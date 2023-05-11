@@ -1,0 +1,23 @@
+Modules:
+  - modules/**/*
+
+Library:
+  - lib/**/*
+
+Overlays:
+  - overlays/**/*
+
+Packages:
+  - packages/**/*
+
+Secrets:
+  - secrets/**/*
+
+Systems:
+  - systems/**/*
+
+repo:
+  - '*'
+
+GitHub-Action:
+  - .github/workflows/*
