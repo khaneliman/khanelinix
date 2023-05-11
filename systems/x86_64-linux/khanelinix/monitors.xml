@@ -1,0 +1,50 @@
+<monitors version="2">
+  <configuration>
+    <logicalmonitor>
+      <x>0</x>
+      <y>1080</y>
+      <scale>1</scale>
+      <primary>yes</primary>
+      <monitor>
+        <monitorspec>
+          <connector>DP-1</connector>
+          <vendor>Samsung Electric Company</vendor>
+          <product>LS49AG95</product>
+          <serial>HNTR900911</serial>
+        </monitorspec>
+        <mode>
+          <width>5120</width>
+          <height>1440</height>
+          <rate>119.999001</rate>
+        </mode>
+      </monitor>
+    </logicalmonitor>
+    <logicalmonitor>
+      <x>1420</x>
+      <y>0</y>
+      <scale>2</scale>
+      <monitor>
+        <monitorspec>
+          <connector>DP-3</connector>
+          <vendor>BNQ</vendor>
+          <product>BenQ EW2780U</product>
+          <serial>V9K01837019</serial>
+        </monitorspec>
+        <mode>
+          <width>3840</width>
+          <height>2160</height>
+          <rate>59.997002</rate>
+        </mode>
+      </monitor>
+
+    </logicalmonitor>
+    <!-- <disabled> -->
+    <!--   <monitorspec> -->
+    <!--     <connector>HDMI-2</connector> -->
+    <!--     <vendor>AOC</vendor> -->
+    <!--     <product>28E850</product> -->
+    <!--     <serial>0x00000000</serial> -->
+    <!--   </monitorspec> -->
+    <!-- </disabled> -->
+  </configuration>
+</monitors>

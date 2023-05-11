@@ -1,0 +1,53 @@
+[
+  {
+    "include": [
+      "~/.config/waybar/default-modules.jsonc"
+    ],
+    "layer": "top",
+    "position": "top",
+    "output": "DP-1",
+    "margin-top": 10,
+    "margin-left": 20,
+    "margin-right": 20,
+    "modules-center": [],
+    "modules-left": [
+      "custom/wlogout",
+      "wlr/workspaces",
+      "custom/separator-left",
+      "hyprland/window"
+    ],
+    "modules-right": [
+      "tray",
+      "custom/separator-right",
+      "group/stats",
+      "custom/separator-right",
+      "group/notifications",
+      "hyprland/submap",
+      "custom/weather",
+      "clock"
+    ]
+  },
+  {
+    "include": [
+      "~/.config/waybar/default-modules.jsonc"
+    ],
+    "layer": "top",
+    "position": "top",
+    "output": "DP-3",
+    "margin-top": 10,
+    "margin-left": 20,
+    "margin-right": 20,
+    "modules-center": [],
+    "modules-left": [
+      "custom/wlogout",
+      "wlr/workspaces",
+      "custom/separator-left",
+      "hyprland/window"
+    ],
+    "modules-right": [
+      // "group/notifications",
+      "custom/weather",
+      "clock"
+    ]
+  }
+]

@@ -1,0 +1,12 @@
+# https://numtide.github.io/devshell
+[devshell]
+packages = [
+  deploy-rs
+  alejandra
+  nix-index
+  nix-prefetch-git
+  cachix
+  meson
+  cmake
+  pkg-config
+]
