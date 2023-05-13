@@ -128,11 +128,15 @@
     # Neovim
     # neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
 
-    sops-nix.url = "github:Mic92/sops-nix";
-    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
-
-    agenix.url = "github:ryantm/agenix";
-    agenix.inputs.nixpkgs.follows = "nixpkgs";
+    # sops-nix.url = "github:Mic92/sops-nix";
+    # sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    #
+    # agenix.url = "github:ryantm/agenix";
+    # agenix.inputs.nixpkgs.follows = "nixpkgs";
+    # agenix.inputs.darwin.inputs.nixpkgs.follows = "nixpkgs";
+    # agenix.inputs.darwin.follows = "darwin";
+    # agenix.inputs.home-manager.follows = "home-manager";
+    # agenix.inputs.home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     devshell.url = "github:numtide/devshell";
     devshell.inputs.nixpkgs.follows = "nixpkgs";
@@ -179,8 +183,8 @@
         home-manager.nixosModules.home-manager
         nix-ld.nixosModules.nix-ld
         hyprland.nixosModules.default
-        sops-nix.nixosModules.sops
-        agenix.nixosModules.default
+        # sops-nix.nixosModules.sops
+        # agenix.nixosModules.default
       ];
 
       deploy = lib.mkDeploy { inherit (inputs) self; };

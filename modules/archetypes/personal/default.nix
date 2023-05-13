@@ -17,7 +17,7 @@ in
   config = mkIf cfg.enable {
     khanelinix = {
 
-      apps = { agenix = enabled; };
+      # apps = { agenix = enabled; };
       suites = { };
 
       tools = {
