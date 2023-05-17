@@ -1,19 +1,34 @@
 # Lower delay waiting for chord after escape key press.
 set -g escape-time 0
 
-# Change the prefix from C-b to C-s to make it easier to type.
-set -g prefix C-s
-unbind C-b
-bind C-s send-prefix
+# Enable mouse support
+set -g mouse on
 
-# Start window numbers at 1 rather than 0.
+# Prefix override
+unbind C-b
+set -g prefix C-a
+bind C-a send-prefix
+
+# Start numbers at 1 rather than 0.
 set -g base-index 1
+set -g pane-base-index 1
+set-window-option -g pane-base-index 1
+set-option -g renumber-windows on
 
 # Use h, j, k, l for movement between panes.
 bind h select-pane -L
 bind j select-pane -D
 bind k select-pane -U
 bind l select-pane -R
+
+# Key bindings overrides
+set-window-option -g mode-keys vi
+bind-key -T copy-mode-vi v send-keys -X begin-selection
+bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
+bind-key -T copy-mode-vi Escape send-keys -X cancel
+bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
+bind '"' split-window -v  -c '#{pane_current_path}'
+bind '%' split-window -h -c '#{pane_current_path}'
 
 # Fix colors being wrong in programs like Neovim.
 set-option -ga terminal-overrides ",xterm-256color:Tc"
