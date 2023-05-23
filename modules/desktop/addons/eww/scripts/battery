@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+icons=("" "" "" "" "" "" "" "")
+num_icons=$(awk -v n="${#icons[@]}" 'BEGIN{print 100 / n}')
+
+geticon() {
+  level=$(awk -v n="$CAPACITY" -v c="$num_icons" 'BEGIN{print int(n/c-1)}')
+  echo "${icons[$level]}"
+}
+
+status() {
+  if [ "$STATE" = "Charging" ]; then
+    echo -n "charging"
+
+    if [ "$RATE" -gt 0 ]; then
+      echo ", $(gettime) left"
+    else
+      echo ""
+    fi
+  elif [ "$STATE" = "Discharging" ]; then
+    echo "$(gettime)h left"
+  else
+    echo "fully charged"
+  fi
+}
+
+color() {
+  [ "$CAPACITY" -le 20 ] && echo '#f38ba8' || echo '#a6e3a1'
+}
+
+wattage() {
+  awk -v rate="$RATE" -v uw="1000000" 'BEGIN{print sprintf("%.1f W", rate/uw)}'
+}
+
+gettime() {
+  FULL=$(cat /sys/class/power_supply/BAT1/energy_full)
+  NOW=$(cat /sys/class/power_supply/BAT1/energy_now)
+
+  if [ "$RATE" -gt 0 ]; then
+    if [ "$STATE" = "Discharging" ]; then
+      EX="$NOW / $RATE"
+    else
+      EX="($FULL - $NOW) / $RATE"
+    fi
+    date -u -d@"$(awk -v ex="$EX" 'BEGIN{print ex * 3600}')" +%H:%M
+  fi
+}
+
+while true; do
+  RATE=$(cat /sys/class/power_supply/BAT1/power_now)
+  CAPACITY=$(cat /sys/class/power_supply/BAT1/capacity)
+  STATE=$(cat /sys/class/power_supply/BAT1/status)
+
+  echo '{ "icon": "'"$(geticon)"'", "percentage": '"$CAPACITY"', "wattage": "'"$(wattage)"'", "status": "'"$(status)"'", "color": "'"$(color)"'" }'
+  sleep 3
+done

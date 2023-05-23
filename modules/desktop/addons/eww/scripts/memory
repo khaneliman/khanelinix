@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+while true; do
+  free=$(free -h --si | rg "Mem:")
+  total="$(echo "$free" | awk '{ print $2 }')"
+  used="$(echo "$free" | awk '{ print $3 }')"
+  perc=$(awk -v used="$used" -v total="$total" 'BEGIN{print sprintf("%.f", used/total*100)}')
+
+  echo '{ "total": "'"$total"'", "used": "'"$used"'", "percent": '"$perc"' }'
+
+  sleep 3
+done

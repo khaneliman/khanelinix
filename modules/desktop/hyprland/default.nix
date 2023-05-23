@@ -26,6 +26,7 @@ in
 
     # Desktop additions
     khanelinix.desktop.addons = {
+      eww = enabled;
       gtk = enabled;
       qt = enabled;
       kitty = enabled;

@@ -22,7 +22,7 @@ in
       LOG_ICONS = "true";
     };
 
-    environment.systemPackages = with pkgs; [ font-manager ];
+    environment.systemPackages = with pkgs; [ font-manager fontpreview ];
 
     fonts.fonts = with pkgs;
       [

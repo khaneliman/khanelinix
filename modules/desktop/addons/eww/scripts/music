@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+get_status() {
+  echo "$1" | rg -q "Playing" && echo "" || echo ""
+}
+
+get_length_sec() {
+  echo "${1:-0}" | awk '{print int($1/1000000)}'
+}
+
+get_length_time() {
+  echo "${len:+$(awk 'BEGIN{printf "%.0f", '"$1"' / 1000000 + 1}')}" | xargs -I{} date -d@{} +%M:%S 2>/dev/null || echo ""
+}
+
+get_position() {
+  echo "${1:+$(awk 'BEGIN{printf "%.2f", '"$1"' / '"$2"' * 100}')}" | xargs printf "%.0f\n"
+}
+
+get_position_time() {
+  echo "${1:+$(date -d@"$(awk 'BEGIN{printf "%.0f", '"$1"' / 1000000}')" +%M:%S)}" | xargs -I{} echo {}
+}
+
+get_cover() {
+  mkdir -p "$XDG_CACHE_HOME/eww_covers"
+  cd "$XDG_CACHE_HOME/eww_covers" || exit
+
+  COVER_URL="$1"
+
+  if [[ "$COVER_URL" = https* ]]; then
+    FILENAME=$(basename "$COVER_URL")
+    if [ ! -e "$FILENAME" ]; then
+      wget -N "$COVER_URL" -o /dev/null
+    fi
+
+    IMG="$XDG_CACHE_HOME/eww_covers/$FILENAME"
+  elif [ -n "$COVER_URL" ]; then
+    IMG="$COVER_URL"
+  else
+    IMG=""
+  fi
+
+  echo "$IMG"
+}
+sanitize() {
+  echo "${1//\"/\\\"}"
+}
+
+prevCover=''
+
+playerctl -F metadata -f '{{title}}\{{artist}}\{{status}}\{{position}}\{{mpris:length}}\{{mpris:artUrl}}' 2>/dev/null | while IFS="$(printf '\')" read -r title artist status position len cover; do
+  if [[ "$cover" != "$prevCover" ]]; then
+    COVER=$(get_cover "$cover")
+
+    if [ "$COVER" != "" ]; then
+      cols=$(convert "$COVER" -colors 2 -format "%c" histogram:info: | awk '{print $3}')
+      color1=$(echo "$cols" | head -1)
+      color1=$(printf "rgba(%d, %d, %d, 0.6)" "$((16#${color1:1:2}))" "$((16#${color1:3:2}))" "$((16#${color1:5:2}))")
+      color2=$(echo "$cols" | tail -1)
+    else
+      color1="#1e1e2e"
+      color2="#28283d"
+    fi
+  fi
+
+  jaq --null-input -r -c \
+    --arg artist "$(sanitize "$artist")" \
+    --arg title "$(sanitize "$title")" \
+    --arg status "$(get_status "$status")" \
+    --arg pos "$(get_position "$position" "${len:-1}")" \
+    --arg pos_time "$(get_position_time "$position" "$len")" \
+    --arg length "$(get_length_time "$len")" \
+    --arg cover "$COVER" \
+    --arg color1 "$color1" \
+    --arg color2 "$color2" \
+    '{"artist": $artist, "title": $title, "status": $status, "position": $pos, "position_time": $pos_time, "length": $length, "cover": $cover, "color1": $color1, "color2": $color2}'
+
+  prevCover=$cover
+done

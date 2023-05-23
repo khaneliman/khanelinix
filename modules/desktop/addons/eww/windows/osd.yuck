@@ -1,0 +1,43 @@
+(defwidget osd-part [icon value class]
+  (box
+    :class "osd-part osd-${class}"
+    :orientation "v"
+    :space-evenly false
+    (scale
+      :flipped true
+      :orientation "v"
+      :value value)
+    (label
+      :text icon)))
+
+(defwidget osd []
+  (box
+    :class "osd-container"
+    :space-evenly false
+    (revealer
+      :reveal {osd-brightness}
+      :transition "slideright"
+      (osd-part
+        :class "brightness"
+        :icon {brightness.icon}
+        :value {brightness.percent}))
+    (revealer
+      :reveal {osd-volume}
+      :transition "slideright"
+      (osd-part
+        :class "volume"
+        :icon {volume.icon}
+        :value {volume.percent})))
+)
+
+(defwindow osd
+  :stacking "fg"
+  :focusable false
+  :monitor 0
+  :geometry (geometry
+    :x "1%"
+    :y "0%"
+    :width "0%"
+    :height "0%"
+    :anchor "center left")
+  (osd))
