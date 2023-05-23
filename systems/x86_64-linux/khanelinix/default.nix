@@ -32,6 +32,9 @@ with lib.internal; {
           "hypr/displays.conf".source = ./hypr/displays.conf;
           "hypr/environment.conf".source = ./hypr/environment.conf;
         };
+        customFiles = {
+          ".screenlayout/primary.sh".source = ./.screenlayout/primary.sh;
+        };
       };
 
       addons = {
