@@ -19,6 +19,7 @@ in
       apps = {
         ardour = enabled;
         yt-music = enabled;
+        spotify = enabled;
       };
     };
   };
