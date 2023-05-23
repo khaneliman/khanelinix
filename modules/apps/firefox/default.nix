@@ -121,7 +121,7 @@ in
                 "image.jxl.enabled" = true;
                 "media.eme.enabled" = true;
                 "media.ffmpeg.vaapi.enabled" = true;
-                "media.hardware-video-decoding.force-enabled" = true;
+                # "media.hardware-video-decoding.force-enabled" = true;
                 "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
                 "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
               };

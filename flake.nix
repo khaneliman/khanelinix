@@ -157,6 +157,7 @@
       # TODO: cleanup when available
       channels-config.permittedInsecurePackages = [
         "imagemagick-6.9.12-68"
+        "openssl-1.1.1t"
       ];
 
       #TODO: implement proper devshell
@@ -183,6 +184,7 @@
         home-manager.nixosModules.home-manager
         nix-ld.nixosModules.nix-ld
         hyprland.nixosModules.default
+        # hyprland.homeManagerModules.default
         # sops-nix.nixosModules.sops
         # agenix.nixosModules.default
       ];
