@@ -133,7 +133,7 @@ in
       system.activationScripts.postInstallHyprland = stringAfter [ "users" ] ''
         echo "Setting sddm permissions for user icon"
         ${pkgs.acl}/bin/setfacl -m u:sddm:x /home/${config.khanelinix.user.name}
-        ${pkgs.acl}/bin/setfacl -m u:sddm:r /home/${config.khanelinix.user.name}/.face.icon
+        ${pkgs.acl}/bin/setfacl -m u:sddm:r /home/${config.khanelinix.user.name}/.face.icon || true
       '';
     };
 }
