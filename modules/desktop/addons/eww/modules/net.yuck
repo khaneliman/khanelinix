@@ -1,7 +1,12 @@
 (defwidget net []
-  (button
-    :class "module icon"
-    :onclick "gnome-control-center &"
+  (box
+    :class "module"
+    (eventbox
+      :class "evtButton"
+     :onclick "nm-applet"
+      (label
+        :text {net.icon}
+          :class "module-net module icon"
+          :style "color: ${net.color};"
     :tooltip {net.name}
-    :style "color: ${net.color};"
-    {net.icon}))
+      ))))

@@ -11,7 +11,7 @@ empty="#313244"
 focusedws=$(hyprctl -j monitors | jaq -r '.[] | select(.focused == true) | .activeWorkspace.id')
 
 declare -A o=([1]=0 [2]=0 [3]=0 [4]=0 [5]=0 [6]=0 [7]=0 [8]=0 [9]=0 [10]=0)
-SPACE_ICONS=("" " " "" "" " " "" "" "󰢹")
+SPACE_ICONS=("" "" "" "" "" "" "󰝚" "󰢹")
 DEFAULT_ICON=""
 declare -A monitormap
 declare -A workspaces

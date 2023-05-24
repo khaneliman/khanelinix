@@ -5,9 +5,11 @@
 			:class "module workspaces"
 			:spacing 5
 		  (for ws in workspace
-		    (button
-					:onclick "hyprctl dispatch workspace ${ws.number}"
-					:class "ws-icon"
-					:style "color: ${ws.color};"
-					:tooltip {ws.tooltip}
-					"${ws.icon}")))))
+		  	(eventbox
+		  		:class "evtButton workspace"
+		  		:onclick "hyprctl dispatch workspace ${ws.number}"
+					(label
+						:class "ws-icon"
+						:style "color: ${ws.color};"
+						:tooltip {ws.tooltip}
+						:text "${ws.icon}"))))))

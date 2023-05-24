@@ -8,7 +8,7 @@
       (box
         :class "song-cover-art"
         :style "background-image: url(\"${music.cover}\");")
-      (button
+      (eventbox
         :class "module"
         :onclick "${EWW_CMD} open --toggle music"
         {music.title})
