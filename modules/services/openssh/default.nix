@@ -62,8 +62,8 @@ in
     services.openssh = {
       enable = true;
       settings = {
-        passwordAuthentication = false;
-        permitRootLogin =
+        PasswordAuthentication = false;
+        PermitRootLogin =
           if format == "install-iso"
           then "yes"
           else "no";
