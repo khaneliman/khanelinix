@@ -1,13 +1,15 @@
 { ... }: final: prev:
 {
-  # waybar-hyprland = prev.waybar-hyprland.overrideAttrs (oldAttrs: {
-  #   src = prev.fetchFromGitHub {
-  #     owner = "Alexays";
-  #     repo = "Waybar";
-  #     rev = "b06953757e1a72236c73ba2780ca8ada800c9047";
-  #     hash = "sha256-LFZ7Kzj9//vKtdOyDCjuT/VvANcnY009uooQwAd0sAQ=";
-  #   };
-  #
-  #   mesonFlags = oldAttrs.mesonFlags ++ [ "-Dlibcxx=true" ];
-  # });
+  waybar-hyprland = prev.waybar-hyprland.overrideAttrs (oldAttrs: {
+    version = "0.9.18";
+
+    src = prev.fetchFromGitHub {
+      owner = "Alexays";
+      repo = "Waybar";
+      rev = "0.9.18";
+      hash = "sha256-bnaYNa1jb7kZ1mtMzeOQqz4tmBG1w5YXlQWoop1Q0Yc=";
+    };
+
+    mesonFlags = oldAttrs.mesonFlags ++ [ "-Dcava=disabled" ];
+  });
 }
