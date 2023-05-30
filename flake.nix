@@ -140,6 +140,9 @@
 
     devshell.url = "github:numtide/devshell";
     devshell.inputs.nixpkgs.follows = "nixpkgs";
+
+    sddm-catppuccin.url = "github:khaneliman/sddm-catppuccin";
+    sddm-catppuccin.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs:

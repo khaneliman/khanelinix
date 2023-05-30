@@ -95,7 +95,7 @@ in
 
       environment.systemPackages = with pkgs; [
         # sddm
-        khanelinix.catppuccin-sddm
+        inputs.sddm-catppuccin.packages.${pkgs.hostPlatform.system}.sddm-catppuccin
         xwayland
         grim
         slurp
