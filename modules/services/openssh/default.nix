@@ -56,6 +56,7 @@ in
     authorizedKeys =
       mkOpt (listOf str) [ default-key ] "The public keys to apply.";
     port = mkOpt port 2222 "The port to listen on (in addition to 22).";
+    extraConfig = mkOpt str "" "Extra configuration to apply.";
   };
 
   config = mkIf cfg.enable {
@@ -83,6 +84,8 @@ in
         HostKeyAlgorithms +ssh-rsa
 
       ${other-hosts-config}
+
+      ${cfg.extraConfig}
     '';
 
     khanelinix.user.extraOptions.openssh.authorizedKeys.keys =
