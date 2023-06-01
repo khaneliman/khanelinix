@@ -26,6 +26,7 @@ in
         fastfetch = enabled;
         feh = enabled;
         flake = enabled;
+        hydra-check = enabled;
         glow = enabled;
         ranger = enabled;
       };
