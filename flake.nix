@@ -160,7 +160,7 @@
       # TODO: cleanup when available
       channels-config.permittedInsecurePackages = [
         "imagemagick-6.9.12-68"
-        "openssl-1.1.1t"
+        "openssl-1.1.1u"
       ];
 
       #TODO: implement proper devshell
