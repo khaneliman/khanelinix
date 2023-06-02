@@ -8,6 +8,8 @@
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.cli-apps.neovim;
+  user = config.users.users.${config.khanelinix.user.name};
+
 in
 {
   options.khanelinix.cli-apps.neovim = with lib.types; {
@@ -20,6 +22,8 @@ in
       ripgrep
       gdu
       bottom
+      deno
+      webkitgtk
     ];
 
     environment.variables = {
@@ -52,5 +56,13 @@ in
         };
       };
     };
+
+    # system.userActivationScripts = {
+    #   postInstall = ''
+    #     echo "Running deno install"
+    #     source ${config.system.build.setEnvironment}
+    #     cd ${user.name}/.local/share/nvim/lazy/peek.nvim/ && deno task build:debug
+    #   '';
+    # };
   };
 }
