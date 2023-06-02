@@ -40,10 +40,7 @@ in
     khanelinix.home.configFile =
       {
         # TODO: replace with fetch from github catppuccin discord or inline css 
-        "BetterDiscord/themes/catppuccin-macchiato.theme.css".text = ''
-          /* macchiato */
-          @import url("https://catppuccin.github.io/discord/dist/catppuccin-macchiato.theme.css");
-        '';
+        "BetterDiscord/themes/catppuccin-macchiato.theme.css".source = ./catppuccin-macchiato.theme.css;
         # "BetterDiscord/data/stable/settings.json".source = inputs.dotfiles.outPath + "/dots/shared/home/.config/BetterDiscord/data/stable/settings.json";
         # "BetterDiscord/data/stable/themes.json".source = inputs.dotfiles.outPath + "/dots/shared/home/.config/BetterDiscord/data/stable/themes.json";
       };
