@@ -40,6 +40,7 @@ in
         exa = enabled;
         fup-repl = enabled;
         git = enabled;
+        glxinfo = enabled;
         lsd = enabled;
         misc = enabled;
         nix-ld = enabled;
