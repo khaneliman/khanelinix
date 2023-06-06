@@ -41,6 +41,7 @@ in
           exec-once = [workspace special silent ] kitty --session scratchpad # Spawn scratchpad terminal
           exec-once = command -v firefox && firefox
           exec-once = command -v steam && steam
+          exec-once = command -v discord && discord
           exec-once = command -v thunderbird && thunderbird
           exec-once = command -v virt-manager && virt-manager
         '';
