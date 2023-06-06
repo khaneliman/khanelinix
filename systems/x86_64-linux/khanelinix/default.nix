@@ -46,6 +46,7 @@ with lib.internal; {
 
     suites = {
       desktop = mkForce disabled;
+      emulation = enabled;
     };
 
     tools = {
