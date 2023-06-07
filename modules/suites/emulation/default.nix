@@ -18,6 +18,7 @@ in
     khanelinix = {
       apps = {
         cemu = enabled;
+        emulationstation = enabled;
         yuzu = enabled;
         pcsx2 = enabled;
         dolphin = enabled;
