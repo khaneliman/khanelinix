@@ -65,7 +65,6 @@ with lib.internal; {
       rgb = {
         enable = true;
         ckbNextConfig = ./ckb-next/ckb-next.conf;
-        openRGBConfig = ./openrgb;
       };
       storage = enabled;
       opengl = enabled;
