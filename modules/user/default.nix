@@ -71,6 +71,7 @@ in
         "Pictures/.keep".text = "";
         "Videos/.keep".text = "";
         "work/.keep".text = "";
+        "public/.keep".text = "";
         ".face".source = cfg.icon;
         ".face.icon".source = cfg.icon;
         "Pictures/${

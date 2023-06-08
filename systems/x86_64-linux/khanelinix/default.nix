@@ -87,15 +87,15 @@ with lib.internal; {
 
         extraConfig = ''
           Host laptop
-            User khaneliman
+            User ${config.khanelinix.user.name}
             Hostname Austins-MacBook-Pro.local
 
           Host desktop
-            User khaneliman
+            User ${config.khanelinix.user.name}
             Hostname 192.168.1.100
 
           Host server
-            User khaneliman
+            User ${config.khanelinix.user.name}
             Hostname 192.168.1.37
         '';
       };
@@ -103,6 +103,26 @@ with lib.internal; {
       # TODO: Set up shares
       samba = {
         enable = true;
+
+        shares = {
+          public = {
+            path = "/home/${config.khanelinix.user.name}/public/";
+            comment = "Home Public folder";
+            public = true;
+            browseable = true;
+            only-owner-editable = false;
+            read-only = false;
+          };
+
+          games = {
+            path = "/mnt/games/";
+            comment = "Games folder";
+            public = true;
+            browseable = true;
+            only-owner-editable = true;
+            read-only = false;
+          };
+        };
       };
     };
 
