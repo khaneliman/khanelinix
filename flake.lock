@@ -824,6 +824,38 @@
         "type": "github"
       }
     },
+    "ranger-devicons": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1673142324,
+        "narHash": "sha256-97u8yNyfN9vbv4JAvqgFekno3dUyYu265TvpU3ZZqg4=",
+        "owner": "alexanderjeurissen",
+        "repo": "ranger_devicons",
+        "rev": "5bb1c32f649055c2d9143c8371c2bf06d5e574f7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "alexanderjeurissen",
+        "repo": "ranger_devicons",
+        "type": "github"
+      }
+    },
+    "ranger-udisk-menu": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1658759789,
+        "narHash": "sha256-NCw8U3t576+y4nfmWTQEhU0j9+yBtHTivJ+JAxyCbBs=",
+        "owner": "SL-RU",
+        "repo": "ranger_udisk_menu",
+        "rev": "c892d447177051dd2fa97e2387b2d04bf8977de7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "SL-RU",
+        "repo": "ranger_udisk_menu",
+        "type": "github"
+      }
+    },
     "replugged": {
       "inputs": {
         "nixpkgs": [
@@ -885,6 +917,8 @@
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
         "nur": "nur",
+        "ranger-devicons": "ranger-devicons",
+        "ranger-udisk-menu": "ranger-udisk-menu",
         "replugged": "replugged",
         "rustup-overlay": "rustup-overlay",
         "sddm-catppuccin": "sddm-catppuccin",

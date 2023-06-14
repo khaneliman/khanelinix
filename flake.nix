@@ -143,6 +143,13 @@
 
     sddm-catppuccin.url = "github:khaneliman/sddm-catppuccin";
     sddm-catppuccin.inputs.nixpkgs.follows = "nixpkgs";
+
+    ## Ranger plugins
+    ranger-devicons.url = "github:alexanderjeurissen/ranger_devicons";
+    ranger-devicons.flake = false;
+
+    ranger-udisk-menu.url = "github:SL-RU/ranger_udisk_menu";
+    ranger-udisk-menu.flake = false;
   };
 
   outputs = inputs:
