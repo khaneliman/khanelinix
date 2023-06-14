@@ -94,8 +94,6 @@ in
       };
 
       environment.systemPackages = with pkgs; [
-        # sddm
-        inputs.sddm-catppuccin.packages.${pkgs.hostPlatform.system}.sddm-catppuccin
         xwayland
         grim
         slurp
@@ -123,9 +121,9 @@ in
         libinput.enable = true;
         displayManager = {
           # defaultSession = "hyprland";
-          sddm = {
+          gdm = {
             enable = true;
-            theme = "catppuccin";
+            wayland = true;
           };
         };
       };

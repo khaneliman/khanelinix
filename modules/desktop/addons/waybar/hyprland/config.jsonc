@@ -45,7 +45,6 @@
       "hyprland/window"
     ],
     "modules-right": [
-      "group/notifications",
       "custom/weather",
       "clock"
     ]
