@@ -15,7 +15,31 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ ranger ];
+    environment.systemPackages = with pkgs; [
+      ranger
+
+      # scope dependenices
+      exiftool
+      mediainfo
+      highlight
+      libxls
+      catdoc
+      pandoc
+      ebook_tools
+      poppler_utils
+      ffmpegthumbnailer
+      jq
+      w3m
+      atool
+      unrar
+      p7zip
+      glow
+      bat
+      lynx
+      elinks
+      odt2txt
+      fontforge
+    ];
 
     khanelinix.home = {
       configFile = with inputs; {

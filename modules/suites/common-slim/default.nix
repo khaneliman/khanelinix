@@ -1,14 +1,14 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.suites.common-slim;
-in {
+in
+{
   options.khanelinix.suites.common-slim = with types; {
     enable = mkBoolOpt false "Whether or not to enable common-slim configuration.";
   };
@@ -25,12 +25,10 @@ in {
         btop = enabled;
         fastfetch = enabled;
         flake = enabled;
-        glow = enabled;
         ranger = enabled;
       };
 
       tools = {
-        atool = enabled;
         bat = enabled;
         bottom = enabled;
         comma = enabled;

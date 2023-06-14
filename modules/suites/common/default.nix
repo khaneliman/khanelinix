@@ -27,12 +27,10 @@ in
         feh = enabled;
         flake = enabled;
         hydra-check = enabled;
-        glow = enabled;
         ranger = enabled;
       };
 
       tools = {
-        atool = enabled;
         bat = enabled;
         bottom = enabled;
         comma = enabled;
