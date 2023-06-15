@@ -18,7 +18,7 @@ in
     khanelinix = {
 
       # apps = { agenix = enabled; };
-      suites = { };
+      suites = { common = enabled; };
 
       tools = {
         appimage-run = enabled;

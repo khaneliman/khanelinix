@@ -8,9 +8,7 @@
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.desktop.hyprland;
-  term = config.khanelinix.desktop.addons.term;
   hyprBasePath = inputs.dotfiles.outPath + "/dots/linux/hyprland/home/.config/hypr/";
-  user = config.users.users.${config.khanelinix.user.name};
 in
 {
   options.khanelinix.desktop.hyprland = with types; {
@@ -51,6 +49,10 @@ in
             xdg-portal = enabled;
           };
 
+          display-managers = {
+            greetd = enabled;
+          };
+
           home = {
             configFile = with inputs;
               {
@@ -77,15 +79,6 @@ in
                 ".local/bin/record_screen".source = dotfiles.outPath + "/dots/linux/hyprland/home/.local/bin/record_screen";
               } // cfg.customFiles;
 
-
-            extraOptions = {
-              # home.modules = [ inputs.hyprland.homeManagerModules.default ];
-              # wayland.windowManager.hyprland = {
-              #   enable = true;
-              #   recommendedEnvironment = false;
-              #   xwayland.enable = true;
-              # };
-            };
           };
         };
 
@@ -115,23 +108,5 @@ in
         inputs.hyprland-contrib.packages.${pkgs.hostPlatform.system}.grimblast
       ];
 
-      services.xserver = {
-        enable = true;
-
-        libinput.enable = true;
-        displayManager = {
-          # defaultSession = "hyprland";
-          gdm = {
-            enable = true;
-            wayland = true;
-          };
-        };
-      };
-
-      system.activationScripts.postInstallHyprland = stringAfter [ "users" ] ''
-        echo "Setting sddm permissions for user icon"
-        ${pkgs.acl}/bin/setfacl -m u:sddm:x /home/${config.khanelinix.user.name}
-        ${pkgs.acl}/bin/setfacl -m u:sddm:r /home/${config.khanelinix.user.name}/.face.icon || true
-      '';
     };
 }

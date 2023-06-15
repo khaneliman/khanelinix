@@ -1,14 +1,14 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.archetypes.gaming;
-in {
+in
+{
   options.khanelinix.archetypes.gaming = with types; {
     enable = mkBoolOpt false "Whether or not to enable the gaming archetype.";
   };
@@ -19,7 +19,8 @@ in {
       desktop = enabled;
       games = enabled;
       social = enabled;
-      media = enabled;
+      video = enabled;
+      music = enabled;
     };
   };
 }

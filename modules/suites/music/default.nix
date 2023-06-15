@@ -17,6 +17,7 @@ in
     khanelinix = {
       apps = {
         ardour = enabled;
+        cadence = enabled;
         yt-music = enabled;
         spotify = enabled;
       };
