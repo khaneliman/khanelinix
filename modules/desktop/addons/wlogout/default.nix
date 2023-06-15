@@ -20,7 +20,6 @@ in
 
     khanelinix.home = {
       configFile = with inputs; {
-        # TODO: Fix broken in nixos config
         "wlogout/layout".source = dotfiles.outPath + "/dots/linux/hyprland/home/.config/wlogout/layout";
         "wlogout/style.css".source = pkgs.writeTextFile {
           name = "style.css";

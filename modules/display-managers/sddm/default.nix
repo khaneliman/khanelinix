@@ -12,6 +12,7 @@ in
 {
   options.khanelinix.display-managers.sddm = with types; {
     enable = mkBoolOpt false "Whether or not to enable sddm.";
+    defaultSession = mkOpt (nullOr types.str) null "The default session to use.";
   };
 
   config = mkIf cfg.enable
@@ -26,6 +27,8 @@ in
 
         libinput.enable = true;
         displayManager = {
+          defaultSession = lib.optional (cfg.defaultSession != null) cfg.defaultSession;
+
           sddm = {
             enable = true;
             theme = "catppuccin";

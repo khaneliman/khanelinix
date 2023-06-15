@@ -31,21 +31,13 @@ in
           desktop.addons = {
             eww = enabled;
             gtk = enabled;
-            qt = enabled;
-            kitty = enabled;
-            rofi = enabled;
-            swappy = enabled;
             kanshi = enabled;
             keyring = enabled;
+            kitty = enabled;
             nautilus = enabled;
-            electron-support = enabled;
-            swaylock = enabled;
-            swayidle = enabled;
-            swaynotificationcenter = enabled;
+            qt = enabled;
+            rofi = enabled;
             thunar = enabled;
-            waybar = enabled;
-            wlogout = enabled;
-            wdisplays = enabled;
             xdg-portal = enabled;
           };
 
@@ -80,6 +72,10 @@ in
               } // cfg.customFiles;
 
           };
+
+          suites = {
+            wlroots = enabled;
+          };
         };
 
       programs.hyprland = {
@@ -87,24 +83,8 @@ in
       };
 
       environment.systemPackages = with pkgs; [
-        xwayland
-        grim
-        slurp
-        swappy
-        cliphist
-        wl-clipboard
-        wf-recorder
-        wlr-randr
-        libinput
-        playerctl
-        brightnessctl
-        glib # for gsettings
-        gtk3.out # for gtk-launch
         hyprpaper
         hyprpicker
-        swayimg
-        blueman
-        networkmanagerapplet
         inputs.hyprland-contrib.packages.${pkgs.hostPlatform.system}.grimblast
       ];
 

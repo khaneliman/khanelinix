@@ -16,7 +16,8 @@ in
     wayland = mkBoolOpt true "Whether or not to use Wayland.";
     suspend =
       mkBoolOpt true "Whether or not to suspend the machine after inactivity.";
-
+    monitors = mkOpt (nullOr path) null "The monitors.xml file to create.";
+    defaultSession = mkOpt (nullOr types.str) null "The default session to use.";
   };
 
   config = mkIf cfg.enable
@@ -35,10 +36,14 @@ in
         enable = true;
 
         libinput.enable = true;
-        displayManager.gdm = {
-          enable = true;
-          wayland = cfg.wayland;
-          autoSuspend = cfg.suspend;
+        displayManager = {
+          defaultSession = lib.optional (cfg.defaultSession != null) cfg.defaultSession;
+
+          gdm = {
+            enable = true;
+            wayland = cfg.wayland;
+            autoSuspend = cfg.suspend;
+          };
         };
         desktopManager.gnome.enable = true;
       };
