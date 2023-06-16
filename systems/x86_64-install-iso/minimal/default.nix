@@ -1,13 +1,19 @@
-{
-  pkgs,
-  lib,
-  ...
+{ pkgs
+, lib
+, ...
 }:
 with lib;
 with lib.internal; {
   # `install-iso` adds wireless support that
   # is incompatible with networkmanager.
   networking.wireless.enable = mkForce false;
+
+  environment.systemPackages = with pkgs; [
+    wget
+    curl
+    pciutils
+    file
+  ];
 
   khanelinix = {
     nix = enabled;
@@ -20,8 +26,6 @@ with lib.internal; {
     tools = {
       git = enabled;
       node = enabled;
-      misc = enabled;
-      http = enabled;
     };
 
     hardware = {

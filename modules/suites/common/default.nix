@@ -14,8 +14,28 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [
-      pkgs.khanelinix.list-iommu
+    environment.systemPackages = with pkgs; [
+      khanelinix.list-iommu
+      feh
+      snowfallorg.flake
+      hydra-check
+      appimage-run
+      bottom
+      exa
+      fd
+      wget
+      curl
+      socat
+      toilet
+      xclip
+      fzf
+      killall
+      unzip
+      file
+      jq
+      clac
+      pciutils
+      tldr
     ];
 
     khanelinix = {
@@ -24,30 +44,22 @@ in
       cli-apps = {
         btop = enabled;
         fastfetch = enabled;
-        feh = enabled;
-        flake = enabled;
-        hydra-check = enabled;
         ranger = enabled;
       };
 
       tools = {
         bat = enabled;
-        bottom = enabled;
         comma = enabled;
+        colorls = enabled;
         direnv = enabled;
-        exa = enabled;
         fup-repl = enabled;
         git = enabled;
         glxinfo = enabled;
         lsd = enabled;
-        misc = enabled;
         nix-ld = enabled;
         oh-my-posh = enabled;
-        socat = enabled;
         spicetify-cli = enabled;
-        toilet = enabled;
         topgrade = enabled;
-        xclip = enabled;
       };
 
       hardware = {
@@ -79,3 +91,4 @@ in
     };
   };
 }
+

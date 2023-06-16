@@ -15,12 +15,17 @@ in
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      rpcs3
+      pcsx2
+      cemu
+      yuzu-early-access
+      emulationstation
+    ];
+
     khanelinix = {
       apps = {
-        cemu = enabled;
         emulationstation = enabled;
-        yuzu = enabled;
-        pcsx2 = enabled;
         dolphin = enabled;
         retroarch = enabled;
       };

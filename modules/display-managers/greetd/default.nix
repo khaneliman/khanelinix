@@ -32,7 +32,6 @@ in
 {
   options.khanelinix.display-managers.greetd = with types; {
     enable = mkBoolOpt false "Whether or not to enable greetd.";
-    # outputConfigs = mkOption types.str "" "The output configs to use for greetd.";
   };
 
   config = mkIf cfg.enable

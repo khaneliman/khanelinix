@@ -27,9 +27,7 @@ in
         music = enabled;
       };
 
-      tools = {
-        appimage-run = enabled;
-      };
+      tools = { };
     };
   };
 }

@@ -16,6 +16,10 @@ in
 
   config = mkIf cfg.enable {
 
+    khanelinix.cli-apps = {
+      wshowkeys = enabled;
+    };
+
     khanelinix.desktop.addons = {
       electron-support = enabled;
       swappy = enabled;

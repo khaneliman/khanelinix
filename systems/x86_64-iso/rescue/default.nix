@@ -1,24 +1,28 @@
-{
-  pkgs,
-  lib,
-  ...
+{ pkgs
+, lib
+, ...
 }:
 with lib;
 with lib.internal; {
+  environment.systemPackages = with pkgs; [
+    wget
+    curl
+    pciutils
+    file
+  ];
+
   khanelinix = {
     nix = enabled;
 
-    cli-apps = {neovim = enabled;};
+    cli-apps = { neovim = enabled; };
 
     tools = {
-      misc = enabled;
       git = enabled;
-      http = enabled;
     };
 
-    hardware = {networking = enabled;};
+    hardware = { networking = enabled; };
 
-    security = {doas = enabled;};
+    security = { doas = enabled; };
 
     system = {
       fonts = enabled;

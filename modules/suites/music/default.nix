@@ -14,10 +14,13 @@ in
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      ardour
+      cadence
+    ];
+
     khanelinix = {
       apps = {
-        ardour = enabled;
-        cadence = enabled;
         yt-music = enabled;
         spotify = enabled;
       };

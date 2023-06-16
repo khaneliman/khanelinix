@@ -86,21 +86,6 @@ in
 
       extraOptions = {
         home.shellAliases = {
-          ls = "lsd -al --color=always --group-directories-first"; # preferred listing                   
-          la = "lsd -a --color=always --group-directories-first"; # all files and dirs                  
-          ll = "lsd -l --color=always --group-directories-first"; # long format                         
-          lt = "lsd -a --tree --color=always --group-directories-first -I .git"; # tree listing          
-          lst = "lsd -al --tree --color=always --group-directories-first -I .git"; # tree listing        
-          llt = "lsd -l --tree --color=always --group-directories-first -I .git"; # tree listing         
-          l = "lsd -a | egrep '^\.'"; # show only dotfilesalias ls='lsd -a' 
-
-          lc = "${pkgs.colorls}/bin/colorls --sd";
-          lcg = "lc --gs";
-          lcl = "lc -1";
-          lclg = "lc -1 --gs";
-          lcu = "${pkgs.colorls}/bin/colorls -U";
-          lclu = "${pkgs.colorls}/bin/colorls -U -1";
-
           # File management
           rcp = "rsync -rahP --mkpath --modify-window=1"; # Rsync copy keeping all attributes,timestamps,permissions"
           rmv = "rsync -rahP --mkpath --modify-window=1 --remove-sent-files"; # Rsync move keeping all attributes,timestamps,permissions

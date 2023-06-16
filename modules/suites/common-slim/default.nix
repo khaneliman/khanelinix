@@ -14,8 +14,18 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [
-      pkgs.khanelinix.list-iommu
+    environment.systemPackages = with pkgs; [
+      khanelinix.list-iommu
+      snowfallorg.flake
+      exa
+      fd
+      wget
+      curl
+      socat
+      xclip
+      killall
+      unzip
+      file
     ];
 
     khanelinix = {
@@ -24,22 +34,16 @@ in
       cli-apps = {
         btop = enabled;
         fastfetch = enabled;
-        flake = enabled;
         ranger = enabled;
       };
 
       tools = {
         bat = enabled;
-        bottom = enabled;
         comma = enabled;
         direnv = enabled;
-        exa = enabled;
         fup-repl = enabled;
         git = enabled;
         lsd = enabled;
-        socat = enabled;
-        topgrade = enabled;
-        xclip = enabled;
       };
 
       hardware = {

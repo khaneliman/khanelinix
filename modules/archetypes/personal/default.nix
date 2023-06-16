@@ -17,11 +17,10 @@ in
   config = mkIf cfg.enable {
     khanelinix = {
 
-      # apps = { agenix = enabled; };
       suites = { common = enabled; };
 
       tools = {
-        appimage-run = enabled;
+        # agenix = enabled;
       };
     };
   };

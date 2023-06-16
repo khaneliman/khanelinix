@@ -7,10 +7,10 @@
 }:
 with lib;
 with lib.internal; let
-  cfg = config.khanelinix.apps.agenix;
+  cfg = config.khanelinix.tools.agenix;
 in
 {
-  options.khanelinix.apps.agenix = with types; {
+  options.khanelinix.tools.agenix = with types; {
     enable = mkBoolOpt false "Whether or not to enable agenix.";
   };
 

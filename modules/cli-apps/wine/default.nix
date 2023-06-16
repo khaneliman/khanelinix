@@ -1,23 +1,23 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.cli-apps.wine;
-in {
+in
+{
   options.khanelinix.cli-apps.wine = with types; {
     enable = mkBoolOpt false "Whether or not to enable Wine.";
   };
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      winePackages.unstable
+      winePackages.waylandFull
       winetricks
-      wine64Packages.unstable
+      wine64Packages.waylandFull
     ];
   };
 }
