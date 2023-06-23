@@ -1,9 +1,10 @@
-{ options
-, config
-, lib
-, pkgs
-, inputs
-, ...
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
 }:
 with lib;
 with lib.internal; let
@@ -49,12 +50,11 @@ with lib.internal; let
       eww open $w
     done
   '';
-in
-{
+in {
   options.khanelinix.desktop.addons.eww = with types; {
     enable = mkBoolOpt false "Whether to enable eww in the desktop environment.";
 
-    package = mkOpt package pkgs.eww-wayland "The Eww package to install";
+    package = mkOpt package pkgs.eww "The Eww package to install";
 
     autoReload = mkBoolOpt false "Whether to restart the eww daemon and windows on change.";
 
@@ -72,31 +72,27 @@ in
   };
 
   config = mkIf cfg.enable {
-
-    environment.systemPackages = with pkgs; [
-
-    ] ++ dependencies;
-
-    fonts.fonts = with pkgs;
+    environment.systemPackages = with pkgs;
       [
-        jost
-        material-icons
-        material-symbols
-        material-design-icons
-      ];
+      ]
+      ++ dependencies;
+
+    fonts.fonts = with pkgs; [
+      jost
+      material-icons
+      material-symbols
+      material-design-icons
+    ];
 
     khanelinix.home = {
-
       extraOptions = {
-
         # remove nix files
         xdg.configFile."eww" = {
           source = lib.cleanSourceWith {
-            filter = name: _type:
-              let
-                baseName = baseNameOf (toString name);
-              in
-                !(lib.hasSuffix ".nix" baseName);
+            filter = name: _type: let
+              baseName = baseNameOf (toString name);
+            in
+              !(lib.hasSuffix ".nix" baseName);
             src = lib.cleanSource ./.;
           };
 
@@ -118,14 +114,14 @@ in
             Description = "Eww Daemon";
             # not yet implemented
             # PartOf = ["tray.target"];
-            PartOf = [ "graphical-session.target" ];
+            PartOf = ["graphical-session.target"];
           };
           Service = {
             Environment = "PATH=/run/wrappers/bin:${lib.makeBinPath dependencies}";
             ExecStart = "${cfg.package}/bin/eww daemon --no-daemonize";
             Restart = "on-failure";
           };
-          Install.WantedBy = [ "graphical-session.target" ];
+          Install.WantedBy = ["graphical-session.target"];
         };
       };
     };

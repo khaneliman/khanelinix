@@ -16,15 +16,16 @@ in
     enable = mkBoolOpt false "Whether to customize GTK and apply themes.";
     theme = {
       name =
-        mkOpt str "Catppuccin-Macchiato-Standard-Blue-Dark"
+        mkOpt str "Catppuccin-Macchiato-Standard-Blue-dark"
           "The name of the GTK theme to apply.";
-      pkg = mkOpt package
-        (pkgs.catppuccin-gtk.override
-          {
-            accents = [ "blue" ];
-            size = "standard";
-            variant = "macchiato";
-          }) "The package to use for the theme.";
+      pkg =
+        mkOpt package
+          (pkgs.catppuccin-gtk.override
+            {
+              accents = [ "blue" ];
+              size = "standard";
+              variant = "macchiato";
+            }) "The package to use for the theme.";
     };
     cursor = {
       name =
@@ -55,16 +56,15 @@ in
       CURSOR_THEME = cfg.cursor.name;
     };
 
-    services =
-      {
-        # needed for GNOME services outside of GNOME Desktop
-        dbus.packages = [ pkgs.gcr ];
-        udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
-      };
+    services = {
+      # needed for GNOME services outside of GNOME Desktop
+      dbus.packages = [ pkgs.gcr ];
+      udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
+    };
 
     khanelinix.home = {
       file = {
-        ".themes/Catppuccin-Dark".source = cfg.theme.pkg.outPath + "/share/themes/${cfg.theme.name}/";
+        ".themes/${cfg.theme.name}".source = cfg.theme.pkg.outPath + "/share/themes/${cfg.theme.name}/";
       };
       configFile = {
         "gtk-3.0/assets".source = cfg.theme.pkg.outPath + "/share/themes/${cfg.theme.name}/gtk-3.0/assets/";
@@ -88,8 +88,7 @@ in
           enable = true;
 
           theme = {
-            # Index.theme is named Catppuccin-Dark for some reason...
-            name = "Catppuccin-Dark";
+            name = cfg.theme.name;
             package = cfg.theme.pkg;
           };
 
@@ -111,17 +110,16 @@ in
         dconf = {
           enable = true;
 
-          settings =
-            nested-default-attrs {
-              "org/gnome/desktop/interface" = {
-                color-scheme = "prefer-dark";
-                enable-hot-corners = false;
-                font-theme = config.khanelinix.system.fonts.default;
-                gtk-theme = cfg.theme.name;
-                cursor-theme = cfg.cursor.name;
-                icon-theme = cfg.icon.name;
-              };
+          settings = nested-default-attrs {
+            "org/gnome/desktop/interface" = {
+              color-scheme = "prefer-dark";
+              enable-hot-corners = false;
+              font-theme = config.khanelinix.system.fonts.default;
+              gtk-theme = cfg.theme.name;
+              cursor-theme = cfg.cursor.name;
+              icon-theme = cfg.icon.name;
             };
+          };
         };
       };
     };
