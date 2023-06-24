@@ -1,14 +1,14 @@
-{ options
-, config
-, lib
-, pkgs
-, ...
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.suites.games;
-in
-{
+in {
   options.khanelinix.suites.games = with types; {
     enable =
       mkBoolOpt false "Whether or not to enable common games configuration.";
@@ -26,6 +26,7 @@ in
       apps = {
         steam = enabled;
         lutris = enabled;
+        mangohud = enabled;
       };
 
       cli-apps = {
