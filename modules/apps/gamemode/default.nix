@@ -11,9 +11,11 @@ with lib.internal; let
   # programs = lib.makeBinPath [config.khanelinix.desktop.hyprland.package];
 
   defaultStartScript = ''
+    ${pkgs.libnotify}/bin/notify-send 'GameMode started'
   '';
 
   defaultEndScript = ''
+    ${pkgs.libnotify}/bin/notify-send 'GameMode ended'
   '';
 in {
   options.khanelinix.apps.gamemode = with types; {

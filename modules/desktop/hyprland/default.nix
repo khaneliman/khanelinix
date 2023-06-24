@@ -10,6 +10,7 @@ with lib;
 with lib.internal; let
   cfg = config.khanelinix.desktop.hyprland;
   hyprBasePath = inputs.dotfiles.outPath + "/dots/linux/hyprland/home/.config/hypr/";
+  programs = lib.makeBinPath [config.programs.hyprland.package];
 in {
   options.khanelinix.desktop.hyprland = with types; {
     enable = mkBoolOpt false "Whether or not to enable Hyprland.";
@@ -26,11 +27,15 @@ in {
           partitionmanager = enabled;
           gamemode = {
             startscript = ''
+              ${pkgs.libnotify}/bin/notify-send 'GameMode started'
+              export PATH=$PATH:${programs}
               export HYPRLAND_INSTANCE_SIGNATURE=$(ls -1 /tmp/hypr | tail -1)
               hyprctl --batch 'keyword decoration:blur 0 ; keyword animations:enabled 0 ; keyword misc:no_vfr 1'
             '';
 
             endscript = ''
+              ${pkgs.libnotify}/bin/notify-send 'GameMode stopped'
+              export PATH=$PATH:${programs}
               export HYPRLAND_INSTANCE_SIGNATURE=$(ls -1 /tmp/hypr | tail -1)
               hyprctl --batch 'keyword decoration:blur 1 ; keyword animations:enabled 1 ; keyword misc:no_vfr 0'
             '';
