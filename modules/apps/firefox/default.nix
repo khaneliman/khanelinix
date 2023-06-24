@@ -1,9 +1,10 @@
-{ options
-, config
-, lib
-, pkgs
-, inputs
-, ...
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
 }:
 with lib;
 with lib.internal; let
@@ -17,8 +18,7 @@ with lib.internal; let
     "browser.aboutConfig.showWarning" = false;
     "browser.ssb.enabled" = true;
   };
-in
-{
+in {
   options.khanelinix.apps.firefox = with types; {
     enable = mkBoolOpt false "Whether or not to enable Firefox.";
     extraConfig =
@@ -80,7 +80,7 @@ in
 
                 "magnolia@12.34" = {
                   installation_mode = "force_installed";
-                  install_url = "https://gitlab.com/magnolia1234/bpc-uploads/-/raw/master/bypass_paywalls_clean-3.1.8.0.xpi";
+                  install_url = "https://gitlab.com/magnolia1234/bpc-uploads/-/raw/master/bypass_paywalls_clean-3.2.1.0.xpi";
                 };
               };
               Preferences = {
@@ -150,19 +150,3 @@ in
     };
   };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
