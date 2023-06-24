@@ -20,6 +20,7 @@ in {
       protontricks
       protonup-ng
       bottles
+      gamescope
     ];
 
     khanelinix = {
@@ -27,6 +28,7 @@ in {
         steam = enabled;
         lutris = enabled;
         mangohud = enabled;
+        gamemode = enabled;
       };
 
       cli-apps = {
