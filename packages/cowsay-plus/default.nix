@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: let
+{pkgs, ...}: let
   cowfiles = pkgs.fetchFromGitHub {
     owner = "paulkaefer";
     repo = "cowsay-files";
