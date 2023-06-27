@@ -22,7 +22,7 @@ with lib.internal; let
   };
   propagatedIcon =
     pkgs.runCommandNoCC "propagated-icon"
-      { passthru = { fileName = cfg.icon.fileName; }; }
+      { passthru = { inherit (cfg.icon) fileName; }; }
       ''
         local target="$out/share/khanelinix.icons/user/${cfg.name}"
         mkdir -p "$target"

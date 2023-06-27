@@ -8,8 +8,8 @@
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.tools.git;
-  gpg = config.khanelinix.security.gpg;
-  user = config.khanelinix.user;
+  inherit (config.khanelinix.security) gpg;
+  inherit (config.khanelinix) user;
 in
 {
   options.khanelinix.tools.git = with types; {
@@ -33,7 +33,7 @@ in
       # TODO: retrieve git secrets/signing information
       # ".gitconfig.signing".source = dotfiles.outPath + "/dots/shared/home/.gitconfig.signing"; # TODO: handle secrets
       ".gitignore_global".source = dotfiles.outPath + "/dots/shared/home/.gitignore_global";
-      ".gitconfig.local".source = (pkgs.writeTextFile {
+      ".gitconfig.local".source = pkgs.writeTextFile {
         name = ".gitconfig.local";
         text = ''
           [gpg "ssh"]
@@ -45,7 +45,7 @@ in
           [credential "https://gist.github.com"]
            	helper = !gh auth git-credential
         '';
-      });
+      };
 
     };
 

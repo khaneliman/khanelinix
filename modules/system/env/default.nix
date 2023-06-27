@@ -14,7 +14,7 @@ in {
       type = attrsOf (oneOf [str path (listOf (either str path))]);
       apply = mapAttrs (n: v:
         if isList v
-        then concatMapStringsSep ":" (x: toString x) v
+        then concatMapStringsSep ":" toString v
         else (toString v));
       default = {};
       description = "A set of environment variables to set.";

@@ -7,7 +7,7 @@
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.virtualisation.kvm;
-  user = config.khanelinix.user;
+  inherit (config.khanelinix) user;
 in {
   options.khanelinix.virtualisation.kvm = with types; {
     enable = mkBoolOpt false "Whether or not to enable KVM virtualisation.";

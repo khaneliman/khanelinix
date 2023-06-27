@@ -25,7 +25,7 @@ in {
     services.zfs = {
       autoScrub = {
         enable = true;
-        pools = cfg.pools;
+        inherit (cfg) pools;
       };
 
       autoSnapshot = mkIf cfg.auto-snapshot.enable {

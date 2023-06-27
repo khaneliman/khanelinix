@@ -60,14 +60,14 @@ in
           plugins = [
             # Enable a plugin (here grc for colorized command output) from nixpkgs
             # { name = "grc"; src = pkgs.fishPlugins.grc.src; }
-            { name = "autopair"; src = pkgs.fishPlugins.autopair.src; }
-            { name = "done"; src = pkgs.fishPlugins.done.src; }
-            { name = "fzf-fish"; src = pkgs.fishPlugins.fzf-fish.src; }
-            { name = "forgit"; src = pkgs.fishPlugins.forgit.src; }
-            { name = "tide"; src = pkgs.fishPlugins.tide.src; }
-            { name = "sponge"; src = pkgs.fishPlugins.sponge.src; }
-            { name = "wakatime"; src = pkgs.fishPlugins.wakatime-fish.src; }
-            { name = "z"; src = pkgs.fishPlugins.z.src; }
+            { name = "autopair"; inherit (pkgs.fishPlugins.autopair) src; }
+            { name = "done"; inherit (pkgs.fishPlugins.done) src; }
+            { name = "fzf-fish"; inherit (pkgs.fishPlugins.fzf-fish) src; }
+            { name = "forgit"; inherit (pkgs.fishPlugins.forgit) src; }
+            { name = "tide"; inherit (pkgs.fishPlugins.tide) src; }
+            { name = "sponge"; inherit (pkgs.fishPlugins.sponge) src; }
+            { name = "wakatime"; inherit (pkgs.fishPlugins.wakatime-fish) src; }
+            { name = "z"; inherit (pkgs.fishPlugins.z) src; }
             # Manually packaging and enable a plugin
             # {
             #   name = "fisher";

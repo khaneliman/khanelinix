@@ -28,7 +28,7 @@ in {
 
     virtualisation = {
       podman = {
-        enable = cfg.enable;
+        inherit (cfg) enable;
         dockerCompat = true;
       };
     };

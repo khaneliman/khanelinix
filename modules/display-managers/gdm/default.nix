@@ -41,7 +41,7 @@ in
 
           gdm = {
             enable = true;
-            wayland = cfg.wayland;
+            inherit (cfg) wayland;
             autoSuspend = cfg.suspend;
           };
         };
