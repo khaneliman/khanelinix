@@ -1,9 +1,10 @@
-{ options
-, config
-, lib
-, pkgs
-, inputs
-, ...
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
 }:
 with lib;
 with lib.internal; let
@@ -22,28 +23,26 @@ with lib.internal; let
       inherit (inputs) discord-nord-theme;
     };
   };
-in
-{
+in {
   options.khanelinix.apps.discord = with types; {
     enable = mkBoolOpt false "Whether or not to enable Discord.";
     canary.enable = mkBoolOpt false "Whether or not to enable Discord Canary.";
     chromium.enable =
       mkBoolOpt false
-        "Whether or not to enable the Chromium version of Discord.";
+      "Whether or not to enable the Chromium version of Discord.";
     firefox.enable =
       mkBoolOpt false
-        "Whether or not to enable the Firefox version of Discord.";
+      "Whether or not to enable the Firefox version of Discord.";
     native.enable = mkBoolOpt false "Whether or not to enable the native version of Discord.";
   };
 
   config = mkIf (cfg.enable or cfg.chromium.enable) {
-    khanelinix.home.configFile =
-      {
-        # TODO: replace with fetch from github catppuccin discord or inline css 
-        "BetterDiscord/themes/catppuccin-macchiato.theme.css".source = ./catppuccin-macchiato.theme.css;
-        # "BetterDiscord/data/stable/settings.json".source = inputs.dotfiles.outPath + "/dots/shared/home/.config/BetterDiscord/data/stable/settings.json";
-        # "BetterDiscord/data/stable/themes.json".source = inputs.dotfiles.outPath + "/dots/shared/home/.config/BetterDiscord/data/stable/themes.json";
-      };
+    khanelinix.home.configFile = {
+      # TODO: replace with fetch from github catppuccin discord or inline css
+      "BetterDiscord/themes/catppuccin-macchiato.theme.css".source = ./catppuccin-macchiato.theme.css;
+      # "BetterDiscord/data/stable/settings.json".source = inputs.dotfiles.outPath + "/dots/shared/home/.config/BetterDiscord/data/stable/settings.json";
+      # "BetterDiscord/data/stable/themes.json".source = inputs.dotfiles.outPath + "/dots/shared/home/.config/BetterDiscord/data/stable/themes.json";
+    };
 
     environment.systemPackages =
       lib.optional cfg.enable discord
@@ -56,7 +55,7 @@ in
       postInstall = ''
         echo "Running betterdiscord install"
         source ${config.system.build.setEnvironment}
-        ${pkgs.betterdiscordctl}/bin/betterdiscordctl install || true 
+        ${pkgs.betterdiscordctl}/bin/betterdiscordctl install || true
       '';
     };
   };

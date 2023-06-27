@@ -1,8 +1,9 @@
-{ options
-, config
-, lib
-, pkgs
-, ...
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 with lib;
 with lib.internal; let
@@ -12,8 +13,7 @@ with lib.internal; let
     src = ./config;
     term = term.pkg.pname or term.pkg.name;
   };
-in
-{
+in {
   options.khanelinix.desktop.sway = with types; {
     enable = mkBoolOpt false "Whether or not to enable Sway.";
     wallpaper = mkOpt (nullOr package) null "The wallpaper to display.";
@@ -113,18 +113,18 @@ in
     # configuring sway itself (assmung a display manager starts it)
     systemd.user.targets.sway-session = {
       description = "Sway compositor session";
-      documentation = [ "man:systemd.special(7)" ];
-      bindsTo = [ "graphical-session.target" ];
-      wants = [ "graphical-session-pre.target" ];
-      after = [ "graphical-session-pre.target" ];
+      documentation = ["man:systemd.special(7)"];
+      bindsTo = ["graphical-session.target"];
+      wants = ["graphical-session-pre.target"];
+      after = ["graphical-session-pre.target"];
     };
 
     systemd.user.services.sway = {
       description = "Sway - Wayland window manager";
-      documentation = [ "man:sway(5)" ];
-      bindsTo = [ "graphical-session.target" ];
-      wants = [ "graphical-session-pre.target" ];
-      after = [ "graphical-session-pre.target" ];
+      documentation = ["man:sway(5)"];
+      bindsTo = ["graphical-session.target"];
+      wants = ["graphical-session-pre.target"];
+      after = ["graphical-session-pre.target"];
       # We explicitly unset PATH here, as we want it to be set by
       # systemctl --user import-environment in startsway
       environment.PATH = lib.mkForce null;

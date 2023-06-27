@@ -1,14 +1,14 @@
-{ options
-, config
-, pkgs
-, lib
-, ...
+{
+  options,
+  config,
+  pkgs,
+  lib,
+  ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.system.boot;
-in
-{
+in {
   options.khanelinix.system.boot = with types; {
     enable = mkBoolOpt false "Whether or not to enable booting.";
   };
@@ -30,7 +30,7 @@ in
 
       plymouth = {
         enable = true;
-        themePackages = [ pkgs.khanelinix.catppuccin-plymouth ];
+        themePackages = [pkgs.khanelinix.catppuccin-plymouth];
         theme = "catppuccin-macchiato";
         # font = "${pkgs.noto-fonts}/share/fonts/truetype/noto/NotoSans-Light.ttf";
       };

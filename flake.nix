@@ -2,7 +2,7 @@
   description = "KhaneliNix";
 
   inputs = {
-    # NixPkgs (nixos-unstable) 
+    # NixPkgs (nixos-unstable)
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # Nix User Repository (master)
@@ -123,7 +123,7 @@
     rustup-overlay.url = "github:oxalica/rust-overlay";
     rustup-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
-    # TODO: utilize these 
+    # TODO: utilize these
 
     # Neovim
     # neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
@@ -152,14 +152,12 @@
     ranger-udisk-menu.flake = false;
   };
 
-  outputs = inputs:
-    let
-
-      lib = inputs.snowfall-lib.mkLib {
-        inherit inputs;
-        src = ./.;
-      };
-    in
+  outputs = inputs: let
+    lib = inputs.snowfall-lib.mkLib {
+      inherit inputs;
+      src = ./.;
+    };
+  in
     lib.mkFlake {
       package-namespace = "khanelinix";
 
@@ -199,12 +197,12 @@
         # agenix.nixosModules.default
       ];
 
-      deploy = lib.mkDeploy { inherit (inputs) self; };
+      deploy = lib.mkDeploy {inherit (inputs) self;};
 
       checks =
         builtins.mapAttrs
-          (system: deploy-lib:
-            deploy-lib.deployChecks inputs.self.deploy)
-          inputs.deploy-rs.lib;
+        (system: deploy-lib:
+          deploy-lib.deployChecks inputs.self.deploy)
+        inputs.deploy-rs.lib;
     };
 }

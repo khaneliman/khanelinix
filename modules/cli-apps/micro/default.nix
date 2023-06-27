@@ -1,14 +1,14 @@
-inputs @ { options
-, config
-, lib
-, pkgs
-, ...
+inputs @ {
+  options,
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.cli-apps.micro;
-in
-{
+in {
   options.khanelinix.cli-apps.micro = with lib.types; {
     enable = lib.mkEnableOption "micro";
   };

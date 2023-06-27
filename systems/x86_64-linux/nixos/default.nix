@@ -1,11 +1,12 @@
-{ pkgs
-, lib
-, config
-, ...
+{
+  pkgs,
+  lib,
+  config,
+  ...
 }:
 with lib;
 with lib.internal; {
-  imports = [ ./hardware.nix ];
+  imports = [./hardware.nix];
 
   programs.sway.extraSessionCommands = ''
     WLR_NO_HARDWARE_CURSORS=1

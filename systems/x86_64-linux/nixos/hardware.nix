@@ -19,7 +19,7 @@ in {
     kernelPackages = pkgs.linuxPackages_latest;
 
     initrd = {
-      kernelModules = [ "kvm-amd" ];
+      kernelModules = ["kvm-amd"];
       availableKernelModules = ["nvme" "ahci" "xhci_pci" "virtio_pci" "virtio_blk" "sr_mod"];
     };
 

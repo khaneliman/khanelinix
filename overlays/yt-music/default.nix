@@ -1,6 +1,6 @@
-{ channels, ... }: final: prev: {
+{channels, ...}: final: prev: {
   khanelinix =
-    (prev.khanelinix or { })
+    (prev.khanelinix or {})
     // {
       yt-music = prev.makeDesktopItem {
         name = "YT Music";
@@ -10,7 +10,7 @@
           ${final.firefox}/bin/firefox "https://music.youtube.com/?khanelinix.app=true"'';
         icon = ./icon.svg;
         type = "Application";
-        categories = [ "AudioVideo" "Audio" "Player" ];
+        categories = ["AudioVideo" "Audio" "Player"];
         terminal = false;
       };
     };

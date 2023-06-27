@@ -1,14 +1,14 @@
-{ options
-, config
-, pkgs
-, lib
-, ...
+{
+  options,
+  config,
+  pkgs,
+  lib,
+  ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.security.polkit;
-in
-{
+in {
   options.khanelinix.security.polkit = {
     enable = mkBoolOpt false "Whether or not to enable polkit.";
   };
@@ -39,9 +39,9 @@ in
       # };
       user.services.polkit-kde-authentication-agent-1 = {
         description = "polkit-kde-authentication-agent-1";
-        wantedBy = [ "graphical-session.target" ];
-        wants = [ "graphical-session.target" ];
-        after = [ "graphical-session.target" ];
+        wantedBy = ["graphical-session.target"];
+        wants = ["graphical-session.target"];
+        after = ["graphical-session.target"];
         serviceConfig = {
           Type = "simple";
           ExecStart = "${pkgs.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1";

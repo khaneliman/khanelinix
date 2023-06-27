@@ -1,15 +1,15 @@
-{ options
-, config
-, pkgs
-, lib
-, inputs
-, ...
+{
+  options,
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.hardware.amdgpu;
-in
-{
+in {
   imports = with inputs.nixos-hardware.nixosModules; [
     common-gpu-amd
   ];
@@ -17,17 +17,17 @@ in
   options.khanelinix.hardware.amdgpu = with types; {
     enable =
       mkBoolOpt false
-        "Whether or not to enable support for amdgpu.";
+      "Whether or not to enable support for amdgpu.";
   };
 
   config = mkIf cfg.enable {
     # TODO: conditionally add kernel module and video drivers
-    boot.initrd.availableKernelModules = [ "amdgpu" ];
-    services.xserver.videoDrivers = [ "modesetting" ];
+    boot.initrd.availableKernelModules = ["amdgpu"];
+    services.xserver.videoDrivers = ["modesetting"];
 
     # hardware.amdgpu.amdvlk = true;
 
-    environment.systemPackages = with pkgs; [ radeontop ];
+    environment.systemPackages = with pkgs; [radeontop];
 
     environment.variables = {
       # VAAPI and VDPAU config for accelerated video.

@@ -1,15 +1,15 @@
-{ options
-, config
-, lib
-, pkgs
-, inputs
-, ...
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.tools.bat;
-in
-{
+in {
   options.khanelinix.tools.bat = with types; {
     enable = mkBoolOpt false "Whether or not to enable bat.";
   };
@@ -26,12 +26,11 @@ in
       extraOptions = {
         home.shellAliases = {
           cat = "bat";
-
         };
       };
     };
 
-    system.activationScripts.postInstallBat = stringAfter [ "users" ] ''
+    system.activationScripts.postInstallBat = stringAfter ["users"] ''
       echo "Running command after bat installation"
       # Your command here, for example:
       ${pkgs.bat}/bin/bat cache --build

@@ -1,17 +1,17 @@
-{ options
-, config
-, pkgs
-, lib
-, inputs
-, ...
+{
+  options,
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.tools.git;
   inherit (config.khanelinix.security) gpg;
   inherit (config.khanelinix) user;
-in
-{
+in {
   options.khanelinix.tools.git = with types; {
     enable = mkBoolOpt false "Whether or not to install and configure git.";
     userName = mkOpt types.str user.fullName "The name to configure git with.";
@@ -46,7 +46,6 @@ in
            	helper = !gh auth git-credential
         '';
       };
-
     };
 
     khanelinix.home.extraOptions = {
@@ -194,7 +193,6 @@ in
         gignored = "git ls-files -v | grep '^[[:lower:]]'";
         gunignore = "git update-index --no-assume-unchanged";
         grev = "git revert";
-
       };
 
       programs.git = {

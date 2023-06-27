@@ -1,6 +1,7 @@
-{ pkgs
-, lib
-, ...
+{
+  pkgs,
+  lib,
+  ...
 }:
 with lib;
 with lib.internal; let
@@ -21,7 +22,7 @@ with lib.internal; let
     rev = "019a4829242937761949274916022e9861ed0627";
     sha256 = "1h48yqffpaz437f3c9hfryf23r95rr319lrb3y79kxpxbc9hihxb";
   };
-  guideHTML = pkgs.runCommand "yubikey-guide" { } ''
+  guideHTML = pkgs.runCommand "yubikey-guide" {} ''
     ${pkgs.pandoc}/bin/pandoc \
       --standalone \
       --metadata title="Yubikey Guide" \
@@ -34,10 +35,9 @@ with lib.internal; let
       -o $out \
       ${guide}
   '';
-in
-{
+in {
   services.pcscd.enable = true;
-  services.udev.packages = with pkgs; [ yubikey-personalization ];
+  services.udev.packages = with pkgs; [yubikey-personalization];
 
   environment.systemPackages = with pkgs; [
     cryptsetup
@@ -96,7 +96,7 @@ in
       };
     };
 
-    security = { doas = enabled; };
+    security = {doas = enabled;};
 
     system = {
       fonts = enabled;

@@ -1,8 +1,9 @@
-{ options
-, config
-, lib
-, pkgs
-, ...
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 with lib;
 with lib.internal; let
@@ -10,33 +11,32 @@ with lib.internal; let
   gdmCfg = config.services.xserver.displayManager.gdm;
   default-attrs = mapAttrs (key: mkDefault);
   nested-default-attrs = mapAttrs (key: default-attrs);
-in
-{
+in {
   options.khanelinix.desktop.addons.gtk = with types; {
     enable = mkBoolOpt false "Whether to customize GTK and apply themes.";
     theme = {
       name =
         mkOpt str "Catppuccin-Macchiato-Standard-Blue-dark"
-          "The name of the GTK theme to apply.";
+        "The name of the GTK theme to apply.";
       pkg =
         mkOpt package
-          (pkgs.catppuccin-gtk.override
-            {
-              accents = [ "blue" ];
-              size = "standard";
-              variant = "macchiato";
-            }) "The package to use for the theme.";
+        (pkgs.catppuccin-gtk.override
+          {
+            accents = ["blue"];
+            size = "standard";
+            variant = "macchiato";
+          }) "The package to use for the theme.";
     };
     cursor = {
       name =
         mkOpt str "Catppuccin-Macchiato-Blue-Cursors"
-          "The name of the cursor theme to apply.";
+        "The name of the cursor theme to apply.";
       pkg = mkOpt package pkgs.catppuccin-cursors.macchiatoBlue "The package to use for the cursor theme.";
     };
     icon = {
       name =
         mkOpt str "Papirus-Dark"
-          "The name of the icon theme to apply.";
+        "The name of the icon theme to apply.";
       pkg = mkOpt package pkgs.papirus-icon-theme "The package to use for the icon theme.";
     };
   };
@@ -58,8 +58,8 @@ in
 
     services = {
       # needed for GNOME services outside of GNOME Desktop
-      dbus.packages = [ pkgs.gcr ];
-      udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
+      dbus.packages = [pkgs.gcr];
+      udev.packages = with pkgs; [gnome.gnome-settings-daemon];
     };
 
     khanelinix.home = {

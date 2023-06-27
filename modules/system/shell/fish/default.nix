@@ -1,16 +1,16 @@
-{ options
-, config
-, lib
-, pkgs
-, inputs
-, ...
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.system.shell.fish;
   fishBasePath = inputs.dotfiles.outPath + "/dots/shared/home/.config/fish/";
-in
-{
+in {
   options.khanelinix.system.shell.fish = with types; {
     enable = mkBoolOpt false "Whether to enable fish.";
   };
@@ -49,7 +49,7 @@ in
             end
 
             if [ $(command -v hyprctl) ];
-                # Hyprland logs 
+                # Hyprland logs
                 alias hl='cat /tmp/hypr/$(lsd -t /tmp/hypr/ | head -n 1)/hyprland.log'
                 alias hl1='cat /tmp/hypr/$(lsd -t -r /tmp/hypr/ | head -n 2 | tail -n 1)/hyprland.log'
             end
@@ -60,14 +60,38 @@ in
           plugins = [
             # Enable a plugin (here grc for colorized command output) from nixpkgs
             # { name = "grc"; src = pkgs.fishPlugins.grc.src; }
-            { name = "autopair"; inherit (pkgs.fishPlugins.autopair) src; }
-            { name = "done"; inherit (pkgs.fishPlugins.done) src; }
-            { name = "fzf-fish"; inherit (pkgs.fishPlugins.fzf-fish) src; }
-            { name = "forgit"; inherit (pkgs.fishPlugins.forgit) src; }
-            { name = "tide"; inherit (pkgs.fishPlugins.tide) src; }
-            { name = "sponge"; inherit (pkgs.fishPlugins.sponge) src; }
-            { name = "wakatime"; inherit (pkgs.fishPlugins.wakatime-fish) src; }
-            { name = "z"; inherit (pkgs.fishPlugins.z) src; }
+            {
+              name = "autopair";
+              inherit (pkgs.fishPlugins.autopair) src;
+            }
+            {
+              name = "done";
+              inherit (pkgs.fishPlugins.done) src;
+            }
+            {
+              name = "fzf-fish";
+              inherit (pkgs.fishPlugins.fzf-fish) src;
+            }
+            {
+              name = "forgit";
+              inherit (pkgs.fishPlugins.forgit) src;
+            }
+            {
+              name = "tide";
+              inherit (pkgs.fishPlugins.tide) src;
+            }
+            {
+              name = "sponge";
+              inherit (pkgs.fishPlugins.sponge) src;
+            }
+            {
+              name = "wakatime";
+              inherit (pkgs.fishPlugins.wakatime-fish) src;
+            }
+            {
+              name = "z";
+              inherit (pkgs.fishPlugins.z) src;
+            }
             # Manually packaging and enable a plugin
             # {
             #   name = "fisher";

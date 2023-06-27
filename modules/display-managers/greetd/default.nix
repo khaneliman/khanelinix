@@ -1,9 +1,10 @@
-{ options
-, config
-, lib
-, pkgs
-, inputs
-, ...
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
 }:
 with lib;
 with lib.internal; let
@@ -28,13 +29,13 @@ with lib.internal; let
 
     exec "${lib.getExe pkgs.greetd.regreet} -l debug; swaymsg exit"
   '';
-in
-{
+in {
   options.khanelinix.display-managers.greetd = with types; {
     enable = mkBoolOpt false "Whether or not to enable greetd.";
   };
 
-  config = mkIf cfg.enable
+  config =
+    mkIf cfg.enable
     {
       environment.systemPackages = [
         config.khanelinix.desktop.addons.gtk.cursor.pkg
@@ -58,11 +59,9 @@ in
         };
       };
 
-      services.greetd.settings.default_session.command =
-        "${pkgs.sway}/bin/sway --config ${greetdSwayConfig}";
+      services.greetd.settings.default_session.command = "${pkgs.sway}/bin/sway --config ${greetdSwayConfig}";
 
       security.pam.services.greetd.gnupg.enable = true;
       security.pam.services.greetd.enableGnomeKeyring = true;
     };
 }
-

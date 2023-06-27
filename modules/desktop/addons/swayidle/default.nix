@@ -1,22 +1,22 @@
-{ options
-, config
-, lib
-, pkgs
-, inputs
-, ...
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.desktop.addons.swayidle;
-in
-{
+in {
   options.khanelinix.desktop.addons.swayidle = with types; {
     enable =
       mkBoolOpt false "Whether to enable swayidle in the desktop environment.";
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ swayidle ];
+    environment.systemPackages = with pkgs; [swayidle];
 
     khanelinix.home = {
       configFile = with inputs; {

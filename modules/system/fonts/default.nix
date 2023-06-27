@@ -1,18 +1,18 @@
-{ options
-, config
-, pkgs
-, lib
-, inputs
-, ...
+{
+  options,
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.system.fonts;
-in
-{
+in {
   options.khanelinix.system.fonts = with types; {
     enable = mkBoolOpt false "Whether or not to manage fonts.";
-    fonts = mkOpt (listOf package) [ ] "Custom font packages to install.";
+    fonts = mkOpt (listOf package) [] "Custom font packages to install.";
     default = mkOpt types.str "Liga SFMono Nerd Font" "Default font name";
   };
 
@@ -22,7 +22,7 @@ in
       LOG_ICONS = "true";
     };
 
-    environment.systemPackages = with pkgs; [ font-manager fontpreview ];
+    environment.systemPackages = with pkgs; [font-manager fontpreview];
 
     fonts.fonts = with pkgs;
       [
@@ -30,7 +30,7 @@ in
         noto-fonts-cjk-sans
         noto-fonts-cjk-serif
         noto-fonts-emoji
-        (nerdfonts.override { fonts = [ "Hack" "CascadiaCode" ]; })
+        (nerdfonts.override {fonts = ["Hack" "CascadiaCode"];})
       ]
       ++ cfg.fonts;
 

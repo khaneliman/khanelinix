@@ -1,16 +1,16 @@
-{ options
-, config
-, lib
-, pkgs
-, inputs
-, ...
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.display-managers.gdm;
   gdmHome = config.users.users.gdm.home;
-in
-{
+in {
   options.khanelinix.display-managers.gdm = with types; {
     enable = mkBoolOpt false "Whether or not to enable gdm.";
     wayland = mkBoolOpt true "Whether or not to use Wayland.";
@@ -20,7 +20,8 @@ in
     defaultSession = mkOpt (nullOr types.str) null "The default session to use.";
   };
 
-  config = mkIf cfg.enable
+  config =
+    mkIf cfg.enable
     {
       systemd.tmpfiles.rules =
         [
@@ -56,38 +57,37 @@ in
       # @NOTE(jakehamilton): The GTK and icon themes don't seem to affect recent GDM versions. I've
       # left them here as reference for the future.
       programs.dconf.profiles = {
-        gdm =
-          let
-            customDconf = pkgs.writeTextFile {
-              name = "gdm-dconf";
-              destination = "/dconf/gdm-custom";
-              text = ''
-                ${optionalString (!gdmCfg.autoSuspend) ''
-                  [org/gnome/settings-daemon/plugins/power]
-                  sleep-inactive-ac-type='nothing'
-                  sleep-inactive-battery-type='nothing'
-                  sleep-inactive-ac-timeout=0
-                  sleep-inactive-battery-timeout=0
-                ''}
+        gdm = let
+          customDconf = pkgs.writeTextFile {
+            name = "gdm-dconf";
+            destination = "/dconf/gdm-custom";
+            text = ''
+              ${optionalString (!gdmCfg.autoSuspend) ''
+                [org/gnome/settings-daemon/plugins/power]
+                sleep-inactive-ac-type='nothing'
+                sleep-inactive-battery-type='nothing'
+                sleep-inactive-ac-timeout=0
+                sleep-inactive-battery-timeout=0
+              ''}
 
-                [org/gnome/desktop/interface]
-                gtk-theme='${config.khanelinix.desktop.addons.gtk.theme.name}'
-                cursor-theme='${config.khanelinix.desktop.addons.gtk.cursor.name}'
-                icon-theme='${config.khanelinix.desktop.addons.gtk.icon.name}'
-                font-theme='${config.khanelinix.system.fonts.default}'
-                color-scheme='prefer-dark'
-                enable-hot-corners=false
-                enable-animations=true
-              '';
-            };
+              [org/gnome/desktop/interface]
+              gtk-theme='${config.khanelinix.desktop.addons.gtk.theme.name}'
+              cursor-theme='${config.khanelinix.desktop.addons.gtk.cursor.name}'
+              icon-theme='${config.khanelinix.desktop.addons.gtk.icon.name}'
+              font-theme='${config.khanelinix.system.fonts.default}'
+              color-scheme='prefer-dark'
+              enable-hot-corners=false
+              enable-animations=true
+            '';
+          };
 
-            customDconfDb = pkgs.stdenv.mkDerivation {
-              name = "gdm-dconf-db";
-              buildCommand = ''
-                ${pkgs.dconf}/bin/dconf compile $out ${customDconf}/dconf
-              '';
-            };
-          in
+          customDconfDb = pkgs.stdenv.mkDerivation {
+            name = "gdm-dconf-db";
+            buildCommand = ''
+              ${pkgs.dconf}/bin/dconf compile $out ${customDconf}/dconf
+            '';
+          };
+        in
           mkForce (
             pkgs.stdenv.mkDerivation {
               name = "dconf-gdm-profile";
@@ -105,4 +105,3 @@ in
       };
     };
 }
-

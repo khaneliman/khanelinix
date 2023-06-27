@@ -1,21 +1,22 @@
-{ options
-, config
-, lib
-, pkgs
-, inputs
-, ...
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.display-managers.sddm;
-in
-{
+in {
   options.khanelinix.display-managers.sddm = with types; {
     enable = mkBoolOpt false "Whether or not to enable sddm.";
     defaultSession = mkOpt (nullOr types.str) null "The default session to use.";
   };
 
-  config = mkIf cfg.enable
+  config =
+    mkIf cfg.enable
     {
       environment.systemPackages = with pkgs; [
         # sddm
@@ -36,11 +37,10 @@ in
         };
       };
 
-      system.activationScripts.postInstallHyprland = stringAfter [ "users" ] ''
+      system.activationScripts.postInstallHyprland = stringAfter ["users"] ''
         echo "Setting sddm permissions for user icon"
         ${pkgs.acl}/bin/setfacl -m u:sddm:x /home/${config.khanelinix.user.name}
         ${pkgs.acl}/bin/setfacl -m u:sddm:r /home/${config.khanelinix.user.name}/.face.icon || true
       '';
     };
 }
-

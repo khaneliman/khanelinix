@@ -1,17 +1,16 @@
-{ options
-, config
-, lib
-, pkgs
-, inputs
-, ...
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.cli-apps.neovim;
   user = config.users.users.${config.khanelinix.user.name};
-
-in
-{
+in {
   options.khanelinix.cli-apps.neovim = with lib.types; {
     enable = lib.mkEnableOption "neovim";
   };
