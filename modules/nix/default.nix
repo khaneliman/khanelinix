@@ -27,7 +27,7 @@ in {
     nix = let
       users = ["root" config.khanelinix.user.name];
     in {
-      package = cfg.package;
+      inherit (cfg) package;
 
       settings =
         {

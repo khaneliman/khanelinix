@@ -1,4 +1,4 @@
-{...}: rec {
+_: rec {
   fileWithText = file: text: ''
     ${builtins.readFile file}
     ${text}'';

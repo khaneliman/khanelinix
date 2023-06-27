@@ -38,7 +38,7 @@ in {
     hardware.ckb-next.enable = true;
     services.hardware.openrgb = {
       enable = true;
-      motherboard = cfg.motherboard;
+      inherit (cfg) motherboard;
     };
 
     environment.systemPackages = with pkgs; [openrgb-with-all-plugins i2c-tools];
