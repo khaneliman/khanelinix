@@ -15,27 +15,33 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      khanelinix.list-iommu
-      feh
-      snowfallorg.flake
-      hydra-check
       appimage-run
       bottom
+      clac
+      curl
       exa
       fd
-      wget
-      curl
-      socat
-      toilet
-      xclip
-      fzf
-      killall
-      unzip
+      feh
       file
+      fzf
       jq
-      clac
+      khanelinix.list-iommu
+      killall
       pciutils
+      socat
       tldr
+      toilet
+      unzip
+      wget
+      xclip
+
+      # nixos
+      alejandra
+      deadnix
+      hydra-check
+      nixfmt
+      snowfallorg.flake
+      statix
     ];
 
     khanelinix = {
@@ -91,4 +97,3 @@ in
     };
   };
 }
-
