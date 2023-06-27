@@ -1,6 +1,5 @@
 {
   pkgs,
-  lib,
   gitHostCommitUrl ? "https://github.com/khaneliman/dotfiles/commit",
   ...
 }:

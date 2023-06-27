@@ -7,7 +7,6 @@
 }:
 with lib;
 with lib.internal; let
-  cfg = config.khanelinix.desktop.addons.wallpapers;
   inherit (pkgs.khanelinix) wallpapers;
 in {
   options.khanelinix.desktop.addons.wallpapers = with types; {

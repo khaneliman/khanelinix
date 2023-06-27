@@ -1,5 +1,4 @@
 {
-  lib,
   writeShellApplication,
   python311,
   venvDir ? "$HOME/.proton-up-venv",

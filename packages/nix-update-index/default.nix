@@ -1,6 +1,5 @@
 {
   pkgs,
-  lib,
   ...
 }:
 pkgs.writeShellScriptBin "nix-update-index" ''

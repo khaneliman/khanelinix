@@ -8,9 +8,8 @@
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.desktop.addons.gtk;
-  gdmCfg = config.services.xserver.displayManager.gdm;
-  default-attrs = mapAttrs (key: mkDefault);
-  nested-default-attrs = mapAttrs (key: default-attrs);
+  default-attrs = mapAttrs (_key: mkDefault);
+  nested-default-attrs = mapAttrs (_key: default-attrs);
 in {
   options.khanelinix.desktop.addons.gtk = with types; {
     enable = mkBoolOpt false "Whether to customize GTK and apply themes.";

@@ -1,11 +1,8 @@
 {
   pkgs,
   config,
-  types,
   ...
-}: let
-  cfg = config.khanelinix.desktop.hyprland.hypr;
-in {
+}: {
   # Define an output to generate the final configuration file
   config = {
     khanelinix.home.configFile = {

@@ -33,12 +33,6 @@
     {}
     images;
   installTarget = "$out/share/wallpapers";
-  installWallpapers =
-    builtins.mapAttrs
-    (name: wallpaper: ''
-      cp ${wallpaper} ${installTarget}/${wallpaper.fileName}
-    '')
-    wallpapers;
 in
   pkgs.stdenvNoCC.mkDerivation {
     name = "khanelinix.wallpapers";

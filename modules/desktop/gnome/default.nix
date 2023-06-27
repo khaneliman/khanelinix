@@ -33,8 +33,8 @@ with lib.internal; let
     # clear-top-bar
   ];
 
-  default-attrs = mapAttrs (key: mkDefault);
-  nested-default-attrs = mapAttrs (key: default-attrs);
+  default-attrs = mapAttrs (_key: mkDefault);
+  nested-default-attrs = mapAttrs (_key: default-attrs);
 in {
   options.khanelinix.desktop.gnome = with types; {
     enable =
@@ -141,7 +141,6 @@ in {
 
     khanelinix.home.extraOptions = {
       dconf.settings = let
-        user = config.users.users.${config.khanelinix.user.name};
         get-wallpaper = wallpaper:
           if lib.isDerivation wallpaper
           then builtins.toString wallpaper

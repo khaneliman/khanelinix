@@ -1,4 +1,4 @@
-inputs @ {
+{
   options,
   config,
   lib,

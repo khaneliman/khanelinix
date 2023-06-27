@@ -1,5 +1,4 @@
 {
-  lib,
   nixos-option,
   makeWrapper,
   fetchFromGitHub,

@@ -1,6 +1,5 @@
 {
   pkgs,
-  lib,
   ...
 }: let
   cowfiles = pkgs.fetchFromGitHub {

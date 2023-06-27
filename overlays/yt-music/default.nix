@@ -1,4 +1,4 @@
-{channels, ...}: final: prev: {
+{ ...}: final: prev: {
   khanelinix =
     (prev.khanelinix or {})
     // {
