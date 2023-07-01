@@ -1,10 +1,13 @@
 {
   lib,
   config,
+  pkgs,
   ...
 }:
 with lib;
-with lib.internal; {
+with lib.internal; let
+  datadir = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}";
+in {
   imports = [./hardware.nix];
 
   khanelinix = {
@@ -30,7 +33,15 @@ with lib.internal; {
 
         customConfigFiles = {
           "hypr/displays.conf".source = ./hypr/displays.conf;
-          "hypr/environment.conf".source = ./hypr/environment.conf;
+          "hypr/environment.conf".text =
+            (builtins.readFile ./hypr/environment.conf)
+            + ''
+              # ░█▀█░▀█▀░█░█░█▀█░█▀▀
+              # ░█░█░░█░░▄▀▄░█░█░▀▀█
+              # ░▀░▀░▀▀▀░▀░▀░▀▀▀░▀▀▀
+
+              env = XDG_DATA_DIRS,${datadir}:$XDG_DATA_DIRS
+            '';
         };
         customFiles = {
           ".screenlayout/primary.sh".source = ./.screenlayout/primary.sh;

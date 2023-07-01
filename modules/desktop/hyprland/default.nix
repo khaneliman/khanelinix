@@ -11,6 +11,7 @@ with lib.internal; let
   cfg = config.khanelinix.desktop.hyprland;
   hyprBasePath = inputs.dotfiles.outPath + "/dots/linux/hyprland/home/.config/hypr/";
   programs = lib.makeBinPath [config.programs.hyprland.package];
+  datadir = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}";
 in {
   options.khanelinix.desktop.hyprland = with types; {
     enable = mkBoolOpt false "Whether or not to enable Hyprland.";
@@ -66,8 +67,12 @@ in {
               "hypr/assets/square.png".source = hyprBasePath + "assets/square.png";
               "hypr/assets/diamond.png".source = hyprBasePath + "assets/diamond.png";
               "hypr/binds.conf".source = hyprBasePath + "binds.conf";
-              "hypr/displays.conf".source = hyprBasePath + "displays.conf";
-              "hypr/environment.conf".source = hyprBasePath + "environment.conf";
+              "hypr/environment.conf".text =
+                hyprBasePath
+                + "environment.conf"
+                // ''
+                  env = XDG_DATA_DIRS,${datadir}:$XDG_DATA_DIRS
+                '';
               "hypr/hyprland.conf".source = hyprBasePath + "hyprland.conf";
               "hypr/hyprpaper.conf".source = hyprBasePath + "hyprpaper.conf";
               "hypr/polish.conf".source = ./hypr/polish.conf;
