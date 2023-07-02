@@ -57,8 +57,9 @@ in {
           xdg-portal = enabled;
         };
 
-        display-managers = {
-          greetd = enabled;
+        display-managers.gdm = {
+          enable = true;
+          defaultSession = "hyprland";
         };
 
         home = {

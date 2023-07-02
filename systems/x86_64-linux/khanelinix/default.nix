@@ -55,6 +55,10 @@ in {
       };
     };
 
+    display-managers.gdm = {
+      monitors = ./monitors.xml;
+    };
+
     suites = {
       desktop = mkForce disabled;
       emulation = enabled;

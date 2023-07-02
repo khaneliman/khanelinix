@@ -25,7 +25,7 @@ with lib.internal; let
     pkgs.runCommandNoCC "propagated-icon"
     {passthru = {inherit (cfg.icon) fileName;};}
     ''
-      local target="$out/share/khanelinix.icons/user/${cfg.name}"
+      local target="$out/share/icons/user/${cfg.name}"
       mkdir -p "$target"
 
       cp ${cfg.icon} "$target/${cfg.icon.fileName}"

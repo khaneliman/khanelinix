@@ -37,7 +37,7 @@ in {
 
         libinput.enable = true;
         displayManager = {
-          defaultSession = lib.optional (cfg.defaultSession != null) cfg.defaultSession;
+          defaultSession = cfg.defaultSession;
 
           gdm = {
             enable = true;
@@ -45,62 +45,47 @@ in {
             autoSuspend = cfg.suspend;
           };
         };
-        desktopManager.gnome.enable = true;
       };
 
-      # @NOTE(jakehamilton): In order to set the cursor theme in GDM we have to specify it in the
-      # dconf profile. However, the NixOS module doesn't provide an easy way to do this so the relevant
-      # parts have been extracted from:
-      # https://github.com/NixOS/nixpkgs/blob/96e18717904dfedcd884541e5a92bf9ff632cf39/nixos/modules/services/x11/display-managers/gdm.nix
-      #
-      # @NOTE(jakehamilton): The GTK and icon themes don't seem to affect recent GDM versions. I've
-      # left them here as reference for the future.
-      programs.dconf.profiles = {
-        gdm = let
-          customDconf = pkgs.writeTextFile {
-            name = "gdm-dconf";
-            destination = "/dconf/gdm-custom";
-            text = ''
-              ${optionalString (!gdmCfg.autoSuspend) ''
-                [org/gnome/settings-daemon/plugins/power]
-                sleep-inactive-ac-type='nothing'
-                sleep-inactive-battery-type='nothing'
-                sleep-inactive-ac-timeout=0
-                sleep-inactive-battery-timeout=0
-              ''}
+      systemd.services.khanelinix-user-icon = {
+        before = ["display-manager.service"];
+        wantedBy = ["display-manager.service"];
 
-              [org/gnome/desktop/interface]
-              gtk-theme='${config.khanelinix.desktop.addons.gtk.theme.name}'
-              cursor-theme='${config.khanelinix.desktop.addons.gtk.cursor.name}'
-              icon-theme='${config.khanelinix.desktop.addons.gtk.icon.name}'
-              font-theme='${config.khanelinix.system.fonts.default}'
-              color-scheme='prefer-dark'
-              enable-hot-corners=false
-              enable-animations=true
-            '';
-          };
+        serviceConfig = {
+          Type = "simple";
+          User = "root";
+          Group = "root";
+        };
 
-          customDconfDb = pkgs.stdenv.mkDerivation {
-            name = "gdm-dconf-db";
-            buildCommand = ''
-              ${pkgs.dconf}/bin/dconf compile $out ${customDconf}/dconf
-            '';
-          };
-        in
-          mkForce (
-            pkgs.stdenv.mkDerivation {
-              name = "dconf-gdm-profile";
-              buildCommand = ''
-                # Check that the GDM profile starts with what we expect.
-                if [ $(head -n 1 ${pkgs.gnome.gdm}/share/dconf/profile/gdm) != "user-db:user" ]; then
-                  echo "GDM dconf profile changed, please update gtk/default.nix"
-                  exit 1
-                fi
-                # Insert our custom DB behind it.
-                sed '2ifile-db:${customDconfDb}' ${pkgs.gnome.gdm}/share/dconf/profile/gdm > $out
-              '';
-            }
-          );
+        script = ''
+          config_file=/var/lib/AccountsService/users/${config.khanelinix.user.name}
+          icon_file=/run/current-system/sw/share/icons/user/${config.khanelinix.user.name}/${config.khanelinix.user.icon.fileName}
+
+          if ! [ -d "$(dirname "$config_file")"]; then
+            mkdir -p "$(dirname "$config_file")"
+          fi
+
+          if ! [ -f "$config_file" ]; then
+            echo "[User]
+            Session=gnome
+            SystemAccount=false
+            Icon=$icon_file" > "$config_file"
+          else
+            icon_config=$(sed -E -n -e "/Icon=.*/p" $config_file)
+
+            if [[ "$icon_config" == "" ]]; then
+              echo "Icon=$icon_file" >> $config_file
+            else
+              sed -E -i -e "s#^Icon=.*$#Icon=$icon_file#" $config_file
+            fi
+          fi
+        '';
       };
+
+      system.activationScripts.postInstallGdm = stringAfter ["users"] ''
+        echo "Setting gdm permissions for user icon"
+        ${pkgs.acl}/bin/setfacl -m u:gdm:x /home/${config.khanelinix.user.name}
+        ${pkgs.acl}/bin/setfacl -m u:gdm:r /home/${config.khanelinix.user.name}/.face.icon || true
+      '';
     };
 }
