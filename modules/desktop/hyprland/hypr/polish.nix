@@ -19,14 +19,6 @@
 
           hyprctl setcursor ${config.khanelinix.desktop.addons.gtk.cursor.name} 32
 
-          # gsettings
-          exec-once = gsettings set org.gnome.desktop.interface gtk-theme '${config.khanelinix.desktop.addons.gtk.theme.name}'
-          exec-once = gsettings set org.gnome.desktop.interface icon-theme '${config.khanelinix.desktop.addons.gtk.icon.name}'
-          exec-once = gsettings set org.gnome.desktop.interface font-name '${config.khanelinix.system.fonts.default} 10'
-          exec-once = gsettings set org.gnome.desktop.interface cursor-theme '${config.khanelinix.desktop.addons.gtk.cursor.name}'
-          exec-once = gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
-          exec-once = gsettings set org.gnome.desktop.interface enable-animations true
-
           # ░█░█░█▀█░█▀▄░█░█░█▀▀░█▀█░█▀█░█▀▀░█▀▀░░░█▀▀░█▀█░█▀█░█▀▀░▀█▀░█▀▀
           # ░█▄█░█░█░█▀▄░█▀▄░▀▀█░█▀▀░█▀█░█░░░█▀▀░░░█░░░█░█░█░█░█▀▀░░█░░█░█
           # ░▀░▀░▀▀▀░▀░▀░▀░▀░▀▀▀░▀░░░▀░▀░▀▀▀░▀▀▀░░░▀▀▀░▀▀▀░▀░▀░▀░░░▀▀▀░▀▀▀

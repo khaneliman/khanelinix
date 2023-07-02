@@ -31,6 +31,7 @@ in {
         mkOpt str "Catppuccin-Macchiato-Blue-Cursors"
         "The name of the cursor theme to apply.";
       pkg = mkOpt package pkgs.catppuccin-cursors.macchiatoBlue "The package to use for the cursor theme.";
+      size = mkOpt int 32 "The size of the cursor.";
     };
     icon = {
       name =
@@ -52,6 +53,7 @@ in {
 
     environment.sessionVariables = {
       XCURSOR_THEME = cfg.cursor.name;
+      XCURSOR_SIZE = "${toString cfg.cursor.size}";
       CURSOR_THEME = cfg.cursor.name;
       GTK_THEME = cfg.theme.name;
     };
@@ -67,7 +69,7 @@ in {
         home.pointerCursor = {
           package = cfg.cursor.pkg;
           name = cfg.cursor.name;
-          size = 32;
+          size = cfg.cursor.size;
           gtk.enable = true;
           x11.enable = true;
         };
@@ -102,9 +104,10 @@ in {
             "org/gnome/desktop/interface" = {
               color-scheme = "prefer-dark";
               enable-hot-corners = false;
-              font-theme = config.khanelinix.system.fonts.default;
+              font-name = config.khanelinix.system.fonts.default;
               gtk-theme = cfg.theme.name;
               cursor-theme = cfg.cursor.name;
+              cursor-size = "${toString cfg.cursor.size}";
               icon-theme = cfg.icon.name;
             };
           };

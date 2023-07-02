@@ -39,6 +39,10 @@ in {
       # qt6.qtwayland
     ];
 
+    environment.sessionVariables = {
+      QT_QPA_PLATFORMTHEME = "qt5ct";
+    };
+
     khanelinix.home = {
       configFile = with inputs; {
         # "kvantum/kvantum.kvconfig".source = (pkgs.formats.ini { }).generate "kvantum.kvconfig" {
