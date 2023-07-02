@@ -10,13 +10,49 @@ with lib;
 with lib.internal; let
   cfg = config.khanelinix.apps.firefox;
   defaultSettings = {
-    "browser.aboutwelcome.enabled" = false;
-    "browser.meta_refresh_when_inactive.disabled" = true;
-    "browser.bookmarks.showMobileBookmarks" = true;
-    "browser.urlbar.suggest.quicksuggest.sponsored" = false;
-    "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
+    "accessibility.typeaheadfind.enablesound" = false;
+    "accessibility.typeaheadfind.flashBar" = 0;
     "browser.aboutConfig.showWarning" = false;
+    "browser.aboutwelcome.enabled" = false;
+    "browser.bookmarks.autoExportHTML" = true;
+    "browser.bookmarks.showMobileBookmarks" = true;
+    "browser.meta_refresh_when_inactive.disabled" = true;
+    "browser.newtabpage.activity-stream.default.sites" = "";
+    "browser.newtabpage.activity-stream.showSponsored" = false;
+    "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
+    "browser.search.hiddenOneOffs" = "Google,Amazon.com,Bing,DuckDuckGo,eBay,Wikipedia (en)";
+    "browser.search.suggest.enabled" = false;
+    "browser.sessionstore.warnOnQuit" = true;
+    "browser.shell.checkDefaultBrowser" = false;
     "browser.ssb.enabled" = true;
+    "browser.startup.homepage.abouthome_cache.enabled" = true;
+    "browser.startup.page" = 3;
+    "browser.urlbar.keepPanelOpenDuringImeComposition" = true;
+    "browser.urlbar.suggest.quicksuggest.sponsored" = false;
+    # TODO: one of these doesn't work
+    # "browser.urlbar.groupLabels.enabled" = false;
+    # "browser.urlbar.shortcuts.bookmarks " = false;
+    # "browser.urlbar.shortcuts.history " = false;
+    # "browser.urlbar.shortcuts.tabs " = false;
+    # "browser.urlbar.suggest.quicksuggest.sponsored" = false;
+    # "browser.urlbar.suggest.searches" = false;
+    # "browser.urlbar.trimURLs" = false;
+    # TODO: fix above
+    "dom.storage.next_gen" = true;
+    "dom.webgpu.enabled" = true;
+    "extensions.htmlaboutaddons.recommendations.enabled" = false;
+    "general.autoScroll" = false;
+    "general.smoothScroll.msdPhysics.enabled" = true;
+    "geo.enabled" = false;
+    "geo.provider.use_corelocation" = false;
+    "geo.provider.use_geoclue" = false;
+    "geo.provider.use_gpsd" = false;
+    "intl.accept_languages" = "en-US = en";
+    "media.eme.enabled" = true;
+    "media.ffmpeg.vaapi.enabled" = true;
+    # "media.hardware-video-decoding.force-enabled" = true;
+    "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
+    "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
   };
 in {
   options.khanelinix.apps.firefox = with types; {
@@ -78,52 +114,12 @@ in {
                   install_url = "https://cdn.frankerfacez.com/script/frankerfacez-4.0-an+fx.xpi";
                 };
 
-                "magnolia@12.34" = {
+                "magnolia_limited_permissions@12.34" = {
                   installation_mode = "force_installed";
-                  install_url = "https://gitlab.com/magnolia1234/bpc-uploads/-/raw/master/bypass_paywalls_clean-3.2.1.0.xpi";
+                  install_url = "https://gitlab.com/magnolia1234/bpc-uploads/-/raw/master/bypass_paywalls_clean-3.2.3.0-custom.xpi";
                 };
               };
               Preferences = {
-                "browser.startup.homepage.abouthome_cache.enabled" = true;
-                "accessibility.typeaheadfind.enablesound" = false;
-                "accessibility.typeaheadfind.flashBar" = 0;
-                "browser.urlbar.keepPanelOpenDuringImeComposition" = true;
-                "browser.aboutConfig.showWarning" = false;
-                "browser.bookmarks.autoExportHTML" = true;
-                "browser.newtabpage.activity-stream.default.sites" = "";
-                "browser.newtabpage.activity-stream.showSponsored" = false;
-                "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
-                "browser.search.hiddenOneOffs" = "Google,Amazon.com,Bing,DuckDuckGo,eBay,Wikipedia (en)";
-                "browser.search.suggest.enabled" = false;
-                "browser.sessionstore.warnOnQuit" = true;
-                "browser.shell.checkDefaultBrowser" = false;
-                "browser.startup.page" = 3;
-                # TODO: one of these doesn't work
-                # "browser.urlbar.groupLabels.enabled" = false;
-                # "browser.urlbar.shortcuts.bookmarks " = false;
-                # "browser.urlbar.shortcuts.history " = false;
-                # "browser.urlbar.shortcuts.tabs " = false;
-                # "browser.urlbar.suggest.quicksuggest.sponsored" = false;
-                # "browser.urlbar.suggest.searches" = false;
-                # "browser.urlbar.trimURLs" = false;
-                # TODO: fix above
-                "devtools.inspector.compatibility.enabled" = true;
-                "dom.storage.next_gen" = true;
-                "dom.webgpu.enabled" = true;
-                "extensions.htmlaboutaddons.recommendations.enabled" = false;
-                "general.autoScroll" = false;
-                "general.smoothScroll.msdPhysics.enabled" = true;
-                "geo.enabled" = false;
-                "geo.provider.use_corelocation" = false;
-                "geo.provider.use_geoclue" = false;
-                "geo.provider.use_gpsd" = false;
-                "intl.accept_languages" = "en-US = en";
-                "image.jxl.enabled" = true;
-                "media.eme.enabled" = true;
-                "media.ffmpeg.vaapi.enabled" = true;
-                # "media.hardware-video-decoding.force-enabled" = true;
-                "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
-                "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
               };
             };
           };
