@@ -35,9 +35,9 @@ in {
     };
     icon = {
       name =
-        mkOpt str "Papirus-Dark"
+        mkOpt str "breeze-dark"
         "The name of the icon theme to apply.";
-      pkg = mkOpt package pkgs.papirus-icon-theme "The package to use for the icon theme.";
+      pkg = mkOpt package pkgs.libsForQt5.breeze-icons "The package to use for the icon theme.";
     };
   };
 
@@ -94,6 +94,18 @@ in {
 
           font = {
             name = config.khanelinix.system.fonts.default;
+          };
+
+          gtk3.extraConfig = {
+            Settings = ''
+              gtk-application-prefer-dark-theme=1
+            '';
+          };
+
+          gtk4.extraConfig = {
+            Settings = ''
+              gtk-application-prefer-dark-theme=1
+            '';
           };
         };
 
