@@ -37,7 +37,7 @@ in {
 
         libinput.enable = true;
         displayManager = {
-          defaultSession = cfg.defaultSession;
+          inherit (cfg) defaultSession;
 
           gdm = {
             enable = true;
