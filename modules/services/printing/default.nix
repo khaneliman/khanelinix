@@ -14,10 +14,31 @@ in {
   };
 
   config = mkIf cfg.enable {
-    services.printing.enable = true;
+    services.printing = {
+      enable = true;
+      browsing = true;
+      extraConf = ''
+        LogLevel warn
+        PageLogFormat
 
-    services.printing.drivers = with pkgs; [
-      brlaser
-    ];
+        # Specifies the maximum size of the log files before they are rotated.  The value "0" disables log rotation.
+        MaxLogSize 0
+
+        # Default error policy for printers
+        ErrorPolicy retry-job
+
+        # Show shared printers on the local network.
+        BrowseLocalProtocols dnssd
+
+        # Default authentication type, when authentication is required...
+        DefaultAuthType Basic
+
+        # Timeout after cupsd exits if idle (applied only if cupsd runs on-demand - with -l)
+        IdleExitTimeout 60
+      '';
+      drivers = with pkgs; [
+        brlaser
+      ];
+    };
   };
 }
