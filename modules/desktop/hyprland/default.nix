@@ -85,7 +85,6 @@ in {
 
           file = with inputs;
             {
-              ".local/bin/xdg-desktop-portal.sh".source = dotfiles.outPath + "/dots/linux/hyprland/home/.local/bin/xdg-desktop-portal.sh";
               ".local/bin/hyprland_setup_dual_monitors.sh".source = dotfiles.outPath + "/dots/linux/hyprland/home/.local/bin/hyprland_setup_dual_monitors.sh";
               ".local/bin/hyprland_cleanup_after_startup.sh".source = dotfiles.outPath + "/dots/linux/hyprland/home/.local/bin/hyprland_cleanup_after_startup.sh";
               ".local/bin/hyprland_handle_monitor_connect.sh".source = dotfiles.outPath + "/dots/linux/hyprland/home/.local/bin/hyprland_handle_monitor_connect.sh";

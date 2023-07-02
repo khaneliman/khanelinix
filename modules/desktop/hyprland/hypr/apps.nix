@@ -1,6 +1,7 @@
 {
   pkgs,
   config,
+  inputs,
   ...
 }: {
   # Define an output to generate the final configuration file
@@ -14,7 +15,7 @@
           # ░▀░▀░▀░░░▀░░░░░▀▀▀░░▀░░▀░▀░▀░▀░░▀░░▀▀▀░▀░░
 
           # Startup background apps
-          exec-once = ~/.local/bin/xdg-desktop-portal.sh
+          exec-once = ${inputs.dotfiles.outPath + "/dots/linux/hyprland/home/.local/bin/xdg-desktop-portal.sh"}
           exec-once = ${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1 & eval $(gnome-keyring-daemon -s --components=pkcs11,secrets,ssh,gpg) && export $(gnome-keyring-daemon --start --components=gpg,pkcs11,secrets,ssh)
           exec-once = sleep 1
           exec-once = command -v hyprpaper && hyprpaper
