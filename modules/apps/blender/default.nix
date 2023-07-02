@@ -13,6 +13,10 @@ in {
     enable = mkBoolOpt false "Whether or not to enable Blender.";
   };
 
-  config =
-    mkIf cfg.enable {environment.systemPackages = with pkgs; [blender];};
+  config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      # TODO: fix when blender builds again
+      # blender
+    ];
+  };
 }

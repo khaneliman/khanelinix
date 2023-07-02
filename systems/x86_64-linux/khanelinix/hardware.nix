@@ -18,8 +18,7 @@ in {
   # Desktop VM config
   ##
   boot = {
-    # kernelPackages = pkgs.linuxPackages_latest;
-    kernelPackages = pkgs.linuxPackages_6_3;
+    kernelPackages = pkgs.linuxPackages_latest;
     kernelParams = [
       "video=DP-1:5120x1440@120"
       "video=DP-3:3840x2160@60"
