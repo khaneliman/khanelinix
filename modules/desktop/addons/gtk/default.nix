@@ -107,7 +107,7 @@ in {
               font-name = config.khanelinix.system.fonts.default;
               gtk-theme = cfg.theme.name;
               cursor-theme = cfg.cursor.name;
-              cursor-size = "${toString cfg.cursor.size}";
+              cursor-size = cfg.cursor.size;
               icon-theme = cfg.icon.name;
             };
           };
