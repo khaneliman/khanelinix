@@ -53,6 +53,7 @@ in {
     environment.sessionVariables = {
       XCURSOR_THEME = cfg.cursor.name;
       CURSOR_THEME = cfg.cursor.name;
+      GTK_THEME = cfg.theme.name;
     };
 
     services = {
@@ -62,18 +63,6 @@ in {
     };
 
     khanelinix.home = {
-      file = {
-        ".themes/${cfg.theme.name}".source = cfg.theme.pkg.outPath + "/share/themes/${cfg.theme.name}/";
-      };
-      configFile = {
-        "gtk-3.0/assets".source = cfg.theme.pkg.outPath + "/share/themes/${cfg.theme.name}/gtk-3.0/assets/";
-        "gtk-3.0/gtk.css".source = cfg.theme.pkg.outPath + "/share/themes/${cfg.theme.name}/gtk-3.0/gtk.css";
-        "gtk-3.0/gtk-dark.css".source = cfg.theme.pkg.outPath + "/share/themes/${cfg.theme.name}/gtk-3.0/gtk-dark.css";
-        "gtk-4.0/assets".source = cfg.theme.pkg.outPath + "/share/themes/${cfg.theme.name}/gtk-4.0/assets/";
-        "gtk-4.0/gtk.css".source = cfg.theme.pkg.outPath + "/share/themes/${cfg.theme.name}/gtk-4.0/gtk.css";
-        "gtk-4.0/gtk-dark.css".source = cfg.theme.pkg.outPath + "/share/themes/${cfg.theme.name}/gtk-4.0/gtk-dark.css";
-      };
-
       extraOptions = {
         home.pointerCursor = {
           package = cfg.cursor.pkg;
