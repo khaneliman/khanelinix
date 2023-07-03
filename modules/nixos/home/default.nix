@@ -36,6 +36,7 @@ with lib.internal; {
 
     home-manager = {
       useUserPackages = true;
+      useGlobalPkgs = true;
 
       users.${config.khanelinix.user.name} =
         mkAliasDefinitions options.khanelinix.home.extraOptions;
