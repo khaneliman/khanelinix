@@ -1,49 +1,55 @@
-{
-  lib,
-  inputs,
-}: let
+{ lib
+, inputs
+,
+}:
+let
   inherit (inputs) deploy-rs;
-in rec {
-  mkDeploy = {
-    self,
-    overrides ? {},
-  }: let
-    hosts = self.nixosConfigurations or {};
-    names = builtins.attrNames hosts;
-    nodes =
-      lib.foldl
-      (result: name: let
-        host = hosts.${name};
-        user = host.config.khanelinix.user.name or null;
-        inherit (host.pkgs) system;
-      in
-        result
-        // {
-          ${name} =
-            (overrides.${name} or {})
+in
+rec {
+  mkDeploy =
+    { self
+    , overrides ? { }
+    ,
+    }:
+    let
+      hosts = self.nixosConfigurations or { };
+      names = builtins.attrNames hosts;
+      nodes =
+        lib.foldl
+          (result: name:
+            let
+              host = hosts.${name};
+              user = host.config.khanelinix.user.name or null;
+              inherit (host.pkgs) system;
+            in
+            result
             // {
-              hostname = overrides.${name}.hostname or "${name}";
-              profiles =
-                (overrides.${name}.profiles or {})
+              ${name} =
+                (overrides.${name} or { })
                 // {
-                  system =
-                    (overrides.${name}.profiles.system or {})
+                  hostname = overrides.${name}.hostname or "${name}";
+                  profiles =
+                    (overrides.${name}.profiles or { })
                     // {
-                      path = deploy-rs.lib.${system}.activate.nixos host;
-                    }
-                    // lib.optionalAttrs (user != null) {
-                      user = "root";
-                      sshUser = user;
-                    }
-                    // lib.optionalAttrs
-                    (host.config.khanelinix.security.doas.enable or false)
-                    {
-                      sudo = "doas -u";
+                      system =
+                        (overrides.${name}.profiles.system or { })
+                        // {
+                          path = deploy-rs.lib.${system}.activate.nixos host;
+                        }
+                        // lib.optionalAttrs (user != null) {
+                          user = "root";
+                          sshUser = user;
+                        }
+                        // lib.optionalAttrs
+                          (host.config.khanelinix.security.doas.enable or false)
+                          {
+                            sudo = "doas -u";
+                          };
                     };
                 };
-            };
-        })
-      {}
-      names;
-  in {inherit nodes;};
+            })
+          { }
+          names;
+    in
+    { inherit nodes; };
 }

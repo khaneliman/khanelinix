@@ -2,7 +2,7 @@
 
 with lib.internal;
 {
-  plusultra = {
+  khanelinix = {
     user = {
       enable = true;
       name = config.snowfallorg.user.name;
