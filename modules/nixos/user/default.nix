@@ -34,7 +34,7 @@ in {
   options.khanelinix.user = with types; {
     name = mkOpt str "khaneliman" "The name to use for the user account.";
     fullName = mkOpt str "Austin Horstman" "The full name of the user.";
-    email = mkOpt str "khaneliman.2@gmail.com" "The email of the user.";
+    email = mkOpt str "khaneliman12@gmail.com" "The email of the user.";
     initialPassword =
       mkOpt str "password"
       "The initial password to use when the user is first created.";

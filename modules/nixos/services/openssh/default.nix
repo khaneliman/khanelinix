@@ -2,14 +2,18 @@
   options,
   config,
   lib,
-  name,
   format,
   inputs,
+  host,
   ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.services.openssh;
+
+  # @TODO(jakehamilton): This is a hold-over from an earlier Snowfall Lib version which used
+  # the specialArg `name` to provide the host name.
+  name = host;
 
   user = config.users.users.${config.khanelinix.user.name};
   user-id = builtins.toString user.uid;
