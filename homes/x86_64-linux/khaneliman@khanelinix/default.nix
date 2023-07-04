@@ -18,6 +18,10 @@ with lib.internal; {
       zsh = enabled;
     };
 
+    system = {
+      xdg = enabled;
+    };
+
     tools = {
       direnv = enabled;
       git = enabled;

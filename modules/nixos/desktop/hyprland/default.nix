@@ -79,7 +79,6 @@ in {
               "hypr/hyprpaper.conf".source = hyprBasePath + "hyprpaper.conf";
               "hypr/variables.conf".source = hyprBasePath + "variables.conf";
               "hypr/windowrules.conf".source = hyprBasePath + "windowrules.conf";
-              "mimeapps.list".source = dotfiles.outPath + "/dots/linux/hyprland/home/.config/mimeapps.list";
             }
             // cfg.customConfigFiles;
 
