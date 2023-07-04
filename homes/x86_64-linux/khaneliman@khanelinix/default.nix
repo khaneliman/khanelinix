@@ -11,15 +11,16 @@ with lib.internal; {
     };
 
     cli-apps = {
-      zsh = enabled;
-      neovim = enabled;
+      helix = enabled;
       home-manager = enabled;
+      neovim = enabled;
       spicetify = enabled;
+      zsh = enabled;
     };
 
     tools = {
-      git = enabled;
       direnv = enabled;
+      git = enabled;
       ssh = enabled;
     };
   };
