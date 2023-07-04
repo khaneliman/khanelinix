@@ -1,22 +1,25 @@
-{ options, config, pkgs, lib, inputs, ... }:
-
-with lib;
-with lib.internal;
-let
-  cfg = config.khanelinix.home;
-in
 {
+  options,
+  config,
+  lib,
+  inputs,
+  ...
+}:
+with lib;
+with lib.internal; {
   imports = with inputs; [
     home-manager.darwinModules.home-manager
   ];
 
   options.khanelinix.home = with types; {
-    file = mkOpt attrs { }
+    file =
+      mkOpt attrs {}
       "A set of files to be managed by home-manager's <option>home.file</option>.";
-    configFile = mkOpt attrs { }
+    configFile =
+      mkOpt attrs {}
       "A set of files to be managed by home-manager's <option>xdg.configFile</option>.";
-    extraOptions = mkOpt attrs { } "Options to pass directly to home-manager.";
-    homeConfig = mkOpt attrs { } "Final config for home-manager.";
+    extraOptions = mkOpt attrs {} "Options to pass directly to home-manager.";
+    homeConfig = mkOpt attrs {} "Final config for home-manager.";
   };
 
   config = {

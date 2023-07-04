@@ -1,10 +1,14 @@
-{ options, config, pkgs, lib, ... }:
-
-with lib;
-with lib.internal;
-let cfg = config.khanelinix.nix;
-in
 {
+  options,
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+with lib;
+with lib.internal; let
+  cfg = config.khanelinix.nix;
+in {
   options.khanelinix.nix = with types; {
     enable = mkBoolOpt true "Whether or not to manage nix configuration.";
     package = mkOpt package pkgs.nixUnstable "Which nix package to use.";
@@ -20,13 +24,13 @@ in
       cachix
     ];
 
-    nix =
-      let users = [ "root" config.khanelinix.user.name ];
-      in
-      {
-        package = cfg.package;
+    nix = let
+      users = ["root" config.khanelinix.user.name];
+    in {
+      package = cfg.package;
 
-        settings = {
+      settings =
+        {
           experimental-features = "nix-command flakes";
           http-connections = 50;
           warn-dirty = false;
@@ -46,17 +50,17 @@ in
           keep-derivations = true;
         });
 
-        gc = {
-          automatic = true;
-          interval = { Day = 7; };
-          options = "--delete-older-than 30d";
-          user = config.khanelinix.user.name;
-        };
-
-        # flake-utils-plus
-        generateRegistryFromInputs = true;
-        generateNixPathFromInputs = true;
-        linkInputs = true;
+      gc = {
+        automatic = true;
+        interval = {Day = 7;};
+        options = "--delete-older-than 30d";
+        user = config.khanelinix.user.name;
       };
+
+      # flake-utils-plus
+      generateRegistryFromInputs = true;
+      generateNixPathFromInputs = true;
+      linkInputs = true;
+    };
   };
 }

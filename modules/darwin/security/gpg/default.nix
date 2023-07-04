@@ -1,6 +1,10 @@
-{ lib, config, pkgs, inputs, ... }:
-
-let
+{
+  lib,
+  config,
+  pkgs,
+  inputs,
+  ...
+}: let
   inherit (lib) types mkEnableOption mkIf;
   inherit (lib.internal) mkOpt;
 
@@ -23,7 +27,7 @@ let
     sha256 = "1h48yqffpaz437f3c9hfryf23r95rr319lrb3y79kxpxbc9hihxb";
   };
 
-  guideHTML = pkgs.runCommand "yubikey-guide" { } ''
+  guideHTML = pkgs.runCommand "yubikey-guide" {} ''
     ${pkgs.pandoc}/bin/pandoc \
       --standalone \
       --metadata title="Yubikey Guide" \
@@ -36,12 +40,7 @@ let
       -o $out \
       ${guide}
   '';
-
-  reload-yubikey = pkgs.writeShellScriptBin "reload-yubikey" ''
-    ${pkgs.gnupg}/bin/gpg-connect-agent "scd serialno" "learn --force" /bye
-  '';
-in
-{
+in {
   options.khanelinix.security.gpg = {
     enable = mkEnableOption "GPG";
     agentTimeout = mkOpt types.int 5 "The amount of time to wait before continuing with shell init.";

@@ -1,15 +1,13 @@
 {
   lib,
   config,
-  osConfig ? {},
-  format ? "unknown",
   ...
 }:
 with lib.internal; {
   khanelinix = {
     user = {
       enable = true;
-      name = config.snowfallorg.user.name;
+      inherit (config.snowfallorg.user) name;
     };
 
     cli-apps = {

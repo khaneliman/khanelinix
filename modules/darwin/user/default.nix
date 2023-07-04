@@ -1,15 +1,13 @@
-{ lib, config, pkgs, ... }:
-
-let
-  inherit (lib) types mkIf mkDefault;
+{
+  lib,
+  config,
+  ...
+}: let
+  inherit (lib) types mkIf;
   inherit (lib.internal) mkOpt;
 
   cfg = config.khanelinix.user;
-
-  is-linux = pkgs.stdenv.isLinux;
-  is-darwin = pkgs.stdenv.isDarwin;
-in
-{
+in {
   options.khanelinix.user = {
     name = mkOpt types.str "short" "The user account.";
 

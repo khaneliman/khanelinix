@@ -1,14 +1,14 @@
-inputs @ { options
-, config
-, lib
-, pkgs
-, ...
+inputs @ {
+  options,
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.cli-apps.neovim;
-in
-{
+in {
   options.khanelinix.cli-apps.neovim = with types; {
     enable = mkBoolOpt false "Whether or not to enable neovim.";
   };
@@ -20,7 +20,7 @@ in
       gdu
       bottom
       deno
-      # FIXME: This is not working 
+      # FIXME: This is not working
       # webkitgtk
     ];
 

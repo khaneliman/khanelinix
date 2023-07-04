@@ -1,13 +1,16 @@
-{ options, config, pkgs, lib, ... }:
-
+{
+  options,
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 with lib;
-with lib.internal;
-let
+with lib.internal; let
   cfg = config.khanelinix.tools.git;
   gpg = config.khanelinix.security.gpg;
   user = config.khanelinix.user;
-in
-{
+in {
   options.khanelinix.tools.git = with types; {
     enable = mkBoolOpt false "Whether or not to install and configure git.";
     userName = mkOpt types.str user.fullName "The name to configure git with.";
@@ -17,7 +20,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ git ];
+    environment.systemPackages = with pkgs; [git];
 
     khanelinix.home.extraOptions = {
       programs.git = {
@@ -29,10 +32,10 @@ in
           signByDefault = mkIf gpg.enable true;
         };
         extraConfig = {
-          init = { defaultBranch = "main"; };
-          pull = { rebase = true; };
-          push = { autoSetupRemote = true; };
-          core = { whitespace = "trailing-space,space-before-tab"; };
+          init = {defaultBranch = "main";};
+          pull = {rebase = true;};
+          push = {autoSetupRemote = true;};
+          core = {whitespace = "trailing-space,space-before-tab";};
           safe = {
             directory = "${config.users.users.${user.name}.home}/work/config";
           };

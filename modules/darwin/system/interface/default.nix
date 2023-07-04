@@ -1,10 +1,13 @@
-{ options, config, pkgs, lib, ... }:
-
-with lib;
-with lib.internal;
-let cfg = config.khanelinix.system.interface;
-in
 {
+  options,
+  config,
+  lib,
+  ...
+}:
+with lib;
+with lib.internal; let
+  cfg = config.khanelinix.system.interface;
+in {
   options.khanelinix.system.interface = with types; {
     enable = mkEnableOption "macOS interface";
   };

@@ -1,7 +1,5 @@
-{ lib, pkgs, ... }:
-
-with lib.internal;
-{
+{lib, ...}:
+with lib.internal; {
   khanelinix = {
     suites = {
       common = enabled;
