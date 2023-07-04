@@ -4,7 +4,6 @@
   ...
 }: let
   inherit (lib) mkEnableOption mkIf;
-  inherit (lib.internal) enabled;
 
   cfg = config.khanelinix.system.xdg;
 
@@ -21,13 +20,8 @@
 
   # XDG MIME types
   associations = {
-    "audio/*" = video;
-    "video/*" = video;
-    "image/*" = image;
-    "inode/directory" = fileManager;
     "application/json" = editor;
-    # "application/pdf" = ["org.pwmt.zathura.desktop.desktop"];
-    "application/pdf" = browser;
+    "application/pdf" = ["org.pwmt.zathura.desktop.desktop"];
     "application/rss+xml" = editor;
     "application/vnd.ms-excel" = excel;
     "application/vnd.ms-powerpoint" = powerpoint;
@@ -73,9 +67,14 @@
     "application/x-bzip-compressed-tar" = ["org.kde.ark.desktop"];
     "application/x-compress" = ["org.kde.ark.desktop"];
     "application/x-compressed-tar" = ["org.kde.ark.desktop"];
+    "application/x-extension-htm" = browser;
+    "application/x-extension-html" = browser;
     "application/x-extension-ics" = mail;
     "application/x-extension-m4a" = video;
     "application/x-extension-mp4" = video;
+    "application/x-extension-shtml" = browser;
+    "application/x-extension-xht" = browser;
+    "application/x-extension-xhtml" = browser;
     "application/x-flac" = video;
     "application/x-gzip" = ["org.kde.ark.desktop"];
     "application/x-lha" = ["org.kde.ark.desktop"];
@@ -95,6 +94,8 @@
     "application/xhtml+xml" = browser;
     "application/xml" = editor;
     "application/zip" = ["org.kde.ark.desktop"];
+    "audio/*" = video;
+    "image/*" = image;
     "image/bmp" = ["org.kde.gwenview.desktop"];
     "image/gif" = ["org.kde.gwenview.desktop"];
     "image/jpeg" = ["org.kde.gwenview.desktop"];
@@ -117,36 +118,33 @@
     "image/x-xcf" = ["gimp.desktop"];
     "image/x-xpixmap" = ["org.kde.gwenview.desktop"];
     "image/x-xwindowdump" = ["org.kde.gwenview.desktop"];
+    "inode/directory" = fileManager;
     "message/rfc822" = mail;
+    "text/*" = editor;
     "text/calendar" = mail;
     "text/html" = browser;
-    "text/*" = editor;
     "text/plain" = editor;
+    "video/*" = video;
     "x-scheme-handler/about" = browser;
-    # "x-scheme-handler/chrome" = ["chromium-browser.desktop"];
+    "x-scheme-handler/chrome" = browser;
+    "x-scheme-handler/discord" = ["discord.desktop"];
+    "x-scheme-handler/etcher" = ["balena-etcher-electron.desktop"];
     "x-scheme-handler/ftp" = browser;
-    "x-scheme-handler/unknown" = browser;
     "x-scheme-handler/gitkraken" = ["GitKraken.desktop"];
     "x-scheme-handler/http" = browser;
     "x-scheme-handler/https" = browser;
     "x-scheme-handler/mailto" = mail;
     "x-scheme-handler/mid" = mail;
+    "x-scheme-handler/spotify" = ["spotify.desktop"];
+    "x-scheme-handler/terminal" = terminal;
     "x-scheme-handler/tg" = ["org.telegram.desktop.desktop"];
+    "x-scheme-handler/unknown" = browser;
     "x-scheme-handler/webcal" = mail;
     "x-scheme-handler/webcals" = mail;
     "x-scheme-handler/x-github-client" = ["github-desktop.desktop"];
     "x-scheme-handler/x-github-desktop-auth" = ["github-desktop.desktop"];
-    "x-scheme-handler/discord" = ["discord.desktop"];
-    "x-scheme-handler/spotify" = ["spotify.desktop"];
-    "x-scheme-handler/etcher" = ["balena-etcher-electron.desktop"];
-    "x-scheme-handler/terminal" = terminal;
     "x-www-browser" = browser;
-    "x-scheme-handler/chrome" = browser;
-    "application/x-extension-htm" = browser;
-    "application/x-extension-html" = browser;
-    "application/x-extension-shtml" = browser;
-    "application/x-extension-xhtml" = browser;
-    "application/x-extension-xht" = browser;
+    # "x-scheme-handler/chrome" = ["chromium-browser.desktop"];
   };
 in {
   options.khanelinix.system.xdg = {

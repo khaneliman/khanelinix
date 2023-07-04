@@ -10,6 +10,10 @@ with lib.internal; {
       inherit (config.snowfallorg.user) name;
     };
 
+    apps = {
+      zathura = enabled;
+    };
+
     cli-apps = {
       helix = enabled;
       home-manager = enabled;
