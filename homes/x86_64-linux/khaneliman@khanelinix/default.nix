@@ -1,6 +1,5 @@
 {
   lib,
-  pkgs,
   config,
   osConfig ? {},
   format ? "unknown",
@@ -17,6 +16,7 @@ with lib.internal; {
       zsh = enabled;
       neovim = enabled;
       home-manager = enabled;
+      spicetify = enabled;
     };
 
     tools = {

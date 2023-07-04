@@ -150,15 +150,17 @@
 
     ranger-udisk-menu.url = "github:SL-RU/ranger_udisk_menu";
     ranger-udisk-menu.flake = false;
+
+    spicetify-nix.url = "github:the-argus/spicetify-nix/dev";
+    spicetify-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs:
-    let
-      lib = inputs.snowfall-lib.mkLib {
-        inherit inputs;
-        src = ./.;
-      };
-    in
+  outputs = inputs: let
+    lib = inputs.snowfall-lib.mkLib {
+      inherit inputs;
+      src = ./.;
+    };
+  in
     lib.mkFlake {
       package-namespace = "khanelinix";
 
@@ -193,17 +195,22 @@
         home-manager.nixosModules.home-manager
         nix-ld.nixosModules.nix-ld
         hyprland.nixosModules.default
-        # hyprland.homeManagerModules.default
         # sops-nix.nixosModules.sops
         # agenix.nixosModules.default
       ];
 
-      deploy = lib.mkDeploy { inherit (inputs) self; };
+      systems.modules.home = with inputs; [
+        home-manager.homeModules.home-manager
+        hyprland.homeManagerModules.default
+        # agenix.homeModules.default
+      ];
+
+      deploy = lib.mkDeploy {inherit (inputs) self;};
 
       checks =
         builtins.mapAttrs
-          (_system: deploy-lib:
-            deploy-lib.deployChecks inputs.self.deploy)
-          inputs.deploy-rs.lib;
+        (_system: deploy-lib:
+          deploy-lib.deployChecks inputs.self.deploy)
+        inputs.deploy-rs.lib;
     };
 }
