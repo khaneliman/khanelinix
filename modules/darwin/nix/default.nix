@@ -12,10 +12,12 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
+      khanelinix.nixos-revision
       deploy-rs
-      nixfmt
+      alejandra
       nix-index
       nix-prefetch-git
+      cachix
     ];
 
     nix =
@@ -38,11 +40,11 @@ in
           # case it becomes important.
           extra-nix-path = "nixpkgs=flake:nixpkgs";
           build-users-group = "nixbld";
-        };
-        #// (lib.optionalAttrs config.khanelinix.tools.direnv.enable {
-        #  keep-outputs = true;
-        #  keep-derivations = true;
-        #});
+        }
+        // (lib.optionalAttrs config.khanelinix.tools.direnv.enable {
+          keep-outputs = true;
+          keep-derivations = true;
+        });
 
         gc = {
           automatic = true;

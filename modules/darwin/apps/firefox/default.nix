@@ -5,15 +5,49 @@ with lib.internal;
 let
   cfg = config.khanelinix.apps.firefox;
   defaultSettings = {
-    "browser.aboutwelcome.enabled" = false;
-    "browser.meta_refresh_when_inactive.disabled" = true;
-    "browser.startup.homepage" =
-      "https://start.duckduckgo.com/?kak=-1&kal=-1&kao=-1&kaq=-1&kt=Hack+Nerd+Font&kae=d&ks=m&k7=2e3440&kj=3b4252&k9=eceff4&kaa=d8dee9&ku=1&k8=d8dee9&kx=81a1c1&k21=3b4252&k18=1&k5=2&kp=-2&k1=-1&kaj=u&kay=b&kk=-1&kax=-1&kap=-1&kau=-1";
-    "browser.bookmarks.showMobileBookmarks" = true;
-    "browser.urlbar.suggest.quicksuggest.sponsored" = false;
-    "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
+    "accessibility.typeaheadfind.enablesound" = false;
+    "accessibility.typeaheadfind.flashBar" = 0;
     "browser.aboutConfig.showWarning" = false;
+    "browser.aboutwelcome.enabled" = false;
+    "browser.bookmarks.autoExportHTML" = true;
+    "browser.bookmarks.showMobileBookmarks" = true;
+    "browser.meta_refresh_when_inactive.disabled" = true;
+    "browser.newtabpage.activity-stream.default.sites" = "";
+    "browser.newtabpage.activity-stream.showSponsored" = false;
+    "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
+    "browser.search.hiddenOneOffs" = "Google,Amazon.com,Bing,DuckDuckGo,eBay,Wikipedia (en)";
+    "browser.search.suggest.enabled" = false;
+    "browser.sessionstore.warnOnQuit" = true;
+    "browser.shell.checkDefaultBrowser" = false;
     "browser.ssb.enabled" = true;
+    "browser.startup.homepage.abouthome_cache.enabled" = true;
+    "browser.startup.page" = 3;
+    "browser.urlbar.keepPanelOpenDuringImeComposition" = true;
+    "browser.urlbar.suggest.quicksuggest.sponsored" = false;
+    # TODO: one of these doesn't work
+    # "browser.urlbar.groupLabels.enabled" = false;
+    # "browser.urlbar.shortcuts.bookmarks " = false;
+    # "browser.urlbar.shortcuts.history " = false;
+    # "browser.urlbar.shortcuts.tabs " = false;
+    # "browser.urlbar.suggest.quicksuggest.sponsored" = false;
+    # "browser.urlbar.suggest.searches" = false;
+    # "browser.urlbar.trimURLs" = false;
+    # TODO: fix above
+    "dom.storage.next_gen" = true;
+    "dom.webgpu.enabled" = true;
+    "extensions.htmlaboutaddons.recommendations.enabled" = false;
+    "general.autoScroll" = false;
+    "general.smoothScroll.msdPhysics.enabled" = true;
+    "geo.enabled" = false;
+    "geo.provider.use_corelocation" = false;
+    "geo.provider.use_geoclue" = false;
+    "geo.provider.use_gpsd" = false;
+    "intl.accept_languages" = "en-US = en";
+    "media.eme.enabled" = true;
+    "media.ffmpeg.vaapi.enabled" = true;
+    # "media.hardware-video-decoding.force-enabled" = true;
+    "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
+    "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
   };
 in
 {
@@ -27,24 +61,74 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix.desktop.addons.firefox-nordic-theme = enabled;
-
     khanelinix.home = {
+      file =
+        {
+          ".mozilla/native-messaging-hosts/com.dannyvankooten.browserpass.json".source = "${pkgs.browserpass}/lib/mozilla/native-messaging-hosts/com.dannyvankooten.browserpass.json";
+          ".mozilla/firefox/${config.khanelinix.user.name}/chrome/userChrome.css".source = dotfiles.outPath + "/dots/shared/home/.mozilla/firefox/khaneliman.default/chrome/userChrome.css";
+          ".mozilla/firefox/${config.khanelinix.user.name}/chrome/img".source = dotfiles.outPath + "/dots/shared/home/.mozilla/firefox/khaneliman.default/chrome/img/";
+          # ".mozilla/firefox/${config.khanelinix.user.name}/user.js".source = dotfiles.outPath + "/dots/shared/home/.mozilla/firefox/khaneliman.default/user.js";
+        };
+
       extraOptions = {
         programs.firefox = {
           enable = true;
-          package = pkgs.firefox.override (
-            {
-              cfg = {
-                enableBrowserpass = true;
+          package = pkgs.wrapFirefox pkgs.firefox-beta-unwrapped {
+            extraPolicies = {
+              CaptivePortal = false;
+              DisableFirefoxStudies = true;
+              DisablePocket = true;
+              DisableTelemetry = true;
+              DisableFormHistory = true;
+              DisplayBookmarksToolbar = true;
+              DontCheckDefaultBrowser = true;
+              FirefoxHome = {
+                Pocket = false;
+                Snippets = false;
               };
-            }
-          );
+              PasswordManagerEnabled = false;
+              # PromptForDownloadLocation = true;
+              UserMessaging = {
+                ExtensionRecommendations = false;
+                SkipOnboarding = true;
+              };
+              ExtensionSettings = {
+                "ebay@search.mozilla.org".installation_mode = "blocked";
+                "amazondotcom@search.mozilla.org".installation_mode = "blocked";
+                "bing@search.mozilla.org".installation_mode = "blocked";
+                "ddg@search.mozilla.org".installation_mode = "blocked";
+                "wikipedia@search.mozilla.org".installation_mode = "blocked";
+
+                "frankerfacez@frankerfacez.com" = {
+                  installation_mode = "force_installed";
+                  install_url = "https://cdn.frankerfacez.com/script/frankerfacez-4.0-an+fx.xpi";
+                };
+
+                "magnolia_limited_permissions@12.34" = {
+                  installation_mode = "force_installed";
+                  install_url = "https://gitlab.com/magnolia1234/bpc-uploads/-/raw/master/bypass_paywalls_clean-3.2.3.0-custom.xpi";
+                };
+              };
+              Preferences = { };
+            };
+          };
 
           profiles.${config.khanelinix.user.name} = {
             inherit (cfg) extraConfig userChrome settings;
             id = 0;
             name = config.khanelinix.user.name;
+            extensions = with pkgs.nur.repos.rycee.firefox-addons; [
+              sponsorblock
+              ublock-origin
+              bitwarden
+              onepassword-password-manager
+              darkreader
+              stylus
+              angular-devtools
+              reduxdevtools
+              tabcenter-reborn
+              user-agent-string-switcher
+            ];
           };
         };
       };

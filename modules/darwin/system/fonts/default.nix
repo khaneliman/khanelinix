@@ -1,4 +1,4 @@
-{ options, config, pkgs, lib, ... }:
+{ options, config, pkgs, lib, inputs, ... }:
 
 with lib;
 with lib.internal;
@@ -25,8 +25,13 @@ in
           noto-fonts-cjk-sans
           noto-fonts-cjk-serif
           noto-fonts-emoji
-          (nerdfonts.override { fonts = [ "Hack" ]; })
-        ] ++ cfg.fonts;
+          (nerdfonts.override { fonts = [ "Hack" "CascadiaCode" ]; })
+        ]
+        ++ cfg.fonts;
+    };
+
+    khanelinix.home.file = with inputs; {
+      ".local/share/fonts/SanFransisco/SF-Mono/".source = dotfiles.outPath + "/dots/shared/home/.fonts/SanFransisco/SF-Mono";
     };
   };
 }

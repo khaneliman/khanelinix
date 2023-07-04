@@ -35,7 +35,7 @@ in
       };
 
       security = {
-        gpg = enabled;
+        # gpg = enabled;
       };
     };
   };
