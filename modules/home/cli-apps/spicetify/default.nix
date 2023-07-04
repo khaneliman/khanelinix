@@ -24,7 +24,17 @@ in {
       theme = spicePkgs.themes.catppuccin-macchiato;
       colorScheme = "blue";
 
+      enabledCustomApps = with spicePkgs.apps; [
+        marketplace
+      ];
+
       enabledExtensions = with spicePkgs.extensions; [
+        adblock
+        autoSkip
+        playNext
+        volumePercentage
+        history
+        genre
         fullAppDisplay
         shuffle # shuffle+ (special characters are sanitized out of ext names)
       ];
