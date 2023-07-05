@@ -153,6 +153,8 @@
 
     spicetify-nix.url = "github:the-argus/spicetify-nix/dev";
     spicetify-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+    nixpkgs-firefox-darwin.url = "github:bandithedoge/nixpkgs-firefox-darwin";
   };
 
   outputs = inputs: let
@@ -188,6 +190,7 @@
         rustup-overlay.overlays.default
         hyprland.overlays.default
         devshell.overlays.default
+        nixpkgs-firefox-darwin.overlay
       ];
 
       # modules from inputs
@@ -203,6 +206,9 @@
         home-manager.homeModules.home-manager
         hyprland.homeManagerModules.default
         # agenix.homeModules.default
+      ];
+
+      systems.modules.darwin = with inputs; [
       ];
 
       deploy = lib.mkDeploy {inherit (inputs) self;};

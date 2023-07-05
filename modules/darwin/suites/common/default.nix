@@ -1,13 +1,13 @@
-{
-  options,
-  config,
-  lib,
-  ...
+{ options
+, config
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.suites.common;
-in {
+in
+{
   options.khanelinix.suites.common = with types; {
     enable = mkBoolOpt false "Whether or not to enable common configuration.";
   };
@@ -19,7 +19,7 @@ in {
       nix = enabled;
 
       apps = {
-        iterm2 = enabled;
+        firefox = enabled;
       };
 
       cli-apps = {
@@ -42,3 +42,4 @@ in {
     };
   };
 }
+
