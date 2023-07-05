@@ -1,17 +1,15 @@
-{ options
-, config
-, lib
-, pkgs
-, inputs
-, ...
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.apps.firefox;
-
-in
-{
-
+in {
   options.khanelinix.apps.firefox = with types; {
     enable = mkBoolOpt false "Whether or not to enable Firefox.";
   };
