@@ -209,6 +209,7 @@
       ];
 
       systems.modules.darwin = with inputs; [
+        home-manager.darwinModules.home-manager
       ];
 
       deploy = lib.mkDeploy {inherit (inputs) self;};

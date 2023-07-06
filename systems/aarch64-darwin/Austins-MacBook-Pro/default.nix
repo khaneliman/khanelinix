@@ -2,6 +2,7 @@
 with lib.internal; {
   khanelinix = {
     suites = {
+      art = enabled;
       common = enabled;
       desktop = enabled;
       development = enabled;
