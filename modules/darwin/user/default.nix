@@ -9,7 +9,7 @@
   cfg = config.khanelinix.user;
 in {
   options.khanelinix.user = {
-    name = mkOpt types.str "short" "The user account.";
+    name = mkOpt types.str "khaneliman" "The user account.";
 
     fullName = mkOpt types.str "Austin Horstman" "The full name of the user.";
     email = mkOpt types.str "khaneliman12@gmail.com" "The email of the user.";
