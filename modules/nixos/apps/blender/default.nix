@@ -15,8 +15,7 @@ in {
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      # TODO: fix when blender builds again
-      # blender
+      blender
     ];
   };
 }
