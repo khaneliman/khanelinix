@@ -2,6 +2,7 @@
   options,
   config,
   lib,
+  pkgs,
   ...
 }:
 with lib;
@@ -14,6 +15,34 @@ in {
 
   config = mkIf cfg.enable {
     programs.zsh = enabled;
+
+    environment.systemPackages = with pkgs; [
+      bottom
+      curl
+      exa
+      fd
+      feh
+      file
+      fzf
+      jq
+      khanelinix.list-iommu
+      killall
+      pciutils
+      socat
+      tldr
+      toilet
+      unzip
+      wget
+      xclip
+
+      # nixos
+      alejandra
+      deadnix
+      hydra-check
+      nixfmt
+      snowfallorg.flake
+      statix
+    ];
 
     khanelinix = {
       nix = enabled;
