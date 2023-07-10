@@ -61,7 +61,7 @@ in {
           config_file=/var/lib/AccountsService/users/${config.khanelinix.user.name}
           icon_file=/run/current-system/sw/share/icons/user/${config.khanelinix.user.name}/${config.khanelinix.user.icon.fileName}
 
-          if ! [ -d "$(dirname "$config_file")"]; then
+          if ! [ -d "$(dirname "$config_file")" ]; then
             mkdir -p "$(dirname "$config_file")"
           fi
 
@@ -76,7 +76,7 @@ in {
             if [[ "$icon_config" == "" ]]; then
               echo "Icon=$icon_file" >> $config_file
             else
-              sed -E -i -e "s#^Icon=.*$#Icon=$icon_file#" $config_file
+              sed -E -i -e 's#^Icon=.*$#Icon=$icon_file#' $config_file
             fi
           fi
         '';
