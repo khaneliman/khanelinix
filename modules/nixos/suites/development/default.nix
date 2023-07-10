@@ -67,7 +67,6 @@ in {
         k8s = enabled;
         node = enabled;
         python = enabled;
-        qmk = enabled;
         tree-sitter = enabled;
       };
 
