@@ -42,6 +42,9 @@ in {
       nixfmt
       snowfallorg.flake
       statix
+
+      # libaries
+      at-spi2-atk
     ];
 
     khanelinix = {

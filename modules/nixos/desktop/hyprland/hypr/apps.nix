@@ -15,13 +15,11 @@
           # ░▀░▀░▀░░░▀░░░░░▀▀▀░░▀░░▀░▀░▀░▀░░▀░░▀▀▀░▀░░
 
           # Startup background apps
-          exec-once = ${inputs.dotfiles.outPath + "/dots/linux/hyprland/home/.local/bin/xdg-desktop-portal.sh"}
           exec-once = ${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1 & eval $(gnome-keyring-daemon -s --components=pkcs11,secrets,ssh,gpg) && export $(gnome-keyring-daemon --start --components=gpg,pkcs11,secrets,ssh)
           exec-once = sleep 1
           exec-once = command -v hyprpaper && hyprpaper
           exec-once = command -v waybar && waybar
           # exec-once = command -v eww && eww open bar && eww open secondary-bar
-          exec-once = command -v swaync && swaync
           exec-once = command -v swayidle && swayidle -w
           exec-once = command -v ckb-next && ckb-next -b
           exec-once = command -v openrgb && openrgb --startminimized --profile default
