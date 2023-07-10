@@ -40,7 +40,6 @@ in {
       wlr-randr
       xwayland
       # Not really wayland specific, but I don't want to make a new module for it
-      blueman
       brightnessctl
       glib # for gsettings
       gtk3.out # for gtk-launch

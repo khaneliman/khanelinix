@@ -49,6 +49,7 @@ in {
       gsettings-desktop-schemas
       glib
       gtk3.out # for gtk-launch
+      libappindicator-gtk3
     ];
 
     environment.sessionVariables = {

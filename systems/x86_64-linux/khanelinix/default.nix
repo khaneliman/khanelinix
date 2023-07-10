@@ -60,6 +60,7 @@ with lib.internal; {
     hardware = {
       amdgpu = enabled;
       audio = enabled;
+      bluetooth = enabled;
       networking = enabled;
       rgb = {
         enable = true;

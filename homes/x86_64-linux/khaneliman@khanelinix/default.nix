@@ -1,6 +1,7 @@
 {
   lib,
   config,
+  inputs,
   ...
 }:
 with lib.internal; {
@@ -22,6 +23,13 @@ with lib.internal; {
       zsh = enabled;
     };
 
+    desktop = {
+      addons = {
+        swayidle = enabled;
+      };
+      hyprland = enabled;
+    };
+
     system = {
       xdg = enabled;
     };
@@ -32,4 +40,6 @@ with lib.internal; {
       ssh = enabled;
     };
   };
+
+  home.stateVersion = "21.11";
 }

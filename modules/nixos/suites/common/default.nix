@@ -34,6 +34,7 @@ in {
       unzip
       wget
       xclip
+      upower
 
       # nixos
       alejandra
@@ -75,6 +76,7 @@ in {
         audio = enabled;
         networking = enabled;
         storage = enabled;
+        power = enabled;
       };
 
       services = {
