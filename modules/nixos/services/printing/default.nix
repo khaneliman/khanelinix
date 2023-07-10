@@ -14,6 +14,8 @@ in {
   };
 
   config = mkIf cfg.enable {
+    services.colord.enable = true;
+
     services.printing = {
       enable = true;
       browsing = true;
