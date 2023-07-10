@@ -26,6 +26,10 @@ in {
       "quiet"
     ];
 
+    blacklistedKernelModules = [
+      "eeepc_wmi"
+    ];
+
     initrd = {
       kernelModules = [];
       availableKernelModules = ["nvme" "xhci_pci" "ehci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" "sr_mod"];
