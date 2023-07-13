@@ -171,6 +171,7 @@
       channels-config.permittedInsecurePackages = [
         "imagemagick-6.9.12-68"
         "openssl-1.1.1u"
+        "xpdf-4.04"
       ];
 
       #TODO: implement proper devshell

@@ -2,6 +2,7 @@
   options,
   config,
   lib,
+  pkgs,
   ...
 }:
 with lib;
@@ -13,9 +14,15 @@ in {
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      # blender
+      gimp
+      inkscape
+    ];
+
     khanelinix = {
       apps = {
-        gimp = enabled;
+        # gimp = enabled;
         # inkscape = enabled;
         # blender = enabled;
       };

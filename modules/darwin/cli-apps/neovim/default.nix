@@ -33,15 +33,14 @@ in {
 
     khanelinix.home = with pkgs; {
       configFile = with inputs; {
-        # "nvim/".source = inputs.dotfiles.outPath + "/dots/shared/home/.config/nvim";
-        # nvim = {
-        #   onChange = "${neovim}/bin/nvim --headless +quitall";
-        #   source = astronvim;
-        # };
-        # # "astronvim/lua/user/".source = inputs.dotfiles.outPath + "/dots/shared/home/.config/astronvim/lua/user";
-        # "astronvim/lua/user" = {
-        #   source = astronvim-user;
-        # };
+        "nvim/".source = inputs.dotfiles.outPath + "/dots/shared/home/.config/nvim";
+        nvim = {
+          onChange = "${neovim}/bin/nvim --headless +quitall";
+          source = astronvim;
+        };
+        "astronvim/lua/user" = {
+          source = astronvim-user;
+        };
       };
 
       extraOptions = {
@@ -54,13 +53,5 @@ in {
         };
       };
     };
-
-    # system.userActivationScripts = {
-    #   postInstall = ''
-    #     echo "Running deno install"
-    #     source ${config.system.build.setEnvironment}
-    #     cd ${user.name}/.local/share/nvim/lazy/peek.nvim/ && deno task build:debug
-    #   '';
-    # };
   };
 }

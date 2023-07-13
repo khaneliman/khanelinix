@@ -13,6 +13,9 @@ in {
     enable = mkBoolOpt false "Whether or not to enable vscode.";
   };
 
-  config =
-    mkIf cfg.enable {environment.systemPackages = with pkgs; [vscode];};
+  config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      vscode
+    ];
+  };
 }

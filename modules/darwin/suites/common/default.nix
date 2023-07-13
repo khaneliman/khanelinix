@@ -40,7 +40,7 @@ in {
       deadnix
       hydra-check
       nixfmt
-      snowfallorg.flake
+      # snowfallorg.flake
       statix
     ];
 
