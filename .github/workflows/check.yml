@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest ]
-        arch: [ x86_64-linux, aarch64-linux ]
+        arch: [ x86_64-linux, aarch64-darwin ]
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
