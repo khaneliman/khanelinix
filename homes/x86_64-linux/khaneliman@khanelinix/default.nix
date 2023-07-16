@@ -23,13 +23,6 @@ with lib.internal; {
       zsh = enabled;
     };
 
-    desktop = {
-      addons = {
-        swayidle = enabled;
-      };
-      hyprland = enabled;
-    };
-
     system = {
       xdg = enabled;
     };

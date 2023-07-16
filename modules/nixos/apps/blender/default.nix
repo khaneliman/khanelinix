@@ -9,5 +9,5 @@ with lib;
 with lib.internal; let
   cfg = config.khanelinix.apps.blender;
 in {
-  imports = [../../../shared/blender/default.nix];
+  imports = [../../../shared/apps/blender/default.nix];
 }
