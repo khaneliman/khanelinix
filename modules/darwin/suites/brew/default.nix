@@ -20,6 +20,7 @@ in {
       act
       armadillo
       atool
+      bat
       bash-completion
       bear
       bfg-repo-cleaner
