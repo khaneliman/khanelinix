@@ -1,5 +1,5 @@
-{...}: final: prev: {
-  waybar-hyprland = prev.waybar-hyprland.overrideAttrs (oldAttrs: {
+{...}: _final: prev: {
+  waybar-hyprland = prev.waybar-hyprland.overrideAttrs (_oldAttrs: {
     version = "e4900db9a2e00e41f43e40d6a8d90c2466645c37";
 
     src = prev.fetchFromGitHub {

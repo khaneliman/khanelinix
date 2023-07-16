@@ -1,13 +1,5 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{lib, ...}:
 with lib;
-with lib.internal; let
-  cfg = config.khanelinix.apps.gimp;
-in {
+with lib.internal; {
   imports = [../../../shared/apps/gimp/default.nix];
 }
