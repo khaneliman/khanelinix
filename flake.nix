@@ -24,6 +24,7 @@
     nixos-generators.inputs.nixpkgs.follows = "nixpkgs";
 
     # Snowfall Lib
+    # TODO: replace with main branch after home-manager merged
     snowfall-lib.url = "github:snowfallorg/lib/feat/home-manager";
     snowfall-lib.inputs.nixpkgs.follows = "nixpkgs";
 

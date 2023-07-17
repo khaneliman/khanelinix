@@ -111,43 +111,43 @@ in {
     # };
 
     "/mnt/austinserver/appdata" = {
-      device = "192.168.1.37:/mnt/user/appdata";
+      device = "austinserver.local:/mnt/user/appdata";
       fsType = "nfs";
       options = ["noauto" "x-systemd.automount" "x-systemd.requires=network.target" "x-systemd.mount-timeout=10" "x-systemd.idle-timeout=1min"];
     };
 
     "/mnt/austinserver/data" = {
-      device = "192.168.1.37:/mnt/user/data";
+      device = "austinserver.local:/mnt/user/data";
       fsType = "nfs";
       options = ["noauto" "x-systemd.automount" "x-systemd.requires=network.target" "x-systemd.mount-timeout=10" "x-systemd.idle-timeout=1min"];
     };
 
     "/mnt/austinserver/backup" = {
-      device = "192.168.1.37:/mnt/user/backup";
+      device = "austinserver.local:/mnt/user/backup";
       fsType = "nfs";
       options = ["noauto" "x-systemd.automount" "x-systemd.requires=network.target" "x-systemd.mount-timeout=10" "x-systemd.idle-timeout=1min"];
     };
 
     "/mnt/austinserver/isos" = {
-      device = "192.168.1.37:/mnt/user/isos";
+      device = "austinserver.local:/mnt/user/isos";
       fsType = "nfs";
       options = ["noauto" "x-systemd.automount" "x-systemd.requires=network.target" "x-systemd.mount-timeout=10" "x-systemd.idle-timeout=1min"];
     };
 
     "/mnt/dropbox" = {
-      device = "192.168.1.37:/mnt/disks/dropbox";
+      device = "austinserver.local:/mnt/disks/dropbox";
       fsType = "nfs";
       options = ["noauto" "x-systemd.automount" "x-systemd.requires=network.target" "x-systemd.mount-timeout=10" "x-systemd.idle-timeout=1min"];
     };
 
     "/mnt/disks/googledrive" = {
-      device = "192.168.1.37:/mnt/disks/googledrive";
+      device = "austinserver.local:/mnt/disks/googledrive";
       fsType = "nfs";
       options = ["noauto" "x-systemd.automount" "x-systemd.requires=network.target" "x-systemd.mount-timeout=10" "x-systemd.idle-timeout=1min"];
     };
 
     "/mnt/disks/onedrive" = {
-      device = "192.168.1.37:/mnt/disks/onedrive";
+      device = "austinserver.local:/mnt/disks/onedrive";
       fsType = "nfs";
       options = ["noauto" "x-systemd.automount" "x-systemd.requires=network.target" "x-systemd.mount-timeout=10" "x-systemd.idle-timeout=1min"];
     };

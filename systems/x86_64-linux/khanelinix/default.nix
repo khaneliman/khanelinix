@@ -91,11 +91,11 @@ with lib.internal; {
 
           Host desktop
             User ${config.khanelinix.user.name}
-            Hostname 192.168.1.100
+            Hostname khanelinix.local
 
           Host server
             User ${config.khanelinix.user.name}
-            Hostname 192.168.1.37
+            Hostname austinserver.local
         '';
       };
 
