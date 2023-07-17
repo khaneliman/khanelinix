@@ -17,6 +17,7 @@ in {
       apps = {
         pitivi = enabled;
         obs = enabled;
+        vlc = enabled;
       };
     };
   };

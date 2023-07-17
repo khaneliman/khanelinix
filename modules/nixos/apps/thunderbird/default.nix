@@ -17,6 +17,7 @@ in {
     environment.systemPackages = with pkgs; [
       birdtray
       davmail
+      thunderbird
     ];
 
     khanelinix.home.extraOptions = {
@@ -50,6 +51,15 @@ in {
 
           # TODO: Bundle extensions
           # TODO: set up accounts
+        };
+      };
+
+      accounts.email.accounts = {
+        "${config.khanelinix.user.email}" = {
+          address = config.khanelinix.user.email;
+          realName = config.khanelinix.user.fullName;
+          flavor = "gmail.com";
+          primary = true;
         };
       };
     };
