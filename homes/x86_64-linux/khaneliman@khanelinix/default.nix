@@ -12,6 +12,7 @@ with lib.internal; {
 
     apps = {
       zathura = enabled;
+      thunderbird = enabled;
     };
 
     cli-apps = {
@@ -20,6 +21,14 @@ with lib.internal; {
       neovim = enabled;
       spicetify = enabled;
       zsh = enabled;
+    };
+
+    desktop = {
+      addons = {
+        swayidle = enabled;
+      };
+
+      hyprland = enabled;
     };
 
     system = {

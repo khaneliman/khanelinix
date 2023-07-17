@@ -30,6 +30,9 @@ in {
       wlogout = enabled;
     };
 
+    programs.nm-applet.enable = true;
+    programs.xwayland.enable = true;
+
     environment.systemPackages = with pkgs; [
       cliphist
       grim
@@ -38,14 +41,13 @@ in {
       wf-recorder
       wl-clipboard
       wlr-randr
-      xwayland
       # Not really wayland specific, but I don't want to make a new module for it
       brightnessctl
       glib # for gsettings
       gtk3.out # for gtk-launch
-      libinput
-      networkmanagerapplet
       playerctl
+      # TODO: remove after figuring out graphical-session.target services
+      networkmanagerapplet
     ];
   };
 }
