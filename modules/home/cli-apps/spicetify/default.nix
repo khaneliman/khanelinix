@@ -26,6 +26,8 @@ in {
 
       enabledCustomApps = with spicePkgs.apps; [
         marketplace
+        reddit
+        lyrics-plus
       ];
 
       enabledExtensions = with spicePkgs.extensions; [

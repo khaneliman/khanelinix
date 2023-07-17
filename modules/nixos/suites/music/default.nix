@@ -17,12 +17,12 @@ in {
     environment.systemPackages = with pkgs; [
       ardour
       cadence
+      spotify
     ];
 
     khanelinix = {
       apps = {
         yt-music = enabled;
-        spotify = enabled;
       };
     };
   };
