@@ -30,7 +30,7 @@ in {
 
       plymouth = {
         enable = true;
-        themePackages = [pkgs.khanelinix.catppuccin-plymouth];
+        themePackages = [pkgs.catppuccin-plymouth];
         theme = "catppuccin-macchiato";
         # font = "${pkgs.noto-fonts}/share/fonts/truetype/noto/NotoSans-Light.ttf";
       };
