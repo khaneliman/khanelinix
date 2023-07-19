@@ -19,26 +19,31 @@ in {
       ranger
 
       # scope dependenices
+      atool
+      bat
+      catdoc
+      ebook_tools
+      elinks
       exiftool
-      mediainfo
+      feh
+      ffmpegthumbnailer
+      fontforge
+      glow
       highlight
       libxls
-      catdoc
-      pandoc
-      ebook_tools
-      poppler_utils
-      ffmpegthumbnailer
-      jq
-      w3m
-      atool
-      unrar
-      p7zip
-      glow
-      bat
       lynx
-      elinks
+      mediainfo
+      mupdf
       odt2txt
-      fontforge
+      p7zip
+      pandoc
+      poppler_utils
+      transmission
+      unrar
+      unzip
+      w3m
+      xclip
+      xlsx2csv
     ];
 
     khanelinix.home = {
