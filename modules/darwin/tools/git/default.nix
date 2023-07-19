@@ -20,7 +20,17 @@ in {
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [git];
+    environment.systemPackages = with pkgs; [
+      gh
+      git
+      git-crypt
+      git-filter-repo
+      git-lfs
+      gitflow
+      gitleaks
+      gitlint
+      lazygit
+    ];
 
     khanelinix.home.extraOptions = {
       programs.git = {

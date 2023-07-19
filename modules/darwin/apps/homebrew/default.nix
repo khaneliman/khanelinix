@@ -106,36 +106,7 @@ in {
       ];
 
       masApps = {
-        "1Password for Safari" = 1569813296;
-        "AdGuard for Safari" = 1440147259;
-        "AmorphousMemoryMark" = 1495719766;
-        "Amphetamine" = 937984704;
-        "AutoMounter" = 1160435653;
-        "Brother iPrint&Scan" = 1193539993;
-        "Cascadea" = 1432182561;
-        "Dark Reader for Safari" = 1438243180;
-        "Disk Speed Test" = 425264550;
-        "GarageBand" = 682658836;
-        "iMovie" = 408981434;
-        "Infuse" = 1136220934;
-        "Keynote" = 409183694;
-        "Malwarebytes Browser Guard" = 1577761052;
-        "MediaInfo" = 510620098;
         "Messenger" = 1480068668;
-        "Microsoft OneNote" = 784801555;
-        "Microsoft Remote Desktop" = 1295203466;
-        "Notability" = 360593530;
-        "Numbers" = 409203825;
-        "Pages" = 409201541;
-        "Patterns" = 429449079;
-        "Pixelmator" = 407963104;
-        "PopClip" = 445189367;
-        "Prime Video" = 545519333;
-        "Slack" = 803453959;
-        "Telegram" = 747648890;
-        "TestFlight" = 899247664;
-        "WiFi Explorer" = 494803304;
-        "Xcode" = 497799835;
       };
     };
   };

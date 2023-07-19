@@ -4,6 +4,7 @@ with lib.internal; {
     suites = {
       art = enabled;
       brew = enabled;
+      business = enabled;
       common = enabled;
       desktop = enabled;
       development = enabled;

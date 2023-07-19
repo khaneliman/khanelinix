@@ -49,19 +49,10 @@ in {
       docutils
       efm-langserver
       eslint_d
-      gh
-      git
-      git-crypt
-      git-filter-repo
-      git-lfs
-      gitflow
-      gitleaks
-      gitlint
       gnumake
       gtksourceview4
       jq
       lazydocker
-      lazygit
       llvm
       luajitPackages.luacheck
       luajit_openresty
@@ -83,5 +74,14 @@ in {
       xmlformat
       yasm
     ];
+
+    homebrew = {
+      enable = true;
+
+      masApps = {
+        "Patterns" = 429449079;
+        "Xcode" = 497799835;
+      };
+    };
   };
 }

@@ -20,6 +20,7 @@ in {
       gdu
       bottom
       deno
+      lazygit
       # FIXME: This is not working
       # webkitgtk
     ];

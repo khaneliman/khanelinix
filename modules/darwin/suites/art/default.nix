@@ -20,6 +20,18 @@ in {
       inkscape
     ];
 
+    homebrew = {
+      enable = true;
+
+      masApps = {
+        "Infuse" = 1136220934;
+        "GarageBand" = 682658836;
+        "iMovie" = 408981434;
+        "Pixelmator" = 407963104;
+        "Prime Video" = 545519333;
+      };
+    };
+
     khanelinix = {
       apps = {
         # gimp = enabled;
