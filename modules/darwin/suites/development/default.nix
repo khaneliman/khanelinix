@@ -2,6 +2,7 @@
   options,
   config,
   lib,
+  pkgs,
   ...
 }:
 with lib;
@@ -30,5 +31,57 @@ in {
 
       # virtualisation = { podman = enabled; };
     };
+
+    environment.systemPackages = with pkgs; [
+      ack
+      act
+      armadillo
+      bear
+      bfg-repo-cleaner
+      binutils
+      binwalk
+      boost
+      ccls
+      clang-tools
+      cmake
+      cmocka
+      direnv
+      docutils
+      efm-langserver
+      eslint_d
+      gh
+      git
+      git-crypt
+      git-filter-repo
+      git-lfs
+      gitflow
+      gitleaks
+      gitlint
+      gnumake
+      gtksourceview4
+      jq
+      lazydocker
+      lazygit
+      llvm
+      luajitPackages.luacheck
+      luajit_openresty
+      luarocks
+      meson
+      mysql-client
+      neovide
+      onefetch
+      perl
+      php
+      pv
+      rapidjson
+      rlwrap
+      rustup
+      shellcheck
+      shfmt
+      swig
+      vbindiff
+      xmlformat
+      yasm
+    ];
   };
 }

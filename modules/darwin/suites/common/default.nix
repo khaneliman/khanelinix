@@ -18,20 +18,34 @@ in {
 
     environment.systemPackages = with pkgs; [
       bottom
+      btop
       curl
+      coreutils
       exa
+      fasd
       fd
-      feh
       file
+      findutils
       fzf
+      gnugrep
+      gnupg
+      gnused
+      gnutls
       jq
       khanelinix.list-iommu
       killall
+      lsd
+      oh-my-posh
       pciutils
+      pigz
+      rename
       socat
       tldr
+      tmux
       toilet
-      unzip
+      topgrade
+      trash-cli
+      tree
       wget
       xclip
 
@@ -51,6 +65,7 @@ in {
 
       cli-apps = {
         neovim = enabled;
+        ranger = enabled;
       };
 
       tools = {
