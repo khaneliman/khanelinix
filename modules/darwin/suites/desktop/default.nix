@@ -15,10 +15,6 @@ in {
 
   config = mkIf cfg.enable {
     khanelinix = {
-      apps = {
-        _1password = enabled;
-        firefox = enabled;
-      };
     };
   };
 }

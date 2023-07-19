@@ -15,39 +15,57 @@ in {
   };
 
   config = mkIf cfg.enable {
+    khanelinix = {
+      apps = {
+        homebrew = enabled;
+      };
+    };
+
     environment.systemPackages = with pkgs; [
+      # brightnessctl
+      # cifer
+      # clang-format
+      # dex2jar
+      # dns2tcp
+      # iproute2
+      # jpeg
+      # libdnet
+      # lua
+      # luajit
+      # pnpm
+      # screenresolution
+      # sfnt2woff
+      # sfnt2woff-zopfli
+      # switchaudio-osx
+      # wtfutil
+      # xdotool
+      # zsh-autosuggestions
+      # zsh-completions
+      # zsh-syntax-highlighting
+      # lua54Packages.lua
       ack
       act
       armadillo
       atool
-      bat
       bash-completion
+      bat
       bear
       bfg-repo-cleaner
       binutils
       binwalk
-      # blueutil
       boost
       bottom
-      haskellPackages.sfnt2woff
-      # sfnt2woff
-      # sfnt2woff-zopfli
-      # brew-cask-completion
-      # brightness
-      # brightnessctl
       btop
       calcurse
       cask
       ccls
-      # cifer
-      # clang-format
       clang-tools
       cmake
       cmocka
+      coreutils
+      curl
       deno
-      # dex2jar
       direnv
-      # dns2tcp
       docutils
       dooit
       duti
@@ -55,12 +73,10 @@ in {
       eslint_d
       exa
       fasd
-      # fastfetch
       fd
       feh
-      sketchybar
+      ffmpeg
       findutils
-      # fisher
       fontforge
       fzf
       gawk
@@ -68,50 +84,45 @@ in {
       git
       git-crypt
       git-filter-repo
-      # git-flow
-      gitflow
       git-lfs
+      gitflow
       gitleaks
       gitlint
       glow
+      gnugrep
+      gnumake
       gnupg
+      gnused
+      gnutls
       gsl
       gtk-vnc
+      gtk3
       gtksourceview4
-      # ical-buddy
-      # iproute2
+      haskellPackages.sfnt2woff
+      # ifstat-legacy
       imagemagick
       intltool
-      # jpeg
       jq
       jrnl
       keychain
-      spicetify-cli
-      skhd
-      yabai
       lazydocker
       lazygit
       libcerf
-      # libdnet
       libgit2
       libmms
       libnice
       libosinfo
       libsass
       libsoup
+      libvirt
       libvirt-glib
       libxml2
       llvm
       lolcat
       lsd
-      # lua
-      # luajit
       luajitPackages.luacheck
-      # luacheck
       luajit_openresty
       luarocks
-      # make
-      gnumake
       mas
       meson
       moreutils
@@ -119,16 +130,15 @@ in {
       nb
       ncdu
       neovide
+      nmap
       oh-my-posh
       onefetch
       openssh
+      p7zip
       perl
       php
       pigz
       pngcheck
-      # pnpm
-      nodePackages.pnpm
-      nodePackages.prettier
       pv
       qemu
       ranger
@@ -136,16 +146,15 @@ in {
       rename
       rlwrap
       rustup
-      # screenresolution
       shellcheck
       shfmt
       socat
       speedtest-cli
       spice-gtk
+      spicetify-cli
       spotify-tui
       ssh-copy-id
       swig
-      # switchaudio-osx
       terminal-notifier
       tldr
       tmux
@@ -154,22 +163,16 @@ in {
       trash-cli
       tree
       vbindiff
-      # vte3
       vte
       wego
       wget
       wireguard-go
-      # wtfutil
       wtf
       xclip
-      # xdotool
       xmlformat
       xpdf
       yasm
       youtube-dl
-      # zsh-autosuggestions
-      # zsh-completions
-      # zsh-syntax-highlighting
     ];
   };
 }

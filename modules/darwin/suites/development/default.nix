@@ -16,10 +16,6 @@ in {
 
   config = mkIf cfg.enable {
     khanelinix = {
-      apps = {
-        vscode = enabled;
-      };
-
       tools = {
         # at = enabled;
         # direnv = enabled;
