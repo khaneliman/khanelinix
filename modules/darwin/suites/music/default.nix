@@ -15,9 +15,9 @@ in {
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      # blender
-      gimp
-      inkscape
+      spicetify-cli
+      spotify-tui
+      youtube-dl
     ];
 
     homebrew = {
@@ -33,14 +33,6 @@ in {
 
       masApps = {
         "GarageBand" = 682658836;
-      };
-    };
-
-    khanelinix = {
-      apps = {
-        # gimp = enabled;
-        # inkscape = enabled;
-        # blender = enabled;
       };
     };
   };

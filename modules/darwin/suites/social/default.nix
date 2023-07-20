@@ -13,9 +13,6 @@ in {
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [
-    ];
-
     homebrew = {
       enable = true;
 
@@ -33,11 +30,6 @@ in {
         "Messenger" = 1480068668;
         "Slack" = 803453959;
         "Telegram" = 747648890;
-      };
-    };
-
-    khanelinix = {
-      apps = {
       };
     };
   };

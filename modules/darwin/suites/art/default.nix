@@ -18,6 +18,8 @@ in {
       # blender
       gimp
       inkscape
+      imagemagick
+      pngcheck
     ];
 
     homebrew = {
@@ -34,14 +36,6 @@ in {
       masApps = {
         "Pixelmator" = 407963104;
         "MediaInfo" = 510620098;
-      };
-    };
-
-    khanelinix = {
-      apps = {
-        # gimp = enabled;
-        # inkscape = enabled;
-        # blender = enabled;
       };
     };
   };

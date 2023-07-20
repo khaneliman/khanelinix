@@ -17,36 +17,51 @@ in {
     programs.zsh = enabled;
 
     environment.systemPackages = with pkgs; [
+      bash-completion
       bottom
       btop
-      curl
+      cask
       coreutils
+      curl
+      duti
       exa
       fasd
       fd
       file
       findutils
       fzf
+      gawk
       gnugrep
       gnupg
       gnused
       gnutls
+      haskellPackages.sfnt2woff
+      intltool
       jq
+      keychain
       khanelinix.list-iommu
       killall
+      lolcat
       lsd
+      mas
+      moreutils
+      ncdu
       oh-my-posh
       pciutils
       pigz
       rename
       socat
+      spice-gtk
+      terminal-notifier
       tldr
       tmux
       toilet
       topgrade
       trash-cli
       tree
+      wego
       wget
+      wtf
       xclip
 
       # nixos
@@ -60,8 +75,6 @@ in {
 
     khanelinix = {
       nix = enabled;
-
-      apps = {};
 
       cli-apps = {
         neovim = enabled;

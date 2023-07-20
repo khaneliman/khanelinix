@@ -2,7 +2,6 @@
   options,
   config,
   lib,
-  pkgs,
   ...
 }:
 with lib;
@@ -14,9 +13,6 @@ in {
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [
-    ];
-
     homebrew = {
       enable = true;
 
@@ -27,17 +23,6 @@ in {
       casks = [
         "moonlight"
       ];
-
-      masApps = {
-      };
-    };
-
-    khanelinix = {
-      apps = {
-        # gimp = enabled;
-        # inkscape = enabled;
-        # blender = enabled;
-      };
     };
   };
 }

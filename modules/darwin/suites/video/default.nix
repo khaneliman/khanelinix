@@ -15,9 +15,7 @@ in {
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      # blender
-      gimp
-      inkscape
+      ffmpeg
     ];
 
     homebrew = {
@@ -27,21 +25,10 @@ in {
         brewfile = true;
       };
 
-      casks = [
-      ];
-
       masApps = {
         "Infuse" = 1136220934;
         "iMovie" = 408981434;
         "Prime Video" = 545519333;
-      };
-    };
-
-    khanelinix = {
-      apps = {
-        # gimp = enabled;
-        # inkscape = enabled;
-        # blender = enabled;
       };
     };
   };

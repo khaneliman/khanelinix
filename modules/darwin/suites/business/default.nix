@@ -2,6 +2,7 @@
   options,
   config,
   lib,
+  pkgs,
   ...
 }:
 with lib;
@@ -13,7 +14,11 @@ in {
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [
+    environment.systemPackages = with pkgs; [
+      calcurse
+      dooit
+      jrnl
+      nb
     ];
 
     homebrew = {
@@ -48,11 +53,6 @@ in {
         "Notability" = 360593530;
         "Numbers" = 409203825;
         "Pages" = 409201541;
-      };
-    };
-
-    khanelinix = {
-      apps = {
       };
     };
   };

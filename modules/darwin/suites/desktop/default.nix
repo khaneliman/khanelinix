@@ -79,8 +79,5 @@ in {
         "WiFi Explorer" = 494803304;
       };
     };
-
-    khanelinix = {
-    };
   };
 }
