@@ -78,6 +78,29 @@ in {
     homebrew = {
       enable = true;
 
+      global = {
+        brewfile = true;
+      };
+
+      brews = [
+        "brew-cask-completion"
+        "jq"
+        "gh"
+      ];
+
+      casks = [
+        "cutter"
+        "docker"
+        "electron"
+        "powershell"
+        "visual-studio-code"
+      ];
+
+      taps = [
+        "cloudflare/cloudflare"
+        "earthly/earthly"
+      ];
+
       masApps = {
         "Patterns" = 429449079;
         "Xcode" = 497799835;

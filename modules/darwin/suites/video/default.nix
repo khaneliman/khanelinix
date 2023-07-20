@@ -7,10 +7,10 @@
 }:
 with lib;
 with lib.internal; let
-  cfg = config.khanelinix.suites.art;
+  cfg = config.khanelinix.suites.video;
 in {
-  options.khanelinix.suites.art = with types; {
-    enable = mkBoolOpt false "Whether or not to enable art configuration.";
+  options.khanelinix.suites.video = with types; {
+    enable = mkBoolOpt false "Whether or not to enable video configuration.";
   };
 
   config = mkIf cfg.enable {
@@ -28,12 +28,12 @@ in {
       };
 
       casks = [
-        "inkscape"
       ];
 
       masApps = {
-        "Pixelmator" = 407963104;
-        "MediaInfo" = 510620098;
+        "Infuse" = 1136220934;
+        "iMovie" = 408981434;
+        "Prime Video" = 545519333;
       };
     };
 

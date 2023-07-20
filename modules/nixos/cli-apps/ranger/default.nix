@@ -30,7 +30,6 @@ in {
       fontforge
       glow
       highlight
-      libxls
       lynx
       mediainfo
       mupdf
@@ -38,6 +37,7 @@ in {
       p7zip
       pandoc
       poppler_utils
+      python311Packages.pygments
       transmission
       unrar
       unzip

@@ -8,6 +8,11 @@ with lib.internal; {
       common = enabled;
       desktop = enabled;
       development = enabled;
+      games = enabled;
+      music = enabled;
+      social = enabled;
+      video = enabled;
+      vm = enabled;
     };
   };
 

@@ -7,17 +7,14 @@
 }:
 with lib;
 with lib.internal; let
-  cfg = config.khanelinix.suites.art;
+  cfg = config.khanelinix.suites.games;
 in {
-  options.khanelinix.suites.art = with types; {
-    enable = mkBoolOpt false "Whether or not to enable art configuration.";
+  options.khanelinix.suites.games = with types; {
+    enable = mkBoolOpt false "Whether or not to enable games configuration.";
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      # blender
-      gimp
-      inkscape
+    environment.systemPackages = [
     ];
 
     homebrew = {
@@ -28,12 +25,10 @@ in {
       };
 
       casks = [
-        "inkscape"
+        "moonlight"
       ];
 
       masApps = {
-        "Pixelmator" = 407963104;
-        "MediaInfo" = 510620098;
       };
     };
 

@@ -7,10 +7,10 @@
 }:
 with lib;
 with lib.internal; let
-  cfg = config.khanelinix.suites.art;
+  cfg = config.khanelinix.suites.music;
 in {
-  options.khanelinix.suites.art = with types; {
-    enable = mkBoolOpt false "Whether or not to enable art configuration.";
+  options.khanelinix.suites.music = with types; {
+    enable = mkBoolOpt false "Whether or not to enable music configuration.";
   };
 
   config = mkIf cfg.enable {
@@ -28,12 +28,11 @@ in {
       };
 
       casks = [
-        "inkscape"
+        "spotify"
       ];
 
       masApps = {
-        "Pixelmator" = 407963104;
-        "MediaInfo" = 510620098;
+        "GarageBand" = 682658836;
       };
     };
 

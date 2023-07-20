@@ -14,24 +14,41 @@ in {
   };
 
   config = mkIf cfg.enable {
+    homebrew = {
+      enable = true;
+
+      brews = [
+        "librsvg"
+      ];
+
+      casks = [
+      ];
+    };
+
     environment.systemPackages = with pkgs; [
+      ranger
+
+      # calibre
+      # gnome-epub-thumbnailer
       atool
       bat
-      # calibre
+      catdoc
+      ebook_tools
+      elinks
       exiftool
       feh
       ffmpegthumbnailer
       fontforge
       glow
-      # gnome-epub-thumbnailer
       highlight
+      lynx
       mediainfo
       mupdf
       odt2txt
       p7zip
       pandoc
       poppler_utils
-      ranger
+      python311Packages.pygments
       transmission
       unrar
       unzip

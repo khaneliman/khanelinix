@@ -17,6 +17,53 @@ in {
     homebrew = {
       enable = true;
 
+      global = {
+        brewfile = true;
+      };
+
+      brews = [
+        "fastfetch"
+        "felixkratz/formulae/sketchybar"
+        "fisher"
+        "ical-buddy"
+        "koekeishiya/formulae/skhd"
+        "koekeishiya/formulae/yabai"
+        "blueutil"
+        "switchaudio-osx"
+        "ifstat"
+      ];
+
+      casks = [
+        "alacritty"
+        "alfred"
+        "alt-tab"
+        "appcleaner"
+        "bartender"
+        "bitwarden"
+        "brightness"
+        "firefox-developer-edition"
+        "gpg-suite"
+        "hammerspoon"
+        "kitty"
+        "lulu"
+        "monitorcontrol"
+        "raycast"
+        "sf-symbols"
+        "stats"
+        "xquartz"
+      ];
+
+      taps = [
+        "beeftornado/rmtree"
+        "bramstein/webfonttools"
+        "felixkratz/formulae"
+        "khanhas/tap"
+        "koekeishiya/formulae"
+        "romkatv/powerlevel10k"
+        "shaunsingh/sfmono-nerd-font-ligaturized"
+        "teamookla/speedtest"
+      ];
+
       masApps = {
         "AdGuard for Safari" = 1440147259;
         "AmorphousMemoryMark" = 1495719766;
@@ -30,7 +77,6 @@ in {
         "PopClip" = 445189367;
         "TestFlight" = 899247664;
         "WiFi Explorer" = 494803304;
-        "MediaInfo" = 510620098;
       };
     };
 
