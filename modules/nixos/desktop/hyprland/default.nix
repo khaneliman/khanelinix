@@ -11,7 +11,6 @@ with lib.internal; let
   cfg = config.khanelinix.desktop.hyprland;
   hyprBasePath = inputs.dotfiles.outPath + "/dots/linux/hyprland/home/.config/hypr/";
   programs = lib.makeBinPath [config.programs.hyprland.package];
-  datadir = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}";
 in {
   options.khanelinix.desktop.hyprland = with types; {
     enable = mkBoolOpt false "Whether or not to enable Hyprland.";
@@ -63,22 +62,11 @@ in {
         };
 
         home = {
-          configFile = with inputs;
+          configFile =
             {
               "hypr/assets/square.png".source = hyprBasePath + "assets/square.png";
               "hypr/assets/diamond.png".source = hyprBasePath + "assets/diamond.png";
-              "hypr/binds.conf".source = hyprBasePath + "binds.conf";
-              "hypr/environment.conf".text = ''
-                # ░█▀█░▀█▀░█░█░█▀█░█▀▀
-                # ░█░█░░█░░▄▀▄░█░█░▀▀█
-                # ░▀░▀░▀▀▀░▀░▀░▀▀▀░▀▀▀
-
-                env = XDG_DATA_DIRS,${datadir}:$XDG_DATA_DIRS
-              '';
-              "hypr/hyprland.conf".source = hyprBasePath + "hyprland.conf";
               "hypr/hyprpaper.conf".source = hyprBasePath + "hyprpaper.conf";
-              "hypr/variables.conf".source = hyprBasePath + "variables.conf";
-              "hypr/windowrules.conf".source = hyprBasePath + "windowrules.conf";
             }
             // cfg.customConfigFiles;
 

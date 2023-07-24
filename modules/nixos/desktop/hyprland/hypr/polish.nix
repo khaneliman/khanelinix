@@ -18,13 +18,6 @@
           # ░░▀░░▀░▀░▀▀▀░▀░▀░▀▀▀
 
           hyprctl setcursor ${config.khanelinix.desktop.addons.gtk.cursor.name} 32
-
-          # ░█▀▀░█▀▄░█▀▀░█▀▀░▀█▀░█▀▀░█▀▄
-          # ░█░█░█▀▄░█▀▀░█▀▀░░█░░█▀▀░█▀▄
-          # ░▀▀▀░▀░▀░▀▀▀░▀▀▀░░▀░░▀▀▀░▀░▀
-
-          # greeting
-          exec = notify-send --icon ~/.face -u normal "Hello $(whoami)"
         '';
       };
     };

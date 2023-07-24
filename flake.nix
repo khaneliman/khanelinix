@@ -206,7 +206,6 @@
 
       systems.modules.home = with inputs; [
         home-manager.homeModules.home-manager
-        hyprland.homeManagerModules.default
         # agenix.homeModules.default
       ];
 
