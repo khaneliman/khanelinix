@@ -110,6 +110,16 @@ in {
           "$launcher_alt" = "rofi - show run - n";
           "$launchpad" = "rofi - show drun - config '~/.config/rofi/appmenu/rofi.rasi'";
           "$looking-glass" = "looking-glass-client";
+
+          # TODO: dynamic configuration support instead of hard coded
+          "$w1" = "hyprctl hyprpaper wallpaper \"DP-3,~/.local/share/wallpapers/catppuccin/flatppuccin_macchiato.png\"";
+          "$w2" = "hyprctl hyprpaper wallpaper \"DP-1,~/.local/share/wallpapers/catppuccin/buttons.png\"";
+          "$w3" = "hyprctl hyprpaper wallpaper \"DP-1,~/.local/share/wallpapers/catppuccin/cat_pacman.png\"";
+          "$w4" = "hyprctl hyprpaper wallpaper \"DP-1,~/.local/share/wallpapers/catppuccin/cat-sound.png\"";
+          "$w5" = "hyprctl hyprpaper wallpaper \"DP-1,~/.local/share/wallpapers/catppuccin/hashtags-black.png\"";
+          "$w6" = "hyprctl hyprpaper wallpaper \"DP-1,~/.local/share/wallpapers/catppuccin/hashtags-new.png\"";
+          "$w7" = "hyprctl hyprpaper wallpaper \"DP-1,~/.local/share/wallpapers/catppuccin/hearts.png\"";
+          "$w8" = "hyprctl hyprpaper wallpaper \"DP-1,~/.local/share/wallpapers/catppuccin/tetris.png\"";
         };
       };
     };
