@@ -46,8 +46,6 @@ in {
       glib # for gsettings
       gtk3.out # for gtk-launch
       playerctl
-      # TODO: remove after figuring out graphical-session.target services
-      networkmanagerapplet
     ];
   };
 }
