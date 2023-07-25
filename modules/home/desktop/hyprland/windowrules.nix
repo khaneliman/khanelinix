@@ -130,9 +130,9 @@ in {
             "workspace 6 silent, class:^(thunderbird)$"
             "workspace 6 silent, class:^(Mailspring)$"
             # Media
-            "workspace 7, class:^(mpv)$"
-            "workspace 7, class:^(vlc)$"
+            "workspace 7, class:^(mpv|vlc|mpdevil)$"
             "workspace 7 silent, class:^(Spotify)$"
+            "workspace 7 silent, title:^(Spotify)$"
             "tile, class:^(Spotify)$"
             "workspace 7 silent, class:^(elisa)$"
             #Remote
