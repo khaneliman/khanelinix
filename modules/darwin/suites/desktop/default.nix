@@ -14,6 +14,10 @@ in {
   };
 
   config = mkIf cfg.enable {
+    khanelinix.desktop.addons = {
+      skhd = enabled;
+    };
+
     homebrew = {
       enable = true;
 
@@ -26,7 +30,6 @@ in {
         "felixkratz/formulae/sketchybar"
         "fisher"
         "ical-buddy"
-        "koekeishiya/formulae/skhd"
         "koekeishiya/formulae/yabai"
         "blueutil"
         "switchaudio-osx"
