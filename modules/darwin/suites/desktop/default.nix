@@ -16,6 +16,7 @@ in {
   config = mkIf cfg.enable {
     khanelinix.desktop.addons = {
       skhd = enabled;
+      yabai = enabled;
     };
 
     homebrew = {
@@ -30,7 +31,6 @@ in {
         "felixkratz/formulae/sketchybar"
         "fisher"
         "ical-buddy"
-        "koekeishiya/formulae/yabai"
         "blueutil"
         "switchaudio-osx"
         "ifstat"
@@ -61,7 +61,6 @@ in {
         "bramstein/webfonttools"
         "felixkratz/formulae"
         "khanhas/tap"
-        "koekeishiya/formulae"
         "romkatv/powerlevel10k"
         "shaunsingh/sfmono-nerd-font-ligaturized"
         "teamookla/speedtest"
