@@ -2,7 +2,6 @@
   options,
   config,
   lib,
-  pkgs,
   ...
 }:
 with lib;
@@ -22,7 +21,7 @@ in {
       # swappy = enabled;
       swaylock = enabled;
       # swaynotificationcenter = enabled;
-      # waybar = enabled;
+      waybar = enabled;
       # wdisplays = enabled;
       # wlogout = enabled;
     };

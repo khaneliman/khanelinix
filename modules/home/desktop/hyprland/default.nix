@@ -34,6 +34,7 @@ in {
       khanelinix.suites.wlroots = enabled;
 
       systemd.user.services.swayidle.Install.WantedBy = lib.mkForce ["hyprland-session.target"];
+      programs.waybar.systemd.target = "hyprland-session.target";
 
       wayland.windowManager.hyprland = {
         enable = true;

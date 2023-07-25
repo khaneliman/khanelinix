@@ -24,7 +24,6 @@ in {
       swappy = enabled;
       swaylock = enabled;
       swaynotificationcenter = enabled;
-      waybar = enabled;
       wdisplays = enabled;
       wlogout = enabled;
     };

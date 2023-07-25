@@ -6,31 +6,6 @@
     "width": 30,
     "icon": true
   },
-  "custom/wlogout": {
-    "format": "",
-    "interval": "once",
-    "on-click": "wlogout -c 5 -r 5 -p layer-shell"
-  },
-  "wlr/workspaces": {
-    "all-outputs": false,
-    "active-only": "false",
-    "on-click": "activate",
-    "format": "{icon}",
-    "on-scroll-up": "hyprctl dispatch workspace e+1",
-    "on-scroll-down": "hyprctl dispatch workspace e-1",
-    "format-icons": {
-      "1": "",
-      "2": "",
-      "3": "",
-      "4": "",
-      "5": "",
-      "6": "",
-      "7": "",
-      "8": "󰢹",
-      "urgent": "",
-      "default": ""
-    }
-  },
   "keyboard-state": {
     "numlock": true,
     "capslock": true,
@@ -39,15 +14,6 @@
       "locked": "",
       "unlocked": ""
     }
-  },
-  "hyprland/window": {
-    "format": "{}",
-    "separate-outputs": true
-  },
-  "hyprland/submap": {
-    "format": "✌️ {}",
-    "max-length": 8,
-    "tooltip": false
   },
   "mpris": {
     "format": "{player_icon} {status_icon} {dynamic}",
@@ -172,50 +138,6 @@
   "custom/separator-left": {
     "format": "",
     "tooltip": false
-  },
-  "custom/notification": {
-    "tooltip": true,
-    "format": "{icon} {}",
-    "format-icons": {
-      "notification": "<span foreground='red'><sup></sup></span>",
-      "none": "",
-      "dnd-notification": "<span foreground='red'><sup></sup></span>",
-      "dnd-none": "",
-      "inhibited-notification": "<span foreground='red'><sup></sup></span>",
-      "inhibited-none": "",
-      "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
-      "dnd-inhibited-none": ""
-    },
-    "return-type": "json",
-    "exec-if": "which swaync-client",
-    "exec": "swaync-client -swb",
-    "on-click": "swaync-client -t -sw",
-    "on-click-right": "swaync-client -d -sw",
-    "escape": true
-  },
-  "custom/updates": {
-    "format": "{} {icon}",
-    "return-type": "json",
-    "format-icons": {
-      "has-updates": "󱍷",
-      "updated": "󰂪"
-    },
-    "exec-if": "which waybar-module-pacman-updates",
-    "exec": "waybar-module-pacman-updates"
-  },
-  "custom/github": {
-    "format": " {}",
-    "return-type": "json",
-    "interval": 60,
-    "exec": "$HOME/.config/waybar/scripts/github.sh",
-    "on-click": "xdg-open https://github.com/notifications"
-  },
-  "custom/weather": {
-    "exec": "$HOME/.config/waybar/scripts/weather.py -l $(jq -r '.weathergov | \"(.location)\"' ~/weather_config.json)",
-    "return-type": "json",
-    "format": "{}",
-    "tooltip": true,
-    "interval": 3600
   },
   "group/stats": {
     "orientation": "horizontal",
