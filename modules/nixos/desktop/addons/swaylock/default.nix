@@ -2,8 +2,6 @@
   options,
   config,
   lib,
-  pkgs,
-  inputs,
   ...
 }:
 with lib;
@@ -16,13 +14,6 @@ in {
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [swaylock-effects];
     security.pam.services.swaylock = {};
-
-    khanelinix.home = {
-      configFile = with inputs; {
-        "swaylock/".source = dotfiles.outPath + "/dots/linux/hyprland/home/.config/swaylock";
-      };
-    };
   };
 }

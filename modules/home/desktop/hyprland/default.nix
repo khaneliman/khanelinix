@@ -31,6 +31,8 @@ in {
     mkIf cfg.enable
     {
       # start swayidle as part of hyprland, not sway
+      khanelinix.suites.wlroots = enabled;
+
       systemd.user.services.swayidle.Install.WantedBy = lib.mkForce ["hyprland-session.target"];
 
       wayland.windowManager.hyprland = {

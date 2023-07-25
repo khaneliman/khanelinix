@@ -28,7 +28,7 @@ in {
               "$mainMod, SPACE, exec, $launcher"
               "SUPER_SHIFT, SPACE, exec, $launcher_alt"
               "$mainMod, A, exec, $launchpad"
-              "$mainMod, L, exec, swaylock --grace 0 --fade-in 0"
+              "$mainMod, L, exec, ${config.programs.swaylock.package}/bin/swaylock --grace 0 --fade-in 0"
               "$mainMod, T, exec, $term btop"
               "$mainMod, N, exec, swaync-client -t -sw"
               # "SUPER, V, clipman pick -t rofi
