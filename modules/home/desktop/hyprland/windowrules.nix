@@ -79,6 +79,8 @@ in {
             # Require input
             "bordercolor rgba(ed8796FF), class:org.kde.polkit-kde-authentication-agent-1"
             "dimaround, class:org.kde.polkit-kde-authentication-agent-1"
+            "stayfocused, class:org.kde.polkit-kde-authentication-agent-1"
+            "stayfocused, class:Rofi"
 
             ##
             # ░▀█▀░█▀▄░█░░░█▀▀░▀█▀░█▀█░█░█░▀█▀░█▀▄░▀█▀░▀█▀

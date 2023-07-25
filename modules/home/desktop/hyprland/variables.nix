@@ -106,9 +106,9 @@ in {
           "$explorer" = "thunar";
           "$music" = "spotify";
           "$notepad" = "code - -profile notepad - -unity-launch ~/Templates";
-          "$launcher" = "rofi - show drun - n";
-          "$launcher_alt" = "rofi - show run - n";
-          "$launchpad" = "rofi - show drun - config '~/.config/rofi/appmenu/rofi.rasi'";
+          "$launcher" = "rofi -show drun -n";
+          "$launcher_alt" = "rofi -show run -n";
+          "$launchpad" = "rofi -show drun -config '~/.config/rofi/appmenu/rofi.rasi'";
           "$looking-glass" = "looking-glass-client";
 
           # TODO: dynamic configuration support instead of hard coded
