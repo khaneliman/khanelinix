@@ -22,7 +22,6 @@ in {
     khanelinix.desktop.addons = {
       electron-support = enabled;
       swappy = enabled;
-      swayidle = enabled;
       swaylock = enabled;
       swaynotificationcenter = enabled;
       waybar = enabled;

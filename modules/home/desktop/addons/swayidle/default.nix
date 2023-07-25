@@ -22,11 +22,11 @@ in {
       events = [
         {
           event = "before-sleep";
-          command = "swaylock -f -c 000000";
+          command = "${pkgs.swaylock-effects}/bin/swaylock -f -c 000000";
         }
         {
           event = "after-resume";
-          command = "hyprctl dispatch dpms on";
+          command = "${pkgs.hyprland}/bin/hyprctl dispatch dpms on";
         }
         {
           event = "lock";
@@ -36,11 +36,11 @@ in {
       timeouts = [
         {
           timeout = 300;
-          command = "swaylock -f";
+          command = "${pkgs.swaylock-effects}/bin/swaylock -f";
         }
         {
           timeout = 600;
-          command = "hyprctl dispatch dpms off";
+          command = "${pkgs.hyprland}/bin/hyprctl dispatch dpms off";
         }
       ];
     };

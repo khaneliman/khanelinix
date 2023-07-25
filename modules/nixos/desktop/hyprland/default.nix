@@ -114,8 +114,5 @@ in {
         hyprpicker
         inputs.hyprland-contrib.packages.${pkgs.hostPlatform.system}.grimblast
       ];
-
-      # start swayidle as part of hyprland, not sway
-      # systemd.user.services.swayidle.Install.WantedBy = lib.mkForce ["hyprland-session.target"];
     };
 }
