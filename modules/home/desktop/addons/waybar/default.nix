@@ -81,7 +81,7 @@ in {
           "margin-top" = 10;
           "margin-left" = 20;
           "margin-right" = 20;
-          "modules-center" = [];
+          "modules-center" = ["mpris"];
           "modules-left" = [
             "custom/wlogout"
             "wlr/workspaces"

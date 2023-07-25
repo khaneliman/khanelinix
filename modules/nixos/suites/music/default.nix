@@ -14,9 +14,21 @@ in {
   };
 
   config = mkIf cfg.enable {
+    # services.mpd = {
+    #   enable = true;
+    #   user = config.khanelinix.user.name;
+    # };
+
+    khanelinix.user.extraGroups = ["mpd"];
+
     environment.systemPackages = with pkgs; [
       ardour
       cadence
+      mpd-mpris
+      mpd-notification
+      mpdevil
+      mpdris2
+      # ncmpcpp
       spotify
     ];
 

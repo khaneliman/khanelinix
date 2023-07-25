@@ -35,6 +35,16 @@ with lib.internal; {
       xdg = enabled;
     };
 
+    services = {
+      mpd = {
+        musicDirectory = "nfs://austinserver.local/mnt/user/data/media/music";
+      };
+    };
+
+    suites = {
+      music = enabled;
+    };
+
     tools = {
       direnv = enabled;
       git = enabled;

@@ -155,6 +155,9 @@ with lib.internal; {
   };
 
   services.xserver.displayManager.defaultSession = "hyprland";
+  services.mpd = {
+    musicDirectory = "nfs://austinserver.local/mnt/user/data/media/music";
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

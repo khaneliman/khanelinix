@@ -25,9 +25,7 @@ in {
             "command -v openrgb && openrgb --startminimized --profile default"
             "command -v 1password && 1password --silent"
             "command -v blueman-applet && blueman-applet"
-            "command -v mpd && mpd"
-            "command -v mpd-mpris && sleep 2 && mpd-mpris"
-            "command -v clipman && wl-paste --watch clipman store"
+            "command -v mpd-mpris && mpd-mpris"
             "command -v cliphist && wl-paste --type text --watch cliphist store" #Stores only text data
             "command -v cliphist && wl-paste --type image --watch cliphist store" #Stores only image data
 
