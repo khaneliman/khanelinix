@@ -13,7 +13,7 @@ in {
   options.khanelinix.display-managers.gdm = with types; {
     enable = mkBoolOpt false "Whether or not to enable gdm.";
     wayland = mkBoolOpt true "Whether or not to use Wayland.";
-    suspend =
+    autoSuspend =
       mkBoolOpt true "Whether or not to suspend the machine after inactivity.";
     monitors = mkOpt (nullOr path) null "The monitors.xml file to create.";
     defaultSession = mkOpt (nullOr types.str) null "The default session to use.";
@@ -41,8 +41,7 @@ in {
 
           gdm = {
             enable = true;
-            inherit (cfg) wayland;
-            autoSuspend = cfg.suspend;
+            inherit (cfg) wayland autoSuspend;
           };
         };
       };

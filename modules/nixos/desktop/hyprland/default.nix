@@ -59,6 +59,7 @@ in {
         display-managers.gdm = {
           enable = true;
           defaultSession = "hyprland";
+          autoSuspend = false;
         };
 
         home = {

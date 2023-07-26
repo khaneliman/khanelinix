@@ -2,7 +2,6 @@
   options,
   config,
   lib,
-  pkgs,
   ...
 }:
 with lib;
@@ -18,6 +17,7 @@ in {
     services.swayidle = {
       enable = true;
       systemdTarget = "graphical-session.target";
+      # TODO: Make dynamic for window manager
       events = [
         {
           event = "before-sleep";
@@ -25,7 +25,7 @@ in {
         }
         {
           event = "after-resume";
-          command = "${pkgs.hyprland}/bin/hyprctl dispatch dpms on";
+          command = "${config.wayland.windowManager.hyprland.package}/bin/hyprctl dispatch dpms on";
         }
         {
           event = "lock";
@@ -39,7 +39,7 @@ in {
         }
         {
           timeout = 600;
-          command = "${pkgs.hyprland}/bin/hyprctl dispatch dpms off";
+          command = "${config.wayland.windowManager.hyprland.package}/bin/hyprctl dispatch dpms off";
         }
       ];
     };
