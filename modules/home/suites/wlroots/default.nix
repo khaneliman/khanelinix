@@ -26,6 +26,10 @@ in {
       # wlogout = enabled;
     };
 
+    khanelinix.security = {
+      keyring = enabled;
+    };
+
     # using nixos module
     # services.network-manager-applet.enable = true;
     services.blueman-applet.enable = true;

@@ -2,7 +2,6 @@
   options,
   config,
   lib,
-  pkgs,
   ...
 }:
 with lib;
@@ -14,10 +13,10 @@ in {
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      gnome.libgnome-keyring
-    ];
+    services.gnome-keyring = {
+      enable = true;
 
-    services.gnome.gnome-keyring.enable = true;
+      components = ["pkcs11" "secrets" "ssh"];
+    };
   };
 }

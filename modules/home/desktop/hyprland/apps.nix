@@ -19,7 +19,7 @@ in {
             # ░▀░▀░▀░░░▀░░░░░▀▀▀░░▀░░▀░▀░▀░▀░░▀░░▀▀▀░▀░░
 
             # Startup background apps
-            "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1 & eval $(gnome-keyring-daemon -s --components=pkcs11,secrets,ssh,gpg) && export $(gnome-keyring-daemon --start --components=gpg,pkcs11,secrets,ssh)"
+            "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1 &"
             "command -v hyprpaper && hyprpaper"
             "command -v ckb-next && ckb-next -b"
             "command -v openrgb && openrgb --startminimized --profile default"
