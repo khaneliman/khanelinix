@@ -15,7 +15,7 @@ in {
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      winePackages.waylandFull
+      # winePackages.waylandFull
       winetricks
       wine64Packages.waylandFull
     ];

@@ -24,7 +24,6 @@ in {
             "command -v ckb-next && ckb-next -b"
             "command -v openrgb && openrgb --startminimized --profile default"
             "command -v 1password && 1password --silent"
-            "command -v blueman-applet && blueman-applet"
             "command -v mpd-mpris && mpd-mpris"
             "command -v cliphist && wl-paste --type text --watch cliphist store" #Stores only text data
             "command -v cliphist && wl-paste --type image --watch cliphist store" #Stores only image data

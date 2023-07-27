@@ -24,7 +24,7 @@ in {
 
     environment.systemPackages = with pkgs; [font-manager fontpreview];
 
-    fonts.fonts = with pkgs;
+    fonts.packages = with pkgs;
       [
         noto-fonts
         noto-fonts-cjk-sans
