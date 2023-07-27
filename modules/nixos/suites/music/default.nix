@@ -24,7 +24,6 @@ in {
     environment.systemPackages = with pkgs; [
       ardour
       cadence
-      mpd-mpris
       mpd-notification
       mpdevil
       mpdris2

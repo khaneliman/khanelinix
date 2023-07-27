@@ -28,9 +28,14 @@ in {
   };
 
   config = mkIf cfg.enable {
-    services.mpd = {
-      enable = true;
-      musicDirectory = cfg.musicDirectory;
+    services = {
+      mpd = {
+        enable = true;
+        musicDirectory = cfg.musicDirectory;
+      };
+      mpd-mpris = {
+        enable = true;
+      };
     };
   };
 }
