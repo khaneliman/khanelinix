@@ -2,6 +2,7 @@
   options,
   config,
   lib,
+  pkgs,
   ...
 }:
 with lib;
@@ -14,6 +15,7 @@ in {
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [swaylock-effects];
     security.pam.services.swaylock = {};
   };
 }

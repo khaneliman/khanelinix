@@ -17,7 +17,12 @@ in {
     mkIf cfg.enable
     {
       environment.systemPackages = with pkgs; [
-        (python311.withPackages (ps: with ps; [requests]))
+        (python311.withPackages (ps:
+          with ps; [
+            requests
+            pyqt5
+            qtpy
+          ]))
       ];
     };
 }

@@ -40,6 +40,7 @@ in {
         enable = true;
         xwayland.enable = true;
         systemdIntegration = true;
+        package = pkgs.hyprland;
 
         settings = {
           exec = [
