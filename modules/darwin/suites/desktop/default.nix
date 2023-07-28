@@ -17,6 +17,7 @@ in {
     khanelinix.desktop.addons = {
       skhd = enabled;
       yabai = enabled;
+      sketchybar = enabled;
     };
 
     homebrew = {
@@ -28,7 +29,6 @@ in {
 
       brews = [
         "fastfetch"
-        "felixkratz/formulae/sketchybar"
         "fisher"
         "ical-buddy"
         "blueutil"
