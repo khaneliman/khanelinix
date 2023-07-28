@@ -48,6 +48,7 @@ in {
         "gpg-suite"
         "hammerspoon"
         "kitty"
+        "launchcontrol"
         "lulu"
         "monitorcontrol"
         "raycast"

@@ -73,6 +73,10 @@ in {
       vbindiff
       xmlformat
       yasm
+
+      #nix
+      nixpkgs-fmt
+      nixpkgs-review
     ];
 
     homebrew = {
