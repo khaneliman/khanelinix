@@ -35,6 +35,14 @@ in {
         ++ cfg.fonts;
     };
 
+    system = {
+      defaults = {
+        NSGlobalDomain = {
+          AppleFontSmoothing = 1;
+        };
+      };
+    };
+
     khanelinix.home.file = with inputs; {
       ".local/share/fonts/SanFransisco/SF-Mono/".source = dotfiles.outPath + "/dots/shared/home/.fonts/SanFransisco/SF-Mono";
     };

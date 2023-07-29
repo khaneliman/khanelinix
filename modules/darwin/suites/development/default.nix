@@ -18,18 +18,10 @@ in {
   config = mkIf cfg.enable {
     khanelinix = {
       tools = {
-        # at = enabled;
-        # direnv = enabled;
-        # go = enabled;
-        # http = enabled;
-        # k8s = enabled;
         node = enabled;
-        # titan = enabled;
         python = enabled;
         java = enabled;
       };
-
-      # virtualisation = { podman = enabled; };
     };
 
     environment.systemPackages = with pkgs; [
