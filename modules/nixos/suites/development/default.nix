@@ -42,8 +42,12 @@ in {
       meson
       pkg-config
       rust-bin.stable.latest.default
-      nixpkgs-review
+
+      #nix
       nixpkgs-fmt
+      nixpkgs-review
+      nixpkgs-lint-community
+      nixpkgs-hammering
     ];
 
     khanelinix = {

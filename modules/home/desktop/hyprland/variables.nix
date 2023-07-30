@@ -12,27 +12,24 @@ in {
     {
       wayland.windowManager.hyprland = {
         settings = {
-          input = {
-            kb_layout = "us";
-            follow_mouse = 1;
+          animations = {
+            enabled = "yes";
 
-            touchpad = {
-              natural_scroll = "no";
-              disable_while_typing = true;
-              tap-to-click = true;
-            };
+            # Some default animations, see https://wiki.hyprland.org/Configuring/Animations/ for more
+            bezier = [
+              "myBezier, 0.05, 0.9, 0.1, 1.05"
+              "overshot, 0.13, 0.99, 0.29, 1.1"
+              "scurve, 0.98, 0.01, 0.02, 0.98"
+              "easein, 0.47, 0, 0.745, 0.715"
+            ];
 
-            sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
-          };
-
-          general = {
-            gaps_in = 5;
-            gaps_out = 20;
-            border_size = 2;
-            "col.inactive_border" = "rgb(5e6798)";
-            "col.active_border" = "rgba(7793D1FF)";
-
-            layout = "dwindle";
+            animation = [
+              "windowsOut, 1, 7, default, popin 10%"
+              "windows, 1, 5, overshot, popin 10%"
+              "border, 1, 10, default"
+              "fade, 1, 10, default"
+              "workspaces, 1, 6, overshot, slide"
+            ];
           };
 
           decoration = {
@@ -56,26 +53,6 @@ in {
             "col.shadow_inactive" = "0x22161925";
           };
 
-          animations = {
-            enabled = "yes";
-
-            # Some default animations, see https://wiki.hyprland.org/Configuring/Animations/ for more
-            bezier = [
-              "myBezier, 0.05, 0.9, 0.1, 1.05"
-              "overshot, 0.13, 0.99, 0.29, 1.1"
-              "scurve, 0.98, 0.01, 0.02, 0.98"
-              "easein, 0.47, 0, 0.745, 0.715"
-            ];
-
-            animation = [
-              "windowsOut, 1, 7, default, popin 10%"
-              "windows, 1, 5, overshot, popin 10%"
-              "border, 1, 10, default"
-              "fade, 1, 10, default"
-              "workspaces, 1, 6, overshot, slide"
-            ];
-          };
-
           dwindle = {
             # See https://wiki.hyprland.org/Configuring/Dwindle-Layout/ for more
             pseudotile = true; # master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
@@ -83,15 +60,43 @@ in {
             force_split = 0;
           };
 
-          master = {
-            # See https://wiki.hyprland.org/Configuring/Master-Layout/ for more
-            new_is_master = true;
+          general = {
+            gaps_in = 5;
+            gaps_out = 20;
+            border_size = 2;
+            "col.inactive_border" = "rgb(5e6798)";
+            "col.active_border" = "rgba(7793D1FF)";
+
+            layout = "dwindle";
           };
 
           gestures = {
             workspace_swipe = true;
             workspace_swipe_invert = false;
             workspace_swipe_fingers = 3;
+          };
+
+          input = {
+            kb_layout = "us";
+            follow_mouse = 1;
+
+            touchpad = {
+              natural_scroll = "no";
+              disable_while_typing = true;
+              tap-to-click = true;
+            };
+
+            sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
+          };
+
+          master = {
+            # See https://wiki.hyprland.org/Configuring/Master-Layout/ for more
+            new_is_master = true;
+          };
+
+          misc = {
+            mouse_move_enables_dpms = true;
+            key_press_enables_dpms = true;
           };
 
           "$mainMod" = "SUPER";

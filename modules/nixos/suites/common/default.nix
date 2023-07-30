@@ -35,6 +35,7 @@ in {
       wget
       xclip
       upower
+      util-linux
 
       # nixos
       alejandra

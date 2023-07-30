@@ -18,7 +18,7 @@ with lib.internal; let
   '';
 
   "custom/weather" = {
-    "exec" = "${pkgs.khanelinix.wttrbar}/bin/wttrbar -l $(${pkgs.jq}/bin/jq -r '.weathergov | (.location)' ~/weather_config.json) --fahrenheit --main-indicator temp_F";
+    "exec" = "${pkgs.wttrbar}/bin/wttrbar -l $(${pkgs.jq}/bin/jq -r '.weathergov | (.location)' ~/weather_config.json) --fahrenheit --main-indicator temp_F";
     "return-type" = "json";
     "format" = "{}";
     "tooltip" = true;

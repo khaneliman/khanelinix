@@ -112,6 +112,7 @@ in {
       };
 
       environment.systemPackages = with pkgs; [
+        # wttrbar
         hyprpaper
         hyprpicker
         inputs.hyprland-contrib.packages.${pkgs.hostPlatform.system}.grimblast

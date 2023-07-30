@@ -69,6 +69,8 @@ in {
       #nix
       nixpkgs-fmt
       nixpkgs-review
+      nixpkgs-lint-community
+      nixpkgs-hammering
     ];
 
     homebrew = {
