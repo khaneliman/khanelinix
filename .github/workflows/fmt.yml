@@ -1,6 +1,6 @@
 name: Formatting Check
 
-on: [push, pull_request, workflow_dispatch]
+on: [ push, pull_request, workflow_dispatch ]
 
 jobs:
 
@@ -17,4 +17,4 @@ jobs:
             auto-optimise-store = true
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
             experimental-features = nix-command flakes
-      - run: nix run nixpkgs#alejandra -- -c .
+      - run: nix run nixpkgs#nixpkgs-fmt -- --check .
