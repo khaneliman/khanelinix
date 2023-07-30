@@ -2,7 +2,10 @@
 [devshell]
 packages = [
   deploy-rs
-  alejandra
+  # alejandra
+  nixpkgs-fmt
+  nixpkgs-lint
+  nixpkgs-hammer
   nix-index
   nix-prefetch-git
   cachix
