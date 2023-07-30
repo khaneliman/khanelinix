@@ -16,7 +16,7 @@ let
 in
 runCommandNoCC "nixos-option"
 {
-  buildInputs = [ makeWrapper ];
+  nativeBuildInputs = [ makeWrapper ];
 }
   ''
     makeWrapper ${nixos-option}/bin/nixos-option $out/bin/nixos-option \
