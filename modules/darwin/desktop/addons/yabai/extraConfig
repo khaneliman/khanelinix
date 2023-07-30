@@ -141,6 +141,7 @@ COMMS=(
 	Messenger
 	Slack
 	Telegram
+	Element
 )
 
 for ((i = 1; i <= "${#COMMS[@]}"; i++)); do
