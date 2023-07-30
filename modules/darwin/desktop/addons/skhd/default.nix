@@ -32,7 +32,9 @@ in
         window, scripts < escape ; default
         default, window < ctrl - escape ; scripts
 
-        # Application launchers
+        # ░█▀█░█▀█░█▀█░░░█░░░█▀█░█░█░█▀█░█▀▀░█░█░█▀▀░█▀▄░█▀▀
+        # ░█▀█░█▀▀░█▀▀░░░█░░░█▀█░█░█░█░█░█░░░█▀█░█▀▀░█▀▄░▀▀█
+        # ░▀░▀░▀░░░▀░░░░░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀
         default < cmd + shift - return : alacritty #open over top
         default < cmd - return : /Applications/kitty.app/Contents/MacOS/kitty --single-instance -d ~
         default < cmd + alt + ctrl - v : open /Applications/Visual\ Studio\ Code.app
@@ -41,7 +43,9 @@ in
         default < cmd + alt + ctrl - f : open /Applications/Firefox\ Developer\ Edition.app
         default < cmd + alt + ctrl - t : /Applications/kitty.app/Contents/MacOS/kitty --single-instance -d ~
 
-        # MacOS Commands
+        # ░█▀▀░█░█░█▀▀░▀█▀░█▀▀░█▄█
+        # ░▀▀█░░█░░▀▀█░░█░░█▀▀░█░█
+        # ░▀▀▀░░▀░░▀▀▀░░▀░░▀▀▀░▀░▀
         default < cmd - l : osascript -e 'tell application "System Events" to keystroke "q" using {command down,control down}';
         default < meh - r : osascript -e 'tell app "loginwindow" to «event aevtrrst»';
         default < meh - p : osascript -e 'tell app "loginwindow" to «event aevtrsdn»';
@@ -49,6 +53,13 @@ in
         # Reload yabai
         default < ctrl + lalt + cmd - r : bash -c 'launchctl kickstart -k "gui/''${UID}''\/homebrew.mxcl.yabai"'
 
+        # Toggle sketchybar
+        default < shift + lalt - space : sketchybar --bar hidden=toggle
+        default < shift + lalt - r : sketchybar --exit
+
+        # ░█░█░▀█▀░█▀█░█▀▄░█▀█░█░█
+        # ░█▄█░░█░░█░█░█░█░█░█░█▄█
+        # ░▀░▀░▀▀▀░▀░▀░▀▀░░▀▀▀░▀░▀
         # Toggle split orientation of the selected windows node: shift + lalt - s
         default < shift + lalt - s : yabai -m window --toggle split
 
@@ -64,19 +75,6 @@ in
         # Make window zoom to parent node:
         default < lalt - f : yabai -m window --toggle zoom-parent; sketchybar --trigger window_focus
 
-        # Space Navigation
-        default < cmd + ctrl - left : yabai -m space --focus prev
-        default < cmd + ctrl - right : yabai -m space --focus next
-
-        default < cmd + ctrl - 1 : yabai -m space --focus 1
-        default < cmd + ctrl - 2 : yabai -m space --focus 2
-        default < cmd + ctrl - 3 : yabai -m space --focus 3
-        default < cmd + ctrl - 4 : yabai -m space --focus 4
-        default < cmd + ctrl - 5 : yabai -m space --focus 5
-        default < cmd + ctrl - 6 : yabai -m space --focus 6
-        default < cmd + ctrl - 7 : yabai -m space --focus 7
-        default < cmd + ctrl - 8 : yabai -m space --focus 8
-
         # Window Navigation (through display borders):
         default < lalt - h : yabai -m window --focus west  || yabai -m display --focus west
         default < lalt - j : yabai -m window --focus south || yabai -m display --focus south
@@ -89,6 +87,23 @@ in
         default < shift + lalt - j : yabai -m window --warp south || $(yabai -m window --display south && sketchybar --trigger windows_on_spaces && yabai -m display --focus south) || yabai -m window --move rel:0:10
         default < shift + lalt - k : yabai -m window --warp north || $(yabai -m window --display north && sketchybar --trigger windows_on_spaces && yabai -m display --focus north) || yabai -m window --move rel:0:-10
         default < shift + lalt - l : yabai -m window --warp east || $(yabai -m window --display east && sketchybar --trigger windows_on_spaces && yabai -m display --focus east && yabai -m window --warp first) || yabai -m window --move rel:10:0
+
+        # ░█░█░█▀█░█▀▄░█░█░█▀▀░█▀█░█▀█░█▀▀░█▀▀
+        # ░█▄█░█░█░█▀▄░█▀▄░▀▀█░█▀▀░█▀█░█░░░█▀▀
+        # ░▀░▀░▀▀▀░▀░▀░▀░▀░▀▀▀░▀░░░▀░▀░▀▀▀░▀▀▀
+        # Space Navigation
+        default < cmd + ctrl - left : yabai -m space --focus prev
+        default < cmd + ctrl - right : yabai -m space --focus next
+
+        # move to workspace by index 
+        default < cmd + ctrl - 1 : yabai -m space --focus 1
+        default < cmd + ctrl - 2 : yabai -m space --focus 2
+        default < cmd + ctrl - 3 : yabai -m space --focus 3
+        default < cmd + ctrl - 4 : yabai -m space --focus 4
+        default < cmd + ctrl - 5 : yabai -m space --focus 5
+        default < cmd + ctrl - 6 : yabai -m space --focus 6
+        default < cmd + ctrl - 7 : yabai -m space --focus 7
+        default < cmd + ctrl - 8 : yabai -m space --focus 8
 
         # Moving windows between spaces: shift + lalt
         default < shift + lalt - 1 : yabai -m window --space 1;\
@@ -110,6 +125,9 @@ in
         default < shift + lalt - p : yabai -m window --space prev; yabai -m space --focus prev; sketchybar --trigger windows_on_spaces
         default < shift + lalt - n : yabai -m window --space next; yabai -m space --focus next; sketchybar --trigger windows_on_spaces
 
+        # ░█░░░█▀█░█░█░█▀█░█░█░▀█▀
+        # ░█░░░█▀█░░█░░█░█░█░█░░█░
+        # ░▀▀▀░▀░▀░░▀░░▀▀▀░▀▀▀░░▀░
         # Mirror Space on X and Y Axis: shift + lalt - {x, y}
         default < shift + lalt - x : yabai -m space --mirror x-axis
         default < shift + lalt - y : yabai -m space --mirror y-axis
@@ -156,10 +174,6 @@ in
         # New window in hor./ vert. splits for all applications with yabai
         default < lalt - s : yabai -m window --insert east;  skhd -k "cmd - n"
         default < lalt - v : yabai -m window --insert south; skhd -k "cmd - n"
-
-        # Toggle sketchybar
-        default < shift + lalt - space : sketchybar --bar hidden=toggle
-        default < shift + lalt - r : sketchybar --exit
 
         # Yabai layouts
         # toggle window split type

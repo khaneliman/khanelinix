@@ -24,6 +24,7 @@ in
         "betterdiscord-installer"
         "caprine"
         "discord"
+        "element"
       ];
 
       masApps = {
