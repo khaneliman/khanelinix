@@ -1,12 +1,13 @@
-{
-  lib,
-  config,
-  ...
-}: let
+{ lib
+, config
+, ...
+}:
+let
   inherit (lib) mkEnableOption mkIf mkOption types literalExpression;
 
   cfg = config.khanelinix.services.mpd;
-in {
+in
+{
   options.khanelinix.services.mpd = {
     enable = mkEnableOption "mpd";
     musicDirectory = mkOption {

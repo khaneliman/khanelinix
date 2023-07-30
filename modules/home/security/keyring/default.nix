@@ -1,13 +1,13 @@
-{
-  options,
-  config,
-  lib,
-  ...
+{ options
+, config
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.security.keyring;
-in {
+in
+{
   options.khanelinix.security.keyring = with types; {
     enable = mkBoolOpt false "Whether to enable gnome keyring.";
   };
@@ -16,7 +16,7 @@ in {
     services.gnome-keyring = {
       enable = true;
 
-      components = ["pkcs11" "secrets" "ssh"];
+      components = [ "pkcs11" "secrets" "ssh" ];
     };
   };
 }

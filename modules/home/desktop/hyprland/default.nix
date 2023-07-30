@@ -1,14 +1,14 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.desktop.hyprland;
-in {
+in
+{
   options.khanelinix.desktop.hyprland = with types; {
     enable = mkEnableOption "Hyprland.";
     extraConfig = lib.mkOption {
@@ -29,33 +29,33 @@ in {
 
   config =
     mkIf cfg.enable
-    {
-      # start swayidle as part of hyprland, not sway
-      khanelinix.suites.wlroots = enabled;
+      {
+        # start swayidle as part of hyprland, not sway
+        khanelinix.suites.wlroots = enabled;
 
-      systemd.user.services.swayidle.Install.WantedBy = lib.mkForce ["hyprland-session.target"];
-      programs.waybar.systemd.target = "hyprland-session.target";
+        systemd.user.services.swayidle.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
+        programs.waybar.systemd.target = "hyprland-session.target";
 
-      wayland.windowManager.hyprland = {
-        enable = true;
-        xwayland.enable = true;
-        systemdIntegration = true;
-        package = pkgs.hyprland;
+        wayland.windowManager.hyprland = {
+          enable = true;
+          xwayland.enable = true;
+          systemdIntegration = true;
+          package = pkgs.hyprland;
 
-        settings = {
-          exec = [
-            "notify-send --icon ~/.face -u normal \"Hello $(whoami)\""
-          ];
+          settings = {
+            exec = [
+              "notify-send --icon ~/.face -u normal \"Hello $(whoami)\""
+            ];
+          };
+
+          extraConfig = ''
+            source=~/.config/hypr/displays.conf
+            source=~/.config/hypr/polish.conf
+
+            env = XDG_DATA_DIRS,'${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}':$XDG_DATA_DIRS
+
+            ${cfg.extraConfig}
+          '';
         };
-
-        extraConfig = ''
-          source=~/.config/hypr/displays.conf
-          source=~/.config/hypr/polish.conf
-
-          env = XDG_DATA_DIRS,'${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}':$XDG_DATA_DIRS
-
-          ${cfg.extraConfig}
-        '';
       };
-    };
 }

@@ -1,21 +1,21 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  inputs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, inputs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.cli-apps.spicetify;
   spicePkgs = inputs.spicetify-nix.packages.${pkgs.system}.default;
-in {
+in
+{
   options.khanelinix.cli-apps.spicetify = with types; {
     enable = mkBoolOpt false "Whether or not to enable support for spicetify.";
   };
 
-  imports = [inputs.spicetify-nix.homeManagerModule];
+  imports = [ inputs.spicetify-nix.homeManagerModule ];
 
   config = mkIf cfg.enable {
     # configure spicetify :)

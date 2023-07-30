@@ -1,8 +1,7 @@
-{
-  writeShellApplication,
-  python311,
-  venvDir ? "$HOME/.proton-up-venv",
-  ...
+{ writeShellApplication
+, python311
+, venvDir ? "$HOME/.proton-up-venv"
+, ...
 }:
 writeShellApplication
 {

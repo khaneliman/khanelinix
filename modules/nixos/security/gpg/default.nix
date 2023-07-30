@@ -1,10 +1,9 @@
-{
-  options,
-  config,
-  pkgs,
-  lib,
-  inputs,
-  ...
+{ options
+, config
+, pkgs
+, lib
+, inputs
+, ...
 }:
 with lib;
 with lib.internal; let
@@ -28,7 +27,7 @@ with lib.internal; let
     sha256 = "1h48yqffpaz437f3c9hfryf23r95rr319lrb3y79kxpxbc9hihxb";
   };
 
-  guideHTML = pkgs.runCommand "yubikey-guide" {} ''
+  guideHTML = pkgs.runCommand "yubikey-guide" { } ''
     ${pkgs.pandoc}/bin/pandoc \
       --standalone \
       --metadata title="Yubikey Guide" \
@@ -48,13 +47,14 @@ with lib.internal; let
     genericName = "View Yubikey Guide in a web browser";
     exec = "${pkgs.xdg-utils}/bin/xdg-open ${guideHTML}";
     icon = ./yubico-icon.svg;
-    categories = ["System"];
+    categories = [ "System" ];
   };
 
   reload-yubikey = pkgs.writeShellScriptBin "reload-yubikey" ''
     ${pkgs.gnupg}/bin/gpg-connect-agent "scd serialno" "learn --force" /bye
   '';
-in {
+in
+{
   options.khanelinix.security.gpg = with types; {
     enable = mkBoolOpt false "Whether or not to enable GPG.";
     agentTimeout = mkOpt int 5 "The amount of time to wait before continuing with shell init.";
@@ -62,7 +62,7 @@ in {
 
   config = mkIf cfg.enable {
     services.pcscd.enable = true;
-    services.udev.packages = with pkgs; [yubikey-personalization];
+    services.udev.packages = with pkgs; [ yubikey-personalization ];
 
     # @NOTE(jakehamilton): This should already have been added by programs.gpg, but
     # keeping it here for now just in case.

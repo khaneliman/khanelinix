@@ -1,14 +1,14 @@
-{
-  options,
-  config,
-  lib,
-  inputs,
-  ...
+{ options
+, config
+, lib
+, inputs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.system.shell.zsh;
-in {
+in
+{
   options.khanelinix.system.shell.zsh = with types; {
     enable = mkBoolOpt false "Whether to enable zsh.";
   };

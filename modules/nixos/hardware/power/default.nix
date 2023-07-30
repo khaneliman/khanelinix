@@ -1,17 +1,17 @@
-{
-  options,
-  config,
-  lib,
-  ...
+{ options
+, config
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.hardware.power;
-in {
+in
+{
   options.khanelinix.hardware.power = with types; {
     enable =
       mkBoolOpt false
-      "Whether or not to enable support for extra power devices.";
+        "Whether or not to enable support for extra power devices.";
   };
 
   config = mkIf cfg.enable {

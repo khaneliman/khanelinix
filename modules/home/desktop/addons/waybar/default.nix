@@ -1,9 +1,8 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, ...
 }:
 with lib;
 with lib.internal; let
@@ -59,7 +58,8 @@ with lib.internal; let
     "interval" = "once";
     "on-click" = "${pkgs.wlogout}/bin/wlogout -c 5 -r 5 -p layer-shell";
   };
-in {
+in
+{
   options.khanelinix.desktop.addons.waybar = with types; {
     enable =
       mkBoolOpt false "Whether to enable waybar in the desktop environment.";
@@ -74,14 +74,14 @@ in {
       # TODO: make dynamic
       settings = {
         mainBar = {
-          "include" = [./default-modules.jsonc] ++ lib.optional config.khanelinix.desktop.hyprland.enable ./hyprland/default-modules.jsonc;
+          "include" = [ ./default-modules.jsonc ] ++ lib.optional config.khanelinix.desktop.hyprland.enable ./hyprland/default-modules.jsonc;
           "layer" = "top";
           "position" = "top";
           "output" = "DP-1";
           "margin-top" = 10;
           "margin-left" = 20;
           "margin-right" = 20;
-          "modules-center" = ["mpris"];
+          "modules-center" = [ "mpris" ];
           "modules-left" = [
             "custom/wlogout"
             "wlr/workspaces"
@@ -101,14 +101,14 @@ in {
           inherit "custom/weather" "custom/github" "custom/notification" "custom/wlogout";
         };
         secondaryBar = {
-          "include" = [./default-modules.jsonc] ++ lib.optional config.khanelinix.desktop.hyprland.enable ./hyprland/default-modules.jsonc;
+          "include" = [ ./default-modules.jsonc ] ++ lib.optional config.khanelinix.desktop.hyprland.enable ./hyprland/default-modules.jsonc;
           "layer" = "top";
           "position" = "top";
           "output" = "DP-3";
           "margin-top" = 10;
           "margin-left" = 20;
           "margin-right" = 20;
-          "modules-center" = [];
+          "modules-center" = [ ];
           "modules-left" = [
             "custom/wlogout"
             "wlr/workspaces"

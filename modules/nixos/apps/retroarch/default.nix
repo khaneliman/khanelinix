@@ -1,14 +1,14 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.apps.retroarch;
-in {
+in
+{
   options.khanelinix.apps.retroarch = with types; {
     enable = mkBoolOpt false "Whether or not to enable retroarch.";
   };

@@ -1,13 +1,13 @@
-{
-  options,
-  config,
-  lib,
-  ...
+{ options
+, config
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.system.locale;
-in {
+in
+{
   options.khanelinix.system.locale = with types; {
     enable = mkBoolOpt false "Whether or not to manage locale settings.";
   };

@@ -1,21 +1,21 @@
-{
-  options,
-  config,
-  lib,
-  ...
+{ options
+, config
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.system.env;
-in {
+in
+{
   options.khanelinix.system.env = with types;
     mkOption {
-      type = attrsOf (oneOf [str path (listOf (either str path))]);
+      type = attrsOf (oneOf [ str path (listOf (either str path)) ]);
       apply = mapAttrs (_n: v:
         if isList v
         then concatMapStringsSep ":" toString v
         else (toString v));
-      default = {};
+      default = { };
       description = "A set of environment variables to set.";
     };
 
@@ -36,7 +36,7 @@ in {
       };
       extraInit =
         concatStringsSep "\n"
-        (mapAttrsToList (n: v: ''export ${n}="${v}"'') cfg);
+          (mapAttrsToList (n: v: ''export ${n}="${v}"'') cfg);
     };
   };
 }

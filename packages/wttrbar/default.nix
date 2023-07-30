@@ -1,7 +1,7 @@
-{
-  lib,
-  fetchFromGitHub,
-  rustPlatform,
+{ lib
+, fetchFromGitHub
+, rustPlatform
+,
 }:
 rustPlatform.buildRustPackage rec {
   pname = "wttrbar";
@@ -20,6 +20,6 @@ rustPlatform.buildRustPackage rec {
     description = "A simple but detailed weather indicator for Waybar using wttr.in.";
     homepage = "https://github.com/bjesus/wttrbar";
     license = licenses.mit;
-    maintainers = ["khaneliman"];
+    maintainers = [ "khaneliman" ];
   };
 }

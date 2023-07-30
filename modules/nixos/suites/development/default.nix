@@ -1,18 +1,18 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.suites.development;
-in {
+in
+{
   options.khanelinix.suites.development = with types; {
     enable =
       mkBoolOpt false
-      "Whether or not to enable common development configuration.";
+        "Whether or not to enable common development configuration.";
   };
 
   config = mkIf cfg.enable {
@@ -76,7 +76,7 @@ in {
         tree-sitter = enabled;
       };
 
-      virtualisation = {podman = enabled;};
+      virtualisation = { podman = enabled; };
     };
   };
 }

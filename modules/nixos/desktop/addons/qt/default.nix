@@ -1,21 +1,21 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  inputs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, inputs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.desktop.addons.qt;
-in {
+in
+{
   options.khanelinix.desktop.addons.qt = with types; {
     enable = mkBoolOpt false "Whether to customize qt and apply themes.";
     theme = {
       name =
         mkOpt str "Catppuccin-Macchiato-Blue"
-        "The name of the kvantum theme to apply.";
+          "The name of the kvantum theme to apply.";
       pkg = mkOpt package pkgs.catppuccin-kvantum "The package to use for the theme.";
     };
   };

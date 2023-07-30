@@ -1,13 +1,13 @@
-{
-  options,
-  config,
-  lib,
-  ...
+{ options
+, config
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.desktop.addons.swayidle;
-in {
+in
+{
   options.khanelinix.desktop.addons.swayidle = with types; {
     enable =
       mkBoolOpt false "Whether to enable swayidle in the desktop environment.";

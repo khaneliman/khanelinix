@@ -1,9 +1,9 @@
-{
-  lib,
-  pkgs,
-  config,
-  ...
-}: let
+{ lib
+, pkgs
+, config
+, ...
+}:
+let
   inherit (lib) types mkIf;
   inherit (lib.internal) mkBoolOpt mkOpt;
   inherit (pkgs) fortune toot;
@@ -36,7 +36,8 @@
 
     rm -rf $tmp_dir
   '';
-in {
+in
+{
   options.khanelinix.services.cowsay-mastodon-poster = with types; {
     enable = mkBoolOpt false "Whether or not to enable cowsay posts.";
     short = mkBoolOpt false "Use short fortunes only.";
@@ -47,7 +48,7 @@ in {
   config = mkIf cfg.enable {
     systemd = {
       timers.cowsay-mastodon-poster = {
-        wantedBy = ["timers.target"];
+        wantedBy = [ "timers.target" ];
         timerConfig = {
           # Run once a day at 10am.
           OnCalendar = "*-*-* 10:00:00";
@@ -56,7 +57,7 @@ in {
       };
 
       services.cowsay-mastodon-poster = {
-        after = ["network-online.target"];
+        after = [ "network-online.target" ];
         description = "Post a cowsay image to Mastodon.";
 
         inherit script;

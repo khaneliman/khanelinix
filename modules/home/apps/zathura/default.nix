@@ -1,13 +1,14 @@
-{
-  lib,
-  config,
-  pkgs,
-  ...
-}: let
+{ lib
+, config
+, pkgs
+, ...
+}:
+let
   inherit (lib) mkEnableOption mkIf;
 
   cfg = config.khanelinix.apps.zathura;
-in {
+in
+{
   options.khanelinix.apps.zathura = {
     enable = mkEnableOption "zathura";
   };

@@ -1,15 +1,15 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  inputs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, inputs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.tools.oh-my-posh;
-in {
+in
+{
   options.khanelinix.tools.oh-my-posh = with types; {
     enable = mkBoolOpt false "Whether or not to enable oh-my-posh.";
   };

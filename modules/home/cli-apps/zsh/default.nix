@@ -1,14 +1,15 @@
-{
-  lib,
-  config,
-  pkgs,
-  inputs,
-  ...
-}: let
+{ lib
+, config
+, pkgs
+, inputs
+, ...
+}:
+let
   inherit (lib) mkEnableOption mkIf;
 
   cfg = config.khanelinix.cli-apps.zsh;
-in {
+in
+{
   options.khanelinix.cli-apps.zsh = {
     enable = mkEnableOption "ZSH";
   };
@@ -42,8 +43,7 @@ in {
           source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
         '';
 
-        shellAliases = {
-        };
+        shellAliases = { };
 
         plugins = [
           {

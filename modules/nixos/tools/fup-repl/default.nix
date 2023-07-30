@@ -1,8 +1,7 @@
-{
-  lib,
-  pkgs,
-  config,
-  ...
+{ lib
+, pkgs
+, config
+, ...
 }:
 with lib;
 with lib.internal; let
@@ -10,10 +9,11 @@ with lib.internal; let
   fup-repl = pkgs.writeShellScriptBin "fup-repl" ''
     ${pkgs.fup-repl}/bin/repl ''${@}
   '';
-in {
+in
+{
   options.khanelinix.tools.fup-repl = with types; {
     enable = mkBoolOpt false "Whether to enable fup-repl or not";
   };
 
-  config = mkIf cfg.enable {environment.systemPackages = [fup-repl];};
+  config = mkIf cfg.enable { environment.systemPackages = [ fup-repl ]; };
 }

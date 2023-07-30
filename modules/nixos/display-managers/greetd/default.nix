@@ -1,9 +1,8 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, ...
 }:
 with lib;
 with lib.internal; let
@@ -28,39 +27,40 @@ with lib.internal; let
 
     exec "${lib.getExe pkgs.greetd.regreet} -l debug; swaymsg exit"
   '';
-in {
+in
+{
   options.khanelinix.display-managers.greetd = with types; {
     enable = mkBoolOpt false "Whether or not to enable greetd.";
   };
 
   config =
     mkIf cfg.enable
-    {
-      environment.systemPackages = [
-        config.khanelinix.desktop.addons.gtk.cursor.pkg
-        config.khanelinix.desktop.addons.gtk.theme.pkg
-        config.khanelinix.desktop.addons.gtk.icon.pkg
-      ];
+      {
+        environment.systemPackages = [
+          config.khanelinix.desktop.addons.gtk.cursor.pkg
+          config.khanelinix.desktop.addons.gtk.theme.pkg
+          config.khanelinix.desktop.addons.gtk.icon.pkg
+        ];
 
-      programs.regreet = {
-        enable = true;
-        settings = {
-          background = {
-            path = pkgs.khanelinix.wallpapers.flatppuccin_macchiato;
-            fit = "Cover";
-          };
-          GTK = {
-            cursor_theme_name = "${config.khanelinix.desktop.addons.gtk.cursor.name}";
-            font_name = "${config.khanelinix.system.fonts.default} * 12";
-            icon_theme_name = "${config.khanelinix.desktop.addons.gtk.icon.name}";
-            theme_name = "${config.khanelinix.desktop.addons.gtk.theme.name}";
+        programs.regreet = {
+          enable = true;
+          settings = {
+            background = {
+              path = pkgs.khanelinix.wallpapers.flatppuccin_macchiato;
+              fit = "Cover";
+            };
+            GTK = {
+              cursor_theme_name = "${config.khanelinix.desktop.addons.gtk.cursor.name}";
+              font_name = "${config.khanelinix.system.fonts.default} * 12";
+              icon_theme_name = "${config.khanelinix.desktop.addons.gtk.icon.name}";
+              theme_name = "${config.khanelinix.desktop.addons.gtk.theme.name}";
+            };
           };
         };
+
+        services.greetd.settings.default_session.command = "${pkgs.sway}/bin/sway --config ${greetdSwayConfig}";
+
+        security.pam.services.greetd.gnupg.enable = true;
+        security.pam.services.greetd.enableGnomeKeyring = true;
       };
-
-      services.greetd.settings.default_session.command = "${pkgs.sway}/bin/sway --config ${greetdSwayConfig}";
-
-      security.pam.services.greetd.gnupg.enable = true;
-      security.pam.services.greetd.enableGnomeKeyring = true;
-    };
 }

@@ -1,14 +1,14 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.tools.java;
-in {
+in
+{
   options.khanelinix.tools.java = with types; {
     enable = mkBoolOpt false "Whether or not to enable Java.";
   };

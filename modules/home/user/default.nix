@@ -1,9 +1,9 @@
-{
-  lib,
-  config,
-  pkgs,
-  ...
-}: let
+{ lib
+, config
+, pkgs
+, ...
+}:
+let
   inherit (lib) types mkIf mkDefault mkMerge;
   inherit (lib.internal) mkOpt;
 
@@ -16,7 +16,8 @@
     else if is-darwin
     then "/Users/${cfg.name}"
     else "/home/${cfg.name}";
-in {
+in
+{
   options.khanelinix.user = {
     enable = mkOpt types.bool false "Whether to configure the user account.";
     name = mkOpt (types.nullOr types.str) config.snowfallorg.user.name "The user account.";

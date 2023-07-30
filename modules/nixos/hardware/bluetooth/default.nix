@@ -1,17 +1,17 @@
-{
-  options,
-  config,
-  lib,
-  ...
+{ options
+, config
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.hardware.bluetooth;
-in {
+in
+{
   options.khanelinix.hardware.bluetooth = with types; {
     enable =
       mkBoolOpt false
-      "Whether or not to enable support for extra bluetooth devices.";
+        "Whether or not to enable support for extra bluetooth devices.";
   };
 
   config = mkIf cfg.enable {

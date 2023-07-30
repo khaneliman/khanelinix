@@ -1,16 +1,17 @@
-{
-  lib,
-  config,
-  inputs,
-  pkgs,
-  ...
-}: let
+{ lib
+, config
+, inputs
+, pkgs
+, ...
+}:
+let
   inherit (lib) types mkEnableOption mkIf;
   inherit (lib.internal) mkOpt enabled;
 
   cfg = config.khanelinix.tools.git;
   inherit (config.khanelinix) user;
-in {
+in
+{
   options.khanelinix.tools.git = {
     enable = mkEnableOption "Git";
     userName = mkOpt types.str user.fullName "The name to configure git with.";
@@ -30,10 +31,10 @@ in {
         inherit (cfg) signByDefault;
       };
       extraConfig = {
-        init = {defaultBranch = "main";};
-        pull = {rebase = true;};
-        push = {autoSetupRemote = true;};
-        core = {whitespace = "trailing-space,space-before-tab";};
+        init = { defaultBranch = "main"; };
+        pull = { rebase = true; };
+        push = { autoSetupRemote = true; };
+        core = { whitespace = "trailing-space,space-before-tab"; };
         safe = {
           directory = "${user.home}/work/config";
         };

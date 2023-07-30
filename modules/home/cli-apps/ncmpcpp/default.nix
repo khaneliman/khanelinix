@@ -1,12 +1,13 @@
-{
-  lib,
-  config,
-  ...
-}: let
+{ lib
+, config
+, ...
+}:
+let
   inherit (lib) mkEnableOption mkIf;
 
   cfg = config.khanelinix.cli-apps.ncmpcpp;
-in {
+in
+{
   options.khanelinix.cli-apps.ncmpcpp = {
     enable = mkEnableOption "ncmpcpp";
   };

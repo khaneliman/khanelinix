@@ -1,5 +1,5 @@
-{lib, ...}:
+{ lib, ... }:
 with lib;
 with lib.internal; {
-  imports = [../../../shared/apps/blender/default.nix];
+  imports = [ ../../../shared/apps/blender/default.nix ];
 }

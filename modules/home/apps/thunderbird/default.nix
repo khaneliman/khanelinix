@@ -1,12 +1,13 @@
-{
-  lib,
-  config,
-  ...
-}: let
+{ lib
+, config
+, ...
+}:
+let
   inherit (lib) mkEnableOption mkIf;
 
   cfg = config.khanelinix.apps.thunderbird;
-in {
+in
+{
   options.khanelinix.apps.thunderbird = {
     enable = mkEnableOption "thunderbird";
   };

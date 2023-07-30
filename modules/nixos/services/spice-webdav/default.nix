@@ -1,13 +1,13 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
+{ config
+, pkgs
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.services.spice-webdav;
-in {
+in
+{
   options.khanelinix.services.spice-webdav = with types; {
     enable = mkBoolOpt false "Whether or not to configure spice-webdav proxy support.";
     package = mkOption {
@@ -23,7 +23,7 @@ in {
     services.davfs2.enable = true;
 
     # add the udev rule which starts the proxy when the spice socket is present
-    services.udev.packages = [cfg.package];
+    services.udev.packages = [ cfg.package ];
 
     systemd.services.spice-webdavd = {
       description = "spice-webdav proxy daemon";

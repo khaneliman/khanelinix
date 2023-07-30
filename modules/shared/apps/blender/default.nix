@@ -1,18 +1,18 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.apps.blender;
-in {
+in
+{
   options.khanelinix.apps.blender = with types; {
     enable = mkBoolOpt false "Whether or not to enable blender.";
   };
 
   config =
-    mkIf cfg.enable {environment.systemPackages = with pkgs; [blender];};
+    mkIf cfg.enable { environment.systemPackages = with pkgs; [ blender ]; };
 }

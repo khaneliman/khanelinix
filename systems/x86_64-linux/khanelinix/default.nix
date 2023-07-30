@@ -1,11 +1,10 @@
-{
-  lib,
-  config,
-  ...
+{ lib
+, config
+, ...
 }:
 with lib;
 with lib.internal; {
-  imports = [./hardware.nix];
+  imports = [ ./hardware.nix ];
 
   khanelinix = {
     nix = enabled;
@@ -22,7 +21,7 @@ with lib.internal; {
       vscode = enabled;
     };
 
-    cli-apps = {};
+    cli-apps = { };
 
     desktop = {
       hyprland = {
@@ -149,8 +148,8 @@ with lib.internal; {
       enable = true;
       platform = "amd";
 
-      vfioIds = ["10de:2206" "10de:1aef"];
-      machineUnits = ["machine-qemu\\x2d4\\x2dwin11\\x2dGPU.scope"];
+      vfioIds = [ "10de:2206" "10de:1aef" ];
+      machineUnits = [ "machine-qemu\\x2d4\\x2dwin11\\x2dGPU.scope" ];
     };
   };
 

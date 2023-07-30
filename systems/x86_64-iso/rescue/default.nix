@@ -1,7 +1,6 @@
-{
-  pkgs,
-  lib,
-  ...
+{ pkgs
+, lib
+, ...
 }:
 with lib;
 with lib.internal; {
@@ -15,15 +14,15 @@ with lib.internal; {
   khanelinix = {
     nix = enabled;
 
-    cli-apps = {neovim = enabled;};
+    cli-apps = { neovim = enabled; };
 
     tools = {
       git = enabled;
     };
 
-    hardware = {networking = enabled;};
+    hardware = { networking = enabled; };
 
-    security = {doas = enabled;};
+    security = { doas = enabled; };
 
     system = {
       fonts = enabled;

@@ -1,9 +1,8 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, ...
 }:
 with lib;
 with lib.internal; let
@@ -20,7 +19,7 @@ with lib.internal; let
       rev = "de8ac3e8a9fa887382649784ed8cae81f5757f77";
       sha256 = "0mkp9r6mipdm7408w7ls1vfn6i3hj19nmir2bvfcp12b69zlzc47";
     };
-    nativeBuildInputs = [pkgs.makeWrapper];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
     postInstall = ''
       for f in extrakto.sh open.sh tmux-extrakto.sh; do
         wrapProgram $target/scripts/$f \
@@ -46,7 +45,8 @@ with lib.internal; let
       tmux-fzf
       vim-tmux-navigator
     ]);
-in {
+in
+{
   options.khanelinix.cli-apps.tmux = with types; {
     enable = mkBoolOpt false "Whether or not to enable tmux.";
   };
@@ -62,7 +62,7 @@ in {
         newSession = true;
         extraConfig =
           builtins.concatStringsSep "\n"
-          (builtins.map lib.strings.fileContents configFiles);
+            (builtins.map lib.strings.fileContents configFiles);
 
         inherit plugins;
       };

@@ -1,14 +1,15 @@
-{
-  lib,
-  config,
-  virtual,
-  ...
-}: let
+{ lib
+, config
+, virtual
+, ...
+}:
+let
   inherit (lib) mkIf mkEnableOption optional;
   inherit (lib.internal) mkOpt;
 
   cfg = config.khanelinix.security.acme;
-in {
+in
+{
   options.khanelinix.security.acme = with lib.types; {
     enable = mkEnableOption "default ACME configuration";
     email = mkOpt str config.khanelinix.user.email "The email to use.";

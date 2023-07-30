@@ -1,13 +1,13 @@
-{
-  options,
-  config,
-  lib,
-  ...
+{ options
+, config
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.suites.social;
-in {
+in
+{
   options.khanelinix.suites.social = with types; {
     enable = mkBoolOpt false "Whether or not to enable social configuration.";
   };

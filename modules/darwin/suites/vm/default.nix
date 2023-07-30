@@ -1,14 +1,14 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.suites.vm;
-in {
+in
+{
   options.khanelinix.suites.vm = with types; {
     enable = mkBoolOpt false "Whether or not to enable vm.";
   };

@@ -1,7 +1,7 @@
-{lib, ...}:
+{ lib, ... }:
 with lib;
 with lib.internal; {
-  imports = [./hardware.nix];
+  imports = [ ./hardware.nix ];
 
   programs.sway.extraSessionCommands = ''
     WLR_NO_HARDWARE_CURSORS=1
@@ -20,7 +20,7 @@ with lib.internal; {
       vscode = enabled;
     };
 
-    cli-apps = {neovim = enabled;};
+    cli-apps = { neovim = enabled; };
 
     desktop = {
       gnome = {
@@ -34,7 +34,7 @@ with lib.internal; {
       };
     };
 
-    tools = {};
+    tools = { };
 
     hardware = {
       # audio = enabled;

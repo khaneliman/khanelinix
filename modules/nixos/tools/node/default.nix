@@ -1,14 +1,14 @@
-{
-  options,
-  config,
-  pkgs,
-  lib,
-  ...
+{ options
+, config
+, pkgs
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.tools.node;
-in {
+in
+{
   options.khanelinix.tools.node = with types; {
     enable = mkBoolOpt false "Whether or not to install and configure git";
     pkg = mkOpt package pkgs.nodejs-18_x "The NodeJS package to use";
@@ -29,7 +29,7 @@ in {
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs;
-      [cfg.pkg]
+      [ cfg.pkg ]
       ++ (lib.optional cfg.prettier.enable cfg.prettier.pkg)
       ++ (lib.optional cfg.yarn.enable cfg.yarn.pkg)
       ++ (lib.optional cfg.flyctl.enable cfg.flyctl.pkg);

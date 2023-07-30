@@ -1,13 +1,13 @@
-{
-  options,
-  config,
-  lib,
-  ...
+{ options
+, config
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.system.input;
-in {
+in
+{
   options.khanelinix.system.input = with types; {
     enable = mkEnableOption "macOS input";
   };

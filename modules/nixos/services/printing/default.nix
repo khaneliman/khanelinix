@@ -1,14 +1,14 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.services.printing;
-in {
+in
+{
   options.khanelinix.services.printing = with types; {
     enable = mkBoolOpt false "Whether or not to configure printing support.";
   };

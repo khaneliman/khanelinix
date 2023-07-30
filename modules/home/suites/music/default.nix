@@ -1,13 +1,13 @@
-{
-  options,
-  config,
-  lib,
-  ...
+{ options
+, config
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.suites.music;
-in {
+in
+{
   options.khanelinix.suites.music = with types; {
     enable =
       mkBoolOpt false "Whether or not to enable common music configuration.";

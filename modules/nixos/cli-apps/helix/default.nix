@@ -1,14 +1,14 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.cli-apps.helix;
-in {
+in
+{
   options.khanelinix.cli-apps.helix = with lib.types; {
     enable = lib.mkEnableOption "helix";
   };

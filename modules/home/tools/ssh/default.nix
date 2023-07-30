@@ -1,11 +1,12 @@
-{
-  lib,
-  config,
-  ...
-}: let
+{ lib
+, config
+, ...
+}:
+let
   inherit (lib) mkEnableOption mkIf;
   cfg = config.khanelinix.tools.ssh;
-in {
+in
+{
   options.khanelinix.tools.ssh = {
     enable = mkEnableOption "SSH";
   };

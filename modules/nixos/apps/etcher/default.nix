@@ -1,14 +1,14 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.apps.etcher;
-in {
+in
+{
   options.khanelinix.apps.etcher = with types; {
     enable = mkBoolOpt false "Whether or not to enable etcher.";
   };

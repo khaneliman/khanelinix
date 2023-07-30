@@ -1,25 +1,25 @@
-{
-  lib,
-  pkgs,
-  config,
-  ...
+{ lib
+, pkgs
+, config
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.cli-apps.prisma;
-in {
+in
+{
   options.khanelinix.cli-apps.prisma = with types; {
     enable = mkBoolOpt false "Whether or not to install Prisma";
     pkgs = {
       npm = mkOpt package pkgs.nodePackages.prisma "The NPM package to install";
       engines =
         mkOpt package pkgs.prisma-engines
-        "The package to get prisma engines from";
+          "The package to get prisma engines from";
     };
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [cfg.pkgs.npm];
+    environment.systemPackages = [ cfg.pkgs.npm ];
 
     khanelinix.home.extraOptions = {
       programs.zsh.initExtra = ''

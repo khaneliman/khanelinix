@@ -1,13 +1,13 @@
-{
-  config,
-  lib,
-  ...
+{ config
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.nix;
-in {
-  imports = [../../shared/nix/default.nix];
+in
+{
+  imports = [ ../../shared/nix/default.nix ];
 
   config = mkIf cfg.enable {
     nix = {
@@ -19,7 +19,7 @@ in {
       };
 
       gc = {
-        interval = {Day = 7;};
+        interval = { Day = 7; };
         user = config.khanelinix.user.name;
       };
     };

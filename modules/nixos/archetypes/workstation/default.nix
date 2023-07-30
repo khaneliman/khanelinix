@@ -1,13 +1,13 @@
-{
-  options,
-  config,
-  lib,
-  ...
+{ options
+, config
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.archetypes.workstation;
-in {
+in
+{
   options.khanelinix.archetypes.workstation = with types; {
     enable =
       mkBoolOpt false "Whether or not to enable the workstation archetype.";
@@ -26,7 +26,7 @@ in {
         music = enabled;
       };
 
-      tools = {};
+      tools = { };
     };
   };
 }

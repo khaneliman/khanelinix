@@ -1,21 +1,20 @@
-{
-  options,
-  config,
-  lib,
-  ...
+{ options
+, config
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.suites.wlroots;
-in {
+in
+{
   options.khanelinix.suites.wlroots = with types; {
     enable =
       mkBoolOpt false "Whether or not to enable common wlroots configuration.";
   };
 
   config = mkIf cfg.enable {
-    khanelinix.cli-apps = {
-    };
+    khanelinix.cli-apps = { };
 
     khanelinix.desktop.addons = {
       # swappy = enabled;

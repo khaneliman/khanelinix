@@ -1,13 +1,13 @@
-{
-  options,
-  config,
-  lib,
-  ...
+{ options
+, config
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.suites.business;
-in {
+in
+{
   options.khanelinix.suites.business = with types; {
     enable = mkBoolOpt false "Whether or not to enable business configuration.";
   };

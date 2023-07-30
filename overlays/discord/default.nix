@@ -1,6 +1,6 @@
-{...}: _final: prev: {
+{ ... }: _final: prev: {
   khanelinix =
-    (prev.khanelinix or {})
+    (prev.khanelinix or { })
     // {
       discord-chromium = with prev;
         makeDesktopItem {
@@ -11,9 +11,9 @@
             ${chromium}/bin/chromium --app="https://discord.com/channels/@me" --enable-features=UseOzonePlatform,WebRTCPipeWireCapturer --ozone-platform=wayland'';
           icon = "discord";
           type = "Application";
-          categories = ["Network" "InstantMessaging"];
+          categories = [ "Network" "InstantMessaging" ];
           terminal = false;
-          mimeTypes = ["x-scheme-handler/discord"];
+          mimeTypes = [ "x-scheme-handler/discord" ];
         };
 
       discord-firefox = with prev;
@@ -25,9 +25,9 @@
             ${firefox}/bin/firefox "https://discord.com/channels/@me?khanelinix.app=true"'';
           icon = "discord";
           type = "Application";
-          categories = ["Network" "InstantMessaging"];
+          categories = [ "Network" "InstantMessaging" ];
           terminal = false;
-          mimeTypes = ["x-scheme-handler/discord"];
+          mimeTypes = [ "x-scheme-handler/discord" ];
         };
     };
 }

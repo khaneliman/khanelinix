@@ -1,14 +1,14 @@
-{
-  options,
-  config,
-  pkgs,
-  lib,
-  ...
+{ options
+, config
+, pkgs
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.tools.qmk;
-in {
+in
+{
   options.khanelinix.tools.qmk = with types; {
     enable = mkBoolOpt false "Whether or not to enable QMK";
   };

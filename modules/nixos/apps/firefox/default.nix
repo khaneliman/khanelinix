@@ -1,10 +1,9 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  inputs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, inputs
+, ...
 }:
 with lib;
 with lib.internal; let
@@ -54,7 +53,8 @@ with lib.internal; let
     "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
     "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
   };
-in {
+in
+{
   options.khanelinix.apps.firefox = with types; {
     enable = mkBoolOpt false "Whether or not to enable Firefox.";
     extraConfig =
@@ -119,8 +119,7 @@ in {
                   install_url = "https://gitlab.com/magnolia1234/bpc-uploads/-/raw/master/bypass_paywalls_clean-3.2.3.0-custom.xpi";
                 };
               };
-              Preferences = {
-              };
+              Preferences = { };
             };
           };
 

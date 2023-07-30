@@ -1,13 +1,14 @@
-{
-  lib,
-  config,
-  ...
-}: let
+{ lib
+, config
+, ...
+}:
+let
   inherit (lib) mkEnableOption mkIf;
   inherit (lib.internal) enabled;
 
   cfg = config.khanelinix.cli-apps.home-manager;
-in {
+in
+{
   options.khanelinix.cli-apps.home-manager = {
     enable = mkEnableOption "home-manager";
   };

@@ -1,13 +1,14 @@
-{
-  lib,
-  config,
-  ...
-}: let
+{ lib
+, config
+, ...
+}:
+let
   inherit (lib) mkEnableOption mkIf;
 
   cfg = config.khanelinix.cli-apps.helix;
-in {
-  imports = [./languages.nix];
+in
+{
+  imports = [ ./languages.nix ];
 
   options.khanelinix.cli-apps.helix = {
     enable = mkEnableOption "Helix";
@@ -52,7 +53,7 @@ in {
           };
           lsp.display-inlay-hints = true;
           # rainbow-brackets = true;
-          statusline.center = ["position-percentage"];
+          statusline.center = [ "position-percentage" ];
           true-color = true;
           whitespace.characters = {
             newline = "↴";

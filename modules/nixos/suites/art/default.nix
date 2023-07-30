@@ -1,13 +1,13 @@
-{
-  options,
-  config,
-  lib,
-  ...
+{ options
+, config
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.suites.art;
-in {
+in
+{
   options.khanelinix.suites.art = with types; {
     enable = mkBoolOpt false "Whether or not to enable art configuration.";
   };

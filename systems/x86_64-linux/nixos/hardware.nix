@@ -1,13 +1,14 @@
-{
-  config,
-  lib,
-  pkgs,
-  modulesPath,
-  inputs,
-  ...
-}: let
+{ config
+, lib
+, pkgs
+, modulesPath
+, inputs
+, ...
+}:
+let
   inherit (inputs) nixos-hardware;
-in {
+in
+{
   imports = with nixos-hardware.nixosModules; [
     (modulesPath + "/profiles/qemu-guest.nix")
   ];
@@ -19,11 +20,11 @@ in {
     kernelPackages = pkgs.linuxPackages_latest;
 
     initrd = {
-      kernelModules = ["kvm-amd"];
-      availableKernelModules = ["nvme" "ahci" "xhci_pci" "virtio_pci" "virtio_blk" "sr_mod"];
+      kernelModules = [ "kvm-amd" ];
+      availableKernelModules = [ "nvme" "ahci" "xhci_pci" "virtio_pci" "virtio_blk" "sr_mod" ];
     };
 
-    extraModulePackages = [];
+    extraModulePackages = [ ];
   };
 
   fileSystems."/" = {
@@ -36,7 +37,7 @@ in {
     fsType = "vfat";
   };
 
-  swapDevices = [];
+  swapDevices = [ ];
 
   hardware.enableRedistributableFirmware = true;
 

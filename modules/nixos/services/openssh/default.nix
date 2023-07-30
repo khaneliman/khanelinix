@@ -1,11 +1,10 @@
-{
-  options,
-  config,
-  lib,
-  format,
-  inputs,
-  host,
-  ...
+{ options
+, config
+, lib
+, format
+, inputs
+, host
+, ...
 }:
 with lib;
 with lib.internal; let
@@ -22,39 +21,42 @@ with lib.internal; let
 
   other-hosts =
     lib.filterAttrs
-    (key: host:
-      key != name && (host.config.khanelinix.user.name or null) != null)
-    ((inputs.self.nixosConfigurations or {}) // (inputs.self.darwinConfigurations or {}));
+      (key: host:
+        key != name && (host.config.khanelinix.user.name or null) != null)
+      ((inputs.self.nixosConfigurations or { }) // (inputs.self.darwinConfigurations or { }));
 
   other-hosts-config =
     lib.concatMapStringsSep
-    "\n"
-    (
-      name: let
-        remote = other-hosts.${name};
-        remote-user-name = remote.config.khanelinix.user.name;
-        remote-user-id = builtins.toString remote.config.users.users.${remote-user-name}.uid;
+      "\n"
+      (
+        name:
+        let
+          remote = other-hosts.${name};
+          remote-user-name = remote.config.khanelinix.user.name;
+          remote-user-id = builtins.toString remote.config.users.users.${remote-user-name}.uid;
 
-        forward-gpg =
-          optionalString (config.programs.gnupg.agent.enable && remote.config.programs.gnupg.agent.enable)
-          ''
-            RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra
-            RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh
-          '';
-      in ''
-        Host ${name}
-          User ${remote-user-name}
-          ForwardAgent yes
-          Port ${builtins.toString cfg.port}
-          ${forward-gpg}
-      ''
-    )
-    (builtins.attrNames other-hosts);
-in {
+          forward-gpg =
+            optionalString (config.programs.gnupg.agent.enable && remote.config.programs.gnupg.agent.enable)
+              ''
+                RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra
+                RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh
+              '';
+        in
+        ''
+          Host ${name}
+            User ${remote-user-name}
+            ForwardAgent yes
+            Port ${builtins.toString cfg.port}
+            ${forward-gpg}
+        ''
+      )
+      (builtins.attrNames other-hosts);
+in
+{
   options.khanelinix.services.openssh = with types; {
     enable = mkBoolOpt false "Whether or not to configure OpenSSH support.";
     authorizedKeys =
-      mkOpt (listOf str) [default-key] "The public keys to apply.";
+      mkOpt (listOf str) [ default-key ] "The public keys to apply.";
     port = mkOpt port 2222 "The port to listen on (in addition to 22).";
     extraConfig = mkOpt str "" "Extra configuration to apply.";
   };
@@ -94,13 +96,13 @@ in {
     khanelinix.home.extraOptions = {
       programs.zsh.shellAliases =
         foldl
-        (aliases: system:
-          aliases
-          // {
-            "ssh-${system}" = "ssh ${system} -t tmux a";
-          })
-        {}
-        (builtins.attrNames other-hosts);
+          (aliases: system:
+            aliases
+            // {
+              "ssh-${system}" = "ssh ${system} -t tmux a";
+            })
+          { }
+          (builtins.attrNames other-hosts);
     };
   };
 }

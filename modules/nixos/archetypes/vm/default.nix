@@ -1,13 +1,13 @@
-{
-  options,
-  config,
-  lib,
-  ...
+{ options
+, config
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.archetypes.vm;
-in {
+in
+{
   options.khanelinix.archetypes.vm = with types; {
     enable =
       mkBoolOpt false "Whether or not to enable the vm archetype.";
@@ -22,7 +22,7 @@ in {
         vm = enabled;
       };
 
-      tools = {};
+      tools = { };
     };
   };
 }

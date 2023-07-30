@@ -1,14 +1,14 @@
-{
-  options,
-  config,
-  lib,
-  inputs,
-  ...
+{ options
+, config
+, lib
+, inputs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.system.shell.bash;
-in {
+in
+{
   options.khanelinix.system.shell.bash = with types; {
     enable = mkBoolOpt false "Whether to enable bash.";
   };

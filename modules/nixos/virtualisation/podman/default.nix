@@ -1,23 +1,23 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.virtualisation.podman;
-in {
+in
+{
   options.khanelinix.virtualisation.podman = with types; {
     enable = mkBoolOpt false "Whether or not to enable Podman.";
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [podman-compose];
+    environment.systemPackages = with pkgs; [ podman-compose ];
 
     khanelinix.home.extraOptions = {
-      home.shellAliases = {"docker-compose" = "podman-compose";};
+      home.shellAliases = { "docker-compose" = "podman-compose"; };
     };
 
     # NixOS 22.05 moved NixOS Containers to a new state directory and the old

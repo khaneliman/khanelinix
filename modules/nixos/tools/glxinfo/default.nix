@@ -1,14 +1,14 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.tools.glxinfo;
-in {
+in
+{
   options.khanelinix.tools.glxinfo = with types; {
     enable = mkBoolOpt false "Whether or not to enable glxinfo.";
   };

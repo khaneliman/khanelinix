@@ -1,15 +1,15 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  inputs,
-  ...
+{ options
+, config
+, lib
+, pkgs
+, inputs
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.desktop.addons.kitty;
-in {
+in
+{
   options.khanelinix.desktop.addons.kitty = with types; {
     enable = mkBoolOpt false "Whether to enable kitty.";
   };

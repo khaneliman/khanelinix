@@ -1,14 +1,15 @@
-{
-  lib,
-  config,
-  options,
-  pkgs,
-  ...
-}: let
+{ lib
+, config
+, options
+, pkgs
+, ...
+}:
+let
   cfg = config.khanelinix.services.avahi;
 
   inherit (lib) types mkEnableOption mkIf;
-in {
+in
+{
   options.khanelinix.services.avahi = with types; {
     enable = mkEnableOption "Avahi";
   };
@@ -17,8 +18,8 @@ in {
     system.nssModules = with pkgs.lib; optional (!config.services.avahi.nssmdns) pkgs.nssmdns;
     system.nssDatabases.hosts = with pkgs.lib;
       optionals (!config.services.avahi.nssmdns) (mkMerge [
-        (mkOrder 900 ["mdns4_minimal [NOTFOUND=return]"]) # must be before resolve
-        (mkOrder 1501 ["mdns4"]) # 1501 to ensure it's after dns
+        (mkOrder 900 [ "mdns4_minimal [NOTFOUND=return]" ]) # must be before resolve
+        (mkOrder 1501 [ "mdns4" ]) # 1501 to ensure it's after dns
       ]);
 
     services.avahi = {

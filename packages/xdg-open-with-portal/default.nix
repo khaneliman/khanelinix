@@ -1,9 +1,8 @@
 # Taken from https://github.com/LunNova/nixos-configs
 # 💖 Thank you!
-{
-  writeShellScriptBin,
-  glib,
-  ...
+{ writeShellScriptBin
+, glib
+, ...
 }:
 # TODO can this maybe suck less
 # https://discourse.nixos.org/t/making-xdg-open-more-resilient/16777

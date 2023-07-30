@@ -1,13 +1,13 @@
-{
-  options,
-  config,
-  lib,
-  ...
+{ options
+, config
+, lib
+, ...
 }:
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.apps.homebrew;
-in {
+in
+{
   options.khanelinix.apps.homebrew = with types; {
     enable = mkBoolOpt false "Whether or not to enable homebrew.";
   };

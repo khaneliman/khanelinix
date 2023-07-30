@@ -1,7 +1,6 @@
-{
-  pkgs,
-  gitHostCommitUrl ? "https://github.com/khaneliman/dotfiles/commit",
-  ...
+{ pkgs
+, gitHostCommitUrl ? "https://github.com/khaneliman/dotfiles/commit"
+, ...
 }:
 pkgs.writeShellScriptBin "nixos-revision" ''
   HAS_HELP=false
