@@ -56,6 +56,9 @@ in
               "float,  class:^(virt-manager)$, title:^.*(on QEMU/KVM)$"
               "size 2360 1330, class:^(virt-manager)$, title:^.*(on QEMU/KVM)$"
               "move 25% 6%, class:^(virt-manager)$, title:^.*(on QEMU/KVM)$"
+              "float,  class:^(qemu)$"
+              "size 2360 1330, class:^(qemu)$"
+              "move 25% 6%, class:^(qemu)$"
 
               # make Firefox PiP window floating and sticky
               "float, title:^(Picture-in-Picture)$"
@@ -136,7 +139,7 @@ in
               "tile, class:^(Spotify)$"
               "workspace 7 silent, class:^(elisa)$"
               #Remote
-              "workspace 8 silent, class:^(virt-manager)$"
+              "workspace 8 silent, class:^(virt-manager|qemu)$"
               "workspace 8 silent, class:^(gnome-connections)$"
               "workspace 8, class:^(looking-glass-client)$"
             ];

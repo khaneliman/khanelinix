@@ -72,7 +72,7 @@ in
     };
 
     khanelinix = {
-      user = { extraGroups = [ "qemu-libvirtd" "libvirtd" "disk" ]; };
+      user = {extraGroups = ["qemu-libvirtd" "libvirtd" "disk" "kvm" "input"];};
 
       apps = { looking-glass-client = enabled; };
 
