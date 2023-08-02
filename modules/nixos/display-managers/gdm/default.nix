@@ -40,8 +40,7 @@ in
             inherit (cfg) defaultSession;
 
             gdm = {
-              enable = true;
-              inherit (cfg) wayland autoSuspend;
+              inherit (cfg) enable wayland autoSuspend;
             };
           };
         };

@@ -19,7 +19,7 @@ in
     mkIf cfg.enable
       {
         environment.systemPackages = with pkgs; [
-          # sddm
+          sddm
           inputs.sddm-catppuccin.packages.${hostPlatform.system}.sddm-catppuccin
         ];
 
@@ -28,11 +28,20 @@ in
 
           libinput.enable = true;
           displayManager = {
-            defaultSession = lib.optional (cfg.defaultSession != null) cfg.defaultSession;
+            inherit (cfg) defaultSession;
 
             sddm = {
-              enable = true;
+              inherit (cfg) enable;
               theme = "catppuccin";
+
+              settings = {
+                General = {
+                  GreeterEnvironment = "QT_PLUGIN_PATH=${pkgs.plasma5Packages.layer-shell-qt}/${pkgs.plasma5Packages.qtbase.qtPluginPrefix},QT_WAYLAND_SHELL_INTEGRATION=layer-shell";
+                  DisplayServer = "wayland";
+                  InputMethod = "";
+                };
+                Wayland.CompositorCommand = "${pkgs.kwin}/bin/kwin_wayland --no-global-shortcuts --no-lockscreen --locale1";
+              };
             };
           };
         };
