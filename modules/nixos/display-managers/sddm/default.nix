@@ -2,7 +2,6 @@
 , config
 , lib
 , pkgs
-, inputs
 , ...
 }:
 with lib;
@@ -20,7 +19,7 @@ in
       {
         environment.systemPackages = with pkgs; [
           sddm
-          inputs.sddm-catppuccin.packages.${hostPlatform.system}.sddm-catppuccin
+          khanelinix.catppuccin-sddm-corners
         ];
 
         services.xserver = {
@@ -32,7 +31,7 @@ in
 
             sddm = {
               inherit (cfg) enable;
-              theme = "catppuccin";
+              theme = "catppuccin-sddm-corners";
 
               settings = {
                 General = {

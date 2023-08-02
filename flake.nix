@@ -142,9 +142,6 @@
     devshell.url = "github:numtide/devshell";
     devshell.inputs.nixpkgs.follows = "nixpkgs";
 
-    sddm-catppuccin.url = "github:khaneliman/sddm-catppuccin";
-    sddm-catppuccin.inputs.nixpkgs.follows = "nixpkgs";
-
     ## Ranger plugins
     ranger-devicons.url = "github:alexanderjeurissen/ranger_devicons";
     ranger-devicons.flake = false;
