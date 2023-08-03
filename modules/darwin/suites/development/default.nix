@@ -39,6 +39,7 @@ in
       cmocka
       direnv
       docutils
+      dotnet-sdk
       efm-langserver
       eslint_d
       gnumake
@@ -78,6 +79,7 @@ in
         "brew-cask-completion"
         "jq"
         "gh"
+        "angular-cli"
       ];
 
       casks = [
