@@ -23,12 +23,6 @@ in
     ];
 
     homebrew = {
-      enable = true;
-
-      global = {
-        brewfile = true;
-      };
-
       casks = [
         "inkscape"
       ];

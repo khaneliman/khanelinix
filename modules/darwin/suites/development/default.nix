@@ -74,12 +74,6 @@ in
     ];
 
     homebrew = {
-      enable = true;
-
-      global = {
-        brewfile = true;
-      };
-
       brews = [
         "brew-cask-completion"
         "jq"

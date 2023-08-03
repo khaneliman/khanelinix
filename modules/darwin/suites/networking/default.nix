@@ -15,12 +15,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix = {
-      apps = {
-        homebrew = enabled;
-      };
-    };
-
     environment.systemPackages = with pkgs; [
       # ifstat-legacy
       nmap

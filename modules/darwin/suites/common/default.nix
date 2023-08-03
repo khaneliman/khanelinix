@@ -76,6 +76,10 @@ in
     khanelinix = {
       nix = enabled;
 
+      apps = {
+        homebrew = enabled;
+      };
+
       cli-apps = {
         neovim = enabled;
         ranger = enabled;

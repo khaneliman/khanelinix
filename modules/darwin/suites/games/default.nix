@@ -14,12 +14,6 @@ in
 
   config = mkIf cfg.enable {
     homebrew = {
-      enable = true;
-
-      global = {
-        brewfile = true;
-      };
-
       casks = [
         "moonlight"
       ];

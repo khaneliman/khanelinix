@@ -22,12 +22,6 @@ in
     ];
 
     homebrew = {
-      enable = true;
-
-      global = {
-        brewfile = true;
-      };
-
       taps = [
         "1password/tap"
       ];

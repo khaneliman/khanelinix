@@ -15,13 +15,8 @@ in
 
   config = mkIf cfg.enable {
     homebrew = {
-      enable = true;
-
       brews = [
         "librsvg"
-      ];
-
-      casks = [
       ];
     };
 

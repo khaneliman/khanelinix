@@ -19,12 +19,6 @@ in
     ];
 
     homebrew = {
-      enable = true;
-
-      global = {
-        brewfile = true;
-      };
-
       masApps = {
         "Infuse" = 1136220934;
         "iMovie" = 408981434;

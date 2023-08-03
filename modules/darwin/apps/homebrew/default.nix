@@ -35,10 +35,6 @@ in
         "homebrew/core"
         "homebrew/services"
       ];
-
-      casks = [
-        "sloth"
-      ];
     };
   };
 }

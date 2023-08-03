@@ -21,12 +21,6 @@ in
     ];
 
     homebrew = {
-      enable = true;
-
-      global = {
-        brewfile = true;
-      };
-
       taps = [
         "arthurk/virt-manager"
       ];

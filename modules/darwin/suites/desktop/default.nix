@@ -21,12 +21,6 @@ in
     };
 
     homebrew = {
-      enable = true;
-
-      global = {
-        brewfile = true;
-      };
-
       brews = [
         "fastfetch"
         "fisher"
