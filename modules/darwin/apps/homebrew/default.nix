@@ -18,6 +18,13 @@ in
 
       global = {
         brewfile = true;
+        autoUpdate = true;
+      };
+
+      onActivation = {
+        autoUpdate = true;
+        cleanup = "uninstall";
+        upgrade = true;
       };
 
       taps = [
