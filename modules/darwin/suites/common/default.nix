@@ -9,6 +9,8 @@ with lib.internal; let
   cfg = config.khanelinix.suites.common;
 in
 {
+  imports = [ ../../../shared/suites/common/default.nix ];
+
   options.khanelinix.suites.common = with types; {
     enable = mkBoolOpt false "Whether or not to enable common configuration.";
   };
@@ -22,12 +24,8 @@ in
       btop
       cask
       coreutils
-      curl
       duti
-      exa
       fasd
-      fd
-      file
       findutils
       fzf
       gawk
@@ -39,8 +37,6 @@ in
       intltool
       jq
       keychain
-      khanelinix.list-iommu
-      killall
       lolcat
       lsd
       mas
@@ -50,27 +46,15 @@ in
       pciutils
       pigz
       rename
-      socat
       spice-gtk
       terminal-notifier
-      tldr
       tmux
       toilet
       topgrade
       trash-cli
       tree
       wego
-      wget
       wtf
-      xclip
-
-      # nixos
-      # alejandra
-      deadnix
-      hydra-check
-      # nixfmt
-      snowfallorg.flake
-      statix
     ];
 
     khanelinix = {
@@ -81,7 +65,6 @@ in
       };
 
       cli-apps = {
-        neovim = enabled;
         ranger = enabled;
       };
 

@@ -25,11 +25,11 @@ in
     homebrew = {
       casks = [
         "inkscape"
+        "mediainfo"
       ];
 
-      masApps = mkIf config.khanelinix.apps.homebrew.masEnable { 
+      masApps = mkIf config.khanelinix.apps.homebrew.masEnable {
         "Pixelmator" = 407963104;
-        "MediaInfo" = 510620098;
       };
     };
   };

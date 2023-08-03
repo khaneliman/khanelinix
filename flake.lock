@@ -3,11 +3,11 @@
     "astronvim": {
       "flake": false,
       "locked": {
-        "lastModified": 1690996371,
-        "narHash": "sha256-krTihmIAbLjh2Sxp+QYWrgz7p21e/ByCBK45nTpdSAo=",
+        "lastModified": 1691093560,
+        "narHash": "sha256-R0lwU/kN+M7kiOL+37PixeVBm5DRxgyV1/S3U2za/dg=",
         "owner": "AstroNvim",
         "repo": "AstroNvim",
-        "rev": "eb451ee390aab9b984dd1a530eacb76935504ea3",
+        "rev": "ffaa3877f0dd3a7468f29e81cf4ebf534a5ad891",
         "type": "github"
       },
       "original": {
@@ -30,22 +30,6 @@
       "original": {
         "owner": "khaneliman",
         "repo": "astronvim",
-        "type": "github"
-      }
-    },
-    "catppuccin-cursors": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1673786126,
-        "narHash": "sha256-NNCtlcOhFEkOOLzXv6Qh2qyG/176pQgJliWjnfR9uFw=",
-        "owner": "catppuccin",
-        "repo": "cursors",
-        "rev": "0ed5dfed4d3be01a923435fae191b82de51a2013",
-        "type": "github"
-      },
-      "original": {
-        "owner": "catppuccin",
-        "repo": "cursors",
         "type": "github"
       }
     },
@@ -623,11 +607,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1691068597,
-        "narHash": "sha256-PQOogVERo1EfgMvEE/QS4NZauW8T+w/3BYvChfWgTFs=",
+        "lastModified": 1691092752,
+        "narHash": "sha256-6yGM2Yu5FgT8ZbfS+s43Ljp+6gHnQqxiBNqkcCY5v4Q=",
         "owner": "hyprwm",
         "repo": "Hyprland",
-        "rev": "da46e01b9710fdb1d8b89d577677321101f9ed96",
+        "rev": "2e6693fbb650dd2c9b7ad4b6d830899589504bda",
         "type": "github"
       },
       "original": {
@@ -846,11 +830,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1691067576,
-        "narHash": "sha256-xOdc3+I6EmJy6RwsTfIZrdNlK5DEZrhEBe73hV4jQHs=",
+        "lastModified": 1691091934,
+        "narHash": "sha256-cNaeoBwITqS8knMA5sN9bWpVh5Ef8X5WBVTY8ANLJRk=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "010a9c3aa0cc874b4a3e4365f2ece970adc667a4",
+        "rev": "28166de817c51e3b316d722b43bdb5f3c715ee38",
         "type": "github"
       },
       "original": {
@@ -932,7 +916,6 @@
       "inputs": {
         "astronvim": "astronvim",
         "astronvim-user": "astronvim-user",
-        "catppuccin-cursors": "catppuccin-cursors",
         "comma": "comma",
         "cowsay": "cowsay",
         "darwin": "darwin",

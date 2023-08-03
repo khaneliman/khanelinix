@@ -21,6 +21,7 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
+      bfg-repo-cleaner
       gh
       git
       git-crypt

@@ -5,6 +5,7 @@
     # NixPkgs (nixos-unstable)
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    # TODO: remove when not used
     # Nix User Repository (master)
     nur.url = "github:nix-community/NUR";
 
@@ -66,12 +67,6 @@
     hyprland-contrib = {
       url = "github:hyprwm/contrib";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Catppuccin cursors
-    catppuccin-cursors = {
-      url = "github:catppuccin/cursors";
-      flake = false;
     };
 
     # Astronvim repo

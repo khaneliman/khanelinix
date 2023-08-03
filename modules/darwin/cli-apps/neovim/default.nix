@@ -15,12 +15,17 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
+      bottom
+      curl
+      deno
+      gdu
+      gzip
+      lazygit
+      less
       neovim
       ripgrep
-      gdu
-      bottom
-      deno
-      lazygit
+      unzip
+      wget
       # FIXME: This is not working
       # webkitgtk
     ];

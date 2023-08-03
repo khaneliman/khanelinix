@@ -19,9 +19,10 @@ in
         environment.systemPackages = with pkgs; [
           (python311.withPackages (ps:
             with ps; [
-              requests
+              pip
               pyqt5
               qtpy
+              requests
             ]))
         ];
       };

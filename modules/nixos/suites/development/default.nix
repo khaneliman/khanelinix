@@ -61,7 +61,6 @@ in
         helix = enabled;
         lazydocker = enabled;
         lazygit = enabled;
-        neovim = enabled;
         prisma = enabled;
         tmux = enabled;
         yubikey = enabled;

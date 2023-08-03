@@ -9,6 +9,8 @@ with lib.internal; let
   cfg = config.khanelinix.suites.common;
 in
 {
+  imports = [ ../../../shared/suites/common/default.nix ];
+
   options.khanelinix.suites.common = with types; {
     enable = mkBoolOpt false "Whether or not to enable common configuration.";
   };
@@ -18,32 +20,13 @@ in
       appimage-run
       bottom
       clac
-      curl
-      exa
-      fd
       feh
-      file
       fzf
       jq
-      khanelinix.list-iommu
-      killall
       pciutils
-      socat
-      tldr
       toilet
-      unzip
-      wget
-      xclip
       upower
       util-linux
-
-      # nixos
-      # alejandra
-      deadnix
-      hydra-check
-      nixfmt
-      snowfallorg.flake
-      statix
 
       # libaries
       at-spi2-atk

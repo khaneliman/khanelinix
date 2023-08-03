@@ -17,6 +17,10 @@ in
 
   config = mkIf cfg.enable {
     khanelinix = {
+      cli-apps = {
+        neovim = enabled;
+      };
+
       tools = {
         node = enabled;
         python = enabled;
@@ -29,7 +33,6 @@ in
       act
       armadillo
       bear
-      bfg-repo-cleaner
       binutils
       binwalk
       boost

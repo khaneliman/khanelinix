@@ -20,10 +20,6 @@ with lib.internal; {
       vscode = enabled;
     };
 
-    cli-apps = {
-      neovim = enabled;
-    };
-
     desktop = {
       gnome = {
         enable = true;
