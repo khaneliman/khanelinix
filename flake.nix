@@ -169,7 +169,7 @@
       # TODO: cleanup when available
       channels-config.permittedInsecurePackages = [
         "imagemagick-6.9.12-68"
-        "openssl-1.1.1u"
+        "openssl-1.1.1v"
       ];
       # channels-config.allowBroken = true;
 

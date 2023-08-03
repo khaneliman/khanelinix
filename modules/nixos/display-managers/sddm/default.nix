@@ -19,7 +19,7 @@ in
       {
         environment.systemPackages = with pkgs; [
           sddm
-          khanelinix.catppuccin-sddm-corners
+          catppuccin-sddm-corners
         ];
 
         services.xserver = {
