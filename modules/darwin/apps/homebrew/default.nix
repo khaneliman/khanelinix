@@ -10,6 +10,7 @@ in
 {
   options.khanelinix.apps.homebrew = with types; {
     enable = mkBoolOpt false "Whether or not to enable homebrew.";
+    masEnable = mkBoolOpt false "Whether or not to enable Mac App Store downloads.";
   };
 
   config = mkIf cfg.enable {

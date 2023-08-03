@@ -39,7 +39,7 @@ in
         "thunderbird"
       ];
 
-      masApps = {
+      masApps = mkIf config.khanelinix.apps.homebrew.masEnable { 
         "1Password for Safari" = 1569813296;
         "Brother iPrint&Scan" = 1193539993;
         "Keynote" = 409183694;

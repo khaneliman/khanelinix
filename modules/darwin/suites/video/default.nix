@@ -19,7 +19,7 @@ in
     ];
 
     homebrew = {
-      masApps = {
+      masApps = mkIf config.khanelinix.apps.homebrew.masEnable { 
         "Infuse" = 1136220934;
         "iMovie" = 408981434;
         "Prime Video" = 545519333;

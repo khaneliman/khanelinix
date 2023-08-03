@@ -21,7 +21,7 @@ in
         "element"
       ];
 
-      masApps = {
+      masApps = mkIf config.khanelinix.apps.homebrew.masEnable { 
         "Messenger" = 1480068668;
         "Slack" = 803453959;
         "Telegram" = 747648890;

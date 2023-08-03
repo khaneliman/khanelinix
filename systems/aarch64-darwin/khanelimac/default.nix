@@ -1,6 +1,8 @@
 { lib, ... }:
 with lib.internal; {
   khanelinix = {
+    apps.homebrew.masEnable = true;
+
     suites = {
       art = enabled;
       business = enabled;

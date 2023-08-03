@@ -27,7 +27,7 @@ in
         "inkscape"
       ];
 
-      masApps = {
+      masApps = mkIf config.khanelinix.apps.homebrew.masEnable { 
         "Pixelmator" = 407963104;
         "MediaInfo" = 510620098;
       };
