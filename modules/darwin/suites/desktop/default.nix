@@ -61,7 +61,7 @@ in
         "teamookla/speedtest"
       ];
 
-      masApps = mkIf config.khanelinix.apps.homebrew.masEnable { 
+      masApps = mkIf config.khanelinix.apps.homebrew.masEnable {
         "AdGuard for Safari" = 1440147259;
         "AmorphousMemoryMark" = 1495719766;
         "Amphetamine" = 937984704;

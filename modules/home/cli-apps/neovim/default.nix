@@ -1,14 +1,15 @@
-{
-  lib,
-  config,
-  pkgs,
-  inputs,
-  ...
-}: let
+{ lib
+, config
+, pkgs
+, inputs
+, ...
+}:
+let
   inherit (lib) mkEnableOption mkIf;
 
   cfg = config.khanelinix.cli-apps.neovim;
-in {
+in
+{
   options.khanelinix.cli-apps.neovim = {
     enable = mkEnableOption "Neovim";
   };

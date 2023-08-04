@@ -25,7 +25,7 @@ in
         "spotify"
       ];
 
-      masApps = mkIf config.khanelinix.apps.homebrew.masEnable { 
+      masApps = mkIf config.khanelinix.apps.homebrew.masEnable {
         "GarageBand" = 682658836;
       };
     };
