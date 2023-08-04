@@ -15,6 +15,7 @@ in
   config = mkIf cfg.enable {
     khanelinix = {
       apps = {
+        armcord = enabled;
         caprine = enabled;
       };
     };
