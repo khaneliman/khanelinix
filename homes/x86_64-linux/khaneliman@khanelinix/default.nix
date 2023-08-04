@@ -42,6 +42,7 @@ with lib.internal; {
 
     suites = {
       music = enabled;
+      social = enabled;
     };
 
     tools = {

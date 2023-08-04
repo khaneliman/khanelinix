@@ -1,0 +1,268 @@
+/*
+This is the custom styles file where you can add anything you want.
+The styles here will be injected into Caprine and will override default styles.
+If you want to disable styles but keep the config, just comment the lines that you don't want to be used.
+
+Press Command/Ctrl+R in Caprine to see your changes.
+*/
+.rq0escxv.l9j0dhe7.du4w35lb.j83agx80.cbu4d94t.g5gj957u.d2edcug0.hpfvmrgz.kud993qy.buofh1pr {
+    margin-top: unset !important;
+}
+
+/* Scrollbar fixes. */
+::-webkit-scrollbar-track, ::-webkit-scrollbar, ::-webkit-scrollbar-corner {
+	background-color: #1e2030;
+}
+::-webkit-scrollbar {
+	width: 15px;
+	overflow-x: hidden;
+}
+body::-webkit-scrollbar {
+	width: 0;
+}
+::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	background-color: #1e2030;
+	background-clip: content-box;
+	border: 1px solid transparent;
+}
+::-webkit-scrollbar-thumb:hover {	
+	background-color: #5b6078;
+}
+
+/* !important spam needed for the colors to actually work in Caprine. */
+:root,
+.__fb-light-mode,
+.__fb-dark-mode {
+  --card-background: #24273a !important;
+  --comment-background: #181926 !important;
+  --container-color: #24273a !important;
+  --card-background-flat: #939ab7 !important;
+  --disabled-button-background: #14170e !important;
+  --divider: #4d4d4d !important;
+  --hosted-view-selected-state: #24273a !important;
+  --hover-overlay: rgba(255, 255, 255, 0.05) !important;
+  --media-inner-border: rgba(255, 255, 255, 0.1) !important;
+  --messenger-card-background: #24273a !important;
+  --messenger-reply-background: #181926 !important;
+  --overlay-alpha-80: rgba(41, 41, 41, 0.8) !important;
+  --popover-background: #24273a !important;
+  --primary-icon: #8aadf4 !important;
+  --primary-text: #cad3f5 !important;
+  --scroll-thumb: #5b6078 !important;
+  --secondary-button-background: #5b6078 !important;
+  --secondary-icon: #a6da95 !important;
+  --secondary-text: #b8c0e0 !important;
+  --shadow-1: rgba(0, 0, 0, 0.3) !important;
+  --shadow-2: rgba(0, 0, 0, 0.4) !important;
+  --shadow-5: rgba(0, 0, 0, 0.7) !important;
+  --shadow-8: rgba(0, 0, 0, 1) !important;
+  --shadow-inset: rgba(000, 000, 000, 0.5) !important;
+  --surface-background: #24273a !important;
+  --wash: #1e2030 !important;
+  --web-wash: #24273a !important;
+}
+
+/**/
+/* /* */
+/* * Left side panel */
+/* */ */
+/* #scrollview */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div.x78zum5.xdt5ytf.x10cihs4.x1t2pt76.x1n2onr6.x1ja2u2z */
+/*   > div.x9f619.x2lah0s.x1nhvcw1.x1qjc9v5.xozqiw3.x1q0g3np.x78zum5.x1iyjqo2.x1t2pt76.x1n2onr6.x1ja2u2z */
+/*   > div.x9f619.x1n2onr6.x78zum5.xdt5ytf.x193iq5w.xeuugli.x2lah0s.x1t2pt76.x1xzczws.x1vjfegm */
+/*   > div */
+/*   > div.x9f619.x1n2onr6.x1ja2u2z.x78zum5.xdt5ytf.x2lah0s.x193iq5w.xeuugli.xycxndf.xkhd6sd.x4uap5.xexx8yu.x18d9i69 { */
+/*   background-color: #24273a; */
+/*   border: 1px solid white; */
+/*   border-radius: 1em; */
+/* } */
+/**/
+/* /* */
+/* * Top chat panel */
+/* */ */
+/* #scrollview */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div.x78zum5.xdt5ytf.x10cihs4.x1t2pt76.x1n2onr6.x1ja2u2z */
+/*   > div.x9f619.x2lah0s.x1nhvcw1.x1qjc9v5.xozqiw3.x1q0g3np.x78zum5.x1iyjqo2.x1t2pt76.x1n2onr6.x1ja2u2z */
+/*   > div.x9f619.x1n2onr6.x1ja2u2z.xdt5ytf.x193iq5w.xeuugli.x1r8uery.x1iyjqo2.xs83m0k.x78zum5.x1t2pt76 */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div.x9f619.x1ja2u2z.x193iq5w.xeuugli.x1r8uery.x1iyjqo2.xs83m0k.x78zum5.xdt5ytf.x6ikm8r.x10wlt62.x1n2onr6 */
+/*   > div.x1u998qt.x1vjfegm { */
+/*   background-color: #24273a; */
+/*   border: 1px solid white; */
+/*   border-radius: 1em; */
+/* } */
+/**/
+/* /* */
+/* * Right side panel */
+/* */ */
+/* #scrollview */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div.x78zum5.xdt5ytf.x10cihs4.x1t2pt76.x1n2onr6.x1ja2u2z */
+/*   > div.x9f619.x2lah0s.x1nhvcw1.x1qjc9v5.xozqiw3.x1q0g3np.x78zum5.x1iyjqo2.x1t2pt76.x1n2onr6.x1ja2u2z */
+/*   > div.x9f619.x1n2onr6.x1ja2u2z.xdt5ytf.x193iq5w.xeuugli.x1r8uery.x1iyjqo2.xs83m0k.x78zum5.x1t2pt76 */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div.x9f619.x1n2onr6.x1ja2u2z.x78zum5.xdt5ytf.x4xrfw5.x1yu6fn4.xs83m0k.x1dt7z5j.x2ixbly */
+/*   > div */
+/*   > div */
+/*   > div.x9f619.x1n2onr6.x1ja2u2z.x78zum5.xdt5ytf.x193iq5w.x1l7klhg.x1iyjqo2.xs83m0k.x2lwn1j { */
+/*   background-color: #24273a; */
+/*   border: 1px solid white; */
+/*   border-radius: 1em; */
+/* } */
+/**/
+/* /* */
+/* * Selected/Expanded side panel */
+/* */ */
+/* #scrollview */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div.x78zum5.xdt5ytf.x10cihs4.x1t2pt76.x1n2onr6.x1ja2u2z */
+/*   > div.x9f619.x2lah0s.x1nhvcw1.x1qjc9v5.xozqiw3.x1q0g3np.x78zum5.x1iyjqo2.x1t2pt76.x1n2onr6.x1ja2u2z */
+/*   > div.x9f619.x1n2onr6.x78zum5.xdt5ytf.x193iq5w.xeuugli.x2lah0s.x1t2pt76.x1xzczws.x1vjfegm */
+/*   > div */
+/*   > div.x9f619.x1n2onr6.x1ja2u2z.x78zum5.xdt5ytf.x2lah0s.x193iq5w.xeuugli.x1iyjqo2.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x1cvmir6 */
+/*   > div { */
+/*   background-color: #24273a; */
+/*   border: 1px solid white; */
+/*   border-radius: 1em; */
+/* } */
+/**/
+/* /* */
+/* * User panel */
+/* */ */
+/* #scrollview */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div.x78zum5.xdt5ytf.x10cihs4.x1t2pt76.x1n2onr6.x1ja2u2z */
+/*   > div.x9f619.x2lah0s.x1nhvcw1.x1qjc9v5.xozqiw3.x1q0g3np.x78zum5.x1iyjqo2.x1t2pt76.x1n2onr6.x1ja2u2z */
+/*   > div.x9f619.x1n2onr6.x78zum5.xdt5ytf.x193iq5w.xeuugli.x2lah0s.x1t2pt76.x1xzczws.x1vjfegm */
+/*   > div */
+/*   > div.x9f619.x1n2onr6.x1ja2u2z.x78zum5.xdt5ytf.x2lah0s.x193iq5w.xeuugli.xycxndf.xkhd6sd.x4uap5.xexx8yu.x18d9i69 */
+/*   > div */
+/*   > div:nth-child(2) */
+/*   > div { */
+/*   background-color: #24273a; */
+/*   border: 1px solid white; */
+/*   border-radius: 1em; */
+/* } */
+/**/
+/* /* */
+/* * User panel settings popover */
+/* */ */
+/* #scrollview */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div:nth-child(2) */
+/*   > div */
+/*   > div */
+/*   > div.xu96u03.xm80bdy.x10l6tqk.x13vifvy */
+/*   > div.x1uvtmcs.x4k7w5x.x1h91t0o.x1beo9mf.xaigb6o.x12ejxvf.x3igimt.xarpa2k.xedcshv.x1lytzrv.x1t2pt76.x7ja8zs.x1n2onr6.x1qrby5j.x1jfb8zj */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div { */
+/*   background-color: #24273a; */
+/*   border: 1px solid white; */
+/*   border-radius: 1em; */
+/* } */
+/**/
+/* /* */
+/* * Chat panel border */
+/* */ */
+/* #scrollview */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div.x78zum5.xdt5ytf.x10cihs4.x1t2pt76.x1n2onr6.x1ja2u2z */
+/*   > div.x9f619.x2lah0s.x1nhvcw1.x1qjc9v5.xozqiw3.x1q0g3np.x78zum5.x1iyjqo2.x1t2pt76.x1n2onr6.x1ja2u2z */
+/*   > div.x9f619.x1n2onr6.x1ja2u2z.xdt5ytf.x193iq5w.xeuugli.x1r8uery.x1iyjqo2.xs83m0k.x78zum5.x1t2pt76 */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div.x9f619.x1ja2u2z.x193iq5w.xeuugli.x1r8uery.x1iyjqo2.xs83m0k.x78zum5.xdt5ytf.x6ikm8r.x10wlt62.x1n2onr6 */
+/*   > div.x1uvtmcs.x4k7w5x.x1h91t0o.x1beo9mf.xaigb6o.x12ejxvf.x3igimt.xarpa2k.xedcshv.x1lytzrv.x1t2pt76.x7ja8zs.x1n2onr6.x1qrby5j.x1jfb8zj */
+/*   > div */
+/*   > div */
+/*   > div.x78zum5.x1r8uery.xdt5ytf.x1iyjqo2.xmz0i5r.x6ikm8r.x10wlt62.x1n2onr6 { */
+/*   border: 1px solid white; */
+/*   border-radius: 1em; */
+/* } */
+/**/
+/* /* */
+/* * Chat panel scrollbar and bubbles */
+/* */ */
+/* #scrollview */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div.x78zum5.xdt5ytf.x10cihs4.x1t2pt76.x1n2onr6.x1ja2u2z */
+/*   > div.x9f619.x2lah0s.x1nhvcw1.x1qjc9v5.xozqiw3.x1q0g3np.x78zum5.x1iyjqo2.x1t2pt76.x1n2onr6.x1ja2u2z */
+/*   > div.x9f619.x1n2onr6.x1ja2u2z.xdt5ytf.x193iq5w.xeuugli.x1r8uery.x1iyjqo2.xs83m0k.x78zum5.x1t2pt76 */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div.x9f619.x1ja2u2z.x193iq5w.xeuugli.x1r8uery.x1iyjqo2.xs83m0k.x78zum5.xdt5ytf.x6ikm8r.x10wlt62.x1n2onr6 */
+/*   > div.x1uvtmcs.x4k7w5x.x1h91t0o.x1beo9mf.xaigb6o.x12ejxvf.x3igimt.xarpa2k.xedcshv.x1lytzrv.x1t2pt76.x7ja8zs.x1n2onr6.x1qrby5j.x1jfb8zj */
+/*   > div */
+/*   > div */
+/*   > div.x78zum5.x1r8uery.xdt5ytf.x1iyjqo2.xmz0i5r.x6ikm8r.x10wlt62.x1n2onr6 */
+/*   > div { */
+/*   background-color: #1e2030; */
+/* } */
+/**/
+/* #scrollview */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div.x78zum5.xdt5ytf.x10cihs4.x1t2pt76.x1n2onr6.x1ja2u2z */
+/*   > div.x9f619.x2lah0s.x1nhvcw1.x1qjc9v5.xozqiw3.x1q0g3np.x78zum5.x1iyjqo2.x1t2pt76.x1n2onr6.x1ja2u2z */
+/*   > div.x9f619.x1n2onr6.x78zum5.xdt5ytf.x193iq5w.xeuugli.x2lah0s.x1t2pt76.x1xzczws.x1vjfegm */
+/*   > div */
+/*   > div.x9f619.x1n2onr6.x1ja2u2z.x78zum5.xdt5ytf.x2lah0s.x193iq5w.xeuugli.x1iyjqo2.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x1cvmir6.x12nzpgo */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div { */
+/*   background-color: #24273a; */
+/* } */
+/**/
+/* #scrollview */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div.x78zum5.xdt5ytf.x10cihs4.x1t2pt76.x1n2onr6.x1ja2u2z */
+/*   > div.x9f619.x2lah0s.x1nhvcw1.x1qjc9v5.xozqiw3.x1q0g3np.x78zum5.x1iyjqo2.x1t2pt76.x1n2onr6.x1ja2u2z */
+/*   > div.x9f619.x1n2onr6.x78zum5.xdt5ytf.x193iq5w.xeuugli.x2lah0s.x1t2pt76.x1xzczws.x1vjfegm */
+/*   > div */
+/*   > div.x9f619.x1n2onr6.x1ja2u2z.x78zum5.xdt5ytf.x2lah0s.x193iq5w.xeuugli.x1iyjqo2.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x1cvmir6 */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div */
+/*   > div.x78zum5.x1iyjqo2.x1n2onr6.xdt5ytf { */
+/*   background-color: #24273a; */
+/* } */

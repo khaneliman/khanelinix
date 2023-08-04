@@ -1,7 +1,6 @@
 { options
 , config
 , lib
-, pkgs
 , ...
 }:
 with lib;
@@ -14,20 +13,9 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      caprine-bin
-      element-desktop
-      slack
-      slack-term
-      telegram-desktop
-    ];
-
     khanelinix = {
       apps = {
-        discord = {
-          enable = true;
-          chromium = enabled;
-        };
+        caprine = enabled;
       };
     };
   };
