@@ -1,6 +1,7 @@
 { options
 , config
 , lib
+, pkgs
 , ...
 }:
 with lib;
@@ -13,6 +14,11 @@ in
   };
 
   config = mkIf cfg.enable {
+
+    environment.systemPackages = with pkgs; [
+      mediainfo-gui
+    ];
+
     khanelinix = {
       apps = {
         pitivi = enabled;

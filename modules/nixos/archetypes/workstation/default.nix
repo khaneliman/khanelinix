@@ -20,10 +20,6 @@ in
         common = enabled;
         desktop = enabled;
         development = enabled;
-        art = enabled;
-        video = enabled;
-        social = enabled;
-        music = enabled;
       };
 
       tools = { };

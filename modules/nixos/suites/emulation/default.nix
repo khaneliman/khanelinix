@@ -16,11 +16,20 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      rpcs3
-      pcsx2
       cemu
-      yuzu-early-access
       emulationstation
+      mame
+      melonDS
+      mgba
+      mupen64plus
+      nestopia
+      pcsx2
+      pcsxr
+      retroarch
+      rpcs3
+      snes9x
+      xemu
+      yuzu-early-access
     ];
 
     khanelinix = {

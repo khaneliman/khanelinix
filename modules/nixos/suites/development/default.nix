@@ -25,29 +25,13 @@ in
     ];
 
     environment.systemPackages = with pkgs; [
-      onefetch
-      clang
-      cmake
-      dotnet-sdk_7
-      dotnet-runtime_7
-      gcc
-      glib
-      glibc
-      libgccjit
-      stdenvNoCC
-      libcxx
-      libcxxStdenv
-      gnumake
-      llvm
-      meson
-      pkg-config
-      rust-bin.stable.latest.default
-
-      #nix
+      dbeaver
       nixpkgs-fmt
-      nixpkgs-review
-      nixpkgs-lint-community
       nixpkgs-hammering
+      nixpkgs-lint-community
+      nixpkgs-review
+      onefetch
+      rust-bin.stable.latest.default
     ];
 
     khanelinix = {

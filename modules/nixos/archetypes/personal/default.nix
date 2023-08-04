@@ -15,7 +15,14 @@ in
 
   config = mkIf cfg.enable {
     khanelinix = {
-      suites = { common = enabled; };
+      suites = {
+        art = enabled;
+        common = enabled;
+        music = enabled;
+        photo = enabled;
+        social = enabled;
+        video = enabled;
+      };
 
       tools = {
         # agenix = enabled;

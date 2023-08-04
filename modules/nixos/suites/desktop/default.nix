@@ -1,6 +1,7 @@
 { options
 , config
 , lib
+, pkgs
 , ...
 }:
 with lib;
@@ -14,13 +15,24 @@ in
   };
 
   config = mkIf cfg.enable {
+
+    environment.systemPackages = with pkgs; [
+      authy
+      barrier
+      bleachbit
+      dupeguru
+      fontpreview
+      keepass
+    ];
+
     khanelinix = {
       desktop = {
-        gnome = enabled;
+        hyprland = enabled;
 
         addons = {
           wallpapers = enabled;
           qt = enabled;
+          gtk = enabled;
         };
       };
 
@@ -29,7 +41,6 @@ in
         firefox = enabled;
         gparted = enabled;
         pocketcasts = enabled;
-        vlc = enabled;
       };
     };
   };

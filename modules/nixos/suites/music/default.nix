@@ -29,6 +29,8 @@ in
       mpdris2
       # ncmpcpp
       spotify
+      tageditor
+      youtube-music
     ];
 
     khanelinix = {

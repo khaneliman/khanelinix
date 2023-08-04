@@ -15,14 +15,6 @@ with lib.internal; {
       workstation = enabled;
     };
 
-    apps = {
-      _1password = enabled;
-      firefox = enabled;
-      vscode = enabled;
-    };
-
-    cli-apps = { };
-
     desktop = {
       hyprland = {
         enable = true;
@@ -35,12 +27,6 @@ with lib.internal; {
           ".screenlayout/primary.sh".source = ./.screenlayout/primary.sh;
         };
       };
-
-      addons = {
-        # I like to have a convenient place to share wallpapers from
-        # even if they're not currently being used.
-        wallpapers = enabled;
-      };
     };
 
     display-managers.gdm = {
@@ -48,7 +34,6 @@ with lib.internal; {
     };
 
     suites = {
-      desktop = mkForce disabled;
       emulation = enabled;
     };
 
