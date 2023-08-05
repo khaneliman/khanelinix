@@ -5,10 +5,6 @@
     # NixPkgs (nixos-unstable)
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    # TODO: remove when not used
-    # Nix User Repository (master)
-    nur.url = "github:nix-community/NUR";
-
     # Home Manager (master)
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -180,7 +176,6 @@
         flake.overlay
         cowsay.overlay
         icehouse.overlay
-        nur.overlay
         # neovim-nightly.overlay
         rustup-overlay.overlays.default
         hyprland.overlays.default

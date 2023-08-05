@@ -16,7 +16,7 @@ in
 
   config = mkIf cfg.enable {
     # TODO: replace with nixpkgs when available
-    environment.systemPackages = with pkgs; [ nur.repos.vanilla.fastfetch ];
+    environment.systemPackages = with pkgs; [ fastfetch ];
 
     khanelinix.home = {
       configFile = with inputs; {

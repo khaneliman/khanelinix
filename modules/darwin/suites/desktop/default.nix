@@ -1,6 +1,7 @@
 { options
 , config
 , lib
+, pkgs
 , ...
 }:
 with lib;
@@ -14,6 +15,10 @@ in
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      fastfetch
+    ];
+
     khanelinix.desktop.addons = {
       skhd = enabled;
       yabai = enabled;
@@ -22,7 +27,6 @@ in
 
     homebrew = {
       brews = [
-        "fastfetch"
         "fisher"
         "ical-buddy"
         "blueutil"
