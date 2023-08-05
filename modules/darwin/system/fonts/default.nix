@@ -1,5 +1,4 @@
-{ options
-, config
+{ config
 , pkgs
 , lib
 , ...
@@ -9,17 +8,9 @@ with lib.internal; let
   cfg = config.khanelinix.system.fonts;
 in
 {
-  options.khanelinix.system.fonts = with types; {
-    enable = mkBoolOpt false "Whether or not to manage fonts.";
-    fonts = mkOpt (listOf package) [ ] "Custom font packages to install.";
-  };
+  imports = [ ../../../shared/system/fonts/default.nix ];
 
   config = mkIf cfg.enable {
-    environment.variables = {
-      # Enable icons in tooling since we have nerdfonts.
-      LOG_ICONS = "true";
-    };
-
     homebrew = {
       casks = [
         "font-sf-mono-nerd-font-ligaturized"
@@ -27,18 +18,10 @@ in
     };
 
     fonts = {
-      fontDir = enabled;
-
       fonts = with pkgs;
         [
-          noto-fonts
-          noto-fonts-cjk-sans
-          noto-fonts-cjk-serif
-          noto-fonts-emoji
           sketchybar-app-font
-          (nerdfonts.override { fonts = [ "Hack" "CascadiaCode" ]; })
-        ]
-        ++ cfg.fonts;
+        ] ++ cfg.fonts;
     };
 
     system = {

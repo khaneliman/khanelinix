@@ -21,7 +21,6 @@ in
       barrier
       bleachbit
       dupeguru
-      fontpreview
       keepass
     ];
 
