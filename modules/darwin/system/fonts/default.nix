@@ -35,6 +35,7 @@ in
           noto-fonts-cjk-sans
           noto-fonts-cjk-serif
           noto-fonts-emoji
+          sketchybar-app-font
           (nerdfonts.override { fonts = [ "Hack" "CascadiaCode" ]; })
         ]
         ++ cfg.fonts;
