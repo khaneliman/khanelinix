@@ -1,7 +1,10 @@
 { lib, ... }:
 with lib.internal; {
   khanelinix = {
-    tools.homebrew.masEnable = true;
+    archetypes = {
+      personal = enabled;
+      workstation = enabled;
+    };
 
     suites = {
       art = enabled;
@@ -16,6 +19,8 @@ with lib.internal; {
       video = enabled;
       vm = enabled;
     };
+
+    tools.homebrew.masEnable = true;
   };
 
   environment.systemPath = [
