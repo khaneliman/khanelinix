@@ -2,7 +2,6 @@
 [devshell]
 packages = [
   deploy-rs
-  # alejandra
   nixpkgs-fmt
   nixpkgs-lint
   nixpkgs-hammer

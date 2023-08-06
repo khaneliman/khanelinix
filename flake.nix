@@ -116,19 +116,10 @@
     rustup-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
     # TODO: utilize these
-
-    # Neovim
-    # neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
-
-    # sops-nix.url = "github:Mic92/sops-nix";
-    # sops-nix.inputs.nixpkgs.follows = "nixpkgs";
-    #
     # agenix.url = "github:ryantm/agenix";
     # agenix.inputs.nixpkgs.follows = "nixpkgs";
-    # agenix.inputs.darwin.inputs.nixpkgs.follows = "nixpkgs";
     # agenix.inputs.darwin.follows = "darwin";
     # agenix.inputs.home-manager.follows = "home-manager";
-    # agenix.inputs.home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     devshell.url = "github:numtide/devshell";
     devshell.inputs.nixpkgs.follows = "nixpkgs";
@@ -143,7 +134,6 @@
     spicetify-nix.url = "github:the-argus/spicetify-nix/dev";
     spicetify-nix.inputs.nixpkgs.follows = "nixpkgs";
 
-    nixpkgs-firefox-darwin.url = "github:bandithedoge/nixpkgs-firefox-darwin";
   };
 
   outputs = inputs:
@@ -164,41 +154,35 @@
       ];
       # channels-config.allowBroken = true;
 
-      #TODO: implement proper devshell
-      # devshells = with inputs; {
-      #   default = nixpkgs.mkshell {
-      #     packages = [ nixpkgs.bashinteractive ];
-      #   };
-      # };
-
       # overlays from inputs
       overlays = with inputs; [
         flake.overlay
         cowsay.overlay
         icehouse.overlay
-        # neovim-nightly.overlay
         rustup-overlay.overlays.default
         hyprland.overlays.default
         devshell.overlays.default
-        nixpkgs-firefox-darwin.overlay
+        # agenix.overlays.default
       ];
 
-      # modules from inputs
+      # nixos modules
       systems.modules.nixos = with inputs; [
         home-manager.nixosModules.home-manager
         nix-ld.nixosModules.nix-ld
         hyprland.nixosModules.default
-        # sops-nix.nixosModules.sops
         # agenix.nixosModules.default
       ];
 
+      # home-manager modules
       systems.modules.home = with inputs; [
         home-manager.homeModules.home-manager
-        # agenix.homeModules.default
+        # agenix.homeManagerModules.default
       ];
 
+      # nix-darwin modules
       systems.modules.darwin = with inputs; [
         home-manager.darwinModules.home-manager
+        # agenix.darwinModules.default
       ];
 
       deploy = lib.mkDeploy { inherit (inputs) self; };
