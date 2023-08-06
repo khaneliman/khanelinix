@@ -22,5 +22,19 @@ with lib.internal; {
     "/opt/homebrew/bin"
   ];
 
+
+  networking = {
+    computerName = "Austins MacBook Pro";
+    hostName = "khanelimac";
+    localHostName = "khanelimac";
+
+    knownNetworkServices = [
+      "ThinkPad TBT 3 Dock"
+      "Wi-Fi"
+      "Thunderbolt Bridge"
+    ];
+  };
+  security.pam.enableSudoTouchIdAuth = true;
+
   system.stateVersion = 4;
 }
