@@ -36,7 +36,6 @@ in
       rename
       spice-gtk
       terminal-notifier
-      tmux
       topgrade
       trash-cli
       tree
@@ -49,6 +48,7 @@ in
 
       cli-apps = {
         ranger = enabled;
+        tmux = enabled;
       };
 
       tools = {
