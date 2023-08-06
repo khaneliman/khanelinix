@@ -28,7 +28,7 @@ in
         "mediainfo"
       ];
 
-      masApps = mkIf config.khanelinix.apps.homebrew.masEnable {
+      masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
         "Pixelmator" = 407963104;
       };
     };

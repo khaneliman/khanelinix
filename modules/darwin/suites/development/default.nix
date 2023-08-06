@@ -98,7 +98,7 @@ in
         "earthly/earthly"
       ];
 
-      masApps = mkIf config.khanelinix.apps.homebrew.masEnable {
+      masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
         "Patterns" = 429449079;
         "Xcode" = 497799835;
       };

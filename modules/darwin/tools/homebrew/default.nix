@@ -5,10 +5,10 @@
 }:
 with lib;
 with lib.internal; let
-  cfg = config.khanelinix.apps.homebrew;
+  cfg = config.khanelinix.tools.homebrew;
 in
 {
-  options.khanelinix.apps.homebrew = with types; {
+  options.khanelinix.tools.homebrew = with types; {
     enable = mkBoolOpt false "Whether or not to enable homebrew.";
     masEnable = mkBoolOpt false "Whether or not to enable Mac App Store downloads.";
   };

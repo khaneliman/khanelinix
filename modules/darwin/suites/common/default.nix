@@ -60,9 +60,7 @@ in
     khanelinix = {
       nix = enabled;
 
-      apps = {
-        homebrew = enabled;
-      };
+      apps = { };
 
       cli-apps = {
         ranger = enabled;
@@ -70,6 +68,7 @@ in
 
       tools = {
         git = enabled;
+        homebrew = enabled;
       };
 
       system = {
