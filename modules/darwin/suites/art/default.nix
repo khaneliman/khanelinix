@@ -15,15 +15,14 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      # blender
-      gimp
-      inkscape
       imagemagick
       pngcheck
     ];
 
     homebrew = {
       casks = [
+        "blender"
+        "gimp"
         "inkscape"
         "mediainfo"
       ];
