@@ -13,11 +13,9 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix.home.extraOptions = {
-      programs.direnv = {
-        enable = true;
-        nix-direnv = enabled;
-      };
+    programs.direnv = {
+      enable = true;
+      nix-direnv = enabled;
     };
   };
 }
