@@ -1,5 +1,4 @@
-{ options
-, config
+{ config
 , lib
 , pkgs
 , ...
@@ -11,19 +10,13 @@ in
 {
   imports = [ ../../../shared/suites/common/default.nix ];
 
-  options.khanelinix.suites.common = with types; {
-    enable = mkBoolOpt false "Whether or not to enable common configuration.";
-  };
-
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       appimage-run
-      bottom
       clac
       feh
       fzf
       jq
-      pciutils
       toilet
       upower
       util-linux

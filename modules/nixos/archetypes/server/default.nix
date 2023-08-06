@@ -16,7 +16,7 @@ in
   config = mkIf cfg.enable {
     khanelinix = {
       suites = {
-        common-slim = enabled;
+        common = enabled;
       };
 
       cli-apps = {

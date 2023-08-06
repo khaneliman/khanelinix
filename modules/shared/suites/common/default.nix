@@ -1,4 +1,5 @@
-{ config
+{ options
+, config
 , lib
 , pkgs
 , ...
@@ -8,14 +9,21 @@ with lib.internal; let
   cfg = config.khanelinix.suites.common;
 in
 {
+  options.khanelinix.suites.common = with types; {
+    enable = mkBoolOpt false "Whether or not to enable common configuration.";
+  };
+
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
+      coreutils
       curl
       exa
       fd
       file
+      findutils
       khanelinix.list-iommu
       killall
+      pciutils
       snowfallorg.flake
       socat
       tldr
