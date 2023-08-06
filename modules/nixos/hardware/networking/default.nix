@@ -8,8 +8,9 @@ with lib.internal; let
   cfg = config.khanelinix.hardware.networking;
 in
 {
+  imports = [ ../../../shared/system/networking/default.nix ];
+
   options.khanelinix.hardware.networking = with types; {
-    enable = mkBoolOpt false "Whether or not to enable networking support";
     hosts =
       mkOpt attrs { }
         "An attribute set to merge with <option>networking.hosts</option>";
