@@ -16,7 +16,10 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ looking-glass-client ];
+    environment.systemPackages = with pkgs; [
+      looking-glass-client
+      obs-studio-plugins.looking-glass-obs
+    ];
 
     environment.etc."looking-glass-client.ini" = {
       user = "+${toString config.users.users.${user.name}.uid}";
