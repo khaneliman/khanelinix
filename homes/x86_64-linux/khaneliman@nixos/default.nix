@@ -21,7 +21,9 @@ with lib.internal; {
       xdg = enabled;
     };
 
-    suites = { };
+    suites = {
+      development = enabled;
+    };
 
     tools = {
       direnv = enabled;

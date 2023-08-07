@@ -33,6 +33,7 @@ in
       nixpkgs-review
       onefetch
       rust-bin.stable.latest.default
+      qtcreator
     ];
 
     khanelinix = {
