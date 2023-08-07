@@ -11,8 +11,6 @@ in
   imports = [ ../../../shared/suites/common/default.nix ];
 
   config = mkIf cfg.enable {
-    programs.zsh = enabled;
-
     environment.systemPackages = with pkgs; [
       bash-completion
       btop
@@ -60,6 +58,10 @@ in
         fonts = enabled;
         input = enabled;
         interface = enabled;
+        shell = {
+          zsh = enabled;
+          fish = enabled;
+        };
       };
 
       security = {
