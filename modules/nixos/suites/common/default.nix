@@ -20,9 +20,6 @@ in
       toilet
       upower
       util-linux
-
-      # libaries
-      at-spi2-atk
     ];
 
     khanelinix = {
@@ -36,8 +33,8 @@ in
 
       tools = {
         bat = enabled;
-        comma = enabled;
         colorls = enabled;
+        comma = enabled;
         direnv = enabled;
         fup-repl = enabled;
         git = enabled;
@@ -51,14 +48,13 @@ in
 
       hardware = {
         audio = enabled;
-        networking = enabled;
-        storage = enabled;
         power = enabled;
+        storage = enabled;
       };
 
       services = {
-        printing = enabled;
         openssh = enabled;
+        printing = enabled;
         tailscale = enabled;
       };
 
@@ -73,6 +69,7 @@ in
         boot = enabled;
         fonts = enabled;
         locale = enabled;
+        networking = enabled;
         time = enabled;
         xkb = enabled;
       };

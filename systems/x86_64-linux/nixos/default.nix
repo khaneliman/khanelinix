@@ -21,10 +21,9 @@ with lib.internal; {
     };
 
     desktop = {
-      gnome = {
+      hyprland = {
         enable = true;
       };
-
       addons = {
         # I like to have a convenient place to share wallpapers from
         # even if they're not currently being used.
@@ -34,11 +33,6 @@ with lib.internal; {
 
     tools = {
       oh-my-posh = enabled;
-    };
-
-    hardware = {
-      # audio = enabled;
-      networking = enabled;
     };
 
     services = {
@@ -54,18 +48,18 @@ with lib.internal; {
       boot = enabled;
       fonts = enabled;
       locale = enabled;
-      time = enabled;
-      xkb = enabled;
+      networking = enabled;
       shell = {
         zsh = enabled;
         bash = enabled;
         fish = enabled;
       };
+      time = enabled;
+      xkb = enabled;
     };
   };
 
-  services.xserver.displayManager.defaultSession = "gnome";
-
+  services.xserver.displayManager.defaultSession = "hyprland";
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave

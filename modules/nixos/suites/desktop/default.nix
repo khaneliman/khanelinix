@@ -20,7 +20,9 @@ in
       authy
       barrier
       bleachbit
+      dropbox
       dupeguru
+      fontpreview
       keepass
     ];
 
@@ -29,9 +31,9 @@ in
         hyprland = enabled;
 
         addons = {
-          wallpapers = enabled;
-          qt = enabled;
           gtk = enabled;
+          qt = enabled;
+          wallpapers = enabled;
         };
       };
 

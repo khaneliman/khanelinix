@@ -13,6 +13,9 @@
     darwin.url = "github:lnl7/nix-darwin";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Nix User Repository (master)
+    nur.url = "github:nix-community/NUR";
+
     # Hardware Configuration
     nixos-hardware.url = "github:nixos/nixos-hardware";
 
@@ -156,33 +159,34 @@
 
       # overlays from inputs
       overlays = with inputs; [
-        flake.overlay
         cowsay.overlay
-        icehouse.overlay
-        rustup-overlay.overlays.default
-        hyprland.overlays.default
         devshell.overlays.default
+        flake.overlay
+        hyprland.overlays.default
+        icehouse.overlay
+        nur.overlay
+        rustup-overlay.overlays.default
         # agenix.overlays.default
       ];
 
       # nixos modules
       systems.modules.nixos = with inputs; [
-        home-manager.nixosModules.home-manager
-        nix-ld.nixosModules.nix-ld
-        hyprland.nixosModules.default
         # agenix.nixosModules.default
+        home-manager.nixosModules.home-manager
+        hyprland.nixosModules.default
+        nix-ld.nixosModules.nix-ld
       ];
 
       # home-manager modules
       systems.modules.home = with inputs; [
-        home-manager.homeModules.home-manager
         # agenix.homeManagerModules.default
+        home-manager.homeModules.home-manager
       ];
 
       # nix-darwin modules
       systems.modules.darwin = with inputs; [
-        home-manager.darwinModules.home-manager
         # agenix.darwinModules.default
+        home-manager.darwinModules.home-manager
       ];
 
       deploy = lib.mkDeploy { inherit (inputs) self; };

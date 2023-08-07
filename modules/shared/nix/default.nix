@@ -16,11 +16,11 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      khanelinix.nixos-revision
+      cachix
       deploy-rs
+      khanelinix.nixos-revision
       nix-index
       nix-prefetch-git
-      cachix
     ];
 
     nix =
@@ -32,18 +32,18 @@ in
 
         settings =
           {
+            allowed-users = users;
+            auto-optimise-store = true;
             experimental-features = "nix-command flakes";
             http-connections = 50;
-            warn-dirty = false;
             log-lines = 50;
             sandbox = "relaxed";
-            auto-optimise-store = true;
             trusted-users = users;
-            allowed-users = users;
+            warn-dirty = false;
           }
           // (lib.optionalAttrs config.khanelinix.tools.direnv.enable {
-            keep-outputs = true;
             keep-derivations = true;
+            keep-outputs = true;
           });
 
         gc = {
@@ -52,8 +52,8 @@ in
         };
 
         # flake-utils-plus
-        generateRegistryFromInputs = true;
         generateNixPathFromInputs = true;
+        generateRegistryFromInputs = true;
         linkInputs = true;
       };
   };

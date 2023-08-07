@@ -15,9 +15,9 @@ in
   config = mkIf cfg.enable {
     khanelinix = {
       apps = {
-        thunderbird = enabled;
-        teams = enabled;
         libreoffice = enabled;
+        teams = enabled;
+        thunderbird = enabled;
       };
     };
   };

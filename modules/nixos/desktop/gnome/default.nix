@@ -54,18 +54,18 @@ in
   config = mkIf cfg.enable {
     khanelinix.system.xkb.enable = true;
     khanelinix.desktop.addons = {
-      gtk = enabled;
-      wallpapers = enabled;
       electron-support = enabled;
+      gtk = enabled;
       kitty = enabled;
+      wallpapers = enabled;
     };
 
     environment.systemPackages = with pkgs;
       [
         (hiPrio khanelinix.xdg-open-with-portal)
-        wl-clipboard
         gnome.gnome-tweaks
         gnome.nautilus-python
+        wl-clipboard
       ]
       ++ defaultExtensions
       ++ cfg.extensions;
@@ -75,8 +75,8 @@ in
       epiphany
       geary
       gnome-font-viewer
-      gnome-system-monitor
       gnome-maps
+      gnome-system-monitor
     ];
 
     systemd.tmpfiles.rules =
@@ -133,8 +133,8 @@ in
       libinput.enable = true;
       displayManager.gdm = {
         enable = true;
-        wayland = cfg.wayland;
         autoSuspend = cfg.suspend;
+        wayland = cfg.wayland;
       };
       desktopManager.gnome.enable = true;
     };

@@ -31,12 +31,12 @@ in
 
       autoSnapshot = mkIf cfg.auto-snapshot.enable {
         enable = true;
-        flags = "-k -p --utc";
-        weekly = mkDefault 3;
         daily = mkDefault 3;
-        hourly = mkDefault 0;
+        flags = "-k -p --utc";
         frequent = mkDefault 0;
+        hourly = mkDefault 0;
         monthly = mkDefault 2;
+        weekly = mkDefault 3;
       };
     };
 

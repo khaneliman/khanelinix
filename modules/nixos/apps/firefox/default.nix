@@ -87,9 +87,9 @@ in
             extraPolicies = {
               CaptivePortal = false;
               DisableFirefoxStudies = true;
+              DisableFormHistory = true;
               DisablePocket = true;
               DisableTelemetry = true;
-              DisableFormHistory = true;
               DisplayBookmarksToolbar = true;
               DontCheckDefaultBrowser = true;
               FirefoxHome = {
@@ -128,15 +128,15 @@ in
             id = 0;
             name = config.khanelinix.user.name;
             extensions = with pkgs.nur.repos.rycee.firefox-addons; [
-              sponsorblock
-              ublock-origin
-              bitwarden
-              onepassword-password-manager
-              darkreader
-              stylus
               angular-devtools
+              bitwarden
+              darkreader
+              onepassword-password-manager
               reduxdevtools
+              sponsorblock
+              stylus
               tabcenter-reborn
+              ublock-origin
               user-agent-string-switcher
             ];
           };

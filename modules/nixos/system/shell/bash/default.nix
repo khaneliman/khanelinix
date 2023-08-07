@@ -23,9 +23,9 @@ in
 
     khanelinix.home = {
       file = with inputs; {
-        ".bashrc".source = dotfiles.outPath + "/dots/shared/home/.bashrc";
-        ".bashenv".source = dotfiles.outPath + "/dots/shared/home/.bashenv";
         ".aliases".source = dotfiles.outPath + "/dots/shared/home/.aliases";
+        ".bashenv".source = dotfiles.outPath + "/dots/shared/home/.bashenv";
+        ".bashrc".source = dotfiles.outPath + "/dots/shared/home/.bashrc";
         ".functions".source = dotfiles.outPath + "/dots/shared/home/.functions";
       };
     };

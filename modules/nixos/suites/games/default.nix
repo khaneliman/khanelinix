@@ -16,19 +16,19 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
+      bottles
+      gamescope
       proton-caller
       protontricks
       protonup-ng
-      bottles
-      gamescope
     ];
 
     khanelinix = {
       apps = {
-        steam = enabled;
+        gamemode = enabled;
         lutris = enabled;
         mangohud = enabled;
-        gamemode = enabled;
+        steam = enabled;
       };
 
       cli-apps = {

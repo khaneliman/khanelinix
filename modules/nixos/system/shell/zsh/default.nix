@@ -23,11 +23,11 @@ in
 
     khanelinix.home = {
       file = with inputs; {
-        ".zshrc".source = dotfiles.outPath + "/dots/shared/home/.zshrc";
-        ".zshenv".source = dotfiles.outPath + "/dots/shared/home/.zshenv";
-        ".p10k.zsh".source = dotfiles.outPath + "/dots/shared/home/.p10k.zsh";
         ".aliases".source = dotfiles.outPath + "/dots/shared/home/.aliases";
         ".functions".source = dotfiles.outPath + "/dots/shared/home/.functions";
+        ".p10k.zsh".source = dotfiles.outPath + "/dots/shared/home/.p10k.zsh";
+        ".zshenv".source = dotfiles.outPath + "/dots/shared/home/.zshenv";
+        ".zshrc".source = dotfiles.outPath + "/dots/shared/home/.zshrc";
       };
     };
   };

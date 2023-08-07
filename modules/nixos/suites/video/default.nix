@@ -21,8 +21,8 @@ in
 
     khanelinix = {
       apps = {
-        pitivi = enabled;
         obs = enabled;
+        pitivi = enabled;
         vlc = enabled;
       };
     };

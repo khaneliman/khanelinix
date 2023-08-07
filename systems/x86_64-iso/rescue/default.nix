@@ -20,8 +20,6 @@ with lib.internal; {
       git = enabled;
     };
 
-    hardware = { networking = enabled; };
-
     security = { doas = enabled; };
 
     system = {

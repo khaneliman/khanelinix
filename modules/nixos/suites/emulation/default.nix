@@ -34,8 +34,8 @@ in
 
     khanelinix = {
       apps = {
-        emulationstation = enabled;
         dolphin = enabled;
+        emulationstation = enabled;
         retroarch = enabled;
       };
     };

@@ -22,7 +22,6 @@ in
 
     khanelinix.home = {
       configFile = {
-        "fish/themes".source = fishBasePath + "themes/";
         "fish/conf.d/environment_variables.fish".source = fishBasePath + "conf.d/environment_variables.fish";
         "fish/conf.d/fish_variables.fish".source = fishBasePath + "conf.d/fish_variables.fish";
         "fish/functions/bak.fish".source = fishBasePath + "functions/bak.fish";
@@ -34,6 +33,7 @@ in
         "fish/functions/mkcd.fish".source = fishBasePath + "functions/mkcd.fish";
         "fish/functions/mvcd.fish".source = fishBasePath + "functions/mvcd.fish";
         "fish/functions/ranger.fish".source = fishBasePath + "functions/ranger.fish";
+        "fish/themes".source = fishBasePath + "themes/";
       };
 
       extraOptions = {

@@ -26,6 +26,7 @@ in
 
     environment.systemPackages = with pkgs; [
       dbeaver
+      mysql-workbench
       nixpkgs-fmt
       nixpkgs-hammering
       nixpkgs-lint-community
@@ -59,7 +60,9 @@ in
         tree-sitter = enabled;
       };
 
-      virtualisation = { podman = enabled; };
+      virtualisation = {
+        podman = enabled;
+      };
     };
   };
 }

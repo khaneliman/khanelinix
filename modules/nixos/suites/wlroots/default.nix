@@ -24,7 +24,6 @@ in
       swappy = enabled;
       swaylock = enabled;
       swaynotificationcenter = enabled;
-      wdisplays = enabled;
       wlogout = enabled;
     };
 
@@ -36,6 +35,7 @@ in
       grim
       slurp
       swayimg
+      wdisplays
       wf-recorder
       wl-clipboard
       wlr-randr

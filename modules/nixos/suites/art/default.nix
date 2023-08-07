@@ -15,9 +15,9 @@ in
   config = mkIf cfg.enable {
     khanelinix = {
       apps = {
+        blender = enabled;
         gimp = enabled;
         inkscape = enabled;
-        blender = enabled;
       };
     };
   };

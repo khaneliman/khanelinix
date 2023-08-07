@@ -14,9 +14,9 @@ in
 {
   options.khanelinix.desktop.hyprland = with types; {
     enable = mkBoolOpt false "Whether or not to enable Hyprland.";
-    wallpaper = mkOpt (nullOr package) null "The wallpaper to display.";
     customConfigFiles = mkOpt attrs { } "Custom configuration files that can be used to override the default files.";
     customFiles = mkOpt attrs { } "Custom files that can be used to override the default files.";
+    wallpaper = mkOpt (nullOr package) null "The wallpaper to display.";
   };
 
   config =
@@ -93,26 +93,25 @@ in
         };
 
         environment.sessionVariables = {
+          ASAN_OPTIONS = "log_path=~/asan.log";
           CLUTTER_BACKEND = "wayland";
           # GDK_BACKEND = "wayland";
+          HYPRLAND_LOG_WLR = "1";
           MOZ_ENABLE_WAYLAND = "1";
           MOZ_USE_XINPUT2 = "1";
           QT_QPA_PLATFORM = "wayland";
           QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
           SDL_VIDEODRIVER = "wayland";
           WLR_RENDERER = "vulkan";
+          XDG_CURRENT_DESKTOP = "Hyprland";
+          XDG_SESSION_DESKTOP = "Hyprland";
           XDG_SESSION_TYPE = "wayland";
           _JAVA_AWT_WM_NONEREPARENTING = "1";
           __GL_GSYNC_ALLOWED = "0";
           __GL_VRR_ALLOWED = "0";
-          ASAN_OPTIONS = "log_path=~/asan.log";
-          HYPRLAND_LOG_WLR = "1";
-          XDG_CURRENT_DESKTOP = "Hyprland";
-          XDG_SESSION_DESKTOP = "Hyprland";
         };
 
         environment.systemPackages = with pkgs; [
-          # wttrbar
           hyprpaper
           hyprpicker
           inputs.hyprland-contrib.packages.${pkgs.hostPlatform.system}.grimblast

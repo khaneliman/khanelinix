@@ -28,10 +28,6 @@ with lib.internal; {
       node = enabled;
     };
 
-    hardware = {
-      networking = enabled;
-    };
-
     services = {
       openssh = enabled;
     };
@@ -46,6 +42,7 @@ with lib.internal; {
       locale = enabled;
       time = enabled;
       xkb = enabled;
+      networking = enabled;
     };
   };
 }

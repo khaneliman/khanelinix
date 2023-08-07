@@ -16,18 +16,10 @@ in
 
   config = mkIf cfg.enable {
     khanelinix = {
-      apps = { };
-
-      cli-apps = { };
-
       services = {
         spice-vdagentd = enabled;
         spice-webdav = enabled;
       };
-
-      tools = { };
-
-      virtualisation = { };
     };
   };
 }

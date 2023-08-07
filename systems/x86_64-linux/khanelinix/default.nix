@@ -45,7 +45,6 @@ with lib.internal; {
       amdgpu = enabled;
       audio = enabled;
       bluetooth = enabled;
-      networking = enabled;
       rgb = {
         enable = true;
         ckbNextConfig = ./ckb-next/ckb-next.conf;
@@ -89,20 +88,20 @@ with lib.internal; {
 
         shares = {
           public = {
-            path = "/home/${config.khanelinix.user.name}/public/";
-            comment = "Home Public folder";
-            public = true;
             browseable = true;
+            comment = "Home Public folder";
             only-owner-editable = false;
+            path = "/home/${config.khanelinix.user.name}/public/";
+            public = true;
             read-only = false;
           };
 
           games = {
-            path = "/mnt/games/";
-            comment = "Games folder";
-            public = true;
             browseable = true;
+            comment = "Games folder";
             only-owner-editable = true;
+            path = "/mnt/games/";
+            public = true;
             read-only = false;
           };
         };
@@ -124,6 +123,7 @@ with lib.internal; {
         bash = enabled;
         fish = enabled;
       };
+      networking = enabled;
     };
 
     #   IOMMU Group 24:

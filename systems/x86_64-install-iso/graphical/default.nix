@@ -50,7 +50,6 @@ with lib.internal; {
 
     hardware = {
       audio = enabled;
-      networking = enabled;
     };
 
     services = {
@@ -69,6 +68,7 @@ with lib.internal; {
       locale = enabled;
       time = enabled;
       xkb = enabled;
+      networking = enabled;
     };
   };
 

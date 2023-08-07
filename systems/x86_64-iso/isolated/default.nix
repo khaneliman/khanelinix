@@ -89,13 +89,6 @@ in
     home.file.".gnupg/gpg.conf".source = gpgConf;
     home.file.".gnupg/gpg-agent.conf".text = gpgAgentConf;
 
-    hardware = {
-      networking = {
-        # Networking is explicitly disabled in this environment.
-        enable = mkForce false;
-      };
-    };
-
     security = { doas = enabled; };
 
     system = {
@@ -103,6 +96,10 @@ in
       locale = enabled;
       time = enabled;
       xkb = enabled;
+      networking = {
+        # Networking is explicitly disabled in this environment.
+        enable = mkForce false;
+      };
     };
   };
 

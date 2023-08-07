@@ -34,13 +34,6 @@ with lib.internal; {
       };
     };
 
-    tools = { };
-
-    hardware = {
-      # audio = enabled;
-      networking = enabled;
-    };
-
     services = {
       printing = enabled;
     };
@@ -56,6 +49,7 @@ with lib.internal; {
       locale = enabled;
       time = enabled;
       xkb = enabled;
+      networking = enabled;
     };
   };
 

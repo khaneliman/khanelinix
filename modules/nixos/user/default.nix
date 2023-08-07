@@ -51,8 +51,8 @@ in
     environment.systemPackages = with pkgs; [
       cowsay
       fortune
-      lolcat
       khanelinix.cowsay-plus
+      lolcat
       propagatedIcon
     ];
 
@@ -64,16 +64,16 @@ in
 
     khanelinix.home = {
       file = {
+        ".face".source = cfg.icon;
+        ".face.icon".source = cfg.icon;
         "Desktop/.keep".text = "";
         "Documents/.keep".text = "";
         "Downloads/.keep".text = "";
         "Music/.keep".text = "";
         "Pictures/.keep".text = "";
         "Videos/.keep".text = "";
-        "work/.keep".text = "";
         "public/.keep".text = "";
-        ".face".source = cfg.icon;
-        ".face.icon".source = cfg.icon;
+        "work/.keep".text = "";
         "Pictures/${
           cfg.icon.fileName or (builtins.baseNameOf cfg.icon)
         }".source =
@@ -104,15 +104,15 @@ in
 
           # Colorize output
           dir = "dir --color=auto";
-          vdir = "vdir --color=auto";
-          grep = "grep --color=auto";
-          fgrep = "fgrep --color=auto";
           egrep = "egrep --color=auto";
+          fgrep = "fgrep --color=auto";
+          grep = "grep --color=auto";
+          vdir = "vdir --color=auto";
 
           # Misc
-          pls = "sudo";
-          clr = "clear";
           clear = "clear && fastfetch";
+          clr = "clear";
+          pls = "sudo";
           usage = "du -ah -d1 | sort -rn 2>/dev/null";
 
           # Cryptography
@@ -124,8 +124,8 @@ in
         programs = {
           zsh = {
             enable = true;
-            enableCompletion = true;
             enableAutosuggestions = true;
+            enableCompletion = true;
             syntaxHighlighting = {
               enable = true;
             };
