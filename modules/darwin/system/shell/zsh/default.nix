@@ -16,8 +16,10 @@ in
   config = mkIf cfg.enable {
     programs.zsh = {
       enable = true;
+      enableCompletion = false; # TODO: fix the conflict with nixpkgs-review
       enableFzfCompletion = true;
       enableSyntaxHighlighting = true;
+      interactiveShellInit = "autoload -U compinit && compinit";
     };
 
     khanelinix.home = {
