@@ -21,5 +21,5 @@ with lib.internal; {
     };
   };
 
-  home.stateVersion = "23.11";
+  home.stateVersion = "21.11";
 }

@@ -23,7 +23,6 @@ with lib.internal; {
 
   config = {
     khanelinix.home.extraOptions = {
-      home.stateVersion = config.system.stateVersion;
       home.file = mkAliasDefinitions options.khanelinix.home.file;
       xdg.enable = true;
       xdg.configFile = mkAliasDefinitions options.khanelinix.home.configFile;

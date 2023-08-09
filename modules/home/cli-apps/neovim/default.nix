@@ -40,9 +40,8 @@ in
         less
         ripgrep
         unzip
-        webkitgtk
         wget
-      ];
+      ] ++ lib.optional stdenv.isLinux webkitgtk;
     };
 
     xdg.configFile = with inputs; {
