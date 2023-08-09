@@ -57,6 +57,19 @@ with lib.internal; {
       printing = enabled;
       geoclue = enabled;
 
+      snapper = {
+        enable = true;
+
+        configs = {
+          Documents = {
+            SUBVOLUME = "/home/khaneliman/Documents";
+            ALLOW_USERS = [ "khaneliman" ];
+            TIMELINE_CREATE = true;
+            TIMELINE_CLEANUP = true;
+          };
+        };
+      };
+
       openssh = {
         enable = true;
 
