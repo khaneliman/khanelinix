@@ -2,6 +2,7 @@
 , config
 , ...
 }:
+with lib;
 with lib.internal; {
   khanelinix = {
     user = {
@@ -9,15 +10,22 @@ with lib.internal; {
       inherit (config.snowfallorg.user) name;
     };
 
+    apps = {
+      vscode = mkForce disabled;
+    };
+
     cli-apps = {
-      zsh = enabled;
-      neovim = enabled;
       home-manager = enabled;
     };
 
     tools = {
       git = enabled;
       direnv = enabled;
+    };
+
+    suites = {
+      common = enabled;
+      development = enabled;
     };
   };
 

@@ -41,7 +41,6 @@ in
         glxinfo = enabled;
         lsd = enabled;
         nix-ld = enabled;
-        oh-my-posh = enabled;
         spicetify-cli = enabled;
         topgrade = enabled;
       };

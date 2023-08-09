@@ -13,8 +13,6 @@ with lib.internal; {
 
     cli-apps = {
       home-manager = enabled;
-      neovim = enabled;
-      zsh = enabled;
     };
 
     system = {
@@ -22,6 +20,7 @@ with lib.internal; {
     };
 
     suites = {
+      common = enabled;
       development = enabled;
     };
 

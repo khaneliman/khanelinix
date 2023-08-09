@@ -17,10 +17,6 @@ in
 
   config = mkIf cfg.enable {
     khanelinix = {
-      cli-apps = {
-        neovim = enabled;
-      };
-
       tools = {
         node = enabled;
         python = enabled;

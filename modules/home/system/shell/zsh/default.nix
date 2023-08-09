@@ -7,10 +7,10 @@
 let
   inherit (lib) mkEnableOption mkIf;
 
-  cfg = config.khanelinix.cli-apps.zsh;
+  cfg = config.khanelinix.system.shell.zsh;
 in
 {
-  options.khanelinix.cli-apps.zsh = {
+  options.khanelinix.system.shell.zsh = {
     enable = mkEnableOption "ZSH";
   };
 

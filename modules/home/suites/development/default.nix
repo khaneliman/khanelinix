@@ -19,6 +19,15 @@ in
       apps = {
         vscode = enabled;
       };
+
+      cli-apps = {
+        neovim = enabled;
+        helix = enabled;
+      };
+
+      tools = {
+        oh-my-posh = enabled;
+      };
     };
   };
 }

@@ -58,10 +58,6 @@ in
         fonts = enabled;
         input = enabled;
         interface = enabled;
-        shell = {
-          zsh = enabled;
-          fish = enabled;
-        };
       };
 
       security = {

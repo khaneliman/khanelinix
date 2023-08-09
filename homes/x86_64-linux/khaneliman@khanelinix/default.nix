@@ -15,11 +15,8 @@ with lib.internal; {
     };
 
     cli-apps = {
-      helix = enabled;
       home-manager = enabled;
-      neovim = enabled;
       spicetify = enabled;
-      zsh = enabled;
     };
 
     desktop = {
@@ -41,6 +38,8 @@ with lib.internal; {
     };
 
     suites = {
+      common = enabled;
+      development = enabled;
       music = enabled;
       social = enabled;
     };

@@ -37,10 +37,6 @@ with lib.internal; {
       emulation = enabled;
     };
 
-    tools = {
-      oh-my-posh = enabled;
-    };
-
     hardware = {
       amdgpu = enabled;
       audio = enabled;

@@ -31,10 +31,6 @@ with lib.internal; {
       };
     };
 
-    tools = {
-      oh-my-posh = enabled;
-    };
-
     services = {
       printing = enabled;
     };

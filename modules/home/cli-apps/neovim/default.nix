@@ -34,6 +34,7 @@ in
         bottom
         curl
         deno
+        fzf
         gdu
         gzip
         lazygit
