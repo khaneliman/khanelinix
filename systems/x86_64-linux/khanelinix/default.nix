@@ -45,7 +45,10 @@ with lib.internal; {
         enable = true;
         ckbNextConfig = ./ckb-next/ckb-next.conf;
       };
-      storage = enabled;
+      storage = {
+        enable = true;
+        btrfs = true;
+      };
       opengl = enabled;
     };
 

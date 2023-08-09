@@ -13,6 +13,7 @@ in
     enable =
       mkBoolOpt false
         "Whether or not to enable support for extra storage devices.";
+    btrfs = mkBoolOpt false "Whether to enable btrfs extra software;";
   };
 
   config = mkIf cfg.enable {
@@ -21,6 +22,12 @@ in
       fuseiso
       nfs-utils
       btrfs-progs
+    ] ++ lib.optionals cfg.btrfs [
+      btdu
+      btrfs-snap
+      compsize
+      # dduper
+      snapper
     ];
   };
 }
