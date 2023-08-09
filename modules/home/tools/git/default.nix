@@ -50,15 +50,28 @@ in
         ".gitignore_global".source = dotfiles.outPath + "/dots/shared/home/.gitignore_global";
         ".gitconfig.local".source = pkgs.writeTextFile {
           name = ".gitconfig.local";
-          text = ''
+          text = '' ''
+            + lib.optionalString pkgs.stdenv.isLinux ''
             [gpg "ssh"]
               program = /opt/1Password/op-ssh-sign
 
             [credential "https://github.com"]
-             	helper = !gh auth git-credential
+             	helper = !${pkgs.gh}/bin/gh auth git-credential
 
             [credential "https://gist.github.com"]
-             	helper = !gh auth git-credential
+             	helper = !${pkgs.gh}/bin/gh auth git-credential
+          ''
+            + lib.optionalString pkgs.stdenv.isDarwin ''
+            [gpg "ssh"]
+              program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+
+            [credential "https://github.com"]
+            	helper =
+            	helper = !${pkgs.gh}/bin/gh auth git-credential
+
+            [credential "https://gist.github.com"]
+            	helper =
+            	helper = !${pkgs.gh}/bin/gh auth git-credential
           '';
         };
       };
