@@ -13,6 +13,7 @@ in
     hosts =
       mkOpt attrs { }
         "An attribute set to merge with <option>networking.hosts</option>";
+    nameServers = mkOpt (listOf str) [ "1.1.1.1" "8.8.8.8" ] "The nameservers to add.";
   };
 
   config = mkIf cfg.enable {
@@ -24,11 +25,12 @@ in
           "127.0.0.1" = [ "local.test" ] ++ (cfg.hosts."127.0.0.1" or [ ]);
         }
         // cfg.hosts;
-      nameservers = [ "1.1.1.1" "8.8.8.8" ];
+      nameservers = cfg.nameServers;
 
       networkmanager = {
         enable = true;
         dhcp = "internal";
+        insertNameservers = cfg.nameServers;
       };
     };
 
