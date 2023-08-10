@@ -76,7 +76,7 @@ in
           usage = "${pkgs.coreutils}/bin/du -ah -d1 | sort -rn 2>/dev/null";
 
           # Cryptography
-          genpass = "${lib.getExe pkgs.openssl} rand - base64 20"; # Generate a random, 20-charactered password
+          genpass = "${pkgs.openssl}/bin/openssl rand - base64 20"; # Generate a random, 20-charactered password
           sha = "shasum -a 256"; # Test checksum
           sshperm = ''${pkgs.findutils}/bin/find .ssh/ -type f -exec chmod 600 {} \;; ${pkgs.findutils}/bin/find .ssh/ -type d -exec chmod 700 {} \;; ${pkgs.findutils}/bin/find .ssh/ -type f -name "*.pub" -exec chmod 644 {} \;'';
         };
