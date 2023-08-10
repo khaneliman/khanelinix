@@ -40,7 +40,6 @@ in
       apps = {
         neovide = enabled;
         vscode = enabled;
-        yubikey = enabled;
       };
 
       cli-apps = {
@@ -49,7 +48,6 @@ in
         lazygit = enabled;
         prisma = enabled;
         tmux = enabled;
-        yubikey = enabled;
       };
 
       tools = {

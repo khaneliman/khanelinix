@@ -74,7 +74,6 @@ in
 
     cli-apps = {
       neovim = enabled;
-      yubikey = enabled;
     };
 
     tools = {
