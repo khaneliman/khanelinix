@@ -3,11 +3,11 @@
     "astronvim": {
       "flake": false,
       "locked": {
-        "lastModified": 1691580812,
-        "narHash": "sha256-IdwY1pjQHNQqsFv+X1N/aAg71GxJHnHYtjMrGN9C1z4=",
+        "lastModified": 1691678898,
+        "narHash": "sha256-uydWNOkk1HnYvLHBRyCqFZMeXJue2fueXhvk0MXhOkw=",
         "owner": "AstroNvim",
         "repo": "AstroNvim",
-        "rev": "4116611179d8498a52cbcc5d800f3b4f75cdb825",
+        "rev": "1910b86d3df873bea4f880f9299dbf66fe1e65fe",
         "type": "github"
       },
       "original": {
@@ -20,11 +20,11 @@
     "astronvim-user": {
       "flake": false,
       "locked": {
-        "lastModified": 1691677900,
-        "narHash": "sha256-PRd9SOZgxRc7vqq01xinaihvKWd/D/KI1G1Zd3/Nty8=",
+        "lastModified": 1691687872,
+        "narHash": "sha256-Rd9uXOGEuOaNOG2GPUCkJujjDuzJgoifjm+OjwW7DwM=",
         "owner": "khaneliman",
         "repo": "astronvim",
-        "rev": "e688de11423a11baf9487659b15eee2e05f9f780",
+        "rev": "ec3c3cf8978ff1451c59f0a049e6f255bff5707c",
         "type": "github"
       },
       "original": {
@@ -796,11 +796,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1691676322,
-        "narHash": "sha256-Q93vcKyYn3k3MRmb5ZPiQa6ozy7OBDGJuTS8Rs3YiCM=",
+        "lastModified": 1691682574,
+        "narHash": "sha256-JWnbpDPQz8LO3pMCIBotLeUOpiAcL27stMJkdUMF2lE=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "702c18ef1676273ef2a4d99fdfef5e338241c70a",
+        "rev": "bf72064b29d70a81df3368b636c5df92825be1f5",
         "type": "github"
       },
       "original": {
