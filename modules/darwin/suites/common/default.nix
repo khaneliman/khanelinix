@@ -25,7 +25,6 @@ in
       haskellPackages.sfnt2woff
       intltool
       keychain
-      lsd
       mas
       moreutils
       ncdu

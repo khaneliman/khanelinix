@@ -39,7 +39,6 @@ in
         fup-repl = enabled;
         git = enabled;
         glxinfo = enabled;
-        lsd = enabled;
         nix-ld = enabled;
         spicetify-cli = enabled;
         topgrade = enabled;

@@ -22,6 +22,7 @@ in
 
       tools = {
         git = enabled;
+        lsd = enabled;
         oh-my-posh = enabled;
       };
 
