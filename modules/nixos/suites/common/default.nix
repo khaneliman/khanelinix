@@ -32,7 +32,6 @@ in
       };
 
       tools = {
-        bat = enabled;
         colorls = enabled;
         comma = enabled;
         direnv = enabled;
