@@ -84,42 +84,8 @@ in
         "sddm/faces/.${cfg.name}".source = cfg.icon;
       };
 
-      extraOptions = {
-        home.shellAliases = {
-          # File management
-          rcp = "rsync -rahP --mkpath --modify-window=1"; # Rsync copy keeping all attributes,timestamps,permissions"
-          rmv = "rsync -rahP --mkpath --modify-window=1 --remove-sent-files"; # Rsync move keeping all attributes,timestamps,permissions
-          tarnow = "tar -acf ";
-          untar = "tar -zxvf ";
-          wget = "wget -c ";
-
-          # Navigation shortcuts
-          home = "cd ~";
-          dots = "cd $DOTS_DIR";
-          ".." = "cd ..";
-          "..." = "cd ../..";
-          "...." = "cd ../../..";
-          "....." = "cd ../../../..";
-          "......" = "cd ../../../../..";
-
-          # Colorize output
-          dir = "dir --color=auto";
-          egrep = "egrep --color=auto";
-          fgrep = "fgrep --color=auto";
-          grep = "grep --color=auto";
-          vdir = "vdir --color=auto";
-
-          # Misc
-          clear = "clear && fastfetch";
-          clr = "clear";
-          pls = "sudo";
-          usage = "du -ah -d1 | sort -rn 2>/dev/null";
-
-          # Cryptography
-          genpass = "openssl rand - base64 20"; # Generate a random, 20-charactered password
-          sha = "shasum -a 256"; # Test checksum
-          sshperm = ''find .ssh/ -type f -exec chmod 600 {} \;; find .ssh/ -type d -exec chmod 700 {} \;; find .ssh/ -type f -name "*.pub" -exec chmod 644 {} \;'';
-        };
+      extraOptions.home.shellAliases = {
+        nixre = "sudo flake switch";
       };
     };
 

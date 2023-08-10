@@ -44,6 +44,43 @@ in
       home = {
         username = mkDefault cfg.name;
         homeDirectory = mkDefault cfg.home;
+
+        shellAliases = {
+          # File management
+          rcp = "${lib.getExe pkgs.rsync} -rahP --mkpath --modify-window=1"; # Rsync copy keeping all attributes,timestamps,permissions"
+          rmv = "${lib.getExe pkgs.rsync} -rahP --mkpath --modify-window=1 --remove-sent-files"; # Rsync move keeping all attributes,timestamps,permissions
+          tarnow = "${lib.getExe pkgs.gnutar} -acf ";
+          untar = "${lib.getExe pkgs.gnutar} -zxvf ";
+          wget = "${lib.getExe pkgs.wget} -c ";
+
+          # Navigation shortcuts
+          home = "cd ~";
+          dots = "cd $DOTS_DIR";
+          ".." = "cd ..";
+          "..." = "cd ../..";
+          "...." = "cd ../../..";
+          "....." = "cd ../../../..";
+          "......" = "cd ../../../../..";
+
+          # Colorize output
+          dir = "${pkgs.coreutils}/bin/dir --color=auto";
+          egrep = "${pkgs.gnugrep}/bin/egrep --color=auto";
+          fgrep = "${pkgs.gnugrep}/bin/fgrep --color=auto";
+          grep = "${lib.getExe pkgs.gnugrep} --color=auto";
+          vdir = "${pkgs.coreutils}/bin/vdir --color=auto";
+
+          # Misc
+          clear = "clear && ${lib.getExe pkgs.fastfetch}";
+          clr = "clear";
+          pls = "sudo";
+          usage = "${pkgs.coreutils}/bin/du -ah -d1 | sort -rn 2>/dev/null";
+
+          # Cryptography
+          genpass = "${lib.getExe pkgs.openssl} rand - base64 20"; # Generate a random, 20-charactered password
+          sha = "shasum -a 256"; # Test checksum
+          sshperm = ''${pkgs.findutils}/bin/find .ssh/ -type f -exec chmod 600 {} \;; ${pkgs.findutils}/bin/find .ssh/ -type d -exec chmod 700 {} \;; ${pkgs.findutils}/bin/find .ssh/ -type f -name "*.pub" -exec chmod 644 {} \;'';
+        };
+
       };
     }
   ]);

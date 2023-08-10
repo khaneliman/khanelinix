@@ -1,5 +1,6 @@
 { lib
 , config
+, pkgs
 , ...
 }:
 let
@@ -24,6 +25,14 @@ in
       # module to evaluate successfully since it reads
       # `users.users.${khanelinix.user.name}.uid`.
       uid = mkIf (cfg.uid != null) cfg.uid;
+
+      shell = pkgs.zsh;
+    };
+
+    khanelinix.home = {
+      extraOptions.home.shellAliases = {
+        nixre = "darwin-rebuild switch --flake .";
+      };
     };
   };
 }
