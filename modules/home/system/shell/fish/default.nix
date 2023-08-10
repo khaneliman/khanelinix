@@ -19,8 +19,6 @@ in
 
     xdg.configFile = {
       "fish/themes".source = fishBasePath + "themes/";
-      "fish/conf.d/environment_variables.fish".source = fishBasePath + "conf.d/environment_variables.fish";
-      "fish/conf.d/fish_variables.fish".source = fishBasePath + "conf.d/fish_variables.fish";
       "fish/functions/bak.fish".source = fishBasePath + "functions/bak.fish";
       "fish/functions/cd.fish".source = fishBasePath + "functions/cd.fish";
       "fish/functions/clear.fish".source = fishBasePath + "functions/clear.fish";
@@ -34,8 +32,6 @@ in
 
     programs.fish = {
       enable = true;
-      loginShellInit = ''
-          '';
       interactiveShellInit = ''
         fish_add_path "$HOME/.local/bin"
 
@@ -49,8 +45,17 @@ in
             alias hl1='cat /tmp/hypr/$(lsd -t -r /tmp/hypr/ | head -n 2 | tail -n 1)/hyprland.log'
         end
 
-        set fish_greeting # Disable greeting
-        fastfetch
+        # Disable greeting
+        set fish_greeting 
+
+        # Fetch on terminal open
+        if status is-interactive
+            if [ "$TMUX" = "" ];
+                command -v tmux && tmux
+            end
+
+            fastfetch 
+        end
       '';
       plugins = [
         # Enable a plugin (here grc for colorized command output) from nixpkgs

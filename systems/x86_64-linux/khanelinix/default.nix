@@ -130,11 +130,6 @@ with lib.internal; {
       fonts = enabled;
       locale = enabled;
       time = enabled;
-      shell = {
-        zsh = enabled;
-        bash = enabled;
-        fish = enabled;
-      };
       networking = enabled;
     };
 

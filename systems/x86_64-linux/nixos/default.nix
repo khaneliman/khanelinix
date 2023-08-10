@@ -45,11 +45,6 @@ with lib.internal; {
       fonts = enabled;
       locale = enabled;
       networking = enabled;
-      shell = {
-        zsh = enabled;
-        bash = enabled;
-        fish = enabled;
-      };
       time = enabled;
       xkb = enabled;
     };

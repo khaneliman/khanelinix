@@ -120,47 +120,6 @@ in
           sha = "shasum -a 256"; # Test checksum
           sshperm = ''find .ssh/ -type f -exec chmod 600 {} \;; find .ssh/ -type d -exec chmod 700 {} \;; find .ssh/ -type f -name "*.pub" -exec chmod 644 {} \;'';
         };
-
-        programs = {
-          zsh = {
-            enable = true;
-            enableAutosuggestions = true;
-            enableCompletion = true;
-            syntaxHighlighting = {
-              enable = true;
-            };
-
-            initExtra = ''
-              # Fix an issue with tmux.
-              export KEYTIMEOUT=1
-
-              # Use vim bindings.
-              set -o vi
-
-              ${pkgs.toilet}/bin/toilet -f future "Plus Ultra" --gay
-
-              # Improved vim bindings.
-              source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
-            '';
-
-            shellAliases = {
-              say = "${pkgs.toilet}/bin/toilet -f pagga";
-            };
-
-            plugins = [
-              {
-                name = "zsh-nix-shell";
-                file = "nix-shell.plugin.zsh";
-                src = pkgs.fetchFromGitHub {
-                  owner = "chisui";
-                  repo = "zsh-nix-shell";
-                  rev = "v0.4.0";
-                  sha256 = "037wz9fqmx0ngcwl9az55fgkipb745rymznxnssr3rx9irb6apzg";
-                };
-              }
-            ];
-          };
-        };
       };
     };
 

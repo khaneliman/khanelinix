@@ -1,7 +1,6 @@
 { options
 , config
 , lib
-, inputs
 , pkgs
 , ...
 }:
@@ -22,11 +21,7 @@ in
       enableFishIntegration = true;
       package = pkgs.oh-my-posh;
 
-      # settings = ;
-    };
-
-    xdg.configFile = with inputs; {
-      "ohmyposh/".source = dotfiles.outPath + "/dots/shared/home/.config/ohmyposh";
+      settings = builtins.fromJSON (builtins.unsafeDiscardStringContext (builtins.readFile ./config.json));
     };
   };
 }
