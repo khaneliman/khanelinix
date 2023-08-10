@@ -20,6 +20,10 @@ in
       configFile = {
         "cava/config".source = ./config;
       };
+
+      extraOptions.home.shellAliases = {
+        cava = "TERM=st-256color cava";
+      };
     };
   };
 }
