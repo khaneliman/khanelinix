@@ -34,6 +34,7 @@ in
       onefetch
       rust-bin.stable.latest.default
       qtcreator
+      github-desktop
     ];
 
     khanelinix = {
