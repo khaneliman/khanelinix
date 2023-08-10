@@ -3,6 +3,7 @@
 , lib
 , inputs
 , pkgs
+, osConfig
 , ...
 }:
 with lib;
@@ -16,6 +17,10 @@ in
   };
 
   config = mkIf cfg.enable {
+
+    home.file = {
+      ".aliases".source = inputs.dotfiles.outPath + "/dots/shared/home/.aliases";
+    };
 
     xdg.configFile = {
       "fish/themes".source = fishBasePath + "themes/";
@@ -32,31 +37,68 @@ in
 
     programs.fish = {
       enable = true;
-      interactiveShellInit = ''
-        fish_add_path "$HOME/.local/bin"
 
+      loginShellInit =
+        let
+          # This naive quoting is good enough in this case. There shouldn't be any
+          # double quotes in the input string, and it needs to be double quoted in case
+          # it contains a space (which is unlikely!)
+          dquote = str: "\"" + str + "\"";
+
+          makeBinPathList = map (path: path + "/bin");
+        in
+        lib.optionalString pkgs.stdenv.isDarwin ''
+          export NIX_PATH="darwin-config=$HOME/.nixpkgs/darwin-configuration.nix:$HOME/.nix-defexpr/channels:$NIX_PATH"
+          fish_add_path --move --prepend --path ${lib.concatMapStringsSep " " dquote (makeBinPathList osConfig.environment.profiles)}
+          set fish_user_paths $fish_user_paths
+        '';
+
+      interactiveShellInit = ''
+        # Source aliases
         if [ -f "$HOME"/.aliases ];
-          source ~/.aliases
+            source ~/.aliases
         end
 
+        # 1password plugin
+        if [ -f ~/.config/op/plugins.sh ];
+            source ~/.config/op/plugins.sh
+        end
+
+        # Brew environment
+        if [ -f /opt/homebrew/bin/brew ];
+        	eval "$("/opt/homebrew/bin/brew" shellenv)"
+        end
+
+        # Nix
+        if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish' ];
+         source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish'
+        end
+        if [ -f '/nix/var/nix/profiles/default/etc/profile.d/nix.fish' ];
+         source '/nix/var/nix/profiles/default/etc/profile.d/nix.fish'
+        end
+        # End Nix
+
+        # SSH setup 
+        [ $(command -v fish_ssh_agent) ] && fish_ssh_agent
+        load_ssh # if you need ssh loading keys on shell launch
+
         if [ $(command -v hyprctl) ];
-            # Hyprland logs
+            # Hyprland logs 
             alias hl='cat /tmp/hypr/$(lsd -t /tmp/hypr/ | head -n 1)/hyprland.log'
             alias hl1='cat /tmp/hypr/$(lsd -t -r /tmp/hypr/ | head -n 2 | tail -n 1)/hyprland.log'
         end
-
+   
         # Disable greeting
         set fish_greeting 
 
         # Fetch on terminal open
-        if status is-interactive
-            if [ "$TMUX" = "" ];
-                command -v tmux && tmux
-            end
-
-            fastfetch 
+        if [ "$TMUX" = "" ];
+            command -v tmux && tmux
         end
+
+        fastfetch 
       '';
+
       plugins = [
         # Enable a plugin (here grc for colorized command output) from nixpkgs
         # { name = "grc"; src = pkgs.fishPlugins.grc.src; }

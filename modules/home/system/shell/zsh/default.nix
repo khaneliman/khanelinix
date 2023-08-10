@@ -30,6 +30,15 @@ in
         enableCompletion = true;
         syntaxHighlighting.enable = true;
 
+        sessionVariables = {
+          KEYTIMEOUT = 1;
+        };
+
+        initExtraFirst = ''
+          export PATH="$PATH:/opt/local/bin:/opt/local/sbin:$HOME/.local/share/pnpm:~/.spicetify:$HOME/.cargo/bin"
+          PATH="$(perl -e 'print join(":", grep { not $seen{$_}++ } split(/:/, $ENV{PATH}))')"
+        '';
+
         initExtra = ''
           # Fix an issue with tmux.
           export KEYTIMEOUT=1
@@ -39,6 +48,9 @@ in
 
           # Improved vim bindings.
           source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+
+          source ~/.aliases
+          source ~/.functions
 
           if [ "$TMUX" = "" ]; then command -v tmux && tmux; fi
 
