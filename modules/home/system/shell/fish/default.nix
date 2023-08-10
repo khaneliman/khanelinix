@@ -17,11 +17,6 @@ in
   };
 
   config = mkIf cfg.enable {
-
-    home.file = {
-      ".aliases".source = inputs.dotfiles.outPath + "/dots/shared/home/.aliases";
-    };
-
     xdg.configFile = {
       "fish/themes".source = fishBasePath + "themes/";
       "fish/functions/bak.fish".source = fishBasePath + "functions/bak.fish";
@@ -54,11 +49,6 @@ in
         '';
 
       interactiveShellInit = ''
-        # Source aliases
-        if [ -f "$HOME"/.aliases ];
-            source ~/.aliases
-        end
-
         # 1password plugin
         if [ -f ~/.config/op/plugins.sh ];
             source ~/.config/op/plugins.sh

@@ -18,7 +18,6 @@ in
     home = {
       file = with inputs; {
         ".p10k.zsh".source = dotfiles.outPath + "/dots/shared/home/.p10k.zsh";
-        ".aliases".source = dotfiles.outPath + "/dots/shared/home/.aliases";
         ".functions".source = dotfiles.outPath + "/dots/shared/home/.functions";
       };
     };
@@ -49,7 +48,6 @@ in
           # Improved vim bindings.
           source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 
-          source ~/.aliases
           source ~/.functions
 
           if [ "$TMUX" = "" ]; then command -v tmux && tmux; fi

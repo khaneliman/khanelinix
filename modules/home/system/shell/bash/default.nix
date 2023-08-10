@@ -24,7 +24,6 @@ in
     home.file = with inputs; {
       ".bashrc".source = dotfiles.outPath + "/dots/shared/home/.bashrc";
       ".bashenv".source = dotfiles.outPath + "/dots/shared/home/.bashenv";
-      ".aliases".source = dotfiles.outPath + "/dots/shared/home/.aliases";
       ".functions".source = dotfiles.outPath + "/dots/shared/home/.functions";
     };
   };
