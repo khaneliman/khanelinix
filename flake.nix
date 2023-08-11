@@ -2,16 +2,73 @@
   description = "KhaneliNix";
 
   inputs = {
-    # NixPkgs (nixos-unstable)
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    # TODO: utilize these
+    # agenix.url = "github:ryantm/agenix";
+    # agenix.inputs.nixpkgs.follows = "nixpkgs";
+    # agenix.inputs.darwin.follows = "darwin";
+    # agenix.inputs.home-manager.follows = "home-manager";
 
-    # Home Manager (master)
-    home-manager.url = "github:nix-community/home-manager";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    # Astronvim repo
+    astronvim = {
+      url = "github:AstroNvim/AstroNvim/nightly";
+      flake = false;
+    };
+
+    # Personal astronvim configuration
+    astronvim-user = {
+      url = "github:khaneliman/astronvim";
+      flake = false;
+    };
+
+    # Comma
+    comma.url = "github:nix-community/comma";
+    comma.inputs.nixpkgs.follows = "nixpkgs";
 
     # macOS Support (master)
     darwin.url = "github:lnl7/nix-darwin";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
+
+    # System Deployment
+    deploy-rs.url = "github:serokell/deploy-rs";
+    deploy-rs.inputs.nixpkgs.follows = "nixpkgs";
+
+    devshell.url = "github:numtide/devshell";
+    devshell.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Personal dotfiles configuration
+    # TODO: replace with inline configs
+    dotfiles = {
+      url = "github:khaneliman/dotfiles";
+      flake = false;
+    };
+
+    # Snowfall Flake
+    flake.url = "github:snowfallorg/flake";
+    flake.inputs.nixpkgs.follows = "nixpkgs";
+
+    # GPG default configuration
+    gpg-base-conf = {
+      url = "github:drduh/config";
+      flake = false;
+    };
+
+    # flake.inputs.snowfall-lib.follows = "snowfall-lib"; 
+    # Home Manager (master)
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    # hyprland
+    hyprland.url = "github:hyprwm/Hyprland";
+    hyprland.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Hyprland user contributions flake
+    hyprland-contrib = {
+      url = "github:hyprwm/contrib";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # NixPkgs (nixos-unstable)
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # Nix User Repository (master)
     nur.url = "github:nix-community/NUR";
@@ -28,76 +85,9 @@
     snowfall-lib.url = "github:snowfallorg/lib/feat/home-manager";
     snowfall-lib.inputs.nixpkgs.follows = "nixpkgs";
 
-    # Snowfall Flake
-    flake.url = "github:snowfallorg/flake";
-    flake.inputs.nixpkgs.follows = "nixpkgs";
-    # flake.inputs.snowfall-lib.follows = "snowfall-lib";
-
-    # Comma
-    comma.url = "github:nix-community/comma";
-    comma.inputs.nixpkgs.follows = "nixpkgs";
-
-    # System Deployment
-    deploy-rs.url = "github:serokell/deploy-rs";
-    deploy-rs.inputs.nixpkgs.follows = "nixpkgs";
-
     # Run unpatched dynamically compiled binaries
     nix-ld.url = "github:Mic92/nix-ld";
     nix-ld.inputs.nixpkgs.follows = "nixpkgs";
-
-    # Personal astronvim configuration
-    astronvim-user = {
-      url = "github:khaneliman/astronvim";
-      flake = false;
-    };
-
-    # Personal dotfiles configuration
-    # TODO: replace with inline configs
-    dotfiles = {
-      url = "github:khaneliman/dotfiles";
-      flake = false;
-    };
-
-    # hyprland
-    hyprland.url = "github:hyprwm/Hyprland";
-    hyprland.inputs.nixpkgs.follows = "nixpkgs";
-
-    # Hyprland user contributions flake
-    hyprland-contrib = {
-      url = "github:hyprwm/contrib";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Astronvim repo
-    astronvim = {
-      url = "github:AstroNvim/AstroNvim/nightly";
-      flake = false;
-    };
-
-    # Yubikey Guide
-    yubikey-guide = {
-      url = "github:drduh/YubiKey-Guide";
-      flake = false;
-    };
-
-    # GPG default configuration
-    gpg-base-conf = {
-      url = "github:drduh/config";
-      flake = false;
-    };
-
-    # rust overlay
-    rustup-overlay.url = "github:oxalica/rust-overlay";
-    rustup-overlay.inputs.nixpkgs.follows = "nixpkgs";
-
-    # TODO: utilize these
-    # agenix.url = "github:ryantm/agenix";
-    # agenix.inputs.nixpkgs.follows = "nixpkgs";
-    # agenix.inputs.darwin.follows = "darwin";
-    # agenix.inputs.home-manager.follows = "home-manager";
-
-    devshell.url = "github:numtide/devshell";
-    devshell.inputs.nixpkgs.follows = "nixpkgs";
 
     ## Ranger plugins
     ranger-devicons.url = "github:alexanderjeurissen/ranger_devicons";
@@ -106,9 +96,19 @@
     ranger-udisk-menu.url = "github:SL-RU/ranger_udisk_menu";
     ranger-udisk-menu.flake = false;
 
+    # rust overlay
+    rustup-overlay.url = "github:oxalica/rust-overlay";
+    rustup-overlay.inputs.nixpkgs.follows = "nixpkgs";
+
+
     spicetify-nix.url = "github:the-argus/spicetify-nix/dev";
     spicetify-nix.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Yubikey Guide
+    yubikey-guide = {
+      url = "github:drduh/YubiKey-Guide";
+      flake = false;
+    };
   };
 
   outputs = inputs:
