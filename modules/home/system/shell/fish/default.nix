@@ -21,13 +21,13 @@ in
       "fish/themes".source = fishBasePath + "themes/";
       "fish/functions/bak.fish".source = fishBasePath + "functions/bak.fish";
       "fish/functions/cd.fish".source = fishBasePath + "functions/cd.fish";
-      "fish/functions/clear.fish".source = fishBasePath + "functions/clear.fish";
       "fish/functions/ex.fish".source = fishBasePath + "functions/ex.fish";
       "fish/functions/git.fish".source = fishBasePath + "functions/git.fish";
       "fish/functions/load_ssh.fish".source = fishBasePath + "functions/load_ssh.fish";
       "fish/functions/mkcd.fish".source = fishBasePath + "functions/mkcd.fish";
       "fish/functions/mvcd.fish".source = fishBasePath + "functions/mvcd.fish";
       "fish/functions/ranger.fish".source = fishBasePath + "functions/ranger.fish";
+      # "fish/completions/nix.fish".source = "${pkgs.nix}/share/fish/vendor_completions.d/nix.fish";
     };
 
     programs.fish = {
@@ -48,7 +48,7 @@ in
           set fish_user_paths $fish_user_paths
         '';
 
-      interactiveShellInit = ''
+      interactiveShellInit = lib.optionalString pkgs.stdenv.isDarwin ''
         # 1password plugin
         if [ -f ~/.config/op/plugins.sh ];
             source ~/.config/op/plugins.sh
@@ -67,17 +67,13 @@ in
          source '/nix/var/nix/profiles/default/etc/profile.d/nix.fish'
         end
         # End Nix
-
-        # SSH setup 
-        [ $(command -v fish_ssh_agent) ] && fish_ssh_agent
-        load_ssh # if you need ssh loading keys on shell launch
-
+      '' + lib.optionalString pkgs.stdenv.isLinux ''
         if [ $(command -v hyprctl) ];
             # Hyprland logs 
             alias hl='cat /tmp/hypr/$(lsd -t /tmp/hypr/ | head -n 1)/hyprland.log'
             alias hl1='cat /tmp/hypr/$(lsd -t -r /tmp/hypr/ | head -n 2 | tail -n 1)/hyprland.log'
         end
-   
+      '' + ''
         # Disable greeting
         set fish_greeting 
 
