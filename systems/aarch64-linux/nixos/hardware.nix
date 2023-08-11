@@ -17,7 +17,6 @@ in
     kernelPackages = pkgs.linuxPackages_latest;
 
     initrd = {
-      # kernelModules = [ "amdgpu" ];
       availableKernelModules = [ "nvme" "ahci" "xhci_pci" "usbhid" "usb_storage" "sd_mod" ];
     };
 
@@ -34,7 +33,9 @@ in
     fsType = "vfat";
   };
 
-  swapDevices = [{ device = "/dev/disk/by-label/swap"; }];
+  swapDevices = [
+    { device = "/dev/disk/by-label/swap"; }
+  ];
 
   hardware.enableRedistributableFirmware = true;
 

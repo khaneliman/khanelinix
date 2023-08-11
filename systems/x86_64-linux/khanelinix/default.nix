@@ -54,18 +54,18 @@ with lib.internal; {
 
     services = {
       avahi = enabled;
-      printing = enabled;
       geoclue = enabled;
+      printing = enabled;
 
       snapper = {
         enable = true;
 
         configs = {
           Documents = {
-            SUBVOLUME = "/home/khaneliman/Documents";
             ALLOW_USERS = [ "khaneliman" ];
-            TIMELINE_CREATE = true;
+            SUBVOLUME = "/home/khaneliman/Documents";
             TIMELINE_CLEANUP = true;
+            TIMELINE_CREATE = true;
           };
         };
       };
@@ -129,8 +129,8 @@ with lib.internal; {
       boot = enabled;
       fonts = enabled;
       locale = enabled;
-      time = enabled;
       networking = enabled;
+      time = enabled;
     };
 
     #   IOMMU Group 24:
@@ -138,10 +138,9 @@ with lib.internal; {
     # 	05:00.1 Audio device [0403]: NVIDIA Corporation GA102 High Definition Audio Controller [10de:1aef] (rev a1)
     virtualisation.kvm = {
       enable = true;
-      platform = "amd";
-
-      vfioIds = [ "10de:2206" "10de:1aef" ];
       machineUnits = [ "machine-qemu\\x2d4\\x2dwin11\\x2dGPU.scope" ];
+      platform = "amd";
+      vfioIds = [ "10de:2206" "10de:1aef" ];
     };
   };
 
