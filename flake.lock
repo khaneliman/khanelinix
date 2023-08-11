@@ -119,38 +119,6 @@
         "type": "github"
       }
     },
-    "discord-nord-theme": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1662442143,
-        "narHash": "sha256-R0Ew/hQtXxbXEUjRS1iCRBIrwdg1RbpBOf39XU75a/k=",
-        "owner": "DapperCore",
-        "repo": "NordCord",
-        "rev": "80066952fa5b4613a19c9d13134e5a69273c3988",
-        "type": "github"
-      },
-      "original": {
-        "owner": "DapperCore",
-        "repo": "NordCord",
-        "type": "github"
-      }
-    },
-    "discord-tweaks": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1627600834,
-        "narHash": "sha256-xSzbP86w5OUy1ZO1iHgv1drbujtlPQAgJmLA3x7UOFc=",
-        "owner": "NurMarvin",
-        "repo": "discord-tweaks",
-        "rev": "bc28b090f9ed706d7f8271aeaa64bdcb886fd0ef",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NurMarvin",
-        "repo": "discord-tweaks",
-        "type": "github"
-      }
-    },
     "dotfiles": {
       "flake": false,
       "locked": {
@@ -701,43 +669,6 @@
         "type": "github"
       }
     },
-    "replugged": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "replugged": "replugged_2"
-      },
-      "locked": {
-        "lastModified": 1669681358,
-        "narHash": "sha256-lkUUaIabrTDYK7U17iTIZJ2GK90zcV42SoiBh/fdDmU=",
-        "owner": "LunNova",
-        "repo": "replugged-nix-flake",
-        "rev": "6e6bb35f7016632cc661c31c54bdc9021229e2da",
-        "type": "github"
-      },
-      "original": {
-        "owner": "LunNova",
-        "repo": "replugged-nix-flake",
-        "type": "github"
-      }
-    },
-    "replugged_2": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1664511204,
-        "narHash": "sha256-wgVInLJd97vsndfSVLRvJzOl4e1yZCXYsFpp0ITZvzQ=",
-        "owner": "replugged-org",
-        "repo": "replugged",
-        "rev": "e984d8fdae3a3585e6ca7dc7fa8aed3725062b31",
-        "type": "github"
-      },
-      "original": {
-        "owner": "replugged-org",
-        "repo": "replugged",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "astronvim": "astronvim",
@@ -746,8 +677,6 @@
         "darwin": "darwin",
         "deploy-rs": "deploy-rs",
         "devshell": "devshell",
-        "discord-nord-theme": "discord-nord-theme",
-        "discord-tweaks": "discord-tweaks",
         "dotfiles": "dotfiles",
         "flake": "flake",
         "gpg-base-conf": "gpg-base-conf",
@@ -762,7 +691,6 @@
         "nur": "nur",
         "ranger-devicons": "ranger-devicons",
         "ranger-udisk-menu": "ranger-udisk-menu",
-        "replugged": "replugged",
         "rustup-overlay": "rustup-overlay",
         "snowfall-lib": "snowfall-lib_3",
         "spicetify-nix": "spicetify-nix",

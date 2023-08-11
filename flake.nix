@@ -74,27 +74,6 @@
       flake = false;
     };
 
-    # Discord Replugged
-    replugged.url = "github:LunNova/replugged-nix-flake";
-    replugged.inputs.nixpkgs.follows = "nixpkgs";
-
-    # Discord Replugged plugins / themes
-    discord-tweaks = {
-      url = "github:NurMarvin/discord-tweaks";
-      flake = false;
-    };
-    discord-nord-theme = {
-      url = "github:DapperCore/NordCord";
-      flake = false;
-    };
-
-    # Backup management
-    icehouse = {
-      url = "github:snowfallorg/icehouse";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.unstable.follows = "nixpkgs";
-    };
-
     # Yubikey Guide
     yubikey-guide = {
       url = "github:drduh/YubiKey-Guide";
@@ -190,3 +169,4 @@
           inputs.deploy-rs.lib;
     };
 }
+

@@ -27,7 +27,6 @@ in
       apps = {
         discord = {
           enable = true;
-          chromium = enabled;
         };
       };
     };
