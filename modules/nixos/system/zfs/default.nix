@@ -39,11 +39,5 @@ in
         weekly = mkDefault 3;
       };
     };
-
-    khanelinix = {
-      tools = {
-        icehouse = enabled;
-      };
-    };
   };
 }

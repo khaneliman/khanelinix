@@ -134,7 +134,6 @@
         devshell.overlays.default
         flake.overlay
         hyprland.overlays.default
-        icehouse.overlay
         nur.overlay
         rustup-overlay.overlays.default
         # agenix.overlays.default
