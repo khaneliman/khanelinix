@@ -46,7 +46,6 @@ in
       cli-apps = {
         helix = enabled;
         lazydocker = enabled;
-        lazygit = enabled;
         prisma = enabled;
         tmux = enabled;
       };

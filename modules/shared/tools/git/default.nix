@@ -24,7 +24,6 @@ in
       gitflow
       gitleaks
       gitlint
-      lazygit
     ];
   };
 }

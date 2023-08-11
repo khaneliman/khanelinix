@@ -1,7 +1,6 @@
 { options
 , config
 , lib
-, pkgs
 , ...
 }:
 with lib;
@@ -14,13 +13,12 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ lazygit ];
-    khanelinix.home = {
-      extraOptions = {
-        home.shellAliases = {
-          lg = "lazygit";
-        };
-      };
+    programs.lazygit = {
+      enable = true;
+    };
+
+    home.shellAliases = {
+      lg = "lazygit";
     };
   };
 }
