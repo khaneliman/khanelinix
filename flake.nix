@@ -88,13 +88,6 @@
       flake = false;
     };
 
-    # Cows!
-    cowsay = {
-      url = "github:snowfallorg/cowsay";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.unstable.follows = "nixpkgs";
-    };
-
     # Backup management
     icehouse = {
       url = "github:snowfallorg/icehouse";
@@ -159,7 +152,6 @@
 
       # overlays from inputs
       overlays = with inputs; [
-        cowsay.overlay
         devshell.overlays.default
         flake.overlay
         hyprland.overlays.default

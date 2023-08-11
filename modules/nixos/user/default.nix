@@ -49,9 +49,7 @@ in
 
   config = {
     environment.systemPackages = with pkgs; [
-      cowsay
       fortune
-      khanelinix.cowsay-plus
       lolcat
       propagatedIcon
     ];
