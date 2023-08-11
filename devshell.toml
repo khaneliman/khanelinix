@@ -1,14 +1,14 @@
 # https://numtide.github.io/devshell
 [devshell]
 packages = [
+  cachix
+  cmake
   deploy-rs
-  nixpkgs-fmt
-  nixpkgs-lint
-  nixpkgs-hammer
+  meson
   nix-index
   nix-prefetch-git
-  cachix
-  meson
-  cmake
+  nixpkgs-fmt
+  nixpkgs-hammer
+  nixpkgs-lint
   pkg-config
 ]
