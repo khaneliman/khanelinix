@@ -25,7 +25,6 @@ with lib.internal; {
     };
 
     tools = {
-      direnv = enabled;
       git = enabled;
       ssh = enabled;
     };

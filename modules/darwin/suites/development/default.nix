@@ -36,7 +36,6 @@ in
       clang-tools
       cmake
       cmocka
-      direnv
       docutils
       dotnet-sdk
       efm-langserver

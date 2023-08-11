@@ -40,11 +40,9 @@ in
             sandbox = "relaxed";
             trusted-users = users;
             warn-dirty = false;
-          }
-          // (lib.optionalAttrs config.khanelinix.tools.direnv.enable {
             keep-derivations = true;
             keep-outputs = true;
-          });
+          };
 
         gc = {
           automatic = true;

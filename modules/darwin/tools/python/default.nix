@@ -14,5 +14,7 @@ in
   };
 
   config =
-    mkIf cfg.enable { environment.systemPackages = with pkgs; [ python311 ]; };
+    mkIf cfg.enable {
+      environment.systemPackages = with pkgs; [ python311 ];
+    };
 }

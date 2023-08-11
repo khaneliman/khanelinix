@@ -34,7 +34,6 @@ in
       tools = {
         colorls = enabled;
         comma = enabled;
-        direnv = enabled;
         fup-repl = enabled;
         git = enabled;
         glxinfo = enabled;

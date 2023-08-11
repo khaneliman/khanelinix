@@ -22,6 +22,7 @@ in
 
       tools = {
         bat = enabled;
+        direnv = enabled;
         git = enabled;
         lsd = enabled;
         oh-my-posh = enabled;

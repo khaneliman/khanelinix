@@ -20,7 +20,6 @@ with lib.internal; {
 
     tools = {
       git = enabled;
-      direnv = enabled;
     };
 
     suites = {
