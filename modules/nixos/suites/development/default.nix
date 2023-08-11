@@ -47,7 +47,6 @@ in
         helix = enabled;
         lazydocker = enabled;
         prisma = enabled;
-        tmux = enabled;
       };
 
       tools = {

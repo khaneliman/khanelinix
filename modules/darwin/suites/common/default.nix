@@ -45,7 +45,6 @@ in
 
       cli-apps = {
         ranger = enabled;
-        tmux = enabled;
       };
 
       tools = {

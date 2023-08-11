@@ -15,10 +15,10 @@ in
 
   config = mkIf cfg.enable {
     khanelinix = {
-      # cli-apps = {
-      #   ranger = enabled;
-      #   tmux = enabled;
-      # };
+      cli-apps = {
+        # ranger = enabled;
+        tmux = enabled;
+      };
 
       tools = {
         bat = enabled;

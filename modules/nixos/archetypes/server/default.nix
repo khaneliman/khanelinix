@@ -18,10 +18,6 @@ in
       suites = {
         common = enabled;
       };
-
-      cli-apps = {
-        tmux = enabled;
-      };
     };
   };
 }
