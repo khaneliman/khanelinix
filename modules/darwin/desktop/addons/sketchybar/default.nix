@@ -7,6 +7,16 @@
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.desktop.addons.sketchybar;
+  zshAliases = {
+    brew = ''command brew "$@" && sketchybar --trigger brew_update'';
+    mas = ''command mas "$@" && sketchybar --trigger brew_update'';
+    push = ''command git push && sketchybar --trigger git_push'';
+  };
+  fishAliases = {
+    brew = ''command brew "$argv" && sketchybar --trigger brew_update'';
+    mas = ''command mas "$argv" && sketchybar --trigger brew_update'';
+    push = ''command git push && sketchybar --trigger git_push'';
+  };
 in
 {
   options.khanelinix.desktop.addons.sketchybar = with types; {
@@ -30,6 +40,11 @@ in
       # config = ''
       #
       # '';
+    };
+
+    khanelinix.home.extraOptions = {
+      programs.fish.shellAliases = fishAliases;
+      programs.zsh.shellAliases = zshAliases;
     };
   };
 }
