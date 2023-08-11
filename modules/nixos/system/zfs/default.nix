@@ -6,7 +6,7 @@ let
   cfg = config.khanelinix.system.zfs;
 
   inherit (lib) mkEnableOption mkIf mkDefault;
-  inherit (lib.internal) mkOpt enabled;
+  inherit (lib.internal) mkOpt;
   inherit (lib.types) listOf str;
 in
 {
