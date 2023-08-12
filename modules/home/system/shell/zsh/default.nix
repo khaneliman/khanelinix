@@ -38,10 +38,7 @@ in
           PATH="$(perl -e 'print join(":", grep { not $seen{$_}++ } split(/:/, $ENV{PATH}))')"
         '';
 
-        initExtra = ''
-          # Fix an issue with tmux.
-          export KEYTIMEOUT=1
-
+        initExtra = ''          
           # Use vim bindings.
           set -o vi
 

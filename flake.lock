@@ -122,11 +122,11 @@
     "dotfiles": {
       "flake": false,
       "locked": {
-        "lastModified": 1691766627,
+        "lastModified": 1691785357,
         "narHash": "sha256-4cWZJ/HmWi4mua95GhXFdTZHxkWIWPZd7my7ns82T/I=",
         "owner": "khaneliman",
         "repo": "dotfiles",
-        "rev": "50f3ac6fc8983e0a039f0e6dccaa8000aa1eddfa",
+        "rev": "9b6ee855d7edfc346f667139f002cc4f41d0f338",
         "type": "github"
       },
       "original": {
@@ -551,11 +551,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1691761568,
-        "narHash": "sha256-GtcvdrPM6rXUYe0SJLY1QGs6wzH5KstBW5Sc4Gpm0O0=",
+        "lastModified": 1691810733,
+        "narHash": "sha256-yWa3VABbzNou5unJ4T/ktUkXlUHNomroJQMxwlpWF9I=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "cc07f9da1fae2bd10bc128b82c06864ee429180a",
+        "rev": "0ec919509ac21efae8a1df43b4f054a912cbe660",
         "type": "github"
       },
       "original": {
@@ -631,11 +631,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1691719735,
-        "narHash": "sha256-GhPn5EIhGt7aFwgC6RELZJC7mUIol9O0k7Dsf2Hu0AM=",
+        "lastModified": 1691806075,
+        "narHash": "sha256-yuq7cNkFOQse4WwLw0rUiXhG58aI6eyXKfcTw5Act/I=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "ac9d8b2e9acc153145e6fa3c78f9ba458ae517bf",
+        "rev": "b87a7db512340dea25e95f444db29e9264ff7a63",
         "type": "github"
       },
       "original": {

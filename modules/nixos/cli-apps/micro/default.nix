@@ -11,6 +11,7 @@ in
 {
   options.khanelinix.cli-apps.micro = with lib.types; {
     enable = lib.mkEnableOption "micro";
+    default = mkBoolOpt true "Whether to set micro as the session EDITOR";
   };
 
   config = mkIf cfg.enable {
@@ -22,7 +23,7 @@ in
       PAGER = "less";
       MANPAGER = "less";
       NPM_CONFIG_PREFIX = "$HOME/.npm-global";
-      EDITOR = "micro";
+      EDITOR = mkIf cfg.default "micro";
     };
 
     khanelinix.home = {

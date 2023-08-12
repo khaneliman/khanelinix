@@ -6,26 +6,29 @@
 }:
 let
   inherit (lib) mkEnableOption mkIf;
+  inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.cli-apps.neovim;
 in
 {
   options.khanelinix.cli-apps.neovim = {
     enable = mkEnableOption "Neovim";
+    default = mkBoolOpt true "Whether to set Neovim as the session EDITOR";
   };
 
   config = mkIf cfg.enable {
     home = {
       sessionVariables = {
-        PAGER = "less";
         MANPAGER = "less";
         NPM_CONFIG_PREFIX = "$HOME/.npm-global";
+        PAGER = "less";
+        EDITOR = mkIf cfg.default "nvim";
       };
     };
 
     programs.neovim = {
       enable = true;
-      defaultEditor = true;
+      defaultEditor = cfg.default;
       viAlias = true;
       vimAlias = true;
       vimdiffAlias = true;

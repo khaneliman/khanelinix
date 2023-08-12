@@ -22,7 +22,10 @@ in
 
       cli-apps = {
         lazygit = enabled;
-        neovim = enabled;
+        neovim = {
+          enable = true;
+          default = true;
+        };
         helix = enabled;
       };
 
