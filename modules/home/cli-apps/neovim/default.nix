@@ -19,9 +19,6 @@ in
   config = mkIf cfg.enable {
     home = {
       sessionVariables = {
-        MANPAGER = "less";
-        NPM_CONFIG_PREFIX = "$HOME/.npm-global";
-        PAGER = "less";
         EDITOR = mkIf cfg.default "nvim";
       };
     };
