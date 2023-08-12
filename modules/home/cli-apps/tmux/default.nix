@@ -11,9 +11,6 @@ with lib.internal; let
 
   plugins = [ ]
     ++ (with pkgs.tmuxPlugins; [
-    continuum
-    tmux-fzf
-    vim-tmux-navigator
     {
       plugin = catppuccin;
       extraConfig = ''
@@ -22,6 +19,24 @@ with lib.internal; let
         set -g @catppuccin_user 'on'
       '';
     }
+    {
+      plugin = resurrect;
+      extraConfig = ''
+        set -g @resurrect-strategy-vim 'session'
+        set -g @resurrect-strategy-nvim 'session'
+        set -g @resurrect-capture-pane-contents 'on'
+        set -g @resurrect-processes 'ssh lazygit ranger'
+        set -g @resurrect-dir '~/.tmux/resurrect'
+      '';
+    }
+    {
+      plugin = continuum;
+      extraConfig = ''
+        set -g @continuum-restore 'on'
+      '';
+    }
+    # tmux-fzf
+    # vim-tmux-navigator
   ]);
 in
 {
