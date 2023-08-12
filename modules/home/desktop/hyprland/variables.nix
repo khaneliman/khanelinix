@@ -1,5 +1,6 @@
 { config
 , lib
+, pkgs
 , ...
 }:
 with lib;
@@ -119,14 +120,14 @@ in
             "$looking-glass" = "looking-glass-client";
 
             # TODO: dynamic configuration support instead of hard coded
-            "$w1" = "hyprctl hyprpaper wallpaper \"DP-3,~/.local/share/wallpapers/catppuccin/flatppuccin_macchiato.png\"";
-            "$w2" = "hyprctl hyprpaper wallpaper \"DP-1,~/.local/share/wallpapers/catppuccin/buttons.png\"";
-            "$w3" = "hyprctl hyprpaper wallpaper \"DP-1,~/.local/share/wallpapers/catppuccin/cat_pacman.png\"";
-            "$w4" = "hyprctl hyprpaper wallpaper \"DP-1,~/.local/share/wallpapers/catppuccin/cat-sound.png\"";
-            "$w5" = "hyprctl hyprpaper wallpaper \"DP-1,~/.local/share/wallpapers/catppuccin/hashtags-black.png\"";
-            "$w6" = "hyprctl hyprpaper wallpaper \"DP-1,~/.local/share/wallpapers/catppuccin/hashtags-new.png\"";
-            "$w7" = "hyprctl hyprpaper wallpaper \"DP-1,~/.local/share/wallpapers/catppuccin/hearts.png\"";
-            "$w8" = "hyprctl hyprpaper wallpaper \"DP-1,~/.local/share/wallpapers/catppuccin/tetris.png\"";
+            "$w1" = ''hyprctl hyprpaper wallpaper "DP-3,${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png"'';
+            "$w2" = ''hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/buttons.png"'';
+            "$w3" = ''hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/cat_pacman.png"'';
+            "$w4" = ''hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/cat-sound.png"'';
+            "$w5" = ''hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/hashtags-black.png"'';
+            "$w6" = ''hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/hashtags-new.png"'';
+            "$w7" = ''hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/hearts.png"'';
+            "$w8" = ''hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/tetris.png"'';
           };
         };
       };

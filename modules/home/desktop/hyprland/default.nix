@@ -25,6 +25,7 @@ in
     ./binds.nix
     ./variables.nix
     ./windowrules.nix
+    ./hyprpaper.nix
   ];
 
   config =

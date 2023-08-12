@@ -67,7 +67,6 @@ in
               {
                 "hypr/assets/square.png".source = hyprBasePath + "assets/square.png";
                 "hypr/assets/diamond.png".source = hyprBasePath + "assets/diamond.png";
-                "hypr/hyprpaper.conf".source = hyprBasePath + "hyprpaper.conf";
               }
               // cfg.customConfigFiles;
 
