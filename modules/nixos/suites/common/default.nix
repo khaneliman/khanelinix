@@ -39,7 +39,6 @@ in
         glxinfo = enabled;
         nix-ld = enabled;
         spicetify-cli = enabled;
-        topgrade = enabled;
       };
 
       hardware = {

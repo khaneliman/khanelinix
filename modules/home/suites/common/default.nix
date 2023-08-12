@@ -26,6 +26,7 @@ in
         git = enabled;
         lsd = enabled;
         oh-my-posh = enabled;
+        topgrade = enabled;
       };
 
       system = {

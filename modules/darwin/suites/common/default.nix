@@ -33,7 +33,6 @@ in
       rename
       spice-gtk
       terminal-notifier
-      topgrade
       trash-cli
       tree
       wego
