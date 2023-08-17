@@ -82,7 +82,7 @@
 
     # Snowfall Lib
     # TODO: replace with main branch after home-manager merged
-    snowfall-lib.url = "github:snowfallorg/lib/feat/home-manager";
+    snowfall-lib.url = "github:snowfallorg/lib/dev";
     snowfall-lib.inputs.nixpkgs.follows = "nixpkgs";
 
     # Run unpatched dynamically compiled binaries
