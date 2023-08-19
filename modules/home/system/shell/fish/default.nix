@@ -1,7 +1,6 @@
 { options
 , config
 , lib
-, inputs
 , pkgs
 , osConfig
 , ...
@@ -9,7 +8,6 @@
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.system.shell.fish;
-  fishBasePath = inputs.dotfiles.outPath + "/dots/shared/home/.config/fish/";
 in
 {
   options.khanelinix.system.shell.fish = with types; {
@@ -17,17 +15,18 @@ in
   };
 
   config = mkIf cfg.enable {
-    xdg.configFile = {
-      "fish/themes".source = fishBasePath + "themes/";
-      "fish/functions/bak.fish".source = fishBasePath + "functions/bak.fish";
-      "fish/functions/cd.fish".source = fishBasePath + "functions/cd.fish";
-      "fish/functions/ex.fish".source = fishBasePath + "functions/ex.fish";
-      "fish/functions/git.fish".source = fishBasePath + "functions/git.fish";
-      "fish/functions/load_ssh.fish".source = fishBasePath + "functions/load_ssh.fish";
-      "fish/functions/mkcd.fish".source = fishBasePath + "functions/mkcd.fish";
-      "fish/functions/mvcd.fish".source = fishBasePath + "functions/mvcd.fish";
-      "fish/functions/ranger.fish".source = fishBasePath + "functions/ranger.fish";
-      # "fish/completions/nix.fish".source = "${pkgs.nix}/share/fish/vendor_completions.d/nix.fish";
+    xdg.configFile."fish/functions" = {
+      source = lib.cleanSourceWith {
+        src = lib.cleanSource ./functions/.;
+      };
+      recursive = true;
+    };
+
+    xdg.configFile."fish/themes" = {
+      source = lib.cleanSourceWith {
+        src = lib.cleanSource ./themes/.;
+      };
+      recursive = true;
     };
 
     programs.fish = {
