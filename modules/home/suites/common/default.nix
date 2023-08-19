@@ -17,6 +17,7 @@ in
     khanelinix = {
       cli-apps = {
         # ranger = enabled;
+        fastfetch = enabled;
         tmux = enabled;
       };
 

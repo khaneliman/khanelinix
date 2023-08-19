@@ -1,0 +1,118 @@
+// ~/.config/fastfetch/config.jsonc
+// See https://github.com/fastfetch-cli/fastfetch/wiki/Configuration for more details
+// See *.jsonc in https://github.com/fastfetch-cli/fastfetch/tree/dev/presets/examples for more examples
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "padding": {
+            "top": 2
+        }
+    },
+    "display": {
+        "color": {
+            "keys": "green",
+            "title": "blue"
+        },
+        "percentType": 9, // colored percent number
+        "separator": " 󰁔 ",
+        "temperatureUnit": "F"
+    },
+    "modules": [
+        {
+            "type": "custom",
+            "key": "┌──────────── OS Information ────────────┐",
+            "keyColor": "blue",
+            "format": " "
+        },
+        {
+            "type": "host",
+            "key": " ╭─ ",
+            "keyColor": "green"
+        },
+        {
+            "type": "os",
+            "key": " ├─  ",
+            "keyColor": "green"
+        },
+        {
+            "type": "kernel",
+            "key": " ├─  ",
+            "keyColor": "green"
+        },
+        // "uptime",
+        {
+            "type": "packages",
+            "key": " ├─  ",
+            "keyColor": "green"
+        },
+        {
+            "type": "shell",
+            "key": " ╰─  ",
+            "keyColor": "green"
+        },
+        {
+            "type": "custom",
+            "key": "├───────── Hardware Information ─────────┤",
+            "keyColor": "blue",
+            "format": " "
+        },
+        {
+            "type": "display",
+            "key": " ╭─ 󰍹 ",
+            "keyColor": "blue"
+        },
+        {
+            "type": "cpu",
+            "key": " ├─ 󰍛 ",
+            "keyColor": "blue"
+        },
+        {
+            "type": "gpu",
+            "key": " ├─ 󰍛 ",
+            "keyColor": "blue"
+        },
+        {
+            "type": "memory",
+            "key": " ├─   ",
+            "keyColor": "blue"
+        },
+        {
+            "type": "disk",
+            "key": " ╰─ 󱛟 ",
+            "keyColor": "blue"
+        },
+        {
+            "type": "custom",
+            "key": "├───────── Software Information ─────────┤",
+            "keyColor": "blue",
+            "format": " "
+        },
+        {
+            "type": "wm",
+            "key": " ╭─  ",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "terminal",
+            "key": " ├─  ",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "font",
+            "key": " ╰─  ",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "custom",
+            "key": "└────────────────────────────────────────┘",
+            "keyColor": "blue",
+            "format": " "
+        },
+        {
+            "type": "custom",
+            "key": "                               ",
+            "format": " "
+        },
+        "break"
+    ]
+}

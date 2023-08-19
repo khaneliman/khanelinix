@@ -2,7 +2,6 @@
 , config
 , lib
 , pkgs
-, inputs
 , ...
 }:
 with lib;
@@ -15,16 +14,8 @@ in
   };
 
   config = mkIf cfg.enable {
-    # TODO: replace with nixpkgs when available
-    environment.systemPackages = with pkgs; [ fastfetch ];
-
-    khanelinix.home = {
-      configFile = with inputs; {
-        "fastfetch/".source = dotfiles.outPath + "/dots/shared/home/.config/fastfetch";
-      };
-      file = {
-        ".local/share/fastfetch/presets/local-overrides".source = ./local-overrides;
-      };
-    };
+    environment.systemPackages = with pkgs; [
+      fastfetch
+    ];
   };
 }
