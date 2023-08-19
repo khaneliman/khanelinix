@@ -17,7 +17,7 @@ in
   config = mkIf cfg.enable {
     home = {
       file = with inputs; {
-        ".p10k.zsh".source = dotfiles.outPath + "/dots/shared/home/.p10k.zsh";
+        ".p10k.zsh".source = ./.p10k.zsh;
         ".functions".source = dotfiles.outPath + "/dots/shared/home/.functions";
       };
     };
