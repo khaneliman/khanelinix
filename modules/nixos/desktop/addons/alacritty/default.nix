@@ -2,7 +2,6 @@
 , config
 , lib
 , pkgs
-, inputs
 , ...
 }:
 with lib;
@@ -18,12 +17,6 @@ in
     khanelinix.desktop.addons.term = {
       enable = true;
       pkg = pkgs.alacritty;
-    };
-
-    khanelinix.home = {
-      configFile = with inputs; {
-        "alacritty/".source = dotfiles.outPath + "/dots/shared/home/.config/alacritty";
-      };
     };
   };
 }
