@@ -16,9 +16,8 @@ in
 
   config = mkIf cfg.enable {
     home = {
-      file = with inputs; {
+      file = {
         ".p10k.zsh".source = ./.p10k.zsh;
-        ".functions".source = dotfiles.outPath + "/dots/shared/home/.functions";
       };
     };
 
@@ -44,8 +43,6 @@ in
 
           # Improved vim bindings.
           source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
-
-          source ~/.functions
 
           if [ "$TMUX" = "" ]; then command -v tmux && tmux; fi
 

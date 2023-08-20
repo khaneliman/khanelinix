@@ -1,7 +1,6 @@
 { options
 , config
 , lib
-, inputs
 , ...
 }:
 with lib;
@@ -19,19 +18,10 @@ in
       enableCompletion = true;
 
       initExtra = ''
-        # Source functions
-        if [ -f "$HOME"/.functions ]; then
-        	source "$HOME"/.functions
-        fi
-        
         if [ "$TMUX" = "" ]; then command -v tmux && tmux; fi
 
         fastfetch
       '';
-    };
-
-    home.file = with inputs; {
-      ".functions".source = dotfiles.outPath + "/dots/shared/home/.functions";
     };
   };
 }
