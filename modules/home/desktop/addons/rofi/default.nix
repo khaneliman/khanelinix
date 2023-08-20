@@ -2,7 +2,6 @@
 , config
 , lib
 , pkgs
-, inputs
 , ...
 }:
 with lib;
@@ -16,11 +15,19 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ rofi ];
+    programs.rofi = {
+      enable = true;
+      package = pkgs.rofi;
 
-    khanelinix.home = {
-      configFile = with inputs; {
-        "rofi/".source = dotfiles.outPath + "/dots/linux/hyprland/home/.config/rofi";
+    };
+
+    xdg.configFile = {
+      "rofi" = {
+        source = lib.cleanSourceWith {
+          src = lib.cleanSource ./config/.;
+        };
+
+        recursive = true;
       };
     };
   };

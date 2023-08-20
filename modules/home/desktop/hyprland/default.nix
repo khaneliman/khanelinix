@@ -33,6 +33,7 @@ in
       {
         # start swayidle as part of hyprland, not sway
         khanelinix.suites.wlroots = enabled;
+        khanelinix.desktop.addons.rofi = enabled;
 
         systemd.user.services.swayidle.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
         programs.waybar.systemd.target = "hyprland-session.target";

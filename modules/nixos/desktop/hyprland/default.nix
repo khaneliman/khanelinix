@@ -50,7 +50,6 @@ in
             kitty = enabled;
             nautilus = enabled;
             qt = enabled;
-            rofi = enabled;
             thunar = enabled;
             xdg-portal = enabled;
           };

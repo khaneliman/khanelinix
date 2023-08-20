@@ -1,0 +1,105 @@
+configuration {
+    font: "Liga SFMono Nerd Font 14";
+	show-icons: true;
+	drun-display-format: "{name}";
+    icon-theme: "Papirus-Dark";
+	fullscreen: false;
+	threads: 0;
+	matching: "fuzzy";
+	scroll-method: 0;
+	disable-history: false;
+	fullscreen: false;
+	window-thumbnail: true;
+}
+
+@theme "catppuccin"
+
+element-text, element-icon , mode-switcher {
+    background-color: inherit;
+    text-color:       inherit;
+}
+
+window {
+    height: 360px;
+    width: 33%;
+    border: 3px;
+    border-radius:6px;
+    background-color: @bg-col;
+    border-color:@peach;
+}
+
+mainbox {
+    background-color: @bg-col;
+}
+
+inputbar {
+    children: [prompt,entry];
+    background-color: @bg-col;
+    border-radius: 6px;
+    padding: 2px;
+}
+
+prompt {
+    background-color: @peach;
+    padding: 6px;
+    text-color: @bg-col;
+    border-radius: 6px;
+    margin: 20px 0px 0px 20px;
+}
+
+textbox-prompt-colon {
+    expand: false;
+    str: ":";
+}
+
+entry {
+    padding: 6px;
+    margin: 20px 10px 0px 10px;
+    text-color: @fg-col;
+    background-color: @bg-col;
+    border: 2px;
+    border-radius: 3px;
+    border-color: @peach;
+    placeholder:"Search";
+
+}
+
+listview {
+    border: 0px 0px 0px;
+    padding: 6px 0px 0px;
+    margin: 10px 0px 0px 20px;
+    columns: 2;
+    background-color: @bg-col;
+}
+
+element {
+    padding: 5px;
+    background-color: @bg-col;
+    text-color: @fg-col  ;
+}
+
+element-icon {
+    size: 25px;
+}
+
+element selected {
+    background-color:  @selected-col ;
+    text-color: @fg-col2  ;
+}
+
+mode-switcher {
+    spacing: 0;
+  }
+
+button {
+    padding: 10px;
+    background-color: @bg-col-light;
+    text-color: @grey;
+    vertical-align: 0.5; 
+    horizontal-align: 0.5;
+}
+
+button selected {
+  background-color: @bg-col;
+  text-color: @peach;
+}

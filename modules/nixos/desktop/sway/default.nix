@@ -28,7 +28,6 @@ in
         gtk = enabled;
         foot = enabled;
         mako = enabled;
-        rofi = enabled;
         wofi = enabled;
         kanshi = enabled;
         keyring = enabled;
