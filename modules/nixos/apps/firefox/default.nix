@@ -74,9 +74,13 @@ in
         })
         {
           ".mozilla/native-messaging-hosts/com.dannyvankooten.browserpass.json".source = "${pkgs.browserpass}/lib/mozilla/native-messaging-hosts/com.dannyvankooten.browserpass.json";
-          ".mozilla/firefox/${config.khanelinix.user.name}/chrome/userChrome.css".source = dotfiles.outPath + "/dots/shared/home/.mozilla/firefox/khaneliman.default/chrome/userChrome.css";
-          ".mozilla/firefox/${config.khanelinix.user.name}/chrome/img".source = dotfiles.outPath + "/dots/shared/home/.mozilla/firefox/khaneliman.default/chrome/img/";
-          # ".mozilla/firefox/${config.khanelinix.user.name}/user.js".source = dotfiles.outPath + "/dots/shared/home/.mozilla/firefox/khaneliman.default/user.js";
+          ".mozilla/firefox/${config.khanelinix.user.name}/chrome/" = {
+            source = lib.cleanSourceWith {
+              src = lib.cleanSource ./chrome/.;
+            };
+
+            recursive = true;
+          };
         }
       ];
 
