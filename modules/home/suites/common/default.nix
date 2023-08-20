@@ -22,6 +22,12 @@ in
         tmux = enabled;
       };
 
+      desktop = {
+        addons = {
+          kitty = enabled;
+        };
+      };
+
       tools = {
         bat = enabled;
         direnv = enabled;
