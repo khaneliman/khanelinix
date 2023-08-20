@@ -16,7 +16,7 @@ in
   config = mkIf cfg.enable {
     khanelinix = {
       cli-apps = {
-        # ranger = enabled;
+        ranger = enabled;
         btop = enabled;
         fastfetch = enabled;
         tmux = enabled;
