@@ -1,5 +1,6 @@
 { config
 , lib
+, pkgs
 , ...
 }:
 with lib;
@@ -25,7 +26,7 @@ in
       desktop = {
         addons = {
           kitty = enabled;
-          qt = enabled;
+          qt.enable = pkgs.stdenv.isLinux;
         };
       };
 
