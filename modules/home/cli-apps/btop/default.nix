@@ -243,7 +243,6 @@ in
         src = lib.cleanSource ./themes/.;
       };
 
-      # links each file individually, which lets us insert the colors file separately
       recursive = true;
     };
   };

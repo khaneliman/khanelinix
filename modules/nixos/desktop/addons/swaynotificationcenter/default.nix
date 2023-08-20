@@ -2,7 +2,6 @@
 , config
 , lib
 , pkgs
-, inputs
 , ...
 }:
 with lib;
@@ -19,8 +18,12 @@ in
     environment.systemPackages = with pkgs; [ swaynotificationcenter libnotify ];
 
     khanelinix.home = {
-      configFile = with inputs; {
-        "swaync/".source = dotfiles.outPath + "/dots/linux/hyprland/home/.config/swaync";
+      configFile."swaync/" = {
+        source = lib.cleanSourceWith {
+          src = lib.cleanSource ./config/.;
+        };
+
+        recursive = true;
       };
     };
   };

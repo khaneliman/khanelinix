@@ -41,7 +41,6 @@ in
         src = lib.cleanSource ./.;
       };
 
-      # links each file individually, which lets us insert the colors file separately
       recursive = true;
     };
   };
