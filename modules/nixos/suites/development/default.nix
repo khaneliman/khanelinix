@@ -44,7 +44,6 @@ in
       };
 
       cli-apps = {
-        helix = enabled;
         lazydocker = enabled;
         prisma = enabled;
       };
