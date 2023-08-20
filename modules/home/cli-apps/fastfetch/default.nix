@@ -11,7 +11,7 @@ in
 {
   options.khanelinix.cli-apps.fastfetch = with types; {
     enable = mkBoolOpt false "Whether or not to enable fastfetch.";
-    local-overrides = mkOpt str "";
+    local-overrides = mkOpt str "" "Local overrides to add to configuration.";
   };
 
   config = mkIf cfg.enable {
@@ -31,7 +31,8 @@ in
           --kernel-key " \e[32m ├─ "
         ''
         + lib.optionalString pkgs.stdenv.isLinux ''
-        '';
+        ''
+        + cfg.local-overrides;
 
     };
   };
