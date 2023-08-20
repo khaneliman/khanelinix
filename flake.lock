@@ -119,22 +119,6 @@
         "type": "github"
       }
     },
-    "dotfiles": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1692562887,
-        "narHash": "sha256-iPEIwjXSzIT13WgGF5uw0OL/wbCjQkm8pylJkp8bKHA=",
-        "owner": "khaneliman",
-        "repo": "dotfiles",
-        "rev": "84af7f0b83354191f8f5105223d73795bfd11db3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "khaneliman",
-        "repo": "dotfiles",
-        "type": "github"
-      }
-    },
     "flake": {
       "inputs": {
         "flake-compat": "flake-compat_3",
@@ -609,7 +593,6 @@
         "darwin": "darwin",
         "deploy-rs": "deploy-rs",
         "devshell": "devshell",
-        "dotfiles": "dotfiles",
         "flake": "flake",
         "gpg-base-conf": "gpg-base-conf",
         "home-manager": "home-manager",
@@ -623,6 +606,7 @@
         "ranger-devicons": "ranger-devicons",
         "ranger-udisk-menu": "ranger-udisk-menu",
         "rustup-overlay": "rustup-overlay",
+        "sf-mono-nerd-font": "sf-mono-nerd-font",
         "snowfall-lib": "snowfall-lib_2",
         "spicetify-nix": "spicetify-nix",
         "yubikey-guide": "yubikey-guide"
@@ -646,6 +630,22 @@
       "original": {
         "owner": "oxalica",
         "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "sf-mono-nerd-font": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1688258025,
+        "narHash": "sha256-AYjKrVLISsJWXN6Cj74wXmbJtREkFDYOCRw1t2nVH2w=",
+        "owner": "shaunsingh",
+        "repo": "SFMono-Nerd-Font-Ligaturized",
+        "rev": "dc5a3e6fcc2e16ad476b7be3c3c17c2273b260ea",
+        "type": "github"
+      },
+      "original": {
+        "owner": "shaunsingh",
+        "repo": "SFMono-Nerd-Font-Ligaturized",
         "type": "github"
       }
     },

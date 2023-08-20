@@ -17,7 +17,13 @@ in
     fonts.packages = [ ] ++ cfg.fonts;
 
     khanelinix.home.file = with inputs; {
-      ".local/share/fonts/SanFransisco/SF-Mono/".source = dotfiles.outPath + "/dots/shared/home/.fonts/SanFransisco/SF-Mono";
+      ".local/share/fonts/SanFransisco/SF-Mono/" = {
+        source = lib.cleanSourceWith {
+          src = lib.cleanSource sf-mono-nerd-font;
+        };
+
+        recursive = true;
+      };
     };
   };
 }

@@ -35,13 +35,6 @@
     devshell.url = "github:numtide/devshell";
     devshell.inputs.nixpkgs.follows = "nixpkgs";
 
-    # Personal dotfiles configuration
-    # TODO: replace with inline configs
-    dotfiles = {
-      url = "github:khaneliman/dotfiles";
-      flake = false;
-    };
-
     # Snowfall Flake
     flake.url = "github:snowfallorg/flake";
     flake.inputs.nixpkgs.follows = "nixpkgs";
@@ -100,6 +93,9 @@
     rustup-overlay.url = "github:oxalica/rust-overlay";
     rustup-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Nerd font 
+    sf-mono-nerd-font.url = "github:shaunsingh/SFMono-Nerd-Font-Ligaturized";
+    sf-mono-nerd-font.flake = false;
 
     spicetify-nix.url = "github:the-argus/spicetify-nix/dev";
     spicetify-nix.inputs.nixpkgs.follows = "nixpkgs";
