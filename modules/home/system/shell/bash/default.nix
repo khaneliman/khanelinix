@@ -14,16 +14,23 @@ in
   };
 
   config = mkIf cfg.enable {
-    # programs.bash = {
-    #   enable = true;
-    #   # interactiveShellInit = ''
-    #   #   source ${dotfiles.outPath}/dots/shared/home/.config/bash/bashrc
-    #   # '';
-    # };
+    programs.bash = {
+      enable = true;
+      enableCompletion = true;
+
+      initExtra = ''
+        # Source functions
+        if [ -f "$HOME"/.functions ]; then
+        	source "$HOME"/.functions
+        fi
+        
+        if [ "$TMUX" = "" ]; then command -v tmux && tmux; fi
+
+        fastfetch
+      '';
+    };
 
     home.file = with inputs; {
-      ".bashrc".source = dotfiles.outPath + "/dots/shared/home/.bashrc";
-      ".bashenv".source = dotfiles.outPath + "/dots/shared/home/.bashenv";
       ".functions".source = dotfiles.outPath + "/dots/shared/home/.functions";
     };
   };
