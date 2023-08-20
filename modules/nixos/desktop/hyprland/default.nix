@@ -8,7 +8,6 @@
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.desktop.hyprland;
-  hyprBasePath = inputs.dotfiles.outPath + "/dots/linux/hyprland/home/.config/hypr/";
   programs = lib.makeBinPath [ config.programs.hyprland.package ];
 in
 {
@@ -63,20 +62,13 @@ in
           };
 
           home = {
-            configFile =
-              {
-                "hypr/assets/square.png".source = hyprBasePath + "assets/square.png";
-                "hypr/assets/diamond.png".source = hyprBasePath + "assets/diamond.png";
-              }
-              // cfg.customConfigFiles;
+            configFile = {
+              "hypr/assets/square.png".source = ./hypr/assets/square.png;
+              "hypr/assets/diamond.png".source = ./hypr/assets/diamond.png;
+            }
+            // cfg.customConfigFiles;
 
-            file = with inputs;
-              {
-                ".local/bin/hyprland_setup_dual_monitors.sh".source = dotfiles.outPath + "/dots/linux/hyprland/home/.local/bin/hyprland_setup_dual_monitors.sh";
-                ".local/bin/hyprland_cleanup_after_startup.sh".source = dotfiles.outPath + "/dots/linux/hyprland/home/.local/bin/hyprland_cleanup_after_startup.sh";
-                ".local/bin/hyprland_handle_monitor_connect.sh".source = dotfiles.outPath + "/dots/linux/hyprland/home/.local/bin/hyprland_handle_monitor_connect.sh";
-                ".local/bin/record_screen".source = dotfiles.outPath + "/dots/linux/hyprland/home/.local/bin/record_screen";
-              }
+            file = { }
               // cfg.customFiles;
           };
 
@@ -114,6 +106,7 @@ in
           hyprpaper
           hyprpicker
           inputs.hyprland-contrib.packages.${pkgs.hostPlatform.system}.grimblast
+          pkgs.khanelinix.record_screen
         ];
       };
 }

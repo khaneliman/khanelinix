@@ -57,8 +57,8 @@ in
                 "SUPER_CTRL, Print, exec, grimblast copy active && wl-paste -t image/png | convert png:- /tmp/clipboard.png && notify-send --icon=/tmp/clipboard.png 'Window copied to clipboard'"
                 "SUPER_CTRL_SHIFT, Print, exec, grimblast copy area && wl-paste -t image/png | convert png:- /tmp/clipboard.png && notify-send --icon=/tmp/clipboard.png 'Area copied to clipboard'"
                 # Screen recording
-                "SUPER_CTRLALT, Print, exec, ~/.local/bin/record_screen screen                                                                                            "
-                "SUPER_CTRLALTSHIFT, Print, exec, ~/.local/bin/record_screen area                                                                                          "
+                "SUPER_CTRLALT, Print, exec, record_screen screen"
+                "SUPER_CTRLALTSHIFT, Print, exec, record_screen area"
 
                 # ░█░░░█▀█░█░█░█▀█░█░█░▀█▀
                 # ░█░░░█▀█░░█░░█░█░█░█░░█░
