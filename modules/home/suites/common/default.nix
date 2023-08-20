@@ -25,6 +25,7 @@ in
       desktop = {
         addons = {
           kitty = enabled;
+          qt = enabled;
         };
       };
 

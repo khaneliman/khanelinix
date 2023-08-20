@@ -143,7 +143,6 @@
       systems.modules.nixos = with inputs; [
         # agenix.nixosModules.default
         home-manager.nixosModules.home-manager
-        hyprland.nixosModules.default
         nix-ld.nixosModules.nix-ld
       ];
 
