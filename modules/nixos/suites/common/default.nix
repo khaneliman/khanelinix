@@ -26,7 +26,6 @@ in
       nix = enabled;
 
       cli-apps = {
-        btop = enabled;
         fastfetch = enabled;
         ranger = enabled;
       };

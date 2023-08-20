@@ -18,9 +18,7 @@ with lib.internal; {
       home-manager = enabled;
     };
 
-    tools = {
-      git = enabled;
-    };
+    tools = { };
 
     suites = {
       common = enabled;

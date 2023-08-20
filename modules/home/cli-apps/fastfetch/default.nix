@@ -11,21 +11,15 @@ in
 {
   options.khanelinix.cli-apps.fastfetch = with types; {
     enable = mkBoolOpt false "Whether or not to enable fastfetch.";
-    # local-overrides = mkOpt 
+    local-overrides = mkOpt str "";
   };
 
   config = mkIf cfg.enable {
     xdg.configFile."fastfetch" = {
       source = lib.cleanSourceWith {
-        # filter = name: _type:
-        #   let
-        #     baseName = baseNameOf (toString name);
-        #   in
-        #   (lib.hasSuffix ".conf" baseName);
         src = lib.cleanSource ./config/.;
       };
 
-      # links each file individually, which lets us insert the colors file separately
       recursive = true;
     };
 
