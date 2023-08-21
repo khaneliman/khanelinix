@@ -1,12 +1,10 @@
 { lib
 , config
 , pkgs
-, inputs
 , ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
-
   cfg = config.khanelinix.system.shell.zsh;
 in
 {
@@ -48,8 +46,6 @@ in
 
           fastfetch
         '';
-
-        shellAliases = { };
 
         plugins = [
           {

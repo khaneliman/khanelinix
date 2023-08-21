@@ -64,7 +64,7 @@ in
         default < shift + lalt - s : yabai -m window --toggle split
 
         # Float / Unfloat window: lalt - space
-        default < lalt - space : yabai -m window --toggle float; sketchybar --trigger window_focus
+        # default < lalt - space : yabai -m window --toggle float; sketchybar --trigger window_focus
 
         # Make window zoom to fullscreen:
         # default < shift + lalt - f : yabai -m window --toggle zoom-fullscreen; sketchybar --trigger window_focus

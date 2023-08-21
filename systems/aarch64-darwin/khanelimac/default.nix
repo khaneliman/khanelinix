@@ -27,7 +27,6 @@ with lib.internal; {
     "/opt/homebrew/bin"
   ];
 
-
   networking = {
     computerName = "Austins MacBook Pro";
     hostName = "khanelimac";
