@@ -1,5 +1,5 @@
 {
-  "wlr/workspaces": {
+  "hyprland/workspaces": {
     "all-outputs": false,
     "active-only": "false",
     "on-click": "activate",

@@ -69,7 +69,7 @@ in
     programs.waybar = {
       enable = true;
       systemd.enable = true;
-      package = mkIf config.khanelinix.desktop.hyprland.enable pkgs.waybar-hyprland;
+      package = pkgs.waybar;
 
       # TODO: make dynamic
       settings = {
@@ -84,7 +84,7 @@ in
           # "modules-center" = [ "mpris" ];
           "modules-left" = [
             "custom/wlogout"
-            "wlr/workspaces"
+            "hyprland/workspaces"
             "custom/separator-left"
             "hyprland/window"
           ];
@@ -111,7 +111,7 @@ in
           "modules-center" = [ ];
           "modules-left" = [
             "custom/wlogout"
-            "wlr/workspaces"
+            "hyprland/workspaces"
             "custom/separator-left"
             "hyprland/window"
           ];
