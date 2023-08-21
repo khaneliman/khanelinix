@@ -24,6 +24,7 @@ in
       btrfs-progs
     ] ++ lib.optionals cfg.btrfs [
       btdu
+      btrfs-assistant
       btrfs-snap
       compsize
       # dduper
