@@ -21,6 +21,7 @@ in
       proton-caller
       protontricks
       protonup-ng
+      protonup-qt
     ];
 
     khanelinix = {
