@@ -18,7 +18,7 @@ in
       enable = true;
 
       config = {
-        theme = "Catppuccin-macchiato";
+        theme = "catppuccin-macchiato";
         style = "auto,header-filesize";
       };
 
