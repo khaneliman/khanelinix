@@ -22,6 +22,7 @@ with lib.internal; {
     desktop = {
       addons = {
         swayidle = enabled;
+        waybar.debug = true;
       };
 
       hyprland = enabled;

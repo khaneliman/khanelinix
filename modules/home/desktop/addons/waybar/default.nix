@@ -63,9 +63,12 @@ in
   options.khanelinix.desktop.addons.waybar = with types; {
     enable =
       mkBoolOpt false "Whether to enable waybar in the desktop environment.";
+    debug = mkBoolOpt false "Whether to enable debug mode.";
   };
 
   config = mkIf cfg.enable {
+    systemd.user.services.waybar.Service.ExecStart = mkIf cfg.debug (mkForce "${pkgs.waybar}/bin/waybar -l debug");
+
     programs.waybar = {
       enable = true;
       systemd.enable = true;
