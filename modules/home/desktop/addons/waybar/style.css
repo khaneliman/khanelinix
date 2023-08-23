@@ -131,6 +131,7 @@ window.DP-3 #workspaces {
 
 #workspaces button.urgent {
   background-color: @red;
+  border-radius: 1em;
   color: @text;
 }
 
