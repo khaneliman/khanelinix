@@ -33,7 +33,11 @@ in
 
         return {
           window_decorations = "RESIZE",
-          font = wezterm.font 'Liga SFMono Nerd Font',
+          font = wezterm.font_with_fallback {
+            'Liga SFMono Nerd Font', 
+            'CaskaydiaCove Nerd Font',
+            'JetBrains Mono',
+          },
           color_schemes = {
             ["Catppuccin"] = custom,
           },

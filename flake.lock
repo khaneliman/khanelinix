@@ -129,11 +129,11 @@
         "unstable": "unstable"
       },
       "locked": {
-        "lastModified": 1676352981,
-        "narHash": "sha256-4Avwfq71dSpVYSuQwxe9b+jbBOSjdm4qVEZcfyGivts=",
+        "lastModified": 1692933493,
+        "narHash": "sha256-SKm0yO0aBh54M4iUtRrbpFDIg7OCR/FJaJcFmOKjwPk=",
         "owner": "snowfallorg",
         "repo": "flake",
-        "rev": "ca46f77b9e42224ede87634d2d4d4ef90281fe21",
+        "rev": "fce4186e3d773187792542a6e48e0543ac59f8e9",
         "type": "github"
       },
       "original": {
@@ -540,11 +540,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1692877512,
-        "narHash": "sha256-87zdIDnnDHLlXlVYVpZ2fr35+ZGKqrCtRVgw+XBFBTU=",
+        "lastModified": 1692934286,
+        "narHash": "sha256-ZQO49V8Mbmy1gla4VSjZlMMv2WfdamHdI4iZVia0JQg=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "a85c4c9804acb573fd7c3fcc74ca187a8da53c85",
+        "rev": "02a685ac66a8af463fc36e744cbe391d0552769c",
         "type": "github"
       },
       "original": {
@@ -620,11 +620,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1692842983,
-        "narHash": "sha256-VJkts5gTo4eGMT1IgXhL5tRVkS1TailFKjjVktAuhdk=",
+        "lastModified": 1692929460,
+        "narHash": "sha256-zdN6UVtEml7t0WQHVy0avsE+TWJLklXnqJyiPaOa8u0=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "8f6d56270ec028a340583111609b12663f5d7490",
+        "rev": "673e2d3d2a3951adc6f5e3351c9fce6ad130baed",
         "type": "github"
       },
       "original": {
