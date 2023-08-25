@@ -57,7 +57,7 @@ in
       newSession = true;
       prefix = "C-a";
       sensibleOnTop = true;
-      terminal = "xterm-kitty";
+      terminal = "tmux-256color";
       extraConfig =
         builtins.concatStringsSep "\n"
           (builtins.map lib.strings.fileContents configFiles);

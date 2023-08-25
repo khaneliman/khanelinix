@@ -5,3 +5,5 @@ bind-key -T copy-mode-vi Escape send-keys -X cancel
 bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
 bind '"' split-window -v  -c '#{pane_current_path}'
 bind '%' split-window -h -c '#{pane_current_path}'
+
+set-option -sa terminal-features ",*xterm*:RGB"
