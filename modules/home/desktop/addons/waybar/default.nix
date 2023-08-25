@@ -87,7 +87,7 @@ in
           # "modules-center" = [ "mpris" ];
           "modules-left" = [
             "custom/wlogout"
-            "wlr/workspaces"
+            "hyprland/workspaces"
             "custom/separator-left"
             "hyprland/window"
           ];
@@ -114,7 +114,7 @@ in
           "modules-center" = [ ];
           "modules-left" = [
             "custom/wlogout"
-            "wlr/workspaces"
+            "hyprland/workspaces"
             "custom/separator-left"
             "hyprland/window"
           ];
