@@ -1,0 +1,48 @@
+{ options
+, config
+, lib
+, pkgs
+, ...
+}:
+with lib;
+with lib.internal; let
+  cfg = config.khanelinix.desktop.addons.wezterm;
+in
+{
+  options.khanelinix.desktop.addons.wezterm = with types; {
+    enable = mkBoolOpt false "Whether or not to enable wezterm.";
+  };
+
+  config = mkIf cfg.enable {
+    programs.wezterm = {
+      enable = true;
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      package = pkgs.wezterm;
+
+      extraConfig = ''
+        function scheme_for_appearance(appearance)
+          if appearance:find "Dark" then
+            return "Catppuccin Macchiato"
+          else
+            return "Catppuccin Frappe"
+          end
+        end
+
+        local custom = wezterm.color.get_builtin_schemes()[scheme_for_appearance(wezterm.gui.get_appearance())]
+
+        return {
+          window_decorations = "RESIZE",
+          font = wezterm.font 'Liga SFMono Nerd Font',
+          color_schemes = {
+            ["Catppuccin"] = custom,
+          },
+          color_scheme = "Catppuccin",
+          use_fancy_tab_bar = false,
+          tab_bar_at_bottom = true,
+          term = "wezterm",
+        }
+      '';
+    };
+  };
+}

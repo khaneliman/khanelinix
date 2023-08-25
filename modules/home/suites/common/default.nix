@@ -27,6 +27,7 @@ in
         addons = {
           kitty = enabled;
           qt.enable = pkgs.stdenv.isLinux;
+          wezterm = enabled;
         };
       };
 
