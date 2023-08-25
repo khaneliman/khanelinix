@@ -107,7 +107,7 @@ in
             "$RHYPER" = "SUPER_RALT_RCTRL"; # TODO: fix
 
             # default applications
-            "$term" = "wezterm";
+            "$term" = "kitty";
             "$browser" = "firefox-developer-edition";
             "$mail" = "thunderbird";
             "$editor" = "nvim";
