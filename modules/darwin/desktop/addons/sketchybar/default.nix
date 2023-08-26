@@ -7,15 +7,15 @@
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.desktop.addons.sketchybar;
-  zshAliases = {
-    brew = ''command brew "$@" && sketchybar --trigger brew_update'';
-    mas = ''command mas "$@" && sketchybar --trigger brew_update'';
-    push = ''command git push && sketchybar --trigger git_push'';
+  zshAliases = with pkgs; {
+    brew = ''command brew "$@" && ${lib.getExe sketchybar} --trigger brew_update'';
+    mas = ''command mas "$@" && ${lib.getExe sketchybar} --trigger brew_update'';
+    push = ''command git push && ${lib.getExe sketchybar} --trigger git_push'';
   };
-  fishAliases = {
-    brew = ''command brew "$argv" && sketchybar --trigger brew_update'';
-    mas = ''command mas "$argv" && sketchybar --trigger brew_update'';
-    push = ''command git push && sketchybar --trigger git_push'';
+  fishAliases = with pkgs;{
+    brew = ''command brew "$argv" && ${lib.getExe sketchybar} --trigger brew_update'';
+    mas = ''command mas "$argv" && ${lib.getExe sketchybar} --trigger brew_update'';
+    push = ''command git push && ${lib.getExe sketchybar} --trigger git_push'';
   };
 in
 {
