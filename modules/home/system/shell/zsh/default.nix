@@ -30,11 +30,6 @@ in
           KEYTIMEOUT = 1;
         };
 
-        initExtraFirst = ''
-          export PATH="$PATH:/opt/local/bin:/opt/local/sbin:$HOME/.local/share/pnpm:~/.spicetify:$HOME/.cargo/bin"
-          PATH="$(perl -e 'print join(":", grep { not $seen{$_}++ } split(/:/, $ENV{PATH}))')"
-        '';
-
         initExtra = ''          
           # Use vim bindings.
           set -o vi
