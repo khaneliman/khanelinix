@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+DYNAMIC_ISLAND_DIR="$HOME/.config/dynamic-island-sketchybar"
+
+source "$DYNAMIC_ISLAND_DIR/item.sh" # Loads Dynamic-Island item
+
+dynamic-island-sketchybar --update

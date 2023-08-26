@@ -18,6 +18,12 @@ with lib.internal; {
       home-manager = enabled;
     };
 
+    desktop = {
+      addons = {
+        sketchybar = enabled;
+      };
+    };
+
     tools = { };
 
     suites = {
