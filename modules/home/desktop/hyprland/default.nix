@@ -38,6 +38,11 @@ in
         systemd.user.services.swayidle.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
         programs.waybar.systemd.target = "hyprland-session.target";
 
+        home.shellAliases = {
+          hl = "cat /tmp/hypr/$(ls -t /tmp/hypr/ | head -n 1)/hyprland.log";
+          hl1 = "cat /tmp/hypr/$(ls -t /tmp/hypr/ | head -n 2 | tail -n 1)/hyprland.log";
+        };
+
         wayland.windowManager.hyprland = {
           enable = true;
           xwayland.enable = true;

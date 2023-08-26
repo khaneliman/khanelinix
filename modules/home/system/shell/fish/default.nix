@@ -66,13 +66,7 @@ in
          source '/nix/var/nix/profiles/default/etc/profile.d/nix.fish'
         end
         # End Nix
-      '' + lib.optionalString pkgs.stdenv.isLinux ''
-        if [ $(command -v hyprctl) ];
-            # Hyprland logs 
-            alias hl='cat /tmp/hypr/$(lsd -t /tmp/hypr/ | head -n 1)/hyprland.log'
-            alias hl1='cat /tmp/hypr/$(lsd -t -r /tmp/hypr/ | head -n 2 | tail -n 1)/hyprland.log'
-        end
-      '' + ''
+     
         # Disable greeting
         set fish_greeting 
 
