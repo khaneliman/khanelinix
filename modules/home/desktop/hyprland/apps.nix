@@ -20,21 +20,21 @@ in
 
               # Startup background apps
               "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1 &"
-              "command -v hyprpaper && hyprpaper"
-              "command -v ckb-next && ckb-next -b"
-              "command -v openrgb && openrgb --startminimized --profile default"
-              "command -v 1password && 1password --silent"
+              "${lib.getExe pkgs.hyprpaper}"
+              "${lib.getExe pkgs.ckb-next} -b"
+              "${lib.getExe pkgs.openrgb} --startminimized --profile default"
+              "${lib.getExe pkgs._1password-gui} --silent"
               "command -v cliphist && wl-paste --type text --watch cliphist store" #Stores only text data
               "command -v cliphist && wl-paste --type image --watch cliphist store" #Stores only image data
 
               # Startup apps that have rules for organizing them
-              "[workspace special silent ] kitty --session scratchpad" # Spawn scratchpad terminal
-              "command -v firefox && firefox"
-              "command -v steam && steam"
-              "command -v discord && discord"
-              "command -v thunderbird && thunderbird"
+              "[workspace special silent ] ${lib.getExe pkgs.kitty} --session scratchpad" # Spawn scratchpad terminal
+              "${lib.getExe pkgs.firefox}"
+              "${lib.getExe pkgs.steam}"
+              "${lib.getExe pkgs.discord}"
+              "${lib.getExe pkgs.thunderbird}"
 
-              "command -v virt-manager && virt-manager"
+              "${lib.getExe pkgs.virt-manager}"
             ];
           };
         };

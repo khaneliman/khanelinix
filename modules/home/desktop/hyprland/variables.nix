@@ -107,27 +107,27 @@ in
             "$RHYPER" = "SUPER_RALT_RCTRL"; # TODO: fix
 
             # default applications
-            "$term" = "kitty";
-            "$browser" = "firefox-developer-edition";
-            "$mail" = "thunderbird";
-            "$editor" = "nvim";
-            "$explorer" = "thunar";
-            "$music" = "spotify";
+            "$term" = "${lib.getExe pkgs.kitty}";
+            "$browser" = "${lib.getExe pkgs.firefox}";
+            "$mail" = "${lib.getExe pkgs.thunderbird}";
+            "$editor" = "${lib.getExe pkgs.neovim}";
+            "$explorer" = "${lib.getExe pkgs.xfce.thunar}";
+            "$music" = "${lib.getExe pkgs.spotify}";
             "$notepad" = "code - -profile notepad - -unity-launch ~/Templates";
-            "$launcher" = "rofi -show drun -n";
-            "$launcher_alt" = "rofi -show run -n";
-            "$launchpad" = "rofi -show drun -config '~/.config/rofi/appmenu/rofi.rasi'";
-            "$looking-glass" = "looking-glass-client";
+            "$launcher" = "${lib.getExe pkgs.rofi} -show drun -n";
+            "$launcher_alt" = "${lib.getExe pkgs.rofi} -show run -n";
+            "$launchpad" = "${lib.getExe pkgs.rofi} -show drun -config '~/.config/rofi/appmenu/rofi.rasi'";
+            "$looking-glass" = "${lib.getExe pkgs.looking-glass-client}";
 
             # TODO: dynamic configuration support instead of hard coded
-            "$w1" = ''hyprctl hyprpaper wallpaper "DP-3,${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png"'';
-            "$w2" = ''hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/buttons.png"'';
-            "$w3" = ''hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/cat_pacman.png"'';
-            "$w4" = ''hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/cat-sound.png"'';
-            "$w5" = ''hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/hashtags-black.png"'';
-            "$w6" = ''hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/hashtags-new.png"'';
-            "$w7" = ''hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/hearts.png"'';
-            "$w8" = ''hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/tetris.png"'';
+            "$w1" = ''${config.wayland.windowManager.hyprland.package}/bin/hyprctl hyprpaper wallpaper "DP-3,${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png"'';
+            "$w2" = ''${config.wayland.windowManager.hyprland.package}/bin/hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/buttons.png"'';
+            "$w3" = ''${config.wayland.windowManager.hyprland.package}/bin/hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/cat_pacman.png"'';
+            "$w4" = ''${config.wayland.windowManager.hyprland.package}/bin/hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/cat-sound.png"'';
+            "$w5" = ''${config.wayland.windowManager.hyprland.package}/bin/hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/hashtags-black.png"'';
+            "$w6" = ''${config.wayland.windowManager.hyprland.package}/bin/hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/hashtags-new.png"'';
+            "$w7" = ''${config.wayland.windowManager.hyprland.package}/bin/hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/hearts.png"'';
+            "$w8" = ''${config.wayland.windowManager.hyprland.package}/bin/hyprctl hyprpaper wallpaper "DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/tetris.png"'';
           };
         };
       };

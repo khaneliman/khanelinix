@@ -10,14 +10,14 @@ with lib.internal; let
   githubHelper = pkgs.writeShellScriptBin "githubHelper" ''
     #!/usr/bin/env bash
 
-    NOTIFICATIONS="$(${pkgs.gh}/bin/gh api notifications)"
-    COUNT="$(echo "$NOTIFICATIONS" | ${pkgs.jq}/bin/jq 'length')"
+    NOTIFICATIONS="$(${lib.getExe pkgs.gh} api notifications)"
+    COUNT="$(echo "$NOTIFICATIONS" | ${lib.getExe pkgs.jq} 'length')"
 
     echo '{"text":'"$COUNT"',"tooltip":"'"$COUNT"' Notifications","class":""}'
   '';
 
   "custom/weather" = {
-    "exec" = "${pkgs.wttrbar}/bin/wttrbar -l $(${pkgs.jq}/bin/jq -r '.weathergov | (.location)' ~/weather_config.json) --fahrenheit --main-indicator temp_F";
+    "exec" = "${lib.getExe pkgs.wttrbar} -l $(${lib.getExe pkgs.jq} -r '.weathergov | (.location)' ~/weather_config.json) --fahrenheit --main-indicator temp_F";
     "return-type" = "json";
     "format" = "{}";
     "tooltip" = true;
@@ -56,7 +56,7 @@ with lib.internal; let
   "custom/wlogout" = {
     "format" = "";
     "interval" = "once";
-    "on-click" = "${pkgs.wlogout}/bin/wlogout -c 5 -r 5 -p layer-shell";
+    "on-click" = "${lib.getExe pkgs.wlogout} -c 5 -r 5 -p layer-shell";
   };
 in
 {
@@ -67,7 +67,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    systemd.user.services.waybar.Service.ExecStart = mkIf cfg.debug (mkForce "${pkgs.waybar}/bin/waybar -l debug");
+    systemd.user.services.waybar.Service.ExecStart = mkIf cfg.debug (mkForce "${lib.getExe config.programs.waybar.package} -l debug");
 
     programs.waybar = {
       enable = true;
