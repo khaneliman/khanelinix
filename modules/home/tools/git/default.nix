@@ -47,18 +47,19 @@ in
       };
 
       extraConfig = {
-        init = { defaultBranch = "main"; };
-        pull = { rebase = true; };
-        push = { autoSetupRemote = true; };
         core = { whitespace = "trailing-space,space-before-tab"; };
-        safe = {
-          directory = "${user.home}/work/config";
-        };
+        fetch = { prune = true; };
         gpg.format = "ssh";
         "gpg \"ssh\"".program = ''
           ${pkgs._1password-gui}''
         + ''${lib.optionalString pkgs.stdenv.isLinux "/share/1password/op-ssh-sign"}''
         + ''${lib.optionalString pkgs.stdenv.isDarwin "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"}'';
+        init = { defaultBranch = "main"; };
+        pull = { rebase = true; };
+        push = { autoSetupRemote = true; };
+        safe = {
+          directory = "${user.home}/work/config";
+        };
       };
 
       aliases = {
