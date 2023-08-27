@@ -10,6 +10,7 @@ in
   imports = with nixos-hardware.nixosModules; [
     (modulesPath + "/installer/scan/not-detected.nix")
     common-cpu-amd
+    common-gpu-amd
     # NOTE: actually removes gpu from list of devices now so can't use GPU-passthru
     # common-gpu-nvidia-disable
     common-pc
@@ -34,10 +35,7 @@ in
 
     initrd = {
       availableKernelModules = [ "nvme" "xhci_pci" "ehci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" "sr_mod" ];
-      kernelModules = [ ];
     };
-
-    extraModulePackages = [ ];
   };
 
   fileSystems = {

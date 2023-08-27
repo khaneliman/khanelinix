@@ -2,7 +2,6 @@
 , config
 , pkgs
 , lib
-, inputs
 , ...
 }:
 with lib;
@@ -10,10 +9,6 @@ with lib.internal; let
   cfg = config.khanelinix.hardware.amdgpu;
 in
 {
-  imports = with inputs.nixos-hardware.nixosModules; [
-    common-gpu-amd
-  ];
-
   options.khanelinix.hardware.amdgpu = with types; {
     enable =
       mkBoolOpt false
@@ -21,9 +16,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    # TODO: conditionally add kernel module and video drivers
-    boot.initrd.availableKernelModules = [ "amdgpu" ];
-    services.xserver.videoDrivers = [ "modesetting" ];
 
     # hardware.amdgpu.amdvlk = true;
 

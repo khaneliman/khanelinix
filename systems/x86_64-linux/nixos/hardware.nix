@@ -39,10 +39,7 @@ in
 
   swapDevices = [ ];
 
-  hardware.enableRedistributableFirmware = true;
-
-  # services.xserver.videoDrivers = [ "amdgpu" ];
-  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-
   hardware.bluetooth.enable = true;
+  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  hardware.enableRedistributableFirmware = true;
 }
