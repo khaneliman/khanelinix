@@ -21,7 +21,7 @@ in
   # Desktop VM config
   ##
   boot = {
-    kernelPackages = pkgs.linuxPackages_latest;
+    kernelPackages = pkgs.linuxPackages_zen;
     kernel.sysctl."kernel.sysrq" = 1;
     kernelParams = [
       "video=DP-1:5120x1440@120"
