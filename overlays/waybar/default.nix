@@ -1,5 +1,5 @@
 { ... }: _final: prev: {
-  waybar = prev.waybar.overrideAttrs (oldAttrs: {
+  waybar = prev.waybar.overrideAttrs (_oldAttrs: {
     version = "b66584308545e3da9fc4433529a684443b5eebe9";
 
     src = prev.fetchFromGitHub {

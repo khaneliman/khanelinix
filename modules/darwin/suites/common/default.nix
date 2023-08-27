@@ -11,8 +11,8 @@ in
   imports = [ ../../../shared/suites/common/default.nix ];
 
   config = mkIf cfg.enable {
-      programs.zsh.enable = true;
-      
+    programs.zsh.enable = true;
+
     environment = {
       loginShell = pkgs.zsh;
 

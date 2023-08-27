@@ -7,7 +7,6 @@
 with lib;
 with lib.internal; let
   cfg = config.khanelinix.cli-apps.fastfetch;
-  formatJson = pkgs.formats.json { };
 in
 {
   options.khanelinix.cli-apps.fastfetch = with types; {
