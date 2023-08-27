@@ -56,6 +56,7 @@ with lib.internal; let
   "custom/wlogout" = {
     "format" = "";
     "interval" = "once";
+    "tooltip" = false;
     "on-click" = "${lib.getExe pkgs.wlogout} -c 5 -r 5 -p layer-shell";
   };
 in
