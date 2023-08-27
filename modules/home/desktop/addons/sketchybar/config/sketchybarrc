@@ -87,7 +87,7 @@ source "$PLUGIN_DIR/stats/item.sh"
 # Center
 # source "$ITEM_DIR/spotify.sh"
 # source "$PLUGIN_DIR/dynamic-island/item.sh"
-ln -s "$(which sketchybar)" "$(dirname "$(which sketchybar)")"/dynamic-island-sketchybar || dynamic-island-sketchybar &
+dynamic-island-sketchybar &
 
 # Forcing all item scripts to run (never do this outside of sketchybarrc)
 sketchybar --update
