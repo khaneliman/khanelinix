@@ -54,6 +54,7 @@ with lib.internal; {
 
     services = {
       avahi = enabled;
+      barrier = enabled;
       geoclue = enabled;
       printing = enabled;
 

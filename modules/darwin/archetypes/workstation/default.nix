@@ -15,6 +15,8 @@ in
 
   config = mkIf cfg.enable {
     khanelinix = {
+      desktop.addons.barrier = enabled;
+
       suites = {
         business = enabled;
         common = enabled;

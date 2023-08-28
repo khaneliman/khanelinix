@@ -24,6 +24,10 @@ with lib.internal; {
       };
     };
 
+    services = {
+      # barrier = enabled;
+    };
+
     tools = { };
 
     suites = {
