@@ -83,7 +83,6 @@ in
         };
 
         environment.sessionVariables = {
-          ASAN_OPTIONS = "log_path=~/asan.log";
           CLUTTER_BACKEND = "wayland";
           # GDK_BACKEND = "wayland";
           HYPRLAND_LOG_WLR = "1";
