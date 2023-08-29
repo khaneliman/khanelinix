@@ -73,6 +73,10 @@
     nixos-generators.url = "github:nix-community/nixos-generators";
     nixos-generators.inputs.nixpkgs.follows = "nixpkgs";
 
+    # NixOS WSL Support
+    nixos-wsl.url = "github:nix-community/nixos-wsl";
+    nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
+
     # Snowfall Lib
     # TODO: replace with main branch after home-manager merged
     snowfall-lib.url = "github:snowfallorg/lib/dev";
