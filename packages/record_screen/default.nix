@@ -1,5 +1,6 @@
 { writeShellApplication
-, wf-recorder
+, pkgs
+, wf-recorder ? pkgs.stdenv.isLinux
 , wl-clipboard
 , libnotify
 , ...
@@ -9,10 +10,9 @@ writeShellApplication
   name = "record_screen";
   checkPhase = "";
   runtimeInputs = [
-    wf-recorder
     wl-clipboard
     libnotify
-  ];
+  ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [ wf-recorder ];
   text = ''
       # If an instance of wf-recorder is running under this user kill it with SIGINT and exit
       # killall -s SIGINT wf-recorder && exit
