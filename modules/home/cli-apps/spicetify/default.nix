@@ -7,15 +7,16 @@
 }:
 with lib;
 with lib.internal; let
+  inherit (inputs) spicetify-nix;
   cfg = config.khanelinix.cli-apps.spicetify;
-  spicePkgs = inputs.spicetify-nix.packages.${pkgs.system}.default;
+  spicePkgs = spicetify-nix.packages.${pkgs.system}.default;
 in
 {
   options.khanelinix.cli-apps.spicetify = with types; {
     enable = mkBoolOpt false "Whether or not to enable support for spicetify.";
   };
 
-  imports = [ inputs.spicetify-nix.homeManagerModule ];
+  imports = [ spicetify-nix.homeManagerModule ];
 
   config = mkIf cfg.enable {
     # configure spicetify :)
