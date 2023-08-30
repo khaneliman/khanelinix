@@ -19,7 +19,7 @@ with lib.internal; {
     nix = enabled;
 
     cli-apps = {
-      neovim = enabled;
+      astronvim = enabled;
       tmux = enabled;
     };
 

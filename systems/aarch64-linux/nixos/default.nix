@@ -21,7 +21,7 @@ with lib.internal; {
     };
 
     cli-apps = {
-      neovim = enabled;
+      astronvim = enabled;
     };
 
     desktop = {

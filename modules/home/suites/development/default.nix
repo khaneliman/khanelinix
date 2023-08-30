@@ -22,7 +22,7 @@ in
 
       cli-apps = {
         lazygit = enabled;
-        neovim = {
+        astronvim = {
           enable = true;
           default = true;
         };

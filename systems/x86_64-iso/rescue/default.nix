@@ -14,13 +14,17 @@ with lib.internal; {
   khanelinix = {
     nix = enabled;
 
-    cli-apps = { neovim = enabled; };
+    cli-apps = {
+      astronvim = enabled;
+    };
 
     tools = {
       git = enabled;
     };
 
-    security = { doas = enabled; };
+    security = {
+      doas = enabled;
+    };
 
     system = {
       fonts = enabled;

@@ -73,7 +73,7 @@ in
     };
 
     cli-apps = {
-      neovim = enabled;
+      astronvim = enabled;
     };
 
     tools = {

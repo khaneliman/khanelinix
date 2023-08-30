@@ -26,7 +26,7 @@ with lib.internal; {
     };
 
     cli-apps = {
-      neovim = enabled;
+      astronvim = enabled;
       tmux = enabled;
     };
 
