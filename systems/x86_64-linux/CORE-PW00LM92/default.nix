@@ -5,7 +5,7 @@ with lib.internal; {
 
   khanelinix = {
     nix = enabled;
-    
+
     user = {
       name = "nixos";
     };

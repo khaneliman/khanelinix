@@ -1,7 +1,4 @@
-{ config
-, lib
-, pkgs
-, modulesPath
+{ modulesPath
 , inputs
 , ...
 }:
@@ -15,7 +12,7 @@ in
     common-pc
   ];
 
-   wsl = {
+  wsl = {
     enable = true;
     defaultUser = "nixos";
     startMenuLaunchers = true;
