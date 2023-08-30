@@ -42,9 +42,13 @@ in
         ripgrep
         unzip
         wget
+        clang
+        gcc
+        dotnet-sdk_7
       ] ++ lib.optional stdenv.isLinux webkitgtk;
     };
 
+    # TODO: Convert to custom nixos neovim config 
     xdg.configFile = with inputs; {
       "nvim" = {
         onChange = "${pkgs.neovim}/bin/nvim --headless +quitall";
