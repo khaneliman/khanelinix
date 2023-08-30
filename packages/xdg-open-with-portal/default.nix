@@ -2,6 +2,7 @@
 # 💖 Thank you!
 { writeShellScriptBin
 , glib
+, pkgs
 , ...
 }:
 # TODO can this maybe suck less
@@ -30,7 +31,7 @@ writeShellScriptBin "xdg-open" ''
       --timeout 5 \
       "" "3" {}
   else
-    if ! echo "$targetFile" | grep -q '://'; then
+    if ! echo "$targetFile" | ${pkgs.gnugrep}/bin/grep -q '://'; then
       targetFile="https://$targetFile"
     fi
 

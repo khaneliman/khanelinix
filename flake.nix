@@ -51,7 +51,7 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # hyprland
-    hyprland.url = "github:hyprwm/Hyprland";
+    hyprland.url = "github:hyprwm/Hyprland/unsafe-state-reworks";
     hyprland.inputs.nixpkgs.follows = "nixpkgs";
 
     # Hyprland user contributions flake

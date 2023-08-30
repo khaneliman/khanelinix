@@ -29,7 +29,7 @@ with lib.internal; let
     "return-type" = "json";
     "interval" = 60;
     "exec" = "${githubHelper}/bin/githubHelper";
-    "on-click" = "xdg-open https://github.com/notifications";
+    "on-click" = "${pkgs.xdg-utils}/bin/xdg-open https://github.com/notifications";
   };
 
   "custom/notification" = {
