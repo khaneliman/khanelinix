@@ -160,6 +160,7 @@ in
       mimeApps = {
         enable = true;
         defaultApplications = associations;
+        associations.added = associations;
       };
 
       userDirs = {
