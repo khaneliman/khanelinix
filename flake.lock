@@ -129,11 +129,11 @@
         "unstable": "unstable"
       },
       "locked": {
-        "lastModified": 1693418173,
-        "narHash": "sha256-KzifhzhKH0HLB2uL09Q7OpgLK9drYkeG2Liq89R1YoI=",
+        "lastModified": 1693426329,
+        "narHash": "sha256-waS9I2HNvDN5PTxehHg/po16Ai88csmkKjZxqxLrjB0=",
         "owner": "snowfallorg",
         "repo": "flake",
-        "rev": "695cdbd600b5e90dce939958aa645c596816a5f0",
+        "rev": "5df1163dbe8a5d295141fda89a4e8d457f1397ed",
         "type": "github"
       },
       "original": {
@@ -597,11 +597,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1693410315,
-        "narHash": "sha256-vIMoNXZeWFqjjS+C7qn4+VF3TnF/5m1kNWoQzx56kUY=",
+        "lastModified": 1693424795,
+        "narHash": "sha256-7HBiRszliR7UjR9q4H4SXov6T7Tvoluuz/0M58jev0E=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "f87b07ea10e924dfb4bd98377c33ec52d48bf061",
+        "rev": "4a0b2e813a93e5932fbedaafab47e9c404e0a812",
         "type": "github"
       },
       "original": {
