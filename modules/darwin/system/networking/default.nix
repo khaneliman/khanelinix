@@ -1,5 +1,5 @@
-{ options
-, config
+{ config
+, options
 , lib
 , ...
 }:

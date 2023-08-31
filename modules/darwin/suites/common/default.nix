@@ -60,6 +60,7 @@ in
         fonts = enabled;
         input = enabled;
         interface = enabled;
+        networking = enabled;
       };
 
       security = {
