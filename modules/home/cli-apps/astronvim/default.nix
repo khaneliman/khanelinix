@@ -45,7 +45,6 @@ in
         ripgrep
         unzip
         wget
-        clang
         gcc
         dotnet-sdk_7
       ] ++ lib.optional stdenv.isLinux webkitgtk;
