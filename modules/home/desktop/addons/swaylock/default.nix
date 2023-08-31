@@ -71,6 +71,8 @@ in
         text-caps-lock-color = "#f5a97f";
         text-ver-color = "#24273a";
         text-wrong-color = "#24273a";
+
+        debug = true;
       };
     };
   };
