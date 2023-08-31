@@ -142,7 +142,6 @@
       # nixos modules
       systems.modules.nixos = with inputs; [
         # agenix.nixosModules.default
-        home-manager.nixosModules.home-manager
         nix-ld.nixosModules.nix-ld
       ];
 
@@ -153,9 +152,8 @@
       ];
 
       # nix-darwin modules
-      systems.modules.darwin = with inputs; [
+      systems.modules.darwin = [
         # agenix.darwinModules.default
-        home-manager.darwinModules.home-manager
       ];
 
       deploy = lib.mkDeploy { inherit (inputs) self; };
