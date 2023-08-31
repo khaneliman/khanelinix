@@ -104,7 +104,7 @@ with lib.internal; {
             browseable = true;
             comment = "Home Public folder";
             only-owner-editable = false;
-            path = "/home/${config.khanelinix.user.name}/public/";
+            path = "/home/${config.khanelinix.user.name}/Public/";
             public = true;
             read-only = false;
           };

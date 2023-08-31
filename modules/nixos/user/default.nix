@@ -70,8 +70,6 @@ in
         "Music/.keep".text = "";
         "Pictures/.keep".text = "";
         "Videos/.keep".text = "";
-        "public/.keep".text = "";
-        "work/.keep".text = "";
         "Pictures/${
           cfg.icon.fileName or (builtins.baseNameOf cfg.icon)
         }".source =
