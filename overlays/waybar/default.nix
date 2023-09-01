@@ -1,12 +1,12 @@
 { ... }: _final: prev: {
   waybar = prev.waybar.overrideAttrs (_oldAttrs: {
-    version = "b66584308545e3da9fc4433529a684443b5eebe9";
+    version = "8eb614f69edffb52ba57b381d99dce1f587235ec";
 
     src = prev.fetchFromGitHub {
-      owner = "khaneliman";
+      owner = "Alexays";
       repo = "Waybar";
-      rev = "b66584308545e3da9fc4433529a684443b5eebe9";
-      hash = "sha256-fMqAhogryl5sitDoGD2uOjZ1L6bTIFndcpH83gv3Fmo=";
+      rev = "8eb614f69edffb52ba57b381d99dce1f587235ec";
+      hash = "sha256-N18eRsEXrvUMsoz8uoXaT0VubNumTrzCI3Zwm9iwq8I=";
     };
   });
 }
