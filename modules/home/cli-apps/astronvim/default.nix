@@ -41,6 +41,7 @@ in
         gdu
         gzip
         lazygit
+        gnumake
         less
         ripgrep
         unzip
