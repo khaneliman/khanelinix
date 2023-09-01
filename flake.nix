@@ -35,8 +35,9 @@
     devshell.url = "github:numtide/devshell";
     devshell.inputs.nixpkgs.follows = "nixpkgs";
 
+    # TODO: Change back to upstream after PR merged.
     # Snowfall Flake
-    flake.url = "github:snowfallorg/flake";
+    flake.url = "github:khaneliman/snowfall-flake/darwin-privileged";
     flake.inputs.nixpkgs.follows = "nixpkgs";
 
     # GPG default configuration
