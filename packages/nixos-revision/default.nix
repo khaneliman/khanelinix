@@ -1,5 +1,5 @@
 { pkgs
-, gitHostCommitUrl ? "https://github.com/khaneliman/dotfiles/commit"
+, gitHostCommitUrl ? "https://github.com/NixOS/nixpkgs/commit"
 , ...
 }:
 pkgs.writeShellScriptBin "nixos-revision" ''
@@ -47,7 +47,7 @@ pkgs.writeShellScriptBin "nixos-revision" ''
     exit 0
   fi
 
-  REVISION=$(nixos-version --json | ${pkgs.jq}/bin/jq -r .configurationRevision)
+  REVISION=$(nixos-version --json | ${pkgs.jq}/bin/jq -r .nixpkgsRevision)
 
   if [ $HAS_OPEN == true ]; then
     GITHUB_URL="${gitHostCommitUrl}/$REVISION"
