@@ -33,5 +33,13 @@ in
           wakatime.vscode-wakatime
         ];
       };
+
+      home.file = {
+        ".vscode/argv.json".text = builtins.toJSON {
+          "enable-crash-reporter" = true;
+          "crash-reporter-id" = "53a6c113-87c4-4f20-9451-dd67057ddb95";
+          "password-store" = "gnome";
+        };
+      };
     };
 }

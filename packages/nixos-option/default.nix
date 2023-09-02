@@ -2,7 +2,7 @@
 , makeWrapper
 , fetchFromGitHub
 , runCommandNoCC
-, flakeSource ? "/home/short/work/config"
+, flakeSource ? "~/.config/.dotfiles/dots/nixos/"
 , ...
 }:
 let
