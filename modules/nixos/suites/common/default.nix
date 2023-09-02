@@ -17,6 +17,8 @@ in
       feh
       fzf
       jq
+      khanelinix.trace-symlink
+      khanelinix.trace-which
       toilet
       upower
       util-linux
