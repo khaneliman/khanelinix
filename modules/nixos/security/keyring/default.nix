@@ -1,7 +1,6 @@
 { options
 , config
 , lib
-, pkgs
 , ...
 }:
 with lib;
@@ -14,10 +13,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      gnome.libgnome-keyring
-    ];
-
     services.gnome.gnome-keyring.enable = true;
+    programs.seahorse.enable = true;
   };
 }
