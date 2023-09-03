@@ -46,12 +46,11 @@
       flake = false;
     };
 
-    # flake.inputs.snowfall-lib.follows = "snowfall-lib"; 
     # Home Manager (master)
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    # hyprland
+    # Hyprland
     hyprland.url = "github:hyprwm/Hyprland";
     hyprland.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -87,21 +86,23 @@
     nix-ld.url = "github:Mic92/nix-ld";
     nix-ld.inputs.nixpkgs.follows = "nixpkgs";
 
-    ## Ranger plugins
+    # Ranger Dev Icons
     ranger-devicons.url = "github:alexanderjeurissen/ranger_devicons";
     ranger-devicons.flake = false;
 
+    # Ranger Disk Menu
     ranger-udisk-menu.url = "github:SL-RU/ranger_udisk_menu";
     ranger-udisk-menu.flake = false;
 
-    # rust overlay
+    # Rust overlay
     rustup-overlay.url = "github:oxalica/rust-overlay";
     rustup-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
-    # Nerd font 
+    # SF Mono Nerd font 
     sf-mono-nerd-font.url = "github:shaunsingh/SFMono-Nerd-Font-Ligaturized";
     sf-mono-nerd-font.flake = false;
 
+    # Spicetify
     spicetify-nix.url = "github:the-argus/spicetify-nix/dev";
     spicetify-nix.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -125,12 +126,9 @@
       channels-config.allowUnfree = true;
       # TODO: cleanup when available
       channels-config.permittedInsecurePackages = [
-        "imagemagick-6.9.12-68"
         "openssl-1.1.1v"
       ];
-      # channels-config.allowBroken = true;
 
-      # overlays from inputs
       overlays = with inputs; [
         devshell.overlays.default
         flake.overlay
@@ -140,19 +138,16 @@
         # agenix.overlays.default
       ];
 
-      # nixos modules
       systems.modules.nixos = with inputs; [
         # agenix.nixosModules.default
         nix-ld.nixosModules.nix-ld
       ];
 
-      # home-manager modules
       systems.modules.home = with inputs; [
         # agenix.homeManagerModules.default
         home-manager.homeModules.home-manager
       ];
 
-      # nix-darwin modules
       systems.modules.darwin = [
         # agenix.darwinModules.default
       ];
