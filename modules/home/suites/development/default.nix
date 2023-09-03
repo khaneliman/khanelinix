@@ -1,6 +1,7 @@
 { options
 , config
 , lib
+, pkgs
 , ...
 }:
 with lib;
@@ -15,6 +16,10 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.packages = with pkgs; [
+      cpplint
+    ];
+
     khanelinix = {
       apps = {
         vscode = enabled;
