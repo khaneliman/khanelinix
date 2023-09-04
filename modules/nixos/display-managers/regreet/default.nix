@@ -6,7 +6,7 @@
 }:
 with lib;
 with lib.internal; let
-  cfg = config.khanelinix.display-managers.greetd;
+  cfg = config.khanelinix.display-managers.regreet;
   greetdSwayConfig = pkgs.writeText "greetd-sway-config" ''
     exec "dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP"
     input "type:touchpad" {
@@ -29,7 +29,7 @@ with lib.internal; let
   '';
 in
 {
-  options.khanelinix.display-managers.greetd = with types; {
+  options.khanelinix.display-managers.regreet = with types; {
     enable = mkBoolOpt false "Whether or not to enable greetd.";
   };
 
