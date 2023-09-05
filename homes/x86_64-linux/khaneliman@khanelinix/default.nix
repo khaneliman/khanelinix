@@ -25,7 +25,7 @@ in
     desktop = {
       addons = {
         swayidle = enabled;
-        waybar.debug = true;
+        # waybar.debug = true;
       };
 
       hyprland = enabled;

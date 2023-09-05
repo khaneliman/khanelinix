@@ -1,12 +1,12 @@
 { ... }: _final: prev: {
   waybar = prev.waybar.overrideAttrs (_oldAttrs: {
-    version = "8eb614f69edffb52ba57b381d99dce1f587235ec";
+    version = "80de22a15993d6ece7fbfa62858792a8c3fa207f";
 
     src = prev.fetchFromGitHub {
       owner = "Alexays";
       repo = "Waybar";
-      rev = "8eb614f69edffb52ba57b381d99dce1f587235ec";
-      hash = "sha256-N18eRsEXrvUMsoz8uoXaT0VubNumTrzCI3Zwm9iwq8I=";
+      rev = "80de22a15993d6ece7fbfa62858792a8c3fa207f";
+      hash = "sha256-6T3mg11V8TpKuI52ss1Je26rW84qJdeEgapK7gBolBI=";
     };
   });
 }
