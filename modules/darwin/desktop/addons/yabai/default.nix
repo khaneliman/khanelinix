@@ -74,15 +74,15 @@ in
         source ${yabaiHelper}/bin/yabaiHelper
 
         # Signal hooks
-        ${lib.getExe yabai} -m signal --add event=dock_did_restart action="sudo ${lib.getExe yabai} --load-sa"
-        ${lib.getExe yabai} -m signal --add event=window_focused action="${lib.getExe sketchybar} --trigger window_focus"
-        ${lib.getExe yabai} -m signal --add event=display_added action="sleep 1 && source ${yabaiHelper}/bin/yabaiHelper && create_spaces 7"
-        ${lib.getExe yabai} -m signal --add event=display_removed action="sleep 1 && source ${yabaiHelper}/bin/yabaiHelper && create_spaces 7"
-        ${lib.getExe yabai} -m signal --add event=window_created action="${lib.getExe sketchybar} --trigger windows_on_spaces"
-        ${lib.getExe yabai} -m signal --add event=window_destroyed action="${lib.getExe sketchybar} --trigger windows_on_spaces"
-        ${lib.getExe yabai} -m signal --add event=window_created app="Code" action="source $HOME/.config/bin/helper && auto_stack Code"
-        # ${lib.getExe yabai} -m signal --add event=window_created app="Firefox" title!="(— Private Browsing$|^Picture-in-Picture$)" action="source ${yabaiHelper}/bin/yabaiHelper && auto_stack Firefox"
-        # ${lib.getExe yabai} -m signal --add event=window_title_changed app="Firefox" title="- noVNC$" action="${lib.getExe yabai} -m window $WINDOW_ID --toggle native-fullscreen"
+        ${getExe yabai} -m signal --add event=dock_did_restart action="sudo ${getExe yabai} --load-sa"
+        ${getExe yabai} -m signal --add event=window_focused action="${getExe sketchybar} --trigger window_focus"
+        ${getExe yabai} -m signal --add event=display_added action="sleep 1 && source ${yabaiHelper}/bin/yabaiHelper && create_spaces 7"
+        ${getExe yabai} -m signal --add event=display_removed action="sleep 1 && source ${yabaiHelper}/bin/yabaiHelper && create_spaces 7"
+        ${getExe yabai} -m signal --add event=window_created action="${getExe sketchybar} --trigger windows_on_spaces"
+        ${getExe yabai} -m signal --add event=window_destroyed action="${getExe sketchybar} --trigger windows_on_spaces"
+        ${getExe yabai} -m signal --add event=window_created app="Code" action="source $HOME/.config/bin/helper && auto_stack Code"
+        # ${getExe yabai} -m signal --add event=window_created app="Firefox" title!="(— Private Browsing$|^Picture-in-Picture$)" action="source ${yabaiHelper}/bin/yabaiHelper && auto_stack Firefox"
+        # ${getExe yabai} -m signal --add event=window_title_changed app="Firefox" title="- noVNC$" action="${getExe yabai} -m window $WINDOW_ID --toggle native-fullscreen"
 
         echo "yabai configuration loaded.."
       '';

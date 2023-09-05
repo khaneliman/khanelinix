@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) types mkIf getExe;
   inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.display-managers.regreet;
   greetdSwayConfig = pkgs.writeText "greetd-sway-config" ''
-    exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK 
+    exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
     exec systemctl --user import-environment
 
     ${cfg.swayOutput}
@@ -25,14 +25,14 @@ let
 
     bindsym XF86MonBrightnessUp exec light -A 5
     bindsym XF86MonBrightnessDown exec light -U 5
-    bindsym Print exec ${lib.getExe pkgs.grim} /tmp/regreet.png
+    bindsym Print exec ${getExe pkgs.grim} /tmp/regreet.png
     bindsym Mod4+shift+e exec swaynag \
       -t warning \
       -m 'What do you want to do?' \
       -b 'Poweroff' 'systemctl poweroff' \
       -b 'Reboot' 'systemctl reboot'
 
-    exec "${lib.getExe pkgs.greetd.regreet} -l debug; swaymsg exit"
+    exec "${getExe pkgs.greetd.regreet} -l debug; swaymsg exit"
   '';
 in
 {

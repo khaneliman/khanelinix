@@ -5,21 +5,21 @@
 , ...
 }:
 let
-  inherit (lib) mkIf mkForce;
+  inherit (lib) mkIf mkForce getExe;
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.desktop.addons.waybar;
   githubHelper = pkgs.writeShellScriptBin "githubHelper" ''
     #!/usr/bin/env bash
 
-    NOTIFICATIONS="$(${lib.getExe pkgs.gh} api notifications)"
-    COUNT="$(echo "$NOTIFICATIONS" | ${lib.getExe pkgs.jq} 'length')"
+    NOTIFICATIONS="$(${getExe pkgs.gh} api notifications)"
+    COUNT="$(echo "$NOTIFICATIONS" | ${getExe pkgs.jq} 'length')"
 
     echo '{"text":'"$COUNT"',"tooltip":"'"$COUNT"' Notifications","class":""}'
   '';
 
   "custom/weather" = {
-    "exec" = "${lib.getExe pkgs.wttrbar} -l $(${lib.getExe pkgs.jq} -r '.weathergov | (.location)' ~/weather_config.json) --fahrenheit --main-indicator temp_F";
+    "exec" = "${getExe pkgs.wttrbar} -l $(${getExe pkgs.jq} -r '.weathergov | (.location)' ~/weather_config.json) --fahrenheit --main-indicator temp_F";
     "return-type" = "json";
     "format" = "{}";
     "tooltip" = true;
@@ -59,7 +59,7 @@ let
     "format" = "";
     "interval" = "once";
     "tooltip" = false;
-    "on-click" = "${lib.getExe pkgs.wlogout} -c 5 -r 5 -p layer-shell";
+    "on-click" = "${getExe pkgs.wlogout} -c 5 -r 5 -p layer-shell";
   };
 in
 {
@@ -70,7 +70,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    systemd.user.services.waybar.Service.ExecStart = mkIf cfg.debug (mkForce "${lib.getExe config.programs.waybar.package} -l debug");
+    systemd.user.services.waybar.Service.ExecStart = mkIf cfg.debug (mkForce "${getExe config.programs.waybar.package} -l debug");
 
     programs.waybar = {
       enable = true;

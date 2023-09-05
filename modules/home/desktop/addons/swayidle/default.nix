@@ -4,8 +4,9 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) types mkIf getExe;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.desktop.addons.swayidle;
 in
 {
@@ -22,7 +23,7 @@ in
       events = [
         {
           event = "before-sleep";
-          command = "${lib.getExe config.programs.swaylock.package} -df";
+          command = "${getExe config.programs.swaylock.package} -df";
         }
         {
           event = "after-resume";
@@ -30,13 +31,13 @@ in
         }
         {
           event = "lock";
-          command = "${lib.getExe config.programs.swaylock.package} -df";
+          command = "${getExe config.programs.swaylock.package} -df";
         }
       ];
       timeouts = [
         {
           timeout = 300;
-          command = "${lib.getExe config.programs.swaylock.package} -df";
+          command = "${getExe config.programs.swaylock.package} -df";
         }
         {
           timeout = 600;

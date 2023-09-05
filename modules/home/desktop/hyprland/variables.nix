@@ -4,7 +4,8 @@
 , ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf getExe;
+
   cfg = config.khanelinix.desktop.hyprland;
 in
 {
@@ -106,17 +107,17 @@ in
             "$RHYPER" = "SUPER_RALT_RCTRL"; # TODO: fix
 
             # default applications
-            "$term" = "${lib.getExe pkgs.kitty}";
-            "$browser" = "${lib.getExe pkgs.firefox}";
-            "$mail" = "${lib.getExe pkgs.thunderbird}";
-            "$editor" = "${lib.getExe pkgs.neovim}";
-            "$explorer" = "${lib.getExe pkgs.xfce.thunar}";
-            "$music" = "${lib.getExe pkgs.spotify}";
+            "$term" = "${getExe pkgs.kitty}";
+            "$browser" = "${getExe pkgs.firefox}";
+            "$mail" = "${getExe pkgs.thunderbird}";
+            "$editor" = "${getExe pkgs.neovim}";
+            "$explorer" = "${getExe pkgs.xfce.thunar}";
+            "$music" = "${getExe pkgs.spotify}";
             "$notepad" = "code - -profile notepad - -unity-launch ~/Templates";
-            "$launcher" = "${lib.getExe pkgs.rofi} -show drun -n";
-            "$launcher_alt" = "${lib.getExe pkgs.rofi} -show run -n";
-            "$launchpad" = "${lib.getExe pkgs.rofi} -show drun -config '~/.config/rofi/appmenu/rofi.rasi'";
-            "$looking-glass" = "${lib.getExe pkgs.looking-glass-client}";
+            "$launcher" = "${getExe pkgs.rofi} -show drun -n";
+            "$launcher_alt" = "${getExe pkgs.rofi} -show run -n";
+            "$launchpad" = "${getExe pkgs.rofi} -show drun -config '~/.config/rofi/appmenu/rofi.rasi'";
+            "$looking-glass" = "${getExe pkgs.looking-glass-client}";
 
             # TODO: dynamic configuration support instead of hard coded
             "$w1" = ''${config.wayland.windowManager.hyprland.package}/bin/hyprctl hyprpaper wallpaper "DP-3,${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png"'';

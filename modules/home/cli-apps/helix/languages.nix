@@ -1,7 +1,11 @@
 { pkgs
 , lib
 , ...
-}: {
+}:
+let
+  inherit (lib) getExe;
+in
+{
   programs.helix.languages = {
     language = [
       {
@@ -31,8 +35,8 @@
       };
 
       nil = {
-        command = lib.getExe pkgs.nil;
-        config.nil.formatting.command = [ "${lib.getExe pkgs.nixpkgs-fmt}" "-q" ];
+        command = getExe pkgs.nil;
+        config.nil.formatting.command = [ "${getExe pkgs.nixpkgs-fmt}" "-q" ];
       };
 
       vscode-css-language-server = {

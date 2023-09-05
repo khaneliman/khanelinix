@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf mapAttrs optional;
+  inherit (lib) types mkIf mapAttrs optional getExe;
   inherit (lib.internal) mkBoolOpt mkOpt mkDefault enabled;
 
   cfg = config.khanelinix.desktop.gnome;
@@ -259,8 +259,8 @@ in
 
             menu-button-terminal =
               if config.khanelinix.desktop.addons.term.enable
-              then lib.getExe config.khanelinix.desktop.addons.term.pkg
-              else lib.getExe pkgs.gnome.gnome-terminal;
+              then getExe config.khanelinix.desktop.addons.term.pkg
+              else getExe pkgs.gnome.gnome-terminal;
           };
 
           "org/gnome/shell/extensions/aylurs-widgets" = {
