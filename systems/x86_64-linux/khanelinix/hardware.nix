@@ -21,20 +21,23 @@ in
   # Desktop VM config
   ##
   boot = {
+    blacklistedKernelModules = [
+      "eeepc_wmi"
+    ];
+
+    # consoleLogLevel = 0;
+
     kernelPackages = pkgs.linuxPackages_latest;
     kernel.sysctl."kernel.sysrq" = 1;
     kernelParams = [
       "video=DP-1:5120x1440@120"
       "video=DP-3:3840x2160@60"
-      "quiet"
     ];
 
-    blacklistedKernelModules = [
-      "eeepc_wmi"
-    ];
 
     initrd = {
       availableKernelModules = [ "nvme" "xhci_pci" "ehci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" "sr_mod" ];
+      # verbose = false;
     };
   };
 
