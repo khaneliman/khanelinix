@@ -9,6 +9,9 @@ with lib.internal; let
   cfg = config.khanelinix.display-managers.regreet;
   greetdSwayConfig = pkgs.writeText "greetd-sway-config" ''
     exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK 
+    exec systemctl --user import-environment
+
+    ${cfg.swayOutput}
 
     input "type:touchpad" {
       tap enabled
@@ -55,17 +58,18 @@ in
               fit = "Cover";
             };
 
-            default_session = {
-              command = "env GTK_USE_PORTAL=0 ${pkgs.sway}/bin/sway --config ${greetdSwayConfig}";
-            };
-
             GTK = {
+              application_prefer_dark_theme = true;
               cursor_theme_name = "${config.khanelinix.desktop.addons.gtk.cursor.name}";
               font_name = "${config.khanelinix.system.fonts.default} * 12";
               icon_theme_name = "${config.khanelinix.desktop.addons.gtk.icon.name}";
               theme_name = "${config.khanelinix.desktop.addons.gtk.theme.name}";
             };
           };
+        };
+
+        services.greetd.settings.default_session = {
+          command = "env GTK_USE_PORTAL=0 ${pkgs.sway}/bin/sway --config ${greetdSwayConfig}";
         };
 
         security.pam.services.greetd.gnupg.enable = true;

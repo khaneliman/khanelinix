@@ -29,8 +29,14 @@ with lib.internal; {
       };
     };
 
-    display-managers.gdm = {
-      monitors = ./monitors.xml;
+    display-managers = {
+      gdm = {
+        monitors = ./monitors.xml;
+      };
+
+      regreet = {
+        swayOutput = builtins.readFile ./swayOutput;
+      };
     };
 
     suites = {
