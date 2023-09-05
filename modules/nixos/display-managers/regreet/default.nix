@@ -8,10 +8,12 @@ with lib;
 with lib.internal; let
   cfg = config.khanelinix.display-managers.regreet;
   greetdSwayConfig = pkgs.writeText "greetd-sway-config" ''
-    exec "dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP"
+    exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK 
+
     input "type:touchpad" {
       tap enabled
     }
+
     seat seat0 xcursor_theme ${config.khanelinix.desktop.addons.gtk.cursor.name} 24
 
     xwayland disable
@@ -31,6 +33,7 @@ in
 {
   options.khanelinix.display-managers.regreet = with types; {
     enable = mkBoolOpt false "Whether or not to enable greetd.";
+    swayOutput = mkOpt lines "" "Sway Outputs config.";
   };
 
   config =
@@ -40,15 +43,22 @@ in
           config.khanelinix.desktop.addons.gtk.cursor.pkg
           config.khanelinix.desktop.addons.gtk.theme.pkg
           config.khanelinix.desktop.addons.gtk.icon.pkg
+          pkgs.vulkan-validation-layers
         ];
 
         programs.regreet = {
           enable = true;
+
           settings = {
             background = {
               path = pkgs.khanelinix.wallpapers.flatppuccin_macchiato;
               fit = "Cover";
             };
+
+            default_session = {
+              command = "env GTK_USE_PORTAL=0 ${pkgs.sway}/bin/sway --config ${greetdSwayConfig}";
+            };
+
             GTK = {
               cursor_theme_name = "${config.khanelinix.desktop.addons.gtk.cursor.name}";
               font_name = "${config.khanelinix.system.fonts.default} * 12";
@@ -57,8 +67,6 @@ in
             };
           };
         };
-
-        services.greetd.settings.default_session.command = "${pkgs.sway}/bin/sway --config ${greetdSwayConfig}";
 
         security.pam.services.greetd.gnupg.enable = true;
         security.pam.services.greetd.enableGnomeKeyring = true;
