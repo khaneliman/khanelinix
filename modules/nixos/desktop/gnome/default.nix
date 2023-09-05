@@ -4,8 +4,10 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf mapAttrs optional;
+  inherit (lib.internal) mkBoolOpt mkOpt mkDefault enabled;
+
   cfg = config.khanelinix.desktop.gnome;
   gdmHome = config.users.users.gdm.home;
 

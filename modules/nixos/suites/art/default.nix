@@ -3,12 +3,14 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt enabled;
+
   cfg = config.khanelinix.suites.art;
 in
 {
-  options.khanelinix.suites.art = with types; {
+  options.khanelinix.suites.art = {
     enable = mkBoolOpt false "Whether or not to enable art configuration.";
   };
 

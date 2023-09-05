@@ -4,12 +4,14 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt enabled;
+
   cfg = config.khanelinix.suites.wlroots;
 in
 {
-  options.khanelinix.suites.wlroots = with types; {
+  options.khanelinix.suites.wlroots = {
     enable =
       mkBoolOpt false "Whether or not to enable common wlroots configuration.";
   };

@@ -4,12 +4,14 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.suites.networking;
 in
 {
-  options.khanelinix.suites.networking = with types; {
+  options.khanelinix.suites.networking = {
     enable =
       mkBoolOpt false "Whether or not to enable networking configuration.";
   };

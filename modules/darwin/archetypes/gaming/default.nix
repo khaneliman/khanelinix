@@ -3,12 +3,14 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt enabled;
+
   cfg = config.khanelinix.archetypes.gaming;
 in
 {
-  options.khanelinix.archetypes.gaming = with types; {
+  options.khanelinix.archetypes.gaming = {
     enable = mkBoolOpt false "Whether or not to enable the gaming archetype.";
   };
 

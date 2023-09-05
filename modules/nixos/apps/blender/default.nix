@@ -1,6 +1,11 @@
-{ lib, config, pkgs, ... }:
-with lib;
-with lib.internal; let
+{ lib
+, config
+, pkgs
+, ...
+}:
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.blender;
 in
 {
@@ -8,8 +13,7 @@ in
     enable = mkBoolOpt false "Whether or not to enable blender.";
   };
 
-  config =
-    mkIf cfg.enable {
-      environment.systemPackages = with pkgs; [ blender ];
-    };
+  config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [ blender ];
+  };
 }

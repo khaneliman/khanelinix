@@ -2,8 +2,10 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; {
+let
+  inherit (lib.internal) enabled;
+in
+{
   environment.systemPackages = with pkgs; [
     wget
     curl

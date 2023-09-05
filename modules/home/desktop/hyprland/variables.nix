@@ -3,8 +3,8 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
   cfg = config.khanelinix.desktop.hyprland;
 in
 {
@@ -41,12 +41,11 @@ in
               inactive_opacity = 0.9;
               fullscreen_opacity = 1.0;
 
-              blur =
-                {
-                  enabled = "yes";
-                  size = 5;
-                  passes = 4;
-                };
+              blur = {
+                enabled = "yes";
+                size = 5;
+                passes = 4;
+              };
 
               drop_shadow = true;
               shadow_ignore_window = true;

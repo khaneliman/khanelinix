@@ -5,8 +5,11 @@
 , inputs
 , ...
 }:
-with lib;
-with lib.internal; {
+let
+  inherit (lib) types mkAliasDefinitions;
+  inherit (lib.internal) mkOpt;
+in
+{
   imports = with inputs; [
     home-manager.nixosModules.home-manager
   ];

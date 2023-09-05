@@ -5,8 +5,9 @@
 , inputs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt mkOpt;
   cfg = config.khanelinix.security.gpg;
 
   gpgConf = "${inputs.gpg-base-conf}/gpg.conf";

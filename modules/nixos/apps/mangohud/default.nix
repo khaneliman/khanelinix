@@ -4,12 +4,14 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf literalExpression;
+  inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.apps.mangohud;
 in
 {
-  options.khanelinix.apps.mangohud = with types; {
+  options.khanelinix.apps.mangohud = {
     enable = mkBoolOpt false "Whether or not to enable mangohud.";
   };
 

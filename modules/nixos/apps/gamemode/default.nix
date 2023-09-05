@@ -4,8 +4,9 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt mkOpt;
   cfg = config.khanelinix.apps.gamemode;
   # programs = lib.makeBinPath [config.khanelinix.desktop.hyprland.package];
 

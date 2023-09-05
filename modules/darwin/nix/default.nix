@@ -2,8 +2,9 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+
   cfg = config.khanelinix.nix;
 in
 {

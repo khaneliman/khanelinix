@@ -4,14 +4,16 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.desktop.addons.yabai;
   yabaiHelper =
     pkgs.writeShellScriptBin "yabaiHelper" (builtins.readFile ./helper);
 in
 {
-  options.khanelinix.desktop.addons.yabai = with types; {
+  options.khanelinix.desktop.addons.yabai = {
     enable = mkBoolOpt false "Whether or not to enable yabai.";
   };
 

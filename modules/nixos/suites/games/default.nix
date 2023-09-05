@@ -4,12 +4,14 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt enabled;
+
   cfg = config.khanelinix.suites.games;
 in
 {
-  options.khanelinix.suites.games = with types; {
+  options.khanelinix.suites.games = {
     enable =
       mkBoolOpt false "Whether or not to enable common games configuration.";
   };

@@ -1,9 +1,11 @@
-{ pkgs
-, lib
+{ lib
+, pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkForce;
+  inherit (lib.internal) enabled;
+
   gpgConf = pkgs.fetchurl {
     url = "https://raw.githubusercontent.com/drduh/config/master/gpg.conf";
     sha256 = "0va62sgnah8rjgp4m6zygs4z9gbpmqvq9m3x4byywk1dha6nvvaj";

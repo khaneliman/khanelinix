@@ -4,8 +4,10 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf mapAttrs mkDefault;
+  inherit (lib.internal) mkBoolOpt mkOpt;
+
   cfg = config.khanelinix.desktop.addons.gtk;
   default-attrs = mapAttrs (_key: mkDefault);
   nested-default-attrs = mapAttrs (_key: default-attrs);

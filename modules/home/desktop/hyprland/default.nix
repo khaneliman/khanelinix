@@ -4,12 +4,14 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf mkEnableOption;
+  inherit (lib.internal) enabled;
+
   cfg = config.khanelinix.desktop.hyprland;
 in
 {
-  options.khanelinix.desktop.hyprland = with types; {
+  options.khanelinix.desktop.hyprland = {
     enable = mkEnableOption "Hyprland.";
     extraConfig = lib.mkOption {
       type = lib.types.lines;

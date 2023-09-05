@@ -4,8 +4,11 @@
 , inputs
 , ...
 }:
-with lib;
-with lib.internal; {
+let
+  inherit (lib) types;
+  inherit (lib.internal) mkOpt mkAliasDefinitions;
+in
+{
   imports = with inputs; [
     home-manager.darwinModules.home-manager
   ];

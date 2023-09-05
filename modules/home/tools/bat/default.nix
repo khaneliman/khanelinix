@@ -4,8 +4,9 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.bat;
 in
 {
@@ -31,16 +32,16 @@ in
         batdiff
       ];
 
-      themes =
-        {
-          catppuccin-macchiato = builtins.readFile (pkgs.fetchFromGitHub
-            {
-              owner = "catppuccin";
-              repo = "bat";
-              rev = "ba4d16880d63e656acced2b7d4e034e4a93f74b1";
-              hash = "sha256-6WVKQErGdaqb++oaXnY3i6/GuH2FhTgK0v4TN4Y0Wbw=";
-            } + "/Catppuccin-macchiato.tmTheme");
-        };
+      themes = {
+        catppuccin-macchiato = builtins.readFile (pkgs.fetchFromGitHub
+          {
+            owner = "catppuccin";
+            repo = "bat";
+            rev = "ba4d16880d63e656acced2b7d4e034e4a93f74b1";
+            hash = "sha256-6WVKQErGdaqb++oaXnY3i6/GuH2FhTgK0v4TN4Y0Wbw=";
+          }
+        + "/Catppuccin-macchiato.tmTheme");
+      };
     };
 
     home.shellAliases = {

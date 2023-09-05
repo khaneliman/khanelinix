@@ -4,8 +4,9 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.hardware.amdgpu;
 in
 {
@@ -16,7 +17,6 @@ in
   };
 
   config = mkIf cfg.enable {
-
     # hardware.amdgpu.amdvlk = true;
 
     environment.systemPackages = with pkgs; [ radeontop ];

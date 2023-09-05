@@ -3,12 +3,13 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt enabled;
   cfg = config.khanelinix.suites.common;
 in
 {
-  options.khanelinix.suites.common = with types; {
+  options.khanelinix.suites.common = {
     enable =
       mkBoolOpt false
         "Whether or not to enable common configuration.";

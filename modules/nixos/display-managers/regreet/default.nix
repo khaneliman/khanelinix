@@ -4,8 +4,10 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt mkOpt;
+
   cfg = config.khanelinix.display-managers.regreet;
   greetdSwayConfig = pkgs.writeText "greetd-sway-config" ''
     exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK 

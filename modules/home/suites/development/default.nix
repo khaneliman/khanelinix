@@ -4,12 +4,14 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt enabled;
+
   cfg = config.khanelinix.suites.development;
 in
 {
-  options.khanelinix.suites.development = with types; {
+  options.khanelinix.suites.development = {
     enable =
       mkBoolOpt false
         "Whether or not to enable common development configuration.";

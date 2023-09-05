@@ -3,8 +3,9 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.thunar;
 in
 {

@@ -4,8 +4,10 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf mkForce;
+  inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.desktop.addons.waybar;
   githubHelper = pkgs.writeShellScriptBin "githubHelper" ''
     #!/usr/bin/env bash
@@ -61,7 +63,7 @@ with lib.internal; let
   };
 in
 {
-  options.khanelinix.desktop.addons.waybar = with types; {
+  options.khanelinix.desktop.addons.waybar = {
     enable =
       mkBoolOpt false "Whether to enable waybar in the desktop environment.";
     debug = mkBoolOpt false "Whether to enable debug mode.";

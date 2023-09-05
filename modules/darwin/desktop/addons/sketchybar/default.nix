@@ -4,22 +4,24 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.desktop.addons.sketchybar;
   zshAliases = with pkgs; {
     brew = ''command brew "$@" && ${lib.getExe sketchybar} --trigger brew_update'';
     mas = ''command mas "$@" && ${lib.getExe sketchybar} --trigger brew_update'';
     push = ''command git push && ${lib.getExe sketchybar} --trigger git_push'';
   };
-  fishAliases = with pkgs;{
+  fishAliases = with pkgs; {
     brew = ''command brew "$argv" && ${lib.getExe sketchybar} --trigger brew_update'';
     mas = ''command mas "$argv" && ${lib.getExe sketchybar} --trigger brew_update'';
     push = ''command git push && ${lib.getExe sketchybar} --trigger git_push'';
   };
 in
 {
-  options.khanelinix.desktop.addons.sketchybar = with types; {
+  options.khanelinix.desktop.addons.sketchybar = {
     enable = mkBoolOpt false "Whether or not to enable sketchybar.";
   };
 

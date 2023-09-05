@@ -5,8 +5,9 @@
 , inputs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.cli-apps.ranger;
 in
 {
@@ -24,19 +25,21 @@ in
         recursive = true;
       };
 
-      "ranger/config/local.conf".text = '''' + lib.optionalString pkgs.stdenv.isDarwin ''
-        # Go to 
-        map ga cd /Applications
-        map gb cd /opt/homebrew
-        map gC cd ~/Library/Application Support/
-        map gV cd /Volumes 
+      "ranger/config/local.conf".text =
+        ''''
+        + lib.optionalString pkgs.stdenv.isDarwin ''
+          # Go to
+          map ga cd /Applications
+          map gb cd /opt/homebrew
+          map gC cd ~/Library/Application Support/
+          map gV cd /Volumes
 
-        unmap g?
-        unmap gM
-        unmap gi
-        unmap gm
-        unmap gr
-      '';
+          unmap g?
+          unmap gM
+          unmap gi
+          unmap gm
+          unmap gr
+        '';
 
       "ranger/plugins/__init__.py".source = ./config/plugins/__init__.py;
       "ranger/plugins/ranger_devicons".source = inputs.ranger-devicons;

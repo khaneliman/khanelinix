@@ -4,8 +4,9 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types;
+  inherit (lib.internal) mkBoolOpt;
   inherit (pkgs.khanelinix) wallpapers;
 in
 {

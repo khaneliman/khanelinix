@@ -4,8 +4,10 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt mkOpt stringAfter;
+
   cfg = config.khanelinix.display-managers.sddm;
 in
 {

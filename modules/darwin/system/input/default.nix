@@ -3,12 +3,13 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf mkMerge mkEnableOption;
+
   cfg = config.khanelinix.system.input;
 in
 {
-  options.khanelinix.system.input = with types; {
+  options.khanelinix.system.input = {
     enable = mkEnableOption "macOS input";
   };
 

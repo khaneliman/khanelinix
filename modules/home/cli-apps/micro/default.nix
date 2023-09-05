@@ -3,8 +3,9 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.cli-apps.micro;
 in
 {
@@ -25,7 +26,6 @@ in
     programs.zsh.shellAliases.vimdiff = mkIf cfg.default "micro -d";
     programs.bash.shellAliases.vimdiff = mkIf cfg.default "micro -d";
     programs.fish.shellAliases.vimdiff = mkIf cfg.default "micro -d";
-
 
     home.sessionVariables = {
       EDITOR = mkIf cfg.default "micro";

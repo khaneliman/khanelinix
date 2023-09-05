@@ -3,8 +3,10 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf mkOption;
+  inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.services.spice-webdav;
 in
 {

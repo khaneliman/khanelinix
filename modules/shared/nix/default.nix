@@ -4,8 +4,9 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt mkOpt;
   cfg = config.khanelinix.nix;
 in
 {
@@ -30,19 +31,18 @@ in
       {
         inherit (cfg) package;
 
-        settings =
-          {
-            allowed-users = users;
-            auto-optimise-store = true;
-            experimental-features = "nix-command flakes";
-            http-connections = 50;
-            log-lines = 50;
-            sandbox = "relaxed";
-            trusted-users = users;
-            warn-dirty = false;
-            keep-derivations = true;
-            keep-outputs = true;
-          };
+        settings = {
+          allowed-users = users;
+          auto-optimise-store = true;
+          experimental-features = "nix-command flakes";
+          http-connections = 50;
+          log-lines = 50;
+          sandbox = "relaxed";
+          trusted-users = users;
+          warn-dirty = false;
+          keep-derivations = true;
+          keep-outputs = true;
+        };
 
         gc = {
           automatic = true;

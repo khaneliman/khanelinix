@@ -5,8 +5,9 @@
 , inputs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt;
   inherit (inputs) spicetify-nix;
   cfg = config.khanelinix.cli-apps.spicetify;
   spicePkgs = spicetify-nix.packages.${pkgs.system}.default;

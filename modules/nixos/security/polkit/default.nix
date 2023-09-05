@@ -4,8 +4,9 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.security.polkit;
 in
 {

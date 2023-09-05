@@ -3,8 +3,9 @@
 , config
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt mkOpt enabled;
   cfg = config.khanelinix.services.tailscale;
 in
 {

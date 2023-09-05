@@ -4,8 +4,10 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt mkOpt enabled fileWithText optionalString;
+
   cfg = config.khanelinix.desktop.sway;
   term = config.khanelinix.desktop.addons.term;
   substitutedConfig = pkgs.substituteAll {
@@ -92,7 +94,7 @@ in
       '';
     };
 
-    environment.systemPackages = with pkgs; [
+    environment.systemPackages = [
       (pkgs.writeTextFile {
         name = "startsway";
         destination = "/bin/startsway";

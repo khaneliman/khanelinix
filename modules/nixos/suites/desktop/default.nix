@@ -4,18 +4,19 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt enabled;
+
   cfg = config.khanelinix.suites.desktop;
 in
 {
-  options.khanelinix.suites.desktop = with types; {
+  options.khanelinix.suites.desktop = {
     enable =
       mkBoolOpt false "Whether or not to enable common desktop configuration.";
   };
 
   config = mkIf cfg.enable {
-
     environment.systemPackages = with pkgs; [
       authy
       barrier

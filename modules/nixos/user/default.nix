@@ -4,8 +4,9 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types;
+  inherit (lib.internal) mkOpt;
   cfg = config.khanelinix.user;
   defaultIconFileName = "profile.png";
   defaultIcon = pkgs.stdenvNoCC.mkDerivation {

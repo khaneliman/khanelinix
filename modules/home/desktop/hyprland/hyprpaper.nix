@@ -3,8 +3,8 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
   cfg = config.khanelinix.desktop.hyprland;
 in
 {
@@ -32,4 +32,3 @@ in
         };
       };
 }
-

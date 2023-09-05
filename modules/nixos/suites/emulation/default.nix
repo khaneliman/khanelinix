@@ -4,12 +4,14 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt enabled;
+
   cfg = config.khanelinix.suites.emulation;
 in
 {
-  options.khanelinix.suites.emulation = with types; {
+  options.khanelinix.suites.emulation = {
     enable =
       mkBoolOpt false "Whether or not to enable emulation configuration.";
   };

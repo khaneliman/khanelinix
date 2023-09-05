@@ -5,8 +5,9 @@
 , osConfig
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.system.shell.fish;
 in
 {
@@ -66,16 +67,16 @@ in
          source '/nix/var/nix/profiles/default/etc/profile.d/nix.fish'
         end
         # End Nix
-     
+
         # Disable greeting
-        set fish_greeting 
+        set fish_greeting
 
         # Fetch on terminal open
         if [ "$TMUX" = "" ];
             command -v tmux && tmux
         end
 
-        fastfetch 
+        fastfetch
       '';
 
       plugins = [
@@ -117,4 +118,3 @@ in
     };
   };
 }
-

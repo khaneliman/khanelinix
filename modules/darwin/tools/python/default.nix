@@ -4,8 +4,9 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.python;
 in
 {
@@ -13,8 +14,7 @@ in
     enable = mkBoolOpt false "Whether or not to enable Python.";
   };
 
-  config =
-    mkIf cfg.enable {
-      environment.systemPackages = with pkgs; [ python311 ];
-    };
+  config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [ python311 ];
+  };
 }

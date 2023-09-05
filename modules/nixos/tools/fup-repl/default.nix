@@ -3,8 +3,9 @@
 , config
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.fup-repl;
   fup-repl = pkgs.writeShellScriptBin "fup-repl" ''
     ${pkgs.fup-repl}/bin/repl ''${@}

@@ -1,5 +1,8 @@
 { lib, ... }:
-with lib.internal; {
+let
+  inherit (lib.internal) enabled;
+in
+{
   khanelinix = {
     archetypes = {
       personal = enabled;

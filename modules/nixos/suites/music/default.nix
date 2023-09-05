@@ -4,12 +4,14 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt enabled;
+
   cfg = config.khanelinix.suites.music;
 in
 {
-  options.khanelinix.suites.music = with types; {
+  options.khanelinix.suites.music = {
     enable = mkBoolOpt false "Whether or not to enable music configuration.";
   };
 

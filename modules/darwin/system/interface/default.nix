@@ -3,12 +3,13 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf mkEnableOption;
+
   cfg = config.khanelinix.system.interface;
 in
 {
-  options.khanelinix.system.interface = with types; {
+  options.khanelinix.system.interface = {
     enable = mkEnableOption "macOS interface";
   };
 

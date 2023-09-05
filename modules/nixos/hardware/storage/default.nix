@@ -4,8 +4,9 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.hardware.storage;
 in
 {
@@ -17,18 +18,20 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      ntfs3g
-      fuseiso
-      nfs-utils
-      btrfs-progs
-    ] ++ lib.optionals cfg.btrfs [
-      btdu
-      btrfs-assistant
-      btrfs-snap
-      compsize
-      # dduper
-      snapper
-    ];
+    environment.systemPackages = with pkgs;
+      [
+        ntfs3g
+        fuseiso
+        nfs-utils
+        btrfs-progs
+      ]
+      ++ lib.optionals cfg.btrfs [
+        btdu
+        btrfs-assistant
+        btrfs-snap
+        compsize
+        # dduper
+        snapper
+      ];
   };
 }

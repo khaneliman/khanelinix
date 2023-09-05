@@ -4,8 +4,9 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.wezterm;
 in
 {
@@ -34,7 +35,7 @@ in
         return {
           window_decorations = "RESIZE",
           font = wezterm.font_with_fallback {
-            'Liga SFMono Nerd Font', 
+            'Liga SFMono Nerd Font',
             'CaskaydiaCove Nerd Font',
             'JetBrains Mono',
           },

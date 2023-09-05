@@ -3,12 +3,14 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt enabled;
+
   cfg = config.khanelinix.archetypes.vm;
 in
 {
-  options.khanelinix.archetypes.vm = with types; {
+  options.khanelinix.archetypes.vm = {
     enable =
       mkBoolOpt false "Whether or not to enable the vm archetype.";
   };

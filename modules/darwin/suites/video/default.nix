@@ -4,12 +4,13 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.suites.video;
 in
 {
-  options.khanelinix.suites.video = with types; {
+  options.khanelinix.suites.video = {
     enable = mkBoolOpt false "Whether or not to enable video configuration.";
   };
 

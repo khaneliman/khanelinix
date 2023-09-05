@@ -4,8 +4,9 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.cli-apps.btop;
 in
 {
@@ -19,7 +20,6 @@ in
       package = pkgs.btop;
 
       settings = {
-
         #* Name of a btop++/bpytop/bashtop formatted ".theme" file, "Default" and "TTY" for builtin themes.
         #* Themes should be placed in "../share/btop/themes" relative to binary or "$HOME/.config/btop/themes"
         color_theme = "catppuccin_macchiato";

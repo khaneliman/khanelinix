@@ -3,12 +3,14 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf mkForce;
+  inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.system.locale;
 in
 {
-  options.khanelinix.system.locale = with types; {
+  options.khanelinix.system.locale = {
     enable = mkBoolOpt false "Whether or not to manage locale settings.";
   };
 

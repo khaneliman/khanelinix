@@ -5,8 +5,10 @@
 , inputs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt mkOpt enabled;
+
   cfg = config.khanelinix.desktop.hyprland;
   programs = lib.makeBinPath [ config.programs.hyprland.package ];
 in
@@ -59,13 +61,15 @@ in
           };
 
           home = {
-            configFile = {
-              "hypr/assets/square.png".source = ./hypr/assets/square.png;
-              "hypr/assets/diamond.png".source = ./hypr/assets/diamond.png;
-            }
-            // cfg.customConfigFiles;
+            configFile =
+              {
+                "hypr/assets/square.png".source = ./hypr/assets/square.png;
+                "hypr/assets/diamond.png".source = ./hypr/assets/diamond.png;
+              }
+              // cfg.customConfigFiles;
 
-            file = { }
+            file =
+              { }
               // cfg.customFiles;
           };
 

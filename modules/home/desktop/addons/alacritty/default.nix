@@ -4,8 +4,10 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf;
+  inherit (lib.internal) mkBoolOpt mkOpt;
+
   cfg = config.khanelinix.desktop.addons.alacritty;
 
   macchiato = {
@@ -27,7 +29,7 @@ with lib.internal; let
 
     vi_mode_cursor = {
       text = "#24273A"; # base
-      cursor = "#B7BDF8"; # lavender 
+      cursor = "#B7BDF8"; # lavender
     };
 
     # Search colors
@@ -104,124 +106,114 @@ with lib.internal; let
     };
 
     indexed_colors = [
-      { index = 16; color = "#F5A97F"; }
-      { index = 17; color = "#F4DBD6"; }
+      {
+        index = 16;
+        color = "#F5A97F";
+      }
+      {
+        index = 17;
+        color = "#F4DBD6";
+      }
     ];
   };
 in
 {
-  options.khanelinix.desktop.addons.alacritty = with types;
-    {
-      enable = mkBoolOpt false "Whether to enable alacritty.";
-      theme = mkOpt attr macchiato "Theme to use for alacritty.";
-      font = mkOpt str "Liga SFMono Nerd Font" "Font to use for alacritty.";
-    };
+  options.khanelinix.desktop.addons.alacritty = with types; {
+    enable = mkBoolOpt false "Whether to enable alacritty.";
+    theme = mkOpt attr macchiato "Theme to use for alacritty.";
+    font = mkOpt str "Liga SFMono Nerd Font" "Font to use for alacritty.";
+  };
 
   config = mkIf cfg.enable {
     programs.alacritty = {
       enable = true;
       package = pkgs.alacritty;
 
-      settings = {
-        window = {
-          dimensions = {
-            columns = 0;
-            lines = 0;
+      settings =
+        {
+          window = {
+            dimensions = {
+              columns = 0;
+              lines = 0;
+            };
+
+            padding = {
+              x = 10;
+              y = 10;
+            };
+
+            dynamic_padding = true;
+            dynamic_title = true;
+            opacity = 0.98;
           };
 
-          padding = {
-            x = 10;
-            y = 10;
+          font = {
+            size = 12.0;
+
+            offset = {
+              x = 0;
+              y = 0;
+            };
+
+            glyph_offset = {
+              x = 0;
+              y = 1;
+            };
+
+            normal = {
+              family = cfg.font;
+            };
+            bold = {
+              family = cfg.font;
+              style = "Bold";
+            };
+            italic = {
+              family = cfg.font;
+              style = "italic";
+            };
+            bold_italic = {
+              family = cfg.font;
+              style = "bold_italic";
+            };
           };
 
-          dynamic_padding = true;
-          dynamic_title = true;
-          opacity = 0.98;
-        };
+          colors = cfg.theme;
 
-        font = {
-          size = 12.0;
-
-          offset = {
-            x = 0;
-            y = 0;
+          cursor = {
+            style = {
+              shape = "Block";
+              blinking = "Off";
+            };
           };
 
-          glyph_offset = {
-            x = 0;
-            y = 1;
+          mouse = {
+            hide_when_typing = true;
           };
 
-          normal = {
-            family = cfg.font;
-          };
-          bold = {
-            family = cfg.font;
-            style = "Bold";
-          };
-          italic = {
-            family = cfg.font;
-            style = "italic";
-          };
-          bold_italic = {
-            family = cfg.font;
-            style = "bold_italic";
-          };
-        };
-
-        colors = cfg.theme;
-
-        cursor = {
-          style = {
-            shape = "Block";
-            blinking = "Off";
-          };
-        };
-
-        mouse = {
-          hide_when_typing = true;
-        };
-
-        keybindings = [
-          {
-            key = Q;
-            mods = Command;
-            action = Quit;
-          }
-          {
-            key = W;
-            mods = Command;
-            action = Quit;
-          }
-          {
-            key = N;
-            mods = Command;
-            action = CreateNewWindow;
-          }
-        ];
-
-      }
-      // lib.optionalAttrs
-        pkgs.stdenv.isLinux
-        { window.decorations = "None"; }
-      // lib.optionalAttrs
-        pkgs.stdenv.isDarwin
-        { window.decorations = "Buttonless"; };
+          keybindings = with lib; [
+            {
+              key = Q;
+              mods = Command;
+              action = Quit;
+            }
+            {
+              key = W;
+              mods = Command;
+              action = Quit;
+            }
+            {
+              key = N;
+              mods = Command;
+              action = CreateNewWindow;
+            }
+          ];
+        }
+        // lib.optionalAttrs
+          pkgs.stdenv.isLinux
+          { window.decorations = "None"; }
+        // lib.optionalAttrs
+          pkgs.stdenv.isDarwin
+          { window.decorations = "Buttonless"; };
     };
   };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

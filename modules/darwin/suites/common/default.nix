@@ -3,8 +3,10 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) enabled;
+
   cfg = config.khanelinix.suites.common;
 in
 {

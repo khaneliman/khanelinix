@@ -3,12 +3,14 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt enabled;
+
   cfg = config.khanelinix.archetypes.personal;
 in
 {
-  options.khanelinix.archetypes.personal = with types; {
+  options.khanelinix.archetypes.personal = {
     enable =
       mkBoolOpt false "Whether or not to enable the personal archetype.";
   };

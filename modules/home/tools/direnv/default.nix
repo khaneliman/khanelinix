@@ -3,12 +3,14 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt enabled;
+
   cfg = config.khanelinix.tools.direnv;
 in
 {
-  options.khanelinix.tools.direnv = with types; {
+  options.khanelinix.tools.direnv = {
     enable = mkBoolOpt false "Whether or not to enable direnv.";
   };
 

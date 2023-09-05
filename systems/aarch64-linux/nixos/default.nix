@@ -1,7 +1,10 @@
 { lib, ... }:
-with lib;
-with lib.internal; {
+let
+  inherit (lib.internal) enabled;
+in
+{
   imports = [ ./hardware.nix ];
+
 
   programs.sway.extraSessionCommands = ''
     WLR_NO_HARDWARE_CURSORS=1

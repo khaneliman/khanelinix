@@ -3,8 +3,9 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types concatStringsSep mapAttrsToList mkOption mapAttrs;
+
   cfg = config.khanelinix.system.env;
 in
 {

@@ -2,15 +2,14 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
   cfg = config.khanelinix.nix;
 in
 {
   imports = [ ../../shared/nix/default.nix ];
 
   config = mkIf cfg.enable {
-
     nix = {
       settings = {
         substituters = [

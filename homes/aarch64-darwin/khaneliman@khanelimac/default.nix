@@ -2,8 +2,11 @@
 , config
 , ...
 }:
-with lib;
-with lib.internal; {
+let
+  inherit (lib) mkForce;
+  inherit (lib.internal) enabled disabled;
+in
+{
   khanelinix = {
     user = {
       enable = true;

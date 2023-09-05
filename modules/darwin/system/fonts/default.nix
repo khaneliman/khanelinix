@@ -3,8 +3,9 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+
   cfg = config.khanelinix.system.fonts;
 in
 {
@@ -21,7 +22,8 @@ in
       fonts = with pkgs;
         [
           sketchybar-app-font
-        ] ++ cfg.fonts;
+        ]
+        ++ cfg.fonts;
     };
 
     system = {

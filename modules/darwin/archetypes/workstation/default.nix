@@ -3,12 +3,14 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt enabled;
+
   cfg = config.khanelinix.archetypes.workstation;
 in
 {
-  options.khanelinix.archetypes.workstation = with types; {
+  options.khanelinix.archetypes.workstation = {
     enable =
       mkBoolOpt false "Whether or not to enable the workstation archetype.";
   };

@@ -5,8 +5,10 @@
 , inputs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf mkMerge;
+  inherit (lib.internal) mkBoolOpt mkOpt;
+
   cfg = config.khanelinix.apps.firefox;
   defaultSettings = {
     "accessibility.typeaheadfind.enablesound" = false;

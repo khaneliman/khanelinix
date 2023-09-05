@@ -6,8 +6,10 @@
 , host
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) types mkIf foldl optionalString;
+  inherit (lib.internal) mkBoolOpt mkOpt;
+
   cfg = config.khanelinix.services.openssh;
 
   # @TODO(jakehamilton): This is a hold-over from an earlier Snowfall Lib version which used

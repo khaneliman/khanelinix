@@ -3,10 +3,12 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
-  cfg = config.khanelinix.virtualisation.kvm;
+let
+  inherit (lib) types mkIf length optionalString concatStringsSep;
+  inherit (lib.internal) mkBoolOpt mkOpt enabled;
   inherit (config.khanelinix) user;
+
+  cfg = config.khanelinix.virtualisation.kvm;
 in
 {
   options.khanelinix.virtualisation.kvm = with types; {

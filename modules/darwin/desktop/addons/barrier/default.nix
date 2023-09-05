@@ -3,12 +3,13 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.barrier;
 in
 {
-  options.khanelinix.desktop.addons.barrier = with types; {
+  options.khanelinix.desktop.addons.barrier = {
     enable = mkBoolOpt false "Whether or not to enable barrier.";
   };
 

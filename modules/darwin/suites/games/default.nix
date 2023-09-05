@@ -3,12 +3,14 @@
 , lib
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.suites.games;
 in
 {
-  options.khanelinix.suites.games = with types; {
+  options.khanelinix.suites.games = {
     enable = mkBoolOpt false "Whether or not to enable games configuration.";
   };
 

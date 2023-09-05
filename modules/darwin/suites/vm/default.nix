@@ -4,12 +4,14 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.suites.vm;
 in
 {
-  options.khanelinix.suites.vm = with types; {
+  options.khanelinix.suites.vm = {
     enable = mkBoolOpt false "Whether or not to enable vm.";
   };
 

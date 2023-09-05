@@ -4,12 +4,13 @@
 , pkgs
 , ...
 }:
-with lib;
-with lib.internal; let
+let
+  inherit (lib) mkIf;
+  inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.skhd;
 in
 {
-  options.khanelinix.desktop.addons.skhd = with types; {
+  options.khanelinix.desktop.addons.skhd = {
     enable = mkBoolOpt false "Whether or not to enable skhd.";
   };
 
@@ -96,7 +97,7 @@ in
         default < cmd + ctrl - left : ${lib.getExe yabai} -m space --focus prev
         default < cmd + ctrl - right : ${lib.getExe yabai} -m space --focus next
 
-        # move to workspace by index 
+        # move to workspace by index
         default < cmd + ctrl - 1 : ${lib.getExe yabai} -m space --focus 1
         default < cmd + ctrl - 2 : ${lib.getExe yabai} -m space --focus 2
         default < cmd + ctrl - 3 : ${lib.getExe yabai} -m space --focus 3

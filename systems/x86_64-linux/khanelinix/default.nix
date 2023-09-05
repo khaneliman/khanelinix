@@ -2,8 +2,10 @@
 , config
 , ...
 }:
-with lib;
-with lib.internal; {
+let
+  inherit (lib.internal) enabled;
+in
+{
   imports = [ ./hardware.nix ];
 
   khanelinix = {
