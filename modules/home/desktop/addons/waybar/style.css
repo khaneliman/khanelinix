@@ -124,9 +124,19 @@ window.DP-3 #workspaces {
   margin: 0.25em;
 }
 
-#workspaces button.active {
+#workspaces button.empty {
+  /* background-color: @surface2; */
+  color: @overlay0;
+}
+
+#workspaces button.visible {
   /* background-color: @surface2; */
   color: @blue;
+}
+
+#workspaces button.active {
+  /* background-color: @surface2; */
+  color: @green;
 }
 
 #workspaces button.urgent {
