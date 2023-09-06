@@ -140,9 +140,9 @@ window.DP-3 #workspaces {
 }
 
 #workspaces button.urgent {
-  background-color: @red;
+  box-shadow: 2px 2px 2px 2px;
   border-radius: 1em;
-  color: @text;
+  color: @red;
 }
 
 /* Add spacing for right side modules */
