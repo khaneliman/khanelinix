@@ -61,6 +61,42 @@ let
     "tooltip" = false;
     "on-click" = "${getExe pkgs.wlogout} -c 5 -r 5 -p layer-shell";
   };
+
+  "hyprland/workspaces" = {
+    "all-outputs" = false;
+    "active-only" = "false";
+    "on-scroll-up" = "${pkgs.hyprland}/bin/hyprctl dispatch workspace e+1";
+    "on-scroll-down" = "${pkgs.hyprland}/bin/hyprctl dispatch workspace e-1";
+    "format" = "{icon}";
+    "format-icons" = {
+      "1" = "";
+      "2" = "";
+      "3" = "";
+      "4" = "";
+      "5" = "";
+      "6" = "";
+      "7" = "";
+      "8" = "󰢹";
+      "urgent" = "";
+      "default" = "";
+      "persistent" = "persistent";
+      "empty" = "empty";
+    };
+    "persistent_workspaces" = {
+      "*" = [
+        2
+        3
+        4
+        5
+        6
+        7
+        8
+      ];
+      "DP-3" = [
+        1
+      ];
+    };
+  };
 in
 {
   options.khanelinix.desktop.addons.waybar = {
@@ -104,7 +140,7 @@ in
             "custom/weather"
             "clock"
           ];
-          inherit "custom/weather" "custom/github" "custom/notification" "custom/wlogout";
+          inherit "custom/weather" "custom/github" "custom/notification" "custom/wlogout" "hyprland/workspaces";
         };
         secondaryBar = {
           "include" = [ ./default-modules.jsonc ] ++ lib.optional config.khanelinix.desktop.hyprland.enable ./hyprland/default-modules.jsonc;
@@ -125,7 +161,7 @@ in
             "custom/weather"
             "clock"
           ];
-          inherit "custom/weather" "custom/github" "custom/notification" "custom/wlogout";
+          inherit "custom/weather" "custom/github" "custom/notification" "custom/wlogout" "hyprland/workspaces";
         };
       };
 
