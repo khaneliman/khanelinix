@@ -1,8 +1,10 @@
 { lib
 , config
+, pkgs
 , ...
 }:
 let
+  inherit (lib) getExe;
   inherit (lib.internal) enabled;
 in
 {
@@ -26,7 +28,15 @@ in
         };
 
         customFiles = {
-          ".screenlayout/primary.sh".source = ./.screenlayout/primary.sh;
+          ".screenlayout/primary.sh".source = pkgs.writeShellApplication {
+            name = "khanelinix-xorg-primary.sh";
+            checkPhase = "";
+            text = ''
+              ${getExe pkgs.xorg.xrandr} \
+              	--output XWAYLAND0 --primary --mode 1920x1080 --pos 1420x0 --rotate normal \
+              	--output XWAYLAND1 --mode 5120x1440 --pos 0x1080 --rotate normal
+            '';
+          };
         };
       };
     };
