@@ -26,13 +26,13 @@ let
     bindsym XF86MonBrightnessUp exec light -A 5
     bindsym XF86MonBrightnessDown exec light -U 5
     bindsym Print exec ${getExe pkgs.grim} /tmp/regreet.png
-    bindsym Mod4+shift+e exec swaynag \
+    bindsym Mod4+shift+e exec ${pkgs.sway}/bin/swaynag \
       -t warning \
       -m 'What do you want to do?' \
       -b 'Poweroff' 'systemctl poweroff' \
       -b 'Reboot' 'systemctl reboot'
 
-    exec "${getExe pkgs.greetd.regreet} -l debug; swaymsg exit"
+    exec "${getExe pkgs.greetd.regreet} -l debug; ${pkgs.sway}/bin/swaymsg exit"
   '';
 in
 {
