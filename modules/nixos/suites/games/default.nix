@@ -30,7 +30,7 @@ in
       apps = {
         gamemode = enabled;
         lutris = enabled;
-        mangohud = enabled;
+        # mangohud = enabled;
         steam = enabled;
       };
 
