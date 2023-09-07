@@ -2,6 +2,8 @@
 , config
 , lib
 , pkgs
+, inputs
+, system
 , ...
 }:
 let
@@ -111,7 +113,7 @@ in
     programs.waybar = {
       enable = true;
       systemd.enable = true;
-      package = pkgs.waybar;
+      package = inputs.nixpkgs-wayland.packages.${system}.waybar;
 
       # TODO: make dynamic
       settings = {

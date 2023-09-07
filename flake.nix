@@ -138,7 +138,7 @@
         devshell.overlays.default
         flake.overlay
         hyprland.overlays.default
-        nixpkgs-wayland.overlay
+        # nixpkgs-wayland.overlay
         nur.overlay
         rustup-overlay.overlays.default
       ];
