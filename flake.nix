@@ -63,6 +63,10 @@
     # NixPkgs (nixos-unstable)
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    # NixPkgs-Wayland 
+    nixpkgs-wayland.url = "github:nix-community/nixpkgs-wayland";
+    nixpkgs-wayland.inputs.nixpkgs.follows = "nixpkgs";
+
     # Nix User Repository (master)
     nur.url = "github:nix-community/NUR";
 
@@ -130,12 +134,13 @@
       ];
 
       overlays = with inputs; [
+        # agenix.overlays.default
         devshell.overlays.default
         flake.overlay
         hyprland.overlays.default
+        nixpkgs-wayland.overlay
         nur.overlay
         rustup-overlay.overlays.default
-        # agenix.overlays.default
       ];
 
       systems.modules.nixos = with inputs; [
