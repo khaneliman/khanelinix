@@ -81,8 +81,7 @@ let
       "8" = "󰢹";
       "urgent" = "";
       "default" = "";
-      "persistent" = "persistent";
-      "empty" = "empty";
+      "empty" = "";
     };
     "persistent_workspaces" = {
       "*" = [
