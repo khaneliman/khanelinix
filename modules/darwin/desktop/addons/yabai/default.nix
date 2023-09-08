@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf getExe;
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.desktop.addons.yabai;

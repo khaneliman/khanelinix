@@ -5,8 +5,8 @@
 , ...
 }:
 let
-  inherit (lib) types;
-  inherit (lib.internal) mkOpt mkAliasDefinitions;
+  inherit (lib) types mkAliasDefinitions;
+  inherit (lib.internal) mkOpt;
 in
 {
   imports = with inputs; [

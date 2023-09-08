@@ -77,7 +77,6 @@ in
     homebrew = {
       brews = [
         "brew-cask-completion"
-        "jq"
         "gh"
         "angular-cli"
       ];
