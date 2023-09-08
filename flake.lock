@@ -20,11 +20,11 @@
     "astronvim-user": {
       "flake": false,
       "locked": {
-        "lastModified": 1691769742,
-        "narHash": "sha256-7uijklxcvHw5p5cNtk1jwV99oFSRxcWwjqBQq+XcpP8=",
+        "lastModified": 1694140330,
+        "narHash": "sha256-KRGVlTRAt97/pvHovCK78tzkJpB8BDOWEDtTgFyWA9Y=",
         "owner": "khaneliman",
         "repo": "astronvim",
-        "rev": "2f56a30f304c04279583ffbe0ea9216425f23bba",
+        "rev": "d728fd86089a1dd27771988c69e297475424942b",
         "type": "github"
       },
       "original": {
@@ -85,11 +85,11 @@
         "utils": "utils_2"
       },
       "locked": {
-        "lastModified": 1686747123,
-        "narHash": "sha256-XUQK9kwHpTeilHoad7L4LjMCCyY13Oq383CoFADecRE=",
+        "lastModified": 1694158470,
+        "narHash": "sha256-yWx9eBDHt6WR3gr65+J85KreHdMypty/P6yM35tIYYM=",
         "owner": "serokell",
         "repo": "deploy-rs",
-        "rev": "724463b5a94daa810abfc64a4f87faef4e00f984",
+        "rev": "d0cfc042eba92eb206611c9e8784d41a2c053bab",
         "type": "github"
       },
       "original": {
@@ -437,11 +437,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1694118552,
-        "narHash": "sha256-gXTw7oAb6hdwMXzt+loKvdWiI00CwqHvUgvWVOY+PoI=",
+        "lastModified": 1694134858,
+        "narHash": "sha256-fG/ESauOGmiojKlpJG8gB62dJa5Wd+ZIuiDMKK/HD3g=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "f1d4f49e716df353eb7851b2eec4afe58aa3b697",
+        "rev": "19c6a4081b14443420358262f8416149bd79561a",
         "type": "github"
       },
       "original": {
@@ -704,6 +704,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-stable": {
+      "locked": {
+        "lastModified": 1693675694,
+        "narHash": "sha256-2pIOyQwGyy2FtFAUIb8YeKVmOCcPOTVphbAvmshudLE=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "5601118d39ca9105f8e7b39d4c221d3388c0419d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "release-23.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs-wayland": {
       "inputs": {
         "flake-compat": "flake-compat_6",
@@ -714,11 +730,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1694136336,
-        "narHash": "sha256-WNvp127sF8ZTSmf5cXFxGcR0npthLWR+F16cdg2G3Fk=",
+        "lastModified": 1694182450,
+        "narHash": "sha256-Eivl9r8Y5RKn3z4N1hAUAl6///bJhpzyHCVk7Q8u6Dw=",
         "owner": "nix-community",
         "repo": "nixpkgs-wayland",
-        "rev": "f510bf7df7a1d17a1f7396b80b362555fccbd0b6",
+        "rev": "1372a7ab8f8d1a4c12f4cf522cbe553c91043656",
         "type": "github"
       },
       "original": {
@@ -745,11 +761,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1694128128,
-        "narHash": "sha256-Mh2Of79t5glO7FAMA97e+cZe7cn5VhnDBUmi3yJ23Ms=",
+        "lastModified": 1694187987,
+        "narHash": "sha256-UuoxSsXSlMV9hTbw2509SAeHF1xObnk6neWUempdys8=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "793d43c8f2c71399627ce66a3d25766aece453ba",
+        "rev": "0d83b01718f7353592390891f9cde9431cf6e944",
         "type": "github"
       },
       "original": {
@@ -815,6 +831,7 @@
         "rustup-overlay": "rustup-overlay",
         "sf-mono-nerd-font": "sf-mono-nerd-font",
         "snowfall-lib": "snowfall-lib_2",
+        "sops-nix": "sops-nix",
         "spicetify-nix": "spicetify-nix",
         "yubikey-guide": "yubikey-guide"
       }
@@ -827,11 +844,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1694052649,
-        "narHash": "sha256-+eBEU3dw3/fCfi8ZHFNutINxehMazGkQxqNcpeNbTo4=",
+        "lastModified": 1694139063,
+        "narHash": "sha256-M2dhhe6IzHmS0zQkmnzbcG98jEQGZ4UcS3VcT+rG/Do=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "a795148ffbcc77f2b592d50ceebe36147e623a77",
+        "rev": "46dbbcaf435b0d22b149684589b9b059f73f4ffc",
         "type": "github"
       },
       "original": {
@@ -900,6 +917,27 @@
         "owner": "snowfallorg",
         "ref": "dev",
         "repo": "lib",
+        "type": "github"
+      }
+    },
+    "sops-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "nixpkgs-stable": "nixpkgs-stable"
+      },
+      "locked": {
+        "lastModified": 1693898833,
+        "narHash": "sha256-OIrMAGNYNeLs6IvBynxcXub7aSW3GEUvWNsb7zx6zuU=",
+        "owner": "Mic92",
+        "repo": "sops-nix",
+        "rev": "faf21ac162173c2deb54e5fdeed002a9bd6e8623",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mic92",
+        "repo": "sops-nix",
         "type": "github"
       }
     },

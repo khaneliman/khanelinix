@@ -106,6 +106,10 @@
     sf-mono-nerd-font.url = "github:shaunsingh/SFMono-Nerd-Font-Ligaturized";
     sf-mono-nerd-font.flake = false;
 
+    # Sops (Secrets) 
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
     # Spicetify
     spicetify-nix.url = "github:the-argus/spicetify-nix/dev";
     spicetify-nix.inputs.nixpkgs.follows = "nixpkgs";
@@ -146,11 +150,13 @@
       systems.modules.nixos = with inputs; [
         # agenix.nixosModules.default
         nix-ld.nixosModules.nix-ld
+        sops-nix.nixosModules.sops
       ];
 
       systems.modules.home = with inputs; [
         # agenix.homeManagerModules.default
         home-manager.homeModules.home-manager
+        sops-nix.homeManagerModules.sops
       ];
 
       systems.modules.darwin = [

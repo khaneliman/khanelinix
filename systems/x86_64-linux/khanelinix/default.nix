@@ -142,6 +142,7 @@ in
     security = {
       doas = enabled;
       keyring = enabled;
+      sops = enabled;
     };
 
     system = {
