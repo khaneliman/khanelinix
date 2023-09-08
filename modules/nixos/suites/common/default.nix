@@ -21,6 +21,7 @@ in
       jq
       khanelinix.trace-symlink
       khanelinix.trace-which
+      ncdu
       toilet
       upower
       util-linux

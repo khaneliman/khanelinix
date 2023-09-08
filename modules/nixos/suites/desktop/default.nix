@@ -23,6 +23,7 @@ in
       bleachbit
       dropbox
       dupeguru
+      filelight
       fontpreview
       keepass
     ];
