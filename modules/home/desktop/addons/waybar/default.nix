@@ -33,7 +33,7 @@ let
     "return-type" = "json";
     "interval" = 60;
     "exec" = "${githubHelper}/bin/githubHelper";
-    "on-click" = "${pkgs.xdg-utils}/bin/xdg-open https://github.com/notifications";
+    "on-click" = "${pkgs.coreutils}/bin/sleep 0.1 && ${pkgs.xdg-utils}/bin/xdg-open https://github.com/notifications";
   };
 
   "custom/notification" = {
@@ -52,8 +52,8 @@ let
     "return-type" = "json";
     "exec-if" = "which ${pkgs.swaynotificationcenter}/bin/swaync-client";
     "exec" = "${pkgs.swaynotificationcenter}/bin/swaync-client -swb";
-    "on-click" = "${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
-    "on-click-right" = "${pkgs.swaynotificationcenter}/bin/swaync-client -d -sw";
+    "on-click" = "${pkgs.coreutils}/bin/sleep 0.1 && ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
+    "on-click-right" = "${pkgs.coreutils}/bin/sleep 0.1 && ${pkgs.swaynotificationcenter}/bin/swaync-client -d -sw";
     "escape" = true;
   };
 
@@ -61,7 +61,7 @@ let
     "format" = "";
     "interval" = "once";
     "tooltip" = false;
-    "on-click" = "${getExe pkgs.wlogout} -c 5 -r 5 -p layer-shell";
+    "on-click" = "${pkgs.coreutils}/bin/sleep 0.1 && ${getExe pkgs.wlogout} -c 5 -r 5 -p layer-shell";
   };
 
   "hyprland/workspaces" = {
@@ -97,6 +97,17 @@ let
         1
       ];
     };
+  };
+
+  "wireplumber" = {
+    "format" = "{volume}% {icon}";
+    "format-muted" = "";
+    "on-click" = "${pkgs.coreutils}/bin/sleep 0.1 && ${getExe pkgs.helvum}";
+    "format-icons" = [
+      ""
+      ""
+      ""
+    ];
   };
 in
 {
@@ -141,7 +152,7 @@ in
             "custom/weather"
             "clock"
           ];
-          inherit "custom/weather" "custom/github" "custom/notification" "custom/wlogout" "hyprland/workspaces";
+          inherit "custom/weather" "custom/github" "custom/notification" "custom/wlogout" "hyprland/workspaces" "wireplumber";
         };
         secondaryBar = {
           "include" = [ ./default-modules.jsonc ] ++ lib.optional config.khanelinix.desktop.hyprland.enable ./hyprland/default-modules.jsonc;
@@ -162,7 +173,7 @@ in
             "custom/weather"
             "clock"
           ];
-          inherit "custom/weather" "custom/github" "custom/notification" "custom/wlogout" "hyprland/workspaces";
+          inherit "custom/weather" "custom/wlogout" "hyprland/workspaces";
         };
       };
 
