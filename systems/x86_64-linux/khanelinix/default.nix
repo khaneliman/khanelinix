@@ -65,11 +65,16 @@ in
       };
       storage = {
         enable = true;
-        btrfs = true;
-        btrfsScrubMounts = [
-          "/"
-          "/mnt/steam"
-        ];
+        btrfs = {
+          enable = true;
+          autoScrub = true;
+          dedupe = false;
+
+          scrubMounts = [
+            "/"
+            "/mnt/steam"
+          ];
+        };
       };
       opengl = enabled;
     };
