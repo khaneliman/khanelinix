@@ -5,9 +5,19 @@
 , ...
 }:
 let
-  inherit (lib) mkIf types;
+  inherit (lib) mkIf types genAttrs;
   inherit (lib.internal) mkBoolOpt mkOpt;
   cfg = config.khanelinix.hardware.storage.btrfs;
+  dedupeFilesystems = cfg.dedupeFilesystems;
+
+  dedupeFilesystemsAttrSets = genAttrs dedupeFilesystems
+    (name: {
+      spec = "LABEL=${name}";
+      hashTableSizeMB = 1024;
+      verbosity = "info";
+      workDir = ".beeshome";
+      extraOptions = [ ];
+    });
 in
 {
   options.khanelinix.hardware.storage.btrfs = with types; {
@@ -42,7 +52,7 @@ in
       };
 
       beesd = mkIf cfg.dedupe {
-        filesystems = mkIf (builtins.length cfg.dedupeFilesystems > 0) cfg.dedupeFilesystems;
+        filesystems = mkIf (builtins.length dedupeFilesystems > 0) dedupeFilesystemsAttrSets;
       };
     };
   };

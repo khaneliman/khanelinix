@@ -68,7 +68,12 @@ in
         btrfs = {
           enable = true;
           autoScrub = true;
-          dedupe = false;
+          dedupe = true;
+
+          dedupeFilesystems = [
+            "nixos"
+            "BtrProductive"
+          ];
 
           scrubMounts = [
             "/"
