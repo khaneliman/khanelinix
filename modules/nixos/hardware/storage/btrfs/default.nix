@@ -27,7 +27,7 @@ in
     autoScrub = mkBoolOpt false "Whether to enable btrfs autoScrub;";
     dedupe = mkBoolOpt false "Whether to enable btrfs deduplication;";
     scrubMounts = mkOpt (listOf path) [ ] "Btrfs mount paths to scrub;";
-    dedupeFilesystems = mkOpt (listOf string) [ ] "Unique btrfs filesystems to dedupe;";
+    dedupeFilesystems = mkOpt (listOf str) [ ] "Unique btrfs filesystems to dedupe;";
   };
 
   config = mkIf cfg.enable {

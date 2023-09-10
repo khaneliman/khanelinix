@@ -11,7 +11,7 @@ in
 {
   options.khanelinix.services.barrier = {
     enable = mkEnableOption "barrier";
-    server = mkOpt types.string "192.168.1.3:24800" "Server address";
+    server = mkOpt types.str "192.168.1.3:24800" "Server address";
   };
 
   config = mkIf cfg.enable {
