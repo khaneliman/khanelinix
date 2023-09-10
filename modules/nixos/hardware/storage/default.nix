@@ -5,8 +5,8 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib) mkIf types;
+  inherit (lib.internal) mkBoolOpt mkOpt;
   cfg = config.khanelinix.hardware.storage;
 in
 {
@@ -15,6 +15,8 @@ in
       mkBoolOpt false
         "Whether or not to enable support for extra storage devices.";
     btrfs = mkBoolOpt false "Whether to enable btrfs extra software;";
+    btrfsDedupe = mkBoolOpt false "Whether to enable btrfs deduplication;";
+    btrfsScrubMounts = mkOpt (listOf path) [ ] "Btrfs mount paths to scrub;";
   };
 
   config = mkIf cfg.enable {
@@ -33,5 +35,14 @@ in
         # dduper
         snapper
       ];
+
+    services.btrfs = mkIf cfg.btrfs {
+      autoScrub = {
+        enable = true;
+        interval = "weekly";
+
+        fileSystems = mkIf (builtins.length cfg.btrfsScrubMounts > 0) cfg.btrfsScrubMounts;
+      };
+    };
   };
 }

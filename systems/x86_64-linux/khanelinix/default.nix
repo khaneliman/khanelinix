@@ -66,6 +66,10 @@ in
       storage = {
         enable = true;
         btrfs = true;
+        btrfsScrubMounts = [
+          "/"
+          "/mnt/steam"
+        ];
       };
       opengl = enabled;
     };
