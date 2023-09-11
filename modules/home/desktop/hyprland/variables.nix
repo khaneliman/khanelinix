@@ -69,8 +69,8 @@ in
               border_size = 2;
               "col.inactive_border" = "rgb(5e6798)";
               "col.active_border" = "rgba(7793D1FF)";
-
               layout = "dwindle";
+              no_cursor_warps = true;
             };
 
             gestures = {
