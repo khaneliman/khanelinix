@@ -4,10 +4,16 @@
 , ...
 }:
 let
-  inherit (lib) mkIf;
-  cfg = config.khanelinix.desktop.hyprland;
+  inherit (lib) mkIf mkEnableOption;
+  cfg = config.khanelinix.desktop.addons.hyprpaper;
 in
 {
+  options.khanelinix.desktop.addons.hyprpaper = {
+    enable = mkEnableOption "Hyprpaper";
+    # TODO: configurable wallpapers package
+    # TODO: configurable monitors attrset with wallpaper
+  };
+
   config =
     mkIf cfg.enable
       {

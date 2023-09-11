@@ -27,15 +27,21 @@ in
     ./binds.nix
     ./variables.nix
     ./windowrules.nix
-    ./hyprpaper.nix
   ];
 
   config =
     mkIf cfg.enable
       {
-        # start swayidle as part of hyprland, not sway
-        khanelinix.suites.wlroots = enabled;
-        khanelinix.desktop.addons.rofi = enabled;
+        khanelinix = {
+          desktop.addons = {
+            rofi = enabled;
+            hyprpaper = enabled;
+          };
+
+          suites = {
+            wlroots = enabled;
+          };
+        };
 
         systemd.user.services.swayidle.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
         programs.waybar.systemd.target = "hyprland-session.target";
