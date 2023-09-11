@@ -16,7 +16,7 @@ let
       hashTableSizeMB = 1024;
       verbosity = "info";
       workDir = ".beeshome";
-      extraOptions = [ ];
+      extraOptions = [ "--thread-count" "8" ];
     });
 in
 {
