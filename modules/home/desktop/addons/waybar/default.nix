@@ -83,7 +83,7 @@ let
       "default" = "";
       "empty" = "";
     };
-    "persistent_workspaces" = {
+    "persistent-workspaces" = {
       "*" = [
         2
         3
