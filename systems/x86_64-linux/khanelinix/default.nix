@@ -1,6 +1,7 @@
 { lib
 , config
 , pkgs
+, self
 , ...
 }:
 let
@@ -156,7 +157,11 @@ in
     security = {
       doas = enabled;
       keyring = enabled;
-      sops = enabled;
+      sops = {
+        enable = true;
+        sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+        defaultSopsFile = "${self}/secrets/khanelinix/default.yaml";
+      };
     };
 
     system = {

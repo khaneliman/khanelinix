@@ -5,3 +5,7 @@ creation_rules:
     key_groups:
       - age:
           - *admin_khaneliman
+  - path_regex: secrets/khanelinix/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+          - *admin_khaneliman
