@@ -170,6 +170,7 @@ in
             "hyprland/window"
           ];
           "modules-right" = [
+            "idle_inhibitor"
             "custom/weather"
             "clock"
           ];
