@@ -2,12 +2,6 @@
   description = "KhaneliNix";
 
   inputs = {
-    # TODO: utilize these
-    # agenix.url = "github:ryantm/agenix";
-    # agenix.inputs.nixpkgs.follows = "nixpkgs";
-    # agenix.inputs.darwin.follows = "darwin";
-    # agenix.inputs.home-manager.follows = "home-manager";
-
     # Astronvim repo
     astronvim = {
       url = "github:AstroNvim/AstroNvim/nightly";
@@ -31,9 +25,6 @@
     # System Deployment
     deploy-rs.url = "github:serokell/deploy-rs";
     deploy-rs.inputs.nixpkgs.follows = "nixpkgs";
-
-    devshell.url = "github:numtide/devshell";
-    devshell.inputs.nixpkgs.follows = "nixpkgs";
 
     # TODO: Change back to upstream after PR merged.
     # Snowfall Flake
@@ -138,8 +129,6 @@
       ];
 
       overlays = with inputs; [
-        # agenix.overlays.default
-        devshell.overlays.default
         flake.overlay
         hyprland.overlays.default
         # nixpkgs-wayland.overlay
@@ -148,19 +137,16 @@
       ];
 
       systems.modules.nixos = with inputs; [
-        # agenix.nixosModules.default
         nix-ld.nixosModules.nix-ld
         sops-nix.nixosModules.sops
       ];
 
       systems.modules.home = with inputs; [
-        # agenix.homeManagerModules.default
         home-manager.homeModules.home-manager
         sops-nix.homeManagerModules.sops
       ];
 
       systems.modules.darwin = [
-        # agenix.darwinModules.default
       ];
 
       deploy = lib.mkDeploy { inherit (inputs) self; };
