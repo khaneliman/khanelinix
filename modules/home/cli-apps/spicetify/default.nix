@@ -6,21 +6,22 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   inherit (inputs) spicetify-nix;
+
   cfg = config.khanelinix.cli-apps.spicetify;
+
   spicePkgs = spicetify-nix.packages.${pkgs.system}.default;
 in
 {
-  options.khanelinix.cli-apps.spicetify = with types; {
+  options.khanelinix.cli-apps.spicetify = {
     enable = mkBoolOpt false "Whether or not to enable support for spicetify.";
   };
 
   imports = [ spicetify-nix.homeManagerModule ];
 
   config = mkIf cfg.enable {
-    # configure spicetify :)
     programs.spicetify = {
       enable = true;
       theme = spicePkgs.themes.catppuccin-macchiato;

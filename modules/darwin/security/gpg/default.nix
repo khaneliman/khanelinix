@@ -7,10 +7,11 @@
 let
   inherit (lib) types mkEnableOption mkIf;
   inherit (lib.internal) mkOpt;
+  inherit (inputs) gpg-base-conf yubikey-guide;
 
   cfg = config.khanelinix.security.gpg;
 
-  gpgConf = "${inputs.gpg-base-conf}/gpg.conf";
+  gpgConf = "${gpg-base-conf}/gpg.conf";
 
   gpgAgentConf = ''
     enable-ssh-support
@@ -18,7 +19,7 @@ let
     max-cache-ttl 120
   '';
 
-  guide = "${inputs.yubikey-guide}/README.md";
+  guide = "${yubikey-guide}/README.md";
 
   theme = pkgs.fetchFromGitHub {
     owner = "jez";

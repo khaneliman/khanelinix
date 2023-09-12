@@ -9,6 +9,7 @@
 let
   inherit (lib) mkIf mkForce getExe;
   inherit (lib.internal) mkBoolOpt;
+  inherit (inputs) nixpkgs-wayland;
 
   cfg = config.khanelinix.desktop.addons.waybar;
   githubHelper = pkgs.writeShellScriptBin "githubHelper" ''
@@ -123,7 +124,7 @@ in
     programs.waybar = {
       enable = true;
       systemd.enable = true;
-      package = inputs.nixpkgs-wayland.packages.${system}.waybar;
+      package = nixpkgs-wayland.packages.${system}.waybar;
 
       # TODO: make dynamic
       settings = {

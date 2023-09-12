@@ -2,7 +2,6 @@
 , config
 , lib
 , pkgs
-, inputs
 , ...
 }:
 let
@@ -69,7 +68,7 @@ in
   config = mkIf cfg.enable {
     services.gnome.gnome-browser-connector.enable = config.khanelinix.desktop.gnome.enable;
 
-    khanelinix.home = with inputs; {
+    khanelinix.home = {
       file = mkMerge [
         (mkIf config.khanelinix.desktop.gnome.enable {
           ".mozilla/native-messaging-hosts/org.gnome.chrome_gnome_shell.json".source = "${pkgs.chrome-gnome-shell}/lib/mozilla/native-messaging-hosts/org.gnome.chrome_gnome_shell.json";

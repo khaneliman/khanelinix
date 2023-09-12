@@ -3,7 +3,8 @@
 ,
 }:
 let
-  inherit (inputs.nixpkgs.lib) assertMsg last;
+  inherit (inputs) nixpkgs;
+  inherit (nixpkgs.lib) assertMsg last;
 in
 {
   network = {

@@ -7,6 +7,7 @@
 let
   inherit (lib) mkEnableOption mkIf;
   inherit (lib.internal) mkBoolOpt;
+  inherit (inputs) astronvim astronvim-user;
 
   cfg = config.khanelinix.cli-apps.astronvim;
 in
@@ -52,7 +53,7 @@ in
     };
 
     # TODO: Convert to custom nixos neovim config 
-    xdg.configFile = with inputs; {
+    xdg.configFile = {
       "nvim" = {
         onChange = "${pkgs.neovim}/bin/nvim --headless +quitall";
         source = astronvim;

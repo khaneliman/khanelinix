@@ -6,12 +6,13 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+  inherit (inputs) ranger-devicons ranger-udisk-menu;
   cfg = config.khanelinix.cli-apps.ranger;
 in
 {
-  options.khanelinix.cli-apps.ranger = with types; {
+  options.khanelinix.cli-apps.ranger = {
     enable = mkBoolOpt false "Whether or not to enable ranger.";
   };
 
@@ -42,8 +43,8 @@ in
         '';
 
       "ranger/plugins/__init__.py".source = ./config/plugins/__init__.py;
-      "ranger/plugins/ranger_devicons".source = inputs.ranger-devicons;
-      "ranger/plugins/ranger_udisk_menu".source = inputs.ranger-udisk-menu;
+      "ranger/plugins/ranger_devicons".source = ranger-devicons;
+      "ranger/plugins/ranger_udisk_menu".source = ranger-udisk-menu;
     };
   };
 }

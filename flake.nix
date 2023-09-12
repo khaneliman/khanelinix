@@ -114,7 +114,9 @@
 
   outputs = inputs:
     let
-      lib = inputs.snowfall-lib.mkLib {
+      inherit (inputs) snowfall-lib flake hyprland nur rustup-overlay nix-ld sops-nix home-manager deploy-rs;
+
+      lib = snowfall-lib.mkLib {
         inherit inputs;
         src = ./.;
       };
@@ -128,7 +130,7 @@
         "openssl-1.1.1v"
       ];
 
-      overlays = with inputs; [
+      overlays = [
         flake.overlay
         hyprland.overlays.default
         # nixpkgs-wayland.overlay
@@ -136,12 +138,12 @@
         rustup-overlay.overlays.default
       ];
 
-      systems.modules.nixos = with inputs; [
+      systems.modules.nixos = [
         nix-ld.nixosModules.nix-ld
         sops-nix.nixosModules.sops
       ];
 
-      systems.modules.home = with inputs; [
+      systems.modules.home = [
         home-manager.homeModules.home-manager
         sops-nix.homeManagerModules.sops
       ];
@@ -155,7 +157,7 @@
         builtins.mapAttrs
           (_system: deploy-lib:
             deploy-lib.deployChecks inputs.self.deploy)
-          inputs.deploy-rs.lib;
+          deploy-rs.lib;
     };
 }
 

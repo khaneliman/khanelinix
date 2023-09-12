@@ -8,6 +8,7 @@
 let
   inherit (lib) types mkIf;
   inherit (lib.internal) mkBoolOpt mkOpt enabled;
+  inherit (inputs) hyprland-contrib;
 
   cfg = config.khanelinix.desktop.hyprland;
   programs = lib.makeBinPath [ config.programs.hyprland.package ];
@@ -105,8 +106,8 @@ in
         environment.systemPackages = with pkgs; [
           hyprpaper
           hyprpicker
-          inputs.hyprland-contrib.packages.${pkgs.hostPlatform.system}.grimblast
-          pkgs.khanelinix.record_screen
+          hyprland-contrib.packages.${hostPlatform.system}.grimblast
+          khanelinix.record_screen
         ];
       };
 }

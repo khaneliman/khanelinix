@@ -8,9 +8,11 @@
 let
   inherit (lib) types mkIf;
   inherit (lib.internal) mkBoolOpt mkOpt;
+  inherit (inputs) gpg-base-conf yubikey-guide;
+
   cfg = config.khanelinix.security.gpg;
 
-  gpgConf = "${inputs.gpg-base-conf}/gpg.conf";
+  gpgConf = "${gpg-base-conf}/gpg.conf";
 
   gpgAgentConf = ''
     enable-ssh-support
@@ -19,7 +21,7 @@ let
     pinentry-program ${pkgs.pinentry-gnome}/bin/pinentry-gnome
   '';
 
-  guide = "${inputs.yubikey-guide}/README.md";
+  guide = "${yubikey-guide}/README.md";
 
   theme = pkgs.fetchFromGitHub {
     owner = "jez";
@@ -65,12 +67,7 @@ in
     services.pcscd.enable = true;
     services.udev.packages = with pkgs; [ yubikey-personalization ];
 
-    # @NOTE(jakehamilton): This should already have been added by programs.gpg, but
-    # keeping it here for now just in case.
     environment.shellInit = ''
-      export GPG_TTY="$(tty)"
-      export SSH_AUTH_SOCK=$(${pkgs.gnupg}/bin/gpgconf --list-dirs agent-ssh-socket)
-
       ${pkgs.coreutils}/bin/timeout ${builtins.toString cfg.agentTimeout} ${pkgs.gnupg}/bin/gpgconf --launch gpg-agent
       gpg_agent_timeout_status=$?
 

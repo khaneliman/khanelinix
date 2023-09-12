@@ -7,9 +7,10 @@
 let
   inherit (lib) types mkAliasDefinitions;
   inherit (lib.internal) mkOpt;
+  inherit (inputs) home-manager;
 in
 {
-  imports = with inputs; [
+  imports = [
     home-manager.darwinModules.home-manager
   ];
 
@@ -36,9 +37,6 @@ in
     home-manager = {
       useUserPackages = true;
       useGlobalPkgs = true;
-
-      # users.${config.khanelinix.user.name} = args:
-      #   mkAliasDefinitions options.khanelinix.home.extraOptions;
     };
   };
 }

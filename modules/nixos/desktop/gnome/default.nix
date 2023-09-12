@@ -25,13 +25,6 @@ let
     space-bar
     top-bar-organizer
     wireless-hid
-
-    # @NOTE(jakehamilton): These extensions are currently unsupported. They may also
-    # no longer be required.
-
-    # audio-output-switcher
-    # big-avatar
-    # clear-top-bar
   ];
 
   default-attrs = mapAttrs (_key: mkDefault);

@@ -21,9 +21,6 @@ in
 
   config = {
     users.users.${cfg.name} = {
-      # @NOTE(jakehamilton): Setting the uid here is required for another
-      # module to evaluate successfully since it reads
-      # `users.users.${khanelinix.user.name}.uid`.
       uid = mkIf (cfg.uid != null) cfg.uid;
 
       shell = pkgs.zsh;
