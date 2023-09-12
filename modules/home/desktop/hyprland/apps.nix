@@ -7,11 +7,32 @@ let
   inherit (lib) mkIf getExe;
 
   cfg = config.khanelinix.desktop.hyprland;
+
+  hypr_socket_watch_dependencies = with pkgs; [
+    coreutils
+    gnused
+    socat
+  ];
 in
 {
   config =
     mkIf cfg.enable
       {
+        systemd.user.services.hypr_socket_watch = {
+          Install.WantedBy = [ "hyprland-session.target" ];
+
+          Unit = {
+            Description = "Hypr Socket Watch Service";
+            PartOf = [ "graphical-session.target" ];
+          };
+
+          Service = {
+            Environment = "PATH=/run/wrappers/bin:${lib.makeBinPath hypr_socket_watch_dependencies}";
+            ExecStart = "${getExe pkgs.khanelinix.hypr_socket_watch}";
+            Restart = "on-failure";
+          };
+        };
+
         wayland.windowManager.hyprland = {
           settings = {
             exec-once = [
@@ -22,7 +43,6 @@ in
               # import env
               "${getExe pkgs.khanelinix.import_env} system"
               "${getExe pkgs.khanelinix.import_env} tmux"
-              "${getExe pkgs.khanelinix.hypr_socket_watch}"
 
               # Startup background apps
               "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1 &"
