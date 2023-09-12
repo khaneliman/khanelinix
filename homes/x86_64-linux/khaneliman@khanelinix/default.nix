@@ -1,5 +1,6 @@
 { lib
 , config
+, pkgs
 , ...
 }:
 let
@@ -26,6 +27,23 @@ in
       addons = {
         swayidle = enabled;
         # waybar.debug = true;
+        hyprpaper = {
+          monitors = [
+            { name = "DP-3"; wallpaper = "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat_pacman.png"; }
+            { name = "DP-1"; wallpaper = "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat-sound.png"; }
+          ];
+
+          wallpapers = [
+            "${pkgs.khanelinix.wallpapers}/share/wallpapers/buttons.png"
+            "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat_pacman.png"
+            "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat-sound.png"
+            "${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png"
+            "${pkgs.khanelinix.wallpapers}/share/wallpapers/hashtags-black.png"
+            "${pkgs.khanelinix.wallpapers}/share/wallpapers/hashtags-new.png"
+            "${pkgs.khanelinix.wallpapers}/share/wallpapers/hearts.png"
+            "${pkgs.khanelinix.wallpapers}/share/wallpapers/tetris.png"
+          ];
+        };
       };
 
       hyprland = enabled;

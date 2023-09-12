@@ -1,17 +1,31 @@
 { config
 , lib
-, pkgs
 , ...
 }:
 let
-  inherit (lib) mkIf mkEnableOption;
+  inherit (lib) mkIf mkEnableOption types concatStringsSep mkOption;
+  inherit (lib.internal) mkOpt;
+
   cfg = config.khanelinix.desktop.addons.hyprpaper;
 in
 {
   options.khanelinix.desktop.addons.hyprpaper = {
     enable = mkEnableOption "Hyprpaper";
-    # TODO: configurable wallpapers package
-    # TODO: configurable monitors attrset with wallpaper
+    wallpapers = mkOpt (types.listOf types.path) [
+    ] "Wallpapers to preload.";
+    monitors = mkOption {
+      description = "Monitors and their wallpapers";
+      type = with types; listOf (submodule {
+        options = {
+          name = mkOption {
+            type = str;
+          };
+          wallpaper = mkOption {
+            type = path;
+          };
+        };
+      });
+    };
   };
 
   config =
@@ -23,17 +37,10 @@ in
             # ░█▄█░█▀█░█░░░█░░░█▀▀░█▀█░█▀▀░█▀▀░█▀▄░▀▀█
             # ░▀░▀░▀░▀░▀▀▀░▀▀▀░▀░░░▀░▀░▀░░░▀▀▀░▀░▀░▀▀▀
 
-            preload = ${pkgs.khanelinix.wallpapers}/share/wallpapers/buttons.png
-            preload = ${pkgs.khanelinix.wallpapers}/share/wallpapers/cat_pacman.png
-            preload = ${pkgs.khanelinix.wallpapers}/share/wallpapers/cat-sound.png
-            preload = ${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png
-            preload = ${pkgs.khanelinix.wallpapers}/share/wallpapers/hashtags-black.png
-            preload = ${pkgs.khanelinix.wallpapers}/share/wallpapers/hashtags-new.png
-            preload = ${pkgs.khanelinix.wallpapers}/share/wallpapers/hearts.png
-            preload = ${pkgs.khanelinix.wallpapers}/share/wallpapers/tetris.png
-
-            wallpaper = DP-3,${pkgs.khanelinix.wallpapers}/share/wallpapers/cat_pacman.png
-            wallpaper = DP-1,${pkgs.khanelinix.wallpapers}/share/wallpapers/cat-sound.png
+            ${concatStringsSep "\n" (map (wallpaper: "preload = ${wallpaper}") cfg.wallpapers)}
+            
+            ${concatStringsSep "\n" (map (monitor: "wallpaper = ${monitor.name},${monitor.wallpaper}") cfg.monitors)}
+            
           '';
         };
       };
