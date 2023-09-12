@@ -5,10 +5,17 @@
 writeShellApplication
 {
   name = "trace-symlink";
+
+  meta = {
+    mainProgram = "trace-symlink";
+  };
+
   checkPhase = "";
+
   runtimeInputs = [
     coreutils
   ];
+
   text = ''
     #!/usr/bin/env sh
 

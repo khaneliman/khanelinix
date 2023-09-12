@@ -5,10 +5,17 @@
 writeShellApplication
 {
   name = "list-iommu";
+
+  meta = {
+    mainProgram = "list-iommu";
+  };
+
   checkPhase = "";
+
   runtimeInputs = [
     pciutils
   ];
+
   text = ''
     shopt -s nullglob
 

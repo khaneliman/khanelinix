@@ -6,10 +6,17 @@
 writeShellApplication
 {
   name = "nix-get-protonup";
+
+  meta = {
+    mainProgram = "nix-get-protonup";
+  };
+
   checkPhase = "";
+
   runtimeInputs = [
     python311
   ];
+
   text = ''
     venv="${venvDir}"
 

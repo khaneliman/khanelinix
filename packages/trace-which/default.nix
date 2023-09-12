@@ -4,7 +4,13 @@
 writeShellApplication
 {
   name = "trace-which";
+
+  meta = {
+    mainProgram = "trace-which";
+  };
+
   checkPhase = "";
+
   text = ''
     #!/usr/bin/env sh
     
