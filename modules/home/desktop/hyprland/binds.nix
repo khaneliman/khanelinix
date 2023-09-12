@@ -151,9 +151,7 @@ in
                   in
                   [
                     "$CTRL_ALT, ${ws}, workspace, ${toString (x + 1)}"
-                    "$CTRL_ALT, ${ws}, exec, $w${toString (x + 1)}"
                     "$CTRL_ALT_SUPER, ${ws}, movetoworkspace, ${toString (x + 1)}"
-                    "$CTRL_ALT_SUPER, ${ws}, exec, $w${toString (x + 1)}"
                     "$SUPER_SHIFT, ${ws}, movetoworkspacesilent, ${toString (x + 1)}"
                   ]
                 )
