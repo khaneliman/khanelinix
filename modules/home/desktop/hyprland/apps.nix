@@ -7,7 +7,7 @@ let
   inherit (lib) mkIf getExe;
 
   cfg = config.khanelinix.desktop.hyprland;
- in
+in
 {
   config =
     mkIf cfg.enable
@@ -22,6 +22,7 @@ let
               # import env
               "${getExe pkgs.khanelinix.import_env} system"
               "${getExe pkgs.khanelinix.import_env} tmux"
+              "${getExe pkgs.khanelinix.hypr_socket_watch}"
 
               # Startup background apps
               "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1 &"
