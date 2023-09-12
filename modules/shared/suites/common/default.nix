@@ -22,22 +22,12 @@ in
       fd
       file
       findutils
-      khanelinix.list-iommu
       killall
       pciutils
-      snowfallorg.flake
-      socat
       tldr
       unzip
       wget
       xclip
-
-      # nix
-      alejandra
-      deadnix
-      hydra-check
-      nixfmt
-      statix
     ];
   };
 }

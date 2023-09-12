@@ -32,7 +32,6 @@ in
         mako = enabled;
         wofi = enabled;
         kanshi = enabled;
-        keyring = enabled;
         nautilus = enabled;
         xdg-portal = enabled;
       };
@@ -61,6 +60,11 @@ in
 
         ${cfg.extraConfig}
       '';
+
+      security = {
+        keyring = enabled;
+        polkit = enabled;
+      };
 
       suites = {
         wlroots = enabled;

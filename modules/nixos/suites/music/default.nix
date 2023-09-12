@@ -39,6 +39,10 @@ in
       apps = {
         yt-music = enabled;
       };
+
+      tools = {
+        spicetify-cli = enabled;
+      };
     };
   };
 }

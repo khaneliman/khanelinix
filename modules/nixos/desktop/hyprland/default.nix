@@ -49,7 +49,6 @@ in
             # eww = enabled;
             gtk = enabled;
             kanshi = enabled;
-            keyring = enabled;
             kitty = enabled;
             nautilus = enabled;
             qt = enabled;
@@ -72,6 +71,11 @@ in
             file =
               { }
               // cfg.customFiles;
+          };
+
+          security = {
+            keyring = enabled;
+            polkit = enabled;
           };
 
           suites = {

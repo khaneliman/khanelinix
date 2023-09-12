@@ -42,13 +42,10 @@ in
         git = enabled;
         glxinfo = enabled;
         nix-ld = enabled;
-        spicetify-cli = enabled;
       };
 
       hardware = {
-        audio = enabled;
         power = enabled;
-        storage = enabled;
       };
 
       services = {
@@ -60,17 +57,12 @@ in
       security = {
         doas = enabled;
         gpg = enabled;
-        keyring = enabled;
-        polkit = enabled;
       };
 
       system = {
-        boot = enabled;
         fonts = enabled;
         locale = enabled;
-        networking = enabled;
         time = enabled;
-        xkb = enabled;
       };
     };
   };
