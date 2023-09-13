@@ -124,11 +124,15 @@
     lib.mkFlake {
       package-namespace = "khanelinix";
 
-      channels-config.allowUnfree = true;
-      # TODO: cleanup when available
-      channels-config.permittedInsecurePackages = [
-        "openssl-1.1.1v"
-      ];
+      channels-config = {
+        # allowBroken = true;
+        allowUnfree = true;
+
+        # TODO: cleanup when available
+        permittedInsecurePackages = [
+          "openssl-1.1.1v"
+        ];
+      };
 
       overlays = [
         flake.overlay

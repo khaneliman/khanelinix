@@ -30,7 +30,6 @@ in
       ack
       act
       armadillo
-      bear
       binutils
       binwalk
       boost
