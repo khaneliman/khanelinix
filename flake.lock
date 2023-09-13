@@ -108,17 +108,16 @@
         "unstable": "unstable"
       },
       "locked": {
-        "lastModified": 1693541932,
+        "lastModified": 1694581364,
         "narHash": "sha256-wb9/nSJM9M9gfyqmi4vlOSvg9gUzfmqJBzT4nK3pfgs=",
-        "owner": "khaneliman",
-        "repo": "snowfall-flake",
-        "rev": "56629db0b139e8eb450462e2921ea21f85a432f1",
+        "owner": "snowfallorg",
+        "repo": "flake",
+        "rev": "40049e2b3e25f68d99d30b0f0f458100a02a2451",
         "type": "github"
       },
       "original": {
-        "owner": "khaneliman",
-        "ref": "darwin-privileged",
-        "repo": "snowfall-flake",
+        "owner": "snowfallorg",
+        "repo": "flake",
         "type": "github"
       }
     },

@@ -28,7 +28,7 @@
 
     # TODO: Change back to upstream after PR merged.
     # Snowfall Flake
-    flake.url = "github:khaneliman/snowfall-flake/darwin-privileged";
+    flake.url = "github:snowfallorg/flake/";
     flake.inputs.nixpkgs.follows = "nixpkgs";
 
     # GPG default configuration
