@@ -27,12 +27,6 @@ in
       };
     };
 
-    services = {
-      # barrier = enabled;
-    };
-
-    tools = { };
-
     suites = {
       common = enabled;
       development = enabled;

@@ -12,8 +12,6 @@ in
       inherit (config.snowfallorg.user) name;
     };
 
-    apps = { };
-
     cli-apps = {
       home-manager = enabled;
     };
