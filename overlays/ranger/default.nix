@@ -1,13 +1,13 @@
-{ ... }: (_self: super: {
+{ ... }: (_final: prev: {
   # Use ranger PR, fixes freeze after opening image in kitty: https://github.com/ranger/ranger/pull/2856
-  ranger = super.ranger.overrideAttrs (old: {
+  ranger = prev.ranger.overrideAttrs (old: {
     version = "136416c7e2ecc27315fe2354ecadfe09202df7dd";
-    src = super.fetchFromGitHub {
+    src = prev.fetchFromGitHub {
       owner = "ranger";
       repo = "ranger";
       rev = "136416c7e2ecc27315fe2354ecadfe09202df7dd";
       sha256 = "sha256-nW4KlatugmPRPXl+XvV0/mo+DE5o8FLRrsJuiKbFGyY=";
     };
-    propagatedBuildInputs = old.propagatedBuildInputs ++ (with super.python3Packages; [ astroid pylint ]);
+    propagatedBuildInputs = old.propagatedBuildInputs ++ (with prev.python3Packages; [ astroid pylint ]);
   });
 })
