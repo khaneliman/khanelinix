@@ -22,7 +22,7 @@ in
           enableCrypto = true;
           enableDragDrop = true;
 
-          server = cfg.server;
+          inherit (cfg) server;
         };
       };
     };

@@ -16,7 +16,7 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [ font-manager fontpreview ];
 
-    fonts.packages = [ ] ++ cfg.fonts;
+    fonts.packages = cfg.fonts;
 
     khanelinix.home.file = {
       ".local/share/fonts/SanFransisco/SF-Mono/" = {

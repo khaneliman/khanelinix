@@ -28,6 +28,6 @@ in
             ".local/share/wallpapers/catppuccin/${wallpaper.fileName}".source = wallpaper;
           })
         { }
-        (wallpapers.names);
+        wallpapers.names;
   };
 }

@@ -239,7 +239,7 @@ in
           let
             baseName = baseNameOf (toString name);
           in
-          (lib.hasSuffix ".theme" baseName);
+          lib.hasSuffix ".theme" baseName;
         src = lib.cleanSource ./themes/.;
       };
 

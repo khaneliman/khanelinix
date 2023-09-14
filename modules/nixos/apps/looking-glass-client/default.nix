@@ -8,7 +8,7 @@ let
   inherit (lib) types mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.looking-glass-client;
-  user = config.khanelinix.user;
+  inherit (config.khanelinix) user;
 in
 {
   options.khanelinix.apps.looking-glass-client = with types; {

@@ -29,7 +29,7 @@ in
   config = mkIf cfg.enable {
     services.snapper = {
       snapshotRootOnBoot = true;
-      configs = cfg.configs;
+      inherit (cfg) configs;
     };
   };
 }

@@ -71,8 +71,8 @@ in
       extraOptions = {
         home.pointerCursor = {
           package = cfg.cursor.pkg;
-          name = cfg.cursor.name;
-          size = cfg.cursor.size;
+          inherit (cfg.cursor) name;
+          inherit (cfg.cursor) size;
           gtk.enable = true;
           x11.enable = true;
         };
@@ -81,17 +81,17 @@ in
           enable = true;
 
           theme = {
-            name = cfg.theme.name;
+            inherit (cfg.theme) name;
             package = cfg.theme.pkg;
           };
 
           cursorTheme = {
-            name = cfg.cursor.name;
+            inherit (cfg.cursor) name;
             package = cfg.cursor.pkg;
           };
 
           iconTheme = {
-            name = cfg.icon.name;
+            inherit (cfg.icon) name;
             package = cfg.icon.pkg;
           };
 

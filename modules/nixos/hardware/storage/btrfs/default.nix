@@ -8,7 +8,7 @@ let
   inherit (lib) mkIf types genAttrs;
   inherit (lib.internal) mkBoolOpt mkOpt;
   cfg = config.khanelinix.hardware.storage.btrfs;
-  dedupeFilesystems = cfg.dedupeFilesystems;
+  inherit (cfg) dedupeFilesystems;
 
   dedupeFilesystemsAttrSets = genAttrs dedupeFilesystems
     (name: {

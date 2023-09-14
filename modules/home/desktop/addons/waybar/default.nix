@@ -153,7 +153,6 @@ in
             "custom/weather"
             "clock"
           ];
-          inherit "custom/weather" "custom/github" "custom/notification" "custom/wlogout" "hyprland/workspaces" "wireplumber";
         };
         secondaryBar = {
           "include" = [ ./default-modules.jsonc ] ++ lib.optional config.khanelinix.desktop.hyprland.enable ./hyprland/default-modules.jsonc;
@@ -175,7 +174,6 @@ in
             "custom/weather"
             "clock"
           ];
-          inherit "custom/weather" "custom/wlogout" "hyprland/workspaces";
         };
       };
 

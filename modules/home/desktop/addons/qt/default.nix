@@ -36,7 +36,7 @@ in
 
       platformTheme = "qtct";
       style = {
-        name = cfg.theme.name;
+        inherit (cfg.theme) name;
         package = cfg.theme.pkg.override {
           accent = "Blue";
           variant = "Macchiato";

@@ -19,7 +19,7 @@ in
   config = mkIf cfg.enable {
     programs.kitty = {
       enable = true;
-      theme = cfg.theme;
+      inherit (cfg) theme;
 
       settings =
         {

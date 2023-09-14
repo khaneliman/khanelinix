@@ -131,7 +131,7 @@ in
           profiles.${config.khanelinix.user.name} = {
             inherit (cfg) extraConfig userChrome settings;
             id = 0;
-            name = config.khanelinix.user.name;
+            inherit (config.khanelinix.user) name;
             extensions = with pkgs.nur.repos.rycee.firefox-addons; [
               angular-devtools
               bitwarden

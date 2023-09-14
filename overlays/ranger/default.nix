@@ -1,4 +1,4 @@
-{ ... }: (_final: prev: {
+_: (_final: prev: {
   # Use ranger PR, fixes freeze after opening image in kitty: https://github.com/ranger/ranger/pull/2856
   ranger = prev.ranger.overrideAttrs (old: {
     version = "136416c7e2ecc27315fe2354ecadfe09202df7dd";

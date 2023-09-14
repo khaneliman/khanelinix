@@ -18,7 +18,7 @@ in
         "Whether or not to enable the Firefox version of Discord.";
   };
 
-  config = mkIf (cfg.enable) {
+  config = mkIf cfg.enable {
     khanelinix.home.configFile = {
       "BetterDiscord/themes/catppuccin-macchiato.theme.css".source = ./catppuccin-macchiato.theme.css;
     };

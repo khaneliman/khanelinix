@@ -129,7 +129,7 @@ in
       displayManager.gdm = {
         enable = true;
         autoSuspend = cfg.suspend;
-        wayland = cfg.wayland;
+        inherit (cfg) wayland;
       };
       desktopManager.gnome.enable = true;
     };
