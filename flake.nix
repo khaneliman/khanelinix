@@ -26,9 +26,8 @@
     deploy-rs.url = "github:serokell/deploy-rs";
     deploy-rs.inputs.nixpkgs.follows = "nixpkgs";
 
-    # TODO: Change back to upstream after PR merged.
     # Snowfall Flake
-    flake.url = "github:snowfallorg/flake/";
+    flake.url = "github:snowfallorg/flake";
     flake.inputs.nixpkgs.follows = "nixpkgs";
 
     # GPG default configuration
@@ -73,8 +72,7 @@
     nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
 
     # Snowfall Lib
-    # TODO: replace with main branch after home-manager merged
-    snowfall-lib.url = "github:snowfallorg/lib/dev";
+    snowfall-lib.url = "github:snowfallorg/lib";
     snowfall-lib.inputs.nixpkgs.follows = "nixpkgs";
 
     # Run unpatched dynamically compiled binaries
