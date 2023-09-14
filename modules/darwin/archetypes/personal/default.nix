@@ -24,10 +24,6 @@ in
         social = enabled;
         video = enabled;
       };
-
-      tools = {
-        agenix = enabled;
-      };
     };
   };
 }
