@@ -3,7 +3,7 @@
 , ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf mkForce;
 
   cfg = config.khanelinix.nix;
 in
@@ -13,8 +13,18 @@ in
   config = mkIf cfg.enable {
     nix = {
       settings = {
+        # FIX: shouldn't disable, but getting sandbox max size errors on darwin
+        sandbox = mkForce false;
         extra-nix-path = "nixpkgs=flake:nixpkgs";
         build-users-group = "nixbld";
+        extra-sandbox-paths = [
+          "/System/Library/Frameworks"
+          "/System/Library/PrivateFrameworks"
+          "/usr/lib"
+          "/private/tmp"
+          "/private/var/tmp"
+          "/usr/bin/env"
+        ];
       };
 
       gc = {
