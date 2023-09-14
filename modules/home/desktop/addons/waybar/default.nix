@@ -9,7 +9,7 @@
 let
   inherit (lib) mkIf mkForce getExe getExe';
   inherit (lib.internal) mkBoolOpt;
-  inherit (inputs) nixpkgs-wayland;
+  inherit (inputs) nixpkgs-wayland hyprland;
 
   cfg = config.khanelinix.desktop.addons.waybar;
 
@@ -70,8 +70,8 @@ let
     "hyprland/workspaces" = {
       "all-outputs" = false;
       "active-only" = "false";
-      "on-scroll-up" = "${getExe' pkgs.hyprland "hyprctl"} dispatch workspace e+1";
-      "on-scroll-down" = "${getExe' pkgs.hyprland "hyprctl"} dispatch workspace e-1";
+      "on-scroll-up" = "${getExe' hyprland.packages.${system}.hyprland "hyprctl"} dispatch workspace e+1";
+      "on-scroll-down" = "${getExe' hyprland.packages.${system}.hyprland "hyprctl"} dispatch workspace e-1";
       "format" = "{icon}";
       "format-icons" = {
         "1" = "";

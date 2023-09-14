@@ -2,11 +2,14 @@
 , config
 , lib
 , pkgs
+, inputs
+, system
 , ...
 }:
 let
   inherit (lib) mkIf mkEnableOption;
   inherit (lib.internal) enabled;
+  inherit (inputs) hyprland;
 
   cfg = config.khanelinix.desktop.hyprland;
 in
@@ -55,7 +58,7 @@ in
           enable = true;
           xwayland.enable = true;
           systemdIntegration = true;
-          package = pkgs.hyprland;
+          package = hyprland.packages.${system}.hyprland;
 
           settings = {
             exec = [

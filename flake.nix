@@ -112,7 +112,7 @@
 
   outputs = inputs:
     let
-      inherit (inputs) snowfall-lib flake hyprland nur rustup-overlay nix-ld sops-nix deploy-rs;
+      inherit (inputs) snowfall-lib flake nur rustup-overlay nix-ld sops-nix deploy-rs;
 
       lib = snowfall-lib.mkLib {
         inherit inputs;
@@ -134,7 +134,6 @@
 
       overlays = [
         flake.overlays.default
-        hyprland.overlays.default
         # nixpkgs-wayland.overlay
         nur.overlay
         rustup-overlay.overlays.default

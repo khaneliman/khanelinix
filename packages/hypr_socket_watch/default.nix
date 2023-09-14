@@ -1,10 +1,13 @@
 { writeShellApplication
 , pkgs
 , lib
+, inputs
+, system
 , ...
 }:
 let
   inherit (lib) getExe getExe';
+  inherit (inputs) hyprland;
 in
 writeShellApplication
 {
@@ -27,7 +30,7 @@ writeShellApplication
           workspace=$(extract_after_double_arrow "$1")
           local wallpaper
           wallpaper=$(nth_file "${pkgs.khanelinix.wallpapers}/share/wallpapers" "$workspace")
-          "${getExe' pkgs.hyprland "hyprctl"}" hyprpaper wallpaper "DP-1,$wallpaper"
+          "${getExe' hyprland.packages.${system}.hyprland "hyprctl"}" hyprpaper wallpaper "DP-1,$wallpaper"
           ;;
       esac
     }

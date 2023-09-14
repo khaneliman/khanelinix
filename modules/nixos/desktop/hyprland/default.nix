@@ -3,12 +3,13 @@
 , lib
 , pkgs
 , inputs
+, system
 , ...
 }:
 let
   inherit (lib) types mkIf getExe';
   inherit (lib.internal) mkBoolOpt mkOpt enabled;
-  inherit (inputs) hyprland-contrib;
+  inherit (inputs) hyprland-contrib hyprland;
 
   cfg = config.khanelinix.desktop.hyprland;
   programs = lib.makeBinPath [ config.programs.hyprland.package ];
@@ -86,7 +87,7 @@ in
         programs.hyprland = {
           enable = true;
           xwayland.enable = true;
-          package = pkgs.hyprland;
+          package = hyprland.packages.${system}.hyprland;
         };
 
         environment.sessionVariables = {
