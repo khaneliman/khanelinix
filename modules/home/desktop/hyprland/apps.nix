@@ -11,7 +11,6 @@ let
   hypr_socket_watch_dependencies = with pkgs; [
     coreutils
     gnused
-    socat
   ];
 in
 {

@@ -28,11 +28,11 @@ in
       };
 
       cli-apps = {
-        lazygit = enabled;
         astronvim = {
           enable = true;
           default = true;
         };
+        lazygit = enabled;
         helix = enabled;
       };
 
