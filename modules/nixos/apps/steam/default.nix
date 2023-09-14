@@ -21,7 +21,6 @@ in
     hardware.steam-hardware.enable = true;
 
     environment.systemPackages = with pkgs; [
-      khanelinix.steam
       steamtinkerlaunch
     ];
 

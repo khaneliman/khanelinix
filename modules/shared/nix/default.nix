@@ -19,7 +19,6 @@ in
     environment.systemPackages = with pkgs; [
       cachix
       deploy-rs
-      khanelinix.nixos-revision
       nix-index
       nix-prefetch-git
     ];
