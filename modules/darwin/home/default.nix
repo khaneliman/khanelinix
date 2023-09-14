@@ -1,18 +1,13 @@
 { options
 , config
 , lib
-, inputs
 , ...
 }:
 let
   inherit (lib) types mkAliasDefinitions;
   inherit (lib.internal) mkOpt;
-  inherit (inputs) home-manager;
 in
 {
-  imports = [
-    home-manager.darwinModules.home-manager
-  ];
 
   options.khanelinix.home = with types; {
     file =
