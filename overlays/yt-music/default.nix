@@ -1,4 +1,4 @@
-{ ... }: final: prev: {
+_: final: prev: {
   khanelinix =
     (prev.khanelinix or { })
     // {

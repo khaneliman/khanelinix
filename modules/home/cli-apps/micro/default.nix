@@ -37,7 +37,7 @@ in
           let
             baseName = baseNameOf (toString name);
           in
-          (lib.hasSuffix ".micro" baseName);
+          lib.hasSuffix ".micro" baseName;
         src = lib.cleanSource ./.;
       };
 

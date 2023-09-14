@@ -32,7 +32,7 @@ in
     services = {
       mpd = {
         enable = true;
-        musicDirectory = cfg.musicDirectory;
+        inherit (cfg) musicDirectory;
       };
       mpd-mpris = {
         enable = true;

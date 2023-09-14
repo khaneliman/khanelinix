@@ -1,4 +1,4 @@
-{ ... }: (_final: prev: {
+_: (_final: prev: {
   dooit = prev.dooit.overrideAttrs (old: {
     pname = "dooit";
     version = "2.0.0";

@@ -9,7 +9,7 @@ let
   inherit (lib.internal) mkBoolOpt mkOpt enabled fileWithText optionalString;
 
   cfg = config.khanelinix.desktop.sway;
-  term = config.khanelinix.desktop.addons.term;
+  inherit (config.khanelinix.desktop.addons) term;
   substitutedConfig = pkgs.substituteAll {
     src = ./config;
     term = term.pkg.pname or term.pkg.name;

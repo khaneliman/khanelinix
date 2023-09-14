@@ -5,7 +5,7 @@
 }:
 let
   inherit (lib) mkIf types;
-  inherit (lib.internal) mkBoolOpt mkOpt;
+  inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.security.sops;
 in
 {

@@ -30,12 +30,12 @@ in
                 enable = true;
 
                 cursorTheme = {
-                  name = config.khanelinix.desktop.addons.gtk.cursor.name;
+                  inherit (config.khanelinix.desktop.addons.gtk.cursor) name;
                   package = config.khanelinix.desktop.addons.gtk.cursor.pkg;
                 };
 
                 iconTheme = {
-                  name = config.khanelinix.desktop.addons.gtk.icon.name;
+                  inherit (config.khanelinix.desktop.addons.gtk.icon) name;
                   package = config.khanelinix.desktop.addons.gtk.icon.pkg;
                 };
 

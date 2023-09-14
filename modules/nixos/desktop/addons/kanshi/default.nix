@@ -8,8 +8,8 @@ let
   inherit (lib) types mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.kanshi;
-  user = config.khanelinix.user;
-  home = config.users.users.${user.name}.home;
+  inherit (config.khanelinix) user;
+  inherit (config.users.users.${user.name}) home;
 in
 {
   options.khanelinix.desktop.addons.kanshi = with types; {

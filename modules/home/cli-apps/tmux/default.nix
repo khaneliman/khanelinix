@@ -11,8 +11,7 @@ let
   configFiles = lib.snowfall.fs.get-files ./config;
 
   plugins =
-    [ ]
-    ++ (with pkgs.tmuxPlugins; [
+    with pkgs.tmuxPlugins; [
       {
         plugin = catppuccin;
         extraConfig = ''
@@ -39,7 +38,7 @@ let
       }
       # tmux-fzf
       # vim-tmux-navigator
-    ]);
+    ];
 in
 {
   options.khanelinix.cli-apps.tmux = with types; {
