@@ -39,7 +39,9 @@ in
 
   swapDevices = [ ];
 
-  hardware.bluetooth.enable = true;
-  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  hardware.enableRedistributableFirmware = true;
+  hardware = {
+    bluetooth.enable = true;
+    cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+    enableRedistributableFirmware = true;
+  };
 }

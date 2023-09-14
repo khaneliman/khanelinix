@@ -38,9 +38,6 @@ let
   '';
 in
 {
-  services.pcscd.enable = true;
-  services.udev.packages = with pkgs; [ yubikey-personalization ];
-
   environment.systemPackages = with pkgs; [
     cryptsetup
     gnupg
@@ -82,13 +79,17 @@ in
       git = enabled;
     };
 
-    home.file."guide.md".source = guide;
-    home.file."guide.html".source = guideHTML;
-    home.file."gpg.conf".source = gpgConf;
-    home.file."gpg-agent.conf".text = gpgAgentConf;
+    home = {
+      file = {
+        "guide.md".source = guide;
+        "guide.html".source = guideHTML;
+        "gpg.conf".source = gpgConf;
+        "gpg-agent.conf".text = gpgAgentConf;
 
-    home.file.".gnupg/gpg.conf".source = gpgConf;
-    home.file.".gnupg/gpg-agent.conf".text = gpgAgentConf;
+        ".gnupg/gpg.conf".source = gpgConf;
+        ".gnupg/gpg-agent.conf".text = gpgAgentConf;
+      };
+    };
 
     security = { doas = enabled; };
 
@@ -102,6 +103,11 @@ in
         enable = mkForce false;
       };
     };
+  };
+
+  services = {
+    pcscd.enable = true;
+    udev.packages = with pkgs; [ yubikey-personalization ];
   };
 
   # This value determines the NixOS release from which the default

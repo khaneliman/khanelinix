@@ -15,17 +15,19 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.micro = {
-      enable = true;
+    programs = {
+      micro = {
+        enable = true;
 
-      settings = {
-        colorscheme = "catppuccin-macchiato";
+        settings = {
+          colorscheme = "catppuccin-macchiato";
+        };
       };
-    };
 
-    programs.zsh.shellAliases.vimdiff = mkIf cfg.default "micro -d";
-    programs.bash.shellAliases.vimdiff = mkIf cfg.default "micro -d";
-    programs.fish.shellAliases.vimdiff = mkIf cfg.default "micro -d";
+      bash.shellAliases.vimdiff = mkIf cfg.default "micro -d";
+      fish.shellAliases.vimdiff = mkIf cfg.default "micro -d";
+      zsh.shellAliases.vimdiff = mkIf cfg.default "micro -d";
+    };
 
     home.sessionVariables = {
       EDITOR = mkIf cfg.default "micro";

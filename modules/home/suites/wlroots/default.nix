@@ -16,18 +16,19 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix.cli-apps = { };
 
-    khanelinix.desktop.addons = {
-      # swappy = enabled;
-      swaylock = enabled;
-      # swaynotificationcenter = enabled;
-      waybar = enabled;
-      # wlogout = enabled;
-    };
+    khanelinix = {
+      desktop.addons = {
+        # swappy = enabled;
+        swaylock = enabled;
+        # swaynotificationcenter = enabled;
+        waybar = enabled;
+        # wlogout = enabled;
+      };
 
-    khanelinix.security = {
-      keyring = enabled;
+      security = {
+        keyring = enabled;
+      };
     };
 
     # using nixos module
