@@ -12,6 +12,7 @@ let
   inherit (inputs) nixpkgs-wayland;
 
   cfg = config.khanelinix.desktop.addons.waybar;
+
   githubHelper = pkgs.writeShellScriptBin "githubHelper" ''
     #!/usr/bin/env bash
 
@@ -21,94 +22,96 @@ let
     echo '{"text":'"$COUNT"',"tooltip":"'"$COUNT"' Notifications","class":""}'
   '';
 
-  "custom/weather" = {
-    "exec" = "${getExe pkgs.wttrbar} -l $(${getExe pkgs.jq} -r '.weathergov | (.location)' ~/weather_config.json) --fahrenheit --main-indicator temp_F";
-    "return-type" = "json";
-    "format" = "{}";
-    "tooltip" = true;
-    "interval" = 3600;
-  };
-
-  "custom/github" = {
-    "format" = " {}";
-    "return-type" = "json";
-    "interval" = 60;
-    "exec" = "${githubHelper}/bin/githubHelper";
-    "on-click" = "${pkgs.coreutils}/bin/sleep 0.1 && ${pkgs.xdg-utils}/bin/xdg-open https://github.com/notifications";
-  };
-
-  "custom/notification" = {
-    "tooltip" = true;
-    "format" = "{icon} {}";
-    "format-icons" = {
-      "notification" = "<span foreground='red'><sup></sup></span>";
-      "none" = "";
-      "dnd-notification" = "<span foreground='red'><sup></sup></span>";
-      "dnd-none" = "";
-      "inhibited-notification" = "<span foreground='red'><sup></sup></span>";
-      "inhibited-none" = "";
-      "dnd-inhibited-notification" = "<span foreground='red'><sup></sup></span>";
-      "dnd-inhibited-none" = "";
+  sharedModuleDefinitions = {
+    "custom/weather" = {
+      "exec" = "${getExe pkgs.wttrbar} -l $(${getExe pkgs.jq} -r '.weathergov | (.location)' ~/weather_config.json) --fahrenheit --main-indicator temp_F";
+      "return-type" = "json";
+      "format" = "{}";
+      "tooltip" = true;
+      "interval" = 3600;
     };
-    "return-type" = "json";
-    "exec-if" = "which ${pkgs.swaynotificationcenter}/bin/swaync-client";
-    "exec" = "${pkgs.swaynotificationcenter}/bin/swaync-client -swb";
-    "on-click" = "${pkgs.coreutils}/bin/sleep 0.1 && ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
-    "on-click-right" = "${pkgs.coreutils}/bin/sleep 0.1 && ${pkgs.swaynotificationcenter}/bin/swaync-client -d -sw";
-    "escape" = true;
-  };
 
-  "custom/wlogout" = {
-    "format" = "";
-    "interval" = "once";
-    "tooltip" = false;
-    "on-click" = "${pkgs.coreutils}/bin/sleep 0.1 && ${getExe pkgs.wlogout} -c 5 -r 5 -p layer-shell";
-  };
-
-  "hyprland/workspaces" = {
-    "all-outputs" = false;
-    "active-only" = "false";
-    "on-scroll-up" = "${pkgs.hyprland}/bin/hyprctl dispatch workspace e+1";
-    "on-scroll-down" = "${pkgs.hyprland}/bin/hyprctl dispatch workspace e-1";
-    "format" = "{icon}";
-    "format-icons" = {
-      "1" = "";
-      "2" = "";
-      "3" = "";
-      "4" = "";
-      "5" = "";
-      "6" = "";
-      "7" = "";
-      "8" = "󰢹";
-      "urgent" = "";
-      "default" = "";
-      "empty" = "";
+    "custom/github" = {
+      "format" = " {}";
+      "return-type" = "json";
+      "interval" = 60;
+      "exec" = "${githubHelper}/bin/githubHelper";
+      "on-click" = "${pkgs.coreutils}/bin/sleep 0.1 && ${pkgs.xdg-utils}/bin/xdg-open https://github.com/notifications";
     };
-    "persistent-workspaces" = {
-      "*" = [
-        2
-        3
-        4
-        5
-        6
-        7
-        8
+
+    "custom/notification" = {
+      "tooltip" = true;
+      "format" = "{icon} {}";
+      "format-icons" = {
+        "notification" = "<span foreground='red'><sup></sup></span>";
+        "none" = "";
+        "dnd-notification" = "<span foreground='red'><sup></sup></span>";
+        "dnd-none" = "";
+        "inhibited-notification" = "<span foreground='red'><sup></sup></span>";
+        "inhibited-none" = "";
+        "dnd-inhibited-notification" = "<span foreground='red'><sup></sup></span>";
+        "dnd-inhibited-none" = "";
+      };
+      "return-type" = "json";
+      "exec-if" = "which ${pkgs.swaynotificationcenter}/bin/swaync-client";
+      "exec" = "${pkgs.swaynotificationcenter}/bin/swaync-client -swb";
+      "on-click" = "${pkgs.coreutils}/bin/sleep 0.1 && ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
+      "on-click-right" = "${pkgs.coreutils}/bin/sleep 0.1 && ${pkgs.swaynotificationcenter}/bin/swaync-client -d -sw";
+      "escape" = true;
+    };
+
+    "custom/wlogout" = {
+      "format" = "";
+      "interval" = "once";
+      "tooltip" = false;
+      "on-click" = "${pkgs.coreutils}/bin/sleep 0.1 && ${getExe pkgs.wlogout} -c 5 -r 5 -p layer-shell";
+    };
+
+    "hyprland/workspaces" = {
+      "all-outputs" = false;
+      "active-only" = "false";
+      "on-scroll-up" = "${pkgs.hyprland}/bin/hyprctl dispatch workspace e+1";
+      "on-scroll-down" = "${pkgs.hyprland}/bin/hyprctl dispatch workspace e-1";
+      "format" = "{icon}";
+      "format-icons" = {
+        "1" = "";
+        "2" = "";
+        "3" = "";
+        "4" = "";
+        "5" = "";
+        "6" = "";
+        "7" = "";
+        "8" = "󰢹";
+        "urgent" = "";
+        "default" = "";
+        "empty" = "";
+      };
+      "persistent-workspaces" = {
+        "*" = [
+          2
+          3
+          4
+          5
+          6
+          7
+          8
+        ];
+        "DP-3" = [
+          1
+        ];
+      };
+    };
+
+    "wireplumber" = {
+      "format" = "{volume}% {icon}";
+      "format-muted" = "";
+      "on-click" = "${pkgs.coreutils}/bin/sleep 0.1 && ${getExe pkgs.helvum}";
+      "format-icons" = [
+        ""
+        ""
+        ""
       ];
-      "DP-3" = [
-        1
-      ];
     };
-  };
-
-  "wireplumber" = {
-    "format" = "{volume}% {icon}";
-    "format-muted" = "";
-    "on-click" = "${pkgs.coreutils}/bin/sleep 0.1 && ${getExe pkgs.helvum}";
-    "format-icons" = [
-      ""
-      ""
-      ""
-    ];
   };
 in
 {
@@ -153,8 +156,7 @@ in
             "custom/weather"
             "clock"
           ];
-          inherit "custom/weather" "custom/github" "custom/notification" "custom/wlogout" "hyprland/workspaces" "wireplumber";
-        };
+        } // sharedModuleDefinitions;
         secondaryBar = {
           "include" = [ ./default-modules.jsonc ] ++ lib.optional config.khanelinix.desktop.hyprland.enable ./hyprland/default-modules.jsonc;
           "layer" = "top";
@@ -175,8 +177,7 @@ in
             "custom/weather"
             "clock"
           ];
-          inherit "custom/weather" "custom/wlogout" "hyprland/workspaces";
-        };
+        } // sharedModuleDefinitions;
       };
 
       style = ./style.css;
