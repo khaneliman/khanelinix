@@ -4,12 +4,12 @@
 , ...
 }:
 let
-  inherit (lib) mkIf types;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.security.sops;
 in
 {
-  options.khanelinix.security.sops = with types; {
+  options.khanelinix.security.sops = {
     enable = mkBoolOpt false "Whether to enable sops.";
   };
 

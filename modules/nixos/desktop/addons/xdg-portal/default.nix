@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.xdg-portal;
 in
 {
-  options.khanelinix.desktop.addons.xdg-portal = with types; {
+  options.khanelinix.desktop.addons.xdg-portal = {
     enable = mkBoolOpt false "Whether or not to add support for xdg portal.";
   };
 

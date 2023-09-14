@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.cli-apps.yubikey;
 in
 {
-  options.khanelinix.cli-apps.yubikey = with types; {
+  options.khanelinix.cli-apps.yubikey = {
     enable = mkBoolOpt false "Whether or not to enable Yubikey.";
   };
 

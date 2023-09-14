@@ -4,12 +4,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.system.xkb;
 in
 {
-  options.khanelinix.system.xkb = with types; {
+  options.khanelinix.system.xkb = {
     enable = mkBoolOpt false "Whether or not to configure xkb.";
   };
 

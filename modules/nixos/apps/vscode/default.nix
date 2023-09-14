@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.vscode;
 in
 {
-  options.khanelinix.apps.vscode = with types; {
+  options.khanelinix.apps.vscode = {
     enable = mkBoolOpt false "Whether or not to enable vscode.";
   };
 

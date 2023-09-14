@@ -4,12 +4,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.services.spice-vdagentd;
 in
 {
-  options.khanelinix.services.spice-vdagentd = with types; {
+  options.khanelinix.services.spice-vdagentd = {
     enable = mkBoolOpt false "Whether or not to configure spice-vdagent support.";
   };
 

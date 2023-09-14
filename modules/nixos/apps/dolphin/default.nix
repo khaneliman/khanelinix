@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.dolphin;
 in
 {
-  options.khanelinix.apps.dolphin = with types; {
+  options.khanelinix.apps.dolphin = {
     enable = mkBoolOpt false "Whether or not to enable Dolphin.";
   };
 

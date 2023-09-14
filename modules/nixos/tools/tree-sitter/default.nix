@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.tree-sitter;
 in
 {
-  options.khanelinix.tools.tree-sitter = with types; {
+  options.khanelinix.tools.tree-sitter = {
     enable = mkBoolOpt false "Whether or not to enable tree-sitter.";
   };
 

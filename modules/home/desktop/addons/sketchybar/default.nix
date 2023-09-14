@@ -4,12 +4,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.sketchybar;
 in
 {
-  options.khanelinix.desktop.addons.sketchybar = with types; {
+  options.khanelinix.desktop.addons.sketchybar = {
     enable =
       mkBoolOpt false "Whether to enable sketchybar in the desktop environment.";
   };

@@ -4,12 +4,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.cli-apps.micro;
 in
 {
-  options.khanelinix.cli-apps.micro = with types; {
+  options.khanelinix.cli-apps.micro = {
     enable = mkBoolOpt false "Whether or not to enable micro.";
     default = mkBoolOpt false "Whether to set micro as the session EDITOR";
   };

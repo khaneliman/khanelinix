@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.swaynotificationcenter;
 in
 {
-  options.khanelinix.desktop.addons.swaynotificationcenter = with types; {
+  options.khanelinix.desktop.addons.swaynotificationcenter = {
     enable =
       mkBoolOpt false "Whether to enable swaynotificationcenter in the desktop environment.";
   };

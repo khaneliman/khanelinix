@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.retroarch;
 in
 {
-  options.khanelinix.apps.retroarch = with types; {
+  options.khanelinix.apps.retroarch = {
     enable = mkBoolOpt false "Whether or not to enable retroarch.";
   };
 

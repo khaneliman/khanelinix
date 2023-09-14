@@ -4,12 +4,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.thunar;
 in
 {
-  options.khanelinix.desktop.addons.thunar = with types; {
+  options.khanelinix.desktop.addons.thunar = {
     enable = mkBoolOpt false "Whether to enable the xfce file manager.";
   };
 

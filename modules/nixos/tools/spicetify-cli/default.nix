@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.spicetify-cli;
 in
 {
-  options.khanelinix.tools.spicetify-cli = with types; {
+  options.khanelinix.tools.spicetify-cli = {
     enable = mkBoolOpt false "Whether or not to enable spicetify-cli.";
   };
 

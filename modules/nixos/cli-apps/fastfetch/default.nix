@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.cli-apps.fastfetch;
 in
 {
-  options.khanelinix.cli-apps.fastfetch = with types; {
+  options.khanelinix.cli-apps.fastfetch = {
     enable = mkBoolOpt false "Whether or not to enable fastfetch.";
   };
 

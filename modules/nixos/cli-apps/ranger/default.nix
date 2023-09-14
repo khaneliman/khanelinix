@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.cli-apps.ranger;
 in
 {
-  options.khanelinix.cli-apps.ranger = with types; {
+  options.khanelinix.cli-apps.ranger = {
     enable = mkBoolOpt false "Whether or not to enable ranger.";
   };
 

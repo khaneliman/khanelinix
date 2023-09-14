@@ -5,13 +5,13 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.looking-glass-client;
   inherit (config.khanelinix) user;
 in
 {
-  options.khanelinix.apps.looking-glass-client = with types; {
+  options.khanelinix.apps.looking-glass-client = {
     enable =
       mkBoolOpt false "Whether or not to enable the Looking Glass client.";
   };

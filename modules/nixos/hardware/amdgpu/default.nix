@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.hardware.amdgpu;
 in
 {
-  options.khanelinix.hardware.amdgpu = with types; {
+  options.khanelinix.hardware.amdgpu = {
     enable =
       mkBoolOpt false
         "Whether or not to enable support for amdgpu.";

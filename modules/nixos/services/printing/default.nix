@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.services.printing;
 in
 {
-  options.khanelinix.services.printing = with types; {
+  options.khanelinix.services.printing = {
     enable = mkBoolOpt false "Whether or not to configure printing support.";
   };
 

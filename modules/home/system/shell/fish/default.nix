@@ -6,12 +6,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.system.shell.fish;
 in
 {
-  options.khanelinix.system.shell.fish = with types; {
+  options.khanelinix.system.shell.fish = {
     enable = mkBoolOpt false "Whether to enable fish.";
   };
 

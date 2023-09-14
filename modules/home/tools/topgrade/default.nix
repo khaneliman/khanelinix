@@ -4,12 +4,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.topgrade;
 in
 {
-  options.khanelinix.tools.topgrade = with types; {
+  options.khanelinix.tools.topgrade = {
     enable = mkBoolOpt false "Whether or not to enable topgrade.";
   };
 

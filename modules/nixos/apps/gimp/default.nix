@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.gimp;
 in
 {
-  options.khanelinix.apps.gimp = with types; {
+  options.khanelinix.apps.gimp = {
     enable = mkBoolOpt false "Whether or not to enable Gimp.";
   };
 

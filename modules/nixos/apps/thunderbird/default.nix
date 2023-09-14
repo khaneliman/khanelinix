@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.thunderbird;
 in
 {
-  options.khanelinix.apps.thunderbird = with types; {
+  options.khanelinix.apps.thunderbird = {
     enable = mkBoolOpt false "Whether or not to enable thunderbird.";
   };
 

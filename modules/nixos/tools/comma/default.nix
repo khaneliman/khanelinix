@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.comma;
 in
 {
-  options.khanelinix.tools.comma = with types; {
+  options.khanelinix.tools.comma = {
     enable = mkBoolOpt false "Whether or not to enable comma.";
   };
 

@@ -33,7 +33,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs;
+    environment.systemPackages =
       [ cfg.pkg ]
       ++ (lib.optional cfg.prettier.enable cfg.prettier.pkg)
       ++ (lib.optional cfg.yarn.enable cfg.yarn.pkg)

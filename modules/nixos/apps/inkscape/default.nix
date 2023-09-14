@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.inkscape;
 in
 {
-  options.khanelinix.apps.inkscape = with types; {
+  options.khanelinix.apps.inkscape = {
     enable = mkBoolOpt false "Whether or not to enable Inkscape.";
   };
 

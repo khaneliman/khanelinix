@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.wofi;
 in
 {
-  options.khanelinix.desktop.addons.wofi = with types; {
+  options.khanelinix.desktop.addons.wofi = {
     enable =
       mkBoolOpt false "Whether to enable the Wofi in the desktop environment.";
   };

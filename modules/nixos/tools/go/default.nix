@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.go;
 in
 {
-  options.khanelinix.tools.go = with types; {
+  options.khanelinix.tools.go = {
     enable = mkBoolOpt false "Whether or not to enable Go support.";
   };
 

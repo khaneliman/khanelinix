@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.partitionmanager;
 in
 {
-  options.khanelinix.apps.partitionmanager = with types; {
+  options.khanelinix.apps.partitionmanager = {
     enable = mkBoolOpt false "Whether or not to enable partitionmanager.";
   };
 
