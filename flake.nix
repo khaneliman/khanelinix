@@ -142,18 +142,22 @@
         rustup-overlay.overlays.default
       ];
 
-      systems.modules.nixos = [
-        nix-ld.nixosModules.nix-ld
-        sops-nix.nixosModules.sops
-      ];
+      systems = {
+        modules = {
+          darwin = [
+          ];
 
-      systems.modules.home = [
-        home-manager.homeModules.home-manager
-        sops-nix.homeManagerModules.sops
-      ];
+          home = [
+            home-manager.homeModules.home-manager
+            sops-nix.homeManagerModules.sops
+          ];
 
-      systems.modules.darwin = [
-      ];
+          nixos = [
+            nix-ld.nixosModules.nix-ld
+            sops-nix.nixosModules.sops
+          ];
+        };
+      };
 
       deploy = lib.mkDeploy { inherit (inputs) self; };
 

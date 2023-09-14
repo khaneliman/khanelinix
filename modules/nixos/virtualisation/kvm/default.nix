@@ -90,10 +90,14 @@ in
                 "sound.target"
               ]
               ++ cfg.machineUnits;
-            Service.ExecStart = "${pkgs.scream}/bin/scream -n scream -o pulse -m /dev/shm/scream";
-            Service.Restart = "always";
-            Service.StartLimitIntervalSec = "5";
-            Service.StartLimitBurst = "1";
+
+            Service = {
+              ExecStart = "${pkgs.scream}/bin/scream -n scream -o pulse -m /dev/shm/scream";
+              Restart = "always";
+              StartLimitIntervalSec = "5";
+              StartLimitBurst = "1";
+            };
+
             Install.RequiredBy = cfg.machineUnits;
           };
         };
