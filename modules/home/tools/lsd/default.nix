@@ -4,12 +4,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.lsd;
 in
 {
-  options.khanelinix.tools.lsd = with types; {
+  options.khanelinix.tools.lsd = {
     enable = mkBoolOpt false "Whether or not to enable lsd.";
   };
 

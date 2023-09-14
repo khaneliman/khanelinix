@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.git;
 in
 {
-  options.khanelinix.tools.git = with types; {
+  options.khanelinix.tools.git = {
     enable = mkBoolOpt false "Whether or not to install and configure git.";
   };
 

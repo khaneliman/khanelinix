@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.python;
 in
 {
-  options.khanelinix.tools.python = with types; {
+  options.khanelinix.tools.python = {
     enable = mkBoolOpt false "Whether or not to enable Python.";
   };
 
