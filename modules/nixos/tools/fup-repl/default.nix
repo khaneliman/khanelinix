@@ -4,11 +4,11 @@
 , ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf getExe';
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.fup-repl;
   fup-repl = pkgs.writeShellScriptBin "fup-repl" ''
-    ${pkgs.fup-repl}/bin/repl ''${@}
+    ${getExe' pkgs.fup-repl "repl"} ''${@}
   '';
 in
 {

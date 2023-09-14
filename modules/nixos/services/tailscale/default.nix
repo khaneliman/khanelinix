@@ -59,13 +59,13 @@ in
         sleep 2
 
         # Check if we are already authenticated to tailscale
-        status="$(${tailscale}/bin/tailscale status -json | ${jq}/bin/jq -r .BackendState)"
+        status="$(${getExe tailscale} status -json | ${getExe jq} -r .BackendState)"
         if [ $status = "Running" ]; then # if so, then do nothing
           exit 0
         fi
 
         # Otherwise authenticate with tailscale
-        ${tailscale}/bin/tailscale up -authkey "${cfg.autoconnect.key}"
+        ${getExe tailscale} up -authkey "${cfg.autoconnect.key}"
       '';
     };
   };

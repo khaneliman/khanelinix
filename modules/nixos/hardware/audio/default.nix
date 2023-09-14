@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf mkForce;
+  inherit (lib) types mkIf mkForce getExe';
   inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.hardware.audio;
@@ -53,7 +53,7 @@ in
       systemd.user.services.mpris-proxy = {
         Unit.Description = "Mpris proxy";
         Unit.After = [ "network.target" "sound.target" ];
-        Service.ExecStart = "${pkgs.bluez}/bin/mpris-proxy";
+        Service.ExecStart = "${getExe' pkgs.bluez "mpris-proxy"}";
         Install.WantedBy = [ "default.target" ];
       };
     };

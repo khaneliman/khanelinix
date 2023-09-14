@@ -3,7 +3,7 @@
 , ...
 }:
 let
-  inherit (lib) mkForce;
+  inherit (lib) mkForce getExe;
   inherit (lib.internal) enabled;
 
   gpgConf = pkgs.fetchurl {
@@ -11,7 +11,7 @@ let
     sha256 = "0va62sgnah8rjgp4m6zygs4z9gbpmqvq9m3x4byywk1dha6nvvaj";
   };
   gpgAgentConf = ''
-    pinentry-program /run/current-system/sw/bin/pinentry-curses
+    pinentry-program ${getExe pkgs.pinentry-curses}
   '';
   guide = pkgs.fetchurl {
     url = "https://raw.githubusercontent.com/drduh/YubiKey-Guide/master/README.md";
@@ -24,7 +24,7 @@ let
     sha256 = "1h48yqffpaz437f3c9hfryf23r95rr319lrb3y79kxpxbc9hihxb";
   };
   guideHTML = pkgs.runCommand "yubikey-guide" { } ''
-    ${pkgs.pandoc}/bin/pandoc \
+    ${getExe pkgs.pandoc} \
       --standalone \
       --metadata title="Yubikey Guide" \
       --from markdown \

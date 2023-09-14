@@ -4,7 +4,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf length optionalString concatStringsSep;
+  inherit (lib) types mkIf length optionalString concatStringsSep getExe;
   inherit (lib.internal) mkBoolOpt mkOpt enabled;
   inherit (config.khanelinix) user;
 
@@ -92,7 +92,7 @@ in
               ++ cfg.machineUnits;
 
             Service = {
-              ExecStart = "${pkgs.scream}/bin/scream -n scream -o pulse -m /dev/shm/scream";
+              ExecStart = "${getExe pkgs.scream} -n scream -o pulse -m /dev/shm/scream";
               Restart = "always";
               StartLimitIntervalSec = "5";
               StartLimitBurst = "1";

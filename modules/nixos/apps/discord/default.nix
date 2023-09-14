@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf getExe;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.discord;
 in
@@ -32,7 +32,7 @@ in
       postInstall = ''
         echo "Running betterdiscord install"
         source ${config.system.build.setEnvironment}
-        ${pkgs.betterdiscordctl}/bin/betterdiscordctl install || true
+        ${getExe pkgs.betterdiscordctl} install || true
       '';
     };
   };

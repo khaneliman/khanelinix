@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkEnableOption mkIf;
+  inherit (lib) types mkEnableOption mkIf getExe getExe';
   inherit (lib.internal) mkOpt;
   inherit (inputs) gpg-base-conf yubikey-guide;
 
@@ -29,7 +29,7 @@ let
   };
 
   guideHTML = pkgs.runCommand "yubikey-guide" { } ''
-    ${pkgs.pandoc}/bin/pandoc \
+    ${getExe pkgs.pandoc} \
       --standalone \
       --metadata title="Yubikey Guide" \
       --from markdown \
@@ -55,9 +55,9 @@ in
 
     environment.shellInit = ''
       export GPG_TTY="$(tty)"
-      export SSH_AUTH_SOCK=$(${pkgs.gnupg}/bin/gpgconf --list-dirs agent-ssh-socket)
+      export SSH_AUTH_SOCK=$(${getExe' pkgs.gnupg "gpgconf"} --list-dirs agent-ssh-socket)
 
-      ${pkgs.coreutils}/bin/timeout ${builtins.toString cfg.agentTimeout} ${pkgs.gnupg}/bin/gpgconf --launch gpg-agent
+      ${getExe' pkgs.coreutils "timeout"} ${builtins.toString cfg.agentTimeout} ${getExe' pkgs.gnupg "gpgconf"} --launch gpg-agent
       gpg_agent_timeout_status=$?
 
       if [ "$gpg_agent_timeout_status" = 124 ]; then

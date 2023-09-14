@@ -1,4 +1,7 @@
-{ pkgs, ... }:
+{ lib
+, pkgs
+, ...
+}:
 pkgs.writeShellScriptBin "nix-update-index" ''
   set -euo pipefail
 
@@ -9,7 +12,7 @@ pkgs.writeShellScriptBin "nix-update-index" ''
 
   pushd ~/.cache/nix-index > /dev/null
 
-  ${pkgs.wget}/bin/wget -q -N https://github.com/Mic92/nix-index-database/releases/latest/download/$filename
+  ${lib.getExe pkgs.wget} -q -N https://github.com/Mic92/nix-index-database/releases/latest/download/$filename
 
   ln -f ''${filename} files
 

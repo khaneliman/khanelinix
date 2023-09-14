@@ -4,7 +4,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf mkDefault mkMerge getExe;
+  inherit (lib) types mkIf mkDefault mkMerge getExe getExe';
   inherit (lib.internal) mkOpt;
 
   cfg = config.khanelinix.user;
@@ -63,22 +63,22 @@ in
           "......" = "cd ../../../../..";
 
           # Colorize output
-          dir = "${pkgs.coreutils}/bin/dir --color=auto";
-          egrep = "${pkgs.gnugrep}/bin/egrep --color=auto";
-          fgrep = "${pkgs.gnugrep}/bin/fgrep --color=auto";
+          dir = "${getExe' pkgs.coreutils "dir"} --color=auto";
+          egrep = "${getExe' pkgs.gnugrep "egrep"} --color=auto";
+          fgrep = "${getExe' pkgs.gnugrep "fgrep"} --color=auto";
           grep = "${getExe pkgs.gnugrep} --color=auto";
-          vdir = "${pkgs.coreutils}/bin/vdir --color=auto";
+          vdir = "${getExe' pkgs.coreutils "vdir"} --color=auto";
 
           # Misc
           clear = "clear && ${getExe pkgs.fastfetch}";
           clr = "clear";
           pls = "sudo";
-          usage = "${pkgs.coreutils}/bin/du -ah -d1 | sort -rn 2>/dev/null";
+          usage = "${getExe' pkgs.coreutils "du"} -ah -d1 | sort -rn 2>/dev/null";
 
           # Cryptography
-          genpass = "${pkgs.openssl}/bin/openssl rand - base64 20"; # Generate a random, 20-charactered password
+          genpass = "${getExe pkgs.openssl} rand - base64 20"; # Generate a random, 20-charactered password
           sha = "shasum -a 256"; # Test checksum
-          sshperm = ''${pkgs.findutils}/bin/find .ssh/ -type f -exec chmod 600 {} \;; ${pkgs.findutils}/bin/find .ssh/ -type d -exec chmod 700 {} \;; ${pkgs.findutils}/bin/find .ssh/ -type f -name "*.pub" -exec chmod 644 {} \;'';
+          sshperm = ''${getExe' pkgs.findutils "find"} .ssh/ -type f -exec chmod 600 {} \;; ${getExe' pkgs.findutils "find"} .ssh/ -type d -exec chmod 700 {} \;; ${getExe' pkgs.findutils "find"} .ssh/ -type f -name "*.pub" -exec chmod 644 {} \;'';
         };
       };
     }

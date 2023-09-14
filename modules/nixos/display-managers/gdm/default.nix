@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) types mkIf getExe';
   inherit (lib.internal) mkBoolOpt mkOpt stringAfter;
 
   cfg = config.khanelinix.display-managers.gdm;
@@ -84,8 +84,8 @@ in
 
         system.activationScripts.postInstallGdm = stringAfter [ "users" ] ''
           echo "Setting gdm permissions for user icon"
-          ${pkgs.acl}/bin/setfacl -m u:gdm:x /home/${config.khanelinix.user.name}
-          ${pkgs.acl}/bin/setfacl -m u:gdm:r /home/${config.khanelinix.user.name}/.face.icon || true
+          ${getExe' pkgs.acl "setfacl"} -m u:gdm:x /home/${config.khanelinix.user.name}
+          ${getExe' pkgs.acl "setfacl"} -m u:gdm:r /home/${config.khanelinix.user.name}/.face.icon || true
         '';
       };
 }

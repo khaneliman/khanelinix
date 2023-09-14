@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf getExe;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.display-managers.tuigreet;
 in
@@ -21,7 +21,7 @@ in
           enable = true;
           settings = {
             default_session = {
-              command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time -r --cmd Hyprland";
+              command = "${getExe pkgs.greetd.tuigreet} --time -r --cmd Hyprland";
               user = "greeter";
             };
           };

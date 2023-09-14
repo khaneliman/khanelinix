@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf getExe getExe';
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.mako;
 in
@@ -27,15 +27,15 @@ in
         BusName = "org.freedesktop.Notifications";
 
         ExecCondition = ''
-          ${pkgs.bash}/bin/bash -c '[ -n "$WAYLAND_DISPLAY" ]'
+          ${getExe pkgs.bash} -c '[ -n "$WAYLAND_DISPLAY" ]'
         '';
 
         ExecStart = ''
-          ${pkgs.mako}/bin/mako
+          ${getExe pkgs.mako}
         '';
 
         ExecReload = ''
-          ${pkgs.mako}/bin/makoctl reload
+          ${getExe' pkgs.mako "makoctl"} reload
         '';
 
         Restart = "on-failure";

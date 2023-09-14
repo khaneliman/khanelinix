@@ -7,7 +7,7 @@ _: final: prev: {
         desktopName = "YT Music";
         genericName = "Music, from YouTube.";
         exec = ''
-          ${final.firefox}/bin/firefox "https://music.youtube.com/?khanelinix.app=true"'';
+          ${prev.lib.getExe final.firefox} "https://music.youtube.com/?khanelinix.app=true"'';
         icon = ./icon.svg;
         type = "Application";
         categories = [ "AudioVideo" "Audio" "Player" ];

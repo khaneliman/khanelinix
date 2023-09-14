@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) types mkIf getExe;
   inherit (lib.internal) mkBoolOpt mkOpt;
   cfg = config.khanelinix.desktop.addons.eww;
 
@@ -115,7 +115,7 @@ in
           };
           Service = {
             Environment = "PATH=/run/wrappers/bin:${lib.makeBinPath dependencies}";
-            ExecStart = "${cfg.package}/bin/eww daemon --no-daemonize";
+            ExecStart = "${getExe cfg.package} daemon --no-daemonize";
             Restart = "on-failure";
           };
           Install.WantedBy = [ "graphical-session.target" ];

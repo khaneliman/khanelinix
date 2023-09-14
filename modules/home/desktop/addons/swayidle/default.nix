@@ -4,7 +4,7 @@
 , ...
 }:
 let
-  inherit (lib) mkIf getExe;
+  inherit (lib) mkIf getExe getExe';
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.desktop.addons.swayidle;
@@ -27,7 +27,7 @@ in
         }
         {
           event = "after-resume";
-          command = "${config.wayland.windowManager.hyprland.package}/bin/hyprctl dispatch dpms on";
+          command = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms on";
         }
         {
           event = "lock";
@@ -41,7 +41,7 @@ in
         }
         {
           timeout = 600;
-          command = "${config.wayland.windowManager.hyprland.package}/bin/hyprctl dispatch dpms off";
+          command = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms off";
         }
       ];
     };

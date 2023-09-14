@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) types mkIf getExe';
   inherit (lib.internal) mkBoolOpt mkOpt stringAfter;
 
   cfg = config.khanelinix.display-managers.sddm;
@@ -41,7 +41,7 @@ in
                   DisplayServer = "wayland";
                   InputMethod = "";
                 };
-                Wayland.CompositorCommand = "${pkgs.kwin}/bin/kwin_wayland --no-global-shortcuts --no-lockscreen --locale1";
+                Wayland.CompositorCommand = "${getExe' pkgs.kwin "kwin_wayland"} --no-global-shortcuts --no-lockscreen --locale1";
               };
             };
           };
@@ -49,8 +49,8 @@ in
 
         system.activationScripts.postInstallSddm = stringAfter [ "users" ] ''
           echo "Setting sddm permissions for user icon"
-          ${pkgs.acl}/bin/setfacl -m u:sddm:x /home/${config.khanelinix.user.name}
-          ${pkgs.acl}/bin/setfacl -m u:sddm:r /home/${config.khanelinix.user.name}/.face.icon || true
+          ${getExe' pkgs.acl "setfacl"} -m u:sddm:x /home/${config.khanelinix.user.name}
+          ${getExe' pkgs.acl "setfacl"} -m u:sddm:r /home/${config.khanelinix.user.name}/.face.icon || true
         '';
       };
 }

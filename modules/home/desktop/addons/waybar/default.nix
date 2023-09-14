@@ -7,7 +7,7 @@
 , ...
 }:
 let
-  inherit (lib) mkIf mkForce getExe;
+  inherit (lib) mkIf mkForce getExe getExe';
   inherit (lib.internal) mkBoolOpt;
   inherit (inputs) nixpkgs-wayland;
 
@@ -35,8 +35,8 @@ let
       "format" = " {}";
       "return-type" = "json";
       "interval" = 60;
-      "exec" = "${githubHelper}/bin/githubHelper";
-      "on-click" = "${pkgs.coreutils}/bin/sleep 0.1 && ${pkgs.xdg-utils}/bin/xdg-open https://github.com/notifications";
+      "exec" = "${getExe githubHelper}";
+      "on-click" = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe' pkgs.xdg-utils "xdg-open"} https://github.com/notifications";
     };
 
     "custom/notification" = {
@@ -53,10 +53,10 @@ let
         "dnd-inhibited-none" = "";
       };
       "return-type" = "json";
-      "exec-if" = "which ${pkgs.swaynotificationcenter}/bin/swaync-client";
-      "exec" = "${pkgs.swaynotificationcenter}/bin/swaync-client -swb";
-      "on-click" = "${pkgs.coreutils}/bin/sleep 0.1 && ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
-      "on-click-right" = "${pkgs.coreutils}/bin/sleep 0.1 && ${pkgs.swaynotificationcenter}/bin/swaync-client -d -sw";
+      "exec-if" = "which ${getExe' pkgs.swaynotificationcenter "swaync-client"}";
+      "exec" = "${getExe' pkgs.swaynotificationcenter "swaync-client"} -swb";
+      "on-click" = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe' pkgs.swaynotificationcenter "swaync-client"} -t -sw";
+      "on-click-right" = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe' pkgs.swaynotificationcenter "swaync-client"} -d -sw";
       "escape" = true;
     };
 
@@ -64,14 +64,14 @@ let
       "format" = "";
       "interval" = "once";
       "tooltip" = false;
-      "on-click" = "${pkgs.coreutils}/bin/sleep 0.1 && ${getExe pkgs.wlogout} -c 5 -r 5 -p layer-shell";
+      "on-click" = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe pkgs.wlogout} -c 5 -r 5 -p layer-shell";
     };
 
     "hyprland/workspaces" = {
       "all-outputs" = false;
       "active-only" = "false";
-      "on-scroll-up" = "${pkgs.hyprland}/bin/hyprctl dispatch workspace e+1";
-      "on-scroll-down" = "${pkgs.hyprland}/bin/hyprctl dispatch workspace e-1";
+      "on-scroll-up" = "${getExe' pkgs.hyprland "hyprctl"} dispatch workspace e+1";
+      "on-scroll-down" = "${getExe' pkgs.hyprland "hyprctl"} dispatch workspace e-1";
       "format" = "{icon}";
       "format-icons" = {
         "1" = "";
@@ -105,7 +105,7 @@ let
     "wireplumber" = {
       "format" = "{volume}% {icon}";
       "format-muted" = "";
-      "on-click" = "${pkgs.coreutils}/bin/sleep 0.1 && ${getExe pkgs.helvum}";
+      "on-click" = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe pkgs.helvum}";
       "format-icons" = [
         ""
         ""

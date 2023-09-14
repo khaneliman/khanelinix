@@ -3,7 +3,7 @@
 , ...
 }:
 let
-  inherit (lib) getExe;
+  inherit (lib) getExe getExe';
 in
 {
   programs.helix.languages = {
@@ -12,7 +12,7 @@ in
         name = "bash";
         auto-format = true;
         formatter = {
-          command = "${pkgs.shfmt}/bin/shfmt";
+          command = "${getExe pkgs.shfmt}";
           args = [ "-i" "2" "-" ];
         };
       }
@@ -25,12 +25,12 @@ in
 
     language-server = {
       bash-language-server = {
-        command = "${pkgs.nodePackages.bash-language-server}/bin/bash-language-server";
+        command = "${getExe pkgs.nodePackages.bash-language-server}";
         args = [ "start" ];
       };
 
       clangd = {
-        command = "${pkgs.clang-tools}/bin/clangd";
+        command = "${getExe' pkgs.clang-tools "clangd"}";
         clangd.fallbackFlags = [ "-std=c++2b" ];
       };
 
@@ -40,7 +40,7 @@ in
       };
 
       vscode-css-language-server = {
-        command = "${pkgs.nodePackages.vscode-css-languageserver-bin}/bin/css-languageserver";
+        command = "${getExe pkgs.nodePackages.vscode-css-languageserver-bin}";
         args = [ "--stdio" ];
       };
     };

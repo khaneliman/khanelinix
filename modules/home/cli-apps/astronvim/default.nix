@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) mkEnableOption mkIf;
+  inherit (lib) mkEnableOption mkIf getExe;
   inherit (lib.internal) mkBoolOpt;
   inherit (inputs) astronvim astronvim-user;
 
@@ -55,7 +55,7 @@ in
     # TODO: Convert to custom nixos neovim config 
     xdg.configFile = {
       "nvim" = {
-        onChange = "${pkgs.neovim}/bin/nvim --headless +quitall";
+        onChange = "${getExe pkgs.neovim} --headless +quitall";
         source = astronvim;
       };
       "astronvim/lua/user" = {

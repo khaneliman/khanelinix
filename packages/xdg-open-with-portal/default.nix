@@ -2,11 +2,15 @@
 # 💖 Thank you!
 { writeShellScriptBin
 , glib
+, lib
 , pkgs
 , ...
 }:
+let
+  inherit (lib) getExe';
+in
 # TODO can this maybe suck less
-# https://discourse.nixos.org/t/making-xdg-open-more-resilient/16777
+  # https://discourse.nixos.org/t/making-xdg-open-more-resilient/16777
 writeShellScriptBin "xdg-open" ''
   # uncomment to get logs somewhere and tail -f it.
   # exec > >(tee -i ~/xdg-open-portal-log.txt)
@@ -24,18 +28,18 @@ writeShellScriptBin "xdg-open" ''
 
   if [ -e "$targetFile" ]; then
     exec 3< "$targetFile"
-    ${glib}/bin/gdbus call --session \
+    ${getExe' glib "gdbus"} call --session \
       --dest org.freedesktop.portal.Desktop \
       --object-path /org/freedesktop/portal/desktop \
       --method org.freedesktop.portal.OpenURI.$openFile \
       --timeout 5 \
       "" "3" {}
   else
-    if ! echo "$targetFile" | ${pkgs.gnugrep}/bin/grep -q '://'; then
+    if ! echo "$targetFile" | ${getExe' pkgs.gnugrep "grep"} -q '://'; then
       targetFile="https://$targetFile"
     fi
 
-    ${glib}/bin/gdbus call --session \
+    ${getExe' glib "gdbus"} call --session \
       --dest org.freedesktop.portal.Desktop \
       --object-path /org/freedesktop/portal/desktop \
       --method org.freedesktop.portal.OpenURI.OpenURI \

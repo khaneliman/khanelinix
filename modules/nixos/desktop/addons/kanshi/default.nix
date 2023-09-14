@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf getExe;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.kanshi;
   inherit (config.khanelinix) user;
@@ -30,11 +30,11 @@ in
       environment = { XDG_CONFIG_HOME = "${home}/.config"; };
       serviceConfig = {
         ExecCondition = ''
-          ${pkgs.bash}/bin/bash -c '[ -n "$WAYLAND_DISPLAY" ]'
+          ${getExe pkgs.bash} -c '[ -n "$WAYLAND_DISPLAY" ]'
         '';
 
         ExecStart = ''
-          ${pkgs.kanshi}/bin/kanshi
+          ${getExe pkgs.kanshi}
         '';
 
         RestartSec = 5;

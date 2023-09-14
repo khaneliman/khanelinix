@@ -4,7 +4,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf mkOption;
+  inherit (lib) types mkIf mkOption getExe';
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.services.spice-webdav;
@@ -32,7 +32,7 @@ in
 
       serviceConfig = {
         Type = "simple";
-        ExecStart = "${cfg.package}/bin/spice-webdavd -p 9843";
+        ExecStart = "${getExe' cfg.package "spice-webdavd"} -p 9843";
         Restart = "on-success";
       };
     };

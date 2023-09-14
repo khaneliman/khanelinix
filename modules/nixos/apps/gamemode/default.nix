@@ -5,17 +5,17 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) types mkIf getExe';
   inherit (lib.internal) mkBoolOpt mkOpt;
   cfg = config.khanelinix.apps.gamemode;
   # programs = lib.makeBinPath [config.khanelinix.desktop.hyprland.package];
 
   defaultStartScript = ''
-    ${pkgs.libnotify}/bin/notify-send 'GameMode started'
+    ${getExe' pkgs.libnotify "notify-send"} 'GameMode started'
   '';
 
   defaultEndScript = ''
-    ${pkgs.libnotify}/bin/notify-send 'GameMode ended'
+    ${getExe' pkgs.libnotify "notify-send"} 'GameMode ended'
   '';
 in
 {

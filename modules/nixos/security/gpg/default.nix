@@ -6,7 +6,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) types mkIf getExe getExe';
   inherit (lib.internal) mkBoolOpt mkOpt;
   inherit (inputs) gpg-base-conf yubikey-guide;
 
@@ -18,7 +18,7 @@ let
     enable-ssh-support
     default-cache-ttl 60
     max-cache-ttl 120
-    pinentry-program ${pkgs.pinentry-gnome}/bin/pinentry-gnome
+    pinentry-program ${getExe pkgs.pinentry-gnome}
   '';
 
   guide = "${yubikey-guide}/README.md";
@@ -31,7 +31,7 @@ let
   };
 
   guideHTML = pkgs.runCommand "yubikey-guide" { } ''
-    ${pkgs.pandoc}/bin/pandoc \
+    ${getExe pkgs.pandoc} \
       --standalone \
       --metadata title="Yubikey Guide" \
       --from markdown \
@@ -48,13 +48,13 @@ let
     name = "yubikey-guide";
     desktopName = "Yubikey Guide";
     genericName = "View Yubikey Guide in a web browser";
-    exec = "${pkgs.xdg-utils}/bin/xdg-open ${guideHTML}";
+    exec = "${getExe' pkgs.xdg-utils "xdg-open"} ${guideHTML}";
     icon = ./yubico-icon.svg;
     categories = [ "System" ];
   };
 
   reload-yubikey = pkgs.writeShellScriptBin "reload-yubikey" ''
-    ${pkgs.gnupg}/bin/gpg-connect-agent "scd serialno" "learn --force" /bye
+    ${getExe' pkgs.gnupg "gpg-connect-agent"} "scd serialno" "learn --force" /bye
   '';
 in
 {
@@ -68,7 +68,7 @@ in
     services.udev.packages = with pkgs; [ yubikey-personalization ];
 
     environment.shellInit = ''
-      ${pkgs.coreutils}/bin/timeout ${builtins.toString cfg.agentTimeout} ${pkgs.gnupg}/bin/gpgconf --launch gpg-agent
+      ${getExe' pkgs.coreutils "timeout"} ${builtins.toString cfg.agentTimeout} ${getExe' pkgs.gnupg "gpgconf"} --launch gpg-agent
       gpg_agent_timeout_status=$?
 
       if [ "$gpg_agent_timeout_status" = 124 ]; then

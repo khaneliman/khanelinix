@@ -4,7 +4,7 @@
 , ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf getExe';
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.services.spice-vdagentd;
 in
@@ -24,7 +24,7 @@ in
       '';
       serviceConfig = {
         Type = "forking";
-        ExecStart = "${pkgs.spice-vdagent}/bin/spice-vdagentd";
+        ExecStart = "${getExe' pkgs.spice-vdagent "spice-vdagentd"}";
       };
     };
   };

@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf getExe;
+  inherit (lib) types mkIf getExe getExe';
   inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.display-managers.regreet;
@@ -26,13 +26,13 @@ let
     bindsym XF86MonBrightnessUp exec light -A 5
     bindsym XF86MonBrightnessDown exec light -U 5
     bindsym Print exec ${getExe pkgs.grim} /tmp/regreet.png
-    bindsym Mod4+shift+e exec ${pkgs.sway}/bin/swaynag \
+    bindsym Mod4+shift+e exec ${getExe' pkgs.sway "swaynag"} \
       -t warning \
       -m 'What do you want to do?' \
       -b 'Poweroff' 'systemctl poweroff' \
       -b 'Reboot' 'systemctl reboot'
 
-    exec "${getExe pkgs.greetd.regreet} -l debug; ${pkgs.sway}/bin/swaymsg exit"
+    exec "${getExe pkgs.greetd.regreet} -l debug; ${getExe' pkgs.sway "swaymsg"} exit"
   '';
 in
 {
@@ -71,7 +71,7 @@ in
         };
 
         services.greetd.settings.default_session = {
-          command = "env GTK_USE_PORTAL=0 ${pkgs.sway}/bin/sway --config ${greetdSwayConfig}";
+          command = "env GTK_USE_PORTAL=0 ${getExe pkgs.sway} --config ${greetdSwayConfig}";
         };
 
         security.pam.services.greetd.gnupg.enable = true;

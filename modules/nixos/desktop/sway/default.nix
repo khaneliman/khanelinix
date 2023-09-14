@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) types mkIf getExe getExe';
   inherit (lib.internal) mkBoolOpt mkOpt enabled fileWithText optionalString;
 
   cfg = config.khanelinix.desktop.sway;
@@ -104,7 +104,7 @@ in
         destination = "/bin/startsway";
         executable = true;
         text = ''
-          #! ${pkgs.bash}/bin/bash
+          #! ${getExe pkgs.bash}
 
           # Import environment variables from the login manager
           systemctl --user import-environment
@@ -136,7 +136,7 @@ in
       serviceConfig = {
         Type = "simple";
         ExecStart = ''
-          ${pkgs.dbus}/bin/dbus-run-session ${pkgs.sway}/bin/sway --debug
+          ${getExe' pkgs.dbus "dbus-run-session"} ${getExe pkgs.sway} --debug
         '';
         Restart = "on-failure";
         RestartSec = 1;

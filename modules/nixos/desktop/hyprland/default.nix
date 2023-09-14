@@ -6,7 +6,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) types mkIf getExe';
   inherit (lib.internal) mkBoolOpt mkOpt enabled;
   inherit (inputs) hyprland-contrib;
 
@@ -29,14 +29,14 @@ in
             partitionmanager = enabled;
             gamemode = {
               startscript = ''
-                ${pkgs.libnotify}/bin/notify-send 'GameMode started'
+                ${getExe' pkgs.libnotify "notify-send"} 'GameMode started'
                 export PATH=$PATH:${programs}
                 export HYPRLAND_INSTANCE_SIGNATURE=$(ls -1 /tmp/hypr | tail -1)
                 hyprctl --batch 'keyword decoration:blur 0 ; keyword animations:enabled 0 ; keyword misc:no_vfr 1'
               '';
 
               endscript = ''
-                ${pkgs.libnotify}/bin/notify-send 'GameMode stopped'
+                ${getExe' pkgs.libnotify "notify-send"} 'GameMode stopped'
                 export PATH=$PATH:${programs}
                 export HYPRLAND_INSTANCE_SIGNATURE=$(ls -1 /tmp/hypr | tail -1)
                 hyprctl --batch 'keyword decoration:blur 1 ; keyword animations:enabled 1 ; keyword misc:no_vfr 0'
