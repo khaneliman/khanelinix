@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.cli-apps.wshowkeys;
 in
 {
-  options.khanelinix.cli-apps.wshowkeys = with types; {
+  options.khanelinix.cli-apps.wshowkeys = {
     enable = mkBoolOpt false "Whether or not to enable wshowkeys.";
   };
 

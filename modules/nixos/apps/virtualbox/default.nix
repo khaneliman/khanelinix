@@ -4,12 +4,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.virtualbox;
 in
 {
-  options.khanelinix.apps.virtualbox = with types; {
+  options.khanelinix.apps.virtualbox = {
     enable = mkBoolOpt false "Whether or not to enable Virtualbox.";
   };
 

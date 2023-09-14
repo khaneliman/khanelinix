@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.cli-apps.btop;
 in
 {
-  options.khanelinix.cli-apps.btop = with types; {
+  options.khanelinix.cli-apps.btop = {
     enable = mkBoolOpt false "Whether or not to enable btop.";
   };
 

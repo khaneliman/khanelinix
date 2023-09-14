@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.cli-apps.cava;
 in
 {
-  options.khanelinix.cli-apps.cava = with types; {
+  options.khanelinix.cli-apps.cava = {
     enable = mkBoolOpt false "Whether or not to enable cava.";
   };
 

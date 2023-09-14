@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.k8s;
 in
 {
-  options.khanelinix.tools.k8s = with types; {
+  options.khanelinix.tools.k8s = {
     enable =
       mkBoolOpt false "Whether or not to enable common Kubernetes utilities.";
   };

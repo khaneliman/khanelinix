@@ -4,7 +4,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.fup-repl;
   fup-repl = pkgs.writeShellScriptBin "fup-repl" ''
@@ -12,7 +12,7 @@ let
   '';
 in
 {
-  options.khanelinix.tools.fup-repl = with types; {
+  options.khanelinix.tools.fup-repl = {
     enable = mkBoolOpt false "Whether to enable fup-repl or not";
   };
 

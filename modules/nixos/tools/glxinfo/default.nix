@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.glxinfo;
 in
 {
-  options.khanelinix.tools.glxinfo = with types; {
+  options.khanelinix.tools.glxinfo = {
     enable = mkBoolOpt false "Whether or not to enable glxinfo.";
   };
 

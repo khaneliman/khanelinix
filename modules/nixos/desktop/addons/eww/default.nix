@@ -72,8 +72,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs;
-      dependencies;
+    environment.systemPackages = dependencies;
 
     fonts.fonts = with pkgs; [
       jost

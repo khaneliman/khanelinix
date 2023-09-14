@@ -5,14 +5,14 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.kanshi;
   inherit (config.khanelinix) user;
   inherit (config.users.users.${user.name}) home;
 in
 {
-  options.khanelinix.desktop.addons.kanshi = with types; {
+  options.khanelinix.desktop.addons.kanshi = {
     enable =
       mkBoolOpt false "Whether to enable Kanshi in the desktop environment.";
   };

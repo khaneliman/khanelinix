@@ -4,12 +4,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.electron-support;
 in
 {
-  options.khanelinix.desktop.addons.electron-support = with types; {
+  options.khanelinix.desktop.addons.electron-support = {
     enable =
       mkBoolOpt false
         "Whether to enable electron support in the desktop environment.";

@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.git-crypt;
 in
 {
-  options.khanelinix.tools.git-crypt = with types; {
+  options.khanelinix.tools.git-crypt = {
     enable = mkBoolOpt false "Whether or not to enable git-crypt.";
   };
 

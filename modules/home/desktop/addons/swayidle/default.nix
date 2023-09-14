@@ -4,13 +4,13 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf getExe;
+  inherit (lib) mkIf getExe;
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.desktop.addons.swayidle;
 in
 {
-  options.khanelinix.desktop.addons.swayidle = with types; {
+  options.khanelinix.desktop.addons.swayidle = {
     enable =
       mkBoolOpt false "Whether to enable swayidle in the desktop environment.";
   };

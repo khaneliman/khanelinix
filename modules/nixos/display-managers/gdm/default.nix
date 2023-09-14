@@ -18,7 +18,7 @@ in
     autoSuspend =
       mkBoolOpt true "Whether or not to suspend the machine after inactivity.";
     monitors = mkOpt (nullOr path) null "The monitors.xml file to create.";
-    defaultSession = mkOpt (nullOr types.str) null "The default session to use.";
+    defaultSession = mkOpt (nullOr str) null "The default session to use.";
   };
 
   config =

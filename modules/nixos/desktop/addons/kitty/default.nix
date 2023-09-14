@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.kitty;
 in
 {
-  options.khanelinix.desktop.addons.kitty = with types; {
+  options.khanelinix.desktop.addons.kitty = {
     enable = mkBoolOpt false "Whether to enable kitty.";
   };
 

@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.teams;
 in
 {
-  options.khanelinix.apps.teams = with types; {
+  options.khanelinix.apps.teams = {
     enable = mkBoolOpt false "Whether or not to enable teams.";
   };
 

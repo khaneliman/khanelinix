@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.etcher;
 in
 {
-  options.khanelinix.apps.etcher = with types; {
+  options.khanelinix.apps.etcher = {
     enable = mkBoolOpt false "Whether or not to enable etcher.";
   };
 

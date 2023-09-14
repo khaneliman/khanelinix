@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.emulationstation;
 in
 {
-  options.khanelinix.apps.emulationstation = with types; {
+  options.khanelinix.apps.emulationstation = {
     enable = mkBoolOpt false "Whether or not to enable emulationstation.";
   };
 

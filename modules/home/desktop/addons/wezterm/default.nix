@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.wezterm;
 in
 {
-  options.khanelinix.desktop.addons.wezterm = with types; {
+  options.khanelinix.desktop.addons.wezterm = {
     enable = mkBoolOpt false "Whether or not to enable wezterm.";
   };
 

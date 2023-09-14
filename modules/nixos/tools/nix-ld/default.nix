@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.nix-ld;
 in
 {
-  options.khanelinix.tools.nix-ld = with types; {
+  options.khanelinix.tools.nix-ld = {
     enable = mkBoolOpt false "Whether or not to enable nix-ld.";
   };
 

@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.steam;
 in
 {
-  options.khanelinix.apps.steam = with types; {
+  options.khanelinix.apps.steam = {
     enable = mkBoolOpt false "Whether or not to enable support for Steam.";
   };
 

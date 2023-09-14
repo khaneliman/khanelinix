@@ -5,13 +5,13 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.display-managers.lightdm;
 in
 {
-  options.khanelinix.display-managers.lightdm = with types; {
+  options.khanelinix.display-managers.lightdm = {
     enable = mkBoolOpt false "Whether or not to enable lightdm.";
   };
 

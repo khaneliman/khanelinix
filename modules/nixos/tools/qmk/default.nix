@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.qmk;
 in
 {
-  options.khanelinix.tools.qmk = with types; {
+  options.khanelinix.tools.qmk = {
     enable = mkBoolOpt false "Whether or not to enable QMK";
   };
 

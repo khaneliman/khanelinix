@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.pitivi;
 in
 {
-  options.khanelinix.apps.pitivi = with types; {
+  options.khanelinix.apps.pitivi = {
     enable = mkBoolOpt false "Whether or not to enable Pitivi.";
   };
 

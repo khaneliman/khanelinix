@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.swappy;
 in
 {
-  options.khanelinix.desktop.addons.swappy = with types; {
+  options.khanelinix.desktop.addons.swappy = {
     enable =
       mkBoolOpt false "Whether to enable Swappy in the desktop environment.";
   };

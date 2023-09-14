@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.virtualisation.podman;
 in
 {
-  options.khanelinix.virtualisation.podman = with types; {
+  options.khanelinix.virtualisation.podman = {
     enable = mkBoolOpt false "Whether or not to enable Podman.";
   };
 

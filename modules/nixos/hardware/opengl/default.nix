@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.hardware.opengl;
 in
 {
-  options.khanelinix.hardware.opengl = with types; {
+  options.khanelinix.hardware.opengl = {
     enable =
       mkBoolOpt false
         "Whether or not to enable support for opengl.";

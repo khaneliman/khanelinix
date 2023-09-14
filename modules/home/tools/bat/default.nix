@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.tools.bat;
 in
 {
-  options.khanelinix.tools.bat = with types; {
+  options.khanelinix.tools.bat = {
     enable = mkBoolOpt false "Whether or not to enable bat.";
   };
 

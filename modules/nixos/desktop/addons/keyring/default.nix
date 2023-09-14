@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.keyring;
 in
 {
-  options.khanelinix.desktop.addons.keyring = with types; {
+  options.khanelinix.desktop.addons.keyring = {
     enable = mkBoolOpt false "Whether to enable the gnome keyring.";
   };
 

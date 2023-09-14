@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.cli-apps.lazydocker;
 in
 {
-  options.khanelinix.cli-apps.lazydocker = with types; {
+  options.khanelinix.cli-apps.lazydocker = {
     enable = mkBoolOpt false "Whether or not to enable lazydocker.";
   };
 

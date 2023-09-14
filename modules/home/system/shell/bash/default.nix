@@ -4,12 +4,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.system.shell.bash;
 in
 {
-  options.khanelinix.system.shell.bash = with types; {
+  options.khanelinix.system.shell.bash = {
     enable = mkBoolOpt false "Whether to enable bash.";
   };
 

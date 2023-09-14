@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.vlc;
 in
 {
-  options.khanelinix.apps.vlc = with types; {
+  options.khanelinix.apps.vlc = {
     enable = mkBoolOpt false "Whether or not to enable vlc.";
   };
 

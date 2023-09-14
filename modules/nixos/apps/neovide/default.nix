@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.neovide;
 in
 {
-  options.khanelinix.apps.neovide = with types; {
+  options.khanelinix.apps.neovide = {
     enable = mkBoolOpt false "Whether or not to enable neovide.";
   };
 

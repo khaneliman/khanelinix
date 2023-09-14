@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.lutris;
 in
 {
-  options.khanelinix.apps.lutris = with types; {
+  options.khanelinix.apps.lutris = {
     enable = mkBoolOpt false "Whether or not to enable Lutris.";
   };
 

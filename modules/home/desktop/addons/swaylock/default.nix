@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.swaylock;
 in
 {
-  options.khanelinix.desktop.addons.swaylock = with types; {
+  options.khanelinix.desktop.addons.swaylock = {
     enable =
       mkBoolOpt false "Whether to enable swaylock in the desktop environment.";
   };

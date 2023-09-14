@@ -7,10 +7,10 @@
 let
   cfg = config.khanelinix.services.avahi;
 
-  inherit (lib) types mkEnableOption mkIf;
+  inherit (lib) mkEnableOption mkIf;
 in
 {
-  options.khanelinix.services.avahi = with types; {
+  options.khanelinix.services.avahi = {
     enable = mkEnableOption "Avahi";
   };
 

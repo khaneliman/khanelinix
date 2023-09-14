@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.apps.logseq;
 in
 {
-  options.khanelinix.apps.logseq = with types; {
+  options.khanelinix.apps.logseq = {
     enable = mkBoolOpt false "Whether or not to enable logseq.";
   };
 

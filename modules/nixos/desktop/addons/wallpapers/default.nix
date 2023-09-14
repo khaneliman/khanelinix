@@ -5,12 +5,11 @@
 , ...
 }:
 let
-  inherit (lib) types;
   inherit (lib.internal) mkBoolOpt;
   inherit (pkgs.khanelinix) wallpapers;
 in
 {
-  options.khanelinix.desktop.addons.wallpapers = with types; {
+  options.khanelinix.desktop.addons.wallpapers = {
     enable =
       mkBoolOpt false
         "Whether or not to add wallpapers to ~/.local/share/wallpapers.";

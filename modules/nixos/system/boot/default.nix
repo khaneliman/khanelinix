@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.system.boot;
 in
 {
-  options.khanelinix.system.boot = with types; {
+  options.khanelinix.system.boot = {
     enable = mkBoolOpt false "Whether or not to enable booting.";
   };
 

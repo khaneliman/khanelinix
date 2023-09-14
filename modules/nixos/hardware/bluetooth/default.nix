@@ -4,12 +4,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.hardware.bluetooth;
 in
 {
-  options.khanelinix.hardware.bluetooth = with types; {
+  options.khanelinix.hardware.bluetooth = {
     enable =
       mkBoolOpt false
         "Whether or not to enable support for extra bluetooth devices.";

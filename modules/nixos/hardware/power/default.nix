@@ -4,12 +4,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.hardware.power;
 in
 {
-  options.khanelinix.hardware.power = with types; {
+  options.khanelinix.hardware.power = {
     enable =
       mkBoolOpt false
         "Whether or not to enable support for extra power devices.";

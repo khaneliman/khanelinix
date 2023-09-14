@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.rofi;
 in
 {
-  options.khanelinix.desktop.addons.rofi = with types; {
+  options.khanelinix.desktop.addons.rofi = {
     enable =
       mkBoolOpt false "Whether to enable Rofi in the desktop environment.";
   };

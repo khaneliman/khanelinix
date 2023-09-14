@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.display-managers.tuigreet;
 in
 {
-  options.khanelinix.display-managers.tuigreet = with types; {
+  options.khanelinix.display-managers.tuigreet = {
     enable = mkBoolOpt false "Whether or not to enable tuigreet.";
   };
 

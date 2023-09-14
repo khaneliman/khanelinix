@@ -5,12 +5,12 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.desktop.addons.wlogout;
 in
 {
-  options.khanelinix.desktop.addons.wlogout = with types; {
+  options.khanelinix.desktop.addons.wlogout = {
     enable =
       mkBoolOpt false "Whether to enable wlogout in the desktop environment.";
   };
