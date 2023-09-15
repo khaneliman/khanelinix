@@ -37,6 +37,8 @@ in
       rust-bin.stable.latest.default
       qtcreator
       github-desktop
+      # ue4
+      unityhub
     ];
 
     khanelinix = {
