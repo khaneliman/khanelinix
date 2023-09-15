@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) mkIf types genAttrs;
+  inherit (lib) mkIf types genAttrs getExe;
   inherit (lib.internal) mkBoolOpt mkOpt;
   cfg = config.khanelinix.hardware.storage.btrfs;
   inherit (cfg) dedupeFilesystems;
@@ -16,7 +16,6 @@ let
       hashTableSizeMB = 1024;
       verbosity = "info";
       workDir = ".beeshome";
-      extraOptions = [ "--thread-count" "8" ];
     });
 in
 {
@@ -55,5 +54,20 @@ in
         filesystems = mkIf (builtins.length dedupeFilesystems > 0) dedupeFilesystemsAttrSets;
       };
     };
+
+    systemd.services.cpulimit-bees = {
+      description = "CPU Limit Bees";
+      enable = cfg.dedupe;
+
+      after = [ "sysinit.target" ];
+      wantedBy = [ "multi-user.target" ];
+
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${getExe pkgs.cpulimit} -e bees -l 20";
+        Restart = "always";
+      };
+    };
+
   };
 }
