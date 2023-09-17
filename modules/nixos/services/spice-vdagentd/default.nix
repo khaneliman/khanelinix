@@ -18,14 +18,17 @@ in
 
     systemd.services.spice-vdagentd = {
       description = "spice-vdagent daemon";
-      wantedBy = [ "graphical.target" ];
+
       preStart = ''
         mkdir -p "/run/spice-vdagentd/"
       '';
+
       serviceConfig = {
         Type = "forking";
         ExecStart = "${getExe' pkgs.spice-vdagent "spice-vdagentd"}";
       };
+
+      wantedBy = [ "graphical.target" ];
     };
   };
 }

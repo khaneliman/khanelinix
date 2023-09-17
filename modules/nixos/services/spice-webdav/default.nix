@@ -35,6 +35,8 @@ in
         ExecStart = "${getExe' cfg.package "spice-webdavd"} -p 9843";
         Restart = "on-success";
       };
+
+      wantedBy = [ "graphical.target" ];
     };
   };
 }
