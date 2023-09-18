@@ -60,10 +60,14 @@ in
       amdgpu = enabled;
       audio = enabled;
       bluetooth = enabled;
+      nvidia = enabled;
+      opengl = enabled;
+
       rgb = {
         enable = true;
         ckbNextConfig = ./ckb-next/ckb-next.conf;
       };
+
       storage = {
         enable = true;
         btrfs = {
@@ -82,7 +86,7 @@ in
           ];
         };
       };
-      opengl = enabled;
+
     };
 
     services = {

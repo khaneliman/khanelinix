@@ -19,7 +19,10 @@ in
   config = mkIf cfg.enable {
     # hardware.amdgpu.amdvlk = true;
 
-    environment.systemPackages = with pkgs; [ radeontop ];
+    environment.systemPackages = with pkgs; [
+      radeontop
+      vulkan-tools
+    ];
 
     environment.variables = {
       # VAAPI and VDPAU config for accelerated video.
