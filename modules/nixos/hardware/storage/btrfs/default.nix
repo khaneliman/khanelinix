@@ -16,6 +16,7 @@ let
       hashTableSizeMB = 1024;
       verbosity = "info";
       workDir = ".beeshome";
+      extraOptions = [ "--thread-factor" "0.2" "--loadavg-target" "10" ];
     });
 in
 {
