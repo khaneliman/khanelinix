@@ -1,6 +1,7 @@
 { options
 , config
 , lib
+, pkgs
 , ...
 }:
 let
@@ -16,8 +17,17 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.noXlibs = mkForce false;
+    environment = {
 
-    khanelinix = { };
+      noXlibs = mkForce false;
+
+      sessionVariables = {
+        BROWSER = "wslview";
+      };
+
+      systemPackages = with pkgs; [
+        wslu
+      ];
+    };
   };
 }
