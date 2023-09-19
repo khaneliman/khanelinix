@@ -13,6 +13,7 @@ mkShell {
     nixpkgs-hammering
     nixpkgs-lint
     snowfallorg.flake
+    snowfallorg.frost
     statix
   ];
 

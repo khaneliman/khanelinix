@@ -15,20 +15,28 @@
     };
 
     # Comma
-    comma.url = "github:nix-community/comma";
-    comma.inputs.nixpkgs.follows = "nixpkgs";
+    comma = {
+      url = "github:nix-community/comma";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # macOS Support (master)
-    darwin.url = "github:lnl7/nix-darwin";
-    darwin.inputs.nixpkgs.follows = "nixpkgs";
+    darwin = {
+      url = "github:lnl7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # System Deployment
-    deploy-rs.url = "github:serokell/deploy-rs";
-    deploy-rs.inputs.nixpkgs.follows = "nixpkgs";
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Snowfall Flake
-    flake.url = "github:snowfallorg/flake";
-    flake.inputs.nixpkgs.follows = "nixpkgs";
+    flake = {
+      url = "github:snowfallorg/flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # GPG default configuration
     gpg-base-conf = {
@@ -37,12 +45,16 @@
     };
 
     # Home Manager (master)
-    home-manager.url = "github:nix-community/home-manager";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Hyprland
-    hyprland.url = "github:hyprwm/Hyprland";
-    hyprland.inputs.nixpkgs.follows = "nixpkgs";
+    hyprland = {
+      url = "github:hyprwm/Hyprland";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Hyprland user contributions flake
     hyprland-contrib = {
@@ -51,57 +63,90 @@
     };
 
     # NixPkgs (nixos-unstable)
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs = {
+      url = "github:nixos/nixpkgs/nixos-unstable";
+    };
 
     # NixPkgs-Wayland 
-    nixpkgs-wayland.url = "github:nix-community/nixpkgs-wayland";
-    nixpkgs-wayland.inputs.nixpkgs.follows = "nixpkgs";
+    nixpkgs-wayland = {
+      url = "github:nix-community/nixpkgs-wayland";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Nix User Repository (master)
-    nur.url = "github:nix-community/NUR";
+    nur = {
+      url = "github:nix-community/NUR";
+    };
 
     # Hardware Configuration
-    nixos-hardware.url = "github:nixos/nixos-hardware";
+    nixos-hardware = {
+      url = "github:nixos/nixos-hardware";
+    };
 
     # Generate System Images
-    nixos-generators.url = "github:nix-community/nixos-generators";
-    nixos-generators.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-generators = {
+      url = "github:nix-community/nixos-generators";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # NixOS WSL Support
-    nixos-wsl.url = "github:nix-community/nixos-wsl";
-    nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-wsl = {
+      url = "github:nix-community/nixos-wsl";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Snowfall Lib
-    snowfall-lib.url = "github:snowfallorg/lib";
-    snowfall-lib.inputs.nixpkgs.follows = "nixpkgs";
+    snowfall-lib = {
+      url = "github:snowfallorg/lib";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    snowfall-frost = {
+      url = "github:snowfallorg/frost";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Run unpatched dynamically compiled binaries
-    nix-ld.url = "github:Mic92/nix-ld";
-    nix-ld.inputs.nixpkgs.follows = "nixpkgs";
+    nix-ld = {
+      url = "github:Mic92/nix-ld";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Ranger Dev Icons
-    ranger-devicons.url = "github:alexanderjeurissen/ranger_devicons";
-    ranger-devicons.flake = false;
+    ranger-devicons = {
+      url = "github:alexanderjeurissen/ranger_devicons";
+      flake = false;
+    };
 
     # Ranger Disk Menu
-    ranger-udisk-menu.url = "github:SL-RU/ranger_udisk_menu";
-    ranger-udisk-menu.flake = false;
+    ranger-udisk-menu = {
+      url = "github:SL-RU/ranger_udisk_menu";
+      flake = false;
+    };
 
     # Rust overlay
-    rustup-overlay.url = "github:oxalica/rust-overlay";
-    rustup-overlay.inputs.nixpkgs.follows = "nixpkgs";
+    rustup-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # SF Mono Nerd font 
-    sf-mono-nerd-font.url = "github:shaunsingh/SFMono-Nerd-Font-Ligaturized";
-    sf-mono-nerd-font.flake = false;
+    sf-mono-nerd-font = {
+      url = "github:shaunsingh/SFMono-Nerd-Font-Ligaturized";
+      flake = false;
+    };
 
     # Sops (Secrets) 
-    sops-nix.url = "github:Mic92/sops-nix";
-    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Spicetify
-    spicetify-nix.url = "github:the-argus/spicetify-nix/dev";
-    spicetify-nix.inputs.nixpkgs.follows = "nixpkgs";
+    spicetify-nix = {
+      url = "github:the-argus/spicetify-nix/dev";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Yubikey Guide
     yubikey-guide = {
@@ -112,7 +157,7 @@
 
   outputs = inputs:
     let
-      inherit (inputs) snowfall-lib flake nur rustup-overlay nix-ld sops-nix deploy-rs;
+      inherit (inputs) deploy-rs flake nur nix-ld rustup-overlay snowfall-lib snowfall-frost sops-nix;
 
       lib = snowfall-lib.mkLib {
         inherit inputs;
@@ -137,6 +182,7 @@
         # nixpkgs-wayland.overlay
         nur.overlay
         rustup-overlay.overlays.default
+        snowfall-frost.overlays.default
       ];
 
       systems = {
