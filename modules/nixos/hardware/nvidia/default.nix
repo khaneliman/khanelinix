@@ -25,7 +25,6 @@ in
       vulkan-tools
     ];
 
-    environment.variables = {
-    };
+    environment.variables = { };
   };
 }
