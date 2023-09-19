@@ -55,7 +55,6 @@ in
       };
 
       security = {
-        doas = enabled;
         gpg = enabled;
       };
 
