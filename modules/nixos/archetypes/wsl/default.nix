@@ -22,10 +22,11 @@ in
       noXlibs = mkForce false;
 
       sessionVariables = {
-        BROWSER = "wslview";
+        BROWSER = "wsl-open";
       };
 
       systemPackages = with pkgs; [
+        wsl-open
         wslu
       ];
     };
