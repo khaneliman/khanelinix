@@ -1,9 +1,10 @@
 { lib
 , config
+, pkgs
 , ...
 }:
 let
-  inherit (lib) mkForce;
+  inherit (lib) mkForce getExe';
   inherit (lib.internal) enabled disabled;
 in
 {
@@ -33,7 +34,11 @@ in
     };
 
     tools = {
-      git = enabled;
+      git = {
+        enable = true;
+        wslAgentBridge = true;
+      };
+
       ssh = enabled;
     };
   };

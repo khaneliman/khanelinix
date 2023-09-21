@@ -4,7 +4,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkEnableOption mkIf;
+  inherit (lib) types mkEnableOption mkIf getExe getExe';
   inherit (lib.internal) mkOpt enabled;
 
   cfg = config.khanelinix.tools.git;
@@ -18,6 +18,7 @@ in
     signingKey =
       mkOpt types.str "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEpfTVxQKmkAYOrsnroZoTk0LewcBIC4OjlsoJY6QbB0" "The key ID to sign commits with.";
     signByDefault = mkOpt types.bool true "Whether to sign commits by default.";
+    wslAgentBridge = mkOpt types.bool false "Whether to enable the wsl agent bridge.";
   };
 
   config = mkIf cfg.enable {
@@ -29,6 +30,14 @@ in
           "https://github.com"
           "https://gist.github.com"
         ];
+      };
+    };
+
+    programs = {
+      zsh = {
+        initExtra = mkIf cfg.wslAgentBridge ''
+          $HOME/.agent-bridge.sh
+        '';
       };
     };
 
@@ -47,16 +56,33 @@ in
       };
 
       extraConfig = {
-        core = { whitespace = "trailing-space,space-before-tab"; };
-        fetch = { prune = true; };
+        core = {
+          whitespace = "trailing-space,space-before-tab";
+          autocrlf = mkIf cfg.wslAgentBridge true;
+          filemode = mkIf cfg.wslAgentBridge false;
+        };
+
+        fetch = {
+          prune = true;
+        };
+
         gpg.format = "ssh";
-        "gpg \"ssh\"".program = ''
-          ${pkgs._1password-gui}''
-        + ''${lib.optionalString pkgs.stdenv.isLinux "/share/1password/op-ssh-sign"}''
-        + ''${lib.optionalString pkgs.stdenv.isDarwin "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"}'';
-        init = { defaultBranch = "main"; };
-        pull = { rebase = true; };
-        push = { autoSetupRemote = true; };
+        "gpg \"ssh\"".program = ''''
+          + ''${lib.optionalString pkgs.stdenv.isLinux (getExe' pkgs._1password-gui "op-ssh-sign")}''
+          + ''${lib.optionalString pkgs.stdenv.isDarwin "${pkgs._1password-gui}/Applications/1Password.app/Contents/MacOS/op-ssh-sign"}'';
+
+        init = {
+          defaultBranch = "main";
+        };
+
+        pull = {
+          rebase = true;
+        };
+
+        push = {
+          autoSetupRemote = true;
+        };
+
         safe = {
           directory = "${user.home}/work/config";
         };
@@ -303,6 +329,11 @@ in
     };
 
     home = {
+      file = {
+        ".1password/.keep".text = mkIf cfg.wslAgentBridge "";
+        ".agent-bridge.sh".source = mkIf cfg.wslAgentBridge (getExe pkgs.khanelinix.wsl-agent-bridge);
+      };
+
       shellAliases = {
         # #
         # Git alias
