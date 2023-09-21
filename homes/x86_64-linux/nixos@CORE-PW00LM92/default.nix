@@ -1,10 +1,9 @@
 { lib
 , config
-, pkgs
 , ...
 }:
 let
-  inherit (lib) mkForce getExe';
+  inherit (lib) mkForce;
   inherit (lib.internal) enabled disabled;
 in
 {
@@ -25,8 +24,6 @@ in
     system = {
       xdg = enabled;
     };
-
-    services = { };
 
     suites = {
       common = enabled;
