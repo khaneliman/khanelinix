@@ -41,7 +41,7 @@ in
   };
 
   home.shellAliases = {
-    nixcfg = "nvim ~/.config/.dotfiles/dots/nixos/flake.nix";
+    nixcfg = "nvim ~/khanelinix/flake.nix";
   };
 
   home.stateVersion = "23.11";
