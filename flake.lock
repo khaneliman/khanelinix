@@ -1,5 +1,38 @@
 {
   "nodes": {
+    "astronvim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1695119958,
+        "narHash": "sha256-jtTaWtQ06Vf7icoWB6YGuBmLCVQv+WUdz2bBh00pj2A=",
+        "owner": "AstroNvim",
+        "repo": "AstroNvim",
+        "rev": "00c4abb95bf83ff1f00f411b65faa1b098d9a9d6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "AstroNvim",
+        "ref": "nightly",
+        "repo": "AstroNvim",
+        "type": "github"
+      }
+    },
+    "astronvim-user": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1695180167,
+        "narHash": "sha256-hA2xgjsPXBnWU9SJoamMv1p/UTD8TcH82CVVDgFJ7Pg=",
+        "owner": "khaneliman",
+        "repo": "astronvim",
+        "rev": "7f589d4c4f379d48eaebc23465cd557a3399803a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "khaneliman",
+        "repo": "astronvim",
+        "type": "github"
+      }
+    },
     "comma": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -553,23 +586,6 @@
         "type": "github"
       }
     },
-    "neovim-config": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1695391594,
-        "narHash": "sha256-PO9StmeMcX3UbJSD8aaLErwznIQGEeXCjhg1GQoZTn8=",
-        "owner": "khaneliman",
-        "repo": "astronvim",
-        "rev": "dbc04bfd76f10dd6fc70ce7478069c9beaaeadc1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "khaneliman",
-        "ref": "v4",
-        "repo": "astronvim",
-        "type": "github"
-      }
-    },
     "nix-eval-jobs": {
       "inputs": {
         "flake-parts": "flake-parts",
@@ -807,11 +823,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1695391212,
-        "narHash": "sha256-GZr4be0hIJ3ubIB5EuxLTUwTbBxiD98VR4GogyNgkAg=",
+        "lastModified": 1695395799,
+        "narHash": "sha256-D/SfJk+w2AknDWfR4KX5lEs/1zYtpq814oQfwEpmXC0=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "4ab0274bae55d4ea22f40c4c48ea9fd162d5f6a0",
+        "rev": "e256049bbaab62633de72dd14be51a8f592d6631",
         "type": "github"
       },
       "original": {
@@ -854,6 +870,8 @@
     },
     "root": {
       "inputs": {
+        "astronvim": "astronvim",
+        "astronvim-user": "astronvim-user",
         "comma": "comma",
         "darwin": "darwin",
         "deploy-rs": "deploy-rs",
@@ -862,7 +880,6 @@
         "home-manager": "home-manager",
         "hyprland": "hyprland",
         "hyprland-contrib": "hyprland-contrib",
-        "neovim-config": "neovim-config",
         "nix-ld": "nix-ld",
         "nixos-generators": "nixos-generators",
         "nixos-hardware": "nixos-hardware",

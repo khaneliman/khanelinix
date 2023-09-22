@@ -2,6 +2,17 @@
   description = "KhaneliNix";
 
   inputs = {
+    # Astronvim repo
+    astronvim = {
+      url = "github:AstroNvim/AstroNvim/nightly";
+      flake = false;
+    };
+
+    # Personal astronvim configuration
+    astronvim-user = {
+      url = "github:khaneliman/astronvim";
+      flake = false;
+    };
 
     # Comma
     comma = {
@@ -49,12 +60,6 @@
     hyprland-contrib = {
       url = "github:hyprwm/contrib";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Personal neovim config
-    neovim-config = {
-      url = "github:khaneliman/astronvim/v4";
-      flake = false;
     };
 
     # NixPkgs (nixos-unstable)

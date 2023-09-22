@@ -7,7 +7,7 @@
 let
   inherit (lib) mkEnableOption mkIf getExe;
   inherit (lib.internal) mkBoolOpt;
-  inherit (inputs) neovim-config;
+  inherit (inputs) astronvim astronvim-user;
 
   cfg = config.khanelinix.cli-apps.astronvim;
 in
@@ -56,7 +56,10 @@ in
     xdg.configFile = {
       "nvim" = {
         onChange = "${getExe pkgs.neovim} --headless +quitall";
-        source = neovim-config;
+        source = astronvim;
+      };
+      "astronvim/lua/user" = {
+        source = astronvim-user;
       };
     };
   };
