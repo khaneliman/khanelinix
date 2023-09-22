@@ -1,7 +1,6 @@
-{ lib
-, config
+{ config
 , pkgs
-, self
+, lib
 , ...
 }:
 let
@@ -164,7 +163,7 @@ in
       sops = {
         enable = true;
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-        defaultSopsFile = "${self}/secrets/khanelinix/default.yaml";
+        defaultSopsFile = ../../../secrets/khanelinix/default.yaml;
       };
     };
 
