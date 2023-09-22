@@ -1,38 +1,5 @@
 {
   "nodes": {
-    "astronvim": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1695119958,
-        "narHash": "sha256-jtTaWtQ06Vf7icoWB6YGuBmLCVQv+WUdz2bBh00pj2A=",
-        "owner": "AstroNvim",
-        "repo": "AstroNvim",
-        "rev": "00c4abb95bf83ff1f00f411b65faa1b098d9a9d6",
-        "type": "github"
-      },
-      "original": {
-        "owner": "AstroNvim",
-        "ref": "nightly",
-        "repo": "AstroNvim",
-        "type": "github"
-      }
-    },
-    "astronvim-user": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1695180167,
-        "narHash": "sha256-hA2xgjsPXBnWU9SJoamMv1p/UTD8TcH82CVVDgFJ7Pg=",
-        "owner": "khaneliman",
-        "repo": "astronvim",
-        "rev": "7f589d4c4f379d48eaebc23465cd557a3399803a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "khaneliman",
-        "repo": "astronvim",
-        "type": "github"
-      }
-    },
     "comma": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -487,11 +454,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1695291618,
-        "narHash": "sha256-AAnm9CH4zP1fdnyR9FcgvwJgg41V6HHVMUyNYxoY5bU=",
+        "lastModified": 1695377169,
+        "narHash": "sha256-F8vosRMiZvF5un6It+9C5Jjf7TUvIaocsutqIPE97H4=",
         "owner": "hyprwm",
         "repo": "Hyprland",
-        "rev": "d41a91e050b242e53e7590e7b9267527f039b9f4",
+        "rev": "ea5d9584dafc73412489b96369ffb090f51edb4d",
         "type": "github"
       },
       "original": {
@@ -583,6 +550,23 @@
         "owner": "nix-community",
         "ref": "master",
         "repo": "naersk",
+        "type": "github"
+      }
+    },
+    "neovim-config": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1695391594,
+        "narHash": "sha256-PO9StmeMcX3UbJSD8aaLErwznIQGEeXCjhg1GQoZTn8=",
+        "owner": "khaneliman",
+        "repo": "astronvim",
+        "rev": "dbc04bfd76f10dd6fc70ce7478069c9beaaeadc1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "khaneliman",
+        "ref": "v4",
+        "repo": "astronvim",
         "type": "github"
       }
     },
@@ -756,11 +740,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1695305685,
-        "narHash": "sha256-Z8t6Jbm4Jgsl+XnB1IIzun2PVuojmYdyzO3tCaTxFck=",
+        "lastModified": 1695334442,
+        "narHash": "sha256-k1QqwZfKUkKUUdJEPKYmeo2VyKb6dU0yDBRP5ZjW7A4=",
         "owner": "nix-community",
         "repo": "nixpkgs-wayland",
-        "rev": "edd6d88208d1117d10b4c582ea15af7799018fa2",
+        "rev": "62d8d899f41675a91c2e7906b88a12cdfa8640ea",
         "type": "github"
       },
       "original": {
@@ -823,11 +807,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1695302663,
-        "narHash": "sha256-8uLJ1vH30qh3HCR/GSJoxzyzfsx/AuYZFua9GbA03mE=",
+        "lastModified": 1695391212,
+        "narHash": "sha256-GZr4be0hIJ3ubIB5EuxLTUwTbBxiD98VR4GogyNgkAg=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "3043e9f2462a33ee8e64ce4a127a637b9fa3100f",
+        "rev": "4ab0274bae55d4ea22f40c4c48ea9fd162d5f6a0",
         "type": "github"
       },
       "original": {
@@ -870,8 +854,6 @@
     },
     "root": {
       "inputs": {
-        "astronvim": "astronvim",
-        "astronvim-user": "astronvim-user",
         "comma": "comma",
         "darwin": "darwin",
         "deploy-rs": "deploy-rs",
@@ -880,6 +862,7 @@
         "home-manager": "home-manager",
         "hyprland": "hyprland",
         "hyprland-contrib": "hyprland-contrib",
+        "neovim-config": "neovim-config",
         "nix-ld": "nix-ld",
         "nixos-generators": "nixos-generators",
         "nixos-hardware": "nixos-hardware",
@@ -906,11 +889,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1695262242,
-        "narHash": "sha256-X8o0VqTOvc301bYoFLJedCi9QiosRYhiyKZhAUmV620=",
+        "lastModified": 1695348673,
+        "narHash": "sha256-Rtg2h1edMTuNGo9UP0Ync9joT97TS3E1lddx8w8vr3s=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "23224b680af0b27b320adec2a0dae4eef29350e6",
+        "rev": "9bfad7bee1816a5e171b96fff7c855d5037f902a",
         "type": "github"
       },
       "original": {
