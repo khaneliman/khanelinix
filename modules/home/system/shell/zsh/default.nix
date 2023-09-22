@@ -30,7 +30,7 @@ in
           KEYTIMEOUT = 1;
         };
 
-        initExtra = ''          
+        initExtra = ''
           # Use vim bindings.
           set -o vi
 

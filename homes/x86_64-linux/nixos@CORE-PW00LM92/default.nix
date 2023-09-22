@@ -34,6 +34,16 @@ in
       git = {
         enable = true;
         wslAgentBridge = true;
+        includes = [
+          {
+            condition = "gitdir:/mnt/c/";
+            path = "${./git/windows-compat-config}";
+          }
+          {
+            condition = "gitdir:/mnt/c/Users/Austin.Horstman/source/repos/DiB/";
+            path = "${./git/dib-signing}";
+          }
+        ];
       };
 
       ssh = enabled;

@@ -6,9 +6,9 @@
 let
   inherit (lib) types mkEnableOption mkIf getExe getExe';
   inherit (lib.internal) mkOpt enabled;
+  inherit (config.khanelinix) user;
 
   cfg = config.khanelinix.tools.git;
-  inherit (config.khanelinix) user;
 in
 {
   options.khanelinix.tools.git = {
@@ -19,6 +19,7 @@ in
       mkOpt types.str "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEpfTVxQKmkAYOrsnroZoTk0LewcBIC4OjlsoJY6QbB0" "The key ID to sign commits with.";
     signByDefault = mkOpt types.bool true "Whether to sign commits by default.";
     wslAgentBridge = mkOpt types.bool false "Whether to enable the wsl agent bridge.";
+    includes = mkOpt (types.listOf types.attrs) { } "Git includeIf paths and conditions.";
   };
 
   config = mkIf cfg.enable {
@@ -117,14 +118,14 @@ in
           pullf = "!bash - c \"git reset --hard origin/$(git rev-parse --abbrev-ref HEAD)\"";
 
           ### Pull only the current branch and dont update refs of all remotes
-          pullhead = "!f() {                                                                  \
-	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                               \
+          pullhead = "!f() {                                                                \
+	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                              \
 	          git pull origin $b;                                                             \
           }; f";
 
           ### Blow up local branch and repull from remote
-          smash = "!f() {                                                                     \
-	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                               \
+          smash = "!f() {                                                                   \
+	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                              \
 	          echo 'Are you sure you want to run this? It will delete your current '$b'.';    \
 	          read -p 'Enter to continue, ctrl-C to quit: ' response;                         \
 	          git checkout master;                                                            \
@@ -134,8 +135,8 @@ in
           }; f";
 
           ### Rebase current branch off master
-          rbm = "!f() {                                                                       \
-	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                               \
+          rbm = "!f() {                                                                     \
+	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                              \
 	          echo 'Are you sure you want to run this? It will delete your current '$b'.';    \
 	          read -p 'Enter to continue, ctrl-C to quit: ' response;                         \
 	          git checkout master;                                                            \
@@ -145,8 +146,8 @@ in
           }; f";
 
           ### Rebase current branch off develop
-          rbd = "!f() {                                                                       \
-	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                               \
+          rbd = "!f() {                                                                     \
+	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                              \
 	          echo 'Are you sure you want to run this? It will delete your current '$b'.';    \
 	          read -p 'Enter to continue, ctrl-C to quit: ' response;                         \
 	          git checkout develop;                                                           \
@@ -164,11 +165,11 @@ in
           # Example: git bd -a
           # Example: git bd -a -20
           # Example: git bd -a20
-          bd = "!f() {                                                                            \
-            case $1 in                                                                          \
-                -a) refs='--'; shift;;                                                          \
-                -a*) refs='--'; one=$${1/-a/-}; shift; set -- $one $@;;                          \
-                *) refs='refs/heads/';;                                                         \
+          bd = "!f() {                                                      \
+            case $1 in                                                      \
+                -a) refs='--'; shift;;                                      \
+                -a*) refs='--'; one=$${1/-a/-}; shift; set -- $one $@;;     \
+                *) refs='refs/heads/';;                                     \
             esac;                                                                               \
             git for-each-ref --color --count=1 1>/dev/null 2>&1 && color_flag=yes;              \
             format='--format=%(refname) %00%(committerdate:format:%s)%(taggerdate:format:%s) %(color:red)%(committerdate:relative)%(taggerdate:relative)%(color:reset)%09%00%(color:yellow)%(refname:short)%(color:reset) %00%(subject)%00 %(color:reset)%(color:dim cyan)<%(color:reset)%(color:cyan)%(authorname)%(taggername)%(color:reset)%(color:dim cyan)>%(color:reset)'; \
@@ -248,8 +249,6 @@ in
         extraConfig = {
           core = {
             whitespace = "trailing-space,space-before-tab";
-            autocrlf = mkIf cfg.wslAgentBridge true;
-            filemode = mkIf cfg.wslAgentBridge false;
           };
 
           credential.helper = mkIf cfg.wslAgentBridge ''/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe'';
@@ -279,6 +278,8 @@ in
             directory = "${user.home}/work/config";
           };
         };
+
+        includes = cfg.includes;
 
         ignores = [
           ".DS_Store"
@@ -329,7 +330,6 @@ in
         '';
       };
     };
-
 
     home = {
       file = {

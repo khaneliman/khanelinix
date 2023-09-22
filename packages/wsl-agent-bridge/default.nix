@@ -38,5 +38,3 @@ writeShellApplication
     fi
   '';
 }
-
-

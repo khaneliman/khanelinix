@@ -26,6 +26,7 @@ in
       };
 
       systemPackages = with pkgs; [
+        dos2unix
         wsl-open
         wslu
       ];
