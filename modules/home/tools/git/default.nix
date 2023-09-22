@@ -19,7 +19,7 @@ in
       mkOpt types.str "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEpfTVxQKmkAYOrsnroZoTk0LewcBIC4OjlsoJY6QbB0" "The key ID to sign commits with.";
     signByDefault = mkOpt types.bool true "Whether to sign commits by default.";
     wslAgentBridge = mkOpt types.bool false "Whether to enable the wsl agent bridge.";
-    includes = mkOpt (types.listOf types.attrs) { } "Git includeIf paths and conditions.";
+    includes = mkOpt (types.listOf types.attrs) [ ] "Git includeIf paths and conditions.";
   };
 
   config = mkIf cfg.enable {
