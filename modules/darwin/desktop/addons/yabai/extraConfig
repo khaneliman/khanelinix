@@ -1,69 +1,7 @@
 #!/usr/bin/env bash
 
-# BAR HEIGHT
-BAR_HEIGHT=$(sketchybar -m --query bar | jq -r '.height')
-
 # SETUP SPACES
 create_spaces 7
-
-GENERAL=(
-	external_bar all:"${BAR_HEIGHT}":0
-	split_type auto
-	split_ratio 0.5
-	auto_balance off
-	insert_feedback_color 0xff7793d1
-)
-# external_bar all:39:0 \
-
-WINDOWS=(
-	window_placement second_child
-	window_topmost on
-	window_shadow float
-	window_opacity on
-	active_window_opacity 1.0
-	normal_window_opacity 0.9
-	window_animation_duration 0.0
-	window_origin_display focused
-	window_opacity_duration 0.15
-)
-# window_topmost off \
-# normal_window_opacity 0.95 \
-# window_animation_duration 0.15
-
-BORDERS=(
-	window_border on
-	window_border_blur off
-	window_border_hidpi on
-	window_border_width 2
-	window_border_radius 12
-	active_window_border_color 0xff7793d1
-	normal_window_border_color 0xff5e6798
-)
-# window_border_radius 11 \
-
-LAYOUT=(
-	layout bsp
-	top_padding 20
-	bottom_padding 10
-	left_padding 10
-	right_padding 10
-	window_gap 10
-)
-
-MOUSE=(
-	mouse_modifier super
-	mouse_action1 move
-	mouse_action2 resize
-	mouse_drop_action swap
-	focus_follows_mouse autoraise
-	mouse_follows_focus off
-)
-
-yabai -m config "${GENERAL[@]}"
-yabai -m config "${WINDOWS[@]}"
-yabai -m config "${BORDERS[@]}"
-yabai -m config "${LAYOUT[@]}"
-yabai -m config "${MOUSE[@]}"
 
 # SPACE LABELS
 LABELS=(

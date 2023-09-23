@@ -4,11 +4,15 @@
 , ...
 }:
 let
-  inherit (lib) getExe getExe';
+  buildInputs = with pkgs; [
+    bc
+    coreutils
+    jq
+    yabai
+  ];
 in
 writeShellApplication
 {
-
   meta = {
     mainProgram = "yabai-helper";
     platforms = lib.platforms.darwin;
@@ -18,45 +22,48 @@ writeShellApplication
 
   checkPhase = "";
 
-  text = ''
-    #!/usr/bin/env bash
-    # set -ex
+  text = ''                                                   
+    set +o errexit
+    set +o nounset
+    set +o pipefail
+
+    export PATH="$PATH:${pkgs.lib.makeBinPath buildInputs}"
 
     toggle_layout() {
-    	LAYOUT=$(${getExe pkgs.yabai} -m query --spaces --space | ${getExe pkgs.jq} .type)
+    	LAYOUT=$(yabai -m query --spaces --space | jq .type)
 
     	if [[ $LAYOUT =~ "bsp" ]]; then
-    		${getExe pkgs.yabai} -m space --layout stack
+    		yabai -m space --layout stack
     	elif [[ $LAYOUT =~ "stack" ]]; then
-    		${getExe pkgs.yabai} -m space --layout float
+    		yabai -m space --layout float
     	elif [[ $LAYOUT =~ "float" ]]; then
-    		${getExe pkgs.yabai} -m space --layout bsp
+    		yabai -m space --layout bsp
     	fi
     }
 
     opacity_up() {
-    	OPACITY=$(${getExe pkgs.yabai} -m query --windows --window | ${getExe pkgs.jq} .opacity)
-    	if [ "$(echo "$OPACITY == 1.0" | ${getExe' pkgs.bc "bc"} -l)" -eq 1 ]; then
-    		${getExe pkgs.yabai} -m window --opacity 0.1
+    	OPACITY=$(yabai -m query --windows --window | jq .opacity)
+    	if [ "$(echo "$OPACITY == 1.0" | bc -l)" -eq 1 ]; then
+    		yabai -m window --opacity 0.1
     	else
-    		OPACITY=$(echo "$OPACITY" + 0.1 | ${getExe' pkgs.bc "bc"})
-    		${getExe pkgs.yabai} -m window --opacity "$OPACITY"
+    		OPACITY=$(echo "$OPACITY" + 0.1 | bc)
+    		yabai -m window --opacity "$OPACITY"
     	fi
     }
 
     opacity_down() {
-    	OPACITY=$(${getExe pkgs.yabai} -m query --windows --window | ${getExe pkgs.jq} .opacity)
-    	if [ "$(echo "$OPACITY == 0.1" | ${getExe' pkgs.bc "bc"} -l)" -eq 1 ]; then
-    		${getExe pkgs.yabai} -m window --opacity 1.0
+    	OPACITY=$(yabai -m query --windows --window | jq .opacity)
+    	if [ "$(echo "$OPACITY == 0.1" | bc -l)" -eq 1 ]; then
+    		yabai -m window --opacity 1.0
     	else
-    		OPACITY=$(echo "$OPACITY" - 0.1 | ${getExe' pkgs.bc "bc"})
-    		${getExe pkgs.yabai} -m window --opacity "$OPACITY"
+    		OPACITY=$(echo "$OPACITY" - 0.1 | bc)
+    		yabai -m window --opacity "$OPACITY"
     	fi
     }
 
     close_window() {
-    	FULLSCREEN=$(${getExe pkgs.yabai} -m query --windows --window | ${getExe pkgs.jq} '."is-native-fullscreen"')
-    	APP=$(${getExe pkgs.yabai} -m query --windows --window | ${getExe pkgs.jq} -r '."app"')
+    	FULLSCREEN=$(yabai -m query --windows --window | jq '."is-native-fullscreen"')
+    	APP=$(yabai -m query --windows --window | jq -r '."app"')
     	skhd -k "escape"
     	if [[ $FULLSCREEN = "true" ]]; then
     		# osascript -l JavaScript -e 'Application("System Events").keystroke("w",{using: ["command down", "shift down"]})'
@@ -66,101 +73,101 @@ writeShellApplication
     		fi
     	else
     		skhd -k "shift + cmd - w"
-    		# ${getExe pkgs.yabai} -m window --close
+    		# yabai -m window --close
     	fi
     }
 
     toggle_border() {
-    	BORDER=$(${getExe pkgs.yabai} -m config window_border)
+    	BORDER=$(yabai -m config window_border)
     	if [[ $BORDER = "on" ]]; then
-    		${getExe pkgs.yabai} -m config window_border off
+    		yabai -m config window_border off
     	elif [[ $BORDER = "off" ]]; then
-    		${getExe pkgs.yabai} -m config window_border on
+    		yabai -m config window_border on
     	fi
-    	${getExe pkgs.yabai} -m config window_border
+    	yabai -m config window_border
     }
 
     increase_gaps() {
-    	GAP=$(${getExe pkgs.yabai} -m config window_gap)
-    	${getExe pkgs.yabai} -m config window_gap $(echo "$GAP" + 1 | ${getExe' pkgs.bc "bc"})
+    	GAP=$(yabai -m config window_gap)
+    	yabai -m config window_gap $(echo "$GAP" + 1 | bc)
     }
 
     decrease_gaps() {
-    	GAP=$(${getExe pkgs.yabai} -m config window_gap)
-    	${getExe pkgs.yabai} -m config window_gap $(echo "$GAP" - 1 | ${getExe' pkgs.bc "bc"})
+    	GAP=$(yabai -m config window_gap)
+    	yabai -m config window_gap $(echo "$GAP" - 1 | bc)
     }
 
     increase_padding_top() {
-    	PADDING=$(${getExe pkgs.yabai} -m config top_padding)
-    	${getExe pkgs.yabai} -m config top_padding $(echo "$PADDING" + 1 | ${getExe' pkgs.bc "bc"})
+    	PADDING=$(yabai -m config top_padding)
+    	yabai -m config top_padding $(echo "$PADDING" + 1 | bc)
     }
 
     increase_padding_bottom() {
-    	PADDING=$(${getExe pkgs.yabai} -m config bottom_padding)
-    	${getExe pkgs.yabai} -m config bottom_padding $(echo "$PADDING" + 1 | ${getExe' pkgs.bc "bc"})
+    	PADDING=$(yabai -m config bottom_padding)
+    	yabai -m config bottom_padding $(echo "$PADDING" + 1 | bc)
     }
 
     increase_padding_left() {
-    	PADDING=$(${getExe pkgs.yabai} -m config left_padding)
-    	${getExe pkgs.yabai} -m config left_padding $(echo "$PADDING" + 1 | ${getExe' pkgs.bc "bc"})
+    	PADDING=$(yabai -m config left_padding)
+    	yabai -m config left_padding $(echo "$PADDING" + 1 | bc)
     }
 
     increase_padding_right() {
-    	PADDING=$(${getExe pkgs.yabai} -m config right_padding)
-    	${getExe pkgs.yabai} -m config right_padding $(echo "$PADDING" + 1 | ${getExe' pkgs.bc "bc"})
+    	PADDING=$(yabai -m config right_padding)
+    	yabai -m config right_padding $(echo "$PADDING" + 1 | bc)
     }
 
     increase_padding_all() {
-    	PADDING_TOP=$(${getExe pkgs.yabai} -m config top_padding)
-    	PADDING_BOTTOM=$(${getExe pkgs.yabai} -m config bottom_padding)
-    	PADDING_LEFT=$(${getExe pkgs.yabai} -m config left_padding)
-    	PADDING_RIGHT=$(${getExe pkgs.yabai} -m config right_padding)
-    	WINDOW_GAP=$(${getExe pkgs.yabai} -m config window_gap)
+    	PADDING_TOP=$(yabai -m config top_padding)
+    	PADDING_BOTTOM=$(yabai -m config bottom_padding)
+    	PADDING_LEFT=$(yabai -m config left_padding)
+    	PADDING_RIGHT=$(yabai -m config right_padding)
+    	WINDOW_GAP=$(yabai -m config window_gap)
 
-    	${getExe pkgs.yabai} -m config top_padding $(echo "$PADDING"_TOP + 10 | ${getExe' pkgs.bc "bc"})
-    	${getExe pkgs.yabai} -m config bottom_padding $(echo "$PADDING"_BOTTOM + 10 | ${getExe' pkgs.bc "bc"})
-    	${getExe pkgs.yabai} -m config left_padding $(echo "$PADDING"_LEFT + 10 | ${getExe' pkgs.bc "bc"})
-    	${getExe pkgs.yabai} -m config right_padding $(echo "$PADDING"_RIGHT + 10 | ${getExe' pkgs.bc "bc"})
-    	${getExe pkgs.yabai} -m config window_gap $(echo "$window"_GAP + 10 | ${getExe' pkgs.bc "bc"})
+    	yabai -m config top_padding $(echo "$PADDING"_TOP + 10 | bc)
+    	yabai -m config bottom_padding $(echo "$PADDING"_BOTTOM + 10 | bc)
+    	yabai -m config left_padding $(echo "$PADDING"_LEFT + 10 | bc)
+    	yabai -m config right_padding $(echo "$PADDING"_RIGHT + 10 | bc)
+    	yabai -m config window_gap $(echo "$window"_GAP + 10 | bc)
     }
 
     decrease_padding_top() {
-    	PADDING=$(${getExe pkgs.yabai} -m config top_padding)
-    	${getExe pkgs.yabai} -m config top_padding $(echo "$PADDING" - 1 | ${getExe' pkgs.bc "bc"})
+    	PADDING=$(yabai -m config top_padding)
+    	yabai -m config top_padding $(echo "$PADDING" - 1 | bc)
     }
 
     decrease_padding_bottom() {
-    	PADDING=$(${getExe pkgs.yabai} -m config bottom_padding)
-    	${getExe pkgs.yabai} -m config bottom_padding $(echo "$PADDING" - 1 | ${getExe' pkgs.bc "bc"})
+    	PADDING=$(yabai -m config bottom_padding)
+    	yabai -m config bottom_padding $(echo "$PADDING" - 1 | bc)
     }
 
     decrease_padding_left() {
-    	PADDING=$(${getExe pkgs.yabai} -m config left_padding)
-    	${getExe pkgs.yabai} -m config left_padding $(echo "$PADDING" - 1 | ${getExe' pkgs.bc "bc"})
+    	PADDING=$(yabai -m config left_padding)
+    	yabai -m config left_padding $(echo "$PADDING" - 1 | bc)
     }
 
     decrease_padding_right() {
-    	PADDING=$(${getExe pkgs.yabai} -m config right_padding)
-    	${getExe pkgs.yabai} -m config right_padding $(echo "$PADDING" - 1 | ${getExe' pkgs.bc "bc"})
+    	PADDING=$(yabai -m config right_padding)
+    	yabai -m config right_padding $(echo "$PADDING" - 1 | bc)
     }
 
     decrease_padding_all() {
-    	PADDING_TOP=$(${getExe pkgs.yabai} -m config top_padding)
-    	PADDING_BOTTOM=$(${getExe pkgs.yabai} -m config bottom_padding)
-    	PADDING_LEFT=$(${getExe pkgs.yabai} -m config left_padding)
-    	PADDING_RIGHT=$(${getExe pkgs.yabai} -m config right_padding)
-    	WINDOW_GAP=$(${getExe pkgs.yabai} -m config window_gap)
+    	PADDING_TOP=$(yabai -m config top_padding)
+    	PADDING_BOTTOM=$(yabai -m config bottom_padding)
+    	PADDING_LEFT=$(yabai -m config left_padding)
+    	PADDING_RIGHT=$(yabai -m config right_padding)
+    	WINDOW_GAP=$(yabai -m config window_gap)
 
-    	${getExe pkgs.yabai} -m config top_padding $(echo "$PADDING"_TOP - 10 | ${getExe' pkgs.bc "bc"})
-    	${getExe pkgs.yabai} -m config bottom_padding $(echo "$PADDING"_BOTTOM - 10 | ${getExe' pkgs.bc "bc"})
-    	${getExe pkgs.yabai} -m config left_padding $(echo "$PADDING"_LEFT - 10 | ${getExe' pkgs.bc "bc"})
-    	${getExe pkgs.yabai} -m config right_padding $(echo "$PADDING"_RIGHT - 10 | ${getExe' pkgs.bc "bc"})
-    	${getExe pkgs.yabai} -m config window_gap $(echo "$window"_GAP - 10 | ${getExe' pkgs.bc "bc"})
+    	yabai -m config top_padding $(echo "$PADDING"_TOP - 10 | bc)
+    	yabai -m config bottom_padding $(echo "$PADDING"_BOTTOM - 10 | bc)
+    	yabai -m config left_padding $(echo "$PADDING"_LEFT - 10 | bc)
+    	yabai -m config right_padding $(echo "$PADDING"_RIGHT - 10 | bc)
+    	yabai -m config window_gap $(echo "$window"_GAP - 10 | bc)
     }
 
     new_window() {
     	APP_TO_OPEN="$1"
-    	CURRENT_APP=$(${getExe pkgs.yabai} -m query --windows --window | ${getExe pkgs.jq} -r '.app')
+    	CURRENT_APP=$(yabai -m query --windows --window | jq -r '.app')
 
     	click_menu_bar() {
     		osascript -e 'tell application "System Events"' \
@@ -185,13 +192,13 @@ writeShellApplication
     	osascript -e "tell application \"$APP_TO_OPEN\" to activate"
 
     	if [[ $2 = "stack" ]]; then
-    		${getExe pkgs.yabai} -m window --insert stack
+    		yabai -m window --insert stack
     	fi
 
     	if [[ $APP_TO_OPEN = "Code" ]]; then
     		click_menu_bar 1
     	elif [[ $APP_TO_OPEN = "Firefox" ]]; then
-    		# HACK: ${getExe pkgs.yabai} fails to allow firefox window to open running from command line works though
+    		# HACK: yabai fails to allow firefox window to open running from command line works though
     		/Applications/Firefox.app/Contents/MacOS/firefox-bin --new-window
     	else
     		click_menu_bar 0
@@ -199,18 +206,18 @@ writeShellApplication
     }
 
     create_spaces() {
-    	CURRENT_SPACES=$(${getExe pkgs.yabai} -m query --spaces | ${getExe pkgs.jq} -r '[.[]."is-native-fullscreen"| select(.==false) ]| length')
-    	CURRENT_SPACE=$(${getExe pkgs.yabai} -m query --spaces --space | ${getExe pkgs.jq} -r ."index")
+    	CURRENT_SPACES=$(yabai -m query --spaces | jq -r '[.[]."is-native-fullscreen"| select(.==false) ]| length')
+    	CURRENT_SPACE=$(yabai -m query --spaces --space | jq -r ."index")
     	NEEDED_SPACES=$1
 
     	if [[ $1 == "a" ]]; then
-    		${getExe pkgs.yabai} -m space --create
-    		${getExe pkgs.yabai} -m space last --label "$2"
-    		if [ -n "$${getExe pkgs.yabai}_WINDOW_ID" ]; then
-    			${getExe pkgs.yabai} -m window "$YABAI_WINDOW_ID" --space "$2"
+    		yabai -m space --create
+    		yabai -m space last --label "$2"
+    		if [ -n "$yabai_WINDOW_ID" ]; then
+    			yabai -m window "$YABAI_WINDOW_ID" --space "$2"
     		fi
-    		${getExe pkgs.yabai} -m space --focus "$2"
-    		set_wallpaper "$HOME/.local/share/wallpapers/catppuccin/$(/bin/ls ~/.local/share/wallpapers/catppuccin | shuf -n 1)"
+    		yabai -m space --focus "$2"
+    		set_wallpaper $HOME/.local/share/wallpapers/catppuccin/$(ls ~/.local/share/wallpapers/catppuccin | shuf -n 1)
     		return 0
     	fi
 
@@ -221,11 +228,11 @@ writeShellApplication
 
     	for i in $(seq $((1 + CURRENT_SPACES)) "$NEEDED_SPACES"); do
     		echo "$i"
-    		${getExe pkgs.yabai} -m space --create
-    		${getExe pkgs.yabai} -m space --focus "$i"
-    		set_wallpaper "$HOME/.local/share/wallpapers/catppuccin/$(/bin/ls ~/.local/share/wallpapers/catppuccin | shuf -n 1)"
+    		yabai -m space --create
+    		yabai -m space --focus "$i"
+    		set_wallpaper $HOME/.local/share/wallpapers/catppuccin/$(ls ~/.local/share/wallpapers/catppuccin | shuf -n 1)
     	done
-    	${getExe pkgs.yabai} -m space "$CURRENT_SPACE" --focus
+    	yabai -m space "$CURRENT_SPACE" --focus
 
     }
 
@@ -234,10 +241,10 @@ writeShellApplication
     }
 
     set_wallpapers() {
-    	if [[ $(command -v ${getExe pkgs.yabai}) ]]; then
+    	if [[ $(command -v yabai) ]]; then
     		LOCAL_WALLPAPERS="$(realpath "$HOME"/.local/share/wallpapers/catppuccin)"
 
-    		${getExe pkgs.yabai} -m space --focus 1
+    		yabai -m space --focus 1
 
     		i=0
 
@@ -246,7 +253,7 @@ writeShellApplication
     			echo "Setting wallpaper on space $i to $file..."
     			# take action on each file. $f store current file name
     			osascript -e 'tell application "Finder" to set desktop picture to POSIX file "'"$file"'"'
-    			${getExe pkgs.yabai} -m space --focus next 2 &>/dev/null
+    			yabai -m space --focus next 2 &>/dev/null
     			sleep 0.1
     		done
     	fi
@@ -293,7 +300,7 @@ writeShellApplication
     	else
     		reverse=""
     	fi
-    	${getExe pkgs.yabai} -m query --windows --space | ${getExe pkgs.jq} -re '
+    	yabai -m query --windows --space | jq -re '
         map(select((."is-minimized" != true) and ."can-move" == true))
         | sort_by(.frame.x, .frame.y, ."stack-index", .id)
         '"$reverse"'
@@ -301,82 +308,82 @@ writeShellApplication
         | map( $first.id, .id )
         | .[]' |
     		tail -n +3 |
-    		xargs -n2 sh -c 'echo $1 $2; ${getExe pkgs.yabai} -m window $1 --swap $2' sh
+    		xargs -n2 sh -c 'echo $1 $2; yabai -m window $1 --swap $2' sh
     }
 
     float_reset() {
-    	ids=($(${getExe pkgs.yabai} -m query --windows --space | ${getExe pkgs.jq} -re '.[].id'))
+    	ids=($(yabai -m query --windows --space | jq -re '.[].id'))
 
     	for window in $ids; do
-    		top=$(${getExe pkgs.yabai} -m query --windows --window "$window" | ${getExe pkgs.jq} -re '."is-topmost"')
-    		floating=$(${getExe pkgs.yabai} -m query --windows --window "$window" | ${getExe pkgs.jq} -re '."is-floating"')
+    		top=$(yabai -m query --windows --window "$window" | jq -re '."is-topmost"')
+    		floating=$(yabai -m query --windows --window "$window" | jq -re '."is-floating"')
 
     		if $top; then
     			if $floating; then
     				continue
     			fi
-    			${getExe pkgs.yabai} -m window "$window" --toggle topmost
+    			yabai -m window "$window" --toggle topmost
     		fi
     	done
     }
 
     float_signal() {
-    	QUERY=$(${getExe pkgs.yabai} -m query --windows --window "$1" | ${getExe pkgs.jq} -re '."is-topmost",."is-floating"')
+    	QUERY=$(yabai -m query --windows --window "$1" | jq -re '."is-topmost",."is-floating"')
     	declare -a PROPERTIES
     	PROPERTIES=("$QUERY")
 
     	if ! $${PROPERTIES[0]} && $${PROPERTIES[1]}; then
-    		${getExe pkgs.yabai} -m window "$1" --toggle topmost
+    		yabai -m window "$1" --toggle topmost
     		echo 1 "$${PROPERTIES[0]}" "$${PROPERTIES[1]}"
     	fi
 
     	if $${PROPERTIES[0]} && ! $${PROPERTIES[1]}; then
-    		${getExe pkgs.yabai} -m window "$1" --toggle topmost
+    		yabai -m window "$1" --toggle topmost
     		echo 2 "$${PROPERTIES[0]}" "$${PROPERTIES[1]}"
     	fi
     }
 
     set_layer() {
-    	QUERY=$(${getExe pkgs.yabai} -m query --windows --window "$1" | ${getExe pkgs.jq} -re '."is-topmost",."is-floating"')
+    	QUERY=$(yabai -m query --windows --window "$1" | jq -re '."is-topmost",."is-floating"')
     	declare -a PROPERTIES
     	PROPERTIES=("$QUERY")
 
     	if ! $${PROPERTIES[1]}; then
-    		${getExe pkgs.yabai} -m window "$YABAI_WINDOW_ID" --layer below
+    		yabai -m window "$YABAI_WINDOW_ID" --layer below
     		return
     	fi
-    	# ${getExe pkgs.yabai} -m window $YABAI_WINDOW_ID --layer normal
+    	# yabai -m window $YABAI_WINDOW_ID --layer normal
     }
 
     auto_stack() {
-    	INSTANCES=$(${getExe pkgs.yabai} -m query --windows | ${getExe pkgs.jq} "[.[] |select(.\"app\"==\"$1\")| .\"id\"]| length")
+    	INSTANCES=$(yabai -m query --windows | jq "[.[] |select(.\"app\"==\"$1\")| .\"id\"]| length")
     	if [[ $INSTANCES -eq 1 ]]; then
     		return 0
     	fi
 
-    	NEW_APP=$${getExe pkgs.yabai}_WINDOW_ID
-    	APP=$(${getExe pkgs.yabai} -m query --windows | ${getExe pkgs.jq} "[.[] |select(.\"app\"==\"$1\" )|select(.\"id\"!=\"$NEW_APP\")][1].\"id\"")
-    	${getExe pkgs.yabai} -m window "$APP" --stack "$NEW_APP"
+    	NEW_APP=$yabai_WINDOW_ID
+    	APP=$(yabai -m query --windows | jq "[.[] |select(.\"app\"==\"$1\" )|select(.\"id\"!=\"$NEW_APP\")][1].\"id\"")
+    	yabai -m window "$APP" --stack "$NEW_APP"
     }
 
     kuake() {
-    	if [[ $(${getExe pkgs.yabai} -m query --windows | ${getExe pkgs.jq} "[.[]|select(.\"title\"==\"KUAKE\").\"title\"]| length") -eq 0 ]]; then
+    	if [[ $(yabai -m query --windows | jq "[.[]|select(.\"title\"==\"KUAKE\").\"title\"]| length") -eq 0 ]]; then
     		/Applications/kitty.app/Contents/MacOS/kitty -1 -T KUAKE -d ~ &
     		disown
-    		KUAKE_ID=$(${getExe pkgs.yabai} -m query --windows | ${getExe pkgs.jq} ".[]|select(.\"title\"==\"KUAKE\").\"id\"")
+    		KUAKE_ID=$(yabai -m query --windows | jq ".[]|select(.\"title\"==\"KUAKE\").\"id\"")
     		return 0
     	fi
 
-    	KUAKE_ID=$(${getExe pkgs.yabai} -m query --windows | ${getExe pkgs.jq} ".[]|select(.\"title\"==\"KUAKE\").\"id\"")
-    	KUAKE_SPACE=$(${getExe pkgs.yabai} -m query --windows --window "$KUAKE_ID" | ${getExe pkgs.jq} '."space"')
-    	CURRENT_SPACE=$(${getExe pkgs.yabai} -m query --spaces --space | ${getExe pkgs.jq} '."index"')
+    	KUAKE_ID=$(yabai -m query --windows | jq ".[]|select(.\"title\"==\"KUAKE\").\"id\"")
+    	KUAKE_SPACE=$(yabai -m query --windows --window "$KUAKE_ID" | jq '."space"')
+    	CURRENT_SPACE=$(yabai -m query --spaces --space | jq '."index"')
 
     	if [[ $KUAKE_SPACE -eq $CURRENT_SPACE ]]; then
-    		${getExe pkgs.yabai} -m window "$KUAKE_ID" --space scratch
+    		yabai -m window "$KUAKE_ID" --space scratch
     		return 0
     	fi
 
-    	${getExe pkgs.yabai} -m window "$KUAKE_ID" --opacity 0.1 --space "$CURRENT_SPACE" --focus "$KUAKE_ID" --opacity 0.0
+    	yabai -m window "$KUAKE_ID" --opacity 0.1 --space "$CURRENT_SPACE" --focus "$KUAKE_ID" --opacity 0.0
     }
 
   '';

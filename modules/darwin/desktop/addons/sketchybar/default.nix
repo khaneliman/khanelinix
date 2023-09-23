@@ -9,11 +9,13 @@ let
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.desktop.addons.sketchybar;
+
   zshAliases = with pkgs; {
     brew = ''command brew "$@" && ${getExe sketchybar} --trigger brew_update'';
     mas = ''command mas "$@" && ${getExe sketchybar} --trigger brew_update'';
     push = ''command git push && ${getExe sketchybar} --trigger git_push'';
   };
+
   fishAliases = with pkgs; {
     brew = ''command brew "$argv" && ${getExe sketchybar} --trigger brew_update'';
     mas = ''command mas "$argv" && ${getExe sketchybar} --trigger brew_update'';

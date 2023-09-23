@@ -67,9 +67,12 @@ in
       };
 
       extraConfig = with pkgs; ''
-        ${builtins.readFile ./extraConfig}
-
         source ${getExe khanelinix.yabai-helper}
+
+        BAR_HEIGHT=$(${getExe sketchybar} -m --query bar | jq -r '.height')
+        ${getExe yabai} -m config external_bar all:"$${BAR_HEIGHT}":0
+
+        ${builtins.readFile ./extraConfig}
 
         # Signal hooks
         ${getExe yabai} -m signal --add event=dock_did_restart action="sudo ${getExe yabai} --load-sa"
