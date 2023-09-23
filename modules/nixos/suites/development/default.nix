@@ -39,6 +39,7 @@ in
       github-desktop
       # ue4
       unityhub
+      godot_4
     ];
 
     khanelinix = {
