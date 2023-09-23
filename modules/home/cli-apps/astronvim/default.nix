@@ -10,6 +10,23 @@ let
   inherit (inputs) neovim-config;
 
   cfg = config.khanelinix.cli-apps.astronvim;
+
+  lsp = with pkgs; [
+    binwalk
+    ccls
+    clang-tools
+    cmake
+    cmocka
+    efm-langserver
+    eslint_d
+    gnumake
+    llvm
+    luajitPackages.luacheck
+    luarocks
+    shellcheck
+    shfmt
+    xmlformat
+  ];
 in
 {
   options.khanelinix.cli-apps.astronvim = {
@@ -49,7 +66,8 @@ in
         wget
         gcc
         dotnet-sdk_7
-      ] ++ lib.optional stdenv.isLinux webkitgtk;
+      ] ++ lsp
+      ++ lib.optional stdenv.isLinux webkitgtk;
     };
 
     # TODO: Convert to custom nixos neovim config 

@@ -27,43 +27,11 @@ in
     };
 
     environment.systemPackages = with pkgs; [
-      ack
-      act
-      armadillo
-      binutils
-      binwalk
-      boost
-      ccls
-      clang-tools
-      cmake
-      cmocka
-      docutils
-      efm-langserver
-      eslint_d
-      gnumake
-      gtksourceview4
-      jq
       lazydocker
-      llvm
-      luajitPackages.luacheck
-      luajit_openresty
-      luarocks
-      meson
       mysql-client
       neovide
       onefetch
-      perl
-      php
-      pv
-      rapidjson
-      rlwrap
       rustup
-      shellcheck
-      shfmt
-      swig
-      vbindiff
-      xmlformat
-      yasm
 
       #nix
       nixpkgs-fmt
