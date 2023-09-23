@@ -38,7 +38,6 @@ in
       cmake
       cmocka
       docutils
-      dotnet-sdk
       efm-langserver
       eslint_d
       gnumake
