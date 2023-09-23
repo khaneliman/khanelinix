@@ -16,6 +16,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    xdg.configFile.wgetrc.text = "";
+
     khanelinix = {
       cli-apps = {
         ranger = enabled;
