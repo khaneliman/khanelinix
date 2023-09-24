@@ -556,11 +556,11 @@
     "neovim-config": {
       "flake": false,
       "locked": {
-        "lastModified": 1695524560,
-        "narHash": "sha256-bq/vJ5DCMxnmuBCUWM5SoUSJASQ7T5oK8gDYeKj1wZg=",
+        "lastModified": 1695528545,
+        "narHash": "sha256-iw34Q/XZN8yZNfYL0a5tqNdzND3x4m60Z/LxdmMkFLc=",
         "owner": "khaneliman",
         "repo": "astronvim",
-        "rev": "d72bc6f5c5a1690e1ef29f57e4df092730e4c4a0",
+        "rev": "e993455f76e9293b172ef05316ae4818b60f6f09",
         "type": "github"
       },
       "original": {
@@ -807,11 +807,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1695505500,
-        "narHash": "sha256-Tmi1wcCiJ5hVSrYVBbW9oxm+YDWWH2xrLFBk1AWi6I4=",
+        "lastModified": 1695528336,
+        "narHash": "sha256-HHQVzXsDNbl23qzPX+AuZwh3NlsCXs695wgNpW39FzQ=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "e7cccb35b745abbdef3f3860e68d41a104bcfaa2",
+        "rev": "640b5ce3d9b40b5d589f8d36a00b1dda78ef4396",
         "type": "github"
       },
       "original": {

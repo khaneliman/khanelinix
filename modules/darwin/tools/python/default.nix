@@ -15,6 +15,14 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ python311 ];
+    environment.systemPackages = with pkgs; [
+      (python3.withPackages (ps:
+        with ps; [
+          pip
+          pyqt5
+          qtpy
+          requests
+        ]))
+    ];
   };
 }
