@@ -37,6 +37,7 @@ in
   config = mkIf cfg.enable {
     home = {
       sessionVariables = {
+        DOTNET_ROOT = "${pkgs.dotnet-sdk_7}";
         EDITOR = mkIf cfg.default "nvim";
       };
     };

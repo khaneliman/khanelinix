@@ -556,11 +556,11 @@
     "neovim-config": {
       "flake": false,
       "locked": {
-        "lastModified": 1695446916,
-        "narHash": "sha256-1ifO56fFb4MhOiDHZ0PyggBVHMSoVdvoHESsGz/gDlo=",
+        "lastModified": 1695524560,
+        "narHash": "sha256-bq/vJ5DCMxnmuBCUWM5SoUSJASQ7T5oK8gDYeKj1wZg=",
         "owner": "khaneliman",
         "repo": "astronvim",
-        "rev": "ee0a7e327f2dd986ded971c5266c074dc51cd069",
+        "rev": "d72bc6f5c5a1690e1ef29f57e4df092730e4c4a0",
         "type": "github"
       },
       "original": {
@@ -740,11 +740,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1695517585,
-        "narHash": "sha256-zKTnKxY/i/U5Wb2k2gHe8J/PczK71VAPGrCbgumghnM=",
+        "lastModified": 1695519508,
+        "narHash": "sha256-0MDHDiuZad/iFzo3rDT6PvWrWz1lqm/AUfiqdMA43YY=",
         "owner": "nix-community",
         "repo": "nixpkgs-wayland",
-        "rev": "8a21cb06b1bbdfd7d65c6611daf4c594ebfff675",
+        "rev": "dad465e1202329d5aa3723e30c18d6e093b1f6d9",
         "type": "github"
       },
       "original": {
@@ -889,11 +889,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1695434972,
-        "narHash": "sha256-xApD0SkgTSZNEp2QBKT1Cwt1H8xkZhdZvmHL6hjbE/o=",
+        "lastModified": 1695521529,
+        "narHash": "sha256-iTQGb6DNZPOg1C6DG4daXFKFiuUffl2rZ5YKzi0LK+4=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "c0ad320f9aadcc3cb1e62794cb950fe243e077d6",
+        "rev": "164b96162f83ae3be6a9f5577053e0d53e5f4e6a",
         "type": "github"
       },
       "original": {
