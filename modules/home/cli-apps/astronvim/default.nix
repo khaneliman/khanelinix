@@ -56,17 +56,18 @@ in
         bottom
         curl
         deno
+        dotnet-sdk_7
         fzf
+        gcc
         gdu
-        gzip
-        lazygit
         gnumake
+        gzip
+        jdk17
+        lazygit
         less
         ripgrep
         unzip
         wget
-        gcc
-        dotnet-sdk_7
       ] ++ lsp
       ++ lib.optional stdenv.isLinux webkitgtk;
     };
