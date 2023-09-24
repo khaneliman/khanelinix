@@ -556,11 +556,11 @@
     "neovim-config": {
       "flake": false,
       "locked": {
-        "lastModified": 1695530904,
-        "narHash": "sha256-ApbhjggsHkBDtIy0z8ImRAyXXDEdjIBt2o7IDicAKYc=",
+        "lastModified": 1695532857,
+        "narHash": "sha256-seMhX4Nb9gOsZUyDzBYdmjvbasw/S6EDMJmjsVyU5X8=",
         "owner": "khaneliman",
         "repo": "astronvim",
-        "rev": "7fbcc07620168843b19c13b3dfa6a513919bca1d",
+        "rev": "ab840c25072ff5ef5bee6aee3565a59a4126607b",
         "type": "github"
       },
       "original": {

@@ -20,12 +20,10 @@ in
 
       libraries = with pkgs; [
         gcc
-        clang
-        cmake
+        icu
         libcxx
-        gnumake
-        meson
-        pkg-config
+        stdenv.cc.cc.lib
+        zlib
       ];
     };
   };
