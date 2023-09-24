@@ -74,7 +74,15 @@ in
     xdg.configFile = {
       "nvim" = {
         onChange = "${getExe pkgs.neovim} --headless +quitall";
-        source = neovim-config;
+        source = lib.cleanSourceWith {
+          filter = name: _type:
+            let
+              baseName = baseNameOf (toString name);
+            in
+            "lazy-lock.json" != baseName;
+          src = lib.cleanSource neovim-config;
+        };
+        recursive = true;
       };
     };
   };
