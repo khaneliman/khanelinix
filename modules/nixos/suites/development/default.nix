@@ -58,7 +58,6 @@ in
         go = enabled;
         k8s = enabled;
         node = enabled;
-        python = enabled;
         tree-sitter = enabled;
       };
 
