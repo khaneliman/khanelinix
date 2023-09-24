@@ -279,7 +279,7 @@ in
           };
         };
 
-        includes = cfg.includes;
+        inherit (cfg) includes;
 
         ignores = [
           ".DS_Store"
