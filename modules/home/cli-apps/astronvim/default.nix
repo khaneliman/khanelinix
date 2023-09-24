@@ -65,6 +65,8 @@ in
         jdk17
         lazygit
         less
+        (python3.withPackages
+          (ps: with ps; [ pip ]))
         ripgrep
         unzip
         wget
