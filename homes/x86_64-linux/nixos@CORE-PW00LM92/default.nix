@@ -21,6 +21,14 @@ in
       home-manager = enabled;
     };
 
+    security = {
+      sops = {
+        enable = true;
+        defaultSopsFile = ../../../secrets/CORE/nixos/default.yaml;
+        sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
+      };
+    };
+
     system = {
       xdg = enabled;
     };
@@ -47,6 +55,7 @@ in
       };
 
       ssh = enabled;
+      wakatime = enabled;
     };
   };
 

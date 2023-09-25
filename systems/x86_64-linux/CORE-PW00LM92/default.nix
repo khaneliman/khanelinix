@@ -23,6 +23,7 @@ in
 
     security = {
       gpg = mkForce disabled;
+      sops = enabled;
     };
 
     suites = {
