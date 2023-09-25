@@ -49,6 +49,14 @@ in
       hyprland = enabled;
     };
 
+    security = {
+      sops = {
+        enable = true;
+        defaultSopsFile = ../../../secrets/khanelinix/khaneliman/default.yaml;
+        sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
+      };
+    };
+
     system = {
       xdg = enabled;
     };
@@ -69,6 +77,7 @@ in
     tools = {
       git = enabled;
       ssh = enabled;
+      wakatime = enabled;
     };
   };
 

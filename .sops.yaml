@@ -1,5 +1,6 @@
 keys:
   - &admin_khaneliman age1547vqtqhgtxu54eewxwttjsfd85w0lm4f46fyxxhnx2ydxt7kyxs36ts2d
+  - &user_khanelinix_khaneliman age13xfa77f49ne56z3yyqh9qc9upjmrjfva8kcvg3jfem2m99dhr9fs34gdrp 
 creation_rules:
   - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
@@ -9,3 +10,13 @@ creation_rules:
     key_groups:
       - age:
           - *admin_khaneliman
+  - path_regex: secrets/khanelinix/khaneliman[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+          - *admin_khaneliman
+          - *user_khanelinix_khaneliman
+  - path_regex: secrets/khaneliman[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+          - *admin_khaneliman
+          - *user_khanelinix_khaneliman
