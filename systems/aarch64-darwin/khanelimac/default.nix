@@ -9,6 +9,10 @@ in
       workstation = enabled;
     };
 
+    security = {
+      sops = enabled;
+    };
+
     suites = {
       art = enabled;
       business = enabled;

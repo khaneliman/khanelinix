@@ -27,9 +27,21 @@ in
       };
     };
 
+    security = {
+      sops = {
+        enable = true;
+        defaultSopsFile = ../../../secrets/khanelimac/khaneliman/default.yaml;
+        sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
+      };
+    };
+
     suites = {
       common = enabled;
       development = enabled;
+    };
+
+    tools = {
+      wakatime = enabled;
     };
   };
 
