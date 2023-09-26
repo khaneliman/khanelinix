@@ -33,15 +33,17 @@ in
         libsForQt5.qt5.qtquickcontrols2
         libsForQt5.qt5.qtsvg
         libsForQt5.qt5ct
+        qt6Packages.qtstyleplugin-kvantum
+        qt6Packages.qt6ct
         # qt6.full
         # qt6.qtsvg
         # qt6.qtquick3d
-        # qt6.wrapQtAppsHook
         # qt6.qtwayland
       ]
       ++ lib.optional config.khanelinix.suites.wlroots.enable libsForQt5.qt5.qtwayland;
 
     environment.sessionVariables = {
+      QT_STYLE_OVERRIDE = "kvantum";
       QT_QPA_PLATFORMTHEME = "qt5ct";
     };
 
