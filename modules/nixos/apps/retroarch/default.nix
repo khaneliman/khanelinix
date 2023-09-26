@@ -24,7 +24,8 @@ in
           beetle-snes
           citra
           dolphin
-          mame
+          # FIX: fix package upstream
+          # mame
           mgba
           nestopia
           pcsx2

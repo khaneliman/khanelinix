@@ -17,7 +17,7 @@ in
     enable = mkBoolOpt false "Whether to customize GTK and apply themes.";
     theme = {
       name =
-        mkOpt str "Catppuccin-Macchiato-Standard-Blue-dark"
+        mkOpt str "Catppuccin-Macchiato-Standard-Blue-Dark"
           "The name of the GTK theme to apply.";
       pkg =
         mkOpt package
