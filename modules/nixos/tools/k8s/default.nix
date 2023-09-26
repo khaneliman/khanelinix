@@ -25,12 +25,13 @@ in
     };
 
     environment.systemPackages = with pkgs; [
+      helmfile
+      k9s
+      kubecolor
       kubectl
       kubectx
-      kubeseal
-      kubecolor
       kubernetes-helm
-      helmfile
+      kubeseal
     ];
   };
 }
