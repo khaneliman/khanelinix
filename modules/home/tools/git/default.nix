@@ -251,7 +251,10 @@ in
             whitespace = "trailing-space,space-before-tab";
           };
 
-          credential.helper = mkIf cfg.wslAgentBridge ''/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe'';
+          credential = {
+            helper = mkIf cfg.wslAgentBridge ''/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe'';
+            useHttpPath = true;
+          };
 
           fetch = {
             prune = true;
