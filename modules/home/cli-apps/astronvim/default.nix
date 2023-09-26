@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib) mkEnableOption mkIf getExe;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.internal) mkBoolOpt enabled;
   inherit (inputs) neovim-config;
 
   cfg = config.khanelinix.cli-apps.astronvim;
@@ -41,6 +41,8 @@ in
         EDITOR = mkIf cfg.default "nvim";
       };
     };
+
+    khanelinix.tools.wakatime = enabled;
 
     programs.neovim = {
       enable = true;

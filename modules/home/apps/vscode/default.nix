@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.internal) mkBoolOpt enabled;
   cfg = config.khanelinix.apps.vscode;
 in
 {
@@ -15,6 +15,18 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.file = {
+      ".vscode/argv.json" = mkIf config.khanelinix.security.keyring.enable {
+        text = builtins.toJSON {
+          "enable-crash-reporter" = true;
+          "crash-reporter-id" = "53a6c113-87c4-4f20-9451-dd67057ddb95";
+          "password-store" = "gnome";
+        };
+      };
+    };
+
+    khanelinix.tools.wakatime = enabled;
+
     programs.vscode = {
       enable = true;
       enableUpdateCheck = true;
@@ -34,14 +46,5 @@ in
       ];
     };
 
-    home.file = {
-      ".vscode/argv.json" = mkIf config.khanelinix.security.keyring.enable {
-        text = builtins.toJSON {
-          "enable-crash-reporter" = true;
-          "crash-reporter-id" = "53a6c113-87c4-4f20-9451-dd67057ddb95";
-          "password-store" = "gnome";
-        };
-      };
-    };
   };
 }

@@ -39,10 +39,6 @@ in
       common = enabled;
       development = enabled;
     };
-
-    tools = {
-      wakatime = enabled;
-    };
   };
 
   home.shellAliases = {

@@ -55,7 +55,6 @@ in
       };
 
       ssh = enabled;
-      wakatime = enabled;
     };
   };
 

@@ -77,7 +77,6 @@ in
     tools = {
       git = enabled;
       ssh = enabled;
-      wakatime = enabled;
     };
   };
 
