@@ -15,8 +15,8 @@ in
   };
 
   config = mkIf cfg.enable {
-    sops.secrets.data = {
-      sopsFile = ../../../../secrets/khaneliman/wakatime.json;
+    sops.secrets.wakatime = {
+      sopsFile = ../../../../secrets/khaneliman/default.json;
       path = "${config.home.homeDirectory}/.wakatime.cfg";
     };
   };
