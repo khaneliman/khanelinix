@@ -111,20 +111,13 @@ in
         enable = true;
 
         authorizedKeys = [
-          "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCy8/it2fHl+l0Hoc70HJWh6uyOtlho4gNLUPf2r36AlO2JJIJR/set/pqpPchcOTtROgmkmFDMS7zIG8o2iZbZhSerJ5hxWzSqMUyFEfB/9l8Qh/6gyuDIB8ZtiauV2EpwERtfVAkUOjTi0c20WVdMJNVhINCRZ3AS3zB4LmsBV8cLLPb14SODR5zr9xtj0AzSmb6G7N/Od1k1X2LYIidMFzFmRWrowl56j9HXMSVkQBEkhf7Cp7RMsh/YqgsQkHtUhKAuX+1F87xPeil8RasCso8/aQGr8vb8TUMCNUOO02WLSmcqtKRyB82L74nNHILgL+kQ2cFtppuEqa2j6Tvc62yCKTSdI8uVRHH6t7t84DEInLEXPS0RuR07k9Rlc+01EEmiSCgUHU1jJC8LPlswJrU9hvdyaVkc86J/MIQMSGX+Z98Fo3xNcLQvjpK0NRue773QdCPKdEMhsIJ63EZI7OfcAuhzUvDJOujJ2JVDJgzskne3CLWH37i/19RK0RM= khaneliman@khanelimac.local"
-          "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCsACVsmcfvobSSL8/luWfc6dnkCe7XrFahYkdlHCJzmC2EKw8iq6DLaFyDgFLtWPdpY87FQFGV4j2b9T7nyLyPnWBokWR+SJdi4xTCbCJkkvP6bFqjMJQXkRRps1kVmUF/mdKjd6KNkqbfVfhiTQIl3ITVQQ6bvE9jxZ46o5yqny8a9U/QSaGv87nXmnTC9x5d8NYNE2qHjbZuRupmZVj253qesRC0nbKrlMhLmdtE587URlndERq9UWIenjFvLhRF3Ju3F4hmCylvFvqxdXLy0ElN1pyqQ/RP1DOWSw1w1GwPZF4ysJQKGGTW7aNH/3hjPZT7+euz79b1m+t+Pnz90sw8y+jxBGusRzoQygWcfBulqCaEQl7T4Zp6/8HTgnTw3c7VJ0ke6RYAWANmBX45sOc63+Uu8lxQINckHfbg4agAh8Idmo6tb6AzgrPIanv5avGQ20u+f3diNzgj8qY4YpPZVdBUBAhAVQ/Y0X2Hgc/8R+3gpTZrkN+FEr1NHBE= khaneliman@Austin-Playground"
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEpfTVxQKmkAYOrsnroZoTk0LewcBIC4OjlsoJY6QbB0"
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINBG8l3jQ2EPLU+BlgtaQZpr4xr97n2buTLAZTxKHSsD"
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM7UBwfd7+K0mdkAIb2TE6RzMu6L4wZnG/anuoYqJMPB"
         ];
 
+        # TODO: make part of ssh config proper 
         extraConfig = ''
-          Host laptop
-            User ${config.khanelinix.user.name}
-            Hostname Khanelimac.local
-
-          Host desktop
-            User ${config.khanelinix.user.name}
-            Hostname khanelinix.local
-
           Host server
             User ${config.khanelinix.user.name}
             Hostname austinserver.local

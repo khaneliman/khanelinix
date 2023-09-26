@@ -45,6 +45,7 @@ let
         in
         ''
           Host ${name}
+            Hostname ${name}.local
             User ${remote-user-name}
             ForwardAgent yes
             Port ${builtins.toString cfg.port}
@@ -68,9 +69,6 @@ in
 
       extraConfig = ''
         StreamLocalBindUnlink yes
-
-        Host *
-        HostKeyAlgorithms +ssh-rsa
 
         ${other-hosts-config}
 

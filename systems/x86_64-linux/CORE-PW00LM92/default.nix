@@ -22,6 +22,7 @@ in
     };
 
     security = {
+      # FIX: make gpg work on wsl
       gpg = mkForce disabled;
       sops = enabled;
     };
