@@ -1,1 +1,4 @@
 secrets/**/*.yaml diff=sopsdiffer
+secrets/**/*.json diff=sopsdiffer
+secrets/**/*.env diff=sopsdiffer
+secrets/**/*.ini diff=sopsdiffer
