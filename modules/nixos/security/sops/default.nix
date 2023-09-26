@@ -24,7 +24,13 @@ in
       ssh-to-age
     ];
 
-    sops.age.sshKeyPaths = cfg.sshKeyPaths;
-    sops.defaultSopsFile = cfg.defaultSopsFile;
+    sops = {
+      inherit (cfg) defaultSopsFile;
+
+      age = {
+        keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
+        inherit (cfg) sshKeyPaths;
+      };
+    };
   };
 }

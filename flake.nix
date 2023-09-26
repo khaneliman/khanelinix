@@ -152,7 +152,7 @@
 
   outputs = inputs:
     let
-      inherit (inputs) deploy-rs flake nur nix-ld rustup-overlay snowfall-lib snowfall-frost sops-nix home-manager;
+      inherit (inputs) deploy-rs flake nur nix-ld rustup-overlay snowfall-lib snowfall-frost sops-nix;
 
       lib = snowfall-lib.mkLib {
         inherit inputs;

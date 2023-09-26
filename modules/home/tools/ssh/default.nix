@@ -1,7 +1,6 @@
 { options
 , config
 , lib
-, format
 , inputs
 , host
 , ...
@@ -37,18 +36,19 @@ let
           remote-user-name = remote.config.khanelinix.user.name;
           remote-user-id = builtins.toString remote.config.users.users.${remote-user-name}.uid;
 
-          # forward-gpg =
-          #   optionalString (config.programs.gnupg.agent.enable && remote.config.programs.gnupg.agent.enable)
-          #     ''
-          #       RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra
-          #       RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh
-          #     '';
+          forward-gpg =
+            optionalString (config.services.gpg-agent.enable && remote.config.services.gpg-agent.enable)
+              ''
+                RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra
+                RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh
+              '';
         in
         ''
           Host ${name}
             User ${remote-user-name}
             ForwardAgent yes
             Port ${builtins.toString cfg.port}
+            ${forward-gpg}
         ''
       )
       (builtins.attrNames other-hosts);

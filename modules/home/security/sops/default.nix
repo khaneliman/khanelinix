@@ -24,10 +24,13 @@ in
 
   config = mkIf cfg.enable {
     sops = {
-      defaultSopsFile = cfg.defaultSopsFile;
-      age.sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ] ++ cfg.sshKeyPaths;
-      age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
-      age.generateKey = true;
+      inherit (cfg) defaultSopsFile;
+
+      age = {
+        generateKey = true;
+        keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
+        sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ] ++ cfg.sshKeyPaths;
+      };
     };
   };
 }
