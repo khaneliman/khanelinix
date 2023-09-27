@@ -30,6 +30,7 @@ in
       kubecolor
       kubectl
       kubectx
+      kubelogin
       kubernetes-helm
       kubeseal
     ];
