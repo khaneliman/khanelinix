@@ -51,10 +51,6 @@ in
       };
     };
 
-    suites = {
-      emulation = enabled;
-    };
-
     hardware = {
       amdgpu = enabled;
       audio = enabled;
@@ -158,6 +154,10 @@ in
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
         defaultSopsFile = ../../../secrets/khanelinix/default.yaml;
       };
+    };
+
+    suites = {
+      emulation = enabled;
     };
 
     system = {
