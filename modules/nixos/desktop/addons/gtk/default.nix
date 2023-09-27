@@ -48,6 +48,7 @@ in
       cfg.icon.pkg
       cfg.cursor.pkg
       cfg.theme.pkg
+      dconf # required explicitly with noXlibs
       gsettings-desktop-schemas
       glib
       gtk3.out # for gtk-launch

@@ -21,6 +21,14 @@ in
       yubikey = enabled;
     };
 
+    desktop = {
+      addons = {
+        gtk = enabled;
+        qt = enabled;
+        wallpapers = enabled;
+      };
+    };
+
     security = {
       # FIX: make gpg work on wsl
       gpg = mkForce disabled;
