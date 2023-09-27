@@ -38,7 +38,14 @@ in
     suites = {
       business = enabled;
       common = enabled;
-      development = enabled;
+      development = {
+        enable = true;
+        azureEnable = true;
+        dockerEnable = true;
+        kubernetesEnable = true;
+        nixEnable = true;
+        sqlEnable = true;
+      };
     };
 
     user = {
