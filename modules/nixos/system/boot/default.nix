@@ -13,19 +13,21 @@ in
   options.khanelinix.system.boot = {
     enable = mkBoolOpt false "Whether or not to enable booting.";
     secureBoot = mkBoolOpt false "Whether or not to enable secure boot.";
+    plymouth = mkBoolOpt false "Whether or not to enable plymouth boot splash.";
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; lib.optionals cfg.secureBoot [
+    environment.systemPackages = with pkgs;  [
       efibootmgr
       efitools
       efivar
       fwupd
+    ] ++ lib.optionals cfg.secureBoot [
       sbctl
     ];
 
     boot = {
-      kernelParams = [ "quiet" "splash" ];
+      kernelParams = lib.optionals cfg.plymouth [ "quiet" ];
 
       lanzaboote = mkIf cfg.secureBoot {
         enable = true;
@@ -47,7 +49,7 @@ in
       };
 
       plymouth = {
-        enable = true;
+        enable = cfg.plymouth;
         themePackages = [ pkgs.catppuccin-plymouth ];
         theme = "catppuccin-macchiato";
         # font = "${pkgs.noto-fonts}/share/fonts/truetype/noto/NotoSans-Light.ttf";

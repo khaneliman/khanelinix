@@ -173,6 +173,7 @@ in
       boot = {
         enable = true;
         secureBoot = true;
+        plymouth = true;
       };
 
       fonts = enabled;
