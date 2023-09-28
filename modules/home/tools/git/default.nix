@@ -113,6 +113,13 @@ in
           ### Random dad joke if typo on git add
           dad = "!curl https://icanhazdadjoke.com/ && echo";
 
+          # Fix corrupt git repo
+          fix = "!f() {
+            find .git/objects/ -type f -empty | xargs rm
+            git fetch -p
+            git fsck --full
+          }";
+
           ### Forced Pull:
           #> You have a local branch (e.g. for reviewing), but someone else did a forced push update on the remote branch. A regular git pull will fail, but this will just set the local branch to match the remote branch. BEWARE: this will overwrite any local commits you have made on this branch that haven't been pushed.
           pullf = "!bash - c \"git reset --hard origin/$(git rev-parse --abbrev-ref HEAD)\"";
