@@ -22,7 +22,6 @@ in
       tools = {
         node = enabled;
         python = enabled;
-        java = enabled;
       };
     };
 
@@ -32,6 +31,7 @@ in
       neovide
       onefetch
       rustup
+      jdk
 
       #nix
       nixpkgs-fmt

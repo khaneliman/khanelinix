@@ -25,15 +25,15 @@ in
       dupeguru
       filelight
       fontpreview
+      gparted
       keepass
+      pkgs.khanelinix.pocketcasts
     ];
 
     khanelinix = {
       apps = {
         _1password = enabled;
         firefox = enabled;
-        gparted = enabled;
-        pocketcasts = enabled;
       };
 
       desktop = {

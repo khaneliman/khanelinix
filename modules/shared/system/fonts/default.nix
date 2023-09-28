@@ -15,6 +15,7 @@ in
     enable = mkBoolOpt false "Whether or not to manage fonts.";
     fonts = with pkgs;
       mkOpt (listOf package) [
+        google-fonts
         noto-fonts
         noto-fonts-cjk-sans
         noto-fonts-cjk-serif

@@ -26,13 +26,10 @@ in
       spotify
       tageditor
       youtube-music
+      pkgs.khanelinix.yt-music
     ];
 
     khanelinix = {
-      apps = {
-        yt-music = enabled;
-      };
-
       tools = {
         spicetify-cli = enabled;
       };

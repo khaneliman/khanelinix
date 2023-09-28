@@ -20,6 +20,7 @@ in
     environment.systemPackages = with pkgs; [
       bottles
       gamescope
+      lutris
       proton-caller
       protontricks
       protonup-ng
@@ -29,7 +30,6 @@ in
     khanelinix = {
       apps = {
         gamemode = enabled;
-        lutris = enabled;
         # mangohud = enabled;
         steam = enabled;
       };

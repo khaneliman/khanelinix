@@ -18,13 +18,13 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       mediainfo-gui
+      pitivi
+      vlc
     ];
 
     khanelinix = {
       apps = {
         obs = enabled;
-        pitivi = enabled;
-        vlc = enabled;
       };
     };
   };

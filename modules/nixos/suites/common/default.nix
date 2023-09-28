@@ -16,6 +16,7 @@ in
     environment.systemPackages = with pkgs; [
       appimage-run
       clac
+      fastfetch
       feh
       fzf
       jq
@@ -29,7 +30,6 @@ in
 
     khanelinix = {
       cli-apps = {
-        fastfetch = enabled;
         ranger = enabled;
       };
 

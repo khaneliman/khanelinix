@@ -67,7 +67,6 @@ in
     };
 
     apps = {
-      vscode = enabled;
       firefox = enabled;
     };
 

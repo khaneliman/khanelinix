@@ -76,8 +76,7 @@ in
       '';
     };
 
-    # TODO: change to all aliases
-    programs.zsh.shellAliases =
+    home.shellAliases =
       foldl
         (aliases: system:
           aliases

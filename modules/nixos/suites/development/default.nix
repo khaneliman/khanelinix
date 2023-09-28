@@ -57,6 +57,8 @@ in
       github-desktop
       onefetch
       qtcreator
+      neovide
+      vscode
     ] ++ lib.optionals cfg.nixEnable [
       nixpkgs-fmt
       nixpkgs-hammering
@@ -74,11 +76,6 @@ in
     ];
 
     khanelinix = {
-      apps = {
-        neovide = enabled;
-        vscode = enabled;
-      };
-
       cli-apps = {
         lazydocker.enable = cfg.dockerEnable;
         prisma = enabled;
