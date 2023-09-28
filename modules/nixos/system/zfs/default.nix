@@ -3,21 +3,19 @@
 , ...
 }:
 let
-  cfg = config.khanelinix.system.zfs;
-
   inherit (lib) mkEnableOption mkIf mkDefault;
   inherit (lib.internal) mkOpt;
   inherit (lib.types) listOf str;
+
+  cfg = config.khanelinix.system.zfs;
 in
 {
   options.khanelinix.system.zfs = {
     enable = mkEnableOption "ZFS support";
-
-    pools = mkOpt (listOf str) [ "rpool" ] "The ZFS pools to manage.";
-
     auto-snapshot = {
       enable = mkEnableOption "ZFS auto snapshotting";
     };
+    pools = mkOpt (listOf str) [ "rpool" ] "The ZFS pools to manage.";
   };
 
   config = mkIf cfg.enable {

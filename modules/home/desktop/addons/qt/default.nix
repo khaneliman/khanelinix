@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) types mkIf;
   inherit (lib.internal) mkBoolOpt mkOpt;
+
   cfg = config.khanelinix.desktop.addons.qt;
 in
 {

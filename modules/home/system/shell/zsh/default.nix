@@ -1,10 +1,11 @@
-{ lib
-, config
+{ config
+, lib
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
+
   cfg = config.khanelinix.system.shell.zsh;
 in
 {

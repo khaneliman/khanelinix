@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -20,14 +20,13 @@ in
     mkIf cfg.enable
       {
         environment.systemPackages = with pkgs; [
-          sddm
           catppuccin-sddm-corners
+          sddm
         ];
 
         services.xserver = {
           enable = true;
 
-          libinput.enable = true;
           displayManager = {
             inherit (cfg) defaultSession;
 
@@ -45,6 +44,8 @@ in
               };
             };
           };
+
+          libinput.enable = true;
         };
 
         system.activationScripts.postInstallSddm = stringAfter [ "users" ] ''

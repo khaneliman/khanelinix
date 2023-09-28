@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.desktop.addons.swappy;
 in
 {
@@ -18,7 +19,9 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [ swappy ];
 
-    khanelinix.home.configFile."swappy/config".source = ./config;
-    khanelinix.home.file."Pictures/screenshots/.keep".text = "";
+    khanelinix.home = {
+      configFile."swappy/config".source = ./config;
+      file."Pictures/screenshots/.keep".text = "";
+    };
   };
 }

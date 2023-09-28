@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.cli-apps.ranger;
 in
 {

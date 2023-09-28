@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , inputs
 , ...
@@ -24,24 +24,24 @@ in
   config = mkIf cfg.enable {
     programs.spicetify = {
       enable = true;
-      theme = spicePkgs.themes.catppuccin-macchiato;
       colorScheme = "blue";
+      theme = spicePkgs.themes.catppuccin-macchiato;
 
       enabledCustomApps = with spicePkgs.apps; [
+        lyrics-plus
         marketplace
         reddit
-        lyrics-plus
       ];
 
       enabledExtensions = with spicePkgs.extensions; [
         adblock
         autoSkip
-        playNext
-        volumePercentage
-        history
-        genre
         fullAppDisplay
+        genre
+        history
+        playNext
         shuffle # shuffle+ (special characters are sanitized out of ext names)
+        volumePercentage
       ];
     };
   };

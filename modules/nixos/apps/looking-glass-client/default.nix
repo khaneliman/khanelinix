@@ -1,14 +1,15 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
-  cfg = config.khanelinix.apps.looking-glass-client;
   inherit (config.khanelinix) user;
+
+  cfg = config.khanelinix.apps.looking-glass-client;
 in
 {
   options.khanelinix.apps.looking-glass-client = {

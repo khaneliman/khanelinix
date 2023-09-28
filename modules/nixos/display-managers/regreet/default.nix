@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -46,8 +46,8 @@ in
       {
         environment.systemPackages = [
           config.khanelinix.desktop.addons.gtk.cursor.pkg
-          config.khanelinix.desktop.addons.gtk.theme.pkg
           config.khanelinix.desktop.addons.gtk.icon.pkg
+          config.khanelinix.desktop.addons.gtk.theme.pkg
           pkgs.vulkan-validation-layers
         ];
 
@@ -74,7 +74,9 @@ in
           command = "env GTK_USE_PORTAL=0 ${getExe pkgs.sway} --config ${greetdSwayConfig}";
         };
 
-        security.pam.services.greetd.gnupg.enable = true;
-        security.pam.services.greetd.enableGnomeKeyring = true;
+        security.pam.services.greetd = {
+          enableGnomeKeyring = true;
+          gnupg.enable = true;
+        };
       };
 }

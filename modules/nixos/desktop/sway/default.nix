@@ -1,15 +1,15 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) types mkIf getExe getExe';
   inherit (lib.internal) mkBoolOpt mkOpt enabled fileWithText optionalString;
+  inherit (config.khanelinix.desktop.addons) term;
 
   cfg = config.khanelinix.desktop.sway;
-  inherit (config.khanelinix.desktop.addons) term;
   substitutedConfig = pkgs.substituteAll {
     src = ./config;
     term = term.pkg.pname or term.pkg.name;
@@ -18,21 +18,37 @@ in
 {
   options.khanelinix.desktop.sway = with types; {
     enable = mkBoolOpt false "Whether or not to enable Sway.";
-    wallpaper = mkOpt (nullOr package) null "The wallpaper to display.";
     extraConfig =
       mkOpt str "" "Additional configuration for the Sway config file.";
+    wallpaper = mkOpt (nullOr package) null "The wallpaper to display.";
   };
 
   config = mkIf cfg.enable {
-    # Desktop additions
+    environment.systemPackages = [
+      (pkgs.writeTextFile {
+        name = "startsway";
+        destination = "/bin/startsway";
+        executable = true;
+        text = ''
+          #! ${getExe pkgs.bash}
+
+          # Import environment variables from the login manager
+          systemctl --user import-environment
+
+          # Start Sway
+          exec systemctl --user start sway.service
+        '';
+      })
+    ];
+
     khanelinix = {
       desktop.addons = {
-        gtk = enabled;
         foot = enabled;
-        mako = enabled;
-        wofi = enabled;
+        gtk = enabled;
         kanshi = enabled;
+        mako = enabled;
         nautilus = enabled;
+        wofi = enabled;
         xdg-portal = enabled;
       };
 
@@ -98,49 +114,33 @@ in
       '';
     };
 
-    environment.systemPackages = [
-      (pkgs.writeTextFile {
-        name = "startsway";
-        destination = "/bin/startsway";
-        executable = true;
-        text = ''
-          #! ${getExe pkgs.bash}
+    systemd.user = {
+      targets.sway-session = {
+        description = "Sway compositor session";
+        documentation = [ "man:systemd.special(7)" ];
+        bindsTo = [ "graphical-session.target" ];
+        wants = [ "graphical-session-pre.target" ];
+        after = [ "graphical-session-pre.target" ];
+      };
 
-          # Import environment variables from the login manager
-          systemctl --user import-environment
-
-          # Start Sway
-          exec systemctl --user start sway.service
-        '';
-      })
-    ];
-
-    # configuring sway itself (assmung a display manager starts it)
-    systemd.user.targets.sway-session = {
-      description = "Sway compositor session";
-      documentation = [ "man:systemd.special(7)" ];
-      bindsTo = [ "graphical-session.target" ];
-      wants = [ "graphical-session-pre.target" ];
-      after = [ "graphical-session-pre.target" ];
-    };
-
-    systemd.user.services.sway = {
-      description = "Sway - Wayland window manager";
-      documentation = [ "man:sway(5)" ];
-      bindsTo = [ "graphical-session.target" ];
-      wants = [ "graphical-session-pre.target" ];
-      after = [ "graphical-session-pre.target" ];
-      # We explicitly unset PATH here, as we want it to be set by
-      # systemctl --user import-environment in startsway
-      environment.PATH = lib.mkForce null;
-      serviceConfig = {
-        Type = "simple";
-        ExecStart = ''
-          ${getExe' pkgs.dbus "dbus-run-session"} ${getExe pkgs.sway} --debug
-        '';
-        Restart = "on-failure";
-        RestartSec = 1;
-        TimeoutStopSec = 10;
+      services.sway = {
+        description = "Sway - Wayland window manager";
+        documentation = [ "man:sway(5)" ];
+        bindsTo = [ "graphical-session.target" ];
+        wants = [ "graphical-session-pre.target" ];
+        after = [ "graphical-session-pre.target" ];
+        # We explicitly unset PATH here, as we want it to be set by
+        # systemctl --user import-environment in startsway
+        environment.PATH = lib.mkForce null;
+        serviceConfig = {
+          Type = "simple";
+          ExecStart = ''
+            ${getExe' pkgs.dbus "dbus-run-session"} ${getExe pkgs.sway} --debug
+          '';
+          Restart = "on-failure";
+          RestartSec = 1;
+          TimeoutStopSec = 10;
+        };
       };
     };
   };

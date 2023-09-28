@@ -1,5 +1,5 @@
-{ lib
-, config
+{ config
+, lib
 , ...
 }:
 let
@@ -8,15 +8,15 @@ let
   cfg = config.khanelinix.system.xdg;
 
   browser = [ "firefox.desktop" ];
-  mail = [ "thunderbird.desktop" ];
-  terminal = [ "kitty.desktop" ];
   editor = [ "nvim.desktop" ];
-  fileManager = [ "thunar.desktop" ];
   excel = [ "libreoffice-calc.desktop" ];
-  powerpoint = [ "libreoffice-impress.desktop" ];
-  word = [ "libreoffice-writer.desktop" ];
-  video = [ "vlc.desktop" ];
+  fileManager = [ "thunar.desktop" ];
   image = [ "feh.desktop" ];
+  mail = [ "thunderbird.desktop" ];
+  powerpoint = [ "libreoffice-impress.desktop" ];
+  terminal = [ "kitty.desktop" ];
+  video = [ "vlc.desktop" ];
+  word = [ "libreoffice-writer.desktop" ];
 
   # XDG MIME types
   associations = {

@@ -6,6 +6,7 @@
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt enabled;
+
   cfg = config.khanelinix.suites.common;
 in
 {
@@ -20,9 +21,9 @@ in
 
     khanelinix = {
       cli-apps = {
-        ranger = enabled;
         btop = enabled;
         fastfetch = enabled;
+        ranger = enabled;
         tmux = enabled;
       };
 

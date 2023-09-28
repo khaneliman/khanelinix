@@ -6,6 +6,7 @@
 let
   inherit (lib) types mkIf getExe';
   inherit (lib.internal) mkBoolOpt mkOpt;
+
   cfg = config.khanelinix.cli-apps.prisma;
 in
 {

@@ -1,15 +1,16 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf getExe;
   inherit (lib.internal) mkBoolOpt;
-  cfg = config.khanelinix.desktop.addons.kanshi;
   inherit (config.khanelinix) user;
   inherit (config.users.users.${user.name}) home;
+
+  cfg = config.khanelinix.desktop.addons.kanshi;
 in
 {
   options.khanelinix.desktop.addons.kanshi = {
@@ -18,16 +19,16 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix.home.configFile."kanshi/config".source = ./config;
-
     environment.systemPackages = with pkgs; [ kanshi ];
+
+    khanelinix.home.configFile."kanshi/config".source = ./config;
 
     # configuring kanshi
     systemd.user.services.kanshi = {
       description = "Kanshi output autoconfig ";
-      wantedBy = [ "graphical-session.target" ];
-      partOf = [ "graphical-session.target" ];
       environment = { XDG_CONFIG_HOME = "${home}/.config"; };
+      partOf = [ "graphical-session.target" ];
+      wantedBy = [ "graphical-session.target" ];
       serviceConfig = {
         ExecCondition = ''
           ${getExe pkgs.bash} -c '[ -n "$WAYLAND_DISPLAY" ]'

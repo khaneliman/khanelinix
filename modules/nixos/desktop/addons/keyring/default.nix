@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.desktop.addons.keyring;
 in
 {
@@ -15,8 +16,8 @@ in
   };
 
   config = mkIf cfg.enable {
-    services.gnome.gnome-keyring.enable = true;
-
     environment.systemPackages = with pkgs; [ gnome.seahorse ];
+
+    services.gnome.gnome-keyring.enable = true;
   };
 }

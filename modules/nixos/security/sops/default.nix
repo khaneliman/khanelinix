@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -13,8 +13,8 @@ in
 {
   options.khanelinix.security.sops = with types; {
     enable = mkBoolOpt false "Whether to enable sops.";
-    sshKeyPaths = mkOpt (listOf path) [ ] "SSH Key paths to use.";
     defaultSopsFile = mkOpt path null "Default sops file.";
+    sshKeyPaths = mkOpt (listOf path) [ ] "SSH Key paths to use.";
   };
 
   config = mkIf cfg.enable {
@@ -28,8 +28,9 @@ in
       inherit (cfg) defaultSopsFile;
 
       age = {
-        keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
         inherit (cfg) sshKeyPaths;
+
+        keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
       };
     };
   };

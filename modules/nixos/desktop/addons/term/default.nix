@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) types mkIf;
   inherit (lib.internal) mkBoolOpt mkOpt;
+
   cfg = config.khanelinix.desktop.addons.term;
 in
 {
@@ -15,5 +16,7 @@ in
     pkg = mkOpt package pkgs.kitty "The terminal to install.";
   };
 
-  config = mkIf cfg.enable { environment.systemPackages = [ cfg.pkg ]; };
+  config = mkIf cfg.enable {
+    environment.systemPackages = [ cfg.pkg ];
+  };
 }

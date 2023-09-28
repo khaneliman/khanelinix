@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -11,13 +11,13 @@ in
 {
 
   options.khanelinix.home = with types; {
-    file =
-      mkOpt attrs { }
-        "A set of files to be managed by home-manager's <option>home.file</option>.";
     configFile =
       mkOpt attrs { }
         "A set of files to be managed by home-manager's <option>xdg.configFile</option>.";
     extraOptions = mkOpt attrs { } "Options to pass directly to home-manager.";
+    file =
+      mkOpt attrs { }
+        "A set of files to be managed by home-manager's <option>home.file</option>.";
   };
 
   config = {
@@ -26,15 +26,15 @@ in
     ];
 
     khanelinix.home.extraOptions = {
-      home.stateVersion = config.system.stateVersion;
       home.file = mkAliasDefinitions options.khanelinix.home.file;
-      xdg.enable = true;
+      home.stateVersion = config.system.stateVersion;
       xdg.configFile = mkAliasDefinitions options.khanelinix.home.configFile;
+      xdg.enable = true;
     };
 
     home-manager = {
-      useUserPackages = true;
       useGlobalPkgs = true;
+      useUserPackages = true;
 
       users.${config.khanelinix.user.name} =
         mkAliasDefinitions options.khanelinix.home.extraOptions;

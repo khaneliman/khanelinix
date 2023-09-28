@@ -11,8 +11,6 @@ in
 {
   options.khanelinix.desktop.addons.hyprpaper = {
     enable = mkEnableOption "Hyprpaper";
-    wallpapers = mkOpt (types.listOf types.path) [
-    ] "Wallpapers to preload.";
     monitors = mkOption {
       description = "Monitors and their wallpapers";
       type = with types; listOf (submodule {
@@ -26,6 +24,8 @@ in
         };
       });
     };
+    wallpapers = mkOpt (types.listOf types.path) [
+    ] "Wallpapers to preload.";
   };
 
   config =

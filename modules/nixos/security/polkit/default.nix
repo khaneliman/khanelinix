@@ -1,12 +1,13 @@
-{ options
-, config
-, pkgs
+{ config
 , lib
+, options
+, pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.security.polkit;
 in
 {
@@ -25,24 +26,11 @@ in
     };
 
     systemd = {
-      # user.services.polkit-gnome-authentication-agent-1 = {
-      #   description = "polkit-gnome-authentication-agent-1";
-      #   wantedBy = [ "graphical-session.target" ];
-      #   wants = [ "graphical-session.target" ];
-      #   after = [ "graphical-session.target" ];
-      #   serviceConfig = {
-      #       Type = "simple";
-      #       ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-      #       Restart = "on-failure";
-      #       RestartSec = 1;
-      #       TimeoutStopSec = 10;
-      #     };
-      # };
       user.services.polkit-kde-authentication-agent-1 = {
+        after = [ "graphical-session.target" ];
         description = "polkit-kde-authentication-agent-1";
         wantedBy = [ "graphical-session.target" ];
         wants = [ "graphical-session.target" ];
-        after = [ "graphical-session.target" ];
         serviceConfig = {
           Type = "simple";
           ExecStart = "${pkgs.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1";

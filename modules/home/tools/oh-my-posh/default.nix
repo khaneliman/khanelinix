@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.tools.oh-my-posh;
 in
 {
@@ -18,10 +19,9 @@ in
     programs.oh-my-posh = {
       enable = true;
       enableBashIntegration = true;
-      enableZshIntegration = true;
       enableFishIntegration = true;
+      enableZshIntegration = true;
       package = pkgs.oh-my-posh;
-
       settings = builtins.fromJSON (builtins.unsafeDiscardStringContext (builtins.readFile ./config.json));
     };
   };

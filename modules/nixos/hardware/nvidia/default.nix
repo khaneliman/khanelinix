@@ -1,7 +1,7 @@
-{ options
-, config
-, pkgs
+{ config
 , lib
+, options
+, pkgs
 , ...
 }:
 let
@@ -24,7 +24,5 @@ in
       nvtop
       vulkan-tools
     ];
-
-    environment.variables = { };
   };
 }

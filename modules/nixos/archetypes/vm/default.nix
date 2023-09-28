@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , ...
 }:
 let
@@ -23,8 +23,6 @@ in
         development = enabled;
         vm = enabled;
       };
-
-      tools = { };
     };
   };
 }

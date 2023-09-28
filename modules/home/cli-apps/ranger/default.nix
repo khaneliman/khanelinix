@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , inputs
 , ...
@@ -9,6 +9,7 @@ let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   inherit (inputs) ranger-devicons ranger-udisk-menu;
+
   cfg = config.khanelinix.cli-apps.ranger;
 in
 {

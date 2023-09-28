@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , inputs
 , system
@@ -25,6 +25,31 @@ in
   config =
     mkIf cfg.enable
       {
+        environment.sessionVariables = {
+          CLUTTER_BACKEND = "wayland";
+          GDK_BACKEND = "wayland";
+          HYPRLAND_LOG_WLR = "1";
+          MOZ_ENABLE_WAYLAND = "1";
+          MOZ_USE_XINPUT2 = "1";
+          QT_QPA_PLATFORM = "wayland";
+          QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+          SDL_VIDEODRIVER = "wayland";
+          WLR_RENDERER = "vulkan";
+          XDG_CURRENT_DESKTOP = "Hyprland";
+          XDG_SESSION_DESKTOP = "Hyprland";
+          XDG_SESSION_TYPE = "wayland";
+          _JAVA_AWT_WM_NONEREPARENTING = "1";
+          __GL_GSYNC_ALLOWED = "0";
+          __GL_VRR_ALLOWED = "0";
+        };
+
+        environment.systemPackages = with pkgs; [
+          hyprpaper
+          hyprpicker
+          hyprland-contrib.packages.${hostPlatform.system}.grimblast
+          khanelinix.record_screen
+        ];
+
         khanelinix = {
           apps = {
             partitionmanager = enabled;
@@ -89,30 +114,5 @@ in
           xwayland.enable = true;
           package = hyprland.packages.${system}.hyprland;
         };
-
-        environment.sessionVariables = {
-          CLUTTER_BACKEND = "wayland";
-          GDK_BACKEND = "wayland";
-          HYPRLAND_LOG_WLR = "1";
-          MOZ_ENABLE_WAYLAND = "1";
-          MOZ_USE_XINPUT2 = "1";
-          QT_QPA_PLATFORM = "wayland";
-          QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-          SDL_VIDEODRIVER = "wayland";
-          WLR_RENDERER = "vulkan";
-          XDG_CURRENT_DESKTOP = "Hyprland";
-          XDG_SESSION_DESKTOP = "Hyprland";
-          XDG_SESSION_TYPE = "wayland";
-          _JAVA_AWT_WM_NONEREPARENTING = "1";
-          __GL_GSYNC_ALLOWED = "0";
-          __GL_VRR_ALLOWED = "0";
-        };
-
-        environment.systemPackages = with pkgs; [
-          hyprpaper
-          hyprpicker
-          hyprland-contrib.packages.${hostPlatform.system}.grimblast
-          khanelinix.record_screen
-        ];
       };
 }

@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.apps.partitionmanager;
 in
 {
@@ -15,5 +16,10 @@ in
   };
 
   config =
-    mkIf cfg.enable { environment.systemPackages = with pkgs; [ partition-manager libsForQt5.kpmcore ]; };
+    mkIf cfg.enable {
+      environment.systemPackages = with pkgs; [
+        partition-manager
+        libsForQt5.kpmcore
+      ];
+    };
 }

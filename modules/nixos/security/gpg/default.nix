@@ -1,7 +1,7 @@
-{ options
-, config
-, pkgs
+{ config
 , lib
+, options
+, pkgs
 , inputs
 , ...
 }:
@@ -45,12 +45,12 @@ let
   '';
 
   guideDesktopItem = pkgs.makeDesktopItem {
-    name = "yubikey-guide";
-    desktopName = "Yubikey Guide";
-    genericName = "View Yubikey Guide in a web browser";
-    exec = "${getExe' pkgs.xdg-utils "xdg-open"} ${guideHTML}";
-    icon = ./yubico-icon.svg;
     categories = [ "System" ];
+    desktopName = "Yubikey Guide";
+    exec = "${getExe' pkgs.xdg-utils "xdg-open"} ${guideHTML}";
+    genericName = "View Yubikey Guide in a web browser";
+    icon = ./yubico-icon.svg;
+    name = "yubikey-guide";
   };
 
   reload-yubikey = pkgs.writeShellScriptBin "reload-yubikey" ''
@@ -64,9 +64,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    services.pcscd.enable = true;
-    services.udev.packages = with pkgs; [ yubikey-personalization ];
-
     environment.shellInit = ''
       ${getExe' pkgs.coreutils "timeout"} ${builtins.toString cfg.agentTimeout} ${getExe' pkgs.gnupg "gpgconf"} --launch gpg-agent
       gpg_agent_timeout_status=$?
@@ -80,25 +77,14 @@ in
 
     environment.systemPackages = with pkgs; [
       cryptsetup
-      paperkey
       gnupg
+      guideDesktopItem
+      paperkey
+      paperkey
       pinentry-curses
       pinentry-qt
-      paperkey
-      guideDesktopItem
       reload-yubikey
     ];
-
-    programs = {
-      ssh.startAgent = false;
-
-      gnupg.agent = {
-        enable = true;
-        enableSSHSupport = true;
-        enableExtraSocket = true;
-        pinentryFlavor = "gnome3";
-      };
-    };
 
     khanelinix = {
       home.file = {
@@ -108,6 +94,22 @@ in
         ".gnupg/gpg.conf".source = gpgConf;
         ".gnupg/gpg-agent.conf".text = gpgAgentConf;
       };
+    };
+
+    programs = {
+      ssh.startAgent = false;
+
+      gnupg.agent = {
+        enable = true;
+        enableExtraSocket = true;
+        enableSSHSupport = true;
+        pinentryFlavor = "gnome3";
+      };
+    };
+
+    services = {
+      pcscd.enable = true;
+      udev.packages = with pkgs; [ yubikey-personalization ];
     };
   };
 }

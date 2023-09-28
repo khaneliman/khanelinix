@@ -1,14 +1,15 @@
-{ options
-, config
-, pkgs
+{ config
 , lib
+, options
+, pkgs
 , ...
 }:
 let
   inherit (lib) types;
   inherit (lib.internal) mkOpt;
+
   cfg = config.khanelinix.user;
-  defaultIconFileName = "profile.png";
+
   defaultIcon = pkgs.stdenvNoCC.mkDerivation {
     name = "default-icon";
     src = ./. + "/${defaultIconFileName}";
@@ -21,6 +22,8 @@ let
 
     passthru = { fileName = defaultIconFileName; };
   };
+  defaultIconFileName = "profile.png";
+
   propagatedIcon =
     pkgs.runCommandNoCC "propagated-icon"
       { passthru = { inherit (cfg.icon) fileName; }; }
@@ -33,19 +36,19 @@ let
 in
 {
   options.khanelinix.user = with types; {
-    name = mkOpt str "khaneliman" "The name to use for the user account.";
-    fullName = mkOpt str "Austin Horstman" "The full name of the user.";
     email = mkOpt str "khaneliman12@gmail.com" "The email of the user.";
-    initialPassword =
-      mkOpt str "password"
-        "The initial password to use when the user is first created.";
-    icon =
-      mkOpt (nullOr package) defaultIcon
-        "The profile picture to use for the user.";
     extraGroups = mkOpt (listOf str) [ ] "Groups for the user to be assigned.";
     extraOptions =
       mkOpt attrs { }
         "Extra options passed to <option>users.users.<name></option>.";
+    fullName = mkOpt str "Austin Horstman" "The full name of the user.";
+    icon =
+      mkOpt (nullOr package) defaultIcon
+        "The profile picture to use for the user.";
+    initialPassword =
+      mkOpt str "password"
+        "The initial password to use when the user is first created.";
+    name = mkOpt str "khaneliman" "The name to use for the user account.";
   };
 
   config = {
@@ -88,23 +91,14 @@ in
 
     users.users.${cfg.name} =
       {
-        isNormalUser = true;
-
         inherit (cfg) name initialPassword;
 
-        home = "/home/${cfg.name}";
-        group = "users";
-
-        shell = pkgs.zsh;
-
-        # Arbitrary user ID to use for the user. Since I only
-        # have a single user on my machines this won't ever collide.
-        # However, if you add multiple users you'll need to change this
-        # so each user has their own unique uid (or leave it out for the
-        # system to select).
-        uid = 1000;
-
         extraGroups = [ "wheel" ] ++ cfg.extraGroups;
+        group = "users";
+        home = "/home/${cfg.name}";
+        isNormalUser = true;
+        shell = pkgs.zsh;
+        uid = 1000;
       }
       // cfg.extraOptions;
   };

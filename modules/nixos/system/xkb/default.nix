@@ -1,11 +1,12 @@
-{ options
-, config
+{ config
 , lib
+, options
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.system.xkb;
 in
 {
@@ -15,6 +16,7 @@ in
 
   config = mkIf cfg.enable {
     console.useXkbConfig = true;
+
     services.xserver = {
       layout = "us";
       xkbOptions = "caps:escape";

@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -14,11 +14,11 @@ in
 {
   options.khanelinix.display-managers.gdm = with types; {
     enable = mkBoolOpt false "Whether or not to enable gdm.";
-    wayland = mkBoolOpt true "Whether or not to use Wayland.";
     autoSuspend =
       mkBoolOpt true "Whether or not to suspend the machine after inactivity.";
-    monitors = mkOpt (nullOr path) null "The monitors.xml file to create.";
     defaultSession = mkOpt (nullOr str) null "The default session to use.";
+    monitors = mkOpt (nullOr path) null "The monitors.xml file to create.";
+    wayland = mkBoolOpt true "Whether or not to use Wayland.";
   };
 
   config =
@@ -37,7 +37,6 @@ in
         services.xserver = {
           enable = true;
 
-          libinput.enable = true;
           displayManager = {
             inherit (cfg) defaultSession;
 
@@ -45,17 +44,13 @@ in
               inherit (cfg) enable wayland autoSuspend;
             };
           };
+
+          libinput.enable = true;
         };
 
         systemd.services.khanelinix-user-icon = {
           before = [ "display-manager.service" ];
           wantedBy = [ "display-manager.service" ];
-
-          serviceConfig = {
-            Type = "simple";
-            User = "root";
-            Group = "root";
-          };
 
           script = ''
             config_file=/var/lib/AccountsService/users/${config.khanelinix.user.name}
@@ -80,6 +75,12 @@ in
               fi
             fi
           '';
+
+          serviceConfig = {
+            Type = "simple";
+            User = "root";
+            Group = "root";
+          };
         };
 
         system.activationScripts.postInstallGdm = stringAfter [ "users" ] ''

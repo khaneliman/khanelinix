@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.apps.vlc;
 in
 {
@@ -14,5 +15,8 @@ in
     enable = mkBoolOpt false "Whether or not to enable vlc.";
   };
 
-  config = mkIf cfg.enable { environment.systemPackages = with pkgs; [ vlc ]; };
+  # TODO: remove module
+  config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [ vlc ];
+  };
 }

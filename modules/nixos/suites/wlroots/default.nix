@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -17,21 +17,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix.cli-apps = {
-      wshowkeys = enabled;
-    };
-
-    khanelinix.desktop.addons = {
-      electron-support = enabled;
-      swappy = enabled;
-      swaylock = enabled;
-      swaynotificationcenter = enabled;
-      wlogout = enabled;
-    };
-
-    programs.nm-applet.enable = true;
-    programs.xwayland.enable = true;
-
     environment.systemPackages = with pkgs; [
       cliphist
       grim
@@ -47,5 +32,24 @@ in
       gtk3.out # for gtk-launch
       playerctl
     ];
+
+    khanelinix = {
+      cli-apps = {
+        wshowkeys = enabled;
+      };
+
+      desktop.addons = {
+        electron-support = enabled;
+        swappy = enabled;
+        swaylock = enabled;
+        swaynotificationcenter = enabled;
+        wlogout = enabled;
+      };
+    };
+
+    programs = {
+      nm-applet.enable = true;
+      xwayland.enable = true;
+    };
   };
 }

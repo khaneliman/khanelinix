@@ -1,7 +1,7 @@
 { config
-, pkgs
-, lib
 , inputs
+, lib
+, pkgs
 , ...
 }:
 let
@@ -14,7 +14,10 @@ in
   imports = [ ../../../shared/system/fonts/default.nix ];
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ font-manager fontpreview ];
+    environment.systemPackages = with pkgs; [
+      font-manager
+      fontpreview
+    ];
 
     fonts.packages = cfg.fonts;
 

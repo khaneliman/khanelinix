@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.desktop.addons.wofi;
 in
 {
@@ -16,13 +17,14 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ wofi wofi-emoji ];
+    environment.systemPackages = with pkgs; [
+      wofi
+      wofi-emoji
+    ];
 
-    # config -> .config/wofi/config
-    # css -> .config/wofi/style.css
-    # colors -> $XDG_CACHE_HOME/wal/colors
-    # khanelinix.home.configFile."foot/foot.ini".source = ./foot.ini;
-    khanelinix.home.configFile."wofi/config".source = ./config;
-    khanelinix.home.configFile."wofi/style.css".source = ./style.css;
+    khanelinix.home.configFile = {
+      "wofi/config".source = ./config;
+      "wofi/style.css".source = ./style.css;
+    };
   };
 }

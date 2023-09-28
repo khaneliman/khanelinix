@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.desktop.addons.swaynotificationcenter;
 in
 {
@@ -16,7 +17,10 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ swaynotificationcenter libnotify ];
+    environment.systemPackages = with pkgs; [
+      swaynotificationcenter
+      libnotify
+    ];
 
     khanelinix.home = {
       configFile."swaync/" = {

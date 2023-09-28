@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -13,7 +13,7 @@ in
   options.khanelinix.apps.teams = {
     enable = mkBoolOpt false "Whether or not to enable teams.";
   };
-
+  # TODO: remove module
   config =
     mkIf cfg.enable { environment.systemPackages = with pkgs; [ teams ]; };
 }

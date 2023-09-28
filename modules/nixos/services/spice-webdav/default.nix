@@ -15,17 +15,19 @@ in
     package = mkOption {
       default = pkgs.phodav;
       defaultText = literalExpression "pkgs.phodav";
-      type = types.package;
       description = lib.mdDoc "spice-webdavd provider package to use.";
+      type = types.package;
     };
   };
 
   config = mkIf cfg.enable {
-    # ensure the webdav fs this exposes can actually be mounted
-    services.davfs2.enable = true;
+    services = {
+      # ensure the webdav fs this exposes can actually be mounted
+      davfs2.enable = true;
 
-    # add the udev rule which starts the proxy when the spice socket is present
-    services.udev.packages = [ cfg.package ];
+      # add the udev rule which starts the proxy when the spice socket is present
+      udev.packages = [ cfg.package ];
+    };
 
     systemd.services.spice-webdavd = {
       description = "spice-webdav proxy daemon";

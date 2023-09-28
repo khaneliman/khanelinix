@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.services.printing;
 in
 {
@@ -15,33 +16,37 @@ in
   };
 
   config = mkIf cfg.enable {
-    services.colord.enable = true;
+    services = {
+      colord.enable = true;
 
-    services.printing = {
-      enable = true;
-      browsing = true;
-      extraConf = ''
-        LogLevel warn
-        PageLogFormat
+      printing = {
+        enable = true;
+        browsing = true;
 
-        # Specifies the maximum size of the log files before they are rotated.  The value "0" disables log rotation.
-        MaxLogSize 0
+        drivers = with pkgs; [
+          brlaser
+        ];
 
-        # Default error policy for printers
-        ErrorPolicy retry-job
+        extraConf = ''
+          LogLevel warn
+          PageLogFormat
 
-        # Show shared printers on the local network.
-        BrowseLocalProtocols dnssd
+          # Specifies the maximum size of the log files before they are rotated.  The value "0" disables log rotation.
+          MaxLogSize 0
 
-        # Default authentication type, when authentication is required...
-        DefaultAuthType Basic
+          # Default error policy for printers
+          ErrorPolicy retry-job
 
-        # Timeout after cupsd exits if idle (applied only if cupsd runs on-demand - with -l)
-        IdleExitTimeout 60
-      '';
-      drivers = with pkgs; [
-        brlaser
-      ];
+          # Show shared printers on the local network.
+          BrowseLocalProtocols dnssd
+
+          # Default authentication type, when authentication is required...
+          DefaultAuthType Basic
+
+          # Timeout after cupsd exits if idle (applied only if cupsd runs on-demand - with -l)
+          IdleExitTimeout 60
+        '';
+      };
     };
   };
 }

@@ -1,7 +1,7 @@
-{ options
-, config
-, pkgs
+{ config
 , lib
+, options
+, pkgs
 , ...
 }:
 let
@@ -15,16 +15,23 @@ in
     enable =
       mkBoolOpt false
         "Whether or not to enable support for rgb controls.";
+    ckbNextConfig = mkOpt (nullOr path) null "The ckb-next.conf file to create.";
     motherboard = mkOption {
       type = types.nullOr (types.enum [ "amd" "intel" ]);
       default = "amd";
       description = lib.mdDoc "CPU family of motherboard. Allows for addition motherboard i2c support.";
     };
     openRGBConfig = mkOpt (nullOr path) null "The openrgb file to create.";
-    ckbNextConfig = mkOpt (nullOr path) null "The ckb-next.conf file to create.";
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      i2c-tools
+      openrgb-with-all-plugins
+    ];
+
+    hardware.ckb-next.enable = true;
+
     khanelinix.home.configFile =
       { }
       // lib.optionalAttrs (cfg.ckbNextConfig != null)
@@ -37,12 +44,9 @@ in
           "OpenRGB/Default.orp".source = cfg.openRGBConfig + "/Default.orp";
         };
 
-    hardware.ckb-next.enable = true;
     services.hardware.openrgb = {
       enable = true;
       inherit (cfg) motherboard;
     };
-
-    environment.systemPackages = with pkgs; [ openrgb-with-all-plugins i2c-tools ];
   };
 }

@@ -13,6 +13,7 @@ in
     enable = mkBoolOpt true "Whether or not to manage nix configuration.";
   };
 
+  # TODO: remove module? 
   config = mkIf cfg.enable {
     sops.secrets.nix = {
       sopsFile = ../../../secrets/khaneliman/default.json;

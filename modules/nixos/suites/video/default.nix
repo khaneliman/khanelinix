@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -23,8 +23,7 @@ in
     khanelinix = {
       apps = {
         obs = enabled;
-        # TODO: enable when not broken
-        # pitivi = enabled;
+        pitivi = enabled;
         vlc = enabled;
       };
     };

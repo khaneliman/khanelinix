@@ -1,19 +1,20 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) types mkIf;
   inherit (lib.internal) mkBoolOpt mkOpt;
+
   cfg = config.khanelinix.desktop.addons.kitty;
 in
 {
   options.khanelinix.desktop.addons.kitty = with types; {
     enable = mkBoolOpt false "Whether to enable kitty.";
-    theme = mkOpt str "Catppuccin-Macchiato" "Theme to use for kitty.";
     font = mkOpt str "Liga SFMono Nerd Font" "Font to use for kitty.";
+    theme = mkOpt str "Catppuccin-Macchiato" "Theme to use for kitty.";
   };
 
   config = mkIf cfg.enable {

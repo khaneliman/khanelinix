@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -13,6 +13,7 @@ in
   options.khanelinix.apps.gimp = {
     enable = mkBoolOpt false "Whether or not to enable Gimp.";
   };
+  # TODO: remove module
 
   config =
     mkIf cfg.enable { environment.systemPackages = with pkgs; [ gimp ]; };

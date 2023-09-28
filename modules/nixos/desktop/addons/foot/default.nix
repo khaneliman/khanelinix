@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.desktop.addons.foot;
 in
 {
@@ -15,11 +16,13 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix.desktop.addons.term = {
-      enable = true;
-      pkg = pkgs.foot;
-    };
+    khanelinix = {
+      desktop.addons.term = {
+        enable = true;
+        pkg = pkgs.foot;
+      };
 
-    khanelinix.home.configFile."foot/foot.ini".source = ./foot.ini;
+      home.configFile."foot/foot.ini".source = ./foot.ini;
+    };
   };
 }

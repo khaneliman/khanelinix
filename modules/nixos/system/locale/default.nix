@@ -1,5 +1,4 @@
-{ options
-, config
+{ config
 , lib
 , ...
 }:
@@ -23,8 +22,8 @@ in
     i18n.defaultLocale = "en_US.UTF-8";
 
     console = {
-      keyMap = mkForce "us";
       font = "Lat2-Terminus16";
+      keyMap = mkForce "us";
     };
   };
 }

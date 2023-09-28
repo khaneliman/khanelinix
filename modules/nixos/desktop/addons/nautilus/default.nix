@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.desktop.addons.nautilus;
 in
 {
@@ -15,10 +16,11 @@ in
   };
 
   config = mkIf cfg.enable {
-    # Enable support for browsing samba shares.
-    services.gvfs.enable = true;
+    environment.systemPackages = with pkgs; [ gnome.nautilus ];
+
     networking.firewall.extraCommands = "iptables -t raw -A OUTPUT -p udp -m udp --dport 137 -j CT --helper netbios-ns";
 
-    environment.systemPackages = with pkgs; [ gnome.nautilus ];
+    # Enable support for browsing samba shares.
+    services.gvfs.enable = true;
   };
 }

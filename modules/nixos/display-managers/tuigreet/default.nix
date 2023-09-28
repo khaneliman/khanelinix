@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf getExe;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.display-managers.tuigreet;
 in
 {
@@ -27,7 +28,9 @@ in
           };
         };
 
-        security.pam.services.greetd.gnupg.enable = true;
-        security.pam.services.greetd.enableGnomeKeyring = true;
+        security.pam.services.greetd = {
+          enableGnomeKeyring = true;
+          gnupg.enable = true;
+        };
       };
 }

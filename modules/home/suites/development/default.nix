@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -32,8 +32,8 @@ in
           enable = true;
           default = true;
         };
-        lazygit = enabled;
         helix = enabled;
+        lazygit = enabled;
       };
 
       tools = {

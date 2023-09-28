@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -48,7 +48,9 @@ in
           };
         };
 
-        security.pam.services.lightdm.gnupg.enable = true;
-        security.pam.services.lightdm.enableGnomeKeyring = true;
+        security.pam.services.greetd = {
+          enableGnomeKeyring = true;
+          gnupg.enable = true;
+        };
       };
 }

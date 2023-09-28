@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) types mkIf getExe';
   inherit (lib.internal) mkBoolOpt mkOpt;
+
   cfg = config.khanelinix.apps.gamemode;
   # programs = lib.makeBinPath [config.khanelinix.desktop.hyprland.package];
 
@@ -21,8 +22,8 @@ in
 {
   options.khanelinix.apps.gamemode = with types; {
     enable = mkBoolOpt false "Whether or not to enable gamemode.";
-    startscript = mkOpt (nullOr str) null "The script to run when enabling gamemode.";
     endscript = mkOpt (nullOr str) null "The script to run when disabling gamemode.";
+    startscript = mkOpt (nullOr str) null "The script to run when enabling gamemode.";
   };
 
   config =

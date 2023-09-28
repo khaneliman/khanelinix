@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.tools.bat;
 in
 {
@@ -24,12 +25,12 @@ in
       };
 
       extraPackages = with pkgs.bat-extras; [
-        prettybat
-        batwatch
-        batpipe
-        batman
-        batgrep
         batdiff
+        batgrep
+        batman
+        batpipe
+        batwatch
+        prettybat
       ];
 
       themes = {

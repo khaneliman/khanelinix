@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -29,11 +29,11 @@ in
 
     homebrew = {
       brews = [
+        "blueutil"
         "fisher"
         "ical-buddy"
-        "blueutil"
-        "switchaudio-osx"
         "ifstat"
+        "switchaudio-osx"
       ];
 
       casks = [

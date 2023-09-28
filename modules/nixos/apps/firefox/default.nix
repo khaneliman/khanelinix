@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -60,9 +60,9 @@ in
     enable = mkBoolOpt false "Whether or not to enable Firefox.";
     extraConfig =
       mkOpt str "" "Extra configuration for the user profile JS file.";
+    settings = mkOpt attrs defaultSettings "Settings to apply to the profile.";
     userChrome =
       mkOpt str "" "Extra configuration for the user chrome CSS file.";
-    settings = mkOpt attrs defaultSettings "Settings to apply to the profile.";
   };
 
   config = mkIf cfg.enable {

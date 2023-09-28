@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -13,8 +13,11 @@ in
   options.khanelinix.apps.inkscape = {
     enable = mkBoolOpt false "Whether or not to enable Inkscape.";
   };
-
+  # TODO: remove module
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ inkscape-with-extensions google-fonts ];
+    environment.systemPackages = with pkgs; [
+      inkscape-with-extensions
+      google-fonts
+    ];
   };
 }

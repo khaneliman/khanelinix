@@ -12,11 +12,14 @@ in
 
   config = mkIf cfg.enable {
     nix = {
+      gc = {
+        interval = { Day = 7; };
+        user = config.khanelinix.user.name;
+      };
+
       settings = {
-        # FIX: shouldn't disable, but getting sandbox max size errors on darwin
-        sandbox = mkForce false;
-        extra-nix-path = "nixpkgs=flake:nixpkgs";
         build-users-group = "nixbld";
+        extra-nix-path = "nixpkgs=flake:nixpkgs";
         extra-sandbox-paths = [
           "/System/Library/Frameworks"
           "/System/Library/PrivateFrameworks"
@@ -25,11 +28,8 @@ in
           "/private/var/tmp"
           "/usr/bin/env"
         ];
-      };
-
-      gc = {
-        interval = { Day = 7; };
-        user = config.khanelinix.user.name;
+        # FIX: shouldn't disable, but getting sandbox max size errors on darwin
+        sandbox = mkForce false;
       };
     };
   };

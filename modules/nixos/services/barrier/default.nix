@@ -1,5 +1,5 @@
-{ lib
-, config
+{ config
+, lib
 , pkgs
 , ...
 }:
@@ -15,7 +15,6 @@ in
   };
 
   config = mkIf cfg.enable {
-
     environment.systemPackages = with pkgs; [ barrier ];
 
     networking.firewall = {

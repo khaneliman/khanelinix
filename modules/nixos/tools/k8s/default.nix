@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.tools.k8s;
 in
 {
@@ -18,10 +19,10 @@ in
   config = mkIf cfg.enable {
     programs.zsh.shellAliases = {
       k = "kubecolor";
-      kubectl = "kubecolor";
       kc = "kubectx";
       kn = "kubens";
       ks = "kubeseal";
+      kubectl = "kubecolor";
     };
 
     environment.systemPackages = with pkgs; [

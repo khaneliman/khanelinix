@@ -1,12 +1,13 @@
-{ options
-, config
-, pkgs
+{ config
 , lib
+, options
+, pkgs
 , ...
 }:
 let
   inherit (lib) types mkIf;
   inherit (lib.internal) mkBoolOpt mkOpt;
+
   cfg = config.khanelinix.nix;
 in
 {
@@ -30,17 +31,22 @@ in
       {
         inherit (cfg) package;
 
+        gc = {
+          automatic = true;
+          options = "--delete-older-than 30d";
+        };
+
         settings = {
           allowed-users = users;
           auto-optimise-store = true;
           experimental-features = "nix-command flakes";
           http-connections = 50;
+          keep-derivations = true;
+          keep-outputs = true;
           log-lines = 50;
           sandbox = "relaxed";
           trusted-users = users;
           warn-dirty = false;
-          keep-derivations = true;
-          keep-outputs = true;
           substituters = [
             "https://cache.nixos.org"
             "https://nix-community.cachix.org"
@@ -51,10 +57,6 @@ in
           ];
         };
 
-        gc = {
-          automatic = true;
-          options = "--delete-older-than 30d";
-        };
 
         # flake-utils-plus
         generateNixPathFromInputs = true;

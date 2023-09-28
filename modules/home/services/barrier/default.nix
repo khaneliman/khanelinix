@@ -1,5 +1,5 @@
-{ lib
-, config
+{ config
+, lib
 , ...
 }:
 let
@@ -18,11 +18,11 @@ in
     services = {
       barrier = {
         client = {
+          inherit (cfg) server;
+
           enable = true;
           enableCrypto = true;
           enableDragDrop = true;
-
-          inherit (cfg) server;
         };
       };
     };

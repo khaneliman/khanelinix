@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -15,19 +15,6 @@ in
 {
   options.khanelinix.desktop.addons.gtk = with types; {
     enable = mkBoolOpt false "Whether to customize GTK and apply themes.";
-    theme = {
-      name =
-        mkOpt str "Catppuccin-Macchiato-Standard-Blue-Dark"
-          "The name of the GTK theme to apply.";
-      pkg =
-        mkOpt package
-          (pkgs.catppuccin-gtk.override
-            {
-              accents = [ "blue" ];
-              size = "standard";
-              variant = "macchiato";
-            }) "The package to use for the theme.";
-    };
     cursor = {
       name =
         mkOpt str "Catppuccin-Macchiato-Blue-Cursors"
@@ -41,25 +28,40 @@ in
           "The name of the icon theme to apply.";
       pkg = mkOpt package pkgs.libsForQt5.breeze-icons "The package to use for the icon theme.";
     };
+    theme = {
+      name =
+        mkOpt str "Catppuccin-Macchiato-Standard-Blue-Dark"
+          "The name of the GTK theme to apply.";
+      pkg =
+        mkOpt package
+          (pkgs.catppuccin-gtk.override
+            {
+              accents = [ "blue" ];
+              size = "standard";
+              variant = "macchiato";
+            }) "The package to use for the theme.";
+    };
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      cfg.icon.pkg
-      cfg.cursor.pkg
-      cfg.theme.pkg
-      dconf # required explicitly with noXlibs
-      gsettings-desktop-schemas
-      glib
-      gtk3.out # for gtk-launch
-      libappindicator-gtk3
-    ];
+    environment = {
+      sessionVariables = {
+        CURSOR_THEME = cfg.cursor.name;
+        GTK_THEME = cfg.theme.name;
+        XCURSOR_SIZE = "${toString cfg.cursor.size}";
+        XCURSOR_THEME = cfg.cursor.name;
+      };
 
-    environment.sessionVariables = {
-      XCURSOR_THEME = cfg.cursor.name;
-      XCURSOR_SIZE = "${toString cfg.cursor.size}";
-      CURSOR_THEME = cfg.cursor.name;
-      GTK_THEME = cfg.theme.name;
+      systemPackages = with pkgs; [
+        cfg.cursor.pkg
+        cfg.icon.pkg
+        cfg.theme.pkg
+        dconf # required explicitly with noXlibs
+        glib
+        gsettings-desktop-schemas
+        gtk3.out # for gtk-launch
+        libappindicator-gtk3
+      ];
     };
 
     services = {
@@ -70,30 +72,28 @@ in
 
     khanelinix.home = {
       extraOptions = {
-        home.pointerCursor = {
-          package = cfg.cursor.pkg;
-          inherit (cfg.cursor) name;
-          inherit (cfg.cursor) size;
-          gtk.enable = true;
-          x11.enable = true;
+        dconf = {
+          enable = true;
+
+          settings = nested-default-attrs {
+            "org/gnome/desktop/interface" = {
+              color-scheme = "prefer-dark";
+              cursor-size = cfg.cursor.size;
+              cursor-theme = cfg.cursor.name;
+              enable-hot-corners = false;
+              font-name = config.khanelinix.system.fonts.default;
+              gtk-theme = cfg.theme.name;
+              icon-theme = cfg.icon.name;
+            };
+          };
         };
 
         gtk = {
           enable = true;
 
-          theme = {
-            inherit (cfg.theme) name;
-            package = cfg.theme.pkg;
-          };
-
           cursorTheme = {
             inherit (cfg.cursor) name;
             package = cfg.cursor.pkg;
-          };
-
-          iconTheme = {
-            inherit (cfg.icon) name;
-            package = cfg.icon.pkg;
           };
 
           font = {
@@ -107,22 +107,24 @@ in
           gtk4.extraConfig = {
             "gtk-application-prefer-dark-theme" = 1;
           };
+
+          iconTheme = {
+            inherit (cfg.icon) name;
+            package = cfg.icon.pkg;
+          };
+
+          theme = {
+            inherit (cfg.theme) name;
+            package = cfg.theme.pkg;
+          };
         };
 
-        dconf = {
-          enable = true;
-
-          settings = nested-default-attrs {
-            "org/gnome/desktop/interface" = {
-              color-scheme = "prefer-dark";
-              enable-hot-corners = false;
-              font-name = config.khanelinix.system.fonts.default;
-              gtk-theme = cfg.theme.name;
-              cursor-theme = cfg.cursor.name;
-              cursor-size = cfg.cursor.size;
-              icon-theme = cfg.icon.name;
-            };
-          };
+        home.pointerCursor = {
+          inherit (cfg.cursor) name;
+          inherit (cfg.cursor) size;
+          package = cfg.cursor.pkg;
+          gtk.enable = true;
+          x11.enable = true;
         };
       };
     };

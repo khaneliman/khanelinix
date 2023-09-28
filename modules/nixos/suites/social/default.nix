@@ -1,12 +1,12 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.internal) mkBoolOpt enabled;
   cfg = config.khanelinix.suites.social;
 in
 {
@@ -26,9 +26,8 @@ in
 
     khanelinix = {
       apps = {
-        discord = {
-          enable = true;
-        };
+        # TODO: switch to armcord ? 
+        discord = enabled;
       };
     };
   };

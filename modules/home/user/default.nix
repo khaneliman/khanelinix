@@ -1,5 +1,5 @@
-{ lib
-, config
+{ config
+, lib
 , pkgs
 , ...
 }:
@@ -20,12 +20,10 @@ in
 {
   options.khanelinix.user = {
     enable = mkOpt types.bool false "Whether to configure the user account.";
-    name = mkOpt (types.nullOr types.str) config.snowfallorg.user.name "The user account.";
-
-    fullName = mkOpt types.str "Austin Horstman" "The full name of the user.";
     email = mkOpt types.str "khaneliman12@gmail.com" "The email of the user.";
-
+    fullName = mkOpt types.str "Austin Horstman" "The full name of the user.";
     home = mkOpt (types.nullOr types.str) home-directory "The user's home directory.";
+    name = mkOpt (types.nullOr types.str) config.snowfallorg.user.name "The user account.";
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -42,7 +40,6 @@ in
       ];
 
       home = {
-        username = mkDefault cfg.name;
         homeDirectory = mkDefault cfg.home;
 
         shellAliases = {
@@ -80,6 +77,8 @@ in
           sha = "shasum -a 256"; # Test checksum
           sshperm = ''${getExe' pkgs.findutils "find"} .ssh/ -type f -exec chmod 600 {} \;; ${getExe' pkgs.findutils "find"} .ssh/ -type d -exec chmod 700 {} \;; ${getExe' pkgs.findutils "find"} .ssh/ -type f -name "*.pub" -exec chmod 644 {} \;'';
         };
+
+        username = mkDefault cfg.name;
       };
     }
   ]);

@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.apps.obs;
 in
 {
@@ -18,10 +19,10 @@ in
     environment.systemPackages = [
       (pkgs.wrapOBS {
         plugins = with pkgs.obs-studio-plugins; [
-          wlrobs
-          obs-multi-rtmp
-          obs-move-transition
           looking-glass-obs
+          obs-move-transition
+          obs-multi-rtmp
+          wlrobs
         ];
       })
     ];

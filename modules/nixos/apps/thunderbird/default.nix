@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.apps.thunderbird;
 in
 {
@@ -22,6 +23,15 @@ in
     ];
 
     khanelinix.home.extraOptions = {
+      accounts.email.accounts = {
+        "${config.khanelinix.user.email}" = {
+          address = config.khanelinix.user.email;
+          realName = config.khanelinix.user.fullName;
+          flavor = "gmail.com";
+          primary = true;
+        };
+      };
+
       programs.thunderbird = {
         enable = true;
         package = pkgs.thunderbird;
@@ -52,15 +62,6 @@ in
 
           # TODO: Bundle extensions
           # TODO: set up accounts
-        };
-      };
-
-      accounts.email.accounts = {
-        "${config.khanelinix.user.email}" = {
-          address = config.khanelinix.user.email;
-          realName = config.khanelinix.user.fullName;
-          flavor = "gmail.com";
-          primary = true;
         };
       };
     };

@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , ...
 }:
 let
@@ -11,13 +11,13 @@ in
 {
   options.khanelinix.system.env = with types;
     mkOption {
-      type = attrsOf (oneOf [ str path (listOf (either str path)) ]);
       apply = mapAttrs (_n: v:
         if isList v
         then concatMapStringsSep ":" toString v
         else (toString v));
       default = { };
       description = "A set of environment variables to set.";
+      type = attrsOf (oneOf [ str path (listOf (either str path)) ]);
     };
 
   config = {
@@ -29,14 +29,16 @@ in
         XDG_DATA_HOME = "$HOME/.local/share";
         XDG_DESKTOP_DIR = "$HOME";
       };
+
+      extraInit =
+        concatStringsSep "\n"
+          (mapAttrsToList (n: v: ''export ${n}="${v}"'') cfg);
+
       variables = {
         # Make some programs "XDG" compliant.
         LESSHISTFILE = "$XDG_CACHE_HOME/less.history";
         WGETRC = "$XDG_CONFIG_HOME/wgetrc";
       };
-      extraInit =
-        concatStringsSep "\n"
-          (mapAttrsToList (n: v: ''export ${n}="${v}"'') cfg);
     };
   };
 }

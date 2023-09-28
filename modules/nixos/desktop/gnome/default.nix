@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -34,19 +34,40 @@ in
   options.khanelinix.desktop.gnome = with types; {
     enable =
       mkBoolOpt false "Whether or not to use Gnome as the desktop environment.";
+    color-scheme = mkOpt (enum [ "light" "dark" ]) "dark" "The color scheme to use.";
+    extensions = mkOpt (listOf package) [ ] "Extra Gnome extensions to install.";
+    monitors = mkOpt (nullOr path) null "The monitors.xml file to create.";
+    suspend =
+      mkBoolOpt true "Whether or not to suspend the machine after inactivity.";
     wallpaper = {
       light = mkOpt (oneOf [ str package ]) pkgs.khanelinix.wallpapers.flatppuccin_macchiato "The light wallpaper to use.";
       dark = mkOpt (oneOf [ str package ]) pkgs.khanelinix.wallpapers.cat-sound "The dark wallpaper to use.";
     };
-    color-scheme = mkOpt (enum [ "light" "dark" ]) "dark" "The color scheme to use.";
     wayland = mkBoolOpt true "Whether or not to use Wayland.";
-    suspend =
-      mkBoolOpt true "Whether or not to suspend the machine after inactivity.";
-    monitors = mkOpt (nullOr path) null "The monitors.xml file to create.";
-    extensions = mkOpt (listOf package) [ ] "Extra Gnome extensions to install.";
   };
 
   config = mkIf cfg.enable {
+    environment = {
+      systemPackages = with pkgs;
+        [
+          (hiPrio khanelinix.xdg-open-with-portal)
+          gnome.gnome-tweaks
+          gnome.nautilus-python
+          wl-clipboard
+        ]
+        ++ defaultExtensions
+        ++ cfg.extensions;
+
+      gnome.excludePackages = with pkgs.gnome; [
+        epiphany
+        geary
+        gnome-font-viewer
+        gnome-maps
+        gnome-system-monitor
+        pkgs.gnome-tour
+      ];
+    };
+
     khanelinix = {
       desktop.addons = {
         electron-support = enabled;
@@ -243,34 +264,30 @@ in
       system.xkb.enable = true;
     };
 
-    environment = {
-      systemPackages = with pkgs;
-        [
-          (hiPrio khanelinix.xdg-open-with-portal)
-          gnome.gnome-tweaks
-          gnome.nautilus-python
-          wl-clipboard
-        ]
-        ++ defaultExtensions
-        ++ cfg.extensions;
-
-      gnome.excludePackages = with pkgs.gnome; [
-        pkgs.gnome-tour
-        epiphany
-        geary
-        gnome-font-viewer
-        gnome-maps
-        gnome-system-monitor
-      ];
-    };
+    # Open firewall for samba connections to work.
+    networking.firewall.extraCommands = "iptables -t raw -A OUTPUT -p udp -m udp --dport 137 -j CT --helper netbios-ns";
 
     programs.kdeconnect = {
       enable = true;
       package = pkgs.gnomeExtensions.gsconnect;
     };
 
-    # Open firewall for samba connections to work.
-    networking.firewall.extraCommands = "iptables -t raw -A OUTPUT -p udp -m udp --dport 137 -j CT --helper netbios-ns";
+    # Required for app indicators
+    services = {
+      udev.packages = with pkgs; [ gnome3.gnome-settings-daemon ];
+
+      xserver = {
+        enable = true;
+
+        libinput.enable = true;
+        displayManager.gdm = {
+          enable = true;
+          autoSuspend = cfg.suspend;
+          inherit (cfg) wayland;
+        };
+        desktopManager.gnome.enable = true;
+      };
+    };
 
     systemd = {
       tmpfiles.rules =
@@ -318,23 +335,5 @@ in
         '';
       };
     };
-
-    # Required for app indicators
-    services = {
-      udev.packages = with pkgs; [ gnome3.gnome-settings-daemon ];
-
-      xserver = {
-        enable = true;
-
-        libinput.enable = true;
-        displayManager.gdm = {
-          enable = true;
-          autoSuspend = cfg.suspend;
-          inherit (cfg) wayland;
-        };
-        desktopManager.gnome.enable = true;
-      };
-    };
-
   };
 }

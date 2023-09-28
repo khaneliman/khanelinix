@@ -1,9 +1,9 @@
-{ options
-, config
-, lib
+{ config
 , format
-, inputs
 , host
+, inputs
+, lib
+, options
 , ...
 }:
 let
@@ -60,20 +60,14 @@ in
     enable = mkBoolOpt false "Whether or not to configure OpenSSH support.";
     authorizedKeys =
       mkOpt (listOf str) [ default-key ] "The public keys to apply.";
-    port = mkOpt port 2222 "The port to listen on (in addition to 22).";
     extraConfig = mkOpt str "" "Extra configuration to apply.";
+    port = mkOpt port 2222 "The port to listen on (in addition to 22).";
   };
 
   config = mkIf cfg.enable {
     services.openssh = {
       enable = true;
-      settings = {
-        PasswordAuthentication = false;
-        PermitRootLogin =
-          if format == "install-iso"
-          then "yes"
-          else "no";
-      };
+
       extraConfig = ''
         StreamLocalBindUnlink yes
       '';
@@ -82,6 +76,14 @@ in
         22
         cfg.port
       ];
+
+      settings = {
+        PasswordAuthentication = false;
+        PermitRootLogin =
+          if format == "install-iso"
+          then "yes"
+          else "no";
+      };
     };
 
     programs.ssh.extraConfig = ''
@@ -90,19 +92,20 @@ in
       ${cfg.extraConfig}
     '';
 
-    khanelinix.user.extraOptions.openssh.authorizedKeys.keys =
-      cfg.authorizedKeys;
+    khanelinix = {
+      user.extraOptions.openssh.authorizedKeys.keys = cfg.authorizedKeys;
 
-    khanelinix.home.extraOptions = {
-      programs.zsh.shellAliases =
-        foldl
-          (aliases: system:
-            aliases
-            // {
-              "ssh-${system}" = "ssh ${system} -t tmux a";
-            })
-          { }
-          (builtins.attrNames other-hosts);
+      home.extraOptions = {
+        programs.zsh.shellAliases =
+          foldl
+            (aliases: system:
+              aliases
+              // {
+                "ssh-${system}" = "ssh ${system} -t tmux a";
+              })
+            { }
+            (builtins.attrNames other-hosts);
+      };
     };
   };
 }

@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -13,6 +13,7 @@ in
   options.khanelinix.apps.pitivi = {
     enable = mkBoolOpt false "Whether or not to enable Pitivi.";
   };
+  # TODO: remove module
 
   config =
     mkIf cfg.enable { environment.systemPackages = with pkgs; [ pitivi ]; };

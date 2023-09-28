@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , ...
 }:
 let
@@ -14,6 +14,7 @@ in
     enable = mkBoolOpt false "Whether or not to enable wakatime.";
   };
 
+  # TODO: remove module
   config = mkIf cfg.enable {
     sops.secrets.wakatime = {
       sopsFile = ../../../../secrets/khaneliman/default.json;

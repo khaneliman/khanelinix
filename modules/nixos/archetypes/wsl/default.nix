@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -18,7 +18,6 @@ in
 
   config = mkIf cfg.enable {
     environment = {
-
       noXlibs = mkForce false;
 
       sessionVariables = {

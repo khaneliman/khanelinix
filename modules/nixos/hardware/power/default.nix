@@ -1,11 +1,12 @@
-{ options
-, config
+{ config
 , lib
+, options
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.hardware.power;
 in
 {
@@ -18,9 +19,9 @@ in
   config = mkIf cfg.enable {
     services.upower = {
       enable = true;
-      percentageLow = 25;
-      percentageCritical = 10;
       percentageAction = 5;
+      percentageCritical = 10;
+      percentageLow = 25;
     };
   };
 }

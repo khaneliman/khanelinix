@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.cli-apps.yubikey;
 in
 {
@@ -15,7 +16,8 @@ in
   };
 
   config = mkIf cfg.enable {
-    services.yubikey-agent.enable = true;
     environment.systemPackages = with pkgs; [ yubikey-manager ];
+
+    services.yubikey-agent.enable = true;
   };
 }

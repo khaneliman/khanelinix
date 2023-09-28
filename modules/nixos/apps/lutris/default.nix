@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.apps.lutris;
 in
 {
@@ -14,12 +15,10 @@ in
     enable = mkBoolOpt false "Whether or not to enable Lutris.";
   };
 
+  # TODO: remove module
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       lutris
-      # Needed for some installers like League of Legends
-      openssl
-      # gnome.zenity
     ];
   };
 }

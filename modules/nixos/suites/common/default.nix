@@ -28,11 +28,31 @@ in
     ];
 
     khanelinix = {
-      nix = enabled;
-
       cli-apps = {
         fastfetch = enabled;
         ranger = enabled;
+      };
+
+      hardware = {
+        power = enabled;
+      };
+
+      nix = enabled;
+
+      security = {
+        gpg = enabled;
+      };
+
+      services = {
+        openssh = enabled;
+        printing = enabled;
+        tailscale = enabled;
+      };
+
+      system = {
+        fonts = enabled;
+        locale = enabled;
+        time = enabled;
       };
 
       tools = {
@@ -42,26 +62,6 @@ in
         git = enabled;
         glxinfo = enabled;
         nix-ld = enabled;
-      };
-
-      hardware = {
-        power = enabled;
-      };
-
-      services = {
-        openssh = enabled;
-        printing = enabled;
-        tailscale = enabled;
-      };
-
-      security = {
-        gpg = enabled;
-      };
-
-      system = {
-        fonts = enabled;
-        locale = enabled;
-        time = enabled;
       };
     };
   };

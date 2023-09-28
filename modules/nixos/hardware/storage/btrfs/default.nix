@@ -1,14 +1,15 @@
-{ options
-, config
-, pkgs
+{ config
 , lib
+, options
+, pkgs
 , ...
 }:
 let
   inherit (lib) mkIf types genAttrs getExe;
   inherit (lib.internal) mkBoolOpt mkOpt;
-  cfg = config.khanelinix.hardware.storage.btrfs;
   inherit (cfg) dedupeFilesystems;
+
+  cfg = config.khanelinix.hardware.storage.btrfs;
 
   dedupeFilesystemsAttrSets = genAttrs dedupeFilesystems
     (name: {
@@ -26,8 +27,8 @@ in
         "Whether or not to enable support for btrfs devices.";
     autoScrub = mkBoolOpt false "Whether to enable btrfs autoScrub;";
     dedupe = mkBoolOpt false "Whether to enable btrfs deduplication;";
-    scrubMounts = mkOpt (listOf path) [ ] "Btrfs mount paths to scrub;";
     dedupeFilesystems = mkOpt (listOf str) [ ] "Unique btrfs filesystems to dedupe;";
+    scrubMounts = mkOpt (listOf path) [ ] "Btrfs mount paths to scrub;";
   };
 
   config = mkIf cfg.enable {
@@ -37,7 +38,6 @@ in
         btrfs-assistant
         btrfs-snap
         compsize
-        # dduper
         snapper
       ];
 
@@ -45,9 +45,8 @@ in
       btrfs = {
         autoScrub = mkIf cfg.autoScrub {
           enable = true;
-          interval = "weekly";
-
           fileSystems = mkIf (builtins.length cfg.scrubMounts > 0) cfg.scrubMounts;
+          interval = "weekly";
         };
       };
 
@@ -57,10 +56,9 @@ in
     };
 
     systemd.services.cpulimit-bees = {
-      description = "CPU Limit Bees";
       enable = cfg.dedupe;
-
       after = [ "sysinit.target" ];
+      description = "CPU Limit Bees";
       wantedBy = [ "multi-user.target" ];
 
       serviceConfig = {
@@ -69,6 +67,5 @@ in
         Restart = "always";
       };
     };
-
   };
 }

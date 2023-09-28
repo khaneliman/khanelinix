@@ -1,11 +1,12 @@
-{ options
-, config
+{ config
 , lib
+, options
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt enabled;
+
   cfg = config.khanelinix.suites.vm;
 in
 {

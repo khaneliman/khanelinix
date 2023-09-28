@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) types mkIf getExe;
   inherit (lib.internal) mkBoolOpt mkOpt;
+
   cfg = config.khanelinix.desktop.addons.eww;
 
   dependencies = with pkgs; [
@@ -19,8 +20,8 @@ let
     gawk
     gnome.gnome-control-center
     gnused
-    imagemagick
     gojq
+    imagemagick
     jaq
     jc
     libnotify
@@ -53,11 +54,7 @@ in
 {
   options.khanelinix.desktop.addons.eww = with types; {
     enable = mkBoolOpt false "Whether to enable eww in the desktop environment.";
-
-    package = mkOpt package pkgs.eww "The Eww package to install";
-
     autoReload = mkBoolOpt false "Whether to restart the eww daemon and windows on change.";
-
     colors = lib.mkOption {
       type = with lib.types; nullOr lines;
       default = null;
@@ -69,6 +66,7 @@ in
         Defaults to Catppuccin Mocha.
       '';
     };
+    package = mkOpt package pkgs.eww "The Eww package to install";
   };
 
   config = mkIf cfg.enable {
@@ -76,13 +74,17 @@ in
 
     fonts.fonts = with pkgs; [
       jost
+      material-design-icons
       material-icons
       material-symbols
-      material-design-icons
     ];
 
     khanelinix.home = {
       extraOptions = {
+        home.packages = [
+          cfg.package
+        ];
+
         # remove nix files
         xdg.configFile."eww" = {
           source = lib.cleanSourceWith {
@@ -102,23 +104,21 @@ in
             else "";
         };
 
-        home.packages = [
-          cfg.package
-        ];
-
         systemd.user.services.eww = {
+          Install.WantedBy = [ "graphical-session.target" ];
+
+          Service = {
+            Environment = "PATH=/run/wrappers/bin:${lib.makeBinPath dependencies}";
+            ExecStart = "${getExe cfg.package} daemon --no-daemonize";
+            Restart = "on-failure";
+          };
+
           Unit = {
             Description = "Eww Daemon";
             # not yet implemented
             # PartOf = ["tray.target"];
             PartOf = [ "graphical-session.target" ];
           };
-          Service = {
-            Environment = "PATH=/run/wrappers/bin:${lib.makeBinPath dependencies}";
-            ExecStart = "${getExe cfg.package} daemon --no-daemonize";
-            Restart = "on-failure";
-          };
-          Install.WantedBy = [ "graphical-session.target" ];
         };
       };
     };

@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.cli-apps.wshowkeys;
 in
 {
@@ -15,7 +16,8 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix.user.extraGroups = [ "input" ];
     environment.systemPackages = with pkgs; [ wshowkeys ];
+
+    khanelinix.user.extraGroups = [ "input" ];
   };
 }

@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , inputs
 , system
@@ -35,6 +35,11 @@ in
   config =
     mkIf cfg.enable
       {
+        home.shellAliases = {
+          hl = "cat /tmp/hypr/$(ls -t /tmp/hypr/ | head -n 1)/hyprland.log";
+          hl1 = "cat /tmp/hypr/$(ls -t /tmp/hypr/ | head -n 2 | tail -n 1)/hyprland.log";
+        };
+
         khanelinix = {
           desktop.addons = {
             rofi = enabled;
@@ -46,13 +51,9 @@ in
           };
         };
 
-        systemd.user.services.swayidle.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
         programs.waybar.systemd.target = "hyprland-session.target";
 
-        home.shellAliases = {
-          hl = "cat /tmp/hypr/$(ls -t /tmp/hypr/ | head -n 1)/hyprland.log";
-          hl1 = "cat /tmp/hypr/$(ls -t /tmp/hypr/ | head -n 2 | tail -n 1)/hyprland.log";
-        };
+        systemd.user.services.swayidle.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
 
         wayland.windowManager.hyprland = {
           enable = true;

@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.cli-apps.lazydocker;
 in
 {
@@ -16,14 +17,15 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [ lazydocker ];
+
     khanelinix.home = {
       extraOptions = {
         home.shellAliases = {
           # #
           # Docker aliases
           # #
-          dcu = "docker-compose up -d";
           dcd = "docker-compose down";
+          dcu = "docker-compose up -d";
           dim = "docker images";
           dps = "docker ps";
           dpsa = "docker ps -a";

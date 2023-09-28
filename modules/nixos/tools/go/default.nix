@@ -1,12 +1,13 @@
-{ options
-, config
-, pkgs
+{ config
 , lib
+, options
+, pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.tools.go;
 in
 {
@@ -16,10 +17,14 @@ in
 
   config = mkIf cfg.enable {
     environment = {
-      systemPackages = with pkgs; [ go gopls ];
       sessionVariables = {
         GOPATH = "$HOME/work/go";
       };
+
+      systemPackages = with pkgs; [
+        go
+        gopls
+      ];
     };
   };
 }

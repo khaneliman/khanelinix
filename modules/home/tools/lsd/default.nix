@@ -1,11 +1,12 @@
-{ options
-, config
+{ config
 , lib
+, options
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.tools.lsd;
 in
 {
@@ -14,6 +15,7 @@ in
   };
 
   config = mkIf cfg.enable {
+    # TODO: fix aliases 
     programs.lsd = {
       enable = true;
       enableAliases = true;

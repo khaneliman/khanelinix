@@ -6,6 +6,7 @@
 let
   inherit (lib) types mkIf;
   inherit (lib.internal) mkBoolOpt mkOpt enabled;
+
   cfg = config.khanelinix.services.tailscale;
 in
 {
@@ -27,20 +28,18 @@ in
 
     environment.systemPackages = with pkgs; [ tailscale ];
 
-    services.tailscale = enabled;
-
     networking = {
       firewall = {
-        trustedInterfaces = [ config.services.tailscale.interfaceName ];
-
         allowedUDPPorts = [ config.services.tailscale.port ];
-
+        trustedInterfaces = [ config.services.tailscale.interfaceName ];
         # Strict reverse path filtering breaks Tailscale exit node use and some subnet routing setups.
         checkReversePath = "loose";
       };
 
       networkmanager.unmanaged = [ "tailscale0" ];
     };
+
+    services.tailscale = enabled;
 
     systemd.services.tailscale-autoconnect = mkIf cfg.autoconnect.enable {
       description = "Automatic connection to Tailscale";

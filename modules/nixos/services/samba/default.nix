@@ -1,24 +1,12 @@
-{ lib
-, config
+{ config
+, lib
 , ...
 }:
 let
+  inherit (lib) mapAttrs mkEnableOption mkIf optionalAttrs types;
+  inherit (lib.internal) mkBoolOpt mkOpt;
+
   cfg = config.khanelinix.services.samba;
-
-  inherit
-    (lib)
-    types
-    mkEnableOption
-    mkIf
-    mapAttrs
-    optionalAttrs
-    ;
-
-  inherit
-    (lib.internal)
-    mkOpt
-    mkBoolOpt
-    ;
 
   bool-to-yes-no = value:
     if value
@@ -42,9 +30,8 @@ in
 {
   options.khanelinix.services.samba = with types; {
     enable = mkEnableOption "Samba";
-    workgroup = mkOpt str "WORKGROUP" "The workgroup to use.";
     browseable = mkBoolOpt true "Whether the shares are browseable.";
-
+    workgroup = mkOpt str "WORKGROUP" "The workgroup to use.";
     shares = mkOpt (attrsOf shares-submodule) { } "The shares to serve.";
   };
 
@@ -62,11 +49,11 @@ in
 
     services.samba = {
       enable = true;
-      openFirewall = true;
 
       extraConfig = ''
         browseable = ${bool-to-yes-no cfg.browseable}
       '';
+      openFirewall = true;
 
       shares =
         mapAttrs

@@ -1,11 +1,12 @@
-{ options
-, config
+{ config
 , lib
+, options
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.system.shell.bash;
 in
 {

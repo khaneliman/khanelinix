@@ -1,12 +1,13 @@
-{ options
-, config
-, pkgs
+{ config
 , lib
+, options
+, pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.hardware.storage;
 in
 {
@@ -19,10 +20,10 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs;
       [
-        ntfs3g
+        btrfs-progs
         fuseiso
         nfs-utils
-        btrfs-progs
+        ntfs3g
       ];
   };
 }

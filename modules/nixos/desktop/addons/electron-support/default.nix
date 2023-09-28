@@ -1,11 +1,12 @@
-{ options
-, config
+{ config
 , lib
+, options
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.desktop.addons.electron-support;
 in
 {
@@ -16,9 +17,11 @@ in
   };
 
   config = mkIf cfg.enable {
+    environment.sessionVariables = {
+      NIXOS_OZONE_WL = "1";
+    };
+
     khanelinix.home.configFile."electron-flags.conf".source =
       ./electron-flags.conf;
-
-    environment.sessionVariables = { NIXOS_OZONE_WL = "1"; };
   };
 }

@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf getExe getExe';
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.desktop.addons.mako;
 in
 {
@@ -17,11 +18,13 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [ mako libnotify ];
 
+    khanelinix.home.configFile."mako/config".source = ./config;
+
     systemd.user.services.mako = {
-      description = "Mako notification daemon";
-      wantedBy = [ "graphical-session.target" ];
-      partOf = [ "graphical-session.target" ];
       after = [ "graphical-session.target" ];
+      description = "Mako notification daemon";
+      partOf = [ "graphical-session.target" ];
+      wantedBy = [ "graphical-session.target" ];
       serviceConfig = {
         Type = "dbus";
         BusName = "org.freedesktop.Notifications";
@@ -44,6 +47,5 @@ in
       };
     };
 
-    khanelinix.home.configFile."mako/config".source = ./config;
   };
 }

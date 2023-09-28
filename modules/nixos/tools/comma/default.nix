@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+
   cfg = config.khanelinix.tools.comma;
 in
 {
@@ -20,6 +21,8 @@ in
       khanelinix.nix-update-index
     ];
 
-    khanelinix.home.extraOptions = { programs.nix-index.enable = true; };
+    khanelinix.home.extraOptions = {
+      programs.nix-index.enable = true;
+    };
   };
 }

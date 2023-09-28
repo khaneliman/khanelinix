@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , inputs
 , ...
 }:
@@ -12,14 +12,15 @@ let
   cfg = config.khanelinix.security.sops;
 in
 {
+  # NOTE: Needed to be imported here otherwise wouldn't work
   imports = [
     sops-nix.homeManagerModules.sops
   ];
 
   options.khanelinix.security.sops = with types; {
     enable = mkBoolOpt false "Whether to enable sops.";
-    sshKeyPaths = mkOpt (listOf path) [ ] "SSH Key paths to use.";
     defaultSopsFile = mkOpt path null "Default sops file.";
+    sshKeyPaths = mkOpt (listOf path) [ ] "SSH Key paths to use.";
   };
 
   config = mkIf cfg.enable {

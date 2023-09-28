@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , ...
 }:
 let
@@ -31,8 +31,6 @@ in
         desktop = enabled;
         development = enabled;
       };
-
-      tools = { };
     };
   };
 }

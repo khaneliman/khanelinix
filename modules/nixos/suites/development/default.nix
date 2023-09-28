@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
@@ -21,18 +21,18 @@ in
     dockerEnable =
       mkBoolOpt false
         "Whether or not to enable docker development configuration.";
-    kubernetesEnable =
-      mkBoolOpt false
-        "Whether or not to enable kubernetes development configuration.";
-    goEnable =
-      mkBoolOpt false
-        "Whether or not to enable go development configuration.";
-    nixEnable =
-      mkBoolOpt false
-        "Whether or not to enable nix development configuration.";
     gameEnable =
       mkBoolOpt false
         "Whether or not to enable game development configuration.";
+    goEnable =
+      mkBoolOpt false
+        "Whether or not to enable go development configuration.";
+    kubernetesEnable =
+      mkBoolOpt false
+        "Whether or not to enable kubernetes development configuration.";
+    nixEnable =
+      mkBoolOpt false
+        "Whether or not to enable nix development configuration.";
     nodeEnable =
       mkBoolOpt false
         "Whether or not to enable node development configuration.";
@@ -54,18 +54,18 @@ in
     ];
 
     environment.systemPackages = with pkgs; [
+      github-desktop
       onefetch
       qtcreator
-      github-desktop
     ] ++ lib.optionals cfg.nixEnable [
       nixpkgs-fmt
       nixpkgs-hammering
       nixpkgs-lint-community
       nixpkgs-review
     ] ++ lib.optionals cfg.gameEnable [
+      godot_4
       # ue4
       unityhub
-      godot_4
     ] ++ lib.optionals cfg.rustEnable [
       rust-bin.stable.latest.default
     ] ++ lib.optionals cfg.sqlEnable [

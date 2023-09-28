@@ -1,5 +1,5 @@
-{ lib
-, config
+{ config
+, lib
 , pkgs
 , ...
 }:
@@ -12,6 +12,7 @@ in
   options.khanelinix.apps.blender = {
     enable = mkBoolOpt false "Whether or not to enable blender.";
   };
+  # TODO: remove module
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [ blender ];

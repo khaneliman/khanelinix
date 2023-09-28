@@ -1,5 +1,5 @@
-{ lib
-, config
+{ config
+, lib
 , pkgs
 , ...
 }:
@@ -13,13 +13,13 @@ in
 {
   options.khanelinix.tools.git = {
     enable = mkEnableOption "Git";
-    userName = mkOpt types.str user.fullName "The name to configure git with.";
-    userEmail = mkOpt types.str user.email "The email to configure git with.";
+    includes = mkOpt (types.listOf types.attrs) [ ] "Git includeIf paths and conditions.";
+    signByDefault = mkOpt types.bool true "Whether to sign commits by default.";
     signingKey =
       mkOpt types.str "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEpfTVxQKmkAYOrsnroZoTk0LewcBIC4OjlsoJY6QbB0" "The key ID to sign commits with.";
-    signByDefault = mkOpt types.bool true "Whether to sign commits by default.";
+    userName = mkOpt types.str user.fullName "The name to configure git with.";
+    userEmail = mkOpt types.str user.email "The email to configure git with.";
     wslAgentBridge = mkOpt types.bool false "Whether to enable the wsl agent bridge.";
-    includes = mkOpt (types.listOf types.attrs) [ ] "Git includeIf paths and conditions.";
   };
 
   config = mkIf cfg.enable {

@@ -1,12 +1,13 @@
-{ options
-, config
+{ config
 , lib
+, options
 , pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt enabled;
+
   cfg = config.khanelinix.apps.vscode;
 in
 {
@@ -37,8 +38,8 @@ in
         eamodio.gitlens
         formulahendry.auto-close-tag
         formulahendry.auto-rename-tag
-        github.vscode-pull-request-github
         github.vscode-github-actions
+        github.vscode-pull-request-github
         gruntfuggly.todo-tree
         mkhl.direnv
         vscode-icons-team.vscode-icons

@@ -1,6 +1,6 @@
-{ options
-, config
+{ config
 , lib
+, options
 , inputs
 , host
 , ...
@@ -59,8 +59,8 @@ in
     enable = mkBoolOpt false "Whether or not to configure ssh support.";
     authorizedKeys =
       mkOpt (listOf str) [ default-key ] "The public keys to apply.";
-    port = mkOpt port 2222 "The port to listen on (in addition to 22).";
     extraConfig = mkOpt str "" "Extra configuration to apply.";
+    port = mkOpt port 2222 "The port to listen on (in addition to 22).";
   };
 
   config = mkIf cfg.enable {
@@ -76,6 +76,7 @@ in
       '';
     };
 
+    # TODO: change to all aliases
     programs.zsh.shellAliases =
       foldl
         (aliases: system:

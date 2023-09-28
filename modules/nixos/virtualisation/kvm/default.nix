@@ -13,26 +13,26 @@ in
 {
   options.khanelinix.virtualisation.kvm = with types; {
     enable = mkBoolOpt false "Whether or not to enable KVM virtualisation.";
-    vfioIds =
-      mkOpt (listOf str) [ ]
-        "The hardware IDs to pass through to a virtual machine.";
-    platform =
-      mkOpt (enum [ "amd" "intel" ]) "amd"
-        "Which CPU platform the machine is using.";
     # Use `machinectl` and then `machinectl status <name>` to
     # get the unit "*.scope" of the virtual machine.
     machineUnits =
       mkOpt (listOf str) [ ]
         "The systemd *.scope units to wait for before starting Scream.";
+    platform =
+      mkOpt (enum [ "amd" "intel" ]) "amd"
+        "Which CPU platform the machine is using.";
+    vfioIds =
+      mkOpt (listOf str) [ ]
+        "The hardware IDs to pass through to a virtual machine.";
   };
 
   config = mkIf cfg.enable {
     boot = {
       kernelModules = [
         "kvm-${cfg.platform}"
-        "vfio_pci"
-        "vfio_iommu_type1"
         "vfio"
+        "vfio_iommu_type1"
+        "vfio_pci"
       ];
       kernelParams = [
         "${cfg.platform}_iommu=on"
@@ -74,22 +74,24 @@ in
     };
 
     khanelinix = {
-      user = { extraGroups = [ "qemu-libvirtd" "libvirtd" "disk" "kvm" "input" ]; };
+      user = {
+        extraGroups = [
+          "disk"
+          "input"
+          "kvm"
+          "libvirtd"
+          "qemu-libvirtd"
+        ];
+      };
 
-      apps = { looking-glass-client = enabled; };
+      apps = {
+        looking-glass-client = enabled;
+      };
 
       home = {
         extraOptions = {
           systemd.user.services.scream = {
-            Unit.Description = "Scream";
-            Unit.After =
-              [
-                "libvirtd.service"
-                "pipewire-pulse.service"
-                "pipewire.service"
-                "sound.target"
-              ]
-              ++ cfg.machineUnits;
+            Install.RequiredBy = cfg.machineUnits;
 
             Service = {
               ExecStart = "${getExe pkgs.scream} -n scream -o pulse -m /dev/shm/scream";
@@ -98,7 +100,17 @@ in
               StartLimitBurst = "1";
             };
 
-            Install.RequiredBy = cfg.machineUnits;
+            Unit = {
+              Description = "Scream";
+              After =
+                [
+                  "libvirtd.service"
+                  "pipewire-pulse.service"
+                  "pipewire.service"
+                  "sound.target"
+                ]
+                ++ cfg.machineUnits;
+            };
           };
         };
       };
