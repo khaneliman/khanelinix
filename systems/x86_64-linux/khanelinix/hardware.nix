@@ -48,7 +48,7 @@ in
       options = [ "rw" "noatime" "ssd" "subvol=/@" ];
     };
 
-    "/boot/efi" = {
+    "/boot" = {
       device = "/dev/disk/by-label/EFI";
       fsType = "vfat";
     };

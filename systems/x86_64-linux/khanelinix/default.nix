@@ -170,7 +170,11 @@ in
     };
 
     system = {
-      boot = enabled;
+      boot = {
+        enable = true;
+        secureBoot = true;
+      };
+
       fonts = enabled;
       locale = enabled;
       networking = enabled;

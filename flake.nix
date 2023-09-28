@@ -51,6 +51,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Secure boot 
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v0.3.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Personal neovim config
     neovim-config = {
       url = "github:khaneliman/astronvim/v4";
@@ -90,17 +96,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Snowfall Lib
-    snowfall-lib = {
-      url = "github:snowfallorg/lib";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    snowfall-frost = {
-      url = "github:snowfallorg/frost";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # Run unpatched dynamically compiled binaries
     nix-ld = {
       url = "github:Mic92/nix-ld";
@@ -131,6 +126,17 @@
       flake = false;
     };
 
+    # Snowfall Lib
+    snowfall-lib = {
+      url = "github:snowfallorg/lib";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    snowfall-frost = {
+      url = "github:snowfallorg/frost";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Sops (Secrets) 
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -152,7 +158,7 @@
 
   outputs = inputs:
     let
-      inherit (inputs) deploy-rs flake nur nix-ld rustup-overlay snowfall-lib snowfall-frost sops-nix;
+      inherit (inputs) deploy-rs flake lanzaboote nur nix-ld rustup-overlay snowfall-lib snowfall-frost sops-nix;
 
       lib = snowfall-lib.mkLib {
         inherit inputs;
@@ -190,6 +196,7 @@
           ];
 
           nixos = [
+            lanzaboote.nixosModules.lanzaboote
             nix-ld.nixosModules.nix-ld
             sops-nix.nixosModules.sops
           ];

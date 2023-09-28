@@ -12,22 +12,32 @@ in
 {
   options.khanelinix.system.boot = {
     enable = mkBoolOpt false "Whether or not to enable booting.";
+    secureBoot = mkBoolOpt false "Whether or not to enable secure boot.";
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; lib.optionals cfg.secureBoot [
+      sbctl
+    ];
+
     boot = {
       kernelParams = [ "quiet" "splash" ];
+
+      lanzaboote = mkIf cfg.secureBoot {
+        enable = true;
+        pkiBundle = "/etc/secureboot";
+      };
 
       loader = {
         # https://github.com/NixOS/nixpkgs/blob/c32c39d6f3b1fe6514598fa40ad2cf9ce22c3fb7/nixos/modules/system/systemd-boot/systemd-boot.nix#L66
         systemd-boot = {
-          enable = true;
+          enable = !cfg.secureBoot;
           configurationLimit = 20;
           editor = false;
         };
         efi = {
           canTouchEfiVariables = true;
-          efiSysMountPoint = "/boot/efi";
+          efiSysMountPoint = "/boot";
         };
       };
 
