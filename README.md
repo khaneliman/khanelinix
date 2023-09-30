@@ -16,7 +16,9 @@
 </a>
 </p>
 
-Welcome to KhaneliNix, a personal Nix configuration repository. This repository contains my NixOS and Nixpkgs configurations, along with various tools and customizations to enhance the Nix experience.
+Welcome to KhaneliNix, a personal Nix configuration repository. This repository
+contains my NixOS and Nixpkgs configurations, along with various tools and
+customizations to enhance the Nix experience.
 
 ## Table of Contents
 
@@ -27,55 +29,84 @@ Welcome to KhaneliNix, a personal Nix configuration repository. This repository 
 
 ## Getting Started
 
-Before diving in, ensure that you have Nix installed on your system. If not, you can download and install it from the official [Nix website](https://nixos.org/download.html).
+Before diving in, ensure that you have Nix installed on your system. If not, you
+can download and install it from the official
+[Nix website](https://nixos.org/download.html).
 
-### Clone this repository to your local machine:
-
-```bash
-    git clone https://github.com/khaneliman/khanelinix.git
-    cd khanelinix
-```
-
-### Automatic
+### Clone this repository to your local machine
 
 ```bash
-cd ~/.config/khanelinix && sudo nixos-rebuild switch --flake . # linux
+git clone https://github.com/khaneliman/khanelinix.git
+cd khanelinix
+sudo nixos-rebuild switch --flake . # linux
 ```
 
 ## Features
 
 Here's an overview of what my Nix configuration offers:
 
-- **Astronvim Integration**: Easily integrate Astronvim and my personal astronvim config.
+- **External Dependency Integrations**:
+  - Easily integrate Astronvim and my personal Astronvim config.
+  - Access the Nix User Repository (NUR) for additional packages and
+    enhancements.
+  - Incorporate Nixpkgs-Wayland to provide an up-to-date Wayland package
+    repository.
 
-- **NUR Integration**: Access the Nix User Repository (NUR) for additional packages and enhancements.
- 
-- **Nixpkgs-Wayland Integration**: Incorporate Nixpkgs-Wayland to provide a more up to date wayland package repository.
+- **macOS Support**: Seamlessly configure and manage Nix on macOS using the
+  power of Nix-darwin, also leveraging homebrew for GUI applications.
 
-- **macOS Support**: Seamlessly configure and manage Nix on macOS using the power of Nix-darwin, also leveraging homebrew for GUI applications.
+- **Home Manager**: Manage your dotfiles, home environment, and user-specific
+  configurations with Home Manager.
 
-- **Home Manager**: Manage your dotfiles, home environment, and user-specific configurations with Home Manager.
+- **DevShell Support**: The flake provides a development shell (`devShell`) to
+  support maintaining this flake. You can use the devShell for convenient
+  development and maintenance of your Nix environment.
+
+- **CI with Cachix**: The configuration includes continuous integration (CI)
+  that pushes built artifacts to Cachix. This ensures efficient builds and
+  reduces the need to build dependencies on your local machine.
+
+- **Utilize sops-nix**: Secret management with sops-nix for secure and encrypted
+  handling of sensitive information.
 
 ## Customization
 
-My Nix configuration, based on the SnowfallOrg lib structure, provides a flexible and organized approach to managing your Nix environment. Here's how it works:
+My Nix configuration, based on the SnowfallOrg lib structure, provides a
+flexible and organized approach to managing your Nix environment. Here's how it
+works:
 
-- **Custom Library**: An optional custom library in the `lib/` directory contains a Nix function called with `inputs`, `snowfall-inputs`, and `lib`. The function should return an attribute set to merge with `lib`.
+- **Custom Library**: An optional custom library in the `lib/` directory
+  contains a Nix function called with `inputs`, `snowfall-inputs`, and `lib`.
+  The function should return an attribute set to merge with `lib`.
 
-- **Modular Directory Structure**: You can create any (nestable) directory structure within `lib/` and `packages/`. Each directory should contain a Nix function that returns an attribute set to merge with `lib`. This structure allows for organized and modular configurations.
+- **Modular Directory Structure**: You can create any (nestable) directory
+  structure within `lib/`, `packages/`, `modules/`, `overlays/`, `systems/`, and
+  `homes/`. Each directory should contain a Nix function that returns an
+  attribute set to merge with the corresponding section.
 
-- **Package Overlays**: The `packages/` directory includes an optional set of packages to export. Each package is instantiated with `callPackage`, and the files should contain functions that take an attribute set of packages and the required `lib` to return a derivation.
+- **Package Overlays**: The `packages/` directory includes an optional set of
+  packages to export. Each package is instantiated with `callPackage`, and the
+  files should contain functions that take an attribute set of packages and the
+  required `lib` to return a derivation.
 
-- **Modules for Configuration**: In the `modules/` directory, you can define NixOS modules for various platforms, such as `nixos`, `darwin`, and `home`. This modular approach simplifies system configuration management.
+- **Modules for Configuration**: In the `modules/` directory, you can define
+  NixOS modules for various platforms, such as `nixos`, `darwin`, and `home`.
+  This modular approach simplifies system configuration management.
 
-- **Custom Overlays**: The `overlays/` directory is for optional custom overlays. Each overlay file should contain a function that takes three arguments: an attribute set of your flake's inputs and a `channels` attribute containing all available channels, the final set of `pkgs`, and the previous set of `pkgs`. This allows you to customize package sets effectively.
+- **Custom Overlays**: The `overlays/` directory is for optional custom
+  overlays. Each overlay file should contain a function that takes three
+  arguments: an attribute set of your flake's inputs and a `channels` attribute
+  containing all available channels, the final set of `pkgs`, and the previous
+  set of `pkgs`. This allows you to customize package sets effectively.
 
-- **System Configurations**: The `systems/` directory organizes system configurations based on architecture and format. You can create configurations for different architectures and formats, such as `x86_64-linux`, `aarch64-darwin`, and more.
+- **System Configurations**: The `systems/` directory organizes system
+  configurations based on architecture and format. You can create configurations
+  for different architectures and formats, such as `x86_64-linux`,
+  `aarch64-darwin`, and more.
 
-- **Home Configurations**: Similar to system configurations, the `homes/` directory organizes home configurations based on architecture and format. This is especially useful if you want to manage home environments with Nix.
+- **Home Configurations**: Similar to system configurations, the `homes/`
+  directory organizes home configurations based on architecture and format. This
+  is especially useful if you want to manage home environments with Nix.
 
-This structured approach to Nix configuration makes it easier to manage and customize your Nix environment while maintaining flexibility and modularity.
-    
-## Credits
-
-Inspiration and code from numerous locations all over the internet. Here are some of the major contributors to my setups.
+This structured approach to Nix configuration makes it easier to manage and
+customize your Nix environment while maintaining flexibility and modularity.
