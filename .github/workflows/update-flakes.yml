@@ -17,6 +17,5 @@ jobs:
       - name: Update flake.lock
         uses: DeterminateSystems/update-flake-lock@v20
         with:
-          token: ${{ secrets.GH_TOKEN }}
           pr-labels: |
             merge-queue
