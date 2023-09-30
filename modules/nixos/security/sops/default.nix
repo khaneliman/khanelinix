@@ -14,7 +14,7 @@ in
   options.khanelinix.security.sops = with types; {
     enable = mkBoolOpt false "Whether to enable sops.";
     defaultSopsFile = mkOpt path null "Default sops file.";
-    sshKeyPaths = mkOpt (listOf path) [ ] "SSH Key paths to use.";
+    sshKeyPaths = mkOpt (listOf path) [ "/etc/ssh/ssh_host_ed25519_key" ] "SSH Key paths to use.";
   };
 
   config = mkIf cfg.enable {

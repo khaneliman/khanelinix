@@ -26,8 +26,6 @@ in
       };
     };
 
-    khanelinix.tools.wakatime = enabled;
-
     programs.vscode = {
       enable = true;
       enableUpdateCheck = true;

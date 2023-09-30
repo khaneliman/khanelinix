@@ -40,6 +40,11 @@ in
     security = {
       doas = enabled;
       keyring = enabled;
+      sops = {
+        enable = true;
+        sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+        defaultSopsFile = ../../../secrets/nixos/default.yaml;
+      };
     };
 
     system = {

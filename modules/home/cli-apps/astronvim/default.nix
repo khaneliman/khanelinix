@@ -42,8 +42,6 @@ in
       };
     };
 
-    khanelinix.tools.wakatime = enabled;
-
     programs.neovim = {
       enable = true;
       defaultEditor = cfg.default;

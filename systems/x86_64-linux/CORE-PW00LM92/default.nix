@@ -32,7 +32,11 @@ in
     security = {
       # FIX: make gpg work on wsl
       gpg = mkForce disabled;
-      sops = enabled;
+      sops = {
+        enable = true;
+        sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+        defaultSopsFile = ../../../secrets/CORE/default.yaml;
+      };
     };
 
     suites = {
