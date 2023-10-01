@@ -28,6 +28,7 @@ in
         NSGlobalDomain = {
           AppleAccentColor = 1;
           AppleHighlightColor = "0.65098 0.85490 0.58431";
+          AppleSpacesSwitchOnActivate = false;
           WebKitDeveloperExtras = true;
         };
       };
