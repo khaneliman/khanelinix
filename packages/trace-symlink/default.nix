@@ -17,8 +17,6 @@ writeShellApplication
   ];
 
   text = ''
-    #!/usr/bin/env sh
-
     readlinkWithPrint() {
         link=$(readlink "$1")
         p=$link

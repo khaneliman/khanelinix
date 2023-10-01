@@ -14,8 +14,6 @@ writeShellApplication
   checkPhase = "";
 
   text = ''
-    #!/usr/bin/env sh
-    
     a=$(which "$1") && exec ${lib.getExe pkgs.khanelinix.trace-symlink} "$a"
   '';
 }
