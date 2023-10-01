@@ -36,7 +36,6 @@ in
 
             decoration = {
               rounding = 10;
-              multisample_edges = true;
 
               active_opacity = 0.95;
               inactive_opacity = 0.9;
