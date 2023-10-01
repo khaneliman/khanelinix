@@ -68,6 +68,11 @@
       url = "github:nixos/nixpkgs/nixos-unstable";
     };
 
+    # Nixpkgs fork
+    nixpkgs-khanelinix = {
+      url = "github:khaneliman/nixpkgs/yabai";
+    };
+
     # NixPkgs-Wayland 
     nixpkgs-wayland = {
       url = "github:nix-community/nixpkgs-wayland";
