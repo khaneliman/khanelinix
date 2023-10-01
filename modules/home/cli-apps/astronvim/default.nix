@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib) mkEnableOption mkIf getExe;
-  inherit (lib.internal) mkBoolOpt enabled;
+  inherit (lib.internal) mkBoolOpt;
   inherit (inputs) neovim-config;
 
   cfg = config.khanelinix.cli-apps.astronvim;
