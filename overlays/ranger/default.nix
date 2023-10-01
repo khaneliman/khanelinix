@@ -6,7 +6,7 @@ _: (_final: prev: {
       owner = "ranger";
       repo = "ranger";
       rev = "136416c7e2ecc27315fe2354ecadfe09202df7dd";
-      sha256 = "sha256-nW4KlatugmPRPXl+XvV0/mo+DE5o8FLRrsJuiKbFGyY=";
+      hash = "sha256-nW4KlatugmPRPXl+XvV0/mo+DE5o8FLRrsJuiKbFGyY=";
     };
     propagatedBuildInputs = old.propagatedBuildInputs ++ (with prev.python3Packages; [ astroid pylint ]);
   });
