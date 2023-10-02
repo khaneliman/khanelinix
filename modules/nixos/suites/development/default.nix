@@ -56,7 +56,8 @@ in
     environment.systemPackages = with pkgs; [
       github-desktop
       onefetch
-      qtcreator
+      # FIX: broken package
+      # qtcreator
       neovide
       vscode
     ] ++ lib.optionals cfg.nixEnable [

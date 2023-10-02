@@ -34,18 +34,10 @@ in
             accent = "Blue";
             variant = "Macchiato";
           })
-          # TODO: get qt5 and qt6 to work together properly with sddm and xdph
-          libsForQt5.qt5.qtgraphicaleffects
-          libsForQt5.qt5.qtquickcontrols2
-          libsForQt5.qt5.qtsvg
           libsForQt5.qt5ct
           libsForQt5.qtstyleplugin-kvantum
           qt6Packages.qt6ct
           qt6Packages.qtstyleplugin-kvantum
-          # qt6.full
-          # qt6.qtsvg
-          # qt6.qtquick3d
-          # qt6.qtwayland
         ]
         ++ lib.optional config.khanelinix.suites.wlroots.enable libsForQt5.qt5.qtwayland;
     };
