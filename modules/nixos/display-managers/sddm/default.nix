@@ -5,8 +5,8 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf getExe';
-  inherit (lib.internal) mkBoolOpt mkOpt stringAfter;
+  inherit (lib) types mkIf getExe' stringAfter;
+  inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.display-managers.sddm;
 in
@@ -22,6 +22,10 @@ in
         environment.systemPackages = with pkgs; [
           catppuccin-sddm-corners
           sddm
+          libsForQt5.qtbase
+          libsForQt5.qtsvg
+          libsForQt5.qtgraphicaleffects
+          libsForQt5.qtquickcontrols2
         ];
 
         services.xserver = {
