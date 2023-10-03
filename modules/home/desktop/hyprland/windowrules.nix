@@ -129,6 +129,7 @@ in
               "workspace 5 silent, class:^(org.telegram.desktop)$"
               "workspace 5 silent, class:^(discord)$"
               "workspace 5 silent, class:^(zoom)$"
+              "workspace 5 silent, class:^(Element)$"
               # Mail
               "workspace 6 silent, class:^(thunderbird)$"
               "workspace 6 silent, class:^(Mailspring)$"
