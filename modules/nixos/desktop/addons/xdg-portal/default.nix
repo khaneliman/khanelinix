@@ -23,8 +23,8 @@ in
           [
             xdg-desktop-portal-gtk
           ]
-          # ++ (lib.optional config.khanelinix.desktop.hyprland.enable xdg-desktop-portal-hyprland)
           ++ (lib.optional config.khanelinix.desktop.sway.enable xdg-desktop-portal-wlr);
+        xdgOpenUsePortal = true;
       };
     };
   };
