@@ -50,7 +50,6 @@ in
     environment = {
       systemPackages = with pkgs;
         [
-          (hiPrio khanelinix.xdg-open-with-portal)
           gnome.gnome-tweaks
           gnome.nautilus-python
           wl-clipboard
