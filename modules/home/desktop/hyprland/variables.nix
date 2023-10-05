@@ -62,6 +62,7 @@ in
             };
 
             general = {
+              allow_tearing = true;
               border_size = 2;
               "col.active_border" = "rgba(7793D1FF)";
               "col.inactive_border" = "rgb(5e6798)";
