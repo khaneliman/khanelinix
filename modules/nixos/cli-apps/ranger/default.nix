@@ -38,7 +38,7 @@ in
       p7zip
       pandoc
       poppler_utils
-      python311Packages.pygments
+      python3Packages.pygments
       transmission
       unrar
       unzip
