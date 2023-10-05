@@ -18,9 +18,15 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      cpplint
-    ];
+    home = {
+      packages = with pkgs; [
+        cpplint
+      ];
+
+      shellAliases = {
+        prefetch-sri = "nix store prefetch-file $1";
+      };
+    };
 
     khanelinix = {
       apps = {
