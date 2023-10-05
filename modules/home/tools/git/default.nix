@@ -5,7 +5,7 @@
 }:
 let
   inherit (lib) types mkEnableOption mkIf getExe getExe';
-  inherit (lib.internal) mkOpt enabled;
+  inherit (lib.internal) mkOpt mkBoolOpt enabled;
   inherit (config.khanelinix) user;
 
   cfg = config.khanelinix.tools.git;
@@ -19,7 +19,7 @@ in
       mkOpt types.str "${config.home.homeDirectory}/.ssh/id_ed25519" "The key ID to sign commits with.";
     userName = mkOpt types.str user.fullName "The name to configure git with.";
     userEmail = mkOpt types.str user.email "The email to configure git with.";
-    wslAgentBridge = mkOpt types.bool false "Whether to enable the wsl agent bridge.";
+    wslAgentBridge = mkBoolOpt false "Whether to enable the wsl agent bridge.";
   };
 
   config = mkIf cfg.enable {
