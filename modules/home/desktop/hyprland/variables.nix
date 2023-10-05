@@ -19,32 +19,31 @@ in
 
               # Some default animations, see https://wiki.hyprland.org/Configuring/Animations/ for more
               bezier = [
+                "easein, 0.47, 0, 0.745, 0.715"
                 "myBezier, 0.05, 0.9, 0.1, 1.05"
                 "overshot, 0.13, 0.99, 0.29, 1.1"
                 "scurve, 0.98, 0.01, 0.02, 0.98"
-                "easein, 0.47, 0, 0.745, 0.715"
               ];
 
               animation = [
-                "windowsOut, 1, 7, default, popin 10%"
-                "windows, 1, 5, overshot, popin 10%"
                 "border, 1, 10, default"
                 "fade, 1, 10, default"
+                "windows, 1, 5, overshot, popin 10%"
+                "windowsOut, 1, 7, default, popin 10%"
                 "workspaces, 1, 6, overshot, slide"
               ];
             };
 
             decoration = {
-              rounding = 10;
-
               active_opacity = 0.95;
-              inactive_opacity = 0.9;
               fullscreen_opacity = 1.0;
+              inactive_opacity = 0.9;
+              rounding = 10;
 
               blur = {
                 enabled = "yes";
-                size = 5;
                 passes = 4;
+                size = 5;
               };
 
               drop_shadow = true;
@@ -57,30 +56,30 @@ in
 
             dwindle = {
               # See https://wiki.hyprland.org/Configuring/Dwindle-Layout/ for more
-              pseudotile = true; # master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
-              preserve_split = true; # you probably want this
               force_split = 0;
+              preserve_split = true; # you probably want this
+              pseudotile = true; # master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
             };
 
             general = {
+              border_size = 2;
+              "col.active_border" = "rgba(7793D1FF)";
+              "col.inactive_border" = "rgb(5e6798)";
               gaps_in = 5;
               gaps_out = 20;
-              border_size = 2;
-              "col.inactive_border" = "rgb(5e6798)";
-              "col.active_border" = "rgba(7793D1FF)";
               layout = "dwindle";
               no_cursor_warps = true;
             };
 
             gestures = {
               workspace_swipe = true;
-              workspace_swipe_invert = false;
               workspace_swipe_fingers = 3;
+              workspace_swipe_invert = false;
             };
 
             input = {
-              kb_layout = "us";
               follow_mouse = 1;
+              kb_layout = "us";
 
               touchpad = {
                 natural_scroll = "no";
@@ -98,8 +97,8 @@ in
 
             misc = {
               disable_hyprland_logo = true;
-              mouse_move_enables_dpms = true;
               key_press_enables_dpms = true;
+              mouse_move_enables_dpms = true;
               vrr = 2;
             };
 
