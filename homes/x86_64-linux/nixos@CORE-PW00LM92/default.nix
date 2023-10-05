@@ -42,7 +42,7 @@ in
     tools = {
       git = {
         enable = true;
-        # wslAgentBridge = true;
+        wslAgentBridge = true;
         includes = [
           {
             condition = "gitdir:/mnt/c/";

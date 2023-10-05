@@ -334,24 +334,9 @@ in
           ];
         };
       };
-
-      zsh = {
-        initExtra = mkIf cfg.wslAgentBridge ''
-          $HOME/.agent-bridge.sh
-        '';
-      };
     };
 
     home = {
-      file = {
-        ".1password/.keep" = mkIf cfg.wslAgentBridge {
-          text = "";
-        };
-        ".agent-bridge.sh" = mkIf cfg.wslAgentBridge {
-          source = getExe pkgs.khanelinix.wsl-agent-bridge;
-        };
-      };
-
       shellAliases = {
         # #
         # Git alias
