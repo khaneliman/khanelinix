@@ -69,9 +69,9 @@
     };
 
     # Nixpkgs fork
-    nixpkgs-khanelinix = {
-      url = "github:khaneliman/nixpkgs/yabai";
-    };
+    # nixpkgs-khanelinix = {
+    #   url = "github:khaneliman/nixpkgs";
+    # };
 
     # NixPkgs-Wayland 
     nixpkgs-wayland = {
