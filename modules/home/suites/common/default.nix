@@ -35,13 +35,12 @@ in
         };
       };
 
-      tools = {
-        bat = enabled;
-        direnv = enabled;
-        git = enabled;
-        lsd = enabled;
-        oh-my-posh = enabled;
-        topgrade = enabled;
+      services = {
+        udiskie = enabled;
+      };
+
+      security = {
+        # gpg = enabled;
       };
 
       system = {
@@ -52,8 +51,13 @@ in
         };
       };
 
-      security = {
-        # gpg = enabled;
+      tools = {
+        bat = enabled;
+        direnv = enabled;
+        git = enabled;
+        lsd = enabled;
+        oh-my-posh = enabled;
+        topgrade = enabled;
       };
     };
   };
