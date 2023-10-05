@@ -16,7 +16,7 @@ in
     includes = mkOpt (types.listOf types.attrs) [ ] "Git includeIf paths and conditions.";
     signByDefault = mkOpt types.bool true "Whether to sign commits by default.";
     signingKey =
-      mkOpt types.str "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEpfTVxQKmkAYOrsnroZoTk0LewcBIC4OjlsoJY6QbB0" "The key ID to sign commits with.";
+      mkOpt types.str "${config.home.homeDirectory}/.ssh/id_ed25519" "The key ID to sign commits with.";
     userName = mkOpt types.str user.fullName "The name to configure git with.";
     userEmail = mkOpt types.str user.email "The email to configure git with.";
     wslAgentBridge = mkOpt types.bool false "Whether to enable the wsl agent bridge.";
@@ -268,9 +268,9 @@ in
           };
 
           gpg.format = "ssh";
-          "gpg \"ssh\"".program = ''''
-            + ''${lib.optionalString pkgs.stdenv.isLinux (getExe' pkgs._1password-gui-beta "op-ssh-sign")}''
-            + ''${lib.optionalString pkgs.stdenv.isDarwin "${pkgs._1password-gui-beta}/Applications/1Password.app/Contents/MacOS/op-ssh-sign"}'';
+          # "gpg \"ssh\"".program = ''''
+          #   + ''${lib.optionalString pkgs.stdenv.isLinux (getExe' pkgs._1password-gui-beta "op-ssh-sign")}''
+          #   + ''${lib.optionalString pkgs.stdenv.isDarwin "${pkgs._1password-gui-beta}/Applications/1Password.app/Contents/MacOS/op-ssh-sign"}'';
 
           init = {
             defaultBranch = "main";
