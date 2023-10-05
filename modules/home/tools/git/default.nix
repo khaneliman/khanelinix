@@ -20,6 +20,7 @@ in
     userName = mkOpt types.str user.fullName "The name to configure git with.";
     userEmail = mkOpt types.str user.email "The email to configure git with.";
     wslAgentBridge = mkBoolOpt false "Whether to enable the wsl agent bridge.";
+    _1password = mkBoolOpt false "Whether to enable 1Password integration.";
   };
 
   config = mkIf cfg.enable {
@@ -268,9 +269,9 @@ in
           };
 
           gpg.format = "ssh";
-          # "gpg \"ssh\"".program = ''''
-          #   + ''${lib.optionalString pkgs.stdenv.isLinux (getExe' pkgs._1password-gui-beta "op-ssh-sign")}''
-          #   + ''${lib.optionalString pkgs.stdenv.isDarwin "${pkgs._1password-gui-beta}/Applications/1Password.app/Contents/MacOS/op-ssh-sign"}'';
+          "gpg \"ssh\"".program = mkIf cfg._1password (''''
+            + ''${lib.optionalString pkgs.stdenv.isLinux (getExe' pkgs._1password-gui-beta "op-ssh-sign")}''
+            + ''${lib.optionalString pkgs.stdenv.isDarwin "${pkgs._1password-gui-beta}/Applications/1Password.app/Contents/MacOS/op-ssh-sign"}'');
 
           init = {
             defaultBranch = "main";
