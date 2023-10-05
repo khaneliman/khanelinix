@@ -48,7 +48,7 @@ in
               "${getExe pkgs.hyprpaper}"
               "${getExe pkgs.ckb-next} -b"
               "${getExe pkgs.openrgb} --startminimized --profile default"
-              "${getExe pkgs._1password-gui} --silent"
+              "${getExe pkgs._1password-gui-beta} --silent"
               "command -v ${getExe pkgs.cliphist} && wl-paste --type text --watch cliphist store" #Stores only text data
               "command -v ${getExe pkgs.cliphist} && wl-paste --type image --watch cliphist store" #Stores only image data
 

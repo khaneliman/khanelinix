@@ -839,6 +839,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-khanelinix": {
+      "locked": {
+        "lastModified": 1696538242,
+        "narHash": "sha256-dS7y7xcsRS+Bzs1kjHn7sVEtAmvvRwAEznl3eTcZLwQ=",
+        "owner": "khaneliman",
+        "repo": "nixpkgs",
+        "rev": "3b1224e94a76df8fc51078ddbfbf6bdad7491958",
+        "type": "github"
+      },
+      "original": {
+        "owner": "khaneliman",
+        "ref": "1password-beta",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs-lib": {
       "locked": {
         "lastModified": 1696121361,
@@ -1056,6 +1072,7 @@
         "nixos-hardware": "nixos-hardware",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
+        "nixpkgs-khanelinix": "nixpkgs-khanelinix",
         "nixpkgs-wayland": "nixpkgs-wayland",
         "nur": "nur",
         "ranger-devicons": "ranger-devicons",

@@ -1,6 +1,7 @@
 { config
 , lib
 , options
+, pkgs
 , ...
 }:
 let
@@ -19,6 +20,7 @@ in
       _1password = enabled;
       _1password-gui = {
         enable = true;
+        package = pkgs._1password-gui-beta;
 
         polkitPolicyOwners = [ config.khanelinix.user.name ];
       };

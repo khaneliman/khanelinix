@@ -269,8 +269,8 @@ in
 
           gpg.format = "ssh";
           "gpg \"ssh\"".program = ''''
-            + ''${lib.optionalString pkgs.stdenv.isLinux (getExe' pkgs._1password-gui "op-ssh-sign")}''
-            + ''${lib.optionalString pkgs.stdenv.isDarwin "${pkgs._1password-gui}/Applications/1Password.app/Contents/MacOS/op-ssh-sign"}'';
+            + ''${lib.optionalString pkgs.stdenv.isLinux (getExe' pkgs._1password-gui-beta "op-ssh-sign")}''
+            + ''${lib.optionalString pkgs.stdenv.isDarwin "${pkgs._1password-gui-beta}/Applications/1Password.app/Contents/MacOS/op-ssh-sign"}'';
 
           init = {
             defaultBranch = "main";
