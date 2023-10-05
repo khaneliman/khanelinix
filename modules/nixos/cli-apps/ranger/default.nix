@@ -19,7 +19,7 @@ in
     environment.systemPackages = with pkgs; [
       ranger
 
-      # scope dependenices
+      # scope dependencies
       atool
       bat
       catdoc

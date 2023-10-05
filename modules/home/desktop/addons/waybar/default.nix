@@ -72,7 +72,7 @@ let
       "active-only" = "false";
       "on-scroll-up" = "${getExe' hyprland.packages.${system}.hyprland "hyprctl"} dispatch workspace e+1";
       "on-scroll-down" = "${getExe' hyprland.packages.${system}.hyprland "hyprctl"} dispatch workspace e-1";
-      "format" = "{icon}";
+      "format" = "{name}  {windows}";
       "format-icons" = {
         "1" = "";
         "2" = "";
@@ -99,6 +99,29 @@ let
         "DP-3" = [
           1
         ];
+      };
+      # "format-window-separator" = "->";
+      "window-rewrite-default" = "";
+      "window-rewrite" = {
+        "1Password" = "󰢁";
+        "Caprine" = "󰈎";
+        "Github Desktop" = "󰊤";
+        "Godot" = "";
+        "Mysql-workbench-bin" = "";
+        "Slack" = "󰒱";
+        "code" = "󰨞";
+        "code-url-handler" = "󰨞";
+        "discord" = "󰙯";
+        "firefox" = "";
+        "kitty" = "";
+        "mediainfo-gui" = "󱂷";
+        "org.kde.digikam" = "󰄄";
+        "org.telegram.desktop" = "";
+        ".pitivi-wrapped" = "󱄢";
+        "steam" = "";
+        "thunderbird" = "";
+        "virt-manager" = "󰢹";
+        "vlc" = "󰕼";
       };
     };
 
