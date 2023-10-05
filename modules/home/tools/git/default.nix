@@ -4,7 +4,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkEnableOption mkIf getExe getExe';
+  inherit (lib) types mkEnableOption mkIf getExe';
   inherit (lib.internal) mkOpt mkBoolOpt enabled;
   inherit (config.khanelinix) user;
 
