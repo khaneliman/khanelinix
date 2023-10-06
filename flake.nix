@@ -59,7 +59,7 @@
 
     # Personal neovim config
     neovim-config = {
-      url = "github:khaneliman/astronvim";
+      url = "github:khaneliman/khanelivim";
       flake = false;
     };
 
