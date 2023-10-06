@@ -72,7 +72,7 @@ let
       "active-only" = "false";
       "on-scroll-up" = "${getExe' hyprland.packages.${system}.hyprland "hyprctl"} dispatch workspace e+1";
       "on-scroll-down" = "${getExe' hyprland.packages.${system}.hyprland "hyprctl"} dispatch workspace e-1";
-      "format" = "{name}  {windows}";
+      "format" = "{icon}";
       "format-icons" = {
         "1" = "";
         "2" = "";
