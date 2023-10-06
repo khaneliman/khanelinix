@@ -59,7 +59,7 @@
 
     # Personal neovim config
     neovim-config = {
-      url = "github:khaneliman/astronvim/v4";
+      url = "github:khaneliman/astronvim";
       flake = false;
     };
 
@@ -70,7 +70,7 @@
 
     # Nixpkgs fork
     nixpkgs-khanelinix = {
-      url = "github:khaneliman/nixpkgs/1password-beta";
+      url = "github:khaneliman/nixpkgs";
     };
 
     # NixPkgs-Wayland 
