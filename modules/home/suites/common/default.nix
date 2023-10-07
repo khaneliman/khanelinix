@@ -36,7 +36,7 @@ in
       };
 
       services = {
-        udiskie = enabled;
+        udiskie.enable = pkgs.stdenv.isLinux;
       };
 
       security = {
