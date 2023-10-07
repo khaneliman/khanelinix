@@ -57,15 +57,6 @@ in
 
         wayland.windowManager.hyprland = {
           enable = true;
-          xwayland.enable = true;
-          systemdIntegration = true;
-          package = hyprland.packages.${system}.hyprland;
-
-          settings = {
-            exec = [
-              "notify-send --icon ~/.face -u normal \"Hello $(whoami)\""
-            ];
-          };
 
           extraConfig = ''
             source=~/.config/hypr/displays.conf
@@ -76,6 +67,20 @@ in
 
             ${cfg.extraConfig}
           '';
+
+          package = hyprland.packages.${system}.hyprland;
+
+          settings = {
+            exec = [
+              "notify-send --icon ~/.face -u normal \"Hello $(whoami)\""
+            ];
+          };
+
+          systemd = {
+            enable = true;
+          };
+
+          xwayland.enable = true;
         };
       };
 }

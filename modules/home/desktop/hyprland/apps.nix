@@ -39,10 +39,6 @@ in
               # ░█▀█░█▀▀░█▀▀░░░▀▀█░░█░░█▀█░█▀▄░░█░░█░█░█▀▀
               # ░▀░▀░▀░░░▀░░░░░▀▀▀░░▀░░▀░▀░▀░▀░░▀░░▀▀▀░▀░░
 
-              # import env
-              "${getExe pkgs.khanelinix.import_env} system"
-              "${getExe pkgs.khanelinix.import_env} tmux"
-
               # Startup background apps
               "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1 &"
               "${getExe pkgs.hyprpaper}"
