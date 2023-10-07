@@ -1,6 +1,7 @@
 { config
 , lib
 , options
+, pkgs
 , ...
 }:
 let
@@ -31,8 +32,20 @@ in
 
       networkmanager = {
         enable = true;
+
+        connectionConfig = {
+          mdns = "yes";
+        };
+
         dhcp = "internal";
         insertNameservers = cfg.nameServers;
+
+        plugins = with pkgs; [
+          networkmanager-l2tp
+          networkmanager-openvpn
+          networkmanager-sstp
+          networkmanager-vpnc
+        ];
       };
     };
 
