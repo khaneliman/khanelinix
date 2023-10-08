@@ -8,4 +8,4 @@ bind '%' split-window -h -c '#{pane_current_path}'
 
 set-option -sa terminal-features ",*xterm*:RGB"
 set-option -sg escape-time 10
-
+set -ga terminal-overrides ",xterm-kitty:Tc"
