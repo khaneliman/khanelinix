@@ -1,6 +1,7 @@
 { config
 , lib
 , options
+, pkgs
 , ...
 }:
 let
@@ -8,6 +9,18 @@ let
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.cli-apps.lazygit;
+
+  fromYAML = f:
+    let
+      jsonFile =
+        pkgs.runCommand "in.json"
+          {
+            nativeBuildInputs = [ pkgs.jc ];
+          } ''
+          jc --yaml < "${f}" > "$out"
+        '';
+    in
+    builtins.elemAt (builtins.fromJSON (builtins.readFile jsonFile)) 0;
 in
 {
   options.khanelinix.cli-apps.lazygit = {
@@ -17,6 +30,10 @@ in
   config = mkIf cfg.enable {
     programs.lazygit = {
       enable = true;
+
+      settings = {
+        gui = fromYAML ./themes/macchiato-blue.yml;
+      };
     };
 
     home.shellAliases = {
