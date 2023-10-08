@@ -21,6 +21,7 @@ in
 
     khanelinix = {
       cli-apps = {
+        bottom = enabled;
         btop = enabled;
         fastfetch = enabled;
         ranger = enabled;
