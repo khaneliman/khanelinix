@@ -4,7 +4,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) types mkIf getExe;
   inherit (lib.internal) mkOpt;
 
   cfg = config.khanelinix.user;
@@ -26,6 +26,7 @@ in
     khanelinix.home = {
       extraOptions.home.shellAliases = {
         nixre = "darwin-rebuild switch --flake .";
+        gsed = "${getExe pkgs.gnused}";
       };
     };
   };
