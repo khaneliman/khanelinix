@@ -24,7 +24,7 @@ in
     };
 
     cli-apps = {
-      astronvim = enabled;
+      neovim = enabled;
     };
 
     desktop = {

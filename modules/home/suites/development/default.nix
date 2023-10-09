@@ -34,12 +34,12 @@ in
       };
 
       cli-apps = {
-        astronvim = {
+        helix = enabled;
+        lazygit = enabled;
+        neovim = {
           enable = true;
           default = true;
         };
-        helix = enabled;
-        lazygit = enabled;
       };
 
       tools = {

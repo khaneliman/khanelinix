@@ -17,7 +17,7 @@ in
     nix = enabled;
 
     cli-apps = {
-      astronvim = enabled;
+      neovim = enabled;
     };
 
     tools = {

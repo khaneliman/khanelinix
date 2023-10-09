@@ -9,7 +9,7 @@ let
   inherit (lib.internal) mkBoolOpt;
   inherit (inputs) neovim-config;
 
-  cfg = config.khanelinix.cli-apps.astronvim;
+  cfg = config.khanelinix.cli-apps.neovim;
 
   lsp = with pkgs; [
     binwalk
@@ -29,8 +29,8 @@ let
   ];
 in
 {
-  options.khanelinix.cli-apps.astronvim = {
-    enable = mkEnableOption "Astronvim";
+  options.khanelinix.cli-apps.neovim = {
+    enable = mkEnableOption "neovim";
     default = mkBoolOpt true "Whether to set Neovim as the session EDITOR";
   };
 
