@@ -25,5 +25,15 @@ in
       enableNushellIntegration = true;
       enableZshIntegration = true;
     };
+
+    xdg.configFile = {
+      "yazi" = {
+        source = lib.cleanSourceWith {
+          src = lib.cleanSource ./configs/.;
+        };
+
+        recursive = true;
+      };
+    };
   };
 }
