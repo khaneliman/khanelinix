@@ -26,6 +26,7 @@ in
         fastfetch = enabled;
         ranger = enabled;
         tmux = enabled;
+        yazi = enabled;
       };
 
       desktop = {
