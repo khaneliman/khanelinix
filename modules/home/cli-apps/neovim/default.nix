@@ -66,6 +66,7 @@ in
         lazygit
         less
         ripgrep
+        tree-sitter
         unzip
         wget
       ] ++ lsp
