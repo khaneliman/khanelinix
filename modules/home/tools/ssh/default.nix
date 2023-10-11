@@ -43,13 +43,14 @@ let
                 RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra
                 RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh
               '';
+          port-expr = if builtins.hasAttr name inputs.self.nixosConfigurations then "Port ${builtins.toString cfg.port}" else "";
         in
         ''
           Host ${name}
             Hostname ${name}.local
             User ${remote-user-name}
             ForwardAgent yes
-            Port ${builtins.toString cfg.port}
+            ${port-expr}
             ${forward-gpg}
         ''
       )
