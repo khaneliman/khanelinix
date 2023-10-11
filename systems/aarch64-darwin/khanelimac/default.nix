@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, ... }:
 let
   inherit (lib.internal) enabled;
 in
@@ -45,6 +45,7 @@ in
       "Thunderbolt Bridge"
     ];
   };
+
   security.pam.enableSudoTouchIdAuth = true;
 
   system.stateVersion = 4;
