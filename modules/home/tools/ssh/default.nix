@@ -3,6 +3,7 @@
 , options
 , inputs
 , host
+, pkgs
 , ...
 }:
 let
@@ -76,14 +77,21 @@ in
       '';
     };
 
-    home.shellAliases =
-      foldl
-        (aliases: system:
-          aliases
-          // {
-            "ssh-${system}" = "ssh ${system} -t tmux a";
-          })
-        { }
-        (builtins.attrNames other-hosts);
+    home = {
+      shellAliases =
+        foldl
+          (aliases: system:
+            aliases
+            // {
+              "ssh-${system}" = "ssh ${system} -t tmux a";
+            })
+          { }
+          (builtins.attrNames other-hosts);
+
+
+      file = mkIf pkgs.stdenv.isDarwin {
+        ".ssh/authorized_keys".text = builtins.concatStringsSep "\n" cfg.authorizedKeys;
+      };
+    };
   };
 }
