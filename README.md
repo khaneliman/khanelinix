@@ -46,7 +46,7 @@ sudo nixos-rebuild switch --flake . # linux
 Here's an overview of what my Nix configuration offers:
 
 - **External Dependency Integrations**:
-  - Easily integrate Astronvim and my personal Astronvim config.
+  - Easily integrate Astronvim and my personal Astronvim [config](https://github.com/khaneliman/khanelivim).
   - Access the Nix User Repository (NUR) for additional packages and
     enhancements.
   - Incorporate Nixpkgs-Wayland to provide an up-to-date Wayland package
