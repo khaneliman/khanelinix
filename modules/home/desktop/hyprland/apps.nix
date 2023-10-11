@@ -41,7 +41,6 @@ in
 
               # Startup background apps
               "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1 &"
-              "${getExe pkgs.hyprpaper}"
               "${getExe pkgs.ckb-next} -b"
               "${getExe pkgs.openrgb} --startminimized --profile default"
               "${getExe pkgs._1password-gui-beta} --silent"
