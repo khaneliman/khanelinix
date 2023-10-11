@@ -34,7 +34,7 @@ in
         enable = true;
 
         connectionConfig = {
-          mdns = "yes";
+          "connection.mdns" = true;
         };
 
         dhcp = "internal";
@@ -48,6 +48,8 @@ in
         ];
       };
     };
+
+    services.resolved.enable = true;
 
     # Fixes an issue that normally causes nixos-rebuild to fail.
     # https://github.com/NixOS/nixpkgs/issues/180175
