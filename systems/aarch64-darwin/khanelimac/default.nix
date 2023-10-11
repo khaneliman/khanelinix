@@ -1,6 +1,8 @@
-{ lib, ... }:
+{ lib, config, ... }:
 let
   inherit (lib.internal) enabled;
+
+  cfg = config.khanelinix.user;
 in
 {
   khanelinix = {
@@ -45,7 +47,18 @@ in
       "Thunderbolt Bridge"
     ];
   };
+
   security.pam.enableSudoTouchIdAuth = true;
+
+  users.users.${cfg.name} = {
+    openssh = {
+      authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEpfTVxQKmkAYOrsnroZoTk0LewcBIC4OjlsoJY6QbB0"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINBG8l3jQ2EPLU+BlgtaQZpr4xr97n2buTLAZTxKHSsD"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM7UBwfd7+K0mdkAIb2TE6RzMu6L4wZnG/anuoYqJMPB"
+      ];
+    };
+  };
 
   system.stateVersion = 4;
 }
