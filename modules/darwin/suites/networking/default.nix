@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.internal) mkBoolOpt enabled;
 
   cfg = config.khanelinix.suites.networking;
 in
@@ -17,6 +17,12 @@ in
   };
 
   config = mkIf cfg.enable {
+    khanelinix = {
+      system = {
+        networking = enabled;
+      };
+    };
+
     environment.systemPackages = with pkgs; [
       # ifstat-legacy
       nmap

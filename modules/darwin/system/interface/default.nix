@@ -55,14 +55,6 @@ in
         _FXShowPosixPathInTitle = true;
       };
 
-      # firewall settings
-      alf = {
-        # 0 = disabled 1 = enabled 2 = blocks all connections except for essential services
-        globalstate = 1;
-        loggingenabled = 0;
-        stealthenabled = 1;
-      };
-
       # dock settings
       dock = {
         # auto show and hide dock
