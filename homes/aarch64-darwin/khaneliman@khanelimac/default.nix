@@ -36,6 +36,7 @@ in
     };
 
     suites = {
+      business = enabled;
       common = enabled;
       development = enabled;
     };

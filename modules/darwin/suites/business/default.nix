@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.internal) mkBoolOpt enabled;
 
   cfg = config.khanelinix.suites.business;
 in
@@ -24,13 +24,7 @@ in
     ];
 
     homebrew = {
-      taps = [
-        "1password/tap"
-      ];
-
       casks = [
-        "1password"
-        "1password-cli"
         "authy"
         "bitwarden"
         "calibre"
@@ -42,13 +36,18 @@ in
       ];
 
       masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
-        "1Password for Safari" = 1569813296;
         "Brother iPrint&Scan" = 1193539993;
         "Keynote" = 409183694;
         "Microsoft OneNote" = 784801555;
         "Notability" = 360593530;
         "Numbers" = 409203825;
         "Pages" = 409201541;
+      };
+    };
+
+    khanelinix = {
+      apps = {
+        _1password = enabled;
       };
     };
   };
