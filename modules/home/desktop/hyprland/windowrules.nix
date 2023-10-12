@@ -45,6 +45,8 @@ in
               "move center, title:^(floating_kitty)$"
               "animation slide, title:^(floating_kitty)$"
               "float, class:^(thunderbird)$,title:.*(Reminders)$"
+              "size 1100 600, class:^(thunderbird)$,title:.*(Reminders)$"
+              "move center, class:^(thunderbird)$,title:.*(Reminders)$"
 
               # Workspace 8 (VM) layout
               "size 1000 1330, class:^(virt-manager)$, title:^(Virtual Machine Manager)$"
