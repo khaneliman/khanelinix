@@ -1,12 +1,11 @@
 { config
 , lib
 , options
-, pkgs
 , ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt enabled;
+  inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.apps._1password;
 in
