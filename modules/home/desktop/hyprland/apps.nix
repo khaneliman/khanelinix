@@ -48,7 +48,7 @@ in
               "command -v ${getExe pkgs.cliphist} && wl-paste --type image --watch cliphist store" #Stores only image data
 
               # Startup apps that have rules for organizing them
-              "[workspace special silent ] ${getExe pkgs.kitty} --session scratchpad" # Spawn scratchpad terminal
+              "[workspace special silent] ${getExe pkgs.kitty} --class scratchpad" # Spawn scratchpad terminal
               "${getExe pkgs.firefox}"
               "${getExe pkgs.steam}"
               "${getExe pkgs.discord}"
