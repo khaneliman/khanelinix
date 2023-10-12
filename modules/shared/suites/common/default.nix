@@ -24,6 +24,7 @@ in
       file
       findutils
       killall
+      lsof
       pciutils
       tldr
       unzip
