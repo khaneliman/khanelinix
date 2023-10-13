@@ -234,17 +234,6 @@ in
       };
     };
 
-    xdg.configFile."btop/themes" = {
-      source = lib.cleanSourceWith {
-        filter = name: _type:
-          let
-            baseName = baseNameOf (toString name);
-          in
-          lib.hasSuffix ".theme" baseName;
-        src = lib.cleanSource ./themes/.;
-      };
-
-      recursive = true;
-    };
+    xdg.configFile."btop/themes/catppuccin_macchiato.theme".source = pkgs.catppuccin + "/btop/catppuccin_macchiato.theme";
   };
 }
