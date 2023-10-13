@@ -250,8 +250,12 @@ in
             }; f";
         };
 
-        diff-so-fancy = {
+        delta = {
           enable = true;
+
+          options = {
+            syntax-theme = mkIf config.khanelinix.tools.bat.enable "catppuccin-macchiato";
+          };
         };
 
         extraConfig = {
