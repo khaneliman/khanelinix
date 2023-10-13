@@ -114,7 +114,6 @@ in
             "$editor" = "${getExe pkgs.neovim}";
             "$explorer" = "${getExe pkgs.xfce.thunar}";
             "$music" = "${getExe pkgs.spotify}";
-            "$notepad" = "code - -profile notepad - -unity-launch ~/Templates";
             "$launcher" = "${getExe pkgs.rofi} -show drun -n";
             "$launcher_alt" = "${getExe pkgs.rofi} -show run -n";
             "$launchpad" = "${getExe pkgs.rofi} -show drun -config '~/.config/rofi/appmenu/rofi.rasi'";
