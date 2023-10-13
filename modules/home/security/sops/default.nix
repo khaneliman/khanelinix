@@ -44,6 +44,11 @@ in
           sopsFile = ../../../../secrets/khaneliman/default.json;
           path = "${config.home.homeDirectory}/.wakatime.cfg";
         };
+
+        twitch-tui = {
+          sopsFile = ../../../../secrets/khaneliman/default.json;
+          path = "${config.home.homeDirectory}/.config/twt/config.toml";
+        };
       };
     };
   };

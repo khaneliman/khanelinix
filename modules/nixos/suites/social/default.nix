@@ -22,6 +22,7 @@ in
       slack
       slack-term
       telegram-desktop
+      twitch-tui
     ];
 
     khanelinix = {
