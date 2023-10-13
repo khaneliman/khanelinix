@@ -1,6 +1,7 @@
 { config
 , lib
 , options
+, pkgs
 , ...
 }:
 let
@@ -8,6 +9,13 @@ let
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.tools.lsd;
+
+  aliases = {
+
+    ls = "${pkgs.lsd}/bin/lsd -al";
+    lt = "${pkgs.lsd}/bin/lsd --tree";
+    llt = "${pkgs.lsd}/bin/lsd -l --tree";
+  };
 in
 {
   options.khanelinix.tools.lsd = {
@@ -15,10 +23,8 @@ in
   };
 
   config = mkIf cfg.enable {
-    # TODO: fix aliases 
     programs.lsd = {
       enable = true;
-      enableAliases = true;
 
       settings = {
         blocks = [ "permission" "user" "group" "size" "date" "name" ];
@@ -45,5 +51,7 @@ in
         # total-size = true;
       };
     };
+
+    home.shellAliases = aliases;
   };
 }
