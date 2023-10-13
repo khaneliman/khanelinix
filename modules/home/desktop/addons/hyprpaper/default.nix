@@ -55,7 +55,7 @@ in
 
           Service = {
             ExecStart = "${getExe pkgs.hyprpaper}";
-            Restart = "on-failure";
+            Restart = "always";
           };
         };
       };
