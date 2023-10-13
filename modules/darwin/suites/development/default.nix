@@ -26,10 +26,8 @@ in
     };
 
     environment.systemPackages = with pkgs; [
-      lazydocker
       mysql-client
       neovide
-      onefetch
       rustup
       jdk
 

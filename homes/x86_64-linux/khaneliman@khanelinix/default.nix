@@ -70,7 +70,10 @@ in
     suites = {
       business = enabled;
       common = enabled;
-      development = enabled;
+      development = {
+        enable = true;
+        dockerEnable = true;
+      };
       music = enabled;
       social = enabled;
     };

@@ -32,6 +32,7 @@ in
       podman = {
         inherit (cfg) enable;
         dockerCompat = true;
+        dockerSocket.enable = true;
       };
     };
   };

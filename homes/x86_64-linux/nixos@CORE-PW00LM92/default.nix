@@ -35,9 +35,11 @@ in
     };
 
     suites = {
-
       common = enabled;
-      development = enabled;
+      development = {
+        enable = true;
+        dockerEnable = true;
+      };
     };
 
     tools = {

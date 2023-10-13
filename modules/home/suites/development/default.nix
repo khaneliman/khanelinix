@@ -15,12 +15,18 @@ in
     enable =
       mkBoolOpt false
         "Whether or not to enable common development configuration.";
+    dockerEnable =
+      mkBoolOpt false
+        "Whether or not to enable docker development configuration.";
   };
 
   config = mkIf cfg.enable {
     home = {
       packages = with pkgs; [
         cpplint
+        jqp
+        lazydocker
+        onefetch
       ];
 
       shellAliases = {
@@ -35,6 +41,7 @@ in
 
       cli-apps = {
         helix = enabled;
+        lazydocker.enable = cfg.dockerEnable;
         lazygit = enabled;
         neovim = {
           enable = true;
