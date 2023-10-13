@@ -20,9 +20,7 @@ in
       caprine-bin
       element-desktop
       slack
-      slack-term
       telegram-desktop
-      twitch-tui
     ];
 
     khanelinix = {

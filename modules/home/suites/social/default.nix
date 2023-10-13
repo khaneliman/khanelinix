@@ -1,6 +1,7 @@
 { config
 , lib
 , options
+, pkgs
 , ...
 }:
 let
@@ -15,6 +16,11 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.packages = with pkgs; [
+      twitch-tui
+      slack-term
+    ];
+
     khanelinix = {
       apps = {
         # armcord = enabled;
