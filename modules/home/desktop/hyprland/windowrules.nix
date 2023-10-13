@@ -40,13 +40,18 @@ in
               "size 1100 600, class:^(wdisplays)$"
               "float, class:^(blueman-manager)$"
               "float, class:^(nm-connection-editor)$"
+
+              # floating terminal
               "float, title:^(floating_kitty)$"
               "size 1100 600, title:^(floating_kitty)$"
               "move center, title:^(floating_kitty)$"
               "animation slide, title:^(floating_kitty)$"
+
+              # calendar reminders
               "float, class:^(thunderbird)$,title:.*(Reminders)$"
               "size 1100 600, class:^(thunderbird)$,title:.*(Reminders)$"
-              "move center, class:^(thunderbird)$,title:.*(Reminders)$"
+              "move onscreen 100 100, class:^(thunderbird)$,title:.*(Reminders)$"
+              "animation slide, class:^(thunderbird)$,title:.*(Reminders)$"
 
               # Workspace 8 (VM) layout
               "size 1000 1330, class:^(virt-manager)$, title:^(Virtual Machine Manager)$"
