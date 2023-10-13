@@ -55,6 +55,7 @@ in
 
     environment.systemPackages = with pkgs; [
       github-desktop
+      jqp
       onefetch
       # FIX: broken package
       # qtcreator
