@@ -26,7 +26,7 @@ in
   config = mkIf cfg.enable {
     sops = {
       inherit (cfg) defaultSopsFile;
-      defaultSopsFormat = "json";
+      defaultSopsFormat = "yaml";
 
       age = {
         generateKey = true;
@@ -36,17 +36,17 @@ in
 
       secrets = {
         nix = {
-          sopsFile = ../../../../secrets/khaneliman/default.json;
+          sopsFile = ../../../../secrets/khaneliman/default.yaml;
           path = "${config.home.homeDirectory}/.config/nix/nix.conf";
         };
 
         wakatime = {
-          sopsFile = ../../../../secrets/khaneliman/default.json;
+          sopsFile = ../../../../secrets/khaneliman/default.yaml;
           path = "${config.home.homeDirectory}/.wakatime.cfg";
         };
 
         twitch-tui = {
-          sopsFile = ../../../../secrets/khaneliman/default.json;
+          sopsFile = ../../../../secrets/khaneliman/default.yaml;
           path = "${config.home.homeDirectory}/.config/twt/config.toml";
         };
       };

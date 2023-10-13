@@ -61,7 +61,6 @@ in
   };
 
   sops.secrets.kubernetes = {
-    format = "yaml";
     path = "${config.home.homeDirectory}/.kube/config";
   };
 
