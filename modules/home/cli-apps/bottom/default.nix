@@ -20,7 +20,7 @@ in
       enable = true;
       package = pkgs.bottom;
 
-      settings = builtins.fromTOML (builtins.readFile ./themes/macchiato.toml);
+      settings = builtins.fromTOML (builtins.readFile (pkgs.catppuccin + "/bottom/macchiato.toml"));
     };
   };
 }
