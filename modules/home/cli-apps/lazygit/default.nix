@@ -13,7 +13,7 @@ let
   fromYAML = f:
     let
       jsonFile =
-        pkgs.runCommand "in.json"
+        pkgs.runCommand "lazygit yaml to attribute set"
           {
             nativeBuildInputs = [ pkgs.jc ];
           } ''

@@ -13,7 +13,7 @@ let
   fromYAML = f:
     let
       jsonFile =
-        pkgs.runCommand "in.json"
+        pkgs.runCommand "k9s yaml to attribute set"
           {
             nativeBuildInputs = [ pkgs.jc ];
           } ''
