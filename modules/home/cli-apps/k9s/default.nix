@@ -32,7 +32,7 @@ in
       enable = true;
       package = pkgs.k9s;
 
-      skin = fromYAML (pkgs.catppuccin + "/k9s/themes/macchiato.yml");
+      skin = fromYAML (pkgs.catppuccin + "/k9s/macchiato.yml");
     };
   };
 }
