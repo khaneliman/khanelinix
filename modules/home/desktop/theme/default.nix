@@ -69,6 +69,22 @@ in
   };
 
   config = mkIf cfg.enable {
+    #bat 
+    programs.bat = {
+      config.theme = "${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}";
+
+      themes = {
+        "${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}" = {
+          src = cfg.package;
+          file = "/bat/Catppuccin-${cfg.selectedTheme.variant}.tmTheme";
+        };
+      };
+    };
+
+    programs.git.delta.options = {
+      syntax-theme = mkIf config.khanelinix.tools.bat.enable "${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}";
+    };
+
     #bottom
     programs.bottom.settings = builtins.fromTOML (builtins.readFile (cfg.package + "/bottom/${cfg.selectedTheme.variant}.toml"));
 

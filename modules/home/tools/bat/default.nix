@@ -20,7 +20,6 @@ in
       enable = true;
 
       config = {
-        theme = "catppuccin-macchiato";
         style = "auto,header-filesize";
       };
 
@@ -32,13 +31,6 @@ in
         batwatch
         prettybat
       ];
-
-      themes = {
-        catppuccin-macchiato = {
-          src = pkgs.catppuccin;
-          file = "/bat/Catppuccin-macchiato.tmTheme";
-        };
-      };
     };
 
     home.shellAliases = {
