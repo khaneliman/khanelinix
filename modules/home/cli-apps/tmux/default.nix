@@ -14,14 +14,6 @@ let
   plugins =
     with pkgs.tmuxPlugins; [
       {
-        plugin = catppuccin;
-        extraConfig = ''
-          set -g @catppuccin_flavour 'macchiato'
-          set -g @catppuccin_host 'on'
-          set -g @catppuccin_user 'on'
-        '';
-      }
-      {
         plugin = resurrect;
         extraConfig = ''
           set -g @resurrect-strategy-vim 'session'

@@ -81,5 +81,14 @@ in
     # k9s
     programs.k9s.skin = fromYAML (cfg.package + "/k9s/${cfg.selectedTheme.variant}.yml");
 
+    # tmux
+    programs.tmux.plugins = [{
+      plugin = pkgs.tmuxPlugins.catppuccin;
+      extraConfig = ''
+        set -g @catppuccin_flavour '${cfg.selectedTheme.variant}'
+        set -g @catppuccin_host 'on'
+        set -g @catppuccin_user 'on'
+      '';
+    }];
   };
 }
