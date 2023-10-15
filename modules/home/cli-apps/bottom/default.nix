@@ -19,8 +19,6 @@ in
     programs.bottom = {
       enable = true;
       package = pkgs.bottom;
-
-      settings = builtins.fromTOML (builtins.readFile (pkgs.catppuccin + "/bottom/macchiato.toml"));
     };
   };
 }

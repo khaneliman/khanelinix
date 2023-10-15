@@ -23,7 +23,7 @@ in
       settings = {
         #* Name of a btop++/bpytop/bashtop formatted ".theme" file, "Default" and "TTY" for builtin themes.
         #* Themes should be placed in "../share/btop/themes" relative to binary or "$HOME/.config/btop/themes"
-        color_theme = "catppuccin_macchiato";
+        # color_theme = "catppuccin_macchiato";
 
         #* If the theme set background should be shown, set to false if you want terminal background transparency.
         theme_background = true;
@@ -233,7 +233,5 @@ in
         log_level = "WARNING";
       };
     };
-
-    xdg.configFile."btop/themes/catppuccin_macchiato.theme".source = pkgs.catppuccin + "/btop/catppuccin_macchiato.theme";
   };
 }

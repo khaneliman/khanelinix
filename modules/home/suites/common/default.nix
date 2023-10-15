@@ -35,6 +35,8 @@ in
           qt.enable = pkgs.stdenv.isLinux;
           wezterm = enabled;
         };
+
+        theme = enabled;
       };
 
       services = {

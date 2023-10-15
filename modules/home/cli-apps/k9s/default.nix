@@ -9,18 +9,6 @@ let
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.cli-apps.k9s;
-
-  fromYAML = f:
-    let
-      jsonFile =
-        pkgs.runCommand "k9s yaml to attribute set"
-          {
-            nativeBuildInputs = [ pkgs.jc ];
-          } ''
-          jc --yaml < "${f}" > "$out"
-        '';
-    in
-    builtins.elemAt (builtins.fromJSON (builtins.readFile jsonFile)) 0;
 in
 {
   options.khanelinix.cli-apps.k9s = {
@@ -31,8 +19,6 @@ in
     programs.k9s = {
       enable = true;
       package = pkgs.k9s;
-
-      skin = fromYAML (pkgs.catppuccin + "/k9s/macchiato.yml");
     };
   };
 }
