@@ -81,18 +81,26 @@ in
       };
     };
 
-    programs.git.delta.options = {
-      syntax-theme = mkIf config.khanelinix.tools.bat.enable "${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}";
+    programs.git.delta = {
+      options = {
+        syntax-theme = mkIf config.khanelinix.tools.bat.enable "${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}";
+      };
     };
 
     #bottom
-    programs.bottom.settings = builtins.fromTOML (builtins.readFile (cfg.package + "/bottom/${cfg.selectedTheme.variant}.toml"));
+    programs.bottom = {
+      settings = builtins.fromTOML (builtins.readFile (cfg.package + "/bottom/${cfg.selectedTheme.variant}.toml"));
+    };
 
     # btop
     programs.btop = {
       settings.color_theme = "${cfg.selectedTheme.name}_${cfg.selectedTheme.variant}";
     };
-    xdg.configFile."btop/themes/${cfg.selectedTheme.name}_${cfg.selectedTheme.variant}.theme".source = mkIf config.programs.btop.enable (cfg.package + "/btop/${cfg.selectedTheme.name}_${cfg.selectedTheme.variant}.theme");
+    xdg.configFile = {
+      "btop/themes/${cfg.selectedTheme.name}_${cfg.selectedTheme.variant}.theme" = {
+        source = mkIf config.programs.btop.enable (cfg.package + "/btop/${cfg.selectedTheme.name}_${cfg.selectedTheme.variant}.theme");
+      };
+    };
 
     # k9s
     programs.k9s.skin = fromYAML (cfg.package + "/k9s/${cfg.selectedTheme.variant}.yml");
