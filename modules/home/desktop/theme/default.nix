@@ -69,50 +69,48 @@ in
   };
 
   config = mkIf cfg.enable {
-    #bat 
-    programs.bat = {
-      config.theme = "${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}";
+    programs = {
+      bat = {
+        config.theme = "${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}";
 
-      themes = {
-        "${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}" = {
-          src = cfg.package;
-          file = "/bat/Catppuccin-${cfg.selectedTheme.variant}.tmTheme";
+        themes = {
+          "${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}" = {
+            src = cfg.package;
+            file = "/bat/Catppuccin-${cfg.selectedTheme.variant}.tmTheme";
+          };
         };
       };
-    };
 
-    programs.git.delta = {
-      options = {
-        syntax-theme = mkIf config.khanelinix.tools.bat.enable "${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}";
+      git.delta = {
+        options = {
+          syntax-theme = mkIf config.khanelinix.tools.bat.enable "${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}";
+        };
       };
+
+      bottom = {
+        settings = builtins.fromTOML (builtins.readFile (cfg.package + "/bottom/${cfg.selectedTheme.variant}.toml"));
+      };
+
+      btop = {
+        settings.color_theme = "${cfg.selectedTheme.name}_${cfg.selectedTheme.variant}";
+      };
+
+      k9s.skin = fromYAML (cfg.package + "/k9s/${cfg.selectedTheme.variant}.yml");
+
+      tmux.plugins = [{
+        plugin = pkgs.tmuxPlugins.catppuccin;
+        extraConfig = ''
+          set -g @catppuccin_flavour '${cfg.selectedTheme.variant}'
+          set -g @catppuccin_host 'on'
+          set -g @catppuccin_user 'on'
+        '';
+      }];
     };
 
-    #bottom
-    programs.bottom = {
-      settings = builtins.fromTOML (builtins.readFile (cfg.package + "/bottom/${cfg.selectedTheme.variant}.toml"));
-    };
-
-    # btop
-    programs.btop = {
-      settings.color_theme = "${cfg.selectedTheme.name}_${cfg.selectedTheme.variant}";
-    };
     xdg.configFile = {
       "btop/themes/${cfg.selectedTheme.name}_${cfg.selectedTheme.variant}.theme" = {
         source = mkIf config.programs.btop.enable (cfg.package + "/btop/${cfg.selectedTheme.name}_${cfg.selectedTheme.variant}.theme");
       };
     };
-
-    # k9s
-    programs.k9s.skin = fromYAML (cfg.package + "/k9s/${cfg.selectedTheme.variant}.yml");
-
-    # tmux
-    programs.tmux.plugins = [{
-      plugin = pkgs.tmuxPlugins.catppuccin;
-      extraConfig = ''
-        set -g @catppuccin_flavour '${cfg.selectedTheme.variant}'
-        set -g @catppuccin_host 'on'
-        set -g @catppuccin_user 'on'
-      '';
-    }];
   };
 }
