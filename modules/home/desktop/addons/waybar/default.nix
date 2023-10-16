@@ -72,7 +72,7 @@ let
       "active-only" = "false";
       "on-scroll-up" = "${getExe' hyprland.packages.${system}.hyprland "hyprctl"} dispatch workspace e+1";
       "on-scroll-down" = "${getExe' hyprland.packages.${system}.hyprland "hyprctl"} dispatch workspace e-1";
-      "format" = "{icon}";
+      "format" = "{name} > {windows}";
       "format-icons" = {
         "1" = "";
         "2" = "";
@@ -103,25 +103,27 @@ let
       # "format-window-separator" = "->";
       "window-rewrite-default" = "";
       "window-rewrite" = {
-        "1Password" = "󰢁";
-        "Caprine" = "󰈎";
-        "Github Desktop" = "󰊤";
-        "Godot" = "";
-        "Mysql-workbench-bin" = "";
-        "Slack" = "󰒱";
-        "code" = "󰨞";
+        "class<1Password>" = "󰢁";
+        "class<Caprine>" = "󰈎";
+        "class<Github Desktop>" = "󰊤";
+        "class<Godot>" = "";
+        "class<Mysql-workbench-bin>" = "";
+        "class<Slack>" = "󰒱";
+        "class<code>" = "󰨞";
         "code-url-handler" = "󰨞";
-        "discord" = "󰙯";
-        "firefox" = "";
-        "kitty" = "";
-        "mediainfo-gui" = "󱂷";
-        "org.kde.digikam" = "󰄄";
-        "org.telegram.desktop" = "";
-        ".pitivi-wrapped" = "󱄢";
-        "steam" = "";
-        "thunderbird" = "";
-        "virt-manager" = "󰢹";
-        "vlc" = "󰕼";
+        "class<discord>" = "󰙯";
+        "class<firefox>" = "";
+        "class<firefox> title<.*github.*>" = "";
+        "class<firefox> title<.*twitch|youtube|plex|tntdrama|bally sports.*>" = "";
+        "class<kitty>" = "";
+        "class<mediainfo-gui>" = "󱂷";
+        "class<org.kde.digikam>" = "󰄄";
+        "class<org.telegram.desktop>" = "";
+        "class<.pitivi-wrapped>" = "󱄢";
+        "class<steam>" = "";
+        "class<thunderbird>" = "";
+        "class<virt-manager>" = "󰢹";
+        "class<vlc>" = "󰕼";
       };
     };
 
@@ -164,13 +166,13 @@ in
           "margin-right" = 20;
           # "modules-center" = [ "mpris" ];
           "modules-left" = [
-            "custom/wlogout"
+            "group/group-power"
             "hyprland/workspaces"
             "custom/separator-left"
             "hyprland/window"
           ];
           "modules-right" = [
-            "tray"
+            "group/tray"
             "custom/separator-right"
             "group/stats"
             "custom/separator-right"
@@ -190,12 +192,14 @@ in
           "margin-right" = 20;
           "modules-center" = [ ];
           "modules-left" = [
-            "custom/wlogout"
+            "group/group-power"
             "hyprland/workspaces"
             "custom/separator-left"
             "hyprland/window"
           ];
           "modules-right" = [
+            "group/tray-drawer"
+            "group/stats-drawer"
             "idle_inhibitor"
             "custom/weather"
             "clock"
