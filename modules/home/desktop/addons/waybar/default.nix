@@ -1,142 +1,77 @@
 { config
+, inputs
 , lib
 , options
 , pkgs
-, inputs
 , system
 , ...
 }:
 let
-  inherit (lib) mkIf mkForce getExe getExe';
+  inherit (lib) mkIf mkForce getExe mkMerge;
   inherit (lib.internal) mkBoolOpt;
-  inherit (inputs) nixpkgs-wayland hyprland;
+  inherit (inputs) nixpkgs-wayland;
 
   cfg = config.khanelinix.desktop.addons.waybar;
 
-  githubHelper = pkgs.writeShellScriptBin "githubHelper" ''
-    #!/usr/bin/env bash
+  custom-modules = import ./modules/custom-modules.nix { inherit lib pkgs; };
+  default-modules = import ./modules/default-modules.nix { inherit lib pkgs; };
+  group-modules = import ./modules/group-modules.nix;
+  hyprland-modules = import ./modules/hyprland-modules.nix { inherit config lib; };
 
-    NOTIFICATIONS="$(${getExe pkgs.gh} api notifications)"
-    COUNT="$(echo "$NOTIFICATIONS" | ${getExe pkgs.jq} 'length')"
+  all-modules = mkMerge [
+    custom-modules
+    default-modules
+    group-modules
+    (lib.mkIf config.khanelinix.desktop.hyprland.enable hyprland-modules)
+  ];
 
-    echo '{"text":'"$COUNT"',"tooltip":"'"$COUNT"' Notifications","class":""}'
-  '';
+  mainBar = {
+    "layer" = "top";
+    "position" = "top";
+    "output" = "DP-1";
+    "margin-top" = 10;
+    "margin-left" = 20;
+    "margin-right" = 20;
+    # "modules-center" = [ "mpris" ];
+    "modules-left" = [
+      "group/group-power"
+      "hyprland/workspaces"
+      "custom/separator-left"
+      "hyprland/window"
+    ];
+    "modules-right" = [
+      "group/tray"
+      "custom/separator-right"
+      "group/stats"
+      "custom/separator-right"
+      "group/notifications"
+      "hyprland/submap"
+      "custom/weather"
+      "clock"
+    ];
+  };
 
-  sharedModuleDefinitions = {
-    "custom/weather" = {
-      "exec" = "${getExe pkgs.wttrbar} -l $(${getExe pkgs.jq} -r '.weathergov | (.location)' ~/weather_config.json) --fahrenheit --main-indicator temp_F";
-      "return-type" = "json";
-      "format" = "{}";
-      "tooltip" = true;
-      "interval" = 3600;
-    };
-
-    "custom/github" = {
-      "format" = " {}";
-      "return-type" = "json";
-      "interval" = 60;
-      "exec" = "${getExe githubHelper}";
-      "on-click" = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe' pkgs.xdg-utils "xdg-open"} https://github.com/notifications";
-    };
-
-    "custom/notification" = {
-      "tooltip" = true;
-      "format" = "{icon} {}";
-      "format-icons" = {
-        "notification" = "<span foreground='red'><sup></sup></span>";
-        "none" = "";
-        "dnd-notification" = "<span foreground='red'><sup></sup></span>";
-        "dnd-none" = "";
-        "inhibited-notification" = "<span foreground='red'><sup></sup></span>";
-        "inhibited-none" = "";
-        "dnd-inhibited-notification" = "<span foreground='red'><sup></sup></span>";
-        "dnd-inhibited-none" = "";
-      };
-      "return-type" = "json";
-      "exec-if" = "which ${getExe' pkgs.swaynotificationcenter "swaync-client"}";
-      "exec" = "${getExe' pkgs.swaynotificationcenter "swaync-client"} -swb";
-      "on-click" = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe' pkgs.swaynotificationcenter "swaync-client"} -t -sw";
-      "on-click-right" = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe' pkgs.swaynotificationcenter "swaync-client"} -d -sw";
-      "escape" = true;
-    };
-
-    "custom/wlogout" = {
-      "format" = "";
-      "interval" = "once";
-      "tooltip" = false;
-      "on-click" = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe pkgs.wlogout} -c 5 -r 5 -p layer-shell";
-    };
-
-    "hyprland/workspaces" = {
-      "all-outputs" = false;
-      "active-only" = "false";
-      "on-scroll-up" = "${getExe' hyprland.packages.${system}.hyprland "hyprctl"} dispatch workspace e+1";
-      "on-scroll-down" = "${getExe' hyprland.packages.${system}.hyprland "hyprctl"} dispatch workspace e-1";
-      "format" = "{name} > {windows}";
-      "format-icons" = {
-        "1" = "";
-        "2" = "";
-        "3" = "";
-        "4" = "";
-        "5" = "";
-        "6" = "";
-        "7" = "";
-        "8" = "󰢹";
-        "urgent" = "";
-        "default" = "";
-        "empty" = "";
-      };
-      "persistent-workspaces" = {
-        "*" = [
-          2
-          3
-          4
-          5
-          6
-          7
-          8
-        ];
-        "DP-3" = [
-          1
-        ];
-      };
-      # "format-window-separator" = "->";
-      "window-rewrite-default" = "";
-      "window-rewrite" = {
-        "class<1Password>" = "󰢁";
-        "class<Caprine>" = "󰈎";
-        "class<Github Desktop>" = "󰊤";
-        "class<Godot>" = "";
-        "class<Mysql-workbench-bin>" = "";
-        "class<Slack>" = "󰒱";
-        "class<code>" = "󰨞";
-        "code-url-handler" = "󰨞";
-        "class<discord>" = "󰙯";
-        "class<firefox>" = "";
-        "class<firefox> title<.*github.*>" = "";
-        "class<firefox> title<.*twitch|youtube|plex|tntdrama|bally sports.*>" = "";
-        "class<kitty>" = "";
-        "class<mediainfo-gui>" = "󱂷";
-        "class<org.kde.digikam>" = "󰄄";
-        "class<org.telegram.desktop>" = "";
-        "class<.pitivi-wrapped>" = "󱄢";
-        "class<steam>" = "";
-        "class<thunderbird>" = "";
-        "class<virt-manager>" = "󰢹";
-        "class<vlc>" = "󰕼";
-      };
-    };
-
-    "wireplumber" = {
-      "format" = "{volume}% {icon}";
-      "format-muted" = "";
-      "on-click" = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe pkgs.helvum}";
-      "format-icons" = [
-        ""
-        ""
-        ""
-      ];
-    };
+  secondaryBar = {
+    "layer" = "top";
+    "position" = "top";
+    "output" = "DP-3";
+    "margin-top" = 10;
+    "margin-left" = 20;
+    "margin-right" = 20;
+    "modules-center" = [ ];
+    "modules-left" = [
+      "group/group-power"
+      "hyprland/workspaces"
+      "custom/separator-left"
+      "hyprland/window"
+    ];
+    "modules-right" = [
+      "group/tray-drawer"
+      "group/stats-drawer"
+      "idle_inhibitor"
+      "custom/weather"
+      "clock"
+    ];
   };
 in
 {
@@ -154,57 +89,10 @@ in
       package = nixpkgs-wayland.packages.${system}.waybar;
       systemd.enable = true;
 
-      # TODO: make dynamic
+      # TODO: make dynamic / support different number of bars etc
       settings = {
-        mainBar = {
-          "include" = [ ./default-modules.jsonc ] ++ lib.optional config.khanelinix.desktop.hyprland.enable ./hyprland/default-modules.jsonc;
-          "layer" = "top";
-          "position" = "top";
-          "output" = "DP-1";
-          "margin-top" = 10;
-          "margin-left" = 20;
-          "margin-right" = 20;
-          # "modules-center" = [ "mpris" ];
-          "modules-left" = [
-            "group/group-power"
-            "hyprland/workspaces"
-            "custom/separator-left"
-            "hyprland/window"
-          ];
-          "modules-right" = [
-            "group/tray"
-            "custom/separator-right"
-            "group/stats"
-            "custom/separator-right"
-            "group/notifications"
-            "hyprland/submap"
-            "custom/weather"
-            "clock"
-          ];
-        } // sharedModuleDefinitions;
-        secondaryBar = {
-          "include" = [ ./default-modules.jsonc ] ++ lib.optional config.khanelinix.desktop.hyprland.enable ./hyprland/default-modules.jsonc;
-          "layer" = "top";
-          "position" = "top";
-          "output" = "DP-3";
-          "margin-top" = 10;
-          "margin-left" = 20;
-          "margin-right" = 20;
-          "modules-center" = [ ];
-          "modules-left" = [
-            "group/group-power"
-            "hyprland/workspaces"
-            "custom/separator-left"
-            "hyprland/window"
-          ];
-          "modules-right" = [
-            "group/tray-drawer"
-            "group/stats-drawer"
-            "idle_inhibitor"
-            "custom/weather"
-            "clock"
-          ];
-        } // sharedModuleDefinitions;
+        mainBar = mkMerge [ mainBar all-modules ];
+        secondaryBar = mkMerge [ secondaryBar all-modules ];
       };
 
       style = ./style.css;
