@@ -6,12 +6,27 @@ let
   inherit (lib) getExe getExe';
 in
 {
-  "user" = {
-    "format" = "{user}";
-    "interval" = 60;
-    "height" = 30;
-    "width" = 30;
-    "icon" = true;
+  "clock" = {
+    "tooltip-format" = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
+    "format" = "{:%a %d; %b \n %I:%M %p }";
+    "format-alt" = "{:%Y-%m-%d}";
+  };
+
+  "cpu" = {
+    "format" = " {usage}%";
+    "tooltip" = true;
+  };
+
+  "disk" = {
+    "format" = " {percentage_used}%";
+  };
+
+  "idle_inhibitor" = {
+    "format" = "{icon} ";
+    "format-icons" = {
+      "activated" = "";
+      "deactivated" = "";
+    };
   };
 
   "keyboard-state" = {
@@ -22,6 +37,10 @@ in
       "locked" = "";
       "unlocked" = "";
     };
+  };
+
+  "memory" = {
+    "format" = "󰍛 {}%";
   };
 
   "mpris" = {
@@ -70,51 +89,6 @@ in
     "tooltip-format-disconnected" = "MPD (disconnected)";
   };
 
-  "idle_inhibitor" = {
-    "format" = "{icon} ";
-    "format-icons" = {
-      "activated" = "";
-      "deactivated" = "";
-    };
-  };
-
-  "tray" = {
-    "spacing" = 10;
-  };
-
-  "clock" = {
-    "tooltip-format" = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
-    "format" = "{:%a %d; %b \n %I:%M %p }";
-    "format-alt" = "{:%Y-%m-%d}";
-  };
-
-  "cpu" = {
-    "format" = " {usage}%";
-    "tooltip" = true;
-  };
-
-  "memory" = {
-    "format" = "󰍛 {}%";
-  };
-
-  "disk" = {
-    "format" = " {percentage_used}%";
-  };
-
-  "temperature" = {
-    "hwmon-path-abs" = "/sys/devices/pci0000:00/0000:00:18.3/hwmon";
-    "input-filename" = "temp3_input";
-    "critical-threshold" = 80;
-    "format-critical" = "{temperatureC}°C {icon}";
-    "format" = "{icon} {temperatureC}°C";
-    "format-icons" = [
-      ""
-      ""
-      ""
-    ];
-    "interval" = "5";
-  };
-
   "network" = {
     "interval" = 1;
     "format-wifi" = "  󰜮 {bandwidthDownBytes} 󰜷 {bandwidthUpBytes}";
@@ -123,17 +97,6 @@ in
     "format-linked" = "󰈁 {ifname} (No IP)";
     "format-disconnected" = " Disconnected";
     "format-alt" = "{ifname}: {ipaddr}/{cidr}";
-  };
-
-  "wireplumber" = {
-    "format" = "{volume}% {icon}";
-    "format-muted" = "";
-    "on-click" = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe pkgs.helvum}";
-    "format-icons" = [
-      ""
-      ""
-      ""
-    ];
   };
 
   "pulseaudio" = {
@@ -163,5 +126,42 @@ in
     "min" = 0;
     "max" = 100;
     "orientation" = "horizontal";
+  };
+
+  "temperature" = {
+    "hwmon-path-abs" = "/sys/devices/pci0000:00/0000:00:18.3/hwmon";
+    "input-filename" = "temp3_input";
+    "critical-threshold" = 80;
+    "format-critical" = "{temperatureC}°C {icon}";
+    "format" = "{icon} {temperatureC}°C";
+    "format-icons" = [
+      ""
+      ""
+      ""
+    ];
+    "interval" = "5";
+  };
+
+  "tray" = {
+    "spacing" = 10;
+  };
+
+  "user" = {
+    "format" = "{user}";
+    "interval" = 60;
+    "height" = 30;
+    "width" = 30;
+    "icon" = true;
+  };
+
+  "wireplumber" = {
+    "format" = "{volume}% {icon}";
+    "format-muted" = "";
+    "on-click" = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe pkgs.helvum}";
+    "format-icons" = [
+      ""
+      ""
+      ""
+    ];
   };
 }

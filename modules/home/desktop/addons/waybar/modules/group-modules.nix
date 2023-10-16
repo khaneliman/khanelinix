@@ -1,5 +1,17 @@
 {
-  "group/group-power" = {
+  "group/audio" = {
+    "orientation" = "horizontal";
+    "drawer" = {
+      "transition-duration" = 500;
+      "transition-left-to-right" = false;
+    };
+    "modules" = [
+      "pulseaudio"
+      "pulseaudio/slider"
+    ];
+  };
+
+  "group/power" = {
     "orientation" = "horizontal";
     "drawer" = {
       "transition-duration" = 500;
@@ -13,12 +25,24 @@
       "custom/reboot"
     ];
   };
+
+  "group/notifications" = {
+    "orientation" = "horizontal";
+    "modules" = [
+      "idle_inhibitor"
+      "custom/notification"
+      "custom/github"
+      "group/audio"
+    ];
+  };
+
   "group/tray" = {
     "orientation" = "horizontal";
     "modules" = [
       "tray"
     ];
   };
+
   "group/stats" = {
     "orientation" = "horizontal";
     "modules" = [
@@ -29,28 +53,7 @@
       "temperature"
     ];
   };
-  "group/audio" = {
-    "orientation" = "horizontal";
-    "drawer" = {
-      "transition-duration" = 500;
-      "transition-left-to-right" = false;
-    };
-    "modules" = [
-      "pulseaudio"
-      "pulseaudio/slider"
-    ];
-  };
-  "group/tray-drawer" = {
-    "orientation" = "horizontal";
-    "drawer" = {
-      "transition-duration" = 500;
-      "transition-left-to-right" = true;
-    };
-    "modules" = [
-      "custom/separator-right"
-      "tray"
-    ];
-  };
+
   "group/stats-drawer" = {
     "orientation" = "horizontal";
     "drawer" = {
@@ -66,13 +69,16 @@
       "temperature"
     ];
   };
-  "group/notifications" = {
+
+  "group/tray-drawer" = {
     "orientation" = "horizontal";
+    "drawer" = {
+      "transition-duration" = 500;
+      "transition-left-to-right" = true;
+    };
     "modules" = [
-      "idle_inhibitor"
-      "custom/notification"
-      "custom/github"
-      "group/audio"
+      "custom/separator-right"
+      "tray"
     ];
   };
 }

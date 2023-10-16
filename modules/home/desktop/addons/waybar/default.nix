@@ -13,7 +13,7 @@ let
 
   cfg = config.khanelinix.desktop.addons.waybar;
 
-  custom-modules = import ./modules/custom-modules.nix { inherit lib pkgs; };
+  custom-modules = import ./modules/custom-modules.nix { inherit config lib pkgs; };
   default-modules = import ./modules/default-modules.nix { inherit lib pkgs; };
   group-modules = import ./modules/group-modules.nix;
   hyprland-modules = import ./modules/hyprland-modules.nix { inherit config lib; };
@@ -34,7 +34,7 @@ let
     "margin-right" = 20;
     # "modules-center" = [ "mpris" ];
     "modules-left" = [
-      "group/group-power"
+      "group/power"
       "hyprland/workspaces"
       "custom/separator-left"
       "hyprland/window"
@@ -60,7 +60,7 @@ let
     "margin-right" = 20;
     "modules-center" = [ ];
     "modules-left" = [
-      "group/group-power"
+      "group/power"
       "hyprland/workspaces"
       "custom/separator-left"
       "hyprland/window"
