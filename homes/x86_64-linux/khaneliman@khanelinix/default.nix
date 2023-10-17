@@ -76,6 +76,7 @@ in
       };
       music = enabled;
       social = enabled;
+      video = enabled;
     };
 
     tools = {

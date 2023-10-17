@@ -16,15 +16,16 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [
-      (pkgs.wrapOBS {
-        plugins = with pkgs.obs-studio-plugins; [
-          looking-glass-obs
-          obs-move-transition
-          obs-multi-rtmp
-          wlrobs
-        ];
-      })
-    ];
+    programs.obs-studio = {
+      enable = true;
+      package = pkgs.obs-studio;
+
+      plugins = with pkgs.obs-studio-plugins; [
+        looking-glass-obs
+        obs-move-transition
+        obs-multi-rtmp
+        wlrobs
+      ];
+    };
   };
 }
