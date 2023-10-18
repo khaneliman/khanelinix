@@ -60,10 +60,6 @@ in
           push = {
             autoSetupRemote = true;
           };
-
-          safe = {
-            directory = "${user.home}/work/config";
-          };
         };
 
         inherit (cfg) includes;
