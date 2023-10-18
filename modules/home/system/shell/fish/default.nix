@@ -72,11 +72,6 @@ in
         # Disable greeting
         set fish_greeting
 
-        # Fetch on terminal open
-        if [ "$TMUX" = "" ];
-            command -v tmux && tmux
-        end
-
         fastfetch
       '';
 

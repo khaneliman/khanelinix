@@ -38,8 +38,6 @@ in
           # Improved vim bindings.
           source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 
-          if [ "$TMUX" = "" ]; then command -v tmux && tmux; fi
-
           fastfetch
         '';
 

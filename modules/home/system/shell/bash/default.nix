@@ -20,8 +20,6 @@ in
       enableCompletion = true;
 
       initExtra = ''
-        if [ "$TMUX" = "" ]; then command -v tmux && tmux; fi
-
         fastfetch
       '';
     };

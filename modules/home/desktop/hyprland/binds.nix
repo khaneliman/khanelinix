@@ -17,7 +17,7 @@ in
                 # ░█▀█░█▀█░█▀█░░░█░░░█▀█░█░█░█▀█░█▀▀░█░█░█▀▀░█▀▄░█▀▀
                 # ░█▀█░█▀▀░█▀▀░░░█░░░█▀█░█░█░█░█░█░░░█▀█░█▀▀░█▀▄░▀▀█
                 # ░▀░▀░▀░░░▀░░░░░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀
-                "$mainMod, RETURN, exec, $term"
+                "$mainMod, RETURN, exec, $term tmux a"
                 "SUPER_SHIFT, RETURN, exec, $term --title floating_kitty --single-instance"
                 "SUPER_ALT, T, exec, alacritty"
                 "$mainMod, Q, killactive,"
