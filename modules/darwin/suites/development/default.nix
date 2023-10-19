@@ -36,6 +36,7 @@ in
       nixpkgs-review
       nixpkgs-lint-community
       nixpkgs-hammering
+      nix-update
     ];
 
     homebrew = {

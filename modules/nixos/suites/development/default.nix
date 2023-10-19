@@ -64,6 +64,7 @@ in
       nixpkgs-hammering
       nixpkgs-lint-community
       nixpkgs-review
+      nix-update
     ] ++ lib.optionals cfg.gameEnable [
       godot_4
       # ue4
