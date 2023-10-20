@@ -68,7 +68,8 @@ let
     "modules-right" = [
       "group/tray-drawer"
       "group/stats-drawer"
-      "idle_inhibitor"
+      "group/notifications"
+      "hyprland/submap"
       "custom/weather"
       "clock"
     ];
