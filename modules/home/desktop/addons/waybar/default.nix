@@ -15,6 +15,10 @@ let
 
   theme = builtins.readFile ./styles/catppuccin.css;
   style = builtins.readFile ./styles/style.css;
+  notificationsStyle = builtins.readFile ./styles/notifications.css;
+  powerStyle = builtins.readFile ./styles/power.css;
+  statsStyle = builtins.readFile ./styles/stats.css;
+  workspacesStyle = builtins.readFile ./styles/workspaces.css;
 
   custom-modules = import ./modules/custom-modules.nix { inherit config lib pkgs; };
   default-modules = import ./modules/default-modules.nix { inherit lib pkgs; };
@@ -94,7 +98,7 @@ in
         secondaryBar = mkMerge [ bar secondaryBar all-modules ];
       };
 
-      style = "${theme}${style}";
+      style = "${theme}${style}${notificationsStyle}${powerStyle}${statsStyle}${workspacesStyle}";
     };
   };
 }

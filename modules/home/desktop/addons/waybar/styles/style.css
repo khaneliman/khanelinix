@@ -1,9 +1,4 @@
 /**
-* Custom styling for a catppuccin style waybar
-* Config settings listed in order from left -> right on bar
-* */
-
-/**
 * Global configuration for theme 
 * */
 * {
@@ -51,166 +46,18 @@ box {
   border: none;
 }
 
-/* Primary monitor configuration */
-window.DP-1,
-#notifications,
-#stats,
-#stats-drawer,
-#workspaces {
-  margin: 0.5em;
-  padding-left: 5px;
-  padding-right: 5px;
-  color: @peach;
-  font-weight: bold;
-  background-color: @surface0;
-  border: 2px solid @surface1;
-}
-
-/* Secondary monitor configuration */
-window.DP-3 #workspaces {
-  margin: 0.5em;
-  padding: 0 1em;
-}
-
-/* Wlr/workspaces configuration  */
-#window,
-#workspaces {
-  color: @peach;
-}
-
-#workspaces label {
-  font-size: 20px;
-}
-
-#workspaces button {
-  padding: 0 0.5em;
-  background-color: @surface0;
-  color: @text;
-  margin: 0.25em;
-}
-
-#workspaces button.empty {
-  /* background-color: @surface2; */
-  color: @overlay0;
-}
-
-#workspaces button.visible {
-  /* background-color: @surface2; */
-  color: @blue;
-}
-
-#workspaces button.active {
-  /* background-color: @surface2; */
-  color: @green;
-}
-
-#workspaces button.urgent {
-  box-shadow: 2px 2px 2px 2px;
-  border-radius: 1em;
-  color: @red;
-}
-
 /* Add spacing for right side modules */
 #tray,
 #user,
+#custom-weather,
 #keyboard-state,
 #mpd {
   padding: 0 1em;
 }
 
-#custom-notification,
-#custom-updates,
-#custom-github,
-#custom-weather,
-#idle_inhibitor,
-#wireplumber,
-#pulseaudio,
-#battery,
-#cpu,
-#memory,
-#temperature,
-#disk,
-#network {
-  padding: 0 0.5em;
-}
-
-#custom-updates.updated {
-  padding-left: 0;
-  padding-right: 1em;
-}
-
-/* Unique colors for modules */
-#cpu {
-  color: @red;
-}
-
-#memory {
-  color: @yellow;
-}
-
-#user {
-  color: @blue;
-}
-
-#custom-pipewire {
-  color: @green;
-}
-
-#temperature {
-  color: @green;
-}
-
-#custom-github {
-  color: @blue;
-}
-
-#custom-updates {
-  color: @red;
-}
-
-#network {
-  color: @blue;
-}
-
-#network.disconnected {
-  background-color: #f53c3c;
-}
-
-#custom-pipewire.muted,
-#pulseaudio.muted {
-  background-color: #90b1b1;
-  color: #2a5c45;
-}
-
-#temperature.critical {
-  background-color: #eb4d4b;
-}
-
-#keyboard-state {
-  padding: 0 0px;
-  min-width: 16px;
-  color: @mauve;
-}
-
-#keyboard-state > label {
-  padding: 0 5px;
-}
-
-#keyboard-state > label.locked {
-  background: rgba(0, 0, 0, 0.2);
-}
-
 #clock {
   font-size: 16px;
   font-weight: 900;
-}
-
-/* Custom styling for the logout icon on end */
-#custom-wlogout {
-  font-size: 1.75em;
-  padding-right: 0.5em;
-  padding-left: 0.5em;
-  color: @blue;
 }
 
 #custom-separator-right,
@@ -227,27 +74,3 @@ window.DP-3 #workspaces {
     color: #000000;
   }
 }
-
-#pulseaudio-slider slider {
-    min-height: 0px;
-    min-width: 0px;
-    opacity: 0;
-    background-image: none;
-    border: none;
-    box-shadow: none;
-}
-#pulseaudio-slider trough {
-    min-height: 10px;
-    min-width: 80px;
-    border-radius: 5px;
-    background-color: @base;
-}
-#pulseaudio-slider highlight {
-    min-width: 10px;
-    border-radius: 5px;
-    background-color: @green;
-}
-
-#power .not-power {
-    color: @red;
-  }

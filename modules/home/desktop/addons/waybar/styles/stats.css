@@ -1,0 +1,43 @@
+#stats,
+#stats-drawer {
+  margin: 0.5em;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: @peach;
+  font-weight: bold;
+  background-color: @surface0;
+  border: 2px solid @surface1;
+}
+#battery,
+#cpu,
+#memory,
+#temperature,
+#disk,
+#network {
+  padding: 0 0.5em;
+}
+
+/* Unique colors for modules */
+#cpu {
+  color: @red;
+}
+
+#memory {
+  color: @yellow;
+}
+#temperature {
+  color: @green;
+}
+
+#network {
+  color: @blue;
+}
+
+#network.disconnected {
+  background-color: #f53c3c;
+}
+
+#temperature.critical {
+  background-color: #eb4d4b;
+}
+
