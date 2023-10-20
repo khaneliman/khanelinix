@@ -13,6 +13,9 @@ let
 
   cfg = config.khanelinix.desktop.addons.waybar;
 
+  theme = builtins.readFile ./styles/catppuccin.css;
+  style = builtins.readFile ./styles/style.css;
+
   custom-modules = import ./modules/custom-modules.nix { inherit config lib pkgs; };
   default-modules = import ./modules/default-modules.nix { inherit lib pkgs; };
   group-modules = import ./modules/group-modules.nix;
@@ -25,20 +28,26 @@ let
     (lib.mkIf config.khanelinix.desktop.hyprland.enable hyprland-modules)
   ];
 
-  mainBar = {
+  bar = {
     "layer" = "top";
     "position" = "top";
-    "output" = "DP-1";
+
     "margin-top" = 10;
     "margin-left" = 20;
     "margin-right" = 20;
-    # "modules-center" = [ "mpris" ];
+
     "modules-left" = [
       "group/power"
       "hyprland/workspaces"
       "custom/separator-left"
       "hyprland/window"
     ];
+  };
+
+  mainBar = {
+    "output" = "DP-1";
+    # "modules-center" = [ "mpris" ];
+
     "modules-right" = [
       "group/tray"
       "custom/separator-right"
@@ -52,19 +61,8 @@ let
   };
 
   secondaryBar = {
-    "layer" = "top";
-    "position" = "top";
     "output" = "DP-3";
-    "margin-top" = 10;
-    "margin-left" = 20;
-    "margin-right" = 20;
-    "modules-center" = [ ];
-    "modules-left" = [
-      "group/power"
-      "hyprland/workspaces"
-      "custom/separator-left"
-      "hyprland/window"
-    ];
+
     "modules-right" = [
       "group/tray-drawer"
       "group/stats-drawer"
@@ -93,11 +91,11 @@ in
 
       # TODO: make dynamic / support different number of bars etc
       settings = {
-        mainBar = mkMerge [ mainBar all-modules ];
-        secondaryBar = mkMerge [ secondaryBar all-modules ];
+        mainBar = mkMerge [ bar mainBar all-modules ];
+        secondaryBar = mkMerge [ bar secondaryBar all-modules ];
       };
 
-      style = ./style.css;
+      style = "${theme}${style}";
     };
   };
 }
