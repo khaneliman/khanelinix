@@ -18,8 +18,8 @@ in
                 # ░█▀█░█▀▀░█▀▀░░░█░░░█▀█░█░█░█░█░█░░░█▀█░█▀▀░█▀▄░▀▀█
                 # ░▀░▀░▀░░░▀░░░░░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀
                 "$mainMod, RETURN, exec, $term tmux a"
+                "SUPER_ALT, RETURN, exec, $term tmux"
                 "SUPER_SHIFT, RETURN, exec, $term --title floating_kitty --single-instance"
-                "SUPER_ALT, T, exec, alacritty"
                 "$mainMod, Q, killactive,"
                 "SUPER_SHIFT, P, exec, hyprpicker -a && (convert -size 32x32 xc:$(wl-paste) /tmp/color.png && notify-send \"Color Code:\" \"$(wl-paste)\" -h \"string:bgcolor:$(wl-paste)\" --icon /tmp/color.png -u critical -t 4000)"
                 "$mainMod, B, exec, $browser"
