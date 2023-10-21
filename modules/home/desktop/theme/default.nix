@@ -107,6 +107,10 @@ in
       }];
     };
 
+    khanelinix.desktop.hyprland.prependConfig = ''
+      source=${cfg.package}/hyprland/${cfg.selectedTheme.variant}.conf
+    '';
+
     xdg.configFile = {
       "btop/themes/${cfg.selectedTheme.name}_${cfg.selectedTheme.variant}.theme" = {
         source = mkIf config.programs.btop.enable (cfg.package + "/btop/${cfg.selectedTheme.name}_${cfg.selectedTheme.variant}.theme");

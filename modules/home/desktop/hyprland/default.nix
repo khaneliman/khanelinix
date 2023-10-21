@@ -16,11 +16,18 @@ in
 {
   options.khanelinix.desktop.hyprland = {
     enable = mkEnableOption "Hyprland.";
-    extraConfig = lib.mkOption {
+    appendConfig = lib.mkOption {
       type = lib.types.lines;
       default = "";
       description = ''
-        Extra configuration lines to add to `~/.config/hypr/hyprland.conf`.
+        Extra configuration lines to add to bottom of `~/.config/hypr/hyprland.conf`.
+      '';
+    };
+    prependConfig = lib.mkOption {
+      type = lib.types.lines;
+      default = "";
+      description = ''
+        Extra configuration lines to add to top of `~/.config/hypr/hyprland.conf`.
       '';
     };
   };
@@ -59,13 +66,15 @@ in
           enable = true;
 
           extraConfig = ''
+            ${cfg.prependConfig}
+
             source=~/.config/hypr/displays.conf
             source=~/.config/hypr/polish.conf
 
             env = XDG_DATA_DIRS,'${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}':$XDG_DATA_DIRS
             env = HYPRLAND_TRACE,1
 
-            ${cfg.extraConfig}
+            ${cfg.appendConfig}
           '';
 
           package = hyprland.packages.${system}.hyprland;
