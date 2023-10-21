@@ -50,8 +50,8 @@ in
               # calendar reminders
               "float, class:^(thunderbird)$,title:.*(Reminders)$"
               "size 1100 600, class:^(thunderbird)$,title:.*(Reminders)$"
-              "move onscreen 100 100, class:^(thunderbird)$,title:.*(Reminders)$"
-              "animation slide, class:^(thunderbird)$,title:.*(Reminders)$"
+              "move 78% 6%, class:^(thunderbird)$,title:.*(Reminders)$"
+              "pin, class:^(thunderbird)$,title:.*(Reminders)$"
 
               # Workspace 8 (VM) layout
               "size 1000 1330, class:^(virt-manager)$, title:^(Virtual Machine Manager)$"
