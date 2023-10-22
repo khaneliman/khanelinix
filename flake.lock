@@ -1,5 +1,26 @@
 {
   "nodes": {
+    "ags": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1695234369,
+        "narHash": "sha256-1XX2K417v9ghnLI9uP6EIEAS1zmy92AenQ04P+v6Si4=",
+        "owner": "Aylur",
+        "repo": "ags",
+        "rev": "364fde91311ca6396c8a82796eb54bbca7e708ae",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Aylur",
+        "ref": "v1.3.0",
+        "repo": "ags",
+        "type": "github"
+      }
+    },
     "comma": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -1056,6 +1077,7 @@
     },
     "root": {
       "inputs": {
+        "ags": "ags",
         "comma": "comma",
         "darwin": "darwin",
         "deploy-rs": "deploy-rs",

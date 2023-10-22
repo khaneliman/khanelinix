@@ -50,6 +50,7 @@ in
 
         khanelinix = {
           desktop.addons = {
+            ags = enabled;
             rofi = enabled;
             hyprpaper = enabled;
           };

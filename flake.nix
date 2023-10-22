@@ -3,6 +3,11 @@
 
   inputs = {
 
+    ags = {
+      url = "github:Aylur/ags/v1.3.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Comma
     comma = {
       url = "github:nix-community/comma";
@@ -168,7 +173,7 @@
 
   outputs = inputs:
     let
-      inherit (inputs) deploy-rs flake lanzaboote nur nix-ld rustup-overlay snowfall-lib snowfall-frost sops-nix;
+      inherit (inputs) ags deploy-rs flake lanzaboote nur nix-ld rustup-overlay snowfall-lib snowfall-frost sops-nix;
 
       lib = snowfall-lib.mkLib {
         inherit inputs;
@@ -202,6 +207,7 @@
           ];
 
           home = [
+            ags.homeManagerModules.default
             sops-nix.homeManagerModules.sops
           ];
 

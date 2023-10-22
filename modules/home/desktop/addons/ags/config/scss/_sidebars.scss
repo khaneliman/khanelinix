@@ -1,0 +1,442 @@
+// sideleft sideright stuff
+
+.sidebar-right {
+    @include md3_decel;
+    @include large-rounding;
+    @include elevation-border;
+    @include elevation2;
+    // min-width: 29.591rem;
+    // min-height: 29.591rem;
+    background-color: $t_background;
+    padding: 1.023rem;
+}
+
+.sideright-hide {
+    margin-right: -30.682rem;
+    @include md3_accel;
+}
+
+.sidebar-left {
+    @include md3_decel;
+    @include large-rounding;
+    @include elevation-border;
+    @include elevation2;
+    // min-width: 29.591rem; // COMMENT THIS LATER IF TEXT WRAP IS USED
+    // min-height: 29.591rem;
+    background-color: $t_background;
+    padding: 1.023rem;
+}
+
+.sideleft-hide {
+    margin-left: -30.682rem;
+    @include md3_accel;
+}
+
+.sidebar-group {
+    @include normal-rounding;
+    // @include elevation-border;
+    @include group-padding;
+    background-color: $t_surface;
+}
+
+.sidebar-group-nopad {
+    @include normal-rounding;
+    // @include elevation-border;
+    background-color: $t_surface;
+}
+
+.sidebar-group-invisible {
+    @include group-padding;
+}
+
+.sidebar-group-invisible-morehorizpad {
+    padding: 0.341rem 0.682rem;
+}
+
+.sidebar-iconbutton {
+    @include md3_decel;
+    border-radius: 9999px;
+    color: $onSurface;
+    min-width: 2.727rem;
+    min-height: 2.727rem;
+}
+
+.sidebar-iconbutton:hover {
+    background-color: mix($t_secondaryContainer, $t_onSecondaryContainer, 80%);
+}
+
+.sidebar-iconbutton:active {
+    background-color: mix($t_secondaryContainer, $t_onSecondaryContainer, 60%);
+}
+
+.sidebar-button {
+    @include md3_decel;
+    padding: 0rem $rounding_small;
+    background-color: $t_secondaryContainer;
+    color: $onSecondaryContainer;
+}
+
+.sidebar-button-nopad {
+    @include md3_decel;
+    background-color: $t_secondaryContainer;
+    color: $onSecondaryContainer;
+}
+
+.sidebar-button:hover {
+    background-color: mix($t_secondaryContainer, $t_onSecondaryContainer, 80%);
+}
+
+.sidebar-button:active {
+    background-color: mix($t_secondaryContainer, $t_onSecondaryContainer, 60%);
+}
+
+.sidebar-button-nopad:hover {
+    background-color: mix($t_secondaryContainer, $t_onSecondaryContainer, 80%);
+}
+
+.sidebar-button-nopad:active {
+    background-color: mix($t_secondaryContainer, $t_onSecondaryContainer, 60%);
+}
+
+.sidebar-button-left {
+    border-top-left-radius: $rounding_small;
+    border-bottom-left-radius: $rounding_small;
+}
+
+.sidebar-button-right {
+    border-top-right-radius: $rounding_small;
+    border-bottom-right-radius: $rounding_mediumsmall;
+}
+
+.sidebar-button-alone {
+    @include small-rounding;
+}
+
+.sidebar-button-alone-normal {
+    border-radius: $rounding_small;
+}
+
+.sidebar-button-active {
+    background-color: $primary;
+    color: $onPrimary;
+}
+
+.sidebar-button-active:hover {
+    background-color: mix($primary, $hovercolor, 90%);
+}
+
+.sidebar-button-active:active {
+    background-color: mix($primary, $hovercolor, 70%);
+}
+
+.sidebar-buttons-separator {
+    min-width: 0.068rem;
+    min-height: 0.068rem;
+    background-color: $onSurfaceVariant;
+}
+
+.sidebar-navrail {
+    // background-color: $t_surface;
+    padding: 0rem $rounding_medium;
+}
+
+.sidebar-navrail-btn>box>label {
+    border-radius: 9999px;
+    @include md3_decel;
+}
+
+.sidebar-navrail-btn:hover>box>label:first-child {
+    background-color: $hovercolor;
+}
+
+.sidebar-navrail-btn:active>box>label:first-child {
+    background-color: $activecolor;
+}
+
+.sidebar-navrail-btn-active>box>label:first-child {
+    background-color: $secondaryContainer;
+    color: $onSecondaryContainer;
+}
+
+.sidebar-navrail-btn-active:hover>box>label:first-child {
+    background-color: mix($secondaryContainer, $hovercolor, 90%);
+    color: mix($onSecondaryContainer, $hovercolor, 90%);
+}
+
+.sidebar-sysinfo-grouppad {
+    padding: 1.159rem;
+}
+
+.sidebar-memory-ram-circprog {
+    @include fluent_decel_long;
+    min-width: $rounding_small;
+    min-height: 4.091rem;
+    padding: 0.409rem;
+    background-color: $secondaryContainer;
+    color: $onSecondaryContainer;
+    font-size: 0px;
+}
+
+.sidebar-memory-swap-circprog {
+    @include fluent_decel_long;
+    min-width: $rounding_small;
+    min-height: 2.255rem;
+    padding: 0.409rem;
+    margin: 0.918rem;
+    background-color: $secondaryContainer;
+    color: $onSecondaryContainer;
+    font-size: 0px;
+}
+
+.sidebar-cpu-circprog {
+    min-width: $rounding_small;
+    min-height: 3.409rem;
+    padding: 0.409rem;
+    background-color: $secondaryContainer;
+    color: $onSecondaryContainer;
+    @include fluent_decel_long;
+    font-size: 0px;
+}
+
+// .sidebar-sysinfo-txt {
+//     font-size: 1.0909rem;
+//     @include techfont;
+// }
+
+.sidebar-notification-low {
+    @include small-rounding;
+    background-color: $t_surfaceVariant;
+    color: $onSurfaceVariant;
+    padding: $rounding_small;
+    padding-right: $rounding_small + 0.545rem;
+}
+
+.sidebar-notification-normal {
+    @include small-rounding;
+    background-color: $t_surfaceVariant;
+    color: $onSurfaceVariant;
+    padding: $rounding_small;
+    padding-right: $rounding_small + 0.545rem;
+}
+
+.sidebar-notification-critical {
+    @include small-rounding;
+    background-color: $error;
+    color: $onError;
+    padding: $rounding_small;
+    padding-right: $rounding_small + 0.545rem;
+}
+
+.sidebar-notif-body-low {
+    color: mix($onSurfaceVariant, $surfaceVariant, 67%);
+}
+
+.sidebar-notif-body-normal {
+    color: mix($onSurfaceVariant, $surfaceVariant, 67%);
+}
+
+.sidebar-notif-body-critical {
+    color: mix($onError, $error, 67%);
+}
+
+.sidebar-notif-icon {
+    min-width: 3.409rem;
+    min-height: 3.409rem;
+    border-radius: 9999px;
+}
+
+.sidebar-notif-icon-material {
+    background-color: $t_secondaryContainer;
+    color: $onSecondaryContainer;
+}
+
+.sidebar-notif-icon-material-urgent {
+    background-color: $t_errorContainer;
+    color: $onErrorContainer;
+}
+
+.sidebar-notif-close-btn {
+    @include small-rounding;
+    padding: 0rem 0.136rem;
+}
+
+.sidebar-notif-close-btn:hover {
+    background: $hovercolor;
+}
+
+.sidebar-notif-close-btn:active {
+    background: $activecolor;
+}
+
+.sidebar-viewport {
+    border-radius: $rounding_small;
+}
+
+.sidebar-scrollbar {
+    trough {
+        // margin: $rounding_small 0rem;
+        min-width: 0.545rem;
+        border-radius: 9999px;
+        // background-color: $t_surfaceVariant; // If I manage to make the scrollbar show separately
+        background-color: transparent;
+    }
+
+    slider {
+        min-width: 0.273rem;
+        min-height: 2.045rem;
+        border-radius: 9999px;
+        background-color: $t_onSurfaceVariant;
+    }
+
+    slider:hover {
+        background-color: mix($t_onSurfaceVariant, $onSurfaceVariant, 80%);
+    }
+
+    slider:active {
+        background-color: mix($onSurfaceVariant, $surfaceVariant, 50%);
+    }
+}
+
+.sidebar-calendar-btn {
+    @include md3_decel;
+    min-height: 2.523rem;
+    min-width: 2.523rem;
+    border-radius: 9999px;
+    color: $onSurface;
+}
+
+.sidebar-calendar-btn:hover {
+    background-color: $hovercolor;
+}
+
+.sidebar-calendar-btn:active {
+    background-color: $activecolor;
+}
+
+.sidebar-calendar-btn-txt {
+    margin-left: -10.341rem;
+    margin-right: -10.341rem;
+}
+
+.sidebar-calendar-btn-today {
+    background-color: $primary;
+    color: $onPrimary;
+}
+
+.sidebar-calendar-btn-today:hover {
+    background-color: mix($primary, $hovercolor, 90%);
+}
+
+.sidebar-calendar-btn-today:active {
+    background-color: mix($primary, $hovercolor, 70%);
+}
+
+.sidebar-calendar-btn-othermonth {
+    color: mix($onSurface, $surface, 50%);
+}
+
+.sidebar-calendar-header {
+    margin: 0.341rem;
+}
+
+.sidebar-calendar-monthyear-btn {
+    border-radius: 9999px;
+    padding: 0rem 0.682rem;
+    background-color: $t_surfaceVariant;
+    color: $onSurfaceVariant;
+}
+
+.sidebar-calendar-monthyear-btn:hover {
+    background-color: mix($t_surfaceVariant, $onSurfaceVariant, 90%);
+    color: mix($onSurfaceVariant, $surfaceVariant, 90%);
+}
+
+.sidebar-calendar-monthyear-btn:active {
+    background-color: mix($surfaceVariant, $onSurfaceVariant, 80%);
+    color: mix($onSurfaceVariant, $surfaceVariant, 80%);
+}
+
+.sidebar-calendar-monthshift-btn {
+    min-width: 2.045rem;
+    min-height: 2.045rem;
+    border-radius: 9999px;
+    background-color: $t_surfaceVariant;
+    color: $onSurfaceVariant;
+}
+
+.sidebar-calendar-monthshift-btn:hover {
+    background-color: mix($t_surfaceVariant, $onSurfaceVariant, 90%);
+    color: mix($onSurfaceVariant, $surfaceVariant, 90%);
+}
+
+.sidebar-calendar-monthshift-btn:active {
+    background-color: mix($surfaceVariant, $onSurfaceVariant, 80%);
+    color: mix($onSurfaceVariant, $surfaceVariant, 80%);
+}
+
+.sidebar-todo-selector-tab {
+    @include md3_decel;
+    min-height: 2.5rem;
+    color: $onSurface;
+    border-radius: $rounding_small;
+}
+
+.sidebar-todo-selector-tab:hover {
+    background-color: $hovercolor;
+}
+
+.sidebar-todo-selector-tab:active {
+    background-color: $activecolor;
+}
+
+.sidebar-todo-selector-tab:hover>box>label {
+    font-weight: 500;
+}
+
+.sidebar-todo-selector-tab-active>box>label {
+    color: $primary;
+}
+
+.sidebar-todo-selector-tab-active>box>label:last-child {
+    text-decoration: underline;
+}
+
+.sidebar-todo-item-action {
+    border-radius: 9999px;
+    min-width: 1.705rem;
+    min-height: 1.705rem;
+}
+
+.sidebar-todo-item-action:hover {
+    background-color: $hovercolor;
+}
+
+.sidebar-todo-item-action:active {
+    background-color: $activecolor;
+}
+
+.sidebar-clipboard-item {
+    border-radius: $rounding_small;
+    min-height: 2.045rem;
+    padding: 0.341rem;
+    background-color: $t_secondaryContainer;
+    color: $onSecondaryContainer;
+}
+
+.sidebar-clipboard-item:hover {
+    background-color: mix($t_secondaryContainer, $t_onSecondaryContainer, 90%);
+}
+
+.sidebar-clipboard-item:active {
+    background-color: mix($t_secondaryContainer, $t_onSecondaryContainer, 80%);
+}
+
+// cool gradient background from amberol
+// .main-window {
+//     background: linear-gradient(127deg, alpha(@background_color_0, .55), alpha(@background_color_0, 0) 70.71%),
+//         linear-gradient(217deg, alpha(@background_color_1, .55), alpha(@background_color_1, 0) 70.71%),
+//         linear-gradient(336deg, alpha(@background_color_2, .55), alpha(@background_color_2, 0) 70.71%);
+//     transition-property: background;
+//     transition-duration: 250ms;
+//     transition-timing-function: ease;
+// }
