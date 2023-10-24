@@ -44,6 +44,7 @@ in
       aggressiveResize = true;
       baseIndex = 1;
       clock24 = false;
+      escapeTime = 0;
       historyLimit = 2000;
       keyMode = "vi";
       mouse = true;

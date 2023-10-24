@@ -28,7 +28,7 @@ in
         syntaxHighlighting.enable = true;
 
         sessionVariables = {
-          KEYTIMEOUT = 1;
+          KEYTIMEOUT = 0;
         };
 
         initExtra = ''
