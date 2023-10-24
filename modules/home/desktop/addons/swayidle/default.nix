@@ -36,11 +36,11 @@ in
       ];
       timeouts = [
         {
-          timeout = 300;
+          timeout = 900;
           command = "${getExe config.programs.swaylock.package} -df";
         }
         {
-          timeout = 600;
+          timeout = 1200;
           command = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms off";
         }
       ];

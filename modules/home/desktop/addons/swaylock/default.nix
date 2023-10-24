@@ -25,7 +25,7 @@ in
         ignore-empty-password = true;
         disable-caps-lock-text = true;
         font = "Liga SFMono Nerd Font";
-        grace = 60;
+        grace = 300;
 
         clock = true;
         timestr = "%R";
