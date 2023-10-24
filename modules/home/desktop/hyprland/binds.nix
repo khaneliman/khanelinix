@@ -103,8 +103,12 @@ in
                 "SUPER_SHIFT, left, movetoworkspacesilent, -1 "
 
                 # Scratchpad
-                "SUPER_ALT,grave,movetoworkspace,special"
-                "SUPER,grave,togglespecialworkspace,"
+                "SUPER_SHIFT,grave,movetoworkspace,special:scratchpad"
+                "SUPER,grave,togglespecialworkspace,scratchpad"
+
+                # Inactive
+                "ALT_SHIFT,grave,movetoworkspace,special:inactive"
+                "ALT,grave,togglespecialworkspace,inactive"
 
                 # ░█▄█░█▀█░█▀█░▀█▀░▀█▀░█▀█░█▀▄
                 # ░█░█░█░█░█░█░░█░░░█░░█░█░█▀▄
