@@ -37,6 +37,7 @@ in
     ./binds.nix
     ./variables.nix
     ./windowrules.nix
+    ./workspacerules.nix
   ];
 
   config =
