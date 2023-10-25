@@ -58,6 +58,7 @@ in
       tools = {
         bat = enabled;
         direnv = enabled;
+        fzf = enabled;
         git = enabled;
         lsd = enabled;
         oh-my-posh = enabled;

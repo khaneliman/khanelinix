@@ -18,7 +18,6 @@ in
       clac
       fastfetch
       feh
-      fzf
       jq
       khanelinix.trace-symlink
       khanelinix.trace-which
