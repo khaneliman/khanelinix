@@ -1,4 +1,4 @@
-_: (self: super: {
+_: (_self: super: {
   # Use ranger PR, fixes freeze after opening image in kitty: https://github.com/ranger/ranger/pull/2856
   ranger = super.ranger.overrideAttrs (old: {
     version = "1.9.3";
