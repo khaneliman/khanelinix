@@ -23,21 +23,12 @@ in
 
   config = mkIf cfg.enable {
     environment = {
-      sessionVariables = {
-        QT_STYLE_OVERRIDE = "kvantum";
-        QT_QPA_PLATFORMTHEME = "qt5ct";
-      };
-
       systemPackages = with pkgs;
         [
           (cfg.theme.pkg.override {
             accent = "Blue";
             variant = "Macchiato";
           })
-          libsForQt5.qt5ct
-          libsForQt5.qtstyleplugin-kvantum
-          qt6Packages.qt6ct
-          qt6Packages.qtstyleplugin-kvantum
         ]
         ++ lib.optional config.khanelinix.suites.wlroots.enable libsForQt5.qt5.qtwayland;
     };
@@ -46,13 +37,13 @@ in
       enable = true;
 
       platformTheme = "qt5ct";
-      style = {
-        inherit (cfg.theme) name;
-        package = cfg.theme.pkg.override {
-          accent = "Blue";
-          variant = "Macchiato";
-        };
-      };
+      style = "kvantum";
+      # {
+      #   name = ;
+      #   package = cfg.theme.pkg.override {
+      #     accent = "Blue";
+      #     variant = "Macchiato";
+      #   };
     };
   };
 }

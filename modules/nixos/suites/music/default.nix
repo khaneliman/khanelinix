@@ -18,7 +18,8 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       ardour
-      cadence
+      # TODO: reenable after fixed
+      # cadence
       mpd-notification
       mpdevil
       mpdris2
