@@ -40,7 +40,8 @@ in
       };
 
       services = {
-        udiskie.enable = pkgs.stdenv.isLinux;
+        # TODO: reenable after fixed
+        # udiskie.enable = pkgs.stdenv.isLinux;
       };
 
       security = {
