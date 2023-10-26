@@ -8,3 +8,7 @@ bind '%' split-window -h -c '#{pane_current_path}'
 
 set-option -sa terminal-features ",*xterm*:RGB"
 set -ga terminal-overrides ",xterm-kitty:Tc"
+
+set -g allow-passthrough on
+set -ga update-environment TERM
+set -ga update-environment TERM_PROGRAM
