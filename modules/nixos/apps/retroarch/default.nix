@@ -20,7 +20,8 @@ in
       (retroarch.override {
         cores = with libretro; [
           beetle-psx-hw
-          beetle-snes
+          # TODO: reenable after fixed
+          # beetle-snes
           citra
           dolphin
           genesis-plus-gx
@@ -29,7 +30,8 @@ in
           mgba
           nestopia
           pcsx2
-          snes9x
+          # TODO: reenable after fixed
+          # snes9x
         ];
       })
     ];
