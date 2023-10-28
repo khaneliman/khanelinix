@@ -166,7 +166,11 @@ in
         rustEnable = true;
         sqlEnable = true;
       };
-      emulation = enabled;
+
+      emulation = {
+        enable = true;
+        # retroarchFull = true;
+      };
     };
 
     system = {

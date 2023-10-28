@@ -20,18 +20,16 @@ in
       (retroarch.override {
         cores = with libretro; [
           beetle-psx-hw
-          # TODO: reenable after fixed
-          # beetle-snes
+          bsnes
           citra
           dolphin
+          dosbox
           genesis-plus-gx
-          # FIX: fix package upstream
-          # mame
+          mame
           mgba
           nestopia
           pcsx2
-          # TODO: reenable after fixed
-          # snes9x
+          snes9x
         ];
       })
     ];
