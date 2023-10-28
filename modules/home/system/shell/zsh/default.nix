@@ -23,12 +23,22 @@ in
     programs = {
       zsh = {
         enable = true;
+        package = pkgs.zsh;
+
+        completionInit = ''
+          zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+        '';
+
         enableAutosuggestions = true;
         enableCompletion = true;
-        syntaxHighlighting.enable = true;
 
         sessionVariables = {
           KEYTIMEOUT = 0;
+        };
+
+        syntaxHighlighting = {
+          enable = true;
+          package = pkgs.zsh-syntax-highlighting;
         };
 
         initExtra = ''
@@ -42,38 +52,17 @@ in
         '';
 
         plugins = [
-          {
-            name = "zsh-nix-shell";
-            file = "nix-shell.plugin.zsh";
-            src = pkgs.zsh-nix-shell;
-          }
-          {
-            name = "zsh-autocomplete";
-            src = pkgs.zsh-autocomplete;
-          }
-          {
-            name = "zsh-autosuggestions";
-            src = pkgs.zsh-autosuggestions;
-          }
-          {
-            name = "zsh-syntax-highlighting";
-            src = pkgs.zsh-syntax-highlighting;
-          }
-          {
-            name = "zsh-you-should-use";
-            src = pkgs.zsh-you-should-use;
-          }
-          {
-            name = "zsh-history";
-            src = pkgs.zsh-history;
-          }
-          {
-            name = "zsh-history";
-            src = pkgs.zsh-history;
-          }
+          # {
+          #   name = "zsh-autocomplete";
+          #   src = pkgs.zsh-autocomplete;
+          # }
           {
             name = "zsh-command-time";
             src = pkgs.zsh-command-time;
+          }
+          {
+            name = "zsh-history";
+            src = pkgs.zsh-history;
           }
           {
             name = "zsh-history-to-fish";
@@ -83,6 +72,16 @@ in
             name = "zsh-navigation-tools";
             src = pkgs.zsh-navigation-tools;
           }
+          {
+            name = "zsh-nix-shell";
+            file = "nix-shell.plugin.zsh";
+            src = pkgs.zsh-nix-shell;
+          }
+          {
+            name = "zsh-you-should-use";
+            src = pkgs.zsh-you-should-use;
+          }
+
         ];
       };
     };
