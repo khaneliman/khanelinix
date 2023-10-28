@@ -14,6 +14,8 @@ in
   options.khanelinix.suites.emulation = {
     enable =
       mkBoolOpt false "Whether or not to enable emulation configuration.";
+    retroarchFull =
+      mkBoolOpt false "Whether or not to enable emulation configuration.";
   };
 
   config = mkIf cfg.enable {
@@ -27,17 +29,16 @@ in
       nestopia
       pcsx2
       pcsxr
-      retroarch
       rpcs3
       snes9x
       xemu
       yuzu-early-access
-    ];
+    ] ++ lib.optionals cfg.retroarchFull [ retroarchFull ];
 
     khanelinix = {
       apps = {
         dolphin = enabled;
-        retroarch = enabled;
+        retroarch.enable = mkIf cfg.retroarchFull == false;
       };
     };
   };
