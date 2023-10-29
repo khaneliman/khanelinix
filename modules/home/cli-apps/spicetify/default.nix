@@ -24,8 +24,8 @@ in
   config = mkIf cfg.enable {
     programs.spicetify = {
       enable = true;
-      colorScheme = "blue";
-      theme = spicePkgs.themes.catppuccin-macchiato;
+      colorScheme = "macchiato";
+      theme = spicePkgs.themes.catppuccin;
 
       enabledCustomApps = with spicePkgs.apps; [
         lyrics-plus
