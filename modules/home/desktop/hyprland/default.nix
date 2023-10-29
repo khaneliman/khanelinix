@@ -7,7 +7,7 @@
 , ...
 }:
 let
-  inherit (lib) mkIf mkEnableOption;
+  inherit (lib) mkIf mkEnableOption getExe;
   inherit (lib.internal) enabled;
   inherit (inputs) hyprland;
 
@@ -82,7 +82,7 @@ in
 
           settings = {
             exec = [
-              "notify-send --icon ~/.face -u normal \"Hello $(whoami)\""
+              "${getExe pkgs.libnotify} --icon ~/.face -u normal \"Hello $(whoami)\""
             ];
           };
 
