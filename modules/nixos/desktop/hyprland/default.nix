@@ -9,7 +9,7 @@
 let
   inherit (lib) types mkIf getExe getExe';
   inherit (lib.internal) mkBoolOpt mkOpt enabled;
-  inherit (inputs) hyprland-contrib hyprland;
+  inherit (inputs) hyprland;
 
   cfg = config.khanelinix.desktop.hyprland;
   programs = lib.makeBinPath [ config.programs.hyprland.package ];
