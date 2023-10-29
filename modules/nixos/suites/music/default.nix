@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt enabled;
+  inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.suites.music;
 in
@@ -18,12 +18,11 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       ardour
-      # TODO: reenable after fixed
-      # cadence
       mpd-notification
       mpdevil
       mpdris2
       # ncmpcpp
+      spicetify-cli
       spotify
       tageditor
       youtube-music
@@ -31,10 +30,6 @@ in
     ];
 
     khanelinix = {
-      tools = {
-        spicetify-cli = enabled;
-      };
-
       user.extraGroups = [ "mpd" ];
     };
 
