@@ -1,9 +1,14 @@
 { config
+, inputs
 , lib
+, pkgs
+, system
 , ...
 }:
 let
-  inherit (lib) mkIf getExe;
+  inherit (lib) mkIf getExe getExe';
+  inherit (inputs) hyprland-contrib;
+
   cfg = config.khanelinix.desktop.hyprland;
 in
 {
@@ -21,7 +26,7 @@ in
                 "SUPER_ALT, RETURN, exec, $term tmux"
                 "SUPER_SHIFT, RETURN, exec, $term --title floating_kitty --single-instance"
                 "$mainMod, Q, killactive,"
-                "SUPER_SHIFT, P, exec, hyprpicker -a && (convert -size 32x32 xc:$(wl-paste) /tmp/color.png && notify-send \"Color Code:\" \"$(wl-paste)\" -h \"string:bgcolor:$(wl-paste)\" --icon /tmp/color.png -u critical -t 4000)"
+                "SUPER_SHIFT, P, exec, ${getExe pkgs.hyprpicker} -a && (${getExe' pkgs.imagemagick "convert"} -size 32x32 xc:$(${getExe' pkgs.wl-clipboard "wl-paste"}) /tmp/color.png && ${getExe pkgs.libnotify} \"Color Code:\" \"$(${getExe' pkgs.wl-clipboard "wl-paste"})\" -h \"string:bgcolor:$(${getExe' pkgs.wl-clipboard "wl-paste"})\" --icon /tmp/color.png -u critical -t 4000)"
                 "$mainMod, B, exec, $browser"
                 "$mainMod, E, exec, $term ranger"
                 "SUPER_SHIFT, E, exec, $explorer"
@@ -30,10 +35,11 @@ in
                 "$mainMod, A, exec, $launchpad"
                 "$mainMod, L, exec, ${getExe config.programs.swaylock.package} --grace 0 --fade-in 0"
                 "$mainMod, T, exec, $term btop"
-                "$mainMod, N, exec, swaync-client -t -sw"
+                "$mainMod, N, exec, ${getExe' pkgs.swaynotificationcenter "swaync-client"} -t -sw"
                 # "SUPER, V, clipman pick -t rofi
-                "$mainMod, V, exec, cliphist list | rofi -dmenu | cliphist decode | wl-copy"
+                "$mainMod, V, exec, ${getExe pkgs.cliphist} list | ${getExe config.programs.rofi.package} -dmenu | ${getExe pkgs.cliphist} decode | ${getExe' pkgs.wl-clipboard "wl-copy"}"
                 "$mainMod, W, exec, $looking-glass"
+                "$mainMod, I, exec, ${getExe hyprland-contrib.packages.${system}.hyprprop}"
 
                 # ░█▀▀░█░█░█▀▀░▀█▀░█▀▀░█▄█
                 # ░▀▀█░░█░░▀▀█░░█░░█▀▀░█░█
@@ -42,23 +48,23 @@ in
                 "$LHYPER, L, exit,    "
                 # "$RHYPER, R, exec, reboot" # TODO: fix
                 # "$RHYPER, P, exec, shutdown" # TODO: fix
-                "$LHYPER, T, exec, notify-send 'test left'"
-                "$RHYPER, T, exec, notify-send 'test right'"
+                "$LHYPER, T, exec, ${getExe pkgs.libnotify} 'test left'"
+                "$RHYPER, T, exec, ${getExe pkgs.libnotify} 'test right'"
 
                 # ░█▀▀░█▀▀░█▀▄░█▀▀░█▀▀░█▀█░█▀▀░█░█░█▀█░▀█▀
                 # ░▀▀█░█░░░█▀▄░█▀▀░█▀▀░█░█░▀▀█░█▀█░█░█░░█░
                 # ░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░░▀░
                 # Pictures
-                ", Print, exec, file=\"$(xdg-user-dir PICTURES)/screenshots/$(date +'%Y%m%d_%H%M%S.png')\" && grim \"$file\" && notify-send --icon \"$file\" 'Screenshot Saved'"
-                "SHIFT, Print, exec, file=\"$(xdg-user-dir PICTURES)/screenshots/$(date +'%Y%m%d_%H%M%S.png')\" && grim -g \"$(slurp)\" \"$file\" && notify-send --icon \"$file\" 'Screenshot Saved'"
-                "SUPER_SHIFT, Print, exec, grim -g \"$(slurp)\" - | swappy -f -"
-                "SUPER, Print, exec, grim - | swappy -f -"
-                "CONTROL, Print, exec, grimblast copy screen && wl-paste -t image/png | convert png:- /tmp/clipboard.png && notify-send --icon=/tmp/clipboard.png 'Screen copied to clipboard'"
-                "SUPER_CTRL, Print, exec, grimblast copy active && wl-paste -t image/png | convert png:- /tmp/clipboard.png && notify-send --icon=/tmp/clipboard.png 'Window copied to clipboard'"
-                "SUPER_CTRL_SHIFT, Print, exec, grimblast copy area && wl-paste -t image/png | convert png:- /tmp/clipboard.png && notify-send --icon=/tmp/clipboard.png 'Area copied to clipboard'"
+                ", Print, exec, file=\"$(xdg-user-dir PICTURES)/screenshots/$(date +'%Y%m%d_%H%M%S.png')\" && ${getExe pkgs.grim} \"$file\" && ${getExe pkgs.libnotify} --icon \"$file\" 'Screenshot Saved'"
+                "SHIFT, Print, exec, file=\"$(xdg-user-dir PICTURES)/screenshots/$(date +'%Y%m%d_%H%M%S.png')\" && ${getExe pkgs.grim} -g \"$(slurp)\" \"$file\" && ${getExe pkgs.libnotify} --icon \"$file\" 'Screenshot Saved'"
+                "SUPER_SHIFT, Print, exec, ${getExe pkgs.grim} -g \"$(${getExe pkgs.slurp})\" - | ${getExe pkgs.swappy} -f -"
+                "SUPER, Print, exec, ${getExe pkgs.grim} - | ${getExe pkgs.swappy} -f -"
+                "CONTROL, Print, exec, ${getExe pkgs.grimblast} copy screen && ${getExe' pkgs.wl-clipboard "wl-paste"} -t image/png | ${getExe' pkgs.imagemagick "convert"} png:- /tmp/clipboard.png && ${getExe pkgs.libnotify} --icon=/tmp/clipboard.png 'Screen copied to clipboard'"
+                "SUPER_CTRL, Print, exec, ${getExe pkgs.grimblast} copy active && ${getExe' pkgs.wl-clipboard "wl-paste"} -t image/png | ${getExe' pkgs.imagemagick "convert"} png:- /tmp/clipboard.png && ${getExe pkgs.libnotify} --icon=/tmp/clipboard.png 'Window copied to clipboard'"
+                "SUPER_CTRL_SHIFT, Print, exec, ${getExe pkgs.grimblast} copy area && ${getExe' pkgs.wl-clipboard "wl-paste"} -t image/png | ${getExe' pkgs.imagemagick "convert"} png:- /tmp/clipboard.png && ${getExe pkgs.libnotify} --icon=/tmp/clipboard.png 'Area copied to clipboard'"
                 # Screen recording
-                "SUPER_CTRLALT, Print, exec, record_screen screen"
-                "SUPER_CTRLALTSHIFT, Print, exec, record_screen area"
+                "SUPER_CTRLALT, Print, exec, ${getExe pkgs.khanelinix.record_screen} screen"
+                "SUPER_CTRLALTSHIFT, Print, exec, ${getExe pkgs.khanelinix.record_screen} area"
 
                 # ░█░░░█▀█░█░█░█▀█░█░█░▀█▀
                 # ░█░░░█▀█░░█░░█░█░█░█░░█░
@@ -133,11 +139,11 @@ in
                 ",XF86AudioMute,exec,wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
                 ",XF86MonBrightnessUp,exec,light -A 5"
                 ",XF86MonBrightnessDown,exec,light -U 5"
-                ",XF86AudioMedia,exec,playerctl play-pause"
-                ",XF86AudioPlay,exec,playerctl play-pause"
-                ",XF86AudioStop,exec,playerctl stop"
-                ",XF86AudioPrev,exec,playerctl previous"
-                ",XF86AudioNext,exec,playerctl next"
+                ",XF86AudioMedia,exec,${getExe pkgs.playerctl} play-pause"
+                ",XF86AudioPlay,exec,${getExe pkgs.playerctl} play-pause"
+                ",XF86AudioStop,exec,${getExe pkgs.playerctl} stop"
+                ",XF86AudioPrev,exec,${getExe pkgs.playerctl} previous"
+                ",XF86AudioNext,exec,${getExe pkgs.playerctl} next"
               ]
               # ░█░█░█▀█░█▀▄░█░█░█▀▀░█▀█░█▀█░█▀▀░█▀▀
               # ░█▄█░█░█░█▀▄░█▀▄░▀▀█░█▀▀░█▀█░█░░░█▀▀

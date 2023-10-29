@@ -114,9 +114,9 @@ in
             "$editor" = "${getExe pkgs.neovim}";
             "$explorer" = "${getExe pkgs.xfce.thunar}";
             "$music" = "${getExe pkgs.spotify}";
-            "$launcher" = "${getExe pkgs.rofi} -show drun -n";
-            "$launcher_alt" = "${getExe pkgs.rofi} -show run -n";
-            "$launchpad" = "${getExe pkgs.rofi} -show drun -config '~/.config/rofi/appmenu/rofi.rasi'";
+            "$launcher" = "${getExe config.programs.rofi.package} -show drun -n";
+            "$launcher_alt" = "${getExe config.programs.rofi.package} -show run -n";
+            "$launchpad" = "${getExe config.programs.rofi.package} -show drun -config '~/.config/rofi/appmenu/rofi.rasi'";
             "$looking-glass" = "${getExe pkgs.looking-glass-client}";
           };
         };
