@@ -7,9 +7,9 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf getExe';
+  inherit (lib) types mkIf getExe getExe';
   inherit (lib.internal) mkBoolOpt mkOpt enabled;
-  inherit (inputs) hyprland-contrib hyprland;
+  inherit (inputs) hyprland;
 
   cfg = config.khanelinix.desktop.hyprland;
   programs = lib.makeBinPath [ config.programs.hyprland.package ];
@@ -46,9 +46,6 @@ in
 
         environment.systemPackages = with pkgs; [
           hyprpaper
-          hyprpicker
-          hyprland-contrib.packages.${hostPlatform.system}.grimblast
-          khanelinix.record_screen
         ];
 
         khanelinix = {
@@ -56,17 +53,17 @@ in
             partitionmanager = enabled;
             gamemode = {
               startscript = ''
-                ${getExe' pkgs.libnotify "notify-send"} 'GameMode started'
+                ${getExe pkgs.libnotify} 'GameMode started'
                 export PATH=$PATH:${programs}
                 export HYPRLAND_INSTANCE_SIGNATURE=$(ls -1 /tmp/hypr | tail -1)
-                hyprctl --batch 'keyword decoration:blur 0 ; keyword animations:enabled 0 ; keyword misc:no_vfr 1'
+                ${getExe' hyprland.packages.${system}.hyprland "hyprctl"} --batch 'keyword decoration:blur 0 ; keyword animations:enabled 0 ; keyword misc:no_vfr 1'
               '';
 
               endscript = ''
-                ${getExe' pkgs.libnotify "notify-send"} 'GameMode stopped'
+                ${getExe pkgs.libnotify} 'GameMode stopped'
                 export PATH=$PATH:${programs}
                 export HYPRLAND_INSTANCE_SIGNATURE=$(ls -1 /tmp/hypr | tail -1)
-                hyprctl --batch 'keyword decoration:blur 1 ; keyword animations:enabled 1 ; keyword misc:no_vfr 0'
+                ${getExe' hyprland.packages.${system}.hyprland "hyprctl"} --batch 'keyword decoration:blur 1 ; keyword animations:enabled 1 ; keyword misc:no_vfr 0'
               '';
             };
           };

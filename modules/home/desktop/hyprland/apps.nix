@@ -4,7 +4,7 @@
 , ...
 }:
 let
-  inherit (lib) mkIf getExe;
+  inherit (lib) mkIf getExe getExe';
 
   cfg = config.khanelinix.desktop.hyprland;
 
@@ -44,8 +44,8 @@ in
               "${getExe pkgs.ckb-next} -b"
               "${getExe pkgs.openrgb} --startminimized --profile default"
               "${getExe pkgs._1password-gui-beta} --silent"
-              "command -v ${getExe pkgs.cliphist} && wl-paste --type text --watch cliphist store" #Stores only text data
-              "command -v ${getExe pkgs.cliphist} && wl-paste --type image --watch cliphist store" #Stores only image data
+              "command -v ${getExe pkgs.cliphist} && ${getExe' pkgs.wl-clipboard "wl-paste"} --type text --watch cliphist store" #Stores only text data
+              "command -v ${getExe pkgs.cliphist} && ${getExe' pkgs.wl-clipboard "wl-paste"} --type image --watch cliphist store" #Stores only image data
 
               # Startup apps that have rules for organizing them
               "${getExe pkgs.firefox}"
