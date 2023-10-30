@@ -18,9 +18,11 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
+      cliphist
       swayimg
       wdisplays
       wf-recorder
+      wl-clipboard
       wlr-randr
       # Not really wayland specific, but I don't want to make a new module for it
       brightnessctl
