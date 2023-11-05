@@ -8,7 +8,7 @@ let
   inherit (lib.internal) enabled;
 in
 {
-  imports = [ ./hardware.nix ];
+  imports = [ ./hardware.nix ./specializations.nix ];
 
   khanelinix = {
     nix = enabled;
@@ -81,7 +81,6 @@ in
           ];
         };
       };
-
     };
 
     services = {
