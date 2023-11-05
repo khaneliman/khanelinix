@@ -68,6 +68,9 @@
       url = "github:nixos/nixpkgs/nixos-unstable";
     };
 
+    nixpkgs-master = {
+      url = "github:nixos/nixpkgs/master";
+    };
     # Nixpkgs fork
     # nixpkgs-khanelinix = {
     #   url = "github:khaneliman/nixpkgs";

@@ -37,7 +37,7 @@ in
 
     khanelinix = {
       apps = {
-        dolphin = enabled;
+        # dolphin = enabled;
         retroarch.enable = mkIf cfg.retroarchFull == false;
       };
     };

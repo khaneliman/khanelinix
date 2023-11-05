@@ -32,7 +32,9 @@ in
                 "keys": "green",
                 "title": "blue"
               },
-              "percentType": 9,
+              "percent": {
+                "type": 9
+              },
               "separator": " 󰁔 ",
               "temperatureUnit": "F"
             },
