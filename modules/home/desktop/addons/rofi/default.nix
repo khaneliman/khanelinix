@@ -17,9 +17,29 @@ in
   };
 
   config = mkIf cfg.enable {
+
+    home.packages = with pkgs; [
+      wtype
+    ];
+
     programs.rofi = {
       enable = true;
-      package = pkgs.rofi;
+      package = pkgs.rofi-wayland;
+
+      font = "Liga SFMono Nerd Font 14";
+      location = "center";
+      theme = "catppuccin";
+
+      pass = {
+        enable = true;
+        package = pkgs.rofi-pass-wayland;
+      };
+
+      plugins = with pkgs; [
+        rofi-calc
+        rofi-emoji
+        rofi-top
+      ];
     };
 
     xdg.configFile = {
