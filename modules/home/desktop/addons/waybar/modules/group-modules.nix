@@ -20,9 +20,9 @@
     };
     "modules" = [
       "custom/wlogout"
-      "custom/quit"
-      "custom/lock"
-      "custom/reboot"
+      # "custom/quit"
+      # "custom/lock"
+      # "custom/reboot"
     ];
   };
 

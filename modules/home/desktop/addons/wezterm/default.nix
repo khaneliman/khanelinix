@@ -36,7 +36,7 @@ in
         return {
           window_decorations = "RESIZE",
           font = wezterm.font_with_fallback {
-            'Liga SFMono Nerd Font',
+            'Monaspace Krypton',
             'CaskaydiaCove Nerd Font',
             'JetBrains Mono',
           },

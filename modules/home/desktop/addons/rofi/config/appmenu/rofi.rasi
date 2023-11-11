@@ -1,5 +1,5 @@
 configuration {
-	font: "Liga SFMono Nerd Font 14";
+	font: "Monaspace Argon 14";
 	show-icons: true;
 	drun-display-format: "{name}";
   icon-theme: "Papirus-Dark";
@@ -28,7 +28,7 @@ window {
 button {
 	action: "ok";
 	str: " ";
-	font: "Liga SFMono Nerd Font Mono 11";
+	font: "Monaspace Krypton Mono 11";
 	expand: false;
 	text-color: @text;
 	background-color: @base;
@@ -37,7 +37,7 @@ button {
 }
 
 entry {
-	font: "Liga SFMono Nerd Font 11";
+	font: "Monaspace Argon 11";
 	background-color: @base;
 	text-color: @text;
 	expand: true;

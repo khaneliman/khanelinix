@@ -62,7 +62,7 @@ in
         "wlogout/style.css".text = ''
           * {
             background-image: none;
-            font-family: Liga SFMono Nerd Font;
+            font-family: Monaspace Argon;
             font-size: 20px;
           }
           window {

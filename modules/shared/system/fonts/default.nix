@@ -21,8 +21,9 @@ in
         noto-fonts-cjk-serif
         noto-fonts-emoji
         (nerdfonts.override { fonts = [ "Hack" "CascadiaCode" ]; })
+        khanelinix.monaspace
       ] "Custom font packages to install.";
-    default = mkOpt types.str "Liga SFMono Nerd Font" "Default font name";
+    default = mkOpt types.str "Monaspace Kyrpton" "Default font name";
   };
 
   config = mkIf cfg.enable {

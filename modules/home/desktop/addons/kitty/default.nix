@@ -13,7 +13,7 @@ in
 {
   options.khanelinix.desktop.addons.kitty = with types; {
     enable = mkBoolOpt false "Whether to enable kitty.";
-    font = mkOpt str "Liga SFMono Nerd Font" "Font to use for kitty.";
+    font = mkOpt str "Monaspace Krypton" "Font to use for kitty.";
     theme = mkOpt str "Catppuccin-Macchiato" "Theme to use for kitty.";
   };
 
