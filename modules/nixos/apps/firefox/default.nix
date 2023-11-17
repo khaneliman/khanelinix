@@ -9,64 +9,56 @@ let
   inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.apps.firefox;
-  defaultSettings = {
-    "accessibility.typeaheadfind.enablesound" = false;
-    "accessibility.typeaheadfind.flashBar" = 0;
-    "browser.aboutConfig.showWarning" = false;
-    "browser.aboutwelcome.enabled" = false;
-    "browser.bookmarks.autoExportHTML" = true;
-    "browser.bookmarks.showMobileBookmarks" = true;
-    "browser.meta_refresh_when_inactive.disabled" = true;
-    "browser.newtabpage.activity-stream.default.sites" = "";
-    "browser.newtabpage.activity-stream.showSponsored" = false;
-    "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
-    "browser.search.hiddenOneOffs" = "Google,Amazon.com,Bing,DuckDuckGo,eBay,Wikipedia (en)";
-    "browser.search.suggest.enabled" = false;
-    "browser.sessionstore.warnOnQuit" = true;
-    "browser.shell.checkDefaultBrowser" = false;
-    "browser.ssb.enabled" = true;
-    "browser.startup.homepage.abouthome_cache.enabled" = true;
-    "browser.startup.page" = 3;
-    "browser.urlbar.keepPanelOpenDuringImeComposition" = true;
-    "browser.urlbar.suggest.quicksuggest.sponsored" = false;
-    # TODO: one of these doesn't work
-    # "browser.urlbar.groupLabels.enabled" = false;
-    # "browser.urlbar.shortcuts.bookmarks " = false;
-    # "browser.urlbar.shortcuts.history " = false;
-    # "browser.urlbar.shortcuts.tabs " = false;
-    # "browser.urlbar.suggest.quicksuggest.sponsored" = false;
-    # "browser.urlbar.suggest.searches" = false;
-    # "browser.urlbar.trimURLs" = false;
-    # TODO: fix above
-    "dom.storage.next_gen" = true;
-    "dom.webgpu.enabled" = true;
-    "extensions.htmlaboutaddons.recommendations.enabled" = false;
-    "general.autoScroll" = false;
-    "general.smoothScroll.msdPhysics.enabled" = true;
-    "geo.enabled" = false;
-    "geo.provider.use_corelocation" = false;
-    "geo.provider.use_geoclue" = false;
-    "geo.provider.use_gpsd" = false;
-    "intl.accept_languages" = "en-US = en";
-    "media.eme.enabled" = true;
-    "media.ffmpeg.vaapi.enabled" = true;
-    # "media.hardware-video-decoding.force-enabled" = true;
-    "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
-    "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
-    "font.name.monospace.x-western" = "Monaspace Krypton";
-    "font.name.sans-serif.x-western" = "Monaspace Argon";
-    "font.name.serif.x-western" = "Monaspace Argon";
-  };
 in
 {
-  options.khanelinix.apps.firefox = with types; {
-    enable = mkBoolOpt false "Whether or not to enable Firefox.";
-    extraConfig =
-      mkOpt str "" "Extra configuration for the user profile JS file.";
-    settings = mkOpt attrs defaultSettings "Settings to apply to the profile.";
-    userChrome =
-      mkOpt str "" "Extra configuration for the user chrome CSS file.";
-  };
+  options.khanelinix.apps.firefox = with types;
+    {
+      enable = mkBoolOpt false "Whether or not to enable Firefox.";
+      extraConfig =
+        mkOpt str "" "Extra configuration for the user profile JS file.";
+      settings = mkOpt attrs
+        {
+          "accessibility.typeaheadfind.enablesound" = false;
+          "accessibility.typeaheadfind.flashBar" = 0;
+          "browser.aboutConfig.showWarning" = false;
+          "browser.aboutwelcome.enabled" = false;
+          "browser.bookmarks.autoExportHTML" = true;
+          "browser.bookmarks.showMobileBookmarks" = true;
+          "browser.meta_refresh_when_inactive.disabled" = true;
+          "browser.newtabpage.activity-stream.default.sites" = "";
+          "browser.newtabpage.activity-stream.showSponsored" = false;
+          "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
+          "browser.search.hiddenOneOffs" = "Google,Amazon.com,Bing,DuckDuckGo,eBay,Wikipedia (en)";
+          "browser.search.suggest.enabled" = false;
+          "browser.sessionstore.warnOnQuit" = true;
+          "browser.shell.checkDefaultBrowser" = false;
+          "browser.ssb.enabled" = true;
+          "browser.startup.homepage.abouthome_cache.enabled" = true;
+          "browser.startup.page" = 3;
+          "browser.urlbar.keepPanelOpenDuringImeComposition" = true;
+          "browser.urlbar.suggest.quicksuggest.sponsored" = false;
+          "dom.storage.next_gen" = true;
+          "dom.webgpu.enabled" = true;
+          "extensions.htmlaboutaddons.recommendations.enabled" = false;
+          "general.autoScroll" = false;
+          "general.smoothScroll.msdPhysics.enabled" = true;
+          "geo.enabled" = false;
+          "geo.provider.use_corelocation" = false;
+          "geo.provider.use_geoclue" = false;
+          "geo.provider.use_gpsd" = false;
+          "intl.accept_languages" = "en-US = en";
+          "media.eme.enabled" = true;
+          "media.ffmpeg.vaapi.enabled" = true;
+          # "media.hardware-video-decoding.force-enabled" = true;
+          "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
+          "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+          "font.name.monospace.x-western" = "Monaspace Krypton";
+          "font.name.sans-serif.x-western" = "Monaspace Argon";
+          "font.name.serif.x-western" = "Monaspace Argon";
+        } "Settings to apply to the profile.";
+      userChrome =
+        mkOpt str "" "Extra configuration for the user chrome CSS file.";
+    };
 
   config = mkIf cfg.enable {
     services.gnome.gnome-browser-connector.enable = config.khanelinix.desktop.gnome.enable;
