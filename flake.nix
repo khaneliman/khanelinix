@@ -58,6 +58,21 @@
     };
 
     # Personal neovim config
+    astronvim-config = {
+      url = "github:khaneliman/khanelivim/astronvim";
+      flake = false;
+    };
+
+    lazyvim-config = {
+      url = "github:khaneliman/khanelivim/lazyvim";
+      flake = false;
+    };
+
+    lunarvim-config = {
+      url = "github:LunarVim/LunarVim";
+      flake = false;
+    };
+
     neovim-config = {
       url = "github:khaneliman/khanelivim";
       flake = false;

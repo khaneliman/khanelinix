@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "astronvim-config": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1700279002,
+        "narHash": "sha256-mqykjSeWf8dzIN1W5d1HJR9Yw6XygeVFOSGlvOhhps0=",
+        "owner": "khaneliman",
+        "repo": "khanelivim",
+        "rev": "26620ebfbc090c38ac8849a3b81070a848ee2031",
+        "type": "github"
+      },
+      "original": {
+        "owner": "khaneliman",
+        "ref": "astronvim",
+        "repo": "khanelivim",
+        "type": "github"
+      }
+    },
     "comma": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -652,6 +669,23 @@
         "type": "github"
       }
     },
+    "lazyvim-config": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1700278914,
+        "narHash": "sha256-fGlBmrSqDetXcCUTozzQfvKDgH5pXu3UMS8wHovNwvo=",
+        "owner": "khaneliman",
+        "repo": "khanelivim",
+        "rev": "33b9deeb9fd221cb2deaa3d3473510fbb019bc98",
+        "type": "github"
+      },
+      "original": {
+        "owner": "khaneliman",
+        "ref": "lazyvim",
+        "repo": "khanelivim",
+        "type": "github"
+      }
+    },
     "lib-aggregate": {
       "inputs": {
         "flake-utils": "flake-utils_4",
@@ -668,6 +702,22 @@
       "original": {
         "owner": "nix-community",
         "repo": "lib-aggregate",
+        "type": "github"
+      }
+    },
+    "lunarvim-config": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1698763050,
+        "narHash": "sha256-KhHy8np6iCZhIOOGVFVy9eLkN/72KwPwjPBDKpkfnHI=",
+        "owner": "LunarVim",
+        "repo": "LunarVim",
+        "rev": "9dc549a4edd4b79f7f3bcad0e386e490a6a2b952",
+        "type": "github"
+      },
+      "original": {
+        "owner": "LunarVim",
+        "repo": "LunarVim",
         "type": "github"
       }
     },
@@ -1079,6 +1129,7 @@
     },
     "root": {
       "inputs": {
+        "astronvim-config": "astronvim-config",
         "comma": "comma",
         "darwin": "darwin",
         "deploy-rs": "deploy-rs",
@@ -1088,6 +1139,8 @@
         "hyprland": "hyprland",
         "hyprland-contrib": "hyprland-contrib",
         "lanzaboote": "lanzaboote",
+        "lazyvim-config": "lazyvim-config",
+        "lunarvim-config": "lunarvim-config",
         "neovim-config": "neovim-config",
         "nix-ld": "nix-ld",
         "nixos-generators": "nixos-generators",

@@ -7,7 +7,7 @@
 let
   inherit (lib) mkEnableOption mkIf getExe;
   inherit (lib.internal) mkBoolOpt;
-  inherit (inputs) neovim-config;
+  inherit (inputs) astronvim-config lazyvim-config lunarvim-config neovim-config;
 
   cfg = config.khanelinix.cli-apps.neovim;
 
@@ -39,6 +39,12 @@ in
       sessionVariables = {
         DOTNET_ROOT = "${pkgs.dotnet-sdk_7}";
         EDITOR = mkIf cfg.default "nvim";
+      };
+
+      shellAliases = {
+        astronvim = "NVIM_APPNAME=astronvim nvim";
+        lazyvim = "NVIM_APPNAME=lazyvim nvim";
+        lunarvim = "NVIM_APPNAME=lunarvim nvim";
       };
     };
 
@@ -77,6 +83,42 @@ in
 
     # TODO: Convert to custom nixos neovim config 
     xdg.configFile = {
+      "astronvim" = {
+        onChange = "${getExe pkgs.neovim} --headless +quitall";
+        source = lib.cleanSourceWith {
+          filter = name: _type:
+            let
+              baseName = baseNameOf (toString name);
+            in
+            "lazy-lock.json" != baseName;
+          src = lib.cleanSource astronvim-config;
+        };
+        recursive = true;
+      };
+      "lazyvim" = {
+        onChange = "${getExe pkgs.neovim} --headless +quitall";
+        source = lib.cleanSourceWith {
+          filter = name: _type:
+            let
+              baseName = baseNameOf (toString name);
+            in
+            "lazy-lock.json" != baseName;
+          src = lib.cleanSource lazyvim-config;
+        };
+        recursive = true;
+      };
+      "lunarvim" = {
+        onChange = "${getExe pkgs.neovim} --headless +quitall";
+        source = lib.cleanSourceWith {
+          filter = name: _type:
+            let
+              baseName = baseNameOf (toString name);
+            in
+            "lazy-lock.json" != baseName;
+          src = lib.cleanSource lunarvim-config;
+        };
+        recursive = true;
+      };
       "nvim" = {
         onChange = "${getExe pkgs.neovim} --headless +quitall";
         source = lib.cleanSourceWith {
