@@ -27,7 +27,8 @@ in
 
     environment.systemPackages = with pkgs; [
       mysql-client
-      neovide
+      # FIX: nixpkg broken
+      # neovide
       rustup
       jdk
 

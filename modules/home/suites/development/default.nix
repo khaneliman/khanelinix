@@ -40,7 +40,8 @@ in
       };
 
       cli-apps = {
-        helix = enabled;
+        # FIX: nixpkg broke
+        # helix = enabled;
         lazydocker.enable = cfg.dockerEnable;
         lazygit = enabled;
         neovim = {
