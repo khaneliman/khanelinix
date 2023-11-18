@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt enabled;
+  inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.suites.emulation;
 in
@@ -37,7 +37,6 @@ in
 
     khanelinix = {
       apps = {
-        # dolphin = enabled;
         retroarch.enable = mkIf cfg.retroarchFull == false;
       };
     };
