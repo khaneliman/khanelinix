@@ -15,12 +15,7 @@ in
     enable = mkBoolOpt false "Whether or not to manage fonts.";
     fonts = with pkgs;
       mkOpt (listOf package) [
-        google-fonts
-        noto-fonts
-        noto-fonts-cjk-sans
-        noto-fonts-cjk-serif
-        noto-fonts-emoji
-        (nerdfonts.override { fonts = [ "Hack" "CascadiaCode" ]; })
+        (nerdfonts.override { fonts = [ "CascadiaCode" ]; })
         monaspace
       ] "Custom font packages to install.";
     default = mkOpt types.str "Monaspace Kyrpton" "Default font name";

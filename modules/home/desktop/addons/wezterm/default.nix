@@ -37,8 +37,9 @@ in
           window_decorations = "RESIZE",
           font = wezterm.font_with_fallback {
             'Monaspace Krypton',
+            'Liga SFMono Nerd Font',
             'CaskaydiaCove Nerd Font',
-            'JetBrains Mono',
+            'Noto Color Emoji',
           },
           color_schemes = {
             ["Catppuccin"] = custom,

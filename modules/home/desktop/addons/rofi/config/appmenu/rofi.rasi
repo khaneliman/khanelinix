@@ -28,7 +28,7 @@ window {
 button {
 	action: "ok";
 	str: " ";
-	font: "Monaspace Krypton Mono 11";
+	font: "Monaspace Krypton 11";
 	expand: false;
 	text-color: @text;
 	background-color: @base;

@@ -19,7 +19,25 @@ in
       fontpreview
     ];
 
-    fonts.packages = cfg.fonts;
+    fonts = {
+      packages = cfg.fonts;
+      enableDefaultPackages = true;
+
+      fontconfig = {
+        allowType1 = true;
+
+        defaultFonts = {
+          emoji = [
+            "Noto Color Emoji"
+          ];
+          monospace = [
+            "Monaspace Argon"
+            "Liga SFMonon Nerd Font"
+            "CaskaydiaCove Nerd Font Mono"
+          ];
+        };
+      };
+    };
 
     khanelinix.home.file = {
       ".local/share/fonts/SanFransisco/SF-Mono/" = {
