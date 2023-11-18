@@ -20,7 +20,7 @@ in
       enable = true;
       enableBashIntegration = true;
       enableZshIntegration = true;
-      package = pkgs.wezterm;
+      package = pkgs.khanelinix.wezterm;
 
       extraConfig = ''
         function scheme_for_appearance(appearance)
