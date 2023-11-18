@@ -85,6 +85,9 @@ in
         # ${getExe yabai} -m signal --add event=window_created app="Firefox" title!="(— Private Browsing$|^Picture-in-Picture$)" action="source ${getExe khanelinix.yabai-helper} && auto_stack Firefox"
         # ${getExe yabai} -m signal --add event=window_title_changed app="Firefox" title="- noVNC$" action="${getExe yabai} -m window $WINDOW_ID --toggle native-fullscreen"
 
+        # jankyborders
+        borders active_color=0xff7793d1 inactive_color=0xff5e6798 width=3.0 2>/dev/null 1>&2 &
+
         echo "yabai configuration loaded.."
       '';
     };

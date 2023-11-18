@@ -30,6 +30,7 @@ in
     homebrew = {
       brews = [
         "blueutil"
+        "borders"
         "fisher"
         "ical-buddy"
         "ifstat"
@@ -60,7 +61,7 @@ in
       taps = [
         "beeftornado/rmtree"
         "bramstein/webfonttools"
-        "felixkratz/formulae"
+        "felixkratz/homebrew-formulae"
         "khanhas/tap"
         "romkatv/powerlevel10k"
         "shaunsingh/sfmono-nerd-font-ligaturized"
