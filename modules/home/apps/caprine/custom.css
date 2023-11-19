@@ -43,7 +43,7 @@ body::-webkit-scrollbar {
   --hosted-view-selected-state: #24273a !important;
   --hover-overlay: rgba(255, 255, 255, 0.05) !important;
   --media-inner-border: rgba(255, 255, 255, 0.1) !important;
-  --chat-incoming-message-bubble-background-color: #5b6078 !important;
+  --chat-incoming-message-bubble-background-color: #363a4f !important;
   --messenger-card-background: #24273a !important;
   --messenger-reply-background: #181926 !important;
   --overlay-alpha-80: rgba(41, 41, 41, 0.8) !important;
@@ -64,210 +64,27 @@ body::-webkit-scrollbar {
   --web-wash: #24273a !important;
 }
 
+/* Hide messenger ad */
 .x9f619.x1n2onr6.x1ja2u2z.x78zum5.x1r8uery.xs83m0k.xeuugli.x1qughib.x6s0dn4.xozqiw3.x1q0g3np.xb756pt.x1c4vz4f.xt55aet.xexx8yu.xc73u3c.x18d9i69.x5ib6vp.x1lku1pv.x12nzpgo {
 	display: none;
 }
 
-/**/
-/* /* */
-/* * Left side panel */
-/* */ */
-/* #scrollview */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div.x78zum5.xdt5ytf.x10cihs4.x1t2pt76.x1n2onr6.x1ja2u2z */
-/*   > div.x9f619.x2lah0s.x1nhvcw1.x1qjc9v5.xozqiw3.x1q0g3np.x78zum5.x1iyjqo2.x1t2pt76.x1n2onr6.x1ja2u2z */
-/*   > div.x9f619.x1n2onr6.x78zum5.xdt5ytf.x193iq5w.xeuugli.x2lah0s.x1t2pt76.x1xzczws.x1vjfegm */
-/*   > div */
-/*   > div.x9f619.x1n2onr6.x1ja2u2z.x78zum5.xdt5ytf.x2lah0s.x193iq5w.xeuugli.xycxndf.xkhd6sd.x4uap5.xexx8yu.x18d9i69 { */
-/*   background-color: #24273a; */
-/*   border: 1px solid white; */
-/*   border-radius: 1em; */
-/* } */
-/**/
-/* /* */
-/* * Top chat panel */
-/* */ */
-/* #scrollview */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div.x78zum5.xdt5ytf.x10cihs4.x1t2pt76.x1n2onr6.x1ja2u2z */
-/*   > div.x9f619.x2lah0s.x1nhvcw1.x1qjc9v5.xozqiw3.x1q0g3np.x78zum5.x1iyjqo2.x1t2pt76.x1n2onr6.x1ja2u2z */
-/*   > div.x9f619.x1n2onr6.x1ja2u2z.xdt5ytf.x193iq5w.xeuugli.x1r8uery.x1iyjqo2.xs83m0k.x78zum5.x1t2pt76 */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div.x9f619.x1ja2u2z.x193iq5w.xeuugli.x1r8uery.x1iyjqo2.xs83m0k.x78zum5.xdt5ytf.x6ikm8r.x10wlt62.x1n2onr6 */
-/*   > div.x1u998qt.x1vjfegm { */
-/*   background-color: #24273a; */
-/*   border: 1px solid white; */
-/*   border-radius: 1em; */
-/* } */
-/**/
-/* /* */
-/* * Right side panel */
-/* */ */
-/* #scrollview */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div.x78zum5.xdt5ytf.x10cihs4.x1t2pt76.x1n2onr6.x1ja2u2z */
-/*   > div.x9f619.x2lah0s.x1nhvcw1.x1qjc9v5.xozqiw3.x1q0g3np.x78zum5.x1iyjqo2.x1t2pt76.x1n2onr6.x1ja2u2z */
-/*   > div.x9f619.x1n2onr6.x1ja2u2z.xdt5ytf.x193iq5w.xeuugli.x1r8uery.x1iyjqo2.xs83m0k.x78zum5.x1t2pt76 */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div.x9f619.x1n2onr6.x1ja2u2z.x78zum5.xdt5ytf.x4xrfw5.x1yu6fn4.xs83m0k.x1dt7z5j.x2ixbly */
-/*   > div */
-/*   > div */
-/*   > div.x9f619.x1n2onr6.x1ja2u2z.x78zum5.xdt5ytf.x193iq5w.x1l7klhg.x1iyjqo2.xs83m0k.x2lwn1j { */
-/*   background-color: #24273a; */
-/*   border: 1px solid white; */
-/*   border-radius: 1em; */
-/* } */
-/**/
-/* /* */
-/* * Selected/Expanded side panel */
-/* */ */
-/* #scrollview */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div.x78zum5.xdt5ytf.x10cihs4.x1t2pt76.x1n2onr6.x1ja2u2z */
-/*   > div.x9f619.x2lah0s.x1nhvcw1.x1qjc9v5.xozqiw3.x1q0g3np.x78zum5.x1iyjqo2.x1t2pt76.x1n2onr6.x1ja2u2z */
-/*   > div.x9f619.x1n2onr6.x78zum5.xdt5ytf.x193iq5w.xeuugli.x2lah0s.x1t2pt76.x1xzczws.x1vjfegm */
-/*   > div */
-/*   > div.x9f619.x1n2onr6.x1ja2u2z.x78zum5.xdt5ytf.x2lah0s.x193iq5w.xeuugli.x1iyjqo2.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x1cvmir6 */
-/*   > div { */
-/*   background-color: #24273a; */
-/*   border: 1px solid white; */
-/*   border-radius: 1em; */
-/* } */
-/**/
-/* /* */
-/* * User panel */
-/* */ */
-/* #scrollview */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div.x78zum5.xdt5ytf.x10cihs4.x1t2pt76.x1n2onr6.x1ja2u2z */
-/*   > div.x9f619.x2lah0s.x1nhvcw1.x1qjc9v5.xozqiw3.x1q0g3np.x78zum5.x1iyjqo2.x1t2pt76.x1n2onr6.x1ja2u2z */
-/*   > div.x9f619.x1n2onr6.x78zum5.xdt5ytf.x193iq5w.xeuugli.x2lah0s.x1t2pt76.x1xzczws.x1vjfegm */
-/*   > div */
-/*   > div.x9f619.x1n2onr6.x1ja2u2z.x78zum5.xdt5ytf.x2lah0s.x193iq5w.xeuugli.xycxndf.xkhd6sd.x4uap5.xexx8yu.x18d9i69 */
-/*   > div */
-/*   > div:nth-child(2) */
-/*   > div { */
-/*   background-color: #24273a; */
-/*   border: 1px solid white; */
-/*   border-radius: 1em; */
-/* } */
-/**/
-/* /* */
-/* * User panel settings popover */
-/* */ */
-/* #scrollview */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div:nth-child(2) */
-/*   > div */
-/*   > div */
-/*   > div.xu96u03.xm80bdy.x10l6tqk.x13vifvy */
-/*   > div.x1uvtmcs.x4k7w5x.x1h91t0o.x1beo9mf.xaigb6o.x12ejxvf.x3igimt.xarpa2k.xedcshv.x1lytzrv.x1t2pt76.x7ja8zs.x1n2onr6.x1qrby5j.x1jfb8zj */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div { */
-/*   background-color: #24273a; */
-/*   border: 1px solid white; */
-/*   border-radius: 1em; */
-/* } */
-/**/
-/* /* */
-/* * Chat panel border */
-/* */ */
-/* #scrollview */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div.x78zum5.xdt5ytf.x10cihs4.x1t2pt76.x1n2onr6.x1ja2u2z */
-/*   > div.x9f619.x2lah0s.x1nhvcw1.x1qjc9v5.xozqiw3.x1q0g3np.x78zum5.x1iyjqo2.x1t2pt76.x1n2onr6.x1ja2u2z */
-/*   > div.x9f619.x1n2onr6.x1ja2u2z.xdt5ytf.x193iq5w.xeuugli.x1r8uery.x1iyjqo2.xs83m0k.x78zum5.x1t2pt76 */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div.x9f619.x1ja2u2z.x193iq5w.xeuugli.x1r8uery.x1iyjqo2.xs83m0k.x78zum5.xdt5ytf.x6ikm8r.x10wlt62.x1n2onr6 */
-/*   > div.x1uvtmcs.x4k7w5x.x1h91t0o.x1beo9mf.xaigb6o.x12ejxvf.x3igimt.xarpa2k.xedcshv.x1lytzrv.x1t2pt76.x7ja8zs.x1n2onr6.x1qrby5j.x1jfb8zj */
-/*   > div */
-/*   > div */
-/*   > div.x78zum5.x1r8uery.xdt5ytf.x1iyjqo2.xmz0i5r.x6ikm8r.x10wlt62.x1n2onr6 { */
-/*   border: 1px solid white; */
-/*   border-radius: 1em; */
-/* } */
-/**/
-/* /* */
-/* * Chat panel scrollbar and bubbles */
-/* */ */
-/* #scrollview */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div.x78zum5.xdt5ytf.x10cihs4.x1t2pt76.x1n2onr6.x1ja2u2z */
-/*   > div.x9f619.x2lah0s.x1nhvcw1.x1qjc9v5.xozqiw3.x1q0g3np.x78zum5.x1iyjqo2.x1t2pt76.x1n2onr6.x1ja2u2z */
-/*   > div.x9f619.x1n2onr6.x1ja2u2z.xdt5ytf.x193iq5w.xeuugli.x1r8uery.x1iyjqo2.xs83m0k.x78zum5.x1t2pt76 */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div.x9f619.x1ja2u2z.x193iq5w.xeuugli.x1r8uery.x1iyjqo2.xs83m0k.x78zum5.xdt5ytf.x6ikm8r.x10wlt62.x1n2onr6 */
-/*   > div.x1uvtmcs.x4k7w5x.x1h91t0o.x1beo9mf.xaigb6o.x12ejxvf.x3igimt.xarpa2k.xedcshv.x1lytzrv.x1t2pt76.x7ja8zs.x1n2onr6.x1qrby5j.x1jfb8zj */
-/*   > div */
-/*   > div */
-/*   > div.x78zum5.x1r8uery.xdt5ytf.x1iyjqo2.xmz0i5r.x6ikm8r.x10wlt62.x1n2onr6 */
-/*   > div { */
-/*   background-color: #1e2030; */
-/* } */
-/**/
-/* #scrollview */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div.x78zum5.xdt5ytf.x10cihs4.x1t2pt76.x1n2onr6.x1ja2u2z */
-/*   > div.x9f619.x2lah0s.x1nhvcw1.x1qjc9v5.xozqiw3.x1q0g3np.x78zum5.x1iyjqo2.x1t2pt76.x1n2onr6.x1ja2u2z */
-/*   > div.x9f619.x1n2onr6.x78zum5.xdt5ytf.x193iq5w.xeuugli.x2lah0s.x1t2pt76.x1xzczws.x1vjfegm */
-/*   > div */
-/*   > div.x9f619.x1n2onr6.x1ja2u2z.x78zum5.xdt5ytf.x2lah0s.x193iq5w.xeuugli.x1iyjqo2.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x1cvmir6.x12nzpgo */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div { */
-/*   background-color: #24273a; */
-/* } */
-/**/
-/* #scrollview */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div.x78zum5.xdt5ytf.x10cihs4.x1t2pt76.x1n2onr6.x1ja2u2z */
-/*   > div.x9f619.x2lah0s.x1nhvcw1.x1qjc9v5.xozqiw3.x1q0g3np.x78zum5.x1iyjqo2.x1t2pt76.x1n2onr6.x1ja2u2z */
-/*   > div.x9f619.x1n2onr6.x78zum5.xdt5ytf.x193iq5w.xeuugli.x2lah0s.x1t2pt76.x1xzczws.x1vjfegm */
-/*   > div */
-/*   > div.x9f619.x1n2onr6.x1ja2u2z.x78zum5.xdt5ytf.x2lah0s.x193iq5w.xeuugli.x1iyjqo2.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x1cvmir6 */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div */
-/*   > div.x78zum5.x1iyjqo2.x1n2onr6.xdt5ytf { */
-/*   background-color: #24273a; */
-/* } */
+/* action buttons at bottom */
+.x1lliihq.x1rdy4ex.xcud41i.x4vbgl9.x139jcc6.x1k90msu.x11xpdln.x1qfuztq.xsrhx6k.x7p49u4 path {
+	fill: #8aadf4;
+}
+.x6s0dn4.x1ey2m1c.x78zum5.xl56j7k.x10l6tqk.x1vjfegm.xat24cr.x3oybdh.x1g2r6go.x11xpdln.x1th4bbo div svg path {
+	fill: #c6a0f6;
+}
+.x6s0dn4.x1ey2m1c.x78zum5.xl56j7k.x10l6tqk.x1vjfegm.xat24cr.x3oybdh.x1g2r6go.x11xpdln.x5h36tt div svg path {
+	fill: #a6da95;
+}
+.x6s0dn4.x1ey2m1c.x78zum5.xl56j7k.x10l6tqk.x1vjfegm.xat24cr.x3oybdh.x1g2r6go.x11xpdln.x5w5eug div svg path {
+	fill: #f5a97f;
+}
+.x6s0dn4.x1ey2m1c.x78zum5.xl56j7k.x10l6tqk.x1vjfegm.xat24cr.xds687c div svg path {
+	fill: #f0c6c6;
+}
+
+
+/* #ed8796 */
