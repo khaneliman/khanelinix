@@ -13,21 +13,24 @@ sleep 0.5
 USER_CONFIG="$DYNAMIC_ISLAND_DIR/userconfig.sh"
 test -f "$USER_CONFIG" && source "$USER_CONFIG"
 
+# clear cache
+PREVIOUS_ISLAND_CACHE="$HOME/.config/dynamic-island-sketchybar/scripts/islands/previous_island"
+true > "$PREVIOUS_ISLAND_CACHE"
+
 PADDING=3
 
 sketchy_bar=(
-	height=32
-	color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT"
+	height="$P_DYNAMIC_ISLAND_DEFAULT_HEIGHT"
+	color="$P_DYNAMIC_ISLAND_COLOR_BLACK"
 	shadow=off
 	position=top
-	sticky=on
-	padding_right=$((10 - $PADDING))
-	topmost="${P_DYNAMIC_ISLAND_TOPMOST:=off}"
-	padding_left=18
-	corner_radius=9
-	y_offset=0
-	margin=10
-	blur_radius=30
+	sticky=off
+	topmost=on
+	padding_left=0
+    padding_right=0
+	corner_radius="$P_DYNAMIC_ISLAND_CORNER_RADIUS"
+	y_offset="-$P_DYNAMIC_ISLAND_CORNER_RADIUS"
+    margin=$(($P_DYNAMIC_ISLAND_MONITOR_HORIZONTAL_RESOLUTION / 2 - $P_DYNAMIC_ISLAND_DEFAULT_WIDTH))
 	notch_width=0
 )
 
@@ -43,10 +46,6 @@ sketchy_default=(
 	label.padding_right="$PADDING"
 	background.padding_right="$PADDING"
 	background.padding_left="$PADDING"
-	popup.background.corner_radius=11
-	popup.background.shadow.drawing=off
-	popup.background.border_width=2
-	popup.horizontal=on
 )
 
 dynamic-island-sketchybar --bar "${sketchy_bar[@]}"
@@ -56,27 +55,8 @@ dynamic-island-sketchybar --default "${sketchy_default[@]}"
 island=(
 	drawing=on
 	mach_helper=git.crissnb.islandhelper
-	update_freq=2
-	width="$P_DYNAMIC_ISLAND_DEFAULT_WIDTH"
-	background.color="$P_DYNAMIC_ISLAND_COLOR_BLACK"
-	background.corner_radius="$P_DYNAMIC_ISLAND_DEFAULT_CORNER_RADIUS"
-	background.drawing=true
-	background.height=50
-	background.padding_left=0
-	background.padding_right=0
-	background.y_offset=9
-	popup.background.height=30
-	popup.align=center
-	popup.drawing=false
-	popup.height="$P_DYNAMIC_ISLAND_DEFAULT_HEIGHT"
-	popup.horizontal=on
-	popup.y_offset=-69
-	popup.background.border_color="$P_DYNAMIC_ISLAND_COLOR_BLACK"
-	popup.background.color="$P_DYNAMIC_ISLAND_COLOR_BLACK"
-	popup.background.corner_radius="$P_DYNAMIC_ISLAND_DEFAULT_CORNER_RADIUS"
-	popup.background.padding_left=0
-	popup.background.padding_right=0
-	popup.background.shadow.drawing=off
+	update_freq=5
+	width=0
 )
 
 dynamic-island-sketchybar --add event dynamic_island_queue \
@@ -84,11 +64,7 @@ dynamic-island-sketchybar --add event dynamic_island_queue \
 	--add item island center \
 	--set island "${island[@]}"
 
-if [[ $P_DYNAMIC_ISLAND_DISPLAY == "Primary" ]]; then
-	dynamic-island-sketchybar --set island associated_display=1
-elif [[ $P_DYNAMIC_ISLAND_DISPLAY == "Active" ]]; then
-	dynamic-island-sketchybar --set island associated_display=active
-fi
+dynamic-island-sketchybar --bar display="$P_DYNAMIC_ISLAND_DISPLAY"
 
 # subscribe to events to communicate with helper
 dynamic-island-sketchybar --subscribe island dynamic_island_queue \

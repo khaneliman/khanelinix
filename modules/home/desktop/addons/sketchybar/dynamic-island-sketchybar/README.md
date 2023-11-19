@@ -2,10 +2,14 @@
 
 Dynamic Island on iPhone 14 Pro implementation on Mac using SketchyBar
 
-***NOTE: Majority of the code are hardcoded. This is my first time making a project using Shell Scripts. Some features require constantly rewriting a file instead of relying on a event system. With that being said, I have yet experienced a large impact on performance on my machine.***
 ***This project is yet to be used daily and be functional. It's more of a concept.***
 
 ![](images/fullupdated.png)
+
+DEMO
+====
+
+![](images/demo.gif)
 
 Table of Contents
 =================
@@ -13,6 +17,8 @@ Table of Contents
 [Installation](#installation)
 
 [Updating](#updating)
+
+[Uninstallation](#uninstallation)
 
 [Optimal Setup](#optimal-setup)
 
@@ -37,6 +43,11 @@ Installation
 - [SketchyBar](https://github.com/FelixKratz/SketchyBar)
 - sf-symbols (`brew install --cask sf-symbols`)
 - jq (`brew install jq`)
+
+For music island to work properly you need the following additional requirements
+
+- [cava](https://github.com/karlstav/cava) (`brew install cava`)
+- [Background Music](https://github.com/kyleneideck/BackgroundMusic) (`brew install --cask background-music`)
 
 ### Getting Started
 
@@ -64,39 +75,36 @@ dynamic-island-sketchybar
 
 NOTE: There appears to be a bug that dynamic island helper program does not run the first time it is installed (after restarting sketchybar). If this is the case, simply restart the program.
 
-If you'd like to have the `dynamic-island-sketchybar` run automatically, then consider putting the command in `sketchybarrc`.
+If you'd like to have the `dynamic-island-sketchybar` run automatically, then have the command at the end of `sketchybarrc`.
 
 ##
-
-### For existing SketchyBar users
-
-By default, this plugin is meant to be used with macOS's default menu bar.
-When using this plugin without macOS's default menu bar (with `Automatically hide and show the menu bar` option turned on), you need to set P_DYNAMIC_ISLAND_TOPMOST option to "off" ([see configuration](#configuration)).
 
 Updating
 =============
 
-Just go into the `dynamic-island-sketchybar` directory and pull the changes.
+Just go into the `dynamic-island-sketchybar` directory and pull the changes from this repository.
 
 ```bash
 cd ~/.config/dynamic-island-sketchybar
 git pull
 ```
 
-Optimal Setup
-=============
+Uninstallation
+==============
 
-I highly suggest you to use SketchyBar and the dynamic island config files with Yabai.
+Uninstalling this project can be done by removing the symlink and the config folder (this repository).
 
-If you have been using the macOS's default menu bar, I suggest you to enable the `"Automatically hide and show the menu bar"` option (located in `System Preferences -> Dock & Menu Bar`) and completely relying on the SketchyBar to handle the macOS menu. This repository only includes the SketchyBar configuration for Dynamic Island plugin. See my [dotfiles](https://github.com/crissNb/dotfiles) or [Sketchybar setups](https://github.com/FelixKratz/SketchyBar/discussions/47) for preconfigured SketchyBar setups to fully replace macOS menu bar.
-*If you are using my dotfiles for sketchybar, dynamic island is already included in the dotfiles. Otherwise, you will need to repeat the process above. Also see ["For existing SketchyBar users"](#for-existing-sketchybar-users).
+```bash
+rm $(which dynamic-island-sketchybar)
+rm -r ~/.config/dynamic-island-sketchybar/
+```
 
-If you prefer to use the macOS's default menu bar, you need to enable P_DYNAMIC_ISLAND_TOPMOST option to "on" ([see configuration](#configuration)), which is enabled by default.
+This will remove dynamic-island-sketchybar. Note that this will not remove sketchybar (see sketchybar documentation for sketchybar uninstallation guide).
 
 Configuration
 =============
 
-All Dynamic Island configuration can be done in `~/.config/dynamic-island-sketchybar/userconfig.sh`. There are `userconfig.sh` presets reated in `~/.config/dynamic-island-sketchybar/userconfigs/`, so copy the appropriate config for your machine during installation.
+All Dynamic Island configuration can be done in `~/.config/dynamic-island-sketchybar/userconfig.sh`. There are `userconfig.sh` presets created in `~/.config/dynamic-island-sketchybar/userconfigs/`, so copy the appropriate config for your machine during installation for best results.
 
 By default, dynamic island will take input from Apple Music. If you would like to use Spotify instead, change `P_DYNAMIC_ISLAND_MUSIC_SOURCE` variable in `userconfig.sh` to "Spotify" instead.
 
@@ -115,14 +123,23 @@ P_DYNAMIC_ISLAND_VOLUME_ENABLED=0
 
 Notifications are disabled by default.
 
-It is recommended to restart sketchybar service, once you have made your changes to `userconfig.sh` (especially disabling or enabling features will only take effect when sketchybar is restarted).
+You need to restart sketchybar service in order for the changes to take effect.
+
+### Screen resolutions
+In order for the dynamic island to properly scale with your monitor's resolution, you need to specify your monitor's resolution manually by changing `P_DYNAMIC_ISLAND_MONITOR_HORIZONTAL_RESOLUTION` variable in `userconfig.sh`. If you are using an external 1080p monitor, you would set this value to the following:
+
+```bash
+P_DYNAMIC_ISLAND_MONITOR_HORIZONTAL_RESOLUTION=1920
+```
+
+In case of built-in display, it must be divded by 2, e.g.: MBP 14 has 3024 resolution, so 3024/2=1512.
 
 Features
 ========
 
-The following table describes the capabilities of this dynamic island project (working islands). Some islands do not work properly just yet. Thus, you may experience some glitches when using them.
+The following is a list of features that this dynamic island project (working islands) has. Some islands do not work properly just yet. Thus, you may experience some glitches when using them.
 
-- General Notifications
+- General Notifications (experimental)
 
 - Volume/Brightness
 
@@ -141,9 +158,9 @@ Music island saves the artwork 'temporarily' (this artwork file is then replaced
 
 ### Recommended Features
 
-For General Notification feature, I suggest you to turn on the "Do Not Disturb" on your macOS settings. This way the notifications will only be shown via the dynamic island.
+For "general notifications" feature, I suggest you to turn on the "Do Not Disturb" on your macOS settings. This way the notifications will only be shown via the dynamic island.
 
-If you would like to purely rely on the dynamic island interface for your audio (and brightness coming soon) levels, type the following command in terminal:
+If you would like to purely rely on the dynamic island interface for your volume and brightness levels, type the following command in terminal:
 
 ```bash
 launchctl unload -F /System/Library/LaunchAgents/com.apple.OSDUIHelper.plist
@@ -194,7 +211,6 @@ Tested devices
 ==============
 
 - 2021 MacBook Pro 14
-- 2021 MacBook Pro 16
 
 FAQ
 ===
@@ -207,7 +223,7 @@ FAQ
 
 **Q:** Can I use this with multi monitors?
 
-**A:** It's possible, but there will be a notch on all displays. The dynamic island will only appear on one active display, though. This project is not intended to be used with multiple monitors.
+**A:** It's possible. You can either configure it to show in specific displays (e.g. main display) or all displays. However, unexpected results might occur if you attempt to use this project with multiple monitors of different resolutions.
 
 ##
 
@@ -215,3 +231,5 @@ Credits
 =======
 
 Base sketchybarrc was taken from FelixKratz's [dotfiles](https://github.com/FelixKratz/dotfiles).
+
+Base visualizer config was taken from @ColaMint

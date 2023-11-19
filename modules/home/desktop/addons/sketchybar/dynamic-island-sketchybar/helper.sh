@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 DYNAMIC_ISLAND_DIR=$(
 	cd "$(dirname "${BASH_SOURCE[0]}")" || exit
 	pwd -P
