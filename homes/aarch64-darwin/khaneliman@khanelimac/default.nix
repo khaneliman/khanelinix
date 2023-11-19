@@ -39,6 +39,7 @@ in
       business = enabled;
       common = enabled;
       development = enabled;
+      social = enabled;
     };
 
     tools = {

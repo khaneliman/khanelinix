@@ -43,6 +43,7 @@ body::-webkit-scrollbar {
   --hosted-view-selected-state: #24273a !important;
   --hover-overlay: rgba(255, 255, 255, 0.05) !important;
   --media-inner-border: rgba(255, 255, 255, 0.1) !important;
+  --chat-incoming-message-bubble-background-color: #5b6078 !important;
   --messenger-card-background: #24273a !important;
   --messenger-reply-background: #181926 !important;
   --overlay-alpha-80: rgba(41, 41, 41, 0.8) !important;
