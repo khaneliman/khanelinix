@@ -5,22 +5,11 @@
 , ...
 }:
 let
-  inherit (lib) mkIf getExe;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.desktop.addons.sketchybar;
 
-  zshAliases = with pkgs; {
-    brew = ''command brew "$@" && ${getExe sketchybar} --trigger brew_update'';
-    mas = ''command mas "$@" && ${getExe sketchybar} --trigger brew_update'';
-    push = ''command git push && ${getExe sketchybar} --trigger git_push'';
-  };
-
-  fishAliases = with pkgs; {
-    brew = ''command brew "$argv" && ${getExe sketchybar} --trigger brew_update'';
-    mas = ''command mas "$argv" && ${getExe sketchybar} --trigger brew_update'';
-    push = ''command git push && ${getExe sketchybar} --trigger git_push'';
-  };
 in
 {
   options.khanelinix.desktop.addons.sketchybar = {
@@ -49,11 +38,6 @@ in
       # config = ''
       #
       # '';
-    };
-
-    khanelinix.home.extraOptions = {
-      programs.fish.shellAliases = fishAliases;
-      programs.zsh.shellAliases = zshAliases;
     };
   };
 }
