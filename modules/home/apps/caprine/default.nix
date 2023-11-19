@@ -1,5 +1,6 @@
 { config
 , lib
+, pkgs
 , ...
 }:
 let
@@ -13,8 +14,12 @@ in
   };
 
   config = mkIf cfg.enable {
-    xdg.configFile = {
+    xdg.configFile = mkIf pkgs.stdenv.isLinux {
       "Caprine/custom.css".source = ./custom.css;
+    };
+
+    home.file = mkIf pkgs.stdenv.isDarwin {
+      "Library/Application Support/Caprine/custom.css".source = ./custom.css;
     };
   };
 }
