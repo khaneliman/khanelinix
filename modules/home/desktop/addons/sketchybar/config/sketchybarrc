@@ -29,7 +29,7 @@ bar_config=(
 )
 
 icon_defaults=(
-	icon.color="$ICON_COLOR"
+	icon.color="$TEXT"
 	icon.font="$NERD_FONT:Bold:16.0"
 	icon.padding_left="$PADDINGS"
 	icon.padding_right="$PADDINGS"
@@ -79,9 +79,7 @@ source "$PLUGIN_DIR/front-app/item.sh"
 # Right
 source "$PLUGIN_DIR/date/item.sh"
 source "$PLUGIN_DIR/weather/item.sh"
-
 source "$PLUGIN_DIR/control-center/item.sh"
-
 source "$PLUGIN_DIR/stats/item.sh"
 
 # Center

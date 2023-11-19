@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
-
-#
-#
 # Catppuccin Macchiato palette
-#
-#
 
 export BASE=0xff24273a
 export MANTLE=0xff1e2030
@@ -40,19 +35,5 @@ export ROSEWATER=0xfff4dbd6
 export RANDOM_CAT_COLOR=("$BLUE" "$LAVENDER" "$SAPPHIRE" "$SKY" "$TEAL" "$GREEN" "$YELLOW" "$PEACH" "$MAROON" "$RED" "$MAUVE" "$PINK" "$FLAMINGO" "$ROSEWATER")
 
 function getRandomCatColor() {
-  echo "${RANDOM_CAT_COLOR[ $RANDOM % ${#RANDOM_CAT_COLOR[@]} ]}"
+	echo "${RANDOM_CAT_COLOR[$RANDOM % ${#RANDOM_CAT_COLOR[@]}]}"
 }
-
-#
-# LEGACY COLORS 
-#
-# Color Palette
-export GREY=0xff939ab7
-export TRANSPARENT=0x00000000
-
-# General bar colors
-export BAR_COLOR=$BASE
-export ICON_COLOR=$TEXT # Color of all icons
-export LABEL_COLOR=$TEXT # Color of all labels
-
-
