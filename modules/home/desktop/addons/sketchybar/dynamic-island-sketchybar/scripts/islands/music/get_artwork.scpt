@@ -11,7 +11,7 @@ close access fileRef
 set resizeCommand to "sips -Z 600 " & quoted form of POSIX path of tempFile
 do shell script resizeCommand
 
-set currentFolder to POSIX path of ((path to me as string) & "::")
-set newFile to currentFolder & "artwork.jpg"
+set destinationFolder to POSIX path of (path to home folder as string)
+set newFile to destinationFolder & ".config/dynamic-island-sketchybar/scripts/islands/music/artwork.jpg"
 set moveCommand to "mv " & quoted form of POSIX path of tempFile & " " & quoted form of newFile
 do shell script moveCommand

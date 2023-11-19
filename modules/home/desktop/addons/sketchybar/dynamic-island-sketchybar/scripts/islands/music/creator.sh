@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-ARTWORK_LOCATION="$DYNAMIC_ISLAND_DIR/scripts/islands/music/artwork.jpg"
+ARTWORK_LOCATION="$HOME/.config/dynamic-island-sketchybar/scripts/islands/music/artwork.jpg"
 
 artwork=(
 	background.color="$P_DYNAMIC_ISLAND_COLOR_ICON_HIDDEN"
@@ -45,16 +45,16 @@ resume_text=(
 	padding_left=0
 	padding_right=10
 	width=30
-    y_offset=-5
+	y_offset=-5
 	drawing=off
 )
 
 visualizer=(
-    drawing=off
-    update_freq=0
-    y_offset=-10
-    label.font="$P_DYNAMIC_ISLAND_FONT:Bold:10.0"
-    script="$DYNAMIC_ISLAND_DIR/scripts/islands/music/cava.sh"
+	drawing=off
+	update_freq=0
+	y_offset=-10
+	label.font="$P_DYNAMIC_ISLAND_FONT:Bold:10.0"
+	script="$DYNAMIC_ISLAND_DIR/scripts/islands/music/cava.sh"
 	label.color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT"
 )
 
@@ -75,7 +75,7 @@ dynamic-island-sketchybar --add item island.music_artwork left \
 	--add item island.music_title center \
 	--set island.music_title "${title[@]}" \
 	--add item island.music_artist center \
-	--set island.music_artist "${artist[@]}" \
+	--set island.music_artist "${artist[@]}"
 
 # pause island
 dynamic-island-sketchybar --add item island.resume_text right \
@@ -83,6 +83,6 @@ dynamic-island-sketchybar --add item island.resume_text right \
 
 # idle island
 dynamic-island-sketchybar --add item island.music_visualizer right \
-    --set island.music_visualizer "${visualizer[@]}" \
-    --add item island.small_artwork left \
-    --set island.small_artwork "${small_artwork[@]}"
+	--set island.music_visualizer "${visualizer[@]}" \
+	--add item island.small_artwork left \
+	--set island.small_artwork "${small_artwork[@]}"
