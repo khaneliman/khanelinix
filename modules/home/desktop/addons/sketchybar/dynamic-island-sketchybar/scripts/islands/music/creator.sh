@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
+ARTWORK_LOCATION="$DYNAMIC_ISLAND_DIR/scripts/islands/music/artwork.jpg"
 
 artwork=(
 	background.color="$P_DYNAMIC_ISLAND_COLOR_ICON_HIDDEN"
-	background.padding_left=20
-	background.padding_right=3
-	background.image.scale=0.08
-	y_offset=-15
+	padding_left=5
+	padding_right=0
+	background.image.scale=0.12
+	y_offset=0
 	drawing=off
 	width=50
+	background.image="$ARTWORK_LOCATION"
 )
 
 title=(
@@ -15,10 +17,10 @@ title=(
 	label.color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT"
 	label.padding_left=0
 	label.padding_right=0
-	label.font="$P_DYNAMIC_ISLAND_FONT:Bold:16.0"
-	label.y_offset=-20
-	background.padding_left=0
-	background.padding_right=0
+	label.font="$P_DYNAMIC_ISLAND_FONT:Bold:14.0"
+	y_offset=-10
+	padding_left=-80
+	padding_right=0
 	label.width=550
 	drawing=off
 )
@@ -28,63 +30,59 @@ artist=(
 	label.color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT"
 	label.padding_left=0
 	label.padding_right=0
-	background.padding_left=0
-	background.padding_right=0
+	padding_left=-80
+	padding_right=0
 	label.width=550
-	label.font="$P_DYNAMIC_ISLAND_FONT:Semibold:14.0"
-	label.y_offset=-40
-	drawing=off
-)
-
-placeholder=(
-	width="$P_DYNAMIC_ISLAND_MUSIC_INFO_EXPAND_WIDTH"
-	background.height="$P_DYNAMIC_ISLAND_MUSIC_INFO_DEFAULT_HEIGHT"
-	background.color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT"
-	background.border_color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT"
-	background.corner_radius="$P_DYNAMIC_ISLAND_DEFAULT_CORNER_RADIUS"
-	background.padding_left=0
-	background.padding_right=0
-	background.y_offset=0
-	background.shadow.drawing=off
+	label.font="$P_DYNAMIC_ISLAND_FONT:Semibold:12.0"
+	label.y_offset=-30
 	drawing=off
 )
 
 resume_text=(
 	label.color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT"
 	label.padding_right=0
-	label.font="$P_DYNAMIC_ISLAND_FONT:Bold:11.0"
-	label.y_offset=-20
-	background.padding_left=0
-	background.padding_right=0
+	label.font="$P_DYNAMIC_ISLAND_FONT:Bold:12.0"
+	padding_left=0
+	padding_right=10
 	width=30
+    y_offset=-5
 	drawing=off
 )
 
-resume_bar=(
-	width="$P_DYNAMIC_ISLAND_MUSIC_RESUME_EXPAND_WIDTH"
-	background.height="$P_DYNAMIC_ISLAND_MUSIC_RESUME_DEFAULT_HEIGHT"
-	background.color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT"
-	background.border_color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT"
-	background.corner_radius="$P_DYNAMIC_ISLAND_DEFAULT_CORNER_RADIUS"
-	background.padding_left=0
-	background.padding_right=0
-	background.y_offset=0
-	background.shadow.drawing=off
+visualizer=(
+    drawing=off
+    update_freq=0
+    y_offset=-10
+    label.font="$P_DYNAMIC_ISLAND_FONT:Bold:10.0"
+    script="$DYNAMIC_ISLAND_DIR/scripts/islands/music/cava.sh"
+	label.color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT"
+)
+
+small_artwork=(
+	background.color="$P_DYNAMIC_ISLAND_COLOR_ICON_HIDDEN"
+	padding_left=10
+	padding_right=0
+	background.image.scale=0.04
+	y_offset=-5
 	drawing=off
+	width=50
+	background.image="$ARTWORK_LOCATION"
 )
 
 # music island
-dynamic-island-sketchybar --add item island.music_artwork popup.island \
+dynamic-island-sketchybar --add item island.music_artwork left \
 	--set island.music_artwork "${artwork[@]}" \
-	--add item island.music_title popup.island \
+	--add item island.music_title center \
 	--set island.music_title "${title[@]}" \
-	--add item island.music_artist popup.island \
+	--add item island.music_artist center \
 	--set island.music_artist "${artist[@]}" \
-	--add item island.music_placeholder popup.island \
-	--set island.music_placeholder "${placeholder[@]}"
 
 # pause island
-dynamic-island-sketchybar --add item island.resume_text popup.island \
-	--set island.resume_text "${resume_text[@]}" \
-	--add item island.resume_bar popup.island \
-	--set island.resume_bar "${resume_bar[@]}"
+dynamic-island-sketchybar --add item island.resume_text right \
+	--set island.resume_text "${resume_text[@]}"
+
+# idle island
+dynamic-island-sketchybar --add item island.music_visualizer right \
+    --set island.music_visualizer "${visualizer[@]}" \
+    --add item island.small_artwork left \
+    --set island.small_artwork "${small_artwork[@]}"

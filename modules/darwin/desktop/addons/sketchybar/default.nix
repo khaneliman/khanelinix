@@ -28,6 +28,11 @@ in
   };
 
   config = mkIf cfg.enable {
+    homebrew = {
+      brews = [ "cava" ];
+      casks = [ "background-music" ];
+    };
+
     services.sketchybar = {
       enable = true;
       package = pkgs.sketchybar;
