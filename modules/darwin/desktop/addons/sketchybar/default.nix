@@ -29,7 +29,7 @@ in
 
   config = mkIf cfg.enable {
     homebrew = {
-      brews = [ "cava" ];
+      brews = [ "cava" "jq" ];
       casks = [ "background-music" ];
     };
 
