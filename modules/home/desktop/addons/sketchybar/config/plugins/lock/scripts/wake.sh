@@ -17,7 +17,7 @@ unlock() {
 		margin=10 \
 		shadow=on \
 		corner_radius=9 \
-		color="$BAR_COLOR" \
+		color="$BASE" \
 		blur_radius=20
 }
 
