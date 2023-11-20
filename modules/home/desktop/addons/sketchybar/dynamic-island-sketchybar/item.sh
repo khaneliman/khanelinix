@@ -15,7 +15,7 @@ test -f "$USER_CONFIG" && source "$USER_CONFIG"
 
 # clear cache
 PREVIOUS_ISLAND_CACHE="$HOME/.config/dynamic-island-sketchybar/scripts/islands/previous_island"
-true > "$PREVIOUS_ISLAND_CACHE"
+true >"$PREVIOUS_ISLAND_CACHE"
 
 PADDING=3
 
@@ -27,10 +27,10 @@ sketchy_bar=(
 	sticky=off
 	topmost=on
 	padding_left=0
-    padding_right=0
+	padding_right=0
 	corner_radius="$P_DYNAMIC_ISLAND_CORNER_RADIUS"
 	y_offset="-$P_DYNAMIC_ISLAND_CORNER_RADIUS"
-    margin=$(($P_DYNAMIC_ISLAND_MONITOR_HORIZONTAL_RESOLUTION / 2 - $P_DYNAMIC_ISLAND_DEFAULT_WIDTH))
+	margin=$(($P_DYNAMIC_ISLAND_MONITOR_HORIZONTAL_RESOLUTION / 2 - $P_DYNAMIC_ISLAND_DEFAULT_WIDTH))
 	notch_width=0
 )
 

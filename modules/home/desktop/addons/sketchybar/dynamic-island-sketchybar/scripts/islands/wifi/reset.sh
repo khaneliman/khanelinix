@@ -1,6 +1,6 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 dynamic-island-sketchybar --set island.wifi_icon drawing=off \
-		   --set island.wifi_ssid drawing=off \
+	--set island.wifi_ssid drawing=off
 
 sleep 0.1
 

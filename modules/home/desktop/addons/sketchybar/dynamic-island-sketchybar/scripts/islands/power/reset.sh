@@ -1,6 +1,6 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 dynamic-island-sketchybar --set island.power_text drawing=off \
-	--set island.power_icon drawing=off \
+	--set island.power_icon drawing=off
 
 sleep 0.1
 

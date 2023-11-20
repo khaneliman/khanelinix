@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 dynamic-island-sketchybar --set island.resume_text drawing=off
 sleep 0.1
 

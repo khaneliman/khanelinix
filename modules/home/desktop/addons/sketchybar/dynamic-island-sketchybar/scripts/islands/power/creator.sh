@@ -1,4 +1,4 @@
-#!/usr/bin/env/bash
+#!/usr/bin/env bash
 
 power_text=(
 	width=0
@@ -15,7 +15,7 @@ power_icon=(
 	label.color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT"
 	label.font="$P_DYNAMIC_ISLAND_FONT:Bold:12.0"
 	y_offset=-5
-    padding_right=10
+	padding_right=10
 	drawing=off
 )
 

@@ -1,8 +1,8 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 dynamic-island-sketchybar --set island.notification_title drawing=off \
 	--set island.notification_subtitle drawing=off \
 	--set island.notification_body drawing=off \
-	--set island.notification_logo drawing=off \
+	--set island.notification_logo drawing=off
 
 sleep 0.1
 
