@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 dynamic-island-sketchybar --set island.music_title drawing=off \
 	--set island.music_artist drawing=off \
 	--set island.music_artwork drawing=off
