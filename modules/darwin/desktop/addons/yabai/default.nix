@@ -70,7 +70,7 @@ in
         source ${getExe khanelinix.yabai-helper}
 
         BAR_HEIGHT=$(${getExe sketchybar} -m --query bar | jq -r '.height')
-        ${getExe yabai} -m config external_bar all:"$${BAR_HEIGHT}":0
+        ${getExe yabai} -m config external_bar all:"$BAR_HEIGHT":0
 
         ${builtins.readFile ./extraConfig}
 
