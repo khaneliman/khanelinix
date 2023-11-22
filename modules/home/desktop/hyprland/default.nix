@@ -44,8 +44,8 @@ in
     mkIf cfg.enable
       {
         home.shellAliases = {
-          hl = "cat /tmp/hypr/$(ls -t /tmp/hypr/ | head -n 1)/hyprland.log";
-          hl1 = "cat /tmp/hypr/$(ls -t /tmp/hypr/ | head -n 2 | tail -n 1)/hyprland.log";
+          hl = "cat /tmp/hypr/$(command ls -t /tmp/hypr/ | head -n 1)/hyprland.log";
+          hl1 = "cat /tmp/hypr/$(command ls -t /tmp/hypr/ | head -n 2 | tail -n 1)/hyprland.log";
         };
 
         khanelinix = {
