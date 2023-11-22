@@ -6,8 +6,8 @@ _: (_self: super: {
     src = super.fetchFromGitHub {
       owner = "KhronosGroup";
       repo = "Vulkan-Utility-Libraries";
-      rev = "vulkan-sdk-1.3.268.0";
-      hash = "sha256-O1agpzZpXiQZFYx1jPosIhxJovZtfZSLBNFj1LVB1VI=";
+      rev = "v1.3.268.0";
+      hash = "sha256-l6PiHCre/JQg8PSs1k/0Zzfwwv55AqVdZtBbjeKLS6E=";
     };
   });
 })
