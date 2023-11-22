@@ -96,12 +96,12 @@ in
             Service = {
               ExecStart = "${getExe pkgs.scream} -n scream -o pulse -m /dev/shm/scream";
               Restart = "always";
-              StartLimitIntervalSec = "5";
               StartLimitBurst = "1";
             };
 
             Unit = {
               Description = "Scream";
+              StartLimitIntervalSec = "5";
               After =
                 [
                   "libvirtd.service"
