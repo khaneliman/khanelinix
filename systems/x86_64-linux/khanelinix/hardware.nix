@@ -11,8 +11,6 @@ in
     (modulesPath + "/installer/scan/not-detected.nix")
     common-cpu-amd
     common-gpu-amd
-    # NOTE: actually removes gpu from list of devices now so can't use GPU-passthru
-    # common-gpu-nvidia-disable
     common-pc
     common-pc-ssd
   ];

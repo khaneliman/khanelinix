@@ -33,7 +33,7 @@ in
         libva
         libvdpau
         libdrm
-      ]; #++ lib.optional config.khanelinix.hardware.amdgpu.enable pkgs.mesa-vdpau;
+      ];
     };
   };
 }

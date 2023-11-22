@@ -18,8 +18,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    # hardware.amdgpu.amdvlk = true;
-
     environment.systemPackages = with pkgs; [
       radeontop
       vulkan-tools
