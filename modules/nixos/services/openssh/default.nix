@@ -84,6 +84,7 @@ in
           if format == "install-iso"
           then "yes"
           else "no";
+        UseDns = true;
       };
     };
 
