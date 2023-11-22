@@ -30,7 +30,7 @@ in
       ++ lib.optional cfg.firefox.enable pkgs.khanelinix.discord-firefox;
 
     system.userActivationScripts = {
-      postInstall = ''
+      postInstall = /* bash */ ''
         echo "Running betterdiscord install"
         source ${config.system.build.setEnvironment}
         ${getExe pkgs.betterdiscordctl} install || true

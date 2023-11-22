@@ -5,7 +5,7 @@ in
 {
   imports = [ ./hardware.nix ];
 
-  programs.sway.extraSessionCommands = ''
+  programs.sway.extraSessionCommands = /* bash */ ''
     WLR_NO_HARDWARE_CURSORS=1
   '';
 

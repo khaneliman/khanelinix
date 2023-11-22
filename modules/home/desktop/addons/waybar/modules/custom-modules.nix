@@ -6,7 +6,7 @@
 let
   inherit (lib) getExe getExe';
 
-  githubHelper = pkgs.writeShellScriptBin "githubHelper" ''
+  githubHelper = pkgs.writeShellScriptBin "githubHelper" /* bash */ ''
     #!/usr/bin/env bash
 
     NOTIFICATIONS="$(${getExe pkgs.gh} api notifications)"

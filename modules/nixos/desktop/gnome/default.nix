@@ -309,7 +309,7 @@ in
           Group = "root";
         };
 
-        script = ''
+        script = /* bash */ ''
           config_file=/var/lib/AccountsService/users/${config.khanelinix.user.name}
           icon_file=/run/current-system/sw/share/khanelinix.icons/user/${config.khanelinix.user.name}/${config.khanelinix.user.icon.fileName}
 

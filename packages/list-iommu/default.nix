@@ -16,7 +16,7 @@ writeShellApplication
     pciutils
   ];
 
-  text = ''
+  text = /* bash */ ''
     shopt -s nullglob
 
     for d in /sys/kernel/iommu_groups/*/devices/*; do

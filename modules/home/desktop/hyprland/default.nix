@@ -66,7 +66,7 @@ in
         wayland.windowManager.hyprland = {
           enable = true;
 
-          extraConfig = ''
+          extraConfig = /* bash */ ''
             ${cfg.prependConfig}
 
             source=~/.config/hypr/displays.conf

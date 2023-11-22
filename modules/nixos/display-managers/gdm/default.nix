@@ -52,7 +52,7 @@ in
           before = [ "display-manager.service" ];
           wantedBy = [ "display-manager.service" ];
 
-          script = ''
+          script = /* bash */ ''
             config_file=/var/lib/AccountsService/users/${config.khanelinix.user.name}
             icon_file=/run/current-system/sw/share/icons/user/${config.khanelinix.user.name}/${config.khanelinix.user.icon.fileName}
 
@@ -83,7 +83,7 @@ in
           };
         };
 
-        system.activationScripts.postInstallGdm = stringAfter [ "users" ] ''
+        system.activationScripts.postInstallGdm = stringAfter [ "users" ] /* bash */ ''
           echo "Setting gdm permissions for user icon"
           ${getExe' pkgs.acl "setfacl"} -m u:gdm:x /home/${config.khanelinix.user.name}
           ${getExe' pkgs.acl "setfacl"} -m u:gdm:r /home/${config.khanelinix.user.name}/.face.icon || true

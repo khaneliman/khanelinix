@@ -16,7 +16,7 @@ pkgs.rustPlatform.buildRustPackage rec {
     hash = "sha256-iwIiGRHgf2uBf2ueIzdxDtQW9Z7Gf0gXdb+0RIOH+Qo=";
   };
 
-  postPatch = ''
+  postPatch = /* bash */ ''
     echo ${version} > .tag
 
     # tests are failing with: Unable to exchange encryption keys
@@ -61,7 +61,7 @@ pkgs.rustPlatform.buildRustPackage rec {
 
   env.NIX_LDFLAGS = lib.optionalString stdenv.isDarwin "-framework System";
 
-  postInstall = ''
+  postInstall = /* bash */ ''
     mkdir -p $out/nix-support
     echo "${passthru.terminfo}" >> $out/nix-support/propagated-user-env-packages
 
@@ -78,12 +78,12 @@ pkgs.rustPlatform.buildRustPackage rec {
     install -Dm644 assets/wezterm-nautilus.py -t $out/share/nautilus-python/extensions
   '';
 
-  preFixup = lib.optionalString stdenv.isLinux ''
+  preFixup = lib.optionalString stdenv.isLinux /* bash */ ''
     patchelf \
       --add-needed "${pkgs.libGL}/lib/libEGL.so.1" \
       --add-needed "${pkgs.vulkan-loader}/lib/libvulkan.so.1" \
       $out/bin/wezterm-gui
-  '' + lib.optionalString stdenv.isDarwin ''
+  '' + lib.optionalString stdenv.isDarwin /* bash */ ''
     mkdir -p "$out/Applications"
     OUT_APP="$out/Applications/WezTerm.app"
     cp -r assets/macos/WezTerm.app "$OUT_APP"
@@ -100,7 +100,7 @@ pkgs.rustPlatform.buildRustPackage rec {
     terminfo = pkgs.runCommand "wezterm-terminfo"
       {
         nativeBuildInputs = [ pkgs.ncurses ];
-      } ''
+      } /* bash */ ''
       mkdir -p $out/share/terminfo $out/nix-support
       tic -x -o $out/share/terminfo ${src}/termwiz/data/wezterm.terminfo
     '';

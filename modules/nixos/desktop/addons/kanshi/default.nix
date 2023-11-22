@@ -30,11 +30,11 @@ in
       partOf = [ "graphical-session.target" ];
       wantedBy = [ "graphical-session.target" ];
       serviceConfig = {
-        ExecCondition = ''
+        ExecCondition = /* bash */ ''
           ${getExe pkgs.bash} -c '[ -n "$WAYLAND_DISPLAY" ]'
         '';
 
-        ExecStart = ''
+        ExecStart = /* bash */ ''
           ${getExe pkgs.kanshi}
         '';
 

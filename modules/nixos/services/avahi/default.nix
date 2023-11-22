@@ -18,7 +18,7 @@ in
       enable = true;
 
       extraServiceFiles = {
-        smb = ''
+        smb = /* xml */ ''
           <?xml version="1.0" standalone='no'?><!--*-nxml-*-->
           <!DOCTYPE service-group SYSTEM "avahi-service.dtd">
           <service-group>

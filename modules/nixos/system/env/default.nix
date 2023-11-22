@@ -32,7 +32,11 @@ in
 
       extraInit =
         concatStringsSep "\n"
-          (mapAttrsToList (n: v: ''export ${n}="${v}"'') cfg);
+          (mapAttrsToList
+            (n: v: /* bash */ ''
+              export ${n}="${v}"
+            '')
+            cfg);
 
       variables = {
         # Make some programs "XDG" compliant.

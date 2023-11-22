@@ -20,7 +20,7 @@ in
     systemd.services.spice-vdagentd = {
       description = "spice-vdagent daemon";
 
-      preStart = ''
+      preStart = /* bash */ ''
         mkdir -p "/run/spice-vdagentd/"
       '';
 

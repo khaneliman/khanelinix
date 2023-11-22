@@ -17,7 +17,7 @@ writeShellApplication
     mainProgram = "hypr_socket_watch";
   };
 
-  text = ''
+  text = /* bash */ ''
     # shellcheck disable=SC1091
     source ${./bash-functions.sh}
 

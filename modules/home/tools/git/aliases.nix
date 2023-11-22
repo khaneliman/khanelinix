@@ -84,7 +84,7 @@
     dad = "!curl https://icanhazdadjoke.com/ && echo";
 
     # Fix corrupt git repo
-    fix = "!f() {
+    fix = /* bash */ "!f() {
             find .git/objects/ -type f -empty | xargs rm
             git fetch -p
             git fsck --full
@@ -95,13 +95,13 @@
     pullf = "!bash - c \"git reset --hard origin/$(git rev-parse --abbrev-ref HEAD)\"";
 
     ### Pull only the current branch and dont update refs of all remotes
-    pullhead = "!f() {                                                                \
+    pullhead = /* bash */ "!f() {                                                                \
 	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                              \
 	          git pull origin $b;                                                             \
           }; f";
 
     ### Blow up local branch and repull from remote
-    smash = "!f() {                                                                   \
+    smash = /* bash */ "!f() {                                                                   \
 	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                              \
 	          echo 'Are you sure you want to run this? It will delete your current '$b'.';    \
 	          read -p 'Enter to continue, ctrl-C to quit: ' response;                         \
@@ -112,7 +112,7 @@
           }; f";
 
     ### Rebase current branch off master
-    rbm = "!f() {                                                                     \
+    rbm = /* bash */ "!f() {                                                                \
 	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                              \
 	          echo 'Are you sure you want to run this? It will delete your current '$b'.';    \
 	          read -p 'Enter to continue, ctrl-C to quit: ' response;                         \
@@ -123,7 +123,7 @@
           }; f";
 
     ### Rebase current branch off develop
-    rbd = "!f() {                                                                     \
+    rbd = /* bash */ "!f() {                                                                \
 	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                              \
 	          echo 'Are you sure you want to run this? It will delete your current '$b'.';    \
 	          read -p 'Enter to continue, ctrl-C to quit: ' response;                         \
@@ -142,12 +142,12 @@
     # Example: git bd -a
     # Example: git bd -a -20
     # Example: git bd -a20
-    bd = "!f() {                                                      \
+    bd = /* bash */ "!f() {                                                 \
             case $1 in                                                      \
                 -a) refs='--'; shift;;                                      \
                 -a*) refs='--'; one=$${1/-a/-}; shift; set -- $one $@;;     \
                 *) refs='refs/heads/';;                                     \
-            esac;                                                                               \
+            esac;                                                           \
             git for-each-ref --color --count=1 1>/dev/null 2>&1 && color_flag=yes;              \
             format='--format=%(refname) %00%(committerdate:format:%s)%(taggerdate:format:%s) %(color:red)%(committerdate:relative)%(taggerdate:relative)%(color:reset)%09%00%(color:yellow)%(refname:short)%(color:reset) %00%(subject)%00 %(color:reset)%(color:dim cyan)<%(color:reset)%(color:cyan)%(authorname)%(taggername)%(color:reset)%(color:dim cyan)>%(color:reset)'; \
             {                                                                                   \
@@ -175,47 +175,47 @@
     #         less -RFX;                                                                      \
     # }; f";
 
-    fetch-pr = "!f() { \
+    fetch-pr = /* bash */ "!f() { \
             git remote get-url $1 >/dev/null 2>&1 || { printf >&2 'Usage: git fetch-pr <remote> [<pr-number>]\n'; exit 1; }; \
             pr=$2; \
             [ -z $pr ] && pr='*'; \
             git fetch $1 '+refs/pull/$pr/head:refs/remotes/$1/pr/$pr';\
           }; f";
 
-    stash-staged = "!f() { : git stash ;                                                                                  \
+    stash-staged = /* bash */ "!f() { : git stash ;                                                                               \
             staged=$(git diff --staged --unified=0);                                                                              \
             unstaged=$(git diff --unified=0);                                                                                     \
-            [ '$staged' = '' ] && return;                                                                 \
-            [ '$unstaged' = '' ] && { git stash $@; return $?; };                                                                                         \
-            printf 'This is a potentially destructive command.\nBe sure you understand it before running it.\nContinue? [y/N]: ';   \
+            [ '$staged' = '' ] && return;                                                                                         \
+            [ '$unstaged' = '' ] && { git stash $@; return $?; };                                                                 \
+            printf 'This is a potentially destructive command.\nBe sure you understand it before running it.\nContinue? [y/N]: '; \
             IFS= read -r cont; echo $cont | grep -iq '^y' || { echo 'Not continuing.'; return 1; };                               \
-            git reset --hard && echo -E $staged |                                                                               \
-                git apply --unidiff-zero --allow-empty - &&                                                                                       \
+            git reset --hard && echo -E $staged |                                                                                 \
+                git apply --unidiff-zero --allow-empty - &&                                                                       \
                 git stash $@ &&                                                                                                   \
-                echo -E $unstaged | git apply --unidiff-zero --allow-empty - || {                                                                 \
+                echo -E $unstaged | git apply --unidiff-zero --allow-empty - || {                                                 \
                     top=$(git rev-parse --git-dir);                                                                               \
-                    echo -E $staged >$top/LAST_STAGED.diff;                                                                     \
-                    echo -E $unstaged >$top/LAST_UNSTAGED.diff;                                                                 \
+                    echo -E $staged >$top/LAST_STAGED.diff;                                                                       \
+                    echo -E $unstaged >$top/LAST_UNSTAGED.diff;                                                                   \
                     printf 'ERROR: Could not stash staged.\nDiffs saved: try git apply --unidiff-zero .git/LAST_STAGED.diff .git/LAST_UNSTAGED.diff\n'; \
-                };                                                                                                                  \
+                };                                                                                                                \
             }; f";
 
-    stash-unstaged = "!f() { : git stash ;                                                                                  \
+    stash-unstaged = /* bash */ "!f() { : git stash ;                                                                             \
             staged=$(git diff --staged --unified=0);                                                                              \
             unstaged=$(git diff --unified=0);                                                                                     \
-            [ '$staged' = '' ] && { git stash $@; return $?; };                                                                 \
-            [ '$unstaged' = '' ] && return;                                                                                         \
-            printf 'This is a potentially destructive command.\nBe sure you understand it before running it.\nContinue? [y/N]: ';   \
+            [ '$staged' = '' ] && { git stash $@; return $?; };                                                                   \
+            [ '$unstaged' = '' ] && return;                                                                                       \
+            printf 'This is a potentially destructive command.\nBe sure you understand it before running it.\nContinue? [y/N]: '; \
             IFS= read -r cont; echo $cont | grep -iq '^y' || { echo 'Not continuing.'; return 1; };                               \
             git reset --hard && echo -E $unstaged |                                                                               \
-                git apply --unidiff-zero - &&                                                                                       \
+                git apply --unidiff-zero - &&                                                                                     \
                 git stash $@ &&                                                                                                   \
-                echo -E $staged | git apply --unidiff-zero --allow-empty - || {                                                                 \
+                echo -E $staged | git apply --unidiff-zero --allow-empty - || {                                                   \
                     top=$(git rev-parse --git-dir);                                                                               \
-                    echo -E $staged >$top/LAST_STAGED.diff;                                                                     \
-                    echo -E $unstaged >$top/LAST_UNSTAGED.diff;                                                                 \
+                    echo -E $staged >$top/LAST_STAGED.diff;                                                                       \
+                    echo -E $unstaged >$top/LAST_UNSTAGED.diff;                                                                   \
                     printf 'ERROR: Could not stash unstaged.\nDiffs saved: try git apply --unidiff-zero .git/LAST_STAGED.diff .git/LAST_UNSTAGED.diff\n'; \
-                };                                                                                                                  \
+                };                                                                                                                \
             }; f";
   };
 

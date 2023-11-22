@@ -29,7 +29,7 @@ in
         name = "startsway";
         destination = "/bin/startsway";
         executable = true;
-        text = ''
+        text = /* bash */ ''
           #! ${getExe pkgs.bash}
 
           # Import environment variables from the login manager
@@ -52,7 +52,7 @@ in
         xdg-portal = enabled;
       };
 
-      home.configFile."sway/config".text = fileWithText substitutedConfig ''
+      home.configFile."sway/config".text = fileWithText substitutedConfig /* bash */ ''
         #############################
         #░░░░░░░░░░░░░░░░░░░░░░░░░░░#
         #░░█▀▀░█░█░█▀▀░▀█▀░█▀▀░█▄█░░#
@@ -102,7 +102,7 @@ in
         gnome.gnome-control-center
       ];
 
-      extraSessionCommands = ''
+      extraSessionCommands = /* bash */ ''
         export SDL_VIDEODRIVER=wayland
         export QT_QPA_PLATFORM=wayland
         export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
@@ -134,7 +134,7 @@ in
         environment.PATH = lib.mkForce null;
         serviceConfig = {
           Type = "simple";
-          ExecStart = ''
+          ExecStart = /* bash */ ''
             ${getExe' pkgs.dbus "dbus-run-session"} ${getExe pkgs.sway} --debug
           '';
           Restart = "on-failure";

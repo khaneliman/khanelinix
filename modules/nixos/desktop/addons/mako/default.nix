@@ -29,15 +29,15 @@ in
         Type = "dbus";
         BusName = "org.freedesktop.Notifications";
 
-        ExecCondition = ''
+        ExecCondition = /* bash */ ''
           ${getExe pkgs.bash} -c '[ -n "$WAYLAND_DISPLAY" ]'
         '';
 
-        ExecStart = ''
+        ExecStart = /* bash */ ''
           ${getExe pkgs.mako}
         '';
 
-        ExecReload = ''
+        ExecReload = /* bash */ ''
           ${getExe' pkgs.mako "makoctl"} reload
         '';
 

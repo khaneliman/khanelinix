@@ -12,7 +12,7 @@ let
 
         dontUnpack = true;
 
-        installPhase = ''
+        installPhase = /* bash */ ''
           cp $src $out
         '';
 
@@ -40,7 +40,7 @@ pkgs.stdenvNoCC.mkDerivation {
   name = "khanelinix.wallpapers";
   src = ./wallpapers;
 
-  installPhase = ''
+  installPhase = /* bash */ ''
     mkdir -p ${installTarget}
 
     find * -type f -mindepth 0 -maxdepth 0 -exec cp ./{} ${installTarget}/{} ';'

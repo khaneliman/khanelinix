@@ -16,7 +16,7 @@ writeShellApplication
     coreutils
   ];
 
-  text = ''
+  text = /* bash */ ''
     readlinkWithPrint() {
         link=$(readlink "$1")
         p=$link

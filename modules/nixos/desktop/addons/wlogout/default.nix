@@ -21,7 +21,7 @@ in
 
     khanelinix.home = {
       configFile = {
-        "wlogout/layout".text = ''
+        "wlogout/layout".text = /* json */ ''
           {
               "label" : "lock",
               "action" : "swaylock",
@@ -59,7 +59,7 @@ in
               "keybind" : "r"
           }
         '';
-        "wlogout/style.css".text = ''
+        "wlogout/style.css".text = /* css */ ''
           * {
             background-image: none;
             font-family: Monaspace Argon;

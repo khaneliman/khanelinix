@@ -49,7 +49,7 @@ in
             "browser.theme.dark-toolbar-theme" = true;
           };
 
-          userChrome = ''
+          userChrome = /* css */ ''
             #spacesToolbar,
             #agenda-container,
             #agenda,

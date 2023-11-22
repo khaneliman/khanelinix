@@ -28,7 +28,7 @@ let
     sha256 = "1h48yqffpaz437f3c9hfryf23r95rr319lrb3y79kxpxbc9hihxb";
   };
 
-  guideHTML = pkgs.runCommand "yubikey-guide" { } ''
+  guideHTML = pkgs.runCommand "yubikey-guide" { } /* bash */ ''
     ${getExe pkgs.pandoc} \
       --standalone \
       --metadata title="Yubikey Guide" \
@@ -53,7 +53,7 @@ in
       gnupg
     ];
 
-    environment.shellInit = ''
+    environment.shellInit = /* bash */ ''
       export GPG_TTY="$(tty)"
       export SSH_AUTH_SOCK=$(${getExe' pkgs.gnupg "gpgconf"} --list-dirs agent-ssh-socket)
 

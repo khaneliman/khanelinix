@@ -41,7 +41,7 @@ let
     wlogout
   ];
 
-  reload_script = pkgs.writeShellScript "reload_eww" ''
+  reload_script = pkgs.writeShellScript "reload_eww" /* bash */ ''
     windows=$(eww windows | rg '\*' | tr -d '*')
 
     systemctl --user restart eww.service

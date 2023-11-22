@@ -66,7 +66,7 @@ in
         mouse_follows_focus = "off";
       };
 
-      extraConfig = with pkgs; ''
+      extraConfig = with pkgs; /* bash */ ''
         source ${getExe khanelinix.yabai-helper}
 
         BAR_HEIGHT=$(${getExe sketchybar} -m --query bar | jq -r '.height')

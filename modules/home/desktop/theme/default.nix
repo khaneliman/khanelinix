@@ -19,7 +19,7 @@ let
         pkgs.runCommand "yaml to attribute set"
           {
             nativeBuildInputs = [ pkgs.jc ];
-          } ''
+          } /* bash */ ''
           jc --yaml < "${f}" > "$out"
         '';
     in

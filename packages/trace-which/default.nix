@@ -13,7 +13,7 @@ writeShellApplication
 
   checkPhase = "";
 
-  text = ''
+  text = /* bash */ ''
     a=$(which "$1") && exec ${lib.getExe pkgs.khanelinix.trace-symlink} "$a"
   '';
 }

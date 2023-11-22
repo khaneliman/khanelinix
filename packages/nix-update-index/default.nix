@@ -2,7 +2,7 @@
 , pkgs
 , ...
 }:
-pkgs.writeShellScriptBin "nix-update-index" ''
+pkgs.writeShellScriptBin "nix-update-index" /* bash */ ''
   set -euo pipefail
 
   filename="index-${pkgs.system}"

@@ -11,7 +11,7 @@ let
   cfg = config.khanelinix.desktop.addons.sketchybar;
 
   shellAliases = with pkgs; {
-    push = ''command git push && ${getExe sketchybar} --trigger git_push'';
+    push = /* bash */ ''command git push && ${getExe sketchybar} --trigger git_push'';
   };
 in
 {
@@ -23,7 +23,7 @@ in
   config = mkIf cfg.enable {
     home.shellAliases = shellAliases;
 
-    programs.zsh.initExtra = ''
+    programs.zsh.initExtra = /* bash */ ''
       brew() {
         command brew "$@" && ${getExe pkgs.sketchybar} --trigger brew_update
       }

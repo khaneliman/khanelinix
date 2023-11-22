@@ -30,7 +30,7 @@ let
     sha256 = "1h48yqffpaz437f3c9hfryf23r95rr319lrb3y79kxpxbc9hihxb";
   };
 
-  guideHTML = pkgs.runCommand "yubikey-guide" { } ''
+  guideHTML = pkgs.runCommand "yubikey-guide" { } /* bash */ ''
     ${getExe pkgs.pandoc} \
       --standalone \
       --metadata title="Yubikey Guide" \
@@ -53,7 +53,7 @@ let
     name = "yubikey-guide";
   };
 
-  reload-yubikey = pkgs.writeShellScriptBin "reload-yubikey" ''
+  reload-yubikey = pkgs.writeShellScriptBin "reload-yubikey" /* bash */ ''
     ${getExe' pkgs.gnupg "gpg-connect-agent"} "scd serialno" "learn --force" /bye
   '';
 in
@@ -64,7 +64,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.shellInit = ''
+    environment.shellInit = /* bash */ ''
       ${getExe' pkgs.coreutils "timeout"} ${builtins.toString cfg.agentTimeout} ${getExe' pkgs.gnupg "gpgconf"} --launch gpg-agent
       gpg_agent_timeout_status=$?
 

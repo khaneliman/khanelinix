@@ -20,7 +20,7 @@ in
       enable = true;
       package = pkgs.skhd;
 
-      skhdConfig = with pkgs; ''
+      skhdConfig = with pkgs; /* bash */ ''
         # hyper (cmd + shift + alt + ctrl)
         # meh (shift + alt + ctrl)
         # Modes

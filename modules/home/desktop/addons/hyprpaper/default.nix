@@ -33,7 +33,7 @@ in
     mkIf cfg.enable
       {
         xdg.configFile = {
-          "hypr/hyprpaper.conf".text = ''
+          "hypr/hyprpaper.conf".text = /* bash */ ''
             # ░█░█░█▀█░█░░░█░░░█▀█░█▀█░█▀█░█▀▀░█▀▄░█▀▀
             # ░█▄█░█▀█░█░░░█░░░█▀▀░█▀█░█▀▀░█▀▀░█▀▄░▀▀█
             # ░▀░▀░▀░▀░▀▀▀░▀▀▀░▀░░░▀░▀░▀░░░▀▀▀░▀░▀░▀▀▀

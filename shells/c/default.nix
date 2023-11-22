@@ -11,7 +11,7 @@ let
 
   # arguments: outfile
   # basic usage example: mk main [flags]
-  mymake = pkgs.writeShellScriptBin "mk" ''
+  mymake = pkgs.writeShellScriptBin "mk" /* bash */ ''
     if [ -f "$1.c" ]; then
       i="$1.c"
       c=$CC

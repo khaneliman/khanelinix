@@ -16,7 +16,7 @@ let
 
     dontUnpack = true;
 
-    installPhase = ''
+    installPhase = /* bash */ ''
       cp $src $out
     '';
 
@@ -27,12 +27,12 @@ let
   propagatedIcon =
     pkgs.runCommandNoCC "propagated-icon"
       { passthru = { inherit (cfg.icon) fileName; }; }
-      ''
-        local target="$out/share/icons/user/${cfg.name}"
-        mkdir -p "$target"
+      /* bash */ ''
+      local target="$out/share/icons/user/${cfg.name}"
+      mkdir -p "$target"
 
-        cp ${cfg.icon} "$target/${cfg.icon.fileName}"
-      '';
+      cp ${cfg.icon} "$target/${cfg.icon.fileName}"
+    '';
 in
 {
   options.khanelinix.user = with types; {

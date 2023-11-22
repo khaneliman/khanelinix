@@ -20,7 +20,7 @@ writeShellApplication
     libnotify
   ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [ wf-recorder ];
 
-  text = ''
+  text = /* bash */ ''
       # If an instance of wf-recorder is running under this user kill it with SIGINT and exit
       # killall -s SIGINT wf-recorder && exit
       pkill --euid "$USER" --signal SIGINT wf-recorder && exit

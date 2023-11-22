@@ -22,7 +22,7 @@ in
       enableZshIntegration = true;
       package = pkgs.khanelinix.wezterm;
 
-      extraConfig = ''
+      extraConfig = /* lua */''
         function scheme_for_appearance(appearance)
           if appearance:find "Dark" then
             return "Catppuccin Macchiato"

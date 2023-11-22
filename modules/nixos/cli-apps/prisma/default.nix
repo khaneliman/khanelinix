@@ -24,7 +24,7 @@ in
     environment.systemPackages = [ cfg.pkgs.npm ];
 
     khanelinix.home.extraOptions = {
-      programs.zsh.initExtra = ''
+      programs.zsh.initExtra = /* bash */ ''
         export PRISMA_MIGRATION_ENGINE_BINARY="${getExe' cfg.pkgs.engines "migration-engine"}"
         export PRISMA_QUERY_ENGINE_BINARY="${getExe' cfg.pkgs.engines "query-engine"}"
         export PRISMA_QUERY_ENGINE_LIBRARY="${cfg.pkgs.engines}/lib/libquery_engine.node"

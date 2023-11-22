@@ -25,7 +25,7 @@ in
         enable = true;
         package = pkgs.zsh;
 
-        completionInit = ''
+        completionInit = /* bash */ ''
           zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
         '';
 
@@ -41,7 +41,7 @@ in
           package = pkgs.zsh-syntax-highlighting;
         };
 
-        initExtra = ''
+        initExtra = /* bash */ ''
           # Use vim bindings.
           set -o vi
 
