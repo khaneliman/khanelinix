@@ -13,6 +13,7 @@ in
 {
   options.khanelinix.desktop.addons.yabai = {
     enable = mkBoolOpt false "Whether or not to enable yabai.";
+    debug = mkBoolOpt false "Whether to enable debug output.";
   };
 
   config = mkIf cfg.enable {
@@ -22,6 +23,7 @@ in
       enableScriptingAddition = true;
 
       config = {
+        debug_output = if cfg.debug then "on" else "off";
         external_bar = "all:$${BAR_HEIGHT}:0";
         split_type = "auto";
         split_ratio = "0.5";

@@ -50,7 +50,6 @@ in
         "hammerspoon"
         "kitty"
         "launchcontrol"
-        "lulu"
         "monitorcontrol"
         "raycast"
         "sf-symbols"
@@ -73,7 +72,6 @@ in
         "AmorphousMemoryMark" = 1495719766;
         "Amphetamine" = 937984704;
         "AutoMounter" = 1160435653;
-        "Cascadea" = 1432182561;
         "Dark Reader for Safari" = 1438243180;
         "Disk Speed Test" = 425264550;
         "Malwarebytes Browser Guard" = 1577761052;
