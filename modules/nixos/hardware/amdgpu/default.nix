@@ -19,7 +19,7 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      radeontop
+      amdgpu_top
       vulkan-tools
     ];
 
