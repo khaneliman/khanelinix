@@ -16,6 +16,7 @@ in
     apps = {
       zathura = enabled;
       thunderbird = enabled;
+      chromium = enabled;
     };
 
     cli-apps = {
