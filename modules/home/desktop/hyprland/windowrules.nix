@@ -53,6 +53,12 @@ in
               "move 78% 6%, class:^(thunderbird)$,title:.*(Reminders)$"
               "pin, class:^(thunderbird)$,title:.*(Reminders)$"
 
+              # thunar file operation progress
+              "float, class:^(thunar)$,title:^(File Operation Progress)$"
+              "size 800 600, class:^(thunar)$,title:^(File Operation Progress)$"
+              "move 78% 6%, class:^(thunar)$,title:^(File Operation Progress)$"
+              "pin, class:^(thunar)$,title:^(File Operation Progress)$"
+
               # Workspace 8 (VM) layout
               "size 1000 1330, class:^(virt-manager)$, title:^(Virtual Machine Manager)$"
               "float, class:^(virt-manager)$, title:^(Virtual Machine Manager)$"

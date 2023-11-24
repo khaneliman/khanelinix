@@ -82,6 +82,8 @@ in
       "class<thunderbird>" = "";
       "class<virt-manager>" = "󰢹";
       "class<vlc>" = "󰕼";
+      "class<thunar>" = "󰉋";
+      "class<org.gnome.Nautilus>" = "󰉋";
     };
   };
 
