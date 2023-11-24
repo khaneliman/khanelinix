@@ -49,6 +49,11 @@ in
           sopsFile = ../../../../secrets/khaneliman/default.yaml;
           path = "${config.home.homeDirectory}/.config/twt/config.toml";
         };
+
+        weather_config = {
+          sopsFile = ../../../../secrets/khaneliman/default.yaml;
+          path = "${config.home.homeDirectory}/weather_config.json";
+        };
       };
     };
   };
