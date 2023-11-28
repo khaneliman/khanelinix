@@ -81,10 +81,9 @@ in
       extraPython3Packages = ps: [ ps.pip ];
     };
 
-    # TODO: Convert to custom nixos neovim config 
     xdg.configFile = {
       "astronvim" = {
-        onChange = "${getExe pkgs.neovim} --headless +quitall";
+        onChange = "NVIM_APPNAME=astronvim ${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
         source = lib.cleanSourceWith {
           filter = name: _type:
             let
@@ -96,7 +95,7 @@ in
         recursive = true;
       };
       "lazyvim" = {
-        onChange = "${getExe pkgs.neovim} --headless +quitall";
+        onChange = "NVIM_APPNAME=lazyvim ${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
         source = lib.cleanSourceWith {
           filter = name: _type:
             let
@@ -108,7 +107,7 @@ in
         recursive = true;
       };
       "lunarvim" = {
-        onChange = "${getExe pkgs.neovim} --headless +quitall";
+        onChange = "NVIM_APPNAME=lunarvim ${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
         source = lib.cleanSourceWith {
           filter = name: _type:
             let
@@ -119,8 +118,9 @@ in
         };
         recursive = true;
       };
+      # TODO: Convert to custom nixos neovim config 
       "nvim" = {
-        onChange = "${getExe pkgs.neovim} --headless +quitall";
+        onChange = "${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
         source = lib.cleanSourceWith {
           filter = name: _type:
             let
