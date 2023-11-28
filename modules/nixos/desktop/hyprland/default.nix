@@ -27,11 +27,11 @@ in
       {
         environment.sessionVariables = {
           CLUTTER_BACKEND = "wayland";
-          GDK_BACKEND = "wayland";
+          GDK_BACKEND = "wayland,x11";
           HYPRLAND_LOG_WLR = "1";
           MOZ_ENABLE_WAYLAND = "1";
           MOZ_USE_XINPUT2 = "1";
-          QT_QPA_PLATFORM = "wayland";
+          QT_QPA_PLATFORM = "wayland;xcb";
           QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
           SDL_VIDEODRIVER = "wayland";
           WLR_DRM_NO_ATOMIC = "1";
