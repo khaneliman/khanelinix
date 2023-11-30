@@ -81,9 +81,10 @@ in
       extraPython3Packages = ps: [ ps.pip ];
     };
 
+    # TODO: setup onchange to either be after sops-nix or not load wakatime in headless
     xdg.configFile = {
       "astronvim" = {
-        onChange = "NVIM_APPNAME=astronvim ${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
+        # onChange = "NVIM_APPNAME=astronvim ${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
         source = lib.cleanSourceWith {
           filter = name: _type:
             let
@@ -95,7 +96,7 @@ in
         recursive = true;
       };
       "lazyvim" = {
-        onChange = "NVIM_APPNAME=lazyvim ${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
+        # onChange = "NVIM_APPNAME=lazyvim ${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
         source = lib.cleanSourceWith {
           filter = name: _type:
             let
@@ -107,7 +108,7 @@ in
         recursive = true;
       };
       "lunarvim" = {
-        onChange = "NVIM_APPNAME=lunarvim ${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
+        # onChange = "NVIM_APPNAME=lunarvim ${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
         source = lib.cleanSourceWith {
           filter = name: _type:
             let
@@ -120,7 +121,7 @@ in
       };
       # TODO: Convert to custom nixos neovim config 
       "nvim" = {
-        onChange = "${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
+        # onChange = "${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
         source = lib.cleanSourceWith {
           filter = name: _type:
             let
