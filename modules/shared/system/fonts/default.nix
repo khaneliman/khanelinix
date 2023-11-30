@@ -15,10 +15,9 @@ in
     enable = mkBoolOpt false "Whether or not to manage fonts.";
     fonts = with pkgs;
       mkOpt (listOf package) [
-        (nerdfonts.override { fonts = [ "CascadiaCode" ]; })
-        monaspace
+        (nerdfonts.override { fonts = [ "CascadiaCode" "Monaspace" ]; })
       ] "Custom font packages to install.";
-    default = mkOpt types.str "Monaspace Kyrpton" "Default font name";
+    default = mkOpt types.str "MonaspiceKr Nerd Font" "Default font name";
   };
 
   config = mkIf cfg.enable {

@@ -9,7 +9,7 @@
 }
 
 #workspaces label {
-  font-family: Monaspace Argon;
+  font-family: MonaspiceAr Nerd Font;
   font-size: 20px;
 }
 
@@ -40,4 +40,3 @@
   border-radius: 1em;
   color: @red;
 }
-

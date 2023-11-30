@@ -31,7 +31,7 @@ in
             "Noto Color Emoji"
           ];
           monospace = [
-            "Monaspace Argon"
+            "MonaspiceAr Nerd Font"
             "Liga SFMonon Nerd Font"
             "CaskaydiaCove Nerd Font Mono"
           ];

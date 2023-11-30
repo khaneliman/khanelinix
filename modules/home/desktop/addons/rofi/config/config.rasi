@@ -1,7 +1,7 @@
 configuration{
     modi: "run,drun";
     lines: 6;
-    font: "Monaspace Argon 14";
+    font: "MonaspiceAr Nerd Font 14";
     show-icons: true;
     icon-theme: "Papirus-Dark";
     terminal: "st";

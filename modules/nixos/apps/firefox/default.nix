@@ -52,9 +52,9 @@ in
           # "media.hardware-video-decoding.force-enabled" = true;
           "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
           "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
-          "font.name.monospace.x-western" = "Monaspace Krypton";
-          "font.name.sans-serif.x-western" = "Monaspace Argon";
-          "font.name.serif.x-western" = "Monaspace Argon";
+          "font.name.monospace.x-western" = "MonaspiceKr Nerd Font";
+          "font.name.sans-serif.x-western" = "MonaspiceAr Nerd Font";
+          "font.name.serif.x-western" = "MonaspiceAr Nerd Font";
         } "Settings to apply to the profile.";
       userChrome =
         mkOpt str "" "Extra configuration for the user chrome CSS file.";

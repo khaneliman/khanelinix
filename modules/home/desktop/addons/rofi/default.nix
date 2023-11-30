@@ -26,7 +26,7 @@ in
       enable = true;
       package = pkgs.rofi-wayland;
 
-      font = "Monaspace Argon 14";
+      font = "MonaspiceAr Nerd Font 14";
       location = "center";
       theme = "catppuccin";
 

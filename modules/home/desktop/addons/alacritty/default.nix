@@ -121,7 +121,7 @@ in
   options.khanelinix.desktop.addons.alacritty = with types; {
     enable = mkBoolOpt false "Whether to enable alacritty.";
     theme = mkOpt attr macchiato "Theme to use for alacritty.";
-    font = mkOpt str "Monaspace Krypton" "Font to use for alacritty.";
+    font = mkOpt str "MonaspiceKr Nerd Font" "Font to use for alacritty.";
   };
 
   config = mkIf cfg.enable {
