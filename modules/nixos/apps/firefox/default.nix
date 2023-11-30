@@ -53,8 +53,8 @@ in
           "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
           "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
           "font.name.monospace.x-western" = "MonaspiceKr Nerd Font";
-          "font.name.sans-serif.x-western" = "MonaspiceAr Nerd Font";
-          "font.name.serif.x-western" = "MonaspiceAr Nerd Font";
+          "font.name.sans-serif.x-western" = "MonaspiceNe Nerd Font";
+          "font.name.serif.x-western" = "MonaspiceNe Nerd Font";
         } "Settings to apply to the profile.";
       userChrome =
         mkOpt str "" "Extra configuration for the user chrome CSS file.";

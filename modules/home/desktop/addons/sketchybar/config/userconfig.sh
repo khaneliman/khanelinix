@@ -17,7 +17,7 @@ export P_DYNAMIC_ISLAND_DISPLAY=Primary
 
 # Needs to have Regular, Bold, Semibold, Heavy and Black variants
 export P_DYNAMIC_ISLAND_FONT="SF Pro"
-export P_DYNAMIC_ISLAND_NERD_FONT="Liga SFMono Nerd Font"
+export P_DYNAMIC_ISLAND_NERD_FONT="MonaspiceNe Nerd Font"
 
 # Enable/Disable Islands
 export P_DYNAMIC_ISLAND_MUSIC_ENABLED=1
@@ -132,6 +132,6 @@ export P_DYNAMIC_ISLAND_PADDINGS=3 # All paddings use this value (icon, label, b
 ## Fonts
 #
 export FONT="SF Pro" # Needs to have Regular, Bold, Semibold, Heavy and Black variants
-export NERD_FONT="Liga SFMono Nerd Font"
+export NERD_FONT="MonaspiceNe Nerd Font"
 
 export PADDINGS=3

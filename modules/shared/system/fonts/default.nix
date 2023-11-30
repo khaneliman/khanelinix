@@ -17,7 +17,7 @@ in
       mkOpt (listOf package) [
         (nerdfonts.override { fonts = [ "CascadiaCode" "Monaspace" ]; })
       ] "Custom font packages to install.";
-    default = mkOpt types.str "MonaspiceKr Nerd Font" "Default font name";
+    default = mkOpt types.str "MonaspiceNe Nerd Font" "Default font name";
   };
 
   config = mkIf cfg.enable {
