@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) mkEnableOption mkIf getExe;
+  inherit (lib) mkEnableOption mkIf;
   inherit (lib.internal) mkBoolOpt;
   inherit (inputs) astronvim-config lazyvim-config lunarvim-config neovim-config;
 
