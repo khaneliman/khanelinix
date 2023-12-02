@@ -20,6 +20,10 @@ in
     xdg.configFile.wgetrc.text = "";
 
     khanelinix = {
+      apps = {
+        firefox = enabled;
+      };
+
       cli-apps = {
         bottom = enabled;
         btop = enabled;
