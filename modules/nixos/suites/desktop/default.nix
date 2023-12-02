@@ -33,6 +33,7 @@ in
     khanelinix = {
       apps = {
         _1password = enabled;
+        firefox = enabled;
       };
 
       desktop = {

@@ -25,9 +25,6 @@ in
   config = mkIf cfg.enable {
     home = {
       file = mkMerge [
-        # (mkIf config.khanelinix.desktop.gnome.enable {
-        #   ".mozilla/native-messaging-hosts/org.gnome.chrome_gnome_shell.json".source = "${pkgs.chrome-gnome-shell}/lib/mozilla/native-messaging-hosts/org.gnome.chrome_gnome_shell.json";
-        # })
         {
           ".mozilla/native-messaging-hosts/com.dannyvankooten.browserpass.json".source = "${pkgs.browserpass}/lib/mozilla/native-messaging-hosts/com.dannyvankooten.browserpass.json";
           ".mozilla/firefox/${config.khanelinix.user.name}/chrome/" = {
@@ -101,7 +98,6 @@ in
           ublock-origin
           user-agent-string-switcher
         ];
-
 
         settings = mkMerge [
           cfg.settings

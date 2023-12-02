@@ -18,6 +18,7 @@ in
 
     apps = {
       _1password = enabled;
+      firefox = enabled;
       # vscode = enabled;
     };
 

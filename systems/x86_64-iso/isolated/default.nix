@@ -66,7 +66,9 @@ in
       };
     };
 
-    apps = { };
+    apps = {
+      firefox = enabled;
+    };
 
     cli-apps = {
       neovim = enabled;
