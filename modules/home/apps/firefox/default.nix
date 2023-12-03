@@ -84,6 +84,7 @@ in
         Preferences = { };
       };
 
+
       profiles.${config.khanelinix.user.name} = {
         inherit (cfg) extraConfig userChrome;
         inherit (config.khanelinix.user) name;
@@ -103,6 +104,11 @@ in
           ublock-origin
           user-agent-string-switcher
         ];
+
+        search = {
+          default = "Google";
+          privateDefault = "DuckDuckGo";
+        };
 
         settings = mkMerge [
           cfg.settings
