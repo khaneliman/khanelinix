@@ -44,7 +44,7 @@ in
 
     programs.firefox = {
       enable = true;
-      package = if pkgs.stdenv.isLinux then pkgs.firefox-devedition else null;
+      package = if pkgs.stdenv.isLinux then pkgs.firefox-beta else null;
 
       policies = {
         CaptivePortal = false;
