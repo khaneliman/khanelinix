@@ -44,47 +44,45 @@ in
 
     programs.firefox = {
       enable = true;
-      package =
-        if pkgs.stdenv.isLinux then
-          (pkgs.wrapFirefox pkgs.firefox-beta-unwrapped {
-            extraPolicies = {
-              CaptivePortal = false;
-              DisableFirefoxStudies = true;
-              DisableFormHistory = true;
-              DisablePocket = true;
-              DisableTelemetry = true;
-              DisplayBookmarksToolbar = true;
-              DontCheckDefaultBrowser = true;
-              FirefoxHome = {
-                Pocket = false;
-                Snippets = false;
-              };
-              PasswordManagerEnabled = false;
-              # PromptForDownloadLocation = true;
-              UserMessaging = {
-                ExtensionRecommendations = false;
-                SkipOnboarding = true;
-              };
-              ExtensionSettings = {
-                "ebay@search.mozilla.org".installation_mode = "blocked";
-                "amazondotcom@search.mozilla.org".installation_mode = "blocked";
-                "bing@search.mozilla.org".installation_mode = "blocked";
-                "ddg@search.mozilla.org".installation_mode = "blocked";
-                "wikipedia@search.mozilla.org".installation_mode = "blocked";
+      package = if pkgs.stdenv.isLinux then pkgs.firefox-devedition else null;
 
-                "frankerfacez@frankerfacez.com" = {
-                  installation_mode = "force_installed";
-                  install_url = "https://cdn.frankerfacez.com/script/frankerfacez-4.0-an+fx.xpi";
-                };
+      policies = {
+        CaptivePortal = false;
+        DisableFirefoxStudies = true;
+        DisableFormHistory = true;
+        DisablePocket = true;
+        DisableTelemetry = true;
+        DisplayBookmarksToolbar = true;
+        DontCheckDefaultBrowser = true;
+        FirefoxHome = {
+          Pocket = false;
+          Snippets = false;
+        };
+        PasswordManagerEnabled = false;
+        # PromptForDownloadLocation = true;
+        UserMessaging = {
+          ExtensionRecommendations = false;
+          SkipOnboarding = true;
+        };
+        ExtensionSettings = {
+          "ebay@search.mozilla.org".installation_mode = "blocked";
+          "amazondotcom@search.mozilla.org".installation_mode = "blocked";
+          "bing@search.mozilla.org".installation_mode = "blocked";
+          "ddg@search.mozilla.org".installation_mode = "blocked";
+          "wikipedia@search.mozilla.org".installation_mode = "blocked";
 
-                "magnolia_limited_permissions@12.34" = {
-                  installation_mode = "force_installed";
-                  install_url = "https://gitlab.com/magnolia1234/bpc-uploads/-/raw/master/bypass_paywalls_clean-3.2.3.0-custom.xpi";
-                };
-              };
-              Preferences = { };
-            };
-          }) else null;
+          "frankerfacez@frankerfacez.com" = {
+            installation_mode = "force_installed";
+            install_url = "https://cdn.frankerfacez.com/script/frankerfacez-4.0-an+fx.xpi";
+          };
+
+          "magnolia_limited_permissions@12.34" = {
+            installation_mode = "force_installed";
+            install_url = "https://gitlab.com/magnolia1234/bpc-uploads/-/raw/master/bypass_paywalls_clean-3.4.4.0-custom.xpi";
+          };
+        };
+        Preferences = { };
+      };
 
       profiles.${config.khanelinix.user.name} = {
         inherit (cfg) extraConfig userChrome;
