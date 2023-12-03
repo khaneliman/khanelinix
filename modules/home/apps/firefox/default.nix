@@ -9,6 +9,10 @@ let
   inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.apps.firefox;
+
+  firefoxPath =
+    if pkgs.stdenv.isLinux then ".mozilla/firefox/${config.khanelinix.user.name}"
+    else "/Users/${config.khanelinix.user.name}/Library/Application Support/Firefox/Profiles/${config.khanelinix.user.name}";
 in
 {
   options.khanelinix.apps.firefox = with types;
@@ -26,8 +30,8 @@ in
     home = {
       file = mkMerge [
         {
-          ".mozilla/native-messaging-hosts/com.dannyvankooten.browserpass.json".source = "${pkgs.browserpass}/lib/mozilla/native-messaging-hosts/com.dannyvankooten.browserpass.json";
-          ".mozilla/firefox/${config.khanelinix.user.name}/chrome/" = {
+          "${firefoxPath}/native-messaging-hosts/com.dannyvankooten.browserpass.json".source = "${pkgs.browserpass}/lib/mozilla/native-messaging-hosts/com.dannyvankooten.browserpass.json";
+          "${firefoxPath}/chrome/" = {
             source = lib.cleanSourceWith {
               src = lib.cleanSource ./chrome/.;
             };
@@ -92,6 +96,7 @@ in
           angular-devtools
           bitwarden
           darkreader
+          firefox-color
           onepassword-password-manager
           reduxdevtools
           sponsorblock
