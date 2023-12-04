@@ -2,7 +2,6 @@
 , lib
 , inputs
 , options
-, pkgs
 , system
 , ...
 }:
