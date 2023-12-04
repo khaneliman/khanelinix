@@ -31,9 +31,9 @@ in
       file = mkMerge [
         {
           "${firefoxPath}/native-messaging-hosts/com.dannyvankooten.browserpass.json".source = "${pkgs.browserpass}/lib/mozilla/native-messaging-hosts/com.dannyvankooten.browserpass.json";
-          "${firefoxPath}/chrome/" = {
+          "${firefoxPath}/chrome/img" = {
             source = lib.cleanSourceWith {
-              src = lib.cleanSource ./chrome/.;
+              src = lib.cleanSource ./chrome/img/.;
             };
 
             recursive = true;
@@ -86,7 +86,7 @@ in
 
 
       profiles.${config.khanelinix.user.name} = {
-        inherit (cfg) extraConfig userChrome;
+        inherit (cfg) extraConfig;
         inherit (config.khanelinix.user) name;
 
         id = 0;
@@ -156,6 +156,11 @@ in
             "signon.autofillForms" = false;
           }
         ];
+
+        # TODO: support alternative theme loading
+        userChrome = builtins.readFile ./chrome/userChrome.css + ''
+          ${cfg.userChrome}
+        '';
       };
     };
   };
