@@ -1,12 +1,15 @@
 { config
+, inputs
 , lib
 , options
 , pkgs
+, system
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+  inherit (inputs) nixpkgs-wayland;
 
   cfg = config.khanelinix.desktop.addons.wlogout;
 in
@@ -17,7 +20,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ wlogout ];
+    environment.systemPackages = with nixpkgs-wayland.packages.${system}; [ wlogout ];
 
     khanelinix.home = {
       configFile = {
