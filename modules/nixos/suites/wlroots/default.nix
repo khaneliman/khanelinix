@@ -1,4 +1,6 @@
 { config
+, inputs
+, system
 , lib
 , options
 , pkgs
@@ -7,6 +9,7 @@
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt enabled;
+  inherit (inputs) nixpkgs-wayland;
 
   cfg = config.khanelinix.suites.wlroots;
 in
@@ -20,9 +23,9 @@ in
     environment.systemPackages = with pkgs; [
       cliphist
       swayimg
-      wdisplays
-      wf-recorder
-      wl-clipboard
+      nixpkgs-wayland.packages.${system}.wdisplays
+      nixpkgs-wayland.packages.${system}.wf-recorder
+      nixpkgs-wayland.packages.${system}.wl-clipboard
       wlr-randr
       # Not really wayland specific, but I don't want to make a new module for it
       brightnessctl
