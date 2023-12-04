@@ -1,11 +1,14 @@
 { config
+, inputs
 , lib
 , options
+, system
 , ...
 }:
 let
   inherit (lib) mkIf getExe getExe';
   inherit (lib.internal) mkBoolOpt;
+  inherit (inputs) nixpkgs-wayland;
 
   cfg = config.khanelinix.desktop.addons.swayidle;
 in
@@ -18,6 +21,8 @@ in
   config = mkIf cfg.enable {
     services.swayidle = {
       enable = true;
+      package = nixpkgs-wayland.packages.${system}.swayidle;
+
       events = [
         {
           event = "before-sleep";
