@@ -1,10 +1,15 @@
 { writeShellApplication
 , pkgs
-, wf-recorder ? pkgs.stdenv.isLinux
-, wl-clipboard
+, inputs
+, gnome
 , libnotify
+, wl-screenrec ? pkgs.stdenv.isLinux
+, system
 , ...
 }:
+let
+  inherit (inputs) nixpkgs-wayland;
+in
 writeShellApplication
 {
   name = "record_screen";
@@ -16,14 +21,16 @@ writeShellApplication
   checkPhase = "";
 
   runtimeInputs = [
-    wl-clipboard
+    nixpkgs-wayland.packages.${system}.wl-clipboard
     libnotify
-  ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [ wf-recorder ];
+    nixpkgs-wayland.packages.${system}.slurp
+    gnome.zenity
+  ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [ wl-screenrec ];
 
   text = /* bash */ ''
-      # If an instance of wf-recorder is running under this user kill it with SIGINT and exit
-      # killall -s SIGINT wf-recorder && exit
-      pkill --euid "$USER" --signal SIGINT wf-recorder && exit
+      # If an instance of wl-screenrec is running under this user kill it with SIGINT and exit
+      # killall -s SIGINT wl-screenrec && exit
+      pkill --euid "$USER" --signal SIGINT wl-screenrec && exit
 
       # Define paths
       DefaultSaveDir=$HOME'/Videos/Recordings'
@@ -49,7 +56,7 @@ writeShellApplication
     		  # Capture video using slup for screen area
     		  # timeout and exit after 10 minutes as user has almost certainly forgotten it's running
     		  notify-send --icon ~/.config/hypr/assets/square.png "Area Recording started..."
-    		  timeout 600 wf-recorder --audio=alsa_output.pci-0000_0c_00.4.analog-stereo.monitor -g "$COORDS" -f "$TmpRecordPath" || exit
+    		  timeout 600 wl-screenrec --audio --audio-device alsa_output.pci-0000_0c_00.4.analog-stereo.monitor -g "$COORDS" -f "$TmpRecordPath" || exit
     	  else
     		  exit
     	  fi
@@ -58,7 +65,7 @@ writeShellApplication
 
     	  OUTPUT=$(hyprctl -j monitors | jq -r '.[] | select( .focused | IN(true)).name')
 
-    	  timeout 600 wf-recorder --audio=alsa_output.pci-0000_0c_00.4.analog-stereo.monitor -f "$TmpRecordPath" -o "$OUTPUT" || exit
+    	  timeout 600 wl-screenrec --audio --audio-device alsa_output.pci-0000_0c_00.4.analog-stereo.monitor -f "$TmpRecordPath" -o "$OUTPUT" || exit
       fi
 
       # Get the filename from the user and honor cancel

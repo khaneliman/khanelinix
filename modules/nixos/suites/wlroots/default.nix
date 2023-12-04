@@ -24,7 +24,7 @@ in
       cliphist
       swayimg
       nixpkgs-wayland.packages.${system}.wdisplays
-      nixpkgs-wayland.packages.${system}.wf-recorder
+      wl-screenrec
       nixpkgs-wayland.packages.${system}.wl-clipboard
       wlr-randr
       # Not really wayland specific, but I don't want to make a new module for it
