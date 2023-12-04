@@ -22,22 +22,6 @@ in
     desktop = {
       hyprland = {
         enable = true;
-
-        customConfigFiles = {
-          "hypr/displays.conf".source = ./hypr/displays.conf;
-        };
-
-        customFiles = {
-          ".screenlayout/primary.sh".source = pkgs.writeShellApplication {
-            name = "khanelinix-xorg-primary.sh";
-            checkPhase = "";
-            text = /* bash */ ''
-              ${getExe pkgs.xorg.xrandr} \
-              	--output XWAYLAND0 --primary --mode 1920x1080 --pos 1420x0 --rotate normal \
-              	--output XWAYLAND1 --mode 5120x1440 --pos 0x1080 --rotate normal
-            '';
-          };
-        };
       };
     };
 
