@@ -36,6 +36,7 @@ in
       desktop = {
         addons = {
           kitty = enabled;
+          gtk.enable = pkgs.stdenv.isLinux;
           qt.enable = pkgs.stdenv.isLinux;
           wezterm = enabled;
         };
