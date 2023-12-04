@@ -18,14 +18,13 @@ in
   config = mkIf cfg.enable {
     services.swayidle = {
       enable = true;
-      systemdTarget = "graphical-session.target";
-      # TODO: Make dynamic for window manager
       events = [
         {
           event = "before-sleep";
           command = "${getExe config.programs.swaylock.package} -defF";
         }
         {
+          # TODO: Make dynamic for window manager
           event = "after-resume";
           command = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms on";
         }
@@ -40,6 +39,7 @@ in
           command = "${getExe config.programs.swaylock.package} -defF";
         }
         {
+          # TODO: Make dynamic for window manager
           timeout = 1200;
           command = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms off";
         }
