@@ -6,12 +6,12 @@ let
 in
 pkgs.rustPlatform.buildRustPackage rec {
   pname = "wezterm";
-  version = "600652583594e9f6195a6427d1fabb09068622a7";
+  version = "e3cd2e93d0ee5f3af7f3fe0af86ffad0cf8c7ea8";
 
   src = pkgs.fetchFromGitHub {
     owner = "wez";
     repo = "wezterm";
-    rev = "600652583594e9f6195a6427d1fabb09068622a7";
+    rev = version;
     fetchSubmodules = true;
     hash = "sha256-iwIiGRHgf2uBf2ueIzdxDtQW9Z7Gf0gXdb+0RIOH+Qo=";
   };

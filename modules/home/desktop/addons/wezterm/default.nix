@@ -34,7 +34,6 @@ in
         local custom = wezterm.color.get_builtin_schemes()[scheme_for_appearance(wezterm.gui.get_appearance())]
 
         return {
-          window_decorations = "RESIZE",
           font = wezterm.font_with_fallback {
             'MonaspiceKr Nerd Font',
             'Liga SFMono Nerd Font',
@@ -48,6 +47,8 @@ in
           use_fancy_tab_bar = false,
           tab_bar_at_bottom = true,
           term = "wezterm",
+          window_close_confirmation = 'NeverPrompt',
+          window_decorations = "RESIZE",
         }
       '';
     };
