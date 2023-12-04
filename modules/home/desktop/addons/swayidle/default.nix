@@ -23,7 +23,7 @@ in
       events = [
         {
           event = "before-sleep";
-          command = "${getExe config.programs.swaylock.package} -df";
+          command = "${getExe config.programs.swaylock.package} -defF";
         }
         {
           event = "after-resume";
@@ -31,13 +31,13 @@ in
         }
         {
           event = "lock";
-          command = "${getExe config.programs.swaylock.package} -df";
+          command = "${getExe config.programs.swaylock.package} -defF";
         }
       ];
       timeouts = [
         {
           timeout = 900;
-          command = "${getExe config.programs.swaylock.package} -df";
+          command = "${getExe config.programs.swaylock.package} -defF";
         }
         {
           timeout = 1200;
