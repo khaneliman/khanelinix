@@ -22,10 +22,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.sessionVariables = {
-      QT_QPA_PLATFORMTHEME = "qt5ct";
-    };
-
     xdg.configFile = {
       "Kvantum".source = ./Kvantum;
       "qt5ct".source = ./qt5ct;
