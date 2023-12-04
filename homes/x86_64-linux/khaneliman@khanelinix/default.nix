@@ -50,6 +50,9 @@ in
 
       hyprland = {
         enable = true;
+        appendConfig = /* bash */ ''
+          hyprctl setcursor ${config.khanelinix.desktop.addons.gtk.cursor.name} 32
+        '';
 
         prependConfig = /* bash */ ''
           # See https://wiki.hyprland.org/Configuring/Monitors/
