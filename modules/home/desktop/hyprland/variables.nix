@@ -34,6 +34,10 @@ in
               ];
             };
 
+            debug = {
+              disable_logs = false;
+            };
+
             decoration = {
               active_opacity = 0.95;
               fullscreen_opacity = 1.0;
