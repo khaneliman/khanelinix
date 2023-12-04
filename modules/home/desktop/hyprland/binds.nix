@@ -34,7 +34,7 @@ in
                 "SUPER_ALT, SPACE, exec, $launcher_alt"
                 "SUPER_SHIFT, SPACE, exec, $launcher_shift"
                 "$mainMod, A, exec, $launchpad"
-                "$mainMod, L, exec, ${getExe config.programs.swaylock.package} --grace 0 --fade-in 0"
+                "$mainMod, L, exec, ${getExe config.programs.swaylock.package}"
                 "$mainMod, T, exec, $term btop"
                 "$mainMod, N, exec, ${getExe' pkgs.swaynotificationcenter "swaync-client"} -t -sw"
                 # "SUPER, V, clipman pick -t rofi

@@ -1,12 +1,15 @@
 { config
 , lib
+, inputs
 , options
 , pkgs
+, system
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+  inherit (inputs) nixpkgs-wayland;
 
   cfg = config.khanelinix.desktop.addons.swaylock;
 in
@@ -19,62 +22,58 @@ in
   config = mkIf cfg.enable {
     programs.swaylock = {
       enable = true;
-      package = pkgs.swaylock-effects;
 
+      package = nixpkgs-wayland.packages.${system}.swaylock;
       settings = {
-        ignore-empty-password = true;
-        disable-caps-lock-text = true;
+        # ignore-empty-password = true;
+        # disable-caps-lock-text = true;
         font = "MonaspiceAr Nerd Font";
-        grace = 300;
+        # grace = 300;
 
-        clock = true;
-        timestr = "%R";
-        datestr = "%a, %e of %B";
+        image = "${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png";
 
-        image = "~/.local/share/wallpapers/catppuccin/tetris.png";
+        # fade-in = "0.2";
 
-        fade-in = "0.2";
+        # effect-blur = "10x2";
+        # effect-scale = "0.1";
 
-        effect-blur = "10x2";
-        effect-scale = "0.1";
+        # indicator = true;
+        # indicator-radius = 240;
+        # indicator-thickness = 20;
+        # indicator-caps-lock = true;
 
-        indicator = true;
-        indicator-radius = 240;
-        indicator-thickness = 20;
-        indicator-caps-lock = true;
+        key-hl-color = "a6da95";
+        bs-hl-color = "f4dbd6";
+        caps-lock-key-hl-color = "a6da95";
+        caps-lock-bs-hl-color = "f4dbd6";
 
-        key-hl-color = "#8aadf4";
-        bs-hl-color = "#ed8796";
-        caps-lock-key-hl-color = "#f5a97f";
-        caps-lock-bs-hl-color = "#ed8796";
+        separator-color = "00000000";
 
-        separator-color = "#181926";
+        inside-color = "00000000";
+        inside-clear-color = "00000000";
+        inside-caps-lock-color = "00000000";
+        inside-ver-color = "00000000";
+        inside-wrong-color = "00000000";
 
-        inside-color = "#24273a";
-        inside-clear-color = "#24273a";
-        inside-caps-lock-color = "#24273a";
-        inside-ver-color = "#24273a";
-        inside-wrong-color = "#24273a";
+        ring-color = "b7bdf8";
+        ring-clear-color = "f4dbd6";
+        ring-caps-lock-color = "f5a97f";
+        ring-ver-color = "8aadf4";
+        ring-wrong-color = "ee99a0";
 
-        ring-color = "#1e2030";
-        ring-clear-color = "#8aadf4";
-        ring-caps-lock-color = "231f20D9";
-        ring-ver-color = "#1e2030";
-        ring-wrong-color = "#ed8796";
+        line-color = "00000000";
+        line-clear-color = "00000000";
+        line-caps-lock-color = "00000000";
+        line-ver-color = "00000000";
+        line-wrong-color = "00000000";
 
-        line-color = "#8aadf4";
-        line-clear-color = "#8aadf4";
-        line-caps-lock-color = "#f5a97f";
-        line-ver-color = "#181926";
-        line-wrong-color = "#ed8796";
+        text-color = "cad3f5";
+        text-clear-color = "f4dbd6";
+        text-caps-lock-color = "f5a97f";
+        text-ver-color = "8aadf4";
+        text-wrong-color = "ee99a0";
 
-        text-color = "#8aadf4";
-        text-clear-color = "#24273a";
-        text-caps-lock-color = "#f5a97f";
-        text-ver-color = "#24273a";
-        text-wrong-color = "#24273a";
-
-        debug = true;
+        # debug = true;
       };
     };
   };
