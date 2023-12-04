@@ -36,7 +36,6 @@ in
         return {
           font = wezterm.font_with_fallback {
             'MonaspiceKr Nerd Font',
-            'Liga SFMono Nerd Font',
             'CaskaydiaCove Nerd Font',
             'Noto Color Emoji',
           },

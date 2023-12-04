@@ -145,12 +145,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # SF Mono Nerd font 
-    sf-mono-nerd-font = {
-      url = "github:shaunsingh/SFMono-Nerd-Font-Ligaturized";
-      flake = false;
-    };
-
     # Snowfall Lib
     snowfall-lib = {
       url = "github:snowfallorg/lib";

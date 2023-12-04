@@ -63,7 +63,6 @@ in
         "felixkratz/homebrew-formulae"
         "khanhas/tap"
         "romkatv/powerlevel10k"
-        "shaunsingh/sfmono-nerd-font-ligaturized"
         "teamookla/speedtest"
       ];
 

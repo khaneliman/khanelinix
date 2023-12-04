@@ -5,7 +5,7 @@ source "$HOME/.config/sketchybar/colors.sh"
 SPACE_ICONS=(" " " " " " "" "" "" " " " ")
 
 space=(
-	icon.font="Liga SFMono Nerd Font:Bold:16.0"
+	icon.font="MonaspiceNe Nerd Font:Bold:16.0"
 	icon.padding_left=7
 	icon.padding_right=7
 	background.padding_left=2

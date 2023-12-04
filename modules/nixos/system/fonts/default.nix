@@ -32,20 +32,9 @@ in
           ];
           monospace = [
             "MonaspiceNe Nerd Font"
-            "Liga SFMonon Nerd Font"
             "CaskaydiaCove Nerd Font Mono"
           ];
         };
-      };
-    };
-
-    khanelinix.home.file = {
-      ".local/share/fonts/SanFransisco/SF-Mono/" = {
-        source = lib.cleanSourceWith {
-          src = lib.cleanSource sf-mono-nerd-font;
-        };
-
-        recursive = true;
       };
     };
   };

@@ -12,12 +12,6 @@ in
   imports = [ ../../../shared/system/fonts/default.nix ];
 
   config = mkIf cfg.enable {
-    homebrew = {
-      casks = [
-        "font-sf-mono-nerd-font-ligaturized"
-      ];
-    };
-
     fonts = {
       fonts = with pkgs;
         [
