@@ -5,12 +5,10 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf mapAttrs mkDefault;
+  inherit (lib) types mkIf;
   inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.desktop.addons.gtk;
-  default-attrs = mapAttrs (_key: mkDefault);
-  nested-default-attrs = mapAttrs (_key: default-attrs);
 in
 {
   options.khanelinix.desktop.addons.gtk = with types; {

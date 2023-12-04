@@ -5,10 +5,8 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
-  inherit (lib.internal) mkBoolOpt mkOpt enabled;
-
-  cfg = config.khanelinix.system.fonts;
+  inherit (lib) types;
+  inherit (lib.internal) mkBoolOpt mkOpt;
 in
 {
   options.khanelinix.system.fonts = with types; {

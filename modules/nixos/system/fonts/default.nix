@@ -6,7 +6,6 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (inputs) sf-mono-nerd-font;
 
   cfg = config.khanelinix.system.fonts;
 in
