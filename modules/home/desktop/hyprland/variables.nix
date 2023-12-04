@@ -85,6 +85,7 @@ in
             input = {
               follow_mouse = 1;
               kb_layout = "us";
+              numlock_by_default = true;
 
               touchpad = {
                 natural_scroll = "no";
