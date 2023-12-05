@@ -15,7 +15,7 @@ export BELL_DOT=􀝗
 
 export BATTERY=
 export CPU=
-export DISK=
+export DISK=󰋊
 export MEMORY=﬙
 export NETWORK=
 export NETWORK_DOWN=
