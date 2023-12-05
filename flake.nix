@@ -35,7 +35,7 @@
 
     # Home Manager (master)
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:khaneliman/home-manager/cava";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

@@ -19,6 +19,7 @@ in
 
     cli-apps = {
       home-manager = enabled;
+      cava = enabled;
     };
 
     desktop = {
