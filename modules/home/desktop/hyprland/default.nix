@@ -22,6 +22,16 @@ let
       }
     )
     4);
+
+  historicalCrashAliases = builtins.listToAttrs (builtins.genList
+    (
+      x:
+      {
+        name = "hlc${toString (x + 1)}";
+        value = "cat /home/${config.khanelinix.user.name}/.local/cache/hyprland/$(command ls -t /home/${config.khanelinix.user.name}/.local/cache/hyprland/ | grep 'hyprlandCrashReport' | head -n ${toString (x + 2)} | tail -n 1)";
+      }
+    )
+    4);
 in
 {
   options.khanelinix.desktop.hyprland = {
@@ -55,7 +65,8 @@ in
       {
         home.shellAliases = {
           hl = "cat /tmp/hypr/$(command ls -t /tmp/hypr/ | grep -v '\.lock$' | head -n 1)/hyprland.log";
-        } // historicalLogAliases;
+          hlc = "cat /home/${config.khanelinix.user.name}/.local/cache/hyprland/$(command ls -t /home/${config.khanelinix.user.name}/.local/cache/hyprland/ | grep 'hyprlandCrashReport' | head -n 1)";
+        } // historicalLogAliases // historicalCrashAliases;
 
         khanelinix = {
           desktop.addons = {
