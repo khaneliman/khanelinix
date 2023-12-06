@@ -12,6 +12,16 @@ let
   inherit (inputs) hyprland;
 
   cfg = config.khanelinix.desktop.hyprland;
+
+  historicalLogAliases = builtins.listToAttrs (builtins.genList
+    (
+      x:
+      {
+        name = "hl${toString (x + 1)}";
+        value = "cat /tmp/hypr/$(command ls -t /tmp/hypr/ | grep -v '\.lock$' | head -n ${toString (x + 2)} | tail -n 1)/hyprland.log";
+      }
+    )
+    4);
 in
 {
   options.khanelinix.desktop.hyprland = {
@@ -44,9 +54,8 @@ in
     mkIf cfg.enable
       {
         home.shellAliases = {
-          hl = "cat /tmp/hypr/$(command ls -t /tmp/hypr/ | head -n 1)/hyprland.log";
-          hl1 = "cat /tmp/hypr/$(command ls -t /tmp/hypr/ | head -n 2 | tail -n 1)/hyprland.log";
-        };
+          hl = "cat /tmp/hypr/$(command ls -t /tmp/hypr/ | grep -v '\.lock$' | head -n 1)/hyprland.log";
+        } // historicalLogAliases;
 
         khanelinix = {
           desktop.addons = {
