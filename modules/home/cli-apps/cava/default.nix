@@ -40,8 +40,8 @@ in
         };
 
         input = {
-          method = mkIf pkgs.stdenv.isLinux "pulse";
-          source = "auto";
+          method = if pkgs.stdenv.isLinux then "pulse" else "portaudio";
+          source = if pkgs.stdenv.isLinux then "auto" else "Background Music";
         };
 
         output = {
