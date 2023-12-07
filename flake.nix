@@ -122,8 +122,8 @@
     };
 
     # Run unpatched dynamically compiled binaries
-    nix-ld = {
-      url = "github:Mic92/nix-ld";
+    nix-ld-rs = {
+      url = "github:nix-community/nix-ld-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -177,7 +177,7 @@
 
   outputs = inputs:
     let
-      inherit (inputs) deploy-rs flake lanzaboote nur nix-ld rustup-overlay snowfall-lib snowfall-frost sops-nix;
+      inherit (inputs) deploy-rs flake lanzaboote nur nix-ld-rs rustup-overlay snowfall-lib snowfall-frost sops-nix;
 
       lib = snowfall-lib.mkLib {
         inherit inputs;
@@ -200,6 +200,7 @@
       overlays = [
         flake.overlays.default
         # nixpkgs-wayland.overlay
+        nix-ld-rs.overlays.default
         nur.overlay
         rustup-overlay.overlays.default
         snowfall-frost.overlays.default
@@ -216,7 +217,7 @@
 
           nixos = [
             lanzaboote.nixosModules.lanzaboote
-            nix-ld.nixosModules.nix-ld
+            # nix-ld.nixosModules.nix-ld
             sops-nix.nixosModules.sops
           ];
         };
