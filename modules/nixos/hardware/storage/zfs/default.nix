@@ -7,10 +7,10 @@ let
   inherit (lib.internal) mkOpt;
   inherit (lib.types) listOf str;
 
-  cfg = config.khanelinix.system.zfs;
+  cfg = config.khanelinix.hardware.storage.zfs;
 in
 {
-  options.khanelinix.system.zfs = {
+  options.khanelinix.hardware.storage.zfs = {
     enable = mkEnableOption "ZFS support";
     auto-snapshot = {
       enable = mkEnableOption "ZFS auto snapshotting";
