@@ -1,5 +1,4 @@
-{ pkgs
-, modulesPath
+{ modulesPath
 , inputs
 , ...
 }:
