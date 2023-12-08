@@ -186,9 +186,12 @@ in
     }];
   };
 
-  services.xserver.displayManager.defaultSession = "hyprland";
-  services.mpd = {
-    musicDirectory = "nfs://austinserver.local/mnt/user/data/media/music";
+  services = {
+    xserver.displayManager.defaultSession = "hyprland";
+    mpd = {
+      musicDirectory = "nfs://austinserver.local/mnt/user/data/media/music";
+    };
+    rpcbind.enable = true; # needed for NFS
   };
 
   # This value determines the NixOS release from which the default

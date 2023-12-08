@@ -161,8 +161,4 @@ in
   hardware = {
     enableRedistributableFirmware = true;
   };
-
-  services = {
-    rpcbind.enable = true; # needed for NFS
-  };
 }
