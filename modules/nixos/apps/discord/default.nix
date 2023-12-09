@@ -20,10 +20,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix.home.configFile = {
-      "BetterDiscord/themes/catppuccin-macchiato.theme.css".source = ./catppuccin-macchiato.theme.css;
-    };
-
     environment.systemPackages =
       lib.optional cfg.enable pkgs.discord
       ++ lib.optional cfg.canary.enable pkgs.khanelinix.discord

@@ -24,6 +24,7 @@ in
     khanelinix = {
       apps = {
         # armcord = enabled;
+        discord = enabled;
         caprine = enabled;
       };
     };
