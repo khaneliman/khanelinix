@@ -5,6 +5,7 @@
 , libnotify
 , wl-screenrec ? pkgs.stdenv.isLinux
 , system
+, lib
 , ...
 }:
 let
@@ -16,6 +17,7 @@ writeShellApplication
 
   meta = {
     mainProgram = "record_screen";
+    platforms = lib.platforms.linux;
   };
 
   checkPhase = "";

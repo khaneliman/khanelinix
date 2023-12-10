@@ -15,6 +15,7 @@ writeShellApplication
 
   meta = {
     mainProgram = "hypr_socket_watch";
+    platforms = lib.platforms.linux;
   };
 
   text = /* bash */ ''

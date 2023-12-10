@@ -1,4 +1,5 @@
 { writeShellApplication
+, lib
 , pciutils
 , ...
 }:
@@ -8,6 +9,7 @@ writeShellApplication
 
   meta = {
     mainProgram = "list-iommu";
+    platforms = lib.platforms.linux;
   };
 
   checkPhase = "";
