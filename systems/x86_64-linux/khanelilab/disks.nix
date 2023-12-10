@@ -1,7 +1,4 @@
-{ config, disks ? [ "/dev/nvme0n1" "/dev/nvme1n1" "/dev/sda" ], ... }:
-let
-  defaultBtrfsOpts = [ "defaults" "compress=zstd:1" "ssd" "noatime" "nodiratime" ];
-in
+{ disks ? [ "/dev/nvme0n1" "/dev/nvme1n1" "/dev/sda" ], ... }:
 {
   disko.devices = {
     disk = {
