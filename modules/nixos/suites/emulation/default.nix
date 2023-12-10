@@ -37,7 +37,7 @@ in
 
     khanelinix = {
       apps = {
-        retroarch.enable = mkIf cfg.retroarchFull == false;
+        retroarch.enable = if cfg.retroarchFull then false else true;
       };
     };
   };
