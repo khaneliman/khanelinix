@@ -1,6 +1,6 @@
 keys:
   - &admin_khaneliman age1547vqtqhgtxu54eewxwttjsfd85w0lm4f46fyxxhnx2ydxt7kyxs36ts2d
-  - &user_khanelinix_khaneliman age13xfa77f49ne56z3yyqh9qc9upjmrjfva8kcvg3jfem2m99dhr9fs34gdrp 
+  - &user_khanelinix_khaneliman age13xfa77f49ne56z3yyqh9qc9upjmrjfva8kcvg3jfem2m99dhr9fs34gdrp
   - &user_CORE_nixos age1qh2epukpmcg69386v5shr3w9l2tvryan4xr8npdk8tkth62jtpwqg4u0n3
   - &user_khanelimac_khaneliman age1q2qaahrx4chvsa5g7xqwrwk28mld6kn4md8crcrqg046m8yt2efsugl8vr
 creation_rules:
@@ -8,7 +8,20 @@ creation_rules:
     key_groups:
       - age:
           - *admin_khaneliman
-  - path_regex: secrets/khanelinix/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: secrets/CORE/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+          - *admin_khaneliman
+  - path_regex: secrets/CORE/nixos/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+          - *admin_khaneliman
+          - *user_CORE_nixos
+  - path_regex: secrets/khanelilab/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+          - *admin_khaneliman
+  - path_regex: secrets/khanelimac/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
           - *admin_khaneliman
@@ -17,16 +30,15 @@ creation_rules:
       - age:
           - *admin_khaneliman
           - *user_khanelimac_khaneliman
+  - path_regex: secrets/khanelinix/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+          - *admin_khaneliman
   - path_regex: secrets/khanelinix/khaneliman[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
           - *admin_khaneliman
           - *user_khanelinix_khaneliman
-  - path_regex: secrets/CORE/nixos/[^/]+\.(yaml|json|env|ini)$
-    key_groups:
-      - age:
-          - *admin_khaneliman
-          - *user_CORE_nixos
   - path_regex: secrets/khaneliman/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
