@@ -194,6 +194,7 @@
         # TODO: cleanup when available
         permittedInsecurePackages = [
           "openssl-1.1.1v"
+          "electron-25.9.0"
         ];
       };
 
