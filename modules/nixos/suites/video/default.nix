@@ -17,6 +17,9 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
+      devede
+      handbrake
+      k3b
       mediainfo-gui
       pitivi
       vlc
