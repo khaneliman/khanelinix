@@ -212,9 +212,10 @@
           darwin = [
           ];
 
-          home = [
-            sops-nix.homeManagerModules.sops
-          ];
+          ## TODO: update upstream to support
+          # home = [
+          #   sops-nix.homeManagerModules.sops
+          # ];
 
           nixos = [
             lanzaboote.nixosModules.lanzaboote
