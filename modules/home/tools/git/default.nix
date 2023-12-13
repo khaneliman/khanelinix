@@ -96,6 +96,11 @@ in
         };
       };
 
+      git-credential-oauth = {
+        enable = true;
+        package = pkgs.git-credential-oauth;
+      };
+
       gh = {
         enable = true;
         gitCredentialHelper = {
