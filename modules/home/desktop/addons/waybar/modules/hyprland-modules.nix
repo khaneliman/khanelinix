@@ -84,6 +84,8 @@ in
       "class<vlc>" = "󰕼";
       "class<thunar>" = "󰉋";
       "class<org.gnome.Nautilus>" = "󰉋";
+      "class<Spotify>" = "";
+      "title<Spotify Free>" = "";
     };
   };
 

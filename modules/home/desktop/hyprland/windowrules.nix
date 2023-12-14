@@ -157,7 +157,9 @@ in
               "workspace 7, class:^(mpv|vlc|mpdevil)$"
               "workspace 7 silent, class:^(Spotify)$"
               "workspace 7 silent, title:^(Spotify)$"
+              "workspace 7 silent, title:^(Spotify Free)$"
               "tile, class:^(Spotify)$"
+              "tile, class:^(Spotify Free)$"
               "workspace 7 silent, class:^(elisa)$"
               #Remote
               "workspace 8 silent, class:^(virt-manager|qemu)$"
