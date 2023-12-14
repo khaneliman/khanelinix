@@ -12,14 +12,14 @@ let
 
   cfg = config.khanelinix.cli-apps.spicetify;
 
-  spicePkgs = spicetify-nix.packages.${pkgs.system}.default;
+  spicePkgs = spicetify-nix.legacyPackages.${pkgs.system};
 in
 {
   options.khanelinix.cli-apps.spicetify = {
     enable = mkBoolOpt false "Whether or not to enable support for spicetify.";
   };
 
-  imports = [ spicetify-nix.homeManagerModule ];
+  imports = [ spicetify-nix.homeManagerModules.default ];
 
   config = mkIf cfg.enable {
     programs.spicetify = {
