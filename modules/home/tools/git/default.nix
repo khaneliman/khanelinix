@@ -29,6 +29,7 @@ in
     programs = {
       git = {
         enable = true;
+        package = pkgs.gitFull;
         inherit (cfg) userName userEmail;
         inherit (aliases) aliases;
         lfs = enabled;
@@ -40,7 +41,7 @@ in
         extraConfig = {
 
           credential = {
-            helper = mkIf cfg.wslAgentBridge ''/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe'';
+            helper = if cfg.wslAgentBridge then ''/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe'' else ''${getExe' pkgs.gitFull "git-credential-libsecret"}'';
             useHttpPath = true;
           };
 
@@ -96,20 +97,16 @@ in
         };
       };
 
-      git-credential-oauth = {
-        enable = true;
-        package = pkgs.git-credential-oauth;
-      };
-
       gh = {
         enable = true;
-        gitCredentialHelper = {
-          enable = true;
-          hosts = [
-            "https://github.com"
-            "https://gist.github.com"
-          ];
-        };
+        # NOTE: causing issues lately
+        # gitCredentialHelper = {
+        #   enable = true;
+        #   hosts = [
+        #     "https://github.com"
+        #     "https://gist.github.com"
+        #   ];
+        # };
       };
     };
 
