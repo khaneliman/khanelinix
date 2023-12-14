@@ -86,6 +86,10 @@ in
       "class<org.gnome.Nautilus>" = "󰉋";
       "class<Spotify>" = "";
       "title<Spotify Free>" = "";
+      "class<libreoffice-draw>" = "󰽉";
+      "class<libreoffice-writer>" = "";
+      "class<libreoffice-calc>" = "󱎏";
+      "class<libreoffice-impress>" = "󱎐";
     };
   };
 
