@@ -99,14 +99,18 @@ in
 
       gh = {
         enable = true;
-        # NOTE: causing issues lately
-        # gitCredentialHelper = {
-        #   enable = true;
-        #   hosts = [
-        #     "https://github.com"
-        #     "https://gist.github.com"
-        #   ];
-        # };
+
+        settings = {
+          version = "1";
+        };
+
+        gitCredentialHelper = {
+          enable = true;
+          hosts = [
+            "https://github.com"
+            "https://gist.github.com"
+          ];
+        };
       };
     };
 

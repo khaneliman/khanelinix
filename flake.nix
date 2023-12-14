@@ -36,6 +36,7 @@
     # Home Manager (master)
     home-manager = {
       url = "github:khaneliman/home-manager/cava";
+      # url = "git+file:///home/khaneliman/Documents/github/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
