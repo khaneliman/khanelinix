@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) types mkIf mergeAttrs;
   inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.desktop.addons.qt;
@@ -70,13 +70,15 @@ in
     xdg.configFile = {
       "Kvantum".source = ./Kvantum;
       "qt5ct/colors/Catppuccin-Macchiato.conf".text = lib.generators.toINI { } colorScheme;
-      "qt5ct/qt5ct.conf".text = lib.generators.toINI { } (settings // {
-        Appearance.color_scheme_path = "/home/${config.khanelinix.user.name}/.config/qt5ct/colors/Catppuccin-Macchiato.conf";
-      });
+      "qt5ct/qt5ct.conf".text = lib.generators.toINI { }
+        (settings // {
+          Appearance = mergeAttrs settings.Appearance { color_scheme_path = "/home/${config.khanelinix.user.name}/.config/qt5ct/colors/Catppuccin-Macchiato.conf"; };
+        });
       "qt6ct/colors/Catppuccin-Macchiato.conf".text = lib.generators.toINI { } colorScheme;
-      "qt6ct/qt6ct.conf".text = lib.generators.toINI { } (settings // {
-        Appearance.color_scheme_path = "/home/${config.khanelinix.user.name}/.config/qt6ct/colors/Catppuccin-Macchiato.conf";
-      });
+      "qt6ct/qt6ct.conf".text = lib.generators.toINI { }
+        (settings // {
+          Appearance = mergeAttrs settings.Appearance { color_scheme_path = "/home/${config.khanelinix.user.name}/.config/qt6ct/colors/Catppuccin-Macchiato.conf"; };
+        });
     };
 
     qt = {
