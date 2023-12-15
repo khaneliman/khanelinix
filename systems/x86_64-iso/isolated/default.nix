@@ -3,7 +3,7 @@
 , ...
 }:
 let
-  inherit (lib) mkForce getExe;
+  inherit (lib) mkForce getExe getExe';
   inherit (lib.internal) enabled;
 
   gpgConf = pkgs.fetchurl {
@@ -11,7 +11,7 @@ let
     sha256 = "0va62sgnah8rjgp4m6zygs4z9gbpmqvq9m3x4byywk1dha6nvvaj";
   };
   gpgAgentConf = ''
-    pinentry-program ${getExe pkgs.pinentry-curses}
+    pinentry-program ${getExe' pkgs.pinentry-curses "pinentry-curses"}
   '';
   guide = pkgs.fetchurl {
     url = "https://raw.githubusercontent.com/drduh/YubiKey-Guide/master/README.md";

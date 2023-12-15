@@ -18,7 +18,7 @@ let
     enable-ssh-support
     default-cache-ttl 60
     max-cache-ttl 120
-    pinentry-program ${getExe pkgs.pinentry-gnome}
+    pinentry-program ${getExe' pkgs.pinentry-gnome "pinentry-gnome"}
   '';
 
   guide = "${yubikey-guide}/README.md";
