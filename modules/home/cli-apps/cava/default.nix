@@ -22,7 +22,7 @@ in
 
     programs.cava = {
       enable = true;
-      package = if pkgs.stdenv.isLinux then pkgs.cava else null;
+      package = if pkgs.stdenv.isLinux then pkgs.cava else pkgs.emptyDirectory;
 
       settings = {
         general = {
