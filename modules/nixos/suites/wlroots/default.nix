@@ -44,7 +44,6 @@ in
         swappy = enabled;
         swaylock = enabled;
         swaynotificationcenter = enabled;
-        wlogout = enabled;
       };
     };
 

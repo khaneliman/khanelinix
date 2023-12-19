@@ -23,7 +23,7 @@ in
         swaylock = enabled;
         # swaynotificationcenter = enabled;
         waybar = enabled;
-        # wlogout = enabled;
+        wlogout = enabled;
       };
 
       security = {
