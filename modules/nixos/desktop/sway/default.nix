@@ -1,4 +1,5 @@
 { config
+, inputs
 , lib
 , options
 , pkgs
@@ -8,6 +9,7 @@ let
   inherit (lib) types mkIf getExe getExe';
   inherit (lib.internal) mkBoolOpt mkOpt enabled fileWithText optionalString;
   inherit (config.khanelinix.desktop.addons) term;
+  inherit (inputs) nixpkgs-wayland;
 
   cfg = config.khanelinix.desktop.sway;
   substitutedConfig = pkgs.substituteAll {
@@ -96,6 +98,8 @@ in
 
     programs.sway = {
       enable = true;
+      package = nixpkgs-wayland.sway;
+
       extraPackages = with pkgs; [
         sway-contrib.grimshot
         swaylock-fancy
@@ -135,7 +139,7 @@ in
         serviceConfig = {
           Type = "simple";
           ExecStart = /* bash */ ''
-            ${getExe' pkgs.dbus "dbus-run-session"} ${getExe pkgs.sway} --debug
+            ${getExe' pkgs.dbus "dbus-run-session"} ${getExe config.programs.sway.package} --debug
           '';
           Restart = "on-failure";
           RestartSec = 1;
