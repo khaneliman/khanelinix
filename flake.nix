@@ -58,25 +58,33 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Personal neovim config
+    # Astronvim neovim config
     astronvim-config = {
       url = "github:khaneliman/khanelivim/astronvim";
       flake = false;
     };
 
+    # lazyvim neovim config
     lazyvim-config = {
       url = "github:khaneliman/khanelivim/lazyvim";
       flake = false;
     };
 
+    # lunarvim config
     lunarvim-config = {
       url = "github:LunarVim/LunarVim";
       flake = false;
     };
 
+    # Personal neovim config
     neovim-config = {
       url = "github:khaneliman/khanelivim";
       flake = false;
+    };
+
+    # Neovim nightly overlay
+    neovim-nightly-overlay = {
+      url = "github:nix-community/neovim-nightly-overlay";
     };
 
     # NixPkgs (nixos-unstable)
@@ -100,11 +108,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Nix User Repository (master)
-    nur = {
-      url = "github:nix-community/NUR";
-    };
-
     # Hardware Configuration
     nixos-hardware = {
       url = "github:nixos/nixos-hardware";
@@ -126,6 +129,11 @@
     nix-ld-rs = {
       url = "github:nix-community/nix-ld-rs";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Nix User Repository (master)
+    nur = {
+      url = "github:nix-community/NUR";
     };
 
     # Ranger Dev Icons
@@ -178,7 +186,7 @@
 
   outputs = inputs:
     let
-      inherit (inputs) deploy-rs flake lanzaboote nur nix-ld-rs rustup-overlay snowfall-lib snowfall-frost sops-nix;
+      inherit (inputs) deploy-rs flake lanzaboote neovim-nightly-overlay nix-ld-rs nur rustup-overlay snowfall-lib snowfall-frost sops-nix;
 
       lib = snowfall-lib.mkLib {
         inherit inputs;
@@ -202,6 +210,7 @@
       overlays = [
         flake.overlays.default
         # nixpkgs-wayland.overlay
+        neovim-nightly-overlay.overlay
         nix-ld-rs.overlays.default
         nur.overlay
         rustup-overlay.overlays.default
