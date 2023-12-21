@@ -97,6 +97,7 @@ in
               "dimaround, class:org.kde.polkit-kde-authentication-agent-1"
               "stayfocused, class:org.kde.polkit-kde-authentication-agent-1"
               "stayfocused, class:Rofi"
+              "nofocus, class:^(steam)$, title:^()$"
 
               ##
               # ░▀█▀░█▀▄░█░░░█▀▀░▀█▀░█▀█░█░█░▀█▀░█▀▄░▀█▀░▀█▀
