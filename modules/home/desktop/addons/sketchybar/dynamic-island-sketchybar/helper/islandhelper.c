@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
 
   dynamic_island_init(&g_dynamic_island);
 
-  if (getenv("P_DYNAMIC_ISLAND_NOTIFICATION_ENABLED") == NULL &&
+  if (getenv("P_DYNAMIC_ISLAND_NOTIFICATION_ENABLED") != NULL &&
       *getenv("P_DYNAMIC_ISLAND_NOTIFICATION_ENABLED") == (char)'1') {
     database_init(&g_notification_helper);
   }
