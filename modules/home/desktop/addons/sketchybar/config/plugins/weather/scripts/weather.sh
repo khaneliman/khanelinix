@@ -123,15 +123,23 @@ render_popup() {
 update() {
 	# Bar
 	url=$(jq -r '.weathergov | "\(.url)\(.location)/\(.format)"' ~/weather_config.json)
-	weather=$(curl -s "$url")
-	temp=$(echo "$weather" | jq -r '.properties.periods[0].temperature')
-	forecast=$(echo "$weather" | jq -r '.properties.periods[0].shortForecast')
-	time=$(echo "$weather" | jq -r '.properties.periods[0].isDaytime')
-	icon=$(weather_icon_map "$time" "$forecast")
+	response_code=$(curl -s --head "$url" | grep 'HTTP/2 200')
+	if [ -z "$response_code" ]; then
+		echo "Response code was not 200"
+		# Handle non-200 response
+	else
+		echo "Response code was 200"
+		# Proceed with api call
+		weather=$(curl -s "$url")
+		temp=$(echo "$weather" | jq -r '.properties.periods[0].temperature')
+		forecast=$(echo "$weather" | jq -r '.properties.periods[0].shortForecast')
+		time=$(echo "$weather" | jq -r '.properties.periods[0].isDaytime')
+		icon=$(weather_icon_map "$time" "$forecast")
 
-	# popup
-	url=$(jq -r '.wttr | "\(.url)\(.location)?\(.format)"' ~/weather_config.json)
-	popup_weather=$(curl -s "$url" | sed 's/  */ /g')
+		# popup
+		url=$(jq -r '.wttr | "\(.url)\(.location)?\(.format)"' ~/weather_config.json)
+		popup_weather=$(curl -s "$url" | sed 's/  */ /g')
+	fi
 
 	render_bar
 	render_popup
