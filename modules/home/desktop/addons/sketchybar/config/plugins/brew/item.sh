@@ -3,7 +3,7 @@
 # Trigger the brew_udpate event when brew update or upgrade is run from cmdline
 # e.g. via function in .zshrc or fish function
 
-POPUP_CLICK_SCRIPT="sketchybar --set $NAME popup.drawing=toggle"
+POPUP_CLICK_SCRIPT="sketchybar --set \$NAME popup.drawing=toggle"
 
 brew=(
 	script="$PLUGIN_DIR/brew/scripts/brew.sh"
