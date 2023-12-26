@@ -6,14 +6,14 @@ let
 in
 pkgs.rustPlatform.buildRustPackage rec {
   pname = "wezterm";
-  version = "e3cd2e93d0ee5f3af7f3fe0af86ffad0cf8c7ea8";
+  version = "84ae00c868e711cf97b2bfe885892428f1131a1d";
 
   src = pkgs.fetchFromGitHub {
     owner = "wez";
     repo = "wezterm";
     rev = version;
     fetchSubmodules = true;
-    hash = "sha256-iwIiGRHgf2uBf2ueIzdxDtQW9Z7Gf0gXdb+0RIOH+Qo=";
+    hash = "sha256-Sx5NtapMe+CtSlW9mfxUHhzF+n9tV2j/St6pku26Rj0=";
   };
 
   postPatch = /* bash */ ''
