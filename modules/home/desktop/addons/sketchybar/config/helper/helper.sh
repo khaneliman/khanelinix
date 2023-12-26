@@ -2,5 +2,5 @@
 
 HELPER=git.felix.helper
 killall helper
-cd "$HOME"/.config/sketchybar/helper && make
+make -C "$HOME"/.config/sketchybar/helper
 "$HOME"/.config/sketchybar/helper/helper "$HELPER" >/dev/null 2>&1 &
