@@ -1,9 +1,9 @@
-_: (_self: super: {
+_: _final: prev: {
   # TODO: remove once fix makes it to nixos-unstable
-  deno = super.deno.overrideAttrs (old: {
-    buildInputs = super.lib.optionals super.stdenv.isDarwin (
-      [ super.libiconv super.darwin.libobjc ] ++
-      (with super.darwin.apple_sdk_11_0.frameworks; [
+  deno = prev.deno.overrideAttrs (old: {
+    buildInputs = prev.lib.optionals prev.stdenv.isDarwin (
+      [ prev.libiconv prev.darwin.libobjc ] ++
+      (with prev.darwin.apple_sdk_11_0.frameworks; [
         Security
         CoreServices
         Metal
@@ -19,4 +19,4 @@ _: (_self: super: {
       substituteInPlace .cargo/config.toml --replace "-fuse-ld=lld " ""
     '';
   });
-})
+}
