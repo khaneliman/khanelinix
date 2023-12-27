@@ -4,6 +4,7 @@ source "$DYNAMIC_ISLAND_DIR/scripts/islands/clear.sh"
 
 MAX_EXPAND_HEIGHT=$(($P_DYNAMIC_ISLAND_NOTIFICATION_EXPAND_HEIGHT + $P_DYNAMIC_ISLAND_SQUISH_AMOUNT))
 EXPAND_SIZE=$(($P_DYNAMIC_ISLAND_MONITOR_HORIZONTAL_RESOLUTION / 2 - $P_DYNAMIC_ISLAND_NOTIFICATION_MAX_EXPAND_WIDTH))
+echo "Notification received"
 
 args=$*
 IFS='|'
@@ -15,11 +16,13 @@ unset IFS
 # 3 - subtitle
 # 4 - message - message1
 # 5 - app bundle identifier
+set -x
 override="${strarr[0]}"
 title="${strarr[1]}"
 subtitle="${strarr[2]}"
 message="${strarr[3]}"
 appId="${strarr[4]%% *}"
+set +x
 
 logo=(
 	drawing=on
@@ -35,7 +38,7 @@ dynamic-island-sketchybar --set island.notification_title drawing=on \
 	label="$subtitle" \
 	--set island.notification_body drawing=on \
 	label="$message" \
-	--set island.notification_logo "${logo[@]}" \
+	--set island.notification_logo "${logo[@]}"
 
 target_width=$(($P_DYNAMIC_ISLAND_MONITOR_HORIZONTAL_RESOLUTION / 2 - $P_DYNAMIC_ISLAND_DEFAULT_WIDTH - $P_DYNAMIC_ISLAND_SQUISH_AMOUNT))
 

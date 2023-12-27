@@ -12,8 +12,10 @@ unset IFS
 
 # $1 - override
 # $2 - connection type
+set -x
 override="${strarr[0]}"
 power_source="${strarr[1]}"
+set +x
 icon=$P_DYNAMIC_ISLAND_ICON_BATTERY_ONBATTERY
 
 if [ "$power_source" == "AC" ]; then

@@ -13,8 +13,10 @@ unset IFS
 
 # $1 - override
 # $2 - ssid
+set -x
 override="${strarr[0]}"
 ssid="${strarr[1]}"
+set +x
 icon=$P_DYNAMIC_ISLAND_ICON_WIFI_CONNECTED
 
 if [ -z "$ssid" ]; then

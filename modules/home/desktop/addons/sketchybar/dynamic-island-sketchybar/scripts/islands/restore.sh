@@ -22,6 +22,7 @@ sleep 0.2
 # Restore elements
 while IFS= read -r line; do
 	echo "$line"
+	# TODO: check for paused state
 	if [[ $line == "music" ]]; then
 		dynamic-island-sketchybar --set island.music_visualizer drawing=on \
 			--set island.small_artwork drawing=on
