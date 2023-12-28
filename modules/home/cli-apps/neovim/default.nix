@@ -7,7 +7,7 @@
 let
   inherit (lib) mkEnableOption mkIf;
   inherit (lib.internal) mkBoolOpt;
-  inherit (inputs) astronvim-config lazyvim-config lunarvim-config neovim-config;
+  inherit (inputs) astronvim-config lazyvim-config lunarvim-config neovim-config nixvim;
 
   cfg = config.khanelinix.cli-apps.neovim;
 
@@ -29,6 +29,15 @@ let
   ];
 in
 {
+  imports = [
+    nixvim.homeManagerModules.nixvim
+    ./autocommands.nix
+    ./completion.nix
+    ./keymappings.nix
+    ./options.nix
+    ./todo.nix
+  ];
+
   options.khanelinix.cli-apps.neovim = {
     enable = mkEnableOption "neovim";
     default = mkBoolOpt true "Whether to set Neovim as the session EDITOR";
@@ -48,37 +57,26 @@ in
       };
     };
 
-    programs.neovim = {
+    programs.nixvim = {
       enable = true;
-      defaultEditor = cfg.default;
+
+      defaultEditor = true;
+
       viAlias = true;
       vimAlias = true;
-      vimdiffAlias = true;
-      withNodeJs = true;
-      withPython3 = true;
-      withRuby = true;
 
-      extraPackages = with pkgs; [
-        bottom
-        curl
-        deno
-        dotnet-sdk_8
-        fzf
-        gcc
-        gdu
-        gnumake
-        gzip
-        jdk17
-        lazygit
-        less
-        ripgrep
-        tree-sitter
-        unzip
-        wget
-      ] ++ lsp
-      ++ lib.optional stdenv.isLinux webkitgtk;
+      luaLoader.enable = true;
 
-      extraPython3Packages = ps: [ ps.pip ];
+      # Highlight and remove extra white spaces
+      highlight.ExtraWhitespace.bg = "red";
+      match.ExtraWhitespace = "\\s\\+$";
+
+      colorschemes.catppuccin.enable = true;
+      plugins.lightline.enable = true;
+
+      # extraConfigLua = '''';
+      # extraPlugins = with pkgs.vimPlugins; [
+      # ];
     };
 
     # TODO: setup onchange to either be after sops-nix or not load wakatime in headless
@@ -120,18 +118,18 @@ in
         recursive = true;
       };
       # TODO: Convert to custom nixos neovim config 
-      "nvim" = {
-        # onChange = "${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
-        source = lib.cleanSourceWith {
-          filter = name: _type:
-            let
-              baseName = baseNameOf (toString name);
-            in
-            "lazy-lock.json" != baseName;
-          src = lib.cleanSource neovim-config;
-        };
-        recursive = true;
-      };
+      # "nvim" = {
+      #   # onChange = "${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
+      #   source = lib.cleanSourceWith {
+      #     filter = name: _type:
+      #       let
+      #         baseName = baseNameOf (toString name);
+      #       in
+      #       "lazy-lock.json" != baseName;
+      #     src = lib.cleanSource neovim-config;
+      #   };
+      #   recursive = true;
+      # };
     };
   };
 }
