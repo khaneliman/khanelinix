@@ -131,6 +131,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Neovim nix configuration
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Nix User Repository (master)
     nur = {
       url = "github:nix-community/NUR";
@@ -186,7 +192,7 @@
 
   outputs = inputs:
     let
-      inherit (inputs) deploy-rs flake lanzaboote neovim-nightly-overlay nix-ld-rs nur rustup-overlay snowfall-lib snowfall-frost sops-nix;
+      inherit (inputs) deploy-rs flake lanzaboote neovim-nightly-overlay nix-ld-rs nixvim nur rustup-overlay snowfall-lib snowfall-frost sops-nix;
 
       lib = snowfall-lib.mkLib {
         inherit inputs;
@@ -220,6 +226,7 @@
       systems = {
         modules = {
           darwin = [
+            nixvim.nixDarwinModules.nixvim
           ];
 
           ## TODO: update upstream to support
@@ -231,6 +238,7 @@
             lanzaboote.nixosModules.lanzaboote
             # nix-ld.nixosModules.nix-ld
             sops-nix.nixosModules.sops
+            nixvim.nixosModules.nixvim
           ];
         };
       };
