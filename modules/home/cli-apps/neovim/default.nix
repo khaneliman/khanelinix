@@ -75,8 +75,9 @@ in
       plugins.lightline.enable = true;
 
       # extraConfigLua = '''';
-      # extraPlugins = with pkgs.vimPlugins; [
-      # ];
+      extraPlugins = with pkgs.vimPlugins; [
+        vim-wakatime
+      ];
     };
 
     # TODO: setup onchange to either be after sops-nix or not load wakatime in headless
@@ -117,7 +118,7 @@ in
         };
         recursive = true;
       };
-      # TODO: Convert to custom nixos neovim config 
+      # TODO: Convert to custom nixos neovim config
       # "nvim" = {
       #   # onChange = "${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
       #   source = lib.cleanSourceWith {
