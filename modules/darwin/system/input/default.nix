@@ -40,7 +40,7 @@ in
           };
 
           ".GlobalPreferences" = {
-            "com.apple.mouse.scaling" = "-1";
+            "com.apple.mouse.scaling" = -1.0;
           };
 
           NSGlobalDomain = {
