@@ -36,7 +36,7 @@
       smartcase = true; # Override the 'ignorecase' option if the search pattern contains upper
       #   case characters
       scrolloff = 999; # Number of screen lines to show around the cursor
-      cursorline = false; # Highlight the screen line of the cursor
+      cursorline = true; # Highlight the screen line of the cursor
       cursorcolumn = false; # Highlight the screen column of the cursor
       signcolumn = "yes"; # Whether to show the signcolumn
       colorcolumn = "100"; # Columns to highlight
@@ -47,8 +47,8 @@
       wrap = false; # Prevent text from wrapping
 
       # Tab options
-      tabstop = 4; # Number of spaces a <Tab> in the text stands for (local to buffer)
-      shiftwidth = 4; # Number of spaces used for each step of (auto)indent (local to buffer)
+      tabstop = 2; # Number of spaces a <Tab> in the text stands for (local to buffer)
+      shiftwidth = 2; # Number of spaces used for each step of (auto)indent (local to buffer)
       softtabstop = 0; # If non-zero, number of spaces to insert for a <Tab> (local to buffer)
       expandtab = true; # Expand <Tab> to spaces in Insert mode (local to buffer)
       autoindent = true; # Do clever autoindenting
@@ -58,6 +58,29 @@
 
       # Folding
       foldlevel = 99; # Folds with a level higher than this number will be closed
+      foldcolumn = "1";
+      foldenable = true;
+      foldlevelstart = 99;
+
+      # backspace = { append = [ "nostop" ]; };
+      breakindent = true;
+      cmdheight = 0;
+      copyindent = true;
+      # diffopt = { append = [ "algorithm:histogram" "linematch:60" ]; };
+      # fillchars = { eob = " "; };
+      history = 100;
+      infercase = true;
+      linebreak = true;
+      preserveindent = true;
+      pumheight = 10;
+      # shortmess = { append = { s = true; I = true; }; };
+      showmode = false;
+      showtabline = 2;
+      timeoutlen = 500;
+      title = true;
+      # viewoptions = { remove = [ "curdir" ]; };
+      virtualedit = "block";
+      writebackup = false;
     };
   };
 }
