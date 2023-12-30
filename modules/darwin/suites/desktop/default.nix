@@ -73,7 +73,6 @@ in
         "AutoMounter" = 1160435653;
         "Dark Reader for Safari" = 1438243180;
         "Disk Speed Test" = 425264550;
-        "Malwarebytes Browser Guard" = 1577761052;
         "Microsoft Remote Desktop" = 1295203466;
         "PopClip" = 445189367;
         "TestFlight" = 899247664;

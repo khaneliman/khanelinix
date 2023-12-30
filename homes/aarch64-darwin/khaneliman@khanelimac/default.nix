@@ -15,6 +15,21 @@ in
 
     apps = {
       vscode = mkForce disabled;
+
+      firefox = {
+        settings = {
+          "dom.ipc.processCount.webIsolated" = 9;
+          "dom.maxHardwareConcurrency" = 16;
+          "media.av1.enabled" = false;
+          "media.ffmpeg.vaapi.enabled" = true;
+          "media.ffvpx.enabled" = false;
+          "media.hardware-video-decoding.enabled" = true;
+          "media.hardware-video-decoding.force-enabled" = true;
+          "media.hardwaremediakeys.enabled" = true;
+          "media.navigator.mediadatadecoder_vpx_enabled" = true;
+          "media.rdd-vpx.enabled" = false;
+        };
+      };
     };
 
     cli-apps = {

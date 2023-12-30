@@ -92,6 +92,7 @@ in
         id = 0;
 
         extensions = with pkgs.nur.repos.rycee.firefox-addons; [
+          auto-tab-discard
           angular-devtools
           bitwarden
           darkreader
