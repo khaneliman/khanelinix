@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf mkMerge;
+  inherit (lib) types mkIf mkMerge optionalAttrs;
   inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.apps.firefox;
@@ -18,6 +18,8 @@ in
   options.khanelinix.apps.firefox = with types;
     {
       enable = mkBoolOpt false "Whether or not to enable Firefox.";
+      hardwareDecoding = mkBoolOpt false "Enable hardware video decoding.";
+      gpuAcceleration = mkBoolOpt false "Enable GPU acceleration.";
       extraConfig =
         mkOpt str "" "Extra configuration for the user profile JS file.";
       settings = mkOpt attrs
@@ -135,7 +137,6 @@ in
             "browser.urlbar.keepPanelOpenDuringImeComposition" = true;
             "browser.urlbar.suggest.quicksuggest.sponsored" = false;
             "dom.storage.next_gen" = true;
-            "dom.webgpu.enabled" = true;
             "dom.forms.autocomplete.formautofill" = true;
             "extensions.htmlaboutaddons.recommendations.enabled" = false;
             "extensions.formautofill.addresses.enabled" = false;
@@ -148,8 +149,6 @@ in
             "geo.provider.use_gpsd" = false;
             "intl.accept_languages" = "en-US = en";
             "media.eme.enabled" = true;
-            "media.ffmpeg.vaapi.enabled" = true;
-            # "media.hardware-video-decoding.force-enabled" = true;
             "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
             "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
             "font.name.monospace.x-western" = "MonaspiceKr Nerd Font";
@@ -157,6 +156,17 @@ in
             "font.name.serif.x-western" = "MonaspiceNe Nerd Font";
             "signon.autofillForms" = false;
           }
+          (optionalAttrs cfg.gpuAcceleration {
+            "dom.webgpu.enabled" = true;
+            "gfx.webrender.all" = true;
+            "layers.gpu-process.enabled" = true;
+            "layers.mlgpu.enabled" = true;
+          })
+          (optionalAttrs cfg.hardwareDecoding {
+            "media.ffmpeg.vaapi.enabled" = true;
+            "media.gpu-process-decoder" = true;
+            "media.hardware-video-decoding.enabled" = true;
+          })
         ];
 
         # TODO: support alternative theme loading
