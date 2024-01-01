@@ -1,3 +1,71 @@
+:root {
+
+  /* Containter Tab Colours */
+  --uc-identity-colour-blue: #7ed6df;
+  --uc-identity-colour-turquoise: #55e6c1;
+  --uc-identity-colour-green: #b8e994;
+  --uc-identity-colour-yellow: #f7d794;
+  --uc-identity-colour-orange: #f19066;
+  --uc-identity-colour-red: #fc5c65;
+  --uc-identity-colour-pink: #f78fb3;
+  --uc-identity-colour-purple: #786fa6;
+
+  --uc-identity-colour-blue-muted: #7ed6df99;
+  --uc-identity-colour-turquoise-muted: #55e6c199;
+  --uc-identity-colour-green-muted: #b8e99499;
+  --uc-identity-colour-yellow-muted: #f7d794cc;
+  --uc-identity-colour-orange-muted: #f19066ff;
+  --uc-identity-colour-red-muted: #fc5c65ff;
+  --uc-identity-colour-pink-muted: #f78fb399;
+  --uc-identity-colour-purple-muted: #786fa6ff;
+
+  --uc-theme-colour: var(--window-colour, var(--toolbar-bgcolor));
+  --uc-hover-colour: var(--secondary-colour, rgba(0, 0, 0, 0.2));
+  --uc-inverted-colour: var(--inverted-colour, var(--toolbar-color));
+
+  --button-bgcolor: var(--uc-theme-colour) !important;
+  --button-hover-bgcolor: var(--uc-hover-colour) !important;
+  --button-active-bgcolor: var(--uc-hover-colour) !important;
+
+  --toolbarbutton-border-radius: var(--uc-border-radius) !important;
+
+  --tab-border-radius: var(--uc-border-radius) !important;
+  --lwt-text-color: var(--uc-inverted-colour) !important;
+  --lwt-tab-text: var(--uc-inverted-colour) !important;
+
+  --arrowpanel-border-radius: var(--uc-border-radius) !important;
+
+  --tab-block-margin: 2px !important;
+
+  /* URL colour in URL bar suggestions */
+  --urlbar-popup-url-color: var(--uc-identity-colour-blue) !important;
+
+  /*---+---+---+---+---+---+---+
+   | V | I | S | U | A | L | S |
+   +---+---+---+---+---+---+---*/
+
+  /* global border radius */
+  --uc-border-radius: 0;
+
+  /* dynamic url bar width settings */
+  --uc-urlbar-width: clamp(200px, 40vw, 500px);
+
+  /* dynamic tab width settings */
+  --uc-active-tab-width: clamp(100px, 20vw, 300px);
+  --uc-inactive-tab-width: clamp(50px, 15vw, 200px);
+
+  /* if active always shows the tab close button */
+  --show-tab-close-button: none;
+  /* DEFAULT: -moz-inline-box; */
+
+  /* if active only shows the tab close button on hover*/
+  --show-tab-close-button-hover: none;
+  /* DEFAULT: -moz-inline-box; */
+
+  /* adds left and right margin to the container-tabs indicator */
+  --container-tabs-indicator-margin: 10px;
+}
+
 @media (prefers-color-scheme:dark) {
   :root {
     --bg: #1a1b26;
@@ -21,6 +89,10 @@
     --dark-menu-background-color: #181926 !important;
     --dark-menu-border-color: #1e2030 !important;
     --dark-menuitem-hover-background-color: rgba(159, 159, 159, 0.35) !important;
+
+    --window-colour: #1e2021;
+    --secondary-colour: #191b1c;
+    --inverted-colour: #fafafc;
   }
 }
 
@@ -306,11 +378,6 @@
   direction: rtl;
 }
 
-/* HIDE SIDE BAR IN FULL SCREEN */
-/* #main-window[inFullscreen="true"] #sidebar-box {
-	--uc-sidebar-width: 0px;
-} */
-
 #sidebar-splitter {
   display: none;
 }
@@ -337,6 +404,7 @@
 }
 
 .sidebar-panel #search-box {
+  appearance: none !important;
   -moz-appearance: none !important;
   background-color: rgba(249, 249, 250, 0.1) !important;
   color: inherit !important;
@@ -369,7 +437,9 @@
 
 
 /**/
+/**/
 /* Old styles */
+/**/
 /**/
 
 /* Linux & macOS specific styles */
@@ -513,58 +583,6 @@
   position: relative;
 }
 
-/**/
-/* #sidebar-box[sidebarcommand*="tabcenter"] { */
-/*   z-index: 1; */
-/* } */
-/**/
-/* #sidebar-box[sidebarcommand*="tabcenter"] #sidebar-header { */
-/*   visibility: collapse; */
-/*   display: none; */
-/* } */
-/**/
-/* #sidebar-box[sidebarcommand*="tabcenter"]:not([hidden]) { */
-/*   display: block; */
-/*   position: absolute; */
-/*   min-width: 48px !important; */
-/*   max-width: 48px !important; */
-/*   overflow: hidden; */
-/*   transition: all 0.2s ease; */
-/*   border-right: 1px solid var(--sidebar-border-color); */
-/*   z-index: 1; */
-/*   top: 0; */
-/*   bottom: 0; */
-/* } */
-
-/* [sidebarcommand*="tabcenter"] #sidebar, */
-/* #sidebar-box[sidebarcommand*="tabcenter"]:hover { */
-/*   min-width: 10vw !important; */
-/*   width: 30vw !important; */
-/*   max-width: 200px !important; */
-/*   z-index: 10 !important; */
-/* } */
-/**/
-/* @media (width >=1200px) { */
-/**/
-/*   [sidebarcommand*="tabcenter"] #sidebar, */
-/*   #sidebar-box[sidebarcommand*="tabcenter"]:hover { */
-/*     max-width: 250px !important; */
-/*   } */
-/* } */
-/**/
-/* [sidebarcommand*="tabcenter"]~#sidebar-splitter { */
-/*   display: none; */
-/* } */
-/**/
-/* [sidebarcommand*="tabcenter"] #sidebar { */
-/*   max-height: 100%; */
-/*   height: 100%; */
-/* } */
-/**/
-/* #sidebar-box[sidebarcommand*="tabcenter"]:not([hidden])~#appcontent { */
-/*   margin-left: 48px; */
-/* } */
-
 #main-window[inFullscreen][inDOMFullscreen] #appcontent {
   margin-left: 0;
 }
@@ -572,22 +590,6 @@
 #main-window[inFullscreen] #sidebar {
   height: 100vh;
 }
-
-/**/
-/* [sidebarcommand*="tabcenter"] #sidebar-header { */
-/*   background: #0c0c0d; */
-/*   border-bottom: none !important; */
-/* } */
-/**/
-/* [sidebarcommand*="tabcenter"]~#sidebar-splitter { */
-/*   border-right-color: #0c0c0d !important; */
-/*   border-left-color: #0c0c0d !important; */
-/* } */
-/**/
-/* [sidebarcommand*="tabcenter"] #sidebar-switcher-target, */
-/* [sidebarcommand*="tabcenter"] #sidebar-close { */
-/*   filter: invert(100%); */
-/* } */
 
 @media (max-width: 630px) {
   #urlbar-container {
@@ -646,25 +648,6 @@ scrollbar {
 }
 
 /*
-			TREE STYLE TABS - START
-*/
-
-/* Reduce minimum width of the sidebar */
-/* #sidebar { */
-/*   min-width: 100px !important; */
-/* } */
-/**/
-/* /* Hide sidebar header when using Tree Style Tab. */
-*/
-/* #sidebar-box[sidebarcommand="treestyletab_piro_sakura_ne_jp-sidebar-action"] #sidebar-header { */
-/*   visibility: collapse; */
-/* } */
-
-/*
-			TREE STYLE TABS - END
-*/
-
-/*
 			REMOVE TAB BAR - START
 */
 
@@ -686,6 +669,7 @@ scrollbar {
 /* Workaround v2 (Since #nav-bar is bad at laying out children (it doesnt respect ::after's width on small window widths), just make it get out of the way)*/
 
 #titlebar {
+  appearance: none !important;
   -moz-appearance: none !important;
   position: absolute !important;
   inset: 2px;
@@ -716,10 +700,6 @@ scrollbar {
 #nav-bar {
   padding: 2px !important;
   font-size: 10px !important;
-}
-
-#nav-bar-customization-target {
-  /*! padding-left: 7em !important; */
 }
 
 #back-button,
@@ -759,14 +739,6 @@ scrollbar {
   list-style-image: url("img/menu.svg") !important;
 }
 
-#urlbar,
-/* #searchbar {
-	--urlbar-background: #272735;
-} */
-/* :root[lwthemetextcolor="bright"] #urlbar,
-:root[lwthemetextcolor="bright"] #searchbar {
-	--urlbar-background: hsla(0, 0%, 12%, 0.9);
-} */
 #urlbar,
 #searchbar {
   --urlbar-height: var(--urlbar-height,
@@ -925,101 +897,13 @@ scrollbar {
   background-color: #00000020;
 }
 
-/* #sidebar-header { */
-/*   padding: 6px !important; */
-/*   margin: 6px !important; */
-/*   background-color: #00000010 !important; */
-/*   font-family: Inter !important; */
-/*   border-radius: 5px !important; */
-/*   box-shadow: 0 3px 5px var(--shadow-color) !important; */
-/* } */
-/**/
-/* #sidebar>* { */
-/*   background-color: #00000010 !important; */
-/* } */
-
 #urlbar,
 #urlbar * {
   outline: none !important;
   box-shadow: none !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --window-colour: #1e2021;
-    --secondary-colour: #191b1c;
-    --inverted-colour: #fafafc;
 
-    /* Containter Tab Colours */
-    --uc-identity-colour-blue: #7ed6df;
-    --uc-identity-colour-turquoise: #55e6c1;
-    --uc-identity-colour-green: #b8e994;
-    --uc-identity-colour-yellow: #f7d794;
-    --uc-identity-colour-orange: #f19066;
-    --uc-identity-colour-red: #fc5c65;
-    --uc-identity-colour-pink: #f78fb3;
-    --uc-identity-colour-purple: #786fa6;
-
-    --uc-identity-colour-blue-muted: #7ed6df99;
-    --uc-identity-colour-turquoise-muted: #55e6c199;
-    --uc-identity-colour-green-muted: #b8e99499;
-    --uc-identity-colour-yellow-muted: #f7d794cc;
-    --uc-identity-colour-orange-muted: #f19066ff;
-    --uc-identity-colour-red-muted: #fc5c65ff;
-    --uc-identity-colour-pink-muted: #f78fb399;
-    --uc-identity-colour-purple-muted: #786fa6ff;
-  }
-}
-
-:root {
-  /* URL colour in URL bar suggestions */
-  --urlbar-popup-url-color: var(--uc-identity-colour-blue) !important;
-
-  /*---+---+---+---+---+---+---+
-     | V | I | S | U | A | L | S |
-     +---+---+---+---+---+---+---*/
-
-  /* global border radius */
-  --uc-border-radius: 0;
-
-  /* dynamic url bar width settings */
-  --uc-urlbar-width: clamp(200px, 40vw, 500px);
-
-  /* dynamic tab width settings */
-  --uc-active-tab-width: clamp(100px, 20vw, 300px);
-  --uc-inactive-tab-width: clamp(50px, 15vw, 200px);
-
-  /* if active always shows the tab close button */
-  --show-tab-close-button: none;
-  /* DEFAULT: -moz-inline-box; */
-
-  /* if active only shows the tab close button on hover*/
-  --show-tab-close-button-hover: none;
-  /* DEFAULT: -moz-inline-box; */
-
-  /* adds left and right margin to the container-tabs indicator */
-  --container-tabs-indicator-margin: 10px;
-}
-
-:root {
-  --uc-theme-colour: var(--window-colour, var(--toolbar-bgcolor));
-  --uc-hover-colour: var(--secondary-colour, rgba(0, 0, 0, 0.2));
-  --uc-inverted-colour: var(--inverted-colour, var(--toolbar-color));
-
-  --button-bgcolor: var(--uc-theme-colour) !important;
-  --button-hover-bgcolor: var(--uc-hover-colour) !important;
-  --button-active-bgcolor: var(--uc-hover-colour) !important;
-
-  --toolbarbutton-border-radius: var(--uc-border-radius) !important;
-
-  --tab-border-radius: var(--uc-border-radius) !important;
-  --lwt-text-color: var(--uc-inverted-colour) !important;
-  --lwt-tab-text: var(--uc-inverted-colour) !important;
-
-  --arrowpanel-border-radius: var(--uc-border-radius) !important;
-
-  --tab-block-margin: 2px !important;
-}
 
 /* container tabs indicator */
 .tabbrowser-tab[usercontextid]>.tab-stack>.tab-background>.tab-context-line {
