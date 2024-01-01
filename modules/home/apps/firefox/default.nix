@@ -101,9 +101,10 @@ in
           firefox-color
           onepassword-password-manager
           reduxdevtools
+          sidebery
           sponsorblock
           stylus
-          tabcenter-reborn
+          # tabcenter-reborn
           ublock-origin
           user-agent-string-switcher
         ];
