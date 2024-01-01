@@ -137,6 +137,8 @@ in
             "browser.startup.page" = 3;
             "browser.urlbar.keepPanelOpenDuringImeComposition" = true;
             "browser.urlbar.suggest.quicksuggest.sponsored" = false;
+            "devtools.chrome.enabled" = true;
+            "devtools.debugger.remote-enabled" = true;
             "dom.storage.next_gen" = true;
             "dom.forms.autocomplete.formautofill" = true;
             "extensions.htmlaboutaddons.recommendations.enabled" = false;
