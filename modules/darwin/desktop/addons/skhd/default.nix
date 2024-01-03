@@ -37,7 +37,7 @@ in
         # ░█▀█░█▀█░█▀█░░░█░░░█▀█░█░█░█▀█░█▀▀░█░█░█▀▀░█▀▄░█▀▀
         # ░█▀█░█▀▀░█▀▀░░░█░░░█▀█░█░█░█░█░█░░░█▀█░█▀▀░█▀▄░▀▀█
         # ░▀░▀░▀░░░▀░░░░░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀
-        default < cmd + shift - return : ${getExe alacritty} #open over top
+        default < cmd + shift - return : ${getExe pkgs.wezterm} start -- tmux
         default < cmd - return : ${getExe pkgs.wezterm} start -- tmux a
         default < cmd + alt + ctrl - v : open /Applications/Visual\ Studio\ Code.app
         default < cmd + alt + ctrl - o : open /Applications/Microsoft\ Outlook.app
