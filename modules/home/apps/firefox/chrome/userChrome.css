@@ -1,14 +1,44 @@
 :root {
+  --base: #24273a;
+  --mantle: #1e2030;
+  --crust: #181926;
+
+  --text: #cad3f5;
+  --subtext0: #b8c0e0;
+  --subtext1: #a5adcb;
+
+  --surface0: #363a4f;
+  --surface1: #494d64;
+  --surface2: #5b6078;
+
+  --overlay0: #6e738d;
+  --overlay1: #8087a2;
+  --overlay2: #939ab7;
+
+  --blue: #8aadf4;
+  --lavender: #b7bdf8;
+  --sapphire: #7dc4e4;
+  --sky: #91d7e3;
+  --teal: #8bd5ca;
+  --green: #a6da95;
+  --yellow: #eed49f;
+  --peach: #f5a97f;
+  --maroon: #ee99a0;
+  --red: #ed8796;
+  --mauve: #c6a0f6;
+  --pink: #f5bde6;
+  --flamingo: #f0c6c6;
+  --rosewater: #f4dbd6;
 
   /* Containter Tab Colours */
-  --uc-identity-colour-blue: #7ed6df;
-  --uc-identity-colour-turquoise: #55e6c1;
-  --uc-identity-colour-green: #b8e994;
-  --uc-identity-colour-yellow: #f7d794;
-  --uc-identity-colour-orange: #f19066;
-  --uc-identity-colour-red: #fc5c65;
-  --uc-identity-colour-pink: #f78fb3;
-  --uc-identity-colour-purple: #786fa6;
+  --uc-identity-colour-blue: var(--blue);
+  --uc-identity-colour-turquoise: var(--teal);
+  --uc-identity-colour-green: var(--green);
+  --uc-identity-colour-yellow: var(--yellow);
+  --uc-identity-colour-orange: var(--peach);
+  --uc-identity-colour-red: var(--red);
+  --uc-identity-colour-pink: var(--pink);
+  --uc-identity-colour-purple: var(--mauve);
 
   --uc-identity-colour-blue-muted: #7ed6df99;
   --uc-identity-colour-turquoise-muted: #55e6c199;
@@ -86,12 +116,12 @@
     --toolbarbutton-icon-fill-opacity: 0.8 !important;
     --arrowpanel-border-color: rgb(55, 55, 55) !important;
 
-    --dark-menu-background-color: #181926 !important;
-    --dark-menu-border-color: #1e2030 !important;
+    --dark-menu-background-color: var(--base) !important;
+    --dark-menu-border-color: var(--mantle) !important;
     --dark-menuitem-hover-background-color: rgba(159, 159, 159, 0.35) !important;
 
-    --window-colour: #1e2021;
-    --secondary-colour: #191b1c;
+    --window-colour: var(--base);
+    --secondary-colour: var(--mantle);
     --inverted-colour: #fafafc;
   }
 }
@@ -902,8 +932,6 @@ scrollbar {
   outline: none !important;
   box-shadow: none !important;
 }
-
-
 
 /* container tabs indicator */
 .tabbrowser-tab[usercontextid]>.tab-stack>.tab-background>.tab-context-line {
