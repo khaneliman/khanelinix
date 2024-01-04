@@ -16,6 +16,10 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.packages = with pkgs; [
+      zoxide
+    ];
+
     programs.yazi = {
       enable = true;
       package = pkgs.yazi;
