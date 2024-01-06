@@ -52,7 +52,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Secure boot 
+    # Secure boot
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.3.0";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -102,7 +102,7 @@
     #   url = "github:khaneliman/nixpkgs/yabai-update";
     # };
 
-    # NixPkgs-Wayland 
+    # NixPkgs-Wayland
     nixpkgs-wayland = {
       url = "github:nix-community/nixpkgs-wayland";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -165,7 +165,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Sops (Secrets) 
+    # Sops (Secrets)
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
