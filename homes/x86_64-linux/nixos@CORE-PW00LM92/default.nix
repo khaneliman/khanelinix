@@ -52,7 +52,7 @@ in
             path = "${./git/windows-compat-config}";
           }
           {
-            condition = "gitdir:/mnt/c/Users/Austin.Horstman/source/repos/DiB/";
+            condition = "gitdir:/mnt/c/source/repos/DiB/";
             path = "${./git/dib-signing}";
           }
         ];
