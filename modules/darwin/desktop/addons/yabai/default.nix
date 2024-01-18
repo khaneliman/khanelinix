@@ -19,7 +19,7 @@ in
   config = mkIf cfg.enable {
     services.yabai = {
       enable = true;
-      package = pkgs.khanelinix.yabai;
+      package = pkgs.yabai;
       enableScriptingAddition = true;
 
       config = {
