@@ -4,8 +4,8 @@ _: _final: prev: {
     src = prev.fetchFromGitHub {
       owner = "Alexays";
       repo = "waybar";
-      rev = "f744d906becbf6d06a3d95fee37af5c32061d1aa";
-      sha256 = "sha256-7hyOmMTkvQ1a7yQ4YA5Kheg9FLUAPV3otvDj7kGKgko=";
+      rev = "0d9c4929988cc8443483400631157826069a388d";
+      sha256 = "sha256-ozW4yGPdGY2WrVU0mxqkc0uFQUg8m6+S/JkALwDxRTw=";
     };
 
     patches = [ ./catch.patch ];

@@ -6,7 +6,7 @@ _: _final: prev: {
       owner = "Ethsan";
       repo = "ranger";
       rev = "71a06f28551611d192d3e644d95ad04023e10801";
-      sha256 = "sha256-Yjdn1oE5VtJMGnmQ2VC764UXKm1PrkIPXXQ8MzQ8u1U=";
+      hash = "sha256-Yjdn1oE5VtJMGnmQ2VC764UXKm1PrkIPXXQ8MzQ8u1U=";
     };
     propagatedBuildInputs = old.propagatedBuildInputs ++ (with prev.python3Packages; [ astroid pylint ]);
   });

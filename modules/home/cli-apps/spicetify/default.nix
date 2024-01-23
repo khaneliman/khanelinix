@@ -37,7 +37,6 @@ in
         adblock
         autoSkip
         fullAppDisplay
-        genre
         history
         playNext
         shuffle # shuffle+ (special characters are sanitized out of ext names)

@@ -27,7 +27,8 @@ in
       mgba
       mupen64plus
       nestopia
-      pcsx2
+      # FIX: broken package
+      # pcsx2
       pcsxr
       rpcs3
       snes9x
