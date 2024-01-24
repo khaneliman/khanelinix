@@ -58,8 +58,16 @@ in
             defaultBranch = "main";
           };
 
+          pull = {
+            rebase = true;
+          };
+
           push = {
             autoSetupRemote = true;
+          };
+
+          rebase = {
+            autoStash = true;
           };
         };
 
