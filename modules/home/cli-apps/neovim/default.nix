@@ -37,7 +37,7 @@ in
   config = mkIf cfg.enable {
     home = {
       sessionVariables = {
-        DOTNET_ROOT = "${pkgs.dotnet-sdk_7}";
+        DOTNET_ROOT = "${pkgs.dotnet-sdk_8}";
         EDITOR = mkIf cfg.default "nvim";
       };
 
@@ -62,7 +62,7 @@ in
         bottom
         curl
         deno
-        dotnet-sdk_7
+        dotnet-sdk_8
         fzf
         gcc
         gdu
