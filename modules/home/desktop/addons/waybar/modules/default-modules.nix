@@ -128,6 +128,14 @@ in
     "orientation" = "horizontal";
   };
 
+  "systemd-failed-units" = {
+    "hide-on-ok" = false;
+    "format" = "✗ {nr_failed}";
+    "format-ok" = "✓";
+    "system" = true;
+    "user" = false;
+  };
+
   "temperature" = {
     "hwmon-path-abs" = "/sys/devices/pci0000:00/0000:00:18.3/hwmon";
     "input-filename" = "temp3_input";

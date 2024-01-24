@@ -7,12 +7,14 @@
   background-color: @surface0;
   border: 2px solid @surface1;
 }
+
 #custom-notification,
 #custom-updates,
 #custom-github,
 #idle_inhibitor,
 #wireplumber,
-#pulseaudio
+#pulseaudio,
+#systemd-failed-units
  {
   padding: 0 0.5em;
 }
@@ -23,8 +25,11 @@
 }
 
 /* Unique colors for modules */
+#idle_inhibitor {
+  color: @yellow;
+}
 
-#custom-pipewire {
+#pulseaudio{
   color: @green;
 }
 
@@ -34,6 +39,10 @@
 
 #custom-updates {
   color: @red;
+}
+
+#systemd-failed-units {
+  color: @mauve;
 }
 
 #custom-pipewire.muted,
@@ -56,11 +65,11 @@
   background: rgba(0, 0, 0, 0.2);
 }
 
-
 #pulseaudio-slider slider {
     min-height: 0px;
     min-width: 0px;
     opacity: 0;
+    background-color: @green;
     background-image: none;
     border: none;
     box-shadow: none;
@@ -76,4 +85,3 @@
     border-radius: 5px;
     background-color: @green;
 }
-

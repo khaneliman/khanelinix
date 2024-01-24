@@ -30,6 +30,7 @@
     "orientation" = "horizontal";
     "modules" = [
       "idle_inhibitor"
+      "systemd-failed-units"
       "custom/notification"
       "custom/github"
       "group/audio"
