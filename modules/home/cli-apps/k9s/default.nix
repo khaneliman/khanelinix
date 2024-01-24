@@ -19,6 +19,15 @@ in
     programs.k9s = {
       enable = true;
       package = pkgs.k9s;
+
+      settings.k9s = {
+        liveViewAutoRefresh = true;
+        refreshRate = 1;
+        maxConnRetry = 3;
+        ui = {
+          enableMouse = true;
+        };
+      };
     };
   };
 }

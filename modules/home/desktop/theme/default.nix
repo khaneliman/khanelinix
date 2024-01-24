@@ -95,7 +95,9 @@ in
         settings.color_theme = "${cfg.selectedTheme.name}_${cfg.selectedTheme.variant}";
       };
 
-      k9s.skin = fromYAML (cfg.package + "/k9s/${cfg.selectedTheme.variant}.yml");
+      k9s.skins = {
+        catppuccin = fromYAML (cfg.package + "/k9s/${cfg.selectedTheme.variant}.yml");
+      };
 
       tmux.plugins = [{
         plugin = pkgs.tmuxPlugins.catppuccin;
