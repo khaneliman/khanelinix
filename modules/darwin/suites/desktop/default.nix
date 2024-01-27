@@ -19,6 +19,7 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       fastfetch
+      ripgrep
     ];
 
     khanelinix.desktop.addons = {
