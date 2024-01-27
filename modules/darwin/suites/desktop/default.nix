@@ -45,6 +45,7 @@ in
         "bitwarden"
         "brightness"
         "firefox-developer-edition"
+        "floorp"
         "gpg-suite"
         "hammerspoon"
         "kitty"
