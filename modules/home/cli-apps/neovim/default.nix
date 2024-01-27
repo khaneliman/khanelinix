@@ -7,26 +7,9 @@
 let
   inherit (lib) mkEnableOption mkIf;
   inherit (lib.internal) mkBoolOpt;
-  inherit (inputs) astronvim-config lazyvim-config lunarvim-config neovim-config nixvim;
+  inherit (inputs) astronvim-config lazyvim-config lunarvim-config nixvim;
 
   cfg = config.khanelinix.cli-apps.neovim;
-
-  lsp = with pkgs; [
-    binwalk
-    ccls
-    clang-tools
-    cmake
-    cmocka
-    efm-langserver
-    eslint_d
-    gnumake
-    llvm
-    luajitPackages.luacheck
-    luarocks
-    shellcheck
-    shfmt
-    xmlformat
-  ];
 in
 {
   imports = [

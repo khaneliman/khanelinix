@@ -1,5 +1,5 @@
 _: _final: prev: {
-  waybar = prev.waybar.overrideAttrs (old: {
+  waybar = prev.waybar.overrideAttrs (_old: {
     version = "unstable-waybar";
     src = prev.fetchFromGitHub {
       owner = "Alexays";

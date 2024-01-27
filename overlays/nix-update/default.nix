@@ -1,5 +1,5 @@
 _: _final: prev: {
-  nix-update = prev.nix-update.overrideAttrs (old: {
+  nix-update = prev.nix-update.overrideAttrs (_old: {
     src = prev.fetchFromGitHub {
       owner = "Mic92";
       repo = "nix-update";
