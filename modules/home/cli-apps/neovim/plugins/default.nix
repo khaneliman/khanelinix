@@ -2,7 +2,6 @@
   imports = [
     ./barbar.nix
     ./catppuccin.nix
-    ./codeium.nix
     ./comment.nix
     ./efm.nix
     ./floaterm.nix

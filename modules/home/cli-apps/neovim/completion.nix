@@ -3,6 +3,8 @@
     options.completeopt = [ "menu" "menuone" "noselect" ];
 
     plugins = {
+      codeium-nvim.enable = true;
+
       luasnip.enable = true;
 
       lspkind = {
@@ -18,6 +20,7 @@
             buffer = "[buffer]";
             neorg = "[neorg]";
             cmp_tabnine = "[TabNine]";
+            codeium = "[Codeium]";
           };
         };
       };
@@ -46,6 +49,7 @@
         sources = [
           { name = "path"; }
           { name = "nvim_lsp"; }
+          { name = "codeium"; }
           { name = "cmp_tabnine"; }
           { name = "luasnip"; }
           {
