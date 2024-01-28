@@ -5,6 +5,7 @@
     ./comment.nix
     ./efm.nix
     ./floaterm.nix
+    ./gitsigns.nix
     ./harpoon.nix
     ./lsp.nix
     ./lualine.nix
@@ -20,13 +21,6 @@
 
   programs.nixvim = {
     plugins = {
-      gitsigns = {
-        enable = true;
-        signs = {
-          add.text = "+";
-          change.text = "~";
-        };
-      };
 
       nvim-autopairs.enable = true;
 
