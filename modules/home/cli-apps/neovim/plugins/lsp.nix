@@ -1,6 +1,14 @@
-{ ... }: {
+{ lib, pkgs, ... }:
+let
+  inherit (lib) getExe;
+in
+{
   programs.nixvim = {
     plugins = {
+      lsp-format = {
+        enable = true;
+      };
+
       lsp = {
         enable = true;
 
@@ -66,6 +74,7 @@
           nil_ls = {
             enable = true;
             filetypes = [ "nix" ];
+            settings.formatting.command = [ "${getExe pkgs.nixpkgs-fmt}" ];
           };
           pyright = {
             enable = true;
