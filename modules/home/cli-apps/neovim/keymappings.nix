@@ -12,21 +12,23 @@
       let
         normal =
           lib.mapAttrsToList
-            (key: { action, options }: {
+            (key: { action, ... }@attrs: {
               mode = "n";
-              inherit action key options;
+              inherit action key;
+              lua = attrs.lua or false;
+              options = attrs.options or { };
             })
             {
-              "<Space>" = { action = "<NOP>"; options = { }; };
+              "<Space>" = { action = "<NOP>"; };
 
               # Esc to clear search results
-              "<esc>" = { action = ":noh<CR>"; options = { }; };
+              "<esc>" = { action = ":noh<CR>"; };
 
               # fix Y behaviour
-              "Y" = { action = "y$"; options = { }; };
+              "Y" = { action = "y$"; };
 
               # back and fourth between the two most recent files
-              "<C-c>" = { action = ":b#<CR>"; options = { }; };
+              "<C-c>" = { action = ":b#<CR>"; };
 
               # close buffer
               "<leader>c" = { action = ":BufferClose<CR>"; options = { desc = "Close buffer"; }; };
@@ -43,15 +45,15 @@
               "<leader>]" = { action = "<C-w>l"; options = { desc = "Right window"; }; };
 
               # resize with arrows
-              "<C-Up>" = { action = ":resize -2<CR>"; options = { }; };
-              "<C-Down>" = { action = ":resize +2<CR>"; options = { }; };
-              "<C-Left>" = { action = ":vertical resize +2<CR>"; options = { }; };
-              "<C-Right>" = { action = ":vertical resize -2<CR>"; options = { }; };
+              "<C-Up>" = { action = ":resize -2<CR>"; };
+              "<C-Down>" = { action = ":resize +2<CR>"; };
+              "<C-Left>" = { action = ":vertical resize +2<CR>"; };
+              "<C-Right>" = { action = ":vertical resize -2<CR>"; };
 
               # move current line up/down
               # M = Alt key
-              "<M-k>" = { action = ":move-2<CR>"; options = { }; };
-              "<M-j>" = { action = ":move+<CR>"; options = { }; };
+              "<M-k>" = { action = ":move-2<CR>"; };
+              "<M-j>" = { action = ":move+<CR>"; };
 
               "<Leader>w" = {
                 action = "<Cmd>w<CR>"; # Action to perform (save the file in this case)
@@ -71,9 +73,11 @@
             };
         visual =
           lib.mapAttrsToList
-            (key: { action, options }: {
+            (key: { action, ... }@attrs: {
               mode = "v";
-              inherit action key options;
+              inherit action key;
+              options = attrs.options or { };
+              lua = attrs.lua or false;
             })
             {
               # Better indenting
@@ -83,12 +87,14 @@
               ">" = { action = ">gv"; options = { desc = "Indent line"; }; };
 
               # Move selected line/block in visual mode
-              "K" = { action = ":m '<-2<CR>gv=gv"; options = { }; };
-              "J" = { action = ":m '>+1<CR>gv=gv"; options = { }; };
+              "K" = { action = ":m '<-2<CR>gv=gv"; };
+              "J" = { action = ":m '>+1<CR>gv=gv"; };
             };
       in
       config.nixvim.helpers.keymaps.mkKeymaps
-        { options.silent = true; }
+        {
+          options.silent = true;
+        }
         (normal ++ visual);
   };
 }
