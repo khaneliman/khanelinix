@@ -52,13 +52,7 @@ in
     };
   };
 
-  imports = [
-    ./apps.nix
-    ./binds.nix
-    ./variables.nix
-    ./windowrules.nix
-    ./workspacerules.nix
-  ];
+  imports = lib.snowfall.fs.get-non-default-nix-files ./.;
 
   config =
     mkIf cfg.enable

@@ -14,12 +14,7 @@ in
 {
   imports = [
     nixvim.homeManagerModules.nixvim
-    ./autocommands.nix
-    ./completion.nix
-    ./keymappings.nix
-    ./options.nix
-    ./todo.nix
-  ];
+  ] ++ lib.snowfall.fs.get-non-default-nix-files ./.;
 
   options.khanelinix.cli-apps.neovim = {
     enable = mkEnableOption "neovim";

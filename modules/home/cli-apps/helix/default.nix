@@ -8,7 +8,7 @@ let
   cfg = config.khanelinix.cli-apps.helix;
 in
 {
-  imports = [ ./languages.nix ];
+  imports = lib.snowfall.fs.get-non-default-nix-files ./.;
 
   options.khanelinix.cli-apps.helix = {
     enable = mkEnableOption "Helix";
