@@ -16,17 +16,18 @@ in
           silent = true;
           diagnostic = {
             # Navigate in diagnostics
-            "<leader>k" = "goto_prev";
-            "<leader>j" = "goto_next";
+            "<leader>lp" = "goto_prev";
+            "<leader>ln" = "goto_next";
           };
 
           lspBuf = {
-            gd = "definition";
-            gD = "references";
-            gt = "type_definition";
-            gi = "implementation";
-            K = "hover";
-            "<F2>" = "rename";
+            "<leader>la" = "code_action";
+            "<leader>ld" = "definition";
+            "<leader>lD" = "references";
+            "<leader>lt" = "type_definition";
+            "<leader>li" = "implementation";
+            "<leader>lh" = "hover";
+            "<leader>lr" = "rename";
           };
         };
 

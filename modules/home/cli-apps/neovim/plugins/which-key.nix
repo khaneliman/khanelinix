@@ -3,6 +3,34 @@
     plugins.which-key = {
       enable = true;
       # ignoreMissing = true;
+      registrations = {
+        "<leader>" = {
+          "b" = { name = "Buffer"; };
+          "g" = { name = "Git"; };
+          "f" = { name = "Telescope"; };
+          "h" = {
+            name = "Harpoon";
+            a = "Add";
+            e = "QuickMenu";
+            j = "1";
+            k = "2";
+            l = "3";
+            m = "4";
+          };
+          "l" = {
+            name = "LSP";
+            a = "Code Action";
+            d = "Definition";
+            D = "References";
+            p = "Prev";
+            n = "Next";
+            t = "Type Definition";
+            i = "Implementation";
+            h = "Hover";
+            r = "Rename";
+          };
+        };
+      };
     };
   };
 }

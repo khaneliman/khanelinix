@@ -6,13 +6,13 @@
       keymapsSilent = true;
 
       keymaps = {
-        addFile = "<leader>a";
-        toggleQuickMenu = "<C-e>";
+        addFile = "<leader>ha";
+        toggleQuickMenu = "<leader>he";
         navFile = {
-          "1" = "<C-j>";
-          "2" = "<C-k>";
-          "3" = "<C-l>";
-          "4" = "<C-m>";
+          "1" = "<leader>hj";
+          "2" = "<leader>hk";
+          "3" = "<leader>hl";
+          "4" = "<leader>hm";
         };
       };
     };
