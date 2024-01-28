@@ -70,6 +70,25 @@
               "<leader>Q" = { action = "<Cmd>q!<CR>"; options = { desc = "Force quit"; }; };
               "|" = { action = "<Cmd>vsplit<CR>"; options = { desc = "Vertical Split"; }; };
               "\\" = { action = "<Cmd>split<CR>"; options = { desc = "Horizontal Split"; }; };
+
+              "<leader>," = { action = ":ToggleTerm<CR>"; options = { desc = "ToggleTerm"; }; };
+              "<leader>tg" = {
+                action = "function() require('toggleterm.terminal').Terminal:new({ cmd = 'lazygit', hidden = true }):toggle() end";
+                lua = true;
+                options = {
+                  noremap = true;
+                  desc = "Toggle LazyGit";
+                };
+              };
+
+              "<leader>gg" = {
+                action = "function() require('toggleterm.terminal').Terminal:new({ cmd = 'lazygit', hidden = true }):toggle() end";
+                lua = true;
+                options = {
+                  noremap = true;
+                  desc = "Toggle LazyGit";
+                };
+              };
             };
         visual =
           lib.mapAttrsToList

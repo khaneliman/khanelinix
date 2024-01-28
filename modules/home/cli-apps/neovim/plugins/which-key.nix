@@ -29,6 +29,7 @@
             h = "Hover";
             r = "Rename";
           };
+          "t" = { name = "ToggleTerm"; };
         };
       };
     };
