@@ -101,19 +101,6 @@ in
         };
         recursive = true;
       };
-      # TODO: Convert to custom nixos neovim config
-      # "nvim" = {
-      #   # onChange = "${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
-      #   source = lib.cleanSourceWith {
-      #     filter = name: _type:
-      #       let
-      #         baseName = baseNameOf (toString name);
-      #       in
-      #       "lazy-lock.json" != baseName;
-      #     src = lib.cleanSource neovim-config;
-      #   };
-      #   recursive = true;
-      # };
     };
   };
 }
