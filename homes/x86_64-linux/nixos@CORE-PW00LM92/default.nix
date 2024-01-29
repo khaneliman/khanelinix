@@ -22,6 +22,12 @@ in
       k9s = enabled;
     };
 
+    desktop = {
+      addons = {
+        wezterm = mkForce disabled;
+      };
+    };
+
     security = {
       sops = {
         enable = true;
