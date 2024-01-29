@@ -16,9 +16,17 @@
       enable = true;
 
       closeIfLastWindow = true;
+
+      filesystem = {
+        followCurrentFile = {
+          enabled = true;
+          leaveDirsOpen = true;
+        };
+      };
+
       window = {
         width = 30;
-        autoExpandWidth = true;
+        autoExpandWidth = false;
       };
     };
   };
