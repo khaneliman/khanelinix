@@ -19,7 +19,6 @@
             luasnip = "[snip]";
             buffer = "[buffer]";
             neorg = "[neorg]";
-            cmp_tabnine = "[TabNine]";
             codeium = "[Codeium]";
           };
         };
@@ -50,7 +49,6 @@
           { name = "path"; }
           { name = "nvim_lsp"; }
           { name = "codeium"; }
-          { name = "cmp_tabnine"; }
           { name = "luasnip"; }
           {
             name = "buffer";
