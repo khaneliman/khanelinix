@@ -3,8 +3,6 @@
     options.completeopt = [ "menu" "menuone" "noselect" ];
 
     plugins = {
-      codeium-nvim.enable = true;
-
       luasnip.enable = true;
 
       lspkind = {
@@ -20,6 +18,9 @@
             buffer = "[buffer]";
             neorg = "[neorg]";
             codeium = "[Codeium]";
+            cmdline = "[Cmdline]";
+            calc = "[Calc]";
+            emoji = "[Emoji]";
           };
         };
       };
@@ -46,16 +47,24 @@
         };
 
         sources = [
-          { name = "path"; }
-          { name = "nvim_lsp"; }
-          { name = "codeium"; }
-          { name = "luasnip"; }
           {
             name = "buffer";
             # Words from other open buffers can also be suggested.
             option.get_bufnrs.__raw = "vim.api.nvim_list_bufs";
           }
+          { name = "calc"; }
+          { name = "cmdline"; }
+          { name = "codeium"; }
+          { name = "emoji"; }
+          { name = "fish"; }
+          { name = "git"; }
+          { name = "luasnip"; }
           { name = "neorg"; }
+          { name = "npm"; }
+          { name = "nvim_lsp"; }
+          { name = "path"; }
+          { name = "tmux"; }
+          { name = "zsh"; }
         ];
       };
     };
