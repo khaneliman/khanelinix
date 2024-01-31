@@ -56,6 +56,10 @@ in
       extraPlugins = with pkgs.vimPlugins; [
         vim-wakatime
       ];
+
+      extraConfigLuaPre = /* lua */ ''
+        function bool2str(bool) return bool and "on" or "off" end
+      '';
     };
 
     # TODO: setup onchange to either be after sops-nix or not load wakatime in headless
