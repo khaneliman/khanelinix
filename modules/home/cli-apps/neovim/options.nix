@@ -35,7 +35,6 @@
       #   patterns
       smartcase = true; # Override the 'ignorecase' option if the search pattern contains upper
       #   case characters
-      scrolloff = 999; # Number of screen lines to show around the cursor
       cursorline = true; # Highlight the screen line of the cursor
       cursorcolumn = false; # Highlight the screen column of the cursor
       signcolumn = "yes"; # Whether to show the signcolumn
