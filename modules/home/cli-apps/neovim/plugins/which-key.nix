@@ -5,11 +5,11 @@
       # ignoreMissing = true;
       registrations = {
         "<leader>" = {
-          "b" = { name = "Buffer"; };
-          "g" = { name = "Git"; };
-          "f" = { name = "Telescope"; };
+          "b" = { name = "󰓩 Buffers"; };
+          "g" = { name = "󰊢 Git"; };
+          "f" = { name = " Find"; };
           "h" = {
-            name = "Harpoon";
+            name = "󱡀 Harpoon";
             a = "Add";
             e = "QuickMenu";
             j = "1";
@@ -18,7 +18,7 @@
             m = "4";
           };
           "l" = {
-            name = "LSP";
+            name = "  LSP";
             a = "Code Action";
             d = "Definition";
             D = "References";
@@ -29,7 +29,8 @@
             h = "Hover";
             r = "Rename";
           };
-          "t" = { name = "ToggleTerm"; };
+          "t" = { name = " Terminal"; };
+          "u" = { name = " UI/UX"; };
         };
       };
     };
