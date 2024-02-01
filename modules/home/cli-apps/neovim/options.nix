@@ -5,6 +5,7 @@
       loaded_ruby_provider = 0; # Ruby
       loaded_perl_provider = 0; # Perl
       loaded_python_provider = 0; # Python 2
+      autoformat_enabled = 1;
     };
 
     clipboard = {

@@ -94,6 +94,7 @@
                 action = /*lua*/ ''
                   function ()
                     vim.g.autoformat_enabled = not vim.g.autoformat_enabled
+                    vim.cmd('FormatToggle')
                     vim.notify(string.format("Global autoformatting %s", bool2str(vim.g.autoformat_enabled), "info"))
                   end'';
                 lua = true;
