@@ -101,6 +101,30 @@
                   desc = "Toggle autoformatting";
                 };
               };
+
+              "<leader>us" = {
+                action = /*lua*/ ''
+                  function ()
+                    vim.wo.spell = not vim.wo.spell
+                    vim.notify(string.format("Spell %s", bool2str(vim.wo.spell), "info"))
+                  end'';
+                lua = true;
+                options = {
+                  desc = "Toggle spell";
+                };
+              };
+
+              "<leader>uw" = {
+                action = /*lua*/ ''
+                  function ()
+                    vim.wo.wrap = not vim.wo.wrap
+                    vim.notify(string.format("Wrap %s", bool2str(vim.wo.wrap), "info"))
+                  end'';
+                lua = true;
+                options = {
+                  desc = "Toggle word wrap";
+                };
+              };
             };
         visual =
           lib.mapAttrsToList
