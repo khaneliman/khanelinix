@@ -1,4 +1,4 @@
-{ ... }: {
+_: {
   programs.nixvim.plugins = {
     lsp.servers.efm = {
       enable = true;

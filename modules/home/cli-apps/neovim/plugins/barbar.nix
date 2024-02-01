@@ -1,4 +1,4 @@
-{ ... }: {
+_: {
   programs.nixvim.plugins.barbar = {
     enable = true;
     keymaps = {

@@ -1,4 +1,4 @@
-{ ... }: {
+_: {
   programs.nixvim = {
     options.completeopt = [ "menu" "menuone" "noselect" ];
 
