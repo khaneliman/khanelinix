@@ -125,6 +125,20 @@
                   desc = "Toggle word wrap";
                 };
               };
+
+              "<leader>uh" = {
+                action = /*lua*/ ''
+                  function ()
+                    local curr_foldcolumn = vim.wo.foldcolumn
+                    if curr_foldcolumn ~= "0" then vim.g.last_active_foldcolumn = curr_foldcolumn end
+                    vim.wo.foldcolumn = curr_foldcolumn == "0" and (vim.g.last_active_foldcolumn or "1") or "0"
+                    vim.notify(string.format("Fold Column %s", bool2str(vim.wo.wrap), "info"))
+                  end'';
+                lua = true;
+                options = {
+                  desc = "Toggle Fold Column";
+                };
+              };
             };
         visual =
           lib.mapAttrsToList
