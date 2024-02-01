@@ -5,7 +5,13 @@
       bg = "Yellow";
     };
 
+    highlight.Fix = {
+      fg = "White";
+      bg = "Red";
+    };
+
     match.TODO = "TODO";
+    match.FIX = "FIX";
 
     keymaps = [
       {
