@@ -20,7 +20,7 @@ in
       enable = true;
       enableBashIntegration = true;
       enableZshIntegration = true;
-      package = pkgs.khanelinix.wezterm;
+      package = pkgs.wezterm;
 
       extraConfig = /* lua */''
         function scheme_for_appearance(appearance)
