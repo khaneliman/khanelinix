@@ -20,7 +20,8 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      cemu
+      # FIX: broken package
+      # cemu
       emulationstation
       mame
       melonDS

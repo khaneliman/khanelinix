@@ -20,12 +20,13 @@ in
       devede
       handbrake
       mediainfo-gui
-      pitivi
+      # FIX: broken package
+      # pitivi
       vlc
     ];
 
     # NOTE: dvd burning software requires cdrom group and k3b dependencies in nix store do not have those permissions
-    # https://github.com/NixOS/nixpkgs/issues/19154#issuecomment-647005545 
+    # https://github.com/NixOS/nixpkgs/issues/19154#issuecomment-647005545
     # Additionally to installing `k3b` enabling this will
     # add `setuid` wrappers in `/run/wrappers/bin`
     # for both `cdrdao` and `cdrecord`. On first

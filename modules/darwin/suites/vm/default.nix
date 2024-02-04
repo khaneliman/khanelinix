@@ -19,7 +19,8 @@ in
     environment.systemPackages = with pkgs; [
       qemu
       vte
-      libvirt
+      # FIX: broken nixpkg on darwin
+      # libvirt
     ];
 
     homebrew = {
