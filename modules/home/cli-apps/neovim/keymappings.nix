@@ -140,6 +140,18 @@
                   desc = "Toggle Fold Column";
                 };
               };
+
+              "<leader>uc" = {
+                action = /*lua*/ ''
+                  function ()
+                    vim.g.cmp_enabled = not vim.g.cmp_enabled
+                    vim.notify(string.format("Completions %s", bool2str(vim.g.cmp_enabled), "info"))
+                  end'';
+                lua = true;
+                options = {
+                  desc = "Toggle completions";
+                };
+              };
             };
         visual =
           lib.mapAttrsToList
