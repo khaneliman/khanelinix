@@ -27,7 +27,7 @@ in
       melonDS
       mgba
       mupen64plus
-      nestopia
+      nestopia-ue
       # FIX: broken package
       # pcsx2
       pcsxr

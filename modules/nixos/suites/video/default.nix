@@ -20,8 +20,7 @@ in
       devede
       handbrake
       mediainfo-gui
-      # FIX: broken package
-      # pitivi
+      pitivi
       vlc
     ];
 
