@@ -1,3 +1,7 @@
+# A TOML linter such as https://taplo.tamasfe.dev/ can use this schema to validate your config.
+# If you encounter any issues, please make an issue at https://github.com/yazi-rs/schemas.
+"$schema" = "https://yazi-rs.github.io/schemas/keymap.json"
+
 [manager]
 
 keymap = [
@@ -16,8 +20,8 @@ keymap = [
 
 	{ on = [ "<C-u>" ], exec = "arrow -50%",  desc = "Move cursor up half page" },
 	{ on = [ "<C-d>" ], exec = "arrow 50%",   desc = "Move cursor down half page" },
-	{ on = [ "<C-b>" ], exec = "arrow -100%", desc = "Move cursor up one page" },
-	{ on = [ "<C-f>" ], exec = "arrow 100%",  desc = "Move cursor down one page" },
+	{ on = [ "<PageUp>" ], exec = "arrow -100%", desc = "Move cursor up one page" },
+	{ on = [ "<PageDown>" ], exec = "arrow 100%",  desc = "Move cursor down one page" },
 
 	{ on = [ "h" ], exec = "leave", desc = "Go back to the parent directory" },
 	{ on = [ "l" ], exec = "enter", desc = "Enter the child directory" },
@@ -114,6 +118,7 @@ keymap = [
 	{ on = [ "w" ], exec = "tasks_show", desc = "Show the tasks manager" },
 
 	# Goto
+	{ on = [ "g", "/" ],       exec = "cd /",										desc = "Go to the root directory" },
 	{ on = [ "g", "h" ],       exec = "cd ~",										desc = "Go to the home directory" },
 	{ on = [ "g", "c" ],       exec = "cd ~/.config",						desc = "Go to the config directory" },
 	{ on = [ "g", "t" ],       exec = "cd /tmp",								desc = "Go to the temporary directory" },
@@ -192,21 +197,27 @@ keymap = [
 	{ on = [ "v" ], exec = "visual",                              desc = "Enter visual mode" },
 	{ on = [ "V" ], exec = [ "move -999", "visual", "move 999" ], desc = "Enter visual mode and select all" },
 
-	# Navigation
+	# Character-wise movement
 	{ on = [ "h" ], exec = "move -1", desc = "Move cursor left" },
 	{ on = [ "l" ], exec = "move 1",  desc = "Move cursor right" },
+	{ on = [ "<Left>" ],  exec = "move -1", desc = "Move cursor left" },
+	{ on = [ "<Right>" ], exec = "move 1",  desc = "Move cursor right" },
 
+  # Line-wise movement
 	{ on = [ "0" ], exec = "move -999",                       desc = "Move to the BOL" },
 	{ on = [ "$" ], exec = "move 999",                        desc = "Move to the EOL" },
 	{ on = [ "I" ], exec = [ "move -999", "insert" ],         desc = "Move to the BOL, and enter insert mode" },
 	{ on = [ "A" ], exec = [ "move 999", "insert --append" ], desc = "Move to the EOL, and enter append mode" },
 
-	{ on = [ "<Left>" ],  exec = "move -1", desc = "Move cursor left" },
-	{ on = [ "<Right>" ], exec = "move 1",  desc = "Move cursor right" },
-
+	# Word-wise movement
 	{ on = [ "b" ], exec = "backward",              desc = "Move to the beginning of the previous word" },
 	{ on = [ "w" ], exec = "forward",               desc = "Move to the beginning of the next word" },
 	{ on = [ "e" ], exec = "forward --end-of-word", desc = "Move to the end of the next word" },
+
+	# Delete
+	{ on = [ "<Backspace>" ], exec = "backspace",	        desc = "Delete the character before the cursor" },
+	{ on = [ "<C-h>" ],       exec = "backspace",         desc = "Delete the character before the cursor" },
+	{ on = [ "<C-d>" ],       exec = "backspace --under", desc = "Delete the character under the cursor" },
 
 	# Deletion
 	{ on = [ "d" ], exec = "delete --cut",                              desc = "Cut the selected characters" },
@@ -215,7 +226,18 @@ keymap = [
 	{ on = [ "C" ], exec = [ "delete --cut --insert", "move 999" ],     desc = "Cut until the EOL, and enter insert mode" },
 	{ on = [ "x" ], exec = [ "delete --cut", "move 1 --in-operating" ], desc = "Cut the current character" },
 
-	# Yank/Paste
+  # Kill
+	{ on = [ "<C-u>" ], exec = "kill bol",      desc = "Kill backwards to the BOL" },
+	{ on = [ "<C-k>" ], exec = "kill eol",      desc = "Kill forwards to the EOL" },
+	{ on = [ "<C-w>" ], exec = "kill backward", desc = "Kill backwards to the start of the current word" },
+	{ on = [ "<A-d>" ], exec = "kill forward",  desc = "Kill forwards to the end of the current word" },
+
+	# Cut/Yank/Paste
+	{ on = [ "d" ], exec = "delete --cut",                              desc = "Cut the selected characters" },
+	{ on = [ "D" ], exec = [ "delete --cut", "move 999" ],              desc = "Cut until the EOL" },
+	{ on = [ "c" ], exec = "delete --cut --insert",                     desc = "Cut the selected characters, and enter insert mode" },
+	{ on = [ "C" ], exec = [ "delete --cut --insert", "move 999" ],     desc = "Cut until the EOL, and enter insert mode" },
+	{ on = [ "x" ], exec = [ "delete --cut", "move 1 --in-operating" ], desc = "Cut the current character" },
 	{ on = [ "y" ], exec = "yank",           desc = "Copy the selected characters" },
 	{ on = [ "p" ], exec = "paste",          desc = "Paste the copied characters after the cursor" },
 	{ on = [ "P" ], exec = "paste --before", desc = "Paste the copied characters before the cursor" },
@@ -225,6 +247,22 @@ keymap = [
 	{ on = [ "<C-r>" ], exec = "redo", desc = "Redo the last operation" },
 
 	# Help
+	{ on = [ "~" ], exec = "help", desc = "Open help" }
+]
+
+[completion]
+
+keymap = [
+	{ on = [ "<C-q>" ],   exec = "close",                                      desc = "Cancel completion" },
+	{ on = [ "<Tab>" ],   exec = "close --submit",                             desc = "Submit the completion" },
+	{ on = [ "<Enter>" ], exec = [ "close --submit", "close_input --submit" ], desc = "Submit the completion and input" },
+
+	{ on = [ "<A-k>" ], exec = "arrow -1", desc = "Move cursor up" },
+	{ on = [ "<A-j>" ], exec = "arrow 1",  desc = "Move cursor down" },
+
+	{ on = [ "<Up>" ],   exec = "arrow -1", desc = "Move cursor up" },
+	{ on = [ "<Down>" ], exec = "arrow 1",  desc = "Move cursor down" },
+
 	{ on = [ "~" ], exec = "help", desc = "Open help" }
 ]
 
@@ -244,6 +282,9 @@ keymap = [
 
 	{ on = [ "<Up>" ],   exec = "arrow -1", desc = "Move cursor up" },
 	{ on = [ "<Down>" ], exec = "arrow 1",  desc = "Move cursor down" },
+
+	{ on = [ "<S-Up>" ],   exec = "arrow -5", desc = "Move cursor up 5 lines" },
+	{ on = [ "<S-Down>" ], exec = "arrow 5",  desc = "Move cursor down 5 lines" },
 
 	# Filtering
 	{ on = [ "/" ], exec = "filter", desc = "Apply a filter for the help items" },

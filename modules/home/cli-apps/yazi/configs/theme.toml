@@ -1,3 +1,7 @@
+# A TOML linter such as https://taplo.tamasfe.dev/ can use this schema to validate your config.
+# If you encounter any issues, please make an issue at https://github.com/yazi-rs/schemas.
+"$schema" = "https://yazi-rs.github.io/schemas/theme.json"
+
 [manager]
 cwd = { fg = "#cad3f5" }
 
@@ -24,6 +28,7 @@ border_symbol = "│"
 border_style = { fg = "#8aadf4" }
 
 # Highlighting
+# FIX: reference catppuccin pkg
 syntect_theme = "~/.config/bat/themes/catppuccin-macchiato.tmTheme"
 
 [status]
