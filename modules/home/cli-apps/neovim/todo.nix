@@ -1,11 +1,11 @@
 _: {
   programs.nixvim = {
-    highlight.Todo = {
+    highlightOverride.Todo = {
       fg = "Blue";
       bg = "Yellow";
     };
 
-    highlight.Fix = {
+    highlightOverride.Fix = {
       fg = "White";
       bg = "Red";
     };
