@@ -2,7 +2,7 @@ _: {
   programs.nixvim = {
     plugins.tagbar = {
       enable = true;
-      extraConfig.width = 50;
+      settings.width = 50;
     };
 
     keymaps = [
