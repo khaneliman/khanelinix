@@ -1,0 +1,132 @@
+{ writeShellApplication
+, pkgs
+, lib
+, ...
+}:
+let
+  inherit (lib) getExe getExe';
+
+  buildInputs = with pkgs; [
+    bc
+    coreutils
+    curl
+    jq
+    yabai
+    sketchybar
+  ];
+in
+writeShellApplication
+{
+  meta = {
+    mainProgram = "sketchybarrc";
+    platforms = lib.platforms.darwin;
+  };
+
+  name = "sketchybarrc";
+
+  checkPhase = "";
+
+  text = /* bash */ ''
+    set +o errexit
+    set +o nounset
+    set +o pipefail
+
+    export PATH="$PATH:${pkgs.lib.makeBinPath buildInputs}"
+
+    source ${./config/colors.sh}     # Loads all defined colors
+    source ${./config/icons.sh}     # Loads all defined icons
+    source ${./config/userconfig.sh} # Loads all defined variables
+
+    export PLUGIN_DIR=${./config/plugins} # Directory where all the plugins are stored
+    export CONFIG_DIR=${./config}
+    # Setting up and starting the helper process
+    ${getExe pkgs.khanelinix.sketchyhelper} "git.felix.helper" >/dev/null 2>&1 &
+
+    # Unload the macOS on screen indicator overlay for volume change
+    launchctl unload -F /System/Library/LaunchAgents/com.apple.OSDUIHelper.plist >/dev/null 2>&1 &
+
+    bar_config=(
+    	blur_radius=30
+    	border_color="$SURFACE1"
+    	border_width=2
+    	color="$BASE"
+    	corner_radius=9
+    	height=40
+    	margin=10
+    	notch_width=0
+    	padding_left=18
+    	padding_right=10
+    	position=top
+    	shadow=on
+    	sticky=on
+    	topmost=off
+    	y_offset=10
+    )
+
+    icon_defaults=(
+    	icon.color="$TEXT"
+    	icon.font="$NERD_FONT:Bold:16.0"
+    	icon.padding_left="$PADDINGS"
+    	icon.padding_right="$PADDINGS"
+    )
+
+    label_defaults=(
+    	label.color="$TEXT"
+    	label.font="$FONT:Semibold:13.0"
+    	label.padding_left="$PADDINGS"
+    	label.padding_right="$PADDINGS"
+    )
+
+    background_defaults=(
+    	background.corner_radius=9
+    	background.height=30
+    	background.padding_left="$PADDINGS"
+    	background.padding_right="$PADDINGS"
+    )
+
+    popup_defaults=(
+    	popup.height=30
+    	popup.horizontal=false
+    	popup.background.border_color="$BLUE"
+    	popup.background.border_width=2
+    	popup.background.color="$MANTLE"
+    	popup.background.corner_radius=11
+    	popup.background.shadow.drawing=on
+    )
+
+    # Setting up the general bar appearance and default values
+    ${getExe pkgs.sketchybar} --bar "''${bar_config[@]}" \
+    	--default \
+    	updates=when_shown \
+    	"''${icon_defaults[@]}" \
+    	"''${label_defaults[@]}" \
+    	"''${background_defaults[@]}" \
+    	"''${popup_defaults[@]}"
+
+    source "$PLUGIN_DIR/lock/item.sh"
+
+    # Left
+    source "$PLUGIN_DIR/apple/item.sh"
+    source "$PLUGIN_DIR/spaces/item.sh"
+    source "$PLUGIN_DIR/skhd/item.sh"
+    source "$PLUGIN_DIR/front-app/item.sh"
+
+    # Right
+    source "$PLUGIN_DIR/date/item.sh"
+    source "$PLUGIN_DIR/weather/item.sh"
+    source "$PLUGIN_DIR/control-center/item.sh"
+    source "$PLUGIN_DIR/stats/item.sh"
+
+    # Center
+    # source "$ITEM_DIR/spotify.sh"
+    # source "$PLUGIN_DIR/dynamic-island/item.sh"
+    pkill dynamic-island-sketchybar 2>/dev/null
+    ${getExe' pkgs.sketchybar "dynamic-island-sketchybar"} &
+
+    # Forcing all item scripts to run (never do this outside of sketchybarrc)
+    ${getExe pkgs.sketchybar} --update
+
+    echo "sketchybar configuation loaded.."
+  '';
+}
+

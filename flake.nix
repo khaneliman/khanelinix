@@ -35,8 +35,9 @@
 
     # Home Manager (master)
     home-manager = {
-      url = "github:nix-community/home-manager";
-      # url = "git+file:///home/khaneliman/Documents/github/home-manager";
+      # url = "github:nix-community/home-manager";
+      url = "github:khaneliman/home-manager/sketchybar";
+      # url = "git+file:///home/khaneliman/Documents/GitHub/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

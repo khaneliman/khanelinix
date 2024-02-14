@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-source "$HOME/.config/sketchybar/colors.sh"
+source "$CONFIG_DIR/colors.sh"
 
 render_bar_item() {
-	sketchybar --set "${NAME}" icon.color=0xff989898
+	sketchybar --set "$NAME" icon.color=0xff989898
 
-	if [[ ${CHARGING} != "" ]]; then
-		case ${BATT_PERCENT} in
+	if [[ "$CHARGING" != "" ]]; then
+		case "$BATT_PERCENT" in
 		100) ICON="󰂅" COLOR="$GREEN" ;;
 		9[0-9]) ICON="󰂋" COLOR="$GREEN" ;;
 		8[0-9]) ICON="󰂊" COLOR="$GREEN" ;;
@@ -20,14 +20,14 @@ render_bar_item() {
 		*) ICON="󰢟" COLOR="$RED" ;;
 		esac
 
-		sketchybar --set "${NAME}" icon="${ICON}" icon.color="${COLOR}"
-		sketchybar --set "${NAME}" label="${BATT_PERCENT}%"
+		sketchybar --set "$NAME" icon="$ICON" icon.color="$COLOR"
+		sketchybar --set "$NAME" label="$BATT_PERCENT%"
 
 		low_battery_label
 		return 0
 	fi
 
-	case ${BATT_PERCENT} in
+	case $BATT_PERCENT in
 	100) ICON="󰁹" COLOR="$GREEN" ;;
 	9[0-9]) ICON="󰂂" COLOR="$GREEN" ;;
 	8[0-9]) ICON="󰂁" COLOR="$GREEN" ;;
@@ -41,22 +41,22 @@ render_bar_item() {
 	*) ICON="󰂃" COLOR="$RED" ;;
 	esac
 
-	sketchybar --set "${NAME}" icon="${ICON}" icon.color="${COLOR}"
+	sketchybar --set "$NAME" icon="$ICON" icon.color="$COLOR"
 
 	low_battery_label
 }
 
 low_battery_label() {
 	if [[ "$BATT_PERCENT" -lt 50 ]]; then
-		sketchybar --set "${NAME}" label="${BATT_PERCENT}%" label.drawing=on
+		sketchybar --set "$NAME" label="$BATT_PERCENT%" label.drawing=on
 	else
-		sketchybar --set "${NAME}" label.drawing=off
+		sketchybar --set "$NAME" label.drawing=off
 	fi
 }
 
 render_popup() {
 	battery_details=(
-		label="${BATT_PERCENT}%"
+		label="$BATT_PERCENT%"
 		label.padding_right=0
 		label.padding_right=0
 		label.align=center
