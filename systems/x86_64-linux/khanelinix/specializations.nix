@@ -1,4 +1,6 @@
 { inputs
+, lib
+, pkgs
 , ...
 }:
 let
@@ -22,6 +24,20 @@ in
     #     };
     #   };
     # };
+
+    zen = {
+      inheritParentConfig = true;
+      configuration = {
+        boot.kernelPackages = lib.mkForce pkgs.linuxPackages_zen;
+      };
+    };
+
+    lts = {
+      inheritParentConfig = true;
+      configuration = {
+        boot.kernelPackages = lib.mkForce pkgs.linuxPackages;
+      };
+    };
 
     nvidialess = {
       inheritParentConfig = true;
