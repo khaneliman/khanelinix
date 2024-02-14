@@ -43,7 +43,8 @@ in
         "appcleaner"
         "bartender"
         "bitwarden"
-        "brightness"
+        # FIX: broken package reference
+        # "brightness"
         "firefox-developer-edition"
         "floorp"
         "gpg-suite"
