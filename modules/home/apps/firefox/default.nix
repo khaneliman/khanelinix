@@ -80,7 +80,7 @@ in
 
           "magnolia_limited_permissions@12.34" = {
             installation_mode = "force_installed";
-            install_url = "https://gitlab.com/magnolia1234/bpc-uploads/-/raw/master/bypass_paywalls_clean-3.4.4.0-custom.xpi";
+            install_url = "https://gitlab.com/magnolia1234/bpc-uploads/-/raw/master/bypass_paywalls_clean-latest.xpi";
           };
         };
         Preferences = { };
