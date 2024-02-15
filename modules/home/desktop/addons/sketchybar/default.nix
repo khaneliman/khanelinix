@@ -69,6 +69,10 @@ in
           };
         };
 
+        extraConfig = ''
+          ${getExe pkgs.khanelinix.sketchyhelper}
+        '';
+
         sources = [
           ./config/colors.sh
           ./config/icons.sh
