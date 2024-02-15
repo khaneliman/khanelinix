@@ -781,11 +781,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1707884977,
-        "narHash": "sha256-X304SNziuhHjOAmy+PGiujdHAfWRXWdikAMer4r6MJs=",
+        "lastModified": 1708140158,
+        "narHash": "sha256-AaFjD5+fbjdmi0K27mDldlRO3xGS/UEp2fAZbRzHIvU=",
         "owner": "khaneliman",
         "repo": "home-manager",
-        "rev": "44570cc0cbe02fe90d403089a928601cad50fd49",
+        "rev": "31d587d52300fabe2d7c7eafa89273c2e5fa965a",
         "type": "github"
       },
       "original": {

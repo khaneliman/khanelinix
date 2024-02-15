@@ -69,11 +69,19 @@ in
           };
         };
 
+        sources = [
+          ./config/colors.sh
+          ./config/icons.sh
+          ./config/userconfig.sh
+        ];
+
+        plugins = builtins.filter (path: lib.hasSuffix "item.sh" (baseNameOf (toString path))) (lib.snowfall.fs.get-files-recursive ./config/plugins);
+
         variables = {
           FONT = "SF Pro";
           NERD_FONT = "MonaspiceNe Nerd Font";
 
-          PADDINGS = 3;
+          PADDINGS = "3";
 
           BASE = "0xff24273a";
           MANTLE = "0xff1e2030";
