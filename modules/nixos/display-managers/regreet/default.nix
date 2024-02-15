@@ -1,12 +1,15 @@
 { config
+, inputs
 , lib
 , options
 , pkgs
+, system
 , ...
 }:
 let
   inherit (lib) types mkIf getExe getExe';
   inherit (lib.internal) mkBoolOpt mkOpt;
+  inherit (inputs) nixpkgs-wayland;
 
   cfg = config.khanelinix.display-managers.regreet;
   greetdSwayConfig = pkgs.writeText "greetd-sway-config" ''
@@ -71,7 +74,7 @@ in
         };
 
         services.greetd.settings.default_session = {
-          command = "env GTK_USE_PORTAL=0 ${getExe pkgs.sway} --config ${greetdSwayConfig}";
+          command = "env GTK_USE_PORTAL=0 ${getExe nixpkgs-wayland.packages.${system}.sway-unwrapped} --config ${greetdSwayConfig}";
         };
 
         security.pam.services.greetd = {
