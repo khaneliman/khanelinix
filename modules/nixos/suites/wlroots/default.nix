@@ -24,9 +24,9 @@ in
       cliphist
       swayimg
       nixpkgs-wayland.packages.${system}.wdisplays
-      wl-screenrec
+      nixpkgs-wayland.packages.${system}.wl-screenrec
       nixpkgs-wayland.packages.${system}.wl-clipboard
-      wlr-randr
+      nixpkgs-wayland.packages.${system}.wlr-randr
       # Not really wayland specific, but I don't want to make a new module for it
       brightnessctl
       glib # for gsettings
