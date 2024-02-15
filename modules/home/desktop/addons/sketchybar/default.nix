@@ -70,7 +70,8 @@ in
         };
 
         extraConfig = ''
-          ${getExe pkgs.khanelinix.sketchyhelper}
+          killall sketchyhelper
+          ${getExe pkgs.khanelinix.sketchyhelper} git.felix.helper &
         '';
 
         sources = [
@@ -79,7 +80,10 @@ in
           ./config/userconfig.sh
         ];
 
-        plugins = builtins.filter (path: lib.hasSuffix "item.sh" (baseNameOf (toString path))) (lib.snowfall.fs.get-files-recursive ./config/plugins);
+        plugins = builtins.filter
+          (path: lib.hasSuffix "item.sh"
+            (baseNameOf (toString path)))
+          (lib.snowfall.fs.get-files-recursive ./config/plugins);
 
         variables = {
           FONT = "SF Pro";
