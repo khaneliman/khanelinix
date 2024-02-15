@@ -1,12 +1,15 @@
 { config
+, inputs
 , lib
 , options
 , pkgs
+, system
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+  inherit (inputs) nixpkgs-wayland;
 
   cfg = config.khanelinix.desktop.addons.swaylock;
 in
@@ -20,7 +23,7 @@ in
     programs.swaylock = {
       enable = true;
 
-      package = pkgs.swaylock-effects;
+      package = nixpkgs-wayland.packages.${system}.swaylock-effects;
       settings = {
         ignore-empty-password = true;
         disable-caps-lock-text = true;
