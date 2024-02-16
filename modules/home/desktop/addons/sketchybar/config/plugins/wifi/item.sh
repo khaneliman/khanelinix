@@ -2,11 +2,10 @@
 
 POPUP_CLICK_SCRIPT="sketchybar --set \$NAME popup.drawing=toggle"
 
-wifi_alias=(
-	icon.drawing=off
-	alias.color="$YELLOW"
-	background.padding_right=0
-	icon.padding_right=0
+wifi=(
+	icon="$WIFI"
+	icon.color="$YELLOW"
+	background.padding_left=5
 	align=right
 	click_script="$POPUP_CLICK_SCRIPT"
 	script="$PLUGIN_DIR/wifi/scripts/wifi.sh"
@@ -20,15 +19,14 @@ wifi_details=(
 	icon.background.height=2
 	icon.background.y_offset=-12
 	label.align=center
-	click_script="sketchybar --set wifi.alias popup.drawing=off"
+	click_script="sketchybar --set wifi popup.drawing=off"
 )
 
-sketchybar --add alias  "Control Center,WiFi" right                      \
-           --rename     "Control Center,WiFi" wifi.alias                 \
-           --set        wifi.alias    "${wifi_alias[@]}"                 \
-           --subscribe  wifi.alias    mouse.entered                      \
-                                      mouse.exited                       \
-                                      mouse.exited.global                \
+sketchybar  --add item   wifi right 								                     \
+            --set        wifi         "${wifi[@]}"                       \
+            --subscribe  wifi          mouse.entered                     \
+                                       mouse.exited                      \
+                                       mouse.exited.global               \
                                                                          \
-            --add       item          wifi.details popup.wifi.alias      \
+            --add       item          wifi.details popup.wifi            \
             --set       wifi.details  "${wifi_details[@]}"

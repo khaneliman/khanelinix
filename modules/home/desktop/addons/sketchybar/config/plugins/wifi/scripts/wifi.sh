@@ -5,9 +5,9 @@ source "$HOME/.config/sketchybar/icons.sh"
 
 render_bar_item() {
 	if [ "$SSID" = "" ]; then
-		args+=(--set "$NAME" label="N/A")
+		args+=(--set "$NAME" label="N/A" icon="$WIFI_OFF")
 	else
-		args+=(--set "$NAME" label="$SSID (${CURR_TX}Mbps)"
+		args+=(--set "$NAME" label="$SSID (${CURR_TX}Mbps)" icon="$WIFI"
 			label.drawing=off) # remove if you want more detailed info available without hovering
 	fi
 }

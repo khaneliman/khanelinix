@@ -7,6 +7,7 @@ github_bell=(
 	icon.font="$FONT:Bold:15.0"
 	icon="$BELL"
 	icon.color="$BLUE"
+	background.padding_left=0
 	label="$LOADING"
 	label.highlight_color="$BLUE"
 	popup.align=right

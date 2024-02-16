@@ -20,6 +20,10 @@ export MEMORY=﬙
 export NETWORK=
 export NETWORK_DOWN=
 export NETWORK_UP=
+export BLUETOOTH=󰂯
+export BLUETOOTH_OFF=󰂲
+export WIFI=󰖩
+export WIFI_OFF=󰖪
 
 # Git Icons
 export GIT_ISSUE=􀍷

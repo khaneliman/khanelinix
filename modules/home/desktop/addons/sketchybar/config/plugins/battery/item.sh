@@ -17,4 +17,4 @@ sketchybar -m --add item    battery right 		                               \
                                               mouse.clicked                  \
                                                                              \
               --add         item              battery.details popup.battery  \
-              --set         battery.details   "${battery_details[@]}"                                
+              --set         battery.details   "${battery_details[@]}"

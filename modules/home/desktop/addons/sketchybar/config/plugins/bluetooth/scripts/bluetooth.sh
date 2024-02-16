@@ -63,7 +63,7 @@ update() {
 	CONNECTED="$(blueutil --connected)"
 	COUNT_PAIRED="$(echo "$PAIRED" | grep "^.*$" -c)"
 	COUNT_CONNECTED="$(echo "$CONNECTED" | grep "^.*$" -c)"
-	PREV_COUNT=$(sketchybar --query bluetooth.alias | jq -r .popup.items | grep ".device*" -c)
+	PREV_COUNT=$(sketchybar --query bluetooth | jq -r .popup.items | grep ".device*" -c)
 
 	render_bar_item
 	render_popup

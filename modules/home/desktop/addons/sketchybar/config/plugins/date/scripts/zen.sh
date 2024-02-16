@@ -13,8 +13,8 @@ zen_items=(
 	battery
 	disk
 	memory
-	bluetooth.alias
-	wifi.alias
+	bluetooth
+	wifi
 	separator_left
 	separator_right
 	github.bell
