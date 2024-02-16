@@ -29,6 +29,7 @@ in
         split_ratio = "0.5";
         auto_balance = "off";
         insert_feedback_color = "0xff7793d1";
+        menubar_opacity = "0.5";
         # external_bar all:39:0 \
 
         window_placement = "second_child";
