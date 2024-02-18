@@ -2,12 +2,10 @@ _: _final: prev: {
   waybar = prev.waybar.overrideAttrs (_old: {
     version = "unstable-waybar";
     src = prev.fetchFromGitHub {
-      owner = "Alexays";
+      owner = "zjeffer";
       repo = "waybar";
-      rev = "0d9c4929988cc8443483400631157826069a388d";
-      sha256 = "sha256-ozW4yGPdGY2WrVU0mxqkc0uFQUg8m6+S/JkALwDxRTw=";
+      rev = "11310b89f063a305de0d23aa4dd21d6ef365a776";
+      sha256 = "sha256-2NJRsx5VXh0BCfoEDfOvL0wMKR3uzpMWq8XSg4ZZ5rg=";
     };
-
-    patches = [ ./catch.patch ];
   });
 }
