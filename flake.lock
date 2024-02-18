@@ -815,6 +815,28 @@
         "type": "github"
       }
     },
+    "hypridle": {
+      "inputs": {
+        "hyprlang": "hyprlang",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1708235206,
+        "narHash": "sha256-BbJSY2DQQEqnVgVfFHUuLtP5yCVuudyBjDg3nQRtWr4=",
+        "owner": "khaneliman",
+        "repo": "Hypridle",
+        "rev": "294e7869b7100bfa9afdb09a9e4a13628d8a4525",
+        "type": "github"
+      },
+      "original": {
+        "owner": "khaneliman",
+        "ref": "hm",
+        "repo": "Hypridle",
+        "type": "github"
+      }
+    },
     "hyprland": {
       "inputs": {
         "hyprland-protocols": "hyprland-protocols",
@@ -885,6 +907,27 @@
       }
     },
     "hyprlang": {
+      "inputs": {
+        "nixpkgs": [
+          "hypridle",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1708197082,
+        "narHash": "sha256-6jMgmGkZLXUHVSkUQi9NLhFD3KYrG8merm0T9qiUdyA=",
+        "owner": "hyprwm",
+        "repo": "hyprlang",
+        "rev": "65a7f870a682bd313ae978d76e61ebc72fbd64cd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hyprwm",
+        "repo": "hyprlang",
+        "type": "github"
+      }
+    },
+    "hyprlang_2": {
       "inputs": {
         "nixpkgs": [
           "hyprland",
@@ -1522,6 +1565,7 @@
         "flake": "flake",
         "gpg-base-conf": "gpg-base-conf",
         "home-manager": "home-manager",
+        "hypridle": "hypridle",
         "hyprland": "hyprland",
         "hyprland-contrib": "hyprland-contrib",
         "lanzaboote": "lanzaboote",
@@ -2007,7 +2051,7 @@
           "hyprland",
           "hyprland-protocols"
         ],
-        "hyprlang": "hyprlang",
+        "hyprlang": "hyprlang_2",
         "nixpkgs": [
           "hyprland",
           "nixpkgs"
