@@ -3,7 +3,6 @@
 , lib
 , options
 , pkgs
-, system
 , ...
 }:
 let

@@ -5,4 +5,4 @@ set $monitor-bottom DP-1
 #output $monitor-bottom bg /home/khaneliman/Photos/wallpapers/center.jpg fill
 
 output $monitor-top resolution 3840x2160 position 1420,0
-output $monitor-bottom resolution 5120x1440 position 0,1080  
+output $monitor-bottom resolution 5120x1440 position 0,1080

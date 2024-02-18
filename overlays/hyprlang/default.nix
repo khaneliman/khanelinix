@@ -1,5 +1,5 @@
 _: _final: prev: {
-  hyprlang = prev.hyprlang.overrideAttrs (old: {
+  hyprlang = prev.hyprlang.overrideAttrs (_old: {
     version = "0.4.0";
     src = prev.fetchFromGitHub {
       owner = "hyprwm";

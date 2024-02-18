@@ -1,4 +1,4 @@
-{ config, ... }: {
+_: {
   programs.nixvim.plugins = {
     yanky = {
       enable = true;
