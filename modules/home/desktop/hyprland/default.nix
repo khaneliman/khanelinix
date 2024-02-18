@@ -66,6 +66,7 @@ in
           desktop.addons = {
             rofi = enabled;
             hyprpaper = enabled;
+            hypridle = enabled;
           };
 
           suites = {
