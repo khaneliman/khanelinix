@@ -24,7 +24,7 @@ in
   config = mkIf cfg.enable {
     services.hypridle = {
       enable = true;
-      package = pkgs.khanelinix.hypridle;
+      package = pkgs.hypridle;
 
       lockCmd = "${getExe config.programs.swaylock.package} -defF";
       afterSleepCmd = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms on";

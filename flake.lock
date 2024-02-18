@@ -823,11 +823,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1708235206,
-        "narHash": "sha256-BbJSY2DQQEqnVgVfFHUuLtP5yCVuudyBjDg3nQRtWr4=",
+        "lastModified": 1708271191,
+        "narHash": "sha256-P4NtAWAYcz8vOrpYzR0H9qSPaB0A8MgvYUcdu+PYSRg=",
         "owner": "khaneliman",
         "repo": "Hypridle",
-        "rev": "294e7869b7100bfa9afdb09a9e4a13628d8a4525",
+        "rev": "0318c940ffd8602a86a5fcd7640d98ff86c1c099",
         "type": "github"
       },
       "original": {

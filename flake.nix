@@ -43,6 +43,7 @@
     # Hypridle
     hypridle = {
       url = "github:khaneliman/Hypridle/hm";
+      # url = "git+file:///home/khaneliman/Documents/github/hypridle";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
