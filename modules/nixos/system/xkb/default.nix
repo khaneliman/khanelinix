@@ -18,8 +18,10 @@ in
     console.useXkbConfig = true;
 
     services.xserver = {
-      layout = "us";
-      xkbOptions = "caps:escape";
+      xkb = {
+        layout = "us";
+        options = "caps:escape";
+      };
     };
   };
 }

@@ -46,7 +46,7 @@ in
                 # ░▀▀█░░█░░▀▀█░░█░░█▀▀░█░█
                 # ░▀▀▀░░▀░░▀▀▀░░▀░░▀▀▀░▀░▀
                 "$LHYPER, L, exec, systemctl --user exit"
-                "$LHYPER, L, exit,    "
+                "$LHYPER, L, exit,"
                 # "$RHYPER, R, exec, reboot" # TODO: fix
                 # "$RHYPER, P, exec, shutdown" # TODO: fix
                 "$LHYPER, T, exec, ${getExe pkgs.libnotify} 'test left'"
@@ -107,7 +107,7 @@ in
 
                 # MOVING silently LEFT/RIGHT
                 "SUPER_SHIFT, right, movetoworkspacesilent, +1"
-                "SUPER_SHIFT, left, movetoworkspacesilent, -1 "
+                "SUPER_SHIFT, left, movetoworkspacesilent, -1"
 
                 # Scratchpad
                 "SUPER_SHIFT,grave,movetoworkspace,special:scratchpad"

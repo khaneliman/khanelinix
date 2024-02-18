@@ -96,7 +96,8 @@
 
     # NixPkgs (nixos-unstable)
     nixpkgs = {
-      url = "github:nixos/nixpkgs/nixos-unstable";
+      # url = "github:nixos/nixpkgs/nixos-unstable";
+      url = "github:khaneliman/nixpkgs/nixos-unstable-patched";
     };
 
     # NixPkgs (master)
@@ -140,7 +141,8 @@
 
     # Neovim nix configuration
     nixvim = {
-      url = "github:nix-community/nixvim";
+      # url = "github:nix-community/nixvim";
+      url = "github:khaneliman/nixvim/base16";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
