@@ -2,7 +2,7 @@
 , pkgs
 , stdenv
 }:
-stdenv.mkDerivation (finalAttrs: {
+stdenv.mkDerivation (_finalAttrs: {
   pname = "dynamic-island-helper";
   version = "unstable-2024-02-11";
 

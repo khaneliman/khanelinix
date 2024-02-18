@@ -1,7 +1,7 @@
 { lib
 , stdenv
 }:
-stdenv.mkDerivation (finalAttrs: {
+stdenv.mkDerivation (_finalAttrs: {
   pname = "sketchybarhelper";
   version = "unstable-2024-02-11";
 
