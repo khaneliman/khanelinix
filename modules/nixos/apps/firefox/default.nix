@@ -17,6 +17,10 @@ in
     };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = [
+      pkgs.floorp
+    ];
+
     services.gnome.gnome-browser-connector.enable = config.khanelinix.desktop.gnome.enable;
 
     khanelinix.home = {
