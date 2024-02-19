@@ -42,7 +42,7 @@
 
     # Hypridle
     hypridle = {
-      url = "github:khaneliman/Hypridle/hm";
+      url = "github:hyprwm/Hypridle";
       # url = "git+file:///home/khaneliman/Documents/github/hypridle";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -97,6 +97,7 @@
     # NixPkgs (nixos-unstable)
     nixpkgs = {
       # url = "github:nixos/nixpkgs/nixos-unstable";
+      # TODO: replace when upstream isn't broken
       url = "github:khaneliman/nixpkgs/nixos-unstable-patched";
     };
 
@@ -142,6 +143,7 @@
     # Neovim nix configuration
     nixvim = {
       # url = "github:nix-community/nixvim";
+      # TODO: replace when upstream isn't broken
       url = "github:khaneliman/nixvim/base16";
       inputs.nixpkgs.follows = "nixpkgs";
     };
