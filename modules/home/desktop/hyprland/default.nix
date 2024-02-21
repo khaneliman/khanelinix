@@ -7,8 +7,8 @@
 , ...
 }:
 let
-  inherit (lib) mkIf mkEnableOption getExe;
-  inherit (lib.internal) enabled;
+  inherit (lib) mkIf mkEnableOption mkForce getExe;
+  inherit (lib.internal) enabled disabled;
   inherit (inputs) hyprland;
 
   cfg = config.khanelinix.desktop.hyprland;
@@ -67,6 +67,9 @@ in
             rofi = enabled;
             hyprpaper = enabled;
             hypridle = enabled;
+            hyprlock = enabled;
+            swayidle = mkForce disabled;
+            swaylock = mkForce disabled;
           };
 
           suites = {
@@ -77,6 +80,7 @@ in
         programs.waybar.systemd.target = "hyprland-session.target";
 
         systemd.user.services.swayidle.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
+        systemd.user.services.hypridle.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
 
         wayland.windowManager.hyprland = {
           enable = true;

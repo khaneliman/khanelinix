@@ -40,7 +40,6 @@ in
 
     desktop = {
       addons = {
-        # swayidle = enabled;
         # waybar.debug = true;
         hyprpaper = {
           monitors = [

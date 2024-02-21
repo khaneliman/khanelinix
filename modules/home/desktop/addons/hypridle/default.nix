@@ -25,13 +25,13 @@ in
       enable = true;
       package = pkgs.hypridle;
 
-      lockCmd = "${getExe config.programs.swaylock.package} -defF";
+      lockCmd = "${getExe config.programs.hyprlock.package}";
       afterSleepCmd = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms on";
 
       listeners = [
         {
           timeout = 900;
-          onTimeout = "${getExe config.programs.swaylock.package} -defF";
+          onTimeout = "${getExe config.programs.hyprlock.package}";
         }
         {
           timeout = 1200;
