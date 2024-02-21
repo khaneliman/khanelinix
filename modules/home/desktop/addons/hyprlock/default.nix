@@ -25,22 +25,37 @@ in
       enable = true;
       # package = pkgs.hyprlock;
 
-      input_field = {
-        outer_color = "rgb(24, 25, 38)";
-        inner_color = "rgb(91, 96, 120)";
-        font_color = "rgb(202, 211, 245)";
-        halign = "center";
-        valign = "bottom";
-      };
+      input-fields = [
+        {
+          outer_color = "rgb(24, 25, 38)";
+          inner_color = "rgb(91, 96, 120)";
+          font_color = "rgb(202, 211, 245)";
+          halign = "center";
+          valign = "bottom";
+        }
+      ];
 
-      label = {
-        text = "$TIME";
-        color = "rgb(237, 135, 150)";
-        font_family = config.khanelinix.system.fonts.default;
-        font_size = 72;
-        halign = "center";
-        valign = "center";
-      };
+      labels = [
+        {
+          text = "$TIME";
+          color = "rgb(24, 25, 38)";
+          font_family = config.khanelinix.system.fonts.default;
+          font_size = 72;
+          halign = "center";
+          valign = "center";
+        }
+        {
+          text = "Welcome back, $USER!";
+          color = "rgb(237, 135, 150)";
+          font_family = config.khanelinix.system.fonts.default;
+          font_size = 72;
+          halign = "center";
+          valign = "top";
+          position = {
+            y = -20;
+          };
+        }
+      ];
 
       backgrounds = [
         {
