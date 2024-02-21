@@ -1422,16 +1422,16 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1708276127,
-        "narHash": "sha256-Bp4AwC4yOeTEwxXhvQZM9ap1CXCZm13NTZPY0/CtqzY=",
-        "owner": "khaneliman",
+        "lastModified": 1708296515,
+        "narHash": "sha256-FyF489fYNAUy7b6dkYV6rGPyzp+4tThhr80KNAaF/yY=",
+        "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "3c230d70f9a6c77338a85d548027aa6f629a8329",
+        "rev": "b98a4e1746acceb92c509bc496ef3d0e5ad8d4aa",
         "type": "github"
       },
       "original": {
-        "owner": "khaneliman",
-        "ref": "nixos-unstable-patched",
+        "owner": "nixos",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -1480,16 +1480,15 @@
         "pre-commit-hooks": "pre-commit-hooks"
       },
       "locked": {
-        "lastModified": 1708276392,
-        "narHash": "sha256-S9cjQmOZGGD41n5ch80YWgmNpiVRERM/LS2v6NcMy/8=",
-        "owner": "khaneliman",
+        "lastModified": 1708460459,
+        "narHash": "sha256-r6w+4IKAyxMCBADP3T7Fj8PXo0yay/4EJMNWV630m6o=",
+        "owner": "nix-community",
         "repo": "nixvim",
-        "rev": "fd79d6a90fc15b52d04381eb5b67dc2a8536e949",
+        "rev": "82a24d0d422bcc24eb33ebe7aa2571a78f4eafdf",
         "type": "github"
       },
       "original": {
-        "owner": "khaneliman",
-        "ref": "base16",
+        "owner": "nix-community",
         "repo": "nixvim",
         "type": "github"
       }
@@ -1516,11 +1515,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1708483231,
-        "narHash": "sha256-nEt81dQBylCvBYrnnyqy4Fxh34HoXewnfJRf1cBb86Q=",
+        "lastModified": 1708490325,
+        "narHash": "sha256-DGHWfk4nNZMja9lC3xRt49/ABvPp0xc6/TOgB77VqRI=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "4a06dbfc56df098148d311fd37c74e0363019863",
+        "rev": "d080c30d6c656d1bc59abb3f511b32d41f5486e9",
         "type": "github"
       },
       "original": {
@@ -1839,11 +1838,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1708402307,
-        "narHash": "sha256-TvkyfZduvaridstQHOa4r74XFU4oUJYfJrvFDxjAN1Q=",
+        "lastModified": 1708488596,
+        "narHash": "sha256-hzH4NlmfsOnOwREs2xlji7N2OW3LQc/WLAwUe0Se5XM=",
         "owner": "Gerg-L",
         "repo": "spicetify-nix",
-        "rev": "e70958c9943b7ed2f20b60c8f09a886eaeea3c2d",
+        "rev": "c19e1d31b497929c16fdc16b211db01d6cc61289",
         "type": "github"
       },
       "original": {

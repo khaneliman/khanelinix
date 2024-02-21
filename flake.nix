@@ -101,9 +101,7 @@
 
     # NixPkgs (nixos-unstable)
     nixpkgs = {
-      # url = "github:nixos/nixpkgs/nixos-unstable";
-      # TODO: replace when upstream isn't broken
-      url = "github:khaneliman/nixpkgs/nixos-unstable-patched";
+      url = "github:nixos/nixpkgs/nixos-unstable";
     };
 
     # NixPkgs (master)
@@ -147,9 +145,7 @@
 
     # Neovim nix configuration
     nixvim = {
-      # url = "github:nix-community/nixvim";
-      # TODO: replace when upstream isn't broken
-      url = "github:khaneliman/nixvim/base16";
+      url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
