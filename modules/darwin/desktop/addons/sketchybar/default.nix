@@ -37,6 +37,8 @@ in
         gnugrep
         gnused
         jq
+        lua5_4
+        wttrbar
       ];
 
       # TODO: need to update nixpkg to support complex configurations
