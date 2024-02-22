@@ -42,11 +42,15 @@ in
       labels = [
         {
           text = "$TIME";
-          color = "rgb(24, 25, 38)";
+          color = "rgb(237, 135, 150)";
           font_family = config.khanelinix.system.fonts.default;
           font_size = 72;
           halign = "center";
           valign = "center";
+          position = {
+            x = 700;
+            y = -50;
+          };
         }
         {
           text = "Welcome back, $USER!";
