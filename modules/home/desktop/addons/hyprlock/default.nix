@@ -67,7 +67,9 @@ in
 
       backgrounds = [
         {
-          path = "${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png";
+          # path = "${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png";
+          path = "screenshot";
+          blur_passes = 4;
         }
       ];
     };
