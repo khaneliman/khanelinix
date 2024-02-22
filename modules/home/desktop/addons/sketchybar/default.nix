@@ -36,7 +36,7 @@ in
     xdg.configFile = {
       "sketchybar" = {
         source = lib.cleanSourceWith {
-          src = lib.cleanSource ./config/.;
+          src = lib.cleanSource ./lua-config/.;
         };
 
         recursive = true;
