@@ -25,6 +25,10 @@ in
       enable = true;
       # package = pkgs.hyprlock;
 
+      general = {
+        grace = 300;
+      };
+
       input-fields = [
         {
           outer_color = "rgb(24, 25, 38)";
