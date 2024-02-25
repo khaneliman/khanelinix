@@ -49,29 +49,30 @@ end
 
 local function wifi_update()
   -- Get current WiFi info
-  local currentWifi = io.popen(
-    "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I"):read("*a")
+  sbar.exec(
+    "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I",
+    function(currentWifi)
+      -- Extract SSID
+      local ssid = string.match(currentWifi, "SSID: (.-)\n")
 
-  -- Extract SSID
-  local ssid = string.match(currentWifi, "SSID: (.-)\n")
+      -- Extract current transmission rate
+      local currTx = string.match(currentWifi, "lastTxRate: (.-)\n")
 
-  -- Extract current transmission rate
-  local currTx = string.match(currentWifi, "lastTxRate: (.-)\n")
+      if isempty(ssid) then
+        wifi:set({ icon = { string = icons.wifi_off } })
+        wifi_details:set({ label = "No WiFi" })
+        return
+      end
 
-  if isempty(ssid) then
-    wifi:set({ icon = { string = icons.wifi_off } })
-    wifi_details:set({ label = "No WiFi" })
-    return
-  end
-
-  wifi:set({
-    icon = {
-      string = icons.wifi,
-    },
-  })
-  wifi_details:set({
-    label = ssid .. " (" .. currTx .. "Mbps)"
-  })
+      wifi:set({
+        icon = {
+          string = icons.wifi,
+        },
+      })
+      wifi_details:set({
+        label = ssid .. " (" .. currTx .. "Mbps)"
+      })
+    end)
 end
 
 wifi:subscribe({
@@ -95,5 +96,6 @@ wifi:subscribe({
   function(_)
     wifi:set({ popup = { drawing = true } })
   end)
+
 
 return wifi

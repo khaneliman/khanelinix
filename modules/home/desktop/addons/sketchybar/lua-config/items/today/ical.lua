@@ -67,46 +67,46 @@ ical:subscribe({ "routine", "forced" }, function()
   ical:set({ popup = { drawing = false } })
 
   -- Fetch events from calendar
-  local EVENTS = io.popen("icalBuddy -nc -nrd -eed -iep datetime,title -b '' -ps '|" .. SEP .. "|' eventsToday")
-      :read("*a")
+  sbar.exec("icalBuddy -nc -nrd -eed -iep datetime,title -b '' -ps '|" .. SEP .. "|' eventsToday",
+    function(events)
+      -- Clear existing events
+      local existingEvents = ical:query()
+      if existingEvents.popup and next(existingEvents.popup.items) ~= nil then
+        for _, item in pairs(existingEvents.popup.items) do
+          sbar.remove(item)
+        end
+      end
 
-  -- Clear existing events
-  local existingEvents = ical:query()
-  if existingEvents.popup and next(existingEvents.popup.items) ~= nil then
-    for _, item in pairs(existingEvents.popup.items) do
-      sbar.remove(item)
-    end
-  end
+      -- Parse and organize events
+      for _, line in ipairs(split(events, "\n")) do
+        local title, time = line:match("^(.-)%s*%%(.*)$")
 
-  -- Parse and organize events
-  for _, line in ipairs(split(EVENTS, "\n")) do
-    local title, time = line:match("^(.-)%s*%%(.*)$")
-
-    if title and time then
-      local ical_event = sbar.add("item", "ical_event_" .. title, {
-        icon = {
-          string = time,
-          color = colors.yellow
-        },
-        label = {
-          string = title
-        },
-        position = "popup." .. ical.name,
-        click_script = "sketchybar --set $NAME popup.drawing=off",
-      })
-    else
-      local ical_event = sbar.add("item", "ical_event_" .. line, {
-        icon = {
-          color = colors.yellow
-        },
-        label = {
-          string = line
-        },
-        position = "popup." .. ical.name,
-        click_script = "sketchybar --set $NAME popup.drawing=off",
-      })
-    end
-  end
+        if title and time then
+          local ical_event = sbar.add("item", "ical_event_" .. title, {
+            icon = {
+              string = time,
+              color = colors.yellow
+            },
+            label = {
+              string = title
+            },
+            position = "popup." .. ical.name,
+            click_script = "sketchybar --set $NAME popup.drawing=off",
+          })
+        else
+          local ical_event = sbar.add("item", "ical_event_" .. line, {
+            icon = {
+              color = colors.yellow
+            },
+            label = {
+              string = line
+            },
+            position = "popup." .. ical.name,
+            click_script = "sketchybar --set $NAME popup.drawing=off",
+          })
+        end
+      end
+    end)
 end)
 
 ical:subscribe("mouse.entered", function()

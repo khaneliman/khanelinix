@@ -65,32 +65,32 @@ network.network_down:subscribe({
   },
   function()
     -- Execute the ifstat command and read the output
-    local ifstat_output = io.popen('ifstat -i "en0" -b 0.1 1 | tail -n1'):read("*a")
+    sbar.exec('ifstat -i "en0" -b 0.1 1 | tail -n1', function(ifstat_output)
+      -- Extract DOWN and UP values from the ifstat output
+      local DOWN, UP = ifstat_output:match("(%S+)%s+(%S+)")
 
-    -- Extract DOWN and UP values from the ifstat output
-    local DOWN, UP = ifstat_output:match("(%S+)%s+(%S+)")
+      -- Convert DOWN and UP values to Lua numbers
+      DOWN = tonumber(DOWN)
+      UP = tonumber(UP)
 
-    -- Convert DOWN and UP values to Lua numbers
-    DOWN = tonumber(DOWN)
-    UP = tonumber(UP)
+      -- Format DOWN and UP values
+      local DOWN_FORMAT
+      if DOWN > 999 then
+        DOWN_FORMAT = string.format("%03.0f Mbps", DOWN / 1000)
+      else
+        DOWN_FORMAT = string.format("%03.0f kbps", DOWN)
+      end
 
-    -- Format DOWN and UP values
-    local DOWN_FORMAT
-    if DOWN > 999 then
-      DOWN_FORMAT = string.format("%03.0f Mbps", DOWN / 1000)
-    else
-      DOWN_FORMAT = string.format("%03.0f kbps", DOWN)
-    end
+      local UP_FORMAT
+      if UP > 999 then
+        UP_FORMAT = string.format("%03.0f Mbps", UP / 1000)
+      else
+        UP_FORMAT = string.format("%03.0f kbps", UP)
+      end
 
-    local UP_FORMAT
-    if UP > 999 then
-      UP_FORMAT = string.format("%03.0f Mbps", UP / 1000)
-    else
-      UP_FORMAT = string.format("%03.0f kbps", UP)
-    end
-
-    network.network_down:set({ label = DOWN_FORMAT })
-    network.network_up:set({ label = UP_FORMAT })
+      network.network_down:set({ label = DOWN_FORMAT })
+      network.network_up:set({ label = UP_FORMAT })
+    end)
   end)
 
 return network
