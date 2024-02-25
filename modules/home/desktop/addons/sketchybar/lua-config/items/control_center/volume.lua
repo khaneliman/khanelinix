@@ -1,6 +1,9 @@
 local colors = require("colors")
 local icons = require("icons")
 
+-- Unload the macOS on screen indicator overlay for volume change
+sbar.exec("launchctl unload -F /System/Library/LaunchAgents/com.apple.OSDUIHelper.plist >/dev/null 2>&1 &")
+
 local volume_slider = sbar.add("slider", "volume_slider", 100, {
   position = "right",
   updates = true,
