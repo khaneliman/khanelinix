@@ -64,53 +64,52 @@ brew:subscribe({
     }
 
     -- fetch new information
-    os.execute("command brew update")
-    local outdated = io.popen("command brew outdated")
-        :read("*a")
-    local count = 0
-    for _ in outdated:gmatch("\n") do
-      count = count + 1
-    end
-
-    -- Clear existing packages
-    local existingPackages = brew:query()
-    if existingPackages.popup and next(existingPackages.popup.items) ~= nil then
-      for _, item in pairs(existingPackages.popup.items) do
-        -- os.execute("sketchybar --remove " .. item)
-        sbar.remove(item)
+    sbar.exec("command brew update")
+    sbar.exec("command brew outdated", function(outdated)
+      local count = 0
+      for _ in outdated:gmatch("\n") do
+        count = count + 1
       end
-    end
 
-    -- Add packages to popup
-    for package in outdated:gmatch("[^\n]+") do
-      local brew_package = sbar.add("item", "brew_" .. package, {
-        label = {
-          string = tostring(package),
-          align = "right",
-          padding_right = 20,
-          padding_left = 20
-        },
-        icon = {
-          string = tostring(package),
-          drawing = false
-        },
-        click_script = popup_off,
-        position = "popup." .. brew.name
-      })
-    end
+      -- Clear existing packages
+      local existingPackages = brew:query()
+      if existingPackages.popup and next(existingPackages.popup.items) ~= nil then
+        for _, item in pairs(existingPackages.popup.items) do
+          sbar.remove(item)
+        end
+      end
 
-    -- Change icon and color depending on packages
-    for _, threshold in ipairs(thresholds) do
-      if count >= threshold.count then
-        brew:set({
-          icon = {
-            color = threshold.color
+      -- Add packages to popup
+      for package in outdated:gmatch("[^\n]+") do
+        local brew_package = sbar.add("item", "brew_" .. package, {
+          label = {
+            string = tostring(package),
+            align = "right",
+            padding_right = 20,
+            padding_left = 20
           },
-          label = count
+          icon = {
+            string = tostring(package),
+            drawing = false
+          },
+          click_script = popup_off,
+          position = "popup." .. brew.name
         })
-        break
       end
-    end
+
+      -- Change icon and color depending on packages
+      for _, threshold in ipairs(thresholds) do
+        if count >= threshold.count then
+          brew:set({
+            icon = {
+              color = threshold.color
+            },
+            label = count
+          })
+          break
+        end
+      end
+    end)
   end)
 
 return brew

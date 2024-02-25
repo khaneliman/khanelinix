@@ -33,11 +33,11 @@ memory:subscribe({
     "system_woke"
   },
   function()
-    local memoryUsage = io.popen(
-          "memory_pressure | grep 'System-wide memory free percentage:' | awk '{ printf(\"%02.0f\\n\", 100-$5\"%\") }'")
-        :read(
-          "*a")
-    memory:set({ label = memoryUsage .. "%" })
+    sbar.exec(
+      "memory_pressure | grep 'System-wide memory free percentage:' | awk '{ printf(\"%02.0f\\n\", 100-$5\"%\") }'",
+      function(memoryUsage)
+        memory:set({ label = memoryUsage .. "%" })
+      end)
   end)
 
 

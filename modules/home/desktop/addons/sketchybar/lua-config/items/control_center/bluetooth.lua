@@ -33,114 +33,108 @@ bluetooth:subscribe({
   end)
 
 bluetooth:subscribe("mouse.clicked", function()
-  local state = io.popen("blueutil -p"):read("*a")
-
-  if tonumber(state) == 0 then
-    sbar.exec("blueutil -p 1")
-    bluetooth:set({ icon = icons.bluetooth })
-  else
-    sbar.exec("blueutil -p 0")
-    bluetooth:set({ icon = icons.bluetooth_off })
-  end
+  sbar.exec("blueutil -p", function(state)
+    if tonumber(state) == 0 then
+      sbar.exec("blueutil -p 1")
+      bluetooth:set({ icon = icons.bluetooth })
+    else
+      sbar.exec("blueutil -p 0")
+      bluetooth:set({ icon = icons.bluetooth_off })
+    end
+  end)
 end)
 
 bluetooth:subscribe({ "routine", "forced" }, function()
-  local state = io.popen("blueutil -p"):read("*a")
-
-  if tonumber(state) == 0 then
-    bluetooth:set({ icon = icons.bluetooth_off })
-  else
-    bluetooth:set({ icon = icons.bluetooth })
-  end
-
-  -- Get paired and connected devices
-  local paired = io.popen("blueutil --paired"):read("*a")
-  local connected = io.popen("blueutil --connected"):read("*a")
-
-  -- Count paired and connected devices
-  local countPaired = select(2, paired:gsub("\n", ""))       -- Count the number of newlines in the paired string
-  local countConnected = select(2, connected:gsub("\n", "")) -- Count the number of newlines in the connected string
-
-  -- bluetooth:set({ label = countPaired })
-
-  -- Clear existing devices in tooltip
-  local existingEvents = bluetooth:query()
-  if existingEvents.popup and next(existingEvents.popup.items) ~= nil then
-    for _, item in pairs(existingEvents.popup.items) do
-      sbar.remove(item)
+  sbar.exec("blueutil -p", function(state)
+    -- Clear existing devices in tooltip
+    local existingEvents = bluetooth:query()
+    if existingEvents.popup and next(existingEvents.popup.items) ~= nil then
+      for _, item in pairs(existingEvents.popup.items) do
+        sbar.remove(item)
+      end
     end
-  end
 
-  local bluetooth_paired_header = sbar.add("item", "bluetooth_paired_header", {
-    icon = {
-      drawing = false
-    },
-    label = {
-      string = "Paired Devices",
-      font = {
-        family = settings.font,
-        size = 14.0,
-        style = "Bold"
-      },
-    },
-    position = "popup." .. bluetooth.name,
-    click_script = "sketchybar --set $NAME popup.drawing=off",
-  })
+    if tonumber(state) == 0 then
+      bluetooth:set({ icon = icons.bluetooth_off })
+    else
+      bluetooth:set({ icon = icons.bluetooth })
+    end
 
-  -- Iterate over the list of paired devices
-  for device in paired:gmatch("[^\n]+") do
-    local label = device:match('"(.*)"')
-    local bluetooth_paired_device = sbar.add("item", "bluetooth_paired_device_" .. label, {
-      icon = {
-        drawing = false
-      },
-      label = {
-        string = label,
-        font = {
-          family = settings.font,
-          size = 13.0,
-          style = "Regular"
+    -- Get paired and connected devices
+    sbar.exec("blueutil --paired", function(paired)
+      local bluetooth_paired_header = sbar.add("item", "bluetooth_paired_header", {
+        icon = {
+          drawing = false
         },
-      },
-      position = "popup." .. bluetooth.name,
-      click_script = "sketchybar --set $NAME popup.drawing=off",
-    })
-  end
-
-  local bluetooth_connected_header = sbar.add("item", "bluetooth_connected_header", {
-    icon = {
-      drawing = false
-    },
-    label = {
-      string = "Connected Devices",
-      font = {
-        family = settings.font,
-        size = 14.0,
-        style = "Bold"
-      },
-    },
-    position = "popup." .. bluetooth.name,
-    click_script = "sketchybar --set $NAME popup.drawing=off",
-  })
-
-  for device in connected:gmatch("[^\n]+") do
-    local label = device:match('"(.*)"')
-    local bluetooth_connected_device = sbar.add("item", "bluetooth_connected_device_" .. label, {
-      icon = {
-        drawing = false
-      },
-      label = {
-        string = label,
-        font = {
-          family = settings.font,
-          size = 13.0,
-          style = "Regular"
+        label = {
+          string = "Paired Devices",
+          font = {
+            family = settings.font,
+            size = 14.0,
+            style = "Bold"
+          },
         },
-      },
-      position = "popup." .. bluetooth.name,
-      click_script = "sketchybar --set $NAME popup.drawing=off",
-    })
-  end
+        position = "popup." .. bluetooth.name,
+        click_script = "sketchybar --set $NAME popup.drawing=off",
+      })
+
+      -- Iterate over the list of paired devices
+      for device in paired:gmatch("[^\n]+") do
+        local label = device:match('"(.*)"')
+        local bluetooth_paired_device = sbar.add("item", "bluetooth_paired_device_" .. label, {
+          icon = {
+            drawing = false
+          },
+          label = {
+            string = label,
+            font = {
+              family = settings.font,
+              size = 13.0,
+              style = "Regular"
+            },
+          },
+          position = "popup." .. bluetooth.name,
+          click_script = "sketchybar --set $NAME popup.drawing=off",
+        })
+      end
+      sbar.exec("blueutil --connected", function(connected)
+        local bluetooth_connected_header = sbar.add("item", "bluetooth_connected_header", {
+          icon = {
+            drawing = false
+          },
+          label = {
+            string = "Connected Devices",
+            font = {
+              family = settings.font,
+              size = 14.0,
+              style = "Bold"
+            },
+          },
+          position = "popup." .. bluetooth.name,
+          click_script = "sketchybar --set $NAME popup.drawing=off",
+        })
+
+        for device in connected:gmatch("[^\n]+") do
+          local label = device:match('"(.*)"')
+          local bluetooth_connected_device = sbar.add("item", "bluetooth_connected_device_" .. label, {
+            icon = {
+              drawing = false
+            },
+            label = {
+              string = label,
+              font = {
+                family = settings.font,
+                size = 13.0,
+                style = "Regular"
+              },
+            },
+            position = "popup." .. bluetooth.name,
+            click_script = "sketchybar --set $NAME popup.drawing=off",
+          })
+        end
+      end)
+    end)
+  end)
 end)
 
 return bluetooth

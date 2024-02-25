@@ -28,8 +28,9 @@ disk:subscribe({
     "system_woke"
   },
   function()
-    local diskUsage = io.popen("df -H | grep -E '^(/dev/disk3s1s1 ).' | awk '{ printf (\"%s\\n\", $5) }'"):read("*a")
-    disk:set({ label = diskUsage })
+    sbar.exec("df -H | grep -E '^(/dev/disk3s1s1 ).' | awk '{ printf (\"%s\\n\", $5) }'", function(diskUsage)
+      disk:set({ label = diskUsage })
+    end)
   end)
 
 return disk

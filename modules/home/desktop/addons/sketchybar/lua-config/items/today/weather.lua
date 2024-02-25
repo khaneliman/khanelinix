@@ -78,15 +78,9 @@ weather_temp:subscribe({ "routine", "forced" }, function()
   weather_temp:set({ popup = { drawing = false } })
 
   -- Fetch events from calendar
-  local forecast = io.popen("wttrbar --fahrenheit --ampm")
-      :read("*a")
-
-  -- Extract icon and temperature
-  local text_start, text_end = string.find(forecast, '"text":', 1, true)                                    -- Start search from index 1
-  if text_start and text_end then
-    local text_value = string.sub(forecast, text_start + 8, string.find(forecast, ',', text_start + 8) - 2) -- Find comma after "text"
-
-    for i, value in ipairs(split(text_value)) do
+  sbar.exec("wttrbar --fahrenheit --ampm", function(forecast)
+    -- Extract icon and temperature
+    for i, value in ipairs(split(forecast.text)) do
       -- first part of response is icon
       if i == 1 then
         weather_icon:set({ icon = { string = value } })
@@ -96,31 +90,31 @@ weather_temp:subscribe({ "routine", "forced" }, function()
         weather_temp:set({ label = { string = value .. "°" } })
       end
     end
-  end
 
-  -- Clear existing events in tooltip
-  local existingEvents = weather_temp:query()
-  if existingEvents.popup and next(existingEvents.popup.items) ~= nil then
-    for _, item in pairs(existingEvents.popup.items) do
-      sbar.remove(item)
-    end
-  end
-
-  -- Extract tooltip using similar approach
-  local tooltip_start, tooltip_end = string.find(forecast, '"tooltip":', 1, true)
-  if tooltip_start and tooltip_end then
-    local tooltip_value = string.sub(forecast, tooltip_start + 11,
-      string.find(forecast, '}', tooltip_start + 12) - 2) -- Find closing curly brace after "tooltip"
-
-    for _, line in ipairs(split(tooltip_value, "\\\n")) do
-      -- NOTE: dumb workaround for splitting not behaving
-      if string.sub(line, 1, 1) == 'n' then
-        line = string.sub(line, 2)
+    -- Clear existing events in tooltip
+    local existingEvents = weather_temp:query()
+    if existingEvents.popup and next(existingEvents.popup.items) ~= nil then
+      for _, item in pairs(existingEvents.popup.items) do
+        sbar.remove(item)
       end
+    end
 
+    for _, line in ipairs(split(forecast.tooltip, "\n")) do
       if string.find(line, "<b>") then
         local replacedString = string.gsub(line, "<b>", "")
         replacedString = string.gsub(replacedString, "</b>", "")
+
+        local weather_event_separator = sbar.add("item", "weather_event_separator_" .. _, {
+          icon = {
+            drawing = true,
+            string = "",
+          },
+          label = {
+            drawing = false
+          },
+          position = "popup." .. weather_temp.name,
+          click_script = "sketchybar --set $NAME popup.drawing=off",
+        })
 
         local weather_event_title = sbar.add("item", "weather_event_title_" .. _, {
           icon = {
@@ -147,7 +141,7 @@ weather_temp:subscribe({ "routine", "forced" }, function()
         })
       end
     end
-  end
+  end)
 end)
 
 weather_temp:subscribe("mouse.entered", function()
