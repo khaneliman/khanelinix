@@ -6,5 +6,5 @@ sketchybar 	--add event 				lock   "com.apple.screenIsLocked"   					    \
            	--add item         	animator left                									    \
            	--set animator     	drawing=off                  									    \
                               	updates=on                   									    \
-                              	script="$PLUGIN_DIR/lock/scripts/wake.sh"         \
+                              	script="$CONFIG_DIR/plugins/lock/scripts/wake.sh"         \
            	--subscribe        	animator lock unlock

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-source "$HOME/.config/sketchybar/icons.sh"
-source "$HOME/.config/sketchybar/colors.sh"
+source "$CONFIG_DIR/icons.sh"
+source "$CONFIG_DIR/colors.sh"
 
 network_down=(
 	y_offset=-7
@@ -24,7 +24,7 @@ network_up=(
 	icon.color="$GREEN"
 	icon.highlight_color="$BLUE"
 	update_freq=1
-	script="$PLUGIN_DIR/stats/scripts/network.sh"
+	script="$CONFIG_DIR/plugins/stats/scripts/network.sh"
 )
 
 sketchybar 	--add item network.down right 						\

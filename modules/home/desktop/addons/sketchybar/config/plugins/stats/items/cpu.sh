@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "$HOME/.config/sketchybar/colors.sh"
+source "$CONFIG_DIR/colors.sh"
 
 cpu_percent=(
 	background.padding_left=0
@@ -11,7 +11,7 @@ cpu_percent=(
 	icon="$CPU"
 	icon.color="$BLUE"
 	update_freq=2
-	mach_helper="$HELPER"
+	mach_helper="git.felix.helper"
 )
 
 sketchybar --add item cpu.percent right \

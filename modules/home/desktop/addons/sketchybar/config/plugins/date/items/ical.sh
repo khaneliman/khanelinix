@@ -11,7 +11,7 @@ ical=(
 	popup.height=20
 	background.padding_left=10
 	y_offset=-8
-	script="$PLUGIN_DIR/date/scripts/ical.sh"
+	script="$CONFIG_DIR/plugins/date/scripts/ical.sh"
 	click_script="$POPUP_CLICK_SCRIPT"
 )
 

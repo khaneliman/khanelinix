@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-source "$PLUGIN_DIR/spaces/items/spaces.sh"
-source "$PLUGIN_DIR/spaces/items/separator-left.sh"
+source "$CONFIG_DIR/plugins/spaces/items/spaces.sh"
+source "$CONFIG_DIR/plugins/spaces/items/separator-left.sh"

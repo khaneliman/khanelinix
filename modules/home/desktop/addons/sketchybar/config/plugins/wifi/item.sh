@@ -8,7 +8,7 @@ wifi=(
 	background.padding_left=5
 	align=right
 	click_script="$POPUP_CLICK_SCRIPT"
-	script="$PLUGIN_DIR/wifi/scripts/wifi.sh"
+	script="$CONFIG_DIR/plugins/wifi/scripts/wifi.sh"
 	update_freq=1
 )
 

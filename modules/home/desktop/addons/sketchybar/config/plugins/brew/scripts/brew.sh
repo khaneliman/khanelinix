@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-source "$HOME/.config/sketchybar/colors.sh"
-source "$HOME/.config/sketchybar/icons.sh"
-source "$HOME/.config/sketchybar/userconfig.sh" # Loads all defined icons
+source "$CONFIG_DIR/colors.sh"
+source "$CONFIG_DIR/icons.sh"
+source "$CONFIG_DIR/userconfig.sh" # Loads all defined icons
 
 PREV_COUNT=$(sketchybar --query brew | jq -r .popup.items | grep ".package*" -c)
 

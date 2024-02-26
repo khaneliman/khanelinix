@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "$HOME/.config/sketchybar/colors.sh"
+source "$CONFIG_DIR/colors.sh"
 
 lock() {
 	sketchybar --bar y_offset=-32 \

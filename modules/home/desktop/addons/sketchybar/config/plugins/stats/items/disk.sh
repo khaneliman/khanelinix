@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "$HOME/.config/sketchybar/colors.sh"
+source "$CONFIG_DIR/colors.sh"
 
 disk=(
 	background.padding_left=0
@@ -9,7 +9,7 @@ disk=(
 	icon="$DISK"
 	icon.color="$MAROON"
 	update_freq=60
-	script="$PLUGIN_DIR/stats/scripts/disk.sh"
+	script="$CONFIG_DIR/plugins/stats/scripts/disk.sh"
 )
 
 sketchybar --add item disk right \

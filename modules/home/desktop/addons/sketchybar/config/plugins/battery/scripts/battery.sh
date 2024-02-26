@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "$HOME/.config/sketchybar/colors.sh"
+source "$CONFIG_DIR/colors.sh"
 
 render_bar_item() {
 	sketchybar --set "${NAME}" icon.color=0xff989898

@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-source "$PLUGIN_DIR/lock/events/lock.sh"
+source "$CONFIG_DIR/plugins/lock/events/lock.sh"

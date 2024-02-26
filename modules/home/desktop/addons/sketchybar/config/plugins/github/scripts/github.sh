@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-source "$HOME/.config/sketchybar/colors.sh"
-source "$HOME/.config/sketchybar/icons.sh"
-source "$HOME/.config/sketchybar/userconfig.sh" # Loads all defined variables
+source "$CONFIG_DIR/colors.sh"
+source "$CONFIG_DIR/icons.sh"
+source "$CONFIG_DIR/userconfig.sh" # Loads all defined variables
 
 render_bar_item() {
 	if [ "$NOTIFICATIONS" = "[]" ]; then

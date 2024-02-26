@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "$HOME/.config/sketchybar/colors.sh"
+source "$CONFIG_DIR/colors.sh"
 
 SPACE_ICONS=(" " " " "󰆍" "" "" "" " " " ")
 
@@ -17,7 +17,7 @@ space=(
 	label.background.color="$SURFACE1"
 	label.background.corner_radius=8
 	label.drawing=off
-	script="$PLUGIN_DIR/spaces/scripts/space.sh"
+	script="$CONFIG_DIR/plugins/spaces/scripts/space.sh"
 )
 
 # Destroy space on right click, focus space on left click.

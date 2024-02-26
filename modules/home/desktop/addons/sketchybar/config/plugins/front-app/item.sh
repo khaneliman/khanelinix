@@ -3,7 +3,7 @@
 FRONT_APP_SCRIPT='sketchybar --set "$NAME" label="$INFO"'
 
 system_yabai=(
-	script="$PLUGIN_DIR/front-app/scripts/yabai.sh"
+	script="$CONFIG_DIR/plugins/front-app/scripts/yabai.sh"
 	icon.font="$FONT:Bold:16.0"
 	label.drawing=off
 	icon.width=30

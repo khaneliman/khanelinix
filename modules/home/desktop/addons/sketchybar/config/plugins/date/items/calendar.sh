@@ -8,8 +8,8 @@ calendar_date=(
 	width=30
 	y_offset=6
 	update_freq=120
-	script="$PLUGIN_DIR/date/scripts/date.sh"
-	click_script="$PLUGIN_DIR/date/scripts/zen.sh"
+	script="$CONFIG_DIR/plugins/date/scripts/date.sh"
+	click_script="$CONFIG_DIR/plugins/date/scripts/zen.sh"
 )
 
 calendar_clock=(
@@ -21,8 +21,8 @@ calendar_clock=(
 	background.padding_left=0
 	y_offset=-8
 	update_freq=15
-	script="$PLUGIN_DIR/date/scripts/clock.sh"
-	click_script="$PLUGIN_DIR/date/scripts/zen.sh"
+	script="$CONFIG_DIR/plugins/date/scripts/clock.sh"
+	click_script="$CONFIG_DIR/plugins/date/scripts/zen.sh"
 	label.padding_left=-50
 )
 

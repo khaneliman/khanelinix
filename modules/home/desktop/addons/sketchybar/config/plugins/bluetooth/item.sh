@@ -6,8 +6,8 @@ bluetooth=(
 	icon.color="$PEACH"
 	background.padding_right=0
 	align=right
-	click_script="$PLUGIN_DIR/bluetooth/scripts/bluetooth_click.sh"
-	script="$PLUGIN_DIR/bluetooth/scripts/bluetooth.sh"
+	click_script="$CONFIG_DIR/plugins/bluetooth/scripts/bluetooth_click.sh"
+	script="$CONFIG_DIR/plugins/bluetooth/scripts/bluetooth.sh"
 	popup.height=30
 	update_freq=1
 )

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-source "$HOME/.config/sketchybar/colors.sh"
-source "$HOME/.config/sketchybar/icons.sh"
+source "$CONFIG_DIR/colors.sh"
+source "$CONFIG_DIR/icons.sh"
 
 render_bar_item() {
 	if [ "$SSID" = "" ]; then

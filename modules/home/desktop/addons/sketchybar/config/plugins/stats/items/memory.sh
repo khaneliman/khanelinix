@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "$HOME/.config/sketchybar/colors.sh"
+source "$CONFIG_DIR/colors.sh"
 
 memory=(
 	background.padding_left=0
@@ -10,7 +10,7 @@ memory=(
 	icon.font="$FONT:Bold:16.0"
 	icon.color="$GREEN"
 	update_freq=15
-	script="$PLUGIN_DIR/stats/scripts/ram.sh"
+	script="$CONFIG_DIR/plugins/stats/scripts/ram.sh"
 )
 
 sketchybar --add item memory right \

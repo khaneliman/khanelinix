@@ -7,5 +7,5 @@ sketchybar 	--add event 				hide_stats   					                                  
            	--add item         	animator right                									            \
            	--set animator     	drawing=off                  									              \
                               	updates=on                   									              \
-                              	script="$PLUGIN_DIR/stats/scripts/toggle_stats.sh"          \
+                              	script="$CONFIG_DIR/plugins/stats/scripts/toggle_stats.sh"          \
            	--subscribe        	animator hide_stats show_stats toggle_stats
