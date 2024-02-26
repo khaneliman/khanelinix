@@ -75,7 +75,7 @@
     "orientation" = "horizontal";
     "drawer" = {
       "transition-duration" = 500;
-      "transition-left-to-right" = true;
+      "transition-left-to-right" = false;
     };
     "modules" = [
       "custom/separator-right"
