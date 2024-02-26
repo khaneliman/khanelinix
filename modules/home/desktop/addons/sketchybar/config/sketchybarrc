@@ -5,7 +5,8 @@ source "$CONFIG_DIR/icons.sh"      # Loads all defined icons
 source "$CONFIG_DIR/userconfig.sh" # Loads all defined variables
 
 # Setting up and starting the helper process
-source "$CONFIG_DIR/helper/helper.sh"
+# source "$CONFIG_DIR/sketchyhelper/helper.sh"
+"$CONFIG_DIR/sketchyhelper/sketchyhelper" $HELPER &
 # source "$CONFIG_DIR/plugins/dynamic-island/helper.sh"
 
 # Unload the macOS on screen indicator overlay for volume change
