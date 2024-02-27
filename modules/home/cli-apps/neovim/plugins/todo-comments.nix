@@ -5,7 +5,7 @@ _: {
 
       keymaps = {
         todoTelescope = {
-          key = "<C-t>";
+          key = "<leader>ft";
           keywords = "TODO,FIX,NOTE";
         };
       };
