@@ -96,13 +96,14 @@ github:subscribe({
         for _, notification in pairs(notifications) do
           -- increment count for label
           count = count + 1
-          local color, icon
+
           local id = notification.id
           local url = notification.subject.latest_comment_url
           local repo = notification.repository.name
           local title = notification.subject.title
           local type = notification.subject.type
 
+          -- set click_script for each notification
           if url == nil then
             url = "https://www.github.com/notifications"
           else
@@ -125,6 +126,9 @@ github:subscribe({
             end)
           end
 
+          -- get icon and color for each notification
+          -- depending on the type
+          local color, icon
           if type == "Issue" then
             color = colors.green
             icon = icons.git.issue
@@ -142,7 +146,7 @@ github:subscribe({
             icon = icons.git.issue
           end
 
-
+          -- add notification to popup
           if IS_EMPTY(repo) == false then
             local github_notification_repo = sbar.add("item", "github_notification_repo" .. tostring(id), {
               label = {

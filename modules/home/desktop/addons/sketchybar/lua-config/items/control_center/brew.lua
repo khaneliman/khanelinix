@@ -2,8 +2,6 @@ local icons = require("icons")
 local settings = require("settings")
 local colors = require("colors")
 
-local popup_off = "sketchybar --set brew popup.drawing=off"
-
 local brew = sbar.add("item", "brew", {
   position = "right",
   icon = {
@@ -24,7 +22,7 @@ local brew = sbar.add("item", "brew", {
 
 local brew_details = sbar.add("item", "brew_details", {
   position = "popup." .. brew.name,
-  click_script = popup_off,
+  click_script = "sketchybar --set brew popup.drawing=off",
   background = {
     corner_radius = 12,
     padding_left = 5,
