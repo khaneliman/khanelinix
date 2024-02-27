@@ -14,7 +14,6 @@ local separator_right = sbar.add("item", "separator_right", {
     string = "",
     color = colors.text
   },
-  update_freq = 15,
   position = "right",
 })
 

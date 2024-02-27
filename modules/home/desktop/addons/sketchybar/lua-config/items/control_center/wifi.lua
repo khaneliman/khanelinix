@@ -21,7 +21,7 @@ local wifi = sbar.add("item", "wifi", {
     padding_left = 5
   },
   label = { drawing = false },
-  update_freq = 1,
+  update_freq = 60,
 })
 
 local wifi_details = sbar.add("item", "wifi_details", {

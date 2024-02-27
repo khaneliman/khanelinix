@@ -34,7 +34,7 @@ local weather_temp = sbar.add("item", "weather_temp", {
     align = "right",
     height = 20,
   },
-  update_freq = 300,
+  update_freq = 900,
   position = "right",
   y_offset = -8,
   click_script = popup_toggle,

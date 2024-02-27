@@ -17,7 +17,7 @@ local brew = sbar.add("item", "brew", {
     }
   },
   label = "?",
-  update_freq = 30,
+  update_freq = 300,
   popup = {
     align = "right",
     height = 20

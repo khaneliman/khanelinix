@@ -26,7 +26,7 @@ local ical = sbar.add("item", "ical", {
   position = "right",
   y_offset = -8,
   click_script = popup_toggle,
-  update_freq = 180
+  update_freq = 900
 })
 
 local ical_details = sbar.add("item", "ical_details", {
