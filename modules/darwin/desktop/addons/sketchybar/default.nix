@@ -39,6 +39,8 @@ in
         jq
         lua5_4
         wttrbar
+        pkgs.khanelinix.sketchyhelper
+        pkgs.khanelinix.dynamic-island-helper
       ];
 
       # TODO: need to update nixpkg to support complex configurations
