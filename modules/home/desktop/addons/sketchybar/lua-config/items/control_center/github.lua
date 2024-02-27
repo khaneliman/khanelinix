@@ -4,10 +4,6 @@ local colors = require("colors")
 
 local popup_off = "sketchybar --set github popup.drawing=off"
 
-local function isempty(s)
-  return s == nil or s == ''
-end
-
 local github = sbar.add("item", "github", {
   position = "right",
   icon = {
@@ -84,13 +80,8 @@ github:subscribe({
   function(_)
     -- fetch new information
     sbar.exec(
-      'gh api notifications | jq -r \'.[] | [.id, .repository.name, .subject.latest_comment_url, .subject.type, .subject.title] | @sh\'',
+      'gh api notifications',
       function(notifications)
-        local count = 0
-        for _ in notifications:gmatch("\n") do
-          count = count + 1
-        end
-
         -- Clear existing packages
         local existingNotifications = github:query()
         if existingNotifications.popup and next(existingNotifications.popup.items) ~= nil then
@@ -99,26 +90,33 @@ github:subscribe({
           end
         end
 
-        -- Add packages to popup
-        for notification in notifications:gmatch("[^\n]+") do
-          local id, repo, url, type, title = notification:match(
-            "'%s*(.-)%s*' '%s*(.-)%s*' '%s*(.-)%s*' '%s*(.-)%s*' '%s*(.-)%s*'")
+        -- PRINT_TABLE(notifications)
+
+        local count = 0
+        for _, notification in pairs(notifications) do
+          -- increment count for label
+          count = count + 1
           local color, icon
+          local id = notification.id
+          local url = notification.subject.latest_comment_url
+          local repo = notification.repository.name
+          local title = notification.subject.title
+          local type = notification.subject.type
 
           if url == nil then
-            url = ""
+            url = "https://www.github.com/notifications"
           else
             local tempUrl = url:gsub("^'", ""):gsub("'$", "")
-            -- url = io.popen('gh api "' .. tempUrl .. '" | jq .html_url'):read("*a")
+            print(tempUrl)
             sbar.exec('gh api "' .. tempUrl .. '" | jq .html_url', function(html_url)
-              if isempty(repo) == false then
+              if IS_EMPTY(repo) == false then
                 sbar.exec('sketchybar -m --set github_notification_repo' ..
                   tostring(id) .. ' click_script="open ' .. html_url .. '"', function()
                     sbar.exec(popup_off)
                   end)
               end
 
-              if isempty(title) == false then
+              if IS_EMPTY(title) == false then
                 sbar.exec('sketchybar -m --set github_notification_message.' ..
                   tostring(id) .. ' click_script="open ' .. html_url .. '"', function()
                     sbar.exec(popup_off)
@@ -133,7 +131,6 @@ github:subscribe({
           elseif type == "Discussion" then
             color = colors.text
             icon = icons.git.discussion
-            url = "https://www.github.com/notifications"
           elseif type == "PullRequest" then
             color = colors.maroon
             icon = icons.git.pull_request
@@ -146,7 +143,7 @@ github:subscribe({
           end
 
 
-          if isempty(repo) == false then
+          if IS_EMPTY(repo) == false then
             local github_notification_repo = sbar.add("item", "github_notification_repo" .. tostring(id), {
               label = {
                 padding_right = settings.paddings,
@@ -167,7 +164,7 @@ github:subscribe({
             })
           end
 
-          if isempty(title) == false then
+          if IS_EMPTY(title) == false then
             local github_notification_message = sbar.add("item", "github_notification_message." .. tostring(id), {
               label = {
                 string = title,
