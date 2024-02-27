@@ -3,12 +3,10 @@ local settings = require("settings")
 local colors = require("colors")
 local percent = 0
 
-local popup_toggle = "sketchybar --set $NAME popup.drawing=toggle"
-
 local wifi = sbar.add("item", "wifi", {
   position = "right",
   align = "right",
-  click_script = popup_toggle,
+  click_script = POPUP_TOGGLE("wifi"),
   icon = {
     string = icons.wifi,
     font = {

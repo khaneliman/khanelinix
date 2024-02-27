@@ -2,7 +2,6 @@ local icons = require("icons")
 local settings = require("settings")
 local colors = require("colors")
 
-local popup_toggle = "sketchybar --set brew popup.drawing=toggle"
 local popup_off = "sketchybar --set brew popup.drawing=off"
 
 local brew = sbar.add("item", "brew", {
@@ -38,7 +37,7 @@ brew:subscribe({
   },
   function(info)
     if (info.BUTTON == "left") then
-      sbar.exec(popup_toggle)
+      POPUP_TOGGLE(info.NAME)
     end
 
     if (info.BUTTON == "right") then
