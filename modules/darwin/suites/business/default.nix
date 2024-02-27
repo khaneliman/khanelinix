@@ -21,6 +21,7 @@ in
       dooit
       jrnl
       nb
+      teams
     ];
 
     homebrew = {

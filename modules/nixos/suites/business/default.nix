@@ -19,6 +19,7 @@ in
     environment.systemPackages = with pkgs; [
       dooit
       libreoffice
+      teams-for-linux
     ];
 
     khanelinix = {
