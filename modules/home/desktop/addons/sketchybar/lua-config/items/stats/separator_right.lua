@@ -1,6 +1,4 @@
-local settings = require('settings')
 local colors = require('colors')
-local icons = require('icons')
 
 local separator_right = sbar.add("item", "separator_right", {
   background = {

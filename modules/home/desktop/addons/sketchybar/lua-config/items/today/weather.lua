@@ -55,17 +55,6 @@ local weather_details = sbar.add("item", "weather_details", {
   click_script = "sketchybar --set $NAME popup.drawing=off",
 })
 
-local function split(inputstr, sep)
-  if sep == nil then
-    sep = "%s"
-  end
-  local t = {}
-  for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
-    table.insert(t, str)
-  end
-  return t
-end
-
 -- Update function
 weather_temp:subscribe({ "routine", "forced", "weather_update" }, function()
   -- Reset popup state
@@ -74,7 +63,7 @@ weather_temp:subscribe({ "routine", "forced", "weather_update" }, function()
   -- Fetch events from calendar
   sbar.exec("wttrbar --fahrenheit --ampm", function(forecast)
     -- Extract icon and temperature
-    for i, value in ipairs(split(forecast.text)) do
+    for i, value in ipairs(STR_SPLIT(forecast.text)) do
       -- first part of response is icon
       if i == 1 then
         weather_icon:set({ icon = { string = value } })
@@ -93,7 +82,7 @@ weather_temp:subscribe({ "routine", "forced", "weather_update" }, function()
       end
     end
 
-    for _, line in ipairs(split(forecast.tooltip, "\n")) do
+    for _, line in ipairs(STR_SPLIT(forecast.tooltip, "\n")) do
       if string.find(line, "<b>") then
         local replacedString = string.gsub(line, "<b>", "")
         replacedString = string.gsub(replacedString, "</b>", "")

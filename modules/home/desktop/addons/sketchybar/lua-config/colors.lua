@@ -27,14 +27,14 @@ local colors = {
   rosewater = 0xfff4dbd6,
 }
 
-local random_cat_color = {
+colors.random_cat_color = {
   colors.blue, colors.lavender, colors.sapphire, colors.sky, colors.teal,
   colors.green, colors.yellow, colors.peach, colors.maroon, colors.red,
   colors.mauve, colors.pink, colors.flamingo, colors.rosewater,
 }
 
-local function getRandomCatColor()
-  return random_cat_color[math.random(1, #random_cat_color)]
+colors.getRandomCatColor = function()
+  return colors.random_cat_color[math.random(1, #colors.random_cat_color)]
 end
 
 return colors
