@@ -34,18 +34,19 @@ local clock = sbar.add("item", "clock", {
     padding_right = -20
   },
   position = "right",
-  update_freq = 15,
+  update_freq = 1,
   y_offset = -8
 })
 
-local function update()
+local function date_update()
   local date = os.date("%a. %d %b.")
-  local time = os.date("%I:%M %p")
   cal:set({ icon = date })
+end
+
+local function clock_update()
+  local time = os.date("%I:%M %p")
   clock:set({ icon = time })
 end
 
-cal:subscribe("forced", update)
-cal:subscribe("routine", update)
-clock:subscribe("forced", update)
-clock:subscribe("routine", update)
+cal:subscribe({"forced", "routine"}, date_update)
+clock:subscribe({"forced", "routine"}, clock_update)
