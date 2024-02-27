@@ -76,6 +76,7 @@ in
       "class<libreoffice-writer>" = "";
       "class<libreoffice-calc>" = "󱎏";
       "class<libreoffice-impress>" = "󱎐";
+      "class<teams-for-linux>" = "󰊻";
     };
   };
 
