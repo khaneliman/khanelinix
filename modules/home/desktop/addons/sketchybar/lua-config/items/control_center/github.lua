@@ -2,8 +2,8 @@ local icons = require("icons")
 local settings = require("settings")
 local colors = require("colors")
 
-local popup_toggle = "sketchybar --set $NAME popup.drawing=toggle"
-local popup_off = "sketchybar --set $NAME popup.drawing=off"
+local popup_toggle = "sketchybar --set github popup.drawing=toggle"
+local popup_off = "sketchybar --set github popup.drawing=off"
 
 local function isempty(s)
   return s == nil or s == ''
@@ -11,7 +11,6 @@ end
 
 local github = sbar.add("item", "github", {
   position = "right",
-  click_script = popup_toggle,
   icon = {
     string = icons.bell,
     color = colors.blue,
@@ -49,6 +48,19 @@ local github_details = sbar.add("item", "github_details", {
     }
   }
 })
+
+github:subscribe({
+    "mouse.clicked"
+  },
+  function(info)
+    if (info.BUTTON == "left") then
+      sbar.exec(popup_toggle)
+    end
+
+    if (info.BUTTON == "right") then
+      sbar.trigger("github_update")
+    end
+  end)
 
 github:subscribe({
     "mouse.exited",

@@ -2,12 +2,11 @@ local icons = require("icons")
 local settings = require("settings")
 local colors = require("colors")
 
-local popup_toggle = "sketchybar --set $NAME popup.drawing=toggle"
-local popup_off = "sketchybar --set $NAME popup.drawing=off"
+local popup_toggle = "sketchybar --set brew popup.drawing=toggle"
+local popup_off = "sketchybar --set brew popup.drawing=off"
 
 local brew = sbar.add("item", "brew", {
   position = "right",
-  click_script = popup_toggle,
   icon = {
     string = icons.brew,
     font = {
@@ -33,6 +32,19 @@ local brew_details = sbar.add("item", "brew_details", {
     padding_right = 10
   },
 })
+
+brew:subscribe({
+    "mouse.clicked"
+  },
+  function(info)
+    if (info.BUTTON == "left") then
+      sbar.exec(popup_toggle)
+    end
+
+    if (info.BUTTON == "right") then
+      sbar.trigger("brew_update")
+    end
+  end)
 
 brew:subscribe({
     "mouse.exited",
