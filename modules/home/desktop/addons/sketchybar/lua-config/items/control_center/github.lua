@@ -2,7 +2,6 @@ local icons = require("icons")
 local settings = require("settings")
 local colors = require("colors")
 
-local popup_toggle = "sketchybar --set github popup.drawing=toggle"
 local popup_off = "sketchybar --set github popup.drawing=off"
 
 local function isempty(s)
@@ -54,7 +53,7 @@ github:subscribe({
   },
   function(info)
     if (info.BUTTON == "left") then
-      sbar.exec(popup_toggle)
+      POPUP_TOGGLE(info.NAME)
     end
 
     if (info.BUTTON == "right") then

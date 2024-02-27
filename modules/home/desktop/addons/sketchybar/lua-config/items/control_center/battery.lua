@@ -3,11 +3,9 @@ local settings = require("settings")
 local colors = require("colors")
 local percent = 0
 
-local popup_toggle = "sketchybar --set $NAME popup.drawing=toggle"
-
 local battery = sbar.add("item", "battery", {
   position = "right",
-  click_script = popup_toggle,
+  click_script = POPUP_TOGGLE("battery"),
   icon = {
     font = {
       family = settings.nerd_font,
