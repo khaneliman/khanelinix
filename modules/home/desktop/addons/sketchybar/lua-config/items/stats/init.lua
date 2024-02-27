@@ -4,10 +4,6 @@ local memory = require("items.stats.memory")
 local disk = require("items.stats.disk")
 local network = require("items.stats.network")
 
-sbar.add("event", "hide_stats")
-sbar.add("event", "show_stats")
-sbar.add("event", "toggle_stats")
-
 separator:subscribe("hide_stats", function()
   cpu:set({ drawing = false })
   memory:set({ drawing = false })

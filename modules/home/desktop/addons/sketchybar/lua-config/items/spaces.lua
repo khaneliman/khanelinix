@@ -29,7 +29,7 @@ for i = 1, 10, 1 do
       padding_left = 7,
       padding_right = 7,
       color = colors.white,
-      highlight_color = colors.red,
+      highlight_color = colors.getRandomCatColor(),
     },
     padding_left = 2,
     padding_right = 2,

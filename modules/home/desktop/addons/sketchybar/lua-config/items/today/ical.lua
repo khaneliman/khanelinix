@@ -43,17 +43,6 @@ local ical_details = sbar.add("item", "ical_details", {
   click_script = "sketchybar --set $NAME popup.drawing=off",
 })
 
-local function split(inputstr, sep)
-  if sep == nil then
-    sep = "%s"
-  end
-  local t = {}
-  for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
-    table.insert(t, str)
-  end
-  return t
-end
-
 -- Update function
 ical:subscribe({ "routine", "forced" }, function()
   -- Constants
@@ -74,7 +63,7 @@ ical:subscribe({ "routine", "forced" }, function()
       end
 
       -- Parse and organize events
-      for _, line in ipairs(split(events, "\n")) do
+      for _, line in ipairs(STR_SPLIT(events, "\n")) do
         local title, time = line:match("^(.-)%s*%%(.*)$")
 
         if title and time then

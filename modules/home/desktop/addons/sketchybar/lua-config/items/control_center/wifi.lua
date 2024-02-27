@@ -1,7 +1,5 @@
 local icons = require("icons")
 local settings = require("settings")
-local colors = require("colors")
-local percent = 0
 
 local wifi = sbar.add("item", "wifi", {
   position = "right",
@@ -41,10 +39,6 @@ local wifi_details = sbar.add("item", "wifi_details", {
   },
 })
 
-local function isempty(s)
-  return s == nil or s == ''
-end
-
 local function wifi_update()
   -- Get current WiFi info
   sbar.exec(
@@ -56,7 +50,7 @@ local function wifi_update()
       -- Extract current transmission rate
       local currTx = string.match(currentWifi, "lastTxRate: (.-)\n")
 
-      if isempty(ssid) then
+      if IS_EMPTY(ssid) then
         wifi:set({ icon = { string = icons.wifi_off } })
         wifi_details:set({ label = "No WiFi" })
         return
