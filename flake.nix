@@ -97,6 +97,7 @@
     # Neovim nightly overlay
     neovim-nightly-overlay = {
       url = "github:nix-community/neovim-nightly-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # NixPkgs (nixos-unstable)
