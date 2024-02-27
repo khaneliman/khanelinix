@@ -1,5 +1,6 @@
 require("items.apple")
 require("items.spaces")
+require("items.skhd")
 require("items.front_app")
 require("items.today")
 require("items.media")

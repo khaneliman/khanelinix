@@ -1,6 +1,6 @@
 local colors = require("colors")
 
-local skhd = {
+sbar.add("item", "skhd", {
   icon = {
     string = "N",
     color = colors.blue,
@@ -14,6 +14,4 @@ local skhd = {
   },
   drawing = false,
   position = "left"
-}
-
-sbart.add("item", "skhd", skhd)
+})
