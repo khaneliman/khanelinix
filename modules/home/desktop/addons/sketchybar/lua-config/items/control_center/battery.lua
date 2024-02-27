@@ -5,7 +5,7 @@ local percent = 0
 
 local battery = sbar.add("item", "battery", {
   position = "right",
-  click_script = POPUP_TOGGLE("battery"),
+  click_script = "sketchybar --set $NAME popup.drawing=toggle",
   icon = {
     font = {
       family = settings.nerd_font,

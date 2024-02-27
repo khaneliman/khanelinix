@@ -4,7 +4,7 @@ local settings = require("settings")
 local wifi = sbar.add("item", "wifi", {
   position = "right",
   align = "right",
-  click_script = POPUP_TOGGLE("wifi"),
+  click_script = "sketchybar --set $NAME popup.drawing=toggle",
   icon = {
     string = icons.wifi,
     font = {
