@@ -83,7 +83,7 @@ static inline void mach_receive_message(mach_port_t port, struct mach_buffer* bu
                           port,
                           1000,
                           MACH_PORT_NULL             );
-  else 
+  else
     msg_return = mach_msg(&buffer->message.header,
                           MACH_RCV_MSG,
                           0,

@@ -20,6 +20,7 @@ local cpu = sbar.add("item", "cpu", {
     color = colors.blue
   },
   update_freq = 2,
+  mach_helper = "git.felix.sketchyhelper",
   position = "right"
 })
 

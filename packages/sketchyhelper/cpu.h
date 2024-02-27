@@ -90,19 +90,19 @@ static inline void cpu_update(struct cpu *cpu) {
 
     char color[16];
     if (total_perc >= .7) {
-      snprintf(color, 16, "%s", getenv("RED"));
+      snprintf(color, 16, "%s", "0xffed8796");
     } else if (total_perc >= .3) {
-      snprintf(color, 16, "%s", getenv("PEACH"));
+      snprintf(color, 16, "%s", "0xfff5a97f");
     } else if (total_perc >= .1) {
-      snprintf(color, 16, "%s", getenv("YELLOW"));
+      snprintf(color, 16, "%s", "0xffeed49f");
     } else {
-      snprintf(color, 16, "%s", getenv("TEXT"));
+      snprintf(color, 16, "%s", "0xffcad3f5");
     }
 
     snprintf(cpu->command, 256,
              // "--push cpu.sys %.2f "
              // "--push cpu.user %.2f "
-             "--set cpu.percent label=%.0f%% label.color=%s ",
+             "--set cpu label=%.0f%% label.color=%s ",
              // "--set cpu.top label=\"%s\"",
              // sys_perc,
              // user_perc,
