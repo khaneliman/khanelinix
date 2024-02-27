@@ -1,9 +1,6 @@
 local settings = require("settings")
 local colors = require("colors")
 local icons = require("icons")
-local debug = require("debug")
-
-local popup_toggle = "sketchybar --set $NAME popup.drawing=toggle"
 
 local ical = sbar.add("item", "ical", {
   icon = {
@@ -25,7 +22,6 @@ local ical = sbar.add("item", "ical", {
   },
   position = "right",
   y_offset = -8,
-  click_script = popup_toggle,
   update_freq = 900
 })
 
@@ -119,4 +115,17 @@ ical:subscribe({
   },
   function()
     ical:set({ popup = { drawing = false } })
+  end)
+
+ical:subscribe({
+    "mouse.clicked"
+  },
+  function(info)
+    if (info.BUTTON == "left") then
+      POPUP_TOGGLE(info.NAME)
+    end
+
+    if (info.BUTTON == "right") then
+      sbar.trigger("brew_update")
+    end
   end)
