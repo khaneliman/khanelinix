@@ -32,6 +32,7 @@ in
 
       taps = [
         "homebrew/bundle"
+        "homebrew/cask"
         "homebrew/cask-fonts"
         "homebrew/cask-versions"
         "homebrew/services"
