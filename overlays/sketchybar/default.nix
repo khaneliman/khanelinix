@@ -5,8 +5,8 @@ _: _final: prev: {
     src = prev.fetchFromGitHub {
       owner = "FelixKratz";
       repo = "SketchyBar";
-      rev = "5e7b93221cad6c9704d7f34711ec013cddf58881";
-      hash = "sha256-MlNnkff4sD/GkM1m+FH8ZtbNymgvxNOCoLWolwFEXTE=";
+      rev = "4c457077c92c8616dd2525388df47bf42560fdcf";
+      hash = "sha256-xIwmlQtLBfH8ljHZWOF/Wvw15s6FOhhYgV96VK4qL4U=";
     };
 
     # Create secondary sketchybar executable for dynamic island
