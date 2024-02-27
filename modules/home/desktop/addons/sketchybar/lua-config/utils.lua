@@ -27,3 +27,14 @@ STR_SPLIT = function(inputstr, sep)
   end
   return t
 end
+
+PRINT_TABLE = function(t)
+  for key, value in pairs(t) do
+    if type(value) == "table" then
+      print(key, ":")
+      PRINT_TABLE(value)
+    else
+      print(key, ":", value)
+    end
+  end
+end
