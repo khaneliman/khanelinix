@@ -1,9 +1,4 @@
 local settings = require("settings")
-local colors = require("colors")
-local icons = require("icons")
-local debug = require("debug")
-
-local popup_toggle = "sketchybar --set $NAME popup.drawing=toggle"
 
 local weather_icon = sbar.add("item", "weather_icon", {
   icon = {
@@ -37,7 +32,6 @@ local weather_temp = sbar.add("item", "weather_temp", {
   update_freq = 900,
   position = "right",
   y_offset = -8,
-  click_script = popup_toggle,
 })
 
 local weather_details = sbar.add("item", "weather_details", {
@@ -73,7 +67,7 @@ local function split(inputstr, sep)
 end
 
 -- Update function
-weather_temp:subscribe({ "routine", "forced" }, function()
+weather_temp:subscribe({ "routine", "forced", "weather_update" }, function()
   -- Reset popup state
   weather_temp:set({ popup = { drawing = false } })
 
@@ -154,4 +148,30 @@ weather_temp:subscribe({
   },
   function()
     weather_temp:set({ popup = { drawing = false } })
+  end)
+
+weather_temp:subscribe({
+    "mouse.clicked"
+  },
+  function(info)
+    if (info.BUTTON == "left") then
+      POPUP_TOGGLE(info.NAME)
+    end
+
+    if (info.BUTTON == "right") then
+      sbar.trigger("weather_update")
+    end
+  end)
+
+weather_icon:subscribe({
+    "mouse.clicked"
+  },
+  function(info)
+    if (info.BUTTON == "left") then
+      POPUP_TOGGLE(info.NAME)
+    end
+
+    if (info.BUTTON == "right") then
+      sbar.trigger("weather_update")
+    end
   end)
