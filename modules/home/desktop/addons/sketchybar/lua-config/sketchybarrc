@@ -3,7 +3,7 @@
 -- This is only needed once to install the sketchybar module
 -- (or for an update of the module)
 os.execute(
-"[ ! -f $HOME/.local/share/sketchybar_lua/sketchybar.so ] && (git clone https://github.com/FelixKratz/SbarLua.git /tmp/SbarLua && cd /tmp/SbarLua/ && make install && rm -rf /tmp/SbarLua/)")
+  "[ ! -f $HOME/.local/share/sketchybar_lua/sketchybar.so ] && (git clone https://github.com/FelixKratz/SbarLua.git /tmp/SbarLua && cd /tmp/SbarLua/ && make install && rm -rf /tmp/SbarLua/)")
 
 -- Add the sketchybar module to the package cpath (the module could be
 -- installed into the default search path then this would not be needed)
@@ -20,7 +20,7 @@ sbar.exec("killall sketchyhelper || sketchyhelper git.felix.sketchyhelper >/dev/
 -- config calls to see the difference -- yeah..
 sbar.begin_config()
 require("init")
--- sbar.hotload(true)
+sbar.hotload(true)
 sbar.end_config()
 
 -- Run the event loop of the sketchybar module (without this there will be no
