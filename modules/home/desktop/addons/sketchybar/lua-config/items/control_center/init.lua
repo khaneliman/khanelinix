@@ -14,7 +14,7 @@ local items = {
   bluetooth.name,
   brew.name,
   github.name,
-  volume.name,
+  volume.icon.name,
 }
 
 sbar.add("bracket", items, {

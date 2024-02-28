@@ -4,7 +4,9 @@ local icons = require("icons")
 -- Unload the macOS on screen indicator overlay for volume change
 sbar.exec("launchctl unload -F /System/Library/LaunchAgents/com.apple.OSDUIHelper.plist >/dev/null 2>&1 &")
 
-local volume_slider = sbar.add("slider", "volume_slider", 100, {
+local volume = {}
+
+volume.slider = sbar.add("slider", "volume.slider", 100, {
   position = "right",
   updates = true,
   label = { drawing = false },
@@ -24,7 +26,7 @@ local volume_slider = sbar.add("slider", "volume_slider", 100, {
   },
 })
 
-local volume_icon = sbar.add("item", "volume_icon", {
+volume.icon = sbar.add("item", "volume.icon", {
   position = "right",
   icon = {
     string = icons.volume._100,
@@ -46,39 +48,40 @@ local volume_icon = sbar.add("item", "volume_icon", {
   },
 })
 
-volume_slider:subscribe("mouse.clicked", function(env)
+volume.slider:subscribe("mouse.clicked", function(env)
   sbar.exec("osascript -e 'set volume output volume " .. env["PERCENTAGE"] .. "'")
 end)
 
-volume_slider:subscribe("volume_change", function(env)
-  local volume = tonumber(env.INFO)
+volume.slider:subscribe("volume_change", function(env)
+  local new_volume = tonumber(env.INFO)
   local icon = icons.volume._0
-  if volume > 60 then
+
+  if new_volume > 60 then
     icon = icons.volume._100
-  elseif volume > 30 then
+  elseif new_volume > 30 then
     icon = icons.volume._66
-  elseif volume > 10 then
+  elseif new_volume > 10 then
     icon = icons.volume._33
-  elseif volume > 0 then
+  elseif new_volume > 0 then
     icon = icons.volume._10
   end
 
-  volume_icon:set({ label = icon })
-  volume_slider:set({ slider = { percentage = volume } })
+  volume.icon:set({ label = icon })
+  volume.slider:set({ slider = { percentage = new_volume } })
 end)
 
 local function animate_slider_width(width)
   sbar.animate("tanh", 30.0, function()
-    volume_slider:set({ slider = { width = width } })
+    volume.slider:set({ slider = { width = width } })
   end)
 end
 
-volume_icon:subscribe("mouse.clicked", function()
-  if tonumber(volume_slider:query().slider.width) > 0 then
+volume.icon:subscribe("mouse.clicked", function()
+  if tonumber(volume.slider:query().slider.width) > 0 then
     animate_slider_width(0)
   else
     animate_slider_width(100)
   end
 end)
 
-return volume_icon
+return volume
