@@ -28,7 +28,7 @@ local github = sbar.add("item", "github", {
   },
 })
 
-local github_details = sbar.add("item", "github_details", {
+github.details = sbar.add("item", "github.details", {
   position = "popup." .. github.name,
   click_script = popup_off,
   background = {
@@ -110,14 +110,14 @@ github:subscribe({
             local tempUrl = url:gsub("^'", ""):gsub("'$", "")
             sbar.exec('gh api "' .. tempUrl .. '" | jq .html_url', function(html_url)
               if IS_EMPTY(repo) == false then
-                sbar.exec('sketchybar -m --set github_notification_repo' ..
+                sbar.exec('sketchybar -m --set github.notification.repo' ..
                   tostring(id) .. ' click_script="open ' .. html_url .. '"', function()
                     sbar.exec(popup_off)
                   end)
               end
 
               if IS_EMPTY(title) == false then
-                sbar.exec('sketchybar -m --set github_notification_message.' ..
+                sbar.exec('sketchybar -m --set github.notification.message.' ..
                   tostring(id) .. ' click_script="open ' .. html_url .. '"', function()
                     sbar.exec(popup_off)
                   end)
@@ -146,8 +146,10 @@ github:subscribe({
           end
 
           -- add notification to popup
+          github.notification = {}
+
           if IS_EMPTY(repo) == false then
-            local github_notification_repo = sbar.add("item", "github_notification_repo" .. tostring(id), {
+            github.notification.repo = sbar.add("item", "github.notification.repo" .. tostring(id), {
               label = {
                 padding_right = settings.paddings,
               },
@@ -162,13 +164,14 @@ github:subscribe({
                 padding_left = settings.paddings
               },
               drawing = true,
+              -- TODO: trigger update after clicking since notification is cleared on github
               click_script = "open " .. url .. "; " .. popup_off,
               position = "popup." .. github.name,
             })
           end
 
           if IS_EMPTY(title) == false then
-            local github_notification_message = sbar.add("item", "github_notification_message." .. tostring(id), {
+            github.notification.message = sbar.add("item", "github.notification.message." .. tostring(id), {
               label = {
                 string = title,
                 padding_right = 10,
@@ -178,6 +181,7 @@ github:subscribe({
                 padding_left = settings.paddings
               },
               drawing = true,
+              -- TODO: trigger update after clicking since notification is cleared on github
               click_script = "open " .. url .. "; " .. popup_off,
               position = "popup." .. github.name,
             })
