@@ -20,7 +20,7 @@ local wifi = sbar.add("item", "wifi", {
   update_freq = 60,
 })
 
-local wifi_details = sbar.add("item", "wifi_details", {
+wifi.details = sbar.add("item", "wifi.details", {
   position = "popup." .. wifi.name,
   click_script = "sketchybar --set $NAME popup.drawing=off",
   background = {
@@ -39,40 +39,38 @@ local wifi_details = sbar.add("item", "wifi_details", {
   },
 })
 
-local function wifi_update()
-  -- Get current WiFi info
-  sbar.exec(
-    "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I",
-    function(currentWifi)
-      -- Extract SSID
-      local ssid = string.match(currentWifi, "SSID: (.-)\n")
-
-      -- Extract current transmission rate
-      local currTx = string.match(currentWifi, "lastTxRate: (.-)\n")
-
-      if IS_EMPTY(ssid) then
-        wifi:set({ icon = { string = icons.wifi_off } })
-        wifi_details:set({ label = "No WiFi" })
-        return
-      end
-
-      wifi:set({
-        icon = {
-          string = icons.wifi,
-        },
-      })
-      wifi_details:set({
-        label = ssid .. " (" .. currTx .. "Mbps)"
-      })
-    end)
-end
-
 wifi:subscribe({
     "routine",
     "power_source_change",
     "system_woke"
   },
-  wifi_update)
+  function()
+    -- Get current WiFi info
+    sbar.exec(
+      "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I",
+      function(currentWifi)
+        -- Extract SSID
+        local ssid = string.match(currentWifi, "SSID: (.-)\n")
+
+        -- Extract current transmission rate
+        local currTx = string.match(currentWifi, "lastTxRate: (.-)\n")
+
+        if IS_EMPTY(ssid) then
+          wifi:set({ icon = { string = icons.wifi_off } })
+          wifi.details:set({ label = "No WiFi" })
+          return
+        end
+
+        wifi:set({
+          icon = {
+            string = icons.wifi,
+          },
+        })
+        wifi.details:set({
+          label = ssid .. " (" .. currTx .. "Mbps)"
+        })
+      end)
+  end)
 
 wifi:subscribe({
     "mouse.exited",
@@ -88,6 +86,5 @@ wifi:subscribe({
   function(_)
     wifi:set({ popup = { drawing = true } })
   end)
-
 
 return wifi
