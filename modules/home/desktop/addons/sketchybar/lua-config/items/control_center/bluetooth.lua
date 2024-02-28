@@ -51,7 +51,12 @@ bluetooth:subscribe("mouse.clicked", function()
 end)
 
 -- Fetch bluetooth status and devices
-bluetooth:subscribe({ "routine", "forced", "bluetooth_update" }, function()
+bluetooth:subscribe({
+  "routine",
+  "forced",
+  "bluetooth_update",
+  "system_woke"
+}, function()
   sbar.exec("blueutil -p", function(state)
     -- Clear existing devices in tooltip
     local existingEvents = bluetooth:query()
