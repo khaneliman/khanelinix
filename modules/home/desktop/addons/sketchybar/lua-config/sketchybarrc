@@ -2,6 +2,7 @@
 
 -- This is only needed once to install the sketchybar module
 -- (or for an update of the module)
+-- TODO: replace with nixpkg derivation when we can, darwin frameworks need to get updated
 os.execute(
   "[ ! -f $HOME/.local/share/sketchybar_lua/sketchybar.so ] && (git clone https://github.com/FelixKratz/SbarLua.git /tmp/SbarLua && cd /tmp/SbarLua/ && make install && rm -rf /tmp/SbarLua/)")
 

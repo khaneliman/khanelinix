@@ -108,7 +108,6 @@ github:subscribe({
             url = "https://www.github.com/notifications"
           else
             local tempUrl = url:gsub("^'", ""):gsub("'$", "")
-            print(tempUrl)
             sbar.exec('gh api "' .. tempUrl .. '" | jq .html_url', function(html_url)
               if IS_EMPTY(repo) == false then
                 sbar.exec('sketchybar -m --set github_notification_repo' ..
