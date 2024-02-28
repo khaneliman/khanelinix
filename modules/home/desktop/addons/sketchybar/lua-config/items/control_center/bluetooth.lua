@@ -2,7 +2,7 @@ local icons = require("icons")
 local colors = require("colors")
 local settings = require("settings")
 
--- Define the "bluetooth" item using Lua tables
+-- Add bluetooth icon to bar
 local bluetooth = sbar.add("item", "bluetooth", {
   position = "right",
   align = "right",
@@ -20,10 +20,12 @@ local bluetooth = sbar.add("item", "bluetooth", {
   },
 })
 
+-- Mouse hover to show popup
 bluetooth:subscribe("mouse.entered", function()
   bluetooth:set({ popup = { drawing = true } })
 end)
 
+-- Close popup on exit
 bluetooth:subscribe({
     "mouse.exited.global",
     "mouse.exited"
@@ -32,6 +34,7 @@ bluetooth:subscribe({
     bluetooth:set({ popup = { drawing = false } })
   end)
 
+-- Toggle bluetooth with mouse click
 bluetooth:subscribe("mouse.clicked", function()
   sbar.exec("blueutil -p", function(state)
     if tonumber(state) == 0 then
@@ -41,10 +44,14 @@ bluetooth:subscribe("mouse.clicked", function()
       sbar.exec("blueutil -p 0")
       bluetooth:set({ icon = icons.bluetooth_off })
     end
+
+    SLEEP(1)
+    sbar.trigger("bluetooth_update")
   end)
 end)
 
-bluetooth:subscribe({ "routine", "forced" }, function()
+-- Fetch bluetooth status and devices
+bluetooth:subscribe({ "routine", "forced", "bluetooth_update" }, function()
   sbar.exec("blueutil -p", function(state)
     -- Clear existing devices in tooltip
     local existingEvents = bluetooth:query()
@@ -62,7 +69,9 @@ bluetooth:subscribe({ "routine", "forced" }, function()
 
     -- Get paired and connected devices
     sbar.exec("blueutil --paired", function(paired)
-      local bluetooth_paired_header = sbar.add("item", "bluetooth_paired_header", {
+      bluetooth.paired = {}
+
+      bluetooth.paired.header = sbar.add("item", "bluetooth.paired.header", {
         icon = {
           drawing = false
         },
@@ -81,7 +90,7 @@ bluetooth:subscribe({ "routine", "forced" }, function()
       -- Iterate over the list of paired devices
       for device in paired:gmatch("[^\n]+") do
         local label = device:match('"(.*)"')
-        local bluetooth_paired_device = sbar.add("item", "bluetooth_paired_device_" .. label, {
+        bluetooth.paired.device = sbar.add("item", "bluetooth.paired.device." .. label, {
           icon = {
             drawing = false
           },
@@ -97,8 +106,12 @@ bluetooth:subscribe({ "routine", "forced" }, function()
           click_script = "sketchybar --set $NAME popup.drawing=off",
         })
       end
+
+      -- Fetch connected devices
       sbar.exec("blueutil --connected", function(connected)
-        local bluetooth_connected_header = sbar.add("item", "bluetooth_connected_header", {
+        bluetooth.connected = {}
+
+        bluetooth.connected.header = sbar.add("item", "bluetooth.connected.header", {
           icon = {
             drawing = false
           },
@@ -116,7 +129,7 @@ bluetooth:subscribe({ "routine", "forced" }, function()
 
         for device in connected:gmatch("[^\n]+") do
           local label = device:match('"(.*)"')
-          local bluetooth_connected_device = sbar.add("item", "bluetooth_connected_device_" .. label, {
+          bluetooth.connected.device = sbar.add("item", "bluetooth.connected.device." .. label, {
             icon = {
               drawing = false
             },

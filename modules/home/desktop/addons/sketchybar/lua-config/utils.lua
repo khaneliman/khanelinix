@@ -38,3 +38,9 @@ PRINT_TABLE = function(t)
     end
   end
 end
+
+SLEEP = function(seconds)
+  local start = os.time()
+  while os.time() - start < seconds do
+  end
+end
