@@ -4,7 +4,7 @@ local icons = require('icons')
 
 local disk = sbar.add("item", "disk", {
   background = {
-    padding_left = 0,
+    padding_left = 5,
   },
   label = {
     font = {
