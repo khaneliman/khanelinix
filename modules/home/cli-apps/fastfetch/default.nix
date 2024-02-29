@@ -36,7 +36,9 @@ in
               "type": 9
             },
             "separator": " 󰁔 ",
-            "temperatureUnit": "F"
+            "temp": {
+              "unit": "F"
+            }
           },
           "modules": [
             {

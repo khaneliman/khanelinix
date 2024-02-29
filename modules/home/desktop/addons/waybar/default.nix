@@ -1,12 +1,14 @@
 { config
+, inputs
 , lib
-, options
 , pkgs
+, system
 , ...
 }:
 let
   inherit (lib) mkIf mkForce getExe mkMerge;
   inherit (lib.internal) mkBoolOpt;
+  inherit (inputs) nixpkgs-wayland;
 
   cfg = config.khanelinix.desktop.addons.waybar;
 
@@ -86,8 +88,8 @@ in
 
     programs.waybar = {
       enable = true;
-      # package = nixpkgs-wayland.packages.${system}.waybar;
-      package = pkgs.waybar;
+      package = nixpkgs-wayland.packages.${system}.waybar;
+      # package = pkgs.waybar;
       systemd.enable = true;
 
       # TODO: make dynamic / support different number of bars etc
