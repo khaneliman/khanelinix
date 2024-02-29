@@ -44,3 +44,7 @@ SLEEP = function(seconds)
   while os.time() - start < seconds do
   end
 end
+
+COLOR_TO_HEX = function(color)
+  return string.format("0x%x", color)
+end
