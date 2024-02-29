@@ -4,7 +4,7 @@ local icons = require('icons')
 
 local network = {}
 
-network.network_down = sbar.add("item", "network_down", {
+network.down = sbar.add("item", "network.down", {
   background = {
     padding_left = 0,
   },
@@ -31,7 +31,7 @@ network.network_down = sbar.add("item", "network_down", {
   y_offset = -7
 })
 
-network.network_up = sbar.add("item", "network_up", {
+network.up = sbar.add("item", "network.up", {
   background = {
     padding_right = -70,
   },
@@ -58,7 +58,7 @@ network.network_up = sbar.add("item", "network_up", {
   y_offset = 7
 })
 
-network.network_down:subscribe({
+network.down:subscribe({
     "routine",
     "forced",
     "system_woke"
@@ -67,29 +67,53 @@ network.network_down:subscribe({
     -- Execute the ifstat command and read the output
     sbar.exec('ifstat -i "en0" -b 0.1 1 | tail -n1', function(ifstat_output)
       -- Extract DOWN and UP values from the ifstat output
-      local DOWN, UP = ifstat_output:match("(%S+)%s+(%S+)")
+      local down, up = ifstat_output:match("(%S+)%s+(%S+)")
 
       -- Convert DOWN and UP values to Lua numbers
-      DOWN = tonumber(DOWN)
-      UP = tonumber(UP)
+      down = tonumber(down)
+      up = tonumber(up)
 
       -- Format DOWN and UP values
-      local DOWN_FORMAT
-      if DOWN > 999 then
-        DOWN_FORMAT = string.format("%03.0f Mbps", DOWN / 1000)
+      local down_formatted
+      if down > 999 then
+        down_formatted = string.format("%03.0f Mbps", down / 1000)
       else
-        DOWN_FORMAT = string.format("%03.0f kbps", DOWN)
+        down_formatted = string.format("%03.0f kbps", down)
       end
 
-      local UP_FORMAT
-      if UP > 999 then
-        UP_FORMAT = string.format("%03.0f Mbps", UP / 1000)
+      local up_formatted
+      if up > 999 then
+        up_formatted = string.format("%03.0f Mbps", up / 1000)
       else
-        UP_FORMAT = string.format("%03.0f kbps", UP)
+        up_formatted = string.format("%03.0f kbps", up)
       end
 
-      network.network_down:set({ label = DOWN_FORMAT })
-      network.network_up:set({ label = UP_FORMAT })
+      local up_highlighted
+      if up > 0 then
+        up_highlighted = true
+      else
+        up_highlighted = false
+      end
+
+      local down_highlighted
+      if down > 0 then
+        down_highlighted = true
+      else
+        down_highlighted = false
+      end
+
+      network.down:set({
+        label = down_formatted,
+        icon = {
+          highlight = down_highlighted
+        }
+      })
+      network.up:set({
+        label = up_formatted,
+        icon = {
+          highlight = up_highlighted
+        }
+      })
     end)
   end)
 
