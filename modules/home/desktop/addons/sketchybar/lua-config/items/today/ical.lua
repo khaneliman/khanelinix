@@ -25,7 +25,7 @@ local ical = sbar.add("item", "ical", {
   update_freq = 900
 })
 
-local ical_details = sbar.add("item", "ical_details", {
+ical.details = sbar.add("item", "ical.details", {
   icon = {
     drawing = false,
     background = {

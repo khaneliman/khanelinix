@@ -1,6 +1,8 @@
 local settings = require("settings")
 
-local weather_icon = sbar.add("item", "weather_icon", {
+local weather = {}
+
+weather.icon = sbar.add("item", "weather.icon", {
   icon = {
     align = "right",
     padding_left = 12,
@@ -14,7 +16,7 @@ local weather_icon = sbar.add("item", "weather_icon", {
   y_offset = 6,
 })
 
-local weather_temp = sbar.add("item", "weather_temp", {
+weather.temp = sbar.add("item", "weather.temp", {
   label = {
     align = "right",
     padding_left = 0,
@@ -34,7 +36,7 @@ local weather_temp = sbar.add("item", "weather_temp", {
   y_offset = -8,
 })
 
-local weather_details = sbar.add("item", "weather_details", {
+weather.details = sbar.add("item", "weather.details", {
   icon = {
     background = {
       height = 2,
@@ -56,9 +58,9 @@ local weather_details = sbar.add("item", "weather_details", {
 })
 
 -- Update function
-weather_temp:subscribe({ "routine", "forced", "weather_update" }, function()
+weather.temp:subscribe({ "routine", "forced", "weather_update" }, function()
   -- Reset popup state
-  weather_temp:set({ popup = { drawing = false } })
+  weather.temp:set({ popup = { drawing = false } })
 
   -- Fetch events from calendar
   sbar.exec("wttrbar --fahrenheit --ampm", function(forecast)
@@ -66,16 +68,16 @@ weather_temp:subscribe({ "routine", "forced", "weather_update" }, function()
     for i, value in ipairs(STR_SPLIT(forecast.text)) do
       -- first part of response is icon
       if i == 1 then
-        weather_icon:set({ icon = { string = value } })
+        weather.icon:set({ icon = { string = value } })
       end
       -- second part of response is temperature
       if i == 2 then
-        weather_temp:set({ label = { string = value .. "°" } })
+        weather.temp:set({ label = { string = value .. "°" } })
       end
     end
 
     -- Clear existing events in tooltip
-    local existingEvents = weather_temp:query()
+    local existingEvents = weather.temp:query()
     if existingEvents.popup and next(existingEvents.popup.items) ~= nil then
       for _, item in pairs(existingEvents.popup.items) do
         sbar.remove(item)
@@ -87,7 +89,9 @@ weather_temp:subscribe({ "routine", "forced", "weather_update" }, function()
         local replacedString = string.gsub(line, "<b>", "")
         replacedString = string.gsub(replacedString, "</b>", "")
 
-        local weather_event_separator = sbar.add("item", "weather_event_separator_" .. _, {
+        weather.event = {}
+
+        weather.event.separator = sbar.add("item", "weather.event.separator_" .. _, {
           icon = {
             drawing = true,
             string = "",
@@ -95,11 +99,11 @@ weather_temp:subscribe({ "routine", "forced", "weather_update" }, function()
           label = {
             drawing = false
           },
-          position = "popup." .. weather_temp.name,
+          position = "popup." .. weather.temp.name,
           click_script = "sketchybar --set $NAME popup.drawing=off",
         })
 
-        local weather_event_title = sbar.add("item", "weather_event_title_" .. _, {
+        weather.event.title = sbar.add("item", "weather.event.title_" .. _, {
           icon = {
             drawing = true,
             string = replacedString,
@@ -107,11 +111,11 @@ weather_temp:subscribe({ "routine", "forced", "weather_update" }, function()
           label = {
             drawing = false
           },
-          position = "popup." .. weather_temp.name,
+          position = "popup." .. weather.temp.name,
           click_script = "sketchybar --set $NAME popup.drawing=off",
         })
       else
-        local weather_event = sbar.add("item", "weather_event_" .. _, {
+        weather.event = sbar.add("item", "weather.event." .. _, {
           icon = {
             drawing = false
           },
@@ -119,7 +123,7 @@ weather_temp:subscribe({ "routine", "forced", "weather_update" }, function()
             string = line,
             drawing = true
           },
-          position = "popup." .. weather_temp.name,
+          position = "popup." .. weather.temp.name,
           click_script = "sketchybar --set $NAME popup.drawing=off",
         })
       end
@@ -127,19 +131,19 @@ weather_temp:subscribe({ "routine", "forced", "weather_update" }, function()
   end)
 end)
 
-weather_temp:subscribe("mouse.entered", function()
-  weather_temp:set({ popup = { drawing = true } })
+weather.temp:subscribe("mouse.entered", function()
+  weather.temp:set({ popup = { drawing = true } })
 end)
 
-weather_temp:subscribe({
+weather.temp:subscribe({
     "mouse.exited.global",
     "mouse.exited"
   },
   function()
-    weather_temp:set({ popup = { drawing = false } })
+    weather.temp:set({ popup = { drawing = false } })
   end)
 
-weather_temp:subscribe({
+weather.temp:subscribe({
     "mouse.clicked"
   },
   function(info)
@@ -152,7 +156,7 @@ weather_temp:subscribe({
     end
   end)
 
-weather_icon:subscribe({
+weather.icon:subscribe({
     "mouse.clicked"
   },
   function(info)

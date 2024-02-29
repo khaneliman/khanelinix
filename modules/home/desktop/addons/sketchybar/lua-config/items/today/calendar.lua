@@ -1,6 +1,8 @@
 local settings = require("settings")
 
-local cal = sbar.add("item", "date", {
+local today = {}
+
+today.cal = sbar.add("item", "date", {
   icon = {
     align = "right",
     padding_right = 0,
@@ -16,7 +18,7 @@ local cal = sbar.add("item", "date", {
   y_offset = 6
 })
 
-local clock = sbar.add("item", "clock", {
+today.clock = sbar.add("item", "clock", {
   icon = {
     align = "right",
     padding_right = 0,
@@ -40,13 +42,13 @@ local clock = sbar.add("item", "clock", {
 
 local function date_update()
   local date = os.date("%a. %d %b.")
-  cal:set({ icon = date })
+  today.cal:set({ icon = date })
 end
 
 local function clock_update()
   local time = os.date("%I:%M %p")
-  clock:set({ icon = time })
+  today.clock:set({ icon = time })
 end
 
-cal:subscribe({"forced", "routine"}, date_update)
-clock:subscribe({"forced", "routine"}, clock_update)
+today.cal:subscribe({ "forced", "routine" }, date_update)
+today.clock:subscribe({ "forced", "routine" }, clock_update)
