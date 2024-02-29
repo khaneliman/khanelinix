@@ -1,9 +1,12 @@
 local icons = require("icons")
 local colors = require("colors")
+local settings = require("settings")
 
 local popup_toggle = "sketchybar --set $NAME popup.drawing=toggle"
 
-local apple_logo = sbar.add("item", "apple_logo", {
+local apple = {}
+
+apple.logo = sbar.add("item", "apple.logo", {
   padding_right = 15,
   click_script = popup_toggle,
   icon = {
@@ -22,8 +25,8 @@ local apple_logo = sbar.add("item", "apple_logo", {
   }
 })
 
-local apple_prefs = sbar.add("item", "apple_prefs", {
-  position = "popup." .. apple_logo.name,
+apple.prefs = sbar.add("item", "apple.prefs", {
+  position = "popup." .. apple.logo.name,
   icon = icons.preferences,
   label = "Preferences",
   background = {
@@ -33,13 +36,13 @@ local apple_prefs = sbar.add("item", "apple_prefs", {
   }
 })
 
-apple_prefs:subscribe("mouse.clicked", function(_)
+apple.prefs:subscribe("mouse.clicked", function(_)
   sbar.exec("open -a 'System Preferences'")
-  apple_logo:set({ popup = { drawing = false } })
+  apple.logo:set({ popup = { drawing = false } })
 end)
 
-local apple_activity = sbar.add("item", "apple_activity", {
-  position = "popup." .. apple_logo.name,
+apple.activity = sbar.add("item", "apple.activity", {
+  position = "popup." .. apple.logo.name,
   icon = {
     string = icons.activity
   },
@@ -52,12 +55,12 @@ local apple_activity = sbar.add("item", "apple_activity", {
   click_script = "open -a 'Activity Monitor'; " .. popup_toggle,
 })
 
-apple_activity:subscribe("mouse.clicked", function(_)
-  apple_logo:set({ popup = { drawing = false } })
+apple.activity:subscribe("mouse.clicked", function(_)
+  apple.logo:set({ popup = { drawing = false } })
 end)
 
-local apple_divider = sbar.add("item", "apple_divider", {
-  position = "popup." .. apple_logo.name,
+apple.divider = sbar.add("item", "apple.divider", {
+  position = "popup." .. apple.logo.name,
   icon = {
     drawing = false,
   },
@@ -74,8 +77,8 @@ local apple_divider = sbar.add("item", "apple_divider", {
   width = 110,
 })
 
-local apple_lock = sbar.add("item", "apple_lock", {
-  position = "popup." .. apple_logo.name,
+apple.lock = sbar.add("item", "apple.lock", {
+  position = "popup." .. apple.logo.name,
   icon = {
     string = icons.lock
   },
@@ -90,12 +93,12 @@ local apple_lock = sbar.add("item", "apple_lock", {
       popup_toggle,
 })
 
-apple_lock:subscribe("mouse.clicked", function(_)
-  apple_logo:set({ popup = { drawing = false } })
+apple.lock:subscribe("mouse.clicked", function(_)
+  apple.logo:set({ popup = { drawing = false } })
 end)
 
-local apple_logout = sbar.add("item", "apple_logout", {
-  position = "popup." .. apple_logo.name,
+apple.logout = sbar.add("item", "apple.logout", {
+  position = "popup." .. apple.logo.name,
   icon = {
     string = icons.logout,
     padding_left = 7,
@@ -110,15 +113,15 @@ local apple_logout = sbar.add("item", "apple_logout", {
       popup_toggle,
 })
 
-apple_logout:subscribe("mouse.clicked", function(_)
-  apple_logo:set({ popup = { drawing = false } })
+apple.logout:subscribe("mouse.clicked", function(_)
+  apple.logo:set({ popup = { drawing = false } })
 end)
 
-local apple_sleep = sbar.add("item", "apple_sleep", {
-  position = "popup." .. apple_logo.name,
+apple.sleep = sbar.add("item", "apple.sleep", {
+  position = "popup." .. apple.logo.name,
   icon = {
     string = icons.sleep,
-    padding_left = 5,
+    padding_left = 7,
   },
   label = "Sleep",
   background = {
@@ -129,15 +132,15 @@ local apple_sleep = sbar.add("item", "apple_sleep", {
   click_script = "osascript -e 'tell app \"System Events\" to sleep'; " .. popup_toggle,
 })
 
-apple_sleep:subscribe("mouse.clicked", function(_)
-  apple_logo:set({ popup = { drawing = false } })
+apple.sleep:subscribe("mouse.clicked", function(_)
+  apple.logo:set({ popup = { drawing = false } })
 end)
 
-local apple_reboot = sbar.add("item", "apple_reboot", {
-  position = "popup." .. apple_logo.name,
+apple.reboot = sbar.add("item", "apple.reboot", {
+  position = "popup." .. apple.logo.name,
   icon = {
     string = icons.reboot,
-    padding_left = 5,
+    padding_left = 7,
   },
   label = "Reboot",
   background = {
@@ -148,15 +151,15 @@ local apple_reboot = sbar.add("item", "apple_reboot", {
   click_script = "osascript -e 'tell app \"loginwindow\" to «event aevtrrst»'; " .. popup_toggle,
 })
 
-apple_reboot:subscribe("mouse.clicked", function(_)
-  apple_logo:set({ popup = { drawing = false } })
+apple.reboot:subscribe("mouse.clicked", function(_)
+  apple.logo:set({ popup = { drawing = false } })
 end)
 
-local apple_shutdown = sbar.add("item", "apple_shutdown", {
-  position = "popup." .. apple_logo.name,
+apple.shutdown = sbar.add("item", "apple.shutdown", {
+  position = "popup." .. apple.logo.name,
   icon = {
     string = icons.power,
-    padding_left = 5,
+    padding_left = 7,
   },
   label = "Shutdown",
   background = {
@@ -167,6 +170,6 @@ local apple_shutdown = sbar.add("item", "apple_shutdown", {
   click_script = "osascript -e 'tell app \"loginwindow\" to «event aevtrsdn»'; " .. popup_toggle,
 })
 
-apple_shutdown:subscribe("mouse.clicked", function(_)
-  apple_logo:set({ popup = { drawing = false } })
+apple.shutdown:subscribe("mouse.clicked", function(_)
+  apple.logo:set({ popup = { drawing = false } })
 end)

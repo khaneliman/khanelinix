@@ -4,7 +4,7 @@ return {
   preferences = "􀺽",
   activity = "􀒓",
   lock = "􀒳",
-  logout = "",
+  logout = "󰍃",
   power = "",
   reboot = "",
   sleep = "⏾",
