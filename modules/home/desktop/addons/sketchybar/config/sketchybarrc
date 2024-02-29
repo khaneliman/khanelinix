@@ -1,96 +1,29 @@
-#!/usr/bin/env bash
+#!/usr/bin/env lua
 
-source "$CONFIG_DIR/colors.sh"     # Loads all defined colors
-source "$CONFIG_DIR/icons.sh"      # Loads all defined icons
-source "$CONFIG_DIR/userconfig.sh" # Loads all defined variables
+-- This is only needed once to install the sketchybar module
+-- (or for an update of the module)
+-- TODO: replace with nixpkg derivation when we can, darwin frameworks need to get updated
+os.execute(
+  "[ ! -f $HOME/.local/share/sketchybar_lua/sketchybar.so ] && (git clone https://github.com/FelixKratz/SbarLua.git /tmp/SbarLua && cd /tmp/SbarLua/ && make install && rm -rf /tmp/SbarLua/)")
 
-# Setting up and starting the helper process
-# source "$CONFIG_DIR/sketchyhelper/helper.sh"
-"$CONFIG_DIR/sketchyhelper/sketchyhelper" $HELPER &
-# source "$CONFIG_DIR/plugins/dynamic-island/helper.sh"
+-- Add the sketchybar module to the package cpath (the module could be
+-- installed into the default search path then this would not be needed)
+package.cpath = package.cpath .. ";/Users/" .. os.getenv("USER") .. "/.local/share/sketchybar_lua/?.so"
 
-# Unload the macOS on screen indicator overlay for volume change
-launchctl unload -F /System/Library/LaunchAgents/com.apple.OSDUIHelper.plist >/dev/null 2>&1 &
 
-bar_config=(
-	blur_radius=30
-	border_color="$SURFACE1"
-	border_width=2
-	color="$BASE"
-	corner_radius=9
-	height=40
-	margin=10
-	notch_width=0
-	padding_left=18
-	padding_right=10
-	position=top
-	shadow=on
-	sticky=on
-	topmost=off
-	y_offset=10
-)
+-- Require the sketchybar module
+sbar = require("sketchybar")
 
-icon_defaults=(
-	icon.color="$TEXT"
-	icon.font="$NERD_FONT:Bold:16.0"
-	icon.padding_left="$PADDINGS"
-	icon.padding_right="$PADDINGS"
-)
+sbar.exec("killall sketchyhelper || sketchyhelper git.felix.sketchyhelper >/dev/null 2>&1 &")
 
-label_defaults=(
-	label.color="$TEXT"
-	label.font="$FONT:Semibold:13.0"
-	label.padding_left="$PADDINGS"
-	label.padding_right="$PADDINGS"
-)
+-- Bundle the entire initial configuration into a single message to sketchybar
+-- This improves startup times drastically, try removing both the begin and end
+-- config calls to see the difference -- yeah..
+sbar.begin_config()
+require("init")
+sbar.hotload(true)
+sbar.end_config()
 
-background_defaults=(
-	background.corner_radius=9
-	background.height=30
-	background.padding_left="$PADDINGS"
-	background.padding_right="$PADDINGS"
-)
-
-popup_defaults=(
-	popup.height=30
-	popup.horizontal=false
-	popup.background.border_color="$BLUE"
-	popup.background.border_width=2
-	popup.background.color="$MANTLE"
-	popup.background.corner_radius=11
-	popup.background.shadow.drawing=on
-)
-
-# Setting up the general bar appearance and default values
-sketchybar --bar "${bar_config[@]}" \
-	--default \
-	updates=when_shown \
-	"${icon_defaults[@]}" \
-	"${label_defaults[@]}" \
-	"${background_defaults[@]}" \
-	"${popup_defaults[@]}"
-
-source "$CONFIG_DIR/plugins/lock/item.sh"
-
-# Left
-source "$CONFIG_DIR/plugins/apple/item.sh"
-source "$CONFIG_DIR/plugins/spaces/item.sh"
-source "$CONFIG_DIR/plugins/skhd/item.sh"
-source "$CONFIG_DIR/plugins/front-app/item.sh"
-
-# Right
-source "$CONFIG_DIR/plugins/date/item.sh"
-source "$CONFIG_DIR/plugins/weather/item.sh"
-source "$CONFIG_DIR/plugins/control-center/item.sh"
-source "$CONFIG_DIR/plugins/stats/item.sh"
-
-# Center
-# source "$ITEM_DIR/spotify.sh"
-# source "$CONFIG_DIR/plugins/dynamic-island/item.sh"
-pkill dynamic-island-sketchybar 2>/dev/null
-dynamic-island-sketchybar &
-
-# Forcing all item scripts to run (never do this outside of sketchybarrc)
-sketchybar --update
-
-echo "sketchybar configuation loaded.."
+-- Run the event loop of the sketchybar module (without this there will be no
+-- callback functions executed in the lua module)
+sbar.event_loop()
