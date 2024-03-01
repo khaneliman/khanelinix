@@ -849,11 +849,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1709302616,
-        "narHash": "sha256-7X2f87af+vUJMNkiTtKEGHIyVW9tieYMzmADuiz93Es=",
+        "lastModified": 1709323656,
+        "narHash": "sha256-vSRd5AE34dWvTC+25jXedPoUIWJI1rHyN8btDFLyQIw=",
         "owner": "hyprwm",
         "repo": "Hyprland",
-        "rev": "555afea73c87f8e2bb374d1112431bb3a6f451dd",
+        "rev": "6e3a494d1ddbdcffaee39d78e7d66d00a4cd350d",
         "type": "github"
       },
       "original": {
@@ -1393,16 +1393,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1709321450,
+        "lastModified": 1709323170,
         "narHash": "sha256-IW2JRiYCbq31KRhlgyEFt0sVXH+3ZUPfGteUe69Yia8=",
-        "owner": "khaneliman",
+        "owner": "nix-community",
         "repo": "nixpkgs-wayland",
-        "rev": "14c2fd9b17a898a514fd0da082710233a24c47fe",
+        "rev": "f5b5ca15b9e6c2282246c80bc1357595f0c90347",
         "type": "github"
       },
       "original": {
-        "owner": "khaneliman",
-        "ref": "bugfix/sway-unwrapped",
+        "owner": "nix-community",
         "repo": "nixpkgs-wayland",
         "type": "github"
       }
@@ -1486,11 +1485,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1709319852,
-        "narHash": "sha256-nYKIvKAeK9od2eJ8qXWIPR2AqmtDwmzI+UKJxZvHTsU=",
+        "lastModified": 1709322401,
+        "narHash": "sha256-AUuuklEh6Ph5FYCjh3odZFeqz9ynh+HDDgARbh52rcU=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "2bc9cfcb92c01b8483e1768c39823b36d6077059",
+        "rev": "7d003db96005f367008a368f5e3ea1b9d073d64f",
         "type": "github"
       },
       "original": {

@@ -117,9 +117,7 @@
 
     # NixPkgs-Wayland
     nixpkgs-wayland = {
-      # url = "github:nix-community/nixpkgs-wayland";
-      # TODO: replace when upstreamed
-      url = "github:khaneliman/nixpkgs-wayland/bugfix/sway-unwrapped";
+      url = "github:nix-community/nixpkgs-wayland";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
