@@ -94,12 +94,13 @@ in
         id = 0;
 
         extensions = with pkgs.nur.repos.rycee.firefox-addons; [
-          auto-tab-discard
           angular-devtools
+          auto-tab-discard
           bitwarden
           darkreader
           firefox-color
           onepassword-password-manager
+          react-devtools
           reduxdevtools
           sidebery
           sponsorblock
