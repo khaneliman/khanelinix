@@ -24,13 +24,12 @@ in
 
       config = {
         debug_output = if cfg.debug then "on" else "off";
-        external_bar = "all:$${BAR_HEIGHT}:0";
+        # external_bar = "all:$${BAR_HEIGHT}:0";
         split_type = "auto";
         split_ratio = "0.5";
         auto_balance = "off";
         insert_feedback_color = "0xff7793d1";
         menubar_opacity = "0.5";
-        # external_bar all:39:0 \
 
         window_placement = "second_child";
         window_topmost = "on";
@@ -44,15 +43,6 @@ in
         # window_topmost off \
         # normal_window_opacity 0.95 \
         # window_animation_duration 0.15
-
-        window_border = "on";
-        window_border_blur = "off";
-        window_border_hidpi = "on";
-        window_border_width = "2";
-        window_border_radius = "12";
-        active_window_border_color = "0xff7793d1";
-        normal_window_border_color = "0xff5e6798";
-        # window_border_radius 11 \
 
         layout = "bsp";
         top_padding = "20";
