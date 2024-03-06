@@ -1,3 +1,5 @@
+#!/usr/bin/env lua
+
 local colors = require("colors")
 
 -- require order determines ui order on bar

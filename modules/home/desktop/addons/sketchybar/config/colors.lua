@@ -1,3 +1,5 @@
+#!/usr/bin/env lua
+
 local colors = {
   base = 0xff24273a,
   mantle = 0xff1e2030,

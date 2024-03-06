@@ -1,3 +1,5 @@
+#!/usr/bin/env lua
+
 local separator = require("items.stats.separator_right")
 local cpu = require("items.stats.cpu")
 local memory = require("items.stats.memory")

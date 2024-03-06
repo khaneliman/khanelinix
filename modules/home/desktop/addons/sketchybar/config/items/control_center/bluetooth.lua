@@ -1,3 +1,5 @@
+#!/usr/bin/env lua
+
 local icons = require("icons")
 local colors = require("colors")
 local settings = require("settings")

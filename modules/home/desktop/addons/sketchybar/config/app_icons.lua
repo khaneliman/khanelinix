@@ -1,3 +1,5 @@
+#!/usr/bin/env lua
+
 return {
   ["Typora"] = ":text:",
   ["Orion"] = ":orion:",

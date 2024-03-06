@@ -1,3 +1,5 @@
+#!/usr/bin/env lua
+
 local whitelist = {
   ["Spotify"] = true,
   ["Music"] = true

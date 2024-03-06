@@ -1,3 +1,5 @@
+#!/usr/bin/env lua
+
 local settings = require("settings")
 
 local weather = {}

@@ -1,3 +1,5 @@
+#!/usr/bin/env lua
+
 local colors = require("colors")
 
 -- Equivalent to the --bar domain

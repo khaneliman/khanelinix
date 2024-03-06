@@ -1,3 +1,5 @@
+#!/usr/bin/env lua
+
 require("items.apple")
 require("items.spaces")
 -- require("items.spaces-windowrule")

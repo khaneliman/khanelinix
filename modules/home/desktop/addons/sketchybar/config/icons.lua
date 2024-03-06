@@ -1,3 +1,5 @@
+#!/usr/bin/env lua
+
 return {
   loading = "􀖇",
   apple = "􀣺",
