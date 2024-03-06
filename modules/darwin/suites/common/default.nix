@@ -31,6 +31,8 @@ in
         haskellPackages.sfnt2woff
         intltool
         keychain
+        khanelinix.trace-symlink
+        khanelinix.trace-which
         mas
         moreutils
         ncdu
@@ -41,7 +43,6 @@ in
         terminal-notifier
         trash-cli
         tree
-        wego
         wtf
       ];
     };
