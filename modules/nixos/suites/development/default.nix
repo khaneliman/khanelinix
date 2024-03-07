@@ -73,7 +73,8 @@ in
       rust-bin.stable.latest.default
     ] ++ lib.optionals cfg.sqlEnable [
       dbeaver
-      mysql-workbench
+      # FIX: package broken on nixpkgs
+      # mysql-workbench
     ];
 
     khanelinix = {

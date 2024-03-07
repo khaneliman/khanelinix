@@ -34,7 +34,8 @@ in
       rpcs3
       snes9x
       xemu
-      yuzu-early-access
+      # NOTE: yuzu removed upstream, using alternative
+      ryujinx
     ] ++ lib.optionals cfg.retroarchFull [ retroarchFull ];
 
     khanelinix = {
