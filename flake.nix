@@ -168,7 +168,7 @@
     };
 
     # Rust overlay
-    rustup-overlay = {
+    rust-overlay = {
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -205,7 +205,7 @@
 
   outputs = inputs:
     let
-      inherit (inputs) deploy-rs flake hypridle lanzaboote neovim-nightly-overlay nix-ld-rs nixvim nur rustup-overlay snowfall-lib snowfall-frost sops-nix;
+      inherit (inputs) deploy-rs flake hypridle lanzaboote neovim-nightly-overlay nix-ld-rs nixvim nur rust-overlay snowfall-lib snowfall-frost sops-nix;
 
       lib = snowfall-lib.mkLib {
         inherit inputs;
@@ -234,7 +234,7 @@
         neovim-nightly-overlay.overlay
         nix-ld-rs.overlays.default
         nur.overlay
-        rustup-overlay.overlays.default
+        rust-overlay.overlays.default
         snowfall-frost.overlays.default
       ];
 
