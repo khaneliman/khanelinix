@@ -98,6 +98,28 @@ in
             filetypes = [ "rust" ];
             installCargo = true;
             installRustc = true;
+
+            settings = {
+              diagnostics = {
+                enable = true;
+                # experimental.enable = true;
+              };
+
+              inlayHints = {
+                bindingModeHints.enable = true;
+                closureStyle = "rust_analyzer";
+                closureReturnTypeHints.enable = "always";
+                discriminantHints.enable = "always";
+                expressionAdjustmentHints. enable = "always";
+                implicitDrops.enable = true;
+                lifetimeElisionHints.enable = "always";
+                rangeExclusiveHints.enable = true;
+              };
+
+              procMacro = {
+                enable = true;
+              };
+            };
           };
 
           tsserver = {
