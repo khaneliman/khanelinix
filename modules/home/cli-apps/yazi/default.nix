@@ -19,6 +19,7 @@ in
     home.packages = with pkgs; [
       ripgrep
       zoxide
+      xdragon
     ];
 
     programs.yazi = {
