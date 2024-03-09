@@ -40,10 +40,12 @@ in
           ccls = {
             enable = true;
             filetypes = [ "c" "cpp" "objc" "objcpp" ];
+
+            initOptions.compilationDatabaseDirectory = "build";
           };
 
           clangd = {
-            enable = true;
+            enable = false;
             filetypes = [ "c" "cpp" "objc" "objcpp" ];
           };
 
