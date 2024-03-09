@@ -3,8 +3,10 @@ _: {
     enable = true;
 
     modules = {
-      surround = { };
+      basics = { };
+      bracketed = { };
       indentscope = { };
+      surround = { };
     };
   };
 }
