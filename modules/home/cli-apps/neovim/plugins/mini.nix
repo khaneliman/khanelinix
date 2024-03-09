@@ -4,6 +4,7 @@ _: {
 
     modules = {
       surround = { };
+      indentscope = { };
     };
   };
 }
