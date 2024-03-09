@@ -7,6 +7,26 @@
     plugins.telescope = {
       enable = true;
 
+      extensions = {
+        file_browser = {
+          enable = true;
+          hidden = true;
+        };
+
+        frecency = {
+          enable = true;
+        };
+
+        # FIX: upstream requires a separate setting to enable this properly
+        # project-nvim = {
+        #   enable = true;
+        # };
+
+        ui-select = {
+          enable = true;
+        };
+      };
+
       keymaps = {
         "<leader>f'" = { action = "marks"; desc = "View marks"; };
         "<leader>f/" = { action = "current_buffer_fuzzy_find"; desc = "Fuzzy find in current buffer"; };
