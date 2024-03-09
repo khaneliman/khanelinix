@@ -124,6 +124,11 @@ in
             };
           };
 
+          taplo = {
+            enable = true;
+            filetypes = [ "toml" ];
+          };
+
           tsserver = {
             enable = true;
             filetypes = [ "javascript" "javascriptreact" "typescript" "typescriptreact" ];
