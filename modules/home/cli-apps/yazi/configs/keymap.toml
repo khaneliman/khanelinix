@@ -11,7 +11,7 @@ prepend_keymap = [
     "<Right>",
   ], exec = "plugin --sync smart-enter", desc = "Enter the child directory, or open the file" },
   { on = [
-    "<C-n>",
+    "<C-v>",
   ], exec = '''shell 'dragon -x -i -T "$1"' --confirm''', desc = "Drag and drop files" },
 ]
 
@@ -21,7 +21,7 @@ keymap = [
   ], exec = "escape", desc = "Exit visual mode, clear selected, or cancel search" },
   { on = [
     "q",
-  ], exec = "quit", desc = "Exit the process" },
+  ], exec = "close", desc = "Close the current tab; if it's the last tab, exit the process instead." },
   { on = [
     "Q",
   ], exec = "quit --no-cwd-file", desc = "Exit the process without writing cwd-file" },
@@ -268,6 +268,9 @@ keymap = [
   { on = [
     "t",
   ], exec = "tab_create --current", desc = "Create a new tab using the current path" },
+  { on = [
+    "<C-n>",
+  ], exec = "tab_create --current", desc = "Create a new tab using the current path" },
 
   { on = [
     "1",
@@ -302,6 +305,12 @@ keymap = [
   ], exec = "tab_switch -1 --relative", desc = "Switch to the previous tab" },
   { on = [
     "]",
+  ], exec = "tab_switch 1 --relative", desc = "Switch to the next tab" },
+  { on = [
+    "<S-Tab>",
+  ], exec = "tab_switch -1 --relative", desc = "Switch to the previous tab" },
+  { on = [
+    "<Tab>",
   ], exec = "tab_switch 1 --relative", desc = "Switch to the next tab" },
 
   { on = [
