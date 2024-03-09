@@ -3,6 +3,10 @@
 "$schema" = "https://yazi-rs.github.io/schemas/keymap.json"
 
 [manager]
+prepend_keymap = [
+  { on = [ "l"], exec = "plugin --sync smart-enter", desc = "Enter the child directory, or open the file"},
+  { on = [ "<Right>"], exec = "plugin --sync smart-enter", desc = "Enter the child directory, or open the file"}
+]
 
 keymap = [
 	{ on = [ "<Esc>" ], exec = "escape",             desc = "Exit visual mode, clear selected, or cancel search" },
