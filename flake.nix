@@ -146,8 +146,9 @@
 
     # Neovim nix configuration
     nixvim = {
-      url = "github:khaneliman/nixvim/telescope";
-      # url = "github:nix-community/nixvim";
+      # url = "github:khaneliman/nixvim/telescope";
+      url = "github:nix-community/nixvim";
+      # url = "git+file:///Users/khaneliman/Documents/github/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

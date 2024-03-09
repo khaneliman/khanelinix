@@ -4,6 +4,8 @@
   ];
 
   programs.nixvim = {
+    plugins.project-nvim.enable = true;
+
     plugins.telescope = {
       enable = true;
 
@@ -17,7 +19,6 @@
           enable = true;
         };
 
-        # FIX: upstream requires a separate setting to enable this properly
         project-nvim = {
           enable = true;
         };
