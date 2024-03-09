@@ -18,9 +18,9 @@
         };
 
         # FIX: upstream requires a separate setting to enable this properly
-        # project-nvim = {
-        #   enable = true;
-        # };
+        project-nvim = {
+          enable = true;
+        };
 
         ui-select = {
           enable = true;
