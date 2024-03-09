@@ -45,6 +45,32 @@
               "<leader>fO" = { action = ":Telescope frecency<CR>"; options = { desc = "Find Frequent Files"; }; };
               "<leader>fp" = { action = ":Telescope projects<CR>"; options = { desc = "Find Projects"; }; };
 
+              # Minimap
+              "<leader>mt" = {
+                action = "MiniMap.toggle";
+                lua = true;
+                options = {
+                  noremap = true;
+                  desc = "Toggle MiniMap";
+                };
+              };
+              "<leader>mf" = {
+                action = "MiniMap.toggle_focus";
+                lua = true;
+                options = {
+                  noremap = true;
+                  desc = "Focus MiniMap";
+                };
+              };
+              "<leader>mr" = {
+                action = "MiniMap.refresh";
+                lua = true;
+                options = {
+                  noremap = true;
+                  desc = "Refresh MiniMap";
+                };
+              };
+
               # navigate to left/right window
               "<leader>[" = { action = "<C-w>h"; options = { desc = "Left window"; }; };
               "<leader>]" = { action = "<C-w>l"; options = { desc = "Right window"; }; };
