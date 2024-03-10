@@ -121,6 +121,19 @@
                 };
               };
 
+              "<leader>uC" = {
+                action = /*lua*/ ''
+                  function ()
+                    vim.g.colorizing_enabled = not vim.g.colorizing_enabled
+                    vim.cmd('ColorizerToggle')
+                    vim.notify(string.format("Colorizing %s", bool2str(vim.g.colorizing_enabled), "info"))
+                  end'';
+                lua = true;
+                options = {
+                  desc = "Toggle colorizing";
+                };
+              };
+
               "<leader>uf" = {
                 action = /*lua*/ ''
                   function ()
