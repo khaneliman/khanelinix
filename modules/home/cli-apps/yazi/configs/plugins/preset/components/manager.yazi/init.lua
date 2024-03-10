@@ -9,14 +9,14 @@ function Manager:render(area)
 
   return ya.flat {
     -- Borders
-    ui.Border(area, ui.Border.ALL):type(ui.Border.ROUNDED),
-    ui.Bar(chunks[1], ui.Bar.RIGHT),
-    ui.Bar(chunks[3], ui.Bar.LEFT),
+    ui.Border(area, ui.Border.ALL):type(ui.Border.ROUNDED):style(THEME.manager.border_style),
+    ui.Bar(chunks[1], ui.Bar.RIGHT):style(THEME.manager.border_style),
+    ui.Bar(chunks[3], ui.Bar.LEFT):style(THEME.manager.border_style),
 
-    bar("┬", chunks[1].right - 1, chunks[1].y),
-    bar("┴", chunks[1].right - 1, chunks[1].bottom - 1),
-    bar("┬", chunks[2].right, chunks[2].y),
-    bar("┴", chunks[2].right, chunks[1].bottom - 1),
+    bar("┬", chunks[1].right - 1, chunks[1].y):style(THEME.manager.border_style),
+    bar("┴", chunks[1].right - 1, chunks[1].bottom - 1):style(THEME.manager.border_style),
+    bar("┬", chunks[2].right, chunks[2].y):style(THEME.manager.border_style),
+    bar("┴", chunks[2].right, chunks[1].bottom - 1):style(THEME.manager.border_style),
 
     -- Parent
     Parent:render(chunks[1]:padding(ui.Padding.xy(1))),
