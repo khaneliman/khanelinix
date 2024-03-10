@@ -25,6 +25,18 @@ _: {
       callback = { __raw = "MiniMap.open"; };
     }
 
+    # Open Neo-Tree on buffer
+    # FIX: shouldn't focus but is...
+    {
+      event = "BufReadPost";
+      once = true;
+      command = "Neotree show filesystem left";
+      # callback = {
+      #   __raw =
+      #     "function() vim.api.nvim_exec('Neotree show filesystem left', true) end";
+      # };
+    }
+
     # Open help in a vertical split
     {
       event = "FileType";
