@@ -12,8 +12,6 @@
 
       nvim-autopairs.enable = true;
 
-      nvim-colorizer.enable = true;
-
       nix-develop.enable = true;
 
       oil.enable = true;

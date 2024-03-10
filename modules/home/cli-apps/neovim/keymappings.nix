@@ -45,32 +45,6 @@
               "<leader>fO" = { action = ":Telescope frecency<CR>"; options = { desc = "Find Frequent Files"; }; };
               "<leader>fp" = { action = ":Telescope projects<CR>"; options = { desc = "Find Projects"; }; };
 
-              # Minimap
-              "<leader>mt" = {
-                action = "MiniMap.toggle";
-                lua = true;
-                options = {
-                  noremap = true;
-                  desc = "Toggle MiniMap";
-                };
-              };
-              "<leader>mf" = {
-                action = "MiniMap.toggle_focus";
-                lua = true;
-                options = {
-                  noremap = true;
-                  desc = "Focus MiniMap";
-                };
-              };
-              "<leader>mr" = {
-                action = "MiniMap.refresh";
-                lua = true;
-                options = {
-                  noremap = true;
-                  desc = "Refresh MiniMap";
-                };
-              };
-
               # navigate to left/right window
               "<leader>[" = { action = "<C-w>h"; options = { desc = "Left window"; }; };
               "<leader>]" = { action = "<C-w>l"; options = { desc = "Right window"; }; };
@@ -101,38 +75,6 @@
               "<leader>Q" = { action = "<Cmd>q!<CR>"; options = { desc = "Force quit"; }; };
               "|" = { action = "<Cmd>vsplit<CR>"; options = { desc = "Vertical Split"; }; };
               "\\" = { action = "<Cmd>split<CR>"; options = { desc = "Horizontal Split"; }; };
-
-              "<leader>," = { action = ":ToggleTerm<CR>"; options = { desc = "ToggleTerm"; }; };
-              "<leader>tg" = {
-                action = "function() require('toggleterm.terminal').Terminal:new({ cmd = 'lazygit', hidden = true }):toggle() end";
-                lua = true;
-                options = {
-                  noremap = true;
-                  desc = "Toggle LazyGit";
-                };
-              };
-
-              "<leader>gg" = {
-                action = "function() require('toggleterm.terminal').Terminal:new({ cmd = 'lazygit', hidden = true }):toggle() end";
-                lua = true;
-                options = {
-                  noremap = true;
-                  desc = "Toggle LazyGit";
-                };
-              };
-
-              "<leader>uC" = {
-                action = /*lua*/ ''
-                  function ()
-                    vim.g.colorizing_enabled = not vim.g.colorizing_enabled
-                    vim.cmd('ColorizerToggle')
-                    vim.notify(string.format("Colorizing %s", bool2str(vim.g.colorizing_enabled), "info"))
-                  end'';
-                lua = true;
-                options = {
-                  desc = "Toggle colorizing";
-                };
-              };
 
               "<leader>uf" = {
                 action = /*lua*/ ''
