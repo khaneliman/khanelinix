@@ -26,6 +26,8 @@ _: {
             ".direnv"
             ".git"
           ];
+
+          visible = true;
         };
 
         followCurrentFile = {
