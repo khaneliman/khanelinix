@@ -27,6 +27,10 @@ tab_width = 1
 border_symbol = "│"
 border_style = { fg = "#8aadf4" }
 
+count_copied = { fg = "#24273a", bg = "#eed49f" }
+count_cut = { fg = "#24273a", bg = "#f5bde6" }
+count_selected = { fg = "#24273a", bg = "#a6da95" }
+
 # Highlighting
 # FIX: reference catppuccin pkg
 syntect_theme = "~/.config/bat/themes/catppuccin-macchiato.tmTheme"

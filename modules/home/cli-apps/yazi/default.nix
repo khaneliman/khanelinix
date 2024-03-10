@@ -42,6 +42,27 @@ in
           sort_reverse = false;
           sort_sensitive = false;
         };
+
+        preview = {
+          tab_size = 2;
+          max_width = 600;
+          max_height = 900;
+          cache_dir = "";
+          image_filter = "triangle";
+          image_quality = 75;
+          sixel_fraction = 15;
+          ueberzug_scale = 1;
+          ueberzug_offset = [ 0 0 0 0 ];
+        };
+
+        tasks = {
+          micro_workers = 10;
+          macro_workers = 25;
+          bizarre_retry = 5;
+          image_alloc = 536870912; # 512MB
+          image_bound = [ 0 0 ];
+          suppress_preload = false;
+        };
       };
     };
 
