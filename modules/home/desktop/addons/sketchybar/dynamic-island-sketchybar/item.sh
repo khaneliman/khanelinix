@@ -1,23 +1,8 @@
 #!/usr/bin/env bash
 
-export DYNAMIC_ISLAND_DIR
-DYNAMIC_ISLAND_DIR=$(
-	cd "$(dirname "${BASH_SOURCE[0]}")" || exit
-	pwd -P
-)
-
-source "$DYNAMIC_ISLAND_DIR/helper.sh"
-sleep 0.5
-
-# Load user config overrides
-USER_CONFIG="$DYNAMIC_ISLAND_DIR/userconfig.sh"
-test -f "$USER_CONFIG" && source "$USER_CONFIG"
-
 # clear cache
 PREVIOUS_ISLAND_CACHE="$HOME/.config/dynamic-island-sketchybar/scripts/islands/previous_island"
 true >"$PREVIOUS_ISLAND_CACHE"
-
-PADDING=3
 
 sketchy_bar=(
 	height="$P_DYNAMIC_ISLAND_DEFAULT_HEIGHT"
@@ -82,7 +67,7 @@ if [[ $P_DYNAMIC_ISLAND_MUSIC_ENABLED == 1 ]]; then
 
 	source "$DYNAMIC_ISLAND_DIR/scripts/islands/music/creator.sh"
 
-	dynamic-island-sketchybar --add event music_change $MUSIC_EVENT \
+	dynamic-island-sketchybar --add event music_change "$MUSIC_EVENT" \
 		--add item musicListener center \
 		--set musicListener script="$DYNAMIC_ISLAND_DIR/scripts/islands/music/handler.sh $P_DYNAMIC_ISLAND_MUSIC_SOURCE" \
 		width=0 \
