@@ -96,7 +96,7 @@ keymap = [
 
   { on = [
     "g",
-    "g",
+    "T",
   ], exec = "arrow -99999999", desc = "Move cursor to the top" },
   { on = [
     "G",
