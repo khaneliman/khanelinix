@@ -12,6 +12,12 @@ _: {
       command = "%s/\\s\\+$//e";
     }
 
+    # Refresh minimap on save
+    # {
+    #   event = "BufWrite";
+    #   callback = { __raw = "MiniMap.refresh"; };
+    # }
+
     # Open help in a vertical split
     {
       event = "FileType";

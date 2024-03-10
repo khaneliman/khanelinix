@@ -27,31 +27,11 @@ _: {
     keymaps = [
       {
         mode = "n";
-        key = "<leader>mt";
+        key = "<leader>um";
         lua = true;
         action = "MiniMap.toggle";
         options = {
           desc = "Toggle MiniMap";
-          silent = true;
-        };
-      }
-      {
-        mode = "n";
-        key = "<leader>mf";
-        lua = true;
-        action = "MiniMap.toggle_focus";
-        options = {
-          desc = "Focus MiniMap";
-          silent = true;
-        };
-      }
-      {
-        mode = "n";
-        key = "<leader>mr";
-        lua = true;
-        action = "MiniMap.refresh";
-        options = {
-          desc = "Refresh MiniMap";
           silent = true;
         };
       }

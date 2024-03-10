@@ -8,7 +8,7 @@ _: {
     keymaps = [
       {
         mode = "n";
-        key = "<leader>,";
+        key = "<leader>tt";
         action = ":ToggleTerm<CR>";
         options = {
           desc = "Toggle terminal";
