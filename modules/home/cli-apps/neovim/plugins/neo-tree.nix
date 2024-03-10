@@ -18,10 +18,22 @@ _: {
       closeIfLastWindow = true;
 
       filesystem = {
+        filteredItems = {
+          hideDotfiles = false;
+          hideHidden = false;
+
+          neverShowByPattern = [
+            ".direnv"
+            ".git"
+          ];
+        };
+
         followCurrentFile = {
           enabled = true;
           leaveDirsOpen = true;
         };
+
+        useLibuvFileWatcher.__raw = ''vim.fn.has "win32" ~= 1'';
       };
 
       window = {
