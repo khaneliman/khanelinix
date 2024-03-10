@@ -18,6 +18,13 @@ _: {
     #   callback = { __raw = "MiniMap.refresh"; };
     # }
 
+    # Open minimap on buffers
+    {
+      event = "BufRead";
+      once = true;
+      callback = { __raw = "MiniMap.open"; };
+    }
+
     # Open help in a vertical split
     {
       event = "FileType";
