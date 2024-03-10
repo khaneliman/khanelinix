@@ -25,6 +25,16 @@ _: {
       callback = { __raw = "MiniMap.open"; };
     }
 
+    # Open Neo-Tree onn buffer
+    {
+      event = "BufRead";
+      once = true;
+      callback = {
+        __raw =
+          "function() vim.api.nvim_exec('Neotree show filesystem left', true) end";
+      };
+    }
+
     # Open help in a vertical split
     {
       event = "FileType";
