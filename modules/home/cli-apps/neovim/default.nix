@@ -50,12 +50,6 @@ in
       match.ExtraWhitespace = "\\s\\+$";
 
       colorschemes.catppuccin.enable = true;
-      plugins.lightline.enable = true;
-
-      # extraConfigLua = '''';
-      extraPlugins = with pkgs.vimPlugins; [
-        vim-wakatime
-      ];
 
       extraConfigLuaPre = /* lua */ ''
         function bool2str(bool) return bool and "on" or "off" end
