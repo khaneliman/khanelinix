@@ -110,3 +110,10 @@ works:
 
 This structured approach to Nix configuration makes it easier to manage and
 customize your Nix environment while maintaining flexibility and modularity.
+
+# Screenshots
+
+## MacOS
+<img width="1512" alt="image" src="https://github.com/khaneliman/khanelinix/assets/1778670/abbd501e-60c4-46c3-927d-12890dadd811">
+
+
