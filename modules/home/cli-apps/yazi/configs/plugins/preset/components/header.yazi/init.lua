@@ -1,28 +1,3 @@
--- function Header:count()
---   local yanked = #cx.yanked
---
---   local count, style
---   if yanked == 0 then
---     count = #cx.active.selected
---     style = THEME.manager.count_selected
---   elseif cx.yanked.is_cut then
---     count = yanked
---     style = THEME.manager.count_cut
---   else
---     count = yanked
---     style = THEME.manager.count_copied
---   end
---
---   if count == 0 then
---     return ui.Line {}
---   end
---
---   return ui.Line {
---     ui.Span(string.format(" %d ", count)):style(style),
---     ui.Span(" "),
---   }
--- end
-
 function Header:host()
   if ya.target_family() ~= "unix" then
     return ui.Line {}
@@ -37,6 +12,7 @@ function Header:render(area)
 
   self.area = area
 
+  -- TODO: readd count after nixpkgs version bump
   -- local right = ui.Line { self:count(), self:tabs() }
   local right = ui.Line { self:tabs() }
   local left = ui.Line { self:host(), self:cwd(math.max(0, area.w - right:width())) }
