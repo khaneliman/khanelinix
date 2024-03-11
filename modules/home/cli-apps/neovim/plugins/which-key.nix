@@ -6,6 +6,7 @@ _: {
       registrations = {
         "<leader>" = {
           "b" = { name = "󰓩 Buffers"; };
+          "d" = { name = "  Debug"; };
           "g" = { name = "󰊢 Git"; };
           "f" = { name = " Find"; };
           "h" = {
