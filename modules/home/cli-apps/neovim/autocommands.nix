@@ -18,23 +18,26 @@ _: {
     #   callback = { __raw = "MiniMap.refresh"; };
     # }
 
-    # Open minimap on buffers
+    # Open minimap on first buffer
     {
       event = "BufRead";
       once = true;
       callback = { __raw = "MiniMap.open"; };
     }
 
-    # Open Neo-Tree on buffer
-    # FIX: shouldn't focus but is...
+    # Open Neo-Tree on first buffer
     {
-      event = "BufReadPost";
-      once = true;
-      command = "Neotree show filesystem left";
-      # callback = {
-      #   __raw =
-      #     "function() vim.api.nvim_exec('Neotree show filesystem left', true) end";
-      # };
+      event = "BufWinEnter";
+      callback = {
+        __raw = ''
+          function(table)
+            if vim.api.nvim_buf_get_name(0) ~= "" and not vim.g.first_buffer_opened then
+              vim.g.first_buffer_opened = true
+              vim.api.nvim_exec('Neotree show filesystem left', true)
+            end
+          end
+        '';
+      };
     }
 
     # Enable spellcheck for some filetypes

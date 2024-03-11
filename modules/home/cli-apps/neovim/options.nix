@@ -7,6 +7,7 @@ _: {
       loaded_python_provider = 0; # Python 2
       autoformat_enabled = 1;
       colorizing_enabled = 1;
+      first_buffer_opened = false;
     };
 
     clipboard = {
