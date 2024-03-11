@@ -5,9 +5,9 @@ in
 {
   programs.nixvim = {
     plugins = {
-      lsp-format = {
-        enable = true;
-      };
+      # lsp-format = {
+      #   enable = true;
+      # };
 
       lsp = {
         enable = true;
