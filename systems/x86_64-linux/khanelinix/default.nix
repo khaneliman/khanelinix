@@ -93,7 +93,7 @@ in
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM7UBwfd7+K0mdkAIb2TE6RzMu6L4wZnG/anuoYqJMPB"
         ];
 
-        # TODO: make part of ssh config proper 
+        # TODO: make part of ssh config proper
         extraConfig = ''
           Host server
             User ${config.khanelinix.user.name}
@@ -128,13 +128,14 @@ in
     };
 
     security = {
-      doas = enabled;
+      # doas = enabled;
       keyring = enabled;
       sops = {
         enable = true;
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
         defaultSopsFile = ../../../secrets/khanelinix/default.yaml;
       };
+      sudo-rs = enabled;
     };
 
     suites = {
