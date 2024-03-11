@@ -69,6 +69,13 @@ in
           rebase = {
             autoStash = true;
           };
+
+          safe = {
+            directory = [
+              "~/khanelinix/"
+              "/etc/nixos"
+            ];
+          };
         };
 
         inherit (cfg) includes;
