@@ -116,4 +116,8 @@ customize your Nix environment while maintaining flexibility and modularity.
 ## MacOS
 <img width="1512" alt="image" src="https://github.com/khaneliman/khanelinix/assets/1778670/abbd501e-60c4-46c3-927d-12890dadd811">
 
+## NixOS
+![image](https://github.com/khaneliman/khanelinix/assets/1778670/34aebc9c-b053-4ccf-9540-6da5e93a77d5)
+
+
 
