@@ -55,6 +55,7 @@ in
       common = enabled;
       development = enabled;
       social = enabled;
+      music = enabled;
     };
 
     tools = {
