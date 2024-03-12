@@ -22,7 +22,6 @@ in
       mpdevil
       mpdris2
       # ncmpcpp
-      ncspot
       spicetify-cli
       spotify
       tageditor

@@ -20,6 +20,7 @@ in
     khanelinix = {
       cli-apps = {
         ncmpcpp = enabled;
+        ncspot = enabled;
       };
 
       services = {
