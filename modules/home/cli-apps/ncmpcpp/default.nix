@@ -15,7 +15,7 @@ in
   config = mkIf cfg.enable {
     programs.ncmpcpp = {
       enable = true;
-      mpdMusicDir = config.khanelinix.services.mpd.musicDirectory;
+      mpdMusicDir = mkIf config.khanelinix.services.mpd.enable config.khanelinix.services.mpd.musicDirectory;
     };
   };
 }

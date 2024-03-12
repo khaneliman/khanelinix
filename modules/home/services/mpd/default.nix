@@ -1,5 +1,6 @@
 { config
 , lib
+, pkgs
 , ...
 }:
 let
@@ -12,11 +13,7 @@ in
     enable = mkEnableOption "mpd";
     musicDirectory = mkOption {
       type = with types; either path str;
-      defaultText = literalExpression ''
-        ''${home.homeDirectory}/music    if state version < 22.11
-        ''${xdg.userDirs.music}          if xdg.userDirs.enable == true
-        undefined                      otherwise
-      '';
+      default = config.xdg.userDirs.music;
       apply = toString; # Prevent copies to Nix store.
       description = ''
         The directory where mpd reads music from.

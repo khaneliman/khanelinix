@@ -1,6 +1,7 @@
 { config
 , lib
 , options
+, pkgs
 , ...
 }:
 let
@@ -22,7 +23,7 @@ in
       };
 
       services = {
-        mpd = enabled;
+        mpd = mkIf pkgs.stdenv.isLinux enabled;
       };
     };
   };
