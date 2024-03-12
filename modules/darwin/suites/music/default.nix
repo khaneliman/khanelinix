@@ -17,8 +17,8 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
+      ncspot
       spicetify-cli
-      spotify-tui
       youtube-dl
     ];
 
