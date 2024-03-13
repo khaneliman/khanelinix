@@ -1,15 +1,19 @@
 { config
+, inputs
 , lib
-, pkgs
+, system
 , ...
 }:
 let
-  inherit (lib) mkIf mkEnableOption types concatStringsSep mkOption getExe;
+  inherit (lib) mkIf mkEnableOption types mkOption;
   inherit (lib.internal) mkOpt;
+  inherit (inputs) hyprpaper;
 
   cfg = config.khanelinix.desktop.addons.hyprpaper;
 in
 {
+  imports = [ hyprpaper.homeManagerModules.default ];
+
   options.khanelinix.desktop.addons.hyprpaper = {
     enable = mkEnableOption "Hyprpaper";
     monitors = mkOption {
@@ -32,31 +36,11 @@ in
   config =
     mkIf cfg.enable
       {
-        xdg.configFile = {
-          "hypr/hyprpaper.conf".text = /* bash */ ''
-            # ░█░█░█▀█░█░░░█░░░█▀█░█▀█░█▀█░█▀▀░█▀▄░█▀▀
-            # ░█▄█░█▀█░█░░░█░░░█▀▀░█▀█░█▀▀░█▀▀░█▀▄░▀▀█
-            # ░▀░▀░▀░▀░▀▀▀░▀▀▀░▀░░░▀░▀░▀░░░▀▀▀░▀░▀░▀▀▀
-
-            ${concatStringsSep "\n" (map (wallpaper: "preload = ${wallpaper}") cfg.wallpapers)}
-            
-            ${concatStringsSep "\n" (map (monitor: "wallpaper = ${monitor.name},${monitor.wallpaper}") cfg.monitors)}
-            
-          '';
-        };
-
-        systemd.user.services.hyprpaper = {
-          Install.WantedBy = [ "hyprland-session.target" ];
-
-          Unit = {
-            Description = "Hyprpaper Service";
-            PartOf = [ "graphical-session.target" ];
-          };
-
-          Service = {
-            ExecStart = "${getExe pkgs.hyprpaper}";
-            Restart = "always";
-          };
+        services.hyprpaper = {
+          enable = true;
+          package = hyprpaper.packages.${system}.hyprpaper;
+          preloads = cfg.wallpapers;
+          wallpapers = map (monitor: "${monitor.name},${monitor.wallpaper}") cfg.monitors;
         };
       };
 }

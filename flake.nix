@@ -58,6 +58,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Hyprpaper
+    hyprpaper = {
+      url = "github:hyprwm/hyprpaper";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Hyprland user contributions flake
     hyprland-contrib = {
       url = "github:hyprwm/contrib";
