@@ -3,6 +3,7 @@
 , lib
 , options
 , pkgs
+, system
 , ...
 }:
 let
@@ -23,7 +24,7 @@ in
   config = mkIf cfg.enable {
     services.hypridle = {
       enable = true;
-      package = pkgs.hypridle;
+      package = hypridle.packages.${system}.hypridle;
 
       lockCmd = "${getExe config.programs.hyprlock.package}";
       afterSleepCmd = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms on";
