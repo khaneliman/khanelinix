@@ -12,4 +12,11 @@ with lib; rec {
   enabled = { enable = true; };
 
   disabled = { enable = false; };
+
+  capitalize = s:
+    let
+      len = stringLength s;
+    in
+    if len == 0 then "" else
+    (lib.toUpper (substring 0 1 s)) + (substring 1 len s);
 }
