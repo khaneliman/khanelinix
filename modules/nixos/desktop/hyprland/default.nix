@@ -46,6 +46,7 @@ in
 
         environment.systemPackages = with pkgs; [
           hyprpaper
+          xwaylandvideobridge
         ];
 
         khanelinix = {
