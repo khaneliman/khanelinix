@@ -18,7 +18,7 @@ let
     enable-ssh-support
     default-cache-ttl 60
     max-cache-ttl 120
-    pinentry-program ${getExe' pkgs.pinentry-gnome "pinentry-gnome"}
+    pinentry-program ${getExe' pkgs.pinentry-gnome3 "pinentry-gnome3"}
   '';
 
   guide = "${yubikey-guide}/README.md";
@@ -103,7 +103,7 @@ in
         enable = true;
         enableExtraSocket = true;
         enableSSHSupport = true;
-        pinentryFlavor = "gnome3";
+        pinentryPackage = pkgs.pinentry-gnome3;
       };
     };
 
