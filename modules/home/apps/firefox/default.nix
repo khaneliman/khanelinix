@@ -151,7 +151,7 @@ in
             "geo.provider.use_corelocation" = false;
             "geo.provider.use_geoclue" = false;
             "geo.provider.use_gpsd" = false;
-            "intl.accept_languages" = "en-US = en";
+            "intl.accept_languages" = "en-US,en";
             "media.eme.enabled" = true;
             "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
             "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
