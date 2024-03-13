@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }: {
+{ pkgs, ... }: {
   programs.nixvim = {
     extraPlugins = with pkgs.vimPlugins; [
       nvim-gdb

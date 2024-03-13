@@ -1,10 +1,9 @@
 { config
 , lib
-, pkgs
 , ...
 }:
 let
-  inherit (lib) mkEnableOption mkIf mkOption types literalExpression;
+  inherit (lib) mkEnableOption mkIf mkOption types;
 
   cfg = config.khanelinix.services.mpd;
 in
