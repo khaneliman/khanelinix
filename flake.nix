@@ -44,30 +44,33 @@
     hypridle = {
       url = "github:hyprwm/Hypridle";
       # url = "git+file:///home/khaneliman/Documents/github/hypridle";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Hyprlock
     hyprlock = {
       url = "github:hyprwm/Hyprlock";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Hyprland
     hyprland = {
       url = "github:hyprwm/Hyprland";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Hyprpaper
     hyprpaper = {
       url = "github:hyprwm/hyprpaper";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Hyprland user contributions flake
     hyprland-contrib = {
       url = "github:hyprwm/contrib";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Hyprland plugins
+    hyprland-plugins = {
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
     };
 
     # Secure boot
