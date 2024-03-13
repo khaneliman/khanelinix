@@ -1,7 +1,9 @@
 { config
 , inputs
 , lib
+, pkgs
 , options
+, system
 , ...
 }:
 let
@@ -22,7 +24,7 @@ in
   config = mkIf cfg.enable {
     programs.hyprlock = {
       enable = true;
-      # package = pkgs.hyprlock;
+      package = hyprlock.packages.${system}.hyprlock;
 
       general = {
         grace = 300;
