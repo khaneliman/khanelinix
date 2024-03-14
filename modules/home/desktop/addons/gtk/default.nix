@@ -47,8 +47,6 @@ in
     home.sessionVariables = {
       CURSOR_THEME = cfg.cursor.name;
       GTK_THEME = cfg.theme.name;
-      XCURSOR_SIZE = "${toString cfg.cursor.size}";
-      XCURSOR_THEME = cfg.cursor.name;
     };
 
     dconf = {
