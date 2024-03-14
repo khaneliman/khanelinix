@@ -46,6 +46,7 @@ let
     };
   };
 
+  # TODO: replace with capitalize from gtk theme settings
   colorSchemePath = "${pkgs.catppuccin}/qt5ct/Catppuccin-Macchiato.conf";
 in
 {

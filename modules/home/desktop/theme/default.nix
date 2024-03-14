@@ -6,12 +6,13 @@
 }:
 let
   inherit (lib) mkIf mkEnableOption mkOption types;
-  inherit (lib.internal) mkOpt;
+  inherit (lib.internal) mkOpt capitalize;
 
   cfg = config.khanelinix.desktop.theme;
 
   catppuccinAccents = [ "rosewater" "flamingo" "pink" "mauve" "red" "maroon" "peach" "yellow" "green" "teal" "sky" "sapphire" "blue" "lavender" ];
   catppuccinVariants = [ "latte" "frappe" "macchiato" "mocha" ];
+
 
   fromYAML = f:
     let
@@ -76,7 +77,7 @@ in
         themes = {
           "${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}" = {
             src = cfg.package;
-            file = "/bat/Catppuccin-${cfg.selectedTheme.variant}.tmTheme";
+            file = "/bat/${capitalize cfg.selectedTheme.name}-${cfg.selectedTheme.variant}.tmTheme";
           };
         };
       };
