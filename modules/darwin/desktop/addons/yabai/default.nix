@@ -19,8 +19,8 @@ in
   config = mkIf cfg.enable {
     services.yabai = {
       enable = true;
-      package = pkgs.yabai;
-      # package = pkgs.khanelinix.yabai;
+      # package = pkgs.yabai;
+      package = pkgs.khanelinix.yabai;
       enableScriptingAddition = true;
 
       config = {
