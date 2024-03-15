@@ -2,6 +2,9 @@
 
 local icons = require("icons")
 local settings = require("settings")
+local colors = require("colors")
+
+local popup_width = 250
 
 local wifi = sbar.add("item", "wifi", {
   position = "right",
@@ -20,59 +23,104 @@ local wifi = sbar.add("item", "wifi", {
   },
   label = { drawing = false },
   update_freq = 60,
+  popup = {
+    align = "right",
+  },
 })
 
-wifi.details = sbar.add("item", "wifi.details", {
+local ssid = sbar.add("item", {
   position = "popup." .. wifi.name,
-  click_script = "sketchybar --set $NAME popup.drawing=off",
-  background = {
-    corner_radius = 12,
-    padding_left = 5,
-    padding_right = 10
-  },
   icon = {
-    background = {
-      height = 2,
-      y_offset = 12,
-    }
+    font = {
+      style = "Bold"
+    },
+    string = icons.wifi.router,
+  },
+  width = popup_width,
+  align = "center",
+  label = {
+    font = {
+      size = 15,
+      style = "Bold"
+    },
+    max_chars = 18,
+    string = "????????????",
+  },
+  background = {
+    height = 2,
+    color = colors.grey,
+    y_offset = -15
+  }
+})
+
+local hostname = sbar.add("item", {
+  position = "popup." .. wifi.name,
+  icon = {
+    align = "left",
+    string = "Hostname:",
+    width = popup_width / 2,
   },
   label = {
-    align = "center",
+    max_chars = 20,
+    string = "????????????",
+    width = popup_width / 2,
+    align = "right",
+  }
+})
+
+local ip = sbar.add("item", {
+  position = "popup." .. wifi.name,
+  icon = {
+    align = "left",
+    string = "IP:",
+    width = popup_width / 2,
+  },
+  label = {
+    string = "???.???.???.???",
+    width = popup_width / 2,
+    align = "right",
+  }
+})
+
+local mask = sbar.add("item", {
+  position = "popup." .. wifi.name,
+  icon = {
+    align = "left",
+    string = "Subnet mask:",
+    width = popup_width / 2,
+  },
+  label = {
+    string = "???.???.???.???",
+    width = popup_width / 2,
+    align = "right",
+  }
+})
+
+local router = sbar.add("item", {
+  position = "popup." .. wifi.name,
+  icon = {
+    align = "left",
+    string = "Router:",
+    width = popup_width / 2,
+  },
+  label = {
+    string = "???.???.???.???",
+    width = popup_width / 2,
+    align = "right",
   },
 })
 
-wifi:subscribe({
-    "routine",
-    "power_source_change",
-    "system_woke"
-  },
-  function()
-    -- Get current WiFi info
-    sbar.exec(
-      "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I",
-      function(currentWifi)
-        -- Extract SSID
-        local ssid = string.match(currentWifi, "SSID: (.-)\n")
 
-        -- Extract current transmission rate
-        local currTx = string.match(currentWifi, "lastTxRate: (.-)\n")
-
-        if IS_EMPTY(ssid) then
-          wifi:set({ icon = { string = icons.wifi_off } })
-          wifi.details:set({ label = "No WiFi" })
-          return
-        end
-
-        wifi:set({
-          icon = {
-            string = icons.wifi,
-          },
-        })
-        wifi.details:set({
-          label = ssid .. " (" .. currTx .. "Mbps)"
-        })
-      end)
+wifi:subscribe({ "wifi_change", "system_woke" }, function(env)
+  sbar.exec("ipconfig getifaddr en0", function(ip)
+    local connected = not (ip == "")
+    wifi:set({
+      icon = {
+        string = connected and icons.wifi or icons.wifi_off,
+      },
+    })
   end)
+end)
 
 wifi:subscribe({
     "mouse.exited",
@@ -87,6 +135,21 @@ wifi:subscribe({
   },
   function(_)
     wifi:set({ popup = { drawing = true } })
+    sbar.exec("networksetup -getcomputername", function(result)
+      hostname:set({ label = result })
+    end)
+    sbar.exec("ipconfig getifaddr en0", function(result)
+      ip:set({ label = result })
+    end)
+    sbar.exec("ipconfig getsummary en0 | awk -F ' SSID : '  '/ SSID : / {print $2}'", function(result)
+      ssid:set({ label = result })
+    end)
+    sbar.exec("networksetup -getinfo Wi-Fi | awk -F 'Subnet mask: ' '/^Subnet mask: / {print $2}'", function(result)
+      mask:set({ label = result })
+    end)
+    sbar.exec("networksetup -getinfo Wi-Fi | awk -F 'Router: ' '/^Router: / {print $2}'", function(result)
+      router:set({ label = result })
+    end)
   end)
 
 return wifi
