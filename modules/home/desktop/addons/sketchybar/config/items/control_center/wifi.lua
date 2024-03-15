@@ -152,4 +152,19 @@ wifi:subscribe({
     end)
   end)
 
+local function copy_label_to_clipboard(env)
+  local label = sbar.query(env.NAME).label.value
+  sbar.exec("echo \"" .. label .. "\" | pbcopy")
+  sbar.set(env.NAME, { label = { string = icons.clipboard, align = "center" } })
+  sbar.delay(1, function()
+    sbar.set(env.NAME, { label = { string = label, align = "right" } })
+  end)
+end
+
+ssid:subscribe("mouse.clicked", copy_label_to_clipboard)
+hostname:subscribe("mouse.clicked", copy_label_to_clipboard)
+ip:subscribe("mouse.clicked", copy_label_to_clipboard)
+mask:subscribe("mouse.clicked", copy_label_to_clipboard)
+router:subscribe("mouse.clicked", copy_label_to_clipboard)
+
 return wifi
