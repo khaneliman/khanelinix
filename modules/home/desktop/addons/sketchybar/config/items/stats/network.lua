@@ -6,6 +6,8 @@ local icons = require('icons')
 
 local network = {}
 
+sbar.exec("killall sketchy_network_load >/dev/null; sketchy_network_load en0 network_update 2.0")
+
 network.down = sbar.add("item", "network.down", {
   background = {
     padding_left = 0,
@@ -60,63 +62,21 @@ network.up = sbar.add("item", "network.up", {
   y_offset = 7
 })
 
-network.down:subscribe({
-    "routine",
-    "forced",
-    "system_woke"
-  },
-  function()
-    -- Execute the ifstat command and read the output
-    sbar.exec('ifstat -i "en0" -b 0.1 1 | tail -n1', function(ifstat_output)
-      -- Extract DOWN and UP values from the ifstat output
-      local down, up = ifstat_output:match("(%S+)%s+(%S+)")
-
-      -- Convert DOWN and UP values to Lua numbers
-      down = tonumber(down)
-      up = tonumber(up)
-
-      -- Format DOWN and UP values
-      local down_formatted
-      if down > 999 then
-        down_formatted = string.format("%03.0f Mbps", down / 1000)
-      else
-        down_formatted = string.format("%03.0f kbps", down)
-      end
-
-      local up_formatted
-      if up > 999 then
-        up_formatted = string.format("%03.0f Mbps", up / 1000)
-      else
-        up_formatted = string.format("%03.0f kbps", up)
-      end
-
-      local up_highlighted
-      if up > 0 then
-        up_highlighted = true
-      else
-        up_highlighted = false
-      end
-
-      local down_highlighted
-      if down > 0 then
-        down_highlighted = true
-      else
-        down_highlighted = false
-      end
-
-      network.down:set({
-        label = down_formatted,
-        icon = {
-          highlight = down_highlighted
-        }
-      })
-      network.up:set({
-        label = up_formatted,
-        icon = {
-          highlight = up_highlighted
-        }
-      })
-    end)
-  end)
+network.down:subscribe("network_update", function(env)
+  local up_color = (env.upload == "000 Bps") and colors.subtext0 or colors.green
+  local down_color = (env.download == "000 Bps") and colors.subtext0 or colors.blue
+  network.up:set({
+    icon = { color = up_color },
+    label = {
+      string = env.upload,
+    }
+  })
+  network.down:set({
+    icon = { color = down_color },
+    label = {
+      string = env.download,
+    }
+  })
+end)
 
 return network
