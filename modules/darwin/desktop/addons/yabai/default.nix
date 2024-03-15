@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib) mkIf getExe;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.internal) mkBoolOpt enabled;
 
   cfg = config.khanelinix.desktop.addons.yabai;
 in
@@ -17,6 +17,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    khanelinix.desktop.addons.jankyborders = enabled;
+
     services.yabai = {
       enable = true;
       # package = pkgs.yabai;
@@ -80,7 +82,7 @@ in
         # ${getExe config.services.yabai.package} -m signal --add event=window_title_changed app="Firefox" title="- noVNC$" action="${getExe config.services.yabai.package} -m window $WINDOW_ID --toggle native-fullscreen"
 
         # jankyborders
-        borders active_color=0xff7793d1 inactive_color=0xff5e6798 width=3.0 2>/dev/null 1>&2 &
+        borders 2>/dev/null 1>&2 &
 
         echo "yabai configuration loaded.."
       '';

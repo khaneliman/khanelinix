@@ -25,6 +25,7 @@ in
       skhd = enabled;
       yabai = enabled;
       sketchybar = enabled;
+      jankyborders = enabled;
     };
 
     homebrew = {
