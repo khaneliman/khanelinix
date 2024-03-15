@@ -119,7 +119,17 @@ in
     };
 
     tools = {
-      git = enabled;
+      git = {
+        enable = true;
+
+        includes = [
+          {
+            condition = "gitdir:/home/khaneliman/Documents/azure/DIB/";
+            path = "${./git/dib-signing}";
+          }
+        ];
+      };
+
       ssh = enabled;
     };
   };
