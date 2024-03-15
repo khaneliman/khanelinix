@@ -1,7 +1,8 @@
+all:
+	(cd cpu_load && $(MAKE))
+	(cd network_load && $(MAKE))
 
-sketchyhelper: sketchyhelper.c cpu.h sketchybarhelper/sketchybar.h
-	clang -std=c99 -O3 sketchyhelper.c -o sketchyhelper
-
-install: sketchyhelper
+install: all
 	mkdir -p ${out}/bin
-	cp sketchyhelper ${out}/bin
+	cp network_load/bin/sketchy_network_load ${out}/bin
+	cp cpu_load/bin/sketchy_cpu_load ${out}/bin
