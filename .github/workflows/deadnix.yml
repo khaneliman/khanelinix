@@ -17,3 +17,5 @@ jobs:
         with:
           name: deadnix
       - uses: astro/deadnix-action@main
+        with:
+          commit_message: 'chore: remove dead code'
