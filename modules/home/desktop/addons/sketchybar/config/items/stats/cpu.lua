@@ -31,7 +31,7 @@ cpu:subscribe("cpu_update", function(env)
   -- Also available: env.user_load, env.sys_load
   local load = tonumber(env.total_load)
 
-  local color = colors.blue
+  local color = colors.text
   if load > 30 then
     if load < 60 then
       color = colors.yellow
