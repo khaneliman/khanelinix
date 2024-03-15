@@ -216,7 +216,7 @@
 
   outputs = inputs:
     let
-      inherit (inputs) deploy-rs flake hypridle lanzaboote neovim-nightly-overlay nix-ld-rs nixvim nur rust-overlay snowfall-lib snowfall-frost sops-nix;
+      inherit (inputs) deploy-rs flake hypridle lanzaboote neovim-nightly-overlay nixpkgs nix-ld-rs nixvim nur rust-overlay snowfall-lib snowfall-frost sops-nix;
 
       lib = snowfall-lib.mkLib {
         inherit inputs;
@@ -276,6 +276,9 @@
           (_system: deploy-lib:
             deploy-lib.deployChecks inputs.self.deploy)
           deploy-rs.lib;
+
+      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixpkgs-fmt;
+      formatter.aarch64-darwin = nixpkgs.legacyPackages.aarch64-darwin.nixpkgs-fmt;
     };
 }
 
