@@ -1,23 +1,31 @@
 Modules:
-  - modules/**/*
+  - changed-files:
+    - any-glob-to-any-file: modules/**/*
 
 Library:
-  - lib/**/*
+  - changed-files:
+    - any-glob-to-any-file: lib/**/*
 
 Overlays:
-  - overlays/**/*
+  - changed-files:
+    - any-glob-to-any-file: overlays/**/*
 
 Packages:
-  - packages/**/*
+  - changed-files:
+    - any-glob-to-any-file: packages/**/*
 
 Secrets:
-  - secrets/**/*
+  - changed-files:
+    - any-glob-to-any-file: secrets/**/*
 
 Systems:
-  - systems/**/*
+  - changed-files:
+    - any-glob-to-any-file: systems/**/*
 
 repo:
-  - '*'
+  - changed-files:
+    - any-glob-to-any-file:  '*'
 
 GitHub-Action:
-  - .github/workflows/*
+  - changed-files:
+    - any-glob-to-any-file:  .github/workflows/*
