@@ -4,12 +4,18 @@ local colors = require("colors")
 local icons = require("icons")
 local settings = require("settings")
 
+local function getIcon(i)
+  local numSpaces = #icons.spaces                                                    -- Get the number of entries in the spaces table
+  local icon = icons.spaces["_" .. i]
+  return icon or (i <= numSpaces and icons.spaces["_" .. i] or icons.spaces.default) -- Default to "X" if out of range
+end
+
 local spaces = {}
 for i = 1, 10, 1 do
   local space = sbar.add("space", "space." .. i, {
     associated_space = i,
     icon = {
-      string = icons.spaces["_" .. i],
+      string = getIcon(i),
       padding_left = 7,
       padding_right = 7,
       color = colors.text,
