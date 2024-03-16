@@ -8,6 +8,9 @@ let
   inherit (lib) mkIf getExe;
   inherit (lib.internal) mkBoolOpt;
 
+  sketchybar = getExe config.services.sketchybar.package;
+  yabai = getExe config.services.yabai.package;
+
   cfg = config.khanelinix.desktop.addons.skhd;
 in
 {
@@ -20,13 +23,13 @@ in
       enable = true;
       package = pkgs.skhd;
 
-      skhdConfig = with pkgs; /* bash */ ''
+      skhdConfig = /* bash */ ''
         # hyper (cmd + shift + alt + ctrl)
         # meh (shift + alt + ctrl)
         # Modes
-        :: default : ${getExe sketchybar} -m --set skhd icon="N" icon.color="0xff8aadf4" drawing=off
-        :: window @ : ${getExe sketchybar} -m --set skhd icon="W" icon.color="0xffa6da95" drawing=on
-        :: scripts @ : ${getExe sketchybar} -m --set skhd icon="S" icon.color="0xffed8796" drawing=on
+        :: default : ${sketchybar} -m --set skhd icon="N" icon.color="0xff8aadf4" drawing=off
+        :: window @ : ${sketchybar} -m --set skhd icon="W" icon.color="0xffa6da95" drawing=on
+        :: scripts @ : ${sketchybar} -m --set skhd icon="S" icon.color="0xffed8796" drawing=on
 
         # Mode Shortcuts
         # NOTE: This will toggle through modes with ctrl - escape
@@ -57,146 +60,177 @@ in
         default < shift + lalt + cmd - r : bash -c launchctl kickstart -k gui/501/org.nixos.skhd
 
         # Toggle sketchybar
-        default < shift + lalt - space : ${getExe sketchybar} --bar hidden=toggle
-        default < shift + lalt - r : ${getExe sketchybar} --exit
+        default < shift + lalt - space : ${sketchybar} --bar hidden=toggle
+        default < shift + lalt - r : ${sketchybar} --exit
 
         # ░█░█░▀█▀░█▀█░█▀▄░█▀█░█░█
         # ░█▄█░░█░░█░█░█░█░█░█░█▄█
         # ░▀░▀░▀▀▀░▀░▀░▀▀░░▀▀▀░▀░▀
         # Toggle split orientation of the selected windows node: shift + lalt - s
-        default < shift + lalt - s : ${getExe yabai} -m window --toggle split
+        default < shift + lalt - s : ${yabai} -m window --toggle split
 
         # Float / Unfloat window: lalt - space
-        # default < lalt - space : ${getExe yabai} -m window --toggle float; sketchybar --trigger window_focus
+        # default < lalt - space : ${yabai} -m window --toggle float; sketchybar --trigger window_focus
 
         # Make window zoom to fullscreen:
-        # default < shift + lalt - f : ${getExe yabai} -m window --toggle zoom-fullscreen; ${getExe sketchybar} --trigger window_focus
-        default < shift + cmd - f : ${getExe yabai} -m query --spaces --window | grep '"type":"float"' && ${getExe yabai} -m space --layout bsp;\
-                  ${getExe yabai} -m query --windows --window | grep '"floating":1' && ${getExe yabai} -m window --toggle float;\
-                  ${getExe yabai} -m window --toggle zoom-fullscreen && ${getExe sketchybar} --trigger window_focus;
+        # default < shift + lalt - f : ${yabai} -m window --toggle zoom-fullscreen; ${sketchybar} --trigger window_focus
+        default < shift + cmd - f : ${yabai} -m query --spaces --window | grep '"type":"float"' && ${yabai} -m space --layout bsp;\
+                  ${yabai} -m query --windows --window | grep '"floating":1' && ${yabai} -m window --toggle float;\
+                  ${yabai} -m window --toggle zoom-fullscreen && ${sketchybar} --trigger window_focus;
 
         # Make window zoom to parent node:
-        default < lalt - f : ${getExe yabai} -m window --toggle zoom-parent; ${getExe sketchybar} --trigger window_focus
+        default < lalt - f : ${yabai} -m window --toggle zoom-parent; ${sketchybar} --trigger window_focus
 
         # Window Navigation (through display borders):
-        default < lalt - h : ${getExe yabai} -m window --focus west  || ${getExe yabai} -m display --focus west
-        default < lalt - j : ${getExe yabai} -m window --focus south || ${getExe yabai} -m display --focus south
-        default < lalt - k : ${getExe yabai} -m window --focus north || ${getExe yabai} -m display --focus north
-        default < lalt - l : ${getExe yabai} -m window --focus east  || ${getExe yabai} -m display --focus east
+        default < lalt - h : ${yabai} -m window --focus west  || ${yabai} -m display --focus west
+        default < lalt - j : ${yabai} -m window --focus south || ${yabai} -m display --focus south
+        default < lalt - k : ${yabai} -m window --focus north || ${yabai} -m display --focus north
+        default < lalt - l : ${yabai} -m window --focus east  || ${yabai} -m display --focus east
 
         ## Window Movement (shift + lalt - ...)
         # Moving windows in spaces:
-        default < shift + lalt - h : ${getExe yabai} -m window --warp west || $(${getExe yabai} -m window --display west && ${getExe sketchybar} --trigger windows_on_spaces && ${getExe yabai} -m display --focus west && ${getExe yabai} -m window --warp last) || ${getExe yabai} -m window --move rel:-10:0
-        default < shift + lalt - j : ${getExe yabai} -m window --warp south || $(${getExe yabai} -m window --display south && ${getExe sketchybar} --trigger windows_on_spaces && ${getExe yabai} -m display --focus south) || ${getExe yabai} -m window --move rel:0:10
-        default < shift + lalt - k : ${getExe yabai} -m window --warp north || $(${getExe yabai} -m window --display north && ${getExe sketchybar} --trigger windows_on_spaces && ${getExe yabai} -m display --focus north) || ${getExe yabai} -m window --move rel:0:-10
-        default < shift + lalt - l : ${getExe yabai} -m window --warp east || $(${getExe yabai} -m window --display east && ${getExe sketchybar} --trigger windows_on_spaces && ${getExe yabai} -m display --focus east && ${getExe yabai} -m window --warp first) || ${getExe yabai} -m window --move rel:10:0
+        default < shift + lalt - h : ${yabai} -m window --warp west || $(${yabai} -m window --display west && ${sketchybar} --trigger windows_on_spaces && ${ yabai} -m display --focus west && ${yabai} -m window --warp last) || ${yabai} -m window --move rel:-10:0
+        default < shift + lalt - j : ${yabai} -m window --warp south || $(${yabai} -m window --display south && ${sketchybar} --trigger windows_on_spaces && ${yabai} -m display --focus south) || ${yabai} -m window --move rel:0:10
+        default < shift + lalt - k : ${yabai} -m window --warp north || $(${yabai} -m window --display north && ${sketchybar} --trigger windows_on_spaces && ${yabai} -m display --focus north) || ${yabai} -m window --move rel:0:-10
+        default < shift + lalt - l : ${yabai} -m window --warp east || $(${yabai} -m window --display east && ${sketchybar} --trigger windows_on_spaces && ${yabai} -m display --focus east && ${yabai} -m window --warp first) || ${yabai} -m window --move rel:10:0
+
+        # Moving windows between spaces: shift + lalt - {1, 2, 3, 4, p, n } (Assumes 4 Spaces Max per Display)
+        default < shift + lalt - 1 : SPACES=($(${yabai} -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[1] ]] \
+                          && ${yabai} -m window --space $SPACES[1]
+
+        default < shift + lalt - 2 : SPACES=($(${yabai} -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[2] ]] \
+                          && ${yabai} -m window --space $SPACES[2]
+
+        default < shift + lalt - 3 : SPACES=($(${yabai} -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[3] ]] \
+                          && ${yabai} -m window --space $SPACES[3]
+
+        default < shift + lalt - 4 : SPACES=($(${yabai} -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[4] ]] \
+                  && ${yabai} -m window --space $SPACES[4]
+
+        default < shift + lalt - left : \
+        WIN_ID=$(${yabai} -m query --windows --window | jq '.id'); \
+        ${yabai} -m window --swap west; \
+        [[ ! $? == 0 ]] && (${yabai} -m display --focus west; \
+        ${yabai} -m window last --insert east; \
+        ${yabai} -m window --focus $WIN_ID; \
+        ${yabai} -m window --display prev; \
+        ${yabai} -m window --focus $WIN_ID);
+
+        default < shift + lalt - right : \
+        WIN_ID=$(${yabai} -m query --windows --window | jq '.id'); \
+        ${yabai} -m window --swap east; \
+        [[ ! $? == 0 ]] && (${yabai} -m display --focus east; \
+        ${yabai} -m window first --insert west; \
+        ${yabai} -m window --focus $WIN_ID; \
+        ${yabai} -m window --display next; \
+        ${yabai} -m window --focus $WIN_ID);
 
         # ░█░█░█▀█░█▀▄░█░█░█▀▀░█▀█░█▀█░█▀▀░█▀▀
         # ░█▄█░█░█░█▀▄░█▀▄░▀▀█░█▀▀░█▀█░█░░░█▀▀
         # ░▀░▀░▀▀▀░▀░▀░▀░▀░▀▀▀░▀░░░▀░▀░▀▀▀░▀▀▀
         # Space Navigation
-        default < cmd + ctrl - left : ${getExe yabai} -m space --focus prev
-        default < cmd + ctrl - right : ${getExe yabai} -m space --focus next
+        default < cmd + ctrl - left : ${yabai} -m space --focus prev
+        default < cmd + ctrl - right : ${yabai} -m space --focus next
 
         # move to workspace by index
-        default < cmd + ctrl - 1 : ${getExe yabai} -m space --focus 1
-        default < cmd + ctrl - 2 : ${getExe yabai} -m space --focus 2
-        default < cmd + ctrl - 3 : ${getExe yabai} -m space --focus 3
-        default < cmd + ctrl - 4 : ${getExe yabai} -m space --focus 4
-        default < cmd + ctrl - 5 : ${getExe yabai} -m space --focus 5
-        default < cmd + ctrl - 6 : ${getExe yabai} -m space --focus 6
-        default < cmd + ctrl - 7 : ${getExe yabai} -m space --focus 7
-        default < cmd + ctrl - 8 : ${getExe yabai} -m space --focus 8
+        default < cmd + ctrl - 1 : ${yabai} -m space --focus 1
+        default < cmd + ctrl - 2 : ${yabai} -m space --focus 2
+        default < cmd + ctrl - 3 : ${yabai} -m space --focus 3
+        default < cmd + ctrl - 4 : ${yabai} -m space --focus 4
+        default < cmd + ctrl - 5 : ${yabai} -m space --focus 5
+        default < cmd + ctrl - 6 : ${yabai} -m space --focus 6
+        default < cmd + ctrl - 7 : ${yabai} -m space --focus 7
+        default < cmd + ctrl - 8 : ${yabai} -m space --focus 8
 
         # Moving windows between spaces: shift + lalt
-        default < shift + lalt - 1 : ${getExe yabai} -m window --space 1;\
-                           ${getExe sketchybar} --trigger windows_on_spaces
-        default < shift + lalt - 2 : ${getExe yabai} -m window --space 2;\
-                           ${getExe sketchybar} --trigger windows_on_spaces
-        default < shift + lalt - 3 : ${getExe yabai} -m window --space 3;\
-                           ${getExe sketchybar} --trigger windows_on_spaces
-        default < shift + lalt - 4 : ${getExe yabai} -m window --space 4;\
-                           ${getExe sketchybar} --trigger windows_on_spaces
-        default < shift + lalt - 5 : ${getExe yabai} -m window --space 5;\
-                           ${getExe sketchybar} --trigger windows_on_spaces
-        default < shift + lalt - 6 : ${getExe yabai} -m window --space 6;\
-                           ${getExe sketchybar} --trigger windows_on_spaces
-        default < shift + lalt - 7 : ${getExe yabai} -m window --space 7;\
-                           ${getExe sketchybar} --trigger windows_on_spaces
+        default < shift + lalt - 1 : ${yabai} -m window --space 1;\
+                           ${sketchybar} --trigger windows_on_spaces
+        default < shift + lalt - 2 : ${yabai} -m window --space 2;\
+                           ${sketchybar} --trigger windows_on_spaces
+        default < shift + lalt - 3 : ${yabai} -m window --space 3;\
+                           ${sketchybar} --trigger windows_on_spaces
+        default < shift + lalt - 4 : ${yabai} -m window --space 4;\
+                           ${sketchybar} --trigger windows_on_spaces
+        default < shift + lalt - 5 : ${yabai} -m window --space 5;\
+                           ${sketchybar} --trigger windows_on_spaces
+        default < shift + lalt - 6 : ${yabai} -m window --space 6;\
+                           ${sketchybar} --trigger windows_on_spaces
+        default < shift + lalt - 7 : ${yabai} -m window --space 7;\
+                           ${sketchybar} --trigger windows_on_spaces
 
         # Move windows to previous or next space
-        default < shift + lalt - p : ${getExe yabai} -m window --space prev; ${getExe yabai} -m space --focus prev; ${getExe sketchybar} --trigger windows_on_spaces
-        default < shift + lalt - n : ${getExe yabai} -m window --space next; ${getExe yabai} -m space --focus next; ${getExe sketchybar} --trigger windows_on_spaces
+        default < shift + lalt - p : ${yabai} -m window --space prev; \ ${yabai} -m space --focus prev; ${sketchybar} --trigger windows_on_spaces
+        default < shift + lalt - n : ${yabai} -m window --space next; ${yabai} -m space --focus next; ${sketchybar} --trigger windows_on_spaces
 
         # ░█░░░█▀█░█░█░█▀█░█░█░▀█▀
         # ░█░░░█▀█░░█░░█░█░█░█░░█░
         # ░▀▀▀░▀░▀░░▀░░▀▀▀░▀▀▀░░▀░
         # Mirror Space on X and Y Axis: shift + lalt - {x, y}
-        default < shift + lalt - x : ${getExe yabai} -m space --mirror x-axis
-        default < shift + lalt - y : ${getExe yabai} -m space --mirror y-axis
+        default < shift + lalt - x : ${yabai} -m space --mirror x-axis
+        default < shift + lalt - y : ${yabai} -m space --mirror y-axis
 
         ## Stacks (shift + ctrl - ...)
         # Add the active window to the window or stack to the {direction}: shift + ctrl - {j, k, l, ö}
-        default < shift + ctrl - h : ${getExe yabai} -m window  west --stack $(${getExe yabai} -m query --windows --window | jq -r '.id'); ${getExe sketchybar} --trigger window_focus
-        default < shift + ctrl - j : ${getExe yabai} -m window south --stack $(${getExe yabai} -m query --windows --window | jq -r '.id'); ${getExe sketchybar} --trigger window_focus
-        default < shift + ctrl - k : ${getExe yabai} -m window north --stack $(${getExe yabai} -m query --windows --window | jq -r '.id'); ${getExe sketchybar} --trigger window_focus
-        default < shift + ctrl - l : ${getExe yabai} -m window  east --stack $(${getExe yabai} -m query --windows --window | jq -r '.id'); ${getExe sketchybar} --trigger window_focus
+        default < shift + ctrl - h : ${yabai} -m window  west --stack $(${yabai} -m query --windows --window | jq -r '.id'); ${sketchybar} --trigger window_focus
+        default < shift + ctrl - j : ${yabai} -m window south --stack $(${yabai} -m query --windows --window | jq -r '.id'); ${sketchybar} --trigger window_focus
+        default < shift + ctrl - k : ${yabai} -m window north --stack $(${yabai} -m query --windows --window | jq -r '.id'); ${sketchybar} --trigger window_focus
+        default < shift + ctrl - l : ${yabai} -m window  east --stack $(${yabai} -m query --windows --window | jq -r '.id'); ${sketchybar} --trigger window_focus
 
         # Stack Navigation: shift + ctrl - {n, p}
-        default < shift + ctrl - n : ${getExe yabai} -m window --focus stack.next
-        default < shift + ctrl - p : ${getExe yabai} -m window --focus stack.prev
-        default < shift + ctrl - right : ${getExe yabai} -m window --focus stack.next
-        default < shift + ctrl - left : ${getExe yabai} -m window --focus stack.prev
+        default < shift + ctrl - n : ${yabai} -m window --focus stack.next
+        default < shift + ctrl - p : ${yabai} -m window --focus stack.prev
+        default < shift + ctrl - right : ${yabai} -m window --focus stack.next
+        default < shift + ctrl - left : ${yabai} -m window --focus stack.prev
 
         ## Resize (ctrl + lalt - ...)
         # Resize windows: ctrl + lalt - {j, k, l, ö}
-        default < ctrl + lalt - h : ${getExe yabai} -m window --resize right:-100:0 || ${getExe yabai} -m window --resize left:-100:0
-        default < ctrl + lalt - j : ${getExe yabai} -m window --resize bottom:0:100 || ${getExe yabai} -m window --resize top:0:100
-        default < ctrl + lalt - k : ${getExe yabai} -m window --resize bottom:0:-100 || ${getExe yabai} -m window --resize top:0:-100
-        default < ctrl + lalt - l : ${getExe yabai} -m window --resize right:100:0 || ${getExe yabai} -m window --resize left:100:0
+        default < ctrl + lalt - h : ${yabai} -m window --resize right:-100:0 || ${yabai} -m window --resize left:-100:0
+        default < ctrl + lalt - j : ${yabai} -m window --resize bottom:0:100 || ${yabai} -m window --resize top:0:100
+        default < ctrl + lalt - k : ${yabai} -m window --resize bottom:0:-100 || ${yabai} -m window --resize top:0:-100
+        default < ctrl + lalt - l : ${yabai} -m window --resize right:100:0 || ${yabai} -m window --resize left:100:0
 
         # Equalize size of windows: ctrl + lalt - e
-        default < ctrl + lalt - e : ${getExe yabai} -m space --balance
+        default < ctrl + lalt - e : ${yabai} -m space --balance
 
         # Enable / Disable gaps in current workspace: ctrl + lalt - g
-        default < ctrl + lalt - g : ${getExe yabai} -m space --toggle padding; ${getExe yabai} -m space --toggle gap
+        default < ctrl + lalt - g : ${yabai} -m space --toggle padding; ${yabai} -m space --toggle gap
 
         # Enable / Disable gaps in current workspace: ctrl + lalt - g
-        default < ctrl + lalt - b : ${getExe yabai} -m config window_border off
-        default < shift + ctrl + lalt - b : ${getExe yabai} -m config window_border on
+        default < ctrl + lalt - b : ${yabai} -m config window_border off
+        default < shift + ctrl + lalt - b : ${yabai} -m config window_border on
 
         ## Insertion (shift + ctrl + lalt - ...)
         # Set insertion point for focused container: shift + ctrl + lalt - {j, k, l, ö, s}
-        default < shift + ctrl + lalt - h : ${getExe yabai} -m window --insert west
-        default < shift + ctrl + lalt - j : ${getExe yabai} -m window --insert south
-        default < shift + ctrl + lalt - k : ${getExe yabai} -m window --insert north
-        default < shift + ctrl + lalt - l : ${getExe yabai} -m window --insert east
-        default < shift + ctrl + lalt - s : ${getExe yabai} -m window --insert stack
+        default < shift + ctrl + lalt - h : ${yabai} -m window --insert west
+        default < shift + ctrl + lalt - j : ${yabai} -m window --insert south
+        default < shift + ctrl + lalt - k : ${yabai} -m window --insert north
+        default < shift + ctrl + lalt - l : ${yabai} -m window --insert east
+        default < shift + ctrl + lalt - s : ${yabai} -m window --insert stack
 
         ## Misc
         # New window in hor./ vert. splits for all applications with yabai
-        default < lalt - s : ${getExe yabai} -m window --insert east;  skhd -k "cmd - n"
-        default < lalt - v : ${getExe yabai} -m window --insert south; skhd -k "cmd - n"
+        default < lalt - s : ${yabai} -m window --insert east;  skhd -k "cmd - n"
+        default < lalt - v : ${yabai} -m window --insert south; skhd -k "cmd - n"
 
         # yabai layouts
         # toggle window split type
-        default < cmd - j : ${getExe yabai} -m window --toggle split
+        default < cmd - j : ${yabai} -m window --toggle split
 
         # float / unfloat window and center on screen
-        default < lalt - t : ${getExe yabai} -m window --toggle float; \
-                  ${getExe yabai} -m window --grid 4:4:1:1:2:2; \
+        default < lalt - t : ${yabai} -m window --toggle float; \
+                  ${yabai} -m window --grid 4:4:1:1:2:2; \
 
-        default < shift + lalt - t : ${getExe yabai} -m window --toggle float;\
-                  ${getExe yabai} -m window --grid 20:20:1:1:18:18; \
+        default < shift + lalt - t : ${yabai} -m window --toggle float;\
+                  ${yabai} -m window --grid 20:20:1:1:18:18; \
 
 
         # toggle sticky, float and resize to picture-in-picture size
-        default < lalt - p : ${getExe yabai} -m window --toggle sticky; \
-                   ${getExe yabai} -m window --grid 4:4:2:4:4:0; \
+        default < lalt - p : ${yabai} -m window --toggle sticky; \
+                   ${yabai} -m window --grid 4:4:2:4:4:0; \
 
-        default < shift + lalt - z : ${getExe yabai} -m space --layout bsp
-        default < shift + lalt - x : ${getExe yabai} -m space --layout float
-        default < shift + lalt - c : ${getExe yabai} -m space --layout stack
+        default < shift + lalt - z : ${yabai} -m space --layout bsp
+        default < shift + lalt - x : ${yabai} -m space --layout float
+        default < shift + lalt - c : ${yabai} -m space --layout stack
       '';
     };
   };
