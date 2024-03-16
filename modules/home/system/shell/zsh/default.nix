@@ -29,7 +29,10 @@ in
           zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
         '';
 
-        enableAutosuggestions = true;
+        autosuggestion = {
+          enable = true;
+        };
+
         enableCompletion = true;
 
         sessionVariables = {
