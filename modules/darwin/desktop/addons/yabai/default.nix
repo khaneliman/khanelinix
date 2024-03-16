@@ -82,7 +82,7 @@ in
         # ${getExe config.services.yabai.package} -m signal --add event=window_title_changed app="Firefox" title="- noVNC$" action="${getExe config.services.yabai.package} -m window $WINDOW_ID --toggle native-fullscreen"
 
         # jankyborders
-        borders 2>/dev/null 1>&2 &
+        ${getExe pkgs.khanelinix.jankyborders} 2>/dev/null 1>&2 &
 
         echo "yabai configuration loaded.."
       '';

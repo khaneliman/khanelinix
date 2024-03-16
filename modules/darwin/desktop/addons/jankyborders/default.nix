@@ -1,6 +1,7 @@
 { config
 , lib
 , options
+, pkgs
 , ...
 }:
 let
@@ -16,6 +17,10 @@ in
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs.khanelinix; [
+      jankyborders
+    ];
+
     khanelinix.home.configFile = {
       "borders/bordersrc".source = ./bordersrc;
     };

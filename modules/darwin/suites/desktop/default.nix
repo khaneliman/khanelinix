@@ -31,7 +31,6 @@ in
     homebrew = {
       brews = [
         "blueutil"
-        "borders"
         "fisher"
         "ical-buddy"
         "ifstat"

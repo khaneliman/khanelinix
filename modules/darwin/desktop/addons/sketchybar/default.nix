@@ -30,6 +30,7 @@ in
     services.sketchybar = {
       enable = true;
       package = pkgs.sketchybar;
+
       extraPackages = with pkgs; [
         coreutils
         curl
