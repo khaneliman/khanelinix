@@ -79,9 +79,9 @@
               "<leader>uf" = {
                 action = /*lua*/ ''
                   function ()
-                    vim.g.autoformat_enabled = not vim.g.autoformat_enabled
+                    -- vim.g.disable_autoformat = not vim.g.disable_autoformat
                     vim.cmd('FormatToggle')
-                    vim.notify(string.format("Global autoformatting %s", bool2str(vim.g.autoformat_enabled), "info"))
+                    vim.notify(string.format("Global autoformatting %s", bool2str(not vim.g.disable_autoformat), "info"))
                   end'';
                 lua = true;
                 options = {
