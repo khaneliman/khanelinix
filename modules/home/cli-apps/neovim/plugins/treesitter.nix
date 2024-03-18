@@ -10,6 +10,7 @@
 
       grammarPackages = with config.programs.nixvim.plugins.treesitter.package.builtGrammars; [
         bash
+        bicep
         c
         html
         javascript
