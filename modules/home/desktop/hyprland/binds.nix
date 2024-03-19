@@ -23,8 +23,8 @@ in
                 # ░█▀█░█▀▀░█▀▀░░░█░░░█▀█░█░█░█░█░█░░░█▀█░█▀▀░█▀▄░▀▀█
                 # ░▀░▀░▀░░░▀░░░░░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀
                 "$mainMod, RETURN, exec, $term tmux a"
-                "SUPER_ALT, RETURN, exec, $term tmux"
-                "SUPER_SHIFT, RETURN, exec, $term --title floating_kitty --single-instance"
+                "SUPER_SHIFT, RETURN, exec, $term tmux"
+                "SUPER_ALT, RETURN, exec, $term --title floating_kitty --single-instance"
                 "$mainMod, Q, killactive,"
                 "SUPER_SHIFT, P, exec, ${getExe pkgs.hyprpicker} -a && (${getExe' pkgs.imagemagick "convert"} -size 32x32 xc:$(${getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-paste"}) /tmp/color.png && ${getExe pkgs.libnotify} \"Color Code:\" \"$(${getExe' pkgs.wl-clipboard "wl-paste"})\" -h \"string:bgcolor:$(${getExe' pkgs.wl-clipboard "wl-paste"})\" --icon /tmp/color.png -u critical -t 4000)"
                 "$mainMod, B, exec, $browser"
