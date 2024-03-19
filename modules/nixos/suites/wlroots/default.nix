@@ -22,11 +22,11 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       cliphist
-      swayimg
       nixpkgs-wayland.packages.${system}.wdisplays
       nixpkgs-wayland.packages.${system}.wl-screenrec
       nixpkgs-wayland.packages.${system}.wl-clipboard
       nixpkgs-wayland.packages.${system}.wlr-randr
+      # TODO: cleanup
       # Not really wayland specific, but I don't want to make a new module for it
       brightnessctl
       glib # for gsettings
@@ -42,7 +42,6 @@ in
       desktop.addons = {
         electron-support = enabled;
         swappy = enabled;
-        swaylock = enabled;
         swaynotificationcenter = enabled;
       };
     };

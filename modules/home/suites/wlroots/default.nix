@@ -20,7 +20,6 @@ in
     khanelinix = {
       desktop.addons = {
         # swappy = enabled;
-        swaylock = enabled;
         # swaynotificationcenter = enabled;
         waybar = enabled;
         wlogout = enabled;
