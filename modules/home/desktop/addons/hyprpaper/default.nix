@@ -1,11 +1,12 @@
 { config
 , inputs
 , lib
+, pkgs
 , system
 , ...
 }:
 let
-  inherit (lib) mkIf mkEnableOption types mkOption;
+  inherit (lib) mkIf mkEnableOption types mkOption getExe;
   inherit (lib.internal) mkOpt;
   inherit (inputs) hyprpaper;
 
@@ -42,5 +43,20 @@ in
           preloads = cfg.wallpapers;
           wallpapers = map (monitor: "${monitor.name},${monitor.wallpaper}") cfg.monitors;
         };
+
+        # FIX: broken with recent hyprpaper/hyprland updates... need to fix
+        # systemd.user.services.hypr_socket_watch = {
+        #   Install.WantedBy = [ "hyprland-session.target" ];
+        #
+        #   Unit = {
+        #     Description = "Hypr Socket Watch Service";
+        #     PartOf = [ "graphical-session.target" ];
+        #   };
+        #
+        #   Service = {
+        #     ExecStart = "${getExe pkgs.khanelinix.hypr_socket_watch}";
+        #     Restart = "on-failure";
+        #   };
+        # };
       };
 }

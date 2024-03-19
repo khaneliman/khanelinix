@@ -12,20 +12,6 @@ in
   config =
     mkIf cfg.enable
       {
-        systemd.user.services.hypr_socket_watch = {
-          Install.WantedBy = [ "hyprland-session.target" ];
-
-          Unit = {
-            Description = "Hypr Socket Watch Service";
-            PartOf = [ "graphical-session.target" ];
-          };
-
-          Service = {
-            ExecStart = "${getExe pkgs.khanelinix.hypr_socket_watch}";
-            Restart = "on-failure";
-          };
-        };
-
         wayland.windowManager.hyprland = {
           settings = {
             exec-once = [
