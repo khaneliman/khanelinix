@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (lib) mkIf getExe;
+  inherit (lib) mkIf getExe mkOption literalExpression;
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.desktop.addons.jankyborders;
@@ -14,10 +14,17 @@ in
   options.khanelinix.desktop.addons.jankyborders = {
     enable =
       mkBoolOpt false "Whether to enable jankyborders in the desktop environment.";
+    package = mkOption {
+      type = lib.types.package;
+      default = pkgs.jankyborders;
+      defaultText = literalExpression "pkgs.jankyborders";
+      description = "The jankyborders package to use.";
+      example = literalExpression "pkgs.khanelinix.jankyborders";
+    };
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs.khanelinix; [
+    environment.systemPackages = with pkgs; [
       jankyborders
     ];
 
@@ -33,7 +40,7 @@ in
         	blur_radius=25
         )
 
-        ${getExe pkgs.khanelinix.jankyborders} "''${options[@]}"
+        ${getExe cfg.package} "''${options[@]}"
       '';
     };
   };
