@@ -52,6 +52,7 @@ in
         nautilus = enabled;
         wofi = enabled;
         xdg-portal = enabled;
+        swaylock = enabled;
       };
 
       home.configFile."sway/config".text = fileWithText substitutedConfig /* bash */ ''
