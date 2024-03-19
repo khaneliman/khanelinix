@@ -1,12 +1,11 @@
 { config
 , inputs
 , lib
-, pkgs
 , system
 , ...
 }:
 let
-  inherit (lib) mkIf mkEnableOption types mkOption getExe;
+  inherit (lib) mkIf mkEnableOption types mkOption;
   inherit (lib.internal) mkOpt;
   inherit (inputs) hyprpaper;
 

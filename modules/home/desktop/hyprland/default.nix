@@ -8,7 +8,7 @@
 }:
 let
   inherit (lib) mkIf mkEnableOption mkForce getExe;
-  inherit (lib.internal) enabled disabled;
+  inherit (lib.internal) enabled;
   inherit (inputs) hyprland;
 
   cfg = config.khanelinix.desktop.hyprland;
