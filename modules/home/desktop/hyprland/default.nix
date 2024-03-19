@@ -68,8 +68,6 @@ in
             hyprpaper = enabled;
             hypridle = enabled;
             hyprlock = enabled;
-            swayidle = mkForce disabled;
-            swaylock = mkForce disabled;
           };
 
           suites = {
@@ -79,7 +77,6 @@ in
 
         programs.waybar.systemd.target = "hyprland-session.target";
 
-        systemd.user.services.swayidle.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
         systemd.user.services.hypridle.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
 
         wayland.windowManager.hyprland = {
