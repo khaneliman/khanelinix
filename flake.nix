@@ -43,22 +43,26 @@
     # Hypridle
     hypridle = {
       url = "github:hyprwm/Hypridle";
+      inputs.nixpkgs.follows = "nixpkgs";
       # url = "git+file:///home/khaneliman/Documents/github/hypridle";
     };
 
     # Hyprlock
     hyprlock = {
       url = "github:hyprwm/Hyprlock";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Hyprland
     hyprland = {
       url = "github:hyprwm/Hyprland";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Hyprpaper
     hyprpaper = {
       url = "github:hyprwm/hyprpaper";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Hyprland user contributions flake
@@ -216,7 +220,7 @@
 
   outputs = inputs:
     let
-      inherit (inputs) deploy-rs flake hypridle lanzaboote neovim-nightly-overlay nixpkgs nix-ld-rs nixvim nur rust-overlay snowfall-lib snowfall-frost sops-nix;
+      inherit (inputs) deploy-rs flake hypridle hyprlock lanzaboote neovim-nightly-overlay nixpkgs nix-ld-rs nixvim nur rust-overlay snowfall-lib snowfall-frost sops-nix;
 
       lib = snowfall-lib.mkLib {
         inherit inputs;
@@ -241,6 +245,7 @@
       overlays = [
         flake.overlays.default
         hypridle.overlays.default
+        hyprlock.overlays.default
         # nixpkgs-wayland.overlay
         neovim-nightly-overlay.overlay
         nix-ld-rs.overlays.default
