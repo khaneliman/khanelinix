@@ -1,13 +1,15 @@
-{ lib, pkgs, ... }:
+{ config
+, lib
+, pkgs
+, ...
+}:
 let
-  inherit (lib) getExe;
+  inherit (lib) getExe mkIf;
 in
 {
   programs.nixvim = {
     plugins = {
-      # lsp-format = {
-      #   enable = true;
-      # };
+      lsp-format.enable = mkIf (!config.programs.nixvim.plugins.conform-nvim.enable) true;
 
       lsp = {
         enable = true;
