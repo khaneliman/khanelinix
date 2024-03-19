@@ -1,4 +1,4 @@
-#!bin/sh
+#!/usr/bin/env bash
 
 extract_after_double_arrow() {
 	local input_string="$1"

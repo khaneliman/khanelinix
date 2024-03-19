@@ -7,11 +7,6 @@ let
   inherit (lib) mkIf getExe getExe';
 
   cfg = config.khanelinix.desktop.hyprland;
-
-  hypr_socket_watch_dependencies = with pkgs; [
-    coreutils
-    gnused
-  ];
 in
 {
   config =
@@ -26,7 +21,6 @@ in
           };
 
           Service = {
-            Environment = "PATH=/run/wrappers/bin:${lib.makeBinPath hypr_socket_watch_dependencies}";
             ExecStart = "${getExe pkgs.khanelinix.hypr_socket_watch}";
             Restart = "on-failure";
           };

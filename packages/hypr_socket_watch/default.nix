@@ -13,6 +13,13 @@ writeShellApplication
 {
   name = "hypr_socket_watch";
 
+  runtimeInputs = with pkgs; [
+    coreutils
+    gnused
+    socat
+    hyprland.packages.${system}.hyprland
+  ];
+
   meta = {
     mainProgram = "hypr_socket_watch";
     platforms = lib.platforms.linux;
@@ -31,12 +38,12 @@ writeShellApplication
           workspace=$(extract_after_double_arrow "$1")
           local wallpaper
           wallpaper=$(nth_file "${pkgs.khanelinix.wallpapers}/share/wallpapers" "$workspace")
-          "${getExe' hyprland.packages.${system}.hyprland "hyprctl"}" hyprpaper wallpaper "DP-1,$wallpaper"
+          hyprctl hyprpaper wallpaper "DP-1,$wallpaper"
           ;;
       esac
     }
 
-    ${getExe pkgs.socat} -U - UNIX-CONNECT:/tmp/hypr/"$HYPRLAND_INSTANCE_SIGNATURE"/.socket2.sock | while read -r line; do handle "$line"; done
+    socat -U - UNIX-CONNECT:/tmp/hypr/"$HYPRLAND_INSTANCE_SIGNATURE"/.socket2.sock | while read -r line; do handle "$line"; done
   '';
 }
 
