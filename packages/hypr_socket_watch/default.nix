@@ -6,7 +6,6 @@
 , ...
 }:
 let
-  inherit (lib) getExe getExe';
   inherit (inputs) hyprland;
 in
 writeShellApplication
