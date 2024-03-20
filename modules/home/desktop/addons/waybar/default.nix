@@ -1,14 +1,11 @@
 { config
-, inputs
 , lib
 , pkgs
-, system
 , ...
 }:
 let
   inherit (lib) mkIf mkForce getExe mkMerge;
   inherit (lib.internal) mkBoolOpt;
-  inherit (inputs) nixpkgs-wayland;
 
   cfg = config.khanelinix.desktop.addons.waybar;
 

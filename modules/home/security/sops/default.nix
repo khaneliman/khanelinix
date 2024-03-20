@@ -1,13 +1,11 @@
 { config
 , lib
 , options
-, inputs
 , ...
 }:
 let
   inherit (lib) mkIf types;
   inherit (lib.internal) mkBoolOpt mkOpt;
-  inherit (inputs) sops-nix;
 
   cfg = config.khanelinix.security.sops;
 in
