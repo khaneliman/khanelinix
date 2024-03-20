@@ -82,7 +82,7 @@ in
     };
 
     "/mnt/kvm" = {
-      device = "/dev/disk/by-label/BtrProductive";
+      device = "/dev/disk/by-label/Linux";
       fsType = "btrfs";
       options = [ "rw" "nodatacow" "noatime" "compress-force=zstd:1" "ssd" "subvol=/@kvm" ];
     };
