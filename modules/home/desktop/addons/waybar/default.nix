@@ -88,8 +88,8 @@ in
 
     programs.waybar = {
       enable = true;
-      package = nixpkgs-wayland.packages.${system}.waybar;
-      # package = pkgs.waybar;
+      # package = nixpkgs-wayland.packages.${system}.waybar;
+      package = pkgs.waybar;
       systemd.enable = true;
 
       # TODO: make dynamic / support different number of bars etc

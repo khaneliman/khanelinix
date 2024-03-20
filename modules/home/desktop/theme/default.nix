@@ -72,12 +72,12 @@ in
   config = mkIf cfg.enable {
     programs = {
       bat = {
-        config.theme = "${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}";
+        config.theme = "${cfg.selectedTheme.name} ${capitalize cfg.selectedTheme.variant}";
 
         themes = {
-          "${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}" = {
+          "${cfg.selectedTheme.name} ${capitalize cfg.selectedTheme.variant}" = {
             src = cfg.package;
-            file = "/bat/${capitalize cfg.selectedTheme.name}-${cfg.selectedTheme.variant}.tmTheme";
+            file = "/bat/${capitalize cfg.selectedTheme.name} ${capitalize cfg.selectedTheme.variant}.tmTheme";
           };
         };
       };
@@ -97,7 +97,7 @@ in
       };
 
       k9s.skins = {
-        catppuccin = fromYAML (cfg.package + "/k9s/${cfg.selectedTheme.variant}.yml");
+        catppuccin = fromYAML (cfg.package + "/k9s/${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}.yaml");
       };
 
       tmux.plugins = [{

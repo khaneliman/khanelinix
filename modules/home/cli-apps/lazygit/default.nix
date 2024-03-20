@@ -32,7 +32,7 @@ in
       enable = true;
 
       settings = {
-        gui = fromYAML (pkgs.catppuccin + "/lazygit/themes/macchiato-blue.yml");
+        gui = fromYAML (pkgs.catppuccin + "/lazygit/themes/${config.khanelinix.desktop.theme.selectedTheme.accent}.yml");
       };
     };
 
