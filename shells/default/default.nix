@@ -18,6 +18,7 @@ mkShell {
     nixpkgs-lint
     snowfallorg.flake
     snowfallorg.frost
+    snowfallorg.thaw
     statix
   ];
 
