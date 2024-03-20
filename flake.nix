@@ -199,6 +199,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    snowfall-thaw = {
+      url = "github:snowfallorg/thaw";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Sops (Secrets)
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -222,7 +227,7 @@
     let
       inherit (inputs) deploy-rs flake hypridle hyprlock hyprpaper lanzaboote
         neovim-nightly-overlay nixpkgs nix-ld-rs nixvim nur rust-overlay snowfall-lib
-        snowfall-frost sops-nix spicetify-nix;
+        snowfall-frost snowfall-thaw sops-nix spicetify-nix;
 
       lib = snowfall-lib.mkLib {
         inherit inputs;
@@ -254,6 +259,7 @@
         nur.overlay
         rust-overlay.overlays.default
         snowfall-frost.overlays.default
+        snowfall-thaw.overlays.default
       ];
 
       homes.modules = [
