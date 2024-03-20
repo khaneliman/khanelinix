@@ -19,8 +19,6 @@ in
     enable = mkBoolOpt false "Whether or not to enable support for spicetify.";
   };
 
-  imports = [ spicetify-nix.homeManagerModules.default ];
-
   config = mkIf cfg.enable {
     programs.spicetify = {
       enable = true;

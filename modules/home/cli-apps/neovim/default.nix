@@ -7,14 +7,12 @@
 let
   inherit (lib) mkEnableOption mkIf;
   inherit (lib.internal) mkBoolOpt;
-  inherit (inputs) astronvim-config lazyvim-config lunarvim-config nixvim;
+  inherit (inputs) astronvim-config lazyvim-config lunarvim-config;
 
   cfg = config.khanelinix.cli-apps.neovim;
 in
 {
-  imports = [
-    nixvim.homeManagerModules.nixvim
-  ] ++ lib.snowfall.fs.get-non-default-nix-files ./.;
+  imports = lib.snowfall.fs.get-non-default-nix-files ./.;
 
   options.khanelinix.cli-apps.neovim = {
     enable = mkEnableOption "neovim";

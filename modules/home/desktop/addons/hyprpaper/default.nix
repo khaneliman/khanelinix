@@ -12,8 +12,6 @@ let
   cfg = config.khanelinix.desktop.addons.hyprpaper;
 in
 {
-  imports = [ hyprpaper.homeManagerModules.default ];
-
   options.khanelinix.desktop.addons.hyprpaper = {
     enable = mkEnableOption "Hyprpaper";
     monitors = mkOption {

@@ -13,8 +13,6 @@ let
   cfg = config.khanelinix.desktop.addons.hypridle;
 in
 {
-  imports = [ hypridle.homeManagerModules.default ];
-
   options.khanelinix.desktop.addons.hypridle = {
     enable =
       mkBoolOpt false "Whether to enable hypridle in the desktop environment.";

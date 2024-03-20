@@ -190,7 +190,7 @@
 
     # Snowfall Lib
     snowfall-lib = {
-      url = "github:snowfallorg/lib";
+      url = "github:snowfallorg/lib/dev";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -220,7 +220,9 @@
 
   outputs = inputs:
     let
-      inherit (inputs) deploy-rs flake hypridle hyprlock lanzaboote neovim-nightly-overlay nixpkgs nix-ld-rs nixvim nur rust-overlay snowfall-lib snowfall-frost sops-nix;
+      inherit (inputs) deploy-rs flake hypridle hyprlock hyprpaper lanzaboote
+        neovim-nightly-overlay nixpkgs nix-ld-rs nixvim nur rust-overlay snowfall-lib
+        snowfall-frost sops-nix spicetify-nix;
 
       lib = snowfall-lib.mkLib {
         inherit inputs;
@@ -254,16 +256,20 @@
         snowfall-frost.overlays.default
       ];
 
+      homes.modules = [
+        hypridle.homeManagerModules.default
+        hyprlock.homeManagerModules.default
+        hyprpaper.homeManagerModules.default
+        nixvim.homeManagerModules.nixvim
+        sops-nix.homeManagerModules.sops
+        spicetify-nix.homeManagerModules.default
+      ];
+
       systems = {
         modules = {
           darwin = [
             nixvim.nixDarwinModules.nixvim
           ];
-
-          ## TODO: update upstream to support
-          # home = [
-          #   sops-nix.homeManagerModules.sops
-          # ];
 
           nixos = [
             lanzaboote.nixosModules.lanzaboote

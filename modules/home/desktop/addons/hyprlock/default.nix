@@ -13,8 +13,6 @@ let
   cfg = config.khanelinix.desktop.addons.hyprlock;
 in
 {
-  imports = [ hyprlock.homeManagerModules.default ];
-
   options.khanelinix.desktop.addons.hyprlock = {
     enable =
       mkBoolOpt false "Whether to enable hyprlock in the desktop environment.";

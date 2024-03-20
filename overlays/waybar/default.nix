@@ -1,9 +1,8 @@
-{ nixpkgs-wayland, ... }:
-
+{ inputs, ... }:
 _final: prev: {
   # NOTE: nixpkgs updated wireplumber to 0.5, but upstream restricts to 0.4.
   # TODO: remove after upstreamed package hits unstable
-  waybar = nixpkgs-wayland.packages.${prev.system}.waybar.override {
+  waybar = inputs.nixpkgs-wayland.packages.${prev.system}.waybar.override {
     wireplumber = prev.wireplumber.overrideAttrs rec {
       version = "0.4.17";
       src = prev.fetchFromGitLab {

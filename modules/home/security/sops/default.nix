@@ -12,11 +12,6 @@ let
   cfg = config.khanelinix.security.sops;
 in
 {
-  # NOTE: Needed to be imported here otherwise wouldn't work
-  imports = [
-    sops-nix.homeManagerModules.sops
-  ];
-
   options.khanelinix.security.sops = with types; {
     enable = mkBoolOpt false "Whether to enable sops.";
     defaultSopsFile = mkOpt path null "Default sops file.";
