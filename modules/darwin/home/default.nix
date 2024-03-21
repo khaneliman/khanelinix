@@ -27,7 +27,7 @@ in
       xdg.configFile = mkAliasDefinitions options.khanelinix.home.configFile;
     };
 
-    snowfallorg.user.${config.khanelinix.user.name}.home.config = mkAliasDefinitions options.khanelinix.home.extraOptions;
+    snowfallorg.users.${config.khanelinix.user.name}.home.config = mkAliasDefinitions options.khanelinix.home.extraOptions;
 
     home-manager = {
       useUserPackages = true;
