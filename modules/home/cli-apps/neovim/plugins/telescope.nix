@@ -96,6 +96,33 @@
           silent = true;
         };
       }
+      {
+        mode = "n";
+        key = "<leader>fe";
+        action = ":Telescope file_browser<CR>";
+        options = {
+          desc = "File Explorer";
+          silent = true;
+        };
+      }
+      # {
+      #   mode = "n";
+      #   key = "<leader>fO";
+      #   action = ":Telescope frecency<CR>";
+      #   options = {
+      #     desc = "Find Frequent Files";
+      #     silent = true;
+      #   };
+      # }
+      {
+        mode = "n";
+        key = "<leader>fp";
+        action = ":Telescope projects<CR>";
+        options = {
+          desc = "Find Projects";
+          silent = true;
+        };
+      }
     ];
 
     plugins.project-nvim = {
@@ -112,9 +139,10 @@
           hidden = true;
         };
 
-        frecency = {
-          enable = true;
-        };
+        # FIX: annoying frecency validation on startup about removed files
+        # frecency = {
+        #   enable = true;
+        # };
 
         ui-select = {
           enable = true;

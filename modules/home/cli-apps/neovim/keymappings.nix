@@ -40,11 +40,6 @@
               "<leader>b[" = { action = ":BufferPrevious<CR>"; options = { desc = "Previous buffer"; }; };
               "<leader>bp" = { action = ":BufferPin<CR>"; options = { desc = "Pin buffer"; }; };
 
-              # Telescope
-              "<leader>fe" = { action = ":Telescope file_browser<CR>"; options = { desc = "File Explorer"; }; };
-              "<leader>fO" = { action = ":Telescope frecency<CR>"; options = { desc = "Find Frequent Files"; }; };
-              "<leader>fp" = { action = ":Telescope projects<CR>"; options = { desc = "Find Projects"; }; };
-
               # navigate to left/right window
               "<leader>[" = { action = "<C-w>h"; options = { desc = "Left window"; }; };
               "<leader>]" = { action = "<C-w>l"; options = { desc = "Right window"; }; };
