@@ -4,15 +4,15 @@
 , ...
 }:
 let
-  inherit (lib) getExe mkIf mkEnableOption types mkOption;
+  inherit (lib) mkIf mkEnableOption types mkOption;
   inherit (lib.internal) mkOpt;
-  # inherit (inputs) hyprpaper hypr-socket-watch;
 
   cfg = config.khanelinix.desktop.addons.hyprpaper;
 in
 {
   options.khanelinix.desktop.addons.hyprpaper = {
     enable = mkEnableOption "Hyprpaper";
+    enableSocketWatch = mkEnableOption "hypr-socket-watch";
     monitors = mkOption {
       description = "Monitors and their wallpapers";
       type = with types; listOf (submodule {
@@ -33,42 +33,22 @@ in
   config =
     mkIf cfg.enable
       {
-        services.hyprpaper = {
-          enable = true;
-          # package = hyprpaper.packages.${system}.hyprpaper;
-          package = pkgs.hyprpaper;
-          preloads = cfg.wallpapers;
-          wallpapers = map (monitor: "${monitor.name},${monitor.wallpaper}") cfg.monitors;
-        };
-
-        xdg.configFile = {
-          "hypr-socket-watch/config.yaml".text = /*yaml*/ ''
-            monitor: "DP-1"
-            wallpapers: "${pkgs.khanelinix.wallpapers}/share/wallpapers/"
-            debug: true
-          '';
-        };
-
-        systemd.user.services.hypr-socket-watch = {
-          Install.WantedBy = [ "default.target" ];
-
-          Unit = {
-            Description = "Hyprland Socket Watch Service";
-            BindsTo = [ "graphical-session.target" ];
-            After = [ "graphical-session.target" ];
-            X-Restart-Triggers = [
-              config.xdg.configFile."hypr-socket-watch/config.yaml".source
-            ];
+        services = {
+          hyprpaper = {
+            enable = true;
+            # package = hyprpaper.packages.${system}.hyprpaper;
+            package = pkgs.hyprpaper;
+            preloads = cfg.wallpapers;
+            wallpapers = map (monitor: "${monitor.name},${monitor.wallpaper}") cfg.monitors;
           };
 
-          Service = {
-            Environment = [
-              "PATH=${
-              lib.makeBinPath [config.wayland.windowManager.hyprland.package]
-              }"
-            ];
-            ExecStart = "${getExe pkgs.hypr-socket-watch}";
-            Restart = "on-failure";
+          hypr-socket-watch = {
+            enable = cfg.enableSocketWatch;
+            package = pkgs.hypr-socket-watch;
+
+            monitor = "DP-1";
+            wallpapers = "${pkgs.khanelinix.wallpapers}/share/wallpapers/";
+            debug = false;
           };
         };
       };

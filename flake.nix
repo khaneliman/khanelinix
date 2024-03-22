@@ -284,6 +284,7 @@
       ];
 
       homes.modules = with inputs; [
+        hypr-socket-watch.homeManagerModules.default
         hypridle.homeManagerModules.default
         hyprlock.homeManagerModules.default
         hyprpaper.homeManagerModules.default

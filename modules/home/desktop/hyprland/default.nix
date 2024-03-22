@@ -64,7 +64,10 @@ in
         khanelinix = {
           desktop.addons = {
             rofi = enabled;
-            hyprpaper = enabled;
+            hyprpaper = {
+              enable = true;
+              enableSocketWatch = true;
+            };
             hypridle = enabled;
             hyprlock = enabled;
           };
