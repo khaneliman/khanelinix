@@ -124,6 +124,7 @@ in
           hosts = [
             "https://github.com"
             "https://gist.github.com"
+            "https://dibc@dev.azure.com"
           ];
         };
       };
