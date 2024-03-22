@@ -21,12 +21,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Snowfall Flake
-    flake = {
-      url = "github:snowfallorg/flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # GPG default configuration
     gpg-base-conf = {
       url = "github:drduh/config";
@@ -38,6 +32,13 @@
       url = "github:nix-community/home-manager";
       # url = "git+file:///home/khaneliman/Documents/github/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Hyprcursor
+    hyprcursor = {
+      url = "github:hyprwm/Hyprcursor";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.hyprlang.follows = "hyprlang";
     };
 
     # Hypridle
@@ -57,6 +58,13 @@
     hyprland = {
       url = "github:hyprwm/Hyprland";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.hyprlang.follows = "hyprlang";
+      inputs.hyprcursor.follows = "hyprcursor";
+    };
+
+    hyprlang = {
+      url = "github:hyprwm/hyprlang";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Hyprpaper
@@ -74,6 +82,13 @@
     # Hyprland plugins
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
+
+    # Hyprland plugins
+    hypr-socket-watch = {
+      url = "github:khaneliman/hypr-socket-watch";
+      inputs.nixpkgs.follows = "nixpkgs";
       inputs.hyprland.follows = "hyprland";
     };
 
@@ -194,6 +209,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Snowfall Flake
+    snowfall-flake = {
+      url = "github:snowfallorg/flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     snowfall-frost = {
       url = "github:snowfallorg/frost";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -225,9 +246,7 @@
 
   outputs = inputs:
     let
-      inherit (inputs) deploy-rs flake hypridle hyprlock hyprpaper lanzaboote
-        neovim-nightly-overlay nixpkgs nix-ld-rs nixvim nur rust-overlay snowfall-lib
-        snowfall-frost snowfall-thaw sops-nix spicetify-nix;
+      inherit (inputs) deploy-rs nixpkgs snowfall-lib;
 
       lib = snowfall-lib.mkLib {
         inherit inputs;
@@ -247,20 +266,24 @@
         ];
       };
 
-      overlays = [
-        flake.overlays.default
-        hypridle.overlays.default
-        hyprlock.overlays.default
+      overlays = with inputs; [
+        hypr-socket-watch.overlays.default
+        # hyprlang.overlays.default
+        # hyprcursor.overlays.default
+        # hypridle.overlays.default
+        hyprland.overlays.default
+        # hyprlock.overlays.default
         # nixpkgs-wayland.overlay
         neovim-nightly-overlay.overlay
         nix-ld-rs.overlays.default
         nur.overlay
         rust-overlay.overlays.default
+        snowfall-flake.overlays.default
         snowfall-frost.overlays.default
         snowfall-thaw.overlays.default
       ];
 
-      homes.modules = [
+      homes.modules = with inputs; [
         hypridle.homeManagerModules.default
         hyprlock.homeManagerModules.default
         hyprpaper.homeManagerModules.default
@@ -271,15 +294,15 @@
 
       systems = {
         modules = {
-          darwin = [
+          darwin = with inputs; [
             nixvim.nixDarwinModules.nixvim
           ];
 
-          nixos = [
+          nixos = with inputs; [
             lanzaboote.nixosModules.lanzaboote
+            nixvim.nixosModules.nixvim
             # nix-ld.nixosModules.nix-ld
             sops-nix.nixosModules.sops
-            nixvim.nixosModules.nixvim
           ];
         };
       };

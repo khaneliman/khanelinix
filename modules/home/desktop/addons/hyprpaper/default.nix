@@ -1,13 +1,14 @@
 { config
 , inputs
 , lib
+, pkgs
 , system
 , ...
 }:
 let
-  inherit (lib) mkIf mkEnableOption types mkOption;
+  inherit (lib) getExe' getExe mkIf mkEnableOption types mkOption;
   inherit (lib.internal) mkOpt;
-  inherit (inputs) hyprpaper;
+  # inherit (inputs) hyprpaper hypr-socket-watch;
 
   cfg = config.khanelinix.desktop.addons.hyprpaper;
 in
@@ -36,7 +37,8 @@ in
       {
         services.hyprpaper = {
           enable = true;
-          package = hyprpaper.packages.${system}.hyprpaper;
+          # package = hyprpaper.packages.${system}.hyprpaper;
+          package = pkgs.hyprpaper;
           preloads = cfg.wallpapers;
           wallpapers = map (monitor: "${monitor.name},${monitor.wallpaper}") cfg.monitors;
         };

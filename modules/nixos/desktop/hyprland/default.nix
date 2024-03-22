@@ -9,10 +9,9 @@
 let
   inherit (lib) types mkIf getExe getExe';
   inherit (lib.internal) mkBoolOpt mkOpt enabled;
-  inherit (inputs) hyprland;
+  # inherit (inputs) hyprland;
 
   cfg = config.khanelinix.desktop.hyprland;
-  programs = lib.makeBinPath [ config.programs.hyprland.package ];
 in
 {
   options.khanelinix.desktop.hyprland = with types; {
@@ -54,16 +53,14 @@ in
             gamemode = {
               startscript = /* bash */ ''
                 ${getExe pkgs.libnotify} 'GameMode started'
-                export PATH=$PATH:${programs}
                 export HYPRLAND_INSTANCE_SIGNATURE=$(ls -1 /tmp/hypr | tail -1)
-                ${getExe' hyprland.packages.${system}.hyprland "hyprctl"} --batch 'keyword decoration:blur 0 ; keyword animations:enabled 0 ; keyword misc:no_vfr 1'
+                ${getExe' config.programs.hyprland.package "hyprctl"} --batch 'keyword decoration:blur 0 ; keyword animations:enabled 0 ; keyword misc:no_vfr 1'
               '';
 
               endscript = /* bash */ ''
                 ${getExe pkgs.libnotify} 'GameMode stopped'
-                export PATH=$PATH:${programs}
                 export HYPRLAND_INSTANCE_SIGNATURE=$(ls -1 /tmp/hypr | tail -1)
-                ${getExe' hyprland.packages.${system}.hyprland "hyprctl"} --batch 'keyword decoration:blur 1 ; keyword animations:enabled 1 ; keyword misc:no_vfr 0'
+                ${getExe' config.programs.hyprland.package "hyprctl"} --batch 'keyword decoration:blur 1 ; keyword animations:enabled 1 ; keyword misc:no_vfr 0'
               '';
             };
           };
@@ -110,8 +107,10 @@ in
         programs.hyprland = {
           enable = true;
           xwayland.enable = true;
-          package = hyprland.packages.${system}.hyprland;
-          portalPackage = hyprland.packages.${system}.xdg-desktop-portal-hyprland;
+          # package = hyprland.packages.${system}.hyprland;
+          package = pkgs.hyprland;
+          # portalPackage = hyprland.packages.${system}.xdg-desktop-portal-hyprland;
+          portalPackage = pkgs.xdg-desktop-portal-hyprland;
         };
       };
 }

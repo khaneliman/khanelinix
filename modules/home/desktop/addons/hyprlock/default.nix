@@ -2,13 +2,14 @@
 , inputs
 , lib
 , options
+, pkgs
 , system
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
-  inherit (inputs) hyprlock;
+  # inherit (inputs) hyprlock;
 
   cfg = config.khanelinix.desktop.addons.hyprlock;
 in
@@ -21,7 +22,8 @@ in
   config = mkIf cfg.enable {
     programs.hyprlock = {
       enable = true;
-      package = hyprlock.packages.${system}.hyprlock;
+      # package = hyprlock.packages.${system}.hyprlock;
+      package = pkgs.hyprlock;
 
       general = {
         grace = 300;

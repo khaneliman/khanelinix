@@ -91,7 +91,8 @@ in
             ${cfg.appendConfig}
           '';
 
-          package = hyprland.packages.${system}.hyprland;
+          # package = hyprland.packages.${system}.hyprland;
+          package = pkgs.hyprland;
 
           settings = {
             exec = [
