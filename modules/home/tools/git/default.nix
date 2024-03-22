@@ -125,6 +125,7 @@ in
             "https://github.com"
             "https://gist.github.com"
             "https://dibc@dev.azure.com"
+            "https://core-bts-02@dev.azure.com"
           ];
         };
       };
