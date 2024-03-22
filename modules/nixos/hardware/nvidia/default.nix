@@ -21,7 +21,7 @@ in
     environment.systemPackages = with pkgs; [
       nvfancontrol
       nvidia-vaapi-driver
-      nvtop
+      nvtopPackages.full
       vulkan-tools
     ];
   };

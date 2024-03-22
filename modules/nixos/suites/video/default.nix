@@ -18,7 +18,8 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       devede
-      handbrake
+      # FIX: broken nixpkgs
+      # handbrake
       mediainfo-gui
       pitivi
       vlc
