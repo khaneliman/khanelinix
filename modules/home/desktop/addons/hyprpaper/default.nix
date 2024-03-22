@@ -43,19 +43,36 @@ in
           wallpapers = map (monitor: "${monitor.name},${monitor.wallpaper}") cfg.monitors;
         };
 
+        xdg.configFile = {
+          "hypr-socket-watch/config.yaml".text = /*yaml*/ ''
+            monitor: "DP-1"
+            wallpapers: "${pkgs.khanelinix.wallpapers}/share/wallpapers/"
+            debug: true
+          '';
+        };
+
         # FIX: broken with recent hyprpaper/hyprland updates... need to fix
-        # systemd.user.services.hypr_socket_watch = {
-        #   Install.WantedBy = [ "hyprland-session.target" ];
-        #
-        #   Unit = {
-        #     Description = "Hypr Socket Watch Service";
-        #     PartOf = [ "graphical-session.target" ];
-        #   };
-        #
-        #   Service = {
-        #     ExecStart = "${getExe pkgs.khanelinix.hypr_socket_watch}";
-        #     Restart = "on-failure";
-        #   };
-        # };
+        systemd.user.services.hypr-socket-watch = {
+          Install.WantedBy = [ "default.target" ];
+
+          Unit = {
+            Description = "Hyprland Socket Watch Service";
+            BindsTo = [ "graphical-session.target" ];
+            After = [ "graphical-session.target" ];
+            X-Restart-Triggers = [
+              config.xdg.configFile."hypr-socket-watch/config.yaml".source
+            ];
+          };
+
+          Service = {
+            Environment = [
+              "PATH=${
+              lib.makeBinPath ([config.wayland.windowManager.hyprland.package])
+              }"
+            ];
+            ExecStart = "${getExe pkgs.hypr-socket-watch}";
+            Restart = "on-failure";
+          };
+        };
       };
 }
