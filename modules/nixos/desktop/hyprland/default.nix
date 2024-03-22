@@ -2,8 +2,6 @@
 , lib
 , options
 , pkgs
-, inputs
-, system
 , ...
 }:
 let

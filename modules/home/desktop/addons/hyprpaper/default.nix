@@ -1,12 +1,10 @@
 { config
-, inputs
 , lib
 , pkgs
-, system
 , ...
 }:
 let
-  inherit (lib) getExe' getExe mkIf mkEnableOption types mkOption;
+  inherit (lib) getExe mkIf mkEnableOption types mkOption;
   inherit (lib.internal) mkOpt;
   # inherit (inputs) hyprpaper hypr-socket-watch;
 

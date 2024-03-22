@@ -3,7 +3,6 @@
 , options
 , pkgs
 , inputs
-, system
 , ...
 }:
 let
