@@ -41,7 +41,10 @@ in
         extraConfig = {
 
           credential = {
-            helper = if cfg.wslAgentBridge then ''/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe'' else ''${getExe' pkgs.gitFull "git-credential-libsecret"}'';
+            helper =
+              if cfg.wslAgentBridge then ''/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe''
+              else if pkgs.stdenv.isLinux then ''${getExe' pkgs.gitFull "git-credential-libsecret"}''
+              else ''${getExe' pkgs.gitFull "git-credential-osxkeychain"}'';
             useHttpPath = true;
           };
 
