@@ -5,6 +5,7 @@
   programs.nixvim = {
     extraPlugins = with pkgs.vimPlugins; [
       vim-wakatime
+      webapi-vim
     ];
 
     plugins = {
