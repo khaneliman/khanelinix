@@ -41,12 +41,7 @@
       {
         mode = "n";
         key = "<leader>fn";
-        lua = true;
-        action = /*lua*/ ''
-          function()
-            require("telescope").extensions.notify.notify()
-          end
-        '';
+        action = ":Telescope noice<CR>";
         options = {
           desc = "Find notifications";
           silent = true;

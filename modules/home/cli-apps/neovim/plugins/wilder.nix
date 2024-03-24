@@ -1,4 +1,8 @@
-{ pkgs, ... }: {
+{ config, lib, pkgs, ... }:
+let
+  inherit (lib) mkIf;
+in
+{
   programs.nixvim = {
     extraPlugins = with pkgs.vimPlugins; [
       cpsm
@@ -7,7 +11,7 @@
 
     plugins = {
       wilder = {
-        enable = true;
+        enable = mkIf (!config.programs.nixvim.plugins.noice.enable) true;
 
         modes = [ "/" "?" ":" ];
 
