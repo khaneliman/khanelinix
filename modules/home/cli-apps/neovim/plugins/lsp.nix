@@ -11,6 +11,20 @@ in
     plugins = {
       lsp-format.enable = mkIf (!config.programs.nixvim.plugins.conform-nvim.enable) true;
 
+      rustaceanvim = {
+        enable = true;
+
+        server.settings = {
+          cargo.features = "all";
+          checkOnSave = true;
+          check.command = "clippy";
+          files = {
+            excludeDirs = [ ".direnv" ];
+          };
+          rustc.source = "discover";
+        };
+      };
+
       lsp = {
         enable = true;
 
@@ -98,7 +112,7 @@ in
           };
 
           rust-analyzer = {
-            enable = true;
+            enable = mkIf (!config.programs.nixvim.plugins.rustaceanvim.enable) true;
             filetypes = [ "rust" ];
             installCargo = true;
             installRustc = true;
