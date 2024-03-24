@@ -28,6 +28,7 @@ _: {
         end
       end, {
         desc = "Toggle autoformat-on-save",
+        bang = true,
       })
     '';
 

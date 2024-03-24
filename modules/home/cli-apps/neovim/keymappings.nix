@@ -75,12 +75,25 @@
                 action = /*lua*/ ''
                   function ()
                     -- vim.g.disable_autoformat = not vim.g.disable_autoformat
+                    vim.cmd('FormatToggle!')
+                    vim.notify(string.format("Buffer autoformatting %s", bool2str(not vim.b[0].disable_autoformat), "info"))
+                  end'';
+                lua = true;
+                options = {
+                  desc = "Toggle buffer autoformatting";
+                };
+              };
+
+              "<leader>uF" = {
+                action = /*lua*/ ''
+                  function ()
+                    -- vim.g.disable_autoformat = not vim.g.disable_autoformat
                     vim.cmd('FormatToggle')
                     vim.notify(string.format("Global autoformatting %s", bool2str(not vim.g.disable_autoformat), "info"))
                   end'';
                 lua = true;
                 options = {
-                  desc = "Toggle autoformatting";
+                  desc = "Toggle global autoformatting";
                 };
               };
 
