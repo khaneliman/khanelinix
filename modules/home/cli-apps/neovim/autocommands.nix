@@ -1,22 +1,10 @@
 _: {
   programs.nixvim.autoCmd = [
-    # Vertically center document when entering insert mode
-    {
-      event = "InsertEnter";
-      command = "norm zz";
-    }
-
     # Remove trailing whitespace on save
     {
       event = "BufWrite";
       command = "%s/\\s\\+$//e";
     }
-
-    # Refresh minimap on save
-    # {
-    #   event = "BufWrite";
-    #   callback = { __raw = "MiniMap.refresh"; };
-    # }
 
     # Open minimap on first buffer
     {
