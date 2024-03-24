@@ -40,15 +40,6 @@
       }
       {
         mode = "n";
-        key = "<leader>fn";
-        action = ":Telescope noice<CR>";
-        options = {
-          desc = "Find notifications";
-          silent = true;
-        };
-      }
-      {
-        mode = "n";
         key = "<leader>ft";
         lua = true;
         action = /*lua*/ ''

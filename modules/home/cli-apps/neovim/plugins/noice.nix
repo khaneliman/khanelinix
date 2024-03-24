@@ -1,4 +1,6 @@
-_: {
+{ config, lib, ... }:
+let inherit (lib) mkIf; in
+{
   programs.nixvim = {
     plugins.noice = {
       enable = true;
@@ -22,5 +24,17 @@ _: {
         lsp_doc_border = false;
       };
     };
+
+    keymaps = mkIf config.programs.nixvim.plugins.telescope.enable [
+      {
+        mode = "n";
+        key = "<leader>fn";
+        action = ":Telescope noice<CR>";
+        options = {
+          desc = "Find notifications";
+          silent = true;
+        };
+      }
+    ];
   };
 }
