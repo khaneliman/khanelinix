@@ -1,8 +1,11 @@
-_: {
+{ config, lib, ... }:
+let inherit (lib) mkIf; in {
   programs.nixvim = {
     plugins.refactoring = {
       enable = true;
     };
+
+    plugins.telescope.enabledExtensions = mkIf (config.programs.nixvim.plugins.telescope.enable) [ "refactoring" ];
 
     keymaps = [
       {
@@ -65,6 +68,21 @@ _: {
         action = ":Refactor extract_block_to_file<CR>";
         options = {
           desc = "Extract block to file";
+          silent = true;
+        };
+      }
+    ] ++ lib.optionals config.programs.nixvim.plugins.telescope.enable [
+      {
+        mode = "n";
+        key = "<leader>fR";
+        lua = true;
+        action = /*lua*/ ''
+          function()
+            require('telescope').extensions.refactoring.refactors()
+          end
+        '';
+        options = {
+          desc = "Find all files";
           silent = true;
         };
       }
