@@ -1,9 +1,9 @@
-_: final: prev: {
+_: _final: prev: {
   # TODO: remove after nixos-unstable updated
   pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
     (
-      python-final: python-prev: {
-        catppuccin = python-prev.catppuccin.overridePythonAttrs (oldAttrs: rec {
+      _python-final: python-prev: {
+        catppuccin = python-prev.catppuccin.overridePythonAttrs (_oldAttrs: rec {
           version = "1.3.2";
 
           src = prev.fetchFromGitHub {
