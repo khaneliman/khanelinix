@@ -30,6 +30,7 @@ _: {
             h = "Hover";
             r = "Rename";
           };
+          "r" = { name = " Refactor"; };
           "t" = { name = " Terminal"; };
           "u" = { name = " UI/UX"; };
         };
