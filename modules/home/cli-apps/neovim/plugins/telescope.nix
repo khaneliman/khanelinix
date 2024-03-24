@@ -86,21 +86,7 @@
       #     silent = true;
       #   };
       # }
-      {
-        mode = "n";
-        key = "<leader>fp";
-        action = ":Telescope projects<CR>";
-        options = {
-          desc = "Find Projects";
-          silent = true;
-        };
-      }
     ];
-
-    plugins.project-nvim = {
-      enable = true;
-      enableTelescope = true;
-    };
 
     plugins.telescope = {
       enable = true;
