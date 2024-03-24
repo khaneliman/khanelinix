@@ -30,16 +30,6 @@
               # back and fourth between the two most recent files
               "<C-c>" = { action = ":b#<CR>"; };
 
-              # close buffer
-              "<leader>c" = { action = ":BufferClose<CR>"; options = { desc = "Close buffer"; }; };
-              # Buffer mappings
-              # "<leader>b" = { action = ""; options = { desc = "Buffer"; }; };
-              "<leader>bc" = { action = ":BufferCloseAllButCurrent<CR>"; options = { desc = "Close all buffers but current"; }; }; # requires barbar
-              "<leader>bC" = { action = ":bufdo bdelete<CR>"; options = { desc = "Close all buffers"; }; };
-              "<leader>b]" = { action = ":BufferNext<CR>"; options = { desc = "Next buffer"; }; };
-              "<leader>b[" = { action = ":BufferPrevious<CR>"; options = { desc = "Previous buffer"; }; };
-              "<leader>bp" = { action = ":BufferPin<CR>"; options = { desc = "Pin buffer"; }; };
-
               # navigate to left/right window
               "<leader>[" = { action = "<C-w>h"; options = { desc = "Left window"; }; };
               "<leader>]" = { action = "<C-w>l"; options = { desc = "Right window"; }; };
