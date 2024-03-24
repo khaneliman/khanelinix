@@ -70,20 +70,6 @@
       }
       {
         mode = "n";
-        key = "<leader>fS";
-        lua = true;
-        action = /*lua*/ ''
-          function()
-            require("telescope").extensions.aerial.aerial()
-          end
-        '';
-        options = {
-          desc = "Search Symbols aerial";
-          silent = true;
-        };
-      }
-      {
-        mode = "n";
         key = "<leader>fe";
         action = ":Telescope file_browser<CR>";
         options = {
