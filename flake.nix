@@ -274,7 +274,7 @@
         hyprland.overlays.default
         # hyprlock.overlays.default
         # nixpkgs-wayland.overlay
-        neovim-nightly-overlay.overlay
+        # neovim-nightly-overlay.overlay
         nix-ld-rs.overlays.default
         nur.overlay
         rust-overlay.overlays.default
