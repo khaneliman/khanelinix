@@ -6,6 +6,7 @@
     extraPlugins = with pkgs.vimPlugins; [
       vim-wakatime
       webapi-vim
+      nvim-web-devicons
     ];
 
     plugins = {
@@ -15,7 +16,7 @@
 
       nix-develop.enable = true;
 
-      oil.enable = true;
+      # oil.enable = true;
     };
   };
 }

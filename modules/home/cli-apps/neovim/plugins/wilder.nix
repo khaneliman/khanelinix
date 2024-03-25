@@ -6,7 +6,6 @@ in
   programs.nixvim = {
     extraPlugins = with pkgs.vimPlugins; [
       cpsm
-      nvim-web-devicons
     ];
 
     plugins = {
