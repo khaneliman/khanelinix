@@ -31,7 +31,8 @@ in
       # FIX: broken package
       # pcsx2
       pcsxr
-      rpcs3
+      # FIX: broken package
+      # rpcs3
       snes9x
       xemu
       # NOTE: yuzu removed upstream, using alternative
