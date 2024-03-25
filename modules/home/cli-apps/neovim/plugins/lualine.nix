@@ -86,6 +86,20 @@
           "tabs"
         ];
       };
+
+      # TODO: breadcrumb style path with custom separator and file icon
+      # https://github.com/AstroNvim/astrocommunity/blob/main/lua/astrocommunity/bars-and-lines/heirline-vscode-winbar/init.lua
+      winbar = {
+        lualine_b = [
+          {
+            name = "filename";
+            extraConfig = {
+              newfile_status = true;
+              path = 3;
+            };
+          }
+        ];
+      };
     };
 
     keymaps = lib.mkIf config.programs.nixvim.plugins.lualine.enable [
