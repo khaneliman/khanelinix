@@ -72,14 +72,10 @@
 
       tabline = {
         lualine_a = [
+          # TODO: fix left separator color
           {
             name = "buffers";
             extraConfig = {
-              separator = {
-                left = "";
-                right = "";
-              };
-              right_padding = 2;
               symbols = {
                 alternate_file = "";
               };
