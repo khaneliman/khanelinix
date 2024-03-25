@@ -3,6 +3,17 @@
     plugins.lualine = {
       enable = true;
 
+      disabledFiletypes = {
+        statusline = [
+          # "neo-tree"
+          "startify"
+        ];
+        winbar = [
+          "neo-tree"
+          "startify"
+        ];
+      };
+
       globalstatus = true;
 
       # +-------------------------------------------------+
