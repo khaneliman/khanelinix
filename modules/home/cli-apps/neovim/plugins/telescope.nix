@@ -111,6 +111,7 @@
         "<leader>f'" = { action = "marks"; desc = "View marks"; };
         "<leader>f/" = { action = "current_buffer_fuzzy_find"; desc = "Fuzzy find in current buffer"; };
         "<leader>f<CR>" = { action = "resume"; desc = "Resume action"; };
+        "<leader>fa" = { action = "autocommands"; desc = "View autocommands"; };
         "<leader>fC" = { action = "commands"; desc = "View commands"; };
         "<leader>fb" = { action = "buffers"; desc = "View buffers"; };
         "<leader>fc" = { action = "grep_string"; desc = "Grep string"; };
