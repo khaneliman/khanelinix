@@ -1,7 +1,7 @@
 { config, lib, ... }: {
   programs.nixvim = {
     plugins.barbar = {
-      enable = true;
+      enable = false;
 
       insertAtEnd = true;
 
