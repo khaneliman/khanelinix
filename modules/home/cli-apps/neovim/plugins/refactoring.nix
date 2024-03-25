@@ -5,7 +5,7 @@ let inherit (lib) mkIf; in {
       enable = true;
     };
 
-    plugins.telescope.enabledExtensions = mkIf (config.programs.nixvim.plugins.telescope.enable) [ "refactoring" ];
+    plugins.telescope.enabledExtensions = mkIf config.programs.nixvim.plugins.telescope.enable [ "refactoring" ];
 
     keymaps = [
       {
