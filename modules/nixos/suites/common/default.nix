@@ -57,7 +57,6 @@ in
 
       tools = {
         colorls = enabled;
-        comma = enabled;
         fup-repl = enabled;
         git = enabled;
         glxinfo = enabled;

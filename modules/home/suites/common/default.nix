@@ -63,6 +63,7 @@ in
 
       tools = {
         bat = enabled;
+        comma = enabled;
         direnv = enabled;
         fzf = enabled;
         git = enabled;

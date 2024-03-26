@@ -20,7 +20,6 @@ in
     environment.systemPackages = with pkgs; [
       cachix
       deploy-rs
-      nix-index
       nix-prefetch-git
     ];
 

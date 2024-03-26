@@ -16,13 +16,18 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
+    home.packages = with pkgs; [
       comma
       khanelinix.nix-update-index
     ];
 
-    khanelinix.home.extraOptions = {
-      programs.nix-index.enable = true;
+    programs.nix-index = {
+      enable = true;
+      package = pkgs.nix-index;
+
+      enableBashIntegration = true;
+      enableFishIntegration = true;
+      enableZshIntegration = true;
     };
   };
 }
