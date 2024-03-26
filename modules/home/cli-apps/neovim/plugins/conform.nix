@@ -1,6 +1,8 @@
 _: {
   programs.nixvim = {
     extraConfigLuaPre = /* lua */ ''
+      local slow_format_filetypes = {}
+
       vim.api.nvim_create_user_command("FormatDisable", function(args)
          if args.bang then
           -- FormatDisable! will disable formatting just for this buffer
@@ -67,7 +69,32 @@ _: {
             if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
               return
             end
-            return { timeout_ms = 500, lsp_fallback = true }
+
+            if slow_format_filetypes[vim.bo[bufnr].filetype] then
+              return
+            end
+
+            local function on_format(err)
+              if err and err:match("timeout$") then
+                slow_format_filetypes[vim.bo[bufnr].filetype] = true
+              end
+            end
+
+            return { timeout_ms = 200, lsp_fallback = true }, on_format
+           end
+        '';
+
+        formatAfterSave = /*lua*/ ''
+          function(bufnr)
+            if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+              return
+            end
+
+            if not slow_format_filetypes[vim.bo[bufnr].filetype] then
+              return
+            end
+
+            return { lsp_fallback = true }
           end
         '';
 
