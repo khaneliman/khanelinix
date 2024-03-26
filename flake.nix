@@ -3,12 +3,6 @@
 
   inputs = {
 
-    # Comma
-    comma = {
-      url = "github:nix-community/comma";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # macOS Support (master)
     darwin = {
       url = "github:lnl7/nix-darwin";
@@ -122,26 +116,10 @@
       flake = false;
     };
 
-    # Neovim nightly overlay
-    neovim-nightly-overlay = {
-      url = "github:nix-community/neovim-nightly-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # NixPkgs (nixos-unstable)
     nixpkgs = {
       url = "github:nixos/nixpkgs/nixos-unstable";
     };
-
-    # NixPkgs (master)
-    # nixpkgs-master = {
-    #   url = "github:nixos/nixpkgs/master";
-    # };
-    #
-    # Nixpkgs fork
-    # nixpkgs-khanelinix = {
-    #   url = "github:khaneliman/nixpkgs/yabai-update";
-    # };
 
     # NixPkgs-Wayland
     nixpkgs-wayland = {
@@ -171,10 +149,8 @@
       url = "github:nix-community/nix-ld-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
     # Neovim nix configuration
     nixvim = {
-      # url = "github:khaneliman/nixvim/telescope";
       url = "github:nix-community/nixvim";
       # url = "git+file:///Users/khaneliman/Documents/github/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -274,7 +250,6 @@
         hyprland.overlays.default
         # hyprlock.overlays.default
         # nixpkgs-wayland.overlay
-        # neovim-nightly-overlay.overlay
         nix-ld-rs.overlays.default
         nur.overlay
         rust-overlay.overlays.default
@@ -302,7 +277,6 @@
           nixos = with inputs; [
             lanzaboote.nixosModules.lanzaboote
             nixvim.nixosModules.nixvim
-            # nix-ld.nixosModules.nix-ld
             sops-nix.nixosModules.sops
           ];
         };
