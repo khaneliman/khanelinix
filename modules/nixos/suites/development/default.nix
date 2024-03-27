@@ -33,9 +33,6 @@ in
     nixEnable =
       mkBoolOpt false
         "Whether or not to enable nix development configuration.";
-    nodeEnable =
-      mkBoolOpt false
-        "Whether or not to enable node development configuration.";
     rustEnable =
       mkBoolOpt false
         "Whether or not to enable rust development configuration.";
@@ -87,7 +84,6 @@ in
         git-crypt = enabled;
         go.enable = cfg.goEnable;
         k8s.enable = cfg.kubernetesEnable;
-        node.enable = cfg.nodeEnable;
         tree-sitter = enabled;
       };
 

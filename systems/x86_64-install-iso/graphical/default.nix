@@ -47,7 +47,6 @@ in
 
     tools = {
       k8s = enabled;
-      node = enabled;
     };
 
     hardware = {

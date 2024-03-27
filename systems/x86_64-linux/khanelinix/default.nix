@@ -144,7 +144,6 @@ in
         dockerEnable = true;
         gameEnable = true;
         nixEnable = true;
-        nodeEnable = true;
         rustEnable = true;
         sqlEnable = true;
       };

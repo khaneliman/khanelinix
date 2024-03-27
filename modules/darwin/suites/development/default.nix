@@ -20,7 +20,6 @@ in
   config = mkIf cfg.enable {
     khanelinix = {
       tools = {
-        node = enabled;
         python = enabled;
       };
     };

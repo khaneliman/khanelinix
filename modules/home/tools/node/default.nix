@@ -34,7 +34,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages =
+    home.packages =
       [ cfg.pkg ]
       ++ (lib.optional cfg.flyctl.enable cfg.flyctl.pkg)
       ++ (lib.optional cfg.pnpm.enable cfg.pnpm.pkg)
