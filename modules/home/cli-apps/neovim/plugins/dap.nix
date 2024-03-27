@@ -1,4 +1,58 @@
-{ lib, pkgs, ... }: {
+{ lib, pkgs, ... }:
+let
+  codelldb-config = {
+    name = "Launch";
+    type = "codelldb";
+    request = "launch";
+    program.__raw = ''
+      function()
+          return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. '/', "file")
+      end
+    '';
+    cwd = ''\$\{workspaceFolder}'';
+    stopOnEntry = false;
+  };
+
+  coreclr-config = {
+    type = "coreclr";
+    name = "launch - netcoredbg";
+    request = "launch";
+    program__raw = ''
+      function()
+        if vim.fn.confirm('Should I recompile first?', '&yes\n&no', 2) == 1 then
+          vim.g.dotnet_build_project()
+        end
+
+        return vim.g.dotnet_get_dll_path()
+      end'';
+    cwd = ''\$\{workspaceFolder}'';
+  };
+
+  gdb-config = {
+    name = "Launch";
+    type = "gdb";
+    request = "launch";
+    program.__raw = ''
+      function()
+          return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. '/', "file")
+      end'';
+    cwd = ''\$\{workspaceFolder}'';
+    stopOnEntry = false;
+  };
+
+  lldb-config = {
+    name = "Launch";
+    type = "lldb";
+    request = "launch";
+    program.__raw = ''
+      function()
+          return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. '/', "file")
+      end'';
+    cwd = ''\$\{workspaceFolder}'';
+    stopOnEntry = false;
+  };
+in
+{
   home.packages = with pkgs; [
     netcoredbg
   ] ++ lib.optionals pkgs.stdenv.isLinux [
@@ -49,58 +103,27 @@
 
         configurations = {
           c = [
-            {
-              name = "Launch";
-              type = "gdb";
-              request = "launch";
-              program.__raw = ''
-                function()
-                    return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. '/', "file")
-                end'';
-              cwd = ''\$\{workspaceFolder}'';
-              stopOnEntry = false;
-            }
-          ];
+            lldb-config
+          ]
+          ++ lib.optionals pkgs.stdenv.isLinux [ gdb-config ];
 
           cpp = [
-            {
-              name = "Launch";
-              type = "codelldb";
-              request = "launch";
-              program.__raw = ''
-                function()
-                    return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. '/', "file")
-                end'';
-              cwd = ''\$\{workspaceFolder}'';
-              stopOnEntry = false;
-            }
-          ];
+            lldb-config
+          ]
+          ++ lib.optionals pkgs.stdenv.isLinux [ codelldb-config ];
 
           cs = [
-            {
-              type = "coreclr";
-              name = "launch - netcoredbg";
-              request = "launch";
-              program__raw = ''
-                function()
-                    return vim.fn.input('Path to dll', vim.fn.getcwd() .. '/bin/Debug/', 'file')
-                end'';
-            }
+            coreclr-config
+          ];
+
+          fsharp = [
+            coreclr-config
           ];
 
           rust = [
-            {
-              name = "Launch";
-              type = "lldb";
-              request = "launch";
-              program.__raw = ''
-                function()
-                    return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. '/', "file")
-                end'';
-              cwd = ''\$\{workspaceFolder}'';
-              stopOnEntry = false;
-            }
-          ];
+            lldb-config
+          ]
+          ++ lib.optionals pkgs.stdenv.isLinux [ codelldb-config ];
         };
 
         extensions = {
