@@ -21,6 +21,8 @@ in
       bottles
       gamescope
       lutris
+      minecraft
+      prismlauncher
       proton-caller
       protontricks
       protonup-ng
