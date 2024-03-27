@@ -11,24 +11,6 @@ in
     plugins = {
       lsp-format.enable = mkIf (!config.programs.nixvim.plugins.conform-nvim.enable) true;
 
-      rustaceanvim = {
-        enable = true;
-
-        dap = {
-          autoloadConfigurations = true;
-        };
-
-        server.settings = {
-          cargo.features = "all";
-          checkOnSave = true;
-          check.command = "clippy";
-          files = {
-            excludeDirs = [ ".direnv" ];
-          };
-          rustc.source = "discover";
-        };
-      };
-
       lsp = {
         enable = true;
 
