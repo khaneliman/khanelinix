@@ -21,6 +21,7 @@ in
     environment.systemPackages = with pkgs; [
       amdgpu_top
       vulkan-tools
+      nvtopPackages.amd
     ];
 
     environment.variables = {
