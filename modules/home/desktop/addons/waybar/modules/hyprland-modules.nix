@@ -77,6 +77,8 @@ in
       "class<libreoffice-calc>" = "󱎏";
       "class<libreoffice-impress>" = "󱎐";
       "class<teams-for-linux>" = "󰊻";
+      "class<org.prismlauncher.PrismLauncher>" = "󰍳";
+      "class<minecraft-launcher>" = "󰍳";
     };
   };
 
