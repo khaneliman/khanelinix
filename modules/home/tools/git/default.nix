@@ -26,6 +26,16 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.packages = with pkgs; [
+      bfg-repo-cleaner
+      git-crypt
+      git-filter-repo
+      git-lfs
+      gitflow
+      gitleaks
+      gitlint
+    ];
+
     programs = {
       git = {
         enable = true;
@@ -43,8 +53,8 @@ in
           credential = {
             helper =
               if cfg.wslAgentBridge then ''/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe''
-              else if pkgs.stdenv.isLinux then ''${getExe' pkgs.gitFull "git-credential-libsecret"}''
-              else ''${getExe' pkgs.gitFull "git-credential-osxkeychain"}'';
+              else if pkgs.stdenv.isLinux then ''${getExe' config.programs.git.package "git-credential-libsecret"}''
+              else ''${getExe' config.programs.git.package "git-credential-osxkeychain"}'';
             useHttpPath = true;
           };
 

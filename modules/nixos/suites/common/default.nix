@@ -58,7 +58,6 @@ in
       tools = {
         colorls = enabled;
         fup-repl = enabled;
-        git = enabled;
         glxinfo = enabled;
         nix-ld = enabled;
       };

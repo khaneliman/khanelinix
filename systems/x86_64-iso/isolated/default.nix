@@ -40,6 +40,7 @@ in
 {
   environment.systemPackages = with pkgs; [
     cryptsetup
+    git
     gnupg
     pinentry-curses
     pinentry-qt
@@ -74,9 +75,7 @@ in
       neovim = enabled;
     };
 
-    tools = {
-      git = enabled;
-    };
+    tools = { };
 
     home = {
       file = {

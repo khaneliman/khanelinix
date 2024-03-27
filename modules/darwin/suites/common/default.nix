@@ -55,7 +55,6 @@ in
       };
 
       tools = {
-        git = enabled;
         homebrew = enabled;
       };
 

@@ -7,6 +7,7 @@ let
 in
 {
   environment.systemPackages = with pkgs; [
+    git
     wget
     curl
     pciutils
@@ -20,9 +21,7 @@ in
       neovim = enabled;
     };
 
-    tools = {
-      git = enabled;
-    };
+    tools = { };
 
     security = {
       doas = enabled;

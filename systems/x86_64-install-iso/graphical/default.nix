@@ -12,6 +12,7 @@ in
   networking.wireless.enable = mkForce false;
 
   environment.systemPackages = with pkgs; [
+    git
     wget
     curl
     pciutils
@@ -46,7 +47,6 @@ in
 
     tools = {
       k8s = enabled;
-      git = enabled;
       node = enabled;
     };
 
