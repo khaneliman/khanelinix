@@ -33,6 +33,9 @@ in
 
       settings = {
         gui = fromYAML (pkgs.catppuccin + "/lazygit/themes/${config.khanelinix.desktop.theme.selectedTheme.accent}.yml");
+        git = {
+          overrideGpg = true;
+        };
       };
     };
 
