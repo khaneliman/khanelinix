@@ -9,6 +9,7 @@
           "startify"
         ];
         winbar = [
+          "dap-repl"
           "neo-tree"
           "startify"
         ];
