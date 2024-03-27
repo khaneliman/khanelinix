@@ -51,12 +51,35 @@ let
     cwd = ''\$\{workspaceFolder}'';
     stopOnEntry = false;
   };
+
+  sh-config = lib.mkIf pkgs.stdenv.isLinux {
+    type = "bashdb";
+    request = "launch";
+    name = "Launch file";
+    showDebugOutput = true;
+    pathBashdb = "${lib.getExe pkgs.bashdb}";
+    pathBashdbLib = "${pkgs.bashdb}/share/basdhb/lib/";
+    trace = true;
+    file = ''\$\{file}'';
+    program = ''\$\{file}'';
+    cwd = ''\$\{workspaceFolder}'';
+    pathCat = "cat";
+    pathBash = "${lib.getExe pkgs.bash}";
+    pathMkfifo = "mkfifo";
+    pathPkill = "pkill";
+    args = { };
+    env = { };
+    terminalKind = "integrated";
+  };
 in
 {
   home.packages = with pkgs; [
+    coreutils
+    lldb
     netcoredbg
   ] ++ lib.optionals pkgs.stdenv.isLinux [
     pkgs.gdb
+    pkgs.bashdb
   ];
 
   programs.nixvim = {
@@ -70,6 +93,10 @@ in
 
         adapters = {
           executables = {
+            bashdb = lib.mkIf pkgs.stdenv.isLinux {
+              command = "${lib.getExe pkgs.bashdb}";
+            };
+
             gdb = {
               command = "gdb";
               args = [ "-i" "dap" ];
@@ -124,6 +151,9 @@ in
             lldb-config
           ]
           ++ lib.optionals pkgs.stdenv.isLinux [ codelldb-config ];
+
+          sh = [
+          ] ++ lib.optionals pkgs.stdenv.isLinux [ sh-config ];
         };
 
         extensions = {
