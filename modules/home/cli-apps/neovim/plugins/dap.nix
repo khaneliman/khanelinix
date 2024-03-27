@@ -1,4 +1,10 @@
 { lib, pkgs, ... }: {
+  home.packages = with pkgs; [
+    netcoredbg
+  ] ++ lib.optionals pkgs.stdenv.isLinux [
+    pkgs.gdb
+  ];
+
   programs.nixvim = {
     extraPlugins = with pkgs.vimPlugins; [
       nvim-gdb
@@ -11,7 +17,7 @@
         adapters = {
           executables = {
             gdb = {
-              command = "${lib.getExe pkgs.gdb}";
+              command = "gdb";
               args = [ "-i" "dap" ];
             };
 
@@ -28,7 +34,7 @@
           };
 
           servers = {
-            codelldb = {
+            codelldb = lib.mkIf pkgs.stdenv.isLinux {
               port = 13000;
               executable = {
                 command = "${pkgs.vscode-extensions.vadimcn.vscode-lldb}/share/vscode/extensions/vadimcn.vscode-lldb/adapter/codelldb";
