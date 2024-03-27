@@ -53,6 +53,7 @@ in
       tools = {
         node = enabled;
         oh-my-posh = enabled;
+        python = enabled;
       };
     };
   };

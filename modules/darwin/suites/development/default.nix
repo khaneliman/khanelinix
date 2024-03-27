@@ -19,9 +19,7 @@ in
 
   config = mkIf cfg.enable {
     khanelinix = {
-      tools = {
-        python = enabled;
-      };
+      tools = { };
     };
 
     environment.systemPackages = with pkgs; [
