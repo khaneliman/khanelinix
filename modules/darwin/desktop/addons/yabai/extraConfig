@@ -70,6 +70,7 @@ yabai -m rule --add label="Select file to save to" app="^Inkscape$" title="Selec
 
 COMMS=(
 	Microsoft Teams
+	"Microsoft Teams (work or school)"
 	Mail
 	Messages
 	Spark
