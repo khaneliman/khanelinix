@@ -101,9 +101,19 @@ local front_app = sbar.add("item", "front_app", {
 })
 
 front_app:subscribe("front_app_switched", function(env)
+  local window_name = env.INFO
+
+  local window_rewrite_map = {
+    ["wezterm-gui"] = "WezTerm",
+  }
+
+  if window_rewrite_map[window_name] then
+    window_name = window_rewrite_map[window_name]
+  end
+
   front_app:set({
     label = {
-      string = env.INFO
+      string = window_name
     }
   })
 end)
