@@ -162,8 +162,4 @@ for ((i = 1; i <= "${#VM[@]}"; i++)); do
 	yabai -m rule --add label="vm_${VM[(($i - 1))]}" app="^${VM[(($i - 1))]}.*$" space=vm
 done
 
-# Keep yabai up to date automatically
-# updates from github repo
-# YABAI_CERT=yabai-cert sh -c ~/.config/yabai/update.sh &
-
 echo "yabai configuration loaded.."
