@@ -24,6 +24,9 @@
               # Esc to clear search results
               "<esc>" = { action = ":noh<CR>"; };
 
+              # Backspace delete in normal
+              "<BS>" = { action = "<BS>x"; };
+
               # fix Y behaviour
               "Y" = { action = "y$"; };
 
@@ -155,6 +158,9 @@
               # Move selected line/block in visual mode
               "K" = { action = ":m '<-2<CR>gv=gv"; };
               "J" = { action = ":m '>+1<CR>gv=gv"; };
+
+              # Backspace delete in visual
+              "<BS>" = { action = "x"; };
             };
         insert =
           lib.mapAttrsToList
