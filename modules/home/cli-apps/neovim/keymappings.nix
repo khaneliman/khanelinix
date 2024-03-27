@@ -156,12 +156,27 @@
               "K" = { action = ":m '<-2<CR>gv=gv"; };
               "J" = { action = ":m '>+1<CR>gv=gv"; };
             };
+        insert =
+          lib.mapAttrsToList
+            (key: { action, ... }@attrs: {
+              mode = "i";
+              inherit action key;
+              options = attrs.options or { };
+              lua = attrs.lua or false;
+            })
+            {
+              # Move selected line/block in insert mode
+              "<C-k>" = { action = "<C-o>gk"; };
+              "<C-h>" = { action = "<Left>"; };
+              "<C-l>" = { action = "<Right>"; };
+              "<C-j>" = { action = "<C-o>gj"; };
+            };
       in
       config.nixvim.helpers.keymaps.mkKeymaps
         {
           options.silent = true;
         }
-        (normal ++ visual);
+        (normal ++ visual ++ insert);
   };
 }
 
