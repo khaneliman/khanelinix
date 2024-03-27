@@ -4,7 +4,21 @@ _: {
     plugins.neotest = {
       enable = true;
 
+      settings = {
+        adapters = [
+          ''require('rustaceanvim.neotest')''
+        ];
+      };
+
       adapters = {
+        bash = {
+          enable = true;
+        };
+
+        deno = {
+          enable = true;
+        };
+
         dotnet = {
           enable = true;
         };
@@ -18,10 +32,6 @@ _: {
         };
 
         playwright = {
-          enable = true;
-        };
-
-        rust = {
           enable = true;
         };
       };
