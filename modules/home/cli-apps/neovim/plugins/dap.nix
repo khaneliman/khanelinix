@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ lib, pkgs, ... }: {
   programs.nixvim = {
     extraPlugins = with pkgs.vimPlugins; [
       nvim-gdb
@@ -11,13 +11,32 @@
         adapters = {
           executables = {
             gdb = {
-              command = "gdb";
+              command = "${lib.getExe pkgs.gdb}";
               args = [ "-i" "dap" ];
             };
 
             lldb = {
-              # command = "${pkgs.vscode-extensions.vadimcn.vscode-lldb}/share/vscode/extensions/vadimcn.vscode-lldb/adapter/codelldb";
               command = "${pkgs.lldb}/bin/lldb-vscode";
+            };
+
+            coreclr = {
+              command = "${lib.getExe pkgs.netcoredbg}";
+              args = [
+                "--interpreter=vscode"
+              ];
+            };
+          };
+
+          servers = {
+            codelldb = {
+              port = 13000;
+              executable = {
+                command = "${pkgs.vscode-extensions.vadimcn.vscode-lldb}/share/vscode/extensions/vadimcn.vscode-lldb/adapter/codelldb";
+                args = [
+                  "--port"
+                  "13000"
+                ];
+              };
             };
           };
         };
@@ -36,6 +55,33 @@
               stopOnEntry = false;
             }
           ];
+
+          cpp = [
+            {
+              name = "Launch";
+              type = "codelldb";
+              request = "launch";
+              program.__raw = ''
+                function()
+                    return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. '/', "file")
+                end'';
+              cwd = ''\$\{workspaceFolder}'';
+              stopOnEntry = false;
+            }
+          ];
+
+          cs = [
+            {
+              type = "coreclr";
+              name = "launch - netcoredbg";
+              request = "launch";
+              program__raw = ''
+                function()
+                    return vim.fn.input('Path to dll', vim.fn.getcwd() .. '/bin/Debug/', 'file')
+                end'';
+            }
+          ];
+
           rust = [
             {
               name = "Launch";

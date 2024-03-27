@@ -14,6 +14,10 @@ in
       rustaceanvim = {
         enable = true;
 
+        dap = {
+          autoloadConfigurations = true;
+        };
+
         server.settings = {
           cargo.features = "all";
           checkOnSave = true;
