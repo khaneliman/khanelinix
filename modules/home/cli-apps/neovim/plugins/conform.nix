@@ -1,4 +1,4 @@
-_: {
+{ lib, pkgs, ... }: {
   programs.nixvim = {
     extraConfigLuaPre = /* lua */ ''
       local slow_format_filetypes = {}
@@ -112,22 +112,41 @@ _: {
           cpp = [ "clang_format" ];
           cs = [ "csharpier" ];
           fish = [ "fish_indent" ];
+          javascript = [ [ "prettierd" "prettier" ] ];
           json = [ "jq" ];
           lua = [ "stylua" ];
           nix = [ "nixpkgs_fmt" ];
           python = [ "isort" "black" ];
-          javascript = [ [ "prettierd" "prettier" ] ];
           rust = [ "rustfmt" ];
           sh = [ "shellcheck" "shellharden" "shfmt" ];
           sql = [ "sqlfmt" ];
           swift = [ "swiftformat" ];
           terraform = [ "terraform_fmt" ];
           toml = [ "taplo" ];
+          typescript = [ [ "prettierd" "prettier" ] ];
           xml = [ "xmllint" ];
           yaml = [ "yamlfmt" ];
           zig = [ "zigfmt" ];
           "*" = [ "codespell" ];
           "_" = [ "trim_whitespace" ];
+        };
+
+        formatters = {
+          black = { command = "${lib.getExe pkgs.black}"; };
+          csharpier = { command = "${lib.getExe pkgs.csharpier}"; };
+          isort = { command = "${lib.getExe pkgs.isort}"; };
+          jq = { command = "${lib.getExe pkgs.jq}"; };
+          nixpkgs_fmt = { command = "${lib.getExe pkgs.nixpkgs-fmt}"; };
+          prettierd = { command = "${lib.getExe pkgs.prettierd}"; };
+          rustfmt = { command = "${lib.getExe pkgs.rustfmt}"; };
+          shellcheck = { command = "${lib.getExe pkgs.shellcheck}"; };
+          # shellfmt = { command = "${lib.getExe pkgs.shellfmt}"; };
+          shellharden = { command = "${lib.getExe pkgs.shellharden}"; };
+          # sqlfmt = { command = "${lib.getExe pkgs.sqlfmt}"; };
+          stylua = { command = "${lib.getExe pkgs.stylua}"; };
+          taplo = { command = "${lib.getExe pkgs.taplo}"; };
+          # xmllint = { command = "${lib.getExe pkgs.xmllint}"; };
+          yamlfmt = { command = "${lib.getExe pkgs.yamlfmt}"; };
         };
       };
     };
