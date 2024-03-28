@@ -1,11 +1,12 @@
-_: {
+{ config, lib, ... }: {
   programs.nixvim = {
 
     plugins.neotest = {
       enable = true;
 
       settings = {
-        adapters = [
+        adapters = [ ]
+          ++ lib.optionals config.programs.nixvim.plugins.rustaceanvim.enable [
           ''require('rustaceanvim.neotest')''
         ];
       };
