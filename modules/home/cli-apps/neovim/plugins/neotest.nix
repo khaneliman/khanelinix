@@ -36,5 +36,15 @@ _: {
         };
       };
     };
+
+    keymaps = [{
+      mode = "n";
+      key = "<leader>un";
+      action = ":Neotest summary<CR>";
+      options = {
+        desc = "Toggle Neotest Summary";
+        silent = true;
+      };
+    }];
   };
 }

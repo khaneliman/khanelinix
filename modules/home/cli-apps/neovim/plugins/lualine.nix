@@ -11,6 +11,7 @@
         winbar = [
           "dap-repl"
           "neo-tree"
+          "neotest-summary"
           "startify"
         ];
       };
