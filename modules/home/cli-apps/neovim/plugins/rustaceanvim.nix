@@ -8,14 +8,45 @@ _: {
           autoloadConfigurations = true;
         };
 
-        server.settings = {
-          cargo.features = "all";
-          checkOnSave = true;
-          check.command = "clippy";
-          files = {
-            excludeDirs = [ ".direnv" ];
+        server = {
+          settings = {
+            cargo = {
+              buildScripts.enable = true;
+              features = "all";
+            };
+
+            diagnostics = {
+              enable = true;
+              styleLints.enable = true;
+            };
+
+            checkOnSave = true;
+            check.command = "clippy";
+
+            files = {
+              excludeDirs = [
+                "rust/.direnv"
+                ".direnv"
+              ];
+            };
+
+            inlayHints = {
+              bindingModeHints.enable = true;
+              closureStyle = "rust_analyzer";
+              closureReturnTypeHints.enable = "always";
+              discriminantHints.enable = "always";
+              expressionAdjustmentHints. enable = "always";
+              implicitDrops.enable = true;
+              lifetimeElisionHints.enable = "always";
+              rangeExclusiveHints.enable = true;
+            };
+
+            procMacro = {
+              enable = true;
+            };
+
+            rustc.source = "discover";
           };
-          rustc.source = "discover";
         };
       };
     };

@@ -107,6 +107,14 @@ in
               diagnostics = {
                 enable = true;
                 # experimental.enable = true;
+                styleLints.enable = true;
+              };
+
+              files = {
+                excludeDirs = [
+                  ".direnv"
+                  "rust/.direnv"
+                ];
               };
 
               inlayHints = {
