@@ -26,6 +26,8 @@ in
 
       general = {
         grace = 300;
+        hide_cursor = true;
+        ignore_empty_input = true;
       };
 
       input-fields = [
