@@ -9,57 +9,57 @@ local network = require("items.stats.network")
 local stats = {}
 
 stats.close = function()
-  sbar.animate("tanh", 30, function()
-    cpu:set({ background = { padding_right = -10 } })
-    memory:set({ background = { padding_right = -50 } })
-    disk:set({ background = { padding_right = -40 } })
-    network.up:set({ background = { padding_right = -70 } })
-    network.down:set({ background = { padding_right = -50 } })
-  end)
+	Sbar.animate("tanh", 30, function()
+		cpu:set({ background = { padding_right = -10 } })
+		memory:set({ background = { padding_right = -50 } })
+		disk:set({ background = { padding_right = -40 } })
+		network.up:set({ background = { padding_right = -70 } })
+		network.down:set({ background = { padding_right = -50 } })
+	end)
 
-  separator:set({ icon = "" })
+	separator:set({ icon = "" })
 
-  SLEEP(.1)
+	SLEEP(0.1)
 
-  cpu:set({ drawing = false })
-  memory:set({ drawing = false })
-  disk:set({ drawing = false })
-  network.up:set({ drawing = false })
-  network.down:set({ drawing = false })
+	cpu:set({ drawing = false })
+	memory:set({ drawing = false })
+	disk:set({ drawing = false })
+	network.up:set({ drawing = false })
+	network.down:set({ drawing = false })
 end
 
 stats.open = function()
-  separator:set({ icon = "" })
+	separator:set({ icon = "" })
 
-  sbar.animate("tanh", 30, function()
-    cpu:set({ drawing = true })
-    memory:set({ drawing = true })
-    disk:set({ drawing = true })
-    network.up:set({ drawing = true })
-    network.down:set({ drawing = true })
+	Sbar.animate("tanh", 30, function()
+		cpu:set({ drawing = true })
+		memory:set({ drawing = true })
+		disk:set({ drawing = true })
+		network.up:set({ drawing = true })
+		network.down:set({ drawing = true })
 
-    cpu:set({ background = { padding_right = 0 } })
-    memory:set({ background = { padding_right = 0 } })
-    disk:set({ background = { padding_right = 0 } })
-    network.up:set({ background = { padding_right = -70 } })
-    network.down:set({ background = { padding_right = 0 } })
-  end)
+		cpu:set({ background = { padding_right = 0 } })
+		memory:set({ background = { padding_right = 0 } })
+		disk:set({ background = { padding_right = 0 } })
+		network.up:set({ background = { padding_right = -70 } })
+		network.down:set({ background = { padding_right = 0 } })
+	end)
 end
 
 separator:subscribe("hide_stats", function()
-  stats.close()
+	stats.close()
 end)
 
 separator:subscribe("show_stats", function()
-  stats.open()
+	stats.open()
 end)
 
 separator:subscribe("toggle_stats", function()
-  local state = separator:query().icon.value
+	local state = separator:query().icon.value
 
-  if state == "" then
-    sbar.trigger("show_stats")
-  elseif state == "" then
-    sbar.trigger("hide_stats")
-  end
+	if state == "" then
+		Sbar.trigger("show_stats")
+	elseif state == "" then
+		Sbar.trigger("hide_stats")
+	end
 end)

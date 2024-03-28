@@ -11,20 +11,20 @@ local github = require("items.control_center.github")
 local volume = require("items.control_center.volume")
 
 local items = {
-  battery.name,
-  wifi.name,
-  bluetooth.name,
-  brew.name,
-  github.name,
-  volume.icon.name,
+	battery.name,
+	wifi.name,
+	bluetooth.name,
+	brew.name,
+	github.name,
+	volume.icon.name,
 }
 
-sbar.add("bracket", items, {
-  background = {
-    color = colors.surface0,
-    border_color = colors.surface1,
-    border_width = 2,
-    padding_left = 5,
-    padding_right = 10
-  }
+Sbar.add("bracket", items, {
+	background = {
+		color = colors.surface0,
+		border_color = colors.surface1,
+		border_width = 2,
+		padding_left = 5,
+		padding_right = 10,
+	},
 })
