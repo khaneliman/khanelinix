@@ -35,6 +35,7 @@ in
                 "SUPER_SHIFT, SPACE, exec, $launcher_shift"
                 "$mainMod, A, exec, $launchpad"
                 "$mainMod, L, exec, ${getExe config.programs.hyprlock.package}"
+                "$mainMod, BackSpace, exec, pkill -SIGUSR1 ${getExe config.programs.hyprlock.package} && WAYLAND_DISPLAY=wayland-1 ${getExe config.programs.hyprlock.package}"
                 "$mainMod, T, exec, $term btop"
                 "$mainMod, N, exec, ${getExe' pkgs.swaynotificationcenter "swaync-client"} -t -sw"
                 # "SUPER, V, clipman pick -t rofi
