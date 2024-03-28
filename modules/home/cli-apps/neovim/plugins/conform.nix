@@ -132,7 +132,7 @@
         };
 
         formatters = {
-          codespell = { command = "${lib.getExe pkgs.codespell}"; };
+          # codespell = { command = "${lib.getExe pkgs.codespell}"; };
           black = { command = "${lib.getExe pkgs.black}"; };
           csharpier = { command = "${lib.getExe pkgs.csharpier}"; };
           isort = { command = "${lib.getExe pkgs.isort}"; };
