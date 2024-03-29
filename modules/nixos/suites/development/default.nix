@@ -84,7 +84,6 @@ in
         git-crypt = enabled;
         go.enable = cfg.goEnable;
         k8s.enable = cfg.kubernetesEnable;
-        tree-sitter = enabled;
       };
 
       virtualisation = {
