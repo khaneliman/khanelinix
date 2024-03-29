@@ -5,8 +5,7 @@
       enable = true;
 
       settings = {
-        adapters = [ ]
-          ++ lib.optionals config.programs.nixvim.plugins.rustaceanvim.enable [
+        adapters = lib.optionals config.programs.nixvim.plugins.rustaceanvim.enable [
           ''require('rustaceanvim.neotest')''
         ];
       };

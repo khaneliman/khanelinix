@@ -152,8 +152,7 @@ in
           ]
           ++ lib.optionals pkgs.stdenv.isLinux [ codelldb-config ];
 
-          sh = [
-          ] ++ lib.optionals pkgs.stdenv.isLinux [ sh-config ];
+          sh = lib.optionals pkgs.stdenv.isLinux [ sh-config ];
         };
 
         extensions = {
