@@ -35,7 +35,6 @@ in
                 "SUPER_SHIFT, SPACE, exec, $launcher_shift"
                 "$mainMod, A, exec, $launchpad"
                 "$mainMod, L, exec, ${getExe config.programs.hyprlock.package}"
-                "$mainMod, BackSpace, exec, pkill -SIGUSR1 ${getExe config.programs.hyprlock.package} && WAYLAND_DISPLAY=wayland-1 ${getExe config.programs.hyprlock.package}"
                 "$mainMod, T, exec, $term btop"
                 "$mainMod, N, exec, ${getExe' pkgs.swaynotificationcenter "swaync-client"} -t -sw"
                 # "SUPER, V, clipman pick -t rofi
@@ -168,8 +167,11 @@ in
                   ]
                 )
                 10));
-            # Move/resize windows with mainMod + LMB/RMB and dragging
+            bindl = [
+              "$mainMod, BackSpace, exec, pkill -SIGUSR1 hyprlock && WAYLAND_DISPLAY=wayland-1 ${getExe config.programs.hyprlock.package}"
+            ];
             bindm = [
+              # Move/resize windows with mainMod + LMB/RMB and dragging
               "$mainMod, mouse:272, movewindow #left click"
               "$mainMod, mouse:273, resizewindow #right click"
             ];
