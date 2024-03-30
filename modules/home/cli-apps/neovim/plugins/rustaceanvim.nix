@@ -21,12 +21,18 @@ _: {
             };
 
             checkOnSave = true;
-            check.command = "clippy";
+            check = {
+              command = "clippy";
+              features = "all";
+            };
 
             files = {
               excludeDirs = [
-                "rust/.direnv"
+                ".cargo"
                 ".direnv"
+                ".git"
+                "node_modules"
+                "target"
               ];
             };
 
