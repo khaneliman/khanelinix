@@ -23,22 +23,23 @@ _: {
           sources = [
             {
               name = "buffer";
+              priority = 500;
               # Words from other open buffers can also be suggested.
               option.get_bufnrs.__raw = "vim.api.nvim_list_bufs";
             }
-            { name = "calc"; }
-            { name = "cmdline"; }
-            { name = "codeium"; }
-            { name = "emoji"; }
-            { name = "fish"; }
-            { name = "git"; }
-            { name = "luasnip"; }
-            { name = "neorg"; }
-            { name = "npm"; }
-            { name = "nvim_lsp"; }
-            { name = "path"; }
-            { name = "tmux"; }
-            { name = "zsh"; }
+            { name = "calc"; priority = 150; }
+            { name = "cmdline"; priority = 150; }
+            { name = "codeium"; priority = 300; }
+            { name = "emoji"; priority = 100; }
+            { name = "fish"; priority = 250; }
+            { name = "git"; priority = 250; }
+            { name = "luasnip"; priority = 750; }
+            { name = "neorg"; priority = 250; }
+            { name = "npm"; priority = 250; }
+            { name = "nvim_lsp"; priority = 1000; }
+            { name = "path"; priority = 300; }
+            { name = "tmux"; priority = 250; }
+            { name = "zsh"; priority = 250; }
           ];
         };
       };
