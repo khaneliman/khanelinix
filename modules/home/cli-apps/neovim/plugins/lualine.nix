@@ -9,6 +9,7 @@
           "startify"
         ];
         winbar = [
+          "aerial"
           "dap-repl"
           "neo-tree"
           "neotest-summary"
