@@ -18,15 +18,6 @@
     keymaps = lib.mkIf config.programs.nixvim.plugins.barbar.enable [
       {
         mode = "n";
-        key = "<leader>c";
-        action = ":BufferClose<CR>";
-        options = {
-          desc = "Close buffer";
-          silent = true;
-        };
-      }
-      {
-        mode = "n";
         key = "<leader>bc";
         action = ":BufferCloseAllButCurrent<CR>";
         options = {

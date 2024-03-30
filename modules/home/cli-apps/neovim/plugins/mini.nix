@@ -6,6 +6,7 @@ _: {
       modules = {
         basics = { };
         bracketed = { };
+        bufremove = { };
         indentscope = { };
         map = {
           # __raw = lua code
@@ -32,6 +33,26 @@ _: {
         action = "MiniMap.toggle";
         options = {
           desc = "Toggle MiniMap";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>c";
+        lua = true;
+        action = ''require("mini.bufremove").delete'';
+        options = {
+          desc = "Close buffer";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<C-w>";
+        lua = true;
+        action = ''require("mini.bufremove").delete'';
+        options = {
+          desc = "Close buffer";
           silent = true;
         };
       }

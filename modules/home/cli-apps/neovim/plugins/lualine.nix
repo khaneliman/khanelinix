@@ -119,24 +119,6 @@
     keymaps = lib.mkIf config.programs.nixvim.plugins.lualine.enable [
       {
         mode = "n";
-        key = "<leader>c";
-        action = ":bdelete<CR>";
-        options = {
-          desc = "Close buffer";
-          silent = true;
-        };
-      }
-      {
-        mode = "n";
-        key = "<C-w>";
-        action = ":bdelete<CR>";
-        options = {
-          desc = "Close buffer";
-          silent = true;
-        };
-      }
-      {
-        mode = "n";
         key = "<leader>bc";
         action = ":%bdelete|edit#|bdelete#<CR>";
         options = {
