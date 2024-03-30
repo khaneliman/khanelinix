@@ -1,6 +1,6 @@
 _: {
   programs.nixvim = {
-    options.completeopt = [ "menu" "menuone" "noselect" ];
+    opts.completeopt = [ "menu" "menuone" "noselect" ];
 
     plugins = {
       cmp = {
