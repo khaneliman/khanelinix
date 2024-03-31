@@ -45,5 +45,11 @@ in
       ];
     };
 
+    sops.secrets = {
+      wakatime = {
+        sopsFile = ../../../../secrets/khaneliman/default.yaml;
+        path = "${config.home.homeDirectory}/.wakatime.cfg";
+      };
+    };
   };
 }

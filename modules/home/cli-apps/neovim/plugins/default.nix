@@ -4,7 +4,6 @@
 
   programs.nixvim = {
     extraPlugins = with pkgs.vimPlugins; [
-      vim-wakatime
       webapi-vim
       nvim-web-devicons
     ];
@@ -15,8 +14,6 @@
       nvim-autopairs.enable = true;
 
       nix-develop.enable = true;
-
-      # oil.enable = true;
     };
   };
 }

@@ -33,11 +33,6 @@ in
           path = "${config.home.homeDirectory}/.config/nix/nix.conf";
         };
 
-        wakatime = {
-          sopsFile = ../../../../secrets/khaneliman/default.yaml;
-          path = "${config.home.homeDirectory}/.wakatime.cfg";
-        };
-
         twitch-tui = {
           sopsFile = ../../../../secrets/khaneliman/default.yaml;
           path = "${config.home.homeDirectory}/.config/twt/config.toml";

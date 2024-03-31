@@ -56,6 +56,13 @@ in
       '';
     };
 
+    sops.secrets = {
+      wakatime = {
+        sopsFile = ../../../../secrets/khaneliman/default.yaml;
+        path = "${config.home.homeDirectory}/.wakatime.cfg";
+      };
+    };
+
     # TODO: setup onchange to either be after sops-nix or not load wakatime in headless
     xdg.configFile = {
       "astronvim" = {
