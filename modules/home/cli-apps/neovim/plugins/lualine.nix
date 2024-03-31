@@ -1,4 +1,4 @@
-{ config, lib, ... }: {
+{ ... }: {
   programs.nixvim = {
     plugins.lualine = {
       enable = true;

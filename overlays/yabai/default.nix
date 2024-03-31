@@ -1,5 +1,5 @@
 _: _final: prev: {
-  yabai = prev.yabai.overrideAttrs (old: rec {
+  yabai = prev.yabai.overrideAttrs (_old: rec {
     version = "7.0.4";
 
     src = prev.fetchzip {
