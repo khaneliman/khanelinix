@@ -248,7 +248,7 @@
         # hyprcursor.overlays.default
         # hypridle.overlays.default
         hyprland.overlays.default
-        # hyprlock.overlays.default
+        hyprlock.overlays.default
         # nixpkgs-wayland.overlay
         nix-ld-rs.overlays.default
         nur.overlay

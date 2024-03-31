@@ -1,14 +1,17 @@
 { config
+  # , inputs
 , lib
 , options
 , pkgs
-, system
+  # , system
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
   # inherit (inputs) hyprlock;
+
+  catppuccin = import ../../theme/catppuccin.nix;
 
   cfg = config.khanelinix.desktop.addons.hyprlock;
 in
@@ -21,56 +24,143 @@ in
   config = mkIf cfg.enable {
     programs.hyprlock = {
       enable = true;
-      # package = hyprlock.packages.${system}.hyprlock;
       package = pkgs.hyprlock;
+      # package = hyprlock.packages.${system}.hyprlock;
 
       general = {
-        grace = 300;
+        disable_loading_bar = true;
         hide_cursor = true;
-        ignore_empty_input = true;
+        grace = 300;
+        no_fade_in = false;
       };
+
+      backgrounds = [
+        {
+          path = "screenshot";
+          blur_passes = 3;
+          blur_size = 8;
+        }
+      ];
 
       input-fields = [
         {
-          outer_color = "rgb(24, 25, 38)";
-          inner_color = "rgb(91, 96, 120)";
-          font_color = "rgb(202, 211, 245)";
+          size = {
+            width = 200;
+            height = 50;
+          };
+          position = {
+            x = 0;
+            y = -80;
+          };
+          outline_thickness = 5;
+          dots_center = true;
+          outer_color = catppuccin.colors.crust.rgb;
+          inner_color = catppuccin.colors.surface2.rgb;
+          font_color = catppuccin.colors.text.rgb;
+          fade_on_empty = false;
+          placeholder_text = "<span foreground=\"##cad3f5\">Password...</span>";
+          shadow_passes = 2;
+        }
+      ];
+
+      images = [
+        # FIX: out of memory error on 114KB image??
+        {
+          size = 120;
+          position = {
+            x = 0;
+            y = 45;
+          };
+          path = "/home/${config.snowfallorg.user.name}/.face";
+          border_color = catppuccin.colors.text.rgb;
+          border_size = 5;
           halign = "center";
-          valign = "bottom";
+          valign = "center";
+          # FIX: home-manager module
+          # shadow = {
+          #   shadow_passes = 1;
+          # };
         }
       ];
 
       labels = [
         {
-          text = "$TIME";
-          color = "rgb(237, 135, 150)";
+          text = "<span font_weight=\"ultrabold\">$TIME</span>";
+          color = catppuccin.colors.text.rgb;
+          font_size = 100;
           font_family = config.khanelinix.system.fonts.default;
-          font_size = 72;
-          halign = "center";
           valign = "center";
-          position = {
-            x = 700;
-            y = -50;
-          };
-        }
-        {
-          text = "Welcome back, $USER!";
-          color = "rgb(237, 135, 150)";
-          font_family = config.khanelinix.system.fonts.default;
-          font_size = 72;
           halign = "center";
-          valign = "top";
           position = {
-            y = -20;
+            x = 0;
+            y = 330;
           };
+          shadow_passes = 2;
         }
-      ];
-
-      backgrounds = [
         {
-          # path = "${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png";
-          path = "screenshot";
-          blur_passes = 4;
+          text = "<span font_weight=\"bold\"> $USER</span>";
+          color = catppuccin.colors.text.rgb;
+          font_size = 25;
+          font_family = config.khanelinix.system.fonts.default;
+          valign = "top";
+          halign = "left";
+          position = {
+            x = 10;
+            y = 0;
+          };
+          shadow_passes = 1;
+        }
+        {
+          text = "<span font_weight=\"ultrabold\">󰌾 </span>";
+          color = catppuccin.colors.text.rgb;
+          font_size = 50;
+          font_family = config.khanelinix.system.fonts.default;
+          valign = "center";
+          halign = "center";
+          position = {
+            x = 15;
+            y = -350;
+          };
+          shadow_passes = 1;
+        }
+        {
+          text = "<span font_weight=\"bold\">Locked</span>";
+          color = catppuccin.colors.text.rgb;
+          font_size = 25;
+          font_family = config.khanelinix.system.fonts.default;
+          valign = "center";
+          halign = "center";
+          position = {
+            x = 0;
+            y = -430;
+          };
+          shadow_passes = 1;
+        }
+        {
+          text = "cmd[update:120000] echo \"<span font_weight='bold'>$(date +'%a %d %B')</span>\"";
+          color = catppuccin.colors.text.rgb;
+          font_size = 30;
+          font_family = config.khanelinix.system.fonts.default;
+          valign = "center";
+          halign = "center";
+          position = {
+            x = 0;
+            y = 210;
+          };
+          shadow_passes = 1;
+        }
+        {
+          text = "<span font_weight=\"ultrabold\"> </span>";
+          color = catppuccin.colors.text.rgb;
+          font_size = 25;
+          font_family = config.khanelinix.system.fonts.default;
+          valign = "bottom";
+          halign = "right";
+          position = {
+            x = 5;
+            y = 8;
+          };
+          shadow_passes = 1;
         }
       ];
     };
