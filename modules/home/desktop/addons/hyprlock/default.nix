@@ -64,7 +64,6 @@ in
       ];
 
       images = [
-        # FIX: out of memory error on 114KB image??
         {
           size = 120;
           position = {
