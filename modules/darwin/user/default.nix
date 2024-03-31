@@ -22,11 +22,5 @@ in
       uid = mkIf (cfg.uid != null) cfg.uid;
       shell = pkgs.zsh;
     };
-
-    khanelinix.home = {
-      extraOptions.home.shellAliases = {
-        gsed = "${getExe pkgs.gnused}";
-      };
-    };
   };
 }

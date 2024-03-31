@@ -76,6 +76,8 @@ in
         shellAliases = {
           nixre = "${lib.optionalString pkgs.stdenv.isLinux "sudo"} ${getExe pkgs.snowfallorg.flake} switch";
 
+          gsed = "${getExe pkgs.gnused}";
+
           # File management
           rcp = "${getExe pkgs.rsync} -rahP --mkpath --modify-window=1"; # Rsync copy keeping all attributes,timestamps,permissions"
           rmv = "${getExe pkgs.rsync} -rahP --mkpath --modify-window=1 --remove-sent-files"; # Rsync move keeping all attributes,timestamps,permissions
