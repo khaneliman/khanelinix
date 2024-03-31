@@ -64,7 +64,22 @@
               "|" = { action = "<Cmd>vsplit<CR>"; options = { desc = "Vertical Split"; }; };
               "\\" = { action = "<Cmd>split<CR>"; options = { desc = "Horizontal Split"; }; };
 
+              "<leader>bC" = { action = ":%bd!<CR>"; options = { desc = "Close all buffers"; silent = true; }; };
+              "<leader>b]" = { action = ":bnext<CR>"; options = { desc = "Next buffer"; silent = true; }; };
+              "<TAB>" = { action = ":bnext<CR>"; options = { desc = "Next buffer (default)"; silent = true; }; };
+              "<leader>b[" = { action = ":bprevious<CR>"; options = { desc = "Previous buffer"; silent = true; }; };
+              "<S-TAB>" = { action = ":bprevious<CR>"; options = { desc = "Previous buffer"; silent = true; }; };
 
+              # TODO: Add pin/unpin
+              #   {
+              #     mode = "n";
+              #     key = "<leader>bp";
+              #     action = ":BufferLineTogglePin<CR>";
+              #     options = {
+              #       desc = "Pin buffer";
+              #       silent = true;
+              #     };
+              #   }
 
               "<leader>uf" = {
                 action = /*lua*/ ''
