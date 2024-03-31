@@ -4,7 +4,7 @@
 , ...
 }:
 let
-  inherit (lib) types mkIf getExe;
+  inherit (lib) types mkIf;
   inherit (lib.internal) mkOpt;
 
   cfg = config.khanelinix.user;
