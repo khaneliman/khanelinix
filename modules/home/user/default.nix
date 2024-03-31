@@ -8,12 +8,11 @@ let
   inherit (lib.internal) mkOpt;
 
   cfg = config.khanelinix.user;
-  is-darwin = pkgs.stdenv.isDarwin;
 
   home-directory =
     if cfg.name == null
     then null
-    else if is-darwin
+    else if pkgs.stdenv.isDarwin
     then "/Users/${cfg.name}"
     else "/home/${cfg.name}";
 
@@ -75,7 +74,7 @@ in
         homeDirectory = mkDefault cfg.home;
 
         shellAliases = {
-          nixre = "sudo flake switch";
+          nixre = "${lib.optionalString pkgs.stdenv.isLinux "sudo"} ${getExe pkgs.snowfallorg.flake} switch";
 
           # File management
           rcp = "${getExe pkgs.rsync} -rahP --mkpath --modify-window=1"; # Rsync copy keeping all attributes,timestamps,permissions"

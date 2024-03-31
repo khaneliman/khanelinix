@@ -25,7 +25,6 @@ in
 
     khanelinix.home = {
       extraOptions.home.shellAliases = {
-        nixre = "darwin-rebuild switch --flake .";
         gsed = "${getExe pkgs.gnused}";
       };
     };
