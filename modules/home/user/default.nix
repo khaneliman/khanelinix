@@ -16,6 +16,20 @@ let
     else if is-darwin
     then "/Users/${cfg.name}"
     else "/home/${cfg.name}";
+
+  defaultIcon = pkgs.stdenvNoCC.mkDerivation {
+    name = "default-icon";
+    src = ./. + "/${defaultIconFileName}";
+
+    dontUnpack = true;
+
+    installPhase = /* bash */ ''
+      cp $src $out
+    '';
+
+    passthru = { fileName = defaultIconFileName; };
+  };
+  defaultIconFileName = "profile.png";
 in
 {
   options.khanelinix.user = {
@@ -23,6 +37,9 @@ in
     email = mkOpt types.str "khaneliman12@gmail.com" "The email of the user.";
     fullName = mkOpt types.str "Austin Horstman" "The full name of the user.";
     home = mkOpt (types.nullOr types.str) home-directory "The user's home directory.";
+    icon =
+      mkOpt (types.nullOr types.package) defaultIcon
+        "The profile picture to use for the user.";
     name = mkOpt (types.nullOr types.str) config.snowfallorg.user.name "The user account.";
   };
 
@@ -40,9 +57,26 @@ in
       ];
 
       home = {
+        file = {
+          ".face".source = cfg.icon;
+          ".face.icon".source = cfg.icon;
+          "Desktop/.keep".text = "";
+          "Documents/.keep".text = "";
+          "Downloads/.keep".text = "";
+          "Music/.keep".text = "";
+          "Pictures/.keep".text = "";
+          "Videos/.keep".text = "";
+          "Pictures/${
+          cfg.icon.fileName or (builtins.baseNameOf cfg.icon)
+        }".source =
+            cfg.icon;
+        };
+
         homeDirectory = mkDefault cfg.home;
 
         shellAliases = {
+          nixre = "sudo flake switch";
+
           # File management
           rcp = "${getExe pkgs.rsync} -rahP --mkpath --modify-window=1"; # Rsync copy keeping all attributes,timestamps,permissions"
           rmv = "${getExe pkgs.rsync} -rahP --mkpath --modify-window=1 --remove-sent-files"; # Rsync move keeping all attributes,timestamps,permissions
@@ -79,6 +113,10 @@ in
         };
 
         username = mkDefault cfg.name;
+      };
+
+      xdg.configFile = {
+        "sddm/faces/.${cfg.name}".source = cfg.icon;
       };
     }
   ]);
