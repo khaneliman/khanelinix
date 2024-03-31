@@ -5,4 +5,3 @@ function mvcd -d "Moves files and directories and changes the current directory"
         cd $argv[2]
     end
 end
-

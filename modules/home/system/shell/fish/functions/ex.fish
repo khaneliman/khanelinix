@@ -23,14 +23,14 @@ function ex
             case '*.tgz'
                 tar xzf $argv[1] -C ./$foldername/
             case '*.zip'
-                unzip  -d ./$foldername/  "$filename"
+                unzip -d ./$foldername/ "$filename"
             case '*.Z'
-                uncompress  "$filename"
-                 mv (basename "$filename" ".Z") "./$foldername/"
+                uncompress "$filename"
+                mv (basename "$filename" ".Z") "./$foldername/"
             case '*.7z'
-                 7z x "$filename" "-o./$foldername/"
-             otherwise
-                 echo "'$filename' cannot be extracted via ex()"
+                7z x "$filename" "-o./$foldername/"
+                otherwise
+                echo "'$filename' cannot be extracted via ex()"
         end
     else
         echo "'$filename' is not a valid file"
