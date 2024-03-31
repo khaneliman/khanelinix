@@ -75,10 +75,9 @@ in
           border_size = 5;
           halign = "center";
           valign = "center";
-          # FIX: home-manager module
-          # shadow = {
-          #   shadow_passes = 1;
-          # };
+          shadow = {
+            shadow_passes = 1;
+          };
         }
       ];
 
