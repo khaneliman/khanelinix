@@ -32,11 +32,6 @@ in
           sopsFile = ../../../../secrets/khaneliman/default.yaml;
           path = "${config.home.homeDirectory}/.config/nix/nix.conf";
         };
-
-        twitch-tui = {
-          sopsFile = ../../../../secrets/khaneliman/default.yaml;
-          path = "${config.home.homeDirectory}/.config/twt/config.toml";
-        };
       };
     };
   };

@@ -17,7 +17,6 @@ in
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      twitch-tui
       slack-term
     ];
 
@@ -26,6 +25,10 @@ in
         # armcord = enabled;
         discord = enabled;
         caprine = enabled;
+      };
+
+      cli-apps = {
+        twitch-tui = enabled;
       };
     };
   };
