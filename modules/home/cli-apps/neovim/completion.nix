@@ -9,25 +9,25 @@ _: {
 
         settings = {
           mapping = {
-            "<C-d>" = "cmp.mapping.scroll_docs(-4)";
-            "<C-f>" = "cmp.mapping.scroll_docs(4)";
-            "<C-Space>" = "cmp.mapping.complete()";
-            "<C-e>" = "cmp.mapping.close()";
-            "<Tab>" = "cmp.mapping(cmp.mapping.select_next_item({behavior = cmp.SelectBehavior.Select}), {'i', 's'})";
-            "<S-Tab>" = "cmp.mapping(cmp.mapping.select_prev_item({behavior = cmp.SelectBehavior.Select}), {'i', 's'})";
-            "<CR>" = "cmp.mapping.confirm({ select = false, behavior = cmp.ConfirmBehavior.Replace })";
+            "<C-d>" = /*lua*/ "cmp.mapping.scroll_docs(-4)";
+            "<C-f>" = /*lua*/ "cmp.mapping.scroll_docs(4)";
+            "<C-Space>" = /*lua*/  "cmp.mapping.complete()";
+            "<C-e>" = /*lua*/ "cmp.mapping.close()";
+            "<Tab>" = /*lua*/ "cmp.mapping(cmp.mapping.select_next_item({behavior = cmp.SelectBehavior.Select}), {'i', 's'})";
+            "<S-Tab>" = /*lua*/  "cmp.mapping(cmp.mapping.select_prev_item({behavior = cmp.SelectBehavior.Select}), {'i', 's'})";
+            "<CR>" = /*lua*/ "cmp.mapping.confirm({ select = false, behavior = cmp.ConfirmBehavior.Replace })";
           };
 
-          preselect = "cmp.PreselectMode.None";
+          preselect = /*lua*/  "cmp.PreselectMode.None";
 
-          snippet.expand = "function(args) require('luasnip').lsp_expand(args.body) end";
+          snippet.expand = /*lua*/  "function(args) require('luasnip').lsp_expand(args.body) end";
 
           sources = [
             {
               name = "buffer";
               priority = 500;
               # Words from other open buffers can also be suggested.
-              option.get_bufnrs.__raw = "vim.api.nvim_list_bufs";
+              option.get_bufnrs.__raw = /*lua*/  "vim.api.nvim_list_bufs";
             }
             { name = "calc"; priority = 150; }
             { name = "cmdline"; priority = 150; }

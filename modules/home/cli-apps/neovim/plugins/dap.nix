@@ -4,7 +4,7 @@ let
     name = "Launch";
     type = "codelldb";
     request = "launch";
-    program.__raw = ''
+    program.__raw = /*lua*/ ''
       function()
           return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. '/', "file")
       end
@@ -17,7 +17,7 @@ let
     type = "coreclr";
     name = "launch - netcoredbg";
     request = "launch";
-    program__raw = ''
+    program__raw = /*lua*/ ''
       function()
         if vim.fn.confirm('Should I recompile first?', '&yes\n&no', 2) == 1 then
           vim.g.dotnet_build_project()
@@ -32,7 +32,7 @@ let
     name = "Launch";
     type = "gdb";
     request = "launch";
-    program.__raw = ''
+    program.__raw = /*lua*/ ''
       function()
           return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. '/', "file")
       end'';
@@ -44,7 +44,7 @@ let
     name = "Launch";
     type = "lldb";
     request = "launch";
-    program.__raw = ''
+    program.__raw = /*lua*/ ''
       function()
           return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. '/', "file")
       end'';

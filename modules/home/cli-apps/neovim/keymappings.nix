@@ -64,6 +64,8 @@
               "|" = { action = "<Cmd>vsplit<CR>"; options = { desc = "Vertical Split"; }; };
               "\\" = { action = "<Cmd>split<CR>"; options = { desc = "Horizontal Split"; }; };
 
+
+
               "<leader>uf" = {
                 action = /*lua*/ ''
                   function ()

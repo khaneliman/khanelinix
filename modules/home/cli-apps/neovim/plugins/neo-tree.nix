@@ -35,7 +35,7 @@ _: {
           leaveDirsOpen = true;
         };
 
-        useLibuvFileWatcher.__raw = ''vim.fn.has "win32" ~= 1'';
+        useLibuvFileWatcher.__raw = /*lua*/ ''vim.fn.has "win32" ~= 1'';
       };
 
       window = {

@@ -10,14 +10,16 @@ _: {
     {
       event = "BufRead";
       once = true;
-      callback = { __raw = "MiniMap.open"; };
+      callback = {
+        __raw = /*lua*/ "MiniMap.open";
+      };
     }
 
     # Open Neo-Tree on first buffer
     {
       event = "BufWinEnter";
       callback = {
-        __raw = ''
+        __raw = /*lua*/ ''
           function(table)
             if vim.api.nvim_buf_get_name(0) ~= "" and not vim.g.first_buffer_opened then
               vim.g.first_buffer_opened = true

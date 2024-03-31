@@ -8,7 +8,7 @@ _: {
       disable_autoformat = false;
       colorizing_enabled = 1;
       first_buffer_opened = false;
-      dotnet_build_project.__raw = ''
+      dotnet_build_project.__raw = /*lua*/  ''
         function()
           local default_path = vim.fn.getcwd() .. '/'
 
@@ -34,7 +34,7 @@ _: {
           end
         end
       '';
-      dotnet_get_dll_path.__raw = ''
+      dotnet_get_dll_path.__raw = /*lua*/ ''
         function()
           local request = function()
               return vim.fn.input('Path to dll', vim.fn.getcwd() .. '/bin/Debug/', 'file')

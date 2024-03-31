@@ -6,6 +6,7 @@
 
       settings = {
         adapters = lib.optionals config.programs.nixvim.plugins.rustaceanvim.enable [
+          /*lua*/
           ''require('rustaceanvim.neotest')''
         ];
       };
