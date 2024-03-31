@@ -13,7 +13,6 @@ let
   catppuccinAccents = [ "rosewater" "flamingo" "pink" "mauve" "red" "maroon" "peach" "yellow" "green" "teal" "sky" "sapphire" "blue" "lavender" ];
   catppuccinVariants = [ "latte" "frappe" "macchiato" "mocha" ];
 
-
   fromYAML = f:
     let
       jsonFile =
