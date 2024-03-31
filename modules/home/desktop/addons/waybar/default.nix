@@ -100,5 +100,12 @@ in
 
       style = "${theme}${style}${notificationsStyle}${powerStyle}${statsStyle}${workspacesStyle}";
     };
+
+    sops.secrets = {
+      weather_config = {
+        sopsFile = ../../../../../secrets/khaneliman/default.yaml;
+        path = "${config.home.homeDirectory}/weather_config.json";
+      };
+    };
   };
 }
