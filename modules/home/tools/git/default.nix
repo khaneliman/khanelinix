@@ -142,10 +142,27 @@ in
           ];
         };
       };
+
+      bash.initExtra = /* bash */ ''
+        export GITHUB_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
+      '';
+      fish.shellInit = /* fish */ ''
+        export GITHUB_TOKEN="(cat ${config.sops.secrets."github/access-token".path})"
+      '';
+      zsh.initExtra = /* bash */ ''
+        export GITHUB_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
+      '';
     };
 
     home = {
       inherit (aliases) shellAliases;
+    };
+
+    sops.secrets = {
+      "github/access-token" = {
+        sopsFile = ../../../../secrets/khaneliman/default.yaml;
+        path = "${config.home.homeDirectory}/.config/gh/access-token";
+      };
     };
   };
 }
