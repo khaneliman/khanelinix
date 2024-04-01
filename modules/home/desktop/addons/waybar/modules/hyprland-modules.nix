@@ -79,6 +79,7 @@ in
       "class<teams-for-linux>" = "󰊻";
       "class<org.prismlauncher.PrismLauncher>" = "󰍳";
       "class<minecraft-launcher>" = "󰍳";
+      "class<Postman>" = "󰛮";
     };
   };
 

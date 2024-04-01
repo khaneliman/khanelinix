@@ -26,6 +26,7 @@ in
         jqp
         lazydocker
         onefetch
+        postman
       ];
 
       shellAliases = {
