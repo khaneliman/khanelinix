@@ -36,6 +36,7 @@ in
     cli-apps = {
       home-manager = enabled;
       spicetify = enabled;
+      k9s = enabled;
     };
 
     desktop = {

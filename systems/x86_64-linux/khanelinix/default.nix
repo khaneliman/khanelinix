@@ -143,6 +143,7 @@ in
         enable = true;
         dockerEnable = true;
         gameEnable = true;
+        kubernetesEnable = true;
         nixEnable = true;
         rustEnable = true;
         sqlEnable = true;
