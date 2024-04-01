@@ -40,7 +40,7 @@
       }
       {
         mode = "n";
-        key = "<leader>ft";
+        key = "<leader>fT";
         lua = true;
         action = /*lua*/ ''
           function()
