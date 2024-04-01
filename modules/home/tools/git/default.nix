@@ -50,6 +50,10 @@ in
 
         extraConfig = {
 
+          blame = {
+            ignoreRevsFile = ".git-blame-ignore-revs";
+          };
+
           credential = {
             helper =
               if cfg.wslAgentBridge then ''/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe''
