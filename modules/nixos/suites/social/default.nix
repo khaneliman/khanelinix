@@ -1,6 +1,5 @@
 { config
 , lib
-, options
 , pkgs
 , ...
 }:
@@ -25,7 +24,7 @@ in
 
     khanelinix = {
       apps = {
-        # TODO: switch to armcord ? 
+        # TODO: switch to armcord ?
         discord = enabled;
       };
     };

@@ -3,7 +3,6 @@
 , host
 , inputs
 , lib
-, options
 , ...
 }:
 let

@@ -1,11 +1,11 @@
 { writeShellApplication
-, pkgs
-, inputs
 , gnome
-, libnotify
-, wl-screenrec ? pkgs.stdenv.isLinux
-, system
+, inputs
 , lib
+, libnotify
+, pkgs
+, system
+, wl-screenrec ? pkgs.stdenv.isLinux
 , ...
 }:
 let

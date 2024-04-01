@@ -1,8 +1,8 @@
 { config
-, lib
-, pkgs
-, modulesPath
 , inputs
+, lib
+, modulesPath
+, pkgs
 , ...
 }:
 let
