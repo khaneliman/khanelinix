@@ -74,9 +74,7 @@ in
           border_size = 5;
           halign = "center";
           valign = "center";
-          shadow = {
-            shadow_passes = 1;
-          };
+          shadow_passes = 1;
         }
       ];
 
