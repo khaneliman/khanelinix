@@ -24,21 +24,33 @@ customizations to enhance the Nix experience.
 
 1. [Getting Started](#getting-started)
 2. [Features](#features)
-3. [Usage](#usage)
-4. [Customization](#customization)
+3. [Customization](#customization)
+4. [Exported Packages](#exported-packages)
+5. [Screenshots](#screenshots)
+6. [Resources](#resources)
 
 ## Getting Started
 
 Before diving in, ensure that you have Nix installed on your system. If not, you
 can download and install it from the official
-[Nix website](https://nixos.org/download.html).
+[Nix website](https://nixos.org/download.html). If running on macOS, you need to have
+Nix-Darwin installed, as well. You can follow the installation instruction on
+[GitHub](https://github.com/LnL7/nix-darwin?tab=readme-ov-file#flakes).
 
 ### Clone this repository to your local machine
 
 ```bash
 git clone https://github.com/khaneliman/khanelinix.git
 cd khanelinix
-sudo nixos-rebuild switch --flake . # linux
+
+# linux
+sudo nixos-rebuild switch --flake .
+
+ # macos
+darwin-rebuild switch --flake .
+
+ # with direnv
+flake switch
 ```
 
 ## Features
@@ -53,25 +65,25 @@ Here's an overview of what my Nix configuration offers:
     repository.
 
 - **macOS Support**: Seamlessly configure and manage Nix on macOS using the
-  power of Nix-darwin, also leveraging homebrew for GUI applications.
+  power of [Nix-darwin](https://github.com/LnL7/nix-darwin), also leveraging homebrew for GUI applications.
 
 - **Home Manager**: Manage your dotfiles, home environment, and user-specific
-  configurations with Home Manager.
+  configurations with [Home Manager](https://github.com/nix-community/home-manager).
 
 - **DevShell Support**: The flake provides a development shell (`devShell`) to
   support maintaining this flake. You can use the devShell for convenient
   development and maintenance of your Nix environment.
 
 - **CI with Cachix**: The configuration includes continuous integration (CI)
-  that pushes built artifacts to Cachix. This ensures efficient builds and
+  that pushes built artifacts to [Cachix](https://github.com/cachix/cachix). This ensures efficient builds and
   reduces the need to build dependencies on your local machine.
 
-- **Utilize sops-nix**: Secret management with sops-nix for secure and encrypted
+- **Utilize sops-nix**: Secret management with [sops-nix](https://github.com/Mic92/sops-nix) for secure and encrypted
   handling of sensitive information.
 
 ## Customization
 
-My Nix configuration, based on the SnowfallOrg lib structure, provides a
+My Nix configuration, based on the [SnowfallOrg lib](https://github.com/snowfallorg/lib) structure, provides a
 flexible and organized approach to managing your Nix environment. Here's how it
 works:
 
@@ -111,6 +123,33 @@ works:
 This structured approach to Nix configuration makes it easier to manage and
 customize your Nix environment while maintaining flexibility and modularity.
 
+# Exported packages
+
+Run packages directly with:
+
+```console
+nix run github:khaneliman/khanelinix#packageName
+```
+
+Or install from the `packages` output. For example:
+
+```nix
+# flake.nix
+{
+  inputs.khanelinix = {
+    url = "github:khaneliman/khanelinix";
+    inputs.nixpkgs.follows = "nixpkgs";
+  };
+}
+
+# configuration.nix
+{pkgs, inputs, ...}: {
+  environment.systemPackages = [
+    inputs.khanelinix.packages."x86_64-linux".packageName
+  ];
+}
+```
+
 # Screenshots
 
 ## MacOS
@@ -119,5 +158,11 @@ customize your Nix environment while maintaining flexibility and modularity.
 ## NixOS
 ![image](https://github.com/khaneliman/khanelinix/assets/1778670/34aebc9c-b053-4ccf-9540-6da5e93a77d5)
 
+# Resources
 
+Other configurations from where I learned and copied:
+
+- [JakeHamilton/config](https://github.com/jakehamilton/config) *Main inspiration and started with
+- [FelixKrats/dotfiles](https://github.com/FelixKratz/dotfiles) *Sketchybar design and implementation
+- [Fufexan/dotfiles](https://github.com/fufexan/dotfiles)
 
