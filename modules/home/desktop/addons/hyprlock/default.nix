@@ -1,14 +1,11 @@
 { config
-  # , inputs
 , lib
 , pkgs
-  # , system
 , ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
-  # inherit (inputs) hyprlock;
 
   catppuccin = import ../../theme/catppuccin.nix;
 
@@ -24,7 +21,6 @@ in
     programs.hyprlock = {
       enable = true;
       package = pkgs.hyprlock;
-      # package = hyprlock.packages.${system}.hyprlock;
 
       general = {
         disable_loading_bar = true;

@@ -100,7 +100,6 @@ in
           sidebery
           sponsorblock
           stylus
-          # tabcenter-reborn
           ublock-origin
           user-agent-string-switcher
         ];

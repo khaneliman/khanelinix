@@ -4,7 +4,7 @@
 }:
 let
   azure-artifacts-credential-provider =
-    (pkgs.stdenv.mkDerivation rec {
+    pkgs.stdenv.mkDerivation rec {
       name = "azure-artifacts-credential-provider";
       version = "1.0.9";
 
@@ -18,7 +18,7 @@ let
         mkdir -p $out/bin
         cp -r netcore $out/bin
       '';
-    });
+    };
 in
 mkShell {
   buildInputs = with pkgs; [
