@@ -76,11 +76,6 @@ in
             installation_mode = "force_installed";
             install_url = "https://cdn.frankerfacez.com/script/frankerfacez-4.0-an+fx.xpi";
           };
-
-          "magnolia_limited_permissions@12.34" = {
-            installation_mode = "force_installed";
-            install_url = "https://gitlab.com/magnolia1234/bpc-uploads/-/raw/master/bypass_paywalls_clean-latest.xpi";
-          };
         };
         Preferences = { };
       };
@@ -96,6 +91,7 @@ in
           angular-devtools
           auto-tab-discard
           bitwarden
+          bypass-paywalls-clean
           darkreader
           firefox-color
           onepassword-password-manager
