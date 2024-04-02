@@ -103,6 +103,10 @@ in
 
           systemd = {
             enable = true;
+
+            variables = [
+              "--all"
+            ];
           };
 
           xwayland.enable = true;
