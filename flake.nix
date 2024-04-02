@@ -161,18 +161,6 @@
       url = "github:nix-community/NUR";
     };
 
-    # Ranger Dev Icons
-    ranger-devicons = {
-      url = "github:alexanderjeurissen/ranger_devicons";
-      flake = false;
-    };
-
-    # Ranger Disk Menu
-    ranger-udisk-menu = {
-      url = "github:SL-RU/ranger_udisk_menu";
-      flake = false;
-    };
-
     # Rust overlay
     rust-overlay = {
       url = "github:oxalica/rust-overlay";

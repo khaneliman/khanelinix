@@ -50,10 +50,6 @@ in
     khanelinix = {
       nix = enabled;
 
-      cli-apps = {
-        ranger = enabled;
-      };
-
       tools = {
         homebrew = enabled;
       };
@@ -63,10 +59,6 @@ in
         input = enabled;
         interface = enabled;
         networking = enabled;
-      };
-
-      security = {
-        # gpg = enabled;
       };
     };
   };

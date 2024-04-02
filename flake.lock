@@ -1587,38 +1587,6 @@
         "type": "github"
       }
     },
-    "ranger-devicons": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1709209315,
-        "narHash": "sha256-ETE13REDIVuoFIbvWqWvQLj/2fGST+1koowmmuBzGmo=",
-        "owner": "alexanderjeurissen",
-        "repo": "ranger_devicons",
-        "rev": "ed718dd6a6d5d2c0f53cba8474c5ad96185057e9",
-        "type": "github"
-      },
-      "original": {
-        "owner": "alexanderjeurissen",
-        "repo": "ranger_devicons",
-        "type": "github"
-      }
-    },
-    "ranger-udisk-menu": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1658759789,
-        "narHash": "sha256-NCw8U3t576+y4nfmWTQEhU0j9+yBtHTivJ+JAxyCbBs=",
-        "owner": "SL-RU",
-        "repo": "ranger_udisk_menu",
-        "rev": "c892d447177051dd2fa97e2387b2d04bf8977de7",
-        "type": "github"
-      },
-      "original": {
-        "owner": "SL-RU",
-        "repo": "ranger_udisk_menu",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "astronvim-config": "astronvim-config",
@@ -1647,8 +1615,6 @@
         "nixpkgs-wayland": "nixpkgs-wayland",
         "nixvim": "nixvim",
         "nur": "nur",
-        "ranger-devicons": "ranger-devicons",
-        "ranger-udisk-menu": "ranger-udisk-menu",
         "rust-overlay": "rust-overlay_3",
         "snowfall-flake": "snowfall-flake",
         "snowfall-frost": "snowfall-frost",

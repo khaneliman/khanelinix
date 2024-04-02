@@ -28,7 +28,6 @@ in
         bottom = enabled;
         btop = enabled;
         fastfetch = enabled;
-        ranger = enabled;
         tmux = enabled;
         yazi = enabled;
       };
