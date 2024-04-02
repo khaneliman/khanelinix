@@ -29,7 +29,6 @@ in
     ];
 
     khanelinix = {
-      cli-apps = { };
 
       hardware = {
         power = enabled;

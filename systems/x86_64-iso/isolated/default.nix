@@ -75,8 +75,6 @@ in
       neovim = enabled;
     };
 
-    tools = { };
-
     home = {
       file = {
         "guide.md".source = guide;

@@ -27,8 +27,6 @@ in
       tmux = enabled;
     };
 
-    tools = { };
-
     services = {
       openssh = enabled;
     };

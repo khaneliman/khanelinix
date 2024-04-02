@@ -11,8 +11,6 @@ in
   khanelinix = {
     nix = enabled;
 
-    archetypes = { };
-
     hardware = {
       audio = enabled;
       bluetooth = enabled;

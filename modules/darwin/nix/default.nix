@@ -28,7 +28,9 @@ in
           "/private/var/tmp"
           "/usr/bin/env"
         ];
+
         # FIX: shouldn't disable, but getting sandbox max size errors on darwin
+        # darwin-rebuild --rollback on testing changing
         sandbox = mkForce false;
       };
     };

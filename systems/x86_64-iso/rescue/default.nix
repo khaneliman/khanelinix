@@ -21,8 +21,6 @@ in
       neovim = enabled;
     };
 
-    tools = { };
-
     security = {
       doas = enabled;
     };

@@ -17,10 +17,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix = {
-      tools = { };
-    };
-
     environment.systemPackages = with pkgs; [
       mysql-client
       # FIX: nixpkg broken
