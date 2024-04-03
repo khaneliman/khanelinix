@@ -127,7 +127,8 @@
         "<leader>gC" = { action = "git_bcommits"; desc = "View git bcommits"; };
         "<leader>gb" = { action = "git_branches"; desc = "View git branches"; };
         "<leader>gc" = { action = "git_commits"; desc = "View git commits"; };
-        "<leader>gt" = { action = "git_status"; desc = "View git status"; };
+        "<leader>gs" = { action = "git_status"; desc = "View git status"; };
+        "<leader>gS" = { action = "git_stash"; desc = "View git stashes"; };
       };
 
       keymapsSilent = true;
