@@ -17,5 +17,17 @@ _: {
         };
       };
     };
+
+    keymaps = [
+      {
+        mode = "n";
+        key = "<leader>gB";
+        action = ":Gitsigns blame_line<CR>";
+        options = {
+          desc = "Toggle Git Blame";
+          silent = true;
+        };
+      }
+    ];
   };
 }
