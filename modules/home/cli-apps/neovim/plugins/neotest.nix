@@ -1,5 +1,16 @@
-{ config, lib, ... }: {
+{ config, lib, pkgs, ... }: {
   programs.nixvim = {
+    extraPlugins = with pkgs.vimPlugins; [
+      (pkgs.vimUtils.buildVimPlugin {
+        name = "nvim-nio";
+        src = pkgs.fetchFromGitHub {
+          owner = "nvim-neotest";
+          repo = "nvim-nio";
+          rev = "v1.8.1";
+          hash = "sha256-MHCrUisx3blgHWFyA5IHcSwKvC1tK1Pgy/jADBkoXX0=";
+        };
+      })
+    ];
 
     plugins.neotest = {
       enable = true;
