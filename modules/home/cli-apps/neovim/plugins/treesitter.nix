@@ -34,6 +34,7 @@
           latex
           make
           markdown
+          markdown_inline
           lua
           nix
           norg
