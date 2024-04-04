@@ -49,6 +49,7 @@
           typescript
           yaml
           vim
+          vimdoc
         ];
 
       };
