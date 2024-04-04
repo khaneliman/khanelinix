@@ -127,12 +127,10 @@
           xml = [ "xmllint" ];
           yaml = [ "yamlfmt" ];
           zig = [ "zigfmt" ];
-          "*" = [ "codespell" ];
           "_" = [ "trim_whitespace" ];
         };
 
         formatters = {
-          # codespell = { command = "${lib.getExe pkgs.codespell}"; };
           black = { command = "${lib.getExe pkgs.black}"; };
           csharpier = { command = "${lib.getExe pkgs.csharpier}"; };
           isort = { command = "${lib.getExe pkgs.isort}"; };
