@@ -106,8 +106,8 @@ in
               ##
               "idleinhibit focus, class:^(steam_app).*"
               "idleinhibit focus, class:^(gamescope).*"
-              "idleinhibit focus, class:.*(cemu|yuzu|ryujinx|emulationstation|retroarch).*"
-              "idleinhibit fullscreen, title:.*(cemu|yuzu|ryujinx|emulationstation|retroarch).*"
+              "idleinhibit focus, class:.*(cemu|yuzu|Ryujinx|emulationstation|retroarch).*"
+              "idleinhibit fullscreen, title:.*(cemu|yuzu|Ryujinx|emulationstation|retroarch).*"
               "idleinhibit fullscreen, title:^(.*(Twitch|TNTdrama|YouTube|Bally Sports|Video Entertainment|Plex)).*(Firefox).*$"
               "idleinhibit focus, title:^(.*(Twitch|TNTdrama|YouTube|Bally Sports|Video Entertainment|Plex)).*(Firefox).*$"
               "idleinhibit focus, class:^(mpv|.+exe)$"
@@ -149,8 +149,8 @@ in
               "workspace 4 silent, class:^(gamescope|steam_app).*"
               "workspace 4, class:^(heroic)$"
               "workspace 4, class:^(lutris)$"
-              "workspace 4, class:.*(cemu|yuzu|ryujinx|emulationstation|retroarch).*"
-              "workspace 4, title:.*(cemu|yuzu|ryujinx|emulationstation|retroarch).*"
+              "workspace 4, class:.*(cemu|yuzu|Ryujinx|emulationstation|retroarch).*"
+              "workspace 4, title:.*(cemu|yuzu|Ryujinx|emulationstation|retroarch).*"
               # Messaging
               "workspace 5 silent, class:^(Slack)$"
               "workspace 5 silent, class:^(Caprine)$"
