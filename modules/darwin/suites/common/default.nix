@@ -15,6 +15,10 @@ in
   config = mkIf cfg.enable {
     programs.zsh.enable = true;
 
+    homebrew = {
+      brews = [ "bashdb" ];
+    };
+
     environment = {
       loginShell = pkgs.zsh;
 
