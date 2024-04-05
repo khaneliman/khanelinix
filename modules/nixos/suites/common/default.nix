@@ -41,6 +41,7 @@ in
       };
 
       services = {
+        ddccontrol = enabled;
         openssh = enabled;
         printing = enabled;
         tailscale = enabled;
