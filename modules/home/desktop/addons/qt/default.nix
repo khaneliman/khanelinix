@@ -52,6 +52,7 @@ in
   options.khanelinix.desktop.addons.qt = with types; {
     enable = mkBoolOpt false "Whether to customize qt and apply themes.";
     theme = {
+      # TODO: cleanup with proper name
       name =
         mkOpt str "Catppuccin-Macchiato-Blue"
           "The name of the kvantum theme to apply.";
@@ -61,6 +62,7 @@ in
 
   config = mkIf cfg.enable {
     xdg.configFile = {
+      # TODO: replace with settings
       "Kvantum".source = ./Kvantum;
       "qt5ct/qt5ct.conf".text = lib.generators.toINI { }
         (settings // {
@@ -77,7 +79,7 @@ in
 
       platformTheme = "qtct";
       style = {
-        inherit (cfg.theme) name;
+        name = "qt6ct-style";
         package = cfg.theme.pkg.override {
           accent = "Blue";
           variant = "Macchiato";
