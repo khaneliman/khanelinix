@@ -25,7 +25,16 @@ in
           dolphin
           dosbox
           genesis-plus-gx
-          mame
+          # TODO: replace after nixpkg hash fixed
+          (mame.overrideAttrs
+            (_old: {
+              src = fetchFromGitHub {
+                owner = "libretro";
+                repo = "mame";
+                rev = "ac9d0347f5d331eb49017cd599a5e63a668b4f22";
+                hash = "sha256-YlnW5v8Slz/w/AHwWzJ7ZszFic/W0wth2nOZVOD7yxs=";
+              };
+            }))
           mgba
           nestopia
           # FIX: broken package
