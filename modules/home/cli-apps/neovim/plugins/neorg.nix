@@ -28,7 +28,8 @@
     ];
 
     plugins.neorg = {
-      enable = true;
+      # TODO: figure out errors and re-enable
+      enable = false;
 
       modules = {
         "core.defaults".__empty = null;
