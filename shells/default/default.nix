@@ -13,7 +13,7 @@ mkShell {
     nix-melt
     nix-prefetch-git
     nix-search-cli
-    nixpkgs-fmt
+    nixfmt-rfc-style
     nixpkgs-hammering
     nixpkgs-lint
     snowfallorg.flake

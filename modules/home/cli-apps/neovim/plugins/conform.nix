@@ -115,7 +115,7 @@
           javascript = [ [ "prettierd" "prettier" ] ];
           json = [ "jq" ];
           lua = [ "stylua" ];
-          nix = [ "nixpkgs_fmt" ];
+          nix = [ "nixfmt" ];
           python = [ "isort" "black" ];
           rust = [ "rustfmt" ];
           sh = [ "shellcheck" "shellharden" "shfmt" ];
@@ -135,7 +135,7 @@
           csharpier = { command = "${lib.getExe pkgs.csharpier}"; };
           isort = { command = "${lib.getExe pkgs.isort}"; };
           jq = { command = "${lib.getExe pkgs.jq}"; };
-          nixpkgs_fmt = { command = "${lib.getExe pkgs.nixpkgs-fmt}"; };
+          nixfmt = { command = "${lib.getExe pkgs.nixfmt-rfc-style}"; };
           prettierd = { command = "${lib.getExe pkgs.prettierd}"; };
           rustfmt = { command = "${lib.getExe pkgs.rustfmt}"; };
           shellcheck = { command = "${lib.getExe pkgs.shellcheck}"; };

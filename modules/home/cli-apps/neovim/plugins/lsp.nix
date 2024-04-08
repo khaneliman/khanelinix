@@ -89,7 +89,7 @@ in
           nil_ls = {
             enable = true;
             filetypes = [ "nix" ];
-            settings.formatting.command = [ "${getExe pkgs.nixpkgs-fmt}" ];
+            settings.formatting.command = [ "${getExe pkgs.nixfmt-rfc-style}" ];
           };
 
           pyright = {

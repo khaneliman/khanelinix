@@ -36,7 +36,7 @@ in
 
       nil = {
         command = getExe pkgs.nil;
-        config.nil.formatting.command = [ "${getExe pkgs.nixpkgs-fmt}" "-q" ];
+        config.nil.formatting.command = [ "${getExe pkgs.nixfmt-rfc-style}" "-q" ];
       };
 
       vscode-css-language-server = {

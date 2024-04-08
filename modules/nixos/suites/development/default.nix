@@ -56,7 +56,7 @@ in
       neovide
       vscode
     ] ++ lib.optionals cfg.nixEnable [
-      nixpkgs-fmt
+      nixfmt-rfc-style
       nixpkgs-hammering
       nixpkgs-lint-community
       nixpkgs-review
