@@ -1,7 +1,4 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
@@ -10,9 +7,7 @@ let
 in
 {
   options.khanelinix.hardware.power = {
-    enable =
-      mkBoolOpt false
-        "Whether or not to enable support for extra power devices.";
+    enable = mkBoolOpt false "Whether or not to enable support for extra power devices.";
   };
 
   config = mkIf cfg.enable {

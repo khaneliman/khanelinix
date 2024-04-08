@@ -1,7 +1,4 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) getExe';
 in
@@ -82,5 +79,4 @@ in
       "class<Postman>" = "󰛮";
     };
   };
-
 }

@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -21,7 +22,9 @@ in
       enableFishIntegration = true;
       enableZshIntegration = true;
       package = pkgs.oh-my-posh;
-      settings = builtins.fromJSON (builtins.unsafeDiscardStringContext (builtins.readFile ./config.json));
+      settings = builtins.fromJSON (
+        builtins.unsafeDiscardStringContext (builtins.readFile ./config.json)
+      );
     };
   };
 }

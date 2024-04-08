@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -15,9 +16,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      ffmpeg
-    ];
+    environment.systemPackages = with pkgs; [ ffmpeg ];
 
     homebrew = {
       masApps = mkIf config.khanelinix.tools.homebrew.masEnable {

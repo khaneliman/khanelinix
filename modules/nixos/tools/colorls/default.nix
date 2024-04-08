@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -15,9 +16,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      colorls
-    ];
+    environment.systemPackages = with pkgs; [ colorls ];
 
     khanelinix.home.extraOptions.home.shellAliases = {
       lc = "colorls --sd";

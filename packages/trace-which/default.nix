@@ -1,10 +1,10 @@
-{ writeShellApplication
-, pkgs
-, lib
-, ...
-}:
-writeShellApplication
 {
+  writeShellApplication,
+  pkgs,
+  lib,
+  ...
+}:
+writeShellApplication {
   name = "trace-which";
 
   meta = {
@@ -13,7 +13,8 @@ writeShellApplication
 
   checkPhase = "";
 
-  text = /* bash */ ''
-    a=$(which "$1") && exec ${lib.getExe pkgs.khanelinix.trace-symlink} "$a"
-  '';
+  text = # bash
+    ''
+      a=$(which "$1") && exec ${lib.getExe pkgs.khanelinix.trace-symlink} "$a"
+    '';
 }

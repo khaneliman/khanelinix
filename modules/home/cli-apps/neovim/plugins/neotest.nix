@@ -1,4 +1,10 @@
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
   programs.nixvim = {
     extraPlugins = with pkgs.vimPlugins; [
       (pkgs.vimUtils.buildVimPlugin {
@@ -17,7 +23,7 @@
 
       settings = {
         adapters = lib.optionals config.programs.nixvim.plugins.rustaceanvim.enable [
-          /*lua*/
+          # lua
           ''require('rustaceanvim.neotest')''
         ];
       };
@@ -49,14 +55,16 @@
       };
     };
 
-    keymaps = [{
-      mode = "n";
-      key = "<leader>ut";
-      action = ":Neotest summary<CR>";
-      options = {
-        desc = "Toggle Neotest Summary";
-        silent = true;
-      };
-    }];
+    keymaps = [
+      {
+        mode = "n";
+        key = "<leader>ut";
+        action = ":Neotest summary<CR>";
+        options = {
+          desc = "Toggle Neotest Summary";
+          silent = true;
+        };
+      }
+    ];
   };
 }

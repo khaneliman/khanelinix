@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -16,13 +17,14 @@ in
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      (python3.withPackages (ps:
-        with ps; [
+      (python3.withPackages (
+        ps: with ps; [
           pip
           pyqt5
           qtpy
           requests
-        ]))
+        ]
+      ))
     ];
   };
 }

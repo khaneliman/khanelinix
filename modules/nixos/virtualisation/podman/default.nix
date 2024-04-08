@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -24,7 +25,9 @@ in
     environment.systemPackages = with pkgs; [ podman-compose ];
 
     khanelinix.home.extraOptions = {
-      home.shellAliases = { "docker-compose" = "podman-compose"; };
+      home.shellAliases = {
+        "docker-compose" = "podman-compose";
+      };
     };
 
     virtualisation = {

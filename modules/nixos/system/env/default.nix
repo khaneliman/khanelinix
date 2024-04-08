@@ -1,22 +1,27 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
-  inherit (lib) types concatStringsSep mapAttrsToList mkOption mapAttrs;
+  inherit (lib)
+    types
+    concatStringsSep
+    mapAttrsToList
+    mkOption
+    mapAttrs
+    ;
 
   cfg = config.khanelinix.system.env;
 in
 {
-  options.khanelinix.system.env = with types;
+  options.khanelinix.system.env =
+    with types;
     mkOption {
-      apply = mapAttrs (_n: v:
-        if isList v
-        then concatMapStringsSep ":" toString v
-        else (toString v));
+      apply = mapAttrs (_n: v: if isList v then concatMapStringsSep ":" toString v else (toString v));
       default = { };
       description = "A set of environment variables to set.";
-      type = attrsOf (oneOf [ str path (listOf (either str path)) ]);
+      type = attrsOf (oneOf [
+        str
+        path
+        (listOf (either str path))
+      ]);
     };
 
   config = {
@@ -29,13 +34,13 @@ in
         XDG_DESKTOP_DIR = "$HOME";
       };
 
-      extraInit =
-        concatStringsSep "\n"
-          (mapAttrsToList
-            (n: v: /* bash */ ''
-              export ${n}="${v}"
-            '')
-            cfg);
+      extraInit = concatStringsSep "\n" (
+        mapAttrsToList (
+          n: v: # bash
+          ''
+            export ${n}="${v}"
+          '') cfg
+      );
 
       variables = {
         # Make some programs "XDG" compliant.

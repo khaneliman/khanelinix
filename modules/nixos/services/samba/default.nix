@@ -1,31 +1,35 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
-  inherit (lib) mapAttrs mkEnableOption mkIf optionalAttrs types;
+  inherit (lib)
+    mapAttrs
+    mkEnableOption
+    mkIf
+    optionalAttrs
+    types
+    ;
   inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.services.samba;
 
-  bool-to-yes-no = value:
-    if value
-    then "yes"
-    else "no";
+  bool-to-yes-no = value: if value then "yes" else "no";
 
-  shares-submodule = with types;
-    submodule ({ name, ... }: {
-      options = {
-        path = mkOpt str null "The path to serve.";
-        public = mkBoolOpt false "Whether the share is public.";
-        browseable = mkBoolOpt true "Whether the share is browseable.";
-        comment = mkOpt str name "An optional comment.";
-        read-only = mkBoolOpt false "Whether the share should be read only.";
-        only-owner-editable = mkBoolOpt false "Whether the share is only writable by the system owner (khanelinix.user.name).";
+  shares-submodule =
+    with types;
+    submodule (
+      { name, ... }:
+      {
+        options = {
+          path = mkOpt str null "The path to serve.";
+          public = mkBoolOpt false "Whether the share is public.";
+          browseable = mkBoolOpt true "Whether the share is browseable.";
+          comment = mkOpt str name "An optional comment.";
+          read-only = mkBoolOpt false "Whether the share should be read only.";
+          only-owner-editable = mkBoolOpt false "Whether the share is only writable by the system owner (khanelinix.user.name).";
 
-        extra-config = mkOpt attrs { } "Extra configuration options for the share.";
-      };
-    });
+          extra-config = mkOpt attrs { } "Extra configuration options for the share.";
+        };
+      }
+    );
 in
 {
   options.khanelinix.services.samba = with types; {
@@ -55,24 +59,23 @@ in
       '';
       openFirewall = true;
 
-      shares =
-        mapAttrs
-          (name: value:
-            {
-              inherit (value) path comment;
+      shares = mapAttrs (
+        name: value:
+        {
+          inherit (value) path comment;
 
-              public = bool-to-yes-no value.public;
-              browseable = bool-to-yes-no value.browseable;
-              "read only" = bool-to-yes-no value.read-only;
-            }
-            // (optionalAttrs value.only-owner-editable {
-              "write list" = config.khanelinix.user.name;
-              "read list" = "guest, nobody";
-              "create mask" = "0755";
-              "directory mask" = "0755";
-            })
-            // value.extra-config)
-          cfg.shares;
+          public = bool-to-yes-no value.public;
+          browseable = bool-to-yes-no value.browseable;
+          "read only" = bool-to-yes-no value.read-only;
+        }
+        // (optionalAttrs value.only-owner-editable {
+          "write list" = config.khanelinix.user.name;
+          "read list" = "guest, nobody";
+          "create mask" = "0755";
+          "directory mask" = "0755";
+        })
+        // value.extra-config
+      ) cfg.shares;
     };
 
     # TODO: figure out samba user and pass setup

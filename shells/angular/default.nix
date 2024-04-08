@@ -1,7 +1,4 @@
-{ mkShell
-, pkgs
-, ...
-}:
+{ mkShell, pkgs, ... }:
 mkShell {
   buildInputs = with pkgs; [
     vimPlugins.nvim-treesitter-parsers.angular
@@ -17,5 +14,4 @@ mkShell {
 
 
   '';
-
 }

@@ -25,7 +25,10 @@ _: {
       sections = {
         lualine_a = [ "mode" ];
         lualine_b = [ "branch" ];
-        lualine_c = [ "filename" "diff" ];
+        lualine_c = [
+          "filename"
+          "diff"
+        ];
 
         lualine_x = [
           "diagnostics"
@@ -96,9 +99,7 @@ _: {
             };
           }
         ];
-        lualine_z = [
-          "tabs"
-        ];
+        lualine_z = [ "tabs" ];
       };
 
       # TODO: breadcrumb style path with custom separator and file icon

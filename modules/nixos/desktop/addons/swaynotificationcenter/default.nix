@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -11,8 +12,7 @@ let
 in
 {
   options.khanelinix.desktop.addons.swaynotificationcenter = {
-    enable =
-      mkBoolOpt false "Whether to enable swaynotificationcenter in the desktop environment.";
+    enable = mkBoolOpt false "Whether to enable swaynotificationcenter in the desktop environment.";
   };
 
   config = mkIf cfg.enable {
@@ -23,9 +23,7 @@ in
 
     khanelinix.home = {
       configFile."swaync/" = {
-        source = lib.cleanSourceWith {
-          src = lib.cleanSource ./config/.;
-        };
+        source = lib.cleanSourceWith { src = lib.cleanSource ./config/.; };
 
         recursive = true;
       };

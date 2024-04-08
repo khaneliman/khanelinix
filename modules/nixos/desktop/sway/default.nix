@@ -1,12 +1,24 @@
-{ config
-, inputs
-, lib
-, pkgs
-, ...
+{
+  config,
+  inputs,
+  lib,
+  pkgs,
+  ...
 }:
 let
-  inherit (lib) types mkIf getExe getExe';
-  inherit (lib.internal) mkBoolOpt mkOpt enabled fileWithText optionalString;
+  inherit (lib)
+    types
+    mkIf
+    getExe
+    getExe'
+    ;
+  inherit (lib.internal)
+    mkBoolOpt
+    mkOpt
+    enabled
+    fileWithText
+    optionalString
+    ;
   inherit (config.khanelinix.desktop.addons) term;
   inherit (inputs) nixpkgs-wayland;
 
@@ -19,8 +31,7 @@ in
 {
   options.khanelinix.desktop.sway = with types; {
     enable = mkBoolOpt false "Whether or not to enable Sway.";
-    extraConfig =
-      mkOpt str "" "Additional configuration for the Sway config file.";
+    extraConfig = mkOpt str "" "Additional configuration for the Sway config file.";
     wallpaper = mkOpt (nullOr package) null "The wallpaper to display.";
   };
 
@@ -30,15 +41,16 @@ in
         name = "startsway";
         destination = "/bin/startsway";
         executable = true;
-        text = /* bash */ ''
-          #! ${getExe pkgs.bash}
+        text = # bash
+          ''
+            #! ${getExe pkgs.bash}
 
-          # Import environment variables from the login manager
-          systemctl --user import-environment
+            # Import environment variables from the login manager
+            systemctl --user import-environment
 
-          # Start Sway
-          exec systemctl --user start sway.service
-        '';
+            # Start Sway
+            exec systemctl --user start sway.service
+          '';
       })
     ];
 
@@ -54,30 +66,32 @@ in
         swaylock = enabled;
       };
 
-      home.configFile."sway/config".text = fileWithText substitutedConfig /* bash */ ''
-        #############################
-        #░░░░░░░░░░░░░░░░░░░░░░░░░░░#
-        #░░█▀▀░█░█░█▀▀░▀█▀░█▀▀░█▄█░░#
-        #░░▀▀█░░█░░▀▀█░░█░░█▀▀░█░█░░#
-        #░░▀▀▀░░▀░░▀▀▀░░▀░░▀▀▀░▀░▀░░#
-        #░░░░░░░░░░░░░░░░░░░░░░░░░░░#
-        #############################
+      home.configFile."sway/config".text =
+        fileWithText substitutedConfig # bash
+          ''
+            #############################
+            #░░░░░░░░░░░░░░░░░░░░░░░░░░░#
+            #░░█▀▀░█░█░█▀▀░▀█▀░█▀▀░█▄█░░#
+            #░░▀▀█░░█░░▀▀█░░█░░█▀▀░█░█░░#
+            #░░▀▀▀░░▀░░▀▀▀░░▀░░▀▀▀░▀░▀░░#
+            #░░░░░░░░░░░░░░░░░░░░░░░░░░░#
+            #############################
 
-        # Launch services waiting for the systemd target sway-session.target
-        exec "systemctl --user import-environment; systemctl --user start sway-session.target"
+            # Launch services waiting for the systemd target sway-session.target
+            exec "systemctl --user import-environment; systemctl --user start sway-session.target"
 
-        # Start a user session dbus (required for things like starting
-        # applications through wofi).
-        exec dbus-daemon --session --address=unix:path=$XDG_RUNTIME_DIR/bus
+            # Start a user session dbus (required for things like starting
+            # applications through wofi).
+            exec dbus-daemon --session --address=unix:path=$XDG_RUNTIME_DIR/bus
 
-        ${optionalString (cfg.wallpaper != null) ''
-          output * {
-            bg ${cfg.wallpaper.gnomeFilePath or cfg.wallpaper} fill
-          }
-        ''}
+            ${optionalString (cfg.wallpaper != null) ''
+              output * {
+                bg ${cfg.wallpaper.gnomeFilePath or cfg.wallpaper} fill
+              }
+            ''}
 
-        ${cfg.extraConfig}
-      '';
+            ${cfg.extraConfig}
+          '';
 
       security = {
         keyring = enabled;
@@ -106,16 +120,17 @@ in
         gnome.gnome-control-center
       ];
 
-      extraSessionCommands = /* bash */ ''
-        export SDL_VIDEODRIVER=wayland
-        export QT_QPA_PLATFORM=wayland
-        export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
-        export _JAVA_AWT_WM_NONREPARENTING=1
-        export MOZ_ENABLE_WAYLAND=1
-        export XDG_SESSION_TYPE=wayland
-        export XDG_SESSION_DESKTOP=sway
-        export XDG_CURRENT_DESKTOP=sway
-      '';
+      extraSessionCommands = # bash
+        ''
+          export SDL_VIDEODRIVER=wayland
+          export QT_QPA_PLATFORM=wayland
+          export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
+          export _JAVA_AWT_WM_NONREPARENTING=1
+          export MOZ_ENABLE_WAYLAND=1
+          export XDG_SESSION_TYPE=wayland
+          export XDG_SESSION_DESKTOP=sway
+          export XDG_CURRENT_DESKTOP=sway
+        '';
     };
 
     systemd.user = {
@@ -138,9 +153,10 @@ in
         environment.PATH = lib.mkForce null;
         serviceConfig = {
           Type = "simple";
-          ExecStart = /* bash */ ''
-            ${getExe' pkgs.dbus "dbus-run-session"} ${getExe config.programs.sway.package} --debug
-          '';
+          ExecStart = # bash
+            ''
+              ${getExe' pkgs.dbus "dbus-run-session"} ${getExe config.programs.sway.package} --debug
+            '';
           Restart = "on-failure";
           RestartSec = 1;
           TimeoutStopSec = 10;

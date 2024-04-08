@@ -1,11 +1,17 @@
-{ config
-, lib
-, pkgs
-, inputs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
 }:
 let
-  inherit (lib) types mkIf getExe getExe';
+  inherit (lib)
+    types
+    mkIf
+    getExe
+    getExe'
+    ;
   inherit (lib.internal) mkBoolOpt mkOpt;
   inherit (inputs) gpg-base-conf yubikey-guide;
 
@@ -29,19 +35,21 @@ let
     sha256 = "1h48yqffpaz437f3c9hfryf23r95rr319lrb3y79kxpxbc9hihxb";
   };
 
-  guideHTML = pkgs.runCommand "yubikey-guide" { } /* bash */ ''
-    ${getExe pkgs.pandoc} \
-      --standalone \
-      --metadata title="Yubikey Guide" \
-      --from markdown \
-      --to html5+smart \
-      --toc \
-      --template ${theme}/template.html5 \
-      --css ${theme}/docs/css/theme.css \
-      --css ${theme}/docs/css/skylighting-solarized-theme.css \
-      -o $out \
-      ${guide}
-  '';
+  guideHTML =
+    pkgs.runCommand "yubikey-guide" { } # bash
+      ''
+        ${getExe pkgs.pandoc} \
+          --standalone \
+          --metadata title="Yubikey Guide" \
+          --from markdown \
+          --to html5+smart \
+          --toc \
+          --template ${theme}/template.html5 \
+          --css ${theme}/docs/css/theme.css \
+          --css ${theme}/docs/css/skylighting-solarized-theme.css \
+          -o $out \
+          ${guide}
+      '';
 
   guideDesktopItem = pkgs.makeDesktopItem {
     categories = [ "System" ];
@@ -52,9 +60,11 @@ let
     name = "yubikey-guide";
   };
 
-  reload-yubikey = pkgs.writeShellScriptBin "reload-yubikey" /* bash */ ''
-    ${getExe' pkgs.gnupg "gpg-connect-agent"} "scd serialno" "learn --force" /bye
-  '';
+  reload-yubikey =
+    pkgs.writeShellScriptBin "reload-yubikey" # bash
+      ''
+        ${getExe' pkgs.gnupg "gpg-connect-agent"} "scd serialno" "learn --force" /bye
+      '';
 in
 {
   options.khanelinix.security.gpg = with types; {
@@ -63,16 +73,17 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.shellInit = /* bash */ ''
-      ${getExe' pkgs.coreutils "timeout"} ${builtins.toString cfg.agentTimeout} ${getExe' pkgs.gnupg "gpgconf"} --launch gpg-agent
-      gpg_agent_timeout_status=$?
+    environment.shellInit = # bash
+      ''
+        ${getExe' pkgs.coreutils "timeout"} ${builtins.toString cfg.agentTimeout} ${getExe' pkgs.gnupg "gpgconf"} --launch gpg-agent
+        gpg_agent_timeout_status=$?
 
-      if [ "$gpg_agent_timeout_status" = 124 ]; then
-        # Command timed out...
-        echo "GPG Agent timed out..."
-        echo 'Run "gpgconf --launch gpg-agent" to try and launch it again.'
-      fi
-    '';
+        if [ "$gpg_agent_timeout_status" = 124 ]; then
+          # Command timed out...
+          echo "GPG Agent timed out..."
+          echo 'Run "gpgconf --launch gpg-agent" to try and launch it again.'
+        fi
+      '';
 
     environment.systemPackages = with pkgs; [
       cryptsetup

@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf getExe';
@@ -20,9 +21,10 @@ in
     systemd.services.spice-vdagentd = {
       description = "spice-vdagent daemon";
 
-      preStart = /* bash */ ''
-        mkdir -p "/run/spice-vdagentd/"
-      '';
+      preStart = # bash
+        ''
+          mkdir -p "/run/spice-vdagentd/"
+        '';
 
       serviceConfig = {
         Type = "forking";

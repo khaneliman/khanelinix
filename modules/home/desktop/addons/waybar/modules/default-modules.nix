@@ -1,7 +1,4 @@
-{ lib
-, pkgs
-, ...
-}:
+{ lib, pkgs, ... }:
 let
   inherit (lib) getExe getExe';
 in
@@ -117,9 +114,7 @@ in
     };
     "scroll-step" = 1;
     "on-click" = "pavucontrol";
-    "ignored-sinks" = [
-      "Easy Effects Sink"
-    ];
+    "ignored-sinks" = [ "Easy Effects Sink" ];
   };
 
   "pulseaudio/slider" = {

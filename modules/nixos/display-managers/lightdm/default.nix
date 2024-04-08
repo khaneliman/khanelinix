@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -14,42 +15,40 @@ in
     enable = mkBoolOpt false "Whether or not to enable lightdm.";
   };
 
-  config =
-    mkIf cfg.enable
-      {
-        services.xserver = {
-          enable = true;
+  config = mkIf cfg.enable {
+    services.xserver = {
+      enable = true;
 
-          displayManager.lightdm = {
+      displayManager.lightdm = {
+        enable = true;
+        background = pkgs.khanelinix.wallpapers.flatppuccin_macchiato;
+
+        greeters = {
+          gtk = {
             enable = true;
-            background = pkgs.khanelinix.wallpapers.flatppuccin_macchiato;
 
-            greeters = {
-              gtk = {
-                enable = true;
+            cursorTheme = {
+              inherit (config.khanelinix.desktop.addons.gtk.cursor) name;
+              package = config.khanelinix.desktop.addons.gtk.cursor.pkg;
+            };
 
-                cursorTheme = {
-                  inherit (config.khanelinix.desktop.addons.gtk.cursor) name;
-                  package = config.khanelinix.desktop.addons.gtk.cursor.pkg;
-                };
+            iconTheme = {
+              inherit (config.khanelinix.desktop.addons.gtk.icon) name;
+              package = config.khanelinix.desktop.addons.gtk.icon.pkg;
+            };
 
-                iconTheme = {
-                  inherit (config.khanelinix.desktop.addons.gtk.icon) name;
-                  package = config.khanelinix.desktop.addons.gtk.icon.pkg;
-                };
-
-                theme = {
-                  name = "${config.khanelinix.desktop.addons.gtk.theme.name}";
-                  package = config.khanelinix.desktop.addons.gtk.theme.pkg;
-                };
-              };
+            theme = {
+              name = "${config.khanelinix.desktop.addons.gtk.theme.name}";
+              package = config.khanelinix.desktop.addons.gtk.theme.pkg;
             };
           };
         };
-
-        security.pam.services.greetd = {
-          enableGnomeKeyring = true;
-          gnupg.enable = true;
-        };
       };
+    };
+
+    security.pam.services.greetd = {
+      enableGnomeKeyring = true;
+      gnupg.enable = true;
+    };
+  };
 }

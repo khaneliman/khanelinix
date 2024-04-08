@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -11,9 +12,7 @@ let
 in
 {
   options.khanelinix.hardware.amdgpu = {
-    enable =
-      mkBoolOpt false
-        "Whether or not to enable support for amdgpu.";
+    enable = mkBoolOpt false "Whether or not to enable support for amdgpu.";
   };
 
   config = mkIf cfg.enable {

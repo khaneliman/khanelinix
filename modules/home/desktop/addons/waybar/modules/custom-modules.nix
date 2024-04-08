@@ -1,19 +1,22 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) getExe getExe';
 
-  githubHelper = pkgs.writeShellScriptBin "githubHelper" /* bash */ ''
-    #!/usr/bin/env bash
+  githubHelper =
+    pkgs.writeShellScriptBin "githubHelper" # bash
+      ''
+        #!/usr/bin/env bash
 
-    NOTIFICATIONS="$(${getExe pkgs.gh} api notifications)"
-    COUNT="$(echo "$NOTIFICATIONS" | ${getExe pkgs.jq} 'length')"
+        NOTIFICATIONS="$(${getExe pkgs.gh} api notifications)"
+        COUNT="$(echo "$NOTIFICATIONS" | ${getExe pkgs.jq} 'length')"
 
-    echo '{"text":'"$COUNT"',"tooltip":"'"$COUNT"' Notifications","class":""}'
-  '';
+        echo '{"text":'"$COUNT"',"tooltip":"'"$COUNT"' Notifications","class":""}'
+      '';
 in
 {
   "custom/ellipses" = {

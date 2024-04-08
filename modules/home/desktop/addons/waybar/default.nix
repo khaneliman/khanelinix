@@ -1,12 +1,18 @@
-{ config
-, inputs
-, lib
-, pkgs
-, system
-, ...
+{
+  config,
+  inputs,
+  lib,
+  pkgs,
+  system,
+  ...
 }:
 let
-  inherit (lib) mkIf mkForce getExe mkMerge;
+  inherit (lib)
+    mkIf
+    mkForce
+    getExe
+    mkMerge
+    ;
   inherit (lib.internal) mkBoolOpt;
   inherit (inputs) nixpkgs-wayland;
 
@@ -78,13 +84,14 @@ let
 in
 {
   options.khanelinix.desktop.addons.waybar = {
-    enable =
-      mkBoolOpt false "Whether to enable waybar in the desktop environment.";
+    enable = mkBoolOpt false "Whether to enable waybar in the desktop environment.";
     debug = mkBoolOpt false "Whether to enable debug mode.";
   };
 
   config = mkIf cfg.enable {
-    systemd.user.services.waybar.Service.ExecStart = mkIf cfg.debug (mkForce "${getExe config.programs.waybar.package} -l debug");
+    systemd.user.services.waybar.Service.ExecStart = mkIf cfg.debug (
+      mkForce "${getExe config.programs.waybar.package} -l debug"
+    );
 
     programs.waybar = {
       enable = true;
@@ -94,8 +101,16 @@ in
 
       # TODO: make dynamic / support different number of bars etc
       settings = {
-        mainBar = mkMerge [ bar mainBar all-modules ];
-        secondaryBar = mkMerge [ bar secondaryBar all-modules ];
+        mainBar = mkMerge [
+          bar
+          mainBar
+          all-modules
+        ];
+        secondaryBar = mkMerge [
+          bar
+          secondaryBar
+          all-modules
+        ];
       };
 
       style = "${theme}${style}${notificationsStyle}${powerStyle}${statsStyle}${workspacesStyle}";

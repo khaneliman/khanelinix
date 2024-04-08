@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -10,27 +11,26 @@ let
   cfg = config.khanelinix.cli-apps.tmux;
   configFiles = lib.snowfall.fs.get-files ./config;
 
-  plugins =
-    with pkgs.tmuxPlugins; [
-      {
-        plugin = resurrect;
-        extraConfig = ''
-          set -g @resurrect-strategy-vim 'session'
-          set -g @resurrect-strategy-nvim 'session'
-          set -g @resurrect-capture-pane-contents 'on'
-          set -g @resurrect-processes 'ssh lazygit yazi'
-          set -g @resurrect-dir '~/.tmux/resurrect'
-        '';
-      }
-      {
-        plugin = continuum;
-        extraConfig = ''
-          set -g @continuum-restore 'on'
-        '';
-      }
-      # tmux-fzf
-      # vim-tmux-navigator
-    ];
+  plugins = with pkgs.tmuxPlugins; [
+    {
+      plugin = resurrect;
+      extraConfig = ''
+        set -g @resurrect-strategy-vim 'session'
+        set -g @resurrect-strategy-nvim 'session'
+        set -g @resurrect-capture-pane-contents 'on'
+        set -g @resurrect-processes 'ssh lazygit yazi'
+        set -g @resurrect-dir '~/.tmux/resurrect'
+      '';
+    }
+    {
+      plugin = continuum;
+      extraConfig = ''
+        set -g @continuum-restore 'on'
+      '';
+    }
+    # tmux-fzf
+    # vim-tmux-navigator
+  ];
 in
 {
   options.khanelinix.cli-apps.tmux = {
@@ -51,9 +51,7 @@ in
       prefix = "C-a";
       sensibleOnTop = true;
       terminal = "xterm-256color";
-      extraConfig =
-        builtins.concatStringsSep "\n"
-          (builtins.map lib.strings.fileContents configFiles);
+      extraConfig = builtins.concatStringsSep "\n" (builtins.map lib.strings.fileContents configFiles);
 
       inherit plugins;
     };

@@ -1,7 +1,4 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt enabled;
@@ -10,8 +7,7 @@ let
 in
 {
   options.khanelinix.archetypes.workstation = {
-    enable =
-      mkBoolOpt false "Whether or not to enable the workstation archetype.";
+    enable = mkBoolOpt false "Whether or not to enable the workstation archetype.";
   };
 
   config = mkIf cfg.enable {

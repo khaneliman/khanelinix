@@ -1,9 +1,7 @@
 { pkgs, ... }:
 {
   programs.nixvim = {
-    extraPlugins = with pkgs.vimPlugins; [
-      vim-wakatime
-    ];
+    extraPlugins = with pkgs.vimPlugins; [ vim-wakatime ];
   };
 
   # TODO: figure out why i can't from within imports =

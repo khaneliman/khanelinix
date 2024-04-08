@@ -1,7 +1,8 @@
-{ inputs
-, lib
-, pkgs
-, ...
+{
+  inputs,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (inputs) nixos-hardware;
@@ -45,9 +46,7 @@ in
       configuration = {
         system.nixos.tags = [ "no-nvidia" ];
 
-        imports = with nixos-hardware.nixosModules; [
-          common-gpu-nvidia-disable
-        ];
+        imports = with nixos-hardware.nixosModules; [ common-gpu-nvidia-disable ];
       };
     };
   };

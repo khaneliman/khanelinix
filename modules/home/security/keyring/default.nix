@@ -1,7 +1,4 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
@@ -17,7 +14,11 @@ in
     services.gnome-keyring = {
       enable = true;
 
-      components = [ "pkcs11" "secrets" "ssh" ];
+      components = [
+        "pkcs11"
+        "secrets"
+        "ssh"
+      ];
     };
   };
 }

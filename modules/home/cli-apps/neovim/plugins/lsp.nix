@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) getExe mkIf;
@@ -36,19 +37,32 @@ in
         servers = {
           bashls = {
             enable = true;
-            filetypes = [ "sh" "bash" ];
+            filetypes = [
+              "sh"
+              "bash"
+            ];
           };
 
           ccls = {
             enable = true;
-            filetypes = [ "c" "cpp" "objc" "objcpp" ];
+            filetypes = [
+              "c"
+              "cpp"
+              "objc"
+              "objcpp"
+            ];
 
             initOptions.compilationDatabaseDirectory = "build";
           };
 
           clangd = {
             enable = false;
-            filetypes = [ "c" "cpp" "objc" "objcpp" ];
+            filetypes = [
+              "c"
+              "cpp"
+              "objc"
+              "objcpp"
+            ];
           };
 
           csharp-ls = {
@@ -63,7 +77,12 @@ in
 
           eslint = {
             enable = true;
-            filetypes = [ "javascript" "javascriptreact" "typescript" "typescriptreact" ];
+            filetypes = [
+              "javascript"
+              "javascriptreact"
+              "typescript"
+              "typescriptreact"
+            ];
           };
 
           html = {
@@ -122,7 +141,7 @@ in
                 closureStyle = "rust_analyzer";
                 closureReturnTypeHints.enable = "always";
                 discriminantHints.enable = "always";
-                expressionAdjustmentHints. enable = "always";
+                expressionAdjustmentHints.enable = "always";
                 implicitDrops.enable = true;
                 lifetimeElisionHints.enable = "always";
                 rangeExclusiveHints.enable = true;
@@ -141,7 +160,12 @@ in
 
           tsserver = {
             enable = true;
-            filetypes = [ "javascript" "javascriptreact" "typescript" "typescriptreact" ];
+            filetypes = [
+              "javascript"
+              "javascriptreact"
+              "typescript"
+              "typescriptreact"
+            ];
           };
 
           yamlls = {

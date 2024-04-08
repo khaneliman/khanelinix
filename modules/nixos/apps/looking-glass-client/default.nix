@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -12,8 +13,7 @@ let
 in
 {
   options.khanelinix.apps.looking-glass-client = {
-    enable =
-      mkBoolOpt false "Whether or not to enable the Looking Glass client.";
+    enable = mkBoolOpt false "Whether or not to enable the Looking Glass client.";
   };
 
   config = mkIf cfg.enable {

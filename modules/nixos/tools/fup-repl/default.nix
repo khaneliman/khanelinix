@@ -1,7 +1,8 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  ...
 }:
 let
   inherit (lib) mkIf getExe';
@@ -18,7 +19,5 @@ in
     enable = mkBoolOpt false "Whether to enable fup-repl or not";
   };
 
-  config = mkIf cfg.enable {
-    environment.systemPackages = [ fup-repl ];
-  };
+  config = mkIf cfg.enable { environment.systemPackages = [ fup-repl ]; };
 }

@@ -1,7 +1,8 @@
-{ pkgs
-, modulesPath
-, inputs
-, ...
+{
+  pkgs,
+  modulesPath,
+  inputs,
+  ...
 }:
 let
   inherit (inputs) nixos-hardware;
@@ -19,9 +20,7 @@ in
   # Desktop VM config
   ##
   boot = {
-    blacklistedKernelModules = [
-      "eeepc_wmi"
-    ];
+    blacklistedKernelModules = [ "eeepc_wmi" ];
 
     # consoleLogLevel = 0;
 
@@ -32,9 +31,17 @@ in
       "video=DP-3:3840x2160@60"
     ];
 
-
     initrd = {
-      availableKernelModules = [ "nvme" "xhci_pci" "ehci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" "sr_mod" ];
+      availableKernelModules = [
+        "nvme"
+        "xhci_pci"
+        "ehci_pci"
+        "ahci"
+        "usb_storage"
+        "usbhid"
+        "sd_mod"
+        "sr_mod"
+      ];
       # verbose = false;
     };
   };
@@ -43,7 +50,12 @@ in
     "/" = {
       device = "/dev/disk/by-label/nixos";
       fsType = "btrfs";
-      options = [ "rw" "noatime" "ssd" "subvol=/@" ];
+      options = [
+        "rw"
+        "noatime"
+        "ssd"
+        "subvol=/@"
+      ];
     };
 
     "/boot" = {
@@ -54,49 +66,100 @@ in
     "/home/khaneliman/Downloads" = {
       device = "/dev/disk/by-label/BtrProductive";
       fsType = "btrfs";
-      options = [ "rw" "noatime" "compress-force=zstd:1" "ssd" "subvol=/@userdata/@downloads" ];
+      options = [
+        "rw"
+        "noatime"
+        "compress-force=zstd:1"
+        "ssd"
+        "subvol=/@userdata/@downloads"
+      ];
     };
 
     "/home/khaneliman/Documents" = {
       device = "/dev/disk/by-label/BtrProductive";
       fsType = "btrfs";
-      options = [ "rw" "noatime" "compress-force=zstd:1" "ssd" "subvol=/@userdata/@documents" ];
+      options = [
+        "rw"
+        "noatime"
+        "compress-force=zstd:1"
+        "ssd"
+        "subvol=/@userdata/@documents"
+      ];
     };
 
     "/home/khaneliman/Pictures" = {
       device = "/dev/disk/by-label/BtrProductive";
       fsType = "btrfs";
-      options = [ "rw" "noatime" "compress-force=zstd:1" "ssd" "subvol=/@userdata/@pictures" ];
+      options = [
+        "rw"
+        "noatime"
+        "compress-force=zstd:1"
+        "ssd"
+        "subvol=/@userdata/@pictures"
+      ];
     };
 
     "/home/khaneliman/Videos" = {
       device = "/dev/disk/by-label/BtrProductive";
       fsType = "btrfs";
-      options = [ "rw" "noatime" "compress-force=zstd:1" "ssd" "subvol=/@userdata/@videos" ];
+      options = [
+        "rw"
+        "noatime"
+        "compress-force=zstd:1"
+        "ssd"
+        "subvol=/@userdata/@videos"
+      ];
     };
 
     "/home/khaneliman/Music" = {
       device = "/dev/disk/by-label/BtrProductive";
       fsType = "btrfs";
-      options = [ "rw" "noatime" "compress-force=zstd:1" "ssd" "subvol=/@userdata/@music" ];
+      options = [
+        "rw"
+        "noatime"
+        "compress-force=zstd:1"
+        "ssd"
+        "subvol=/@userdata/@music"
+      ];
     };
 
     "/mnt/kvm" = {
       device = "/dev/disk/by-label/Linux";
       fsType = "btrfs";
-      options = [ "rw" "nodatacow" "noatime" "compress-force=zstd:1" "ssd" "subvol=/@kvm" ];
+      options = [
+        "rw"
+        "nodatacow"
+        "noatime"
+        "compress-force=zstd:1"
+        "ssd"
+        "subvol=/@kvm"
+      ];
     };
 
     "/mnt/games" = {
       device = "/dev/disk/by-label/BtrProductive";
       fsType = "btrfs";
-      options = [ "rw" "nodatacow" "noatime" "compress-force=zstd:1" "ssd" "subvol=/@games" ];
+      options = [
+        "rw"
+        "nodatacow"
+        "noatime"
+        "compress-force=zstd:1"
+        "ssd"
+        "subvol=/@games"
+      ];
     };
 
     "/mnt/steam" = {
       device = "/dev/disk/by-label/BtrProductive";
       fsType = "btrfs";
-      options = [ "rw" "nodatacow" "noatime" "compress-force=zstd:1" "ssd" "subvol=/@steam" ];
+      options = [
+        "rw"
+        "nodatacow"
+        "noatime"
+        "compress-force=zstd:1"
+        "ssd"
+        "subvol=/@steam"
+      ];
     };
 
     # "/mnt/steam-extra" = {
@@ -114,49 +177,89 @@ in
     "/mnt/austinserver/appdata" = {
       device = "austinserver.local:/mnt/user/appdata";
       fsType = "nfs";
-      options = [ "noauto" "x-systemd.automount" "x-systemd.requires=network.target" "x-systemd.mount-timeout=10" "x-systemd.idle-timeout=1min" ];
+      options = [
+        "noauto"
+        "x-systemd.automount"
+        "x-systemd.requires=network.target"
+        "x-systemd.mount-timeout=10"
+        "x-systemd.idle-timeout=1min"
+      ];
     };
 
     "/mnt/austinserver/data" = {
       device = "austinserver.local:/mnt/user/data";
       fsType = "nfs";
-      options = [ "noauto" "x-systemd.automount" "x-systemd.requires=network.target" "x-systemd.mount-timeout=10" "x-systemd.idle-timeout=1min" ];
+      options = [
+        "noauto"
+        "x-systemd.automount"
+        "x-systemd.requires=network.target"
+        "x-systemd.mount-timeout=10"
+        "x-systemd.idle-timeout=1min"
+      ];
     };
 
     "/mnt/austinserver/backup" = {
       device = "austinserver.local:/mnt/user/backup";
       fsType = "nfs";
-      options = [ "noauto" "x-systemd.automount" "x-systemd.requires=network.target" "x-systemd.mount-timeout=10" "x-systemd.idle-timeout=1min" ];
+      options = [
+        "noauto"
+        "x-systemd.automount"
+        "x-systemd.requires=network.target"
+        "x-systemd.mount-timeout=10"
+        "x-systemd.idle-timeout=1min"
+      ];
     };
 
     "/mnt/austinserver/isos" = {
       device = "austinserver.local:/mnt/user/isos";
       fsType = "nfs";
-      options = [ "noauto" "x-systemd.automount" "x-systemd.requires=network.target" "x-systemd.mount-timeout=10" "x-systemd.idle-timeout=1min" ];
+      options = [
+        "noauto"
+        "x-systemd.automount"
+        "x-systemd.requires=network.target"
+        "x-systemd.mount-timeout=10"
+        "x-systemd.idle-timeout=1min"
+      ];
     };
 
     "/mnt/dropbox" = {
       device = "austinserver.local:/mnt/disks/dropbox";
       fsType = "nfs";
-      options = [ "noauto" "x-systemd.automount" "x-systemd.requires=network.target" "x-systemd.mount-timeout=10" "x-systemd.idle-timeout=1min" ];
+      options = [
+        "noauto"
+        "x-systemd.automount"
+        "x-systemd.requires=network.target"
+        "x-systemd.mount-timeout=10"
+        "x-systemd.idle-timeout=1min"
+      ];
     };
 
     "/mnt/disks/googledrive" = {
       device = "austinserver.local:/mnt/disks/googledrive";
       fsType = "nfs";
-      options = [ "noauto" "x-systemd.automount" "x-systemd.requires=network.target" "x-systemd.mount-timeout=10" "x-systemd.idle-timeout=1min" ];
+      options = [
+        "noauto"
+        "x-systemd.automount"
+        "x-systemd.requires=network.target"
+        "x-systemd.mount-timeout=10"
+        "x-systemd.idle-timeout=1min"
+      ];
     };
 
     "/mnt/disks/onedrive" = {
       device = "austinserver.local:/mnt/disks/onedrive";
       fsType = "nfs";
-      options = [ "noauto" "x-systemd.automount" "x-systemd.requires=network.target" "x-systemd.mount-timeout=10" "x-systemd.idle-timeout=1min" ];
+      options = [
+        "noauto"
+        "x-systemd.automount"
+        "x-systemd.requires=network.target"
+        "x-systemd.mount-timeout=10"
+        "x-systemd.idle-timeout=1min"
+      ];
     };
   };
 
-  swapDevices = [
-    { device = "/dev/disk/by-uuid/be1e6602-df3a-4d27-9d46-c52586093cb8"; }
-  ];
+  swapDevices = [ { device = "/dev/disk/by-uuid/be1e6602-df3a-4d27-9d46-c52586093cb8"; } ];
 
   hardware = {
     enableRedistributableFirmware = true;

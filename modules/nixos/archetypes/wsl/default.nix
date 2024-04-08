@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf mkForce;
@@ -11,8 +12,7 @@ let
 in
 {
   options.khanelinix.archetypes.wsl = {
-    enable =
-      mkBoolOpt false "Whether or not to enable the wsl archetype.";
+    enable = mkBoolOpt false "Whether or not to enable the wsl archetype.";
   };
 
   config = mkIf cfg.enable {

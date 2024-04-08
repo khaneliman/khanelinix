@@ -39,9 +39,7 @@
 
   "group/tray" = {
     "orientation" = "horizontal";
-    "modules" = [
-      "tray"
-    ];
+    "modules" = [ "tray" ];
   };
 
   "group/stats" = {

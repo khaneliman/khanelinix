@@ -1,7 +1,8 @@
-{ pkgs
-, modulesPath
-, inputs
-, ...
+{
+  pkgs,
+  modulesPath,
+  inputs,
+  ...
 }:
 let
   inherit (inputs) nixos-hardware;
@@ -17,7 +18,14 @@ in
     kernelPackages = pkgs.linuxPackages_latest;
 
     initrd = {
-      availableKernelModules = [ "nvme" "ahci" "xhci_pci" "usbhid" "usb_storage" "sd_mod" ];
+      availableKernelModules = [
+        "nvme"
+        "ahci"
+        "xhci_pci"
+        "usbhid"
+        "usb_storage"
+        "sd_mod"
+      ];
     };
 
     extraModulePackages = [ ];
@@ -33,9 +41,7 @@ in
     fsType = "vfat";
   };
 
-  swapDevices = [
-    { device = "/dev/disk/by-label/swap"; }
-  ];
+  swapDevices = [ { device = "/dev/disk/by-label/swap"; } ];
 
   hardware.enableRedistributableFirmware = true;
 

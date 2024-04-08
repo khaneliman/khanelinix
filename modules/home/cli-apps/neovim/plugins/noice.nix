@@ -1,5 +1,7 @@
 { config, lib, ... }:
-let inherit (lib) mkIf; in
+let
+  inherit (lib) mkIf;
+in
 {
   programs.nixvim = {
     plugins = {

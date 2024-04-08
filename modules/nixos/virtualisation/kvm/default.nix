@@ -1,10 +1,18 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
-  inherit (lib) types mkIf length optionalString concatStringsSep getExe;
+  inherit (lib)
+    types
+    mkIf
+    length
+    optionalString
+    concatStringsSep
+    getExe
+    ;
   inherit (lib.internal) mkBoolOpt mkOpt enabled;
   inherit (config.khanelinix) user;
 
@@ -18,12 +26,11 @@ in
     machineUnits =
       mkOpt (listOf str) [ ]
         "The systemd *.scope units to wait for before starting Scream.";
-    platform =
-      mkOpt (enum [ "amd" "intel" ]) "amd"
-        "Which CPU platform the machine is using.";
-    vfioIds =
-      mkOpt (listOf str) [ ]
-        "The hardware IDs to pass through to a virtual machine.";
+    platform = mkOpt (enum [
+      "amd"
+      "intel"
+    ]) "amd" "Which CPU platform the machine is using.";
+    vfioIds = mkOpt (listOf str) [ ] "The hardware IDs to pass through to a virtual machine.";
   };
 
   config = mkIf cfg.enable {
@@ -39,9 +46,9 @@ in
         "${cfg.platform}_iommu=pt"
         "kvm.ignore_msrs=1"
       ];
-      extraModprobeConfig =
-        optionalString (length cfg.vfioIds > 0)
-          "options vfio-pci ids=${concatStringsSep "," cfg.vfioIds}";
+      extraModprobeConfig = optionalString (
+        length cfg.vfioIds > 0
+      ) "options vfio-pci ids=${concatStringsSep "," cfg.vfioIds}";
     };
 
     systemd.tmpfiles.rules = [
@@ -102,14 +109,12 @@ in
             Unit = {
               Description = "Scream";
               StartLimitIntervalSec = "5";
-              After =
-                [
-                  "libvirtd.service"
-                  "pipewire-pulse.service"
-                  "pipewire.service"
-                  "sound.target"
-                ]
-                ++ cfg.machineUnits;
+              After = [
+                "libvirtd.service"
+                "pipewire-pulse.service"
+                "pipewire.service"
+                "sound.target"
+              ] ++ cfg.machineUnits;
             };
           };
         };

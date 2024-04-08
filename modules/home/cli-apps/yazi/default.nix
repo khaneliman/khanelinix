@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -32,7 +33,11 @@ in
 
       settings = {
         manager = {
-          layout = [ 1 3 4 ];
+          layout = [
+            1
+            3
+            4
+          ];
           linemode = "size";
           show_hidden = true;
           show_symlink = true;
@@ -51,7 +56,12 @@ in
           image_quality = 75;
           sixel_fraction = 15;
           ueberzug_scale = 1;
-          ueberzug_offset = [ 0 0 0 0 ];
+          ueberzug_offset = [
+            0
+            0
+            0
+            0
+          ];
         };
 
         tasks = {
@@ -59,7 +69,10 @@ in
           macro_workers = 25;
           bizarre_retry = 5;
           image_alloc = 536870912; # 512MB
-          image_bound = [ 0 0 ];
+          image_bound = [
+            0
+            0
+          ];
           suppress_preload = false;
         };
       };
@@ -67,9 +80,7 @@ in
 
     xdg.configFile = {
       "yazi" = {
-        source = lib.cleanSourceWith {
-          src = lib.cleanSource ./configs/.;
-        };
+        source = lib.cleanSourceWith { src = lib.cleanSource ./configs/.; };
 
         recursive = true;
       };

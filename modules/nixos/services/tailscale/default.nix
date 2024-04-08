@@ -1,7 +1,8 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  ...
 }:
 let
   inherit (lib) types mkIf;
@@ -45,27 +46,35 @@ in
       description = "Automatic connection to Tailscale";
 
       # Make sure tailscale is running before trying to connect to tailscale
-      after = [ "network-pre.target" "tailscale.service" ];
-      wants = [ "network-pre.target" "tailscale.service" ];
+      after = [
+        "network-pre.target"
+        "tailscale.service"
+      ];
+      wants = [
+        "network-pre.target"
+        "tailscale.service"
+      ];
       wantedBy = [ "multi-user.target" ];
 
       # Set this service as a oneshot job
       serviceConfig.Type = "oneshot";
 
       # Have the job run this shell script
-      script = with pkgs; /* bash */''
-        # Wait for tailscaled to settle
-        sleep 2
+      script =
+        with pkgs; # bash
+        ''
+          # Wait for tailscaled to settle
+          sleep 2
 
-        # Check if we are already authenticated to tailscale
-        status="$(${getExe tailscale} status -json | ${getExe jq} -r .BackendState)"
-        if [ $status = "Running" ]; then # if so, then do nothing
-          exit 0
-        fi
+          # Check if we are already authenticated to tailscale
+          status="$(${getExe tailscale} status -json | ${getExe jq} -r .BackendState)"
+          if [ $status = "Running" ]; then # if so, then do nothing
+            exit 0
+          fi
 
-        # Otherwise authenticate with tailscale
-        ${getExe tailscale} up -authkey "${cfg.autoconnect.key}"
-      '';
+          # Otherwise authenticate with tailscale
+          ${getExe tailscale} up -authkey "${cfg.autoconnect.key}"
+        '';
     };
   };
 }

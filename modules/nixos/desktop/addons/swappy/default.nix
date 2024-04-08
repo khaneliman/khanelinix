@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -11,8 +12,7 @@ let
 in
 {
   options.khanelinix.desktop.addons.swappy = {
-    enable =
-      mkBoolOpt false "Whether to enable Swappy in the desktop environment.";
+    enable = mkBoolOpt false "Whether to enable Swappy in the desktop environment.";
   };
 
   config = mkIf cfg.enable {

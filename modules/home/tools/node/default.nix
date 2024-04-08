@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) types mkIf;
@@ -23,8 +24,7 @@ in
     };
     prettier = {
       enable = mkBoolOpt true "Whether or not to install Prettier";
-      pkg =
-        mkOpt package pkgs.nodePackages.prettier "The NodeJS package to use";
+      pkg = mkOpt package pkgs.nodePackages.prettier "The NodeJS package to use";
     };
     yarn = {
       enable = mkBoolOpt true "Whether or not to install Yarn";

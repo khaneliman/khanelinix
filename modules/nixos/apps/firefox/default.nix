@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf mkMerge;
@@ -10,15 +11,12 @@ let
   cfg = config.khanelinix.apps.firefox;
 in
 {
-  options.khanelinix.apps.firefox =
-    {
-      enable = mkBoolOpt false "Whether or not to enable Firefox.";
-    };
+  options.khanelinix.apps.firefox = {
+    enable = mkBoolOpt false "Whether or not to enable Firefox.";
+  };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [
-      pkgs.floorp
-    ];
+    environment.systemPackages = [ pkgs.floorp ];
 
     services.gnome.gnome-browser-connector.enable = config.khanelinix.desktop.gnome.enable;
 

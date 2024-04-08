@@ -1,7 +1,8 @@
-{ lib
+{
+  lib,
 
-, pkgs
-, ...
+  pkgs,
+  ...
 }:
 let
   inherit (lib) types;
@@ -10,9 +11,15 @@ in
 {
   options.khanelinix.system.fonts = with types; {
     enable = mkBoolOpt false "Whether or not to manage fonts.";
-    fonts = with pkgs;
+    fonts =
+      with pkgs;
       mkOpt (listOf package) [
-        (nerdfonts.override { fonts = [ "CascadiaCode" "Monaspace" ]; })
+        (nerdfonts.override {
+          fonts = [
+            "CascadiaCode"
+            "Monaspace"
+          ];
+        })
       ] "Custom font packages to install.";
     default = mkOpt types.str "MonaspiceNe Nerd Font" "Default font name";
   };

@@ -1,7 +1,4 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
@@ -15,7 +12,9 @@ in
 
   config = mkIf cfg.enable {
     # Add an alias to the shell for backward-compat and convenience.
-    environment.shellAliases = { sudo = "doas"; };
+    environment.shellAliases = {
+      sudo = "doas";
+    };
 
     # Disable sudo
     security.sudo.enable = false;

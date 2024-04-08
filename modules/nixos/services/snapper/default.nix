@@ -1,7 +1,4 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   cfg = config.khanelinix.services.snapper;
 
@@ -20,9 +17,18 @@ in
       default = { };
       description = "Subvolume configuration. Any option mentioned in man:snapper-configs(5)
         is valid here, even if NixOS doesn't document it.";
-      type = types.attrsOf (types.submodule {
-        freeformType = types.attrsOf (types.oneOf [ (types.listOf safeStr) types.bool safeStr types.number ]);
-      });
+      type = types.attrsOf (
+        types.submodule {
+          freeformType = types.attrsOf (
+            types.oneOf [
+              (types.listOf safeStr)
+              types.bool
+              safeStr
+              types.number
+            ]
+          );
+        }
+      );
     };
   };
 
@@ -34,4 +40,3 @@ in
     };
   };
 }
-

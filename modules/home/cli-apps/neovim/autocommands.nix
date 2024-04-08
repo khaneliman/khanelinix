@@ -11,7 +11,8 @@ _: {
       event = "BufRead";
       once = true;
       callback = {
-        __raw = /*lua*/ "MiniMap.open";
+        __raw = # lua
+          "MiniMap.open";
       };
     }
 
@@ -19,14 +20,15 @@ _: {
     {
       event = "BufWinEnter";
       callback = {
-        __raw = /*lua*/ ''
-          function(table)
-            if vim.api.nvim_buf_get_name(0) ~= "" and not vim.g.first_buffer_opened then
-              vim.g.first_buffer_opened = true
-              vim.api.nvim_exec('Neotree show filesystem left', true)
+        __raw = # lua
+          ''
+            function(table)
+              if vim.api.nvim_buf_get_name(0) ~= "" and not vim.g.first_buffer_opened then
+                vim.g.first_buffer_opened = true
+                vim.api.nvim_exec('Neotree show filesystem left', true)
+              end
             end
-          end
-        '';
+          '';
       };
     }
 

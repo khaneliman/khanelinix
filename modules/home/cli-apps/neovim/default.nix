@@ -1,8 +1,9 @@
-{ config
-, lib
-, pkgs
-, inputs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
@@ -49,11 +50,12 @@ in
 
       colorschemes.catppuccin.enable = true;
 
-      extraConfigLuaPre = /* lua */ ''
-        function bool2str(bool) return bool and "on" or "off" end
+      extraConfigLuaPre = # lua
+        ''
+          function bool2str(bool) return bool and "on" or "off" end
 
-        require("aerial").setup()
-      '';
+          require("aerial").setup()
+        '';
     };
 
     sops.secrets = {
@@ -68,7 +70,8 @@ in
       "astronvim" = {
         # onChange = "NVIM_APPNAME=astronvim ${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
         source = lib.cleanSourceWith {
-          filter = name: _type:
+          filter =
+            name: _type:
             let
               baseName = baseNameOf (toString name);
             in
@@ -80,7 +83,8 @@ in
       "lazyvim" = {
         # onChange = "NVIM_APPNAME=lazyvim ${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
         source = lib.cleanSourceWith {
-          filter = name: _type:
+          filter =
+            name: _type:
             let
               baseName = baseNameOf (toString name);
             in
@@ -92,7 +96,8 @@ in
       "lunarvim" = {
         # onChange = "NVIM_APPNAME=lunarvim ${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
         source = lib.cleanSourceWith {
-          filter = name: _type:
+          filter =
+            name: _type:
             let
               baseName = baseNameOf (toString name);
             in

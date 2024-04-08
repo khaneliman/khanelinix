@@ -1,7 +1,4 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf mkForce;
 
@@ -13,7 +10,9 @@ in
   config = mkIf cfg.enable {
     nix = {
       gc = {
-        interval = { Day = 7; };
+        interval = {
+          Day = 7;
+        };
         user = config.khanelinix.user.name;
       };
 

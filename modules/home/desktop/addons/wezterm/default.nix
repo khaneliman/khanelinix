@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -21,34 +22,35 @@ in
       enableZshIntegration = true;
       package = pkgs.wezterm;
 
-      extraConfig = /* lua */''
-        function scheme_for_appearance(appearance)
-          if appearance:find "Dark" then
-            return "Catppuccin Macchiato"
-          else
-            return "Catppuccin Frappe"
+      extraConfig = # lua
+        ''
+          function scheme_for_appearance(appearance)
+            if appearance:find "Dark" then
+              return "Catppuccin Macchiato"
+            else
+              return "Catppuccin Frappe"
+            end
           end
-        end
 
-        local custom = wezterm.color.get_builtin_schemes()[scheme_for_appearance(wezterm.gui.get_appearance())]
+          local custom = wezterm.color.get_builtin_schemes()[scheme_for_appearance(wezterm.gui.get_appearance())]
 
-        return {
-          font = wezterm.font_with_fallback {
-            'MonaspiceKr Nerd Font',
-            'CaskaydiaCove Nerd Font',
-            'Noto Color Emoji',
-          },
-          color_schemes = {
-            ["Catppuccin"] = custom,
-          },
-          color_scheme = "Catppuccin",
-          use_fancy_tab_bar = false,
-          tab_bar_at_bottom = true,
-          term = "wezterm",
-          window_close_confirmation = 'NeverPrompt',
-          window_decorations = "RESIZE",
-        }
-      '';
+          return {
+            font = wezterm.font_with_fallback {
+              'MonaspiceKr Nerd Font',
+              'CaskaydiaCove Nerd Font',
+              'Noto Color Emoji',
+            },
+            color_schemes = {
+              ["Catppuccin"] = custom,
+            },
+            color_scheme = "Catppuccin",
+            use_fancy_tab_bar = false,
+            tab_bar_at_bottom = true,
+            term = "wezterm",
+            window_close_confirmation = 'NeverPrompt',
+            window_decorations = "RESIZE",
+          }
+        '';
     };
   };
 }

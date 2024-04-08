@@ -1,20 +1,29 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
-  inherit (lib) types mkIf mkDefault mkMerge getExe getExe';
+  inherit (lib)
+    types
+    mkIf
+    mkDefault
+    mkMerge
+    getExe
+    getExe'
+    ;
   inherit (lib.internal) mkOpt;
 
   cfg = config.khanelinix.user;
 
   home-directory =
-    if cfg.name == null
-    then null
-    else if pkgs.stdenv.isDarwin
-    then "/Users/${cfg.name}"
-    else "/home/${cfg.name}";
+    if cfg.name == null then
+      null
+    else if pkgs.stdenv.isDarwin then
+      "/Users/${cfg.name}"
+    else
+      "/home/${cfg.name}";
 
   defaultIcon = pkgs.stdenvNoCC.mkDerivation {
     name = "default-icon";
@@ -22,11 +31,14 @@ let
 
     dontUnpack = true;
 
-    installPhase = /* bash */ ''
-      cp $src $out
-    '';
+    installPhase = # bash
+      ''
+        cp $src $out
+      '';
 
-    passthru = { fileName = defaultIconFileName; };
+    passthru = {
+      fileName = defaultIconFileName;
+    };
   };
   defaultIconFileName = "profile.png";
 in
@@ -36,9 +48,7 @@ in
     email = mkOpt types.str "khaneliman12@gmail.com" "The email of the user.";
     fullName = mkOpt types.str "Austin Horstman" "The full name of the user.";
     home = mkOpt (types.nullOr types.str) home-directory "The user's home directory.";
-    icon =
-      mkOpt (types.nullOr types.package) defaultIcon
-        "The profile picture to use for the user.";
+    icon = mkOpt (types.nullOr types.package) defaultIcon "The profile picture to use for the user.";
     name = mkOpt (types.nullOr types.str) config.snowfallorg.user.name "The user account.";
   };
 
@@ -65,10 +75,7 @@ in
           "Music/.keep".text = "";
           "Pictures/.keep".text = "";
           "Videos/.keep".text = "";
-          "Pictures/${
-          cfg.icon.fileName or (builtins.baseNameOf cfg.icon)
-        }".source =
-            cfg.icon;
+          "Pictures/${cfg.icon.fileName or (builtins.baseNameOf cfg.icon)}".source = cfg.icon;
         };
 
         homeDirectory = mkDefault cfg.home;
@@ -110,7 +117,8 @@ in
           # Cryptography
           genpass = "${getExe pkgs.openssl} rand - base64 20"; # Generate a random, 20-charactered password
           sha = "shasum -a 256"; # Test checksum
-          sshperm = /* bash */ ''${getExe' pkgs.findutils "find"} .ssh/ -type f -exec chmod 600 {} \;; ${getExe' pkgs.findutils "find"} .ssh/ -type d -exec chmod 700 {} \;; ${getExe' pkgs.findutils "find"} .ssh/ -type f -name "*.pub" -exec chmod 644 {} \;'';
+          sshperm = # bash
+            ''${getExe' pkgs.findutils "find"} .ssh/ -type f -exec chmod 600 {} \;; ${getExe' pkgs.findutils "find"} .ssh/ -type d -exec chmod 700 {} \;; ${getExe' pkgs.findutils "find"} .ssh/ -type f -name "*.pub" -exec chmod 644 {} \;'';
         };
 
         username = mkDefault cfg.name;

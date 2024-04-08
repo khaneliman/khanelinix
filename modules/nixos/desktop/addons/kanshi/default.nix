@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf getExe;
@@ -13,8 +14,7 @@ let
 in
 {
   options.khanelinix.desktop.addons.kanshi = {
-    enable =
-      mkBoolOpt false "Whether to enable Kanshi in the desktop environment.";
+    enable = mkBoolOpt false "Whether to enable Kanshi in the desktop environment.";
   };
 
   config = mkIf cfg.enable {
@@ -25,17 +25,21 @@ in
     # configuring kanshi
     systemd.user.services.kanshi = {
       description = "Kanshi output autoconfig ";
-      environment = { XDG_CONFIG_HOME = "${home}/.config"; };
+      environment = {
+        XDG_CONFIG_HOME = "${home}/.config";
+      };
       partOf = [ "graphical-session.target" ];
       wantedBy = [ "graphical-session.target" ];
       serviceConfig = {
-        ExecCondition = /* bash */ ''
-          ${getExe pkgs.bash} -c '[ -n "$WAYLAND_DISPLAY" ]'
-        '';
+        ExecCondition = # bash
+          ''
+            ${getExe pkgs.bash} -c '[ -n "$WAYLAND_DISPLAY" ]'
+          '';
 
-        ExecStart = /* bash */ ''
-          ${getExe pkgs.kanshi}
-        '';
+        ExecStart = # bash
+          ''
+            ${getExe pkgs.kanshi}
+          '';
 
         RestartSec = 5;
         Restart = "always";

@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -15,12 +16,8 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      qmk
-    ];
+    environment.systemPackages = with pkgs; [ qmk ];
 
-    services.udev.packages = with pkgs; [
-      qmk-udev-rules
-    ];
+    services.udev.packages = with pkgs; [ qmk-udev-rules ];
   };
 }

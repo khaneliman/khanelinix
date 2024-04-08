@@ -1,17 +1,16 @@
-{ config
-, inputs
-, lib
-, modulesPath
-, pkgs
-, ...
+{
+  config,
+  inputs,
+  lib,
+  modulesPath,
+  pkgs,
+  ...
 }:
 let
   inherit (inputs) nixos-hardware;
 in
 {
-  imports = with nixos-hardware.nixosModules; [
-    (modulesPath + "/profiles/qemu-guest.nix")
-  ];
+  imports = with nixos-hardware.nixosModules; [ (modulesPath + "/profiles/qemu-guest.nix") ];
 
   ##
   # Desktop VM config
@@ -21,7 +20,14 @@ in
 
     initrd = {
       kernelModules = [ "kvm-amd" ];
-      availableKernelModules = [ "nvme" "ahci" "xhci_pci" "virtio_pci" "virtio_blk" "sr_mod" ];
+      availableKernelModules = [
+        "nvme"
+        "ahci"
+        "xhci_pci"
+        "virtio_pci"
+        "virtio_blk"
+        "sr_mod"
+      ];
     };
 
     extraModulePackages = [ ];

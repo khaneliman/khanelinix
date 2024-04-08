@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -25,9 +26,7 @@ in
         allowType1 = true;
 
         defaultFonts = {
-          emoji = [
-            "Noto Color Emoji"
-          ];
+          emoji = [ "Noto Color Emoji" ];
           monospace = [
             "MonaspiceNe Nerd Font"
             "CaskaydiaCove Nerd Font Mono"

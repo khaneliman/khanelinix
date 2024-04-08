@@ -1,7 +1,8 @@
-{ config
-, pkgs
-, lib
-, ...
+{
+  config,
+  pkgs,
+  lib,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -13,11 +14,7 @@ in
 
   config = mkIf cfg.enable {
     fonts = {
-      fonts = with pkgs;
-        [
-          sketchybar-app-font
-        ]
-        ++ cfg.fonts;
+      fonts = with pkgs; [ sketchybar-app-font ] ++ cfg.fonts;
     };
 
     system = {

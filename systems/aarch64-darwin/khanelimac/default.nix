@@ -32,9 +32,7 @@ in
     tools.homebrew.masEnable = true;
   };
 
-  environment.systemPath = [
-    "/opt/homebrew/bin"
-  ];
+  environment.systemPath = [ "/opt/homebrew/bin" ];
 
   networking = {
     computerName = "Austins MacBook Pro";

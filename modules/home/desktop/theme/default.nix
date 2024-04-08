@@ -1,26 +1,51 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
-  inherit (lib) mkIf mkEnableOption mkOption types;
+  inherit (lib)
+    mkIf
+    mkEnableOption
+    mkOption
+    types
+    ;
   inherit (lib.internal) mkOpt capitalize;
 
   cfg = config.khanelinix.desktop.theme;
 
-  catppuccinAccents = [ "rosewater" "flamingo" "pink" "mauve" "red" "maroon" "peach" "yellow" "green" "teal" "sky" "sapphire" "blue" "lavender" ];
-  catppuccinVariants = [ "latte" "frappe" "macchiato" "mocha" ];
+  catppuccinAccents = [
+    "rosewater"
+    "flamingo"
+    "pink"
+    "mauve"
+    "red"
+    "maroon"
+    "peach"
+    "yellow"
+    "green"
+    "teal"
+    "sky"
+    "sapphire"
+    "blue"
+    "lavender"
+  ];
+  catppuccinVariants = [
+    "latte"
+    "frappe"
+    "macchiato"
+    "mocha"
+  ];
 
-  fromYAML = f:
+  fromYAML =
+    f:
     let
       jsonFile =
-        pkgs.runCommand "yaml to attribute set"
-          {
-            nativeBuildInputs = [ pkgs.jc ];
-          } /* bash */ ''
-          jc --yaml < "${f}" > "$out"
-        '';
+        pkgs.runCommand "yaml to attribute set" { nativeBuildInputs = [ pkgs.jc ]; } # bash
+          ''
+            jc --yaml < "${f}" > "$out"
+          '';
     in
     builtins.elemAt (builtins.fromJSON (builtins.readFile jsonFile)) 0;
 in
@@ -87,7 +112,9 @@ in
       };
 
       bottom = {
-        settings = builtins.fromTOML (builtins.readFile (cfg.package + "/bottom/${cfg.selectedTheme.variant}.toml"));
+        settings = builtins.fromTOML (
+          builtins.readFile (cfg.package + "/bottom/${cfg.selectedTheme.variant}.toml")
+        );
       };
 
       btop = {
@@ -95,17 +122,21 @@ in
       };
 
       k9s.skins = {
-        catppuccin = fromYAML (cfg.package + "/k9s/${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}.yaml");
+        catppuccin = fromYAML (
+          cfg.package + "/k9s/${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}.yaml"
+        );
       };
 
-      tmux.plugins = [{
-        plugin = pkgs.tmuxPlugins.catppuccin;
-        extraConfig = ''
-          set -g @catppuccin_flavour '${cfg.selectedTheme.variant}'
-          set -g @catppuccin_host 'on'
-          set -g @catppuccin_user 'on'
-        '';
-      }];
+      tmux.plugins = [
+        {
+          plugin = pkgs.tmuxPlugins.catppuccin;
+          extraConfig = ''
+            set -g @catppuccin_flavour '${cfg.selectedTheme.variant}'
+            set -g @catppuccin_host 'on'
+            set -g @catppuccin_user 'on'
+          '';
+        }
+      ];
     };
 
     khanelinix.desktop.hyprland.prependConfig = ''
@@ -114,7 +145,9 @@ in
 
     xdg.configFile = {
       "btop/themes/${cfg.selectedTheme.name}_${cfg.selectedTheme.variant}.theme" = {
-        source = mkIf config.programs.btop.enable (cfg.package + "/btop/${cfg.selectedTheme.name}_${cfg.selectedTheme.variant}.theme");
+        source = mkIf config.programs.btop.enable (
+          cfg.package + "/btop/${cfg.selectedTheme.name}_${cfg.selectedTheme.variant}.theme"
+        );
       };
     };
   };

@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -15,9 +16,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      libsForQt5.polkit-kde-agent
-    ];
+    environment.systemPackages = with pkgs; [ libsForQt5.polkit-kde-agent ];
 
     # Enable and configure `polkit`.
     security.polkit = {

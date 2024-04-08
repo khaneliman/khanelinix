@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -10,9 +11,7 @@ let
 in
 {
   options.khanelinix.hardware.nvidia = {
-    enable =
-      mkBoolOpt false
-        "Whether or not to enable support for nvidia.";
+    enable = mkBoolOpt false "Whether or not to enable support for nvidia.";
   };
 
   config = mkIf cfg.enable {

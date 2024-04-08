@@ -1,12 +1,8 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkEnableOption mkIf;
 
   cfg = config.khanelinix.services.udiskie;
-
 in
 {
   options.khanelinix.services.udiskie = {

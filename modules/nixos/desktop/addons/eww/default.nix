@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) types mkIf getExe;
@@ -40,15 +41,17 @@ let
     wlogout
   ];
 
-  reload_script = pkgs.writeShellScript "reload_eww" /* bash */ ''
-    windows=$(eww windows | rg '\*' | tr -d '*')
+  reload_script =
+    pkgs.writeShellScript "reload_eww" # bash
+      ''
+        windows=$(eww windows | rg '\*' | tr -d '*')
 
-    systemctl --user restart eww.service
+        systemctl --user restart eww.service
 
-    echo $windows | while read -r w; do
-      eww open $w
-    done
-  '';
+        echo $windows | while read -r w; do
+          eww open $w
+        done
+      '';
 in
 {
   options.khanelinix.desktop.addons.eww = with types; {
@@ -80,27 +83,23 @@ in
 
     khanelinix.home = {
       extraOptions = {
-        home.packages = [
-          cfg.package
-        ];
+        home.packages = [ cfg.package ];
 
         # remove nix files
         xdg.configFile."eww" = {
           source = lib.cleanSourceWith {
-            filter = name: _type:
+            filter =
+              name: _type:
               let
                 baseName = baseNameOf (toString name);
               in
-                !(lib.hasSuffix ".nix" baseName);
+              !(lib.hasSuffix ".nix" baseName);
             src = lib.cleanSource ./.;
           };
 
           recursive = true;
 
-          onChange =
-            if cfg.autoReload
-            then reload_script.outPath
-            else "";
+          onChange = if cfg.autoReload then reload_script.outPath else "";
         };
 
         systemd.user.services.eww = {

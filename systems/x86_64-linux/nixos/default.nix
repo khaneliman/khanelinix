@@ -5,9 +5,10 @@ in
 {
   imports = [ ./hardware.nix ];
 
-  programs.sway.extraSessionCommands = /* bash */ ''
-    WLR_NO_HARDWARE_CURSORS=1
-  '';
+  programs.sway.extraSessionCommands = # bash
+    ''
+      WLR_NO_HARDWARE_CURSORS=1
+    '';
 
   khanelinix = {
     nix = enabled;

@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -17,7 +18,7 @@ in
   config = mkIf cfg.enable {
     xdg.configFile = {
       "fastfetch/config.jsonc".text =
-        /* json */
+        # json
         ''
           {
             "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
@@ -49,39 +50,41 @@ in
                   "user": "green",
                   "host": "green"
                 }
-              },${lib.optionalString pkgs.stdenv.isDarwin /* json */ ''
-                {
-                      "type": "os",
-                      "key": " ├─  ",
-                      "keyColor": "green"
-                    },
-                    {
-                      "type": "kernel",
-                      "key": " ├─  ",
-                      "keyColor": "green"
-                    },
-                    {
-                      "type": "packages",
-                      "key": " ├─  ",
-                      "keyColor": "green"
-                    },
-              ''}${lib.optionalString pkgs.stdenv.isLinux /* json */ ''
-                {
-                      "type": "os",
-                      "key": " ├─ ",
-                      "keyColor": "green"
-                    },
-                    {
-                      "type": "kernel",
-                      "key": " ├─ ",
-                      "keyColor": "green"
-                    },
-                    {
-                      "type": "packages",
-                      "key": " ├─ ",
-                      "keyColor": "green"
-                    },
-              ''}
+              },${lib.optionalString pkgs.stdenv.isDarwin # json
+                ''
+                  {
+                        "type": "os",
+                        "key": " ├─  ",
+                        "keyColor": "green"
+                      },
+                      {
+                        "type": "kernel",
+                        "key": " ├─  ",
+                        "keyColor": "green"
+                      },
+                      {
+                        "type": "packages",
+                        "key": " ├─  ",
+                        "keyColor": "green"
+                      },
+                ''}${lib.optionalString pkgs.stdenv.isLinux # json
+                ''
+                  {
+                        "type": "os",
+                        "key": " ├─ ",
+                        "keyColor": "green"
+                      },
+                      {
+                        "type": "kernel",
+                        "key": " ├─ ",
+                        "keyColor": "green"
+                      },
+                      {
+                        "type": "packages",
+                        "key": " ├─ ",
+                        "keyColor": "green"
+                      },
+                ''}
               {
                 "type": "shell",
                 "key": " ╰─  ",
@@ -150,5 +153,3 @@ in
     };
   };
 }
-
-

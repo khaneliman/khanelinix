@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -22,9 +23,7 @@ in
         enable = true;
         browsing = true;
 
-        drivers = with pkgs; [
-          brlaser
-        ];
+        drivers = with pkgs; [ brlaser ];
 
         extraConf = ''
           LogLevel warn

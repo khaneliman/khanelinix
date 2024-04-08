@@ -5,10 +5,18 @@ _: {
       # ignoreMissing = true;
       registrations = {
         "<leader>" = {
-          "b" = { name = "󰓩 Buffers"; };
-          "d" = { name = "  Debug"; };
-          "g" = { name = "󰊢 Git"; };
-          "f" = { name = " Find"; };
+          "b" = {
+            name = "󰓩 Buffers";
+          };
+          "d" = {
+            name = "  Debug";
+          };
+          "g" = {
+            name = "󰊢 Git";
+          };
+          "f" = {
+            name = " Find";
+          };
           "h" = {
             name = "󱡀 Harpoon";
             a = "Add";
@@ -30,9 +38,15 @@ _: {
             h = "Hover";
             r = "Rename";
           };
-          "r" = { name = " Refactor"; };
-          "t" = { name = " Terminal"; };
-          "u" = { name = " UI/UX"; };
+          "r" = {
+            name = " Refactor";
+          };
+          "t" = {
+            name = " Terminal";
+          };
+          "u" = {
+            name = " UI/UX";
+          };
         };
       };
     };

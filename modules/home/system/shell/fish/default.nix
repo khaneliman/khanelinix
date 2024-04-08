@@ -1,8 +1,9 @@
-{ config
-, lib
-, pkgs
-, osConfig
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  osConfig,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -17,16 +18,12 @@ in
 
   config = mkIf cfg.enable {
     xdg.configFile."fish/functions" = {
-      source = lib.cleanSourceWith {
-        src = lib.cleanSource ./functions/.;
-      };
+      source = lib.cleanSourceWith { src = lib.cleanSource ./functions/.; };
       recursive = true;
     };
 
     xdg.configFile."fish/themes" = {
-      source = lib.cleanSourceWith {
-        src = lib.cleanSource ./themes/.;
-      };
+      source = lib.cleanSourceWith { src = lib.cleanSource ./themes/.; };
       recursive = true;
     };
 
@@ -42,37 +39,42 @@ in
 
           makeBinPathList = map (path: path + "/bin");
         in
-        lib.optionalString pkgs.stdenv.isDarwin /* fish */ ''
-          export NIX_PATH="darwin-config=$HOME/.nixpkgs/darwin-configuration.nix:$HOME/.nix-defexpr/channels:$NIX_PATH"
-          fish_add_path --move --prepend --path ${lib.concatMapStringsSep " " dquote (makeBinPathList osConfig.environment.profiles)}
-          set fish_user_paths $fish_user_paths
-        '';
+        lib.optionalString pkgs.stdenv.isDarwin # fish
+          ''
+            export NIX_PATH="darwin-config=$HOME/.nixpkgs/darwin-configuration.nix:$HOME/.nix-defexpr/channels:$NIX_PATH"
+            fish_add_path --move --prepend --path ${
+              lib.concatMapStringsSep " " dquote (makeBinPathList osConfig.environment.profiles)
+            }
+            set fish_user_paths $fish_user_paths
+          '';
 
-      interactiveShellInit = lib.optionalString pkgs.stdenv.isDarwin /* fish */''
-        # 1password plugin
-        if [ -f ~/.config/op/plugins.sh ];
-            source ~/.config/op/plugins.sh
-        end
+      interactiveShellInit =
+        lib.optionalString pkgs.stdenv.isDarwin # fish
+          ''
+            # 1password plugin
+            if [ -f ~/.config/op/plugins.sh ];
+                source ~/.config/op/plugins.sh
+            end
 
-        # Brew environment
-        if [ -f /opt/homebrew/bin/brew ];
-        	eval "$("/opt/homebrew/bin/brew" shellenv)"
-        end
+            # Brew environment
+            if [ -f /opt/homebrew/bin/brew ];
+            	eval "$("/opt/homebrew/bin/brew" shellenv)"
+            end
 
-        # Nix
-        if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish' ];
-         source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish'
-        end
-        if [ -f '/nix/var/nix/profiles/default/etc/profile.d/nix.fish' ];
-         source '/nix/var/nix/profiles/default/etc/profile.d/nix.fish'
-        end
-        # End Nix
+            # Nix
+            if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish' ];
+             source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish'
+            end
+            if [ -f '/nix/var/nix/profiles/default/etc/profile.d/nix.fish' ];
+             source '/nix/var/nix/profiles/default/etc/profile.d/nix.fish'
+            end
+            # End Nix
 
-        # Disable greeting
-        set fish_greeting
+            # Disable greeting
+            set fish_greeting
 
-        fastfetch
-      '';
+            fastfetch
+          '';
 
       plugins = [
         # Enable a plugin (here grc for colorized command output) from nixpkgs

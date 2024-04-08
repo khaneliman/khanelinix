@@ -1,7 +1,4 @@
-{ modulesPath
-, inputs
-, ...
-}:
+{ modulesPath, inputs, ... }:
 let
   inherit (inputs) nixos-hardware;
 in
@@ -14,14 +11,21 @@ in
   ];
 
   boot = {
-    blacklistedKernelModules = [
-      "eeepc_wmi"
-    ];
+    blacklistedKernelModules = [ "eeepc_wmi" ];
 
     kernel.sysctl."kernel.sysrq" = 1;
 
     initrd = {
-      availableKernelModules = [ "nvme" "xhci_pci" "ehci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" "sr_mod" ];
+      availableKernelModules = [
+        "nvme"
+        "xhci_pci"
+        "ehci_pci"
+        "ahci"
+        "usb_storage"
+        "usbhid"
+        "sd_mod"
+        "sr_mod"
+      ];
       # verbose = false;
     };
   };
@@ -30,7 +34,12 @@ in
     "/" = {
       device = "/dev/disk/by-label/nixos";
       fsType = "btrfs";
-      options = [ "rw" "noatime" "ssd" "subvol=/@" ];
+      options = [
+        "rw"
+        "noatime"
+        "ssd"
+        "subvol=/@"
+      ];
     };
 
     "/boot" = {

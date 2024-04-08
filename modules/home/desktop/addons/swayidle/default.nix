@@ -1,8 +1,9 @@
-{ config
-, inputs
-, lib
-, system
-, ...
+{
+  config,
+  inputs,
+  lib,
+  system,
+  ...
 }:
 let
   inherit (lib) mkIf getExe getExe';
@@ -13,8 +14,7 @@ let
 in
 {
   options.khanelinix.desktop.addons.swayidle = {
-    enable =
-      mkBoolOpt false "Whether to enable swayidle in the desktop environment.";
+    enable = mkBoolOpt false "Whether to enable swayidle in the desktop environment.";
   };
 
   config = mkIf cfg.enable {

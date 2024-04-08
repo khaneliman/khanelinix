@@ -19,13 +19,14 @@ _: {
         mode = "n";
         key = "<leader>tg";
         lua = true;
-        action = /*lua*/ ''
-          function()
-            local toggleterm = require('toggleterm.terminal')
+        action = # lua
+          ''
+            function()
+              local toggleterm = require('toggleterm.terminal')
 
-            toggleterm.Terminal:new({cmd = 'lazygit',hidden = true}):toggle()
-          end
-        '';
+              toggleterm.Terminal:new({cmd = 'lazygit',hidden = true}):toggle()
+            end
+          '';
         options = {
           desc = "Toggle lazygit";
           silent = true;
@@ -35,13 +36,14 @@ _: {
         mode = "n";
         key = "<leader>gg";
         lua = true;
-        action = /*lua*/ ''
-          function()
-            local toggleterm = require('toggleterm.terminal')
+        action = # lua
+          ''
+            function()
+              local toggleterm = require('toggleterm.terminal')
 
-            toggleterm.Terminal:new({cmd = 'lazygit',hidden = true}):toggle()
-          end
-        '';
+              toggleterm.Terminal:new({cmd = 'lazygit',hidden = true}):toggle()
+            end
+          '';
         options = {
           desc = "Toggle lazygit";
           silent = true;

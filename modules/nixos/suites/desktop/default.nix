@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -11,8 +12,7 @@ let
 in
 {
   options.khanelinix.suites.desktop = {
-    enable =
-      mkBoolOpt false "Whether or not to enable common desktop configuration.";
+    enable = mkBoolOpt false "Whether or not to enable common desktop configuration.";
   };
 
   config = mkIf cfg.enable {

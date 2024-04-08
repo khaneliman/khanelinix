@@ -1,7 +1,4 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
@@ -13,7 +10,5 @@ in
     enable = mkBoolOpt false "Whether or not to configure geoclue support.";
   };
 
-  config = mkIf cfg.enable {
-    services.geoclue2.enable = true;
-  };
+  config = mkIf cfg.enable { services.geoclue2.enable = true; };
 }

@@ -1,12 +1,18 @@
-{ config
-, lib
-, inputs
-, host
-, pkgs
-, ...
+{
+  config,
+  lib,
+  inputs,
+  host,
+  pkgs,
+  ...
 }:
 let
-  inherit (lib) types mkIf foldl optionalString;
+  inherit (lib)
+    types
+    mkIf
+    foldl
+    optionalString
+    ;
   inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.tools.ssh;
@@ -20,46 +26,43 @@ let
 
   default-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJAZIwy7nkz8CZYR/ZTSNr+7lRBW2AYy1jw06b44zaID";
 
-  other-hosts =
-    lib.filterAttrs
-      (key: host:
-        key != name && (host.config.khanelinix.user.name or null) != null)
-      ((inputs.self.nixosConfigurations or { }) // (inputs.self.darwinConfigurations or { }));
+  other-hosts = lib.filterAttrs (
+    key: host: key != name && (host.config.khanelinix.user.name or null) != null
+  ) ((inputs.self.nixosConfigurations or { }) // (inputs.self.darwinConfigurations or { }));
 
-  other-hosts-config =
-    lib.concatMapStringsSep
-      "\n"
-      (
-        name:
-        let
-          remote = other-hosts.${name};
-          remote-user-name = remote.config.khanelinix.user.name;
-          remote-user-id = builtins.toString remote.config.users.users.${remote-user-name}.uid;
+  other-hosts-config = lib.concatMapStringsSep "\n" (
+    name:
+    let
+      remote = other-hosts.${name};
+      remote-user-name = remote.config.khanelinix.user.name;
+      remote-user-id = builtins.toString remote.config.users.users.${remote-user-name}.uid;
 
-          forward-gpg =
-            optionalString (config.services.gpg-agent.enable && remote.config.services.gpg-agent.enable)
-              ''
-                RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra
-                RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh
-              '';
-          port-expr = if builtins.hasAttr name inputs.self.nixosConfigurations then "Port ${builtins.toString cfg.port}" else "";
-        in
-        ''
-          Host ${name}
-            Hostname ${name}.local
-            User ${remote-user-name}
-            ForwardAgent yes
-            ${port-expr}
-            ${forward-gpg}
-        ''
-      )
-      (builtins.attrNames other-hosts);
+      forward-gpg =
+        optionalString (config.services.gpg-agent.enable && remote.config.services.gpg-agent.enable)
+          ''
+            RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra
+            RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh
+          '';
+      port-expr =
+        if builtins.hasAttr name inputs.self.nixosConfigurations then
+          "Port ${builtins.toString cfg.port}"
+        else
+          "";
+    in
+    ''
+      Host ${name}
+        Hostname ${name}.local
+        User ${remote-user-name}
+        ForwardAgent yes
+        ${port-expr}
+        ${forward-gpg}
+    ''
+  ) (builtins.attrNames other-hosts);
 in
 {
   options.khanelinix.tools.ssh = with types; {
     enable = mkBoolOpt false "Whether or not to configure ssh support.";
-    authorizedKeys =
-      mkOpt (listOf str) [ default-key ] "The public keys to apply.";
+    authorizedKeys = mkOpt (listOf str) [ default-key ] "The public keys to apply.";
     extraConfig = mkOpt str "" "Extra configuration to apply.";
     port = mkOpt port 2222 "The port to listen on (in addition to 22).";
   };
@@ -78,16 +81,9 @@ in
     };
 
     home = {
-      shellAliases =
-        foldl
-          (aliases: system:
-            aliases
-            // {
-              "ssh-${system}" = "ssh ${system} -t tmux a";
-            })
-          { }
-          (builtins.attrNames other-hosts);
-
+      shellAliases = foldl (
+        aliases: system: aliases // { "ssh-${system}" = "ssh ${system} -t tmux a"; }
+      ) { } (builtins.attrNames other-hosts);
 
       file = mkIf pkgs.stdenv.isDarwin {
         ".ssh/authorized_keys".text = builtins.concatStringsSep "\n" cfg.authorizedKeys;

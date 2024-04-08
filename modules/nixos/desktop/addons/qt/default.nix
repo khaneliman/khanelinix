@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) types mkIf;
@@ -13,16 +14,15 @@ in
   options.khanelinix.desktop.addons.qt = with types; {
     enable = mkBoolOpt false "Whether to customize qt and apply themes.";
     theme = {
-      name =
-        mkOpt str "Catppuccin-Macchiato-Blue"
-          "The name of the kvantum theme to apply.";
+      name = mkOpt str "Catppuccin-Macchiato-Blue" "The name of the kvantum theme to apply.";
       pkg = mkOpt package pkgs.catppuccin-kvantum "The package to use for the theme.";
     };
   };
 
   config = mkIf cfg.enable {
     environment = {
-      systemPackages = with pkgs;
+      systemPackages =
+        with pkgs;
         [
           (cfg.theme.pkg.override {
             accent = "Blue";

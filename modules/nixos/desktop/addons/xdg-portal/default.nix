@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -18,10 +19,9 @@ in
     xdg = {
       portal = {
         enable = true;
-        extraPortals = with pkgs;
-          [
-            xdg-desktop-portal-gtk
-          ]
+        extraPortals =
+          with pkgs;
+          [ xdg-desktop-portal-gtk ]
           ++ (lib.optional config.khanelinix.desktop.sway.enable xdg-desktop-portal-wlr);
         # xdgOpenUsePortal = true;
       };

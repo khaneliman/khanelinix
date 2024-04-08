@@ -1,10 +1,16 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
-  inherit (lib) types mkIf getExe' stringAfter;
+  inherit (lib)
+    types
+    mkIf
+    getExe'
+    stringAfter
+    ;
   inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.display-managers.sddm;
@@ -15,46 +21,46 @@ in
     defaultSession = mkOpt (nullOr types.str) null "The default session to use.";
   };
 
-  config =
-    mkIf cfg.enable
-      {
-        environment.systemPackages = with pkgs; [
-          catppuccin-sddm-corners
-          sddm
-          libsForQt5.qtbase
-          libsForQt5.qtsvg
-          libsForQt5.qtgraphicaleffects
-          libsForQt5.qtquickcontrols2
-        ];
+  config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      catppuccin-sddm-corners
+      sddm
+      libsForQt5.qtbase
+      libsForQt5.qtsvg
+      libsForQt5.qtgraphicaleffects
+      libsForQt5.qtquickcontrols2
+    ];
 
-        services.xserver = {
-          enable = true;
+    services.xserver = {
+      enable = true;
 
-          displayManager = {
-            inherit (cfg) defaultSession;
+      displayManager = {
+        inherit (cfg) defaultSession;
 
-            sddm = {
-              inherit (cfg) enable;
-              theme = "catppuccin-sddm-corners";
+        sddm = {
+          inherit (cfg) enable;
+          theme = "catppuccin-sddm-corners";
 
-              settings = {
-                General = {
-                  GreeterEnvironment = "QT_PLUGIN_PATH=${pkgs.plasma5Packages.layer-shell-qt}/${pkgs.plasma5Packages.qtbase.qtPluginPrefix},QT_WAYLAND_SHELL_INTEGRATION=layer-shell";
-                  DisplayServer = "wayland";
-                  InputMethod = "";
-                };
-                Wayland.CompositorCommand = "${getExe' pkgs.kwin "kwin_wayland"} --no-global-shortcuts --no-lockscreen --locale1";
-              };
+          settings = {
+            General = {
+              GreeterEnvironment = "QT_PLUGIN_PATH=${pkgs.plasma5Packages.layer-shell-qt}/${pkgs.plasma5Packages.qtbase.qtPluginPrefix},QT_WAYLAND_SHELL_INTEGRATION=layer-shell";
+              DisplayServer = "wayland";
+              InputMethod = "";
             };
+            Wayland.CompositorCommand = "${getExe' pkgs.kwin "kwin_wayland"} --no-global-shortcuts --no-lockscreen --locale1";
           };
-
-          libinput.enable = true;
         };
+      };
 
-        system.activationScripts.postInstallSddm = stringAfter [ "users" ] /* bash */ ''
+      libinput.enable = true;
+    };
+
+    system.activationScripts.postInstallSddm =
+      stringAfter [ "users" ] # bash
+        ''
           echo "Setting sddm permissions for user icon"
           ${getExe' pkgs.acl "setfacl"} -m u:sddm:x /home/${config.khanelinix.user.name}
           ${getExe' pkgs.acl "setfacl"} -m u:sddm:r /home/${config.khanelinix.user.name}/.face.icon || true
         '';
-      };
+  };
 }

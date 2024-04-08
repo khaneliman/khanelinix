@@ -1,10 +1,16 @@
-{ config
-, pkgs
-, lib
-, ...
+{
+  config,
+  pkgs,
+  lib,
+  ...
 }:
 let
-  inherit (lib) types mkIf mkOption getExe';
+  inherit (lib)
+    types
+    mkIf
+    mkOption
+    getExe'
+    ;
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.services.spice-webdav;

@@ -1,7 +1,4 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt enabled;
@@ -10,9 +7,7 @@ let
 in
 {
   options.khanelinix.suites.vm = {
-    enable =
-      mkBoolOpt false
-        "Whether or not to enable common vm configuration.";
+    enable = mkBoolOpt false "Whether or not to enable common vm configuration.";
   };
 
   config = mkIf cfg.enable {

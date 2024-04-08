@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -11,18 +12,15 @@ let
 in
 {
   options.khanelinix.hardware.storage = {
-    enable =
-      mkBoolOpt false
-        "Whether or not to enable support for extra storage devices.";
+    enable = mkBoolOpt false "Whether or not to enable support for extra storage devices.";
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs;
-      [
-        btrfs-progs
-        fuseiso
-        nfs-utils
-        ntfs3g
-      ];
+    environment.systemPackages = with pkgs; [
+      btrfs-progs
+      fuseiso
+      nfs-utils
+      ntfs3g
+    ];
   };
 }

@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -28,9 +29,7 @@ in
         "mediainfo"
       ];
 
-      masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
-        "Pixelmator" = 407963104;
-      };
+      masApps = mkIf config.khanelinix.tools.homebrew.masEnable { "Pixelmator" = 407963104; };
     };
   };
 }

@@ -1,31 +1,35 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
-  inherit (lib) types mkIf mkMerge optionalAttrs;
+  inherit (lib)
+    types
+    mkIf
+    mkMerge
+    optionalAttrs
+    ;
   inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.apps.firefox;
 
   firefoxPath =
-    if pkgs.stdenv.isLinux then ".mozilla/firefox/${config.khanelinix.user.name}"
-    else "/Users/${config.khanelinix.user.name}/Library/Application Support/Firefox/Profiles/${config.khanelinix.user.name}";
+    if pkgs.stdenv.isLinux then
+      ".mozilla/firefox/${config.khanelinix.user.name}"
+    else
+      "/Users/${config.khanelinix.user.name}/Library/Application Support/Firefox/Profiles/${config.khanelinix.user.name}";
 in
 {
-  options.khanelinix.apps.firefox = with types;
-    {
-      enable = mkBoolOpt false "Whether or not to enable Firefox.";
-      hardwareDecoding = mkBoolOpt false "Enable hardware video decoding.";
-      gpuAcceleration = mkBoolOpt false "Enable GPU acceleration.";
-      extraConfig =
-        mkOpt str "" "Extra configuration for the user profile JS file.";
-      settings = mkOpt attrs
-        { } "Settings to apply to the profile.";
-      userChrome =
-        mkOpt str "" "Extra configuration for the user chrome CSS file.";
-    };
+  options.khanelinix.apps.firefox = with types; {
+    enable = mkBoolOpt false "Whether or not to enable Firefox.";
+    hardwareDecoding = mkBoolOpt false "Enable hardware video decoding.";
+    gpuAcceleration = mkBoolOpt false "Enable GPU acceleration.";
+    extraConfig = mkOpt str "" "Extra configuration for the user profile JS file.";
+    settings = mkOpt attrs { } "Settings to apply to the profile.";
+    userChrome = mkOpt str "" "Extra configuration for the user chrome CSS file.";
+  };
 
   config = mkIf cfg.enable {
     home = {
@@ -33,9 +37,7 @@ in
         {
           "${firefoxPath}/native-messaging-hosts/com.dannyvankooten.browserpass.json".source = "${pkgs.browserpass}/lib/mozilla/native-messaging-hosts/com.dannyvankooten.browserpass.json";
           "${firefoxPath}/chrome/img" = {
-            source = lib.cleanSourceWith {
-              src = lib.cleanSource ./chrome/img/.;
-            };
+            source = lib.cleanSourceWith { src = lib.cleanSource ./chrome/img/.; };
 
             recursive = true;
           };
@@ -79,7 +81,6 @@ in
         };
         Preferences = { };
       };
-
 
       profiles.${config.khanelinix.user.name} = {
         inherit (cfg) extraConfig;
@@ -168,9 +169,11 @@ in
         ];
 
         # TODO: support alternative theme loading
-        userChrome = builtins.readFile ./chrome/userChrome.css + ''
-          ${cfg.userChrome}
-        '';
+        userChrome =
+          builtins.readFile ./chrome/userChrome.css
+          + ''
+            ${cfg.userChrome}
+          '';
       };
     };
   };

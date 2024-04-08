@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -26,7 +27,14 @@ in
       enable = true;
 
       settings = {
-        blocks = [ "permission" "user" "group" "size" "date" "name" ];
+        blocks = [
+          "permission"
+          "user"
+          "group"
+          "size"
+          "date"
+          "name"
+        ];
         classic = false;
         date = "date";
         dereference = false;

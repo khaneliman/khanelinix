@@ -1,7 +1,4 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf types;
   inherit (lib.internal) mkBoolOpt mkOpt;

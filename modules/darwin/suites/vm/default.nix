@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -23,13 +24,9 @@ in
     ];
 
     homebrew = {
-      taps = [
-        "arthurk/virt-manager"
-      ];
+      taps = [ "arthurk/virt-manager" ];
 
-      casks = [
-        "utm"
-      ];
+      casks = [ "utm" ];
     };
   };
 }

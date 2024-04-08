@@ -3,9 +3,7 @@ _: {
     enable = true;
 
     settings = {
-      bookmarks = [
-        "~/khanelinix/flake.nix"
-      ];
+      bookmarks = [ "~/khanelinix/flake.nix" ];
 
       customHeader = [
         "   ██╗  ██╗██╗  ██╗ █████╗ ███╗   ██╗███████╗██╗     ██╗███╗   ██╗██╗██╗  ██╗"

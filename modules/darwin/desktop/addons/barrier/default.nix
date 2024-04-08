@@ -1,7 +1,4 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
@@ -15,9 +12,7 @@ in
 
   config = mkIf cfg.enable {
     homebrew = {
-      casks = [
-        "barrier"
-      ];
+      casks = [ "barrier" ];
     };
   };
 }

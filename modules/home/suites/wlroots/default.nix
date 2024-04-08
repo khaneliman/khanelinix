@@ -1,7 +1,4 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt enabled;
@@ -10,8 +7,7 @@ let
 in
 {
   options.khanelinix.suites.wlroots = {
-    enable =
-      mkBoolOpt false "Whether or not to enable common wlroots configuration.";
+    enable = mkBoolOpt false "Whether or not to enable common wlroots configuration.";
   };
 
   config = mkIf cfg.enable {

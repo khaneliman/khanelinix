@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -48,16 +49,17 @@ in
             "browser.theme.dark-toolbar-theme" = true;
           };
 
-          userChrome = /* css */ ''
-            #spacesToolbar,
-            #agenda-container,
-            #agenda,
-            #agenda-toolbar,
-            #mini-day-box
-            {
-              background-color: #24273a !important;
-            }
-          '';
+          userChrome = # css
+            ''
+              #spacesToolbar,
+              #agenda-container,
+              #agenda,
+              #agenda-toolbar,
+              #mini-day-box
+              {
+                background-color: #24273a !important;
+              }
+            '';
 
           # TODO: Bundle extensions
           # TODO: set up accounts

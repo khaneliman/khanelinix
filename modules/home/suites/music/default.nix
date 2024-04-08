@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -11,8 +12,7 @@ let
 in
 {
   options.khanelinix.suites.music = {
-    enable =
-      mkBoolOpt false "Whether or not to enable common music configuration.";
+    enable = mkBoolOpt false "Whether or not to enable common music configuration.";
   };
 
   config = mkIf cfg.enable {

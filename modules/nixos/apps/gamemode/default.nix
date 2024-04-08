@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) types mkIf getExe';
@@ -28,28 +29,29 @@ in
   config =
     let
       startScript =
-        if (cfg.startscript == null)
-        then pkgs.writeShellScript "gamemode-start" defaultStartScript
-        else pkgs.writeShellScript "gamemode-start" cfg.startscript;
+        if (cfg.startscript == null) then
+          pkgs.writeShellScript "gamemode-start" defaultStartScript
+        else
+          pkgs.writeShellScript "gamemode-start" cfg.startscript;
       endScript =
-        if (cfg.endscript == null)
-        then pkgs.writeShellScript "gamemode-end" defaultEndScript
-        else pkgs.writeShellScript "gamemode-end" cfg.endscript;
+        if (cfg.endscript == null) then
+          pkgs.writeShellScript "gamemode-end" defaultEndScript
+        else
+          pkgs.writeShellScript "gamemode-end" cfg.endscript;
     in
-    mkIf cfg.enable
-      {
-        programs.gamemode = {
-          enable = true;
-          settings = {
-            general = {
-              softrealtime = "auto";
-              renice = 15;
-            };
-            custom = {
-              start = startScript.outPath;
-              end = endScript.outPath;
-            };
+    mkIf cfg.enable {
+      programs.gamemode = {
+        enable = true;
+        settings = {
+          general = {
+            softrealtime = "auto";
+            renice = 15;
+          };
+          custom = {
+            start = startScript.outPath;
+            end = endScript.outPath;
           };
         };
       };
+    };
 }

@@ -1,7 +1,4 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
@@ -35,7 +32,8 @@ in
 
     xdg.configFile."micro/colorschemes" = {
       source = lib.cleanSourceWith {
-        filter = name: _type:
+        filter =
+          name: _type:
           let
             baseName = baseNameOf (toString name);
           in

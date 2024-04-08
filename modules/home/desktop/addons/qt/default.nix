@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) types mkIf mergeAttrs;
@@ -53,9 +54,7 @@ in
     enable = mkBoolOpt false "Whether to customize qt and apply themes.";
     theme = {
       # TODO: cleanup with proper name
-      name =
-        mkOpt str "Catppuccin-Macchiato-Blue"
-          "The name of the kvantum theme to apply.";
+      name = mkOpt str "Catppuccin-Macchiato-Blue" "The name of the kvantum theme to apply.";
       pkg = mkOpt package pkgs.catppuccin-kvantum "The package to use for the theme.";
     };
   };
@@ -64,14 +63,18 @@ in
     xdg.configFile = {
       # TODO: replace with settings
       "Kvantum".source = ./Kvantum;
-      "qt5ct/qt5ct.conf".text = lib.generators.toINI { }
-        (settings // {
+      "qt5ct/qt5ct.conf".text = lib.generators.toINI { } (
+        settings
+        // {
           Appearance = mergeAttrs settings.Appearance { color_scheme_path = colorSchemePath; };
-        });
-      "qt6ct/qt6ct.conf".text = lib.generators.toINI { }
-        (settings // {
+        }
+      );
+      "qt6ct/qt6ct.conf".text = lib.generators.toINI { } (
+        settings
+        // {
           Appearance = mergeAttrs settings.Appearance { color_scheme_path = colorSchemePath; };
-        });
+        }
+      );
     };
 
     qt = {

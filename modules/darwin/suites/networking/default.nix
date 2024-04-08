@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -11,8 +12,7 @@ let
 in
 {
   options.khanelinix.suites.networking = {
-    enable =
-      mkBoolOpt false "Whether or not to enable networking configuration.";
+    enable = mkBoolOpt false "Whether or not to enable networking configuration.";
   };
 
   config = mkIf cfg.enable {

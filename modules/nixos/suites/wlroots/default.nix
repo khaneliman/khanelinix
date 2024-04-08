@@ -1,9 +1,10 @@
-{ config
-, inputs
-, system
-, lib
-, pkgs
-, ...
+{
+  config,
+  inputs,
+  system,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -14,8 +15,7 @@ let
 in
 {
   options.khanelinix.suites.wlroots = {
-    enable =
-      mkBoolOpt false "Whether or not to enable common wlroots configuration.";
+    enable = mkBoolOpt false "Whether or not to enable common wlroots configuration.";
   };
 
   config = mkIf cfg.enable {

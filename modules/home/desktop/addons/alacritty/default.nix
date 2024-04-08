@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) types mkIf;
@@ -207,12 +208,8 @@ in
             }
           ];
         }
-        // lib.optionalAttrs
-          pkgs.stdenv.isLinux
-          { window.decorations = "None"; }
-        // lib.optionalAttrs
-          pkgs.stdenv.isDarwin
-          { window.decorations = "Buttonless"; };
+        // lib.optionalAttrs pkgs.stdenv.isLinux { window.decorations = "None"; }
+        // lib.optionalAttrs pkgs.stdenv.isDarwin { window.decorations = "Buttonless"; };
     };
   };
 }

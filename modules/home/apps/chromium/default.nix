@@ -1,7 +1,4 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
@@ -31,6 +28,5 @@ in
       #   wakatime.chromium-wakatime
       # ];
     };
-
   };
 }

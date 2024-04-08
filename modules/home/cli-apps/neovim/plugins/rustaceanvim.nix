@@ -41,7 +41,7 @@ _: {
               closureStyle = "rust_analyzer";
               closureReturnTypeHints.enable = "always";
               discriminantHints.enable = "always";
-              expressionAdjustmentHints. enable = "always";
+              expressionAdjustmentHints.enable = "always";
               implicitDrops.enable = true;
               lifetimeElisionHints.enable = "always";
               rangeExclusiveHints.enable = true;

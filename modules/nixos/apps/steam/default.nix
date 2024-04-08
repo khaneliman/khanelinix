@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -20,9 +21,7 @@ in
         STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
       };
 
-      systemPackages = with pkgs; [
-        steamtinkerlaunch
-      ];
+      systemPackages = with pkgs; [ steamtinkerlaunch ];
     };
 
     programs.steam = {

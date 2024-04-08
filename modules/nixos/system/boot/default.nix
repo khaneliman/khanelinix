@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -17,14 +18,15 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs;  [
-      efibootmgr
-      efitools
-      efivar
-      fwupd
-    ] ++ lib.optionals cfg.secureBoot [
-      sbctl
-    ];
+    environment.systemPackages =
+      with pkgs;
+      [
+        efibootmgr
+        efitools
+        efivar
+        fwupd
+      ]
+      ++ lib.optionals cfg.secureBoot [ sbctl ];
 
     boot = {
       kernelParams = lib.optionals cfg.plymouth [ "quiet" ];

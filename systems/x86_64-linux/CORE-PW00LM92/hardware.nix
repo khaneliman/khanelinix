@@ -1,7 +1,4 @@
-{ modulesPath
-, inputs
-, ...
-}:
+{ modulesPath, inputs, ... }:
 let
   inherit (inputs) nixos-hardware;
 in
@@ -28,6 +25,5 @@ in
 
     # Enable integration with Docker Desktop (needs to be installed)
     # docker-desktop.enable = true;
-
   };
 }

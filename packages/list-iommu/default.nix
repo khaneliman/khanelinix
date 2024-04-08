@@ -1,10 +1,10 @@
-{ writeShellApplication
-, lib
-, pciutils
-, ...
-}:
-writeShellApplication
 {
+  writeShellApplication,
+  lib,
+  pciutils,
+  ...
+}:
+writeShellApplication {
   name = "list-iommu";
 
   meta = {
@@ -14,17 +14,16 @@ writeShellApplication
 
   checkPhase = "";
 
-  runtimeInputs = [
-    pciutils
-  ];
+  runtimeInputs = [ pciutils ];
 
-  text = /* bash */ ''
-    shopt -s nullglob
+  text = # bash
+    ''
+      shopt -s nullglob
 
-    for d in /sys/kernel/iommu_groups/*/devices/*; do
-      n=''${d#*/iommu_groups/*}; n=''${n%%/*}
-      printf 'IOMMU Group %s' "$n"
-      lspci -nns "''${d##*/}"
-    done
-  '';
+      for d in /sys/kernel/iommu_groups/*/devices/*; do
+        n=''${d#*/iommu_groups/*}; n=''${n%%/*}
+        printf 'IOMMU Group %s' "$n"
+        lspci -nns "''${d##*/}"
+      done
+    '';
 }

@@ -1,6 +1,7 @@
-{ lib
-, host ? null
-, ...
+{
+  lib,
+  host ? null,
+  ...
 }:
 let
   inherit (lib) types;

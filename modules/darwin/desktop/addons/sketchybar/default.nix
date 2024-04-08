@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf types;
@@ -17,7 +18,10 @@ in
 
   config = mkIf cfg.enable {
     homebrew = {
-      brews = [ "cava" "jq" ];
+      brews = [
+        "cava"
+        "jq"
+      ];
       casks = [ "background-music" ];
     };
 

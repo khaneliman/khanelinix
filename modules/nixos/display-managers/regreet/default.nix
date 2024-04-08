@@ -1,12 +1,18 @@
-{ config
-, inputs
-, lib
-, pkgs
-, system
-, ...
+{
+  config,
+  inputs,
+  lib,
+  pkgs,
+  system,
+  ...
 }:
 let
-  inherit (lib) types mkIf getExe getExe';
+  inherit (lib)
+    types
+    mkIf
+    getExe
+    getExe'
+    ;
   inherit (lib.internal) mkBoolOpt mkOpt;
   inherit (inputs) nixpkgs-wayland;
 
@@ -43,42 +49,42 @@ in
     swayOutput = mkOpt lines "" "Sway Outputs config.";
   };
 
-  config =
-    mkIf cfg.enable
-      {
-        environment.systemPackages = [
-          config.khanelinix.desktop.addons.gtk.cursor.pkg
-          config.khanelinix.desktop.addons.gtk.icon.pkg
-          config.khanelinix.desktop.addons.gtk.theme.pkg
-          pkgs.vulkan-validation-layers
-        ];
+  config = mkIf cfg.enable {
+    environment.systemPackages = [
+      config.khanelinix.desktop.addons.gtk.cursor.pkg
+      config.khanelinix.desktop.addons.gtk.icon.pkg
+      config.khanelinix.desktop.addons.gtk.theme.pkg
+      pkgs.vulkan-validation-layers
+    ];
 
-        programs.regreet = {
-          enable = true;
+    programs.regreet = {
+      enable = true;
 
-          settings = {
-            background = {
-              path = pkgs.khanelinix.wallpapers.flatppuccin_macchiato;
-              fit = "Cover";
-            };
-
-            GTK = {
-              application_prefer_dark_theme = true;
-              cursor_theme_name = "${config.khanelinix.desktop.addons.gtk.cursor.name}";
-              font_name = "${config.khanelinix.system.fonts.default} * 12";
-              icon_theme_name = "${config.khanelinix.desktop.addons.gtk.icon.name}";
-              theme_name = "${config.khanelinix.desktop.addons.gtk.theme.name}";
-            };
-          };
+      settings = {
+        background = {
+          path = pkgs.khanelinix.wallpapers.flatppuccin_macchiato;
+          fit = "Cover";
         };
 
-        services.greetd.settings.default_session = {
-          command = "env GTK_USE_PORTAL=0 ${getExe nixpkgs-wayland.packages.${system}.sway-unwrapped} --config ${greetdSwayConfig}";
-        };
-
-        security.pam.services.greetd = {
-          enableGnomeKeyring = true;
-          gnupg.enable = true;
+        GTK = {
+          application_prefer_dark_theme = true;
+          cursor_theme_name = "${config.khanelinix.desktop.addons.gtk.cursor.name}";
+          font_name = "${config.khanelinix.system.fonts.default} * 12";
+          icon_theme_name = "${config.khanelinix.desktop.addons.gtk.icon.name}";
+          theme_name = "${config.khanelinix.desktop.addons.gtk.theme.name}";
         };
       };
+    };
+
+    services.greetd.settings.default_session = {
+      command = "env GTK_USE_PORTAL=0 ${
+        getExe nixpkgs-wayland.packages.${system}.sway-unwrapped
+      } --config ${greetdSwayConfig}";
+    };
+
+    security.pam.services.greetd = {
+      enableGnomeKeyring = true;
+      gnupg.enable = true;
+    };
+  };
 }

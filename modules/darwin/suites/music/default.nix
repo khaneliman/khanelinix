@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -21,13 +22,9 @@ in
     ];
 
     homebrew = {
-      casks = [
-        "spotify"
-      ];
+      casks = [ "spotify" ];
 
-      masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
-        "GarageBand" = 682658836;
-      };
+      masApps = mkIf config.khanelinix.tools.homebrew.masEnable { "GarageBand" = 682658836; };
     };
   };
 }

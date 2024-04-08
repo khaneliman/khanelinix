@@ -1,7 +1,4 @@
-{ mkShell
-, pkgs
-, ...
-}:
+{ mkShell, pkgs, ... }:
 let
   llvm = pkgs.llvmPackages_latest;
 
@@ -11,18 +8,20 @@ let
 
   # arguments: outfile
   # basic usage example: mk main [flags]
-  mymake = pkgs.writeShellScriptBin "mk" /* bash */ ''
-    if [ -f "$1.c" ]; then
-      i="$1.c"
-      c=$CC
-    else
-      i="$1.cpp"
-      c=$CXX
-    fi
-    o=$1
-    shift
-    $c -ggdb $i -o $o -lm -Wall $@
-  '';
+  mymake =
+    pkgs.writeShellScriptBin "mk" # bash
+      ''
+        if [ -f "$1.c" ]; then
+          i="$1.c"
+          c=$CC
+        else
+          i="$1.cpp"
+          c=$CXX
+        fi
+        o=$1
+        shift
+        $c -ggdb $i -o $o -lm -Wall $@
+      '';
 in
 mkShell {
   buildInputs = with pkgs; [
@@ -64,5 +63,4 @@ mkShell {
 
 
   '';
-
 }

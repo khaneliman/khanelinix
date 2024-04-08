@@ -1,4 +1,5 @@
-{ config, ... }: {
+{ config, ... }:
+{
   programs.nixvim = {
     filetype.pattern = {
       ".*/hypr/.*%.conf" = "hyprlang";
@@ -51,7 +52,6 @@
           vim
           vimdoc
         ];
-
       };
 
       treesitter-refactor = {

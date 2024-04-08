@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) types mkIf;
@@ -15,7 +16,5 @@ in
     pkg = mkOpt package pkgs.kitty "The terminal to install.";
   };
 
-  config = mkIf cfg.enable {
-    environment.systemPackages = [ cfg.pkg ];
-  };
+  config = mkIf cfg.enable { environment.systemPackages = [ cfg.pkg ]; };
 }

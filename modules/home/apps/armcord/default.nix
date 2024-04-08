@@ -1,7 +1,4 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkEnableOption mkIf;
 
@@ -18,4 +15,3 @@ in
     };
   };
 }
-

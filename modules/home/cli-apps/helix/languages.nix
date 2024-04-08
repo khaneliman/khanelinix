@@ -1,7 +1,4 @@
-{ pkgs
-, lib
-, ...
-}:
+{ pkgs, lib, ... }:
 let
   inherit (lib) getExe getExe';
 in
@@ -13,13 +10,27 @@ in
         auto-format = true;
         formatter = {
           command = "${getExe pkgs.shfmt}";
-          args = [ "-i" "2" "-" ];
+          args = [
+            "-i"
+            "2"
+            "-"
+          ];
         };
       }
       {
         name = "clojure";
         injection-regex = "(clojure|clj|edn|boot|yuck)";
-        file-types = [ "clj" "cljs" "cljc" "clje" "cljr" "cljx" "edn" "boot" "yuck" ];
+        file-types = [
+          "clj"
+          "cljs"
+          "cljc"
+          "clje"
+          "cljr"
+          "cljx"
+          "edn"
+          "boot"
+          "yuck"
+        ];
       }
     ];
 
@@ -36,7 +47,10 @@ in
 
       nil = {
         command = getExe pkgs.nil;
-        config.nil.formatting.command = [ "${getExe pkgs.nixfmt-rfc-style}" "-q" ];
+        config.nil.formatting.command = [
+          "${getExe pkgs.nixfmt-rfc-style}"
+          "-q"
+        ];
       };
 
       vscode-css-language-server = {

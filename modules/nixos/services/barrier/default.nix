@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
@@ -11,7 +12,6 @@ in
 {
   options.khanelinix.services.barrier = {
     enable = mkEnableOption "barrier";
-
   };
 
   config = mkIf cfg.enable {

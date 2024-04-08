@@ -1,4 +1,11 @@
-{ disks ? [ "/dev/nvme0n1" "/dev/nvme1n1" "/dev/sda" ], ... }:
+{
+  disks ? [
+    "/dev/nvme0n1"
+    "/dev/nvme1n1"
+    "/dev/sda"
+  ],
+  ...
+}:
 {
   disko.devices = {
     disk = {
@@ -69,7 +76,6 @@
                 extraArgs = [ "-f" ];
                 subvolumes = { };
               };
-
             };
           };
         };

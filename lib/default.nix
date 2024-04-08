@@ -1,5 +1,6 @@
 _: {
-  override-meta = meta: package:
+  override-meta =
+    meta: package:
     package.overrideAttrs (_: {
       inherit meta;
     });

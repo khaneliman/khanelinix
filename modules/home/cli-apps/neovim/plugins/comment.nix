@@ -3,8 +3,12 @@ _: {
     enable = true;
 
     settings = {
-      opleader = { line = "<leader>/"; };
-      toggler = { line = "<leader>/"; };
+      opleader = {
+        line = "<leader>/";
+      };
+      toggler = {
+        line = "<leader>/";
+      };
     };
   };
 }

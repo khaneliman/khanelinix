@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -11,8 +12,7 @@ let
 in
 {
   options.khanelinix.tools.azure = {
-    enable =
-      mkBoolOpt false "Whether or not to enable common Azure utilities.";
+    enable = mkBoolOpt false "Whether or not to enable common Azure utilities.";
   };
 
   config = mkIf cfg.enable {

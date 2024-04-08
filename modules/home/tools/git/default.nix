@@ -1,10 +1,16 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
-  inherit (lib) types mkEnableOption mkIf getExe';
+  inherit (lib)
+    types
+    mkEnableOption
+    mkIf
+    getExe'
+    ;
   inherit (lib.internal) mkOpt mkBoolOpt enabled;
   inherit (config.khanelinix) user;
 
@@ -18,7 +24,8 @@ in
     includes = mkOpt (types.listOf types.attrs) [ ] "Git includeIf paths and conditions.";
     signByDefault = mkOpt types.bool true "Whether to sign commits by default.";
     signingKey =
-      mkOpt types.str "${config.home.homeDirectory}/.ssh/id_ed25519" "The key ID to sign commits with.";
+      mkOpt types.str "${config.home.homeDirectory}/.ssh/id_ed25519"
+        "The key ID to sign commits with.";
     userName = mkOpt types.str user.fullName "The name to configure git with.";
     userEmail = mkOpt types.str user.email "The email to configure git with.";
     wslAgentBridge = mkBoolOpt false "Whether to enable the wsl agent bridge.";
@@ -56,9 +63,12 @@ in
 
           credential = {
             helper =
-              if cfg.wslAgentBridge then ''/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe''
-              else if pkgs.stdenv.isLinux then ''${getExe' config.programs.git.package "git-credential-libsecret"}''
-              else ''${getExe' config.programs.git.package "git-credential-osxkeychain"}'';
+              if cfg.wslAgentBridge then
+                ''/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe''
+              else if pkgs.stdenv.isLinux then
+                ''${getExe' config.programs.git.package "git-credential-libsecret"}''
+              else
+                ''${getExe' config.programs.git.package "git-credential-osxkeychain"}'';
             useHttpPath = true;
           };
 
@@ -67,9 +77,11 @@ in
           };
 
           gpg.format = "ssh";
-          "gpg \"ssh\"".program = mkIf cfg._1password (''''
+          "gpg \"ssh\"".program = mkIf cfg._1password (
+            ''''
             + ''${lib.optionalString pkgs.stdenv.isLinux (getExe' pkgs._1password-gui "op-ssh-sign")}''
-            + ''${lib.optionalString pkgs.stdenv.isDarwin "${pkgs._1password-gui}/Applications/1Password.app/Contents/MacOS/op-ssh-sign"}'');
+            + ''${lib.optionalString pkgs.stdenv.isDarwin "${pkgs._1password-gui}/Applications/1Password.app/Contents/MacOS/op-ssh-sign"}''
+          );
 
           init = {
             defaultBranch = "main";
@@ -147,15 +159,18 @@ in
         };
       };
 
-      bash.initExtra = /* bash */ ''
-        export GITHUB_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
-      '';
-      fish.shellInit = /* fish */ ''
-        export GITHUB_TOKEN="(cat ${config.sops.secrets."github/access-token".path})"
-      '';
-      zsh.initExtra = /* bash */ ''
-        export GITHUB_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
-      '';
+      bash.initExtra = # bash
+        ''
+          export GITHUB_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
+        '';
+      fish.shellInit = # fish
+        ''
+          export GITHUB_TOKEN="(cat ${config.sops.secrets."github/access-token".path})"
+        '';
+      zsh.initExtra = # bash
+        ''
+          export GITHUB_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
+        '';
     };
 
     home = {

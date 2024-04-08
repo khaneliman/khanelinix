@@ -1,7 +1,4 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
@@ -15,18 +12,14 @@ in
 
   config = mkIf cfg.enable {
     homebrew = {
-      taps = [
-        "1password/tap"
-      ];
+      taps = [ "1password/tap" ];
 
       casks = [
         "1password"
         "1password-cli"
       ];
 
-      masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
-        "1Password for Safari" = 1569813296;
-      };
+      masApps = mkIf config.khanelinix.tools.homebrew.masEnable { "1Password for Safari" = 1569813296; };
     };
   };
 }

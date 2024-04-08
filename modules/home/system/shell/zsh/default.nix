@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
@@ -25,9 +26,10 @@ in
         enable = true;
         package = pkgs.zsh;
 
-        completionInit = /* bash */ ''
-          zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
-        '';
+        completionInit = # bash
+          ''
+            zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+          '';
 
         autosuggestion = {
           enable = true;
@@ -44,15 +46,16 @@ in
           package = pkgs.zsh-syntax-highlighting;
         };
 
-        initExtra = /* bash */ ''
-          # Use vim bindings.
-          set -o vi
+        initExtra = # bash
+          ''
+            # Use vim bindings.
+            set -o vi
 
-          # Improved vim bindings.
-          source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+            # Improved vim bindings.
+            source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 
-          fastfetch
-        '';
+            fastfetch
+          '';
 
         plugins = [
           # {
@@ -84,7 +87,6 @@ in
             name = "zsh-you-should-use";
             src = pkgs.zsh-you-should-use;
           }
-
         ];
       };
     };

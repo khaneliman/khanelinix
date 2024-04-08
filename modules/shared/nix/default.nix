@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) types mkIf;
@@ -24,7 +25,10 @@ in
 
     nix =
       let
-        users = [ "root" config.khanelinix.user.name ];
+        users = [
+          "root"
+          config.khanelinix.user.name
+        ];
       in
       {
         inherit (cfg) package;

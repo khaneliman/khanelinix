@@ -1,6 +1,20 @@
-{ config, disks ? [ "/dev/nvme0n1" "/dev/nvme1n1" "/dev/sda" ], ... }:
+{
+  config,
+  disks ? [
+    "/dev/nvme0n1"
+    "/dev/nvme1n1"
+    "/dev/sda"
+  ],
+  ...
+}:
 let
-  defaultBtrfsOpts = [ "defaults" "compress=zstd:1" "ssd" "noatime" "nodiratime" ];
+  defaultBtrfsOpts = [
+    "defaults"
+    "compress=zstd:1"
+    "ssd"
+    "noatime"
+    "nodiratime"
+  ];
 in
 {
   disko.devices = {
@@ -85,7 +99,6 @@ in
                 extraArgs = [ "-f" ];
                 subvolumes = { };
               };
-
             };
           };
         };

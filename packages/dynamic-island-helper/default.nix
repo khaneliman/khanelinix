@@ -1,6 +1,7 @@
-{ lib
-, pkgs
-, stdenv
+{
+  lib,
+  pkgs,
+  stdenv,
 }:
 stdenv.mkDerivation (_finalAttrs: {
   pname = "dynamic-island-helper";

@@ -1,7 +1,4 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
@@ -10,9 +7,7 @@ let
 in
 {
   options.khanelinix.desktop.addons.electron-support = {
-    enable =
-      mkBoolOpt false
-        "Whether to enable electron support in the desktop environment.";
+    enable = mkBoolOpt false "Whether to enable electron support in the desktop environment.";
   };
 
   config = mkIf cfg.enable {
@@ -20,7 +15,6 @@ in
       NIXOS_OZONE_WL = "1";
     };
 
-    khanelinix.home.configFile."electron-flags.conf".source =
-      ./electron-flags.conf;
+    khanelinix.home.configFile."electron-flags.conf".source = ./electron-flags.conf;
   };
 }

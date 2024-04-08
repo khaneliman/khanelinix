@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -14,9 +15,5 @@ in
     enable = mkBoolOpt false "Whether or not to enable git-crypt.";
   };
 
-  config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      git-crypt
-    ];
-  };
+  config = mkIf cfg.enable { environment.systemPackages = with pkgs; [ git-crypt ]; };
 }

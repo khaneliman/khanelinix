@@ -1,11 +1,23 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
-  inherit (lib) types mkIf mapAttrs optional getExe;
-  inherit (lib.internal) mkBoolOpt mkOpt mkDefault enabled;
+  inherit (lib)
+    types
+    mkIf
+    mapAttrs
+    optional
+    getExe
+    ;
+  inherit (lib.internal)
+    mkBoolOpt
+    mkOpt
+    mkDefault
+    enabled
+    ;
 
   cfg = config.khanelinix.desktop.gnome;
   gdmHome = config.users.users.gdm.home;
@@ -31,23 +43,31 @@ let
 in
 {
   options.khanelinix.desktop.gnome = with types; {
-    enable =
-      mkBoolOpt false "Whether or not to use Gnome as the desktop environment.";
-    color-scheme = mkOpt (enum [ "light" "dark" ]) "dark" "The color scheme to use.";
+    enable = mkBoolOpt false "Whether or not to use Gnome as the desktop environment.";
+    color-scheme = mkOpt (enum [
+      "light"
+      "dark"
+    ]) "dark" "The color scheme to use.";
     extensions = mkOpt (listOf package) [ ] "Extra Gnome extensions to install.";
     monitors = mkOpt (nullOr path) null "The monitors.xml file to create.";
-    suspend =
-      mkBoolOpt true "Whether or not to suspend the machine after inactivity.";
+    suspend = mkBoolOpt true "Whether or not to suspend the machine after inactivity.";
     wallpaper = {
-      light = mkOpt (oneOf [ str package ]) pkgs.khanelinix.wallpapers.flatppuccin_macchiato "The light wallpaper to use.";
-      dark = mkOpt (oneOf [ str package ]) pkgs.khanelinix.wallpapers.cat-sound "The dark wallpaper to use.";
+      light = mkOpt (oneOf [
+        str
+        package
+      ]) pkgs.khanelinix.wallpapers.flatppuccin_macchiato "The light wallpaper to use.";
+      dark = mkOpt (oneOf [
+        str
+        package
+      ]) pkgs.khanelinix.wallpapers.cat-sound "The dark wallpaper to use.";
     };
     wayland = mkBoolOpt true "Whether or not to use Wayland.";
   };
 
   config = mkIf cfg.enable {
     environment = {
-      systemPackages = with pkgs;
+      systemPackages =
+        with pkgs;
         [
           gnome.gnome-tweaks
           gnome.nautilus-python
@@ -77,10 +97,8 @@ in
       home.extraOptions = {
         dconf.settings =
           let
-            get-wallpaper = wallpaper:
-              if lib.isDerivation wallpaper
-              then builtins.toString wallpaper
-              else wallpaper;
+            get-wallpaper =
+              wallpaper: if lib.isDerivation wallpaper then builtins.toString wallpaper else wallpaper;
           in
           nested-default-attrs {
             "org/gnome/shell" = {
@@ -113,10 +131,7 @@ in
               picture-uri-dark = get-wallpaper cfg.wallpaper.dark;
             };
             "org/gnome/desktop/interface" = {
-              color-scheme =
-                if cfg.color-scheme == "light"
-                then "default"
-                else "prefer-dark";
+              color-scheme = if cfg.color-scheme == "light" then "default" else "prefer-dark";
               enable-hot-corners = false;
             };
             "org/gnome/desktop/peripherals/touchpad" = {
@@ -191,9 +206,10 @@ in
               menu-button-icon-image = 23;
 
               menu-button-terminal =
-                if config.khanelinix.desktop.addons.term.enable
-                then getExe config.khanelinix.desktop.addons.term.pkg
-                else getExe pkgs.gnome.gnome-terminal;
+                if config.khanelinix.desktop.addons.term.enable then
+                  getExe config.khanelinix.desktop.addons.term.pkg
+                else
+                  getExe pkgs.gnome.gnome-terminal;
             };
 
             "org/gnome/shell/extensions/aylurs-widgets" = {
@@ -224,9 +240,7 @@ in
                 "appMenu"
               ];
 
-              center-box-order = [
-                "Space Bar"
-              ];
+              center-box-order = [ "Space Bar" ];
 
               right-box-order = [
                 "keyboard"
@@ -289,9 +303,7 @@ in
 
     systemd = {
       tmpfiles.rules =
-        [
-          "d ${gdmHome}/.config 0711 gdm gdm"
-        ]
+        [ "d ${gdmHome}/.config 0711 gdm gdm" ]
         ++ (
           # "./monitors.xml" comes from ~/.config/monitors.xml when GNOME
           # display information is updated.
@@ -308,29 +320,30 @@ in
           Group = "root";
         };
 
-        script = /* bash */ ''
-          config_file=/var/lib/AccountsService/users/${config.khanelinix.user.name}
-          icon_file=/run/current-system/sw/share/khanelinix.icons/user/${config.khanelinix.user.name}/${config.khanelinix.user.icon.fileName}
+        script = # bash
+          ''
+            config_file=/var/lib/AccountsService/users/${config.khanelinix.user.name}
+            icon_file=/run/current-system/sw/share/khanelinix.icons/user/${config.khanelinix.user.name}/${config.khanelinix.user.icon.fileName}
 
-          if ! [ -d "$(dirname "$config_file")"]; then
-            mkdir -p "$(dirname "$config_file")"
-          fi
-
-          if ! [ -f "$config_file" ]; then
-            echo "[User]
-            Session=gnome
-            SystemAccount=false
-            Icon=$icon_file" > "$config_file"
-          else
-            icon_config=$(sed -E -n -e "/Icon=.*/p" $config_file)
-
-            if [[ "$icon_config" == "" ]]; then
-              echo "Icon=$icon_file" >> $config_file
-            else
-              sed -E -i -e "s#^Icon=.*$#Icon=$icon_file#" $config_file
+            if ! [ -d "$(dirname "$config_file")"]; then
+              mkdir -p "$(dirname "$config_file")"
             fi
-          fi
-        '';
+
+            if ! [ -f "$config_file" ]; then
+              echo "[User]
+              Session=gnome
+              SystemAccount=false
+              Icon=$icon_file" > "$config_file"
+            else
+              icon_config=$(sed -E -n -e "/Icon=.*/p" $config_file)
+
+              if [[ "$icon_config" == "" ]]; then
+                echo "Icon=$icon_file" >> $config_file
+              else
+                sed -E -i -e "s#^Icon=.*$#Icon=$icon_file#" $config_file
+              fi
+            fi
+          '';
       };
     };
   };

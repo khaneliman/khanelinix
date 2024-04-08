@@ -1,12 +1,12 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib.internal) enabled;
 in
 {
-  imports = [ ./hardware.nix ./specializations.nix ];
+  imports = [
+    ./hardware.nix
+    ./specializations.nix
+  ];
 
   khanelinix = {
     nix = enabled;
@@ -175,16 +175,21 @@ in
       enable = true;
       machineUnits = [ "machine-qemu\\x2d4\\x2dwin11\\x2dGPU.scope" ];
       platform = "amd";
-      vfioIds = [ "10de:2206" "10de:1aef" ];
+      vfioIds = [
+        "10de:2206"
+        "10de:1aef"
+      ];
     };
   };
 
   networking = {
     defaultGateway = "192.168.1.1";
-    interfaces.enp6s0.ipv4.addresses = [{
-      address = "192.168.1.3";
-      prefixLength = 24;
-    }];
+    interfaces.enp6s0.ipv4.addresses = [
+      {
+        address = "192.168.1.3";
+        prefixLength = 24;
+      }
+    ];
   };
 
   services = {

@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) types;
@@ -13,9 +14,7 @@ in
   options.khanelinix.user = with types; {
     email = mkOpt str "khaneliman12@gmail.com" "The email of the user.";
     extraGroups = mkOpt (listOf str) [ ] "Groups for the user to be assigned.";
-    extraOptions =
-      mkOpt attrs { }
-        "Extra options passed to <option>users.users.<name></option>.";
+    extraOptions = mkOpt attrs { } "Extra options passed to <option>users.users.<name></option>.";
     fullName = mkOpt str "Austin Horstman" "The full name of the user.";
     initialPassword =
       mkOpt str "password"
@@ -37,17 +36,15 @@ in
       histFile = "$XDG_CACHE_HOME/zsh.history";
     };
 
-    users.users.${cfg.name} =
-      {
-        inherit (cfg) name initialPassword;
+    users.users.${cfg.name} = {
+      inherit (cfg) name initialPassword;
 
-        extraGroups = [ "wheel" ] ++ cfg.extraGroups;
-        group = "users";
-        home = "/home/${cfg.name}";
-        isNormalUser = true;
-        shell = pkgs.zsh;
-        uid = 1000;
-      }
-      // cfg.extraOptions;
+      extraGroups = [ "wheel" ] ++ cfg.extraGroups;
+      group = "users";
+      home = "/home/${cfg.name}";
+      isNormalUser = true;
+      shell = pkgs.zsh;
+      uid = 1000;
+    } // cfg.extraOptions;
   };
 }

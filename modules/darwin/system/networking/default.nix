@@ -1,7 +1,4 @@
-{ config
-, lib
-, ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
@@ -15,7 +12,10 @@ in
 
   config = mkIf cfg.enable {
     networking = {
-      dns = [ "1.1.1.1" "8.8.8.8" ];
+      dns = [
+        "1.1.1.1"
+        "8.8.8.8"
+      ];
     };
 
     system.defaults = {

@@ -20,7 +20,11 @@ _: {
         all.linter = [ "codespell" ];
         bash.linter = [ "shellcheck" ];
         c.linter = [ "clang_tidy" ];
-        "c++".linter = [ "clang_tidy" "cppcheck" "cpplint" ];
+        "c++".linter = [
+          "clang_tidy"
+          "cppcheck"
+          "cpplint"
+        ];
         "c#".linter = [ "mcs" ];
         css.linter = [ "stylelint" ];
         gitcommit.linter = [ "gitlint" ];

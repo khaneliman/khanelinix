@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -11,9 +12,7 @@ let
 in
 {
   options.khanelinix.hardware.opengl = {
-    enable =
-      mkBoolOpt false
-        "Whether or not to enable support for opengl.";
+    enable = mkBoolOpt false "Whether or not to enable support for opengl.";
   };
 
   config = mkIf cfg.enable {

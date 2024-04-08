@@ -84,7 +84,8 @@
     dad = "!curl https://icanhazdadjoke.com/ && echo";
 
     # Fix corrupt git repo
-    fix = /* bash */ "!f() {
+    fix = # bash
+      "!f() {
             find .git/objects/ -type f -empty | xargs rm
             git fetch -p
             git fsck --full
@@ -95,13 +96,15 @@
     pullf = "!bash - c \"git reset --hard origin/$(git rev-parse --abbrev-ref HEAD)\"";
 
     ### Pull only the current branch and dont update refs of all remotes
-    pullhead = /* bash */ "!f() {                                                                \
+    pullhead = # bash
+      "!f() {                                                                \
 	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                              \
 	          git pull origin $b;                                                             \
           }; f";
 
     ### Blow up local branch and repull from remote
-    smash = /* bash */ "!f() {                                                                   \
+    smash = # bash
+      "!f() {                                                                   \
 	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                              \
 	          echo 'Are you sure you want to run this? It will delete your current '$b'.';    \
 	          read -p 'Enter to continue, ctrl-C to quit: ' response;                         \
@@ -112,7 +115,8 @@
           }; f";
 
     ### Rebase current branch off master
-    rbm = /* bash */ "!f() {                                                                \
+    rbm = # bash
+      "!f() {                                                                \
 	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                              \
 	          echo 'Are you sure you want to run this? It will delete your current '$b'.';    \
 	          read -p 'Enter to continue, ctrl-C to quit: ' response;                         \
@@ -123,7 +127,8 @@
           }; f";
 
     ### Rebase current branch off develop
-    rbd = /* bash */ "!f() {                                                                \
+    rbd = # bash
+      "!f() {                                                                \
 	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                              \
 	          echo 'Are you sure you want to run this? It will delete your current '$b'.';    \
 	          read -p 'Enter to continue, ctrl-C to quit: ' response;                         \
@@ -142,7 +147,8 @@
     # Example: git bd -a
     # Example: git bd -a -20
     # Example: git bd -a20
-    bd = /* bash */ "!f() {                                                 \
+    bd = # bash
+      "!f() {                                                 \
             case $1 in                                                      \
                 -a) refs='--'; shift;;                                      \
                 -a*) refs='--'; one=$${1/-a/-}; shift; set -- $one $@;;     \
@@ -175,14 +181,16 @@
     #         less -RFX;                                                                      \
     # }; f";
 
-    fetch-pr = /* bash */ "!f() { \
+    fetch-pr = # bash
+      "!f() { \
             git remote get-url $1 >/dev/null 2>&1 || { printf >&2 'Usage: git fetch-pr <remote> [<pr-number>]\n'; exit 1; }; \
             pr=$2; \
             [ -z $pr ] && pr='*'; \
             git fetch $1 '+refs/pull/$pr/head:refs/remotes/$1/pr/$pr';\
           }; f";
 
-    stash-staged = /* bash */ "!f() { : git stash ;                                                                               \
+    stash-staged = # bash
+      "!f() { : git stash ;                                                                               \
             staged=$(git diff --staged --unified=0);                                                                              \
             unstaged=$(git diff --unified=0);                                                                                     \
             [ '$staged' = '' ] && return;                                                                                         \
@@ -200,7 +208,8 @@
                 };                                                                                                                \
             }; f";
 
-    stash-unstaged = /* bash */ "!f() { : git stash ;                                                                             \
+    stash-unstaged = # bash
+      "!f() { : git stash ;                                                                             \
             staged=$(git diff --staged --unified=0);                                                                              \
             unstaged=$(git diff --unified=0);                                                                                     \
             [ '$staged' = '' ] && { git stash $@; return $?; };                                                                   \

@@ -1,7 +1,4 @@
-{ lib
-, pkgs
-, ...
-}:
+{ lib, pkgs, ... }:
 let
   inherit (lib) mkForce getExe getExe';
   inherit (lib.internal) enabled;
@@ -87,7 +84,9 @@ in
       };
     };
 
-    security = { doas = enabled; };
+    security = {
+      doas = enabled;
+    };
 
     system = {
       fonts = enabled;

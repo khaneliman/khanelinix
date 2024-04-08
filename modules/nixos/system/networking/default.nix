@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) types mkIf;
@@ -12,21 +13,20 @@ in
 {
   options.khanelinix.system.networking = with types; {
     enable = mkBoolOpt false "Whether or not to enable networking support";
-    hosts =
-      mkOpt attrs { }
-        "An attribute set to merge with <option>networking.hosts</option>";
-    nameServers = mkOpt (listOf str) [ "1.1.1.1" "8.8.8.8" ] "The nameservers to add.";
+    hosts = mkOpt attrs { } "An attribute set to merge with <option>networking.hosts</option>";
+    nameServers = mkOpt (listOf str) [
+      "1.1.1.1"
+      "8.8.8.8"
+    ] "The nameservers to add.";
   };
 
   config = mkIf cfg.enable {
     khanelinix.user.extraGroups = [ "networkmanager" ];
 
     networking = {
-      hosts =
-        {
-          "127.0.0.1" = [ "local.test" ] ++ (cfg.hosts."127.0.0.1" or [ ]);
-        }
-        // cfg.hosts;
+      hosts = {
+        "127.0.0.1" = [ "local.test" ] ++ (cfg.hosts."127.0.0.1" or [ ]);
+      } // cfg.hosts;
 
       firewall = {
         trustedInterfaces = [ "tailscale0" ];

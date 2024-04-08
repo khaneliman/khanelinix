@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf getExe getExe';
@@ -12,8 +13,7 @@ let
 in
 {
   options.khanelinix.desktop.addons.hypridle = {
-    enable =
-      mkBoolOpt false "Whether to enable hypridle in the desktop environment.";
+    enable = mkBoolOpt false "Whether to enable hypridle in the desktop environment.";
   };
 
   config = mkIf cfg.enable {

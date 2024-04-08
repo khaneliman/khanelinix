@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -14,11 +15,10 @@ in
     enable = mkBoolOpt false "Whether or not to enable partitionmanager.";
   };
 
-  config =
-    mkIf cfg.enable {
-      environment.systemPackages = with pkgs; [
-        partition-manager
-        libsForQt5.kpmcore
-      ];
-    };
+  config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      partition-manager
+      libsForQt5.kpmcore
+    ];
+  };
 }

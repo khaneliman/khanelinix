@@ -208,7 +208,8 @@
     };
   };
 
-  outputs = inputs:
+  outputs =
+    inputs:
     let
       inherit (inputs) deploy-rs nixpkgs snowfall-lib;
 
@@ -225,9 +226,7 @@
         allowUnfree = true;
 
         # TODO: cleanup when available
-        permittedInsecurePackages = [
-          "freeimage-unstable-2021-11-01"
-        ];
+        permittedInsecurePackages = [ "freeimage-unstable-2021-11-01" ];
       };
 
       overlays = with inputs; [
@@ -258,9 +257,7 @@
 
       systems = {
         modules = {
-          darwin = with inputs; [
-            nixvim.nixDarwinModules.nixvim
-          ];
+          darwin = with inputs; [ nixvim.nixDarwinModules.nixvim ];
 
           nixos = with inputs; [
             lanzaboote.nixosModules.lanzaboote
@@ -272,14 +269,11 @@
 
       deploy = lib.mkDeploy { inherit (inputs) self; };
 
-      checks =
-        builtins.mapAttrs
-          (_system: deploy-lib:
-            deploy-lib.deployChecks inputs.self.deploy)
-          deploy-rs.lib;
+      checks = builtins.mapAttrs (
+        _system: deploy-lib: deploy-lib.deployChecks inputs.self.deploy
+      ) deploy-rs.lib;
 
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
       formatter.aarch64-darwin = nixpkgs.legacyPackages.aarch64-darwin.nixfmt-rfc-style;
     };
 }
-

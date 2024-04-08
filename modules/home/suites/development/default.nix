@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -11,12 +12,8 @@ let
 in
 {
   options.khanelinix.suites.development = {
-    enable =
-      mkBoolOpt false
-        "Whether or not to enable common development configuration.";
-    dockerEnable =
-      mkBoolOpt false
-        "Whether or not to enable docker development configuration.";
+    enable = mkBoolOpt false "Whether or not to enable common development configuration.";
+    dockerEnable = mkBoolOpt false "Whether or not to enable docker development configuration.";
   };
 
   config = mkIf cfg.enable {

@@ -1,7 +1,8 @@
-{ config
-, lib
-, options
-, ...
+{
+  config,
+  lib,
+  options,
+  ...
 }:
 let
   inherit (lib) types mkAliasDefinitions;
@@ -10,9 +11,7 @@ in
 {
 
   options.khanelinix.home = with types; {
-    file =
-      mkOpt attrs { }
-        "A set of files to be managed by home-manager's <option>home.file</option>.";
+    file = mkOpt attrs { } "A set of files to be managed by home-manager's <option>home.file</option>.";
     configFile =
       mkOpt attrs { }
         "A set of files to be managed by home-manager's <option>xdg.configFile</option>.";
