@@ -40,8 +40,8 @@ _: {
 
           items = {
             "__unkeyed.buildtin_actions".__raw = "require('mini.starter').sections.builtin_actions()";
-            "__unkeyed.recent_files_current_directory".__raw = "require('mini.starter').sections.recent_files(10, true)";
-            "__unkeyed.recent_files".__raw = "require('mini.starter').sections.recent_files(10, false)";
+            "__unkeyed.recent_files_current_directory".__raw = "require('mini.starter').sections.recent_files(10, false)";
+            "__unkeyed.recent_files".__raw = "require('mini.starter').sections.recent_files(10, true)";
             "__unkeyed.sessions".__raw = "require('mini.starter').sections.sessions(5, true)";
           };
 
