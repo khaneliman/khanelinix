@@ -61,6 +61,10 @@ in
     "/boot" = {
       device = "/dev/disk/by-label/EFI";
       fsType = "vfat";
+      options = [
+        "fmask=0137"
+        "dmask=0027"
+      ];
     };
 
     "/home/khaneliman/Downloads" = {
