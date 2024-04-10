@@ -3,7 +3,6 @@
   inputs,
   lib,
   pkgs,
-  system,
   ...
 }:
 let
@@ -14,7 +13,7 @@ let
     getExe
     ;
   inherit (lib.internal) enabled;
-  inherit (inputs) hyprcursor-catppuccin hyprcatosvg;
+  inherit (inputs) hyprcatosvg;
 
   cfg = config.khanelinix.desktop.hyprland;
 
