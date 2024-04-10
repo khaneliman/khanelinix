@@ -12,3 +12,5 @@ set -ga terminal-overrides ",xterm-kitty:Tc"
 set -g allow-passthrough on
 set -ga update-environment TERM
 set -ga update-environment TERM_PROGRAM
+
+set -g set-titles
