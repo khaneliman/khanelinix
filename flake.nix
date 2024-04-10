@@ -37,6 +37,20 @@
       };
     };
 
+    # Hyprcatosvg
+    hyprcatosvg = {
+      url = "github:entailz/HyprcatoSVG";
+      flake = false;
+    };
+
+    # Hyprcursor-catppuccin
+    hyprcursor-catppuccin = {
+      url = "github:NotAShelf/hyprcursor-catppuccin";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
+
     # Hypridle
     hypridle = {
       url = "github:hyprwm/Hypridle";
@@ -238,7 +252,7 @@
       overlays = with inputs; [
         hypr-socket-watch.overlays.default
         # hyprlang.overlays.default
-        # hyprcursor.overlays.default
+        hyprcursor.overlays.default
         # hypridle.overlays.default
         hyprland.overlays.default
         hyprlock.overlays.default

@@ -1,8 +1,9 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
-  inputs,
+  system,
   ...
 }:
 let
@@ -13,7 +14,7 @@ let
     getExe
     ;
   inherit (lib.internal) enabled;
-  inherit (inputs) hyprland;
+  inherit (inputs) hyprcursor-catppuccin hyprcatosvg;
 
   cfg = config.khanelinix.desktop.hyprland;
 
@@ -57,6 +58,20 @@ in
       hl = "cat /tmp/hypr/$(command ls -t /tmp/hypr/ | grep -v '\.lock$' | head -n 1)/hyprland.log";
       hlc = "cat /home/${config.khanelinix.user.name}/.local/cache/hyprland/$(command ls -t /home/${config.khanelinix.user.name}/.local/cache/hyprland/ | grep 'hyprlandCrashReport' | head -n 1)";
     } // historicalLogAliases // historicalCrashAliases;
+
+    home = {
+      # packages = [ hyprcursor-catppuccin.packages.${system}.hyprcursor-catppuccin.macchiatoBlue ];
+      file = {
+        ".local/share/icons/HyprcatoBlue".source = hyprcatosvg.outPath + "/HyprcatoBlue";
+        ".local/share/icons/HyprcatoFlamingo".source = hyprcatosvg.outPath + "/HyprcatoFlamingo";
+      };
+
+      sessionVariables = {
+        HYPRCURSOR_THEME = "HyprcatoFlamingo";
+        # HYPRCURSOR_THEME = "Catppuccin-Macchiato-Blue-Cursors";
+        HYPRCURSOR_SIZE = "32";
+      };
+    };
 
     khanelinix = {
       desktop.addons = {
