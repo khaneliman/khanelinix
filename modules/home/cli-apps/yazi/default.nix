@@ -47,6 +47,50 @@ in
           sort_sensitive = false;
         };
 
+        opener = {
+          archive = [
+            {
+              desc = "Open archive files with atool";
+              run = "${lib.getExe pkgs.atool} --extract --each --subdir --quiet -- \"$@\"";
+              block = true;
+            }
+          ];
+        };
+
+        open = {
+          rules = [
+            # TODO: iterate over list to produce attribute set
+            # {
+            #   name = "*.{7z,ace,ar,arc,bz2,cab,cpio,cpt,deb,dgc,dmg,gz}";
+            #   use = "archive";
+            # }
+            # {
+            #   name = "*.{iso,jar,msi,pkg,rar,shar,tar,tgz,xar,xpi,xz,zip}";
+            #   use = "archive";
+            # }
+            {
+              name = "*.7z";
+              use = "archive";
+            }
+            {
+              name = "*.zip";
+              use = "archive";
+            }
+            {
+              name = "*.gz";
+              use = "archive";
+            }
+            {
+              name = "*.xz";
+              use = "archive";
+            }
+            {
+              name = "*.tar";
+              use = "archive";
+            }
+          ];
+        };
+
         preview = {
           tab_size = 2;
           max_width = 600;
