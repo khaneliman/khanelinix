@@ -31,8 +31,10 @@
     # Hyprcursor
     hyprcursor = {
       url = "github:hyprwm/Hyprcursor";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.hyprlang.follows = "hyprlang";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        hyprlang.follows = "hyprlang";
+      };
     };
 
     # Hypridle
@@ -51,9 +53,11 @@
     # Hyprland
     hyprland = {
       url = "github:hyprwm/Hyprland";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.hyprlang.follows = "hyprlang";
-      inputs.hyprcursor.follows = "hyprcursor";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        hyprlang.follows = "hyprlang";
+        hyprcursor.follows = "hyprcursor";
+      };
     };
 
     hyprlang = {
@@ -82,8 +86,10 @@
     # Hyprland plugins
     hypr-socket-watch = {
       url = "github:khaneliman/hypr-socket-watch";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.hyprland.follows = "hyprland";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        hyprland.follows = "hyprland";
+      };
     };
 
     # Secure boot
