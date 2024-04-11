@@ -48,11 +48,96 @@ in
         };
 
         opener = {
-          archive = [
+          edit = [
             {
-              desc = "Open archive files with atool";
+              run = "nvim \"$@\"";
+              desc = "$EDITOR";
+              block = true;
+              for = "unix";
+            }
+            {
+              run = "code \"%*\"";
+              orphan = true;
+              desc = "code";
+              for = "windows";
+            }
+            {
+              run = "code -w \"%*\"";
+              block = true;
+              desc = "code (block)";
+              for = "windows";
+            }
+          ];
+          open = [
+            {
+              run = "xdg-open \"$@\"";
+              desc = "Open";
+              for = "linux";
+            }
+            {
+              run = "open \"$@\"";
+              desc = "Open";
+              for = "macos";
+            }
+            {
+              run = "start \"\" \"%1\"";
+              orphan = true;
+              desc = "Open";
+              for = "windows";
+            }
+          ];
+          reveal = [
+            {
+              run = "open -R \"$1\"";
+              desc = "Reveal";
+              for = "macos";
+            }
+            {
+              run = "explorer /select, \"%1\"";
+              orphan = true;
+              desc = "Reveal";
+              for = "windows";
+            }
+            {
+              run = "exiftool \"$1\"; echo \"Press enter to exit\"; read _";
+              block = true;
+              desc = "Show EXIF";
+              for = "unix";
+            }
+          ];
+          extract = [
+            {
+              desc = "Extract with atool";
               run = "${lib.getExe pkgs.atool} --extract --each --subdir --quiet -- \"$@\"";
               block = true;
+            }
+            {
+              run = "unar \"$1\"";
+              desc = "Extract here";
+              for = "unix";
+            }
+            {
+              run = "unar \"%1\"";
+              desc = "Extract here";
+              for = "windows";
+            }
+          ];
+          play = [
+            {
+              run = "mpv \"$@\"";
+              orphan = true;
+              for = "unix";
+            }
+            {
+              run = "mpv \"%1\"";
+              orphan = true;
+              for = "windows";
+            }
+            {
+              run = "mediainfo \"$1\"; echo \"Press enter to exit\"; read _";
+              block = true;
+              desc = "Show media info";
+              for = "unix";
             }
           ];
         };
@@ -70,23 +155,143 @@ in
             # }
             {
               name = "*.7z";
-              use = "archive";
+              use = "extract";
             }
             {
               name = "*.zip";
-              use = "archive";
+              use = "extract";
             }
             {
               name = "*.gz";
-              use = "archive";
+              use = "extract";
             }
             {
               name = "*.xz";
-              use = "archive";
+              use = "extract";
             }
             {
               name = "*.tar";
-              use = "archive";
+              use = "extract";
+            }
+            {
+              name = "*/";
+              use = [
+                "edit"
+                "open"
+                "reveal"
+              ];
+            }
+            {
+              mime = "text/*";
+              use = [
+                "edit"
+                "reveal"
+              ];
+            }
+            {
+              mime = "image/*";
+              use = [
+                "open"
+                "reveal"
+              ];
+            }
+            {
+              mime = "video/*";
+              use = [
+                "play"
+                "reveal"
+              ];
+            }
+            {
+              mime = "audio/*";
+              use = [
+                "play"
+                "reveal"
+              ];
+            }
+            {
+              mime = "inode/x-empty";
+              use = [
+                "edit"
+                "reveal"
+              ];
+            }
+            {
+              mime = "application/json";
+              use = [
+                "edit"
+                "reveal"
+              ];
+            }
+            {
+              mime = "*/javascript";
+              use = [
+                "edit"
+                "reveal"
+              ];
+            }
+            {
+              mime = "application/zip";
+              use = [
+                "extract"
+                "reveal"
+              ];
+            }
+            {
+              mime = "application/gzip";
+              use = [
+                "extract"
+                "reveal"
+              ];
+            }
+            {
+              mime = "application/x-tar";
+              use = [
+                "extract"
+                "reveal"
+              ];
+            }
+            {
+              mime = "application/x-bzip";
+              use = [
+                "extract"
+                "reveal"
+              ];
+            }
+            {
+              mime = "application/x-bzip2";
+              use = [
+                "extract"
+                "reveal"
+              ];
+            }
+            {
+              mime = "application/x-7z-compressed";
+              use = [
+                "extract"
+                "reveal"
+              ];
+            }
+            {
+              mime = "application/x-rar";
+              use = [
+                "extract"
+                "reveal"
+              ];
+            }
+            {
+              mime = "application/xz";
+              use = [
+                "extract"
+                "reveal"
+              ];
+            }
+            {
+              mime = "*";
+              use = [
+                "open"
+                "reveal"
+              ];
             }
           ];
         };
