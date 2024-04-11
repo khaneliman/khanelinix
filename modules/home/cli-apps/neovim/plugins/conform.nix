@@ -139,7 +139,7 @@
             "shellharden"
             "shfmt"
           ];
-          sql = [ "sqlfmt" ];
+          sql = [ "sqlfluff" ];
           swift = [ "swiftformat" ];
           terraform = [ "terraform_fmt" ];
           toml = [ "taplo" ];
@@ -189,7 +189,9 @@
           shellharden = {
             command = "${lib.getExe pkgs.shellharden}";
           };
-          # sqlfmt = { command = "${lib.getExe pkgs.sqlfmt}"; };
+          sqlfluff = {
+            command = "${lib.getExe pkgs.sqlfluff}";
+          };
           stylua = {
             command = "${lib.getExe pkgs.stylua}";
           };
