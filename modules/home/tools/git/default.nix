@@ -57,10 +57,6 @@ in
 
         extraConfig = {
 
-          blame = {
-            ignoreRevsFile = ".git-blame-ignore-revs";
-          };
-
           credential = {
             helper =
               if cfg.wslAgentBridge then
