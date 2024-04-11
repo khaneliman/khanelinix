@@ -57,6 +57,7 @@ in
       "class<firefox> title<.*github.*>" = "";
       "class<firefox> title<.*twitch|youtube|plex|tntdrama|bally sports.*>" = "";
       "class<kitty>" = "";
+      "class<org.wezfurlong.wezterm>" = "";
       "class<mediainfo-gui>" = "󱂷";
       "class<org.kde.digikam>" = "󰄄";
       "class<org.telegram.desktop>" = "";
