@@ -52,5 +52,7 @@ in
         debug = false;
       };
     };
+
+    systemd.user.services.hyprpaper.Service.Restart = lib.mkForce "always";
   };
 }
