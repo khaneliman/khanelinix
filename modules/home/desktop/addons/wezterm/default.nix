@@ -49,6 +49,7 @@ in
             term = "wezterm",
             window_close_confirmation = 'NeverPrompt',
             window_decorations = "RESIZE",
+            warn_about_missing_glyphs=false,
           }
         '';
     };
