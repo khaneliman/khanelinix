@@ -101,7 +101,8 @@ in
       systemd = {
         enable = true;
 
-        variables = [ "--all" ];
+        # NOTE: needed?
+        # variables = [ "--all" ];
       };
 
       xwayland.enable = true;

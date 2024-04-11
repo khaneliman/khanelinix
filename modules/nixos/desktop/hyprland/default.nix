@@ -55,14 +55,14 @@ in
           startscript = # bash
             ''
               ${getExe pkgs.libnotify} 'GameMode started'
-              export HYPRLAND_INSTANCE_SIGNATURE=$(ls -1 /tmp/hypr | tail -1)
+              export HYPRLAND_INSTANCE_SIGNATURE=$(command ls -t /tmp/hypr | head -n 1)
               ${getExe' config.programs.hyprland.package "hyprctl"} --batch 'keyword decoration:blur 0 ; keyword animations:enabled 0 ; keyword misc:no_vfr 1'
             '';
 
           endscript = # bash
             ''
               ${getExe pkgs.libnotify} 'GameMode stopped'
-              export HYPRLAND_INSTANCE_SIGNATURE=$(ls -1 /tmp/hypr | tail -1)
+              export HYPRLAND_INSTANCE_SIGNATURE=$(command ls -t /tmp/hypr | head -n 1)
               ${getExe' config.programs.hyprland.package "hyprctl"} --batch 'keyword decoration:blur 1 ; keyword animations:enabled 1 ; keyword misc:no_vfr 0'
             '';
         };

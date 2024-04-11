@@ -23,7 +23,7 @@ in
             # ░▀░▀░▀░░░▀░░░░░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀
             "$mainMod, RETURN, exec, $term tmux a"
             "SUPER_SHIFT, RETURN, exec, $term tmux"
-            "SUPER_ALT, RETURN, exec, $term --title floating_kitty --single-instance"
+            "SUPER_ALT, RETURN, exec, $term --title floatterm --single-instance"
             "$mainMod, Q, killactive,"
             "SUPER_SHIFT, P, exec, ${getExe pkgs.hyprpicker} -a && (${getExe' pkgs.imagemagick "convert"} -size 32x32 xc:$(${
               getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-paste"
