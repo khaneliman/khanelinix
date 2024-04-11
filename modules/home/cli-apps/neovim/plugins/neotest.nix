@@ -4,6 +4,12 @@
   pkgs,
   ...
 }:
+let
+  junit_jar = pkgs.fetchurl {
+    url = "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.10.2/junit-platform-console-standalone-1.10.2.jar";
+    hash = "sha256-od5VeCEpPOkDwhPGlBZf/1Ms+SCBusQji54Fs18E9D8=";
+  };
+in
 {
   programs.nixvim = {
     extraPlugins = with pkgs.vimPlugins; [
@@ -43,6 +49,10 @@
 
         java = {
           enable = true;
+
+          settings = {
+            junit_jar = junit_jar.outPath;
+          };
         };
 
         jest = {
