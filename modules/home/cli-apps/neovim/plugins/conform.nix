@@ -183,7 +183,9 @@
           shellcheck = {
             command = "${lib.getExe pkgs.shellcheck}";
           };
-          # shellfmt = { command = "${lib.getExe pkgs.shellfmt}"; };
+          shfmt = {
+            command = "${lib.getExe pkgs.shfmt}";
+          };
           shellharden = {
             command = "${lib.getExe pkgs.shellharden}";
           };
