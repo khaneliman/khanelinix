@@ -72,7 +72,7 @@ in
       desktop.addons = {
         # eww = enabled;
         gtk = enabled;
-        kanshi = enabled;
+        # kanshi = enabled;
         kitty = enabled;
         nautilus = enabled;
         qt = enabled;
