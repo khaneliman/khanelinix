@@ -149,7 +149,10 @@
               "prettier"
             ]
           ];
-          xml = [ "xmllint" ];
+          xml = [
+            "xmlformat"
+            "xmllint"
+          ];
           yaml = [ "yamlfmt" ];
           zig = [ "zigfmt" ];
           "_" = [ "trim_whitespace" ];
@@ -191,7 +194,9 @@
           taplo = {
             command = "${lib.getExe pkgs.taplo}";
           };
-          # xmllint = { command = "${lib.getExe pkgs.xmllint}"; };
+          xmlformat = {
+            command = "${lib.getExe pkgs.xmlformat}";
+          };
           yamlfmt = {
             command = "${lib.getExe pkgs.yamlfmt}";
           };
