@@ -1,13 +1,12 @@
 monitor=DP-3,	3840x2160@60,	1420x0,	2
 monitor=DP-1,	5120x1440@120,	0x1080,	1
+
 workspace = name:hello, monitor:DP-1, defafult:true
 windowrulev2 = workspace name:hello, class:^(nwg-hello)$
 
 env = CLUTTER_BACKEND,"wayland"
-env = GDK_BACKEND,"wayland,x11"
+# env = GDK_BACKEND,"wayland,x11"
 env = HYPRLAND_LOG_WLR,"1"
-env = MOZ_ENABLE_WAYLAND,"1"
-env = MOZ_USE_XINPUT2,"1"
 env = QT_QPA_PLATFORM,"waylandxcb"
 env = QT_WAYLAND_DISABLE_WINDOWDECORATION,"1"
 env = SDL_VIDEODRIVER,"wayland"
@@ -16,6 +15,3 @@ env = WLR_RENDERER,"vulkan"
 env = XDG_CURRENT_DESKTOP,"Hyprland"
 env = XDG_SESSION_DESKTOP,"Hyprland"
 env = XDG_SESSION_TYPE,"wayland"
-env = _JAVA_AWT_WM_NONEREPARENTING,"1"
-env = __GL_GSYNC_ALLOWED,"0"
-env = __GL_VRR_ALLOWED,"0"

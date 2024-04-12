@@ -29,7 +29,7 @@ in
       };
 
       regreet = {
-        swayOutput = builtins.readFile ./swayOutput;
+        hyprlandOutput = builtins.readFile ./hyprlandOutput;
       };
     };
 

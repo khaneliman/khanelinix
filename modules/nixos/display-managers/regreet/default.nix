@@ -14,39 +14,33 @@ let
     getExe'
     ;
   inherit (lib.internal) mkBoolOpt mkOpt;
-  inherit (inputs) nixpkgs-wayland;
+  inherit (inputs) hyprland;
 
   cfg = config.khanelinix.display-managers.regreet;
-  greetdSwayConfig = pkgs.writeText "greetd-sway-config" ''
-    exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
-    exec systemctl --user import-environment
 
-    ${cfg.swayOutput}
+  greetdHyprlandConfig = pkgs.writeText "greetd-hyprland-config" ''
+    ${cfg.hyprlandOutput}
 
-    input "type:touchpad" {
-      tap enabled
+    animations {
+      enabled=false
+      first_launch_animation=false
     }
 
-    seat seat0 xcursor_theme ${config.khanelinix.desktop.addons.gtk.cursor.name} 24
+    bind=SUPER, RETURN, exec, ${getExe pkgs.wezterm}
+    bind=SUPER_SHIFT, RETURN, exec, ${getExe pkgs.nwg-hello}
+    bind=SUPER_CTRL_SHIFT, RETURN, exec, ${getExe pkgs.greetd.regreet}
 
-    xwayland disable
+    exec-once = ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE
 
-    bindsym XF86MonBrightnessUp exec light -A 5
-    bindsym XF86MonBrightnessDown exec light -U 5
-    bindsym Print exec ${getExe pkgs.grim} /tmp/regreet.png
-    bindsym Mod4+shift+e exec ${getExe' config.programs.sway.package "swaynag"} \
-      -t warning \
-      -m 'What do you want to do?' \
-      -b 'Poweroff' 'systemctl poweroff' \
-      -b 'Reboot' 'systemctl reboot'
-
-    exec "${getExe pkgs.greetd.regreet} -l debug; ${getExe' config.programs.sway.package "swaymsg"} exit"
+    exec-once = ${getExe pkgs.greetd.regreet} -l debug && ${
+      getExe' hyprland.packages.${system}.hyprland-unwrapped "hyprctl"
+    } exit
   '';
 in
 {
   options.khanelinix.display-managers.regreet = with types; {
     enable = mkBoolOpt false "Whether or not to enable greetd.";
-    swayOutput = mkOpt lines "" "Sway Outputs config.";
+    hyprlandOutput = mkOpt lines "" "Hyprlands Outputs config.";
   };
 
   config = mkIf cfg.enable {
@@ -54,7 +48,6 @@ in
       config.khanelinix.desktop.addons.gtk.cursor.pkg
       config.khanelinix.desktop.addons.gtk.icon.pkg
       config.khanelinix.desktop.addons.gtk.theme.pkg
-      pkgs.vulkan-validation-layers
     ];
 
     programs.regreet = {
@@ -76,10 +69,16 @@ in
       };
     };
 
-    services.greetd.settings.default_session = {
-      command = "env GTK_USE_PORTAL=0 ${
-        getExe nixpkgs-wayland.packages.${system}.sway-unwrapped
-      } --config ${greetdSwayConfig}";
+    services.greetd = {
+      settings = {
+        default_session = {
+          command = "${
+            getExe hyprland.packages.${system}.hyprland-unwrapped
+          } --config ${greetdHyprlandConfig} > /tmp/hyprland-log-out.txt 2>&1";
+        };
+      };
+
+      restart = false;
     };
 
     security.pam.services.greetd = {
