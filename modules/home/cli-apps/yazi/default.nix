@@ -31,7 +31,9 @@ in
       enableNushellIntegration = true;
       enableZshIntegration = true;
 
+      # keymap = { };
       settings = import ./yazi.nix { inherit lib pkgs; };
+      theme = import ./theme.nix { inherit config lib; };
     };
 
     xdg.configFile = {
