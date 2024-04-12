@@ -1,61 +1,64 @@
 { config, lib }:
+let
+  catppuccin = import ../../desktop/theme/catppuccin.nix;
+in
 {
   manager = {
     cwd = {
-      fg = "#cad3f5";
+      fg = catppuccin.colors.text.hex;
     };
     hovered = {
-      fg = "#24273a";
-      bg = "#8aadf4";
+      fg = catppuccin.colors.base.hex;
+      bg = catppuccin.colors.blue.hex;
     };
     preview_hovered = {
       underline = true;
     };
     find_keyword = {
-      fg = "#eed49f";
+      fg = catppuccin.colors.yellow.hex;
       italic = true;
     };
     find_position = {
-      fg = "#f5bde6";
+      fg = catppuccin.colors.pink.hex;
       bg = "reset";
       italic = true;
     };
     marker_selected = {
-      fg = "#a6da95";
-      bg = "#a6da95";
+      fg = catppuccin.colors.green.hex;
+      bg = catppuccin.colors.green.hex;
     };
     marker_copied = {
-      fg = "#eed49f";
-      bg = "#eed49f";
+      fg = catppuccin.colors.yellow.hex;
+      bg = catppuccin.colors.yellow.hex;
     };
     marker_cut = {
-      fg = "#ed8796";
-      bg = "#ed8796";
+      fg = catppuccin.colors.red.hex;
+      bg = catppuccin.colors.red.hex;
     };
     tab_active = {
-      fg = "#24273a";
-      bg = "#8aadf4";
+      fg = catppuccin.colors.base.hex;
+      bg = catppuccin.colors.blue.hex;
     };
     tab_inactive = {
-      fg = "#cad3f5";
-      bg = "#494d64";
+      fg = catppuccin.colors.text.hex;
+      bg = catppuccin.colors.surface1.hex;
     };
     tab_width = 1;
     border_symbol = "│";
     border_style = {
-      fg = "#8aadf4";
+      fg = catppuccin.colors.blue.hex;
     };
     count_copied = {
-      fg = "#24273a";
-      bg = "#eed49f";
+      fg = catppuccin.colors.base.hex;
+      bg = catppuccin.colors.yellow.hex;
     };
     count_cut = {
-      fg = "#24273a";
-      bg = "#f5bde6";
+      fg = catppuccin.colors.base.hex;
+      bg = catppuccin.colors.pink.hex;
     };
     count_selected = {
-      fg = "#24273a";
-      bg = "#a6da95";
+      fg = catppuccin.colors.base.hex;
+      bg = catppuccin.colors.green.hex;
     };
     syntect_theme =
       let
@@ -69,23 +72,23 @@
     separator_open = "";
     separator_close = "";
     separator_style = {
-      fg = "#494d64";
-      bg = "#494d64";
+      fg = catppuccin.colors.surface1.hex;
+      bg = catppuccin.colors.surface1.hex;
     };
 
     mode_normal = {
-      fg = "#24273a";
-      bg = "#8aadf4";
+      fg = catppuccin.colors.base.hex;
+      bg = catppuccin.colors.blue.hex;
       bold = true;
     };
     mode_select = {
-      fg = "#24273a";
-      bg = "#a6da95";
+      fg = catppuccin.colors.base.hex;
+      bg = catppuccin.colors.green.hex;
       bold = true;
     };
     mode_unset = {
-      fg = "#24273a";
-      bg = "#f0c6c6";
+      fg = catppuccin.colors.base.hex;
+      bg = catppuccin.colors.flamingo.hex;
       bold = true;
     };
 
@@ -94,34 +97,34 @@
       bold = true;
     };
     progress_normal = {
-      fg = "#8aadf4";
-      bg = "#494d64";
+      fg = catppuccin.colors.blue.hex;
+      bg = catppuccin.colors.surface1.hex;
     };
     progress_error = {
-      fg = "#ed8796";
-      bg = "#494d64";
+      fg = catppuccin.colors.red.hex;
+      bg = catppuccin.colors.surface1.hex;
     };
 
     permissions_t = {
-      fg = "#8aadf4";
+      fg = catppuccin.colors.blue.hex;
     };
     permissions_r = {
-      fg = "#eed49f";
+      fg = catppuccin.colors.yellow.hex;
     };
     permissions_w = {
-      fg = "#ed8796";
+      fg = catppuccin.colors.red.hex;
     };
     permissions_x = {
-      fg = "#a6da95";
+      fg = catppuccin.colors.green.hex;
     };
     permissions_s = {
-      fg = "#8087a2";
+      fg = catppuccin.colors.overlay1.hex;
     };
   };
 
   input = {
     border = {
-      fg = "#8aadf4";
+      fg = catppuccin.colors.blue.hex;
     };
     title = { };
     value = { };
@@ -132,17 +135,17 @@
 
   select = {
     border = {
-      fg = "#8aadf4";
+      fg = catppuccin.colors.blue.hex;
     };
     active = {
-      fg = "#f5bde6";
+      fg = catppuccin.colors.pink.hex;
     };
     inactive = { };
   };
 
   tasks = {
     border = {
-      fg = "#8aadf4";
+      fg = catppuccin.colors.blue.hex;
     };
     title = { };
     hovered = {
@@ -155,37 +158,37 @@
       bg = "#363a4f";
     };
     cand = {
-      fg = "#8bd5ca";
+      fg = catppuccin.colors.teal.hex;
     };
     rest = {
-      fg = "#939ab7";
+      fg = catppuccin.colors.overlay2.hex;
     };
     desc = {
-      fg = "#f5bde6";
+      fg = catppuccin.colors.pink.hex;
     };
     separator = "  ";
     separator_style = {
-      fg = "#5b6078";
+      fg = catppuccin.colors.surface2.hex;
     };
   };
 
   help = {
     on = {
-      fg = "#f5bde6";
+      fg = catppuccin.colors.pink.hex;
     };
     exec = {
-      fg = "#8bd5ca";
+      fg = catppuccin.colors.teal.hex;
     };
     desc = {
-      fg = "#939ab7";
+      fg = catppuccin.colors.overlay2.hex;
     };
     hovered = {
-      bg = "#5b6078";
+      bg = catppuccin.colors.surface2.hex;
       bold = true;
     };
     footer = {
-      fg = "#494d64";
-      bg = "#cad3f5";
+      fg = catppuccin.colors.surface1.hex;
+      bg = catppuccin.colors.text.hex;
     };
   };
 
@@ -193,51 +196,51 @@
     rules = [
       {
         mime = "image/*";
-        fg = "#8bd5ca";
+        fg = catppuccin.colors.teal.hex;
       }
       {
         mime = "video/*";
-        fg = "#eed49f";
+        fg = catppuccin.colors.yellow.hex;
       }
       {
         mime = "audio/*";
-        fg = "#eed49f";
+        fg = catppuccin.colors.yellow.hex;
       }
       {
         mime = "application/zip";
-        fg = "#f5bde6";
+        fg = catppuccin.colors.pink.hex;
       }
       {
         mime = "application/gzip";
-        fg = "#f5bde6";
+        fg = catppuccin.colors.pink.hex;
       }
       {
         mime = "application/x-tar";
-        fg = "#f5bde6";
+        fg = catppuccin.colors.pink.hex;
       }
       {
         mime = "application/x-bzip";
-        fg = "#f5bde6";
+        fg = catppuccin.colors.pink.hex;
       }
       {
         mime = "application/x-bzip2";
-        fg = "#f5bde6";
+        fg = catppuccin.colors.pink.hex;
       }
       {
         mime = "application/x-7z-compressed";
-        fg = "#f5bde6";
+        fg = catppuccin.colors.pink.hex;
       }
       {
         mime = "application/x-rar";
-        fg = "#f5bde6";
+        fg = catppuccin.colors.pink.hex;
       }
       {
         name = "*";
-        fg = "#cad3f5";
+        fg = catppuccin.colors.text.hex;
       }
       {
         name = "*/";
-        fg = "#8aadf4";
+        fg = catppuccin.colors.blue.hex;
       }
     ];
   };
