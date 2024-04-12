@@ -29,12 +29,12 @@ in
         lib.optional (cfg.monitors != null) "L+ ${gdmHome}/.config/monitors.xml - - - - ${cfg.monitors}"
       );
 
+    services.displayManager.defaultSession = cfg.defaultSession;
+
     services.xserver = {
       enable = true;
 
       displayManager = {
-        inherit (cfg) defaultSession;
-
         gdm = {
           inherit (cfg) enable wayland autoSuspend;
         };

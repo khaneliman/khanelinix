@@ -31,12 +31,12 @@ in
       libsForQt5.qtquickcontrols2
     ];
 
+    services.displayManager.defaultSession = cfg.defaultSession;
+
     services.xserver = {
       enable = true;
 
       displayManager = {
-        inherit (cfg) defaultSession;
-
         sddm = {
           inherit (cfg) enable;
           theme = "catppuccin-sddm-corners";
