@@ -92,7 +92,8 @@ in
           angular-devtools
           auto-tab-discard
           bitwarden
-          bypass-paywalls-clean
+          # NOTE: annoying new page and permissions
+          # bypass-paywalls-clean
           darkreader
           firefox-color
           onepassword-password-manager

@@ -43,7 +43,6 @@ in
         # FIX: broken package reference
         # "brightness"
         "firefox-developer-edition"
-        "floorp"
         "gpg-suite"
         "hammerspoon"
         "kitty"
