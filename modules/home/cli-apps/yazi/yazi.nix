@@ -73,6 +73,13 @@
         for = "unix";
       }
     ];
+    dmg = [
+      {
+        run = "${lib.getExe pkgs.undmg} \"$1\"";
+        desc = "Extract here";
+        for = "unix";
+      }
+    ];
     extract = [
       {
         desc = "Extract with atool";
@@ -121,6 +128,13 @@
       #   name = "*.{iso,jar,msi,pkg,rar,shar,tar,tgz,xar,xpi,xz,zip}";
       #   use = "archive";
       # }
+      {
+        name = "*.dmg";
+        use = [
+          "dmg"
+          "reveal"
+        ];
+      }
       {
         name = "*.7z";
         use = "extract";
