@@ -9,7 +9,7 @@ weather.icon = Sbar.add("item", "weather.icon", {
 		align = "right",
 		padding_left = 12,
 		padding_right = 2,
-		string = "",
+		string = "",
 	},
 	background = {
 		padding_right = -15,
@@ -19,11 +19,12 @@ weather.icon = Sbar.add("item", "weather.icon", {
 })
 
 weather.temp = Sbar.add("item", "weather.temp", {
+	icon = "",
 	label = {
 		align = "right",
 		padding_left = 0,
 		padding_right = 0,
-		string = "N/A",
+		string = "",
 	},
 	background = {
 		padding_right = -30,
@@ -74,7 +75,7 @@ weather.temp:subscribe({ "routine", "forced", "weather_update" }, function()
 			end
 			-- second part of response is temperature
 			if i == 2 then
-				weather.temp:set({ label = { string = value .. "°" } })
+				weather.temp:set({ icon = "", label = { string = value .. "°" } })
 			end
 		end
 
