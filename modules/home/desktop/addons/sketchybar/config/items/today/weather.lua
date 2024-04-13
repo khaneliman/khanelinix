@@ -9,7 +9,7 @@ weather.icon = Sbar.add("item", "weather.icon", {
 		align = "right",
 		padding_left = 12,
 		padding_right = 2,
-		string = "",
+		string = "",
 	},
 	background = {
 		padding_right = -15,
@@ -23,7 +23,7 @@ weather.temp = Sbar.add("item", "weather.temp", {
 		align = "right",
 		padding_left = 0,
 		padding_right = 0,
-		string = "temp",
+		string = "N/A",
 	},
 	background = {
 		padding_right = -30,
