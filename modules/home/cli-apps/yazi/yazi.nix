@@ -343,6 +343,10 @@
         run = "glow";
       }
       {
+        mime = "text/csv";
+        run = "miller";
+      }
+      {
         name = "*/";
         run = "folder";
         sync = true;

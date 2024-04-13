@@ -24,10 +24,11 @@ in
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      ripgrep
-      zoxide
-      xdragon
       glow
+      miller
+      ripgrep
+      xdragon
+      zoxide
     ];
 
     programs.yazi = {
