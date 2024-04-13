@@ -27,6 +27,7 @@ in
       ripgrep
       zoxide
       xdragon
+      glow
     ];
 
     programs.yazi = {

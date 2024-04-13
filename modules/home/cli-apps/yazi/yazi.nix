@@ -339,6 +339,10 @@
 
     previewers = [
       {
+        name = "*.md";
+        run = "glow";
+      }
+      {
         name = "*/";
         run = "folder";
         sync = true;
