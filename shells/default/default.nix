@@ -1,8 +1,15 @@
-{ mkShell, pkgs, ... }:
+{
+  inputs,
+  mkShell,
+  pkgs,
+  system,
+  ...
+}:
 mkShell {
   buildInputs = with pkgs; [
     deadnix
     hydra-check
+    inputs.nix-inspect.packages.${system}.default
     nix-bisect
     nix-diff
     nix-health

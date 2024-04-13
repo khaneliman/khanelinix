@@ -122,6 +122,9 @@
       flake = false;
     };
 
+    # Nix-inspect
+    nix-inspect.url = "github:bluskript/nix-inspect";
+
     # NixPkgs (nixos-unstable)
     nixpkgs = {
       url = "github:nixos/nixpkgs/nixos-unstable";
