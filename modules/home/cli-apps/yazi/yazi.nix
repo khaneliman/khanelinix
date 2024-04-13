@@ -67,7 +67,7 @@
         for = "windows";
       }
       {
-        run = "exiftool \"$1\"; echo \"Press enter to exit\"; read _";
+        run = "${lib.getExe pkgs.exiftool} \"$1\"; echo \"Press enter to exit\"; read _";
         block = true;
         desc = "Show EXIF";
         for = "unix";
@@ -80,29 +80,29 @@
         block = true;
       }
       {
-        run = "unar \"$1\"";
+        run = "${lib.getExe pkgs.unar} \"$1\"";
         desc = "Extract here";
         for = "unix";
       }
       {
-        run = "unar \"%1\"";
+        run = "${lib.getExe pkgs.unar} \"%1\"";
         desc = "Extract here";
         for = "windows";
       }
     ];
     play = [
       {
-        run = "mpv \"$@\"";
+        run = "${lib.getExe pkgs.mpv} \"$@\"";
         orphan = true;
         for = "unix";
       }
       {
-        run = "mpv \"%1\"";
+        run = "${lib.getExe pkgs.mpv} \"%1\"";
         orphan = true;
         for = "windows";
       }
       {
-        run = "mediainfo \"$1\"; echo \"Press enter to exit\"; read _";
+        run = "${lib.getExe pkgs.mediainfo} \"$1\"; echo \"Press enter to exit\"; read _";
         block = true;
         desc = "Show media info";
         for = "unix";
