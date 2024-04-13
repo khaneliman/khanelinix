@@ -1,3 +1,7 @@
+--
+-- https://github.com/Reledia/miller.yazi
+--
+
 local M = {}
 
 function M:peek()

@@ -1,3 +1,7 @@
+--
+-- https://github.com/Reledia/glow.yazi
+--
+
 local M = {}
 
 function M:peek()

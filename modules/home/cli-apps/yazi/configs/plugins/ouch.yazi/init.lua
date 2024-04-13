@@ -1,3 +1,7 @@
+--
+-- https://github.com/ndtoan96/ouch.yazi
+--
+
 local M = {}
 
 function M:peek()
