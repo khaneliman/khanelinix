@@ -26,6 +26,7 @@ in
     home.packages = with pkgs; [
       glow
       miller
+      ouch
       ripgrep
       xdragon
       zoxide

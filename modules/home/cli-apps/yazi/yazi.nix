@@ -395,7 +395,7 @@
       # Archive
       {
         mime = "application/zip";
-        run = "archive";
+        run = "ouch";
       }
       {
         mime = "application/gzip";
@@ -403,27 +403,27 @@
       }
       {
         mime = "application/x-tar";
-        run = "archive";
+        run = "ouch";
       }
       {
         mime = "application/x-bzip";
-        run = "archive";
+        run = "ouch";
       }
       {
         mime = "application/x-bzip2";
-        run = "archive";
+        run = "ouch";
       }
       {
         mime = "application/x-7z-compressed";
-        run = "archive";
+        run = "ouch";
       }
       {
         mime = "application/x-rar";
-        run = "archive";
+        run = "ouch";
       }
       {
         mime = "application/xz";
-        run = "archive";
+        run = "ouch";
       }
       # Fallback
       {
