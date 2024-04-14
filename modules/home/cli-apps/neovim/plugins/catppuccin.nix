@@ -4,7 +4,7 @@ _: {
       enable = true;
 
       settings = {
-        dimInactive = {
+        dim_inactive = {
           enabled = false;
           percentage = 0.25;
         };
@@ -23,6 +23,7 @@ _: {
           markdown = true;
           mason = true;
           mini.enabled = true;
+
           native_lsp = {
             enabled = true;
             virtual_text = {
@@ -41,6 +42,7 @@ _: {
               background = false;
             };
           };
+
           neogit = true;
           neotree = false;
           noice = true;
@@ -57,7 +59,7 @@ _: {
           which_key = true;
         };
 
-        transparentBackground = true;
+        transparent_background = true;
       };
     };
   };
