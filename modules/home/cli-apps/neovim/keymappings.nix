@@ -59,6 +59,14 @@
                 };
               };
 
+              # navigate quickfix list
+              "<C-k>" = {
+                action = ":cnext<CR>";
+              };
+              "<C-j>" = {
+                action = ":cprev<CR>";
+              };
+
               # resize with arrows
               "<C-Up>" = {
                 action = ":resize -2<CR>";
