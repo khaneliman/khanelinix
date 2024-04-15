@@ -223,7 +223,7 @@
                 };
               };
 
-              "<leader>us" = {
+              "<leader>uS" = {
                 action = # lua
                   ''
                     function ()

@@ -12,10 +12,10 @@
       [
         {
           mode = "n";
-          key = "<leader>ls";
+          key = "<leader>us";
           action = ":AerialToggle<CR>";
           options = {
-            desc = "View Symbols";
+            desc = "Toggle Symbols";
             silent = true;
           };
         }
