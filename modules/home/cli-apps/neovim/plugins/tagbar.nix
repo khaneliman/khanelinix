@@ -8,9 +8,12 @@ _: {
     keymaps = [
       {
         mode = "n";
-        key = "<C-g>";
+        key = "<leader>ut";
         action = ":TagbarToggle<cr>";
-        options.silent = true;
+        options = {
+          desc = "Toggle Tagbar";
+          silent = true;
+        };
       }
     ];
   };

@@ -57,7 +57,7 @@ in
     keymaps = [
       {
         mode = "n";
-        key = "<leader>ut";
+        key = "<leader>uT";
         action = ":Neotest summary<CR>";
         options = {
           desc = "Toggle Neotest Summary";
