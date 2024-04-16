@@ -10,10 +10,10 @@
 -- 	--subscribe di_helper_listener di_helper_listener_event \
 -- 	--set di_helper_listener "${listener[@]}"
 
-local di_helper_listener = sbar.add("item", "di_helper_listener", {
-  width = 0
+local di_helper_listener = Sbar.add("item", "di_helper_listener", {
+	width = 0,
 })
 
-di_helper_listener:subscribe("appswitch", {
+di_helper_listener:subscribe("appswitch", {})
 
-})
+print("di_helper_listener loaded")

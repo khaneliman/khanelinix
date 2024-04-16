@@ -4,57 +4,6 @@
 PREVIOUS_ISLAND_CACHE="$HOME/.config/dynamic-island-sketchybar/scripts/islands/previous_island"
 true >"$PREVIOUS_ISLAND_CACHE"
 
-sketchy_bar=(
-	height="$P_DYNAMIC_ISLAND_DEFAULT_HEIGHT"
-	color="$P_DYNAMIC_ISLAND_COLOR_BLACK"
-	shadow=off
-	position=top
-	sticky=off
-	topmost=on
-	padding_left=0
-	padding_right=0
-	corner_radius="$P_DYNAMIC_ISLAND_CORNER_RADIUS"
-	y_offset="-$P_DYNAMIC_ISLAND_CORNER_RADIUS"
-	margin=$(($P_DYNAMIC_ISLAND_MONITOR_HORIZONTAL_RESOLUTION / 2 - $P_DYNAMIC_ISLAND_DEFAULT_WIDTH))
-	notch_width=0
-)
-
-sketchy_default=(
-	updates=when_shown
-	icon.font="$P_DYNAMIC_ISLAND_FONT:Bold:14.0"
-	icon.color="$P_DYNAMIC_ISLAND_COLOR_WHITE"
-	icon.padding_left="$PADDING"
-	icon.padding_right="$PADDING"
-	label.font="$P_DYNAMIC_ISLAND_FONT:Semibold:13.0"
-	label.color="$P_DYNAMIC_ISLAND_COLOR_WHITE"
-	label.padding_left="$PADDING"
-	label.padding_right="$PADDING"
-	background.padding_right="$PADDING"
-	background.padding_left="$PADDING"
-)
-
-dynamic-island-sketchybar --bar "${sketchy_bar[@]}"
-
-dynamic-island-sketchybar --default "${sketchy_default[@]}"
-
-island=(
-	drawing=on
-	mach_helper=git.crissnb.islandhelper
-	update_freq=5
-	width=0
-)
-
-dynamic-island-sketchybar --add event dynamic_island_queue \
-	--add event dynamic_island_request \
-	--add item island center \
-	--set island "${island[@]}"
-
-dynamic-island-sketchybar --bar display="$P_DYNAMIC_ISLAND_DISPLAY"
-
-# subscribe to events to communicate with helper
-dynamic-island-sketchybar --subscribe island dynamic_island_queue \
-	--subscribe island dynamic_island_request
-
 # module initalization
 if [[ $P_DYNAMIC_ISLAND_MUSIC_ENABLED == 1 ]]; then
 	if [[ $P_DYNAMIC_ISLAND_MUSIC_SOURCE == "Music" ]]; then
