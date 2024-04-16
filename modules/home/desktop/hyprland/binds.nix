@@ -185,7 +185,7 @@ in
             ) 10
           ));
         bindl = [
-          "$mainMod, BackSpace, exec, pkill -SIGUSR1 hyprlock && WAYLAND_DISPLAY=wayland-1 ${getExe config.programs.hyprlock.package}"
+          "$mainMod, BackSpace, exec, pkill -SIGUSR1 hyprlock || WAYLAND_DISPLAY=wayland-1 ${getExe config.programs.hyprlock.package}  --immediate"
         ];
         bindm = [
           # Move/resize windows with mainMod + LMB/RMB and dragging
