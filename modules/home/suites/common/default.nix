@@ -29,6 +29,7 @@ in
         fastfetch = enabled;
         tmux = enabled;
         yazi = enabled;
+        zellij = enabled;
       };
 
       desktop = {
