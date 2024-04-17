@@ -1,7 +1,9 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
+  system,
   ...
 }:
 let
@@ -12,7 +14,7 @@ let
     getExe'
     ;
   inherit (lib.internal) mkBoolOpt mkOpt enabled;
-  # inherit (inputs) hyprland;
+  inherit (inputs) hyprland;
 
   cfg = config.khanelinix.desktop.hyprland;
 in
@@ -114,10 +116,10 @@ in
     programs.hyprland = {
       enable = true;
       xwayland.enable = true;
-      # package = hyprland.packages.${system}.hyprland;
-      package = pkgs.hyprland;
-      # portalPackage = hyprland.packages.${system}.xdg-desktop-portal-hyprland;
-      portalPackage = pkgs.xdg-desktop-portal-hyprland;
+      package = hyprland.packages.${system}.hyprland;
+      # package = pkgs.hyprland;
+      portalPackage = hyprland.packages.${system}.xdg-desktop-portal-hyprland;
+      # portalPackage = pkgs.xdg-desktop-portal-hyprland;
     };
   };
 }
