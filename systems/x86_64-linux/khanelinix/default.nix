@@ -42,7 +42,6 @@ in
 
       rgb = {
         enable = true;
-        ckbNextConfig = ./ckb-next/ckb-next.conf;
       };
 
       storage = {
