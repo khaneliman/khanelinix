@@ -190,7 +190,9 @@ in
         bindm = [
           # Move/resize windows with mainMod + LMB/RMB and dragging
           "$mainMod, mouse:272, movewindow #left click"
+          "CTRL_SHIFT, mouse:272, movewindow #left click"
           "$mainMod, mouse:273, resizewindow #right click"
+          "CTRL_SHIFT, mouse:273, resizewindow #right click"
         ];
       };
     };
