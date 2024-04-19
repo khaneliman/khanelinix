@@ -79,7 +79,7 @@ in
           lib.concatStringsSep "\n" [
             "# See https://wiki.hyprland.org/Configuring/Monitors/"
             "monitor=DP-3,	3840x2160@60,	1420x0,	2"
-            "monitor=DP-1,	5120x1440@120,	0x1080,	1"
+            "monitor=DP-1,	5120x1440@120,	450x1080,	1.333333"
             ""
             (
               "exec-once = ${getExe pkgs.xorg.xrandr} "
