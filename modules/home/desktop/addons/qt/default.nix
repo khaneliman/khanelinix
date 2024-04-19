@@ -80,7 +80,10 @@ in
     qt = {
       enable = true;
 
-      platformTheme = "qtct";
+      platformTheme = {
+        name = "qtct";
+      };
+
       style = {
         name = "qt6ct-style";
         package = cfg.theme.pkg.override {
