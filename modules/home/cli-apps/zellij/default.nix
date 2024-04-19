@@ -12,7 +12,7 @@ in
 
   config = mkIf cfg.enable {
     programs.zellij = {
-      enable = true;
+      # enable = true;
 
       enableBashIntegration = true;
       enableFishIntegration = true;
