@@ -7,8 +7,23 @@
   ...
 }:
 let
-  inherit (inputs) nixpkgs-wayland;
+  inherit (inputs) nixpkgs-wayland hyprland-contrib;
   inherit (lib) mkIf getExe getExe';
+
+  convert = getExe' pkgs.imagemagick "convert";
+  grim = getExe nixpkgs-wayland.packages.${system}.grim;
+  slurp = getExe nixpkgs-wayland.packages.${system}.slurp;
+  wl-copy = getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-copy";
+  wl-paste = getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-paste";
+
+  getDateTime = getExe (
+    pkgs.writeShellScriptBin "getDateTime" # bash
+      ''
+        echo $(date +'%Y%m%d_%H%M%S')
+      ''
+  );
+
+  screenshot-path = "/home/${config.khanelinix.user.name}/Pictures/screenshots";
 
   cfg = config.khanelinix.desktop.hyprland;
 in
@@ -122,28 +137,30 @@ in
         "$editor" = "${getExe pkgs.neovim}";
         "$explorer" = "${getExe pkgs.xfce.thunar}";
         "$music" = "${getExe pkgs.spotify}";
+        "$notification_center" = "${getExe' pkgs.swaynotificationcenter "swaync-client"}";
         "$launcher" = "${getExe config.programs.rofi.package} -show drun -n";
         "$launcher_alt" = "${getExe config.programs.rofi.package} -show calc";
         "$launcher_shift" = "${getExe config.programs.rofi.package} -show run -n";
         "$launchpad" = "${getExe config.programs.rofi.package} -show drun -config '~/.config/rofi/appmenu/rofi.rasi'";
         "$looking-glass" = "${getExe pkgs.looking-glass-client}";
+        "$screen-locker" = "${getExe config.programs.hyprlock.package}";
+        "$window-inspector" = "${getExe hyprland-contrib.packages.${system}.hyprprop}";
+        "$screen-recorder" = "${getExe pkgs.khanelinix.record_screen}";
 
-        "$screenshot" = "file=\"/home/${config.khanelinix.user.name}/Pictures/screenshots/$(date +'%Y%m%d_%H%M%S.png')\" && ${
-          getExe nixpkgs-wayland.packages.${system}.grim
-        } \"$file\" && ${getExe pkgs.libnotify} --icon \"$file\" 'Screenshot Saved'";
-        "$slurp_screenshot" = "file=\"/home/${config.khanelinix.user.name})/Pictures/screenshots/$(date +'%Y%m%d_%H%M%S.png')\" && ${
-          getExe nixpkgs-wayland.packages.${system}.grim
-        } -g \"$(slurp)\" \"$file\" && ${getExe pkgs.libnotify} --icon \"$file\" 'Screenshot Saved'";
-        "$slurp_swappy" = "${getExe nixpkgs-wayland.packages.${system}.grim} -g \"$(${
-          getExe nixpkgs-wayland.packages.${system}.slurp
-        })\" - | ${getExe pkgs.swappy} -f -";
-        "$grim_swappy" = "${getExe nixpkgs-wayland.packages.${system}.grim} - | ${getExe pkgs.swappy} -f -";
-        "$grimblast_screen" = "${getExe pkgs.grimblast} copy screen && ${
-          getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-paste"
-        } -t image/png | ${getExe' pkgs.imagemagick "convert"} png:- /tmp/clipboard.png && ${getExe pkgs.libnotify} --icon=/tmp/clipboard.png 'Screen copied to clipboard'";
-        "$grimblast_window" = "${getExe pkgs.grimblast} copy active && ${
-          getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-paste"
-        } -t image/png | ${getExe' pkgs.imagemagick "convert"} png:- /tmp/clipboard.png && ${getExe pkgs.libnotify} --icon=/tmp/clipboard.png 'Window copied to clipboard'";
+        # screenshot commands
+        "$notify-screenshot" = "${getExe pkgs.libnotify} --icon \"$file\" 'Screenshot Saved'";
+        "$screenshot-path" = "/home/${config.khanelinix.user.name}/Pictures/screenshots";
+        "$screenshot" = "file=\"${screenshot-path}/$(${getDateTime}).png\" && ${grim} \"$file\" && $notify-screenshot";
+        "$slurp_screenshot" = "file=\"${screenshot-path}/$(${getDateTime}).png\" && ${grim} -g \"$(${slurp})\" \"$file\" && $notify-screenshot";
+        "$slurp_swappy" = "${grim} -g \"$(${slurp})\" - | ${getExe pkgs.swappy} -f -";
+        "$grim_swappy" = "${grim} - | ${getExe pkgs.swappy} -f -";
+        "$grimblast_screen" = "${getExe pkgs.grimblast} copy screen && ${wl-paste} -t image/png | ${convert} png:- /tmp/clipboard.png && ${getExe pkgs.libnotify} --icon=/tmp/clipboard.png 'Screen copied to clipboard'";
+        "$grimblast_window" = "${getExe pkgs.grimblast} copy active && ${wl-paste} -t image/png | ${convert} png:- /tmp/clipboard.png && ${getExe pkgs.libnotify} --icon=/tmp/clipboard.png 'Window copied to clipboard'";
+        "$grimblast_area" = "${getExe pkgs.grimblast} copy area && ${wl-paste} -t image/png | ${convert} png:- /tmp/clipboard.png && ${getExe pkgs.libnotify} --icon=/tmp/clipboard.png 'Area copied to clipboard'";
+
+        # utility commands
+        "$color_picker" = "${getExe pkgs.hyprpicker} -a && (${convert} -size 32x32 xc:$(${wl-paste}) /tmp/color.png && ${getExe pkgs.libnotify} \"Color Code:\" \"$(${wl-paste})\" -h \"string:bgcolor:$(${wl-paste})\" --icon /tmp/color.png -u critical -t 4000)";
+        "$cliphist" = "${getExe pkgs.cliphist} list | ${getExe config.programs.rofi.package} -dmenu | ${getExe pkgs.cliphist} decode | ${wl-copy}";
       };
     };
   };

@@ -1,14 +1,11 @@
 {
   config,
-  inputs,
   lib,
   pkgs,
-  system,
   ...
 }:
 let
-  inherit (lib) mkIf getExe getExe';
-  inherit (inputs) hyprland-contrib nixpkgs-wayland;
+  inherit (lib) mkIf getExe;
 
   cfg = config.khanelinix.desktop.hyprland;
 in
@@ -26,9 +23,7 @@ in
             "SUPER_ALT, RETURN, exec, $term --title floatterm --single-instance"
             "$mainMod, Q, killactive,"
             "CTRL_SHIFT, Q, killactive,"
-            "SUPER_SHIFT, P, exec, ${getExe pkgs.hyprpicker} -a && (${getExe' pkgs.imagemagick "convert"} -size 32x32 xc:$(${
-              getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-paste"
-            }) /tmp/color.png && ${getExe pkgs.libnotify} \"Color Code:\" \"$(${getExe' pkgs.wl-clipboard "wl-paste"})\" -h \"string:bgcolor:$(${getExe' pkgs.wl-clipboard "wl-paste"})\" --icon /tmp/color.png -u critical -t 4000)"
+            "SUPER_SHIFT, P, exec, $color_picker"
             "$mainMod, B, exec, $browser"
             "SUPER_SHIFT, E, exec, $explorer"
             "$mainMod, E, exec, $term yazi"
@@ -36,15 +31,13 @@ in
             "SUPER_ALT, SPACE, exec, $launcher_alt"
             "SUPER_SHIFT, SPACE, exec, $launcher_shift"
             "$mainMod, A, exec, $launchpad"
-            "$mainMod, L, exec, ${getExe config.programs.hyprlock.package} --immediate"
+            "$mainMod, L, exec, $screen-locker --immediate"
             "$mainMod, T, exec, $term btop"
-            "$mainMod, N, exec, ${getExe' pkgs.swaynotificationcenter "swaync-client"} -t -sw"
+            "$mainMod, N, exec, $notification_center -t -sw"
             # "SUPER, V, clipman pick -t rofi
-            "$mainMod, V, exec, ${getExe pkgs.cliphist} list | ${getExe config.programs.rofi.package} -dmenu | ${getExe pkgs.cliphist} decode | ${
-              getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-copy"
-            }"
+            "$mainMod, V, exec, $cliphist"
             "$mainMod, W, exec, $looking-glass"
-            "$mainMod, I, exec, ${getExe hyprland-contrib.packages.${system}.hyprprop}"
+            "$mainMod, I, exec, ${getExe pkgs.libnotify} \"$($window-inspector)\""
 
             # ░█▀▀░█░█░█▀▀░▀█▀░█▀▀░█▄█
             # ░▀▀█░░█░░▀▀█░░█░░█▀▀░█░█
@@ -62,17 +55,16 @@ in
             # Pictures
             ", Print, exec, $screenshot"
             "SHIFT, Print, exec, $slurp_screenshot"
+            "SHIFT_CTRL, S, exec, $slurp_screenshot"
             "SUPER_SHIFT, Print, exec, $slurp_swappy"
             "SUPER_SHIFT, S, exec, $slurp_swappy"
             "SUPER, Print, exec, $grim_swappy"
             "CONTROL, Print, exec, $grimblast_screen"
             "SUPER_CTRL, Print, exec, $grimblast_window"
-            "SUPER_CTRL_SHIFT, Print, exec, ${getExe pkgs.grimblast} copy area && ${
-              getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-paste"
-            } -t image/png | ${getExe' pkgs.imagemagick "convert"} png:- /tmp/clipboard.png && ${getExe pkgs.libnotify} --icon=/tmp/clipboard.png 'Area copied to clipboard'"
+            "SUPER_CTRL_SHIFT, Print, exec, $grimblast_area"
             # Screen recording
-            "SUPER_CTRLALT, Print, exec, ${getExe pkgs.khanelinix.record_screen} screen"
-            "SUPER_CTRLALTSHIFT, Print, exec, ${getExe pkgs.khanelinix.record_screen} area"
+            "SUPER_CTRLALT, Print, exec, $screen-recorder screen"
+            "SUPER_CTRLALTSHIFT, Print, exec, $screen-recorder area"
 
             # ░█░░░█▀█░█░█░█▀█░█░█░▀█▀
             # ░█░░░█▀█░░█░░█░█░█░█░░█░
@@ -175,7 +167,7 @@ in
             ) 10
           ));
         bindl = [
-          "$mainMod, BackSpace, exec, pkill -SIGUSR1 hyprlock || WAYLAND_DISPLAY=wayland-1 ${getExe config.programs.hyprlock.package}  --immediate"
+          "$mainMod, BackSpace, exec, pkill -SIGUSR1 hyprlock || WAYLAND_DISPLAY=wayland-1 $screen-locker  --immediate"
         ];
         bindm = [
           # Move/resize windows with mainMod + LMB/RMB and dragging
