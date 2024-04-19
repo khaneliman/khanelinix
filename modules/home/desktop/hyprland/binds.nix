@@ -25,6 +25,7 @@ in
             "SUPER_SHIFT, RETURN, exec, $term tmux"
             "SUPER_ALT, RETURN, exec, $term --title floatterm --single-instance"
             "$mainMod, Q, killactive,"
+            "CTRL_SHIFT, Q, killactive,"
             "SUPER_SHIFT, P, exec, ${getExe pkgs.hyprpicker} -a && (${getExe' pkgs.imagemagick "convert"} -size 32x32 xc:$(${
               getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-paste"
             }) /tmp/color.png && ${getExe pkgs.libnotify} \"Color Code:\" \"$(${getExe' pkgs.wl-clipboard "wl-paste"})\" -h \"string:bgcolor:$(${getExe' pkgs.wl-clipboard "wl-paste"})\" --icon /tmp/color.png -u critical -t 4000)"
@@ -59,24 +60,13 @@ in
             # ░▀▀█░█░░░█▀▄░█▀▀░█▀▀░█░█░▀▀█░█▀█░█░█░░█░
             # ░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░░▀░
             # Pictures
-            ", Print, exec, file=\"/home/${config.khanelinix.user.name}/Pictures/screenshots/$(date +'%Y%m%d_%H%M%S.png')\" && ${
-              getExe nixpkgs-wayland.packages.${system}.grim
-            } \"$file\" && ${getExe pkgs.libnotify} --icon \"$file\" 'Screenshot Saved'"
-            "SHIFT, Print, exec, file=\"/home/${config.khanelinix.user.name})/Pictures/screenshots/$(date +'%Y%m%d_%H%M%S.png')\" && ${
-              getExe nixpkgs-wayland.packages.${system}.grim
-            } -g \"$(slurp)\" \"$file\" && ${getExe pkgs.libnotify} --icon \"$file\" 'Screenshot Saved'"
-            "SUPER_SHIFT, Print, exec, ${getExe nixpkgs-wayland.packages.${system}.grim} -g \"$(${
-              getExe nixpkgs-wayland.packages.${system}.slurp
-            })\" - | ${getExe pkgs.swappy} -f -"
-            "SUPER, Print, exec, ${
-              getExe nixpkgs-wayland.packages.${system}.grim
-            } - | ${getExe pkgs.swappy} -f -"
-            "CONTROL, Print, exec, ${getExe pkgs.grimblast} copy screen && ${
-              getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-paste"
-            } -t image/png | ${getExe' pkgs.imagemagick "convert"} png:- /tmp/clipboard.png && ${getExe pkgs.libnotify} --icon=/tmp/clipboard.png 'Screen copied to clipboard'"
-            "SUPER_CTRL, Print, exec, ${getExe pkgs.grimblast} copy active && ${
-              getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-paste"
-            } -t image/png | ${getExe' pkgs.imagemagick "convert"} png:- /tmp/clipboard.png && ${getExe pkgs.libnotify} --icon=/tmp/clipboard.png 'Window copied to clipboard'"
+            ", Print, exec, $screenshot"
+            "SHIFT, Print, exec, $slurp_screenshot"
+            "SUPER_SHIFT, Print, exec, $slurp_swappy"
+            "SUPER_SHIFT, S, exec, $slurp_swappy"
+            "SUPER, Print, exec, $grim_swappy"
+            "CONTROL, Print, exec, $grimblast_screen"
+            "SUPER_CTRL, Print, exec, $grimblast_window"
             "SUPER_CTRL_SHIFT, Print, exec, ${getExe pkgs.grimblast} copy area && ${
               getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-paste"
             } -t image/png | ${getExe' pkgs.imagemagick "convert"} png:- /tmp/clipboard.png && ${getExe pkgs.libnotify} --icon=/tmp/clipboard.png 'Area copied to clipboard'"

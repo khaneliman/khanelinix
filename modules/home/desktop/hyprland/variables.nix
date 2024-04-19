@@ -1,11 +1,14 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
+  system,
   ...
 }:
 let
-  inherit (lib) mkIf getExe;
+  inherit (inputs) nixpkgs-wayland;
+  inherit (lib) mkIf getExe getExe';
 
   cfg = config.khanelinix.desktop.hyprland;
 in
@@ -124,6 +127,23 @@ in
         "$launcher_shift" = "${getExe config.programs.rofi.package} -show run -n";
         "$launchpad" = "${getExe config.programs.rofi.package} -show drun -config '~/.config/rofi/appmenu/rofi.rasi'";
         "$looking-glass" = "${getExe pkgs.looking-glass-client}";
+
+        "$screenshot" = "file=\"/home/${config.khanelinix.user.name}/Pictures/screenshots/$(date +'%Y%m%d_%H%M%S.png')\" && ${
+          getExe nixpkgs-wayland.packages.${system}.grim
+        } \"$file\" && ${getExe pkgs.libnotify} --icon \"$file\" 'Screenshot Saved'";
+        "$slurp_screenshot" = "file=\"/home/${config.khanelinix.user.name})/Pictures/screenshots/$(date +'%Y%m%d_%H%M%S.png')\" && ${
+          getExe nixpkgs-wayland.packages.${system}.grim
+        } -g \"$(slurp)\" \"$file\" && ${getExe pkgs.libnotify} --icon \"$file\" 'Screenshot Saved'";
+        "$slurp_swappy" = "${getExe nixpkgs-wayland.packages.${system}.grim} -g \"$(${
+          getExe nixpkgs-wayland.packages.${system}.slurp
+        })\" - | ${getExe pkgs.swappy} -f -";
+        "$grim_swappy" = "${getExe nixpkgs-wayland.packages.${system}.grim} - | ${getExe pkgs.swappy} -f -";
+        "$grimblast_screen" = "${getExe pkgs.grimblast} copy screen && ${
+          getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-paste"
+        } -t image/png | ${getExe' pkgs.imagemagick "convert"} png:- /tmp/clipboard.png && ${getExe pkgs.libnotify} --icon=/tmp/clipboard.png 'Screen copied to clipboard'";
+        "$grimblast_window" = "${getExe pkgs.grimblast} copy active && ${
+          getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-paste"
+        } -t image/png | ${getExe' pkgs.imagemagick "convert"} png:- /tmp/clipboard.png && ${getExe pkgs.libnotify} --icon=/tmp/clipboard.png 'Window copied to clipboard'";
       };
     };
   };
