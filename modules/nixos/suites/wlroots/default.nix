@@ -34,10 +34,6 @@ in
     ];
 
     khanelinix = {
-      cli-apps = {
-        wshowkeys = enabled;
-      };
-
       desktop.addons = {
         electron-support = enabled;
         swappy = enabled;
@@ -48,6 +44,7 @@ in
     programs = {
       nm-applet.enable = true;
       xwayland.enable = true;
+      wshowkeys.enable = true;
     };
   };
 }
