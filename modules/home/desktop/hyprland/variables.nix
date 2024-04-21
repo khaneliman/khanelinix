@@ -126,6 +126,11 @@ in
           vrr = 2;
         };
 
+        # unscale XWayland
+        xwayland = {
+          force_zero_scaling = true;
+        };
+
         "$mainMod" = "SUPER";
         "$LHYPER" = "SUPER_LALT_LCTRL"; # TODO: fix
         "$RHYPER" = "SUPER_RALT_RCTRL"; # TODO: fix
