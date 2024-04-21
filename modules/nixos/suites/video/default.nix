@@ -21,7 +21,8 @@ in
       # FIX: broken nixpkgs
       # handbrake
       mediainfo-gui
-      pitivi
+      # FIX: broken nixpkgs
+      # pitivi
       vlc
     ];
 
