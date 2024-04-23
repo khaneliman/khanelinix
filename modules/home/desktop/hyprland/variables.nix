@@ -12,7 +12,9 @@ let
 
   convert = getExe' pkgs.imagemagick "convert";
   grim = getExe nixpkgs-wayland.packages.${system}.grim;
-  slurp = getExe nixpkgs-wayland.packages.${system}.slurp;
+  # TODO: check to see if it works again later, getting a slurp wl-pointer error
+  # slurp = getExe nixpkgs-wayland.packages.${system}.slurp;
+  slurp = getExe pkgs.slurp;
   wl-copy = getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-copy";
   wl-paste = getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-paste";
 
@@ -153,11 +155,11 @@ in
         "$screen-recorder" = "${getExe pkgs.khanelinix.record_screen}";
 
         # screenshot commands
-        "$notify-screenshot" = "${getExe pkgs.libnotify} --icon \"$file\" 'Screenshot Saved'";
+        "$notify-screenshot" = ''${getExe pkgs.libnotify} --icon "$file" "Screenshot Saved"'';
         "$screenshot-path" = "/home/${config.khanelinix.user.name}/Pictures/screenshots";
-        "$screenshot" = "file=\"${screenshot-path}/$(${getDateTime}).png\" && ${grim} \"$file\" && $notify-screenshot";
-        "$slurp_screenshot" = "file=\"${screenshot-path}/$(${getDateTime}).png\" && ${grim} -g \"$(${slurp})\" \"$file\" && $notify-screenshot";
-        "$slurp_swappy" = "${grim} -g \"$(${slurp})\" - | ${getExe pkgs.swappy} -f -";
+        "$screenshot" = ''file="${screenshot-path}/$(${getDateTime}).png" && ${grim} "$file" && $notify-screenshot'';
+        "$slurp_screenshot" = ''file="${screenshot-path}/$(${getDateTime}).png" && ${grim} -g "$(${slurp})" "$file" && $notify-screenshot'';
+        "$slurp_swappy" = ''${grim} -g "$(${slurp})" - | ${getExe pkgs.swappy} -f -'';
         "$grim_swappy" = "${grim} - | ${getExe pkgs.swappy} -f -";
         "$grimblast_screen" = "${getExe pkgs.grimblast} copy screen && ${wl-paste} -t image/png | ${convert} png:- /tmp/clipboard.png && ${getExe pkgs.libnotify} --icon=/tmp/clipboard.png 'Screen copied to clipboard'";
         "$grimblast_window" = "${getExe pkgs.grimblast} copy active && ${wl-paste} -t image/png | ${convert} png:- /tmp/clipboard.png && ${getExe pkgs.libnotify} --icon=/tmp/clipboard.png 'Window copied to clipboard'";
