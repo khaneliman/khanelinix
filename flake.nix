@@ -33,17 +33,20 @@
       url = "github:hyprwm/Hyprcursor";
       inputs = {
         hyprlang.follows = "hyprlang";
+        nixpkgs.follows = "nixpkgs";
       };
     };
 
     # Hypridle
     hypridle = {
       url = "github:hyprwm/Hypridle";
+      inputs.nixpkgs.follows = "nixpkgs";
       # url = "git+file:///home/khaneliman/Documents/github/hypridle";
     };
 
     # Hyprlock
     hyprlock = {
+      inputs.nixpkgs.follows = "nixpkgs";
       url = "github:hyprwm/Hyprlock";
     };
 
@@ -53,16 +56,19 @@
       inputs = {
         hyprlang.follows = "hyprlang";
         hyprcursor.follows = "hyprcursor";
+        nixpkgs.follows = "nixpkgs";
       };
     };
 
     hyprlang = {
       url = "github:hyprwm/hyprlang";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Hyprpaper
     hyprpaper = {
       url = "github:hyprwm/hyprpaper";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Hyprland user contributions flake
@@ -234,18 +240,9 @@
 
       overlays = with inputs; [
         hypr-socket-watch.overlays.default
-        # hyprlang.overlays.default
-        # hyprcursor.overlays.default
-        # hypridle.overlays.default
-        hyprland.overlays.default
-        hyprlock.overlays.default
-        # nixpkgs-wayland.overlay
         nix-ld-rs.overlays.default
         nur.overlay
         rust-overlay.overlays.default
-        snowfall-flake.overlays.default
-        snowfall-frost.overlays.default
-        snowfall-thaw.overlays.default
       ];
 
       homes.modules = with inputs; [

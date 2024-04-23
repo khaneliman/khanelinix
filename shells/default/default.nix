@@ -5,11 +5,19 @@
   system,
   ...
 }:
+let
+  inherit (inputs)
+    nix-inspect
+    snowfall-flake
+    snowfall-frost
+    snowfall-thaw
+    ;
+in
 mkShell {
   buildInputs = with pkgs; [
     deadnix
     hydra-check
-    inputs.nix-inspect.packages.${system}.default
+    nix-inspect.packages.${system}.default
     nix-bisect
     nix-diff
     nix-health
@@ -20,9 +28,9 @@ mkShell {
     nixfmt-rfc-style
     nixpkgs-hammering
     nixpkgs-lint
-    snowfallorg.flake
-    snowfallorg.frost
-    snowfallorg.thaw
+    snowfall-flake.packages.${system}.flake
+    snowfall-frost.packages.${system}.frost
+    snowfall-thaw.packages.${system}.thaw
     statix
   ];
 

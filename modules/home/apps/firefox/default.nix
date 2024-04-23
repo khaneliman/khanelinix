@@ -89,7 +89,8 @@ in
         id = 0;
 
         extensions = with pkgs.nur.repos.rycee.firefox-addons; [
-          angular-devtools
+          # FIX: readd when firefox addon readded
+          # angular-devtools
           auto-tab-discard
           bitwarden
           # NOTE: annoying new page and permissions

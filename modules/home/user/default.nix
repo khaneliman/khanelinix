@@ -1,7 +1,9 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
+  system,
   ...
 }:
 let
@@ -14,6 +16,7 @@ let
     getExe'
     ;
   inherit (lib.internal) mkOpt;
+  inherit (inputs) snowfall-flake;
 
   cfg = config.khanelinix.user;
 
@@ -81,7 +84,9 @@ in
         homeDirectory = mkDefault cfg.home;
 
         shellAliases = {
-          nixre = "${lib.optionalString pkgs.stdenv.isLinux "sudo"} ${getExe pkgs.snowfallorg.flake} switch";
+          nixre = "${lib.optionalString pkgs.stdenv.isLinux "sudo"} ${
+            getExe snowfall-flake.packages.${system}.flake
+          } switch";
 
           gsed = "${getExe pkgs.gnused}";
 
