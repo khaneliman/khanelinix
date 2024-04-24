@@ -188,16 +188,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    snowfall-frost = {
-      url = "github:snowfallorg/frost";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    snowfall-thaw = {
-      url = "github:snowfallorg/thaw";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # Sops (Secrets)
     sops-nix = {
       url = "github:Mic92/sops-nix";

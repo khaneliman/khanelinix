@@ -6,12 +6,7 @@
   ...
 }:
 let
-  inherit (inputs)
-    nix-inspect
-    snowfall-flake
-    snowfall-frost
-    snowfall-thaw
-    ;
+  inherit (inputs) nix-inspect snowfall-flake;
 in
 mkShell {
   buildInputs = with pkgs; [
@@ -29,8 +24,6 @@ mkShell {
     nixpkgs-hammering
     nixpkgs-lint
     snowfall-flake.packages.${system}.flake
-    snowfall-frost.packages.${system}.frost
-    snowfall-thaw.packages.${system}.thaw
     statix
   ];
 
