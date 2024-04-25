@@ -19,8 +19,7 @@ if [[ $P_DYNAMIC_ISLAND_MUSIC_ENABLED == 1 ]]; then
 	dynamic-island-sketchybar --add event music_change "$MUSIC_EVENT" \
 		--add item musicListener center \
 		--set musicListener script="$DYNAMIC_ISLAND_DIR/scripts/islands/music/handler.sh $P_DYNAMIC_ISLAND_MUSIC_SOURCE" \
-		width=0 \
-		--subscribe musicListener music_change
+		width=0 --subscribe musicListener music_change
 fi
 
 if [[ $P_DYNAMIC_ISLAND_APPSWITCH_ENABLED == 1 ]]; then
