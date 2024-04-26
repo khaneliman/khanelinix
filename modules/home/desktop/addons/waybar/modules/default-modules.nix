@@ -3,6 +3,28 @@ let
   inherit (lib) getExe getExe';
 in
 {
+  "cava" = {
+    "framerate" = 120;
+    "autosens" = 1;
+    "bars" = 12;
+    "method" = "pipewire";
+    "source" = "auto";
+    "bar_delimiter" = 0;
+    "input_delay" = 2;
+    "sleep_timer" = 2;
+    "hide_on_silence" = true;
+    "format-icons" = [
+      "▁"
+      "▂"
+      "▃"
+      "▄"
+      "▅"
+      "▆"
+      "▇"
+      "█"
+    ];
+  };
+
   "clock" = {
     "tooltip-format" = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
     "format" = "{:%a %d; %b \n %I:%M %p }";

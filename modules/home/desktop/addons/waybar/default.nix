@@ -55,7 +55,7 @@ let
 
   mainBar = {
     "output" = "DP-1";
-    # "modules-center" = [ "mpris" ];
+    "modules-center" = [ "cava" ];
 
     "modules-right" = [
       "group/tray"
