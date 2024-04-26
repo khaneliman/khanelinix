@@ -67,8 +67,9 @@ local function get_volume_icon(new_volume)
 	return icon
 end
 
-local update_co = nil -- Stores the running coroutine
-local delay_finished = false
+local animation_co = nil -- Stores the running coroutine
+local sleep_co = nil -- Stores the running coroutine
+local end_time = nil
 
 local function animate_show()
 	print("Animating showing volume")
@@ -77,7 +78,6 @@ local function animate_show()
 		volume.icon:set({ label = { width = 25 } })
 		Sbar.bar({ height = 80 })
 	end)
-	delay_finished = false
 end
 
 local function animate_hide()
@@ -87,43 +87,72 @@ local function animate_hide()
 		volume.icon:set({ label = { width = 0 } })
 		Sbar.bar({ height = settings.default.height })
 	end)
-	delay_finished = true
 end
 
 volume.slider:subscribe("volume_change", function(env)
+	print("--")
 	local new_volume = tonumber(env.INFO)
 	local icon = get_volume_icon(new_volume)
 
 	volume.icon:set({ label = icon })
 	volume.slider:set({ slider = { percentage = new_volume } })
 
-	print("Updating volume")
-	animate_show()
-
-	if update_co and coroutine.status(update_co) == "running" then
-		print("Closing coroutine")
-		coroutine.close(update_co)
-	end
-
 	-- Create a new delay coroutine
-	update_co = coroutine.create(function()
+	animation_co = coroutine.create(function()
 		print("Delay coroutine created")
-		local start_time = os.time()
-		local target_duration = 1
 
-		while os.time() < start_time + target_duration do
-			if delay_finished == true then
-				print("Delay finished")
-				return
-			end
-			os.execute("sleep .1")
-		end
+		print("Showing overlay")
+		animate_show()
 
-		print("Animating hiding volume")
+		print("Pausing animation routine")
+		coroutine.yield()
+
+		print("Hiding overlay")
 		animate_hide()
 	end)
 
-	print("Resuming coroutine")
-	coroutine.resume(update_co)
+	print("Starting animation coroutine")
+	coroutine.resume(animation_co)
+
+	if end_time then
+		print("end time: " .. end_time)
+	end
+
+	print("current time: " .. os.time())
+	if end_time == nil then
+		end_time = os.time() + 3
+	end
+
+	print("Creating sleep coroutine")
+	sleep_co = coroutine.create(function()
+		print("starting sleep loop")
+		print("current time: " .. os.time())
+		print("end time: " .. end_time)
+		while os.time() < end_time do
+			-- print("yielding sleep routine")
+			coroutine.yield()
+		end
+
+		print("Continuing animation coroutine")
+		coroutine.resume(animation_co)
+		end_time = nil
+		sleep_co = nil
+	end)
+
+	print("Starting sleep coroutine")
+	coroutine.resume(sleep_co)
+
+	print("continuing to check for resuming sleep routine")
+	if sleep_co and coroutine.status(sleep_co) == "suspended" then
+		print("Resuming sleep coroutine since it's suspended")
+		-- coroutine.close(sleep_co)
+		-- while os.time() < end_time do
+		coroutine.resume(sleep_co)
+		-- end
+	end
+	-- while os.time() < start_time + target_duration do
+	-- coroutine.resume(sleep_co)
+	-- end
 end)
+
 return volume
