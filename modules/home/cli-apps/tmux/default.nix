@@ -28,8 +28,8 @@ let
         set -g @continuum-restore 'on'
       '';
     }
-    # tmux-fzf
-    # vim-tmux-navigator
+    { plugin = tmux-fzf; }
+    # { plugin = vim-tmux-navigator; }
   ];
 in
 {
