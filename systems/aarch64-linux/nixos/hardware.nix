@@ -45,7 +45,5 @@ in
 
   hardware.enableRedistributableFirmware = true;
 
-  # services.xserver.videoDrivers = [ "amdgpu" ];
-
   hardware.bluetooth.enable = true;
 }
