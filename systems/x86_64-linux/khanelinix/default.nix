@@ -165,6 +165,7 @@ in
         enable = true;
         secureBoot = true;
         plymouth = true;
+        silentBoot = true;
       };
 
       fonts = enabled;
