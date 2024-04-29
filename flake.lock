@@ -1,22 +1,5 @@
 {
   "nodes": {
-    "astronvim-config": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1700279002,
-        "narHash": "sha256-mqykjSeWf8dzIN1W5d1HJR9Yw6XygeVFOSGlvOhhps0=",
-        "owner": "khaneliman",
-        "repo": "khanelivim",
-        "rev": "26620ebfbc090c38ac8849a3b81070a848ee2031",
-        "type": "github"
-      },
-      "original": {
-        "owner": "khaneliman",
-        "ref": "astronvim",
-        "repo": "khanelivim",
-        "type": "github"
-      }
-    },
     "crane": {
       "inputs": {
         "flake-compat": [
@@ -1057,23 +1040,6 @@
         "type": "github"
       }
     },
-    "lazyvim-config": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1700278914,
-        "narHash": "sha256-fGlBmrSqDetXcCUTozzQfvKDgH5pXu3UMS8wHovNwvo=",
-        "owner": "khaneliman",
-        "repo": "khanelivim",
-        "rev": "33b9deeb9fd221cb2deaa3d3473510fbb019bc98",
-        "type": "github"
-      },
-      "original": {
-        "owner": "khaneliman",
-        "ref": "lazyvim",
-        "repo": "khanelivim",
-        "type": "github"
-      }
-    },
     "lib-aggregate": {
       "inputs": {
         "flake-utils": "flake-utils_5",
@@ -1090,22 +1056,6 @@
       "original": {
         "owner": "nix-community",
         "repo": "lib-aggregate",
-        "type": "github"
-      }
-    },
-    "lunarvim-config": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1707843618,
-        "narHash": "sha256-grCEaLJrcPMdM9ODWSExcNsc+G+QmEmZ7EBfBeEVeGU=",
-        "owner": "LunarVim",
-        "repo": "LunarVim",
-        "rev": "9ee3b7b8846d7ed2fa79f03d67083f8b95c897f2",
-        "type": "github"
-      },
-      "original": {
-        "owner": "LunarVim",
-        "repo": "LunarVim",
         "type": "github"
       }
     },
@@ -1668,7 +1618,6 @@
     },
     "root": {
       "inputs": {
-        "astronvim-config": "astronvim-config",
         "darwin": "darwin",
         "deploy-rs": "deploy-rs",
         "gpg-base-conf": "gpg-base-conf",
@@ -1683,8 +1632,6 @@
         "hyprlock": "hyprlock",
         "hyprpaper": "hyprpaper",
         "lanzaboote": "lanzaboote",
-        "lazyvim-config": "lazyvim-config",
-        "lunarvim-config": "lunarvim-config",
         "neovim-config": "neovim-config",
         "nix-inspect": "nix-inspect",
         "nix-ld-rs": "nix-ld-rs",

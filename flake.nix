@@ -98,24 +98,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Astronvim neovim config
-    astronvim-config = {
-      url = "github:khaneliman/khanelivim/astronvim";
-      flake = false;
-    };
-
-    # lazyvim neovim config
-    lazyvim-config = {
-      url = "github:khaneliman/khanelivim/lazyvim";
-      flake = false;
-    };
-
-    # lunarvim config
-    lunarvim-config = {
-      url = "github:LunarVim/LunarVim";
-      flake = false;
-    };
-
     # Personal neovim config
     neovim-config = {
       url = "github:khaneliman/khanelivim";

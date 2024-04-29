@@ -2,13 +2,11 @@
   config,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
   inherit (lib.internal) mkBoolOpt;
-  inherit (inputs) astronvim-config lazyvim-config lunarvim-config;
 
   cfg = config.khanelinix.cli-apps.neovim;
 in
@@ -25,12 +23,6 @@ in
       sessionVariables = {
         DOTNET_ROOT = "${pkgs.dotnet-sdk_8}";
         EDITOR = mkIf cfg.default "nvim";
-      };
-
-      shellAliases = {
-        astronvim = "NVIM_APPNAME=astronvim nvim";
-        lazyvim = "NVIM_APPNAME=lazyvim nvim";
-        lunarvim = "NVIM_APPNAME=lunarvim nvim";
       };
     };
 
@@ -62,49 +54,6 @@ in
       wakatime = {
         sopsFile = ../../../../secrets/khaneliman/default.yaml;
         path = "${config.home.homeDirectory}/.wakatime.cfg";
-      };
-    };
-
-    # TODO: setup onchange to either be after sops-nix or not load wakatime in headless
-    xdg.configFile = {
-      "astronvim" = {
-        # onChange = "NVIM_APPNAME=astronvim ${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
-        source = lib.cleanSourceWith {
-          filter =
-            name: _type:
-            let
-              baseName = baseNameOf (toString name);
-            in
-            "lazy-lock.json" != baseName;
-          src = lib.cleanSource astronvim-config;
-        };
-        recursive = true;
-      };
-      "lazyvim" = {
-        # onChange = "NVIM_APPNAME=lazyvim ${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
-        source = lib.cleanSourceWith {
-          filter =
-            name: _type:
-            let
-              baseName = baseNameOf (toString name);
-            in
-            "lazy-lock.json" != baseName;
-          src = lib.cleanSource lazyvim-config;
-        };
-        recursive = true;
-      };
-      "lunarvim" = {
-        # onChange = "NVIM_APPNAME=lunarvim ${getExe pkgs.neovim} --headless \"+Lazy! sync\" +qa";
-        source = lib.cleanSourceWith {
-          filter =
-            name: _type:
-            let
-              baseName = baseNameOf (toString name);
-            in
-            "lazy-lock.json" != baseName;
-          src = lib.cleanSource lunarvim-config;
-        };
-        recursive = true;
       };
     };
   };
