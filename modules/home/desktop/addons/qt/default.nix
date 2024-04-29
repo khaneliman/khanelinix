@@ -6,15 +6,16 @@
 }:
 let
   inherit (lib) types mkIf mergeAttrs;
-  inherit (lib.internal) mkBoolOpt mkOpt;
+  inherit (lib.internal) capitalize mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.desktop.addons.qt;
+  themeCfg = config.khanelinix.desktop.theme;
 
   settings = {
     Appearance = {
       color_scheme_path = "";
       custom_palette = true;
-      icon_theme = config.khanelinix.desktop.addons.gtk.icon.name;
+      icon_theme = config.khanelinix.desktop.theme.icon.name;
       standard_dialogs = "gtk3";
       style = "kvantum";
     };
@@ -46,8 +47,7 @@ let
     };
   };
 
-  # TODO: replace with capitalize from gtk theme settings
-  colorSchemePath = "${pkgs.catppuccin}/qt5ct/Catppuccin-Macchiato.conf";
+  colorSchemePath = "${pkgs.catppuccin}/qt5ct/${capitalize themeCfg.selectedTheme.name}-${capitalize themeCfg.selectedTheme.variant}.conf";
 in
 {
   options.khanelinix.desktop.addons.qt = with types; {
@@ -55,7 +55,10 @@ in
     theme = {
       # TODO: cleanup with proper name
       name = mkOpt str "Catppuccin-Macchiato-Blue" "The name of the kvantum theme to apply.";
-      pkg = mkOpt package pkgs.catppuccin-kvantum "The package to use for the theme.";
+      package = mkOpt package (pkgs.catppuccin-kvantum.override {
+        accent = "Blue";
+        variant = "Macchiato";
+      }) "The package to use for the theme.";
     };
   };
 
@@ -86,10 +89,7 @@ in
 
       style = {
         name = "qt6ct-style";
-        package = cfg.theme.pkg.override {
-          accent = "Blue";
-          variant = "Macchiato";
-        };
+        inherit (cfg.theme) package;
       };
     };
   };

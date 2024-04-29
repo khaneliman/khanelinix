@@ -14,26 +14,19 @@ let
   inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.desktop.addons.gtk;
+  themeCfg = config.khanelinix.desktop.theme;
+
   default-attrs = mapAttrs (_key: mkDefault);
   nested-default-attrs = mapAttrs (_key: default-attrs);
 in
 {
-  options.khanelinix.desktop.addons.gtk = with types; {
+  options.khanelinix.desktop.addons.gtk = {
     enable = mkBoolOpt false "Whether to customize GTK and apply themes.";
-    cursor = {
-      name = mkOpt str "Catppuccin-Macchiato-Blue-Cursors" "The name of the cursor theme to apply.";
-      pkg =
-        mkOpt package pkgs.catppuccin-cursors.macchiatoBlue
-          "The package to use for the cursor theme.";
-      size = mkOpt int 32 "The size of the cursor.";
-    };
-    icon = {
-      name = mkOpt str "breeze-dark" "The name of the icon theme to apply.";
-      pkg = mkOpt package pkgs.libsForQt5.breeze-icons "The package to use for the icon theme.";
-    };
     theme = {
-      name = mkOpt str "Catppuccin-Macchiato-Standard-Blue-Dark" "The name of the GTK theme to apply.";
-      pkg = mkOpt package (pkgs.catppuccin-gtk.override {
+      name =
+        mkOpt types.str "Catppuccin-Macchiato-Standard-Blue-Dark"
+          "The name of the GTK theme to apply.";
+      package = mkOpt types.package (pkgs.catppuccin-gtk.override {
         accents = [ "blue" ];
         size = "standard";
         variant = "macchiato";
@@ -42,8 +35,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    # TODO: check if this is even needed still
     home.sessionVariables = {
-      CURSOR_THEME = cfg.cursor.name;
       GTK_THEME = cfg.theme.name;
     };
 
@@ -53,23 +46,18 @@ in
       settings = nested-default-attrs {
         "org/gnome/desktop/interface" = {
           color-scheme = "prefer-dark";
-          cursor-size = cfg.cursor.size;
-          cursor-theme = cfg.cursor.name;
+          cursor-size = themeCfg.cursor.size;
+          cursor-theme = themeCfg.cursor.name;
           enable-hot-corners = false;
           font-name = config.khanelinix.system.fonts.default;
           gtk-theme = cfg.theme.name;
-          icon-theme = cfg.icon.name;
+          icon-theme = themeCfg.icon.name;
         };
       };
     };
 
     gtk = {
       enable = true;
-
-      cursorTheme = {
-        inherit (cfg.cursor) name;
-        package = cfg.cursor.pkg;
-      };
 
       font = {
         name = config.khanelinix.system.fonts.default;
@@ -84,22 +72,16 @@ in
       };
 
       iconTheme = {
-        inherit (cfg.icon) name;
-        package = cfg.icon.pkg;
+        inherit (themeCfg.icon) name package;
       };
 
       theme = {
-        inherit (cfg.theme) name;
-        package = cfg.theme.pkg;
+        inherit (cfg.theme) name package;
       };
     };
 
     home.pointerCursor = {
-      inherit (cfg.cursor) name;
-      inherit (cfg.cursor) size;
-      package = cfg.cursor.pkg;
       gtk.enable = true;
-      x11.enable = true;
     };
   };
 }
