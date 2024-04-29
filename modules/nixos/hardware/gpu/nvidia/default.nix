@@ -7,10 +7,10 @@
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
-  cfg = config.khanelinix.hardware.nvidia;
+  cfg = config.khanelinix.hardware.gpu.nvidia;
 in
 {
-  options.khanelinix.hardware.nvidia = {
+  options.khanelinix.hardware.gpu.nvidia = {
     enable = mkBoolOpt false "Whether or not to enable support for nvidia.";
   };
 

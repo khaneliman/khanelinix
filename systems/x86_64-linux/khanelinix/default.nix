@@ -35,10 +35,12 @@ in
 
     hardware = {
       cpu.amd = enabled;
-      gpu.amd = enabled;
+      gpu = {
+        amd = enabled;
+        nvidia = enabled;
+      };
       audio = enabled;
       bluetooth = enabled;
-      nvidia = enabled;
       opengl = enabled;
 
       rgb = {

@@ -8,10 +8,10 @@ let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
 
-  cfg = config.khanelinix.hardware.amdgpu;
+  cfg = config.khanelinix.hardware.gpu.amd;
 in
 {
-  options.khanelinix.hardware.amdgpu = {
+  options.khanelinix.hardware.gpu.amd = {
     enable = mkBoolOpt false "Whether or not to enable support for amdgpu.";
   };
 
