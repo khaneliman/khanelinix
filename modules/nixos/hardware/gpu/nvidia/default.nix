@@ -5,9 +5,19 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkDefault mkIf versionOlder;
   inherit (lib.internal) mkBoolOpt;
   cfg = config.khanelinix.hardware.gpu.nvidia;
+
+  # use the latest possible nvidia package
+  nvStable = config.boot.kernelPackages.nvidiaPackages.stable.version;
+  nvBeta = config.boot.kernelPackages.nvidiaPackages.beta.version;
+
+  nvidiaPackage =
+    if (versionOlder nvBeta nvStable) then
+      config.boot.kernelPackages.nvidiaPackages.stable
+    else
+      config.boot.kernelPackages.nvidiaPackages.beta;
 in
 {
   options.khanelinix.hardware.gpu.nvidia = {
@@ -15,12 +25,43 @@ in
   };
 
   config = mkIf cfg.enable {
+    boot.blacklistedKernelModules = [ "nouveau" ];
 
     environment.systemPackages = with pkgs; [
       nvfancontrol
-      nvidia-vaapi-driver
+
       nvtopPackages.nvidia
+
+      # mesa
+      mesa
+
+      # vulkan
       vulkan-tools
+      vulkan-loader
+      vulkan-validation-layers
+      vulkan-extension-layer
     ];
+
+    hardware = {
+      nvidia = mkIf (!config.khanelinix.hardware.gpu.amd.enable) {
+        package = mkDefault nvidiaPackage;
+        modesetting.enable = mkDefault true;
+
+        powerManagement = {
+          enable = mkDefault true;
+          finegrained = mkDefault false;
+        };
+
+        open = mkDefault true;
+        nvidiaSettings = false;
+        nvidiaPersistenced = true;
+        forceFullCompositionPipeline = true;
+      };
+
+      opengl = {
+        extraPackages = with pkgs; [ nvidia-vaapi-driver ];
+        extraPackages32 = with pkgs.pkgsi686Linux; [ nvidia-vaapi-driver ];
+      };
+    };
   };
 }
