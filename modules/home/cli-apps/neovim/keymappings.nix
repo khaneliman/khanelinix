@@ -223,18 +223,21 @@
                 };
               };
 
-              "<leader>uS" = {
-                action = # lua
-                  ''
-                    function ()
-                      vim.wo.spell = not vim.wo.spell
-                      vim.notify(string.format("Spell %s", bool2str(vim.wo.spell), "info"))
-                    end'';
-                lua = true;
-                options = {
-                  desc = "Toggle spell";
-                };
-              };
+              /*
+                FIX: fix mapping
+                    "<leader>uS" = {
+                      action = # lua
+                        ''
+                          function ()
+                            vim.wo.spell = not vim.wo.spell
+                            vim.notify(string.format("Spell %s", bool2str(vim.wo.spell), "info"))
+                          end'';
+                      lua = true;
+                      options = {
+                        desc = "Toggle spell";
+                      };
+                    };
+              */
 
               "<leader>uw" = {
                 action = # lua
