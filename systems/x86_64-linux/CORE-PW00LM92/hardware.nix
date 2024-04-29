@@ -1,12 +1,8 @@
 { modulesPath, inputs, ... }:
-let
-  inherit (inputs) nixos-hardware;
-in
 {
-  imports = with nixos-hardware.nixosModules; [
+  imports = [
     "${modulesPath}/profiles/minimal.nix"
     inputs.nixos-wsl.nixosModules.wsl
-    common-pc
   ];
 
   wsl = {

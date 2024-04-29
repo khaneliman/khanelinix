@@ -1,17 +1,8 @@
-{
-  pkgs,
-  modulesPath,
-  inputs,
-  ...
-}:
+{ pkgs, modulesPath, ... }:
 let
-  inherit (inputs) nixos-hardware;
 in
 {
-  imports = with nixos-hardware.nixosModules; [
-    (modulesPath + "/installer/scan/not-detected.nix")
-    common-pc
-  ];
+  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
   ##
   # Desktop VM config

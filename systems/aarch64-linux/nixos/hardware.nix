@@ -1,17 +1,6 @@
+{ pkgs, modulesPath, ... }:
 {
-  pkgs,
-  modulesPath,
-  inputs,
-  ...
-}:
-let
-  inherit (inputs) nixos-hardware;
-in
-{
-  imports = with nixos-hardware.nixosModules; [
-    (modulesPath + "/installer/scan/not-detected.nix")
-    common-pc
-  ];
+  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
