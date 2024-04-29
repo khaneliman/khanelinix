@@ -9,6 +9,11 @@ in
 
   config = mkIf cfg.enable {
     nix = {
+      # make builds run with low priority so my system stays responsive
+      daemonCPUSchedPolicy = "batch";
+      daemonIOSchedClass = "idle";
+      daemonIOSchedPriority = 7;
+
       gc = {
         dates = "weekly";
       };
