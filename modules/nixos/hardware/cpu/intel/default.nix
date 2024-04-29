@@ -8,10 +8,10 @@ let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
 
-  cfg = config.khanelinix.hardware.intelcpu;
+  cfg = config.khanelinix.hardware.cpu.intel;
 in
 {
-  options.khanelinix.hardware.intelcpu = {
+  options.khanelinix.hardware.cpu.intel = {
     enable = mkBoolOpt false "Whether or not to enable support for intel cpu.";
   };
 

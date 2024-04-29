@@ -11,7 +11,7 @@ in
     hardware = {
       audio = enabled;
       bluetooth = enabled;
-      intelcpu = enabled;
+      cpu.intel = enabled;
       opengl = enabled;
 
       storage = {

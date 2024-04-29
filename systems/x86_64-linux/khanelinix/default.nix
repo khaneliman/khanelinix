@@ -34,8 +34,8 @@ in
     };
 
     hardware = {
-      amdcpu = enabled;
-      amdgpu = enabled;
+      cpu.amd = enabled;
+      gpu.amd = enabled;
       audio = enabled;
       bluetooth = enabled;
       nvidia = enabled;

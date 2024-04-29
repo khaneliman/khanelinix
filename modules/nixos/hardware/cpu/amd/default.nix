@@ -8,10 +8,10 @@ let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
 
-  cfg = config.khanelinix.hardware.amdcpu;
+  cfg = config.khanelinix.hardware.cpu.amd;
 in
 {
-  options.khanelinix.hardware.amdcpu = {
+  options.khanelinix.hardware.cpu.amd = {
     enable = mkBoolOpt false "Whether or not to enable support for amd cpu.";
   };
 
