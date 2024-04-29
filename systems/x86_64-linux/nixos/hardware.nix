@@ -1,16 +1,12 @@
 {
   config,
-  inputs,
   lib,
   modulesPath,
   pkgs,
   ...
 }:
-let
-  inherit (inputs) nixos-hardware;
-in
 {
-  imports = with nixos-hardware.nixosModules; [ (modulesPath + "/profiles/qemu-guest.nix") ];
+  imports = [ (modulesPath + "/profiles/qemu-guest.nix") ];
 
   ##
   # Desktop VM config
