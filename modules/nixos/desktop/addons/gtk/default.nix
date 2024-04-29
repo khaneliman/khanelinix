@@ -13,20 +13,10 @@ in
 {
   options.khanelinix.desktop.addons.gtk = with types; {
     enable = mkBoolOpt false "Whether to customize GTK and apply themes.";
-    cursor = {
-      name = mkOpt str "Catppuccin-Macchiato-Blue-Cursors" "The name of the cursor theme to apply.";
-      pkg =
-        mkOpt package pkgs.catppuccin-cursors.macchiatoBlue
-          "The package to use for the cursor theme.";
-      size = mkOpt int 32 "The size of the cursor.";
-    };
-    icon = {
-      name = mkOpt str "breeze-dark" "The name of the icon theme to apply.";
-      pkg = mkOpt package pkgs.libsForQt5.breeze-icons "The package to use for the icon theme.";
-    };
+
     theme = {
       name = mkOpt str "Catppuccin-Macchiato-Standard-Blue-Dark" "The name of the GTK theme to apply.";
-      pkg = mkOpt package (pkgs.catppuccin-gtk.override {
+      package = mkOpt package (pkgs.catppuccin-gtk.override {
         accents = [ "blue" ];
         size = "standard";
         variant = "macchiato";
@@ -36,17 +26,12 @@ in
 
   config = mkIf cfg.enable {
     environment = {
+      # TODO: check if this is even needed still
       sessionVariables = {
-        CURSOR_THEME = cfg.cursor.name;
         GTK_THEME = cfg.theme.name;
-        XCURSOR_SIZE = "${toString cfg.cursor.size}";
-        XCURSOR_THEME = cfg.cursor.name;
       };
 
       systemPackages = with pkgs; [
-        cfg.cursor.pkg
-        cfg.icon.pkg
-        cfg.theme.pkg
         dconf # required explicitly with noXlibs
         glib
         gsettings-desktop-schemas

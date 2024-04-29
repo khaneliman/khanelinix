@@ -17,6 +17,8 @@ let
   inherit (inputs) hyprland;
 
   cfg = config.khanelinix.display-managers.regreet;
+  themeCfg = config.khanelinix.desktop.theme;
+  gtkCfg = config.khanelinix.desktop.addons.gtk;
 
   greetdHyprlandConfig = pkgs.writeText "greetd-hyprland-config" ''
     ${cfg.hyprlandOutput}
@@ -45,9 +47,9 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = [
-      config.khanelinix.desktop.addons.gtk.cursor.pkg
-      config.khanelinix.desktop.addons.gtk.icon.pkg
-      config.khanelinix.desktop.addons.gtk.theme.pkg
+      themeCfg.cursor.package
+      themeCfg.icon.package
+      gtkCfg.theme.package
     ];
 
     programs.regreet = {
@@ -61,10 +63,10 @@ in
 
         GTK = {
           application_prefer_dark_theme = true;
-          cursor_theme_name = "${config.khanelinix.desktop.addons.gtk.cursor.name}";
+          cursor_theme_name = "${themeCfg.cursor.name}";
           font_name = "${config.khanelinix.system.fonts.default} * 12";
-          icon_theme_name = "${config.khanelinix.desktop.addons.gtk.icon.name}";
-          theme_name = "${config.khanelinix.desktop.addons.gtk.theme.name}";
+          icon_theme_name = "${themeCfg.icon.name}";
+          theme_name = "${gtkCfg.theme.name}";
         };
       };
     };
