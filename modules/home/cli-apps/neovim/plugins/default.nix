@@ -6,7 +6,6 @@
     extraPlugins = with pkgs.vimPlugins; [
       webapi-vim
       nvim-web-devicons
-      nvim-spectre
     ];
 
     plugins = {
