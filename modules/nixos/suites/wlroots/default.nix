@@ -25,7 +25,6 @@ in
       nixpkgs-wayland.packages.${system}.wl-screenrec
       nixpkgs-wayland.packages.${system}.wl-clipboard
       nixpkgs-wayland.packages.${system}.wlr-randr
-      nixpkgs-wayland.packages.${system}.wshowkeys
       # TODO: cleanup
       # Not really wayland specific, but I don't want to make a new module for it
       brightnessctl
@@ -45,14 +44,11 @@ in
     programs = {
       nm-applet.enable = true;
       xwayland.enable = true;
-    };
 
-    # TODO: replace with the programs.wshowkeys.enable when package option is supported upstream
-    security.wrappers.wshowkeys = {
-      setuid = true;
-      owner = "root";
-      group = "root";
-      source = getExe nixpkgs-wayland.packages.${system}.wshowkeys;
+      wshowkeys = {
+        enable = true;
+        package = nixpkgs-wayland.packages.${system}.wshowkeys;
+      };
     };
   };
 }
