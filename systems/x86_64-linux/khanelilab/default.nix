@@ -11,6 +11,7 @@ in
     hardware = {
       audio = enabled;
       bluetooth = enabled;
+      intelcpu = enabled;
       opengl = enabled;
 
       storage = {
@@ -21,7 +22,7 @@ in
     };
 
     services = {
-      avahi = enabled;
+      # avahi = enabled;
       barrier = enabled;
       geoclue = enabled;
       printing = enabled;

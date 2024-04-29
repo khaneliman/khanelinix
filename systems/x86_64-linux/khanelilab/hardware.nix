@@ -1,12 +1,6 @@
-{ modulesPath, inputs, ... }:
-let
-  inherit (inputs) nixos-hardware;
-in
+{ modulesPath, ... }:
 {
-  imports = with nixos-hardware.nixosModules; [
-    (modulesPath + "/installer/scan/not-detected.nix")
-    common-cpu-intel
-  ];
+  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
   boot = {
     blacklistedKernelModules = [ "eeepc_wmi" ];
