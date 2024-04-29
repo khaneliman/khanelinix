@@ -39,6 +39,13 @@ in
       };
     };
 
+    hardware = {
+      storage = {
+        enable = true;
+        ssdEnable = true;
+      };
+    };
+
     services = {
       printing = enabled;
     };

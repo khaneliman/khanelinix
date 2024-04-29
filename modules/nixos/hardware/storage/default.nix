@@ -13,6 +13,7 @@ in
 {
   options.khanelinix.hardware.storage = {
     enable = mkBoolOpt false "Whether or not to enable support for extra storage devices.";
+    ssdEnable = mkBoolOpt true "Whether or not to enable support for SSD storage devices.";
   };
 
   config = mkIf cfg.enable {
@@ -22,5 +23,7 @@ in
       nfs-utils
       ntfs3g
     ];
+
+    services.fstrim.enable = lib.mkDefault cfg.ssdEnable;
   };
 }

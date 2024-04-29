@@ -7,7 +7,6 @@ in
     (modulesPath + "/installer/scan/not-detected.nix")
     common-cpu-intel
     common-pc
-    common-pc-ssd
   ];
 
   boot = {

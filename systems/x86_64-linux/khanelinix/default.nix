@@ -47,6 +47,7 @@ in
 
       storage = {
         enable = true;
+
         btrfs = {
           enable = true;
           autoScrub = true;
@@ -62,6 +63,8 @@ in
             "/mnt/steam"
           ];
         };
+
+        ssdEnable = true;
       };
     };
 
