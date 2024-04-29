@@ -9,6 +9,7 @@ let
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.system.boot;
+  themeCfg = config.khanelinix.desktop.theme;
 in
 {
   options.khanelinix.system.boot = {
@@ -51,7 +52,7 @@ in
 
       plymouth = {
         enable = cfg.plymouth;
-        theme = "catppuccin-macchiato";
+        theme = "${themeCfg.selectedTheme.name}-${themeCfg.selectedTheme.variant}";
         themePackages = [ pkgs.catppuccin-plymouth ];
       };
     };
