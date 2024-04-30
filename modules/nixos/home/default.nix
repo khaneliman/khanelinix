@@ -30,10 +30,15 @@ in
     };
 
     home-manager = {
+      # enables backing up existing files instead of erroring if conflicts exist
+      backupFileExtension = "hm.old";
+
       useGlobalPkgs = true;
       useUserPackages = true;
 
       users.${config.khanelinix.user.name} = mkAliasDefinitions options.khanelinix.home.extraOptions;
+
+      verbose = true;
     };
   };
 }

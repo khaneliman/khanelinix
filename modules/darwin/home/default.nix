@@ -29,8 +29,13 @@ in
     snowfallorg.users.${config.khanelinix.user.name}.home.config = mkAliasDefinitions options.khanelinix.home.extraOptions;
 
     home-manager = {
+      # enables backing up existing files instead of erroring if conflicts exist
+      backupFileExtension = "hm.old";
+
       useUserPackages = true;
       useGlobalPkgs = true;
+
+      verbose = true;
     };
   };
 }
