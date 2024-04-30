@@ -52,6 +52,8 @@ in
             exec systemctl --user start sway.service
           '';
       })
+      pkgs.brightnessctl
+      pkgs.playerctl
     ];
 
     khanelinix = {

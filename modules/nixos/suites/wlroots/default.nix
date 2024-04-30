@@ -25,12 +25,6 @@ in
       nixpkgs-wayland.packages.${system}.wl-screenrec
       nixpkgs-wayland.packages.${system}.wl-clipboard
       nixpkgs-wayland.packages.${system}.wlr-randr
-      # TODO: cleanup
-      # Not really wayland specific, but I don't want to make a new module for it
-      brightnessctl
-      glib # for gsettings
-      gtk3.out # for gtk-launch
-      playerctl
     ];
 
     khanelinix = {
