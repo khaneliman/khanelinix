@@ -19,7 +19,8 @@ in
     environment.systemPackages = with pkgs; [
       calcurse
       dooit
-      jrnl
+      # FIX: nixpkgs broken
+      # jrnl
       nb
       teams
     ];

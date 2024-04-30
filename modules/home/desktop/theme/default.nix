@@ -105,7 +105,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    home = {
+    home = mkIf pkgs.stdenv.isLinux {
       pointerCursor = {
         inherit (cfg.cursor) name package size;
         x11.enable = true;
