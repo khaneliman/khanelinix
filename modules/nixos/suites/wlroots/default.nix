@@ -37,7 +37,6 @@ in
       desktop.addons = {
         electron-support = enabled;
         swappy = enabled;
-        swaynotificationcenter = enabled;
       };
     };
 

@@ -64,10 +64,10 @@ in
       "dnd-inhibited-none" = "";
     };
     "return-type" = "json";
-    "exec-if" = "which ${getExe' pkgs.swaynotificationcenter "swaync-client"}";
-    "exec" = "${getExe' pkgs.swaynotificationcenter "swaync-client"} -swb";
-    "on-click" = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe' pkgs.swaynotificationcenter "swaync-client"} -t -sw";
-    "on-click-right" = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe' pkgs.swaynotificationcenter "swaync-client"} -d -sw";
+    "exec-if" = "which ${getExe' config.services.swaync.package "swaync-client"}";
+    "exec" = "${getExe' config.services.swaync.package "swaync-client"} -swb";
+    "on-click" = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe' config.services.swaync.package "swaync-client"} -t -sw";
+    "on-click-right" = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe' config.services.swaync.package "swaync-client"} -d -sw";
     "escape" = true;
   };
 

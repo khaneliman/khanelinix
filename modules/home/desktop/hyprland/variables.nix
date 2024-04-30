@@ -144,7 +144,7 @@ in
         "$editor" = "${getExe pkgs.neovim}";
         "$explorer" = "${getExe pkgs.xfce.thunar}";
         "$music" = "${getExe pkgs.spotify}";
-        "$notification_center" = "${getExe' pkgs.swaynotificationcenter "swaync-client"}";
+        "$notification_center" = "${getExe' config.services.swaync.package "swaync-client"}";
         "$launcher" = "${getExe config.programs.rofi.package} -show drun -n";
         "$launcher_alt" = "${getExe config.programs.rofi.package} -show calc";
         "$launcher_shift" = "${getExe config.programs.rofi.package} -show run -n";
