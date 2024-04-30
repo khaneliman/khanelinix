@@ -1,7 +1,10 @@
 {
   config,
+  inputs,
   lib,
+  osConfig,
   pkgs,
+  system,
   ...
 }:
 let
@@ -10,7 +13,16 @@ let
 
   cfg = config.khanelinix.desktop.addons.swaync;
 
-  settings = import ./settings.nix;
+  settings = import ./settings.nix {
+    inherit
+      config
+      inputs
+      lib
+      osConfig
+      pkgs
+      system
+      ;
+  };
   style = import ./style.nix;
 in
 {

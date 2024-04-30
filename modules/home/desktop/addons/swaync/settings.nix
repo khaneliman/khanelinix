@@ -1,31 +1,47 @@
 {
+  config,
+  inputs,
+  lib,
+  osConfig,
+  pkgs,
+  system,
+}:
+
+let
+  inherit (lib) getExe getExe' mkIf;
+  inherit (inputs) nixpkgs-wayland;
+
+  grim = getExe nixpkgs-wayland.packages.${system}.grim;
+  slurp = getExe pkgs.slurp;
+in
+{
   "$schema" = "/etc/xdg/swaync/configSchema.json";
-  positionX = "right";
-  positionY = "top";
-  cssPriority = "user";
-  layer = "top";
-  control-center-margin-top = 10;
+  control-center-height = 600;
   control-center-margin-bottom = 0;
-  control-center-margin-right = 10;
   control-center-margin-left = 0;
-  notification-icon-size = 64;
+  control-center-margin-right = 10;
+  control-center-margin-top = 10;
+  control-center-width = 500;
+  cssPriority = "user";
+  fit-to-screen = true;
+  hide-on-action = true;
+  hide-on-clear = false;
+  image-visibility = "when-available";
+  keyboard-shortcuts = true;
+  layer = "top";
   notification-body-image-height = 100;
   notification-body-image-width = 200;
-  timeout = 10;
-  timeout-low = 5;
-  timeout-critical = 0;
-  fit-to-screen = true;
-  control-center-width = 500;
-  control-center-height = 600;
+  notification-icon-size = 64;
+  notification-visibility = { };
   notification-window-width = 500;
-  keyboard-shortcuts = true;
-  image-visibility = "when-available";
-  transition-time = 200;
-  hide-on-clear = false;
-  hide-on-action = true;
+  positionX = "right";
+  positionY = "top";
   script-fail-notify = true;
   scripts = { };
-  notification-visibility = { };
+  timeout = 10;
+  timeout-critical = 0;
+  timeout-low = 5;
+  transition-time = 200;
 
   widgets = [
     "menubar#label"
@@ -73,7 +89,7 @@
           }
           {
             label = " Lock";
-            command = "swaylock -f ";
+            command = "hyprlock --immediate";
           }
           {
             label = " Logout";
@@ -86,7 +102,7 @@
         ];
       };
 
-      "menu#powermode-buttons" = {
+      "menu#powermode-buttons" = mkIf osConfig.services.power-profiles-daemon.enable {
         label = "";
         position = "left";
         actions = [
@@ -110,7 +126,7 @@
         actions = [
           {
             label = "";
-            command = "grim";
+            command = ''${grim} -g "$(${slurp})" - | ${getExe pkgs.swappy} -f -'';
           }
         ];
       };
