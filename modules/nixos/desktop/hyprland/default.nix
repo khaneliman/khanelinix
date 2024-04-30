@@ -80,7 +80,6 @@ in
 
       # Desktop additions
       desktop.addons = {
-        # eww = enabled;
         gtk = enabled;
         # kanshi = enabled;
         kitty = enabled;
