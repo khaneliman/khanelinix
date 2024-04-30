@@ -35,6 +35,8 @@ in
 
   config = mkIf cfg.enable {
     boot = {
+      extraModprobeConfig = "options bonding max_bonds=0";
+
       kernelModules =
         [ "af_packet" ]
         ++ lib.optionals cfg.optimizeTcp [
@@ -121,7 +123,7 @@ in
       } // cfg.hosts;
 
       firewall = {
-        allowedUDPPorts = [ ];
+        allowedUDPPorts = [ 5353 ];
         allowedTCPPorts = [
           443
           8080
@@ -136,6 +138,9 @@ in
       networkmanager = {
         enable = true;
 
+        connectionConfig = {
+          "connection.mdns" = "2";
+        };
         dns = "systemd-resolved";
 
         plugins = with pkgs; [
@@ -165,12 +170,50 @@ in
       # this is necessary to get tailscale picking up your headscale instance
       # and allows you to ping connected hosts by hostname
       domains = [ "~." ];
+
+      # additional configuration to be appeneded to systemd-resolved configuration
+      # NOTE: last thing added after mdns test worked
+      extraConfig = ''
+        # <https://wiki.archlinux.org/title/Systemd-resolved#DNS_over_TLS>
+        # apparently upstream (systemd) recommends this to be false
+        # `allow-downgrade` is vulnerable to downgrade attacks
+        DNSOverTLS=yes # or allow-downgrade
+      '';
     };
 
     # Fixes an issue that normally causes nixos-rebuild to fail.
     # https://github.com/NixOS/nixpkgs/issues/180175
     systemd = {
-      network.wait-online.enable = false;
+      network = {
+        enable = true;
+
+        wait-online = {
+          enable = false;
+          anyInterface = true;
+          extraArgs = [ "--ipv4" ];
+        };
+
+        # https://wiki.archlinux.org/title/Systemd-networkd
+        networks = {
+          # leave the kernel dummy devies unmanagaed
+          "10-dummy" = {
+            matchConfig.Name = "dummy*";
+            networkConfig = { };
+            # linkConfig.ActivationPolicy = "always-down";
+            linkConfig.Unmanaged = "yes";
+          };
+
+          # let me configure tailscale manually
+          "20-tailscale-ignore" = mkIf config.khanelinix.services.tailscale.enable {
+            matchConfig.Name = "tailscale*";
+            linkConfig = {
+              Unmanaged = "yes";
+              RequiredForOnline = false;
+            };
+          };
+        };
+      };
+
       services.NetworkManager-wait-online.enable = lib.mkForce false;
     };
   };

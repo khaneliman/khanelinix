@@ -191,26 +191,27 @@ in
     };
   };
 
-  networking = {
-    defaultGateway = {
-      address = "192.168.1.1";
-      interface = "enp6s0";
-    };
-
-    # interfaces.enp6s0.ipv4.addresses = [
-    #   {
-    #     address = "192.168.1.3";
-    #     prefixLength = 24;
-    #   }
-    # ];
-  };
-
   services = {
     displayManager.defaultSession = "hyprland";
     mpd = {
       musicDirectory = "nfs://austinserver.local/mnt/user/data/media/music";
     };
     rpcbind.enable = true; # needed for NFS
+  };
+
+  systemd.network.networks = {
+    # wired interfaces e.g. ethernet
+    "30-network-defaults-wired" = {
+      # matchConfig.Name = "en* | eth* | usb*";
+      matchConfig.Type = "ether";
+      networkConfig = {
+        Address = "192.168.1.3/24";
+        Gateway = "192.168.1.1";
+        # IPv6AcceptRA = true;
+        # IPForward = "yes";
+        # IPMasquerade = "no";
+      };
+    };
   };
 
   # This value determines the NixOS release from which the default

@@ -30,7 +30,7 @@ in
 
       # resolve .local domains
       nssmdns4 = true;
-      nssmdns6 = true;
+      # nssmdns6 = true;
 
       # pass avahi port(s) to the firewall
       openFirewall = true;
