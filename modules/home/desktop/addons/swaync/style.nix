@@ -194,8 +194,9 @@
       }
 
       .control-center {
+        /* background: alpha(@base, .97); */
         background-color: @base;
-        border: 1px solid @surface0;
+        border: 2px solid @surface1;
         border-radius: 1em;
       }
 
@@ -263,7 +264,7 @@
       }
 
       .widget-label > label {
-        font-size: 1.1rem;
+        font-size: 1.5rem;
       }
 
       /* Mpris widget */
@@ -323,6 +324,17 @@
 
       .power-buttons > button:hover {
         background: @noti-bg-hover;
+      }
+
+      .power-buttons > button:active {
+        background: @noti-bg-hover;
+      }
+
+      .widget-menubar {
+        border: none;
+        background: transparent;
+        margin: 0 8px 0 8px;
+        padding: 8px;
       }
 
       .widget-menubar > box > .menu-button-bar > button {

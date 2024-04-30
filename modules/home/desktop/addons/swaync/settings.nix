@@ -44,7 +44,8 @@ in
   transition-time = 200;
 
   widgets = [
-    "menubar#label"
+    "label"
+    "menubar"
     "buttons-grid"
     "volume"
     "mpris"
@@ -63,7 +64,7 @@ in
       text = "Do Not Disturb";
     };
     label = {
-      max-lines = 4;
+      max-lines = 1;
       text = "Control Center";
     };
     mpris = {
@@ -77,8 +78,9 @@ in
     };
     volume = {
       label = "";
+      show-per-app = true;
     };
-    "menubar#label" = {
+    "menubar" = {
       "menu#power-buttons" = {
         label = "";
         position = "right";
@@ -108,15 +110,21 @@ in
         actions = [
           {
             label = "Performance";
+            active = true;
             command = "powerprofilesctl set performance";
+            update-command = ''sh -c "[[ $(powerprofilesctl get) == "performance" ]] && echo true || echo false"'';
           }
           {
             label = "Balanced";
+            active = false;
             command = "powerprofilesctl set balanced";
+            update-command = ''sh -c "[[ $(powerprofilesctl get) == "balanced" ]] && echo true || echo false"'';
           }
           {
             label = "Power-saver";
+            active = false;
             command = "powerprofilesctl set power-saver";
+            update-command = ''sh -c "[[ $(powerprofilesctl get) == "power-saver" ]] && echo true || echo false"'';
           }
         ];
       };
@@ -126,7 +134,7 @@ in
         actions = [
           {
             label = "";
-            command = ''${grim} -g "$(${slurp})" - | ${getExe pkgs.swappy} -f -'';
+            command = ''swaync-client -cp && sleep 1 && ${grim} -g "$(${slurp})" - | ${getExe pkgs.swappy} -f -'';
           }
         ];
       };
@@ -136,11 +144,11 @@ in
       actions = [
         {
           label = "";
-          command = "~/.config/rofi/rofi-wifi-menu.sh";
+          command = "${getExe' pkgs.networkmanagerapplet "nm-connection-editor"}";
         }
         {
           label = "";
-          command = "~/.config/rofi/rofi-bluetooth";
+          command = "blueman-manager";
         }
       ];
     };
