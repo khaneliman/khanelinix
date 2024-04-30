@@ -6,13 +6,13 @@
   ...
 }:
 let
-  inherit (inputs) nix-inspect snowfall-flake;
+  inherit (inputs) snowfall-flake;
 in
 mkShell {
   buildInputs = with pkgs; [
     deadnix
     hydra-check
-    nix-inspect.packages.${system}.default
+    nix-inspect
     nix-bisect
     nix-diff
     nix-health
