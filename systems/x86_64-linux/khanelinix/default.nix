@@ -74,6 +74,7 @@ in
       avahi = enabled;
       barrier = enabled;
       geoclue = enabled;
+      power = enabled;
       printing = enabled;
 
       snapper = {
