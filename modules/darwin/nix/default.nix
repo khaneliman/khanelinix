@@ -16,6 +16,9 @@ in
         user = config.khanelinix.user.name;
       };
 
+      # NOTE: not sure if i saw any benefits changing this
+      # daemonProcessType = "Adaptive";
+
       settings = {
         build-users-group = "nixbld";
         extra-nix-path = "nixpkgs=flake:nixpkgs";
