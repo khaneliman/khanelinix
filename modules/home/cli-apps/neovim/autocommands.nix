@@ -7,14 +7,14 @@ _: {
     }
 
     # Open minimap on first buffer
-    {
-      event = "BufRead";
-      once = true;
-      callback = {
-        __raw = # lua
-          "MiniMap.open";
-      };
-    }
+    # {
+    #   event = "BufRead";
+    #   once = true;
+    #   callback = {
+    #     __raw = # lua
+    #       "MiniMap.open";
+    #   };
+    # }
 
     # Open Neo-Tree on first buffer
     {
