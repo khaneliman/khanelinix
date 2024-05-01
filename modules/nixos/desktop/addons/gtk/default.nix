@@ -34,7 +34,6 @@ in
       systemPackages = with pkgs; [
         dconf # required explicitly with noXlibs
         glib
-        gsettings-desktop-schemas
         gtk3.out # for gtk-launch
         libappindicator-gtk3
       ];
