@@ -98,12 +98,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Personal neovim config
-    neovim-config = {
-      url = "github:khaneliman/khanelivim";
-      flake = false;
-    };
-
     # NixPkgs (nixos-unstable)
     nixpkgs = {
       url = "github:nixos/nixpkgs/nixos-unstable";
@@ -112,12 +106,6 @@
     # NixPkgs-Wayland
     nixpkgs-wayland = {
       url = "github:nix-community/nixpkgs-wayland";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Generate System Images
-    nixos-generators = {
-      url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
