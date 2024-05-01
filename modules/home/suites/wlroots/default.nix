@@ -25,6 +25,7 @@ in
 
       services = {
         clipboard = enabled;
+        polkit = enabled;
       };
     };
 
