@@ -1,17 +1,13 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
-  inputs,
+  system,
   ...
 }:
 let
-  inherit (lib)
-    mkIf
-    mkEnableOption
-    mkForce
-    getExe
-    ;
+  inherit (lib) mkIf mkEnableOption getExe;
   inherit (lib.internal) enabled;
   inherit (inputs) hyprland;
 
@@ -90,8 +86,7 @@ in
           ${cfg.appendConfig}
         '';
 
-      # package = hyprland.packages.${system}.hyprland;
-      package = pkgs.hyprland;
+      package = hyprland.packages.${system}.hyprland;
 
       settings = {
         exec = [ "${getExe pkgs.libnotify} --icon ~/.face -u normal \"Hello $(whoami)\"" ];
