@@ -20,7 +20,6 @@ in
       ardour
       mpd-notification
       mpdevil
-      mpdris2
       # ncmpcpp
       spicetify-cli
       spotify
@@ -32,11 +31,5 @@ in
     khanelinix = {
       user.extraGroups = [ "mpd" ];
     };
-
-    # TODO: ?
-    # services.mpd = {
-    #   enable = true;
-    #   user = config.khanelinix.user.name;
-    # };
   };
 }
