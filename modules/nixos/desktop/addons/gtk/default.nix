@@ -26,7 +26,6 @@ in
 
   config = mkIf cfg.enable {
     environment = {
-      # TODO: check if this is even needed still
       sessionVariables = {
         GTK_THEME = cfg.theme.name;
       };

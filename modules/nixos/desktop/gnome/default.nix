@@ -91,7 +91,6 @@ in
         electron-support = enabled;
         gtk = enabled;
         kitty = enabled;
-        wallpapers = enabled;
       };
 
       home.extraOptions = {

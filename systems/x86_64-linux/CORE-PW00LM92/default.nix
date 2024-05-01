@@ -25,7 +25,6 @@ in
       addons = {
         gtk = enabled;
         qt = enabled;
-        wallpapers = enabled;
       };
     };
 

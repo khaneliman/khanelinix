@@ -31,12 +31,6 @@ in
       gnome = {
         enable = true;
       };
-
-      addons = {
-        # I like to have a convenient place to share wallpapers from
-        # even if they're not currently being used.
-        wallpapers = enabled;
-      };
     };
 
     hardware = {
