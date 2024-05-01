@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   inherit (lib)
     mkEnableOption
@@ -27,13 +32,84 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.packages =
+      with pkgs;
+      [
+        playerctl # CLI interface for playerctld
+        mpc_cli # CLI interface for mpd
+      ]
+      ++ lib.optionals pkgs.stdenv.isLinux [
+        cava # CLI music visualizer (cavalier is a gui alternative)
+      ];
+
     services = {
       mpd = {
         enable = true;
         inherit (cfg) musicDirectory;
+
+        network = {
+          startWhenNeeded = true;
+          listenAddress = "127.0.0.1";
+          port = 6600;
+        };
+
+        extraConfig = ''
+          auto_update           "yes"
+          volume_normalization  "yes"
+          restore_paused        "yes"
+          filesystem_charset    "UTF-8"
+
+          audio_output {
+            type                "pipewire"
+            name                "PipeWire"
+          }
+
+          audio_output {
+            type                "fifo"
+            name                "Visualiser"
+            path                "/tmp/mpd.fifo"
+            format              "44100:16:2"
+          }
+
+          audio_output {
+           type		              "httpd"
+           name		              "lossless"
+           encoder		          "flac"
+           port		              "8000"
+           max_clients	        "8"
+           mixer_type	          "software"
+           format		            "44100:16:2"
+          }
+        '';
       };
-      mpd-mpris = {
+
+      mpd-mpris.enable = true;
+      mpris-proxy.enable = true;
+      playerctld.enable = true;
+
+      # MPRIS 2 support to mpd
+      mpdris2 = {
         enable = true;
+        notifications = true;
+        multimediaKeys = true;
+        mpd = {
+          # inherit (config.services.mpd) musicDirectory;
+          musicDirectory = null;
+        };
+      };
+
+      # discord rich presence for mpd
+      mpd-discord-rpc = {
+        enable = true;
+
+        settings = {
+          format = {
+            details = "$title";
+            state = "On $album by $artist";
+            large_text = "$album";
+            small_image = "";
+          };
+        };
       };
     };
   };
