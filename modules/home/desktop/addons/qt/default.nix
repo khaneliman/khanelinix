@@ -63,6 +63,29 @@ in
   };
 
   config = mkIf cfg.enable {
+    home = {
+      packages = with pkgs; [
+        # libraries and programs to ensure that qt applications load without issue
+        # breeze-icons is added as a fallback
+        breeze-icons
+        kdePackages.qt6ct
+        libsForQt5.qt5ct
+        libsForQt5.qtstyleplugin-kvantum
+        qt6Packages.qtstyleplugin-kvantum
+      ];
+
+      sessionVariables = {
+        # scaling - 1 means no scaling
+        QT_AUTO_SCREEN_SCALE_FACTOR = "1";
+        # use wayland as the default backend, fallback to xcb if wayland is not available
+        QT_QPA_PLATFORM = "wayland;xcb";
+        # disable window decorations everywhere
+        QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+        # remain backwards compatible with qt5
+        DISABLE_QT5_COMPAT = "0";
+      };
+    };
+
     xdg.configFile = {
       # TODO: replace with settings
       "Kvantum".source = ./Kvantum;
