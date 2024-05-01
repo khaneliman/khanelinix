@@ -5,12 +5,7 @@
   ...
 }:
 let
-  inherit (lib)
-    types
-    mkIf
-    mkForce
-    getExe'
-    ;
+  inherit (lib) types mkIf mkForce;
   inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.hardware.audio;

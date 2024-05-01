@@ -46,6 +46,7 @@ in
       };
 
       services = {
+        easyeffects.enable = pkgs.stdenv.isLinux;
         udiskie.enable = pkgs.stdenv.isLinux;
         tray.enable = pkgs.stdenv.isLinux;
       };
