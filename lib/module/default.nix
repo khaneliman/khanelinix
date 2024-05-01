@@ -25,4 +25,8 @@ rec {
       len = stringLength s;
     in
     if len == 0 then "" else (lib.toUpper (substring 0 1 s)) + (substring 1 len s);
+
+  # return an int (1/0) based on boolean value
+  # `boolToNum true` -> 1
+  boolToNum = bool: if bool then 1 else 0;
 }
