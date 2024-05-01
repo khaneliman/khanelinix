@@ -116,6 +116,7 @@ in
       mpd = {
         musicDirectory = "nfs://austinserver.local/mnt/user/data/media/music";
       };
+      noisetorch = enabled;
     };
 
     suites = {
