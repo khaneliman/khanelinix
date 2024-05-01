@@ -33,9 +33,10 @@ customizations to enhance the Nix experience.
 
 Before diving in, ensure that you have Nix installed on your system. If not, you
 can download and install it from the official
-[Nix website](https://nixos.org/download.html). If running on macOS, you need to have
-Nix-Darwin installed, as well. You can follow the installation instruction on
-[GitHub](https://github.com/LnL7/nix-darwin?tab=readme-ov-file#flakes).
+[Nix website](https://nixos.org/download.html) or from the
+[Determinate Systems installer](https://github.com/DeterminateSystems/nix-installer).
+If running on macOS, you need to have Nix-Darwin installed, as well. You can follow the
+installation instruction on [GitHub](https://github.com/LnL7/nix-darwin?tab=readme-ov-file#flakes).
 
 ### Clone this repository to your local machine
 
@@ -58,7 +59,7 @@ flake switch
 Here's an overview of what my Nix configuration offers:
 
 - **External Dependency Integrations**:
-  - Easily integrate Astronvim and my personal Astronvim [config](https://github.com/khaneliman/khanelivim).
+  - [Nixvim](https://github.com/nix-community/nixvim) neovim configuration.
   - Access the Nix User Repository (NUR) for additional packages and
     enhancements.
   - Incorporate Nixpkgs-Wayland to provide an up-to-date Wayland package
@@ -143,9 +144,9 @@ Or install from the `packages` output. For example:
 }
 
 # configuration.nix
-{pkgs, inputs, ...}: {
+{pkgs, inputs, system, ...}: {
   environment.systemPackages = [
-    inputs.khanelinix.packages."x86_64-linux".packageName
+    inputs.khanelinix.packages."${system}".packageName
   ];
 }
 ```
@@ -165,4 +166,5 @@ Other configurations from where I learned and copied:
 - [JakeHamilton/config](https://github.com/jakehamilton/config) *Main inspiration and started with
 - [FelixKrats/dotfiles](https://github.com/FelixKratz/dotfiles) *Sketchybar design and implementation
 - [Fufexan/dotfiles](https://github.com/fufexan/dotfiles)
+- [NotAShelf/nyx](https://github.com/NotAShelf/nyx)
 
