@@ -20,7 +20,7 @@ let
 
   theme = builtins.readFile ./styles/catppuccin.css;
   style = builtins.readFile ./styles/style.css;
-  notificationsStyle = builtins.readFile ./styles/notifications.css;
+  controlCenterStyle = builtins.readFile ./styles/control-center.css;
   powerStyle = builtins.readFile ./styles/power.css;
   statsStyle = builtins.readFile ./styles/stats.css;
   workspacesStyle = builtins.readFile ./styles/workspaces.css;
@@ -38,14 +38,14 @@ let
   ];
 
   bar = {
-    "layer" = "top";
-    "position" = "top";
+    layer = "top";
+    position = "top";
 
-    "margin-top" = 10;
-    "margin-left" = 20;
-    "margin-right" = 20;
+    margin-top = 10;
+    margin-left = 20;
+    margin-right = 20;
 
-    "modules-left" = [
+    modules-left = [
       "group/power"
       "hyprland/workspaces"
       "custom/separator-left"
@@ -54,15 +54,15 @@ let
   };
 
   mainBar = {
-    "output" = "DP-1";
+    output = "DP-1";
     # "modules-center" = [ "cava" ];
 
-    "modules-right" = [
+    modules-right = [
       "group/tray"
       "custom/separator-right"
       "group/stats"
       "custom/separator-right"
-      "group/notifications"
+      "group/control-center"
       "hyprland/submap"
       "custom/weather"
       "clock"
@@ -70,12 +70,12 @@ let
   };
 
   secondaryBar = {
-    "output" = "DP-3";
+    output = "DP-3";
 
-    "modules-right" = [
+    modules-right = [
       "group/tray-drawer"
       "group/stats-drawer"
-      "group/notifications"
+      "group/control-center"
       "hyprland/submap"
       "custom/weather"
       "clock"
@@ -96,7 +96,6 @@ in
     programs.waybar = {
       enable = true;
       package = nixpkgs-wayland.packages.${system}.waybar;
-      # package = pkgs.waybar;
       systemd.enable = true;
 
       # TODO: make dynamic / support different number of bars etc
@@ -113,7 +112,7 @@ in
         ];
       };
 
-      style = "${theme}${style}${notificationsStyle}${powerStyle}${statsStyle}${workspacesStyle}";
+      style = "${theme}${style}${controlCenterStyle}${powerStyle}${statsStyle}${workspacesStyle}";
     };
 
     sops.secrets = {

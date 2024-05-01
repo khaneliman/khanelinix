@@ -3,6 +3,61 @@ let
   inherit (lib) getExe getExe';
 in
 {
+  backlight =
+    let
+      brightnessctl = lib.getExe pkgs.brightnessctl;
+    in
+    {
+      format = "{icon}";
+      format-icons = [
+        "󰋙"
+        "󰫃"
+        "󰫄"
+        "󰫅"
+        "󰫆"
+        "󰫇"
+        "󰫈"
+      ];
+      on-scroll-up = "${brightnessctl} s 1%-";
+      on-scroll-down = "${brightnessctl} s +1%";
+    };
+
+  battery = {
+    states = {
+      warning = 30;
+      critical = 15;
+    };
+    format = "{icon}";
+    format-charging = "󰂄";
+    format-plugged = "󰂄";
+    format-alt = "{icon}";
+    format-icons = [
+      "󰂃"
+      "󰁺"
+      "󰁻"
+      "󰁼"
+      "󰁽"
+      "󰁾"
+      "󰁾"
+      "󰁿"
+      "󰂀"
+      "󰂁"
+      "󰂂"
+      "󰁹"
+    ];
+  };
+
+  bluetooth = {
+    format = "";
+    format-disabled = "󰂲";
+    format-connected = "󰂱";
+    tooltip-format = "{controller_alias}\t{controller_address}";
+    tooltip-format-connected = "{controller_alias}\t{controller_address}\n\n{device_enumerate}";
+    tooltip-format-disabled = "";
+    tooltip-format-enumerate-connected = "{device_alias}\t{device_address}";
+    on-click = "blueman-manager";
+  };
+
   cava = {
     framerate = 120;
     autosens = 1;
@@ -43,6 +98,19 @@ in
 
   disk = {
     format = " {percentage_used}%";
+  };
+
+  gamemode = {
+    format = "󰊴";
+    format-alt = "{glyph}";
+    glyph = "󰊴";
+    hide-not-running = true;
+    use-icon = true;
+    icon-name = "input-gaming-symbolic";
+    icon-spacing = 4;
+    icon-size = 20;
+    tooltip = true;
+    tooltip-format = "Games running: {count}";
   };
 
   idle_inhibitor = {
@@ -113,15 +181,20 @@ in
     tooltip-format-disconnected = "MPD (disconnected)";
   };
 
-  network = {
-    interval = 1;
-    format-wifi = "  󰜮 {bandwidthDownBytes} 󰜷 {bandwidthUpBytes}";
-    format-ethernet = "󰈀  󰜮 {bandwidthDownBytes} 󰜷 {bandwidthUpBytes}";
-    tooltip-format = " {ifname} via {gwaddr}";
-    format-linked = "󰈁 {ifname} (No IP)";
-    format-disconnected = " Disconnected";
-    format-alt = "{ifname}: {ipaddr}/{cidr}";
-  };
+  network =
+    let
+      nm-editor = "${getExe' pkgs.networkmanagerapplet "nm-connection-editor"}";
+    in
+    {
+      interval = 1;
+      format-wifi = "  󰜮 {bandwidthDownBytes} 󰜷 {bandwidthUpBytes}";
+      format-ethernet = "󰈀  󰜮 {bandwidthDownBytes} 󰜷 {bandwidthUpBytes}";
+      tooltip-format = " {ifname} via {gwaddr}";
+      format-linked = "󰈁 {ifname} (No IP)";
+      format-disconnected = " Disconnected";
+      format-alt = "{ifname}: {ipaddr}/{cidr}";
+      on-click-right = "${nm-editor}";
+    };
 
   pulseaudio = {
     format = "{volume}% {icon}";
