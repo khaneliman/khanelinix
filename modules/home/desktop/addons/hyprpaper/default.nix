@@ -1,7 +1,9 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
+  system,
   ...
 }:
 let
@@ -11,6 +13,7 @@ let
     types
     mkOption
     ;
+  inherit (inputs) hyprpaper;
   inherit (lib.internal) mkOpt;
 
   cfg = config.khanelinix.desktop.addons.hyprpaper;
@@ -37,8 +40,7 @@ in
     services = {
       hyprpaper = {
         enable = true;
-        # package = hyprpaper.packages.${system}.hyprpaper;
-        package = pkgs.hyprpaper;
+        package = hyprpaper.packages.${system}.hyprpaper;
         preloads = cfg.wallpapers;
         wallpapers = map (monitor: "${monitor.name},${monitor.wallpaper}") cfg.monitors;
       };
