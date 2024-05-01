@@ -1,5 +1,5 @@
 /**
-* Global configuration for theme 
+* Global configuration for theme
 * */
 * {
   font-family: MonaspiceNe Nerd Font;
@@ -47,12 +47,16 @@ box {
 }
 
 /* Add spacing for right side modules */
-#tray,
 #user,
 #custom-weather,
 #keyboard-state,
 #mpd {
   padding: 0 1em;
+}
+
+/* tray needs less padding */
+#tray {
+  padding: 0em;
 }
 
 #clock {
