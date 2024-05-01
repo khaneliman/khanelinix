@@ -14,7 +14,6 @@ in
 
     khanelinix = {
       desktop.addons = {
-        # swappy = enabled;
         swaync = enabled;
         waybar = enabled;
         wlogout = enabled;
@@ -22,6 +21,10 @@ in
 
       security = {
         keyring = enabled;
+      };
+
+      services = {
+        clipboard = enabled;
       };
     };
 

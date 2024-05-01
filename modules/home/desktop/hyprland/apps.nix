@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf getExe getExe';
+  inherit (lib) mkIf getExe;
 
   cfg = config.khanelinix.desktop.hyprland;
 in
@@ -22,8 +22,6 @@ in
           "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1 &"
           "${getExe pkgs.openrgb} --startminimized --profile default"
           "${getExe pkgs._1password-gui} --silent"
-          "command -v ${getExe pkgs.cliphist} && ${getExe' pkgs.wl-clipboard "wl-paste"} --type text --watch cliphist store" # Stores only text data
-          "command -v ${getExe pkgs.cliphist} && ${getExe' pkgs.wl-clipboard "wl-paste"} --type image --watch cliphist store" # Stores only image data
 
           # Startup apps that have rules for organizing them
           "${getExe pkgs.firefox}"
