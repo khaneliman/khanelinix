@@ -1,10 +1,10 @@
 {
   "wlr/workspaces" = {
-    "all-outputs" = false;
-    "active-only" = "false";
-    "on-click" = "activate";
-    "format" = "{icon}";
-    "format-icons" = {
+    all-outputs = false;
+    active-only = "false";
+    on-click = "activate";
+    format = "{icon}";
+    format-icons = {
       "1" = "";
       "2" = "";
       "3" = "";
@@ -16,7 +16,7 @@
       "urgent" = "";
       "default" = "";
     };
-    "persistent_workspaces" = {
+    persistent_workspaces = {
       "1" = [ "DP-3" ];
       "2" = [ "DP-1" ];
       "3" = [ "DP-1" ];

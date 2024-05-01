@@ -1,25 +1,26 @@
 {
   "group/audio" = {
-    "orientation" = "horizontal";
-    "drawer" = {
-      "transition-duration" = 500;
-      "transition-left-to-right" = false;
+    orientation = "horizontal";
+    drawer = {
+      transition-duration = 500;
+      transition-left-to-right = false;
     };
-    "modules" = [
+    modules = [
       "pulseaudio"
       "pulseaudio/slider"
     ];
   };
 
   "group/power" = {
-    "orientation" = "horizontal";
-    "drawer" = {
-      "transition-duration" = 500;
-      "children-class" = "not-power";
-      "transition-left-to-right" = false;
+    orientation = "horizontal";
+    drawer = {
+      transition-duration = 500;
+      children-class = "not-power";
+      transition-left-to-right = false;
     };
-    "modules" = [
+    modules = [
       "custom/wlogout"
+      # "custom/power"
       # "custom/quit"
       # "custom/lock"
       # "custom/reboot"
@@ -27,8 +28,8 @@
   };
 
   "group/notifications" = {
-    "orientation" = "horizontal";
-    "modules" = [
+    orientation = "horizontal";
+    modules = [
       "idle_inhibitor"
       "systemd-failed-units"
       "custom/notification"
@@ -38,13 +39,13 @@
   };
 
   "group/tray" = {
-    "orientation" = "horizontal";
-    "modules" = [ "tray" ];
+    orientation = "horizontal";
+    modules = [ "tray" ];
   };
 
   "group/stats" = {
-    "orientation" = "horizontal";
-    "modules" = [
+    orientation = "horizontal";
+    modules = [
       "network"
       "cpu"
       "memory"
@@ -54,12 +55,12 @@
   };
 
   "group/stats-drawer" = {
-    "orientation" = "horizontal";
-    "drawer" = {
-      "transition-duration" = 500;
-      "transition-left-to-right" = false;
+    orientation = "horizontal";
+    drawer = {
+      transition-duration = 500;
+      transition-left-to-right = false;
     };
-    "modules" = [
+    modules = [
       "custom/separator-right"
       "network"
       "cpu"
@@ -70,12 +71,12 @@
   };
 
   "group/tray-drawer" = {
-    "orientation" = "horizontal";
-    "drawer" = {
-      "transition-duration" = 500;
-      "transition-left-to-right" = false;
+    orientation = "horizontal";
+    drawer = {
+      transition-duration = 500;
+      transition-left-to-right = false;
     };
-    "modules" = [
+    modules = [
       "custom/separator-right"
       "tray"
     ];

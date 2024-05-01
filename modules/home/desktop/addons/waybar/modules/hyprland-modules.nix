@@ -4,29 +4,29 @@ let
 in
 {
   "custom/quit" = {
-    "format" = "󰗼";
-    "tooltip" = false;
-    "on-click" = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch exit";
+    format = "󰗼";
+    tooltip = false;
+    on-click = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch exit";
   };
 
   "hyprland/submap" = {
-    "format" = "✌️ {}";
-    "max-length" = 8;
-    "tooltip" = false;
+    format = "✌️ {}";
+    max-length = 8;
+    tooltip = false;
   };
 
   "hyprland/window" = {
-    "format" = "{}";
-    "separate-outputs" = true;
+    format = "{}";
+    separate-outputs = true;
   };
 
   "hyprland/workspaces" = {
-    "all-outputs" = false;
-    "active-only" = "false";
-    "on-scroll-up" = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch workspace e+1";
-    "on-scroll-down" = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch workspace e-1";
-    "format" = "{icon} {windows}";
-    "format-icons" = {
+    all-outputs = false;
+    active-only = "false";
+    on-scroll-up = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch workspace e+1";
+    on-scroll-down = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch workspace e-1";
+    format = "{icon} {windows}";
+    format-icons = {
       "1" = "󰎤";
       "2" = "󰎧";
       "3" = "󰎪";
@@ -42,8 +42,8 @@ in
       "empty" = "󱓼";
     };
     # "format-window-separator" = "->";
-    "window-rewrite-default" = "";
-    "window-rewrite" = {
+    window-rewrite-default = "";
+    window-rewrite = {
       "class<1Password>" = "󰢁";
       "class<Caprine>" = "󰈎";
       "class<Github Desktop>" = "󰊤";
