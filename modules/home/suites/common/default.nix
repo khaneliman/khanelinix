@@ -47,6 +47,7 @@ in
 
       services = {
         udiskie.enable = pkgs.stdenv.isLinux;
+        tray.enable = pkgs.stdenv.isLinux;
       };
 
       security = {
