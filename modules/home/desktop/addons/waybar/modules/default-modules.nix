@@ -187,9 +187,9 @@ in
     in
     {
       interval = 1;
-      format-wifi = "  󰜮 {bandwidthDownBytes} 󰜷 {bandwidthUpBytes}";
-      format-ethernet = "󰈀  󰜮 {bandwidthDownBytes} 󰜷 {bandwidthUpBytes}";
-      tooltip-format = " {ifname} via {gwaddr}";
+      format-wifi = "󰜷 {bandwidthUpBytes}\n󰜮 {bandwidthDownBytes}";
+      format-ethernet = "󰜷 {bandwidthUpBytes}\n󰜮 {bandwidthDownBytes}";
+      tooltip-format = "󰈀 {ifname} via {gwaddr}";
       format-linked = "󰈁 {ifname} (No IP)";
       format-disconnected = " Disconnected";
       format-alt = "{ifname}: {ipaddr}/{cidr}";
