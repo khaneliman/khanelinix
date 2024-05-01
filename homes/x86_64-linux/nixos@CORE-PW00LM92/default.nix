@@ -69,9 +69,5 @@ in
     path = "${config.home.homeDirectory}/.kube/config";
   };
 
-  home.shellAliases = {
-    nixcfg = "nvim ~/khanelinix/flake.nix";
-  };
-
   home.stateVersion = "23.11";
 }

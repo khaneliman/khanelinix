@@ -68,9 +68,5 @@ in
     };
   };
 
-  home.shellAliases = {
-    nixcfg = "nvim ~/.config/.dotfiles/dots/nixos/flake.nix";
-  };
-
   home.stateVersion = "21.11";
 }

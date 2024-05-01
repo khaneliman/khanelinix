@@ -16,7 +16,9 @@ in
   };
 
   config = mkIf cfg.enable {
-    xdg.configFile.wgetrc.text = "";
+    home.shellAliases = {
+      nixcfg = "nvim ~/khanelinix/flake.nix";
+    };
 
     khanelinix = {
       apps = {
@@ -79,5 +81,7 @@ in
         set completion-ignore-case on
       '';
     };
+
+    xdg.configFile.wgetrc.text = "";
   };
 }
