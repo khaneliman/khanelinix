@@ -22,8 +22,11 @@ in
 
       plugins = with pkgs.obs-studio-plugins; [
         looking-glass-obs
+        obs-gstreamer
         obs-move-transition
         obs-multi-rtmp
+        obs-pipewire-audio-capture
+        obs-vkcapture
         wlrobs
       ];
     };
