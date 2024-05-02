@@ -32,6 +32,7 @@
           javascript
           json
           json5
+          kdl
           latex
           make
           markdown
