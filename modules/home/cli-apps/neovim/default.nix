@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -21,7 +20,8 @@ in
   config = mkIf cfg.enable {
     home = {
       sessionVariables = {
-        DOTNET_ROOT = "${pkgs.dotnet-sdk_8}";
+        # TODO: why was this set ?
+        # DOTNET_ROOT = "${pkgs.dotnet-sdk_8}";
         EDITOR = mkIf cfg.default "nvim";
       };
     };
