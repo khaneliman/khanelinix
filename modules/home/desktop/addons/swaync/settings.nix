@@ -8,11 +8,7 @@
 }:
 
 let
-  inherit (lib) getExe getExe' mkIf;
-  inherit (inputs) nixpkgs-wayland;
-
-  grim = getExe nixpkgs-wayland.packages.${system}.grim;
-  slurp = getExe pkgs.slurp;
+  inherit (lib) getExe' mkIf;
 in
 {
   "$schema" = "/etc/xdg/swaync/configSchema.json";
@@ -129,13 +125,22 @@ in
         ];
       };
 
-      "buttons#topbar-buttons" = {
+      "menu#screenshot-buttons" = {
+        label = "";
         position = "left";
         actions = [
           {
-            label = "";
-            command = ''swaync-client -cp && sleep 1 && ${grim} -g "$(${slurp})" - | ${getExe pkgs.swappy} -f -'';
+            label = "󰍹";
+            command = ''grimblast --notify save screen '';
           }
+          {
+            label = "";
+            command = ''grimblast --notify --freeze save area '';
+          }
+          # {
+          #   label = "";
+          #   command = ''${getExe hyprland-contrib.packages.${system}.grimblast} --notify --freeze save area '';
+          # }
         ];
       };
     };

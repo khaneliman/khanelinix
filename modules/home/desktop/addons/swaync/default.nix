@@ -10,8 +10,22 @@
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
+  inherit (inputs) hyprland-contrib;
 
   cfg = config.khanelinix.desktop.addons.swaync;
+
+  dependencies = with pkgs; [
+    bash
+    config.wayland.windowManager.hyprland.package
+    coreutils
+    grim
+    hyprland-contrib.packages.${system}.grimblast
+    hyprpicker
+    jq
+    libnotify
+    slurp
+    wl-clipboard
+  ];
 
   settings = import ./settings.nix {
     inherit
@@ -38,5 +52,7 @@ in
       inherit settings;
       inherit (style) style;
     };
+
+    systemd.user.services.swaync.Service.Environment = "PATH=/run/wrappers/bin:${lib.makeBinPath dependencies}";
   };
 }

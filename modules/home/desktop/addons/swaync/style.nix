@@ -342,7 +342,7 @@
         background: transparent;
       }
 
-      .topbar-buttons > button {
+      .screenshot-buttons > button {
         border: none;
         background: transparent;
       }
@@ -363,19 +363,19 @@
         background: @noti-bg-hover;
       }
 
-      .powermode-buttons {
+      .powermode-buttons, .screenshot-buttons {
         background-color: @mantle;
         padding: 8px;
         margin: 8px;
         border-radius: 12px;
       }
 
-      .powermode-buttons > button {
+      .powermode-buttons, .screenshot-buttons > button {
         background: transparent;
         border: none;
       }
 
-      .powermode-buttons > button:hover {
+      .powermode-buttons, .screenshot-buttons > button:hover {
         background: @noti-bg-hover;
       }
     '';
