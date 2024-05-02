@@ -50,7 +50,7 @@ in
 
   config = mkIf cfg.enable {
     home.shellAliases = {
-      hl = "cat /tmp/hypr/$(command ls -t /tmp/hypr/ | grep -v '\.lock$' | head -n 1)/hyprland.log";
+      hl = "cat $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland.log";
       hlc = "cat /home/${config.khanelinix.user.name}/.local/cache/hyprland/$(command ls -t /home/${config.khanelinix.user.name}/.local/cache/hyprland/ | grep 'hyprlandCrashReport' | head -n 1)";
     } // historicalLogAliases // historicalCrashAliases;
 
