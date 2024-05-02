@@ -11,15 +11,24 @@ let
   cfg = config.khanelinix.system.fonts;
 in
 {
+  # TODO: consolidate home and nixos/nix-darwin configs
   options.khanelinix.system.fonts = with types; {
     enable = mkBoolOpt false "Whether or not to manage fonts.";
     fonts =
       with pkgs;
       mkOpt (listOf package) [
+        # emojis
+        noto-fonts-color-emoji
+        twemoji-color-font
+        # openmoji-color
+        # openmoji-black
+
         (nerdfonts.override {
           fonts = [
             "CascadiaCode"
+            "Iosevka"
             "Monaspace"
+            "NerdFontsSymbolsOnly"
           ];
         })
       ] "Custom font packages to install.";
