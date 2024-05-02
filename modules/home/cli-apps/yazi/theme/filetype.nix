@@ -45,13 +45,24 @@ in
         mime = "application/x-rar";
         fg = catppuccin.colors.pink.hex;
       }
+      # Orphan symbolic links
       {
         name = "*";
-        fg = catppuccin.colors.text.hex;
+        is = "orphan";
+        fg = catppuccin.colors.red.hex;
+      }
+      {
+        name = "*";
+        is = "link";
+        fg = catppuccin.colors.green.hex;
       }
       {
         name = "*/";
         fg = catppuccin.colors.blue.hex;
+      }
+      {
+        name = "*";
+        fg = catppuccin.colors.text.hex;
       }
     ];
   };
