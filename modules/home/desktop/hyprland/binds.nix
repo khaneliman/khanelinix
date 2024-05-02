@@ -53,15 +53,15 @@ in
             # ░▀▀█░█░░░█▀▄░█▀▀░█▀▀░█░█░▀▀█░█▀█░█░█░░█░
             # ░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░░▀░
             # Pictures
-            ", Print, exec, $screenshot"
+            ", Print, exec, $grimblast_screen_file"
             "SHIFT, Print, exec, $grimblast_area_file"
             "SHIFT_CTRL, S, exec, $grimblast_area_file"
             "SUPER_SHIFT, Print, exec, $grimblast_area_swappy"
             "SUPER_SHIFT, S, exec, $grimblast_area_swappy"
             "SUPER, Print, exec, $grimblast_screen_swappy"
-            "CONTROL, Print, exec, $grimblast_screen"
-            "SUPER_CTRL, Print, exec, $grimblast_window"
-            "SUPER_CTRL_SHIFT, Print, exec, $grimblast_area"
+            "CONTROL, Print, exec, $grimblast_screen_clipboard"
+            "SUPER_CTRL, Print, exec, $grimblast_window_clipboard"
+            "SUPER_CTRL_SHIFT, Print, exec, $grimblast_area_clipboard"
             # Screen recording
             "SUPER_CTRLALT, Print, exec, $screen-recorder screen"
             "SUPER_CTRLALTSHIFT, Print, exec, $screen-recorder area"
