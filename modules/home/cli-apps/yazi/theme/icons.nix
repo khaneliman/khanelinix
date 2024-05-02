@@ -26,6 +26,36 @@ in
         text = "";
         fg = catppuccin.colors.red.hex;
       }
+      {
+        name = "*";
+        is = "exec";
+        text = "";
+      }
+      {
+        name = "*";
+        is = "sock";
+        text = "󰟩";
+      }
+      {
+        name = "*";
+        is = "fifo";
+        text = "󰟥";
+      }
+      {
+        name = "*";
+        is = "char";
+        text = "󰕵";
+      }
+      {
+        name = "*";
+        is = "block";
+        text = "󱛟";
+      }
+      {
+        name = "*";
+        is = "sticky";
+        text = "";
+      }
       # Home
       {
         name = "*.config/";
@@ -34,6 +64,10 @@ in
       {
         name = "*.ssh/";
         text = "󰢬";
+      }
+      {
+        name = "*Applications/";
+        text = "";
       }
       {
         name = "*Desktop/";
