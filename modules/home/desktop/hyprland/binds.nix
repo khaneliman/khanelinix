@@ -52,16 +52,23 @@ in
             # ░█▀▀░█▀▀░█▀▄░█▀▀░█▀▀░█▀█░█▀▀░█░█░█▀█░▀█▀
             # ░▀▀█░█░░░█▀▄░█▀▀░█▀▀░█░█░▀▀█░█▀█░█░█░░█░
             # ░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░░▀░
-            # Pictures
-            ", Print, exec, $grimblast_screen_file"
+            # File
+            ", Print, exec, $grimblast_active_file"
             "SHIFT, Print, exec, $grimblast_area_file"
-            "SHIFT_CTRL, S, exec, $grimblast_area_file"
-            "SUPER_SHIFT, Print, exec, $grimblast_area_swappy"
-            "SUPER_SHIFT, S, exec, $grimblast_area_swappy"
-            "SUPER, Print, exec, $grimblast_screen_swappy"
-            "CONTROL, Print, exec, $grimblast_screen_clipboard"
-            "SUPER_CTRL, Print, exec, $grimblast_window_clipboard"
-            "SUPER_CTRL_SHIFT, Print, exec, $grimblast_area_clipboard"
+            # "SHIFT_CTRL, S, exec, $grimblast_area_file"
+            "SUPER, Print, exec, $grimblast_screen_file"
+
+            # Area / Window
+            "ALT, Print, exec, $grimblast_active_swappy"
+            "ALT_CTRL, Print, exec, $grimblast_area_swappy"
+            "ALT_SUPER, Print, exec, $grimblast_screen_swappy"
+            # "SUPER_CTRL_SHIFT, S, exec, $grimblast_screen_swappy"
+
+            # Clipboard
+            "CTRL, Print, exec, $grimblast_active_clipboard"
+            "CTRL_SHIFT, Print, exec, $grimblast_area_clipboard"
+            "SUPER_CTRL, Print, exec, $grimblast_screen_clipboard"
+
             # Screen recording
             "SUPER_CTRLALT, Print, exec, $screen-recorder screen"
             "SUPER_CTRLALTSHIFT, Print, exec, $screen-recorder area"

@@ -11,6 +11,7 @@ let
   inherit (lib) mkIf getExe getExe';
 
   convert = getExe' pkgs.imagemagick "convert";
+  grimblast = getExe hyprland-contrib.packages.${system}.grimblast;
   wl-copy = getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-copy";
   wl-paste = getExe' nixpkgs-wayland.packages.${system}.wl-clipboard "wl-paste";
 
@@ -153,15 +154,15 @@ in
         # screenshot commands
         "$notify-screenshot" = ''${getExe pkgs.libnotify} --icon "$file" "Screenshot Saved"'';
         "$screenshot-path" = "/home/${config.khanelinix.user.name}/Pictures/screenshots";
-        "$grimblast_area_file" = ''file="${screenshot-path}/$(${getDateTime}).png" && ${getExe pkgs.grimblast} --freeze --notify save area "$file"'';
-        "$grimblast_window_file" = ''file="${screenshot-path}/$(${getDateTime}).png" && ${getExe pkgs.grimblast} --freeze --notify save window "$file"'';
-        "$grimblast_screen_file" = ''file="${screenshot-path}/$(${getDateTime}).png" && ${getExe pkgs.grimblast} --freeze --notify save screen "$file"'';
-        "$grimblast_area_swappy" = ''${getExe pkgs.grimblast} --freeze save area - | ${getExe pkgs.swappy} -f -'';
-        "$grimblast_window_swappy" = ''${getExe pkgs.grimblast} --freeze save window - | ${getExe pkgs.swappy} -f -'';
-        "$grimblast_screen_swappy" = ''${getExe pkgs.grimblast} save screen - | ${getExe pkgs.swappy} -f -'';
-        "$grimblast_area_clipboard" = "${getExe pkgs.grimblast} --freeze copy area";
-        "$grimblast_window_clipboard" = "${getExe pkgs.grimblast} copy active";
-        "$grimblast_screen_clipboard" = "${getExe pkgs.grimblast} --notify copy screen";
+        "$grimblast_area_file" = ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --freeze --notify save area "$file"'';
+        "$grimblast_active_file" = ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --notify save active "$file"'';
+        "$grimblast_screen_file" = ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --notify save screen "$file"'';
+        "$grimblast_area_swappy" = ''${grimblast} --freeze save area - | ${getExe pkgs.swappy} -f -'';
+        "$grimblast_active_swappy" = ''${grimblast} save active - | ${getExe pkgs.swappy} -f -'';
+        "$grimblast_screen_swappy" = ''${grimblast} save screen - | ${getExe pkgs.swappy} -f -'';
+        "$grimblast_area_clipboard" = "${grimblast} --freeze --notify copy area";
+        "$grimblast_active_clipboard" = "${grimblast} --notify copy active";
+        "$grimblast_screen_clipboard" = "${grimblast} --notify copy screen";
 
         # utility commands
         "$color_picker" = "${getExe pkgs.hyprpicker} -a && (${convert} -size 32x32 xc:$(${wl-paste}) /tmp/color.png && ${getExe pkgs.libnotify} \"Color Code:\" \"$(${wl-paste})\" -h \"string:bgcolor:$(${wl-paste})\" --icon /tmp/color.png -u critical -t 4000)";
