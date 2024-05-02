@@ -17,22 +17,20 @@ in
   config = mkIf cfg.enable {
     programs.zathura = {
       enable = true;
+      extraConfig = "include catppuccin-mocha";
+
       options = {
-        recolor-lightcolor = "rgba(0,0,0,0)";
-
-        font = "Lexend 12";
-        selection-notification = true;
-
-        selection-clipboard = "clipboard";
         adjust-open = "best-fit";
+        font = "Iosevka 14";
         pages-per-row = "1";
-        scroll-page-aware = "true";
+        recolor-lightcolor = "rgba(0,0,0,0)";
         scroll-full-overlap = "0.01";
+        scroll-page-aware = "true";
         scroll-step = "100";
+        selection-clipboard = "clipboard";
+        selection-notification = true;
         zoom-min = "10";
       };
-
-      extraConfig = "include catppuccin-mocha";
     };
 
     #TODO: add to the catppuccin package
