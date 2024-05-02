@@ -17,6 +17,7 @@ let
   cfg = config.khanelinix.tools.git;
 
   aliases = import ./aliases.nix;
+  ignores = import ./ignores.nix;
 in
 {
   options.khanelinix.tools.git = {
@@ -47,16 +48,23 @@ in
       git = {
         enable = true;
         package = pkgs.gitFull;
-        inherit (cfg) userName userEmail;
+        inherit (cfg) includes userName userEmail;
         inherit (aliases) aliases;
-        lfs = enabled;
+        inherit (ignores) ignores;
 
         delta = {
           enable = true;
+
+          options = {
+            dark = true;
+            features = "decorations side-by-side navigate";
+            line-numbers = true;
+            navigate = true;
+            side-by-side = true;
+          };
         };
 
         extraConfig = {
-
           credential = {
             helper =
               if cfg.wslAgentBridge then
@@ -65,6 +73,7 @@ in
                 ''${getExe' config.programs.git.package "git-credential-libsecret"}''
               else
                 ''${getExe' config.programs.git.package "git-credential-osxkeychain"}'';
+
             useHttpPath = true;
           };
 
@@ -83,12 +92,15 @@ in
             defaultBranch = "main";
           };
 
+          lfs = enabled;
+
           pull = {
             rebase = true;
           };
 
           push = {
             autoSetupRemote = true;
+            default = "current";
           };
 
           rebase = {
@@ -102,34 +114,6 @@ in
             ];
           };
         };
-
-        inherit (cfg) includes;
-
-        ignores = [
-          ".DS_Store"
-          "Desktop.ini"
-
-          # Thumbnail cache files
-          "._*"
-          "Thumbs.db"
-
-          # Files that might appear on external disks
-          ".Spotlight-V100"
-          ".Trashes"
-
-          # Compiled Python files
-          "*.pyc"
-
-          # Compiled C++ files
-          "*.out"
-
-          # Application specific files
-          "venv"
-          "node_modules"
-          ".sass-cache"
-
-          ".idea*"
-        ];
 
         signing = {
           key = cfg.signingKey;
