@@ -54,11 +54,11 @@ in
             # ░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░░▀░
             # Pictures
             ", Print, exec, $screenshot"
-            "SHIFT, Print, exec, $slurp_screenshot"
-            "SHIFT_CTRL, S, exec, $slurp_screenshot"
-            "SUPER_SHIFT, Print, exec, $slurp_swappy"
-            "SUPER_SHIFT, S, exec, $slurp_swappy"
-            "SUPER, Print, exec, $grim_swappy"
+            "SHIFT, Print, exec, $grimblast_area_file"
+            "SHIFT_CTRL, S, exec, $grimblast_area_file"
+            "SUPER_SHIFT, Print, exec, $grimblast_area_swappy"
+            "SUPER_SHIFT, S, exec, $grimblast_area_swappy"
+            "SUPER, Print, exec, $grimblast_screen_swappy"
             "CONTROL, Print, exec, $grimblast_screen"
             "SUPER_CTRL, Print, exec, $grimblast_window"
             "SUPER_CTRL_SHIFT, Print, exec, $grimblast_area"
