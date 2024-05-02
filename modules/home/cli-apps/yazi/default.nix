@@ -8,12 +8,19 @@ let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
 
+  # lib.snowfall.fs.get-non-default-nix-files ./keymap/
+
   completion = import ./keymap/completion.nix { };
   help = import ./keymap/help.nix { };
   input = import ./keymap/input.nix { };
   manager = import ./keymap/manager.nix { };
   select = import ./keymap/select.nix { };
   tasks = import ./keymap/tasks.nix { };
+
+  filetype = import ./theme/filetype.nix { };
+  theme-manager = import ./theme/manager.nix { inherit config lib; };
+  status = import ./theme/status.nix { };
+  theme = import ./theme/theme.nix { };
 
   cfg = config.khanelinix.cli-apps.yazi;
 in
@@ -50,7 +57,12 @@ in
         tasks
       ];
       settings = import ./yazi.nix { inherit lib pkgs; };
-      theme = import ./theme.nix { inherit config lib; };
+      theme = lib.mkMerge [
+        filetype
+        theme-manager
+        status
+        theme
+      ];
     };
 
     xdg.configFile = {
