@@ -1,6 +1,4 @@
 { pkgs, modulesPath, ... }:
-let
-in
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
