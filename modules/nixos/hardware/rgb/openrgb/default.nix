@@ -8,12 +8,11 @@ let
   inherit (lib) types mkIf mkOption;
   inherit (lib.internal) mkBoolOpt mkOpt;
 
-  cfg = config.khanelinix.hardware.rgb;
+  cfg = config.khanelinix.hardware.rgb.openrgb;
 in
 {
-  options.khanelinix.hardware.rgb = with types; {
+  options.khanelinix.hardware.rgb.openrgb = with types; {
     enable = mkBoolOpt false "Whether or not to enable support for rgb controls.";
-    ckbNextConfig = mkOpt (nullOr path) null "The ckb-next.conf file to create.";
     motherboard = mkOption {
       type = types.nullOr (
         types.enum [
@@ -33,13 +32,8 @@ in
       openrgb-with-all-plugins
     ];
 
-    hardware.ckb-next.enable = true;
-
     khanelinix.home.configFile =
       { }
-      // lib.optionalAttrs (cfg.ckbNextConfig != null) {
-        "ckb-next/ckb-next.cfg".source = cfg.ckbNextConfig;
-      }
       // lib.optionalAttrs (cfg.openRGBConfig != null) {
         "OpenRGB/sizes.ors".source = cfg.openRGBConfig + "/sizes.ors";
         "OpenRGB/Default.orp".source = cfg.openRGBConfig + "/Default.orp";

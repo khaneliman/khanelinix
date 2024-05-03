@@ -54,7 +54,7 @@ in
       opengl = enabled;
 
       rgb = {
-        enable = true;
+        openrgb.enable = true;
       };
 
       storage = {
