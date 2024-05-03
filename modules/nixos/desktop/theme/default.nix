@@ -11,7 +11,7 @@ let
     mkOption
     types
     ;
-  inherit (lib.internal) mkOpt capitalize;
+  inherit (lib.internal) mkOpt;
 
   cfg = config.khanelinix.desktop.theme;
 

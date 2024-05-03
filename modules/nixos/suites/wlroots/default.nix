@@ -7,7 +7,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf getExe;
+  inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt enabled;
   inherit (inputs) nixpkgs-wayland;
 

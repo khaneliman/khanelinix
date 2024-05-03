@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+_:
 {
   programs.nixvim = {
     plugins = {
