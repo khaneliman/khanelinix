@@ -28,16 +28,28 @@ in
     wallpaper = mkOpt (nullOr package) null "The wallpaper to display.";
   };
 
+  disabledModules = [ "programs/hyprland.nix" ];
+
   config = mkIf cfg.enable {
     environment = {
+      etc."greetd/environments".text = ''
+        "Hyprland"
+        zsh
+      '';
+
       sessionVariables = {
         CLUTTER_BACKEND = "wayland";
+        GDK_BACKEND = "wayland,x11";
         HYPRLAND_LOG_WLR = "1";
         MOZ_ENABLE_WAYLAND = "1";
         MOZ_USE_XINPUT2 = "1";
         SDL_VIDEODRIVER = "wayland";
         WLR_DRM_NO_ATOMIC = "1";
         WLR_RENDERER = "vulkan";
+        XDG_CURRENT_DESKTOP = "Hyprland";
+        XDG_SESSION_DESKTOP = "Hyprland";
+        XDG_SESSION_TYPE = "wayland";
+        _JAVA_AWT_WM_NONEREPARENTING = "1";
         __GL_GSYNC_ALLOWED = "0";
         __GL_VRR_ALLOWED = "0";
       };
@@ -76,7 +88,6 @@ in
       # Desktop additions
       desktop.addons = {
         gtk = enabled;
-        # kanshi = enabled;
         kitty = enabled;
         nautilus = enabled;
         qt = enabled;
@@ -107,12 +118,6 @@ in
       };
     };
 
-    programs.hyprland = {
-      enable = true;
-      envVars.enable = true;
-      package = hyprland.packages.${system}.hyprland;
-      portalPackage = hyprland.packages.${system}.xdg-desktop-portal-hyprland;
-      xwayland.enable = true;
-    };
+    services.displayManager.sessionPackages = [ hyprland.packages.${system}.hyprland ];
   };
 }

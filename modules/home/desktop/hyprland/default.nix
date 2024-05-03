@@ -70,10 +70,6 @@ in
       };
     };
 
-    programs.waybar.systemd.target = "hyprland-session.target";
-
-    systemd.user.services.hypridle.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
-
     wayland.windowManager.hyprland = {
       enable = true;
 
@@ -94,9 +90,7 @@ in
 
       systemd = {
         enable = true;
-
-        # NOTE: needed?
-        # variables = [ "--all" ];
+        variables = [ "--all" ];
       };
 
       xwayland.enable = true;
