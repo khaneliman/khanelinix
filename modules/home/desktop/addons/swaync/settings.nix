@@ -150,7 +150,7 @@ in
         }
         {
           label = "";
-          command = "blueman-manager";
+          command = "${getExe' pkgs.blueman "blueman-manager"}";
         }
       ];
     };

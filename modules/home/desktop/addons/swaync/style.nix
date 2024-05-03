@@ -326,9 +326,6 @@
         background: @noti-bg-hover;
       }
 
-      .power-buttons > button:active {
-        background: @noti-bg-hover;
-      }
 
       .widget-menubar {
         border: none;
@@ -370,12 +367,25 @@
         border-radius: 12px;
       }
 
-      .powermode-buttons, .screenshot-buttons > button {
+      .powermode-buttons > button {
         background: transparent;
         border: none;
       }
 
-      .powermode-buttons, .screenshot-buttons > button:hover {
+      .powermode-buttons > button:hover {
+        background: @noti-bg-hover;
+      }
+
+      .powermode-buttons > button:active {
+        background: @noti-bg-hover;
+      }
+
+      .screenshot-buttons > button {
+        background: transparent;
+        border: none;
+      }
+
+      .screenshot-buttons > button:hover {
         background: @noti-bg-hover;
       }
     '';
