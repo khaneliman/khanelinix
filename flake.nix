@@ -166,7 +166,6 @@
       };
 
       overlays = with inputs; [
-        hypr-socket-watch.overlays.default
         nix-ld-rs.overlays.default
         nur.overlay
         rust-overlay.overlays.default

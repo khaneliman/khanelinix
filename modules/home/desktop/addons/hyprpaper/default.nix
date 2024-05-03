@@ -13,7 +13,7 @@ let
     types
     mkOption
     ;
-  inherit (inputs) hyprpaper;
+  inherit (inputs) hyprpaper hypr-socket-watch;
   inherit (lib.internal) mkOpt;
 
   cfg = config.khanelinix.desktop.addons.hyprpaper;
@@ -47,7 +47,7 @@ in
 
       hypr-socket-watch = {
         enable = cfg.enableSocketWatch;
-        package = pkgs.hypr-socket-watch;
+        package = hypr-socket-watch.packages.${system}.hypr-socket-watch;
 
         monitor = "DP-1";
         wallpapers = "${pkgs.khanelinix.wallpapers}/share/wallpapers/";
