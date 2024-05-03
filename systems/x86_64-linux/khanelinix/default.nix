@@ -202,6 +202,11 @@ in
     };
   };
 
+  nix.settings = {
+    cores = 24;
+    max-jobs = 24;
+  };
+
   services = {
     displayManager.defaultSession = "hyprland";
     mpd = {
