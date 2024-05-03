@@ -9,9 +9,25 @@ in
 
   config = mkIf cfg.enable {
     nix = {
+      # Options that aren't supported through nix-darwin
+      extraOptions = ''
+        # bail early on missing cache hits
+        connect-timeout = 5
+        keep-going = true
+      '';
+
       gc = {
         interval = {
           Day = 7;
+          Hour = 3;
+        };
+        user = config.khanelinix.user.name;
+      };
+
+      optimise = {
+        interval = {
+          Day = 7;
+          Hour = 4;
         };
         user = config.khanelinix.user.name;
       };
@@ -30,6 +46,10 @@ in
           "/private/var/tmp"
           "/usr/bin/env"
         ];
+
+        # Frequent issues with networking failures on darwin
+        # limit number to see if it helps
+        http-connections = mkForce 25;
 
         # FIX: shouldn't disable, but getting sandbox max size errors on darwin
         # darwin-rebuild --rollback on testing changing

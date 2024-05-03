@@ -1,6 +1,6 @@
 { config, lib, ... }:
 let
-  inherit (lib) mkDefault mkIf;
+  inherit (lib) mkDefault mkIf mkForce;
 
   cfg = config.khanelinix.nix;
 in
@@ -17,10 +17,21 @@ in
       daemonIOSchedPriority = 7;
 
       gc = {
-        dates = "weekly";
+        dates = "Sun *-*-* 03:00";
+      };
+
+      optimise = {
+        automatic = true;
+        dates = [ "04:00" ];
       };
 
       settings = {
+        # bail early on missing cache hits
+        connect-timeout = 5;
+        experimental-features = mkForce "cgroups nix-command flakes";
+        keep-going = true;
+        use-cgroups = true;
+
         substituters = [
           "https://hyprland.cachix.org"
           "https://nix-gaming.cachix.org"

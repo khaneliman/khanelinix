@@ -48,6 +48,8 @@ in
       let
         users = [
           "root"
+          "@wheel"
+          "nix-builder"
           config.khanelinix.user.name
         ];
       in
@@ -59,15 +61,19 @@ in
           options = "--delete-older-than 7d";
         };
 
+        optimise.automatic = true;
+
         settings = {
           allowed-users = users;
           auto-optimise-store = true;
+          builders-use-substitutes = true;
           experimental-features = "nix-command flakes";
           http-connections = 50;
           keep-derivations = true;
+          keep-going = true;
           keep-outputs = true;
           log-lines = 50;
-          sandbox = "relaxed";
+          sandbox = true;
           trusted-users = users;
           warn-dirty = false;
 
