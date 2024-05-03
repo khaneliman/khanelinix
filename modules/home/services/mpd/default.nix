@@ -85,7 +85,7 @@ in
 
       mpd-mpris.enable = true;
       mpris-proxy.enable = true;
-      playerctld.enable = true;
+      # playerctld.enable = true;
 
       # MPRIS 2 support to mpd
       mpdris2 = {
