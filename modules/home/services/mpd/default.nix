@@ -100,7 +100,7 @@ in
 
       # discord rich presence for mpd
       mpd-discord-rpc = {
-        enable = true;
+        enable = false;
 
         settings = {
           format = {
