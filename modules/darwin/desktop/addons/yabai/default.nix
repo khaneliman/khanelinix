@@ -66,7 +66,7 @@ in
         ''
           source ${getExe khanelinix.yabai-helper}
 
-          # TODO: use a sketchybar event
+          # Set external_bar here in case we launch after sketchybar
           BAR_HEIGHT=$(${getExe sketchybar} -m --query bar | jq -r '.height')
           ${getExe config.services.yabai.package} -m config external_bar all:"$BAR_HEIGHT":0
 
