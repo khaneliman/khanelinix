@@ -49,7 +49,7 @@ in
         XDG_CURRENT_DESKTOP = "Hyprland";
         XDG_SESSION_DESKTOP = "Hyprland";
         XDG_SESSION_TYPE = "wayland";
-        _JAVA_AWT_WM_NONEREPARENTING = "1";
+        _JAVA_AWT_WM_NONREPARENTING = "1";
         __GL_GSYNC_ALLOWED = "0";
         __GL_VRR_ALLOWED = "0";
       };
