@@ -49,10 +49,31 @@ in
   imports = lib.snowfall.fs.get-non-default-nix-files ./.;
 
   config = mkIf cfg.enable {
-    home.shellAliases = {
-      hl = "cat $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland.log";
-      hlc = "cat /home/${config.khanelinix.user.name}/.local/cache/hyprland/$(command ls -t /home/${config.khanelinix.user.name}/.local/cache/hyprland/ | grep 'hyprlandCrashReport' | head -n 1)";
-    } // historicalLogAliases // historicalCrashAliases;
+    home = {
+      packages = with pkgs; [ xwaylandvideobridge ];
+
+      sessionVariables = {
+        CLUTTER_BACKEND = "wayland";
+        GDK_BACKEND = "wayland,x11";
+        HYPRLAND_LOG_WLR = "1";
+        MOZ_ENABLE_WAYLAND = "1";
+        MOZ_USE_XINPUT2 = "1";
+        SDL_VIDEODRIVER = "wayland";
+        WLR_DRM_NO_ATOMIC = "1";
+        WLR_RENDERER = "vulkan";
+        XDG_CURRENT_DESKTOP = "Hyprland";
+        XDG_SESSION_DESKTOP = "Hyprland";
+        XDG_SESSION_TYPE = "wayland";
+        _JAVA_AWT_WM_NONREPARENTING = "1";
+        __GL_GSYNC_ALLOWED = "0";
+        __GL_VRR_ALLOWED = "0";
+      };
+
+      shellAliases = {
+        hl = "cat $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland.log";
+        hlc = "cat /home/${config.khanelinix.user.name}/.local/cache/hyprland/$(command ls -t /home/${config.khanelinix.user.name}/.local/cache/hyprland/ | grep 'hyprlandCrashReport' | head -n 1)";
+      } // historicalLogAliases // historicalCrashAliases;
+    };
 
     khanelinix = {
       desktop.addons = {
