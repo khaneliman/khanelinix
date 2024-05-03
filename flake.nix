@@ -28,15 +28,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Hyprcursor
-    hyprcursor = {
-      url = "github:hyprwm/Hyprcursor";
-      inputs = {
-        hyprlang.follows = "hyprlang";
-        nixpkgs.follows = "nixpkgs";
-      };
-    };
-
     # Hypridle
     hypridle = {
       url = "github:hyprwm/Hypridle";
@@ -54,15 +45,8 @@
     hyprland = {
       url = "github:hyprwm/Hyprland";
       inputs = {
-        hyprlang.follows = "hyprlang";
-        hyprcursor.follows = "hyprcursor";
         nixpkgs.follows = "nixpkgs";
       };
-    };
-
-    hyprlang = {
-      url = "github:hyprwm/hyprlang";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Hyprpaper
