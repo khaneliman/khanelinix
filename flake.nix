@@ -29,36 +29,21 @@
     };
 
     # Hypridle
-    hypridle = {
-      url = "github:hyprwm/Hypridle";
-      inputs.nixpkgs.follows = "nixpkgs";
-      # url = "git+file:///home/khaneliman/Documents/github/hypridle";
-    };
+    hypridle.url = "github:hyprwm/Hypridle";
+    # url = "git+file:///home/khaneliman/Documents/github/hypridle";
 
     # Hyprlock
-    hyprlock = {
-      inputs.nixpkgs.follows = "nixpkgs";
-      url = "github:hyprwm/Hyprlock";
-    };
+    hyprlock.url = "github:hyprwm/Hyprlock";
 
     # Hyprland
-    hyprland = {
-      url = "github:hyprwm/Hyprland";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-      };
-    };
+    hyprland.url = "github:hyprwm/Hyprland";
 
     # Hyprpaper
-    hyprpaper = {
-      url = "github:hyprwm/hyprpaper";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    hyprpaper.url = "github:hyprwm/hyprpaper";
 
     # Hyprland user contributions flake
     hyprland-contrib = {
       url = "github:hyprwm/contrib";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Hyprland plugins
