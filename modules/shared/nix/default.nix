@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib) types mkIf;
+  inherit (lib) types mkDefault mkIf;
   inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.nix;
@@ -18,6 +18,13 @@ in
   };
 
   config = mkIf cfg.enable {
+    # faster rebuilding
+    documentation = {
+      doc.enable = false;
+      info.enable = false;
+      man.enable = mkDefault true;
+    };
+
     environment = {
       etc = with inputs; {
         # set channels (backwards compatibility)

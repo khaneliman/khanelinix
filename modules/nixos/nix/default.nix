@@ -1,6 +1,6 @@
 { config, lib, ... }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkDefault mkIf;
 
   cfg = config.khanelinix.nix;
 in
@@ -8,6 +8,8 @@ in
   imports = [ ../../shared/nix/default.nix ];
 
   config = mkIf cfg.enable {
+    documentation.man.generateCaches = mkDefault true;
+
     nix = {
       # make builds run with low priority so my system stays responsive
       daemonCPUSchedPolicy = "batch";
