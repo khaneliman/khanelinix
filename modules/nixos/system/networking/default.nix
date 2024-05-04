@@ -117,6 +117,16 @@ in
       traceroute
     ];
 
+    khanelinix = {
+      user = {
+        extraGroups = [
+          "network"
+          "networkmanager"
+          "wireshark"
+        ];
+      };
+    };
+
     networking = {
       hosts = {
         "127.0.0.1" = [ "local.test" ] ++ (cfg.hosts."127.0.0.1" or [ ]);

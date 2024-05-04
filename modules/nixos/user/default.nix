@@ -39,7 +39,19 @@ in
     users.users.${cfg.name} = {
       inherit (cfg) name initialPassword;
 
-      extraGroups = [ "wheel" ] ++ cfg.extraGroups;
+      extraGroups = [
+        "wheel"
+        "systemd-journal"
+        "audio"
+        "video"
+        "input"
+        "plugdev"
+        "lp"
+        "tss"
+        "power"
+        "nix"
+      ] ++ cfg.extraGroups;
+
       group = "users";
       home = "/home/${cfg.name}";
       isNormalUser = true;

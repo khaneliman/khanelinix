@@ -24,9 +24,18 @@ in
 
     environment.systemPackages = with pkgs; [ podman-compose ];
 
-    khanelinix.home.extraOptions = {
-      home.shellAliases = {
-        "docker-compose" = "podman-compose";
+    khanelinix = {
+      user = {
+        extraGroups = [
+          "docker"
+          "podman"
+        ];
+      };
+
+      home.extraOptions = {
+        home.shellAliases = {
+          "docker-compose" = "podman-compose";
+        };
       };
     };
 
