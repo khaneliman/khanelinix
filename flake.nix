@@ -36,7 +36,7 @@
     hyprlock.url = "github:hyprwm/Hyprlock";
 
     # Hyprland
-    hyprland.url = "github:hyprwm/Hyprland?rev=1ebc32f5f4b04c913fb6301b886e016afec4c20e";
+    hyprland.url = "github:hyprwm/Hyprland";
 
     # Hyprpaper
     hyprpaper.url = "github:hyprwm/hyprpaper";
