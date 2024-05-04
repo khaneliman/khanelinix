@@ -1,11 +1,10 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
-  inherit (lib) types mkIf mkOption;
+  inherit (lib) types mkIf;
   inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.hardware.rgb.ckb-next;

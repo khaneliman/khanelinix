@@ -13,7 +13,6 @@ let
     mapAttrsToList
     mkDefault
     mkIf
-    optionalAttrs
     pipe
     types
     ;
