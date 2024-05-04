@@ -8,10 +8,10 @@ let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
 
-  cfg = config.khanelinix.system.logrotate;
+  cfg = config.khanelinix.services.logrotate;
 in
 {
-  options.khanelinix.system.logrotate = {
+  options.khanelinix.services.logrotate = {
     enable = mkBoolOpt false "Whether or not to configure logrotate.";
   };
 

@@ -8,10 +8,10 @@ let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
 
-  cfg = config.khanelinix.system.oomd;
+  cfg = config.khanelinix.services.oomd;
 in
 {
-  options.khanelinix.system.oomd = {
+  options.khanelinix.services.oomd = {
     enable = mkBoolOpt false "Whether or not to configure oomd.";
   };
 

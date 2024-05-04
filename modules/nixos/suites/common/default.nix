@@ -43,6 +43,8 @@ in
 
       services = {
         ddccontrol = enabled;
+        logrotate = enabled;
+        oomd = enabled;
         openssh = enabled;
         printing = enabled;
       };
@@ -50,8 +52,6 @@ in
       system = {
         fonts = enabled;
         locale = enabled;
-        logrotate = enabled;
-        oomd = enabled;
         time = enabled;
       };
 
