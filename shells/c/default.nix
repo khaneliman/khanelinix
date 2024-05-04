@@ -24,38 +24,42 @@ let
       '';
 in
 mkShell {
-  buildInputs = with pkgs; [
-    # builder
-    gnumake
-    cmake
-    bear
-    meson
-    ninja
+  buildInputs =
+    with pkgs;
+    [
+      # builder
+      gnumake
+      cmake
+      bear
+      meson
+      ninja
 
-    # debugger
-    llvm.lldb
-    gdb
+      # debugger
+      llvm.lldb
 
-    # fix headers not found
-    clang-tools
+      # fix headers not found
+      clang-tools
 
-    # LSP and compiler
-    llvm.libstdcxxClang
+      # LSP and compiler
+      llvm.libstdcxxClang
 
-    # other tools
-    cppcheck
-    llvm.libllvm
-    valgrind
-    mymake
+      # other tools
+      cppcheck
+      llvm.libllvm
+      mymake
 
-    # stdlib for cpp
-    llvm.libcxx
+      # stdlib for cpp
+      llvm.libcxx
 
-    # libs
-    glm
-    SDL2
-    SDL2_gfx
-  ];
+      # libs
+      glm
+      SDL2
+      SDL2_gfx
+    ]
+    ++ lib.optionals pkgs.stdenv.isLinux [
+      gdb
+      valgrind
+    ];
 
   shellHook = ''
 
