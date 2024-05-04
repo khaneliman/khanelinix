@@ -90,7 +90,6 @@ in
       gnupg
       guideDesktopItem
       paperkey
-      paperkey
       pinentry-curses
       pinentry-qt
       reload-yubikey

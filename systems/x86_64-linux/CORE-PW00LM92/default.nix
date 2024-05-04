@@ -13,19 +13,15 @@ in
       wsl = enabled;
     };
 
-    apps = {
-      yubikey = enabled;
-    };
-
-    cli-apps = {
-      yubikey = enabled;
-    };
-
     desktop = {
       addons = {
         gtk = enabled;
         qt = enabled;
       };
+    };
+
+    hardware = {
+      yubikey = enabled;
     };
 
     security = {

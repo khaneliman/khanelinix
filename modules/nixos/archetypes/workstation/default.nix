@@ -12,14 +12,6 @@ in
 
   config = mkIf cfg.enable {
     khanelinix = {
-      apps = {
-        yubikey = enabled;
-      };
-
-      cli-apps = {
-        yubikey = enabled;
-      };
-
       suites = {
         business = enabled;
         common = enabled;
