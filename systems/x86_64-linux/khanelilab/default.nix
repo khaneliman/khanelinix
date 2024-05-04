@@ -131,10 +131,14 @@ in
   };
 
   networking = {
-    defaultGateway = "192.168.1.1";
-    interfaces.enp6s0.ipv4.addresses = [
+    defaultGateway = {
+      address = "192.168.1.1";
+      interface = "eth0";
+    };
+
+    interfaces.eth0.ipv4.addresses = [
       {
-        address = "192.168.1.3";
+        address = "192.168.1.37";
         prefixLength = 24;
       }
     ];
