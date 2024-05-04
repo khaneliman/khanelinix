@@ -187,6 +187,7 @@ in
         enable = true;
         optimizeTcp = true;
       };
+      realtime = enabled;
       time = enabled;
     };
 
