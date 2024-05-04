@@ -6,7 +6,17 @@
   ...
 }:
 let
-  inherit (lib) types mkDefault mkIf;
+  inherit (lib)
+    filterAttrs
+    isType
+    mapAttrs
+    mapAttrsToList
+    mkDefault
+    mkIf
+    optionalAttrs
+    pipe
+    types
+    ;
   inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.nix;
@@ -46,6 +56,12 @@ in
 
     nix =
       let
+        mappedRegistry = pipe inputs [
+          (filterAttrs (_: isType "flake"))
+          (mapAttrs (_: flake: { inherit flake; }))
+          (x: x // { nixpkgs.flake = inputs.nixpkgs; })
+        ];
+
         users = [
           "root"
           "@wheel"
@@ -61,13 +77,22 @@ in
           options = "--delete-older-than 7d";
         };
 
+        # This will additionally add your inputs to the system's legacy channels
+        # Making legacy nix commands consistent as well
+        nixPath = mapAttrsToList (key: _: "${key}=flake:${key}") config.nix.registry;
+
         optimise.automatic = true;
+
+        # pin the registry to avoid downloading and evaluating a new nixpkgs version every time
+        # this will add each flake input as a registry to make nix3 commands consistent with your flake
+        registry = mappedRegistry;
 
         settings = {
           allowed-users = users;
           auto-optimise-store = true;
           builders-use-substitutes = true;
           experimental-features = "nix-command flakes";
+          flake-registry = "/etc/nix/registry.json";
           http-connections = 50;
           keep-derivations = true;
           keep-going = true;
@@ -92,6 +117,8 @@ in
             "nixpkgs-unfree.cachix.org-1:hqvoInulhbV4nJ9yJOEr+4wxhDV4xq2d1DK7S6Nj6rs="
             "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE="
           ];
+
+          use-xdg-base-directories = true;
         };
 
         # flake-utils-plus
