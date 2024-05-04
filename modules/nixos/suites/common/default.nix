@@ -50,6 +50,7 @@ in
       system = {
         fonts = enabled;
         locale = enabled;
+        logrotate = enabled;
         oomd = enabled;
         time = enabled;
       };
