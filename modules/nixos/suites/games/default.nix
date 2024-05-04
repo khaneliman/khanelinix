@@ -18,7 +18,6 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       bottles
-      gamescope
       lutris
       minecraft
       prismlauncher
@@ -31,6 +30,7 @@ in
     khanelinix = {
       apps = {
         gamemode = enabled;
+        gamescope = enabled;
         # mangohud = enabled;
         steam = enabled;
       };
