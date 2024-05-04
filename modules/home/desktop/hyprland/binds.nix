@@ -96,6 +96,9 @@ in
             "SUPER,up,movewindow,u"
             "SUPER,down,movewindow,d"
 
+            "CTRL_SHIFT,h,resizeactive,-10% 0"
+            "CTRL_SHIFT,l,resizeactive,10% 0"
+
             # ░█░█░█▀█░█▀▄░█░█░█▀▀░█▀█░█▀█░█▀▀░█▀▀
             # ░█▄█░█░█░█▀▄░█▀▄░▀▀█░█▀▀░█▀█░█░░░█▀▀
             # ░▀░▀░▀▀▀░▀░▀░▀░▀░▀▀▀░▀░░░▀░▀░▀▀▀░▀▀▀
