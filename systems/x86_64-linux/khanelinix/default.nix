@@ -78,6 +78,8 @@ in
 
         ssdEnable = true;
       };
+
+      tpm = enabled;
     };
 
     services = {
