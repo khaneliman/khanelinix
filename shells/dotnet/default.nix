@@ -17,26 +17,28 @@ let
   };
 in
 mkShell {
-  buildInputs = with pkgs; [
-    (
-      with dotnetCorePackages;
-      combinePackages [
-        dotnet-aspnetcore_7
-        dotnet-runtime_7
-        dotnet-sdk_7
-        dotnet_8.aspnetcore
-        dotnet_8.runtime
-        dotnet_8.sdk
-      ]
-    )
-    azure-cli
-    bicep
-    dotnetbuildhelpers
-    netcoredbg
-    powershell
-    vimPlugins.neotest-dotnet
-    vscode-extensions.ms-dotnettools.csharp
-  ];
+  buildInputs =
+    with pkgs;
+    [
+      (
+        with dotnetCorePackages;
+        combinePackages [
+          dotnet-aspnetcore_7
+          dotnet-runtime_7
+          dotnet-sdk_7
+          dotnet_8.aspnetcore
+          dotnet_8.runtime
+          dotnet_8.sdk
+        ]
+      )
+      azure-cli
+      dotnetbuildhelpers
+      netcoredbg
+      powershell
+      vimPlugins.neotest-dotnet
+      vscode-extensions.ms-dotnettools.csharp
+    ]
+    ++ lib.optionals pkgs.stdenv.isLinux [ bicep ];
 
   shellHook = ''
 
