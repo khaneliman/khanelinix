@@ -82,6 +82,9 @@ in
       };
     };
 
-    services.fwupd.enable = true;
+    services.fwupd = {
+      enable = true;
+      daemonSettings.EspLocation = config.boot.loader.efi.efiSysMountPoint;
+    };
   };
 }
