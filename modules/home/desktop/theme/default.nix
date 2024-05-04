@@ -42,7 +42,7 @@ let
     f:
     let
       jsonFile =
-        pkgs.runCommand "yaml to attribute set" { nativeBuildInputs = [ pkgs.jc ]; } # bash
+        pkgs.runCommand "theme yaml to attribute set" { nativeBuildInputs = [ pkgs.jc ]; } # bash
           ''
             jc --yaml < "${f}" > "$out"
           '';
