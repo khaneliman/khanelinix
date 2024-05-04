@@ -8,8 +8,8 @@
 }:
 let
   inherit (lib)
-    getExe
-    getExe'
+    concatStringsSep
+    makeBinPath
     mkIf
     types
     ;
@@ -17,6 +17,17 @@ let
   inherit (inputs) hyprland;
 
   cfg = config.khanelinix.desktop.hyprland;
+
+  programs = makeBinPath (
+    with pkgs;
+    [
+      hyprland.packages.${system}.hyprland
+      coreutils
+      config.services.power-profiles-daemon.package
+      systemd
+      libnotify
+    ]
+  );
 in
 {
   options.khanelinix.desktop.hyprland = with types; {
@@ -44,30 +55,38 @@ in
         gamemode = {
           startscript = # bash
             ''
-              ${getExe pkgs.libnotify} 'GameMode started'
-
+              export PATH=$PATH:${programs}
               export HYPRLAND_INSTANCE_SIGNATURE=$(command ls -t $XDG_RUNTIME_DIR/hypr | head -n 1)
-              ${getExe' config.programs.hyprland.package "hyprctl"} --batch
-               'keyword animations:enabled 0;\
-                keyword decoration:drop_shadow 0;\
-                keyword decoration:blur:enabled 0;\
-                keyword general:gaps_in 0;\
-                keyword general:gaps_out 0;\
-                keyword general:border_size 1;\
-                keyword decoration:rounding 0";\
-                keyword misc:no_vfr 1'
 
-               ${getExe' config.services.power-profiles-daemon.package "powerprofilesctl"} set performance
+              hyprctl --batch '${
+                concatStringsSep " " [
+                  "keyword animations:enabled 0;"
+                  "keyword decoration:drop_shadow 0;"
+                  "keyword decoration:blur:enabled 0;"
+                  "keyword misc:vfr 0"
+                ]
+              }'
+
+              powerprofilesctl set performance
+              notify-send -a 'Gamemode' 'Optimizations activated' -u 'low'
             '';
 
           endscript = # bash
             ''
-              ${getExe pkgs.libnotify} 'GameMode stopped'
-
+              export PATH=$PATH:${programs}
               export HYPRLAND_INSTANCE_SIGNATURE=$(command ls -t $XDG_RUNTIME_DIR/hypr | head -n 1)
-              ${getExe' config.programs.hyprland.package "hyprctl"} reload
 
-               ${getExe' config.services.power-profiles-daemon.package "powerprofilesctl"} set balanced
+              hyprctl --batch '${
+                concatStringsSep " " [
+                  "keyword animations:enabled 1;"
+                  "keyword decoration:drop_shadow 1;"
+                  "keyword decoration:blur:enabled 1;"
+                  "keyword misc:vfr 1"
+                ]
+              }'
+
+              powerprofilesctl set balanced
+              notify-send -a 'Gamemode' 'Optimizations deactivated' -u 'low'
             '';
         };
       };
