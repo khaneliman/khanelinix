@@ -9,7 +9,6 @@ let
   inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.apps.gamemode;
-  # programs = lib.makeBinPath [config.khanelinix.desktop.hyprland.package];
 
   defaultStartScript = ''
     ${getExe' pkgs.libnotify "notify-send"} 'GameMode started'
