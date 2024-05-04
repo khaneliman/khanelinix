@@ -6,6 +6,8 @@ in
 {
   imports = [ ./hardware.nix ];
 
+  documentation.man.enable = mkForce true;
+
   khanelinix = {
     nix = enabled;
 
