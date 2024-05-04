@@ -17,16 +17,14 @@ in
 
   config = mkIf cfg.enable {
     environment = {
-      sessionVariables = {
-        STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
-      };
-
       systemPackages = with pkgs; [ steamtinkerlaunch ];
     };
 
     programs.steam = {
       enable = true;
       remotePlay.openFirewall = true;
+
+      extraCompatPackages = [ pkgs.proton-ge-bin.steamcompattool ];
     };
 
     hardware.steam-hardware.enable = true;
