@@ -20,7 +20,6 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      cliphist
       nixpkgs-wayland.packages.${system}.wdisplays
       nixpkgs-wayland.packages.${system}.wl-screenrec
       nixpkgs-wayland.packages.${system}.wl-clipboard
