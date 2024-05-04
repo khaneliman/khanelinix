@@ -42,9 +42,7 @@
     hyprpaper.url = "github:hyprwm/hyprpaper";
 
     # Hyprland user contributions flake
-    hyprland-contrib = {
-      url = "github:hyprwm/contrib";
-    };
+    hyprland-contrib.url = "github:hyprwm/contrib";
 
     # Hyprland plugins
     hyprland-plugins = {
