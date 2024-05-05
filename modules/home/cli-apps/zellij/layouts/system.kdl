@@ -1,0 +1,83 @@
+layout {
+	// define default tab layout
+    default_tab_template {
+		// tab bar on the top
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+
+		// child tabs and panes
+		children
+
+		// status bar on the bottom
+		pane size=2 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+
+	  tab_template name="dev_tab" {
+          pane size=1 borderless=true {
+              plugin location="zellij:tab-bar"
+          }
+
+          pane split_direction="Vertical" {
+              pane size="15%" name="Filetree" {
+                  plugin location="zellij:strider"
+              }
+              children
+          }
+
+          pane size=2 borderless=true {
+              plugin location="zellij:status-bar"
+          }
+      }
+
+		pane_template name="term" {
+		    pane split_direction="horizontal" {
+          children
+          pane command="zsh" size="25%" name="Shell"
+        }
+    }
+
+		dev_tab name="Khanelinix" cwd="~/khanelinix/" focus=true {
+        term split_direction="vertical" {
+			      pane edit="./flake.nix" name="Flake"
+        }
+    }
+
+    tab name="Git" split_direction="horizontal" name="Git" {
+        pane {
+          cwd "$HOME/khanelinix/"
+          command "lazygit"
+        }
+    }
+
+	  tab name="Files" split_direction="horizontal" name="Files" {
+        pane {
+          cwd "$HOME"
+          command "yazi"
+        }
+    }
+
+	  tab name="Processes" split_direction="vertical"  {
+        pane {
+		      cwd "$HOME"
+			    command "btop"
+		    }
+    }
+
+	  tab name="Media" split_direction="vertical" {
+      pane split_direction="horizontal" name="Player" {
+          pane {
+				    cwd "$HOME/Music"
+				    command "musikcube"
+			    }
+      }
+
+		  pane split_direction="horizontal" name="Mixer" {
+          pane size="35%" {
+				    command "pulsemixer"
+			    }
+        }
+      }
+}
