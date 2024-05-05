@@ -42,3 +42,4 @@ node_modules
 result
 .ccls-cache
 flake
+.pre-commit-config.yaml
