@@ -18,8 +18,8 @@ in
             # ░█▀█░█▀█░█▀█░░░█░░░█▀█░█░█░█▀█░█▀▀░█░█░█▀▀░█▀▄░█▀▀
             # ░█▀█░█▀▀░█▀▀░░░█░░░█▀█░█░█░█░█░█░░░█▀█░█▀▀░█▀▄░▀▀█
             # ░▀░▀░▀░░░▀░░░░░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀
-            "$mainMod, RETURN, exec, $term tmux a"
-            "SUPER_SHIFT, RETURN, exec, $term tmux"
+            "$mainMod, RETURN, exec, $term"
+            "SUPER_SHIFT, RETURN, exec, $term zellij"
             "SUPER_ALT, RETURN, exec, $term --title floatterm --single-instance"
             "$mainMod, Q, killactive,"
             "CTRL_SHIFT, Q, killactive,"
