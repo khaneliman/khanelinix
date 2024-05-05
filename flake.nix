@@ -202,31 +202,47 @@
       outputs-builder = channels: {
         checks.pre-commit-check = inputs.pre-commit-hooks-nix.lib.${channels.nixpkgs.system}.run {
           src = ./.;
-          hooks = {
-            deadnix.enable = true;
-
-            git-cliff = {
-              enable = true;
+          hooks =
+            let
               excludes = [
                 "flake.lock"
                 "CHANGELOG.md"
               ];
-              language = "system";
-              pass_filenames = false;
-              entry = "${channels.nixpkgs.khanelinix.git-cliff}/bin/git-cliff";
-              description = "pre-commit hook for git-cliff";
-              fail_fast = true; # running hooks if this hook fails
+              fail_fast = true;
               verbose = true;
-            };
+            in
+            {
+              deadnix.enable = true;
 
-            nixfmt = {
-              enable = true;
-              package = channels.nixpkgs.nixfmt-rfc-style;
-            };
+              git-cliff = {
+                enable = true;
+                inherit fail_fast verbose;
 
-            # prettier.enable = true;
-            statix.enable = true;
-          };
+                description = "pre-commit hook for git-cliff";
+                excludes = excludes ++ [ "CHANGELOG.md" ];
+                entry = "${channels.nixpkgs.khanelinix.git-cliff}/bin/git-cliff";
+                language = "system";
+                pass_filenames = false;
+              };
+
+              nixfmt = {
+                enable = true;
+                package = channels.nixpkgs.nixfmt-rfc-style;
+              };
+
+              prettier = {
+                enable = true;
+                inherit excludes fail_fast verbose;
+
+                description = "pre-commit hook for prettier";
+                settings = {
+                  binPath = "${channels.nixpkgs.prettierd}/bin/prettierd";
+                  write = true;
+                };
+              };
+
+              statix.enable = true;
+            };
         };
       };
 
