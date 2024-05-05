@@ -59,6 +59,13 @@ layout {
         }
     }
 
+    tab name="Shell" split_direction="horizontal" name="Shell" {
+        pane {
+          cwd "$HOME/khanelinix/"
+          command "zsh"
+        }
+    }
+
 	  tab name="Processes" split_direction="vertical"  {
         pane {
 		      cwd "$HOME"
