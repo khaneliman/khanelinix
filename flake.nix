@@ -105,6 +105,8 @@
       url = "github:nix-community/NUR";
     };
 
+    pre-commit-hooks-nix.url = "github:cachix/pre-commit-hooks.nix";
+
     # Rust overlay
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
@@ -196,6 +198,21 @@
       checks = builtins.mapAttrs (
         _system: deploy-lib: deploy-lib.deployChecks inputs.self.deploy
       ) deploy-rs.lib;
+
+      outputs-builder = channels: {
+        checks.pre-commit-check = inputs.pre-commit-hooks-nix.lib.${channels.nixpkgs.system}.run {
+          src = ./.;
+          hooks = {
+            deadnix.enable = true;
+            nixfmt = {
+              enable = true;
+              package = channels.nixpkgs.nixfmt-rfc-style;
+            };
+            # prettier.enable = true;
+            statix.enable = true;
+          };
+        };
+      };
 
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
       formatter.aarch64-darwin = nixpkgs.legacyPackages.aarch64-darwin.nixfmt-rfc-style;

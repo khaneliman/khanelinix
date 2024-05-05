@@ -25,11 +25,12 @@ mkShell {
     nixpkgs-lint
     snowfall-flake.packages.${system}.flake
     statix
+    inputs.self.checks.${system}.pre-commit-check.enabledPackages
   ];
 
   shellHook = ''
-
-    echo 🔨 Welcome to khanelinix
+    ${inputs.self.checks.${system}.pre-commit-check.shellHook}
+      echo 🔨 Welcome to khanelinix
 
 
   '';
