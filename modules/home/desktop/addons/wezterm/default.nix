@@ -46,7 +46,7 @@ in
             color_scheme = "Catppuccin",
             use_fancy_tab_bar = false,
             tab_bar_at_bottom = true,
-            term = "wezterm",
+            term = "xterm-256color",
             window_close_confirmation = 'NeverPrompt',
             window_decorations = "RESIZE",
             warn_about_missing_glyphs=false,
