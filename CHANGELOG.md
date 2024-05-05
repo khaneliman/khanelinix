@@ -4,6 +4,8 @@
 
 ### Changed
 
+- flake.nix: exclude flake.lock updates from changelog
+
 - CHANGELOG.md: init
 
 - .gitignore: ignore symlinked pre-commit config
