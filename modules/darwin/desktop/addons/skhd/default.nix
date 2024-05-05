@@ -41,8 +41,8 @@ in
           # ░█▀█░█▀█░█▀█░░░█░░░█▀█░█░█░█▀█░█▀▀░█░█░█▀▀░█▀▄░█▀▀
           # ░█▀█░█▀▀░█▀▀░░░█░░░█▀█░█░█░█░█░█░░░█▀█░█▀▀░█▀▄░▀▀█
           # ░▀░▀░▀░░░▀░░░░░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀
-          default < cmd + shift - return : ${getExe pkgs.wezterm} start -- tmux
-          default < cmd - return : ${getExe pkgs.wezterm} start -- tmux a
+          default < cmd + shift - return : ${getExe pkgs.wezterm} start -- zellij
+          default < cmd - return : ${getExe pkgs.wezterm}
           default < cmd + alt + ctrl - v : open /Applications/Visual\ Studio\ Code.app
           default < cmd + alt + ctrl - o : open /Applications/Microsoft\ Outlook.app
           default < cmd + alt + ctrl - p : open /Applications/Microsoft\ PowerPoint.app
