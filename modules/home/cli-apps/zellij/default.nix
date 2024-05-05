@@ -44,7 +44,7 @@ in
 
         on_force_close = "quit";
         pane_frames = true;
-        session_serialization = false;
+        session_serialization = true;
 
         ui.pane_frames = {
           rounded_corners = true;
