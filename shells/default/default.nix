@@ -10,7 +10,6 @@ let
 in
 mkShell {
   buildInputs = with pkgs; [
-    deadnix
     hydra-check
     nix-inspect
     nix-bisect
@@ -20,17 +19,17 @@ mkShell {
     nix-melt
     nix-prefetch-git
     nix-search-cli
-    nixfmt-rfc-style
     nixpkgs-hammering
     nixpkgs-lint
     snowfall-flake.packages.${system}.flake
-    statix
+
+    # Adds all the packages required for the pre-commit checks
     inputs.self.checks.${system}.pre-commit-check.enabledPackages
   ];
 
   shellHook = ''
     ${inputs.self.checks.${system}.pre-commit-check.shellHook}
-      echo 🔨 Welcome to khanelinix
+    echo 🔨 Welcome to khanelinix
 
 
   '';
