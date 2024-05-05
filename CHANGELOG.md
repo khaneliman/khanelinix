@@ -4,6 +4,8 @@
 
 ### Changed
 
+- CHANGELOG.md: init
+
 - .gitignore: ignore symlinked pre-commit config
 
 - devshell/default: cleanup
@@ -2903,6 +2905,8 @@ This reverts commit 746c3753d5f7080a03d9cbfad750c7a0994fa753.
 
 
 ### New
+
+- flake.nix: add git-cliff hook
 
 - packages/git-cliff: add git-cliff package for hook
 

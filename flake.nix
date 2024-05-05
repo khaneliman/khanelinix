@@ -207,7 +207,10 @@
 
             git-cliff = {
               enable = true;
-              excludes = [ "CHANGELOG.md" ];
+              excludes = [
+                "flake.lock"
+                "CHANGELOG.md"
+              ];
               language = "system";
               pass_filenames = false;
               entry = "${channels.nixpkgs.khanelinix.git-cliff}/bin/git-cliff";
