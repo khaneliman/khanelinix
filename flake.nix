@@ -212,7 +212,16 @@
               verbose = true;
             in
             {
+              actionlint.enable = true;
+              beautysh.enable = true;
+              clang-format.enable = true;
+              clang-tidy.enable = true;
+              # conform.enable = true;
               deadnix.enable = true;
+              eslint = {
+                enable = true;
+                package = channels.nixpkgs.eslint_d;
+              };
 
               git-cliff = {
                 enable = true;
@@ -225,10 +234,14 @@
                 pass_filenames = false;
               };
 
+              luacheck.enable = true;
+
               nixfmt = {
                 enable = true;
                 package = channels.nixpkgs.nixfmt-rfc-style;
               };
+
+              pre-commit-hook-ensure-sops.enable = true;
 
               prettier = {
                 enable = true;
@@ -242,6 +255,7 @@
               };
 
               statix.enable = true;
+              # treefmt.enable = true;
             };
         };
       };
