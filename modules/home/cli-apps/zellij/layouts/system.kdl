@@ -16,21 +16,22 @@ layout {
     }
 
 	  tab_template name="dev_tab" {
-          pane size=1 borderless=true {
-              plugin location="zellij:tab-bar"
-          }
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
 
-          pane split_direction="Vertical" {
-              pane size="15%" name="Filetree" {
-                  plugin location="zellij:strider"
-              }
-              children
-          }
+        pane split_direction="Vertical" {
+          // NOTE: not sure what this even does... seems useless
+          //pane size="15%" name="Filetree" {
+          //    plugin location="zellij:strider"
+          //}
+          children
+        }
 
-          pane size=2 borderless=true {
-              plugin location="zellij:status-bar"
-          }
-      }
+        pane size=2 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
 
 		pane_template name="term" {
 		    pane split_direction="horizontal" {
