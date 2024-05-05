@@ -16,6 +16,19 @@ in
   };
 
   config = mkIf cfg.enable {
+
+    home.packages = with pkgs; [
+      musikcube
+      (pulsemixer.overrideAttrs {
+        postFixup = ''
+          substituteInPlace "$out/bin/pulsemixer" \
+            --replace "libpulse.so.0" "$libpulseaudio/lib/libpulse${
+              if stdenv.isLinux then ".so.0" else ".0.dylib"
+            }"
+        '';
+      })
+    ];
+
     khanelinix = {
       cli-apps = {
         ncmpcpp = enabled;
