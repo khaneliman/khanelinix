@@ -14,7 +14,8 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      font-manager
+      # FIX: broken nixpkg
+      # font-manager
       fontpreview
     ];
 
