@@ -48,16 +48,20 @@ let
         # process each line of a commit as an individual commit
          split_commits = false
 
+
         # regex for parsing and grouping commits
          commit_parsers = [
            { message = "^.*: add", group = "New" },
+           { message = "^.*: init", group = "New" },
            { message = "^.*: support", group = "New" },
            { message = "^test", group = "New" },
-           { message = "^fix", group = "New" },
-           { message = "^.*: fix", group = "New" },
-           { message = "^.*", group = "Changed" },
+           { message = "^doc", group = "Documentation", default_scope = "other" },
+           { message = "^fix", group = "Fixes" },
+           { message = "^.*: fix", group = "Fixes" },
+           { message = "^.*: change", group = "Changed" },
            { message = "^.*: remove", group = "Removed" },
            { message = "^.*: delete", group = "Removed" },
+           { message = "^.*", group = "Changed" },
          ]
 
          # protect breaking changes from being skipped due to matching a skipping commit_parser
@@ -70,7 +74,7 @@ let
          tag_pattern = "v[0-9].*"
 
          # regex for skipping tags
-         skip_tags = "v0.1.0-beta.1"
+         # skip_tags = "v0.1.0-beta.1"
 
          # regex for ignoring tags
          ignore_tags = ""
