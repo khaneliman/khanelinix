@@ -22,20 +22,25 @@ in
       enable = true;
       package = hypridle.packages.${system}.hypridle;
 
-      lockCmd = "${getExe config.programs.hyprlock.package}";
-      afterSleepCmd = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms on";
+      settings = {
+        general = {
+          after_sleep_cmd = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms on";
+          ignore_dbus_inhibit = false;
+          lock_cmd = "${getExe config.programs.hyprlock.package}";
+        };
 
-      listeners = [
-        {
-          timeout = 900;
-          onTimeout = "${getExe config.programs.hyprlock.package}";
-        }
-        {
-          timeout = 1200;
-          onTimeout = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms off";
-          onResume = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms on";
-        }
-      ];
+        listener = [
+          {
+            timeout = 900;
+            on-timeout = "${getExe config.programs.hyprlock.package}";
+          }
+          {
+            timeout = 1200;
+            on-timeout = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms off";
+            on-resume = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms on";
+          }
+        ];
+      };
     };
   };
 }
