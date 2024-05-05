@@ -204,10 +204,23 @@
           src = ./.;
           hooks = {
             deadnix.enable = true;
+
+            git-cliff = {
+              enable = true;
+              excludes = [ "CHANGELOG.md" ];
+              language = "system";
+              pass_filenames = false;
+              entry = "${channels.nixpkgs.khanelinix.git-cliff}/bin/git-cliff";
+              description = "pre-commit hook for git-cliff";
+              fail_fast = true; # running hooks if this hook fails
+              verbose = true;
+            };
+
             nixfmt = {
               enable = true;
               package = channels.nixpkgs.nixfmt-rfc-style;
             };
+
             # prettier.enable = true;
             statix.enable = true;
           };
