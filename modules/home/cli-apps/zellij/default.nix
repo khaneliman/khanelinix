@@ -44,6 +44,8 @@ in
 
         on_force_close = "quit";
         pane_frames = true;
+        pane_viewport_serialization = true;
+        scrollback_lines_to_serialize = 1000;
         session_serialization = true;
 
         ui.pane_frames = {
