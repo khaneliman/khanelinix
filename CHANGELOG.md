@@ -3052,6 +3052,8 @@ This reverts commit aa86bb51e6169da2f9b485aa8f72511fd08bdeab.
 
 ### New
 
+- flake.nix: add misc hooks
+
 - flake.nix: add prettier hook
 
 - CHANGELOG.md: init
