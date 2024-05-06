@@ -4,6 +4,8 @@
 
 ### Changed
 
+- flake.nix: clean up formatter declaration
+
 - dynamic-island-helper: formatting
 
 - json: formatting
