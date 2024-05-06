@@ -15,7 +15,7 @@ in
           ##
 
           # Code
-          "3, on-created-empty:$term tmux a"
+          "3, on-created-empty:$term zellij"
           # Gaming
           "4, on-created-empty:steam"
           # Messaging
