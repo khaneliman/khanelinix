@@ -33,7 +33,11 @@
     # url = "git+file:///home/khaneliman/Documents/github/hypridle";
 
     # Hyprlock
-    hyprlock.url = "github:hyprwm/Hyprlock";
+    hyprlock = {
+      url = "github:hyprwm/Hyprlock";
+      # NOTE: required to prevent red screen on lock
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Hyprland
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1&rev=c7fbc30bfd64b2104006fef291f4c4bff537beb2";
