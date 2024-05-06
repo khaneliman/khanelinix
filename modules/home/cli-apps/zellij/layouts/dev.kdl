@@ -1,0 +1,66 @@
+layout {
+	// define default tab layout
+    default_tab_template {
+		// tab bar on the top
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+
+		// child tabs and panes
+		children
+
+		// status bar on the bottom
+		pane size=2 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+
+	  tab_template name="dev_tab" {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+
+        pane split_direction="Vertical" {
+          // NOTE: not sure what this even does... seems useless
+          //pane size="15%" name="Filetree" {
+          //    plugin location="zellij:strider"
+          //}
+          children
+        }
+
+        pane size=2 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+
+		pane_template name="term" {
+		    pane split_direction="horizontal" {
+          children
+          pane command="zsh" size="25%" name="Shell"
+        }
+    }
+
+		dev_tab name="Project"  focus=true {
+        term split_direction="vertical" {
+			      pane edit="./" name="Root"
+        }
+    }
+
+    tab name="Git" split_direction="horizontal" name="Git" {
+        pane {
+          command "lazygit"
+        }
+    }
+
+	  tab name="Files" split_direction="horizontal" name="Files" {
+        pane {
+          command "yazi"
+        }
+    }
+
+    tab name="Shell" split_direction="horizontal" name="Shell" {
+        pane {
+          command "zsh"
+        }
+    }
+}
