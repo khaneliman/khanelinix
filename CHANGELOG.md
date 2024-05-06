@@ -4,6 +4,8 @@
 
 ### Changed
 
+- flake.lock: update
+
 - chore: changelog update
 
 - flake.lock: update
@@ -3501,6 +3503,8 @@ This reverts commit 05a880d54c37997b325964d2a9b5e36d1f8668bd.
 
 
 ### Removed
+
+- hyprland: remove WLR_RENDERER
 
 - zellij: remove strider
 
