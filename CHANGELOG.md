@@ -4,6 +4,8 @@
 
 ### Changed
 
+- dynamic-island-helper: formatting
+
 - json: formatting
 
 - .github: formatting
