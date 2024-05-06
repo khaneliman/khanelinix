@@ -216,7 +216,15 @@
               clang-format.enable = true;
               clang-tidy.enable = true;
               # conform.enable = true;
-              deadnix.enable = true;
+
+              deadnix = {
+                enable = true;
+
+                settings = {
+                  edit = true;
+                };
+              };
+
               eslint = {
                 enable = true;
                 package = channels.nixpkgs.eslint_d;

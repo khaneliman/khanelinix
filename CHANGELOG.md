@@ -4,6 +4,8 @@
 
 ### Changed
 
+- chore: nix fmt
+
 - flake.nix: clean up formatter declaration
 
 - dynamic-island-helper: formatting
