@@ -4,6 +4,8 @@
 
 ### Changed
 
+- dynamic-island-helper: formatting
+
 - sketchyhelper: formatting
 
 - packages/git-cliff: refactor config
