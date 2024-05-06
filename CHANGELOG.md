@@ -4,6 +4,8 @@
 
 ### Changed
 
+- pre-commit-hook: deadnix edit
+
 - chore: nix fmt
 
 - flake.nix: clean up formatter declaration
