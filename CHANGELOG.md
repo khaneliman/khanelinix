@@ -4,6 +4,8 @@
 
 ### Changed
 
+- json: formatting
+
 - .github: formatting
 
 - pre-commit-hook: swap beautysh for shfmt
