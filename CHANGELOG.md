@@ -4,6 +4,8 @@
 
 ### Changed
 
+- rofi: formatting
+
 - dynamic-island-helper: formatting
 
 - sketchyhelper: formatting

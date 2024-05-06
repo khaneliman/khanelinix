@@ -76,7 +76,7 @@ cd "$workdir"
 # Creating gnome-shell-theme.gresource.xml with theme file list and add header
 echo '<?xml version="1.0" encoding="UTF-8"?>' >"$workdir/gnome-shell-theme.gresource.xml"
 echo '<gresources><gresource>' >>"$workdir/gnome-shell-theme.gresource.xml"
-for res_file in $(gresource list /usr/share/gnome-shell/gnome-shell-theme.gresource); do
+for res_file in "$(gresource list /usr/share/gnome-shell/gnome-shell-theme.gresource)"; do
 	# create dir for theme file inside temp dir
 	mkdir -p "$(dirname "$workdir$res_file")"
 	if [ "$res_file" != "/org/gnome/shell/theme/wallpaper-gdm.png" ]; then
