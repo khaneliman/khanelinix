@@ -4,6 +4,8 @@
 
 ### Changed
 
+- sketchyhelper: formatting
+
 - packages/git-cliff: refactor config
 
 - flake.nix: exclude flake.lock updates from changelog
