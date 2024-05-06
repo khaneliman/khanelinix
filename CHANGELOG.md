@@ -4,6 +4,8 @@
 
 ### Changed
 
+- .github: formatting
+
 - pre-commit-hook: swap beautysh for shfmt
 
 Matches the conform configuration
