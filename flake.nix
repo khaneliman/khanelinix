@@ -213,7 +213,6 @@
             in
             {
               actionlint.enable = true;
-              beautysh.enable = true;
               clang-format.enable = true;
               clang-tidy.enable = true;
               # conform.enable = true;
@@ -254,6 +253,7 @@
                 };
               };
 
+              shfmt.enable = true;
               statix.enable = true;
               # treefmt.enable = true;
             };

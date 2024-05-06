@@ -4,6 +4,8 @@
 
 ### Changed
 
+- set-gdm-wallpaper: formatting
+
 - rofi: formatting
 
 - dynamic-island-helper: formatting
