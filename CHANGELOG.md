@@ -4,6 +4,10 @@
 
 ### Changed
 
+- pre-commit-hook: swap beautysh for shfmt
+
+Matches the conform configuration
+
 - set-gdm-wallpaper: formatting
 
 - rofi: formatting

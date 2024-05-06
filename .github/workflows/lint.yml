@@ -1,7 +1,5 @@
-on: [ push ]
-
+on: [push]
 name: Lint Nix code
-
 jobs:
   statix:
     name: Lint code

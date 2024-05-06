@@ -6,5 +6,4 @@ updates:
       interval: "daily"
     commit-message:
       # Prefix all commit messages with "npm: "
-      prefix: ".github" 
-    
+      prefix: ".github"
