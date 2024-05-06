@@ -234,11 +234,12 @@
                 enable = true;
                 inherit fail_fast verbose;
 
-                description = "pre-commit hook for git-cliff";
+                always_run = true;
+                description = "pre-push hook for git-cliff";
                 excludes = excludes ++ [ "CHANGELOG.md" ];
                 entry = "${channels.nixpkgs.khanelinix.git-cliff}/bin/git-cliff";
                 language = "system";
-                pass_filenames = false;
+                stages = [ "pre-push" ];
               };
 
               luacheck.enable = true;
