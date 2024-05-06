@@ -4,6 +4,16 @@
 
 ### Changed
 
+- chore: changelog update
+
+- flake.lock: update
+
+- pre-commit-hook: git-cliff moved to pre-push
+
+- hyprland: workspace rule opens zellij
+
+- chore: deadnix
+
 - pre-commit-hook: deadnix edit
 
 - chore: nix fmt
