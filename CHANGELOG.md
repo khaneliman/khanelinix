@@ -1,701 +1,390 @@
- # Changelog
-
- ## [Unreleased]
-
-### Changed
-
-- zellij: update dev layout to open nvim dashboard
-
-- flake.lock: update
-
-- flake.lock: update
-
-- hyprland: use sddm again
-
-- flake.nix: unlock hyprland
-
-Accidentally left from troubleshooting
-
-- flake.nix: hyprlock follows nixpkgs
-
-Fix red screen of death
-
-- chore: changelog update
-
-- flake.lock: update
-
-- chore: changelog update
-
-- flake.lock: update
-
-- pre-commit-hook: git-cliff moved to pre-push
-
-- hyprland: workspace rule opens zellij
-
-- chore: deadnix
-
-- pre-commit-hook: deadnix edit
-
-- chore: nix fmt
-
-- flake.nix: clean up formatter declaration
-
-- dynamic-island-helper: formatting
-
-- json: formatting
-
-- .github: formatting
-
-- pre-commit-hook: swap beautysh for shfmt
-
-Matches the conform configuration
-
-- set-gdm-wallpaper: formatting
-
-- rofi: formatting
-
-- dynamic-island-helper: formatting
-
-- sketchyhelper: formatting
-
-- packages/git-cliff: refactor config
-
-- flake.nix: exclude flake.lock updates from changelog
-
-- .gitignore: ignore symlinked pre-commit config
-
-- devshell/default: cleanup
-
-- theme: change default package for system
-
-- flake.lock: update
-
-Disable font-manager until fixed
-
-- zellij: more detail to session resurrection
-
-- hypridle: migrate to home-manager module
-
-- hyprland: update terminal keybinds
-
-- zellij: enable session serialization
-
-- skhd: update terminal keybindings
-
-- wezterm: change term variable
-
-- flake.lock: update
-
-- direnv: silence output
-
-- nix/services: take ownership of logrotate and oomd
-
-- fwupd: set esp location
-
-- flake.lock: update
-
-- theme: fromyaml distinct log message
-
-- CORE: resolve conflict
-
-- cliphist: use home-manager module
-
-- steam: compat tools fix
-
-- gamescope: move to module
-
-- gamemode: renice tweaks
-
-- yubikey: move to hardware
-
-- chore: lint fix
-
-- flake.lock: update
-
-Resolved hyprland bug
-
-- nix: more tweaks
-
-- flake.nix: pin hyprland input to before breaking change
-
-https://github.com/hyprwm/Hyprland/issues/5849
-
-- flake.lock: update
-
-- mpd: disable playerctld
-
-Crashing nonstop
-
-- hyprland: reorg background apps
-
-- nixos/rgb: split modules
-
-- mpd: disable discord rpc
-
-- hyprland: move variables to home
-
-- hypridle: use flake pkg
-
-- hyprlock: use flake pkg
-
-- flake.lock: update
-
-- nix: misc tweaks
-
-- nix: documentation tweaks
-
-Might speed up rebuilds
-
-- chore: lint cleanup
-
-- khanelinix: test setting max-jobs
-
-- hyprland: refactor
-
-- flake.lock: more cleanup
-
-- flake.lock: update
-
-- sketchybar: set yabai external_bar on load
+  # Changelog
+
+  All notable changes to this project will be documented in this file.
+
+  ## [Unreleased]
+### Details
+#### Changed
+- CHANGELOG.md: update
+- Packages/git-cliff: update changelog generation
+- Neovim/treesitter: associate avsc with json by @khaneliman
+- Chore: changelog update by @khaneliman
+- Zellij: update dev layout to open nvim dashboard by @khaneliman
+- Flake.lock: update by @khaneliman
+- Flake.lock: update by @khaneliman
+- Hyprland: use sddm again by @khaneliman
+- Flake.nix: unlock hyprland
+
+Accidentally left from troubleshooting by @khaneliman
+- Flake.nix: hyprlock follows nixpkgs
+
+Fix red screen of death by @khaneliman
+- Chore: changelog update by @khaneliman
+- Flake.lock: update by @khaneliman
+- Chore: changelog update by @khaneliman
+- Flake.lock: update by @khaneliman
+- Pre-commit-hook: git-cliff moved to pre-push by @khaneliman
+- Hyprland: workspace rule opens zellij by @khaneliman
+- Chore: deadnix by @khaneliman
+- Pre-commit-hook: deadnix edit by @khaneliman
+- Chore: nix fmt by @khaneliman
+- Flake.nix: clean up formatter declaration by @khaneliman
+- Dynamic-island-helper: formatting by @khaneliman
+- Json: formatting by @khaneliman
+- .github: formatting by @khaneliman
+- Pre-commit-hook: swap beautysh for shfmt
+
+Matches the conform configuration by @khaneliman
+- Set-gdm-wallpaper: formatting by @khaneliman
+- Rofi: formatting by @khaneliman
+- Dynamic-island-helper: formatting by @khaneliman
+- Sketchyhelper: formatting by @khaneliman
+- Packages/git-cliff: refactor config by @khaneliman
+- Flake.nix: exclude flake.lock updates from changelog by @khaneliman
+- .gitignore: ignore symlinked pre-commit config by @khaneliman
+- Devshell/default: cleanup by @khaneliman
+- Theme: change default package for system by @khaneliman
+- Flake.lock: update
+
+Disable font-manager until fixed by @khaneliman
+- Zellij: more detail to session resurrection by @khaneliman
+- Hypridle: migrate to home-manager module by @khaneliman
+- Hyprland: update terminal keybinds by @khaneliman
+- Zellij: enable session serialization by @khaneliman
+- Skhd: update terminal keybindings by @khaneliman
+- Wezterm: change term variable by @khaneliman
+- Flake.lock: update by @khaneliman
+- Direnv: silence output by @khaneliman
+- Nix/services: take ownership of logrotate and oomd by @khaneliman
+- Fwupd: set esp location by @khaneliman
+- Flake.lock: update by @khaneliman
+- Theme: fromyaml distinct log message by @khaneliman
+- CORE: resolve conflict by @khaneliman
+- Cliphist: use home-manager module by @khaneliman
+- Steam: compat tools fix by @khaneliman
+- Gamescope: move to module by @khaneliman
+- Gamemode: renice tweaks by @khaneliman
+- Yubikey: move to hardware by @khaneliman
+- Chore: lint fix by @khaneliman
+- Flake.lock: update
+
+Resolved hyprland bug by @khaneliman
+- Nix: more tweaks by @khaneliman
+- Flake.nix: pin hyprland input to before breaking change
+
+https://github.com/hyprwm/Hyprland/issues/5849 by @khaneliman
+- Flake.lock: update by @khaneliman
+- Mpd: disable playerctld
+
+Crashing nonstop by @khaneliman
+- Hyprland: reorg background apps by @khaneliman
+- Nixos/rgb: split modules by @khaneliman
+- Mpd: disable discord rpc by @khaneliman
+- Hyprland: move variables to home by @khaneliman
+- Hypridle: use flake pkg by @khaneliman
+- Hyprlock: use flake pkg by @khaneliman
+- Flake.lock: update by @khaneliman
+- Nix: misc tweaks by @khaneliman
+- Nix: documentation tweaks
+
+Might speed up rebuilds by @khaneliman
+- Chore: lint cleanup by @khaneliman
+- Khanelinix: test setting max-jobs by @khaneliman
+- Hyprland: refactor by @khaneliman
+- Flake.lock: more cleanup by @khaneliman
+- Flake.lock: update by @khaneliman
+- Sketchybar: set yabai external_bar on load
 
 Usually yabai loads before sketchybar, allow sketchybar to configure
-yabai's external_bar height when it loads
+yabai's external_bar height when it loads by @khaneliman
+- Vscode: user settings
 
-- vscode: user settings
-
-Moving user settings from sync profile over.
-
-- zathura: clean up
-
-- ncmpcpp: qol improvements
-
-- hyprland: adjust grimblast binds
+Moving user settings from sync profile over. by @khaneliman
+- Zathura: clean up by @khaneliman
+- Ncmpcpp: qol improvements by @khaneliman
+- Hyprland: adjust grimblast binds
 
 More logical mappings to remember
-Also switch to hypr-contrib, fixes issues with nixpkg
-
-- hyprland: adjust grimblast binds
+Also switch to hypr-contrib, fixes issues with nixpkg by @khaneliman
+- Hyprland: adjust grimblast binds
 
 Can just notify from the script itself and can freeze for better
-screenshots
-
-- hyprland: use grimblast for all screenshots
-
-- neovim: disable settings dotnet root global
-
-- flake.lock: update
-
-- easyeffects: disable for now
-
-Finding it kinda annoying
-
-- yazi: highlight links and orphans
-
-- yazi: break up theme config
-
-- git: minor tweaks
-
-- comma: replace with nix-index-database
-
-- flake.lock: update
-
-- hyprpaper: use flake pkg to fix hypr-socket-watch
-
-- flake.lock: update
-
-- waybar: reduce tray padding
-
-- waybar: network format
-
-- waybar: modules cleanup
-
-- nixos/music: cleanup
-
-- nixos/video: clean up FIX todos
-
-- tray: move to separate module
-
-- udiskie: reenable
-
-- homes: consolidate nixcfg alias
-
-- khanelinix: use noisetorch
-
-- flake.lock: update
-
-- mpd: refactor
-
-- hyprland: cleanup package
-
-- Update README.md
-- wlroots: use polkit service module
-
-- wlroots: use clipboard service module
-
-- gtk: refactoring
-
-- hyprland: tweak launcher bindings
-
-- qt: reorg and add some packages
-
-- neovim: dont open minimap on load
-
-- swaync: tweaking ui and features
-
-- swaync: misc fixes
-
-- wlroots: clean up systemPackages
-
-- home-manager: backup existing files
-
-- networking: more refactoring
-
-- devShell/default: use nixpkgs nix-inspect
-
-- swaync: migrate to home-manager module
-
-- networking: refactor
-
-Trying NotAShelf config to see if it helps with my connectivity issues
-
-- flake.lock: update
-
-- chore: misc cleanup
-
-- neovim: use spectre module
-
-- khanelinix: use silentBoot
-
-- plymouth: use theme config values
-
-- nix: daemon priority adjustments
-
-- nix: gc cleanup more frequently
-
-- hardware: restructure gpu with nesting
-
-- hardware: restructure cpu with nesting
-
-- khanelilab: use intelcpu module
-
-- khanelinix/specialization: migrate nixos-hardware nvidia removal to flake
-
-- ssd: migrate nixos-hardware to flake
-
-- bluetooth: tweaks
-
-- pipewire: audio enable
-
-- amdcpu: migrate nixos-hardware to flake
-
-Trying to reduce external input dependencies.
-
-- amdgpu: migrate nixos-hardware to flake
-
-Trying to reduce external input dependencies.
-
-- home/theme: refactor cursor and icon
-
-Moving ownership of generic theme elements to theme module
-
-- wshowkeys: use module again
-
-- flake.lock: update
-
-- flake.lock: update
-
-- flake.lock: update
-
-- waybar: disable cava module
-
-audio glitches....
-
-- wlroots: nixpkgs-wayland wshowkeys
-
-- flake.lock: update
-
-- flake.lock: update
-
-- flake.lock: update
-
-- flake.lock: update
-
-Reduce amount of overlays
-
-- darwin: missed nixpkgs-fmt -> nixfmt-rfc-style
-
-- flake.lock: update
-
-- wshowkeys: use module
-
-- hyprland: disable scaling on xwayland
-
-- flake.lock: update
-
-- flake.lock: update
-
-- hyprland: refactor keybinds
-
-- khanelinix: boomer scaling
-
-- hyprland: setup advantage keybinds
-
-- zellij: disable for now
+screenshots by @khaneliman
+- Hyprland: use grimblast for all screenshots by @khaneliman
+- Neovim: disable settings dotnet root global by @khaneliman
+- Flake.lock: update by @khaneliman
+- Easyeffects: disable for now
+
+Finding it kinda annoying by @khaneliman
+- Yazi: highlight links and orphans by @khaneliman
+- Yazi: break up theme config by @khaneliman
+- Git: minor tweaks by @khaneliman
+- Comma: replace with nix-index-database by @khaneliman
+- Flake.lock: update by @khaneliman
+- Hyprpaper: use flake pkg to fix hypr-socket-watch by @khaneliman
+- Flake.lock: update by @khaneliman
+- Waybar: reduce tray padding by @khaneliman
+- Waybar: network format by @khaneliman
+- Waybar: modules cleanup by @khaneliman
+- Nixos/music: cleanup by @khaneliman
+- Nixos/video: clean up FIX todos by @khaneliman
+- Tray: move to separate module by @khaneliman
+- Udiskie: reenable by @khaneliman
+- Homes: consolidate nixcfg alias by @khaneliman
+- Khanelinix: use noisetorch by @khaneliman
+- Flake.lock: update by @khaneliman
+- Mpd: refactor by @khaneliman
+- Hyprland: cleanup package by @khaneliman
+- Update README.md by @khaneliman
+- Wlroots: use polkit service module by @khaneliman
+- Wlroots: use clipboard service module by @khaneliman
+- Gtk: refactoring by @khaneliman
+- Hyprland: tweak launcher bindings by @khaneliman
+- Qt: reorg and add some packages by @khaneliman
+- Neovim: dont open minimap on load by @khaneliman
+- Swaync: tweaking ui and features by @khaneliman
+- Swaync: misc fixes by @khaneliman
+- Wlroots: clean up systemPackages by @khaneliman
+- Home-manager: backup existing files by @khaneliman
+- Networking: more refactoring by @khaneliman
+- DevShell/default: use nixpkgs nix-inspect by @khaneliman
+- Swaync: migrate to home-manager module by @khaneliman
+- Networking: refactor
+
+Trying NotAShelf config to see if it helps with my connectivity issues by @khaneliman
+- Flake.lock: update by @khaneliman
+- Chore: misc cleanup by @khaneliman
+- Neovim: use spectre module by @khaneliman
+- Khanelinix: use silentBoot by @khaneliman
+- Plymouth: use theme config values by @khaneliman
+- Nix: daemon priority adjustments by @khaneliman
+- Nix: gc cleanup more frequently by @khaneliman
+- Hardware: restructure gpu with nesting by @khaneliman
+- Hardware: restructure cpu with nesting by @khaneliman
+- Khanelilab: use intelcpu module by @khaneliman
+- Khanelinix/specialization: migrate nixos-hardware nvidia removal to flake by @khaneliman
+- Ssd: migrate nixos-hardware to flake by @khaneliman
+- Bluetooth: tweaks by @khaneliman
+- Pipewire: audio enable by @khaneliman
+- Amdcpu: migrate nixos-hardware to flake
+
+Trying to reduce external input dependencies. by @khaneliman
+- Amdgpu: migrate nixos-hardware to flake
+
+Trying to reduce external input dependencies. by @khaneliman
+- Home/theme: refactor cursor and icon
+
+Moving ownership of generic theme elements to theme module by @khaneliman
+- Wshowkeys: use module again by @khaneliman
+- Flake.lock: update by @khaneliman
+- Flake.lock: update by @khaneliman
+- Flake.lock: update by @khaneliman
+- Waybar: disable cava module
+
+audio glitches.... by @khaneliman
+- Wlroots: nixpkgs-wayland wshowkeys by @khaneliman
+- Flake.lock: update by @khaneliman
+- Flake.lock: update by @khaneliman
+- Flake.lock: update by @khaneliman
+- Flake.lock: update
+
+Reduce amount of overlays by @khaneliman
+- Darwin: missed nixpkgs-fmt -> nixfmt-rfc-style by @khaneliman
+- Flake.lock: update by @khaneliman
+- Wshowkeys: use module by @khaneliman
+- Hyprland: disable scaling on xwayland by @khaneliman
+- Flake.lock: update by @khaneliman
+- Flake.lock: update by @khaneliman
+- Hyprland: refactor keybinds by @khaneliman
+- Khanelinix: boomer scaling by @khaneliman
+- Hyprland: setup advantage keybinds by @khaneliman
+- Zellij: disable for now
 
 Just got a new keyboard and trying to learn how to use existing bindings
-before learning an entire new workflow.
-
-- flake.lock: update
-
-- qt: platformtheme deprecation fix
-
-- flake.lock: update
-
-- hyprland: setup advantage keybinds
-
-- flake.lock: update
-
-- flake.lock: update
-
-- hyprland: explicit package reference from input
-
-- hyprland: hyprlock recovery key update
-
-- waybar: more firefox window-rewrites
-
-- flake.lock: update
-
-- neovim/tagbar: change toggle keymap
-
-- neovim/aerial: change toggle keymap
-
-- neovim: undotree init
-
-- flake.lock: update
-
-- flake.lock: update
-
-- yazi/plugins: credits
-
-- sketchybar/weather: change defaults
-
-- yazi/plugins: ouch for archive previews
-
-- sketchybar/weather: change defaults
-
-- flake.lock: update
-
-- yazi: openers with getExe
-
-- yazi: preloaders and previewers update
-
-- regreet: sway -> hyprland
-
-- flake.lock: update
-
-- yazi: keymap.toml -> nix
-
-- hyprland: use wezterm
-
-- flake.lock: update
-
-- yazi: theme use catppuccin.nix
-
-- yazi: theme.toml -> nix
-
-- yazi: move settings to separate file
-
-- yaba-helper: updates
-
-- hyprpaper: always restart
-
-- hyprland: gamemode script updates
-
-- git: move ignoreRevsFile to local config
+before learning an entire new workflow. by @khaneliman
+- Flake.lock: update by @khaneliman
+- Qt: platformtheme deprecation fix by @khaneliman
+- Flake.lock: update by @khaneliman
+- Hyprland: setup advantage keybinds by @khaneliman
+- Flake.lock: update by @khaneliman
+- Flake.lock: update by @khaneliman
+- Hyprland: explicit package reference from input by @khaneliman
+- Hyprland: hyprlock recovery key update by @khaneliman
+- Waybar: more firefox window-rewrites by @khaneliman
+- Flake.lock: update by @khaneliman
+- Neovim/tagbar: change toggle keymap by @khaneliman
+- Neovim/aerial: change toggle keymap by @khaneliman
+- Neovim: undotree init by @khaneliman
+- Flake.lock: update by @khaneliman
+- Flake.lock: update by @khaneliman
+- Yazi/plugins: credits by @khaneliman
+- Sketchybar/weather: change defaults by @khaneliman
+- Yazi/plugins: ouch for archive previews by @khaneliman
+- Sketchybar/weather: change defaults by @khaneliman
+- Flake.lock: update by @khaneliman
+- Yazi: openers with getExe by @khaneliman
+- Yazi: preloaders and previewers update by @khaneliman
+- Regreet: sway -> hyprland by @khaneliman
+- Flake.lock: update by @khaneliman
+- Yazi: keymap.toml -> nix by @khaneliman
+- Hyprland: use wezterm by @khaneliman
+- Flake.lock: update by @khaneliman
+- Yazi: theme use catppuccin.nix by @khaneliman
+- Yazi: theme.toml -> nix by @khaneliman
+- Yazi: move settings to separate file by @khaneliman
+- Yaba-helper: updates by @khaneliman
+- Hyprpaper: always restart by @khaneliman
+- Hyprland: gamemode script updates by @khaneliman
+- Git: move ignoreRevsFile to local config
 
 Throws error if file is missing... too much hassle to have global in
-current git state.
+current git state. by @khaneliman
+- Flake.lock: update by @khaneliman
+- Hyprland: misc cleanup by @khaneliman
+- Wezterm: warn_about_missing_glyphs=false by @khaneliman
+- Hyprland: disable kanshi by @khaneliman
+- Nixos/commong: disable tailscale by @khaneliman
+- Overlays/yabai: lint fix by @khaneliman
+- Flake.nix: lint fix by @khaneliman
+- .github/workflows: fmt match solution by @khaneliman
+- Tmux: set-titles by @khaneliman
+- Mini/starter: reorder recent files by @khaneliman
+- Khanelinix: boot permissions by @khaneliman
+- Zsh: tweak completions by @khaneliman
+- Flake.lock: update by @khaneliman
+- Yabai: 7.0.4 -> 7.1.0 by @khaneliman
+- Mini: replace startify with mini.starter by @khaneliman
+- Neorg: disable for now
 
-- flake.lock: update
+Errors and dont really use by @khaneliman
+- .git-blame-ignore-revs: update by @khaneliman
+- Chore: nixfmt solution by @khaneliman
+- Treewide: nixpkgs-fmt -> nixfmt-rfc-style by @khaneliman
+- Flake.lock: update by @khaneliman
+- Flake.lock: update by @khaneliman
+- Flake.lock: update by @khaneliman
+- Flake.lock: update by @khaneliman
+- Neotest: change mapping by @khaneliman
+- Flake.lock: update by @khaneliman
+- Hyprland: windowrules fix ryujinx by @khaneliman
+- Sops: update github access-token by @khaneliman
+- Flake.lock: update
 
-- hyprland: misc cleanup
-
-- wezterm: warn_about_missing_glyphs=false
-
-- hyprland: disable kanshi
-
-- nixos/commong: disable tailscale
-
-- overlays/yabai: lint fix
-
-- flake.nix: lint fix
-
-- .github/workflows: fmt match solution
-
-- tmux: set-titles
-
-- mini/starter: reorder recent files
-
-- khanelinix: boot permissions
-
-- zsh: tweak completions
-
-- flake.lock: update
-
-- yabai: 7.0.4 -> 7.1.0
-
-- mini: replace startify with mini.starter
-
-- neorg: disable for now
-
-Errors and dont really use
-
-- .git-blame-ignore-revs: update
-
-- chore: nixfmt solution
-
-- treewide: nixpkgs-fmt -> nixfmt-rfc-style
-
-- flake.lock: update
-
-- flake.lock: update
-
-- flake.lock: update
-
-- flake.lock: update
-
-- neotest: change mapping
-
-- flake.lock: update
-
-- hyprland: windowrules fix ryujinx
-
-- sops: update github access-token
-
-- flake.lock: update
-
-neotest error requiring nvim-nio
-
-- flake.lock: update
-
-- hyprland: systemd --all
-
-- Update README.md
-- tmux: terminal change to fix color issue in k9s
-
-- .git-blame-ignore-revs: update
-
-- chore: cleanup
-
-- chore: cleanup
-
-- firefox: move bypass-paywalls-clean to nur package
-
-- flake.lock: update
-
-- khanelinix: enable kubernetes tools
-
-- devshells/dotnet: update to support more dotnet dev
-
-- chore: lint cleanup
-
-- flake.lock: update
-
-- slack-term: create module
-
-- twitch-tui: create module
-
-- weather_config: move to waybar module
-
-- wakatime: move secret to neovim and vscode modules
-
-- fish: format functions
-
-- flake.lock: update
-
-- aliases: move gsed to shared
+neotest error requiring nvim-nio by @khaneliman
+- Flake.lock: update by @khaneliman
+- Hyprland: systemd --all by @khaneliman
+- Update README.md by @khaneliman
+- Tmux: terminal change to fix color issue in k9s by @khaneliman
+- .git-blame-ignore-revs: update by @khaneliman
+- Chore: cleanup by @khaneliman
+- Chore: cleanup by @khaneliman
+- Firefox: move bypass-paywalls-clean to nur package by @khaneliman
+- Flake.lock: update by @khaneliman
+- Khanelinix: enable kubernetes tools by @khaneliman
+- Devshells/dotnet: update to support more dotnet dev by @khaneliman
+- Chore: lint cleanup by @khaneliman
+- Flake.lock: update by @khaneliman
+- Slack-term: create module by @khaneliman
+- Twitch-tui: create module by @khaneliman
+- Weather_config: move to waybar module by @khaneliman
+- Wakatime: move secret to neovim and vscode modules by @khaneliman
+- Fish: format functions by @khaneliman
+- Flake.lock: update by @khaneliman
+- Aliases: move gsed to shared
 
 linux is already using this package for gsed, doesnt need to be
-conditional
-
-- user: nixre fix conflict
-
-- user: profile.png converted to actual png
-
-- hyprland: hyprlock immediate on keybind
-
-- user: migrate settings to home-manager
-
-- hyprlock: update theme
-
-- flake.lock: update
-
-- chore: lint cleanup
-
-- keymappings: take ownership of generic buffer commands
-
-- bufremove: handle remove all but current
-
-- flake.lock: update
-
-- neovim: /*lua*/ coverage
-
-- yabai: 7.0.3 -> 7.0.4
-
-- cmp: refine completion selection and insertion
-
-- nixvim: options => opts
-
-- lualine: winbar ignore aerial
-
-- flake.lock: update
-
-- treesitter: move all grammarPackages to neovim
-
-- chore: lint fix
-
-- flake.lock: update
-
-- hyprland: hyprlock unlock and relock keybind fix
-
-- conform: disable codespell
-
-Dumb behavior of breaking my source code on save...
-
-- sketchybar: format config
-
-- hyprland: try adding hyprlock focus fix keybind
-
-- neotest: safeguard adding rustaceanvim adapter
-
-- flake.lock: update
-
-- hyprland: allow session lock restore
-
-- hyprlock: hide cursor and ignore empty
-
-- rustaceanvim: tweaks
-
-- chore: cleanup
-
-- dap: try adding bashdb
-
-- dap: refactor
-
-- rustaceanvim: move to new module
-
-- neovim: dap wip
-
-- neovim: backspace works like expected
-
-- neovim: insert navigation keymaps
-
-- waybar: hyprland window-rewrite add minecraft
-
-- nvtop: split into nvtopPackages.<arch>
-
-- python: consolidate in home-manager
-
-- node: consolidate in home-manager
-
-- git: consolidate in home-manager
-
-- comma: move to home-manager
-
-- flake.nix: cleanup
-
-- flake.lock: update
-
-- flake.lock: update
-
-- flake.lock: update
-
-- chore: format fix
-
-- flake.lock: update
-
-- lualine: disable on certain buffers
-
-- lualine: cleanup buffer tabline
-
-- nixvim: use lualine for tabline
-
-- nixvim: move nvim-web-devicons
-
-- barbar: move keymappings to module
-
-- darwin: dock layout
-
-- flake.nix: disable neovim nightly, for now
-
-- nixvim: buffer format toggle keymap
-
-- chore: lint cleanup
-
-- nixvim: move project-nvim to new module
-
-- nixvim: move aerial telescope keymap to aerial module
-
-- nixvim: move noice telescope keymap to noice module
-
-- nixvim: refactoring add telescope integration
-
-- nixvim: notify and wilder -> noice
-
-- nixvim: use rustaceanvim instead of just rust-analyser lsp
-
-- flake.lock: update
-
-- flake.lock: update
-
-- hypr-socket-watch: use home-manager module
-
-- chore: lint
-
-- flake.nix: restructure inputs and overlays
-
-- darwin/home: v3 deprecation warning
-
-- nixvim: telescope keymaps moved and disable frecency
-
-- chore: deadnix cleanup
-
-- snowfall-lib: v3 migration
-
-- khanelinix: move kvm storage
-
-- flake.lock: update
-
-- hyprland: swap term bindings to match darwin
-
-- jankyborders: use upstreamed pkg
-
-- yabai: use upstreamed pkg
-
-- hypr_socket_watch: disable temporarily
-
-- nixvim: lsp-format conditional with conform
-
-- flake.lock: follow nixpkgs again
-
-- hypr_socket_watch: restructure dependencies calling
-
-- flake.lock: update
-
-- nixvim: treesitter add bicep grammar
-
-- flake.lock: update
-
-- skhd: cleanup executables
-
-- jankyborders: bordersrc nix expression
-
-- darwin: jankyborders brew -> nix
-
-- flake.nix: configure nix fmt
-
-- dependabot.yml: update
-- build(deps): bump cachix/install-nix-action from 25 to 26
+conditional by @khaneliman
+- User: nixre fix conflict by @khaneliman
+- User: profile.png converted to actual png by @khaneliman
+- Hyprland: hyprlock immediate on keybind by @khaneliman
+- User: migrate settings to home-manager by @khaneliman
+- Hyprlock: update theme by @khaneliman
+- Flake.lock: update by @khaneliman
+- Chore: lint cleanup by @khaneliman
+- Keymappings: take ownership of generic buffer commands by @khaneliman
+- Bufremove: handle remove all but current by @khaneliman
+- Flake.lock: update by @khaneliman
+- Neovim: /*lua*/ coverage by @khaneliman
+- Yabai: 7.0.3 -> 7.0.4 by @khaneliman
+- Cmp: refine completion selection and insertion by @khaneliman
+- Nixvim: options => opts by @khaneliman
+- Lualine: winbar ignore aerial by @khaneliman
+- Flake.lock: update by @khaneliman
+- Treesitter: move all grammarPackages to neovim by @khaneliman
+- Chore: lint fix by @khaneliman
+- Flake.lock: update by @khaneliman
+- Hyprland: hyprlock unlock and relock keybind fix by @khaneliman
+- Conform: disable codespell
+
+Dumb behavior of breaking my source code on save... by @khaneliman
+- Sketchybar: format config by @khaneliman
+- Hyprland: try adding hyprlock focus fix keybind by @khaneliman
+- Neotest: safeguard adding rustaceanvim adapter by @khaneliman
+- Flake.lock: update by @khaneliman
+- Hyprland: allow session lock restore by @khaneliman
+- Hyprlock: hide cursor and ignore empty by @khaneliman
+- Rustaceanvim: tweaks by @khaneliman
+- Chore: cleanup by @khaneliman
+- Dap: try adding bashdb by @khaneliman
+- Dap: refactor by @khaneliman
+- Rustaceanvim: move to new module by @khaneliman
+- Neovim: dap wip by @khaneliman
+- Neovim: backspace works like expected by @khaneliman
+- Neovim: insert navigation keymaps by @khaneliman
+- Waybar: hyprland window-rewrite add minecraft by @khaneliman
+- Nvtop: split into nvtopPackages.<arch> by @khaneliman
+- Python: consolidate in home-manager by @khaneliman
+- Node: consolidate in home-manager by @khaneliman
+- Git: consolidate in home-manager by @khaneliman
+- Comma: move to home-manager by @khaneliman
+- Flake.nix: cleanup by @khaneliman
+- Flake.lock: update by @khaneliman
+- Flake.lock: update by @khaneliman
+- Flake.lock: update by @khaneliman
+- Chore: format fix by @khaneliman
+- Flake.lock: update by @khaneliman
+- Lualine: disable on certain buffers by @khaneliman
+- Lualine: cleanup buffer tabline by @khaneliman
+- Nixvim: use lualine for tabline by @khaneliman
+- Nixvim: move nvim-web-devicons by @khaneliman
+- Barbar: move keymappings to module by @khaneliman
+- Darwin: dock layout by @khaneliman
+- Flake.nix: disable neovim nightly, for now by @khaneliman
+- Nixvim: buffer format toggle keymap by @khaneliman
+- Chore: lint cleanup by @khaneliman
+- Nixvim: move project-nvim to new module by @khaneliman
+- Nixvim: move aerial telescope keymap to aerial module by @khaneliman
+- Nixvim: move noice telescope keymap to noice module by @khaneliman
+- Nixvim: refactoring add telescope integration by @khaneliman
+- Nixvim: notify and wilder -> noice by @khaneliman
+- Nixvim: use rustaceanvim instead of just rust-analyser lsp by @khaneliman
+- Flake.lock: update by @khaneliman
+- Flake.lock: update by @khaneliman
+- Hypr-socket-watch: use home-manager module by @khaneliman
+- Chore: lint by @khaneliman
+- Flake.nix: restructure inputs and overlays by @khaneliman
+- Darwin/home: v3 deprecation warning by @khaneliman
+- Nixvim: telescope keymaps moved and disable frecency by @khaneliman
+- Chore: deadnix cleanup by @khaneliman
+- Snowfall-lib: v3 migration by @khaneliman
+- Khanelinix: move kvm storage by @khaneliman
+- Flake.lock: update by @khaneliman
+- Hyprland: swap term bindings to match darwin by @khaneliman
+- Jankyborders: use upstreamed pkg by @khaneliman
+- Yabai: use upstreamed pkg by @khaneliman
+- Hypr_socket_watch: disable temporarily by @khaneliman
+- Nixvim: lsp-format conditional with conform by @khaneliman
+- Flake.lock: follow nixpkgs again by @khaneliman
+- Hypr_socket_watch: restructure dependencies calling by @khaneliman
+- Flake.lock: update by @khaneliman
+- Nixvim: treesitter add bicep grammar by @khaneliman
+- Flake.lock: update by @khaneliman
+- Skhd: cleanup executables by @khaneliman
+- Jankyborders: bordersrc nix expression by @khaneliman
+- Darwin: jankyborders brew -> nix by @khaneliman
+- Flake.nix: configure nix fmt by @khaneliman
+- Dependabot.yml: update by @khaneliman
+- Build(deps): bump cachix/install-nix-action from 25 to 26
 
 Bumps [cachix/install-nix-action](https://github.com/cachix/install-nix-action) from 25 to 26.
 - [Release notes](https://github.com/cachix/install-nix-action/releases)
@@ -708,126 +397,69 @@ updated-dependencies:
   update-type: version-update:semver-major
 ...
 
-Signed-off-by: dependabot[bot] <support@github.com>
-- flake.lock: update
+Signed-off-by: dependabot[bot] <support@github.com> by @dependabot[bot] in [#84](https://github.com/khaneliman/khanelinix/pull/84)
+- Flake.lock: update by @khaneliman
+- Sketchybar: cpu color fix by @khaneliman
+- Sketchybar: wifi popup fix and add details by @khaneliman
+- Sketchybar: network use mach helper by @khaneliman
+- Sketchyhelper: felix implementation and cpu update by @khaneliman
+- Flake.lock: update by @khaneliman
+- Theme: use capitalize function
 
-- sketchybar: cpu color fix
-
-- sketchybar: wifi popup fix and add details
-
-- sketchybar: network use mach helper
-
-- sketchyhelper: felix implementation and cpu update
-
-- flake.lock: update
-
-- theme: use capitalize function
-
-Seems to be a catppuccin specific thing, though... need to break theme out into separate modules probably.
-
-- sketchybar: 2.20.1-unstable -> 2.21.0
-
-- yabai: 6.0.15 -> 7.0.2
-
-- flake.lock: update
-
-- hypridle: package set to flake output
-
-- hyprlock: package set to flake output
-
-- flake.lock: hyprland flakes dont follow nixpkgs
-
-- chore: lint fix
-
-- hyprpaper: use flake module
-
-- nixvim: project-nvim telescope deprecation fix
-
-- flake.lock: update
-
-- ncspot: move to music suite
-
-- mpd: hide behind linux check
-
-- flake.lock: update
-
-- Update README.md
-- khanelinix: use sudo-rs
-
-- flake.lock: update
-
-- nixvim: dap
-
-- nixvim: telescope keybinding updates
-
-- nixvim: try conform-nvim
-
-- nixvim: neotree open on first buffer
-
-- nixvim: show neo-tree on buffread
-
-- nixvim: open minimap on buffread
-
-- nixvim: cleanup keymapping conflicts
-
-- nixvim: move keymappings closer to plugins
-
-- nixvim: neo-tree visible hidden
-
-- chore: consolidate nixvim plugins to plugins folder
-
-- nixvim: nvim-colorizer keymapping and tweak
-
-- nixvim: neo-tree tweaks
-
-- nixvim: barbar tweak
-
-- yazi: 0.2.3 -> 0.2.4
-
-- Update README.md
-- chore: cleanup
-
-- yazi: border style
-
-- yazi: tab keybinding updates
-
-- ranger: commit bump
-
-- yazi: move preset overrides to plugins folders
-
-- yazi: keymap.toml taplo formatting
-
-- nixvim: enable taplo lsp for toml
-
-- yazi: plugins add smart-enter
-
-- nixvim: project-nvim enable explicitly
-
-- nixvim: startify tweaks
-
-- nixvim: telescope project-nvim
-
-- nixvim: telescope extensions added
-
-- nixvim: lsp ccls update and disable clangd
-
-- flake.lock: update
-
-- nixvim: rust-analyzer updates
-
-- flake.lock: update
-
-- yabai: cleanup old border settings
-
-- darwin: common suite tools
-
-- fastfetch: clean up configs
-
-- sketchybar: bump overlay commit
-
-- flake.lock: update
-
-- build(deps): bump DeterminateSystems/update-flake-lock from 20 to 21
+Seems to be a catppuccin specific thing, though... need to break theme out into separate modules probably. by @khaneliman
+- Sketchybar: 2.20.1-unstable -> 2.21.0 by @khaneliman
+- Yabai: 6.0.15 -> 7.0.2 by @khaneliman
+- Flake.lock: update by @khaneliman
+- Hypridle: package set to flake output by @khaneliman
+- Hyprlock: package set to flake output by @khaneliman
+- Flake.lock: hyprland flakes dont follow nixpkgs by @khaneliman
+- Chore: lint fix by @khaneliman
+- Hyprpaper: use flake module by @khaneliman
+- Nixvim: project-nvim telescope deprecation fix by @khaneliman
+- Flake.lock: update by @khaneliman
+- Ncspot: move to music suite by @khaneliman
+- Mpd: hide behind linux check by @khaneliman
+- Flake.lock: update by @khaneliman
+- Update README.md by @khaneliman
+- Khanelinix: use sudo-rs by @khaneliman
+- Flake.lock: update by @khaneliman
+- Nixvim: dap by @khaneliman
+- Nixvim: telescope keybinding updates by @khaneliman
+- Nixvim: try conform-nvim by @khaneliman
+- Nixvim: neotree open on first buffer by @khaneliman
+- Nixvim: show neo-tree on buffread by @khaneliman
+- Nixvim: open minimap on buffread by @khaneliman
+- Nixvim: cleanup keymapping conflicts by @khaneliman
+- Nixvim: move keymappings closer to plugins by @khaneliman
+- Nixvim: neo-tree visible hidden by @khaneliman
+- Chore: consolidate nixvim plugins to plugins folder by @khaneliman
+- Nixvim: nvim-colorizer keymapping and tweak by @khaneliman
+- Nixvim: neo-tree tweaks by @khaneliman
+- Nixvim: barbar tweak by @khaneliman
+- Yazi: 0.2.3 -> 0.2.4 by @khaneliman
+- Update README.md by @khaneliman
+- Chore: cleanup by @khaneliman
+- Yazi: border style by @khaneliman
+- Yazi: tab keybinding updates by @khaneliman
+- Ranger: commit bump by @khaneliman
+- Yazi: move preset overrides to plugins folders by @khaneliman
+- Yazi: keymap.toml taplo formatting by @khaneliman
+- Nixvim: enable taplo lsp for toml by @khaneliman
+- Yazi: plugins add smart-enter by @khaneliman
+- Nixvim: project-nvim enable explicitly by @khaneliman
+- Nixvim: startify tweaks by @khaneliman
+- Nixvim: telescope project-nvim by @khaneliman
+- Nixvim: telescope extensions added by @khaneliman
+- Nixvim: lsp ccls update and disable clangd by @khaneliman
+- Flake.lock: update by @khaneliman
+- Nixvim: rust-analyzer updates by @khaneliman
+- Flake.lock: update by @khaneliman
+- Yabai: cleanup old border settings by @khaneliman
+- Darwin: common suite tools by @khaneliman
+- Fastfetch: clean up configs by @khaneliman
+- Sketchybar: bump overlay commit by @khaneliman
+- Flake.lock: update by @khaneliman
+- Build(deps): bump DeterminateSystems/update-flake-lock from 20 to 21
 
 Bumps [DeterminateSystems/update-flake-lock](https://github.com/determinatesystems/update-flake-lock) from 20 to 21.
 - [Release notes](https://github.com/determinatesystems/update-flake-lock/releases)
@@ -840,241 +472,127 @@ updated-dependencies:
   update-type: version-update:semver-major
 ...
 
-Signed-off-by: dependabot[bot] <support@github.com>
-- chore: nixpkgs-wayland fix upstreamed, use it again
-
-- chore: flake lock update
-
-- chore: cleanup old sketchybar config
-
-- sketchybar: network cleanup
-
-- chore: flake lock update
-
-- sketchybar: spaces module cleanup
-
-- sketchybar: apple module cleanup
-
-- sketchybar: today module cleanup
-
-- sketchybar: stats animation
-
-- sketchybar: commit bump
-
-- sketchybar: bluetooth add system_woke subscription
-
-- sketchybar: wifi module cleanup
-
-- sketchybar: volume module cleanup
-
-- chore: flake lock update
-
-- sketchybar: github module cleanup
-
-- sketchybar: bluetooth module cleanup
-
-- sketchybar: battery module cleanup
-
-- sketchybar: brew fixes
-
-- chore: neovim-nightly follows nixpkgs
-
-- chore: flake lock update
-
-- chore: lint cleanup
-
-- sketchybar: more cleanup
-
-- sketchybar: cleanup
-
-- sketchybar: more right click refreshes
-
-- sketchybar: popup toggle util
-
-- sketchybar: enable right click refreshes
-
-- sketchybar: reenable hotload
-
-- sketchybar: update_freq tweaks
-
-- sketchybar: cpu mach_helper
-
-- sketchybar: overlay commit bump
-
-- sketchybar: sketchybar.so check instead of directory check
-
-- sketchybar: disable volume osd
-
-- sketchybar: disable hotload trial
-
-- sketchybar: use sbar.exec callbacks
-
-- sketchybar: use sbarlua
-
-- sketchybar: 2.20.1 -> master
-
-- neovim: todoTelescope keybind update
-
-- chore: flake lock update
-
-- sketchybar: helper compiles
-
-- sketchybar: clean up source paths
-
-- chore: flake lock update
-
-- yabai: 6.0.12 -> 6.0.15
-
-- hyprlock: use screenshot with blur
-
-- hyprlock: layout update
-
-- hyprlock: tweak with new home-manager module updates
-
-- chore: clean up flake input forks
-
-- hyprland: swaylock -> hyprlock
-
+Signed-off-by: dependabot[bot] <support@github.com> by @dependabot[bot] in [#82](https://github.com/khaneliman/khanelinix/pull/82)
+- Chore: nixpkgs-wayland fix upstreamed, use it again by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: cleanup old sketchybar config by @khaneliman
+- Sketchybar: network cleanup by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Sketchybar: spaces module cleanup by @khaneliman
+- Sketchybar: apple module cleanup by @khaneliman
+- Sketchybar: today module cleanup by @khaneliman
+- Sketchybar: stats animation by @khaneliman
+- Sketchybar: commit bump by @khaneliman
+- Sketchybar: bluetooth add system_woke subscription by @khaneliman
+- Sketchybar: wifi module cleanup by @khaneliman
+- Sketchybar: volume module cleanup by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Sketchybar: github module cleanup by @khaneliman
+- Sketchybar: bluetooth module cleanup by @khaneliman
+- Sketchybar: battery module cleanup by @khaneliman
+- Sketchybar: brew fixes by @khaneliman
+- Chore: neovim-nightly follows nixpkgs by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: lint cleanup by @khaneliman
+- Sketchybar: more cleanup by @khaneliman in [#81](https://github.com/khaneliman/khanelinix/pull/81)
+- Sketchybar: cleanup by @khaneliman
+- Sketchybar: more right click refreshes by @khaneliman
+- Sketchybar: popup toggle util by @khaneliman
+- Sketchybar: enable right click refreshes by @khaneliman
+- Sketchybar: reenable hotload by @khaneliman
+- Sketchybar: update_freq tweaks by @khaneliman
+- Sketchybar: cpu mach_helper by @khaneliman
+- Sketchybar: overlay commit bump by @khaneliman
+- Sketchybar: sketchybar.so check instead of directory check by @khaneliman
+- Sketchybar: disable volume osd by @khaneliman
+- Sketchybar: disable hotload trial by @khaneliman
+- Sketchybar: use sbar.exec callbacks by @khaneliman
+- Sketchybar: use sbarlua by @khaneliman
+- Sketchybar: 2.20.1 -> master by @khaneliman
+- Neovim: todoTelescope keybind update by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Sketchybar: helper compiles by @khaneliman
+- Sketchybar: clean up source paths by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Yabai: 6.0.12 -> 6.0.15 by @khaneliman
+- Hyprlock: use screenshot with blur by @khaneliman
+- Hyprlock: layout update by @khaneliman
+- Hyprlock: tweak with new home-manager module updates by @khaneliman
+- Chore: clean up flake input forks by @khaneliman
+- Hyprland: swaylock -> hyprlock by @khaneliman
 - Revert "waybar: go back to nixpkgs-wayland"
 
 This reverts commit 93e0343e744c8774b2b3ceed822d154321f1a84f.
-Nixpkgs-wayland is currently not updating because of failing packages. Readd after its updated.
-
-- waybar: go back to nixpkgs-wayland
-
-- chore: flake lock update
-
-- chore: flake lock update
-
-- waybar: use new persistent workspace feature branch
-
-- chore: lint fixes
-
-- chore: flake lock update and workarounds for broken nixos-unstable and nixvim
-
-- hypridle: use flake pkg
-
-- hypridle: use hm-module from flake
-
-- hyprland: use new hypridle instead of swayidle
-
-- yabai: 6.0.11 -> 6.0.12
-
-- regreet: use nixpkgs-wayland sway
-
-- wlroots: wl-screenrec and wlr-randr use nixpkgs-wayland
-
-- swaylock-effects: use nixpkgs-wayland
-
-- firefox: bpc latest instead of versioned
-
-- chore: flake lock update
-
-- chore: flake lock update
-
-- nixvim: tagbar extraConfig -> settings
-
-- chore: flake lock update
-
-- nixvim: startify header update
-
-- nixvim: manual todo matching -> todo-comments plugin
-
-- dynamic-island-helper: create nix derivation
-
-- sketchyhelper: create nix derivation
-
-- chore: flake lock update
-
-- yabai: 6.0.7 -> 6.0.11
-
-- yazi: keymap update
-
-- chore: flake lock update
-
-- chore: sketchybar bump
-
-- chore: flake lock update
-
-- chore: flake lock update
-
-- lint: cleanup
-
-- nixvim: update which-key sections
-
-- nixvim: neo-tree bump width
-
-- feat: nixvim add notify and toggle formatting keymap
-
-- refactor: cleanup ripgrep dependency
-
-- refactor: neo-tree tweaks
-
-- chore: disable wezterm building on wsl home
-
-- feat: nixvim completions added
-
-- feat: nixvim add wilder
-
-- refactor: nixvim remove tabnine
-
-- feat: nixvim toggleterm lazygit
-
-- refactor: nixvim keymappings support optional attributes
-
-- refactor: nixvim floatterm -> toggleterm
-
-- chore: nixvim keymappings
-
-- refactor: manual imports -> import non default nix files
-
-- refactor: nixvim move gitsigns into file
-
-- chore: update telescope keymappings
-
-- chore: cleanup old nvim config
-
-- feat: lsp-format all and fix nix
-
-- refactor: codeium-vim -> codeium.nvim
-
-- feat: nixvim add codeium
-
-- feat: nixvim add lsp servers
-
-- feat: sketchybar 2.20.0
-
-- chore: deadnix cleanup
-
-- feat: nixvim keymappings
-
-- feat: nixvim add wakatime
-
-- feat: nixvim general options
-
-- feat: nixvim
-
-- feat: yabai 6.0.7
-
-- chore: flake lock update
-
-- feat: git rebase again
-
-- chore: update k9s home-manager config
-
-- feat: waybar add systemd-failed-units
-
-- chore: bump dotnet sdk version neovim
-
-- chore: flake lock update and workarounds
-
-- chore: flake lock update
-
-- chore: flake lock update
-
-Add overlays to compensate for broken packages.
-
-- chore(deps): bump cachix/cachix-action from 13 to 14
+Nixpkgs-wayland is currently not updating because of failing packages. Readd after its updated. by @khaneliman
+- Waybar: go back to nixpkgs-wayland by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Waybar: use new persistent workspace feature branch by @khaneliman
+- Chore: lint fixes by @khaneliman
+- Chore: flake lock update and workarounds for broken nixos-unstable and nixvim by @khaneliman
+- Hypridle: use flake pkg by @khaneliman
+- Hypridle: use hm-module from flake by @khaneliman
+- Hyprland: use new hypridle instead of swayidle by @khaneliman
+- Yabai: 6.0.11 -> 6.0.12 by @khaneliman
+- Regreet: use nixpkgs-wayland sway by @khaneliman
+- Wlroots: wl-screenrec and wlr-randr use nixpkgs-wayland by @khaneliman
+- Swaylock-effects: use nixpkgs-wayland by @khaneliman
+- Firefox: bpc latest instead of versioned by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Nixvim: tagbar extraConfig -> settings by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Nixvim: startify header update by @khaneliman
+- Nixvim: manual todo matching -> todo-comments plugin by @khaneliman
+- Dynamic-island-helper: create nix derivation by @khaneliman
+- Sketchyhelper: create nix derivation by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Yabai: 6.0.7 -> 6.0.11 by @khaneliman
+- Yazi: keymap update by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: sketchybar bump by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Lint: cleanup by @khaneliman
+- Nixvim: update which-key sections by @khaneliman
+- Nixvim: neo-tree bump width by @khaneliman
+- Feat: nixvim add notify and toggle formatting keymap by @khaneliman
+- Refactor: cleanup ripgrep dependency by @khaneliman
+- Refactor: neo-tree tweaks by @khaneliman
+- Chore: disable wezterm building on wsl home by @khaneliman
+- Feat: nixvim completions added by @khaneliman
+- Feat: nixvim add wilder by @khaneliman
+- Refactor: nixvim remove tabnine by @khaneliman
+- Feat: nixvim toggleterm lazygit by @khaneliman
+- Refactor: nixvim keymappings support optional attributes by @khaneliman
+- Refactor: nixvim floatterm -> toggleterm by @khaneliman
+- Chore: nixvim keymappings by @khaneliman
+- Refactor: manual imports -> import non default nix files by @khaneliman
+- Refactor: nixvim move gitsigns into file by @khaneliman
+- Chore: update telescope keymappings by @khaneliman
+- Chore: cleanup old nvim config by @khaneliman
+- Feat: lsp-format all and fix nix by @khaneliman
+- Refactor: codeium-vim -> codeium.nvim by @khaneliman
+- Feat: nixvim add codeium by @khaneliman
+- Feat: nixvim add lsp servers by @khaneliman
+- Feat: sketchybar 2.20.0 by @khaneliman
+- Chore: deadnix cleanup by @khaneliman
+- Feat: nixvim keymappings by @khaneliman in [#73](https://github.com/khaneliman/khanelinix/pull/73)
+- Feat: nixvim add wakatime by @khaneliman
+- Feat: nixvim general options by @khaneliman
+- Feat: nixvim by @khaneliman
+- Feat: yabai 6.0.7 by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Feat: git rebase again by @khaneliman
+- Chore: update k9s home-manager config by @khaneliman
+- Feat: waybar add systemd-failed-units by @khaneliman
+- Chore: bump dotnet sdk version neovim by @khaneliman
+- Chore: flake lock update and workarounds by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: flake lock update
+
+Add overlays to compensate for broken packages. by @khaneliman
+- Chore(deps): bump cachix/cachix-action from 13 to 14
 
 Bumps [cachix/cachix-action](https://github.com/cachix/cachix-action) from 13 to 14.
 - [Release notes](https://github.com/cachix/cachix-action/releases)
@@ -1087,8 +605,8 @@ updated-dependencies:
   update-type: version-update:semver-major
 ...
 
-Signed-off-by: dependabot[bot] <support@github.com>
-- chore(deps): bump cachix/install-nix-action from 24 to 25
+Signed-off-by: dependabot[bot] <support@github.com> by @dependabot[bot] in [#70](https://github.com/khaneliman/khanelinix/pull/70)
+- Chore(deps): bump cachix/install-nix-action from 24 to 25
 
 Bumps [cachix/install-nix-action](https://github.com/cachix/install-nix-action) from 24 to 25.
 - [Release notes](https://github.com/cachix/install-nix-action/releases)
@@ -1101,100 +619,54 @@ updated-dependencies:
   update-type: version-update:semver-major
 ...
 
-Signed-off-by: dependabot[bot] <support@github.com>
-- feat: yabai 6.0.4 -> 6.0.6
-
-- chore: flake lock update
-
-- chore: waybar overlay changed to upstream
-
-- feat: waybar overlay for unreleased fix
-
-- chore: flake lock update
-
-- chore: white space cleanup
-
-- chore: flake lock update
-
-- feat: yabai 6.0.4
-
-- chore: minor firefox userchrome styling setup
-
-- refactor: darwin remove alacritty
-
-- chore: flake lock update
-
-- feat: firefox add browser toolbox
-
-- refactor: clean up userchrome
-
-- feat: sidebery instead of tabcenter
-
-- feat: firefox gpu acceleration and hardware decoding options
-
-- feat: khanelimac firefox battery tweaks
-
-- chore: flake lock update
-
-- chore: sketchybar.h update to latest
-
-- chore: clean up overlays
-
-- chore: flake lock update
-
-- chore: wezterm update
-
-- chore: sketchybar restart dynamic island on start
-
-- chore: homebrew tap cleanup - api default support
-
-- chore: flake lock update
-
-- feat: dotnet devshell
-
-- feat: angular devshell
-
-- chore: flake lock update
-
-- refactor: sway use package option
-
-- refactor: wlogout nixos -> home-manager
-
-- chore: flake lock update
-
-- chore: deadnix
-
-- chore: cava pkgs.emptyDirectory instead of null
-
-- chore: flake lock update
-
-- chore: clean up pinentry warnings
-
-- chore: flake lock update
-
-- feat: waybar libre office icons
-
-- refactor: git workaround
-
-- refactor: cdrom group using user config option
-
-- refactor: use gerg spicetify
-
-- refactor: use catppuccin pkg qt theme file
-
-- refactor: git changes
-
-- chore: flake lock update
-
-- chore: comment out systems.modules.home
-
-- chore: flake lock update
-
-- chore: update sops.yaml
-
-- wip
-
-- chore(deps): bump cachix/install-nix-action from 23 to 24 (#60)
+Signed-off-by: dependabot[bot] <support@github.com> by @dependabot[bot] in [#71](https://github.com/khaneliman/khanelinix/pull/71)
+- Feat: yabai 6.0.4 -> 6.0.6 by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: waybar overlay changed to upstream by @khaneliman
+- Feat: waybar overlay for unreleased fix by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: white space cleanup by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Feat: yabai 6.0.4 by @khaneliman
+- Chore: minor firefox userchrome styling setup by @khaneliman
+- Refactor: darwin remove alacritty by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Feat: firefox add browser toolbox by @khaneliman
+- Refactor: clean up userchrome by @khaneliman
+- Feat: sidebery instead of tabcenter by @khaneliman
+- Feat: firefox gpu acceleration and hardware decoding options by @khaneliman
+- Feat: khanelimac firefox battery tweaks by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: sketchybar.h update to latest by @khaneliman
+- Chore: clean up overlays by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: wezterm update by @khaneliman
+- Chore: sketchybar restart dynamic island on start by @khaneliman
+- Chore: homebrew tap cleanup - api default support by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Feat: dotnet devshell by @khaneliman
+- Feat: angular devshell by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Refactor: sway use package option by @khaneliman
+- Refactor: wlogout nixos -> home-manager by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: deadnix by @khaneliman
+- Chore: cava pkgs.emptyDirectory instead of null by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: clean up pinentry warnings by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Feat: waybar libre office icons by @khaneliman
+- Refactor: git workaround by @khaneliman
+- Refactor: cdrom group using user config option by @khaneliman in [#66](https://github.com/khaneliman/khanelinix/pull/66)
+- Refactor: use gerg spicetify by @khaneliman
+- Refactor: use catppuccin pkg qt theme file by @khaneliman
+- Refactor: git changes by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: comment out systems.modules.home by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: update sops.yaml by @khaneliman
+- Wip by @khaneliman
+- Chore(deps): bump cachix/install-nix-action from 23 to 24 (#60)
 
 Bumps [cachix/install-nix-action](https://github.com/cachix/install-nix-action) from 23 to 24.
 - [Release notes](https://github.com/cachix/install-nix-action/releases)
@@ -1208,8 +680,8 @@ updated-dependencies:
 ...
 
 Signed-off-by: dependabot[bot] <support@github.com>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-- chore(deps): bump cachix/cachix-action from 12 to 13 (#59)
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com> by @dependabot[bot] in [#60](https://github.com/khaneliman/khanelinix/pull/60)
+- Chore(deps): bump cachix/cachix-action from 12 to 13 (#59)
 
 Bumps [cachix/cachix-action](https://github.com/cachix/cachix-action) from 12 to 13.
 - [Release notes](https://github.com/cachix/cachix-action/releases)
@@ -1223,8 +695,8 @@ updated-dependencies:
 ...
 
 Signed-off-by: dependabot[bot] <support@github.com>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-- chore(deps): bump actions/labeler from 4 to 5 (#58)
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com> by @dependabot[bot] in [#59](https://github.com/khaneliman/khanelinix/pull/59)
+- Chore(deps): bump actions/labeler from 4 to 5 (#58)
 
 Bumps [actions/labeler](https://github.com/actions/labeler) from 4 to 5.
 - [Release notes](https://github.com/actions/labeler/releases)
@@ -1238,177 +710,94 @@ updated-dependencies:
 ...
 
 Signed-off-by: dependabot[bot] <support@github.com>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-- chore: disable nix flake check for now
-
-- chore: lint fix
-
-- chore: flake lock update
-
-- refactor: move betterdiscord theme to home-manager
-
-- refactor: cleanup khanelinix services
-
-- refactor: nix-ld -> nix-ld-rs
-
-- chore: flake lock update and remove overlay
-
-- chore: lint cleanup
-
-- chore: flake lock update
-
-- refactor: move cava to home-manager module
-
-- chore: flake lock update
-
-- refactor: go back to swaylock-effects (correct fork)
-
-- chore: deadnix cleanup
-
-- refactor: swayidle use nixpkgs-wayland
-
-- refactor: wlroots suite use nixpkgs-wayland
-
-- refactor: use nixpkgs-wayland wlogout
-
-- refactor: nixify qt config
-
-- refactor: move hyprland polish to appendConfig
-
-- refactor: gtk reorganize
-
-- chore: cleanup remaining sfmono
-
-- refactor: move displays.conf to prependConfig hyprland
-
-- feat: hyprland numlock by default
-
-- chore: wezterm bump
-
-- chore: cleanup gitignore result
-
-- chore: cleanup overlay after nixpkgs update
-
-- refactor: try upstream swaylock again
-
-- refactor: try locking swaylock differently
-
-- refactor: use new firefox policies option
-
-- chore: flake lock update
-
-- refactor: gnome firefox support
-
-- refactor: move firefox config to home module
-
-- chore: Remove dead code (#54)
-
-Co-authored-by: khaneliman <khaneliman@users.noreply.github.com>
-- chore: flake lock update
-
-- refactor: argon -> neon
-
-- feat: monaspace nerd font
-
-- chore: flake lock update
-
-- chore: hyprland environment variable update
-
-- chore: flake lock update
-
-- feat: replace radeontop with amdgpu_top
-
-- feat: file manager updates
-
-- chore: flake lock update
-
-- chore: misc mac cleanup
-
-- chore: flake lock update
-
-- chore: lsp language comments for nix expressions
-
-- chore: networking tweaks
-
-- chore: cleanup amdgpu
-
-- chore: 1password-gui stable
-
-- chore: flake lock update
-
-- chore: manual dynamic island cleanup
-
-- chore: lint fix
-
-- chore: flake lock update
-
-- refactor: sketchybar theme
-
-- feat: yazi catppuccin theme
-
-- feat: yazi layout customization
-
-- chore: dynamic island sketchybar update
-
-- chore: cleanup sketchybar colors.sh usage
-
-- refactor: tweak caprine styling more
-
-- feat: jankyborders homebrew
-
-- chore: flake lock update and workarounds for broken packages
-
-- feat: wezterm git package
-
-- feat: multiple neovim configs
-
-- chore: deadnix
-
-- chore: flake lock update
-
-- feat: macos overlays until nixpkgs updated
-
-- feat: monaspace font
-
-- feat: rofi enhancements
-
-- chore: flake lock update
-
-- chore: flake lock update and fastfetch workaround
-
-- feat: nvidialess specialization
-
-- chore: flake lock update
-
-- feat: shell improvements
-
-- feat: retroarch core updates and full option
-
-- chore: flake lock update (breaking changes)
-
-- feat: fzf module
-
-- chore: key input timeout removal
-
-- chore: sway lazy man timeouts
-
-- feat: kitty add shell integration
-
-- chore: flake lock update
-
-- chore: cleanup unnecessary scratchpad exec-once
-
-- feat: hyprland default app workspace rules
-
-- feat: hyprland named specials
-
-- chore: flake lock update
-
-- feat: thunderbird reminders pinned upper right
-
-- feat: hyprland new tmux terminal bind
-
-- chore: flake.lock: Update (#40)
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com> by @dependabot[bot] in [#58](https://github.com/khaneliman/khanelinix/pull/58)
+- Chore: disable nix flake check for now by @khaneliman
+- Chore: lint fix by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Refactor: move betterdiscord theme to home-manager by @khaneliman
+- Refactor: cleanup khanelinix services by @khaneliman
+- Refactor: nix-ld -> nix-ld-rs by @khaneliman
+- Chore: flake lock update and remove overlay by @khaneliman
+- Chore: lint cleanup by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Refactor: move cava to home-manager module by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Refactor: go back to swaylock-effects (correct fork) by @khaneliman
+- Chore: deadnix cleanup by @khaneliman
+- Refactor: swayidle use nixpkgs-wayland by @khaneliman
+- Refactor: wlroots suite use nixpkgs-wayland by @khaneliman
+- Refactor: use nixpkgs-wayland wlogout by @khaneliman
+- Refactor: nixify qt config by @khaneliman
+- Refactor: move hyprland polish to appendConfig by @khaneliman
+- Refactor: gtk reorganize by @khaneliman
+- Chore: cleanup remaining sfmono by @khaneliman
+- Refactor: move displays.conf to prependConfig hyprland by @khaneliman
+- Feat: hyprland numlock by default by @khaneliman
+- Chore: wezterm bump by @khaneliman
+- Chore: cleanup gitignore result by @khaneliman
+- Chore: cleanup overlay after nixpkgs update by @khaneliman
+- Refactor: try upstream swaylock again by @khaneliman
+- Refactor: try locking swaylock differently by @khaneliman
+- Refactor: use new firefox policies option by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Refactor: gnome firefox support by @khaneliman
+- Refactor: move firefox config to home module by @khaneliman
+- Chore: Remove dead code (#54)
+
+Co-authored-by: khaneliman <khaneliman@users.noreply.github.com> by @github-actions[bot] in [#54](https://github.com/khaneliman/khanelinix/pull/54)
+- Chore: flake lock update by @khaneliman
+- Refactor: argon -> neon by @khaneliman
+- Feat: monaspace nerd font by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: hyprland environment variable update by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Feat: replace radeontop with amdgpu_top by @khaneliman
+- Feat: file manager updates by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: misc mac cleanup by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: lsp language comments for nix expressions by @khaneliman
+- Chore: networking tweaks by @khaneliman
+- Chore: cleanup amdgpu by @khaneliman
+- Chore: 1password-gui stable by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: manual dynamic island cleanup by @khaneliman
+- Chore: lint fix by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Refactor: sketchybar theme by @khaneliman
+- Feat: yazi catppuccin theme by @khaneliman
+- Feat: yazi layout customization by @khaneliman
+- Chore: dynamic island sketchybar update by @khaneliman
+- Chore: cleanup sketchybar colors.sh usage by @khaneliman
+- Refactor: tweak caprine styling more by @khaneliman
+- Feat: jankyborders homebrew by @khaneliman
+- Chore: flake lock update and workarounds for broken packages by @khaneliman
+- Feat: wezterm git package by @khaneliman
+- Feat: multiple neovim configs by @khaneliman
+- Chore: deadnix by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Feat: macos overlays until nixpkgs updated by @khaneliman
+- Feat: monaspace font by @khaneliman
+- Feat: rofi enhancements by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: flake lock update and fastfetch workaround by @khaneliman
+- Feat: nvidialess specialization by @khaneliman
+- Chore: flake lock update by @khaneliman in [#45](https://github.com/khaneliman/khanelinix/pull/45)
+- Feat: shell improvements by @khaneliman
+- Feat: retroarch core updates and full option by @khaneliman
+- Chore: flake lock update (breaking changes) by @khaneliman
+- Feat: fzf module by @khaneliman
+- Chore: key input timeout removal by @khaneliman
+- Chore: sway lazy man timeouts by @khaneliman
+- Feat: kitty add shell integration by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Chore: cleanup unnecessary scratchpad exec-once by @khaneliman
+- Feat: hyprland default app workspace rules by @khaneliman
+- Feat: hyprland named specials by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Feat: thunderbird reminders pinned upper right by @khaneliman
+- Feat: hyprland new tmux terminal bind by @khaneliman
+- Chore: flake.lock: Update (#40)
 
 Flake lock file updates:
 
@@ -1431,23 +820,17 @@ Flake lock file updates:
     'github:nix-community/NUR/d531cd7ef0001eaba84743d6666726df3c3b5620' (2023-10-20)
   → 'github:nix-community/NUR/5275d02ba283b544d714ede2d5c8b846854af3f3' (2023-10-20)
 
-Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-- chore: Remove dead code (#42)
+Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com> by @github-actions[bot] in [#40](https://github.com/khaneliman/khanelinix/pull/40)
+- Chore: Remove dead code (#42)
 
-Co-authored-by: khaneliman <khaneliman@users.noreply.github.com>
-- refactor: modularize waybar css
-
-- feat: waybar hyprland workspaces styling change
-
-- chore: flake lock update
-
-- refactor: waybar module refactor
-
-- feat: waybar css updates
-
-- feat: temporary waybar overlay with fixes
-
-- chore: flake.lock: Update (#39)
+Co-authored-by: khaneliman <khaneliman@users.noreply.github.com> by @github-actions[bot] in [#42](https://github.com/khaneliman/khanelinix/pull/42)
+- Refactor: modularize waybar css by @khaneliman
+- Feat: waybar hyprland workspaces styling change by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Refactor: waybar module refactor by @khaneliman
+- Feat: waybar css updates by @khaneliman
+- Feat: temporary waybar overlay with fixes by @khaneliman
+- Chore: flake.lock: Update (#39)
 
 Flake lock file updates:
 
@@ -1470,16 +853,12 @@ Flake lock file updates:
     'github:oxalica/rust-overlay/056256f2fcf3c5a652dbc3edba9ec1a956d41f56' (2023-10-16)
   → 'github:oxalica/rust-overlay/a2ccfb2134622b28668a274e403ba6f075ae1223' (2023-10-18)
 
-Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-- feat: darwin tmux skhd update
-
-- refactor: git pull ff again remove whitespace override
-
-- refactor: hyprland persistent workspace instead of waybar
-
-- refactor: move obs to home-manager
-
-- chore: flake.lock: Update (#37)
+Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com> by @github-actions[bot] in [#39](https://github.com/khaneliman/khanelinix/pull/39)
+- Feat: darwin tmux skhd update by @khaneliman
+- Refactor: git pull ff again remove whitespace override by @khaneliman
+- Refactor: hyprland persistent workspace instead of waybar by @khaneliman
+- Refactor: move obs to home-manager by @khaneliman
+- Chore: flake.lock: Update (#37)
 
 Flake lock file updates:
 
@@ -1487,10 +866,9 @@ Flake lock file updates:
     'github:nix-community/NUR/cc83a858d3dbf50a934a4f74fe5508ac2fa72bc5' (2023-10-16)
   → 'github:nix-community/NUR/998d09217e50c2c30ac41c4f3c8ddfc83427ffb2' (2023-10-16)
 
-Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-- chore: sort waybar module definitions
-
-- chore: flake.lock: Update (#36)
+Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com> by @github-actions[bot] in [#37](https://github.com/khaneliman/khanelinix/pull/37)
+- Chore: sort waybar module definitions by @khaneliman
+- Chore: flake.lock: Update (#36)
 
 * chore: flake.lock: Update
 
@@ -1525,10 +903,9 @@ Flake lock file updates:
 ---------
 
 Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Co-authored-by: Austin Horstman <khaneliman12@gmail.com>
-- chore: copy pasta cleanup
-
-- chore: flake.lock: Update (#35)
+Co-authored-by: Austin Horstman <khaneliman12@gmail.com> by @github-actions[bot] in [#36](https://github.com/khaneliman/khanelinix/pull/36)
+- Chore: copy pasta cleanup by @khaneliman
+- Chore: flake.lock: Update (#35)
 
 chore: flake.lock: Update
 
@@ -1553,16 +930,12 @@ Flake lock file updates:
     'github:Mic92/sops-nix/f995ea159252a53b25fa99824f2891e3b479d511' (2023-10-11)
   → 'github:Mic92/sops-nix/7711514b8543891eea6ae84392c74a379c5010de' (2023-10-14)
 
-Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-- chore: cleanup code length theme module
-
-- refactor: move bat and delta theme to theme module
-
-- refactor: move tmux catppuccin to theme module
-
-- chore: fromyaml runcommand naming
-
-- chore: flake.lock: Update (#34)
+Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com> by @github-actions[bot] in [#35](https://github.com/khaneliman/khanelinix/pull/35)
+- Chore: cleanup code length theme module by @khaneliman
+- Refactor: move bat and delta theme to theme module by @khaneliman
+- Refactor: move tmux catppuccin to theme module by @khaneliman
+- Chore: fromyaml runcommand naming by @khaneliman
+- Chore: flake.lock: Update (#34)
 
 Flake lock file updates:
 
@@ -1576,36 +949,22 @@ Flake lock file updates:
     'github:nix-community/NUR/527c0fa45b385206d5c6e6bbed7e1a6ad096fda9' (2023-10-13)
   → 'github:nix-community/NUR/25fedce20d4b0671adeefa9d52f6b69079af84c0' (2023-10-13)
 
-Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-- chore: secret update
-
-- feat: lsd custom aliases
-
-- refactor: break git aliases out into separate module
-
-- feat: try to arrange calendar reminder notifications
-
-- refactor: development tui to home
-
-- refactor: move social tui to home packages
-
-- refactor: sops json -> yaml
-
-- feat: twitch-tui
-
-- feat: git diff-so-fancy -> delta
-
-- refactor: bottom uses new theme package
-
-- refactor: k9s use new theme package
-
-- refactor: btop use new theme package
-
-- refactor: lazygit use new theme package
-
-- refactor: bat theme attribute set new package
-
-- chore: flake.lock: Update (#33)
+Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com> by @github-actions[bot] in [#34](https://github.com/khaneliman/khanelinix/pull/34)
+- Chore: secret update by @khaneliman
+- Feat: lsd custom aliases by @khaneliman
+- Refactor: break git aliases out into separate module by @khaneliman
+- Feat: try to arrange calendar reminder notifications by @khaneliman
+- Refactor: development tui to home by @khaneliman
+- Refactor: move social tui to home packages by @khaneliman
+- Refactor: sops json -> yaml by @khaneliman
+- Feat: twitch-tui by @khaneliman
+- Feat: git diff-so-fancy -> delta by @khaneliman
+- Refactor: bottom uses new theme package by @khaneliman
+- Refactor: k9s use new theme package by @khaneliman
+- Refactor: btop use new theme package by @khaneliman
+- Refactor: lazygit use new theme package by @khaneliman
+- Refactor: bat theme attribute set new package by @khaneliman
+- Chore: flake.lock: Update (#33)
 
 chore: flake.lock: Update
 
@@ -1624,15 +983,11 @@ Flake lock file updates:
     'github:nix-community/NUR/c324f1bd5ad41d63a4721f08760480e346fbff0c' (2023-10-12)
   → 'github:nix-community/NUR/9652d4b7c5c05d982e69d1c9df8d05010d431ba0' (2023-10-12)
 
-Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-- feat: hyprland thunderbird reminder rules
-
-- feat: lsof
-
-- chore: Remove dead code (#30)
-
-
-- chore: flake.lock update
+Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com> by @github-actions[bot]
+- Feat: hyprland thunderbird reminder rules by @khaneliman
+- Feat: lsof by @khaneliman
+- Chore: Remove dead code (#30) by @github-actions[bot] in [#30](https://github.com/khaneliman/khanelinix/pull/30)
+- Chore: flake.lock update
 
 Flake lock file updates:
 
@@ -1653,21 +1008,14 @@ Flake lock file updates:
   → 'github:oxalica/rust-overlay/c6d2f0bbd56fc833a7c1973f422ca92a507d0320' (2023-10-11)
 • Updated input 'sops-nix':
     'github:Mic92/sops-nix/6b32358c22d2718a5407d39a8236c7bd9608f447' (2023-10-09)
-  → 'github:Mic92/sops-nix/f995ea159252a53b25fa99824f2891e3b479d511' (2023-10-11)
-
-- feat: 1password home config
-
-- feat: darwin ssh setup
-
-- refactor: nixos mdns
-
-- feat: darwin networking disable stealth
-
-- feat: khanelimac ssh config
-
-- feat: hyprpaper service to handle crashes
-
-- flake.lock: Update
+  → 'github:Mic92/sops-nix/f995ea159252a53b25fa99824f2891e3b479d511' (2023-10-11) by @github-actions[bot] in [#31](https://github.com/khaneliman/khanelinix/pull/31)
+- Feat: 1password home config by @khaneliman
+- Feat: darwin ssh setup by @khaneliman
+- Refactor: nixos mdns by @khaneliman
+- Feat: darwin networking disable stealth by @khaneliman
+- Feat: khanelimac ssh config by @khaneliman
+- Feat: hyprpaper service to handle crashes by @khaneliman
+- Flake.lock: Update
 
 Flake lock file updates:
 
@@ -1709,10 +1057,9 @@ Flake lock file updates:
   → 'github:oxalica/rust-overlay/c0df7f2a856b5ff27a3ce314f6d7aacf5fda546f' (2023-10-09)
 • Updated input 'sops-nix':
     'github:Mic92/sops-nix/d7380c38d407eaf06d111832f4368ba3486b800e' (2023-10-08)
-  → 'github:Mic92/sops-nix/6b32358c22d2718a5407d39a8236c7bd9608f447' (2023-10-09)
-
-- Update README.md
-- flake.lock: Update
+  → 'github:Mic92/sops-nix/6b32358c22d2718a5407d39a8236c7bd9608f447' (2023-10-09) by @github-actions[bot] in [#28](https://github.com/khaneliman/khanelinix/pull/28)
+- Update README.md by @khaneliman
+- Flake.lock: Update
 
 Flake lock file updates:
 
@@ -1745,15 +1092,11 @@ Flake lock file updates:
   → 'github:Mic92/sops-nix/d7380c38d407eaf06d111832f4368ba3486b800e' (2023-10-08)
 • Updated input 'sops-nix/nixpkgs-stable':
     'github:NixOS/nixpkgs/dbe90e63a36762f1fbde546e26a84af774a32455' (2023-10-01)
-  → 'github:NixOS/nixpkgs/2f3b6b3fcd9fa0a4e6b544180c058a70890a7cc1' (2023-10-07)
-
-- refactor: rename neovim config again
-
-- feat: lazygit catppuccin
-
-- chore: lint fix
-
-- flake.lock: Update
+  → 'github:NixOS/nixpkgs/2f3b6b3fcd9fa0a4e6b544180c058a70890a7cc1' (2023-10-07) by @github-actions[bot]
+- Refactor: rename neovim config again by @khaneliman
+- Feat: lazygit catppuccin by @khaneliman
+- Chore: lint fix by @khaneliman
+- Flake.lock: Update
 
 Flake lock file updates:
 
@@ -1777,11 +1120,9 @@ Flake lock file updates:
   → 'github:nix-community/NUR/975896ef9edb4539c040ea28ecebd7a2a12a5dd0' (2023-10-07)
 • Updated input 'rustup-overlay':
     'github:oxalica/rust-overlay/fdb37574a04df04aaa8cf7708f94a9309caebe2b' (2023-10-06)
-  → 'github:oxalica/rust-overlay/126829788e99c188be4eeb805f144d73d8a00f2c' (2023-10-07)
-
-- refactor: hyprland home-manager module systemd handles environment variables now
-
-- flake.lock: Update
+  → 'github:oxalica/rust-overlay/126829788e99c188be4eeb805f144d73d8a00f2c' (2023-10-07) by @github-actions[bot] in [#26](https://github.com/khaneliman/khanelinix/pull/26)
+- Refactor: hyprland home-manager module systemd handles environment variables now by @khaneliman
+- Flake.lock: Update
 
 Flake lock file updates:
 
@@ -1802,29 +1143,18 @@ Flake lock file updates:
   → 'github:nix-community/nixpkgs-wayland/53e525b2ee8d84bab4db3e90a7b94db51249d393' (2023-10-06)
 • Updated input 'nur':
     'github:nix-community/NUR/e9db143072899753216cd84143489ed2a544e793' (2023-10-06)
-  → 'github:nix-community/NUR/b5bfec93605030aa492e339fd60ad00bdc9492ed' (2023-10-06)
-
-- chore: update renamed neovim repo
-
-- chore: flake lock update
-
-- Remove dead code
-
-- refactor: hide op-ssh-sign behind feature flag
-
-- refactor: mkBoolOpt git
-
-- refactor: dont use op-ssh-sign
-
-- feat: 1password-gui-beta attempt workaround
-
-- chore: sort hyprland variables
-
-- feat: waybar window-rewrite setup
-
-- chore: python3 instead of python311 explicitly
-
-- flake.lock: Update
+  → 'github:nix-community/NUR/b5bfec93605030aa492e339fd60ad00bdc9492ed' (2023-10-06) by @github-actions[bot] in [#25](https://github.com/khaneliman/khanelinix/pull/25)
+- Chore: update renamed neovim repo by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Remove dead code by @khaneliman in [#21](https://github.com/khaneliman/khanelinix/pull/21)
+- Refactor: hide op-ssh-sign behind feature flag by @khaneliman
+- Refactor: mkBoolOpt git by @khaneliman
+- Refactor: dont use op-ssh-sign by @khaneliman
+- Feat: 1password-gui-beta attempt workaround by @khaneliman
+- Chore: sort hyprland variables by @khaneliman
+- Feat: waybar window-rewrite setup by @khaneliman
+- Chore: python3 instead of python311 explicitly by @khaneliman
+- Flake.lock: Update
 
 Flake lock file updates:
 
@@ -1874,15 +1204,11 @@ Flake lock file updates:
   → 'github:Mic92/sops-nix/746c7fa1a64c1671a4bf287737c27fdc7101c4c2' (2023-10-03)
 • Updated input 'sops-nix/nixpkgs-stable':
     'github:NixOS/nixpkgs/596611941a74be176b98aeba9328aa9d01b8b322' (2023-09-16)
-  → 'github:NixOS/nixpkgs/dbe90e63a36762f1fbde546e26a84af774a32455' (2023-10-01)
-
-- feat: xdg enable open use portal
-
-- feat: disable hyprland background
-
-- chore: reorg substituters
-
-- flake.lock: Update
+  → 'github:NixOS/nixpkgs/dbe90e63a36762f1fbde546e26a84af774a32455' (2023-10-01) by @github-actions[bot]
+- Feat: xdg enable open use portal by @khaneliman
+- Feat: disable hyprland background by @khaneliman
+- Chore: reorg substituters by @khaneliman in [#19](https://github.com/khaneliman/khanelinix/pull/19)
+- Flake.lock: Update
 
 Flake lock file updates:
 
@@ -1915,11 +1241,9 @@ Flake lock file updates:
   → 'github:nix-community/NUR/e91591b0854baca7bc1a90c6d74181dba079b174' (2023-10-02)
 • Updated input 'rustup-overlay':
     'github:oxalica/rust-overlay/fc6fe50d9a4540a1111731baaa00f207301fdeb7' (2023-10-01)
-  → 'github:oxalica/rust-overlay/1aaa2dc3e7367f2014f939c927e9e768a0cc2f08' (2023-10-02)
-
-- feat: cachix the flake check
-
-- chore(deps): bump actions/checkout from 3 to 4
+  → 'github:oxalica/rust-overlay/1aaa2dc3e7367f2014f939c927e9e768a0cc2f08' (2023-10-02) by @github-actions[bot]
+- Feat: cachix the flake check by @khaneliman
+- Chore(deps): bump actions/checkout from 3 to 4
 
 Bumps [actions/checkout](https://github.com/actions/checkout) from 3 to 4.
 - [Release notes](https://github.com/actions/checkout/releases)
@@ -1933,8 +1257,8 @@ updated-dependencies:
   update-type: version-update:semver-major
 ...
 
-Signed-off-by: dependabot[bot] <support@github.com>
-- chore(deps): bump cachix/install-nix-action from 20 to 23
+Signed-off-by: dependabot[bot] <support@github.com> by @dependabot[bot] in [#18](https://github.com/khaneliman/khanelinix/pull/18)
+- Chore(deps): bump cachix/install-nix-action from 20 to 23
 
 Bumps [cachix/install-nix-action](https://github.com/cachix/install-nix-action) from 20 to 23.
 - [Release notes](https://github.com/cachix/install-nix-action/releases)
@@ -1947,10 +1271,9 @@ updated-dependencies:
   update-type: version-update:semver-major
 ...
 
-Signed-off-by: dependabot[bot] <support@github.com>
-- Remove dead code
-
-- flake.lock: Update
+Signed-off-by: dependabot[bot] <support@github.com> by @dependabot[bot] in [#17](https://github.com/khaneliman/khanelinix/pull/17)
+- Remove dead code by @khaneliman in [#15](https://github.com/khaneliman/khanelinix/pull/15)
+- Flake.lock: Update
 
 Flake lock file updates:
 
@@ -1980,15 +1303,11 @@ Flake lock file updates:
   → 'github:nix-community/NUR/72619f85c0eeec8864f0c365932e39e8935a5b93' (2023-10-01)
 • Updated input 'rustup-overlay':
     'github:oxalica/rust-overlay/a4c3c904ab29e04a20d3a6da6626d66030385773' (2023-09-30)
-  → 'github:oxalica/rust-overlay/fc6fe50d9a4540a1111731baaa00f207301fdeb7' (2023-10-01)
-
-- feat: darwin disable automatic space switching
-
-- feat: yabai 5.0.9 overlay until merged
-
-- Remove dead code
-
-- flake.lock: Update
+  → 'github:oxalica/rust-overlay/fc6fe50d9a4540a1111731baaa00f207301fdeb7' (2023-10-01) by @github-actions[bot]
+- Feat: darwin disable automatic space switching by @khaneliman
+- Feat: yabai 5.0.9 overlay until merged by @khaneliman
+- Remove dead code by @khaneliman in [#11](https://github.com/khaneliman/khanelinix/pull/11)
+- Flake.lock: Update
 
 Flake lock file updates:
 
@@ -2012,14 +1331,11 @@ Flake lock file updates:
   → 'github:nix-community/nixpkgs-wayland/bedaae13271fd5cfd861698e591d6af7104174e4' (2023-09-30)
 • Updated input 'nur':
     'github:nix-community/NUR/b38a6a856e3c8258b6d776f63eb1041c314e96f6' (2023-09-30)
-  → 'github:nix-community/NUR/02ba0aeaddf56c02b8030f81d765e8de3d342f5b' (2023-09-30)
-
-- chore: use sri hash ranger overlay
-
-- chore: update README
-
-- Create cachix.yml
-- flake.lock: Update
+  → 'github:nix-community/NUR/02ba0aeaddf56c02b8030f81d765e8de3d342f5b' (2023-09-30) by @github-actions[bot]
+- Chore: use sri hash ranger overlay by @khaneliman
+- Chore: update README by @khaneliman
+- Create cachix.yml by @khaneliman
+- Flake.lock: Update
 
 Flake lock file updates:
 
@@ -2049,9 +1365,8 @@ Flake lock file updates:
   → 'github:nix-community/NUR/b38a6a856e3c8258b6d776f63eb1041c314e96f6' (2023-09-30)
 • Updated input 'rustup-overlay':
     'github:oxalica/rust-overlay/9d8f850c3de67597c65271f3088aced0a671677f' (2023-09-28)
-  → 'github:oxalica/rust-overlay/a4c3c904ab29e04a20d3a6da6626d66030385773' (2023-09-30)
-
-- chore(deps): bump cachix/install-nix-action from 18 to 23
+  → 'github:oxalica/rust-overlay/a4c3c904ab29e04a20d3a6da6626d66030385773' (2023-09-30) by @github-actions[bot] in [#6](https://github.com/khaneliman/khanelinix/pull/6)
+- Chore(deps): bump cachix/install-nix-action from 18 to 23
 
 Bumps [cachix/install-nix-action](https://github.com/cachix/install-nix-action) from 18 to 23.
 - [Release notes](https://github.com/cachix/install-nix-action/releases)
@@ -2064,8 +1379,8 @@ updated-dependencies:
   update-type: version-update:semver-major
 ...
 
-Signed-off-by: dependabot[bot] <support@github.com>
-- chore(deps): bump actions/checkout from 2 to 4
+Signed-off-by: dependabot[bot] <support@github.com> by @dependabot[bot] in [#8](https://github.com/khaneliman/khanelinix/pull/8)
+- Chore(deps): bump actions/checkout from 2 to 4
 
 Bumps [actions/checkout](https://github.com/actions/checkout) from 2 to 4.
 - [Release notes](https://github.com/actions/checkout/releases)
@@ -2079,1592 +1394,817 @@ updated-dependencies:
   update-type: version-update:semver-major
 ...
 
-Signed-off-by: dependabot[bot] <support@github.com>
-- Create dependabot.yml
-- Create settings.yml
-- Update update-flakes.yml
-- Create update-flakes.yml
-- chore: cleanup
-
-- refactor: sort solution
-
-- refactor: feature flags boot module
-
-- refactor: break development into feature flags
-
-- chore: cleanup
-
-- chore: flake lock update
-
-- refactor: clean up ssh config
-
-- refactor: move where wakatime secret is enabled
-
-- chore: lint fix
-
-- chore: standardize  python versions
-
-- feat: sketchybar spaces activate animation
-
-- refactor: clean up yabai config
-
-- refactor: darwin development dependencies
-
-- feat: readd astronvim v4 config
-
-- chore: set recommended tmux escape-time
-
-- feat: wsl smarter
-
+Signed-off-by: dependabot[bot] <support@github.com> by @dependabot[bot] in [#7](https://github.com/khaneliman/khanelinix/pull/7)
+- Create dependabot.yml by @khaneliman
+- Create settings.yml by @khaneliman
+- Update update-flakes.yml by @khaneliman
+- Create update-flakes.yml by @khaneliman
+- Chore: cleanup by @khaneliman
+- Refactor: sort solution by @khaneliman
+- Refactor: feature flags boot module by @khaneliman
+- Refactor: break development into feature flags by @khaneliman
+- Chore: cleanup by @khaneliman
+- Chore: flake lock update by @khaneliman
+- Refactor: clean up ssh config by @khaneliman
+- Refactor: move where wakatime secret is enabled by @khaneliman
+- Chore: lint fix by @khaneliman
+- Chore: standardize  python versions by @khaneliman
+- Feat: sketchybar spaces activate animation by @khaneliman
+- Refactor: clean up yabai config by @khaneliman
+- Refactor: darwin development dependencies by @khaneliman
+- Feat: readd astronvim v4 config by @khaneliman
+- Chore: set recommended tmux escape-time by @khaneliman
+- Feat: wsl smarter by @khaneliman
 - Revert "feat: use astronvim v4 config"
 
-This reverts commit 746c3753d5f7080a03d9cbfad750c7a0994fa753.
-
-- feat: use astronvim v4 config
-
-- refactor: give bees less again
-
-- feat: wsl add wsl-open
-
-- feat: wsl add wslutilities and wslview override
-
-- chore: lint fix
-
-- Update README.md
-- feat: hardware add nvidia programs
-
-- chore: bump dooit overlay until new nixos-unstable
-
-- refactor: replace hyprland overlay with direct pkg references
-
-- refactor: refine getExe and use getExe'
-
-- chore: cleanup snowfall inputs
-
-- chore: group attributes
-
-- chore: linting cleanup
-
-- wip home sops
-
-- chore: cleanup overlays
-
-- feat: dooit 2.0.0 overlay
-
-- chore: cleanup with inputs;
-
-- feat: hypr_socket_watch systemd service
-
-- feat: hyprland socket watch wallpaper changer
-
-- feat: hyprland reenable GDK_BACKEND=wayland
-
-- refactor: move import_env to packages
-
-- refactor: hyprpaper dynamic config
-
-- refactor: move hyprpaper to separate module
-
-- refactor: waybar persistent-workspaces rename
-
-- refactor: waybar add idle_inhibitor to secondary monitor
-
-- feat: more sops configuration
-
-- refactor: move btrfs into new module
-
-- chore: replace exa with eza
-
-- refactor: tweak waybar format-icons
-
-- refactor: hide vscode/argv.json behind keyring enable
-
-- refactor: nixpkgs-wayland specific packages instead of overlay
-
-- refactor: nixpkgs-wayland overlay replace manual waybar overlay
-
-- refactor: waybar tweak urgent css
-
-- refactor: convert hyprland workspaces to nix expression
-
-- feat: readd scroll events waybar
-
-- feat: waybar add empty and visible styling
-
-- chore: update waybar overlay
-
-- refactor: replace lib.getExe with inherit
-
-- refactor: replace with lib with inherit
-
-- chore: minor cleanup of boot
-
-- chore: sketchybar version overlay until nixpkgs updated
-
-- refactor: greetd -> regreet
-
-- chore: waybar hyprland new config style
-
-- feat: development add cpplint
-
-- chore: cleanup flake.nix
-
-- feat: nixos security add seahorse
-
-- remove upstreamed overlay fix
-
-- chore: update waybar overlay and flake lock
-
-- darwin networking dns
-
-- remove duplicate home-manager imports
-
-- astronvim fix treesitter compile issue
-
-- home folder cleanup
-
-- swaylock debug level to troubleshoot
-
-- swayidle debug level to troubleshoot
-
-- flake darwin fix
-
-- linting cleanup CORE
-
-- xdg add associations too
-
-- minor spicetify cleanup
-
-- waybar fix xdg-open not found
-
-- rename neovim to astronvim
-
-- ranger overlay updated to latest commit
-
-- remove unused sketchybar version overlay
-
-- hyprland environment import safeguards
-
-- add barrier kvm
-
-- zen kernel for now since main is fubar
-
-- hardware cleanup
-
-- linting fixes
-
-- waybar remove tooltip on wlogout
-
-- revert nixpkgs update
-
-- sketchybar overlay until nixpkgs update
-
-- darwin zsh login shell
-
-- git prune on fetch
-
-- sketchybar config embedded manually for now
-
-- getExe more configs
-
-- darwin desktop configs use getexe
-
-- kitty default again (wezterm crashes on display unplug)
-
-- waybar overlay until new release
-
-- ranger attempt jsonc preview support
-
-- ranger edit jsonc support
-
-- fastfetch jsonc config nix expression
-
-- wezterm default hyprland
-
-- add wezterm
-
-- tmux colors fix
-
-- waybar switch back to wlr/workspaces
-
-- waybar overlay for hyprland urgent support until upstreamed
-
-- waybar tweak urgent css
-
-- create debug option for waybar
-
-- btrfs-assistant add
-
-- add protonup-qt
-
-- waybar remove hyprland overlay and update config
-
-- misc cleanup
-
-- add yubikey to workstation
-
-- darwin build fix
-
-- sf-mono use source as input
-
-- firefox embed config
-
-- rofi embed config
-
-- hyprland embed config
-
-- embed ranger config
-
-- embed qt theming
-
-- alacritty home-manager config
-
-- wlogout embed layout
-
-- kitty home-manager config
-
-- remove .functions
-
-- zsh plugins
-
-- bash home-manager config
-
-- embed swaync dotfiles
-
-- nixos remove neofetch
-
-- helix cleanup
-
-- minor fastfetch cleanup
-
-- btop to home-manager config
-
-- zsh to home-manager config
-
-- fish to home-manager config
-
-- fastfetch to home-manager config
-
-- snowfall lib switch to dev
-
-- ranger fork support tmux image preview
-
-- cleanup neovim config
-
-- khanelimac nixcfg alias
-
-- micro home-manager consolidation
-
-- topgrade home-manager consolidation
-
-- tmux updates
-
-- default editor options
-
-- hyprland hyprpaper nix file
-
-- darwin sketchybar aliases
-
-- tmux home-manager consolidation
-
-- lazygit home-manager consolidation
-
-- nixos remove bundled op-ssh-sign
-
-- git use home-manager options
-
-- deadnix fixes
-
-- direnv home-manager consolidation
-
-- sort systems
-
-- sort devshell.toml
-
-- sort flake inputs
-
-- nixos remove icehouse
-
-- nixos cleanup discord config
-
-- remove cowsay packages and overlays
-
-- cleanup home-manager fish config
-
-- remove .aliases file
-
-- openssl alias specify bin
-
-- nixos cava alias
-
-- bat moved to home-manager
-
-- lsd moved to home-manager
-
-- refine aliases
-
-- darwin shell fixes
-
-- nixos add github desktop
-
-- shell refactoring
-
-- nixos networking nameservers
-
-- remove lazygit overlay
-
-- khanelinix disable common-gpu-nvidia-disable so gpu passthru works with nixos-hardware update
-
-- flake lock update and disable broken packages
-
-- nixos add snapper
-
-- nixos add btrfs storage options
-
-- consolidate git
-
-- wip home-manager refactor
-
-- home-manager git config support darwin and linux
-
-- darwin conflict fix
-
-- looking-glass update
-
-- misc dev tweaks
-
-- lazygit overlay until nixpkgs updated
-
-- darwin add shell configs
-
-- darwin use nix tmux config
-
-- khanelimac archetypes
-
-- darwin add tmux custom config
-
-- darwin add archetypes and suite updates
-
-- misc cleanup
-
-- move agenix to shared module (still doesn't work with config)
-
-- change nixos direnv to use nixos module
-
-- consolidate common
-
-- consolidate networking
-
-- khanelimac specific tweaks
-
-- darwin move homebrew to tools
-
-- consolidate fonts
-
-- darwin add sketchybar-app-font
-
-- remove nur finally
-
-- more refactoring
-
-- cleanup formatting
-
-- nixos add to social suite
-
-- [wip] refactoring
-
-- flake update and misc fixes/changes
-
-- darwin hide mas apps behind flag
-
-- darwin dev update (wip)
-
-- cleanup
-
-- darwin migrate sfmono to cask
-
-- darwin consolidate homebrew config
-
-- darwin homebrew tweaks
-
-- migrate sddm-catppuccin to catppuccin-sddm-corners (will replace with nixpkgs)
-
-- minor cleanup on display-managers sddm still not working for me
-
-- nixos add element-desktop
-
-- migrate wttrbar from custom package to nixpkg
-
-- misc cleanup
-
-- darwin yabai rule for element
-
-- darwin disable home-manager until fixed and add element
-
-- update workflows
-
-- nixpkgs-lint solution
-
-- nixpkgs-fmt solution
-
-- switch to nixpkgs-fmt
-
-- hyprland updates
-
-- darwin system defaults added
-
-- misc tweaks and fixes
-
-- darwin add packages
-
-- darwin migrate sketchybar to nix-darwin
-
-- home-manager ncmpcpp use same directory as mpd explicitly
-
-- hyprland use home-manager mpd-mpris
-
-- hyprland use home-manager gnome-keyring daemon
-
-- hyprland use blueman home-manager service
-
-- nixpkgs development reqs
-
-- hyprland tweaks
-
-- nixos fix hyprland windowrule for spotify and add mpdevil
-
-- nixos add mpris functionality waybar and mpd setup
-
-- nixos migrate waybar to home-manager
-
-- nixos fix hyprland rofi
-
-- darwin migrate yabai to nix-darwin
-
-- darwin migrate skhd to nix-darwin
-
-- migrate swaylock to home-manager
-
-- remove nixos swayidle just use home-manager
-
-- nixos fix wallpaper change temporary hack
-
-- nixos modularize hyprland config
-
-- nixos convert hyprland to home-manager
-
-- darwin remove brew suite
-
-- darwin organize brews casks and taps
-
-- darwin organize masApps
-
-- minor cleanup
-
-- nixos plymouth fix
-
-- darwin organize better
-
-- darwin migrate gui apps to homebrew module
-
-- spotify cleanup
-
-- minor hyprland and home-manager scaffold / test
-
-- use mdns instead of ip
-
-- update thunderbird a little and add vlc
-
-- add darwin to check
-
-- deadnix cleanup
-
-- rename darwin hostname
-
-- darwin add stuff from brewfile as a module for now
-
-- enable colord for printing
-
-- flake lock update
-
-- hyprland remove unused script call
-
-- bluetooth and power fix
-
-- blacklist module throwing errors
-
-- remove qmk from dev
-
-- misc fixes
-
-- waybar overlay for unreleased hyprland fix
-
-- khanelinix enable sysrq
-
-- darwin update common
-
-- darwin add gimp
-
-- nixos swaync icon update
-
-- nixos waybar icon update
-
-- shared blender config
-
-- darwin fix username
-
-- nixos enable blender again
-
-- darwin remove iterm2
-
-- darwin 1password
-
-- darwin home app linker
-
-- add darwin firefox (wip)
-
-- shared nix config module
-
-- add zathura
-
-- xdg mimeapps config
-
-- helix initial config
-
-- spicetify extensions and apps
-
-- cleanup
-
-- add spicetify
-
-- darwin tweaks
-
-- initial darwin setup
-
-- initial snowfallorg home-manager setup
-
-- move nixos into separate modules
-
-- use breeze dark icons
-
-- deadnix and statix fixes
-
-- hyprland config tweak
-
-- unpin linux kernel
-
-- firefox updates
-
-- try and fix printing
-
-- screenlayout disable resetting secondary monitor
-
-- cleanup gtk, qt, and hyprland configs a bit
-
-- gdm instead of regreet again
-
-- update hyprland polish file to use config values
-
-- flake lock update - temp pin kernel crash on 6.4
-
-- hyprland add gsettings schemas to regular terminal
-
-- Update README.md
-- some lint fixes
-
-- gate flake check behind branch condition
-
-- add lint workflow
-
-- remove unused secrets file
-
-- alejandra reformat
-
-- deadnix fix
-
-- alejandra format
-
-- statix fix
-
-- flake lock update
-
-- add nixos packages to common
-
-- refine xdg-desktop-portal implementation
-
-- gamemode tweak
-
-- flake lock update
-
-- add gamemode
-
-- add mangohud
-
-- update firefox addon
-
-- flake lock update and gtk breaking change fix
-
-- flake lock update
-
-- massive refactor
-
-- flake lock update
-
-- wlroots suite
-
-- catppuccin regreet, modularize display-managers, some cleanup and reorg
-
-- ranger plugins fix
-
-- ranger dependencies
-
-- flake lock update
-
-- khanelinix remove nix controlled openrgb config
-
-- samba update for khanelinix
-
-- flake lock update
-
-- add emulationstation
-
-- thunderbird updates
-
-- add emulators
-
-- include discord in startup apps
-
-- flake lock update
-
-- remove waybar overlay with 0.9.18 in nixpkgs
-
-- add glxinfo
-
-- remove unused cava overlay
-
-- attempt to fix peek.nvim (still errors but new errors)
-
-- flake lock update
-
-- add group notifications back to waybar 0.9.18
-
-- add hydra-check
-
-- Create README.md
-- flake lock update
-
-- add ssh public keys and aliases
-
-- move sddm-catppuccin to its own nix flake
-
-- change login shell to zsh
-
-- use waybar again after new release with fixes
-
-- flake lock update
-
-- eww tweaks
-
-- add betterdiscord theme
-
-- hyprland add secondary monitor workaround
-
-- add spotify
-
-- initial eww bar config attempt
-
-- environment variable updates
-
-- flake lock update
-
-- update khanelinix hardware
-
-- update hyprland environment variables
-
-- update firefox config
-
-- tmux update
-
-- flake update and remove things breaking build
-
-- workflow add
-
-- flake lock update
-
-- initial commit
-
-
-### Fixes
-
-- sddm: fix config
-
-- packages/git-cliff: fix syntax highlighting
-
-- khanelilab: fix networking address
-
-- shell/c: fix darwin
-
-- shell/dotnet: fix darwin
-
-- gamemode: fix hyprland commands
-
-For real this time....
-
-- gamemode: fix hyprland commands
-
-- swaync: fixes
-
-- hyprland: fix variable name
-
-- swaync: fix
-
-- swaync: fix screenshot utility
-
-- hyprland: fix hl alias
-
-- darwin: fixes
-
-- hyprland: fix slurp shortcuts
-
-- hyprland: fix yazi launch bind
-
-- neovim/catppuccin: fix changed setting names
-
-- nixvim: fix deprecations
-
-- yazi: fix openers
-
-- qt: fix style name
-
-- telescope: fix conflicting key map
-
-- hyprlock: fix images.shadow_passes
-
-- dap: fix darwin build
-
-- lualine: fix dap-ui
-
-- git: fix darwin git credential helper
-
-- conform: fix format toggle
-
-- labeler.yml: fix
-- deadnix: fix commit message
-
-- skhd: fix yabai and skhd restart mappings
-
-- hyprland: fix screen sharing
-
-- firefox: fix intl.accept_languages
-
-- yazi: fix conflicting keybinding
-
-- flake.nix: fix rust-overlay name
-
-- sketchybar: fix github
-
-- khanelinix: fix swayoutput
-
-- waybar: fix tray slider
-
-- nixvim: fix todo and fix highlights
-
-- nixvim: fix autoformat keymap
-
-- nixvim: fix spellang
-
-- fix: dib core remapping
-
-- fix: wttrbar config location
-
-- fix: non aarch-64 builds
-
-- fix: sketchybar helper.sh make without cd
-
-- fix: sketchybar remove compiled helpers
-
-- fix: sketchybar island notification init
-
-- fix: sketchybar toggle fixes
-
-- fix: sketchybar bluetooth fix indexing
-
-- fix: sketchybar  weather gracefully handle failed api calls
-
-- fix: deno darwin overlay fix
-
-- fix: steam menu focus
-
-- fix: qt theme fix
-
-- fix: hacks and workarounds for k3b
-
-- fix: cava for darwin
-
-- fix: fix hyprland log aliases
-
-- fix: sketchybar icons
-
-- fix: record_screen
-
-- fix: hyprland screenshot binds
-
-- fix: firefox search force
-
-- fix: firefox cfg.userchrome used appended after /chrome/userchrome.css
-
-- fix: firefox needing to be beta for now for profile to work
-
-- fix: proper darwin firefox config location
-
-- fix: firefox not supported darwin
-
-- fix: neovim onChange temporarily disabled
-
-- fix: neovim onchange events
-
-- fix: scream service property
-
-- fix: hl commands breaking due to aliases
-
-- fix: vulkan-utility-libraries revert
-
-- fix: yabai bar height
-
-- fix: zsh sketchybar aliases
-
-- fix: music playing artwork sketchybar
-
-- fix: caprine hide messenger ad
-
-- fix: caprine macos config
-
-- fix: caprine style fix
-
-- fix: cleanup fonts
-
-- fix: firefox theme
-
-- fix: wlroots readd clipboard
-
-- fix: hyprland pkg exe references
-
-- fix: spicetify catppuccin theme
-
-- feat: fix_git pkg (wip)
-
-- fix: tmux ranger img previews
-
-- fix: discord master overlay until released unstable
-
-- fix: readd waybar persistent workspaces to config
-
-This reverts commit aa86bb51e6169da2f9b485aa8f72511fd08bdeab.
-
-- fix: lint fixes
-
-- fix: k9s theme path
-
-- fix: hypraper restart always
-
-- fix: kitty scratchpad launch
-
-- fix: khanelinix static ip match router config
-
-- fix: ssh port expression only nixos configurations
-
-- fix: tmux truecolor
-
-- fix: udiskie breaks darwin
-
-- fix: nixos networking mdns
-
-- fix: remove custom dib signing key
-
-- fix: revert waybar workspaces setup for now
-
-- fix: reenable wslagentbridge and remove ssh auth override
-
-- fix: revert xdgOpenUsePortal until i can figure out portal application associations
-
-- fix: sddm module fix
-
-- fix: broken / disabled packages
-
-- fix: trace-which encapsulate dependency properly
-
-- fix: hyprland removed decoration setting
-
-- fix: sops configuration
-
-- fix: credentials usehttppath
-
-- fix: lint fixes
-
-- fix: sopsdiffer attribute
-
-- fix: marksman dependencies
-
-- fix: jdtls fix dependency
-
-- fix: csharp-ls neovim
-
-- fix: neovim lazy lock
-
-- fix: remove conflicting dotnet-sdk version
-
-- fix: wgetrc missing error
-
-- fix: git includes option default
-
-- fix: sops fixes
-
-- fix: CORE nixcfg alias
-
-- fix: git wsl not enabled
-
-- fix: wsl git credentials
-
-- fix: wsl git signing
-
-- fix: remove doas from common to fix wsl
-
-- fix: tune bees more
-
-- fix: spice service wantedby
-
-- fix: limit bees a different way
-
-- refactor: fix lint warning waybar
-
-- fix: stupid darwin sandbox workaround
-
-- fix: hypr_socket_watch encapsulate dependency
-
-- fix: remove broken darwin package
-
-- fix: hyprland remove ws explicit bind conflicts
-
-- fix: devshell
-
-- fix: hyprland prevent stupid cursor relocation default change
-
-- fix: limit beesd threads to prevent performance issues
-
-- fix: replace types.string with types.str
-
-- fix: btrfs dedupe
-
-- fix: dumb waybar on-click workaround on hyprland
-
-- fix: darwin missing inherits
-
-- fix: disable mangohud for now (broke steam)
-
-- fix: primary.sh xrandr command
-
-- fix: regreet use sway and support monitor definitions
-
-- fix: regreet work with vulkan
-
-- fix: nixos-revision correct url and jq parameter
-
-- fix: flake switch on darwin
-
-- fix: astronvim gnumake dependency
-
-- fix neovim plugins not being able to update
-
-- record:screen: fix darwin build
-
-- fix hyprland log aliases
-
-- fix fastfetch config
-
-- fix bat theme name
-
-- fix home-manager config for khanelimac
-
-- fixes and cleanup
-
-- fix nixos config
-
-- fix gdm user icon script
-
-- fix mdns
-
-- fix cursor-size gtk
-
-- fix gtk theme name
-
-- fix cachix
-
-- fix check action
-
-- fix waybar bug and use gdm for nixos since sddm is outdated
-
-- fix discord theme error
-
-
-### New
-
-- zellij: add aliases for creating and attaching sessions
-
-- zellij: add dev layout
-
-- flake.nix: add misc hooks
-
-- flake.nix: add prettier hook
-
-- CHANGELOG.md: init
-
-- flake.nix: add git-cliff hook
-
-- packages/git-cliff: add git-cliff package for hook
-
-- flake.nix: add pre-commit-hooks
-
-- zellij: add shell tab to layout
-
-mimic my normal tmux layout
-
-- music: add musikube and pulsemixer
-
-- zellij: add custom layout
-
-- nix/system: add logrotate
-
-- nix/system: add oomd
-
-- system/time: add ntp
-
-- khanelinix: add realtime
-
-- nixos/system: add realtime module
-
-- user.extraGroups: add extra groups
-
-- khanelinix: add networking address
-
-Apparently configured in wrong system...
-
-- hyprland: add resize binds
-
-- khanelinix: add tpm
-
-- nix/hardware: add tpm module
-
-- fonts: add some more fonts
-
-- obs: add extra plugins
-
-- yazi: add unique type icons
-
-- yazi: add icons
-
-- neovim/treesitter: add kdl grammar
-
-- waybar: additional modules
-
-- services/easyeffects: init module
-
-- .gitignore: add flake
-
-- home/services/noisetorch: init module
-
-- nixos/noisetorch: init module
-
-- nix: add channel links
-
-- services/polkit: init new module
-
-- services/cliboard: init new module
-
-- lib: add booltToNum
-
-- services/power: add power-profiles-daemon
-
-- polkit: add logging
-
-- boot: add silentBoot config
-
-- nix: add extra substituters
-
-- nvidia: add extra configuration
-
-- hardware: init intelcpu
-
-- nixos/theme: init theme module
-
-- tmux: add fzf
-
-- waybar: add cava module
-
-- bluetooth: add experimental features
-
-- zellij: init
-
-- neovim: add quickfix navigation keybind
-
-- shells/default: add nix-inspect
-
-- yazi: add miller previewer
-
-- yazi: add glow previewer
-
-- yazi: add dmg opener
-
-- neovim/neotest: add junit_jar
-
-- neovim/conform: add sqlfluff
-
-- neovim/conform: add shfmt
-
-- neovim/conform: add xmlformat
-
-- shells/java: init
-
-- waybar: add wezterm window-rewrite
-
-- yazi: add archive opener
-
-- services/ddc: init
-
-- codeium: add plugin settings
-
-- treesitter: add vimdoc back
-
-- darwin: add bashdb
-
-- treesitter: add markdown_inline
-
-- noice: add nvim-notify
-
-- efm: add linters
-
-- gitsigns: add git blame
-
-- telescope: add git stash keymap
-
-- development: add postman
-
-- .git-blame-ignore-revs: init
-
-- git: add blame.ignoreRevsFile
-
-- git: add GITHUB_TOKEN secret
-
-- theme: add catppuccin.nix
-
-- cmp: add priorities
-
-- bufremove: init to handle removing single buffer
-
-- rustaceanvim: add excludeDirs (doesnt seem to work)
-
-- .luarc.json: init
-
-- conform: add codespell formatter
-
-- neotest: add summary keymap
-
-- conform: add formatter commands
-
-- yabai: add teams work rule
-
-- sketchybar: add window rewrite front app
-
-- neotest: add adapters
-
-- games: add minecraft and prismlauncher
-
-- neotest: init
-
-- gitsigns: add line blame
-
-- lazygit: add overrideGpg
-
-- conform: add async formatting
-
-- telescope: add autocommands search
-
-- lualine: add winbar
-
-- lualine: add tabs to tabline
-
-- lualine: add aerial
-
-- nixvim: add refactoring-nvim
-
-- nixvim: add webapi-vim for rustplay
-
-- git: add core azure host credential provider
-
-- git: add dib azure host credential provider
-
-- hypr-socket-watch: add new rust flake
-
-- devshell: add thaw
-
-This reverts commit 05a880d54c37997b325964d2a9b5e36d1f8668bd.
-
-- flake.nix: add snowfallorg.thaw
-
-- sway: add swaylock
-
-- khanelinix: add dib signing
-
-- sketchybar: add default space icon
-
-- sketchybar: add copy labels wifi module
-
-- jankyborders: add bordersrc for default behavior
-
-- lib: add capitalize function
-
-- khanelimac: add music suite
-
-- git: add safe directories
-
-- security: add sudo-rs
-
-- nixvim: add aerial
-
-- nixvim: add nix-develop
-
-- yazi: add hostname to header
-
-- yazi: add dragon keymap
-
-- yazi: add extra status information
-
-- yazi: add full border
-
-- nixvim: add mini.map
-
-- nixvim: add mini.basics and mini.bracketed
-
-- nixvim: add mini.indentscope
-
-- nixvim: add mini.surround
-
-- firefox: add react dev tools
-
-- sketchybar: add lua shebang on all
-
-- sketchybar: add yabai item
-
-- hyprland: add teams windowrule
-
-- waybar: add teams window rewrite
-
-- business: add teams
-
-- sketchybar: add print_table
-
-- sketchybar: add spaces with windowrules
-
-- sketchybar: add skhd
-
-- homebrew: add cask back
-
-- hyprlock: add grace on lock
-
-- firefox: add floorp package without customization, for now
-
-- khanelinix: add hyprlandOutput
-
-- khanelinix: add kernel specializations
-
-- nixvim: add yanky
-
-- sketchybar: add logFile output
-
-- nixvim: add fix highlights
-
-- nixvim: add toggle fold column
-
-- nixvim: add toggle spell and wrap
-
-- nixvim: add diffview
-
-- nixvim: add indent-blankline
-
-- feat: add ripgrep darwin
-
-- feat: add floorp
-
-- feat: add zoxide to yazi
-
-- chore: add dynamic-island-sketchybar logging output
-
-- feat: add neovim nightly overlay again
-
-- chore: add spotify free rules and window rewrite
-
-- feat: add git-credential-oauth
-
-- feat: add video programs
-
-- feat: add cloudflared
-
-- feat: add khanelilab cloudflared secret
-
-- chore: add supported secrets directories
-
-- feat: add more to devshell
-
-- chore: add meta.platforms to packages
-
-- feat: add hyprland crash report aliases
-
-- feat: add logging hyprland (breaking change randomly)
-
-- feat: add firefox search defaults
-
-- feat: add weather_config to secrets
-
-- feat: add chromium while troubleshooting firefox crashes
-
-- feat: add c devshell
-
-- feat: add disko khanelinix
-
-- feat: add hyprland catppuccin.conf
-
-- feat: add nix-update
-
-- feat: add theme module
-
-- feat: add flake-checker to check.yml
-
-- feat: add jqp dev packages
-
-- feat: add yazi goto keymap
-
-- feat: add gsed alias darwin
-
-- feat: add yazi (wip config)
-
-- feat: add tree-sitter to allow building from grammar
-
-- feat: add k9s
-
-- feat: add bottom
-
-- feat: add prefetch-sri
-
-- feat: add tearing to games
-
-- feat: add hyprland tearing
-
-- feat: add udiskie
-
-- feat: add tree
-
-- feat: add element windowrule
-
-- feat: add khanelinix cachix
-
-- feat: add git fix
-
-- feat: add efi tools
-
-- feat: add lanzaboote secure boot
-
-- feat: add dib kubeconfig core laptop
-
-- feat: add azure tools
-
-- feat: add gtk and qt theme core laptop
-
-- fix: add qt6 kvantum
-
-- feat: add k9s to k8s
-
-- feat: add nix secret
-
-- feat: add wakatime secret for khanelimac khaneliman
-
-- feat: add wakatime secret for core nixos
-
-- feat: add wakatime secret and user ssh
-
-- fix: add python3 pip dependency
-
-- feat: add godot engine
-
-- feat: add wakatime secret (wip implementation)
-
-- feat: add snowfall-frost
-
-- feat: add unityhub
-
-- feat: initial wsl setup (#5)
-
-
-- chore: add meta.mainProgram to local packages
-
-- feat: add btrfs auto scrub
-
-- feat: initial sops addition
-
-- feat: add some disk space analysers
-
-- feat: add tuigreet (unthemed)
-
-- feat: add lightdm
-
-- feat: add vscode/argv.json to fix keychain issue
-
-- feat: add nix trace helper programs
-
-- nixos-wsl: add CORE-PW00LM92 init
-
-- testing kernel because of amdgpu issues in current
-
-- test out armcord as a discord client
-
-
-### Removed
-
-- hyprland: remove WLR_RENDERER
-
-- zellij: remove strider
-
-- flake.nix: remove hypr-socket-watch overlay
-
-- flake.nix: remove hypr*.inputs.nixpkgs.follows
-
-- waybar: remove alt for clock
-
-- flake.nix: remove unused inputs
-
-- wallpapers: remove module used for creating symlink
-
-- hyprland: remove redundant sessionVariables
-
-https://github.com/NixOS/nixpkgs/pull/307155 added these by default now
-
-- eww: remove
-
-- neovim: remove old config inputs
-
-- flake.nix: remove nixos-hardware
-
-- hardware: remove common-pc
-
-- flake.nix: remove snowfall-frost and thaw
-
-- khanelinix: remove ckb-next
-
-- firefox: remove floorp and bypass-paywalls
-
-- overlays/nix-update: remove
-
-- git: remove git alias that blocks real command
-
-- conform: remove codespell
-
-- ranger: remove
-
-- chore: remove unnecessary , options
-
-- barbar: remove
-
-- nixvim: remove auto center on insert
-
-- hypr_socket_watch: remove local package
-
-- flake.nix: remove unused insecure programs
-
-- chore: remove dead code
-
-- wlroots: remove swaylock
-
-- hyprland: remove sway addons
-
-- chore: remove sketchybar version overlay
-
-- chore: remove dead code
-
-- gtk: remove XCURSOR explicit sessionVariables
-
-Handled in the home.pointerCursor module
-
-- nixvim: remove unused autocmds
-
-- fastfetch: remove unused temp setting
-
-- homebrew: remove cask tap again
-
-- sketchybar: remove wifi and bluetooth aliases
-
-- darwin: remove broken package reference
-
-- wezterm: remove custom package
-
-- nixvim: remove scrolloff locking
-
-- chore: remove duplicate qt session variable
-
-- chore: remove upstreamed swayidle systemdTarget
-
-- chore: remove monaspace overlay
-
-- chore: remove yabai overlay
-
-- chore: remove unnecessary spicetify-cli module
-
-- chore: remove dooit overlay and add to nixos
-
-- chore: remove custom waybar overlay
-
-This reverts commit dfac919656d50196f4fa69f3d09eeacff5211537.
-
-- chore: remove git safe directory
-
-- refactor: remove tmux always on init, move to keybind
-
-- chore: remove dead code (#38)
-
-Co-authored-by: khaneliman <khaneliman@users.noreply.github.com>
-- chore: remove unused hyprland variable
-
-- chore: remove nixpkgs-khanelinix again
-
-- chore: remove nixpkgs fork again
-
-- feat: remove armcord
-
-- chore: remove custom xdg-open-with-portal
-
-- chore: remove redundant shebangs
-
-- refactor: remove simple package modules
-
-- chore: remove global python
-
-- chore: remove duplicate home-manager imports
-
-- chore: remove unused bindings
-
-- chore: remove unused types
-
-- chore: remove unused attributes
-
-- chore: remove unused agenix
-
-- chore: remove unused packages
-
-- chore: remove snowfallorg flake fork
-
-- chore: remove unused inputs
-
-- chore: remove unneeded sketchybar overlay
-
-
-
-This changelog has been generated automatically using the custom git-cliff hook for
-[git-hooks.nix](https://github.com/cachix/git-hooks.nix)
+This reverts commit 746c3753d5f7080a03d9cbfad750c7a0994fa753. by @khaneliman
+- Feat: use astronvim v4 config by @khaneliman
+- Refactor: give bees less again by @khaneliman
+- Feat: wsl add wsl-open by @khaneliman
+- Feat: wsl add wslutilities and wslview override by @khaneliman
+- Chore: lint fix by @khaneliman
+- Update README.md by @khaneliman
+- Feat: hardware add nvidia programs by @khaneliman
+- Chore: bump dooit overlay until new nixos-unstable by @khaneliman
+- Refactor: replace hyprland overlay with direct pkg references by @khaneliman
+- Refactor: refine getExe and use getExe' by @khaneliman
+- Chore: cleanup snowfall inputs by @khaneliman
+- Chore: group attributes by @khaneliman
+- Chore: linting cleanup by @khaneliman
+- Wip home sops by @khaneliman
+- Chore: cleanup overlays by @khaneliman
+- Feat: dooit 2.0.0 overlay by @khaneliman
+- Chore: cleanup with inputs; by @khaneliman
+- Feat: hypr_socket_watch systemd service by @khaneliman
+- Feat: hyprland socket watch wallpaper changer by @khaneliman
+- Feat: hyprland reenable GDK_BACKEND=wayland by @khaneliman
+- Refactor: move import_env to packages by @khaneliman
+- Refactor: hyprpaper dynamic config by @khaneliman
+- Refactor: move hyprpaper to separate module by @khaneliman
+- Refactor: waybar persistent-workspaces rename by @khaneliman
+- Refactor: waybar add idle_inhibitor to secondary monitor by @khaneliman
+- Feat: more sops configuration by @khaneliman
+- Refactor: move btrfs into new module by @khaneliman
+- Chore: replace exa with eza by @khaneliman
+- Refactor: tweak waybar format-icons by @khaneliman
+- Refactor: hide vscode/argv.json behind keyring enable by @khaneliman
+- Refactor: nixpkgs-wayland specific packages instead of overlay by @khaneliman
+- Refactor: nixpkgs-wayland overlay replace manual waybar overlay by @khaneliman
+- Refactor: waybar tweak urgent css by @khaneliman
+- Refactor: convert hyprland workspaces to nix expression by @khaneliman
+- Feat: readd scroll events waybar by @khaneliman
+- Feat: waybar add empty and visible styling by @khaneliman
+- Chore: update waybar overlay by @khaneliman
+- Refactor: replace lib.getExe with inherit by @khaneliman
+- Refactor: replace with lib with inherit by @khaneliman
+- Chore: minor cleanup of boot by @khaneliman
+- Chore: sketchybar version overlay until nixpkgs updated by @khaneliman
+- Refactor: greetd -> regreet by @khaneliman
+- Chore: waybar hyprland new config style by @khaneliman
+- Feat: development add cpplint by @khaneliman
+- Chore: cleanup flake.nix by @khaneliman
+- Feat: nixos security add seahorse by @khaneliman
+- Remove upstreamed overlay fix by @khaneliman
+- Chore: update waybar overlay and flake lock by @khaneliman
+- Darwin networking dns by @khaneliman
+- Remove duplicate home-manager imports by @khaneliman
+- Astronvim fix treesitter compile issue by @khaneliman
+- Home folder cleanup by @khaneliman
+- Swaylock debug level to troubleshoot by @khaneliman
+- Swayidle debug level to troubleshoot by @khaneliman
+- Flake darwin fix by @khaneliman
+- Linting cleanup CORE by @khaneliman
+- Xdg add associations too by @khaneliman
+- Minor spicetify cleanup by @khaneliman
+- Waybar fix xdg-open not found by @khaneliman
+- Rename neovim to astronvim by @khaneliman
+- Ranger overlay updated to latest commit by @khaneliman
+- Remove unused sketchybar version overlay by @khaneliman
+- Hyprland environment import safeguards by @khaneliman
+- Add barrier kvm by @khaneliman
+- Zen kernel for now since main is fubar by @khaneliman
+- Hardware cleanup by @khaneliman
+- Linting fixes by @khaneliman
+- Waybar remove tooltip on wlogout by @khaneliman
+- Revert nixpkgs update by @khaneliman
+- Sketchybar overlay until nixpkgs update by @khaneliman
+- Darwin zsh login shell by @khaneliman
+- Git prune on fetch by @khaneliman
+- Sketchybar config embedded manually for now by @khaneliman
+- GetExe more configs by @khaneliman
+- Darwin desktop configs use getexe by @khaneliman
+- Kitty default again (wezterm crashes on display unplug) by @khaneliman
+- Waybar overlay until new release by @khaneliman
+- Ranger attempt jsonc preview support by @khaneliman
+- Ranger edit jsonc support by @khaneliman
+- Fastfetch jsonc config nix expression by @khaneliman
+- Wezterm default hyprland by @khaneliman
+- Add wezterm by @khaneliman
+- Tmux colors fix by @khaneliman
+- Waybar switch back to wlr/workspaces by @khaneliman
+- Waybar overlay for hyprland urgent support until upstreamed by @khaneliman
+- Waybar tweak urgent css by @khaneliman
+- Create debug option for waybar by @khaneliman
+- Btrfs-assistant add by @khaneliman
+- Add protonup-qt by @khaneliman
+- Waybar remove hyprland overlay and update config by @khaneliman
+- Misc cleanup by @khaneliman
+- Add yubikey to workstation by @khaneliman
+- Darwin build fix by @khaneliman
+- Sf-mono use source as input by @khaneliman
+- Firefox embed config by @khaneliman
+- Rofi embed config by @khaneliman
+- Hyprland embed config by @khaneliman
+- Embed ranger config by @khaneliman
+- Embed qt theming by @khaneliman
+- Alacritty home-manager config by @khaneliman
+- Wlogout embed layout by @khaneliman
+- Kitty home-manager config by @khaneliman
+- Remove .functions by @khaneliman
+- Zsh plugins by @khaneliman
+- Bash home-manager config by @khaneliman
+- Embed swaync dotfiles by @khaneliman
+- Nixos remove neofetch by @khaneliman
+- Helix cleanup by @khaneliman
+- Minor fastfetch cleanup by @khaneliman
+- Btop to home-manager config by @khaneliman
+- Zsh to home-manager config by @khaneliman
+- Fish to home-manager config by @khaneliman
+- Fastfetch to home-manager config by @khaneliman
+- Snowfall lib switch to dev by @khaneliman
+- Ranger fork support tmux image preview by @khaneliman
+- Cleanup neovim config by @khaneliman
+- Khanelimac nixcfg alias by @khaneliman
+- Micro home-manager consolidation by @khaneliman
+- Topgrade home-manager consolidation by @khaneliman
+- Tmux updates by @khaneliman
+- Default editor options by @khaneliman
+- Hyprland hyprpaper nix file by @khaneliman
+- Darwin sketchybar aliases by @khaneliman
+- Tmux home-manager consolidation by @khaneliman
+- Lazygit home-manager consolidation by @khaneliman
+- Nixos remove bundled op-ssh-sign by @khaneliman
+- Git use home-manager options by @khaneliman
+- Deadnix fixes by @khaneliman
+- Direnv home-manager consolidation by @khaneliman
+- Sort systems by @khaneliman
+- Sort devshell.toml by @khaneliman
+- Sort flake inputs by @khaneliman
+- Nixos remove icehouse by @khaneliman
+- Nixos cleanup discord config by @khaneliman
+- Remove cowsay packages and overlays by @khaneliman
+- Cleanup home-manager fish config by @khaneliman
+- Remove .aliases file by @khaneliman
+- Openssl alias specify bin by @khaneliman
+- Nixos cava alias by @khaneliman
+- Bat moved to home-manager by @khaneliman
+- Lsd moved to home-manager by @khaneliman
+- Refine aliases by @khaneliman
+- Darwin shell fixes by @khaneliman
+- Nixos add github desktop by @khaneliman
+- Shell refactoring by @khaneliman
+- Nixos networking nameservers by @khaneliman
+- Remove lazygit overlay by @khaneliman
+- Khanelinix disable common-gpu-nvidia-disable so gpu passthru works with nixos-hardware update by @khaneliman
+- Flake lock update and disable broken packages by @khaneliman
+- Nixos add snapper by @khaneliman
+- Nixos add btrfs storage options by @khaneliman
+- Consolidate git by @khaneliman
+- Wip home-manager refactor by @khaneliman
+- Home-manager git config support darwin and linux by @khaneliman
+- Darwin conflict fix by @khaneliman
+- Looking-glass update by @khaneliman
+- Misc dev tweaks by @khaneliman
+- Lazygit overlay until nixpkgs updated by @khaneliman
+- Darwin add shell configs by @khaneliman
+- Darwin use nix tmux config by @khaneliman
+- Khanelimac archetypes by @khaneliman
+- Darwin add tmux custom config by @khaneliman
+- Darwin add archetypes and suite updates by @khaneliman
+- Misc cleanup by @khaneliman
+- Move agenix to shared module (still doesn't work with config) by @khaneliman
+- Change nixos direnv to use nixos module by @khaneliman
+- Consolidate common by @khaneliman
+- Consolidate networking by @khaneliman
+- Khanelimac specific tweaks by @khaneliman
+- Darwin move homebrew to tools by @khaneliman
+- Consolidate fonts by @khaneliman
+- Darwin add sketchybar-app-font by @khaneliman
+- Remove nur finally by @khaneliman
+- More refactoring by @khaneliman
+- Cleanup formatting by @khaneliman
+- Nixos add to social suite by @khaneliman
+- [wip] refactoring by @khaneliman
+- Flake update and misc fixes/changes by @khaneliman
+- Darwin hide mas apps behind flag by @khaneliman
+- Darwin dev update (wip) by @khaneliman
+- Cleanup by @khaneliman
+- Darwin migrate sfmono to cask by @khaneliman
+- Darwin consolidate homebrew config by @khaneliman
+- Darwin homebrew tweaks by @khaneliman
+- Migrate sddm-catppuccin to catppuccin-sddm-corners (will replace with nixpkgs) by @khaneliman
+- Minor cleanup on display-managers sddm still not working for me by @khaneliman
+- Nixos add element-desktop by @khaneliman
+- Migrate wttrbar from custom package to nixpkg by @khaneliman
+- Misc cleanup by @khaneliman
+- Darwin yabai rule for element by @khaneliman
+- Darwin disable home-manager until fixed and add element by @khaneliman
+- Update workflows by @khaneliman
+- Nixpkgs-lint solution by @khaneliman
+- Nixpkgs-fmt solution by @khaneliman
+- Switch to nixpkgs-fmt by @khaneliman
+- Hyprland updates by @khaneliman
+- Darwin system defaults added by @khaneliman
+- Misc tweaks and fixes by @khaneliman
+- Darwin add packages by @khaneliman
+- Darwin migrate sketchybar to nix-darwin by @khaneliman
+- Home-manager ncmpcpp use same directory as mpd explicitly by @khaneliman
+- Hyprland use home-manager mpd-mpris by @khaneliman
+- Hyprland use home-manager gnome-keyring daemon by @khaneliman
+- Hyprland use blueman home-manager service by @khaneliman
+- Nixpkgs development reqs by @khaneliman
+- Hyprland tweaks by @khaneliman
+- Nixos fix hyprland windowrule for spotify and add mpdevil by @khaneliman
+- Nixos add mpris functionality waybar and mpd setup by @khaneliman
+- Nixos migrate waybar to home-manager by @khaneliman
+- Nixos fix hyprland rofi by @khaneliman
+- Darwin migrate yabai to nix-darwin by @khaneliman
+- Darwin migrate skhd to nix-darwin by @khaneliman
+- Migrate swaylock to home-manager by @khaneliman
+- Remove nixos swayidle just use home-manager by @khaneliman
+- Nixos fix wallpaper change temporary hack by @khaneliman
+- Nixos modularize hyprland config by @khaneliman
+- Nixos convert hyprland to home-manager by @khaneliman
+- Darwin remove brew suite by @khaneliman
+- Darwin organize brews casks and taps by @khaneliman
+- Darwin organize masApps by @khaneliman
+- Minor cleanup by @khaneliman
+- Nixos plymouth fix by @khaneliman
+- Darwin organize better by @khaneliman
+- Darwin migrate gui apps to homebrew module by @khaneliman
+- Spotify cleanup by @khaneliman
+- Minor hyprland and home-manager scaffold / test by @khaneliman
+- Use mdns instead of ip by @khaneliman
+- Update thunderbird a little and add vlc by @khaneliman
+- Add darwin to check by @khaneliman
+- Deadnix cleanup by @khaneliman
+- Rename darwin hostname by @khaneliman
+- Darwin add stuff from brewfile as a module for now by @khaneliman
+- Enable colord for printing by @khaneliman
+- Flake lock update by @khaneliman
+- Hyprland remove unused script call by @khaneliman
+- Bluetooth and power fix by @khaneliman
+- Blacklist module throwing errors by @khaneliman
+- Remove qmk from dev by @khaneliman
+- Misc fixes by @khaneliman
+- Waybar overlay for unreleased hyprland fix by @khaneliman
+- Khanelinix enable sysrq by @khaneliman
+- Darwin update common by @khaneliman
+- Darwin add gimp by @khaneliman
+- Nixos swaync icon update by @khaneliman
+- Nixos waybar icon update by @khaneliman
+- Shared blender config by @khaneliman
+- Darwin fix username by @khaneliman
+- Nixos enable blender again by @khaneliman
+- Darwin remove iterm2 by @khaneliman
+- Darwin 1password by @khaneliman
+- Darwin home app linker by @khaneliman
+- Add darwin firefox (wip) by @khaneliman
+- Shared nix config module by @khaneliman
+- Add zathura by @khaneliman
+- Xdg mimeapps config by @khaneliman
+- Helix initial config by @khaneliman
+- Spicetify extensions and apps by @khaneliman
+- Cleanup by @khaneliman
+- Add spicetify by @khaneliman
+- Darwin tweaks by @khaneliman
+- Initial darwin setup by @khaneliman
+- Initial snowfallorg home-manager setup by @khaneliman
+- Move nixos into separate modules by @khaneliman
+- Use breeze dark icons by @khaneliman
+- Deadnix and statix fixes by @khaneliman
+- Hyprland config tweak by @khaneliman
+- Unpin linux kernel by @khaneliman
+- Firefox updates by @khaneliman
+- Try and fix printing by @khaneliman
+- Screenlayout disable resetting secondary monitor by @khaneliman
+- Cleanup gtk, qt, and hyprland configs a bit by @khaneliman
+- Gdm instead of regreet again by @khaneliman
+- Update hyprland polish file to use config values by @khaneliman
+- Flake lock update - temp pin kernel crash on 6.4 by @khaneliman
+- Hyprland add gsettings schemas to regular terminal by @khaneliman
+- Update README.md by @khaneliman
+- Some lint fixes by @khaneliman
+- Gate flake check behind branch condition by @khaneliman
+- Add lint workflow by @khaneliman
+- Remove unused secrets file by @khaneliman
+- Alejandra reformat by @khaneliman
+- Deadnix fix by @khaneliman
+- Alejandra format by @khaneliman
+- Statix fix by @khaneliman
+- Flake lock update by @khaneliman
+- Add nixos packages to common by @khaneliman
+- Refine xdg-desktop-portal implementation by @khaneliman
+- Gamemode tweak by @khaneliman
+- Flake lock update by @khaneliman
+- Add gamemode by @khaneliman
+- Add mangohud by @khaneliman
+- Update firefox addon by @khaneliman
+- Flake lock update and gtk breaking change fix by @khaneliman
+- Flake lock update by @khaneliman
+- Massive refactor by @khaneliman
+- Flake lock update by @khaneliman
+- Wlroots suite by @khaneliman
+- Catppuccin regreet, modularize display-managers, some cleanup and reorg by @khaneliman
+- Ranger plugins fix by @khaneliman
+- Ranger dependencies by @khaneliman
+- Flake lock update by @khaneliman
+- Khanelinix remove nix controlled openrgb config by @khaneliman
+- Samba update for khanelinix by @khaneliman
+- Flake lock update by @khaneliman
+- Add emulationstation by @khaneliman
+- Thunderbird updates by @khaneliman
+- Add emulators by @khaneliman
+- Include discord in startup apps by @khaneliman
+- Flake lock update by @khaneliman
+- Remove waybar overlay with 0.9.18 in nixpkgs by @khaneliman
+- Add glxinfo by @khaneliman
+- Remove unused cava overlay by @khaneliman
+- Attempt to fix peek.nvim (still errors but new errors) by @khaneliman
+- Flake lock update by @khaneliman
+- Add group notifications back to waybar 0.9.18 by @khaneliman
+- Add hydra-check by @khaneliman
+- Create README.md by @khaneliman
+- Flake lock update by @khaneliman
+- Add ssh public keys and aliases by @khaneliman
+- Move sddm-catppuccin to its own nix flake by @khaneliman
+- Change login shell to zsh by @khaneliman
+- Use waybar again after new release with fixes by @khaneliman
+- Flake lock update by @khaneliman
+- Eww tweaks by @khaneliman
+- Add betterdiscord theme by @khaneliman
+- Hyprland add secondary monitor workaround by @khaneliman
+- Add spotify by @khaneliman
+- Initial eww bar config attempt by @khaneliman
+- Environment variable updates by @khaneliman
+- Flake lock update by @khaneliman
+- Update khanelinix hardware by @khaneliman
+- Update hyprland environment variables by @khaneliman
+- Update firefox config by @khaneliman
+- Tmux update by @khaneliman
+- Flake update and remove things breaking build by @khaneliman
+- Workflow add by @khaneliman
+- Flake lock update by @khaneliman
+- Initial commit by @khaneliman
+
+#### Fixes
+- Sddm: fix config by @khaneliman
+- Packages/git-cliff: fix syntax highlighting by @khaneliman
+- Khanelilab: fix networking address by @khaneliman
+- Shell/c: fix darwin by @khaneliman
+- Shell/dotnet: fix darwin by @khaneliman
+- Gamemode: fix hyprland commands
+
+For real this time.... by @khaneliman
+- Gamemode: fix hyprland commands by @khaneliman
+- Swaync: fixes by @khaneliman
+- Hyprland: fix variable name by @khaneliman
+- Swaync: fix by @khaneliman
+- Swaync: fix screenshot utility by @khaneliman
+- Hyprland: fix hl alias by @khaneliman
+- Darwin: fixes by @khaneliman
+- Hyprland: fix slurp shortcuts by @khaneliman
+- Hyprland: fix yazi launch bind by @khaneliman
+- Neovim/catppuccin: fix changed setting names by @khaneliman
+- Nixvim: fix deprecations by @khaneliman
+- Yazi: fix openers by @khaneliman
+- Qt: fix style name by @khaneliman
+- Telescope: fix conflicting key map by @khaneliman
+- Hyprlock: fix images.shadow_passes by @khaneliman
+- Dap: fix darwin build by @khaneliman
+- Lualine: fix dap-ui by @khaneliman
+- Git: fix darwin git credential helper by @khaneliman
+- Conform: fix format toggle by @khaneliman
+- Labeler.yml: fix by @khaneliman
+- Deadnix: fix commit message by @khaneliman
+- Skhd: fix yabai and skhd restart mappings by @khaneliman
+- Hyprland: fix screen sharing by @khaneliman
+- Firefox: fix intl.accept_languages by @khaneliman
+- Yazi: fix conflicting keybinding by @khaneliman
+- Flake.nix: fix rust-overlay name by @khaneliman
+- Sketchybar: fix github by @khaneliman
+- Khanelinix: fix swayoutput by @khaneliman
+- Waybar: fix tray slider by @khaneliman
+- Nixvim: fix todo and fix highlights by @khaneliman
+- Nixvim: fix autoformat keymap by @khaneliman
+- Nixvim: fix spellang by @khaneliman
+- Fix: dib core remapping by @khaneliman
+- Fix: wttrbar config location by @khaneliman
+- Fix: non aarch-64 builds by @khaneliman
+- Fix: sketchybar helper.sh make without cd by @khaneliman
+- Fix: sketchybar remove compiled helpers by @khaneliman
+- Fix: sketchybar island notification init by @khaneliman
+- Fix: sketchybar toggle fixes by @khaneliman
+- Fix: sketchybar bluetooth fix indexing by @khaneliman
+- Fix: sketchybar  weather gracefully handle failed api calls by @khaneliman
+- Fix: deno darwin overlay fix by @khaneliman
+- Fix: steam menu focus by @khaneliman
+- Fix: qt theme fix by @khaneliman
+- Fix: hacks and workarounds for k3b by @khaneliman
+- Fix: cava for darwin by @khaneliman
+- Fix: fix hyprland log aliases by @khaneliman
+- Fix: sketchybar icons by @khaneliman
+- Fix: record_screen by @khaneliman
+- Fix: hyprland screenshot binds by @khaneliman
+- Fix: firefox search force by @khaneliman
+- Fix: firefox cfg.userchrome used appended after /chrome/userchrome.css by @khaneliman
+- Fix: firefox needing to be beta for now for profile to work by @khaneliman
+- Fix: proper darwin firefox config location by @khaneliman
+- Fix: firefox not supported darwin by @khaneliman
+- Fix: neovim onChange temporarily disabled by @khaneliman
+- Fix: neovim onchange events by @khaneliman
+- Fix: scream service property by @khaneliman
+- Fix: hl commands breaking due to aliases by @khaneliman
+- Fix: vulkan-utility-libraries revert by @khaneliman in [#53](https://github.com/khaneliman/khanelinix/pull/53)
+- Fix: yabai bar height by @khaneliman
+- Fix: zsh sketchybar aliases by @khaneliman
+- Fix: music playing artwork sketchybar by @khaneliman
+- Fix: caprine hide messenger ad by @khaneliman
+- Fix: caprine macos config by @khaneliman
+- Fix: caprine style fix by @khaneliman
+- Fix: cleanup fonts by @khaneliman
+- Fix: firefox theme by @khaneliman
+- Fix: wlroots readd clipboard by @khaneliman
+- Fix: hyprland pkg exe references by @khaneliman
+- Fix: spicetify catppuccin theme by @khaneliman
+- Feat: fix_git pkg (wip) by @khaneliman
+- Fix: tmux ranger img previews by @khaneliman
+- Fix: discord master overlay until released unstable by @khaneliman
+- Fix: readd waybar persistent workspaces to config
+
+This reverts commit aa86bb51e6169da2f9b485aa8f72511fd08bdeab. by @khaneliman
+- Fix: lint fixes by @khaneliman
+- Fix: k9s theme path by @khaneliman
+- Fix: hypraper restart always by @khaneliman
+- Fix: kitty scratchpad launch by @khaneliman
+- Fix: khanelinix static ip match router config by @khaneliman
+- Fix: ssh port expression only nixos configurations by @khaneliman
+- Fix: tmux truecolor by @khaneliman
+- Fix: udiskie breaks darwin by @khaneliman
+- Fix: nixos networking mdns by @khaneliman
+- Fix: remove custom dib signing key by @khaneliman
+- Fix: revert waybar workspaces setup for now by @khaneliman
+- Fix: reenable wslagentbridge and remove ssh auth override by @khaneliman
+- Fix: revert xdgOpenUsePortal until i can figure out portal application associations by @khaneliman
+- Fix: sddm module fix by @khaneliman
+- Fix: broken / disabled packages by @khaneliman
+- Fix: trace-which encapsulate dependency properly by @khaneliman
+- Fix: hyprland removed decoration setting by @khaneliman in [#12](https://github.com/khaneliman/khanelinix/pull/12)
+- Fix: sops configuration by @khaneliman
+- Fix: credentials usehttppath by @khaneliman
+- Fix: lint fixes by @khaneliman
+- Fix: sopsdiffer attribute by @khaneliman
+- Fix: marksman dependencies by @khaneliman
+- Fix: jdtls fix dependency by @khaneliman
+- Fix: csharp-ls neovim by @khaneliman
+- Fix: neovim lazy lock by @khaneliman
+- Fix: remove conflicting dotnet-sdk version by @khaneliman
+- Fix: wgetrc missing error by @khaneliman
+- Fix: git includes option default by @khaneliman
+- Fix: sops fixes by @khaneliman
+- Fix: CORE nixcfg alias by @khaneliman
+- Fix: git wsl not enabled by @khaneliman
+- Fix: wsl git credentials by @khaneliman
+- Fix: wsl git signing by @khaneliman
+- Fix: remove doas from common to fix wsl by @khaneliman
+- Fix: tune bees more by @khaneliman
+- Fix: spice service wantedby by @khaneliman
+- Fix: limit bees a different way by @khaneliman
+- Refactor: fix lint warning waybar by @khaneliman
+- Fix: stupid darwin sandbox workaround by @khaneliman
+- Fix: hypr_socket_watch encapsulate dependency by @khaneliman
+- Fix: remove broken darwin package by @khaneliman
+- Fix: hyprland remove ws explicit bind conflicts by @khaneliman
+- Fix: devshell by @khaneliman
+- Fix: hyprland prevent stupid cursor relocation default change by @khaneliman
+- Fix: limit beesd threads to prevent performance issues by @khaneliman
+- Fix: replace types.string with types.str by @khaneliman
+- Fix: btrfs dedupe by @khaneliman
+- Fix: dumb waybar on-click workaround on hyprland by @khaneliman
+- Fix: darwin missing inherits by @khaneliman
+- Fix: disable mangohud for now (broke steam) by @khaneliman
+- Fix: primary.sh xrandr command by @khaneliman
+- Fix: regreet use sway and support monitor definitions by @khaneliman
+- Fix: regreet work with vulkan by @khaneliman
+- Fix: nixos-revision correct url and jq parameter by @khaneliman
+- Fix: flake switch on darwin by @khaneliman
+- Fix: astronvim gnumake dependency by @khaneliman
+- Fix neovim plugins not being able to update by @khaneliman
+- Record:screen: fix darwin build by @khaneliman
+- Fix hyprland log aliases by @khaneliman
+- Fix fastfetch config by @khaneliman
+- Fix bat theme name by @khaneliman
+- Fix home-manager config for khanelimac by @khaneliman
+- Fixes and cleanup by @khaneliman
+- Fix nixos config by @khaneliman
+- Fix gdm user icon script by @khaneliman
+- Fix mdns by @khaneliman
+- Fix cursor-size gtk by @khaneliman
+- Fix gtk theme name by @khaneliman
+- Fix cachix by @khaneliman
+- Fix check action by @khaneliman
+- Fix waybar bug and use gdm for nixos since sddm is outdated by @khaneliman
+- Fix discord theme error by @khaneliman
+
+#### New
+- Zellij: add aliases for creating and attaching sessions by @khaneliman
+- Zellij: add dev layout by @khaneliman
+- Flake.nix: add misc hooks by @khaneliman
+- Flake.nix: add prettier hook by @khaneliman
+- CHANGELOG.md: init by @khaneliman
+- Flake.nix: add git-cliff hook by @khaneliman
+- Packages/git-cliff: add git-cliff package for hook by @khaneliman
+- Flake.nix: add pre-commit-hooks by @khaneliman
+- Zellij: add shell tab to layout
+
+mimic my normal tmux layout by @khaneliman
+- Music: add musikube and pulsemixer by @khaneliman
+- Zellij: add custom layout by @khaneliman
+- Nix/system: add logrotate by @khaneliman
+- Nix/system: add oomd by @khaneliman
+- System/time: add ntp by @khaneliman
+- Khanelinix: add realtime by @khaneliman
+- Nixos/system: add realtime module by @khaneliman
+- User.extraGroups: add extra groups by @khaneliman
+- Khanelinix: add networking address
+
+Apparently configured in wrong system... by @khaneliman
+- Hyprland: add resize binds by @khaneliman
+- Khanelinix: add tpm by @khaneliman
+- Nix/hardware: add tpm module by @khaneliman
+- Fonts: add some more fonts by @khaneliman
+- Obs: add extra plugins by @khaneliman
+- Yazi: add unique type icons by @khaneliman
+- Yazi: add icons by @khaneliman
+- Neovim/treesitter: add kdl grammar by @khaneliman
+- Waybar: additional modules by @khaneliman
+- Services/easyeffects: init module by @khaneliman
+- .gitignore: add flake by @khaneliman
+- Home/services/noisetorch: init module by @khaneliman
+- Nixos/noisetorch: init module by @khaneliman
+- Nix: add channel links by @khaneliman
+- Services/polkit: init new module by @khaneliman
+- Services/cliboard: init new module by @khaneliman
+- Lib: add booltToNum by @khaneliman
+- Services/power: add power-profiles-daemon by @khaneliman
+- Polkit: add logging by @khaneliman
+- Boot: add silentBoot config by @khaneliman
+- Nix: add extra substituters by @khaneliman
+- Nvidia: add extra configuration by @khaneliman
+- Hardware: init intelcpu by @khaneliman
+- Nixos/theme: init theme module by @khaneliman
+- Tmux: add fzf by @khaneliman
+- Waybar: add cava module by @khaneliman
+- Bluetooth: add experimental features by @khaneliman
+- Zellij: init by @khaneliman
+- Neovim: add quickfix navigation keybind by @khaneliman
+- Shells/default: add nix-inspect by @khaneliman
+- Yazi: add miller previewer by @khaneliman
+- Yazi: add glow previewer by @khaneliman
+- Yazi: add dmg opener by @khaneliman
+- Neovim/neotest: add junit_jar by @khaneliman
+- Neovim/conform: add sqlfluff by @khaneliman
+- Neovim/conform: add shfmt by @khaneliman
+- Neovim/conform: add xmlformat by @khaneliman
+- Shells/java: init by @khaneliman
+- Waybar: add wezterm window-rewrite by @khaneliman
+- Yazi: add archive opener by @khaneliman
+- Services/ddc: init by @khaneliman
+- Codeium: add plugin settings by @khaneliman
+- Treesitter: add vimdoc back by @khaneliman
+- Darwin: add bashdb by @khaneliman
+- Treesitter: add markdown_inline by @khaneliman
+- Noice: add nvim-notify by @khaneliman
+- Efm: add linters by @khaneliman
+- Gitsigns: add git blame by @khaneliman
+- Telescope: add git stash keymap by @khaneliman
+- Development: add postman by @khaneliman
+- .git-blame-ignore-revs: init by @khaneliman
+- Git: add blame.ignoreRevsFile by @khaneliman
+- Git: add GITHUB_TOKEN secret by @khaneliman
+- Theme: add catppuccin.nix by @khaneliman
+- Cmp: add priorities by @khaneliman
+- Bufremove: init to handle removing single buffer by @khaneliman
+- Rustaceanvim: add excludeDirs (doesnt seem to work) by @khaneliman
+- .luarc.json: init by @khaneliman
+- Conform: add codespell formatter by @khaneliman
+- Neotest: add summary keymap by @khaneliman
+- Conform: add formatter commands by @khaneliman
+- Yabai: add teams work rule by @khaneliman
+- Sketchybar: add window rewrite front app by @khaneliman
+- Neotest: add adapters by @khaneliman
+- Games: add minecraft and prismlauncher by @khaneliman
+- Neotest: init by @khaneliman
+- Gitsigns: add line blame by @khaneliman
+- Lazygit: add overrideGpg by @khaneliman
+- Conform: add async formatting by @khaneliman
+- Telescope: add autocommands search by @khaneliman
+- Lualine: add winbar by @khaneliman
+- Lualine: add tabs to tabline by @khaneliman
+- Lualine: add aerial by @khaneliman
+- Nixvim: add refactoring-nvim by @khaneliman
+- Nixvim: add webapi-vim for rustplay by @khaneliman
+- Git: add core azure host credential provider by @khaneliman
+- Git: add dib azure host credential provider by @khaneliman
+- Hypr-socket-watch: add new rust flake by @khaneliman
+- Devshell: add thaw
+
+This reverts commit 05a880d54c37997b325964d2a9b5e36d1f8668bd. by @khaneliman
+- Flake.nix: add snowfallorg.thaw by @khaneliman
+- Sway: add swaylock by @khaneliman
+- Khanelinix: add dib signing by @khaneliman
+- Sketchybar: add default space icon by @khaneliman
+- Sketchybar: add copy labels wifi module by @khaneliman
+- Jankyborders: add bordersrc for default behavior by @khaneliman
+- Lib: add capitalize function by @khaneliman
+- Khanelimac: add music suite by @khaneliman
+- Git: add safe directories by @khaneliman
+- Security: add sudo-rs by @khaneliman
+- Nixvim: add aerial by @khaneliman
+- Nixvim: add nix-develop by @khaneliman
+- Yazi: add hostname to header by @khaneliman
+- Yazi: add dragon keymap by @khaneliman
+- Yazi: add extra status information by @khaneliman
+- Yazi: add full border by @khaneliman
+- Nixvim: add mini.map by @khaneliman
+- Nixvim: add mini.basics and mini.bracketed by @khaneliman
+- Nixvim: add mini.indentscope by @khaneliman
+- Nixvim: add mini.surround by @khaneliman
+- Firefox: add react dev tools by @khaneliman
+- Sketchybar: add lua shebang on all by @khaneliman
+- Sketchybar: add yabai item by @khaneliman
+- Hyprland: add teams windowrule by @khaneliman
+- Waybar: add teams window rewrite by @khaneliman
+- Business: add teams by @khaneliman
+- Sketchybar: add print_table by @khaneliman
+- Sketchybar: add spaces with windowrules by @khaneliman
+- Sketchybar: add skhd by @khaneliman
+- Homebrew: add cask back by @khaneliman
+- Hyprlock: add grace on lock by @khaneliman
+- Firefox: add floorp package without customization, for now by @khaneliman
+- Khanelinix: add hyprlandOutput by @khaneliman
+- Khanelinix: add kernel specializations by @khaneliman
+- Nixvim: add yanky by @khaneliman
+- Sketchybar: add logFile output by @khaneliman
+- Nixvim: add fix highlights by @khaneliman
+- Nixvim: add toggle fold column by @khaneliman
+- Nixvim: add toggle spell and wrap by @khaneliman
+- Nixvim: add diffview by @khaneliman
+- Nixvim: add indent-blankline by @khaneliman
+- Feat: add ripgrep darwin by @khaneliman
+- Feat: add floorp by @khaneliman
+- Feat: add zoxide to yazi by @khaneliman
+- Chore: add dynamic-island-sketchybar logging output by @khaneliman
+- Feat: add neovim nightly overlay again by @khaneliman
+- Chore: add spotify free rules and window rewrite by @khaneliman
+- Feat: add git-credential-oauth by @khaneliman
+- Feat: add video programs by @khaneliman
+- Feat: add cloudflared by @khaneliman
+- Feat: add khanelilab cloudflared secret by @khaneliman
+- Chore: add supported secrets directories by @khaneliman
+- Feat: add more to devshell by @khaneliman
+- Chore: add meta.platforms to packages by @khaneliman
+- Feat: add hyprland crash report aliases by @khaneliman
+- Feat: add logging hyprland (breaking change randomly) by @khaneliman
+- Feat: add firefox search defaults by @khaneliman
+- Feat: add weather_config to secrets by @khaneliman
+- Feat: add chromium while troubleshooting firefox crashes by @khaneliman
+- Feat: add c devshell by @khaneliman
+- Feat: add disko khanelinix by @khaneliman
+- Feat: add hyprland catppuccin.conf by @khaneliman
+- Feat: add nix-update by @khaneliman
+- Feat: add theme module by @khaneliman
+- Feat: add flake-checker to check.yml by @khaneliman
+- Feat: add jqp dev packages by @khaneliman
+- Feat: add yazi goto keymap by @khaneliman
+- Feat: add gsed alias darwin by @khaneliman
+- Feat: add yazi (wip config) by @khaneliman
+- Feat: add tree-sitter to allow building from grammar by @khaneliman
+- Feat: add k9s by @khaneliman
+- Feat: add bottom by @khaneliman
+- Feat: add prefetch-sri by @khaneliman
+- Feat: add tearing to games by @khaneliman
+- Feat: add hyprland tearing by @khaneliman
+- Feat: add udiskie by @khaneliman
+- Feat: add tree by @khaneliman
+- Feat: add element windowrule by @khaneliman
+- Feat: add khanelinix cachix by @khaneliman
+- Feat: add git fix by @khaneliman
+- Feat: add efi tools by @khaneliman
+- Feat: add lanzaboote secure boot by @khaneliman
+- Feat: add dib kubeconfig core laptop by @khaneliman
+- Feat: add azure tools by @khaneliman
+- Feat: add gtk and qt theme core laptop by @khaneliman
+- Fix: add qt6 kvantum by @khaneliman
+- Feat: add k9s to k8s by @khaneliman
+- Feat: add nix secret by @khaneliman
+- Feat: add wakatime secret for khanelimac khaneliman by @khaneliman
+- Feat: add wakatime secret for core nixos by @khaneliman
+- Feat: add wakatime secret and user ssh by @khaneliman
+- Fix: add python3 pip dependency by @khaneliman
+- Feat: add godot engine by @khaneliman
+- Feat: add wakatime secret (wip implementation) by @khaneliman
+- Feat: add snowfall-frost by @khaneliman
+- Feat: add unityhub by @khaneliman
+- Feat: initial wsl setup (#5) by @khaneliman
+- Chore: add meta.mainProgram to local packages by @khaneliman
+- Feat: add btrfs auto scrub by @khaneliman
+- Feat: initial sops addition by @khaneliman
+- Feat: add some disk space analysers by @khaneliman
+- Feat: add tuigreet (unthemed) by @khaneliman
+- Feat: add lightdm by @khaneliman
+- Feat: add vscode/argv.json to fix keychain issue by @khaneliman
+- Feat: add nix trace helper programs by @khaneliman
+- Nixos-wsl: add CORE-PW00LM92 init by @khaneliman
+- Testing kernel because of amdgpu issues in current by @khaneliman
+- Test out armcord as a discord client by @khaneliman
+
+#### Removed
+- Hyprland: remove WLR_RENDERER by @khaneliman
+- Zellij: remove strider by @khaneliman
+- Flake.nix: remove hypr-socket-watch overlay by @khaneliman
+- Flake.nix: remove hypr*.inputs.nixpkgs.follows by @khaneliman
+- Waybar: remove alt for clock by @khaneliman
+- Flake.nix: remove unused inputs by @khaneliman
+- Wallpapers: remove module used for creating symlink by @khaneliman
+- Hyprland: remove redundant sessionVariables
+
+https://github.com/NixOS/nixpkgs/pull/307155 added these by default now by @khaneliman
+- Eww: remove by @khaneliman
+- Neovim: remove old config inputs by @khaneliman
+- Flake.nix: remove nixos-hardware by @khaneliman
+- Hardware: remove common-pc by @khaneliman
+- Flake.nix: remove snowfall-frost and thaw by @khaneliman
+- Khanelinix: remove ckb-next by @khaneliman
+- Firefox: remove floorp and bypass-paywalls by @khaneliman
+- Overlays/nix-update: remove by @khaneliman
+- Git: remove git alias that blocks real command by @khaneliman
+- Conform: remove codespell by @khaneliman
+- Ranger: remove by @khaneliman
+- Chore: remove unnecessary , options by @khaneliman
+- Barbar: remove by @khaneliman
+- Nixvim: remove auto center on insert by @khaneliman
+- Hypr_socket_watch: remove local package by @khaneliman
+- Flake.nix: remove unused insecure programs by @khaneliman
+- Chore: remove dead code by @khaneliman in [#86](https://github.com/khaneliman/khanelinix/pull/86)
+- Wlroots: remove swaylock by @khaneliman
+- Hyprland: remove sway addons by @khaneliman
+- Chore: remove sketchybar version overlay by @khaneliman
+- Chore: remove dead code by @khaneliman in [#83](https://github.com/khaneliman/khanelinix/pull/83)
+- Gtk: remove XCURSOR explicit sessionVariables
+
+Handled in the home.pointerCursor module by @khaneliman
+- Nixvim: remove unused autocmds by @khaneliman
+- Fastfetch: remove unused temp setting by @khaneliman
+- Homebrew: remove cask tap again by @khaneliman
+- Sketchybar: remove wifi and bluetooth aliases by @khaneliman
+- Darwin: remove broken package reference by @khaneliman
+- Wezterm: remove custom package by @khaneliman
+- Nixvim: remove scrolloff locking by @khaneliman
+- Chore: remove duplicate qt session variable by @khaneliman
+- Chore: remove upstreamed swayidle systemdTarget by @khaneliman
+- Chore: remove monaspace overlay by @khaneliman
+- Chore: remove yabai overlay by @khaneliman
+- Chore: remove unnecessary spicetify-cli module by @khaneliman
+- Chore: remove dooit overlay and add to nixos by @khaneliman
+- Chore: remove custom waybar overlay
+
+This reverts commit dfac919656d50196f4fa69f3d09eeacff5211537. by @khaneliman
+- Chore: remove git safe directory by @khaneliman
+- Refactor: remove tmux always on init, move to keybind by @khaneliman
+- Chore: remove dead code (#38)
+
+Co-authored-by: khaneliman <khaneliman@users.noreply.github.com> by @github-actions[bot] in [#38](https://github.com/khaneliman/khanelinix/pull/38)
+- Chore: remove unused hyprland variable by @khaneliman
+- Chore: remove nixpkgs-khanelinix again by @khaneliman
+- Chore: remove nixpkgs fork again by @khaneliman
+- Feat: remove armcord by @khaneliman
+- Chore: remove custom xdg-open-with-portal by @khaneliman
+- Chore: remove redundant shebangs by @khaneliman
+- Refactor: remove simple package modules by @khaneliman
+- Chore: remove global python by @khaneliman
+- Chore: remove duplicate home-manager imports by @khaneliman
+- Chore: remove unused bindings by @khaneliman
+- Chore: remove unused types by @khaneliman
+- Chore: remove unused attributes by @khaneliman
+- Chore: remove unused agenix by @khaneliman
+- Chore: remove unused packages by @khaneliman
+- Chore: remove snowfallorg flake fork by @khaneliman
+- Chore: remove unused inputs by @khaneliman
+- Chore: remove unneeded sketchybar overlay by @khaneliman
+
+## New Contributors
+* @khaneliman made their first contribution
+* @dependabot[bot] made their first contribution in [#84](https://github.com/khaneliman/khanelinix/pull/84)
+* @github-actions[bot] made their first contribution in [#54](https://github.com/khaneliman/khanelinix/pull/54)
 
