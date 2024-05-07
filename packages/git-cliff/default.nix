@@ -10,30 +10,49 @@ let
     text = # toml
       ''
          [changelog]
-         # changelog header
-         header = """
-         # Changelog\n
-         """
-         # template for the changelog body
-         # https://keats.github.io/tera/docs/#introduction
-         body = """
-         {% if version -%}
-             ## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
-         {% else -%}
-             ## [Unreleased]
-         {% endif -%}
-         {% for group, commits in commits | group_by(attribute="group") %}
-             ### {{ group }}
-             {% for commit in commits %}
-                 - {{ commit.message }}\
-             {% endfor %}
-         {% endfor %}\n
-         """
-         # template for the changelog footer
-         footer = """
-          This changelog has been generated automatically using the custom git-cliff hook for
-          [git-hooks.nix](https://github.com/cachix/git-hooks.nix)
-         """
+          # changelog header
+          header = """
+          # Changelog\n
+          All notable changes to this project will be documented in this file.
+
+          """
+          # template for the changelog body
+          # https://keats.github.io/tera/docs/#introduction
+          body = """
+          {%- macro remote_url() -%}
+            https://github.com/{{ remote.github.owner }}/{{ remote.github.repo }}
+          {%- endmacro -%}
+
+          {% if version -%}
+              ## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
+          {% else -%}
+              ## [Unreleased]
+          {% endif -%}
+
+          ### Details\
+
+          {% for group, commits in commits | group_by(attribute="group") %}
+              #### {{ group | upper_first }}
+              {%- for commit in commits %}
+                  - {{ commit.message | upper_first | trim }}\
+                      {% if commit.github.username %} by @{{ commit.github.username }}{%- endif -%}
+                      {% if commit.github.pr_number %} in \
+                        [#{{ commit.github.pr_number }}]({{ self::remote_url() }}/pull/{{ commit.github.pr_number }}) \
+                      {%- endif -%}
+              {% endfor %}
+          {% endfor %}
+
+          {%- if github.contributors | filter(attribute="is_first_time", value=true) | length != 0 %}
+            ## New Contributors
+          {%- endif -%}
+
+          {% for contributor in github.contributors | filter(attribute="is_first_time", value=true) %}
+            * @{{ contributor.username }} made their first contribution
+              {%- if contributor.pr_number %} in \
+                [#{{ contributor.pr_number }}]({{ self::remote_url() }}/pull/{{ contributor.pr_number }}) \
+              {%- endif %}
+          {%- endfor %}\n
+          """
 
          # remove the leading and trailing whitespace from the templates
          trim = true

@@ -151,7 +151,7 @@
   outputs =
     inputs:
     let
-      inherit (inputs) deploy-rs nixpkgs snowfall-lib;
+      inherit (inputs) deploy-rs snowfall-lib;
 
       lib = snowfall-lib.mkLib {
         inherit inputs;
@@ -236,11 +236,10 @@
 
               git-cliff = {
                 enable = true;
-                inherit fail_fast verbose;
+                inherit excludes fail_fast verbose;
 
                 always_run = true;
                 description = "pre-push hook for git-cliff";
-                excludes = excludes ++ [ "CHANGELOG.md" ];
                 entry = "${channels.nixpkgs.khanelinix.git-cliff}/bin/git-cliff";
                 language = "system";
                 stages = [ "pre-push" ];
