@@ -42,7 +42,7 @@ layout {
 
 		dev_tab name="Project"  focus=true {
         term split_direction="vertical" {
-			      pane edit="./" name="Root"
+			      pane command="nvim" name="Root"
         }
     }
 
