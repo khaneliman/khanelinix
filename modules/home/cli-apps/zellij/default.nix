@@ -16,6 +16,11 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.shellAliases = {
+      zns = "zellij -s $(basename $(pwd)) -l dev options --default-cwd $(pwd)";
+      zas = "zellij a $(basename $(pwd))";
+    };
+
     programs.zellij = {
       enable = true;
 
