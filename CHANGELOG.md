@@ -4,6 +4,24 @@
 
 ### Changed
 
+- zellij: update dev layout to open nvim dashboard
+
+- flake.lock: update
+
+- flake.lock: update
+
+- hyprland: use sddm again
+
+- flake.nix: unlock hyprland
+
+Accidentally left from troubleshooting
+
+- flake.nix: hyprlock follows nixpkgs
+
+Fix red screen of death
+
+- chore: changelog update
+
 - flake.lock: update
 
 - chore: changelog update
@@ -2778,6 +2796,8 @@ This reverts commit 746c3753d5f7080a03d9cbfad750c7a0994fa753.
 
 ### Fixes
 
+- sddm: fix config
+
 - packages/git-cliff: fix syntax highlighting
 
 - khanelilab: fix networking address
@@ -3087,6 +3107,10 @@ This reverts commit aa86bb51e6169da2f9b485aa8f72511fd08bdeab.
 
 
 ### New
+
+- zellij: add aliases for creating and attaching sessions
+
+- zellij: add dev layout
 
 - flake.nix: add misc hooks
 
