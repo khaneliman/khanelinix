@@ -786,11 +786,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1715088506,
-        "narHash": "sha256-8KUE4xi+kTgnZtlNf+I7U95NbIlbxK9uR9kKpSA+5Lk=",
+        "lastModified": 1715094470,
+        "narHash": "sha256-5m2mh5UbZLv54W0jvELt5l0xXE13yt+X2wtKjIvzQPI=",
         "ref": "refs/heads/main",
-        "rev": "ec092bd601d9d351ff6ca34bd97f12055b2a4dd9",
-        "revCount": 4627,
+        "rev": "6ccc22194ca2d16bd7dc4b7263f897a547c50e6b",
+        "revCount": 4628,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -1289,11 +1289,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1715073535,
-        "narHash": "sha256-WmEkteY/19LMoZHH8H9bi4MUpEKR6h6bwOFmRxObZy4=",
+        "lastModified": 1715095010,
+        "narHash": "sha256-coGLjWh1Pvpl1MU6mV7iOucn6hYXC0IsRAcUV4H3rHg=",
         "owner": "nix-community",
         "repo": "nixpkgs-wayland",
-        "rev": "66498f41d22d9ee298bfdd01be464a13bf4cbf00",
+        "rev": "27dd3e018459a4e2490e23bee67ca5c5152e696c",
         "type": "github"
       },
       "original": {
@@ -1443,11 +1443,11 @@
         "pre-commit-hooks": "pre-commit-hooks"
       },
       "locked": {
-        "lastModified": 1714939240,
-        "narHash": "sha256-U4L+0ugafh+E3yMUzLb4N4ME9Ve4LigujiJcAFyl204=",
+        "lastModified": 1715093176,
+        "narHash": "sha256-zb0hnSNnniskSB/B9r3+zjQyJTwLT84Vm4WMz/v2ErI=",
         "owner": "nix-community",
         "repo": "nixvim",
-        "rev": "62f32bfc711f0a3c8a52af4c0790345b4b3d2346",
+        "rev": "b731bedfb9a75f9d25da4d8e97a95f03eb863274",
         "type": "github"
       },
       "original": {
@@ -1458,11 +1458,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1715088887,
-        "narHash": "sha256-QTtXeu+Snm75o4vloKSG2xkEF7BayVO9OrgjRpuLKcY=",
+        "lastModified": 1715095690,
+        "narHash": "sha256-U9qaMOxYbSEi9DyVF7ECJdZd/Oc2Ve6RX2MayGa1MVA=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "d669f475d3be3816bd7189977d93b9dd09d8e54d",
+        "rev": "e0f09d1671a6688472777f93e87a20d713491239",
         "type": "github"
       },
       "original": {
