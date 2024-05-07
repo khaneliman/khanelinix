@@ -1,8 +1,14 @@
 { config, ... }:
 {
   programs.nixvim = {
-    filetype.pattern = {
-      ".*/hypr/.*%.conf" = "hyprlang";
+    filetype = {
+      extension = {
+        "avsc" = "json";
+      };
+
+      pattern = {
+        ".*/hypr/.*%.conf" = "hyprlang";
+      };
     };
 
     plugins = {
