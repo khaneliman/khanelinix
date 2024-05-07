@@ -101,7 +101,7 @@ in
         xdg-portal = enabled;
       };
 
-      display-managers.regreet = {
+      display-managers.sddm = {
         enable = true;
       };
 
