@@ -54,7 +54,7 @@
       inputs.hyprland.follows = "hyprland";
     };
 
-    # Hyprland plugins
+    # Hyprland socket watcher
     hypr-socket-watch = {
       url = "github:khaneliman/hypr-socket-watch";
       inputs = {
