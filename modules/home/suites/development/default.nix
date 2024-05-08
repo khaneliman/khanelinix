@@ -19,7 +19,6 @@ in
   config = mkIf cfg.enable {
     home = {
       packages = with pkgs; [
-        cpplint
         jqp
         lazydocker
         onefetch
@@ -37,8 +36,7 @@ in
       };
 
       cli-apps = {
-        # FIX: nixpkg broke
-        # helix = enabled;
+        helix = enabled;
         lazydocker.enable = cfg.dockerEnable;
         lazygit = enabled;
         neovim = {
