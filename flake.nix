@@ -235,7 +235,7 @@
               };
 
               git-cliff = {
-                enable = true;
+                enable = false;
                 inherit excludes fail_fast verbose;
 
                 always_run = true;
