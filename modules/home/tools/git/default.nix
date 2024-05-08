@@ -30,6 +30,9 @@ in
     userName = mkOpt types.str user.fullName "The name to configure git with.";
     userEmail = mkOpt types.str user.email "The email to configure git with.";
     wslAgentBridge = mkBoolOpt false "Whether to enable the wsl agent bridge.";
+    wslGitCredentialManagerPath =
+      mkOpt types.str "/mnt/c/Program Files/Git/mingw64/bin/git-credential-manager.exe"
+        "The windows git credential manager path.";
     _1password = mkBoolOpt false "Whether to enable 1Password integration.";
   };
 
@@ -68,7 +71,7 @@ in
           credential = {
             helper =
               if cfg.wslAgentBridge then
-                ''/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe''
+                cfg.wslGitCredentialManagerPath
               else if pkgs.stdenv.isLinux then
                 ''${getExe' config.programs.git.package "git-credential-libsecret"}''
               else
