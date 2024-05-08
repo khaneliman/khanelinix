@@ -111,12 +111,6 @@
 
     pre-commit-hooks-nix.url = "github:cachix/pre-commit-hooks.nix";
 
-    # Rust overlay
-    rust-overlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # Snowfall Lib
     snowfall-lib = {
       url = "github:snowfallorg/lib/dev";
@@ -172,7 +166,6 @@
       overlays = with inputs; [
         nix-ld-rs.overlays.default
         nur.overlay
-        rust-overlay.overlays.default
       ];
 
       homes.modules = with inputs; [
