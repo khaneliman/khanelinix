@@ -19,7 +19,6 @@ in
     goEnable = mkBoolOpt false "Whether or not to enable go development configuration.";
     kubernetesEnable = mkBoolOpt false "Whether or not to enable kubernetes development configuration.";
     nixEnable = mkBoolOpt false "Whether or not to enable nix development configuration.";
-    rustEnable = mkBoolOpt false "Whether or not to enable rust development configuration.";
     sqlEnable = mkBoolOpt false "Whether or not to enable sql development configuration.";
   };
 
@@ -53,7 +52,6 @@ in
         # ue4
         unityhub
       ]
-      ++ lib.optionals cfg.rustEnable [ rust-bin.stable.latest.default ]
       ++ lib.optionals cfg.sqlEnable [
         dbeaver
         # FIX: package broken on nixpkgs

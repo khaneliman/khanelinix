@@ -163,7 +163,6 @@ in
         gameEnable = true;
         kubernetesEnable = true;
         nixEnable = true;
-        rustEnable = true;
         sqlEnable = true;
       };
 
