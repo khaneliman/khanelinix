@@ -49,6 +49,7 @@ in
       git = {
         enable = true;
         wslAgentBridge = true;
+        wslGitCredentialManagerPath = ''/mnt/c/Users/Austin.Horstman/AppData/Local/Programs/Git/mingw64/bin/git-credential-manager.exe'';
         includes = [
           {
             condition = "gitdir:/mnt/c/";
