@@ -45,6 +45,7 @@ mkShell {
 
       # other tools
       cppcheck
+      cpplint
       llvm.libllvm
       mymake
 
