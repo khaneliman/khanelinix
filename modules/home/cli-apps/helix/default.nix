@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   inherit (lib) mkEnableOption mkIf;
 
@@ -14,48 +19,104 @@ in
   config = mkIf cfg.enable {
     programs.helix = {
       enable = true;
-      # package = inputs.helix.packages.default.overrideAttrs (self: {
-      #   makeWrapperArgs = with pkgs;
-      #     self.makeWrapperArgs
-      #     or []
-      #     ++ [
-      #       "--suffix"
-      #       "PATH"
-      #       ":"
-      #       (lib.makeBinPath [
-      #         clang-tools
-      #         marksman
-      #         nil
-      #         nodePackages.bash-language-server
-      #         nodePackages.vscode-css-languageserver-bin
-      #         nodePackages.vscode-langservers-extracted
-      #         shellcheck
-      #       ])
-      #     ];
-      # });
+      package = pkgs.helix.overrideAttrs (self: {
+        makeWrapperArgs =
+          with pkgs;
+          self.makeWrapperArgs or [ ]
+          ++ [
+            "--suffix"
+            "PATH"
+            ":"
+            (lib.makeBinPath [
+              clang-tools
+              marksman
+              nil
+              nixfmt-rfc-style
+              nodePackages.bash-language-server
+              nodePackages.vscode-css-languageserver-bin
+              nodePackages.vscode-langservers-extracted
+              nodePackages.prettier
+              rustfmt
+              rust-analyzer
+              shellcheck
+            ])
+          ];
+      });
 
       settings = {
         theme = "catppuccin_macchiato";
+
         editor = {
+          bufferline = "always";
           color-modes = true;
+          completion-replace = true;
           cursorline = true;
+
           cursor-shape = {
             insert = "bar";
             normal = "block";
-            select = "underline";
+            select = "block";
           };
+
+          gutters = [
+            "diagnostics"
+            "line-numbers"
+            "spacer"
+            "diff"
+          ];
+
+          idle-timeout = 1;
+
           indent-guides = {
             render = true;
             rainbow-option = "dim";
           };
-          lsp.display-inlay-hints = true;
-          # rainbow-brackets = true;
-          statusline.center = [ "position-percentage" ];
-          true-color = true;
-          whitespace.characters = {
-            newline = "↴";
-            tab = "⇥";
+
+          line-number = "relative";
+
+          lsp = {
+            display-messages = true;
+            display-inlay-hints = true;
           };
+
+          mouse = true;
+          rulers = [ 80 ];
+          scrolloff = 5;
+
+          statusline = {
+            separator = "";
+            left = [
+              "mode"
+              "selections"
+              "spinner"
+              "file-name"
+              "total-line-numbers"
+            ];
+            center = [ ];
+            right = [
+              "diagnostics"
+              "file-encoding"
+              "file-line-ending"
+              "file-type"
+              "position-percentage"
+              "position"
+            ];
+            mode = {
+              normal = "NORMAL";
+              insert = "INSERT";
+              select = "SELECT";
+            };
+          };
+
+          whitespace.characters = {
+            space = "·";
+            nbsp = "⍽";
+            tab = "→";
+            newline = "⤶";
+          };
+
+          soft-wrap.enable = true;
+          true-color = true;
         };
 
         keys.normal.space.u = {
