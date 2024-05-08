@@ -24,7 +24,6 @@ in
       jdk
 
       #nix
-      nixfmt-rfc-style
       nixpkgs-review
       nixpkgs-lint-community
       nixpkgs-hammering

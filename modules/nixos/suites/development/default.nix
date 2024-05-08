@@ -41,7 +41,6 @@ in
         vscode
       ]
       ++ lib.optionals cfg.nixEnable [
-        nixfmt-rfc-style
         nixpkgs-hammering
         nixpkgs-lint-community
         nixpkgs-review
