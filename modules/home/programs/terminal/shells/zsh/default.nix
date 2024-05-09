@@ -6,6 +6,7 @@
 }:
 let
   inherit (lib) mkEnableOption mkIf;
+  inherit (lib.strings) fileContents;
 
   cfg = config.khanelinix.programs.terminal.shell.zsh;
 in
@@ -31,18 +32,26 @@ in
 
         completionInit = # bash
           ''
-            # case insensitive tab completion
-            zstyle ':completion:*' completer _complete _ignored _approximate
-            zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
-            zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
-            zstyle ':completion:*' menu select
-            zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
-            zstyle ':completion:*' verbose true
+            # Load compinit
+            autoload -U compinit
+            zmodload zsh/complist
 
-            # use cache for completions
-            zstyle ':completion:*' use-cache on
-            zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/.zcompcache"
             _comp_options+=(globdots)
+            zcompdump="$XDG_DATA_HOME"/zsh/.zcompdump-"$ZSH_VERSION"-"$(date --iso-8601=date)"
+            compinit -d "$zcompdump"
+
+            # Recompile zcompdump if it exists and is newer than zcompdump.zwc
+            # compdumps are marked with the current date in yyyy-mm-dd format
+            # which means this is likely to recompile daily
+            # also see: <https://htr3n.github.io/2018/07/faster-zsh/>
+            if [[ -s "$zcompdump" && (! -s "$zcompdump".zwc || "$zcompdump" -nt "$zcompdump".zwc) ]]; then
+              zcompile "$zcompdump"
+            fi
+
+            # Load bash completion functions.
+            autoload -U +X bashcompinit && bashcompinit
+
+            ${fileContents ./rc/comp.zsh}
           '';
 
         enableCompletion = true;
