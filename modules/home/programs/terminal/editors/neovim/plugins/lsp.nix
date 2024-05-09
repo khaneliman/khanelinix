@@ -11,6 +11,10 @@ in
   programs.nixvim = {
     plugins = {
       lsp-format.enable = mkIf (!config.programs.nixvim.plugins.conform-nvim.enable) true;
+      nvim-jdtls = {
+        enable = true;
+        data = "/home/${config.snowfallorg.user.name}/.cache/jdtls/workspace";
+      };
 
       lsp = {
         enable = true;
@@ -91,7 +95,7 @@ in
           };
 
           java-language-server = {
-            enable = true;
+            enable = mkIf (!config.programs.nixvim.plugins.nvim-jdtls.enable) true;
             filetypes = [ "java" ];
           };
 
