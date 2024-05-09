@@ -19,7 +19,6 @@ in
     environment.systemPackages = with pkgs; [
       coreutils
       curl
-      eza
       fd
       file
       findutils

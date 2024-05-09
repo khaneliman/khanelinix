@@ -50,6 +50,7 @@ in
             btop = enabled;
             comma = enabled;
             direnv = enabled;
+            eza = enabled;
             fastfetch = enabled;
             fzf = enabled;
             git = enabled;
