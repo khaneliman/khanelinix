@@ -82,6 +82,15 @@ in
         "markdown.preview.fontFamily" = "Monaspace Xenon; -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif";
         "terminal.integrated.fontFamily" = "JetBrainsMono Nerd Font Mono";
 
+        # LSP
+        "java.jdt.ls.java.home" = "${pkgs.jdk17}/lib/openjdk";
+        "java.configuration.runtimes" = [
+          "${pkgs.jdk8}/lib/openjdk"
+          "${pkgs.jdk17}/lib/openjdk"
+          "${pkgs.jdk22}/lib/openjdk"
+        ];
+        "redhat.telemetry.enabled" = false;
+
         # Formatters
         "editor.defaultFormatter" = "esbenp.prettier-vscode";
         "[cpp]" = {
