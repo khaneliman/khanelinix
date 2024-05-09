@@ -258,7 +258,12 @@
                 };
               };
 
-              shfmt.enable = true;
+              shfmt = {
+                enable = true;
+
+                excludes = [ ".*.p10k.zsh$" ];
+              };
+
               statix.enable = true;
               # treefmt.enable = true;
             };
