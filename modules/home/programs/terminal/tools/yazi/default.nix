@@ -35,7 +35,7 @@ in
       glow
       miller
       ouch
-      ripgrep
+      config.programs.ripgrep.package
       xdragon
       zoxide
     ];

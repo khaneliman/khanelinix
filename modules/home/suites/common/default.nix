@@ -55,6 +55,7 @@ in
             git = enabled;
             lsd = enabled;
             oh-my-posh = enabled;
+            ripgrep = enabled;
             tmux = enabled;
             topgrade = enabled;
             yazi = enabled;
