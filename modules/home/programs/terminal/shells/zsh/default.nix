@@ -86,6 +86,32 @@ in
           package = pkgs.zsh-syntax-highlighting;
         };
 
+        initExtraFirst = # bash
+          ''
+            # avoid duplicated entries in PATH
+            typeset -U PATH
+
+            # try to correct the spelling of commands
+            setopt correct
+            # disable C-S/C-Q
+            setopt noflowcontrol
+            # disable "no matches found" check
+            unsetopt nomatch
+
+            # autosuggests otherwise breaks these widgets.
+            # <https://github.com/zsh-users/zsh-autosuggestions/issues/619>
+            ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-beginning-search-backward-end history-beginning-search-forward-end)
+
+            # Do this early so fast-syntax-highlighting can wrap and override this
+            if autoload history-search-end; then
+              zle -N history-beginning-search-backward-end history-search-end
+              zle -N history-beginning-search-forward-end  history-search-end
+            fi
+
+            source <(${lib.getExe pkgs.fzf} --zsh)
+            source ${pkgs.git}/share/git/contrib/completion/git-prompt.sh
+          '';
+
         initExtra = # bash
           ''
             # Use vim bindings.
