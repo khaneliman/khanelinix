@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) getExe mkIf;
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.programs.terminal.tools.bat;
@@ -34,7 +34,7 @@ in
     };
 
     home.shellAliases = {
-      cat = "bat";
+      cat = "${getExe pkgs.bat} --style=plain";
     };
   };
 }
