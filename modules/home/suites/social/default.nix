@@ -12,15 +12,17 @@ in
 
   config = mkIf cfg.enable {
     khanelinix = {
-      apps = {
-        # armcord = enabled;
-        discord = enabled;
-        caprine = enabled;
-      };
+      programs = {
+        graphical.apps = {
+          # armcord = enabled;
+          discord = enabled;
+          caprine = enabled;
+        };
 
-      cli-apps = {
-        slack-term = enabled;
-        twitch-tui = enabled;
+        terminal.social = {
+          slack-term = enabled;
+          twitch-tui = enabled;
+        };
       };
     };
   };

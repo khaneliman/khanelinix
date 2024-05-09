@@ -12,8 +12,10 @@ in
 
   config = mkIf cfg.enable {
     khanelinix = {
-      apps = {
-        obs = enabled;
+      programs = {
+        graphical.apps = {
+          obs = enabled;
+        };
       };
     };
   };

@@ -10,22 +10,43 @@ in
       inherit (config.snowfallorg.user) name;
     };
 
-    apps = {
-      vscode = mkForce disabled;
-    };
+    programs = {
+      graphical = {
+        editors = {
+          vscode = mkForce disabled;
+        };
+      };
 
-    cli-apps = {
-      home-manager = enabled;
-      k9s = enabled;
-    };
+      terminal = {
+        emulators = {
+          wezterm = mkForce disabled;
+        };
 
-    desktop = {
-      addons = {
-        wezterm = mkForce disabled;
+        tools = {
+          git = {
+            enable = true;
+            wslAgentBridge = true;
+            wslGitCredentialManagerPath = ''/mnt/c/Users/Austin.Horstman/AppData/Local/Programs/Git/mingw64/bin/git-credential-manager.exe'';
+            includes = [
+              {
+                condition = "gitdir:/mnt/c/";
+                path = "${./git/windows-compat-config}";
+              }
+              {
+                condition = "gitdir:/mnt/c/source/repos/DiB/";
+                path = "${./git/dib-signing}";
+              }
+            ];
+          };
+
+          home-manager = enabled;
+          k9s = enabled;
+          ssh = enabled;
+        };
       };
     };
 
-    security = {
+    services = {
       sops = {
         enable = true;
         defaultSopsFile = ../../../secrets/CORE/nixos/default.yaml;
@@ -43,26 +64,6 @@ in
         enable = true;
         dockerEnable = true;
       };
-    };
-
-    tools = {
-      git = {
-        enable = true;
-        wslAgentBridge = true;
-        wslGitCredentialManagerPath = ''/mnt/c/Users/Austin.Horstman/AppData/Local/Programs/Git/mingw64/bin/git-credential-manager.exe'';
-        includes = [
-          {
-            condition = "gitdir:/mnt/c/";
-            path = "${./git/windows-compat-config}";
-          }
-          {
-            condition = "gitdir:/mnt/c/source/repos/DiB/";
-            path = "${./git/dib-signing}";
-          }
-        ];
-      };
-
-      ssh = enabled;
     };
   };
 

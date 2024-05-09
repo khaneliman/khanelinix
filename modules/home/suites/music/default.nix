@@ -16,7 +16,6 @@ in
   };
 
   config = mkIf cfg.enable {
-
     home.packages = with pkgs; [
       musikcube
       (pulsemixer.overrideAttrs {
@@ -30,7 +29,7 @@ in
     ];
 
     khanelinix = {
-      cli-apps = {
+      programs.terminal.media = {
         ncmpcpp = enabled;
         ncspot = enabled;
       };

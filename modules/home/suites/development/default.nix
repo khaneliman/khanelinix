@@ -31,24 +31,30 @@ in
     };
 
     khanelinix = {
-      apps = {
-        vscode = enabled;
-      };
-
-      cli-apps = {
-        helix = enabled;
-        lazydocker.enable = cfg.dockerEnable;
-        lazygit = enabled;
-        neovim = {
-          enable = true;
-          default = true;
+      programs = {
+        graphical = {
+          editors = {
+            vscode = enabled;
+          };
         };
-      };
 
-      tools = {
-        node = enabled;
-        oh-my-posh = enabled;
-        python = enabled;
+        terminal = {
+          editors = {
+            helix = enabled;
+            neovim = {
+              enable = true;
+              default = true;
+            };
+          };
+
+          tools = {
+            node = enabled;
+            oh-my-posh = enabled;
+            lazydocker.enable = cfg.dockerEnable;
+            lazygit = enabled;
+            python = enabled;
+          };
+        };
       };
     };
   };

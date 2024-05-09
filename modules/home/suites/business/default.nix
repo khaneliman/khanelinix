@@ -12,8 +12,12 @@ in
 
   config = mkIf cfg.enable {
     khanelinix = {
-      apps = {
-        _1password = enabled;
+      programs = {
+        graphical = {
+          apps = {
+            _1password = enabled;
+          };
+        };
       };
     };
   };

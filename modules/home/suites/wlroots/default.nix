@@ -13,17 +13,21 @@ in
   config = mkIf cfg.enable {
 
     khanelinix = {
-      desktop.addons = {
-        swaync = enabled;
-        waybar = enabled;
-        wlogout = enabled;
-      };
+      programs = {
+        graphical = {
+          addons = {
+            swaync = enabled;
+            wlogout = enabled;
+          };
 
-      security = {
-        keyring = enabled;
+          bars = {
+            waybar = enabled;
+          };
+        };
       };
 
       services = {
+        keyring = enabled;
         polkit = enabled;
       };
     };

@@ -9,8 +9,14 @@ in
       inherit (config.snowfallorg.user) name;
     };
 
-    cli-apps = {
-      home-manager = enabled;
+    programs = {
+      terminal = {
+        tools = {
+          git = enabled;
+          home-manager = enabled;
+          ssh = enabled;
+        };
+      };
     };
 
     system = {
@@ -20,11 +26,6 @@ in
     suites = {
       common = enabled;
       development = enabled;
-    };
-
-    tools = {
-      git = enabled;
-      ssh = enabled;
     };
   };
 
