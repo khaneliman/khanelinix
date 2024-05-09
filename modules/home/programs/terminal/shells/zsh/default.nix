@@ -27,6 +27,7 @@ in
         package = pkgs.zsh;
 
         autocd = true;
+        autosuggestion.enable = true;
 
         completionInit = # bash
           ''
@@ -44,13 +45,30 @@ in
             _comp_options+=(globdots)
           '';
 
-        autosuggestion = {
-          enable = true;
+        enableCompletion = true;
+        enableVteIntegration = true;
+
+        history = {
+          # share history between different zsh sessions
+          share = true;
+
+          # avoid cluttering $HOME with the histfile
+          path = "${config.xdg.dataHome}/zsh/zsh_history";
+
+          # saves timestamps to the histfile
+          extended = true;
+
+          # optimize size of the histfile by avoiding duplicates
+          # or commands we don't need remembered
+          save = 100000;
+          size = 100000;
+          expireDuplicatesFirst = true;
+          ignoreDups = true;
+          ignoreSpace = true;
         };
 
-        enableCompletion = true;
-
         sessionVariables = {
+          LC_ALL = "en_US.UTF-8";
           KEYTIMEOUT = 0;
         };
 
@@ -100,10 +118,6 @@ in
             src = pkgs.zsh-command-time;
           }
           {
-            name = "zsh-history";
-            src = pkgs.zsh-history;
-          }
-          {
             name = "zsh-history-to-fish";
             src = pkgs.zsh-history-to-fish;
           }
@@ -119,6 +133,14 @@ in
           {
             name = "zsh-you-should-use";
             src = pkgs.zsh-you-should-use;
+          }
+          {
+            name = "zsh-vi-mode";
+            src = "${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh";
+          }
+          {
+            name = "fast-syntax-highlighting";
+            src = "${pkgs.zsh-fast-syntax-highlighting}/share/zsh/site-functions";
           }
         ];
       };
