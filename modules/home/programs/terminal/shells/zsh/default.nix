@@ -16,12 +16,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    home = {
-      file = {
-        ".p10k.zsh".source = ./.p10k.zsh;
-      };
-    };
-
     programs = {
       zsh = {
         enable = true;
@@ -114,28 +108,33 @@ in
 
         initExtra = # bash
           ''
-            # Use vim bindings.
-            set -o vi
+            # Raf's helper functions for setting zsh options that I normally use on my shell
+            # a description of each option can be found in the Zsh manual
+            # <https://zsh.sourceforge.io/Doc/Release/Options.html>
+            # NOTE: this slows down shell startup time considerably
+            ${fileContents ./rc/unset.zsh}
+            ${fileContents ./rc/set.zsh}
 
-            # Improved vim bindings.
-            source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+            # binds, zsh modules and everything else
+            ${fileContents ./rc/binds.zsh}
+            ${fileContents ./rc/modules.zsh}
+            ${fileContents ./rc/fzf-tab.zsh}
+            ${fileContents ./rc/misc.zsh}
 
-            # C-right / C-left for word skips
-            bindkey "^[[1;5C" forward-word
-            bindkey "^[[1;5D" backward-word
-
-            # C-Backspace / C-Delete for word deletions
-            # bindkey "^[[3;5~" forward-kill-word
-            bindkey "^H" backward-kill-word
-
-            # Home/End
-            bindkey "^[[OH" beginning-of-line
-            bindkey "^[[OF" end-of-line
+            # Set LS_COLORS by parsing dircolors output
+            LS_COLORS="$(${pkgs.coreutils}/bin/dircolors --sh)"
+            LS_COLORS="''${''${LS_COLORS#*\'}%\'*}"
+            export LS_COLORS
 
             fastfetch
           '';
 
         plugins = [
+          {
+            # Must be before plugins that wrap widgets, such as zsh-autosuggestions or fast-syntax-highlighting
+            name = "fzf-tab";
+            src = "${pkgs.zsh-fzf-tab}/share/fzf-tab";
+          }
           {
             name = "zsh-autocomplete";
             src = pkgs.zsh-autocomplete;

@@ -1,3 +1,5 @@
+#!/usr/bin/env zsh
+
 # Configure menu selection for completion options in all contexts
 # (indicated by the wildcard `*`)
 zstyle ':completion:*' menu select
