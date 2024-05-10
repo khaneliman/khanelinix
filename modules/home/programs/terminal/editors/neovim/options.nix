@@ -146,6 +146,13 @@ _: {
       # viewoptions = { remove = [ "curdir" ]; };
       virtualedit = "block";
       writebackup = false;
+
+      lazyredraw = false; # Faster scrolling if enabled, breaks noice
+      synmaxcol = 240; # Max column for syntax highlight
+      showmatch = true; # when closing a bracket, briefly flash the matching one
+      matchtime = 1; # duration of that flashing n deci-seconds
+      startofline = true; # motions like "G" also move to the first char
+      report = 9001; # disable "x more/fewer lines" messages
     };
   };
 }
