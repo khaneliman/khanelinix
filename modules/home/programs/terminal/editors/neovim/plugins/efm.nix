@@ -2,7 +2,7 @@ _: {
   programs.nixvim.plugins = {
 
     lsp.servers.efm = {
-      enable = true;
+      enable = false;
       extraOptions.init_options = {
         documentFormatting = false;
         documentRangeFormatting = false;
@@ -14,7 +14,7 @@ _: {
     };
 
     efmls-configs = {
-      enable = true;
+      enable = false;
 
       setup = {
         all.linter = [ "codespell" ];
