@@ -24,13 +24,18 @@ in
       enableZshIntegration = true;
       enableFishIntegration = true;
 
-      icons = true;
+      extraOptions = [
+        "--group-directories-first"
+        "--header"
+      ];
+
       git = true;
+      icons = true;
     };
 
     home.shellAliases = {
-      la = mkForce "${getExe pkgs.eza} -lah --tree";
-      tree = mkForce "${getExe pkgs.eza} --tree --icons=always";
+      la = mkForce "${getExe config.programs.eza.package} -lah --tree";
+      tree = mkForce "${getExe config.programs.eza.package} --tree --icons=always";
     };
   };
 }
