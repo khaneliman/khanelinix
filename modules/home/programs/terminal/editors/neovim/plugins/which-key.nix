@@ -31,6 +31,7 @@ _: {
             a = "Code Action";
             d = "Definition";
             D = "References";
+            f = "Format";
             p = "Prev";
             n = "Next";
             t = "Type Definition";
