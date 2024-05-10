@@ -181,7 +181,7 @@
           action = "git_bcommits";
           options.desc = "View git bcommits";
         };
-        "<leader>gb" = {
+        "<leader>gB" = {
           action = "git_branches";
           options.desc = "View git branches";
         };
