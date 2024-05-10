@@ -30,6 +30,7 @@ in
           lspBuf = {
             "<leader>la" = "code_action";
             "<leader>ld" = "definition";
+            "<leader>lf" = "format";
             "<leader>lD" = "references";
             "<leader>lt" = "type_definition";
             "<leader>li" = "implementation";
