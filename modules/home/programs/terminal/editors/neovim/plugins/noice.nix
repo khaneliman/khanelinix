@@ -44,6 +44,7 @@ in
           };
 
           progress.enabled = true;
+          signature.enabled = true;
         };
 
         popupmenu.backend = "cmp";
