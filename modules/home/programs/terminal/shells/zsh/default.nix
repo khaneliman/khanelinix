@@ -52,6 +52,13 @@ in
         enableCompletion = true;
         enableVteIntegration = true;
 
+        # Disable /etc/{zshrc,zprofile} that contains the "sane-default" setup out of the box
+        # in order avoid issues with incorrect precedence to our own zshrc.
+        # See `/etc/zshrc` for more info.
+        envExtra = mkIf pkgs.stdenv.isLinux ''
+          setopt no_global_rcs
+        '';
+
         history = {
           # share history between different zsh sessions
           share = true;
@@ -113,8 +120,8 @@ in
             # a description of each option can be found in the Zsh manual
             # <https://zsh.sourceforge.io/Doc/Release/Options.html>
             # NOTE: this slows down shell startup time considerably
-            # ${fileContents ./rc/unset.zsh}
-            # ${fileContents ./rc/set.zsh}
+            ${fileContents ./rc/unset.zsh}
+            ${fileContents ./rc/set.zsh}
 
             # binds, zsh modules and everything else
             ${fileContents ./rc/binds.zsh}
