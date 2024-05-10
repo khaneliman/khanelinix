@@ -1,16 +1,6 @@
 { config, ... }:
 {
   programs.nixvim = {
-    filetype = {
-      extension = {
-        "avsc" = "json";
-      };
-
-      pattern = {
-        ".*/hypr/.*%.conf" = "hyprlang";
-      };
-    };
-
     plugins = {
       treesitter = {
         enable = true;
