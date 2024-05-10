@@ -19,7 +19,6 @@ in
   config = mkIf cfg.enable {
     programs.fzf = {
       enable = true;
-      package = pkgs.fzf;
 
       colors = {
         "preview-bg" = "-1";
@@ -58,7 +57,7 @@ in
       ];
 
       enableBashIntegration = true;
-      enableZshIntegration = true;
+      enableZshIntegration = false;
       enableFishIntegration = true;
 
       tmux = {
