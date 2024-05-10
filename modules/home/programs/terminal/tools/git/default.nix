@@ -127,9 +127,12 @@ in
       gh = {
         enable = true;
 
-        settings = {
-          version = "1";
-        };
+        extensions = with pkgs; [
+          gh-dash # dashboard with pull requests and issues
+          gh-eco # explore the ecosystem
+          gh-cal # contributions calender terminal viewer
+          gh-poi # clean up local branches safely
+        ];
 
         gitCredentialHelper = {
           enable = true;
@@ -139,6 +142,10 @@ in
             "https://dibc@dev.azure.com"
             "https://core-bts-02@dev.azure.com"
           ];
+        };
+
+        settings = {
+          version = "1";
         };
       };
 
