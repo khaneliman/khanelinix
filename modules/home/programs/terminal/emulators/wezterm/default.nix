@@ -71,6 +71,8 @@ in
             show_tab_index_in_tab_bar = false,
             tab_bar_at_bottom = true,
             use_fancy_tab_bar = false,
+            -- try and let the tabs stretch instead of squish
+            tab_max_width = 10000,
 
             -- perf
             enable_wayland = true,
