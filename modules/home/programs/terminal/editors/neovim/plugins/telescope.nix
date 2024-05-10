@@ -173,6 +173,10 @@
           action = "lsp_document_symbols";
           options.desc = "Search symbols";
         };
+        "<leader>fq" = {
+          action = "quickfix";
+          options.desc = "Search quickfix";
+        };
         "<leader>fw" = {
           action = "live_grep";
           options.desc = "Live grep";
