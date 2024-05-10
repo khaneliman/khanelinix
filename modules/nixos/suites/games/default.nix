@@ -19,7 +19,8 @@ in
     environment.systemPackages = with pkgs; [
       bottles
       lutris
-      minecraft
+      # FIX: broken nixpkg
+      # minecraft
       prismlauncher
       proton-caller
       protontricks

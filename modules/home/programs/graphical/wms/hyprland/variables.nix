@@ -89,7 +89,6 @@ in
           gaps_in = 5;
           gaps_out = 20;
           layout = "dwindle";
-          no_cursor_warps = true;
         };
 
         gestures = {
