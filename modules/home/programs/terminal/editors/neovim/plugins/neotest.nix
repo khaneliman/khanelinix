@@ -1,15 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
-let
-  junit_jar = pkgs.fetchurl {
-    url = "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.10.2/junit-platform-console-standalone-1.10.2.jar";
-    hash = "sha256-od5VeCEpPOkDwhPGlBZf/1Ms+SCBusQji54Fs18E9D8=";
-  };
-in
+{ config, lib, ... }:
 {
   programs.nixvim = {
 
@@ -40,7 +29,15 @@ in
           enable = true;
 
           settings = {
-            junit_jar = junit_jar.outPath;
+            # NOTE: just run NeotestJava setup
+            # Not sure why this wasn't working
+            # junit_jar =
+            #   pkgs.fetchurl
+            #     {
+            #       url = "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.10.1/junit-platform-console-standalone-1.10.1.jar";
+            #       hash = "sha256-tC6qU9E1dtF9tfuLKAcipq6eNtr5X0JivG6W1Msgcl8=";
+            #     }
+            #     .outPath;
           };
         };
 
