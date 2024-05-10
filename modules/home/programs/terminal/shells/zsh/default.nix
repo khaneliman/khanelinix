@@ -48,6 +48,7 @@ in
             ${fileContents ./rc/comp.zsh}
           '';
 
+        dotDir = ".config/zsh";
         enableCompletion = true;
         enableVteIntegration = true;
 
@@ -102,8 +103,8 @@ in
               zle -N history-beginning-search-forward-end  history-search-end
             fi
 
-            source <(${lib.getExe pkgs.fzf} --zsh)
-            source ${pkgs.git}/share/git/contrib/completion/git-prompt.sh
+            source <(${lib.getExe config.programs.fzf.package} --zsh)
+            source ${config.programs.git.package}/share/git/contrib/completion/git-prompt.sh
           '';
 
         initExtra = # bash
@@ -112,8 +113,8 @@ in
             # a description of each option can be found in the Zsh manual
             # <https://zsh.sourceforge.io/Doc/Release/Options.html>
             # NOTE: this slows down shell startup time considerably
-            ${fileContents ./rc/unset.zsh}
-            ${fileContents ./rc/set.zsh}
+            # ${fileContents ./rc/unset.zsh}
+            # ${fileContents ./rc/set.zsh}
 
             # binds, zsh modules and everything else
             ${fileContents ./rc/binds.zsh}
@@ -133,19 +134,32 @@ in
           {
             # Must be before plugins that wrap widgets, such as zsh-autosuggestions or fast-syntax-highlighting
             name = "fzf-tab";
-            src = "${pkgs.zsh-fzf-tab}/share/fzf-tab";
+            file = "share/fzf-tab/fzf-tab.plugin.zsh";
+            src = pkgs.zsh-fzf-tab;
           }
           {
-            name = "zsh-autocomplete";
-            src = pkgs.zsh-autocomplete;
+            name = "zsh-nix-shell";
+            file = "share/zsh-nix-shell/nix-shell.plugin.zsh";
+            src = pkgs.zsh-nix-shell;
+          }
+          {
+            name = "zsh-vi-mode";
+            src = pkgs.zsh-vi-mode;
+            file = "share/zsh-vi-mode/zsh-vi-mode.plugin.zsh";
+          }
+          {
+            name = "fast-syntax-highlighting";
+            file = "share/zsh/site-functions/fast-syntax-highlighting.plugin.zsh";
+            src = pkgs.zsh-fast-syntax-highlighting;
+          }
+          {
+            name = "zsh-autosuggestions";
+            file = "share/zsh-autosuggestions/zsh-autosuggestions.zsh";
+            src = pkgs.zsh-autosuggestions;
           }
           {
             name = "zsh-better-npm-completion";
             src = pkgs.zsh-better-npm-completion;
-          }
-          {
-            name = "zsh-completions";
-            src = pkgs.zsh-completions;
           }
           {
             name = "zsh-command-time";
@@ -156,25 +170,8 @@ in
             src = pkgs.zsh-history-to-fish;
           }
           {
-            name = "zsh-navigation-tools";
-            src = pkgs.zsh-navigation-tools;
-          }
-          {
-            name = "zsh-nix-shell";
-            file = "nix-shell.plugin.zsh";
-            src = pkgs.zsh-nix-shell;
-          }
-          {
             name = "zsh-you-should-use";
             src = pkgs.zsh-you-should-use;
-          }
-          {
-            name = "zsh-vi-mode";
-            src = "${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh";
-          }
-          {
-            name = "fast-syntax-highlighting";
-            src = "${pkgs.zsh-fast-syntax-highlighting}/share/zsh/site-functions";
           }
         ];
       };
