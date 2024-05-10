@@ -170,7 +170,6 @@
 
       homes.modules = with inputs; [
         hypr-socket-watch.homeManagerModules.default
-        hyprpaper.homeManagerModules.default
         nix-index-database.hmModules.nix-index
         nixvim.homeManagerModules.nixvim
         sops-nix.homeManagerModules.sops

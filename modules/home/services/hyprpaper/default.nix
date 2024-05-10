@@ -41,8 +41,11 @@ in
       hyprpaper = {
         enable = true;
         package = hyprpaper.packages.${system}.hyprpaper;
-        preloads = cfg.wallpapers;
-        wallpapers = map (monitor: "${monitor.name},${monitor.wallpaper}") cfg.monitors;
+
+        settings = {
+          preload = cfg.wallpapers;
+          wallpaper = map (monitor: "${monitor.name},${monitor.wallpaper}") cfg.monitors;
+        };
       };
 
       hypr-socket-watch = {
@@ -54,7 +57,5 @@ in
         debug = false;
       };
     };
-
-    systemd.user.services.hyprpaper.Service.Restart = lib.mkForce "always";
   };
 }
