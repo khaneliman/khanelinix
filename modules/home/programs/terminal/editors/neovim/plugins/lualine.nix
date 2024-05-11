@@ -102,10 +102,10 @@ _: {
         lualine_z = [ "tabs" ];
       };
 
-      # TODO: breadcrumb style path with custom separator and file icon
-      # https://github.com/AstroNvim/astrocommunity/blob/main/lua/astrocommunity/bars-and-lines/heirline-vscode-winbar/init.lua
       winbar = {
-        lualine_b = [
+        lualine_c = [ "navic" ];
+
+        lualine_x = [
           {
             name = "filename";
             extraConfig = {
