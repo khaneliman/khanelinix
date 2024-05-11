@@ -184,17 +184,6 @@
                 };
               };
 
-              # TODO: Add pin/unpin
-              #   {
-              #     mode = "n";
-              #     key = "<leader>bp";
-              #     action = ":BufferLineTogglePin<CR>";
-              #     options = {
-              #       desc = "Pin buffer";
-              #       silent = true;
-              #     };
-              #   }
-
               "<leader>uf" = {
                 action = # lua
                   ''

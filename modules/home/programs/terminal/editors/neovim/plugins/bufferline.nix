@@ -1,4 +1,8 @@
-_: {
+{ config, lib, ... }:
+let
+  inherit (lib) mkIf;
+in
+{
   programs.nixvim = {
     plugins.bufferline =
       let
@@ -82,5 +86,35 @@ _: {
           }
         ];
       };
+
+    keymaps = mkIf config.programs.nixvim.plugins.bufferline.enable [
+      {
+        mode = "n";
+        key = "<leader>bP";
+        action = ":BufferLineTogglePin<cr>";
+        options = {
+          desc = "Toggle Buffer Pin";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>bp";
+        action = ":BufferLinePick<cr>";
+        options = {
+          desc = "Buffer Pick";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>bs";
+        action = ":BufferLineSortByDirectory<cr>";
+        options = {
+          desc = "Buffer Sort By Directory";
+          silent = true;
+        };
+      }
+    ];
   };
 }
