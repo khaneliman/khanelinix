@@ -9,6 +9,7 @@ let
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.programs.terminal.emulators.wezterm;
+  catppuccin = import ../../../theme/catppuccin.nix;
 in
 {
   options.khanelinix.programs.terminal.emulators.wezterm = {
@@ -33,6 +34,60 @@ in
           end
 
           local custom = wezterm.color.get_builtin_schemes()[scheme_for_appearance(wezterm.gui.get_appearance())]
+          local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_right_hard_divider
+          local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
+
+          -- This function returns the suggested title for a tab.
+          -- It prefers the title that was set via `tab:set_title()`
+          -- or `wezterm cli set-tab-title`, but falls back to the
+          -- title of the active pane in that tab.
+          function tab_title(tab_info)
+            local title = tab_info.tab_title
+            -- if the tab title is explicitly set, take that
+            if title and #title > 0 then
+              return title
+            end
+            -- Otherwise, use the title from the active pane
+            -- in that tab
+            return tab_info.active_pane.title
+          end
+
+          wezterm.on(
+            'format-tab-title',
+            function(tab, tabs, panes, config, hover, max_width)
+              local edge_background = '${catppuccin.colors.mantle.hex}'
+              local background = '${catppuccin.colors.base.hex}'
+              local foreground = '${catppuccin.colors.text.hex}'
+
+              if tab.is_active then
+                background = '${catppuccin.colors.blue.hex}'
+                foreground = '${catppuccin.colors.crust.hex}'
+              elseif hover then
+                background = '${catppuccin.colors.mauve.hex}'
+                foreground = '${catppuccin.colors.crust.hex}'
+              end
+
+              local edge_foreground = background
+
+              local title = tab_title(tab)
+
+              -- ensure that the titles fit in the available space,
+              -- and that we have room for the edges.
+              title = wezterm.truncate_right(title, max_width - 2)
+
+              return {
+                { Background = { Color = edge_background } },
+                { Foreground = { Color = edge_foreground } },
+                { Text = SOLID_LEFT_ARROW },
+                { Background = { Color = background } },
+                { Foreground = { Color = foreground } },
+                { Text = title },
+                { Background = { Color = edge_background } },
+                { Foreground = { Color = edge_foreground } },
+                { Text = SOLID_RIGHT_ARROW },
+              }
+            end
+          )
 
           return {
             -- general
@@ -73,8 +128,7 @@ in
             use_fancy_tab_bar = false,
             -- try and let the tabs stretch instead of squish
             tab_max_width = 10000,
-
-            -- perf
+                        -- perf
             enable_wayland = true,
             front_end = "WebGpu",
             scrollback_lines = 10000,
