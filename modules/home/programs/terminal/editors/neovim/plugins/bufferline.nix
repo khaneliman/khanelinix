@@ -38,6 +38,18 @@ _: {
             end
           '';
         enforceRegularTabs = true;
+        # NOTE: fixes colorscheme with transparent_background
+        highlights = {
+          fill = {
+            bg = "#1e2030";
+          };
+          separator = {
+            fg = "#1e2030";
+          };
+          separatorSelected = {
+            fg = "#1e2030";
+          };
+        };
         indicator = {
           style = "icon";
           icon = "▎";
