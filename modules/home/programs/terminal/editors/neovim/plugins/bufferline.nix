@@ -93,7 +93,7 @@ in
         key = "<leader>bP";
         action = ":BufferLineTogglePin<cr>";
         options = {
-          desc = "Toggle Buffer Pin";
+          desc = "Toggle Pin";
           silent = true;
         };
       }
@@ -102,16 +102,34 @@ in
         key = "<leader>bp";
         action = ":BufferLinePick<cr>";
         options = {
-          desc = "Buffer Pick";
+          desc = "Pick Buffer";
           silent = true;
         };
       }
       {
         mode = "n";
-        key = "<leader>bs";
+        key = "<leader>bsd";
         action = ":BufferLineSortByDirectory<cr>";
         options = {
-          desc = "Buffer Sort By Directory";
+          desc = "Sort By Directory";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>bse";
+        action = ":BufferLineSortByExtension<cr>";
+        options = {
+          desc = "Sort By Extension";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>bsr";
+        action = ":BufferLineSortByRelativeDirectory<cr>";
+        options = {
+          desc = "Sort By Relative Directory";
           silent = true;
         };
       }

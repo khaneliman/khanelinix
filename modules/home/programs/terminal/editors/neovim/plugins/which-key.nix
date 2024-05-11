@@ -7,6 +7,7 @@ _: {
         "<leader>" = {
           "b" = {
             name = "󰓩 Buffers";
+            s = "󰒺 Sort";
           };
           "d" = {
             name = "  Debug";
