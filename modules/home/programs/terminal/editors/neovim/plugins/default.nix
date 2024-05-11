@@ -9,8 +9,6 @@
     ];
 
     plugins = {
-      lightline.enable = true;
-
       nvim-autopairs.enable = true;
 
       nix-develop.enable = true;

@@ -1,4 +1,8 @@
-_: {
+{ config, lib, ... }:
+let
+  inherit (lib) mkIf;
+in
+{
   programs.nixvim = {
     plugins.lualine = {
       enable = true;
@@ -87,7 +91,7 @@ _: {
         ];
       };
 
-      tabline = {
+      tabline = mkIf (!config.programs.nixvim.plugins.bufferline.enable) {
         lualine_a = [
           # TODO: fix left separator color
           {
