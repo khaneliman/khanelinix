@@ -39,6 +39,18 @@ _: {
 
           sources = [
             {
+              name = "nvim_lsp";
+              priority = 1000;
+            }
+            {
+              name = "treesitter";
+              priority = 850;
+            }
+            {
+              name = "luasnip";
+              priority = 750;
+            }
+            {
               name = "buffer";
               priority = 500;
               # Words from other open buffers can also be suggested.
@@ -46,20 +58,16 @@ _: {
                 "vim.api.nvim_list_bufs";
             }
             {
-              name = "calc";
-              priority = 150;
-            }
-            {
-              name = "cmdline";
-              priority = 150;
-            }
-            {
               name = "codeium";
               priority = 300;
             }
             {
-              name = "emoji";
-              priority = 100;
+              name = "path";
+              priority = 300;
+            }
+            {
+              name = "spell";
+              priority = 300;
             }
             {
               name = "fish";
@@ -70,10 +78,6 @@ _: {
               priority = 250;
             }
             {
-              name = "luasnip";
-              priority = 750;
-            }
-            {
               name = "neorg";
               priority = 250;
             }
@@ -82,20 +86,24 @@ _: {
               priority = 250;
             }
             {
-              name = "nvim_lsp";
-              priority = 1000;
-            }
-            {
-              name = "path";
-              priority = 300;
-            }
-            {
               name = "tmux";
               priority = 250;
             }
             {
               name = "zsh";
               priority = 250;
+            }
+            {
+              name = "calc";
+              priority = 150;
+            }
+            {
+              name = "cmdline";
+              priority = 150;
+            }
+            {
+              name = "emoji";
+              priority = 100;
             }
           ];
         };
@@ -108,17 +116,21 @@ _: {
 
         cmp = {
           enable = true;
+
           menu = {
-            nvim_lsp = "[LSP]";
-            nvim_lua = "[api]";
-            path = "[path]";
-            luasnip = "[snip]";
-            buffer = "[buffer]";
-            neorg = "[neorg]";
-            codeium = "[Codeium]";
-            cmdline = "[Cmdline]";
+            buffer = "[Buffer]";
             calc = "[Calc]";
+            cmdline = "[Cmdline]";
+            codeium = "[Codeium]";
             emoji = "[Emoji]";
+            git = "[Git]";
+            luasnip = "[Snippet]";
+            neorg = "[Neorg]";
+            nvim_lsp = "[LSP]";
+            nvim_lua = "[API]";
+            path = "[Path]";
+            spell = "[Spell]";
+            treesitter = "[TreeSitter]";
           };
         };
       };
