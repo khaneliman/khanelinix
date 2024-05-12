@@ -37,11 +37,6 @@ in
       match.ExtraWhitespace = "\\s\\+$";
 
       colorschemes.catppuccin.enable = true;
-
-      extraConfigLuaPre = # lua
-        ''
-          function bool2str(bool) return bool and "on" or "off" end
-        '';
     };
 
     sops.secrets = {
