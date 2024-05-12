@@ -10,8 +10,6 @@
 
     plugins = {
       nvim-autopairs.enable = true;
-
-      nix-develop.enable = true;
     };
   };
 }
