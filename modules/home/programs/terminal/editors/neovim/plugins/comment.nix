@@ -4,9 +4,11 @@ _: {
 
     settings = {
       opleader = {
+        # block = "<leader>/";
         line = "<leader>/";
       };
       toggler = {
+        # block = "<leader>/";
         line = "<leader>/";
       };
     };

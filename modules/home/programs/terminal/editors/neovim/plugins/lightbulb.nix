@@ -17,7 +17,7 @@ _: {
           };
           sign = {
             enabled = true;
-            text = "󰌶";
+            text = " 󰌶";
           };
           status_text = {
             enabled = true;
