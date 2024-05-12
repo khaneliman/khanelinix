@@ -11,15 +11,6 @@ _: {
         enable = true;
         autoEnableSources = true;
 
-        extraOptions = {
-          window = {
-            completion.__raw = # lua
-              ''cmp.config.window.bordered()'';
-            documentation.__raw = # lua
-              ''cmp.config.window.bordered()'';
-          };
-        };
-
         settings = {
           mapping = {
             "<C-d>" = # lua
@@ -121,6 +112,13 @@ _: {
               priority = 100;
             }
           ];
+
+          window = {
+            completion.__raw = # lua
+              ''cmp.config.window.bordered()'';
+            documentation.__raw = # lua
+              ''cmp.config.window.bordered()'';
+          };
         };
       };
 
