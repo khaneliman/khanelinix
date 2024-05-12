@@ -18,15 +18,6 @@ _: {
           "f" = {
             name = " Find";
           };
-          "h" = {
-            name = "󱡀 Harpoon";
-            a = "Add";
-            e = "QuickMenu";
-            j = "1";
-            k = "2";
-            l = "3";
-            m = "4";
-          };
           "l" = {
             name = "  LSP";
             a = "Code Action";
