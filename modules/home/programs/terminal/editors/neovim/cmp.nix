@@ -7,9 +7,6 @@ _: {
     ];
 
     plugins = {
-      cmp-nvim-lsp-signature-help.enable = true;
-      cmp-nvim-lsp-document-symbol.enable = true;
-
       cmp = {
         enable = true;
         autoEnableSources = true;
@@ -41,6 +38,14 @@ _: {
           sources = [
             {
               name = "nvim_lsp";
+              priority = 1000;
+            }
+            {
+              name = "nvim_lsp_signature_help";
+              priority = 1000;
+            }
+            {
+              name = "nvim_lsp_document_symbol";
               priority = 1000;
             }
             {
