@@ -1,5 +1,13 @@
 _: {
   programs.nixvim = {
+
+    clipboard = {
+      # Use system clipboard
+      register = "unnamedplus";
+
+      providers.wl-copy.enable = true;
+    };
+
     globals = {
       # Disable useless providers
       loaded_ruby_provider = 0; # Ruby
@@ -55,13 +63,6 @@ _: {
         '';
     };
 
-    clipboard = {
-      # Use system clipboard
-      register = "unnamedplus";
-
-      providers.wl-copy.enable = true;
-    };
-
     opts = {
       updatetime = 100; # Faster completion
 
@@ -90,7 +91,8 @@ _: {
       laststatus = 3; # When to use a status line for the last window
       fileencoding = "utf-8"; # File-content encoding for the current buffer
       termguicolors = true; # Enables 24-bit RGB color in the |TUI|
-      spell = false; # Highlight spelling mistakes (local to window)
+      spelllang = [ "en_us" ]; # Spell check languages
+      spell = true; # Highlight spelling mistakes (local to window)
       wrap = false; # Prevent text from wrapping
 
       # Tab options
