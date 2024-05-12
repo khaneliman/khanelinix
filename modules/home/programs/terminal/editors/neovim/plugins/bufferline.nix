@@ -41,7 +41,8 @@ in
                return s
             end
           '';
-        enforceRegularTabs = true;
+        # Will make sure all names in bufferline are unique
+        enforceRegularTabs = false;
 
         groups = {
           options = {
@@ -79,13 +80,6 @@ in
                     return buf.name:match('%.md') or buf.name:match('%.txt')
                   end
                 '';
-              # icon = "";
-              # separator = {
-              #  style.__raw = # lua
-              #    ''
-              #      require('bufferline.groups').separator.tab
-              #    '';
-              #};
             }
           ];
         };
@@ -133,6 +127,7 @@ in
             filetype = "neo-tree";
             text = "File Explorer";
             text_align = "center";
+            highlght = "Directory";
           }
         ];
       };
