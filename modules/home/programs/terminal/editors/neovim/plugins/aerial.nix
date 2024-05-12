@@ -8,6 +8,11 @@
   programs.nixvim = {
     extraPlugins = with pkgs.vimPlugins; [ aerial-nvim ];
 
+    extraConfigLuaPre = # lua
+      ''
+        require("aerial").setup()
+      '';
+
     keymaps =
       [
         {
