@@ -8,6 +8,7 @@ _: {
 
     plugins = {
       cmp-nvim-lsp-signature-help.enable = true;
+      cmp-nvim-lsp-document-symbol.enable = true;
 
       cmp = {
         enable = true;
@@ -51,15 +52,15 @@ _: {
               priority = 750;
             }
             {
+              name = "codeium";
+              priority = 300;
+            }
+            {
               name = "buffer";
               priority = 500;
               # Words from other open buffers can also be suggested.
               option.get_bufnrs.__raw = # lua
                 "vim.api.nvim_list_bufs";
-            }
-            {
-              name = "codeium";
-              priority = 300;
             }
             {
               name = "path";
