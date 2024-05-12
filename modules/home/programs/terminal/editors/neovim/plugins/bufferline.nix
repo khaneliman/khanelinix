@@ -42,6 +42,53 @@ in
             end
           '';
         enforceRegularTabs = true;
+
+        groups = {
+          options = {
+            toggleHiddenOnEnter = true;
+          };
+
+          items = [
+            {
+              name = "Tests";
+              highlight = {
+                underline = true;
+                fg = "#a6da95";
+                sp = "#494d64";
+              };
+              priority = 2;
+              # icon = "";
+              matcher.__raw = # lua
+                ''
+                  function(buf)
+                    return buf.name:match('%test') or buf.name:match('%.spec')
+                  end
+                '';
+            }
+            {
+              name = "Docs";
+              highlight = {
+                undercurl = true;
+                fg = "#ffffff";
+                sp = "#494d64";
+              };
+              auto_close = false;
+              matcher.__raw = # lua
+                ''
+                  function(buf)
+                    return buf.name:match('%.md') or buf.name:match('%.txt')
+                  end
+                '';
+              # icon = "";
+              # separator = {
+              #  style.__raw = # lua
+              #    ''
+              #      require('bufferline.groups').separator.tab
+              #    '';
+              #};
+            }
+          ];
+        };
         # NOTE: fixes colorscheme with transparent_background
         highlights = {
           fill = {
