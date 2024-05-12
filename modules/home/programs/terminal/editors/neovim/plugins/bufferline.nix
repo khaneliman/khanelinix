@@ -100,6 +100,9 @@ in
           separatorSelected = {
             fg = "#1e2030";
           };
+          separatorVisible = {
+            fg = "#1e2030";
+          };
         };
         indicator = {
           style = "icon";
