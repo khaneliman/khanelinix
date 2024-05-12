@@ -83,82 +83,80 @@ in
             }
           ];
         };
+
         # NOTE: fixes colorscheme with transparent_background
         # and better contrast selected tabs
-        highlights = {
-          fill = {
-            bg = "#1e2030";
+        highlights =
+          let
+            commonBgColor = "#363a4f";
+            commonFgColor = "#1e2030";
+
+            commonSelectedAttrs = {
+              bg = commonBgColor;
+            };
+
+            # Define a set with common selected attributes
+            selectedAttrsSet = builtins.listToAttrs (
+              map
+                (name: {
+                  inherit name;
+                  value = commonSelectedAttrs;
+                })
+                [
+                  # "separatorSelected" # Handled uniquely
+                  "bufferSelected"
+                  "tabSelected"
+                  "numbersSelected"
+                  "closeButtonSelected"
+                  "duplicateSelected"
+                  "modifiedSelected"
+                  "infoSelected"
+                  "warningSelected"
+                  "errorSelected"
+                  "hintSelected"
+                  "diagnosticSelected"
+                  "infoDiagnosticSelected"
+                  "warningDiagnosticSelected"
+                  "errorDiagnosticSelected"
+                  "hintDiagnosticSelected"
+                ]
+            );
+          in
+          # Merge the common selected attributes with the unique attributes
+          selectedAttrsSet
+          // {
+            fill = {
+              bg = commonFgColor;
+            };
+            separator = {
+              fg = commonFgColor;
+            };
+            separatorVisible = {
+              fg = commonFgColor;
+            };
+            separatorSelected = {
+              bg = commonBgColor;
+              fg = commonFgColor;
+            };
           };
-          separator = {
-            fg = "#1e2030";
-          };
-          separatorSelected = {
-            fg = "#1e2030";
-            bg = "#363a4f";
-          };
-          separatorVisible = {
-            fg = "#1e2030";
-          };
-          bufferSelected = {
-            bg = "#363a4f";
-          };
-          tabSelected = {
-            bg = "#363a4f";
-          };
-          numbersSelected = {
-            bg = "#363a4f";
-          };
-          closeButtonSelected = {
-            bg = "#363a4f";
-          };
-          duplicateSelected = {
-            bg = "#363a4f";
-          };
-          modifiedSelected = {
-            bg = "#363a4f";
-          };
-          infoSelected = {
-            bg = "#363a4f";
-          };
-          warningSelected = {
-            bg = "#363a4f";
-          };
-          errorSelected = {
-            bg = "#363a4f";
-          };
-          hintSelected = {
-            bg = "#363a4f";
-          };
-          diagnosticSelected = {
-            bg = "#363a4f";
-          };
-          infoDiagnosticSelected = {
-            bg = "#363a4f";
-          };
-          warningDiagnosticSelected = {
-            bg = "#363a4f";
-          };
-          errorDiagnosticSelected = {
-            bg = "#363a4f";
-          };
-          hintDiagnosticSelected = {
-            bg = "#363a4f";
-          };
-        };
+
         indicator = {
           style = "icon";
           icon = "▎";
         };
+
         leftTruncMarker = "";
         maxNameLength = 18;
         maxPrefixLength = 15;
         modifiedIcon = "●";
+
         numbers.__raw = # lua
           ''
             function(opts)
               return string.format('%s·%s', opts.raise(opts.id), opts.lower(opts.ordinal))
             end
           '';
+
         persistBufferSort = true;
         rightMouseCommand.__raw = mouse.right;
         rightTruncMarker = "";
@@ -169,6 +167,7 @@ in
         showTabIndicators = true;
         sortBy = "extension";
         tabSize = 18;
+
         offsets = [
           {
             filetype = "neo-tree";
