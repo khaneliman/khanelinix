@@ -9,6 +9,14 @@ let
 in
 {
   programs.nixvim = {
+    extraConfigLuaPre = # lua
+      ''
+        vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "DiagnosticError", linehl = "", numhl = "" })
+        vim.fn.sign_define("DiagnosticSignWarn", { text = "", texthl = "DiagnosticWarn", linehl = "", numhl = "" })
+        vim.fn.sign_define("DiagnosticSignHint", { text = "󰌵", texthl = "DiagnosticHint", linehl = "", numhl = "" })
+        vim.fn.sign_define("DiagnosticSignInfo", { text = " ", texthl = "DiagnosticInfo", linehl = "", numhl = "" })
+      '';
+
     plugins = {
       lspkind.enable = true;
       lsp-lines.enable = true;
