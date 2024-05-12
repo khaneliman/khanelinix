@@ -84,6 +84,7 @@ in
           ];
         };
         # NOTE: fixes colorscheme with transparent_background
+        # and better contrast selected tabs
         highlights = {
           fill = {
             bg = "#1e2030";
@@ -93,9 +94,55 @@ in
           };
           separatorSelected = {
             fg = "#1e2030";
+            bg = "#363a4f";
           };
           separatorVisible = {
             fg = "#1e2030";
+          };
+          bufferSelected = {
+            bg = "#363a4f";
+          };
+          tabSelected = {
+            bg = "#363a4f";
+          };
+          numbersSelected = {
+            bg = "#363a4f";
+          };
+          closeButtonSelected = {
+            bg = "#363a4f";
+          };
+          duplicateSelected = {
+            bg = "#363a4f";
+          };
+          modifiedSelected = {
+            bg = "#363a4f";
+          };
+          infoSelected = {
+            bg = "#363a4f";
+          };
+          warningSelected = {
+            bg = "#363a4f";
+          };
+          errorSelected = {
+            bg = "#363a4f";
+          };
+          hintSelected = {
+            bg = "#363a4f";
+          };
+          diagnosticSelected = {
+            bg = "#363a4f";
+          };
+          infoDiagnosticSelected = {
+            bg = "#363a4f";
+          };
+          warningDiagnosticSelected = {
+            bg = "#363a4f";
+          };
+          errorDiagnosticSelected = {
+            bg = "#363a4f";
+          };
+          hintDiagnosticSelected = {
+            bg = "#363a4f";
           };
         };
         indicator = {
