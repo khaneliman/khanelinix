@@ -7,9 +7,5 @@
       webapi-vim
       nvim-web-devicons
     ];
-
-    plugins = {
-      nvim-autopairs.enable = true;
-    };
   };
 }
