@@ -12,7 +12,7 @@ in
         enableTelescope = true;
       };
 
-      which-key.registrations."<leader>"."g"."w" = mkIf (cfg.enableTelescope && cfg.enable) {
+      which-key.registrations."<leader>"."g"."W" = mkIf (cfg.enableTelescope && cfg.enable) {
         name = "󰙅 Git Worktree";
       };
     };
@@ -29,7 +29,7 @@ in
       }
       {
         mode = "n";
-        key = "<leader>gwc";
+        key = "<leader>gWc";
         lua = true;
         action = # lua
           ''
@@ -44,7 +44,7 @@ in
       }
       {
         mode = "n";
-        key = "<leader>gws";
+        key = "<leader>gWs";
         lua = true;
         action = # lua
           ''

@@ -25,7 +25,7 @@ in
         }
         {
           mode = "x";
-          key = "<leader>rf";
+          key = "<leader>rE";
           action = ":Refactor extract_to_file ";
           options = {
             desc = "Extract to file";
@@ -70,7 +70,7 @@ in
         }
         {
           mode = "n";
-          key = "<leader>rbf";
+          key = "<leader>rB";
           action = ":Refactor extract_block_to_file<CR>";
           options = {
             desc = "Extract block to file";
