@@ -189,6 +189,42 @@
                 };
               };
 
+              "<leader>ud" = {
+                action = # lua
+                  ''
+                    function ()
+                      vim.b.disable_diagnostics = not vim.b.disable_diagnostics
+                      if vim.b.disable_diagnostics then
+                        vim.diagnostic.hide()
+                      else
+                        vim.diagnostic.show()
+                      end
+                      vim.notify(string.format("Buffer Diagnostics %s", bool2str(not vim.b.disable_diagnostics), "info"))
+                    end'';
+                lua = true;
+                options = {
+                  desc = "Toggle Buffer Diagnostics";
+                };
+              };
+
+              "<leader>uD" = {
+                action = # lua
+                  ''
+                    function ()
+                      vim.g.disable_diagnostics = not vim.g.disable_diagnostics
+                      if vim.g.disable_diagnostics then
+                        vim.diagnostic.hide()
+                      else
+                        vim.diagnostic.show()
+                      end
+                      vim.notify(string.format("Global Diagnostics %s", bool2str(not vim.g.disable_diagnostics), "info"))
+                    end'';
+                lua = true;
+                options = {
+                  desc = "Toggle Global Diagnostics";
+                };
+              };
+
               "<leader>uf" = {
                 action = # lua
                   ''
