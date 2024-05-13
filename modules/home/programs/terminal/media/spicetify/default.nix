@@ -26,7 +26,7 @@ in
       theme = spicePkgs.themes.catppuccin;
 
       enabledCustomApps = with spicePkgs.apps; [
-        lyrics-plus
+        lyricsPlus
         marketplace
         reddit
       ];
