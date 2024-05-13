@@ -27,10 +27,12 @@ _: {
           }
           {
             text = [
+              " "
               {
                 __raw = # lua
                   "require('statuscol.builtin').lnumfunc";
               }
+              " "
             ];
             click = "v:lua.ScLa";
           }
