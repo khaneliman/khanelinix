@@ -15,34 +15,9 @@ layout {
         }
     }
 
-	  tab_template name="dev_tab" {
-        pane size=1 borderless=true {
-            plugin location="zellij:tab-bar"
-        }
-
-        pane split_direction="Vertical" {
-          // NOTE: not sure what this even does... seems useless
-          //pane size="15%" name="Filetree" {
-          //    plugin location="zellij:strider"
-          //}
-          children
-        }
-
-        pane size=2 borderless=true {
-            plugin location="zellij:status-bar"
-        }
-    }
-
-		pane_template name="term" {
-		    pane split_direction="horizontal" {
-          children
-          pane command="zsh" size="25%" name="Shell"
-        }
-    }
-
-		dev_tab name="Project"  focus=true {
-        term split_direction="vertical" {
-			      pane command="nvim" name="Root"
+		tab name="Project" split_direction="horizontal" focus=true {
+			  pane {
+			    command="nvim" name="Root"
         }
     }
 
