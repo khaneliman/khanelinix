@@ -8,26 +8,56 @@ in
       noice = {
         enable = true;
 
+        # Hides the title above noice boxes
         cmdline = {
-          format =
-            let
-              no_top_text = {
-                opts = {
-                  border = {
-                    text = {
-                      top = "";
-                    };
+          format = {
+            cmdline = {
+              pattern = "^:";
+              icon = "";
+              lang = "vim";
+              opts = {
+                border = {
+                  text = {
+                    top = "Cmd";
                   };
                 };
               };
-            in
-            {
-              cmdline = no_top_text;
-              filter = no_top_text;
-              lua = no_top_text;
-              search_down = no_top_text;
-              search_up = no_top_text;
             };
+            search_down = {
+              kind = "search";
+              pattern = "^/";
+              icon = " ";
+              lang = "regex";
+            };
+            search_up = {
+              kind = "search";
+              pattern = "^%?";
+              icon = " ";
+              lang = "regex";
+            };
+            filter = {
+              pattern = "^:%s*!";
+              icon = "";
+              lang = "bash";
+              opts = {
+                border = {
+                  text = {
+                    top = "Bash";
+                  };
+                };
+              };
+            };
+            lua = {
+              pattern = "^:%s*lua%s+";
+              icon = "";
+              lang = "lua";
+            };
+            help = {
+              pattern = "^:%s*he?l?p?%s+";
+              icon = "󰋖";
+            };
+            input = { };
+          };
         };
 
         messages = {
@@ -47,10 +77,12 @@ in
           signature.enabled = true;
         };
 
-        popupmenu.backend = "cmp";
+        popupmenu.backend = "nui";
+        # Doesn't support the standard cmdline completions
+        # popupmenu.backend = "cmp";
 
         presets = {
-          bottom_search = true;
+          bottom_search = false;
           command_palette = true;
           long_message_to_split = true;
           inc_rename = true;
