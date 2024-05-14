@@ -1,5 +1,12 @@
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
+  inherit (lib) mkIf;
+
   codelldb-config = {
     name = "Launch";
     type = "codelldb";
@@ -156,9 +163,16 @@ in
           };
         };
       };
+
+      which-key.registrations."<leader>d" =
+        mkIf config.programs.nixvim.plugins.dap.extensions.dap-ui.enable
+          {
+            mode = "v";
+            name = "  Debug";
+          };
     };
 
-    keymaps = [
+    keymaps = lib.optionals config.programs.nixvim.plugins.dap.extensions.dap-ui.enable [
       {
         mode = "n";
         key = "<leader>dE";

@@ -91,6 +91,7 @@ _: {
         };
       }
       {
+        mode = "n";
         key = "<leader>bc";
         action = # lua
           ''

@@ -55,6 +55,9 @@ in
               lua = true;
               mode = "v";
               key = "<leader>lf";
+              options = {
+                desc = "Format selection";
+              };
             }
           ];
 
@@ -209,6 +212,11 @@ in
             filetypes = [ "yaml" ];
           };
         };
+      };
+
+      which-key.registrations."<leader>l" = {
+        mode = "v";
+        name = "  LSP";
       };
     };
   };

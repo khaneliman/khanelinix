@@ -4,16 +4,23 @@ let
 in
 {
   programs.nixvim = {
-    plugins.refactoring = {
-      enable = true;
+    plugins = {
+      refactoring = {
+        enable = true;
+      };
+
+      telescope.enabledExtensions = mkIf config.programs.nixvim.plugins.telescope.enable [
+        "refactoring"
+      ];
+
+      which-key.registrations."<leader>r" = mkIf config.programs.nixvim.plugins.refactoring.enable {
+        mode = "x";
+        name = " Refactor";
+      };
     };
 
-    plugins.telescope.enabledExtensions = mkIf config.programs.nixvim.plugins.telescope.enable [
-      "refactoring"
-    ];
-
     keymaps =
-      [
+      lib.optionals config.programs.nixvim.plugins.refactoring.enable [
         {
           mode = "x";
           key = "<leader>re";
