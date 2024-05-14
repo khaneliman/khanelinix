@@ -2,7 +2,7 @@ _: {
   programs.nixvim = {
     plugins.which-key = {
       enable = true;
-      # ignoreMissing = true;
+
       registrations = {
         "<leader>" = {
           "b" = {
@@ -41,6 +41,10 @@ _: {
             name = " UI/UX";
           };
         };
+      };
+
+      window = {
+        border = "single";
       };
     };
   };
