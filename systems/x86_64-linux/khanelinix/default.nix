@@ -148,6 +148,7 @@ in
     security = {
       # doas = enabled;
       keyring = enabled;
+      pulse-secure = enabled;
       sops = {
         enable = true;
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
