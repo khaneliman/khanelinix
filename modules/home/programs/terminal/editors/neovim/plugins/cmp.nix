@@ -72,6 +72,10 @@ _: {
               priority = 300;
             }
             {
+              name = "cmdline";
+              priority = 300;
+            }
+            {
               name = "spell";
               priority = 300;
             }
@@ -101,10 +105,6 @@ _: {
             }
             {
               name = "calc";
-              priority = 150;
-            }
-            {
-              name = "cmdline";
               priority = 150;
             }
             {
