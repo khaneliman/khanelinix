@@ -112,6 +112,29 @@ in
 
             source <(${lib.getExe config.programs.fzf.package} --zsh)
             source ${config.programs.git.package}/share/git/contrib/completion/git-prompt.sh
+
+            # Prevent the command from being written to history before it's
+            # executed; save it to LASTHIST instead.  Write it to history
+            # in precmd.
+            #
+            # called before a history line is saved.  See zshmisc(1).
+            function zshaddhistory() {
+              # Remove line continuations since otherwise a "\" will eventually
+              # get written to history with no newline.
+              LASTHIST=''${1//\\$'\n'/}
+              # Return value 2: "... the history line will be saved on the internal
+              # history list, but not written to the history file".
+              return 2
+            }
+
+            # zsh hook called before the prompt is printed.  See zshmisc(1).
+            function precmd() {
+              # Write the last command if successful, using the history buffered by
+              # zshaddhistory().
+              if [[ $? == 0 && -n ''${LASTHIST//[[:space:]\n]/} && -n $HISTFILE ]] ; then
+                print -sr -- ''${=''${LASTHIST%%'\n'}}
+              fi
+            }
           '';
 
         initExtra = # bash
