@@ -109,6 +109,8 @@ in
           };
 
           sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
+          repeat_delay = 300; # Mimic the responsiveness of mac setup
+          repeat_rate = 50; # Mimic the responsiveness of mac setup
         };
 
         master = {
