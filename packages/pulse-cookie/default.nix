@@ -47,7 +47,7 @@ python3.pkgs.buildPythonApplication rec {
   meta = with lib; {
     homepage = "https://pypi.org/project/pulse-cookie/";
     description = "wrapper around openconnect allowing user to log in through a webkit window for mfa";
-    mainProgram = "pulse-cookie";
+    mainProgram = "get-pulse-cookie";
     license = licenses.gpl3;
   };
 }
