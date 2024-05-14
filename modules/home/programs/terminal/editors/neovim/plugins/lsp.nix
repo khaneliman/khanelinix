@@ -38,6 +38,26 @@ in
             "<leader>ln" = "goto_next";
           };
 
+          extra = [
+            {
+              action = # lua
+                ''
+                  function()
+                    vim.lsp.buf.format({
+                      async = true,
+                      range = {
+                        ["start"] = vim.api.nvim_buf_get_mark(0, "<"),
+                        ["end"] = vim.api.nvim_buf_get_mark(0, ">"),
+                      }
+                    })
+                  end
+                '';
+              lua = true;
+              mode = "v";
+              key = "<leader>lf";
+            }
+          ];
+
           lspBuf = {
             "<leader>la" = "code_action";
             "<leader>ld" = "definition";
