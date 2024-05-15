@@ -13,10 +13,11 @@ let
   start-pulse-vpn =
     pkgs.writeShellScriptBin "start-pulse-vpn" # bash
       ''
-        # Grab host name from cli argument
+        # Grab hostname from cli argument
         HOST="$1"
         DSID=$(${getExe pkgs.khanelinix.pulse-cookie} -n DSID $HOST)
-        sudo ${getExe pkgs.openconnect} --protocol nc -C DSID=$DSID $HOST
+        # NOTE: can be pulse or nc
+        sudo ${getExe pkgs.openconnect} --protocol pulse -C DSID=$DSID $HOST
       '';
 in
 {

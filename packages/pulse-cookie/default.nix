@@ -20,6 +20,8 @@ python3.pkgs.buildPythonApplication rec {
     python3.pkgs.setuptools_scm
   ];
 
+  # TODO: https://discourse.nixos.org/t/build-package-module-for-closed-source-binary-package-pulse-secure-vpn/29628/18
+  # See if another solution works better
   preBuild = ''
     cat > setup.py << EOF
     from setuptools import setup
