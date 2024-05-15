@@ -17,12 +17,24 @@ in
     fonts =
       with pkgs;
       mkOpt (listOf package) [
-        # emojis
+        # Desktop Fonts
+        corefonts # MS fonts
+        b612 # high legibility
+        material-icons
+        material-design-icons
+        work-sans
+        comic-neue
+        source-sans
+        inter
+        lexend
+
+        # Emojis
         noto-fonts-color-emoji
         twemoji-color-font
         # openmoji-color
         # openmoji-black
 
+        # Nerd Fonts
         (nerdfonts.override {
           fonts = [
             "CascadiaCode"

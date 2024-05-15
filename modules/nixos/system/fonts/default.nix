@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf mapAttrs;
 
   cfg = config.khanelinix.system.fonts;
 in
@@ -14,8 +14,7 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      # FIX: broken nixpkg
-      # font-manager
+      font-manager
       fontpreview
     ];
 
@@ -24,15 +23,34 @@ in
       enableDefaultPackages = true;
 
       fontconfig = {
-        allowType1 = true;
+        # allowType1 = true;
+        # Defaults to true, but be explicit
+        antialias = true;
+        hinting.enable = true;
 
-        defaultFonts = {
-          emoji = [ "Noto Color Emoji" ];
-          monospace = [
-            "MonaspiceNe Nerd Font"
-            "CaskaydiaCove Nerd Font Mono"
-          ];
-        };
+        defaultFonts =
+          let
+            common = [
+              "MonaspiceNe Nerd Font"
+              "CaskaydiaCove Nerd Font Mono"
+              "Iosevka Nerd Font"
+              "Symbols Nerd Font"
+              "Noto Color Emoji"
+            ];
+          in
+          mapAttrs (_: fonts: fonts ++ common) {
+            serif = [ "Noto Serif" ];
+            sansSerif = [ "Lexend" ];
+            emoji = [ "Noto Color Emoji" ];
+            monospace = [
+              "Source Code Pro Medium"
+              "Source Han Mono"
+            ];
+          };
+      };
+
+      fontDir = {
+        decompressFonts = true;
       };
     };
   };
