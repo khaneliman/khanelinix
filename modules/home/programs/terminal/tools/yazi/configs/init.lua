@@ -84,3 +84,8 @@ function Status:render(area)
 		table.unpack(Progress:render(area, right:width())),
 	}
 end
+
+-- Cross session yank
+require("session"):setup({
+	sync_yanked = true,
+})
