@@ -40,7 +40,8 @@
     };
 
     # Hyprland
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    # TODO: unpin for updating to new commits
+    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1&rev=4cdddcfe466cb21db81af0ac39e51cc15f574da9";
 
     # Hyprpaper
     hyprpaper.url = "github:hyprwm/hyprpaper";
