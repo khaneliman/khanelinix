@@ -23,6 +23,9 @@ mkShell {
       (
         with dotnetCorePackages;
         combinePackages [
+          dotnet-aspnetcore_6
+          dotnet-runtime_6
+          dotnet-sdk_6
           dotnet-aspnetcore_7
           dotnet-runtime_7
           dotnet-sdk_7
@@ -37,6 +40,12 @@ mkShell {
       powershell
       vimPlugins.neotest-dotnet
       vscode-extensions.ms-dotnettools.csharp
+      omnisharp-roslyn
+      roslyn
+      roslyn-ls
+      csharp-ls
+      mono
+      msbuild
     ]
     ++ lib.optionals pkgs.stdenv.isLinux [ bicep ];
 
