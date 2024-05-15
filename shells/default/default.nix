@@ -9,7 +9,7 @@ let
   inherit (inputs) snowfall-flake;
 in
 mkShell {
-  buildInputs = with pkgs; [
+  packages = with pkgs; [
     hydra-check
     nix-inspect
     nix-bisect

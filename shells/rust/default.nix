@@ -1,6 +1,6 @@
 { mkShell, pkgs, ... }:
 mkShell {
-  buildInputs = with pkgs; [
+  packages = with pkgs; [
     cargo
     clippy
     rust-analyzer

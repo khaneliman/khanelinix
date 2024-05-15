@@ -17,7 +17,7 @@ let
   };
 in
 mkShell {
-  buildInputs =
+  packages =
     with pkgs;
     [
       (
