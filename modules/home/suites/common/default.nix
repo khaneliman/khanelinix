@@ -61,6 +61,7 @@ in
             topgrade = enabled;
             yazi = enabled;
             zellij = enabled;
+            zoxide = enabled;
           };
         };
 
