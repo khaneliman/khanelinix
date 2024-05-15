@@ -1,3 +1,9 @@
+-- Cross session yank
+require("session"):setup({
+	sync_yanked = true,
+})
+
+-- Hostname
 function Header:host()
 	if ya.target_family() ~= "unix" then
 		return ui.Line({})
@@ -5,6 +11,7 @@ function Header:host()
 	return ui.Span(ya.user_name() .. "@" .. ya.host_name() .. ":"):fg("green")
 end
 
+-- Add hostname to header
 function Header:render(area)
 	self.area = area
 
@@ -17,6 +24,7 @@ function Header:render(area)
 	}
 end
 
+-- Add borders to ui
 function Manager:render(area)
 	local chunks = self:layout(area)
 
@@ -46,6 +54,7 @@ function Manager:render(area)
 	})
 end
 
+-- Filename and symbolic link path
 function Status:name()
 	local h = cx.active.current.hovered
 	if not h then
@@ -59,6 +68,7 @@ function Status:name()
 	return ui.Span(" " .. h.name .. linked)
 end
 
+-- File Owner
 function Status:owner()
 	local h = cx.active.current.hovered
 	if h == nil or ya.target_family() ~= "unix" then
@@ -73,19 +83,51 @@ function Status:owner()
 	})
 end
 
+-- File creation and modified date
+function Status:date()
+	local h = cx.active.current.hovered
+	local formatted_date = ""
+
+	if h == nil then
+		return ui.Line({})
+	end
+
+	if h.cha then
+		local formatted_created = nil
+		local formatted_modified = nil
+
+		if h.cha.created then
+			formatted_created = tostring(os.date("%Y-%m-%d %H:%M:%S", math.floor(h.cha.created)))
+		end
+
+		if h.cha.modified then
+			formatted_modified = tostring(os.date("%Y-%m-%d %H:%M:%S", math.floor(h.cha.modified)))
+		end
+
+		if formatted_created and formatted_modified then
+			formatted_date = formatted_created .. ":" .. formatted_modified
+		else
+			if formatted_modified then
+				formatted_date = formatted_modified
+			end
+		end
+	end
+
+	return ui.Line({
+		ui.Span(formatted_date):fg("green"),
+		ui.Span(" "),
+	})
+end
+
+-- Setup status line
 function Status:render(area)
 	self.area = area
 
 	local left = ui.Line({ self:mode(), self:size(), self:name() })
-	local right = ui.Line({ self:owner(), self:permissions(), self:percentage(), self:position() })
+	local right = ui.Line({ self:date(), self:owner(), self:permissions(), self:percentage(), self:position() })
 	return {
 		ui.Paragraph(area, { left }),
 		ui.Paragraph(area, { right }):align(ui.Paragraph.RIGHT),
 		table.unpack(Progress:render(area, right:width())),
 	}
 end
-
--- Cross session yank
-require("session"):setup({
-	sync_yanked = true,
-})
