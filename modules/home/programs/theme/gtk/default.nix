@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  osConfig,
   ...
 }:
 let
@@ -57,7 +58,7 @@ in
           cursor-size = themeCfg.cursor.size;
           cursor-theme = themeCfg.cursor.name;
           enable-hot-corners = false;
-          font-name = config.khanelinix.system.fonts.default;
+          font-name = osConfig.khanelinix.system.fonts.default;
           gtk-theme = cfg.theme.name;
           icon-theme = themeCfg.icon.name;
         };
@@ -68,7 +69,7 @@ in
       enable = true;
 
       font = {
-        name = config.khanelinix.system.fonts.default;
+        name = osConfig.khanelinix.system.fonts.default;
       };
 
       gtk2 = {

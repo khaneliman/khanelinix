@@ -2,6 +2,7 @@
   config,
   inputs,
   lib,
+  osConfig,
   system,
   ...
 }:
@@ -108,7 +109,7 @@ in
             text = "<span font_weight=\"ultrabold\">$TIME</span>";
             color = catppuccin.colors.text.rgb;
             font_size = 100;
-            font_family = config.khanelinix.system.fonts.default;
+            font_family = osConfig.khanelinix.system.fonts.default;
             valign = "center";
             halign = "center";
             position = "0, 330";
@@ -123,7 +124,7 @@ in
             text = "<span font_weight=\"bold\"> $USER</span>";
             color = catppuccin.colors.text.rgb;
             font_size = 25;
-            font_family = config.khanelinix.system.fonts.default;
+            font_family = osConfig.khanelinix.system.fonts.default;
             valign = "top";
             halign = "left";
             position = "10, 0";
@@ -138,7 +139,7 @@ in
             text = "<span font_weight=\"ultrabold\">󰌾 </span>";
             color = catppuccin.colors.text.rgb;
             font_size = 50;
-            font_family = config.khanelinix.system.fonts.default;
+            font_family = osConfig.khanelinix.system.fonts.default;
             valign = "center";
             halign = "center";
             positino = "15, -350";
@@ -153,7 +154,7 @@ in
             text = "<span font_weight=\"bold\">Locked</span>";
             color = catppuccin.colors.text.rgb;
             font_size = 25;
-            font_family = config.khanelinix.system.fonts.default;
+            font_family = osConfig.khanelinix.system.fonts.default;
             valign = "center";
             halign = "center";
             position = "0, -430";
@@ -168,7 +169,7 @@ in
             text = "cmd[update:120000] echo \"<span font_weight='bold'>$(date +'%a %d %B')</span>\"";
             color = catppuccin.colors.text.rgb;
             font_size = 30;
-            font_family = config.khanelinix.system.fonts.default;
+            font_family = osConfig.khanelinix.system.fonts.default;
             valign = "center";
             halign = "center";
             position = "0, 210";
@@ -183,7 +184,7 @@ in
             text = "<span font_weight=\"ultrabold\"> </span>";
             color = catppuccin.colors.text.rgb;
             font_size = 25;
-            font_family = config.khanelinix.system.fonts.default;
+            font_family = osConfig.khanelinix.system.fonts.default;
             valign = "bottom";
             halign = "right";
             position = "5, 8";
