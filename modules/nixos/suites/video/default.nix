@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
@@ -16,14 +11,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      devede
-      handbrake
-      mediainfo-gui
-      shotcut
-      vlc
-    ];
-
     # NOTE: dvd burning software requires cdrom group and k3b dependencies in nix store do not have those permissions
     # https://github.com/NixOS/nixpkgs/issues/19154#issuecomment-647005545
     # Additionally to installing `k3b` enabling this will

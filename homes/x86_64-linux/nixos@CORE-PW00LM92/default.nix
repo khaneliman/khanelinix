@@ -40,7 +40,6 @@ in
           };
 
           home-manager = enabled;
-          k9s = enabled;
           ssh = enabled;
         };
       };
@@ -59,10 +58,12 @@ in
     };
 
     suites = {
+      business = enabled;
       common = enabled;
       development = {
         enable = true;
         dockerEnable = true;
+        kubernetesEnable = true;
       };
     };
   };

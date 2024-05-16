@@ -30,12 +30,20 @@ in
     ];
 
     khanelinix = {
-
       hardware = {
         power = enabled;
       };
 
       nix = enabled;
+
+      programs = {
+        terminal = {
+          tools = {
+            bandwhich = enabled;
+            nix-ld = enabled;
+          };
+        };
+      };
 
       security = {
         gpg = enabled;
@@ -53,22 +61,6 @@ in
         fonts = enabled;
         locale = enabled;
         time = enabled;
-      };
-
-      tools = {
-        colorls = enabled;
-        fup-repl = enabled;
-        glxinfo = enabled;
-        nix-ld = enabled;
-      };
-
-      programs = {
-        terminal = {
-          tools = {
-
-            bandwhich = enabled;
-          };
-        };
       };
     };
   };

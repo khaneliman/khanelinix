@@ -78,7 +78,6 @@ in
 
         tools = {
           home-manager = enabled;
-          k9s = enabled;
 
           git = {
             enable = true;
@@ -144,8 +143,11 @@ in
       development = {
         enable = true;
         dockerEnable = true;
+        kubernetesEnable = true;
       };
+      emulation = enabled;
       music = enabled;
+      photo = enabled;
       social = enabled;
       video = enabled;
     };

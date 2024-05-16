@@ -11,26 +11,10 @@ in
   khanelinix = {
     nix = enabled;
 
-    apps = {
-      noisetorch = {
-        enable = true;
-
-        threshold = 95;
-        device = "alsa_input.usb-Blue_Microphones_Yeti_Stereo_Microphone_LT_191128065321F39907D0_111000-00.analog-stereo";
-        deviceUnit = "sys-devices-pci0000:00-0000:00:01.2-0000:02:00.0-0000:03:08.0-0000:08:00.3-usb3-3\x2d2-3\x2d2.1-3\x2d2.1.4-3\x2d2.1.4.3-3\x2d2.1.4.3:1.0-sound-card3-controlC3.device";
-      };
-    };
-
     archetypes = {
       gaming = enabled;
       personal = enabled;
       workstation = enabled;
-    };
-
-    desktop = {
-      hyprland = {
-        enable = true;
-      };
     };
 
     display-managers = {
@@ -80,6 +64,26 @@ in
       };
 
       tpm = enabled;
+    };
+
+    programs = {
+      graphical = {
+        addons = {
+          noisetorch = {
+            enable = true;
+
+            threshold = 95;
+            device = "alsa_input.usb-Blue_Microphones_Yeti_Stereo_Microphone_LT_191128065321F39907D0_111000-00.analog-stereo";
+            deviceUnit = "sys-devices-pci0000:00-0000:00:01.2-0000:02:00.0-0000:03:08.0-0000:08:00.3-usb3-3\x2d2-3\x2d2.1-3\x2d2.1.4-3\x2d2.1.4.3-3\x2d2.1.4.3:1.0-sound-card3-controlC3.device";
+          };
+        };
+
+        wms = {
+          hyprland = {
+            enable = true;
+          };
+        };
+      };
     };
 
     services = {
@@ -164,11 +168,6 @@ in
         kubernetesEnable = true;
         nixEnable = true;
         sqlEnable = true;
-      };
-
-      emulation = {
-        enable = true;
-        # retroarchFull = true;
       };
     };
 

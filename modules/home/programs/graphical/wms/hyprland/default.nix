@@ -77,12 +77,22 @@ in
     khanelinix = {
       programs = {
         graphical = {
+          apps = {
+            partitionmanager = enabled;
+          };
+
           launchers = {
             rofi = enabled;
           };
+
           screenlockers = {
             hyprlock = enabled;
           };
+        };
+
+        theme = {
+          gtk = enabled;
+          qt = enabled;
         };
       };
 

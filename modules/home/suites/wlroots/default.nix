@@ -1,7 +1,14 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  inputs,
+  system,
+  ...
+}:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt enabled;
+  inherit (inputs) nixpkgs-wayland;
 
   cfg = config.khanelinix.suites.wlroots;
 in
@@ -11,11 +18,19 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.packages = [
+      nixpkgs-wayland.packages.${system}.wdisplays
+      nixpkgs-wayland.packages.${system}.wl-screenrec
+      nixpkgs-wayland.packages.${system}.wl-clipboard
+      nixpkgs-wayland.packages.${system}.wlr-randr
+    ];
 
     khanelinix = {
       programs = {
         graphical = {
           addons = {
+            electron-support = enabled;
+            swappy = enabled;
             swaync = enabled;
             wlogout = enabled;
           };

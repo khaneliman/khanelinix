@@ -17,15 +17,17 @@ in
       vm = enabled;
     };
 
-    apps = {
-      _1password = enabled;
-      firefox = enabled;
-      # vscode = enabled;
-    };
+    programs = {
+      graphical = {
+        apps = {
+          _1password = enabled;
+        };
 
-    desktop = {
-      hyprland = {
-        enable = true;
+        wms = {
+          hyprland = {
+            enable = true;
+          };
+        };
       };
     };
 

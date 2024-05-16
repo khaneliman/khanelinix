@@ -42,6 +42,7 @@ in
       extraGroups = [
         "wheel"
         "systemd-journal"
+        "mpd"
         "audio"
         "video"
         "input"

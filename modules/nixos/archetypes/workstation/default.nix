@@ -13,7 +13,6 @@ in
   config = mkIf cfg.enable {
     khanelinix = {
       suites = {
-        business = enabled;
         common = enabled;
         desktop = enabled;
         development = enabled;

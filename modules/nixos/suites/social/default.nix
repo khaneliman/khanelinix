@@ -24,9 +24,13 @@ in
     ];
 
     khanelinix = {
-      apps = {
-        # TODO: switch to armcord ?
-        discord = enabled;
+      programs = {
+        graphical = {
+          apps = {
+            # TODO: switch to armcord ?
+            discord = enabled;
+          };
+        };
       };
     };
   };

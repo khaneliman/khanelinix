@@ -48,12 +48,15 @@ in
             bat = enabled;
             bottom = enabled;
             btop = enabled;
+            colorls = enabled;
             comma = enabled;
             direnv = enabled;
             eza = enabled;
             fastfetch = enabled;
             fzf = enabled;
+            fup-repl = enabled;
             git = enabled;
+            glxinfo.enable = pkgs.stdenv.isLinux;
             lsd = enabled;
             oh-my-posh = enabled;
             ripgrep = enabled;

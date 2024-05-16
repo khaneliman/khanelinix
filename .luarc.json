@@ -1,6 +1,6 @@
 {
-    "diagnostics.globals": [
-        "vim",
-        "Sbar"
-    ]
+  "diagnostics.globals": [
+    "vim",
+    "Sbar"
+  ]
 }

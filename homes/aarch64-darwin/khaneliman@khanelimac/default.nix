@@ -67,8 +67,9 @@ in
       business = enabled;
       common = enabled;
       development = enabled;
-      social = enabled;
       music = enabled;
+      photo = enabled;
+      social = enabled;
     };
   };
 

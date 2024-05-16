@@ -29,17 +29,15 @@ in
     ];
 
     khanelinix = {
-      apps = {
-        _1password = enabled;
-        firefox = enabled;
-      };
+      programs = {
+        graphical = {
+          apps = {
+            _1password = enabled;
+          };
 
-      desktop = {
-        hyprland = enabled;
-
-        addons = {
-          gtk = enabled;
-          qt = enabled;
+          wms = {
+            hyprland = enabled;
+          };
         };
       };
     };

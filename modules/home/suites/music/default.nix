@@ -16,17 +16,28 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      musikcube
-      (pulsemixer.overrideAttrs {
-        postFixup = ''
-          substituteInPlace "$out/bin/pulsemixer" \
-            --replace "libpulse.so.0" "$libpulseaudio/lib/libpulse${
-              if stdenv.isLinux then ".so.0" else ".0.dylib"
-            }"
-        '';
-      })
-    ];
+    home.packages =
+      with pkgs;
+      [
+        musikcube
+        (pulsemixer.overrideAttrs {
+          postFixup = ''
+            substituteInPlace "$out/bin/pulsemixer" \
+              --replace "libpulse.so.0" "$libpulseaudio/lib/libpulse${
+                if stdenv.isLinux then ".so.0" else ".0.dylib"
+              }"
+          '';
+        })
+      ]
+      ++ lib.optionals pkgs.stdenv.isLinux [
+        ardour
+        mpd-notification
+        mpdevil
+        spicetify-cli
+        tageditor
+        youtube-music
+        pkgs.khanelinix.yt-music
+      ];
 
     khanelinix = {
       programs.terminal.media = {

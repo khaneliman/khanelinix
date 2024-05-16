@@ -15,10 +15,12 @@ in
       wsl = enabled;
     };
 
-    desktop = {
-      addons = {
-        gtk = enabled;
-        qt = enabled;
+    programs = {
+      graphical = {
+        theme = {
+          gtk = enabled;
+          qt = enabled;
+        };
       };
     };
 
@@ -37,7 +39,6 @@ in
     };
 
     suites = {
-      business = enabled;
       common = enabled;
       development = {
         enable = true;

@@ -15,8 +15,6 @@ in
       suites = {
         art = enabled;
         common = enabled;
-        music = enabled;
-        photo = enabled;
         social = enabled;
         video = enabled;
       };

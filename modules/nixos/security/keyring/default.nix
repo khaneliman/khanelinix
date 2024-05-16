@@ -10,8 +10,5 @@ in
     enable = mkBoolOpt false "Whether to enable gnome keyring.";
   };
 
-  config = mkIf cfg.enable {
-    services.gnome.gnome-keyring.enable = true;
-    programs.seahorse.enable = true;
-  };
+  config = mkIf cfg.enable { services.gnome.gnome-keyring.enable = true; };
 }

@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt enabled;
@@ -11,6 +16,20 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.packages =
+      with pkgs;
+      [
+        calcurse
+        dooit
+        jrnl
+        np
+      ]
+      ++ lib.optionals stdenv.isLinux [
+        libreoffice
+        teams-for-linux
+      ]
+      ++ lib.optionals stdenv.isDarwin [ teams ];
+
     khanelinix = {
       programs = {
         graphical = {

@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt enabled;
@@ -16,28 +11,19 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      bottles
-      lutris
-      # FIX: broken nixpkg
-      # minecraft
-      prismlauncher
-      proton-caller
-      protontricks
-      protonup-ng
-      protonup-qt
-    ];
-
     khanelinix = {
-      apps = {
-        gamemode = enabled;
-        gamescope = enabled;
-        # mangohud = enabled;
-        steam = enabled;
-      };
+      programs = {
+        graphical = {
+          addons = {
+            gamemode = enabled;
+            gamescope = enabled;
+            # mangohud = enabled;
+          };
 
-      cli-apps = {
-        wine = enabled;
+          apps = {
+            steam = enabled;
+          };
+        };
       };
     };
   };

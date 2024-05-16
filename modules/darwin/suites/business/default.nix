@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt enabled;
@@ -16,15 +11,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      calcurse
-      dooit
-      # FIX: nixpkgs broken
-      # jrnl
-      nb
-      teams
-    ];
-
     homebrew = {
       casks = [
         "authy"
@@ -48,8 +34,12 @@ in
     };
 
     khanelinix = {
-      apps = {
-        _1password = enabled;
+      programs = {
+        graphical = {
+          apps = {
+            _1password = enabled;
+          };
+        };
       };
     };
   };

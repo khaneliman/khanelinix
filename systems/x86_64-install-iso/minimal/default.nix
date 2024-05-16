@@ -19,9 +19,13 @@ in
   khanelinix = {
     nix = enabled;
 
-    cli-apps = {
-      neovim = enabled;
-      tmux = enabled;
+    programs = {
+      terminal = {
+        editors = {
+          neovim = enabled;
+          tmux = enabled;
+        };
+      };
     };
 
     services = {

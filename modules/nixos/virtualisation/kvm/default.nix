@@ -91,7 +91,7 @@ in
         ];
       };
 
-      apps = {
+      programs.graphical.addons = {
         looking-glass-client = enabled;
       };
 

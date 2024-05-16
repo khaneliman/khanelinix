@@ -16,17 +16,37 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.k9s = {
-      enable = true;
-      package = pkgs.k9s;
+    home.packages = with pkgs; [
+      helmfile
+      kubecolor
+      kubectl
+      kubectx
+      kubelogin
+      kubernetes-helm
+      kubeseal
+    ];
 
-      settings.k9s = {
-        liveViewAutoRefresh = true;
-        refreshRate = 1;
-        maxConnRetry = 3;
-        ui = {
-          enableMouse = true;
+    programs = {
+      k9s = {
+        enable = true;
+        package = pkgs.k9s;
+
+        settings.k9s = {
+          liveViewAutoRefresh = true;
+          refreshRate = 1;
+          maxConnRetry = 3;
+          ui = {
+            enableMouse = true;
+          };
         };
+      };
+
+      zsh.shellAliases = {
+        k = "kubecolor";
+        kc = "kubectx";
+        kn = "kubens";
+        ks = "kubeseal";
+        kubectl = "kubecolor";
       };
     };
   };

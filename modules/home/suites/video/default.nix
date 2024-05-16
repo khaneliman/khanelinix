@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt enabled;
@@ -11,6 +16,16 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.packages =
+      with pkgs;
+      lib.optionals stdenv.isLinux [
+        devede
+        handbrake
+        mediainfo-gui
+        shotcut
+        vlc
+      ];
+
     khanelinix = {
       programs = {
         graphical.apps = {

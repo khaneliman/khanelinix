@@ -1,12 +1,7 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt enabled;
+  inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.suites.development;
 in
@@ -31,42 +26,7 @@ in
       8081
     ];
 
-    environment.systemPackages =
-      with pkgs;
-      [
-        github-desktop
-        qtcreator
-        neovide
-        vscode
-      ]
-      ++ lib.optionals cfg.nixEnable [
-        nixpkgs-hammering
-        nixpkgs-lint-community
-        nixpkgs-review
-        nix-update
-      ]
-      ++ lib.optionals cfg.gameEnable [
-        godot_4
-        # ue4
-        unityhub
-      ]
-      ++ lib.optionals cfg.sqlEnable [
-        dbeaver
-        mysql-workbench
-      ];
-
     khanelinix = {
-      cli-apps = {
-        prisma = enabled;
-      };
-
-      tools = {
-        azure.enable = cfg.azureEnable;
-        git-crypt = enabled;
-        go.enable = cfg.goEnable;
-        k8s.enable = cfg.kubernetesEnable;
-      };
-
       user = {
         extraGroups = [ "git" ] ++ lib.optionals cfg.sqlEnable [ "mysql" ];
       };
