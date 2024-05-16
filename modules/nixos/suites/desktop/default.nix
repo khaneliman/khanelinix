@@ -28,6 +28,9 @@ in
       pkgs.khanelinix.pocketcasts
     ];
 
+    # TODO: what does this set that makes it default
+    programs.firefox.enable = true;
+
     khanelinix = {
       programs = {
         graphical = {
