@@ -97,7 +97,7 @@ in
               end
             '';
           options = {
-            desc = "Find all files";
+            desc = "Refactoring";
             silent = true;
           };
         }
