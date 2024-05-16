@@ -40,8 +40,6 @@ in
         "appcleaner"
         "bartender"
         "bitwarden"
-        # FIX: broken package reference
-        # "brightness"
         "firefox-developer-edition"
         "gpg-suite"
         "hammerspoon"

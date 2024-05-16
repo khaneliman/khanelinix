@@ -20,19 +20,16 @@ in
     environment.systemPackages =
       with pkgs;
       [
-        # FIX: broken package
-        # cemu
+        cemu
         emulationstation
         mame
         melonDS
         mgba
         mupen64plus
         nestopia-ue
-        # FIX: broken package
-        # pcsx2
+        pcsx2
         pcsxr
-        # FIX: broken package
-        # rpcs3
+        rpcs3
         snes9x
         xemu
         # NOTE: yuzu removed upstream, using alternative

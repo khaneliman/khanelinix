@@ -21,16 +21,14 @@ in
         cores = with libretro; [
           beetle-psx-hw
           bsnes
-          # FIX: broken package
-          # citra
+          citra
           dolphin
           dosbox
           genesis-plus-gx
           mame
           mgba
           nestopia
-          # FIX: broken package
-          # pcsx2
+          pcsx2
           snes9x
         ];
       })

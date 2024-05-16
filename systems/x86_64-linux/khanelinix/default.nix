@@ -119,7 +119,6 @@ in
         '';
       };
 
-      # TODO: Set up shares
       samba = {
         enable = true;
 

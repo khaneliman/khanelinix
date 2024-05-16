@@ -53,7 +53,6 @@ in
   options.khanelinix.programs.theme.qt = with types; {
     enable = mkBoolOpt false "Whether to customize qt and apply themes.";
     theme = {
-      # TODO: cleanup with proper name
       name = mkOpt str "Catppuccin-Macchiato-Blue" "The name of the kvantum theme to apply.";
       package = mkOpt package (pkgs.catppuccin-kvantum.override {
         accent = "Blue";

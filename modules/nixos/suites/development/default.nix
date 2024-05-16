@@ -35,8 +35,7 @@ in
       with pkgs;
       [
         github-desktop
-        # FIX: broken package
-        # qtcreator
+        qtcreator
         neovide
         vscode
       ]
@@ -53,8 +52,7 @@ in
       ]
       ++ lib.optionals cfg.sqlEnable [
         dbeaver
-        # FIX: package broken on nixpkgs
-        # mysql-workbench
+        mysql-workbench
       ];
 
     khanelinix = {

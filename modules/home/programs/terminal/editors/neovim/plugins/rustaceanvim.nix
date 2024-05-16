@@ -1,5 +1,9 @@
-_: {
+{ pkgs, ... }:
+{
   programs.nixvim = {
+    # Needed for RustPlay
+    extraPlugins = with pkgs.vimPlugins; [ webapi-vim ];
+
     plugins = {
       rustaceanvim = {
         enable = true;

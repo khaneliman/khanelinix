@@ -94,7 +94,7 @@ in
 
       tabline = mkIf (!config.programs.nixvim.plugins.bufferline.enable) {
         lualine_a = [
-          # TODO: fix left separator color
+          # NOTE: not high priority since i use bufferline now, but should fix left separator color
           {
             name = "buffers";
             extraConfig = {
