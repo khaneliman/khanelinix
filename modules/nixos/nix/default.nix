@@ -43,6 +43,11 @@ in
           "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
         ];
       };
+
+      # flake-utils-plus
+      generateNixPathFromInputs = true;
+      generateRegistryFromInputs = true;
+      linkInputs = true;
     };
   };
 }
