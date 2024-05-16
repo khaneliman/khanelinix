@@ -29,13 +29,6 @@ in
       sessionVariables = {
         GTK_THEME = cfg.theme.name;
       };
-
-      systemPackages = with pkgs; [
-        dconf # required explicitly with noXlibs
-        glib
-        gtk3.out # for gtk-launch
-        libappindicator-gtk3
-      ];
     };
 
     services = {

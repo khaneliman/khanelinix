@@ -99,6 +99,11 @@ in
             nautilus = enabled;
             thunar = enabled;
           };
+
+          theme = {
+            gtk = enabled;
+            qt = enabled;
+          };
         };
       };
 

@@ -61,7 +61,6 @@ in
         graphical = {
           addons = {
             # TODO: moved to home-manager
-            # gtk = enabled;
             # kanshi = enabled;
             keyring = enabled;
             # TODO: moved to home-manager
@@ -70,8 +69,14 @@ in
             # wofi = enabled;
             xdg-portal = enabled;
           };
+
           file-managers = {
             nautilus = enabled;
+          };
+
+          theme = {
+            gtk = enabled;
+            qt = enabled;
           };
         };
         # TODO: moved to home-manager

@@ -39,7 +39,10 @@ in
   config = mkIf cfg.enable {
     home = {
       packages = with pkgs; [
+        dconf # required explicitly with noXlibs and home-manager
         glib # gsettings
+        gtk3.out # for gtk-launch
+        libappindicator-gtk3
         cfg.theme.package
       ];
 

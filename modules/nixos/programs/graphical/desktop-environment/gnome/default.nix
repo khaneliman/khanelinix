@@ -12,7 +12,12 @@ let
     optional
     getExe
     ;
-  inherit (lib.internal) mkBoolOpt mkOpt mkDefault;
+  inherit (lib.internal)
+    enabled
+    mkBoolOpt
+    mkOpt
+    mkDefault
+    ;
 
   cfg = config.khanelinix.programs.graphical.desktop-environment.gnome;
   gdmHome = config.users.users.gdm.home;
@@ -85,9 +90,17 @@ in
       # TODO: gnome equivalent on home-manager
       # desktop.addons = {
       # electron-support = enabled;
-      # gtk = enabled;
       # kitty = enabled;
       # };
+
+      programs = {
+        graphical = {
+          theme = {
+            gtk = enabled;
+            qt = enabled;
+          };
+        };
+      };
 
       home.extraOptions = {
         dconf.settings =
