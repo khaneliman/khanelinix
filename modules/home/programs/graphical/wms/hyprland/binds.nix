@@ -13,41 +13,48 @@ in
   config = mkIf cfg.enable {
     wayland.windowManager.hyprland = {
       settings = {
+        # NOTE: different bind flags
+        # l -> locked, will also work when an input inhibitor (e.g. a lockscreen) is active.
+        # r -> release, will trigger on release of a key.
+        # e -> repeat, will repeat when held.
+        # n -> non-consuming, key/mouse events will be passed to the active window in addition to triggering the dispatcher.
+        # m -> mouse, Mouse binds are binds that rely on mouse movement. They will have one less arg
+        # t -> transparent, cannot be shadowed by other binds.
+        # i -> ignore mods, will ignore modifiers.
+        # "$mainMod" = "SUPER";
+        # "$HYPER" = "SUPER_ALT_CTRL";
         bind =
           [
-            # ░█▀█░█▀█░█▀█░░░█░░░█▀█░█░█░█▀█░█▀▀░█░█░█▀▀░█▀▄░█▀▀
-            # ░█▀█░█▀▀░█▀▀░░░█░░░█▀█░█░█░█░█░█░░░█▀█░█▀▀░█▀▄░▀▀█
-            # ░▀░▀░▀░░░▀░░░░░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀
-            "$mainMod, RETURN, exec, $term"
-            "SUPER_SHIFT, RETURN, exec, $term zellij"
-            "SUPER_ALT, RETURN, exec, $term --title floatterm --single-instance"
-            "$mainMod, Q, killactive,"
-            "CTRL_SHIFT, Q, killactive,"
-            "SUPER_SHIFT, P, exec, $color_picker"
-            "$mainMod, B, exec, $browser"
-            "SUPER_SHIFT, E, exec, $explorer"
-            "$mainMod, E, exec, $term yazi"
+            # █░░░█▀█░█░█░█▀█░█▀▀░█░█░█▀▀░█▀▄░█▀▀
+            # █░░░█▀█░█░█░█░█░█░░░█▀█░█▀▀░█▀▄░▀▀█
+            # ▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀
             "$mainMod, SPACE, exec, $launcher"
             "CTRL, SPACE, exec, $launcher"
             "CTRL_SHIFT, SPACE, exec, $launcher_shift"
             "$mainMod, A, exec, $launchpad"
+
+            # ░█▀█░█▀█░█▀█░█▀▀
+            # ░█▀█░█▀▀░█▀▀░▀▀█
+            # ░▀░▀░▀░░░▀░░░▀▀▀
+
+            "$mainMod, RETURN, exec, $term"
+            "SUPER_SHIFT, RETURN, exec, $term zellij"
+            # FIX:
+            # "SUPER_ALT, RETURN, exec, $term --title floatterm --single-instance"
+            "SUPER_SHIFT, P, exec, $color_picker"
+            "$mainMod, B, exec, $browser"
+            "SUPER_SHIFT, E, exec, $explorer"
+            "$mainMod, E, exec, $term yazi"
             "$mainMod, L, exec, $screen-locker --immediate"
             "$mainMod, T, exec, $term btop"
             "$mainMod, N, exec, $notification_center -t -sw"
-            # "SUPER, V, clipman pick -t rofi
             "$mainMod, V, exec, $cliphist"
             "$mainMod, W, exec, $looking-glass"
             "$mainMod, I, exec, ${getExe pkgs.libnotify} \"$($window-inspector)\""
 
-            # ░█▀▀░█░█░█▀▀░▀█▀░█▀▀░█▄█
-            # ░▀▀█░░█░░▀▀█░░█░░█▀▀░█░█
-            # ░▀▀▀░░▀░░▀▀▀░░▀░░▀▀▀░▀░▀
-            "$LHYPER, L, exec, systemctl --user exit"
-            "$LHYPER, L, exit,"
-            # "$RHYPER, R, exec, reboot" # TODO: fix
-            # "$RHYPER, P, exec, shutdown" # TODO: fix
-            "$LHYPER, T, exec, ${getExe pkgs.libnotify} 'test left'"
-            "$RHYPER, T, exec, ${getExe pkgs.libnotify} 'test right'"
+            # kill window
+            "$mainMod, Q, killactive,"
+            "CTRL_SHIFT, Q, killactive,"
 
             # ░█▀▀░█▀▀░█▀▄░█▀▀░█▀▀░█▀█░█▀▀░█░█░█▀█░▀█▀
             # ░▀▀█░█░░░█▀▄░█▀▀░█▀▀░█░█░▀▀█░█▀█░█░█░░█░
@@ -140,20 +147,6 @@ in
             "SUPER_CTRL_SHIFT,up,movecurrentworkspacetomonitor,u"
             "SUPER_CTRL_SHIFT,left,movecurrentworkspacetomonitor,l"
             "SUPER_CTRL_SHIFT,right,movecurrentworkspacetomonitor,r"
-
-            # ░█▄█░█▀▀░█▀▄░▀█▀░█▀█
-            # ░█░█░█▀▀░█░█░░█░░█▀█
-            # ░▀░▀░▀▀▀░▀▀░░▀▀▀░▀░▀
-            ",XF86AudioRaiseVolume,exec,wpctl set-volume @DEFAULT_AUDIO_SINK@ 2.5%+"
-            ",XF86AudioLowerVolume,exec,wpctl set-volume @DEFAULT_AUDIO_SINK@ 2.5%-"
-            ",XF86AudioMute,exec,wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-            ",XF86MonBrightnessUp,exec,light -A 5"
-            ",XF86MonBrightnessDown,exec,light -U 5"
-            ",XF86AudioMedia,exec,${getExe pkgs.playerctl} play-pause"
-            ",XF86AudioPlay,exec,${getExe pkgs.playerctl} play-pause"
-            ",XF86AudioStop,exec,${getExe pkgs.playerctl} stop"
-            ",XF86AudioPrev,exec,${getExe pkgs.playerctl} previous"
-            ",XF86AudioNext,exec,${getExe pkgs.playerctl} next"
           ]
           # ░█░█░█▀█░█▀▄░█░█░█▀▀░█▀█░█▀█░█▀▀░█▀▀
           # ░█▄█░█░█░█▀▄░█▀▄░▀▀█░█▀▀░█▀█░█░░░█▀▀
@@ -177,7 +170,29 @@ in
             ) 10
           ));
         bindl = [
-          "$mainMod, BackSpace, exec, pkill -SIGUSR1 hyprlock || WAYLAND_DISPLAY=wayland-1 $screen-locker  --immediate"
+          # ░█▀▀░█░█░█▀▀░▀█▀░█▀▀░█▄█
+          # ░▀▀█░░█░░▀▀█░░█░░█▀▀░█░█
+          # ░▀▀▀░░▀░░▀▀▀░░▀░░▀▀▀░▀░▀
+          # Kill and restart crashed hyprlock
+          "$mainMod, BackSpace, exec, pkill -SIGUSR1 hyprlock || WAYLAND_DISPLAY=wayland-1 $screen-locker --immediate"
+          "$LHYPER, L, exec, systemctl --user exit"
+          "$LHYPER, L, exit,"
+          # "$RHYPER, R, exec, reboot" # FIX:
+          # "$RHYPER, P, exec, shutdown" # FIX:
+
+          # ░█▄█░█▀▀░█▀▄░▀█▀░█▀█
+          # ░█░█░█▀▀░█░█░░█░░█▀█
+          # ░▀░▀░▀▀▀░▀▀░░▀▀▀░▀░▀
+          ",XF86AudioRaiseVolume,exec,wpctl set-volume @DEFAULT_AUDIO_SINK@ 2.5%+"
+          ",XF86AudioLowerVolume,exec,wpctl set-volume @DEFAULT_AUDIO_SINK@ 2.5%-"
+          ",XF86AudioMute,exec,wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+          ",XF86MonBrightnessUp,exec,light -A 5"
+          ",XF86MonBrightnessDown,exec,light -U 5"
+          ",XF86AudioMedia,exec,${getExe pkgs.playerctl} play-pause"
+          ",XF86AudioPlay,exec,${getExe pkgs.playerctl} play-pause"
+          ",XF86AudioStop,exec,${getExe pkgs.playerctl} stop"
+          ",XF86AudioPrev,exec,${getExe pkgs.playerctl} previous"
+          ",XF86AudioNext,exec,${getExe pkgs.playerctl} next"
         ];
         bindm = [
           # Move/resize windows with mainMod + LMB/RMB and dragging
