@@ -119,11 +119,6 @@ in
 
           use-xdg-base-directories = true;
         };
-
-        # flake-utils-plus
-        generateNixPathFromInputs = true;
-        generateRegistryFromInputs = true;
-        linkInputs = true;
       };
   };
 }
