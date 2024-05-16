@@ -1,4 +1,5 @@
-_: {
+{ config, ... }:
+{
   manager = {
     prepend_keymap = [
       {
@@ -632,8 +633,7 @@ _: {
           "g"
           "i"
         ];
-        # TODO: fix for yazi
-        run = "shell cd('/run/media/' + os.getenv('USER'))";
+        run = "cd /run/media/${config.khanelinix.user.name}";
         desc = "Run command to change to media directory";
       }
       {

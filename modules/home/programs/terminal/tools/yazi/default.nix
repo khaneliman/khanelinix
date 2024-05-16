@@ -13,7 +13,7 @@ let
   completion = import ./keymap/completion.nix { };
   help = import ./keymap/help.nix { };
   input = import ./keymap/input.nix { };
-  manager = import ./keymap/manager.nix { };
+  manager = import ./keymap/manager.nix { inherit config; };
   select = import ./keymap/select.nix { };
   tasks = import ./keymap/tasks.nix { };
 
