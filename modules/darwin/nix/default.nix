@@ -21,6 +21,7 @@ in
           Day = 7;
           Hour = 3;
         };
+
         user = config.khanelinix.user.name;
       };
 
@@ -29,6 +30,7 @@ in
           Day = 7;
           Hour = 4;
         };
+
         user = config.khanelinix.user.name;
       };
 
@@ -37,7 +39,7 @@ in
 
       settings = {
         build-users-group = "nixbld";
-        extra-nix-path = "nixpkgs=flake:nixpkgs";
+
         extra-sandbox-paths = [
           "/System/Library/Frameworks"
           "/System/Library/PrivateFrameworks"
