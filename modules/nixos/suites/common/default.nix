@@ -61,6 +61,15 @@ in
         glxinfo = enabled;
         nix-ld = enabled;
       };
+
+      programs = {
+        terminal = {
+          tools = {
+
+            bandwhich = enabled;
+          };
+        };
+      };
     };
   };
 }
