@@ -117,166 +117,176 @@
     ];
   };
 
-  open = {
-    rules = [
-      # TODO: iterate over list to produce attribute set
-      # {
-      #   name = "*.{7z,ace,ar,arc,bz2,cab,cpio,cpt,deb,dgc,dmg,gz}";
-      #   use = "archive";
-      # }
-      # {
-      #   name = "*.{iso,jar,msi,pkg,rar,shar,tar,tgz,xar,xpi,xz,zip}";
-      #   use = "archive";
-      # }
-      {
-        name = "*.dmg";
-        use = [
-          "dmg"
-          "reveal"
-        ];
-      }
-      {
-        name = "*.7z";
-        use = "extract";
-      }
-      {
-        name = "*.zip";
-        use = "extract";
-      }
-      {
-        name = "*.gz";
-        use = "extract";
-      }
-      {
-        name = "*.xz";
-        use = "extract";
-      }
-      {
-        name = "*.tar";
-        use = "extract";
-      }
-      {
-        name = "*/";
-        use = [
-          "edit"
-          "open"
-          "reveal"
-        ];
-      }
-      {
-        mime = "text/*";
-        use = [
-          "edit"
-          "reveal"
-        ];
-      }
-      {
-        mime = "image/*";
-        use = [
-          "open"
-          "reveal"
-        ];
-      }
-      {
-        mime = "video/*";
-        use = [
-          "play"
-          "reveal"
-        ];
-      }
-      {
-        mime = "audio/*";
-        use = [
-          "play"
-          "reveal"
-        ];
-      }
-      {
-        mime = "inode/x-empty";
-        use = [
-          "edit"
-          "reveal"
-        ];
-      }
-      {
-        mime = "application/json";
-        use = [
-          "edit"
-          "reveal"
-        ];
-      }
-      {
-        mime = "*/javascript";
-        use = [
-          "edit"
-          "reveal"
-        ];
-      }
-      {
-        mime = "application/zip";
+  open =
+    let
+      archiveExtensions = [
+        "7z"
+        "ace"
+        "ar"
+        "arc"
+        "bz2"
+        "cab"
+        "cpio"
+        "cpt"
+        "deb"
+        "dgc"
+        "dmg"
+        "gz"
+        "iso"
+        "jar"
+        "msi"
+        "pkg"
+        "rar"
+        "shar"
+        "tar"
+        "tgz"
+        "xar"
+        "xpi"
+        "xz"
+        "zip"
+      ];
+
+      generateArchiveRule = ext: {
+        name = "*.${ext}";
         use = [
           "extract"
           "reveal"
         ];
-      }
-      {
-        mime = "application/gzip";
-        use = [
-          "extract"
-          "reveal"
-        ];
-      }
-      {
-        mime = "application/x-tar";
-        use = [
-          "extract"
-          "reveal"
-        ];
-      }
-      {
-        mime = "application/x-bzip";
-        use = [
-          "extract"
-          "reveal"
-        ];
-      }
-      {
-        mime = "application/x-bzip2";
-        use = [
-          "extract"
-          "reveal"
-        ];
-      }
-      {
-        mime = "application/x-7z-compressed";
-        use = [
-          "extract"
-          "reveal"
-        ];
-      }
-      {
-        mime = "application/x-rar";
-        use = [
-          "extract"
-          "reveal"
-        ];
-      }
-      {
-        mime = "application/xz";
-        use = [
-          "extract"
-          "reveal"
-        ];
-      }
-      {
-        mime = "*";
-        use = [
-          "open"
-          "reveal"
-        ];
-      }
-    ];
-  };
+      };
+
+      archiveRules = map generateArchiveRule archiveExtensions;
+    in
+    {
+      rules = archiveRules ++ [
+        {
+          name = "*.dmg";
+          use = [
+            "dmg"
+            "reveal"
+          ];
+        }
+        {
+          name = "*/";
+          use = [
+            "edit"
+            "open"
+            "reveal"
+          ];
+        }
+        {
+          mime = "text/*";
+          use = [
+            "edit"
+            "reveal"
+          ];
+        }
+        {
+          mime = "image/*";
+          use = [
+            "open"
+            "reveal"
+          ];
+        }
+        {
+          mime = "video/*";
+          use = [
+            "play"
+            "reveal"
+          ];
+        }
+        {
+          mime = "audio/*";
+          use = [
+            "play"
+            "reveal"
+          ];
+        }
+        {
+          mime = "inode/x-empty";
+          use = [
+            "edit"
+            "reveal"
+          ];
+        }
+        {
+          mime = "application/json";
+          use = [
+            "edit"
+            "reveal"
+          ];
+        }
+        {
+          mime = "*/javascript";
+          use = [
+            "edit"
+            "reveal"
+          ];
+        }
+        {
+          mime = "application/zip";
+          use = [
+            "extract"
+            "reveal"
+          ];
+        }
+        {
+          mime = "application/gzip";
+          use = [
+            "extract"
+            "reveal"
+          ];
+        }
+        {
+          mime = "application/x-tar";
+          use = [
+            "extract"
+            "reveal"
+          ];
+        }
+        {
+          mime = "application/x-bzip";
+          use = [
+            "extract"
+            "reveal"
+          ];
+        }
+        {
+          mime = "application/x-bzip2";
+          use = [
+            "extract"
+            "reveal"
+          ];
+        }
+        {
+          mime = "application/x-7z-compressed";
+          use = [
+            "extract"
+            "reveal"
+          ];
+        }
+        {
+          mime = "application/x-rar";
+          use = [
+            "extract"
+            "reveal"
+          ];
+        }
+        {
+          mime = "application/xz";
+          use = [
+            "extract"
+            "reveal"
+          ];
+        }
+        {
+          mime = "*";
+          use = [
+            "open"
+            "reveal"
+          ];
+        }
+      ];
+    };
 
   preview = {
     tab_size = 2;
