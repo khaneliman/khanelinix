@@ -111,19 +111,24 @@ in
             # ░▀░▀░▀▀▀░▀░▀░▀░▀░▀▀▀░▀░░░▀░▀░▀▀▀░▀▀▀
             # Swipe through existing workspaces with CTRL_ALT + left / right
             "CTRL_ALT, right, workspace, +1"
+            "CTRL_ALT, l, workspace, +1"
             "CTRL_ALT, left, workspace, -1"
-
-            # Move to workspace left/right
-            "CTRL_ALT_SUPER, right, movetoworkspace, +1"
-            "CTRL_ALT_SUPER, left, movetoworkspace, -1"
-
+            "CTRL_ALT, h, workspace, -1"
             # Scroll through existing workspaces with CTRL_ALT + scroll
             "CTRL_ALT, mouse_down, workspace, e+1"
             "CTRL_ALT, mouse_up, workspace, e-1"
 
+            # Move to workspace left/right
+            "CTRL_ALT_SUPER, right, movetoworkspace, +1"
+            "CTRL_ALT_SUPER, l, movetoworkspace, +1"
+            "CTRL_ALT_SUPER, left, movetoworkspace, -1"
+            "CTRL_ALT_SUPER, h, movetoworkspace, -1"
+
             # MOVING silently LEFT/RIGHT
             "SUPER_SHIFT, right, movetoworkspacesilent, +1"
+            "SUPER_SHIFT, l, movetoworkspacesilent, +1"
             "SUPER_SHIFT, left, movetoworkspacesilent, -1"
+            "SUPER_SHIFT, h, movetoworkspacesilent, -1"
 
             # Scratchpad
             "SUPER_SHIFT,grave,movetoworkspace,special:scratchpad"
@@ -137,16 +142,24 @@ in
             # ░█░█░█░█░█░█░░█░░░█░░█░█░█▀▄
             # ░▀░▀░▀▀▀░▀░▀░▀▀▀░░▀░░▀▀▀░▀░▀
             # simple movement between monitors
-            "SUPER_CTRL, up, focusmonitor, u"
-            "SUPER_CTRL, down, focusmonitor, d"
-            "SUPER_CTRL, left, focusmonitor, l"
-            "SUPER_CTRL, right, focusmonitor, r"
+            "SUPER_ALT, up, focusmonitor, u"
+            "SUPER_ALT, k, focusmonitor, u"
+            "SUPER_ALT, down, focusmonitor, d"
+            "SUPER_ALT, j, focusmonitor, d"
+            "SUPER_ALT, left, focusmonitor, l"
+            "SUPER_ALT, h, focusmonitor, l"
+            "SUPER_ALT, right, focusmonitor, r"
+            "SUPER_ALT, l, focusmonitor, r"
 
             # moving current workspace to monitor
             "SUPER_CTRL_SHIFT,down,movecurrentworkspacetomonitor,d"
+            "SUPER_CTRL_SHIFT,j,movecurrentworkspacetomonitor,d"
             "SUPER_CTRL_SHIFT,up,movecurrentworkspacetomonitor,u"
+            "SUPER_CTRL_SHIFT,k,movecurrentworkspacetomonitor,u"
             "SUPER_CTRL_SHIFT,left,movecurrentworkspacetomonitor,l"
+            "SUPER_CTRL_SHIFT,h,movecurrentworkspacetomonitor,l"
             "SUPER_CTRL_SHIFT,right,movecurrentworkspacetomonitor,r"
+            "SUPER_CTRL_SHIFT,l,movecurrentworkspacetomonitor,r"
           ]
           # ░█░█░█▀█░█▀▄░█░█░█▀▀░█▀█░█▀█░█▀▀░█▀▀
           # ░█▄█░█░█░█▀▄░█▀▄░▀▀█░█▀▀░█▀█░█░░░█▀▀
