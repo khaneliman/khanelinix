@@ -138,10 +138,12 @@ in
         type = "png";
       };
 
-      # TODO: fix
-      # menuExtraClock = {
-      #   DateFormat = "EEE d MMM HH:mm";
-      # };
+      menuExtraClock = {
+        ShowAMPM = true;
+        ShowDate = 1;
+        ShowDayOfWeek = true;
+        ShowSeconds = true;
+      };
 
       NSGlobalDomain = {
         "com.apple.sound.beep.feedback" = 0;
