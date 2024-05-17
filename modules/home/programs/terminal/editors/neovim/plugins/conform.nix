@@ -120,6 +120,7 @@
           cpp = [ "clang_format" ];
           cs = [ "csharpier" ];
           fish = [ "fish_indent" ];
+          fsharp = [ "fantomas" ];
           javascript = [
             [
               "prettierd"
@@ -167,6 +168,9 @@
           };
           isort = {
             command = "${lib.getExe pkgs.isort}";
+          };
+          fantomas = {
+            command = "${lib.getExe pkgs.fantomas}";
           };
           jq = {
             command = "${lib.getExe pkgs.jq}";
