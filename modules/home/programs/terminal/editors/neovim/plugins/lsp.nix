@@ -22,9 +22,11 @@ in
       lsp-lines.enable = true;
       lsp-format.enable = mkIf (!config.programs.nixvim.plugins.conform-nvim.enable) true;
 
+      # TODO: set up autocmd to reconfigure data with each project
       nvim-jdtls = {
         enable = true;
-        data = "/home/${config.snowfallorg.user.name}/.cache/jdtls/workspace";
+        configuration = "${config.xdg.cacheHome}/jdtls/config";
+        data = "${config.xdg.cacheHome}/jdtls/workspace";
       };
 
       lsp = {
