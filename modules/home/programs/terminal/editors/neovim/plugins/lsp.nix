@@ -124,6 +124,11 @@ in
             ];
           };
 
+          fsautocomplete = {
+            enable = true;
+            filetypes = [ "fsharp" ];
+          };
+
           html = {
             enable = true;
             filetypes = [ "html" ];
