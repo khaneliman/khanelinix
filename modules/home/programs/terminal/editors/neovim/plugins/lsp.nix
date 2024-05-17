@@ -143,7 +143,10 @@ in
 
           jsonls = {
             enable = true;
-            filetypes = [ "json" ];
+            filetypes = [
+              "json"
+              "jsonc"
+            ];
           };
 
           lua-ls = {
