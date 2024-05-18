@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt enabled;
@@ -16,8 +11,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ fastfetch ];
-
     khanelinix.desktop.addons = {
       skhd = enabled;
       yabai = enabled;

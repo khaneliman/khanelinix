@@ -157,7 +157,7 @@ in
             LS_COLORS="''${''${LS_COLORS#*\'}%\'*}"
             export LS_COLORS
 
-            fastfetch
+            ${lib.optionalString config.programs.fastfetch.enable "fastfetch"}
           '';
 
         plugins = [

@@ -15,7 +15,7 @@ in
       enable = true;
       enableCompletion = true;
 
-      initExtra = ''
+      initExtra = lib.optionalString config.programs.fastfetch.enable ''
         fastfetch
       '';
     };

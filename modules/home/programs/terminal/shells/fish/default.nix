@@ -73,7 +73,7 @@ in
             # Disable greeting
             set fish_greeting
 
-            fastfetch
+            ${lib.optionalString config.programs.fastfetch.enable "fastfetch"}
           '';
 
       plugins = [

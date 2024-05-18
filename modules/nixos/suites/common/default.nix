@@ -17,7 +17,6 @@ in
     environment.systemPackages = with pkgs; [
       appimage-run
       clac
-      fastfetch
       feh
       jq
       khanelinix.trace-symlink

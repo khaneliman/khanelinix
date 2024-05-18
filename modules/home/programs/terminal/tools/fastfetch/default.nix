@@ -16,6 +16,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    programs.fastfetch.enable = true;
+
     xdg.configFile = {
       "fastfetch/config.jsonc".text =
         # json
