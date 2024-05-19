@@ -22,7 +22,10 @@ in
     # This option disables NixOS Containers, leaving OCI Containers available.
     boot.enableContainers = false;
 
-    environment.systemPackages = with pkgs; [ podman-compose ];
+    environment.systemPackages = with pkgs; [
+      podman-compose
+      podman-desktop
+    ];
 
     khanelinix = {
       user = {
@@ -42,6 +45,14 @@ in
     virtualisation = {
       podman = {
         inherit (cfg) enable;
+
+        # prune images and containers periodically
+        autoPrune = {
+          enable = true;
+          flags = [ "--all" ];
+          dates = "weekly";
+        };
+
         dockerCompat = true;
         dockerSocket.enable = true;
       };
