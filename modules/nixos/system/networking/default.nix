@@ -138,7 +138,7 @@ in
           443
           8080
         ];
-        checkReversePath = false;
+        checkReversePath = mkDefault false;
         logReversePathDrops = true;
         logRefusedConnections = false;
       };
@@ -171,7 +171,7 @@ in
 
       useDHCP = mkForce false;
       useNetworkd = mkForce true;
-      usePredictableInterfaceNames = mkDefault true;
+      usePredictableInterfaceNames = mkForce true;
     };
 
     services.resolved = {

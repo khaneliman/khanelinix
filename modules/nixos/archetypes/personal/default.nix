@@ -12,6 +12,10 @@ in
 
   config = mkIf cfg.enable {
     khanelinix = {
+      services = {
+        tailscale = enabled;
+      };
+
       suites = {
         art = enabled;
         common = enabled;

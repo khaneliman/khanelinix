@@ -6,7 +6,8 @@
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.internal) mkBoolOpt mkOpt enabled;
+  inherit (lib.modules) mkBefore;
+  inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.services.tailscale;
 in
@@ -27,6 +28,14 @@ in
       }
     ];
 
+    boot.kernel.sysctl = {
+      # Enable IP forwarding
+      # required for Wireguard & Tailscale/Headscale subnet feature
+      # See <https://tailscale.com/kb/1019/subnets/?tab=linux#step-1-install-the-tailscale-client>
+      "net.ipv4.ip_forward" = true;
+      "net.ipv6.conf.all.forwarding" = true;
+    };
+
     environment.systemPackages = with pkgs; [ tailscale ];
 
     networking = {
@@ -40,41 +49,51 @@ in
       networkmanager.unmanaged = [ "tailscale0" ];
     };
 
-    services.tailscale = enabled;
+    services.tailscale = {
+      enable = true;
+      permitCertUid = "root";
+      useRoutingFeatures = "both";
+    };
 
-    systemd.services.tailscale-autoconnect = mkIf cfg.autoconnect.enable {
-      description = "Automatic connection to Tailscale";
+    systemd = {
+      network.wait-online.ignoredInterfaces = [ "${config.services.tailscale.interfaceName}" ];
 
-      # Make sure tailscale is running before trying to connect to tailscale
-      after = [
-        "network-pre.target"
-        "tailscale.service"
-      ];
-      wants = [
-        "network-pre.target"
-        "tailscale.service"
-      ];
-      wantedBy = [ "multi-user.target" ];
+      services = {
+        tailscaled.serviceConfig.Environment = mkBefore [ "TS_NO_LOGS_NO_SUPPORT=true" ];
 
-      # Set this service as a oneshot job
-      serviceConfig.Type = "oneshot";
+        tailscale-autoconnect = mkIf cfg.autoconnect.enable {
+          description = "Automatic connection to Tailscale";
 
-      # Have the job run this shell script
-      script =
-        with pkgs; # bash
-        ''
-          # Wait for tailscaled to settle
-          sleep 2
+          # Make sure tailscale is running before trying to connect to tailscale
+          after = [
+            "network-pre.target"
+            "tailscale.service"
+          ];
+          wants = [
+            "network-pre.target"
+            "tailscale.service"
+          ];
+          wantedBy = [ "multi-user.target" ];
 
-          # Check if we are already authenticated to tailscale
-          status="$(${getExe tailscale} status -json | ${getExe jq} -r .BackendState)"
-          if [ $status = "Running" ]; then # if so, then do nothing
-            exit 0
-          fi
+          serviceConfig.Type = "oneshot";
 
-          # Otherwise authenticate with tailscale
-          ${getExe tailscale} up -authkey "${cfg.autoconnect.key}"
-        '';
+          script =
+            with pkgs; # bash
+            ''
+              # Wait for tailscaled to settle
+              sleep 2
+
+              # Check if we are already authenticated to tailscale
+              status="$(${getExe tailscale} status -json | ${getExe jq} -r .BackendState)"
+              if [ $status = "Running" ]; then # if so, then do nothing
+                exit 0
+              fi
+
+              # Otherwise authenticate with tailscale
+              ${getExe tailscale} up -authkey "${cfg.autoconnect.key}"
+            '';
+        };
+      };
     };
   };
 }
