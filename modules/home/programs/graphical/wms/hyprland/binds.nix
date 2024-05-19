@@ -22,7 +22,10 @@ in
         # t -> transparent, cannot be shadowed by other binds.
         # i -> ignore mods, will ignore modifiers.
         # "$mainMod" = "SUPER";
-        # "$HYPER" = "SUPER_ALT_CTRL";
+        # "$HYPER" = "SUPER_SHIFT_CTRL";
+        # "$ALT-HYPER" = "SHIFT_ALT_CTRL";
+        # "$RHYPER" = "SUPER_ALT_R_CTRL_R";
+        # "$LHYPER" = "SUPER_ALT_L_CTRL_L";
         bind =
           [
             # █░░░█▀█░█░█░█▀█░█▀▀░█░█░█▀▀░█▀▄░█▀▀
@@ -119,10 +122,10 @@ in
             "CTRL_ALT, mouse_up, workspace, e-1"
 
             # Move to workspace left/right
-            "CTRL_ALT_SUPER, right, movetoworkspace, +1"
-            "CTRL_ALT_SUPER, l, movetoworkspace, +1"
-            "CTRL_ALT_SUPER, left, movetoworkspace, -1"
-            "CTRL_ALT_SUPER, h, movetoworkspace, -1"
+            "$ALT-HYPER, right, movetoworkspace, +1"
+            "$ALT-HYPER, l, movetoworkspace, +1"
+            "$ALT-HYPER, left, movetoworkspace, -1"
+            "$ALT-HYPER, h, movetoworkspace, -1"
 
             # MOVING silently LEFT/RIGHT
             "SUPER_SHIFT, right, movetoworkspacesilent, +1"
@@ -152,14 +155,14 @@ in
             "SUPER_ALT, l, focusmonitor, r"
 
             # moving current workspace to monitor
-            "SUPER_CTRL_SHIFT,down,movecurrentworkspacetomonitor,d"
-            "SUPER_CTRL_SHIFT,j,movecurrentworkspacetomonitor,d"
-            "SUPER_CTRL_SHIFT,up,movecurrentworkspacetomonitor,u"
-            "SUPER_CTRL_SHIFT,k,movecurrentworkspacetomonitor,u"
-            "SUPER_CTRL_SHIFT,left,movecurrentworkspacetomonitor,l"
-            "SUPER_CTRL_SHIFT,h,movecurrentworkspacetomonitor,l"
-            "SUPER_CTRL_SHIFT,right,movecurrentworkspacetomonitor,r"
-            "SUPER_CTRL_SHIFT,l,movecurrentworkspacetomonitor,r"
+            "$HYPER,down,movecurrentworkspacetomonitor,d"
+            "$HYPER,j,movecurrentworkspacetomonitor,d"
+            "$HYPER,up,movecurrentworkspacetomonitor,u"
+            "$HYPER,k,movecurrentworkspacetomonitor,u"
+            "$HYPER,left,movecurrentworkspacetomonitor,l"
+            "$HYPER,h,movecurrentworkspacetomonitor,l"
+            "$HYPER,right,movecurrentworkspacetomonitor,r"
+            "$HYPER,l,movecurrentworkspacetomonitor,r"
           ]
           # ░█░█░█▀█░█▀▄░█░█░█▀▀░█▀█░█▀█░█▀▀░█▀▀
           # ░█▄█░█░█░█▀▄░█▀▄░▀▀█░█▀▀░█▀█░█░░░█▀▀
@@ -190,8 +193,8 @@ in
           "$mainMod, BackSpace, exec, pkill -SIGUSR1 hyprlock || WAYLAND_DISPLAY=wayland-1 $screen-locker --immediate"
           "$LHYPER, L, exec, systemctl --user exit"
           "$LHYPER, L, exit,"
-          # "$RHYPER, R, exec, reboot" # FIX:
-          # "$RHYPER, P, exec, shutdown" # FIX:
+          "$RHYPER, R, exec, reboot"
+          "$RHYPER, P, exec, shutdown"
 
           # ░█▄█░█▀▀░█▀▄░▀█▀░█▀█
           # ░█░█░█▀▀░█░█░░█░░█▀█

@@ -132,9 +132,10 @@ in
         };
 
         "$mainMod" = "SUPER";
-        "$HYPER" = "SUPER_ALT_CTRL";
-        "$LHYPER" = "SUPER_LALT_LCTRL"; # FIX: Not unique from other hyper
-        "$RHYPER" = "SUPER_RALT_RCTRL"; # FIX: Not unique from other hyper
+        "$HYPER" = "SUPER_SHIFT_CTRL";
+        "$ALT-HYPER" = "SHIFT_ALT_CTRL";
+        "$RHYPER" = "SUPER_ALT_R_CTRL_R";
+        "$LHYPER" = "SUPER_ALT_L_CTRL_L";
 
         # default applications
         "$term" = "[float;tile] ${getExe pkgs.wezterm} start --always-new-process";
