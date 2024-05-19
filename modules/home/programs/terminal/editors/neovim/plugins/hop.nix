@@ -1,4 +1,5 @@
-_: {
+{ config, lib, ... }:
+{
   programs.nixvim = {
     plugins = {
       hop = {
@@ -6,26 +7,13 @@ _: {
       };
     };
 
-    keymaps = [
-      # TODO: add global hop
-      # {
-      #   key = "S";
-      #   action.__raw = ''
-      #     function()
-      #       require'hop'.hint_char1({
-      #         direction = require'hop.hint'.HintDirection.BEFORE_CURSOR,
-      #       })
-      #     end
-      #   '';
-      #   options.remap = true;
-      # }
+    keymaps = lib.optionals config.programs.nixvim.plugins.hop.enable [
       {
         key = "f";
         action.__raw = ''
           function()
             require'hop'.hint_char1({
               direction = require'hop.hint'.HintDirection.AFTER_CURSOR,
-              current_line_only = true
             })
           end
         '';
@@ -37,7 +25,6 @@ _: {
           function()
             require'hop'.hint_char1({
               direction = require'hop.hint'.HintDirection.BEFORE_CURSOR,
-              current_line_only = true
             })
           end
         '';
@@ -49,7 +36,6 @@ _: {
           function()
             require'hop'.hint_char1({
               direction = require'hop.hint'.HintDirection.AFTER_CURSOR,
-              current_line_only = true,
               hint_offset = -1
             })
           end
@@ -62,7 +48,6 @@ _: {
           function()
             require'hop'.hint_char1({
               direction = require'hop.hint'.HintDirection.BEFORE_CURSOR,
-              current_line_only = true,
               hint_offset = 1
             })
           end
