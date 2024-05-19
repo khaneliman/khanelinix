@@ -51,16 +51,20 @@ in
       ) "options vfio-pci ids=${concatStringsSep "," cfg.vfioIds}";
     };
 
+    environment.systemPackages = with pkgs; [ virt-manager ];
+
+    # trust bridge network interface(s)
+    networking.firewall.trustedInterfaces = [
+      "virbr0"
+      "br0"
+    ];
+
     systemd.tmpfiles.rules = [
       "f /dev/shm/looking-glass 0660 ${user.name} qemu-libvirtd -"
       "f /dev/shm/scream 0660 ${user.name} qemu-libvirtd -"
     ];
 
-    environment.systemPackages = with pkgs; [ virt-manager ];
-
     virtualisation = {
-      spiceUSBRedirection.enable = true;
-
       libvirtd = {
         enable = true;
         extraConfig = ''
@@ -69,15 +73,20 @@ in
 
         onBoot = "ignore";
         onShutdown = "shutdown";
+
         qemu = {
           package = pkgs.qemu_kvm;
           ovmf = enabled;
+          swtpm.enable = true;
+
           verbatimConfig = ''
             namespaces = []
             user = "+${builtins.toString config.users.users.${user.name}.uid}"
           '';
         };
       };
+
+      spiceUSBRedirection.enable = true;
     };
 
     khanelinix = {
