@@ -17,7 +17,10 @@ in
     programs.zsh.enable = true;
 
     homebrew = {
-      brews = [ "bashdb" ];
+      brews = [
+        "bashdb"
+        "gnu-sed"
+      ];
     };
 
     environment = {
