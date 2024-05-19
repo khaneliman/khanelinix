@@ -19,6 +19,10 @@ in
         enable = true;
       };
 
+      scanner = {
+        enable = true;
+      };
+
       updater = {
         enable = true;
       };
