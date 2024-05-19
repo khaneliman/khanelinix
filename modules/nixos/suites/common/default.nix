@@ -48,6 +48,7 @@ in
         auditd = enabled;
         clamav = enabled;
         gpg = enabled;
+        usbguard = enabled;
       };
 
       services = {
