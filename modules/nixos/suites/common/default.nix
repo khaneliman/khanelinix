@@ -46,6 +46,7 @@ in
 
       security = {
         auditd = enabled;
+        clamav = enabled;
         gpg = enabled;
       };
 
