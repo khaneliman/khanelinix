@@ -28,13 +28,13 @@ in
     };
 
     hardware = {
+      audio = enabled;
+      bluetooth = enabled;
       cpu.amd = enabled;
       gpu = {
         amd = enabled;
         nvidia = enabled;
       };
-      audio = enabled;
-      bluetooth = enabled;
       opengl = enabled;
 
       rgb = {
@@ -64,6 +64,7 @@ in
       };
 
       tpm = enabled;
+      yubikey = enabled;
     };
 
     programs = {
