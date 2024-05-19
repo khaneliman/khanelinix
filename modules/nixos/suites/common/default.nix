@@ -45,6 +45,7 @@ in
       };
 
       security = {
+        auditd = enabled;
         gpg = enabled;
       };
 
