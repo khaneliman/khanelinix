@@ -8,8 +8,6 @@ let
   inherit (lib) mkIf;
   inherit (lib.internal) mkBoolOpt;
 
-  # lib.snowfall.fs.get-non-default-nix-files ./keymap/
-
   completion = import ./keymap/completion.nix { };
   help = import ./keymap/help.nix { };
   input = import ./keymap/input.nix { };
@@ -26,13 +24,14 @@ let
   cfg = config.khanelinix.programs.terminal.tools.yazi;
 in
 {
+  imports = lib.snowfall.fs.get-non-default-nix-files ./configs/plugins;
+
   options.khanelinix.programs.terminal.tools.yazi = {
     enable = mkBoolOpt false "Whether or not to enable yazi.";
   };
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      glow
       miller
       ouch
       config.programs.ripgrep.package
@@ -69,7 +68,15 @@ in
 
     xdg.configFile = {
       "yazi" = {
-        source = lib.cleanSourceWith { src = lib.cleanSource ./configs/.; };
+        source = lib.cleanSourceWith {
+          filter =
+            name: _type:
+            let
+              baseName = baseNameOf (toString name);
+            in
+            !lib.hasSuffix ".nix" baseName;
+          src = lib.cleanSource ./configs/.;
+        };
 
         recursive = true;
       };
