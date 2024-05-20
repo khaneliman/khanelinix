@@ -13,7 +13,7 @@ in
     services.usbguard = {
       IPCAllowedUsers = [
         "root"
-        "${config.snowfallorg.user.name}"
+        "${config.snowfallorg.users.name}"
       ];
       presentDevicePolicy = "allow";
       rules = ''

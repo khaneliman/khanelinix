@@ -135,23 +135,23 @@ in
                     mountOptions = defaultBtrfsOpts;
                   };
                   "@userdata/@documents" = {
-                    mountpoint = "/home/${config.snowfallorg.user.name}/Documents";
+                    mountpoint = "/home/${config.snowfallorg.users.name}/Documents";
                     mountOptions = defaultBtrfsOpts;
                   };
                   "@userdata/@downloads" = {
-                    mountpoint = "/home/${config.snowfallorg.user.name}/Downloads";
+                    mountpoint = "/home/${config.snowfallorg.users.name}/Downloads";
                     mountOptions = defaultBtrfsOpts;
                   };
                   "@userdata/@music" = {
-                    mountpoint = "/home/${config.snowfallorg.user.name}/Music";
+                    mountpoint = "/home/${config.snowfallorg.users.name}/Music";
                     mountOptions = defaultBtrfsOpts;
                   };
                   "@userdata/@pictures" = {
-                    mountpoint = "/home/${config.snowfallorg.user.name}/Pictures";
+                    mountpoint = "/home/${config.snowfallorg.users.name}/Pictures";
                     mountOptions = defaultBtrfsOpts;
                   };
                   "@userdata/@videos" = {
-                    mountpoint = "/home/${config.snowfallorg.user.name}/Videos";
+                    mountpoint = "/home/${config.snowfallorg.users.name}/Videos";
                     mountOptions = defaultBtrfsOpts;
                   };
                 };
