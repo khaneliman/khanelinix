@@ -18,7 +18,7 @@ let
   # XDG MIME types
   associations = {
     "application/json" = editor;
-    "application/pdf" = [ "org.pwmt.zathura.desktop.desktop" ];
+    "application/pdf" = [ "org.pwmt.zathura.desktop" ];
     "application/rss+xml" = editor;
     "application/vnd.ms-excel" = excel;
     "application/vnd.ms-powerpoint" = powerpoint;
@@ -134,7 +134,7 @@ let
     "x-scheme-handler/mid" = mail;
     "x-scheme-handler/spotify" = [ "spotify.desktop" ];
     "x-scheme-handler/terminal" = terminal;
-    "x-scheme-handler/tg" = [ "org.telegram.desktop.desktop" ];
+    "x-scheme-handler/tg" = [ "org.telegram.desktop" ];
     "x-scheme-handler/unknown" = browser;
     "x-scheme-handler/webcal" = mail;
     "x-scheme-handler/webcals" = mail;
