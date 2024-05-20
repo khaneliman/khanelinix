@@ -6,13 +6,8 @@
   ...
 }:
 let
-  inherit (lib)
-    types
-    mkIf
-    mapAttrs
-    mkDefault
-    ;
-  inherit (lib.internal) boolToNum mkBoolOpt mkOpt;
+  inherit (lib) mkIf mapAttrs mkDefault;
+  inherit (lib.internal) boolToNum mkBoolOpt;
 
   cfg = config.khanelinix.programs.theme.gtk;
   themeCfg = config.khanelinix.desktop.theme;
@@ -23,16 +18,6 @@ in
 {
   options.khanelinix.programs.theme.gtk = {
     enable = mkBoolOpt false "Whether to customize GTK and apply themes.";
-    theme = {
-      name =
-        mkOpt types.str "Catppuccin-Macchiato-Standard-Blue-Dark"
-          "The name of the GTK theme to apply.";
-      package = mkOpt types.package (pkgs.catppuccin-gtk.override {
-        accents = [ "blue" ];
-        size = "standard";
-        variant = "macchiato";
-      }) "The package to use for the theme.";
-    };
     usePortal = mkBoolOpt false "Whether to use the GTK Portal.";
   };
 
@@ -43,11 +28,10 @@ in
         glib # gsettings
         gtk3.out # for gtk-launch
         libappindicator-gtk3
-        cfg.theme.package
       ];
 
       sessionVariables = {
-        GTK_THEME = cfg.theme.name;
+        # GTK_THEME = cfg.theme.name;
         GTK_USE_PORTAL = "${toString (boolToNum cfg.usePortal)}";
       };
     };
@@ -109,14 +93,6 @@ in
         gtk-xft-antialias = 1;
         gtk-xft-hinting = 1;
         gtk-xft-hintstyle = "hintslight";
-      };
-
-      iconTheme = {
-        inherit (themeCfg.icon) name package;
-      };
-
-      theme = {
-        inherit (cfg.theme) name package;
       };
     };
 

@@ -18,7 +18,6 @@ let
 
   cfg = config.khanelinix.programs.graphical.bars.waybar;
 
-  theme = builtins.readFile ./styles/catppuccin.css;
   style = builtins.readFile ./styles/style.css;
   controlCenterStyle = builtins.readFile ./styles/control-center.css;
   powerStyle = builtins.readFile ./styles/power.css;
@@ -112,7 +111,7 @@ in
         ];
       };
 
-      style = "${theme}${style}${controlCenterStyle}${powerStyle}${statsStyle}${workspacesStyle}";
+      style = "${style}${controlCenterStyle}${powerStyle}${statsStyle}${workspacesStyle}";
     };
 
     sops.secrets = {

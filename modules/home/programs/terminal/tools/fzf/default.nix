@@ -9,7 +9,6 @@ let
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.programs.terminal.tools.fzf;
-  catppuccin = import ../../../theme/catppuccin.nix;
 in
 {
   options.khanelinix.programs.terminal.tools.fzf = {
@@ -19,24 +18,6 @@ in
   config = mkIf cfg.enable {
     programs.fzf = {
       enable = true;
-
-      colors = {
-        "preview-bg" = "-1";
-        "gutter" = "-1";
-        "bg" = "-1";
-        "bg+" = "-1";
-        "fg" = "${catppuccin.colors.surface2.hex}";
-        "fg+" = "${catppuccin.colors.rosewater.hex}";
-        "hl" = "${catppuccin.colors.blue.hex}";
-        "hl+" = "${catppuccin.colors.blue.hex}";
-        "header" = "${catppuccin.colors.blue.hex}";
-        "info" = "${catppuccin.colors.yellow.hex}";
-        "pointer" = "${catppuccin.colors.teal.hex}";
-        "marker" = "${catppuccin.colors.teal.hex}";
-        "prompt" = "${catppuccin.colors.yellow.hex}";
-        "spinner" = "${catppuccin.colors.teal.hex}";
-        "preview-fg" = "${catppuccin.colors.blue.hex}";
-      };
 
       defaultCommand = "${lib.getExe pkgs.fd} --type=f --hidden --exclude=.git";
       defaultOptions = [

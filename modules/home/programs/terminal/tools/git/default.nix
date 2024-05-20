@@ -9,6 +9,7 @@ let
     types
     mkEnableOption
     mkIf
+    mkForce
     getExe'
     ;
   inherit (lib.internal) mkOpt mkBoolOpt enabled;
@@ -60,7 +61,7 @@ in
 
           options = {
             dark = true;
-            features = "decorations side-by-side navigate";
+            features = mkForce "decorations side-by-side navigate";
             line-numbers = true;
             navigate = true;
             side-by-side = true;

@@ -3,6 +3,8 @@
 
   inputs = {
 
+    catppuccin.url = "github:catppuccin/nix";
+
     # macOS Support (master)
     darwin = {
       url = "github:lnl7/nix-darwin";
@@ -170,6 +172,7 @@
       ];
 
       homes.modules = with inputs; [
+        catppuccin.homeManagerModules.catppuccin
         hypr-socket-watch.homeManagerModules.default
         nix-index-database.hmModules.nix-index
         nixvim.homeManagerModules.nixvim
@@ -182,6 +185,7 @@
           darwin = with inputs; [ nixvim.nixDarwinModules.nixvim ];
 
           nixos = with inputs; [
+            # catppuccin.nixosModules.catppuccin
             lanzaboote.nixosModules.lanzaboote
             nixvim.nixosModules.nixvim
             sops-nix.nixosModules.sops

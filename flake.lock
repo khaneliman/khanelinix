@@ -1,5 +1,20 @@
 {
   "nodes": {
+    "catppuccin": {
+      "locked": {
+        "lastModified": 1715659881,
+        "narHash": "sha256-emodPGTXLVqlcOkqbJiOUkf5vo8WWujgzKxms1B+iBs=",
+        "owner": "catppuccin",
+        "repo": "nix",
+        "rev": "d6344610c04af0f8e315fef45dd3b854014b119e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "catppuccin",
+        "repo": "nix",
+        "type": "github"
+      }
+    },
     "crane": {
       "inputs": {
         "flake-compat": [
@@ -1535,6 +1550,7 @@
     },
     "root": {
       "inputs": {
+        "catppuccin": "catppuccin",
         "darwin": "darwin",
         "deploy-rs": "deploy-rs",
         "gpg-base-conf": "gpg-base-conf",

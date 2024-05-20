@@ -44,8 +44,6 @@ in
       });
 
       settings = {
-        theme = "catppuccin_macchiato";
-
         editor = {
           bufferline = "always";
           color-modes = true;

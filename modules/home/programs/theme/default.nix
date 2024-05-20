@@ -11,7 +11,7 @@ let
     mkOption
     types
     ;
-  inherit (lib.internal) mkOpt capitalize;
+  inherit (lib.internal) mkOpt;
 
   cfg = config.khanelinix.desktop.theme;
 
@@ -37,17 +37,6 @@ let
     "macchiato"
     "mocha"
   ];
-
-  fromYAML =
-    f:
-    let
-      jsonFile =
-        pkgs.runCommand "theme yaml to attribute set" { nativeBuildInputs = [ pkgs.jc ]; } # bash
-          ''
-            jc --yaml < "${f}" > "$out"
-          '';
-    in
-    builtins.elemAt (builtins.fromJSON (builtins.readFile jsonFile)) 0;
 in
 {
   options.khanelinix.desktop.theme = {
@@ -105,6 +94,13 @@ in
   };
 
   config = mkIf cfg.enable {
+    catppuccin = {
+      enable = false;
+
+      accent = "blue";
+      flavour = "macchiato";
+    };
+
     home = mkIf pkgs.stdenv.isLinux {
       pointerCursor = {
         inherit (cfg.cursor) name package size;
@@ -116,40 +112,66 @@ in
       };
     };
 
+    gtk.catppuccin = {
+      enable = true;
+
+      inherit (cfg.selectedTheme) accent;
+      size = "standard";
+
+      cursor = {
+        enable = true;
+        inherit (cfg.selectedTheme) accent;
+      };
+
+      icon = {
+        enable = true;
+        inherit (cfg.selectedTheme) accent;
+      };
+    };
+
+    wayland.windowManager.hyprland.catppuccin = {
+      enable = true;
+
+      inherit (cfg.selectedTheme) accent;
+    };
+
     programs = {
-      bat = {
-        config.theme = "${cfg.selectedTheme.name} ${capitalize cfg.selectedTheme.variant}";
+      bat.catppuccin.enable = true;
+      bottom.catppuccin.enable = true;
+      btop.catppuccin.enable = true;
+      cava.catppuccin.enable = true;
+      fish.catppuccin.enable = true;
+      fzf.catppuccin.enable = true;
+      git.delta.catppuccin.enable = true;
+      gh-dash.catppuccin.enable = true;
+      gitui.catppuccin.enable = true;
+      glamour.catppuccin.enable = true;
+      helix.catppuccin.enable = true;
 
-        themes = {
-          "${cfg.selectedTheme.name} ${capitalize cfg.selectedTheme.variant}" = {
-            src = cfg.package;
-            file = "/bat/${capitalize cfg.selectedTheme.name} ${capitalize cfg.selectedTheme.variant}.tmTheme";
-          };
-        };
+      k9s.catppuccin = {
+        enable = true;
+
+        transparent = true;
       };
 
-      git.delta = {
-        options = {
-          syntax-theme = mkIf config.khanelinix.programs.terminal.tools.bat.enable "${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}";
-        };
+      kitty.catppuccin.enable = true;
+
+      lazygit.catppuccin = {
+        enable = true;
+
+        inherit (cfg.selectedTheme) accent;
       };
 
-      bottom = {
-        settings = builtins.fromTOML (
-          builtins.readFile (cfg.package + "/bottom/${cfg.selectedTheme.variant}.toml")
-        );
-      };
+      neovim.catppuccin.enable = true;
+      waybar.catppuccin.enable = true;
 
-      btop = {
-        settings.color_theme = "${cfg.selectedTheme.name}_${cfg.selectedTheme.variant}";
-      };
+      zathura.catppuccin.enable = true;
+      zellij.catppuccin.enable = true;
+      zsh.syntaxHighlighting.catppuccin.enable = true;
 
-      k9s.skins = {
-        catppuccin = fromYAML (
-          cfg.package + "/k9s/${cfg.selectedTheme.name}-${cfg.selectedTheme.variant}.yaml"
-        );
-      };
-
+      # TODO: Make work with personal customizations
+      # yazi.catppuccin.enable = true;
+      # rofi.catppuccin.enable = true;
       tmux.plugins = [
         {
           plugin = pkgs.tmuxPlugins.catppuccin;
@@ -160,18 +182,6 @@ in
           '';
         }
       ];
-    };
-
-    khanelinix.programs.graphical.wms.hyprland.prependConfig = ''
-      source=${cfg.package}/hyprland/${cfg.selectedTheme.variant}.conf
-    '';
-
-    xdg.configFile = {
-      "btop/themes/${cfg.selectedTheme.name}_${cfg.selectedTheme.variant}.theme" = {
-        source = mkIf config.programs.btop.enable (
-          cfg.package + "/btop/${cfg.selectedTheme.name}_${cfg.selectedTheme.variant}.theme"
-        );
-      };
     };
   };
 }
