@@ -40,7 +40,6 @@ in
       terminal = {
         tools = {
           home-manager = enabled;
-          cava = enabled;
 
           ssh = {
             enable = true;

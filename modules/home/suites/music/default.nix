@@ -40,9 +40,15 @@ in
       ];
 
     khanelinix = {
-      programs.terminal.media = {
-        ncmpcpp = enabled;
-        ncspot = enabled;
+      programs.terminal = {
+        media = {
+          ncmpcpp = enabled;
+          ncspot = enabled;
+        };
+
+        tools = {
+          cava = enabled;
+        };
       };
 
       services = {
