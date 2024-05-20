@@ -20,6 +20,13 @@ in
       nixcfg = "nvim ~/khanelinix/flake.nix";
     };
 
+    home.packages =
+      with pkgs;
+      lib.optionals pkgs.stdenv.isLinux [
+        kdePackages.gwenview
+        kdePackages.ark
+      ];
+
     khanelinix = {
       desktop = {
         theme = enabled;
