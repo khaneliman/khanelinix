@@ -140,11 +140,17 @@ in
     suites = {
       business = enabled;
       common = enabled;
+
       development = {
         enable = true;
+
         dockerEnable = true;
+        gameEnable = true;
         kubernetesEnable = true;
+        nixEnable = true;
+        sqlEnable = true;
       };
+
       emulation = enabled;
       music = enabled;
       photo = enabled;
