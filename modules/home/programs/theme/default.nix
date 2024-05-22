@@ -135,53 +135,62 @@ in
       inherit (cfg.selectedTheme) accent;
     };
 
-    programs = {
-      bat.catppuccin.enable = true;
-      bottom.catppuccin.enable = true;
-      btop.catppuccin.enable = true;
-      cava.catppuccin.enable = true;
-      fish.catppuccin.enable = true;
-      fzf.catppuccin.enable = true;
-      git.delta.catppuccin.enable = true;
-      gh-dash.catppuccin.enable = true;
-      gitui.catppuccin.enable = true;
-      glamour.catppuccin.enable = true;
-      helix.catppuccin.enable = true;
+    programs =
+      let
+        applyCatppuccin = _name: {
+          catppuccin = {
+            enable = true;
+            # accent = cfg.selectedTheme.accent;
+            flavor = cfg.selectedTheme.variant;
+          };
+        };
 
-      k9s.catppuccin = {
-        enable = true;
+        themedPrograms = [
+          "bat"
+          "bottom"
+          "btop"
+          "cava"
+          "fish"
+          "fzf"
+          "gh-dash"
+          "gitui"
+          "glamour"
+          "helix"
+          "k9s"
+          "kitty"
+          "lazygit"
+          "neovim"
+          "waybar"
+          "zathura"
+          "zellij"
+        ];
 
-        transparent = true;
+        commonSettings = builtins.listToAttrs (
+          map (name: {
+            inherit name;
+            value = applyCatppuccin name;
+          }) themedPrograms
+        );
+      in
+      commonSettings
+      // {
+        git.delta.catppuccin.enable = true;
+        k9s.catppuccin.transparent = true;
+        zsh.syntaxHighlighting.catppuccin.enable = true;
+
+        # TODO: Make work with personal customizations
+        # yazi.catppuccin.enable = true;
+        # rofi.catppuccin.enable = true;
+        tmux.plugins = [
+          {
+            plugin = pkgs.tmuxPlugins.catppuccin;
+            extraConfig = ''
+              set -g @catppuccin_flavour '${cfg.selectedTheme.variant}'
+              set -g @catppuccin_host 'on'
+              set -g @catppuccin_user 'on'
+            '';
+          }
+        ];
       };
-
-      kitty.catppuccin.enable = true;
-
-      lazygit.catppuccin = {
-        enable = true;
-
-        inherit (cfg.selectedTheme) accent;
-      };
-
-      neovim.catppuccin.enable = true;
-      waybar.catppuccin.enable = true;
-
-      zathura.catppuccin.enable = true;
-      zellij.catppuccin.enable = true;
-      zsh.syntaxHighlighting.catppuccin.enable = true;
-
-      # TODO: Make work with personal customizations
-      # yazi.catppuccin.enable = true;
-      # rofi.catppuccin.enable = true;
-      tmux.plugins = [
-        {
-          plugin = pkgs.tmuxPlugins.catppuccin;
-          extraConfig = ''
-            set -g @catppuccin_flavour '${cfg.selectedTheme.variant}'
-            set -g @catppuccin_host 'on'
-            set -g @catppuccin_user 'on'
-          '';
-        }
-      ];
-    };
   };
 }
