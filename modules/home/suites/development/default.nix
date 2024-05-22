@@ -70,7 +70,7 @@ in
 
         terminal = {
           editors = {
-            helix = enabled;
+            # helix = enabled;
             neovim = {
               enable = true;
               default = true;
