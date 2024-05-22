@@ -51,7 +51,7 @@ in
           unityhub
         ]
         ++ lib.optionals cfg.sqlEnable [
-          dbeaver
+          dbeaver-bin
           mysql-workbench
         ];
 

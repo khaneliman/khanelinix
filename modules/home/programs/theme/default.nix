@@ -98,7 +98,7 @@ in
       enable = false;
 
       accent = "blue";
-      flavour = "macchiato";
+      flavor = "macchiato";
     };
 
     home = mkIf pkgs.stdenv.isLinux {
