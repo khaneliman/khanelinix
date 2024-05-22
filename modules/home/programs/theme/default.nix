@@ -137,15 +137,34 @@ in
 
     programs =
       let
-        applyCatppuccin = _name: {
-          catppuccin = {
-            enable = true;
-            # accent = cfg.selectedTheme.accent;
-            flavor = cfg.selectedTheme.variant;
-          };
-        };
+        applyCatppuccin =
+          {
+            name,
+            nestedName ? null,
+            extraAttrs ? { },
+          }:
+          let
+            catppuccinConfig = {
+              catppuccin = {
+                enable = true;
+                flavor = cfg.selectedTheme.variant;
+              } // extraAttrs;
+            };
+          in
+          if nestedName == null then
+            {
+              inherit name;
+              value = catppuccinConfig;
+            }
+          else
+            {
+              inherit name;
+              value = {
+                ${nestedName} = catppuccinConfig;
+              };
+            };
 
-        themedPrograms = [
+        themedPrograms = map (prog: applyCatppuccin { name = prog; }) [
           "bat"
           "bottom"
           "btop"
@@ -156,7 +175,7 @@ in
           "gitui"
           "glamour"
           "helix"
-          "k9s"
+          # "k9s"
           "kitty"
           "lazygit"
           "neovim"
@@ -165,22 +184,30 @@ in
           "zellij"
         ];
 
-        commonSettings = builtins.listToAttrs (
-          map (name: {
-            inherit name;
-            value = applyCatppuccin name;
-          }) themedPrograms
-        );
-      in
-      commonSettings
-      // {
-        git.delta.catppuccin.enable = true;
-        k9s.catppuccin.transparent = true;
-        zsh.syntaxHighlighting.catppuccin.enable = true;
+        extraConfigurations = [
+          (applyCatppuccin {
+            name = "git";
+            nestedName = "delta";
+          })
+          (applyCatppuccin {
+            name = "k9s";
+            extraAttrs = {
+              transparent = true;
+            };
+          })
+          (applyCatppuccin {
+            name = "zsh";
+            nestedName = "syntaxHighlighting";
+          })
+        ];
 
-        # TODO: Make work with personal customizations
-        # yazi.catppuccin.enable = true;
-        # rofi.catppuccin.enable = true;
+        allPrograms = themedPrograms ++ extraConfigurations;
+
+        programs = builtins.listToAttrs allPrograms;
+      in
+      programs
+      // {
+        # Additional program settings that don't follow the common pattern
         tmux.plugins = [
           {
             plugin = pkgs.tmuxPlugins.catppuccin;
@@ -191,6 +218,10 @@ in
             '';
           }
         ];
+
+        # TODO: Make work with personal customizations
+        # yazi.catppuccin.enable = true;
+        # rofi.catppuccin.enable = true;
       };
   };
 }
