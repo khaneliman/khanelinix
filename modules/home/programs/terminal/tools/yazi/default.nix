@@ -15,12 +15,6 @@ let
   select = import ./keymap/select.nix { };
   tasks = import ./keymap/tasks.nix { };
 
-  filetype = import ./theme/filetype.nix { };
-  icons = import ./theme/icons.nix { };
-  theme-manager = import ./theme/manager.nix { inherit config lib; };
-  status = import ./theme/status.nix { };
-  theme = import ./theme/theme.nix { };
-
   cfg = config.khanelinix.programs.terminal.tools.yazi;
 in
 {
@@ -57,13 +51,6 @@ in
         tasks
       ];
       settings = import ./yazi.nix { inherit lib pkgs; };
-      theme = lib.mkMerge [
-        filetype
-        icons
-        theme-manager
-        status
-        theme
-      ];
     };
 
     xdg.configFile = {

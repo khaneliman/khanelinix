@@ -5,53 +5,15 @@
   ...
 }:
 let
-  inherit (lib) types mkIf mergeAttrs;
-  inherit (lib.internal) capitalize mkBoolOpt mkOpt;
+  inherit (lib) types mkDefault mkIf;
+  inherit (lib.internal) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.theme.qt;
-  themeCfg = config.khanelinix.theme;
-
-  settings = {
-    Appearance = {
-      color_scheme_path = "";
-      custom_palette = true;
-      icon_theme = config.khanelinix.theme.icon.name;
-      standard_dialogs = "gtk3";
-      style = "kvantum";
-    };
-
-    Fonts = {
-      fixed = "MonaspiceKr Nerd Font 10";
-      general = "MonaspiceNe Nerd Font 10";
-    };
-
-    Interface = {
-      activate_item_on_single_click = 1;
-      buttonbox_layout = 0;
-      cursor_flash_time = 1000;
-      dialog_buttons_have_icons = 1;
-      double_click_interval = 400;
-      gui_effects = null; # You might need to adjust this depending on Nix version
-      keyboard_scheme = 2;
-      menus_have_icons = true;
-      show_shortcuts_in_context_menus = true;
-      stylesheets = null; # You might need to adjust this depending on Nix version
-      toolbutton_style = "kvantum";
-      underline_shortcut = 1;
-      # wheel_scroll_lines = 3;
-    };
-
-    Troubleshooting = {
-      force_raster_widgets = 1;
-      ignored_applications = null; # You might need to adjust this depending on Nix version
-    };
-  };
-
-  colorSchemePath = "${pkgs.catppuccin}/qt5ct/${capitalize themeCfg.selectedTheme.name}-${capitalize themeCfg.selectedTheme.variant}.conf";
 in
 {
   options.khanelinix.theme.qt = with types; {
     enable = mkBoolOpt false "Whether to customize qt and apply themes.";
+
     theme = {
       name = mkOpt str "Catppuccin-Macchiato-Blue" "The name of the kvantum theme to apply.";
       package = mkOpt package (pkgs.catppuccin-kvantum.override {
@@ -59,9 +21,47 @@ in
         variant = "Macchiato";
       }) "The package to use for the theme.";
     };
+
+    settings = {
+      Appearance = {
+        color_scheme_path = mkOpt types.str "" "Color scheme path";
+        custom_palette = mkBoolOpt true "Whether to use custom palette";
+        icon_theme = mkOpt types.str config.khanelinix.theme.gtk.icon.name "Icon theme";
+        standard_dialogs = mkOpt types.str "gtk3" "Dialog type";
+        style = mkOpt types.str "kvantum" "Style";
+      };
+
+      Fonts = {
+        fixed = mkOpt types.str "MonaspiceKr Nerd Font 10" "Fixed font type";
+        general = mkOpt types.str "MonaspiceNe Nerd Font 10" "General font type";
+      };
+
+      Interface = {
+        activate_item_on_single_click = mkOpt types.int 1 "Whether to activate item on single click";
+        buttonbox_layout = mkOpt types.int 0 "Buttonbox layout";
+        cursor_flash_time = mkOpt types.int 1000 "Cursor flash time";
+        dialog_buttons_have_icons = mkOpt types.int 1 "Whether dialog buttons have icons";
+        double_click_interval = mkOpt types.int 400 "Double click interval";
+        gui_effects = mkOpt (types.nullOr types.int) null "Whether to enable effects"; # You might need to adjust this depending on Nix version
+        keyboard_scheme = mkOpt types.int 2 "keyboard_scheme";
+        menus_have_icons = mkBoolOpt true "Whether menus have icons";
+        show_shortcuts_in_context_menus = mkBoolOpt true "Show shortcuts in context menus";
+        stylesheets = mkOpt (types.nullOr (types.listOf types.str)) null "Stylesheets"; # You might need to adjust this depending on Nix version
+        toolbutton_style = mkOpt types.str "kvantum" "Toolbutton style";
+        underline_shortcut = mkOpt types.int 1 "Whether to underline shortcuts";
+        # wheel_scroll_lines = 3;
+      };
+
+      Troubleshooting = {
+        force_raster_widgets = mkOpt types.int 1 "Whether to force rastering of widgets";
+        ignored_applications = mkOpt (types.nullOr (
+          types.listOf types.str
+        )) null "List of applications to ignore"; # You might need to adjust this depending on Nix version
+      };
+    };
   };
 
-  config = mkIf cfg.enable {
+  config = mkIf (cfg.enable && pkgs.stdenv.isLinux) {
     home = {
       packages = with pkgs; [
         # libraries and programs to ensure that qt applications load without issue
@@ -88,18 +88,8 @@ in
     xdg.configFile = {
       # TODO: replace with settings
       "Kvantum".source = ./Kvantum;
-      "qt5ct/qt5ct.conf".text = lib.generators.toINI { } (
-        settings
-        // {
-          Appearance = mergeAttrs settings.Appearance { color_scheme_path = colorSchemePath; };
-        }
-      );
-      "qt6ct/qt6ct.conf".text = lib.generators.toINI { } (
-        settings
-        // {
-          Appearance = mergeAttrs settings.Appearance { color_scheme_path = colorSchemePath; };
-        }
-      );
+      "qt5ct/qt5ct.conf".text = lib.generators.toINI { } cfg.settings;
+      "qt6ct/qt6ct.conf".text = lib.generators.toINI { } cfg.settings;
     };
 
     qt = {
@@ -109,7 +99,7 @@ in
         name = "qtct";
       };
 
-      style = {
+      style = mkDefault {
         name = "qt6ct-style";
         inherit (cfg.theme) package;
       };

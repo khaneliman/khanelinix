@@ -44,7 +44,7 @@ in
             enable = true;
             appendConfig = # bash
               ''
-                exec-once = hyprctl setcursor ${config.khanelinix.theme.cursor.name} 32
+                exec-once = hyprctl setcursor ${config.khanelinix.theme.gtk.cursor.name} 32
               '';
 
             prependConfig = # bash
@@ -157,6 +157,8 @@ in
       social = enabled;
       video = enabled;
     };
+
+    theme.catppuccin = enabled;
   };
 
   home.stateVersion = "21.11";

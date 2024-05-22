@@ -66,6 +66,8 @@ in
         kubernetesEnable = true;
       };
     };
+
+    theme.catppuccin = enabled;
   };
 
   sops.secrets.kubernetes = {

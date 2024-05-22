@@ -6,22 +6,49 @@
   ...
 }:
 let
-  inherit (lib) mkIf mapAttrs mkDefault;
-  inherit (lib.internal) boolToNum mkBoolOpt;
+  inherit (lib) mkIf mkDefault types;
+  inherit (lib.internal)
+    boolToNum
+    mkBoolOpt
+    mkOpt
+    nested-default-attrs
+    ;
 
   cfg = config.khanelinix.theme.gtk;
-  themeCfg = config.khanelinix.theme;
-
-  default-attrs = mapAttrs (_key: mkDefault);
-  nested-default-attrs = mapAttrs (_key: default-attrs);
 in
 {
   options.khanelinix.theme.gtk = {
     enable = mkBoolOpt false "Whether to customize GTK and apply themes.";
     usePortal = mkBoolOpt false "Whether to use the GTK Portal.";
+
+    cursor = {
+      name = mkOpt types.str "Catppuccin-Macchiato-Blue-Cursors" "The name of the cursor theme to apply.";
+      package = mkOpt types.package (
+        if pkgs.stdenv.isLinux then pkgs.catppuccin-cursors.macchiatoBlue else pkgs.emptyDirectory
+      ) "The package to use for the cursor theme.";
+      size = mkOpt types.int 32 "The size of the cursor.";
+    };
+
+    icon = {
+      name = mkOpt types.str "Papirus-Dark" "The name of the icon theme to apply.";
+      package = mkOpt types.package (pkgs.catppuccin-papirus-folders.override {
+        accent = "blue";
+        flavor = "macchiato";
+      }) "The package to use for the icon theme.";
+    };
+
+    theme = {
+      name = mkOpt types.str "Catppuccin-Macchiato-Blue-Dark" "The name of the theme to apply";
+      package = mkOpt types.package (pkgs.catppuccin-gtk.override {
+        accents = [ "blue" ];
+        size = "standard";
+        tweaks = [ "normal" ];
+        variant = "macchiato";
+      }) "The package to use for the theme";
+    };
   };
 
-  config = mkIf cfg.enable {
+  config = mkIf (cfg.enable && pkgs.stdenv.isLinux) {
     home = {
       packages = with pkgs; [
         dconf # required explicitly with noXlibs and home-manager
@@ -30,9 +57,14 @@ in
         libappindicator-gtk3
       ];
 
+      pointerCursor = mkDefault {
+        inherit (cfg.cursor) name package size;
+        x11.enable = true;
+      };
+
       sessionVariables = {
-        # GTK_THEME = cfg.theme.name;
         GTK_USE_PORTAL = "${toString (boolToNum cfg.usePortal)}";
+        CURSOR_THEME = mkDefault cfg.cursor.name;
       };
     };
 
@@ -42,12 +74,12 @@ in
       settings = nested-default-attrs {
         "org/gnome/desktop/interface" = {
           color-scheme = "prefer-dark";
-          cursor-size = themeCfg.cursor.size;
-          cursor-theme = themeCfg.cursor.name;
+          cursor-size = cfg.cursor.size;
+          cursor-theme = cfg.cursor.name;
           enable-hot-corners = false;
           font-name = osConfig.khanelinix.system.fonts.default;
           gtk-theme = cfg.theme.name;
-          icon-theme = themeCfg.icon.name;
+          icon-theme = cfg.icon.name;
         };
       };
     };
@@ -94,10 +126,6 @@ in
         gtk-xft-hinting = 1;
         gtk-xft-hintstyle = "hintslight";
       };
-    };
-
-    home.pointerCursor = {
-      gtk.enable = true;
     };
 
     xdg.systemDirs.data =

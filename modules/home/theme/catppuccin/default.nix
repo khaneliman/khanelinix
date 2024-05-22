@@ -11,9 +11,9 @@ let
     mkOption
     types
     ;
-  inherit (lib.internal) mkOpt;
+  inherit (lib.internal) capitalize;
 
-  cfg = config.khanelinix.theme;
+  cfg = config.khanelinix.theme.catppuccin;
 
   catppuccinAccents = [
     "rosewater"
@@ -31,7 +31,8 @@ let
     "blue"
     "lavender"
   ];
-  catppuccinVariants = [
+
+  catppuccinFlavors = [
     "latte"
     "frappe"
     "macchiato"
@@ -39,62 +40,81 @@ let
   ];
 in
 {
-  options.khanelinix.theme = {
-    enable = mkEnableOption "Enable custom theme use for applications.";
+  options.khanelinix.theme.catppuccin = {
+    enable = mkEnableOption "Enable catppuccin theme for applications.";
 
-    cursor = {
-      name = mkOpt types.str "Catppuccin-Macchiato-Blue-Cursors" "The name of the cursor theme to apply.";
-      package = mkOpt types.package (
-        if pkgs.stdenv.isLinux then pkgs.catppuccin-cursors.macchiatoBlue else pkgs.emptyDirectory
-      ) "The package to use for the cursor theme.";
-      size = mkOpt types.int 32 "The size of the cursor.";
+    accent = mkOption {
+      type = types.enum catppuccinAccents;
+      default = "blue";
+      description = ''
+        An optional theme accent.
+      '';
     };
 
-    icon = {
-      name = mkOpt types.str "breeze-dark" "The name of the icon theme to apply.";
-      package = mkOpt types.package pkgs.libsForQt5.breeze-icons "The package to use for the icon theme.";
-    };
-
-    selectedTheme = mkOption {
-      type = types.submodule {
-        options = {
-          name = mkOpt types.str "catppuccin" "The theme to use.";
-          accent = mkOption {
-            type = types.enum catppuccinAccents;
-            default = "blue";
-            description = ''
-              An optional theme accent.
-            '';
-          };
-          variant = mkOption {
-            type = types.enum catppuccinVariants;
-            default = "macchiato";
-            description = ''
-              An optional theme variant.
-            '';
-          };
-        };
-      };
-      default = {
-        name = "catppuccin";
-        accent = "blue";
-        variant = "macchiato";
-      };
-      description = "Theme to use for applications.";
+    flavor = mkOption {
+      type = types.enum catppuccinFlavors;
+      default = "macchiato";
+      description = ''
+        An optional theme flavor.
+      '';
     };
 
     package = mkOption {
       type = types.package;
-      default = pkgs.catppuccin.override { inherit (cfg.selectedTheme) accent variant; };
-      description = ''
-        The `spotifyd` package to use.
-        Can be used to specify extensions.
-      '';
+      default = pkgs.catppuccin.override {
+        inherit (cfg) accent;
+        variant = cfg.flavor;
+      };
     };
   };
 
   config = mkIf cfg.enable {
+    khanelinix = {
+      theme = {
+        gtk = mkIf pkgs.stdenv.isLinux {
+          cursor = {
+            name = "Catppuccin-Macchiato-Blue-Cursors";
+            package = pkgs.catppuccin-cursors.macchiatoBlue;
+            size = 32;
+          };
+
+          icon = {
+            name = "Papirus-Dark";
+            package = pkgs.catppuccin-papirus-folders.override {
+              accent = "blue";
+              flavor = "macchiato";
+            };
+          };
+
+          theme = {
+            name = "Catppuccin-Macchiato-Blue-Dark";
+            package = pkgs.catppuccin-gtk.override {
+              accents = [ "blue" ];
+              variant = "macchiato";
+            };
+          };
+        };
+
+        qt = mkIf pkgs.stdenv.isLinux {
+          theme = {
+            name = "Catppuccin-Macchiato-Blue";
+            package = pkgs.catppuccin-kvantum.override {
+              accent = "Blue";
+              variant = "Macchiato";
+            };
+          };
+
+          settings = {
+            Appearance = {
+              color_scheme_path = "${pkgs.catppuccin}/qt5ct/Catppuccin-${capitalize cfg.flavor}.conf";
+            };
+          };
+        };
+      };
+    };
+
     catppuccin = {
+      # NOTE: getting infinite recursion error with global enable
       enable = false;
 
       accent = "blue";
@@ -103,36 +123,49 @@ in
 
     home = mkIf pkgs.stdenv.isLinux {
       pointerCursor = {
-        inherit (cfg.cursor) name package size;
+        inherit (config.khanelinix.theme.gtk.cursor) name package size;
         x11.enable = true;
       };
 
       sessionVariables = {
-        CURSOR_THEME = cfg.cursor.name;
+        CURSOR_THEME = config.khanelinix.theme.gtk.cursor.name;
       };
     };
 
-    gtk.catppuccin = {
+    gtk.catppuccin = mkIf pkgs.stdenv.isLinux {
       enable = true;
 
-      inherit (cfg.selectedTheme) accent;
+      inherit (cfg) accent;
       size = "standard";
 
       cursor = {
         enable = true;
-        inherit (cfg.selectedTheme) accent;
+        inherit (cfg) accent;
       };
 
       icon = {
         enable = true;
-        inherit (cfg.selectedTheme) accent;
+        inherit (cfg) accent;
       };
     };
 
-    wayland.windowManager.hyprland.catppuccin = {
+    qt = mkIf pkgs.stdenv.isLinux {
       enable = true;
 
-      inherit (cfg.selectedTheme) accent;
+      platformTheme = {
+        name = "qtct";
+      };
+
+      style = {
+        name = "qt6ct-style";
+        inherit (config.khanelinix.theme.qt.theme) package;
+      };
+    };
+
+    wayland.windowManager.hyprland.catppuccin = mkIf pkgs.stdenv.isLinux {
+      enable = true;
+
+      inherit (cfg) accent;
     };
 
     programs =
@@ -147,7 +180,7 @@ in
             catppuccinConfig = {
               catppuccin = {
                 enable = true;
-                flavor = cfg.selectedTheme.variant;
+                inherit (cfg) flavor;
               } // extraAttrs;
             };
           in
@@ -196,7 +229,7 @@ in
           (applyCatppuccin {
             name = "lazygit";
             extraAttrs = {
-              inherit (cfg.selectedTheme) accent;
+              inherit (cfg) accent;
             };
           })
           (applyCatppuccin {
@@ -216,11 +249,19 @@ in
           {
             plugin = pkgs.tmuxPlugins.catppuccin;
             extraConfig = ''
-              set -g @catppuccin_flavour '${cfg.selectedTheme.variant}'
+              set -g @catppuccin_flavour '${cfg.flavor}'
               set -g @catppuccin_host 'on'
               set -g @catppuccin_user 'on'
             '';
           }
+        ];
+
+        yazi.theme = lib.mkMerge [
+          (import ./yazi/filetype.nix { })
+          (import ./yazi/icons.nix { })
+          (import ./yazi/manager.nix { inherit config lib; })
+          (import ./yazi/status.nix { })
+          (import ./yazi/theme.nix { })
         ];
 
         # TODO: Make work with personal customizations

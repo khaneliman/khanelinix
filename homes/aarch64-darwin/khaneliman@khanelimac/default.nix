@@ -70,6 +70,8 @@ in
       photo = enabled;
       social = enabled;
     };
+
+    theme.catppuccin = enabled;
   };
 
   home.stateVersion = "21.11";

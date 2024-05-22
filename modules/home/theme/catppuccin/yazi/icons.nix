@@ -1,7 +1,8 @@
 _:
 let
-  catppuccin = import ../../../../../theme/catppuccin/colors.nix;
+  catppuccin = import ../colors.nix;
 in
+# TODO: move out of catppuccin folder
 {
   icon = {
     rules = [ ];

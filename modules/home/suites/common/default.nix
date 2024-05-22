@@ -79,7 +79,6 @@ in
       };
 
       theme = {
-        enable = true;
         gtk.enable = pkgs.stdenv.isLinux;
         qt.enable = pkgs.stdenv.isLinux;
       };

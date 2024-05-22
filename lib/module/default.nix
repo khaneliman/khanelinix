@@ -29,4 +29,8 @@ rec {
   # return an int (1/0) based on boolean value
   # `boolToNum true` -> 1
   boolToNum = bool: if bool then 1 else 0;
+
+  default-attrs = mapAttrs (_key: mkDefault);
+
+  nested-default-attrs = mapAttrs (_key: default-attrs);
 }
