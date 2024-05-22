@@ -175,9 +175,7 @@ in
           "gitui"
           "glamour"
           "helix"
-          # "k9s"
           "kitty"
-          "lazygit"
           "neovim"
           "waybar"
           "zathura"
@@ -193,6 +191,12 @@ in
             name = "k9s";
             extraAttrs = {
               transparent = true;
+            };
+          })
+          (applyCatppuccin {
+            name = "lazygit";
+            extraAttrs = {
+              inherit (cfg.selectedTheme) accent;
             };
           })
           (applyCatppuccin {
