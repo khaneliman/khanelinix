@@ -16,6 +16,7 @@ in
   };
 
   config = mkIf cfg.enable {
+    # TODO: use theme module
     home.file = mkIf pkgs.stdenv.isDarwin {
       "Library/Application Support/BetterDiscord/themes/catppuccin-macchiato.theme.css".source = ./catppuccin-macchiato.theme.css;
     };

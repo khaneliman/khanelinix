@@ -9,24 +9,15 @@ in
   documentation.man.enable = mkForce true;
 
   khanelinix = {
-    nix = enabled;
-
     archetypes = {
       wsl = enabled;
-    };
-
-    programs = {
-      graphical = {
-        theme = {
-          gtk = enabled;
-          qt = enabled;
-        };
-      };
     };
 
     hardware = {
       yubikey = enabled;
     };
+
+    nix = enabled;
 
     security = {
       # FIX: make gpg work on wsl
@@ -48,6 +39,11 @@ in
         nixEnable = true;
         sqlEnable = true;
       };
+    };
+
+    theme = {
+      gtk = enabled;
+      qt = enabled;
     };
 
     user = {

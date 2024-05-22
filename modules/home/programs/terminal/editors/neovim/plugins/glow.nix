@@ -9,6 +9,7 @@ let
     hash = "sha256-f3JFgqL3K/u8U/UzmBohJLDBPlT446bosRQDca9+4oA=";
   };
 
+  # TODO: use theme module
   style = "${stylePkg.outPath}/themes/catppuccin-macchiato.json";
 
   config = generators.toYAML { } {

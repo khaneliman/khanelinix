@@ -57,6 +57,13 @@ in
     ];
 
     khanelinix = {
+      display-managers = {
+        gdm = {
+          enable = true;
+          defaultSession = "sway";
+        };
+      };
+
       programs = {
         graphical = {
           addons = {
@@ -73,12 +80,8 @@ in
           file-managers = {
             nautilus = enabled;
           };
-
-          theme = {
-            gtk = enabled;
-            qt = enabled;
-          };
         };
+
         # TODO: moved to home-manager
         # terminal = {
         #   emulators = {
@@ -123,11 +126,9 @@ in
         wlroots = enabled;
       };
 
-      display-managers = {
-        gdm = {
-          enable = true;
-          defaultSession = "sway";
-        };
+      theme = {
+        gtk = enabled;
+        qt = enabled;
       };
     };
 

@@ -50,6 +50,21 @@ in
     };
 
     khanelinix = {
+      display-managers = {
+        sddm = {
+          enable = true;
+        };
+      };
+
+      home = {
+        configFile = {
+          "hypr/assets/square.png".source = ./hypr/assets/square.png;
+          "hypr/assets/diamond.png".source = ./hypr/assets/diamond.png;
+        } // cfg.customConfigFiles;
+
+        file = { } // cfg.customFiles;
+      };
+
       programs = {
         graphical = {
           addons = {
@@ -99,27 +114,7 @@ in
             nautilus = enabled;
             thunar = enabled;
           };
-
-          theme = {
-            gtk = enabled;
-            qt = enabled;
-          };
         };
-      };
-
-      display-managers = {
-        sddm = {
-          enable = true;
-        };
-      };
-
-      home = {
-        configFile = {
-          "hypr/assets/square.png".source = ./hypr/assets/square.png;
-          "hypr/assets/diamond.png".source = ./hypr/assets/diamond.png;
-        } // cfg.customConfigFiles;
-
-        file = { } // cfg.customFiles;
       };
 
       security = {
@@ -129,6 +124,11 @@ in
 
       suites = {
         wlroots = enabled;
+      };
+
+      theme = {
+        gtk = enabled;
+        qt = enabled;
       };
     };
 

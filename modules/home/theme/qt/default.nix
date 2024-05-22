@@ -8,14 +8,14 @@ let
   inherit (lib) types mkIf mergeAttrs;
   inherit (lib.internal) capitalize mkBoolOpt mkOpt;
 
-  cfg = config.khanelinix.programs.theme.qt;
-  themeCfg = config.khanelinix.desktop.theme;
+  cfg = config.khanelinix.theme.qt;
+  themeCfg = config.khanelinix.theme;
 
   settings = {
     Appearance = {
       color_scheme_path = "";
       custom_palette = true;
-      icon_theme = config.khanelinix.desktop.theme.icon.name;
+      icon_theme = config.khanelinix.theme.icon.name;
       standard_dialogs = "gtk3";
       style = "kvantum";
     };
@@ -50,7 +50,7 @@ let
   colorSchemePath = "${pkgs.catppuccin}/qt5ct/${capitalize themeCfg.selectedTheme.name}-${capitalize themeCfg.selectedTheme.variant}.conf";
 in
 {
-  options.khanelinix.programs.theme.qt = with types; {
+  options.khanelinix.theme.qt = with types; {
     enable = mkBoolOpt false "Whether to customize qt and apply themes.";
     theme = {
       name = mkOpt str "Catppuccin-Macchiato-Blue" "The name of the kvantum theme to apply.";

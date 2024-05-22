@@ -1,6 +1,6 @@
 _:
 let
-  catppuccin = import ../../../../theme/catppuccin/colors.nix;
+  catppuccin = import ../../../../../theme/catppuccin/colors.nix;
 in
 {
   status = {

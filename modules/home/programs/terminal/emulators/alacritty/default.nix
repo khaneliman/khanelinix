@@ -120,6 +120,7 @@ in
 {
   options.khanelinix.programs.terminal.emulators.alacritty = with types; {
     enable = mkBoolOpt false "Whether to enable alacritty.";
+    # TODO: use theme module
     theme = mkOpt attr macchiato "Theme to use for alacritty.";
     font = mkOpt str "MonaspiceKr Nerd Font" "Font to use for alacritty.";
   };

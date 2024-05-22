@@ -44,7 +44,7 @@ in
             enable = true;
             appendConfig = # bash
               ''
-                exec-once = hyprctl setcursor ${config.khanelinix.desktop.theme.cursor.name} 32
+                exec-once = hyprctl setcursor ${config.khanelinix.theme.cursor.name} 32
               '';
 
             prependConfig = # bash

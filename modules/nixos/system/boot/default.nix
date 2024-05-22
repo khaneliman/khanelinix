@@ -9,7 +9,7 @@ let
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.system.boot;
-  themeCfg = config.khanelinix.desktop.theme;
+  themeCfg = config.khanelinix.theme;
 in
 {
   options.khanelinix.system.boot = {

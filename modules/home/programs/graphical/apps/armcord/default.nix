@@ -11,6 +11,7 @@ in
 
   config = mkIf cfg.enable {
     xdg.configFile = {
+      # TODO: use theme module
       "ArmCord/themes/Catppuccin-Macchiato-BD".source = ./Catppuccin-Macchiato-BD;
     };
   };

@@ -9,14 +9,14 @@ let
   inherit (lib) mkIf mapAttrs mkDefault;
   inherit (lib.internal) boolToNum mkBoolOpt;
 
-  cfg = config.khanelinix.programs.theme.gtk;
-  themeCfg = config.khanelinix.desktop.theme;
+  cfg = config.khanelinix.theme.gtk;
+  themeCfg = config.khanelinix.theme;
 
   default-attrs = mapAttrs (_key: mkDefault);
   nested-default-attrs = mapAttrs (_key: default-attrs);
 in
 {
-  options.khanelinix.programs.theme.gtk = {
+  options.khanelinix.theme.gtk = {
     enable = mkBoolOpt false "Whether to customize GTK and apply themes.";
     usePortal = mkBoolOpt false "Whether to use the GTK Portal.";
   };

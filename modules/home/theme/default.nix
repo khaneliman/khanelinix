@@ -13,7 +13,7 @@ let
     ;
   inherit (lib.internal) mkOpt;
 
-  cfg = config.khanelinix.desktop.theme;
+  cfg = config.khanelinix.theme;
 
   catppuccinAccents = [
     "rosewater"
@@ -39,7 +39,7 @@ let
   ];
 in
 {
-  options.khanelinix.desktop.theme = {
+  options.khanelinix.theme = {
     enable = mkEnableOption "Enable custom theme use for applications.";
 
     cursor = {

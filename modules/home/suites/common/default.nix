@@ -28,10 +28,6 @@ in
       ];
 
     khanelinix = {
-      desktop = {
-        theme = enabled;
-      };
-
       programs = {
         graphical = {
           browsers = {
@@ -74,17 +70,18 @@ in
             zoxide = enabled;
           };
         };
-
-        theme = {
-          gtk.enable = pkgs.stdenv.isLinux;
-          qt.enable = pkgs.stdenv.isLinux;
-        };
       };
 
       services = {
         # easyeffects.enable = pkgs.stdenv.isLinux;
         udiskie.enable = pkgs.stdenv.isLinux;
         tray.enable = pkgs.stdenv.isLinux;
+      };
+
+      theme = {
+        enable = true;
+        gtk.enable = pkgs.stdenv.isLinux;
+        qt.enable = pkgs.stdenv.isLinux;
       };
     };
 

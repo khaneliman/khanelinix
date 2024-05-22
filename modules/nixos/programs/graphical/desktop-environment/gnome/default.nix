@@ -93,15 +93,6 @@ in
       # kitty = enabled;
       # };
 
-      programs = {
-        graphical = {
-          theme = {
-            gtk = enabled;
-            qt = enabled;
-          };
-        };
-      };
-
       home.extraOptions = {
         dconf.settings =
           let
@@ -284,6 +275,11 @@ in
       };
 
       system.xkb.enable = true;
+
+      theme = {
+        gtk = enabled;
+        qt = enabled;
+      };
     };
 
     # Open firewall for samba connections to work.

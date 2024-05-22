@@ -14,6 +14,7 @@ in
       enable = true;
 
       settings = {
+        # TODO: move to theme module
         theme = {
           background = "#24273A";
           primary = "#CAD3F5";

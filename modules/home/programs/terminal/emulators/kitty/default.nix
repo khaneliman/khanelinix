@@ -14,6 +14,7 @@ in
   options.khanelinix.programs.terminal.emulators.kitty = with types; {
     enable = mkBoolOpt false "Whether to enable kitty.";
     font = mkOpt str "MonaspiceKr Nerd Font" "Font to use for kitty.";
+    # TODO: use theme module
     theme = mkOpt str "Catppuccin-Macchiato" "Theme to use for kitty.";
   };
 

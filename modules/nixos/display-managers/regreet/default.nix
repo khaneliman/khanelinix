@@ -17,7 +17,7 @@ let
   inherit (inputs) hyprland;
 
   cfg = config.khanelinix.display-managers.regreet;
-  themeCfg = config.khanelinix.desktop.theme;
+  themeCfg = config.khanelinix.theme;
   gtkCfg = config.khanelinix.desktop.addons.gtk;
 
   greetdHyprlandConfig = pkgs.writeText "greetd-hyprland-config" ''

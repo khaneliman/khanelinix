@@ -89,11 +89,6 @@ in
             hyprlock = enabled;
           };
         };
-
-        theme = {
-          gtk = enabled;
-          qt = enabled;
-        };
       };
 
       services = {
@@ -107,6 +102,11 @@ in
 
       suites = {
         wlroots = enabled;
+      };
+
+      theme = {
+        gtk = enabled;
+        qt = enabled;
       };
     };
 

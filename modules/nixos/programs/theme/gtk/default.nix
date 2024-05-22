@@ -8,10 +8,10 @@ let
   inherit (lib) types mkIf;
   inherit (lib.internal) mkBoolOpt mkOpt;
 
-  cfg = config.khanelinix.programs.graphical.theme.gtk;
+  cfg = config.khanelinix.theme.gtk;
 in
 {
-  options.khanelinix.programs.graphical.theme.gtk = with types; {
+  options.khanelinix.theme.gtk = with types; {
     enable = mkBoolOpt false "Whether to customize GTK and apply themes.";
 
     theme = {
