@@ -9,7 +9,7 @@ let
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.programs.terminal.emulators.wezterm;
-  catppuccin = import ../../../theme/catppuccin.nix;
+  catppuccin = import ../../../theme/catppuccin/colors.nix;
 in
 {
   options.khanelinix.programs.terminal.emulators.wezterm = {

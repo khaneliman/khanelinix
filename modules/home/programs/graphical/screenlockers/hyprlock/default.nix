@@ -11,7 +11,7 @@ let
   inherit (lib.internal) mkBoolOpt;
   inherit (inputs) hyprlock;
 
-  catppuccin = import ../../../theme/catppuccin.nix;
+  catppuccin = import ../../../theme/catppuccin/colors.nix;
 
   cfg = config.khanelinix.programs.graphical.screenlockers.hyprlock;
 in

@@ -9,7 +9,7 @@ let
   inherit (lib.internal) mkBoolOpt;
 
   cfg = config.khanelinix.programs.terminal.emulators.foot;
-  colors = import ../../../theme/catppuccin.nix;
+  colors = import ../../../theme/catppuccin/colors.nix;
 in
 {
   options.khanelinix.programs.terminal.emulators.foot = {
