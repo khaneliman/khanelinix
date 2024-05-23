@@ -253,21 +253,20 @@
                 };
               };
 
-              /*
-                FIX: fix mapping
-                    "<leader>uS" = {
-                      action = # lua
-                        ''
-                          function ()
-                            vim.wo.spell = not vim.wo.spell
-                            vim.notify(string.format("Spell %s", bool2str(vim.wo.spell), "info"))
-                          end'';
-                      lua = true;
-                      options = {
-                        desc = "Toggle spell";
-                      };
-                    };
-              */
+              "<leader>uS" = {
+                action = # lua
+                  ''
+                    function ()
+                      if vim.g.spell_enabled then vim.cmd('setlocal nospell') end
+                      if not vim.g.spell_enabled then vim.cmd('setlocal spell') end
+                      vim.g.spell_enabled = not vim.g.spell_enabled
+                      vim.notify(string.format("Spell %s", bool2str(vim.g.spell_enabled), "info"))
+                    end'';
+                lua = true;
+                options = {
+                  desc = "Toggle spell";
+                };
+              };
 
               "<leader>uw" = {
                 action = # lua
