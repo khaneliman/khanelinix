@@ -4,19 +4,20 @@
   lib,
   osConfig,
   system,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
   inherit (inputs) hyprlock;
 
-  catppuccin = import ../../../../theme/catppuccin/colors.nix;
+  catppuccin = import (lib.snowfall.fs.get-file "modules/home/theme/catppuccin/colors.nix");
 
-  cfg = config.khanelinix.programs.graphical.screenlockers.hyprlock;
+  cfg = config.${namespace}.programs.graphical.screenlockers.hyprlock;
 in
 {
-  options.khanelinix.programs.graphical.screenlockers.hyprlock = {
+  options.${namespace}.programs.graphical.screenlockers.hyprlock = {
     enable = mkBoolOpt false "Whether to enable hyprlock in the desktop environment.";
   };
 
@@ -109,7 +110,7 @@ in
             text = "<span font_weight=\"ultrabold\">$TIME</span>";
             color = catppuccin.colors.text.rgb;
             font_size = 100;
-            font_family = osConfig.khanelinix.system.fonts.default;
+            font_family = osConfig.${namespace}.system.fonts.default;
             valign = "center";
             halign = "center";
             position = "0, 330";
@@ -124,7 +125,7 @@ in
             text = "<span font_weight=\"bold\"> $USER</span>";
             color = catppuccin.colors.text.rgb;
             font_size = 25;
-            font_family = osConfig.khanelinix.system.fonts.default;
+            font_family = osConfig.${namespace}.system.fonts.default;
             valign = "top";
             halign = "left";
             position = "10, 0";
@@ -139,7 +140,7 @@ in
             text = "<span font_weight=\"ultrabold\">󰌾 </span>";
             color = catppuccin.colors.text.rgb;
             font_size = 50;
-            font_family = osConfig.khanelinix.system.fonts.default;
+            font_family = osConfig.${namespace}.system.fonts.default;
             valign = "center";
             halign = "center";
             positino = "15, -350";
@@ -154,7 +155,7 @@ in
             text = "<span font_weight=\"bold\">Locked</span>";
             color = catppuccin.colors.text.rgb;
             font_size = 25;
-            font_family = osConfig.khanelinix.system.fonts.default;
+            font_family = osConfig.${namespace}.system.fonts.default;
             valign = "center";
             halign = "center";
             position = "0, -430";
@@ -169,7 +170,7 @@ in
             text = "cmd[update:120000] echo \"<span font_weight='bold'>$(date +'%a %d %B')</span>\"";
             color = catppuccin.colors.text.rgb;
             font_size = 30;
-            font_family = osConfig.khanelinix.system.fonts.default;
+            font_family = osConfig.${namespace}.system.fonts.default;
             valign = "center";
             halign = "center";
             position = "0, 210";
@@ -184,7 +185,7 @@ in
             text = "<span font_weight=\"ultrabold\"> </span>";
             color = catppuccin.colors.text.rgb;
             font_size = 25;
-            font_family = osConfig.khanelinix.system.fonts.default;
+            font_family = osConfig.${namespace}.system.fonts.default;
             valign = "bottom";
             halign = "right";
             position = "5, 8";

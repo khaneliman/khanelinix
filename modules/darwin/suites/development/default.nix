@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.suites.development;
+  cfg = config.${namespace}.suites.development;
 in
 {
-  options.khanelinix.suites.development = {
+  options.${namespace}.suites.development = {
     enable = mkBoolOpt false "Whether or not to enable common development configuration.";
   };
 
@@ -50,7 +51,7 @@ in
         "earthly/earthly"
       ];
 
-      masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
+      masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
         "Patterns" = 429449079;
         "Xcode" = 497799835;
       };

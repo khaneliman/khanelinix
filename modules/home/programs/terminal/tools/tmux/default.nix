@@ -2,13 +2,14 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.terminal.tools.tmux;
+  cfg = config.${namespace}.programs.terminal.tools.tmux;
   configFiles = lib.snowfall.fs.get-files ./config;
 
   plugins = with pkgs.tmuxPlugins; [
@@ -33,7 +34,7 @@ let
   ];
 in
 {
-  options.khanelinix.programs.terminal.tools.tmux = {
+  options.${namespace}.programs.terminal.tools.tmux = {
     enable = mkBoolOpt false "Whether or not to enable tmux.";
   };
 

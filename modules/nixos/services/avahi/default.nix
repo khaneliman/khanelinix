@@ -1,11 +1,16 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
-  cfg = config.khanelinix.services.avahi;
+  cfg = config.${namespace}.services.avahi;
 
   inherit (lib) mkEnableOption mkIf;
 in
 {
-  options.khanelinix.services.avahi = {
+  options.${namespace}.services.avahi = {
     enable = mkEnableOption "Avahi";
   };
 

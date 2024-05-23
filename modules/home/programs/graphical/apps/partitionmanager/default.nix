@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.graphical.apps.partitionmanager;
+  cfg = config.${namespace}.programs.graphical.apps.partitionmanager;
 in
 {
-  options.khanelinix.programs.graphical.apps.partitionmanager = {
+  options.${namespace}.programs.graphical.apps.partitionmanager = {
     enable = mkBoolOpt false "Whether or not to enable partitionmanager.";
   };
 

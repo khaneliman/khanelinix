@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.graphical.apps.discord;
+  cfg = config.${namespace}.programs.graphical.apps.discord;
 in
 {
-  options.khanelinix.programs.graphical.apps.discord = {
+  options.${namespace}.programs.graphical.apps.discord = {
     enable = mkBoolOpt false "Whether or not to enable Discord.";
   };
 

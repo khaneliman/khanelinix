@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.hardware.gpu.amd;
+  cfg = config.${namespace}.hardware.gpu.amd;
 in
 {
-  options.khanelinix.hardware.gpu.amd = {
+  options.${namespace}.hardware.gpu.amd = {
     enable = mkBoolOpt false "Whether or not to enable support for amdgpu.";
   };
 

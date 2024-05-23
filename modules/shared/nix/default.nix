@@ -3,6 +3,7 @@
   inputs,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
@@ -16,12 +17,12 @@ let
     pipe
     types
     ;
-  inherit (lib.internal) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
-  cfg = config.khanelinix.nix;
+  cfg = config.${namespace}.nix;
 in
 {
-  options.khanelinix.nix = with types; {
+  options.${namespace}.nix = with types; {
     enable = mkBoolOpt true "Whether or not to manage nix configuration.";
     package = mkOpt package pkgs.nixVersions.latest "Which nix package to use.";
   };
@@ -65,7 +66,7 @@ in
           "root"
           "@wheel"
           "nix-builder"
-          config.khanelinix.user.name
+          config.${namespace}.user.name
         ];
       in
       {

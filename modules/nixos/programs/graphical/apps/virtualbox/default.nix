@@ -1,17 +1,22 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.graphical.apps.virtualbox;
+  cfg = config.${namespace}.programs.graphical.apps.virtualbox;
 in
 {
-  options.khanelinix.programs.graphical.apps.virtualbox = {
+  options.${namespace}.programs.graphical.apps.virtualbox = {
     enable = mkBoolOpt false "Whether or not to enable Virtualbox.";
   };
 
   config = mkIf cfg.enable {
-    khanelinix.user.extraGroups = [ "vboxusers" ];
+    ${namespace}.user.extraGroups = [ "vboxusers" ];
 
     virtualisation.virtualbox.host = {
       enable = true;

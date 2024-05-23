@@ -2,15 +2,16 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
 
-  cfg = config.khanelinix.services.polkit;
+  cfg = config.${namespace}.services.polkit;
 in
 {
-  options.khanelinix.services.polkit = {
+  options.${namespace}.services.polkit = {
     enable = mkEnableOption "polkit";
   };
 

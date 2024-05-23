@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.graphical.addons.swappy;
+  cfg = config.${namespace}.programs.graphical.addons.swappy;
 in
 {
-  options.khanelinix.programs.graphical.addons.swappy = {
+  options.${namespace}.programs.graphical.addons.swappy = {
     enable = mkBoolOpt false "Whether to enable Swappy in the desktop environment.";
   };
 

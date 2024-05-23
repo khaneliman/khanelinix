@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.hardware.bluetooth;
+  cfg = config.${namespace}.hardware.bluetooth;
 in
 {
-  options.khanelinix.hardware.bluetooth = {
+  options.${namespace}.hardware.bluetooth = {
     enable = mkBoolOpt false "Whether or not to enable support for extra bluetooth devices.";
   };
 

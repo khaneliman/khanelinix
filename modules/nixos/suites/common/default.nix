@@ -2,24 +2,25 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) enabled;
+  inherit (lib.${namespace}) enabled;
 
-  cfg = config.khanelinix.suites.common;
+  cfg = config.${namespace}.suites.common;
 in
 {
-  imports = [ ../../../shared/suites/common/default.nix ];
+  imports = [ (lib.snowfall.fs.get-file "modules/shared/suites/common/default.nix") ];
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       appimage-run
       clac
       feh
-      khanelinix.trace-symlink
-      khanelinix.trace-which
+      pkgs.${namespace}.trace-symlink
+      pkgs.${namespace}.trace-which
       ncdu
       toilet
       tree

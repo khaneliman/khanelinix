@@ -2,15 +2,16 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
 
-  cfg = config.khanelinix.services.barrier;
+  cfg = config.${namespace}.services.barrier;
 in
 {
-  options.khanelinix.services.barrier = {
+  options.${namespace}.services.barrier = {
     enable = mkEnableOption "barrier";
   };
 

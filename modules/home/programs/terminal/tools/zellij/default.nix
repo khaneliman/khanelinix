@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.terminal.tools.zellij;
+  cfg = config.${namespace}.programs.terminal.tools.zellij;
 in
 {
-  options.khanelinix.programs.terminal.tools.zellij = {
+  options.${namespace}.programs.terminal.tools.zellij = {
     enable = mkBoolOpt false "Whether or not to enable zellij.";
   };
 

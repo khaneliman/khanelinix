@@ -1,6 +1,11 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
-  cfg = config.khanelinix.services.snapper;
+  cfg = config.${namespace}.services.snapper;
 
   safeStr = types.strMatching "[^\n\"]*" // {
     description = "string without line breaks or quotes";
@@ -10,7 +15,7 @@ let
   inherit (lib) types mkEnableOption mkIf;
 in
 {
-  options.khanelinix.services.snapper = {
+  options.${namespace}.services.snapper = {
     enable = mkEnableOption "snapper";
 
     configs = lib.mkOption {

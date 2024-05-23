@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt enabled;
+  inherit (lib.${namespace}) mkBoolOpt enabled;
 
-  cfg = config.khanelinix.suites.development;
+  cfg = config.${namespace}.suites.development;
 in
 {
-  options.khanelinix.suites.development = {
+  options.${namespace}.suites.development = {
     enable = mkBoolOpt false "Whether or not to enable common development configuration.";
     azureEnable = mkBoolOpt false "Whether or not to enable azure development configuration.";
     dockerEnable = mkBoolOpt false "Whether or not to enable docker development configuration.";

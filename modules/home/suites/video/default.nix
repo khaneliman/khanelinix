@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt enabled;
+  inherit (lib.${namespace}) mkBoolOpt enabled;
 
-  cfg = config.khanelinix.suites.video;
+  cfg = config.${namespace}.suites.video;
 in
 {
-  options.khanelinix.suites.video = {
+  options.${namespace}.suites.video = {
     enable = mkBoolOpt false "Whether or not to enable video configuration.";
   };
 

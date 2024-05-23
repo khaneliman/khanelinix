@@ -1,12 +1,17 @@
-{ lib, config, ... }:
+{
+  lib,
+  config,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.services.power;
+  cfg = config.${namespace}.services.power;
 in
 {
-  options.khanelinix.services.power = {
+  options.${namespace}.services.power = {
     enable = mkBoolOpt false "Whether or not to configure power profiles";
   };
 

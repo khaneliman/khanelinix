@@ -2,15 +2,16 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
 
-  cfg = config.khanelinix.programs.graphical.apps.caprine;
+  cfg = config.${namespace}.programs.graphical.apps.caprine;
 in
 {
-  options.khanelinix.programs.graphical.apps.caprine = {
+  options.${namespace}.programs.graphical.apps.caprine = {
     enable = mkEnableOption "caprine";
   };
 

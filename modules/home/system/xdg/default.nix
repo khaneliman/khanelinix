@@ -1,8 +1,13 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkEnableOption mkIf;
 
-  cfg = config.khanelinix.system.xdg;
+  cfg = config.${namespace}.system.xdg;
 
   browser = [ "firefox.desktop" ];
   editor = [ "nvim.desktop" ];
@@ -145,7 +150,7 @@ let
   };
 in
 {
-  options.khanelinix.system.xdg = {
+  options.${namespace}.system.xdg = {
     enable = mkEnableOption "xdg";
   };
 

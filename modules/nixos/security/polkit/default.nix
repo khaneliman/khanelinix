@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.security.polkit;
+  cfg = config.${namespace}.security.polkit;
 in
 {
-  options.khanelinix.security.polkit = {
+  options.${namespace}.security.polkit = {
     enable = mkBoolOpt false "Whether or not to enable polkit.";
   };
 

@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.internal) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
-  cfg = config.khanelinix.theme.gtk;
+  cfg = config.${namespace}.theme.gtk;
 in
 {
-  options.khanelinix.theme.gtk = with types; {
+  options.${namespace}.theme.gtk = with types; {
     enable = mkBoolOpt false "Whether to customize GTK and apply themes.";
 
     theme = {

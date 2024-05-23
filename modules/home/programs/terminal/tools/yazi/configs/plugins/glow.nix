@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
@@ -16,7 +17,7 @@ let
 
   # TODO: Use theme module
   style = "${stylePkg.outPath}/themes/catppuccin-macchiato.json";
-  cfg = config.khanelinix.programs.terminal.tools.yazi;
+  cfg = config.${namespace}.programs.terminal.tools.yazi;
 in
 {
   config = mkIf cfg.enable {

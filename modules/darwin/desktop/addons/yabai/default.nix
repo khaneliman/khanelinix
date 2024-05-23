@@ -2,22 +2,23 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf getExe;
-  inherit (lib.internal) mkBoolOpt enabled;
+  inherit (lib.${namespace}) mkBoolOpt enabled;
 
-  cfg = config.khanelinix.desktop.addons.yabai;
+  cfg = config.${namespace}.desktop.addons.yabai;
 in
 {
-  options.khanelinix.desktop.addons.yabai = {
+  options.${namespace}.desktop.addons.yabai = {
     enable = mkBoolOpt false "Whether or not to enable yabai.";
     debug = mkBoolOpt false "Whether to enable debug output.";
   };
 
   config = mkIf cfg.enable {
-    khanelinix.desktop.addons.jankyborders = enabled;
+    ${namespace}.desktop.addons.jankyborders = enabled;
 
     services.yabai = {
       enable = true;
@@ -64,7 +65,7 @@ in
       extraConfig =
         with pkgs; # bash
         ''
-          source ${getExe khanelinix.yabai-helper}
+          source ${getExe pkgs.${namespace}.yabai-helper}
 
           # Set external_bar here in case we launch after sketchybar
           BAR_HEIGHT=$(${getExe sketchybar} -m --query bar | jq -r '.height')
@@ -75,16 +76,24 @@ in
           # Signal hooks
           ${getExe config.services.yabai.package} -m signal --add event=dock_did_restart action="sudo ${getExe config.services.yabai.package} --load-sa"
           ${getExe config.services.yabai.package} -m signal --add event=window_focused action="${getExe sketchybar} --trigger window_focus"
-          ${getExe config.services.yabai.package} -m signal --add event=display_added action="sleep 1 && source ${getExe khanelinix.yabai-helper} && create_spaces 7"
-          ${getExe config.services.yabai.package} -m signal --add event=display_removed action="sleep 1 && source ${getExe khanelinix.yabai-helper} && create_spaces 7"
+          ${getExe config.services.yabai.package} -m signal --add event=display_added action="sleep 1 && source ${
+            getExe pkgs.${namespace}.yabai-helper
+          } && create_spaces 7"
+          ${getExe config.services.yabai.package} -m signal --add event=display_removed action="sleep 1 && source ${
+            getExe pkgs.${namespace}.yabai-helper
+          } && create_spaces 7"
           ${getExe config.services.yabai.package} -m signal --add event=window_created action="${getExe sketchybar} --trigger windows_on_spaces"
           ${getExe config.services.yabai.package} -m signal --add event=window_destroyed action="${getExe sketchybar} --trigger windows_on_spaces"
-          ${getExe config.services.yabai.package} -m signal --add event=window_created app="Code" action="source ${getExe khanelinix.yabai-helper} && auto_stack Code"
-          # ${getExe config.services.yabai.package} -m signal --add event=window_created app="Firefox" title!="(— Private Browsing$|^Picture-in-Picture$)" action="source ${getExe khanelinix.yabai-helper} && auto_stack Firefox"
+          ${getExe config.services.yabai.package} -m signal --add event=window_created app="Code" action="source ${
+            getExe pkgs.${namespace}.yabai-helper
+          } && auto_stack Code"
+          # ${getExe config.services.yabai.package} -m signal --add event=window_created app="Firefox" title!="(— Private Browsing$|^Picture-in-Picture$)" action="source ${
+            getExe pkgs.${namespace}.yabai-helper
+          } && auto_stack Firefox"
           # ${getExe config.services.yabai.package} -m signal --add event=window_title_changed app="Firefox" title="- noVNC$" action="${getExe config.services.yabai.package} -m window $WINDOW_ID --toggle native-fullscreen"
 
           # jankyborders
-          ${getExe config.khanelinix.desktop.addons.jankyborders.package} 2>/dev/null 1>&2 &
+          ${getExe config.${namespace}.desktop.addons.jankyborders.package} 2>/dev/null 1>&2 &
 
           echo "yabai configuration loaded.."
         '';

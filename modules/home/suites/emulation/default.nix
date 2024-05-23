@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.suites.emulation;
+  cfg = config.${namespace}.suites.emulation;
 in
 {
-  options.khanelinix.suites.emulation = {
+  options.${namespace}.suites.emulation = {
     enable = mkBoolOpt false "Whether or not to enable emulation configuration.";
     retroarchFull = mkBoolOpt false "Whether or not to enable emulation configuration.";
   };

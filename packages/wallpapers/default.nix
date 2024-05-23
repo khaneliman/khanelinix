@@ -1,4 +1,9 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  namespace,
+  ...
+}:
 let
   images = builtins.attrNames (builtins.readDir ./wallpapers);
   mkWallpaper =
@@ -36,7 +41,7 @@ let
   installTarget = "$out/share/wallpapers";
 in
 pkgs.stdenvNoCC.mkDerivation {
-  name = "khanelinix.wallpapers";
+  name = "${namespace}.wallpapers";
   src = ./wallpapers;
 
   installPhase = # bash

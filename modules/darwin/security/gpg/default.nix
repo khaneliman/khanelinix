@@ -3,6 +3,7 @@
   lib,
   pkgs,
   inputs,
+  namespace,
   ...
 }:
 let
@@ -13,10 +14,10 @@ let
     getExe
     getExe'
     ;
-  inherit (lib.internal) mkOpt;
+  inherit (lib.${namespace}) mkOpt;
   inherit (inputs) gpg-base-conf yubikey-guide;
 
-  cfg = config.khanelinix.security.gpg;
+  cfg = config.${namespace}.security.gpg;
 
   gpgConf = "${gpg-base-conf}/gpg.conf";
 
@@ -52,7 +53,7 @@ let
       '';
 in
 {
-  options.khanelinix.security.gpg = {
+  options.${namespace}.security.gpg = {
     enable = mkEnableOption "GPG";
     agentTimeout = mkOpt types.int 5 "The amount of time to wait before continuing with shell init.";
   };
@@ -80,7 +81,7 @@ in
       enableSSHSupport = true;
     };
 
-    khanelinix.home.file = {
+    ${namespace}.home.file = {
       ".gnupg/.keep".text = "";
 
       ".gnupg/yubikey-guide.md".source = guide;

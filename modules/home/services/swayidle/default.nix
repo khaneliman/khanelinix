@@ -3,17 +3,18 @@
   inputs,
   lib,
   system,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf getExe getExe';
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
   inherit (inputs) nixpkgs-wayland;
 
-  cfg = config.khanelinix.services.swayidle;
+  cfg = config.${namespace}.services.swayidle;
 in
 {
-  options.khanelinix.services.swayidle = {
+  options.${namespace}.services.swayidle = {
     enable = mkBoolOpt false "Whether to enable swayidle service.";
   };
 

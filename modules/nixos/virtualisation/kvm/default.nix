@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
@@ -13,13 +14,13 @@ let
     concatStringsSep
     getExe
     ;
-  inherit (lib.internal) mkBoolOpt mkOpt enabled;
-  inherit (config.khanelinix) user;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt enabled;
+  inherit (config.${namespace}) user;
 
-  cfg = config.khanelinix.virtualisation.kvm;
+  cfg = config.${namespace}.virtualisation.kvm;
 in
 {
-  options.khanelinix.virtualisation.kvm = with types; {
+  options.${namespace}.virtualisation.kvm = with types; {
     enable = mkBoolOpt false "Whether or not to enable KVM virtualisation.";
     # Use `machinectl` and then `machinectl status <name>` to
     # get the unit "*.scope" of the virtual machine.

@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt enabled;
+  inherit (lib.${namespace}) mkBoolOpt enabled;
 
-  cfg = config.khanelinix.suites.music;
+  cfg = config.${namespace}.suites.music;
 in
 {
-  options.khanelinix.suites.music = {
+  options.${namespace}.suites.music = {
     enable = mkBoolOpt false "Whether or not to enable common music configuration.";
   };
 
@@ -36,7 +37,7 @@ in
         spicetify-cli
         tageditor
         youtube-music
-        pkgs.khanelinix.yt-music
+        pkgs.${namespace}.yt-music
       ];
 
     khanelinix = {

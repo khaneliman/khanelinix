@@ -2,12 +2,13 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkDefault mkIf versionOlder;
-  inherit (lib.internal) mkBoolOpt;
-  cfg = config.khanelinix.hardware.gpu.nvidia;
+  inherit (lib.${namespace}) mkBoolOpt;
+  cfg = config.${namespace}.hardware.gpu.nvidia;
 
   # use the latest possible nvidia package
   nvStable = config.boot.kernelPackages.nvidiaPackages.stable.version;
@@ -20,7 +21,7 @@ let
       config.boot.kernelPackages.nvidiaPackages.beta;
 in
 {
-  options.khanelinix.hardware.gpu.nvidia = {
+  options.${namespace}.hardware.gpu.nvidia = {
     enable = mkBoolOpt false "Whether or not to enable support for nvidia.";
   };
 
@@ -43,7 +44,7 @@ in
     ];
 
     hardware = {
-      nvidia = mkIf (!config.khanelinix.hardware.gpu.amd.enable) {
+      nvidia = mkIf (!config.${namespace}.hardware.gpu.amd.enable) {
         package = mkDefault nvidiaPackage;
         modesetting.enable = mkDefault true;
 

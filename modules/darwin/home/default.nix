@@ -2,15 +2,16 @@
   config,
   lib,
   options,
+  namespace,
   ...
 }:
 let
   inherit (lib) types mkAliasDefinitions;
-  inherit (lib.internal) mkOpt;
+  inherit (lib.${namespace}) mkOpt;
 in
 {
 
-  options.khanelinix.home = with types; {
+  options.${namespace}.home = with types; {
     file = mkOpt attrs { } "A set of files to be managed by home-manager's <option>home.file</option>.";
     configFile =
       mkOpt attrs { }
@@ -20,13 +21,15 @@ in
   };
 
   config = {
-    khanelinix.home.extraOptions = {
-      home.file = mkAliasDefinitions options.khanelinix.home.file;
+    ${namespace}.home.extraOptions = {
+      home.file = mkAliasDefinitions options.${namespace}.home.file;
       xdg.enable = true;
-      xdg.configFile = mkAliasDefinitions options.khanelinix.home.configFile;
+      xdg.configFile = mkAliasDefinitions options.${namespace}.home.configFile;
     };
 
-    snowfallorg.users.${config.khanelinix.user.name}.home.config = mkAliasDefinitions options.khanelinix.home.extraOptions;
+    snowfallorg.users.${config.${namespace}.user.name}.home.config =
+      mkAliasDefinitions
+        options.${namespace}.home.extraOptions;
 
     home-manager = {
       # enables backing up existing files instead of erroring if conflicts exist

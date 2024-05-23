@@ -2,15 +2,16 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf mkEnableOption;
 
-  cfg = config.khanelinix.system.interface;
+  cfg = config.${namespace}.system.interface;
 in
 {
-  options.khanelinix.system.interface = {
+  options.${namespace}.system.interface = {
     enable = mkEnableOption "macOS interface";
   };
 

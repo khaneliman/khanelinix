@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) getExe mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.terminal.tools.bat;
+  cfg = config.${namespace}.programs.terminal.tools.bat;
 in
 {
-  options.khanelinix.programs.terminal.tools.bat = {
+  options.${namespace}.programs.terminal.tools.bat = {
     enable = mkBoolOpt false "Whether or not to enable bat.";
   };
 

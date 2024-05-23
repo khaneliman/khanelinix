@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
@@ -11,12 +12,12 @@ let
     mkDefault
     mkForce
     ;
-  inherit (lib.internal) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
-  cfg = config.khanelinix.system.networking;
+  cfg = config.${namespace}.system.networking;
 in
 {
-  options.khanelinix.system.networking = with types; {
+  options.${namespace}.system.networking = with types; {
     enable = mkBoolOpt false "Whether or not to enable networking support";
     hosts = mkOpt attrs { } "An attribute set to merge with <option>networking.hosts</option>";
     optimizeTcp = mkBoolOpt false "Optimize TCP connections";
@@ -214,7 +215,7 @@ in
           };
 
           # let me configure tailscale manually
-          "20-tailscale-ignore" = mkIf config.khanelinix.services.tailscale.enable {
+          "20-tailscale-ignore" = mkIf config.${namespace}.services.tailscale.enable {
             matchConfig.Name = "tailscale*";
             linkConfig = {
               Unmanaged = "yes";

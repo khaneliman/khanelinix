@@ -1,11 +1,16 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkEnableOption mkIf;
 
-  cfg = config.khanelinix.services.easyeffects;
+  cfg = config.${namespace}.services.easyeffects;
 in
 {
-  options.khanelinix.services.easyeffects = {
+  options.${namespace}.services.easyeffects = {
     enable = mkEnableOption "easyeffects";
   };
 

@@ -40,7 +40,7 @@ layout {
         }
     }
 
-		dev_tab name="Khanelinix" cwd="~/khanelinix/" focus=true {
+		dev_tab name="khanelinix" cwd="~/khanelinix/" focus=true {
         term split_direction="vertical" {
 			      pane edit="./flake.nix" name="Flake"
         }

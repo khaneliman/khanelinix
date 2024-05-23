@@ -1,12 +1,17 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt enabled;
+  inherit (lib.${namespace}) mkBoolOpt enabled;
 
-  cfg = config.khanelinix.archetypes.server;
+  cfg = config.${namespace}.archetypes.server;
 in
 {
-  options.khanelinix.archetypes.server = {
+  options.${namespace}.archetypes.server = {
     enable = mkBoolOpt false "Whether or not to enable the server archetype.";
   };
 

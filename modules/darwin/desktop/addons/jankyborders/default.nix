@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
@@ -11,26 +12,26 @@ let
     mkOption
     literalExpression
     ;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.desktop.addons.jankyborders;
+  cfg = config.${namespace}.desktop.addons.jankyborders;
 in
 {
-  options.khanelinix.desktop.addons.jankyborders = {
+  options.${namespace}.desktop.addons.jankyborders = {
     enable = mkBoolOpt false "Whether to enable jankyborders in the desktop environment.";
     package = mkOption {
       type = lib.types.package;
       default = pkgs.jankyborders;
       defaultText = literalExpression "pkgs.jankyborders";
       description = "The jankyborders package to use.";
-      example = literalExpression "pkgs.khanelinix.jankyborders";
+      example = literalExpression "pkgs.${namespace}.jankyborders";
     };
   };
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [ jankyborders ];
 
-    khanelinix.home.configFile = {
+    ${namespace}.home.configFile = {
       "borders/bordersrc".source =
         pkgs.writeShellScript "bordersrc" # bash
           ''

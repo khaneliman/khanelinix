@@ -4,6 +4,7 @@
   lib,
   pkgs,
   system,
+  namespace,
   ...
 }:
 let
@@ -13,10 +14,10 @@ let
     getExe
     mkMerge
     ;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
   inherit (inputs) nixpkgs-wayland;
 
-  cfg = config.khanelinix.programs.graphical.bars.waybar;
+  cfg = config.${namespace}.programs.graphical.bars.waybar;
 
   style = builtins.readFile ./styles/style.css;
   controlCenterStyle = builtins.readFile ./styles/control-center.css;
@@ -33,7 +34,7 @@ let
     custom-modules
     default-modules
     group-modules
-    (lib.mkIf config.khanelinix.programs.graphical.wms.hyprland.enable hyprland-modules)
+    (lib.mkIf config.${namespace}.programs.graphical.wms.hyprland.enable hyprland-modules)
   ];
 
   bar = {
@@ -82,7 +83,7 @@ let
   };
 in
 {
-  options.khanelinix.programs.graphical.bars.waybar = {
+  options.${namespace}.programs.graphical.bars.waybar = {
     enable = mkBoolOpt false "Whether to enable waybar in the desktop environment.";
     debug = mkBoolOpt false "Whether to enable debug mode.";
   };
@@ -116,7 +117,7 @@ in
 
     sops.secrets = {
       weather_config = {
-        sopsFile = ../../../../../../secrets/khaneliman/default.yaml;
+        sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/weather_config.json";
       };
     };

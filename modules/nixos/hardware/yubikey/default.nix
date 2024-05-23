@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.hardware.yubikey;
+  cfg = config.${namespace}.hardware.yubikey;
 in
 {
-  options.khanelinix.hardware.yubikey = {
+  options.${namespace}.hardware.yubikey = {
     enable = mkBoolOpt false "Whether or not to enable Yubikey.";
   };
 

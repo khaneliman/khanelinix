@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.virtualisation.podman;
+  cfg = config.${namespace}.virtualisation.podman;
 in
 {
-  options.khanelinix.virtualisation.podman = {
+  options.${namespace}.virtualisation.podman = {
     enable = mkBoolOpt false "Whether or not to enable Podman.";
   };
 

@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
@@ -11,18 +12,18 @@ let
     mkMerge
     optionalAttrs
     ;
-  inherit (lib.internal) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
-  cfg = config.khanelinix.programs.graphical.browsers.firefox;
+  cfg = config.${namespace}.programs.graphical.browsers.firefox;
 
   firefoxPath =
     if pkgs.stdenv.isLinux then
-      ".mozilla/firefox/${config.khanelinix.user.name}"
+      ".mozilla/firefox/${config.${namespace}.user.name}"
     else
-      "/Users/${config.khanelinix.user.name}/Library/Application Support/Firefox/Profiles/${config.khanelinix.user.name}";
+      "/Users/${config.${namespace}.user.name}/Library/Application Support/Firefox/Profiles/${config.${namespace}.user.name}";
 in
 {
-  options.khanelinix.programs.graphical.browsers.firefox = with types; {
+  options.${namespace}.programs.graphical.browsers.firefox = with types; {
     enable = mkBoolOpt false "Whether or not to enable Firefox.";
     hardwareDecoding = mkBoolOpt false "Enable hardware video decoding.";
     gpuAcceleration = mkBoolOpt false "Enable GPU acceleration.";
@@ -82,9 +83,9 @@ in
         Preferences = { };
       };
 
-      profiles.${config.khanelinix.user.name} = {
+      profiles.${config.${namespace}.user.name} = {
         inherit (cfg) extraConfig;
-        inherit (config.khanelinix.user) name;
+        inherit (config.${namespace}.user) name;
 
         id = 0;
 

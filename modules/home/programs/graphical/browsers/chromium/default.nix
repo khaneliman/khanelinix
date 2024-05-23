@@ -1,12 +1,17 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.graphical.browsers.chromium;
+  cfg = config.${namespace}.programs.graphical.browsers.chromium;
 in
 {
-  options.khanelinix.programs.graphical.browsers.chromium = {
+  options.${namespace}.programs.graphical.browsers.chromium = {
     enable = mkBoolOpt false "Whether or not to enable chromium.";
   };
 

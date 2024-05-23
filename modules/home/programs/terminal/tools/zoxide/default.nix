@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.terminal.tools.zoxide;
+  cfg = config.${namespace}.programs.terminal.tools.zoxide;
 in
 {
-  options.khanelinix.programs.terminal.tools.zoxide = {
+  options.${namespace}.programs.terminal.tools.zoxide = {
     enable = mkBoolOpt false "Whether or not to enable zoxide.";
   };
 

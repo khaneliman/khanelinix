@@ -3,17 +3,18 @@
   lib,
   inputs,
   system,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt enabled;
+  inherit (lib.${namespace}) mkBoolOpt enabled;
   inherit (inputs) nixpkgs-wayland;
 
-  cfg = config.khanelinix.suites.wlroots;
+  cfg = config.${namespace}.suites.wlroots;
 in
 {
-  options.khanelinix.suites.wlroots = {
+  options.${namespace}.suites.wlroots = {
     enable = mkBoolOpt false "Whether or not to enable common wlroots configuration.";
   };
 

@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.terminal.tools.oh-my-posh;
+  cfg = config.${namespace}.programs.terminal.tools.oh-my-posh;
 in
 {
-  options.khanelinix.programs.terminal.tools.oh-my-posh = {
+  options.${namespace}.programs.terminal.tools.oh-my-posh = {
     enable = mkBoolOpt false "Whether or not to enable oh-my-posh.";
   };
 

@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.suites.video;
+  cfg = config.${namespace}.suites.video;
 in
 {
-  options.khanelinix.suites.video = {
+  options.${namespace}.suites.video = {
     enable = mkBoolOpt false "Whether or not to enable video configuration.";
   };
 
@@ -19,7 +20,7 @@ in
     environment.systemPackages = with pkgs; [ ffmpeg ];
 
     homebrew = {
-      masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
+      masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
         "Infuse" = 1136220934;
         "iMovie" = 408981434;
         "Prime Video" = 545519333;

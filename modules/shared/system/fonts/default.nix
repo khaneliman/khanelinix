@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.internal) mkBoolOpt mkOpt enabled;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt enabled;
 
-  cfg = config.khanelinix.system.fonts;
+  cfg = config.${namespace}.system.fonts;
 in
 {
-  options.khanelinix.system.fonts = with types; {
+  options.${namespace}.system.fonts = with types; {
     enable = mkBoolOpt false "Whether or not to manage fonts.";
     fonts =
       with pkgs;

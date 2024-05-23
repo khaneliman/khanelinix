@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf literalExpression;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.graphical.mangohud;
+  cfg = config.${namespace}.programs.graphical.mangohud;
 in
 {
-  options.khanelinix.programs.graphical.mangohud = {
+  options.${namespace}.programs.graphical.mangohud = {
     enable = mkBoolOpt false "Whether or not to enable mangohud.";
   };
 

@@ -1,8 +1,13 @@
-{ lib, config, ... }:
+{
+  lib,
+  config,
+  namespace,
+  ...
+}:
 let
-  inherit (lib.internal) enabled;
+  inherit (lib.${namespace}) enabled;
 
-  cfg = config.khanelinix.user;
+  cfg = config.${namespace}.user;
 in
 {
   khanelinix = {

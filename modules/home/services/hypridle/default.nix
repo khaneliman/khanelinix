@@ -3,17 +3,18 @@
   inputs,
   lib,
   system,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf getExe getExe';
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
   inherit (inputs) hypridle;
 
-  cfg = config.khanelinix.services.hypridle;
+  cfg = config.${namespace}.services.hypridle;
 in
 {
-  options.khanelinix.services.hypridle = {
+  options.${namespace}.services.hypridle = {
     enable = mkBoolOpt false "Whether to enable hypridle service.";
   };
 

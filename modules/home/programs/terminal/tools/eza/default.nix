@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) getExe mkForce mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.terminal.tools.eza;
+  cfg = config.${namespace}.programs.terminal.tools.eza;
 in
 {
-  options.khanelinix.programs.terminal.tools.eza = {
+  options.${namespace}.programs.terminal.tools.eza = {
     enable = mkBoolOpt false "Whether or not to enable eza.";
   };
 

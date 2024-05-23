@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.graphical.file-managers.nautilus;
+  cfg = config.${namespace}.programs.graphical.file-managers.nautilus;
 in
 {
-  options.khanelinix.programs.graphical.file-managers.nautilus = {
+  options.${namespace}.programs.graphical.file-managers.nautilus = {
     enable = mkBoolOpt false "Whether to enable the gnome file manager.";
   };
 

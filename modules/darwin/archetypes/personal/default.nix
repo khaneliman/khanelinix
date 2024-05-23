@@ -1,12 +1,17 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt enabled;
+  inherit (lib.${namespace}) mkBoolOpt enabled;
 
-  cfg = config.khanelinix.archetypes.personal;
+  cfg = config.${namespace}.archetypes.personal;
 in
 {
-  options.khanelinix.archetypes.personal = {
+  options.${namespace}.archetypes.personal = {
     enable = mkBoolOpt false "Whether or not to enable the personal archetype.";
   };
 

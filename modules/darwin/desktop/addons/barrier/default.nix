@@ -1,12 +1,17 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.desktop.addons.barrier;
+  cfg = config.${namespace}.desktop.addons.barrier;
 in
 {
-  options.khanelinix.desktop.addons.barrier = {
+  options.${namespace}.desktop.addons.barrier = {
     enable = mkBoolOpt false "Whether or not to enable barrier.";
   };
 

@@ -3,16 +3,17 @@
   lib,
   pkgs,
   osConfig,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.terminal.shell.fish;
+  cfg = config.${namespace}.programs.terminal.shell.fish;
 in
 {
-  options.khanelinix.programs.terminal.shell.fish = {
+  options.${namespace}.programs.terminal.shell.fish = {
     enable = mkBoolOpt false "Whether to enable fish.";
   };
 

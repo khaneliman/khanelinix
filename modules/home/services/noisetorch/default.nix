@@ -2,17 +2,18 @@
   osConfig,
   config,
   lib,
+  namespace,
   ...
 }:
 let
   inherit (lib) getExe mkIf mkEnableOption;
 
-  cfg = config.khanelinix.services.noisetorch;
-  osCfg = osConfig.khanelinix.programs.graphical.addons.noisetorch;
+  cfg = config.${namespace}.services.noisetorch;
+  osCfg = osConfig.${namespace}.programs.graphical.addons.noisetorch;
 in
 {
   options = {
-    khanelinix.services.noisetorch = {
+    ${namespace}.services.noisetorch = {
       enable = mkEnableOption "noisetorch service";
     };
   };

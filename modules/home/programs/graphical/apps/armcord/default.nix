@@ -1,11 +1,16 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkEnableOption mkIf;
 
-  cfg = config.khanelinix.programs.graphical.apps.armcord;
+  cfg = config.${namespace}.programs.graphical.apps.armcord;
 in
 {
-  options.khanelinix.programs.graphical.apps.armcord = {
+  options.${namespace}.programs.graphical.apps.armcord = {
     enable = mkEnableOption "armcord";
   };
 

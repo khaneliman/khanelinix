@@ -2,12 +2,13 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf mapAttrs;
 
-  cfg = config.khanelinix.system.fonts;
+  cfg = config.${namespace}.system.fonts;
 in
 {
   imports = [ ../../../shared/system/fonts/default.nix ];

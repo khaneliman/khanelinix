@@ -1,11 +1,16 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf mkEnableOption;
 
-  cfg = config.khanelinix.security.clamav;
+  cfg = config.${namespace}.security.clamav;
 in
 {
-  options.khanelinix.security.clamav = {
+  options.${namespace}.security.clamav = {
     enable = mkEnableOption "default clamav configuration";
   };
 

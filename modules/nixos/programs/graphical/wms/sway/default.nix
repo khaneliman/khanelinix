@@ -3,6 +3,7 @@
   inputs,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
@@ -12,24 +13,24 @@ let
     getExe
     getExe'
     ;
-  inherit (lib.internal)
+  inherit (lib.${namespace})
     mkBoolOpt
     mkOpt
     enabled
     fileWithText
     optionalString
     ;
-  inherit (config.khanelinix.desktop.addons) term;
+  inherit (config.${namespace}.desktop.addons) term;
   inherit (inputs) nixpkgs-wayland;
 
-  cfg = config.khanelinix.programs.graphical.wms.sway;
+  cfg = config.${namespace}.programs.graphical.wms.sway;
   substitutedConfig = pkgs.substituteAll {
     src = ./config;
     term = term.pkg.pname or term.pkg.name;
   };
 in
 {
-  options.khanelinix.programs.graphical.wms.sway = with types; {
+  options.${namespace}.programs.graphical.wms.sway = with types; {
     enable = mkBoolOpt false "Whether or not to enable Sway.";
     extraConfig = mkOpt str "" "Additional configuration for the Sway config file.";
     wallpaper = mkOpt (nullOr package) null "The wallpaper to display.";

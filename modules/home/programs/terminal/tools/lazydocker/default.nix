@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.terminal.tools.lazydocker;
+  cfg = config.${namespace}.programs.terminal.tools.lazydocker;
 in
 {
-  options.khanelinix.programs.terminal.tools.lazydocker = {
+  options.${namespace}.programs.terminal.tools.lazydocker = {
     enable = mkBoolOpt false "Whether or not to enable lazydocker.";
   };
 

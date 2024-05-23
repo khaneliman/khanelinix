@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.suites.music;
+  cfg = config.${namespace}.suites.music;
 in
 {
-  options.khanelinix.suites.music = {
+  options.${namespace}.suites.music = {
     enable = mkBoolOpt false "Whether or not to enable music configuration.";
   };
 
@@ -24,7 +25,7 @@ in
     homebrew = {
       casks = [ "spotify" ];
 
-      masApps = mkIf config.khanelinix.tools.homebrew.masEnable { "GarageBand" = 682658836; };
+      masApps = mkIf config.${namespace}.tools.homebrew.masEnable { "GarageBand" = 682658836; };
     };
   };
 }

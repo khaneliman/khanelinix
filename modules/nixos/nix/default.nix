@@ -1,11 +1,16 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkDefault mkIf mkForce;
 
-  cfg = config.khanelinix.nix;
+  cfg = config.${namespace}.nix;
 in
 {
-  imports = [ ../../shared/nix/default.nix ];
+  imports = [ (lib.snowfall.fs.get-file "modules/shared/nix/default.nix") ];
 
   config = mkIf cfg.enable {
     documentation.man.generateCaches = mkDefault true;

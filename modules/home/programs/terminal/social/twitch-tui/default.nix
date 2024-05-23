@@ -1,18 +1,18 @@
 {
   config,
   lib,
-
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.terminal.social.twitch-tui;
+  cfg = config.${namespace}.programs.terminal.social.twitch-tui;
 in
 {
-  options.khanelinix.programs.terminal.social.twitch-tui = {
+  options.${namespace}.programs.terminal.social.twitch-tui = {
     enable = mkBoolOpt false "Whether or not to enable twitch-tui.";
   };
 
@@ -21,7 +21,7 @@ in
 
     sops.secrets = {
       twitch-tui = {
-        sopsFile = ../../../../../../secrets/khaneliman/default.yaml;
+        sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.config/twt/config.toml";
       };
     };

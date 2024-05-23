@@ -3,19 +3,20 @@
   lib,
   pkgs,
   inputs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
   inherit (inputs) spicetify-nix;
 
-  cfg = config.khanelinix.programs.terminal.media.spicetify;
+  cfg = config.${namespace}.programs.terminal.media.spicetify;
 
   spicePkgs = spicetify-nix.legacyPackages.${pkgs.system};
 in
 {
-  options.khanelinix.programs.terminal.media.spicetify = {
+  options.${namespace}.programs.terminal.media.spicetify = {
     enable = mkBoolOpt false "Whether or not to enable support for spicetify.";
   };
 

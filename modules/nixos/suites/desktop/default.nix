@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt enabled;
+  inherit (lib.${namespace}) mkBoolOpt enabled;
 
-  cfg = config.khanelinix.suites.desktop;
+  cfg = config.${namespace}.suites.desktop;
 in
 {
-  options.khanelinix.suites.desktop = {
+  options.${namespace}.suites.desktop = {
     enable = mkBoolOpt false "Whether or not to enable common desktop configuration.";
   };
 
@@ -25,7 +26,7 @@ in
       fontpreview
       gparted
       keepass
-      pkgs.khanelinix.pocketcasts
+      pkgs.${namespace}.pocketcasts
     ];
 
     # TODO: what does this set that makes it default

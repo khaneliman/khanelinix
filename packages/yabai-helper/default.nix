@@ -2,6 +2,7 @@
   writeShellApplication,
   pkgs,
   lib,
+  namespace,
   ...
 }:
 let
@@ -219,7 +220,7 @@ writeShellApplication {
           	yabai -m window "$YABAI_WINDOW_ID" --space "$2"
           fi
           yabai -m space --focus "$2"
-          set_wallpaper ${pkgs.khanelinix.wallpapers}/share/wallpapers/$(ls ${pkgs.khanelinix.wallpapers}/share/wallpapers/ | shuf -n 1)
+          set_wallpaper ${pkgs.${namespace}.wallpapers}/share/wallpapers/$(ls ${pkgs.${namespace}.wallpapers}/share/wallpapers/ | shuf -n 1)
           return 0
         fi
 
@@ -232,7 +233,7 @@ writeShellApplication {
           echo "$i"
           yabai -m space --create
           yabai -m space --focus "$i"
-      		set_wallpaper ${pkgs.khanelinix.wallpapers}/share/wallpapers/$(ls ${pkgs.khanelinix.wallpapers}/share/wallpapers/ | shuf -n 1)
+      		set_wallpaper ${pkgs.${namespace}.wallpapers}/share/wallpapers/$(ls ${pkgs.${namespace}.wallpapers}/share/wallpapers/ | shuf -n 1)
         done
         yabai -m space "$CURRENT_SPACE" --focus
 
@@ -244,7 +245,7 @@ writeShellApplication {
 
       set_wallpapers() {
         if [[ $(command -v yabai) ]]; then
-          LOCAL_WALLPAPERS="$(realpath ${pkgs.khanelinix.wallpapers}/share/wallpapers/)"
+          LOCAL_WALLPAPERS="$(realpath ${pkgs.${namespace}.wallpapers}/share/wallpapers/)"
 
           yabai -m space --focus 1
 

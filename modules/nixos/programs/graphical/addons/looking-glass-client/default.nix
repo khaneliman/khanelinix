@@ -2,17 +2,18 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
-  inherit (config.khanelinix) user;
+  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (config.${namespace}) user;
 
-  cfg = config.khanelinix.programs.graphical.addons.looking-glass-client;
+  cfg = config.${namespace}.programs.graphical.addons.looking-glass-client;
 in
 {
-  options.khanelinix.programs.graphical.addons.looking-glass-client = {
+  options.${namespace}.programs.graphical.addons.looking-glass-client = {
     enable = mkBoolOpt false "Whether or not to enable the Looking Glass client.";
   };
 

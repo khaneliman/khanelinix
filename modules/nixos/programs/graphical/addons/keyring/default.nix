@@ -1,12 +1,17 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.graphical.addons.keyring;
+  cfg = config.${namespace}.programs.graphical.addons.keyring;
 in
 {
-  options.khanelinix.programs.graphical.addons.keyring = {
+  options.${namespace}.programs.graphical.addons.keyring = {
     enable = mkBoolOpt false "Whether to enable the passwords application.";
   };
 

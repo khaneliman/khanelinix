@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.suites.art;
+  cfg = config.${namespace}.suites.art;
 in
 {
-  options.khanelinix.suites.art = {
+  options.${namespace}.suites.art = {
     enable = mkBoolOpt false "Whether or not to enable art configuration.";
   };
 
