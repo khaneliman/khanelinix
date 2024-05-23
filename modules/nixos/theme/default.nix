@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
@@ -11,9 +12,9 @@ let
     mkOption
     types
     ;
-  inherit (lib.internal) mkOpt;
+  inherit (lib.${namespace}) mkOpt;
 
-  cfg = config.khanelinix.theme;
+  cfg = config.${namespace}.theme;
 
   catppuccinAccents = [
     "rosewater"
@@ -40,7 +41,7 @@ let
 in
 {
   # TODO: consolidate home-manager and nixos module
-  options.khanelinix.theme = {
+  options.${namespace}.theme = {
     enable = mkEnableOption "Enable custom theme use for applications.";
 
     cursor = {

@@ -1,12 +1,17 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkDefault mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.hardware.tpm;
+  cfg = config.${namespace}.hardware.tpm;
 in
 {
-  options.khanelinix.hardware.tpm = {
+  options.${namespace}.hardware.tpm = {
     enable = mkBoolOpt false "Whether or not to enable Trusted Platform Module 2 (TPM2).";
   };
 

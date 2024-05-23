@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.hardware.storage;
+  cfg = config.${namespace}.hardware.storage;
 in
 {
-  options.khanelinix.hardware.storage = {
+  options.${namespace}.hardware.storage = {
     enable = mkBoolOpt false "Whether or not to enable support for extra storage devices.";
     ssdEnable = mkBoolOpt true "Whether or not to enable support for SSD storage devices.";
   };

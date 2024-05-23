@@ -1,12 +1,17 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt enabled;
+  inherit (lib.${namespace}) mkBoolOpt enabled;
 
-  cfg = config.khanelinix.suites.business;
+  cfg = config.${namespace}.suites.business;
 in
 {
-  options.khanelinix.suites.business = {
+  options.${namespace}.suites.business = {
     enable = mkBoolOpt false "Whether or not to enable business configuration.";
   };
 
@@ -23,7 +28,7 @@ in
         "thunderbird"
       ];
 
-      masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
+      masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
         "Brother iPrint&Scan" = 1193539993;
         "Keynote" = 409183694;
         "Microsoft OneNote" = 784801555;

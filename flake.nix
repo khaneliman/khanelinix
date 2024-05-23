@@ -116,7 +116,7 @@
 
     # Snowfall Lib
     snowfall-lib = {
-      url = "github:snowfallorg/lib/dev";
+      url = "github:snowfallorg/lib";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -153,11 +153,18 @@
       lib = snowfall-lib.mkLib {
         inherit inputs;
         src = ./.;
+
+        snowfall = {
+          meta = {
+            name = "khanelinix";
+            title = "KhaneliNix";
+          };
+
+          namespace = "khanelinix";
+        };
       };
     in
     lib.mkFlake {
-      package-namespace = "khanelinix";
-
       channels-config = {
         # allowBroken = true;
         allowUnfree = true;

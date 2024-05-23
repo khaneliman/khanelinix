@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) types;
-  inherit (lib.internal) mkOpt;
+  inherit (lib.${namespace}) mkOpt;
 
-  cfg = config.khanelinix.user;
+  cfg = config.${namespace}.user;
 in
 {
-  options.khanelinix.user = with types; {
+  options.${namespace}.user = with types; {
     email = mkOpt str "khaneliman12@gmail.com" "The email of the user.";
     extraGroups = mkOpt (listOf str) [ ] "Groups for the user to be assigned.";
     extraOptions = mkOpt attrs { } "Extra options passed to <option>users.users.<name></option>.";

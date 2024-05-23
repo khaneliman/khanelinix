@@ -2,17 +2,18 @@
   lib,
   pkgs,
   config,
+  namespace,
   ...
 }:
 let
   inherit (lib) types mkIf;
   inherit (lib.modules) mkBefore;
-  inherit (lib.internal) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
-  cfg = config.khanelinix.services.tailscale;
+  cfg = config.${namespace}.services.tailscale;
 in
 {
-  options.khanelinix.services.tailscale = with types; {
+  options.${namespace}.services.tailscale = with types; {
     enable = mkBoolOpt false "Whether or not to configure Tailscale";
     autoconnect = {
       enable = mkBoolOpt false "Whether or not to enable automatic connection to Tailscale";
@@ -24,7 +25,7 @@ in
     assertions = [
       {
         assertion = cfg.autoconnect.enable -> cfg.autoconnect.key != "";
-        message = "khanelinix.services.tailscale.autoconnect.key must be set";
+        message = "${namespace}.services.tailscale.autoconnect.key must be set";
       }
     ];
 

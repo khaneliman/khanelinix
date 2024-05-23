@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib)
     mapAttrs
@@ -7,9 +12,9 @@ let
     optionalAttrs
     types
     ;
-  inherit (lib.internal) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
-  cfg = config.khanelinix.services.samba;
+  cfg = config.${namespace}.services.samba;
 
   bool-to-yes-no = value: if value then "yes" else "no";
 
@@ -24,7 +29,7 @@ let
           browseable = mkBoolOpt true "Whether the share is browseable.";
           comment = mkOpt str name "An optional comment.";
           read-only = mkBoolOpt false "Whether the share should be read only.";
-          only-owner-editable = mkBoolOpt false "Whether the share is only writable by the system owner (khanelinix.user.name).";
+          only-owner-editable = mkBoolOpt false "Whether the share is only writable by the system owner (${namespace}.user.name).";
 
           extra-config = mkOpt attrs { } "Extra configuration options for the share.";
         };
@@ -32,7 +37,7 @@ let
     );
 in
 {
-  options.khanelinix.services.samba = with types; {
+  options.${namespace}.services.samba = with types; {
     enable = mkEnableOption "Samba";
     browseable = mkBoolOpt true "Whether the shares are browseable.";
     workgroup = mkOpt str "WORKGROUP" "The workgroup to use.";
@@ -69,7 +74,7 @@ in
           "read only" = bool-to-yes-no value.read-only;
         }
         // (optionalAttrs value.only-owner-editable {
-          "write list" = config.khanelinix.user.name;
+          "write list" = config.${namespace}.user.name;
           "read list" = "guest, nobody";
           "create mask" = "0755";
           "directory mask" = "0755";
@@ -83,7 +88,7 @@ in
     #   sambaUserSetup = {
     #     text = ''
     #       PATH=$PATH:${lib.makeBinPath [ pkgs.samba ]}
-    #       pdbedit -i smbpasswd:/home/${config.khanelinix.user.name}/smbpasswd -e tdbsam:/var/lib/samba/private/passdb.tdb
+    #       pdbedit -i smbpasswd:/home/${config.${namespace}.user.name}/smbpasswd -e tdbsam:/var/lib/samba/private/passdb.tdb
     #     '';
     #     deps = [ ];
     #   };

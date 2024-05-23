@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.terminal.tools.btop;
+  cfg = config.${namespace}.programs.terminal.tools.btop;
 in
 {
-  options.khanelinix.programs.terminal.tools.btop = {
+  options.${namespace}.programs.terminal.tools.btop = {
     enable = mkBoolOpt false "Whether or not to enable btop.";
   };
 

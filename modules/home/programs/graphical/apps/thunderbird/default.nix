@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.graphical.apps.thunderbird;
+  cfg = config.${namespace}.programs.graphical.apps.thunderbird;
 in
 {
-  options.khanelinix.programs.graphical.apps.thunderbird = {
+  options.${namespace}.programs.graphical.apps.thunderbird = {
     enable = mkBoolOpt false "Whether or not to enable thunderbird.";
   };
 
@@ -24,9 +25,9 @@ in
 
     # TODO: set up accounts
     accounts.email.accounts = {
-      "${config.khanelinix.user.email}" = {
-        address = config.khanelinix.user.email;
-        realName = config.khanelinix.user.fullName;
+      "${config.${namespace}.user.email}" = {
+        address = config.${namespace}.user.email;
+        realName = config.${namespace}.user.fullName;
         flavor = "gmail.com";
         primary = true;
       };
@@ -36,7 +37,7 @@ in
       enable = true;
       package = pkgs.thunderbird;
 
-      profiles.${config.khanelinix.user.name} = {
+      profiles.${config.${namespace}.user.name} = {
         isDefault = true;
 
         settings = {

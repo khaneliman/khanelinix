@@ -1,14 +1,15 @@
 {
   lib,
   host ? null,
+  namespace,
   ...
 }:
 let
   inherit (lib) types;
-  inherit (lib.internal) mkOpt;
+  inherit (lib.${namespace}) mkOpt;
 in
 {
-  options.khanelinix.host = {
+  options.${namespace}.host = {
     name = mkOpt (types.nullOr types.str) host "The host name.";
   };
 }

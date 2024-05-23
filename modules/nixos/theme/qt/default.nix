@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.internal) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
-  cfg = config.khanelinix.theme.qt;
+  cfg = config.${namespace}.theme.qt;
 in
 {
-  options.khanelinix.theme.qt = with types; {
+  options.${namespace}.theme.qt = with types; {
     enable = mkBoolOpt false "Whether to customize qt and apply themes.";
 
     theme = {
@@ -28,7 +29,7 @@ in
       systemPackages =
         with pkgs;
         [ cfg.theme.package ]
-        ++ lib.optional config.khanelinix.suites.wlroots.enable libsForQt5.qt5.qtwayland;
+        ++ lib.optional config.${namespace}.suites.wlroots.enable libsForQt5.qt5.qtwayland;
     };
 
     qt = {

@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.internal) mkOpt;
+  inherit (lib.${namespace}) mkOpt;
 
-  cfg = config.khanelinix.user;
+  cfg = config.${namespace}.user;
 in
 {
-  options.khanelinix.user = {
+  options.${namespace}.user = {
     name = mkOpt types.str "khaneliman" "The user account.";
     email = mkOpt types.str "khaneliman12@gmail.com" "The email of the user.";
     fullName = mkOpt types.str "Austin Horstman" "The full name of the user.";

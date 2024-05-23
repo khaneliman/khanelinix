@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.graphical.file-managers.dolphin;
+  cfg = config.${namespace}.programs.graphical.file-managers.dolphin;
 in
 {
-  options.khanelinix.programs.graphical.file-managers.dolphin = {
+  options.${namespace}.programs.graphical.file-managers.dolphin = {
     enable = mkBoolOpt false "Whether or not to enable Dolphin.";
   };
 

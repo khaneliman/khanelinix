@@ -3,6 +3,7 @@
   lib,
   pkgs,
   inputs,
+  namespace,
   ...
 }:
 let
@@ -12,10 +13,10 @@ let
     getExe
     getExe'
     ;
-  inherit (lib.internal) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt;
   inherit (inputs) gpg-base-conf yubikey-guide;
 
-  cfg = config.khanelinix.security.gpg;
+  cfg = config.${namespace}.security.gpg;
 
   gpgConf = "${gpg-base-conf}/gpg.conf";
 
@@ -67,7 +68,7 @@ let
       '';
 in
 {
-  options.khanelinix.security.gpg = with types; {
+  options.${namespace}.security.gpg = with types; {
     enable = mkBoolOpt false "Whether or not to enable GPG.";
     agentTimeout = mkOpt int 5 "The amount of time to wait before continuing with shell init.";
   };

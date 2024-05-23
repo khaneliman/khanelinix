@@ -1,12 +1,17 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.graphical.apps._1password;
+  cfg = config.${namespace}.programs.graphical.apps._1password;
 in
 {
-  options.khanelinix.programs.graphical.apps._1password = {
+  options.${namespace}.programs.graphical.apps._1password = {
     enable = mkBoolOpt false "Whether or not to enable 1password.";
   };
 

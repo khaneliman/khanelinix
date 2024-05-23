@@ -1,7 +1,12 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkForce getExe getExe';
-  inherit (lib.internal) enabled;
+  inherit (lib.${namespace}) enabled;
 
   gpgConf = pkgs.fetchurl {
     url = "https://raw.githubusercontent.com/drduh/config/master/gpg.conf";

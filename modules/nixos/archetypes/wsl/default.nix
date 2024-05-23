@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf mkForce;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.archetypes.wsl;
+  cfg = config.${namespace}.archetypes.wsl;
 in
 {
-  options.khanelinix.archetypes.wsl = {
+  options.${namespace}.archetypes.wsl = {
     enable = mkBoolOpt false "Whether or not to enable the wsl archetype.";
   };
 

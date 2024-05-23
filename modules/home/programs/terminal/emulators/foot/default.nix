@@ -2,17 +2,18 @@
   config,
   pkgs,
   lib,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.terminal.emulators.foot;
-  colors = import ../../../../theme/catppuccin/colors.nix;
+  cfg = config.${namespace}.programs.terminal.emulators.foot;
+  colors = import (lib.snowfall.fs.get-file "modules/home/theme/catppuccin/colors.nix");
 in
 {
-  options.khanelinix.programs.terminal.emulators.foot = {
+  options.${namespace}.programs.terminal.emulators.foot = {
     enable = mkBoolOpt false "Whether or not to enable foot.";
   };
 

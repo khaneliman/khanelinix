@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.terminal.tools.comma;
+  cfg = config.${namespace}.programs.terminal.tools.comma;
 in
 {
-  options.khanelinix.programs.terminal.tools.comma = {
+  options.${namespace}.programs.terminal.tools.comma = {
     enable = mkBoolOpt false "Whether or not to enable comma.";
   };
 

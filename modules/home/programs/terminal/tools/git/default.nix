@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
@@ -12,16 +13,16 @@ let
     mkForce
     getExe'
     ;
-  inherit (lib.internal) mkOpt mkBoolOpt enabled;
-  inherit (config.khanelinix) user;
+  inherit (lib.${namespace}) mkOpt mkBoolOpt enabled;
+  inherit (config.${namespace}) user;
 
-  cfg = config.khanelinix.programs.terminal.tools.git;
+  cfg = config.${namespace}.programs.terminal.tools.git;
 
   aliases = import ./aliases.nix;
   ignores = import ./ignores.nix;
 in
 {
-  options.khanelinix.programs.terminal.tools.git = {
+  options.${namespace}.programs.terminal.tools.git = {
     enable = mkEnableOption "Git";
     includes = mkOpt (types.listOf types.attrs) [ ] "Git includeIf paths and conditions.";
     signByDefault = mkOpt types.bool true "Whether to sign commits by default.";
@@ -113,7 +114,7 @@ in
 
           safe = {
             directory = [
-              "~/khanelinix/"
+              "~/${namespace}/"
               "/etc/nixos"
             ];
           };
@@ -170,7 +171,7 @@ in
 
     sops.secrets = {
       "github/access-token" = {
-        sopsFile = ../../../../../../secrets/khaneliman/default.yaml;
+        sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.config/gh/access-token";
       };
     };

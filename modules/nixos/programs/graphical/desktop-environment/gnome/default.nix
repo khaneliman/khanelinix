@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
@@ -12,14 +13,14 @@ let
     optional
     getExe
     ;
-  inherit (lib.internal)
+  inherit (lib.${namespace})
     enabled
     mkBoolOpt
     mkOpt
     mkDefault
     ;
 
-  cfg = config.khanelinix.programs.graphical.desktop-environment.gnome;
+  cfg = config.${namespace}.programs.graphical.desktop-environment.gnome;
   gdmHome = config.users.users.gdm.home;
 
   defaultExtensions = with pkgs.gnomeExtensions; [
@@ -42,7 +43,7 @@ let
   nested-default-attrs = mapAttrs (_key: default-attrs);
 in
 {
-  options.khanelinix.programs.graphical.desktop-environment.gnome = with types; {
+  options.${namespace}.programs.graphical.desktop-environment.gnome = with types; {
     enable = mkBoolOpt false "Whether or not to use Gnome as the desktop environment.";
     color-scheme = mkOpt (enum [
       "light"
@@ -55,11 +56,11 @@ in
       light = mkOpt (oneOf [
         str
         package
-      ]) pkgs.khanelinix.wallpapers.flatppuccin_macchiato "The light wallpaper to use.";
+      ]) pkgs.${namespace}.wallpapers.flatppuccin_macchiato "The light wallpaper to use.";
       dark = mkOpt (oneOf [
         str
         package
-      ]) pkgs.khanelinix.wallpapers.cat-sound "The dark wallpaper to use.";
+      ]) pkgs.${namespace}.wallpapers.cat-sound "The dark wallpaper to use.";
     };
     wayland = mkBoolOpt true "Whether or not to use Wayland.";
   };
@@ -112,15 +113,15 @@ in
               favorite-apps =
                 [ "org.gnome.Nautilus.desktop" ]
                 # FIX: references
-                # ++ optional config.khanelinix.programs.graphical.firefox.enable "firefox.desktop"
-                # ++ optional config.khanelinix.programs.graphical.vscode.enable "code.desktop"
-                ++ optional config.khanelinix.programs.terminal.emulators.foot.enable "foot.desktop"
-                ++ optional config.khanelinix.programs.terminal.emulators.kitty.enable "kitty.desktop"
+                # ++ optional config.${namespace}.programs.graphical.firefox.enable "firefox.desktop"
+                # ++ optional config.${namespace}.programs.graphical.vscode.enable "code.desktop"
+                ++ optional config.${namespace}.programs.terminal.emulators.foot.enable "foot.desktop"
+                ++ optional config.${namespace}.programs.terminal.emulators.kitty.enable "kitty.desktop"
                 ++ [ "org.gnome.Console.desktop" ]
                 # FIX: references
-                # ++ optional config.khanelinix.programs.graphical.logseq.enable "logseq.desktop"
-                ++ optional config.khanelinix.programs.graphical.apps.discord.enable "discord.desktop"
-                ++ optional config.khanelinix.programs.graphical.apps.steam.enable "steam.desktop";
+                # ++ optional config.${namespace}.programs.graphical.logseq.enable "logseq.desktop"
+                ++ optional config.${namespace}.programs.graphical.apps.discord.enable "discord.desktop"
+                ++ optional config.${namespace}.programs.graphical.apps.steam.enable "steam.desktop";
             };
 
             "org/gnome/desktop/background" = {
@@ -207,8 +208,8 @@ in
               menu-button-icon-image = 23;
 
               menu-button-terminal =
-                if config.khanelinix.desktop.addons.term.enable then
-                  getExe config.khanelinix.desktop.addons.term.pkg
+                if config.${namespace}.desktop.addons.term.enable then
+                  getExe config.${namespace}.desktop.addons.term.pkg
                 else
                   getExe pkgs.gnome.gnome-terminal;
             };
@@ -316,7 +317,7 @@ in
           lib.optional (cfg.monitors != null) "L+ ${gdmHome}/.config/monitors.xml - - - - ${cfg.monitors}"
         );
 
-      services.khanelinix-user-icon = {
+      services."${namespace}-user-icon" = {
         before = [ "display-manager.service" ];
         wantedBy = [ "display-manager.service" ];
 
@@ -328,8 +329,10 @@ in
 
         script = # bash
           ''
-            config_file=/var/lib/AccountsService/users/${config.khanelinix.user.name}
-            icon_file=/run/current-system/sw/share/khanelinix.icons/user/${config.khanelinix.user.name}/${config.khanelinix.user.icon.fileName}
+            config_file=/var/lib/AccountsService/users/${config.${namespace}.user.name}
+            icon_file=/run/current-system/sw/share/${namespace}.icons/user/${config.${namespace}.user.name}/${
+              config.${namespace}.user.icon.fileName
+            }
 
             if ! [ -d "$(dirname "$config_file")"]; then
               mkdir -p "$(dirname "$config_file")"

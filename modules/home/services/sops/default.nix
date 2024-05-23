@@ -1,12 +1,17 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf types;
-  inherit (lib.internal) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
-  cfg = config.khanelinix.services.sops;
+  cfg = config.${namespace}.services.sops;
 in
 {
-  options.khanelinix.services.sops = with types; {
+  options.${namespace}.services.sops = with types; {
     enable = mkBoolOpt false "Whether to enable sops.";
     defaultSopsFile = mkOpt path null "Default sops file.";
     sshKeyPaths = mkOpt (listOf path) [ ] "SSH Key paths to use.";
@@ -25,7 +30,7 @@ in
 
       secrets = {
         nix = {
-          sopsFile = ../../../../secrets/khaneliman/default.yaml;
+          sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
           path = "${config.home.homeDirectory}/.config/nix/nix.conf";
         };
       };

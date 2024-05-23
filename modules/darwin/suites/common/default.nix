@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) enabled;
+  inherit (lib.${namespace}) enabled;
 
-  cfg = config.khanelinix.suites.common;
+  cfg = config.${namespace}.suites.common;
 in
 {
-  imports = [ ../../../shared/suites/common/default.nix ];
+  imports = [ (lib.snowfall.fs.get-file "modules/shared/suites/common/default.nix") ];
 
   config = mkIf cfg.enable {
     programs.zsh.enable = true;
@@ -39,8 +40,8 @@ in
         haskellPackages.sfnt2woff
         intltool
         keychain
-        khanelinix.trace-symlink
-        khanelinix.trace-which
+        pkgs.${namespace}.trace-symlink
+        pkgs.${namespace}.trace-which
         mas
         moreutils
         ncdu

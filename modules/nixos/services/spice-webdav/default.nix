@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  namespace,
   ...
 }:
 let
@@ -11,12 +12,12 @@ let
     mkOption
     getExe'
     ;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.services.spice-webdav;
+  cfg = config.${namespace}.services.spice-webdav;
 in
 {
-  options.khanelinix.services.spice-webdav = with types; {
+  options.${namespace}.services.spice-webdav = with types; {
     enable = mkBoolOpt false "Whether or not to configure spice-webdav proxy support.";
     package = mkOption {
       default = pkgs.phodav;

@@ -2,13 +2,14 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf getExe;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.graphical.bars.sketchybar;
+  cfg = config.${namespace}.programs.graphical.bars.sketchybar;
 
   shellAliases = with pkgs; {
     push = # bash
@@ -16,7 +17,7 @@ let
   };
 in
 {
-  options.khanelinix.programs.graphical.bars.sketchybar = {
+  options.${namespace}.programs.graphical.bars.sketchybar = {
     enable = mkBoolOpt false "Whether to enable sketchybar in the desktop environment.";
   };
 

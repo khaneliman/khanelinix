@@ -1,12 +1,17 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.hardware.fingerprint;
+  cfg = config.${namespace}.hardware.fingerprint;
 in
 {
-  options.khanelinix.hardware.fingerprint = {
+  options.${namespace}.hardware.fingerprint = {
     enable = mkBoolOpt false "Whether or not to enable fingerprint support.";
   };
 

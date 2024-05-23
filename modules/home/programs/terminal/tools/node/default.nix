@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.internal) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
-  cfg = config.khanelinix.programs.terminal.tools.node;
+  cfg = config.${namespace}.programs.terminal.tools.node;
 in
 {
-  options.khanelinix.programs.terminal.tools.node = with types; {
+  options.${namespace}.programs.terminal.tools.node = with types; {
     enable = mkBoolOpt false "Whether or not to install and configure git";
     flyctl = {
       enable = mkBoolOpt true "Whether or not to install flyctl";

@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.terminal.tools.glxinfo;
+  cfg = config.${namespace}.programs.terminal.tools.glxinfo;
 in
 {
-  options.khanelinix.programs.terminal.tools.glxinfo = {
+  options.${namespace}.programs.terminal.tools.glxinfo = {
     enable = mkBoolOpt false "Whether or not to enable glxinfo.";
   };
 

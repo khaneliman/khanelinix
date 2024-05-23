@@ -1,11 +1,16 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf mkEnableOption;
 
-  cfg = config.khanelinix.security.usbguard;
+  cfg = config.${namespace}.security.usbguard;
 in
 {
-  options.khanelinix.security.usbguard = {
+  options.${namespace}.security.usbguard = {
     enable = mkEnableOption "default usbguard configuration";
   };
 

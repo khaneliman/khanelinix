@@ -1,12 +1,17 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.system.realtime;
+  cfg = config.${namespace}.system.realtime;
 in
 {
-  options.khanelinix.system.realtime = {
+  options.${namespace}.system.realtime = {
     enable = mkBoolOpt false "Whether or not to configure xkb.";
   };
 
@@ -16,7 +21,7 @@ in
     # tldr: realtime processes have higher priority than normal processes
     # and that's a good thing
     users = {
-      users."${config.khanelinix.user.name}".extraGroups = [ "realtime" ];
+      users."${config.${namespace}.user.name}".extraGroups = [ "realtime" ];
       groups.realtime = { };
     };
 

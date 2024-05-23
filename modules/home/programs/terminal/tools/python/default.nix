@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.terminal.tools.python;
+  cfg = config.${namespace}.programs.terminal.tools.python;
 in
 {
-  options.khanelinix.programs.terminal.tools.python = {
+  options.${namespace}.programs.terminal.tools.python = {
     enable = mkBoolOpt false "Whether or not to enable Python.";
   };
 

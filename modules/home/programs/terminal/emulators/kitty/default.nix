@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.internal) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
-  cfg = config.khanelinix.programs.terminal.emulators.kitty;
+  cfg = config.${namespace}.programs.terminal.emulators.kitty;
 in
 {
-  options.khanelinix.programs.terminal.emulators.kitty = with types; {
+  options.${namespace}.programs.terminal.emulators.kitty = with types; {
     enable = mkBoolOpt false "Whether to enable kitty.";
     font = mkOpt str "MonaspiceKr Nerd Font" "Font to use for kitty.";
     # TODO: use theme module

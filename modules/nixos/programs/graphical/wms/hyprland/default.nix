@@ -4,6 +4,7 @@
   lib,
   pkgs,
   system,
+  namespace,
   ...
 }:
 let
@@ -13,10 +14,10 @@ let
     mkIf
     types
     ;
-  inherit (lib.internal) mkBoolOpt mkOpt enabled;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt enabled;
   inherit (inputs) hyprland;
 
-  cfg = config.khanelinix.programs.graphical.wms.hyprland;
+  cfg = config.${namespace}.programs.graphical.wms.hyprland;
 
   programs = makeBinPath (
     with pkgs;
@@ -30,7 +31,7 @@ let
   );
 in
 {
-  options.khanelinix.programs.graphical.wms.hyprland = with types; {
+  options.${namespace}.programs.graphical.wms.hyprland = with types; {
     enable = mkBoolOpt false "Whether or not to enable Hyprland.";
     customConfigFiles =
       mkOpt attrs { }

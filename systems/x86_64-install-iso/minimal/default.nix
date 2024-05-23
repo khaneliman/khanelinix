@@ -1,7 +1,12 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkForce;
-  inherit (lib.internal) enabled;
+  inherit (lib.${namespace}) enabled;
 in
 {
   # `install-iso` adds wireless support that

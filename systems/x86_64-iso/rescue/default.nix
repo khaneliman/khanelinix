@@ -1,6 +1,11 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  namespace,
+  ...
+}:
 let
-  inherit (lib.internal) enabled;
+  inherit (lib.${namespace}) enabled;
 in
 {
   environment.systemPackages = with pkgs; [

@@ -2,6 +2,7 @@
   writeShellApplication,
   pkgs,
   lib,
+  namespace,
   ...
 }:
 writeShellApplication {
@@ -15,6 +16,6 @@ writeShellApplication {
 
   text = # bash
     ''
-      a=$(which "$1") && exec ${lib.getExe pkgs.khanelinix.trace-symlink} "$a"
+      a=$(which "$1") && exec ${lib.getExe pkgs.${namespace}.trace-symlink} "$a"
     '';
 }

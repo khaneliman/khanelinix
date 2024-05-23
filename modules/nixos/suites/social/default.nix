@@ -2,15 +2,16 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt enabled;
-  cfg = config.khanelinix.suites.social;
+  inherit (lib.${namespace}) mkBoolOpt enabled;
+  cfg = config.${namespace}.suites.social;
 in
 {
-  options.khanelinix.suites.social = {
+  options.${namespace}.suites.social = {
     enable = mkBoolOpt false "Whether or not to enable social configuration.";
   };
 

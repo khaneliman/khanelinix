@@ -34,7 +34,6 @@ mkShell {
           dotnet_8.sdk
         ]
       )
-      azure-cli
       dotnetbuildhelpers
       netcoredbg
       powershell
@@ -47,7 +46,10 @@ mkShell {
       mono
       msbuild
     ]
-    ++ lib.optionals pkgs.stdenv.isLinux [ bicep ];
+    ++ lib.optionals pkgs.stdenv.isLinux [
+      azure-cli
+      bicep
+    ];
 
   shellHook = ''
 

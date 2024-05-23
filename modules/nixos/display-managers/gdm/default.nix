@@ -2,17 +2,18 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) types mkIf getExe';
-  inherit (lib.internal) mkBoolOpt mkOpt stringAfter;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt stringAfter;
 
-  cfg = config.khanelinix.display-managers.gdm;
+  cfg = config.${namespace}.display-managers.gdm;
   gdmHome = config.users.users.gdm.home;
 in
 {
-  options.khanelinix.display-managers.gdm = with types; {
+  options.${namespace}.display-managers.gdm = with types; {
     enable = mkBoolOpt false "Whether or not to enable gdm.";
     autoSuspend = mkBoolOpt true "Whether or not to suspend the machine after inactivity.";
     defaultSession = mkOpt (nullOr str) null "The default session to use.";
@@ -43,14 +44,16 @@ in
       libinput.enable = true;
     };
 
-    systemd.services.khanelinix-user-icon = {
+    systemd.services."${namespace}-user-icon" = {
       before = [ "display-manager.service" ];
       wantedBy = [ "display-manager.service" ];
 
       script = # bash
         ''
-          config_file=/var/lib/AccountsService/users/${config.khanelinix.user.name}
-          icon_file=/run/current-system/sw/share/icons/user/${config.khanelinix.user.name}/${config.khanelinix.user.icon.fileName}
+          config_file=/var/lib/AccountsService/users/${config.${namespace}.user.name}
+          icon_file=/run/current-system/sw/share/icons/user/${config.${namespace}.user.name}/${
+            config.${namespace}.user.icon.fileName
+          }
 
           if ! [ -d "$(dirname "$config_file")" ]; then
             mkdir -p "$(dirname "$config_file")"
@@ -83,8 +86,8 @@ in
       stringAfter [ "users" ] # bash
         ''
           echo "Setting gdm permissions for user icon"
-          ${getExe' pkgs.acl "setfacl"} -m u:gdm:x /home/${config.khanelinix.user.name}
-          ${getExe' pkgs.acl "setfacl"} -m u:gdm:r /home/${config.khanelinix.user.name}/.face.icon || true
+          ${getExe' pkgs.acl "setfacl"} -m u:gdm:x /home/${config.${namespace}.user.name}
+          ${getExe' pkgs.acl "setfacl"} -m u:gdm:r /home/${config.${namespace}.user.name}/.face.icon || true
         '';
   };
 }

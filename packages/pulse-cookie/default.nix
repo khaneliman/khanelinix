@@ -51,5 +51,6 @@ python3.pkgs.buildPythonApplication rec {
     description = "wrapper around openconnect allowing user to log in through a webkit window for mfa";
     mainProgram = "get-pulse-cookie";
     license = licenses.gpl3;
+    platforms = platforms.linux;
   };
 }

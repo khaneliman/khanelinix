@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib)
     types
@@ -8,10 +13,10 @@ let
     mapAttrs
     ;
 
-  cfg = config.khanelinix.system.env;
+  cfg = config.${namespace}.system.env;
 in
 {
-  options.khanelinix.system.env =
+  options.${namespace}.system.env =
     with types;
     mkOption {
       apply = mapAttrs (_n: v: if isList v then concatMapStringsSep ":" toString v else (toString v));

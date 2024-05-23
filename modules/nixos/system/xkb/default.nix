@@ -1,12 +1,17 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.system.xkb;
+  cfg = config.${namespace}.system.xkb;
 in
 {
-  options.khanelinix.system.xkb = {
+  options.${namespace}.system.xkb = {
     enable = mkBoolOpt false "Whether or not to configure xkb.";
   };
 

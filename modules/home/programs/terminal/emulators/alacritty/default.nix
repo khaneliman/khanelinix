@@ -2,13 +2,14 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.internal) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
-  cfg = config.khanelinix.programs.terminal.emulators.alacritty;
+  cfg = config.${namespace}.programs.terminal.emulators.alacritty;
 
   macchiato = {
     primary = {
@@ -118,7 +119,7 @@ let
   };
 in
 {
-  options.khanelinix.programs.terminal.emulators.alacritty = with types; {
+  options.${namespace}.programs.terminal.emulators.alacritty = with types; {
     enable = mkBoolOpt false "Whether to enable alacritty.";
     # TODO: use theme module
     theme = mkOpt attr macchiato "Theme to use for alacritty.";

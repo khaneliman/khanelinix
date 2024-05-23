@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.suites.common;
+  cfg = config.${namespace}.suites.common;
 in
 {
-  options.khanelinix.suites.common = {
+  options.${namespace}.suites.common = {
     enable = mkBoolOpt false "Whether or not to enable common configuration.";
   };
 

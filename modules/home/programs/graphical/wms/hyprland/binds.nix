@@ -2,12 +2,13 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf getExe;
 
-  cfg = config.khanelinix.programs.graphical.wms.hyprland;
+  cfg = config.${namespace}.programs.graphical.wms.hyprland;
 in
 {
   config = mkIf cfg.enable {

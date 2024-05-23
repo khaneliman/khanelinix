@@ -2,19 +2,20 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf getExe;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
   sketchybar = getExe config.services.sketchybar.package;
   yabai = getExe config.services.yabai.package;
 
-  cfg = config.khanelinix.desktop.addons.skhd;
+  cfg = config.${namespace}.desktop.addons.skhd;
 in
 {
-  options.khanelinix.desktop.addons.skhd = {
+  options.${namespace}.desktop.addons.skhd = {
     enable = mkBoolOpt false "Whether or not to enable skhd.";
   };
 

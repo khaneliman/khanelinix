@@ -1,7 +1,7 @@
-{ lib, ... }:
+{ lib, namespace, ... }:
 let
   inherit (lib) mkForce;
-  inherit (lib.internal) enabled disabled;
+  inherit (lib.${namespace}) enabled disabled;
 in
 {
   imports = [ ./hardware.nix ];
@@ -25,7 +25,7 @@ in
       sops = {
         enable = true;
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-        defaultSopsFile = ../../../secrets/CORE/default.yaml;
+        defaultSopsFile = lib.snowfall.fs.get-file "secrets/CORE/default.yaml";
       };
     };
 

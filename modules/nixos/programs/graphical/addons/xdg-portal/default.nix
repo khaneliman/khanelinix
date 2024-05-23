@@ -4,17 +4,18 @@
   lib,
   pkgs,
   system,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
   inherit (inputs) hyprland;
 
-  cfg = config.khanelinix.programs.graphical.addons.xdg-portal;
+  cfg = config.${namespace}.programs.graphical.addons.xdg-portal;
 in
 {
-  options.khanelinix.programs.graphical.addons.xdg-portal = {
+  options.${namespace}.programs.graphical.addons.xdg-portal = {
     enable = mkBoolOpt false "Whether or not to add support for xdg portal.";
   };
 
@@ -26,9 +27,9 @@ in
           common =
             let
               portal =
-                if config.khanelinix.programs.graphical.wms.hyprland.enable == "Hyprland" then
+                if config.${namespace}.programs.graphical.wms.hyprland.enable == "Hyprland" then
                   "hyprland"
-                else if config.khanelinix.programs.graphical.wms.sway.enable == "sway" then
+                else if config.${namespace}.programs.graphical.wms.sway.enable == "sway" then
                   "wlr"
                 else
                   "gtk";
@@ -48,8 +49,8 @@ in
         extraPortals =
           with pkgs;
           [ xdg-desktop-portal-gtk ]
-          ++ (lib.optional config.khanelinix.programs.graphical.wms.sway.enable xdg-desktop-portal-wlr)
-          ++ (lib.optional config.khanelinix.programs.graphical.wms.hyprland.enable
+          ++ (lib.optional config.${namespace}.programs.graphical.wms.sway.enable xdg-desktop-portal-wlr)
+          ++ (lib.optional config.${namespace}.programs.graphical.wms.hyprland.enable
             hyprland.packages.${system}.xdg-desktop-portal-hyprland
           );
         # xdgOpenUsePortal = true;

@@ -1,14 +1,19 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkEnableOption mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.terminal.editors.neovim;
+  cfg = config.${namespace}.programs.terminal.editors.neovim;
 in
 {
-  imports = lib.snowfall.fs.get-non-default-nix-files ./.;
+  imports = lib.snowfall.fs.get-non-default-nix-files-recursive ./.;
 
-  options.khanelinix.programs.terminal.editors.neovim = {
+  options.${namespace}.programs.terminal.editors.neovim = {
     enable = mkEnableOption "neovim";
     default = mkBoolOpt true "Whether to set Neovim as the session EDITOR";
   };
@@ -39,7 +44,7 @@ in
 
     sops.secrets = {
       wakatime = {
-        sopsFile = ../../../../../../secrets/khaneliman/default.yaml;
+        sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.wakatime.cfg";
       };
     };

@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf getExe;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.graphical.apps.discord;
+  cfg = config.${namespace}.programs.graphical.apps.discord;
 in
 {
-  options.khanelinix.programs.graphical.apps.discord = {
+  options.${namespace}.programs.graphical.apps.discord = {
     enable = mkBoolOpt false "Whether or not to enable Discord.";
     canary.enable = mkBoolOpt false "Whether or not to enable Discord Canary.";
     firefox.enable = mkBoolOpt false "Whether or not to enable the Firefox version of Discord.";
@@ -20,8 +21,8 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages =
       lib.optional cfg.enable pkgs.discord
-      ++ lib.optional cfg.canary.enable pkgs.khanelinix.discord
-      ++ lib.optional cfg.firefox.enable pkgs.khanelinix.discord-firefox;
+      ++ lib.optional cfg.canary.enable pkgs.${namespace}.discord
+      ++ lib.optional cfg.firefox.enable pkgs.${namespace}.discord-firefox;
 
     system.userActivationScripts = {
       postInstall = # bash

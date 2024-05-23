@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
@@ -11,9 +12,9 @@ let
     mkOption
     types
     ;
-  inherit (lib.internal) capitalize;
+  inherit (lib.${namespace}) capitalize;
 
-  cfg = config.khanelinix.theme.catppuccin;
+  cfg = config.${namespace}.theme.catppuccin;
 
   catppuccinAccents = [
     "rosewater"
@@ -40,7 +41,7 @@ let
   ];
 in
 {
-  options.khanelinix.theme.catppuccin = {
+  options.${namespace}.theme.catppuccin = {
     enable = mkEnableOption "Enable catppuccin theme for applications.";
 
     accent = mkOption {
@@ -123,12 +124,12 @@ in
 
     home = mkIf pkgs.stdenv.isLinux {
       pointerCursor = {
-        inherit (config.khanelinix.theme.gtk.cursor) name package size;
+        inherit (config.${namespace}.theme.gtk.cursor) name package size;
         x11.enable = true;
       };
 
       sessionVariables = {
-        CURSOR_THEME = config.khanelinix.theme.gtk.cursor.name;
+        CURSOR_THEME = config.${namespace}.theme.gtk.cursor.name;
       };
     };
 
@@ -158,7 +159,7 @@ in
 
       style = {
         name = "qt6ct-style";
-        inherit (config.khanelinix.theme.qt.theme) package;
+        inherit (config.${namespace}.theme.qt.theme) package;
       };
     };
 
@@ -259,7 +260,7 @@ in
         yazi.theme = lib.mkMerge [
           (import ./yazi/filetype.nix { })
           (import ./yazi/icons.nix { })
-          (import ./yazi/manager.nix { inherit config lib; })
+          (import ./yazi/manager.nix { inherit config lib namespace; })
           (import ./yazi/status.nix { })
           (import ./yazi/theme.nix { })
         ];

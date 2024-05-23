@@ -2,11 +2,12 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) getExe;
-  inherit (lib.internal) enabled;
+  inherit (lib.${namespace}) enabled;
 in
 {
   khanelinix = {
@@ -44,7 +45,7 @@ in
             enable = true;
             appendConfig = # bash
               ''
-                exec-once = hyprctl setcursor ${config.khanelinix.theme.gtk.cursor.name} 32
+                exec-once = hyprctl setcursor ${config.${namespace}.theme.gtk.cursor.name} 32
               '';
 
             prependConfig = # bash
@@ -100,23 +101,23 @@ in
         monitors = [
           {
             name = "DP-3";
-            wallpaper = "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat_pacman.png";
+            wallpaper = "${pkgs.${namespace}.wallpapers}/share/wallpapers/cat_pacman.png";
           }
           {
             name = "DP-1";
-            wallpaper = "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat-sound.png";
+            wallpaper = "${pkgs.${namespace}.wallpapers}/share/wallpapers/cat-sound.png";
           }
         ];
 
         wallpapers = [
-          "${pkgs.khanelinix.wallpapers}/share/wallpapers/buttons.png"
-          "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat_pacman.png"
-          "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat-sound.png"
-          "${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png"
-          "${pkgs.khanelinix.wallpapers}/share/wallpapers/hashtags-black.png"
-          "${pkgs.khanelinix.wallpapers}/share/wallpapers/hashtags-new.png"
-          "${pkgs.khanelinix.wallpapers}/share/wallpapers/hearts.png"
-          "${pkgs.khanelinix.wallpapers}/share/wallpapers/tetris.png"
+          "${pkgs.${namespace}.wallpapers}/share/wallpapers/buttons.png"
+          "${pkgs.${namespace}.wallpapers}/share/wallpapers/cat_pacman.png"
+          "${pkgs.${namespace}.wallpapers}/share/wallpapers/cat-sound.png"
+          "${pkgs.${namespace}.wallpapers}/share/wallpapers/flatppuccin_macchiato.png"
+          "${pkgs.${namespace}.wallpapers}/share/wallpapers/hashtags-black.png"
+          "${pkgs.${namespace}.wallpapers}/share/wallpapers/hashtags-new.png"
+          "${pkgs.${namespace}.wallpapers}/share/wallpapers/hearts.png"
+          "${pkgs.${namespace}.wallpapers}/share/wallpapers/tetris.png"
         ];
       };
 
@@ -128,7 +129,7 @@ in
 
       sops = {
         enable = true;
-        defaultSopsFile = ../../../secrets/khanelinix/khaneliman/default.yaml;
+        defaultSopsFile = lib.snowfall.fs.get-file "secrets/khanelinix/khaneliman/default.yaml";
         sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
       };
     };

@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf types;
-  inherit (lib.internal) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
-  cfg = config.khanelinix.desktop.addons.sketchybar;
+  cfg = config.${namespace}.desktop.addons.sketchybar;
 in
 {
-  options.khanelinix.desktop.addons.sketchybar = {
+  options.${namespace}.desktop.addons.sketchybar = {
     enable = mkBoolOpt false "Whether or not to enable sketchybar.";
     logFile = mkOpt types.str "/var/tmp/sketchybar.log" "Filepath of log output";
   };
@@ -40,8 +41,8 @@ in
         jq
         lua5_4
         wttrbar
-        pkgs.khanelinix.sketchyhelper
-        pkgs.khanelinix.dynamic-island-helper
+        pkgs.${namespace}.sketchyhelper
+        pkgs.${namespace}.dynamic-island-helper
       ];
 
       # TODO: need to update nixpkg to support complex configurations

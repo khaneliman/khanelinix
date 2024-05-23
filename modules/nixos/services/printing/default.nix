@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.services.printing;
+  cfg = config.${namespace}.services.printing;
 in
 {
-  options.khanelinix.services.printing = {
+  options.${namespace}.services.printing = {
     enable = mkBoolOpt false "Whether or not to configure printing support.";
   };
 

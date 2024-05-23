@@ -1,12 +1,17 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkEnableOption mkIf;
-  inherit (lib.internal) enabled;
+  inherit (lib.${namespace}) enabled;
 
-  cfg = config.khanelinix.programs.terminal.tools.home-manager;
+  cfg = config.${namespace}.programs.terminal.tools.home-manager;
 in
 {
-  options.khanelinix.programs.terminal.tools.home-manager = {
+  options.${namespace}.programs.terminal.tools.home-manager = {
     enable = mkEnableOption "home-manager";
   };
 

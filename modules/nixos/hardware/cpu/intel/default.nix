@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.hardware.cpu.intel;
+  cfg = config.${namespace}.hardware.cpu.intel;
 in
 {
-  options.khanelinix.hardware.cpu.intel = {
+  options.${namespace}.hardware.cpu.intel = {
     enable = mkBoolOpt false "Whether or not to enable support for intel cpu.";
   };
 

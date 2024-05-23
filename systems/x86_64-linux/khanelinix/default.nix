@@ -1,6 +1,11 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
-  inherit (lib.internal) enabled;
+  inherit (lib.${namespace}) enabled;
 in
 {
   imports = [
@@ -119,7 +124,7 @@ in
         # TODO: make part of ssh config proper
         extraConfig = ''
           Host server
-            User ${config.khanelinix.user.name}
+            User ${config.${namespace}.user.name}
             Hostname austinserver.local
         '';
       };
@@ -132,7 +137,7 @@ in
             browseable = true;
             comment = "Home Public folder";
             only-owner-editable = false;
-            path = "/home/${config.khanelinix.user.name}/Public/";
+            path = "/home/${config.${namespace}.user.name}/Public/";
             public = true;
             read-only = false;
           };
@@ -156,7 +161,7 @@ in
       sops = {
         enable = true;
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-        defaultSopsFile = ../../../secrets/khanelinix/default.yaml;
+        defaultSopsFile = lib.snowfall.fs.get-file "secrets/khanelinix/default.yaml";
       };
       sudo-rs = enabled;
     };

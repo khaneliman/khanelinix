@@ -2,22 +2,23 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.graphical.editors.vscode;
+  cfg = config.${namespace}.programs.graphical.editors.vscode;
 in
 {
-  options.khanelinix.programs.graphical.editors.vscode = {
+  options.${namespace}.programs.graphical.editors.vscode = {
     enable = mkBoolOpt false "Whether or not to enable vscode.";
   };
 
   config = mkIf cfg.enable {
     home.file = {
-      ".vscode/argv.json" = mkIf config.khanelinix.services.keyring.enable {
+      ".vscode/argv.json" = mkIf config.${namespace}.services.keyring.enable {
         text = builtins.toJSON {
           "enable-crash-reporter" = true;
           "crash-reporter-id" = "53a6c113-87c4-4f20-9451-dd67057ddb95";
@@ -194,7 +195,7 @@ in
 
     sops.secrets = {
       wakatime = {
-        sopsFile = ../../../../../../secrets/khaneliman/default.yaml;
+        sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.wakatime.cfg";
       };
     };

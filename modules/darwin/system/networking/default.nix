@@ -1,12 +1,17 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.system.networking;
+  cfg = config.${namespace}.system.networking;
 in
 {
-  options.khanelinix.system.networking = {
+  options.${namespace}.system.networking = {
     enable = mkBoolOpt false "Whether or not to enable networking support";
   };
 

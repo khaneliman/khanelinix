@@ -1,12 +1,17 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.terminal.shell.bash;
+  cfg = config.${namespace}.programs.terminal.shell.bash;
 in
 {
-  options.khanelinix.programs.terminal.shell.bash = {
+  options.${namespace}.programs.terminal.shell.bash = {
     enable = mkBoolOpt false "Whether to enable bash.";
   };
 

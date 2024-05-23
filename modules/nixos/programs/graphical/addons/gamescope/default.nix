@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) getExe mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.graphical.addons.gamescope;
+  cfg = config.${namespace}.programs.graphical.addons.gamescope;
 in
 {
-  options.khanelinix.programs.graphical.addons.gamescope = {
+  options.${namespace}.programs.graphical.addons.gamescope = {
     enable = mkBoolOpt false "Whether or not to enable gamescope.";
   };
 

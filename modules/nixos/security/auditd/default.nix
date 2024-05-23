@@ -1,11 +1,16 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf mkEnableOption;
 
-  cfg = config.khanelinix.security.auditd;
+  cfg = config.${namespace}.security.auditd;
 in
 {
-  options.khanelinix.security.auditd = {
+  options.${namespace}.security.auditd = {
     enable = mkEnableOption "default auditd configuration";
   };
 

@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.suites.vm;
+  cfg = config.${namespace}.suites.vm;
 in
 {
-  options.khanelinix.suites.vm = {
+  options.${namespace}.suites.vm = {
     enable = mkBoolOpt false "Whether or not to enable vm.";
   };
 

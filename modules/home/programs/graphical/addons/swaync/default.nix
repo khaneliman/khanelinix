@@ -5,14 +5,15 @@
   osConfig,
   pkgs,
   system,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
   inherit (inputs) hyprland-contrib;
 
-  cfg = config.khanelinix.programs.graphical.addons.swaync;
+  cfg = config.${namespace}.programs.graphical.addons.swaync;
 
   dependencies = with pkgs; [
     bash
@@ -31,7 +32,7 @@ let
   style = import ./style.nix;
 in
 {
-  options.khanelinix.programs.graphical.addons.swaync = {
+  options.${namespace}.programs.graphical.addons.swaync = {
     enable = mkBoolOpt false "Whether to enable swaync in the desktop environment.";
   };
 

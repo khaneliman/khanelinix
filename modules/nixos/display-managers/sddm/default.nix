@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf getExe' stringAfter;
-  inherit (lib.internal) mkBoolOpt enabled;
+  inherit (lib.${namespace}) mkBoolOpt enabled;
 
-  cfg = config.khanelinix.display-managers.sddm;
+  cfg = config.${namespace}.display-managers.sddm;
 in
 {
-  options.khanelinix.display-managers.sddm = {
+  options.${namespace}.display-managers.sddm = {
     enable = mkBoolOpt false "Whether or not to enable sddm.";
   };
 
@@ -35,8 +36,8 @@ in
       stringAfter [ "users" ] # bash
         ''
           echo "Setting sddm permissions for user icon"
-          ${getExe' pkgs.acl "setfacl"} -m u:sddm:x /home/${config.khanelinix.user.name}
-          ${getExe' pkgs.acl "setfacl"} -m u:sddm:r /home/${config.khanelinix.user.name}/.face.icon || true
+          ${getExe' pkgs.acl "setfacl"} -m u:sddm:x /home/${config.${namespace}.user.name}
+          ${getExe' pkgs.acl "setfacl"} -m u:sddm:r /home/${config.${namespace}.user.name}/.face.icon || true
         '';
   };
 }

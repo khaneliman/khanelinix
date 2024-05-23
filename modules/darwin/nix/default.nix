@@ -1,11 +1,16 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf mkForce;
 
-  cfg = config.khanelinix.nix;
+  cfg = config.${namespace}.nix;
 in
 {
-  imports = [ ../../shared/nix/default.nix ];
+  imports = [ (lib.snowfall.fs.get-file "modules/shared/nix/default.nix") ];
 
   config = mkIf cfg.enable {
     nix = {
@@ -22,7 +27,7 @@ in
           Hour = 3;
         };
 
-        user = config.khanelinix.user.name;
+        user = config.${namespace}.user.name;
       };
 
       optimise = {
@@ -31,7 +36,7 @@ in
           Hour = 4;
         };
 
-        user = config.khanelinix.user.name;
+        user = config.${namespace}.user.name;
       };
 
       # NOTE: not sure if i saw any benefits changing this

@@ -1,12 +1,17 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.terminal.tools.lazygit;
+  cfg = config.${namespace}.programs.terminal.tools.lazygit;
 in
 {
-  options.khanelinix.programs.terminal.tools.lazygit = {
+  options.${namespace}.programs.terminal.tools.lazygit = {
     enable = mkBoolOpt false "Whether or not to enable lazygit.";
   };
 
@@ -17,7 +22,7 @@ in
       settings = {
         gui = {
           authorColors = {
-            "${config.khanelinix.user.fullName}" = "#c6a0f6";
+            "${config.${namespace}.user.fullName}" = "#c6a0f6";
             "dependabot[bot]" = "#eed49f";
           };
           branchColors = {

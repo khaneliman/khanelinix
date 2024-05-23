@@ -1,13 +1,18 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   inherit (lib) mkEnableOption mkIf mkDefault;
-  inherit (lib.internal) mkOpt;
+  inherit (lib.${namespace}) mkOpt;
   inherit (lib.types) listOf str;
 
-  cfg = config.khanelinix.hardware.storage.zfs;
+  cfg = config.${namespace}.hardware.storage.zfs;
 in
 {
-  options.khanelinix.hardware.storage.zfs = {
+  options.${namespace}.hardware.storage.zfs = {
     enable = mkEnableOption "ZFS support";
     auto-snapshot = {
       enable = mkEnableOption "ZFS auto snapshotting";

@@ -2,17 +2,18 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.system.boot;
-  themeCfg = config.khanelinix.theme;
+  cfg = config.${namespace}.system.boot;
+  themeCfg = config.${namespace}.theme;
 in
 {
-  options.khanelinix.system.boot = {
+  options.${namespace}.system.boot = {
     enable = mkBoolOpt false "Whether or not to enable booting.";
     plymouth = mkBoolOpt false "Whether or not to enable plymouth boot splash.";
     secureBoot = mkBoolOpt false "Whether or not to enable secure boot.";

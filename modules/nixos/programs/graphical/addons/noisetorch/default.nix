@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
@@ -13,10 +14,10 @@ let
     types
     ;
 
-  cfg = config.khanelinix.programs.graphical.addons.noisetorch;
+  cfg = config.${namespace}.programs.graphical.addons.noisetorch;
 in
 {
-  options.khanelinix.programs.graphical.addons.noisetorch = {
+  options.${namespace}.programs.graphical.addons.noisetorch = {
     enable = mkEnableOption "noisetorch service";
     package = mkOption {
       type = types.package;

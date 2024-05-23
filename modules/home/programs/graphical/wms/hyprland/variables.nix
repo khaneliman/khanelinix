@@ -4,6 +4,7 @@
   lib,
   pkgs,
   system,
+  namespace,
   ...
 }:
 let
@@ -22,9 +23,9 @@ let
       ''
   );
 
-  screenshot-path = "/home/${config.khanelinix.user.name}/Pictures/screenshots";
+  screenshot-path = "/home/${config.${namespace}.user.name}/Pictures/screenshots";
 
-  cfg = config.khanelinix.programs.graphical.wms.hyprland;
+  cfg = config.${namespace}.programs.graphical.wms.hyprland;
 in
 {
   config = mkIf cfg.enable {
@@ -152,11 +153,11 @@ in
         "$looking-glass" = "${getExe pkgs.looking-glass-client}";
         "$screen-locker" = "${getExe config.programs.hyprlock.package}";
         "$window-inspector" = "${getExe hyprland-contrib.packages.${system}.hyprprop}";
-        "$screen-recorder" = "${getExe pkgs.khanelinix.record_screen}";
+        "$screen-recorder" = "${getExe pkgs.${namespace}.record_screen}";
 
         # screenshot commands
         "$notify-screenshot" = ''${getExe pkgs.libnotify} --icon "$file" "Screenshot Saved"'';
-        "$screenshot-path" = "/home/${config.khanelinix.user.name}/Pictures/screenshots";
+        "$screenshot-path" = "/home/${config.${namespace}.user.name}/Pictures/screenshots";
         "$grimblast_area_file" = ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --freeze --notify save area "$file"'';
         "$grimblast_active_file" = ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --notify save active "$file"'';
         "$grimblast_screen_file" = ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --notify save screen "$file"'';

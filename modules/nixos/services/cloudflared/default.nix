@@ -2,16 +2,17 @@
   lib,
   pkgs,
   config,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.services.cloudflared;
+  cfg = config.${namespace}.services.cloudflared;
 in
 {
-  options.khanelinix.services.cloudflared = {
+  options.${namespace}.services.cloudflared = {
     enable = mkBoolOpt false "Whether or not to configure cloudflared";
   };
 
@@ -20,7 +21,7 @@ in
     # assertions = [
     #   {
     #     assertion = cfg.autoconnect.enable -> cfg.autoconnect.key != "";
-    #     message = "khanelinix.services.cloudflared.autoconnect.key must be set";
+    #     message = "${namespace}.services.cloudflared.autoconnect.key must be set";
     #   }
     # ];
 

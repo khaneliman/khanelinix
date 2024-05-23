@@ -1,6 +1,6 @@
-{ lib, ... }:
+{ lib, namespace, ... }:
 let
-  inherit (lib.internal) enabled;
+  inherit (lib.${namespace}) enabled;
 in
 {
   imports = [ ./hardware.nix ];

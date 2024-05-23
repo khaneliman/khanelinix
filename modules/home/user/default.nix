@@ -4,6 +4,7 @@
   lib,
   pkgs,
   system,
+  namespace,
   ...
 }:
 let
@@ -15,10 +16,10 @@ let
     getExe
     getExe'
     ;
-  inherit (lib.internal) mkOpt;
+  inherit (lib.${namespace}) mkOpt;
   inherit (inputs) snowfall-flake;
 
-  cfg = config.khanelinix.user;
+  cfg = config.${namespace}.user;
 
   home-directory =
     if cfg.name == null then
@@ -46,7 +47,7 @@ let
   defaultIconFileName = "profile.png";
 in
 {
-  options.khanelinix.user = {
+  options.${namespace}.user = {
     enable = mkOpt types.bool false "Whether to configure the user account.";
     email = mkOpt types.str "khaneliman12@gmail.com" "The email of the user.";
     fullName = mkOpt types.str "Austin Horstman" "The full name of the user.";
@@ -60,11 +61,11 @@ in
       assertions = [
         {
           assertion = cfg.name != null;
-          message = "khanelinix.user.name must be set";
+          message = "${namespace}.user.name must be set";
         }
         {
           assertion = cfg.home != null;
-          message = "khanelinix.user.home must be set";
+          message = "${namespace}.user.home must be set";
         }
       ];
 

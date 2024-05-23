@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.security.sops;
+  cfg = config.${namespace}.security.sops;
 in
 {
-  options.khanelinix.security.sops = {
+  options.${namespace}.security.sops = {
     enable = mkBoolOpt false "Whether to enable sops.";
   };
 

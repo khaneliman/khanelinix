@@ -2,16 +2,17 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.tools.qmk;
+  cfg = config.${namespace}.tools.qmk;
 in
 {
-  options.khanelinix.tools.qmk = {
+  options.${namespace}.tools.qmk = {
     enable = mkBoolOpt false "Whether or not to enable QMK";
   };
 

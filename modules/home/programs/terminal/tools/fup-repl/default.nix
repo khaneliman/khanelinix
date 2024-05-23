@@ -2,20 +2,21 @@
   lib,
   pkgs,
   config,
+  namespace,
   ...
 }:
 let
   inherit (lib) mkIf getExe';
-  inherit (lib.internal) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.terminal.tools.fup-repl;
+  cfg = config.${namespace}.programs.terminal.tools.fup-repl;
 
   fup-repl = pkgs.writeShellScriptBin "fup-repl" ''
     ${getExe' pkgs.fup-repl "repl"} ''${@}
   '';
 in
 {
-  options.khanelinix.programs.terminal.tools.fup-repl = {
+  options.${namespace}.programs.terminal.tools.fup-repl = {
     enable = mkBoolOpt false "Whether to enable fup-repl or not";
   };
 
