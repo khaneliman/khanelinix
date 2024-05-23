@@ -18,7 +18,6 @@ in
       appimage-run
       clac
       feh
-      jq
       khanelinix.trace-symlink
       khanelinix.trace-which
       ncdu

@@ -60,6 +60,7 @@ in
             fup-repl = enabled;
             git = enabled;
             glxinfo.enable = pkgs.stdenv.isLinux;
+            jq = enabled;
             lsd = enabled;
             oh-my-posh = enabled;
             ripgrep = enabled;
