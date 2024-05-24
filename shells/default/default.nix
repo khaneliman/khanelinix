@@ -26,11 +26,11 @@ mkShell {
     snowfall-flake.packages.${system}.flake
 
     # Adds all the packages required for the pre-commit checks
-    inputs.self.checks.${system}.pre-commit-check.enabledPackages
+    inputs.self.checks.${system}.pre-commit-hooks.enabledPackages
   ];
 
   shellHook = ''
-    ${inputs.self.checks.${system}.pre-commit-check.shellHook}
+    ${inputs.self.checks.${system}.pre-commit-hooks.shellHook}
     echo 🔨 Welcome to ${namespace}
 
 
