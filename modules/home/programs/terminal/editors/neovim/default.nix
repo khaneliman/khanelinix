@@ -41,12 +41,5 @@ in
 
       colorschemes.catppuccin.enable = true;
     };
-
-    sops.secrets = {
-      wakatime = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
-        path = "${config.home.homeDirectory}/.wakatime.cfg";
-      };
-    };
   };
 }
