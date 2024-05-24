@@ -11,7 +11,7 @@ let
   cfg = config.${namespace}.system.fonts;
 in
 {
-  imports = [ ../../../shared/system/fonts/default.nix ];
+  imports = [ (lib.snowfall.fs.get-file "modules/shared/system/fonts/default.nix") ];
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
