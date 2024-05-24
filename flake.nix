@@ -148,7 +148,7 @@
   outputs =
     inputs:
     let
-      inherit (inputs) deploy-rs snowfall-lib;
+      inherit (inputs) snowfall-lib;
 
       lib = snowfall-lib.mkLib {
         inherit inputs;
@@ -201,10 +201,6 @@
       };
 
       deploy = lib.mkDeploy { inherit (inputs) self; };
-
-      checks = builtins.mapAttrs (
-        _system: deploy-lib: deploy-lib.deployChecks inputs.self.deploy
-      ) deploy-rs.lib;
 
       outputs-builder = channels: { formatter = channels.nixpkgs.nixfmt-rfc-style; };
     };
