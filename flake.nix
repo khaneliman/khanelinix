@@ -170,7 +170,7 @@
         allowUnfree = true;
 
         # TODO: cleanup when available
-        permittedInsecurePackages = [ "freeimage-unstable-2021-11-01" ];
+        permittedInsecurePackages = [ ];
       };
 
       overlays = with inputs; [
