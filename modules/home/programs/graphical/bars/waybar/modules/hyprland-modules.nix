@@ -65,6 +65,7 @@ in
       "class<org.telegram.desktop>" = "";
       "class<.pitivi-wrapped>" = "󱄢";
       "class<steam>" = "";
+      "title<Steam>" = "";
       "class<thunderbird>" = "";
       "class<virt-manager>" = "󰢹";
       "class<vlc>" = "󰕼";
