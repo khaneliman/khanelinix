@@ -18,10 +18,8 @@ in
   config = mkIf cfg.enable {
     homebrew = {
       casks = [
-        "authy"
         "bitwarden"
         "calibre"
-        "grammarly"
         "libreoffice"
         "meetingbar"
         "obsidian"
