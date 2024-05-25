@@ -32,12 +32,6 @@ in
     ];
 
     homebrew = {
-      brews = [
-        "brew-cask-completion"
-        "gh"
-        "angular-cli"
-      ];
-
       casks = [
         "cutter"
         "docker"
