@@ -34,17 +34,18 @@ mkShell {
           dotnet_8.sdk
         ]
       )
-      dotnetbuildhelpers
-      netcoredbg
-      powershell
-      vimPlugins.neotest-dotnet
-      vscode-extensions.ms-dotnettools.csharp
-      omnisharp-roslyn
-      roslyn
-      roslyn-ls
       csharp-ls
+      dotnetbuildhelpers
+      fsautocomplete
       mono
       msbuild
+      netcoredbg
+      omnisharp-roslyn
+      powershell
+      roslyn
+      roslyn-ls
+      vimPlugins.neotest-dotnet
+      vscode-extensions.ms-dotnettools.csharp
     ]
     ++ lib.optionals pkgs.stdenv.isLinux [
       azure-cli
