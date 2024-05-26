@@ -89,8 +89,7 @@ in
         {
           mode = "n";
           key = "<leader>fR";
-          lua = true;
-          action = # lua
+          action.__raw = # lua
             ''
               function()
                 require('telescope').extensions.refactoring.refactors()

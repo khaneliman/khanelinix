@@ -42,7 +42,7 @@ in
 
           extra = [
             {
-              action = # lua
+              action.__raw = # lua
                 ''
                   function()
                     vim.lsp.buf.format({
@@ -54,7 +54,6 @@ in
                     })
                   end
                 '';
-              lua = true;
               mode = "v";
               key = "<leader>lf";
               options = {

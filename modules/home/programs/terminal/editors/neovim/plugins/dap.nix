@@ -176,8 +176,7 @@ in
       {
         mode = "n";
         key = "<leader>dE";
-        lua = true;
-        action = # lua
+        action.__raw = # lua
           ''
             function()
               vim.ui.input({ prompt = "Expression: " }, function(expr)
@@ -193,8 +192,7 @@ in
       {
         mode = "n";
         key = "<leader>du";
-        lua = true;
-        action = # lua
+        action.__raw = # lua
           ''
             function() require("dapui").toggle() end
           '';
@@ -206,8 +204,7 @@ in
       {
         mode = "n";
         key = "<leader>dh";
-        lua = true;
-        action = # lua
+        action.__raw = # lua
           ''
             function() require("dap.ui.widgets").hover() end
           '';
@@ -219,8 +216,7 @@ in
       {
         mode = "v";
         key = "<leader>dE";
-        lua = true;
-        action = # lua
+        action.__raw = # lua
           ''
             function() require("dapui").eval() end
           '';

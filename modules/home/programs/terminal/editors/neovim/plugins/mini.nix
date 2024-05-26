@@ -70,8 +70,7 @@ _: {
       {
         mode = "n";
         key = "<leader>um";
-        lua = true;
-        action = # lua
+        action.__raw = # lua
           "MiniMap.toggle";
         options = {
           desc = "Toggle MiniMap";
@@ -81,8 +80,7 @@ _: {
       {
         mode = "n";
         key = "<leader>c";
-        lua = true;
-        action = # lua
+        action.__raw = # lua
           ''require("mini.bufremove").delete'';
         options = {
           desc = "Close buffer";
@@ -92,8 +90,7 @@ _: {
       {
         mode = "n";
         key = "<C-w>";
-        lua = true;
-        action = # lua
+        action.__raw = # lua
           ''require("mini.bufremove").delete'';
         options = {
           desc = "Close buffer";
@@ -103,7 +100,7 @@ _: {
       {
         mode = "n";
         key = "<leader>bc";
-        action = # lua
+        action.__raw = # lua
           ''
             function ()
               local current = vim.api.nvim_get_current_buf()
@@ -121,7 +118,6 @@ _: {
               end
             end
           '';
-        lua = true;
         options = {
           desc = "Close all buffers but current";
         };

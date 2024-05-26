@@ -21,7 +21,6 @@
               {
                 mode = "n";
                 inherit action key;
-                lua = attrs.lua or false;
                 options = attrs.options or { };
               }
             )
@@ -190,7 +189,7 @@
               };
 
               "<leader>ud" = {
-                action = # lua
+                action.__raw = # lua
                   ''
                     function ()
                       vim.b.disable_diagnostics = not vim.b.disable_diagnostics
@@ -201,14 +200,13 @@
                       end
                       vim.notify(string.format("Buffer Diagnostics %s", bool2str(not vim.b.disable_diagnostics), "info"))
                     end'';
-                lua = true;
                 options = {
                   desc = "Toggle Buffer Diagnostics";
                 };
               };
 
               "<leader>uD" = {
-                action = # lua
+                action.__raw = # lua
                   ''
                     function ()
                       vim.g.disable_diagnostics = not vim.g.disable_diagnostics
@@ -219,42 +217,39 @@
                       end
                       vim.notify(string.format("Global Diagnostics %s", bool2str(not vim.g.disable_diagnostics), "info"))
                     end'';
-                lua = true;
                 options = {
                   desc = "Toggle Global Diagnostics";
                 };
               };
 
               "<leader>uf" = {
-                action = # lua
+                action.__raw = # lua
                   ''
                     function ()
                       -- vim.g.disable_autoformat = not vim.g.disable_autoformat
                       vim.cmd('FormatToggle!')
                       vim.notify(string.format("Buffer autoformatting %s", bool2str(not vim.b[0].disable_autoformat), "info"))
                     end'';
-                lua = true;
                 options = {
                   desc = "Toggle buffer autoformatting";
                 };
               };
 
               "<leader>uF" = {
-                action = # lua
+                action.__raw = # lua
                   ''
                     function ()
                       -- vim.g.disable_autoformat = not vim.g.disable_autoformat
                       vim.cmd('FormatToggle')
                       vim.notify(string.format("Global autoformatting %s", bool2str(not vim.g.disable_autoformat), "info"))
                     end'';
-                lua = true;
                 options = {
                   desc = "Toggle global autoformatting";
                 };
               };
 
               "<leader>uS" = {
-                action = # lua
+                action.__raw = # lua
                   ''
                     function ()
                       if vim.g.spell_enabled then vim.cmd('setlocal nospell') end
@@ -262,27 +257,25 @@
                       vim.g.spell_enabled = not vim.g.spell_enabled
                       vim.notify(string.format("Spell %s", bool2str(vim.g.spell_enabled), "info"))
                     end'';
-                lua = true;
                 options = {
                   desc = "Toggle spell";
                 };
               };
 
               "<leader>uw" = {
-                action = # lua
+                action.__raw = # lua
                   ''
                     function ()
                       vim.wo.wrap = not vim.wo.wrap
                       vim.notify(string.format("Wrap %s", bool2str(vim.wo.wrap), "info"))
                     end'';
-                lua = true;
                 options = {
                   desc = "Toggle word wrap";
                 };
               };
 
               "<leader>uh" = {
-                action = # lua
+                action.__raw = # lua
                   ''
                     function ()
                       local curr_foldcolumn = vim.wo.foldcolumn
@@ -290,20 +283,18 @@
                       vim.wo.foldcolumn = curr_foldcolumn == "0" and (vim.g.last_active_foldcolumn or "1") or "0"
                       vim.notify(string.format("Fold Column %s", bool2str(vim.wo.wrap), "info"))
                     end'';
-                lua = true;
                 options = {
                   desc = "Toggle Fold Column";
                 };
               };
 
               "<leader>uc" = {
-                action = # lua
+                action.__raw = # lua
                   ''
                     function ()
                       vim.g.cmp_enabled = not vim.g.cmp_enabled
                       vim.notify(string.format("Completions %s", bool2str(vim.g.cmp_enabled), "info"))
                     end'';
-                lua = true;
                 options = {
                   desc = "Toggle completions";
                 };
@@ -318,7 +309,6 @@
                 mode = "v";
                 inherit action key;
                 options = attrs.options or { };
-                lua = attrs.lua or false;
               }
             )
             {
@@ -370,7 +360,6 @@
                 mode = "i";
                 inherit action key;
                 options = attrs.options or { };
-                lua = attrs.lua or false;
               }
             )
             {

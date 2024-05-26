@@ -8,8 +8,7 @@
       {
         mode = "n";
         key = "<leader>fc";
-        lua = true;
-        action = # lua
+        action.__raw = # lua
           ''
             function()
               require("telescope.builtin").find_files {
@@ -27,8 +26,7 @@
       {
         mode = "n";
         key = "<leader>fF";
-        lua = true;
-        action = # lua
+        action.__raw = # lua
           ''
             function()
               require("telescope.builtin").find_files({ hidden = true, no_ignore = true})
@@ -42,8 +40,7 @@
       {
         mode = "n";
         key = "<leader>fT";
-        lua = true;
-        action = # lua
+        action.__raw = # lua
           ''
             function()
               require("telescope.builtin").colorscheme({ enable_preview = true })
@@ -57,8 +54,7 @@
       {
         mode = "n";
         key = "<leader>fW";
-        lua = true;
-        action = # lua
+        action.__raw = # lua
           ''
             function()
               require("telescope.builtin").live_grep {

@@ -29,8 +29,7 @@
         {
           mode = "n";
           key = "<leader>fS";
-          lua = true;
-          action = # lua
+          action.__raw = # lua
             ''
               function()
                 require("telescope").extensions.aerial.aerial()
