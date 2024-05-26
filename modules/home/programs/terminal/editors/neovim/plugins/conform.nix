@@ -141,7 +141,7 @@
             "shfmt"
           ];
           sql = [ "sqlfluff" ];
-          swift = [ "swiftformat" ];
+          swift = [ "swift_format" ];
           terraform = [ "terraform_fmt" ];
           toml = [ "taplo" ];
           typescript = [
@@ -199,14 +199,25 @@
           stylua = {
             command = "${lib.getExe pkgs.stylua}";
           };
+          swift_format = {
+            command = "${lib.getExe pkgs.swift-format}";
+          };
           taplo = {
             command = "${lib.getExe pkgs.taplo}";
+          };
+          terraform_fmt = {
+            command = "${lib.getExe pkgs.terraform}";
+            prepend_args = "fmt";
           };
           xmlformat = {
             command = "${lib.getExe pkgs.xmlformat}";
           };
           yamlfmt = {
             command = "${lib.getExe pkgs.yamlfmt}";
+          };
+          zigfmt = {
+            command = "${lib.getExe pkgs.zig}";
+            prepend_args = "fmt";
           };
         };
       };
