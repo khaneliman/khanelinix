@@ -156,7 +156,16 @@ in
           nil_ls = {
             enable = true;
             filetypes = [ "nix" ];
-            settings.formatting.command = [ "${getExe pkgs.nixfmt-rfc-style}" ];
+            settings = {
+              formatting = {
+                command = [ "${getExe pkgs.nixfmt-rfc-style}" ];
+              };
+              nix = {
+                flake = {
+                  autoArchive = true;
+                };
+              };
+            };
           };
 
           pyright = {
