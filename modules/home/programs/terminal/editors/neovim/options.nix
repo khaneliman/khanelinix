@@ -1,4 +1,8 @@
-_: {
+{ lib, ... }:
+let
+  inherit (lib) mkDefault;
+in
+{
   programs.nixvim = {
 
     clipboard = {
@@ -48,6 +52,7 @@ _: {
             end
           end
         '';
+
       dotnet_get_dll_path.__raw = # lua
         ''
           function()
@@ -96,7 +101,7 @@ _: {
       laststatus = 3; # When to use a status line for the last window
       fileencoding = "utf-8"; # File-content encoding for the current buffer
       termguicolors = true; # Enables 24-bit RGB color in the |TUI|
-      spelllang = [ "en_us" ]; # Spell check languages
+      spelllang = mkDefault [ "en_us" ]; # Spell check languages
       spell = true; # Highlight spelling mistakes (local to window)
       wrap = false; # Prevent text from wrapping
 
