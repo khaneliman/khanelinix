@@ -161,62 +161,62 @@
 
         formatters = {
           black = {
-            command = "${lib.getExe pkgs.black}";
+            command = lib.getExe pkgs.black;
           };
           csharpier = {
-            command = "${lib.getExe pkgs.csharpier}";
+            command = lib.getExe pkgs.csharpier;
           };
           isort = {
-            command = "${lib.getExe pkgs.isort}";
+            command = lib.getExe pkgs.isort;
           };
           fantomas = {
-            command = "${lib.getExe pkgs.fantomas}";
+            command = lib.getExe pkgs.fantomas;
           };
           jq = {
-            command = "${lib.getExe pkgs.jq}";
+            command = lib.getExe pkgs.jq;
           };
           nixfmt = {
-            command = "${lib.getExe pkgs.nixfmt-rfc-style}";
+            command = lib.getExe pkgs.nixfmt-rfc-style;
           };
           prettierd = {
-            command = "${lib.getExe pkgs.prettierd}";
+            command = lib.getExe pkgs.prettierd;
           };
           rustfmt = {
-            command = "${lib.getExe pkgs.rustfmt}";
+            command = lib.getExe pkgs.rustfmt;
           };
           shellcheck = {
-            command = "${lib.getExe pkgs.shellcheck}";
+            command = lib.getExe pkgs.shellcheck;
           };
           shfmt = {
-            command = "${lib.getExe pkgs.shfmt}";
+            command = lib.getExe pkgs.shfmt;
           };
           shellharden = {
-            command = "${lib.getExe pkgs.shellharden}";
+            command = lib.getExe pkgs.shellharden;
           };
           sqlfluff = {
-            command = "${lib.getExe pkgs.sqlfluff}";
+            command = lib.getExe pkgs.sqlfluff;
           };
           stylua = {
-            command = "${lib.getExe pkgs.stylua}";
+            command = lib.getExe pkgs.stylua;
           };
           swift_format = {
-            command = "${lib.getExe pkgs.swift-format}";
+            command = lib.getExe pkgs.swift-format;
           };
           taplo = {
-            command = "${lib.getExe pkgs.taplo}";
+            command = lib.getExe pkgs.taplo;
           };
           terraform_fmt = {
-            command = "${lib.getExe pkgs.terraform}";
+            command = lib.getExe pkgs.terraform;
             prepend_args = "fmt";
           };
           xmlformat = {
-            command = "${lib.getExe pkgs.xmlformat}";
+            command = lib.getExe pkgs.xmlformat;
           };
           yamlfmt = {
-            command = "${lib.getExe pkgs.yamlfmt}";
+            command = lib.getExe pkgs.yamlfmt;
           };
           zigfmt = {
-            command = "${lib.getExe pkgs.zig}";
+            command = lib.getExe pkgs.zig;
             prepend_args = "fmt";
           };
         };
