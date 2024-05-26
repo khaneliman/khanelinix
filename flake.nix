@@ -201,6 +201,7 @@
       };
 
       templates = {
+        angular.description = "Angular template";
         c.description = "C flake template.";
         container.description = "Container template";
         cpp.description = "CPP flake template";
