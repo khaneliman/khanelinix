@@ -1,4 +1,8 @@
-_: {
+_:
+let
+  inherit (builtins) toJSON;
+in
+{
   programs.nixvim = {
     plugins = {
       gitsigns = {
@@ -9,6 +13,7 @@ _: {
 
           current_line_blame_opts = {
             delay = 500;
+
             ignore_blank_lines = true;
             ignore_whitespace = true;
             virt_text = true;
@@ -27,10 +32,86 @@ _: {
     keymaps = [
       {
         mode = "n";
-        key = "<leader>gb";
-        action = ":Gitsigns blame_line<CR>";
+        key = "<leader>gtb";
+        action = ":Gitsigns toggle_current_line_blame<CR>";
         options = {
           desc = "Toggle Git Blame";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>gtd";
+        action = ":Gitsigns toggle_deleted<CR>";
+        options = {
+          desc = "Toggle Deleted";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>gtw";
+        action = "<cmd>Gitsigns toggle_word_diff<CR>";
+        options = {
+          desc = "Toggle word diff";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>gb";
+        action.__raw = # Lua
+          ''
+            function() require("gitsigns").blame_line{full=true} end
+          '';
+        options = {
+          desc = "Git Blame";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>gp";
+        action.__raw = ''
+          function()
+            if vim.wo.diff then return ${toJSON "<leader>gp"} end
+
+            vim.schedule(function() require("gitsigns").prev_hunk() end)
+
+            return '<Ignore>'
+          end
+        '';
+        options = {
+          desc = "Previous hunk";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>gn";
+        action.__raw = ''
+          function()
+            if vim.wo.diff then return ${toJSON "<leader>gn"} end
+
+            vim.schedule(function() require("gitsigns").next_hunk() end)
+
+            return '<Ignore>'
+          end
+        '';
+        options = {
+          desc = "Next hunk";
+          silent = true;
+        };
+      }
+      {
+        mode = [
+          "n"
+          "v"
+        ];
+        key = "<leader>gs";
+        action = "<cmd>Gitsigns stage_hunk<CR>";
+        options = {
+          desc = "Stage hunk";
           silent = true;
         };
       }
@@ -39,30 +120,28 @@ _: {
         key = "<leader>gu";
         action = "<cmd>Gitsigns undo_stage_hunk<CR>";
         options = {
+          desc = "Undo stage hunk";
+          silent = true;
+        };
+      }
+      {
+        mode = [
+          "n"
+          "v"
+        ];
+        key = "<leader>gr";
+        action = "<cmd>Gitsigns reset_hunk<CR>";
+        options = {
+          desc = "Reset hunk";
           silent = true;
         };
       }
       {
         mode = "n";
-        key = "<leader>g<C-w>";
+        key = "<leader>g<C-p>";
         action = "<cmd>Gitsigns preview_hunk<CR>";
         options = {
-          silent = true;
-        };
-      }
-      {
-        mode = "n";
-        key = "<leader>gp";
-        action = "<cmd>Gitsigns prev_hunk<CR>";
-        options = {
-          silent = true;
-        };
-      }
-      {
-        mode = "n";
-        key = "<leader>gn";
-        action = "<cmd>Gitsigns next_hunk<CR>";
-        options = {
+          desc = "Preview hunk";
           silent = true;
         };
       }
@@ -70,6 +149,14 @@ _: {
         mode = "n";
         key = "<leader>gP";
         action = "<cmd>Gitsigns preview_hunk_inline<CR>";
+        options = {
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>gS";
+        action = "<cmd>Gitsigns stage_buffer<CR>";
         options = {
           silent = true;
         };
@@ -86,14 +173,6 @@ _: {
         mode = "n";
         key = "<leader>gD";
         action = "<cmd>Gitsigns diffthis HEAD<CR>";
-        options = {
-          silent = true;
-        };
-      }
-      {
-        mode = "n";
-        key = "<leader>gw";
-        action = "<cmd>Gitsigns toggle_word_diff<CR>";
         options = {
           silent = true;
         };
