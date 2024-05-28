@@ -15,7 +15,7 @@ let
     mkMerge
     ;
   inherit (lib.${namespace}) mkBoolOpt;
-  inherit (inputs) nixpkgs-wayland;
+  inherit (inputs) waybar;
 
   cfg = config.${namespace}.programs.graphical.bars.waybar;
 
@@ -95,7 +95,7 @@ in
 
     programs.waybar = {
       enable = true;
-      package = nixpkgs-wayland.packages.${system}.waybar;
+      package = waybar.packages.${system}.waybar;
       systemd.enable = true;
 
       # TODO: make dynamic / support different number of.graphical.bars etc

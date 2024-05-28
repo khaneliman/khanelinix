@@ -1,9 +1,10 @@
 {
   config,
-  lib,
   inputs,
-  system,
+  lib,
   namespace,
+  pkgs,
+  system,
   ...
 }:
 let
@@ -21,9 +22,9 @@ in
   config = mkIf cfg.enable {
     home.packages = [
       nixpkgs-wayland.packages.${system}.wdisplays
-      nixpkgs-wayland.packages.${system}.wl-screenrec
       nixpkgs-wayland.packages.${system}.wl-clipboard
       nixpkgs-wayland.packages.${system}.wlr-randr
+      pkgs.wl-screenrec
     ];
 
     khanelinix = {
