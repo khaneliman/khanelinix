@@ -22,11 +22,12 @@ layout {
 
         pane split_direction="Vertical" {
           // NOTE: not sure what this even does... seems useless
-          //pane size="15%" name="Filetree" {
-          //    plugin location="zellij:strider"
-          //}
-          children
+          pane size="15%" name="Filetree" {
+              plugin location="zellij:strider"
+          }
         }
+
+          children
 
         pane size=2 borderless=true {
             plugin location="zellij:status-bar"
@@ -40,9 +41,10 @@ layout {
         }
     }
 
-		dev_tab name="khanelinix" cwd="~/khanelinix/" focus=true {
-        term split_direction="vertical" {
-			      pane edit="./flake.nix" name="Flake"
+		tab name="khanelinix" focus=true {
+        pane {
+         cwd "$HOME/khanelinix/"
+			   edit "flake.nix"
         }
     }
 
