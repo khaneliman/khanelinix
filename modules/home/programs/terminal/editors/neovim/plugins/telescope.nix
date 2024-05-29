@@ -199,8 +199,6 @@
         };
       };
 
-      keymapsSilent = true;
-
       settings = {
         defaults = {
           file_ignore_patterns = [
