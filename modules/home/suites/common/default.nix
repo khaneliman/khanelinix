@@ -38,6 +38,8 @@ in
 
         terminal = {
           emulators = {
+            alacritty = enabled;
+            foot.enable = pkgs.stdenv.isLinux;
             kitty = enabled;
             wezterm = enabled;
           };
