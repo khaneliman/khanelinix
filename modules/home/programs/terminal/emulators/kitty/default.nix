@@ -126,8 +126,8 @@ in
           initial_window_width = 700;
           initial_window_height = 400;
           window_border_width = 0;
-          window_margin_width = 12;
-          window_padding_width = 10;
+          window_margin_width = 0;
+          window_padding_width = 0;
           inactive_text_alpha = "1.0";
           background_opacity = "0.90";
           placement_strategy = "center";

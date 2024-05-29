@@ -147,6 +147,10 @@
       url = "github:drduh/YubiKey-Guide";
       flake = false;
     };
+
+    wezterm = {
+      url = "github:wez/wezterm?dir=nix";
+    };
   };
 
   outputs =
