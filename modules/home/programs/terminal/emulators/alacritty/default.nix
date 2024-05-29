@@ -28,6 +28,11 @@ let
       cursor = "#F4DBD6"; # rosewater
     };
 
+    footer_bar = {
+      foreground = "#24273A"; # base
+      background = "#A5ADCB"; # subtext0
+    };
+
     vi_mode_cursor = {
       text = "#24273A"; # base
       cursor = "#B7BDF8"; # lavender
@@ -43,11 +48,6 @@ let
       focused_match = {
         foreground = "#24273A"; # base
         background = "#A6DA95"; # green
-      };
-
-      footer_bar = {
-        foreground = "#24273A"; # base
-        background = "#A5ADCB"; # subtext0
       };
     };
 
@@ -122,7 +122,7 @@ in
   options.${namespace}.programs.terminal.emulators.alacritty = with types; {
     enable = mkBoolOpt false "Whether to enable alacritty.";
     # TODO: use theme module
-    theme = mkOpt attr macchiato "Theme to use for alacritty.";
+    theme = mkOpt attrs macchiato "Theme to use for alacritty.";
     font = mkOpt str "MonaspiceKr Nerd Font" "Font to use for alacritty.";
   };
 
@@ -133,20 +133,13 @@ in
 
       settings =
         {
-          window = {
-            dimensions = {
-              columns = 0;
-              lines = 0;
-            };
+          colors = cfg.theme;
 
-            padding = {
-              x = 10;
-              y = 10;
+          cursor = {
+            style = {
+              shape = "Block";
+              blinking = "Off";
             };
-
-            dynamic_padding = true;
-            dynamic_title = true;
-            opacity = 0.98;
           };
 
           font = {
@@ -179,36 +172,45 @@ in
             };
           };
 
-          colors = cfg.theme;
-
-          cursor = {
-            style = {
-              shape = "Block";
-              blinking = "Off";
-            };
+          keyboard = {
+            bindings = [
+              {
+                key = "Q";
+                mods = "Command";
+                action = "Quit";
+              }
+              {
+                key = "W";
+                mods = "Command";
+                action = "Quit";
+              }
+              {
+                key = "N";
+                mods = "Command";
+                action = "CreateNewWindow";
+              }
+            ];
           };
 
           mouse = {
             hide_when_typing = true;
           };
 
-          keybindings = with lib; [
-            {
-              key = Q;
-              mods = Command;
-              action = Quit;
-            }
-            {
-              key = W;
-              mods = Command;
-              action = Quit;
-            }
-            {
-              key = N;
-              mods = Command;
-              action = CreateNewWindow;
-            }
-          ];
+          window = {
+            dimensions = {
+              columns = 0;
+              lines = 0;
+            };
+
+            padding = {
+              x = 10;
+              y = 10;
+            };
+
+            dynamic_padding = true;
+            dynamic_title = true;
+            opacity = 0.98;
+          };
         }
         // lib.optionalAttrs pkgs.stdenv.isLinux { window.decorations = "None"; }
         // lib.optionalAttrs pkgs.stdenv.isDarwin { window.decorations = "Buttonless"; };
