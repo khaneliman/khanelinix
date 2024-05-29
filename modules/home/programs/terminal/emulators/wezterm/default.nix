@@ -1,13 +1,16 @@
 {
   config,
+  # inputs,
   lib,
   pkgs,
+  # system,
   namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
+  # inherit (inputs) wezterm;
 
   cfg = config.${namespace}.programs.terminal.emulators.wezterm;
   catppuccin = import (lib.snowfall.fs.get-file "modules/home/theme/catppuccin/colors.nix");
@@ -23,6 +26,7 @@ in
       enableBashIntegration = true;
       enableZshIntegration = true;
       package = pkgs.wezterm;
+      # package = wezterm.packages.${system}.default;
 
       extraConfig = # lua
         ''
@@ -34,6 +38,7 @@ in
             end
           end
 
+          local act = wezterm.action
           local custom = wezterm.color.get_builtin_schemes()[scheme_for_appearance(wezterm.gui.get_appearance())]
           local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_right_hard_divider
           local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
@@ -115,10 +120,20 @@ in
             default_cursor_style = "SteadyBar",
 
             -- font
+            font_size = 12.0,
             font = wezterm.font_with_fallback {
-              'MonaspiceKr Nerd Font',
-              'CaskaydiaCove Nerd Font',
-              'Noto Color Emoji',
+              { family = 'MonaspiceKr Nerd Font', weight = "Regular" },
+              { family = 'CaskaydiaCove Nerd Font', weight = "Regular" },
+              { family = "Symbols Nerd Font", weight = "Regular" },
+              { family = 'Noto Color Emoji', weight = "Regular" },
+            },
+
+            keys = {
+              -- paste from the clipboard
+              { key = 'V', mods = 'SHIFT|CTRL', action = act.PasteFrom 'Clipboard' },
+
+              -- paste from the primary selection
+              { key = 'S', mods = 'SHIFT|CTRL', action = act.PasteFrom 'PrimarySelection' },
             },
 
             -- Tab bar
@@ -129,7 +144,8 @@ in
             use_fancy_tab_bar = false,
             -- try and let the tabs stretch instead of squish
             tab_max_width = 10000,
-                        -- perf
+
+            -- perf
             enable_wayland = true,
             front_end = "WebGpu",
             scrollback_lines = 10000,
