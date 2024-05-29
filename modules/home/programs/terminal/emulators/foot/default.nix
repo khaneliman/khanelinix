@@ -8,9 +8,10 @@
 let
   inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.strings) removePrefix;
 
   cfg = config.${namespace}.programs.terminal.emulators.foot;
-  colors = import (lib.snowfall.fs.get-file "modules/home/theme/catppuccin/colors.nix");
+  catppuccin = import (lib.snowfall.fs.get-file "modules/home/theme/catppuccin/colors.nix");
 in
 {
   options.${namespace}.programs.terminal.emulators.foot = {
@@ -42,8 +43,8 @@ in
 
           # font and font rendering
           dpi-aware = false; # this looks more readable on a laptop, but it's unreasonably large
-          font = "Iosevka Nerd Font:size=14";
-          font-bold = "Iosevka Nerd Font:size=14";
+          font = "MonaspiceKr Nerd Font:size=12";
+          font-bold = "MonaspiceKr Nerd Font:size=12";
           vertical-letter-offset = "-0.90";
         };
 
@@ -74,8 +75,29 @@ in
           uri-characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.,~:;/?#@!$&%*+=\"'()[]";
         };
 
-        colors = import ./presets/catppuccin-macchiato/colors.nix { inherit colors; } // {
+        colors = {
           alpha = "0.85";
+
+          foreground = "${(removePrefix "#") catppuccin.colors.text.hex}";
+          background = "${(removePrefix "#") catppuccin.colors.base.hex}";
+
+          regular0 = "${(removePrefix "#") catppuccin.colors.surface1.hex}";
+          regular1 = "${(removePrefix "#") catppuccin.colors.red.hex}";
+          regular2 = "${(removePrefix "#") catppuccin.colors.green.hex}";
+          regular3 = "${(removePrefix "#") catppuccin.colors.yellow.hex}";
+          regular4 = "${(removePrefix "#") catppuccin.colors.blue.hex}";
+          regular5 = "${(removePrefix "#") catppuccin.colors.pink.hex}";
+          regular6 = "${(removePrefix "#") catppuccin.colors.teal.hex}";
+          regular7 = "${(removePrefix "#") catppuccin.colors.subtext0.hex}";
+
+          bright0 = "${(removePrefix "#") catppuccin.colors.surface2.hex}";
+          bright1 = "${(removePrefix "#") catppuccin.colors.red.hex}";
+          bright2 = "${(removePrefix "#") catppuccin.colors.green.hex}";
+          bright3 = "${(removePrefix "#") catppuccin.colors.yellow.hex}";
+          bright4 = "${(removePrefix "#") catppuccin.colors.blue.hex}";
+          bright5 = "${(removePrefix "#") catppuccin.colors.pink.hex}";
+          bright6 = "${(removePrefix "#") catppuccin.colors.teal.hex}";
+          bright7 = "${(removePrefix "#") catppuccin.colors.subtext0.hex}";
         };
       };
     };
