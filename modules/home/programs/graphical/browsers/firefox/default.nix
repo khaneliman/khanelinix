@@ -148,6 +148,9 @@ in
             "geo.provider.use_corelocation" = false;
             "geo.provider.use_geoclue" = false;
             "geo.provider.use_gpsd" = false;
+            "gfx.font_rendering.directwrite.bold_simulation" = 2;
+            "gfx.font_rendering.cleartype_params.enhanced_contrast" = 25;
+            "gfx.font_rendering.cleartype_params.force_gdi_classic_for_families" = "";
             "intl.accept_languages" = "en-US,en";
             "media.eme.enabled" = true;
             "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
