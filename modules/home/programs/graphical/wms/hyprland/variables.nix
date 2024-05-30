@@ -33,6 +33,7 @@ in
       settings = {
         animations = {
           enabled = "yes";
+          first_launch_animation = true; # fade in on first launch
 
           # Some default animations, see https://wiki.hyprland.org/Configuring/Animations/ for more
           bezier = [
@@ -77,9 +78,11 @@ in
 
         dwindle = {
           # See https://wiki.hyprland.org/Configuring/Dwindle-Layout/ for more
-          force_split = 0;
+          # force_split = 0;
           preserve_split = true; # you probably want this
-          pseudotile = true; # master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
+          pseudotile = false; # master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
+          no_gaps_when_only = false;
+          special_scale_factor = 0.9;
         };
 
         general = {
@@ -98,6 +101,29 @@ in
           workspace_swipe_invert = false;
         };
 
+        group = {
+          # new windows in a group spawn after current or at group tail
+          insert_after_current = true;
+          # focus on the window that has just been moved out of the group
+          focus_removed_window = true;
+
+          "col.border_active" = "rgba(88888888)";
+          "col.border_inactive" = "rgba(00000088)";
+
+          groupbar = {
+            # groupbar stuff
+            # this removes the ugly gradient around grouped windows - which sucks
+            gradients = false;
+            font_size = 14;
+
+            # titles look ugly, and I usually know what I'm looking at
+            render_titles = false;
+
+            # scrolling in the groupbar changes group active window
+            scrolling = true;
+          };
+        };
+
         input = {
           follow_mouse = 1;
           kb_layout = "us";
@@ -110,6 +136,7 @@ in
           };
 
           sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
+          scroll_factor = 1.0;
           # repeat_delay = 500; # Mimic the responsiveness of mac setup
           # repeat_rate = 50; # Mimic the responsiveness of mac setup
         };
@@ -122,9 +149,16 @@ in
         misc = {
           allow_session_lock_restore = true;
           disable_hyprland_logo = true;
+
+          # DPMS
           key_press_enables_dpms = true;
           mouse_move_enables_dpms = true;
+
           vrr = 2;
+
+          # window swallowing
+          enable_swallow = true; # hide windows that spawn other windows
+          swallow_regex = "foot|thunar|nemo|wezterm"; # windows for which swallow is applied
         };
 
         # unscale XWayland
