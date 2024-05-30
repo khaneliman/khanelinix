@@ -199,6 +199,7 @@ in
             };
 
         themedPrograms = map (prog: applyCatppuccin { name = prog; }) [
+          "alacritty"
           "bat"
           "bottom"
           "btop"
