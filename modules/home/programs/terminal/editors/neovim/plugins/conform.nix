@@ -116,6 +116,7 @@
             "shellharden"
             "shfmt"
           ];
+          bicep = [ "bicep" ];
           c = [ "clang_format" ];
           cpp = [ "clang_format" ];
           cs = [ "csharpier" ];
@@ -162,6 +163,9 @@
         formatters = {
           black = {
             command = lib.getExe pkgs.black;
+          };
+          bicep = {
+            command = lib.getExe pkgs.bicep;
           };
           csharpier = {
             command = lib.getExe pkgs.csharpier;
