@@ -1,5 +1,3 @@
-#!/usr/bin/env zsh
-
 # Define a function to set Zsh options
 function __set_zsh_options() {
 	local options=(
@@ -24,8 +22,9 @@ function __set_zsh_options() {
 		"PUSHD_SILENT"         # do not print the directory stack
 		"NOTIFY"               # report the status of background jobs immediately
 		"PROMPT_SUBST"         # allow substitutions as part of prompt format string
-		"SH_WORD_SPLIT"        # perform field splitting on unquoted parameter expansions
-		"MULTIOS"              # perform implicit tees or cats when multiple redirections are attempted
+		# NOTE: causing weird unicode escape in prompt in kitty
+		# "SH_WORD_SPLIT"        # perform field splitting on unquoted parameter expansions
+		"MULTIOS" # perform implicit tees or cats when multiple redirections are attempted
 	)
 
 	for option in "${options[@]}"; do

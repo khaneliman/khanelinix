@@ -1,5 +1,3 @@
-#!/usr/bin/env zsh
-
 # Hyperoptimized time format for the time command
 # the definition of the format is as follows:
 # - "[%J]": The name of the job.

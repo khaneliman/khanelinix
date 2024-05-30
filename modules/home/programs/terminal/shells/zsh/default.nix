@@ -154,7 +154,7 @@ in
             ${fileContents ./rc/misc.zsh}
 
             # Set LS_COLORS by parsing dircolors output
-            LS_COLORS="$(${pkgs.coreutils}/bin/dircolors --sh)"
+            LS_COLORS="$(${lib.getExe' pkgs.coreutils "dircolors"} --sh)"
             LS_COLORS="''${''${LS_COLORS#*\'}%\'*}"
             export LS_COLORS
 

@@ -1,5 +1,3 @@
-#!/usr/bin/env zsh
-
 # Define a function to unset Zsh options
 function __unset_zsh_options() {
 	local options=(

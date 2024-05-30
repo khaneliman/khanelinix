@@ -1,5 +1,3 @@
-#!/usr/bin/env zsh
-
 # zsh Line Editor (ZLE) module
 # interactive line editing in the shell
 zmodload zsh/zle

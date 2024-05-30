@@ -1,5 +1,3 @@
-#!/usr/bin/env zsh
-
 # Fzf-tab
 # <https://github.com/Aloxaf/fzf-tab?tab=readme-ov-file#configure>
 # disable sort when completing `git checkout`
