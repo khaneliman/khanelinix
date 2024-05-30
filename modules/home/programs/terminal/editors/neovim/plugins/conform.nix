@@ -118,8 +118,10 @@
           ];
           bicep = [ "bicep" ];
           c = [ "clang_format" ];
+          cmake = [ "cmake-format" ];
           cpp = [ "clang_format" ];
           cs = [ "csharpier" ];
+          css = [ "stylelint" ];
           fish = [ "fish_indent" ];
           fsharp = [ "fantomas" ];
           javascript = [
@@ -130,6 +132,7 @@
           ];
           json = [ "jq" ];
           lua = [ "stylua" ];
+          markdown = [ "deno_fmt" ];
           nix = [ "nixfmt" ];
           python = [
             "isort"
@@ -157,7 +160,11 @@
           ];
           yaml = [ "yamlfmt" ];
           zig = [ "zigfmt" ];
-          "_" = [ "trim_whitespace" ];
+          "_" = [
+            "squeeze_blanks"
+            "trim_whitespace"
+            "trim_newlines"
+          ];
         };
 
         formatters = {
@@ -167,8 +174,14 @@
           bicep = {
             command = lib.getExe pkgs.bicep;
           };
+          cmake-format = {
+            command = lib.getExe pkgs.cmake-format;
+          };
           csharpier = {
             command = lib.getExe pkgs.csharpier;
+          };
+          deno_fmt = {
+            command = lib.getExe pkgs.deno;
           };
           isort = {
             command = lib.getExe pkgs.isort;
@@ -199,6 +212,12 @@
           };
           sqlfluff = {
             command = lib.getExe pkgs.sqlfluff;
+          };
+          squeeze_blanks = {
+            comamnd = lib.getExe' pkgs.coreutils "cat";
+          };
+          stylelint = {
+            command = lib.getExe pkgs.stylelint;
           };
           stylua = {
             command = lib.getExe pkgs.stylua;
