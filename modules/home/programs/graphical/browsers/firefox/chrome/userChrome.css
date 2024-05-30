@@ -663,6 +663,7 @@ scrollbox {
 scrollbox {
   scroll-behavior: smooth;
   overflow-y: auto;
+  font-size: 1.25rem;
 }
 
 .scrollbutton-up[orient="vertical"],
@@ -729,7 +730,7 @@ scrollbar {
 
 #nav-bar {
   padding: 2px !important;
-  font-size: 10px !important;
+  font-size: 1.25rem !important;
 }
 
 #back-button,
@@ -878,7 +879,7 @@ scrollbar {
   margin-top: 6px !important;
   padding: 10px !important;
   box-shadow: inset 0 12px 11px -5px #00000030 !important;
-}
+
 
 .search-panel-current-engine {
   padding-bottom: 10px !important;

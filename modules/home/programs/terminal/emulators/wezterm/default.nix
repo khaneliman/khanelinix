@@ -120,7 +120,7 @@ in
             default_cursor_style = "SteadyBar",
 
             -- font
-            font_size = 12.0,
+            font_size = 13.0,
             font = wezterm.font_with_fallback {
               { family = 'MonaspiceKr Nerd Font', weight = "Regular" },
               { family = 'CaskaydiaCove Nerd Font', weight = "Regular" },
