@@ -205,6 +205,7 @@ in
           "cava"
           "fish"
           "fzf"
+          "foot"
           "gh-dash"
           "gitui"
           "glamour"

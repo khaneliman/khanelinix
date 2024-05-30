@@ -8,10 +8,8 @@
 let
   inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
-  inherit (lib.strings) removePrefix;
 
   cfg = config.${namespace}.programs.terminal.emulators.foot;
-  catppuccin = import (lib.snowfall.fs.get-file "modules/home/theme/catppuccin/colors.nix");
 in
 {
   options.${namespace}.programs.terminal.emulators.foot = {
@@ -77,27 +75,6 @@ in
 
         colors = {
           alpha = "0.85";
-
-          foreground = "${(removePrefix "#") catppuccin.colors.text.hex}";
-          background = "${(removePrefix "#") catppuccin.colors.base.hex}";
-
-          regular0 = "${(removePrefix "#") catppuccin.colors.surface1.hex}";
-          regular1 = "${(removePrefix "#") catppuccin.colors.red.hex}";
-          regular2 = "${(removePrefix "#") catppuccin.colors.green.hex}";
-          regular3 = "${(removePrefix "#") catppuccin.colors.yellow.hex}";
-          regular4 = "${(removePrefix "#") catppuccin.colors.blue.hex}";
-          regular5 = "${(removePrefix "#") catppuccin.colors.pink.hex}";
-          regular6 = "${(removePrefix "#") catppuccin.colors.teal.hex}";
-          regular7 = "${(removePrefix "#") catppuccin.colors.subtext0.hex}";
-
-          bright0 = "${(removePrefix "#") catppuccin.colors.surface2.hex}";
-          bright1 = "${(removePrefix "#") catppuccin.colors.red.hex}";
-          bright2 = "${(removePrefix "#") catppuccin.colors.green.hex}";
-          bright3 = "${(removePrefix "#") catppuccin.colors.yellow.hex}";
-          bright4 = "${(removePrefix "#") catppuccin.colors.blue.hex}";
-          bright5 = "${(removePrefix "#") catppuccin.colors.pink.hex}";
-          bright6 = "${(removePrefix "#") catppuccin.colors.teal.hex}";
-          bright7 = "${(removePrefix "#") catppuccin.colors.subtext0.hex}";
         };
       };
     };
