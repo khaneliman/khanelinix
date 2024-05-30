@@ -211,7 +211,6 @@
           };
           terraform_fmt = {
             command = lib.getExe pkgs.terraform;
-            prepend_args = "fmt";
           };
           xmlformat = {
             command = lib.getExe pkgs.xmlformat;
@@ -221,7 +220,6 @@
           };
           zigfmt = {
             command = lib.getExe pkgs.zig;
-            prepend_args = "fmt";
           };
         };
       };
