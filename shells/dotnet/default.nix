@@ -17,40 +17,36 @@ let
   };
 in
 mkShell {
-  packages =
-    with pkgs;
-    [
-      (
-        with dotnetCorePackages;
-        combinePackages [
-          dotnet-aspnetcore_6
-          dotnet-runtime_6
-          dotnet-sdk_6
-          dotnet-aspnetcore_7
-          dotnet-runtime_7
-          dotnet-sdk_7
-          dotnet_8.aspnetcore
-          dotnet_8.runtime
-          dotnet_8.sdk
-        ]
-      )
-      csharp-ls
-      dotnetbuildhelpers
-      fsautocomplete
-      mono
-      msbuild
-      netcoredbg
-      omnisharp-roslyn
-      powershell
-      roslyn
-      roslyn-ls
-      vimPlugins.neotest-dotnet
-      vscode-extensions.ms-dotnettools.csharp
-    ]
-    ++ lib.optionals pkgs.stdenv.isLinux [
-      azure-cli
-      bicep
-    ];
+  packages = with pkgs; [
+    (
+      with dotnetCorePackages;
+      combinePackages [
+        dotnet-aspnetcore_6
+        dotnet-runtime_6
+        dotnet-sdk_6
+        dotnet-aspnetcore_7
+        dotnet-runtime_7
+        dotnet-sdk_7
+        dotnet_8.aspnetcore
+        dotnet_8.runtime
+        dotnet_8.sdk
+      ]
+    )
+    azure-cli
+    bicep
+    csharp-ls
+    dotnetbuildhelpers
+    fsautocomplete
+    mono
+    msbuild
+    netcoredbg
+    omnisharp-roslyn
+    powershell
+    roslyn
+    roslyn-ls
+    vimPlugins.neotest-dotnet
+    vscode-extensions.ms-dotnettools.csharp
+  ];
 
   shellHook = ''
 
