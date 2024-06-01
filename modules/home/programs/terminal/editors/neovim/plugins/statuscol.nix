@@ -19,7 +19,9 @@ _: {
           {
             text = [ ];
             sign = {
-              name = [ "Diagnostic" ];
+              name = [ ".*" ];
+              namespace = [ ".*" ];
+              text = [ ".*" ];
               maxwidth = 2;
               auto = true;
             };
