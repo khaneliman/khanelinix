@@ -1,6 +1,7 @@
-_:
+{ config, lib, ... }:
 let
   inherit (builtins) toJSON;
+  inherit (lib) mkIf;
 in
 {
   programs.nixvim = {
@@ -27,6 +28,10 @@ in
           };
         };
       };
+
+      which-key.registrations."<leader>"."g"."t" = mkIf config.programs.nixvim.plugins.gitsigns.enable {
+        name = "  Gitsigns Toggle";
+      };
     };
 
     keymaps = [
@@ -50,10 +55,37 @@ in
       }
       {
         mode = "n";
+        key = "<leader>gtl";
+        action = ":Gitsigns toggle_linehl<CR>";
+        options = {
+          desc = "Toggle Line Highlight";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>gtn";
+        action = ":Gitsigns toggle_numhl<CR>";
+        options = {
+          desc = "Toggle Number Highlight";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
         key = "<leader>gtw";
         action = "<cmd>Gitsigns toggle_word_diff<CR>";
         options = {
-          desc = "Toggle word diff";
+          desc = "Toggle Word Diff";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>gts";
+        action = "<cmd>Gitsigns toggle_signs<CR>";
+        options = {
+          desc = "Toggle Signs";
           silent = true;
         };
       }
