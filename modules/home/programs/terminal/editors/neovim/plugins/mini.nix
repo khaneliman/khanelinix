@@ -33,6 +33,14 @@ _: {
           bufremove = { };
           # TODO: see which i prefer, which-key or this
           # clue = { };
+          comment = {
+            mappings = {
+              comment = "<leader>/";
+              comment_line = "<leader>/";
+              comment_visual = "<leader>/";
+              textobject = "<leader>/";
+            };
+          };
           diff = {
             view = {
               style = "sign";
