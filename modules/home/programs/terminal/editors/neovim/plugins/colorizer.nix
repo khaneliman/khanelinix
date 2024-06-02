@@ -20,7 +20,7 @@
             end
           '';
         options = {
-          desc = "Toggle colorizing";
+          desc = "Colorizing toggle";
           silent = true;
         };
       }

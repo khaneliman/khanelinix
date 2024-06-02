@@ -24,7 +24,7 @@
         key = "<leader>uc";
         action = ":Codeium Chat<CR>";
         options = {
-          desc = "Toggle Codeium Chat";
+          desc = "Codeium Chat";
           silent = true;
         };
       }

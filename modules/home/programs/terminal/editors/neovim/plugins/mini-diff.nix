@@ -21,7 +21,7 @@ _: {
         action.__raw = # lua
           "MiniDiff.toggle_overlay";
         options = {
-          desc = "Toggle Git Overlay";
+          desc = "Git Overlay toggle";
           silent = true;
         };
       }

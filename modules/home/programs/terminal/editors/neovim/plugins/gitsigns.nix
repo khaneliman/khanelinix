@@ -37,7 +37,7 @@ in
         key = "<leader>gtb";
         action = ":Gitsigns toggle_current_line_blame<CR>";
         options = {
-          desc = "Toggle Git Blame";
+          desc = "Git Blame toggle";
           silent = true;
         };
       }
@@ -46,7 +46,7 @@ in
         key = "<leader>gtd";
         action = ":Gitsigns toggle_deleted<CR>";
         options = {
-          desc = "Toggle Deleted";
+          desc = "Deleted toggle";
           silent = true;
         };
       }
@@ -55,7 +55,7 @@ in
         key = "<leader>gtl";
         action = ":Gitsigns toggle_linehl<CR>";
         options = {
-          desc = "Toggle Line Highlight";
+          desc = "Line Highlight toggle";
           silent = true;
         };
       }
@@ -64,7 +64,7 @@ in
         key = "<leader>gtn";
         action = ":Gitsigns toggle_numhl<CR>";
         options = {
-          desc = "Toggle Number Highlight";
+          desc = "Number Highlight toggle";
           silent = true;
         };
       }
@@ -73,7 +73,7 @@ in
         key = "<leader>gtw";
         action = "<cmd>Gitsigns toggle_word_diff<CR>";
         options = {
-          desc = "Toggle Word Diff";
+          desc = "Word Diff toggle";
           silent = true;
         };
       }
@@ -82,7 +82,7 @@ in
         key = "<leader>gts";
         action = "<cmd>Gitsigns toggle_signs<CR>";
         options = {
-          desc = "Toggle Signs";
+          desc = "Signs toggle";
           silent = true;
         };
       }
@@ -94,7 +94,7 @@ in
             function() require("gitsigns").blame_line{full=true} end
           '';
         options = {
-          desc = "Git Blame";
+          desc = "Git Blame toggle";
           silent = true;
         };
       }

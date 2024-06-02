@@ -20,7 +20,7 @@
           key = "<leader>us";
           action = ":AerialToggle<CR>";
           options = {
-            desc = "Toggle Symbols";
+            desc = "Symbols toggle";
             silent = true;
           };
         }

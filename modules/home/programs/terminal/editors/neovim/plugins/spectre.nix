@@ -12,7 +12,7 @@ _: {
         key = "<leader>rs";
         action = ":Spectre<CR>";
         options = {
-          desc = "Toggle Spectre";
+          desc = "Spectre toggle";
           silent = true;
         };
       }

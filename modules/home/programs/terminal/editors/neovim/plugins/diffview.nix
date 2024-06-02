@@ -22,7 +22,7 @@ _: {
             end
           '';
         options = {
-          desc = "Toggle Git Diff";
+          desc = "Git Diff toggle";
           silent = true;
         };
       }

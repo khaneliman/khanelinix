@@ -59,7 +59,7 @@ _: {
         key = "<leader>up";
         action = ":CccPick<CR>";
         options = {
-          desc = "Toggle Color Picker";
+          desc = "Color Picker toggle";
           silent = true;
         };
       }

@@ -33,7 +33,7 @@ _: {
         key = "<leader>uu";
         action = ":UndotreeToggle<CR>";
         options = {
-          desc = "Toggle Undotree";
+          desc = "Undotree toggle";
           silent = true;
         };
       }

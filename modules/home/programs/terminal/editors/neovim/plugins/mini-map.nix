@@ -32,7 +32,7 @@ _: {
         action.__raw = # lua
           "MiniMap.toggle";
         options = {
-          desc = "Toggle MiniMap";
+          desc = "MiniMap toggle";
           silent = true;
         };
       }

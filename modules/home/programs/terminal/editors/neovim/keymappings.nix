@@ -124,7 +124,7 @@
               "<Leader>n" = {
                 action = "<Cmd>enew<CR>";
                 options = {
-                  desc = "New File";
+                  desc = "New file";
                 };
               };
               "<leader>W" = {
@@ -142,13 +142,13 @@
               "|" = {
                 action = "<Cmd>vsplit<CR>";
                 options = {
-                  desc = "Vertical Split";
+                  desc = "Vertical split";
                 };
               };
               "\\" = {
                 action = "<Cmd>split<CR>";
                 options = {
-                  desc = "Horizontal Split";
+                  desc = "Horizontal split";
                 };
               };
 
@@ -201,7 +201,7 @@
                       vim.notify(string.format("Buffer Diagnostics %s", bool2str(not vim.b.disable_diagnostics), "info"))
                     end'';
                 options = {
-                  desc = "Toggle Buffer Diagnostics";
+                  desc = "Buffer Diagnostics toggle";
                 };
               };
 
@@ -218,7 +218,7 @@
                       vim.notify(string.format("Global Diagnostics %s", bool2str(not vim.g.disable_diagnostics), "info"))
                     end'';
                 options = {
-                  desc = "Toggle Global Diagnostics";
+                  desc = "Global Diagnostics toggle";
                 };
               };
 
@@ -227,11 +227,11 @@
                   ''
                     function ()
                       -- vim.g.disable_autoformat = not vim.g.disable_autoformat
-                      vim.cmd('FormatToggle!')
-                      vim.notify(string.format("Buffer autoformatting %s", bool2str(not vim.b[0].disable_autoformat), "info"))
+                      vim.cmd('Formattoggle!')
+                      vim.notify(string.format("Buffer Autoformatting %s", bool2str(not vim.b[0].disable_autoformat), "info"))
                     end'';
                 options = {
-                  desc = "Toggle buffer autoformatting";
+                  desc = "Buffer Autoformatting toggle";
                 };
               };
 
@@ -240,11 +240,11 @@
                   ''
                     function ()
                       -- vim.g.disable_autoformat = not vim.g.disable_autoformat
-                      vim.cmd('FormatToggle')
-                      vim.notify(string.format("Global autoformatting %s", bool2str(not vim.g.disable_autoformat), "info"))
+                      vim.cmd('Formattoggle')
+                      vim.notify(string.format("Global Autoformatting %s", bool2str(not vim.g.disable_autoformat), "info"))
                     end'';
                 options = {
-                  desc = "Toggle global autoformatting";
+                  desc = "Global Autoformatting toggle";
                 };
               };
 
@@ -258,7 +258,7 @@
                       vim.notify(string.format("Spell %s", bool2str(vim.g.spell_enabled), "info"))
                     end'';
                 options = {
-                  desc = "Toggle spell";
+                  desc = "Spell toggle";
                 };
               };
 
@@ -270,7 +270,7 @@
                       vim.notify(string.format("Wrap %s", bool2str(vim.wo.wrap), "info"))
                     end'';
                 options = {
-                  desc = "Toggle word wrap";
+                  desc = "Word Wrap toggle";
                 };
               };
 
@@ -284,7 +284,7 @@
                       vim.notify(string.format("Fold Column %s", bool2str(vim.wo.wrap), "info"))
                     end'';
                 options = {
-                  desc = "Toggle Fold Column";
+                  desc = "Fold Column toggle";
                 };
               };
 
@@ -296,7 +296,7 @@
                       vim.notify(string.format("Completions %s", bool2str(vim.g.cmp_enabled), "info"))
                     end'';
                 options = {
-                  desc = "Toggle completions";
+                  desc = "Completions toggle";
                 };
               };
             };

@@ -57,7 +57,7 @@
         key = "<leader>uT";
         action = ":Neotest summary<CR>";
         options = {
-          desc = "Toggle Neotest Summary";
+          desc = "Neotest Summary toggle";
           silent = true;
         };
       }

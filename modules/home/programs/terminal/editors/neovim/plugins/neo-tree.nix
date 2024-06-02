@@ -6,7 +6,7 @@ _: {
         key = "<leader>e";
         action = ":Neotree action=focus reveal toggle<CR>";
         options = {
-          desc = "Toggle Explorer";
+          desc = "Explorer toggle";
           silent = true;
         };
       }

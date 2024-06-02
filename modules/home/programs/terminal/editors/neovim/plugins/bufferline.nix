@@ -184,7 +184,7 @@ in
         key = "<leader>bP";
         action = ":BufferLineTogglePin<cr>";
         options = {
-          desc = "Toggle Pin";
+          desc = "Pin buffer toggle";
           silent = true;
         };
       }
