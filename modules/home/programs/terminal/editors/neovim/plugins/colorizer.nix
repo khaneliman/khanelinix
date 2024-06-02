@@ -1,12 +1,13 @@
-_: {
+{ config, lib, ... }:
+{
   programs.nixvim = {
     plugins = {
       nvim-colorizer = {
-        enable = true;
+        enable = false;
       };
     };
 
-    keymaps = [
+    keymaps = lib.mkIf config.programs.nixvim.plugins.nvim-colorizer.enable [
       {
         mode = "n";
         key = "<leader>uC";
