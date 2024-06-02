@@ -21,11 +21,7 @@ in
             virt_text_pos = "eol";
           };
 
-          signs = {
-            add.text = " ";
-            change.text = " ";
-            delete.text = " ";
-          };
+          signcolumn = false;
         };
       };
 
