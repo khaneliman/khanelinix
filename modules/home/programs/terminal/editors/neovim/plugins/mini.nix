@@ -15,11 +15,6 @@ _: {
           diff = {
             view = {
               style = "sign";
-              signs = {
-                add = " ";
-                change = " ";
-                delete = " ";
-              };
             };
           };
           fuzzy = { };
