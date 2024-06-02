@@ -17,7 +17,7 @@ _: {
     keymaps = [
       {
         mode = "n";
-        key = "<leader>gto";
+        key = "<leader>ugo";
         action.__raw = # lua
           "MiniDiff.toggle_overlay";
         options = {

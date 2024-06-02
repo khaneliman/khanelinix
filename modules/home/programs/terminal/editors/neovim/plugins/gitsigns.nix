@@ -25,16 +25,21 @@ in
         };
       };
 
-      which-key.registrations."<leader>"."g" = {
-        "h" = mkIf config.programs.nixvim.plugins.gitsigns.enable { name = "  Hunks"; };
-        "t" = mkIf config.programs.nixvim.plugins.gitsigns.enable { name = "  Toggle"; };
+      which-key.registrations."<leader>" = {
+        "g" = {
+          "h" = mkIf config.programs.nixvim.plugins.gitsigns.enable { name = "  Hunks"; };
+        };
+        "u" = {
+          "g" = mkIf config.programs.nixvim.plugins.gitsigns.enable { name = "󰊢 Git"; };
+        };
       };
     };
 
     keymaps = [
+      # UI binds
       {
         mode = "n";
-        key = "<leader>gtb";
+        key = "<leader>ugb";
         action = ":Gitsigns toggle_current_line_blame<CR>";
         options = {
           desc = "Git Blame toggle";
@@ -43,7 +48,7 @@ in
       }
       {
         mode = "n";
-        key = "<leader>gtd";
+        key = "<leader>ugd";
         action = ":Gitsigns toggle_deleted<CR>";
         options = {
           desc = "Deleted toggle";
@@ -52,7 +57,7 @@ in
       }
       {
         mode = "n";
-        key = "<leader>gtl";
+        key = "<leader>ugl";
         action = ":Gitsigns toggle_linehl<CR>";
         options = {
           desc = "Line Highlight toggle";
@@ -61,7 +66,7 @@ in
       }
       {
         mode = "n";
-        key = "<leader>gtn";
+        key = "<leader>ugh";
         action = ":Gitsigns toggle_numhl<CR>";
         options = {
           desc = "Number Highlight toggle";
@@ -70,7 +75,7 @@ in
       }
       {
         mode = "n";
-        key = "<leader>gtw";
+        key = "<leader>ugw";
         action = "<cmd>Gitsigns toggle_word_diff<CR>";
         options = {
           desc = "Word Diff toggle";
@@ -79,7 +84,7 @@ in
       }
       {
         mode = "n";
-        key = "<leader>gts";
+        key = "<leader>ugs";
         action = "<cmd>Gitsigns toggle_signs<CR>";
         options = {
           desc = "Signs toggle";
@@ -98,6 +103,7 @@ in
           silent = true;
         };
       }
+      # Hunk binds
       {
         mode = "n";
         key = "<leader>ghp";
@@ -183,6 +189,7 @@ in
           silent = true;
         };
       }
+      # Buffer binds
       {
         mode = "n";
         key = "<leader>gS";
