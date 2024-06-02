@@ -14,7 +14,7 @@ _: {
         key = "<leader>tt";
         action = ":ToggleTerm<CR>";
         options = {
-          desc = "Toggle terminal";
+          desc = "Open Terminal";
           silent = true;
         };
       }
@@ -30,7 +30,7 @@ _: {
             end
           '';
         options = {
-          desc = "Toggle lazygit";
+          desc = "Open Lazygit";
           silent = true;
         };
       }
@@ -46,7 +46,7 @@ _: {
             end
           '';
         options = {
-          desc = "Toggle lazygit";
+          desc = "Open Lazygit";
           silent = true;
         };
       }

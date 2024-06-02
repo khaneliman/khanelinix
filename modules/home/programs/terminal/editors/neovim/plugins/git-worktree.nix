@@ -13,7 +13,7 @@ in
       };
 
       which-key.registrations."<leader>"."g"."W" = mkIf (cfg.enableTelescope && cfg.enable) {
-        name = "󰙅 Git Worktree";
+        name = "󰙅 Worktree";
       };
     };
 

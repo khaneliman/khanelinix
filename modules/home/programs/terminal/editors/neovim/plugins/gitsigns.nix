@@ -25,8 +25,9 @@ in
         };
       };
 
-      which-key.registrations."<leader>"."g"."t" = mkIf config.programs.nixvim.plugins.gitsigns.enable {
-        name = "  Gitsigns Toggle";
+      which-key.registrations."<leader>"."g" = {
+        "h" = mkIf config.programs.nixvim.plugins.gitsigns.enable { name = "  Hunks"; };
+        "t" = mkIf config.programs.nixvim.plugins.gitsigns.enable { name = "  Toggle"; };
       };
     };
 
@@ -99,7 +100,7 @@ in
       }
       {
         mode = "n";
-        key = "<leader>gp";
+        key = "<leader>ghp";
         action.__raw = ''
           function()
             if vim.wo.diff then return ${toJSON "<leader>gp"} end
@@ -116,7 +117,7 @@ in
       }
       {
         mode = "n";
-        key = "<leader>gn";
+        key = "<leader>ghn";
         action.__raw = ''
           function()
             if vim.wo.diff then return ${toJSON "<leader>gn"} end
@@ -136,7 +137,7 @@ in
           "n"
           "v"
         ];
-        key = "<leader>gs";
+        key = "<leader>ghs";
         action = "<cmd>Gitsigns stage_hunk<CR>";
         options = {
           desc = "Stage hunk";
@@ -145,7 +146,7 @@ in
       }
       {
         mode = "n";
-        key = "<leader>gu";
+        key = "<leader>ghu";
         action = "<cmd>Gitsigns undo_stage_hunk<CR>";
         options = {
           desc = "Undo stage hunk";
@@ -157,7 +158,7 @@ in
           "n"
           "v"
         ];
-        key = "<leader>gr";
+        key = "<leader>ghr";
         action = "<cmd>Gitsigns reset_hunk<CR>";
         options = {
           desc = "Reset hunk";
@@ -166,7 +167,7 @@ in
       }
       {
         mode = "n";
-        key = "<leader>g<C-p>";
+        key = "<leader>ghP";
         action = "<cmd>Gitsigns preview_hunk<CR>";
         options = {
           desc = "Preview hunk";
@@ -175,9 +176,10 @@ in
       }
       {
         mode = "n";
-        key = "<leader>gP";
+        key = "<leader>gh<C-p>";
         action = "<cmd>Gitsigns preview_hunk_inline<CR>";
         options = {
+          desc = "Preview hunk inline";
           silent = true;
         };
       }
@@ -186,6 +188,7 @@ in
         key = "<leader>gS";
         action = "<cmd>Gitsigns stage_buffer<CR>";
         options = {
+          desc = "Stage buffer";
           silent = true;
         };
       }
@@ -194,14 +197,7 @@ in
         key = "<leader>gR";
         action = "<cmd>Gitsigns reset_buffer<CR>";
         options = {
-          silent = true;
-        };
-      }
-      {
-        mode = "n";
-        key = "<leader>gD";
-        action = "<cmd>Gitsigns diffthis HEAD<CR>";
-        options = {
+          desc = "Reset buffer";
           silent = true;
         };
       }

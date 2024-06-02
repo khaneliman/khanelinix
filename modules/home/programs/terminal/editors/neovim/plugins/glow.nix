@@ -39,17 +39,17 @@ in
     keymaps = [
       {
         mode = "n";
-        key = "<leader>pm";
+        key = "<leader>pg";
         action = ":Glow<CR>";
         options = {
-          desc = "Preview Markdown";
+          desc = "Glow (Markdown)";
           silent = true;
         };
       }
     ];
 
     plugins.which-key.registrations."<leader>p" = {
-      mode = "v";
+      mode = "n";
       name = " Preview";
     };
   };

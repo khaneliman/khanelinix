@@ -19,7 +19,7 @@
         key = "<leader>ty";
         action = ":Yazi<CR>";
         options = {
-          desc = "Toggle Yazi";
+          desc = "Open Yazi";
           silent = true;
         };
       }

@@ -12,9 +12,12 @@ _: {
     keymaps = [
       {
         mode = "n";
-        key = "<leader>m";
+        key = "<leader>pm";
         action = ":MarkdownPreview<cr>";
-        options.silent = true;
+        options = {
+          desc = "Markdown Preview";
+          silent = true;
+        };
       }
     ];
   };

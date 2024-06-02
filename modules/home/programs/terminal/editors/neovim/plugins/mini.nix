@@ -113,7 +113,7 @@ _: {
       }
       {
         mode = "n";
-        key = "<leader>ug";
+        key = "<leader>gto";
         action.__raw = # lua
           "MiniDiff.toggle_overlay";
         options = {
