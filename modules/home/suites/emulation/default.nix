@@ -21,7 +21,8 @@ in
     home.packages =
       with pkgs;
       [
-        cemu
+        # FIXME: broken nixpkg
+        # cemu
         emulationstation
         mame
         melonDS
