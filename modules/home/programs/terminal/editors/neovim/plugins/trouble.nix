@@ -21,6 +21,40 @@
               hash = "sha256-Uj4euCnlxbDS37X9+xhchMehhNJaiAz31Wvg73T685o=";
             };
           };
+
+        settings = {
+          modes = {
+            preview_split = {
+              mode = "diagnostics";
+              preview = {
+                type = "split";
+                relative = "win";
+                position = "right";
+                size = 0.5;
+              };
+            };
+
+            preview_float = {
+              mode = "diagnostics";
+              preview = {
+                type = "float";
+                relative = "editor";
+                border = "rounded";
+                title = "Preview";
+                title_pos = "center";
+                position = [
+                  0
+                  (-2)
+                ];
+                size = {
+                  width = 0.3;
+                  height = 0.3;
+                };
+                zindex = 200;
+              };
+            };
+          };
+        };
       };
     };
 
@@ -28,7 +62,7 @@
       {
         mode = "n";
         key = "<leader>xx";
-        action = "<cmd>Trouble diagnostics toggle<cr>";
+        action = "<cmd>Trouble preview_split toggle<cr>";
         options = {
           desc = "Diagnostics toggle";
           silent = true;
@@ -37,7 +71,7 @@
       {
         mode = "n";
         key = "<leader>xX";
-        action = "<cmd>Trouble diagnostics toggle filter.buf=0<cr>";
+        action = "<cmd>Trouble preview_split toggle filter.buf=0<cr>";
         options = {
           desc = "Buffer Diagnostics toggle";
           silent = true;
