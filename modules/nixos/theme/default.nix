@@ -45,7 +45,7 @@ in
     enable = mkEnableOption "Enable custom theme use for applications.";
 
     cursor = {
-      name = mkOpt types.str "Catppuccin-Macchiato-Blue-Cursors" "The name of the cursor theme to apply.";
+      name = mkOpt types.str "catppuccin-macchiato-blue-cursors" "The name of the cursor theme to apply.";
       package = mkOpt types.package (
         if pkgs.stdenv.isLinux then pkgs.catppuccin-cursors.macchiatoBlue else pkgs.emptyDirectory
       ) "The package to use for the cursor theme.";

@@ -74,7 +74,7 @@ in
       theme = {
         gtk = mkIf pkgs.stdenv.isLinux {
           cursor = {
-            name = "Catppuccin-Macchiato-Blue-Cursors";
+            name = "catppuccin-macchiato-blue-cursors";
             package = pkgs.catppuccin-cursors.macchiatoBlue;
             size = 32;
           };
@@ -88,7 +88,7 @@ in
           };
 
           theme = {
-            name = "Catppuccin-Macchiato-Blue-Dark";
+            name = "Catppuccin-Macchiato-Standard-Blue-Dark";
             package = pkgs.catppuccin-gtk.override {
               accents = [ "blue" ];
               variant = "macchiato";

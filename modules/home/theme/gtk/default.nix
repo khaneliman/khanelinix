@@ -23,7 +23,7 @@ in
     usePortal = mkBoolOpt false "Whether to use the GTK Portal.";
 
     cursor = {
-      name = mkOpt types.str "Catppuccin-Macchiato-Blue-Cursors" "The name of the cursor theme to apply.";
+      name = mkOpt types.str "catppuccin-macchiato-blue-cursors" "The name of the cursor theme to apply.";
       package = mkOpt types.package (
         if pkgs.stdenv.isLinux then pkgs.catppuccin-cursors.macchiatoBlue else pkgs.emptyDirectory
       ) "The package to use for the cursor theme.";
@@ -39,7 +39,7 @@ in
     };
 
     theme = {
-      name = mkOpt types.str "Catppuccin-Macchiato-Blue-Dark" "The name of the theme to apply";
+      name = mkOpt types.str "Catppuccin-Macchiato-Standard-Blue-Dark" "The name of the theme to apply";
       package = mkOpt types.package (pkgs.catppuccin-gtk.override {
         accents = [ "blue" ];
         size = "standard";
