@@ -3,6 +3,7 @@
 
   inputs = {
 
+    catppuccin-cursors.url = "github:catppuccin/cursors";
     catppuccin.url = "github:catppuccin/nix";
 
     # macOS Support (master)

@@ -227,7 +227,7 @@
                   ''
                     function ()
                       -- vim.g.disable_autoformat = not vim.g.disable_autoformat
-                      vim.cmd('Formattoggle!')
+                      vim.cmd('FormatToggle!')
                       vim.notify(string.format("Buffer Autoformatting %s", bool2str(not vim.b[0].disable_autoformat), "info"))
                     end'';
                 options = {
@@ -240,7 +240,7 @@
                   ''
                     function ()
                       -- vim.g.disable_autoformat = not vim.g.disable_autoformat
-                      vim.cmd('Formattoggle')
+                      vim.cmd('FormatToggle')
                       vim.notify(string.format("Global Autoformatting %s", bool2str(not vim.g.disable_autoformat), "info"))
                     end'';
                 options = {
