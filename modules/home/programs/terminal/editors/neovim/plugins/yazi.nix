@@ -16,10 +16,10 @@
     keymaps = [
       {
         mode = "n";
-        key = "<leader>ty";
+        key = "<leader>e";
         action = ":Yazi<CR>";
         options = {
-          desc = "Open Yazi";
+          desc = "Yazi toggle";
           silent = true;
         };
       }
