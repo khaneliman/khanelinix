@@ -153,7 +153,7 @@ in
             filetypes = [ "lua" ];
           };
 
-          nil_ls = {
+          nil-ls = {
             enable = true;
             filetypes = [ "nix" ];
             settings = {
