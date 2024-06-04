@@ -237,9 +237,7 @@
           yamlfmt = {
             command = lib.getExe pkgs.yamlfmt;
           };
-          zigfmt = {
-            command = lib.getExe pkgs.zig;
-          };
+          zigfmt = lib.mkIf pkgs.stdenv.isLinux { command = lib.getExe pkgs.zig; };
         };
       };
     };
