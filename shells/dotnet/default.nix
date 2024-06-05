@@ -1,7 +1,7 @@
 { mkShell, pkgs, ... }:
 let
-  azure-artifacts-credential-provider = pkgs.stdenv.mkDerivation rec {
-    name = "azure-artifacts-credential-provider";
+  artifacts-credprovider = pkgs.stdenv.mkDerivation rec {
+    name = "artifacts-credprovider";
     version = "1.1.1";
 
     src = pkgs.fetchurl {
@@ -50,7 +50,7 @@ mkShell {
 
   shellHook = ''
 
-    export NUGET_PLUGIN_PATHS=${azure-artifacts-credential-provider}/bin/netcore/CredentialProvider.Microsoft/CredentialProvider.Microsoft.dll
+    export NUGET_PLUGIN_PATHS=${artifacts-credprovider}/bin/netcore/CredentialProvider.Microsoft/CredentialProvider.Microsoft.dll
 
     echo 🔨 Dotnet DevShell
 
