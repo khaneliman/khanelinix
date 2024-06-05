@@ -173,7 +173,9 @@ in
         "$LHYPER" = "SUPER_ALT_L_CTRL_L";
 
         # default applications
-        "$term" = "[float;tile] ${getExe pkgs.wezterm} start --always-new-process";
+        # FIX: broken clipboard with new hyprland impl
+        # "$term" = "[float;tile] ${getExe pkgs.wezterm} start --always-new-process";
+        "$term" = "${getExe pkgs.kitty}";
         "$browser" = "${getExe pkgs.firefox}";
         "$mail" = "${getExe pkgs.thunderbird}";
         "$editor" = "${getExe pkgs.neovim}";
