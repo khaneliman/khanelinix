@@ -34,6 +34,7 @@ in
 
       # TODO: add extensions not packaged with nixpkgs
       extensions = with pkgs.vscode-extensions; [
+        adpyke.codesnap
         arrterian.nix-env-selector
         bbenoist.nix
         catppuccin.catppuccin-vsc
