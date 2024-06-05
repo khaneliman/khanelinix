@@ -44,8 +44,7 @@ in
         pkgs.${namespace}.trace-which
         mas
         moreutils
-        # FIX: broken nixpkg dependency
-        # ncdu
+        ncdu
         oh-my-posh
         pigz
         rename
