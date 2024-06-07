@@ -104,6 +104,7 @@ in
               type = "display";
               key = " ╭─ 󰍹 ";
               keyColor = "blue";
+              compactType = "original-with-refresh-rate";
             }
             {
               type = "cpu";
@@ -112,17 +113,17 @@ in
             }
             {
               type = "gpu";
-              key = " ├─ 󰍛 ";
-              keyColor = "blue";
-            }
-            {
-              type = "memory";
-              key = " ├─   ";
+              key = " ├─  ";
               keyColor = "blue";
             }
             {
               type = "disk";
-              key = " ╰─ 󱛟 ";
+              key = " ├─ 󱛟 ";
+              keyColor = "blue";
+            }
+            {
+              type = "memory";
+              key = " ╰─  ";
               keyColor = "blue";
             }
             {
