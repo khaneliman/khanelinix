@@ -85,6 +85,7 @@ in
         "terminal.integrated.fontFamily" = "JetBrainsMono Nerd Font Mono";
 
         # LSP
+        "C_Cpp.intelliSenseEngine" = "disabled";
         "java.jdt.ls.java.home" = "${pkgs.jdk17}/lib/openjdk";
         "java.configuration.runtimes" = [
           "${pkgs.jdk8}/lib/openjdk"
