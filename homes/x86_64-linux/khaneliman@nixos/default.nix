@@ -24,6 +24,14 @@ in
       };
     };
 
+    services = {
+      sops = {
+        enable = true;
+        defaultSopsFile = lib.snowfall.fs.get-file "secrets/khanelinix/khaneliman/default.yaml";
+        sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
+      };
+    };
+
     system = {
       xdg = enabled;
     };

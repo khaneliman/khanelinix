@@ -158,11 +158,6 @@ in
       # doas = enabled;
       keyring = enabled;
       pulse-secure = enabled;
-      sops = {
-        enable = true;
-        sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-        defaultSopsFile = lib.snowfall.fs.get-file "secrets/khanelinix/default.yaml";
-      };
       sudo-rs = enabled;
     };
 

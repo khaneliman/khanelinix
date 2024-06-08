@@ -22,11 +22,6 @@ in
     security = {
       # FIX: make gpg work on wsl
       gpg = mkForce disabled;
-      sops = {
-        enable = true;
-        sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-        defaultSopsFile = lib.snowfall.fs.get-file "secrets/CORE/default.yaml";
-      };
     };
 
     suites = {

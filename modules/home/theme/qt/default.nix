@@ -100,10 +100,7 @@ in
         name = "qtct";
       };
 
-      style = mkDefault {
-        name = "qt6ct-style";
-        inherit (cfg.theme) package;
-      };
+      style = mkDefault { name = "qt6ct-style"; };
     };
   };
 }

@@ -198,12 +198,8 @@
 
       systems = {
         modules = {
-          darwin = with inputs; [ nixvim.nixDarwinModules.nixvim ];
-
           nixos = with inputs; [
-            # catppuccin.nixosModules.catppuccin
             lanzaboote.nixosModules.lanzaboote
-            nixvim.nixosModules.nixvim
             sops-nix.nixosModules.sops
           ];
         };
