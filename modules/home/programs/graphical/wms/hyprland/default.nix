@@ -133,6 +133,8 @@ in
 
       systemd = {
         enable = true;
+        enableXdgAutostart = true;
+
         variables = [ "--all" ];
       };
 
