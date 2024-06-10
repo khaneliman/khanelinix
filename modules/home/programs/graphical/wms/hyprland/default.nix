@@ -57,7 +57,6 @@ in
         CLUTTER_BACKEND = "wayland";
         GDK_BACKEND = "wayland,x11";
         HYPRLAND_LOG_WLR = "1";
-        HYPRCURSOR_SIZE = "${toString config.${namespace}.theme.gtk.cursor.size}";
         HYPRCURSOR_THEME = config.${namespace}.theme.gtk.cursor.name;
         MOZ_ENABLE_WAYLAND = "1";
         MOZ_USE_XINPUT2 = "1";
