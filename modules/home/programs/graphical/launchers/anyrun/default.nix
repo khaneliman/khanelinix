@@ -30,6 +30,7 @@ in
           shell
           symbols
           translate
+          websearch
 
           anyrun-nixos-options.packages.${system}.default
         ];
@@ -113,6 +114,13 @@ in
             prefix: ":tr",
             language_delimiter: ">",
             max_entries: 3,
+          )
+        '';
+
+        "websearch.ron".text = ''
+          Config(
+            prefix: "?",
+            engines: [DuckDuckGo] 
           )
         '';
       };
