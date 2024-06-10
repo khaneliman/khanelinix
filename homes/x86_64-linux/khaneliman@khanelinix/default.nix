@@ -91,6 +91,7 @@ in
             ];
           };
 
+          run-as-service = enabled;
           ssh = enabled;
         };
       };
