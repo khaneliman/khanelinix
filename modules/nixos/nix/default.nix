@@ -13,7 +13,18 @@ in
   imports = [ (lib.snowfall.fs.get-file "modules/shared/nix/default.nix") ];
 
   config = mkIf cfg.enable {
-    documentation.man.generateCaches = mkDefault true;
+    documentation = {
+      man.generateCaches = mkDefault true;
+
+      nixos = {
+        enable = true;
+
+        options = {
+          warningsAreErrors = true;
+          splitBuild = true;
+        };
+      };
+    };
 
     nix = {
       # make builds run with low priority so my system stays responsive
