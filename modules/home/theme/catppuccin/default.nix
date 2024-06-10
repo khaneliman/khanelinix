@@ -16,6 +16,15 @@ let
 
   cfg = config.${namespace}.theme.catppuccin;
 
+  warpPkg = pkgs.fetchFromGitHub {
+    owner = "catppuccin";
+    repo = "warp";
+    rev = "11295fa7aed669ca26f81ff44084059952a2b528";
+    hash = "sha256-ym5hwEBtLlFe+DqMrXR3E4L2wghew2mf9IY/1aynvAI=";
+  };
+
+  warpStyle = "${warpPkg.outPath}/themes/catppuccin_macchiato.yml";
+
   catppuccinAccents = [
     "rosewater"
     "flamingo"
@@ -122,13 +131,18 @@ in
       flavor = "macchiato";
     };
 
-    home = mkIf pkgs.stdenv.isLinux {
-      pointerCursor = {
+    home = {
+      file = mkIf config.khanelinix.programs.terminal.emulators.warp.enable {
+        ".warp/themes/catppuccin_macchiato.yaml".source = warpStyle;
+        ".local/share/warp-terminal/themes/catppuccin_macchiato.yaml".source = warpStyle;
+      };
+
+      pointerCursor = mkIf pkgs.stdenv.isLinux {
         inherit (config.${namespace}.theme.gtk.cursor) name package size;
         x11.enable = true;
       };
 
-      sessionVariables = {
+      sessionVariables = mkIf pkgs.stdenv.isLinux {
         CURSOR_THEME = config.${namespace}.theme.gtk.cursor.name;
       };
     };
