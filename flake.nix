@@ -2,6 +2,8 @@
   description = "KhaneliNix";
 
   inputs = {
+    anyrun.url = "github:anyrun-org/anyrun";
+    anyrun-nixos-options.url = "github:n3oney/anyrun-nixos-options";
 
     catppuccin-cursors.url = "github:catppuccin/cursors";
     catppuccin.url = "github:catppuccin/nix";
@@ -188,6 +190,7 @@
       ];
 
       homes.modules = with inputs; [
+        anyrun.homeManagerModules.default
         catppuccin.homeManagerModules.catppuccin
         hypr-socket-watch.homeManagerModules.default
         nix-index-database.hmModules.nix-index

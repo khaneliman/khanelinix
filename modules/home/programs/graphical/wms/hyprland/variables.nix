@@ -182,8 +182,8 @@ in
         "$explorer" = "${getExe pkgs.xfce.thunar}";
         "$music" = "${getExe pkgs.spotify}";
         "$notification_center" = "${getExe' config.services.swaync.package "swaync-client"}";
-        "$launcher" = "${getExe config.programs.rofi.package} -show drun -n";
-        "$launcher_alt" = "${getExe config.programs.rofi.package} -show calc";
+        "$launcher" = "anyrun";
+        "$launcher_alt" = "${getExe config.programs.rofi.package} -show drun -n";
         "$launcher_shift" = "${getExe config.programs.rofi.package} -show run -n";
         "$launchpad" = "${getExe config.programs.rofi.package} -show drun -config '~/.config/rofi/appmenu/rofi.rasi'";
         "$looking-glass" = "${getExe pkgs.looking-glass-client}";

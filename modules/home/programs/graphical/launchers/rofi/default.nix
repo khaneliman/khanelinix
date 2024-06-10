@@ -22,6 +22,7 @@ in
 
     programs.rofi = {
       enable = true;
+      # NOTE: rofi-wayland doesn't support plugins with HM module. But... non wayland sucks... sooo
       package = pkgs.rofi-wayland;
 
       font = "MonaspiceNe Nerd Font 14";

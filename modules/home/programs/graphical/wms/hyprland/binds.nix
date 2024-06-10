@@ -32,9 +32,10 @@ in
             # █░░░█▀█░█░█░█▀█░█▀▀░█░█░█▀▀░█▀▄░█▀▀
             # █░░░█▀█░█░█░█░█░█░░░█▀█░█▀▀░█▀▄░▀▀█
             # ▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀
-            "$mainMod, SPACE, exec, $launcher"
-            "CTRL, SPACE, exec, $launcher"
-            "CTRL_SHIFT, SPACE, exec, $launcher_shift"
+            "$mainMod, SPACE, exec, run-as-service $($launcher)"
+            "$mainMod_SHIFT, SPACE, exec, run-as-service $($launcher_alt)"
+            "CTRL, SPACE, exec, run-as-service $($launcher)"
+            "CTRL_SHIFT, SPACE, exec, run-as-service $($launcher_shift)"
             "$mainMod, A, exec, $launchpad"
 
             # ░█▀█░█▀█░█▀█░█▀▀
