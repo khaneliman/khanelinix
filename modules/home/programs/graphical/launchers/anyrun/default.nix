@@ -26,6 +26,7 @@ in
       config = {
         plugins = with anyrun.packages.${system}; [
           applications
+          dictionary
           rink
           shell
           symbols
