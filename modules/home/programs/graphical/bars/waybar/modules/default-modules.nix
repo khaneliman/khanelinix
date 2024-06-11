@@ -82,7 +82,7 @@ in
 
   clock = {
     tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
-    format = "{:%a %d; %b \n %I:%M %p }";
+    format = "󰃭 {:%a %d %b \n 󰅐 %I:%M %p}";
   };
 
   cpu = {
