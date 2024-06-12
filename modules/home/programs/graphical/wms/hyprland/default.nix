@@ -51,7 +51,7 @@ in
 
   config = mkIf cfg.enable {
     home = {
-      packages = with pkgs; [ xwaylandvideobridge ];
+      # packages = with pkgs; [ xwaylandvideobridge ];
 
       sessionVariables = {
         CLUTTER_BACKEND = "wayland";

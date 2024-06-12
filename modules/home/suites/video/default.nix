@@ -21,7 +21,8 @@ in
       with pkgs;
       lib.optionals stdenv.isLinux [
         devede
-        handbrake
+        # FIXME: broken nixpkg again
+        # handbrake
         mediainfo-gui
         shotcut
         vlc
