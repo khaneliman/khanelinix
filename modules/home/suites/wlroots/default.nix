@@ -1,16 +1,13 @@
 {
   config,
-  inputs,
   lib,
   namespace,
   pkgs,
-  system,
   ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt enabled;
-  inherit (inputs) nixpkgs-wayland;
 
   cfg = config.${namespace}.suites.wlroots;
 in
@@ -21,9 +18,9 @@ in
 
   config = mkIf cfg.enable {
     home.packages = [
-      nixpkgs-wayland.packages.${system}.wdisplays
-      nixpkgs-wayland.packages.${system}.wl-clipboard
-      nixpkgs-wayland.packages.${system}.wlr-randr
+      pkgs.wdisplays
+      pkgs.wl-clipboard
+      pkgs.wlr-randr
       pkgs.wl-screenrec
     ];
 
