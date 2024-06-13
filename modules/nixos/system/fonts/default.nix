@@ -51,6 +51,7 @@ in
       };
 
       fontDir = {
+        enable = true;
         decompressFonts = true;
       };
     };

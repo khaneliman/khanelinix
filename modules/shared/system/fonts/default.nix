@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt enabled;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
   cfg = config.${namespace}.system.fonts;
 in
@@ -53,8 +53,5 @@ in
       LOG_ICONS = "true";
     };
 
-    fonts = {
-      fontDir = enabled;
-    };
   };
 }

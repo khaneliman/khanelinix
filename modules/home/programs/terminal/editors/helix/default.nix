@@ -33,7 +33,7 @@ in
               marksman
               nil
               nixfmt-rfc-style
-              nodePackages.bash-language-server
+              bash-language-server
               nodePackages.vscode-css-languageserver-bin
               nodePackages.vscode-langservers-extracted
               nodePackages.prettier

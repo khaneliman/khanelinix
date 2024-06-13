@@ -15,7 +15,7 @@ in
 
   config = mkIf cfg.enable {
     fonts = {
-      fonts = with pkgs; [ sketchybar-app-font ] ++ cfg.fonts;
+      packages = with pkgs; [ sketchybar-app-font ] ++ cfg.fonts;
     };
 
     system = {
