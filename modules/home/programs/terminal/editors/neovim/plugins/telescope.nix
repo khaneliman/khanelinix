@@ -1,10 +1,14 @@
-{ pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   home.packages = with pkgs; [ ripgrep ];
 
   programs.nixvim = {
-
-    keymaps = [
+    keymaps = lib.mkIf config.programs.nixvim.plugins.telescope.enable [
       {
         mode = "n";
         key = "<leader>fc";

@@ -51,7 +51,7 @@
       };
     };
 
-    keymaps = [
+    keymaps = lib.mkIf config.programs.nixvim.plugins.neotest.enable [
       {
         mode = "n";
         key = "<leader>uT";

@@ -1,4 +1,5 @@
-_: {
+{ config, lib, ... }:
+{
   programs.nixvim = {
     plugins.toggleterm = {
       enable = true;
@@ -8,7 +9,7 @@ _: {
       };
     };
 
-    keymaps = [
+    keymaps = lib.mkIf config.programs.nixvim.plugins.toggleterm.enable [
       {
         mode = "n";
         key = "<leader>tt";

@@ -35,7 +35,7 @@ in
       };
     };
 
-    keymaps = [
+    keymaps = mkIf config.programs.nixvim.plugins.gitsigns.enable [
       # UI binds
       {
         mode = "n";

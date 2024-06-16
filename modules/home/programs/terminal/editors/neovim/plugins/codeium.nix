@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   programs.nixvim = {
     plugins = {
@@ -18,7 +23,7 @@
       };
     };
 
-    keymaps = [
+    keymaps = lib.mkIf config.programs.nixvim.plugins.codeium-nvim.enable [
       {
         mode = "n";
         key = "<leader>uc";

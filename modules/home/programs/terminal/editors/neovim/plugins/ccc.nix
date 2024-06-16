@@ -1,4 +1,5 @@
-_: {
+{ lib, config, ... }:
+{
   programs.nixvim = {
     plugins = {
       ccc = {
@@ -69,7 +70,7 @@ _: {
       };
     };
 
-    keymaps = [
+    keymaps = lib.mkIf config.programs.nixvim.plugins.ccc.enable [
       {
         mode = "n";
         key = "<leader>up";

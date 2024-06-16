@@ -1,4 +1,5 @@
-_: {
+{ lib, config, ... }:
+{
   programs.nixvim = {
     plugins = {
       spectre = {
@@ -6,7 +7,7 @@ _: {
       };
     };
 
-    keymaps = [
+    keymaps = lib.mkIf config.programs.nixvim.plugins.spectre.enable [
       {
         mode = "n";
         key = "<leader>rs";

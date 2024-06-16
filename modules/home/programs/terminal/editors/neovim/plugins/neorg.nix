@@ -1,7 +1,6 @@
 { pkgs, ... }:
 {
   programs.nixvim = {
-
     autoCmd = [
       {
         event = "FileType";
@@ -15,7 +14,7 @@
       }
     ];
 
-    extraPlugins = with pkgs.vimPlugins; [
+    extraPlugins = [
       (pkgs.vimUtils.buildVimPlugin {
         name = "lua-utils.nvim";
         src = pkgs.fetchFromGitHub {

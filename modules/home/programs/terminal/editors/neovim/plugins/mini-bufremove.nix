@@ -1,4 +1,5 @@
-_: {
+{ lib, config, ... }:
+{
   programs.nixvim = {
     plugins = {
       mini = {
@@ -10,7 +11,7 @@ _: {
       };
     };
 
-    keymaps = [
+    keymaps = lib.mkIf config.programs.nixvim.plugins.mini.enable [
       {
         mode = "n";
         key = "<leader>c";

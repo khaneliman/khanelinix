@@ -1,4 +1,5 @@
-_: {
+{ config, lib, ... }:
+{
   programs.nixvim = {
     plugins = {
       diffview = {
@@ -6,7 +7,7 @@ _: {
       };
     };
 
-    keymaps = [
+    keymaps = lib.mkIf config.programs.nixvim.plugins.diffview.enable [
       {
         mode = "n";
         key = "<leader>gd";

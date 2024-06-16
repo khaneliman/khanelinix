@@ -1,4 +1,5 @@
-_: {
+{ config, lib, ... }:
+{
   programs.nixvim = {
 
     plugins = {
@@ -27,7 +28,7 @@ _: {
       };
     };
 
-    keymaps = [
+    keymaps = lib.mkIf config.programs.nixvim.plugins.undotree.enable [
       {
         mode = "n";
         key = "<leader>uu";
