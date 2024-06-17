@@ -4,7 +4,7 @@
     keymaps = lib.mkIf config.programs.nixvim.plugins.neo-tree.enable [
       {
         mode = "n";
-        key = "<leader>e";
+        key = "<leader>E";
         action = ":Neotree action=focus reveal toggle<CR>";
         options = {
           desc = "Explorer toggle";
@@ -14,7 +14,7 @@
     ];
 
     plugins.neo-tree = {
-      enable = false;
+      enable = true;
 
       closeIfLastWindow = true;
 
