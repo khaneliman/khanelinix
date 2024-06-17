@@ -11,7 +11,7 @@
       };
     };
 
-    keymaps = lib.mkIf config.programs.nixvim.plugins.mini.enable [
+    keymaps = lib.mkIf (lib.hasAttr "bufremove" config.programs.nixvim.plugins.mini.modules) [
       {
         mode = "n";
         key = "<leader>c";

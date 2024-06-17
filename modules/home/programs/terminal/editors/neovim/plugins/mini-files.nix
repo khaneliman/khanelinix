@@ -1,7 +1,7 @@
 { config, lib, ... }:
 {
   programs.nixvim = {
-    keymaps = lib.mkIf config.programs.nixvim.plugins.mini.enable [
+    keymaps = lib.mkIf (lib.hasAttr "files" config.programs.nixvim.plugins.mini.modules) [
       {
         mode = "n";
         key = "<leader>E";
