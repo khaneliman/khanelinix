@@ -30,7 +30,7 @@ in
           # window settings
           app-id = "foot";
           locked-title = "no";
-          pad = "16x16 center";
+          pad = "12x12 center";
           shell = "zsh";
           term = "xterm-256color";
           title = "foot";
