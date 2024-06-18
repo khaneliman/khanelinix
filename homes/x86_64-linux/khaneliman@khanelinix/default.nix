@@ -154,6 +154,7 @@ in
       };
 
       emulation = enabled;
+      games = enabled;
       music = enabled;
       photo = enabled;
       social = enabled;
