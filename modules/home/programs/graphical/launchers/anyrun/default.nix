@@ -13,7 +13,7 @@ let
   inherit (lib.${namespace}) compileSCSS mkBoolOpt;
   inherit (inputs) anyrun anyrun-nixos-options;
 
-  cfg = config.${namespace}.programs.graphical.launchers.rofi;
+  cfg = config.${namespace}.programs.graphical.launchers.anyrun;
 in
 {
   options.${namespace}.programs.graphical.launchers.anyrun = {
