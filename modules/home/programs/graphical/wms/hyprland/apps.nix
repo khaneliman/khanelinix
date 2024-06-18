@@ -12,6 +12,20 @@ let
 in
 {
   config = mkIf cfg.enable {
+    # NOTE: xdgautostart method of providing a desktop item to start
+    # xdg.configFile = {
+    #   "autostart/OpenRGB.desktop".source = pkgs.makeDesktopItem {
+    #     name = "OpenRGB";
+    #     desktopName = "openrgb";
+    #     genericName = "Control RGB lighting.";
+    #     exec = "openrgb --startminimized --profile default";
+    #     icon = "OpenRGB";
+    #     type = "Application";
+    #     categories = [ "Utility" ];
+    #     terminal = false;
+    #   };
+    # };
+
     wayland.windowManager.hyprland = {
       settings = {
         exec-once = [
@@ -26,7 +40,7 @@ in
           "${getExe pkgs.thunderbird}"
 
           # Startup background apps
-          "${getExe pkgs.openrgb} --startminimized --profile default"
+          "${getExe pkgs.openrgb-with-all-plugins} --startminimized --profile default"
           "${getExe pkgs._1password-gui} --silent"
         ];
       };
