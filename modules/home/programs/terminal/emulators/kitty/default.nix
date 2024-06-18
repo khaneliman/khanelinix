@@ -98,12 +98,14 @@ in
 
           # URLs
           url_style = "double";
-          open_url_modifiers = "ctrl + shift";
+          # FIXME: removed option https://sw.kovidgoyal.net/kitty/changelog/#id41
+          # open_url_modifiers = "ctrl + shift";
           open_url_with = "default";
           copy_on_select = "yes";
 
           # Selection
-          rectangle_select_modifiers = "ctrl + shift";
+          # FIXME: removed option https://sw.kovidgoyal.net/kitty/changelog/#id41
+          # rectangle_select_modifiers = "ctrl + shift";
           select_by_word_characters = ":@-./_~?& = %+#";
 
           # Mouse
