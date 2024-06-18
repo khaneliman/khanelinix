@@ -87,7 +87,6 @@ in
             lazygit = enabled;
             oh-my-posh = enabled;
             prisma = enabled;
-            python = enabled;
           };
         };
       };
