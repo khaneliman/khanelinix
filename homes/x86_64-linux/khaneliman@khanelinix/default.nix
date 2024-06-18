@@ -60,7 +60,7 @@ in
                   + "--output XWAYLAND1 --mode 5120x1440 --pos 0x1080 --rotate normal"
                 )
                 ""
-                "workspace = 1, monitor:DP-3, persistent:true"
+                "workspace = 1, monitor:DP-3, persistent:true, default:true"
                 "workspace = 2, monitor:DP-1, persistent:true, default:true"
                 "workspace = 3, monitor:DP-1, persistent:true"
                 "workspace = 4, monitor:DP-1, persistent:true"
