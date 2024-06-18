@@ -85,7 +85,6 @@ in
             k9s.enable = cfg.kubernetesEnable;
             lazydocker.enable = cfg.dockerEnable;
             lazygit = enabled;
-            node = enabled;
             oh-my-posh = enabled;
             prisma = enabled;
             python = enabled;
