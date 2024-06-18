@@ -24,7 +24,6 @@ in
           "${getExe pkgs.steam}"
           "${getExe pkgs.discord}"
           "${getExe pkgs.thunderbird}"
-          "${getExe pkgs.virt-manager}"
 
           # Startup background apps
           "${getExe pkgs.openrgb} --startminimized --profile default"
