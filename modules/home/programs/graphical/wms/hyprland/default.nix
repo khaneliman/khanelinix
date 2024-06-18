@@ -85,7 +85,6 @@ in
 
           launchers = {
             anyrun = enabled;
-            rofi = enabled;
           };
 
           screenlockers = {
