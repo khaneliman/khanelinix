@@ -31,6 +31,7 @@ in
 {
   options.${namespace}.programs.graphical.wms.hyprland = {
     enable = mkEnableOption "Hyprland.";
+    enableDebug = mkEnableOption "Enable debug mode.";
     appendConfig = lib.mkOption {
       type = lib.types.lines;
       default = "";
@@ -53,22 +54,26 @@ in
     home = {
       # packages = with pkgs; [ xwaylandvideobridge ];
 
-      sessionVariables = {
-        CLUTTER_BACKEND = "wayland";
-        GDK_BACKEND = "wayland,x11";
-        HYPRLAND_LOG_WLR = "1";
-        HYPRCURSOR_THEME = config.${namespace}.theme.gtk.cursor.name;
-        MOZ_ENABLE_WAYLAND = "1";
-        MOZ_USE_XINPUT2 = "1";
-        SDL_VIDEODRIVER = "wayland";
-        WLR_DRM_NO_ATOMIC = "1";
-        XDG_CURRENT_DESKTOP = "Hyprland";
-        XDG_SESSION_DESKTOP = "Hyprland";
-        XDG_SESSION_TYPE = "wayland";
-        _JAVA_AWT_WM_NONREPARENTING = "1";
-        __GL_GSYNC_ALLOWED = "0";
-        __GL_VRR_ALLOWED = "0";
-      };
+      sessionVariables =
+        {
+          CLUTTER_BACKEND = "wayland";
+          GDK_BACKEND = "wayland,x11";
+          HYPRCURSOR_THEME = config.${namespace}.theme.gtk.cursor.name;
+          MOZ_ENABLE_WAYLAND = "1";
+          MOZ_USE_XINPUT2 = "1";
+          SDL_VIDEODRIVER = "wayland";
+          WLR_DRM_NO_ATOMIC = "1";
+          XDG_CURRENT_DESKTOP = "Hyprland";
+          XDG_SESSION_DESKTOP = "Hyprland";
+          XDG_SESSION_TYPE = "wayland";
+          _JAVA_AWT_WM_NONREPARENTING = "1";
+          __GL_GSYNC_ALLOWED = "0";
+          __GL_VRR_ALLOWED = "0";
+        }
+        // mkIf cfg.enableDebug {
+          HYPRLAND_LOG_WLR = "1";
+          HYPRLAND_TRACE = "1";
+        };
 
       shellAliases = {
         hl = "cat $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland.log";
@@ -119,12 +124,14 @@ in
         ''
           ${cfg.prependConfig}
 
-          env = HYPRLAND_TRACE,1
-
           ${cfg.appendConfig}
         '';
 
-      package = hyprland.packages.${system}.hyprland;
+      package =
+        if cfg.enableDebug then
+          hyprland.packages.${system}.hyprland-debug
+        else
+          hyprland.packages.${system}.hyprland;
 
       settings = {
         exec = [ "${getExe pkgs.libnotify} --icon ~/.face -u normal \"Hello $(whoami)\"" ];

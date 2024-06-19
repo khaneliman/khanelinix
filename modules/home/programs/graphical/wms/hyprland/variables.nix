@@ -52,7 +52,7 @@ in
           ];
         };
 
-        debug = {
+        debug = mkIf cfg.enableDebug {
           colored_stdout_logs = true;
           disable_logs = false;
           enable_stdout_logs = true;
