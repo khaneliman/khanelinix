@@ -30,6 +30,7 @@ in
           rink
           shell
           symbols
+          stdin
           translate
           websearch
 
