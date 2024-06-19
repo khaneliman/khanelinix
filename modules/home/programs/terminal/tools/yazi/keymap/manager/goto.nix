@@ -157,6 +157,14 @@
     {
       on = [
         "g"
+        "r"
+      ];
+      run = "cd /run";
+      desc = "Go to the /run directory";
+    }
+    {
+      on = [
+        "g"
         "s"
       ];
       run = "cd /srv";
