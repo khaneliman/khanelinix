@@ -83,6 +83,7 @@ in
       "class<org.prismlauncher.PrismLauncher>" = "󰍳";
       "class<minecraft-launcher>" = "󰍳";
       "class<Postman>" = "󰛮";
+      "class<wlroots> title<.*WL-1.*>" = "";
     };
   };
 }
