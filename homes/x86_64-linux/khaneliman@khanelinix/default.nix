@@ -43,6 +43,8 @@ in
         wms = {
           hyprland = {
             enable = true;
+            enableDebug = true;
+
             appendConfig = # bash
               ''
                 exec-once = hyprctl setcursor ${config.${namespace}.theme.gtk.cursor.name} 32
