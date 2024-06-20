@@ -178,7 +178,7 @@ in
         # FIX: broken clipboard with new hyprland impl
         # "$term" = "[float;tile] ${getExe pkgs.wezterm} start --always-new-process";
         "$term" = "${getExe pkgs.kitty}";
-        "$browser" = "${getExe pkgs.firefox}";
+        "$browser" = "${getExe config.programs.firefox.package}";
         "$mail" = "${getExe pkgs.thunderbird}";
         "$editor" = "${getExe pkgs.neovim}";
         "$explorer" = "${getExe pkgs.xfce.thunar}";

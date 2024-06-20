@@ -34,7 +34,7 @@ in
           # ░▀░▀░▀░░░▀░░░░░▀▀▀░░▀░░▀░▀░▀░▀░░▀░░▀▀▀░▀░░
 
           # Startup apps that have rules for organizing them
-          "${getExe pkgs.firefox}"
+          "${getExe config.programs.firefox.package}"
           "${getExe pkgs.steam}"
           "${getExe pkgs.discord}"
           "${getExe pkgs.thunderbird}"
