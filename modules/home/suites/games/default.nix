@@ -20,8 +20,6 @@ in
     home.packages = with pkgs; [
       bottles
       lutris
-      # FIX: broken nixpkg
-      # minecraft
       prismlauncher
       proton-caller
       protontricks
