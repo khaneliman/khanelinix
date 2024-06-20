@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   namespace,
   ...
 }:
@@ -17,20 +16,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      mysql-client
-      # FIX: nixpkg broken
-      # neovide
-      rustup
-      jdk
-
-      #nix
-      nixpkgs-review
-      nixpkgs-lint-community
-      nixpkgs-hammering
-      nix-update
-    ];
-
     homebrew = {
       casks = [
         "cutter"
