@@ -53,11 +53,9 @@ in
       "class<code>" = "󰨞";
       "code-url-handler" = "󰨞";
       "class<discord>" = "󰙯";
-      "class<firefox>" = "";
-      "class<firefox-beta>" = "";
-      "class<firefox-developer-edition>" = "";
-      "class<firefox> title<.*github.*>" = "";
-      "class<firefox> title<.*twitch|youtube|plex|tntdrama|bally sports.*>" = "";
+      "class<firefox.*>" = "";
+      "class<firefox.*> title<.*github.*>" = "";
+      "class<firefox.*> title<.*twitch|youtube|plex|tntdrama|bally sports.*>" = "";
       "class<Alacritty>" = "";
       "class<kitty>" = "";
       "class<org.wezfurlong.wezterm>" = "";
