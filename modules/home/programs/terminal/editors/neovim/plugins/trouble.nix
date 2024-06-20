@@ -1,26 +1,9 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 {
   programs.nixvim = {
     plugins = {
       trouble = {
         enable = true;
-
-        package =
-          # TODO: remove when v3 is packaged
-          pkgs.vimUtils.buildVimPlugin {
-            name = "trouble.nvim";
-            src = pkgs.fetchFromGitHub {
-              owner = "folke";
-              repo = "trouble.nvim";
-              rev = "e2969409cf3f38f69913cc8fd9aa13137aabe760";
-              hash = "sha256-Uj4euCnlxbDS37X9+xhchMehhNJaiAz31Wvg73T685o=";
-            };
-          };
 
         settings = {
           modes = {
