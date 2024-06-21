@@ -165,6 +165,7 @@ in
               "font.name.sans-serif.x-western" = "MonaspiceNe Nerd Font";
               "font.name.serif.x-western" = "MonaspiceNe Nerd Font";
               "signon.autofillForms" = false;
+              "xpinstall.signatures.required" = false;
             }
             (optionalAttrs cfg.gpuAcceleration {
               "dom.webgpu.enabled" = true;
