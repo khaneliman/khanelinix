@@ -19,7 +19,12 @@ let
   image = [ "feh.desktop" ];
   mail = [ "thunderbird.desktop" ];
   powerpoint = [ "libreoffice-impress.desktop" ];
-  terminal = [ "kitty.desktop" ];
+  terminal = [
+    "kitty.desktop"
+    "foot.desktop"
+    "wezterm.desktop"
+    "alacritty.desktop"
+  ];
   video = [ "vlc.desktop" ];
   word = [ "libreoffice-writer.desktop" ];
 
