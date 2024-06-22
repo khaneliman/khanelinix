@@ -54,7 +54,9 @@ in
 
     icon = {
       name = mkOpt types.str "breeze-dark" "The name of the icon theme to apply.";
-      package = mkOpt types.package pkgs.libsForQt5.breeze-icons "The package to use for the icon theme.";
+      package =
+        mkOpt types.package pkgs.kdePackages.breeze-icons
+          "The package to use for the icon theme.";
     };
 
     selectedTheme = mkOption {

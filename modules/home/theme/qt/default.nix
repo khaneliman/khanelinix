@@ -67,10 +67,8 @@ in
       packages = with pkgs; [
         # libraries and programs to ensure that qt applications load without issue
         # breeze-icons is added as a fallback
-        breeze-icons
+        kdePackages.breeze-icons
         kdePackages.qt6ct
-        libsForQt5.qt5ct
-        libsForQt5.qtstyleplugin-kvantum
         qt6Packages.qtstyleplugin-kvantum
       ];
 
@@ -87,7 +85,6 @@ in
     };
 
     xdg.configFile = {
-      # TODO: replace with settings
       "Kvantum".source = ./Kvantum;
       "qt5ct/qt5ct.conf".text = lib.generators.toINI { } cfg.settings;
       "qt6ct/qt6ct.conf".text = lib.generators.toINI { } cfg.settings;

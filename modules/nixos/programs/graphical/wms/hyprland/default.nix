@@ -68,6 +68,10 @@ in
 
       programs = {
         graphical = {
+          apps = {
+            partitionmanager = enabled;
+          };
+
           addons = {
             gamemode = {
               startscript = # bash

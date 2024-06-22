@@ -84,10 +84,6 @@ in
     khanelinix = {
       programs = {
         graphical = {
-          apps = {
-            partitionmanager = enabled;
-          };
-
           launchers = {
             anyrun = enabled;
           };

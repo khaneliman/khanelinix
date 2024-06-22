@@ -17,9 +17,9 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      partition-manager
-      libsForQt5.kpmcore
-    ];
+    programs.partition-manager = {
+      enable = true;
+      package = pkgs.kdePackages.partitionmanager;
+    };
   };
 }

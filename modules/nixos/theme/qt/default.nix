@@ -29,7 +29,7 @@ in
       systemPackages =
         with pkgs;
         [ cfg.theme.package ]
-        ++ lib.optional config.${namespace}.suites.wlroots.enable libsForQt5.qt5.qtwayland;
+        ++ lib.optional config.${namespace}.suites.wlroots.enable kdePackages.qtwayland;
     };
 
     qt = {
