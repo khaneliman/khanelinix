@@ -91,7 +91,7 @@ in
 
     language-server = {
       bash-language-server = {
-        command = getExe pkgs.nodePackages.bash-language-server;
+        command = getExe pkgs.bash-language-server;
         args = [ "start" ];
       };
 

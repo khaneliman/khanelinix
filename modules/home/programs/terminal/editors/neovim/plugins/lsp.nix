@@ -77,7 +77,6 @@ in
         servers = {
           bashls = {
             enable = true;
-            package = pkgs.bash-language-server;
 
             filetypes = [
               "sh"
