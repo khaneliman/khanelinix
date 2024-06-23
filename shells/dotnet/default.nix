@@ -15,6 +15,14 @@ let
       cp -r netcore $out/bin
     '';
   };
+
+  avrogen = pkgs.buildDotnetGlobalTool {
+    # TODO: build from source?
+    pname = "avrogen";
+    nugetName = "Apache.Avro.Tools";
+    version = "1.11.3";
+    nugetSha256 = "sha256-nrG5NXCQwN1dOpf+fIXcbTjpYOHiQ++hBryYfpRFThU=";
+  };
 in
 mkShell {
   packages = with pkgs; [
@@ -32,15 +40,7 @@ mkShell {
         dotnet-sdk_8
       ]
     )
-
-    (buildDotnetGlobalTool {
-      # TODO: build from source?
-      pname = "avrogen";
-      nugetName = "Apache.Avro.Tools";
-      version = "1.11.3";
-      nugetSha256 = "sha256-nrG5NXCQwN1dOpf+fIXcbTjpYOHiQ++hBryYfpRFThU=";
-    })
-
+    avrogen
     azure-cli
     bicep
     csharp-ls
