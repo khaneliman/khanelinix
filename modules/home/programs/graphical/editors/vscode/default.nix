@@ -6,14 +6,15 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkEnableOption mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.graphical.editors.vscode;
 in
 {
   options.${namespace}.programs.graphical.editors.vscode = {
-    enable = mkBoolOpt false "Whether or not to enable vscode.";
+    enable = mkEnableOption "Whether or not to enable vscode.";
+    declarativeConfig = mkBoolOpt false "Whether or not to enable vscode.";
   };
 
   config = mkIf cfg.enable {
@@ -67,7 +68,7 @@ in
         yzhang.markdown-all-in-one
       ];
 
-      userSettings = {
+      userSettings = mkIf cfg.declarativeConfig {
         # Color theme
         "workbench.colorTheme" = "Catppuccin Macchiato";
         "catppuccin.accentColor" = "mauve";
