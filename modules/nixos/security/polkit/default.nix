@@ -17,15 +17,12 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ kdePackages.polkit-kde-agent-1 ];
+    environment.systemPackages = with pkgs; [ libsForQt5.polkit-kde-agent ];
 
-    # Enable and configure `polkit`.
     security.polkit = {
       enable = true;
       debug = lib.mkDefault true;
 
-      # the below configuration depends on security.polkit.debug being set to true
-      # so we have it written only if debugging is enabled
       extraConfig = lib.mkIf config.security.polkit.debug ''
         /* Log authorization checks. */
         polkit.addRule(function(action, subject) {
@@ -42,7 +39,7 @@ in
         wants = [ "graphical-session.target" ];
         serviceConfig = {
           Type = "simple";
-          ExecStart = "${pkgs.kdePackages.polkit-kde-agent-1}/libexec/polkit-kde-authentication-agent-1";
+          ExecStart = "${pkgs.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1";
           Restart = "on-failure";
           RestartSec = 1;
           TimeoutStopSec = 10;

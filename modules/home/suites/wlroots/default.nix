@@ -42,7 +42,6 @@ in
 
       services = {
         keyring = enabled;
-        polkit = enabled;
       };
     };
 
