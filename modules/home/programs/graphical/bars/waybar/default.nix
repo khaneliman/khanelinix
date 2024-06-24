@@ -13,8 +13,9 @@ let
     mkForce
     getExe
     mkMerge
+    types
     ;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.${namespace}) mkOpt mkBoolOpt;
   inherit (inputs) waybar;
 
   cfg = config.${namespace}.programs.graphical.bars.waybar;
@@ -30,14 +31,7 @@ let
   group-modules = import ./modules/group-modules.nix;
   hyprland-modules = import ./modules/hyprland-modules.nix { inherit config lib; };
 
-  all-modules = mkMerge [
-    custom-modules
-    default-modules
-    group-modules
-    (lib.mkIf config.${namespace}.programs.graphical.wms.hyprland.enable hyprland-modules)
-  ];
-
-  bar = {
+  commonAttributes = {
     layer = "top";
     position = "top";
 
@@ -53,10 +47,7 @@ let
     ];
   };
 
-  mainBar = {
-    output = "DP-1";
-    # "modules-center" = [ "cava" ];
-
+  fullSizeModules = {
     modules-right = [
       "group/tray"
       "custom/separator-right"
@@ -69,9 +60,7 @@ let
     ];
   };
 
-  secondaryBar = {
-    output = "DP-3";
-
+  condensedModules = {
     modules-right = [
       "group/tray-drawer"
       "group/stats-drawer"
@@ -81,11 +70,40 @@ let
       "clock"
     ];
   };
+
+  mkBarSettings =
+    barType:
+    mkMerge [
+      commonAttributes
+      (if barType == "fullSize" then fullSizeModules else condensedModules)
+      custom-modules
+      default-modules
+      group-modules
+      (lib.mkIf config.${namespace}.programs.graphical.wms.hyprland.enable hyprland-modules)
+    ];
+
+  generateOutputSettings =
+    outputList: barType:
+    builtins.listToAttrs (
+      builtins.map (outputName: {
+        name = outputName;
+        value = mkMerge [
+          (mkBarSettings barType)
+          { output = outputName; }
+        ];
+      }) outputList
+    );
 in
 {
   options.${namespace}.programs.graphical.bars.waybar = {
     enable = mkBoolOpt false "Whether to enable waybar in the desktop environment.";
     debug = mkBoolOpt false "Whether to enable debug mode.";
+    fullSizeOutputs =
+      mkOpt (types.listOf types.str) "Which outputs to use the full size waybar on."
+        [ ];
+    condensedOutputs =
+      mkOpt (types.listOf types.str) "Which outputs to use the smaller size waybar on."
+        [ ];
   };
 
   config = mkIf cfg.enable {
@@ -98,19 +116,10 @@ in
       package = waybar.packages.${system}.waybar;
       systemd.enable = true;
 
-      # TODO: make dynamic / support different number of.graphical.bars etc
-      settings = {
-        mainBar = mkMerge [
-          bar
-          mainBar
-          all-modules
-        ];
-        secondaryBar = mkMerge [
-          bar
-          secondaryBar
-          all-modules
-        ];
-      };
+      settings = mkMerge [
+        (generateOutputSettings cfg.fullSizeOutputs "fullSize")
+        (generateOutputSettings cfg.condensedOutputs "condensed")
+      ];
 
       style = "${style}${controlCenterStyle}${powerStyle}${statsStyle}${workspacesStyle}";
     };

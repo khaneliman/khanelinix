@@ -23,6 +23,13 @@ in
           zathura = enabled;
         };
 
+        bars = {
+          waybar = {
+            fullSizeOutputs = [ "DP-1" ];
+            condensedOutputs = [ "DP-3" ];
+          };
+        };
+
         browsers = {
           chromium = enabled;
 
