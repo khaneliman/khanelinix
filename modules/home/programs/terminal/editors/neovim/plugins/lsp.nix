@@ -97,7 +97,7 @@ in
           };
 
           clangd = {
-            enable = false;
+            enable = true;
             filetypes = [
               "c"
               "cpp"
