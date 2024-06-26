@@ -54,6 +54,7 @@ in
           dates = "weekly";
         };
 
+        defaultNetwork.settings.dns_enabled = true;
         dockerCompat = true;
         dockerSocket.enable = true;
       };
