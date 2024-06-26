@@ -2,6 +2,7 @@
   config,
   lib,
   namespace,
+  pkgs,
   ...
 }:
 let
@@ -16,10 +17,19 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.packages = lib.optionals pkgs.stdenv.isLinux (
+      with pkgs;
+      [
+        caprine-bin
+        element-desktop
+        slack
+        telegram-desktop
+      ]
+    );
+
     khanelinix = {
       programs = {
         graphical.apps = {
-          # armcord = enabled;
           discord = enabled;
           caprine = enabled;
         };
