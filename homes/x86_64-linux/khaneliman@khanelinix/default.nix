@@ -87,8 +87,6 @@ in
         media.spicetify = enabled;
 
         tools = {
-          home-manager = enabled;
-
           git = {
             enable = true;
 

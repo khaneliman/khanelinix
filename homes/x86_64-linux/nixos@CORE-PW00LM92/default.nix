@@ -44,7 +44,6 @@ in
             ];
           };
 
-          home-manager = enabled;
           ssh = enabled;
         };
       };

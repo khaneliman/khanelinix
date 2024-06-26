@@ -44,8 +44,6 @@ in
 
       terminal = {
         tools = {
-          home-manager = enabled;
-
           ssh = {
             enable = true;
 

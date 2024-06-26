@@ -16,7 +16,7 @@ let
     getExe
     getExe'
     ;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.${namespace}) mkOpt enabled;
   inherit (inputs) snowfall-flake;
 
   cfg = config.${namespace}.user;
@@ -139,6 +139,8 @@ in
 
         username = mkDefault cfg.name;
       };
+
+      programs.home-manager = enabled;
 
       xdg.configFile = {
         "sddm/faces/.${cfg.name}".source = cfg.icon;

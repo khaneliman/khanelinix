@@ -18,7 +18,6 @@ in
       terminal = {
         tools = {
           git = enabled;
-          home-manager = enabled;
           ssh = enabled;
         };
       };

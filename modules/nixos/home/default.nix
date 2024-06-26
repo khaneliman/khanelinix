@@ -2,7 +2,6 @@
   config,
   lib,
   options,
-  pkgs,
   namespace,
   ...
 }:
@@ -21,8 +20,6 @@ in
   };
 
   config = {
-    environment.systemPackages = [ pkgs.home-manager ];
-
     ${namespace}.home.extraOptions = {
       home.file = mkAliasDefinitions options.${namespace}.home.file;
       home.stateVersion = config.system.stateVersion;
