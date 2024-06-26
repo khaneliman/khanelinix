@@ -38,6 +38,7 @@ in
       enable = true;
       package = pkgs.yazi;
 
+      # NOTE: wrapper alias is yy
       enableBashIntegration = true;
       enableFishIntegration = true;
       enableNushellIntegration = true;
