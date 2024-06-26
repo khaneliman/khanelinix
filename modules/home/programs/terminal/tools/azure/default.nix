@@ -20,10 +20,10 @@ in
     home.packages =
       with pkgs;
       [
+        azure-cli
         azure-functions-core-tools
         azure-storage-azcopy
-        azuredatastudio
       ]
-      ++ lib.optionals pkgs.stdenv.isLinux [ azure-cli ];
+      ++ lib.optionals pkgs.stdenv.isLinux [ azuredatastudio ];
   };
 }
