@@ -82,9 +82,7 @@
 
     # NixPkgs (nixos-unstable)
     nixpkgs = {
-      # TODO: remove after https://nixpk.gs/pr-tracker.html?pr=321293
-      # url = "github:nixos/nixpkgs/nixos-unstable";
-      url = "github:khaneliman/nixpkgs/cgtk";
+      url = "github:nixos/nixpkgs/nixos-unstable";
     };
 
     # NixPkgs-Wayland
