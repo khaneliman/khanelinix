@@ -289,7 +289,9 @@ in
         # rofi.catppuccin.enable = true;
       };
 
+    # TODO: conditional enable 
     xdg.configFile = mkIf pkgs.stdenv.isLinux {
+      "ArmCord/themes/Catppuccin-Macchiato-BD".source = ./Catppuccin-Macchiato-BD;
       "BetterDiscord/themes/catppuccin-macchiato.theme.css".source = ./catppuccin-macchiato.theme.css;
     };
   };
