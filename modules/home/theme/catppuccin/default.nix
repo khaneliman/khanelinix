@@ -153,11 +153,6 @@ in
       inherit (cfg) accent;
       size = "standard";
 
-      cursor = {
-        enable = true;
-        inherit (cfg) accent;
-      };
-
       icon = {
         enable = true;
         inherit (cfg) accent;
