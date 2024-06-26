@@ -125,7 +125,7 @@ in
           vdir = "${getExe' pkgs.coreutils "vdir"} --color=auto";
 
           # Misc
-          clear = "clear && ${getExe pkgs.fastfetch}";
+          clear = "clear && ${getExe config.programs.fastfetch.package}";
           clr = "clear";
           pls = "sudo";
           usage = "${getExe' pkgs.coreutils "du"} -ah -d1 | sort -rn 2>/dev/null";
