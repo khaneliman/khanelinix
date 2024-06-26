@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   namespace,
   ...
 }:
@@ -17,18 +16,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      barrier
-      bleachbit
-      dropbox
-      dupeguru
-      filelight
-      fontpreview
-      gparted
-      keepass
-      pkgs.${namespace}.pocketcasts
-    ];
-
     khanelinix = {
       programs = {
         graphical = {
