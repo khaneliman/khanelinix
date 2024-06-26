@@ -209,20 +209,6 @@ in
     max-jobs = 24;
   };
 
-  networking = {
-    defaultGateway = {
-      address = "192.168.1.1";
-      interface = "enp6s0";
-    };
-
-    interfaces.enp6s0.ipv4.addresses = [
-      {
-        address = "192.168.1.3";
-        prefixLength = 24;
-      }
-    ];
-  };
-
   services = {
     displayManager.defaultSession = "hyprland";
     mpd = {
@@ -234,17 +220,19 @@ in
   systemd.network.networks = {
     # wired interfaces e.g. ethernet
     "30-network-defaults-wired" = {
-      # matchConfig.Name = "en* | eth* | usb*";
-      matchConfig.Type = "ether";
+      matchConfig.Name = "en* | eth* | usb*";
       networkConfig = {
-        Address = "192.168.1.3/24";
-        Gateway = "192.168.1.1";
+        # Address = "192.168.1.3/24";
+        # Gateway = "192.168.1.1";
+        DHCP = "ipv4";
+        MulticastDNS = true;
         # IPv6AcceptRA = true;
         # IPForward = "yes";
         # IPMasquerade = "no";
       };
     };
   };
+  systemd.services."systemd-networkd".environment.SYSTEMD_LOG_LEVEL = "debug";
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

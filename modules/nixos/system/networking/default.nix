@@ -21,17 +21,10 @@ in
     enable = mkBoolOpt false "Whether or not to enable networking support";
     hosts = mkOpt attrs { } "An attribute set to merge with <option>networking.hosts</option>";
     optimizeTcp = mkBoolOpt false "Optimize TCP connections";
-    nameServers = mkOpt (listOf str) [
-      "1.1.1.1"
-      "1.0.0.1"
-      "2606:4700:4700::1111"
-      "2606:4700:4700::1001"
-
-      "9.9.9.9"
-      "149.112.112.112"
-      "2620:fe::fe"
-      "2620:fe::9"
-    ] "The nameservers to add.";
+    dns = mkOpt (types.enum [
+      "dnsmasq"
+      "systemd-resolved"
+    ]) "systemd-resolved" "Dns resolver to use";
   };
 
   config = mkIf cfg.enable {
@@ -130,7 +123,7 @@ in
 
     networking = {
       hosts = {
-        "127.0.0.1" = [ "local.test" ] ++ (cfg.hosts."127.0.0.1" or [ ]);
+        "127.0.0.1" = cfg.hosts."127.0.0.1" or [ ];
       } // cfg.hosts;
 
       firewall = {
@@ -141,10 +134,15 @@ in
         ];
         checkReversePath = mkDefault false;
         logReversePathDrops = true;
-        logRefusedConnections = false;
+        logRefusedConnections = true;
       };
 
-      nameservers = cfg.nameServers;
+      nameservers = [
+        "1.1.1.1"
+        "1.0.0.1"
+        "2606:4700:4700::1111"
+        "2606:4700:4700::1001"
+      ];
 
       networkmanager = {
         enable = true;
@@ -152,7 +150,6 @@ in
         connectionConfig = {
           "connection.mdns" = "2";
         };
-        dns = "systemd-resolved";
 
         plugins = with pkgs; [
           networkmanager-l2tp
@@ -170,31 +167,47 @@ in
         ];
       };
 
+      # search = [ "doitbestcorp.com" ];
+
       useDHCP = mkForce false;
       useNetworkd = mkForce true;
       usePredictableInterfaceNames = mkForce true;
     };
 
-    services.resolved = {
-      enable = true;
+    services = {
+      dnsmasq = {
+        enable = cfg.dns == "dnsmasq";
 
-      # this is necessary to get tailscale picking up your headscale instance
-      # and allows you to ping connected hosts by hostname
-      domains = [ "~." ];
+        resolveLocalQueries = true;
 
-      # additional configuration to be appeneded to systemd-resolved configuration
-      # NOTE: last thing added after mdns test worked
-      extraConfig = ''
-        # <https://wiki.archlinux.org/title/Systemd-resolved#DNS_over_TLS>
-        # apparently upstream (systemd) recommends this to be false
-        # `allow-downgrade` is vulnerable to downgrade attacks
-        DNSOverTLS=yes # or allow-downgrade
-      '';
+        settings = {
+          server = [
+            "1.1.1.1"
+            "1.0.0.1"
+            "2606:4700:4700::1111"
+            "2606:4700:4700::1001"
+          ];
+        };
+      };
+
+      resolved = {
+        enable = cfg.dns == "systemd-resolved";
+
+        # dnssec = "true";
+        # this is necessary to get tailscale picking up your headscale instance
+        # and allows you to ping connected hosts by hostname
+        domains = [ "~." ];
+        dnsovertls = "true";
+        # extraConfig =
+        #   mkIf cfg.dns == "dnsmasq" ''
+        #     DNSStubListener=false
+        #   '';
+        fallbackDns = [ "192.168.1.1" ];
+      };
     };
 
-    # Fixes an issue that normally causes nixos-rebuild to fail.
-    # https://github.com/NixOS/nixpkgs/issues/180175
     systemd = {
+      # https://nixos.wiki/wiki/Systemd-networkd
       network = {
         enable = true;
 
