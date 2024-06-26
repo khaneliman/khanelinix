@@ -23,8 +23,6 @@ in
   config = mkIf cfg.enable {
     programs.spicetify = {
       enable = true;
-      # TODO: move to theme module
-      colorScheme = "macchiato";
       theme = spicePkgs.themes.catppuccin;
 
       enabledCustomApps = with spicePkgs.apps; [

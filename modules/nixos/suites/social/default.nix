@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (lib.${namespace}) mkBoolOpt;
   cfg = config.${namespace}.suites.social;
 in
 {
@@ -23,16 +23,5 @@ in
       slack
       telegram-desktop
     ];
-
-    khanelinix = {
-      programs = {
-        graphical = {
-          apps = {
-            # TODO: switch to armcord ?
-            discord = enabled;
-          };
-        };
-      };
-    };
   };
 }

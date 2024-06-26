@@ -7,8 +7,9 @@
 }:
 let
   inherit (lib)
-    mkIf
     mkEnableOption
+    mkIf
+    mkMerge
     mkOption
     types
     ;
@@ -124,7 +125,7 @@ in
     };
 
     catppuccin = {
-      # NOTE: getting infinite recursion error with global enable
+      # NOTE: Need some customization and merging of configuration files so cant just enable all 
       enable = false;
 
       accent = "blue";
@@ -132,10 +133,15 @@ in
     };
 
     home = {
-      file = mkIf config.khanelinix.programs.terminal.emulators.warp.enable {
-        ".warp/themes/catppuccin_macchiato.yaml".source = warpStyle;
-        ".local/share/warp-terminal/themes/catppuccin_macchiato.yaml".source = warpStyle;
-      };
+      file = mkMerge [
+        (mkIf config.khanelinix.programs.terminal.emulators.warp.enable {
+          ".warp/themes/catppuccin_macchiato.yaml".source = warpStyle;
+          ".local/share/warp-terminal/themes/catppuccin_macchiato.yaml".source = warpStyle;
+        })
+        (mkIf pkgs.stdenv.isDarwin {
+          "Library/Application Support/BetterDiscord/themes/catppuccin-macchiato.theme.css".source = ./catppuccin-macchiato.theme.css;
+        })
+      ];
 
       pointerCursor = mkIf pkgs.stdenv.isLinux {
         inherit (config.${namespace}.theme.gtk.cursor) name package size;
@@ -167,7 +173,7 @@ in
       };
 
       style = {
-        name = "qt6ct-style";
+        name = "kvantum";
         inherit (config.${namespace}.theme.qt.theme) package;
       };
     };
@@ -257,6 +263,8 @@ in
       programs
       // {
         # Additional program settings that don't follow the common pattern
+        spicetify.colorScheme = "macchiato";
+
         tmux.plugins = [
           {
             plugin = pkgs.tmuxPlugins.catppuccin;
@@ -280,5 +288,9 @@ in
         # yazi.catppuccin.enable = true;
         # rofi.catppuccin.enable = true;
       };
+
+    xdg.configFile = mkIf pkgs.stdenv.isLinux {
+      "BetterDiscord/themes/catppuccin-macchiato.theme.css".source = ./catppuccin-macchiato.theme.css;
+    };
   };
 }

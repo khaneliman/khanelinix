@@ -36,32 +36,6 @@
         })
       '';
 
-    # FIX: doesn't work for some reason with nixvim generated use command
-    # userCommands = {
-    #   "FormatDisable" = {
-    #     command = /*lua*/ ''
-    #       function FormatDisable(args)
-    #          if args.bang then
-    #           vim.b.disable_autoformat = true
-    #          else
-    #           vim.g.disable_autoformat = true
-    #          end
-    #       end
-    #     '';
-    #     desc = "Disable autoformat-on-save";
-    #     bang = true;
-    #   };
-    #   "FormatEnable" = {
-    #     command = /*lua*/ ''
-    #       function FormatEnable()
-    #         vim.b.disable_autoformat = false
-    #         vim.g.disable_autoformat = false
-    #       end
-    #     '';
-    #     desc = "Re-enable autoformat-on-save";
-    #   };
-    # };
-
     plugins = {
       conform-nvim = {
         enable = true;

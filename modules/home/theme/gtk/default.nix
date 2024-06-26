@@ -51,7 +51,8 @@ in
   config = mkIf (cfg.enable && pkgs.stdenv.isLinux) {
     home = {
       packages = with pkgs; [
-        dconf # required explicitly with noXlibs and home-manager
+        # NOTE: required explicitly with noXlibs and home-manager
+        dconf
         glib # gsettings
         gtk3.out # for gtk-launch
         libappindicator-gtk3
