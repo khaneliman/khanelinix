@@ -30,35 +30,9 @@ in
       activation = mkIf pkgs.stdenv.isLinux {
         betterdiscordInstall = # bash
           home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-            echo "Running BetterDiscord install"
-
-            BETTERDISCORDCTL=${getExe pkgs.betterdiscordctl}
-
-            if $BETTERDISCORDCTL status; then
-              echo "BetterDiscord is already installed. Attempting reinstallation..."
-              $BETTERDISCORDCTL reinstall || {
-                echo "Reinstallation failed! Attempting uninstallation..."
-                $BETTERDISCORDCTL uninstall || {
-                  echo "Uninstallation failed! Please check manually."
-                  exit 1
-                }
-                echo "Uninstallation successful. Attempting fresh installation..."
-                $BETTERDISCORDCTL install || {
-                  echo "Installation failed!"
-                  exit 1
-                }
-                echo "BetterDiscord installed successfully after uninstallation."
-              }
-            else
-              echo "BetterDiscord is not installed. Attempting installation..."
-              $BETTERDISCORDCTL install || {
-                echo "Installation failed!"
-                exit 1
-              }
-              echo "BetterDiscord installed successfully."
-            fi
+            echo "Running betterdiscord install"
+            ${getExe pkgs.betterdiscordctl} install || ${getExe pkgs.betterdiscordctl} reinstall || true
           '';
-
       };
     };
   };
