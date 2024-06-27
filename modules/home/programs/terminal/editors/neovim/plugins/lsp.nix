@@ -96,6 +96,12 @@ in
             initOptions.compilationDatabaseDirectory = "build";
           };
 
+          # TODO: see what further configuration might be needed
+          cmake = {
+            enable = true;
+            filetypes = [ "cmake" ];
+          };
+
           clangd = {
             enable = true;
             filetypes = [
@@ -109,6 +115,15 @@ in
           csharp-ls = {
             enable = true;
             filetypes = [ "cs" ];
+          };
+
+          cssls = {
+            enable = true;
+            filetypes = [
+              "css"
+              "less"
+              "scss"
+            ];
           };
 
           dockerls = {
@@ -129,6 +144,15 @@ in
           fsautocomplete = {
             enable = true;
             filetypes = [ "fsharp" ];
+          };
+
+          gdscript = {
+            enable = true;
+            filetypes = [
+              "gd"
+              "gdscript"
+              "gdscript3"
+            ];
           };
 
           html = {
@@ -152,6 +176,11 @@ in
           lua-ls = {
             enable = true;
             filetypes = [ "lua" ];
+          };
+
+          marksman = {
+            enable = true;
+            filetypes = [ "markdown" ];
           };
 
           nil-ls = {
@@ -210,6 +239,16 @@ in
               };
             };
           };
+
+          sqls = {
+            enable = true;
+            filetypes = [ "sql" ];
+          };
+
+          # tailwindcss = {
+          #   enable = true;
+          #   filetypes = [ "css" ];
+          # };
 
           taplo = {
             enable = true;
