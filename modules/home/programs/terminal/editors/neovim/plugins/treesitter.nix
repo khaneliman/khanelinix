@@ -11,16 +11,24 @@
         indent = true;
 
         grammarPackages = with config.programs.nixvim.plugins.treesitter.package.builtGrammars; [
+          angular
           bash
           bicep
           c
+          c-sharp
           cmake
           cpp
           css
-          c-sharp
+          csv
+          diff
           dockerfile
           dot
           fish
+          git_config
+          git_rebase
+          gitattributes
+          gitcommit
+          gitignore
           go
           html
           hyprlang
@@ -28,26 +36,38 @@
           javascript
           json
           json5
+          jsonc
           kdl
           latex
+          lua
           make
           markdown
           markdown_inline
-          lua
+          mermaid
+          meson
+          ninja
           nix
           norg
+          objc
           python
+          rasi
+          readline
           regex
           rust
           scss
           sql
+          ssh-config
           svelte
+          swift
+          terraform
           toml
           tsx
           typescript
-          yaml
           vim
           vimdoc
+          xml
+          yaml
+          zig
         ];
       };
 
