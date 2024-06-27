@@ -1,5 +1,4 @@
-{ config, ... }:
-{
+_: {
   programs.nixvim = {
     plugins = {
       treesitter = {
@@ -10,65 +9,66 @@
         folding = true;
         indent = true;
 
-        grammarPackages = with config.programs.nixvim.plugins.treesitter.package.builtGrammars; [
-          angular
-          bash
-          bicep
-          c
-          c-sharp
-          cmake
-          cpp
-          css
-          csv
-          diff
-          dockerfile
-          dot
-          fish
-          git_config
-          git_rebase
-          gitattributes
-          gitcommit
-          gitignore
-          go
-          html
-          hyprlang
-          java
-          javascript
-          json
-          json5
-          jsonc
-          kdl
-          latex
-          lua
-          make
-          markdown
-          markdown_inline
-          mermaid
-          meson
-          ninja
-          nix
-          norg
-          objc
-          python
-          rasi
-          readline
-          regex
-          rust
-          scss
-          sql
-          ssh-config
-          svelte
-          swift
-          terraform
-          toml
-          tsx
-          typescript
-          vim
-          vimdoc
-          xml
-          yaml
-          zig
-        ];
+        # NOTE: Default is to install all grammars, here's a more concise list of ones i care about
+        # grammarPackages = with config.programs.nixvim.plugins.treesitter.package.builtGrammars; [
+        #   angular
+        #   bash
+        #   bicep
+        #   c
+        #   c-sharp
+        #   cmake
+        #   cpp
+        #   css
+        #   csv
+        #   diff
+        #   dockerfile
+        #   dot
+        #   fish
+        #   git_config
+        #   git_rebase
+        #   gitattributes
+        #   gitcommit
+        #   gitignore
+        #   go
+        #   html
+        #   hyprlang
+        #   java
+        #   javascript
+        #   json
+        #   json5
+        #   jsonc
+        #   kdl
+        #   latex
+        #   lua
+        #   make
+        #   markdown
+        #   markdown_inline
+        #   mermaid
+        #   meson
+        #   ninja
+        #   nix
+        #   norg
+        #   objc
+        #   python
+        #   rasi
+        #   readline
+        #   regex
+        #   rust
+        #   scss
+        #   sql
+        #   ssh-config
+        #   svelte
+        #   swift
+        #   terraform
+        #   toml
+        #   tsx
+        #   typescript
+        #   vim
+        #   vimdoc
+        #   xml
+        #   yaml
+        #   zig
+        # ];
       };
 
       treesitter-refactor = {
