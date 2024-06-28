@@ -23,11 +23,6 @@ in
       recursive = true;
     };
 
-    xdg.configFile."fish/themes" = {
-      source = lib.cleanSourceWith { src = lib.cleanSource ./themes/.; };
-      recursive = true;
-    };
-
     programs.fish = {
       enable = true;
 
