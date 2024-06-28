@@ -19,6 +19,7 @@ in
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       bottles
+      heroic
       lutris
       prismlauncher
       proton-caller
