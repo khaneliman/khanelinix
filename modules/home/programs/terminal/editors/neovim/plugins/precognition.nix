@@ -2,13 +2,14 @@
 {
   programs.nixvim = {
     extraPlugins = [
+      # TODO: Replace when https://github.com/NixOS/nixpkgs/pull/323435 is in nixos-unstable
       (pkgs.vimUtils.buildVimPlugin {
         name = "precognition.nvim";
         src = pkgs.fetchFromGitHub {
           owner = "tris203";
           repo = "precognition.nvim";
-          rev = "v1.0.0";
-          hash = "sha256-AqWYV/59ugKyOWALOCdycWVm0bZ7qb981xnuw/mAVzM=";
+          rev = "2a566f03eb06859298eff837f3a6686dfa5304a5";
+          hash = "sha256-XLcyRB4ow5nPoQ0S29bx0utV9Z/wogg7c3rozYSqlWE=";
         };
       })
     ];
