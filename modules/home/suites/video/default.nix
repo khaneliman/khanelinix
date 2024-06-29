@@ -26,7 +26,8 @@ in
         mediainfo-gui
         shotcut
         vlc
-      ];
+      ]
+      ++ lib.optionals stdenv.isDarwin [ iina ];
 
     khanelinix = {
       programs = {
