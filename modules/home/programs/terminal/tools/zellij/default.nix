@@ -10,6 +10,17 @@ let
   inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.zellij;
+
+  zns = "zellij -s $(basename $(pwd)) -l dev options --default-cwd $(pwd)";
+  zas = "zellij a $(basename $(pwd))";
+  zo = ''
+    session_name=$(basename $(pwd))
+    if zellij list-sessions | rg $session_name &> /dev/null; then
+        zellij a $session_name
+    else
+        zellij -s $session_name -l dev options --default-cwd $(pwd)
+    fi
+  '';
 in
 {
   options.${namespace}.programs.terminal.tools.zellij = {
@@ -17,65 +28,62 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.shellAliases = {
-      zns = "zellij -s $(basename $(pwd)) -l dev options --default-cwd $(pwd)";
-      zas = "zellij a $(basename $(pwd))";
-      zo = ''
-        session_name=$(basename $(pwd))
-        if zellij list-sessions | rg $session_name &> /dev/null; then
-            zellij a $session_name
-        else
-            zellij -s $session_name -l dev options --default-cwd $(pwd)
-        fi
-      '';
-    };
+    programs = {
+      bash.shellAliases = {
+        inherit zns zas zo;
+      };
 
-    programs.zellij = {
-      enable = true;
+      zsh.shellAliases = {
+        inherit zns zas zo;
+      };
 
-      # These enable auto starting
-      # enableBashIntegration = true;
-      # enableFishIntegration = true;
-      # enableZshIntegration = true;
+      zellij = {
+        enable = true;
 
-      settings = {
-        # custom defined layouts
-        layout_dir = "${./layouts}";
+        # These enable auto starting
+        # enableBashIntegration = true;
+        # enableFishIntegration = true;
+        # enableZshIntegration = true;
 
-        # clipboard provider
-        copy_command =
-          if pkgs.stdenv.isLinux then
-            "wl-copy"
-          else if pkgs.stdenv.isDarwin then
-            "pbcopy"
-          else
-            "";
+        settings = {
+          # custom defined layouts
+          layout_dir = "${./layouts}";
 
-        auto_layouts = true;
+          # clipboard provider
+          copy_command =
+            if pkgs.stdenv.isLinux then
+              "wl-copy"
+            else if pkgs.stdenv.isDarwin then
+              "pbcopy"
+            else
+              "";
 
-        default_layout = "system"; # or compact
-        default_mode = "locked";
+          auto_layouts = true;
 
-        on_force_close = "quit";
-        pane_frames = true;
-        pane_viewport_serialization = true;
-        scrollback_lines_to_serialize = 1000;
-        session_serialization = true;
+          default_layout = "system"; # or compact
+          default_mode = "locked";
 
-        ui.pane_frames = {
-          rounded_corners = true;
-          hide_session_name = true;
+          on_force_close = "quit";
+          pane_frames = true;
+          pane_viewport_serialization = true;
+          scrollback_lines_to_serialize = 1000;
+          session_serialization = true;
+
+          ui.pane_frames = {
+            rounded_corners = true;
+            hide_session_name = true;
+          };
+
+          # load internal plugins from built-in paths
+          plugins = {
+            tab-bar.path = "tab-bar";
+            status-bar.path = "status-bar";
+            strider.path = "strider";
+            compact-bar.path = "compact-bar";
+          };
+
+          theme = "catppuccin-macchiato";
         };
-
-        # load internal plugins from built-in paths
-        plugins = {
-          tab-bar.path = "tab-bar";
-          status-bar.path = "status-bar";
-          strider.path = "strider";
-          compact-bar.path = "compact-bar";
-        };
-
-        theme = "catppuccin-macchiato";
       };
     };
   };

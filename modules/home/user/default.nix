@@ -94,7 +94,6 @@ in
           run = "nix run";
           search = "nix search";
           shell = "nix shell";
-          build = "nix build $@ --builders \"\"";
           nixre = "${lib.optionalString pkgs.stdenv.isLinux "sudo"} ${
             getExe snowfall-flake.packages.${system}.flake
           } switch";

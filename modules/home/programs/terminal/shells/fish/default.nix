@@ -45,32 +45,34 @@ in
           '';
 
       interactiveShellInit =
-        lib.optionalString pkgs.stdenv.isDarwin # fish
-          ''
-            # 1password plugin
-            if [ -f ~/.config/op/plugins.sh ];
-                source ~/.config/op/plugins.sh
-            end
+        # fish
+        ''
+          # 1password plugin
+          if [ -f ~/.config/op/plugins.sh ];
+              source ~/.config/op/plugins.sh
+          end
+        ''
+        + lib.optionalString pkgs.stdenv.isDarwin ''
+          # Brew environment
+          if [ -f /opt/homebrew/bin/brew ];
+          	eval "$("/opt/homebrew/bin/brew" shellenv)"
+          end
 
-            # Brew environment
-            if [ -f /opt/homebrew/bin/brew ];
-            	eval "$("/opt/homebrew/bin/brew" shellenv)"
-            end
+          # Nix
+          if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish' ];
+           source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish'
+          end
+          if [ -f '/nix/var/nix/profiles/default/etc/profile.d/nix.fish' ];
+           source '/nix/var/nix/profiles/default/etc/profile.d/nix.fish'
+          end
+          # End Nix
+        ''
+        + ''
+          # Disable greeting
+          set fish_greeting
 
-            # Nix
-            if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish' ];
-             source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish'
-            end
-            if [ -f '/nix/var/nix/profiles/default/etc/profile.d/nix.fish' ];
-             source '/nix/var/nix/profiles/default/etc/profile.d/nix.fish'
-            end
-            # End Nix
-
-            # Disable greeting
-            set fish_greeting
-
-            ${lib.optionalString config.programs.fastfetch.enable "fastfetch"}
-          '';
+          ${lib.optionalString config.programs.fastfetch.enable "fastfetch"}
+        '';
 
       plugins = [
         # Enable a plugin (here grc for colorized command output) from nixpkgs
