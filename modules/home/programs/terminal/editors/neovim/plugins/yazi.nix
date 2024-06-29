@@ -2,13 +2,14 @@
 {
   programs.nixvim = {
     extraPlugins = [
+      # TODO: Replace when https://github.com/NixOS/nixpkgs/pull/323432 is in unstable
       (pkgs.vimUtils.buildVimPlugin {
         name = "yazi.nvim";
         src = pkgs.fetchFromGitHub {
           owner = "DreamMaoMao";
           repo = "yazi.nvim";
-          rev = "b5c9390c733244b10859b940413ef9741955301a";
-          hash = "sha256-/wuo95maj6WxfwPvu0AAm3JJ6ifDI/ONp2SSA6k+5WQ=";
+          rev = "0e7dce1a936b92099180ff80cbf35eb7e8a5f660";
+          hash = "sha256-xKwQXwvqGBNveu94i6NW4I7L/mAnbqLmYS3Uc/6qTyw=";
         };
       })
     ];
