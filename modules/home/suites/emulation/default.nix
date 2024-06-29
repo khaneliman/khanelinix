@@ -21,8 +21,7 @@ in
     home.packages =
       with pkgs;
       [
-        # FIXME: broken nixpkg
-        # cemu
+        cemu
         emulationstation
         mame
         melonDS
@@ -34,7 +33,6 @@ in
         rpcs3
         snes9x
         xemu
-        # NOTE: yuzu removed upstream, using alternative
         ryujinx
       ]
       ++ lib.optionals cfg.retroarchFull [ retroarchFull ];
