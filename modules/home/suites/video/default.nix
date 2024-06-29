@@ -20,6 +20,7 @@ in
     home.packages =
       with pkgs;
       lib.optionals stdenv.isLinux [
+        celluloid
         devede
         handbrake
         mediainfo-gui
