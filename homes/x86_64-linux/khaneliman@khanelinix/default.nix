@@ -133,7 +133,7 @@ in
         musicDirectory = "nfs://austinserver.local/mnt/user/data/media/music";
       };
 
-      noisetorch = enabled;
+      rnnoise = enabled;
 
       sops = {
         enable = true;

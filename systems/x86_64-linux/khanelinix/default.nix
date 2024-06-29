@@ -76,7 +76,7 @@ in
       graphical = {
         addons = {
           noisetorch = {
-            enable = true;
+            enable = false;
 
             threshold = 95;
             device = "alsa_input.usb-Blue_Microphones_Yeti_Stereo_Microphone_LT_191128065321F39907D0_111000-00.analog-stereo";
