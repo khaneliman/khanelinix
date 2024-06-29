@@ -84,8 +84,6 @@ in
       };
 
       terminal = {
-        media.spicetify = enabled;
-
         tools = {
           git = {
             enable = true;

@@ -32,6 +32,12 @@ in
         graphical.apps = {
           obs = enabled;
         };
+
+        terminal = {
+          media = {
+            spicetify = enabled;
+          };
+        };
       };
     };
   };
