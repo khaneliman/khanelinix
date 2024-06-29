@@ -16,5 +16,14 @@ in
     enable = mkBoolOpt false "Whether or not to enable photo configuration.";
   };
 
-  config = mkIf cfg.enable { home.packages = with pkgs; lib.optionals stdenv.isLinux [ digikam ]; };
+  config = mkIf cfg.enable {
+    home.packages =
+      with pkgs;
+      lib.optionals stdenv.isLinux [
+        darktable
+        digikam
+        exiftool
+        shotwell
+      ];
+  };
 }
