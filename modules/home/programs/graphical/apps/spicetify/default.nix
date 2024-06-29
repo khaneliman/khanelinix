@@ -11,12 +11,12 @@ let
   inherit (lib.${namespace}) mkBoolOpt;
   inherit (inputs) spicetify-nix;
 
-  cfg = config.${namespace}.programs.terminal.media.spicetify;
+  cfg = config.${namespace}.programs.graphical.apps.spicetify;
 
   spicePkgs = spicetify-nix.legacyPackages.${pkgs.system};
 in
 {
-  options.${namespace}.programs.terminal.media.spicetify = {
+  options.${namespace}.programs.graphical.apps.spicetify = {
     enable = mkBoolOpt false "Whether or not to enable support for spicetify.";
   };
 

@@ -33,13 +33,8 @@ in
       programs = {
         graphical.apps = {
           obs = enabled;
-        };
-
-        terminal = {
-          media = {
-            mpv = enabled;
-            spicetify = enabled;
-          };
+          mpv = enabled;
+          spicetify = enabled;
         };
       };
     };
