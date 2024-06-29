@@ -62,10 +62,7 @@
     # Hyprland socket watcher
     hypr-socket-watch = {
       url = "github:khaneliman/hypr-socket-watch";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        hyprland.follows = "hyprland";
-      };
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Secure boot
