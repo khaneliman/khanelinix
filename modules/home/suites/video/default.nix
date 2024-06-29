@@ -35,6 +35,7 @@ in
 
         terminal = {
           media = {
+            mpv = enabled;
             spicetify = enabled;
           };
         };
