@@ -42,6 +42,7 @@ in
           # Startup background apps
           "${getExe pkgs.openrgb-with-all-plugins} --startminimized --profile default"
           "${getExe pkgs._1password-gui} --silent"
+          "${getExe pkgs.tailscale-systray}"
         ];
       };
     };

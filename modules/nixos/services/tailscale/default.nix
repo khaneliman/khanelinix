@@ -37,7 +37,10 @@ in
       "net.ipv6.conf.all.forwarding" = true;
     };
 
-    environment.systemPackages = with pkgs; [ tailscale ];
+    environment.systemPackages = with pkgs; [
+      tailscale
+      tailscale-systray
+    ];
 
     networking = {
       firewall = {
