@@ -6,10 +6,10 @@
       (pkgs.vimUtils.buildVimPlugin {
         name = "yazi.nvim";
         src = pkgs.fetchFromGitHub {
-          owner = "DreamMaoMao";
+          owner = "mikavilpas";
           repo = "yazi.nvim";
-          rev = "0e7dce1a936b92099180ff80cbf35eb7e8a5f660";
-          hash = "sha256-xKwQXwvqGBNveu94i6NW4I7L/mAnbqLmYS3Uc/6qTyw=";
+          rev = "05849f390175f2ba8fd277b224d4fd9e35455895";
+          hash = "sha256-zj+lmxsOEW+YaCk5hb7u454gACUmqYPA/IeW6av4D7k=";
         };
       })
     ];
@@ -18,7 +18,11 @@
       {
         mode = "n";
         key = "<leader>e";
-        action = ":Yazi<CR>";
+        action.__raw = ''
+          function()
+            require('yazi').yazi()
+          end
+        '';
         options = {
           desc = "Yazi toggle";
           silent = true;
