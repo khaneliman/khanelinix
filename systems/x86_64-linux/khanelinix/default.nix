@@ -157,7 +157,6 @@ in
     security = {
       # doas = enabled;
       keyring = enabled;
-      pulse-secure = enabled;
       sudo-rs = enabled;
     };
 
