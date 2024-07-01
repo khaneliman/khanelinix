@@ -8,7 +8,7 @@ let
   inherit (lib) mkIf;
 
   codelldb-config = {
-    name = "Launch";
+    name = "Launch (CodeLLDB)";
     type = "codelldb";
     request = "launch";
     program.__raw = # lua
@@ -38,7 +38,7 @@ let
   };
 
   gdb-config = {
-    name = "Launch";
+    name = "Launch (GDB)";
     type = "gdb";
     request = "launch";
     program.__raw = # lua
@@ -51,7 +51,7 @@ let
   };
 
   lldb-config = {
-    name = "Launch";
+    name = "Launch (LLDB)";
     type = "lldb";
     request = "launch";
     program.__raw = # lua
@@ -66,7 +66,7 @@ let
   sh-config = lib.mkIf pkgs.stdenv.isLinux {
     type = "bashdb";
     request = "launch";
-    name = "Launch file";
+    name = "Launch (BashDB)";
     showDebugOutput = true;
     pathBashdb = "${lib.getExe pkgs.bashdb}";
     pathBashdbLib = "${pkgs.bashdb}/share/basdhb/lib/";
@@ -150,7 +150,12 @@ in
         configurations = {
           c = [ lldb-config ] ++ lib.optionals pkgs.stdenv.isLinux [ gdb-config ];
 
-          cpp = [ lldb-config ] ++ lib.optionals pkgs.stdenv.isLinux [ codelldb-config ];
+          cpp =
+            [ lldb-config ]
+            ++ lib.optionals pkgs.stdenv.isLinux [
+              gdb-config
+              codelldb-config
+            ];
 
           cs = [ coreclr-config ];
 
