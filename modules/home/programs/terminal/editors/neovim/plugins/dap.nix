@@ -97,7 +97,7 @@ in
     ];
 
   programs.nixvim = {
-    extraPlugins = with pkgs.vimPlugins; [ nvim-gdb ];
+    #   extraPlugins = with pkgs.vimPlugins; [ nvim-gdb ];
 
     plugins = {
       dap = {
