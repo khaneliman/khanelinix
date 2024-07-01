@@ -107,6 +107,14 @@ in
           executables = {
             bashdb = lib.mkIf pkgs.stdenv.isLinux { command = "${lib.getExe pkgs.bashdb}"; };
 
+            cppdbg = {
+              command = "gdb";
+              args = [
+                "-i"
+                "dap"
+              ];
+            };
+
             gdb = {
               command = "gdb";
               args = [
@@ -194,7 +202,10 @@ in
         key = "<leader>du";
         action.__raw = # lua
           ''
-            function() require("dapui").toggle() end
+            function() 
+              require('dap.ext.vscode').load_launchjs(nil, {})
+              require("dapui").toggle() 
+            end
           '';
         options = {
           desc = "Toggle Debugger UI";
