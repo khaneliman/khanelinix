@@ -17,7 +17,7 @@ let
             return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. '/', "file")
         end
       '';
-    cwd = ''\$\{workspaceFolder}'';
+    cwd = ''''${workspaceFolder}'';
     stopOnEntry = false;
   };
 
@@ -34,7 +34,7 @@ let
 
           return vim.g.dotnet_get_dll_path()
         end'';
-    cwd = ''\$\{workspaceFolder}'';
+    cwd = ''''${workspaceFolder}'';
   };
 
   gdb-config = {
@@ -46,7 +46,7 @@ let
         function()
             return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. '/', "file")
         end'';
-    cwd = ''\$\{workspaceFolder}'';
+    cwd = ''''${workspaceFolder}'';
     stopOnEntry = false;
   };
 
@@ -59,7 +59,7 @@ let
         function()
             return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. '/', "file")
         end'';
-    cwd = ''\$\{workspaceFolder}'';
+    cwd = ''''${workspaceFolder}'';
     stopOnEntry = false;
   };
 
@@ -71,9 +71,9 @@ let
     pathBashdb = "${lib.getExe pkgs.bashdb}";
     pathBashdbLib = "${pkgs.bashdb}/share/basdhb/lib/";
     trace = true;
-    file = ''\$\{file}'';
-    program = ''\$\{file}'';
-    cwd = ''\$\{workspaceFolder}'';
+    file = ''''${file}'';
+    program = ''''${file}'';
+    cwd = ''''${workspaceFolder}'';
     pathCat = "cat";
     pathBash = "${lib.getExe pkgs.bash}";
     pathMkfifo = "mkfifo";
@@ -161,7 +161,12 @@ in
 
           fsharp = [ coreclr-config ];
 
-          rust = [ lldb-config ] ++ lib.optionals pkgs.stdenv.isLinux [ codelldb-config ];
+          rust =
+            [ lldb-config ]
+            ++ lib.optionals pkgs.stdenv.isLinux [
+              gdb-config
+              codelldb-config
+            ];
 
           sh = lib.optionals pkgs.stdenv.isLinux [ sh-config ];
         };
