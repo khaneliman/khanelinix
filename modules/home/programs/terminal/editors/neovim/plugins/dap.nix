@@ -175,6 +175,29 @@ in
             enable = true;
           };
         };
+
+        signs = {
+          dapBreakpoint = {
+            text = "";
+            texthl = "DapBreakpoint";
+          };
+          dapBreakpointCondition = {
+            text = "";
+            texthl = "dapBreakpointCondition";
+          };
+          dapBreakpointRejected = {
+            text = "";
+            texthl = "DapBreakpointRejected";
+          };
+          dapLogPoint = {
+            text = "";
+            texthl = "DapLogPoint";
+          };
+          dapStopped = {
+            text = "";
+            texthl = "DapStopped";
+          };
+        };
       };
 
       which-key.registrations."<leader>d" =
