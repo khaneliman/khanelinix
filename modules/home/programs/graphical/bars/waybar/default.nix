@@ -40,7 +40,7 @@ let
     margin-right = 20;
 
     modules-left = [
-      "group/power"
+      "custom/power"
       "hyprland/workspaces"
       "custom/separator-left"
       "hyprland/window"

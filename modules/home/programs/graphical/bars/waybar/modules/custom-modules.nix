@@ -74,29 +74,76 @@ in
   "custom/power" = {
     format = "";
     tooltip = false;
-    on-click =
+    menu = "on-click";
+    menu-file =
+      pkgs.writeText "powermenu.xml" # xml
+        ''
+          <?xml version="1.0" encoding="UTF-8"?>
+          <interface>
+            <object class="GtkMenu" id="menu">
+              <child>
+          		  <object class="GtkMenuItem" id="top">
+          			  <property name="label">Activity</property>
+                </object>
+          	  </child>
+              <child>
+                <object class="GtkSeparatorMenuItem" id="delimiter1"/>
+              </child>
+              <child>
+          		  <object class="GtkMenuItem" id="lock">
+          			  <property name="label">Lock</property>
+                </object>
+          	  </child>
+              <child>
+          		  <object class="GtkMenuItem" id="logout">
+          			  <property name="label">Logout</property>
+                </object>
+          	  </child>
+              <child>
+          		  <object class="GtkMenuItem" id="suspend">
+          			  <property name="label">Suspend</property>
+                </object>
+          	  </child>
+          	  <child>
+                <object class="GtkMenuItem" id="hibernate">
+          			  <property name="label">Hibernate</property>
+                </object>
+          	  </child>
+              <child>
+                <object class="GtkSeparatorMenuItem" id="delimiter2"/>
+              </child>
+              <child>
+                <object class="GtkMenuItem" id="shutdown">
+          			  <property name="label">Shutdown</property>
+                </object>
+              </child>
+              <child>
+          		  <object class="GtkMenuItem" id="reboot">
+          			  <property name="label">Reboot</property>
+          		  </object>
+              </child>
+            </object>
+          </interface>
+        '';
+    menu-actions =
       let
-        sudo = getExe pkgs.sudo;
-        rofi = getExe config.programs.rofi.package;
+        systemctl = getExe' pkgs.systemd "systemctl";
+        lock = getExe config.programs.hyprlock.package;
         poweroff = getExe' pkgs.systemd "poweroff";
         reboot = getExe' pkgs.systemd "reboot";
+        terminal = getExe config.programs.kitty.package;
+        top = getExe config.programs.btop.package;
+        hyprctl = getExe' config.wayland.windowManager.hyprland.package "hyprctl";
       in
-      pkgs.writeShellScript "shutdown-waybar" ''
-        #!/bin/sh
+      {
+        inherit poweroff reboot;
 
-        off=" Shutdown"
-        reboot=" Reboot"
-        cancel="󰅖 Cancel"
-
-        sure="$(printf '%s\n%s\n%s' "$off" "$reboot" "$cancel" |
-        	${rofi} -dmenu -p ' Are you sure?')"
-
-        if [ "$sure" = "$off" ]; then
-        	${sudo} ${poweroff}
-        elif [ "$sure" = "$reboot" ]; then
-        	${sudo} ${reboot}
-        fi
-      '';
+        hibernate = "${systemctl} hibernate";
+        lock = "${lock} --immediate";
+        suspend = "${systemctl} suspend";
+        top = "${terminal} ${top}";
+        logout = "${hyprctl} dispatch exit && ${systemctl} --user exit ";
+      };
   };
 
   "custom/separator-right" = {
