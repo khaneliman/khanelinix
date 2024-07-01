@@ -113,6 +113,8 @@ in
       };
     };
 
+    services.cliphist.systemdTarget = "hyprland-session.target";
+
     wayland.windowManager.hyprland = {
       enable = true;
 
