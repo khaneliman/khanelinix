@@ -8,6 +8,7 @@ _: {
 
         segments = [
           {
+            hl = "FoldColumn";
             text = [
               {
                 __raw = # lua
@@ -17,7 +18,7 @@ _: {
             click = "v:lua.ScFa";
           }
           {
-            text = [ ];
+            text = null;
             sign = {
               name = [ ".*" ];
               namespace = [ ".*" ];
@@ -39,7 +40,7 @@ _: {
             click = "v:lua.ScLa";
           }
           {
-            text = [ ];
+            text = null;
             sign = {
               name = [ ".*" ];
               maxwidth = 2;
