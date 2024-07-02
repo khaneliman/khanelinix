@@ -1,5 +1,11 @@
 _: {
   programs.nixvim.autoCmd = [
+    # Remove trailing whitespace on save
+    {
+      event = "BufWrite";
+      command = "%s/\\s\\+$//e";
+    }
+
     # Open minimap on first buffer
     # {
     #   event = "BufRead";
