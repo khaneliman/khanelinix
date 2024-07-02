@@ -27,8 +27,6 @@ in
           "5, on-created-empty:discord"
           # Mail
           "6, on-created-empty:thunderbird"
-          #Remote
-          "8, on-created-empty:virt-manager"
 
           "special:scratchpad, on-created-empty:$term"
         ];
