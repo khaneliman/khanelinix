@@ -1,15 +1,13 @@
 {
   config,
-  inputs,
   lib,
-  system,
   namespace,
+  pkgs,
   ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
-  inherit (inputs) nixpkgs-wayland;
 
   cfg = config.${namespace}.programs.graphical.addons.wlogout;
 in
@@ -21,7 +19,7 @@ in
   config = mkIf cfg.enable {
     programs.wlogout = {
       enable = true;
-      package = nixpkgs-wayland.packages.${system}.wlogout;
+      package = pkgs.wlogout;
 
       layout = [
         {

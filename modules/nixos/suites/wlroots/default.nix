@@ -1,15 +1,13 @@
 {
   config,
-  inputs,
-  system,
   lib,
   namespace,
+  pkgs,
   ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
-  inherit (inputs) nixpkgs-wayland;
 
   cfg = config.${namespace}.suites.wlroots;
 in
@@ -25,7 +23,7 @@ in
 
       wshowkeys = {
         enable = true;
-        package = nixpkgs-wayland.packages.${system}.wshowkeys;
+        package = pkgs.wshowkeys;
       };
     };
   };

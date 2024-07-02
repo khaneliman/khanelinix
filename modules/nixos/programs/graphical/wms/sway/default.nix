@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   lib,
   pkgs,
   namespace,
@@ -21,9 +20,9 @@ let
     optionalString
     ;
   inherit (config.${namespace}.desktop.addons) term;
-  inherit (inputs) nixpkgs-wayland;
 
   cfg = config.${namespace}.programs.graphical.wms.sway;
+
   substitutedConfig = pkgs.substituteAll {
     src = ./config;
     term = term.pkg.pname or term.pkg.name;
@@ -135,7 +134,7 @@ in
 
     programs.sway = {
       enable = true;
-      package = nixpkgs-wayland.sway;
+      package = pkgs.sway;
 
       extraPackages = with pkgs; [
         sway-contrib.grimshot

@@ -1,17 +1,13 @@
 {
-  writeShellApplication,
   gnome,
-  inputs,
   lib,
   libnotify,
-  pkgs,
-  system,
-  wl-screenrec ? pkgs.stdenv.isLinux,
+  slurp,
+  wl-clipboard,
+  wl-screenrec,
+  writeShellApplication,
   ...
 }:
-let
-  inherit (inputs) nixpkgs-wayland;
-in
 writeShellApplication {
   name = "record_screen";
 
@@ -23,11 +19,12 @@ writeShellApplication {
   checkPhase = "";
 
   runtimeInputs = [
-    nixpkgs-wayland.packages.${system}.wl-clipboard
-    libnotify
-    nixpkgs-wayland.packages.${system}.slurp
     gnome.zenity
-  ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [ wl-screenrec ];
+    libnotify
+    slurp
+    wl-clipboard
+    wl-screenrec
+  ];
 
   text = # bash
     ''

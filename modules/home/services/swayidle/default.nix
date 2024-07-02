@@ -1,15 +1,13 @@
 {
   config,
-  inputs,
   lib,
-  system,
   namespace,
+  pkgs,
   ...
 }:
 let
   inherit (lib) mkIf getExe getExe';
   inherit (lib.${namespace}) mkBoolOpt;
-  inherit (inputs) nixpkgs-wayland;
 
   cfg = config.${namespace}.services.swayidle;
 in
@@ -21,7 +19,7 @@ in
   config = mkIf cfg.enable {
     services.swayidle = {
       enable = true;
-      package = nixpkgs-wayland.packages.${system}.swayidle;
+      package = pkgs.swayidle;
 
       events = [
         {

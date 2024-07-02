@@ -1,16 +1,13 @@
 {
   config,
-  inputs,
   lib,
   pkgs,
-  system,
   namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
-  inherit (inputs) nixpkgs-wayland;
 
   cfg = config.${namespace}.programs.graphical.screenlockers.swaylock;
 in
@@ -23,7 +20,7 @@ in
     programs.swaylock = {
       enable = true;
 
-      package = nixpkgs-wayland.packages.${system}.swaylock-effects;
+      package = pkgs.swaylock-effects;
       settings = {
         ignore-empty-password = true;
         disable-caps-lock-text = true;

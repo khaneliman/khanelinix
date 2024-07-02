@@ -22,6 +22,7 @@ let
   programs = makeBinPath (
     with pkgs;
     [
+      # TODO: make sure this references same package as home-manager
       hyprland.packages.${system}.hyprland
       coreutils
       config.services.power-profiles-daemon.package
@@ -137,6 +138,7 @@ in
       };
     };
 
+    # TODO: make sure it references same package as home-manager
     services.displayManager.sessionPackages = [ hyprland.packages.${system}.hyprland ];
   };
 }
