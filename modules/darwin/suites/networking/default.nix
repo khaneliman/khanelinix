@@ -29,6 +29,7 @@ in
       openssh
       speedtest-cli
       ssh-copy-id
+      tailscale
       wireguard-go
     ];
   };
