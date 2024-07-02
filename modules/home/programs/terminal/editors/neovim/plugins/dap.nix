@@ -219,8 +219,8 @@ in
         key = "<leader>db";
         action.__raw = # lua
           ''
-            function() 
-              require("dap").toggle_breakpoint() 
+            function()
+              require("dap").toggle_breakpoint()
             end
           '';
         options = {
@@ -233,8 +233,8 @@ in
         key = "<leader>dc";
         action.__raw = # lua
           ''
-            function() 
-              require("dap").continue() 
+            function()
+              require("dap").continue()
             end
           '';
         options = {
@@ -244,7 +244,7 @@ in
       }
       {
         mode = "v";
-        key = "<leader>dE";
+        key = "<leader>de";
         action.__raw = # lua
           ''
             function() require("dapui").eval() end
@@ -256,7 +256,7 @@ in
       }
       {
         mode = "n";
-        key = "<leader>dE";
+        key = "<leader>de";
         action.__raw = # lua
           ''
             function()
@@ -287,8 +287,8 @@ in
         key = "<leader>do";
         action.__raw = # lua
           ''
-            function() 
-              require("dap").step_out() 
+            function()
+              require("dap").step_out()
             end
           '';
         options = {
@@ -301,8 +301,8 @@ in
         key = "<leader>ds";
         action.__raw = # lua
           ''
-            function() 
-              require("dap").step_over() 
+            function()
+              require("dap").step_over()
             end
           '';
         options = {
@@ -315,8 +315,8 @@ in
         key = "<leader>dS";
         action.__raw = # lua
           ''
-            function() 
-              require("dap").step_into() 
+            function()
+              require("dap").step_into()
             end
           '';
         options = {
@@ -326,12 +326,24 @@ in
       }
       {
         mode = "n";
+        key = "<leader>dt";
+        action.__raw = # lua
+          ''
+            function() require("dap").terminate() end
+          '';
+        options = {
+          desc = "Terminate Debugging";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
         key = "<leader>du";
         action.__raw = # lua
           ''
-            function() 
+            function()
               require('dap.ext.vscode').load_launchjs(nil, {})
-              require("dapui").toggle() 
+              require("dapui").toggle()
             end
           '';
         options = {
