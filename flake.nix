@@ -46,6 +46,7 @@
 
     # Hyprland
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    # hyprland.url = "git+https://github.com/khaneliman/Hyprland?ref=windows&submodules=1";
 
     # Hyprpaper
     hyprpaper.url = "github:hyprwm/hyprpaper";
@@ -80,12 +81,6 @@
     # NixPkgs (nixos-unstable)
     nixpkgs = {
       url = "github:nixos/nixpkgs/nixos-unstable";
-    };
-
-    # NixPkgs-Wayland
-    nixpkgs-wayland = {
-      url = "github:nix-community/nixpkgs-wayland";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # NixOS WSL Support
