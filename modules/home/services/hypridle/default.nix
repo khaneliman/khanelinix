@@ -32,11 +32,11 @@ in
 
         listener = [
           {
-            timeout = 900;
+            timeout = 300;
             on-timeout = "${getExe config.programs.hyprlock.package}";
           }
           {
-            timeout = 1200;
+            timeout = 600;
             on-timeout = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms off";
             on-resume = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms on";
           }
