@@ -108,6 +108,7 @@ in
       "class<virt-manager>" = "󰢹";
       "class<vlc>" = "󰕼";
       "class<wlroots> title<.*WL-1.*>" = "";
+      "class<xwaylandvideobridge>" = "";
       "code-url-handler" = "󰨞";
       "title<RPCS3.*>" = "";
       "title<Spotify Free>" = "";
