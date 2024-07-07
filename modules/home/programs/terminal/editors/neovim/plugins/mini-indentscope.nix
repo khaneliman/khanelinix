@@ -1,6 +1,7 @@
-_: {
+{ config, lib, ... }:
+{
   programs.nixvim = {
-    autoCmd = [
+    autoCmd = lib.mkIf (lib.hasAttr "indentscope" config.programs.nixvim.plugins.mini.modules) [
       {
         event = [ "FileType" ];
         pattern = [
