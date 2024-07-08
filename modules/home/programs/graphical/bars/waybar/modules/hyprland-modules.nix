@@ -97,6 +97,7 @@ in
       "class<org.shotcut.Shotcut>" = "󰈰";
       "class<org.telegram.desktop>" = "";
       "class<org.wezfurlong.wezterm>" = "";
+      "class<pavucontrol>" = "";
       "class<pcsx2-qt>" = "";
       "class<pcsxr>" = "";
       "class<shotwell>" = "";
