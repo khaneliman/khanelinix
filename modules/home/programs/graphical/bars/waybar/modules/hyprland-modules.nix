@@ -44,6 +44,7 @@ in
     # "format-window-separator" = "->";
     window-rewrite-default = "";
     window-rewrite = {
+      "class<.blueman-manager-wrapped>" = "";
       "class<.devede_ng.py-wrapped>" = "";
       "class<.pitivi-wrapped>" = "󱄢";
       "class<.xemu-wrapped>" = "";
