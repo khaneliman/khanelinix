@@ -1,11 +1,11 @@
 {
-  gnome,
   lib,
   libnotify,
   slurp,
   wl-clipboard,
   wl-screenrec,
   writeShellApplication,
+  zenity,
   ...
 }:
 writeShellApplication {
@@ -19,7 +19,7 @@ writeShellApplication {
   checkPhase = "";
 
   runtimeInputs = [
-    gnome.zenity
+    zenity
     libnotify
     slurp
     wl-clipboard
