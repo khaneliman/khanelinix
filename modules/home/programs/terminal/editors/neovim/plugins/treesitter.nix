@@ -4,10 +4,30 @@ _: {
       treesitter = {
         enable = true;
 
+        folding = true;
         nixvimInjections = true;
 
-        folding = true;
-        indent = true;
+        settings = {
+          highlight = {
+            additional_vim_regex_highlighting = true;
+            enable = true;
+            disable = null;
+          };
+
+          incremental_selection = {
+            enable = true;
+            keymaps = {
+              init_selection = "gnn";
+              node_incremental = "grn";
+              scope_incremental = "grc";
+              node_decremental = "grm";
+            };
+          };
+
+          indent = {
+            enable = true;
+          };
+        };
 
         # NOTE: Default is to install all grammars, here's a more concise list of ones i care about
         # grammarPackages = with config.programs.nixvim.plugins.treesitter.package.builtGrammars; [
