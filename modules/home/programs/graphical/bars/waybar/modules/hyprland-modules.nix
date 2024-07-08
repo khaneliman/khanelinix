@@ -53,6 +53,7 @@ in
       "class<Bitwarden>" = "󰞀";
       "class<Caprine>" = "󰈎";
       "class<DBeaver>" = "";
+      "class<Element>" = "󰭹";
       "class<Darktable>" = "󰄄";
       "class<Github Desktop>" = "󰊤";
       "class<Godot>" = "";
