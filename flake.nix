@@ -83,6 +83,11 @@
       url = "github:nixos/nixpkgs/nixos-unstable";
     };
 
+    # NixPkgs (nixos-unstable-small)
+    nixpkgs-small = {
+      url = "github:nixos/nixpkgs/nixos-unstable-small";
+    };
+
     # NixOS WSL Support
     nixos-wsl = {
       url = "github:nix-community/nixos-wsl";
