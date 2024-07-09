@@ -10,6 +10,7 @@ _: {
           "neo-tree"
           "TelescopePrompt"
         ];
+        largeFileCutoff = 3000;
       };
     };
   };
