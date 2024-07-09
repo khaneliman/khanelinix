@@ -19,7 +19,8 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       spicetify-cli
-      youtube-dl
+      # TODO: replace? don't use and marked insecure
+      # youtube-dl
     ];
 
     homebrew = {

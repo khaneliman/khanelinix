@@ -22,7 +22,8 @@ in
       bitwarden
       bleachbit
       dropbox
-      dupeguru
+      # TODO: remove override after https://github.com/NixOS/nixpkgs/pull/325740 is in unstable
+      (dupeguru.override { python3Packages = pkgs.python311Packages; })
       filelight
       fontpreview
       gparted
