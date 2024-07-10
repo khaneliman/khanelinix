@@ -1,4 +1,21 @@
-_: {
+_:
+let
+  get_bufnrs.__raw = # lua
+    ''
+      function()
+        local buf_size_limit = 1024 * 1024 -- 1MB size limit
+        local bufs = vim.api.nvim_list_bufs()
+        local valid_bufs = {}
+        for _, buf in ipairs(bufs) do
+          if vim.api.nvim_buf_is_loaded(buf) and vim.api.nvim_buf_get_offset(buf, vim.api.nvim_buf_line_count(buf)) < buf_size_limit then
+            table.insert(valid_bufs, buf)
+          end
+        end
+        return valid_bufs
+      end
+    '';
+in
+{
   programs.nixvim = {
     opts.completeopt = [
       "menu"
@@ -39,18 +56,30 @@ _: {
             {
               name = "nvim_lsp";
               priority = 1000;
+              option = {
+                inherit get_bufnrs;
+              };
             }
             {
               name = "nvim_lsp_signature_help";
               priority = 1000;
+              option = {
+                inherit get_bufnrs;
+              };
             }
             {
               name = "nvim_lsp_document_symbol";
               priority = 1000;
+              option = {
+                inherit get_bufnrs;
+              };
             }
             {
               name = "treesitter";
               priority = 850;
+              option = {
+                inherit get_bufnrs;
+              };
             }
             {
               name = "luasnip";
@@ -63,9 +92,9 @@ _: {
             {
               name = "buffer";
               priority = 500;
-              # Words from other open buffers can also be suggested.
-              option.get_bufnrs.__raw = # lua
-                "vim.api.nvim_list_bufs";
+              option = {
+                inherit get_bufnrs;
+              };
             }
             {
               name = "path";
