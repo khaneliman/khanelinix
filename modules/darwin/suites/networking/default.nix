@@ -18,6 +18,10 @@ in
 
   config = mkIf cfg.enable {
     khanelinix = {
+      services = {
+        tailscale = enabled;
+      };
+
       system = {
         networking = enabled;
       };
@@ -29,7 +33,6 @@ in
       openssh
       speedtest-cli
       ssh-copy-id
-      tailscale
       wireguard-go
     ];
   };
