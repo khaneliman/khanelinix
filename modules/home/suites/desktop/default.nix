@@ -19,14 +19,15 @@ in
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       barrier
-      bleachbit
       bitwarden
+      bleachbit
       dropbox
       dupeguru
       filelight
       fontpreview
       gparted
       pkgs.${namespace}.pocketcasts
+      realvnc-vnc-viewer
     ];
   };
 }
