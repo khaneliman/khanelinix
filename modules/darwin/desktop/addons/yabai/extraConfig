@@ -5,19 +5,19 @@ create_spaces 7
 
 # SPACE LABELS
 LABELS=(
-	main
-	comms
-	code
-	ref
-	productivity
-	media
-	vm
-	misc
-	scratch
+  main
+  comms
+  code
+  ref
+  productivity
+  media
+  vm
+  misc
+  scratch
 )
 
 for ((i = 1; i <= "${#LABELS[@]}"; i++)); do
-	yabai -m space "${i}" --label "${LABELS[(($i - 1))]}"
+  yabai -m space "$i" --label "${LABELS[(($i - 1))]}"
 done
 
 # SPACE LAYOUTS
@@ -27,39 +27,39 @@ yabai -m config --space scratch layout float
 
 # RULES
 UNMANAGED=(
-	Activity Monitor
-	Alfred
-	App Store
-	Archive Utility
-	Authy
-	Bitwarden
-	Calculator
-	Dictionary
-	FaceTime
-	# Finder
-	LibreOffice
-	LuLu
-	Microsoft Remote Desktop
-	Photo Booth
-	Python
-	ScanSnap
-	Screen Sharing
-	Screens
-	Software Update
-	Stats
-	Steam
-	System Information
-	System Preferences
-	System Settings
-	VLC
-	Vimac
-	iStat Menus
-	iStat Menus Status
-	zoom.us
+  Activity Monitor
+  Alfred
+  App Store
+  Archive Utility
+  Authy
+  Bitwarden
+  Calculator
+  Dictionary
+  FaceTime
+  # Finder
+  LibreOffice
+  LuLu
+  Microsoft Remote Desktop
+  Photo Booth
+  Python
+  ScanSnap
+  Screen Sharing
+  Screens
+  Software Update
+  Stats
+  Steam
+  System Information
+  System Preferences
+  System Settings
+  VLC
+  Vimac
+  iStat Menus
+  iStat Menus Status
+  zoom.us
 )
 
 for ((i = 1; i <= "${#UNMANAGED[@]}"; i++)); do
-	yabai -m rule --add label="unmanage_${UNMANAGED[(($i - 1))]}" app="^${UNMANAGED[(($i - 1))]}.*$" manage=off border=off
+  yabai -m rule --add label="unmanage_${UNMANAGED[(($i - 1))]}" app="^${UNMANAGED[(($i - 1))]}.*$" manage=off border=off
 done
 
 # Exclude problematic apps from being managed:
@@ -69,98 +69,96 @@ yabai -m rule --add label="About This Mac" app="System Information" title="About
 yabai -m rule --add label="Select file to save to" app="^Inkscape$" title="Select file to save to" manage=off
 
 COMMS=(
-	Microsoft Teams
-	"Microsoft Teams (work or school)"
-	Mail
-	Messages
-	Spark
-	Mail
-	Discord
-	Thunderbird
-	Caprine
-	Messenger
-	Slack
-	Telegram
-	Element
+  Microsoft Teams
+  "Microsoft Teams (work or school)"
+  Mail
+  Messages
+  Spark
+  Mail
+  Discord
+  Thunderbird
+  Caprine
+  Messenger
+  Slack
+  Telegram
+  Element
 )
 
 for ((i = 1; i <= "${#COMMS[@]}"; i++)); do
-	yabai -m rule --add label="comms_${COMMS[(($i - 1))]}" app="^${COMMS[(($i - 1))]}.*$" space=comms
+  yabai -m rule --add label="comms_${COMMS[(($i - 1))]}" app="^${COMMS[(($i - 1))]}.*$" space=comms
 done
 
 STICKY=(
-	Authy Desktop
-	1Password
-	Bitwarden
-	System Preferences
-	System Settings
+  Authy Desktop
+  1Password
+  Bitwarden
 )
 
 for ((i = 1; i <= "${#STICKY[@]}"; i++)); do
-	yabai -m rule --add label="sticky_${STICKY[(($i - 1))]}" app="^${STICKY[(($i - 1))]}.*$" sticky=on
+  yabai -m rule --add label="sticky_${STICKY[(($i - 1))]}" app="^${STICKY[(($i - 1))]}.*$" sticky=on
 done
 
 MEDIA=(
-	Music
-	Plex
-	Spotify
-	VLC
+  Music
+  Plex
+  Spotify
+  VLC
 )
 
 for ((i = 1; i <= "${#MEDIA[@]}"; i++)); do
-	yabai -m rule --add label="media_${MEDIA[(($i - 1))]}" app="^${MEDIA[(($i - 1))]}.*$" space=media
+  yabai -m rule --add label="media_${MEDIA[(($i - 1))]}" app="^${MEDIA[(($i - 1))]}.*$" space=media
 done
 
 # Productivity
 PRODUCTIVITY=(
-	Notes
-	Reminders
-	Calendar
-	Fantastical
+  Notes
+  Reminders
+  Calendar
+  Fantastical
 )
 
 for ((i = 1; i <= "${#PRODUCTIVITY[@]}"; i++)); do
-	yabai -m rule --add label="productivity_${PRODUCTIVITY[(($i - 1))]}" app="^${PRODUCTIVITY[(($i - 1))]}.*$" space=productivity
+  yabai -m rule --add label="productivity_${PRODUCTIVITY[(($i - 1))]}" app="^${PRODUCTIVITY[(($i - 1))]}.*$" space=productivity
 done
 
 MAIN=(
-	Firefox Developer Edition
-	Firefox
-	Google Chrome
-	Safari
+  Firefox Developer Edition
+  Firefox
+  Google Chrome
+  Safari
 )
 
 for ((i = 1; i <= "${#MAIN[@]}"; i++)); do
-	yabai -m rule --add label="main_${MAIN[(($i - 1))]}" app="^${MAIN[(($i - 1))]}.*$" space=main
+  yabai -m rule --add label="main_${MAIN[(($i - 1))]}" app="^${MAIN[(($i - 1))]}.*$" space=main
 done
 
 CODE=(
-	Qt Creator
-	Visual Studio Code
-	Visual Studio
-	XCode
+  Qt Creator
+  Visual Studio Code
+  Visual Studio
+  XCode
 )
 
 for ((i = 1; i <= "${#CODE[@]}"; i++)); do
-	yabai -m rule --add label="code_${CODE[(($i - 1))]}" app="^${CODE[(($i - 1))]}.*$" space=code
+  yabai -m rule --add label="code_${CODE[(($i - 1))]}" app="^${CODE[(($i - 1))]}.*$" space=code
 done
 
 REF=(
-	GitHub
-	GitKraken
+  GitHub
+  GitKraken
 )
 
 for ((i = 1; i <= "${#REF[@]}"; i++)); do
-	yabai -m rule --add label="ref_${REF[(($i - 1))]}" app="^${REF[(($i - 1))]}.*$" space=ref
+  yabai -m rule --add label="ref_${REF[(($i - 1))]}" app="^${REF[(($i - 1))]}.*$" space=ref
 done
 
 VM=(
-	UTM
-	Parallels
+  UTM
+  Parallels
 )
 
 for ((i = 1; i <= "${#VM[@]}"; i++)); do
-	yabai -m rule --add label="vm_${VM[(($i - 1))]}" app="^${VM[(($i - 1))]}.*$" space=vm
+  yabai -m rule --add label="vm_${VM[(($i - 1))]}" app="^${VM[(($i - 1))]}.*$" space=vm
 done
 
 echo "yabai configuration loaded.."
