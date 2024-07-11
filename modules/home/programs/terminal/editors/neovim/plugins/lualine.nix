@@ -108,7 +108,24 @@ in
       };
 
       winbar = {
-        lualine_c = [ "navic" ];
+        lualine_c = [
+          {
+            name = "navic";
+            extraConfig = {
+              cond.__raw = # Lua
+                ''
+                  function()
+                    local buf_size_limit = 1024 * 1024 -- 1MB size limit
+                    if vim.api.nvim_buf_get_offset(0, vim.api.nvim_buf_line_count(0)) > buf_size_limit then
+                      return false
+                    end
+
+                    return true
+                  end
+                '';
+            };
+          }
+        ];
 
         # TODO: Need to dynamically hide/show component so navic takes precedence on smaller width
         lualine_x = [
