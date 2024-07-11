@@ -1,6 +1,18 @@
 { config, lib, ... }:
 let
   inherit (lib) mkIf;
+
+  cond.__raw = # Lua
+    ''
+      function()
+        local buf_size_limit = 1024 * 1024 -- 1MB size limit
+        if vim.api.nvim_buf_get_offset(0, vim.api.nvim_buf_line_count(0)) > buf_size_limit then
+          return false
+        end
+
+        return true
+      end
+    '';
 in
 {
   programs.nixvim = {
@@ -69,6 +81,8 @@ in
           {
             name = "aerial";
             extraConfig = {
+              inherit cond;
+
               # -- The separator to be used to separate symbols in status line.
               sep = " ) ";
 
@@ -87,6 +101,15 @@ in
 
               # -- Color the symbol icons.
               colored = true;
+            };
+          }
+        ];
+
+        lualine_z = [
+          {
+            name = "location";
+            extraConfig = {
+              inherit cond;
             };
           }
         ];
@@ -112,17 +135,7 @@ in
           {
             name = "navic";
             extraConfig = {
-              cond.__raw = # Lua
-                ''
-                  function()
-                    local buf_size_limit = 1024 * 1024 -- 1MB size limit
-                    if vim.api.nvim_buf_get_offset(0, vim.api.nvim_buf_line_count(0)) > buf_size_limit then
-                      return false
-                    end
-
-                    return true
-                  end
-                '';
+              inherit cond;
             };
           }
         ];
