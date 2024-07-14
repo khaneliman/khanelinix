@@ -25,6 +25,8 @@ in
           { command = "${getExe pkgs._1password-gui} --silent"; }
           { command = getExe pkgs.tailscale-systray; }
           { command = "run-as-service $(${getExe pkgs.wayvnc} $(${getExe pkgs.tailscale} ip --4))"; }
+
+          { command = "${lib.getExe pkgs.libnotify} --icon ~/.face -u normal \"Hello $(whoami)\""; }
         ];
       };
     };

@@ -125,11 +125,7 @@ in
 
       extraConfig = cfg.appendConfig;
       extraConfigEarly = cfg.prependConfig;
-
-      extraSessionCommands = # bash
-        ''
-          ${lib.getExe pkgs.libnotify} --icon ~/.face -u normal \"Hello $(whoami)\"
-        '';
+      inherit (cfg) extraSessionCommands;
 
       systemd = {
         enable = true;
