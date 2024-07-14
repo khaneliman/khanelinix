@@ -80,6 +80,24 @@ in
                 "workspace = 9, monitor:DP-1, persistent:true"
               ];
           };
+
+          sway = {
+            enable = true;
+
+            settings = {
+              output = {
+                "DP-3" = {
+                  resolution = "3840x2160";
+                  position = "1420,0";
+                  scale = "2";
+                };
+                "DP-1" = {
+                  resolution = "5120x1440";
+                  position = "0,1080";
+                };
+              };
+            };
+          };
         };
       };
 

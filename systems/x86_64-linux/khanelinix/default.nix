@@ -88,6 +88,10 @@ in
           hyprland = {
             enable = true;
           };
+
+          sway = {
+            enable = true;
+          };
         };
       };
     };

@@ -138,7 +138,6 @@ in
       };
     };
 
-    # TODO: make sure it references same package as home-manager
     services.displayManager.sessionPackages = [ hyprland.packages.${system}.hyprland ];
   };
 }
