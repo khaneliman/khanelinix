@@ -83,6 +83,8 @@ in
       };
 
       services = {
+        cliphist.systemdTargets = [ "sway-session.target" ];
+
         swayidle = enabled;
       };
 
@@ -95,8 +97,6 @@ in
         qt = enabled;
       };
     };
-
-    services.cliphist.systemdTarget = lib.mkDefault "sway-session.target";
 
     wayland.windowManager.sway = {
       enable = true;
