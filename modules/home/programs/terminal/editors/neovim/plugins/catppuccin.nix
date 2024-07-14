@@ -1,8 +1,6 @@
 _: {
   programs.nixvim = {
     colorschemes.catppuccin = {
-      enable = true;
-
       settings = {
         dim_inactive = {
           enabled = false;
