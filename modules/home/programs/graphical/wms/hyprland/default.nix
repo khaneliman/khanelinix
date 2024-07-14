@@ -95,6 +95,8 @@ in
       };
 
       services = {
+        cliphist.systemdTargets = [ "hyprland-session.target" ];
+
         hypridle = enabled;
 
         hyprpaper = {
@@ -112,8 +114,6 @@ in
         qt = enabled;
       };
     };
-
-    services.cliphist.systemdTarget = "hyprland-session.target";
 
     wayland.windowManager.hyprland = {
       enable = true;
