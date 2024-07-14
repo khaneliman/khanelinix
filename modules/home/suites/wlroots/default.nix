@@ -41,6 +41,7 @@ in
       };
 
       services = {
+        cliphist = enabled;
         keyring = enabled;
       };
     };
@@ -49,11 +50,6 @@ in
     # services.network-manager-applet.enable = true;
     services = {
       blueman-applet.enable = true;
-
-      cliphist = {
-        enable = true;
-        allowImages = true;
-      };
     };
   };
 }
