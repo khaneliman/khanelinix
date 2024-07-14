@@ -32,5 +32,9 @@ rec {
 
   default-attrs = mapAttrs (_key: mkDefault);
 
+  force-attrs = mapAttrs (_key: mkForce);
+
   nested-default-attrs = mapAttrs (_key: default-attrs);
+
+  nested-force-attrs = mapAttrs (_key: force-attrs);
 }
