@@ -48,6 +48,11 @@ in
   };
 
   # imports = lib.snowfall.fs.get-non-default-nix-files ./.;
+  imports = [
+    ./apps.nix
+    ./binds.nix
+    ./variables.nix
+  ];
 
   config = mkIf cfg.enable {
     home = {
@@ -103,25 +108,21 @@ in
       package = pkgs.sway;
 
       config = {
-        terminal = "wezterm";
+        modifier = "Mod4";
+
+        # terminal = "wezterm";
 
         bars = [
           { command = mkIf config.khanelinix.programs.graphical.bars.waybar.enable (lib.getExe pkgs.waybar); }
         ];
 
-        startup = [
-          { command = getExe config.programs.firefox.package; }
-          { command = getExe pkgs.steam; }
-          { command = getExe pkgs.discord; }
-          { command = getExe pkgs.thunderbird; }
+        gaps = {
+          inner = 5;
+          outer = 20;
+        };
 
-          # Startup background apps
-          { command = "${getExe pkgs.openrgb-with-all-plugins} --startminimized --profile default"; }
-          { command = "${getExe pkgs._1password-gui} --silent"; }
-          { command = getExe pkgs.tailscale-systray; }
-          { command = "run-as-service $(${getExe pkgs.wayvnc} $(${getExe pkgs.tailscale} ip --4))"; }
-        ];
       } // cfg.settings;
+
       extraConfig = cfg.appendConfig;
       extraConfigEarly = cfg.prependConfig;
 
