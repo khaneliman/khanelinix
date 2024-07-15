@@ -134,6 +134,7 @@ in
         terminal = getExe config.programs.kitty.package;
         top = getExe config.programs.btop.package;
         hyprctl = getExe' config.wayland.windowManager.hyprland.package "hyprctl";
+        swaymsg = getExe' config.wayland.windowManager.sway.package "swaymsg";
       in
       {
         inherit poweroff reboot;
@@ -142,7 +143,7 @@ in
         lock = "${lock} --immediate";
         suspend = "${systemctl} suspend";
         top = "${terminal} ${top}";
-        logout = "${hyprctl} dispatch exit && ${systemctl} --user exit ";
+        logout = "$(${hyprctl} dispatch exit || ${swaymsg} exit) && ${systemctl} --user exit ";
       };
   };
 
