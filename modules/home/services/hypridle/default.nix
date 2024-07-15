@@ -43,5 +43,7 @@ in
         ];
       };
     };
+
+    systemd.user.services.hypridle.Install.WantedBy = [ "hyprland-session.target" ];
   };
 }
