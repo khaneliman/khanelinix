@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkEnableOption getExe;
+  inherit (lib) mkIf mkEnableOption;
   inherit (lib.${namespace}) enabled;
 
   cfg = config.${namespace}.programs.graphical.wms.sway;
@@ -112,9 +112,7 @@ in
 
         # terminal = "wezterm";
 
-        bars = [
-          { command = mkIf config.khanelinix.programs.graphical.bars.waybar.enable (lib.getExe pkgs.waybar); }
-        ];
+        bars = [ ];
 
         gaps = {
           inner = 5;
