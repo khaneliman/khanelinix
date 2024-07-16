@@ -106,8 +106,6 @@ in
       config = {
         bars = [ ];
 
-        colors = { };
-
         floating = {
           modifier = "Shift";
         };
