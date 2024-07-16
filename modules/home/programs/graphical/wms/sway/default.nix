@@ -100,10 +100,13 @@ in
 
     wayland.windowManager.sway = {
       enable = true;
-      package = pkgs.sway;
+      package = pkgs.swayfx;
+      checkConfig = false;
 
       config = {
         bars = [ ];
+
+        colors = { };
 
         floating = {
           modifier = "Shift";
@@ -131,7 +134,18 @@ in
         workspaceLayout = "default";
       } // cfg.settings;
 
-      extraConfig = cfg.appendConfig;
+      extraConfig = ''
+        blur enable
+        blur_passes 4
+        blur_radius 5
+
+        shadows_on_csd enable
+        titlebar_separator disable
+        scratchpad_minimize disable
+
+        ${cfg.appendConfig}
+      '';
+
       extraConfigEarly = cfg.prependConfig;
       inherit (cfg) extraSessionCommands;
 
@@ -153,12 +167,6 @@ in
 #   fullscreen_opacity = 1.0;
 #   inactive_opacity = 0.9;
 #   rounding = 10;
-#
-#   blur = {
-#     enabled = "yes";
-#     passes = 4;
-#     size = 5;
-#   };
 #
 #   drop_shadow = true;
 #   shadow_ignore_window = true;
