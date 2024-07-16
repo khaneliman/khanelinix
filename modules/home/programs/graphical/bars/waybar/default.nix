@@ -30,6 +30,7 @@ let
   default-modules = import ./modules/default-modules.nix { inherit lib pkgs; };
   group-modules = import ./modules/group-modules.nix;
   hyprland-modules = import ./modules/hyprland-modules.nix { inherit config lib; };
+  sway-modules = import ./modules/sway-modules.nix { inherit config lib; };
 
   commonAttributes = {
     layer = "top";
@@ -39,36 +40,44 @@ let
     margin-left = 20;
     margin-right = 20;
 
-    modules-left = [
-      "custom/power"
-      "hyprland/workspaces"
-      "custom/separator-left"
-      "hyprland/window"
-    ];
+    modules-left =
+      [ "custom/power" ]
+      ++ lib.optionals config.${namespace}.programs.graphical.wms.hyprland.enable [
+        "hyprland/workspaces"
+      ]
+      ++ lib.optionals config.${namespace}.programs.graphical.wms.sway.enable [ "sway/workspaces" ]
+      ++ [ "custom/separator-left" ]
+      ++ lib.optionals config.${namespace}.programs.graphical.wms.hyprland.enable [ "hyprland/window" ];
   };
 
   fullSizeModules = {
-    modules-right = [
-      "group/tray"
-      "custom/separator-right"
-      "group/stats"
-      "custom/separator-right"
-      "group/control-center"
-      "hyprland/submap"
-      "custom/weather"
-      "clock"
-    ];
+    modules-right =
+      [
+        "group/tray"
+        "custom/separator-right"
+        "group/stats"
+        "custom/separator-right"
+        "group/control-center"
+      ]
+      ++ lib.optionals config.${namespace}.programs.graphical.wms.hyprland.enable [ "hyprland/submap" ]
+      ++ [
+        "custom/weather"
+        "clock"
+      ];
   };
 
   condensedModules = {
-    modules-right = [
-      "group/tray-drawer"
-      "group/stats-drawer"
-      "group/control-center"
-      "hyprland/submap"
-      "custom/weather"
-      "clock"
-    ];
+    modules-right =
+      [
+        "group/tray-drawer"
+        "group/stats-drawer"
+        "group/control-center"
+      ]
+      ++ lib.optionals config.${namespace}.programs.graphical.wms.hyprland.enable [ "hyprland/submap" ]
+      ++ [
+        "custom/weather"
+        "clock"
+      ];
   };
 
   mkBarSettings =
@@ -80,6 +89,7 @@ let
       default-modules
       group-modules
       (lib.mkIf config.${namespace}.programs.graphical.wms.hyprland.enable hyprland-modules)
+      (lib.mkIf config.${namespace}.programs.graphical.wms.sway.enable sway-modules)
     ];
 
   generateOutputSettings =
