@@ -23,21 +23,21 @@ in
         # }
 
         assigns = {
-          "1: web" = [
+          "1" = [
             { title = "^(.*(Twitch|TNTdrama|YouTube|Bally Sports|Video Entertainment|Plex)).*(Firefox).*$"; }
           ];
-          "2: browsers" = [
+          "2" = [
             { title = "^(?!.*(Twitch|TNTdrama|YouTube|Bally Sports|Video Entertainment|Plex)).*(Firefox).*$"; }
             # TODO: hide/minimize
             # { title = "^(.*(hidden tabs - Workona)).*(Firefox).*$"; }
           ];
-          "3: code" = [
+          "3" = [
             { class = "^Code$"; }
             { class = "^neovide$"; }
             { class = "^GitHub Desktop$"; }
             { class = "^GitKraken$"; }
           ];
-          "4: gaming" = [
+          "4" = [
             { class = "^Steam|steam$"; }
             {
               class = "^Steam|steam$";
@@ -49,7 +49,7 @@ in
             { class = ".*(cemu|yuzu|Ryujinx|emulationstation|retroarch).*"; }
             { title = ".*(cemu|yuzu|Ryujinx|emulationstation|retroarch).*"; }
           ];
-          "5: messaging" = [
+          "5" = [
             { class = "^Slack$"; }
             { class = "^Caprine$"; }
             { class = "^org.telegram.desktop$"; }
@@ -58,11 +58,11 @@ in
             { class = "^Element$"; }
             { class = "^teams-for-linux$"; }
           ];
-          "6: mail" = [
+          "6" = [
             { class = "^thunderbird$"; }
             { class = "^Mailspring$"; }
           ];
-          "7: media" = [
+          "7" = [
             { class = "^mpv|vlc|mpdevil$"; }
             { class = "^Spotify$"; }
             { title = "^Spotify$"; }
@@ -77,7 +77,7 @@ in
             }
             { class = "^elisa$"; }
           ];
-          "8: remote" = [
+          "8" = [
             { class = "^virt-manager|qemu$"; }
             { class = "^gnome-connections$"; }
             { class = "^looking-glass-client$"; }
