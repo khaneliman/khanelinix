@@ -125,7 +125,7 @@ in
     };
 
     catppuccin = {
-      # NOTE: Need some customization and merging of configuration files so cant just enable all 
+      # NOTE: Need some customization and merging of configuration files so cant just enable all
       enable = false;
 
       accent = "blue";
@@ -178,11 +178,17 @@ in
       };
     };
 
-    wayland.windowManager.hyprland.catppuccin = mkIf pkgs.stdenv.isLinux {
-      enable = true;
+    wayland.windowManager.hyprland.catppuccin =
+      mkIf config.${namespace}.programs.graphical.wms.hyprland.enable
+        {
+          enable = true;
 
-      inherit (cfg) accent;
-    };
+          inherit (cfg) accent;
+        };
+
+    wayland.windowManager.sway.catppuccin =
+      mkIf config.${namespace}.programs.graphical.wms.sway.enable
+        { enable = true; };
 
     programs =
       let
@@ -220,8 +226,8 @@ in
           "btop"
           "cava"
           "fish"
-          "fzf"
           "foot"
+          "fzf"
           "gh-dash"
           "gitui"
           "glamour"
@@ -289,7 +295,7 @@ in
         # rofi.catppuccin.enable = true;
       };
 
-    # TODO: conditional enable 
+    # TODO: conditional enable
     xdg.configFile = mkIf pkgs.stdenv.isLinux {
       "ArmCord/themes/Catppuccin-Macchiato-BD".source = ./Catppuccin-Macchiato-BD;
       "BetterDiscord/themes/catppuccin-macchiato.theme.css".source = ./catppuccin-macchiato.theme.css;
