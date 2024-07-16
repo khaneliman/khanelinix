@@ -115,11 +115,17 @@ in
 
         bars = [ ];
 
+        floating = {
+          modifier = "Shift";
+        };
+
         gaps = {
           inner = 5;
           outer = 20;
         };
 
+        workspaceAutoBackAndForth = true;
+        workspaceLayout = "default";
       } // cfg.settings;
 
       extraConfig = cfg.appendConfig;
