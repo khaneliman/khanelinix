@@ -30,7 +30,7 @@ in
       "default" = "";
       "empty" = "󱓼";
     };
-    persistent_workspaces = {
+    persistent-workspaces = {
       "1" = [ "DP-3" ];
       "2" = [ "DP-1" ];
       "3" = [ "DP-1" ];
