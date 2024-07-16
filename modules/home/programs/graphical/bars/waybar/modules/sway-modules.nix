@@ -3,6 +3,11 @@ let
   inherit (lib) getExe';
 in
 {
+  "sway/window" = {
+    format = "{}";
+    separate-outputs = true;
+  };
+
   "sway/workspaces" = {
     all-outputs = false;
     active-only = "false";

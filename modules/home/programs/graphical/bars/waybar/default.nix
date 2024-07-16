@@ -47,7 +47,8 @@ let
       ]
       ++ lib.optionals config.${namespace}.programs.graphical.wms.sway.enable [ "sway/workspaces" ]
       ++ [ "custom/separator-left" ]
-      ++ lib.optionals config.${namespace}.programs.graphical.wms.hyprland.enable [ "hyprland/window" ];
+      ++ lib.optionals config.${namespace}.programs.graphical.wms.hyprland.enable [ "hyprland/window" ]
+      ++ lib.optionals config.${namespace}.programs.graphical.wms.sway.enable [ "sway/window" ];
   };
 
   fullSizeModules = {
