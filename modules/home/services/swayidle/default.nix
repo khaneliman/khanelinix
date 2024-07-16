@@ -30,7 +30,7 @@ in
         }
         {
           event = "after-resume";
-          command = "${getExe' config.wayland.windowManager.sway.package "swaymsg"} output * dpms on";
+          command = ''${getExe' config.wayland.windowManager.sway.package "swaymsg"} "output * dpms on"'';
         }
         {
           event = "lock";
@@ -44,7 +44,7 @@ in
         }
         {
           timeout = 600;
-          command = "${getExe' config.wayland.windowManager.sway.package "swaymsg"} output * dpms off";
+          command = ''${getExe' config.wayland.windowManager.sway.package "swaymsg"} "output * dpms off"'';
         }
       ];
     };
