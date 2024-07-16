@@ -52,6 +52,7 @@ in
     ./apps.nix
     ./binds.nix
     ./variables.nix
+    ./windowrules.nix
   ];
 
   config = mkIf cfg.enable {
