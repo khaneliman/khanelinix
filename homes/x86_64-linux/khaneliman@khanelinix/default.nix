@@ -96,6 +96,41 @@ in
                   position = "0,1080";
                 };
               };
+
+              workspaceOutputAssign = [
+                {
+                  workspace = "web";
+                  output = "DP-3";
+                }
+                {
+                  workspace = "browsers";
+                  output = "DP-1";
+                }
+                {
+                  workspace = "code";
+                  output = "DP-1";
+                }
+                {
+                  workspace = "gaming";
+                  output = "DP-1";
+                }
+                {
+                  workspace = "messaging";
+                  output = "DP-1";
+                }
+                {
+                  workspace = "mail";
+                  output = "DP-1";
+                }
+                {
+                  workspace = "media";
+                  output = "DP-1";
+                }
+                {
+                  workspace = "remote";
+                  output = "DP-1";
+                }
+              ];
             };
           };
         };
