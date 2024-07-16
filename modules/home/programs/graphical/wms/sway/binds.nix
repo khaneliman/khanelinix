@@ -44,7 +44,7 @@ in
             notification_center = "${getExe' config.services.swaync.package "swaync-client"}";
             launcher = "anyrun";
             looking-glass = "${getExe pkgs.looking-glass-client}";
-            screen-locker = "${getExe config.programs.hyprlock.package}";
+            screen-locker = "${getExe config.programs.swaylock.package}";
             # window-inspector = "${getExe sway-contrib.packages.${system}.hyprprop}";
             screen-recorder = "${getExe pkgs.${namespace}.record_screen}";
 
@@ -65,7 +65,7 @@ in
           in
           lib.mkMerge [
             (lib.mkOptionDefault {
-              "${swayCfg.modifier}+BackSpace" = "exec pkill -SIGUSR1 hyprlock || WAYLAND_DISPLAY=wayland-1 $screen-locker --immediate";
+              "${swayCfg.modifier}+BackSpace" = "exec pkill -SIGUSR1 swaylock || WAYLAND_DISPLAY=wayland-1 $screen-locker";
               "${swayCfg.modifier}+Return" = "exec ${swayCfg.terminal}";
               "${swayCfg.modifier}+Shift+q" = "kill";
 
@@ -190,11 +190,11 @@ in
                         value = "workspace number ${ws}";
                       }
                       {
-                        name = "Control+Alt+Super_L+${ws}";
+                        name = "Control+Alt+Shift+${ws}";
                         value = "move container to workspace ${ws}";
                       }
                       {
-                        name = "Super_L+Shift+${ws}";
+                        name = "Mod4+Shift+${ws}";
                         value = "move container to workspace ${ws}";
                       }
                     ]
