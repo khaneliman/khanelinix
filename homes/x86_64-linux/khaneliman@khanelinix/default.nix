@@ -99,35 +99,35 @@ in
 
               workspaceOutputAssign = [
                 {
-                  workspace = "web";
+                  workspace = "1";
                   output = "DP-3";
                 }
                 {
-                  workspace = "browsers";
+                  workspace = "2";
                   output = "DP-1";
                 }
                 {
-                  workspace = "code";
+                  workspace = "3";
                   output = "DP-1";
                 }
                 {
-                  workspace = "gaming";
+                  workspace = "4";
                   output = "DP-1";
                 }
                 {
-                  workspace = "messaging";
+                  workspace = "5";
                   output = "DP-1";
                 }
                 {
-                  workspace = "mail";
+                  workspace = "6";
                   output = "DP-1";
                 }
                 {
-                  workspace = "media";
+                  workspace = "7";
                   output = "DP-1";
                 }
                 {
-                  workspace = "remote";
+                  workspace = "8";
                   output = "DP-1";
                 }
               ];
