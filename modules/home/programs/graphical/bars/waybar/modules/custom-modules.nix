@@ -141,7 +141,7 @@ in
         inherit poweroff reboot;
 
         hibernate = "${systemctl} hibernate";
-        lock = ''([[ "$XDG_CURRENT_DESKTOP" == "sway" ]] && ${swaylock} -defF) || ([[ "$XDG_CURRENT_DESKTOP" == "Hyprland" ]] && ${hyprlock}} --immediate)'';
+        lock = ''([[ "$XDG_CURRENT_DESKTOP" == "sway" ]] && ${swaylock} -defF) || ([[ "$XDG_CURRENT_DESKTOP" == "Hyprland" ]] && ${hyprlock} --immediate)'';
         suspend = "${systemctl} suspend";
         top = "${terminal} ${top}";
         logout = "$(${hyprctl} dispatch exit || ${swaymsg} exit) && ${systemctl} --user exit ";
