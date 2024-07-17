@@ -22,6 +22,8 @@ in
         #  $float floating enable; border pixel 1; shadows enable
         # }
 
+        # TODO: use sway's app_id for wayland and class for xwayland
+        # use xlsclients to check which are x11
         assigns = {
           "1" = [
             { title = "^(.*(Twitch|TNTdrama|YouTube|Bally Sports|Video Entertainment|Plex)).*(Firefox).*$"; }
@@ -32,49 +34,38 @@ in
             # { title = "^(.*(hidden tabs - Workona)).*(Firefox).*$"; }
           ];
           "3" = [
-            { class = "^Code$"; }
-            { class = "^neovide$"; }
-            { class = "^GitHub Desktop$"; }
-            { class = "^GitKraken$"; }
+            { app_id = "^Code$"; }
+            { app_id = "^neovide$"; }
+            { app_id = "^GitHub Desktop$"; }
+            { app_id = "^GitKraken$"; }
           ];
           "4" = [
-            { class = "^Steam|steam$"; }
-            {
-              class = "^Steam|steam$";
-              title = "^Steam|steam$";
-            }
+            { class = "[Ss]team$"; }
+            { title = "[Ss]team$"; }
             { class = "^gamescope|steam_app.*$"; }
-            { class = "^heroic$"; }
-            { class = "^lutris$"; }
-            { class = ".*(cemu|yuzu|Ryujinx|emulationstation|retroarch).*"; }
+            { app_id = "^heroic$"; }
+            { app_id = "^lutris$"; }
+            { app_id = ".*(cemu|yuzu|Ryujinx|emulationstation|retroarch).*"; }
             { title = ".*(cemu|yuzu|Ryujinx|emulationstation|retroarch).*"; }
           ];
           "5" = [
-            { class = "^Slack$"; }
-            { class = "^Caprine$"; }
-            { class = "^org.telegram.desktop$"; }
-            { class = "^discord$"; }
-            { class = "^zoom$"; }
-            { class = "^Element$"; }
-            { class = "^teams-for-linux$"; }
+            { app_id = "^Slack$"; }
+            { class = "[Cc]aprine$"; }
+            { app_id = "^org.telegram.desktop$"; }
+            { app_id = "^discord$"; }
+            # { class = "^zoom$"; }
+            { app_id = "^Element$"; }
+            { app_id = "^teams-for-linux$"; }
           ];
           "6" = [
-            { class = "^thunderbird$"; }
-            { class = "^Mailspring$"; }
+            { app_id = "^thunderbird$"; }
+            # { class = "^Mailspring$"; }
           ];
           "7" = [
-            { class = "^mpv|vlc|mpdevil$"; }
-            { class = "^Spotify$"; }
+            { app_id = "^mpv|vlc|VLC|mpdevil$"; }
+            { app_id = "^Spotify$"; }
             { title = "^Spotify$"; }
             { title = "^Spotify Free$"; }
-            {
-              class = "^Spotify$";
-              floating = true;
-            }
-            {
-              class = "^Spotify Free$";
-              floating = true;
-            }
             { class = "^elisa$"; }
           ];
           "8" = [
@@ -106,6 +97,7 @@ in
             { title = "^(floatterm)$"; }
           ];
 
+          # TODO: convert rules
           # # Floating terminal
           # [title="floatterm"] $float; resize set 1100 600; move position center; animation none
           #
