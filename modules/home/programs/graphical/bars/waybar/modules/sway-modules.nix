@@ -40,6 +40,7 @@ in
       "7" = [ "DP-1" ];
       "8" = [ "DP-1" ];
     };
+    window-format = "<span color='@text'>{name}</span>";
     window-rewrite-default = "";
     window-rewrite = {
       "class<.blueman-manager-wrapped>" = "";
