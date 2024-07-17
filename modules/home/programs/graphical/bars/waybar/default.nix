@@ -124,7 +124,28 @@ in
 
     programs.waybar = {
       enable = true;
-      package = waybar.packages.${system}.waybar;
+      package = waybar.packages.${system}.waybar.overrideAttrs (_oldAttrs: {
+        patches = [
+          # TODO: remove when https://github.com/Alexays/Waybar/pull/3447 is merged
+          (pkgs.fetchpatch {
+            name = "disable-hyprland-not-in-use.patch";
+            url = "https://github.com/Alexays/Waybar/pull/3447.patch";
+            hash = "sha256-iQSjwmP/k8Iu3c5QgC+yQmqoUexLVGmIwczxszdQKmk=";
+          })
+          # TODO: remove when https://github.com/Alexays/Waybar/pull/3443 is merged
+          (pkgs.fetchpatch {
+            name = "fix-tray-disappearing.patch";
+            url = "https://github.com/Alexays/Waybar/pull/3443.patch";
+            hash = "sha256-SL/1UUqff1iGkC2fQNc0XLlHq6xZL4YLgcc8Fg/Lut8=";
+          })
+          # TODO: remove when https://github.com/Alexays/Waybar/pull/3448 is merged
+          (pkgs.fetchpatch {
+            name = "sway-ignore-empty-rewrite.patch";
+            url = "https://github.com/Alexays/Waybar/pull/3448.patch";
+            hash = "sha256-OOBhNNDryiZr70drvGKv55g+uSgYsK7IMCm1Dl+Mg5M=";
+          })
+        ];
+      });
       systemd.enable = true;
 
       settings = mkMerge [
