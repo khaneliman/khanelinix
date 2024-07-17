@@ -128,7 +128,8 @@ in
     menu-actions =
       let
         systemctl = getExe' pkgs.systemd "systemctl";
-        lock = getExe config.programs.hyprlock.package;
+        hyprlock = getExe config.programs.hyprlock.package;
+        swaylock = getExe config.programs.swaylock.package;
         poweroff = getExe' pkgs.systemd "poweroff";
         reboot = getExe' pkgs.systemd "reboot";
         terminal = getExe config.programs.kitty.package;
@@ -140,7 +141,7 @@ in
         inherit poweroff reboot;
 
         hibernate = "${systemctl} hibernate";
-        lock = "${lock} --immediate";
+        lock = ''([[ "$XDG_CURRENT_DESKTOP" == "sway" ]] && ${swaylock} -defF) || ([[ "$XDG_CURRENT_DESKTOP" == "Hyprland" ]] && ${hyprlock}} --immediate)'';
         suspend = "${systemctl} suspend";
         top = "${terminal} ${top}";
         logout = "$(${hyprctl} dispatch exit || ${swaymsg} exit) && ${systemctl} --user exit ";
