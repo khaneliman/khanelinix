@@ -56,6 +56,7 @@ in
           colored_stdout_logs = true;
           disable_logs = false;
           enable_stdout_logs = true;
+          error_position = -1;
         };
 
         decoration = {
@@ -139,6 +140,7 @@ in
 
           sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
           scroll_factor = 1.0;
+          emulate_discrete_scroll = 1;
           # repeat_delay = 500; # Mimic the responsiveness of mac setup
           # repeat_rate = 50; # Mimic the responsiveness of mac setup
         };
