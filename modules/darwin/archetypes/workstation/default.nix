@@ -17,7 +17,7 @@ in
 
   config = mkIf cfg.enable {
     khanelinix = {
-      desktop.addons.barrier = enabled;
+      # TODO: input-leap replace barrier
 
       suites = {
         business = enabled;

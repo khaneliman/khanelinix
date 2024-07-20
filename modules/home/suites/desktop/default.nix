@@ -18,7 +18,6 @@ in
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      barrier
       bitwarden
       bleachbit
       dropbox
