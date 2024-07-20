@@ -45,7 +45,8 @@
     };
 
     # Hyprland
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    # hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    hyprland.url = "git+https://github.com/hyprwm/Hyprland?ref=aquamarine&submodules=1";
     # hyprland.url = "git+https://github.com/khaneliman/Hyprland?ref=windows&submodules=1";
 
     # Hyprpaper
