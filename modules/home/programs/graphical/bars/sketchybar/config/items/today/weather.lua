@@ -61,7 +61,7 @@ weather.details = Sbar.add("item", "weather.details", {
 })
 
 -- Update function
-weather.temp:subscribe({ "routine", "forced", "weather_update" }, function()
+weather.temp:subscribe({ "routine", "forced", "system_woke", "weather_update" }, function()
 	-- Reset popup state
 	weather.temp:set({ popup = { drawing = false } })
 
