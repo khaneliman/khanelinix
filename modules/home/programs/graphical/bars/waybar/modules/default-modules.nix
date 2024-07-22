@@ -1,6 +1,8 @@
 { lib, pkgs, ... }:
 let
   inherit (lib) getExe getExe';
+
+  catppuccin = import (lib.snowfall.fs.get-file "modules/home/theme/catppuccin/colors.nix");
 in
 {
   backlight =
@@ -83,6 +85,26 @@ in
   clock = {
     tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
     format = "󰃭 {:%a %d %b \n 󰅐 %I:%M %p}";
+    calendar = {
+      mode = "year";
+      mode-mon-col = 3;
+      weeks-pos = "right";
+      on-scroll = 1;
+      format = {
+        months = "<span color='${catppuccin.colors.rosewater.hex}'><b>{}</b></span>";
+        days = "<span color='${catppuccin.colors.flamingo.hex}'><b>{}</b></span>";
+        weeks = "<span color='${catppuccin.colors.teal.hex}'><b>W{}</b></span>";
+        weekdays = "<span color='${catppuccin.colors.yellow.hex}'><b>{}</b></span>";
+        today = "<span color='${catppuccin.colors.red.hex}'><b><u>{}</u></b></span>";
+      };
+    };
+    actions = {
+      on-click-right = "mode";
+      on-click-forward = "tz_up";
+      on-click-backward = "tz_down";
+      on-scroll-up = "shift_up";
+      on-scroll-down = "shift_down";
+    };
   };
 
   cpu = {
