@@ -108,7 +108,8 @@ in
       "class<thunderbird>" = "";
       "class<unityhub>" = "󰚯";
       "class<virt-manager>" = "󰢹";
-      "class<vlc>" = "󰕼";
+      "class<vlc>" = "󱍼";
+      "class<VLC media player>" = "󱍼";
       "class<wlroots> title<.*WL-1.*>" = "";
       "class<xwaylandvideobridge>" = "";
       "code-url-handler" = "󰨞";
