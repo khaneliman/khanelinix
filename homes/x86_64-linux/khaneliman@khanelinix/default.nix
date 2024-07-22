@@ -60,8 +60,8 @@ in
             prependConfig = # bash
               lib.concatStringsSep "\n" [
                 "# See https://wiki.hyprland.org/Configuring/Monitors/"
-                "monitor=DP-3,	3840x2160@60,	1420x0,	2"
-                "monitor=DP-1,	5120x1440@120,	0x1080,	1"
+                "monitor=DP-3,	3840x2160@60,	1420x0,	2, bitdepth, 10"
+                "monitor=DP-1,	5120x1440@120,	0x1080,	1, bitdepth, 10"
                 ""
                 (
                   "exec-once = ${getExe pkgs.xorg.xrandr} "
