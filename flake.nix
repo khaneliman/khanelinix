@@ -40,8 +40,6 @@
     # Hyprlock
     hyprlock = {
       url = "github:hyprwm/Hyprlock";
-      # NOTE: required to prevent red screen on lock
-      # inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Hyprland
@@ -83,11 +81,6 @@
       url = "github:nixos/nixpkgs/nixos-unstable";
     };
 
-    # NixPkgs (nixos-unstable-small)
-    nixpkgs-small = {
-      url = "github:nixos/nixpkgs/nixos-unstable-small";
-    };
-
     # NixOS WSL Support
     nixos-wsl = {
       url = "github:nix-community/nixos-wsl";
@@ -99,6 +92,7 @@
       url = "github:nix-community/nix-ld-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     # Neovim nix configuration
     nixvim = {
       url = "github:nix-community/nixvim";
