@@ -41,12 +41,11 @@
     hyprlock = {
       url = "github:hyprwm/Hyprlock";
       # NOTE: required to prevent red screen on lock
-      inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Hyprland
-    # hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?ref=aquamarine&submodules=1";
+    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     # hyprland.url = "git+https://github.com/khaneliman/Hyprland?ref=windows&submodules=1";
 
     # Hyprpaper
