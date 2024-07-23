@@ -52,7 +52,12 @@ in
 
   config = mkIf cfg.enable {
     home = {
-      packages = with pkgs; [ xwaylandvideobridge ];
+      packages = with pkgs; [
+        xwaylandvideobridge
+        # NOTE: xdph requirement
+        grim
+        slurp
+      ];
 
       sessionVariables =
         {
