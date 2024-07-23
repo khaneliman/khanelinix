@@ -22,7 +22,7 @@ in
       lib.optionals stdenv.isLinux [
         celluloid
         devede
-        handbrake
+        # handbrake
         mediainfo-gui
         shotcut
         vlc
