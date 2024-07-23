@@ -68,6 +68,7 @@ in
     suites = {
       business = enabled;
       common = enabled;
+      desktop = enabled;
       development = {
         enable = true;
 
