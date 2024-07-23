@@ -21,15 +21,16 @@ in
       enable = true;
       package = pkgs.swayidle;
 
+      systemdTarget = "sway-session.target";
+
       events = [
         {
           event = "before-sleep";
           command = "${getExe config.programs.swaylock.package} -defF";
         }
         {
-          # TODO: Make dynamic for window manager
           event = "after-resume";
-          command = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms on";
+          command = ''${getExe' config.wayland.windowManager.sway.package "swaymsg"} "output * dpms on"'';
         }
         {
           event = "lock";
@@ -38,13 +39,12 @@ in
       ];
       timeouts = [
         {
-          timeout = 900;
+          timeout = 300;
           command = "${getExe config.programs.swaylock.package} -defF";
         }
         {
-          # TODO: Make dynamic for window manager
-          timeout = 1200;
-          command = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms off";
+          timeout = 600;
+          command = ''${getExe' config.wayland.windowManager.sway.package "swaymsg"} "output * dpms off"'';
         }
       ];
     };

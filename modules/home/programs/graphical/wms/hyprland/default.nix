@@ -52,7 +52,12 @@ in
 
   config = mkIf cfg.enable {
     home = {
-      packages = with pkgs; [ xwaylandvideobridge ];
+      packages = with pkgs; [
+        xwaylandvideobridge
+        # NOTE: xdph requirement
+        grim
+        slurp
+      ];
 
       sessionVariables =
         {
@@ -95,6 +100,8 @@ in
       };
 
       services = {
+        cliphist.systemdTargets = [ "hyprland-session.target" ];
+
         hypridle = enabled;
 
         hyprpaper = {
@@ -112,8 +119,6 @@ in
         qt = enabled;
       };
     };
-
-    services.cliphist.systemdTarget = "hyprland-session.target";
 
     wayland.windowManager.hyprland = {
       enable = true;
@@ -138,6 +143,11 @@ in
       systemd = {
         enable = true;
         enableXdgAutostart = true;
+        extraCommands = [
+          "systemctl --user stop hyprland-session.target"
+          "systemctl --user reset-failed"
+          "systemctl --user start hyprland-session.target"
+        ];
 
         variables = [ "--all" ];
       };

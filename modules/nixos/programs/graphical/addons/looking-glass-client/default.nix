@@ -27,5 +27,16 @@ in
       user = "+${toString config.users.users.${user.name}.uid}";
       source = ./client.ini;
     };
+
+    systemd.tmpfiles.settings = {
+      "looking-glass" = {
+        "/dev/shm/looking-glass".f = {
+          age = "-";
+          group = "kvm";
+          mode = "0660";
+          user = toString config.users.users.${user.name}.uid;
+        };
+      };
+    };
   };
 }

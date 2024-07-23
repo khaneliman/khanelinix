@@ -3,28 +3,17 @@ let
   inherit (lib) getExe';
 in
 {
-  "custom/quit" = {
-    format = "󰗼";
-    tooltip = false;
-    on-click = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch exit";
-  };
-
-  "hyprland/submap" = {
-    format = "✌️ {}";
-    max-length = 8;
-    tooltip = false;
-  };
-
-  "hyprland/window" = {
+  "sway/window" = {
     format = "{}";
     separate-outputs = true;
   };
 
-  "hyprland/workspaces" = {
+  "sway/workspaces" = {
     all-outputs = false;
     active-only = "false";
-    on-scroll-up = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch workspace e+1";
-    on-scroll-down = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch workspace e-1";
+    on-click = "activate";
+    on-scroll-up = "${getExe' config.wayland.windowManager.sway.package "swaymsg"} workspace next";
+    on-scroll-down = "${getExe' config.wayland.windowManager.sway.package "swaymsg"} workspace prev";
     format = "{icon} {windows}";
     format-icons = {
       "1" = "󰎤";
@@ -41,7 +30,17 @@ in
       "default" = "";
       "empty" = "󱓼";
     };
-    # "format-window-separator" = "->";
+    persistent-workspaces = {
+      "1" = [ "DP-3" ];
+      "2" = [ "DP-1" ];
+      "3" = [ "DP-1" ];
+      "4" = [ "DP-1" ];
+      "5" = [ "DP-1" ];
+      "6" = [ "DP-1" ];
+      "7" = [ "DP-1" ];
+      "8" = [ "DP-1" ];
+    };
+    window-format = "<span color='@text'>{name}</span>";
     window-rewrite-default = "";
     window-rewrite = {
       "class<.blueman-manager-wrapped>" = "";
@@ -110,6 +109,7 @@ in
       "class<unityhub>" = "󰚯";
       "class<virt-manager>" = "󰢹";
       "class<vlc>" = "󱍼";
+      "class<VLC media player>" = "󱍼";
       "class<wlroots> title<.*WL-1.*>" = "";
       "class<xwaylandvideobridge>" = "";
       "code-url-handler" = "󰨞";

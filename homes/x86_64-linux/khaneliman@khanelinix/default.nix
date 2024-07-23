@@ -60,8 +60,8 @@ in
             prependConfig = # bash
               lib.concatStringsSep "\n" [
                 "# See https://wiki.hyprland.org/Configuring/Monitors/"
-                "monitor=DP-3,	3840x2160@60,	1420x0,	2"
-                "monitor=DP-1,	5120x1440@120,	0x1080,	1"
+                "monitor=DP-3,	3840x2160@60,	1420x0,	2, bitdepth, 10"
+                "monitor=DP-1,	5120x1440@120,	0x1080,	1, bitdepth, 10"
                 ""
                 (
                   "exec-once = ${getExe pkgs.xorg.xrandr} "
@@ -79,6 +79,59 @@ in
                 "workspace = 8, monitor:DP-1, persistent:true"
                 "workspace = 9, monitor:DP-1, persistent:true"
               ];
+          };
+
+          sway = {
+            enable = true;
+
+            settings = {
+              output = {
+                "DP-3" = {
+                  resolution = "3840x2160";
+                  position = "1420,0";
+                  scale = "2";
+                };
+                "DP-1" = {
+                  resolution = "5120x1440";
+                  position = "0,1080";
+                };
+              };
+
+              workspaceOutputAssign = [
+                {
+                  workspace = "1";
+                  output = "DP-3";
+                }
+                {
+                  workspace = "2";
+                  output = "DP-1";
+                }
+                {
+                  workspace = "3";
+                  output = "DP-1";
+                }
+                {
+                  workspace = "4";
+                  output = "DP-1";
+                }
+                {
+                  workspace = "5";
+                  output = "DP-1";
+                }
+                {
+                  workspace = "6";
+                  output = "DP-1";
+                }
+                {
+                  workspace = "7";
+                  output = "DP-1";
+                }
+                {
+                  workspace = "8";
+                  output = "DP-1";
+                }
+              ];
+            };
           };
         };
       };
@@ -162,6 +215,7 @@ in
       emulation = enabled;
       games = enabled;
       music = enabled;
+      networking = enabled;
       photo = enabled;
       social = enabled;
       video = enabled;

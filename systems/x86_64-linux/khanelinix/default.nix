@@ -88,13 +88,17 @@ in
           hyprland = {
             enable = true;
           };
+
+          sway = {
+            enable = true;
+          };
         };
       };
     };
 
     services = {
       avahi = enabled;
-      barrier = enabled;
+      # TODO: input-leap replace barrier
       geoclue = enabled;
       power = enabled;
       printing = enabled;

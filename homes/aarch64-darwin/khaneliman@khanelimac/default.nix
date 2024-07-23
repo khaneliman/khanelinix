@@ -68,12 +68,14 @@ in
     suites = {
       business = enabled;
       common = enabled;
+      desktop = enabled;
       development = {
         enable = true;
 
         nixEnable = true;
       };
       music = enabled;
+      networking = enabled;
       photo = enabled;
       social = enabled;
     };

@@ -17,18 +17,20 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      barrier
-      bitwarden
-      bleachbit
-      dropbox
-      # TODO: remove override after https://github.com/NixOS/nixpkgs/pull/325740 is in unstable
-      (dupeguru.override { python3Packages = pkgs.python311Packages; })
-      filelight
-      fontpreview
-      gparted
-      pkgs.${namespace}.pocketcasts
-      realvnc-vnc-viewer
-    ];
+    home.packages =
+      with pkgs;
+      lib.optionals pkgs.stdenv.isLinux [
+        bitwarden
+        bleachbit
+        dropbox
+        dupeguru
+        filelight
+        fontpreview
+        gparted
+        input-leap
+        pkgs.${namespace}.pocketcasts
+        realvnc-vnc-viewer
+        rustdesk
+      ];
   };
 }

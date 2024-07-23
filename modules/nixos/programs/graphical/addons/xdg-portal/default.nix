@@ -23,29 +23,35 @@ in
     xdg = {
       portal = {
         enable = true;
-        config = {
-          common =
-            let
-              portal =
-                if config.${namespace}.programs.graphical.wms.hyprland.enable == "Hyprland" then
-                  "hyprland"
-                else if config.${namespace}.programs.graphical.wms.sway.enable == "sway" then
-                  "wlr"
-                else
-                  "gtk";
-            in
-            {
-              default = [
-                "hyprland"
-                "gtk"
-              ];
 
-              # for flameshot to work
-              # https://github.com/flameshot-org/flameshot/issues/3363#issuecomment-1753771427
-              "org.freedesktop.impl.portal.Screencast" = "${portal}";
-              "org.freedesktop.impl.portal.Screenshot" = "${portal}";
-            };
+        config = {
+          hyprland = mkIf config.${namespace}.programs.graphical.wms.hyprland.enable {
+            default = [
+              "hyprland"
+              "gtk"
+            ];
+            "org.freedesktop.impl.portal.Screencast" = "hyprland";
+            "org.freedesktop.impl.portal.Screenshot" = "hyprland";
+          };
+
+          sway = mkIf config.${namespace}.programs.graphical.wms.sway.enable {
+            default = [
+              "wlr"
+              "gtk"
+            ];
+            "org.freedesktop.impl.portal.Screencast" = "wlr";
+            "org.freedesktop.impl.portal.Screenshot" = "wlr";
+          };
+
+          common = {
+            default = [ "gtk" ];
+
+            "org.freedesktop.impl.portal.Screencast" = "gtk";
+            "org.freedesktop.impl.portal.Screenshot" = "gtk";
+            "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
+          };
         };
+
         extraPortals =
           with pkgs;
           [ xdg-desktop-portal-gtk ]
