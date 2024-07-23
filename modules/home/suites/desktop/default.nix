@@ -17,16 +17,20 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      bitwarden
-      bleachbit
-      dropbox
-      dupeguru
-      filelight
-      fontpreview
-      gparted
-      pkgs.${namespace}.pocketcasts
-      realvnc-vnc-viewer
-    ];
+    home.packages =
+      with pkgs;
+      lib.optionals pkgs.stdenv.isLinux [
+        bitwarden
+        bleachbit
+        dropbox
+        dupeguru
+        filelight
+        fontpreview
+        gparted
+        input-leap
+        pkgs.${namespace}.pocketcasts
+        realvnc-vnc-viewer
+        rustdesk
+      ];
   };
 }
