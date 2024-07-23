@@ -5,6 +5,8 @@
     anyrun.url = "github:anyrun-org/anyrun";
     anyrun-nixos-options.url = "github:n3oney/anyrun-nixos-options";
 
+    aquamarine-patched.url = "github:sjcobb2022/aquamarine-patched";
+
     catppuccin-cursors.url = "github:catppuccin/cursors";
     catppuccin.url = "github:catppuccin/nix";
 
@@ -44,6 +46,7 @@
 
     # Hyprland
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    hyprland.inputs.aquamarine.follows = "aquamarine-patched";
     # hyprland.url = "git+https://github.com/khaneliman/Hyprland?ref=windows&submodules=1";
 
     # Hyprpaper
