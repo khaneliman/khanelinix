@@ -75,6 +75,7 @@ in
         nixEnable = true;
       };
       music = enabled;
+      networking = enabled;
       photo = enabled;
       social = enabled;
     };

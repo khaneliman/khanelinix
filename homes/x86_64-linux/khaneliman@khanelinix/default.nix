@@ -215,6 +215,7 @@ in
       emulation = enabled;
       games = enabled;
       music = enabled;
+      networking = enabled;
       photo = enabled;
       social = enabled;
       video = enabled;
