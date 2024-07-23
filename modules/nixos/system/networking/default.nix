@@ -207,7 +207,7 @@ in
     };
 
     systemd = {
-      # https://nixos.wiki/wiki/Systemd-networkd
+      # https://wiki.nixos.org/wiki/Systemd-networkd
       network = {
         enable = true;
 
