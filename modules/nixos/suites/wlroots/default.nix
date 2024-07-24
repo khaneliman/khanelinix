@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt enabled;
 
   cfg = config.${namespace}.suites.wlroots;
 in
@@ -17,6 +17,12 @@ in
   };
 
   config = mkIf cfg.enable {
+
+    khanelinix = {
+      services = {
+        seatd = enabled;
+      };
+    };
     programs = {
       nm-applet.enable = true;
       xwayland.enable = true;
