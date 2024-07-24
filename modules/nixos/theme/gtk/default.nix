@@ -34,7 +34,6 @@ in
 
     services = {
       # needed for GNOME services outside of GNOME Desktop
-      dbus.packages = [ pkgs.gcr ];
       udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
     };
   };
