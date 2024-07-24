@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt default-attrs;
 
   cfg = config.${namespace}.system.boot;
   themeCfg = config.${namespace}.theme;
@@ -80,6 +80,12 @@ in
         enable = cfg.plymouth;
         theme = "${themeCfg.selectedTheme.name}-${themeCfg.selectedTheme.variant}";
         themePackages = [ pkgs.catppuccin-plymouth ];
+      };
+
+      tmp = default-attrs {
+        useTmpfs = true;
+        cleanOnBoot = true;
+        tmpfsSize = "50%";
       };
     };
 
