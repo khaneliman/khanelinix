@@ -23,7 +23,7 @@ let
     with pkgs;
     [
       # TODO: make sure this references same package as home-manager
-      hyprland.packages.${system}.hyprland
+      hyprland.packages.${system}.hyprland-debug
       coreutils
       config.services.power-profiles-daemon.package
       systemd
@@ -138,6 +138,6 @@ in
       };
     };
 
-    services.displayManager.sessionPackages = [ hyprland.packages.${system}.hyprland ];
+    services.displayManager.sessionPackages = [ hyprland.packages.${system}.hyprland-debug ];
   };
 }
