@@ -10,6 +10,7 @@ _: {
           basics = { };
           bracketed = { };
           git = { };
+          icons = { };
           pairs = { };
         };
       };
