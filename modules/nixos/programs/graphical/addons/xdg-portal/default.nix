@@ -24,6 +24,8 @@ in
       portal = {
         enable = true;
 
+        configPackages = [ hyprland.packages.${system}.hyprland-debug ];
+
         config = {
           hyprland = mkIf config.${namespace}.programs.graphical.wms.hyprland.enable {
             default = [
