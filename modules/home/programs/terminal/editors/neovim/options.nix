@@ -1,15 +1,19 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 let
   inherit (lib) mkDefault;
 in
 {
   programs.nixvim = {
-
     clipboard = {
       # Use system clipboard
       register = "unnamedplus";
 
-      providers.wl-copy.enable = true;
+      providers = {
+        wl-copy = {
+          enable = true;
+          package = pkgs.wl-clipboard;
+        };
+      };
     };
 
     globals = {
