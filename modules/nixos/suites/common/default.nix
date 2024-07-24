@@ -53,8 +53,9 @@ in
 
       services = {
         ddccontrol = enabled;
+        earlyoom = enabled;
         logrotate = enabled;
-        oomd = enabled;
+        # oomd = enabled;
         openssh = enabled;
         printing = enabled;
       };
