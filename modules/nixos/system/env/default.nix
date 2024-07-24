@@ -47,6 +47,12 @@ in
           '') cfg
       );
 
+      pathsToLink = [
+        "/share/zsh" # zsh completions
+        "/share/bash-completion" # bash completions
+        "/share/nix-direnv" # direnv completions
+      ];
+
       variables = {
         # Make some programs "XDG" compliant.
         LESSHISTFILE = "$XDG_CACHE_HOME/less.history";
