@@ -60,6 +60,18 @@ in
             hyprland.packages.${system}.xdg-desktop-portal-hyprland
           );
         # xdgOpenUsePortal = true;
+
+        wlr = {
+          inherit (config.${namespace}.programs.graphical.wms.sway) enable;
+
+          settings = {
+            screencast = {
+              max_fps = 30;
+              chooser_type = "simple";
+              chooser_cmd = "${pkgs.slurp}/bin/slurp -f %o -or";
+            };
+          };
+        };
       };
     };
   };
