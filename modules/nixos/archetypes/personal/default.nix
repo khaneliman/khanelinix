@@ -22,7 +22,6 @@ in
       };
 
       suites = {
-        art = enabled;
         common = enabled;
         video = enabled;
       };
