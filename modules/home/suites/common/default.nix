@@ -24,8 +24,9 @@ in
     home.packages =
       with pkgs;
       lib.optionals pkgs.stdenv.isLinux [
-        kdePackages.gwenview
-        kdePackages.ark
+        ncdu
+        toilet
+        tree
       ];
 
     khanelinix = {

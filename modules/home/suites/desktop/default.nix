@@ -20,14 +20,19 @@ in
     home.packages =
       with pkgs;
       lib.optionals pkgs.stdenv.isLinux [
+        appimage-run
         bitwarden
         bleachbit
+        clac
         dropbox
         dupeguru
+        feh
         filelight
         fontpreview
         gparted
         input-leap
+        kdePackages.ark
+        kdePackages.gwenview
         pkgs.${namespace}.pocketcasts
         realvnc-vnc-viewer
         rustdesk

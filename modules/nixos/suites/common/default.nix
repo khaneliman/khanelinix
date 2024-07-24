@@ -15,18 +15,23 @@ in
   imports = [ (lib.snowfall.fs.get-file "modules/shared/suites/common/default.nix") ];
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      appimage-run
-      clac
-      feh
-      pkgs.${namespace}.trace-symlink
-      pkgs.${namespace}.trace-which
-      ncdu
-      toilet
-      tree
-      upower
-      util-linux
-    ];
+
+    environment = {
+      defaultPackages = lib.mkForce [ ];
+
+      systemPackages = with pkgs; [
+        curl
+        dnsutils
+        lshw
+        pciutils
+        pkgs.${namespace}.trace-symlink
+        pkgs.${namespace}.trace-which
+        rsync
+        upower
+        util-linux
+        wget
+      ];
+    };
 
     khanelinix = {
       hardware = {
