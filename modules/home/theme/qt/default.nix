@@ -66,9 +66,20 @@ in
     home = {
       packages = with pkgs; [
         # libraries and programs to ensure that qt applications load without issue
-        # breeze-icons is added as a fallback
+        # kdePackages = qt6
+        # libsForQt5 = qt5
         kdePackages.breeze-icons
+        kdePackages.qqc2-desktop-style
         kdePackages.qt6ct
+        kdePackages.qtwayland # qt6
+        libsForQt5.breeze-qt5
+        libsForQt5.qt5.qtwayland # qt5
+        libsForQt5.qt5ct
+        libsForQt5.qtstyleplugin-kvantum
+        libsForQt5.qtstyleplugins
+        qt6.qtsvg # needed to load breeze icons
+        qt6.qtwayland
+        qt6Packages.qt6gtk2
         qt6Packages.qtstyleplugin-kvantum
       ];
 
