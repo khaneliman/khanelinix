@@ -378,6 +378,6 @@
               };
             };
       in
-      config.nixvim.helpers.keymaps.mkKeymaps { options.silent = true; } (normal ++ visual ++ insert);
+      config.lib.nixvim.keymaps.mkKeymaps { options.silent = true; } (normal ++ visual ++ insert);
   };
 }
