@@ -24,13 +24,13 @@ in
 
   config = mkIf cfg.enable {
     services = {
-
       cliphist = {
         enable = true;
         allowImages = true;
-
-        systemdTarget = lib.concatStringsSep " " cfg.systemdTargets;
       };
     };
+
+    systemd.user.services.cliphist.Install.WantedBy = cfg.systemdTargets;
+    systemd.user.services.cliphist-images.Install.WantedBy = cfg.systemdTargets;
   };
 }
