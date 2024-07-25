@@ -109,6 +109,7 @@ in
       "class<thunderbird>" = "";
       "class<unityhub>" = "󰚯";
       "class<virt-manager>" = "󰢹";
+      "class<looking-glass-client>" = "󱇽";
       "class<vlc>" = "󱍼";
       "class<wlroots> title<.*WL-1.*>" = "";
       "class<xwaylandvideobridge>" = "";
