@@ -60,9 +60,10 @@ mkShell {
 
   shellHook = ''
 
+    export DOTNET_ROOT="${pkgs.dotnet-sdk_7}";
     export NUGET_PLUGIN_PATHS=${artifacts-credprovider}/bin/netcore/CredentialProvider.Microsoft/CredentialProvider.Microsoft.dll
 
-    echo 🔨 Dotnet DevShell
+    echo 🔨 Dotnet 7 DevShell
 
 
   '';
