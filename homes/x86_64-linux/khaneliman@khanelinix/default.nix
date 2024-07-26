@@ -63,11 +63,11 @@ in
                 "monitor=DP-3,	3840x2160@60,	1420x0,	2, bitdepth, 10"
                 "monitor=DP-1,	5120x1440@120,	0x1080,	1, bitdepth, 10"
                 ""
-                (
-                  "exec-once = ${getExe pkgs.xorg.xrandr} "
-                  + "--output XWAYLAND0 --primary --mode 1920x1080 --pos 1420x0 --rotate normal"
-                  + "--output XWAYLAND1 --mode 5120x1440 --pos 0x1080 --rotate normal"
-                )
+                (lib.concatStringsSep " " [
+                  "exec-once = ${getExe pkgs.xorg.xrandr}"
+                  "--output XWAYLAND0 --primary --mode 1920x1080 --pos 1420x0 --rotate normal"
+                  "--output XWAYLAND1 --mode 5120x1440 --pos 0x1080 --rotate normal"
+                ])
                 ""
                 "workspace = 1, monitor:DP-3, persistent:true, default:true"
                 "workspace = 2, monitor:DP-1, persistent:true, default:true"
