@@ -21,7 +21,10 @@ in
       with pkgs;
       [
         calcurse
-        dooit
+        # FIXME: package broken because of dependency textual being broken because of a dependency
+        # on tree-sitter-languages being broken because of a dependency on tree-sitter0_21 which is
+        # marked as incompatible with python3.12
+        # dooit
         jrnl
         np
       ]
