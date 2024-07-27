@@ -2,17 +2,18 @@
   config,
   lib,
   namespace,
+  system,
+  inputs,
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
+  inherit (inputs) khanelivim;
 
   cfg = config.${namespace}.programs.terminal.editors.neovim;
 in
 {
-  imports = lib.snowfall.fs.get-non-default-nix-files-recursive ./.;
-
   options.${namespace}.programs.terminal.editors.neovim = {
     enable = mkEnableOption "neovim";
     default = mkBoolOpt true "Whether to set Neovim as the session EDITOR";
@@ -20,26 +21,14 @@ in
 
   config = mkIf cfg.enable {
     home = {
+      # file = mkIf pkgs.stdenv.isDarwin { "Library/Preferences/glow/glow.yml".text = config; };
+
       sessionVariables = {
         EDITOR = mkIf cfg.default "nvim";
       };
+      packages = [ khanelivim.packages.${system}.default ];
     };
 
-    programs.nixvim = {
-      enable = true;
-
-      defaultEditor = true;
-
-      viAlias = true;
-      vimAlias = true;
-
-      luaLoader.enable = true;
-
-      # Highlight and remove extra white spaces
-      highlight.ExtraWhitespace.bg = "red";
-      match.ExtraWhitespace = "\\s\\+$";
-
-      colorschemes.catppuccin.enable = true;
-    };
+    # xdg.configFile = mkIf pkgs.stdenv.isLinux { "glow/glow.yml".text = config; };
   };
 }

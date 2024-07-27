@@ -59,6 +59,17 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Personal Neovim Flake
+    khanelivim = {
+      url = "github:khaneliman/khanelivim";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        pre-commit-hooks-nix.follows = "pre-commit-hooks-nix";
+        snowfall-lib.follows = "snowfall-lib";
+        snowfall-flake.follows = "snowfall-flake";
+      };
+    };
+
     # Secure boot
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.3.0";
@@ -86,13 +97,6 @@
     nix-ld-rs = {
       url = "github:nix-community/nix-ld-rs";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Neovim nix configuration
-    nixvim = {
-      url = "github:nix-community/nixvim";
-      # url = "git+file:///Users/khaneliman/Documents/github/nixvim";
-      # inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Nix User Repository (master)
@@ -180,7 +184,6 @@
         catppuccin.homeManagerModules.catppuccin
         hypr-socket-watch.homeManagerModules.default
         nix-index-database.hmModules.nix-index
-        nixvim.homeManagerModules.nixvim
         sops-nix.homeManagerModules.sops
         spicetify-nix.homeManagerModules.default
       ];
