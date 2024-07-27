@@ -161,7 +161,12 @@ in
           };
 
           java-language-server = {
-            enable = mkIf (!config.programs.nixvim.plugins.nvim-jdtls.enable) true;
+            enable = !config.programs.nixvim.plugins.nvim-jdtls.enable;
+            filetypes = [ "java" ];
+          };
+
+          jdt-language-server = {
+            inherit (config.programs.nixvim.plugins.nvim-jdtls) enable;
             filetypes = [ "java" ];
           };
 
