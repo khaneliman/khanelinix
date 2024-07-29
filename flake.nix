@@ -36,21 +36,73 @@
     ##
     # Hyprland Section
     ##
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-    # hyprland.url = "git+https://github.com/khaneliman/Hyprland?ref=windows&submodules=1";
-    xdg-desktop-portal-hyprland.url = "github:hyprwm/xdg-desktop-portal-hyprland";
-    # Hypridle
-    hypridle.url = "github:hyprwm/Hypridle";
-    # url = "git+file:///home/khaneliman/Documents/github/hypridle";
-    hyprlock.url = "github:hyprwm/Hyprlock";
-    hyprpaper.url = "github:hyprwm/hyprpaper";
+    aquamarine = {
+      url = "github:hyprwm/aquamarine";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    hyprland = {
+      url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+
+      inputs = {
+        # url = "git+https://github.com/khaneliman/Hyprland?ref=windows&submodules=1";
+        nixpkgs.follows = "nixpkgs";
+        aquamarine.follows = "aquamarine";
+        xdph.follows = "xdg-desktop-portal-hyprland";
+        hyprwayland-scanner.follows = "hyprwayland-scanner";
+        hyprlang.follows = "hyprlang";
+        hyprutils.follows = "hyprutils";
+      };
+    };
+
+    xdg-desktop-portal-hyprland = {
+      url = "github:hyprwm/xdg-desktop-portal-hyprland";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    hypridle = {
+      url = "github:hyprwm/Hypridle";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    hyprlang = {
+      url = "github:hyprwm/hyprlang";
+
+      inputs = {
+        nixpkgs.follows = "hyprland/nixpkgs";
+        hyprutils.follows = "hyprutils";
+      };
+    };
+
+    hyprlock = {
+      # url = "git+file:///home/khaneliman/Documents/github/hypridle";
+      url = "github:hyprwm/Hyprlock";
+      inputs.nixpkgs.follows = "hyprland/nixpkgs";
+    };
+
+    hyprpaper = {
+      url = "github:hyprwm/hyprpaper";
+      inputs.nixpkgs.follows = "hyprland/nixpkgs";
+    };
+
     hyprland-contrib = {
       url = "github:hyprwm/contrib";
       inputs.nixpkgs.follows = "hyprland/nixpkgs";
     };
+
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
+    };
+
+    hyprutils = {
+      url = "github:hyprwm/hyprutils";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    hyprwayland-scanner = {
+      url = "github:hyprwm/hyprwayland-scanner";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Hyprland socket watcher
@@ -62,6 +114,7 @@
     # Personal Neovim Flake
     khanelivim = {
       url = "github:khaneliman/khanelivim";
+
       inputs = {
         nixpkgs.follows = "nixpkgs";
         pre-commit-hooks-nix.follows = "pre-commit-hooks-nix";
