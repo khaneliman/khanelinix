@@ -76,6 +76,7 @@ in
           __GL_VRR_ALLOWED = "0";
         }
         // mkIf cfg.enableDebug {
+          AQ_TRACE = "1";
           HYPRLAND_LOG_WLR = "1";
           HYPRLAND_TRACE = "1";
         };
