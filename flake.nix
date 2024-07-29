@@ -38,7 +38,7 @@
     ##
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     # hyprland.url = "git+https://github.com/khaneliman/Hyprland?ref=windows&submodules=1";
-    xdg-portal-hyprland.url = "github:hyprwm/xdg-desktop-portal-hyprland";
+    xdg-desktop-portal-hyprland.url = "github:hyprwm/xdg-desktop-portal-hyprland";
     # Hypridle
     hypridle.url = "github:hyprwm/Hypridle";
     # url = "git+file:///home/khaneliman/Documents/github/hypridle";

@@ -10,7 +10,7 @@
 let
   inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
-  inherit (inputs) hyprland xdg-portal-hyprland;
+  inherit (inputs) hyprland xdg-desktop-portal-hyprland;
 
   cfg = config.${namespace}.programs.graphical.addons.xdg-portal;
 in
@@ -59,7 +59,8 @@ in
           [ xdg-desktop-portal-gtk ]
           ++ (lib.optional config.${namespace}.programs.graphical.wms.sway.enable xdg-desktop-portal-wlr)
           ++ (lib.optional config.${namespace}.programs.graphical.wms.hyprland.enable (
-            xdg-portal-hyprland.packages.${system}.xdg-desktop-portal-hyprland.override {
+            xdg-desktop-portal-hyprland.packages.${system}.xdg-desktop-portal-hyprland.override {
+              debug = true;
               # TODO: use same package as home-manager
               hyprland = hyprland.packages.${system}.hyprland-debug;
             }
