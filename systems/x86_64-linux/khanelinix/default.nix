@@ -34,7 +34,10 @@ in
     };
 
     hardware = {
-      audio = enabled;
+      audio = {
+        enable = true;
+        extra-packages = [ ];
+      };
       bluetooth = enabled;
       cpu.amd = enabled;
       gpu = {

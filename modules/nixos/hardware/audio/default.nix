@@ -17,6 +17,7 @@ in
     alsa-monitor = mkOpt attrs { } "Alsa configuration.";
     extra-packages = mkOpt (listOf package) [
       pkgs.qjackctl
+      # FIXME: broken nixpkgs
       pkgs.easyeffects
     ] "Additional packages to install.";
     modules = mkOpt (listOf attrs) [ ] "Audio modules to pass to Pipewire as `context.modules`.";
