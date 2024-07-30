@@ -24,7 +24,7 @@ in
       portal = {
         enable = true;
 
-        configPackages = [ hyprland.packages.${system}.hyprland-debug ];
+        configPackages = [ hyprland.packages.${system}.hyprland ];
 
         config = {
           hyprland = mkIf config.${namespace}.programs.graphical.wms.hyprland.enable {
@@ -62,7 +62,7 @@ in
             xdg-desktop-portal-hyprland.packages.${system}.xdg-desktop-portal-hyprland.override {
               debug = true;
               # TODO: use same package as home-manager
-              hyprland = hyprland.packages.${system}.hyprland-debug;
+              inherit (hyprland.packages.${system}) hyprland;
             }
           ));
         # xdgOpenUsePortal = true;

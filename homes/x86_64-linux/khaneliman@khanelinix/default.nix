@@ -50,7 +50,7 @@ in
         wms = {
           hyprland = {
             enable = true;
-            enableDebug = true;
+            # enableDebug = true;
 
             appendConfig = # bash
               ''
