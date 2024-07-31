@@ -28,13 +28,14 @@ in
         networkmanager-vpnc
       ];
 
-      unmanaged = [
-        "interface-name:tailscale*"
-        "interface-name:br-*"
-        "interface-name:rndis*"
-        "interface-name:docker*"
-        "interface-name:virbr*"
-      ];
+      unmanaged =
+        [
+          "interface-name:br-*"
+          "interface-name:rndis*"
+        ]
+        ++ lib.optionals config.${namespace}.services.tailscale.enable [ "interface-name:tailscale*" ]
+        ++ lib.optionals config.${namespace}.virtualisation.podman.enable [ "interface-name:docker*" ]
+        ++ lib.optionals config.${namespace}.virtualisation.kvm.enable [ "interface-name:virbr*" ];
     };
 
     systemd.services.NetworkManager-wait-online.enable = lib.mkForce false;
