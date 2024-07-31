@@ -111,15 +111,10 @@ in
       traceroute
     ];
 
-    khanelinix = {
-      user = {
-        extraGroups = [
-          "network"
-          "networkmanager"
-          "wireshark"
-        ];
-      };
-    };
+    khanelinix.user.extraGroups = [
+      "network"
+      "wireshark"
+    ];
 
     networking = {
       hosts = {
@@ -144,101 +139,8 @@ in
         "2606:4700:4700::1001"
       ];
 
-      networkmanager = {
-        enable = true;
-
-        connectionConfig = {
-          "connection.mdns" = "2";
-        };
-
-        plugins = with pkgs; [
-          networkmanager-l2tp
-          networkmanager-openvpn
-          networkmanager-sstp
-          networkmanager-vpnc
-        ];
-
-        unmanaged = [
-          "interface-name:tailscale*"
-          "interface-name:br-*"
-          "interface-name:rndis*"
-          "interface-name:docker*"
-          "interface-name:virbr*"
-        ];
-      };
-
-      # search = [ "doitbestcorp.com" ];
-
       useDHCP = mkForce false;
-      useNetworkd = mkForce true;
       usePredictableInterfaceNames = mkForce true;
-    };
-
-    services = {
-      dnsmasq = {
-        enable = cfg.dns == "dnsmasq";
-
-        resolveLocalQueries = true;
-
-        settings = {
-          server = [
-            "1.1.1.1"
-            "1.0.0.1"
-            "2606:4700:4700::1111"
-            "2606:4700:4700::1001"
-          ];
-        };
-      };
-
-      resolved = {
-        enable = cfg.dns == "systemd-resolved";
-
-        # dnssec = "true";
-        # this is necessary to get tailscale picking up your headscale instance
-        # and allows you to ping connected hosts by hostname
-        domains = [ "~." ];
-        dnsovertls = "true";
-        # extraConfig =
-        #   mkIf cfg.dns == "dnsmasq" ''
-        #     DNSStubListener=false
-        #   '';
-        fallbackDns = [ "192.168.1.1" ];
-      };
-    };
-
-    systemd = {
-      # https://wiki.nixos.org/wiki/Systemd-networkd
-      network = {
-        enable = true;
-
-        wait-online = {
-          enable = false;
-          anyInterface = true;
-          extraArgs = [ "--ipv4" ];
-        };
-
-        # https://wiki.archlinux.org/title/Systemd-networkd
-        networks = {
-          # leave the kernel dummy devies unmanagaed
-          "10-dummy" = {
-            matchConfig.Name = "dummy*";
-            networkConfig = { };
-            # linkConfig.ActivationPolicy = "always-down";
-            linkConfig.Unmanaged = "yes";
-          };
-
-          # let me configure tailscale manually
-          "20-tailscale-ignore" = mkIf config.${namespace}.services.tailscale.enable {
-            matchConfig.Name = "tailscale*";
-            linkConfig = {
-              Unmanaged = "yes";
-              RequiredForOnline = false;
-            };
-          };
-        };
-      };
-
-      services.NetworkManager-wait-online.enable = lib.mkForce false;
     };
   };
 }
