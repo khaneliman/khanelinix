@@ -5,12 +5,14 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf mkForce;
 
   cfg = config.${namespace}.system.networking;
 in
 {
   config = mkIf (cfg.dns == "systemd-resolved") {
+    networking.networkmanager.dns = "systemd-resolved";
+    services.dnsmasq.enable = mkForce false;
     services.resolved = {
       enable = true;
 
