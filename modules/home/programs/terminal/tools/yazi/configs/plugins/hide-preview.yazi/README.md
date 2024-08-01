@@ -1,0 +1,24 @@
+# hide-preview.yazi
+
+Switch the preview pane between hidden and shown.
+
+https://github.com/yazi-rs/plugins/assets/17523360/c4f0b5c4-ff9f-4be8-ba73-4d8e7902e383
+
+## Installation
+
+```sh
+ya pack -a yazi-rs/plugins#hide-preview
+```
+
+## Usage
+
+Add this to your `~/.config/yazi/keymap.toml`:
+
+```toml
+[[manager.prepend_keymap]]
+on   = "T"
+run  = "plugin --sync hide-preview"
+desc = "Hide or show preview"
+```
+
+Make sure the <kbd>T</kbd> key is not used elsewhere.

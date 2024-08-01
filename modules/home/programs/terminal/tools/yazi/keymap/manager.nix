@@ -27,6 +27,44 @@ in
         run = "shell 'dragon -x -i -T \"$1\"' --confirm";
         desc = "Drag and drop files";
       }
+      {
+        on = [ "<C-d>" ];
+        run = "plugin diff";
+        desc = "Diff the selected with the hovered file";
+      }
+      {
+        on = [ "<C-d>" ];
+        run = "plugin diff";
+        desc = "Diff the selected with the hovered file";
+      }
+      {
+        on = [
+          "c"
+          "m"
+        ];
+        run = "plugin chmod";
+        desc = "Chmod on selected files";
+      }
+      {
+        on = [ "T" ];
+        run = "plugin --sync hide-preview";
+        desc = "Hide or show preview";
+      }
+      # {
+      #   on = [ "T" ];
+      #   run = "plugin --sync max-preview";
+      #   desc = "Maximize or restore preview";
+      # }
+      {
+        on = [ "f" ];
+        run = "plugin jump-to-char";
+        desc = "Jump to char";
+      }
+      {
+        on = [ "F" ];
+        run = "plugin smart-filter";
+        desc = "Smart filter";
+      }
     ];
 
     keymap =
@@ -65,7 +103,6 @@ in
           run = "suspend";
           desc = "Suspend the process";
         }
-
         # Tasks
         {
           on = [ "w" ];

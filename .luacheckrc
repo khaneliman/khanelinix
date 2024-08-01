@@ -17,11 +17,13 @@ files["**/yazi/**"] = {
 	globals = {
 		"Current",
 		"Header",
+		"Linemode",
 		"Manager",
 		"Parent",
 		"Preview",
 		"Progress",
 		"Status",
+		"Tab",
 		"cx",
 		"ui",
 		"ya",
@@ -29,5 +31,6 @@ files["**/yazi/**"] = {
 	ignore = {
 		"113",
 		"212",
+		"512",
 	},
 }

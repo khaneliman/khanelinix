@@ -73,7 +73,7 @@ _: {
     }
     {
       on = [ "," ];
-      run = "shell";
+      run = "shell --interactive";
       desc = "Run a shell command";
     }
     {
@@ -103,12 +103,12 @@ _: {
     }
     {
       on = [ "z" ];
-      run = "jump zoxide";
+      run = "plugin zoxide";
       desc = "Jump to a directory using zoxide";
     }
     {
       on = [ "Z" ];
-      run = "jump fzf";
+      run = "plugin fzf";
       desc = "Jump to a directory, or reveal a file using fzf";
     }
   ];

@@ -6,7 +6,7 @@ _: {
         ","
         "a"
       ];
-      run = "sort alphabetical --dir_first";
+      run = "sort alphabetical --reverse=no";
       desc = "Sort alphabetically";
     }
     {
@@ -14,7 +14,7 @@ _: {
         ","
         "A"
       ];
-      run = "sort alphabetical --reverse --dir_first";
+      run = "sort alphabetical --reverse";
       desc = "Sort alphabetically (reverse)";
     }
     {
@@ -22,7 +22,7 @@ _: {
         ","
         "c"
       ];
-      run = "sort created --dir_first";
+      run = "sort created --reverse=no";
       desc = "Sort by creation time";
     }
     {
@@ -30,7 +30,7 @@ _: {
         ","
         "C"
       ];
-      run = "sort created --reverse --dir_first";
+      run = "sort created --reverse";
       desc = "Sort by creation time (reverse)";
     }
     {
@@ -38,7 +38,7 @@ _: {
         ","
         "m"
       ];
-      run = "sort modified --dir_first";
+      run = "sort modified --reverse=no";
       desc = "Sort by modified time";
     }
     {
@@ -46,7 +46,7 @@ _: {
         ","
         "M"
       ];
-      run = "sort modified --reverse --dir_first";
+      run = "sort modified --reverse";
       desc = "Sort by modified time (reverse)";
     }
     {
@@ -54,7 +54,7 @@ _: {
         ","
         "n"
       ];
-      run = "sort natural --dir_first";
+      run = "sort natural --reverse=no";
       desc = "Sort naturally";
     }
     {
@@ -62,7 +62,7 @@ _: {
         ","
         "N"
       ];
-      run = "sort natural --reverse --dir_first";
+      run = "sort natural --reverse";
       desc = "Sort naturally (reverse)";
     }
     {
@@ -70,7 +70,7 @@ _: {
         ","
         "s"
       ];
-      run = "sort size --dir_first";
+      run = "sort size --reverse=no";
       desc = "Sort by size";
     }
     {
@@ -78,7 +78,7 @@ _: {
         ","
         "S"
       ];
-      run = "sort size --reverse --dir_first";
+      run = "sort size --reverse";
       desc = "Sort by size (reverse)";
     }
   ];

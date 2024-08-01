@@ -6,7 +6,7 @@
       3
       4
     ];
-    linemode = "size";
+    linemode = "custom";
     show_hidden = true;
     show_symlink = true;
     sort_by = "alphabetical";
@@ -319,13 +319,6 @@
 
   plugin = {
     preloaders = [
-      {
-        name = "*";
-        cond = "!mime";
-        run = "mime";
-        multi = true;
-        prio = "high";
-      }
       # Image
       {
         mime = "image/vnd.djvu";
