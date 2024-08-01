@@ -23,7 +23,10 @@ _: _final: prev: {
     env.VERGEN_BUILD_DATE = "2024-08-01";
 
     nativeBuildInputs = with prev; [ installShellFiles ];
-    buildInputs = with prev; [ rust-jemalloc-sys ] ++ lib.optionals stdenv.isDarwin [ Foundation ];
+    buildInputs =
+      with prev;
+      [ rust-jemalloc-sys ]
+      ++ lib.optionals stdenv.isDarwin (with prev.darwin.apple_sdk.frameworks; [ Foundation ]);
 
     postInstall = ''
       installShellCompletion --cmd yazi \
