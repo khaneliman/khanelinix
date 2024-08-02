@@ -362,7 +362,6 @@ in
 
         yazi.theme = lib.mkMerge [
           (import ./yazi/filetype.nix { })
-          (import ./yazi/icons.nix { })
           (import ./yazi/manager.nix { inherit config lib namespace; })
           (import ./yazi/status.nix { })
           (import ./yazi/theme.nix { })
