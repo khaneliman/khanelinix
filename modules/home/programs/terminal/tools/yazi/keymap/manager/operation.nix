@@ -78,7 +78,7 @@ _: {
     }
     {
       on = [ ":" ];
-      run = "shell --block";
+      run = "shell --block --interactive";
       desc = "Run a shell command (block the UI until the command finishes)";
     }
     {
