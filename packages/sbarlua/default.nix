@@ -1,17 +1,15 @@
 {
-  stdenv,
   clang,
   fetchFromGitHub,
   gcc,
   readline,
-  lua5_4,
+  lua,
 }:
-let
-  lua = lua5_4;
-in
-stdenv.mkDerivation {
+lua.stdenv.mkDerivation rec {
   pname = "SBarLua";
   version = "unstable-2024-02-28";
+
+  name = "lua${lua.luaversion}-" + pname + "-" + version;
 
   src = fetchFromGitHub {
     owner = "FelixKratz";
@@ -26,6 +24,15 @@ stdenv.mkDerivation {
   ];
 
   buildInputs = [ readline ];
+
+  propagatedBuildInputs = [ lua ];
+
+  makeFlags = [
+    "PREFIX=$(out)"
+    "LUA_INC=-I${lua}/include"
+    "LUA_LIBDIR=$(out)/lib/lua/${lua.luaversion}"
+    "LUA_VERSION=${lua.luaversion}"
+  ];
 
   installPhase = ''
     mkdir -p $out/lib/lua/${lua.luaversion}/
