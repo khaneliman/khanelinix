@@ -29,8 +29,7 @@ in
         with pkgs;
         [
           jqp
-          # FIX: broken nixpkgs
-          # neovide
+          neovide
           onefetch
           postman
           vscode
