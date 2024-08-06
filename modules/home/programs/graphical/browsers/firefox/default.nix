@@ -25,9 +25,117 @@ in
 {
   options.${namespace}.programs.graphical.browsers.firefox = with types; {
     enable = mkBoolOpt false "Whether or not to enable Firefox.";
-    hardwareDecoding = mkBoolOpt false "Enable hardware video decoding.";
-    gpuAcceleration = mkBoolOpt false "Enable GPU acceleration.";
+
+    extensions = mkOpt (listOf package) (with pkgs.nur.repos.rycee.firefox-addons; [
+      angular-devtools
+      auto-tab-discard
+      bitwarden
+      # NOTE: annoying new page and permissions
+      # bypass-paywalls-clean
+      darkreader
+      firefox-color
+      onepassword-password-manager
+      react-devtools
+      reduxdevtools
+      sidebery
+      sponsorblock
+      stylus
+      ublock-origin
+      user-agent-string-switcher
+    ]) "Extensions to install";
+
     extraConfig = mkOpt str "" "Extra configuration for the user profile JS file.";
+    gpuAcceleration = mkBoolOpt false "Enable GPU acceleration.";
+    hardwareDecoding = mkBoolOpt false "Enable hardware video decoding.";
+
+    policies = mkOpt attrs {
+      CaptivePortal = false;
+      DisableFirefoxStudies = true;
+      DisableFormHistory = true;
+      DisablePocket = true;
+      DisableTelemetry = true;
+      DisplayBookmarksToolbar = true;
+      DontCheckDefaultBrowser = true;
+      FirefoxHome = {
+        Pocket = false;
+        Snippets = false;
+      };
+      PasswordManagerEnabled = false;
+      # PromptForDownloadLocation = true;
+      UserMessaging = {
+        ExtensionRecommendations = false;
+        SkipOnboarding = true;
+      };
+      ExtensionSettings = {
+        "ebay@search.mozilla.org".installation_mode = "blocked";
+        "amazondotcom@search.mozilla.org".installation_mode = "blocked";
+        "bing@search.mozilla.org".installation_mode = "blocked";
+        "ddg@search.mozilla.org".installation_mode = "blocked";
+        "wikipedia@search.mozilla.org".installation_mode = "blocked";
+
+        "frankerfacez@frankerfacez.com" = {
+          installation_mode = "force_installed";
+          install_url = "https://cdn.frankerfacez.com/script/frankerfacez-4.0-an+fx.xpi";
+        };
+      };
+      Preferences = { };
+    } "Policies to apply to firefox";
+
+    search = mkOpt attrs {
+      default = "DuckDuckGo";
+      privateDefault = "DuckDuckGo";
+      force = true;
+
+      engines = {
+        "Nix Packages" = {
+          urls = [
+            {
+              template = "https://search.nixos.org/packages";
+              params = [
+                {
+                  name = "type";
+                  value = "packages";
+                }
+                {
+                  name = "query";
+                  value = "{searchTerms}";
+                }
+              ];
+            }
+          ];
+          icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+          definedAliases = [ "@np" ];
+        };
+
+        "NixOs Options" = {
+          urls = [
+            {
+              template = "https://search.nixos.org/options";
+              params = [
+                {
+                  name = "channel";
+                  value = "unstable";
+                }
+                {
+                  name = "query";
+                  value = "{searchTerms}";
+                }
+              ];
+            }
+          ];
+          icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+          definedAliases = [ "@no" ];
+        };
+
+        "NixOS Wiki" = {
+          urls = [ { template = "https://wiki.nixos.org/w/index.php?search={searchTerms}"; } ];
+          iconUpdateURL = "https://wiki.nixos.org/favicon.png";
+          updateInterval = 24 * 60 * 60 * 1000;
+          definedAliases = [ "@nw" ];
+        };
+      };
+    } "Search configuration";
+
     settings = mkOpt attrs { } "Settings to apply to the profile.";
     userChrome = mkOpt str "" "Extra configuration for the user chrome CSS file.";
   };
@@ -50,38 +158,7 @@ in
       enable = true;
       package = if pkgs.stdenv.isLinux then pkgs.firefox-devedition else null;
 
-      policies = {
-        CaptivePortal = false;
-        DisableFirefoxStudies = true;
-        DisableFormHistory = true;
-        DisablePocket = true;
-        DisableTelemetry = true;
-        DisplayBookmarksToolbar = true;
-        DontCheckDefaultBrowser = true;
-        FirefoxHome = {
-          Pocket = false;
-          Snippets = false;
-        };
-        PasswordManagerEnabled = false;
-        # PromptForDownloadLocation = true;
-        UserMessaging = {
-          ExtensionRecommendations = false;
-          SkipOnboarding = true;
-        };
-        ExtensionSettings = {
-          "ebay@search.mozilla.org".installation_mode = "blocked";
-          "amazondotcom@search.mozilla.org".installation_mode = "blocked";
-          "bing@search.mozilla.org".installation_mode = "blocked";
-          "ddg@search.mozilla.org".installation_mode = "blocked";
-          "wikipedia@search.mozilla.org".installation_mode = "blocked";
-
-          "frankerfacez@frankerfacez.com" = {
-            installation_mode = "force_installed";
-            install_url = "https://cdn.frankerfacez.com/script/frankerfacez-4.0-an+fx.xpi";
-          };
-        };
-        Preferences = { };
-      };
+      inherit (cfg) policies;
 
       profiles = {
         "dev-edition-default" = {
@@ -90,83 +167,10 @@ in
         };
 
         ${config.${namespace}.user.name} = {
-          inherit (cfg) extraConfig;
+          inherit (cfg) extraConfig extensions search;
           inherit (config.${namespace}.user) name;
 
           id = 1;
-
-          extensions = with pkgs.nur.repos.rycee.firefox-addons; [
-            angular-devtools
-            auto-tab-discard
-            bitwarden
-            # NOTE: annoying new page and permissions
-            # bypass-paywalls-clean
-            darkreader
-            firefox-color
-            onepassword-password-manager
-            react-devtools
-            reduxdevtools
-            sidebery
-            sponsorblock
-            stylus
-            ublock-origin
-            user-agent-string-switcher
-          ];
-
-          search = {
-            default = "DuckDuckGo";
-            privateDefault = "DuckDuckGo";
-            force = true;
-
-            engines = {
-              "Nix Packages" = {
-                urls = [
-                  {
-                    template = "https://search.nixos.org/packages";
-                    params = [
-                      {
-                        name = "type";
-                        value = "packages";
-                      }
-                      {
-                        name = "query";
-                        value = "{searchTerms}";
-                      }
-                    ];
-                  }
-                ];
-                icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-                definedAliases = [ "@np" ];
-              };
-
-              "NixOs Options" = {
-                urls = [
-                  {
-                    template = "https://search.nixos.org/options";
-                    params = [
-                      {
-                        name = "channel";
-                        value = "unstable";
-                      }
-                      {
-                        name = "query";
-                        value = "{searchTerms}";
-                      }
-                    ];
-                  }
-                ];
-                icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-                definedAliases = [ "@no" ];
-              };
-
-              "NixOS Wiki" = {
-                urls = [ { template = "https://wiki.nixos.org/w/index.php?search={searchTerms}"; } ];
-                iconUpdateURL = "https://wiki.nixos.org/favicon.png";
-                updateInterval = 24 * 60 * 60 * 1000;
-                definedAliases = [ "@nw" ];
-              };
-            };
-          };
 
           settings = mkMerge [
             cfg.settings
