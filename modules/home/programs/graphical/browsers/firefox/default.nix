@@ -144,7 +144,6 @@ in
     home = {
       file = mkMerge [
         {
-          "${firefoxPath}/native-messaging-hosts/com.dannyvankooten.browserpass.json".source = "${pkgs.browserpass}/lib/mozilla/native-messaging-hosts/com.dannyvankooten.browserpass.json";
           "${firefoxPath}/chrome/img" = {
             source = lib.cleanSourceWith { src = lib.cleanSource ./chrome/img/.; };
 
