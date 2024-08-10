@@ -64,6 +64,7 @@ in
           CLUTTER_BACKEND = "wayland";
           GDK_BACKEND = "wayland,x11";
           HYPRCURSOR_THEME = config.${namespace}.theme.gtk.cursor.name;
+          HYPRCURSOR_SIZE = "${toString config.${namespace}.theme.cursor.size}";
           MOZ_ENABLE_WAYLAND = "1";
           MOZ_USE_XINPUT2 = "1";
           SDL_VIDEODRIVER = "wayland";
