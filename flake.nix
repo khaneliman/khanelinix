@@ -116,7 +116,7 @@
       url = "github:khaneliman/khanelivim";
 
       inputs = {
-        nixpkgs.follows = "nixpkgs";
+        # nixpkgs.follows = "nixpkgs";
         pre-commit-hooks-nix.follows = "pre-commit-hooks-nix";
         snowfall-lib.follows = "snowfall-lib";
         snowfall-flake.follows = "snowfall-flake";
