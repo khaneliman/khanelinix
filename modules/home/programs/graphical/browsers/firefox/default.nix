@@ -34,6 +34,7 @@ in
       # bypass-paywalls-clean
       darkreader
       firefox-color
+      firenvim
       onepassword-password-manager
       react-devtools
       reduxdevtools
