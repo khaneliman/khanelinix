@@ -54,7 +54,9 @@ in
 
             appendConfig = # bash
               ''
-                exec-once = hyprctl setcursor ${config.${namespace}.theme.gtk.cursor.name} 32
+                exec-once = hyprctl setcursor ${config.${namespace}.theme.gtk.cursor.name} ${
+                  builtins.toString config.${namespace}.theme.gtk.cursor.size
+                }
               '';
 
             prependConfig = # bash
