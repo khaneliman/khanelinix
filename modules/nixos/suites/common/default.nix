@@ -53,6 +53,7 @@ in
         auditd = enabled;
         clamav = enabled;
         gpg = enabled;
+        pam = enabled;
         usbguard = enabled;
       };
 
