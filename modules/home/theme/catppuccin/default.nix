@@ -98,7 +98,7 @@ in
           };
 
           theme = {
-            name = "catppuccin-macchiato-blue-standard+normal";
+            name = "catppuccin-macchiato-blue-standard";
             package = pkgs.catppuccin-gtk.override {
               accents = [ "blue" ];
               variant = "macchiato";

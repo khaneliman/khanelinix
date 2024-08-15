@@ -39,7 +39,7 @@ in
     };
 
     theme = {
-      name = mkOpt types.str "catppuccin-macchiato-blue-standard+normal" "The name of the theme to apply";
+      name = mkOpt types.str "catppuccin-macchiato-blue-standard" "The name of the theme to apply";
       package = mkOpt types.package (pkgs.catppuccin-gtk.override {
         accents = [ "blue" ];
         size = "standard";
