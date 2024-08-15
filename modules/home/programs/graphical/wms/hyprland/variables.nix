@@ -52,6 +52,11 @@ in
           ];
         };
 
+        cursor = {
+          enable_hyprcursor = true;
+          sync_gsettings_theme = true;
+        };
+
         debug = mkIf cfg.enableDebug {
           colored_stdout_logs = true;
           disable_logs = false;
