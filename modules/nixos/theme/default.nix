@@ -49,7 +49,7 @@ in
       package = mkOpt types.package (
         if pkgs.stdenv.isLinux then pkgs.catppuccin-cursors.macchiatoBlue else pkgs.emptyDirectory
       ) "The package to use for the cursor theme.";
-      size = mkOpt types.int 28 "The size of the cursor.";
+      size = mkOpt types.int 32 "The size of the cursor.";
     };
 
     icon = {
