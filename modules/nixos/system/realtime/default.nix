@@ -12,7 +12,7 @@ let
 in
 {
   options.${namespace}.system.realtime = {
-    enable = mkBoolOpt false "Whether or not to configure xkb.";
+    enable = mkBoolOpt false "Whether or not to configure realtime.";
   };
 
   config = mkIf cfg.enable {
