@@ -153,17 +153,17 @@ in
       };
     };
 
-    gtk.catppuccin = mkIf pkgs.stdenv.isLinux {
-      enable = true;
-
-      inherit (cfg) accent;
-      size = "standard";
-
-      icon = {
-        enable = true;
-        inherit (cfg) accent;
-      };
-    };
+    # gtk.catppuccin = mkIf pkgs.stdenv.isLinux {
+    #   enable = true;
+    #
+    #   inherit (cfg) accent;
+    #   size = "standard";
+    #
+    #   icon = {
+    #     enable = true;
+    #     inherit (cfg) accent;
+    #   };
+    # };
 
     qt = mkIf pkgs.stdenv.isLinux {
       enable = true;

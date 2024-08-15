@@ -73,6 +73,15 @@ in
       enable = true;
 
       settings = nested-default-attrs {
+        "org/gnome/shell" = {
+          disable-user-extensions = false;
+          enabled-extensions = [ "user-theme@gnome-shell-extensions.gcampax.github.com" ];
+        };
+
+        "org/gnome/shell/extensions/user-theme" = {
+          inherit (cfg.theme) name;
+        };
+
         "org/gnome/desktop/interface" = {
           color-scheme = "prefer-dark";
           cursor-size = cfg.cursor.size;
@@ -127,12 +136,32 @@ in
         gtk-xft-hinting = 1;
         gtk-xft-hintstyle = "hintslight";
       };
+
+      iconTheme = {
+        inherit (cfg.icon) name package;
+      };
+
+      theme = {
+        inherit (cfg.theme) name package;
+      };
     };
 
-    xdg.systemDirs.data =
-      let
-        schema = pkgs.gsettings-desktop-schemas;
-      in
-      [ "${schema}/share/gsettings-schemas/${schema.name}" ];
+    xdg = {
+      configFile =
+        let
+          gtk4Dir = "${cfg.theme.package}/share/themes/${cfg.theme.name}/gtk-4.0";
+        in
+        {
+          "gtk-4.0/assets".source = "${gtk4Dir}/assets";
+          "gtk-4.0/gtk.css".source = "${gtk4Dir}/gtk.css";
+          "gtk-4.0/gtk-dark.css".source = "${gtk4Dir}/gtk-dark.css";
+        };
+
+      systemDirs.data =
+        let
+          schema = pkgs.gsettings-desktop-schemas;
+        in
+        [ "${schema}/share/gsettings-schemas/${schema.name}" ];
+    };
   };
 }
