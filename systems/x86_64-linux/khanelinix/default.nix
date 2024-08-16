@@ -56,7 +56,7 @@ in
         btrfs = {
           enable = true;
           autoScrub = true;
-          dedupe = true;
+          # dedupe = true;
 
           dedupeFilesystems = [
             "nixos"
