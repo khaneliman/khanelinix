@@ -90,6 +90,7 @@ github:subscribe({
 
 		local count = 0
 		for _, notification in pairs(notifications) do
+			-- PRINT_TABLE(notification)
 			-- increment count for label
 			count = count + 1
 
@@ -105,30 +106,23 @@ github:subscribe({
 			else
 				local tempUrl = url:gsub("^'", ""):gsub("'$", "")
 				Sbar.exec('gh api "' .. tempUrl .. '" | jq .html_url', function(html_url)
+					local cmd = "sketchybar -m --set github.notification"
+
 					if IS_EMPTY(repo) == false then
-						Sbar.exec(
-							"sketchybar -m --set github.notification.repo"
-								.. tostring(id)
-								.. ' click_script="open '
-								.. html_url
-								.. '"',
-							function()
-								Sbar.exec(popup_off)
-							end
-						)
+						cmd = cmd .. ".repo."
+						cmd = cmd .. tostring(id) .. ' click_script="open ' .. html_url .. '"'
+						Sbar.exec(cmd, function()
+							Sbar.exec(popup_off)
+						end)
 					end
 
+					cmd = "sketchybar -m --set github.notification"
 					if IS_EMPTY(title) == false then
-						Sbar.exec(
-							"sketchybar -m --set github.notification.message."
-								.. tostring(id)
-								.. ' click_script="open '
-								.. html_url
-								.. '"',
-							function()
-								Sbar.exec(popup_off)
-							end
-						)
+						cmd = cmd .. ".message."
+						cmd = cmd .. tostring(id) .. ' click_script="open ' .. html_url .. '"'
+						Sbar.exec(cmd, function()
+							Sbar.exec(popup_off)
+						end)
 					end
 				end)
 			end
@@ -157,7 +151,7 @@ github:subscribe({
 			github.notification = {}
 
 			if IS_EMPTY(repo) == false then
-				github.notification.repo = Sbar.add("item", "github.notification.repo" .. tostring(id), {
+				github.notification.repo = Sbar.add("item", "github.notification.repo." .. tostring(id), {
 					label = {
 						padding_right = settings.paddings,
 					},
