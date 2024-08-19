@@ -35,7 +35,8 @@ in
         kdePackages.gwenview
         pkgs.${namespace}.pocketcasts
         realvnc-vnc-viewer
-        rustdesk
+        # FIXME: broken nixpkgs
+        # rustdesk
       ];
   };
 }

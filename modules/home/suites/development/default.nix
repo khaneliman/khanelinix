@@ -85,7 +85,8 @@ in
             lazydocker.enable = cfg.dockerEnable;
             lazygit = enabled;
             oh-my-posh = enabled;
-            prisma = enabled;
+            # FIXME: broken nixpkg
+            # prisma = enabled;
           };
         };
       };

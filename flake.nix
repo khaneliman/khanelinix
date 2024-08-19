@@ -224,7 +224,10 @@
         allowUnfree = true;
 
         # TODO: cleanup when available
-        permittedInsecurePackages = [ "freeimage-unstable-2021-11-01" ];
+        permittedInsecurePackages = [
+          "freeimage-unstable-2021-11-01"
+          "jitsi-meet-1.0.8043"
+        ];
       };
 
       overlays = with inputs; [

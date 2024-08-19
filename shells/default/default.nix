@@ -17,7 +17,8 @@ mkShell {
     nix-diff
     nix-health
     nix-index
-    nix-melt
+    # FIXME: broken nixpkgs
+    # nix-melt
     nix-prefetch-git
     nix-search-cli
     nix-tree
