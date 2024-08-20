@@ -114,6 +114,8 @@
     # Personal Neovim Flake
     khanelivim = {
       url = "github:khaneliman/khanelivim";
+      # url = "git+file:///Users/khaneliman/Documents/github/khanelivim";
+      # url = "git+file:///home/khaneliman/Documents/github/khanelivim";
 
       inputs = {
         # nixpkgs.follows = "nixpkgs";
