@@ -18,8 +18,6 @@ in
   config = mkIf cfg.enable {
     homebrew = {
       casks = [ "digikam" ];
-
-      masApps = mkIf config.${namespace}.tools.homebrew.masEnable { };
     };
   };
 }
