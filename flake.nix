@@ -267,6 +267,7 @@
         python.description = "Python template";
         rust.description = "Rust template";
         rust-web-server.description = "Rust web server template";
+        snowfall.description = "Snowfall-lib template";
       };
 
       deploy = lib.mkDeploy { inherit (inputs) self; };
