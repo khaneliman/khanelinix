@@ -16,11 +16,16 @@ in
   };
 
   config = mkIf cfg.enable {
-    ${namespace}.desktop.addons = {
-      skhd = enabled;
-      yabai = enabled;
-      sketchybar = enabled;
-      jankyborders = enabled;
+    ${namespace}.desktop = {
+      addons = {
+        skhd = enabled;
+        jankyborders = enabled;
+        yabai = enabled;
+      };
+
+      bars = {
+        sketchybar = enabled;
+      };
     };
 
     homebrew = {
