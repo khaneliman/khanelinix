@@ -25,11 +25,6 @@ in
         "visual-studio-code"
       ];
 
-      taps = [
-        "cloudflare/cloudflare"
-        "earthly/earthly"
-      ];
-
       masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
         "Patterns" = 429449079;
         "Xcode" = 497799835;
