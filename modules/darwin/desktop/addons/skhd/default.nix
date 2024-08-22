@@ -235,5 +235,11 @@ in
           default < shift + lalt - c : ${yabai} -m space --layout stack
         '';
     };
+
+    # Hot-reload workaround until https://github.com/koekeishiya/skhd/issues/342 is fixed
+    system.activationScripts.postActivation.text = ''
+      echo "Restarting skhd"
+      su - ${config.${namespace}.user.name} -c '${getExe config.services.skhd.package} -r'
+    '';
   };
 }
