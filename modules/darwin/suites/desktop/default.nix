@@ -20,11 +20,14 @@ in
       addons = {
         skhd = enabled;
         jankyborders = enabled;
-        yabai = enabled;
       };
 
       bars = {
         sketchybar = enabled;
+      };
+
+      wms = {
+        yabai = enabled;
       };
     };
 

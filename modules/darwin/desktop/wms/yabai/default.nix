@@ -9,10 +9,10 @@ let
   inherit (lib) mkIf getExe;
   inherit (lib.${namespace}) mkBoolOpt enabled;
 
-  cfg = config.${namespace}.desktop.addons.yabai;
+  cfg = config.${namespace}.desktop.wms.yabai;
 in
 {
-  options.${namespace}.desktop.addons.yabai = {
+  options.${namespace}.desktop.wms.yabai = {
     enable = mkBoolOpt false "Whether or not to enable yabai.";
     debug = mkBoolOpt false "Whether to enable debug output.";
   };
