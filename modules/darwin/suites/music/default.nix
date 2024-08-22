@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   namespace,
   ...
 }:
@@ -17,12 +16,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      spicetify-cli
-      # TODO: replace? don't use and marked insecure
-      # youtube-dl
-    ];
-
     homebrew = {
       casks = [ "spotify" ];
 
