@@ -102,11 +102,17 @@ in
         # '$music' '$spotify' '$plex' '$small_blank' 																							\
         # '$code' '$github' '$gitkraken' '$small_blank' 													\
         # '$alacritty' '$kitty'"
+        # Larger spacer
+        # {tile-data={}; tile-type="spacer-tile";}
+        # Small spacer
+        # ''{tile-data={}; tile-type="small-spacer-tile";}''
         persistent-apps = [
           "/System/Applications/Launchpad.app"
           "/System/Applications/System Settings.app"
           "/System/Applications/App Store.app"
           # TODO: implement small_blank
+          # Need to update upstream to accept something like this
+          # ''{tile-data={}; tile-type="small-spacer-tile";}''
           "/System/Applications/Messages.app"
           "/Applications/Caprine.app"
           "/Applications/Element.app"
