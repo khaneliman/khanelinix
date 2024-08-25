@@ -31,8 +31,6 @@ in
         # Emojis
         noto-fonts-color-emoji
         twemoji-color-font
-        # openmoji-color
-        # openmoji-black
 
         # Nerd Fonts
         (nerdfonts.override {
@@ -52,6 +50,5 @@ in
       # Enable icons in tooling since we have nerdfonts.
       LOG_ICONS = "true";
     };
-
   };
 }
