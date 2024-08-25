@@ -153,18 +153,6 @@ in
       };
     };
 
-    # gtk.catppuccin = mkIf pkgs.stdenv.isLinux {
-    #   enable = true;
-    #
-    #   inherit (cfg) accent;
-    #   size = "standard";
-    #
-    #   icon = {
-    #     enable = true;
-    #     inherit (cfg) accent;
-    #   };
-    # };
-
     qt = mkIf pkgs.stdenv.isLinux {
       enable = true;
 
@@ -372,10 +360,11 @@ in
         # rofi.catppuccin.enable = true;
       };
 
-    # TODO: conditional enable
-    xdg.configFile = mkIf pkgs.stdenv.isLinux {
-      "ArmCord/themes/Catppuccin-Macchiato-BD".source = ./Catppuccin-Macchiato-BD;
-      "BetterDiscord/themes/catppuccin-macchiato.theme.css".source = ./catppuccin-macchiato.theme.css;
-    };
+    xdg.configFile =
+      mkIf (pkgs.stdenv.isLinux && config.${namespace}.programs.graphical.apps.discord.enable)
+        {
+          "ArmCord/themes/Catppuccin-Macchiato-BD".source = ./Catppuccin-Macchiato-BD;
+          "BetterDiscord/themes/catppuccin-macchiato.theme.css".source = ./catppuccin-macchiato.theme.css;
+        };
   };
 }
