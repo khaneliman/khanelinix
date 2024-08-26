@@ -22,14 +22,15 @@ in
       with pkgs;
       [
         cemu
+        duckstation
         emulationstation
         mame
+        mednafen
         melonDS
         mgba
         mupen64plus
         nestopia-ue
         pcsx2
-        pcsxr
         rpcs3
         snes9x
         xemu
