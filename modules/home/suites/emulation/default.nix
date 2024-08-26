@@ -21,20 +21,22 @@ in
     home.packages =
       with pkgs;
       [
-        cemu
-        duckstation
-        emulationstation
         mame
         mednafen
         melonDS
+        pcsx2
+        snes9x
+      ]
+      ++ lib.optionals stdenv.isLinux [
+        cemu
+        duckstation
+        emulationstation
         mgba
         mupen64plus
         nestopia-ue
-        pcsx2
         rpcs3
-        snes9x
-        xemu
         ryujinx
+        xemu
       ]
       ++ lib.optionals cfg.retroarchFull [ retroarchFull ];
 
