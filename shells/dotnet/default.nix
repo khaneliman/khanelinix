@@ -29,6 +29,7 @@ mkShell {
     avrogen
     azure-cli
     bicep
+    csharpier
     dotnetbuildhelpers
     dotnetPackages.Nuget
     fsautocomplete
