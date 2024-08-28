@@ -2,12 +2,12 @@
 let
   artifacts-credprovider = pkgs.stdenv.mkDerivation rec {
     name = "artifacts-credprovider";
-    version = "1.1.1";
+    version = "1.2.1";
 
     src = pkgs.fetchurl {
       # TODO: build from source?
       url = "https://github.com/microsoft/artifacts-credprovider/releases/download/v${version}/Microsoft.Net6.NuGet.CredentialProvider.tar.gz";
-      sha256 = "sha256-EfC3WVGKwNWxmv1JuH0e/g4u3trXCO8dv1wDMkvqcA4=";
+      sha256 = "sha256-wO5DHmEMjNTpDwx3rrZc9SkX3DxgW2LHs9W8un3jjo4=";
     };
 
     buildPhase = ''
