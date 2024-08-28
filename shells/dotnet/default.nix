@@ -20,8 +20,8 @@ let
     # TODO: build from source?
     pname = "avrogen";
     nugetName = "Apache.Avro.Tools";
-    version = "1.11.3";
-    nugetSha256 = "sha256-nrG5NXCQwN1dOpf+fIXcbTjpYOHiQ++hBryYfpRFThU=";
+    version = "1.12.0";
+    nugetSha256 = "sha256-bR2ObY5hFCAWD326Y6NkN5FRyNWCKu4JaXlZ1dKY+XY=";
   };
 in
 mkShell {
