@@ -27,14 +27,13 @@ in
         dooit
         jrnl
         np
-      ]
-      ++ lib.optionals stdenv.isLinux [
-        libreoffice
         # TODO: replace once https://github.com/NixOS/nixpkgs/pull/337868 is available
         # teams-for-linux
         pkgs.khanelinix.teams-for-linux
       ]
-      ++ lib.optionals stdenv.isDarwin [ teams ];
+      ++ lib.optionals stdenv.isLinux [
+        libreoffice
+      ];
 
     khanelinix = {
       programs = {
