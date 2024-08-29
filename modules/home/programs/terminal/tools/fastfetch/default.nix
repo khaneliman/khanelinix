@@ -20,12 +20,7 @@ in
 
     programs.fastfetch = {
       enable = true;
-      package =
-        # NOTE: Getting missing X11 header during compilation for some reason on darwin all of a sudden.
-        if pkgs.stdenv.isDarwin then
-          pkgs.fastfetch.override { imagemagick_light = pkgs.imagemagick; }
-        else
-          pkgs.fastfetch;
+      package = pkgs.fastfetch;
 
       settings = {
         "$schema" = "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json";

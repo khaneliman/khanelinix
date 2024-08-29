@@ -30,7 +30,9 @@ in
       ]
       ++ lib.optionals stdenv.isLinux [
         libreoffice
-        teams-for-linux
+        # TODO: replace once https://github.com/NixOS/nixpkgs/pull/337868 is available
+        # teams-for-linux
+        pkgs.khanelinix.teams-for-linux
       ]
       ++ lib.optionals stdenv.isDarwin [ teams ];
 
