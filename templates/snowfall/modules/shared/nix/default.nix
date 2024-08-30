@@ -91,7 +91,7 @@ in
           allowed-users = users;
           auto-optimise-store = true;
           builders-use-substitutes = true;
-          experimental-features = "nix-command flakes";
+          experimental-features = "nix-command flakes pipe-operators";
           flake-registry = "/etc/nix/registry.json";
           http-connections = 50;
           keep-derivations = true;
