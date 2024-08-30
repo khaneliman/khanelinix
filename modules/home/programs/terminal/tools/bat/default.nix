@@ -25,8 +25,7 @@ in
       };
 
       extraPackages = with pkgs.bat-extras; [
-        # FIXME: broken nixpkg
-        # batdiff
+        batdiff
         batgrep
         batman
         batpipe
