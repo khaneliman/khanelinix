@@ -69,9 +69,6 @@ in
           MOZ_USE_XINPUT2 = "1";
           SDL_VIDEODRIVER = "wayland";
           WLR_DRM_NO_ATOMIC = "1";
-          # TODO: set these on init of wm
-          XDG_CURRENT_DESKTOP = "Hyprland";
-          XDG_SESSION_DESKTOP = "Hyprland";
           XDG_SESSION_TYPE = "wayland";
           _JAVA_AWT_WM_NONREPARENTING = "1";
           __GL_GSYNC_ALLOWED = "0";
@@ -123,39 +120,49 @@ in
       };
     };
 
-    wayland.windowManager.hyprland = {
-      enable = true;
-
-      extraConfig = # bash
-        ''
-          ${cfg.prependConfig}
-
-          ${cfg.appendConfig}
-        '';
-
-      package =
-        if cfg.enableDebug then
-          hyprland.packages.${system}.hyprland-debug
-        else
-          hyprland.packages.${system}.hyprland;
-
-      settings = {
-        exec = [ "${getExe pkgs.libnotify} --icon ~/.face -u normal \"Hello $(whoami)\"" ];
-      };
-
-      systemd = {
+    wayland.windowManager.hyprland =
+      let
+        systemctl = lib.getExe' pkgs.systemd "systemctl";
+      in
+      {
         enable = true;
-        enableXdgAutostart = true;
-        extraCommands = [
-          "systemctl --user stop hyprland-session.target"
-          "systemctl --user reset-failed"
-          "systemctl --user start hyprland-session.target"
-        ];
 
-        variables = [ "--all" ];
+        extraConfig =
+          # bash
+          ''
+            # NOTE: don't seem to be needed with SDDM, at least.
+            env = XDG_CURRENT_DESKTOP,Hyprland
+            env = XDG_SESSION_DESKTOP,Hyprland
+            exec-once = ${lib.getExe' pkgs.dbus "dbus-update-activation-environment"} --systemd XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP && ${systemctl} --user stop hyprland-session.target && ${systemctl} --user reset-failed && ${systemctl} --user start hyprland-session.target
+
+            ${cfg.prependConfig}
+
+            ${cfg.appendConfig}
+          '';
+
+        package =
+          if cfg.enableDebug then
+            hyprland.packages.${system}.hyprland-debug
+          else
+            hyprland.packages.${system}.hyprland;
+
+        settings = {
+          exec = [ "${getExe pkgs.libnotify} --icon ~/.face -u normal \"Hello $(whoami)\"" ];
+        };
+
+        systemd = {
+          enable = true;
+          enableXdgAutostart = true;
+          extraCommands = [
+            "${systemctl} --user stop hyprland-session.target"
+            "${systemctl} --user reset-failed"
+            "${systemctl} --user start hyprland-session.target"
+          ];
+
+          variables = [ "--all" ];
+        };
+
+        xwayland.enable = true;
       };
-
-      xwayland.enable = true;
-    };
   };
 }
