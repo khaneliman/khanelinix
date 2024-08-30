@@ -130,11 +130,6 @@ in
         extraConfig =
           # bash
           ''
-            # NOTE: don't seem to be needed with SDDM, at least.
-            env = XDG_CURRENT_DESKTOP,Hyprland
-            env = XDG_SESSION_DESKTOP,Hyprland
-            exec-once = ${lib.getExe' pkgs.dbus "dbus-update-activation-environment"} --systemd XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP && ${systemctl} --user stop hyprland-session.target && ${systemctl} --user reset-failed && ${systemctl} --user start hyprland-session.target
-
             ${cfg.prependConfig}
 
             ${cfg.appendConfig}
@@ -159,7 +154,9 @@ in
             "${systemctl} --user start hyprland-session.target"
           ];
 
-          variables = [ "--all" ];
+          variables = [
+            "--all"
+          ];
         };
 
         xwayland.enable = true;
