@@ -84,7 +84,7 @@ in
           };
 
           sway = {
-            enable = true;
+            enable = false;
 
             settings = {
               output = {
