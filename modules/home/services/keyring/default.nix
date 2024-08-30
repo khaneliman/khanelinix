@@ -5,7 +5,6 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.services.keyring;
@@ -15,7 +14,7 @@ in
     enable = mkBoolOpt false "Whether to enable gnome keyring.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     services.gnome-keyring = {
       enable = true;
 

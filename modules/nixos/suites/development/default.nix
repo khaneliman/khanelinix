@@ -5,7 +5,6 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.suites.development;
@@ -22,7 +21,7 @@ in
     sqlEnable = mkBoolOpt false "Whether or not to enable sql development configuration.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     networking.firewall.allowedTCPPorts = [
       12345
       3000

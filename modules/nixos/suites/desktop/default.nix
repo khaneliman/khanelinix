@@ -5,7 +5,6 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt enabled;
 
   cfg = config.${namespace}.suites.desktop;
@@ -15,7 +14,7 @@ in
     enable = mkBoolOpt false "Whether or not to enable common desktop configuration.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     khanelinix = {
       programs = {
         graphical = {

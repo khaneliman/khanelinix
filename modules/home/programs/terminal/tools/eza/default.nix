@@ -6,7 +6,6 @@
   ...
 }:
 let
-  inherit (lib) getExe mkForce mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.eza;
@@ -16,7 +15,7 @@ in
     enable = mkBoolOpt false "Whether or not to enable eza.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     programs.eza = {
       enable = true;
       package = pkgs.eza;
@@ -35,8 +34,8 @@ in
     };
 
     home.shellAliases = {
-      la = mkForce "${getExe config.programs.eza.package} -lah --tree";
-      tree = mkForce "${getExe config.programs.eza.package} --tree --icons=always";
+      la = lib.mkForce "${lib.getExe config.programs.eza.package} -lah --tree";
+      tree = lib.mkForce "${lib.getExe config.programs.eza.package} --tree --icons=always";
     };
   };
 }

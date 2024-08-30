@@ -6,7 +6,6 @@
   ...
 }:
 let
-  inherit (lib) mkIf types;
   inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
   cfg = config.${namespace}.desktop.bars.sketchybar;
@@ -14,10 +13,10 @@ in
 {
   options.${namespace}.desktop.bars.sketchybar = {
     enable = mkBoolOpt false "Whether or not to enable sketchybar.";
-    logFile = mkOpt types.str "/var/tmp/sketchybar.log" "Filepath of log output";
+    logFile = mkOpt lib.types.str "/var/tmp/sketchybar.log" "Filepath of log output";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     homebrew = {
       brews = [ "cava" ];
       casks = [ "background-music" ];

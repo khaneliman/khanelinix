@@ -6,7 +6,6 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkForce mkDefault;
   inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.security.sudo;
@@ -15,13 +14,13 @@ in
   options.${namespace}.security.sudo = {
     enable = mkBoolOpt false "Whether or not to enable sudo.";
   };
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     security = {
       sudo = {
         enable = true;
 
-        execWheelOnly = mkForce true;
-        wheelNeedsPassword = mkDefault false;
+        execWheelOnly = lib.mkForce true;
+        wheelNeedsPassword = lib.mkDefault false;
 
         extraConfig = ''
           Defaults lecture = never # rollback results in sudo lectures after each reboot, it's somewhat useless anyway

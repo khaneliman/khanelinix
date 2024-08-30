@@ -6,29 +6,23 @@
   ...
 }:
 let
-  inherit (lib)
-    mkIf
-    getExe
-    mkOption
-    literalExpression
-    ;
-  inherit (lib.${namespace}) mkBoolOpt;
-
   cfg = config.${namespace}.desktop.addons.jankyborders;
 in
 {
   options.${namespace}.desktop.addons.jankyborders = {
-    enable = mkBoolOpt false "Whether to enable jankyborders in the desktop environment.";
-    package = mkOption {
+    enable =
+      lib.${namespace}.mkBoolOpt false
+        "Whether to enable jankyborders in the desktop environment.";
+    package = lib.mkOption {
       type = lib.types.package;
       default = pkgs.jankyborders;
-      defaultText = literalExpression "pkgs.jankyborders";
+      defaultText = lib.literalExpression "pkgs.jankyborders";
       description = "The jankyborders package to use.";
-      example = literalExpression "pkgs.${namespace}.jankyborders";
+      example = lib.literalExpression "pkgs.${namespace}.jankyborders";
     };
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [ jankyborders ];
 
     ${namespace}.home.configFile = {
@@ -45,7 +39,7 @@ in
             	blur_radius=25
             )
 
-            ${getExe cfg.package} "''${options[@]}"
+            ${lib.getExe cfg.package} "''${options[@]}"
           '';
     };
   };

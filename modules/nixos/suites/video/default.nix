@@ -5,7 +5,6 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.suites.video;
@@ -15,7 +14,7 @@ in
     enable = mkBoolOpt false "Whether or not to enable video configuration.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     # NOTE: dvd burning software requires cdrom group and k3b dependencies in nix store do not have those permissions
     # https://github.com/NixOS/nixpkgs/issues/19154#issuecomment-647005545
     # Additionally to installing `k3b` enabling this will

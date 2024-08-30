@@ -5,16 +5,14 @@
   ...
 }:
 let
-  inherit (lib) mkEnableOption mkIf;
-
   cfg = config.${namespace}.services.easyeffects;
 in
 {
   options.${namespace}.services.easyeffects = {
-    enable = mkEnableOption "easyeffects";
+    enable = lib.mkEnableOption "easyeffects";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     services.easyeffects = {
       enable = true;
 

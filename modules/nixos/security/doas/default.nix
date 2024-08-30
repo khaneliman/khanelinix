@@ -5,7 +5,6 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.security.doas;
@@ -15,7 +14,7 @@ in
     enable = mkBoolOpt false "Whether or not to replace sudo with doas.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     # Add an alias to the shell for backward-compat and convenience.
     environment.shellAliases = {
       sudo = "doas";

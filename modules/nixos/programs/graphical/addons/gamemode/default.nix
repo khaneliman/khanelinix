@@ -6,21 +6,20 @@
   ...
 }:
 let
-  inherit (lib) types mkIf getExe';
   inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
   cfg = config.${namespace}.programs.graphical.addons.gamemode;
 
   defaultStartScript = ''
-    ${getExe' pkgs.libnotify "notify-send"} 'GameMode started'
+    ${lib.getExe' pkgs.libnotify "notify-send"} 'GameMode started'
   '';
 
   defaultEndScript = ''
-    ${getExe' pkgs.libnotify "notify-send"} 'GameMode ended'
+    ${lib.getExe' pkgs.libnotify "notify-send"} 'GameMode ended'
   '';
 in
 {
-  options.${namespace}.programs.graphical.addons.gamemode = with types; {
+  options.${namespace}.programs.graphical.addons.gamemode = with lib.types; {
     enable = mkBoolOpt false "Whether or not to enable gamemode.";
     endscript = mkOpt (nullOr str) null "The script to run when disabling gamemode.";
     startscript = mkOpt (nullOr str) null "The script to run when enabling gamemode.";
@@ -39,7 +38,7 @@ in
         else
           pkgs.writeShellScript "gamemode-end" cfg.endscript;
     in
-    mkIf cfg.enable {
+    lib.mkIf cfg.enable {
       programs.gamemode = {
         enable = true;
         enableRenice = true;
@@ -60,7 +59,7 @@ in
       security.wrappers.gamemode = {
         owner = "root";
         group = "root";
-        source = "${getExe' pkgs.gamemode "gamemoderun"}";
+        source = "${lib.getExe' pkgs.gamemode "gamemoderun"}";
         capabilities = "cap_sys_ptrace,cap_sys_nice+pie";
       };
 

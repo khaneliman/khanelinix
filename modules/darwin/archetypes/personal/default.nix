@@ -5,7 +5,6 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt enabled;
 
   cfg = config.${namespace}.archetypes.personal;
@@ -15,7 +14,7 @@ in
     enable = mkBoolOpt false "Whether or not to enable the personal archetype.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     khanelinix = {
       suites = {
         art = enabled;

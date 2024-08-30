@@ -6,7 +6,6 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.security.polkit;
@@ -16,7 +15,7 @@ in
     enable = mkBoolOpt false "Whether or not to enable polkit.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [ libsForQt5.polkit-kde-agent ];
 
     security.polkit = {

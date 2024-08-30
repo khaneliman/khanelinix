@@ -5,14 +5,12 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkForce;
-
   cfg = config.${namespace}.nix;
 in
 {
   imports = [ (lib.snowfall.fs.get-file "modules/shared/nix/default.nix") ];
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     nix = {
       # Options that aren't supported through nix-darwin
       extraOptions = ''
@@ -56,11 +54,11 @@ in
 
         # Frequent issues with networking failures on darwin
         # limit number to see if it helps
-        http-connections = mkForce 25;
+        http-connections = lib.mkForce 25;
 
         # FIX: shouldn't disable, but getting sandbox max size errors on darwin
         # darwin-rebuild --rollback on testing changing
-        sandbox = mkForce false;
+        sandbox = lib.mkForce false;
       };
     };
   };

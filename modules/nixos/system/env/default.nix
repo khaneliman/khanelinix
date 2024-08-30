@@ -5,14 +5,6 @@
   ...
 }:
 let
-  inherit (lib)
-    types
-    concatStringsSep
-    mapAttrsToList
-    mkOption
-    mapAttrs
-    ;
-
   pagerArgs = [
     "--RAW-CONTROL-CHARS" # Only allow colors.
     "--wheel-lines=5"
@@ -24,18 +16,20 @@ let
   cfg = config.${namespace}.system.env;
 in
 {
-  options.${namespace}.system.env =
-    with types;
-    mkOption {
-      apply = mapAttrs (_n: v: if isList v then concatMapStringsSep ":" toString v else (toString v));
-      default = { };
-      description = "A set of environment variables to set.";
-      type = attrsOf (oneOf [
+  options.${namespace}.system.env = lib.mkOption {
+    apply = lib.mapAttrs (
+      _n: v: if lib.isList v then lib.concatMapStringsSep ":" toString v else (toString v)
+    );
+    default = { };
+    description = "A set of environment variables to set.";
+    type =
+      with lib.types;
+      attrsOf (oneOf [
         str
         path
         (listOf (either str path))
       ]);
-    };
+  };
 
   config = {
     environment = {
@@ -47,8 +41,8 @@ in
         XDG_DESKTOP_DIR = "$HOME";
       };
 
-      extraInit = concatStringsSep "\n" (
-        mapAttrsToList (
+      extraInit = lib.concatStringsSep "\n" (
+        lib.mapAttrsToList (
           n: v: # bash
           ''
             export ${n}="${v}"
@@ -69,8 +63,8 @@ in
         MANPAGER = "nvim -c 'set ft=man bt=nowrite noswapfile nobk shada=\\\"NONE\\\" ro noma' +Man! -o -";
         SYSTEMD_PAGERSECURE = "true";
         PAGER = "less -FR";
-        LESS = concatStringsSep " " pagerArgs;
-        SYSTEMD_LESS = concatStringsSep " " (
+        LESS = lib.concatStringsSep " " pagerArgs;
+        SYSTEMD_LESS = lib.concatStringsSep " " (
           pagerArgs
           ++ [
             "--quit-if-one-screen"

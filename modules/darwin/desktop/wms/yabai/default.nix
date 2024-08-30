@@ -6,7 +6,6 @@
   ...
 }:
 let
-  inherit (lib) mkIf getExe;
   inherit (lib.${namespace}) mkBoolOpt enabled;
 
   cfg = config.${namespace}.desktop.wms.yabai;
@@ -17,7 +16,7 @@ in
     debug = mkBoolOpt false "Whether to enable debug output.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     ${namespace}.desktop.addons.jankyborders = enabled;
 
     services.yabai = {

@@ -5,16 +5,14 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkEnableOption;
-
   cfg = config.${namespace}.security.clamav;
 in
 {
   options.${namespace}.security.clamav = {
-    enable = mkEnableOption "default clamav configuration";
+    enable = lib.mkEnableOption "default clamav configuration";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     services.clamav = {
       daemon = {
         enable = true;

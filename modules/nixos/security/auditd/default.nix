@@ -5,16 +5,14 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkEnableOption;
-
   cfg = config.${namespace}.security.auditd;
 in
 {
   options.${namespace}.security.auditd = {
-    enable = mkEnableOption "default auditd configuration";
+    enable = lib.mkEnableOption "default auditd configuration";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     security = {
       auditd.enable = true;
 

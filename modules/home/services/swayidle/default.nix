@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf getExe getExe';
+  inherit (lib) getExe getExe';
   inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.services.swayidle;
@@ -16,7 +16,7 @@ in
     enable = mkBoolOpt false "Whether to enable swayidle service.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     services.swayidle = {
       enable = true;
       package = pkgs.swayidle;

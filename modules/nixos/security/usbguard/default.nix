@@ -5,16 +5,14 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkEnableOption;
-
   cfg = config.${namespace}.security.usbguard;
 in
 {
   options.${namespace}.security.usbguard = {
-    enable = mkEnableOption "default usbguard configuration";
+    enable = lib.mkEnableOption "default usbguard configuration";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     services.usbguard = {
       IPCAllowedUsers = [
         "root"

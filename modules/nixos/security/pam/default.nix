@@ -5,7 +5,6 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.security.pam;
@@ -15,7 +14,7 @@ in
     enable = mkBoolOpt false "Whether or not to configure pam.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     security.pam.loginLimits = [
       {
         domain = "*";
