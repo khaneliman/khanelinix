@@ -7,32 +7,22 @@
   ...
 }:
 let
-  inherit (lib)
-    filterAttrs
-    isType
-    mapAttrs
-    mapAttrsToList
-    mkDefault
-    mkIf
-    pipe
-    types
-    ;
   inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
   cfg = config.${namespace}.nix;
 in
 {
-  options.${namespace}.nix = with types; {
+  options.${namespace}.nix = {
     enable = mkBoolOpt true "Whether or not to manage nix configuration.";
-    package = mkOpt package pkgs.nixVersions.latest "Which nix package to use.";
+    package = mkOpt lib.types.package pkgs.nixVersions.latest "Which nix package to use.";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     # faster rebuilding
     documentation = {
       doc.enable = false;
       info.enable = false;
-      man.enable = mkDefault true;
+      man.enable = lib.mkDefault true;
     };
 
     environment = {
@@ -56,9 +46,9 @@ in
 
     nix =
       let
-        mappedRegistry = pipe inputs [
-          (filterAttrs (_: isType "flake"))
-          (mapAttrs (_: flake: { inherit flake; }))
+        mappedRegistry = lib.pipe inputs [
+          (lib.filterAttrs (_: lib.isType "flake"))
+          (lib.mapAttrs (_: flake: { inherit flake; }))
           (x: x // { nixpkgs.flake = inputs.nixpkgs; })
         ];
 
@@ -79,7 +69,7 @@ in
 
         # This will additionally add your inputs to the system's legacy channels
         # Making legacy nix commands consistent as well
-        nixPath = mapAttrsToList (key: _: "${key}=flake:${key}") config.nix.registry;
+        nixPath = lib.mapAttrsToList (key: _: "${key}=flake:${key}") config.nix.registry;
 
         optimise.automatic = true;
 
