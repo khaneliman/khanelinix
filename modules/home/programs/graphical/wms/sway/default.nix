@@ -60,9 +60,6 @@ in
         MOZ_USE_XINPUT2 = "1";
         SDL_VIDEODRIVER = "wayland";
         WLR_DRM_NO_ATOMIC = "1";
-        # TODO: set these on init of wm
-        XDG_CURRENT_DESKTOP = "sway";
-        XDG_SESSION_DESKTOP = "sway";
         XDG_SESSION_TYPE = "wayland";
         _JAVA_AWT_WM_NONREPARENTING = "1";
         __GL_GSYNC_ALLOWED = "0";
@@ -152,7 +149,9 @@ in
         enable = true;
         xdgAutostart = true;
 
-        variables = [ "--all" ];
+        variables = [
+          "--all"
+        ];
       };
 
       xwayland = true;
