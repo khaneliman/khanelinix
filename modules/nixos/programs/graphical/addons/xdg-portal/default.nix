@@ -74,7 +74,7 @@ in
             screencast = {
               max_fps = 30;
               chooser_type = "simple";
-              chooser_cmd = "${pkgs.slurp}/bin/slurp -f %o -or";
+              chooser_cmd = "${lib.getExe pkgs.slurp} -f %o -or";
             };
           };
         };

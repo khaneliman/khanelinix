@@ -7,7 +7,6 @@
 }:
 let
   inherit (inputs) pre-commit-hooks-nix;
-  inherit (lib) getExe;
 in
 pre-commit-hooks-nix.lib.${pkgs.system}.run {
   src = ./.;
@@ -45,7 +44,7 @@ pre-commit-hooks-nix.lib.${pkgs.system}.run {
 
         always_run = true;
         description = "pre-push hook for git-cliff";
-        entry = "${getExe pkgs.${namespace}.git-cliff}";
+        entry = "${lib.getExe pkgs.${namespace}.git-cliff}";
         language = "system";
         stages = [ "pre-push" ];
       };
@@ -65,7 +64,7 @@ pre-commit-hooks-nix.lib.${pkgs.system}.run {
 
         description = "pre-commit hook for prettier";
         settings = {
-          binPath = "${pkgs.prettierd}/bin/prettierd";
+          binPath = "${lib.getExe pkgs.prettierd}";
           write = true;
         };
       };

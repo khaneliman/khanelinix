@@ -87,7 +87,7 @@ in
               "${swayCfg.modifier}+n" = "exec ${notification_center} -t -sw";
               "${swayCfg.modifier}+v" = "exec ${cliphist}";
               "${swayCfg.modifier}+w" = "exec ${looking-glass}";
-              # "${swayCfg.modifier}+I" = "exec ${pkgs.libnotify}/bin/notify-send ${window-inspector}";
+              # "${swayCfg.modifier}+I" = "exec ${lib.getExe' pkgs.libnotify "notify-send"} ${window-inspector}";
 
               # Kill window
               "${swayCfg.modifier}+Q" = "kill";

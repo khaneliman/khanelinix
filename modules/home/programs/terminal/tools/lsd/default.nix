@@ -13,9 +13,9 @@ let
 
   aliases = {
 
-    ls = "${pkgs.lsd}/bin/lsd -al";
-    lt = "${pkgs.lsd}/bin/lsd --tree";
-    llt = "${pkgs.lsd}/bin/lsd -l --tree";
+    ls = "${lib.getExe pkgs.lsd} -al";
+    lt = "${lib.getExe pkgs.lsd} --tree";
+    llt = "${lib.getExe pkgs.lsd} -l --tree";
   };
 in
 {

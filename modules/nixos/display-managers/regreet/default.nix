@@ -33,7 +33,7 @@ let
     bind=SUPER_SHIFT, RETURN, exec, ${getExe pkgs.nwg-hello}
     bind=SUPER_CTRL_SHIFT, RETURN, exec, ${getExe pkgs.greetd.regreet}
 
-    exec-once = ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE
+    exec-once = ${lib.getExe' pkgs.dbus "dbus-update-activation-environment"} --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE
 
     exec-once = ${getExe pkgs.greetd.regreet} -l debug && ${
       getExe' hyprland.packages.${system}.hyprland-unwrapped "hyprctl"
