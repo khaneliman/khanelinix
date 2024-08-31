@@ -67,7 +67,8 @@ in
           HYPRCURSOR_SIZE = "${toString config.${namespace}.theme.cursor.size}";
           MOZ_ENABLE_WAYLAND = "1";
           MOZ_USE_XINPUT2 = "1";
-          SDL_VIDEODRIVER = "wayland";
+          # NOTE: causes gldriverquery crash on wayland
+          # SDL_VIDEODRIVER = "wayland";
           WLR_DRM_NO_ATOMIC = "1";
           XDG_SESSION_TYPE = "wayland";
           _JAVA_AWT_WM_NONREPARENTING = "1";
