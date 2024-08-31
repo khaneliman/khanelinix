@@ -6,6 +6,7 @@
   ...
 }:
 let
+  inherit (lib) getExe;
   inherit (lib.${namespace}) mkBoolOpt enabled;
 
   cfg = config.${namespace}.desktop.wms.yabai;
@@ -62,7 +63,10 @@ in
       };
 
       extraConfig =
-        with pkgs; # bash
+        let
+          inherit (pkgs) sketchybar;
+        in
+        # bash
         ''
           source ${getExe pkgs.${namespace}.yabai-helper}
 
