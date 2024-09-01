@@ -16,7 +16,14 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ libsForQt5.polkit-kde-agent ];
+    environment.systemPackages =
+      with pkgs;
+      lib.optionals (!config.${namespace}.programs.graphical.wms.hyprland.enable) [
+        libsForQt5.polkit-kde-agent
+      ]
+      ++ lib.optionals (config.${namespace}.programs.graphical.wms.hyprland.enable) [
+        pkgs.khanelinix.hyprpolkitagent
+      ];
 
     security.polkit = {
       enable = true;
@@ -31,18 +38,22 @@ in
     };
 
     systemd = {
-      user.services.polkit-kde-authentication-agent-1 = {
-        after = [ "graphical-session.target" ];
-        description = "polkit-kde-authentication-agent-1";
-        wantedBy = [ "graphical-session.target" ];
-        wants = [ "graphical-session.target" ];
-        serviceConfig = {
-          Type = "simple";
-          ExecStart = "${pkgs.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1";
-          Restart = "on-failure";
-          RestartSec = 1;
-          TimeoutStopSec = 10;
-        };
+      user.services = {
+        polkit-kde-authentication-agent-1 =
+          lib.mkIf (!config.${namespace}.programs.graphical.wms.hyprland.enable)
+            {
+              after = [ "graphical-session.target" ];
+              description = "polkit-kde-authentication-agent-1";
+              wantedBy = [ "graphical-session.target" ];
+              wants = [ "graphical-session.target" ];
+              serviceConfig = {
+                Type = "simple";
+                ExecStart = "${pkgs.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1";
+                Restart = "on-failure";
+                RestartSec = 1;
+                TimeoutStopSec = 10;
+              };
+            };
       };
     };
   };
