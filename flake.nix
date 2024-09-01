@@ -234,7 +234,6 @@
       };
 
       overlays = with inputs; [
-        nix-ld-rs.overlays.default
         nur.overlay
       ];
 

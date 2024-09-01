@@ -1,13 +1,16 @@
 {
   config,
+  inputs,
   lib,
-  pkgs,
   namespace,
+  pkgs,
+  system,
   ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
+  inherit (inputs) nix-ld-rs;
 
   cfg = config.${namespace}.programs.terminal.tools.nix-ld;
 in
@@ -19,7 +22,7 @@ in
   config = mkIf cfg.enable {
     programs.nix-ld = {
       enable = true;
-      package = pkgs.nix-ld-rs;
+      package = nix-ld-rs.packages.${system}.nix-ld-rs;
 
       libraries = with pkgs; [
         gcc
