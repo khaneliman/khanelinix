@@ -26,7 +26,7 @@ in
   options.${namespace}.programs.graphical.browsers.firefox = with types; {
     enable = mkBoolOpt false "Whether or not to enable Firefox.";
 
-    extensions = mkOpt (listOf package) (with pkgs.nur.repos.rycee.firefox-addons; [
+    extensions = mkOpt (listOf package) (with config.nur.repos.rycee.firefox-addons; [
       angular-devtools
       auto-tab-discard
       bitwarden
