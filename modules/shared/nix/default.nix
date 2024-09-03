@@ -71,7 +71,7 @@ in
         # Making legacy nix commands consistent as well
         nixPath = lib.mapAttrsToList (key: _: "${key}=flake:${key}") config.nix.registry;
 
-        optimise.automatic = true;
+        optimise.automatic = pkgs.stdenv.isLinux;
 
         # pin the registry to avoid downloading and evaluating a new nixpkgs version every time
         # this will add each flake input as a registry to make nix3 commands consistent with your flake
