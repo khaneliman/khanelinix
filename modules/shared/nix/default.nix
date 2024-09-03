@@ -81,7 +81,8 @@ in
           allowed-users = users;
           auto-optimise-store = true;
           builders-use-substitutes = true;
-          experimental-features = "nix-command flakes pipe-operators";
+          # TODO: pipe-operators throws annoying warnings
+          experimental-features = "nix-command flakes";
           flake-registry = "/etc/nix/registry.json";
           http-connections = 50;
           keep-derivations = true;
