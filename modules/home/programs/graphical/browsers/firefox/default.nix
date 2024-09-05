@@ -156,7 +156,9 @@ in
 
     programs.firefox = {
       enable = true;
-      package = if pkgs.stdenv.isLinux then pkgs.firefox-devedition else null;
+      # FIXME: use devedition again when fixed
+      # package = if pkgs.stdenv.isLinux then pkgs.firefox-devedition else null;
+      package = if pkgs.stdenv.isLinux then pkgs.firefox else null;
 
       inherit (cfg) policies;
 
