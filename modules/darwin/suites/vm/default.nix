@@ -18,7 +18,8 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      qemu
+      # FIX: broken nixpkg on darwin
+      # qemu
       vte
       # FIX: broken nixpkg on darwin
       # libvirt
