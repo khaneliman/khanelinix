@@ -26,7 +26,7 @@ in
       extraArgs =
         let
           appsToAvoid = concatStringsSep "|" [
-            "Hyprland"
+            "(h|H)yprland"
             "sway"
             "foot"
             "kitty"
@@ -52,8 +52,8 @@ in
         in
         [
           "-g" # kill all processes within a process group
-          "--avoid '^(${appsToAvoid})$'" # things we want to not kill
-          "--prefer '^(${appsToPrefer})$'" # things we want to kill as soon as possible
+          "--avoid '(^|/)(${appsToAvoid})'" # things we want to not kill
+          "--prefer '(^|/)(${appsToPrefer})'" # things we want to kill as soon as possible
         ];
 
       killHook = pkgs.writeShellScript "earlyoom-kill-hook" ''
