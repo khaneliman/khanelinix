@@ -27,27 +27,37 @@ in
         let
           appsToAvoid = concatStringsSep "|" [
             "(h|H)yprland"
-            "sway"
-            "foot"
-            "kitty"
-            "wezterm"
+            "Xwayland"
+            "bash"
             "cryptsetup"
             "dbus-.*"
-            "Xwayland"
+            "foot"
             "gpg-agent"
+            "greetd"
+            "kitty"
+            "n?vim"
+            ".*qemu-system.*"
+            "regreet"
+            "sddm"
+            "ssh-agent"
+            "sshd"
+            "sway"
             "systemd"
             "systemd-.*"
-            "ssh-agent"
+            "wezterm"
+            "zsh"
           ];
 
           appsToPrefer = concatStringsSep "|" [
             "Web Content"
             "Isolated Web Co"
-            "chromium.*"
+            "chrom(e|ium).*"
+            "firefox.*"
             "electron"
             ".*.exe"
             "java.*"
             "pipewire(.*)"
+            "nix"
           ];
         in
         [
