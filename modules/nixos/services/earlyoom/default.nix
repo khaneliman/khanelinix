@@ -52,12 +52,15 @@ in
             "Web Content"
             "Isolated Web Co"
             "chrom(e|ium).*"
+            "dotnet"
             "firefox.*"
             "electron"
             ".*.exe"
             "java.*"
-            "pipewire(.*)"
             "nix"
+            "npm"
+            "node"
+            "pipewire(.*)"
           ];
         in
         [
