@@ -59,11 +59,13 @@ in
     services.samba = {
       enable = true;
 
-      extraConfig = ''
-        browseable = ${bool-to-yes-no cfg.browseable}
-      '';
+      # TODO: double check if replacement needed,  it was removed
+      # extraConfig = ''
+      #   browseable = ${bool-to-yes-no cfg.browseable}
+      # '';
       openFirewall = true;
 
+      # TODO: move to settings
       shares = mapAttrs (
         name: value:
         {
