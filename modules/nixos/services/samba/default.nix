@@ -53,36 +53,36 @@ in
     services.samba-wsdd = {
       enable = true;
       discovery = true;
-      workgroup = "WORKGROUP";
+      inherit (cfg) workgroup;
     };
 
     services.samba = {
       enable = true;
-
-      # TODO: double check if replacement needed,  it was removed
-      # extraConfig = ''
-      #   browseable = ${bool-to-yes-no cfg.browseable}
-      # '';
       openFirewall = true;
 
-      # TODO: move to settings
-      shares = mapAttrs (
-        name: value:
+      settings =
         {
-          inherit (value) path comment;
-
-          public = bool-to-yes-no value.public;
-          browseable = bool-to-yes-no value.browseable;
-          "read only" = bool-to-yes-no value.read-only;
+          global = {
+            browseable = bool-to-yes-no cfg.browseable;
+          };
         }
-        // (optionalAttrs value.only-owner-editable {
-          "write list" = config.${namespace}.user.name;
-          "read list" = "guest, nobody";
-          "create mask" = "0755";
-          "directory mask" = "0755";
-        })
-        // value.extra-config
-      ) cfg.shares;
+        // mapAttrs (
+          name: value:
+          {
+            inherit (value) path comment;
+
+            public = bool-to-yes-no value.public;
+            browseable = bool-to-yes-no value.browseable;
+            "read only" = bool-to-yes-no value.read-only;
+          }
+          // (optionalAttrs value.only-owner-editable {
+            "write list" = config.${namespace}.user.name;
+            "read list" = "guest, nobody";
+            "create mask" = "0755";
+            "directory mask" = "0755";
+          })
+          // value.extra-config
+        ) cfg.shares;
     };
 
     # TODO: figure out samba user and pass setup
