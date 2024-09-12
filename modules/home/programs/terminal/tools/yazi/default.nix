@@ -52,7 +52,7 @@ in
         select
         tasks
       ];
-      settings = import ./yazi.nix { inherit lib pkgs; };
+      settings = import ./yazi.nix { inherit config lib pkgs; };
     };
 
     xdg.configFile = {
