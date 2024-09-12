@@ -19,7 +19,8 @@ in
 
   config = mkIf cfg.enable {
     programs.mpv = {
-      enable = true;
+      enable = pkgs.stdenv.isLinux;
+      package = pkgs.mpv;
 
       defaultProfiles = [ "gpu-hq" ];
       scripts = lib.optionals pkgs.stdenv.isLinux [ pkgs.mpvScripts.mpris ];
