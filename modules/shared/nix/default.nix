@@ -49,7 +49,7 @@ in
         mappedRegistry = lib.pipe inputs [
           (lib.filterAttrs (_: lib.isType "flake"))
           (lib.mapAttrs (_: flake: { inherit flake; }))
-          (x: x // { nixpkgs.flake = inputs.nixpkgs; })
+          (x: x // (lib.mkIf pkgs.stdenv.isLinux { nixpkgs.flake = inputs.nixpkgs; }))
         ];
 
         users = [
