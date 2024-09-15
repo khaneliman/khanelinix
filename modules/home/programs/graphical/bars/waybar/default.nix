@@ -124,7 +124,8 @@ in
 
     programs.waybar = {
       enable = true;
-      package = waybar.packages.${system}.waybar;
+      # TODO: remove patch when https://github.com/Alexays/Waybar/pull/3604 is merged
+      package = waybar.packages.${system}.waybar.overrideAttrs { patches = [ ./3604.patch ]; };
       systemd.enable = true;
 
       settings = mkMerge [
