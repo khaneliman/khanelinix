@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   namespace,
@@ -8,6 +9,7 @@
 let
   inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (inputs) snowfall-flake;
 
   cfg = config.${namespace}.suites.development;
 in
@@ -39,10 +41,13 @@ in
           qtcreator
         ]
         ++ lib.optionals cfg.nixEnable [
+          hydra-check
           nixpkgs-hammering
           nixpkgs-lint-community
           nixpkgs-review
           nix-update
+          nix-output-monitor
+          snowfall-flake.packages.${system}.flake
         ]
         ++ lib.optionals cfg.gameEnable [
           godot_4
