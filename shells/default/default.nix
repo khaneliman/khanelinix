@@ -11,6 +11,7 @@ let
 in
 mkShell {
   packages = with pkgs; [
+    act
     hydra-check
     nix-inspect
     nix-bisect
