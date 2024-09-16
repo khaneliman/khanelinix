@@ -27,7 +27,8 @@ in
 
       masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
         "Patterns" = 429449079;
-        "Xcode" = 497799835;
+        # FIXME: keeps trying to reinstall it
+        # "Xcode" = 497799835;
       };
     };
   };
