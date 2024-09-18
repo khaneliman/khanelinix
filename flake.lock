@@ -49,11 +49,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1726579748,
-        "narHash": "sha256-d8QAY0aQlwnJE2OCTjcX6xx3KSgv0HFEs3CaLE18RnU=",
+        "lastModified": 1726665257,
+        "narHash": "sha256-rEzEZtd3iyVo5RJ1OGujOlnywNf3gsrOnjAn1NLciD4=",
         "owner": "hyprwm",
         "repo": "aquamarine",
-        "rev": "dc399a37d339e958494da270473cbc1d829f7307",
+        "rev": "752d0fbd141fabb5a1e7f865199b80e6e76f8d8e",
         "type": "github"
       },
       "original": {
@@ -904,11 +904,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1726580240,
-        "narHash": "sha256-VBXNeRJMaiqbIietRihPYnWA7bFJO2wqqlPg0f9Xfjc=",
+        "lastModified": 1726669611,
+        "narHash": "sha256-+n+e7jHABO7jbfVwkmEQexUvOqHThaDV+qNvx90flbg=",
         "ref": "refs/heads/main",
-        "rev": "3c9716acfd00c6ea1b7bcd1dc63f97b51cc09998",
-        "revCount": 5227,
+        "rev": "d936eb437b5d33cda21e1502a96dc7d83446aca5",
+        "revCount": 5230,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -1413,11 +1413,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1726628432,
-        "narHash": "sha256-wtkJE//LjVXWwt9NOBDpeFdYHkUYtXeiJ99Ms7NOdb8=",
+        "lastModified": 1726670099,
+        "narHash": "sha256-MbzoKdACZaIOwpldK8eIMGGFR1H70rbaPygSBNR88zA=",
         "owner": "khaneliman",
         "repo": "khanelivim",
-        "rev": "127ae304a13e62d9222c95a7dad5966cc840cf64",
+        "rev": "05a2a0e01fba78599161c71a114e1349fbaee00c",
         "type": "github"
       },
       "original": {
@@ -1701,11 +1701,11 @@
     },
     "nixpkgs_5": {
       "locked": {
-        "lastModified": 1726243404,
-        "narHash": "sha256-sjiGsMh+1cWXb53Tecsm4skyFNag33GPbVgCdfj3n9I=",
+        "lastModified": 1726463316,
+        "narHash": "sha256-gI9kkaH0ZjakJOKrdjaI/VbaMEo9qBbSUl93DnU7f4c=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "345c263f2f53a3710abe117f28a5cb86d0ba4059",
+        "rev": "99dc8785f6a0adac95f5e2ab05cc2e1bf666d172",
         "type": "github"
       },
       "original": {
@@ -1792,11 +1792,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1726604448,
-        "narHash": "sha256-Y9myeRO551JhU5GLoczhHPMquhR0bhtq8Mih1TSu+l0=",
+        "lastModified": 1726665769,
+        "narHash": "sha256-G/f0WToo9dj6iKJtchVYVKnKlmSU3OuYvvIORjVkl0c=",
         "owner": "nix-community",
         "repo": "nixvim",
-        "rev": "6cbf441c22b2c26a1561993f5993e20612a6df1c",
+        "rev": "b34379e9819d171b7ab8f268bdf05dc0b699b3c6",
         "type": "github"
       },
       "original": {
@@ -1807,11 +1807,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1726628322,
-        "narHash": "sha256-PWht2BqTP+FtQuNbJ7+pcFAIDjDYA+YAGl2ggwZWR3o=",
+        "lastModified": 1726664693,
+        "narHash": "sha256-wKhz9vk5SweftZ3qIDj87tjCoiso5dBg3exVxdxCYtU=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "a0314649bb457dc22dcd03bd07b6cdcc45ccf839",
+        "rev": "cac0bf9ab741e9cc76042fe00284bd692ac80a8f",
         "type": "github"
       },
       "original": {
@@ -2093,11 +2093,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1726546530,
-        "narHash": "sha256-cgfOnRrsSgxXOUNqTyiLFlnFSC7ukveTEqAzsanCHdk=",
+        "lastModified": 1726633022,
+        "narHash": "sha256-Ef/kTMoV3aPfecL2X27sxYshsLJJDIBFKYjPsqaTUBw=",
         "owner": "Gerg-L",
         "repo": "spicetify-nix",
-        "rev": "65e118fae842aa8d7c0d3c11e3b484effc0dde16",
+        "rev": "9f373314f087e11183afe6928d48a816d44929d4",
         "type": "github"
       },
       "original": {
@@ -2464,11 +2464,11 @@
       },
       "locked": {
         "dir": "nix",
-        "lastModified": 1726439563,
-        "narHash": "sha256-6aDv7s8cUL/PG/RRIkDlydMFL8xii9Xhw1JXI9G96xs=",
+        "lastModified": 1726667357,
+        "narHash": "sha256-ezIgDZP0Oq3tx0quGvTdpNJipmg1Yo95etnDPGTqTqg=",
         "owner": "wez",
         "repo": "wezterm",
-        "rev": "2d0c5cddc91a9c59aef9a7667d90924e7cedd0ac",
+        "rev": "832c533c5f9e8d1c3315f2fbf96c125927a232f7",
         "type": "github"
       },
       "original": {
