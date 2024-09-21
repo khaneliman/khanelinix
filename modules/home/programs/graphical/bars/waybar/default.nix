@@ -124,7 +124,9 @@ in
 
     programs.waybar = {
       enable = true;
-      package = waybar.packages.${system}.waybar;
+      package = waybar.packages.${system}.waybar.overrideAttrs (_oldAttrs: {
+        patches = [ ];
+      });
       systemd.enable = true;
 
       settings = mkMerge [
