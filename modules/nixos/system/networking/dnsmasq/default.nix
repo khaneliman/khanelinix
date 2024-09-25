@@ -10,7 +10,7 @@ let
   cfg = config.${namespace}.system.networking;
 in
 {
-  config = mkIf (cfg.dns == "dnsmasq") {
+  config = mkIf (cfg.enable && cfg.dns == "dnsmasq") {
     networking.networkmanager.dns = "dnsmasq";
     services.resolved.enable = mkForce false;
     services.dnsmasq = {
