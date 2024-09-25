@@ -10,7 +10,7 @@ let
   cfg = config.${namespace}.system.networking;
 in
 {
-  config = mkIf (cfg.dns == "systemd-resolved") {
+  config = mkIf (cfg.enable && cfg.dns == "systemd-resolved") {
     networking.networkmanager.dns = "systemd-resolved";
     services.dnsmasq.enable = mkForce false;
     services.resolved = {
