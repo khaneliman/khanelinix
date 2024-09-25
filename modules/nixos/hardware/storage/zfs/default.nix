@@ -21,7 +21,8 @@ in
   };
 
   config = mkIf cfg.enable {
-    boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
+    # NOTE: shouldn't need to be set anymore
+    # boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
 
     services.zfs = {
       autoScrub = {
