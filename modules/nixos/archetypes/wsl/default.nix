@@ -30,5 +30,7 @@ in
         wslu
       ];
     };
+
+    khanelinix.system.networking.enable = mkForce false;
   };
 }
