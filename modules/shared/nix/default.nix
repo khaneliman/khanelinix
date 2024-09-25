@@ -62,6 +62,40 @@ in
       {
         inherit (cfg) package;
 
+        buildMachines =
+          let
+            protocol = "ssh";
+            sshUser = "khaneliman";
+            supportedFeatures = [
+              "benchmark"
+              "big-parallel"
+              "nixos-test"
+            ];
+          in
+          [
+            {
+              inherit protocol sshUser;
+              hostName = "khanelinix.local";
+              system = "x86_64-linux";
+              maxJobs = 16;
+              speedFactor = 10;
+              supportedFeatures = supportedFeatures ++ [ "kvm" ];
+            }
+            {
+              inherit protocol sshUser;
+              hostName = "khanelimac.local";
+              systems = [
+                "aarch64-darwin"
+                "x86_64-darwin"
+              ];
+              maxJobs = 8;
+              speedFactor = 5;
+              supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
+            }
+          ];
+
+        distributedBuilds = true;
+
         gc = {
           automatic = true;
           options = "--delete-older-than 7d";
