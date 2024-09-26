@@ -73,15 +73,15 @@ in
             ];
           in
           [
-            {
+            (lib.mkIf pkgs.stdenv.isDarwin {
               inherit protocol sshUser;
               hostName = "khanelinix.local";
               system = "x86_64-linux";
               maxJobs = 16;
               speedFactor = 10;
               supportedFeatures = supportedFeatures ++ [ "kvm" ];
-            }
-            {
+            })
+            (lib.mkIf pkgs.stdenv.isLinux {
               inherit protocol sshUser;
               hostName = "khanelimac.local";
               systems = [
@@ -91,7 +91,7 @@ in
               maxJobs = 8;
               speedFactor = 5;
               supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
-            }
+            })
           ];
 
         distributedBuilds = true;
