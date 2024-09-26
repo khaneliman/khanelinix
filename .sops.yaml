@@ -25,7 +25,7 @@ creation_rules:
     key_groups:
       - age:
           - *admin_khaneliman
-  - path_regex: secrets/khanelimac/khaneliman[^/]+\.(yaml|json|env|ini)$
+  - path_regex: secrets/khanelimac/khaneliman/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
           - *admin_khaneliman
@@ -34,7 +34,7 @@ creation_rules:
     key_groups:
       - age:
           - *admin_khaneliman
-  - path_regex: secrets/khanelinix/khaneliman[^/]+\.(yaml|json|env|ini)$
+  - path_regex: secrets/khanelinix/khaneliman/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
           - *admin_khaneliman
