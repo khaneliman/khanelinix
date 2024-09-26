@@ -14,6 +14,7 @@ in
 {
   options.${namespace}.programs.graphical.apps._1password = {
     enable = mkBoolOpt false "Whether or not to enable 1password.";
+    enableSshSocket = mkBoolOpt false "Whether or not to enable ssh-agent socket.";
   };
 
   config = mkIf cfg.enable {
@@ -29,7 +30,7 @@ in
       ssh.extraConfig = ''
         Host *
           AddKeysToAgent yes
-          IdentityAgent ~/.1password/agent.sock
+          ${lib.optionalString cfg.enableSshSocket "IdentityAgent ~/.1password/agent.sock"}
       '';
     };
   };
