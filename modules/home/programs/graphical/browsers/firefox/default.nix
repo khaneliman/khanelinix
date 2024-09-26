@@ -218,6 +218,9 @@ in
               "font.name.sans-serif.x-western" = "MonaspiceNe Nerd Font";
               "font.name.serif.x-western" = "MonaspiceNe Nerd Font";
               "signon.autofillForms" = false;
+              "signon.firefoxRelay.feature" = "disabled";
+              "signon.generation.enabled" = false;
+              "signon.management.page.breach-alerts.enabled" = false;
               "xpinstall.signatures.required" = false;
             }
             (optionalAttrs cfg.gpuAcceleration {
