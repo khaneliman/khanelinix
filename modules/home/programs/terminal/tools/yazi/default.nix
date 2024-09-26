@@ -32,6 +32,7 @@ in
       config.programs.ripgrep.package
       xdragon
       zoxide
+      glow
     ];
 
     programs.yazi = {
