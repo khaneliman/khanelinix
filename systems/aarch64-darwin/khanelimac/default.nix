@@ -16,10 +16,6 @@ in
       workstation = enabled;
     };
 
-    security = {
-      sops = enabled;
-    };
-
     suites = {
       art = enabled;
       common = enabled;

@@ -2,6 +2,7 @@
   config,
   lib,
   namespace,
+  pkgs,
   ...
 }:
 let
@@ -18,6 +19,12 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.packages = with pkgs; [
+      age
+      sops
+      ssh-to-age
+    ];
+
     sops = {
       inherit (cfg) defaultSopsFile;
       defaultSopsFormat = "yaml";

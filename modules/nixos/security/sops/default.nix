@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   namespace,
   ...
 }:
@@ -18,12 +17,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      age
-      sops
-      ssh-to-age
-    ];
-
     sops = {
       inherit (cfg) defaultSopsFile;
 
