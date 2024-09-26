@@ -166,6 +166,11 @@ in
       # doas = enabled;
       keyring = enabled;
       sudo-rs = enabled;
+      sops = {
+        enable = true;
+        sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+        defaultSopsFile = lib.snowfall.fs.get-file "secrets/khanelinix/default.yaml";
+      };
     };
 
     suites = {
