@@ -35,6 +35,12 @@ in
       glow
     ];
 
+    # Dumb workaround for no color with latest glow
+    # https://github.com/Reledia/glow.yazi/issues/7
+    home.sessionVariables = {
+      "CLICOLOR_FORCE" = 1;
+    };
+
     programs.yazi = {
       enable = true;
       package = pkgs.yazi;
