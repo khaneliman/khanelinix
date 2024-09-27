@@ -21,17 +21,14 @@ let
 
   cfg = config.${namespace}.services.openssh;
 
-  # @TODO(jakehamilton): This is a hold-over from an earlier Snowfall Lib version which used
-  # the specialArg `name` to provide the host name.
-  name = host;
-
+  host' = host;
   user = config.users.users.${config.${namespace}.user.name};
   user-id = builtins.toString user.uid;
 
   default-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJAZIwy7nkz8CZYR/ZTSNr+7lRBW2AYy1jw06b44zaID";
 
   other-hosts = lib.filterAttrs (
-    key: host: key != name && (host.config.${namespace}.user.name or null) != null
+    key: host: key != host' && (host.config.${namespace}.user.name or null) != null
   ) ((inputs.self.nixosConfigurations or { }) // (inputs.self.darwinConfigurations or { }));
 
   other-hosts-config = lib.concatMapStringsSep "\n" (
