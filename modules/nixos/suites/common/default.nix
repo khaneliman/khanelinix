@@ -51,8 +51,7 @@ in
 
       security = {
         auditd = enabled;
-        # FIXME: broken nixpkgs
-        # clamav = enabled;
+        clamav = enabled;
         gpg = enabled;
         pam = enabled;
         usbguard = enabled;
