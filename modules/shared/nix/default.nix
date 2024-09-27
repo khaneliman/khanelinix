@@ -81,19 +81,35 @@ in
               speedFactor = 10;
               supportedFeatures = supportedFeatures ++ [ "kvm" ];
             })
-            (lib.mkIf pkgs.stdenv.isLinux {
-              inherit protocol sshUser;
-              hostName = "khanelimac.local";
+          ]
+          ++ lib.optionals pkgs.stdenv.isLinux (
+            let
               systems = [
                 "aarch64-darwin"
                 "x86_64-darwin"
               ];
-              maxJobs = 8;
-              speedFactor = 5;
-              supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
-              sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
-            })
-          ];
+            in
+            [
+              {
+                inherit protocol sshUser systems;
+                hostName = "khanelimac.local";
+                maxJobs = 8;
+                speedFactor = 5;
+                supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
+                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
+              }
+              {
+                inherit protocol sshUser systems;
+                hostName = "darwin-build-box.nix-community.org";
+                maxJobs = 32;
+                speedFactor = 20;
+                supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
+                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
+                publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUZ6OEZYU1ZFZGY4RnZETWZib3hoQjVWalNlN3kyV2dTYTA5cTFMNHQwOTkgCg";
+              }
+
+            ]
+          );
 
         distributedBuilds = true;
 
