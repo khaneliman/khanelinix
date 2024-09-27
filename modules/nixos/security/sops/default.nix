@@ -26,5 +26,11 @@ in
         keyFile = "${config.users.users.${config.${namespace}.user.name}.home}/.config/sops/age/keys.txt";
       };
     };
+
+    sops.secrets = {
+      "khanelinix_khaneliman_ssh_key" = {
+        sopsFile = lib.snowfall.fs.get-file "secrets/khanelinix/khaneliman/default.yaml";
+      };
+    };
   };
 }
