@@ -91,6 +91,7 @@ in
               maxJobs = 8;
               speedFactor = 5;
               supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
+              sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
             })
           ];
 
@@ -146,5 +147,6 @@ in
           use-xdg-base-directories = true;
         };
       };
+
   };
 }
