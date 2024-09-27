@@ -1,9 +1,7 @@
 {
   config,
-  inputs,
   lib,
   pkgs,
-  system,
   namespace,
   ...
 }:
@@ -17,7 +15,6 @@ let
     getExe'
     ;
   inherit (lib.${namespace}) mkOpt enabled;
-  inherit (inputs) snowfall-flake;
 
   cfg = config.${namespace}.user;
 
@@ -82,9 +79,11 @@ in
           run = "nix run";
           search = "nix search";
           shell = "nix shell";
-          nixre = "${lib.optionalString pkgs.stdenv.isLinux "sudo"} ${
-            getExe snowfall-flake.packages.${system}.flake
-          } switch";
+          nixre = "${lib.optionalString pkgs.stdenv.isLinux "sudo"} flake switch";
+          # TODO: figure out how to make this nix flake check compatible
+          # nixre = "${lib.optionalString pkgs.stdenv.isLinux "sudo"} ${
+          #   getExe snowfall-flake.packages.${system}.flake
+          # } switch";
 
           gsed = "${getExe pkgs.gnused}";
 
