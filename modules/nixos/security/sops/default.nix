@@ -23,7 +23,7 @@ in
       age = {
         inherit (cfg) sshKeyPaths;
 
-        keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
+        keyFile = "${config.users.users.${config.${namespace}.user.name}.home}/.config/sops/age/keys.txt";
       };
     };
   };
