@@ -1,7 +1,6 @@
 {
   config,
   inputs,
-  pkgs,
   lib,
   namespace,
   system,
@@ -10,7 +9,7 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) compileSCSS mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt;
   inherit (inputs) anyrun anyrun-nixos-options;
 
   cfg = config.${namespace}.programs.graphical.launchers.anyrun;
@@ -122,19 +121,12 @@ in
         "websearch.ron".text = ''
           Config(
             prefix: "?",
-            engines: [DuckDuckGo] 
+            engines: [DuckDuckGo]
           )
         '';
       };
 
-      # this compiles the SCSS file from the given path into CSS
-      # by default, `-t expanded` as the args to the sass compiler
-      extraCss = builtins.readFile (
-        compileSCSS pkgs {
-          name = "style-dark";
-          source = ./styles/dark.scss;
-        }
-      );
+      extraCss = builtins.readFile ./styles/dark.css;
     };
   };
 }
