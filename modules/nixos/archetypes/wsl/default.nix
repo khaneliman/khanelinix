@@ -18,8 +18,6 @@ in
 
   config = mkIf cfg.enable {
     environment = {
-      noXlibs = mkForce false;
-
       sessionVariables = {
         BROWSER = "wsl-open";
       };
