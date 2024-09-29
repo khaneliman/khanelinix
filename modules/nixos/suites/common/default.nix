@@ -60,6 +60,7 @@ in
       services = {
         ddccontrol = enabled;
         earlyoom = enabled;
+        logind = enabled;
         logrotate = enabled;
         # oomd = enabled;
         openssh = enabled;
