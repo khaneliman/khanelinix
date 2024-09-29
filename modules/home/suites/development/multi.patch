@@ -1,0 +1,1216 @@
+From 598aa536ef1cb94d6a5224455a3666253ae62ac9 Mon Sep 17 00:00:00 2001
+From: Gaetan Lepage <gaetan@glepage.com>
+Date: Mon, 23 Sep 2024 00:15:57 +0200
+Subject: [PATCH 1/3] [WIP] Feat: add support for multi-systems
+
+---
+ README.md                           |  55 +++++--
+ nixpkgs_review/cli/__init__.py      |  12 +-
+ nixpkgs_review/cli/pr.py            |  22 ++-
+ nixpkgs_review/nix.py               |  68 ++++++---
+ nixpkgs_review/nix/review-shell.nix |  34 ++++-
+ nixpkgs_review/report.py            | 229 +++++++++++++++++-----------
+ nixpkgs_review/review.py            | 145 +++++++++++-------
+ nixpkgs_review/utils.py             |   4 +-
+ 8 files changed, 372 insertions(+), 197 deletions(-)
+
+diff --git a/README.md b/README.md
+index 958261f..18b6140 100644
+--- a/README.md
++++ b/README.md
+@@ -175,19 +175,38 @@ done
+ inside the nix-shell instead of an interactive session:
+
+ ```console
+-$ nixpkgs-review pr --run 'jq < report.json' 113814
++$ nixpkgs-review pr --run --systems all 'jq < report.json' 340297
+ # ...
+ {
+-  "blacklisted": [],
+-  "broken": [],
+-  "built": [
+-    "cargo-deny"
+-  ],
+-  "failed": [],
+-  "non-existent": [],
+-  "pr": 113814,
+-  "system": "x86_64-linux",
+-  "tests": []
++  "checkout": "merge",
++  "extra-nixpkgs-config": null,
++  "pr": 340297,
++  "result": {
++    "aarch64-linux": {
++      "blacklisted": [],
++      "broken": [],
++      "built": [
++        "forecast"
++      ],
++      "failed": [],
++      "non-existent": [],
++      "tests": []
++    },
++    "x86_64-linux": {
++      "blacklisted": [],
++      "broken": [],
++      "built": [
++        "forecast"
++      ],
++      "failed": [],
++      "non-existent": [],
++      "tests": []
++    }
++  },
++  "systems": [
++    "x86_64-linux",
++    "aarch64-linux"
++  ]
+ }
+ ```
+
+@@ -326,9 +345,17 @@ subcommand.
+
+ ## Review changes for other operating systems/architectures
+
+-The `--system` flag allows setting a system different from the current one. Note
+-that the result nix-shell may not be able to execute all hooks correctly since
+-the architecture/operating system mismatches.
++The `--systems` flag allows setting a system different from the current one.
++Note that the result nix-shell may not be able to execute all hooks correctly
++since the architecture/operating system mismatches.
++
++By default, `nixpkgs-review` targets only the current system
++(`--systems current`). You can also explicitly provide one or several systems to
++target (`--systems "x86_64-linux aarch64-darwin"`). The `--systems all` value
++will build for the four major platforms supported by hydra (`--x86_64-linux`,
++`aarch64-linux`, `x86_64-darwin` and `aarch64-darwin`). Ensure that your system
++is capable of building for the specified architectures, either locally or
++through the remote builder protocol.
+
+ ```console
+ $ nixpkgs-review pr --system aarch64-linux 98734
+diff --git a/nixpkgs_review/cli/__init__.py b/nixpkgs_review/cli/__init__.py
+index a87c4cd..5938f75 100644
+--- a/nixpkgs_review/cli/__init__.py
++++ b/nixpkgs_review/cli/__init__.py
+@@ -9,7 +9,7 @@
+ from shutil import which
+ from typing import Any, cast
+
+-from ..utils import current_system, nix_nom_tool
++from ..utils import nix_nom_tool
+ from .approve import approve_command
+ from .comments import show_comments
+ from .merge import merge_command
+@@ -213,11 +213,17 @@ def common_flags() -> list[CommonFlag]:
+             type=regex_type,
+             help="Regular expression that package attributes have not to match (can be passed multiple times)",
+         ),
++        CommonFlag(
++            "--systems",
++            type=str,
++            default="current",
++            help="Nix 'systems' to evaluate and build packages for",
++        ),
+         CommonFlag(
+             "--system",
+             type=str,
+-            default=current_system(),
+-            help="Nix 'system' to evaluate and build packages for",
++            default="",
++            help="[DEPRECATED] use `--systems` instead",
+         ),
+         CommonFlag(
+             "--token",
+diff --git a/nixpkgs_review/cli/pr.py b/nixpkgs_review/cli/pr.py
+index 0001588..fa62636 100644
+--- a/nixpkgs_review/cli/pr.py
++++ b/nixpkgs_review/cli/pr.py
+@@ -2,13 +2,15 @@
+ import re
+ import sys
+ from contextlib import ExitStack
++from pathlib import Path
+
+ from ..allow import AllowedFeatures
+ from ..builddir import Builddir
+ from ..buildenv import Buildenv
+ from ..errors import NixpkgsReviewError
++from ..nix import Attr
+ from ..review import CheckoutOption, Review
+-from ..utils import warn
++from ..utils import System, warn
+ from .utils import ensure_github_token
+
+
+@@ -32,7 +34,7 @@ def parse_pr_numbers(number_args: list[str]) -> list[int]:
+
+
+ def pr_command(args: argparse.Namespace) -> str:
+-    prs = parse_pr_numbers(args.number)
++    prs: list[int] = parse_pr_numbers(args.number)
+     use_ofborg_eval = args.eval == "ofborg"
+     checkout_option = (
+         CheckoutOption.MERGE if args.checkout == "merge" else CheckoutOption.COMMIT
+@@ -40,8 +42,20 @@ def pr_command(args: argparse.Namespace) -> str:
+
+     if args.post_result:
+         ensure_github_token(args.token)
++    if args.system:
++        warn("Warning: The `--system` is deprecated. Use `--systems` instead.")
++        args.systems = args.system
+
+-    contexts = []
++    contexts: list[
++        tuple[
++            # PR number
++            int,
++            # builddir path
++            Path,
++            # Attrs to build for each system
++            dict[System, list[Attr]],
++        ]
++    ] = []
+
+     allow = AllowedFeatures(args.allow)
+
+@@ -65,7 +79,7 @@ def pr_command(args: argparse.Namespace) -> str:
+                     package_regexes=args.package_regex,
+                     skip_packages=set(args.skip_package),
+                     skip_packages_regex=args.skip_package_regex,
+-                    system=args.system,
++                    systems=args.systems.split(" "),
+                     allow=allow,
+                     checkout=checkout_option,
+                     sandbox=args.sandbox,
+diff --git a/nixpkgs_review/nix.py b/nixpkgs_review/nix.py
+index bf8adbb..85e8fd2 100644
+--- a/nixpkgs_review/nix.py
++++ b/nixpkgs_review/nix.py
+@@ -11,7 +11,7 @@
+
+ from .allow import AllowedFeatures
+ from .errors import NixpkgsReviewError
+-from .utils import ROOT, escape_attr, info, sh, warn
++from .utils import ROOT, System, info, sh, warn
+
+
+ @dataclass
+@@ -56,9 +56,9 @@ def is_test(self) -> bool:
+
+
+ def nix_shell(
+-    attrs: list[str],
++    attrs_per_system: dict[System, list[str]],
+     cache_directory: Path,
+-    system: str,
++    local_system: str,
+     build_graph: str,
+     nix_path: str,
+     nixpkgs_config: Path,
+@@ -71,7 +71,10 @@ def nix_shell(
+         raise RuntimeError(f"{build_graph} not found in PATH")
+
+     shell_file_args = build_shell_file_args(
+-        cache_directory, attrs, system, nixpkgs_config
++        cache_dir=cache_directory,
++        attrs_per_system=attrs_per_system,
++        local_system=local_system,
++        nixpkgs_config=nixpkgs_config,
+     )
+     if sandbox:
+         args = _nix_shell_sandbox(
+@@ -267,27 +270,33 @@ def nix_eval(
+
+
+ def nix_build(
+-    attr_names: set[str],
++    attr_names_per_system: dict[System, set[str]],
+     args: str,
+     cache_directory: Path,
+-    system: str,
++    systems: set[System],
++    local_system: System,
+     allow: AllowedFeatures,
+     build_graph: str,
+     nix_path: str,
+     nixpkgs_config: Path,
+-) -> list[Attr]:
+-    if not attr_names:
++) -> dict[System, list[Attr]]:
++    if not attr_names_per_system:
+         info("Nothing to be built.")
+-        return []
++        return {}
+
+-    attrs = nix_eval(attr_names, system, allow, nix_path)
+-    filtered = []
+-    for attr in attrs:
+-        if not (attr.broken or attr.blacklisted):
+-            filtered.append(attr.name)
++    # TODO parallelize evaluation
++    attrs_per_system: dict[System, list[Attr]] = {}
++    filtered_per_system: dict[System, list[str]] = {}
++    for system, attr_names in attr_names_per_system.items():
++        attrs_per_system[system] = nix_eval(attr_names, system, allow, nix_path)
+
+-    if len(filtered) == 0:
+-        return attrs
++        filtered_per_system[system] = []
++        for attr in attrs_per_system[system]:
++            if not (attr.broken or attr.blacklisted):
++                filtered_per_system[system].append(attr.name)
++
++    if all(len(filtered) == 0 for filtered in filtered_per_system.values()):
++        return attrs_per_system
+
+     command = [
+         build_graph,
+@@ -314,26 +323,37 @@ def nix_build(
+         ]
+
+     command += build_shell_file_args(
+-        cache_directory, filtered, system, nixpkgs_config
++        cache_dir=cache_directory,
++        attrs_per_system=filtered_per_system,
++        local_system=local_system,
++        nixpkgs_config=nixpkgs_config,
+     ) + shlex.split(args)
+
+     sh(command)
+-    return attrs
++    return attrs_per_system
+
+
+ def build_shell_file_args(
+-    cache_dir: Path, attrs: list[str], system: str, nixpkgs_config: Path
++    cache_dir: Path,
++    attrs_per_system: dict[System, list[str]],
++    local_system: str,
++    nixpkgs_config: Path,
+ ) -> list[str]:
+     attrs_file = cache_dir.joinpath("attrs.nix")
+     with open(attrs_file, "w+", encoding="utf-8") as f:
+-        f.write("pkgs: with pkgs; [\n")
+-        f.write("\n".join(f"  {escape_attr(a)}" for a in attrs))
+-        f.write("\n]")
++        f.write("{\n")
++        for system, attrs in attrs_per_system.items():
++            f.write(f"  {system} = [\n")
++            for attr in attrs:
++                f.write(f'    "{attr}"\n')
++            f.write("  ];\n")
++        f.write("}")
++        print(f.read())
+
+     return [
+         "--argstr",
+-        "system",
+-        system,
++        "local-system",
++        local_system,
+         "--argstr",
+         "nixpkgs-path",
+         str(cache_dir.joinpath("nixpkgs/")),
+diff --git a/nixpkgs_review/nix/review-shell.nix b/nixpkgs_review/nix/review-shell.nix
+index 9938f13..d78007d 100644
+--- a/nixpkgs_review/nix/review-shell.nix
++++ b/nixpkgs_review/nix/review-shell.nix
+@@ -1,14 +1,32 @@
+-{ system
+-, nixpkgs-config-path # Path to Nix file containing the Nixpkgs config
+-, attrs-path # Path to Nix file containing a list of attributes to build
+-, nixpkgs-path # Path to this review's nixpkgs
+-, pkgs ? import nixpkgs-path { inherit system; config = import nixpkgs-config-path; }
+-, lib ? pkgs.lib
++{ local-system
++, nixpkgs-config-path
++, # Path to Nix file containing the Nixpkgs config
++  attrs-path
++, # Path to Nix file containing a list of attributes to build
++  nixpkgs-path
++, # Path to this review's nixpkgs
++  local-pkgs ? import nixpkgs-path {
++    system = local-system;
++    config = import nixpkgs-config-path;
++  }
++, lib ? local-pkgs.lib
++,
+ }:
+
+ let
+-  attrs = import attrs-path pkgs;
+-  env = pkgs.buildEnv {
++
++  nixpkgs-config = import nixpkgs-config-path;
++  extractPackagesForSystem =
++    system: system-attrs:
++    let
++      system-pkg = import nixpkgs-path {
++        inherit system;
++        config = nixpkgs-config;
++      };
++    in
++    map (attrString: lib.attrByPath (lib.splitString "." attrString) null system-pkg) system-attrs;
++  attrs = lib.flatten (lib.mapAttrsToList extractPackagesForSystem (import attrs-path));
++  env = local-pkgs.buildEnv {
+     name = "env";
+     paths = attrs;
+     ignoreCollisions = true;
+diff --git a/nixpkgs_review/report.py b/nixpkgs_review/report.py
+index fd29acb..c7641df 100644
+--- a/nixpkgs_review/report.py
++++ b/nixpkgs_review/report.py
+@@ -6,7 +6,7 @@
+ from typing import Literal
+
+ from .nix import Attr
+-from .utils import info, link, warn
++from .utils import System, info, link, warn
+
+
+ def print_number(
+@@ -55,84 +55,124 @@ def ensure(self) -> Path:
+         return self.path
+
+
+-def write_error_logs(attrs: list[Attr], directory: Path) -> None:
++def write_error_logs(attrs_per_system: dict[str, list[Attr]], directory: Path) -> None:
+     logs = LazyDirectory(directory.joinpath("logs"))
+     results = LazyDirectory(directory.joinpath("results"))
+     failed_results = LazyDirectory(directory.joinpath("failed_results"))
+-    for attr in attrs:
+-        # Broken attrs have no drv_path.
+-        if attr.blacklisted or attr.drv_path is None:
+-            continue
+-
+-        if attr.path is not None and os.path.exists(attr.path):
+-            if attr.was_build():
+-                symlink_source = results.ensure().joinpath(attr.name)
++    for system, attrs in attrs_per_system.items():
++        for attr in attrs:
++            # Broken attrs have no drv_path.
++            if attr.blacklisted or attr.drv_path is None:
++                continue
++
++            attr_name: str = f"{attr.name}-{system}"
++
++            if attr.path is not None and os.path.exists(attr.path):
++                if attr.was_build():
++                    symlink_source = results.ensure().joinpath(attr_name)
++                else:
++                    symlink_source = failed_results.ensure().joinpath(attr_name)
++                if os.path.lexists(symlink_source):
++                    symlink_source.unlink()
++                symlink_source.symlink_to(attr.path)
++
++            for path in [f"{attr.drv_path}^*", attr.path]:
++                if not path:
++                    continue
++                with open(
++                    logs.ensure().joinpath(attr_name + ".log"),
++                    "w+",
++                    encoding="utf-8",
++                ) as f:
++                    nix_log = subprocess.run(
++                        [
++                            "nix",
++                            "--extra-experimental-features",
++                            "nix-command",
++                            "log",
++                            path,
++                        ],
++                        stdout=f,
++                    )
++                    if nix_log.returncode == 0:
++                        break
++
++
++def _serialize_attrs(attrs: list[Attr]) -> list[str]:
++    return list(map(lambda a: a.name, attrs))
++
++
++class SystemReport:
++    def __init__(self, attrs: list[Attr]) -> None:
++        self.broken: list[Attr] = []
++        self.failed: list[Attr] = []
++        self.non_existent: list[Attr] = []
++        self.blacklisted: list[Attr] = []
++        self.tests: list[Attr] = []
++        self.built: list[Attr] = []
++
++        for attr in attrs:
++            if attr.broken:
++                self.broken.append(attr)
++            elif attr.blacklisted:
++                self.blacklisted.append(attr)
++            elif not attr.exists:
++                self.non_existent.append(attr)
++            elif attr.name.startswith("nixosTests."):
++                self.tests.append(attr)
++            elif not attr.was_build():
++                self.failed.append(attr)
+             else:
+-                symlink_source = failed_results.ensure().joinpath(attr.name)
+-            if os.path.lexists(symlink_source):
+-                symlink_source.unlink()
+-            symlink_source.symlink_to(attr.path)
++                self.built.append(attr)
++
++    def serialize(self) -> dict[str, list[str]]:
++        return {
++            "broken": _serialize_attrs(self.broken),
++            "non-existent": _serialize_attrs(self.non_existent),
++            "blacklisted": _serialize_attrs(self.blacklisted),
++            "failed": _serialize_attrs(self.failed),
++            "built": _serialize_attrs(self.built),
++            "tests": _serialize_attrs(self.tests),
++        }
+
+-        for path in [f"{attr.drv_path}^*", attr.path]:
+-            if not path:
+-                continue
+-            with open(
+-                logs.ensure().joinpath(attr.name + ".log"), "w+", encoding="utf-8"
+-            ) as f:
+-                nix_log = subprocess.run(
+-                    [
+-                        "nix",
+-                        "--extra-experimental-features",
+-                        "nix-command",
+-                        "log",
+-                        path,
+-                    ],
+-                    stdout=f,
+-                )
+-                if nix_log.returncode == 0:
+-                    break
++
++def order_reports(reports: dict[System, SystemReport]) -> dict[System, SystemReport]:
++    """Ensure that systems are always ordered consistently in reports"""
++    return dict(
++        sorted(
++            reports.items(),
++            key=lambda item: "".join(reversed(item[0].split("-"))),
++            reverse=True,
++        )
++    )
+
+
+ class Report:
+     def __init__(
+         self,
+-        system: str,
+-        attrs: list[Attr],
++        attrs_per_system: dict[str, list[Attr]],
+         extra_nixpkgs_config: str,
+         *,
+         checkout: Literal["merge", "commit"] = "merge",
+     ) -> None:
+-        self.system = system
+-        self.attrs = attrs
++        self.attrs = attrs_per_system
+         self.checkout = checkout
+-        self.broken: list[Attr] = []
+-        self.failed: list[Attr] = []
+-        self.non_existent: list[Attr] = []
+-        self.blacklisted: list[Attr] = []
+-        self.tests: list[Attr] = []
+-        self.built: list[Attr] = []
+
+         if extra_nixpkgs_config != "{ }":
+             self.extra_nixpkgs_config: str | None = extra_nixpkgs_config
+         else:
+             self.extra_nixpkgs_config = None
+
+-        for a in attrs:
+-            if a.broken:
+-                self.broken.append(a)
+-            elif a.blacklisted:
+-                self.blacklisted.append(a)
+-            elif not a.exists:
+-                self.non_existent.append(a)
+-            elif a.name.startswith("nixosTests."):
+-                self.tests.append(a)
+-            elif not a.was_build():
+-                self.failed.append(a)
+-            else:
+-                self.built.append(a)
++        reports: dict[System, SystemReport] = {}
++        for system, attrs in attrs_per_system.items():
++            reports[system] = SystemReport(attrs)
++        self.system_reports: dict[System, SystemReport] = order_reports(reports)
+
+-    def built_packages(self) -> list[str]:
+-        return [a.name for a in self.built]
++    def built_packages(self) -> dict[System, list[str]]:
++        return {
++            system: [a.name for a in report.built]
++            for system, report in self.system_reports.items()
++        }
+
+     def write(self, directory: Path, pr: int | None) -> None:
+         with open(directory.joinpath("report.md"), "w+", encoding="utf-8") as f:
+@@ -145,30 +185,28 @@ def write(self, directory: Path, pr: int | None) -> None:
+
+     def succeeded(self) -> bool:
+         """Whether the report is considered a success or a failure"""
+-        return len(self.failed) == 0
++        return all((len(report.failed) == 0) for report in self.system_reports.values())
+
+     def json(self, pr: int | None) -> str:
+-        def serialize_attrs(attrs: list[Attr]) -> list[str]:
+-            return list(map(lambda a: a.name, attrs))
+-
+         return json.dumps(
+             {
+-                "system": self.system,
++                "systems": list(self.system_reports.keys()),
+                 "pr": pr,
+                 "checkout": self.checkout,
+                 "extra-nixpkgs-config": self.extra_nixpkgs_config,
+-                "broken": serialize_attrs(self.broken),
+-                "non-existent": serialize_attrs(self.non_existent),
+-                "blacklisted": serialize_attrs(self.blacklisted),
+-                "failed": serialize_attrs(self.failed),
+-                "built": serialize_attrs(self.built),
+-                "tests": serialize_attrs(self.tests),
++                "result": {
++                    system: report.serialize()
++                    for system, report in self.system_reports.items()
++                },
+             },
+             sort_keys=True,
+             indent=4,
+         )
+
+     def markdown(self, pr: int | None) -> str:
++        msg = "## `nixpkgs-review` result\n\n"
++        msg += "Generated using [`nixpkgs-review`](https://github.com/Mic92/nixpkgs-review).\n\n"
++
+         cmd = "nixpkgs-review"
+         if pr is not None:
+             cmd += f" pr {pr}"
+@@ -176,21 +214,27 @@ def markdown(self, pr: int | None) -> str:
+             cmd += f" --extra-nixpkgs-config '{self.extra_nixpkgs_config}'"
+         if self.checkout != "merge":
+             cmd += f" --checkout {self.checkout}"
++        msg += f"Command: `{cmd}`\n"
+
+-        msg = f"Result of `{cmd}` run on {self.system} [1](https://github.com/Mic92/nixpkgs-review)\n"
+-
+-        msg += html_pkgs_section(
+-            ":fast_forward:", self.broken, "marked as broken and skipped"
+-        )
+-        msg += html_pkgs_section(
+-            ":fast_forward:",
+-            self.non_existent,
+-            "present in ofBorgs evaluation, but not found in the checkout",
+-        )
+-        msg += html_pkgs_section(":fast_forward:", self.blacklisted, "blacklisted")
+-        msg += html_pkgs_section(":x:", self.failed, "failed to build")
+-        msg += html_pkgs_section(":white_check_mark:", self.tests, "built", what="test")
+-        msg += html_pkgs_section(":white_check_mark:", self.built, "built")
++        for system, report in self.system_reports.items():
++            msg += "\n---\n"
++            msg += f"### `{system}`\n"
++            msg += html_pkgs_section(
++                ":fast_forward:", report.broken, "marked as broken and skipped"
++            )
++            msg += html_pkgs_section(
++                ":fast_forward:",
++                report.non_existent,
++                "present in ofBorgs evaluation, but not found in the checkout",
++            )
++            msg += html_pkgs_section(
++                ":fast_forward:", report.blacklisted, "blacklisted"
++            )
++            msg += html_pkgs_section(":x:", report.failed, "failed to build")
++            msg += html_pkgs_section(
++                ":white_check_mark:", report.tests, "built", what="test"
++            )
++            msg += html_pkgs_section(":white_check_mark:", report.built, "built")
+
+         return msg
+
+@@ -199,12 +243,15 @@ def print_console(self, pr: int | None) -> None:
+             pr_url = f"https://github.com/NixOS/nixpkgs/pull/{pr}"
+             info("\nLink to currently reviewing PR:")
+             link(f"\u001b]8;;{pr_url}\u001b\\{pr_url}\u001b]8;;\u001b\\\n")
+-        print_number(self.broken, "marked as broken and skipped")
+-        print_number(
+-            self.non_existent,
+-            "present in ofBorgs evaluation, but not found in the checkout",
+-        )
+-        print_number(self.blacklisted, "blacklisted")
+-        print_number(self.failed, "failed to build")
+-        print_number(self.tests, "built", what="tests", log=print)
+-        print_number(self.built, "built", log=print)
++
++        for system, report in self.system_reports.items():
++            info(f"--------- Report for '{system}' ---------")
++            print_number(report.broken, "marked as broken and skipped")
++            print_number(
++                report.non_existent,
++                "present in ofBorgs evaluation, but not found in the checkout",
++            )
++            print_number(report.blacklisted, "blacklisted")
++            print_number(report.failed, "failed to build")
++            print_number(report.tests, "built", what="tests", log=print)
++            print_number(report.built, "built", log=print)
+diff --git a/nixpkgs_review/review.py b/nixpkgs_review/review.py
+index 3293f49..5f7358b 100644
+--- a/nixpkgs_review/review.py
++++ b/nixpkgs_review/review.py
+@@ -16,7 +16,18 @@
+ from .github import GithubClient
+ from .nix import Attr, nix_build, nix_eval, nix_shell
+ from .report import Report
+-from .utils import info, sh, warn
++from .utils import System, current_system, info, sh, warn
++
++# keep up to date with `supportedPlatforms`
++# https://github.com/NixOS/ofborg/blob/cf2c6712bd7342406e799110e7cd465aa250cdca/ofborg/src/outpaths.nix#L12
++OFBORG_PLATFORMS: set[str] = set(
++    [
++        "aarch64-darwin",
++        "aarch64-linux",
++        "x86_64-darwin",
++        "x86_64-linux",
++    ]
++)
+
+
+ class CheckoutOption(Enum):
+@@ -29,10 +40,6 @@ class CheckoutOption(Enum):
+     COMMIT = 2
+
+
+-def native_packages(packages_per_system: dict[str, set[str]], system: str) -> set[str]:
+-    return set(packages_per_system[system])
+-
+-
+ def print_packages(
+     names: list[str],
+     msg: str,
+@@ -87,7 +94,7 @@ def __init__(
+         no_shell: bool,
+         run: str,
+         remote: str,
+-        system: str,
++        systems: list[System],
+         allow: AllowedFeatures,
+         build_graph: str,
+         nixpkgs_config: Path,
+@@ -113,7 +120,20 @@ def __init__(
+         self.package_regex = package_regexes
+         self.skip_packages = skip_packages
+         self.skip_packages_regex = skip_packages_regex
+-        self.system = system
++        self.local_system = current_system()
++        match len(systems):
++            case 0:
++                raise NixpkgsReviewError("Systems is empty")
++            case 1:
++                system = list(systems)[0]
++                if system == "current":
++                    self.systems = set([current_system()])
++                elif system == "all":
++                    self.systems = OFBORG_PLATFORMS
++                else:
++                    self.systems = set([system])
++            case _:
++                self.systems = set(systems)
+         self.allow = allow
+         self.sandbox = sandbox
+         self.build_graph = build_graph
+@@ -152,33 +172,54 @@ def apply_unstaged(self, staged: bool = False) -> None:
+
+     def build_commit(
+         self, base_commit: str, reviewed_commit: str | None, staged: bool = False
+-    ) -> list[Attr]:
++    ) -> dict[System, list[Attr]]:
+         """
+         Review a local git commit
+         """
+         self.git_worktree(base_commit)
+
+-        base_packages = list_packages(
+-            self.builddir.nix_path,
+-            self.system,
+-            self.allow,
+-        )
++        # TODO: nix-eval-jobs ?
++        # parallel version: returning a dict[System, list[Package]]
++        # base_packages = list_packages(
++        #     self.builddir.nix_path,
++        #     self.systems,
++        #     self.allow,
++        # )
++        base_packages = {
++            system: list_packages(
++                self.builddir.nix_path,
++                system,
++                self.allow,
++            )
++            for system in self.systems
++        }
+
+         if reviewed_commit is None:
+             self.apply_unstaged(staged)
+         else:
+             self.git_merge(reviewed_commit)
+
+-        merged_packages = list_packages(
+-            self.builddir.nix_path,
+-            self.system,
+-            self.allow,
+-            check_meta=True,
+-        )
++        # TODO: nix-eval-jobs ?
++        merged_packages = {
++            system: list_packages(
++                self.builddir.nix_path,
++                system,
++                self.allow,
++                check_meta=True,
++            )
++            for system in self.systems
++        }
++
++        changed_attrs = {}
++        for system in self.systems:
++            changed_pkgs, removed_pkgs = differences(
++                base_packages[system], merged_packages[system]
++            )
++            print(f"--------- Impacted packages on '{system}' ---------")
++            print_updates(changed_pkgs, removed_pkgs)
++
++            changed_attrs[system] = set(p.attr_path for p in changed_pkgs)
+
+-        changed_pkgs, removed_pkgs = differences(base_packages, merged_packages)
+-        changed_attrs = set(p.attr_path for p in changed_pkgs)
+-        print_updates(changed_pkgs, removed_pkgs)
+         return self.build(changed_attrs, self.build_args)
+
+     def git_worktree(self, commit: str) -> None:
+@@ -195,40 +236,39 @@ def checkout_pr(self, base_rev: str, pr_rev: str) -> None:
+         else:
+             self.git_worktree(pr_rev)
+
+-    def build(self, packages: set[str], args: str) -> list[Attr]:
+-        packages = filter_packages(
+-            packages,
+-            self.only_packages,
+-            self.package_regex,
+-            self.skip_packages,
+-            self.skip_packages_regex,
+-            self.system,
+-            self.allow,
+-            self.builddir.nix_path,
+-        )
++    def build(
++        self, packages_per_system: dict[System, set[str]], args: str
++    ) -> dict[System, list[Attr]]:
++        for system, packages in packages_per_system.items():
++            packages_per_system[system] = filter_packages(
++                packages,
++                self.only_packages,
++                self.package_regex,
++                self.skip_packages,
++                self.skip_packages_regex,
++                system,
++                self.allow,
++                self.builddir.nix_path,
++            )
+         return nix_build(
+-            packages,
++            packages_per_system,
+             args,
+             self.builddir.path,
+-            self.system,
++            self.systems,
++            self.local_system,
+             self.allow,
+             self.build_graph,
+             self.builddir.nix_path,
+             self.nixpkgs_config,
+         )
+
+-    def build_pr(self, pr_number: int) -> list[Attr]:
++    def build_pr(self, pr_number: int) -> dict[System, list[Attr]]:
+         pr = self.github_client.pull_request(pr_number)
+
+-        # keep up to date with `supportedPlatforms`
+-        # https://github.com/NixOS/ofborg/blob/cf2c6712bd7342406e799110e7cd465aa250cdca/ofborg/src/outpaths.nix#L12
+-        ofborg_platforms = [
+-            "aarch64-darwin",
+-            "aarch64-linux",
+-            "x86_64-darwin",
+-            "x86_64-linux",
+-        ]
+-        if self.use_ofborg_eval and self.system in ofborg_platforms:
++        packages_per_system: dict[System, set[str]] | None
++        if self.use_ofborg_eval and all(
++            system in OFBORG_PLATFORMS for system in self.systems
++        ):
+             packages_per_system = self.github_client.get_borg_eval_gist(pr)
+         else:
+             packages_per_system = None
+@@ -257,12 +297,14 @@ def build_pr(self, pr_number: int) -> list[Attr]:
+
+         self.checkout_pr(base_rev, pr_rev)
+
+-        packages = native_packages(packages_per_system, self.system)
+-        return self.build(packages, self.build_args)
++        for system in list(packages_per_system.keys()):
++            if system not in self.systems:
++                packages_per_system.pop(system)
++        return self.build(packages_per_system, self.build_args)
+
+     def start_review(
+         self,
+-        attr: list[Attr],
++        attrs_per_system: dict[System, list[Attr]],
+         path: Path,
+         pr: int | None = None,
+         post_result: bool | None = False,
+@@ -273,8 +315,7 @@ def start_review(
+         if pr:
+             os.environ["PR"] = str(pr)
+         report = Report(
+-            self.system,
+-            attr,
++            attrs_per_system,
+             self.extra_nixpkgs_config,
+             checkout=self.checkout.name.lower(),  # type: ignore
+         )
+@@ -291,7 +332,7 @@ def start_review(
+             nix_shell(
+                 report.built_packages(),
+                 path,
+-                self.system,
++                self.local_system,
+                 self.build_graph,
+                 self.builddir.nix_path,
+                 self.nixpkgs_config,
+@@ -577,7 +618,7 @@ def review_local_revision(
+             package_regexes=args.package_regex,
+             skip_packages=set(args.skip_package),
+             skip_packages_regex=args.skip_package_regex,
+-            system=args.system,
++            systems=args.systems.split(" "),
+             allow=allow,
+             sandbox=args.sandbox,
+             build_graph=args.build_graph,
+diff --git a/nixpkgs_review/utils.py b/nixpkgs_review/utils.py
+index c2daca0..237346e 100644
+--- a/nixpkgs_review/utils.py
++++ b/nixpkgs_review/utils.py
+@@ -6,11 +6,13 @@
+ import sys
+ from collections.abc import Callable
+ from pathlib import Path
+-from typing import IO, Any
++from typing import IO, Any, TypeAlias
+
+ HAS_TTY = sys.stdout.isatty()
+ ROOT = Path(os.path.dirname(os.path.realpath(__file__)))
+
++System: TypeAlias = str
++
+
+ def color_text(code: int, file: IO[Any] | None = None) -> Callable[[str], None]:
+     def wrapper(text: str) -> None:
+
+From 1a98b0880dc2c2968f9f54291e43337caa30e1a7 Mon Sep 17 00:00:00 2001
+From: Gaetan Lepage <gaetan@glepage.com>
+Date: Thu, 26 Sep 2024 10:40:54 +0200
+Subject: [PATCH 2/3] adapt tests to work with new report format
+
+---
+ tests/conftest.py |  7 +++++++
+ tests/test_pr.py  | 15 +++++----------
+ tests/test_rev.py |  6 ++----
+ tests/test_wip.py |  6 ++----
+ 4 files changed, 16 insertions(+), 18 deletions(-)
+
+diff --git a/tests/conftest.py b/tests/conftest.py
+index 8ccfee5..2dfdf7c 100644
+--- a/tests/conftest.py
++++ b/tests/conftest.py
+@@ -14,6 +14,8 @@
+
+ import pytest
+
++from nixpkgs_review.utils import current_system
++
+ TEST_ROOT = Path(__file__).parent.resolve()
+ sys.path.append(str(TEST_ROOT.parent))
+
+@@ -116,6 +118,11 @@ def load_report(review_dir: str) -> dict[str, Any]:
+         with open(os.path.join(review_dir, "report.json")) as f:
+             return cast(dict[str, Any], json.load(f))
+
++    @staticmethod
++    def assert_built(pkg_name: str, path: str) -> None:
++        report = Helpers.load_report(path)
++        assert report["result"][current_system()]["built"] == [pkg_name]
++
+     @staticmethod
+     @contextmanager
+     def save_environ() -> Iterator[None]:
+diff --git a/tests/test_pr.py b/tests/test_pr.py
+index 3a40165..436d919 100644
+--- a/tests/test_pr.py
++++ b/tests/test_pr.py
+@@ -40,8 +40,7 @@ def test_pr_local_eval(helpers: Helpers, capfd: pytest.CaptureFixture) -> None:
+                 "1",
+             ],
+         )
+-        report = helpers.load_report(path)
+-        assert report["built"] == ["pkg1"]
++        helpers.assert_built(pkg_name="pkg1", path=path)
+         captured = capfd.readouterr()
+         assert "$ nom build" in captured.out
+
+@@ -69,8 +68,7 @@ def test_pr_local_eval_missing_nom(
+                 "1",
+             ],
+         )
+-        report = helpers.load_report(path)
+-        assert report["built"] == ["pkg1"]
++        helpers.assert_built(pkg_name="pkg1", path=path)
+         mock_tool.assert_called_once()
+         captured = capfd.readouterr()
+         assert "$ nix build" in captured.out
+@@ -100,8 +98,7 @@ def test_pr_local_eval_without_nom(
+                 "nix",
+             ],
+         )
+-        report = helpers.load_report(path)
+-        assert report["built"] == ["pkg1"]
++        helpers.assert_built(pkg_name="pkg1", path=path)
+         captured = capfd.readouterr()
+         assert "$ nix build" in captured.out
+
+@@ -128,8 +125,7 @@ def test_pr_local_eval_with_sandbox(helpers: Helpers) -> None:
+                 "1",
+             ],
+         )
+-        report = helpers.load_report(path)
+-        assert report["built"] == ["pkg1"]
++        helpers.assert_built(pkg_name="pkg1", path=path)
+
+
+ @patch("urllib.request.urlopen")
+@@ -161,5 +157,4 @@ def test_pr_ofborg_eval(mock_urlopen: MagicMock, helpers: Helpers) -> None:
+                 "37200",
+             ],
+         )
+-        report = helpers.load_report(path)
+-        assert report["built"] == ["pkg1"]
++        helpers.assert_built(pkg_name="pkg1", path=path)
+diff --git a/tests/test_rev.py b/tests/test_rev.py
+index 88d0b15..16c52bf 100644
+--- a/tests/test_rev.py
++++ b/tests/test_rev.py
+@@ -21,8 +21,7 @@ def test_rev_command(helpers: Helpers) -> None:
+             "nixpkgs-review",
+             ["rev", "HEAD", "--remote", str(nixpkgs.remote), "--run", "exit 0"],
+         )
+-        report = helpers.load_report(path)
+-        assert report["built"] == ["pkg1"]
++        helpers.assert_built(pkg_name="pkg1", path=path)
+
+
+ def test_rev_command_without_nom(helpers: Helpers) -> None:
+@@ -44,5 +43,4 @@ def test_rev_command_without_nom(helpers: Helpers) -> None:
+                 "nix",
+             ],
+         )
+-        report = helpers.load_report(path)
+-        assert report["built"] == ["pkg1"]
++        helpers.assert_built(pkg_name="pkg1", path=path)
+diff --git a/tests/test_wip.py b/tests/test_wip.py
+index 8160c0e..71840ea 100644
+--- a/tests/test_wip.py
++++ b/tests/test_wip.py
+@@ -18,8 +18,7 @@ def test_wip_command(helpers: Helpers, capfd: pytest.CaptureFixture) -> None:
+             "nixpkgs-review",
+             ["wip", "--remote", str(nixpkgs.remote), "--run", "exit 0"],
+         )
+-        report = helpers.load_report(path)
+-        assert report["built"] == ["pkg1"]
++        helpers.assert_built(pkg_name="pkg1", path=path)
+         captured = capfd.readouterr()
+         assert "$ nom build" in captured.out
+
+@@ -42,7 +41,6 @@ def test_wip_command_without_nom(
+                 "nix",
+             ],
+         )
+-        report = helpers.load_report(path)
+-        assert report["built"] == ["pkg1"]
++        helpers.assert_built(pkg_name="pkg1", path=path)
+         captured = capfd.readouterr()
+         assert "$ nix build" in captured.out
+
+From 93732c71d7dc764267e3785644173a17d133e957 Mon Sep 17 00:00:00 2001
+From: Gaetan Lepage <gaetan@glepage.com>
+Date: Mon, 23 Sep 2024 15:21:40 +0200
+Subject: [PATCH 3/3] Parallelize nix_eval
+
+---
+ nixpkgs_review/cli/__init__.py |  6 +++++
+ nixpkgs_review/cli/pr.py       |  1 +
+ nixpkgs_review/nix.py          | 46 +++++++++++++++++++++++++++++-----
+ nixpkgs_review/review.py       |  4 +++
+ 4 files changed, 51 insertions(+), 6 deletions(-)
+
+diff --git a/nixpkgs_review/cli/__init__.py b/nixpkgs_review/cli/__init__.py
+index 5938f75..74671c0 100644
+--- a/nixpkgs_review/cli/__init__.py
++++ b/nixpkgs_review/cli/__init__.py
+@@ -249,6 +249,12 @@ def common_flags() -> list[CommonFlag]:
+             default="{ }",
+             help="Extra nixpkgs config to pass to `import <nixpkgs>`",
+         ),
++        CommonFlag(
++            "--num-procs-eval",
++            type=int,
++            default=1,
++            help="Number of parallel `nix-env` processes to run simultaneously (warning, can imply heavy RAM usage)",
++        ),
+     ]
+
+
+diff --git a/nixpkgs_review/cli/pr.py b/nixpkgs_review/cli/pr.py
+index fa62636..113aa88 100644
+--- a/nixpkgs_review/cli/pr.py
++++ b/nixpkgs_review/cli/pr.py
+@@ -86,6 +86,7 @@ def pr_command(args: argparse.Namespace) -> str:
+                     build_graph=args.build_graph,
+                     nixpkgs_config=nixpkgs_config,
+                     extra_nixpkgs_config=args.extra_nixpkgs_config,
++                    n_procs_eval=args.num_procs_eval,
+                 )
+                 contexts.append((pr, builddir.path, review.build_pr(pr)))
+             except NixpkgsReviewError as e:
+diff --git a/nixpkgs_review/nix.py b/nixpkgs_review/nix.py
+index 85e8fd2..8d00531 100644
+--- a/nixpkgs_review/nix.py
++++ b/nixpkgs_review/nix.py
+@@ -1,9 +1,11 @@
+ import json
++import multiprocessing as mp
+ import os
+ import shlex
+ import shutil
+ import subprocess
+ from dataclasses import dataclass, field
++from functools import partial
+ from pathlib import Path
+ from sys import platform
+ from tempfile import NamedTemporaryFile
+@@ -269,6 +271,34 @@ def nix_eval(
+             os.unlink(attr_json.name)
+
+
++def nix_eval_thread(
++    system: System,
++    attr_names: set[str],
++    allow: AllowedFeatures,
++    nix_path: str,
++) -> tuple[System, list[Attr]]:
++    return system, nix_eval(attr_names, system, allow, nix_path)
++
++
++def multi_system_eval(
++    attr_names_per_system: dict[System, set[str]],
++    allow: AllowedFeatures,
++    nix_path: str,
++    n_procs: int,
++) -> dict[System, list[Attr]]:
++    nix_eval_partial = partial(
++        nix_eval_thread,
++        allow=allow,
++        nix_path=nix_path,
++    )
++
++    args: list[tuple[System, set[str]]] = list(attr_names_per_system.items())
++    with mp.Pool(n_procs) as pool:
++        results: list[tuple[System, list[Attr]]] = pool.starmap(nix_eval_partial, args)
++
++    return {system: attrs for system, attrs in results}
++
++
+ def nix_build(
+     attr_names_per_system: dict[System, set[str]],
+     args: str,
+@@ -279,19 +309,23 @@ def nix_build(
+     build_graph: str,
+     nix_path: str,
+     nixpkgs_config: Path,
++    n_procs_eval: int,
+ ) -> dict[System, list[Attr]]:
+     if not attr_names_per_system:
+         info("Nothing to be built.")
+         return {}
+
+-    # TODO parallelize evaluation
+-    attrs_per_system: dict[System, list[Attr]] = {}
+-    filtered_per_system: dict[System, list[str]] = {}
+-    for system, attr_names in attr_names_per_system.items():
+-        attrs_per_system[system] = nix_eval(attr_names, system, allow, nix_path)
++    attrs_per_system: dict[System, list[Attr]] = multi_system_eval(
++        attr_names_per_system,
++        allow,
++        nix_path,
++        n_procs=n_procs_eval,
++    )
+
++    filtered_per_system: dict[System, list[str]] = {}
++    for system, attrs in attrs_per_system.items():
+         filtered_per_system[system] = []
+-        for attr in attrs_per_system[system]:
++        for attr in attrs:
+             if not (attr.broken or attr.blacklisted):
+                 filtered_per_system[system].append(attr.name)
+
+diff --git a/nixpkgs_review/review.py b/nixpkgs_review/review.py
+index 5f7358b..c389c72 100644
+--- a/nixpkgs_review/review.py
++++ b/nixpkgs_review/review.py
+@@ -107,6 +107,7 @@ def __init__(
+         skip_packages_regex: list[Pattern[str]] = [],
+         checkout: CheckoutOption = CheckoutOption.MERGE,
+         sandbox: bool = False,
++        n_procs_eval: int = 1,
+     ) -> None:
+         self.builddir = builddir
+         self.build_args = build_args
+@@ -139,6 +140,7 @@ def __init__(
+         self.build_graph = build_graph
+         self.nixpkgs_config = nixpkgs_config
+         self.extra_nixpkgs_config = extra_nixpkgs_config
++        self.n_procs_eval = n_procs_eval
+
+     def worktree_dir(self) -> str:
+         return str(self.builddir.worktree_dir)
+@@ -260,6 +262,7 @@ def build(
+             self.build_graph,
+             self.builddir.nix_path,
+             self.nixpkgs_config,
++            self.n_procs_eval,
+         )
+
+     def build_pr(self, pr_number: int) -> dict[System, list[Attr]]:
+@@ -624,6 +627,7 @@ def review_local_revision(
+             build_graph=args.build_graph,
+             nixpkgs_config=nixpkgs_config,
+             extra_nixpkgs_config=args.extra_nixpkgs_config,
++            n_procs_eval=args.num_procs_eval,
+         )
+         review.review_commit(builddir.path, args.branch, commit, staged, print_result)
+         return builddir.path
