@@ -1,12 +1,11 @@
 {
   config,
   lib,
-  pkgs,
   namespace,
   ...
 }:
 let
-  inherit (lib) mkIf mkEnableOption getExe;
+  inherit (lib) mkIf mkEnableOption;
 
   cfg = config.${namespace}.services.seatd;
 in
@@ -16,17 +15,11 @@ in
   };
 
   config = mkIf cfg.enable {
-    systemd.services = {
+    services = {
       seatd = {
         enable = true;
-        description = "Seat management daemon";
-        script = "${getExe pkgs.seatd} -g wheel";
-        serviceConfig = {
-          Type = "simple";
-          Restart = "always";
-          RestartSec = "1";
-        };
-        wantedBy = [ "multi-user.target" ];
+        # NOTE: does it matter?
+        user = config.khanelinix.user.name;
       };
     };
   };
