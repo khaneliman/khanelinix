@@ -21,14 +21,12 @@ in
       nixcfg = "nvim ~/${namespace}/flake.nix";
     };
 
-    home.packages =
-      with pkgs;
-      lib.optionals pkgs.stdenv.isLinux [
-        ncdu
-        smassh
-        toilet
-        tree
-      ];
+    home.packages = with pkgs; [
+      ncdu
+      smassh
+      toilet
+      tree
+    ];
 
     khanelinix = {
       programs = {
