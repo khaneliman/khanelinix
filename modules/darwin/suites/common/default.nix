@@ -44,14 +44,12 @@ in
         pkgs.${namespace}.trace-which
         mas
         moreutils
-        ncdu
         oh-my-posh
         pigz
         rename
         spice-gtk
         terminal-notifier
         trash-cli
-        tree
         wtf
       ];
     };
