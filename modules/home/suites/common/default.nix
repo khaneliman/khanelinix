@@ -25,6 +25,7 @@ in
       with pkgs;
       lib.optionals pkgs.stdenv.isLinux [
         ncdu
+        smassh
         toilet
         tree
       ];
