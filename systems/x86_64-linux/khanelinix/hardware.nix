@@ -6,6 +6,11 @@
   # Desktop VM config
   ##
   boot = {
+    binfmt.emulatedSystems = [
+      "aarch64-linux"
+      "riscv64-linux"
+    ];
+
     blacklistedKernelModules = [ "eeepc_wmi" ];
 
     # consoleLogLevel = 0;
