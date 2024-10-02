@@ -80,8 +80,7 @@ in
               maxJobs = 16;
               speedFactor = 10;
               supportedFeatures = supportedFeatures ++ [ "kvm" ];
-              # TODO: figure out how to use sops secret on darwin
-              # sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+              sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
             })
           ]
           ++ lib.optionals (pkgs.stdenv.isLinux && config.${namespace}.security.sops.enable) (
