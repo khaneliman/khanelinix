@@ -16,6 +16,14 @@ in
       workstation = enabled;
     };
 
+    security = {
+      sops = {
+        enable = true;
+        sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+        defaultSopsFile = lib.snowfall.fs.get-file "secrets/khanelimac/default.yaml";
+      };
+    };
+
     suites = {
       art = enabled;
       common = enabled;
