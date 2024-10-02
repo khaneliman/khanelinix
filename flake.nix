@@ -185,6 +185,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    sops-nix-darwin = {
+      url = "github:Mic92/sops-nix/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
     # Spicetify
     spicetify-nix = {
       url = "github:Gerg-L/spicetify-nix";
@@ -249,6 +254,7 @@
 
       systems = {
         modules = {
+          darwin = with inputs; [ sops-nix-darwin.darwinModules.sops ];
           nixos = with inputs; [
             lanzaboote.nixosModules.lanzaboote
             sops-nix.nixosModules.sops

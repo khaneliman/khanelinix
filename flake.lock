@@ -1717,6 +1717,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-stable_4": {
+      "locked": {
+        "lastModified": 1721524707,
+        "narHash": "sha256-5NctRsoE54N86nWd0psae70YSLfrOek3Kv1e8KoXe/0=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "556533a23879fc7e5f98dd2e0b31a6911a213171",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "release-24.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs-unstable": {
       "locked": {
         "lastModified": 1727686113,
@@ -2003,6 +2019,7 @@
         "snowfall-flake": "snowfall-flake",
         "snowfall-lib": "snowfall-lib_2",
         "sops-nix": "sops-nix",
+        "sops-nix-darwin": "sops-nix-darwin",
         "spicetify-nix": "spicetify-nix",
         "waybar": "waybar",
         "wezterm": "wezterm",
@@ -2160,6 +2177,28 @@
       },
       "original": {
         "owner": "Mic92",
+        "repo": "sops-nix",
+        "type": "github"
+      }
+    },
+    "sops-nix-darwin": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ],
+        "nixpkgs-stable": "nixpkgs-stable_4"
+      },
+      "locked": {
+        "lastModified": 1725540253,
+        "narHash": "sha256-AsmDvrx0TAWbPdGI2ag36Mfrohx5E2fBRVlpj664U0k=",
+        "owner": "Mic92",
+        "repo": "sops-nix",
+        "rev": "c3cff455d08edf687d89c2c82c9d79c305df9307",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mic92",
+        "ref": "nix-darwin",
         "repo": "sops-nix",
         "type": "github"
       }
