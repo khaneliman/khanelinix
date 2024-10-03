@@ -26,7 +26,10 @@ in
         np
         teams-for-linux
       ]
-      ++ lib.optionals stdenv.isLinux [ libreoffice ];
+      ++ lib.optionals stdenv.isLinux [
+        libreoffice
+        p3x-onenote
+      ];
 
     khanelinix = {
       programs = {
