@@ -143,7 +143,7 @@ in
             font_family = osConfig.${namespace}.system.fonts.default;
             valign = "center";
             halign = "center";
-            positino = "15, -350";
+            position = "15, -350";
             shadow_passes = 1;
             rotate = "0.000000";
             shadow_boost = "1.200000";
