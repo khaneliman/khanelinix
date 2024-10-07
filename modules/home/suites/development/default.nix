@@ -53,7 +53,8 @@ in
           }))
           nix-update
           nix-output-monitor
-          snowfall-flake.packages.${system}.flake
+          # FIXME: IFD
+          # snowfall-flake.packages.${system}.flake
         ]
         ++ lib.optionals cfg.gameEnable [
           godot_4

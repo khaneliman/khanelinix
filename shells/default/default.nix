@@ -6,9 +6,6 @@
   namespace,
   ...
 }:
-let
-  inherit (inputs) snowfall-flake;
-in
 mkShell {
   packages = with pkgs; [
     act
@@ -24,7 +21,8 @@ mkShell {
     nix-tree
     nixpkgs-hammering
     nixpkgs-lint
-    snowfall-flake.packages.${system}.flake
+    # FIXME: IFD in upstream source flake.sh
+    # snowfall-flake.packages.${system}.flake
 
     # Adds all the packages required for the pre-commit checks
     inputs.self.checks.${system}.pre-commit-hooks.enabledPackages

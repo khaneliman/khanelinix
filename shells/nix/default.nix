@@ -26,6 +26,7 @@ mkShell {
     nixpkgs-hammering
     nixpkgs-lint
     nixpkgs-review
+    # FIXME: IFD in upstream source flake.sh
     snowfall-flake.packages.${system}.flake
     statix
   ];

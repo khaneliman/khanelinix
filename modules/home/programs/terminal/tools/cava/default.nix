@@ -22,7 +22,8 @@ in
     };
 
     programs.cava = {
-      enable = true;
+      # FIXME: contains IFD from upstream
+      # enable = true;
       package = if pkgs.stdenv.isLinux then pkgs.cava else pkgs.emptyDirectory;
 
       settings =
