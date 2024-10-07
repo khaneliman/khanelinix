@@ -9,7 +9,6 @@
 let
   inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt enabled;
-  inherit (inputs) snowfall-flake;
 
   cfg = config.${namespace}.suites.development;
 in
