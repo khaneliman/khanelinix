@@ -24,12 +24,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      # TODO: remove patch after https://github.com/Cretezy/lazyjj/pull/61 is available
-      (lazyjj.overrideAttrs (_oldAttrs: {
-        patches = [ ./test.patch ];
-      }))
-    ];
+    home.packages = with pkgs; [ lazyjj ];
 
     programs = {
       jujutsu = {
