@@ -54,6 +54,11 @@ in
     ];
   };
 
+  nix.settings = {
+    cores = 5;
+    max-jobs = 2;
+  };
+
   security.pam.enableSudoTouchIdAuth = true;
 
   users.users.${cfg.name} = {
