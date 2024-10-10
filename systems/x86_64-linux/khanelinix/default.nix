@@ -217,8 +217,8 @@ in
   };
 
   nix.settings = {
-    cores = 24;
-    max-jobs = 24;
+    cores = 8;
+    max-jobs = 4;
   };
 
   services = {
