@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) mkDefault mkIf mkForce;
+  inherit (lib) mkDefault mkIf;
 
   cfg = config.${namespace}.nix;
 in
@@ -44,7 +44,7 @@ in
       settings = {
         # bail early on missing cache hits
         connect-timeout = 5;
-        experimental-features = mkForce "cgroups nix-command flakes";
+        experimental-features = [ "cgroups" ];
         keep-going = true;
         use-cgroups = true;
 
