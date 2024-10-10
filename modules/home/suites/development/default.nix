@@ -34,7 +34,6 @@ in
           neovide
           onefetch
           postman
-          vscode
           act
         ]
         ++ lib.optionals pkgs.stdenv.isLinux [
