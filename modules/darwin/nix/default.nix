@@ -15,7 +15,7 @@ in
       # Options that aren't supported through nix-darwin
       extraOptions = ''
         # bail early on missing cache hits
-        connect-timeout = 5
+        connect-timeout = 10
         keep-going = true
       '';
 
