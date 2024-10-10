@@ -134,7 +134,10 @@ in
           auto-optimise-store = true;
           builders-use-substitutes = true;
           # TODO: pipe-operators throws annoying warnings
-          experimental-features = "nix-command flakes";
+          experimental-features = [
+            "nix-command "
+            "flakes "
+          ];
           flake-registry = "/etc/nix/registry.json";
           http-connections = 50;
           keep-derivations = true;
