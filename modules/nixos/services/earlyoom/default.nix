@@ -27,7 +27,7 @@ in
         let
           appsToAvoid = concatStringsSep "|" [
             "(h|H)yprland"
-            "Xwayland"
+            "(x|X)wayland"
             "bash"
             "cryptsetup"
             "dbus-.*"
@@ -43,7 +43,10 @@ in
             "sshd"
             "sway"
             "systemd"
-            "systemd-.*"
+            "systemd-logind"
+            "systemd-udevd"
+            "tmux: client"
+            "tmux: server"
             "wezterm"
             "zsh"
           ];
@@ -54,9 +57,10 @@ in
             "chrom(e|ium).*"
             "dotnet"
             "firefox.*"
+            ".firefox-wrappe"
             "electron"
             ".*.exe"
-            "java.*"
+            "java"
             "nix"
             "npm"
             "node"
@@ -65,8 +69,8 @@ in
         in
         [
           "-g" # kill all processes within a process group
-          "--avoid '(^|/)(${appsToAvoid})'" # things we want to not kill
-          "--prefer '(^|/)(${appsToPrefer})'" # things we want to kill as soon as possible
+          "--avoid '^(${appsToAvoid})$'" # things we want to not kill
+          "--prefer '^(${appsToPrefer})$'" # things we want to kill as soon as possible
         ];
 
       killHook = pkgs.writeShellScript "earlyoom-kill-hook" ''
