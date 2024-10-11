@@ -76,7 +76,10 @@ in
             (lib.mkIf pkgs.stdenv.isDarwin {
               inherit protocol sshUser;
               hostName = "khanelinix.local";
-              system = "x86_64-linux";
+              systems = [
+                "x86_64-linux"
+                "aarch64-linux"
+              ];
               maxJobs = 16;
               speedFactor = 10;
               supportedFeatures = supportedFeatures ++ [ "kvm" ];
