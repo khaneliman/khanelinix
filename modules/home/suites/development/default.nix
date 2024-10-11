@@ -44,12 +44,7 @@ in
           hydra-check
           nixpkgs-hammering
           nixpkgs-lint-community
-          (nixpkgs-review.overrideAttrs (_oldAttrs: {
-            patches = [
-              ./master.patch
-              ./multi.patch
-            ];
-          }))
+          nixpkgs-review
           nix-update
           nix-output-monitor
           snowfall-flake.packages.${system}.flake
