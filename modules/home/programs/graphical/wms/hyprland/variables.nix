@@ -89,7 +89,7 @@ in
           # force_split = 0;
           preserve_split = true; # you probably want this
           pseudotile = false; # master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
-          no_gaps_when_only = false;
+          # no_gaps_when_only = false;
           special_scale_factor = 0.9;
         };
 
