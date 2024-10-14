@@ -56,6 +56,7 @@ in
             "$mainMod, V, exec, $cliphist"
             "$mainMod, W, exec, $looking-glass"
             "$mainMod, I, exec, ${getExe pkgs.libnotify} \"$($window-inspector)\""
+            "$mainMod, PERIOD, exec, ${getExe pkgs.smile}"
 
             # kill window
             "$mainMod, Q, killactive,"
