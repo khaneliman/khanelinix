@@ -48,6 +48,7 @@ in
           shell = {
             bash = enabled;
             fish = enabled;
+            nushell = enabled;
             zsh = enabled;
           };
 
@@ -55,6 +56,7 @@ in
             bat = enabled;
             bottom = enabled;
             btop = enabled;
+            carapace = enabled;
             colorls = enabled;
             comma = enabled;
             direnv = enabled;
