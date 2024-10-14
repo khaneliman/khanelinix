@@ -40,6 +40,7 @@ in
           "size 1100 600, class:^(wdisplays)$"
           "float, class:^(blueman-manager)$"
           "float, class:^(nm-connection-editor)$"
+          "float, class:it.mijorus.smile"
 
           # floating terminal
           "float, title:^(floatterm)$"
@@ -98,6 +99,7 @@ in
           "stayfocused, class:org.kde.polkit-kde-authentication-agent-1"
           "stayfocused, class:Rofi"
           "nofocus, class:^(steam)$, title:^()$"
+          "stayfocused, class:it.mijorus.smile"
 
           ##
           # ░▀█▀░█▀▄░█░░░█▀▀░▀█▀░█▀█░█░█░▀█▀░█▀▄░▀█▀░▀█▀
