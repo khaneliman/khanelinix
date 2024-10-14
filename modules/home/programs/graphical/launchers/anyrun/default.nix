@@ -101,7 +101,7 @@ in
             },
 
             // The number of entries to be displayed
-            max_entries: 5,
+            max_entries: 10,
           )
         '';
 
