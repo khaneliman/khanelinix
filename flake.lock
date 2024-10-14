@@ -1531,11 +1531,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1728861753,
-        "narHash": "sha256-GSWAKR9B5y0F49jReBmyZ4cEPt9d7fyaYQ0qN1Sjkto=",
+        "lastModified": 1728926972,
+        "narHash": "sha256-fm2SizCvV7Cqb7j/Ix/fAmcHuUsLplc54Qv5Kx6UV84=",
         "owner": "khaneliman",
         "repo": "khanelivim",
-        "rev": "0a082d3f702c9c56e9f4408f9117a2312947773a",
+        "rev": "0e85a607a65af7d7e72246fa8bef1f5deae03ce0",
         "type": "github"
       },
       "original": {
