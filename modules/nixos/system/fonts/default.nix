@@ -17,6 +17,7 @@ in
     environment.systemPackages = with pkgs; [
       font-manager
       fontpreview
+      smile
     ];
 
     fonts = {
