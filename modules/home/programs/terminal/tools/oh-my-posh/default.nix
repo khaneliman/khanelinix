@@ -21,6 +21,7 @@ in
       enable = true;
       enableBashIntegration = true;
       enableFishIntegration = true;
+      enableNushellIntegration = true;
       enableZshIntegration = true;
       package = pkgs.oh-my-posh;
       settings = builtins.fromJSON (
