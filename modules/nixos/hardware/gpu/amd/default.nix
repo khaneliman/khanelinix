@@ -36,37 +36,45 @@ in
     };
 
     # enables AMDVLK & OpenCL support
-    hardware.graphics = {
-      extraPackages =
-        with pkgs;
-        [
-          amdvlk
+    hardware = {
+      amdgpu = {
+        amdvlk = {
+          enable = true;
 
-          # mesa
-          mesa
+          support32Bit = {
+            enable = true;
+          };
+        };
+      };
 
-          # vulkan
-          vulkan-tools
-          vulkan-loader
-          vulkan-validation-layers
-          vulkan-extension-layer
-        ]
-        ++ (
-          if pkgs ? rocmPackages.clr then
-            with pkgs.rocmPackages;
-            [
-              clr
-              clr.icd
-            ]
-          else
-            with pkgs;
-            [
-              rocm-opencl-icd
-              rocm-opencl-runtime
-            ]
-        );
+      graphics = {
+        extraPackages =
+          with pkgs;
+          [
+            # mesa
+            mesa
 
-      extraPackages32 = [ pkgs.driversi686Linux.amdvlk ];
+            # vulkan
+            vulkan-tools
+            vulkan-loader
+            vulkan-validation-layers
+            vulkan-extension-layer
+          ]
+          ++ (
+            if pkgs ? rocmPackages.clr then
+              with pkgs.rocmPackages;
+              [
+                clr
+                clr.icd
+              ]
+            else
+              with pkgs;
+              [
+                rocm-opencl-icd
+                rocm-opencl-runtime
+              ]
+          );
+      };
     };
 
     services.xserver.videoDrivers = lib.mkDefault [
