@@ -12,8 +12,7 @@ let
       ''
         #!/usr/bin/env bash
 
-        NOTIFICATIONS="$(${getExe pkgs.gh} api notifications)"
-        COUNT="$(echo "$NOTIFICATIONS" | ${getExe pkgs.jq} 'length')"
+        COUNT=$(${getExe pkgs.gh} api notifications -q 'length')
 
         echo '{"text":'"$COUNT"',"tooltip":"'"$COUNT"' Notifications","class":""}'
       '';
