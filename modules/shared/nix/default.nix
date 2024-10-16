@@ -4,6 +4,7 @@
   lib,
   pkgs,
   namespace,
+  host,
   ...
 }:
 let
@@ -72,21 +73,25 @@ in
               "nixos-test"
             ];
           in
-          [
-            (lib.mkIf pkgs.stdenv.isDarwin {
-              inherit protocol sshUser;
-              hostName = "khanelinix.local";
-              systems = [
-                "x86_64-linux"
-                "aarch64-linux"
-              ];
-              maxJobs = 16;
-              speedFactor = 10;
-              supportedFeatures = supportedFeatures ++ [ "kvm" ];
-              sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
-            })
+          lib.optionals config.${namespace}.security.sops.enable [
+            (
+              lib.mkIf (host != "khanelinix") {
+                inherit protocol sshUser;
+                hostName = "khanelinix.local";
+                systems = [
+                  "x86_64-linux"
+                  "aarch64-linux"
+                ];
+                maxJobs = 16;
+                speedFactor = 10;
+                supportedFeatures = supportedFeatures ++ [ "kvm" ];
+              }
+              // lib.optionalAttrs (host == "khanelimac") {
+                sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+              }
+            )
           ]
-          ++ lib.optionals (pkgs.stdenv.isLinux && config.${namespace}.security.sops.enable) (
+          ++ lib.optionals config.${namespace}.security.sops.enable (
             let
               systems = [
                 "aarch64-darwin"
@@ -94,23 +99,30 @@ in
               ];
             in
             [
-              {
+              (lib.mkIf (host != "khanelimac") {
                 inherit protocol sshUser systems;
                 hostName = "khanelimac.local";
                 maxJobs = 8;
                 speedFactor = 5;
                 supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
-              }
-              {
-                inherit protocol sshUser systems;
-                hostName = "darwin-build-box.nix-community.org";
-                maxJobs = 32;
-                speedFactor = 20;
-                supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
-                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
-                publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUZ6OEZYU1ZFZGY4RnZETWZib3hoQjVWalNlN3kyV2dTYTA5cTFMNHQwOTkgCg";
-              }
+              })
+              (
+                {
+                  inherit protocol sshUser systems;
+                  hostName = "darwin-build-box.nix-community.org";
+                  maxJobs = 32;
+                  speedFactor = 20;
+                  supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
+                  publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUZ6OEZYU1ZFZGY4RnZETWZib3hoQjVWalNlN3kyV2dTYTA5cTFMNHQwOTkgCg";
+                }
+                // lib.optionalAttrs (host == "khanelinix") {
+                  sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
+                }
+                // lib.optionalAttrs (host == "khanelimac") {
+                  sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+                }
+              )
 
             ]
           );
