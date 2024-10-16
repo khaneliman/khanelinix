@@ -80,6 +80,10 @@ in
       social = enabled;
     };
 
+    system = {
+      xdg = enabled;
+    };
+
     theme.catppuccin = enabled;
   };
 
