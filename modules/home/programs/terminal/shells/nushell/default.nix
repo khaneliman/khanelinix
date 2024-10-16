@@ -19,7 +19,11 @@ in
       nushell = {
         enable = true;
 
-        shellAliases = lib.filterAttrs (_k: v: !lib.strings.hasInfix " && " v) config.home.shellAliases;
+        shellAliases = (lib.filterAttrs (_k: v: !lib.strings.hasInfix " && " v)) (
+          lib.mapAttrs (
+            _k: v: if lib.strings.isString v then (lib.replaceStrings [ "$" ] [ "$env." ] v) else v
+          ) config.home.shellAliases
+        );
       };
     };
   };
