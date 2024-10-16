@@ -45,35 +45,20 @@ in
             enable = true;
           };
         };
+        opencl.enable = true;
       };
 
       graphics = {
-        extraPackages =
-          with pkgs;
-          [
-            # mesa
-            mesa
+        extraPackages = with pkgs; [
+          # mesa
+          mesa
 
-            # vulkan
-            vulkan-tools
-            vulkan-loader
-            vulkan-validation-layers
-            vulkan-extension-layer
-          ]
-          ++ (
-            if pkgs ? rocmPackages.clr then
-              with pkgs.rocmPackages;
-              [
-                clr
-                clr.icd
-              ]
-            else
-              with pkgs;
-              [
-                rocm-opencl-icd
-                rocm-opencl-runtime
-              ]
-          );
+          # vulkan
+          vulkan-tools
+          vulkan-loader
+          vulkan-validation-layers
+          vulkan-extension-layer
+        ];
       };
     };
 
