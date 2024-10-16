@@ -27,7 +27,6 @@ in
         efibootmgr
         efitools
         efivar
-        fwupd
       ]
       ++ lib.optionals cfg.secureBoot [ sbctl ];
 
