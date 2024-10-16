@@ -2,6 +2,7 @@
   config,
   lib,
   namespace,
+  pkgs,
   ...
 }:
 let
@@ -167,13 +168,13 @@ in
       enable = true;
       cacheHome = config.home.homeDirectory + "/.local/cache";
 
-      mimeApps = {
+      mimeApps = lib.mkIf pkgs.stdenv.isLinux {
         enable = true;
         defaultApplications = associations;
         associations.added = associations;
       };
 
-      userDirs = {
+      userDirs = lib.mkIf pkgs.stdenv.isLinux {
         enable = true;
         createDirectories = true;
         extraConfig = {
