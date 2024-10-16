@@ -17,10 +17,6 @@
 
     kernelPackages = pkgs.linuxPackages_latest;
     kernel.sysctl."kernel.sysrq" = 1;
-    kernelParams = [
-      "video=DP-1:5120x1440@120"
-      "video=DP-3:3840x2160@60"
-    ];
 
     initrd = {
       availableKernelModules = [
@@ -257,6 +253,16 @@
   swapDevices = [ { device = "/dev/disk/by-uuid/be1e6602-df3a-4d27-9d46-c52586093cb8"; } ];
 
   hardware = {
+    display = {
+      outputs = {
+        "DP-1" = {
+          mode = "5120x1440@120";
+        };
+        "DP-3" = {
+          mode = "3840x2160@60";
+        };
+      };
+    };
     enableRedistributableFirmware = true;
   };
 }
