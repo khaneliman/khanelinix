@@ -23,7 +23,6 @@ in
       packages = with pkgs; [
         dconf
         gcr
-        udisks2
       ];
 
       implementation = "broker";
