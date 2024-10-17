@@ -154,12 +154,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Run unpatched dynamically compiled binaries
-    nix-ld-rs = {
-      url = "github:nix-community/nix-ld-rs";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # Nix User Repository (master)
     nur = {
       url = "github:nix-community/NUR";
