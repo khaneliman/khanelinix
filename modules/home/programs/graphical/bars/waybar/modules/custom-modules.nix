@@ -159,7 +159,7 @@ in
   };
 
   "custom/weather" = {
-    exec = "${getExe pkgs.wttrbar} --location $(${getExe pkgs.jq} -r '.wttr | (.location)' ~/weather_config.json) --fahrenheit --main-indicator temp_F";
+    exec = "${getExe pkgs.wttrbar} --fahrenheit --ampm";
     return-type = "json";
     format = "{}";
     tooltip = true;
