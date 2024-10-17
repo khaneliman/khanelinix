@@ -1,4 +1,5 @@
 _: _final: prev: {
+  # TODO: remove after available in unstable
   cliphist = prev.cliphist.overrideAttrs (_oldAttrs: rec {
     version = "0.6.1";
 

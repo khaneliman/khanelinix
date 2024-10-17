@@ -34,6 +34,7 @@
       "idle_inhibitor"
       "systemd-failed-units"
       "custom/notification"
+      # FIXME: not showing in service?
       "custom/github"
       "bluetooth"
       "group/audio"
