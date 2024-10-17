@@ -24,9 +24,11 @@ in
         looking-glass-obs
         obs-gstreamer
         obs-move-transition
-        obs-multi-rtmp
+        # FIXME: broken nixpkgs
+        # obs-multi-rtmp
         obs-pipewire-audio-capture
-        obs-vkcapture
+        # FIXME: broken nixpkgs
+        # obs-vkcapture
         wlrobs
       ];
     };

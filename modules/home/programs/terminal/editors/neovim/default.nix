@@ -4,6 +4,7 @@
   namespace,
   system,
   inputs,
+  pkgs,
   ...
 }:
 let
@@ -26,7 +27,10 @@ in
       sessionVariables = {
         EDITOR = mkIf cfg.default "nvim";
       };
-      packages = [ khanelivim.packages.${system}.default ];
+      packages = [
+        khanelivim.packages.${system}.default
+        pkgs.nvrh
+      ];
     };
 
     sops.secrets = {

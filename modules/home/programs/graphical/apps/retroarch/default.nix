@@ -22,7 +22,8 @@ in
         cores = with libretro; [
           beetle-psx-hw
           bsnes
-          citra
+          # FIXME: broken nixpkgs
+          # citra
           dolphin
           dosbox
           genesis-plus-gx
