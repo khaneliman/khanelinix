@@ -7,15 +7,13 @@
 let
   inherit (lib) getExe getExe';
 
-  githubHelper =
-    pkgs.writeShellScriptBin "githubHelper" # bash
-      ''
-        #!/usr/bin/env bash
+  githubHelper = pkgs.writeShellScriptBin "githubHelper" ''
+    ${getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
+    NOTIFICATIONS="$(${getExe pkgs.gh} api notifications)"
+    COUNT="$(${getExe pkgs.gh} api notifications --jq 'length')"
 
-        COUNT=$(${getExe pkgs.gh} api notifications -q 'length')
-
-        echo '{"text":'"$COUNT"',"tooltip":"'"$COUNT"' Notifications","class":""}'
-      '';
+    echo '{"text":'"$COUNT"',"tooltip":"'"$COUNT"' Notifications","class":""}'
+  '';
 in
 {
   "custom/ellipses" = {
