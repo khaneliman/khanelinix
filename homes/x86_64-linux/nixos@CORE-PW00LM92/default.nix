@@ -2,6 +2,7 @@
   config,
   lib,
   namespace,
+  osConfig,
   ...
 }:
 let
@@ -74,8 +75,10 @@ in
     theme.catppuccin = enabled;
   };
 
-  sops.secrets.kubernetes = {
-    path = "${config.home.homeDirectory}/.kube/config";
+  sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
+    kubernetes = {
+      path = "${config.home.homeDirectory}/.kube/config";
+    };
   };
 
   home.stateVersion = "23.11";

@@ -5,6 +5,7 @@
   pkgs,
   system,
   namespace,
+  osConfig,
   ...
 }:
 let
@@ -137,7 +138,7 @@ in
       style = "${style}${controlCenterStyle}${powerStyle}${statsStyle}${workspacesStyle}";
     };
 
-    sops.secrets = {
+    sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
       weather_config = {
         sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/weather_config.json";
