@@ -1,4 +1,10 @@
 {
+  lib,
+  namespace,
+  osConfig,
+  ...
+}:
+{
   "group/audio" = {
     orientation = "horizontal";
     drawer = {
@@ -29,16 +35,18 @@
 
   "group/control-center" = {
     orientation = "horizontal";
-    modules = [
-      "gamemode"
-      "idle_inhibitor"
-      "systemd-failed-units"
-      "custom/notification"
-      # FIXME: not showing in service?
-      "custom/github"
-      "bluetooth"
-      "group/audio"
-    ];
+    modules =
+      [
+        "gamemode"
+        "idle_inhibitor"
+        "systemd-failed-units"
+        "custom/notification"
+      ]
+      ++ lib.optionals osConfig.${namespace}.security.sops.enable [ "custom/github" ]
+      ++ [
+        "bluetooth"
+        "group/audio"
+      ];
   };
 
   "group/tray" = {
