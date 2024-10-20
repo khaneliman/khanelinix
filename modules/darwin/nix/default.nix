@@ -28,6 +28,21 @@ in
         user = config.${namespace}.user.name;
       };
 
+      linux-builder = {
+        maxJobs = 2;
+        protocol = "ssh";
+        systems = [
+          "x86_64-linux"
+          "aarch64-linux"
+        ];
+        speedFactor = 1;
+        supportedFeatures = [
+          "benchmark"
+          "big-parallel"
+          "nixos-test"
+        ];
+      };
+
       optimise = {
         interval = {
           Day = 7;
