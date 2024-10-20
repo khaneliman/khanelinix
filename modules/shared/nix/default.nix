@@ -99,14 +99,18 @@ in
               ];
             in
             [
-              (lib.mkIf (host != "khanelimac") {
-                inherit protocol sshUser systems;
-                hostName = "khanelimac.local";
-                maxJobs = 8;
-                speedFactor = 5;
-                supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
-                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
-              })
+              (
+                lib.mkIf (host != "khanelimac") {
+                  inherit protocol sshUser systems;
+                  hostName = "khanelimac.local";
+                  maxJobs = 8;
+                  speedFactor = 5;
+                  supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
+                }
+                // lib.optionalAttrs (host == "khanelinix") {
+                  sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
+                }
+              )
               (
                 {
                   inherit protocol sshUser systems;
