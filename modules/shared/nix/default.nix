@@ -150,7 +150,7 @@ in
           builders-use-substitutes = true;
           # TODO: pipe-operators throws annoying warnings
           experimental-features = [
-            "nix-command "
+            "nix-command"
             "flakes "
           ];
           flake-registry = "/etc/nix/registry.json";
