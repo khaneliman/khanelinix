@@ -35,7 +35,8 @@ in
 mkShell {
   packages = with pkgs; [
     avrogen
-    azure-cli
+    # FIXME: broken nixpkgs
+    # azure-cli
     bicep
     csharpier
     dotnetbuildhelpers
