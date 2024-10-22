@@ -62,6 +62,8 @@ in
 
       shellAliases = {
         prefetch-sri = "nix store prefetch-file $1";
+        nr = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "all"'';
+        nrp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "all" --post-result'';
       };
     };
 
