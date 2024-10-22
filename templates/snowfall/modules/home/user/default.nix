@@ -106,6 +106,11 @@ in
           tarnow = "${getExe pkgs.gnutar} -acf ";
           untar = "${getExe pkgs.gnutar} -zxvf ";
           wget = "${getExe pkgs.wget} -c ";
+          remove-empty = ''${getExe' pkgs.findutils "find"} . -type d --empty --delete'';
+          print-empty = ''${getExe' pkgs.findutils "find"} . -type d --empty --print'';
+          dfh = "${getExe' pkgs.coreutils "df"} -h";
+          duh = "${getExe' pkgs.coreutils "du"} -h";
+          usage = "${getExe' pkgs.coreutils "du"} -ah -d1 | sort -rn 2>/dev/null";
 
           # Navigation shortcuts
           home = "cd ~";
@@ -127,7 +132,8 @@ in
           clear = "clear && ${getExe config.programs.fastfetch.package}";
           clr = "clear";
           pls = "sudo";
-          usage = "${getExe' pkgs.coreutils "du"} -ah -d1 | sort -rn 2>/dev/null";
+          psg = "${getExe pkgs.ps} aux | grep";
+          myip = "${getExe pkgs.curl} ifconfig.me";
 
           # Cryptography
           genpass = "${getExe pkgs.openssl} rand - base64 20"; # Generate a random, 20-charactered password
