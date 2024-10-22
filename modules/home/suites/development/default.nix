@@ -64,6 +64,9 @@ in
         prefetch-sri = "nix store prefetch-file $1";
         nr = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "all"'';
         nrp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "all" --post-result'';
+        # NOTE: must call from nixpkgs directory
+        nup = ''nix-shell maintainers/scripts/update.nix --argstr package $1'';
+        num = ''nix-shell maintainers/scripts/update.nix --argstr maintainer $1'';
       };
     };
 
