@@ -97,6 +97,7 @@ in
           nixre = "${lib.optionalString pkgs.stdenv.isLinux "sudo"} ${
             getExe snowfall-flake.packages.${system}.flake
           } switch";
+          nix = "nix -vL";
 
           gsed = "${getExe pkgs.gnused}";
 
