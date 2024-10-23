@@ -85,6 +85,7 @@ in
           #   getExe snowfall-flake.packages.${system}.flake
           # } switch";
           nix = "nix -vL";
+          hmvar-reload = ''__HM_ZSH_SESS_VARS_SOURCED=0 source "/etc/profiles/per-user/${config.${namespace}.user.name}/etc/profile.d/hm-session-vars.sh"'';
 
           gsed = "${getExe pkgs.gnused}";
 
