@@ -19,10 +19,7 @@ in
     homebrew = {
       taps = [ "1password/tap" ];
 
-      casks = [
-        "1password"
-        "1password-cli"
-      ];
+      casks = [ "1password" ];
 
       masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
         "1Password for Safari" = 1569813296;
