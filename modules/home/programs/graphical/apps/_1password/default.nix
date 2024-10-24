@@ -2,6 +2,7 @@
   config,
   lib,
   namespace,
+  pkgs,
   ...
 }:
 let
@@ -17,6 +18,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.packages = [ pkgs._1password ];
+
     programs = {
       ssh.extraConfig = ''
         Host *
