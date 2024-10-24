@@ -25,6 +25,12 @@ in
         input = {
           rawMouse = "yes";
           mouseSens = 6;
+          # escapeKey = "";
+        };
+
+        spice = {
+          enable = true;
+          audio = true;
         };
 
         win = {
