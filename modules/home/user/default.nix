@@ -86,6 +86,8 @@ in
           # } switch";
           nix = "nix -vL";
           hmvar-reload = ''__HM_ZSH_SESS_VARS_SOURCED=0 source "/etc/profiles/per-user/${config.${namespace}.user.name}/etc/profile.d/hm-session-vars.sh"'';
+          vim-update = ''nix run nixpkgs#vimPluginsUpdater -- --github-token=$(echo $GITHUB_TOKEN)'';
+          lua-update = ''nix run nixpkgs#luarocks-packages-updater'';
 
           gsed = "${getExe pkgs.gnused}";
 
