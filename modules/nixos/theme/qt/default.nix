@@ -18,8 +18,8 @@ in
     theme = {
       name = mkOpt str "Catppuccin-Macchiato-Blue" "The name of the kvantum theme to apply.";
       package = mkOpt package (pkgs.catppuccin-kvantum.override {
-        accent = "Blue";
-        variant = "Macchiato";
+        accent = "blue";
+        variant = "macchiato";
       }) "The package to use for the theme.";
     };
   };
