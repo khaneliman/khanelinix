@@ -18,6 +18,7 @@ in
 
     programs = {
       graphical = {
+        addons.looking-glass-client = enabled;
         apps = {
           thunderbird = enabled;
           zathura = enabled;
