@@ -34,7 +34,6 @@ node_modules
 
 .idea*
 
-
 # ░█▀█░▀█▀░█░█░█▀█░█▀▀
 # ░█░█░░█░░▄▀▄░█░█░▀▀█
 # ░▀░▀░▀▀▀░▀░▀░▀▀▀░▀▀▀
@@ -43,3 +42,4 @@ result
 .ccls-cache
 flake
 .pre-commit-config.yaml
+.venv
