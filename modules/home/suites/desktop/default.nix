@@ -34,7 +34,6 @@ in
         input-leap
         kdePackages.ark
         kdePackages.gwenview
-        pkgs.${namespace}.pocketcasts
         realvnc-vnc-viewer
         # FIXME: broken nixpkgs
         # rustdesk
