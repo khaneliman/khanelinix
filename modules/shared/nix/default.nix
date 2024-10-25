@@ -34,7 +34,7 @@ in
         "nix/flake-channels/home-manager".source = home-manager;
 
         # preserve current flake in /etc
-        "nixos/flake".source = self;
+        "nixos/flake".source = lib.mkIf pkgs.stdenv.isLinux self;
       };
 
       systemPackages = with pkgs; [
