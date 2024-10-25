@@ -68,7 +68,6 @@ in
       ];
 
       masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
-        "AdGuard for Safari" = 1440147259;
         "AmorphousMemoryMark" = 1495719766;
         "Amphetamine" = 937984704;
         "AutoMounter" = 1160435653;
