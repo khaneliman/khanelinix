@@ -30,7 +30,6 @@ in
         spicetify-cli
         tageditor
         youtube-music
-        pkgs.${namespace}.yt-music
       ];
 
     khanelinix = {
