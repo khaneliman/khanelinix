@@ -91,7 +91,7 @@ in
               }
             )
           ]
-          ++ lib.optionals config.${namespace}.security.sops.enable (
+          ++ lib.optionals (config.${namespace}.security.sops.enable && pkgs.stdenv.hostPlatform.isLinux) (
             let
               systems = [
                 "aarch64-darwin"
@@ -100,7 +100,7 @@ in
             in
             [
               (
-                lib.mkIf (host != "khanelimac") {
+                {
                   inherit protocol sshUser systems;
                   hostName = "khanelimac.local";
                   maxJobs = 8;
