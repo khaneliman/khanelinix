@@ -63,6 +63,7 @@ in
       shellAliases = {
         prefetch-sri = "nix store prefetch-file $1";
         nr = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "all"'';
+        nrl = ''${lib.getExe pkgs.nixpkgs-review} rev HEAD'';
         nrp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "all" --post-result'';
         # NOTE: must call from nixpkgs directory
         nup = ''nix-shell maintainers/scripts/update.nix --argstr package $1'';
