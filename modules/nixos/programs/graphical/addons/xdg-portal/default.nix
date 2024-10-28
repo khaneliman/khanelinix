@@ -37,7 +37,7 @@ in
           };
 
           sway = mkIf config.${namespace}.programs.graphical.wms.sway.enable {
-            default = [
+            default = lib.mkDefault [
               "wlr"
               "gtk"
             ];
