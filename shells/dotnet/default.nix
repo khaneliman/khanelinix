@@ -12,8 +12,8 @@ let
   upgrade-assistant = pkgs.buildDotnetGlobalTool {
     pname = "upgrade-assistant";
     nugetName = "upgrade-assistant";
-    version = "0.5.764";
-    nugetSha256 = "sha256-z9R52jpRPDbr0WpAG7OV1Vufoy9+2hCu9RkrlnKZEDY=";
+    version = "0.5.820";
+    nugetSha256 = "sha256-GB+q5aZRkBTeXUbIPjkPsll6pSI/H6Iyh5mY53uT284=";
   };
 in
 mkShell {
