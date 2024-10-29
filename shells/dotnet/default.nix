@@ -1,14 +1,6 @@
 { mkShell, pkgs, ... }:
 let
   # TODO: upstream
-  avrogen = pkgs.buildDotnetGlobalTool {
-    pname = "avrogen";
-    nugetName = "Apache.Avro.Tools";
-    version = "1.12.0";
-    nugetSha256 = "sha256-bR2ObY5hFCAWD326Y6NkN5FRyNWCKu4JaXlZ1dKY+XY=";
-  };
-
-  # TODO: upstream
   upgrade-assistant = pkgs.buildDotnetGlobalTool {
     pname = "upgrade-assistant";
     nugetName = "upgrade-assistant";
@@ -18,7 +10,7 @@ let
 in
 mkShell {
   packages = with pkgs; [
-    avrogen
+    pkgs.khanelinix.avrogen
     # FIXME: broken nixpkgs
     # azure-cli
     bicep
