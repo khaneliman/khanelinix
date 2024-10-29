@@ -1,13 +1,4 @@
 { mkShell, pkgs, ... }:
-let
-  # TODO: upstream
-  upgrade-assistant = pkgs.buildDotnetGlobalTool {
-    pname = "upgrade-assistant";
-    nugetName = "upgrade-assistant";
-    version = "0.5.820";
-    nugetSha256 = "sha256-GB+q5aZRkBTeXUbIPjkPsll6pSI/H6Iyh5mY53uT284=";
-  };
-in
 mkShell {
   packages = with pkgs; [
     pkgs.khanelinix.avrogen
@@ -27,7 +18,7 @@ mkShell {
     roslyn-ls
     vimPlugins.neotest-dotnet
     vscode-extensions.ms-dotnettools.csharp
-    upgrade-assistant
+    pkgs.khanelinix.upgrade-assistant
   ];
 
   shellHook = ''
