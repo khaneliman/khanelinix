@@ -18,7 +18,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = [ pkgs._1password ];
+    home.packages = [ pkgs._1password-cli ];
 
     programs = {
       ssh.extraConfig = ''
