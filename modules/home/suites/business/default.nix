@@ -33,8 +33,8 @@ in
 
     khanelinix = {
       programs = {
-        graphical = {
-          apps = {
+        terminal = {
+          tools = {
             _1password = enabled;
           };
         };
