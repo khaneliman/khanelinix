@@ -35,7 +35,7 @@ in
       programs = {
         terminal = {
           tools = {
-            _1password = enabled;
+            _1password-cli = enabled;
           };
         };
       };
