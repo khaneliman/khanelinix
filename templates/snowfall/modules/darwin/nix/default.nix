@@ -8,8 +8,6 @@ let
   cfg = config.${namespace}.nix;
 in
 {
-  imports = [ (lib.snowfall.fs.get-file "modules/shared/nix/default.nix") ];
-
   config = lib.mkIf cfg.enable {
     nix = {
       # Options that aren't supported through nix-darwin
@@ -56,9 +54,9 @@ in
         # limit number to see if it helps
         http-connections = lib.mkForce 25;
 
-        # FIX: shouldn't disable, but getting sandbox max size errors on darwin
+        # NOTE: shouldn't disable, but getting sandbox max size errors on darwin
         # darwin-rebuild --rollback on testing changing
-        sandbox = lib.mkForce false;
+        sandbox = lib.mkForce "relaxed";
       };
     };
   };

@@ -24,11 +24,6 @@ in
   };
 
   config = {
-    environment.systemPackages = with pkgs; [
-      fortune
-      lolcat
-    ];
-
     environment.pathsToLink = [ "/share/zsh" ];
 
     programs.zsh = {
