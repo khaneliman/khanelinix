@@ -21,7 +21,8 @@ in
       pkgs.wdisplays
       pkgs.wl-clipboard
       pkgs.wlr-randr
-      pkgs.wl-screenrec
+      # FIXME: broken nixpkgs
+      # pkgs.wl-screenrec
     ];
 
     khanelinix = {

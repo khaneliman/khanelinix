@@ -198,7 +198,8 @@ in
         "$looking-glass" = "${getExe pkgs.looking-glass-client}";
         "$screen-locker" = "${getExe config.programs.hyprlock.package}";
         "$window-inspector" = "${getExe hyprland-contrib.packages.${system}.hyprprop}";
-        "$screen-recorder" = "${getExe pkgs.${namespace}.record_screen}";
+        # FIXME: broken nixpkgs dependency
+        # "$screen-recorder" = "${getExe pkgs.${namespace}.record_screen}";
 
         # screenshot commands
         "$notify-screenshot" = ''${getExe pkgs.libnotify} --icon "$file" "Screenshot Saved"'';

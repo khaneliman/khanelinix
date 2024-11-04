@@ -25,8 +25,6 @@ in
     };
 
     environment = {
-      loginShell = pkgs.zsh;
-
       systemPackages = with pkgs; [
         bash-completion
         cask

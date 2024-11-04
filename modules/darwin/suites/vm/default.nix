@@ -20,7 +20,8 @@ in
     environment.systemPackages = with pkgs; [
       # FIX: broken nixpkg on darwin
       # qemu
-      vte
+      # FIX: broken nixpkg on darwin
+      # vte
       # FIX: broken nixpkg on darwin
       # libvirt
     ];

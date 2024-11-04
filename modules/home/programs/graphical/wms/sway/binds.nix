@@ -46,7 +46,7 @@ in
             looking-glass = "${getExe pkgs.looking-glass-client}";
             screen-locker = "${getExe config.programs.swaylock.package}";
             # window-inspector = "${getExe sway-contrib.packages.${system}.hyprprop}";
-            screen-recorder = "${getExe pkgs.${namespace}.record_screen}";
+            # screen-recorder = "${getExe pkgs.${namespace}.record_screen}";
 
             # screenshot commands
             grimblast_area_file = ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --freeze --notify save area "$file"'';
@@ -109,8 +109,8 @@ in
               "Super_L+Control+Print" = "exec ${grimblast_screen_clipboard}";
 
               # Screen recording
-              "Super_L+Control+Alt+Print" = "exec ${screen-recorder} screen";
-              "Super_L+Control+Alt+Shift+Print" = "exec ${screen-recorder} area";
+              # "Super_L+Control+Alt+Print" = "exec ${screen-recorder} screen";
+              # "Super_L+Control+Alt+Shift+Print" = "exec ${screen-recorder} area";
 
               # Floating toggle
               "Super_L+Alt+v" = "floating toggle";

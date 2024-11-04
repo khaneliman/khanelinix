@@ -28,7 +28,8 @@ in
         snes9x
       ]
       ++ lib.optionals stdenv.isLinux [
-        cemu
+        # FIXME: broken nixpkgs
+        # cemu
         duckstation
         emulationstation
         mgba
