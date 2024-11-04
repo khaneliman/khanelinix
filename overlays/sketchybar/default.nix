@@ -1,5 +1,8 @@
 _: _final: prev: {
-  sketchybar = prev.sketchybar.overrideAttrs (oldAttrs: {
+  # TODO: remove stdenv and buildinputs override after next unstable
+  sketchybar = (prev.sketchybar.override { inherit (prev) stdenv; }).overrideAttrs (oldAttrs: {
+    buildInputs = [ prev.apple-sdk_15 ];
+
     # Create secondary sketchybar executable for dynamic island
     installPhase = # bash
       ''
