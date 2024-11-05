@@ -7,15 +7,15 @@
 }:
 lua.stdenv.mkDerivation rec {
   pname = "SBarLua";
-  version = "unstable-2024-07-15";
+  version = "0-unstable-2024-08-12";
 
   name = "lua${lua.luaversion}-" + pname + "-" + version;
 
   src = fetchFromGitHub {
     owner = "FelixKratz";
     repo = "SbarLua";
-    rev = "19ca262c39cc45f1841155697dffd649cc119d9c";
-    hash = "sha256-nz8NAeoprQ7OeFfs+7ixd6EFJyJV35WZK4mAS5izn8k=";
+    rev = "437bd2031da38ccda75827cb7548e7baa4aa9978";
+    hash = "sha256-F0UfNxHM389GhiPQ6/GFbeKQq5EvpiqQdvyf7ygzkPg=";
   };
 
   nativeBuildInputs = [
