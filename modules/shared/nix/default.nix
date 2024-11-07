@@ -104,7 +104,7 @@ in
                   inherit protocol sshUser systems;
                   hostName = "khanelimac.local";
                   maxJobs = 8;
-                  speedFactor = 5;
+                  speedFactor = 10;
                   supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
                 }
                 // lib.optionalAttrs (host == "khanelinix") {
@@ -116,7 +116,7 @@ in
                   inherit protocol sshUser systems;
                   hostName = "darwin-build-box.nix-community.org";
                   maxJobs = 32;
-                  speedFactor = 20;
+                  speedFactor = 5;
                   supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
                   publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUZ6OEZYU1ZFZGY4RnZETWZib3hoQjVWalNlN3kyV2dTYTA5cTFMNHQwOTkgCg";
                 }
