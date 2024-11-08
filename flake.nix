@@ -181,7 +181,8 @@
 
     sops-nix-darwin = {
       # url = "github:Mic92/sops-nix/nix-darwin";
-      url = "github:khaneliman/sops-nix/nix-darwin";
+      # url = "github:khaneliman/sops-nix/nix-darwin";
+      url = "github:khaneliman/sops-nix/darwin";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
