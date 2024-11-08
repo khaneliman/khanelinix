@@ -35,6 +35,7 @@ in
           # neovide
           onefetch
           postman
+          bruno
           act
         ]
         ++ lib.optionals pkgs.stdenv.isLinux [
