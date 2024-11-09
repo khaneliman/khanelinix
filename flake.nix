@@ -179,12 +179,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Yubikey Guide
-    yubikey-guide = {
-      url = "github:drduh/YubiKey-Guide";
-      flake = false;
-    };
-
     wezterm = {
       url = "github:wez/wezterm?dir=nix";
     };

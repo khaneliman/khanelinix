@@ -2074,8 +2074,7 @@
         "spicetify-nix": "spicetify-nix",
         "waybar": "waybar",
         "wezterm": "wezterm",
-        "xdg-desktop-portal-hyprland": "xdg-desktop-portal-hyprland",
-        "yubikey-guide": "yubikey-guide"
+        "xdg-desktop-portal-hyprland": "xdg-desktop-portal-hyprland"
       }
     },
     "rust-overlay": {
@@ -2637,22 +2636,6 @@
       "original": {
         "owner": "hyprwm",
         "repo": "xdg-desktop-portal-hyprland",
-        "type": "github"
-      }
-    },
-    "yubikey-guide": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1730658116,
-        "narHash": "sha256-gmsr6uBQE9IG1+uK7mtIGXqrHeVG+Wf7uHc2zC4aWcY=",
-        "owner": "drduh",
-        "repo": "YubiKey-Guide",
-        "rev": "dea24f4fa0b6a543788c51dde8dfaf77cf9cffca",
-        "type": "github"
-      },
-      "original": {
-        "owner": "drduh",
-        "repo": "YubiKey-Guide",
         "type": "github"
       }
     },
