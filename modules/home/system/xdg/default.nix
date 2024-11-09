@@ -146,7 +146,6 @@ let
     "x-scheme-handler/https" = browser;
     "x-scheme-handler/mailto" = mail;
     "x-scheme-handler/mid" = mail;
-    "x-scheme-handler/spotify" = [ "spotify.desktop" ];
     "x-scheme-handler/terminal" = terminal;
     "x-scheme-handler/tg" = [ "org.telegram.desktop" ];
     "x-scheme-handler/unknown" = browser;
