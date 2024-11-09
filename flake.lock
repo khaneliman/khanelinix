@@ -736,22 +736,6 @@
         "type": "github"
       }
     },
-    "gpg-base-conf": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1724021581,
-        "narHash": "sha256-f+ghj8qiljbHyIPZb6b2IAxxQU9GvbYpTdEEjSN9g8E=",
-        "owner": "drduh",
-        "repo": "config",
-        "rev": "eedb4ecf4bb2b5fd71bb27768f76da0f2e2605c8",
-        "type": "github"
-      },
-      "original": {
-        "owner": "drduh",
-        "repo": "config",
-        "type": "github"
-      }
-    },
     "harfbuzz": {
       "flake": false,
       "locked": {
@@ -2064,7 +2048,6 @@
         "catppuccin-cursors": "catppuccin-cursors",
         "darwin": "darwin",
         "deploy-rs": "deploy-rs",
-        "gpg-base-conf": "gpg-base-conf",
         "home-manager": "home-manager",
         "hypr-socket-watch": "hypr-socket-watch",
         "hypridle": "hypridle",

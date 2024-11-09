@@ -14,11 +14,9 @@ let
     getExe'
     ;
   inherit (lib.${namespace}) mkBoolOpt mkOpt;
-  inherit (inputs) gpg-base-conf yubikey-guide;
+  inherit (inputs) yubikey-guide;
 
   cfg = config.${namespace}.security.gpg;
-
-  gpgConf = "${gpg-base-conf}/gpg.conf";
 
   gpgAgentConf = ''
     enable-ssh-support
@@ -101,7 +99,6 @@ in
         ".gnupg/yubikey-guide.md".source = guide;
         ".gnupg/yubikey-guide.html".source = guideHTML;
 
-        ".gnupg/gpg.conf".source = gpgConf;
         ".gnupg/gpg-agent.conf".text = gpgAgentConf;
       };
     };
