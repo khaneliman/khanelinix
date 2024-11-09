@@ -161,6 +161,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # TODO: remove after merged into sops-nix
     sops-nix-darwin = {
       # url = "github:Mic92/sops-nix/nix-darwin";
       # url = "github:khaneliman/sops-nix/nix-darwin";
@@ -203,7 +204,10 @@
         allowUnfree = true;
 
         # TODO: cleanup when available
-        permittedInsecurePackages = [ "freeimage-unstable-2021-11-01" ];
+        permittedInsecurePackages = [
+          # NOTE: needed by emulationstation
+          "freeimage-unstable-2021-11-01"
+        ];
       };
 
       overlays = [ ];
