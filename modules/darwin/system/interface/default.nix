@@ -127,7 +127,6 @@ in
           "/System/Applications/Notes.app"
           # TODO: implement small_blank
           "/System/Applications/Music.app"
-          "/Applications/Spotify.app"
           "/Applications/Plex.app"
           # TODO: implement small_blank
           "/Applications/Visual Studio Code.app"

@@ -17,8 +17,6 @@ in
 
   config = mkIf cfg.enable {
     homebrew = {
-      casks = [ "spotify" ];
-
       masApps = mkIf config.${namespace}.tools.homebrew.masEnable { "GarageBand" = 682658836; };
     };
   };
