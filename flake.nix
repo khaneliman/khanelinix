@@ -168,12 +168,6 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
-    # Spicetify
-    spicetify-nix = {
-      url = "github:Gerg-L/spicetify-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     waybar = {
       url = "github:Alexays/Waybar";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -221,7 +215,6 @@
         nix-index-database.hmModules.nix-index
         nur.hmModules.nur
         sops-nix.homeManagerModules.sops
-        spicetify-nix.homeManagerModules.default
       ];
 
       systems = {

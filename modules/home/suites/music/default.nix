@@ -27,7 +27,6 @@ in
         ardour
         mpd-notification
         mpdevil
-        spicetify-cli
         tageditor
         youtube-music
       ];

@@ -357,8 +357,6 @@ in
           };
         };
 
-        spicetify.colorScheme = "macchiato";
-
         tmux.plugins = [
           {
             plugin = pkgs.tmuxPlugins.catppuccin;

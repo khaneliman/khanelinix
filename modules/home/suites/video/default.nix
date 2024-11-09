@@ -34,7 +34,6 @@ in
         graphical.apps = {
           obs = enabled;
           mpv = enabled;
-          spicetify = enabled;
         };
       };
     };
