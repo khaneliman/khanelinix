@@ -191,7 +191,7 @@ in
         "$mail" = "${getExe pkgs.thunderbird}";
         "$editor" = "${getExe pkgs.neovim}";
         "$explorer" = "${getExe pkgs.xfce.thunar}";
-        "$music" = "${getExe pkgs.spotify}";
+        "$music" = "${getExe pkgs.youtube-music}";
         "$notification_center" = "${getExe' config.services.swaync.package "swaync-client"}";
         "$launcher" = "anyrun";
         # "$launcher_alt" = "${getExe config.programs.rofi.package} -show drun -n";
