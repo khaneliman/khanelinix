@@ -118,14 +118,10 @@
     };
 
     # NixPkgs (nixos-unstable)
-    nixpkgs = {
-      url = "github:nixos/nixpkgs/nixos-unstable";
-    };
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # NixPkgs (nixpkgs-unstable)
-    nixpkgs-unstable = {
-      url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    };
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
     # NixOS WSL Support
     nixos-wsl = {
@@ -134,9 +130,7 @@
     };
 
     # Nix User Repository (master)
-    nur = {
-      url = "github:nix-community/NUR";
-    };
+    nur.url = "github:nix-community/NUR";
 
     pre-commit-hooks-nix.url = "github:cachix/pre-commit-hooks.nix";
 
@@ -171,9 +165,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    wezterm = {
-      url = "github:wez/wezterm?dir=nix";
-    };
+    wezterm.url = "github:wez/wezterm?dir=nix";
   };
 
   outputs =
