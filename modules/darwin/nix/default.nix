@@ -31,18 +31,16 @@ in
       linux-builder = {
         enable = true;
         ephemeral = true;
-        maxJobs = 4;
-        protocol = "ssh-ng";
-        systems = [
-          "x86_64-linux"
-          "aarch64-linux"
-        ];
-        speedFactor = 1;
+        maxJobs = 8;
+        speedFactor = 10;
         supportedFeatures = [
-          "benchmark"
           "big-parallel"
           "nixos-test"
         ];
+        config = {
+          virtualisation.darwin-builder.memorySize = 4 * 1024;
+          virtualisation.cores = 8;
+        };
       };
 
       optimise = {
