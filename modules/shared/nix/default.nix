@@ -87,6 +87,7 @@ in
                 supportedFeatures = supportedFeatures ++ [ "kvm" ];
               }
               // lib.optionalAttrs (host == "khanelimac") {
+                speedFactor = 5;
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
               }
             )
