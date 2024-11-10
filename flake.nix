@@ -11,7 +11,7 @@
     # macOS Support (master)
     darwin = {
       url = "github:lnl7/nix-darwin";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
     # System Deployment
