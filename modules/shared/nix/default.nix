@@ -65,7 +65,7 @@ in
 
         buildMachines =
           let
-            protocol = "ssh";
+            protocol = "ssh-ng";
             sshUser = "khaneliman";
             supportedFeatures = [
               "benchmark"
@@ -87,7 +87,6 @@ in
                 supportedFeatures = supportedFeatures ++ [ "kvm" ];
               }
               // lib.optionalAttrs (host == "khanelimac") {
-                speedFactor = 5;
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
               }
             )
