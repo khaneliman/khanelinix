@@ -1,9 +1,9 @@
 { writeShellApplication, git, ... }:
 writeShellApplication {
-  name = "fix_git";
+  name = "fix-git";
 
   meta = {
-    mainProgram = "fix_git";
+    mainProgram = "fix-git";
   };
 
   checkPhase = "";
