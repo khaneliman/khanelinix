@@ -91,6 +91,26 @@ in
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
               }
             )
+            (
+              {
+                inherit protocol sshUser;
+                hostName = "aarch64.nixos.community";
+                maxJobs = 64;
+                speedFactor = 20;
+                system = "aarch64-linux";
+                supportedFeatures = [
+                  "big-parallel"
+                  "kvm"
+                  "nixos-test"
+                ];
+              }
+              // lib.optionalAttrs (host == "khanelimac") {
+                sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+              }
+              // lib.optionalAttrs (host == "khanelinix") {
+                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
+              }
+            )
           ]
           ++ lib.optionals (config.${namespace}.security.sops.enable && pkgs.stdenv.hostPlatform.isLinux) (
             let
@@ -188,5 +208,6 @@ in
         };
       };
 
+    programs.ssh.knownHosts."aarch64.nixos.community".publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMUTz5i9u5H2FHNAmZJyoJfIGyUm/HfGhfwnc142L3ds";
   };
 }
