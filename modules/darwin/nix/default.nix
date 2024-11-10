@@ -29,8 +29,10 @@ in
       };
 
       linux-builder = {
-        maxJobs = 2;
-        protocol = "ssh";
+        enable = true;
+        ephemeral = true;
+        maxJobs = 4;
+        protocol = "ssh-ng";
         systems = [
           "x86_64-linux"
           "aarch64-linux"
