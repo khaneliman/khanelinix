@@ -21,12 +21,9 @@
     };
 
     # Home Manager (master)
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      # url = "git+file:///home/khaneliman/Documents/github/home-manager";
-      # url = "git+file:///Users/khaneliman/Documents/github/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    home-manager.url = "github:nix-community/home-manager";
+    # home-manager.url = "git+file:///home/khaneliman/Documents/github/home-manager";
+    # home-manager.url = "git+file:///Users/khaneliman/Documents/github/home-manager";
 
     ##
     # Hyprland Section
