@@ -133,6 +133,7 @@ in
                 }
               )
               (
+                # NOTE: git clone --reference /var/lib/nixpkgs.git https://github.com/NixOS/nixpkgs.git
                 {
                   inherit protocol sshUser systems;
                   hostName = "darwin-build-box.nix-community.org";
@@ -208,6 +209,9 @@ in
         };
       };
 
-    programs.ssh.knownHosts."aarch64.nixos.community".publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMUTz5i9u5H2FHNAmZJyoJfIGyUm/HfGhfwnc142L3ds";
+    programs.ssh.knownHosts = {
+      "aarch64.nixos.community".publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMUTz5i9u5H2FHNAmZJyoJfIGyUm/HfGhfwnc142L3ds";
+      "darwin-build-box.nix-community.org".publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFz8FXSVEdf8FvDMfboxhB5VjSe7y2WgSa09q1L4t099";
+    };
   };
 }
