@@ -14,12 +14,9 @@ let
   zns = "zellij -s $(basename $(pwd)) -l dev options --default-cwd $(pwd)";
   zas = "zellij a $(basename $(pwd))";
   zo = ''
-    session_name=$(basename $(pwd))
-    if zellij list-sessions | rg $session_name &> /dev/null; then
-        zellij a $session_name
-    else
-        zellij -s $session_name -l dev options --default-cwd $(pwd)
-    fi
+    session_name=$(basename "$(pwd)")
+
+    zellij --layout dev  attach --create "$session_name" options --default-cwd "$(pwd)"
   '';
 in
 {
