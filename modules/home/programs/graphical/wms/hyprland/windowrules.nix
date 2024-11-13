@@ -99,6 +99,7 @@ in
           "stayfocused, class:org.kde.polkit-kde-authentication-agent-1"
           "stayfocused, class:Rofi"
           "nofocus, class:^(steam)$, title:^()$"
+          "nofocus, class:^(xwaylandvideobridge)$"
           "stayfocused, class:it.mijorus.smile"
 
           ##
