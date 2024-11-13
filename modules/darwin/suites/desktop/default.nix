@@ -41,7 +41,6 @@ in
       ];
 
       casks = [
-        "alfred"
         "alt-tab"
         "appcleaner"
         "bartender"
