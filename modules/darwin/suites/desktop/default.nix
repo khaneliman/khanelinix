@@ -45,7 +45,7 @@ in
         "appcleaner"
         "bartender"
         "bitwarden"
-        "firefox-developer-edition"
+        "firefox@developer-edition"
         "gpg-suite"
         "hammerspoon"
         "kitty"
