@@ -123,7 +123,7 @@ in
                 {
                   inherit protocol sshUser systems;
                   hostName = "khanelimac.local";
-                  maxJobs = 8;
+                  maxJobs = 24;
                   speedFactor = 10;
                   supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
                 }
