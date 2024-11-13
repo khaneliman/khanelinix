@@ -55,8 +55,8 @@ in
   };
 
   nix.settings = {
-    cores = 5;
-    max-jobs = 2;
+    cores = 16;
+    max-jobs = 24;
   };
 
   security.pam.enableSudoTouchIdAuth = true;
