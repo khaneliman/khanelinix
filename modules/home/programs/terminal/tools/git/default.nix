@@ -25,10 +25,12 @@ let
   tokenExports =
     lib.optionalString osConfig.${namespace}.security.sops.enable # Bash
       ''
-        GITHUB_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
-        export GITHUB_TOKEN
-        GH_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
-        export GH_TOKEN
+        if [ -f ${config.sops.secrets."github/access-token".path} ]; then
+          GITHUB_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
+          export GITHUB_TOKEN
+          GH_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
+          export GH_TOKEN
+        fi
       '';
 in
 {
