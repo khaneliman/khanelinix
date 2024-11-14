@@ -20,7 +20,15 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [ config.services.skhd.package ];
+    environment = {
+      systemPackages = [ config.services.skhd.package ];
+    };
+
+    ${namespace}.home.extraOptions = {
+      home.shellAliases = {
+        restart-yabai = ''launchctl kickstart -k gui/"$(id -u)"/org.nixos.yabai'';
+      };
+    };
 
     services.skhd = {
       enable = true;
