@@ -1,8 +1,8 @@
 {
   config,
   lib,
-  pkgs,
   namespace,
+  pkgs,
   ...
 }:
 let
@@ -130,8 +130,7 @@ in
           "/Applications/Plex.app"
           # TODO: implement small_blank
           "/Applications/Visual Studio Code.app"
-          "/Applications/GitHub Desktop.app"
-          "/Applications/GitKraken.app"
+          "${pkgs.bruno}/Applications/Bruno.app"
           # TODO: implement small_blank
           "${pkgs.wezterm}/Applications/WezTerm.app"
         ];
