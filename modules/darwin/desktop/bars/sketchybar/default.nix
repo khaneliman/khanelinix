@@ -17,6 +17,12 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    ${namespace}.home.extraOptions = {
+      home.shellAliases = {
+        restart-sketchybar = ''launchctl kickstart -k gui/"$(id -u)"/org.nixos.sketchybar'';
+      };
+    };
+
     homebrew = {
       brews = [ "cava" ];
       casks = [ "background-music" ];
