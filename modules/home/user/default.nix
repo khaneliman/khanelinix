@@ -129,12 +129,18 @@ in
           # Cryptography
           genpass = "${getExe pkgs.openssl} rand - base64 20"; # Generate a random, 20-charactered password
           sha = "shasum -a 256"; # Test checksum
-          ssh-list-perm-user = ''find ~/.ssh -exec stat -c "%a %n" {} \;'';
+          ssh-list-perm-user = # Bash
+            ''find ~/.ssh -exec stat -c "%a %n" {} \;'';
           sshperm-user = # bash
-            ''${getExe' pkgs.findutils "find"} ~/.ssh/ -type f -exec chmod 600 {} \;; ${getExe' pkgs.findutils "find"} ~/.ssh/ -type d -exec chmod 700 {} \;; ${getExe' pkgs.findutils "find"} ~/.ssh/ -type f -name "*.pub" -exec chmod 644 {} \;'';
-          ssh-list-perm-system = ''find /etc/ssh -exec stat -c "%a %n" {} \;'';
+            ''
+              ${getExe' pkgs.findutils "find"} ~/.ssh -type f -exec chmod 600 {} \;; ${getExe' pkgs.findutils "find"} ~/.ssh -type d -exec chmod 700 {} \;; ${getExe' pkgs.findutils "find"} ~/.ssh -type f -name "*.pub" -exec chmod 644 {} \;
+            '';
+          ssh-list-perm-system = # Bash
+            ''find /etc/ssh -exec stat -c "%a %n" {} \;'';
           sshperm-system = # bash
-            ''sudo ${getExe' pkgs.findutils "find"} /etc/ssh/ -type f -exec chmod 600 {} \;; sudo ${getExe' pkgs.findutils "find"} /etc/ssh/ -type d -exec chmod 700 {} \;;sudo ${getExe' pkgs.findutils "find"} /etc/ssh/ -type f -name "*.pub" -exec chmod 644 {} \;'';
+            ''
+              sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type f -exec chmod 600 {} \;; sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type d -exec chmod 700 {} \;;sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type f -name "*.pub" -exec chmod 644 {} \;
+            '';
         };
 
         username = mkDefault cfg.name;
