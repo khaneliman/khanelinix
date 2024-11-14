@@ -22,6 +22,7 @@ in
         "calibre"
         "libreoffice"
         "meetingbar"
+        "microsoft-teams"
         "obsidian"
         "thunderbird"
       ];

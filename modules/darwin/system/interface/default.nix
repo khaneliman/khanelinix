@@ -116,7 +116,7 @@ in
           "/System/Applications/Messages.app"
           "/Applications/Caprine.app"
           "/Applications/Element.app"
-          "/Applications/Microsoft Teams (work or school).app"
+          "/Applications/Microsoft Teams.app"
           "/Applications/Discord.app"
           "/Applications/Thunderbird.app"
           # TODO: implement small_blank
