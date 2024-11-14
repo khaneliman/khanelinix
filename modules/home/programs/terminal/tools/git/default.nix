@@ -19,7 +19,7 @@ let
 
   cfg = config.${namespace}.programs.terminal.tools.git;
 
-  aliases = import ./aliases.nix;
+  aliases = import ./aliases.nix { inherit lib pkgs; };
   ignores = import ./ignores.nix;
 
   tokenExports =
