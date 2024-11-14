@@ -32,5 +32,10 @@ in
         stealthenabled = 0;
       };
     };
+
+    system.activationScripts.postActivation.text = ''
+      echo "Enabling ssh"
+      sudo launchctl load -w /System/Library/LaunchDaemons/ssh.plist
+    '';
   };
 }
