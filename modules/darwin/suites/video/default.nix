@@ -20,6 +20,10 @@ in
     environment.systemPackages = with pkgs; [ ffmpeg ];
 
     homebrew = {
+      casks = [
+        "plex"
+      ];
+
       masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
         "Infuse" = 1136220934;
         "iMovie" = 408981434;
