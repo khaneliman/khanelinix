@@ -64,10 +64,12 @@ in
 
       shellAliases = {
         prefetch-sri = "nix store prefetch-file $1";
-        nrl = ''${lib.getExe pkgs.nixpkgs-review} rev HEAD'';
+        nrh = ''${lib.getExe pkgs.nixpkgs-review} rev HEAD'';
         nra = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "all"'';
         nrap = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "all" --post-result'';
+        nrd = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-darwin aarch64-darwin"'';
         nrdp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-darwin aarch64-darwin" --post-result'';
+        nrl = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-linux aarch64-linux"'';
         nrlp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-linux aarch64-linux" --post-result'';
         # TODO: remove once remote building to khanelinix works
         nrmp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-darwin aarch64-darwin aarch64-linux" --post-result'';
