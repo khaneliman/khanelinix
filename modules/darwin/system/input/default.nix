@@ -30,14 +30,16 @@ in
             ActuationStrength = 0;
             # enable tap to click
             Clicking = true;
+            # Enable tap to drag
+            # Dragging = true;
             # firmness level, 0 = lightest, 2 = heaviest
             FirstClickThreshold = 1;
             # firmness level for force touch
             SecondClickThreshold = 1;
             # don't allow positional right click
             TrackpadRightClick = true;
-            # three finger drag for space switching
-            # TrackpadThreeFingerDrag = true;
+            # three finger drag
+            TrackpadThreeFingerDrag = true;
           };
 
           ".GlobalPreferences" = {
