@@ -18,7 +18,15 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    ${namespace}.desktop.addons.jankyborders = enabled;
+    ${namespace} = {
+      desktop.addons.jankyborders = enabled;
+
+      home.extraOptions = {
+        home.shellAliases = {
+          restart-yabai = ''launchctl kickstart -k gui/"$(id -u)"/org.nixos.yabai'';
+        };
+      };
+    };
 
     services.yabai = {
       enable = true;
