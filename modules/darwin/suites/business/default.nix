@@ -20,6 +20,7 @@ in
       casks = [
         "bitwarden"
         "calibre"
+        "fantastical"
         "libreoffice"
         "meetingbar"
         "microsoft-teams"
