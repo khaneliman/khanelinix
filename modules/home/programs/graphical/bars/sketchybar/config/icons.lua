@@ -47,9 +47,9 @@ return {
 		},
 	},
 	stats = {
-		cpu = "",
+		cpu = "",
 		disk = "󰋊",
-		memory = "﬙",
+		memory = "",
 		network = "",
 		network_down = "",
 		network_up = "",
