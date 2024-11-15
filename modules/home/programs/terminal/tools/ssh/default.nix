@@ -1,4 +1,5 @@
 {
+  osConfig,
   config,
   lib,
   inputs,
@@ -37,26 +38,20 @@ let
       remote = other-hosts.${name};
       remote-user-name = remote.config.${namespace}.user.name;
       remote-user-id = builtins.toString remote.config.users.users.${remote-user-name}.uid;
-
-      forward-gpg =
-        optionalString (config.services.gpg-agent.enable && remote.config.services.gpg-agent.enable)
-          ''
-            RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra
-            RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh
-          '';
-      port-expr =
-        if builtins.hasAttr name inputs.self.nixosConfigurations then
-          "Port ${builtins.toString cfg.port}"
-        else
-          "";
+      indent = "  ";
     in
     ''
       Host ${name}
         Hostname ${name}.local
         User ${remote-user-name}
         ForwardAgent yes
-        ${port-expr}
-        ${forward-gpg}
+    ''
+    + optionalString (builtins.hasAttr name inputs.self.nixosConfigurations) ''
+      ${indent}Port ${builtins.toString cfg.port}
+    ''
+    + optionalString (config.services.gpg-agent.enable && remote.config.services.gpg-agent.enable) ''
+      ${indent}RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra
+      ${indent}RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh
     ''
   ) (builtins.attrNames other-hosts);
 in
