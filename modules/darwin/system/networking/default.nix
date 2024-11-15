@@ -34,8 +34,13 @@ in
     };
 
     system.activationScripts.postActivation.text = ''
-      echo "Enabling ssh"
-      sudo launchctl load -w /System/Library/LaunchDaemons/ssh.plist
+      echo "Checking if ssh is already loaded"
+      if ! sudo launchctl list | grep -q ssh; then
+        echo "Enabling ssh"
+        sudo launchctl load -w /System/Library/LaunchDaemons/ssh.plist
+      else
+        echo "ssh is already loaded"
+      fi
     '';
   };
 }
