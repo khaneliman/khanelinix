@@ -15,14 +15,16 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    security.pam.loginLimits = [
-      {
-        domain = "*";
-        item = "nofile";
-        type = "-";
-        value = "65536";
-      }
-
-    ];
+    security.pam = {
+      sshAgentAuth.enable = true;
+      loginLimits = [
+        {
+          domain = "*";
+          item = "nofile";
+          type = "-";
+          value = "65536";
+        }
+      ];
+    };
   };
 }
