@@ -21,12 +21,6 @@ let
     max-cache-ttl 120
     pinentry-program ${getExe' pkgs.pinentry-gnome3 "pinentry-gnome3"}
   '';
-
-  reload-yubikey =
-    pkgs.writeShellScriptBin "reload-yubikey" # bash
-      ''
-        ${getExe' pkgs.gnupg "gpg-connect-agent"} "scd serialno" "learn --force" /bye
-      '';
 in
 {
   options.${namespace}.security.gpg = with types; {
@@ -53,7 +47,6 @@ in
       paperkey
       pinentry-curses
       pinentry-qt
-      reload-yubikey
     ];
 
     khanelinix = {

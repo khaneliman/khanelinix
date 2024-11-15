@@ -6,10 +6,16 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf getExe';
   inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.hardware.yubikey;
+
+  reload-yubikey =
+    pkgs.writeShellScriptBin "reload-yubikey" # bash
+      ''
+        ${getExe' pkgs.gnupg "gpg-connect-agent"} "scd serialno" "learn --force" /bye
+      '';
 in
 {
   options.${namespace}.hardware.yubikey = {
@@ -28,6 +34,7 @@ in
       yubikey-personalization-gui # gui
       yubico-piv-tool # cli
       #yubioath-flutter # gui
+      reload-yubikey
     ];
 
     programs = {
