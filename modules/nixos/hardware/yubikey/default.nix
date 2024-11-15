@@ -20,6 +20,7 @@ in
 {
   options.${namespace}.hardware.yubikey = {
     enable = mkBoolOpt false "Whether or not to enable Yubikey.";
+    enableSSHSupport = mkBoolOpt false "Whether or not to enable SSH support for Yubikey.";
   };
 
   config = mkIf cfg.enable {
@@ -37,18 +38,12 @@ in
       reload-yubikey
     ];
 
-    programs = {
-      ssh.startAgent = false;
-      gnupg.agent = {
-        enable = true;
-        enableSSHSupport = true;
-      };
-    };
+    programs.ssh.startAgent = !cfg.enableSSHSupport;
 
     services = {
       pcscd.enable = true;
       udev.packages = [ pkgs.yubikey-personalization ];
-      yubikey-agent.enable = true;
+      yubikey-agent.enable = cfg.enableSSHSupport;
     };
   };
 }
