@@ -27,10 +27,10 @@ in
         polkitPolicyOwners = [ config.${namespace}.user.name ];
       };
 
-      ssh.extraConfig = ''
+      ssh.extraConfig = lib.optionalString cfg.enableSshSocket ''
         Host *
           AddKeysToAgent yes
-          ${lib.optionalString cfg.enableSshSocket "IdentityAgent ~/.1password/agent.sock"}
+          IdentityAgent ~/.1password/agent.sock
       '';
     };
   };
