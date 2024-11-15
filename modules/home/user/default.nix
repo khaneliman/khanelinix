@@ -136,7 +136,7 @@ in
               ${getExe' pkgs.findutils "find"} ~/.ssh -type f -exec chmod 600 {} \;; ${getExe' pkgs.findutils "find"} ~/.ssh -type d -exec chmod 700 {} \;; ${getExe' pkgs.findutils "find"} ~/.ssh -type f -name "*.pub" -exec chmod 644 {} \;
             '';
           ssh-list-perm-system = # Bash
-            ''find /etc/ssh -exec stat -c "%a %n" {} \;'';
+            ''sudo find /etc/ssh -exec stat -c "%a %n" {} \;'';
           sshperm-system = # bash
             ''
               sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type f -exec chmod 600 {} \;; sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type d -exec chmod 700 {} \;;sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type f -name "*.pub" -exec chmod 644 {} \;
