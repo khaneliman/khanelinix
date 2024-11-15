@@ -1,10 +1,8 @@
 {
-  osConfig,
   config,
   lib,
   inputs,
   host,
-  pkgs,
   namespace,
   ...
 }:
