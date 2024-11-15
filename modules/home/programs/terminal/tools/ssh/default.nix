@@ -67,6 +67,9 @@ in
     programs.ssh = {
       enable = true;
 
+      addKeysToAgent = "yes";
+      forwardAgent = true;
+
       extraConfig = ''
         StreamLocalBindUnlink yes
 
