@@ -53,6 +53,10 @@ let
       ${indent}RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra
       ${indent}RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh
     ''
+    + optionalString osConfig.${namespace}.security.sops.enable ''
+      ${indent}IdentityFile ${osConfig.sops.secrets."${host}_khaneliman_ssh_key".path}
+    ''
+
   ) (builtins.attrNames other-hosts);
 in
 {
