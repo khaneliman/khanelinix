@@ -65,7 +65,7 @@ in
 
         buildMachines =
           let
-            protocol = "ssh-ng";
+            protocol = if pkgs.stdenv.isLinux then "ssh-ng" else "ssh";
             sshUser = "khaneliman";
             supportedFeatures = [
               "benchmark"
