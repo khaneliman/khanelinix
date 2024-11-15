@@ -84,12 +84,13 @@ in
         extraConfig = {
           credential = {
             helper =
-              if cfg.wslAgentBridge then
-                cfg.wslGitCredentialManagerPath
-              else if pkgs.stdenv.isLinux then
-                ''${getExe' config.programs.git.package "git-credential-libsecret"}''
-              else
-                ''${getExe' config.programs.git.package "git-credential-osxkeychain"}'';
+              lib.optionalString cfg.wslAgentBridge cfg.wslGitCredentialManagerPath
+              + lib.optionalString (!cfg.wslAgentBridge && pkgs.stdenv.isLinux) (
+                getExe' config.programs.git.package "git-credential-libsecret"
+              )
+              + lib.optionalString (!cfg.wslAgentBridge && pkgs.stdenv.isDarwin) (
+                getExe' config.programs.git.package "git-credential-osxkeychain"
+              );
 
             useHttpPath = true;
           };
@@ -99,10 +100,10 @@ in
           };
 
           gpg.format = "ssh";
+          # TODO: verify still works
           "gpg \"ssh\"".program = mkIf cfg._1password (
-            ''''
-            + ''${lib.optionalString pkgs.stdenv.isLinux (getExe' pkgs._1password-gui "op-ssh-sign")}''
-            + ''${lib.optionalString pkgs.stdenv.isDarwin "${pkgs._1password-gui}/Applications/1Password.app/Contents/MacOS/op-ssh-sign"}''
+            lib.optionalString pkgs.stdenv.isLinux (getExe' pkgs._1password-gui "op-ssh-sign")
+            + lib.optionalString pkgs.stdenv.isDarwin "${pkgs._1password-gui}/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
           );
 
           init = {
