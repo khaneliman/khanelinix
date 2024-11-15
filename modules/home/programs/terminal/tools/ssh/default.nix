@@ -1,10 +1,8 @@
 {
-  osConfig,
   config,
   lib,
   inputs,
   host,
-  pkgs,
   namespace,
   ...
 }:
@@ -68,8 +66,6 @@ in
       enable = true;
 
       addKeysToAgent = "yes";
-      forwardAgent = true;
-
       extraConfig = ''
         StreamLocalBindUnlink yes
 
