@@ -120,15 +120,6 @@
     # Sops (Secrets)
     sops-nix = {
       url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # TODO: remove after merged into sops-nix
-    sops-nix-darwin = {
-      # url = "github:Mic92/sops-nix/nix-darwin";
-      # url = "github:khaneliman/sops-nix/nix-darwin";
-      url = "github:khaneliman/sops-nix/darwin";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
     waybar = {
@@ -183,7 +174,7 @@
 
       systems = {
         modules = {
-          darwin = with inputs; [ sops-nix-darwin.darwinModules.sops ];
+          darwin = with inputs; [ sops-nix.darwinModules.sops ];
           nixos = with inputs; [
             lanzaboote.nixosModules.lanzaboote
             sops-nix.nixosModules.sops
