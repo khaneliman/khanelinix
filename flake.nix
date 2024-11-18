@@ -30,8 +30,8 @@
     ##
     hyprland = {
       url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+      # url = "git+https://github.com/khaneliman/Hyprland?ref=windows&submodules=1";
       inputs = {
-        # url = "git+https://github.com/khaneliman/Hyprland?ref=windows&submodules=1";
         nixpkgs.follows = "nixpkgs";
       };
     };
@@ -40,8 +40,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprlock = {
-      # url = "git+file:///home/khaneliman/Documents/github/hypridle";
       url = "github:hyprwm/Hyprlock";
+      # url = "git+file:///home/khaneliman/Documents/github/hypridle";
       inputs.nixpkgs.follows = "hyprland/nixpkgs";
     };
     hyprpaper = {
