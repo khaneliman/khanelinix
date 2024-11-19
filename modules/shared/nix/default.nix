@@ -138,7 +138,7 @@ in
                   hostName = "darwin-build-box.nix-community.org";
                   maxJobs = 32;
                   speedFactor = 5;
-                  supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
+                  supportedFeatures = [ "big-parallel" ];
                   publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUZ6OEZYU1ZFZGY4RnZETWZib3hoQjVWalNlN3kyV2dTYTA5cTFMNHQwOTkgCg";
                 }
                 // lib.optionalAttrs (host == "khanelinix") {
