@@ -50,6 +50,7 @@ in
           nix-update
           nix-output-monitor
           snowfall-flake.packages.${system}.flake
+          khanelinix.build-by-path
         ]
         ++ lib.optionals cfg.gameEnable [
           godot_4
