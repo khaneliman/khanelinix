@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+  root,
   ...
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
-  cfg = config.${namespace}.suites.common;
+  cfg = config.khanelinix.suites.common;
 in
 {
-  imports = [ (lib.snowfall.fs.get-file "modules/shared/suites/common/default.nix") ];
+  imports = [ (root + "/modules/shared/suites/common/default.nix") ];
 
   config = mkIf cfg.enable {
 
@@ -24,8 +24,8 @@ in
         dnsutils
         lshw
         pciutils
-        pkgs.${namespace}.trace-symlink
-        pkgs.${namespace}.trace-which
+        pkgs.khanelinix.trace-symlink
+        pkgs.khanelinix.trace-which
         rsync
         util-linux
         wget

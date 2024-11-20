@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.apps.obs;
+  cfg = config.khanelinix.programs.graphical.apps.obs;
 in
 {
-  options.${namespace}.programs.graphical.apps.obs = {
+  options.khanelinix.programs.graphical.apps.obs = {
     enable = mkBoolOpt false "Whether or not to enable support for OBS.";
   };
 

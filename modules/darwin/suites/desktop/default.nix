@@ -1,18 +1,18 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (lib.khanelinix) mkBoolOpt enabled;
 
-  cfg = config.${namespace}.suites.desktop;
+  cfg = config.khanelinix.suites.desktop;
 in
 {
-  options.${namespace}.suites.desktop = {
+  options.khanelinix.suites.desktop = {
     enable = mkBoolOpt false "Whether or not to enable common desktop configuration.";
   };
 
@@ -30,7 +30,7 @@ in
       # xquartz
     ];
 
-    ${namespace}.desktop = {
+    khanelinix.desktop = {
       addons = {
         skhd = mkDefault enabled;
         jankyborders = mkDefault enabled;
@@ -66,7 +66,7 @@ in
         "khanhas/tap"
       ];
 
-      masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
+      masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
         "AmorphousMemoryMark" = 1495719766;
         "Amphetamine" = 937984704;
         "AutoMounter" = 1160435653;

@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.git-crypt;
+  cfg = config.khanelinix.programs.terminal.tools.git-crypt;
 in
 {
-  options.${namespace}.programs.terminal.tools.git-crypt = {
+  options.khanelinix.programs.terminal.tools.git-crypt = {
     enable = mkBoolOpt false "Whether or not to enable git-crypt.";
   };
 

@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.security.sudo-rs;
+  cfg = config.khanelinix.security.sudo-rs;
 in
 {
-  options.${namespace}.security.sudo-rs = {
+  options.khanelinix.security.sudo-rs = {
     enable = mkBoolOpt false "Whether or not to replace sudo with sudo-rs.";
   };
 
@@ -25,7 +25,7 @@ in
       # extraRules = [
       #   {
       #     noPass = true;
-      #     users = [ config.${namespace}.user.name ];
+      #     users = [ config.khanelinix.user.name ];
       #   }
       # ];
     };

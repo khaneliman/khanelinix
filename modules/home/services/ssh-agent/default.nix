@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.services.ssh-agent;
+  cfg = config.khanelinix.services.ssh-agent;
 in
 {
-  options.${namespace}.services.ssh-agent = {
+  options.khanelinix.services.ssh-agent = {
     enable = mkBoolOpt false "Whether to enable ssh-agent service.";
   };
 

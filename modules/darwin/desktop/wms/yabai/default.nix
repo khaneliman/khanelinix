@@ -2,24 +2,24 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) getExe;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt enabled;
+  inherit (lib.khanelinix) mkBoolOpt mkOpt enabled;
 
-  cfg = config.${namespace}.desktop.wms.yabai;
+  cfg = config.khanelinix.desktop.wms.yabai;
 in
 {
-  options.${namespace}.desktop.wms.yabai = {
+  options.khanelinix.desktop.wms.yabai = {
     enable = mkBoolOpt false "Whether or not to enable yabai.";
     debug = mkBoolOpt false "Whether to enable debug output.";
     logFile = mkOpt lib.types.str "/Users/khaneliman/Library/Logs/yabai.log" "Filepath of log output";
   };
 
   config = lib.mkIf cfg.enable {
-    ${namespace} = {
+    khanelinix = {
       desktop.addons.jankyborders = enabled;
 
       home.extraOptions = {
@@ -75,7 +75,7 @@ in
       extraConfig =
         let
           inherit (pkgs) sketchybar;
-          inherit (pkgs.${namespace}) yabai-helper;
+          inherit (pkgs.khanelinix) yabai-helper;
           yabai = config.services.yabai.package;
         in
         # bash
@@ -100,7 +100,7 @@ in
           # ${getExe yabai} -m signal --add event=window_title_changed app="Firefox" title="- noVNC$" action="${getExe yabai} -m window $WINDOW_ID --toggle native-fullscreen"
 
           # jankyborders
-          ${getExe config.${namespace}.desktop.addons.jankyborders.package} 2>/dev/null 1>&2 &
+          ${getExe config.khanelinix.desktop.addons.jankyborders.package} 2>/dev/null 1>&2 &
 
           open ${pkgs.raycast}/Applications/Raycast.app
 

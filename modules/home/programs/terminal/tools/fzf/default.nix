@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.fzf;
+  cfg = config.khanelinix.programs.terminal.tools.fzf;
 in
 {
-  options.${namespace}.programs.terminal.tools.fzf = {
+  options.khanelinix.programs.terminal.tools.fzf = {
     enable = mkBoolOpt false "Whether or not to enable fzf.";
   };
 

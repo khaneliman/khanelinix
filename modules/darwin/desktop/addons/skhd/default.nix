@@ -2,20 +2,20 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf getExe;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.khanelinix) mkBoolOpt mkOpt;
 
   sketchybar = getExe config.services.sketchybar.package;
   yabai = getExe config.services.yabai.package;
 
-  cfg = config.${namespace}.desktop.addons.skhd;
+  cfg = config.khanelinix.desktop.addons.skhd;
 in
 {
-  options.${namespace}.desktop.addons.skhd = {
+  options.khanelinix.desktop.addons.skhd = {
     enable = mkBoolOpt false "Whether or not to enable skhd.";
     logFile = mkOpt lib.types.str "/Users/khaneliman/Library/Logs/skhd.log" "Filepath of log output";
   };
@@ -25,7 +25,7 @@ in
       systemPackages = [ config.services.skhd.package ];
     };
 
-    ${namespace}.home.extraOptions = {
+    khanelinix.home.extraOptions = {
       home.shellAliases = {
         restart-skhd = ''launchctl kickstart -k gui/"$(id -u)"/org.nixos.skhd'';
       };
@@ -251,7 +251,7 @@ in
     # Hot-reload workaround until https://github.com/koekeishiya/skhd/issues/342 is fixed
     system.activationScripts.postActivation.text = ''
       echo "Restarting skhd..."
-      launchctl kickstart -k gui/"$(id -u ${config.${namespace}.user.name})"/org.nixos.skhd
+      launchctl kickstart -k gui/"$(id -u ${config.khanelinix.user.name})"/org.nixos.skhd
     '';
   };
 }

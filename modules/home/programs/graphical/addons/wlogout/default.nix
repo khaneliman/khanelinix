@@ -1,18 +1,18 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.addons.wlogout;
+  cfg = config.khanelinix.programs.graphical.addons.wlogout;
 in
 {
-  options.${namespace}.programs.graphical.addons.wlogout = {
+  options.khanelinix.programs.graphical.addons.wlogout = {
     enable = mkBoolOpt false "Whether to enable wlogout in the desktop environment.";
   };
 

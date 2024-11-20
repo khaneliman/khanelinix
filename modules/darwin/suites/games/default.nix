@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.suites.games;
+  cfg = config.khanelinix.suites.games;
 in
 {
-  options.${namespace}.suites.games = {
+  options.khanelinix.suites.games = {
     enable = mkBoolOpt false "Whether or not to enable games configuration.";
   };
 
