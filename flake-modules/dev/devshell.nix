@@ -7,8 +7,6 @@
       lib,
       pkgs,
       config,
-      self',
-      system,
       ...
     }:
     lib.optionalAttrs (inputs.devshell ? flakeModule) {
