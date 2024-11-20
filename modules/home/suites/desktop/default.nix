@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.suites.desktop;
+  cfg = config.khanelinix.suites.desktop;
 in
 {
-  options.${namespace}.suites.desktop = {
+  options.khanelinix.suites.desktop = {
     enable = mkBoolOpt false "Whether or not to enable common desktop applications.";
   };
 

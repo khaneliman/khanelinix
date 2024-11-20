@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
@@ -12,9 +12,9 @@ let
     mkIf
     getExe'
     ;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.security.gpg;
+  cfg = config.khanelinix.security.gpg;
 
   gpgAgentConf = ''
     enable-ssh-support
@@ -23,7 +23,7 @@ let
   '';
 in
 {
-  options.${namespace}.security.gpg = {
+  options.khanelinix.security.gpg = {
     enable = mkEnableOption "GPG";
     agentTimeout = mkOpt types.int 5 "The amount of time to wait before continuing with shell init.";
   };
@@ -51,7 +51,7 @@ in
       enableSSHSupport = true;
     };
 
-    ${namespace}.home.file = {
+    khanelinix.home.file = {
       ".gnupg/.keep".text = "";
       ".gnupg/gpg-agent.conf".text = gpgAgentConf;
     };

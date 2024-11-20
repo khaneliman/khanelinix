@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.suites.vm;
+  cfg = config.khanelinix.suites.vm;
 in
 {
-  options.${namespace}.suites.vm = {
+  options.khanelinix.suites.vm = {
     enable = mkBoolOpt false "Whether or not to enable vm.";
   };
 

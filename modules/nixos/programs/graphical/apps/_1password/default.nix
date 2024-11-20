@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt enabled;
 
-  cfg = config.${namespace}.programs.graphical.apps._1password;
+  cfg = config.khanelinix.programs.graphical.apps._1password;
 in
 {
-  options.${namespace}.programs.graphical.apps._1password = {
+  options.khanelinix.programs.graphical.apps._1password = {
     enable = mkBoolOpt false "Whether or not to enable 1password.";
     enableSshSocket = mkBoolOpt false "Whether or not to enable ssh-agent socket.";
   };
@@ -24,7 +24,7 @@ in
         enable = true;
         package = pkgs._1password-gui;
 
-        polkitPolicyOwners = [ config.${namespace}.user.name ];
+        polkitPolicyOwners = [ config.khanelinix.user.name ];
       };
 
       ssh.extraConfig = lib.optionalString cfg.enableSshSocket ''

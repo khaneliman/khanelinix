@@ -1,4 +1,4 @@
-{ config, namespace, ... }:
+{ config, ... }:
 let
   copy = import ./manager/copy.nix { };
   find = import ./manager/find.nix { };

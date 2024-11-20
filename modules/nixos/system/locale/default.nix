@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf mkForce;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.system.locale;
+  cfg = config.khanelinix.system.locale;
 in
 {
-  options.${namespace}.system.locale = {
+  options.khanelinix.system.locale = {
     enable = mkBoolOpt false "Whether or not to manage locale settings.";
   };
 

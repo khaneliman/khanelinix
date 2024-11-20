@@ -2,19 +2,19 @@
   config,
   inputs,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) mkIf getExe;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
   inherit (inputs) home-manager;
 
-  cfg = config.${namespace}.programs.graphical.apps.discord;
+  cfg = config.khanelinix.programs.graphical.apps.discord;
 in
 {
-  options.${namespace}.programs.graphical.apps.discord = {
+  options.khanelinix.programs.graphical.apps.discord = {
     enable = mkBoolOpt false "Whether or not to enable Discord.";
     canary.enable = mkBoolOpt false "Whether or not to enable Discord Canary.";
     firefox.enable = mkBoolOpt false "Whether or not to enable the Firefox version of Discord.";
@@ -24,8 +24,8 @@ in
     home = {
       packages =
         lib.optional cfg.enable pkgs.discord
-        ++ lib.optional cfg.canary.enable pkgs.${namespace}.discord
-        ++ lib.optional cfg.firefox.enable pkgs.${namespace}.discord-firefox;
+        ++ lib.optional cfg.canary.enable pkgs.khanelinix.discord
+        ++ lib.optional cfg.firefox.enable pkgs.khanelinix.discord-firefox;
 
       activation = mkIf pkgs.stdenv.isLinux {
         betterdiscordInstall = # bash

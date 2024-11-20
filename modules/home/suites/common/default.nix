@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt enabled;
 
-  cfg = config.${namespace}.suites.common;
+  cfg = config.khanelinix.suites.common;
 in
 {
-  options.${namespace}.suites.common = {
+  options.khanelinix.suites.common = {
     enable = mkBoolOpt false "Whether or not to enable common configuration.";
   };
 
@@ -24,7 +24,7 @@ in
       };
 
       shellAliases = {
-        nixcfg = "nvim ~/${namespace}/flake.nix";
+        nixcfg = "nvim ~/khanelinix/flake.nix";
       };
     };
 

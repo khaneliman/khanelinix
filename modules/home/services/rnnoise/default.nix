@@ -1,6 +1,6 @@
 {
   pkgs,
-  namespace,
+
   lib,
   config,
   ...
@@ -10,11 +10,11 @@ let
 
   json = pkgs.formats.json { };
 
-  cfg = config.${namespace}.services.rnnoise;
+  cfg = config.khanelinix.services.rnnoise;
 in
 {
   options = {
-    ${namespace}.services.rnnoise = {
+    khanelinix.services.rnnoise = {
       enable = mkEnableOption "rnnoise pipewire module";
     };
   };

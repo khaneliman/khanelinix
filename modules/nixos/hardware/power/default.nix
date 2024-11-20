@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.hardware.power;
+  cfg = config.khanelinix.hardware.power;
 in
 {
-  options.${namespace}.hardware.power = {
+  options.khanelinix.hardware.power = {
     enable = mkBoolOpt false "Whether or not to enable support for extra power devices.";
   };
 

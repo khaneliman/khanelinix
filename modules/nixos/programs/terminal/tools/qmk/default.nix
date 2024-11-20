@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.tools.qmk;
+  cfg = config.khanelinix.tools.qmk;
 in
 {
-  options.${namespace}.tools.qmk = {
+  options.khanelinix.tools.qmk = {
     enable = mkBoolOpt false "Whether or not to enable QMK";
   };
 

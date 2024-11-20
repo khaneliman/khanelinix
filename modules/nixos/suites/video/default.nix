@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.suites.video;
+  cfg = config.khanelinix.suites.video;
 in
 {
-  options.${namespace}.suites.video = {
+  options.khanelinix.suites.video = {
     enable = mkBoolOpt false "Whether or not to enable video configuration.";
   };
 

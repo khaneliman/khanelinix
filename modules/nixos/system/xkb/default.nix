@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.system.xkb;
+  cfg = config.khanelinix.system.xkb;
 in
 {
-  options.${namespace}.system.xkb = {
+  options.khanelinix.system.xkb = {
     enable = mkBoolOpt false "Whether or not to configure xkb.";
   };
 

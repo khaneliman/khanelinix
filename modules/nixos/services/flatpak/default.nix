@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.services.flatpak;
+  cfg = config.khanelinix.services.flatpak;
 in
 {
-  options.${namespace}.services.flatpak = {
+  options.khanelinix.services.flatpak = {
     enable = mkBoolOpt false "Whether or not to enable flatpak support.";
     extraRepos = lib.mkOption {
       default = [

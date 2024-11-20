@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) types;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.user;
+  cfg = config.khanelinix.user;
 in
 {
-  options.${namespace}.user = with types; {
+  options.khanelinix.user = with types; {
     email = mkOpt str "khaneliman12@gmail.com" "The email of the user.";
     extraGroups = mkOpt (listOf str) [ ] "Groups for the user to be assigned.";
     extraOptions = mkOpt attrs { } "Extra options passed to <option>users.users.<name></option>.";

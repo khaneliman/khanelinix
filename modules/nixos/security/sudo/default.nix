@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.security.sudo;
+  cfg = config.khanelinix.security.sudo;
 in
 {
-  options.${namespace}.security.sudo = {
+  options.khanelinix.security.sudo = {
     enable = mkBoolOpt false "Whether or not to enable sudo.";
   };
   config = lib.mkIf cfg.enable {
