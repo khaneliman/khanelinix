@@ -34,14 +34,9 @@ in
               sourceInfo,
             }:
             let
-              outputs = args.outputs (inputs // { self = result; });
-              result =
-                outputs
-                // sourceInfo
-                // {
-                  inherit inputs outputs sourceInfo;
-                  _type = "flake";
-                };
+              result = {
+                outputs = args.outputs (inputs // { self = result; });
+              };
             in
             result;
 
