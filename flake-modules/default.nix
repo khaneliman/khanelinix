@@ -5,6 +5,7 @@
     ./lib.nix
     ./overlays.nix
     ./packages.nix
+    ./templates.nix
   ];
 
   perSystem =
