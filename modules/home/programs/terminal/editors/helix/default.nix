@@ -2,18 +2,18 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
 
-  cfg = config.${namespace}.programs.terminal.editors.helix;
+  cfg = config.khanelinix.programs.terminal.editors.helix;
 in
 {
   imports = lib.snowfall.fs.get-non-default-nix-files ./.;
 
-  options.${namespace}.programs.terminal.editors.helix = {
+  options.khanelinix.programs.terminal.editors.helix = {
     enable = mkEnableOption "Helix";
   };
 

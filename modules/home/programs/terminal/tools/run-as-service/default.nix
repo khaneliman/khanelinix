@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
   inherit (lib.strings) optionalString concatStringsSep;
   inherit (lib.attrsets) mapAttrsToList;
 
-  cfg = config.${namespace}.programs.terminal.tools.run-as-service;
+  cfg = config.khanelinix.programs.terminal.tools.run-as-service;
 
   sessionPath = optionalString (config.home.sessionPath != [ ]) ''
     export PATH=${concatStringsSep ":" config.home.sessionPath}:$PATH
@@ -41,7 +41,7 @@ let
   '';
 in
 {
-  options.${namespace}.programs.terminal.tools.run-as-service = {
+  options.khanelinix.programs.terminal.tools.run-as-service = {
     enable = mkBoolOpt false "Whether or not to configure systemd-run support.";
   };
   config = mkIf cfg.enable { home.packages = [ run-as-service ]; };

@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.eza;
+  cfg = config.khanelinix.programs.terminal.tools.eza;
 in
 {
-  options.${namespace}.programs.terminal.tools.eza = {
+  options.khanelinix.programs.terminal.tools.eza = {
     enable = mkBoolOpt false "Whether or not to enable eza.";
   };
 

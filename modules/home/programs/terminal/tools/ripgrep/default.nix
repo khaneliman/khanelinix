@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) getExe mkForce mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.ripgrep;
+  cfg = config.khanelinix.programs.terminal.tools.ripgrep;
 in
 {
-  options.${namespace}.programs.terminal.tools.ripgrep = {
+  options.khanelinix.programs.terminal.tools.ripgrep = {
     enable = mkBoolOpt false "Whether or not to enable ripgrep.";
   };
 

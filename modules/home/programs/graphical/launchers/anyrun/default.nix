@@ -2,20 +2,20 @@
   config,
   inputs,
   lib,
-  namespace,
+
   system,
   osConfig,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
   inherit (inputs) anyrun anyrun-nixos-options;
 
-  cfg = config.${namespace}.programs.graphical.launchers.anyrun;
+  cfg = config.khanelinix.programs.graphical.launchers.anyrun;
 in
 {
-  options.${namespace}.programs.graphical.launchers.anyrun = {
+  options.khanelinix.programs.graphical.launchers.anyrun = {
     enable = mkBoolOpt false "Whether to enable anyrun in the desktop environment.";
   };
 

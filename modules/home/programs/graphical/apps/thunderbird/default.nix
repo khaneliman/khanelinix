@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.khanelinix) mkBoolOpt mkOpt;
 
-  cfg = config.${namespace}.programs.graphical.apps.thunderbird;
+  cfg = config.khanelinix.programs.graphical.apps.thunderbird;
 in
 {
-  options.${namespace}.programs.graphical.apps.thunderbird = {
+  options.khanelinix.programs.graphical.apps.thunderbird = {
     enable = mkBoolOpt false "Whether or not to enable thunderbird.";
     extraAccounts = lib.mkOption {
       type =
@@ -57,11 +57,11 @@ in
           }:
           {
             inherit address primary flavor;
-            realName = config.${namespace}.user.fullName;
+            realName = config.khanelinix.user.fullName;
             thunderbird = {
               enable = true;
               profiles = [
-                config.${namespace}.user.name
+                config.khanelinix.user.name
               ];
               settings = id: {
                 "mail.server.server_${id}.authMethod" = 10;
@@ -71,8 +71,8 @@ in
           };
       in
       {
-        "${config.${namespace}.user.email}" = mkEmailConfig {
-          address = config.${namespace}.user.email;
+        "${config.khanelinix.user.email}" = mkEmailConfig {
+          address = config.khanelinix.user.email;
           primary = true;
           flavor = "gmail.com";
         };
@@ -85,7 +85,7 @@ in
       # yeah, yeah...
       darwinSetupWarning = false;
 
-      profiles.${config.${namespace}.user.name} = {
+      profiles.${config.khanelinix.user.name} = {
         isDefault = true;
 
         settings = {

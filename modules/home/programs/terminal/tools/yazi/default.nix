@@ -2,13 +2,13 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   inputs,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
   completion = import ./keymap/completion.nix { };
   help = import ./keymap/help.nix { };
@@ -18,12 +18,12 @@ let
   tasks = import ./keymap/tasks.nix { };
   inherit (inputs) yazi-plugins;
 
-  cfg = config.${namespace}.programs.terminal.tools.yazi;
+  cfg = config.khanelinix.programs.terminal.tools.yazi;
 in
 {
   imports = lib.snowfall.fs.get-non-default-nix-files ./configs/plugins;
 
-  options.${namespace}.programs.terminal.tools.yazi = {
+  options.khanelinix.programs.terminal.tools.yazi = {
     enable = mkBoolOpt false "Whether or not to enable yazi.";
   };
 

@@ -3,17 +3,17 @@
   inputs,
   lib,
   pkgs,
-  namespace,
+
   host,
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.khanelinix) mkBoolOpt mkOpt;
 
-  cfg = config.${namespace}.nix;
+  cfg = config.khanelinix.nix;
 in
 {
-  options.${namespace}.nix = {
+  options.khanelinix.nix = {
     enable = mkBoolOpt true "Whether or not to manage nix configuration.";
     package = mkOpt lib.types.package pkgs.nixVersions.latest "Which nix package to use.";
   };
@@ -67,7 +67,7 @@ in
           "root"
           "@wheel"
           "nix-builder"
-          config.${namespace}.user.name
+          config.khanelinix.user.name
         ];
       in
       {
@@ -82,7 +82,7 @@ in
               "nixos-test"
             ];
           in
-          lib.optionals config.${namespace}.security.sops.enable [
+          lib.optionals config.khanelinix.security.sops.enable [
             (
               lib.mkIf (host != "khanelinix") {
                 inherit sshUser;
@@ -100,7 +100,7 @@ in
               }
             )
           ]
-          ++ lib.optionals (config.${namespace}.security.sops.enable && pkgs.stdenv.hostPlatform.isLinux) (
+          ++ lib.optionals (config.khanelinix.security.sops.enable && pkgs.stdenv.hostPlatform.isLinux) (
             let
               systems = [
                 "aarch64-darwin"
