@@ -5,7 +5,12 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
   outputs =
-    { nixpkgs, flake-utils, ... }:
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+      ...
+    }:
     flake-utils.lib.eachDefaultSystem (
       system:
       let

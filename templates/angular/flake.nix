@@ -5,7 +5,7 @@
   };
 
   outputs =
-    { nixpkgs }:
+    { self, nixpkgs }:
     let
       systems = [
         "x86_64-linux"
@@ -25,5 +25,11 @@
       });
 
       hydraJobs = packages;
+
+      checks = forEachSystem (system: {
+        default = pkgsForEach.${system}.runCommand "check" { } ''
+          echo "Running checks for ${system}"
+        '';
+      });
     };
 }
