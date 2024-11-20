@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.services.printing;
+  cfg = config.khanelinix.services.printing;
 in
 {
-  options.${namespace}.services.printing = {
+  options.khanelinix.services.printing = {
     enable = mkBoolOpt false "Whether or not to configure printing support.";
   };
 

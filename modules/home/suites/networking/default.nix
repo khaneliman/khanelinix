@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.suites.networking;
+  cfg = config.khanelinix.suites.networking;
 in
 {
-  options.${namespace}.suites.networking = {
+  options.khanelinix.suites.networking = {
     enable = mkBoolOpt false "Whether or not to enable networking configuration.";
   };
 

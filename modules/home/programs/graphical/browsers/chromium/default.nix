@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.browsers.chromium;
+  cfg = config.khanelinix.programs.graphical.browsers.chromium;
 in
 {
-  options.${namespace}.programs.graphical.browsers.chromium = {
+  options.khanelinix.programs.graphical.browsers.chromium = {
     enable = mkBoolOpt false "Whether or not to enable chromium.";
   };
 

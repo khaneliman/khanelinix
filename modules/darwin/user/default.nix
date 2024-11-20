@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.user;
+  cfg = config.khanelinix.user;
 in
 {
-  options.${namespace}.user = {
+  options.khanelinix.user = {
     name = mkOpt types.str "khaneliman" "The user account.";
     email = mkOpt types.str "khaneliman12@gmail.com" "The email of the user.";
     fullName = mkOpt types.str "Austin Horstman" "The full name of the user.";

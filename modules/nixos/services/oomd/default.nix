@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.services.oomd;
+  cfg = config.khanelinix.services.oomd;
 in
 {
-  options.${namespace}.services.oomd = {
+  options.khanelinix.services.oomd = {
     enable = mkBoolOpt false "Whether or not to configure oomd.";
   };
 

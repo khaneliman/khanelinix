@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.services.keyring;
+  cfg = config.khanelinix.services.keyring;
 in
 {
-  options.${namespace}.services.keyring = {
+  options.khanelinix.services.keyring = {
     enable = mkBoolOpt false "Whether to enable gnome keyring.";
   };
 

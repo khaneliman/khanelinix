@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt;
 
-  cfg = config.${namespace}.programs.terminal.emulators.kitty;
+  cfg = config.khanelinix.programs.terminal.emulators.kitty;
 in
 {
-  options.${namespace}.programs.terminal.emulators.kitty = with types; {
+  options.khanelinix.programs.terminal.emulators.kitty = with types; {
     enable = mkBoolOpt false "Whether to enable kitty.";
     font = {
       normal = mkOpt str "MonaspiceNe Nerd Font" "Font to use for alacritty.";

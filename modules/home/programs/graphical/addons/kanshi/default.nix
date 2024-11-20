@@ -2,19 +2,19 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf getExe;
-  inherit (lib.${namespace}) mkBoolOpt;
-  inherit (config.${namespace}) user;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
+  inherit (config.khanelinix) user;
   inherit (config.users.users.${user.name}) home;
 
-  cfg = config.${namespace}.programs.graphical.addons.kanshi;
+  cfg = config.khanelinix.programs.graphical.addons.kanshi;
 in
 {
-  options.${namespace}.programs.graphical.addons.kanshi = {
+  options.khanelinix.programs.graphical.addons.kanshi = {
     enable = mkBoolOpt false "Whether to enable Kanshi in the desktop environment.";
   };
 

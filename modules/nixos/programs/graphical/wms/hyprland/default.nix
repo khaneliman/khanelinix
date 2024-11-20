@@ -4,7 +4,7 @@
   lib,
   pkgs,
   system,
-  namespace,
+
   ...
 }:
 let
@@ -14,10 +14,10 @@ let
     mkIf
     types
     ;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt enabled;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt enabled;
   inherit (inputs) hyprland;
 
-  cfg = config.${namespace}.programs.graphical.wms.hyprland;
+  cfg = config.khanelinix.programs.graphical.wms.hyprland;
 
   programs = makeBinPath (
     with pkgs;
@@ -32,7 +32,7 @@ let
   );
 in
 {
-  options.${namespace}.programs.graphical.wms.hyprland = with types; {
+  options.khanelinix.programs.graphical.wms.hyprland = with types; {
     enable = mkBoolOpt false "Whether or not to enable Hyprland.";
     customConfigFiles =
       mkOpt attrs { }
@@ -51,8 +51,8 @@ in
       '';
 
       sessionVariables = {
-        HYPRCURSOR_THEME = config.${namespace}.theme.cursor.name;
-        HYPRCURSOR_SIZE = "${toString config.${namespace}.theme.cursor.size}";
+        HYPRCURSOR_THEME = config.khanelinix.theme.cursor.name;
+        HYPRCURSOR_SIZE = "${toString config.khanelinix.theme.cursor.size}";
       };
     };
 

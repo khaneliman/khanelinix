@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.system.networking;
+  cfg = config.khanelinix.system.networking;
 in
 {
-  options.${namespace}.system.networking = {
+  options.khanelinix.system.networking = {
     enable = mkBoolOpt false "Whether or not to enable networking support";
   };
 

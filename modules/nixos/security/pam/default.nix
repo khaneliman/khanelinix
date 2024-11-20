@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.security.pam;
+  cfg = config.khanelinix.security.pam;
 in
 {
-  options.${namespace}.security.pam = {
+  options.khanelinix.security.pam = {
     enable = mkBoolOpt false "Whether or not to configure pam.";
   };
 

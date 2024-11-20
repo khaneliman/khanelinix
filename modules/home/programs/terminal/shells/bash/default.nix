@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.shell.bash;
+  cfg = config.khanelinix.programs.terminal.shell.bash;
 in
 {
-  options.${namespace}.programs.terminal.shell.bash = {
+  options.khanelinix.programs.terminal.shell.bash = {
     enable = mkBoolOpt false "Whether to enable bash.";
   };
 
