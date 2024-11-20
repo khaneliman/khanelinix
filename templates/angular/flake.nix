@@ -25,5 +25,11 @@
       });
 
       hydraJobs = packages;
+
+      checks = forEachSystem (system: {
+        default = pkgsForEach.${system}.runCommand "check" { } ''
+          echo "Running checks for ${system}"
+        '';
+      });
     };
 }

@@ -27,8 +27,6 @@ in
     {
       checks =
         let
-          # Approximates https://github.com/NixOS/nix/blob/7cd08ae379746749506f2e33c3baeb49b58299b8/src/libexpr/flake/call-flake.nix#L46
-          # s/flake.outputs/args.outputs/
           callFlake =
             args@{
               inputs,
@@ -60,7 +58,7 @@ in
           ) templates;
 
           templateChecks = lib.concatMap (
-            templateOutput: templateOutput.checks.${system}
+            templateOutput: templateOutput.checks.${system} or [ ]
           ) templateFlakeOutputs;
         in
         lib.listToAttrs (
