@@ -30,6 +30,7 @@ in
             master = "#ed8796";
             dev = "#8bd5ca";
           };
+          nerdFontsVersion = "3";
         };
         git = {
           overrideGpg = true;
