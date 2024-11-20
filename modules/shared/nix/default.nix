@@ -27,15 +27,18 @@ in
     };
 
     environment = {
-      etc = with inputs; {
-        # set channels (backwards compatibility)
-        "nix/flake-channels/system".source = self;
-        "nix/flake-channels/nixpkgs".source = nixpkgs;
-        "nix/flake-channels/home-manager".source = home-manager;
-
+      etc =
+        with inputs;
+        {
+          # set channels (backwards compatibility)
+          "nix/flake-channels/system".source = self;
+          "nix/flake-channels/nixpkgs".source = nixpkgs;
+          "nix/flake-channels/home-manager".source = home-manager;
+        }
         # preserve current flake in /etc
-        "nixos/flake".source = lib.mkIf pkgs.stdenv.isLinux self;
-      };
+        // lib.mkIf pkgs.stdenv.isLinux {
+          "nixos/flake".source = self;
+        };
 
       systemPackages = with pkgs; [
         cachix
