@@ -3,7 +3,6 @@
   imports = [
     ./dev
     ./lib.nix
-    ./overlays.nix
     ./packages.nix
     ./templates.nix
   ];
