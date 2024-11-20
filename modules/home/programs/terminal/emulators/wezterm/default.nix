@@ -3,19 +3,19 @@
   inputs,
   lib,
   system,
-  namespace,
+  root,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
   inherit (inputs) wezterm;
 
-  cfg = config.${namespace}.programs.terminal.emulators.wezterm;
-  catppuccin = import (lib.snowfall.fs.get-file "modules/home/theme/catppuccin/colors.nix");
+  cfg = config.khanelinix.programs.terminal.emulators.wezterm;
+  catppuccin = import (root + "/modules/home/theme/catppuccin/colors.nix");
 in
 {
-  options.${namespace}.programs.terminal.emulators.wezterm = {
+  options.khanelinix.programs.terminal.emulators.wezterm = {
     enable = mkBoolOpt false "Whether or not to enable wezterm.";
   };
 

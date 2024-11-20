@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.azure;
+  cfg = config.khanelinix.programs.terminal.tools.azure;
 in
 {
-  options.${namespace}.programs.terminal.tools.azure = {
+  options.khanelinix.programs.terminal.tools.azure = {
     enable = mkBoolOpt false "Whether or not to enable common Azure utilities.";
   };
 

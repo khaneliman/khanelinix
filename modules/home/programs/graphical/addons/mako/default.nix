@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf getExe getExe';
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.addons.mako;
+  cfg = config.khanelinix.programs.graphical.addons.mako;
 in
 {
-  options.${namespace}.programs.graphical.addons.mako = {
+  options.khanelinix.programs.graphical.addons.mako = {
     enable = mkBoolOpt false "Whether to enable Mako in Sway.";
   };
 

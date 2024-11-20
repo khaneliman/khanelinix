@@ -2,14 +2,14 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.lsd;
+  cfg = config.khanelinix.programs.terminal.tools.lsd;
 
   aliases = {
 
@@ -19,7 +19,7 @@ let
   };
 in
 {
-  options.${namespace}.programs.terminal.tools.lsd = {
+  options.khanelinix.programs.terminal.tools.lsd = {
     enable = mkBoolOpt false "Whether or not to enable lsd.";
   };
 
