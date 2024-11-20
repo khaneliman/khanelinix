@@ -4,7 +4,7 @@
   lib,
   pkgs,
   system,
-  namespace,
+
   ...
 }:
 let
@@ -14,12 +14,12 @@ let
     getExe
     getExe'
     ;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt;
   inherit (inputs) hyprland;
 
-  cfg = config.${namespace}.display-managers.regreet;
-  themeCfg = config.${namespace}.theme;
-  gtkCfg = config.${namespace}.desktop.addons.gtk;
+  cfg = config.khanelinix.display-managers.regreet;
+  themeCfg = config.khanelinix.theme;
+  gtkCfg = config.khanelinix.desktop.addons.gtk;
 
   greetdHyprlandConfig = pkgs.writeText "greetd-hyprland-config" ''
     ${cfg.hyprlandOutput}
@@ -41,7 +41,7 @@ let
   '';
 in
 {
-  options.${namespace}.display-managers.regreet = with types; {
+  options.khanelinix.display-managers.regreet = with types; {
     enable = mkBoolOpt false "Whether or not to enable greetd.";
     hyprlandOutput = mkOpt lines "" "Hyprlands Outputs config.";
   };
@@ -58,14 +58,14 @@ in
 
       settings = {
         background = {
-          path = pkgs.${namespace}.wallpapers.flatppuccin_macchiato;
+          path = pkgs.khanelinix.wallpapers.flatppuccin_macchiato;
           fit = "Cover";
         };
 
         GTK = {
           application_prefer_dark_theme = true;
           cursor_theme_name = "${themeCfg.cursor.name}";
-          font_name = "${config.${namespace}.system.fonts.default} * 12";
+          font_name = "${config.khanelinix.system.fonts.default} * 12";
           icon_theme_name = "${themeCfg.icon.name}";
           theme_name = "${gtkCfg.theme.name}";
         };

@@ -1,18 +1,18 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) getExe getExe';
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.services.swayidle;
+  cfg = config.khanelinix.services.swayidle;
 in
 {
-  options.${namespace}.services.swayidle = {
+  options.khanelinix.services.swayidle = {
     enable = mkBoolOpt false "Whether to enable swayidle service.";
   };
 

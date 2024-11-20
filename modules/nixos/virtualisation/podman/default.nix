@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.virtualisation.podman;
+  cfg = config.khanelinix.virtualisation.podman;
 in
 {
-  options.${namespace}.virtualisation.podman = {
+  options.khanelinix.virtualisation.podman = {
     enable = mkBoolOpt false "Whether or not to enable Podman.";
   };
 

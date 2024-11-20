@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt enabled;
 
-  cfg = config.${namespace}.archetypes.personal;
+  cfg = config.khanelinix.archetypes.personal;
 in
 {
-  options.${namespace}.archetypes.personal = {
+  options.khanelinix.archetypes.personal = {
     enable = mkBoolOpt false "Whether or not to enable the personal archetype.";
   };
 

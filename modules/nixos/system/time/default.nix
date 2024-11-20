@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.system.time;
+  cfg = config.khanelinix.system.time;
 in
 {
-  options.${namespace}.system.time = {
+  options.khanelinix.system.time = {
     enable = mkBoolOpt false "Whether or not to configure time related settings.";
   };
 

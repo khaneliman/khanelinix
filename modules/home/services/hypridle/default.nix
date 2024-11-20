@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf getExe getExe';
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.services.hypridle;
+  cfg = config.khanelinix.services.hypridle;
 in
 {
-  options.${namespace}.services.hypridle = {
+  options.khanelinix.services.hypridle = {
     enable = mkBoolOpt false "Whether to enable hypridle service.";
   };
 

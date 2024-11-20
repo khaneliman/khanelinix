@@ -4,7 +4,7 @@
   lib,
   pkgs,
   system,
-  namespace,
+
   ...
 }:
 let
@@ -15,12 +15,12 @@ let
     mkOption
     ;
   inherit (inputs) hypr-socket-watch;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.services.hyprpaper;
+  cfg = config.khanelinix.services.hyprpaper;
 in
 {
-  options.${namespace}.services.hyprpaper = {
+  options.khanelinix.services.hyprpaper = {
     enable = mkEnableOption "Hyprpaper";
     enableSocketWatch = mkEnableOption "hypr-socket-watch";
     monitors = mkOption {
@@ -53,7 +53,7 @@ in
         package = hypr-socket-watch.packages.${system}.hypr-socket-watch;
 
         monitor = "DP-1";
-        wallpapers = "${pkgs.${namespace}.wallpapers}/share/wallpapers/";
+        wallpapers = "${pkgs.khanelinix.wallpapers}/share/wallpapers/";
         debug = false;
       };
     };

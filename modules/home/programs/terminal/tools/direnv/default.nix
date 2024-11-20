@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt enabled;
 
-  cfg = config.${namespace}.programs.terminal.tools.direnv;
+  cfg = config.khanelinix.programs.terminal.tools.direnv;
 in
 {
-  options.${namespace}.programs.terminal.tools.direnv = {
+  options.khanelinix.programs.terminal.tools.direnv = {
     enable = mkBoolOpt false "Whether or not to enable direnv.";
   };
 

@@ -2,18 +2,18 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf mkEnableOption getExe;
-  inherit (lib.${namespace}) enabled;
+  inherit (flake.inputs.self.lib.khanelinix) enabled;
 
-  cfg = config.${namespace}.programs.graphical.wms.sway;
+  cfg = config.khanelinix.programs.graphical.wms.sway;
 
 in
 {
-  options.${namespace}.programs.graphical.wms.sway = {
+  options.khanelinix.programs.graphical.wms.sway = {
     enable = mkEnableOption "sway.";
     enableDebug = mkEnableOption "Enable debug mode.";
     appendConfig = lib.mkOption {

@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.suites.social;
+  cfg = config.khanelinix.suites.social;
 in
 {
-  options.${namespace}.suites.social = {
+  options.khanelinix.suites.social = {
     enable = mkBoolOpt false "Whether or not to enable social configuration.";
   };
 

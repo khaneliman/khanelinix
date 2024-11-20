@@ -1,14 +1,14 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  cfg = config.${namespace}.security.auditd;
+  cfg = config.khanelinix.security.auditd;
 in
 {
-  options.${namespace}.security.auditd = {
+  options.khanelinix.security.auditd = {
     enable = lib.mkEnableOption "default auditd configuration";
   };
 

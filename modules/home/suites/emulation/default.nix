@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.suites.emulation;
+  cfg = config.khanelinix.suites.emulation;
 in
 {
-  options.${namespace}.suites.emulation = {
+  options.khanelinix.suites.emulation = {
     enable = mkBoolOpt false "Whether or not to enable emulation configuration.";
     retroarchFull = mkBoolOpt false "Whether or not to enable emulation configuration.";
   };

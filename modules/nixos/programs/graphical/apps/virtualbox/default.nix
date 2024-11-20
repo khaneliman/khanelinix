@@ -1,22 +1,22 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.apps.virtualbox;
+  cfg = config.khanelinix.programs.graphical.apps.virtualbox;
 in
 {
-  options.${namespace}.programs.graphical.apps.virtualbox = {
+  options.khanelinix.programs.graphical.apps.virtualbox = {
     enable = mkBoolOpt false "Whether or not to enable Virtualbox.";
   };
 
   config = mkIf cfg.enable {
-    ${namespace}.user.extraGroups = [ "vboxusers" ];
+    khanelinix.user.extraGroups = [ "vboxusers" ];
 
     virtualisation.virtualbox.host = {
       enable = true;

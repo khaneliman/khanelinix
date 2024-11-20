@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.btop;
+  cfg = config.khanelinix.programs.terminal.tools.btop;
 in
 {
-  options.${namespace}.programs.terminal.tools.btop = {
+  options.khanelinix.programs.terminal.tools.btop = {
     enable = mkBoolOpt false "Whether or not to enable btop.";
   };
 

@@ -3,7 +3,7 @@
   lib,
   inputs,
   host,
-  namespace,
+
   ...
 }:
 let
@@ -12,26 +12,26 @@ let
     mkIf
     foldl
     ;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.ssh;
+  cfg = config.khanelinix.programs.terminal.tools.ssh;
 
   name = host;
 
-  user = config.users.users.${config.${namespace}.user.name};
+  user = config.users.users.${config.khanelinix.user.name};
   user-id = builtins.toString user.uid;
 
   default-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJAZIwy7nkz8CZYR/ZTSNr+7lRBW2AYy1jw06b44zaID";
 
   other-hosts = lib.filterAttrs (
-    key: host: key != name && (host.config.${namespace}.user.name or null) != null
+    key: host: key != name && (host.config.khanelinix.user.name or null) != null
   ) ((inputs.self.nixosConfigurations or { }) // (inputs.self.darwinConfigurations or { }));
 
   other-hosts-config = lib.foldl' (
     acc: name:
     let
       remote = other-hosts.${name};
-      remote-user-name = remote.config.${namespace}.user.name;
+      remote-user-name = remote.config.khanelinix.user.name;
       remote-user-id = builtins.toString remote.config.users.users.${remote-user-name}.uid;
     in
     acc
@@ -52,7 +52,7 @@ let
   ) { } (builtins.attrNames other-hosts);
 in
 {
-  options.${namespace}.programs.terminal.tools.ssh = with types; {
+  options.khanelinix.programs.terminal.tools.ssh = with types; {
     enable = mkBoolOpt false "Whether or not to configure ssh support.";
     authorizedKeys = mkOpt (listOf str) [ default-key ] "The public keys to apply.";
     extraConfig = mkOpt str "" "Extra configuration to apply.";

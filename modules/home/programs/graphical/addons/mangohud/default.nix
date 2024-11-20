@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf literalExpression;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.mangohud;
+  cfg = config.khanelinix.programs.graphical.mangohud;
 in
 {
-  options.${namespace}.programs.graphical.mangohud = {
+  options.khanelinix.programs.graphical.mangohud = {
     enable = mkBoolOpt false "Whether or not to enable mangohud.";
   };
 

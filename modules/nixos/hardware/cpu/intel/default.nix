@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.hardware.cpu.intel;
+  cfg = config.khanelinix.hardware.cpu.intel;
 in
 {
-  options.${namespace}.hardware.cpu.intel = {
+  options.khanelinix.hardware.cpu.intel = {
     enable = mkBoolOpt false "Whether or not to enable support for intel cpu.";
   };
 

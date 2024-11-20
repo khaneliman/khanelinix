@@ -1,4 +1,4 @@
-{ config, namespace, ... }:
+{ config, ... }:
 {
   keymap = [
     # Goto
@@ -111,7 +111,7 @@
         "g"
         "i"
       ];
-      run = "cd /run/media/${config.${namespace}.user.name}";
+      run = "cd /run/media/${config.khanelinix.user.name}";
       desc = "Run command to change to media directory";
     }
     {

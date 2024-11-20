@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.addons.electron-support;
+  cfg = config.khanelinix.programs.graphical.addons.electron-support;
 in
 {
-  options.${namespace}.programs.graphical.addons.electron-support = {
+  options.khanelinix.programs.graphical.addons.electron-support = {
     enable = mkBoolOpt false "Whether to enable wayland electron support in the desktop environment.";
   };
 
