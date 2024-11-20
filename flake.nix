@@ -1,6 +1,63 @@
 {
   description = "KhaneliNix";
 
+  outputs =
+    inputs@{ flake-parts, self, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      imports = [ ./flake-modules ];
+
+      systems = [
+        "x86_64-linux"
+        "aarch64-darwin"
+      ];
+      flake = {
+        #   channels-config = {
+        #     allowUnfree = true;
+        #     permittedInsecurePackages = [
+        #       "freeimage-unstable-2021-11-01"
+        #     ];
+        #   };
+        #
+        #   homes.modules = with inputs; [
+        #     anyrun.homeManagerModules.default
+        #     catppuccin.homeManagerModules.catppuccin
+        #     hypr-socket-watch.homeManagerModules.default
+        #     nix-index-database.hmModules.nix-index
+        #     nur.hmModules.nur
+        #     sops-nix.homeManagerModules.sops
+        #   ];
+        #
+        #   systems = {
+        #     modules = {
+        #       darwin = with inputs; [ sops-nix.darwinModules.sops ];
+        #       nixos = with inputs; [
+        #         lanzaboote.nixosModules.lanzaboote
+        #         sops-nix.nixosModules.sops
+        #       ];
+        #     };
+        #   };
+        #
+        templates = {
+          angular.description = "Angular template";
+          c.description = "C flake template.";
+          container.description = "Container template";
+          cpp.description = "CPP flake template";
+          dotnetf.description = "Dotnet FSharp template";
+          flake-compat.description = "Flake-compat shell and default files.";
+          go.description = "Go template";
+          node.description = "Node template";
+          python.description = "Python template";
+          rust.description = "Rust template";
+          rust-web-server.description = "Rust web server template";
+          snowfall.description = "Snowfall-lib template";
+        };
+
+        deploy = {
+          inherit self;
+        };
+      };
+    };
+
   inputs = {
     # Principle Inputs
     darwin = {
@@ -104,60 +161,4 @@
     wezterm.url = "github:wez/wezterm?dir=nix";
   };
 
-  outputs =
-    inputs@{ flake-parts, self, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = [ ./flake-modules ];
-
-      systems = [
-        "x86_64-linux"
-        "aarch64-darwin"
-      ];
-      flake = {
-        #   channels-config = {
-        #     allowUnfree = true;
-        #     permittedInsecurePackages = [
-        #       "freeimage-unstable-2021-11-01"
-        #     ];
-        #   };
-        #
-        #   homes.modules = with inputs; [
-        #     anyrun.homeManagerModules.default
-        #     catppuccin.homeManagerModules.catppuccin
-        #     hypr-socket-watch.homeManagerModules.default
-        #     nix-index-database.hmModules.nix-index
-        #     nur.hmModules.nur
-        #     sops-nix.homeManagerModules.sops
-        #   ];
-        #
-        #   systems = {
-        #     modules = {
-        #       darwin = with inputs; [ sops-nix.darwinModules.sops ];
-        #       nixos = with inputs; [
-        #         lanzaboote.nixosModules.lanzaboote
-        #         sops-nix.nixosModules.sops
-        #       ];
-        #     };
-        #   };
-        #
-        templates = {
-          angular.description = "Angular template";
-          c.description = "C flake template.";
-          container.description = "Container template";
-          cpp.description = "CPP flake template";
-          dotnetf.description = "Dotnet FSharp template";
-          flake-compat.description = "Flake-compat shell and default files.";
-          go.description = "Go template";
-          node.description = "Node template";
-          python.description = "Python template";
-          rust.description = "Rust template";
-          rust-web-server.description = "Rust web server template";
-          snowfall.description = "Snowfall-lib template";
-        };
-
-        deploy = {
-          inherit self;
-        };
-      };
-    };
 }
