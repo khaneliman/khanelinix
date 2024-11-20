@@ -1,22 +1,22 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (lib.khanelinix) mkBoolOpt enabled;
 
-  cfg = config.${namespace}.archetypes.gaming;
+  cfg = config.khanelinix.archetypes.gaming;
 in
 {
-  options.${namespace}.archetypes.gaming = {
+  options.khanelinix.archetypes.gaming = {
     enable = mkBoolOpt false "Whether or not to enable the gaming archetype.";
   };
 
   config = mkIf cfg.enable {
-    ${namespace}.suites = {
+    khanelinix.suites = {
       common = enabled;
       desktop = enabled;
       games = enabled;

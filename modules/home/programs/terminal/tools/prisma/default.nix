@@ -2,17 +2,17 @@
   lib,
   pkgs,
   config,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) types mkIf getExe';
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.khanelinix) mkBoolOpt mkOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.prisma;
+  cfg = config.khanelinix.programs.terminal.tools.prisma;
 in
 {
-  options.${namespace}.programs.terminal.tools.prisma = with types; {
+  options.khanelinix.programs.terminal.tools.prisma = with types; {
     enable = mkBoolOpt false "Whether or not to install Prisma";
     pkgs = {
       npm = mkOpt package pkgs.nodePackages.prisma "The NPM package to install";

@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.file-managers.thunar;
+  cfg = config.khanelinix.programs.graphical.file-managers.thunar;
 in
 {
-  options.${namespace}.programs.graphical.file-managers.thunar = {
+  options.khanelinix.programs.graphical.file-managers.thunar = {
     enable = mkBoolOpt false "Whether to enable the xfce file manager.";
   };
 

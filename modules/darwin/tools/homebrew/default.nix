@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.tools.homebrew;
+  cfg = config.khanelinix.tools.homebrew;
 in
 {
-  options.${namespace}.tools.homebrew = {
+  options.khanelinix.tools.homebrew = {
     enable = mkBoolOpt false "Whether or not to enable homebrew.";
     masEnable = mkBoolOpt false "Whether or not to enable Mac App Store downloads.";
   };

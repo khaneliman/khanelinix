@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) types mkDefault mkIf;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.khanelinix) mkBoolOpt mkOpt;
 
-  cfg = config.${namespace}.theme.qt;
+  cfg = config.khanelinix.theme.qt;
 in
 {
-  options.${namespace}.theme.qt = with types; {
+  options.khanelinix.theme.qt = with types; {
     enable = mkBoolOpt false "Whether to customize qt and apply themes.";
 
     theme = {
@@ -27,7 +27,7 @@ in
       Appearance = {
         color_scheme_path = mkOpt types.str "" "Color scheme path";
         custom_palette = mkBoolOpt true "Whether to use custom palette";
-        icon_theme = mkOpt types.str config.${namespace}.theme.gtk.icon.name "Icon theme";
+        icon_theme = mkOpt types.str config.khanelinix.theme.gtk.icon.name "Icon theme";
         standard_dialogs = mkOpt types.str "gtk3" "Dialog type";
         style = mkOpt types.str "kvantum" "Style";
       };
