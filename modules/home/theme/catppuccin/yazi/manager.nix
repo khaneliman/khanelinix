@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  namespace,
+
 }:
 let
   catppuccin = import ../colors.nix;
@@ -66,8 +66,8 @@ in
     };
     syntect_theme =
       let
-        cfg = config.${namespace}.theme.catppuccin;
-        inherit (lib.${namespace}) capitalize;
+        cfg = config.khanelinix.theme.catppuccin;
+        inherit (lib.khanelinix) capitalize;
       in
       "/bat/Catppuccin ${capitalize cfg.flavor}.tmTheme";
   };

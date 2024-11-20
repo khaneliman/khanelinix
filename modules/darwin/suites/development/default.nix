@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.suites.development;
+  cfg = config.khanelinix.suites.development;
 in
 {
-  options.${namespace}.suites.development = {
+  options.khanelinix.suites.development = {
     enable = mkBoolOpt false "Whether or not to enable common development configuration.";
   };
 
@@ -24,7 +24,7 @@ in
         "powershell"
       ];
 
-      masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
+      masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
         "Patterns" = 429449079;
         # FIXME: keeps trying to reinstall it
         # "Xcode" = 497799835;

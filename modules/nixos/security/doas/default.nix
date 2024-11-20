@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.security.doas;
+  cfg = config.khanelinix.security.doas;
 in
 {
-  options.${namespace}.security.doas = {
+  options.khanelinix.security.doas = {
     enable = mkBoolOpt false "Whether or not to replace sudo with doas.";
   };
 
@@ -31,7 +31,7 @@ in
         {
           keepEnv = true;
           noPass = true;
-          users = [ config.${namespace}.user.name ];
+          users = [ config.khanelinix.user.name ];
         }
       ];
     };

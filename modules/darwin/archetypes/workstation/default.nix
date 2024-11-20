@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (lib.khanelinix) mkBoolOpt enabled;
 
-  cfg = config.${namespace}.archetypes.workstation;
+  cfg = config.khanelinix.archetypes.workstation;
 in
 {
-  options.${namespace}.archetypes.workstation = {
+  options.khanelinix.archetypes.workstation = {
     enable = mkBoolOpt false "Whether or not to enable the workstation archetype.";
   };
 

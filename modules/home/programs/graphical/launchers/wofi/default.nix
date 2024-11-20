@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.addons.wofi;
+  cfg = config.khanelinix.programs.graphical.addons.wofi;
 in
 {
-  options.${namespace}.programs.graphical.addons.wofi = {
+  options.khanelinix.programs.graphical.addons.wofi = {
     enable = mkBoolOpt false "Whether to enable the Wofi in the desktop environment.";
   };
 

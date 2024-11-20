@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.apps._1password;
+  cfg = config.khanelinix.programs.graphical.apps._1password;
 in
 {
-  options.${namespace}.programs.graphical.apps._1password = {
+  options.khanelinix.programs.graphical.apps._1password = {
     enable = mkBoolOpt false "Whether or not to enable 1password.";
   };
 
@@ -21,7 +21,7 @@ in
 
       casks = [ "1password" ];
 
-      masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
+      masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
         "1Password for Safari" = 1569813296;
       };
     };

@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.khanelinix) mkBoolOpt mkOpt;
 
-  cfg = config.${namespace}.programs.terminal.emulators.alacritty;
+  cfg = config.khanelinix.programs.terminal.emulators.alacritty;
 in
 {
-  options.${namespace}.programs.terminal.emulators.alacritty = with types; {
+  options.khanelinix.programs.terminal.emulators.alacritty = with types; {
     enable = mkBoolOpt false "Whether to enable alacritty.";
     font = mkOpt str "MonaspiceKr Nerd Font" "Font to use for alacritty.";
   };

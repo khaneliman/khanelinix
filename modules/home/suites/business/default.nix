@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (lib.khanelinix) mkBoolOpt enabled;
 
-  cfg = config.${namespace}.suites.business;
+  cfg = config.khanelinix.suites.business;
 in
 {
-  options.${namespace}.suites.business = {
+  options.khanelinix.suites.business = {
     enable = mkBoolOpt false "Whether or not to enable business configuration.";
   };
 

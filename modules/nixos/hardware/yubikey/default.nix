@@ -2,14 +2,14 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf getExe';
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.hardware.yubikey;
+  cfg = config.khanelinix.hardware.yubikey;
 
   reload-yubikey =
     pkgs.writeShellScriptBin "reload-yubikey" # bash
@@ -18,7 +18,7 @@ let
       '';
 in
 {
-  options.${namespace}.hardware.yubikey = {
+  options.khanelinix.hardware.yubikey = {
     enable = mkBoolOpt false "Whether or not to enable Yubikey.";
     enableSSHSupport = mkBoolOpt false "Whether or not to enable SSH support for Yubikey.";
   };

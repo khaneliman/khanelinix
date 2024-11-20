@@ -1,9 +1,9 @@
-{ lib, namespace, ... }:
+{ lib, ... }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 in
 {
-  options.${namespace}.hardware.gpu = {
+  options.khanelinix.hardware.gpu = {
     enable = mkBoolOpt false "No-op for setting up hierarchy.";
   };
 }

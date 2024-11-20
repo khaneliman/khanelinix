@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (lib.khanelinix) mkBoolOpt enabled;
 
-  cfg = config.${namespace}.suites.music;
+  cfg = config.khanelinix.suites.music;
 in
 {
-  options.${namespace}.suites.music = {
+  options.khanelinix.suites.music = {
     enable = mkBoolOpt false "Whether or not to enable common music configuration.";
   };
 

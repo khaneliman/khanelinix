@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+  root,
   ...
 }:
 let
   inherit (lib) mkDefault mkIf;
 
-  cfg = config.${namespace}.nix;
+  cfg = config.khanelinix.nix;
 in
 {
-  imports = [ (lib.snowfall.fs.get-file "modules/shared/nix/default.nix") ];
+  imports = [ (root + "/modules/shared/nix/default.nix") ];
 
   config = mkIf cfg.enable {
     documentation = {
