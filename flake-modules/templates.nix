@@ -52,10 +52,9 @@ in
             callFlake {
               inputs = {
                 inherit (inputs) flake-parts nixpkgs;
-                nixvim = self;
               };
               # Import and read the `outputs` field of the template flake.
-              inherit (import (templatesDir + "/${template}/flake.nix")) outputs;
+              outputs = import (templatesDir + "/${template}/flake.nix");
               sourceInfo = { };
             }
           ) templates;
@@ -64,6 +63,11 @@ in
             templateOutput: templateOutput.checks.${system}
           ) templateFlakeOutputs;
         in
-        lib.concatMapAttrs (checkName: check: { "template-${checkName}" = check; }) templateChecks;
+        lib.listToAttrs (
+          map (check: {
+            name = "template-${check.name}";
+            value = check;
+          }) templateChecks
+        );
     };
 }
