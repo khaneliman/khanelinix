@@ -3,14 +3,14 @@
   lib,
   osConfig,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.addons.swaync;
+  cfg = config.khanelinix.programs.graphical.addons.swaync;
 
   dependencies = with pkgs; [
     bash
@@ -29,7 +29,7 @@ let
   style = import ./style.nix;
 in
 {
-  options.${namespace}.programs.graphical.addons.swaync = {
+  options.khanelinix.programs.graphical.addons.swaync = {
     enable = mkBoolOpt false "Whether to enable swaync in the desktop environment.";
   };
 

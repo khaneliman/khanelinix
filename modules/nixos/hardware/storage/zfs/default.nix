@@ -1,18 +1,18 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf mkDefault;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkOpt;
   inherit (lib.types) listOf str;
 
-  cfg = config.${namespace}.hardware.storage.zfs;
+  cfg = config.khanelinix.hardware.storage.zfs;
 in
 {
-  options.${namespace}.hardware.storage.zfs = {
+  options.khanelinix.hardware.storage.zfs = {
     enable = mkEnableOption "ZFS support";
     auto-snapshot = {
       enable = mkEnableOption "ZFS auto snapshotting";

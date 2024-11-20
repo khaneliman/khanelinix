@@ -2,16 +2,16 @@
   config,
   pkgs,
   lib,
-  namespace,
+  root,
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.system.fonts;
+  cfg = config.khanelinix.system.fonts;
 in
 {
-  imports = [ (lib.snowfall.fs.get-file "modules/shared/system/fonts/default.nix") ];
+  imports = [ (root + "/modules/shared/system/fonts/default.nix") ];
 
   config = mkIf cfg.enable {
     fonts = {

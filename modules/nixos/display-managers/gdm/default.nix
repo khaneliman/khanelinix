@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
@@ -12,13 +12,13 @@ let
     getExe'
     stringAfter
     ;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt;
 
-  cfg = config.${namespace}.display-managers.gdm;
+  cfg = config.khanelinix.display-managers.gdm;
   gdmHome = config.users.users.gdm.home;
 in
 {
-  options.${namespace}.display-managers.gdm = with types; {
+  options.khanelinix.display-managers.gdm = with types; {
     enable = mkBoolOpt false "Whether or not to enable gdm.";
     autoSuspend = mkBoolOpt true "Whether or not to suspend the machine after inactivity.";
     defaultSession = mkOpt (nullOr str) null "The default session to use.";
@@ -58,8 +58,8 @@ in
       stringAfter [ "users" ] # bash
         ''
           echo "Setting gdm permissions for user icon"
-          ${getExe' pkgs.acl "setfacl"} -m u:gdm:x /home/${config.${namespace}.user.name}
-          ${getExe' pkgs.acl "setfacl"} -m u:gdm:r /home/${config.${namespace}.user.name}/.face.icon || true
+          ${getExe' pkgs.acl "setfacl"} -m u:gdm:x /home/${config.khanelinix.user.name}
+          ${getExe' pkgs.acl "setfacl"} -m u:gdm:r /home/${config.khanelinix.user.name}/.face.icon || true
         '';
   };
 }

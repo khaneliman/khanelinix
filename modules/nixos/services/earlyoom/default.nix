@@ -1,18 +1,18 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) concatStringsSep mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.services.earlyoom;
+  cfg = config.khanelinix.services.earlyoom;
 in
 {
-  options.${namespace}.services.earlyoom = {
+  options.khanelinix.services.earlyoom = {
     enable = mkBoolOpt false "Whether or not to configure oomd.";
   };
 

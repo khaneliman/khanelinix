@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.security.polkit;
+  cfg = config.khanelinix.security.polkit;
 in
 {
-  options.${namespace}.security.polkit = {
+  options.khanelinix.security.polkit = {
     enable = mkBoolOpt false "Whether or not to enable polkit.";
   };
 

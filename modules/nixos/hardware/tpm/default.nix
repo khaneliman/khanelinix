@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkDefault mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.hardware.tpm;
+  cfg = config.khanelinix.hardware.tpm;
 in
 {
-  options.${namespace}.hardware.tpm = {
+  options.khanelinix.hardware.tpm = {
     enable = mkBoolOpt false "Whether or not to enable Trusted Platform Module 2 (TPM2).";
   };
 

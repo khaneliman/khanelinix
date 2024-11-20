@@ -2,18 +2,18 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.apps.mpv;
+  cfg = config.khanelinix.programs.graphical.apps.mpv;
 
 in
 {
-  options.${namespace}.programs.graphical.apps.mpv = {
+  options.khanelinix.programs.graphical.apps.mpv = {
     enable = mkBoolOpt false "Whether or not to enable support for mpv.";
   };
 

@@ -3,17 +3,17 @@
   lib,
   pkgs,
   osConfig,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.shell.fish;
+  cfg = config.khanelinix.programs.terminal.shell.fish;
 in
 {
-  options.${namespace}.programs.terminal.shell.fish = {
+  options.khanelinix.programs.terminal.shell.fish = {
     enable = mkBoolOpt false "Whether to enable fish.";
   };
 
