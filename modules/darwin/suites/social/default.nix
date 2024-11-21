@@ -21,7 +21,6 @@ in
         "betterdiscord-installer"
         "discord"
         "slack@beta"
-        "telegram"
       ];
     };
   };
