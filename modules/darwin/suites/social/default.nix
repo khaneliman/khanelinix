@@ -19,7 +19,6 @@ in
     homebrew = {
       casks = [
         "betterdiscord-installer"
-        "discord"
         "slack@beta"
       ];
     };
