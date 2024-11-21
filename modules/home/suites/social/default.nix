@@ -17,15 +17,16 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = lib.optionals pkgs.stdenv.isLinux (
+    home.packages =
       with pkgs;
       [
         caprine-bin
+      ]
+      ++ lib.optionals pkgs.stdenv.isLinux [
         element-desktop
         slack
         telegram-desktop
-      ]
-    );
+      ];
 
     khanelinix = {
       programs = {
