@@ -21,9 +21,9 @@ in
       with pkgs;
       [
         caprine-bin
+        element-desktop
       ]
       ++ lib.optionals pkgs.stdenv.isLinux [
-        element-desktop
         slack
         telegram-desktop
       ];
