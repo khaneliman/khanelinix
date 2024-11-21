@@ -114,7 +114,7 @@ in
           # Need to update upstream to accept something like this
           # ''{tile-data={}; tile-type="small-spacer-tile";}''
           "/System/Applications/Messages.app"
-          "/Applications/Caprine.app"
+          "${pkgs.caprine-bin}/Applications/Caprine.app"
           "/Applications/Element.app"
           "/Applications/Microsoft Teams.app"
           "/Applications/Discord.app"
