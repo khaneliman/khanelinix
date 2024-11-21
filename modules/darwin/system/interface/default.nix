@@ -115,7 +115,7 @@ in
           # ''{tile-data={}; tile-type="small-spacer-tile";}''
           "/System/Applications/Messages.app"
           "${pkgs.caprine-bin}/Applications/Caprine.app"
-          "/Applications/Element.app"
+          "${pkgs.element-desktop}/Applications/Element.app"
           "/Applications/Microsoft Teams.app"
           "/Applications/Discord.app"
           "/Applications/Thunderbird.app"
