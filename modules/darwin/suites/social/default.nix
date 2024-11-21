@@ -19,7 +19,6 @@ in
     homebrew = {
       casks = [
         "betterdiscord-installer"
-        "caprine"
         "discord"
         "element"
         "slack@beta"
