@@ -117,7 +117,7 @@ in
           "${pkgs.caprine-bin}/Applications/Caprine.app"
           "${pkgs.element-desktop}/Applications/Element.app"
           "/Applications/Microsoft Teams.app"
-          "/Applications/Discord.app"
+          "${pkgs.discord}/Applications/Discord.app"
           "/Applications/Thunderbird.app"
           # TODO: implement small_blank
           "/Applications/Firefox Developer Edition.app"
