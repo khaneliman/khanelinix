@@ -110,28 +110,26 @@ in
           "/System/Applications/Launchpad.app"
           "/System/Applications/System Settings.app"
           "/System/Applications/App Store.app"
-          # TODO: implement small_blank
-          # Need to update upstream to accept something like this
-          # ''{tile-data={}; tile-type="small-spacer-tile";}''
+          "small-spacer-tile"
           "/System/Applications/Messages.app"
           "${pkgs.caprine-bin}/Applications/Caprine.app"
           "${pkgs.element-desktop}/Applications/Element.app"
           "/Applications/Microsoft Teams.app"
           "${pkgs.discord}/Applications/Discord.app"
           "/Applications/Thunderbird.app"
-          # TODO: implement small_blank
+          "small-spacer-tile"
           "/Applications/Firefox Developer Edition.app"
           "/Applications/Safari.app"
           "/Applications/Fantastical.app"
           "/System/Applications/Reminders.app"
           "/System/Applications/Notes.app"
-          # TODO: implement small_blank
+          "small-spacer-tile"
           "/System/Applications/Music.app"
           "/Applications/Plex.app"
-          # TODO: implement small_blank
+          "small-spacer-tile"
           "${pkgs.vscode}/Applications/Visual Studio Code.app"
           "${pkgs.bruno}/Applications/Bruno.app"
-          # TODO: implement small_blank
+          "small-spacer-tile"
           "${pkgs.wezterm}/Applications/WezTerm.app"
         ];
       };
