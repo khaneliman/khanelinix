@@ -22,10 +22,11 @@ in
       [
         caprine-bin
         element-desktop
+        telegram-desktop
       ]
       ++ lib.optionals pkgs.stdenv.isLinux [
+        # TODO: migrate to darwin after version bump
         slack
-        telegram-desktop
       ];
 
     khanelinix = {
