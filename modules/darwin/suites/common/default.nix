@@ -28,7 +28,8 @@ in
       systemPackages = with pkgs; [
         bash-completion
         cask
-        duti
+        # FIXME: broken nixpkg
+        # duti
         fasd
         gawk
         gnugrep
