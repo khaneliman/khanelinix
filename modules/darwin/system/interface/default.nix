@@ -129,7 +129,7 @@ in
           "/System/Applications/Music.app"
           "/Applications/Plex.app"
           # TODO: implement small_blank
-          "/Applications/Visual Studio Code.app"
+          "${pkgs.vscode}/Applications/Visual Studio Code.app"
           "${pkgs.bruno}/Applications/Bruno.app"
           # TODO: implement small_blank
           "${pkgs.wezterm}/Applications/WezTerm.app"
