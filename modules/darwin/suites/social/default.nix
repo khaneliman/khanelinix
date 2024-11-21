@@ -20,7 +20,6 @@ in
       casks = [
         "betterdiscord-installer"
         "discord"
-        "element"
         "slack@beta"
         "telegram"
       ];
