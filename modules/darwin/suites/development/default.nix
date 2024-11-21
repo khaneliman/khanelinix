@@ -22,7 +22,6 @@ in
         "docker"
         "electron"
         "powershell"
-        "visual-studio-code"
       ];
 
       masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
