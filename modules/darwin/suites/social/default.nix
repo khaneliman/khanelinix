@@ -22,7 +22,7 @@ in
         "caprine"
         "discord"
         "element"
-        "slack"
+        "slack@beta"
         "telegram"
       ];
     };
