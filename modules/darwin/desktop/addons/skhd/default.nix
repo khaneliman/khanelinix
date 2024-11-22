@@ -247,9 +247,19 @@ in
     };
 
     # Hot-reload workaround until https://github.com/koekeishiya/skhd/issues/342 is fixed
-    system.activationScripts.postActivation.text = ''
-      echo "Restarting skhd"
-      su - ${config.${namespace}.user.name} -c '${getExe config.services.skhd.package} -r'
-    '';
+    system.activationScripts.postActivation.text =
+      let
+        user = config.${namespace}.user.name;
+      in
+      # Bash
+      ''
+        echo "Checking if skhd is running"
+        if ! su - ${user} -c 'launchctl list | grep -q "org.nixos.skhd"'; then
+          echo "Starting skhd"
+          launchctl kickstart -k gui/"$(id -u ${user})"/org.nixos.skhd
+        else
+          echo "skhd is already running"
+        fi
+      '';
   };
 }
