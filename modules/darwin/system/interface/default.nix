@@ -140,6 +140,8 @@ in
         type = "png";
       };
 
+      spaces.spans-displays = true;
+
       menuExtraClock = {
         ShowAMPM = true;
         ShowDate = 1;
