@@ -26,7 +26,7 @@ in
 
     ${namespace}.home.extraOptions = {
       home.shellAliases = {
-        restart-yabai = ''launchctl kickstart -k gui/"$(id -u)"/org.nixos.yabai'';
+        restart-skhd = ''launchctl kickstart -k gui/"$(id -u)"/org.nixos.skhd'';
       };
     };
 
