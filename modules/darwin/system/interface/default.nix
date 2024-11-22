@@ -140,7 +140,7 @@ in
         type = "png";
       };
 
-      spaces.spans-displays = true;
+      spaces.spans-displays = !config.services.yabai.enable;
 
       menuExtraClock = {
         ShowAMPM = true;
