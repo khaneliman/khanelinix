@@ -29,6 +29,7 @@ in
         rsync
         util-linux
         wget
+        usbimager
       ];
     };
 
