@@ -12,31 +12,31 @@ let
     mapAttrs
     optional
     getExe
+    mkDefault
     ;
   inherit (lib.${namespace})
     enabled
     mkBoolOpt
     mkOpt
-    mkDefault
     ;
 
   cfg = config.${namespace}.programs.graphical.desktop-environment.gnome;
   gdmHome = config.users.users.gdm.home;
 
   defaultExtensions = with pkgs.gnomeExtensions; [
-    appindicator
-    aylurs-widgets
-    dash-to-dock
-    emoji-selector
-    gsconnect
-    gtile
-    just-perfection
-    logo-menu
-    no-overview
-    remove-app-menu
-    space-bar
-    top-bar-organizer
-    wireless-hid
+    # appindicator
+    # aylurs-widgets
+    # dash-to-dock
+    # emoji-selector
+    # gsconnect
+    # gtile
+    # just-perfection
+    # logo-menu
+    # no-overview
+    # remove-app-menu
+    # space-bar
+    # top-bar-organizer
+    # wireless-hid
   ];
 
   default-attrs = mapAttrs (_key: mkDefault);
@@ -70,20 +70,20 @@ in
       systemPackages =
         with pkgs;
         [
-          gnome.gnome-tweaks
-          gnome.nautilus-python
+          gnome-tweaks
+          nautilus-python
           wl-clipboard
         ]
         ++ defaultExtensions
         ++ cfg.extensions;
 
-      gnome.excludePackages = with pkgs.gnome; [
+      gnome.excludePackages = with pkgs; [
         epiphany
         geary
         gnome-font-viewer
         gnome-maps
         gnome-system-monitor
-        pkgs.gnome-tour
+        gnome-tour
       ];
     };
 
@@ -93,6 +93,11 @@ in
       # electron-support = enabled;
       # kitty = enabled;
       # };
+
+      display-managers.gdm = {
+        inherit (cfg) enable wayland;
+        autoSuspend = cfg.suspend;
+      };
 
       home.extraOptions = {
         dconf.settings =
@@ -115,13 +120,13 @@ in
                 # FIX: references
                 # ++ optional config.${namespace}.programs.graphical.firefox.enable "firefox.desktop"
                 # ++ optional config.${namespace}.programs.graphical.vscode.enable "code.desktop"
-                ++ optional config.${namespace}.programs.terminal.emulators.foot.enable "foot.desktop"
-                ++ optional config.${namespace}.programs.terminal.emulators.kitty.enable "kitty.desktop"
-                ++ [ "org.gnome.Console.desktop" ]
-                # FIX: references
-                # ++ optional config.${namespace}.programs.graphical.logseq.enable "logseq.desktop"
-                ++ optional config.${namespace}.programs.graphical.apps.discord.enable "discord.desktop"
-                ++ optional config.${namespace}.programs.graphical.apps.steam.enable "steam.desktop";
+                # ++ optional config.${namespace}.programs.terminal.emulators.foot.enable "foot.desktop"
+                # ++ optional config.${namespace}.programs.terminal.emulators.kitty.enable "kitty.desktop"
+                ++ [ "org.gnome.Console.desktop" ];
+              # FIX: references
+              # ++ optional config.${namespace}.programs.graphical.logseq.enable "logseq.desktop"
+              # ++ optional config.${namespace}.programs.graphical.apps.discord.enable "discord.desktop"
+              # ++ optional config.${namespace}.programs.graphical.apps.steam.enable "steam.desktop";
             };
 
             "org/gnome/desktop/background" = {
@@ -208,10 +213,10 @@ in
               menu-button-icon-image = 23;
 
               menu-button-terminal =
-                if config.${namespace}.desktop.addons.term.enable then
-                  getExe config.${namespace}.desktop.addons.term.pkg
-                else
-                  getExe pkgs.gnome.gnome-terminal;
+                # if config.${namespace}.desktop.addons.term.enable then
+                #   getExe config.${namespace}.desktop.addons.term.pkg
+                # else
+                getExe pkgs.gnome-terminal;
             };
 
             "org/gnome/shell/extensions/aylurs-widgets" = {
@@ -293,19 +298,7 @@ in
 
     # Required for app indicators
     services = {
-      udev.packages = with pkgs; [ gnome3.gnome-settings-daemon ];
-
-      xserver = {
-        enable = true;
-
-        libinput.enable = true;
-        displayManager.gdm = {
-          enable = true;
-          autoSuspend = cfg.suspend;
-          inherit (cfg) wayland;
-        };
-        desktopManager.gnome.enable = true;
-      };
+      udev.packages = with pkgs; [ gnome-settings-daemon ];
     };
 
     systemd = {
@@ -317,43 +310,43 @@ in
           lib.optional (cfg.monitors != null) "L+ ${gdmHome}/.config/monitors.xml - - - - ${cfg.monitors}"
         );
 
-      services."${namespace}-user-icon" = {
-        before = [ "display-manager.service" ];
-        wantedBy = [ "display-manager.service" ];
-
-        serviceConfig = {
-          Type = "simple";
-          User = "root";
-          Group = "root";
-        };
-
-        script = # bash
-          ''
-            config_file=/var/lib/AccountsService/users/${config.${namespace}.user.name}
-            icon_file=/run/current-system/sw/share/${namespace}.icons/user/${config.${namespace}.user.name}/${
-              config.${namespace}.user.icon.fileName
-            }
-
-            if ! [ -d "$(dirname "$config_file")"]; then
-              mkdir -p "$(dirname "$config_file")"
-            fi
-
-            if ! [ -f "$config_file" ]; then
-              echo "[User]
-              Session=gnome
-              SystemAccount=false
-              Icon=$icon_file" > "$config_file"
-            else
-              icon_config=$(sed -E -n -e "/Icon=.*/p" $config_file)
-
-              if [[ "$icon_config" == "" ]]; then
-                echo "Icon=$icon_file" >> $config_file
-              else
-                sed -E -i -e "s#^Icon=.*$#Icon=$icon_file#" $config_file
-              fi
-            fi
-          '';
-      };
+      # services."${namespace}-user-icon" = {
+      #   before = [ "display-manager.service" ];
+      #   wantedBy = [ "display-manager.service" ];
+      #
+      #   serviceConfig = {
+      #     Type = "simple";
+      #     User = "root";
+      #     Group = "root";
+      #   };
+      #
+      #   script = # bash
+      #     ''
+      #       config_file=/var/lib/AccountsService/users/${config.${namespace}.user.name}
+      #       icon_file=/run/current-system/sw/share/${namespace}.icons/user/${config.${namespace}.user.name}/${
+      #         config.${namespace}.user.icon.fileName
+      #       }
+      #
+      #       if ! [ -d "$(dirname "$config_file")"]; then
+      #         mkdir -p "$(dirname "$config_file")"
+      #       fi
+      #
+      #       if ! [ -f "$config_file" ]; then
+      #         echo "[User]
+      #         Session=gnome
+      #         SystemAccount=false
+      #         Icon=$icon_file" > "$config_file"
+      #       else
+      #         icon_config=$(sed -E -n -e "/Icon=.*/p" $config_file)
+      #
+      #         if [[ "$icon_config" == "" ]]; then
+      #           echo "Icon=$icon_file" >> $config_file
+      #         else
+      #           sed -E -i -e "s#^Icon=.*$#Icon=$icon_file#" $config_file
+      #         fi
+      #       fi
+      #     '';
+      # };
     };
   };
 }
