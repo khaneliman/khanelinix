@@ -67,13 +67,13 @@ in
         prefetch-sri = "nix store prefetch-file $1";
         nrh = ''${lib.getExe pkgs.nixpkgs-review} rev HEAD'';
         nra = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "all"'';
-        nrap = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "all" --post-result'';
-        nrd = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-darwin aarch64-darwin"'';
-        nrdp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-darwin aarch64-darwin" --post-result'';
-        nrl = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-linux aarch64-linux"'';
-        nrlp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-linux aarch64-linux" --post-result'';
+        nrap = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "all" --post-result --num-parallel-evals 4'';
+        nrd = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-darwin aarch64-darwin" --num-parallel-evals 2'';
+        nrdp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-darwin aarch64-darwin" --num-parallel-evals 2 --post-result'';
+        nrl = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-linux aarch64-linux" --num-parallel-evals 2'';
+        nrlp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-linux aarch64-linux" --num-parallel-evals 2 --post-result'';
         # TODO: remove once remote building to khanelinix works
-        nrmp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-darwin aarch64-darwin aarch64-linux" --post-result'';
+        nrmp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-darwin aarch64-darwin aarch64-linux" --num-parallel-evals 3 --post-result'';
         nup = ''nix-shell maintainers/scripts/update.nix --argstr package $1'';
         num = ''nix-shell maintainers/scripts/update.nix --argstr maintainer $1'';
       };
