@@ -17,9 +17,9 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      (retroarch.override {
-        cores = with libretro; [
+    home.packages = [
+      (pkgs.retroarch.withCores (
+        cores: with cores; [
           beetle-psx-hw
           bsnes
           # FIXME: broken nixpkgs
@@ -32,8 +32,8 @@ in
           nestopia
           pcsx2
           snes9x
-        ];
-      })
+        ]
+      ))
     ];
   };
 }

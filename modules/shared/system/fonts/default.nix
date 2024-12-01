@@ -33,14 +33,10 @@ in
         twemoji-color-font
 
         # Nerd Fonts
-        (nerdfonts.override {
-          fonts = [
-            "CascadiaCode"
-            "Iosevka"
-            "Monaspace"
-            "NerdFontsSymbolsOnly"
-          ];
-        })
+        nerd-fonts.caskaydia-cove
+        nerd-fonts.iosevka
+        nerd-fonts.monaspace
+        nerd-fonts.symbols-only
       ] "Custom font packages to install.";
     default = mkOpt types.str "MonaspiceNe Nerd Font" "Default font name";
   };
