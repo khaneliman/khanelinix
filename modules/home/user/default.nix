@@ -88,6 +88,8 @@ in
           hmvar-reload = ''__HM_ZSH_SESS_VARS_SOURCED=0 source "/etc/profiles/per-user/${config.${namespace}.user.name}/etc/profile.d/hm-session-vars.sh"'';
           vim-update = ''nix run nixpkgs#vimPluginsUpdater -- --github-token=$(echo $GITHUB_TOKEN)'';
           lua-update = ''nix run nixpkgs#luarocks-packages-updater'';
+          # NOTE: vim-add 'owner/repo'
+          vim-add = ''nix run nixpkgs#vimPluginsUpdater add'';
 
           gsed = "${getExe pkgs.gnused}";
 
