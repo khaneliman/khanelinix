@@ -146,12 +146,9 @@ in
           git = {
             enable = true;
 
-            includes = [
-              {
-                condition = "gitdir:/home/khaneliman/Documents/azure/DIB/";
-                path = "${./git/dib-signing}";
-              }
-            ];
+            includes =
+              [
+              ];
           };
 
           run-as-service = enabled;

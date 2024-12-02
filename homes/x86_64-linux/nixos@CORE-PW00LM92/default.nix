@@ -38,10 +38,6 @@ in
                 condition = "gitdir:/mnt/c/";
                 path = "${./git/windows-compat-config}";
               }
-              {
-                condition = "gitdir:/mnt/c/source/repos/DiB/";
-                path = "${./git/dib-signing}";
-              }
             ];
           };
 
