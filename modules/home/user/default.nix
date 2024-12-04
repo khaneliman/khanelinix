@@ -86,12 +86,12 @@ in
           # } switch";
           nix = "nix -vL";
           hmvar-reload = ''__HM_ZSH_SESS_VARS_SOURCED=0 source "/etc/profiles/per-user/${config.${namespace}.user.name}/etc/profile.d/hm-session-vars.sh"'';
-          vim-update-all = ''nix run nixpkgs#vimPluginsUpdater -- --github-token=$(echo $GITHUB_TOKEN)'';
-          # NOTE: vim-update 'plugin-name'
-          vim-update = ''nix run nixpkgs#vimPluginsUpdater update'';
-          lua-update = ''nix run nixpkgs#luarocks-packages-updater'';
           # NOTE: vim-add 'owner/repo'
           vim-add = ''nix run nixpkgs#vimPluginsUpdater add'';
+          # NOTE: vim-update 'plugin-name'
+          vim-update = ''nix run nixpkgs#vimPluginsUpdater update'';
+          vim-update-all = ''nix run nixpkgs#vimPluginsUpdater -- --github-token=$(echo $GITHUB_TOKEN)'';
+          lua-update-all = ''nix run nixpkgs#luarocks-packages-updater -- --github-token=$(echo $GITHUB_TOKEN)'';
 
           gsed = "${getExe pkgs.gnused}";
 
