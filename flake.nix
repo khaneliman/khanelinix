@@ -71,7 +71,8 @@
 
     # Personal Neovim Flake
     khanelivim = {
-      url = "github:khaneliman/khanelivim";
+      # url = "github:khaneliman/khanelivim";
+      url = "github:khaneliman/khanelivim/lazy";
       # url = "git+file:///Users/khaneliman/Documents/github/khanelivim";
       # url = "git+file:///home/khaneliman/Documents/github/khanelivim";
 
