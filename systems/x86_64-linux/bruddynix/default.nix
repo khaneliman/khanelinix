@@ -107,6 +107,8 @@ in
       realtime = enabled;
       time = enabled;
     };
+
+    user.name = "bruddy";
   };
 
   nix.settings = {
