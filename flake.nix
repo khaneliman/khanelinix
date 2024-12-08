@@ -22,6 +22,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    disko = {
+      url = "github:nix-community/disko/latest";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Home Manager (master)
     home-manager.url = "github:nix-community/home-manager";
     # home-manager.url = "git+file:///home/khaneliman/Documents/github/home-manager";
@@ -179,6 +184,7 @@
         modules = {
           darwin = with inputs; [ sops-nix.darwinModules.sops ];
           nixos = with inputs; [
+            disko.nixosModules.disko
             lanzaboote.nixosModules.lanzaboote
             sops-nix.nixosModules.sops
           ];
