@@ -170,7 +170,8 @@
         catppuccin.homeManagerModules.catppuccin
         hypr-socket-watch.homeManagerModules.default
         nix-index-database.hmModules.nix-index
-        nur.hmModules.nur
+        # FIXME:
+        # nur.modules.homeManager.default
         sops-nix.homeManagerModules.sops
       ];
 
