@@ -139,7 +139,8 @@ in
           ".local/share/warp-terminal/themes/catppuccin_macchiato.yaml".source = warpStyle;
         })
         (mkIf pkgs.stdenv.isDarwin {
-          "Library/Application Support/BetterDiscord/themes/catppuccin-macchiato.theme.css".source = ./catppuccin-macchiato.theme.css;
+          "Library/Application Support/BetterDiscord/themes/catppuccin-macchiato.theme.css".source =
+            ./catppuccin-macchiato.theme.css;
         })
       ];
 

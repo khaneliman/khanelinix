@@ -45,6 +45,7 @@ in
       inherit (style) style;
     };
 
-    systemd.user.services.swaync.Service.Environment = "PATH=/run/wrappers/bin:${lib.makeBinPath dependencies}";
+    systemd.user.services.swaync.Service.Environment =
+      "PATH=/run/wrappers/bin:${lib.makeBinPath dependencies}";
   };
 }

@@ -2,9 +2,8 @@ _: {
   networking = {
     networkmanager = {
       ensureProfiles = {
-        profiles =
-          {
-          };
+        profiles = {
+        };
       };
     };
   };

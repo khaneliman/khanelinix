@@ -146,9 +146,8 @@ in
           git = {
             enable = true;
 
-            includes =
-              [
-              ];
+            includes = [
+            ];
           };
 
           run-as-service = enabled;

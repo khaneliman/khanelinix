@@ -17,6 +17,7 @@ in
   };
 
   config = mkIf cfg.enable {
+    # TODO: sober/roblox?
     home.packages = with pkgs; [
       bottles
       heroic

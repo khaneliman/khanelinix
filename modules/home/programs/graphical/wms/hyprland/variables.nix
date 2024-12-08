@@ -206,9 +206,12 @@ in
         # screenshot commands
         "$notify-screenshot" = ''${getExe pkgs.libnotify} --icon "$file" "Screenshot Saved"'';
         "$screenshot-path" = "/home/${config.${namespace}.user.name}/Pictures/screenshots";
-        "$grimblast_area_file" = ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --freeze --notify save area "$file"'';
-        "$grimblast_active_file" = ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --notify save active "$file"'';
-        "$grimblast_screen_file" = ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --notify save screen "$file"'';
+        "$grimblast_area_file" =
+          ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --freeze --notify save area "$file"'';
+        "$grimblast_active_file" =
+          ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --notify save active "$file"'';
+        "$grimblast_screen_file" =
+          ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --notify save screen "$file"'';
         "$grimblast_area_swappy" = ''${grimblast} --freeze save area - | ${getExe pkgs.swappy} -f -'';
         "$grimblast_active_swappy" = ''${grimblast} save active - | ${getExe pkgs.swappy} -f -'';
         "$grimblast_screen_swappy" = ''${grimblast} save screen - | ${getExe pkgs.swappy} -f -'';
@@ -217,8 +220,10 @@ in
         "$grimblast_screen_clipboard" = "${grimblast} --notify copy screen";
 
         # utility commands
-        "$color_picker" = "${getExe pkgs.hyprpicker} -a && (${convert} -size 32x32 xc:$(${wl-paste}) /tmp/color.png && ${getExe pkgs.libnotify} \"Color Code:\" \"$(${wl-paste})\" -h \"string:bgcolor:$(${wl-paste})\" --icon /tmp/color.png -u critical -t 4000)";
-        "$cliphist" = "${getExe pkgs.cliphist} list | anyrun --show-results-immediately true | ${getExe pkgs.cliphist} decode | ${wl-copy}";
+        "$color_picker" =
+          "${getExe pkgs.hyprpicker} -a && (${convert} -size 32x32 xc:$(${wl-paste}) /tmp/color.png && ${getExe pkgs.libnotify} \"Color Code:\" \"$(${wl-paste})\" -h \"string:bgcolor:$(${wl-paste})\" --icon /tmp/color.png -u critical -t 4000)";
+        "$cliphist" =
+          "${getExe pkgs.cliphist} list | anyrun --show-results-immediately true | ${getExe pkgs.cliphist} decode | ${wl-copy}";
       };
     };
   };

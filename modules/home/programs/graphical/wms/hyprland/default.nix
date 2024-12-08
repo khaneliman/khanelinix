@@ -81,10 +81,13 @@ in
           HYPRLAND_TRACE = "1";
         };
 
-      shellAliases = {
-        hl = "cat $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland${lib.optionalString cfg.enableDebug "d"}.log";
-        hlc = "cat /home/${config.${namespace}.user.name}/.local/cache/hyprland/$(command ls -t /home/${config.${namespace}.user.name}/.local/cache/hyprland/ | grep 'hyprlandCrashReport' | head -n 1)";
-      } // historicalLogAliases // historicalCrashAliases;
+      shellAliases =
+        {
+          hl = "cat $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland${lib.optionalString cfg.enableDebug "d"}.log";
+          hlc = "cat /home/${config.${namespace}.user.name}/.local/cache/hyprland/$(command ls -t /home/${config.${namespace}.user.name}/.local/cache/hyprland/ | grep 'hyprlandCrashReport' | head -n 1)";
+        }
+        // historicalLogAliases
+        // historicalCrashAliases;
     };
 
     khanelinix = {

@@ -65,7 +65,8 @@ in
           in
           lib.mkMerge [
             (lib.mkOptionDefault {
-              "${swayCfg.modifier}+BackSpace" = "exec pkill -SIGUSR1 swaylock || WAYLAND_DISPLAY=wayland-1 $screen-locker";
+              "${swayCfg.modifier}+BackSpace" =
+                "exec pkill -SIGUSR1 swaylock || WAYLAND_DISPLAY=wayland-1 $screen-locker";
               "${swayCfg.modifier}+Return" = "exec ${swayCfg.terminal}";
               "${swayCfg.modifier}+Shift+q" = "kill";
 
@@ -172,7 +173,8 @@ in
               XF86AudioPrev = "exec ${getExe pkgs.playerctl} previous";
               XF86AudioNext = "exec ${getExe pkgs.playerctl} next";
 
-              "${swayCfg.modifier}+u" = ''${getExe' config.wayland.windowManager.sway.package "swaymsg"} "output * dpms on"'';
+              "${swayCfg.modifier}+u" =
+                ''${getExe' config.wayland.windowManager.sway.package "swaymsg"} "output * dpms on"'';
             })
             (lib.mkOptionDefault (
               builtins.listToAttrs (

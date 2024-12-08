@@ -76,14 +76,17 @@ in
         "workbench.iconTheme" = "vscode-icons";
 
         # Font family
-        "editor.fontFamily" = "MonaspiceAr Nerd Font, CaskaydiaCove Nerd Font,Consolas, monospace,Hack Nerd Font";
-        "editor.codeLensFontFamily" = "MonaspiceNe Nerd Font, Liga SFMono Nerd Font, CaskaydiaCove Nerd Font,Consolas, 'Courier New', monospace,Hack Nerd Font";
+        "editor.fontFamily" =
+          "MonaspiceAr Nerd Font, CaskaydiaCove Nerd Font,Consolas, monospace,Hack Nerd Font";
+        "editor.codeLensFontFamily" =
+          "MonaspiceNe Nerd Font, Liga SFMono Nerd Font, CaskaydiaCove Nerd Font,Consolas, 'Courier New', monospace,Hack Nerd Font";
         "editor.inlayHints.fontFamily" = "MonaspiceKr Nerd Font";
         "debug.console.fontFamily" = "Monaspace Krypton";
         "scm.inputFontFamily" = "Monaspace Radon";
         "notebook.output.fontFamily" = "Monapsace Radon";
         "chat.editor.fontFamily" = "Monaspace Argon";
-        "markdown.preview.fontFamily" = "Monaspace Xenon; -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif";
+        "markdown.preview.fontFamily" =
+          "Monaspace Xenon; -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif";
         "terminal.integrated.fontFamily" = "JetBrainsMono Nerd Font Mono";
 
         # LSP
