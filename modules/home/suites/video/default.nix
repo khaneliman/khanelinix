@@ -32,8 +32,8 @@ in
     khanelinix = {
       programs = {
         graphical.apps = {
-          obs = enabled;
-          mpv = enabled;
+          obs = lib.mkDefault enabled;
+          mpv = lib.mkDefault enabled;
         };
       };
     };
