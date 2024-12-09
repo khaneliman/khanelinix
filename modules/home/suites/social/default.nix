@@ -32,13 +32,13 @@ in
     khanelinix = {
       programs = {
         graphical.apps = {
-          discord = enabled;
-          caprine = enabled;
+          discord = lib.mkDefault enabled;
+          caprine = lib.mkDefault enabled;
         };
 
         terminal.social = {
-          slack-term = enabled;
-          twitch-tui = enabled;
+          slack-term = lib.mkDefault enabled;
+          twitch-tui = lib.mkDefault enabled;
         };
       };
     };
