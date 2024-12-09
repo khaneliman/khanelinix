@@ -106,6 +106,10 @@ in
       geoclue = enabled;
       power = enabled;
       printing = enabled;
+      rustdesk-server = {
+        enable = true;
+        relayHosts = [ "khanelinix.local" ];
+      };
 
       snapper = {
         enable = true;
