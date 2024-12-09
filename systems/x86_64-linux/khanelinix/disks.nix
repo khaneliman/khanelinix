@@ -41,7 +41,7 @@ in
             };
             root = {
               name = "NixOS";
-              end = "-16G";
+              end = "-64G";
               content = {
                 type = "btrfs";
                 name = "NixOS";

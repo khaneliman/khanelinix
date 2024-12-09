@@ -9,6 +9,8 @@ let
 in
 {
   imports = [
+    # TODO:
+    # ./disks.nix
     ./hardware.nix
     ./network.nix
     ./specializations.nix
