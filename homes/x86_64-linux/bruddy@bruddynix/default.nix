@@ -1,5 +1,4 @@
 {
-  config,
   lib,
   namespace,
   ...
@@ -11,7 +10,6 @@ in
   khanelinix = {
     user = {
       enable = true;
-      # inherit (config.snowfallorg.user) name;
       name = "bruddy";
     };
 

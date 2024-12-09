@@ -82,7 +82,6 @@ in
     };
 
     security = {
-      # doas = enabled;
       keyring = enabled;
       sudo-rs = enabled;
       # sops = {
@@ -95,6 +94,7 @@ in
     system = {
       boot = {
         enable = true;
+        # TODO: configure
         # secureBoot = true;
         plymouth = true;
         silentBoot = true;
