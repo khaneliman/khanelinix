@@ -24,7 +24,9 @@ in
       portal = {
         enable = true;
 
-        configPackages = [ hyprland.packages.${system}.hyprland ];
+        configPackages = lib.optionals config.${namespace}.programs.graphical.wms.hyprland.enable [
+          hyprland.packages.${system}.hyprland
+        ];
 
         config = {
           hyprland = mkIf config.${namespace}.programs.graphical.wms.hyprland.enable {
