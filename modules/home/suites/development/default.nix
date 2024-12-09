@@ -7,7 +7,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf mkDefault;
   inherit (lib.${namespace}) mkBoolOpt enabled;
   inherit (inputs) snowfall-flake;
 
@@ -83,7 +83,7 @@ in
       programs = {
         graphical = {
           editors = {
-            vscode = enabled;
+            vscode = mkDefault enabled;
           };
         };
 
@@ -91,21 +91,21 @@ in
           editors = {
             # helix = enabled;
             neovim = {
-              enable = true;
-              default = true;
+              enable = mkDefault true;
+              default = mkDefault true;
             };
           };
 
           tools = {
             azure.enable = cfg.azureEnable;
-            git-crypt = enabled;
+            git-crypt = mkDefault enabled;
             go.enable = cfg.goEnable;
             k9s.enable = cfg.kubernetesEnable;
             lazydocker.enable = cfg.dockerEnable;
-            lazygit = enabled;
-            oh-my-posh = enabled;
+            lazygit = mkDefault enabled;
+            oh-my-posh = mkDefault enabled;
             # FIXME: broken nixpkg
-            # prisma = enabled;
+            # prisma = mkDefault enabled;
           };
         };
       };
