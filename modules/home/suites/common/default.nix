@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf mkDefault;
   inherit (lib.${namespace}) mkBoolOpt enabled;
 
   cfg = config.${namespace}.suites.common;
@@ -33,68 +33,68 @@ in
       programs = {
         graphical = {
           browsers = {
-            firefox = enabled;
+            firefox = mkDefault enabled;
           };
         };
 
         terminal = {
           emulators = {
-            alacritty = enabled;
+            alacritty = mkDefault enabled;
             foot.enable = pkgs.stdenv.isLinux;
-            kitty = enabled;
-            warp = enabled;
-            wezterm = enabled;
+            kitty = mkDefault enabled;
+            warp = mkDefault enabled;
+            wezterm = mkDefault enabled;
           };
 
           shell = {
-            bash = enabled;
-            nushell = enabled;
-            zsh = enabled;
+            bash = mkDefault enabled;
+            nushell = mkDefault enabled;
+            zsh = mkDefault enabled;
           };
 
           tools = {
-            bat = enabled;
-            bottom = enabled;
-            btop = enabled;
-            carapace = enabled;
-            colorls = enabled;
-            comma = enabled;
-            direnv = enabled;
-            eza = enabled;
-            fastfetch = enabled;
-            fzf = enabled;
-            fup-repl = enabled;
-            git = enabled;
-            glxinfo.enable = pkgs.stdenv.isLinux;
-            jq = enabled;
-            jujutsu = enabled;
-            lsd = enabled;
-            oh-my-posh = enabled;
-            ripgrep = enabled;
-            tmux = enabled;
-            topgrade = enabled;
-            yazi = enabled;
-            zellij = enabled;
-            zoxide = enabled;
+            bat = mkDefault enabled;
+            bottom = mkDefault enabled;
+            btop = mkDefault enabled;
+            carapace = mkDefault enabled;
+            colorls = mkDefault enabled;
+            comma = mkDefault enabled;
+            direnv = mkDefault enabled;
+            eza = mkDefault enabled;
+            fastfetch = mkDefault enabled;
+            fzf = mkDefault enabled;
+            fup-repl = mkDefault enabled;
+            git = mkDefault enabled;
+            glxinfo.enable = mkDefault pkgs.stdenv.isLinux;
+            jq = mkDefault enabled;
+            jujutsu = mkDefault enabled;
+            lsd = mkDefault enabled;
+            oh-my-posh = mkDefault enabled;
+            ripgrep = mkDefault enabled;
+            tmux = mkDefault enabled;
+            topgrade = mkDefault enabled;
+            yazi = mkDefault enabled;
+            zellij = mkDefault enabled;
+            zoxide = mkDefault enabled;
           };
         };
       };
 
       services = {
-        # easyeffects.enable = pkgs.stdenv.isLinux;
-        udiskie.enable = pkgs.stdenv.isLinux;
-        # ssh-agent.enable = pkgs.stdenv.isLinux;
-        tray.enable = pkgs.stdenv.isLinux;
+        # easyeffects.enable = mkDefault pkgs.stdenv.isLinux;
+        udiskie.enable = mkDefault pkgs.stdenv.isLinux;
+        # ssh-agent.enable = mkDefault pkgs.stdenv.isLinux;
+        tray.enable = mkDefault pkgs.stdenv.isLinux;
       };
 
       theme = {
-        gtk.enable = pkgs.stdenv.isLinux;
-        qt.enable = pkgs.stdenv.isLinux;
+        gtk.enable = mkDefault pkgs.stdenv.isLinux;
+        qt.enable = mkDefault pkgs.stdenv.isLinux;
       };
     };
 
     programs.readline = {
-      enable = true;
+      enable = mkDefault true;
 
       extraConfig = ''
         set completion-ignore-case on
