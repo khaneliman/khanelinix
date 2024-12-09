@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf mkDefault;
   inherit (lib.${namespace}) mkBoolOpt enabled;
 
   cfg = config.${namespace}.suites.wlroots;
@@ -20,15 +20,15 @@ in
 
     khanelinix = {
       services = {
-        seatd = enabled;
+        seatd = mkDefault enabled;
       };
     };
     programs = {
-      nm-applet.enable = true;
-      xwayland.enable = true;
+      nm-applet.enable = mkDefault true;
+      xwayland.enable = mkDefault true;
 
       wshowkeys = {
-        enable = true;
+        enable = mkDefault true;
         package = pkgs.wshowkeys;
       };
     };
