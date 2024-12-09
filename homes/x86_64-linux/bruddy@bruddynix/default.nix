@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.${namespace}) enabled disabled;
 in
 {
   khanelinix = {
@@ -34,6 +34,9 @@ in
       };
 
       terminal = {
+        media = {
+          ncmpcpp = disabled;
+        };
         tools = {
           git = {
             enable = true;

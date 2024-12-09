@@ -34,12 +34,12 @@ in
     khanelinix = {
       programs.terminal = {
         media = {
-          ncmpcpp = enabled;
-          ncspot = enabled;
+          ncmpcpp = lib.mkDefault enabled;
+          ncspot = lib.mkDefault enabled;
         };
 
         tools = {
-          cava = enabled;
+          cava = lib.mkDefault enabled;
         };
       };
 
