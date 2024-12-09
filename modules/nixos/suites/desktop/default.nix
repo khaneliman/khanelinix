@@ -19,7 +19,7 @@ in
       programs = {
         graphical = {
           apps = {
-            _1password = enabled;
+            _1password = lib.mkDefault enabled;
           };
         };
       };
