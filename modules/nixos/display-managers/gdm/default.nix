@@ -54,44 +54,6 @@ in
       };
     };
 
-    # systemd.services."${namespace}-user-icon" = {
-    #   before = [ "display-manager.service" ];
-    #   wantedBy = [ "display-manager.service" ];
-    #
-    #   script = # bash
-    #     ''
-    #       config_file=/var/lib/AccountsService/users/${config.${namespace}.user.name}
-    #       icon_file=/run/current-system/sw/share/icons/user/${config.${namespace}.user.name}/${
-    #         config.${namespace}.user.icon.fileName
-    #       }
-    #
-    #       if ! [ -d "$(dirname "$config_file")" ]; then
-    #         mkdir -p "$(dirname "$config_file")"
-    #       fi
-    #
-    #       if ! [ -f "$config_file" ]; then
-    #         echo "[User]
-    #         Session=gnome
-    #         SystemAccount=false
-    #         Icon=$icon_file" > "$config_file"
-    #       else
-    #         icon_config=$(sed -E -n -e "/Icon=.*/p" $config_file)
-    #
-    #         if [[ "$icon_config" == "" ]]; then
-    #           echo "Icon=$icon_file" >> $config_file
-    #         else
-    #           sed -E -i -e 's#^Icon=.*$#Icon=$icon_file#' $config_file
-    #         fi
-    #       fi
-    #     '';
-    #
-    #   serviceConfig = {
-    #     Type = "simple";
-    #     User = "root";
-    #     Group = "root";
-    #   };
-    # };
-    #
     system.activationScripts.postInstallGdm =
       stringAfter [ "users" ] # bash
         ''
