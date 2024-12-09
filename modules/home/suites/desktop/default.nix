@@ -35,8 +35,7 @@ in
         kdePackages.ark
         kdePackages.gwenview
         realvnc-vnc-viewer
-        # FIXME: broken nixpkgs
-        # rustdesk
+        rustdesk-flutter
       ];
   };
 }
