@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf mkDefault;
   inherit (lib.${namespace}) enabled;
 
   cfg = config.${namespace}.suites.common;
@@ -35,42 +35,42 @@ in
 
     khanelinix = {
       hardware = {
-        power = enabled;
+        power = mkDefault enabled;
       };
 
-      nix = enabled;
+      nix = mkDefault enabled;
 
       programs = {
         terminal = {
           tools = {
-            bandwhich = enabled;
-            nix-ld = enabled;
+            bandwhich = mkDefault enabled;
+            nix-ld = mkDefault enabled;
           };
         };
       };
 
       security = {
-        auditd = enabled;
-        clamav = enabled;
-        gpg = enabled;
-        pam = enabled;
-        usbguard = enabled;
+        auditd = mkDefault enabled;
+        clamav = mkDefault enabled;
+        gpg = mkDefault enabled;
+        pam = mkDefault enabled;
+        usbguard = mkDefault enabled;
       };
 
       services = {
-        ddccontrol = enabled;
-        earlyoom = enabled;
-        logind = enabled;
-        logrotate = enabled;
-        # oomd = enabled;
-        openssh = enabled;
-        printing = enabled;
+        ddccontrol = mkDefault enabled;
+        earlyoom = mkDefault enabled;
+        logind = mkDefault enabled;
+        logrotate = mkDefault enabled;
+        # oomd = mkDefault enabled;
+        openssh = mkDefault enabled;
+        printing = mkDefault enabled;
       };
 
       system = {
-        fonts = enabled;
-        locale = enabled;
-        time = enabled;
+        fonts = mkDefault enabled;
+        locale = mkDefault enabled;
+        time = mkDefault enabled;
       };
     };
   };
