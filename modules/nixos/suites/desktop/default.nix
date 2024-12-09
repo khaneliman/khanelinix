@@ -21,10 +21,6 @@ in
           apps = {
             _1password = enabled;
           };
-
-          wms = {
-            hyprland = enabled;
-          };
         };
       };
     };
