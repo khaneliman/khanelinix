@@ -96,6 +96,7 @@ in
 
       display-managers.gdm = {
         inherit (cfg) enable wayland;
+        defaultSession = "gnome";
         autoSuspend = cfg.suspend;
       };
 
@@ -299,6 +300,7 @@ in
     # Required for app indicators
     services = {
       udev.packages = with pkgs; [ gnome-settings-daemon ];
+      xserver.desktopManager.gnome.enable = true;
     };
 
     systemd = {
