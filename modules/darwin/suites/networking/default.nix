@@ -18,11 +18,11 @@ in
   config = mkIf cfg.enable {
     khanelinix = {
       services = {
-        tailscale = enabled;
+        tailscale = lib.mkDefault enabled;
       };
 
       system = {
-        networking = enabled;
+        networking = lib.mkDefault enabled;
       };
     };
   };
