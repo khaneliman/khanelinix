@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf mkDefault;
   inherit (lib.${namespace}) enabled;
 
   cfg = config.${namespace}.suites.common;
@@ -15,7 +15,7 @@ in
   imports = [ (lib.snowfall.fs.get-file "modules/shared/suites/common/default.nix") ];
 
   config = mkIf cfg.enable {
-    programs.zsh.enable = true;
+    programs.zsh.enable = mkDefault true;
 
     homebrew = {
       brews = [
@@ -61,17 +61,17 @@ in
         };
       };
 
-      nix = enabled;
+      nix = mkDefault enabled;
 
       tools = {
-        homebrew = enabled;
+        homebrew = mkDefault enabled;
       };
 
       system = {
-        fonts = enabled;
-        input = enabled;
-        interface = enabled;
-        networking = enabled;
+        fonts = mkDefault enabled;
+        input = mkDefault enabled;
+        interface = mkDefault enabled;
+        networking = mkDefault enabled;
       };
     };
   };
