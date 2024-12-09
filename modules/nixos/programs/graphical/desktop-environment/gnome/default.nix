@@ -275,7 +275,7 @@ in
             };
 
             "org/gnome/shell/extensions/user-theme" = {
-              name = "Catppuccin-Dark";
+              inherit (config.${namespace}.theme.gtk.theme) name;
             };
           };
       };
