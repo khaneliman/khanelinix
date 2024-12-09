@@ -8,7 +8,11 @@ let
   inherit (lib.${namespace}) enabled;
 in
 {
-  imports = [ ./hardware.nix ];
+  imports = [
+    # TODO:
+    # ./disks.nix
+    ./hardware.nix
+  ];
 
   khanelinix = {
     nix = enabled;
