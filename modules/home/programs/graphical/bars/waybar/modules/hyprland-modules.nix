@@ -117,6 +117,7 @@ in
       "title<RPCS3.*>" = "";
       "title<Spotify Free>" = "";
       "title<Steam>" = "";
+      "class<rustdesk>" = "󰢹";
     };
   };
 }
