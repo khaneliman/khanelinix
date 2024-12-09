@@ -48,7 +48,6 @@ in
 
           shell = {
             bash = enabled;
-            fish = enabled;
             nushell = enabled;
             zsh = enabled;
           };
