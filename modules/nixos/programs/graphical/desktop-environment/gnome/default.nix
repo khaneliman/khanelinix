@@ -96,7 +96,6 @@ in
 
       display-managers.gdm = {
         inherit (cfg) enable wayland;
-        defaultSession = "gnome";
         autoSuspend = cfg.suspend;
       };
 
