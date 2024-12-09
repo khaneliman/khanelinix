@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf mkDefault;
   inherit (lib.${namespace}) mkBoolOpt enabled;
 
   cfg = config.${namespace}.suites.desktop;
@@ -18,16 +18,16 @@ in
   config = mkIf cfg.enable {
     ${namespace}.desktop = {
       addons = {
-        skhd = enabled;
-        jankyborders = enabled;
+        skhd = mkDefault enabled;
+        jankyborders = mkDefault enabled;
       };
 
       bars = {
-        sketchybar = enabled;
+        sketchybar = mkDefault enabled;
       };
 
       wms = {
-        yabai = enabled;
+        yabai = mkDefault enabled;
       };
     };
 
