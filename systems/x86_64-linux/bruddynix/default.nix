@@ -95,7 +95,7 @@ in
     system = {
       boot = {
         enable = true;
-        secureBoot = true;
+        # secureBoot = true;
         plymouth = true;
         silentBoot = true;
       };
