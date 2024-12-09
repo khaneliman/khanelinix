@@ -5,6 +5,7 @@
   ...
 }:
 let
+  inherit (lib) mkDefault;
   inherit (lib.${namespace}) mkBoolOpt enabled;
 
   cfg = config.${namespace}.suites.games;
@@ -19,13 +20,13 @@ in
       programs = {
         graphical = {
           addons = {
-            gamemode = enabled;
-            gamescope = enabled;
-            # mangohud = enabled;
+            gamemode = mkDefault enabled;
+            gamescope = mkDefault enabled;
+            # mangohud = mkDefault enabled;
           };
 
           apps = {
-            steam = enabled;
+            steam = mkDefault enabled;
           };
         };
       };
