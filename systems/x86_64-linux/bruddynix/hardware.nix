@@ -33,7 +33,7 @@
   #   };
   #
   #   "/boot" = {
-  #     device = "/dev/disk/by-label/ESP";
+  #     device = "/dev/disk/by-label/EFI";
   #     fsType = "vfat";
   #     options = [
   #       "fmask=0077"
@@ -41,9 +41,9 @@
   #     ];
   #   };
   # };
-
+  #
   # swapDevices = [ { device = "/dev/disk/by-label/swap"; } ];
-
+  #
   hardware = {
     enableRedistributableFirmware = true;
   };

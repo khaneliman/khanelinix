@@ -6,7 +6,7 @@
       content = {
         type = "gpt";
         partitions = {
-          ESP = {
+          EFI = {
             size = "1G";
             type = "EF00";
             content = {
@@ -16,7 +16,7 @@
               mountOptions = [ "umask=0077" ];
               extraArgs = [
                 "-n"
-                "ESP"
+                "EFI"
               ];
             };
           };
