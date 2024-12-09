@@ -44,7 +44,7 @@ in
       programs = {
         graphical = {
           apps = {
-            retroarch.enable = if cfg.retroarchFull then false else true;
+            retroarch.enable = if cfg.retroarchFull then lib.mkDefault false else lib.mkDefault true;
           };
         };
       };
