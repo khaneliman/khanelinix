@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf mkDefault;
   inherit (lib.${namespace}) mkBoolOpt enabled;
 
   cfg = config.${namespace}.suites.wlroots;
@@ -29,28 +29,28 @@ in
       programs = {
         graphical = {
           addons = {
-            electron-support = enabled;
-            swappy = enabled;
-            swaync = enabled;
-            wlogout = enabled;
+            electron-support = mkDefault enabled;
+            swappy = mkDefault enabled;
+            swaync = mkDefault enabled;
+            wlogout = mkDefault enabled;
           };
 
           bars = {
-            waybar = enabled;
+            waybar = mkDefault enabled;
           };
         };
       };
 
       services = {
-        cliphist = enabled;
-        keyring = enabled;
+        cliphist = mkDefault enabled;
+        keyring = mkDefault enabled;
       };
     };
 
     # using nixos module
-    # services.network-manager-applet.enable = true;
+    # services.network-manager-applet.enable = mkDefault true;
     services = {
-      blueman-applet.enable = true;
+      blueman-applet.enable = mkDefault true;
     };
   };
 }
