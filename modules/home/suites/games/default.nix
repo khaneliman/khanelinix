@@ -33,7 +33,7 @@ in
       programs = {
         terminal = {
           tools = {
-            wine = enabled;
+            wine = lib.mkDefault enabled;
           };
         };
       };
