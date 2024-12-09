@@ -166,6 +166,17 @@
         permittedInsecurePackages = [
           # NOTE: needed by emulationstation
           "freeimage-unstable-2021-11-01"
+          # dev shells
+          "aspnetcore-runtime-7.0.20"
+          "aspnetcore-runtime-wrapped-7.0.20"
+          "dotnet-combined"
+          "dotnet-core-combined"
+          "dotnet-runtime-6.0.36"
+          "dotnet-runtime-wrapped-6.0.36"
+          "dotnet-sdk-6.0.428"
+          "dotnet-sdk-7.0.410"
+          "dotnet-sdk-wrapped-6.0.428"
+          "dotnet-wrapped-combined"
         ];
       };
 
