@@ -23,6 +23,12 @@ in
       personal = enabled;
     };
 
+    display-managers = {
+      gdm = {
+        defaultSession = "gnome";
+      };
+    };
+
     hardware = {
       audio = {
         enable = true;
