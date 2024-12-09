@@ -35,7 +35,7 @@ in
       programs = {
         terminal = {
           tools = {
-            _1password-cli = enabled;
+            _1password-cli = lib.mkDefault enabled;
           };
         };
       };
