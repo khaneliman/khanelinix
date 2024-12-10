@@ -3,6 +3,7 @@
   lib,
   pkgs,
   namespace,
+  inputs,
   ...
 }:
 let
@@ -15,6 +16,7 @@ let
   manager = import ./keymap/manager.nix { inherit config namespace; };
   select = import ./keymap/select.nix { };
   tasks = import ./keymap/tasks.nix { };
+  inherit (inputs) yazi-plugins;
 
   cfg = config.${namespace}.programs.terminal.tools.yazi;
 in
@@ -63,19 +65,18 @@ in
     };
 
     xdg.configFile = {
-      "yazi" = {
-        source = lib.cleanSourceWith {
-          filter =
-            name: _type:
-            let
-              baseName = baseNameOf (toString name);
-            in
-            !lib.hasSuffix ".nix" baseName;
-          src = lib.cleanSource ./configs/.;
-        };
-
-        recursive = true;
-      };
+      "yazi/init.lua".source = ./configs/init.lua;
+      "yazi/plugins/chmod.yazi".source = "${yazi-plugins}/chmod.yazi";
+      "yazi/plugins/diff.yazi".source = "${yazi-plugins}/diff.yazi";
+      "yazi/plugins/full-border.yazi".source = "${yazi-plugins}/full-border.yazi";
+      "yazi/plugins/glow.yazi".source = ./configs/plugins/glow.yazi;
+      "yazi/plugins/jump-to-char.yazi".source = "${yazi-plugins}/jump-to-char.yazi";
+      "yazi/plugins/max-preview.yazi".source = "${yazi-plugins}/max-preview.yazi";
+      "yazi/plugins/miller.yazi".source = ./configs/plugins/miller.yazi;
+      "yazi/plugins/ouch.yazi".source = ./configs/plugins/ouch.yazi;
+      "yazi/plugins/smart-enter.yazi".source = "${yazi-plugins}/smart-enter.yazi";
+      "yazi/plugins/smart-filter.yazi".source = "${yazi-plugins}/smart-filter.yazi";
+      "yazi/plugins/sudo.yazi".source = ./configs/plugins/sudo.yazi;
     };
   };
 }
