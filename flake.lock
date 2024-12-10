@@ -1524,16 +1524,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1733800837,
-        "narHash": "sha256-t69Jcy5N7Ih6COsLwYvEHt2GUGwzmKA9TXoh2WqpmhY=",
+        "lastModified": 1733849172,
+        "narHash": "sha256-kavv5Xl90hG3VPZ+2GAnBpcr/A2nUg1T+nAKSfEYKzM=",
         "owner": "khaneliman",
         "repo": "khanelivim",
-        "rev": "a1f920e9b3dc7d6c3f45ab58911d71d7dcb3aa60",
+        "rev": "9a9e6ec7d1e7a56d8a7506baebc18a3cde1bc11d",
         "type": "github"
       },
       "original": {
         "owner": "khaneliman",
-        "ref": "lazy",
         "repo": "khanelivim",
         "type": "github"
       }
@@ -1854,11 +1853,11 @@
     },
     "nixpkgs_6": {
       "locked": {
-        "lastModified": 1733656523,
-        "narHash": "sha256-w0FXPfpGhOihoJDiwMsyN1EzpsXi2F8VQ+NVZQSMtys=",
+        "lastModified": 1733686850,
+        "narHash": "sha256-NQEO/nZWWGTGlkBWtCs/1iF1yl2lmQ1oY/8YZrumn3I=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "93dc9803a1ee435e590b02cde9589038d5cc3a4e",
+        "rev": "dd51f52372a20a93c219e8216fe528a648ffcbf4",
         "type": "github"
       },
       "original": {
@@ -1929,16 +1928,15 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1733781032,
-        "narHash": "sha256-vMdBy1u6YReGbYX355KzYpSvCLHkoiFNGw/NkSXP6+M=",
-        "owner": "khaneliman",
+        "lastModified": 1733847310,
+        "narHash": "sha256-VHzWuZYK/m5OFXzAczrjnI7vH6knj0sfLnziRVDqgFE=",
+        "owner": "nix-community",
         "repo": "nixvim",
-        "rev": "bb878bfb9f74ea61877f0d3a4c0780df0686819c",
+        "rev": "b752606681ded3f69e99ed568c7075b3578dce48",
         "type": "github"
       },
       "original": {
-        "owner": "khaneliman",
-        "ref": "lazy-complex",
+        "owner": "nix-community",
         "repo": "nixvim",
         "type": "github"
       }
