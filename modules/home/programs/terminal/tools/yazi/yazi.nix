@@ -210,7 +210,7 @@
           ];
         }
         {
-          mime = "inode/x-empty";
+          mime = "inode/empty";
           use = [
             "edit"
             "reveal"
@@ -245,35 +245,35 @@
           ];
         }
         {
-          mime = "application/x-tar";
+          mime = "application/tar";
           use = [
             "extract"
             "reveal"
           ];
         }
         {
-          mime = "application/x-bzip";
+          mime = "application/bzip";
           use = [
             "extract"
             "reveal"
           ];
         }
         {
-          mime = "application/x-bzip2";
+          mime = "application/bzip2";
           use = [
             "extract"
             "reveal"
           ];
         }
         {
-          mime = "application/x-7z-compressed";
+          mime = "application/7z-compressed";
           use = [
             "extract"
             "reveal"
           ];
         }
         {
-          mime = "application/x-rar";
+          mime = "application/rar";
           use = [
             "extract"
             "reveal"
@@ -376,7 +376,7 @@
         run = "code";
       }
       {
-        mime = "*/x-wine-extension-ini";
+        mime = "*/wine-extension-ini";
         run = "code";
       }
       # JSON
@@ -413,23 +413,23 @@
         run = "archive";
       }
       {
-        mime = "application/x-tar";
+        mime = "application/tar";
         run = "ouch";
       }
       {
-        mime = "application/x-bzip";
+        mime = "application/bzip";
         run = "ouch";
       }
       {
-        mime = "application/x-bzip2";
+        mime = "application/bzip2";
         run = "ouch";
       }
       {
-        mime = "application/x-7z-compressed";
+        mime = "application/7z-compressed";
         run = "ouch";
       }
       {
-        mime = "application/x-rar";
+        mime = "application/rar";
         run = "ouch";
       }
       {
@@ -456,7 +456,7 @@
     ];
 
     # create
-    create_title = "Create:";
+    # create_title = "Create:";
     create_origin = "top-center";
     create_offset = [
       0
@@ -562,7 +562,7 @@
     ];
   };
 
-  select = {
+  pick = {
     open_title = "Open with:";
     open_origin = "hovered";
     open_offset = [

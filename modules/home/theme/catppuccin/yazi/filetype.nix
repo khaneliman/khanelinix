@@ -18,31 +18,7 @@ in
         fg = catppuccin.colors.yellow.hex;
       }
       {
-        mime = "application/zip";
-        fg = catppuccin.colors.pink.hex;
-      }
-      {
-        mime = "application/gzip";
-        fg = catppuccin.colors.pink.hex;
-      }
-      {
-        mime = "application/x-tar";
-        fg = catppuccin.colors.pink.hex;
-      }
-      {
-        mime = "application/x-bzip";
-        fg = catppuccin.colors.pink.hex;
-      }
-      {
-        mime = "application/x-bzip2";
-        fg = catppuccin.colors.pink.hex;
-      }
-      {
-        mime = "application/x-7z-compressed";
-        fg = catppuccin.colors.pink.hex;
-      }
-      {
-        mime = "application/x-rar";
+        mime = "application/{tar,bzip*,7z-compressed,xz,rar,gzip}";
         fg = catppuccin.colors.pink.hex;
       }
       # Orphan symbolic links

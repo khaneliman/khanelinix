@@ -54,12 +54,12 @@ Status:children_add(function()
 		local formatted_created = nil
 		local formatted_modified = nil
 
-		if h.cha.created then
-			formatted_created = tostring(os.date("%Y-%m-%d %H:%M:%S", math.floor(h.cha.created)))
+		if h.cha.ctime then
+			formatted_created = tostring(os.date("%Y-%m-%d %H:%M:%S", math.floor(h.cha.ctime)))
 		end
 
-		if h.cha.modified then
-			formatted_modified = tostring(os.date("%Y-%m-%d %H:%M:%S", math.floor(h.cha.modified)))
+		if h.cha.mtime then
+			formatted_modified = tostring(os.date("%Y-%m-%d %H:%M:%S", math.floor(h.cha.mtime)))
 		end
 
 		if formatted_created and formatted_modified then
@@ -79,7 +79,7 @@ end, 400, Status.RIGHT)
 
 function Linemode:custom()
 	local year = os.date("%Y")
-	local time = (self._file.cha.modified or 0) // 1
+	local time = (self._file.cha.mtime or 0) // 1
 
 	if time > 0 and os.date("%Y", time) == year then
 		time = os.date("%b %d %H:%M", time)

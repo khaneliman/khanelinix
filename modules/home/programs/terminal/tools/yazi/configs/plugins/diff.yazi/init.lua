@@ -1,9 +1,9 @@
 local function info(content)
-	return ya.notify {
+	return ya.notify({
 		title = "Diff",
 		content = content,
 		timeout = 5,
-	}
+	})
 end
 
 local selected_url = ya.sync(function()
@@ -29,6 +29,8 @@ return {
 		local output, err = Command("diff"):arg("-Naur"):arg(tostring(a)):arg(tostring(b)):output()
 		if not output then
 			return info("Failed to run diff, error: " .. err)
+		elseif output.stdout == "" then
+			return info("No differences found")
 		end
 
 		ya.clipboard(output.stdout)

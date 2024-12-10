@@ -14,17 +14,17 @@ in
     prepend_keymap = [
       {
         on = [ "l" ];
-        run = "plugin --sync smart-enter";
+        run = "plugin smart-enter";
         desc = "Enter the child directory, or open the file";
       }
       {
         on = [ "<Right>" ];
-        run = "plugin --sync smart-enter";
+        run = "plugin smart-enter";
         desc = "Enter the child directory, or open the file";
       }
       {
         on = [ "<C-v>" ];
-        run = "shell 'dragon -x -i -T \"$1\"' --confirm";
+        run = "shell 'dragon -x -i -T \"$1\"'";
         desc = "Drag and drop files";
       }
       {
@@ -47,12 +47,12 @@ in
       }
       {
         on = [ "T" ];
-        run = "plugin --sync hide-preview";
+        run = "plugin hide-preview";
         desc = "Hide or show preview";
       }
       # {
       #   on = [ "T" ];
-      #   run = "plugin --sync max-preview";
+      #   run = "plugin max-preview";
       #   desc = "Maximize or restore preview";
       # }
       {

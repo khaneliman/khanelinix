@@ -6,7 +6,9 @@ local changed = ya.sync(function(st, new)
 	return b or not cx.active.finder
 end)
 
-local escape = function(s) return s == "." and "\\." or s end
+local escape = function(s)
+	return s == "." and "\\." or s
+end
 
 return {
 	entry = function()
@@ -15,7 +17,7 @@ return {
 			cands[#cands + 1] = { on = AVAILABLE_CHARS:sub(i, i) }
 		end
 
-		local idx = ya.which { cands = cands, silent = true }
+		local idx = ya.which({ cands = cands, silent = true })
 		if not idx then
 			return
 		end

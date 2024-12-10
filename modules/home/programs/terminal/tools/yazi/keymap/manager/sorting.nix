@@ -22,7 +22,7 @@ _: {
         ","
         "c"
       ];
-      run = "sort created --reverse=no";
+      run = "sort btime --reverse=no";
       desc = "Sort by creation time";
     }
     {
@@ -30,7 +30,7 @@ _: {
         ","
         "C"
       ];
-      run = "sort created --reverse";
+      run = "sort btime --reverse";
       desc = "Sort by creation time (reverse)";
     }
     {
@@ -38,7 +38,7 @@ _: {
         ","
         "m"
       ];
-      run = "sort modified --reverse=no";
+      run = "sort mtime --reverse=no";
       desc = "Sort by modified time";
     }
     {
@@ -46,7 +46,7 @@ _: {
         ","
         "M"
       ];
-      run = "sort modified --reverse";
+      run = "sort mtime --reverse";
       desc = "Sort by modified time (reverse)";
     }
     {

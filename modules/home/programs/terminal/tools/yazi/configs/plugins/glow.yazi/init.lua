@@ -45,7 +45,7 @@ function M:peek()
 		)
 	else
 		lines = lines:gsub("\t", string.rep(" ", PREVIEW.tab_size))
-		ya.preview_widgets(self, { ui.Paragraph.parse(self.area, lines) })
+		ya.preview_widgets(self, { ui.Text.parse(self.area, lines) })
 	end
 end
 
@@ -66,7 +66,7 @@ function M:fallback_to_builtin()
 		ya.manager_emit("peek", { bound, only_if = self.file.url, upper_bound = true })
 	elseif err and not err:find("cancelled", 1, true) then
 		ya.preview_widgets(self, {
-			ui.Paragraph(self.area, { ui.Line(err):reverse() }),
+			ui.Text(self.area, { ui.Line(err):reverse() }),
 		})
 	end
 end
