@@ -2086,7 +2086,8 @@
         "snowfall-lib": "snowfall-lib_2",
         "sops-nix": "sops-nix",
         "waybar": "waybar",
-        "wezterm": "wezterm"
+        "wezterm": "wezterm",
+        "yazi-plugins": "yazi-plugins"
       }
     },
     "rust-overlay": {
@@ -2566,6 +2567,22 @@
       "original": {
         "owner": "hyprwm",
         "repo": "xdg-desktop-portal-hyprland",
+        "type": "github"
+      }
+    },
+    "yazi-plugins": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1733411120,
+        "narHash": "sha256-By8XuqVJvS841u+8Dfm6R8GqRAs0mO2WapK6r2g7WI8=",
+        "owner": "yazi-rs",
+        "repo": "plugins",
+        "rev": "ec97f8847feeb0307d240e7dc0f11d2d41ebd99d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "yazi-rs",
+        "repo": "plugins",
         "type": "github"
       }
     },
