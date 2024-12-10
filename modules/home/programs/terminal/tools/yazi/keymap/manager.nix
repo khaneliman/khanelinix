@@ -14,12 +14,12 @@ in
     prepend_keymap = [
       {
         on = [ "l" ];
-        run = "plugin smart-enter";
+        run = "plugin --sync smart-enter";
         desc = "Enter the child directory, or open the file";
       }
       {
         on = [ "<Right>" ];
-        run = "plugin smart-enter";
+        run = "plugin --sync smart-enter";
         desc = "Enter the child directory, or open the file";
       }
       {
@@ -47,12 +47,12 @@ in
       }
       {
         on = [ "T" ];
-        run = "plugin hide-preview";
+        run = "plugin --sync hide-preview";
         desc = "Hide or show preview";
       }
       # {
       #   on = [ "T" ];
-      #   run = "plugin max-preview";
+      #   run = "plugin --sync max-preview";
       #   desc = "Maximize or restore preview";
       # }
       {
