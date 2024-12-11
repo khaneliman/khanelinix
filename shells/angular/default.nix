@@ -7,6 +7,8 @@ mkShell {
     vimPlugins.nvim-treesitter-parsers.angular
     vscode-extensions.angular.ng-template
     yarn
+    typescript-language-server
+    typescript
   ];
 
   shellHook = ''
