@@ -29,7 +29,19 @@ in
         EDITOR = mkIf cfg.default "nvim";
       };
       packages = [
-        khanelivim.packages.${system}.default
+        (khanelivim.packages.${system}.default.extend {
+          plugins.lsp.servers.nixd.settings =
+            let
+              flake = ''(builtins.getFlake "${inputs.self}")'';
+            in
+            {
+              options = rec {
+                nix-darwin.expr = ''${flake}.darwinConfigurations.khanelimac.options'';
+                nixos.expr = ''${flake}.nixosConfigurations.khanelinix.options'';
+                home-manager.expr = ''${nixos.expr}.home-manager.users.type.getSubOptions [ ]'';
+              };
+            };
+        })
         pkgs.nvrh
       ];
     };
