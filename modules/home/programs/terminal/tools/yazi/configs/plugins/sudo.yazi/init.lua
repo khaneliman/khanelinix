@@ -1,4 +1,4 @@
-local fs = os.getenv("HOME") .. "/.config/yazi/plugins/sudo.yazi/fs.nu"
+local fs = os.getenv("HOME") .. "/.config/yazi/plugins/sudo.yazi/assets/fs.nu"
 
 function string:ends_with_char(suffix)
 	return self:sub(-#suffix) == suffix
@@ -172,22 +172,22 @@ local function sudo_remove(value)
 end
 
 return {
-	entry = function(_, args)
+	entry = function(_, job)
 		-- https://github.com/sxyazi/yazi/issues/1553#issuecomment-2309119135
 		ya.manager_emit("escape", { visual = true })
 
-		local state = get_state(args[1])
+		local state = get_state(job.args[1])
 
 		if state.kind == "paste" then
-			state.value.force = args[2] == "-f"
+			state.value.force = job.args[2] == "-f"
 			sudo_paste(state.value)
 		elseif state.kind == "link" then
-			state.value.relative = args[2] == "-r"
+			state.value.relative = job.args[2] == "-r"
 			sudo_link(state.value)
 		elseif state.kind == "create" then
 			sudo_create()
 		elseif state.kind == "remove" then
-			state.value.is_permanent = args[2] == "-P"
+			state.value.is_permanent = job.args[2] == "-P"
 			sudo_remove(state.value)
 		elseif state.kind == "rename" then
 			sudo_rename(state.value)
