@@ -5,6 +5,7 @@
   copyDesktopItems,
   coreutils,
   fetchFromGitHub,
+  hyprland,
   jq,
   makeDesktopItem,
   makeWrapper,
@@ -49,6 +50,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     wrapProgram $out/bin/hyprprop --prefix PATH ':' \
       "${
         lib.makeBinPath [
+          hyprland
           coreutils
           slurp
           jq
@@ -58,11 +60,11 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   desktopItems = [ desktopItem ];
 
-  meta = with lib; {
+  meta = {
+    inherit (lib.platforms) linux;
     description = "An xprop replacement for Hyprland";
-    license = licenses.mit;
-    platforms = platforms.unix;
-    maintainers = with maintainers; [ khaneliman ];
+    inherit (lib.license) mit;
+    maintainers = with lib.maintainers; [ khaneliman ];
     mainProgram = "hyprprop";
   };
 })
