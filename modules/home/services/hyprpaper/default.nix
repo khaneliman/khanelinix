@@ -14,7 +14,7 @@ let
     types
     mkOption
     ;
-  inherit (inputs) hyprpaper hypr-socket-watch;
+  inherit (inputs) hypr-socket-watch;
   inherit (lib.${namespace}) mkOpt;
 
   cfg = config.${namespace}.services.hyprpaper;
@@ -41,7 +41,7 @@ in
     services = {
       hyprpaper = {
         enable = true;
-        package = hyprpaper.packages.${system}.hyprpaper;
+        package = pkgs.${namespace}.hyprpaper;
 
         settings = {
           preload = cfg.wallpapers;
