@@ -38,7 +38,7 @@ gcc14Stdenv.mkDerivation (finalAttrs: {
     homepage = "https://github.com/hyprwm/hyprlang";
     description = "Official implementation library for the hypr config language";
     license = lib.licenses.lgpl3Only;
-    platforms = lib.platforms.all;
+    inherit (lib.platforms) linux;
     maintainers = with lib.maintainers; [
       iogamaster
       fufexan
