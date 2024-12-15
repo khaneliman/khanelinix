@@ -42,10 +42,6 @@
         nixpkgs.follows = "nixpkgs";
       };
     };
-    hyprpaper = {
-      url = "github:hyprwm/hyprpaper";
-      inputs.nixpkgs.follows = "hyprland/nixpkgs";
-    };
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
