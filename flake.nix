@@ -42,10 +42,6 @@
         nixpkgs.follows = "nixpkgs";
       };
     };
-    hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
-      inputs.hyprland.follows = "hyprland";
-    };
     # Hyprland socket watcher
     hypr-socket-watch = {
       url = "github:khaneliman/hypr-socket-watch";
