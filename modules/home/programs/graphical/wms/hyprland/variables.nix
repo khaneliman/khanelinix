@@ -12,7 +12,7 @@ let
   inherit (lib) mkIf getExe getExe';
 
   convert = getExe' pkgs.imagemagick "convert";
-  grimblast = getExe hyprland-contrib.packages.${system}.grimblast;
+  grimblast = getExe pkgs.grimblast;
   wl-copy = getExe' pkgs.wl-clipboard "wl-copy";
   wl-paste = getExe' pkgs.wl-clipboard "wl-paste";
 
