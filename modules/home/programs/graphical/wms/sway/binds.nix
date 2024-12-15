@@ -1,10 +1,8 @@
 {
   config,
-  inputs,
   lib,
   namespace,
   pkgs,
-  system,
   ...
 }:
 let
@@ -14,7 +12,6 @@ let
     getExe'
     mkForce
     ;
-  inherit (inputs) hyprland-contrib;
 
   cfg = config.${namespace}.programs.graphical.wms.sway;
 in
@@ -27,7 +24,7 @@ in
             swayCfg = config.wayland.windowManager.sway.config;
 
             convert = getExe' pkgs.imagemagick "convert";
-            grimblast = getExe hyprland-contrib.packages.${system}.grimblast;
+            grimblast = getExe pkgs.grimblast;
             wl-copy = getExe' pkgs.wl-clipboard "wl-copy";
             wl-paste = getExe' pkgs.wl-clipboard "wl-paste";
 
