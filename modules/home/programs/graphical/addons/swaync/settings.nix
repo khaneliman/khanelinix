@@ -134,10 +134,6 @@ in
             label = "";
             command = ''grimblast --notify --freeze save area '';
           }
-          # {
-          #   label = "";
-          #   command = ''${getExe hyprland-contrib.packages.${system}.grimblast} --notify --freeze save area '';
-          # }
         ];
       };
     };
