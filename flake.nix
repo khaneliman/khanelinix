@@ -42,11 +42,6 @@
         nixpkgs.follows = "nixpkgs";
       };
     };
-    hyprlock = {
-      url = "github:hyprwm/Hyprlock";
-      # url = "git+file:///home/khaneliman/Documents/github/hypridle";
-      inputs.nixpkgs.follows = "hyprland/nixpkgs";
-    };
     hyprpaper = {
       url = "github:hyprwm/hyprpaper";
       inputs.nixpkgs.follows = "hyprland/nixpkgs";
