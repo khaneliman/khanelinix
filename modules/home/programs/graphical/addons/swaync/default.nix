@@ -1,17 +1,14 @@
 {
   config,
-  inputs,
   lib,
   osConfig,
   pkgs,
-  system,
   namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
-  inherit (inputs) hyprland-contrib;
 
   cfg = config.${namespace}.programs.graphical.addons.swaync;
 
@@ -20,7 +17,7 @@ let
     config.wayland.windowManager.hyprland.package
     coreutils
     grim
-    hyprland-contrib.packages.${system}.grimblast
+    grimblast
     hyprpicker
     jq
     libnotify
