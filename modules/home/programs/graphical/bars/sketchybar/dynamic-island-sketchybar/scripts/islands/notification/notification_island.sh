@@ -25,39 +25,39 @@ appId="${strarr[4]%% *}"
 set +x
 
 logo=(
-	drawing=on
-	background.color="$P_DYNAMIC_ISLAND_COLOR_ICON_HIDDEN"
-	background.image="app.$appId"
-	width=50
+    drawing=on
+    background.color="$P_DYNAMIC_ISLAND_COLOR_ICON_HIDDEN"
+    background.image="app.$appId"
+    width=50
 )
 
 # Enable
 dynamic-island-sketchybar --set island.notification_title drawing=on \
-	label="$title" \
-	--set island.notification_subtitle drawing=on \
-	label="$subtitle" \
-	--set island.notification_body drawing=on \
-	label="$message" \
-	--set island.notification_logo "${logo[@]}"
+    label="$title" \
+    --set island.notification_subtitle drawing=on \
+    label="$subtitle" \
+    --set island.notification_body drawing=on \
+    label="$message" \
+    --set island.notification_logo "${logo[@]}"
 
 target_width=$((P_DYNAMIC_ISLAND_MONITOR_HORIZONTAL_RESOLUTION / 2 - P_DYNAMIC_ISLAND_DEFAULT_WIDTH - P_DYNAMIC_ISLAND_SQUISH_AMOUNT))
 
 dynamic-island-sketchybar --animate tanh 8 --bar margin="$target_width" margin="$((EXPAND_SIZE - P_DYNAMIC_ISLAND_SQUISH_AMOUNT))" margin="$EXPAND_SIZE" \
-	--animate tanh 10 --bar height="$MAX_EXPAND_HEIGHT" height="$P_DYNAMIC_ISLAND_NOTIFICATION_EXPAND_HEIGHT" \
-	--animate tanh 10 --bar corner_radius="$P_DYNAMIC_ISLAND_NOTIFICATION_CORNER_RAD"
+    --animate tanh 10 --bar height="$MAX_EXPAND_HEIGHT" height="$P_DYNAMIC_ISLAND_NOTIFICATION_EXPAND_HEIGHT" \
+    --animate tanh 10 --bar corner_radius="$P_DYNAMIC_ISLAND_NOTIFICATION_CORNER_RAD"
 
 sleep 0.45
 dynamic-island-sketchybar --animate sin 20 --set island.notification_title label.color="$P_DYNAMIC_ISLAND_COLOR_WHITE" \
-	--animate sin 20 --set island.notification_subtitle label.color="$P_DYNAMIC_ISLAND_COLOR_WHITE" \
-	--animate sin 20 --set island.notification_body label.color="$P_DYNAMIC_ISLAND_COLOR_WHITE" \
-	--animate sin 20 --set island.notification_logo background.color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT"
+    --animate sin 20 --set island.notification_subtitle label.color="$P_DYNAMIC_ISLAND_COLOR_WHITE" \
+    --animate sin 20 --set island.notification_body label.color="$P_DYNAMIC_ISLAND_COLOR_WHITE" \
+    --animate sin 20 --set island.notification_logo background.color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT"
 
 sleep 2.25
 
 dynamic-island-sketchybar --animate tanh 20 --set island.notification_title label.color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT" \
-	--animate tanh 20 --set island.notification_subtitle label.color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT" \
-	--animate tanh 20 --set island.notification_body label.color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT" \
-	--animate tanh 20 --set island.notification_logo background.color="$P_DYNAMIC_ISLAND_COLOR_ICON_HIDDEN"
+    --animate tanh 20 --set island.notification_subtitle label.color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT" \
+    --animate tanh 20 --set island.notification_body label.color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT" \
+    --animate tanh 20 --set island.notification_logo background.color="$P_DYNAMIC_ISLAND_COLOR_ICON_HIDDEN"
 
 sleep 0.15
 

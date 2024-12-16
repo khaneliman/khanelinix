@@ -18,7 +18,7 @@ Systems:
       - any-glob-to-any-file: systems/**/*
 repo:
   - changed-files:
-      - any-glob-to-any-file: '*'
+      - any-glob-to-any-file: "*"
 GitHub-Action:
   - changed-files:
       - any-glob-to-any-file: .github/workflows/*

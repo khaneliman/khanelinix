@@ -5,9 +5,7 @@ description = ""
 authors = ["Author Name <author@example.com>"]
 # readme = "README.md"
 # license = "BSD"
-packages = [
-  { include = "sample_package" }
-]
+packages = [{ include = "sample_package" }]
 
 [tool.poetry.dependencies]
 python = "^3.10"

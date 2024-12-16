@@ -18,25 +18,25 @@ SYSTEM=$3
 TMP_DIR=$(mktemp -d)
 
 if command -v nom >/dev/null 2>&1; then
-	echo "NOM found, using it"
-	NIX="nom"
+    echo "NOM found, using it"
+    NIX="nom"
 else
-	NIX="nix"
+    NIX="nix"
 fi
 
 echo "(import \"$NIXPKGS_PATH\" { }).$ATTR_PATH" >"$TMP_DIR/to-eval.nix"
 
 nix-env \
-	--extra-experimental-features no-url-literals \
-	--option system "$SYSTEM" \
-	-f "$TMP_DIR/to-eval.nix" \
-	-qaP \
-	--json \
-	--out-path \
-	--show-trace \
-	--no-allow-import-from-derivation |
-	jq 'keys' \
-		>"$TMP_DIR/attrs.json"
+    --extra-experimental-features no-url-literals \
+    --option system "$SYSTEM" \
+    -f "$TMP_DIR/to-eval.nix" \
+    -qaP \
+    --json \
+    --out-path \
+    --show-trace \
+    --no-allow-import-from-derivation |
+    jq 'keys' \
+        >"$TMP_DIR/attrs.json"
 
 # https://github.com/Mic92/nixpkgs-review/blob/907925df227584ae4c0eb38db51fd23fe495d276/nixpkgs_review/nix/evalAttrs.nix
 cat >"$TMP_DIR/to-build.nix" <<EOF
@@ -96,12 +96,12 @@ pkgs.linkFarm "test" filteredPackages
 EOF
 
 "$NIX" build \
-	--file "$TMP_DIR/to-build.nix" \
-	--extra-experimental-features 'nix-command no-url-literals' \
-	--no-link \
-	--keep-going \
-	--show-trace \
-	--no-allow-import-from-derivation \
-	--nix-path "$NIXPKGS_PATH"
+    --file "$TMP_DIR/to-build.nix" \
+    --extra-experimental-features 'nix-command no-url-literals' \
+    --no-link \
+    --keep-going \
+    --show-trace \
+    --no-allow-import-from-derivation \
+    --nix-path "$NIXPKGS_PATH"
 
 rm -rf "$TMP_DIR"

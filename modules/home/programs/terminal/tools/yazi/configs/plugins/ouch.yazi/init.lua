@@ -35,14 +35,11 @@ function M:peek(job)
 
 	child:start_kill()
 	if job.skip > 0 and num_lines < limit then
-		ya.manager_emit(
-			"peek",
-			{
-				tostring(math.max(0, job.skip - (limit - num_lines))),
-				only_if = tostring(job.file.url),
-				upper_bound = "",
-			}
-		)
+		ya.manager_emit("peek", {
+			tostring(math.max(0, job.skip - (limit - num_lines))),
+			only_if = tostring(job.file.url),
+			upper_bound = "",
+		})
 	else
 		ya.preview_widgets(job, { ui.Text(lines):area(job.area) })
 	end

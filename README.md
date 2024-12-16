@@ -35,8 +35,9 @@ Before diving in, ensure that you have Nix installed on your system. If not, you
 can download and install it from the official
 [Nix website](https://nixos.org/download.html) or from the
 [Determinate Systems installer](https://github.com/DeterminateSystems/nix-installer).
-If running on macOS, you need to have Nix-Darwin installed, as well. You can follow the
-installation instruction on [GitHub](https://github.com/LnL7/nix-darwin?tab=readme-ov-file#flakes).
+If running on macOS, you need to have Nix-Darwin installed, as well. You can
+follow the installation instruction on
+[GitHub](https://github.com/LnL7/nix-darwin?tab=readme-ov-file#flakes).
 
 ### Clone this repository to your local machine
 
@@ -66,25 +67,30 @@ Here's an overview of what my Nix configuration offers:
     repository.
 
 - **macOS Support**: Seamlessly configure and manage Nix on macOS using the
-  power of [Nix-darwin](https://github.com/LnL7/nix-darwin), also leveraging homebrew for GUI applications.
+  power of [Nix-darwin](https://github.com/LnL7/nix-darwin), also leveraging
+  homebrew for GUI applications.
 
 - **Home Manager**: Manage your dotfiles, home environment, and user-specific
-  configurations with [Home Manager](https://github.com/nix-community/home-manager).
+  configurations with
+  [Home Manager](https://github.com/nix-community/home-manager).
 
 - **DevShell Support**: The flake provides a development shell (`devShell`) to
   support maintaining this flake. You can use the devShell for convenient
   development and maintenance of your Nix environment.
 
 - **CI with Cachix**: The configuration includes continuous integration (CI)
-  that pushes built artifacts to [Cachix](https://github.com/cachix/cachix). This ensures efficient builds and
-  reduces the need to build dependencies on your local machine.
+  that pushes built artifacts to [Cachix](https://github.com/cachix/cachix).
+  This ensures efficient builds and reduces the need to build dependencies on
+  your local machine.
 
-- **Utilize sops-nix**: Secret management with [sops-nix](https://github.com/Mic92/sops-nix) for secure and encrypted
+- **Utilize sops-nix**: Secret management with
+  [sops-nix](https://github.com/Mic92/sops-nix) for secure and encrypted
   handling of sensitive information.
 
 ## Customization
 
-My Nix configuration, based on the [SnowfallOrg lib](https://github.com/snowfallorg/lib) structure, provides a
+My Nix configuration, based on the
+[SnowfallOrg lib](https://github.com/snowfallorg/lib) structure, provides a
 flexible and organized approach to managing your Nix environment. Here's how it
 works:
 
@@ -154,17 +160,20 @@ Or install from the `packages` output. For example:
 # Screenshots
 
 ## MacOS
+
 <img width="1512" alt="image" src="https://github.com/khaneliman/khanelinix/assets/1778670/abbd501e-60c4-46c3-927d-12890dadd811">
 
 ## NixOS
+
 ![image](https://github.com/khaneliman/khanelinix/assets/1778670/34aebc9c-b053-4ccf-9540-6da5e93a77d5)
 
 # Resources
 
 Other configurations from where I learned and copied:
 
-- [JakeHamilton/config](https://github.com/jakehamilton/config) *Main inspiration and started with
-- [FelixKrats/dotfiles](https://github.com/FelixKratz/dotfiles) *Sketchybar design and implementation
+- [JakeHamilton/config](https://github.com/jakehamilton/config) *Main
+  inspiration and started with
+- [FelixKrats/dotfiles](https://github.com/FelixKratz/dotfiles) *Sketchybar
+  design and implementation
 - [Fufexan/dotfiles](https://github.com/fufexan/dotfiles)
 - [NotAShelf/nyx](https://github.com/NotAShelf/nyx)
-

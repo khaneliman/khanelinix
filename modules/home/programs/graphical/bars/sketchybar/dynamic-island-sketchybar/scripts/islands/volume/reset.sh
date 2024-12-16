@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 dynamic-island-sketchybar --set island.volume_icon drawing=off \
-	--set island.volume_bar drawing=off
+    --set island.volume_bar drawing=off
 
 sleep 0.1
 

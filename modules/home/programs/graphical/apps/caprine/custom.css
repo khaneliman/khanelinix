@@ -6,28 +6,28 @@ If you want to disable styles but keep the config, just comment the lines that y
 Press Command/Ctrl+R in Caprine to see your changes.
 */
 .rq0escxv.l9j0dhe7.du4w35lb.j83agx80.cbu4d94t.g5gj957u.d2edcug0.hpfvmrgz.kud993qy.buofh1pr {
-    margin-top: unset !important;
+  margin-top: unset !important;
 }
 
 /* Scrollbar fixes. */
 ::-webkit-scrollbar-track, ::-webkit-scrollbar, ::-webkit-scrollbar-corner {
-	background-color: #1e2030;
+  background-color: #1e2030;
 }
 ::-webkit-scrollbar {
-	width: 15px;
-	overflow-x: hidden;
+  width: 15px;
+  overflow-x: hidden;
 }
 body::-webkit-scrollbar {
-	width: 0;
+  width: 0;
 }
 ::-webkit-scrollbar-thumb {
-	border-radius: 10px;
-	background-color: #1e2030;
-	background-clip: content-box;
-	border: 1px solid transparent;
+  border-radius: 10px;
+  background-color: #1e2030;
+  background-clip: content-box;
+  border: 1px solid transparent;
 }
-::-webkit-scrollbar-thumb:hover {	
-	background-color: #5b6078;
+::-webkit-scrollbar-thumb:hover {
+  background-color: #5b6078;
 }
 
 /* !important spam needed for the colors to actually work in Caprine. */
@@ -66,25 +66,37 @@ body::-webkit-scrollbar {
 
 /* Hide messenger ad */
 .x9f619.x1n2onr6.x1ja2u2z.x78zum5.x1r8uery.xs83m0k.xeuugli.x1qughib.x6s0dn4.xozqiw3.x1q0g3np.xb756pt.x1c4vz4f.xt55aet.xexx8yu.xc73u3c.x18d9i69.x5ib6vp.x1lku1pv.x12nzpgo {
-	display: none;
+  display: none;
 }
 
 /* action buttons at bottom */
-.x1lliihq.x1rdy4ex.xcud41i.x4vbgl9.x139jcc6.x1k90msu.x11xpdln.x1qfuztq.xsrhx6k.x7p49u4 path {
-	fill: #8aadf4;
+.x1lliihq.x1rdy4ex.xcud41i.x4vbgl9.x139jcc6.x1k90msu.x11xpdln.x1qfuztq.xsrhx6k.x7p49u4
+  path {
+  fill: #8aadf4;
 }
-.x6s0dn4.x1ey2m1c.x78zum5.xl56j7k.x10l6tqk.x1vjfegm.xat24cr.x3oybdh.x1g2r6go.x11xpdln.x1th4bbo div svg path {
-	fill: #c6a0f6;
+.x6s0dn4.x1ey2m1c.x78zum5.xl56j7k.x10l6tqk.x1vjfegm.xat24cr.x3oybdh.x1g2r6go.x11xpdln.x1th4bbo
+  div
+  svg
+  path {
+  fill: #c6a0f6;
 }
-.x6s0dn4.x1ey2m1c.x78zum5.xl56j7k.x10l6tqk.x1vjfegm.xat24cr.x3oybdh.x1g2r6go.x11xpdln.x5h36tt div svg path {
-	fill: #a6da95;
+.x6s0dn4.x1ey2m1c.x78zum5.xl56j7k.x10l6tqk.x1vjfegm.xat24cr.x3oybdh.x1g2r6go.x11xpdln.x5h36tt
+  div
+  svg
+  path {
+  fill: #a6da95;
 }
-.x6s0dn4.x1ey2m1c.x78zum5.xl56j7k.x10l6tqk.x1vjfegm.xat24cr.x3oybdh.x1g2r6go.x11xpdln.x5w5eug div svg path {
-	fill: #f5a97f;
+.x6s0dn4.x1ey2m1c.x78zum5.xl56j7k.x10l6tqk.x1vjfegm.xat24cr.x3oybdh.x1g2r6go.x11xpdln.x5w5eug
+  div
+  svg
+  path {
+  fill: #f5a97f;
 }
-.x6s0dn4.x1ey2m1c.x78zum5.xl56j7k.x10l6tqk.x1vjfegm.xat24cr.xds687c div svg path {
-	fill: #f0c6c6;
+.x6s0dn4.x1ey2m1c.x78zum5.xl56j7k.x10l6tqk.x1vjfegm.xat24cr.xds687c
+  div
+  svg
+  path {
+  fill: #f0c6c6;
 }
-
 
 /* #ed8796 */

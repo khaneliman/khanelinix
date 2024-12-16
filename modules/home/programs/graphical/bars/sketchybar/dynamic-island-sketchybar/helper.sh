@@ -2,8 +2,8 @@
 
 export DYNAMIC_ISLAND_DIR
 DYNAMIC_ISLAND_DIR=$(
-	cd "$(dirname "${BASH_SOURCE[0]}")" || exit
-	pwd -P
+    cd "$(dirname "${BASH_SOURCE[0]}")" || exit
+    pwd -P
 )
 
 # run helper program

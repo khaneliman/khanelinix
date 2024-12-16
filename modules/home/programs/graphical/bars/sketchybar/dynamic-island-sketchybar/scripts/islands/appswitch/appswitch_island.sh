@@ -16,8 +16,8 @@ appName="${strarr[1]}"
 BUNDLENAME=$(osascript -e "id of app \"$appName\"")
 
 if [[ $override == "0" ]]; then
-	dynamic-island-sketchybar --set island.appname drawing=on \
-		--set island.applogo drawing=on
+    dynamic-island-sketchybar --set island.appname drawing=on \
+        --set island.applogo drawing=on
 fi
 
 dynamic-island-sketchybar --set island.appname label="$appName"
@@ -32,26 +32,26 @@ expand_squish_margin=$((P_DYNAMIC_ISLAND_MONITOR_HORIZONTAL_RESOLUTION / 2 - exp
 
 if [[ $override == "0" ]]; then
 
-	target_width=$((P_DYNAMIC_ISLAND_MONITOR_HORIZONTAL_RESOLUTION / 2 - P_DYNAMIC_ISLAND_DEFAULT_WIDTH - P_DYNAMIC_ISLAND_SQUISH_AMOUNT))
+    target_width=$((P_DYNAMIC_ISLAND_MONITOR_HORIZONTAL_RESOLUTION / 2 - P_DYNAMIC_ISLAND_DEFAULT_WIDTH - P_DYNAMIC_ISLAND_SQUISH_AMOUNT))
 
-	dynamic-island-sketchybar --animate tanh 8 --bar margin="$target_width" margin="$expand_squish_margin" margin="$expand_size_margin" \
-		--animate tanh 10 --bar height="$MAX_EXPAND_HEIGHT" height="$P_DYNAMIC_ISLAND_APPSWITCH_EXPAND_HEIGHT" \
-		--animate tanh 10 --bar corner_radius="$P_DYNAMIC_ISLAND_APPSWITCH_CORNER_RAD"
+    dynamic-island-sketchybar --animate tanh 8 --bar margin="$target_width" margin="$expand_squish_margin" margin="$expand_size_margin" \
+        --animate tanh 10 --bar height="$MAX_EXPAND_HEIGHT" height="$P_DYNAMIC_ISLAND_APPSWITCH_EXPAND_HEIGHT" \
+        --animate tanh 10 --bar corner_radius="$P_DYNAMIC_ISLAND_APPSWITCH_CORNER_RAD"
 else
-	dynamic-island-sketchybar --animate tanh 10 --bar margin="$expand_squish_margin" margin="$expand_size_margin" \
-		--animate tanh 10 --bar height="$MAX_EXPAND_HEIGHT" height="$P_DYNAMIC_ISLAND_APPSWITCH_EXPAND_HEIGHT" \
-		--animate tanh 10 --bar corner_radius="$P_DYNAMIC_ISLAND_APPSWITCH_CORNER_RAD"
+    dynamic-island-sketchybar --animate tanh 10 --bar margin="$expand_squish_margin" margin="$expand_size_margin" \
+        --animate tanh 10 --bar height="$MAX_EXPAND_HEIGHT" height="$P_DYNAMIC_ISLAND_APPSWITCH_EXPAND_HEIGHT" \
+        --animate tanh 10 --bar corner_radius="$P_DYNAMIC_ISLAND_APPSWITCH_CORNER_RAD"
 fi
 
 sleep 0.1
 
 dynamic-island-sketchybar --animate sin 15 --set island.appname label.color="$P_DYNAMIC_ISLAND_COLOR_WHITE" \
-	--animate sin 15 --set island.applogo background.color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT"
+    --animate sin 15 --set island.applogo background.color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT"
 
 sleep 0.8
 
 dynamic-island-sketchybar --animate tanh 15 --set island.appname label.color="$P_DYNAMIC_ISLAND_COLOR_TRANSPARENT" \
-	--animate tanh 15 --set island.applogo background.color="$P_DYNAMIC_ISLAND_COLOR_ICON_HIDDEN"
+    --animate tanh 15 --set island.applogo background.color="$P_DYNAMIC_ISLAND_COLOR_ICON_HIDDEN"
 
 sleep 0.1
 
