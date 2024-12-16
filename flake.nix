@@ -109,6 +109,8 @@
       url = "github:Mic92/sops-nix";
     };
 
+    treefmt-nix.url = "github:numtide/treefmt-nix";
+
     waybar = {
       url = "github:Alexays/Waybar";
       inputs.nixpkgs.follows = "nixpkgs";
