@@ -211,6 +211,8 @@
 
       deploy = lib.mkDeploy { inherit (inputs) self; };
 
-      outputs-builder = channels: { formatter = channels.nixpkgs.nixfmt-rfc-style; };
+      outputs-builder = channels: {
+        formatter = inputs.treefmt-nix.lib.mkWrapper channels.nixpkgs ./treefmt.nix;
+      };
     };
 }
