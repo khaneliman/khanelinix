@@ -12,8 +12,10 @@ pre-commit-hooks-nix.lib.${pkgs.system}.run {
     clang-tidy.enable = true;
     luacheck.enable = true;
     pre-commit-hook-ensure-sops.enable = true;
-    treefmt.enable = true;
-    treefmt.settings.fail-on-change = false;
-    treefmt.packageOverrides.treefmt = inputs.treefmt-nix.lib.mkWrapper pkgs ../../treefmt.nix;
+    treefmt = {
+      enable = true;
+      settings.fail-on-change = false;
+      packageOverrides.treefmt = inputs.treefmt-nix.lib.mkWrapper pkgs ../../treefmt.nix;
+    };
   };
 }
