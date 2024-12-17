@@ -57,7 +57,7 @@
 
       inputs = {
         # nixpkgs.follows = "nixpkgs";
-        pre-commit-hooks-nix.follows = "pre-commit-hooks-nix";
+        git-hooks-nix.follows = "git-hooks-nix";
         snowfall-lib.follows = "snowfall-lib";
         snowfall-flake.follows = "snowfall-flake";
       };
@@ -90,7 +90,7 @@
     # Nix User Repository (master)
     nur.url = "github:nix-community/NUR";
 
-    pre-commit-hooks-nix.url = "github:cachix/pre-commit-hooks.nix";
+    git-hooks-nix.url = "github:cachix/git-hooks.nix";
 
     # Snowfall Lib
     snowfall-lib = {

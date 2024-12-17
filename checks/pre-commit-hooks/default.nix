@@ -4,9 +4,9 @@
   ...
 }:
 let
-  inherit (inputs) pre-commit-hooks-nix;
+  inherit (inputs) git-hooks-nix;
 in
-pre-commit-hooks-nix.lib.${pkgs.system}.run {
+git-hooks-nix.lib.${pkgs.system}.run {
   src = ./.;
   hooks = {
     clang-tidy.enable = true;
