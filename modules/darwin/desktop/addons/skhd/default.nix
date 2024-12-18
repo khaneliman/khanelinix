@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) mkIf getExe;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
   sketchybar = getExe config.services.sketchybar.package;
   yabai = getExe config.services.yabai.package;
@@ -17,6 +17,7 @@ in
 {
   options.${namespace}.desktop.addons.skhd = {
     enable = mkBoolOpt false "Whether or not to enable skhd.";
+    logFile = mkOpt lib.types.str "/Users/khaneliman/Library/Logs/skhd.log" "Filepath of log output";
   };
 
   config = mkIf cfg.enable {
@@ -33,6 +34,7 @@ in
     services.skhd = {
       enable = true;
       package = pkgs.skhd;
+      inherit (cfg) logFile;
 
       skhdConfig = # bash
         ''
