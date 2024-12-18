@@ -17,11 +17,14 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      birdtray
-      davmail
-      thunderbird
-    ];
+
+    home.packages = lib.optionals pkgs.stdenv.isLinux (
+      with pkgs;
+      [
+        birdtray
+        davmail
+      ]
+    );
 
     # TODO: set up accounts
     accounts.email.accounts = {
@@ -35,7 +38,9 @@ in
 
     programs.thunderbird = {
       enable = true;
-      package = pkgs.thunderbird;
+      package = lib.mkIf pkgs.stdenv.isDarwin pkgs.emptyDirectory;
+      # yeah, yeah...
+      darwinSetupWarning = false;
 
       profiles.${config.${namespace}.user.name} = {
         isDefault = true;
