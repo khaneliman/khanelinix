@@ -11,7 +11,7 @@
     # macOS Support (master)
     darwin = {
       # url = "github:lnl7/nix-darwin";
-      url = "github:khaneliman/nix-darwin/spacer";
+      url = "github:khaneliman/nix-darwin/cherry-picks";
       # url = "git+file:///Users/khaneliman/github/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
