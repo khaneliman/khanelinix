@@ -41,7 +41,6 @@ in
     services = {
       hyprpaper = {
         enable = true;
-        package = pkgs.${namespace}.hyprpaper;
 
         settings = {
           preload = cfg.wallpapers;

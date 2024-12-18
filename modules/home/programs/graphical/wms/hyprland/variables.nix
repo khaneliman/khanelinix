@@ -197,7 +197,7 @@ in
         "$looking-glass" = "${getExe pkgs.looking-glass-client}";
         "$screen-locker" = "${getExe config.programs.hyprlock.package}";
         # TODO: remove after upstreamed
-        "$window-inspector" = "${getExe pkgs.khanelinix.hyprprop}";
+        "$window-inspector" = "${getExe pkgs.hyprprop}";
         # FIXME: broken nixpkgs dependency
         # "$screen-recorder" = "${getExe pkgs.${namespace}.record_screen}";
 

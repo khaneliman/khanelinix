@@ -42,7 +42,7 @@ in
             launcher = "anyrun";
             looking-glass = "${getExe pkgs.looking-glass-client}";
             screen-locker = "${getExe config.programs.swaylock.package}";
-            # window-inspector = "${getExe sway-contrib.packages.${system}.hyprprop}";
+            # window-inspector = "${getExe pkgs.hyprprop}";
             # screen-recorder = "${getExe pkgs.${namespace}.record_screen}";
 
             # screenshot commands
