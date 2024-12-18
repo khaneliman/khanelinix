@@ -17,6 +17,8 @@ in
 
     programs = {
       graphical = {
+        apps.thunderbird = enabled;
+
         bars = {
           sketchybar = enabled;
         };
