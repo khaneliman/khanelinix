@@ -59,7 +59,7 @@ UNMANAGED=(
 )
 
 for ((i = 1; i <= "${#UNMANAGED[@]}"; i++)); do
-  yabai -m rule --add label="unmanage_${UNMANAGED[(($i - 1))]}" app="^${UNMANAGED[(($i - 1))]}.*$" manage=off border=off
+  yabai -m rule --add label="unmanage_${UNMANAGED[(($i - 1))]}" app="^${UNMANAGED[(($i - 1))]}.*$" manage=off
 done
 
 # Exclude problematic apps from being managed:
