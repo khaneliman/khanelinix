@@ -43,7 +43,6 @@ in
         menubar_opacity = "0.5";
 
         window_placement = "second_child";
-        window_topmost = "on";
         window_shadow = "float";
         window_opacity = "on";
         active_window_opacity = "1.0";
