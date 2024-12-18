@@ -38,6 +38,10 @@ in
           profiles = [
             config.${namespace}.user.name
           ];
+          settings = id: {
+            "mail.server.server_${id}.is_gmail" = true;
+            "mail.server.server_${id}.authMethod" = 10;
+          };
         };
       };
     };
