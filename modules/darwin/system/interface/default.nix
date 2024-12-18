@@ -95,41 +95,50 @@ in
         wvous-bl-corner = 14;
         wvous-br-corner = 4;
 
-        # sudo su "$USER" -c "defaults write com.apple.dock persistent-apps -array 	\
-        # '$launchpad' '$settings' '$appstore' '$small_blank' 																		\
-        # '$messages' '$messenger' '$teams' '$discord' '$mail' '$small_blank' 										\
-        # '$firefox' '$safari' '$fantastical' '$reminders' '$notes' '$small_blank' 								\
-        # '$music' '$spotify' '$plex' '$small_blank' 																							\
-        # '$code' '$github' '$gitkraken' '$small_blank' 													\
-        # '$alacritty' '$kitty'"
-        # Larger spacer
-        # {tile-data={}; tile-type="spacer-tile";}
-        # Small spacer
-        # ''{tile-data={}; tile-type="small-spacer-tile";}''
         persistent-apps = [
           "/System/Applications/Launchpad.app"
           "/System/Applications/System Settings.app"
           "/System/Applications/App Store.app"
-          "small-spacer-tile"
+          {
+            spacer = {
+              small = true;
+            };
+          }
           "/System/Applications/Messages.app"
           "${pkgs.caprine-bin}/Applications/Caprine.app"
           "${pkgs.element-desktop}/Applications/Element.app"
           "/Applications/Microsoft Teams.app"
           "${pkgs.discord}/Applications/Discord.app"
           "/Applications/Thunderbird.app"
-          "small-spacer-tile"
+          {
+            spacer = {
+              small = true;
+            };
+          }
           "/Applications/Firefox Developer Edition.app"
           "/Applications/Safari.app"
           "/Applications/Fantastical.app"
           "/System/Applications/Reminders.app"
           "/System/Applications/Notes.app"
-          "small-spacer-tile"
+          {
+            spacer = {
+              small = true;
+            };
+          }
           "/System/Applications/Music.app"
           "/Applications/Plex.app"
-          "small-spacer-tile"
+          {
+            spacer = {
+              small = true;
+            };
+          }
           "${pkgs.vscode}/Applications/Visual Studio Code.app"
           "${pkgs.bruno}/Applications/Bruno.app"
-          "small-spacer-tile"
+          {
+            spacer = {
+              small = true;
+            };
+          }
           "${pkgs.wezterm}/Applications/WezTerm.app"
         ];
       };
