@@ -33,6 +33,12 @@ in
         realName = config.${namespace}.user.fullName;
         flavor = "gmail.com";
         primary = true;
+        thunderbird = {
+          enable = true;
+          profiles = [
+            config.${namespace}.user.name
+          ];
+        };
       };
     };
 
