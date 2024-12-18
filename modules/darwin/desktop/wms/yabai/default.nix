@@ -61,7 +61,8 @@ in
         right_padding = "10";
         window_gap = "10";
 
-        mouse_modifier = "super";
+        # ['cmd|alt|shift|ctrl|fn']
+        mouse_modifier = "cmd";
         mouse_action1 = "move";
         mouse_action2 = "resize";
         mouse_drop_action = "swap";
