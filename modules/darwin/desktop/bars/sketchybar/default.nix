@@ -13,7 +13,9 @@ in
 {
   options.${namespace}.desktop.bars.sketchybar = {
     enable = mkBoolOpt false "Whether or not to enable sketchybar.";
-    logFile = mkOpt lib.types.str "/var/tmp/sketchybar.log" "Filepath of log output";
+    logFile =
+      mkOpt lib.types.str "/Users/khaneliman/Library/Logs/sketchybar.log"
+        "Filepath of log output";
   };
 
   config = lib.mkIf cfg.enable {
@@ -28,14 +30,10 @@ in
       casks = [ "background-music" ];
     };
 
-    launchd.user.agents.sketchybar = {
-      serviceConfig.StandardErrorPath = cfg.logFile;
-      serviceConfig.StandardOutPath = cfg.logFile;
-    };
-
     services.sketchybar = {
       enable = true;
       package = pkgs.sketchybar;
+      inherit (cfg) logFile;
 
       extraPackages = with pkgs; [
         coreutils
