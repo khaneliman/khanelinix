@@ -42,16 +42,20 @@ follow the installation instruction on
 ### Clone this repository to your local machine
 
 ```bash
+# New machine without git
+nix-shell -p git
+
+# Clone 
 git clone https://github.com/khaneliman/khanelinix.git
 cd khanelinix
 
-# linux
+# Linux
 sudo nixos-rebuild switch --flake .
 
- # macos
+ # MacOS
 darwin-rebuild switch --flake .
 
- # with direnv
+ # Direnv
 flake switch
 ```
 
@@ -135,7 +139,7 @@ customize your Nix environment while maintaining flexibility and modularity.
 Run packages directly with:
 
 ```console
-nix run github:khaneliman/khanelinix#packageName
+nix run --extra-experimental-features 'nix-command flakes' github:khaneliman/khanelinix#packageName
 ```
 
 Or install from the `packages` output. For example:
