@@ -130,6 +130,13 @@ in
 
       accent = "blue";
       flavor = "macchiato";
+
+      hyprland = mkIf config.${namespace}.programs.graphical.wms.hyprland.enable {
+        enable = true;
+
+        inherit (cfg) accent;
+      };
+
     };
 
     home = {
@@ -166,14 +173,6 @@ in
         inherit (config.${namespace}.theme.qt.theme) package;
       };
     };
-
-    wayland.windowManager.hyprland.catppuccin =
-      mkIf config.${namespace}.programs.graphical.wms.hyprland.enable
-        {
-          enable = true;
-
-          inherit (cfg) accent;
-        };
 
     wayland.windowManager.sway = {
       catppuccin = mkIf config.${namespace}.programs.graphical.wms.sway.enable { enable = true; };
