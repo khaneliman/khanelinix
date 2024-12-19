@@ -32,10 +32,26 @@ in
       };
 
       terminal = {
+        # No need for all these on his computer
+        emulators = {
+          alacritty.enable = false;
+          kitty.enable = false;
+          wezterm.enable = false;
+        };
+
         media = {
           ncmpcpp = disabled;
         };
+
+        shell.nushell.enable = false;
+
         tools = {
+          # No need for all these on his computer
+          carapace.enable = false;
+          fup-repl.enable = false;
+          jujutsu.enable = false;
+          topgrade.enable = false;
+
           git = {
             enable = true;
           };
@@ -73,8 +89,6 @@ in
     };
 
     suites = {
-      art = enabled;
-      business = enabled;
       common = enabled;
       desktop = enabled;
 
@@ -87,10 +101,7 @@ in
 
       emulation = enabled;
       games = enabled;
-      music = enabled;
       networking = enabled;
-      photo = enabled;
-      video = enabled;
     };
 
     theme.catppuccin = enabled;
