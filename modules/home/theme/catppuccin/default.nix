@@ -13,7 +13,7 @@ let
     mkOption
     types
     ;
-  inherit (lib.${namespace}) capitalize;
+  inherit (lib.${namespace}) enabled capitalize;
 
   cfg = config.${namespace}.theme.catppuccin;
 
@@ -130,6 +130,34 @@ in
 
       accent = "blue";
       flavor = "macchiato";
+
+      alacritty = enabled;
+      bat = enabled;
+      bottom = enabled;
+      btop = enabled;
+      cava = enabled;
+      delta = enabled;
+      fish = enabled;
+      foot = enabled;
+      fzf = enabled;
+      gh-dash = enabled;
+      gitui = enabled;
+      glamour = enabled;
+      helix = enabled;
+      k9s = {
+        enable = true;
+        transparent = true;
+      };
+      kitty = enabled;
+      lazygit = {
+        enable = true;
+        inherit (cfg) accent;
+      };
+      nvim = enabled;
+      waybar = enabled;
+      zathura = enabled;
+      zellij = enabled;
+      zsh-syntax-highlighting = enabled;
 
       hyprland = mkIf config.${namespace}.programs.graphical.wms.hyprland.enable {
         enable = true;
@@ -256,129 +284,52 @@ in
       };
     };
 
-    programs =
-      let
-        applyCatppuccin =
-          {
-            name,
-            nestedName ? null,
-            extraAttrs ? { },
-          }:
-          let
-            catppuccinConfig = {
-              catppuccin = {
-                enable = true;
-                inherit (cfg) flavor;
-              } // extraAttrs;
-            };
-          in
-          if nestedName == null then
-            {
-              inherit name;
-              value = catppuccinConfig;
-            }
-          else
-            {
-              inherit name;
-              value = {
-                ${nestedName} = catppuccinConfig;
-              };
-            };
-
-        themedPrograms = map (prog: applyCatppuccin { name = prog; }) [
-          "alacritty"
-          "bat"
-          "bottom"
-          "btop"
-          "cava"
-          "fish"
-          "foot"
-          "fzf"
-          "gh-dash"
-          "gitui"
-          "glamour"
-          "helix"
-          "kitty"
-          "neovim"
-          "waybar"
-          "zathura"
-          "zellij"
-        ];
-
-        extraConfigurations = [
-          (applyCatppuccin {
-            name = "git";
-            nestedName = "delta";
-          })
-          (applyCatppuccin {
-            name = "k9s";
-            extraAttrs = {
-              transparent = true;
-            };
-          })
-          (applyCatppuccin {
-            name = "lazygit";
-            extraAttrs = {
-              inherit (cfg) accent;
-            };
-          })
-          (applyCatppuccin {
-            name = "zsh";
-            nestedName = "syntaxHighlighting";
-          })
-        ];
-
-        allPrograms = themedPrograms ++ extraConfigurations;
-
-        programs = builtins.listToAttrs allPrograms;
-      in
-      programs
-      // {
-        # Additional program settings that don't follow the common pattern
-        ncspot.settings = {
-          theme = {
-            background = "#24273A";
-            primary = "#CAD3F5";
-            secondary = "#1E2030";
-            title = "#8AADF4";
-            playing = "#8AADF4";
-            playing_selected = "#B7BDF8";
-            playing_bg = "#181926";
-            highlight = "#C6A0F6";
-            highlight_bg = "#494D64";
-            error = "#CAD3F5";
-            error_bg = "#ED8796";
-            statusbar = "#181926";
-            statusbar_progress = "#CAD3F5";
-            statusbar_bg = "#8AADF4";
-            cmdline = "#CAD3F5";
-            cmdline_bg = "#181926";
-            search_match = "#f5bde6";
-          };
+    programs = {
+      # Additional program settings that don't follow the common pattern
+      ncspot.settings = {
+        theme = {
+          background = "#24273A";
+          primary = "#CAD3F5";
+          secondary = "#1E2030";
+          title = "#8AADF4";
+          playing = "#8AADF4";
+          playing_selected = "#B7BDF8";
+          playing_bg = "#181926";
+          highlight = "#C6A0F6";
+          highlight_bg = "#494D64";
+          error = "#CAD3F5";
+          error_bg = "#ED8796";
+          statusbar = "#181926";
+          statusbar_progress = "#CAD3F5";
+          statusbar_bg = "#8AADF4";
+          cmdline = "#CAD3F5";
+          cmdline_bg = "#181926";
+          search_match = "#f5bde6";
         };
-
-        tmux.plugins = [
-          {
-            plugin = pkgs.tmuxPlugins.catppuccin;
-            extraConfig = ''
-              set -g @catppuccin_flavour '${cfg.flavor}'
-              set -g @catppuccin_host 'on'
-              set -g @catppuccin_user 'on'
-            '';
-          }
-        ];
-
-        yazi.theme = lib.mkMerge [
-          (import ./yazi/filetype.nix { })
-          (import ./yazi/manager.nix { inherit config lib namespace; })
-          (import ./yazi/status.nix { })
-          (import ./yazi/theme.nix { })
-        ];
-
-        # TODO: Make work with personal customizations
-        # yazi.catppuccin.enable = true;
-        # rofi.catppuccin.enable = true;
       };
+
+      tmux.plugins = [
+        {
+          plugin = pkgs.tmuxPlugins.catppuccin;
+          extraConfig = ''
+            set -g @catppuccin_flavour '${cfg.flavor}'
+            set -g @catppuccin_host 'on'
+            set -g @catppuccin_user 'on'
+          '';
+        }
+      ];
+
+      yazi.theme = lib.mkMerge [
+        (import ./yazi/filetype.nix { })
+        (import ./yazi/manager.nix { inherit config lib namespace; })
+        (import ./yazi/status.nix { })
+        (import ./yazi/theme.nix { })
+      ];
+
+      # TODO: Make work with personal customizations
+      # yazi.catppuccin.enable = true;
+      # rofi.catppuccin.enable = true;
+    };
 
     xdg.configFile =
       mkIf (pkgs.stdenv.isLinux && config.${namespace}.programs.graphical.apps.discord.enable)
