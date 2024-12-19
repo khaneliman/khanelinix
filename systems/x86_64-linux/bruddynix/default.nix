@@ -119,6 +119,13 @@ in
     user.name = "bruddy";
   };
 
+  environment.variables = {
+    # Fix black bars in gnome
+    GSK_RENDERER = "ngl";
+    # Fix mouse pointer in gnome
+    NO_POINTER_VIEWPORT = "1";
+  };
+
   nix.settings = {
     cores = 8;
     max-jobs = 8;
