@@ -832,16 +832,15 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1734554347,
-        "narHash": "sha256-2I30L2Oy/uG/ZxFZOls5AGhDYFLBwwl4kZmJaC6SL8M=",
-        "owner": "khaneliman",
+        "lastModified": 1734622158,
+        "narHash": "sha256-h/fdzqlCqSa2ZCIqtDc9kshCJm6kQIoKuO0MSSmAX4A=",
+        "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "6bc85e6f96e23f83bd7ae14b5d4a200007bb6684",
+        "rev": "832920a60833533eaabcc93ab729801bf586fa0c",
         "type": "github"
       },
       "original": {
-        "owner": "khaneliman",
-        "ref": "thunderbird",
+        "owner": "nix-community",
         "repo": "home-manager",
         "type": "github"
       }

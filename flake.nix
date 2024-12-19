@@ -28,8 +28,8 @@
     };
 
     # Home Manager (master)
-    # home-manager.url = "github:nix-community/home-manager";
-    home-manager.url = "github:khaneliman/home-manager/thunderbird";
+    home-manager.url = "github:nix-community/home-manager";
+    # home-manager.url = "github:khaneliman/home-manager/thunderbird";
     # home-manager.url = "git+file:///home/khaneliman/Documents/github/home-manager";
     # home-manager.url = "git+file:///Users/khaneliman/Documents/github/home-manager";
 
