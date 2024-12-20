@@ -12,6 +12,7 @@ in
 mkShell {
   packages = with pkgs; [
     act
+    deadnix
     hydra-check
     nix-inspect
     nix-bisect
@@ -25,6 +26,7 @@ mkShell {
     nixpkgs-hammering
     nixpkgs-lint
     snowfall-flake.packages.${system}.flake
+    statix
 
     # Adds all the packages required for the pre-commit checks
     inputs.self.checks.${system}.pre-commit-hooks.enabledPackages
