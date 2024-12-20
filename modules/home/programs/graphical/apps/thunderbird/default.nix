@@ -7,13 +7,36 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
   cfg = config.${namespace}.programs.graphical.apps.thunderbird;
 in
 {
   options.${namespace}.programs.graphical.apps.thunderbird = {
     enable = mkBoolOpt false "Whether or not to enable thunderbird.";
+    extraAccounts = lib.mkOption {
+      type =
+        let
+          accountType = (
+            lib.types.submodule {
+              options = {
+                address = mkOpt lib.types.str null "Email address";
+                flavor = mkOpt (lib.types.enum [
+                  "plain"
+                  "gmail.com"
+                  "runbox.com"
+                  "fastmail.com"
+                  "yandex.com"
+                  "outlook.office365.com"
+                ]) null "Email flavor";
+              };
+            }
+          );
+        in
+        lib.types.attrsOf accountType;
+      default = null;
+      description = "Extra email accounts to configure.";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -26,25 +49,37 @@ in
       ]
     );
 
-    # TODO: set up accounts
-    accounts.email.accounts = {
-      "${config.${namespace}.user.email}" = {
-        address = config.${namespace}.user.email;
-        realName = config.${namespace}.user.fullName;
-        flavor = "gmail.com";
-        primary = true;
-        thunderbird = {
-          enable = true;
-          profiles = [
-            config.${namespace}.user.name
-          ];
-          settings = id: {
-            "mail.server.server_${id}.is_gmail" = true;
-            "mail.server.server_${id}.authMethod" = 10;
+    accounts.email.accounts =
+      let
+        mkEmailConfig =
+          {
+            address,
+            primary ? false,
+            flavor,
+          }:
+          {
+            inherit address primary flavor;
+            realName = config.${namespace}.user.fullName;
+            thunderbird = {
+              enable = true;
+              profiles = [
+                config.${namespace}.user.name
+              ];
+              settings = id: {
+                "mail.server.server_${id}.authMethod" = 10;
+                "mail.server.server_${id}.is_gmail" = lib.mkIf (flavor == "gmail.com") true;
+              };
+            };
           };
+      in
+      {
+        "${config.${namespace}.user.email}" = mkEmailConfig {
+          address = config.${namespace}.user.email;
+          primary = true;
+          flavor = "gmail.com";
         };
-      };
-    };
+      }
+      // lib.mapAttrs (_name: value: mkEmailConfig value) cfg.extraAccounts;
 
     programs.thunderbird = {
       enable = true;
@@ -78,7 +113,6 @@ in
           '';
 
         # TODO: Bundle extensions
-        # TODO: set up accounts
       };
     };
   };
