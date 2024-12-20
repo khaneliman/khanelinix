@@ -17,21 +17,19 @@ in
     extraAccounts = lib.mkOption {
       type =
         let
-          accountType = (
-            lib.types.submodule {
-              options = {
-                address = mkOpt lib.types.str null "Email address";
-                flavor = mkOpt (lib.types.enum [
-                  "plain"
-                  "gmail.com"
-                  "runbox.com"
-                  "fastmail.com"
-                  "yandex.com"
-                  "outlook.office365.com"
-                ]) null "Email flavor";
-              };
-            }
-          );
+          accountType = lib.types.submodule {
+            options = {
+              address = mkOpt lib.types.str null "Email address";
+              flavor = mkOpt (lib.types.enum [
+                "plain"
+                "gmail.com"
+                "runbox.com"
+                "fastmail.com"
+                "yandex.com"
+                "outlook.office365.com"
+              ]) null "Email flavor";
+            };
+          };
         in
         lib.types.attrsOf accountType;
       default = null;
@@ -79,7 +77,7 @@ in
           flavor = "gmail.com";
         };
       }
-      // lib.mapAttrs (_name: value: mkEmailConfig value) cfg.extraAccounts;
+      // lib.mapAttrs (_name: mkEmailConfig) cfg.extraAccounts;
 
     programs.thunderbird = {
       enable = true;
