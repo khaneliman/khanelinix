@@ -158,6 +158,7 @@ in
       zathura = enabled;
       zellij = enabled;
       zsh-syntax-highlighting = enabled;
+      sway.enable = true;
 
       hyprland = mkIf config.${namespace}.programs.graphical.wms.hyprland.enable {
         enable = true;
@@ -203,8 +204,6 @@ in
     };
 
     wayland.windowManager.sway = {
-      catppuccin = mkIf config.${namespace}.programs.graphical.wms.sway.enable { enable = true; };
-
       config.colors = {
         background = "$base";
 
