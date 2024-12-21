@@ -163,6 +163,22 @@ in
           definedAliases = [ "@sx" ];
         };
 
+        "NüschtOS" = {
+          urls = [
+            {
+              template = "https://search.xn--nschtos-n2a.de/";
+              params = [
+                {
+                  name = "query";
+                  value = "{searchTerms}";
+                }
+              ];
+            }
+          ];
+          icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+          definedAliases = [ "@nos" ];
+        };
+
         "NixOS Wiki" = {
           urls = [ { template = "https://wiki.nixos.org/w/index.php?search={searchTerms}"; } ];
           iconUpdateURL = "https://wiki.nixos.org/favicon.png";
