@@ -60,6 +60,7 @@ in
       services = {
         ddccontrol = mkDefault enabled;
         earlyoom = mkDefault enabled;
+        flatpak = mkDefault enabled;
         logind = mkDefault enabled;
         logrotate = mkDefault enabled;
         # oomd = mkDefault enabled;
