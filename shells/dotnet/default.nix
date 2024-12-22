@@ -17,7 +17,7 @@ mkShell {
     roslyn-ls
     vimPlugins.neotest-dotnet
     vscode-extensions.ms-dotnettools.csharp
-    pkgs.khanelinix.upgrade-assistant
+    upgrade-assistant
   ];
 
   shellHook = ''
