@@ -32,7 +32,10 @@ in
       type = lib.types.listOf (lib.types.either lib.types.str (lib.types.attrsOf lib.types.anything));
       description = "Flatpaks to install.";
       example = [
-        "https://sober.vinegarhq.org/sober.flatpakref"
+        {
+          flatpakref = "https://sober.vinegarhq.org/sober.flatpakref";
+          sha256 = "sha256:1pj8y1xhiwgbnhrr3yr3ybpfis9slrl73i0b1lc9q89vhip6ym2l";
+        }
       ];
     };
   };
