@@ -70,6 +70,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-flatpak.url = "github:gmodena/nix-flatpak";
+
     # Weekly updating nix-index database
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
@@ -190,6 +192,7 @@
           nixos = with inputs; [
             disko.nixosModules.disko
             lanzaboote.nixosModules.lanzaboote
+            nix-flatpak.nixosModules.nix-flatpak
             sops-nix.nixosModules.sops
           ];
         };
