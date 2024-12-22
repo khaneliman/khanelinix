@@ -34,7 +34,8 @@ in
   config = mkIf cfg.enable {
     services.flatpak.enable = true;
     systemd.services = {
-      flatpak-repos = {
+      flatpak-repos = lib.mkIf (cfg.extraRepos != { }) {
+
         wantedBy = [ "multi-user.target" ];
         path = [ pkgs.flatpak ];
         script =
@@ -49,7 +50,7 @@ in
           in
           generateRepoScript cfg.extraRepos;
       };
-      flatpak-refs = {
+      flatpak-refs = lib.mkIf (cfg.extraRefs != [ ]) {
         wantedBy = [ "multi-user.target" ];
         path = [ pkgs.flatpak ];
         script =
