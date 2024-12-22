@@ -118,6 +118,7 @@ in
       "title<Spotify Free>" = "";
       "title<Steam>" = "";
       "class<rustdesk>" = "󰢹";
+      "class<org.vinegarhq.Sober>" = "󰆢";
     };
   };
 }
