@@ -151,6 +151,7 @@ in
           "workspace 4 silent, class:^(gamescope|steam_app).*"
           "workspace 4, class:^(heroic)$"
           "workspace 4, class:^(lutris)$"
+          "workspace 4, class:^(org.vinegarhq.Sober)$"
           "workspace 4, class:.*(cemu|yuzu|Ryujinx|emulationstation|retroarch).*"
           "workspace 4, title:.*(cemu|yuzu|Ryujinx|emulationstation|retroarch).*"
           # Messaging
