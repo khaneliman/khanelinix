@@ -65,6 +65,8 @@ in
           "/private/tmp"
           "/private/var/tmp"
           "/usr/bin/env"
+          # https://github.com/NixOS/nix/issues/4119
+          "/nix/store"
         ];
 
         # Frequent issues with networking failures on darwin
