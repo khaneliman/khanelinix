@@ -125,7 +125,7 @@ in
       finder = {
         AppleShowAllExtensions = true;
         AppleShowAllFiles = true;
-        CreateDesktop = false;
+        CreateDesktop = true;
         FXDefaultSearchScope = "SCcf";
         FXEnableExtensionChangeWarning = false;
         # NOTE: Four-letter codes for the other view modes: `icnv`, `clmv`, `glyv`
@@ -166,6 +166,10 @@ in
       };
 
       spaces.spans-displays = !config.services.yabai.enable;
+
+      universalaccess = {
+        reduceMotion = false;
+      };
     };
   };
 }
