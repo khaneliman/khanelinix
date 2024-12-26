@@ -16,6 +16,10 @@ in
   };
 
   config = mkIf cfg.enable {
+    ${namespace}.home.file = {
+      "Pictures/screenshots/.keep".text = "";
+    };
+
     system.defaults = {
       CustomSystemPreferences = {
         finder = {
@@ -161,7 +165,7 @@ in
 
       screencapture = {
         disable-shadow = true;
-        location = "$HOME/Pictures/screenshots/";
+        location = "/Users/${config.${namespace}.user.name}/Pictures/screenshots/";
         type = "png";
       };
 
