@@ -37,6 +37,7 @@ in
         "fisher"
         "ical-buddy"
         "ifstat"
+        # TODO: replace with https://github.com/NixOS/nixpkgs/pull/365581
         "switchaudio-osx"
       ];
 

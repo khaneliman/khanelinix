@@ -35,28 +35,6 @@ in
         };
       };
 
-      # login window settings
-      loginwindow = {
-        # disable guest account
-        GuestEnabled = false;
-        # show name instead of username
-        SHOWFULLNAME = false;
-      };
-
-      # file viewer settings
-      finder = {
-        AppleShowAllExtensions = true;
-        AppleShowAllFiles = true;
-        CreateDesktop = false;
-        FXDefaultSearchScope = "SCcf";
-        FXEnableExtensionChangeWarning = false;
-        # NOTE: Four-letter codes for the other view modes: `icnv`, `clmv`, `glyv`
-        FXPreferredViewStyle = "Nlsv";
-        QuitMenuItem = true;
-        ShowStatusBar = false;
-        _FXShowPosixPathInTitle = true;
-      };
-
       # dock settings
       dock = {
         # auto show and hide dock
@@ -143,13 +121,27 @@ in
         ];
       };
 
-      screencapture = {
-        disable-shadow = true;
-        location = "$HOME/Pictures/screenshots/";
-        type = "png";
+      # file viewer settings
+      finder = {
+        AppleShowAllExtensions = true;
+        AppleShowAllFiles = true;
+        CreateDesktop = false;
+        FXDefaultSearchScope = "SCcf";
+        FXEnableExtensionChangeWarning = false;
+        # NOTE: Four-letter codes for the other view modes: `icnv`, `clmv`, `glyv`
+        FXPreferredViewStyle = "Nlsv";
+        QuitMenuItem = true;
+        ShowStatusBar = false;
+        _FXShowPosixPathInTitle = true;
       };
 
-      spaces.spans-displays = !config.services.yabai.enable;
+      # login window settings
+      loginwindow = {
+        # disable guest account
+        GuestEnabled = false;
+        # show name instead of username
+        SHOWFULLNAME = false;
+      };
 
       menuExtraClock = {
         ShowAMPM = true;
@@ -166,6 +158,14 @@ in
         NSAutomaticWindowAnimationsEnabled = false;
         _HIHideMenuBar = true;
       };
+
+      screencapture = {
+        disable-shadow = true;
+        location = "$HOME/Pictures/screenshots/";
+        type = "png";
+      };
+
+      spaces.spans-displays = !config.services.yabai.enable;
     };
   };
 }
