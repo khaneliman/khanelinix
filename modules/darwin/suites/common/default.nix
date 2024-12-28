@@ -20,33 +20,21 @@ in
     homebrew = {
       brews = [
         "bashdb"
-        "gnu-sed"
       ];
     };
 
     environment = {
       systemPackages = with pkgs; [
-        bash-completion
-        cask
         # FIXME: broken nixpkg
         # duti
-        fasd
         gawk
         gnugrep
         gnupg
         gnused
         gnutls
-        haskellPackages.sfnt2woff
-        intltool
-        keychain
         pkgs.${namespace}.trace-symlink
         pkgs.${namespace}.trace-which
         mas
-        moreutils
-        oh-my-posh
-        pigz
-        rename
-        spice-gtk
         terminal-notifier
         trash-cli
         wtf
