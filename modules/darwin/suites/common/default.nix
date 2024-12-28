@@ -25,8 +25,7 @@ in
 
     environment = {
       systemPackages = with pkgs; [
-        # FIXME: broken nixpkg
-        # duti
+        duti
         gawk
         gnugrep
         gnupg
