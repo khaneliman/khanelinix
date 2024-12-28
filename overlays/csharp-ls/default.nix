@@ -4,5 +4,6 @@ _: _final: prev: {
     # collisions because dotnet commands will run off the newest SDK breaking working with lower
     # version projects.
     useDotnetFromEnv = false;
+    meta.badPlatforms = [ ];
   });
 }
