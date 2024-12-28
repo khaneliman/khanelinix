@@ -53,7 +53,14 @@ in
         mappedRegistry = lib.pipe inputs [
           (lib.filterAttrs (_: lib.isType "flake"))
           (lib.mapAttrs (_: flake: { inherit flake; }))
-          (x: x // (lib.mkIf pkgs.stdenv.isLinux { nixpkgs.flake = inputs.nixpkgs; }))
+          (
+            x:
+            x
+            // {
+              nixpkgs.flake = if pkgs.stdenv.isLinux then inputs.nixpkgs else inputs.nixpkgs-unstable;
+            }
+          )
+          (x: if pkgs.stdenv.isDarwin then lib.removeAttrs x [ "nixpkgs-unstable" ] else x)
         ];
 
         users = [
