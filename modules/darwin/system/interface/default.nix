@@ -115,7 +115,8 @@ in
             };
           }
           "${pkgs.vscode}/Applications/Visual Studio Code.app"
-          "${pkgs.bruno}/Applications/Bruno.app"
+          # FIXME: broken nixpkgs
+          # "${pkgs.bruno}/Applications/Bruno.app"
           {
             spacer = {
               small = true;

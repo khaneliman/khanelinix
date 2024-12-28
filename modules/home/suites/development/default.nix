@@ -35,7 +35,8 @@ in
           # neovide
           onefetch
           postman
-          bruno
+          # FIXME: broken nixpkgs
+          # bruno
           act
         ]
         ++ lib.optionals pkgs.stdenv.isLinux [
