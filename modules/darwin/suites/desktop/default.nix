@@ -18,7 +18,13 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
+      alt-tab-macos
+      appcleaner
+      bartender
+      monitorcontrol
+      raycast
       switchaudio-osx
+      stats
     ];
 
     ${namespace}.desktop = {
@@ -45,19 +51,13 @@ in
       ];
 
       casks = [
-        "alt-tab"
-        "appcleaner"
-        "bartender"
         "bitwarden"
         "firefox@developer-edition"
         "gpg-suite"
         "hammerspoon"
         "kitty"
         "launchcontrol"
-        "monitorcontrol"
-        "raycast"
         "sf-symbols"
-        "stats"
         "xquartz"
       ];
 
