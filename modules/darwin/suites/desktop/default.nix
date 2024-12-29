@@ -21,6 +21,7 @@ in
       alt-tab-macos
       appcleaner
       bartender
+      blueutil
       monitorcontrol
       raycast
       switchaudio-osx
@@ -44,7 +45,6 @@ in
 
     homebrew = {
       brews = [
-        "blueutil"
         "ical-buddy"
       ];
 
