@@ -36,6 +36,7 @@ in
           onefetch
           postman
           # FIXME: broken nixpkgs
+          # https://nixpk.gs/pr-tracker.html?pr=364971
           # bruno
           act
         ]

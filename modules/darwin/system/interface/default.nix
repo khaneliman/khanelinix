@@ -116,6 +116,7 @@ in
           }
           "${pkgs.vscode}/Applications/Visual Studio Code.app"
           # FIXME: broken nixpkgs
+          # https://nixpk.gs/pr-tracker.html?pr=364971
           # "${pkgs.bruno}/Applications/Bruno.app"
           {
             spacer = {
