@@ -26,6 +26,8 @@ in
       raycast
       switchaudio-osx
       stats
+      # Broken nixpkgs
+      # xquartz
     ];
 
     ${namespace}.desktop = {
@@ -62,7 +64,6 @@ in
         "beeftornado/rmtree"
         "felixkratz/homebrew-formulae"
         "khanhas/tap"
-        "romkatv/powerlevel10k"
       ];
 
       masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
