@@ -45,9 +45,7 @@ in
     homebrew = {
       brews = [
         "blueutil"
-        "fisher"
         "ical-buddy"
-        "ifstat"
       ];
 
       casks = [
@@ -55,7 +53,6 @@ in
         "firefox@developer-edition"
         "gpg-suite"
         "hammerspoon"
-        "kitty"
         "launchcontrol"
         "sf-symbols"
         "xquartz"
@@ -63,11 +60,9 @@ in
 
       taps = [
         "beeftornado/rmtree"
-        "bramstein/webfonttools"
         "felixkratz/homebrew-formulae"
         "khanhas/tap"
         "romkatv/powerlevel10k"
-        "teamookla/speedtest"
       ];
 
       masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
