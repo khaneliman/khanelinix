@@ -2,6 +2,7 @@
   config,
   lib,
   namespace,
+  pkgs,
   ...
 }:
 let
@@ -16,6 +17,10 @@ in
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      switchaudio-osx
+    ];
+
     ${namespace}.desktop = {
       addons = {
         skhd = mkDefault enabled;
@@ -37,8 +42,6 @@ in
         "fisher"
         "ical-buddy"
         "ifstat"
-        # TODO: replace with https://github.com/NixOS/nixpkgs/pull/365581
-        "switchaudio-osx"
       ];
 
       casks = [
