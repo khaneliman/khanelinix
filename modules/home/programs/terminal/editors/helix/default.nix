@@ -32,10 +32,10 @@ in
               clang-tools
               marksman
               nil
+              nixd
               nixfmt-rfc-style
               bash-language-server
-              nodePackages.vscode-css-languageserver-bin
-              nodePackages.vscode-langservers-extracted
+              vscode-langservers-extracted
               nodePackages.prettier
               rustfmt
               rust-analyzer

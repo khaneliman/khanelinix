@@ -174,7 +174,7 @@ in
       };
 
       vscode-css-language-server = {
-        command = getExe pkgs.nodePackages.vscode-css-languageserver-bin;
+        command = lib.getExe' pkgs.vscode-langservers-extracted "vscode-css-language-server";
         args = [ "--stdio" ];
         config = {
           provideFormatter = true;
