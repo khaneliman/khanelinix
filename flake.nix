@@ -80,6 +80,7 @@
 
     # NixPkgs (nixos-unstable)
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-master.url = "github:nixos/nixpkgs";
 
     # NixPkgs (nixpkgs-unstable)
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
