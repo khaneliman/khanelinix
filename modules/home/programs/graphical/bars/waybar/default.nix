@@ -125,9 +125,11 @@ in
 
     programs.waybar = {
       enable = true;
+      # TODO: remove override after waybar is updated in nixpkgs
       package = waybar.packages.${system}.waybar.overrideAttrs (_oldAttrs: {
         patches = [ ];
       });
+
       systemd.enable = true;
 
       settings = mkMerge [
