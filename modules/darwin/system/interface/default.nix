@@ -24,9 +24,12 @@ in
       CustomSystemPreferences = {
         finder = {
           DisableAllAnimations = true;
+          FXEnableExtensionChangeWarning = false;
+          QuitMenuItem = true;
           ShowExternalHardDrivesOnDesktop = false;
           ShowHardDrivesOnDesktop = false;
           ShowMountedServersOnDesktop = false;
+          ShowPathbar = true;
           ShowRemovableMediaOnDesktop = false;
           _FXSortFoldersFirst = true;
         };
