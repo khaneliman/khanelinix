@@ -79,11 +79,11 @@
         "nixpkgs": "nixpkgs_8"
       },
       "locked": {
-        "lastModified": 1735432355,
-        "narHash": "sha256-YZK8kmvDxeqqXA6RNb49y7oIL+x9vpEoe3MGqlOarlc=",
+        "lastModified": 1735502684,
+        "narHash": "sha256-p3HeM52ixWjSSdjD/6Lzo/6MJv/1HNu8mx777XlhiwY=",
         "owner": "saghen",
         "repo": "blink.cmp",
-        "rev": "d9513ee9f8b111a46e262be2b36172ca335051a2",
+        "rev": "0350feedfa8adb07b6750f6d9150c26e13eae0d2",
         "type": "github"
       },
       "original": {
@@ -1139,11 +1139,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1735394862,
-        "narHash": "sha256-34vW0z18FAZajpAU2bFmGjiepnu+9Nm769blbbp679g=",
+        "lastModified": 1735514352,
+        "narHash": "sha256-guBp/FwjjsRGMjD9U0Lt6C7ad6oupA8wrFWupyKpC38=",
         "ref": "refs/heads/main",
-        "rev": "2b01a5bcf62956a5d641a3367edcd35e103edfcd",
-        "revCount": 5597,
+        "rev": "cb211d83f68542e9fbf7567d57bdf528286cbf7e",
+        "revCount": 5603,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -1364,11 +1364,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1735438908,
-        "narHash": "sha256-Tys4G/tUAwIKpGGKaly0PxQcGBY+QC9nC3Cj7gr9GFk=",
+        "lastModified": 1735514590,
+        "narHash": "sha256-aeUobCBWR4zw1stEwAmE+P3Q4d0Q5VFKcZytVqtrZcs=",
         "owner": "khaneliman",
         "repo": "khanelivim",
-        "rev": "401cfb78268906ee242174f54b3d2db485a86085",
+        "rev": "280e9d9eb1e62c1a57c8fdd2e5e576c599c90558",
         "type": "github"
       },
       "original": {
@@ -1445,11 +1445,11 @@
     },
     "nix-flatpak": {
       "locked": {
-        "lastModified": 1734864618,
-        "narHash": "sha256-8SCTJhDH1fdNGGFhuGStIqbO7vwUKQokgQu6nQlQagY=",
+        "lastModified": 1735500379,
+        "narHash": "sha256-5qmX6YYjYfVYBbsmd2XxbTi7A59YuuN9IwfXU7qFquQ=",
         "owner": "gmodena",
         "repo": "nix-flatpak",
-        "rev": "13be795cac27df7044a425c0b2de3a42b10ddb18",
+        "rev": "c31b6cbd11707fe2c74ad805ef085d59d75116ae",
         "type": "github"
       },
       "original": {
@@ -1465,11 +1465,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1735222882,
-        "narHash": "sha256-kWNi45/mRjQMG+UpaZQ7KyPavYrKfle3WgLn9YeBBVg=",
+        "lastModified": 1735443188,
+        "narHash": "sha256-AydPpRBh8+NOkrLylG7vTsHrGO2b5L7XkMEL5HlzcA8=",
         "owner": "nix-community",
         "repo": "nix-index-database",
-        "rev": "7e3246f6ad43b44bc1c16d580d7bf6467f971530",
+        "rev": "55ab1e1df5daf2476e6b826b69a82862dcbd7544",
         "type": "github"
       },
       "original": {
@@ -1612,16 +1612,16 @@
     },
     "nixpkgs-tree-sitter": {
       "locked": {
-        "lastModified": 1735428915,
-        "narHash": "sha256-sBLVwxp/HLFmWEBka2jRbR3tVX5zlzqr1uPYuju4sz4=",
+        "lastModified": 1735514485,
+        "narHash": "sha256-Zww5ANfNtI0O1sj7ZbePNYC1xi5TJYnKHAz9F97DobI=",
         "owner": "khaneliman",
         "repo": "nixpkgs",
-        "rev": "0acf252c365795b3c7f3ae381a368e4c3be8dfc8",
+        "rev": "01ab8a5a632ed4eeed0ea6e9b307d67675f48af6",
         "type": "github"
       },
       "original": {
         "owner": "khaneliman",
-        "ref": "ts",
+        "ref": "treesitter",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -1895,11 +1895,11 @@
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
-        "lastModified": 1735429551,
-        "narHash": "sha256-3YaedFhwEXOxgOYyQV1xG1UVW0irSRmMDIC7G5DkQgw=",
+        "lastModified": 1735512424,
+        "narHash": "sha256-cx8vvo7UMKmM4m4zTnz5rh7Lo1XqjkLntwH72+Ll2l0=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "c38a348fa32610c886fad196b63145bc585caf05",
+        "rev": "fecf125e4108d53df6d7f69f010ae38f8ea17154",
         "type": "github"
       },
       "original": {
@@ -2191,11 +2191,11 @@
         "nixpkgs": "nixpkgs_13"
       },
       "locked": {
-        "lastModified": 1734546875,
-        "narHash": "sha256-6OvJbqQ6qPpNw3CA+W8Myo5aaLhIJY/nNFDk3zMXLfM=",
+        "lastModified": 1735468296,
+        "narHash": "sha256-ZjUjbvS06jf4fElOF4ve8EHjbpbRVHHypStoY8HGzk8=",
         "owner": "Mic92",
         "repo": "sops-nix",
-        "rev": "ed091321f4dd88afc28b5b4456e0a15bd8374b4d",
+        "rev": "bcb8b65aa596866eb7e5c3e1a6cccbf5d1560b27",
         "type": "github"
       },
       "original": {
