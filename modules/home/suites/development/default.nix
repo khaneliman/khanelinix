@@ -39,6 +39,9 @@ in
           # https://nixpk.gs/pr-tracker.html?pr=364971
           # bruno
           act
+          (tree-sitter.override {
+            webUISupport = true;
+          })
         ]
         ++ lib.optionals pkgs.stdenv.isLinux [
           github-desktop
