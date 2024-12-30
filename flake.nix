@@ -150,6 +150,7 @@
       channels-config = {
         # allowBroken = true;
         allowUnfree = true;
+        # showDerivationWarnings = [ "maintainerless" ];
 
         # TODO: cleanup when available
         permittedInsecurePackages = [
