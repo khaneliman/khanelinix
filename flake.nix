@@ -81,6 +81,7 @@
     # NixPkgs (nixos-unstable)
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-master.url = "github:nixos/nixpkgs";
+    nixpkgs-rocm.url = "github:LunNova/nixpkgs/rocm-update";
 
     # NixPkgs (nixpkgs-unstable)
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
