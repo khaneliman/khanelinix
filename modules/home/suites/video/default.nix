@@ -21,10 +21,12 @@ in
       with pkgs;
       lib.optionals stdenv.isLinux [
         celluloid
-        devede
+        # FIXME: broken nixpkgs
+        # devede
         # handbrake
         mediainfo-gui
-        shotcut
+        # FIXME: broken nixpkgs
+        # shotcut
         vlc
       ]
       ++ lib.optionals stdenv.isDarwin [ iina ];
