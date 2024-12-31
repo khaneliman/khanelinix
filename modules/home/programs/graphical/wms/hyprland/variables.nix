@@ -198,8 +198,7 @@ in
         "$screen-locker" = "${getExe config.programs.hyprlock.package}";
         # TODO: remove after upstreamed
         "$window-inspector" = "${getExe pkgs.hyprprop}";
-        # FIXME: broken nixpkgs dependency
-        # "$screen-recorder" = "${getExe pkgs.${namespace}.record_screen}";
+        "$screen-recorder" = "${getExe pkgs.${namespace}.record_screen}";
 
         # screenshot commands
         "$notify-screenshot" = ''${getExe pkgs.libnotify} --icon "$file" "Screenshot Saved"'';
