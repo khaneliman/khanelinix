@@ -101,28 +101,24 @@
         for = "windows";
       }
     ];
-    play =
-      [
-        {
-          run = "${lib.getExe pkgs.mediainfo} \"$1\"; echo \"Press enter to exit\"; read _";
-          block = true;
-          desc = "Show media info";
-          for = "unix";
-        }
-      ]
-      # FIXME: swift broken nixpkgs
-      ++ lib.optionals pkgs.stdenv.isLinux [
-        {
-          run = "${lib.getExe config.programs.mpv.package} \"$@\"";
-          orphan = true;
-          for = "unix";
-        }
-        {
-          run = "${lib.getExe config.programs.mpv.package} \"%1\"";
-          orphan = true;
-          for = "windows";
-        }
-      ];
+    play = [
+      {
+        run = "${lib.getExe pkgs.mediainfo} \"$1\"; echo \"Press enter to exit\"; read _";
+        block = true;
+        desc = "Show media info";
+        for = "unix";
+      }
+      {
+        run = "${lib.getExe config.programs.mpv.package} \"$@\"";
+        orphan = true;
+        for = "unix";
+      }
+      {
+        run = "${lib.getExe config.programs.mpv.package} \"%1\"";
+        orphan = true;
+        for = "windows";
+      }
+    ];
   };
 
   open =
