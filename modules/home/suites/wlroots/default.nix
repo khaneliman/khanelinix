@@ -17,12 +17,11 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = [
-      pkgs.wdisplays
-      pkgs.wl-clipboard
-      pkgs.wlr-randr
-      # FIXME: broken nixpkgs
-      # pkgs.wl-screenrec
+    home.packages = with pkgs; [
+      wdisplays
+      wl-clipboard
+      wlr-randr
+      wl-screenrec
     ];
 
     khanelinix = {
