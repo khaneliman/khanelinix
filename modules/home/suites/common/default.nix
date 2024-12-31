@@ -22,8 +22,7 @@ in
     };
 
     home.packages = with pkgs; [
-      # FIXME: broken nixpgs
-      # ncdu
+      ncdu
       smassh
       toilet
       tree
