@@ -28,13 +28,12 @@ in
 
     environment.systemPackages = with pkgs; [
       # Yubico's official tools
-      # FIXME: broken nixpkgs
-      # yubikey-manager # cli
-      # yubikey-manager-qt # gui
+      yubikey-manager # cli
+      yubikey-manager-qt # gui
       yubikey-personalization # cli
       yubikey-personalization-gui # gui
       yubico-piv-tool # cli
-      #yubioath-flutter # gui
+      yubioath-flutter # gui
       reload-yubikey
     ];
 
