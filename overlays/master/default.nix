@@ -2,6 +2,7 @@
 _final: _prev: {
   inherit (channels.nixpkgs-master)
     bottles
+    bruno
     ddccontrol
     efitools
     electron_31

@@ -35,9 +35,7 @@ in
           # neovide
           onefetch
           postman
-          # FIXME: broken nixpkgs
-          # https://nixpk.gs/pr-tracker.html?pr=364971
-          # bruno
+          bruno
           act
           (tree-sitter.override {
             webUISupport = true;
