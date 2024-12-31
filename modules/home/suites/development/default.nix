@@ -31,8 +31,7 @@ in
         with pkgs;
         [
           jqp
-          # FIXME: broken nixpkgs
-          # neovide
+          neovide
           onefetch
           postman
           bruno
