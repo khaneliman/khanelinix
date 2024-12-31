@@ -25,8 +25,7 @@ in
       with pkgs;
       [
         efibootmgr
-        # FIXME: broken nixpkgs
-        # efitools
+        efitools
         efivar
       ]
       ++ lib.optionals cfg.secureBoot [ sbctl ];
