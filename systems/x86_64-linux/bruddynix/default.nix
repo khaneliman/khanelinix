@@ -32,7 +32,6 @@ in
     hardware = {
       audio = {
         enable = true;
-        extra-packages = [ ];
       };
 
       bluetooth = enabled;
