@@ -44,8 +44,7 @@ in
       btdu
       btrfs-assistant
       btrfs-snap
-      # FIXME: broken nixpkgs
-      # compsize
+      compsize
       snapper
     ];
 
