@@ -22,9 +22,7 @@ in
     };
 
     programs.cava = {
-      # FIXME: nixpkgs broken
-      # revisit when https://github.com/NixOS/nixpkgs/pull/355948 is in unstable
-      # enable = true;
+      enable = true;
       package = if pkgs.stdenv.isLinux then pkgs.cava else pkgs.emptyDirectory;
 
       settings =
