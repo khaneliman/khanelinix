@@ -23,7 +23,7 @@ in
         celluloid
         # FIXME: broken nixpkgs
         # devede
-        # handbrake
+        handbrake
         mediainfo-gui
         # FIXME: broken nixpkgs
         # shotcut
