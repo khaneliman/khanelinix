@@ -106,8 +106,6 @@ in
             lazydocker.enable = cfg.dockerEnable;
             lazygit = mkDefault enabled;
             oh-my-posh = mkDefault enabled;
-            # FIXME: broken nixpkg
-            # prisma = mkDefault enabled;
           };
         };
       };
