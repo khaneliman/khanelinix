@@ -40,9 +40,7 @@ in
         mpc_cli # CLI interface for mpd
       ]
       ++ lib.optionals pkgs.stdenv.isLinux [
-        # FIXME: nixpkgs broken
-        # revisit when https://github.com/NixOS/nixpkgs/pull/355948 is in unstable
-        # cava # CLI music visualizer (cavalier is a gui alternative)
+        cava # CLI music visualizer (cavalier is a gui alternative)
       ];
 
     services = {
