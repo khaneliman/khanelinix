@@ -24,8 +24,7 @@ in
       ]
       ++ lib.optionals pkgs.stdenv.isLinux [
         appimage-run
-        # FIXME: broken nixpkgs
-        # bitwarden
+        bitwarden
         bleachbit
         clac
         dropbox
