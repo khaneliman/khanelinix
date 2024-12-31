@@ -22,8 +22,7 @@ in
         cores: with cores; [
           beetle-psx-hw
           bsnes
-          # FIXME: broken nixpkgs
-          # citra
+          citra
           dolphin
           dosbox
           genesis-plus-gx
