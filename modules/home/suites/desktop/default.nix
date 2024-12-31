@@ -19,7 +19,10 @@ in
   config = mkIf cfg.enable {
     home.packages =
       with pkgs;
-      lib.optionals pkgs.stdenv.isLinux [
+      [
+        meshcentral
+      ]
+      ++ lib.optionals pkgs.stdenv.isLinux [
         appimage-run
         # FIXME: broken nixpkgs
         # bitwarden
