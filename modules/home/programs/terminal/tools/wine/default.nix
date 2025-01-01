@@ -18,9 +18,10 @@ in
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
+      wineWowPackages.waylandFull
+      # wine64Packages.waylandFull
       # winePackages.waylandFull
       winetricks
-      wine64Packages.waylandFull
     ];
   };
 }
