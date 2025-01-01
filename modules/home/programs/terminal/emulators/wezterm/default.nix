@@ -1,16 +1,15 @@
 {
   config,
-  # inputs,
+  inputs,
   lib,
-  pkgs,
-  # system,
+  system,
   namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
-  # inherit (inputs) wezterm;
+  inherit (inputs) wezterm;
 
   cfg = config.${namespace}.programs.terminal.emulators.wezterm;
   catppuccin = import (lib.snowfall.fs.get-file "modules/home/theme/catppuccin/colors.nix");
@@ -25,8 +24,7 @@ in
       enable = true;
       enableBashIntegration = true;
       enableZshIntegration = true;
-      package = pkgs.wezterm;
-      # package = wezterm.packages.${system}.default;
+      package = wezterm.packages.${system}.default;
 
       extraConfig = # lua
         ''
