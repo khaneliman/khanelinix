@@ -27,6 +27,7 @@ in
       protontricks
       protonup-ng
       protonup-qt
+      wowup-cf
     ];
 
     khanelinix = {
