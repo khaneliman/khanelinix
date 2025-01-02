@@ -61,7 +61,6 @@ in
           "pin, class:^(thunar)$,title:^(File Operation Progress)$"
 
           "minsize 5120 1440, class:^(steam_app_0)$, title:^(World of Warcraft)$"
-          "stayfocused, class:^(steam_app_0)$, title:^(World of Warcraft)$"
           "move center, class:^(steam_app_0)$, title:^(World of Warcraft)$"
           "fullscreen, class:^(steam_app_0)$, title:^(World of Warcraft)$"
 
