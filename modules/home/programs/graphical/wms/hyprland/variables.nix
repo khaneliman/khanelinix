@@ -196,9 +196,9 @@ in
         # "$launchpad" = "${getExe config.programs.rofi.package} -show drun -config '~/.config/rofi/appmenu/rofi.rasi'";
         "$looking-glass" = "${getExe pkgs.looking-glass-client}";
         "$screen-locker" = "${getExe config.programs.hyprlock.package}";
-        # TODO: remove after upstreamed
         "$window-inspector" = "${getExe pkgs.hyprprop}";
         "$screen-recorder" = "${getExe pkgs.${namespace}.record_screen}";
+        "$bar" = ".waybar-wrapped";
 
         # screenshot commands
         "$notify-screenshot" = ''${getExe pkgs.libnotify} --icon "$file" "Screenshot Saved"'';
