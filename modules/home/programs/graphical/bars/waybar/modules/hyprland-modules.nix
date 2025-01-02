@@ -119,6 +119,9 @@ in
       "title<Steam>" = "";
       "class<rustdesk>" = "󰢹";
       "class<org.vinegarhq.Sober>" = "󰆢";
+      "class<steam_app_0> title<Battle.net>" = "";
+      "class<steam_app_0> title<World of Warcraft>" = "";
+      "class<Wowup-cf>" = "";
     };
   };
 }
