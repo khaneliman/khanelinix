@@ -60,6 +60,11 @@ in
           "move 78% 6%, class:^(thunar)$,title:^(File Operation Progress)$"
           "pin, class:^(thunar)$,title:^(File Operation Progress)$"
 
+          "minsize 5120 1440, class:^(steam_app_0)$, title:^(World of Warcraft)$"
+          "stayfocused, class:^(steam_app_0)$, title:^(World of Warcraft)$"
+          "move center, class:^(steam_app_0)$, title:^(World of Warcraft)$"
+          "fullscreen, class:^(steam_app_0)$, title:^(World of Warcraft)$"
+
           # Workspace 8 (VM) layout
           "size 1000 1330, class:^(virt-manager)$, title:^(Virtual Machine Manager)$"
           "float, class:^(virt-manager)$, title:^(Virtual Machine Manager)$"
@@ -151,6 +156,8 @@ in
           "workspace 4 silent, class:^(gamescope|steam_app).*"
           "workspace 4, class:^(heroic)$"
           "workspace 4, class:^(lutris)$"
+          "workspace 4, class:^(steam_app_0)., title:^(Battle.net)$"
+          "workspace 4, class:^(steam_app_0)., title:^(World of Warcraft)$"
           "workspace 4, class:^(org.vinegarhq.Sober)$"
           "workspace 4, class:.*(cemu|yuzu|Ryujinx|emulationstation|retroarch).*"
           "workspace 4, title:.*(cemu|yuzu|Ryujinx|emulationstation|retroarch).*"
