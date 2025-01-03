@@ -1543,22 +1543,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-rocm": {
-      "locked": {
-        "lastModified": 1735303427,
-        "narHash": "sha256-IDWPjjo5L7bqDvvEwqrQdmKDjc5jbknyH5DkU1eSWxs=",
-        "owner": "LunNova",
-        "repo": "nixpkgs",
-        "rev": "40fec8b6d2bb7e5b58e3e9ee769129f3459c72a4",
-        "type": "github"
-      },
-      "original": {
-        "owner": "LunNova",
-        "ref": "rocm-update",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nixpkgs-stable": {
       "locked": {
         "lastModified": 1734600368,
@@ -2151,7 +2135,6 @@
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_17",
         "nixpkgs-master": "nixpkgs-master",
-        "nixpkgs-rocm": "nixpkgs-rocm",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nur": "nur",
         "snowfall-flake": "snowfall-flake",

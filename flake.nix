@@ -28,7 +28,6 @@
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     # FIXME: remove after upstream PRs are available
     nixpkgs-master.url = "github:nixos/nixpkgs";
-    nixpkgs-rocm.url = "github:LunNova/nixpkgs/rocm-update";
 
     nixos-wsl = {
       url = "github:nix-community/nixos-wsl";
