@@ -5,7 +5,6 @@
   perSystem =
     {
       lib,
-      pkgs,
       ...
     }:
     lib.optionalAttrs (inputs.treefmt-nix ? flakeModule) {

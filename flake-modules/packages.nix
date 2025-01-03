@@ -1,10 +1,8 @@
-{ inputs, ... }:
+{ ... }:
 {
   perSystem =
     {
       config,
-      inputs',
-      system,
       ...
     }:
     {
