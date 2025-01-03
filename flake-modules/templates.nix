@@ -19,7 +19,6 @@ in
   # It ensures that the template's own checks are successful.
   perSystem =
     {
-      pkgs,
       system,
       lib,
       ...
@@ -31,7 +30,6 @@ in
             args@{
               inputs,
               outputs,
-              sourceInfo,
             }:
             let
               result = {
