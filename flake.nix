@@ -2,60 +2,73 @@
   description = "KhaneliNix";
 
   inputs = {
+
+    #          ╭──────────────────────────────────────────────────────────╮
+    #          │                       Core System                        │
+    #          ╰──────────────────────────────────────────────────────────╯
+    darwin = {
+      # url = "github:lnl7/nix-darwin";
+      # NOTE: Upstream slow to respond to PRs, using own fork.
+      url = "github:khaneliman/nix-darwin/cherry-picks";
+      # url = "git+file:///Users/khaneliman/github/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+    git-hooks-nix.url = "github:cachix/git-hooks.nix";
+
+    home-manager.url = "github:nix-community/home-manager";
+    # home-manager.url = "github:khaneliman/home-manager/thunderbird";
+    # home-manager.url = "git+file:///home/khaneliman/Documents/github/home-manager";
+    # home-manager.url = "git+file:///Users/khaneliman/Documents/github/home-manager";
+
+    # Secure boot
+    lanzaboote.url = "github:nix-community/lanzaboote/v0.4.1";
+
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    # FIXME: remove after upstream PRs are available
+    nixpkgs-master.url = "github:nixos/nixpkgs";
+    nixpkgs-rocm.url = "github:LunNova/nixpkgs/rocm-update";
+
+    nixos-wsl = {
+      url = "github:nix-community/nixos-wsl";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    snowfall-lib = {
+      url = "github:snowfallorg/lib";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Secrets management
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+    };
+
+    treefmt-nix.url = "github:numtide/treefmt-nix";
+
+    #          ╭──────────────────────────────────────────────────────────╮
+    #          │                    System Deployment                     │
+    #          ╰──────────────────────────────────────────────────────────╯
+    deploy-rs.url = "github:serokell/deploy-rs";
+    disko.url = "github:nix-community/disko/latest";
+
+    #          ╭──────────────────────────────────────────────────────────╮
+    #          │                       Applications                       │
+    #          ╰──────────────────────────────────────────────────────────╯
     anyrun.url = "github:anyrun-org/anyrun";
     anyrun-nixos-options.url = "github:n3oney/anyrun-nixos-options";
 
     catppuccin-cursors.url = "github:catppuccin/cursors";
     catppuccin.url = "github:catppuccin/nix";
 
-    # macOS Support (master)
-    darwin = {
-      # url = "github:lnl7/nix-darwin";
-      url = "github:khaneliman/nix-darwin/cherry-picks";
-      # url = "git+file:///Users/khaneliman/github/nix-darwin";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
+    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    hypr-socket-watch.url = "github:khaneliman/hypr-socket-watch";
 
-    # System Deployment
-    deploy-rs = {
-      url = "github:serokell/deploy-rs";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    disko = {
-      url = "github:nix-community/disko/latest";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Home Manager (master)
-    home-manager.url = "github:nix-community/home-manager";
-    # home-manager.url = "github:khaneliman/home-manager/thunderbird";
-    # home-manager.url = "git+file:///home/khaneliman/Documents/github/home-manager";
-    # home-manager.url = "git+file:///Users/khaneliman/Documents/github/home-manager";
-
-    ##
-    # Hyprland Section
-    ##
-    hyprland = {
-      url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-      # url = "git+https://github.com/khaneliman/Hyprland?ref=windows&submodules=1";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-      };
-    };
-    # Hyprland socket watcher
-    hypr-socket-watch = {
-      url = "github:khaneliman/hypr-socket-watch";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Personal Neovim Flake
     khanelivim = {
       url = "github:khaneliman/khanelivim";
-      # url = "github:khaneliman/khanelivim/lazy";
       # url = "git+file:///Users/khaneliman/Documents/github/khanelivim";
       # url = "git+file:///home/khaneliman/Documents/github/khanelivim";
-
       inputs = {
         # nixpkgs.follows = "nixpkgs";
         git-hooks-nix.follows = "git-hooks-nix";
@@ -64,63 +77,11 @@
       };
     };
 
-    # Secure boot
-    lanzaboote = {
-      url = "github:nix-community/lanzaboote/v0.4.1";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     nix-flatpak.url = "github:gmodena/nix-flatpak";
-
-    # Weekly updating nix-index database
-    nix-index-database = {
-      url = "github:nix-community/nix-index-database";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # NixPkgs (nixos-unstable)
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-master.url = "github:nixos/nixpkgs";
-    nixpkgs-rocm.url = "github:LunNova/nixpkgs/rocm-update";
-
-    # NixPkgs (nixpkgs-unstable)
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-
-    # NixOS WSL Support
-    nixos-wsl = {
-      url = "github:nix-community/nixos-wsl";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Nix User Repository (master)
+    nix-index-database.url = "github:nix-community/nix-index-database";
     nur.url = "github:nix-community/NUR";
-
-    git-hooks-nix.url = "github:cachix/git-hooks.nix";
-
-    # Snowfall Lib
-    snowfall-lib = {
-      url = "github:snowfallorg/lib";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Snowfall Flake
-    snowfall-flake = {
-      url = "github:snowfallorg/flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Sops (Secrets)
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-    };
-
-    treefmt-nix.url = "github:numtide/treefmt-nix";
-
-    waybar = {
-      url = "github:Alexays/Waybar";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
+    snowfall-flake.url = "github:snowfallorg/flake";
+    waybar.url = "github:Alexays/Waybar";
     wezterm.url = "github:wez/wezterm?dir=nix";
 
     yazi-plugins = {
