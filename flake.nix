@@ -4,7 +4,11 @@
   outputs =
     inputs@{ flake-parts, self, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = [ ./flake-modules ];
+      imports = [
+        ./flake-modules
+        # inputs.flake-parts.flakeModules.flakeModules
+        # inputs.flake-parts.flakeModules.modules
+      ];
 
       systems = [
         "x86_64-linux"
@@ -18,23 +22,20 @@
         #     ];
         #   };
         #
-        homes.modules = with inputs; [
-          anyrun.homeManagerModules.default
-          catppuccin.homeManagerModules.catppuccin
-          hypr-socket-watch.homeManagerModules.default
-          nix-index-database.hmModules.nix-index
-          nur.hmModules.nur
-          sops-nix.homeManagerModules.sops
-        ];
-
-        systems = {
-          modules = {
-            darwin = with inputs; [ sops-nix.darwinModules.sops ];
-            nixos = with inputs; [
-              lanzaboote.nixosModules.lanzaboote
-              sops-nix.nixosModules.sops
-            ];
-          };
+        modules = {
+          darwin = with inputs; [ sops-nix.darwinModules.sops ];
+          homes = with inputs; [
+            anyrun.homeManagerModules.default
+            catppuccin.homeManagerModules.catppuccin
+            hypr-socket-watch.homeManagerModules.default
+            nix-index-database.hmModules.nix-index
+            nur.hmModules.nur
+            sops-nix.homeManagerModules.sops
+          ];
+          nixos = with inputs; [
+            lanzaboote.nixosModules.lanzaboote
+            sops-nix.nixosModules.sops
+          ];
         };
 
         deploy = {

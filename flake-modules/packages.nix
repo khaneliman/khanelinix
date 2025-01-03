@@ -8,6 +8,10 @@
       ...
     }:
     {
+      imports = [
+        # ../packages/default.nix
+      ];
+
       # packages = import ../docs {
       #   inherit system;
       #   inherit (inputs) nixpkgs;
