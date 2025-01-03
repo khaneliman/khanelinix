@@ -152,7 +152,9 @@
 
       systems = {
         modules = {
-          darwin = with inputs; [ sops-nix.darwinModules.sops ];
+          darwin = with inputs; [
+            sops-nix.darwinModules.sops
+          ];
           nixos = with inputs; [
             disko.nixosModules.disko
             lanzaboote.nixosModules.lanzaboote
