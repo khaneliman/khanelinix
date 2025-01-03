@@ -121,6 +121,7 @@ in
       "class<org.vinegarhq.Sober>" = "󰆢";
       "class<steam_app_0> title<Battle.net>" = "";
       "class<steam_app_0> title<World of Warcraft>" = "";
+      "class<steam_app_0> title<>" = "";
       "class<Wowup-cf>" = "";
     };
   };
