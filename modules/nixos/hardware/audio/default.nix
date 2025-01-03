@@ -33,21 +33,22 @@ in
       ]
       ++ cfg.extra-packages;
 
-    hardware.pulseaudio.enable = mkForce false;
-
     khanelinix = {
       user.extraGroups = [ "audio" ];
     };
 
     security.rtkit.enable = true;
 
-    services.pipewire = {
-      enable = true;
-      alsa.enable = true;
-      audio.enable = true;
-      jack.enable = true;
-      pulse.enable = true;
-      wireplumber.enable = true;
+    services = {
+      pipewire = {
+        enable = true;
+        alsa.enable = true;
+        audio.enable = true;
+        jack.enable = true;
+        pulse.enable = true;
+        wireplumber.enable = true;
+      };
+      pulseaudio.enable = mkForce false;
     };
   };
 }
