@@ -75,7 +75,6 @@ in
 
         buildMachines =
           let
-            protocol = if pkgs.stdenv.isLinux then "ssh-ng" else "ssh";
             sshUser = "khaneliman";
             supportedFeatures = [
               "benchmark"
@@ -86,7 +85,7 @@ in
           lib.optionals config.${namespace}.security.sops.enable [
             (
               lib.mkIf (host != "khanelinix") {
-                inherit protocol sshUser;
+                inherit sshUser;
                 hostName = "khanelinix.local";
                 systems = [
                   "x86_64-linux"
@@ -111,7 +110,7 @@ in
             [
               (
                 {
-                  inherit protocol sshUser systems;
+                  inherit sshUser systems;
                   hostName = "khanelimac.local";
                   maxJobs = 24;
                   speedFactor = 10;
@@ -124,7 +123,7 @@ in
               (
                 # NOTE: git clone --reference /var/lib/nixpkgs.git https://github.com/NixOS/nixpkgs.git
                 {
-                  inherit protocol sshUser systems;
+                  inherit sshUser systems;
                   hostName = "darwin-build-box.nix-community.org";
                   maxJobs = 32;
                   speedFactor = 5;
