@@ -1,4 +1,4 @@
-{ self, inputs, ... }:
+{ inputs, ... }:
 let
   templatesDir = ../templates;
   templates = builtins.attrNames (builtins.readDir templatesDir);
@@ -10,16 +10,13 @@ in
 {
   flake.templates = builtins.listToAttrs (
     map (name: {
-      name = name;
+      inherit name;
       value = generateTemplate name;
     }) templates
   );
 
-  # The following adds the template flake's checks to the main (current) flake's checks.
-  # It ensures that the template's own checks are successful.
   perSystem =
     {
-      pkgs,
       system,
       lib,
       ...
@@ -30,8 +27,6 @@ in
           callFlake =
             args@{
               inputs,
-              outputs,
-              sourceInfo,
             }:
             let
               result = {

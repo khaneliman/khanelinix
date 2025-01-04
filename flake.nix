@@ -1,49 +1,6 @@
 {
   description = "KhaneliNix";
 
-  outputs =
-    inputs@{ flake-parts, self, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = [
-        ./flake-modules
-        # inputs.flake-parts.flakeModules.flakeModules
-        # inputs.flake-parts.flakeModules.modules
-      ];
-
-      systems = [
-        "x86_64-linux"
-        "aarch64-darwin"
-      ];
-      flake = {
-        #   channels-config = {
-        #     allowUnfree = true;
-        #     permittedInsecurePackages = [
-        #       "freeimage-unstable-2021-11-01"
-        #     ];
-        #   };
-        #
-        modules = {
-          darwin = with inputs; [ sops-nix.darwinModules.sops ];
-          homes = with inputs; [
-            anyrun.homeManagerModules.default
-            catppuccin.homeManagerModules.catppuccin
-            hypr-socket-watch.homeManagerModules.default
-            nix-index-database.hmModules.nix-index
-            nur.hmModules.nur
-            sops-nix.homeManagerModules.sops
-          ];
-          nixos = with inputs; [
-            lanzaboote.nixosModules.lanzaboote
-            sops-nix.nixosModules.sops
-          ];
-        };
-
-        deploy = {
-          inherit self;
-        };
-      };
-    };
-
   inputs = {
     #          ╭──────────────────────────────────────────────────────────╮
     #          │                       Core System                        │
@@ -60,7 +17,6 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     git-hooks-nix.url = "github:cachix/git-hooks.nix";
     home-manager.url = "github:nix-community/home-manager";
-    # home-manager.url = "github:khaneliman/home-manager/thunderbird";
     # home-manager.url = "git+file:///home/khaneliman/Documents/github/home-manager";
     # home-manager.url = "git+file:///Users/khaneliman/Documents/github/home-manager";
 
@@ -69,14 +25,11 @@
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     # FIXME: remove after upstream PRs are available
     nixpkgs-master.url = "github:nixos/nixpkgs";
+    nixos-unified.url = "github:srid/nixos-unified";
+    pkgs-by-name-for-flake-parts.url = "github:drupol/pkgs-by-name-for-flake-parts";
 
     nixos-wsl = {
       url = "github:nix-community/nixos-wsl";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    snowfall-lib = {
-      url = "github:snowfallorg/lib";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -101,17 +54,9 @@
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     hypr-socket-watch.url = "github:khaneliman/hypr-socket-watch";
 
-    khanelivim = {
-      url = "github:khaneliman/khanelivim";
-      # url = "git+file:///Users/khaneliman/Documents/github/khanelivim";
-      # url = "git+file:///home/khaneliman/Documents/github/khanelivim";
-      inputs = {
-        # nixpkgs.follows = "nixpkgs";
-        git-hooks-nix.follows = "git-hooks-nix";
-        snowfall-lib.follows = "snowfall-lib";
-        snowfall-flake.follows = "snowfall-flake";
-      };
-    };
+    khanelivim.url = "github:khaneliman/khanelivim";
+    # khanelivim.url = "git+file:///Users/khaneliman/Documents/github/khanelivim";
+    # khanelivim.url = "git+file:///home/khaneliman/Documents/github/khanelivim";
 
     nix-flatpak.url = "github:gmodena/nix-flatpak";
     nix-index-database.url = "github:nix-community/nix-index-database";
@@ -126,25 +71,52 @@
     };
   };
 
+  # Wired using https://nixos-unified.org/autowiring.html
+  outputs =
+    inputs:
+    inputs.nixos-unified.lib.mkFlake {
+      inherit inputs;
+      root = ./.;
+    };
+
   # outputs =
-  #   inputs:
-  #   let
-  #     inherit (inputs) snowfall-lib;
+  #   inputs@{ flake-parts, self, ... }:
+  #   flake-parts.lib.mkFlake { inherit inputs; } {
+  #     imports = [
+  #       ./flake-modules
+  #     ];
   #
-  #     lib = snowfall-lib.mkLib {
-  #       inherit inputs;
-  #       src = ./.;
+  #     systems = [
+  #       "x86_64-linux"
+  #       "aarch64-darwin"
+  #     ];
+  #     flake = {
+  #       modules = {
+  #         darwin = with inputs; [
+  #           sops-nix.darwinModules.sops
+  #         ];
   #
-  #       snowfall = {
-  #         meta = {
-  #           name = "khanelinix";
-  #           title = "KhaneliNix";
-  #         };
+  #         homes = with inputs; [
+  #           anyrun.homeManagerModules.default
+  #           catppuccin.homeManagerModules.catppuccin
+  #           hypr-socket-watch.homeManagerModules.default
+  #           nix-index-database.hmModules.nix-index
+  #           nur.hmModules.nur
+  #           sops-nix.homeManagerModules.sops
+  #         ];
   #
-  #         namespace = "khanelinix";
+  #         nixos = with inputs; [
+  #           lanzaboote.nixosModules.lanzaboote
+  #           sops-nix.nixosModules.sops
+  #         ];
+  #       };
+  #
+  #       deploy = {
+  #         inherit self;
   #       };
   #     };
-  #   in
+  #   };
+
   #   lib.mkFlake {
   #     channels-config = {
   #       # allowBroken = true;
@@ -174,32 +146,6 @@
   #       ];
   #     };
   #
-  #     overlays = [ ];
-  #
-  #     homes.modules = with inputs; [
-  #       anyrun.homeManagerModules.default
-  #       catppuccin.homeManagerModules.catppuccin
-  #       hypr-socket-watch.homeManagerModules.default
-  #       nix-index-database.hmModules.nix-index
-  #       # FIXME:
-  #       # nur.modules.homeManager.default
-  #       sops-nix.homeManagerModules.sops
-  #     ];
-  #
-  #     systems = {
-  #       modules = {
-  #         darwin = with inputs; [
-  #           sops-nix.darwinModules.sops
-  #         ];
-  #         nixos = with inputs; [
-  #           disko.nixosModules.disko
-  #           lanzaboote.nixosModules.lanzaboote
-  #           nix-flatpak.nixosModules.nix-flatpak
-  #           sops-nix.nixosModules.sops
-  #         ];
-  #       };
-  #     };
-  #
   #     templates = {
   #       angular.description = "Angular template";
   #       c.description = "C flake template.";
@@ -214,11 +160,4 @@
   #       rust-web-server.description = "Rust web server template";
   #       snowfall.description = "Snowfall-lib template";
   #     };
-  #
-  #     deploy = lib.mkDeploy { inherit (inputs) self; };
-  #
-  #     outputs-builder = channels: {
-  #       formatter = inputs.treefmt-nix.lib.mkWrapper channels.nixpkgs ./treefmt.nix;
-  #     };
-  #   };
 }
