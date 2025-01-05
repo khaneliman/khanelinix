@@ -11,14 +11,11 @@ let
     types
     mkIf
     foldl
-    optionalString
     ;
   inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.ssh;
 
-  # @TODO(jakehamilton): This is a hold-over from an earlier Snowfall Lib version which used
-  # the specialArg `name` to provide the host name.
   name = host;
 
   user = config.users.users.${config.${namespace}.user.name};
@@ -30,28 +27,29 @@ let
     key: host: key != name && (host.config.${namespace}.user.name or null) != null
   ) ((inputs.self.nixosConfigurations or { }) // (inputs.self.darwinConfigurations or { }));
 
-  other-hosts-config = lib.concatMapStringsSep "\n" (
-    name:
+  other-hosts-config = lib.foldl' (
+    acc: name:
     let
       remote = other-hosts.${name};
       remote-user-name = remote.config.${namespace}.user.name;
       remote-user-id = builtins.toString remote.config.users.users.${remote-user-name}.uid;
-      indent = "  ";
     in
-    ''
-      Host ${name}
-        Hostname ${name}.local
-        User ${remote-user-name}
-        ForwardAgent yes
-    ''
-    + optionalString (builtins.hasAttr name inputs.self.nixosConfigurations) ''
-      ${indent}Port ${builtins.toString cfg.port}
-    ''
-    + optionalString (config.services.gpg-agent.enable && remote.config.services.gpg-agent.enable) ''
-      ${indent}RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra
-      ${indent}RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh
-    ''
-  ) (builtins.attrNames other-hosts);
+    acc
+    // {
+      ${name} = {
+        hostname = "${name}.local";
+        user = remote-user-name;
+        forwardAgent = true;
+        port = lib.mkIf (builtins.hasAttr name inputs.self.nixosConfigurations) cfg.port;
+        remoteForwards =
+          lib.optionals (config.services.gpg-agent.enable && remote.config.services.gpg-agent.enable)
+            [
+              "/run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra"
+              "/run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh"
+            ];
+      };
+    }
+  ) { } (builtins.attrNames other-hosts);
 in
 {
   options.${namespace}.programs.terminal.tools.ssh = with types; {
@@ -66,10 +64,10 @@ in
       enable = true;
 
       addKeysToAgent = "yes";
+      matchBlocks = other-hosts-config;
+
       extraConfig = ''
         StreamLocalBindUnlink yes
-
-        ${other-hosts-config}
 
         ${cfg.extraConfig}
       '';
