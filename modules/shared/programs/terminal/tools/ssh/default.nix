@@ -64,8 +64,8 @@ in
         ${cfg.extraConfig}
       '';
 
-      # Ship GitHub/GitLab/SourceHut host keys to avoid “man in the middle” attacks
       knownHosts = lib.mapAttrs (_: lib.mkForce) {
+        # Ship GitHub/GitLab/SourceHut host keys to avoid “man in the middle” attacks
         github-rsa = {
           hostNames = [ "github.com" ];
           publicKey = "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==";
@@ -94,6 +94,33 @@ in
         sourcehut-ed25519 = {
           hostNames = [ "git.sr.ht" ];
           publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMZvRd4EtM7R+IHVMWmDkVU3VLQTSwQDSAvW0t2Tkj60";
+        };
+
+        # Community builders
+        "darwin-build-box.nix-community.org" = {
+          hostNames = [ "darwin-build-box.nix-community.org" ];
+          publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKMHhlcn7fUpUuiOFeIhDqBzBNFsbNqq+NpzuGX3e6zv";
+        };
+
+        # Local Hosts
+        khanelimac = {
+          hostNames = [ "khanelimac.local" ];
+          publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJAZIwy7nkz8CZYR/ZTSNr+7lRBW2AYy1jw06b44zaID";
+        };
+
+        "khaneliman@khanelimac" = {
+          hostNames = [ "khanelimac.local" ];
+          publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINBG8l3jQ2EPLU+BlgtaQZpr4xr97n2buTLAZTxKHSsD";
+        };
+
+        "khaneliman@khanelinix" = {
+          hostNames = [ "khanelinix.local" ];
+          publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFuMXeT21L3wnxnuzl0rKuE5+8inPSi8ca/Y3ll4s9pC";
+        };
+
+        khanelinix = {
+          hostNames = [ "khanelinix.local" ];
+          publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKEilFPAgSUwW3N7PTvdTqjaV2MD3cY2oZGKdaS7ndKB";
         };
       };
     };

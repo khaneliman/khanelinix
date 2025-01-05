@@ -196,14 +196,5 @@ in
           use-xdg-base-directories = true;
         };
       };
-
-    programs.ssh.knownHosts = {
-      "darwin-build-box.nix-community.org".publicKey =
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKMHhlcn7fUpUuiOFeIhDqBzBNFsbNqq+NpzuGX3e6zv";
-      "khanelimac".publicKey =
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJAZIwy7nkz8CZYR/ZTSNr+7lRBW2AYy1jw06b44zaID";
-      "khanelinix".publicKey =
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFuMXeT21L3wnxnuzl0rKuE5+8inPSi8ca/Y3ll4s9pC";
-    };
   };
 }
