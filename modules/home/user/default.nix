@@ -135,13 +135,13 @@ in
           sha = "shasum -a 256"; # Test checksum
           ssh-list-perm-user = # Bash
             ''find ~/.ssh -exec stat -c "%a %n" {} \;'';
-          sshperm-user = # bash
+          ssh-perm-user = # bash
             ''
               ${getExe' pkgs.findutils "find"} ~/.ssh -type f -exec chmod 600 {} \;; ${getExe' pkgs.findutils "find"} ~/.ssh -type d -exec chmod 700 {} \;; ${getExe' pkgs.findutils "find"} ~/.ssh -type f -name "*.pub" -exec chmod 644 {} \;
             '';
           ssh-list-perm-system = # Bash
             ''sudo find /etc/ssh -exec stat -c "%a %n" {} \;'';
-          sshperm-system = # bash
+          ssh-perm-system = # bash
             ''
               sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type f -exec chmod 600 {} \;; sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type d -exec chmod 700 {} \;;sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type f -name "*.pub" -exec chmod 644 {} \;
             '';
