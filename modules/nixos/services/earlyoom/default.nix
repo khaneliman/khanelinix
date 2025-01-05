@@ -29,6 +29,7 @@ in
 
       extraArgs =
         let
+          # Don't kill please...
           appsToAvoid = concatStringsSep "|" [
             "(h|H)yprland"
             "(x|X)wayland"
@@ -55,6 +56,7 @@ in
             "zsh"
           ];
 
+          # Burn it with fire!
           appsToPrefer = concatStringsSep "|" [
             "Web Content"
             "Isolated Web Co"
@@ -72,11 +74,11 @@ in
           ];
         in
         [
-          "-g" # kill all processes within a process group
+          "-g" # Kill all processes within a process group
           "--avoid"
-          "'^(${appsToAvoid})$'" # things we want to not kill
+          "'^(${appsToAvoid})$'"
           "--prefer"
-          "'^(${appsToPrefer})$'" # things we want to kill as soon as possible
+          "'^(${appsToPrefer})$'"
         ];
 
       killHook = pkgs.writeShellScript "earlyoom-kill-hook" ''
