@@ -59,9 +59,6 @@ let
   ) (builtins.attrNames other-hosts);
 in
 {
-
-  imports = [ (lib.snowfall.fs.get-file "modules/shared/programs/terminal/tools/ssh/default.nix") ];
-
   options.${namespace}.services.openssh = with types; {
     enable = mkBoolOpt false "Whether or not to configure OpenSSH support.";
     authorizedKeys = mkOpt (listOf str) [ default-key ] "The public keys to apply.";

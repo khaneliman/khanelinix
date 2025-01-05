@@ -45,6 +45,7 @@ in
           tools = {
             bandwhich = mkDefault enabled;
             nix-ld = mkDefault enabled;
+            ssh = mkDefault enabled;
           };
         };
       };
