@@ -50,6 +50,8 @@ in
 
       nix = mkDefault enabled;
 
+      programs.terminal.tools.ssh = mkDefault enabled;
+
       tools = {
         homebrew = mkDefault enabled;
       };
