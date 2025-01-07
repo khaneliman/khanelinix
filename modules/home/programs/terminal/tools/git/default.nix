@@ -64,8 +64,7 @@ in
     programs = {
       git = {
         enable = true;
-        # FIXME: broken nixpkgs
-        # package = pkgs.gitFull;
+        package = pkgs.gitFull;
         inherit (cfg) includes userName userEmail;
         inherit (aliases) aliases;
         inherit (ignores) ignores;
