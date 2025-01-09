@@ -71,8 +71,6 @@
       inputs = {
         # nixpkgs.follows = "nixpkgs";
         git-hooks-nix.follows = "git-hooks-nix";
-        snowfall-lib.follows = "snowfall-lib";
-        snowfall-flake.follows = "snowfall-flake";
       };
     };
 
