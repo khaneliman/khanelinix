@@ -18,8 +18,5 @@ _final: _prev: {
     monitorcontrol
     stats
     switchaudio-osx
-
-    # TODO: remove after nixos-unstable has fixes
-    bat-extras
     ;
 }
