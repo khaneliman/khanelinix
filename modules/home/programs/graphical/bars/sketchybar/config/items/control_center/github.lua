@@ -95,7 +95,7 @@ github:subscribe({
 			count = count + 1
 
 			local id = notification.id
-			local url = notification.subject.latest_comment_url
+			local url = notification.subject.latest_comment_url or notification.subject.url
 			local repo = notification.repository.name
 			local title = notification.subject.title
 			local type = notification.subject.type
