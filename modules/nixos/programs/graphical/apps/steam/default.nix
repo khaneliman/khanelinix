@@ -21,13 +21,16 @@ in
       systemPackages = with pkgs; [ steamtinkerlaunch ];
     };
 
+    hardware.steam-hardware.enable = true;
+
     programs.steam = {
       enable = true;
+      extest.enable = true;
+      localNetworkGameTransfers.openFirewall = true;
+      protontricks.enable = true;
       remotePlay.openFirewall = true;
 
       extraCompatPackages = [ pkgs.proton-ge-bin.steamcompattool ];
     };
-
-    hardware.steam-hardware.enable = true;
   };
 }
