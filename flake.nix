@@ -72,7 +72,7 @@
       };
     };
 
-    nix-flatpak.url = "github:gmodena/nix-flatpak";
+    nix-flatpak.url = "github:gmodena/nix-flatpak/latest";
     nix-index-database.url = "github:nix-community/nix-index-database";
     nur.url = "github:nix-community/NUR";
     snowfall-flake.url = "github:snowfallorg/flake";
