@@ -1,29 +1,30 @@
 {
   lib,
-  flake,
+  self,
+  ...
 }:
 lib.makeExtensible (
-  self:
+  self':
   let
     call = lib.callPackageWith {
-      inherit call self lib;
+      inherit call self' lib;
     };
   in
   {
     audio = call ./audio/default.nix { };
     base64 = call ./base64/default.nix { };
     deploy = call ./deploy/default.nix {
-      inherit (flake) inputs;
+      inherit (self) inputs;
     };
-    file = call ./file/default.nix { };
+    file = call ./file/default.nix { inherit lib; };
     module = call ./module/default.nix { };
     packages = call ./packages/default.nix { };
     network = call ./network/default.nix {
-      inherit (flake) inputs;
+      inherit (self) inputs;
     };
     theme = call ./theme/default.nix { };
 
-    inherit (self.module)
+    inherit (self'.module)
       mkOpt
       mkOpt'
       mkBoolOpt
@@ -32,6 +33,10 @@ lib.makeExtensible (
       disabled
       capitalize
       boolToNum
+      ;
+
+    inherit (self'.file)
+      readAllFiles
       ;
   }
 )

@@ -1,4 +1,8 @@
-{ lib, inputs, ... }:
+{
+  inputs,
+  lib,
+  ...
+}:
 {
   imports = lib.optional (
     inputs.pkgs-by-name-for-flake-parts ? flakeModule
@@ -10,6 +14,6 @@
       ...
     }:
     lib.optionalAttrs (inputs.pkgs-by-name-for-flake-parts ? flakeModule) {
-      pkgsDirectory = ../../packages;
+      pkgsDirectory = ../packages;
     };
 }
