@@ -1363,7 +1363,6 @@
         ],
         "home-manager": "home-manager_3",
         "nix-darwin": "nix-darwin",
-        "nixos-unified": "nixos-unified",
         "nixpkgs": "nixpkgs_13",
         "nixpkgs-tree-sitter": "nixpkgs-tree-sitter",
         "nixvim": "nixvim",
@@ -1371,11 +1370,11 @@
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
-        "lastModified": 1736900357,
-        "narHash": "sha256-IYquumHZ+dXL5QyWJtTBo8Salu43vAz7yYMRfMZjF7U=",
+        "lastModified": 1736953235,
+        "narHash": "sha256-s4OmWkFTGRmzulJ4CO6UbD3/vbfc02CTSPSwcWrZozw=",
         "owner": "khaneliman",
         "repo": "khanelivim",
-        "rev": "5b598a67b94f3412d7dafdea8d1c35459fb57f5a",
+        "rev": "7d9638d5b6e4ad2dfd7e4e936b5ade6deba07a9a",
         "type": "github"
       },
       "original": {
@@ -1500,21 +1499,6 @@
       "original": {
         "owner": "nix-community",
         "repo": "nix-index-database",
-        "type": "github"
-      }
-    },
-    "nixos-unified": {
-      "locked": {
-        "lastModified": 1736869773,
-        "narHash": "sha256-tsA4X1c+/9/hmr7kqj5o4pJDexoWUQOYEmkeqKo4oD8=",
-        "owner": "srid",
-        "repo": "nixos-unified",
-        "rev": "4fed581e24ad7292eebfe4527948974efb68857d",
-        "type": "github"
-      },
-      "original": {
-        "owner": "srid",
-        "repo": "nixos-unified",
         "type": "github"
       }
     },
@@ -2058,11 +2042,11 @@
         "treefmt-nix": "treefmt-nix_3"
       },
       "locked": {
-        "lastModified": 1736886709,
-        "narHash": "sha256-K1FOREL0/pIWxoXV5TpT2LM6ZJRe+Yu2OjoSagTBMUE=",
+        "lastModified": 1736936822,
+        "narHash": "sha256-Hj0wyNlxSDxXx6IchzTteHltWj3YOJ35t9SBP1LXb9g=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "3a65a10385feb20b4f01e2220d84c4b053512a41",
+        "rev": "a0194337bf20730deab4a7e893010cb98abac745",
         "type": "github"
       },
       "original": {
