@@ -67,17 +67,6 @@
             "*flake.lock"
             "justfile"
             "assets/*"
-            "*.svg"
-            "*.png"
-            "*.ico"
-            "*.gif"
-            "*makefile"
-            "*.rasi"
-            "*.xml"
-            "*.zsh"
-            "*.tmux"
-            "*.kdl"
-            "*Makefile*"
           ];
 
           formatter.ruff-format.options = [ "--isolated" ];
