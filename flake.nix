@@ -3,6 +3,7 @@
 
   inputs = {
     # Core Inputs
+    ez-configs.url = "github:ehllie/ez-configs";
     flake-parts.url = "github:hercules-ci/flake-parts";
     home-manager.url = "github:nix-community/home-manager";
     # home-manager.url = "git+file:///home/khaneliman/Documents/github/home-manager";
@@ -61,12 +62,12 @@
     }@inputs:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [
-        "aarch64-linux"
         "x86_64-linux"
         "aarch64-darwin"
-        "x86_64-darwin"
       ];
 
-      imports = [ ./flake-modules ];
+      imports = [
+        ./flake-modules
+      ];
     };
 }

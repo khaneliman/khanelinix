@@ -6,7 +6,7 @@
 }:
 {
   imports = [
-    ./checks.nix
+    ./configs.nix
     ./devshell.nix
     ./git-hooks.nix
     ./lib.nix
