@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.khanelinix) mkOpt enabled;
+  inherit (flake.inputs.self.lib.khanelinix) mkOpt enabled;
 
   cfg = config.khanelinix.services.nix-daemon;
 in

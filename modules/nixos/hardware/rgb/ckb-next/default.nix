@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.khanelinix) mkBoolOpt mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.hardware.rgb.ckb-next;
 in

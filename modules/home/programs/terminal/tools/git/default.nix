@@ -14,7 +14,7 @@ let
     mkForce
     getExe'
     ;
-  inherit (lib.khanelinix) mkOpt mkBoolOpt enabled;
+  inherit (flake.inputs.self.lib.khanelinix) mkOpt mkBoolOpt enabled;
   inherit (config.khanelinix) user;
 
   cfg = config.khanelinix.programs.terminal.tools.git;

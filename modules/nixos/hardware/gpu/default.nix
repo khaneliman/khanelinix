@@ -1,6 +1,6 @@
 { lib, ... }:
 let
-  inherit (lib.khanelinix) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 in
 {
   options.khanelinix.hardware.gpu = {

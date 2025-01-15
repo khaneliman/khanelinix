@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.khanelinix) mkBoolOpt mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.programs.graphical.apps.thunderbird;
 in

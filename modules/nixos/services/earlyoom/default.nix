@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) concatStringsSep mkIf;
-  inherit (lib.khanelinix) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
   cfg = config.khanelinix.services.earlyoom;
 in

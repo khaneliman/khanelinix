@@ -1,11 +1,10 @@
 {
   config,
-  lib,
-  root,
+  flake,
   ...
 }:
 let
-  inherit (lib.khanelinix) enabled;
+  inherit (flake.inputs.self.lib.khanelinix) enabled;
 in
 {
   # imports = [
@@ -175,7 +174,7 @@ in
       sops = {
         enable = true;
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-        defaultSopsFile = root + "/secrets/khanelinix/default.yaml";
+        # defaultSopsFile = flake.inputs.self + "/secrets/khanelinix/default.yaml";
       };
     };
 

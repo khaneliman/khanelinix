@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib.khanelinix) mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkOpt;
 in
 {
 

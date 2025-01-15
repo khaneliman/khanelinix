@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) mkIf getExe' stringAfter;
-  inherit (lib.khanelinix) mkBoolOpt enabled;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt enabled;
 
   cfg = config.khanelinix.display-managers.sddm;
 in

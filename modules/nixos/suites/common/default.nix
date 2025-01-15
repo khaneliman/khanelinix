@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.khanelinix) enabled;
+  inherit (flake.inputs.self.lib.khanelinix) enabled;
 
   cfg = config.khanelinix.suites.common;
 in

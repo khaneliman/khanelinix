@@ -1,13 +1,14 @@
 {
   config,
   lib,
-  root,
   osConfig,
+  root,
+  flake,
   ...
 }:
 let
   inherit (lib) mkForce;
-  inherit (lib.khanelinix) enabled disabled;
+  inherit (flake.inputs.self.lib.khanelinix) enabled disabled;
 in
 {
   khanelinix = {

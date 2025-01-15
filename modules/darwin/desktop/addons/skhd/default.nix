@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) mkIf getExe;
-  inherit (lib.khanelinix) mkBoolOpt mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt;
 
   sketchybar = getExe config.services.sketchybar.package;
   yabai = getExe config.services.yabai.package;

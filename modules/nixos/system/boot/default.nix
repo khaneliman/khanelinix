@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.khanelinix) mkBoolOpt default-attrs;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt default-attrs;
 
   cfg = config.khanelinix.system.boot;
   themeCfg = config.khanelinix.theme;

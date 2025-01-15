@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.khanelinix) mkBoolOpt enabled;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt enabled;
 
   cfg = config.khanelinix.archetypes.server;
 in

@@ -2,11 +2,12 @@
   config,
   lib,
   root,
+  flake,
   ...
 }:
 let
   inherit (lib) mkForce;
-  inherit (lib.khanelinix) enabled disabled;
+  inherit (flake.inputs.self.lib.khanelinix) enabled disabled;
 in
 {
   khanelinix = {
@@ -23,8 +24,8 @@ in
             extraAccounts =
               let
                 # Not super secret, just doesn't need to be scraped so easily.
-                outlook = lib.khanelinix.decode "a2hhbmVsaW1hbjEyQG91dGxvb2suY29t";
-                personal = lib.khanelinix.decode "YXVzdGluLm0uaG9yc3RtYW5AZ21haWwuY29t";
+                outlook = flake.inputs.self.lib.khanelinix.decode "a2hhbmVsaW1hbjEyQG91dGxvb2suY29t";
+                personal = flake.inputs.self.lib.khanelinix.decode "YXVzdGluLm0uaG9yc3RtYW5AZ21haWwuY29t";
 
               in
               {

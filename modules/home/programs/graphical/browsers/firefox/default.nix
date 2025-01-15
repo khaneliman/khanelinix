@@ -12,7 +12,7 @@ let
     mkMerge
     optionalAttrs
     ;
-  inherit (lib.khanelinix) mkBoolOpt mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.programs.graphical.browsers.firefox;
 

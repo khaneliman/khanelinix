@@ -9,7 +9,7 @@
 }:
 let
   inherit (lib) mkIf mkEnableOption getExe;
-  inherit (lib.khanelinix) enabled;
+  inherit (flake.inputs.self.lib.khanelinix) enabled;
   inherit (inputs) hyprland;
 
   cfg = config.khanelinix.programs.graphical.wms.hyprland;

@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) types mkIf getExe';
-  inherit (lib.khanelinix) mkBoolOpt mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.programs.terminal.tools.prisma;
 in

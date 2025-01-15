@@ -13,7 +13,7 @@ let
     mkOption
     types
     ;
-  inherit (lib.khanelinix) enabled capitalize;
+  inherit (flake.inputs.self.lib.khanelinix) enabled capitalize;
 
   cfg = config.khanelinix.theme.catppuccin;
 

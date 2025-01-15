@@ -1,10 +1,9 @@
 {
-  lib,
-  root,
+  flake,
   ...
 }:
 let
-  inherit (lib.khanelinix) enabled disabled;
+  inherit (flake.inputs.self.lib.khanelinix) enabled disabled;
 in
 {
   khanelinix = {

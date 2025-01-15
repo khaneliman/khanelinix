@@ -14,7 +14,7 @@ let
     concatStringsSep
     getExe
     ;
-  inherit (lib.khanelinix) mkBoolOpt mkOpt enabled;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt enabled;
   inherit (config.khanelinix) user;
 
   cfg = config.khanelinix.virtualisation.kvm;

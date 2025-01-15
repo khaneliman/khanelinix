@@ -1,10 +1,10 @@
 {
   config,
-  lib,
+  flake,
   ...
 }:
 let
-  inherit (lib.khanelinix) enabled;
+  inherit (flake.inputs.self.lib.khanelinix) enabled;
 in
 {
   # imports = [

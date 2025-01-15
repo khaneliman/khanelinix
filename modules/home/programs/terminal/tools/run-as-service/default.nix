@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.khanelinix) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
   inherit (lib.strings) optionalString concatStringsSep;
   inherit (lib.attrsets) mapAttrsToList;
 

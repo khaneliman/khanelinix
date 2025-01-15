@@ -9,7 +9,7 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.khanelinix) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
   inherit (inputs) anyrun anyrun-nixos-options;
 
   cfg = config.khanelinix.programs.graphical.launchers.anyrun;

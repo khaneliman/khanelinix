@@ -12,7 +12,7 @@ let
     getExe'
     stringAfter
     ;
-  inherit (lib.khanelinix) mkBoolOpt mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.display-managers.gdm;
   gdmHome = config.users.users.gdm.home;

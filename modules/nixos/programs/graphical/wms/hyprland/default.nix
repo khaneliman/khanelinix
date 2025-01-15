@@ -14,7 +14,7 @@ let
     mkIf
     types
     ;
-  inherit (lib.khanelinix) mkBoolOpt mkOpt enabled;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt enabled;
   inherit (inputs) hyprland;
 
   cfg = config.khanelinix.programs.graphical.wms.hyprland;

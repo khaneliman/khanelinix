@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib) mkEnableOption mkIf;
-  inherit (lib.khanelinix) mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.services.rustdesk-server;
 in

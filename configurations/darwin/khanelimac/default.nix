@@ -1,11 +1,11 @@
 {
-  lib,
   config,
   root,
+  flake,
   ...
 }:
 let
-  inherit (lib.khanelinix) enabled;
+  inherit (flake.inputs.self.lib.khanelinix) enabled;
 
   cfg = config.khanelinix.user;
 in

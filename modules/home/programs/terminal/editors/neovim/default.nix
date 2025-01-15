@@ -10,7 +10,7 @@
 }:
 let
   inherit (lib) mkEnableOption mkIf;
-  inherit (lib.khanelinix) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
   inherit (inputs) khanelivim;
 
   cfg = config.khanelinix.programs.terminal.editors.neovim;

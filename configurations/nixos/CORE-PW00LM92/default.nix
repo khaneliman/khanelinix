@@ -1,7 +1,7 @@
-{ lib, ... }:
+{ lib, flake, ... }:
 let
   inherit (lib) mkForce;
-  inherit (lib.khanelinix) enabled disabled;
+  inherit (flake.inputs.self.lib.khanelinix) enabled disabled;
 in
 {
   # imports = [ ./hardware.nix ];

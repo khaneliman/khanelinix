@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) types mkAliasDefinitions;
-  inherit (lib.khanelinix) mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkOpt;
 in
 {
 

@@ -8,7 +8,7 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.khanelinix) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
   inherit (inputs) wezterm;
 
   cfg = config.khanelinix.programs.terminal.emulators.wezterm;

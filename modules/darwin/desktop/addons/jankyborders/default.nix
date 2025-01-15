@@ -10,7 +10,7 @@ let
 in
 {
   options.khanelinix.desktop.addons.jankyborders = {
-    enable = lib.khanelinix.mkBoolOpt false "Whether to enable jankyborders in the desktop environment.";
+    enable = flake.inputs.self.lib.khanelinix.mkBoolOpt false "Whether to enable jankyborders in the desktop environment.";
     package = lib.mkOption {
       type = lib.types.package;
       default = pkgs.jankyborders;

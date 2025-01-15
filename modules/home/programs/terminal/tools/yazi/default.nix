@@ -8,7 +8,7 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.khanelinix) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
   completion = import ./keymap/completion.nix { };
   help = import ./keymap/help.nix { };

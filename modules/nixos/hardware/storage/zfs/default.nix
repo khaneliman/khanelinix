@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib) mkEnableOption mkIf mkDefault;
-  inherit (lib.khanelinix) mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkOpt;
   inherit (lib.types) listOf str;
 
   cfg = config.khanelinix.hardware.storage.zfs;

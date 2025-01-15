@@ -12,7 +12,7 @@ let
     genAttrs
     getExe
     ;
-  inherit (lib.khanelinix) mkBoolOpt mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt;
   inherit (cfg) dedupeFilesystems;
 
   cfg = config.khanelinix.hardware.storage.btrfs;

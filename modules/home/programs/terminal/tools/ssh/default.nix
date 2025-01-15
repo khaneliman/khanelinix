@@ -12,7 +12,7 @@ let
     mkIf
     foldl
     ;
-  inherit (lib.khanelinix) mkBoolOpt mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.programs.terminal.tools.ssh;
 

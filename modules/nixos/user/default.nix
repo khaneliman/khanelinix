@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) types;
-  inherit (lib.khanelinix) mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.user;
 in

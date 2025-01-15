@@ -14,7 +14,7 @@ let
     getExe
     getExe'
     ;
-  inherit (lib.khanelinix) mkOpt enabled;
+  inherit (flake.inputs.self.lib.khanelinix) mkOpt enabled;
 
   cfg = config.khanelinix.user;
 

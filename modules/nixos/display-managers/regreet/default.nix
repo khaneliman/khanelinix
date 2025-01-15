@@ -14,7 +14,7 @@ let
     getExe
     getExe'
     ;
-  inherit (lib.khanelinix) mkBoolOpt mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt;
   inherit (inputs) hyprland;
 
   cfg = config.khanelinix.display-managers.regreet;

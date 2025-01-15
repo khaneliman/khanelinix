@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) mkIf mkEnableOption getExe;
-  inherit (lib.khanelinix) enabled;
+  inherit (flake.inputs.self.lib.khanelinix) enabled;
 
   cfg = config.khanelinix.programs.graphical.wms.sway;
 

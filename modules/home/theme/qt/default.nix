@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) types mkDefault mkIf;
-  inherit (lib.khanelinix) mkBoolOpt mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.theme.qt;
 in

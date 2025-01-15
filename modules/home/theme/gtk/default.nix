@@ -8,7 +8,7 @@
 }:
 let
   inherit (lib) mkIf mkDefault types;
-  inherit (lib.khanelinix)
+  inherit (flake.inputs.self.lib.khanelinix)
     boolToNum
     mkBoolOpt
     mkOpt

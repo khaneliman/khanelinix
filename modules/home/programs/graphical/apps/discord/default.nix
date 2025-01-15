@@ -8,7 +8,7 @@
 }:
 let
   inherit (lib) mkIf getExe;
-  inherit (lib.khanelinix) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
   inherit (inputs) home-manager;
 
   cfg = config.khanelinix.programs.graphical.apps.discord;

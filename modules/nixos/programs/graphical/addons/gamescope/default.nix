@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) getExe mkIf;
-  inherit (lib.khanelinix) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
   cfg = config.khanelinix.programs.graphical.addons.gamescope;
 in

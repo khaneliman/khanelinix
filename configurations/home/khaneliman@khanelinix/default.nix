@@ -3,11 +3,12 @@
   lib,
   pkgs,
   root,
+  flake,
   ...
 }:
 let
   inherit (lib) getExe;
-  inherit (lib.khanelinix) enabled;
+  inherit (flake.inputs.self.lib.khanelinix) enabled;
 in
 {
   khanelinix = {
@@ -25,8 +26,8 @@ in
             extraAccounts =
               let
                 # Not super secret, just doesn't need to be scraped so easily.
-                outlook = lib.khanelinix.decode "a2hhbmVsaW1hbjEyQG91dGxvb2suY29t";
-                personal = lib.khanelinix.decode "YXVzdGluLm0uaG9yc3RtYW5AZ21haWwuY29t";
+                outlook = flake.inputs.self.lib.khanelinix.decode "a2hhbmVsaW1hbjEyQG91dGxvb2suY29t";
+                personal = flake.inputs.self.lib.khanelinix.decode "YXVzdGluLm0uaG9yc3RtYW5AZ21haWwuY29t";
 
               in
               {

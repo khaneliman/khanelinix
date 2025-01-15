@@ -67,7 +67,7 @@ in
     syntect_theme =
       let
         cfg = config.khanelinix.theme.catppuccin;
-        inherit (lib.khanelinix) capitalize;
+        inherit (flake.inputs.self.lib.khanelinix) capitalize;
       in
       "/bat/Catppuccin ${capitalize cfg.flavor}.tmTheme";
   };

@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.khanelinix) mkBoolOpt mkOpt enabled;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt enabled;
 
   cfg = config.khanelinix.programs.graphical.wms.sway;
 in

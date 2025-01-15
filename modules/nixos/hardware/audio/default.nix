@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) types mkIf mkForce;
-  inherit (lib.khanelinix) mkBoolOpt mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.hardware.audio;
 in

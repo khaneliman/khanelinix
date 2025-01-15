@@ -8,7 +8,7 @@
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.khanelinix) mkBoolOpt enabled;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt enabled;
   inherit (inputs) snowfall-flake;
 
   cfg = config.khanelinix.suites.development;

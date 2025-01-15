@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) mkIf getExe;
-  inherit (lib.khanelinix) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
   inherit (config.khanelinix) user;
   inherit (config.users.users.${user.name}) home;
 

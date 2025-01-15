@@ -12,7 +12,7 @@ let
     mkOption
     types
     ;
-  inherit (lib.khanelinix) mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.theme;
 

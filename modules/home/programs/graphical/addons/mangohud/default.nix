@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) mkIf literalExpression;
-  inherit (lib.khanelinix) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
   cfg = config.khanelinix.programs.graphical.mangohud;
 in

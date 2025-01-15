@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) mkDefault mkIf versionOlder;
-  inherit (lib.khanelinix) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
   cfg = config.khanelinix.hardware.gpu.nvidia;
 
   # use the latest possible nvidia package

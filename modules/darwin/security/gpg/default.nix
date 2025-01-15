@@ -12,7 +12,7 @@ let
     mkIf
     getExe'
     ;
-  inherit (lib.khanelinix) mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.security.gpg;
 

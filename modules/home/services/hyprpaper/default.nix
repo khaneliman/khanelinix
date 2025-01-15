@@ -15,7 +15,7 @@ let
     mkOption
     ;
   inherit (inputs) hypr-socket-watch;
-  inherit (lib.khanelinix) mkOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.services.hyprpaper;
 in

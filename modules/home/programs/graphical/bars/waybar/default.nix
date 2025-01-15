@@ -16,7 +16,7 @@ let
     mkMerge
     types
     ;
-  inherit (lib.khanelinix) mkOpt mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkOpt mkBoolOpt;
   inherit (inputs) waybar;
 
   cfg = config.khanelinix.programs.graphical.bars.waybar;

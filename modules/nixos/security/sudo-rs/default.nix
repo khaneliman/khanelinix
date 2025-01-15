@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib.khanelinix) mkBoolOpt;
+  inherit (flake.inputs.self.lib.khanelinix) mkBoolOpt;
 
   cfg = config.khanelinix.security.sudo-rs;
 in

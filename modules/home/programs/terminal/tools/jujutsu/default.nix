@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) types mkEnableOption mkIf;
-  inherit (lib.khanelinix) mkOpt enabled;
+  inherit (flake.inputs.self.lib.khanelinix) mkOpt enabled;
   inherit (config.khanelinix) user;
 
   cfg = config.khanelinix.programs.terminal.tools.jujutsu;

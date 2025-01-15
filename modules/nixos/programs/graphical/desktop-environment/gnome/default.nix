@@ -14,7 +14,7 @@ let
     getExe
     mkDefault
     ;
-  inherit (lib.khanelinix)
+  inherit (flake.inputs.self.lib.khanelinix)
     enabled
     mkBoolOpt
     mkOpt
