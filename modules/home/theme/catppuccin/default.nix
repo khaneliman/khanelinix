@@ -141,6 +141,7 @@ in
       foot = enabled;
       fzf = enabled;
       gh-dash = enabled;
+      ghostty = enabled;
       gitui = enabled;
       glamour = enabled;
       helix = enabled;
