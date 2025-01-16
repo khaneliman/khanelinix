@@ -40,6 +40,7 @@ in
           emulators = {
             alacritty = mkDefault enabled;
             foot.enable = pkgs.stdenv.isLinux;
+            ghostty = mkDefault enabled;
             kitty = mkDefault enabled;
             warp = mkDefault enabled;
             wezterm = mkDefault enabled;
