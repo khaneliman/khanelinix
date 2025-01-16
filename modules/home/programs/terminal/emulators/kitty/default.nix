@@ -14,7 +14,12 @@ in
 {
   options.${namespace}.programs.terminal.emulators.kitty = with types; {
     enable = mkBoolOpt false "Whether to enable kitty.";
-    font = mkOpt str "MonaspiceKr Nerd Font" "Font to use for kitty.";
+    font = {
+      normal = mkOpt str "MonaspiceNe Nerd Font" "Font to use for alacritty.";
+      bold = mkOpt str "MonaspiceXe Nerd Font" "Font to use for alacritty.";
+      italic = mkOpt str "MonaspiceRn Nerd Font" "Font to use for alacritty.";
+      bold_italic = mkOpt str "MonaspiceKr Nerd Font" "Font to use for alacritty.";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -82,10 +87,10 @@ in
       settings =
         {
           # Fonts
-          font_family = cfg.font;
-          italic_font = "auto";
-          bold_font = "auto";
-          bold_italic_font = "auto";
+          font_family = cfg.font.normal;
+          italic_font = cfg.font.italic;
+          bold_font = cfg.font.bold;
+          bold_italic_font = cfg.font.bold_italic;
           font_size = 13;
 
           adjust_line_height = 0;
