@@ -14,7 +14,12 @@ in
 {
   options.${namespace}.programs.terminal.emulators.alacritty = with types; {
     enable = mkBoolOpt false "Whether to enable alacritty.";
-    font = mkOpt str "MonaspiceKr Nerd Font" "Font to use for alacritty.";
+    font = {
+      normal = mkOpt str "MonaspiceNe Nerd Font" "Font to use for alacritty.";
+      bold = mkOpt str "MonaspiceXe Nerd Font" "Font to use for alacritty.";
+      italic = mkOpt str "MonaspiceRn Nerd Font" "Font to use for alacritty.";
+      bold_italic = mkOpt str "MonaspiceKr Nerd Font" "Font to use for alacritty.";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -45,18 +50,18 @@ in
             };
 
             normal = {
-              family = cfg.font;
+              family = cfg.font.normal;
             };
             bold = {
-              family = cfg.font;
+              family = cfg.font.bold;
               style = "Bold";
             };
             italic = {
-              family = cfg.font;
+              family = cfg.font.italic;
               style = "italic";
             };
             bold_italic = {
-              family = cfg.font;
+              family = cfg.font.bold_italic;
               style = "bold_italic";
             };
           };
