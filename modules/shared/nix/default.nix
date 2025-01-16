@@ -91,7 +91,7 @@ in
                   "x86_64-linux"
                   "aarch64-linux"
                 ];
-                maxJobs = 16;
+                maxJobs = 8;
                 speedFactor = 10;
                 supportedFeatures = supportedFeatures ++ [ "kvm" ];
               }
@@ -112,7 +112,7 @@ in
                 {
                   inherit sshUser systems;
                   hostName = "khanelimac.local";
-                  maxJobs = 16;
+                  maxJobs = 8;
                   speedFactor = 10;
                   supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
                 }
@@ -125,7 +125,7 @@ in
                 {
                   inherit sshUser systems;
                   hostName = "darwin-build-box.nix-community.org";
-                  maxJobs = 5;
+                  maxJobs = 4;
                   speedFactor = 5;
                   supportedFeatures = [ "big-parallel" ];
                   publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUtNSGhsY243ZlVwVXVpT0ZlSWhEcUJ6Qk5Gc2JOcXErTnB6dUdYM2U2enYgCg";
