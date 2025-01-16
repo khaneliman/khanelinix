@@ -32,6 +32,7 @@ in
       settings = {
         background-opacity = 0.8;
         window-decoration = lib.mkIf pkgs.stdenv.hostPlatform.isLinux false;
+        # Breaks tab functionality, but tab functionality is broken with yabai
         macos-titlebar-style = "hidden";
       };
     };
