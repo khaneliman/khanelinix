@@ -84,6 +84,24 @@ in
           in
           lib.optionals config.${namespace}.security.sops.enable [
             (
+              lib.mkIf (host != "bruddynix") {
+                inherit sshUser;
+                hostName = "bruddynix.local";
+                systems = [
+                  "x86_64-linux"
+                ];
+                maxJobs = 4;
+                speedFactor = 0;
+                inherit supportedFeatures;
+              }
+              // lib.optionalAttrs (host == "khanelimac") {
+                sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+              }
+              // lib.optionalAttrs (host == "khanelinix") {
+                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
+              }
+            )
+            (
               lib.mkIf (host != "khanelinix") {
                 inherit sshUser;
                 hostName = "khanelinix.local";
