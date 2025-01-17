@@ -105,6 +105,10 @@ in
           hostNames = [ "darwin-build-box.nix-community.org" ];
           publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKMHhlcn7fUpUuiOFeIhDqBzBNFsbNqq+NpzuGX3e6zv";
         };
+        "build-box.nix-community.org" = {
+          hostNames = [ "build-box.nix-community.org" ];
+          publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIElIQ54qAy7Dh63rBudYKdbzJHrrbrrMXLYl7Pkmk88H";
+        };
 
         # Local Hosts
         khanelimac = {
