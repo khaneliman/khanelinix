@@ -82,6 +82,7 @@ in
               "nixos-test"
             ];
           in
+          # Linux builders
           lib.optionals config.${namespace}.security.sops.enable [
             (
               lib.mkIf (host != "bruddynix") {
@@ -138,7 +139,8 @@ in
               }
             )
           ]
-          ++ lib.optionals (config.${namespace}.security.sops.enable && pkgs.stdenv.hostPlatform.isLinux) (
+          # Darwin builders
+          ++ lib.optionals config.${namespace}.security.sops.enable (
             let
               systems = [
                 "aarch64-darwin"
@@ -147,7 +149,7 @@ in
             in
             [
               (
-                {
+                lib.mkIf (host != "khanelimac") {
                   inherit sshUser systems;
                   hostName = "khanelimac.local";
                   maxJobs = 8;
@@ -173,6 +175,8 @@ in
                 }
                 // lib.optionalAttrs (host == "khanelimac") {
                   sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+                  # We are faster, prefer local.
+                  speedFactor = 0;
                 }
               )
             ]
