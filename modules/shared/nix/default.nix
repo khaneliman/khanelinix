@@ -99,6 +99,26 @@ in
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
               }
             )
+            (
+              {
+                inherit sshUser;
+                hostName = "aarch64-build-box.nix-community.org";
+                maxJobs = 10;
+                speedFactor = 20;
+                system = "aarch64-linux";
+                supportedFeatures = [
+                  "big-parallel"
+                  "kvm"
+                  "nixos-test"
+                ];
+              }
+              // lib.optionalAttrs (host == "khanelimac") {
+                sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+              }
+              // lib.optionalAttrs (host == "khanelinix") {
+                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
+              }
+            )
           ]
           ++ lib.optionals (config.${namespace}.security.sops.enable && pkgs.stdenv.hostPlatform.isLinux) (
             let
@@ -137,7 +157,6 @@ in
                   sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
                 }
               )
-
             ]
           );
 
