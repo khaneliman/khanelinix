@@ -92,7 +92,7 @@ in
                   "x86_64-linux"
                 ];
                 maxJobs = 4;
-                speedFactor = 0;
+                speedFactor = 1;
                 inherit supportedFeatures;
               }
               // lib.optionalAttrs (host == "khanelimac") {
@@ -103,19 +103,21 @@ in
               }
             )
             (
-              lib.mkIf (host != "khanelinix") {
+              {
                 inherit sshUser;
                 hostName = "khanelinix.local";
                 systems = [
                   "x86_64-linux"
-                  "aarch64-linux"
                 ];
                 maxJobs = 8;
-                speedFactor = 10;
+                speedFactor = 2;
                 supportedFeatures = supportedFeatures ++ [ "kvm" ];
               }
               // lib.optionalAttrs (host == "khanelimac") {
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+              }
+              // lib.optionalAttrs (host == "khanelinix") {
+                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
               }
             )
             (
@@ -123,7 +125,7 @@ in
                 inherit sshUser;
                 hostName = "aarch64-build-box.nix-community.org";
                 maxJobs = 10;
-                speedFactor = 20;
+                speedFactor = 1;
                 system = "aarch64-linux";
                 supportedFeatures = [
                   "big-parallel"
@@ -138,49 +140,48 @@ in
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
               }
             )
-          ]
-          # Darwin builders
-          ++ lib.optionals config.${namespace}.security.sops.enable (
-            let
-              systems = [
-                "aarch64-darwin"
-                "x86_64-darwin"
-              ];
-            in
-            [
-              (
-                lib.mkIf (host != "khanelimac") {
-                  inherit sshUser systems;
-                  hostName = "khanelimac.local";
-                  maxJobs = 8;
-                  speedFactor = 10;
-                  supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
-                }
-                // lib.optionalAttrs (host == "khanelinix") {
-                  sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
-                }
-              )
-              (
-                # NOTE: git clone --reference /var/lib/nixpkgs.git https://github.com/NixOS/nixpkgs.git
-                {
-                  inherit sshUser systems;
-                  hostName = "darwin-build-box.nix-community.org";
-                  maxJobs = 4;
-                  speedFactor = 5;
-                  supportedFeatures = [ "big-parallel" ];
-                  publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUtNSGhsY243ZlVwVXVpT0ZlSWhEcUJ6Qk5Gc2JOcXErTnB6dUdYM2U2enYgCg";
-                }
-                // lib.optionalAttrs (host == "khanelinix") {
-                  sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
-                }
-                // lib.optionalAttrs (host == "khanelimac") {
-                  sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
-                  # We are faster, prefer local.
-                  speedFactor = 0;
-                }
-              )
-            ]
-          );
+            # Darwin builders
+            (
+              {
+                inherit sshUser;
+                systems = [
+                  "aarch64-darwin"
+                  "x86_64-darwin"
+                ];
+                hostName = "khanelimac.local";
+                maxJobs = 8;
+                speedFactor = 10;
+                supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
+              }
+              // lib.optionalAttrs (host == "khanelinix") {
+                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
+              }
+              // lib.optionalAttrs (host == "khanelimac") {
+                sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+              }
+            )
+            (
+              # NOTE: git clone --reference /var/lib/nixpkgs.git https://github.com/NixOS/nixpkgs.git
+              {
+                inherit sshUser;
+                systems = [
+                  "aarch64-darwin"
+                  "x86_64-darwin"
+                ];
+                hostName = "darwin-build-box.nix-community.org";
+                maxJobs = 4;
+                speedFactor = 5;
+                supportedFeatures = [ "big-parallel" ];
+                publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUtNSGhsY243ZlVwVXVpT0ZlSWhEcUJ6Qk5Gc2JOcXErTnB6dUdYM2U2enYgCg";
+              }
+              // lib.optionalAttrs (host == "khanelinix") {
+                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
+              }
+              // lib.optionalAttrs (host == "khanelimac") {
+                sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+              }
+            )
+          ];
 
         distributedBuilds = true;
 
