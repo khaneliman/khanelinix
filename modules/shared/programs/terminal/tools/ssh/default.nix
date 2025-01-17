@@ -97,6 +97,10 @@ in
         };
 
         # Community builders
+        "aarch64-build-box.nix-community.org" = {
+          hostNames = [ "aarch64-build-box.nix-community.org" ];
+          publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG9uyfhyli+BRtk64y+niqtb+sKquRGGZ87f4YRc8EE1";
+        };
         "darwin-build-box.nix-community.org" = {
           hostNames = [ "darwin-build-box.nix-community.org" ];
           publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKMHhlcn7fUpUuiOFeIhDqBzBNFsbNqq+NpzuGX3e6zv";
