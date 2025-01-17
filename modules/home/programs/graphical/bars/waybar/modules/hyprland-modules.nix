@@ -123,6 +123,7 @@ in
       "class<steam_app_0> title<World of Warcraft>" = "";
       "class<steam_app_0> title<>" = "";
       "class<Wowup-cf>" = "";
+      "class<com.mitchellh.ghostty>" = "󰊠";
     };
   };
 }
