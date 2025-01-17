@@ -111,6 +111,16 @@ in
         };
 
         # Local Hosts
+        bruddynix = {
+          hostNames = [ "bruddynix.local" ];
+          publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFeLt5cnRnKeil39Ds+CimMJQq/5dln32YqQ+EfYSCvc";
+        };
+
+        "bruddynix@bruddynix.local" = {
+          hostNames = [ "bruddynix.local" ];
+          publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEqCiZgjOmhsBTAFD0LbuwpfeuCnwXwMl2wByxC1UiRt";
+        };
+
         khanelimac = {
           hostNames = [ "khanelimac.local" ];
           publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJAZIwy7nkz8CZYR/ZTSNr+7lRBW2AYy1jw06b44zaID";
