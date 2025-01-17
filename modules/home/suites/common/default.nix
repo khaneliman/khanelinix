@@ -17,8 +17,15 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.shellAliases = {
-      nixcfg = "nvim ~/${namespace}/flake.nix";
+    home = {
+      # Silence login messages in shells
+      file = {
+        ".hushlogin".text = "";
+      };
+
+      shellAliases = {
+        nixcfg = "nvim ~/${namespace}/flake.nix";
+      };
     };
 
     home.packages = with pkgs; [
