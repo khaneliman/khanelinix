@@ -30,15 +30,22 @@ in
       enableZshIntegration = true;
 
       settings = {
-        background-opacity = 0.8;
-        window-decoration = lib.mkIf pkgs.stdenv.hostPlatform.isLinux false;
-        # Breaks tab functionality, but tab functionality is broken with yabai
-        macos-titlebar-style = "hidden";
+        adw-toolbar-style = "flat";
 
+        background-opacity = 0.8;
+
+        font-size = 13;
         font-family = "MonaspiceNe Nerd Font";
         font-family-bold = "MonaspiceXe Nerd Font";
         font-family-italic = "MonaspiceRn Nerd Font";
         font-family-bold-italic = "MonaspiceKr Nerd Font";
+
+        # Breaks tab functionality, but tab functionality is broken with yabai
+        macos-titlebar-style = "hidden";
+
+        # Disables some functionality available through window
+        # But, doesn't fit theme of a clean WM with its GTK interface
+        window-decoration = lib.mkIf pkgs.stdenv.hostPlatform.isLinux false;
       };
     };
   };
