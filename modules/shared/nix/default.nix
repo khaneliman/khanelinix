@@ -100,6 +100,7 @@ in
               }
               // lib.optionalAttrs (host == "khanelinix") {
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
+                speedFactor = 0;
               }
             )
             (
@@ -118,6 +119,7 @@ in
               }
               // lib.optionalAttrs (host == "khanelinix") {
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
+                speedFactor = 0;
               }
             )
             (
@@ -158,6 +160,7 @@ in
               }
               // lib.optionalAttrs (host == "khanelimac") {
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+                speedFactor = 0;
               }
             )
             (
@@ -179,6 +182,7 @@ in
               }
               // lib.optionalAttrs (host == "khanelimac") {
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+                speedFactor = 0;
               }
             )
           ];
