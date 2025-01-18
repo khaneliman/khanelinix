@@ -46,7 +46,7 @@ writeShellApplication {
         }
         trap OnExit EXIT
 
-        # Set umask so tmp files are only acessible to the user
+        # Set umask so tmp files are only accessible to the user
         umask 177
 
         if [ "$1" = "area" ]; then
@@ -89,13 +89,13 @@ writeShellApplication {
         # Append .gif to the SavePath if it's missing
         #[[ $SavePath =~ \.gif$ ]] || SavePath+='.gif'
 
-        # Produce a pallete from the video file
+        # Produce a palette from the video file
         #ffmpeg -i "$TmpRecordPath" -filter_complex "palettegen=stats_mode=full" "$TmpPalettePath" -y || exit
 
         # Return umask to default
         umask 022
 
-        # Use pallete to produce a gif from the video file
+        # Use palette to produce a gif from the video file
         # ffmpeg -i "$TmpRecordPath" -i "$TmpPalettePath" -filter_complex "paletteuse=dither=sierra2_4a" "$SavePath" -y || exit
     '';
 }
