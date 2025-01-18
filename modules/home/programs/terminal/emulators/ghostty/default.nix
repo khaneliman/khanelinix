@@ -34,14 +34,26 @@ in
 
         background-opacity = 0.8;
 
+        clipboard-trim-trailing-spaces = true;
+        copy-on-select = "clipboard";
+
+        focus-follows-mouse = true;
+
         font-size = 13;
         font-family = "MonaspiceNe Nerd Font";
         font-family-bold = "MonaspiceXe Nerd Font";
         font-family-italic = "MonaspiceRn Nerd Font";
         font-family-bold-italic = "MonaspiceKr Nerd Font";
 
+        # NOTE: Different methods of using cgroups for every surface.
+        # linux-cgroup = "always";
+        gtk-single-instance = false;
+
         # Breaks tab functionality, but tab functionality is broken with yabai
         macos-titlebar-style = "hidden";
+        macos-option-as-alt = true;
+
+        quit-after-last-window-closed = true;
 
         # Disables some functionality available through window
         # But, doesn't fit theme of a clean WM with its GTK interface
