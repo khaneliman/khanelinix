@@ -1,18 +1,18 @@
 {
   config,
+  khanelinix-lib,
   lib,
   pkgs,
-  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.launchers.rofi;
+  cfg = config.khanelinix.programs.graphical.launchers.rofi;
 in
 {
-  options.${namespace}.programs.graphical.launchers.rofi = {
+  options.khanelinix.programs.graphical.launchers.rofi = {
     enable = mkBoolOpt false "Whether to enable Rofi in the desktop environment.";
   };
 

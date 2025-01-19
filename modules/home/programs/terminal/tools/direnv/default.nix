@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (khanelinix-lib) mkBoolOpt enabled;
 
-  cfg = config.${namespace}.programs.terminal.tools.direnv;
+  cfg = config.khanelinix.programs.terminal.tools.direnv;
 in
 {
-  options.${namespace}.programs.terminal.tools.direnv = {
+  options.khanelinix.programs.terminal.tools.direnv = {
     enable = mkBoolOpt false "Whether or not to enable direnv.";
   };
 

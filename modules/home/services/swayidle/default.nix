@@ -1,18 +1,18 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   pkgs,
   ...
 }:
 let
   inherit (lib) getExe getExe';
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.services.swayidle;
+  cfg = config.khanelinix.services.swayidle;
 in
 {
-  options.${namespace}.services.swayidle = {
+  options.khanelinix.services.swayidle = {
     enable = mkBoolOpt false "Whether to enable swayidle service.";
   };
 

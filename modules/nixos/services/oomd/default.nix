@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.services.oomd;
+  cfg = config.khanelinix.services.oomd;
 in
 {
-  options.${namespace}.services.oomd = {
+  options.khanelinix.services.oomd = {
     enable = mkBoolOpt false "Whether or not to configure oomd.";
   };
 

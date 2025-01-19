@@ -1,13 +1,13 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf mkForce;
 
-  cfg = config.${namespace}.system.networking;
+  cfg = config.khanelinix.system.networking;
 in
 {
   config = mkIf cfg.enable {
@@ -34,7 +34,7 @@ in
         };
 
         # let me configure tailscale manually
-        "20-tailscale-ignore" = mkIf config.${namespace}.services.tailscale.enable {
+        "20-tailscale-ignore" = mkIf config.khanelinix.services.tailscale.enable {
           matchConfig.Name = "tailscale*";
           linkConfig = {
             Unmanaged = "yes";

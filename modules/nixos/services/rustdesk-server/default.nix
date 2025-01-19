@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (khanelinix-lib) mkOpt;
 
-  cfg = config.${namespace}.services.rustdesk-server;
+  cfg = config.khanelinix.services.rustdesk-server;
 in
 {
-  options.${namespace}.services.rustdesk-server = {
+  options.khanelinix.services.rustdesk-server = {
     enable = mkEnableOption "rustdesk-server";
     relayHosts = mkOpt (lib.types.listOf lib.types.str) [ ] "Groups for the user to be assigned.";
   };
