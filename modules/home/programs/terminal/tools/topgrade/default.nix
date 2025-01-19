@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.topgrade;
+  cfg = config.khanelinix.programs.terminal.tools.topgrade;
 in
 {
-  options.${namespace}.programs.terminal.tools.topgrade = {
+  options.khanelinix.programs.terminal.tools.topgrade = {
     enable = mkBoolOpt false "Whether or not to enable topgrade.";
   };
 

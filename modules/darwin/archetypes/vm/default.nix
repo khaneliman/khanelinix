@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (khanelinix-lib) mkBoolOpt enabled;
 
-  cfg = config.${namespace}.archetypes.vm;
+  cfg = config.khanelinix.archetypes.vm;
 in
 {
-  options.${namespace}.archetypes.vm = {
+  options.khanelinix.archetypes.vm = {
     enable = mkBoolOpt false "Whether or not to enable the vm archetype.";
   };
 

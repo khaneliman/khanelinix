@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.k9s;
+  cfg = config.khanelinix.programs.terminal.tools.k9s;
 in
 {
-  options.${namespace}.programs.terminal.tools.k9s = {
+  options.khanelinix.programs.terminal.tools.k9s = {
     enable = mkBoolOpt false "Whether or not to enable k9s.";
   };
 

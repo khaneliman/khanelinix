@@ -1,16 +1,20 @@
 {
   config,
+  khanelinix-lib,
   lib,
   options,
-  namespace,
+  inputs,
   ...
 }:
 let
-  inherit (lib.${namespace}) mkOpt;
+  inherit (khanelinix-lib) mkOpt;
 in
 {
+  imports = lib.optional (
+    inputs.home-manager ? nixosModules
+  ) inputs.home-manager.nixosModules.home-manager;
 
-  options.${namespace}.home = with lib.types; {
+  options.khanelinix.home = with lib.types; {
     file = mkOpt attrs { } "A set of files to be managed by home-manager's <option>home.file</option>.";
     configFile =
       mkOpt attrs { }
@@ -19,16 +23,16 @@ in
     homeConfig = mkOpt attrs { } "Final config for home-manager.";
   };
 
-  config = {
-    ${namespace}.home.extraOptions = {
-      home.file = lib.mkAliasDefinitions options.${namespace}.home.file;
+  config = lib.optionalAttrs (inputs.home-manager ? nixosModules) {
+    khanelinix.home.extraOptions = {
+      home.file = lib.mkAliasDefinitions options.khanelinix.home.file;
       xdg.enable = true;
-      xdg.configFile = lib.mkAliasDefinitions options.${namespace}.home.configFile;
+      xdg.configFile = lib.mkAliasDefinitions options.khanelinix.home.configFile;
     };
 
-    snowfallorg.users.${config.${namespace}.user.name}.home.config =
-      lib.mkAliasDefinitions
-        options.${namespace}.home.extraOptions;
+    # FIXME:
+    # snowfallorg.users.${config.khanelinix.user.name}.home.config =
+    #   lib.mkAliasDefinitions options.khanelinix.home.extraOptions;
 
     home-manager = {
       # enables backing up existing files instead of erroring if conflicts exist

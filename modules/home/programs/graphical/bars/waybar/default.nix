@@ -1,10 +1,11 @@
 {
   config,
   inputs,
+  khanelinix-lib,
   lib,
   pkgs,
   system,
-  namespace,
+  root,
   osConfig,
   ...
 }:
@@ -16,10 +17,10 @@ let
     mkMerge
     types
     ;
-  inherit (lib.${namespace}) mkOpt mkBoolOpt;
+  inherit (khanelinix-lib) mkOpt mkBoolOpt;
   inherit (inputs) waybar;
 
-  cfg = config.${namespace}.programs.graphical.bars.waybar;
+  cfg = config.khanelinix.programs.graphical.bars.waybar;
 
   style = builtins.readFile ./styles/style.css;
   controlCenterStyle = builtins.readFile ./styles/control-center.css;
@@ -37,7 +38,7 @@ let
       ;
   };
   default-modules = import ./modules/default-modules.nix { inherit lib pkgs; };
-  group-modules = import ./modules/group-modules.nix { inherit lib namespace osConfig; };
+  group-modules = import ./modules/group-modules.nix { inherit lib osConfig; };
   hyprland-modules = import ./modules/hyprland-modules.nix { inherit config lib; };
   sway-modules = import ./modules/sway-modules.nix { inherit config lib; };
 
@@ -51,13 +52,13 @@ let
 
     modules-left =
       [ "custom/power" ]
-      ++ lib.optionals config.${namespace}.programs.graphical.wms.hyprland.enable [
+      ++ lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [
         "hyprland/workspaces"
       ]
-      ++ lib.optionals config.${namespace}.programs.graphical.wms.sway.enable [ "sway/workspaces" ]
+      ++ lib.optionals config.khanelinix.programs.graphical.wms.sway.enable [ "sway/workspaces" ]
       ++ [ "custom/separator-left" ]
-      ++ lib.optionals config.${namespace}.programs.graphical.wms.hyprland.enable [ "hyprland/window" ]
-      ++ lib.optionals config.${namespace}.programs.graphical.wms.sway.enable [ "sway/window" ];
+      ++ lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [ "hyprland/window" ]
+      ++ lib.optionals config.khanelinix.programs.graphical.wms.sway.enable [ "sway/window" ];
   };
 
   fullSizeModules = {
@@ -69,7 +70,7 @@ let
         "custom/separator-right"
         "group/control-center"
       ]
-      ++ lib.optionals config.${namespace}.programs.graphical.wms.hyprland.enable [ "hyprland/submap" ]
+      ++ lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [ "hyprland/submap" ]
       ++ [
         "custom/weather"
         "clock"
@@ -83,7 +84,7 @@ let
         "group/stats-drawer"
         "group/control-center"
       ]
-      ++ lib.optionals config.${namespace}.programs.graphical.wms.hyprland.enable [ "hyprland/submap" ]
+      ++ lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [ "hyprland/submap" ]
       ++ [
         "custom/weather"
         "clock"
@@ -98,8 +99,8 @@ let
       custom-modules
       default-modules
       group-modules
-      (lib.mkIf config.${namespace}.programs.graphical.wms.hyprland.enable hyprland-modules)
-      (lib.mkIf config.${namespace}.programs.graphical.wms.sway.enable sway-modules)
+      (lib.mkIf config.khanelinix.programs.graphical.wms.hyprland.enable hyprland-modules)
+      (lib.mkIf config.khanelinix.programs.graphical.wms.sway.enable sway-modules)
     ];
 
   generateOutputSettings =
@@ -115,7 +116,7 @@ let
     );
 in
 {
-  options.${namespace}.programs.graphical.bars.waybar = {
+  options.khanelinix.programs.graphical.bars.waybar = {
     enable = mkBoolOpt false "Whether to enable waybar in the desktop environment.";
     debug = mkBoolOpt false "Whether to enable debug mode.";
     fullSizeOutputs =
@@ -148,9 +149,9 @@ in
       style = "${style}${controlCenterStyle}${powerStyle}${statsStyle}${workspacesStyle}";
     };
 
-    sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
+    sops.secrets = lib.mkIf osConfig.khanelinix.security.sops.enable {
       weather_config = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
+        sopsFile = root + "/secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/weather_config.json";
       };
     };

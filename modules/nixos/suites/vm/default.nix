@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (khanelinix-lib) mkBoolOpt enabled;
 
-  cfg = config.${namespace}.suites.vm;
+  cfg = config.khanelinix.suites.vm;
 in
 {
-  options.${namespace}.suites.vm = {
+  options.khanelinix.suites.vm = {
     enable = mkBoolOpt false "Whether or not to enable common vm configuration.";
   };
 

@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.services.logrotate;
+  cfg = config.khanelinix.services.logrotate;
 in
 {
-  options.${namespace}.services.logrotate = {
+  options.khanelinix.services.logrotate = {
     enable = mkBoolOpt false "Whether or not to configure logrotate.";
   };
 
