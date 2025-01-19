@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf mkForce;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.system.locale;
+  cfg = config.khanelinix.system.locale;
 in
 {
-  options.${namespace}.system.locale = {
+  options.khanelinix.system.locale = {
     enable = mkBoolOpt false "Whether or not to manage locale settings.";
   };
 

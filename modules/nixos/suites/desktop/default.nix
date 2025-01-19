@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (khanelinix-lib) mkBoolOpt enabled;
 
-  cfg = config.${namespace}.suites.desktop;
+  cfg = config.khanelinix.suites.desktop;
 in
 {
-  options.${namespace}.suites.desktop = {
+  options.khanelinix.suites.desktop = {
     enable = mkBoolOpt false "Whether or not to enable common desktop configuration.";
   };
 

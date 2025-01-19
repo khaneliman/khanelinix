@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.services.keyring;
+  cfg = config.khanelinix.services.keyring;
 in
 {
-  options.${namespace}.services.keyring = {
+  options.khanelinix.services.keyring = {
     enable = mkBoolOpt false "Whether to enable gnome keyring.";
   };
 

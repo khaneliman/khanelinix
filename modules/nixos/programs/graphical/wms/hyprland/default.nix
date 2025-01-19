@@ -3,8 +3,7 @@
   inputs,
   lib,
   pkgs,
-  system,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
@@ -14,16 +13,16 @@ let
     mkIf
     types
     ;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt enabled;
+  inherit (khanelinix-lib) mkBoolOpt mkOpt enabled;
   inherit (inputs) hyprland;
 
-  cfg = config.${namespace}.programs.graphical.wms.hyprland;
+  cfg = config.khanelinix.programs.graphical.wms.hyprland;
 
   programs = makeBinPath (
     with pkgs;
     [
       # TODO: make sure this references same package as home-manager
-      hyprland.packages.${system}.hyprland
+      hyprland.packages.${stdenv.system}.hyprland
       coreutils
       config.services.power-profiles-daemon.package
       systemd
@@ -32,7 +31,7 @@ let
   );
 in
 {
-  options.${namespace}.programs.graphical.wms.hyprland = with types; {
+  options.khanelinix.programs.graphical.wms.hyprland = with types; {
     enable = mkBoolOpt false "Whether or not to enable Hyprland.";
     customConfigFiles =
       mkOpt attrs { }
@@ -51,8 +50,8 @@ in
       '';
 
       sessionVariables = {
-        HYPRCURSOR_THEME = config.${namespace}.theme.cursor.name;
-        HYPRCURSOR_SIZE = "${toString config.${namespace}.theme.cursor.size}";
+        HYPRCURSOR_THEME = config.khanelinix.theme.cursor.name;
+        HYPRCURSOR_SIZE = "${toString config.khanelinix.theme.cursor.size}";
       };
     };
 
@@ -143,6 +142,6 @@ in
       };
     };
 
-    services.displayManager.sessionPackages = [ hyprland.packages.${system}.hyprland ];
+    services.displayManager.sessionPackages = [ hyprland.packages.${pkgs.stdenv.system}.hyprland ];
   };
 }

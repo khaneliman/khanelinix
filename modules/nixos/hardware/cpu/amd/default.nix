@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.hardware.cpu.amd;
+  cfg = config.khanelinix.hardware.cpu.amd;
 in
 {
-  options.${namespace}.hardware.cpu.amd = {
+  options.khanelinix.hardware.cpu.amd = {
     enable = mkBoolOpt false "Whether or not to enable support for amd cpu.";
   };
 

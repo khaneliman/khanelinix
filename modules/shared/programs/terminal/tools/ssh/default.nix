@@ -1,30 +1,31 @@
 {
   config,
-  lib,
   inputs,
-  host,
-  namespace,
+  khanelinix-lib,
+  lib,
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (khanelinix-lib) mkBoolOpt mkOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.ssh;
+  cfg = config.khanelinix.programs.terminal.tools.ssh;
 
-  name = host;
-
-  user = config.users.users.${config.${namespace}.user.name};
+  user = config.users.users.${config.khanelinix.user.name};
   user-id = builtins.toString user.uid;
 
+  nixosConfigurations = inputs.self.nixosConfigurations or { };
+  darwinConfigurations = inputs.self.darwinConfigurations or { };
+
+  # FIXME:
   other-hosts = lib.filterAttrs (
-    key: host: key != name && (host.config.${namespace}.user.name or null) != null
-  ) ((inputs.self.nixosConfigurations or { }) // (inputs.self.darwinConfigurations or { }));
+    key: host: key != config.networking.hostName && (host.config.khanelinix.user.name or null) != null
+  ) (nixosConfigurations // darwinConfigurations);
 
   other-hosts-config = lib.concatMapStringsSep "\n" (
     name:
     let
       remote = other-hosts.${name};
-      remote-user-name = remote.config.${namespace}.user.name;
+      remote-user-name = remote.config.khanelinix.user.name;
       remote-user-id = builtins.toString remote.config.users.users.${remote-user-name}.uid;
 
       forward-gpg =
@@ -50,7 +51,7 @@ let
   ) (builtins.attrNames other-hosts);
 in
 {
-  options.${namespace}.programs.terminal.tools.ssh = with lib.types; {
+  options.khanelinix.programs.terminal.tools.ssh = with lib.types; {
     enable = mkBoolOpt false "Whether or not to configure ssh support.";
     extraConfig = mkOpt str "" "Extra configuration to apply.";
     port = mkOpt port 2222 "The port to listen on (in addition to 22).";
@@ -58,11 +59,11 @@ in
 
   config = lib.mkIf cfg.enable {
     programs.ssh = {
-      extraConfig = ''
-        ${other-hosts-config}
-
-        ${cfg.extraConfig}
-      '';
+      # extraConfig = ''
+      #   ${other-hosts-config}
+      #
+      #   ${cfg.extraConfig}
+      # '';
 
       knownHosts = lib.mapAttrs (_: lib.mkForce) {
         # Ship GitHub/GitLab/SourceHut host keys to avoid “man in the middle” attacks
@@ -143,13 +144,13 @@ in
       };
     };
 
-    khanelinix = {
-      home.extraOptions = {
-        programs.zsh.shellAliases = lib.foldl (
-          aliases: system: aliases // { "ssh-${system}" = "ssh ${system} -t tmux a"; }
-        ) { } (builtins.attrNames other-hosts);
-      };
-    };
+    # khanelinix = {
+    #   home.extraOptions = {
+    #     programs.zsh.shellAliases = lib.foldl (
+    #       aliases: system: aliases // { "ssh-${system}" = "ssh ${system} -t tmux a"; }
+    #     ) { } (builtins.attrNames other-hosts);
+    #   };
+    # };
 
   };
 }
