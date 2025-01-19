@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
@@ -11,9 +11,9 @@ let
     mkIf
     getExe'
     ;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (khanelinix-lib) mkBoolOpt mkOpt;
 
-  cfg = config.${namespace}.security.gpg;
+  cfg = config.khanelinix.security.gpg;
 
   gpgAgentConf = ''
     enable-ssh-support
@@ -23,7 +23,7 @@ let
   '';
 in
 {
-  options.${namespace}.security.gpg = with types; {
+  options.khanelinix.security.gpg = with types; {
     enable = mkBoolOpt false "Whether or not to enable GPG.";
     agentTimeout = mkOpt int 5 "The amount of time to wait before continuing with shell init.";
     enableSSHSupport = mkBoolOpt false "Whether or not to enable SSH support for GPG.";

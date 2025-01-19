@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.hardware.opengl;
+  cfg = config.khanelinix.hardware.opengl;
 in
 {
-  options.${namespace}.hardware.opengl = {
+  options.khanelinix.hardware.opengl = {
     enable = mkBoolOpt false "Whether or not to enable support for opengl.";
   };
 

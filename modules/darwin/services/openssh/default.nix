@@ -2,6 +2,7 @@
   config,
   lib,
   namespace,
+  khanelinix-lib,
   ...
 }:
 let
@@ -9,7 +10,7 @@ let
     types
     mkIf
     ;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (khanelinix-lib) mkBoolOpt mkOpt;
 
   cfg = config.${namespace}.services.openssh;
 in

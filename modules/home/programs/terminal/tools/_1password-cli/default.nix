@@ -1,18 +1,18 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   pkgs,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools._1password-cli;
+  cfg = config.khanelinix.programs.terminal.tools._1password-cli;
 in
 {
-  options.${namespace}.programs.terminal.tools._1password-cli = {
+  options.khanelinix.programs.terminal.tools._1password-cli = {
     enable = mkBoolOpt false "Whether or not to enable 1password-cli.";
     enableSshSocket = mkBoolOpt false "Whether or not to enable ssh-agent socket.";
   };

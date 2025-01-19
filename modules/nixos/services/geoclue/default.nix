@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.services.geoclue;
+  cfg = config.khanelinix.services.geoclue;
 in
 {
-  options.${namespace}.services.geoclue = {
+  options.khanelinix.services.geoclue = {
     enable = mkBoolOpt false "Whether or not to configure geoclue support.";
   };
 

@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.services.udisks2;
+  cfg = config.khanelinix.services.udisks2;
 in
 {
-  options.${namespace}.services.udisks2 = {
+  options.khanelinix.services.udisks2 = {
     enable = mkBoolOpt true "Whether or not to enable udisks2 service.";
   };
 

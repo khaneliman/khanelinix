@@ -1,18 +1,18 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   pkgs,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.nix-ld;
+  cfg = config.khanelinix.programs.terminal.tools.nix-ld;
 in
 {
-  options.${namespace}.programs.terminal.tools.nix-ld = {
+  options.khanelinix.programs.terminal.tools.nix-ld = {
     enable = mkBoolOpt false "Whether or not to enable nix-ld.";
   };
 

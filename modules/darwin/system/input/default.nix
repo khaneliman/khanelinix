@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
 
-  cfg = config.${namespace}.system.input;
+  cfg = config.khanelinix.system.input;
 in
 {
-  options.${namespace}.system.input = {
+  options.khanelinix.system.input = {
     enable = mkEnableOption "macOS input";
   };
 

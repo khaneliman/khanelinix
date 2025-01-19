@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
@@ -13,7 +13,7 @@ let
     mkForce
     ;
 
-  cfg = config.${namespace}.programs.graphical.wms.sway;
+  cfg = config.khanelinix.programs.graphical.wms.sway;
 in
 {
   config = mkIf cfg.enable {
@@ -35,7 +35,7 @@ in
                 ''
             );
 
-            screenshot-path = "/home/${config.${namespace}.user.name}/Pictures/screenshots";
+            screenshot-path = "/home/${config.khanelinix.user.name}/Pictures/screenshots";
             browser = "${getExe config.programs.firefox.package}";
             explorer = "${getExe pkgs.xfce.thunar}";
             notification_center = "${getExe' config.services.swaync.package "swaync-client"}";
@@ -43,7 +43,7 @@ in
             looking-glass = "${getExe pkgs.looking-glass-client}";
             screen-locker = "${getExe config.programs.swaylock.package}";
             # window-inspector = "${getExe pkgs.hyprprop}";
-            screen-recorder = "${getExe pkgs.${namespace}.record_screen}";
+            screen-recorder = "${getExe self.packages.${system}.record_screen}";
 
             # screenshot commands
             grimblast_area_file = ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --freeze --notify save area "$file"'';

@@ -1,0 +1,25 @@
+{
+  imports = [
+    ./avahi
+    ./cloudflared
+    ./dbus
+    ./ddc
+    ./earlyoom
+    ./flatpak
+    ./geoclue
+    ./logind
+    ./logrotate
+    ./oomd
+    ./openssh
+    ./power
+    ./printing
+    ./rustdesk-server
+    ./samba
+    ./seatd
+    ./snapper
+    ./spice-vdagentd
+    ./spice-webdav
+    ./tailscale
+    ./udisks2
+  ];
+}

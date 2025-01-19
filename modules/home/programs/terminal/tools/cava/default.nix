@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.cava;
+  cfg = config.khanelinix.programs.terminal.tools.cava;
 in
 {
-  options.${namespace}.programs.terminal.tools.cava = {
+  options.khanelinix.programs.terminal.tools.cava = {
     enable = mkBoolOpt false "Whether or not to enable cava.";
   };
 

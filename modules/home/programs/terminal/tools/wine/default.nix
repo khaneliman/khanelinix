@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.wine;
+  cfg = config.khanelinix.programs.terminal.tools.wine;
 in
 {
-  options.${namespace}.programs.terminal.tools.wine = {
+  options.khanelinix.programs.terminal.tools.wine = {
     enable = mkBoolOpt false "Whether or not to enable Wine.";
   };
 
