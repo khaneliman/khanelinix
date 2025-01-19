@@ -1,30 +1,30 @@
 {
   config,
-  lib,
-  inputs,
   host,
-  namespace,
+  inputs,
+  khanelinix-lib,
+  lib,
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (khanelinix-lib) mkBoolOpt mkOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.ssh;
+  cfg = config.khanelinix.programs.terminal.tools.ssh;
 
   name = host;
 
-  user = config.users.users.${config.${namespace}.user.name};
+  user = config.users.users.${config.khanelinix.user.name};
   user-id = builtins.toString user.uid;
 
   other-hosts = lib.filterAttrs (
-    key: host: key != name && (host.config.${namespace}.user.name or null) != null
+    key: host: key != name && (host.config.khanelinix.user.name or null) != null
   ) ((inputs.self.nixosConfigurations or { }) // (inputs.self.darwinConfigurations or { }));
 
   other-hosts-config = lib.concatMapStringsSep "\n" (
     name:
     let
       remote = other-hosts.${name};
-      remote-user-name = remote.config.${namespace}.user.name;
+      remote-user-name = remote.config.khanelinix.user.name;
       remote-user-id = builtins.toString remote.config.users.users.${remote-user-name}.uid;
 
       forward-gpg =
@@ -50,7 +50,7 @@ let
   ) (builtins.attrNames other-hosts);
 in
 {
-  options.${namespace}.programs.terminal.tools.ssh = with lib.types; {
+  options.khanelinix.programs.terminal.tools.ssh = with lib.types; {
     enable = mkBoolOpt false "Whether or not to configure ssh support.";
     extraConfig = mkOpt str "" "Extra configuration to apply.";
     port = mkOpt port 2222 "The port to listen on (in addition to 22).";

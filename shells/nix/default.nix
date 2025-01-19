@@ -3,7 +3,7 @@
   mkShell,
   pkgs,
   system,
-  namespace,
+
   ...
 }:
 let
@@ -31,7 +31,7 @@ mkShell {
   ];
 
   shellHook = ''
-    echo 🔨 Welcome to ${namespace}
+    echo 🔨 Welcome to khanelinix
 
 
   '';

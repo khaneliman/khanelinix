@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.apps.steam;
+  cfg = config.khanelinix.programs.graphical.apps.steam;
 in
 {
-  options.${namespace}.programs.graphical.apps.steam = {
+  options.khanelinix.programs.graphical.apps.steam = {
     enable = mkBoolOpt false "Whether or not to enable support for Steam.";
   };
 

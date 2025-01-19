@@ -2,17 +2,17 @@
   lib,
   pkgs,
   config,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.services.ddccontrol;
+  cfg = config.khanelinix.services.ddccontrol;
 in
 {
-  options.${namespace}.services.ddccontrol = {
+  options.khanelinix.services.ddccontrol = {
     enable = mkBoolOpt false "Whether or not to configure ddccontrol";
   };
 

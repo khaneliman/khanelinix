@@ -1,18 +1,18 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   pkgs,
   ...
 }:
 let
   inherit (lib) concatStringsSep mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.services.earlyoom;
+  cfg = config.khanelinix.services.earlyoom;
 in
 {
-  options.${namespace}.services.earlyoom = {
+  options.khanelinix.services.earlyoom = {
     enable = mkBoolOpt false "Whether or not to configure oomd.";
   };
 
