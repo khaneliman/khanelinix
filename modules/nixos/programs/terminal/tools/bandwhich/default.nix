@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.bandwhich;
+  cfg = config.khanelinix.programs.terminal.tools.bandwhich;
 in
 {
-  options.${namespace}.programs.terminal.tools.bandwhich = {
+  options.khanelinix.programs.terminal.tools.bandwhich = {
     enable = mkBoolOpt false "Whether or not to enable bandwhich.";
   };
 

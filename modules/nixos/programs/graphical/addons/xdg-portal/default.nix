@@ -4,18 +4,18 @@
   lib,
   pkgs,
   system,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
   inherit (inputs) hyprland;
 
-  cfg = config.${namespace}.programs.graphical.addons.xdg-portal;
+  cfg = config.khanelinix.programs.graphical.addons.xdg-portal;
 in
 {
-  options.${namespace}.programs.graphical.addons.xdg-portal = {
+  options.khanelinix.programs.graphical.addons.xdg-portal = {
     enable = mkBoolOpt false "Whether or not to add support for xdg portal.";
   };
 
@@ -24,12 +24,12 @@ in
       portal = {
         enable = true;
 
-        configPackages = lib.optionals config.${namespace}.programs.graphical.wms.hyprland.enable [
+        configPackages = lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [
           hyprland.packages.${system}.hyprland
         ];
 
         config = {
-          hyprland = mkIf config.${namespace}.programs.graphical.wms.hyprland.enable {
+          hyprland = mkIf config.khanelinix.programs.graphical.wms.hyprland.enable {
             default = [
               "hyprland"
               "gtk"
@@ -38,7 +38,7 @@ in
             "org.freedesktop.impl.portal.Screenshot" = "hyprland";
           };
 
-          sway = mkIf config.${namespace}.programs.graphical.wms.sway.enable {
+          sway = mkIf config.khanelinix.programs.graphical.wms.sway.enable {
             default = lib.mkDefault [
               "wlr"
               "gtk"
@@ -59,8 +59,8 @@ in
         extraPortals =
           with pkgs;
           [ xdg-desktop-portal-gtk ]
-          ++ (lib.optional config.${namespace}.programs.graphical.wms.sway.enable xdg-desktop-portal-wlr)
-          ++ (lib.optional config.${namespace}.programs.graphical.wms.hyprland.enable (
+          ++ (lib.optional config.khanelinix.programs.graphical.wms.sway.enable xdg-desktop-portal-wlr)
+          ++ (lib.optional config.khanelinix.programs.graphical.wms.hyprland.enable (
             hyprland.packages.${system}.xdg-desktop-portal-hyprland.override {
               debug = true;
               # TODO: use same package as home-manager
@@ -70,7 +70,7 @@ in
         # xdgOpenUsePortal = true;
 
         wlr = {
-          inherit (config.${namespace}.programs.graphical.wms.sway) enable;
+          inherit (config.khanelinix.programs.graphical.wms.sway) enable;
 
           settings = {
             screencast = {

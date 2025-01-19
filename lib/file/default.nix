@@ -1,4 +1,4 @@
-_: {
+{
   fileWithText = file: text: ''
     ${builtins.readFile file}
     ${text}'';

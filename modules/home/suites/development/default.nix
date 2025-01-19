@@ -3,18 +3,18 @@
   inputs,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (khanelinix-lib) mkBoolOpt enabled;
   inherit (inputs) snowfall-flake;
 
-  cfg = config.${namespace}.suites.development;
+  cfg = config.khanelinix.suites.development;
 in
 {
-  options.${namespace}.suites.development = {
+  options.khanelinix.suites.development = {
     enable = mkBoolOpt false "Whether or not to enable common development configuration.";
     azureEnable = mkBoolOpt false "Whether or not to enable azure development configuration.";
     dockerEnable = mkBoolOpt false "Whether or not to enable docker development configuration.";

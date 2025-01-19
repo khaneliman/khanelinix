@@ -1,17 +1,20 @@
 {
   config,
+  inputs,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.services.flatpak;
+  cfg = config.khanelinix.services.flatpak;
 in
 {
-  options.${namespace}.services.flatpak = {
+  imports = lib.optional (inputs.nix-flatpak ? flakeModule) inputs.nix-flatpak.flakeModule;
+
+  options.khanelinix.services.flatpak = {
     enable = mkBoolOpt false "Whether or not to enable flatpak support.";
     extraRepos = lib.mkOption {
       default = [
@@ -40,7 +43,7 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
+  config = mkIf (cfg.enable && (inputs.nix-flatpak ? flakeModule)) {
     services.flatpak = {
       enable = true;
 
