@@ -1,7 +1,8 @@
 {
   lib,
+  root,
   ...
 }:
 {
-  imports = [ (lib.snowfall.fs.get-file "modules/shared/programs/terminal/tools/ssh/default.nix") ];
+  imports = [ (root + "/modules/shared/programs/terminal/tools/ssh/default.nix") ];
 }

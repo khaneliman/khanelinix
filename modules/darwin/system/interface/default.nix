@@ -1,22 +1,22 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) mkIf mkEnableOption;
 
-  cfg = config.${namespace}.system.interface;
+  cfg = config.khanelinix.system.interface;
 in
 {
-  options.${namespace}.system.interface = {
+  options.khanelinix.system.interface = {
     enable = mkEnableOption "macOS interface";
   };
 
   config = mkIf cfg.enable {
-    ${namespace}.home.file = {
+    khanelinix.home.file = {
       "Pictures/screenshots/.keep".text = "";
     };
 
@@ -168,7 +168,7 @@ in
 
       screencapture = {
         disable-shadow = true;
-        location = "/Users/${config.${namespace}.user.name}/Pictures/screenshots/";
+        location = "/Users/${config.khanelinix.user.name}/Pictures/screenshots/";
         type = "png";
       };
 

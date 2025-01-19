@@ -2,30 +2,28 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
-  cfg = config.${namespace}.desktop.addons.jankyborders;
+  cfg = config.khanelinix.desktop.addons.jankyborders;
 in
 {
-  options.${namespace}.desktop.addons.jankyborders = {
-    enable =
-      lib.${namespace}.mkBoolOpt false
-        "Whether to enable jankyborders in the desktop environment.";
+  options.khanelinix.desktop.addons.jankyborders = {
+    enable = khanelinix-lib.mkBoolOpt false "Whether to enable jankyborders in the desktop environment.";
     package = lib.mkOption {
       type = lib.types.package;
       default = pkgs.jankyborders;
       defaultText = lib.literalExpression "pkgs.jankyborders";
       description = "The jankyborders package to use.";
-      example = lib.literalExpression "pkgs.${namespace}.jankyborders";
+      example = lib.literalExpression "self.packages.${system}.jankyborders";
     };
   };
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [ jankyborders ];
 
-    ${namespace}.home.configFile = {
+    khanelinix.home.configFile = {
       "borders/bordersrc".source =
         pkgs.writeShellScript "bordersrc" # bash
           ''

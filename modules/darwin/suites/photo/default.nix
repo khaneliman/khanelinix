@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.suites.photo;
+  cfg = config.khanelinix.suites.photo;
 in
 {
-  options.${namespace}.suites.photo = {
+  options.khanelinix.suites.photo = {
     enable = mkBoolOpt false "Whether or not to enable photo configuration.";
   };
 

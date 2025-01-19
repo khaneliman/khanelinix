@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf getExe getExe';
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.services.hypridle;
+  cfg = config.khanelinix.services.hypridle;
 in
 {
-  options.${namespace}.services.hypridle = {
+  options.khanelinix.services.hypridle = {
     enable = mkBoolOpt false "Whether to enable hypridle service.";
   };
 

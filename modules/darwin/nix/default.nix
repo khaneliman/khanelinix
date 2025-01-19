@@ -1,14 +1,14 @@
 {
   config,
   lib,
-  namespace,
+  root,
   ...
 }:
 let
-  cfg = config.${namespace}.nix;
+  cfg = config.khanelinix.nix;
 in
 {
-  imports = [ (lib.snowfall.fs.get-file "modules/shared/nix/default.nix") ];
+  imports = [ (root + "/modules/shared/nix/default.nix") ];
 
   config = lib.mkIf cfg.enable {
     nix = {
@@ -25,7 +25,7 @@ in
           Hour = 3;
         };
 
-        user = config.${namespace}.user.name;
+        user = config.khanelinix.user.name;
       };
 
       linux-builder = {
@@ -49,7 +49,7 @@ in
           Hour = 4;
         };
 
-        user = config.${namespace}.user.name;
+        user = config.khanelinix.user.name;
       };
 
       # NOTE: not sure if i saw any benefits changing this

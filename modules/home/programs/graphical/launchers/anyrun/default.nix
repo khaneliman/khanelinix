@@ -1,29 +1,32 @@
 {
   config,
   inputs,
+  khanelinix-lib,
   lib,
-  namespace,
   system,
   osConfig,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
-  inherit (inputs) anyrun anyrun-nixos-options;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.launchers.anyrun;
+  cfg = config.khanelinix.programs.graphical.launchers.anyrun;
 in
 {
-  options.${namespace}.programs.graphical.launchers.anyrun = {
+  imports = lib.optional (
+    inputs.anyrun ? homeManagerModules
+  ) inputs.anyrun.homeManagerModules.default;
+
+  options.khanelinix.programs.graphical.launchers.anyrun = {
     enable = mkBoolOpt false "Whether to enable anyrun in the desktop environment.";
   };
 
-  config = mkIf cfg.enable {
+  config = mkIf (cfg.enable && (inputs.anyrun ? homeManagerModules)) {
     programs.anyrun = {
       enable = true;
       config = {
-        plugins = with anyrun.packages.${system}; [
+        plugins = with inputs.anyrun.packages.${system}; [
           applications
           dictionary
           rink

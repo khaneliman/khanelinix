@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.hardware.power;
+  cfg = config.khanelinix.hardware.power;
 in
 {
-  options.${namespace}.hardware.power = {
+  options.khanelinix.hardware.power = {
     enable = mkBoolOpt false "Whether or not to enable support for extra power devices.";
   };
 

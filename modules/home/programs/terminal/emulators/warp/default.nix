@@ -2,18 +2,18 @@
   config,
   pkgs,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.emulators.warp;
+  cfg = config.khanelinix.programs.terminal.emulators.warp;
 
 in
 {
-  options.${namespace}.programs.terminal.emulators.warp = {
+  options.khanelinix.programs.terminal.emulators.warp = {
     enable = mkBoolOpt false "Whether or not to enable warp.";
   };
 
