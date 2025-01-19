@@ -1,8 +1,9 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
@@ -13,9 +14,9 @@ let
     mkOption
     types
     ;
-  inherit (lib.${namespace}) enabled capitalize;
+  inherit (khanelinix-lib) enabled capitalize;
 
-  cfg = config.${namespace}.theme.catppuccin;
+  cfg = config.khanelinix.theme.catppuccin;
 
   warpPkg = pkgs.fetchFromGitHub {
     owner = "catppuccin";
@@ -51,7 +52,11 @@ let
   ];
 in
 {
-  options.${namespace}.theme.catppuccin = {
+  imports = lib.optional (
+    inputs.catppuccin ? homeManagerModules
+  ) inputs.catppuccin.homeManagerModules.catppuccin;
+
+  options.khanelinix.theme.catppuccin = {
     enable = mkEnableOption "Enable catppuccin theme for applications.";
 
     accent = mkOption {
@@ -79,7 +84,7 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
+  config = mkIf (cfg.enable && (inputs.catppuccin ? homeManagerModules)) {
     khanelinix = {
       theme = {
         gtk = mkIf pkgs.stdenv.isLinux {
@@ -161,7 +166,7 @@ in
       zsh-syntax-highlighting = enabled;
       sway.enable = true;
 
-      hyprland = mkIf config.${namespace}.programs.graphical.wms.hyprland.enable {
+      hyprland = mkIf config.khanelinix.programs.graphical.wms.hyprland.enable {
         enable = true;
 
         inherit (cfg) accent;
@@ -182,12 +187,12 @@ in
       ];
 
       pointerCursor = mkIf pkgs.stdenv.isLinux {
-        inherit (config.${namespace}.theme.gtk.cursor) name package size;
+        inherit (config.khanelinix.theme.gtk.cursor) name package size;
         x11.enable = true;
       };
 
       sessionVariables = mkIf pkgs.stdenv.isLinux {
-        CURSOR_THEME = config.${namespace}.theme.gtk.cursor.name;
+        CURSOR_THEME = config.khanelinix.theme.gtk.cursor.name;
       };
     };
 
@@ -200,7 +205,7 @@ in
 
       style = {
         name = "kvantum";
-        inherit (config.${namespace}.theme.qt.theme) package;
+        inherit (config.khanelinix.theme.qt.theme) package;
       };
     };
 
@@ -321,7 +326,7 @@ in
 
       yazi.theme = lib.mkMerge [
         (import ./yazi/filetype.nix { })
-        (import ./yazi/manager.nix { inherit config lib namespace; })
+        (import ./yazi/manager.nix { inherit config lib; })
         (import ./yazi/status.nix { })
         (import ./yazi/theme.nix { })
       ];
@@ -332,7 +337,7 @@ in
     };
 
     xdg.configFile =
-      mkIf (pkgs.stdenv.isLinux && config.${namespace}.programs.graphical.apps.discord.enable)
+      mkIf (pkgs.stdenv.isLinux && config.khanelinix.programs.graphical.apps.discord.enable)
         {
           "ArmCord/themes/Catppuccin-Macchiato-BD".source = ./Catppuccin-Macchiato-BD;
           "BetterDiscord/themes/catppuccin-macchiato.theme.css".source = ./catppuccin-macchiato.theme.css;

@@ -1,16 +1,16 @@
 {
   config,
+  khanelinix-lib,
   lib,
-  pkgs,
-  namespace,
   osConfig,
+  pkgs,
   ...
 }:
 let
   inherit (lib) mkIf mkEnableOption getExe;
-  inherit (lib.${namespace}) enabled;
+  inherit (khanelinix-lib) enabled;
 
-  cfg = config.${namespace}.programs.graphical.wms.hyprland;
+  cfg = config.khanelinix.programs.graphical.wms.hyprland;
 
   historicalLogAliases = builtins.listToAttrs (
     builtins.genList (x: {
@@ -22,12 +22,12 @@ let
   historicalCrashAliases = builtins.listToAttrs (
     builtins.genList (x: {
       name = "hlc${toString (x + 1)}";
-      value = "cat /home/${config.${namespace}.user.name}/.local/cache/hyprland/$(command ls -t /home/${config.${namespace}.user.name}/.local/cache/hyprland/ | grep 'hyprlandCrashReport' | head -n ${toString (x + 2)} | tail -n 1)";
+      value = "cat /home/${config.khanelinix.user.name}/.local/cache/hyprland/$(command ls -t /home/${config.khanelinix.user.name}/.local/cache/hyprland/ | grep 'hyprlandCrashReport' | head -n ${toString (x + 2)} | tail -n 1)";
     }) 4
   );
 in
 {
-  options.${namespace}.programs.graphical.wms.hyprland = {
+  options.khanelinix.programs.graphical.wms.hyprland = {
     enable = mkEnableOption "Hyprland.";
     enableDebug = mkEnableOption "Enable debug mode.";
     appendConfig = lib.mkOption {
@@ -63,8 +63,8 @@ in
         {
           CLUTTER_BACKEND = "wayland";
           GDK_BACKEND = "wayland,x11";
-          HYPRCURSOR_THEME = config.${namespace}.theme.gtk.cursor.name;
-          HYPRCURSOR_SIZE = "${toString config.${namespace}.theme.cursor.size}";
+          HYPRCURSOR_THEME = config.khanelinix.theme.gtk.cursor.name;
+          HYPRCURSOR_SIZE = "${toString config.khanelinix.theme.cursor.size}";
           MOZ_ENABLE_WAYLAND = "1";
           MOZ_USE_XINPUT2 = "1";
           # NOTE: causes gldriverquery crash on wayland
@@ -85,7 +85,7 @@ in
       shellAliases =
         {
           hl = "cat $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland${lib.optionalString cfg.enableDebug "d"}.log";
-          hlc = "cat /home/${config.${namespace}.user.name}/.local/cache/hyprland/$(command ls -t /home/${config.${namespace}.user.name}/.local/cache/hyprland/ | grep 'hyprlandCrashReport' | head -n 1)";
+          hlc = "cat /home/${config.khanelinix.user.name}/.local/cache/hyprland/$(command ls -t /home/${config.khanelinix.user.name}/.local/cache/hyprland/ | grep 'hyprlandCrashReport' | head -n 1)";
         }
         // historicalLogAliases
         // historicalCrashAliases;
@@ -148,7 +148,7 @@ in
 
         # systemd = lib.mkIf (!osConfig.programs.uwsm.enable) {
         systemd = {
-          enable = (!osConfig.programs.uwsm.enable);
+          enable = !osConfig.programs.uwsm.enable;
           enableXdgAutostart = true;
           extraCommands = [
             "${systemctl} --user stop hyprland-session.target"

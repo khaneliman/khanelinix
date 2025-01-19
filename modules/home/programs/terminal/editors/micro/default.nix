@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.editors.micro;
+  cfg = config.khanelinix.programs.terminal.editors.micro;
 in
 {
-  options.${namespace}.programs.terminal.editors.micro = {
+  options.khanelinix.programs.terminal.editors.micro = {
     enable = mkBoolOpt false "Whether or not to enable micro.";
     default = mkBoolOpt false "Whether to set micro as the session EDITOR";
   };

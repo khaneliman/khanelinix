@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.${namespace}) mkOpt enabled;
+  inherit (khanelinix-lib) mkOpt enabled;
 
-  cfg = config.${namespace}.services.nix-daemon;
+  cfg = config.khanelinix.services.nix-daemon;
 in
 {
-  options.${namespace}.services.nix-daemon = {
+  options.khanelinix.services.nix-daemon = {
     enable = mkOpt types.bool true "Whether to enable the Nix daemon.";
   };
 

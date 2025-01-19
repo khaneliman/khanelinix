@@ -1,8 +1,10 @@
 {
   config,
+  khanelinix-lib,
   lib,
   pkgs,
-  namespace,
+  self,
+  system,
   ...
 }:
 let
@@ -14,9 +16,9 @@ let
     getExe
     getExe'
     ;
-  inherit (lib.${namespace}) mkOpt enabled;
+  inherit (khanelinix-lib) mkOpt enabled;
 
-  cfg = config.${namespace}.user;
+  cfg = config.khanelinix.user;
 
   home-directory =
     if cfg.name == null then
@@ -27,15 +29,15 @@ let
       "/home/${cfg.name}";
 in
 {
-  options.${namespace}.user = {
+  options.khanelinix.user = {
     enable = mkOpt types.bool false "Whether to configure the user account.";
     email = mkOpt types.str "khaneliman12@gmail.com" "The email of the user.";
     fullName = mkOpt types.str "Austin Horstman" "The full name of the user.";
     home = mkOpt (types.nullOr types.str) home-directory "The user's home directory.";
     icon =
-      mkOpt (types.nullOr types.package) pkgs.${namespace}.user-icon
+      mkOpt (types.nullOr types.package) self.packages.${system}.user-icon
         "The profile picture to use for the user.";
-    name = mkOpt (types.nullOr types.str) config.snowfallorg.user.name "The user account.";
+    name = mkOpt (types.nullOr types.str) "khaneliman" "The user account.";
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -43,11 +45,11 @@ in
       assertions = [
         {
           assertion = cfg.name != null;
-          message = "${namespace}.user.name must be set";
+          message = "khanelinix.user.name must be set";
         }
         {
           assertion = cfg.home != null;
-          message = "${namespace}.user.home must be set";
+          message = "khanelinix.user.home must be set";
         }
       ];
 
@@ -85,7 +87,7 @@ in
           #   getExe snowfall-flake.packages.${system}.flake
           # } switch";
           nix = "nix -vL";
-          hmvar-reload = ''__HM_ZSH_SESS_VARS_SOURCED=0 source "/etc/profiles/per-user/${config.${namespace}.user.name}/etc/profile.d/hm-session-vars.sh"'';
+          hmvar-reload = ''__HM_ZSH_SESS_VARS_SOURCED=0 source "/etc/profiles/per-user/${config.khanelinix.user.name}/etc/profile.d/hm-session-vars.sh"'';
           # NOTE: vim-add 'owner/repo'
           vim-add = ''nix run nixpkgs#vimPluginsUpdater add'';
           # NOTE: vim-update 'plugin-name'

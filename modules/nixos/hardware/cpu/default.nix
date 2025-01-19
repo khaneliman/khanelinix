@@ -1,9 +1,14 @@
-{ lib, namespace, ... }:
+{ khanelinix-lib, ... }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 in
 {
-  options.${namespace}.hardware.cpu = {
+  imports = [
+    ./amd
+    ./intel
+  ];
+
+  options.khanelinix.hardware.cpu = {
     enable = mkBoolOpt false "No-op used for setting up hierarchy.";
   };
 }

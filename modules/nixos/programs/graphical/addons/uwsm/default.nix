@@ -1,12 +1,13 @@
 {
   config,
+  khanelinix-lib,
   lib,
   namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
   cfg = config.${namespace}.programs.graphical.addons.uwsm;
 in

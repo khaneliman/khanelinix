@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.jq;
+  cfg = config.khanelinix.programs.terminal.tools.jq;
 in
 {
-  options.${namespace}.programs.terminal.tools.jq = {
+  options.khanelinix.programs.terminal.tools.jq = {
     enable = mkBoolOpt false "Whether or not to enable jq.";
   };
 

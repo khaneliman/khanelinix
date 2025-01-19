@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
 
-  cfg = config.${namespace}.programs.terminal.media.ncmpcpp;
+  cfg = config.khanelinix.programs.terminal.media.ncmpcpp;
 in
 {
-  options.${namespace}.programs.terminal.media.ncmpcpp = {
+  options.khanelinix.programs.terminal.media.ncmpcpp = {
     enable = mkEnableOption "ncmpcpp";
   };
 
@@ -46,9 +46,7 @@ in
         }
       ];
 
-      mpdMusicDir =
-        mkIf config.${namespace}.services.mpd.enable
-          config.${namespace}.services.mpd.musicDirectory;
+      mpdMusicDir = mkIf config.khanelinix.services.mpd.enable config.khanelinix.services.mpd.musicDirectory;
 
       settings = {
         # TODO: see how much UI customization can be done

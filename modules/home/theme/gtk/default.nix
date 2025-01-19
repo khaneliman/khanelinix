@@ -3,22 +3,22 @@
   lib,
   pkgs,
   osConfig,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf mkDefault types;
-  inherit (lib.${namespace})
+  inherit (khanelinix-lib)
     boolToNum
     mkBoolOpt
     mkOpt
     nested-default-attrs
     ;
 
-  cfg = config.${namespace}.theme.gtk;
+  cfg = config.khanelinix.theme.gtk;
 in
 {
-  options.${namespace}.theme.gtk = {
+  options.khanelinix.theme.gtk = {
     enable = mkBoolOpt false "Whether to customize GTK and apply themes.";
     usePortal = mkBoolOpt false "Whether to use the GTK Portal.";
 
@@ -87,7 +87,7 @@ in
           cursor-size = cfg.cursor.size;
           cursor-theme = cfg.cursor.name;
           enable-hot-corners = false;
-          font-name = osConfig.${namespace}.system.fonts.default;
+          font-name = osConfig.khanelinix.system.fonts.default;
           gtk-theme = cfg.theme.name;
           icon-theme = cfg.icon.name;
         };
@@ -98,7 +98,7 @@ in
       enable = true;
 
       font = {
-        name = osConfig.${namespace}.system.fonts.default;
+        name = osConfig.khanelinix.system.fonts.default;
       };
 
       gtk2 = {

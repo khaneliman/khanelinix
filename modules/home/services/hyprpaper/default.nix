@@ -2,9 +2,8 @@
   config,
   inputs,
   lib,
-  pkgs,
   system,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
@@ -15,12 +14,16 @@ let
     mkOption
     ;
   inherit (inputs) hypr-socket-watch;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (khanelinix-lib) mkOpt;
 
-  cfg = config.${namespace}.services.hyprpaper;
+  cfg = config.khanelinix.services.hyprpaper;
 in
 {
-  options.${namespace}.services.hyprpaper = {
+  imports = lib.optional (
+    inputs.hypr-socket-watch ? homeManagerModules
+  ) inputs.hypr-socket-watch.homeManagerModules.default;
+
+  options.khanelinix.services.hyprpaper = {
     enable = mkEnableOption "Hyprpaper";
     enableSocketWatch = mkEnableOption "hypr-socket-watch";
     monitors = mkOption {
@@ -37,7 +40,7 @@ in
     wallpapers = mkOpt (types.listOf types.path) [ ] "Wallpapers to preload.";
   };
 
-  config = mkIf cfg.enable {
+  config = mkIf (cfg.enable && (inputs.hypr-socket-watch ? homeManagerModules)) {
     services = {
       hyprpaper = {
         enable = true;
@@ -53,7 +56,7 @@ in
         package = hypr-socket-watch.packages.${system}.hypr-socket-watch;
 
         monitor = "DP-1";
-        wallpapers = "${pkgs.${namespace}.wallpapers}/share/wallpapers/";
+        wallpapers = "${self.packages.${system}.wallpapers}/share/wallpapers/";
         debug = false;
       };
     };

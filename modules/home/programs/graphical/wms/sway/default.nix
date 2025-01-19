@@ -2,20 +2,20 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf mkEnableOption getExe;
-  inherit (lib.${namespace}) enabled;
+  inherit (khanelinix-lib) enabled;
 
-  cfg = config.${namespace}.programs.graphical.wms.sway;
-
+  cfg = config.khanelinix.programs.graphical.wms.sway;
 in
 {
-  options.${namespace}.programs.graphical.wms.sway = {
-    enable = mkEnableOption "sway";
-    enableDebug = mkEnableOption "debug mode";
+  options.khanelinix.programs.graphical.wms.sway = {
+    enable = mkEnableOption "sway.";
+    enableDebug = mkEnableOption "Enable debug mode.";
+
     appendConfig = lib.mkOption {
       type = lib.types.lines;
       default = "";

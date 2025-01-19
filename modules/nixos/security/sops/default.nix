@@ -1,35 +1,39 @@
 {
   config,
+  inputs,
   lib,
-  namespace,
+  root,
+  khanelinix-lib,
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (khanelinix-lib) mkBoolOpt mkOpt;
 
-  cfg = config.${namespace}.security.sops;
+  cfg = config.khanelinix.security.sops;
 in
 {
-  options.${namespace}.security.sops = with lib.types; {
+  imports = lib.optional (inputs.sops-nix ? nixosModules) inputs.sops-nix.nixosModules.sops;
+
+  options.khanelinix.security.sops = with lib.types; {
     enable = mkBoolOpt false "Whether to enable sops.";
     defaultSopsFile = mkOpt path null "Default sops file.";
     sshKeyPaths = mkOpt (listOf path) [ "/etc/ssh/ssh_host_ed25519_key" ] "SSH Key paths to use.";
   };
 
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf (cfg.enable && (inputs.sops-nix ? nixosModules)) {
     sops = {
       inherit (cfg) defaultSopsFile;
 
       age = {
         inherit (cfg) sshKeyPaths;
 
-        keyFile = "${config.users.users.${config.${namespace}.user.name}.home}/.config/sops/age/keys.txt";
+        keyFile = "${config.users.users.${config.khanelinix.user.name}.home}/.config/sops/age/keys.txt";
       };
     };
 
     sops.secrets = {
       "khanelinix_khaneliman_ssh_key" = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/khanelinix/khaneliman/default.yaml";
+        sopsFile = root + "/secrets/khanelinix/khaneliman/default.yaml";
       };
     };
   };

@@ -1,14 +1,13 @@
 {
   config,
   lib,
-  namespace,
   pkgs,
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
 
-  cfg = config.${namespace}.system.xdg;
+  cfg = config.khanelinix.system.xdg;
 
   browser = [
     "firefox-devedition.desktop"
@@ -158,7 +157,7 @@ let
   };
 in
 {
-  options.${namespace}.system.xdg = {
+  options.khanelinix.system.xdg = {
     enable = mkEnableOption "xdg";
   };
 
