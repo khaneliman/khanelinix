@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf getExe';
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.services.spice-vdagentd;
+  cfg = config.khanelinix.services.spice-vdagentd;
 in
 {
-  options.${namespace}.services.spice-vdagentd = {
+  options.khanelinix.services.spice-vdagentd = {
     enable = mkBoolOpt false "Whether or not to configure spice-vdagent support.";
   };
 

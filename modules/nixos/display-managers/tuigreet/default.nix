@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf getExe;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.display-managers.tuigreet;
+  cfg = config.khanelinix.display-managers.tuigreet;
 in
 {
-  options.${namespace}.display-managers.tuigreet = {
+  options.khanelinix.display-managers.tuigreet = {
     enable = mkBoolOpt false "Whether or not to enable tuigreet.";
   };
 

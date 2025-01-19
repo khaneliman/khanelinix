@@ -2,14 +2,14 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf getExe;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.bars.sketchybar;
+  cfg = config.khanelinix.programs.graphical.bars.sketchybar;
 
   shellAliases = with pkgs; {
     push = # bash
@@ -17,7 +17,7 @@ let
   };
 in
 {
-  options.${namespace}.programs.graphical.bars.sketchybar = {
+  options.khanelinix.programs.graphical.bars.sketchybar = {
     enable = mkBoolOpt false "Whether to enable sketchybar in the desktop environment.";
   };
 
@@ -50,7 +50,9 @@ in
 
             -- Add the sketchybar module to the package cpath (the module could be
             -- installed into the default search path then this would not be needed)
-            package.cpath = package.cpath .. ";${pkgs.khanelinix.sbarlua}/lib/lua/${pkgs.lua.luaversion}/sketchybar.so"
+            package.cpath = package.cpath .. ";${
+              self.packages.${system}.sbarlua
+            }/lib/lua/${pkgs.lua.luaversion}/sketchybar.so"
 
             Sbar = require("sketchybar")
             Sbar.exec("killall sketchyhelper || sketchyhelper git.felix.sketchyhelper >/dev/null 2>&1 &")

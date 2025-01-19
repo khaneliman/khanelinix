@@ -1,22 +1,27 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.comma;
+  cfg = config.khanelinix.programs.terminal.tools.comma;
 in
 {
-  options.${namespace}.programs.terminal.tools.comma = {
+  imports = lib.optional (
+    inputs.nix-index-database ? hmModules
+  ) inputs.nix-index-database.hmModules.nix-index;
+
+  options.khanelinix.programs.terminal.tools.comma = {
     enable = mkBoolOpt false "Whether or not to enable comma.";
   };
 
-  config = mkIf cfg.enable {
+  config = mkIf (cfg.enable && (inputs.nix-index-database ? hmModules)) {
     programs = {
       nix-index-database.comma.enable = true;
 

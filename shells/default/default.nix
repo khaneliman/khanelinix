@@ -3,7 +3,7 @@
   mkShell,
   pkgs,
   system,
-  namespace,
+
   ...
 }:
 let
@@ -34,7 +34,7 @@ mkShell {
 
   shellHook = ''
     ${inputs.self.checks.${system}.pre-commit-hooks.shellHook}
-    echo 🔨 Welcome to ${namespace}
+    echo 🔨 Welcome to khanelinix
 
 
   '';

@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (khanelinix-lib) mkBoolOpt enabled;
 
-  cfg = config.${namespace}.suites.games;
+  cfg = config.khanelinix.suites.games;
 in
 {
-  options.${namespace}.suites.games = {
+  options.khanelinix.suites.games = {
     enable = mkBoolOpt false "Whether or not to enable common games configuration.";
   };
 
