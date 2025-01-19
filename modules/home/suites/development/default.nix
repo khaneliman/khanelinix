@@ -4,16 +4,16 @@
   lib,
   osConfig,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (khanelinix-lib) mkBoolOpt enabled;
   inherit (inputs) snowfall-flake;
 
   tokenExports =
-    lib.optionalString osConfig.${namespace}.security.sops.enable # Bash
+    lib.optionalString osConfig.khanelinix.security.sops.enable # Bash
       ''
         if [ -f ${config.sops.secrets.ANTHROPIC_API_KEY.path} ]; then
           ANTHROPIC_API_KEY="$(cat ${config.sops.secrets.ANTHROPIC_API_KEY.path})"
@@ -29,10 +29,10 @@ let
         fi
       '';
 
-  cfg = config.${namespace}.suites.development;
+  cfg = config.khanelinix.suites.development;
 in
 {
-  options.${namespace}.suites.development = {
+  options.khanelinix.suites.development = {
     enable = mkBoolOpt false "Whether or not to enable common development configuration.";
     azureEnable = mkBoolOpt false "Whether or not to enable azure development configuration.";
     dockerEnable = mkBoolOpt false "Whether or not to enable docker development configuration.";
@@ -149,7 +149,7 @@ in
       services.ollama.enable = mkDefault (cfg.aiEnable && pkgs.stdenv.hostPlatform.isDarwin);
     };
 
-    sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
+    sops.secrets = lib.mkIf osConfig.khanelinix.security.sops.enable {
       ANTHROPIC_API_KEY = {
         sopsFile = lib.snowfall.fs.get-file "secrets/CORE/default.yaml";
         path = "${config.home.homeDirectory}/.ANTHROPIC_API_KEY";

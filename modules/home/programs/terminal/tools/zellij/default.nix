@@ -2,14 +2,14 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.zellij;
+  cfg = config.khanelinix.programs.terminal.tools.zellij;
 
   zns = "zellij -s $(basename $(pwd)) -l dev options --default-cwd $(pwd)";
   zas = "zellij a $(basename $(pwd))";
@@ -20,7 +20,7 @@ let
   '';
 in
 {
-  options.${namespace}.programs.terminal.tools.zellij = {
+  options.khanelinix.programs.terminal.tools.zellij = {
     enable = mkBoolOpt false "Whether or not to enable zellij.";
   };
 

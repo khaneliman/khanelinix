@@ -1,18 +1,20 @@
 {
   config,
+  khanelinix-lib,
   lib,
   pkgs,
-  namespace,
+  self,
+  system,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.screenlockers.swaylock;
+  cfg = config.khanelinix.programs.graphical.screenlockers.swaylock;
 in
 {
-  options.${namespace}.programs.graphical.screenlockers.swaylock = {
+  options.khanelinix.programs.graphical.screenlockers.swaylock = {
     enable = mkBoolOpt false "Whether to enable swaylock in the desktop environment.";
   };
 
@@ -31,7 +33,7 @@ in
         timestr = "%R";
         datestr = "%a, %e of %B";
 
-        image = "${pkgs.${namespace}.wallpapers}/share/wallpapers/flatppuccin_macchiato.png";
+        image = "${self.packages.${system}.wallpapers}/share/wallpapers/flatppuccin_macchiato.png";
 
         fade-in = "0.2";
 

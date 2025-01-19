@@ -1,28 +1,28 @@
 {
   config,
+  khanelinix-lib,
   lib,
-  pkgs,
-  namespace,
   osConfig,
+  pkgs,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.social.slack-term;
+  cfg = config.khanelinix.programs.terminal.social.slack-term;
 in
 {
-  options.${namespace}.programs.terminal.social.slack-term = {
+  options.khanelinix.programs.terminal.social.slack-term = {
     enable = mkBoolOpt false "Whether or not to enable slack-term.";
   };
 
   config = mkIf cfg.enable {
     home.packages = [ pkgs.slack-term ];
 
-    sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
+    sops.secrets = lib.mkIf osConfig.khanelinix.security.sops.enable {
       slack-term = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
+        sopsFile = khanelinix-lib.getFile "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.config/slack-term/config";
       };
     };

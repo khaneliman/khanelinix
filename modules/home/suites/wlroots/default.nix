@@ -1,18 +1,18 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   pkgs,
   ...
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (khanelinix-lib) mkBoolOpt enabled;
 
-  cfg = config.${namespace}.suites.wlroots;
+  cfg = config.khanelinix.suites.wlroots;
 in
 {
-  options.${namespace}.suites.wlroots = {
+  options.khanelinix.suites.wlroots = {
     enable = mkBoolOpt false "Whether or not to enable common wlroots configuration.";
   };
 

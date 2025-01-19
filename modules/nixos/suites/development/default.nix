@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.suites.development;
+  cfg = config.khanelinix.suites.development;
 in
 {
-  options.${namespace}.suites.development = {
+  options.khanelinix.suites.development = {
     enable = mkBoolOpt false "Whether or not to enable common development configuration.";
     azureEnable = mkBoolOpt false "Whether or not to enable azure development configuration.";
     dockerEnable = mkBoolOpt false "Whether or not to enable docker development configuration.";

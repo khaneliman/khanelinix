@@ -23,7 +23,9 @@ mkShell {
 
   shellHook = ''
 
-    export NUGET_PLUGIN_PATHS=${pkgs.khanelinix.artifacts-credprovider}/bin/netcore/CredentialProvider.Microsoft/CredentialProvider.Microsoft.dll
+    export NUGET_PLUGIN_PATHS=${
+      self.packages.${system}.artifacts-credprovider
+    }/bin/netcore/CredentialProvider.Microsoft/CredentialProvider.Microsoft.dll
 
     echo 🔨 Dotnet DevShell
 

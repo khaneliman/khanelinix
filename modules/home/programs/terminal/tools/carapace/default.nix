@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.carapace;
+  cfg = config.khanelinix.programs.terminal.tools.carapace;
 in
 {
-  options.${namespace}.programs.terminal.tools.carapace = {
+  options.khanelinix.programs.terminal.tools.carapace = {
     enable = mkBoolOpt false "Whether or not to enable carapace.";
   };
 

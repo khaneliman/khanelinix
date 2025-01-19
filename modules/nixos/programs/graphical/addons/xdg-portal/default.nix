@@ -1,20 +1,21 @@
 {
   config,
+  khanelinix-lib,
   lib,
-  pkgs,
   namespace,
+  pkgs,
   ...
 }:
 let
-  inherit (lib) mkEnableOption mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib) mkIf;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.addons.xdg-portal;
+  cfg = config.khanelinix.programs.graphical.addons.xdg-portal;
 in
 {
-  options.${namespace}.programs.graphical.addons.xdg-portal = {
+  options.khanelinix.programs.graphical.addons.xdg-portal = {
     enable = mkBoolOpt false "Whether or not to add support for xdg portal.";
-    enableDebug = mkEnableOption "Enable debug mode.";
+    enableDebug = lib.mkEnableOption "debug mode";
   };
 
   config = mkIf cfg.enable {
@@ -22,12 +23,12 @@ in
       portal = {
         enable = true;
 
-        configPackages = lib.optionals config.${namespace}.programs.graphical.wms.hyprland.enable [
+        configPackages = lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [
           pkgs.hyprland
         ];
 
         config = {
-          hyprland = mkIf config.${namespace}.programs.graphical.wms.hyprland.enable {
+          hyprland = mkIf config.khanelinix.programs.graphical.wms.hyprland.enable {
             default = [
               "hyprland"
               "gtk"
@@ -36,7 +37,7 @@ in
             "org.freedesktop.impl.portal.Screenshot" = "hyprland";
           };
 
-          sway = mkIf config.${namespace}.programs.graphical.wms.sway.enable {
+          sway = mkIf config.khanelinix.programs.graphical.wms.sway.enable {
             default = lib.mkDefault [
               "wlr"
               "gtk"
@@ -61,7 +62,7 @@ in
         # xdgOpenUsePortal = true;
 
         wlr = {
-          inherit (config.${namespace}.programs.graphical.wms.sway) enable;
+          inherit (config.khanelinix.programs.graphical.wms.sway) enable;
 
           settings = {
             screencast = {

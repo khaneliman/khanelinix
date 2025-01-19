@@ -2,7 +2,8 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
+  self,
   ...
 }:
 let
@@ -10,17 +11,16 @@ let
     types
     mkIf
     mapAttrs
-    optional
     getExe
     mkDefault
     ;
-  inherit (lib.${namespace})
+  inherit (khanelinix-lib)
     enabled
     mkBoolOpt
     mkOpt
     ;
 
-  cfg = config.${namespace}.programs.graphical.desktop-environment.gnome;
+  cfg = config.khanelinix.programs.graphical.desktop-environment.gnome;
   gdmHome = config.users.users.gdm.home;
 
   defaultExtensions = with pkgs.gnomeExtensions; [
@@ -43,7 +43,7 @@ let
   nested-default-attrs = mapAttrs (_key: default-attrs);
 in
 {
-  options.${namespace}.programs.graphical.desktop-environment.gnome = with types; {
+  options.khanelinix.programs.graphical.desktop-environment.gnome = with types; {
     enable = mkBoolOpt false "Whether or not to use Gnome as the desktop environment.";
     color-scheme = mkOpt (enum [
       "light"
@@ -53,14 +53,19 @@ in
     monitors = mkOpt (nullOr path) null "The monitors.xml file to create.";
     suspend = mkBoolOpt true "Whether or not to suspend the machine after inactivity.";
     wallpaper = {
-      light = mkOpt (oneOf [
-        str
-        package
-      ]) pkgs.${namespace}.wallpapers.flatppuccin_macchiato "The light wallpaper to use.";
+      light =
+        mkOpt
+          (oneOf [
+            str
+            package
+          ])
+          self.packages.${pkgs.stdenv.system}.wallpapers.flatppuccin_macchiato
+          "The light wallpaper to use.";
       dark = mkOpt (oneOf [
         str
         package
-      ]) pkgs.${namespace}.wallpapers.cat-sound "The dark wallpaper to use.";
+        # FIXME:
+      ]) self.packages.${pkgs.stdenv.system}.wallpapers.cat-sound "The dark wallpaper to use.";
     };
     wayland = mkBoolOpt true "Whether or not to use Wayland.";
   };
@@ -118,15 +123,15 @@ in
               favorite-apps =
                 [ "org.gnome.Nautilus.desktop" ]
                 # FIX: references
-                # ++ optional config.${namespace}.programs.graphical.firefox.enable "firefox.desktop"
-                # ++ optional config.${namespace}.programs.graphical.vscode.enable "code.desktop"
-                # ++ optional config.${namespace}.programs.terminal.emulators.foot.enable "foot.desktop"
-                # ++ optional config.${namespace}.programs.terminal.emulators.kitty.enable "kitty.desktop"
+                # ++ optional config.khanelinix.programs.graphical.firefox.enable "firefox.desktop"
+                # ++ optional config.khanelinix.programs.graphical.vscode.enable "code.desktop"
+                # ++ optional config.khanelinix.programs.terminal.emulators.foot.enable "foot.desktop"
+                # ++ optional config.khanelinix.programs.terminal.emulators.kitty.enable "kitty.desktop"
                 ++ [ "org.gnome.Console.desktop" ];
               # FIX: references
-              # ++ optional config.${namespace}.programs.graphical.logseq.enable "logseq.desktop"
-              # ++ optional config.${namespace}.programs.graphical.apps.discord.enable "discord.desktop"
-              # ++ optional config.${namespace}.programs.graphical.apps.steam.enable "steam.desktop";
+              # ++ optional config.khanelinix.programs.graphical.logseq.enable "logseq.desktop"
+              # ++ optional config.khanelinix.programs.graphical.apps.discord.enable "discord.desktop"
+              # ++ optional config.khanelinix.programs.graphical.apps.steam.enable "steam.desktop";
             };
 
             "org/gnome/desktop/background" = {
@@ -213,8 +218,8 @@ in
               menu-button-icon-image = 23;
 
               menu-button-terminal =
-                # if config.${namespace}.desktop.addons.term.enable then
-                #   getExe config.${namespace}.desktop.addons.term.pkg
+                # if config.khanelinix.desktop.addons.term.enable then
+                #   getExe config.khanelinix.desktop.addons.term.pkg
                 # else
                 getExe pkgs.gnome-terminal;
             };
@@ -275,7 +280,7 @@ in
             };
 
             "org/gnome/shell/extensions/user-theme" = {
-              inherit (config.${namespace}.theme.gtk.theme) name;
+              inherit (config.khanelinix.theme.gtk.theme) name;
             };
           };
       };
@@ -311,7 +316,7 @@ in
           lib.optional (cfg.monitors != null) "L+ ${gdmHome}/.config/monitors.xml - - - - ${cfg.monitors}"
         );
 
-      # services."${namespace}-user-icon" = {
+      # services."khanelinix-user-icon" = {
       #   before = [ "display-manager.service" ];
       #   wantedBy = [ "display-manager.service" ];
       #
@@ -323,9 +328,9 @@ in
       #
       #   script = # bash
       #     ''
-      #       config_file=/var/lib/AccountsService/users/${config.${namespace}.user.name}
-      #       icon_file=/run/current-system/sw/share/${namespace}.icons/user/${config.${namespace}.user.name}/${
-      #         config.${namespace}.user.icon.fileName
+      #       config_file=/var/lib/AccountsService/users/${config.khanelinix.user.name}
+      #       icon_file=/run/current-system/sw/share/khanelinix.icons/user/${config.khanelinix.user.name}/${
+      #         config.khanelinix.user.icon.fileName
       #       }
       #
       #       if ! [ -d "$(dirname "$config_file")"]; then

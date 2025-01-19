@@ -1,5 +1,6 @@
 {
   config,
+  khanelinix-lib,
   lib,
   namespace,
   pkgs,
@@ -7,10 +8,9 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.emulators.ghostty;
-
 in
 {
   options.${namespace}.programs.terminal.emulators.ghostty = {

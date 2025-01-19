@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   osConfig,
   ...
 }:
@@ -14,16 +14,16 @@ let
     mkForce
     getExe'
     ;
-  inherit (lib.${namespace}) mkOpt mkBoolOpt enabled;
-  inherit (config.${namespace}) user;
+  inherit (khanelinix-lib) mkOpt mkBoolOpt enabled;
+  inherit (config.khanelinix) user;
 
-  cfg = config.${namespace}.programs.terminal.tools.git;
+  cfg = config.khanelinix.programs.terminal.tools.git;
 
   aliases = import ./aliases.nix { inherit lib pkgs; };
   ignores = import ./ignores.nix;
 
   tokenExports =
-    lib.optionalString osConfig.${namespace}.security.sops.enable # Bash
+    lib.optionalString osConfig.khanelinix.security.sops.enable # Bash
       ''
         if [ -f ${config.sops.secrets."github/access-token".path} ]; then
           GITHUB_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
@@ -34,7 +34,7 @@ let
       '';
 in
 {
-  options.${namespace}.programs.terminal.tools.git = {
+  options.khanelinix.programs.terminal.tools.git = {
     enable = mkEnableOption "Git";
     includes = mkOpt (types.listOf types.attrs) [ ] "Git includeIf paths and conditions.";
     signByDefault = mkOpt types.bool true "Whether to sign commits by default.";
@@ -127,7 +127,7 @@ in
 
           safe = {
             directory = [
-              "~/${namespace}/"
+              "~/khanelinix/"
               "/etc/nixos"
             ];
           };
@@ -173,9 +173,9 @@ in
       inherit (aliases) shellAliases;
     };
 
-    sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
+    sops.secrets = lib.mkIf osConfig.khanelinix.security.sops.enable {
       "github/access-token" = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
+        sopsFile = khanelinix-lib.getFile "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.config/gh/access-token";
       };
     };

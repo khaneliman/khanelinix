@@ -1,18 +1,18 @@
 {
   config,
   lib,
-  namespace,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.emulators.wezterm;
-  catppuccin = import (lib.snowfall.fs.get-file "modules/home/theme/catppuccin/colors.nix");
+  cfg = config.khanelinix.programs.terminal.emulators.wezterm;
+  catppuccin = import (khanelinix-lib.getFile "modules/home/theme/catppuccin/colors.nix");
 in
 {
-  options.${namespace}.programs.terminal.emulators.wezterm = {
+  options.khanelinix.programs.terminal.emulators.wezterm = {
     enable = mkBoolOpt false "Whether or not to enable wezterm.";
   };
 

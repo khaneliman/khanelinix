@@ -1,14 +1,8 @@
 {
-  inputs,
   mkShell,
   pkgs,
-  system,
-  namespace,
   ...
 }:
-let
-  inherit (inputs) snowfall-flake;
-in
 mkShell {
   packages = with pkgs; [
     deadnix
@@ -26,12 +20,11 @@ mkShell {
     nixpkgs-hammering
     nixpkgs-lint
     nixpkgs-review
-    snowfall-flake.packages.${system}.flake
     statix
   ];
 
   shellHook = ''
-    echo 🔨 Welcome to ${namespace}
+    echo 🔨 Welcome to khanelinix
 
 
   '';

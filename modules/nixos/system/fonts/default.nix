@@ -1,17 +1,17 @@
 {
   config,
+  khanelinix-lib,
   lib,
   pkgs,
-  namespace,
   ...
 }:
 let
   inherit (lib) mkIf mapAttrs;
 
-  cfg = config.${namespace}.system.fonts;
+  cfg = config.khanelinix.system.fonts;
 in
 {
-  imports = [ (lib.snowfall.fs.get-file "modules/shared/system/fonts/default.nix") ];
+  imports = [ (khanelinix-lib.getFile "modules/shared/system/fonts/default.nix") ];
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [

@@ -1,18 +1,18 @@
 {
   config,
+  khanelinix-lib,
   lib,
   pkgs,
-  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.hardware.gpu.amd;
+  cfg = config.khanelinix.hardware.gpu.amd;
 in
 {
-  options.${namespace}.hardware.gpu.amd = {
+  options.khanelinix.hardware.gpu.amd = {
     enable = mkBoolOpt false "Whether or not to enable support for amdgpu.";
     enableRocmSupport = mkBoolOpt false "Whether or not to enable support for rocm.";
   };

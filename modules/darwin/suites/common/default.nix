@@ -2,17 +2,18 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
+  self,
   ...
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.${namespace}) enabled;
+  inherit (khanelinix-lib) enabled;
 
-  cfg = config.${namespace}.suites.common;
+  cfg = config.khanelinix.suites.common;
 in
 {
-  imports = [ (lib.snowfall.fs.get-file "modules/shared/suites/common/default.nix") ];
+  imports = [ (khanelinix-lib.getFile "modules/shared/suites/common/default.nix") ];
 
   config = mkIf cfg.enable {
     programs.zsh.enable = mkDefault true;
@@ -31,8 +32,8 @@ in
         gnupg
         gnused
         gnutls
-        pkgs.${namespace}.trace-symlink
-        pkgs.${namespace}.trace-which
+        self.packages.${pkgs.stdenv.system}.trace-symlink
+        self.packages.${pkgs.stdenv.system}.trace-which
         mas
         terminal-notifier
         trash-cli

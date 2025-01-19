@@ -2,29 +2,29 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
   inputs,
   system,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
   completion = import ./keymap/completion.nix { };
   help = import ./keymap/help.nix { };
   input = import ./keymap/input.nix { };
-  manager = import ./keymap/manager.nix { inherit config namespace; };
+  manager = import ./keymap/manager.nix { inherit config; };
   select = import ./keymap/select.nix { };
   tasks = import ./keymap/tasks.nix { };
   inherit (inputs) yazi yazi-plugins;
 
-  cfg = config.${namespace}.programs.terminal.tools.yazi;
+  cfg = config.khanelinix.programs.terminal.tools.yazi;
 in
 {
   imports = lib.snowfall.fs.get-non-default-nix-files ./configs/plugins;
 
-  options.${namespace}.programs.terminal.tools.yazi = {
+  options.khanelinix.programs.terminal.tools.yazi = {
     enable = mkBoolOpt false "Whether or not to enable yazi.";
   };
 

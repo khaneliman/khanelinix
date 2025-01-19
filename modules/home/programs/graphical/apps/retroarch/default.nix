@@ -1,18 +1,18 @@
 {
   config,
+  khanelinix-lib,
   lib,
   pkgs,
-  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.apps.retroarch;
+  cfg = config.khanelinix.programs.graphical.apps.retroarch;
 in
 {
-  options.${namespace}.programs.graphical.apps.retroarch = {
+  options.khanelinix.programs.graphical.apps.retroarch = {
     enable = mkBoolOpt false "Whether or not to enable retroarch.";
   };
 

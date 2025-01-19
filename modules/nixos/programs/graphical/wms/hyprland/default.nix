@@ -1,10 +1,10 @@
 {
   config,
   inputs,
+  khanelinix-lib,
   lib,
-  pkgs,
   namespace,
-  system,
+  pkgs,
   ...
 }:
 let
@@ -14,9 +14,9 @@ let
     mkIf
     types
     ;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt enabled;
+  inherit (khanelinix-lib) mkBoolOpt mkOpt enabled;
 
-  cfg = config.${namespace}.programs.graphical.wms.hyprland;
+  cfg = config.khanelinix.programs.graphical.wms.hyprland;
 
   programs = makeBinPath (
     with pkgs;
@@ -30,7 +30,7 @@ let
   );
 in
 {
-  options.${namespace}.programs.graphical.wms.hyprland = with types; {
+  options.khanelinix.programs.graphical.wms.hyprland = with types; {
     enable = mkBoolOpt false "Whether or not to enable Hyprland.";
     enableDebug = lib.mkEnableOption "debug mode";
     customConfigFiles =
@@ -43,8 +43,8 @@ in
   config = mkIf cfg.enable {
     environment = {
       sessionVariables = lib.mkIf (!config.programs.uwsm.enable) {
-        HYPRCURSOR_THEME = config.${namespace}.theme.cursor.name;
-        HYPRCURSOR_SIZE = "${toString config.${namespace}.theme.cursor.size}";
+        HYPRCURSOR_THEME = config.khanelinix.theme.cursor.name;
+        HYPRCURSOR_SIZE = "${toString config.khanelinix.theme.cursor.size}";
       };
     };
 
@@ -55,7 +55,9 @@ in
 
         # package = pkgs.hyprland.override { debug = cfg.enableDebug; };
         # TODO: remove after next release
-        package = inputs.hyprland.packages.${system}.default.override { debug = cfg.enableDebug; };
+        package = inputs.hyprland.packages.${pkgs.stdenv.system}.default.override {
+          debug = cfg.enableDebug;
+        };
       };
     };
 

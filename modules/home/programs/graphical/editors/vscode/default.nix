@@ -1,26 +1,26 @@
 {
   config,
+  khanelinix-lib,
   lib,
-  pkgs,
-  namespace,
   osConfig,
+  pkgs,
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.graphical.editors.vscode;
+  cfg = config.khanelinix.programs.graphical.editors.vscode;
 in
 {
-  options.${namespace}.programs.graphical.editors.vscode = {
+  options.khanelinix.programs.graphical.editors.vscode = {
     enable = mkEnableOption "Whether or not to enable vscode.";
     declarativeConfig = mkBoolOpt false "Whether or not to enable vscode.";
   };
 
   config = mkIf cfg.enable {
     home.file = {
-      ".vscode/argv.json" = mkIf config.${namespace}.services.keyring.enable {
+      ".vscode/argv.json" = mkIf config.khanelinix.services.keyring.enable {
         text = builtins.toJSON {
           "enable-crash-reporter" = true;
           "crash-reporter-id" = "53a6c113-87c4-4f20-9451-dd67057ddb95";
@@ -204,9 +204,9 @@ in
       };
     };
 
-    sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
+    sops.secrets = lib.mkIf osConfig.khanelinix.security.sops.enable {
       wakatime = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
+        sopsFile = khanelinix-lib.getFile "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.wakatime.cfg";
       };
     };

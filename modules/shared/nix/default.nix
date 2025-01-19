@@ -3,17 +3,16 @@
   inputs,
   lib,
   pkgs,
-  namespace,
-  host,
+  khanelinix-lib,
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (khanelinix-lib) mkBoolOpt mkOpt;
 
-  cfg = config.${namespace}.nix;
+  cfg = config.khanelinix.nix;
 in
 {
-  options.${namespace}.nix = {
+  options.khanelinix.nix = {
     enable = mkBoolOpt true "Whether or not to manage nix configuration.";
     package = mkOpt lib.types.package pkgs.nixVersions.latest "Which nix package to use.";
   };
@@ -67,7 +66,7 @@ in
           "root"
           "@wheel"
           "nix-builder"
-          config.${namespace}.user.name
+          config.khanelinix.user.name
         ];
       in
       {
@@ -82,10 +81,9 @@ in
               "nixos-test"
             ];
           in
-          # Linux builders
-          lib.optionals config.${namespace}.security.sops.enable [
+          lib.optionals config.khanelinix.security.sops.enable [
             (
-              lib.mkIf (host != "bruddynix" && host != "khanelinix") {
+              lib.mkIf (config.networking.hostName != "bruddynix" && config.networking.hostName != "khanelinix") {
                 inherit sshUser;
                 hostName = "bruddynix.local";
                 systems = [
@@ -95,7 +93,7 @@ in
                 speedFactor = 1;
                 inherit supportedFeatures;
               }
-              // lib.optionalAttrs (host == "khanelimac") {
+              // lib.optionalAttrs (config.networking.hostName == "khanelimac") {
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
               }
             )
@@ -110,10 +108,10 @@ in
                 speedFactor = 2;
                 supportedFeatures = supportedFeatures ++ [ "kvm" ];
               }
-              // lib.optionalAttrs (host == "khanelimac") {
+              // lib.optionalAttrs (config.networking.hostName == "khanelimac") {
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
               }
-              // lib.optionalAttrs (host == "khanelinix") {
+              // lib.optionalAttrs (config.networking.hostName == "khanelinix") {
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
                 maxJobs = 0;
               }
@@ -131,10 +129,10 @@ in
                   "nixos-test"
                 ];
               }
-              // lib.optionalAttrs (host == "khanelimac") {
+              // lib.optionalAttrs (config.networking.hostName == "khanelimac") {
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
               }
-              // lib.optionalAttrs (host == "khanelinix") {
+              // lib.optionalAttrs (config.networking.hostName == "khanelinix") {
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
               }
             )
@@ -151,10 +149,10 @@ in
                 speedFactor = 10;
                 supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
               }
-              // lib.optionalAttrs (host == "khanelinix") {
+              // lib.optionalAttrs (config.networking.hostName == "khanelinix") {
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
               }
-              // lib.optionalAttrs (host == "khanelimac") {
+              // lib.optionalAttrs (config.networking.hostName == "khanelimac") {
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
                 maxJobs = 0;
               }
@@ -173,10 +171,10 @@ in
                 supportedFeatures = [ "big-parallel" ];
                 publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUtNSGhsY243ZlVwVXVpT0ZlSWhEcUJ6Qk5Gc2JOcXErTnB6dUdYM2U2enYgCg";
               }
-              // lib.optionalAttrs (host == "khanelinix") {
+              // lib.optionalAttrs (config.networking.hostName == "khanelinix") {
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
               }
-              // lib.optionalAttrs (host == "khanelimac") {
+              // lib.optionalAttrs (config.networking.hostName == "khanelimac") {
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
                 # Prefer local builds for personal usage
                 systems = [

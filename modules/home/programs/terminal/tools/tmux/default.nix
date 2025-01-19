@@ -2,15 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+  khanelinix-lib,
+  root,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.tmux;
-  configFiles = lib.snowfall.fs.get-files ./config;
+  cfg = config.khanelinix.programs.terminal.tools.tmux;
+  configFiles = root + ./config;
 
   plugins = with pkgs.tmuxPlugins; [
     # FIXME: broken upstream package
@@ -35,7 +36,7 @@ let
   ];
 in
 {
-  options.${namespace}.programs.terminal.tools.tmux = {
+  options.khanelinix.programs.terminal.tools.tmux = {
     enable = mkBoolOpt false "Whether or not to enable tmux.";
   };
 

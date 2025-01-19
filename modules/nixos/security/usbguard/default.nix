@@ -1,14 +1,14 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  cfg = config.${namespace}.security.usbguard;
+  cfg = config.khanelinix.security.usbguard;
 in
 {
-  options.${namespace}.security.usbguard = {
+  options.khanelinix.security.usbguard = {
     enable = lib.mkEnableOption "default usbguard configuration";
   };
 
@@ -16,7 +16,7 @@ in
     services.usbguard = {
       IPCAllowedUsers = [
         "root"
-        "${config.snowfallorg.users.name}"
+        "${config.khanelinix.user.name}"
       ];
       presentDevicePolicy = "allow";
       rules = ''

@@ -1,12 +1,13 @@
 {
   config,
+  khanelinix-lib,
   lib,
-  pkgs,
   namespace,
+  pkgs,
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt mkOpt enabled;
+  inherit (khanelinix-lib) mkBoolOpt mkOpt enabled;
   cfg = config.${namespace}.desktop.wms.aerospace;
 in
 {

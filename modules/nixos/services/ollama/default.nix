@@ -2,10 +2,11 @@
   config,
   lib,
   namespace,
+  khanelinix-lib,
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
   cfg = config.${namespace}.services.ollama;
 

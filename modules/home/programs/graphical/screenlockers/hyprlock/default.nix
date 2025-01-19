@@ -1,20 +1,20 @@
 {
   config,
+  khanelinix-lib,
   lib,
   osConfig,
-  namespace,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (khanelinix-lib) mkBoolOpt;
 
-  catppuccin = import (lib.snowfall.fs.get-file "modules/home/theme/catppuccin/colors.nix");
+  catppuccin = import (khanelinix-lib.getFile "modules/home/theme/catppuccin/colors.nix");
 
-  cfg = config.${namespace}.programs.graphical.screenlockers.hyprlock;
+  cfg = config.khanelinix.programs.graphical.screenlockers.hyprlock;
 in
 {
-  options.${namespace}.programs.graphical.screenlockers.hyprlock = {
+  options.khanelinix.programs.graphical.screenlockers.hyprlock = {
     enable = mkBoolOpt false "Whether to enable hyprlock in the desktop environment.";
   };
 
@@ -74,7 +74,7 @@ in
             monitor = "";
             size = 120;
             position = "0, 45";
-            path = "/home/${config.snowfallorg.user.name}/.face";
+            path = "/home/${config.khanelinix.user.name}/.face";
             border_color = catppuccin.colors.text.rgb;
             border_size = 5;
             halign = "center";
@@ -104,7 +104,7 @@ in
             text = "<span font_weight=\"ultrabold\">󰌾 </span>";
             color = catppuccin.colors.text.rgb;
             font_size = 50;
-            font_family = osConfig.${namespace}.system.fonts.default;
+            font_family = osConfig.khanelinix.system.fonts.default;
             valign = "center";
             halign = "center";
             position = "15, -350";
@@ -119,7 +119,7 @@ in
             text = "<span font_weight=\"ultrabold\"> </span>";
             color = catppuccin.colors.text.rgb;
             font_size = 25;
-            font_family = osConfig.${namespace}.system.fonts.default;
+            font_family = osConfig.khanelinix.system.fonts.default;
             valign = "bottom";
             halign = "right";
             position = "5, 8";

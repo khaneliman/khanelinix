@@ -1,24 +1,27 @@
 {
   config,
+  inputs,
   lib,
-  namespace,
   pkgs,
+  khanelinix-lib,
   ...
 }:
 let
   inherit (lib) mkIf types;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (khanelinix-lib) mkBoolOpt mkOpt;
 
-  cfg = config.${namespace}.services.sops;
+  cfg = config.khanelinix.services.sops;
 in
 {
-  options.${namespace}.services.sops = with types; {
+  imports = lib.optional (inputs.sops-nix ? hmModules) inputs.sops-nix.hmModules.sops;
+
+  options.khanelinix.services.sops = with types; {
     enable = mkBoolOpt false "Whether to enable sops.";
     defaultSopsFile = mkOpt path null "Default sops file.";
     sshKeyPaths = mkOpt (listOf path) [ ] "SSH Key paths to use.";
   };
 
-  config = mkIf cfg.enable {
+  config = mkIf (cfg.enable && (inputs.sops-nix ? hmModules)) {
     home.packages = with pkgs; [
       age
       sops
@@ -37,7 +40,7 @@ in
 
       secrets = {
         nix = {
-          sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
+          sopsFile = khanelinix-lib.getFile "secrets/khaneliman/default.yaml";
           path = "${config.home.homeDirectory}/.config/nix/nix.conf";
         };
       };

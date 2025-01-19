@@ -1,8 +1,12 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  ...
+}:
 let
   inherit (lib) getExe getExe';
 
-  catppuccin = import (lib.snowfall.fs.get-file "modules/home/theme/catppuccin/colors.nix");
+  catppuccin = import (khanelinix-lib.getFile "modules/home/theme/catppuccin/colors.nix");
 in
 {
   backlight =
