@@ -11,9 +11,8 @@
 let
   inherit (lib) mkEnableOption mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
-  inherit (inputs) khanelivim;
 
-  khanelivimConfiguration = khanelivim.nixvimConfigurations.${system}.khanelivim;
+  khanelivimConfiguration = inputs.khanelivim.nixvimConfigurations.${system}.khanelivim;
   khanelivimConfigurationExtended = khanelivimConfiguration.extendModules {
     # FIXME: insane memory usage
     # plugins.lsp.servers.nixd.settings =
@@ -28,7 +27,7 @@ let
     #     };
     #   };
   };
-  khanelivimPackage = khanelivimConfigurationExtended.config.build.package;
+  khanelivim = khanelivimConfigurationExtended.config.build.package;
 
   cfg = config.${namespace}.programs.terminal.editors.neovim;
 in
@@ -46,7 +45,7 @@ in
         EDITOR = mkIf cfg.default "nvim";
       };
       packages = [
-        khanelivimPackage
+        khanelivim
         pkgs.nvrh
       ];
     };
