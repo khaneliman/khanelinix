@@ -1,15 +1,14 @@
 {
   config,
+  inputs,
   lib,
   namespace,
-  system,
-  inputs,
-  pkgs,
   osConfig,
+  pkgs,
+  system,
   ...
 }:
 let
-  inherit (lib) mkEnableOption mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
 
   khanelivimConfiguration = inputs.khanelivim.nixvimConfigurations.${system}.khanelivim;
@@ -33,16 +32,14 @@ let
 in
 {
   options.${namespace}.programs.terminal.editors.neovim = {
-    enable = mkEnableOption "neovim";
+    enable = lib.mkEnableOption "neovim";
     default = mkBoolOpt true "Whether to set Neovim as the session EDITOR";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     home = {
-      # file = mkIf pkgs.stdenv.isDarwin { "Library/Preferences/glow/glow.yml".text = config; };
-
       sessionVariables = {
-        EDITOR = mkIf cfg.default "nvim";
+        EDITOR = lib.mkIf cfg.default "nvim";
       };
       packages = [
         khanelivim
@@ -56,7 +53,5 @@ in
         path = "${config.home.homeDirectory}/.wakatime.cfg";
       };
     };
-
-    # xdg.configFile = mkIf pkgs.stdenv.isLinux { "glow/glow.yml".text = config; };
   };
 }
