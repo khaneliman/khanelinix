@@ -997,11 +997,11 @@
         "nixpkgs": "nixpkgs_8"
       },
       "locked": {
-        "lastModified": 1737299337,
-        "narHash": "sha256-0NBrY2A7buujKmeCbieopOMSbLxTu8TFcTLqAbTnQDw=",
+        "lastModified": 1737394973,
+        "narHash": "sha256-EW4oXMfnfA5sNM9Jqm+y98horWVvN66Gu7YIcEpFYZc=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "f8ef4541bb8a54a8b52f19b52912119e689529b3",
+        "rev": "9786661d57c476021c8a0c3e53bf9fa2b4f3328b",
         "type": "github"
       },
       "original": {
@@ -1146,11 +1146,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1737391684,
-        "narHash": "sha256-NZVjY6ylGENXBYXVIGNvxYTsB+auqHRya5PiDAOeH3E=",
+        "lastModified": 1737398451,
+        "narHash": "sha256-9X6dQbYGi9az9+8wk3fnPppD2SOOe6U68vdZCl+MxkE=",
         "ref": "refs/heads/main",
-        "rev": "2d82a923241c0d7cb6209ee035bbac581d4dc555",
-        "revCount": 5691,
+        "rev": "a661203bb6d4714b211572759e2f74b1da194972",
+        "revCount": 5693,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -1370,11 +1370,11 @@
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
-        "lastModified": 1737393236,
-        "narHash": "sha256-+3fZV9ZXXdzMj+7O05nRlS8tfRNWN4RgM7ZaI+mUChQ=",
+        "lastModified": 1737395960,
+        "narHash": "sha256-4ZRHqmW0XN5b2nX/KoGrIMGdaxQEWxEZO5s9kOdWjMM=",
         "owner": "khaneliman",
         "repo": "khanelivim",
-        "rev": "0bc70e1717a9ac32d0547c7092be5a61ec934bf9",
+        "rev": "708e871cd47ca646278d14532cfb32a984b8aeab",
         "type": "github"
       },
       "original": {
@@ -1598,11 +1598,11 @@
     },
     "nixpkgs-master_2": {
       "locked": {
-        "lastModified": 1737392437,
-        "narHash": "sha256-VhqJWOiPExJivoyS2HUuLZPAZE3BdcOL0L6cWCs/qa8=",
+        "lastModified": 1737401148,
+        "narHash": "sha256-8YfoGyE89rWpG6NjCmYrJeV8EPAKvnZf2lN402WbC/A=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "70dab40f0ce459e3f6f799ca0c92264047238263",
+        "rev": "7ceed4f800bec4c12c9b21c54bb76cb28a80e259",
         "type": "github"
       },
       "original": {
@@ -2056,11 +2056,11 @@
         "treefmt-nix": "treefmt-nix_3"
       },
       "locked": {
-        "lastModified": 1737391387,
-        "narHash": "sha256-YGlbew4ME67tw8JrNK0fqaXO5KRVdvdpLBbcxmFqZyA=",
+        "lastModified": 1737398544,
+        "narHash": "sha256-JBB41OKiruoYYjvjQ5MesYjAic94KxIT/0tjZ/v26f8=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "ae20cb632d67919c2f0c25fc129ac24488f7c0b4",
+        "rev": "2ec9c955e6f4592b33ccd54257be1553b00f3f8a",
         "type": "github"
       },
       "original": {
