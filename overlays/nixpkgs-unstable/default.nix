@@ -20,5 +20,6 @@ _final: _prev: {
     switchaudio-osx
 
     ruff
+    tree-sitter
     ;
 }
