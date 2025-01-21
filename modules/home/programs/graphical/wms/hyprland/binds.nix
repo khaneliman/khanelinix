@@ -91,8 +91,9 @@ in
             # ░█░░░█▀█░░█░░█░█░█░█░░█░
             # ░▀▀▀░▀░▀░░▀░░▀▀▀░▀▀▀░░▀░
             "SUPER_ALT, V, togglefloating,"
-            "$mainMod, P, pseudo, # dwindle"
-            "$mainMod, J, togglesplit, # dwindle"
+            "$mainMod, P, pseudo, #dwindle"
+            "$mainMod, J, togglesplit, #dwindle"
+            "$mainMod, K, swapsplit, #dwindle"
             "$mainMod, F, fullscreen"
             # "SUPER_SHIFT, V, workspaceopt, allfloat"
 
