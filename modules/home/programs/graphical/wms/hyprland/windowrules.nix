@@ -11,6 +11,7 @@ in
 {
   imports = [
     ./windowrules/floating.nix
+    ./windowrules/tiling.nix
     ./windowrules/workspace.nix
   ];
 
