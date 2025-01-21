@@ -2,6 +2,7 @@
   config,
   inputs,
   lib,
+  osConfig,
   pkgs,
   namespace,
   ...
@@ -10,6 +11,23 @@ let
   inherit (lib) mkIf mkDefault;
   inherit (lib.${namespace}) mkBoolOpt enabled;
   inherit (inputs) snowfall-flake;
+
+  tokenExports =
+    lib.optionalString osConfig.${namespace}.security.sops.enable # Bash
+      ''
+        if [ -f ${config.sops.secrets.ANTHROPIC_API_KEY.path} ]; then
+          ANTHROPIC_API_KEY="$(cat ${config.sops.secrets.ANTHROPIC_API_KEY.path})"
+          export ANTHROPIC_API_KEY
+        fi
+        if [ -f ${config.sops.secrets.AZURE_OPENAI_API_KEY.path} ]; then
+          AZURE_OPENAI_API_KEY="$(cat ${config.sops.secrets.AZURE_OPENAI_API_KEY.path})"
+          export AZURE_OPENAI_API_KEY
+        fi
+        if [ -f ${config.sops.secrets.OPENAI_KEY.path} ]; then
+          OPENAI_KEY="$(cat ${config.sops.secrets.OPENAI_KEY.path})"
+          export OPENAI_KEY
+        fi
+      '';
 
   cfg = config.${namespace}.suites.development;
 in
@@ -23,6 +41,7 @@ in
     kubernetesEnable = mkBoolOpt false "Whether or not to enable kubernetes development configuration.";
     nixEnable = mkBoolOpt false "Whether or not to enable nix development configuration.";
     sqlEnable = mkBoolOpt false "Whether or not to enable sql development configuration.";
+    aiEnable = mkBoolOpt true "Whether or not to enable ai development configuration.";
   };
 
   config = mkIf cfg.enable {
@@ -81,6 +100,12 @@ in
       };
     };
 
+    programs = {
+      bash.initExtra = tokenExports;
+      fish.shellInit = tokenExports;
+      zsh.initExtra = tokenExports;
+    };
+
     khanelinix = {
       programs = {
         graphical = {
@@ -108,6 +133,21 @@ in
             oh-my-posh = mkDefault enabled;
           };
         };
+      };
+    };
+
+    sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
+      ANTHROPIC_API_KEY = {
+        sopsFile = lib.snowfall.fs.get-file "secrets/CORE/default.yaml";
+        path = "${config.home.homeDirectory}/.ANTHROPIC_API_KEY";
+      };
+      AZURE_OPENAI_API_KEY = {
+        sopsFile = lib.snowfall.fs.get-file "secrets/CORE/default.yaml";
+        path = "${config.home.homeDirectory}/.AZURE_OPENAI_API_KEY";
+      };
+      OPENAI_KEY = {
+        sopsFile = lib.snowfall.fs.get-file "secrets/CORE/default.yaml";
+        path = "${config.home.homeDirectory}/.OPENAI_KEY";
       };
     };
   };
