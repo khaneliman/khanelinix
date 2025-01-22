@@ -10,45 +10,7 @@ let
 
   cfg = config.khanelinix.programs.terminal.tools.ssh;
 
-  user = config.users.users.${config.khanelinix.user.name};
-  user-id = builtins.toString user.uid;
-
-  nixosConfigurations = inputs.self.nixosConfigurations or { };
-  darwinConfigurations = inputs.self.darwinConfigurations or { };
-
   # FIXME:
-  other-hosts = lib.filterAttrs (
-    key: host: key != config.networking.hostName && (host.config.khanelinix.user.name or null) != null
-  ) (nixosConfigurations // darwinConfigurations);
-
-  other-hosts-config = lib.concatMapStringsSep "\n" (
-    name:
-    let
-      remote = other-hosts.${name};
-      remote-user-name = remote.config.khanelinix.user.name;
-      remote-user-id = builtins.toString remote.config.users.users.${remote-user-name}.uid;
-
-      forward-gpg =
-        lib.optionalString (config.programs.gnupg.agent.enable && remote.config.programs.gnupg.agent.enable)
-          ''
-            RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra
-            RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh
-          '';
-      port-expr =
-        if builtins.hasAttr name inputs.self.nixosConfigurations then
-          "Port ${builtins.toString cfg.port}"
-        else
-          "";
-    in
-    ''
-      Host ${name}
-        Hostname ${name}.local
-        User ${remote-user-name}
-        ForwardAgent yes
-        ${port-expr}
-        ${forward-gpg}
-    ''
-  ) (builtins.attrNames other-hosts);
 in
 {
   options.khanelinix.programs.terminal.tools.ssh = with lib.types; {
