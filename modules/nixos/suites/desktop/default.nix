@@ -18,6 +18,11 @@ in
     khanelinix = {
       programs = {
         graphical = {
+          addons = {
+            keyring = lib.mkDefault enabled;
+            xdg-portal = lib.mkDefault enabled;
+          };
+
           apps = {
             _1password = lib.mkDefault enabled;
           };
