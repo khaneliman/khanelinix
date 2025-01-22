@@ -28,11 +28,6 @@ in
 
       programs = {
         graphical = {
-          addons = {
-            keyring = enabled;
-            xdg-portal = enabled;
-          };
-
           apps = {
             partitionmanager = enabled;
           };
