@@ -116,9 +116,6 @@ in
                   notify-send -a 'Gamemode' 'Optimizations deactivated' -u 'low'
                 '';
             };
-
-            keyring = enabled;
-            xdg-portal = enabled;
           };
 
           file-managers = {
