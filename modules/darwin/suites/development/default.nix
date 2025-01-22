@@ -2,6 +2,7 @@
   config,
   lib,
   namespace,
+  pkgs,
   ...
 }:
 let
@@ -16,6 +17,10 @@ in
   };
 
   config = mkIf cfg.enable {
+    environment.variables = {
+      LLDB_DEBUGSERVER_PATH = "${pkgs.lldb.out}/bin/lldb-server";
+    };
+
     homebrew = {
       casks = [
         "cutter"
