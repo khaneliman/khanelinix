@@ -23,6 +23,10 @@ in
           };
         };
       };
+
+      services = {
+        flatpak = lib.mkDefault enabled;
+      };
     };
   };
 }
