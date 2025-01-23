@@ -102,7 +102,9 @@ in
           # jankyborders
           ${getExe config.${namespace}.desktop.addons.jankyborders.package} 2>/dev/null 1>&2 &
 
-          open ${pkgs.raycast}/Applications/Raycast.app
+          if ! pgrep "Raycast"; then
+            open ${pkgs.raycast}/Applications/Raycast.app
+          fi
 
           echo "yabai configuration loaded.."
         '';
