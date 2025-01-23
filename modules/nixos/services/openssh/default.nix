@@ -80,6 +80,7 @@ in
 
     programs.ssh = {
       startAgent = lib.mkDefault true;
+      inherit (cfg) extraConfig;
     };
 
     khanelinix = {
