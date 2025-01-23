@@ -23,8 +23,8 @@ let
           AZURE_OPENAI_API_KEY="$(cat ${config.sops.secrets.AZURE_OPENAI_API_KEY.path})"
           export AZURE_OPENAI_API_KEY
         fi
-        if [ -f ${config.sops.secrets.OPENAI_KEY.path} ]; then
-          OPENAI_KEY="$(cat ${config.sops.secrets.OPENAI_KEY.path})"
+        if [ -f ${config.sops.secrets.OPENAI_API_KEY.path} ]; then
+          OPENAI_API_KEY="$(cat ${config.sops.secrets.OPENAI_API_KEY.path})"
           export OPENAI_KEY
         fi
       '';
@@ -145,9 +145,9 @@ in
         sopsFile = lib.snowfall.fs.get-file "secrets/CORE/default.yaml";
         path = "${config.home.homeDirectory}/.AZURE_OPENAI_API_KEY";
       };
-      OPENAI_KEY = {
+      OPENAI_API_KEY = {
         sopsFile = lib.snowfall.fs.get-file "secrets/CORE/default.yaml";
-        path = "${config.home.homeDirectory}/.OPENAI_KEY";
+        path = "${config.home.homeDirectory}/.OPENAI_API_KEY";
       };
     };
   };
