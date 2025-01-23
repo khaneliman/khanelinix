@@ -24,6 +24,11 @@
     darwin = {
       configurationsDirectory = ../configurations/darwin;
       modulesDirectory = ../modules/darwin;
+      hosts = {
+        khanelimac.userHomeModules = [
+          "khaneliman"
+        ];
+      };
     };
 
     home = {
@@ -34,6 +39,18 @@
     nixos = {
       configurationsDirectory = ../configurations/nixos;
       modulesDirectory = ../modules/nixos;
+      hosts = {
+        CORE-PW00LM92.userHomeModules = [
+          "nixos"
+        ];
+        bruddynix.userHomeModules = [
+          "khaneliman"
+          "bruddy"
+        ];
+        khanelinix.userHomeModules = [
+          "khaneliman"
+        ];
+      };
     };
   };
 }

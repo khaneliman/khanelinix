@@ -229,7 +229,7 @@ in
     };
 
     suites = {
-      art = enabled;
+      art.enable = pkgs.stdenv.hostPlatform.isLinux;
       business = enabled;
       common = enabled;
       desktop = enabled;
@@ -237,20 +237,23 @@ in
       development = {
         enable = true;
 
-        dockerEnable = true;
-        gameEnable = true;
-        kubernetesEnable = true;
+        dockerEnable = pkgs.stdenv.hostPlatform.isLinux;
+
+        gameEnable = pkgs.stdenv.hostPlatform.isLinux;
+
+        kubernetesEnable = pkgs.stdenv.hostPlatform.isLinux;
+
         nixEnable = true;
-        sqlEnable = true;
+        sqlEnable = pkgs.stdenv.hostPlatform.isLinux;
       };
 
-      emulation = enabled;
-      games = enabled;
+      emulation.enable = pkgs.stdenv.hostPlatform.isLinux;
+      games.enable = pkgs.stdenv.hostPlatform.isLinux;
       music = enabled;
       networking = enabled;
       photo = enabled;
       social = enabled;
-      video = enabled;
+      video.enable = pkgs.stdenv.hostPlatform.isLinux;
     };
 
     theme.catppuccin = enabled;

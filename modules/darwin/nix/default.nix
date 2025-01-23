@@ -1,5 +1,6 @@
 {
   config,
+  khanelinix-lib,
   lib,
   root,
   ...

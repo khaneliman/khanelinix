@@ -12,11 +12,6 @@ let
   cfg = config.khanelinix.hardware.storage;
 in
 {
-  imports = [
-    ./btrfs
-    ./zfs
-  ];
-
   options.khanelinix.hardware.storage = {
     enable = mkBoolOpt false "Whether or not to enable support for extra storage devices.";
     ssdEnable = mkBoolOpt true "Whether or not to enable support for SSD storage devices.";
