@@ -1,0 +1,7 @@
+{
+  imports = [
+    ./catppuccin
+    ./gtk
+    ./qt
+  ];
+}
