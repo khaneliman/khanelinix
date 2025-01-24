@@ -1,14 +1,18 @@
 {
   config,
   lib,
+  osConfig,
   pkgs,
+  namespace,
   ...
 }:
 let
   inherit (lib) getExe getExe';
 
   githubHelper = pkgs.writeShellScriptBin "githubHelper" ''
-    ${getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
+    ${lib.optionalString osConfig.${namespace}.security.sops.enable ''
+      ${getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
+    ''}
     NOTIFICATIONS="$(${getExe pkgs.gh} api notifications)"
     COUNT="$(${getExe pkgs.gh} api notifications --jq 'length')"
 

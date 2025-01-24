@@ -27,7 +27,15 @@ let
   statsStyle = builtins.readFile ./styles/stats.css;
   workspacesStyle = builtins.readFile ./styles/workspaces.css;
 
-  custom-modules = import ./modules/custom-modules.nix { inherit config lib pkgs; };
+  custom-modules = import ./modules/custom-modules.nix {
+    inherit
+      osConfig
+      config
+      lib
+      namespace
+      pkgs
+      ;
+  };
   default-modules = import ./modules/default-modules.nix { inherit lib pkgs; };
   group-modules = import ./modules/group-modules.nix { inherit lib namespace osConfig; };
   hyprland-modules = import ./modules/hyprland-modules.nix { inherit config lib; };
