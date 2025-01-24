@@ -22,11 +22,10 @@
     # home-manager.url = "git+file:///Users/khaneliman/Documents/github/home-manager";
 
     # Secure boot
-    lanzaboote.url = "github:nix-community/lanzaboote/v0.4.1";
+    lanzaboote.url = "github:nix-community/lanzaboote/v0.4.2";
 
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nixpkgs-master.url = "github:nixos/nixpkgs";
 
     nixos-wsl = {
       url = "github:nix-community/nixos-wsl";

@@ -18,8 +18,5 @@ _final: _prev: {
     monitorcontrol
     stats
     switchaudio-osx
-
-    ruff
-    tree-sitter
     ;
 }
