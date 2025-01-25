@@ -78,7 +78,7 @@ in
 
       # sops = {
       #   enable = true;
-      #   defaultSopsFile = root + "/secrets/khanelinix/khaneliman/default.yaml";
+      #   defaultSopsFile = khanelinix-lib.getFile "secrets/khanelinix/khaneliman/default.yaml";
       #   sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
       # };
     };

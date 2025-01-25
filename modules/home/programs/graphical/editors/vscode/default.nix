@@ -203,7 +203,7 @@ in
 
     sops.secrets = lib.mkIf osConfig.khanelinix.security.sops.enable {
       wakatime = {
-        sopsFile = root + "/secrets/khaneliman/default.yaml";
+        sopsFile = khanelinix-lib.getFile "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.wakatime.cfg";
       };
     };

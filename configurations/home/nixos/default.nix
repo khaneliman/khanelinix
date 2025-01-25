@@ -50,7 +50,7 @@ in
     services = {
       sops = {
         enable = true;
-        defaultSopsFile = root + "/secrets/CORE/nixos/default.yaml";
+        defaultSopsFile = khanelinix-lib.getFile "secrets/CORE/nixos/default.yaml";
         sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
       };
     };

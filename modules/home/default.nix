@@ -1,11 +1,4 @@
+{ khanelinix-lib, ... }:
 {
-  imports = [
-    ./host
-    ./programs
-    ./services
-    ./suites
-    ./system
-    ./theme
-    ./user
-  ];
+  imports = khanelinix-lib.getDefaultNixFilesRecursive ./.;
 }

@@ -1,6 +1,0 @@
-{
-  imports = [
-    ./ckb-next
-    ./openrgb
-  ];
-}

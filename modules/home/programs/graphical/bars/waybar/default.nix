@@ -151,7 +151,7 @@ in
 
     sops.secrets = lib.mkIf osConfig.khanelinix.security.sops.enable {
       weather_config = {
-        sopsFile = root + "/secrets/khaneliman/default.yaml";
+        sopsFile = khanelinix-lib.getFile "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/weather_config.json";
       };
     };

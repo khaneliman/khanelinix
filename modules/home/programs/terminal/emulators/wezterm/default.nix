@@ -13,7 +13,7 @@ let
   inherit (inputs) wezterm;
 
   cfg = config.khanelinix.programs.terminal.emulators.wezterm;
-  catppuccin = import (root + "/modules/home/theme/catppuccin/colors.nix");
+  catppuccin = import (khanelinix-lib.getFile "modules/home/theme/catppuccin/colors.nix");
 in
 {
   options.khanelinix.programs.terminal.emulators.wezterm = {
