@@ -1,4 +1,5 @@
 {
+  config,
   khanelinix-lib,
   lib,
   options,
@@ -24,14 +25,16 @@ in
 
   config = lib.optionalAttrs (inputs.home-manager ? darwinModules) {
     khanelinix.home.extraOptions = {
-      home.file = lib.mkAliasDefinitions options.khanelinix.home.file;
-      xdg.enable = true;
-      xdg.configFile = lib.mkAliasDefinitions options.khanelinix.home.configFile;
+      home = {
+        file = lib.mkAliasDefinitions options.khanelinix.home.file;
+        # TODO: better default
+        stateVersion = lib.mkDefault "24.11";
+      };
+      xdg = {
+        enable = true;
+        configFile = lib.mkAliasDefinitions options.khanelinix.home.configFile;
+      };
     };
-
-    # FIXME:
-    # snowfallorg.users.${config.khanelinix.user.name}.home.config =
-    #   lib.mkAliasDefinitions options.khanelinix.home.extraOptions;
 
     home-manager = {
       # enables backing up existing files instead of erroring if conflicts exist
@@ -39,6 +42,8 @@ in
 
       useUserPackages = true;
       useGlobalPkgs = true;
+
+      users.${config.khanelinix.user.name} = lib.mkAliasDefinitions options.khanelinix.home.extraOptions;
 
       verbose = true;
     };

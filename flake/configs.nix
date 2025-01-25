@@ -24,33 +24,33 @@
     darwin = {
       configurationsDirectory = ../configurations/darwin;
       modulesDirectory = ../modules/darwin;
-      hosts = {
-        khanelimac.userHomeModules = [
-          "khaneliman"
-        ];
-      };
+      # hosts = {
+      #   khanelimac.userHomeModules = [
+      #     "khaneliman"
+      #   ];
+      # };
     };
 
-    home = {
-      configurationsDirectory = ../configurations/home;
-      modulesDirectory = ../modules/home;
-    };
+    # home = {
+    #   configurationsDirectory = ../configurations/home;
+    #   modulesDirectory = ../modules/home;
+    # };
 
     nixos = {
       configurationsDirectory = ../configurations/nixos;
       modulesDirectory = ../modules/nixos;
-      hosts = {
-        CORE-PW00LM92.userHomeModules = [
-          "nixos"
-        ];
-        bruddynix.userHomeModules = [
-          "khaneliman"
-          "bruddy"
-        ];
-        khanelinix.userHomeModules = [
-          "khaneliman"
-        ];
-      };
+      # hosts = {
+      #   CORE-PW00LM92.userHomeModules = [
+      #     "nixos"
+      #   ];
+      #   bruddynix.userHomeModules = [
+      #     "khaneliman"
+      #     "bruddy"
+      #   ];
+      #   khanelinix.userHomeModules = [
+      #     "khaneliman"
+      #   ];
+      # };
     };
   };
 }

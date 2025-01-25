@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  root,
+  khanelinix-lib,
   ...
 }:
 let
@@ -10,7 +10,7 @@ let
   cfg = config.khanelinix.nix;
 in
 {
-  imports = [ (root + "/modules/shared/nix/default.nix") ];
+  imports = [ (khanelinix-lib.getFile "modules/shared/nix/default.nix") ];
 
   config = mkIf cfg.enable {
     documentation = {

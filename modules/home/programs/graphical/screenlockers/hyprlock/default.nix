@@ -3,14 +3,13 @@
   khanelinix-lib,
   lib,
   osConfig,
-  root,
   ...
 }:
 let
   inherit (lib) mkIf;
   inherit (khanelinix-lib) mkBoolOpt;
 
-  catppuccin = import (root + "/modules/home/theme/catppuccin/colors.nix");
+  catppuccin = import (khanelinix-lib.getFile "modules/home/theme/catppuccin/colors.nix");
 
   cfg = config.khanelinix.programs.graphical.screenlockers.hyprlock;
 in

@@ -40,11 +40,6 @@ let
   ];
 in
 {
-  imports = [
-    ./gtk
-    ./qt
-  ];
-
   # TODO: consolidate home-manager and nixos module
   options.khanelinix.theme = {
     enable = mkEnableOption "Enable custom theme use for applications.";

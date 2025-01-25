@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  root,
   khanelinix-lib,
   osConfig,
   ...
@@ -175,7 +174,7 @@ in
 
     sops.secrets = lib.mkIf osConfig.khanelinix.security.sops.enable {
       "github/access-token" = {
-        sopsFile = root + "/secrets/khaneliman/default.yaml";
+        sopsFile = khanelinix-lib.getFile "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.config/gh/access-token";
       };
     };

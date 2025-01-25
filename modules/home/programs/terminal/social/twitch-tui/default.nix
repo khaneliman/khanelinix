@@ -3,7 +3,6 @@
   lib,
   khanelinix-lib,
   pkgs,
-  root,
   osConfig,
   ...
 }:
@@ -22,7 +21,7 @@ in
 
     sops.secrets = lib.mkIf osConfig.khanelinix.security.sops.enable {
       twitch-tui = {
-        sopsFile = root + "/secrets/khaneliman/default.yaml";
+        sopsFile = khanelinix-lib.getFile "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.config/twt/config.toml";
       };
     };

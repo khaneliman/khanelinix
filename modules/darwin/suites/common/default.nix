@@ -3,7 +3,7 @@
   lib,
   pkgs,
   khanelinix-lib,
-  root,
+  self,
   ...
 }:
 let
@@ -13,7 +13,7 @@ let
   cfg = config.khanelinix.suites.common;
 in
 {
-  imports = [ (root + "/modules/shared/suites/common/default.nix") ];
+  imports = [ (khanelinix-lib.getFile "modules/shared/suites/common/default.nix") ];
 
   config = mkIf cfg.enable {
     programs.zsh.enable = mkDefault true;
@@ -32,8 +32,8 @@ in
         gnupg
         gnused
         gnutls
-        self.packages.${system}.trace-symlink
-        self.packages.${system}.trace-which
+        self.packages.${pkgs.stdenv.system}.trace-symlink
+        self.packages.${pkgs.stdenv.system}.trace-which
         mas
         terminal-notifier
         trash-cli

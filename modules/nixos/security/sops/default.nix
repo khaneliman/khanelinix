@@ -2,7 +2,6 @@
   config,
   inputs,
   lib,
-  root,
   khanelinix-lib,
   ...
 }:
@@ -33,7 +32,7 @@ in
 
     sops.secrets = {
       "khanelinix_khaneliman_ssh_key" = {
-        sopsFile = root + "/secrets/khanelinix/khaneliman/default.yaml";
+        sopsFile = khanelinix-lib.getFile "secrets/khanelinix/khaneliman/default.yaml";
       };
     };
   };

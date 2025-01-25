@@ -3,7 +3,6 @@
   inputs,
   lib,
   pkgs,
-  root,
   khanelinix-lib,
   ...
 }:
@@ -41,7 +40,7 @@ in
 
       secrets = {
         nix = {
-          sopsFile = root + "/secrets/khaneliman/default.yaml";
+          sopsFile = khanelinix-lib.getFile "secrets/khaneliman/default.yaml";
           path = "${config.home.homeDirectory}/.config/nix/nix.conf";
         };
       };
