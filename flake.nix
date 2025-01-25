@@ -60,6 +60,11 @@
     catppuccin-cursors.url = "github:catppuccin/cursors";
     catppuccin.url = "github:catppuccin/nix";
 
+    firefox-addons = {
+      url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     hypr-socket-watch.url = "github:khaneliman/hypr-socket-watch";
 
@@ -75,7 +80,6 @@
 
     nix-flatpak.url = "github:gmodena/nix-flatpak/latest";
     nix-index-database.url = "github:nix-community/nix-index-database";
-    nur.url = "github:nix-community/NUR";
     snowfall-flake.url = "github:snowfallorg/flake";
     waybar.url = "github:Alexays/Waybar";
     wezterm.url = "github:wez/wezterm?dir=nix";
