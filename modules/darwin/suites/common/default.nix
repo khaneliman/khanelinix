@@ -3,7 +3,6 @@
   lib,
   pkgs,
   khanelinix-lib,
-  root,
   ...
 }:
 let

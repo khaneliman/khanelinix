@@ -3,7 +3,6 @@
   inputs,
   khanelinix-lib,
   lib,
-  root,
   ...
 }:
 let

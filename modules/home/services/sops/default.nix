@@ -3,7 +3,6 @@
   inputs,
   lib,
   pkgs,
-  root,
   khanelinix-lib,
   ...
 }:

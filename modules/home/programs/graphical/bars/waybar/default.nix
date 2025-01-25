@@ -5,7 +5,6 @@
   lib,
   pkgs,
   system,
-  root,
   osConfig,
   ...
 }:
