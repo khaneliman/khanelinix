@@ -60,6 +60,20 @@ rec {
       filteredEntries = filterAttrs (name: kind: kind == "regular") entries;
     in
     mapAttrsToList (name: kind: "${path}/${name}") filteredEntries;
+  get-files-recursive =
+    path:
+    let
+      entries = safeReadDirectory path;
+      filtered-entries = filterAttrs (name: kind: (kind == "file") || (kind == "directory")) entries;
+      map-file =
+        name: kind:
+        let
+          path' = "${path}/${name}";
+        in
+        if kind == "directory" then get-files-recursive path' else path';
+      files = lib.flatten (mapAttrsToList map-file filtered-entries);
+    in
+    files;
 
   getFilesRecursive =
     path:
