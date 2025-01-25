@@ -26,27 +26,24 @@ in
   options.${namespace}.programs.graphical.browsers.firefox = with types; {
     enable = mkBoolOpt false "Whether or not to enable Firefox.";
 
-    extensions =
-      mkOpt (listOf package) [ ]
-        # (with config.nur.repos.rycee.firefox-addons; [
-        # angular-devtools
-        # auto-tab-discard
-        # bitwarden
-        # # NOTE: annoying new page and permissions
-        # # bypass-paywalls-clean
-        # darkreader
-        # firefox-color
-        # firenvim
-        # onepassword-password-manager
-        # react-devtools
-        # reduxdevtools
-        # sidebery
-        # sponsorblock
-        # stylus
-        # ublock-origin
-        # user-agent-string-switcher
-        # ])
-        "Extensions to install";
+    extensions = mkOpt (listOf package) (with pkgs.firefox-addons; [
+      angular-devtools
+      auto-tab-discard
+      bitwarden
+      # NOTE: annoying new page and permissions
+      # bypass-paywalls-clean
+      darkreader
+      firefox-color
+      firenvim
+      onepassword-password-manager
+      react-devtools
+      reduxdevtools
+      sidebery
+      sponsorblock
+      stylus
+      ublock-origin
+      user-agent-string-switcher
+    ]) "Extensions to install";
 
     extraConfig = mkOpt str "" "Extra configuration for the user profile JS file.";
     gpuAcceleration = mkBoolOpt false "Enable GPU acceleration.";
