@@ -49,22 +49,22 @@ rec {
     path:
     let
       entries = safeReadDirectory path;
-      filteredEntries = filterAttrs (name: kind: kind == "directory") entries;
+      filteredEntries = filterAttrs (_name: kind: kind == "directory") entries;
     in
-    mapAttrsToList (name: kind: "${path}/${name}") filteredEntries;
+    mapAttrsToList (name: _kind: "${path}/${name}") filteredEntries;
 
   getFiles =
     path:
     let
       entries = safeReadDirectory path;
-      filteredEntries = filterAttrs (name: kind: kind == "regular") entries;
+      filteredEntries = filterAttrs (_name: kind: kind == "regular") entries;
     in
-    mapAttrsToList (name: kind: "${path}/${name}") filteredEntries;
+    mapAttrsToList (name: _kind: "${path}/${name}") filteredEntries;
   get-files-recursive =
     path:
     let
       entries = safeReadDirectory path;
-      filtered-entries = filterAttrs (name: kind: (kind == "file") || (kind == "directory")) entries;
+      filtered-entries = filterAttrs (_name: kind: (kind == "file") || (kind == "directory")) entries;
       map-file =
         name: kind:
         let

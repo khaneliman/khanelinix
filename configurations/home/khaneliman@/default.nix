@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  root,
   khanelinix-lib,
   self,
   system,

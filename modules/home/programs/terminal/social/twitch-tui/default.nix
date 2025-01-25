@@ -3,7 +3,6 @@
   lib,
   khanelinix-lib,
   pkgs,
-  root,
   osConfig,
   ...
 }:

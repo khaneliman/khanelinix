@@ -3,7 +3,6 @@
   khanelinix-lib,
   lib,
   osConfig,
-  root,
   ...
 }:
 let

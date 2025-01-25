@@ -4,7 +4,6 @@
   lib,
   system,
   khanelinix-lib,
-  root,
   ...
 }:
 let
