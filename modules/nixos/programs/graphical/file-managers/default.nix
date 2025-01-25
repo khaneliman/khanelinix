@@ -1,7 +1,0 @@
-{
-  imports = [
-    ./dolphin
-    ./nautilus
-    ./thunar
-  ];
-}

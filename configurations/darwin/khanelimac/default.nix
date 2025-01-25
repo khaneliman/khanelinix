@@ -2,7 +2,6 @@
   config,
   inputs,
   lib,
-  root,
   khanelinix-lib,
   ...
 }:
@@ -24,7 +23,7 @@ in
       sops = {
         enable = true;
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-        defaultSopsFile = root + "/secrets/khanelimac/default.yaml";
+        defaultSopsFile = khanelinix-lib.getFile "secrets/khanelimac/default.yaml";
       };
     };
 

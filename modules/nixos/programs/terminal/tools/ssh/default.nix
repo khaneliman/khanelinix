@@ -3,5 +3,5 @@
   ...
 }:
 {
-  imports = [ (root + "/modules/shared/programs/terminal/tools/ssh/default.nix") ];
+  imports = [ (khanelinix-lib.getFile "modules/shared/programs/terminal/tools/ssh/default.nix") ];
 }

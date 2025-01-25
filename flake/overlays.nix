@@ -2,10 +2,9 @@
 let
   children =
     dir:
-    with builtins;
     lib.pipe dir [
-      readDir
-      attrNames
+      builtins.readDir
+      builtins.attrNames
       (map (name: dir + "/${name}"))
     ];
 in

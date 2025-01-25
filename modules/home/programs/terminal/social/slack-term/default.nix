@@ -23,7 +23,7 @@ in
 
     sops.secrets = lib.mkIf osConfig.khanelinix.security.sops.enable {
       slack-term = {
-        sopsFile = root + "/secrets/khaneliman/default.yaml";
+        sopsFile = khanelinix-lib.getFile "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.config/slack-term/config";
       };
     };

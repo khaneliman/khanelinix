@@ -1,7 +1,0 @@
-{
-  imports = [
-    ./personal
-    ./vm
-    ./workstation
-  ];
-}

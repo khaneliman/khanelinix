@@ -7,7 +7,7 @@
 let
   inherit (lib) getExe getExe';
 
-  catppuccin = import (root + "/modules/home/theme/catppuccin/colors.nix");
+  catppuccin = import (khanelinix-lib.getFile "modules/home/theme/catppuccin/colors.nix");
 in
 {
   backlight =

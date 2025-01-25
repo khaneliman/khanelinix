@@ -1,7 +1,0 @@
-{
-  imports = [
-    ./addons
-    ./bars
-    ./wms
-  ];
-}

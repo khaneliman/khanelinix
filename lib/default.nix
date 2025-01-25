@@ -1,6 +1,7 @@
 {
   lib,
   self,
+  root,
   ...
 }:
 lib.makeExtensible (
@@ -16,7 +17,7 @@ lib.makeExtensible (
     deploy = call ./deploy/default.nix {
       inherit (self) inputs;
     };
-    file = call ./file/default.nix { };
+    file = call ./file/default.nix { inherit lib root; };
     module = call ./module/default.nix { };
     packages = call ./packages/default.nix { };
     network = call ./network/default.nix {
@@ -37,6 +38,12 @@ lib.makeExtensible (
       force-attrs
       nested-default-attrs
       nested-force-attrs
+      ;
+
+    inherit (self'.file)
+      getDefaultNixFiles
+      getDefaultNixFilesRecursive
+      getFile
       ;
   }
 )

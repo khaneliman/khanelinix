@@ -9,6 +9,7 @@
   flake.lib = {
     khanelinix = lib.makeOverridable (import ../lib) {
       inherit lib self;
+      root = ../.;
     };
   };
 }
