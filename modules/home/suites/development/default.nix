@@ -25,7 +25,7 @@ let
         fi
         if [ -f ${config.sops.secrets.OPENAI_API_KEY.path} ]; then
           OPENAI_API_KEY="$(cat ${config.sops.secrets.OPENAI_API_KEY.path})"
-          export OPENAI_KEY
+          export OPENAI_API_KEY
         fi
       '';
 
