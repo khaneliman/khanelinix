@@ -54,6 +54,8 @@ in
         # NOTE: xdph requirement
         grim
         slurp
+        hyprsunset
+        hyprsysteminfo
       ];
 
       sessionVariables =
