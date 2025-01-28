@@ -64,7 +64,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     hypr-socket-watch.url = "github:khaneliman/hypr-socket-watch";
 
     khanelivim = {

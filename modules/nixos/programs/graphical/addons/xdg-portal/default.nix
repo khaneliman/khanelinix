@@ -1,22 +1,20 @@
 {
   config,
-  inputs,
   lib,
   pkgs,
-  system,
   namespace,
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkEnableOption mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
-  inherit (inputs) hyprland;
 
   cfg = config.${namespace}.programs.graphical.addons.xdg-portal;
 in
 {
   options.${namespace}.programs.graphical.addons.xdg-portal = {
     enable = mkBoolOpt false "Whether or not to add support for xdg portal.";
+    enableDebug = mkEnableOption "Enable debug mode.";
   };
 
   config = mkIf cfg.enable {
@@ -25,7 +23,7 @@ in
         enable = true;
 
         configPackages = lib.optionals config.${namespace}.programs.graphical.wms.hyprland.enable [
-          hyprland.packages.${system}.hyprland
+          pkgs.hyprland
         ];
 
         config = {
@@ -60,13 +58,9 @@ in
           with pkgs;
           [ xdg-desktop-portal-gtk ]
           ++ (lib.optional config.${namespace}.programs.graphical.wms.sway.enable xdg-desktop-portal-wlr)
-          ++ (lib.optional config.${namespace}.programs.graphical.wms.hyprland.enable (
-            hyprland.packages.${system}.xdg-desktop-portal-hyprland.override {
-              debug = true;
-              # TODO: use same package as home-manager
-              inherit (hyprland.packages.${system}) hyprland;
-            }
-          ));
+          ++ (lib.optional config.${namespace}.programs.graphical.wms.hyprland.enable
+            xdg-desktop-portal-hyprland
+          );
         # xdgOpenUsePortal = true;
 
         wlr = {

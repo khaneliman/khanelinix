@@ -1,9 +1,7 @@
 {
   config,
-  inputs,
   lib,
   pkgs,
-  system,
   namespace,
   ...
 }:
@@ -15,7 +13,6 @@ let
     types
     ;
   inherit (lib.${namespace}) mkBoolOpt mkOpt enabled;
-  inherit (inputs) hyprland;
 
   cfg = config.${namespace}.programs.graphical.wms.hyprland;
 
@@ -23,7 +20,7 @@ let
     with pkgs;
     [
       # TODO: make sure this references same package as home-manager
-      hyprland.packages.${system}.hyprland
+      hyprland
       coreutils
       config.services.power-profiles-daemon.package
       systemd
@@ -140,6 +137,6 @@ in
       };
     };
 
-    services.displayManager.sessionPackages = [ hyprland.packages.${system}.hyprland ];
+    services.displayManager.sessionPackages = [ pkgs.hyprland ];
   };
 }
