@@ -124,6 +124,7 @@ in
       "class<steam_app_0> title<>" = "";
       "class<Wowup-cf>" = "";
       "class<com.mitchellh.ghostty>" = "󰊠";
+      "class<org.inkscape.Inkscape>" = "";
     };
   };
 }
