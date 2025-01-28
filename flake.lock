@@ -1156,6 +1156,21 @@
         "type": "github"
       }
     },
+    "nixpkgs-master_2": {
+      "locked": {
+        "lastModified": 1738092064,
+        "narHash": "sha256-WWnq1X5XtxtOdSm/cFUtYzeUYsryJVzXFmoob52hytM=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "b21b4ecad3b168e4d0c318562f26e25280f25671",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs-stable": {
       "locked": {
         "lastModified": 1730741070,
@@ -1631,6 +1646,7 @@
         "nix-index-database": "nix-index-database",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_17",
+        "nixpkgs-master": "nixpkgs-master_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "snowfall-flake": "snowfall-flake",
         "snowfall-lib": "snowfall-lib_2",
