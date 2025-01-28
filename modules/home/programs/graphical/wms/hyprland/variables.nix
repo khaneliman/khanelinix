@@ -92,6 +92,10 @@ in
           special_scale_factor = 0.9;
         };
 
+        ecosystem = {
+          no_donation_nag = true;
+        };
+
         general = {
           # allow_tearing = true;
           border_size = 2;
