@@ -149,6 +149,7 @@ in
             "${systemctl} --user stop hyprland-session.target"
             "${systemctl} --user reset-failed"
             "${systemctl} --user start hyprland-session.target"
+            "${systemctl} --user start hyprpolkitagent"
           ];
 
           variables = [
