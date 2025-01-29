@@ -14,8 +14,8 @@ let
 in
 {
   options.${namespace}.programs.graphical.wms.sway = {
-    enable = mkEnableOption "sway.";
-    enableDebug = mkEnableOption "Enable debug mode.";
+    enable = mkEnableOption "sway";
+    enableDebug = mkEnableOption "debug mode";
     appendConfig = lib.mkOption {
       type = lib.types.lines;
       default = "";
