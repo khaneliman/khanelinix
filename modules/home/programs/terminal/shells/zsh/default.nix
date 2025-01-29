@@ -77,6 +77,8 @@ in
           expireDuplicatesFirst = true;
           ignoreDups = true;
           ignoreSpace = true;
+          saveNoDups = true;
+          findNoDups = true;
         };
 
         sessionVariables = {
