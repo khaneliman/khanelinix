@@ -35,39 +35,43 @@ in
       package = pkgs.vscode;
 
       # TODO: add extensions not packaged with nixpkgs
-      extensions = with pkgs.vscode-extensions; [
-        adpyke.codesnap
-        arrterian.nix-env-selector
-        bbenoist.nix
-        catppuccin.catppuccin-vsc
-        christian-kohler.path-intellisense
-        dbaeumer.vscode-eslint
-        eamodio.gitlens
-        esbenp.prettier-vscode
-        formulahendry.auto-close-tag
-        formulahendry.auto-rename-tag
-        github.vscode-github-actions
-        github.vscode-pull-request-github
-        gruntfuggly.todo-tree
-        irongeek.vscode-env
-        mkhl.direnv
-        ms-azuretools.vscode-docker
-        ms-python.python
-        ms-python.vscode-pylance
-        ms-vscode-remote.remote-ssh
-        ms-vscode.cpptools
-        ms-vsliveshare.vsliveshare
-        redhat.vscode-yaml
-        rust-lang.rust-analyzer
-        shardulm94.trailing-spaces
-        sumneko.lua
-        timonwong.shellcheck
-        usernamehw.errorlens
-        vscode-icons-team.vscode-icons
-        wakatime.vscode-wakatime
-        xaver.clang-format
-        yzhang.markdown-all-in-one
-      ];
+      extensions =
+        with pkgs.vscode-extensions;
+        [
+          adpyke.codesnap
+          arrterian.nix-env-selector
+          bbenoist.nix
+          catppuccin.catppuccin-vsc
+          christian-kohler.path-intellisense
+          dbaeumer.vscode-eslint
+          eamodio.gitlens
+          esbenp.prettier-vscode
+          formulahendry.auto-close-tag
+          formulahendry.auto-rename-tag
+          github.vscode-github-actions
+          github.vscode-pull-request-github
+          gruntfuggly.todo-tree
+          irongeek.vscode-env
+          mkhl.direnv
+          ms-azuretools.vscode-docker
+          ms-python.python
+          ms-python.vscode-pylance
+          ms-vscode-remote.remote-ssh
+          ms-vsliveshare.vsliveshare
+          redhat.vscode-yaml
+          rust-lang.rust-analyzer
+          shardulm94.trailing-spaces
+          sumneko.lua
+          timonwong.shellcheck
+          usernamehw.errorlens
+          vscode-icons-team.vscode-icons
+          wakatime.vscode-wakatime
+          xaver.clang-format
+          yzhang.markdown-all-in-one
+        ]
+        ++ lib.optionals pkgs.stdenv.isLinux [
+          ms-vscode.cpptools
+        ];
 
       userSettings = mkIf cfg.declarativeConfig {
         # Color theme
