@@ -2,7 +2,6 @@
   config,
   lib,
   namespace,
-  pkgs,
   ...
 }:
 let
@@ -178,7 +177,7 @@ in
             },
             window_background_opacity = 0.85,
             window_close_confirmation = "NeverPrompt",
-            window_decorations = ${if pkgs.stdenv.isDarwin then "RESIZE" else "NONE"},
+            window_decorations = "NONE",
             window_padding = { left = 12, right = 12, top = 12, bottom = 12, },
           }
         '';
