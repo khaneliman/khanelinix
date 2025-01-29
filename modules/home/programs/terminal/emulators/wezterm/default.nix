@@ -115,13 +115,38 @@ in
 
             -- font
             font_size = 13.0,
-            font = wezterm.font_with_fallback {
-              { family = 'MonaspiceKr Nerd Font', weight = "Regular" },
-              { family = 'CaskaydiaCove Nerd Font', weight = "Regular" },
-              { family = "Symbols Nerd Font", weight = "Regular" },
-              { family = 'Noto Color Emoji', weight = "Regular" },
+            font = wezterm.font_with_fallback({
+            	{ family = "MonaspiceNe Nerd Font", weight = "Regular" },
+            	{ family = "Symbols Nerd Font", weight = "Regular" },
+            	{ family = "Noto Color Emoji", weight = "Regular" },
+            }),
+            font_rules = {
+            	{
+            	  italic = true,
+            	  font = wezterm.font({
+            		  family = "MonaspiceRn Nerd Font",
+            		  weight = "Regular",
+            		  style = "Italic",
+            	  }),
+            	},
+            	{
+            	  italic = false,
+            	  intensity = "Bold",
+            	  font = wezterm.font({
+            		  family = "MonaspiceXe Nerd Font",
+            		  weight = "Bold",
+            	  }),
+            	},
+            	{
+            	  italic = true,
+            	  intensity = "Bold",
+            	  font = wezterm.font({
+            		  family = "MonaspiceKr Nerd Font",
+            		  weight = "Bold",
+            		  style = "Italic",
+            	  }),
+            	},
             },
-
             keys = {
               -- paste from the clipboard
               { key = 'V', mods = 'SHIFT|CTRL', action = act.PasteFrom 'Clipboard' },
