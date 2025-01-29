@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  osConfig,
+  ...
+}:
 let
   inherit (lib) getExe';
 in
@@ -6,7 +11,15 @@ in
   "custom/quit" = {
     format = "󰗼";
     tooltip = false;
-    on-click = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch exit";
+    "custom/quit" = {
+      format = "󰗼";
+      tooltip = false;
+      on-click =
+        if osConfig.programs.uwsm.enable then
+          "${getExe' osConfig.programs.uwsm.package "uwsm"} stop"
+        else
+          "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch exit";
+    };
   };
 
   "hyprland/submap" = {

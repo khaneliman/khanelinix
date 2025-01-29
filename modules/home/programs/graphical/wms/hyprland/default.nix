@@ -3,6 +3,7 @@
   lib,
   pkgs,
   namespace,
+  osConfig,
   ...
 }:
 let
@@ -58,7 +59,7 @@ in
         hyprsysteminfo
       ];
 
-      sessionVariables =
+      sessionVariables = lib.mkIf (!osConfig.programs.uwsm.enable) (
         {
           CLUTTER_BACKEND = "wayland";
           GDK_BACKEND = "wayland,x11";
@@ -78,7 +79,8 @@ in
           AQ_TRACE = "1";
           HYPRLAND_LOG_WLR = "1";
           HYPRLAND_TRACE = "1";
-        };
+        }
+      );
 
       shellAliases =
         {
@@ -144,8 +146,9 @@ in
           exec = [ "${getExe pkgs.libnotify} --icon ~/.face -u normal \"Hello $(whoami)\"" ];
         };
 
+        # systemd = lib.mkIf (!osConfig.programs.uwsm.enable) {
         systemd = {
-          enable = true;
+          enable = (!osConfig.programs.uwsm.enable);
           enableXdgAutostart = true;
           extraCommands = [
             "${systemctl} --user stop hyprland-session.target"

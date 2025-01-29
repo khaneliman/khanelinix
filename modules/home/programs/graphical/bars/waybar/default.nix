@@ -45,7 +45,7 @@ let
       osConfig
       ;
   };
-  hyprland-modules = import ./modules/hyprland-modules.nix { inherit config lib; };
+  hyprland-modules = import ./modules/hyprland-modules.nix { inherit config lib osConfig; };
   sway-modules = import ./modules/sway-modules.nix { inherit config lib; };
 
   commonAttributes = {

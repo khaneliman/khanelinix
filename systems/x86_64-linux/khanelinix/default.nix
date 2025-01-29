@@ -228,7 +228,7 @@ in
   };
 
   services = {
-    displayManager.defaultSession = "hyprland";
+    displayManager.defaultSession = "hyprland-uwsm";
     mpd = {
       musicDirectory = "nfs://austinserver.local/mnt/user/data/media/music";
     };
