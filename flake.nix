@@ -81,7 +81,6 @@
     nix-index-database.url = "github:nix-community/nix-index-database";
     snowfall-flake.url = "github:snowfallorg/flake";
     waybar.url = "github:Alexays/Waybar";
-    wezterm.url = "github:wez/wezterm?dir=nix";
 
     yazi-plugins = {
       url = "github:yazi-rs/plugins";
