@@ -20,10 +20,10 @@ in
   config = mkIf cfg.enable {
     programs.ghostty = {
       enable = true;
-      package = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin pkgs.emptyDirectory;
+      package = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin null;
 
-      installBatSyntax = true;
-      installVimSyntax = true;
+      installBatSyntax = pkgs.stdenv.hostPlatform.isLinux;
+      installVimSyntax = pkgs.stdenv.hostPlatform.isLinux;
 
       enableBashIntegration = true;
       enableFishIntegration = true;
