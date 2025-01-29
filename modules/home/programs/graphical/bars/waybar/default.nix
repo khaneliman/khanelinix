@@ -37,7 +37,14 @@ let
       ;
   };
   default-modules = import ./modules/default-modules.nix { inherit lib pkgs; };
-  group-modules = import ./modules/group-modules.nix { inherit lib namespace osConfig; };
+  group-modules = import ./modules/group-modules.nix {
+    inherit
+      config
+      lib
+      namespace
+      osConfig
+      ;
+  };
   hyprland-modules = import ./modules/hyprland-modules.nix { inherit config lib; };
   sway-modules = import ./modules/sway-modules.nix { inherit config lib; };
 

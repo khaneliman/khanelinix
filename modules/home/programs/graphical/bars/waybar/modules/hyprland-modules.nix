@@ -127,4 +127,17 @@ in
       "class<org.inkscape.Inkscape>" = "";
     };
   };
+  "custom/hyprsunset" = {
+    interval = "once";
+    exec = "if pgrep hyprsunset >/dev/null 2>&1; then stdbuf -oL printf '{\"alt\": \"on\"}'; else stdbuf -oL printf '{\"alt\": \"off\"}'; fi";
+    on-click = "pkill hyprsunset || hyprsunset";
+    signal = 1;
+    return-type = "json";
+    format = "{icon}";
+    tooltip-format = "hyprsunset: {alt}";
+    format-icons = {
+      "off" = "☀️";
+      "on" = "🌙";
+    };
+  };
 }

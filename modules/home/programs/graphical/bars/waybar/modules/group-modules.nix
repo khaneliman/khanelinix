@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   namespace,
   osConfig,
@@ -36,7 +37,8 @@
   "group/control-center" = {
     orientation = "horizontal";
     modules =
-      [
+      lib.optionals config.${namespace}.programs.graphical.wms.hyprland.enable [ "custom/hyprsunset" ]
+      ++ [
         "gamemode"
         "idle_inhibitor"
         "systemd-failed-units"
