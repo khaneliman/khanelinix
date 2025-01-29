@@ -3,6 +3,7 @@
   lib,
   pkgs,
   namespace,
+  osConfig,
   ...
 }:
 let
@@ -28,23 +29,26 @@ in
 
     wayland.windowManager.hyprland = {
       settings = {
-        exec-once = [
+        exec-once =
+          let
+            # Helper function to conditionally prefix with uwsm
+            mkStartCommand = cmd: if osConfig.programs.uwsm.enable then "uwsm app -- ${cmd}" else cmd;
+          in
           # ░█▀█░█▀█░█▀█░░░█▀▀░▀█▀░█▀█░█▀▄░▀█▀░█░█░█▀█
           # ░█▀█░█▀▀░█▀▀░░░▀▀█░░█░░█▀█░█▀▄░░█░░█░█░█▀▀
           # ░▀░▀░▀░░░▀░░░░░▀▀▀░░▀░░▀░▀░▀░▀░░▀░░▀▀▀░▀░░
 
           # Startup apps that have rules for organizing them
-          "${getExe config.programs.firefox.package}"
-          "${getExe pkgs.steam}"
-          "${getExe pkgs.discord}"
-          "${getExe pkgs.thunderbird}"
-
-          # Startup background apps
-          "${getExe pkgs.openrgb-with-all-plugins} --startminimized --profile default"
-          "${getExe pkgs._1password-gui} --silent"
-          "${getExe pkgs.tailscale-systray}"
-          "run-as-service $(${getExe pkgs.wayvnc} $(${getExe pkgs.tailscale} ip --4))"
-        ];
+          (map mkStartCommand [
+            "${getExe config.programs.firefox.package}"
+            "${getExe pkgs.steam}"
+            "${getExe pkgs.discord}"
+            "${getExe pkgs.thunderbird}"
+            "${getExe pkgs.openrgb-with-all-plugins} --startminimized --profile default"
+            "${getExe pkgs._1password-gui} --silent"
+            "${getExe pkgs.tailscale-systray}"
+            "$(${getExe pkgs.wayvnc} $(${getExe pkgs.tailscale} ip --4))"
+          ]);
       };
     };
   };
