@@ -27,10 +27,8 @@ in
       cliphist = {
         enable = true;
         allowImages = true;
+        inherit (cfg) systemdTargets;
       };
     };
-
-    systemd.user.services.cliphist.Install.WantedBy = cfg.systemdTargets;
-    systemd.user.services.cliphist-images.Install.WantedBy = cfg.systemdTargets;
   };
 }
