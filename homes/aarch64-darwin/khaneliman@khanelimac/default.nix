@@ -5,8 +5,7 @@
   ...
 }:
 let
-  inherit (lib) mkForce;
-  inherit (lib.${namespace}) enabled disabled;
+  inherit (lib.${namespace}) enabled;
 in
 {
   khanelinix = {
@@ -58,10 +57,6 @@ in
               "media.rdd-vpx.enabled" = false;
             };
           };
-        };
-
-        editors = {
-          vscode = mkForce disabled;
         };
       };
 
