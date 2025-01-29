@@ -3,12 +3,25 @@
   lib,
   pkgs,
   namespace,
+  osConfig,
   ...
 }:
 let
   inherit (lib) mkIf getExe;
 
   cfg = config.${namespace}.programs.graphical.wms.hyprland;
+
+  # Helper functions
+  mkStartCommand =
+    cmd: if osConfig.programs.uwsm.enable then "uwsm app -- ${cmd}" else "run-as-service ${cmd}";
+  mkExecBind =
+    bind:
+    let
+      parts = builtins.split "exec, " bind;
+      pre = builtins.head parts;
+      cmd = builtins.elemAt parts 2;
+    in
+    "${pre}exec, ${mkStartCommand cmd}";
 in
 {
   config = mkIf cfg.enable {
@@ -28,146 +41,150 @@ in
         # "$RHYPER" = "SUPER_ALT_R_CTRL_R";
         # "$LHYPER" = "SUPER_ALT_L_CTRL_L";
         bind =
-          [
-            # █░░░█▀█░█░█░█▀█░█▀▀░█░█░█▀▀░█▀▄░█▀▀
-            # █░░░█▀█░█░█░█░█░█░░░█▀█░█▀▀░█▀▄░▀▀█
-            # ▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀
-            "$mainMod, SPACE, exec, run-as-service $($launcher)"
-            # "$mainMod_SHIFT, SPACE, exec, run-as-service $($launcher_alt)"
-            "CTRL, SPACE, exec, run-as-service $($launcher)"
-            # "CTRL_SHIFT, SPACE, exec, run-as-service $($launcher_shift)"
-            # "$mainMod, A, exec, $launchpad"
+          let
+            # Launcher binds
+            launcherBinds = [
+              "$mainMod, SPACE, exec, $($launcher)"
+              "CTRL, SPACE, exec, $($launcher)"
+            ];
 
-            # ░█▀█░█▀█░█▀█░█▀▀
-            # ░█▀█░█▀▀░█▀▀░▀▀█
-            # ░▀░▀░▀░░░▀░░░▀▀▀
+            # App launch binds
+            appBinds = [
+              "$mainMod, RETURN, exec, $term"
+              "SUPER_SHIFT, RETURN, exec, $term zellij"
+              "SUPER_SHIFT, P, exec, $color_picker"
+              "$mainMod, B, exec, $browser"
+              "SUPER_SHIFT, E, exec, $explorer"
+              "$mainMod, E, exec, $term yazi"
+              "$mainMod, L, exec, $screen-locker --immediate"
+              "$mainMod, T, exec, $term btop"
+              "$mainMod, N, exec, $notification_center -t -sw"
+              "$mainMod, V, exec, $cliphist"
+              "$mainMod, W, exec, $looking-glass"
+            ];
 
-            "$mainMod, RETURN, exec, $term"
-            "SUPER_SHIFT, RETURN, exec, $term zellij"
-            # FIX:
-            # "SUPER_ALT, RETURN, exec, $term --title floatterm --single-instance"
-            "SUPER_SHIFT, P, exec, $color_picker"
-            "$mainMod, B, exec, $browser"
-            "SUPER_SHIFT, E, exec, $explorer"
-            "$mainMod, E, exec, $term yazi"
-            "$mainMod, L, exec, $screen-locker --immediate"
-            "$mainMod, T, exec, $term btop"
-            "$mainMod, N, exec, $notification_center -t -sw"
-            "$mainMod, V, exec, $cliphist"
-            "$mainMod, W, exec, $looking-glass"
+            # System binds (non-exec)
+            systemBinds = [
+              "$mainMod, Q, killactive,"
+              "CTRL_SHIFT, Q, killactive,"
+              "SUPER_ALT, V, togglefloating,"
+              "$mainMod, P, pseudo, #dwindle"
+              "$mainMod, J, togglesplit, #dwindle"
+              "$mainMod, K, swapsplit, #dwindle"
+              "$mainMod, F, fullscreen"
+              # "SUPER_SHIFT, V, workspaceopt, allfloat"
+
+              # kill window
+              "$mainMod, Q, killactive,"
+              "CTRL_SHIFT, Q, killactive,"
+            ];
+
+            # Screenshot binds
+            screenshotBinds = [
+              # File
+              ", Print, exec, $grimblast_active_file"
+              "SHIFT, Print, exec, $grimblast_area_file"
+              # "SHIFT_CTRL, S, exec, $grimblast_area_file"
+              "SUPER, Print, exec, $grimblast_screen_file"
+
+              # Area / Window
+              "ALT, Print, exec, $grimblast_active_swappy"
+              "ALT_CTRL, Print, exec, $grimblast_area_swappy"
+              "ALT_SUPER, Print, exec, $grimblast_screen_swappy"
+              # "SUPER_CTRL_SHIFT, S, exec, $grimblast_screen_swappy"
+
+              # Clipboard
+              "CTRL, Print, exec, $grimblast_active_clipboard"
+              "CTRL_SHIFT, Print, exec, $grimblast_area_clipboard"
+              "SUPER_CTRL, Print, exec, $grimblast_screen_clipboard"
+
+              # Screen recording
+              "SUPER_CTRLALT, Print, exec, $screen-recorder screen"
+              "SUPER_CTRLALTSHIFT, Print, exec, $screen-recorder area"
+            ];
+
+            # Window movement binds
+            movementBinds = [
+              # Window Focus
+              "ALT,left,movefocus,l"
+              "ALT,right,movefocus,r"
+              "ALT,up,movefocus,u"
+              "ALT,down,movefocus,d"
+              # Move window
+              "SUPER,left,movewindow,l"
+              "SUPER,right,movewindow,r"
+              "SUPER,up,movewindow,u"
+              "SUPER,down,movewindow,d"
+              # Resize Window
+              "CTRL_SHIFT,h,resizeactive,-10% 0"
+              "CTRL_SHIFT,l,resizeactive,10% 0"
+            ];
+
+            # Workspace management binds
+            workspaceBinds = [
+              # Swipe through existing workspaces with CTRL_ALT + left / right
+              "CTRL_ALT, right, workspace, +1"
+              "CTRL_ALT, l, workspace, +1"
+              "CTRL_ALT, left, workspace, -1"
+              "CTRL_ALT, h, workspace, -1"
+              # Scroll through existing workspaces with CTRL_ALT + scroll
+              "CTRL_ALT, mouse_down, workspace, e+1"
+              "CTRL_ALT, mouse_up, workspace, e-1"
+              # Move to workspace left/right
+              "$ALT-HYPER, right, movetoworkspace, +1"
+              "$ALT-HYPER, l, movetoworkspace, +1"
+              "$ALT-HYPER, left, movetoworkspace, -1"
+              "$ALT-HYPER, h, movetoworkspace, -1"
+              # MOVING silently LEFT/RIGHT
+              "SUPER_SHIFT, right, movetoworkspacesilent, +1"
+              "SUPER_SHIFT, l, movetoworkspacesilent, +1"
+              "SUPER_SHIFT, left, movetoworkspacesilent, -1"
+              "SUPER_SHIFT, h, movetoworkspacesilent, -1"
+            ];
+
+            # Monitor management binds
+            monitorBinds = [
+              "SUPER_ALT, up, focusmonitor, u"
+              "SUPER_ALT, k, focusmonitor, u"
+              "SUPER_ALT, down, focusmonitor, d"
+              "SUPER_ALT, j, focusmonitor, d"
+              "SUPER_ALT, left, focusmonitor, l"
+              "SUPER_ALT, h, focusmonitor, l"
+              "SUPER_ALT, right, focusmonitor, r"
+              "SUPER_ALT, l, focusmonitor, r"
+              # moving current workspace to monitor
+              "$HYPER,down,movecurrentworkspacetomonitor,d"
+              "$HYPER,j,movecurrentworkspacetomonitor,d"
+              "$HYPER,up,movecurrentworkspacetomonitor,u"
+              "$HYPER,k,movecurrentworkspacetomonitor,u"
+              "$HYPER,left,movecurrentworkspacetomonitor,l"
+              "$HYPER,h,movecurrentworkspacetomonitor,l"
+              "$HYPER,right,movecurrentworkspacetomonitor,r"
+              "$HYPER,l,movecurrentworkspacetomonitor,r"
+            ];
+
+            # Special workspace binds
+            specialBinds = [
+              # Scratchpad
+              "SUPER_SHIFT,grave,movetoworkspace,special:scratchpad"
+              "SUPER,grave,togglespecialworkspace,scratchpad"
+              # Inactive
+              "ALT_SHIFT,grave,movetoworkspace,special:inactive"
+              "ALT,grave,togglespecialworkspace,inactive"
+            ];
+          in
+          # Apply mkStartCommand only to the exec commands
+          (map mkExecBind (launcherBinds ++ appBinds ++ screenshotBinds))
+          # Direct binds that don't need command wrapping
+          ++ systemBinds
+          ++ movementBinds
+          ++ workspaceBinds
+          ++ monitorBinds
+          ++ specialBinds
+          ++ [
             "$mainMod, I, exec, ${getExe pkgs.libnotify} \"$($window-inspector)\""
             "$mainMod, PERIOD, exec, ${getExe pkgs.smile}"
             "$CTRL_SHIFT, B, exec, ${getExe pkgs.killall} -SIGUSR1 .waybar-wrapped"
-
-            # kill window
-            "$mainMod, Q, killactive,"
-            "CTRL_SHIFT, Q, killactive,"
-
-            # ░█▀▀░█▀▀░█▀▄░█▀▀░█▀▀░█▀█░█▀▀░█░█░█▀█░▀█▀
-            # ░▀▀█░█░░░█▀▄░█▀▀░█▀▀░█░█░▀▀█░█▀█░█░█░░█░
-            # ░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░░▀░
-            # File
-            ", Print, exec, $grimblast_active_file"
-            "SHIFT, Print, exec, $grimblast_area_file"
-            # "SHIFT_CTRL, S, exec, $grimblast_area_file"
-            "SUPER, Print, exec, $grimblast_screen_file"
-
-            # Area / Window
-            "ALT, Print, exec, $grimblast_active_swappy"
-            "ALT_CTRL, Print, exec, $grimblast_area_swappy"
-            "ALT_SUPER, Print, exec, $grimblast_screen_swappy"
-            # "SUPER_CTRL_SHIFT, S, exec, $grimblast_screen_swappy"
-
-            # Clipboard
-            "CTRL, Print, exec, $grimblast_active_clipboard"
-            "CTRL_SHIFT, Print, exec, $grimblast_area_clipboard"
-            "SUPER_CTRL, Print, exec, $grimblast_screen_clipboard"
-
-            # Screen recording
-            "SUPER_CTRLALT, Print, exec, $screen-recorder screen"
-            "SUPER_CTRLALTSHIFT, Print, exec, $screen-recorder area"
-
-            # ░█░░░█▀█░█░█░█▀█░█░█░▀█▀
-            # ░█░░░█▀█░░█░░█░█░█░█░░█░
-            # ░▀▀▀░▀░▀░░▀░░▀▀▀░▀▀▀░░▀░
-            "SUPER_ALT, V, togglefloating,"
-            "$mainMod, P, pseudo, #dwindle"
-            "$mainMod, J, togglesplit, #dwindle"
-            "$mainMod, K, swapsplit, #dwindle"
-            "$mainMod, F, fullscreen"
-            # "SUPER_SHIFT, V, workspaceopt, allfloat"
-
-            # ░█░█░▀█▀░█▀█░█▀▄░█▀█░█░█
-            # ░█▄█░░█░░█░█░█░█░█░█░█▄█
-            # ░▀░▀░▀▀▀░▀░▀░▀▀░░▀▀▀░▀░▀
-            # WINDOWS FOCUS
-            "ALT,left,movefocus,l"
-            "ALT,right,movefocus,r"
-            "ALT,up,movefocus,u"
-            "ALT,down,movefocus,d"
-            # Move window
-            "SUPER,left,movewindow,l"
-            "SUPER,right,movewindow,r"
-            "SUPER,up,movewindow,u"
-            "SUPER,down,movewindow,d"
-
-            "CTRL_SHIFT,h,resizeactive,-10% 0"
-            "CTRL_SHIFT,l,resizeactive,10% 0"
-
-            # ░█░█░█▀█░█▀▄░█░█░█▀▀░█▀█░█▀█░█▀▀░█▀▀
-            # ░█▄█░█░█░█▀▄░█▀▄░▀▀█░█▀▀░█▀█░█░░░█▀▀
-            # ░▀░▀░▀▀▀░▀░▀░▀░▀░▀▀▀░▀░░░▀░▀░▀▀▀░▀▀▀
-            # Swipe through existing workspaces with CTRL_ALT + left / right
-            "CTRL_ALT, right, workspace, +1"
-            "CTRL_ALT, l, workspace, +1"
-            "CTRL_ALT, left, workspace, -1"
-            "CTRL_ALT, h, workspace, -1"
-            # Scroll through existing workspaces with CTRL_ALT + scroll
-            "CTRL_ALT, mouse_down, workspace, e+1"
-            "CTRL_ALT, mouse_up, workspace, e-1"
-
-            # Move to workspace left/right
-            "$ALT-HYPER, right, movetoworkspace, +1"
-            "$ALT-HYPER, l, movetoworkspace, +1"
-            "$ALT-HYPER, left, movetoworkspace, -1"
-            "$ALT-HYPER, h, movetoworkspace, -1"
-
-            # MOVING silently LEFT/RIGHT
-            "SUPER_SHIFT, right, movetoworkspacesilent, +1"
-            "SUPER_SHIFT, l, movetoworkspacesilent, +1"
-            "SUPER_SHIFT, left, movetoworkspacesilent, -1"
-            "SUPER_SHIFT, h, movetoworkspacesilent, -1"
-
-            # Scratchpad
-            "SUPER_SHIFT,grave,movetoworkspace,special:scratchpad"
-            "SUPER,grave,togglespecialworkspace,scratchpad"
-
-            # Inactive
-            "ALT_SHIFT,grave,movetoworkspace,special:inactive"
-            "ALT,grave,togglespecialworkspace,inactive"
-
-            # ░█▄█░█▀█░█▀█░▀█▀░▀█▀░█▀█░█▀▄
-            # ░█░█░█░█░█░█░░█░░░█░░█░█░█▀▄
-            # ░▀░▀░▀▀▀░▀░▀░▀▀▀░░▀░░▀▀▀░▀░▀
-            # simple movement between monitors
-            "SUPER_ALT, up, focusmonitor, u"
-            "SUPER_ALT, k, focusmonitor, u"
-            "SUPER_ALT, down, focusmonitor, d"
-            "SUPER_ALT, j, focusmonitor, d"
-            "SUPER_ALT, left, focusmonitor, l"
-            "SUPER_ALT, h, focusmonitor, l"
-            "SUPER_ALT, right, focusmonitor, r"
-            "SUPER_ALT, l, focusmonitor, r"
-
-            # moving current workspace to monitor
-            "$HYPER,down,movecurrentworkspacetomonitor,d"
-            "$HYPER,j,movecurrentworkspacetomonitor,d"
-            "$HYPER,up,movecurrentworkspacetomonitor,u"
-            "$HYPER,k,movecurrentworkspacetomonitor,u"
-            "$HYPER,left,movecurrentworkspacetomonitor,l"
-            "$HYPER,h,movecurrentworkspacetomonitor,l"
-            "$HYPER,right,movecurrentworkspacetomonitor,r"
-            "$HYPER,l,movecurrentworkspacetomonitor,r"
           ]
           # ░█░█░█▀█░█▀▄░█░█░█▀▀░█▀█░█▀█░█▀▀░█▀▀
           # ░█▄█░█░█░█▀▄░█▀▄░▀▀█░█▀▀░█▀█░█░░░█▀▀
