@@ -39,7 +39,7 @@ in
           # ░▀░▀░▀░░░▀░░░░░▀▀▀░░▀░░▀░▀░▀░▀░░▀░░▀▀▀░▀░░
 
           # Startup apps that have rules for organizing them
-          (map mkStartCommand [
+          map mkStartCommand [
             "${getExe config.programs.firefox.package}"
             "${getExe pkgs.steam}"
             "${getExe pkgs.discord}"
@@ -48,7 +48,7 @@ in
             "${getExe pkgs._1password-gui} --silent"
             "${getExe pkgs.tailscale-systray}"
             "$(${getExe pkgs.wayvnc} $(${getExe pkgs.tailscale} ip --4))"
-          ]);
+          ];
       };
     };
   };
