@@ -28,8 +28,8 @@ let
 in
 {
   options.${namespace}.programs.graphical.wms.hyprland = {
-    enable = mkEnableOption "Hyprland.";
-    enableDebug = mkEnableOption "Enable debug mode.";
+    enable = mkEnableOption "Hyprland";
+    enableDebug = mkEnableOption "debug config";
     appendConfig = lib.mkOption {
       type = lib.types.lines;
       default = "";
@@ -140,7 +140,7 @@ in
             ${cfg.appendConfig}
           '';
 
-        package = pkgs.hyprland.override { debug = cfg.enableDebug; };
+        inherit (osConfig.programs.hyprland) package;
 
         settings = {
           exec = [ "${getExe pkgs.libnotify} --icon ~/.face -u normal \"Hello $(whoami)\"" ];
@@ -148,7 +148,7 @@ in
 
         # systemd = lib.mkIf (!osConfig.programs.uwsm.enable) {
         systemd = {
-          enable = (!osConfig.programs.uwsm.enable);
+          enable = !osConfig.programs.uwsm.enable;
           enableXdgAutostart = true;
           extraCommands = [
             "${systemctl} --user stop hyprland-session.target"

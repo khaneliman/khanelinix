@@ -19,8 +19,7 @@ let
   programs = makeBinPath (
     with pkgs;
     [
-      # TODO: make sure this references same package as home-manager
-      hyprland
+      config.programs.hyprland.package
       coreutils
       config.services.power-profiles-daemon.package
       systemd
@@ -31,6 +30,7 @@ in
 {
   options.${namespace}.programs.graphical.wms.hyprland = with types; {
     enable = mkBoolOpt false "Whether or not to enable Hyprland.";
+    enableDebug = lib.mkEnableOption "debug mode";
     customConfigFiles =
       mkOpt attrs { }
         "Custom configuration files that can be used to override the default files.";
@@ -50,6 +50,8 @@ in
       hyprland = {
         enable = true;
         withUWSM = true;
+
+        package = pkgs.hyprland.override { debug = cfg.enableDebug; };
       };
     };
 
