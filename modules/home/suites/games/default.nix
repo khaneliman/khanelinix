@@ -1,13 +1,16 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   namespace,
+  system,
   ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (inputs) nix-gaming;
 
   cfg = config.${namespace}.suites.games;
 in
@@ -19,7 +22,12 @@ in
   config = mkIf cfg.enable {
     # TODO: sober/roblox?
     home.packages = with pkgs; [
-      bottles
+      (bottles.override {
+        extraPkgs = pkgs: [
+          nix-gaming.packages.${system}.wine-ge
+        ];
+        removeWarningPopup = true;
+      })
       heroic
       lutris
       prismlauncher
@@ -28,6 +36,7 @@ in
       protonup-ng
       protonup-qt
       wowup-cf
+      nix-gaming.packages.${system}.roblox-player
     ];
 
     khanelinix = {

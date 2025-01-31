@@ -1,13 +1,16 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   namespace,
+  system,
   ...
 }:
 let
   inherit (lib) mkIf;
   inherit (lib.${namespace}) mkBoolOpt;
+  inherit (inputs) nix-gaming;
 
   cfg = config.${namespace}.programs.terminal.tools.wine;
 in
@@ -18,10 +21,8 @@ in
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      wineWowPackages.waylandFull
-      # wine64Packages.waylandFull
-      # winePackages.waylandFull
       winetricks
+      nix-gaming.packages.${system}.wine-ge
     ];
   };
 }
