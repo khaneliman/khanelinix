@@ -51,12 +51,12 @@ in
   config = mkIf cfg.enable {
     home = {
       packages = with pkgs; [
-        xwaylandvideobridge
-        # NOTE: xdph requirement
         grim
-        slurp
         hyprsunset
         hyprsysteminfo
+        pkgs.${namespace}.record_screen
+        slurp
+        xwaylandvideobridge
       ];
 
       sessionVariables = lib.mkIf (!osConfig.programs.uwsm.enable) (
