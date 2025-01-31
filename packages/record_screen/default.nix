@@ -40,6 +40,7 @@ writeShellApplication {
       readonly TMP_MP4_FILE="/tmp/recording.mp4"
       readonly TMP_GIF_RESULT="/tmp/gif_result"
       readonly TMP_GIF_FLAG="/tmp/recording_gif"
+      readonly TMP_PID_FILE="/tmp/recording.pid"
       readonly APP_NAME="Recorder"
       readonly OUT_DIR="$HOME/Videos/Recordings"
       readonly FILENAME="$OUT_DIR/$(date +"%Y-%m-%d_%H-%M-%S")."
@@ -58,6 +59,8 @@ writeShellApplication {
       		"$TMP_GIF_RESULT"
       		"$TMP_MP4_FILE"
       		"$TMP_GIF_FLAG"
+      		"$TMP_PID_FILE"
+      		"/tmp/recording_in_progress"
       	)
       	for file in "''\${tmp_files[@]}"; do
       		if [[ -f "$file" ]]; then
@@ -165,7 +168,26 @@ writeShellApplication {
       	fi
       }
 
+      handle_interrupt() {
+      	debug_log "Interrupt received, stopping recording gracefully"
+      	# Disable cleanup trap during stop operation
+      	trap - EXIT
+
+      	if stop; then
+      		# If stop was successful, run cleanup and exit
+      		cleanup
+      		exit 0
+      	else
+      		# If stop failed, run cleanup and exit with error
+      		cleanup
+      		exit 1
+      	fi
+      }
+
       screen() {
+      	# Set up interrupt handler
+      	trap handle_interrupt SIGINT
+
       	debug_log "Starting screen recording"
       	local output
       	output=$(get_active_monitor) || return 1
@@ -222,12 +244,25 @@ writeShellApplication {
       	touch "/tmp/recording_in_progress"
       	debug_log "Created recording flag file"
 
+      	# Store PID for stop function
+      	echo "$rec_pid" >"/tmp/recording.pid"
+
+      	notify "Recording" "Press Ctrl+C to stop recording"
+
       	# Wait for the recording to be stopped
       	wait "$rec_pid" || {
-      		notify "Error" "Recording failed"
-      		debug_log "wl-screenrec command failed with exit code $?"
-      		rm -f "/tmp/recording_in_progress"
-      		return 1
+      		local exit_code=$?
+      		if [ "$exit_code" -eq 130 ]; then
+      			# Exit code 130 means Ctrl+C was pressed
+      			debug_log "Recording stopped by user"
+      			return 0
+      		else
+      			notify "Error" "Recording failed"
+      			debug_log "wl-screenrec command failed with exit code $exit_code"
+      			rm -f "/tmp/recording_in_progress"
+      			rm -f "/tmp/recording.pid"
+      			return 1
+      		fi
       	}
       }
 
@@ -264,8 +299,13 @@ writeShellApplication {
       }
 
       stop() {
+      	# Temporarily disable cleanup trap
+      	trap - EXIT
+
       	if ! is_recorder_running; then
       		notify "Error" "No recording in progress"
+      		# Restore cleanup trap before returning
+      		trap 'cleanup' EXIT
       		return 1
       	fi
 
@@ -278,11 +318,13 @@ writeShellApplication {
       		sleep 0.5
       	done
 
-      	# Give a moment for files to be written
-      	sleep 0.5
+      	# Give more time for files to be written
+      	sleep 1
 
       	if [[ ! -f "$TMP_MP4_FILE" ]]; then
       		notify "Error" "Recording file not found"
+      		# Restore cleanup trap before returning
+      		trap 'cleanup' EXIT
       		return 1
       	fi
 
@@ -292,6 +334,8 @@ writeShellApplication {
 
       		if ! convert_to_gif "$TMP_MP4_FILE" "$TMP_GIF_RESULT"; then
       			notify "Error" "GIF conversion failed"
+      			# Restore cleanup trap before returning
+      			trap 'cleanup' EXIT
       			return 1
       		fi
 
@@ -302,6 +346,8 @@ writeShellApplication {
       		notify "Stopped Recording" "Video saved to $save_path"
       	fi
 
+      	# Now that we've saved the file, we can restore the cleanup trap
+      	trap 'cleanup' EXIT
       	return 0
       }
 
