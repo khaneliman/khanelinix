@@ -23,7 +23,7 @@ in
     # TODO: sober/roblox?
     home.packages = with pkgs; [
       (bottles.override {
-        extraPkgs = pkgs: [
+        extraPkgs = _pkgs: [
           nix-gaming.packages.${system}.wine-ge
         ];
         removeWarningPopup = true;
