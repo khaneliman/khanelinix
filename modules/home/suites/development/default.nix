@@ -85,6 +85,7 @@ in
         ];
 
       shellAliases = {
+        # Nixpkgs aliases
         prefetch-sri = "nix store prefetch-file $1";
         nrh = ''${lib.getExe pkgs.nixpkgs-review} rev HEAD'';
         nra = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "all"'';
@@ -97,6 +98,10 @@ in
         nrmp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-darwin aarch64-darwin aarch64-linux" --num-parallel-evals 3 --post-result'';
         nup = ''nix-shell maintainers/scripts/update.nix --argstr package $1'';
         num = ''nix-shell maintainers/scripts/update.nix --argstr maintainer $1'';
+        # HM aliases
+        hmd = ''nix build -L .#docs-html && ${lib.getExe config.programs.firefox.package} result/share/doc/home-manager/index.xhtml'';
+        hmt = ''nix build -L --reference-lock-file flake.lock ./tests#test-$1'';
+        hmts = ''nix build -L --reference-lock-file flake.lock ./tests#test-$1 ; nix path-info -rSh ./result'';
       };
     };
 
