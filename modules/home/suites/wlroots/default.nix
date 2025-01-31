@@ -20,6 +20,7 @@ in
     home.packages = with pkgs; [
       wdisplays
       wl-clipboard
+      wl-clip-persist
       wlr-randr
       wl-screenrec
     ];
