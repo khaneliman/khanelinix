@@ -127,12 +127,13 @@ in
         position = "left";
         actions = [
           {
-            label = "󰍹";
-            command = ''grimblast --notify save screen '';
+            label = "󰹑  Whole screen";
+            command = ''${lib.getExe pkgs.grimblast} --notify save screen '';
           }
           {
-            label = "";
-            command = ''grimblast --notify --freeze save area '';
+            label = "󰩭  Window / Region";
+            command = ''${lib.getExe pkgs.grimblast} --notify --freeze save area '';
+          }
           }
         ];
       };
