@@ -1,5 +1,6 @@
 {
   lib,
+  namespace,
   osConfig,
   pkgs,
 }:
@@ -134,6 +135,13 @@ in
             label = "󰩭  Window / Region";
             command = ''${lib.getExe pkgs.grimblast} --notify --freeze save area '';
           }
+          {
+            label = "  Record area";
+            command = ''${lib.getExe pkgs.${namespace}.record_screen} area & ; swaync-client -t'';
+          }
+          {
+            label = "  Record screen";
+            command = ''${lib.getExe pkgs.${namespace}.record_screen} screen & ; swaync-client -t'';
           }
         ];
       };

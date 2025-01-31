@@ -25,7 +25,14 @@ let
     wl-clipboard
   ];
 
-  settings = import ./settings.nix { inherit lib osConfig pkgs; };
+  settings = import ./settings.nix {
+    inherit
+      lib
+      namespace
+      osConfig
+      pkgs
+      ;
+  };
   style = import ./style.nix;
 in
 {
