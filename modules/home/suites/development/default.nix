@@ -99,7 +99,12 @@ in
         nup = ''nix-shell maintainers/scripts/update.nix --argstr package $1'';
         num = ''nix-shell maintainers/scripts/update.nix --argstr maintainer $1'';
         # HM aliases
-        hmd = ''nix build -L .#docs-html && ${lib.getExe config.programs.firefox.package} result/share/doc/home-manager/index.xhtml'';
+        hmd = ''nix build -L .#docs-html && ${
+          if pkgs.stdenv.isDarwin then
+            "open -a /Applications/Firefox\\ Developer\\ Edition.app"
+          else
+            lib.getExe config.programs.firefox.package
+        } result/share/doc/home-manager/index.xhtml'';
         hmt = ''nix build -L --reference-lock-file flake.lock ./tests#test-$1'';
         hmts = ''nix build -L --reference-lock-file flake.lock ./tests#test-$1 ; nix path-info -rSh ./result'';
       };
