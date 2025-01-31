@@ -161,16 +161,13 @@ in
         misc = {
           allow_session_lock_restore = true;
           disable_hyprland_logo = true;
-
-          # DPMS
-          key_press_enables_dpms = true;
-          mouse_move_enables_dpms = true;
-
-          vrr = 2;
-
-          # window swallowing
           enable_swallow = true; # hide windows that spawn other windows
+          font_family = "MonaspiceNe Nerd Font";
+          key_press_enables_dpms = true;
+          middle_click_paste = false;
+          mouse_move_enables_dpms = true;
           swallow_regex = "foot|thunar|nemo|wezterm"; # windows for which swallow is applied
+          vrr = 2;
         };
 
         # unscale XWayland
