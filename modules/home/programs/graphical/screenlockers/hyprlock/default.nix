@@ -49,36 +49,23 @@ in
         input-field = [
           {
             monitor = "";
-            size = "200, 50";
-            position = "0, -80";
-            outline_thickness = 5;
+            size = "300, 50";
+            outline_thickness = 1;
+            rounding = 10;
+            dots_size = "0.25";
+            dots_spacing = "0.4";
             dots_center = true;
             outer_color = catppuccin.colors.crust.rgb;
             inner_color = catppuccin.colors.surface2.rgb;
             font_color = catppuccin.colors.text.rgb;
+            font_size = 14;
+            font_family = "Maple Mono Bold";
             fade_on_empty = false;
-            placeholder_text = "<span foreground=\"##cad3f5\">Password...</span>";
-            shadow_passes = 2;
-            bothlock_color = -1;
-            capslock_color = "-1";
-            check_color = "rgb(204, 136, 34)";
-            dots_rounding = "-1";
-            dots_size = "0.330000";
-            dots_spacing = "0.150000";
-            fade_timeout = "2000";
-            fail_color = "rgb(204, 34, 34)";
-            fail_text = "<i>$FAIL</i>";
-            fail_transition = 300;
-            halign = "center";
+            placeholder_text = "<i><span foreground=\"##fbf1c7\">Enter Password</span></i>";
             hide_input = false;
-            invert_numlock = false;
-            numlock_color = -1;
-            rounding = -1;
-            shadow_boost = "1.200000";
-            shadow_color = "rgba(0, 0, 0, 1.0)";
-            shadow_size = 3;
-            swap_font_color = false;
-            valign = "center";
+            position = "0, 200";
+            halign = "center";
+            valign = "bottom";
           }
         ];
 
@@ -103,33 +90,14 @@ in
         label = [
           {
             monitor = "";
-            text = "<span font_weight=\"ultrabold\">$TIME</span>";
             color = catppuccin.colors.text.rgb;
-            font_size = 100;
-            font_family = osConfig.${namespace}.system.fonts.default;
-            valign = "center";
+            text = "cmd[update:1000] echo \"$(date +\"%k:%M\")\"";
+            font_size = 115;
+            font_family = "Maple Mono Bold";
+            shadow_passes = 3;
+            position = "0, -150";
             halign = "center";
-            position = "0, 330";
-            shadow_passes = 2;
-            rotate = "0.000000";
-            shadow_boost = "1.200000";
-            shadow_color = "rgba(0, 0, 0, 1.0)";
-            shadow_size = 3;
-          }
-          {
-            monitor = "";
-            text = "<span font_weight=\"bold\"> $USER</span>";
-            color = catppuccin.colors.text.rgb;
-            font_size = 25;
-            font_family = osConfig.${namespace}.system.fonts.default;
             valign = "top";
-            halign = "left";
-            position = "10, 0";
-            shadow_passes = 1;
-            rotate = "0.000000";
-            shadow_boost = "1.200000";
-            shadow_color = "rgba(0, 0, 0, 1.0)";
-            shadow_size = 3;
           }
           {
             monitor = "";
@@ -140,36 +108,6 @@ in
             valign = "center";
             halign = "center";
             position = "15, -350";
-            shadow_passes = 1;
-            rotate = "0.000000";
-            shadow_boost = "1.200000";
-            shadow_color = "rgba(0, 0, 0, 1.0)";
-            shadow_size = 3;
-          }
-          {
-            monitor = "";
-            text = "<span font_weight=\"bold\">Locked</span>";
-            color = catppuccin.colors.text.rgb;
-            font_size = 25;
-            font_family = osConfig.${namespace}.system.fonts.default;
-            valign = "center";
-            halign = "center";
-            position = "0, -430";
-            shadow_passes = 1;
-            rotate = "0.000000";
-            shadow_boost = "1.200000";
-            shadow_color = "rgba(0, 0, 0, 1.0)";
-            shadow_size = 3;
-          }
-          {
-            monitor = "";
-            text = "cmd[update:120000] echo \"<span font_weight='bold'>$(date +'%a %d %B')</span>\"";
-            color = catppuccin.colors.text.rgb;
-            font_size = 30;
-            font_family = osConfig.${namespace}.system.fonts.default;
-            valign = "center";
-            halign = "center";
-            position = "0, 210";
             shadow_passes = 1;
             rotate = "0.000000";
             shadow_boost = "1.200000";
@@ -190,6 +128,42 @@ in
             shadow_boost = "1.200000";
             shadow_color = "rgba(0, 0, 0, 1.0)";
             shadow_size = 3;
+          }
+          {
+            monitor = "";
+            color = catppuccin.colors.text.rgb;
+            text = "cmd[update:1000] echo \"- $(date +\"%A, %B %d\") -\"";
+            font_size = 18;
+            font_family = "Maple Mono";
+            shadow_passes = 3;
+            position = "0, -350";
+            halign = "center";
+            valign = "top";
+          }
+          {
+            monitor = "";
+            color = catppuccin.colors.text.rgb;
+            text = "$USER";
+            font_size = 15;
+            font_family = "Maple Mono Bold";
+            position = "0, 281";
+            halign = "center";
+            valign = "bottom";
+          }
+        ];
+
+        shape = [
+          {
+            monitor = "";
+            size = "300, 50";
+            color = "rgba(102, 92, 84, .33)";
+            rounding = 10;
+            border_size = 0;
+            border_color = "rgba(255, 255, 255, 0)";
+            rotate = "0";
+            position = "0, 270";
+            halign = "center";
+            valign = "bottom";
           }
         ];
       };
