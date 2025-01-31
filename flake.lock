@@ -39,6 +39,22 @@
         "type": "github"
       }
     },
+    "avante-nvim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1738232743,
+        "narHash": "sha256-8flnMxHUPksslvpwVH7HIgJ8+rQWLyMoIj04dgbVguI=",
+        "owner": "yetone",
+        "repo": "avante.nvim",
+        "rev": "5d1bc6e8b49c8e5b997040354b748c886fa80b7e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "yetone",
+        "repo": "avante.nvim",
+        "type": "github"
+      }
+    },
     "blink-cmp": {
       "inputs": {
         "fenix": "fenix",
@@ -863,6 +879,7 @@
     },
     "khanelivim": {
       "inputs": {
+        "avante-nvim": "avante-nvim",
         "blink-cmp": "blink-cmp",
         "blink-copilot": "blink-copilot",
         "flake-parts": "flake-parts_4",
@@ -879,11 +896,11 @@
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
-        "lastModified": 1738335235,
-        "narHash": "sha256-HtKGddzpFSDEE1lZ4e0IPDEKcT3Zmpxo1xthjtTutYo=",
+        "lastModified": 1738359732,
+        "narHash": "sha256-4sfq7tA+L8WAoHHQoiSgMbpGL6MylytSoLZSxrMWAHY=",
         "owner": "khaneliman",
         "repo": "khanelivim",
-        "rev": "e410366b995802133194b4148508664e24d30386",
+        "rev": "9a7d7982e405b1644225182801b5f859b07b0f4a",
         "type": "github"
       },
       "original": {
