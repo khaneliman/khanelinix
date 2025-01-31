@@ -47,6 +47,7 @@ in
             "${getExe pkgs.openrgb-with-all-plugins} --startminimized --profile default"
             "${getExe pkgs._1password-gui} --silent"
             "${getExe pkgs.tailscale-systray}"
+            "${getExe pkgs.wl-clip-persist} --clipboard both"
             "$(${getExe pkgs.wayvnc} $(${getExe pkgs.tailscale} ip --4))"
           ];
       };
