@@ -1,6 +1,7 @@
 {
   lib,
   libnotify,
+  bc,
   ffmpeg,
   gifsicle,
   slurp,
@@ -21,6 +22,7 @@ writeShellApplication {
   checkPhase = "";
 
   runtimeInputs = [
+    bc
     gifsicle
     ffmpeg
     libnotify
@@ -145,6 +147,24 @@ writeShellApplication {
       	echo "$output"
       }
 
+      get_scale_factor() {
+      	local width="$1"
+      	local height="$2"
+      	local max_width=4096  # Default max supported width
+      	local max_height=4096 # Default max supported height
+
+      	# Calculate scale factors for both dimensions
+      	local scale_w=$(awk "BEGIN {print ($max_width / $width)}")
+      	local scale_h=$(awk "BEGIN {print ($max_height / $height)}")
+
+      	# Use the smaller scale factor to maintain aspect ratio
+      	if (($(echo "$scale_w < $scale_h" | bc -l))); then
+      		echo "$scale_w"
+      	else
+      		echo "$scale_h"
+      	fi
+      }
+
       screen() {
       	debug_log "Starting screen recording"
       	local output
@@ -152,21 +172,49 @@ writeShellApplication {
       	debug_log "Active monitor: $output"
 
       	# Get screen dimensions
-      	local dimensions
-      	dimensions=$(hyprctl -j monitors | jq -r ".[] | select(.name == \"$output\") | \"\(.width)x\(.height)\"")
-      	debug_log "Screen dimensions: $dimensions"
+      	local width height
+      	width=$(hyprctl -j monitors | jq -r ".[] | select(.name == \"$output\") | .width")
+      	height=$(hyprctl -j monitors | jq -r ".[] | select(.name == \"$output\") | .height")
+      	debug_log "Screen dimensions: ''\${width}x''\${height}"
+
+      	# Calculate scale factor if dimensions exceed maximum supported
+      	local scale_factor=1.0
+      	if [ "$width" -gt 4096 ] || [ "$height" -gt 4096 ]; then
+      		scale_factor=$(get_scale_factor "$width" "$height")
+      		# Add a small buffer to ensure we're under the limit
+      		scale_factor=$(echo "$scale_factor * 0.95" | bc -l)
+      		debug_log "Applying scale factor: $scale_factor due to resolution constraints"
+      	fi
 
       	notify "Starting Recording" "Your screen is being recorded"
       	debug_log "Running wl-screenrec command"
 
       	# Start wl-screenrec in the background and save its PID
-      	wl-screenrec \
-      		--audio \
-      		--audio-device alsa_output.pci-0000_0c_00.4.analog-stereo.monitor \
-      		--low-power=off \
-      		--codec=avc \
-      		-f "$TMP_MP4_FILE" \
-      		-o "$output" &
+      	if [ "$scale_factor" != "1.0" ]; then
+      		debug_log "Recording with scale factor: $scale_factor"
+      		local scaled_width scaled_height
+      		scaled_width=$(echo "$width * $scale_factor" | bc | cut -d. -f1)
+      		scaled_height=$(echo "$height * $scale_factor" | bc | cut -d. -f1)
+      		debug_log "Scaled dimensions: ''\${scaled_width}x''\${scaled_height}"
+
+      		wl-screenrec \
+      			--audio \
+      			--audio-device alsa_output.pci-0000_0c_00.4.analog-stereo.monitor \
+      			--low-power=off \
+      			--codec=avc \
+      			--encode-resolution="''\${scaled_width}x''\${scaled_height}" \
+      			-f "$TMP_MP4_FILE" \
+      			-o "$output" &
+      	else
+      		debug_log "Recording at native resolution"
+      		wl-screenrec \
+      			--audio \
+      			--audio-device alsa_output.pci-0000_0c_00.4.analog-stereo.monitor \
+      			--low-power=off \
+      			--codec=avc \
+      			-f "$TMP_MP4_FILE" \
+      			-o "$output" &
+      	fi
       	local rec_pid=$!
       	debug_log "Recording started with PID: $rec_pid"
 
