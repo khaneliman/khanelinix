@@ -91,7 +91,7 @@ in
                 systems = [
                   "x86_64-linux"
                 ];
-                maxJobs = 4;
+                maxJobs = 2;
                 speedFactor = 1;
                 inherit supportedFeatures;
               }
@@ -101,6 +101,7 @@ in
               // lib.optionalAttrs (host == "khanelinix") {
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
                 speedFactor = 0;
+                maxJobs = 1;
               }
             )
             (
@@ -110,7 +111,7 @@ in
                 systems = [
                   "x86_64-linux"
                 ];
-                maxJobs = 8;
+                maxJobs = 6;
                 speedFactor = 2;
                 supportedFeatures = supportedFeatures ++ [ "kvm" ];
               }
