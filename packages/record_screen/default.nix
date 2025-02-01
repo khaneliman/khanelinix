@@ -34,7 +34,6 @@ writeShellApplication {
 
   text = # bash
     ''
-      # Constants
       readonly TMP_FILE_UNOPTIMIZED="/tmp/recording_unoptimized.gif"
       readonly TMP_PALETTE_FILE="/tmp/palette.png"
       readonly TMP_MP4_FILE="/tmp/recording.mp4"
@@ -45,12 +44,10 @@ writeShellApplication {
       readonly OUT_DIR="$HOME/Videos/Recordings"
       readonly FILENAME="$OUT_DIR/$(date +"%Y-%m-%d_%H-%M-%S")."
 
-      # Enable debug logging
       debug_log() {
       	echo "[DEBUG] $*" >&2
       }
 
-      # Cleanup function
       cleanup() {
       	debug_log "Running cleanup (caller: ''\${FUNCNAME[1]})"
       	local -a tmp_files=(
@@ -170,16 +167,28 @@ writeShellApplication {
 
       handle_interrupt() {
       	debug_log "Interrupt received, stopping recording gracefully"
-      	# Disable cleanup trap during stop operation
-      	trap - EXIT
+      	# Disable all traps temporarily
+      	trap - EXIT SIGINT
 
+      	if [[ -f "$TMP_PID_FILE" ]]; then
+      		local rec_pid
+      		rec_pid=$(cat "$TMP_PID_FILE")
+      		debug_log "Sending SIGINT to PID: $rec_pid"
+      		kill -SIGINT "$rec_pid" 2>/dev/null
+
+      		# Give the process time to finish writing
+      		sleep 1
+
+      		# Wait for the process to end
+      		wait "$rec_pid" 2>/dev/null
+      	fi
+
+      	# Call stop without running cleanup
       	if stop; then
-      		# If stop was successful, run cleanup and exit
-      		cleanup
+      		debug_log "Recording stopped successfully"
       		exit 0
       	else
-      		# If stop failed, run cleanup and exit with error
-      		cleanup
+      		debug_log "Failed to stop recording"
       		exit 1
       	fi
       }
@@ -267,6 +276,8 @@ writeShellApplication {
       }
 
       area() {
+      	trap handle_interrupt SIGINT
+
       	local geometry
       	geometry=$(slurp) || {
       		notify "Cancelled" "Area selection cancelled"
@@ -283,12 +294,33 @@ writeShellApplication {
       			-g "$geometry" \
       			-f "$TMP_MP4_FILE" &
       		local rec_pid=$!
+      		echo "$rec_pid" >"$TMP_PID_FILE"
       		debug_log "Recording started with PID: $rec_pid"
+
+      		# Create a flag file to indicate recording is in progress
+      		touch "/tmp/recording_in_progress"
+
+      		# Ensure the PID file exists before continuing
+      		while [[ ! -f "$TMP_PID_FILE" ]]; do
+      			sleep 0.1
+      		done
+
+      		notify "Recording" "Press Ctrl+C to stop recording"
 
       		# Wait for the recording to be stopped
       		wait "$rec_pid" || {
-      			notify "Error" "Recording failed"
-      			return 1
+      			local exit_code=$?
+      			if [ "$exit_code" -eq 130 ]; then
+      				# Exit code 130 means Ctrl+C was pressed
+      				debug_log "Recording stopped by user"
+      				return 0
+      			else
+      				notify "Error" "Recording failed"
+      				debug_log "wl-screenrec command failed with exit code $exit_code"
+      				rm -f "/tmp/recording_in_progress"
+      				rm -f "$TMP_PID_FILE"
+      				return 1
+      			fi
       		}
       	fi
       }
@@ -299,24 +331,42 @@ writeShellApplication {
       }
 
       stop() {
-      	# Temporarily disable cleanup trap
-      	trap - EXIT
+      	local was_interrupted=''\${1:-false}
+      	debug_log "Stop called (was_interrupted: $was_interrupted)"
 
-      	if ! is_recorder_running; then
+      	if ! is_recorder_running && [[ ! -f "$TMP_MP4_FILE" ]]; then
       		notify "Error" "No recording in progress"
-      		# Restore cleanup trap before returning
-      		trap 'cleanup' EXIT
+
       		return 1
       	fi
 
-      	debug_log "Sending SIGINT to wl-screenrec"
-      	pkill -SIGINT wl-screenrec
+      	# Only send signal if we weren't already interrupted
+      	if [[ "$was_interrupted" == "false" ]]; then
+      		if [[ -f "$TMP_PID_FILE" ]]; then
+      			local rec_pid
+      			rec_pid=$(cat "$TMP_PID_FILE")
+      			debug_log "Sending SIGINT to PID: $rec_pid"
+      			kill -SIGINT "$rec_pid" 2>/dev/null
 
-      	# Wait for the process to actually end
-      	while is_recorder_running; do
-      		debug_log "Waiting for wl-screenrec to stop..."
-      		sleep 0.5
-      	done
+      			# Wait for the process to actually end
+      			while kill -0 "$rec_pid" 2>/dev/null; do
+      				debug_log "Waiting for wl-screenrec to stop..."
+      				sleep 0.5
+      			done
+      		else
+      			debug_log "Sending SIGINT to wl-screenrec"
+      			pkill -SIGINT wl-screenrec
+
+      			# Wait for the process to actually end
+      			while is_recorder_running; do
+      				debug_log "Waiting for wl-screenrec to stop..."
+      				sleep 0.5
+      			done
+      		fi
+      	fi
+
+      	# Give time for the file to be written completely
+      	sleep 1
 
       	# Give more time for files to be written
       	sleep 1
@@ -346,8 +396,8 @@ writeShellApplication {
       		notify "Stopped Recording" "Video saved to $save_path"
       	fi
 
-      	# Now that we've saved the file, we can restore the cleanup trap
-      	trap 'cleanup' EXIT
+      	# Clean up temporary files after saving
+      	cleanup
       	return 0
       }
 
