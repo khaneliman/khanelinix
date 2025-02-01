@@ -19,3 +19,17 @@ prepend_previewers = [
 
 Make sure you have [glow](https://github.com/charmbracelet/glow) installed, and
 can be found in `PATH`.
+
+## Feature
+
+- You can modify line wrap in `init.lua`, the current value is 55.
+- You can press `ctrl+e` to scroll up and `ctrl+y` to scroll down the readme
+  file in preview panel in yazi: (add this to `keymap.toml`)
+
+```toml
+prepend_keymap = [
+    # glow.yazi
+    { on = ["<C-e>"], run = "seek 5" },
+    { on = ["<C-y>"], run = "seek -5" },
+]
+```
