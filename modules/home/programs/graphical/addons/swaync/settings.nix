@@ -143,6 +143,10 @@ in
             label = "  Record screen";
             command = ''${lib.getExe pkgs.${namespace}.record_screen} screen & ; swaync-client -t'';
           }
+          {
+            label = "  Stop Record";
+            command = ''${lib.getExe pkgs.${namespace}.record_screen} stop & ; swaync-client -t'';
+          }
         ];
       };
     };
