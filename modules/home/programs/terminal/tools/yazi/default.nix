@@ -53,6 +53,8 @@ in
       enableNushellIntegration = true;
       enableZshIntegration = true;
 
+      initLua = ./configs/init.lua;
+
       keymap = lib.mkMerge [
         completion
         help
@@ -61,22 +63,22 @@ in
         select
         tasks
       ];
-      settings = import ./yazi.nix { inherit config lib pkgs; };
-    };
 
-    xdg.configFile = {
-      "yazi/init.lua".source = ./configs/init.lua;
-      "yazi/plugins/chmod.yazi".source = "${yazi-plugins}/chmod.yazi";
-      "yazi/plugins/diff.yazi".source = "${yazi-plugins}/diff.yazi";
-      "yazi/plugins/full-border.yazi".source = "${yazi-plugins}/full-border.yazi";
-      "yazi/plugins/glow.yazi".source = ./configs/plugins/glow.yazi;
-      "yazi/plugins/jump-to-char.yazi".source = "${yazi-plugins}/jump-to-char.yazi";
-      "yazi/plugins/max-preview.yazi".source = "${yazi-plugins}/max-preview.yazi";
-      "yazi/plugins/miller.yazi".source = ./configs/plugins/miller.yazi;
-      "yazi/plugins/ouch.yazi".source = ./configs/plugins/ouch.yazi;
-      "yazi/plugins/smart-enter.yazi".source = "${yazi-plugins}/smart-enter.yazi";
-      "yazi/plugins/smart-filter.yazi".source = "${yazi-plugins}/smart-filter.yazi";
-      "yazi/plugins/sudo.yazi".source = ./configs/plugins/sudo.yazi;
+      plugins = {
+        "chmod" = "${yazi-plugins}/chmod.yazi";
+        "diff" = "${yazi-plugins}/diff.yazi";
+        "full-border" = "${yazi-plugins}/full-border.yazi";
+        "glow" = ./configs/plugins/glow.yazi;
+        "jump-to-char" = "${yazi-plugins}/jump-to-char.yazi";
+        "max-preview" = "${yazi-plugins}/max-preview.yazi";
+        "miller" = ./configs/plugins/miller.yazi;
+        "ouch" = ./configs/plugins/ouch.yazi;
+        "smart-enter" = "${yazi-plugins}/smart-enter.yazi";
+        "smart-filter" = "${yazi-plugins}/smart-filter.yazi";
+        "sudo" = ./configs/plugins/sudo.yazi;
+      };
+
+      settings = import ./yazi.nix { inherit config lib pkgs; };
     };
   };
 }
