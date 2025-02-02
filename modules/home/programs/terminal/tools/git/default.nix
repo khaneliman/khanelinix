@@ -143,6 +143,7 @@ in
         enable = true;
 
         extensions = with pkgs; [
+          gh-notify # notifications
           gh-dash # dashboard with pull requests and issues
           gh-eco # explore the ecosystem
           gh-cal # contributions calender terminal viewer
