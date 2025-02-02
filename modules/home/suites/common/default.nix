@@ -29,6 +29,7 @@ in
     };
 
     home.packages = with pkgs; [
+      dwt1-shell-color-scripts
       ncdu
       smassh
       toilet
