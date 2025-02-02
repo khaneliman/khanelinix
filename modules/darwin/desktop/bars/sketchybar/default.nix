@@ -39,6 +39,7 @@ in
         coreutils
         curl
         gh
+        gh-notify
         gnugrep
         gnused
         jq
