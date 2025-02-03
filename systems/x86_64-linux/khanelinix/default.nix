@@ -42,7 +42,10 @@ in
       bluetooth = enabled;
       cpu.amd = enabled;
       gpu = {
-        amd = enabled;
+        amd = {
+          enable = true;
+          enableRocmSupport = true;
+        };
         nvidia = enabled;
       };
       opengl = enabled;
