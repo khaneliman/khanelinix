@@ -14,6 +14,8 @@ in
 {
   options.${namespace}.suites.development = {
     enable = mkBoolOpt false "Whether or not to enable common development configuration.";
+    dockerEnable = mkBoolOpt true "Whether or not to enable docker development configuration.";
+    aiEnable = mkBoolOpt true "Whether or not to enable ai development configuration.";
   };
 
   config = mkIf cfg.enable {
@@ -22,13 +24,14 @@ in
     };
 
     homebrew = {
-      casks = [
-        "cutter"
-        "docker"
-        "electron"
-        "ollamac"
-        "powershell"
-      ];
+      casks =
+        [
+          "cutter"
+          "electron"
+          "powershell"
+        ]
+        ++ lib.optionals cfg.dockerEnable [ "docker" ]
+        ++ lib.optionals cfg.aiEnable [ "ollamac" ];
 
       masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
         "Patterns" = 429449079;
