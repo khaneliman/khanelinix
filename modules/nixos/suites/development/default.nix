@@ -39,6 +39,8 @@ in
       services = {
         ollama.enable = lib.mkDefault cfg.aiEnable;
         ollama-ui.enable = lib.mkDefault cfg.aiEnable;
+        # FIXME: torch broken upstream
+        # open-webui.enable = lib.mkDefault cfg.aiEnable;
       };
 
       virtualisation = {
