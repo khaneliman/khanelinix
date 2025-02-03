@@ -14,6 +14,7 @@ in
 {
   options.${namespace}.hardware.gpu.amd = {
     enable = mkBoolOpt false "Whether or not to enable support for amdgpu.";
+    enableRocmSupport = mkBoolOpt false "Whether or not to enable support for rocm.";
   };
 
   config = mkIf cfg.enable {
@@ -62,6 +63,8 @@ in
         ];
       };
     };
+
+    nixpkgs.config.rocmSupport = cfg.enableRocmSupport;
 
     services.xserver.videoDrivers = lib.mkDefault [
       "modesetting"
