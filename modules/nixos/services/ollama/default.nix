@@ -22,6 +22,8 @@ in
     services.ollama = {
       enable = true;
 
+      openFirewall = true;
+
       rocmOverrideGfx = lib.mkIf (amdCfg.enable && amdCfg.enableRocmSupport) "11.0.0";
 
       environmentVariables =
