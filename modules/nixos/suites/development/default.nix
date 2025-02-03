@@ -37,7 +37,7 @@ in
       };
 
       services = {
-        # ollama.enable = lib.mkDefault cfg.aiEnable;
+        ollama.enable = lib.mkDefault cfg.aiEnable;
         ollama-ui.enable = lib.mkDefault cfg.aiEnable;
       };
 
