@@ -21,10 +21,15 @@ in
     services.ollama = {
       enable = true;
 
-      environmentVariables = lib.mkIf (amdCfg.enable && amdCfg.enableRocmSupport) {
-        HCC_AMDGPU_TARGET = "gfx1102";
-        HSA_OVERRIDE_GFX_VERSION = "11.0.2";
-      };
+      environmentVariables =
+        {
+          OLLAMA_DEBUG = "1";
+        }
+        // lib.optionalAttrs (amdCfg.enable && amdCfg.enableRocmSupport) {
+          HCC_AMDGPU_TARGET = "gfx1102";
+          HSA_OVERRIDE_GFX_VERSION = "11.0.2";
+          AMD_LOG_LEVEL = "3";
+        };
     };
   };
 }
