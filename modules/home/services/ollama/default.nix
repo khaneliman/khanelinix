@@ -26,8 +26,8 @@ in
           OLLAMA_DEBUG = "1";
         }
         // lib.optionalAttrs (amdCfg.enable && amdCfg.enableRocmSupport) {
-          HCC_AMDGPU_TARGET = "gfx1102";
-          HSA_OVERRIDE_GFX_VERSION = "11.0.2";
+          HCC_AMDGPU_TARGET = "gfx1100";
+          HSA_OVERRIDE_GFX_VERSION = "11.0.0";
           AMD_LOG_LEVEL = "3";
         };
     };
