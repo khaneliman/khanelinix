@@ -146,7 +146,6 @@ in
           exec = [ "${getExe pkgs.libnotify} --icon ~/.face -u normal \"Hello $(whoami)\"" ];
         };
 
-        # systemd = lib.mkIf (!osConfig.programs.uwsm.enable) {
         systemd = {
           enable = !osConfig.programs.uwsm.enable;
           enableXdgAutostart = true;
@@ -154,7 +153,6 @@ in
             "${systemctl} --user stop hyprland-session.target"
             "${systemctl} --user reset-failed"
             "${systemctl} --user start hyprland-session.target"
-            "${systemctl} --user start hyprpolkitagent"
           ];
 
           variables = [

@@ -49,6 +49,7 @@ in
             "${getExe pkgs.tailscale-systray}"
             "${getExe pkgs.wl-clip-persist} --clipboard both"
             "$(${getExe pkgs.wayvnc} $(${getExe pkgs.tailscale} ip --4))"
+            "${lib.getExe' pkgs.systemd "systemctl"} --user start hyprpolkitagent"
           ];
       };
     };
