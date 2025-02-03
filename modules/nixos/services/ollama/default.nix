@@ -9,7 +9,7 @@ let
 
   cfg = config.${namespace}.services.ollama;
 
-  amdCfg = config.hardware.gpu.amd;
+  amdCfg = config.khanelinix.hardware.gpu.amd;
 
 in
 {
