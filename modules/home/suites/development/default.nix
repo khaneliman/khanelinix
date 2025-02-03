@@ -144,6 +144,8 @@ in
           };
         };
       };
+
+      services.ollama.enable = mkDefault cfg.aiEnable;
     };
 
     sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
