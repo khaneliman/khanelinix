@@ -26,6 +26,7 @@ in
         "cutter"
         "docker"
         "electron"
+        "ollamac"
         "powershell"
       ];
 
