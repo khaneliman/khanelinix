@@ -19,6 +19,7 @@ in
     kubernetesEnable = mkBoolOpt false "Whether or not to enable kubernetes development configuration.";
     nixEnable = mkBoolOpt false "Whether or not to enable nix development configuration.";
     sqlEnable = mkBoolOpt false "Whether or not to enable sql development configuration.";
+    aiEnable = mkBoolOpt false "Whether or not to enable ai development configuration.";
   };
 
   config = lib.mkIf cfg.enable {
@@ -33,6 +34,11 @@ in
     khanelinix = {
       user = {
         extraGroups = [ "git" ] ++ lib.optionals cfg.sqlEnable [ "mysql" ];
+      };
+
+      services = {
+        # ollama.enable = lib.mkDefault cfg.aiEnable;
+        ollama-ui.enable = lib.mkDefault cfg.aiEnable;
       };
 
       virtualisation = {
