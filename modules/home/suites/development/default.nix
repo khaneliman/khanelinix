@@ -145,7 +145,7 @@ in
         };
       };
 
-      services.ollama.enable = mkDefault cfg.aiEnable;
+      services.ollama.enable = mkDefault (cfg.aiEnable && pkgs.stdenv.hostPlatform.isDarwin);
     };
 
     sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
