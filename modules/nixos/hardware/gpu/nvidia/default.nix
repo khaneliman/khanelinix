@@ -23,6 +23,7 @@ in
 {
   options.${namespace}.hardware.gpu.nvidia = {
     enable = mkBoolOpt false "Whether or not to enable support for nvidia.";
+    enableCudaSupport = mkBoolOpt false "Whether or not to enable support for cuda.";
   };
 
   config = mkIf cfg.enable {
@@ -64,5 +65,7 @@ in
         extraPackages32 = with pkgs.pkgsi686Linux; [ nvidia-vaapi-driver ];
       };
     };
+
+    nixpkgs.config.cudaSupport = cfg.enableCudaSupport;
   };
 }
