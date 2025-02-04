@@ -85,7 +85,7 @@ in
           # Linux builders
           lib.optionals config.${namespace}.security.sops.enable [
             (
-              lib.mkIf (host != "bruddynix") {
+              lib.mkIf (host != "bruddynix" && host != "khanelinix") {
                 inherit sshUser;
                 hostName = "bruddynix.local";
                 systems = [
@@ -97,12 +97,6 @@ in
               }
               // lib.optionalAttrs (host == "khanelimac") {
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
-              }
-              // lib.optionalAttrs (host == "khanelinix") {
-                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
-                speedFactor = 0;
-                # Just disabling until there's some sort of `build local first`
-                maxJobs = 0;
               }
             )
             (
