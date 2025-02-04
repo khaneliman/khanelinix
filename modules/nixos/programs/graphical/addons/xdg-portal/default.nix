@@ -57,10 +57,7 @@ in
         extraPortals =
           with pkgs;
           [ xdg-desktop-portal-gtk ]
-          ++ (lib.optional config.${namespace}.programs.graphical.wms.sway.enable xdg-desktop-portal-wlr)
-          ++ (lib.optional config.${namespace}.programs.graphical.wms.hyprland.enable
-            xdg-desktop-portal-hyprland
-          );
+          ++ (lib.optional config.${namespace}.programs.graphical.wms.sway.enable xdg-desktop-portal-wlr);
         # xdgOpenUsePortal = true;
 
         wlr = {
