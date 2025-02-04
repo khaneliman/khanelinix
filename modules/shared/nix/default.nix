@@ -101,7 +101,8 @@ in
               // lib.optionalAttrs (host == "khanelinix") {
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
                 speedFactor = 0;
-                maxJobs = 1;
+                # Just disabling until there's some sort of `build local first`
+                maxJobs = 0;
               }
             )
             (
