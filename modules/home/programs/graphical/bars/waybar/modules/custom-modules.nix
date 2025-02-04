@@ -13,10 +13,37 @@ let
     ${lib.optionalString osConfig.${namespace}.security.sops.enable ''
       ${getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
     ''}
+
+    # Get notifications and format them for the tooltip
     NOTIFICATIONS="$(${getExe pkgs.gh} api notifications)"
     COUNT="$(${getExe pkgs.gh} api notifications --jq 'length')"
 
-    echo '{"text":'"$COUNT"',"tooltip":"'"$COUNT"' Notifications","class":""}'
+    if [ "$COUNT" -eq 0 ]; then
+      echo '{"text":"0","tooltip":"No notifications","class":""}'
+      exit 0
+    fi
+
+    # Format notifications into a tooltip with HTML
+    TOOLTIP=$(echo "$NOTIFICATIONS" | ${getExe pkgs.jq} -r '
+      def escape_html:
+        gsub("&";"&amp;") | gsub("<";"&lt;") | gsub(">";"&gt;") | gsub("\"";"&quot;");
+
+      def get_icon:
+        if .subject.type == "Issue" then ""
+        elif .subject.type == "Discussion" then ""
+        elif .subject.type == "PullRequest" then ""
+        elif .subject.type == "Commit" then ""
+        else ""
+        end;
+
+      . | map(
+        "<span color=\"#7aa2f7\"><b>󰳏 " + (.repository.full_name | escape_html) + "</b></span>\n" +
+        "<span color=\"#565f89\">" + (get_icon) + "</span> " +
+        (.subject.title | escape_html) + "\n\n"
+      ) | join("")
+    ' | sed 's/api.github.com\/repos/github.com/g' | sed 's/\/pulls\//\/pull\//g' | sed 's/\/commits\//\/commit\//g')
+
+    echo "{\"text\":\"$COUNT\",\"tooltip\":$(echo "$TOOLTIP" | jq -R -s .),\"class\":\"has-notifications\"}"
   '';
 in
 {
