@@ -96,6 +96,8 @@ in
           "svg.context-properties.content.enabled" = true;
           "browser.display.use_system_colors" = true;
           "browser.theme.dark-toolbar-theme" = true;
+          "mailnews.default_sort_type" = 18;
+          "mailnews.default_sort_order" = 2;
         };
 
         userChrome = # css
