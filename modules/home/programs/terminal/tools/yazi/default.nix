@@ -4,6 +4,7 @@
   pkgs,
   namespace,
   inputs,
+  system,
   ...
 }:
 let
@@ -16,7 +17,7 @@ let
   manager = import ./keymap/manager.nix { inherit config namespace; };
   select = import ./keymap/select.nix { };
   tasks = import ./keymap/tasks.nix { };
-  inherit (inputs) yazi-plugins;
+  inherit (inputs) yazi yazi-plugins;
 
   cfg = config.${namespace}.programs.terminal.tools.yazi;
 in
@@ -39,7 +40,7 @@ in
 
     programs.yazi = {
       enable = true;
-      package = pkgs.yazi;
+      package = yazi.packages.${system}.default;
 
       # NOTE: wrapper alias is yy
       enableBashIntegration = true;
