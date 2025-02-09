@@ -74,6 +74,7 @@
       # url = "git+file:///home/khaneliman/Documents/github/khanelivim";
       inputs = {
         # nixpkgs.follows = "nixpkgs";
+        yazi.follows = "yazi";
         git-hooks-nix.follows = "git-hooks-nix";
       };
     };

@@ -2,7 +2,8 @@
 mkShell {
   packages = with pkgs; [
     pkgs.khanelinix.avrogen
-    azure-cli
+    # FIXME: broken nixpkgs
+    # azure-cli
     bicep
     csharpier
     dotnetbuildhelpers

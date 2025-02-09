@@ -81,7 +81,8 @@ in
         ]
         ++ lib.optionals cfg.sqlEnable [
           dbeaver-bin
-          mysql-workbench
+          # FIXME: broken nixpkgs dependency libiodbc
+          # mysql-workbench
         ];
 
       shellAliases = {
