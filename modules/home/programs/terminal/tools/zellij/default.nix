@@ -38,9 +38,9 @@ in
         enable = true;
 
         # These enable auto starting
-        # enableBashIntegration = true;
-        # enableFishIntegration = true;
-        # enableZshIntegration = true;
+        enableBashIntegration = false;
+        enableFishIntegration = false;
+        enableZshIntegration = false;
 
         settings = {
           # custom defined layouts
