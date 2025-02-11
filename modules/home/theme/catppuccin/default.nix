@@ -167,6 +167,9 @@ in
         inherit (cfg) accent;
       };
 
+      # TODO: Make work with personal customizations
+      # yazi.enable = true;
+      # rofi.enable = true;
     };
 
     home = {
@@ -325,10 +328,6 @@ in
         (import ./yazi/status.nix { })
         (import ./yazi/theme.nix { })
       ];
-
-      # TODO: Make work with personal customizations
-      # yazi.catppuccin.enable = true;
-      # rofi.catppuccin.enable = true;
     };
 
     xdg.configFile =

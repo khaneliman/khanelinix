@@ -4,8 +4,18 @@ let
 in
 {
   status = {
-    separator_open = "";
-    separator_close = "";
+    # FIXME:
+    # sep_left = {
+    #   open = "󰅂";
+    #   close = "󰅂";
+    # };
+    #
+    # FIXME:
+    # sep_right = {
+    #   open = "󰅁";
+    #   close = "󰅁";
+    # };
+
     separator_style = {
       fg = catppuccin.colors.surface1.hex;
       bg = catppuccin.colors.surface1.hex;
@@ -27,6 +37,11 @@ in
       bold = true;
     };
 
+    overall = {
+      fg = catppuccin.colors.text.hex;
+      bg = catppuccin.colors.mantle.hex;
+    };
+
     progress_label = {
       fg = "#ffffff";
       bold = true;
@@ -40,19 +55,19 @@ in
       bg = catppuccin.colors.surface1.hex;
     };
 
-    permissions_t = {
+    perm_type = {
       fg = catppuccin.colors.blue.hex;
     };
-    permissions_r = {
+    perm_read = {
       fg = catppuccin.colors.yellow.hex;
     };
-    permissions_w = {
+    perm_write = {
       fg = catppuccin.colors.red.hex;
     };
-    permissions_x = {
+    perm_exec = {
       fg = catppuccin.colors.green.hex;
     };
-    permissions_s = {
+    perm_sep = {
       fg = catppuccin.colors.overlay1.hex;
     };
   };
