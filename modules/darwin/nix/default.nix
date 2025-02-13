@@ -24,8 +24,6 @@ in
           Day = 7;
           Hour = 3;
         };
-
-        user = config.${namespace}.user.name;
       };
 
       linux-builder = {
@@ -48,8 +46,6 @@ in
           Day = 7;
           Hour = 4;
         };
-
-        user = config.${namespace}.user.name;
       };
 
       # NOTE: not sure if i saw any benefits changing this
