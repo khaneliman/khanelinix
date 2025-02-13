@@ -39,6 +39,9 @@ in
           };
         };
       };
+      services = {
+        syncthing.enable = lib.mkDefault pkgs.stdenv.isLinux;
+      };
     };
   };
 }
