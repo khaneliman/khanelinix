@@ -5,12 +5,12 @@
   ...
 }:
 let
-  inherit (builtins) readDir attrNames mapAttrs;
+  inherit (builtins) readDir attrNames;
 
   configDirs =
     let
       dirs = readDir ../configurations/nixos;
-      dirNames = lib.filterAttrs (name: type: type == "directory") dirs;
+      dirNames = lib.filterAttrs (_name: type: type == "directory") dirs;
     in
     attrNames dirNames;
 
