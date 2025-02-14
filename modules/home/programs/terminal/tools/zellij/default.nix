@@ -59,7 +59,7 @@ in
 
           default_layout = "system"; # or compact
           default_mode = "locked";
-          support_kitty_keyboard_protocol = false;
+          support_kitty_keyboard_protocol = true;
 
           on_force_close = "quit";
           pane_frames = true;
