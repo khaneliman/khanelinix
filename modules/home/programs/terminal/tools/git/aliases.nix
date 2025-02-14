@@ -274,6 +274,7 @@
       gcob = "git checkout -b";
       gcof = "git checkout --force";
       gcp = "git cherry-pick";
+      gcpx = "git cherry-pick -x";
       gcpa = "git cherry-pick --abort";
       gcpc = "git cherry-pick --continue";
 
