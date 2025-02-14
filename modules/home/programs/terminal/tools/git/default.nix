@@ -99,7 +99,6 @@ in
             prune = true;
           };
 
-          gpg.format = "ssh";
           # TODO: verify still works
           "gpg \"ssh\"".program = mkIf cfg._1password (
             lib.optionalString pkgs.stdenv.isLinux (getExe' pkgs._1password-gui "op-ssh-sign")
@@ -135,6 +134,7 @@ in
 
         signing = {
           key = cfg.signingKey;
+          format = "ssh";
           inherit (cfg) signByDefault;
         };
       };
