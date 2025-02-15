@@ -2,6 +2,7 @@
   config,
   lib,
   namespace,
+  pkgs,
   ...
 }:
 let
@@ -18,7 +19,7 @@ in
     services.syncthing = {
       enable = true;
 
-      tray.enable = true;
+      tray.enable = pkgs.stdenv.isLinux;
     };
   };
 }
