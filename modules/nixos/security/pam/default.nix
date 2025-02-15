@@ -22,7 +22,7 @@ in
           domain = "*";
           item = "nofile";
           type = "-";
-          value = "65536";
+          value = "524288";
         }
       ];
     };
