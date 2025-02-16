@@ -138,6 +138,7 @@ in
       "class<Wowup-cf>" = "";
       "class<com.mitchellh.ghostty>" = "󰊠";
       "class<org.inkscape.Inkscape>" = "";
+      "class<net.lutris.Lutris>" = "󰸸";
     };
   };
   "custom/hyprsunset" = {
