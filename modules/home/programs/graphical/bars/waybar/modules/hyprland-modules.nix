@@ -132,9 +132,9 @@ in
       "title<Steam>" = "";
       "class<rustdesk>" = "󰢹";
       "class<org.vinegarhq.Sober>" = "󰆢";
-      "class<steam_app_0> title<Battle.net>" = "";
-      "class<steam_app_0> title<World of Warcraft>" = "";
-      "class<steam_app_0> title<>" = "";
+      "class<steam_app.*> title<Battle.net>" = "";
+      "class<steam_app.*> title<World of Warcraft>" = "";
+      "class<steam_app.*> title<>" = "";
       "class<Wowup-cf>" = "";
       "class<com.mitchellh.ghostty>" = "󰊠";
       "class<org.inkscape.Inkscape>" = "";

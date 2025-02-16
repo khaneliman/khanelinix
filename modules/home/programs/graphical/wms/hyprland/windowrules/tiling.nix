@@ -17,7 +17,7 @@ in
           # Fix apps not tiling
           "tile, class:^(Spotify)$"
           "tile, class:^(Spotify Free)$"
-          "tile, class:^(steam_app_0)$, title:^(Battle.net)$"
+          "tile, class:^(steam_app).*, title:^(Battle.net)$"
         ];
       };
     };
