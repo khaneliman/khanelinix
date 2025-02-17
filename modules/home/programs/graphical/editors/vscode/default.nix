@@ -59,7 +59,8 @@ in
           ms-vscode-remote.remote-ssh
           ms-vsliveshare.vsliveshare
           redhat.vscode-yaml
-          rust-lang.rust-analyzer
+          # FIXME:
+          # rust-lang.rust-analyzer
           shardulm94.trailing-spaces
           sumneko.lua
           timonwong.shellcheck
