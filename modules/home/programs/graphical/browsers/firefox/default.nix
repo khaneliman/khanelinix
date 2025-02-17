@@ -26,24 +26,45 @@ in
   options.${namespace}.programs.graphical.browsers.firefox = with types; {
     enable = mkBoolOpt false "Whether or not to enable Firefox.";
 
-    extensions = mkOpt (listOf package) (with pkgs.firefox-addons; [
-      angular-devtools
-      auto-tab-discard
-      bitwarden
-      # NOTE: annoying new page and permissions
-      # bypass-paywalls-clean
-      darkreader
-      firefox-color
-      firenvim
-      onepassword-password-manager
-      react-devtools
-      reduxdevtools
-      sidebery
-      sponsorblock
-      stylus
-      ublock-origin
-      user-agent-string-switcher
-    ]) "Extensions to install";
+    extensions = {
+      packages = mkOpt (listOf package) (with pkgs.firefox-addons; [
+        angular-devtools
+        auto-tab-discard
+        bitwarden
+        # NOTE: annoying new page and permissions
+        # bypass-paywalls-clean
+        darkreader
+        firefox-color
+        firenvim
+        onepassword-password-manager
+        react-devtools
+        reduxdevtools
+        sidebery
+        sponsorblock
+        stylus
+        ublock-origin
+        user-agent-string-switcher
+      ]) "Extensions to install";
+
+      settings = mkOpt (attrsOf anything) {
+        "uBlock0@raymondhill.net".settings = {
+          selectedFilterLists = [
+            "easylist"
+            "easylist-annoyances"
+            "easylist-chat"
+            "easylist-newsletters"
+            "easylist-notifications"
+            "fanboy-cookiemonster"
+            "ublock-badware"
+            "ublock-cookies-easylist"
+            "ublock-filters"
+            "ublock-privacy"
+            "ublock-quick-fixes"
+            "ublock-unbreak"
+          ];
+        };
+      } "Settings to apply to the extensions.";
+    };
 
     extraConfig = mkOpt str "" "Extra configuration for the user profile JS file.";
     gpuAcceleration = mkBoolOpt false "Enable GPU acceleration.";
@@ -215,7 +236,10 @@ in
         };
 
         ${config.${namespace}.user.name} = {
-          inherit (cfg) extraConfig extensions search;
+          inherit (cfg) extraConfig search;
+          extensions = {
+            inherit (cfg.extensions) packages settings;
+          };
           inherit (config.${namespace}.user) name;
 
           id = 1;
