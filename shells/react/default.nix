@@ -8,7 +8,8 @@ mkShell {
   packages =
     with pkgs;
     [
-      create-react-app
+      # FIXME: broken nixpkg
+      # create-react-app
       nodejs_20
       pnpm
       yarn
