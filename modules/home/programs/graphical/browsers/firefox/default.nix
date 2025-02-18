@@ -239,6 +239,7 @@ in
           inherit (cfg) extraConfig search;
           extensions = {
             inherit (cfg.extensions) packages settings;
+            force = cfg.extensions.settings != { };
           };
           inherit (config.${namespace}.user) name;
 
