@@ -10,7 +10,7 @@ mkShell {
     [
       # FIXME: broken nixpkg
       # create-react-app
-      nodejs_20
+      nodejs_22
       pnpm
       yarn
       bun
