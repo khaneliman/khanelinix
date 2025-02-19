@@ -15,60 +15,12 @@ let
   inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
   cfg = config.${namespace}.programs.graphical.browsers.firefox;
-
-  firefoxPath =
-    if pkgs.stdenv.isLinux then
-      ".mozilla/firefox/${config.${namespace}.user.name}"
-    else
-      "/Users/${config.${namespace}.user.name}/Library/Application Support/Firefox/Profiles/${config.${namespace}.user.name}";
 in
 {
+  imports = lib.snowfall.fs.get-non-default-nix-files ./.;
+
   options.${namespace}.programs.graphical.browsers.firefox = with types; {
     enable = mkBoolOpt false "Whether or not to enable Firefox.";
-
-    extensions = {
-      packages = mkOpt (listOf package) (with pkgs.firefox-addons; [
-        angular-devtools
-        auto-tab-discard
-        bitwarden
-        # NOTE: annoying new page and permissions
-        # bypass-paywalls-clean
-        darkreader
-        firefox-color
-        firenvim
-        onepassword-password-manager
-        react-devtools
-        reduxdevtools
-        sidebery
-        sponsorblock
-        stylus
-        ublock-origin
-        user-agent-string-switcher
-      ]) "Extensions to install";
-
-      settings = mkOpt (attrsOf anything) {
-        "uBlock0@raymondhill.net" = {
-          # Home-manager skip collision check
-          force = true;
-          settings = {
-            selectedFilterLists = [
-              "easylist"
-              "easylist-annoyances"
-              "easylist-chat"
-              "easylist-newsletters"
-              "easylist-notifications"
-              "fanboy-cookiemonster"
-              "ublock-badware"
-              "ublock-cookies-easylist"
-              "ublock-filters"
-              "ublock-privacy"
-              "ublock-quick-fixes"
-              "ublock-unbreak"
-            ];
-          };
-        };
-      } "Settings to apply to the extensions.";
-    };
 
     extraConfig = mkOpt str "" "Extra configuration for the user profile JS file.";
     gpuAcceleration = mkBoolOpt false "Enable GPU acceleration.";
@@ -107,126 +59,26 @@ in
       Preferences = { };
     } "Policies to apply to firefox";
 
-    search = mkOpt attrs {
-      default = "DuckDuckGo";
-      privateDefault = "DuckDuckGo";
-      # Home-manager skip collision check
-      force = true;
-
-      engines = {
-        "Nix Packages" = {
-          urls = [
-            {
-              template = "https://search.nixos.org/packages";
-              params = [
-                {
-                  name = "type";
-                  value = "packages";
-                }
-                {
-                  name = "query";
-                  value = "{searchTerms}";
-                }
-              ];
-            }
-          ];
-          icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-          definedAliases = [ "@np" ];
-        };
-
-        "NixOs Options" = {
-          urls = [
-            {
-              template = "https://search.nixos.org/options";
-              params = [
-                {
-                  name = "channel";
-                  value = "unstable";
-                }
-                {
-                  name = "query";
-                  value = "{searchTerms}";
-                }
-              ];
-            }
-          ];
-          icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-          definedAliases = [ "@no" ];
-        };
-
-        "Nixvim Options" = {
-          urls = [
-            {
-              template = "https://nix-community.github.io/nixvim/NeovimOptions/index.html";
-              params = [
-                {
-                  name = "search";
-                  value = "{searchTerms}";
-                }
-              ];
-            }
-          ];
-          icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-          definedAliases = [ "@nv" ];
-        };
-
-        "Searchix" = {
-          urls = [
-            {
-              template = "https://searchix.alanpearce.eu/all/search/";
-              params = [
-                {
-                  name = "query";
-                  value = "{searchTerms}";
-                }
-              ];
-            }
-          ];
-          icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-          definedAliases = [ "@sx" ];
-        };
-
-        "NüschtOS" = {
-          urls = [
-            {
-              template = "https://search.xn--nschtos-n2a.de/";
-              params = [
-                {
-                  name = "query";
-                  value = "{searchTerms}";
-                }
-              ];
-            }
-          ];
-          icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-          definedAliases = [ "@nos" ];
-        };
-
-        "NixOS Wiki" = {
-          urls = [ { template = "https://wiki.nixos.org/w/index.php?search={searchTerms}"; } ];
-          iconUpdateURL = "https://wiki.nixos.org/favicon.png";
-          updateInterval = 24 * 60 * 60 * 1000;
-          definedAliases = [ "@nw" ];
-        };
-      };
-    } "Search configuration";
-
     settings = mkOpt attrs { } "Settings to apply to the profile.";
     userChrome = mkOpt str "" "Extra configuration for the user chrome CSS file.";
   };
 
   config = mkIf cfg.enable {
-    home = {
-      file = mkMerge [
-        {
-          "${firefoxPath}/chrome/img" = {
-            source = lib.cleanSourceWith { src = lib.cleanSource ./chrome/img/.; };
+    home.file =
+      let
+        firefoxPath =
+          if pkgs.stdenv.isLinux then
+            ".mozilla/firefox/${config.${namespace}.user.name}"
+          else
+            "/Users/${config.${namespace}.user.name}/Library/Application Support/Firefox/Profiles/${config.${namespace}.user.name}";
+      in
+      {
+        "${firefoxPath}/chrome/img" = {
+          source = lib.cleanSourceWith { src = lib.cleanSource ./chrome/img/.; };
 
-            recursive = true;
-          };
-        }
-      ];
-    };
+          recursive = true;
+        };
+      };
 
     programs.firefox = {
       enable = true;
@@ -241,11 +93,7 @@ in
         };
 
         ${config.${namespace}.user.name} = {
-          inherit (cfg) extraConfig search;
-          extensions = {
-            inherit (cfg.extensions) packages settings;
-            force = cfg.extensions.settings != { };
-          };
+          inherit (cfg) extraConfig;
           inherit (config.${namespace}.user) name;
 
           id = 1;
