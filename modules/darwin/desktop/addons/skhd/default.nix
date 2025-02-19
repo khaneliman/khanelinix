@@ -31,10 +31,14 @@ in
       };
     };
 
+    launchd.user.agents.skhd.serviceConfig = {
+      StandardErrorPath = cfg.logFile;
+      StandardOutPath = cfg.logFile;
+    };
+
     services.skhd = {
       enable = true;
       package = pkgs.skhd;
-      inherit (cfg) logFile;
 
       skhdConfig = # bash
         ''
