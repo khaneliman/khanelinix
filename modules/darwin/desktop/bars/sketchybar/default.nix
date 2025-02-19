@@ -30,10 +30,14 @@ in
       casks = [ "background-music" ];
     };
 
+    launchd.user.agents.sketchybar.serviceConfig = {
+      StandardErrorPath = cfg.logFile;
+      StandardOutPath = cfg.logFile;
+    };
+
     services.sketchybar = {
       enable = true;
       package = pkgs.sketchybar;
-      inherit (cfg) logFile;
 
       extraPackages = with pkgs; [
         coreutils
