@@ -60,6 +60,7 @@ in
 
       pointerCursor = mkDefault {
         inherit (cfg.cursor) name package size;
+        gtk.enable = true;
         x11.enable = true;
       };
 
