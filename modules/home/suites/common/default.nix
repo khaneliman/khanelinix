@@ -61,6 +61,7 @@ in
           };
 
           tools = {
+            atuin = mkDefault enabled;
             bat = mkDefault enabled;
             bottom = mkDefault enabled;
             btop = mkDefault enabled;
