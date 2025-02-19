@@ -51,6 +51,11 @@ let
   ];
 in
 {
+  imports = [
+    ./firefox.nix
+    ./sway.nix
+  ];
+
   options.${namespace}.theme.catppuccin = {
     enable = mkEnableOption "Enable catppuccin theme for applications.";
 
@@ -80,247 +85,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix = {
-      programs.graphical.browsers.firefox.extensions.settings = {
-        "FirefoxColor@mozilla.com" =
-          lib.mkIf
-            (builtins.elem pkgs.firefox-addons.firefox-color config.khanelinix.programs.graphical.browsers.firefox.extensions.packages)
-            {
-              force = true;
-              settings = {
-                "firstRunDone" = true;
-                "images" = [ ];
-                "theme" = {
-                  "colors" = {
-                    "toolbar" = {
-                      "r" = 36;
-                      "g" = 39;
-                      "b" = 58;
-                    };
-                    "toolbar_text" = {
-                      "r" = 202;
-                      "g" = 211;
-                      "b" = 245;
-                    };
-                    "frame" = {
-                      "r" = 24;
-                      "g" = 25;
-                      "b" = 38;
-                    };
-                    "tab_background_text" = {
-                      "r" = 202;
-                      "g" = 211;
-                      "b" = 245;
-                    };
-                    "toolbar_field" = {
-                      "r" = 30;
-                      "g" = 32;
-                      "b" = 48;
-                    };
-                    "toolbar_field_text" = {
-                      "r" = 202;
-                      "g" = 211;
-                      "b" = 245;
-                    };
-                    "tab_line" = {
-                      "r" = 138;
-                      "g" = 173;
-                      "b" = 244;
-                    };
-                    "popup" = {
-                      "r" = 36;
-                      "g" = 39;
-                      "b" = 58;
-                    };
-                    "popup_text" = {
-                      "r" = 202;
-                      "g" = 211;
-                      "b" = 245;
-                    };
-                    "button_background_active" = {
-                      "r" = 110;
-                      "g" = 115;
-                      "b" = 141;
-                    };
-                    "frame_inactive" = {
-                      "r" = 24;
-                      "g" = 25;
-                      "b" = 38;
-                    };
-                    "icons_attention" = {
-                      "r" = 138;
-                      "g" = 173;
-                      "b" = 244;
-                    };
-                    "icons" = {
-                      "r" = 138;
-                      "g" = 173;
-                      "b" = 244;
-                    };
-                    "ntp_background" = {
-                      "r" = 24;
-                      "g" = 25;
-                      "b" = 38;
-                    };
-                    "ntp_text" = {
-                      "r" = 202;
-                      "g" = 211;
-                      "b" = 245;
-                    };
-                    "popup_border" = {
-                      "r" = 138;
-                      "g" = 173;
-                      "b" = 244;
-                    };
-                    "popup_highlight_text" = {
-                      "r" = 202;
-                      "g" = 211;
-                      "b" = 245;
-                    };
-                    "popup_highlight" = {
-                      "r" = 110;
-                      "g" = 115;
-                      "b" = 141;
-                    };
-                    "sidebar_border" = {
-                      "r" = 138;
-                      "g" = 173;
-                      "b" = 244;
-                    };
-                    "sidebar_highlight_text" = {
-                      "r" = 24;
-                      "g" = 25;
-                      "b" = 38;
-                    };
-                    "sidebar_highlight" = {
-                      "r" = 138;
-                      "g" = 173;
-                      "b" = 244;
-                    };
-                    "sidebar_text" = {
-                      "r" = 202;
-                      "g" = 211;
-                      "b" = 245;
-                    };
-                    "sidebar" = {
-                      "r" = 36;
-                      "g" = 39;
-                      "b" = 58;
-                    };
-                    "tab_background_separator" = {
-                      "r" = 138;
-                      "g" = 173;
-                      "b" = 244;
-                    };
-                    "tab_loading" = {
-                      "r" = 138;
-                      "g" = 173;
-                      "b" = 244;
-                    };
-                    "tab_selected" = {
-                      "r" = 36;
-                      "g" = 39;
-                      "b" = 58;
-                    };
-                    "tab_text" = {
-                      "r" = 202;
-                      "g" = 211;
-                      "b" = 245;
-                    };
-                    "toolbar_bottom_separator" = {
-                      "r" = 36;
-                      "g" = 39;
-                      "b" = 58;
-                    };
-                    "toolbar_field_border_focus" = {
-                      "r" = 138;
-                      "g" = 173;
-                      "b" = 244;
-                    };
-                    "toolbar_field_border" = {
-                      "r" = 36;
-                      "g" = 39;
-                      "b" = 58;
-                    };
-                    "toolbar_field_focus" = {
-                      "r" = 36;
-                      "g" = 39;
-                      "b" = 58;
-                    };
-                    "toolbar_field_highlight_text" = {
-                      "r" = 36;
-                      "g" = 39;
-                      "b" = 58;
-                    };
-                    "toolbar_field_highlight" = {
-                      "r" = 138;
-                      "g" = 173;
-                      "b" = 244;
-                    };
-                    "toolbar_field_separator" = {
-                      "r" = 138;
-                      "g" = 173;
-                      "b" = 244;
-                    };
-                    "toolbar_vertical_separator" = {
-                      "r" = 138;
-                      "g" = 173;
-                      "b" = 244;
-                    };
-                  };
-                  "images" = {
-                    "additional_backgrounds" = [ "./bg-000.svg" ];
-                    "custom_backgrounds" = [ ];
-                  };
-                  "title" = "Catppuccin macchiato blue";
-                };
-              };
-            };
-      };
-
-      theme = {
-        gtk = mkIf pkgs.stdenv.isLinux {
-          cursor = {
-            name = "catppuccin-macchiato-blue-cursors";
-            package = pkgs.catppuccin-cursors.macchiatoBlue;
-            size = 32;
-          };
-
-          icon = {
-            name = "Papirus-Dark";
-            package = pkgs.catppuccin-papirus-folders.override {
-              accent = "blue";
-              flavor = "macchiato";
-            };
-          };
-
-          theme = {
-            name = "catppuccin-macchiato-blue-standard";
-            package = pkgs.catppuccin-gtk.override {
-              accents = [ "blue" ];
-              variant = "macchiato";
-            };
-          };
-        };
-
-        qt = mkIf pkgs.stdenv.isLinux {
-          theme = {
-            name = "Catppuccin-Macchiato-Blue";
-            package = pkgs.catppuccin-kvantum.override {
-              accent = "blue";
-              variant = "macchiato";
-            };
-          };
-
-          settings = {
-            Appearance = {
-              color_scheme_path = "${pkgs.catppuccin}/qt5ct/Catppuccin-${capitalize cfg.flavor}.conf";
-            };
-          };
-        };
-      };
-    };
-
     catppuccin = {
       # NOTE: Need some customization and merging of configuration files so cant just enable all
       enable = false;
@@ -391,96 +155,47 @@ in
       };
     };
 
-    qt = mkIf pkgs.stdenv.isLinux {
-      enable = true;
+    khanelinix = {
+      theme = {
+        gtk = mkIf pkgs.stdenv.isLinux {
+          cursor = {
+            name = "catppuccin-macchiato-blue-cursors";
+            package = pkgs.catppuccin-cursors.macchiatoBlue;
+            size = 32;
+          };
 
-      platformTheme = {
-        name = "qtct";
-      };
+          icon = {
+            name = "Papirus-Dark";
+            package = pkgs.catppuccin-papirus-folders.override {
+              accent = "blue";
+              flavor = "macchiato";
+            };
+          };
 
-      style = {
-        name = "kvantum";
-        inherit (config.${namespace}.theme.qt.theme) package;
-      };
-    };
-
-    wayland.windowManager.sway = {
-      config.colors = {
-        background = "$base";
-
-        focused = {
-          childBorder = "$lavender";
-          background = "$base";
-          text = "$text";
-          indicator = "$rosewater";
-          border = "$lavender";
+          theme = {
+            name = "catppuccin-macchiato-blue-standard";
+            package = pkgs.catppuccin-gtk.override {
+              accents = [ "blue" ];
+              variant = "macchiato";
+            };
+          };
         };
 
-        focusedInactive = {
-          childBorder = "$overlay0";
-          background = "$base";
-          text = "$text";
-          indicator = "$rosewater";
-          border = "$overlay0";
-        };
+        qt = mkIf pkgs.stdenv.isLinux {
+          theme = {
+            name = "Catppuccin-Macchiato-Blue";
+            package = pkgs.catppuccin-kvantum.override {
+              accent = "blue";
+              variant = "macchiato";
+            };
+          };
 
-        unfocused = {
-          childBorder = "$overlay0";
-          background = "$base";
-          text = "$text";
-          indicator = "$rosewater";
-          border = "$overlay0";
+          settings = {
+            Appearance = {
+              color_scheme_path = "${pkgs.catppuccin}/qt5ct/Catppuccin-${capitalize cfg.flavor}.conf";
+            };
+          };
         };
-
-        urgent = {
-          childBorder = "$peach";
-          background = "$base";
-          text = "$peach";
-          indicator = "$overlay0";
-          border = "$peach";
-        };
-
-        placeholder = {
-          childBorder = "$overlay0";
-          background = "$base";
-          text = "$text";
-          indicator = "$overlay0";
-          border = "$overlay0";
-        };
-
-        # bar
-        # focusedBackground = "$base";
-        # focusedStatusline = "$text";
-        # focusedSeparator = "$base";
-        # focusedWorkspace = {
-        #   border = "$base";
-        #   background = "$base";
-        #   text = "$green";
-        # };
-        #
-        # activeWorkspace = {
-        #   border = "$base";
-        #   background = "$base";
-        #   text = "$blue";
-        # };
-        #
-        # inactiveWorkspace = {
-        #   border = "$base";
-        #   background = "$base";
-        #   text = "$surface1";
-        # };
-        #
-        # urgentWorkspace = {
-        #   border = "$base";
-        #   background = "$base";
-        #   text = "$peach";
-        # };
-        #
-        # bindingMode = {
-        #   border = "$base";
-        #   background = "$base";
-        #   text = "$surface1";
-        # };
       };
     };
 
@@ -525,6 +240,19 @@ in
         (import ./yazi/status.nix { })
         (import ./yazi/theme.nix { })
       ];
+    };
+
+    qt = mkIf pkgs.stdenv.isLinux {
+      enable = true;
+
+      platformTheme = {
+        name = "qtct";
+      };
+
+      style = {
+        name = "kvantum";
+        inherit (config.${namespace}.theme.qt.theme) package;
+      };
     };
 
     xdg.configFile =
