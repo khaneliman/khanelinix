@@ -149,7 +149,6 @@ in
 
       pointerCursor = mkIf pkgs.stdenv.isLinux {
         inherit (config.${namespace}.theme.gtk.cursor) name package size;
-        x11.enable = true;
       };
 
       sessionVariables = mkIf pkgs.stdenv.isLinux {
