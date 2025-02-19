@@ -47,21 +47,25 @@ in
       ]) "Extensions to install";
 
       settings = mkOpt (attrsOf anything) {
-        "uBlock0@raymondhill.net".settings = {
-          selectedFilterLists = [
-            "easylist"
-            "easylist-annoyances"
-            "easylist-chat"
-            "easylist-newsletters"
-            "easylist-notifications"
-            "fanboy-cookiemonster"
-            "ublock-badware"
-            "ublock-cookies-easylist"
-            "ublock-filters"
-            "ublock-privacy"
-            "ublock-quick-fixes"
-            "ublock-unbreak"
-          ];
+        "uBlock0@raymondhill.net" = {
+          # Home-manager skip collision check
+          force = true;
+          settings = {
+            selectedFilterLists = [
+              "easylist"
+              "easylist-annoyances"
+              "easylist-chat"
+              "easylist-newsletters"
+              "easylist-notifications"
+              "fanboy-cookiemonster"
+              "ublock-badware"
+              "ublock-cookies-easylist"
+              "ublock-filters"
+              "ublock-privacy"
+              "ublock-quick-fixes"
+              "ublock-unbreak"
+            ];
+          };
         };
       } "Settings to apply to the extensions.";
     };
@@ -106,6 +110,7 @@ in
     search = mkOpt attrs {
       default = "DuckDuckGo";
       privateDefault = "DuckDuckGo";
+      # Home-manager skip collision check
       force = true;
 
       engines = {
