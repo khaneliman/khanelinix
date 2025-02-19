@@ -55,7 +55,6 @@
 
     # Extra nixpkgs
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nixpkgs-master.url = "github:nixos/nixpkgs";
   };
 
   outputs =
