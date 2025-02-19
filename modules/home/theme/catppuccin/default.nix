@@ -13,42 +13,10 @@ let
     mkOption
     types
     ;
+
   inherit (lib.${namespace}) enabled;
 
   cfg = config.${namespace}.theme.catppuccin;
-
-  warpPkg = pkgs.fetchFromGitHub {
-    owner = "catppuccin";
-    repo = "warp";
-    rev = "11295fa7aed669ca26f81ff44084059952a2b528";
-    hash = "sha256-ym5hwEBtLlFe+DqMrXR3E4L2wghew2mf9IY/1aynvAI=";
-  };
-
-  warpStyle = "${warpPkg.outPath}/themes/catppuccin_macchiato.yml";
-
-  catppuccinAccents = [
-    "rosewater"
-    "flamingo"
-    "pink"
-    "mauve"
-    "red"
-    "maroon"
-    "peach"
-    "yellow"
-    "green"
-    "teal"
-    "sky"
-    "sapphire"
-    "blue"
-    "lavender"
-  ];
-
-  catppuccinFlavors = [
-    "latte"
-    "frappe"
-    "macchiato"
-    "mocha"
-  ];
 in
 {
   imports = [
@@ -62,7 +30,22 @@ in
     enable = mkEnableOption "Enable catppuccin theme for applications.";
 
     accent = mkOption {
-      type = types.enum catppuccinAccents;
+      type = types.enum [
+        "rosewater"
+        "flamingo"
+        "pink"
+        "mauve"
+        "red"
+        "maroon"
+        "peach"
+        "yellow"
+        "green"
+        "teal"
+        "sky"
+        "sapphire"
+        "blue"
+        "lavender"
+      ];
       default = "blue";
       description = ''
         An optional theme accent.
@@ -70,7 +53,12 @@ in
     };
 
     flavor = mkOption {
-      type = types.enum catppuccinFlavors;
+      type = types.enum [
+        "latte"
+        "frappe"
+        "macchiato"
+        "mocha"
+      ];
       default = "macchiato";
       description = ''
         An optional theme flavor.
@@ -137,10 +125,22 @@ in
 
     home = {
       file = mkMerge [
-        (mkIf config.khanelinix.programs.terminal.emulators.warp.enable {
-          ".warp/themes/catppuccin_macchiato.yaml".source = warpStyle;
-          ".local/share/warp-terminal/themes/catppuccin_macchiato.yaml".source = warpStyle;
-        })
+        (
+          let
+            warpPkg = pkgs.fetchFromGitHub {
+              owner = "catppuccin";
+              repo = "warp";
+              rev = "11295fa7aed669ca26f81ff44084059952a2b528";
+              hash = "sha256-ym5hwEBtLlFe+DqMrXR3E4L2wghew2mf9IY/1aynvAI=";
+            };
+
+            warpStyle = "${warpPkg.outPath}/themes/catppuccin_macchiato.yml";
+          in
+          mkIf config.khanelinix.programs.terminal.emulators.warp.enable {
+            ".warp/themes/catppuccin_macchiato.yaml".source = warpStyle;
+            ".local/share/warp-terminal/themes/catppuccin_macchiato.yaml".source = warpStyle;
+          }
+        )
         (mkIf pkgs.stdenv.isDarwin {
           "Library/Application Support/BetterDiscord/themes/catppuccin-macchiato.theme.css".source =
             ./catppuccin-macchiato.theme.css;
