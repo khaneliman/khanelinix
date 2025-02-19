@@ -29,11 +29,15 @@ in
       };
     };
 
+    launchd.user.agents.yabai.serviceConfig = {
+      StandardErrorPath = cfg.logFile;
+      StandardOutPath = cfg.logFile;
+    };
+
     services.yabai = {
       enable = true;
       package = pkgs.yabai;
       enableScriptingAddition = true;
-      inherit (cfg) logFile;
 
       config = {
         debug_output = if cfg.debug then "on" else "off";
