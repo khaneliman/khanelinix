@@ -1,0 +1,41 @@
+{
+  config,
+  lib,
+  namespace,
+  pkgs,
+  ...
+}:
+let
+  cfg = config.${namespace}.theme.catppuccin;
+in
+{
+  config = lib.mkIf cfg.enable {
+    khanelinix = {
+      theme = {
+        gtk = lib.mkIf pkgs.stdenv.isLinux {
+          cursor = {
+            name = "catppuccin-macchiato-blue-cursors";
+            package = pkgs.catppuccin-cursors.macchiatoBlue;
+            size = 32;
+          };
+
+          icon = {
+            name = "Papirus-Dark";
+            package = pkgs.catppuccin-papirus-folders.override {
+              accent = "blue";
+              flavor = "macchiato";
+            };
+          };
+
+          theme = {
+            name = "catppuccin-macchiato-blue-standard";
+            package = pkgs.catppuccin-gtk.override {
+              accents = [ "blue" ];
+              variant = "macchiato";
+            };
+          };
+        };
+      };
+    };
+  };
+}

@@ -53,6 +53,7 @@ in
 {
   imports = [
     ./firefox.nix
+    ./gtk.nix
     ./qt.nix
     ./sway.nix
   ];
@@ -153,34 +154,6 @@ in
 
       sessionVariables = mkIf pkgs.stdenv.isLinux {
         CURSOR_THEME = config.${namespace}.theme.gtk.cursor.name;
-      };
-    };
-
-    khanelinix = {
-      theme = {
-        gtk = mkIf pkgs.stdenv.isLinux {
-          cursor = {
-            name = "catppuccin-macchiato-blue-cursors";
-            package = pkgs.catppuccin-cursors.macchiatoBlue;
-            size = 32;
-          };
-
-          icon = {
-            name = "Papirus-Dark";
-            package = pkgs.catppuccin-papirus-folders.override {
-              accent = "blue";
-              flavor = "macchiato";
-            };
-          };
-
-          theme = {
-            name = "catppuccin-macchiato-blue-standard";
-            package = pkgs.catppuccin-gtk.override {
-              accents = [ "blue" ];
-              variant = "macchiato";
-            };
-          };
-        };
       };
     };
 
