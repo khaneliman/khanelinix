@@ -13,7 +13,7 @@ let
     mkOption
     types
     ;
-  inherit (lib.${namespace}) enabled capitalize;
+  inherit (lib.${namespace}) enabled;
 
   cfg = config.${namespace}.theme.catppuccin;
 
@@ -53,6 +53,7 @@ in
 {
   imports = [
     ./firefox.nix
+    ./qt.nix
     ./sway.nix
   ];
 
@@ -180,22 +181,6 @@ in
             };
           };
         };
-
-        qt = mkIf pkgs.stdenv.isLinux {
-          theme = {
-            name = "Catppuccin-Macchiato-Blue";
-            package = pkgs.catppuccin-kvantum.override {
-              accent = "blue";
-              variant = "macchiato";
-            };
-          };
-
-          settings = {
-            Appearance = {
-              color_scheme_path = "${pkgs.catppuccin}/qt5ct/Catppuccin-${capitalize cfg.flavor}.conf";
-            };
-          };
-        };
       };
     };
 
@@ -240,19 +225,6 @@ in
         (import ./yazi/status.nix { })
         (import ./yazi/theme.nix { })
       ];
-    };
-
-    qt = mkIf pkgs.stdenv.isLinux {
-      enable = true;
-
-      platformTheme = {
-        name = "qtct";
-      };
-
-      style = {
-        name = "kvantum";
-        inherit (config.${namespace}.theme.qt.theme) package;
-      };
     };
 
     xdg.configFile =
