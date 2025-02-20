@@ -18,6 +18,11 @@ in
         desc = "Enter the child directory, or open the file";
       }
       {
+        on = [ "M" ];
+        run = "plugin mount";
+        desc = "Mount devices";
+      }
+      {
         on = [ "<Right>" ];
         run = "plugin smart-enter";
         desc = "Enter the child directory, or open the file";
