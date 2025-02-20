@@ -341,6 +341,20 @@
       }
     ];
 
+    prepend_preloaders = [
+      {
+        name = "/mnt/austinserver/**";
+        run = "noop";
+      }
+      {
+        name = "/mnt/disk/**";
+        run = "noop";
+      }
+      {
+        name = "/mnt/dropbox/**";
+        run = "noop";
+      }
+    ];
     preloaders = [
       # Image
       {
