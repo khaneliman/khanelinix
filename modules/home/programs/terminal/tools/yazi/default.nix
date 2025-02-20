@@ -67,6 +67,7 @@ in
         "glow" = ./configs/plugins/glow.yazi;
         "jump-to-char" = "${yazi-plugins}/jump-to-char.yazi";
         "miller" = ./configs/plugins/miller.yazi;
+        "mime-ext" = "${yazi-plugins}/mime-ext.yazi";
         "mount" = "${yazi-plugins}/mount.yazi";
         "ouch" = ./configs/plugins/ouch.yazi;
         "smart-enter" = "${yazi-plugins}/smart-enter.yazi";

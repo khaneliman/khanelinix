@@ -333,6 +333,12 @@
         name = "*/";
         run = "git";
       }
+      {
+        id = "mime";
+        name = "*";
+        run = "mime-ext";
+        prio = "high";
+      }
     ];
 
     preloaders = [
