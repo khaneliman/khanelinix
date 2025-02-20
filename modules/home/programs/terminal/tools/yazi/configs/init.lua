@@ -46,35 +46,28 @@ end, 500, Status.RIGHT)
 -- File creation and modified date
 Status:children_add(function()
 	local h = cx.active.current.hovered
-	local formatted_date = ""
+	local formatted_created = nil
+	local formatted_modified = nil
 
 	if h == nil then
 		return ui.Line({})
 	end
 
 	if h.cha then
-		local formatted_created = nil
-		local formatted_modified = nil
-
-		if h.cha.ctime then
+		-- Check if timestamps exist and are not near epoch start (allowing for small variations)
+		if h.cha.ctime and h.cha.ctime > 86400 then -- More than 1 day after epoch
 			formatted_created = tostring(os.date("%Y-%m-%d %H:%M:%S", math.floor(h.cha.ctime)))
 		end
 
-		if h.cha.mtime then
+		if h.cha.mtime and h.cha.mtime > 86400 then -- More than 1 day after epoch
 			formatted_modified = tostring(os.date("%Y-%m-%d %H:%M:%S", math.floor(h.cha.mtime)))
-		end
-
-		if formatted_created and formatted_modified then
-			formatted_date = formatted_created .. ":" .. formatted_modified
-		else
-			if formatted_modified then
-				formatted_date = formatted_modified
-			end
 		end
 	end
 
 	return ui.Line({
-		ui.Span(formatted_date):fg("green"),
+		ui.Span(formatted_created or ""):fg("green"),
+		ui.Span(" "),
+		ui.Span(formatted_modified or ""):fg("blue"),
 		ui.Span(" "),
 	})
 end, 400, Status.RIGHT)
