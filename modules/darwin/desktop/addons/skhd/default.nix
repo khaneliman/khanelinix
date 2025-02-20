@@ -58,8 +58,10 @@ in
           # ░█▀█░█▀█░█▀█░░░█░░░█▀█░█░█░█▀█░█▀▀░█░█░█▀▀░█▀▄░█▀▀
           # ░█▀█░█▀▀░█▀▀░░░█░░░█▀█░█░█░█░█░█░░░█▀█░█▀▀░█▀▄░▀▀█
           # ░▀░▀░▀░░░▀░░░░░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀
-          default < cmd + shift - return : ${getExe pkgs.wezterm} start -- zellij
-          default < cmd - return : ${getExe pkgs.wezterm}
+          # default < cmd + shift - return : ${getExe pkgs.wezterm} start -- zellij
+          # default < cmd - return : ${getExe pkgs.wezterm}
+          default < cmd + shift - return : ${getExe pkgs.kitty} --single-instance -d ~ -- zellij
+          default < cmd - return : ${getExe pkgs.kitty} --single-instance -d ~
           default < cmd + alt + ctrl - v : open /Applications/Visual\ Studio\ Code.app
           default < cmd + alt + ctrl - o : open /Applications/Microsoft\ Outlook.app
           default < cmd + alt + ctrl - p : open /Applications/Microsoft\ PowerPoint.app
