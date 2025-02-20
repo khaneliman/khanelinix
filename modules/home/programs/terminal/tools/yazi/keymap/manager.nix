@@ -47,12 +47,12 @@ in
       }
       {
         on = [ "T" ];
-        run = "plugin hide-preview";
+        run = "plugin toggle-pane min-preview";
         desc = "Hide or show preview";
       }
       # {
       #   on = [ "T" ];
-      #   run = "plugin --sync max-preview";
+      #   run = "plugin toggle-pane max-preview";
       #   desc = "Maximize or restore preview";
       # }
       {

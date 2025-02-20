@@ -66,13 +66,13 @@ in
         "git" = "${yazi-plugins}/git.yazi";
         "glow" = ./configs/plugins/glow.yazi;
         "jump-to-char" = "${yazi-plugins}/jump-to-char.yazi";
-        "max-preview" = "${yazi-plugins}/max-preview.yazi";
         "miller" = ./configs/plugins/miller.yazi;
         "mount" = "${yazi-plugins}/mount.yazi";
         "ouch" = ./configs/plugins/ouch.yazi;
         "smart-enter" = "${yazi-plugins}/smart-enter.yazi";
         "smart-filter" = "${yazi-plugins}/smart-filter.yazi";
         "sudo" = ./configs/plugins/sudo.yazi;
+        "toggle-pane" = "${yazi-plugins}/toggle-pane.yazi";
       };
 
       settings = import ./yazi.nix { inherit config lib pkgs; };
