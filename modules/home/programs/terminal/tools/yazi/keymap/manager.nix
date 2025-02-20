@@ -1,4 +1,9 @@
-{ config, namespace, ... }:
+{
+  config,
+  lib,
+  namespace,
+  ...
+}:
 let
   copy = import ./manager/copy.nix { };
   find = import ./manager/find.nix { };
@@ -11,61 +16,71 @@ let
 in
 {
   manager = {
-    prepend_keymap = [
-      {
-        on = [ "l" ];
-        run = "plugin smart-enter";
-        desc = "Enter the child directory, or open the file";
-      }
-      {
-        on = [ "M" ];
-        run = "plugin mount";
-        desc = "Mount devices";
-      }
-      {
-        on = [ "<Right>" ];
-        run = "plugin smart-enter";
-        desc = "Enter the child directory, or open the file";
-      }
-      {
-        on = [ "<C-v>" ];
-        run = "shell 'dragon -x -i -T \"$1\"'";
-        desc = "Drag and drop files";
-      }
-      {
-        on = [ "<C-d>" ];
-        run = "plugin diff";
-        desc = "Diff the selected with the hovered file";
-      }
-      {
-        on = [
-          "c"
-          "m"
-        ];
-        run = "plugin chmod";
-        desc = "Chmod on selected files";
-      }
-      {
-        on = [ "T" ];
-        run = "plugin toggle-pane min-preview";
-        desc = "Hide or show preview";
-      }
-      # {
-      #   on = [ "T" ];
-      #   run = "plugin toggle-pane max-preview";
-      #   desc = "Maximize or restore preview";
-      # }
-      {
-        on = [ "f" ];
-        run = "plugin jump-to-char";
-        desc = "Jump to char";
-      }
-      {
-        on = [ "F" ];
-        run = "plugin smart-filter";
-        desc = "Smart filter";
-      }
-    ];
+    prepend_keymap =
+      [
+        {
+          on = [ "l" ];
+          run = "plugin smart-enter";
+          desc = "Enter the child directory, or open the file";
+        }
+        {
+          on = [ "M" ];
+          run = "plugin mount";
+          desc = "Mount devices";
+        }
+        {
+          on = [ "<Right>" ];
+          run = "plugin smart-enter";
+          desc = "Enter the child directory, or open the file";
+        }
+        {
+          on = [ "<C-v>" ];
+          run = "shell 'dragon -x -i -T \"$1\"'";
+          desc = "Drag and drop files";
+        }
+        {
+          on = [ "<C-d>" ];
+          run = "plugin diff";
+          desc = "Diff the selected with the hovered file";
+        }
+        {
+          on = [
+            "c"
+            "m"
+          ];
+          run = "plugin chmod";
+          desc = "Chmod on selected files";
+        }
+        {
+          on = [ "T" ];
+          run = "plugin toggle-pane min-preview";
+          desc = "Hide or show preview";
+        }
+        # {
+        #   on = [ "T" ];
+        #   run = "plugin toggle-pane max-preview";
+        #   desc = "Maximize or restore preview";
+        # }
+        {
+          on = [ "f" ];
+          run = "plugin jump-to-char";
+          desc = "Jump to char";
+        }
+        {
+          on = [ "F" ];
+          run = "plugin smart-filter";
+          desc = "Smart filter";
+        }
+      ]
+      ++ lib.optionals config.${namespace}.suites.wlroots.enable [
+        {
+          on = [ "y" ];
+          run = [
+            ''shell -- for path in "$@"; do echo "file://$path"; done | wl-copy -t text/uri-list''
+            "yank"
+          ];
+        }
+      ];
 
     keymap =
       copy.keymap
