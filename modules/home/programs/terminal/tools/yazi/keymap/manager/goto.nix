@@ -157,10 +157,18 @@
     {
       on = [
         "g"
-        "r"
+        "R"
       ];
       run = "cd /run";
       desc = "Go to the /run directory";
+    }
+    {
+      on = [
+        "g"
+        "r"
+      ];
+      run = ''shell -- ya emit cd "$(git rev-parse --show-toplevel)"'';
+      desc = "Go to the root of git directory";
     }
     {
       on = [
