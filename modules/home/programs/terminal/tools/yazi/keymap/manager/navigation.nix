@@ -13,14 +13,24 @@ _: {
     }
     {
       on = [ "K" ];
-      run = "arrow -5";
-      desc = "Move cursor up 5 lines";
+      run = "plugin arrow-parent -1";
+      desc = "Move parent cursor up";
     }
     {
       on = [ "J" ];
-      run = "arrow 5";
-      desc = "Move cursor down 5 lines";
+      run = "plugin arrow-parent 1";
+      desc = "Move parent cursor down";
     }
+    # {
+    #   on = [ "K" ];
+    #   run = "arrow -5";
+    #   desc = "Move cursor up 5 lines";
+    # }
+    # {
+    #   on = [ "J" ];
+    #   run = "arrow 5";
+    #   desc = "Move cursor down 5 lines";
+    # }
     {
       on = [ "<C-u>" ];
       run = "arrow -50%";
