@@ -1,9 +1,11 @@
+require("full-border"):setup()
+
+require("git"):setup()
+
 -- Cross session yank
 require("session"):setup({
 	sync_yanked = true,
 })
-
-require("full-border"):setup()
 
 Header:children_add(function()
 	if ya.target_family() ~= "unix" then
