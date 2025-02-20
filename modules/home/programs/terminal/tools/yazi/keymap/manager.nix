@@ -39,7 +39,7 @@ in
           desc = "Drag and drop files";
         }
         {
-          on = [ "<C-d>" ];
+          on = [ "<A-d>" ];
           run = "plugin diff";
           desc = "Diff the selected with the hovered file";
         }
