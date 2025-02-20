@@ -60,6 +60,7 @@ in
       ];
 
       plugins = {
+        "arrow" = ./configs/plugins/arrow.yazi;
         "chmod" = "${yazi-plugins}/chmod.yazi";
         "diff" = "${yazi-plugins}/diff.yazi";
         "full-border" = "${yazi-plugins}/full-border.yazi";

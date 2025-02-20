@@ -3,12 +3,12 @@ _: {
     # Navigation
     {
       on = [ "k" ];
-      run = "arrow -1";
+      run = "plugin arrow -1";
       desc = "Move cursor up";
     }
     {
       on = [ "j" ];
-      run = "arrow 1";
+      run = "plugin arrow 1";
       desc = "Move cursor down";
     }
     {
