@@ -21,7 +21,15 @@
 
     deploy-rs.url = "github:serokell/deploy-rs";
     disko.url = "github:nix-community/disko/latest";
-    git-hooks-nix.url = "github:cachix/git-hooks.nix";
+    git-hooks-nix = {
+      url = "github:cachix/git-hooks.nix";
+      inputs = {
+        nixpkgs.follows = "nixpkgs-unstable";
+        # Optional inputs removed
+        gitignore.follows = "";
+        flake-compat.follows = "";
+      };
+    };
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.4.2";
       inputs = {
