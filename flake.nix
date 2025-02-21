@@ -28,7 +28,10 @@
     # Applications
     anyrun.url = "github:anyrun-org/anyrun";
     anyrun-nixos-options.url = "github:n3oney/anyrun-nixos-options";
-    catppuccin-cursors.url = "github:catppuccin/cursors";
+    catppuccin-cursors = {
+      url = "github:catppuccin/cursors";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     catppuccin = {
       url = "github:catppuccin/nix";
       inputs.nixpkgs.follows = "nixpkgs";
