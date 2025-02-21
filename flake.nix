@@ -29,7 +29,10 @@
     anyrun.url = "github:anyrun-org/anyrun";
     anyrun-nixos-options.url = "github:n3oney/anyrun-nixos-options";
     catppuccin-cursors.url = "github:catppuccin/cursors";
-    catppuccin.url = "github:catppuccin/nix";
+    catppuccin = {
+      url = "github:catppuccin/nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     firefox-addons = {
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
