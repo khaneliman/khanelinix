@@ -26,7 +26,10 @@
     treefmt-nix.url = "github:numtide/treefmt-nix";
 
     # Applications
-    anyrun.url = "github:anyrun-org/anyrun";
+    anyrun = {
+      url = "github:anyrun-org/anyrun";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     anyrun-nixos-options.url = "github:n3oney/anyrun-nixos-options";
     catppuccin-cursors = {
       url = "github:catppuccin/cursors";
