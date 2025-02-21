@@ -22,7 +22,16 @@
     deploy-rs.url = "github:serokell/deploy-rs";
     disko.url = "github:nix-community/disko/latest";
     git-hooks-nix.url = "github:cachix/git-hooks.nix";
-    lanzaboote.url = "github:nix-community/lanzaboote/v0.4.2";
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v0.4.2";
+      inputs = {
+        # Does this even make sense with a pinned version ?
+        nixpkgs.follows = "nixpkgs";
+        pre-commit-hooks-nix.follows = "git-hooks-nix";
+        # Optional inputs removed
+        flake-compat.follows = "";
+      };
+    };
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
