@@ -20,7 +20,10 @@
     };
 
     deploy-rs.url = "github:serokell/deploy-rs";
-    disko.url = "github:nix-community/disko/latest";
+    disko = {
+      url = "github:nix-community/disko/latest";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     git-hooks-nix = {
       url = "github:cachix/git-hooks.nix";
       inputs = {
