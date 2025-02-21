@@ -19,7 +19,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    deploy-rs.url = "github:serokell/deploy-rs";
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs-unstable";
+        # Optional inputs removed
+        flake-compat.follows = "";
+      };
+    };
     disko = {
       url = "github:nix-community/disko/latest";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
