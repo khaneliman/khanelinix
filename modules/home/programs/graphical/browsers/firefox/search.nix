@@ -108,8 +108,7 @@ in
 
         "NixOS Wiki" = {
           urls = [ { template = "https://wiki.nixos.org/w/index.php?search={searchTerms}"; } ];
-          iconUpdateURL = "https://wiki.nixos.org/favicon.png";
-          updateInterval = 24 * 60 * 60 * 1000;
+          icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
           definedAliases = [ "@nw" ];
         };
       };
