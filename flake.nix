@@ -46,7 +46,14 @@
     nix-flatpak.url = "github:gmodena/nix-flatpak/latest";
     nix-index-database.url = "github:nix-community/nix-index-database";
     snowfall-flake.url = "github:snowfallorg/flake";
-    waybar.url = "github:Alexays/Waybar";
+    waybar = {
+      url = "github:Alexays/Waybar";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        # Optional inputs removed
+        flake-compat.follows = "";
+      };
+    };
     yazi = {
       url = "github:sxyazi/yazi";
       inputs = {
