@@ -23,7 +23,10 @@
     git-hooks-nix.url = "github:cachix/git-hooks.nix";
     lanzaboote.url = "github:nix-community/lanzaboote/v0.4.2";
     sops-nix.url = "github:Mic92/sops-nix";
-    treefmt-nix.url = "github:numtide/treefmt-nix";
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
 
     # Applications
     anyrun = {
