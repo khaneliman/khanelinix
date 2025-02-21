@@ -52,43 +52,39 @@
       "*CODEOWNERS"
       "*LICENSE"
       "*flake.lock"
-      "*.svg"
-      "*.png"
+      "*.conf"
       "*.gif"
       "*.ico"
+      "*.ini"
+      "*.micro"
+      "*.png"
+      "*.svg"
+      "*.tmux"
+      "*/config"
       # TODO: formatters?
-      "*Makefile"
-      "*makefile"
+      "*.ac"
+      "*.csproj"
+      "*.fsproj"
+      "*.in"
+      "*.kdl"
+      "*.kvconfig"
+      "*.rasi"
+      "*.sln"
       "*.xml"
       "*.zsh"
-      "*.rasi"
-      "*.kdl"
+      "*Makefile"
+      "*makefile"
 
-      # TODO: exceptions
-      # WARN no formatter for path: homes/x86_64-linux/nixos@CORE-PW00LM92/git/windows-compat-config
-      # WARN no formatter for path: modules/darwin/desktop/wms/yabai/extraConfig
-      # WARN no formatter for path: modules/home/programs/graphical/addons/electron-support/electron-flags.conf
-      # WARN no formatter for path: modules/home/programs/graphical/addons/kanshi/config
-      # WARN no formatter for path: modules/home/programs/graphical/addons/mako/config
-      # WARN no formatter for path: modules/home/programs/graphical/addons/swappy/config
-      # WARN no formatter for path: modules/home/programs/graphical/bars/sketchybar/dynamic-island-sketchybar/helper/islandhelper
-      # WARN no formatter for path: modules/home/programs/graphical/bars/sketchybar/dynamic-island-sketchybar/scripts/islands/music/cava.conf
-      # WARN no formatter for path: modules/home/programs/graphical/bars/sketchybar/dynamic-island-sketchybar/scripts/islands/music/get_artwork.scpt
-      # WARN no formatter for path: modules/home/programs/graphical/bars/sketchybar/dynamic-island-sketchybar/scripts/islands/volume/data/cache
-      # WARN no formatter for path: modules/home/programs/graphical/bars/sketchybar/dynamic-island-sketchybar/sketchybarrc
-      # WARN no formatter for path: modules/home/programs/graphical/launchers/wofi/config
-      # WARN no formatter for path: modules/home/programs/terminal/editors/micro/catppuccin-macchiato.micro
-      # WARN no formatter for path: modules/home/programs/terminal/tools/tmux/config/general.tmux
-      # WARN no formatter for path: modules/home/theme/qt/Kvantum/Catppuccin-Macchiato-Blue/Catppuccin-Macchiato-Blue.kvconfig
-      # WARN no formatter for path: modules/home/theme/qt/Kvantum/kvantum.kvconfig
-      # WARN no formatter for path: modules/nixos/programs/graphical/addons/looking-glass-client/client.ini
-      # WARN no formatter for path: systems/x86_64-linux/khanelinix/hyprlandOutput
-      # WARN no formatter for path: systems/x86_64-linux/khanelinix/swayOutput
-      # WARN no formatter for path: templates/c/Makefile.in
-      # WARN no formatter for path: templates/c/configure.ac
-      # WARN no formatter for path: templates/dotnetf/HelloWorld.Test/HelloWorld.Test.fsproj
-      # WARN no formatter for path: templates/dotnetf/HelloWorld.sln
-      # WARN no formatter for path: templates/dotnetf/HelloWorld/HelloWorld.fsproj
+      # Unique files
+      "homes/x86_64-linux/nixos@CORE-PW00LM92/git/windows-compat-config"
+      "lib/base64/ascii"
+      "modules/darwin/desktop/wms/yabai/extraConfig"
+      "modules/home/programs/graphical/bars/sketchybar/dynamic-island-sketchybar/helper/islandhelper"
+      "modules/home/programs/graphical/bars/sketchybar/dynamic-island-sketchybar/scripts/islands/music/get_artwork.scpt"
+      "modules/home/programs/graphical/bars/sketchybar/dynamic-island-sketchybar/scripts/islands/volume/data/cache"
+      "modules/home/programs/graphical/bars/sketchybar/dynamic-island-sketchybar/sketchybarrc"
+      "systems/x86_64-linux/khanelinix/hyprlandOutput"
+      "systems/x86_64-linux/khanelinix/swayOutput"
     ];
 
     formatter.ruff-format.options = [ "--isolated" ];
