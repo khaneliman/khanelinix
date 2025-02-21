@@ -12,7 +12,11 @@
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixos-wsl = {
       url = "github:nix-community/nixos-wsl";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        # Optional inputs removed
+        flake-compat.follows = "";
+      };
     };
     snowfall-lib = {
       url = "github:snowfallorg/lib";
