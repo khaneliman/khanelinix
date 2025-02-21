@@ -23,6 +23,26 @@ in
   };
 
   config = mkIf cfg.enable {
+    xdg.configFile."kitty/nix.conf".text = ''
+      launch zellij
+
+      new_tab khanelivim
+      cd $HOME/github/khanelivim
+      launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
+
+      new_tab nixvim
+      cd $HOME/github/nixvim
+      launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
+
+      new_tab home-manager
+      cd $HOME/github/home-manager
+      launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
+
+      new_tab nixpkgs
+      cd $HOME/github/nixpkgs
+      launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
+    '';
+
     programs.kitty = {
       enable = true;
 
