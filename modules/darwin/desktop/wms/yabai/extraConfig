@@ -68,6 +68,17 @@ yabai -m rule --add label="Safari" app="^Safari$" title="^(General|(Tab|Password
 yabai -m rule --add label="About This Mac" app="System Information" title="About This Mac" manage=off
 yabai -m rule --add label="Select file to save to" app="^Inkscape$" title="Select file to save to" manage=off
 
+# Force Manage for some apps
+MANAGED=(
+  Microsoft Teams
+  WezTerm
+  wezterm-gui
+)
+
+for ((i = 1; i <= "${#MANAGED[@]}"; i++)); do
+  yabai -m rule --add app="^${MANAGED[(($i - 1))]}.*$" manage=on
+done
+
 COMMS=(
   Microsoft Teams
   "Microsoft Teams (work or school)"
