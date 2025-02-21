@@ -45,7 +45,13 @@
     };
     nix-flatpak.url = "github:gmodena/nix-flatpak/latest";
     nix-index-database.url = "github:nix-community/nix-index-database";
-    snowfall-flake.url = "github:snowfallorg/flake";
+    snowfall-flake = {
+      url = "github:snowfallorg/flake";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        snowfall-lib.follows = "snowfall-lib";
+      };
+    };
     waybar = {
       url = "github:Alexays/Waybar";
       inputs = {
