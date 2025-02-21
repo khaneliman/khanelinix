@@ -965,7 +965,9 @@
         "nixvim": "nixvim",
         "pkgs-by-name-for-flake-parts": "pkgs-by-name-for-flake-parts",
         "snacks-nvim": "snacks-nvim",
-        "treefmt-nix": "treefmt-nix",
+        "treefmt-nix": [
+          "treefmt-nix"
+        ],
         "yazi": [
           "yazi"
         ]
@@ -1515,7 +1517,7 @@
         "snowfall-flake": "snowfall-flake",
         "snowfall-lib": "snowfall-lib",
         "sops-nix": "sops-nix",
-        "treefmt-nix": "treefmt-nix_2",
+        "treefmt-nix": "treefmt-nix",
         "waybar": "waybar",
         "yazi": "yazi",
         "yazi-plugins": "yazi-plugins"
@@ -1770,27 +1772,6 @@
       }
     },
     "treefmt-nix": {
-      "inputs": {
-        "nixpkgs": [
-          "khanelivim",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1739829690,
-        "narHash": "sha256-mL1szCeIsjh6Khn3nH2cYtwO5YXG6gBiTw1A30iGeDU=",
-        "owner": "numtide",
-        "repo": "treefmt-nix",
-        "rev": "3d0579f5cc93436052d94b73925b48973a104204",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "treefmt-nix",
-        "type": "github"
-      }
-    },
-    "treefmt-nix_2": {
       "inputs": {
         "nixpkgs": "nixpkgs_16"
       },

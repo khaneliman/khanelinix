@@ -41,6 +41,7 @@
       inputs = {
         yazi.follows = "yazi";
         git-hooks-nix.follows = "git-hooks-nix";
+        treefmt-nix.follows = "treefmt-nix";
       };
     };
     nix-flatpak.url = "github:gmodena/nix-flatpak/latest";
