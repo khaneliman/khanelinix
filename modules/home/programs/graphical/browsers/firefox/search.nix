@@ -18,6 +18,12 @@ in
       force = true;
 
       engines = {
+        "Amazon.com".metaData.hidden = true;
+        "Bing".metaData.hidden = true;
+        "Google".metaData.hidden = true;
+        "eBay".metaData.hidden = true;
+        "Wikipedia (en)".metaData.hidden = true;
+
         "Nix Packages" = {
           urls = [
             {
