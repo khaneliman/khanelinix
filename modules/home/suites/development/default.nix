@@ -115,7 +115,7 @@ in
       bash.initExtra = tokenExports;
       fish.shellInit = tokenExports;
       zsh.initExtra = tokenExports;
-      vinegar = mkDefault enabled;
+      vinegar.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
     };
 
     khanelinix = {
