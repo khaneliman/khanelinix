@@ -15,7 +15,7 @@ in
 {
   options.${namespace}.programs.graphical.editors.vscode = {
     enable = mkEnableOption "Whether or not to enable vscode.";
-    declarativeConfig = mkBoolOpt false "Whether or not to enable vscode.";
+    declarativeConfig = mkBoolOpt true "Whether or not to enable vscode.";
   };
 
   config = mkIf cfg.enable {
@@ -31,178 +31,240 @@ in
 
     programs.vscode = {
       enable = true;
-      enableUpdateCheck = true;
       package = pkgs.vscode;
 
       # TODO: add extensions not packaged with nixpkgs
-      extensions =
-        with pkgs.vscode-extensions;
-        [
-          adpyke.codesnap
-          arrterian.nix-env-selector
-          bbenoist.nix
-          catppuccin.catppuccin-vsc
-          christian-kohler.path-intellisense
-          dbaeumer.vscode-eslint
-          eamodio.gitlens
-          esbenp.prettier-vscode
-          formulahendry.auto-close-tag
-          formulahendry.auto-rename-tag
-          github.vscode-github-actions
-          github.vscode-pull-request-github
-          gruntfuggly.todo-tree
-          irongeek.vscode-env
-          mkhl.direnv
-          ms-azuretools.vscode-docker
-          ms-python.python
-          ms-python.vscode-pylance
-          ms-vscode-remote.remote-ssh
-          ms-vsliveshare.vsliveshare
-          redhat.vscode-yaml
-          # FIXME:
-          # rust-lang.rust-analyzer
-          shardulm94.trailing-spaces
-          sumneko.lua
-          timonwong.shellcheck
-          usernamehw.errorlens
-          vscode-icons-team.vscode-icons
-          wakatime.vscode-wakatime
-          xaver.clang-format
-          yzhang.markdown-all-in-one
-        ]
-        ++ lib.optionals pkgs.stdenv.isLinux [
-          ms-vscode.cpptools
-        ];
+      profiles =
+        let
+          commonExtensions = with pkgs.vscode-extensions; [
+            adpyke.codesnap
+            arrterian.nix-env-selector
+            bbenoist.nix
+            catppuccin.catppuccin-vsc
+            catppuccin.catppuccin-vsc-icons
+            christian-kohler.path-intellisense
+            eamodio.gitlens
+            formulahendry.auto-close-tag
+            formulahendry.auto-rename-tag
+            github.vscode-github-actions
+            github.vscode-pull-request-github
+            gruntfuggly.todo-tree
+            irongeek.vscode-env
+            mkhl.direnv
+            ms-vscode-remote.remote-ssh
+            ms-vsliveshare.vsliveshare
+            shardulm94.trailing-spaces
+            usernamehw.errorlens
+            wakatime.vscode-wakatime
+            yzhang.markdown-all-in-one
+          ];
+          commonSettings = {
+            # Color theme
+            "workbench.colorTheme" = "Catppuccin Macchiato";
+            "catppuccin.accentColor" = "mauve";
+            "workbench.iconTheme" = "vscode-icons";
 
-      userSettings = mkIf cfg.declarativeConfig {
-        # Color theme
-        "workbench.colorTheme" = "Catppuccin Macchiato";
-        "catppuccin.accentColor" = "mauve";
-        "workbench.iconTheme" = "vscode-icons";
+            # Font family
+            "editor.fontFamily" =
+              "MonaspiceAr Nerd Font, CaskaydiaCove Nerd Font,Consolas, monospace,Hack Nerd Font";
+            "editor.codeLensFontFamily" =
+              "MonaspiceNe Nerd Font, Liga SFMono Nerd Font, CaskaydiaCove Nerd Font,Consolas, 'Courier New', monospace,Hack Nerd Font";
+            "editor.inlayHints.fontFamily" = "MonaspiceKr Nerd Font";
+            "debug.console.fontFamily" = "Monaspace Krypton";
+            "scm.inputFontFamily" = "Monaspace Radon";
+            "notebook.output.fontFamily" = "Monapsace Radon";
+            "chat.editor.fontFamily" = "Monaspace Argon";
+            "markdown.preview.fontFamily" =
+              "Monaspace Xenon; -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif";
+            "terminal.integrated.fontFamily" = "JetBrainsMono Nerd Font Mono";
 
-        # Font family
-        "editor.fontFamily" =
-          "MonaspiceAr Nerd Font, CaskaydiaCove Nerd Font,Consolas, monospace,Hack Nerd Font";
-        "editor.codeLensFontFamily" =
-          "MonaspiceNe Nerd Font, Liga SFMono Nerd Font, CaskaydiaCove Nerd Font,Consolas, 'Courier New', monospace,Hack Nerd Font";
-        "editor.inlayHints.fontFamily" = "MonaspiceKr Nerd Font";
-        "debug.console.fontFamily" = "Monaspace Krypton";
-        "scm.inputFontFamily" = "Monaspace Radon";
-        "notebook.output.fontFamily" = "Monapsace Radon";
-        "chat.editor.fontFamily" = "Monaspace Argon";
-        "markdown.preview.fontFamily" =
-          "Monaspace Xenon; -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif";
-        "terminal.integrated.fontFamily" = "JetBrainsMono Nerd Font Mono";
+            # Git settings
+            "git.allowForcePush" = true;
+            "git.autofetch" = true;
+            "git.confirmSync" = false;
+            "git.enableSmartCommit" = true;
+            "git.openRepositoryInParentFolders" = "always";
+            "gitlens.gitCommands.skipConfirmations" = [
+              "fetch:command"
+              "stash-push:command"
+              "switch:command"
+              "branch-create:command"
+            ];
 
-        # LSP
-        "C_Cpp.intelliSenseEngine" = "disabled";
-        "java.jdt.ls.java.home" = "${pkgs.jdk17}/lib/openjdk";
-        "java.configuration.runtimes" = [
-          "${pkgs.jdk8}/lib/openjdk"
-          "${pkgs.jdk17}/lib/openjdk"
-          "${pkgs.jdk22}/lib/openjdk"
-        ];
-        "redhat.telemetry.enabled" = false;
+            # Editor
+            "editor.bracketPairColorization.enabled" = true;
+            "editor.fontLigatures" = true;
+            "editor.fontSize" = 16;
+            "editor.formatOnPaste" = true;
+            "editor.formatOnSave" = true;
+            "editor.formatOnType" = false;
+            "editor.guides.bracketPairs" = true;
+            "editor.guides.indentation" = true;
+            "editor.inlineSuggest.enabled" = true;
+            "editor.minimap.enabled" = false;
+            "editor.minimap.renderCharacters" = false;
+            "editor.overviewRulerBorder" = false;
+            "editor.renderLineHighlight" = "all";
+            "editor.smoothScrolling" = true;
+            "editor.suggestSelection" = "first";
 
-        # Formatters
-        "editor.defaultFormatter" = "esbenp.prettier-vscode";
-        "[cpp]" = {
-          "editor.defaultFormatter" = "xaver.clang-format";
-        };
-        "[csharp]" = {
-          "editor.defaultFormatter" = "ms-dotnettools.csharp";
-        };
-        "[dockerfile]" = {
-          "editor.defaultFormatter" = "ms-azuretools.vscode-docker";
-        };
-        "[gitconfig]" = {
-          "editor.defaultFormatter" = "yy0931.gitconfig-lsp";
-        };
-        "[html]" = {
-          "editor.defaultFormatter" = "vscode.html-language-features";
-        };
-        "[java]" = {
-          "editor.defaultFormatter" = "redhat.java";
-        };
-        "[javascript]" = {
-          "editor.defaultFormatter" = "vscode.typescript-language-features";
-        };
-        "[json]" = {
-          "editor.defaultFormatter" = "vscode.json-language-features";
-        };
-        "[lua]" = {
-          "editor.defaultFormatter" = "yinfei.luahelper";
-        };
-        "[shellscript]" = {
-          "editor.defaultFormatter" = "foxundermoon.shell-format";
-        };
-        "[xml]" = {
-          "editor.defaultFormatter" = "redhat.vscode-xml";
-        };
+            # Terminal
+            "terminal.integrated.automationShell.linux" = "nix-shell";
+            "terminal.integrated.cursorBlinking" = true;
+            "terminal.integrated.defaultProfile.linux" = "zsh";
+            "terminal.integrated.enableBell" = false;
+            "terminal.integrated.gpuAcceleration" = "on";
 
-        # Custom file associations
-        "files.associations" = {
-          "*.avsc" = "json";
+            # Workbench
+            "workbench.editor.tabCloseButton" = "left";
+            "workbench.fontAliasing" = "antialiased";
+            "workbench.list.smoothScrolling" = true;
+            "workbench.panel.defaultLocation" = "right";
+            "workbench.startupEditor" = "none";
+
+            # Miscellaneous
+            "breadcrumbs.enabled" = true;
+            "explorer.confirmDelete" = false;
+            "files.trimTrailingWhitespace" = true;
+            "javascript.updateImportsOnFileMove.enabled" = "always";
+            "security.workspace.trust.enabled" = false;
+            "todo-tree.filtering.includeHiddenFiles" = true;
+            "typescript.updateImportsOnFileMove.enabled" = "always";
+            "vsicons.dontShowNewVersionMessage" = true;
+            "window.menuBarVisibility" = "toggle";
+            "window.nativeTabs" = true;
+            "window.restoreWindows" = "all";
+            "window.titleBarStyle" = "custom";
+
+            # LSP
+            "C_Cpp.intelliSenseEngine" = "disabled";
+
+            # Formatters
+            "editor.defaultFormatter" = "esbenp.prettier-vscode";
+            "[cpp]" = {
+              "editor.defaultFormatter" = "xaver.clang-format";
+            };
+            "[csharp]" = {
+              "editor.defaultFormatter" = "ms-dotnettools.csharp";
+            };
+            "[dockerfile]" = {
+              "editor.defaultFormatter" = "ms-azuretools.vscode-docker";
+            };
+            "[gitconfig]" = {
+              "editor.defaultFormatter" = "yy0931.gitconfig-lsp";
+            };
+            "[html]" = {
+              "editor.defaultFormatter" = "vscode.html-language-features";
+            };
+            "[javascript]" = {
+              "editor.defaultFormatter" = "vscode.typescript-language-features";
+            };
+            "[json]" = {
+              "editor.defaultFormatter" = "vscode.json-language-features";
+            };
+            "[lua]" = {
+              "editor.defaultFormatter" = "yinfei.luahelper";
+            };
+            "[shellscript]" = {
+              "editor.defaultFormatter" = "foxundermoon.shell-format";
+            };
+            "[xml]" = {
+              "editor.defaultFormatter" = "redhat.vscode-xml";
+            };
+          };
+        in
+        {
+          default = {
+            extensions = commonExtensions;
+            enableUpdateCheck = lib.mkIf cfg.declarativeConfig false;
+            enableExtensionUpdateCheck = lib.mkIf cfg.declarativeConfig false;
+            userSettings = lib.mkIf cfg.declarativeConfig commonSettings;
+          };
+          Angular = {
+            extensions =
+              with pkgs.vscode-extensions;
+              commonExtensions
+              ++ [
+                angular.ng-template
+              ];
+          };
+          C = {
+            extensions =
+              with pkgs.vscode-extensions;
+              commonExtensions
+              ++ [
+                xaver.clang-format
+                llvm-vs-code-extensions.vscode-clangd
+              ];
+          };
+          DotNet = {
+            extensions =
+              with pkgs.vscode-extensions;
+              commonExtensions
+              ++ [
+                ms-dotnettools.vscode-dotnet-runtime
+                ms-dotnettools.csharp
+                ms-dotnettools.csdevkit
+              ];
+            userSettings = lib.mkIf cfg.declarativeConfig (
+              commonSettings
+              // {
+                "[csharp]" = {
+                  "editor.defaultFormatter" = "ms-dotnettools.csharp";
+                };
+              }
+            );
+          };
+          Java = {
+            extensions =
+              with pkgs.vscode-extensions;
+              commonExtensions
+              ++ [
+                vscjava.vscode-java-pack
+              ];
+            userSettings = lib.mkIf cfg.declarativeConfig (
+              commonSettings
+              // {
+                # LSP
+                "java.jdt.ls.java.home" = "${pkgs.jdk17}/lib/openjdk";
+                "java.configuration.runtimes" = [
+                  "${pkgs.jdk8}/lib/openjdk"
+                  "${pkgs.jdk17}/lib/openjdk"
+                ];
+                "redhat.telemetry.enabled" = false;
+
+                # Formatters
+                "[java]" = {
+                  "editor.defaultFormatter" = "redhat.java";
+                };
+
+                # Custom file associations
+                "files.associations" = {
+                  "*.avsc" = "json";
+                };
+              }
+            );
+          };
+          Nix = {
+            extensions =
+              with pkgs.vscode-extensions;
+              commonExtensions
+              ++ [
+                arrterian.nix-env-selector
+                bbenoist.nix
+                mkhl.direnv
+              ];
+          };
+          Rust = {
+            extensions =
+              with pkgs.vscode-extensions;
+              commonExtensions
+              # FIXME: broken darwin
+              ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+                rust-lang.rust-analyzer
+              ];
+          };
         };
-
-        # Git settings
-        "git.allowForcePush" = true;
-        "git.autofetch" = true;
-        "git.confirmSync" = false;
-        "git.enableSmartCommit" = true;
-        "git.openRepositoryInParentFolders" = "always";
-        "gitlens.gitCommands.skipConfirmations" = [
-          "fetch:command"
-          "stash-push:command"
-          "switch:command"
-          "branch-create:command"
-        ];
-
-        # Editor
-        "editor.bracketPairColorization.enabled" = true;
-        "editor.fontLigatures" = true;
-        "editor.fontSize" = 16;
-        "editor.formatOnPaste" = true;
-        "editor.formatOnSave" = true;
-        "editor.formatOnType" = false;
-        "editor.guides.bracketPairs" = true;
-        "editor.guides.indentation" = true;
-        "editor.inlineSuggest.enabled" = true;
-        "editor.minimap.enabled" = false;
-        "editor.minimap.renderCharacters" = false;
-        "editor.overviewRulerBorder" = false;
-        "editor.renderLineHighlight" = "all";
-        "editor.smoothScrolling" = true;
-        "editor.suggestSelection" = "first";
-
-        # Terminal
-        "terminal.integrated.automationShell.linux" = "nix-shell";
-        "terminal.integrated.cursorBlinking" = true;
-        "terminal.integrated.defaultProfile.linux" = "zsh";
-        "terminal.integrated.enableBell" = false;
-        "terminal.integrated.gpuAcceleration" = "on";
-
-        # Workbench
-        "workbench.editor.tabCloseButton" = "left";
-        "workbench.fontAliasing" = "antialiased";
-        "workbench.list.smoothScrolling" = true;
-        "workbench.panel.defaultLocation" = "right";
-        "workbench.startupEditor" = "none";
-
-        # Miscellaneous
-        "breadcrumbs.enabled" = true;
-        "explorer.confirmDelete" = false;
-        "files.trimTrailingWhitespace" = true;
-        "javascript.updateImportsOnFileMove.enabled" = "always";
-        "security.workspace.trust.enabled" = false;
-        "todo-tree.filtering.includeHiddenFiles" = true;
-        "typescript.updateImportsOnFileMove.enabled" = "always";
-        "vsicons.dontShowNewVersionMessage" = true;
-        "window.menuBarVisibility" = "toggle";
-        "window.nativeTabs" = true;
-        "window.restoreWindows" = "all";
-        "window.titleBarStyle" = "custom";
-      };
     };
 
     sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
