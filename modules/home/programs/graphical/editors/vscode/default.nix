@@ -259,9 +259,9 @@ in
             extensions =
               with pkgs.vscode-extensions;
               commonExtensions
-              # FIXME: broken darwin
-              ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-                rust-lang.rust-analyzer
+              ++ [
+                # FIXME: broken
+                # rust-lang.rust-analyzer
               ];
           };
         };
