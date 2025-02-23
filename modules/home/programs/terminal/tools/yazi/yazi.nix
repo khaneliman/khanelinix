@@ -285,6 +285,7 @@
         {
           mime = "*";
           use = [
+            "edit"
             "open"
             "reveal"
           ];
