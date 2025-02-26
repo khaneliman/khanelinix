@@ -17,6 +17,7 @@ in
     };
 
     security = {
+      pam = enabled;
       sops = {
         enable = true;
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
@@ -58,8 +59,6 @@ in
     cores = 16;
     max-jobs = 8;
   };
-
-  security.pam.enableSudoTouchIdAuth = true;
 
   users.users.${cfg.name} = {
     openssh = {

@@ -18,5 +18,8 @@ _final: _prev: {
     monitorcontrol
     stats
     switchaudio-osx
+
+    # TODO: remove after available in nixos-unstable
+    gitFull
     ;
 }
