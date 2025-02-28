@@ -28,13 +28,18 @@ in
       };
     };
 
-    home.packages = with pkgs; [
-      dwt1-shell-color-scripts
-      ncdu
-      smassh
-      toilet
-      tree
-    ];
+    home.packages =
+      with pkgs;
+      [
+        dwt1-shell-color-scripts
+        ncdu
+        smassh
+        toilet
+        tree
+      ]
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
+        pngpaste
+      ];
 
     khanelinix = {
       programs = {
