@@ -82,8 +82,6 @@ in
       };
 
       services = {
-        cliphist.systemdTargets = [ "sway-session.target" ];
-
         swayidle = enabled;
       };
 

@@ -2,6 +2,7 @@
   config,
   lib,
   namespace,
+  osConfig,
   ...
 }:
 let
@@ -27,7 +28,14 @@ in
       cliphist = {
         enable = true;
         allowImages = true;
-        inherit (cfg) systemdTargets;
+        systemdTargets =
+          cfg.systemdTargets
+          ++ lib.optionals (!osConfig.programs.hyprland.withUWSM) [
+            "hyprland-session.target"
+          ]
+          ++ lib.optionals osConfig.programs.hyprland.withUWSM [ "graphical-session.target" ]
+          ++ lib.optionals config.wayland.windowManager.sway.enable [ "sway-session.target" ];
+
       };
     };
   };
