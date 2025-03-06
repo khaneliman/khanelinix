@@ -19,7 +19,9 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       catppuccin-sddm-corners
-      sddm
+      libsForQt5.sddm
+      # TODO: update theme support
+      # kdePackages.sddm
     ];
 
     services = {

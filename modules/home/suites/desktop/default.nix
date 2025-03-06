@@ -30,7 +30,7 @@ in
         dropbox
         dupeguru
         feh
-        filelight
+        kdePackages.filelight
         fontpreview
         gparted
         input-leap

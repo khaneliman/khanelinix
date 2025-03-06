@@ -25,7 +25,8 @@ in
 
     environment.systemPackages = with pkgs; [
       podman-compose
-      podman-desktop
+      # FIXME:
+      # podman-desktop
     ];
 
     khanelinix = {

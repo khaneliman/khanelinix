@@ -56,7 +56,7 @@ in
         hyprsysteminfo
         pkgs.${namespace}.record_screen
         slurp
-        xwaylandvideobridge
+        kdePackages.xwaylandvideobridge
       ];
 
       pointerCursor.hyprcursor = {
