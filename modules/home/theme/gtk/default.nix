@@ -128,7 +128,6 @@ in
       };
 
       gtk4.extraConfig = {
-        gtk-application-prefer-dark-theme = true;
         gtk-decoration-layout = "appmenu:none";
         gtk-enable-event-sounds = 0;
         gtk-enable-input-feedback-sounds = 0;
