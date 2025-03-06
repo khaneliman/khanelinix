@@ -107,7 +107,11 @@ in
       };
 
       services = {
-        cliphist.systemdTargets = [ "hyprland-session.target" ];
+        cliphist.systemdTargets =
+          lib.optionals (!osConfig.programs.hyprland.withUWSM) [
+            "hyprland-session.target"
+          ]
+          ++ lib.optionals osConfig.programs.hyprland.withUWSM [ "graphical-session.target" ];
 
         hypridle = enabled;
 
