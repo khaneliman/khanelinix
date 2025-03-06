@@ -54,11 +54,9 @@ in
           };
         };
 
-        extraPortals =
-          with pkgs;
-          [ xdg-desktop-portal-gtk ]
-          ++ (lib.optional config.${namespace}.programs.graphical.wms.sway.enable xdg-desktop-portal-wlr);
-        # xdgOpenUsePortal = true;
+        extraPortals = with pkgs; [
+          xdg-desktop-portal-gtk
+        ];
 
         wlr = {
           inherit (config.${namespace}.programs.graphical.wms.sway) enable;
