@@ -41,8 +41,6 @@ in
               "wlr"
               "gtk"
             ];
-            "org.freedesktop.impl.portal.Screencast" = "wlr";
-            "org.freedesktop.impl.portal.Screenshot" = "wlr";
           };
 
           common = {
