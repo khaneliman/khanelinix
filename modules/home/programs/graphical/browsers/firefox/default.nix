@@ -60,7 +60,6 @@ in
     } "Policies to apply to firefox";
 
     settings = mkOpt attrs { } "Settings to apply to the profile.";
-    userChrome = mkOpt str "" "Extra configuration for the user chrome CSS file.";
   };
 
   config = mkIf cfg.enable {
@@ -163,11 +162,7 @@ in
           ];
 
           # TODO: support alternative theme loading
-          userChrome =
-            builtins.readFile ./chrome/userChrome.css
-            + ''
-              ${cfg.userChrome}
-            '';
+          userChrome = ./chrome/userChrome.css;
         };
       };
     };
