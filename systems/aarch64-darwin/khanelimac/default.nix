@@ -71,5 +71,8 @@ in
     };
   };
 
-  system.stateVersion = 5;
+  system = {
+    primaryUser = "khaneliman";
+    stateVersion = 5;
+  };
 }

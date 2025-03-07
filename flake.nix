@@ -4,7 +4,8 @@
   inputs = {
     # Core inputs
     darwin = {
-      url = "github:lnl7/nix-darwin";
+      # url = "github:lnl7/nix-darwin";
+      url = "github:khaneliman/nix-darwin/darwin-rewrite";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     home-manager = {
