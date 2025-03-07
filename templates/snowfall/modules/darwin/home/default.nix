@@ -9,14 +9,15 @@ let
   inherit (lib.${namespace}) mkOpt;
 in
 {
-
-  options.${namespace}.home = with lib.types; {
-    file = mkOpt attrs { } "A set of files to be managed by home-manager's <option>home.file</option>.";
+  options.${namespace}.home = {
+    file =
+      mkOpt lib.types.attrs { }
+        "A set of files to be managed by home-manager's <option>home.file</option>.";
     configFile =
-      mkOpt attrs { }
+      mkOpt lib.types.attrs { }
         "A set of files to be managed by home-manager's <option>xdg.configFile</option>.";
-    extraOptions = mkOpt attrs { } "Options to pass directly to home-manager.";
-    homeConfig = mkOpt attrs { } "Final config for home-manager.";
+    extraOptions = mkOpt lib.types.attrs { } "Options to pass directly to home-manager.";
+    homeConfig = mkOpt lib.types.attrs { } "Final config for home-manager.";
   };
 
   config = {

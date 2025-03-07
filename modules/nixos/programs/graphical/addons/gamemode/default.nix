@@ -19,10 +19,10 @@ let
   '';
 in
 {
-  options.${namespace}.programs.graphical.addons.gamemode = with lib.types; {
+  options.${namespace}.programs.graphical.addons.gamemode = {
     enable = mkBoolOpt false "Whether or not to enable gamemode.";
-    endscript = mkOpt (nullOr str) null "The script to run when disabling gamemode.";
-    startscript = mkOpt (nullOr str) null "The script to run when enabling gamemode.";
+    endscript = mkOpt (with lib.types; nullOr str) null "The script to run when disabling gamemode.";
+    startscript = mkOpt (with lib.types; nullOr str) null "The script to run when enabling gamemode.";
   };
 
   config =

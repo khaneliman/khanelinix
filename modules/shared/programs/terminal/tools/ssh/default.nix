@@ -57,10 +57,10 @@ let
   ) (builtins.attrNames other-hosts);
 in
 {
-  options.${namespace}.programs.terminal.tools.ssh = with lib.types; {
+  options.${namespace}.programs.terminal.tools.ssh = {
     enable = mkBoolOpt false "Whether or not to configure ssh support.";
-    extraConfig = mkOpt str "" "Extra configuration to apply.";
-    port = mkOpt port 2222 "The port to listen on (in addition to 22).";
+    extraConfig = mkOpt lib.types.str "" "Extra configuration to apply.";
+    port = mkOpt lib.types.port 2222 "The port to listen on (in addition to 22).";
   };
 
   config = lib.mkIf cfg.enable {

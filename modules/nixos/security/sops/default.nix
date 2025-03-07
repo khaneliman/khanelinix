@@ -10,10 +10,12 @@ let
   cfg = config.${namespace}.security.sops;
 in
 {
-  options.${namespace}.security.sops = with lib.types; {
+  options.${namespace}.security.sops = {
     enable = mkBoolOpt false "Whether to enable sops.";
-    defaultSopsFile = mkOpt path null "Default sops file.";
-    sshKeyPaths = mkOpt (listOf path) [ "/etc/ssh/ssh_host_ed25519_key" ] "SSH Key paths to use.";
+    defaultSopsFile = mkOpt lib.types.path null "Default sops file.";
+    sshKeyPaths = mkOpt (with lib.types; listOf path) [
+      "/etc/ssh/ssh_host_ed25519_key"
+    ] "SSH Key paths to use.";
   };
 
   config = lib.mkIf cfg.enable {
