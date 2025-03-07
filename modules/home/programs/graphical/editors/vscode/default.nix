@@ -266,8 +266,7 @@ in
               with pkgs.vscode-extensions;
               commonExtensions
               ++ [
-                # FIXME: broken
-                # rust-lang.rust-analyzer
+                rust-lang.rust-analyzer
               ];
           };
         };
