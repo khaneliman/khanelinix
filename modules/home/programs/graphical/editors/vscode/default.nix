@@ -261,6 +261,16 @@ in
                 mkhl.direnv
               ];
           };
+          Python = {
+            extensions =
+              with pkgs.vscode-extensions;
+              commonExtensions
+              ++ [
+                ms-python.python
+                ms-python.debugpy
+                njpwerner.autodocstring
+              ];
+          };
           Rust = {
             extensions =
               with pkgs.vscode-extensions;
