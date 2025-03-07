@@ -167,13 +167,13 @@ in
       enable = true;
       cacheHome = config.home.homeDirectory + "/.local/cache";
 
-      mimeApps = lib.mkIf pkgs.stdenv.isLinux {
+      mimeApps = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
         enable = true;
         defaultApplications = associations;
         associations.added = associations;
       };
 
-      userDirs = lib.mkIf pkgs.stdenv.isLinux {
+      userDirs = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
         enable = true;
         createDirectories = true;
         extraConfig = {

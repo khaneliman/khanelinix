@@ -35,7 +35,7 @@ in
 
           makeBinPathList = map (path: path + "/bin");
         in
-        lib.optionalString pkgs.stdenv.isDarwin # fish
+        lib.optionalString pkgs.stdenv.hostPlatform.isDarwin # fish
           ''
             export NIX_PATH="darwin-config=$HOME/.nixpkgs/darwin-configuration.nix:$HOME/.nix-defexpr/channels:$NIX_PATH"
             fish_add_path --move --prepend --path ${
@@ -52,7 +52,7 @@ in
               source ~/.config/op/plugins.sh
           end
         ''
-        + lib.optionalString pkgs.stdenv.isDarwin ''
+        + lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
           # Brew environment
           if [ -f /opt/homebrew/bin/brew ];
           	eval "$("/opt/homebrew/bin/brew" shellenv)"

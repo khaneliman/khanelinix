@@ -39,7 +39,7 @@ in
         playerctl # CLI interface for playerctld
         mpc_cli # CLI interface for mpd
       ]
-      ++ lib.optionals pkgs.stdenv.isLinux [
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         cava # CLI music visualizer (cavalier is a gui alternative)
       ];
 

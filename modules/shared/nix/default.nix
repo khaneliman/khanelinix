@@ -36,7 +36,7 @@ in
           "nix/flake-channels/home-manager".source = home-manager;
         }
         # preserve current flake in /etc
-        // lib.mkIf pkgs.stdenv.isLinux {
+        // lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
           "nixos/flake".source = self;
         };
 
@@ -57,10 +57,11 @@ in
             x:
             x
             // {
-              nixpkgs.flake = if pkgs.stdenv.isLinux then inputs.nixpkgs else inputs.nixpkgs-unstable;
+              nixpkgs.flake =
+                if pkgs.stdenv.hostPlatform.isLinux then inputs.nixpkgs else inputs.nixpkgs-unstable;
             }
           )
-          (x: if pkgs.stdenv.isDarwin then lib.removeAttrs x [ "nixpkgs-unstable" ] else x)
+          (x: if pkgs.stdenv.hostPlatform.isDarwin then lib.removeAttrs x [ "nixpkgs-unstable" ] else x)
         ];
 
         users = [
@@ -205,7 +206,7 @@ in
 
         settings = {
           allowed-users = users;
-          auto-optimise-store = pkgs.stdenv.isLinux;
+          auto-optimise-store = pkgs.stdenv.hostPlatform.isLinux;
           builders-use-substitutes = true;
           # TODO: pipe-operators throws annoying warnings
           experimental-features = [

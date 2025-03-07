@@ -19,7 +19,7 @@ in
   config = mkIf cfg.enable {
     home.packages =
       with pkgs;
-      lib.optionals stdenv.isLinux [
+      lib.optionals stdenv.hostPlatform.isLinux [
         darktable
         digikam
         exiftool

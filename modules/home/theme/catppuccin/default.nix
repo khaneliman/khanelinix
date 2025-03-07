@@ -141,17 +141,17 @@ in
             ".local/share/warp-terminal/themes/catppuccin_macchiato.yaml".source = warpStyle;
           }
         )
-        (mkIf pkgs.stdenv.isDarwin {
+        (mkIf pkgs.stdenv.hostPlatform.isDarwin {
           "Library/Application Support/BetterDiscord/themes/catppuccin-macchiato.theme.css".source =
             ./catppuccin-macchiato.theme.css;
         })
       ];
 
-      pointerCursor = mkIf pkgs.stdenv.isLinux {
+      pointerCursor = mkIf pkgs.stdenv.hostPlatform.isLinux {
         inherit (config.${namespace}.theme.gtk.cursor) name package size;
       };
 
-      sessionVariables = mkIf pkgs.stdenv.isLinux {
+      sessionVariables = mkIf pkgs.stdenv.hostPlatform.isLinux {
         CURSOR_THEME = config.${namespace}.theme.gtk.cursor.name;
       };
     };
@@ -200,7 +200,8 @@ in
     };
 
     xdg.configFile =
-      mkIf (pkgs.stdenv.isLinux && config.${namespace}.programs.graphical.apps.discord.enable)
+      mkIf
+        (pkgs.stdenv.hostPlatform.isLinux && config.${namespace}.programs.graphical.apps.discord.enable)
         {
           "ArmCord/themes/Catppuccin-Macchiato-BD".source = ./Catppuccin-Macchiato-BD;
           "BetterDiscord/themes/catppuccin-macchiato.theme.css".source = ./catppuccin-macchiato.theme.css;

@@ -19,7 +19,7 @@ in
   config = mkIf cfg.enable {
     home.packages =
       with pkgs;
-      lib.optionals stdenv.isLinux [
+      lib.optionals stdenv.hostPlatform.isLinux [
         celluloid
         devede
         handbrake
@@ -27,7 +27,7 @@ in
         shotcut
         vlc
       ]
-      ++ lib.optionals stdenv.isDarwin [ iina ];
+      ++ lib.optionals stdenv.hostPlatform.isDarwin [ iina ];
 
     khanelinix = {
       programs = {

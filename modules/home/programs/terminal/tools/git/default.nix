@@ -85,10 +85,10 @@ in
           credential = {
             helper =
               lib.optionalString cfg.wslAgentBridge cfg.wslGitCredentialManagerPath
-              + lib.optionalString (!cfg.wslAgentBridge && pkgs.stdenv.isLinux) (
+              + lib.optionalString (!cfg.wslAgentBridge && pkgs.stdenv.hostPlatform.isLinux) (
                 getExe' config.programs.git.package "git-credential-libsecret"
               )
-              + lib.optionalString (!cfg.wslAgentBridge && pkgs.stdenv.isDarwin) (
+              + lib.optionalString (!cfg.wslAgentBridge && pkgs.stdenv.hostPlatform.isDarwin) (
                 getExe' config.programs.git.package "git-credential-osxkeychain"
               );
 
@@ -101,8 +101,8 @@ in
 
           # TODO: verify still works
           "gpg \"ssh\"".program = mkIf cfg._1password (
-            lib.optionalString pkgs.stdenv.isLinux (getExe' pkgs._1password-gui "op-ssh-sign")
-            + lib.optionalString pkgs.stdenv.isDarwin "${pkgs._1password-gui}/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+            lib.optionalString pkgs.stdenv.hostPlatform.isLinux (getExe' pkgs._1password-gui "op-ssh-sign")
+            + lib.optionalString pkgs.stdenv.hostPlatform.isDarwin "${pkgs._1password-gui}/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
           );
 
           init = {

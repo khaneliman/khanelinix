@@ -27,7 +27,7 @@ in
         np
         teams-for-linux
       ]
-      ++ lib.optionals stdenv.isLinux [
+      ++ lib.optionals stdenv.hostPlatform.isLinux [
         libreoffice
         p3x-onenote
       ];

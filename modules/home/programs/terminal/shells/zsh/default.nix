@@ -56,7 +56,7 @@ in
         # Disable /etc/{zshrc,zprofile} that contains the "sane-default" setup out of the box
         # in order avoid issues with incorrect precedence to our own zshrc.
         # See `/etc/zshrc` for more info.
-        envExtra = mkIf pkgs.stdenv.isLinux ''
+        envExtra = mkIf pkgs.stdenv.hostPlatform.isLinux ''
           setopt no_global_rcs
         '';
 

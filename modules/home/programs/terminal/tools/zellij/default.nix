@@ -48,9 +48,9 @@ in
 
           # clipboard provider
           copy_command =
-            if pkgs.stdenv.isLinux then
+            if pkgs.stdenv.hostPlatform.isLinux then
               "wl-copy"
-            else if pkgs.stdenv.isDarwin then
+            else if pkgs.stdenv.hostPlatform.isDarwin then
               "pbcopy"
             else
               "";

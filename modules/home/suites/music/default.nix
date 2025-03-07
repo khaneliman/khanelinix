@@ -23,7 +23,7 @@ in
         musikcube
         pulsemixer
       ]
-      ++ lib.optionals pkgs.stdenv.isLinux [
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         # FIXME: broken nixpkgs
         # ardour
         mpd-notification
@@ -45,7 +45,7 @@ in
       };
 
       services = {
-        mpd = mkIf pkgs.stdenv.isLinux enabled;
+        mpd = mkIf pkgs.stdenv.hostPlatform.isLinux enabled;
       };
     };
   };

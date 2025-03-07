@@ -59,7 +59,7 @@ in
             webUISupport = true;
           })
         ]
-        ++ lib.optionals pkgs.stdenv.isLinux [
+        ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
           github-desktop
           qtcreator
         ]
@@ -101,7 +101,7 @@ in
         num = ''nix-shell maintainers/scripts/update.nix --argstr maintainer $1'';
         # HM aliases
         hmd = ''nix build -L .#docs-html && ${
-          if pkgs.stdenv.isDarwin then
+          if pkgs.stdenv.hostPlatform.isDarwin then
             "open -a /Applications/Firefox\\ Developer\\ Edition.app"
           else
             lib.getExe config.programs.firefox.package

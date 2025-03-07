@@ -19,7 +19,7 @@ let
   home-directory =
     if cfg.name == null then
       null
-    else if pkgs.stdenv.isDarwin then
+    else if pkgs.stdenv.hostPlatform.isDarwin then
       "/Users/${cfg.name}"
     else
       "/home/${cfg.name}";

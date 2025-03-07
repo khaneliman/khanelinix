@@ -24,7 +24,7 @@ in
         element-desktop
         telegram-desktop
       ]
-      ++ lib.optionals pkgs.stdenv.isLinux [
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         # TODO: migrate to darwin after version bump
         slack
       ];

@@ -26,6 +26,6 @@ in
         speedtest-cli
         ssh-copy-id
       ]
-      ++ lib.optionals pkgs.stdenv.isLinux [ iproute2 ];
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [ iproute2 ];
   };
 }

@@ -27,7 +27,7 @@ in
         ++ lib.optional cfg.canary.enable pkgs.${namespace}.discord
         ++ lib.optional cfg.firefox.enable pkgs.${namespace}.discord-firefox;
 
-      activation = mkIf pkgs.stdenv.isLinux {
+      activation = mkIf pkgs.stdenv.hostPlatform.isLinux {
         betterdiscordInstall = # bash
           home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
             echo "Running betterdiscord install"

@@ -39,7 +39,7 @@ in
 
   config = mkIf cfg.enable {
 
-    home.packages = lib.optionals pkgs.stdenv.isLinux (
+    home.packages = lib.optionals pkgs.stdenv.hostPlatform.isLinux (
       with pkgs;
       [
         birdtray
@@ -81,7 +81,8 @@ in
 
     programs.thunderbird = {
       enable = true;
-      package = if pkgs.stdenv.isDarwin then pkgs.emptyDirectory else pkgs.thunderbird-latest;
+      package =
+        if pkgs.stdenv.hostPlatform.isDarwin then pkgs.emptyDirectory else pkgs.thunderbird-latest;
       # yeah, yeah...
       darwinSetupWarning = false;
 

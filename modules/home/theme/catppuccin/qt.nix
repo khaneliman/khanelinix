@@ -13,7 +13,7 @@ in
   config = lib.mkIf cfg.enable {
     khanelinix = {
       theme = {
-        qt = lib.mkIf pkgs.stdenv.isLinux {
+        qt = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
           theme = {
             name = "Catppuccin-Macchiato-Blue";
             package = pkgs.catppuccin-kvantum.override {
@@ -31,7 +31,7 @@ in
       };
     };
 
-    qt = lib.mkIf pkgs.stdenv.isLinux {
+    qt = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       enable = true;
 
       platformTheme = {

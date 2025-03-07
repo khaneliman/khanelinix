@@ -24,6 +24,6 @@ in
         azure-functions-core-tools
         azure-storage-azcopy
       ]
-      ++ lib.optionals pkgs.stdenv.isLinux [ azuredatastudio ];
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [ azuredatastudio ];
   };
 }

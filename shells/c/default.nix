@@ -57,7 +57,7 @@ mkShell {
       SDL2
       SDL2_gfx
     ]
-    ++ lib.optionals pkgs.stdenv.isLinux [
+    ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       gdb
       valgrind
     ];

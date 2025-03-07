@@ -99,7 +99,7 @@
           };
         }
 
-        // lib.optionalAttrs stdenv.isLinux {
+        // lib.optionalAttrs stdenv.hostPlatform.isLinux {
           # A VM test of the NixOS module.
           vmTest =
             with import (nixpkgs + "/nixos/lib/testing-python.nix") { inherit system; };

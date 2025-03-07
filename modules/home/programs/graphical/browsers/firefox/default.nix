@@ -67,7 +67,7 @@ in
     home.file =
       let
         firefoxPath =
-          if pkgs.stdenv.isLinux then
+          if pkgs.stdenv.hostPlatform.isLinux then
             ".mozilla/firefox/${config.${namespace}.user.name}"
           else
             "/Users/${config.${namespace}.user.name}/Library/Application Support/Firefox/Profiles/${config.${namespace}.user.name}";
@@ -82,7 +82,7 @@ in
 
     programs.firefox = {
       enable = true;
-      package = if pkgs.stdenv.isLinux then pkgs.firefox-devedition else null;
+      package = if pkgs.stdenv.hostPlatform.isLinux then pkgs.firefox-devedition else null;
 
       inherit (cfg) policies;
 

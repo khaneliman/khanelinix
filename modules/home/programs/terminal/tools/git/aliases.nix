@@ -374,7 +374,7 @@
       gunignore = "git update-index --no-assume-unchanged";
       grev = "git revert";
     }
-    // lib.mkIf pkgs.stdenv.isLinux {
+    // lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       log = "git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
     };
 }

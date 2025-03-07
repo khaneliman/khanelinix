@@ -62,7 +62,7 @@ in
     };
   };
 
-  config = mkIf (cfg.enable && pkgs.stdenv.isLinux) {
+  config = mkIf (cfg.enable && pkgs.stdenv.hostPlatform.isLinux) {
     home = {
       packages = with pkgs; [
         # libraries and programs to ensure that qt applications load without issue

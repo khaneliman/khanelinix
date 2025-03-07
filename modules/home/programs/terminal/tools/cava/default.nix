@@ -23,7 +23,7 @@ in
 
     programs.cava = {
       enable = true;
-      package = if pkgs.stdenv.isLinux then pkgs.cava else pkgs.emptyDirectory;
+      package = if pkgs.stdenv.hostPlatform.isLinux then pkgs.cava else pkgs.emptyDirectory;
 
       settings =
         {
@@ -81,13 +81,13 @@ in
             "5" = 1; # treble
           };
         }
-        // lib.mkIf pkgs.stdenv.isLinux {
+        // lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
           input = {
             method = "pulse";
             source = "auto";
           };
         }
-        // lib.mkIf pkgs.stdenv.isDarwin {
+        // lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
           input = {
             method = "portaudio";
             source = "Background Music";

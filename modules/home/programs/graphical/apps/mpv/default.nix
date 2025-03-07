@@ -19,13 +19,13 @@ in
 
   config = mkIf cfg.enable {
     programs.mpv = {
-      enable = pkgs.stdenv.isLinux;
+      enable = pkgs.stdenv.hostPlatform.isLinux;
       package = pkgs.mpv;
 
       defaultProfiles = [ "gpu-hq" ];
-      scripts = lib.optionals pkgs.stdenv.isLinux [ pkgs.mpvScripts.mpris ];
+      scripts = lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.mpvScripts.mpris ];
     };
 
-    services.plex-mpv-shim.enable = pkgs.stdenv.isLinux;
+    services.plex-mpv-shim.enable = pkgs.stdenv.hostPlatform.isLinux;
   };
 }

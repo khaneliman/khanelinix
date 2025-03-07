@@ -12,7 +12,7 @@ in
   config = lib.mkIf cfg.enable {
     khanelinix = {
       theme = {
-        gtk = lib.mkIf pkgs.stdenv.isLinux {
+        gtk = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
           cursor = {
             name = "catppuccin-macchiato-blue-cursors";
             package = pkgs.catppuccin-cursors.macchiatoBlue;

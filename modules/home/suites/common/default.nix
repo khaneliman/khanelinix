@@ -52,7 +52,7 @@ in
         terminal = {
           emulators = {
             alacritty = mkDefault enabled;
-            foot.enable = pkgs.stdenv.isLinux;
+            foot.enable = pkgs.stdenv.hostPlatform.isLinux;
             ghostty = mkDefault enabled;
             kitty = mkDefault enabled;
             warp = mkDefault enabled;
@@ -79,7 +79,7 @@ in
             fzf = mkDefault enabled;
             fup-repl = mkDefault enabled;
             git = mkDefault enabled;
-            glxinfo.enable = mkDefault pkgs.stdenv.isLinux;
+            glxinfo.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
             jq = mkDefault enabled;
             jujutsu = mkDefault enabled;
             lsd = mkDefault enabled;
@@ -95,15 +95,15 @@ in
       };
 
       services = {
-        # easyeffects.enable = mkDefault pkgs.stdenv.isLinux;
-        udiskie.enable = mkDefault pkgs.stdenv.isLinux;
-        # ssh-agent.enable = mkDefault pkgs.stdenv.isLinux;
-        tray.enable = mkDefault pkgs.stdenv.isLinux;
+        # easyeffects.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
+        udiskie.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
+        # ssh-agent.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
+        tray.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
       };
 
       theme = {
-        gtk.enable = mkDefault pkgs.stdenv.isLinux;
-        qt.enable = mkDefault pkgs.stdenv.isLinux;
+        gtk.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
+        qt.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
       };
     };
 

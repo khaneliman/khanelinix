@@ -102,7 +102,7 @@ in
         "ctrl+shift+minus" = "decrease_font_size";
         "ctrl+shift+backspace" = "restore_font_size";
         "ctrl+shift+f6" = "set_font_size 16.0";
-      } // lib.optionalAttrs pkgs.stdenv.isDarwin { "cmd+opt+s" = "noop"; };
+      } // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin { "cmd+opt+s" = "noop"; };
 
       settings =
         {
@@ -188,7 +188,7 @@ in
           allow_remote_control = "yes";
           term = "xterm-kitty";
         }
-        // lib.optionalAttrs pkgs.stdenv.isDarwin {
+        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
           hide_window_decorations = "titlebar-only";
           macos_option_as_alt = "both";
           macos_custom_beam_cursor = "yes";

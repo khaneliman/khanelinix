@@ -21,7 +21,7 @@ let
   home-directory =
     if cfg.name == null then
       null
-    else if pkgs.stdenv.isDarwin then
+    else if pkgs.stdenv.hostPlatform.isDarwin then
       "/Users/${cfg.name}"
     else
       "/home/${cfg.name}";
@@ -79,9 +79,9 @@ in
           run = "nix run";
           search = "nix search";
           shell = "nix shell";
-          nixre = "${lib.optionalString pkgs.stdenv.isLinux "sudo"} flake switch";
+          nixre = "${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "sudo"} flake switch";
           # TODO: figure out how to make this nix flake check compatible
-          # nixre = "${lib.optionalString pkgs.stdenv.isLinux "sudo"} ${
+          # nixre = "${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "sudo"} ${
           #   getExe snowfall-flake.packages.${system}.flake
           # } switch";
           nix = "nix -vL";

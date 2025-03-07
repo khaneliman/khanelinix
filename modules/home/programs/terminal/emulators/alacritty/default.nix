@@ -106,8 +106,8 @@ in
             opacity = 0.98;
           };
         }
-        // lib.optionalAttrs pkgs.stdenv.isLinux { window.decorations = "None"; }
-        // lib.optionalAttrs pkgs.stdenv.isDarwin { window.decorations = "Buttonless"; };
+        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux { window.decorations = "None"; }
+        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin { window.decorations = "Buttonless"; };
     };
   };
 }

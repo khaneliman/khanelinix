@@ -27,7 +27,7 @@ in
         pcsx2
         snes9x
       ]
-      ++ lib.optionals stdenv.isLinux [
+      ++ lib.optionals stdenv.hostPlatform.isLinux [
         cemu
         duckstation
         emulationstation
