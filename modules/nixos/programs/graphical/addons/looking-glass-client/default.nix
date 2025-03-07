@@ -18,6 +18,13 @@ in
   };
 
   config = mkIf cfg.enable {
+    boot = {
+      extraModulePackages = with config.boot.kernelPackages; [ kvmfr ];
+      initrd.availableKernelModules = [
+        "kvmfr"
+      ];
+    };
+
     environment.systemPackages = with pkgs; [
       looking-glass-client
       obs-studio-plugins.looking-glass-obs
