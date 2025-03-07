@@ -36,28 +36,34 @@ in
       # TODO: add extensions not packaged with nixpkgs
       profiles =
         let
-          commonExtensions = with pkgs.vscode-extensions; [
-            adpyke.codesnap
-            arrterian.nix-env-selector
-            bbenoist.nix
-            catppuccin.catppuccin-vsc
-            catppuccin.catppuccin-vsc-icons
-            christian-kohler.path-intellisense
-            eamodio.gitlens
-            formulahendry.auto-close-tag
-            formulahendry.auto-rename-tag
-            github.vscode-github-actions
-            github.vscode-pull-request-github
-            gruntfuggly.todo-tree
-            irongeek.vscode-env
-            mkhl.direnv
-            ms-vscode-remote.remote-ssh
-            ms-vsliveshare.vsliveshare
-            shardulm94.trailing-spaces
-            usernamehw.errorlens
-            wakatime.vscode-wakatime
-            yzhang.markdown-all-in-one
-          ];
+          commonExtensions =
+            with pkgs.vscode-extensions;
+            [
+              adpyke.codesnap
+              arrterian.nix-env-selector
+              bbenoist.nix
+              catppuccin.catppuccin-vsc
+              catppuccin.catppuccin-vsc-icons
+              christian-kohler.path-intellisense
+              eamodio.gitlens
+              formulahendry.auto-close-tag
+              formulahendry.auto-rename-tag
+              github.vscode-github-actions
+              github.vscode-pull-request-github
+              gruntfuggly.todo-tree
+              irongeek.vscode-env
+              mkhl.direnv
+              ms-vscode-remote.remote-ssh
+              ms-vsliveshare.vsliveshare
+              shardulm94.trailing-spaces
+              usernamehw.errorlens
+              wakatime.vscode-wakatime
+              yzhang.markdown-all-in-one
+            ]
+            ++ lib.optionals config.khanelinix.suites.development.dockerEnable [
+              ms-azuretools.vscode-docker
+              ms-vscode-remote.remote-containers
+            ];
           commonSettings = {
             # Color theme
             "workbench.colorTheme" = "Catppuccin Macchiato";
