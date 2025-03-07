@@ -63,6 +63,10 @@ in
             ++ lib.optionals config.khanelinix.suites.development.dockerEnable [
               ms-azuretools.vscode-docker
               ms-vscode-remote.remote-containers
+            ]
+            ++ lib.optionals config.khanelinix.suites.development.aiEnable [
+              github.copilot
+              github.copilot-chat
             ];
           commonSettings = {
             # Color theme
