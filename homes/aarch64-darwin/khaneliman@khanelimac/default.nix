@@ -91,6 +91,7 @@ in
       development = {
         enable = true;
 
+        dockerEnable = true;
         nixEnable = true;
       };
       music = enabled;
