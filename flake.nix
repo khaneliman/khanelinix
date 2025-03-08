@@ -15,6 +15,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixpkgs-master.url = "github:nixos/nixpkgs";
+    nixpkgs-firefox.url = "github:khaneliman/nixpkgs/firefox";
     nixos-wsl = {
       url = "github:nix-community/nixos-wsl";
       inputs = {

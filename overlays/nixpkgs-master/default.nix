@@ -4,5 +4,8 @@ _final: _prev: {
     # TODO: remove when it makes it to nixos-unstable
     looking-glass-client
     linuxKernel
+    tailscale
+    # Broken hash on python
+    vscode-extensions
     ;
 }
