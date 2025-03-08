@@ -37,6 +37,9 @@ in
     services.yabai = {
       enable = true;
       package = pkgs.yabai;
+      # NOTE: You need to disable SIP and set nvram boot args for this.
+      # csrutil disable
+      # sudo nvram boot-args=-arm64e_preview_abi
       enableScriptingAddition = true;
 
       config = {
