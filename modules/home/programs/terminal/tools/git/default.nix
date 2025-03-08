@@ -144,7 +144,6 @@ in
 
         extensions = with pkgs; [
           gh-notify # notifications
-          gh-dash # dashboard with pull requests and issues
           gh-eco # explore the ecosystem
           gh-cal # contributions calender terminal viewer
           gh-poi # clean up local branches safely
@@ -163,6 +162,8 @@ in
           version = "1";
         };
       };
+      # dashboard with pull requests and issues
+      gh-dash = enabled;
 
       bash.initExtra = tokenExports;
       fish.shellInit = tokenExports;
