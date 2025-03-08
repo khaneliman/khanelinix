@@ -83,6 +83,7 @@ in
             jq = mkDefault enabled;
             jujutsu = mkDefault enabled;
             lsd = mkDefault enabled;
+            navi = mkDefault enabled;
             oh-my-posh = mkDefault enabled;
             ripgrep = mkDefault enabled;
             tmux = mkDefault enabled;
