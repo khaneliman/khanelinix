@@ -36,7 +36,7 @@ in
         mas
         terminal-notifier
         trash-cli
-        wtf
+        wtfutil
       ];
     };
 
