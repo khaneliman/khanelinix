@@ -112,6 +112,9 @@ in
           if ! pgrep "Raycast"; then
             open ${pkgs.raycast}/Applications/Raycast.app
           fi
+          if ! pgrep "Amphetamine"; then
+            open Applications/Amphetamine.app
+          fi
 
           echo "yabai configuration loaded.."
         '';
