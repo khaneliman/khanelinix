@@ -44,6 +44,7 @@ in
         font-family-bold = "MonaspiceXe Nerd Font";
         font-family-italic = "MonaspiceRn Nerd Font";
         font-family-bold-italic = "MonaspiceKr Nerd Font";
+        font-feature = "+ss01,+ss02,+ss03,+ss04,+ss05,+ss06,+ss07,+liga,+dlig,+calt";
 
         # NOTE: Different methods of using cgroups for every surface.
         # linux-cgroup = "always";
