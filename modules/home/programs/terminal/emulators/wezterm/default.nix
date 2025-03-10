@@ -116,7 +116,11 @@ in
             -- font
             font_size = 13.0,
             font = wezterm.font_with_fallback({
-              { family = "MonaspiceNe Nerd Font", weight = "Regular" },
+              {
+                family = "MonaspiceNe Nerd Font",
+                weight = "Regular",
+                harfbuzz_features={ 'calt', 'liga', 'dlig', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08' },
+              },
               "Symbols Nerd Font",
               "Noto Color Emoji",
             }),
@@ -127,6 +131,7 @@ in
                         family = "MonaspiceRn Nerd Font",
                         weight = "Regular",
                         style = "Italic",
+                        harfbuzz_features={ 'calt', 'liga', 'dlig', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08' },
                 }),
               },
               {
@@ -135,6 +140,7 @@ in
                 font = wezterm.font({
                         family = "MonaspiceXe Nerd Font",
                         weight = "Bold",
+                        harfbuzz_features={ 'calt', 'liga', 'dlig', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08' },
                 }),
               },
               {
@@ -144,6 +150,7 @@ in
                         family = "MonaspiceKr Nerd Font",
                         weight = "Bold",
                         style = "Italic",
+                        harfbuzz_features={ 'calt', 'liga', 'dlig', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08' },
                 }),
               },
             },
