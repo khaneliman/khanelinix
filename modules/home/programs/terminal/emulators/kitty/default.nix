@@ -46,13 +46,45 @@ in
     programs.kitty = {
       enable = true;
 
-      extraConfig = ''
-        # Emoji font
-        symbol_map U+1F600-U+1F64F Noto Color Emoji
+      extraConfig =
+        let
+          fontFeatures = ffs: builtins.concatStringsSep "\n" (builtins.map (ff: "font_features ${ff}") ffs);
 
-        # Fallback to Nerd Font Symbols
-        symbol_map U+23FB-U+23FE,U+2665,U+26A1,U+2B58,U+E000-U+E00A,U+E0A0-U+E0A3,U+E0B0-U+E0D4,U+E200-U+E2A9,U+E300-U+E3E3,U+E5FA-U+E6AA,U+E700-U+E7C5,U+EA60-U+EBEB,U+F000-U+F2E0,U+F300-U+F32F,U+F400-U+F4A9,U+F500-U+F8FF,U+F0001-U+F1AF0 Symbols Nerd Font Mono
-      '';
+          monaspaceFontFeatures = "+dlig +calt +liga +ss01 +ss02 +ss03 +ss04 +ss05 +ss06 +ss07 +ss08 +ss09 +ss10 +cv01 +cv61 +cv62";
+        in
+        builtins.concatStringsSep "\n" [
+          (fontFeatures (
+            builtins.concatLists (
+              builtins.map
+                (
+                  font:
+                  builtins.map (style: "${font}NF-${style} ${monaspaceFontFeatures}") [
+                    "Bold"
+                    "BoldItalic"
+                    "Italic"
+                    "Light"
+                    "Regular"
+                  ]
+                )
+                [
+                  "MonaspiceAr"
+                  "MonaspiceNe"
+                  "MonaspiceXe"
+                  "MonaspiceRn"
+                  "MonaspiceKr"
+                ]
+            )
+          ))
+
+          # TODO: figure out a proper symbol map
+          # "symbol_map U+e000-U+e00a,U+ea60-U+ebeb,U+e0a0-U+e0c8,U+e0ca,U+e0cc-U+e0d4,U+e200-U+e2a9,U+e300-U+e3e3,U+e5fa-U+e6b1,U+e700-U+e7c5,U+f000-U+f2e0,U+f300-U+f372,U+f400-U+f532,U+f0001-U+f1af0 Symbols Nerd Font Mono"
+
+          # Emoji font
+          "symbol_map U+1F600-U+1F64F Noto Color Emoji"
+
+          # Fallback to Nerd Font Symbols
+          "symbol_map U+23FB-U+23FE,U+2665,U+26A1,U+2B58,U+E000-U+E00A,U+E0A0-U+E0A3,U+E0B0-U+E0D4,U+E200-U+E2A9,U+E300-U+E3E3,U+E5FA-U+E6AA,U+E700-U+E7C5,U+EA60-U+EBEB,U+F000-U+F2E0,U+F300-U+F32F,U+F400-U+F4A9,U+F500-U+F8FF,U+F0001-U+F1AF0 Symbols Nerd Font Mono"
+        ];
 
       keybindings = {
         "ctrl+shift+v" = "paste_from_clipboard";
@@ -105,10 +137,6 @@ in
       } // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin { "cmd+opt+s" = "noop"; };
 
       settings =
-        let
-          # Common font features for all Monaspice fonts
-          monospaceFontFeatures = "+dlig +calt +liga +ss01 +ss02 +ss03 +ss04 +ss05 +ss06 +ss07 +ss08 +ss09";
-        in
         {
           # Fonts
           font_family = cfg.font.normal;
@@ -116,31 +144,6 @@ in
           bold_font = cfg.font.bold;
           bold_italic_font = cfg.font.bold_italic;
           font_size = 13;
-
-          # Font features for ligatures
-          "font_features MonaspiceArNF-Light" = monospaceFontFeatures;
-          "font_features MonaspiceArNF-Regular" = monospaceFontFeatures;
-          "font_features MonaspiceArNF-Italic" = monospaceFontFeatures;
-          "font_features MonaspiceArNF-Bold" = monospaceFontFeatures;
-          "font_features MonaspiceArNF-BoldItalic" = monospaceFontFeatures;
-
-          "font_features MonaspiceNeNF-Light" = monospaceFontFeatures;
-          "font_features MonaspiceNeNF-Regular" = monospaceFontFeatures;
-          "font_features MonaspiceNeNF-Italic" = monospaceFontFeatures;
-          "font_features MonaspiceNeNF-Bold" = monospaceFontFeatures;
-          "font_features MonaspiceNeNF-BoldItalic" = monospaceFontFeatures;
-
-          "font_features MonaspiceXeNF-Light" = monospaceFontFeatures;
-          "font_features MonaspiceXeNF-Regular" = monospaceFontFeatures;
-          "font_features MonaspiceXeNF-Italic" = monospaceFontFeatures;
-          "font_features MonaspiceXeNF-Bold" = monospaceFontFeatures;
-          "font_features MonaspiceXeNF-BoldItalic" = monospaceFontFeatures;
-
-          "font_features MonaspiceRnNF-Light" = monospaceFontFeatures;
-          "font_features MonaspiceRnNF-Regular" = monospaceFontFeatures;
-          "font_features MonaspiceRnNF-Italic" = monospaceFontFeatures;
-          "font_features MonaspiceRnNF-Bold" = monospaceFontFeatures;
-          "font_features MonaspiceRnNF-BoldItalic" = monospaceFontFeatures;
 
           adjust_line_height = 0;
           adjust_column_width = 0;
