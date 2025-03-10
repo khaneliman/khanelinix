@@ -106,9 +106,6 @@ in
           # ${getExe yabai} -m signal --add event=window_created app="Firefox" title!="(— Private Browsing$|^Picture-in-Picture$)" action="source ${getExe yabai-helper} && auto_stack Firefox"
           # ${getExe yabai} -m signal --add event=window_title_changed app="Firefox" title="- noVNC$" action="${getExe yabai} -m window $WINDOW_ID --toggle native-fullscreen"
 
-          # jankyborders
-          ${getExe config.${namespace}.desktop.addons.jankyborders.package} 2>/dev/null 1>&2 &
-
           if ! pgrep "Raycast"; then
             open ${pkgs.raycast}/Applications/Raycast.app
           fi
