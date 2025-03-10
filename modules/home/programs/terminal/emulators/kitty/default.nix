@@ -50,7 +50,7 @@ in
         let
           fontFeatures = ffs: builtins.concatStringsSep "\n" (builtins.map (ff: "font_features ${ff}") ffs);
 
-          monaspaceFontFeatures = "+dlig +calt +liga +ss01 +ss02 +ss03 +ss04 +ss05 +ss06 +ss07 +ss08 +ss09 +ss10 +cv01 +cv61 +cv62";
+          monaspaceFontFeatures = "+calt +liga +ss01 +ss02 +ss03 +ss04 +ss05 +ss06 +ss07 +ss08 +ss09";
         in
         builtins.concatStringsSep "\n" [
           (fontFeatures (
