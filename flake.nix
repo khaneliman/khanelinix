@@ -102,6 +102,7 @@
         treefmt-nix.follows = "treefmt-nix";
       };
     };
+    nh.url = "github:viperML/nh";
     nix-flatpak.url = "github:gmodena/nix-flatpak/latest";
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
@@ -184,7 +185,7 @@
         ];
       };
 
-      overlays = [ ];
+      overlays = [ inputs.nh.overlays.default ];
 
       homes.modules = with inputs; [
         anyrun.homeManagerModules.default
