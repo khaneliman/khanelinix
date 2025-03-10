@@ -37,7 +37,10 @@ in
         }
         # preserve current flake in /etc
         // lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-          "nixos/flake".source = self;
+          "nixos".source = self;
+        }
+        // lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+          "nix-darwin".source = self;
         };
 
       systemPackages = with pkgs; [
