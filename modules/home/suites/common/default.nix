@@ -25,6 +25,9 @@ in
 
       shellAliases = {
         nixcfg = "nvim ~/${namespace}/flake.nix";
+        ndu = "nix-du -s=200MB | dot -Tsvg > store.svg && ${
+          if pkgs.stdenv.hostPlatform.isDarwin then "open" else "xdg-open"
+        } store.svg";
       };
     };
 
@@ -37,6 +40,8 @@ in
         toilet
         tree
         nh
+        nix-du
+        graphviz
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
         pngpaste
