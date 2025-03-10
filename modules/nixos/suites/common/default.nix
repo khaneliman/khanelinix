@@ -22,6 +22,7 @@ in
       systemPackages = with pkgs; [
         curl
         dnsutils
+        isd
         lshw
         pciutils
         pkgs.${namespace}.trace-symlink
