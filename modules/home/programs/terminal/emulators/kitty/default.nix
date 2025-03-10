@@ -105,6 +105,10 @@ in
       } // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin { "cmd+opt+s" = "noop"; };
 
       settings =
+        let
+          # Common font features for all Monaspice fonts
+          monospaceFontFeatures = "+dlig +calt +liga +ss01 +ss02 +ss03 +ss04 +ss05 +ss06 +ss07 +ss08 +ss09";
+        in
         {
           # Fonts
           font_family = cfg.font.normal;
@@ -112,6 +116,31 @@ in
           bold_font = cfg.font.bold;
           bold_italic_font = cfg.font.bold_italic;
           font_size = 13;
+
+          # Font features for ligatures
+          "font_features MonaspiceArNF-Light" = monospaceFontFeatures;
+          "font_features MonaspiceArNF-Regular" = monospaceFontFeatures;
+          "font_features MonaspiceArNF-Italic" = monospaceFontFeatures;
+          "font_features MonaspiceArNF-Bold" = monospaceFontFeatures;
+          "font_features MonaspiceArNF-BoldItalic" = monospaceFontFeatures;
+
+          "font_features MonaspiceNeNF-Light" = monospaceFontFeatures;
+          "font_features MonaspiceNeNF-Regular" = monospaceFontFeatures;
+          "font_features MonaspiceNeNF-Italic" = monospaceFontFeatures;
+          "font_features MonaspiceNeNF-Bold" = monospaceFontFeatures;
+          "font_features MonaspiceNeNF-BoldItalic" = monospaceFontFeatures;
+
+          "font_features MonaspiceXeNF-Light" = monospaceFontFeatures;
+          "font_features MonaspiceXeNF-Regular" = monospaceFontFeatures;
+          "font_features MonaspiceXeNF-Italic" = monospaceFontFeatures;
+          "font_features MonaspiceXeNF-Bold" = monospaceFontFeatures;
+          "font_features MonaspiceXeNF-BoldItalic" = monospaceFontFeatures;
+
+          "font_features MonaspiceRnNF-Light" = monospaceFontFeatures;
+          "font_features MonaspiceRnNF-Regular" = monospaceFontFeatures;
+          "font_features MonaspiceRnNF-Italic" = monospaceFontFeatures;
+          "font_features MonaspiceRnNF-Bold" = monospaceFontFeatures;
+          "font_features MonaspiceRnNF-BoldItalic" = monospaceFontFeatures;
 
           adjust_line_height = 0;
           adjust_column_width = 0;
