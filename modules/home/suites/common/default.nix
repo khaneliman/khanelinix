@@ -36,6 +36,7 @@ in
         smassh
         toilet
         tree
+        nh
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
         pngpaste
