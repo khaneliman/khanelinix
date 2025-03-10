@@ -20,7 +20,7 @@ in
 
       options = {
         adjust-open = "best-fit";
-        font = "Iosevka 14";
+        font = "MonaspiceNe Nerd Font 14";
         pages-per-row = "1";
         # recolor-lightcolor = "rgba(0,0,0,0)";
         scroll-full-overlap = "0.01";

@@ -32,7 +32,6 @@ in
             common = [
               "MonaspiceNe Nerd Font"
               "CaskaydiaCove Nerd Font Mono"
-              "Iosevka Nerd Font"
               "Symbols Nerd Font"
               "Noto Color Emoji"
             ];

@@ -34,7 +34,6 @@ in
 
         # Nerd Fonts
         nerd-fonts.caskaydia-cove
-        nerd-fonts.iosevka
         nerd-fonts.monaspace
         nerd-fonts.symbols-only
       ] "Custom font packages to install.";
