@@ -14,6 +14,7 @@ mkShell {
     act
     deadnix
     hydra-check
+    nh
     nix-inspect
     nix-bisect
     nix-diff
