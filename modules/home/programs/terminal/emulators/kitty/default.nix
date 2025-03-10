@@ -46,6 +46,11 @@ in
     programs.kitty = {
       enable = true;
 
+      darwinLaunchOptions = [
+        "--single-instance"
+        "--listen-on=unix:/tmp/kitty.sock"
+      ];
+
       extraConfig =
         let
           fontFeatures = ffs: builtins.concatStringsSep "\n" (builtins.map (ff: "font_features ${ff}") ffs);
