@@ -10,15 +10,27 @@ let
   inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
   cfg = config.${namespace}.programs.terminal.emulators.kitty;
+
+  monaspaceArgon =
+    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Argon Var" else "MonaspaceArgon";
+  monaspaceKrypton =
+    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton Var" else "MonaspaceKrypton";
+  monaspaceNeon = if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon Var" else "MonaspaceNeon";
+  monaspaceRadon =
+    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Radon Var" else "MonaspaceRadon";
+  monaspaceXenon =
+    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Xenon Var" else "MonaspaceXenon";
+
+  removeSpaces = builtins.replaceStrings [ " " ] [ "" ];
 in
 {
   options.${namespace}.programs.terminal.emulators.kitty = with types; {
     enable = mkBoolOpt false "Whether to enable kitty.";
     font = {
-      normal = mkOpt str "MonaspaceNeon" "Font to use for alacritty.";
-      bold = mkOpt str "MonaspaceXenon" "Font to use for alacritty.";
-      italic = mkOpt str "MonaspaceRadon" "Font to use for alacritty.";
-      bold_italic = mkOpt str "MonaspaceKrypton" "Font to use for alacritty.";
+      normal = mkOpt str monaspaceNeon "Font to use for alacritty.";
+      bold = mkOpt str monaspaceXenon "Font to use for alacritty.";
+      italic = mkOpt str monaspaceRadon "Font to use for alacritty.";
+      bold_italic = mkOpt str monaspaceKrypton "Font to use for alacritty.";
     };
   };
 
@@ -55,41 +67,78 @@ in
         let
           fontFeatures = ffs: builtins.concatStringsSep "\n" (builtins.map (ff: "font_features ${ff}") ffs);
 
+          # TODO: move to font specific module
           monaspaceFontFeatures = "+calt +liga +dlig +ss01 +ss02 +ss03 +ss04 +ss05 +ss06 +ss07 +ss08 +ss09 +ss10";
+          monaspaceStyles = [
+            "Bold"
+            "BoldItalic"
+            "ExtraBold"
+            "ExtraBoldItalic"
+            "ExtraLightItalic"
+            "Italic"
+            "Light"
+            "LightItalic"
+            "Medium"
+            "MediumItalic"
+            "Regular"
+            "SemiBold"
+            "SemiBoldItalic"
+            "SemiWideBold"
+            "SemiWideBoldItalic"
+            "SemiWideExtraBold"
+            "SemiWideExtraBoldItalic"
+            "SemiWideExtraLight"
+            "SemiWideExtraLightItalic"
+            "SemiWideItalic"
+            "SemiWideLight"
+            "SemiWideLightItalic"
+            "SemiWideMedium"
+            "SemiWideMediumItalic"
+            "SemiWideRegular"
+            "SemiWideSemiBold"
+            "SemiWideSemiBoldItalic"
+            "WideBold"
+            "WideBoldItalic"
+            "WideExtraBold"
+            "WideExtraBoldItalic"
+            "WideExtraLight"
+            "WideExtraLightItalic"
+            "WideItalic"
+            "WideLight"
+            "WideLightItalic"
+            "WideMedium"
+            "WideMediumItalic"
+            "WideRegular"
+            "WideSemiBold"
+            "WideSemiBoldItalic"
+          ];
         in
-        builtins.concatStringsSep "\n" [
-          (fontFeatures (
-            builtins.concatLists (
-              builtins.map
-                (
-                  font:
-                  builtins.map (style: "${font}-${style} ${monaspaceFontFeatures}") [
-                    "Bold"
-                    "BoldItalic"
-                    "Italic"
-                    "Light"
-                    "Regular"
+        builtins.concatStringsSep "\n" (
+          [
+            (fontFeatures (
+              builtins.concatLists (
+                builtins.map
+                  (font: builtins.map (style: "${font}-${style} ${monaspaceFontFeatures}") monaspaceStyles)
+                  [
+                    (removeSpaces monaspaceArgon)
+                    (removeSpaces monaspaceKrypton)
+                    (removeSpaces monaspaceNeon)
+                    (removeSpaces monaspaceRadon)
+                    (removeSpaces monaspaceXenon)
                   ]
-                )
-                [
-                  "MonaspaceArgon"
-                  "MonaspaceNeon"
-                  "MonaspaceXenon"
-                  "MonaspaceRadon"
-                  "MonaspaceKrypton"
-                ]
-            )
-          ))
+              )
+            ))
 
-          # TODO: figure out a proper symbol map
-          # "symbol_map U+e000-U+e00a,U+ea60-U+ebeb,U+e0a0-U+e0c8,U+e0ca,U+e0cc-U+e0d4,U+e200-U+e2a9,U+e300-U+e3e3,U+e5fa-U+e6b1,U+e700-U+e7c5,U+f000-U+f2e0,U+f300-U+f372,U+f400-U+f532,U+f0001-U+f1af0 Symbols Nerd Font Mono"
-
+            # Fallback to Nerd Font Symbols
+            "symbol_map U+23FB-U+23FE,U+2665,U+26A1,U+2B58,U+E000-U+E00A,U+E0A0-U+E0A3,U+E0B0-U+E0D4,U+E200-U+E2A9,U+E300-U+E3E3,U+E5FA-U+E6AA,U+E700-U+E7C5,U+EA60-U+EBEB,U+F000-U+F2E0,U+F300-U+F32F,U+F400-U+F4A9,U+F500-U+F8FF,U+F0001-U+F1AF0 Symbols Nerd Font Mono"
+          ]
           # Emoji font
-          "symbol_map U+1F600-U+1F64F Noto Color Emoji"
-
-          # Fallback to Nerd Font Symbols
-          "symbol_map U+23FB-U+23FE,U+2665,U+26A1,U+2B58,U+E000-U+E00A,U+E0A0-U+E0A3,U+E0B0-U+E0D4,U+E200-U+E2A9,U+E300-U+E3E3,U+E5FA-U+E6AA,U+E700-U+E7C5,U+EA60-U+EBEB,U+F000-U+F2E0,U+F300-U+F32F,U+F400-U+F4A9,U+F500-U+F8FF,U+F0001-U+F1AF0 Symbols Nerd Font Mono"
-        ];
+          ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+            "symbol_map U+1F600-U+1F64F Noto Color Emoji"
+          ]
+          ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
+          ]
+        );
 
       keybindings = {
         "ctrl+shift+v" = "paste_from_clipboard";
