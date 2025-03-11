@@ -17,7 +17,10 @@ in
 
   config = mkIf cfg.enable {
     homebrew = {
-      casks = [ "moonlight" ];
+      casks = [
+        "moonlight"
+        "steam"
+      ];
     };
   };
 }
