@@ -2,6 +2,6 @@
 
 return {
 	font = "SF Pro",
-	nerd_font = "MonaspaceNeon",
+	nerd_font = "Monaspace Neon",
 	paddings = 3,
 }
