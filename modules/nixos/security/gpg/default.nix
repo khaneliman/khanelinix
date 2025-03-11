@@ -46,7 +46,6 @@ in
       cryptsetup
       gnupg
       paperkey
-      pinentry-curses
       pinentry-qt
     ];
 
