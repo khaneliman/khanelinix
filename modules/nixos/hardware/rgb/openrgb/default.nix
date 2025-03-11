@@ -30,7 +30,6 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       i2c-tools
-      openrgb-with-all-plugins
     ];
 
     ${namespace}.home.configFile =
@@ -42,6 +41,8 @@ in
 
     services.hardware.openrgb = {
       enable = true;
+      package = pkgs.openrgb-with-all-plugins;
+
       inherit (cfg) motherboard;
     };
   };
