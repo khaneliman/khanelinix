@@ -45,6 +45,7 @@ in
         amd = {
           enable = true;
           enableRocmSupport = true;
+          enableNvtop = true;
         };
         nvidia = enabled;
       };
