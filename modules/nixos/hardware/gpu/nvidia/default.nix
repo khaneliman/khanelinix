@@ -24,25 +24,29 @@ in
   options.${namespace}.hardware.gpu.nvidia = {
     enable = mkBoolOpt false "Whether or not to enable support for nvidia.";
     enableCudaSupport = mkBoolOpt false "Whether or not to enable support for cuda.";
+    enableNvtop = mkBoolOpt false "Whether or not to install nvtop for nvidia.";
   };
 
   config = mkIf cfg.enable {
     boot.blacklistedKernelModules = [ "nouveau" ];
 
-    environment.systemPackages = with pkgs; [
-      nvfancontrol
+    environment.systemPackages =
+      with pkgs;
+      [
+        nvfancontrol
 
-      nvtopPackages.nvidia
+        # mesa
+        mesa
 
-      # mesa
-      mesa
-
-      # vulkan
-      vulkan-tools
-      vulkan-loader
-      vulkan-validation-layers
-      vulkan-extension-layer
-    ];
+        # vulkan
+        vulkan-tools
+        vulkan-loader
+        vulkan-validation-layers
+        vulkan-extension-layer
+      ]
+      ++ lib.optionals enableNvtop [
+        nvtopPackages.nvidia
+      ];
 
     hardware = {
       nvidia = mkIf (!config.${namespace}.hardware.gpu.amd.enable) {
