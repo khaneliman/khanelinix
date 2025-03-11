@@ -30,7 +30,7 @@ in
 
         # Emojis
         noto-fonts-color-emoji
-        twemoji-color-font
+        noto-fonts-monochrome-emoji
 
         # Nerd Fonts
         cascadia-code
