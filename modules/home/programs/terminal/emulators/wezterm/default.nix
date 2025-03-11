@@ -119,7 +119,7 @@ in
               {
                 family = "MonaspaceNeon",
                 weight = "Regular",
-                harfbuzz_features={ 'calt', 'liga', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09' },
+                harfbuzz_features={ 'calt', 'liga', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09', 'ss10', 'dlig' },
               },
               "Symbols Nerd Font",
               "Noto Color Emoji",
@@ -131,7 +131,7 @@ in
                         family = "MonaspaceRadon",
                         weight = "Regular",
                         style = "Italic",
-                        harfbuzz_features={ 'calt', 'liga', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09' },
+                        harfbuzz_features={ 'calt', 'liga', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09', 'ss10', 'dlig' },
                 }),
               },
               {
@@ -140,7 +140,7 @@ in
                 font = wezterm.font({
                         family = "MonaspaceXenon",
                         weight = "Bold",
-                        harfbuzz_features={ 'calt', 'liga', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09' },
+                        harfbuzz_features={ 'calt', 'liga', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09', 'ss10', 'dlig' },
                 }),
               },
               {
@@ -150,7 +150,7 @@ in
                         family = "MonaspaceKrypton",
                         weight = "Bold",
                         style = "Italic",
-                        harfbuzz_features={ 'calt', 'liga', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09' },
+                        harfbuzz_features={ 'calt', 'liga', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09', 'ss10', 'dlig' },
                 }),
               },
             },

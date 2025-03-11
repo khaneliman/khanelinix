@@ -103,7 +103,7 @@ in
             # Editor
             "editor.bracketPairColorization.enabled" = true;
             "editor.fontLigatures" =
-              "'calt', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09', 'liga'";
+              "'calt', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09', 'ss10', 'dlig', 'liga'";
             "editor.fontSize" = 16;
             "editor.formatOnPaste" = true;
             "editor.formatOnSave" = true;

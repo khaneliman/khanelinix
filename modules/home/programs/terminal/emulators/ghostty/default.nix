@@ -44,7 +44,7 @@ in
         font-family-bold = "MonaspaceXenon";
         font-family-italic = "MonaspaceRadon";
         font-family-bold-italic = "MonaspaceKrypton";
-        font-feature = "+ss01,+ss02,+ss03,+ss04,+ss05,+ss06,+ss07,+ss08,+ss09,+liga,+calt";
+        font-feature = "+ss01,+ss02,+ss03,+ss04,+ss05,+ss06,+ss07,+ss08,+ss09,+ss10,+liga,+dlig,+calt";
 
         # NOTE: Different methods of using cgroups for every surface.
         # linux-cgroup = "always";
