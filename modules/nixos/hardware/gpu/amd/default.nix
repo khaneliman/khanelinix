@@ -15,6 +15,7 @@ in
   options.${namespace}.hardware.gpu.amd = {
     enable = mkBoolOpt false "Whether or not to enable support for amdgpu.";
     enableRocmSupport = mkBoolOpt false "Whether or not to enable support for rocm.";
+    enableNvtop = mkBoolOpt false "Whether or not to install nvtop for amd.";
   };
 
   config = mkIf cfg.enable {
@@ -24,10 +25,14 @@ in
       kernelModules = [ "amdgpu" ]; # if loading somehow fails during initrd but the boot continues, try again later
     };
 
-    environment.systemPackages = with pkgs; [
-      amdgpu_top
-      nvtopPackages.amd
-    ];
+    environment.systemPackages =
+      with pkgs;
+      [
+        amdgpu_top
+      ]
+      ++ lib.optionals enableNvtop [
+        nvtopPackages.amd
+      ];
 
     environment.variables = {
       # VAAPI and VDPAU config for accelerated video.
