@@ -25,7 +25,7 @@ in
       # NOTE: rofi-wayland doesn't support plugins with HM module. But... non wayland sucks... sooo
       package = pkgs.rofi-wayland;
 
-      font = "MonaspiceNe Nerd Font 14";
+      font = "MonaspaceNeon 14";
       location = "center";
       theme = "catppuccin";
 

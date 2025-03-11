@@ -139,9 +139,9 @@ in
               "media.eme.enabled" = true;
               "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
               "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
-              "font.name.monospace.x-western" = "MonaspiceKr Nerd Font";
-              "font.name.sans-serif.x-western" = "MonaspiceNe Nerd Font";
-              "font.name.serif.x-western" = "MonaspiceNe Nerd Font";
+              "font.name.monospace.x-western" = "MonaspaceKrypton";
+              "font.name.sans-serif.x-western" = "MonaspaceNeon";
+              "font.name.serif.x-western" = "MonaspaceNeon";
               "signon.autofillForms" = false;
               "signon.firefoxRelay.feature" = "disabled";
               "signon.generation.enabled" = false;

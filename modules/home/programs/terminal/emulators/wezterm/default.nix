@@ -117,7 +117,7 @@ in
             font_size = 13.0,
             font = wezterm.font_with_fallback({
               {
-                family = "MonaspiceNe Nerd Font",
+                family = "MonaspaceNeon",
                 weight = "Regular",
                 harfbuzz_features={ 'calt', 'liga', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09' },
               },
@@ -128,7 +128,7 @@ in
               {
                 italic = true,
                 font = wezterm.font({
-                        family = "MonaspiceRn Nerd Font",
+                        family = "MonaspaceRadon",
                         weight = "Regular",
                         style = "Italic",
                         harfbuzz_features={ 'calt', 'liga', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09' },
@@ -138,7 +138,7 @@ in
                 italic = false,
                 intensity = "Bold",
                 font = wezterm.font({
-                        family = "MonaspiceXe Nerd Font",
+                        family = "MonaspaceXenon",
                         weight = "Bold",
                         harfbuzz_features={ 'calt', 'liga', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09' },
                 }),
@@ -147,7 +147,7 @@ in
                 italic = true,
                 intensity = "Bold",
                 font = wezterm.font({
-                        family = "MonaspiceKr Nerd Font",
+                        family = "MonaspaceKrypton",
                         weight = "Bold",
                         style = "Italic",
                         harfbuzz_features={ 'calt', 'liga', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09' },

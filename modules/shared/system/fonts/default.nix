@@ -34,10 +34,10 @@ in
 
         # Nerd Fonts
         nerd-fonts.caskaydia-cove
-        nerd-fonts.monaspace
+        monaspace
         nerd-fonts.symbols-only
       ] "Custom font packages to install.";
-    default = mkOpt types.str "MonaspiceNe Nerd Font" "Default font name";
+    default = mkOpt types.str "MonaspaceNe" "Default font name";
   };
 
   config = mkIf cfg.enable {

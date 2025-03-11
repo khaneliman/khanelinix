@@ -75,11 +75,10 @@ in
             "workbench.iconTheme" = "vscode-icons";
 
             # Font family
-            "editor.fontFamily" =
-              "MonaspiceAr Nerd Font, CaskaydiaCove Nerd Font,Consolas, monospace,Hack Nerd Font";
+            "editor.fontFamily" = "MonaspaceArgon, CaskaydiaCove Nerd Font,Consolas, monospace,Hack Nerd Font";
             "editor.codeLensFontFamily" =
-              "MonaspiceNe Nerd Font, Liga SFMono Nerd Font, CaskaydiaCove Nerd Font,Consolas, 'Courier New', monospace,Hack Nerd Font";
-            "editor.inlayHints.fontFamily" = "MonaspiceKr Nerd Font";
+              "MonaspaceNeon, Liga SFMono Nerd Font, CaskaydiaCove Nerd Font,Consolas, 'Courier New', monospace,Hack Nerd Font";
+            "editor.inlayHints.fontFamily" = "MonaspaceKrypton";
             "debug.console.fontFamily" = "Monaspace Krypton";
             "scm.inputFontFamily" = "Monaspace Radon";
             "notebook.output.fontFamily" = "Monapsace Radon";

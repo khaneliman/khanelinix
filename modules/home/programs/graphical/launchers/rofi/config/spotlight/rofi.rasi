@@ -1,5 +1,5 @@
 configuration {
-    font: "MonaspiceNe Nerd Font 14";
+    font: "MonaspaceNeon 14";
 	show-icons: true;
 	drun-display-format: "{name}";
     icon-theme: "Papirus-Dark";

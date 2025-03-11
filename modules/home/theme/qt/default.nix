@@ -33,8 +33,8 @@ in
       };
 
       Fonts = {
-        fixed = mkOpt types.str "MonaspiceKr Nerd Font 10" "Fixed font type";
-        general = mkOpt types.str "MonaspiceNe Nerd Font 10" "General font type";
+        fixed = mkOpt types.str "MonaspaceKrypton 10" "Fixed font type";
+        general = mkOpt types.str "MonaspaceNeon 10" "General font type";
       };
 
       Interface = {

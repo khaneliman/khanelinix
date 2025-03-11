@@ -30,7 +30,7 @@ in
         defaultFonts =
           let
             common = [
-              "MonaspiceNe Nerd Font"
+              "MonaspaceNeon"
               "CaskaydiaCove Nerd Font Mono"
               "Symbols Nerd Font"
               "Noto Color Emoji"

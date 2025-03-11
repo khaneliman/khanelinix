@@ -63,7 +63,7 @@ in
         ''
           * {
             background-image: none;
-            font-family: MonaspiceNe Nerd Font;
+            font-family: MonaspaceNeon;
             font-size: 20px;
           }
           window {

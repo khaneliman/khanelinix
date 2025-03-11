@@ -24,7 +24,7 @@ in
       settings = {
         ignore-empty-password = true;
         disable-caps-lock-text = true;
-        font = "MonaspiceAr Nerd Font";
+        font = "MonaspaceArgon";
         grace = 300;
 
         clock = true;
