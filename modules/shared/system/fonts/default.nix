@@ -33,7 +33,7 @@ in
         twemoji-color-font
 
         # Nerd Fonts
-        nerd-fonts.caskaydia-cove
+        cascadia-code
         monaspace
         nerd-fonts.symbols-only
       ] "Custom font packages to install.";

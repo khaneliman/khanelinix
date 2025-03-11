@@ -31,7 +31,7 @@ in
           let
             common = [
               "MonaspaceNeon"
-              "CaskaydiaCove Nerd Font Mono"
+              "CascadiaCode"
               "Symbols Nerd Font"
               "Noto Color Emoji"
             ];
