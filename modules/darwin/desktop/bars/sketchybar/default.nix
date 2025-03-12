@@ -33,6 +33,11 @@ in
     launchd.user.agents.sketchybar.serviceConfig = {
       StandardErrorPath = cfg.logFile;
       StandardOutPath = cfg.logFile;
+      KeepAlive = lib.mkForce {
+        PathState = {
+          "/run/current-system/sw/bin/sketchybar" = true;
+        };
+      };
     };
 
     services.sketchybar = {

@@ -34,6 +34,11 @@ in
     launchd.user.agents.skhd.serviceConfig = {
       StandardErrorPath = cfg.logFile;
       StandardOutPath = cfg.logFile;
+      KeepAlive = lib.mkForce {
+        PathState = {
+          "/run/current-system/sw/bin/skhd" = true;
+        };
+      };
     };
 
     services.skhd = {

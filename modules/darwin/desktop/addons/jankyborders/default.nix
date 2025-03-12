@@ -31,6 +31,11 @@ in
     launchd.user.agents.jankyborders.serviceConfig = {
       StandardErrorPath = cfg.logFile;
       StandardOutPath = cfg.logFile;
+      KeepAlive = lib.mkForce {
+        PathState = {
+          "/run/current-system/sw/bin/borders" = true;
+        };
+      };
     };
 
     services.jankyborders = {
