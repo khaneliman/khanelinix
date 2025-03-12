@@ -139,9 +139,12 @@ in
               "media.eme.enabled" = true;
               "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
               "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
-              "font.name.monospace.x-western" = "MonaspaceKrypton";
-              "font.name.sans-serif.x-western" = "MonaspaceNeon";
-              "font.name.serif.x-western" = "MonaspaceNeon";
+              "font.name.monospace.x-western" =
+                if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton" else "MonaspaceKrypton";
+              "font.name.sans-serif.x-western" =
+                if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon" else "MonaspaceNeon";
+              "font.name.serif.x-western" =
+                if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon" else "MonaspaceNeon";
               "signon.autofillForms" = false;
               "signon.firefoxRelay.feature" = "disabled";
               "signon.generation.enabled" = false;
