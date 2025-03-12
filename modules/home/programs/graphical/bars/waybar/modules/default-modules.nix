@@ -250,6 +250,7 @@ in
     format-ok = "✓";
     system = true;
     user = false;
+    on-click = "${lib.getExe pkgs.kitty} ${lib.getExe pkgs.isd}";
   };
 
   temperature = {
