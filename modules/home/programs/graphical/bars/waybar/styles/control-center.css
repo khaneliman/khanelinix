@@ -1,5 +1,5 @@
 #control-center {
-  margin: 0.5em;
+  margin: 0.5em 0.25em 0.5em 0.5em;
   padding-left: 5px;
   padding-right: 5px;
   color: @peach;
@@ -23,6 +23,14 @@
   padding: 0 0.5em;
 }
 
+#bluetooth {
+  padding-left: 0.75em;
+}
+
+#custom-notification {
+  padding-right: 0.75em;
+}
+
 #custom-updates.updated {
   padding-left: 0;
   padding-right: 1em;
@@ -30,10 +38,13 @@
 
 /* Unique colors for modules */
 #idle_inhibitor {
+  font-size: 22px;
+  padding-right: 0;
   color: @yellow;
 }
 
 #pulseaudio{
+  font-size: 16px;
   color: @green;
 }
 
@@ -46,6 +57,7 @@
 }
 
 #systemd-failed-units {
+  font-size: 22px;
   color: @mauve;
 }
 

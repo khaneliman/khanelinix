@@ -48,10 +48,13 @@ box {
 
 /* Add spacing for right side modules */
 #user,
-#custom-weather,
 #keyboard-state,
 #mpd {
   padding: 0 1em;
+}
+
+#custom-weather {
+  margin: 0.75em;
 }
 
 /* tray needs less padding */
@@ -62,13 +65,19 @@ box {
 #clock {
   font-size: 16px;
   font-weight: 900;
+  margin: 0.5em;
 }
 
-#custom-separator-right,
 #custom-separator-left {
   font-size: 20px;
-  padding-left: 1em;
-  padding-right: 1em;
+  padding-left: 0.25em;
+  padding-right: 0.5em;
+  color: @text;
+}
+#custom-separator-right {
+  font-size: 20px;
+  padding-left: 0.5em;
+  padding-right: 0.25em;
   color: @text;
 }
 
