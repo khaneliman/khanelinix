@@ -11,7 +11,7 @@ Sbar.default({
 		font = {
 			family = settings.nerd_font,
 			style = "Bold",
-			size = 16.0,
+			size = 20.0,
 		},
 		padding_left = settings.paddings,
 		padding_right = settings.paddings,
