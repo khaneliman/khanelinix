@@ -6,6 +6,8 @@
   ...
 }:
 let
+  inherit (lib.${namespace}) mkOpt;
+
   cfg = config.${namespace}.desktop.addons.jankyborders;
 in
 {
@@ -20,9 +22,17 @@ in
       description = "The jankyborders package to use.";
       example = lib.literalExpression "pkgs.${namespace}.jankyborders";
     };
+    logFile =
+      mkOpt lib.types.str "/Users/khaneliman/Library/Logs/jankyborders.log"
+        "Filepath of log output";
   };
 
   config = lib.mkIf cfg.enable {
+    launchd.user.agents.jankyborders.serviceConfig = {
+      StandardErrorPath = cfg.logFile;
+      StandardOutPath = cfg.logFile;
+    };
+
     services.jankyborders = {
       enable = true;
 
