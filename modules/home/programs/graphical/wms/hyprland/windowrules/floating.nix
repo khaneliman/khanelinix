@@ -27,6 +27,7 @@ in
           "float, class:splash"
           "float, class:confirmreset"
           "float, class:org.kde.polkit-kde-authentication-agent-1"
+          "float, class:org.kde.ark"
           "float, class:^(wdisplays)$"
           "size 1100 600, class:^(wdisplays)$"
           "float, class:^(blueman-manager)$"
