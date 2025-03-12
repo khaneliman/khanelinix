@@ -75,17 +75,19 @@ in
             "workbench.iconTheme" = "vscode-icons";
 
             # Font family
-            "editor.fontFamily" = "MonaspaceArgon, CascadiaCode,Consolas, monospace,Hack Nerd Font";
+            "editor.fontFamily" =
+              "MonaspaceArgon, Monaspace Argon, CascadiaCode,Consolas, monospace,Hack Nerd Font";
             "editor.codeLensFontFamily" =
-              "MonaspaceNeon, Liga SFMono Nerd Font, CascadiaCode,Consolas, 'Courier New', monospace,Hack Nerd Font";
-            "editor.inlayHints.fontFamily" = "MonaspaceKrypton";
-            "debug.console.fontFamily" = "Monaspace Krypton";
-            "scm.inputFontFamily" = "Monaspace Radon";
-            "notebook.output.fontFamily" = "Monapsace Radon";
-            "chat.editor.fontFamily" = "Monaspace Argon";
+              "MonaspaceNeon, Monaspace Neon, Liga SFMono Nerd Font, CascadiaCode,Consolas, 'Courier New', monospace,Hack Nerd Font";
+            "editor.inlayHints.fontFamily" = "MonaspaceKrypton, Monaspace Krypton";
+            "debug.console.fontFamily" = "MonaspaceKrypton, Monaspace Krypton";
+            "scm.inputFontFamily" = "MonaspaceRadon, Monaspace Radon";
+            "notebook.output.fontFamily" = "MonaspaceRadon, Monapsace Radon";
+            "chat.editor.fontFamily" = "MonaspaceArgon, Monaspace Argon";
             "markdown.preview.fontFamily" =
-              "Monaspace Xenon; -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif";
-            "terminal.integrated.fontFamily" = "JetBrainsMono Nerd Font Mono";
+              "MonaspaceXenon, Monaspace Xenon; -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif";
+            "terminal.integrated.fontFamily" =
+              "MonaspaceKrypton, Monaspace Krypton, JetBrainsMono Nerd Font Mono";
 
             # Git settings
             "git.allowForcePush" = true;
