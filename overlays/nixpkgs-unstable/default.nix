@@ -18,5 +18,8 @@ _final: _prev: {
     monitorcontrol
     stats
     switchaudio-osx
+
+    # TODO: remove once in nixos-unstable
+    firefox-devedition
     ;
 }
