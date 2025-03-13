@@ -19,6 +19,9 @@ local memory = Sbar.add("item", "memory", {
 	icon = {
 		string = icons.stats.memory,
 		color = colors.green,
+		font = {
+			size = 15,
+		},
 	},
 	update_freq = 15,
 	position = "right",

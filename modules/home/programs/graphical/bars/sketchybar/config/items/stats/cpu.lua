@@ -22,6 +22,9 @@ local cpu = Sbar.add("item", "cpu", {
 	icon = {
 		string = icons.stats.cpu,
 		color = colors.blue,
+		font = {
+			size = 15,
+		},
 	},
 	update_freq = 2,
 	position = "right",

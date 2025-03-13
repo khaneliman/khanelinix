@@ -47,9 +47,9 @@ return {
 		},
 	},
 	stats = {
-		cpu = "",
+		cpu = "􀧓",
 		disk = "󰋊",
-		memory = "",
+		memory = "􀧖",
 		network = "",
 		network_down = "",
 		network_up = "",
@@ -59,8 +59,8 @@ return {
 	bluetooth = "󰂯",
 	bluetooth_off = "󰂲",
 	brew = "􀐛",
-	wifi = "󰖩",
-	wifi_off = "󰖪",
+	wifi = "􀙇",
+	wifi_off = "􀙈",
 	git = {
 		issue = "􀍷",
 		discussion = "􀒤",

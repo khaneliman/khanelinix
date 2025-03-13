@@ -19,6 +19,9 @@ local disk = Sbar.add("item", "disk", {
 	icon = {
 		string = icons.stats.disk,
 		color = colors.blue,
+		font = {
+			size = 16,
+		},
 	},
 	update_freq = 60,
 	position = "right",
