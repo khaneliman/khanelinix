@@ -2,31 +2,42 @@
 
 local colors = require("colors")
 local app_icons = require("app_icons")
+local settings = require("settings")
 
 local spaces = {}
 
 for i = 1, 10, 1 do
 	local space = Sbar.add("space", {
-		space = i,
+		associated_space = i,
 		icon = {
 			string = i,
 			padding_left = 7,
 			padding_right = 7,
-			color = colors.white,
+			color = colors.text,
 			highlight_color = colors.getRandomCatColor(),
+			font = { family = settings.font, size = 14 },
 		},
 		padding_left = 2,
 		padding_right = 2,
 		label = {
 			padding_right = 20,
-			color = colors.subtext0,
+			color = colors.grey,
 			highlight_color = colors.getRandomCatColor(),
 			font = "sketchybar-app-font:Regular:16.0",
 			y_offset = -1,
+			background = {
+				height = 26,
+				drawing = true,
+				color = colors.surface1,
+				corner_radius = 8,
+			},
 		},
 		background = {
+			drawing = true,
 			color = colors.surface0,
 			border_color = colors.surface1,
+			border_width = 2,
+			corner_radius = 8,
 		},
 		popup = {
 			background = {
@@ -85,12 +96,13 @@ local space_creator = Sbar.add("item", {
 	icon = {
 		string = "􀆊",
 		font = {
-			style = "Heavy",
+			family = settings.nerd_font,
+			style = "Regular",
 			size = 16.0,
 		},
 	},
 	label = { drawing = false },
-	display = "active",
+	associated_display = "active",
 })
 
 space_creator:subscribe("mouse.clicked", function(_)
@@ -103,7 +115,7 @@ space_creator:subscribe("space_windows_change", function(env)
 	for app, _ in pairs(env.INFO.apps) do
 		no_app = false
 		local lookup = app_icons[app]
-		local icon = ((lookup == nil) and app_icons["default"] or lookup)
+		local icon = ((lookup == nil) and app_icons["Default"] or lookup)
 		icon_line = icon_line .. " " .. icon
 	end
 	if no_app then
