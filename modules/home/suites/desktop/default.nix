@@ -17,6 +17,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    khanelinix.system.input.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isDarwin;
+
     home.packages =
       with pkgs;
       [
