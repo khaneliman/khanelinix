@@ -115,6 +115,9 @@ space_creator:subscribe("space_windows_change", function(env)
 	for app, _ in pairs(env.INFO.apps) do
 		no_app = false
 		local lookup = app_icons[app]
+		if lookup == nil then
+			print(app .. " not found in icon lookup")
+		end
 		local icon = ((lookup == nil) and app_icons["Default"] or lookup)
 		icon_line = icon_line .. " " .. icon
 	end
