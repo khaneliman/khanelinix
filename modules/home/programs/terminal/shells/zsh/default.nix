@@ -94,17 +94,14 @@ in
         initContent = lib.mkMerge [
           (lib.mkBefore # Bash
             ''
-              # avoid duplicated entries in PATH
-              typeset -U PATH
-
-              # try to correct the spelling of commands
+              # Offer to correct the spelling of commands
               setopt correct
-              # disable C-S/C-Q
+              # Disable C-S/C-Q
               setopt noflowcontrol
-              # disable "no matches found" check
+              # Disable "no matches found" check
               unsetopt nomatch
 
-              # autosuggests otherwise breaks these widgets.
+              # Auto suggests otherwise breaks these widgets.
               # <https://github.com/zsh-users/zsh-autosuggestions/issues/619>
               ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-beginning-search-backward-end history-beginning-search-forward-end)
 
