@@ -2,9 +2,10 @@
 # (indicated by the wildcard `*`)
 zstyle ':completion:*' menu select
 
+# FIXME: breaks fzf
 # forces zsh to realize new commands
 # might be useful if new commands have been installed during the session
-zstyle ':completion:*' completer _oldlist _expand _complete _match _ignored _approximate
+# zstyle ':completion:*' completer _oldlist _expand _complete _match _ignored _approximate
 
 # pasting with tabs doesn't perform completion
 zstyle ':completion:*' insert-tab pending
@@ -30,8 +31,9 @@ zstyle ':completion:*:*:-subscript-:*' tag-order indexes parameters
 # Don't complete unavailable commands.
 zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
 
+# FIXME: breaks fzf
 # No correction
-zstyle ':completion:*' completer _oldlist _expand _complete _files _ignored
+# zstyle ':completion:*' completer _oldlist _expand _complete _files _ignored
 
 # Don't insert tabs when there is no completion (e.g. beginning of line)
 zstyle ':completion:*' insert-tab false
