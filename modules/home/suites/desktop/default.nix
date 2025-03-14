@@ -39,7 +39,8 @@ in
         kdePackages.ark
         kdePackages.gwenview
         realvnc-vnc-viewer
-        rustdesk-flutter
+        # FIXME:
+        # rustdesk-flutter
       ];
   };
 }

@@ -55,9 +55,11 @@ in
           postman
           bruno
           act
-          (tree-sitter.override {
-            webUISupport = true;
-          })
+          tree-sitter
+          # FIXME: broken nixpkgs
+          # (tree-sitter.override {
+          #   webUISupport = true;
+          # })
         ]
         ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
           github-desktop
