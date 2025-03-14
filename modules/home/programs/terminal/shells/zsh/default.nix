@@ -101,18 +101,11 @@ in
               # Disable "no matches found" check
               unsetopt nomatch
 
-              # Auto suggests otherwise breaks these widgets.
-              # <https://github.com/zsh-users/zsh-autosuggestions/issues/619>
-              ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-beginning-search-backward-end history-beginning-search-forward-end)
-
-              # Do this early so fast-syntax-highlighting can wrap and override this
-              if autoload history-search-end; then
-                zle -N history-beginning-search-backward-end history-search-end
-                zle -N history-beginning-search-forward-end  history-search-end
-              fi
-
-              source <(${lib.getExe config.programs.fzf.package} --zsh)
-              source ${config.programs.git.package}/share/git/contrib/completion/git-prompt.sh
+              # Raf's helper functions for setting zsh options that I normally use on my shell
+              # a description of each option can be found in the Zsh manual
+              # <https://zsh.sourceforge.io/Doc/Release/Options.html>
+              # NOTE: this slows down shell startup time considerably
+              ${fileContents ./rc/opts.zsh}
 
               # Prevent the command from being written to history before it's
               # executed; save it to LASTHIST instead.  Write it to history
@@ -130,22 +123,28 @@ in
 
               # zsh hook called before the prompt is printed.  See zshmisc(1).
               function precmd() {
-                # Write the last command if successful, using the history buffered by
-                # zshaddhistory().
-                if [[ $? == 0 && -n ''${LASTHIST//[[:space:]\n]/} && -n $HISTFILE ]] ; then
-                  print -sr -- ''${=''${LASTHIST%%'\n'}}
-                fi
-              }
+                  # Write the last command if successful, using the history buffered by
+                  # zshaddhistory().
+                  if [[ $? == 0 && -n ''${LASTHIST//[[:space:]\n]/} && -n $HISTFILE ]] ; then
+                    print -sr -- ''${=''${LASTHIST%%'\n'}}
+                  fi
+                }
+
+              # Do this early so fast-syntax-highlighting can wrap and override this
+              if autoload history-search-end; then
+                zle -N history-beginning-search-backward-end history-search-end
+                zle -N history-beginning-search-forward-end  history-search-end
+              fi
+
+              source <(${lib.getExe config.programs.fzf.package} --zsh)
+              source ${config.programs.git.package}/share/git/contrib/completion/git-prompt.sh
             ''
           )
           # Bash
           ''
-            # Raf's helper functions for setting zsh options that I normally use on my shell
-            # a description of each option can be found in the Zsh manual
-            # <https://zsh.sourceforge.io/Doc/Release/Options.html>
-            # NOTE: this slows down shell startup time considerably
-            ${fileContents ./rc/unset.zsh}
-            ${fileContents ./rc/set.zsh}
+            # Auto suggests otherwise breaks these widgets.
+            # <https://github.com/zsh-users/zsh-autosuggestions/issues/619>
+            ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-beginning-search-backward-end history-beginning-search-forward-end)
 
             # binds, zsh modules and everything else
             ${fileContents ./rc/binds.zsh}
