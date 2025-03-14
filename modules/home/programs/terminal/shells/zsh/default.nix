@@ -91,56 +91,57 @@ in
           package = pkgs.zsh-syntax-highlighting;
         };
 
-        initExtraFirst = # bash
-          ''
-            # avoid duplicated entries in PATH
-            typeset -U PATH
+        initContent = lib.mkMerge [
+          (lib.mkBefore # Bash
+            ''
+              # avoid duplicated entries in PATH
+              typeset -U PATH
 
-            # try to correct the spelling of commands
-            setopt correct
-            # disable C-S/C-Q
-            setopt noflowcontrol
-            # disable "no matches found" check
-            unsetopt nomatch
+              # try to correct the spelling of commands
+              setopt correct
+              # disable C-S/C-Q
+              setopt noflowcontrol
+              # disable "no matches found" check
+              unsetopt nomatch
 
-            # autosuggests otherwise breaks these widgets.
-            # <https://github.com/zsh-users/zsh-autosuggestions/issues/619>
-            ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-beginning-search-backward-end history-beginning-search-forward-end)
+              # autosuggests otherwise breaks these widgets.
+              # <https://github.com/zsh-users/zsh-autosuggestions/issues/619>
+              ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-beginning-search-backward-end history-beginning-search-forward-end)
 
-            # Do this early so fast-syntax-highlighting can wrap and override this
-            if autoload history-search-end; then
-              zle -N history-beginning-search-backward-end history-search-end
-              zle -N history-beginning-search-forward-end  history-search-end
-            fi
-
-            source <(${lib.getExe config.programs.fzf.package} --zsh)
-            source ${config.programs.git.package}/share/git/contrib/completion/git-prompt.sh
-
-            # Prevent the command from being written to history before it's
-            # executed; save it to LASTHIST instead.  Write it to history
-            # in precmd.
-            #
-            # called before a history line is saved.  See zshmisc(1).
-            function zshaddhistory() {
-              # Remove line continuations since otherwise a "\" will eventually
-              # get written to history with no newline.
-              LASTHIST=''${1//\\$'\n'/}
-              # Return value 2: "... the history line will be saved on the internal
-              # history list, but not written to the history file".
-              return 2
-            }
-
-            # zsh hook called before the prompt is printed.  See zshmisc(1).
-            function precmd() {
-              # Write the last command if successful, using the history buffered by
-              # zshaddhistory().
-              if [[ $? == 0 && -n ''${LASTHIST//[[:space:]\n]/} && -n $HISTFILE ]] ; then
-                print -sr -- ''${=''${LASTHIST%%'\n'}}
+              # Do this early so fast-syntax-highlighting can wrap and override this
+              if autoload history-search-end; then
+                zle -N history-beginning-search-backward-end history-search-end
+                zle -N history-beginning-search-forward-end  history-search-end
               fi
-            }
-          '';
 
-        initExtra = # bash
+              source <(${lib.getExe config.programs.fzf.package} --zsh)
+              source ${config.programs.git.package}/share/git/contrib/completion/git-prompt.sh
+
+              # Prevent the command from being written to history before it's
+              # executed; save it to LASTHIST instead.  Write it to history
+              # in precmd.
+              #
+              # called before a history line is saved.  See zshmisc(1).
+              function zshaddhistory() {
+                # Remove line continuations since otherwise a "\" will eventually
+                # get written to history with no newline.
+                LASTHIST=''${1//\\$'\n'/}
+                # Return value 2: "... the history line will be saved on the internal
+                # history list, but not written to the history file".
+                return 2
+              }
+
+              # zsh hook called before the prompt is printed.  See zshmisc(1).
+              function precmd() {
+                # Write the last command if successful, using the history buffered by
+                # zshaddhistory().
+                if [[ $? == 0 && -n ''${LASTHIST//[[:space:]\n]/} && -n $HISTFILE ]] ; then
+                  print -sr -- ''${=''${LASTHIST%%'\n'}}
+                fi
+              }
+            ''
+          )
+          # Bash
           ''
             # Raf's helper functions for setting zsh options that I normally use on my shell
             # a description of each option can be found in the Zsh manual
@@ -161,7 +162,8 @@ in
             export LS_COLORS
 
             ${lib.optionalString config.programs.fastfetch.enable "fastfetch"}
-          '';
+          ''
+        ];
 
         plugins = [
           {
