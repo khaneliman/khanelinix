@@ -157,9 +157,10 @@ in
             LS_COLORS="$(${lib.getExe' pkgs.coreutils "dircolors"} --sh)"
             LS_COLORS="''${''${LS_COLORS#*\'}%\'*}"
             export LS_COLORS
-
-            ${lib.optionalString config.programs.fastfetch.enable "fastfetch"}
           ''
+
+          # Should be last thing to run
+          (lib.mkOrder 5000 (lib.optionalString config.programs.fastfetch.enable "fastfetch"))
         ];
 
         plugins = [
