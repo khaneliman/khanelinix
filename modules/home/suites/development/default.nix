@@ -67,13 +67,19 @@ in
         ]
         ++ lib.optionals cfg.nixEnable [
           hydra-check
+          khanelinix.build-by-path
+          nh
+          nix-bisect
+          nix-diff
+          nix-fast-build
+          nix-health
+          nix-index
+          nix-output-monitor
+          nix-update
           nixpkgs-hammering
           nixpkgs-lint-community
           nixpkgs-review
-          nix-update
-          nix-output-monitor
           snowfall-flake.packages.${system}.flake
-          khanelinix.build-by-path
         ]
         ++ lib.optionals cfg.gameEnable [
           godot_4
