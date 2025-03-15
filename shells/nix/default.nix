@@ -13,11 +13,13 @@ mkShell {
   packages = with pkgs; [
     deadnix
     hydra-check
-    nix-inspect
+    nh
     nix-bisect
     nix-diff
+    nix-fast-build
     nix-health
     nix-index
+    nix-inspect
     nix-melt
     nix-prefetch-git
     nix-search-cli
