@@ -15,11 +15,12 @@ mkShell {
     deadnix
     hydra-check
     nh
-    nix-inspect
     nix-bisect
     nix-diff
+    nix-fast-build
     nix-health
     nix-index
+    nix-inspect
     nix-melt
     nix-prefetch-git
     nix-search-cli
