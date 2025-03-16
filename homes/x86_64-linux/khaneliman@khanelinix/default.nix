@@ -179,6 +179,7 @@ in
               "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM7UBwfd7+K0mdkAIb2TE6RzMu6L4wZnG/anuoYqJMPB"
               "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJAZIwy7nkz8CZYR/ZTSNr+7lRBW2AYy1jw06b44zaID" # Khanelimac
               "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINBG8l3jQ2EPLU+BlgtaQZpr4xr97n2buTLAZTxKHSsD" # Khaneliman@khanelimac
+              "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGFA599aGAr1pFCo3SjDx4NlFh4o468CTrUwFDs9VPX2" # khaneliman@khanelimac-m1
             ];
           };
         };
