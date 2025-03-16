@@ -66,11 +66,11 @@ in
       addKeysToAgent = "yes";
       matchBlocks = other-hosts-config;
 
-      extraConfig = ''
-        StreamLocalBindUnlink yes
-
-        ${cfg.extraConfig}
-      '';
+      extraConfig =
+        ''
+          StreamLocalBindUnlink yes
+        ''
+        + lib.optionalString (cfg.extraConfig != "") cfg.extraConfig;
     };
 
     home = {
