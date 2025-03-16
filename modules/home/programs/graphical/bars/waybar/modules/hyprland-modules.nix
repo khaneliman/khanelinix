@@ -139,6 +139,7 @@ in
       "class<com.mitchellh.ghostty>" = "󰊠";
       "class<org.inkscape.Inkscape>" = "";
       "class<net.lutris.Lutris>" = "󰸸";
+      "class<btrfs-assistant>" = "";
     };
   };
   "custom/hyprsunset" = {
