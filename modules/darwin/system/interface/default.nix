@@ -138,7 +138,7 @@ in
                 small = true;
               };
             }
-            "${pkgs.wezterm}/Applications/WezTerm.app"
+            "${pkgs.kitty}/Applications/Kitty.app"
           ];
       };
 
