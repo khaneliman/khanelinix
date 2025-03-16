@@ -6,8 +6,8 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib) mkDefault mkIf;
+  inherit (lib.${namespace}) enabled mkBoolOpt;
 
   cfg = config.${namespace}.suites.desktop;
 in
@@ -17,7 +17,20 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix.system.input.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isDarwin;
+    khanelinix = {
+      programs = {
+        graphical = {
+          browsers = {
+            firefox = mkDefault enabled;
+          };
+        };
+      };
+      system.input.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isDarwin;
+      theme = {
+        gtk.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
+        qt.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
+      };
+    };
 
     home.packages =
       with pkgs;

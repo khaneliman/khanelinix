@@ -50,12 +50,6 @@ in
 
     khanelinix = {
       programs = {
-        graphical = {
-          browsers = {
-            firefox = mkDefault enabled;
-          };
-        };
-
         terminal = {
           emulators = {
             alacritty = mkDefault enabled;
@@ -107,11 +101,6 @@ in
         udiskie.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
         # ssh-agent.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
         tray.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
-      };
-
-      theme = {
-        gtk.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
-        qt.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
       };
     };
 
