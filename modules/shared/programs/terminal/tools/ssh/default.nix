@@ -138,6 +138,16 @@ in
           publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINBG8l3jQ2EPLU+BlgtaQZpr4xr97n2buTLAZTxKHSsD";
         };
 
+        "khanelimac-m1" = {
+          hostNames = [ "khanelimac-m1.local" ];
+          publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAJX6b2buv6PO/J8fWuMpUEM/snSuJd7FtWLTUHiWgna";
+        };
+
+        "khaneliman@khanelimac-m1" = {
+          hostNames = [ "khanelimac-m1.local" ];
+          publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGFA599aGAr1pFCo3SjDx4NlFh4o468CTrUwFDs9VPX2";
+        };
+
         "khaneliman@khanelinix" = {
           hostNames = [ "khanelinix.local" ];
           publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFuMXeT21L3wnxnuzl0rKuE5+8inPSi8ca/Y3ll4s9pC";
