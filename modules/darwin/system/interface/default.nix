@@ -177,7 +177,7 @@ in
         AppleShowAllExtensions = true;
         AppleShowScrollBars = "Automatic";
         NSAutomaticWindowAnimationsEnabled = false;
-        _HIHideMenuBar = true;
+        _HIHideMenuBar = config.services.sketchybar.enable;
       };
 
       screencapture = {
