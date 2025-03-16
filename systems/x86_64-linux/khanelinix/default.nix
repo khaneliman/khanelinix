@@ -120,12 +120,14 @@ in
         enable = true;
 
         configs = {
-          Documents = {
-            ALLOW_USERS = [ "khaneliman" ];
-            SUBVOLUME = "/home/khaneliman/Documents";
-            TIMELINE_CLEANUP = true;
-            TIMELINE_CREATE = true;
-          };
+          # Example
+          # Don't really store anything worth keeping backups here for
+          # Documents = {
+          #   ALLOW_USERS = [ "khaneliman" ];
+          #   SUBVOLUME = "/home/khaneliman/Documents";
+          #   TIMELINE_CLEANUP = true;
+          #   TIMELINE_CREATE = true;
+          # };
         };
       };
 
