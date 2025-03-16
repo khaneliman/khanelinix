@@ -52,7 +52,10 @@ cd khanelinix
 # Linux
 sudo nixos-rebuild switch --flake .
 
- # MacOS
+# MacOS
+# First run without nix-darwin:
+nix run github:lnl7/nix-darwin#darwin-rebuild -- switch --flake github:khaneliman/khanelinix
+
 darwin-rebuild switch --flake .
 
  # Direnv
