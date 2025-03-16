@@ -80,52 +80,59 @@ in
         wvous-bl-corner = 14;
         wvous-br-corner = 4;
 
-        persistent-apps = [
-          "/System/Applications/Launchpad.app"
-          "/System/Applications/System Settings.app"
-          "/System/Applications/App Store.app"
-          {
-            spacer = {
-              small = true;
-            };
-          }
-          "/System/Applications/Messages.app"
-          "${pkgs.caprine-bin}/Applications/Caprine.app"
-          "${pkgs.element-desktop}/Applications/Element.app"
-          "/Applications/Microsoft Teams.app"
-          "${pkgs.discord}/Applications/Discord.app"
-          "/Applications/Thunderbird.app"
-          {
-            spacer = {
-              small = true;
-            };
-          }
-          "/Applications/Firefox Developer Edition.app"
-          "/Applications/Safari.app"
-          "/Applications/Fantastical.app"
-          "/System/Applications/Reminders.app"
-          "/System/Applications/Notes.app"
-          {
-            spacer = {
-              small = true;
-            };
-          }
-          "/System/Applications/Music.app"
-          "/Applications/Plex.app"
-          {
-            spacer = {
-              small = true;
-            };
-          }
-          "${pkgs.vscode}/Applications/Visual Studio Code.app"
-          "${pkgs.bruno}/Applications/Bruno.app"
-          {
-            spacer = {
-              small = true;
-            };
-          }
-          "${pkgs.wezterm}/Applications/WezTerm.app"
-        ];
+        persistent-apps =
+          [
+            "/System/Applications/Launchpad.app"
+            "/System/Applications/System Settings.app"
+            "/System/Applications/App Store.app"
+            {
+              spacer = {
+                small = true;
+              };
+            }
+            "/System/Applications/Messages.app"
+          ]
+          ++ lib.optionals config.khanelinix.suites.social.enable [
+            "${pkgs.caprine-bin}/Applications/Caprine.app"
+            "${pkgs.element-desktop}/Applications/Element.app"
+            (lib.mkIf config.khanelinix.tools.homebrew.enable { app = "/Applications/Microsoft Teams.app"; })
+            "${pkgs.discord}/Applications/Discord.app"
+            (lib.mkIf config.khanelinix.tools.homebrew.enable {
+              app = "/Applications/Thunderbird.app";
+            })
+            {
+              spacer = {
+                small = true;
+              };
+            }
+          ]
+          ++ [
+            "/Applications/Firefox Developer Edition.app"
+            "/Applications/Safari.app"
+            "/Applications/Fantastical.app"
+            "/System/Applications/Reminders.app"
+            "/System/Applications/Notes.app"
+            {
+              spacer = {
+                small = true;
+              };
+            }
+            "/System/Applications/Music.app"
+            "/Applications/Plex.app"
+            {
+              spacer = {
+                small = true;
+              };
+            }
+            "${pkgs.vscode}/Applications/Visual Studio Code.app"
+            "${pkgs.bruno}/Applications/Bruno.app"
+            {
+              spacer = {
+                small = true;
+              };
+            }
+            "${pkgs.wezterm}/Applications/WezTerm.app"
+          ];
       };
 
       # file viewer settings
