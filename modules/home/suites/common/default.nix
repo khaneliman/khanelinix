@@ -101,6 +101,8 @@ in
         # ssh-agent.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
         tray.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
       };
+
+      system.input.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isDarwin;
     };
 
     programs.readline = {

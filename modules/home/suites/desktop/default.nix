@@ -25,7 +25,6 @@ in
           };
         };
       };
-      system.input.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isDarwin;
       theme = {
         gtk.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
         qt.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
