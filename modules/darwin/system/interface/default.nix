@@ -106,10 +106,15 @@ in
               };
             }
           ]
+          # && config.home-manager.users.${config.khanelinix.user.name}.programs.firefox.enable
           ++ [
-            "/Applications/Firefox Developer Edition.app"
+            (lib.mkIf (config.khanelinix.tools.homebrew.enable && config.khanelinix.suites.desktop.enable) {
+              app = "/Applications/Firefox Developer Edition.app";
+            })
             "/Applications/Safari.app"
-            "/Applications/Fantastical.app"
+            (lib.mkIf (config.khanelinix.tools.homebrew.enable && config.khanelinix.suites.business.enable) {
+              app = "/Applications/Fantastical.app";
+            })
             "/System/Applications/Reminders.app"
             "/System/Applications/Notes.app"
             {
