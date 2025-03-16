@@ -123,7 +123,9 @@ in
               };
             }
             "/System/Applications/Music.app"
-            "/Applications/Plex.app"
+            (lib.mkIf (config.khanelinix.tools.homebrew.enable && config.khanelinix.suites.video.enable) {
+              app = "/Applications/Plex.app";
+            })
             {
               spacer = {
                 small = true;
