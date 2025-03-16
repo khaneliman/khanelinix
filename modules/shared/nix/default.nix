@@ -164,6 +164,25 @@ in
               }
             )
             (
+              {
+                inherit sshUser;
+                systems = [
+                  "aarch64-darwin"
+                  "x86_64-darwin"
+                ];
+                hostName = "khanelimac-m1.local";
+                maxJobs = 2;
+                speedFactor = 3;
+                supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
+              }
+              // lib.optionalAttrs (host == "khanelinix") {
+                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
+              }
+              // lib.optionalAttrs (host == "khanelimac") {
+                sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+              }
+            )
+            (
               # NOTE: git clone --reference /var/lib/nixpkgs.git https://github.com/NixOS/nixpkgs.git
               {
                 inherit sshUser;
