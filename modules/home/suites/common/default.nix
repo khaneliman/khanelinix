@@ -82,7 +82,6 @@ in
             git = mkDefault enabled;
             glxinfo.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
             jq = mkDefault enabled;
-            jujutsu = mkDefault enabled;
             lsd = mkDefault enabled;
             navi = mkDefault enabled;
             oh-my-posh = mkDefault enabled;

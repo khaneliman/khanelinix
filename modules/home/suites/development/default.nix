@@ -147,6 +147,7 @@ in
             azure.enable = cfg.azureEnable;
             git-crypt = mkDefault enabled;
             go.enable = cfg.goEnable;
+            jujutsu = mkDefault enabled;
             k9s.enable = cfg.kubernetesEnable;
             lazydocker.enable = cfg.dockerEnable;
             lazygit = mkDefault enabled;
