@@ -131,6 +131,8 @@ in
                 small = true;
               };
             }
+          ]
+          ++ lib.optionals config.khanelinix.suites.development.enable [
             "${pkgs.vscode}/Applications/Visual Studio Code.app"
             "${pkgs.bruno}/Applications/Bruno.app"
             {
@@ -138,6 +140,8 @@ in
                 small = true;
               };
             }
+          ]
+          ++ [
             "${pkgs.kitty}/Applications/Kitty.app"
           ];
       };
