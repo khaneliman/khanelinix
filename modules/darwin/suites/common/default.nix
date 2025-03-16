@@ -24,20 +24,24 @@ in
     };
 
     environment = {
-      systemPackages = with pkgs; [
-        duti
-        gawk
-        gnugrep
-        gnupg
-        gnused
-        gnutls
-        pkgs.${namespace}.trace-symlink
-        pkgs.${namespace}.trace-which
-        mas
-        terminal-notifier
-        trash-cli
-        wtfutil
-      ];
+      systemPackages =
+        with pkgs;
+        [
+          duti
+          gawk
+          gnugrep
+          gnupg
+          gnused
+          gnutls
+          pkgs.${namespace}.trace-symlink
+          pkgs.${namespace}.trace-which
+          terminal-notifier
+          trash-cli
+          wtfutil
+        ]
+        ++ lib.optionals config.${namespace}.tools.homebrew.masEnable [
+          mas
+        ];
     };
 
     khanelinix = {
