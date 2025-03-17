@@ -11,10 +11,6 @@ let
 in
 {
   khanelinix = {
-    archetypes = {
-      workstation = enabled;
-    };
-
     security = {
       pam = enabled;
       sops = {
@@ -34,8 +30,6 @@ in
       homebrew.enable = false;
     };
   };
-
-  # environment.systemPath = [ "/opt/homebrew/bin" ];
 
   networking = {
     computerName = "Austins MacBook Pro Build Machine";
