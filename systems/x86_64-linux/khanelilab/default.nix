@@ -35,16 +35,7 @@ in
       # TODO: input-leap replace barrier
       geoclue = enabled;
       printing = enabled;
-
-      openssh = {
-        enable = true;
-
-        authorizedKeys = [
-          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEpfTVxQKmkAYOrsnroZoTk0LewcBIC4OjlsoJY6QbB0"
-          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINBG8l3jQ2EPLU+BlgtaQZpr4xr97n2buTLAZTxKHSsD"
-          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM7UBwfd7+K0mdkAIb2TE6RzMu6L4wZnG/anuoYqJMPB"
-        ];
-      };
+      openssh = enabled;
 
       # TODO: Set up shares
       samba = {
