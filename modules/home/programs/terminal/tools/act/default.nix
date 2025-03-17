@@ -19,10 +19,10 @@ in
   config = mkIf cfg.enable {
     home.packages = [ pkgs.act ];
 
-    home.file.".actrc".text =
-      lib.mkIf (pkgs.stdenv.hostPlatform.isDarwin && pkgs.stdenv.hostPlatform.isAarch64)
-        ''
-          --container-architecture linux/amd64
-        '';
+    home.file = lib.mkIf (pkgs.stdenv.hostPlatform.isDarwin && pkgs.stdenv.hostPlatform.isAarch64) {
+      ".actrc".text = ''
+        --container-architecture linux/amd64
+      '';
+    };
   };
 }
