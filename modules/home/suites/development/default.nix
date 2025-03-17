@@ -54,7 +54,6 @@ in
           onefetch
           postman
           bruno
-          act
           tree-sitter
           # FIXME: broken nixpkgs
           # (tree-sitter.override {
@@ -144,6 +143,7 @@ in
           };
 
           tools = {
+            act = mkDefault enabled;
             azure.enable = cfg.azureEnable;
             git-crypt = mkDefault enabled;
             go.enable = cfg.goEnable;
