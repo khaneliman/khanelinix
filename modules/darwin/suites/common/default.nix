@@ -71,5 +71,10 @@ in
         networking = mkDefault enabled;
       };
     };
+
+    system.activationScripts.postActivation.text = lib.mkIf pkgs.stdenv.hostPlatform.isAarch64 ''
+      echo "Installing Rosetta..."
+      softwareupdate --install-rosetta --agree-to-license
+    '';
   };
 }
