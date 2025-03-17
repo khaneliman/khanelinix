@@ -2,7 +2,6 @@
   config,
   lib,
   inputs,
-  host,
   namespace,
   ...
 }:
@@ -10,8 +9,6 @@ let
   inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.ssh;
-
-  name = host;
 
   user = config.users.users.${config.${namespace}.user.name};
   user-id = builtins.toString user.uid;
@@ -23,7 +20,7 @@ let
   ## TODO: Find a more elegant way that doesn't require bloating eval complications
   other-hosts =
     lib.filterAttrs (
-      key: host: key != name && (host.config.${namespace}.user.name or null) != null
+      _key: host: (host.config.${namespace}.user.name or null) != null
     ) nixosConfigurations
     // darwinConfigurations;
 
