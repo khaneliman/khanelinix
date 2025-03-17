@@ -2,7 +2,6 @@
   config,
   lib,
   inputs,
-  host,
   namespace,
   ...
 }:
@@ -16,16 +15,14 @@ let
 
   cfg = config.${namespace}.programs.terminal.tools.ssh;
 
-  name = host;
-
   user = config.users.users.${config.${namespace}.user.name};
   user-id = builtins.toString user.uid;
 
   default-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJAZIwy7nkz8CZYR/ZTSNr+7lRBW2AYy1jw06b44zaID";
 
-  other-hosts = lib.filterAttrs (
-    key: host: key != name && (host.config.${namespace}.user.name or null) != null
-  ) ((inputs.self.nixosConfigurations or { }) // (inputs.self.darwinConfigurations or { }));
+  other-hosts = lib.filterAttrs (_key: host: (host.config.${namespace}.user.name or null) != null) (
+    (inputs.self.nixosConfigurations or { }) // (inputs.self.darwinConfigurations or { })
+  );
 
   other-hosts-config = lib.foldl' (
     acc: name:
