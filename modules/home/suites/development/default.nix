@@ -41,7 +41,7 @@ in
     kubernetesEnable = mkBoolOpt false "Whether or not to enable kubernetes development configuration.";
     nixEnable = mkBoolOpt false "Whether or not to enable nix development configuration.";
     sqlEnable = mkBoolOpt false "Whether or not to enable sql development configuration.";
-    aiEnable = mkBoolOpt true "Whether or not to enable ai development configuration.";
+    aiEnable = mkBoolOpt false "Whether or not to enable ai development configuration.";
   };
 
   config = mkIf cfg.enable {
