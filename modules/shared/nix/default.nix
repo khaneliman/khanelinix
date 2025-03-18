@@ -80,6 +80,7 @@ in
         buildMachines =
           let
             sshUser = "khaneliman";
+            protocol = if pkgs.stdenv.hostPlatform.isLinux then "ssh-ng" else "ssh";
             supportedFeatures = [
               "benchmark"
               "big-parallel"
@@ -97,7 +98,7 @@ in
                 ];
                 maxJobs = 2;
                 speedFactor = 1;
-                inherit supportedFeatures;
+                inherit protocol supportedFeatures;
               }
               // lib.optionalAttrs (host == "khanelimac") {
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
@@ -105,7 +106,7 @@ in
             )
             (
               {
-                inherit sshUser;
+                inherit protocol sshUser;
                 hostName = "khanelinix.local";
                 systems = [
                   "x86_64-linux"
@@ -124,7 +125,7 @@ in
             )
             (
               {
-                inherit sshUser;
+                inherit protocol sshUser;
                 hostName = "aarch64-build-box.nix-community.org";
                 maxJobs = 10;
                 speedFactor = 1;
@@ -145,7 +146,7 @@ in
             # Darwin builders
             (
               {
-                inherit sshUser;
+                inherit protocol sshUser;
                 systems = [
                   "aarch64-darwin"
                   "x86_64-darwin"
@@ -165,7 +166,7 @@ in
             )
             (
               {
-                inherit sshUser;
+                inherit protocol sshUser;
                 systems = [
                   "aarch64-darwin"
                   "x86_64-darwin"
@@ -185,7 +186,7 @@ in
             (
               # NOTE: git clone --reference /var/lib/nixpkgs.git https://github.com/NixOS/nixpkgs.git
               {
-                inherit sshUser;
+                inherit protocol sshUser;
                 systems = [
                   "aarch64-darwin"
                   "x86_64-darwin"
