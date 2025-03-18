@@ -24,7 +24,7 @@ in
 
     services = {
       sops = {
-        enable = true;
+        enable = false;
         defaultSopsFile = lib.snowfall.fs.get-file "secrets/khanelimac/khaneliman/default.yaml";
         sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
       };
