@@ -29,7 +29,11 @@ in
       art = enabled;
       common = enabled;
       desktop = enabled;
-      development = enabled;
+      development = {
+        enable = true;
+
+        aiEnable = true;
+      };
       games = enabled;
       music = enabled;
       networking = enabled;
