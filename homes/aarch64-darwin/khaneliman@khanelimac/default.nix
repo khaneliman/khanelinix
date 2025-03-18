@@ -84,6 +84,7 @@ in
       development = {
         enable = true;
 
+        aiEnable = true;
         dockerEnable = true;
         nixEnable = true;
       };
