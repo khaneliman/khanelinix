@@ -14,7 +14,7 @@ in
     security = {
       pam = enabled;
       sops = {
-        # enable = true;
+        enable = false;
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
         defaultSopsFile = lib.snowfall.fs.get-file "secrets/khanelimac/default.yaml";
       };
@@ -65,7 +65,7 @@ in
   };
 
   system = {
-    # primaryUser = "khaneliman";
+    primaryUser = "khaneliman";
     stateVersion = 5;
   };
 }

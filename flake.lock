@@ -178,15 +178,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1742013980,
-        "narHash": "sha256-34YbfwABU5nb0F5eaaJE3ujldaNDhmyxw7CWqhXJV08=",
-        "owner": "lnl7",
+        "lastModified": 1741740360,
+        "narHash": "sha256-xH7J2yXMuLNjm/j45Ve7uOaqzhiJdw7aGCkmc1JI5GE=",
+        "owner": "khaneliman",
         "repo": "nix-darwin",
-        "rev": "9175b4bb5f127fb7b5784b14f7e01abff24c378f",
+        "rev": "0d9daefc4043a5032129650b470f9779206cb9f2",
         "type": "github"
       },
       "original": {
-        "owner": "lnl7",
+        "owner": "khaneliman",
+        "ref": "darwin-rewrite",
         "repo": "nix-darwin",
         "type": "github"
       }
@@ -873,15 +874,16 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1741336922,
-        "narHash": "sha256-ahECQuhpwRKp0TcBsE1rsHlm6t+mUllMojORXmgBcC4=",
-        "owner": "viperML",
+        "lastModified": 1742324651,
+        "narHash": "sha256-7OvmE6W+fXaz0ziVHqt41J1TIDbJsgvuQPQK94BXrH4=",
+        "owner": "khaneliman",
         "repo": "nh",
-        "rev": "509dd6c96eefa11e7324f475a86ff4ea447987b7",
+        "rev": "dc3393441b766e0dd7ebe619606eb902e1b50501",
         "type": "github"
       },
       "original": {
-        "owner": "viperML",
+        "owner": "khaneliman",
+        "ref": "darwin",
         "repo": "nh",
         "type": "github"
       }

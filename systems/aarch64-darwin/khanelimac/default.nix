@@ -81,7 +81,7 @@ in
   };
 
   system = {
-    # primaryUser = "khaneliman";
+    primaryUser = "khaneliman";
     stateVersion = 5;
   };
 }

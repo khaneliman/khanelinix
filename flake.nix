@@ -4,8 +4,8 @@
   inputs = {
     # Core inputs
     darwin = {
-      url = "github:lnl7/nix-darwin";
-      # url = "github:khaneliman/nix-darwin/darwin-rewrite";
+      # url = "github:lnl7/nix-darwin";
+      url = "github:khaneliman/nix-darwin/darwin-rewrite";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     home-manager = {
@@ -101,7 +101,8 @@
         treefmt-nix.follows = "treefmt-nix";
       };
     };
-    nh.url = "github:viperML/nh";
+    # nh.url = "github:viperML/nh";
+    nh.url = "github:khaneliman/nh/darwin";
     nix-flatpak.url = "github:gmodena/nix-flatpak/latest";
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
