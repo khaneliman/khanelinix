@@ -121,8 +121,9 @@ in
     programs = {
       bash.initExtra = tokenExports;
       fish.shellInit = tokenExports;
-      zsh.initExtra = tokenExports;
+      nix-your-shell = mkDefault enabled;
       vinegar.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
+      zsh.initExtra = tokenExports;
     };
 
     khanelinix = {
