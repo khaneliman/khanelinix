@@ -83,7 +83,7 @@ in
         "Searchix" = {
           urls = [
             {
-              template = "https://searchix.alanpearce.eu/all/search/";
+              template = "https://searchix.alanpearce.eu/";
               params = [
                 {
                   name = "query";
