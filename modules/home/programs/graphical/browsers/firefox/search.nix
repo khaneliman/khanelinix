@@ -12,17 +12,17 @@ in
 {
   options.khanelinix.programs.graphical.browsers.firefox = {
     search = mkOpt lib.types.attrs {
-      default = "DuckDuckGo";
-      privateDefault = "DuckDuckGo";
+      default = "ddg";
+      privateDefault = "ddg";
       # Home-manager skip collision check
       force = true;
 
       engines = {
-        "Amazon.com".metaData.hidden = true;
-        "Bing".metaData.hidden = true;
-        "Google".metaData.hidden = true;
-        "eBay".metaData.hidden = true;
-        "Wikipedia (en)".metaData.hidden = true;
+        "amazondotcom-us".metaData.hidden = true;
+        "bing".metaData.hidden = true;
+        "google".metaData.hidden = true;
+        "ebay".metaData.hidden = true;
+        "wikipedia".metaData.hidden = true;
 
         "Nix Packages" = {
           urls = [
