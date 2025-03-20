@@ -104,7 +104,7 @@ in
         nrlp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-linux aarch64-linux" --num-parallel-evals 2 --post-result'';
         # TODO: remove once remote building to khanelinix works
         nrmp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-darwin aarch64-darwin aarch64-linux" --num-parallel-evals 3 --post-result'';
-        nup = ''nix-shell maintainers/scripts/update.nix --argstr package $1'';
+        nup = ''nix-update --commit -u $1'';
         num = ''nix-shell maintainers/scripts/update.nix --argstr maintainer $1'';
         # HM aliases
         hmd = ''nix build -L .#docs-html && ${
