@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) concatStringsSep mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.services.earlyoom;
 in
 {
   options.${namespace}.services.earlyoom = {
-    enable = mkBoolOpt false "Whether or not to configure oomd.";
+    enable = lib.mkEnableOption "oomd";
   };
 
   config = mkIf cfg.enable {

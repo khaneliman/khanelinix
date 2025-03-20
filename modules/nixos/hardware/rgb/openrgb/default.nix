@@ -7,13 +7,13 @@
 }:
 let
   inherit (lib) types mkIf mkOption;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkOpt;
 
   cfg = config.${namespace}.hardware.rgb.openrgb;
 in
 {
   options.${namespace}.hardware.rgb.openrgb = with types; {
-    enable = mkBoolOpt false "Whether or not to enable support for rgb controls.";
+    enable = lib.mkEnableOption "support for rgb controls";
     motherboard = mkOption {
       type = types.nullOr (
         types.enum [

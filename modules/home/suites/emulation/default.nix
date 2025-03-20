@@ -7,14 +7,13 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.suites.emulation;
 in
 {
   options.${namespace}.suites.emulation = {
-    enable = mkBoolOpt false "Whether or not to enable emulation configuration.";
-    retroarchFull = mkBoolOpt false "Whether or not to enable emulation configuration.";
+    enable = lib.mkEnableOption "emulation configuration";
+    retroarchFull = lib.mkEnableOption "emulation configuration";
   };
 
   config = mkIf cfg.enable {

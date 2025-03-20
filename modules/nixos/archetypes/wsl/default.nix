@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf mkForce;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.archetypes.wsl;
 in
 {
   options.${namespace}.archetypes.wsl = {
-    enable = mkBoolOpt false "Whether or not to enable the wsl archetype.";
+    enable = lib.mkEnableOption "the wsl archetype";
   };
 
   config = mkIf cfg.enable {

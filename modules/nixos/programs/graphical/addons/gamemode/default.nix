@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkOpt;
 
   cfg = config.${namespace}.programs.graphical.addons.gamemode;
 
@@ -20,7 +20,7 @@ let
 in
 {
   options.${namespace}.programs.graphical.addons.gamemode = {
-    enable = mkBoolOpt false "Whether or not to enable gamemode.";
+    enable = lib.mkEnableOption "gamemode";
     endscript = mkOpt (with lib.types; nullOr str) null "The script to run when disabling gamemode.";
     startscript = mkOpt (with lib.types; nullOr str) null "The script to run when enabling gamemode.";
   };

@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf getExe;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.display-managers.tuigreet;
 in
 {
   options.${namespace}.display-managers.tuigreet = {
-    enable = mkBoolOpt false "Whether or not to enable tuigreet.";
+    enable = lib.mkEnableOption "tuigreet";
   };
 
   config = mkIf cfg.enable {

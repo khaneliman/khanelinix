@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.graphical.apps.steam;
 in
 {
   options.${namespace}.programs.graphical.apps.steam = {
-    enable = mkBoolOpt false "Whether or not to enable support for Steam.";
+    enable = lib.mkEnableOption "support for Steam";
   };
 
   config = mkIf cfg.enable {

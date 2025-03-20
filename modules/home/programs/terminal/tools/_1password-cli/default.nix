@@ -7,14 +7,13 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.tools._1password-cli;
 in
 {
   options.${namespace}.programs.terminal.tools._1password-cli = {
-    enable = mkBoolOpt false "Whether or not to enable 1password-cli.";
-    enableSshSocket = mkBoolOpt false "Whether or not to enable ssh-agent socket.";
+    enable = lib.mkEnableOption "1password-cli";
+    enableSshSocket = lib.mkEnableOption "ssh-agent socket";
   };
 
   config = mkIf cfg.enable {

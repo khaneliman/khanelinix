@@ -6,13 +6,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.carapace;
 in
 {
   options.${namespace}.programs.terminal.tools.carapace = {
-    enable = mkBoolOpt false "Whether or not to enable carapace.";
+    enable = lib.mkEnableOption "carapace";
   };
 
   config = mkIf cfg.enable {

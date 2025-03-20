@@ -12,13 +12,12 @@ let
     mkOption
     getExe'
     ;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.services.spice-webdav;
 in
 {
   options.${namespace}.services.spice-webdav = with types; {
-    enable = mkBoolOpt false "Whether or not to configure spice-webdav proxy support.";
+    enable = lib.mkEnableOption "spice-webdav proxy support";
     package = mkOption {
       default = pkgs.phodav;
       defaultText = literalExpression "pkgs.phodav";

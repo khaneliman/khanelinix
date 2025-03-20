@@ -16,7 +16,7 @@ let
     mkMerge
     types
     ;
-  inherit (lib.${namespace}) mkOpt mkBoolOpt;
+  inherit (lib.${namespace}) mkOpt;
   inherit (inputs) waybar;
 
   cfg = config.${namespace}.programs.graphical.bars.waybar;
@@ -123,8 +123,8 @@ let
 in
 {
   options.${namespace}.programs.graphical.bars.waybar = {
-    enable = mkBoolOpt false "Whether to enable waybar in the desktop environment.";
-    debug = mkBoolOpt false "Whether to enable debug mode.";
+    enable = lib.mkEnableOption "waybar in the desktop environment";
+    debug = lib.mkEnableOption "debug mode";
     fullSizeOutputs =
       mkOpt (types.listOf types.str) "Which outputs to use the full size waybar on."
         [ ];

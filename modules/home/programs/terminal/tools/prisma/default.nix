@@ -7,13 +7,13 @@
 }:
 let
   inherit (lib) types mkIf getExe';
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.prisma;
 in
 {
   options.${namespace}.programs.terminal.tools.prisma = with types; {
-    enable = mkBoolOpt false "Whether or not to install Prisma";
+    enable = lib.mkEnableOption "Prisma";
     pkgs = {
       npm = mkOpt package pkgs.nodePackages.prisma "The NPM package to install";
       engines = mkOpt package pkgs.prisma-engines "The package to get prisma engines from";

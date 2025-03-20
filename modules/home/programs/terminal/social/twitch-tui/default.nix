@@ -7,13 +7,12 @@
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.social.twitch-tui;
 in
 {
   options.${namespace}.programs.terminal.social.twitch-tui = {
-    enable = mkBoolOpt false "Whether or not to enable twitch-tui.";
+    enable = lib.mkEnableOption "twitch-tui";
   };
 
   config = lib.mkIf cfg.enable {

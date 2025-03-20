@@ -7,13 +7,13 @@
 }:
 let
   inherit (lib) types mkIf mkForce;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkOpt;
 
   cfg = config.${namespace}.hardware.audio;
 in
 {
   options.${namespace}.hardware.audio = with types; {
-    enable = mkBoolOpt false "Whether or not to enable audio support.";
+    enable = lib.mkEnableOption "audio support";
     alsa-monitor = mkOpt attrs { } "Alsa configuration.";
     extra-packages = mkOpt (listOf package) [
       pkgs.qjackctl

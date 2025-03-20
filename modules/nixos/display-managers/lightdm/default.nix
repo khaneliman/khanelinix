@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.display-managers.lightdm;
 in
 {
   options.${namespace}.display-managers.lightdm = {
-    enable = mkBoolOpt false "Whether or not to enable lightdm.";
+    enable = lib.mkEnableOption "lightdm";
   };
 
   config = mkIf cfg.enable {

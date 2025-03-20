@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.act;
 in
 {
   options.${namespace}.programs.terminal.tools.act = {
-    enable = mkBoolOpt false "Whether or not to enable act.";
+    enable = lib.mkEnableOption "act";
   };
 
   config = mkIf cfg.enable {

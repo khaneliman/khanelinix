@@ -9,14 +9,13 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
   inherit (inputs) anyrun anyrun-nixos-options;
 
   cfg = config.${namespace}.programs.graphical.launchers.anyrun;
 in
 {
   options.${namespace}.programs.graphical.launchers.anyrun = {
-    enable = mkBoolOpt false "Whether to enable anyrun in the desktop environment.";
+    enable = lib.mkEnableOption "anyrun in the desktop environment";
   };
 
   config = mkIf cfg.enable {

@@ -27,7 +27,7 @@ in
   ];
 
   options.${namespace}.theme.catppuccin = {
-    enable = mkEnableOption "Enable catppuccin theme for applications.";
+    enable = mkEnableOption "catppuccin theme for applications";
 
     accent = mkOption {
       type = types.enum [

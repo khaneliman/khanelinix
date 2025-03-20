@@ -8,7 +8,6 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.graphical.addons.swaync;
 
@@ -37,7 +36,7 @@ let
 in
 {
   options.${namespace}.programs.graphical.addons.swaync = {
-    enable = mkBoolOpt false "Whether to enable swaync in the desktop environment.";
+    enable = lib.mkEnableOption "swaync in the desktop environment";
   };
 
   config = mkIf cfg.enable {

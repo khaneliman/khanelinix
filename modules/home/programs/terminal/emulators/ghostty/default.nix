@@ -7,14 +7,13 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.emulators.ghostty;
 
 in
 {
   options.${namespace}.programs.terminal.emulators.ghostty = {
-    enable = mkBoolOpt false "Whether or not to enable ghostty.";
+    enable = lib.mkEnableOption "ghostty";
   };
 
   config = mkIf cfg.enable {

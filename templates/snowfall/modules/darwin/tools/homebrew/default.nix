@@ -6,14 +6,13 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.tools.homebrew;
 in
 {
   options.${namespace}.tools.homebrew = {
-    enable = mkBoolOpt false "Whether or not to enable homebrew.";
-    masEnable = mkBoolOpt false "Whether or not to enable Mac App Store downloads.";
+    enable = lib.mkEnableOption "homebrew";
+    masEnable = lib.mkEnableOption "Mac App Store downloads";
   };
 
   config = mkIf cfg.enable {

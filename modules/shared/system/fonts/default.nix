@@ -7,13 +7,13 @@
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkOpt;
 
   cfg = config.${namespace}.system.fonts;
 in
 {
   options.${namespace}.system.fonts = with types; {
-    enable = mkBoolOpt false "Whether or not to manage fonts.";
+    enable = lib.mkEnableOption "managing fonts";
     fonts =
       with pkgs;
       mkOpt (listOf package) [

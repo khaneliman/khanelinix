@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.suites.art;
 in
 {
   options.${namespace}.suites.art = {
-    enable = mkBoolOpt false "Whether or not to enable art configuration.";
+    enable = lib.mkEnableOption "art configuration";
   };
 
   config = mkIf cfg.enable {

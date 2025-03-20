@@ -6,13 +6,12 @@
 }:
 let
   inherit (lib) mkIf mkForce;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.system.locale;
 in
 {
   options.${namespace}.system.locale = {
-    enable = mkBoolOpt false "Whether or not to manage locale settings.";
+    enable = lib.mkEnableOption "managing locale settings";
   };
 
   config = mkIf cfg.enable {

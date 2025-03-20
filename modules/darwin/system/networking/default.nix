@@ -6,13 +6,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.system.networking;
 in
 {
   options.${namespace}.system.networking = {
-    enable = mkBoolOpt false "Whether or not to enable networking support";
+    enable = lib.mkEnableOption "networking support";
   };
 
   config = mkIf cfg.enable {

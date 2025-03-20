@@ -6,14 +6,13 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.emulators.wezterm;
   catppuccin = import (lib.snowfall.fs.get-file "modules/home/theme/catppuccin/colors.nix");
 in
 {
   options.${namespace}.programs.terminal.emulators.wezterm = {
-    enable = mkBoolOpt false "Whether or not to enable wezterm.";
+    enable = lib.mkEnableOption "wezterm";
   };
 
   config = mkIf cfg.enable {

@@ -6,14 +6,13 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.atuin;
 in
 {
   options.${namespace}.programs.terminal.tools.atuin = {
-    enable = mkBoolOpt false "Whether or not to enable atuin.";
-    enableDebug = mkBoolOpt false "Whether or not to enable atuin daemon debug logging.";
+    enable = lib.mkEnableOption "atuin";
+    enableDebug = lib.mkEnableOption "atuin daemon debug logging";
   };
 
   config = mkIf cfg.enable {

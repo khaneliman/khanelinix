@@ -44,7 +44,7 @@ let
 in
 {
   options.${namespace}.programs.graphical.desktop-environment.gnome = with types; {
-    enable = mkBoolOpt false "Whether or not to use Gnome as the desktop environment.";
+    enable = lib.mkEnableOption "using Gnome as the desktop environment";
     color-scheme = mkOpt (enum [
       "light"
       "dark"

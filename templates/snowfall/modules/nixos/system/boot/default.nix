@@ -7,17 +7,17 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt default-attrs;
+  inherit (lib.${namespace}) default-attrs;
 
   cfg = config.${namespace}.system.boot;
   themeCfg = config.${namespace}.theme;
 in
 {
   options.${namespace}.system.boot = {
-    enable = mkBoolOpt false "Whether or not to enable booting.";
-    plymouth = mkBoolOpt false "Whether or not to enable plymouth boot splash.";
-    secureBoot = mkBoolOpt false "Whether or not to enable secure boot.";
-    silentBoot = mkBoolOpt false "Whether or not to enable silent boot.";
+    enable = lib.mkEnableOption "booting";
+    plymouth = lib.mkEnableOption "plymouth boot splash";
+    secureBoot = lib.mkEnableOption "secure boot";
+    silentBoot = lib.mkEnableOption "silent boot";
   };
 
   config = mkIf cfg.enable {

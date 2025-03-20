@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf literalExpression;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.graphical.mangohud;
 in
 {
   options.${namespace}.programs.graphical.mangohud = {
-    enable = mkBoolOpt false "Whether or not to enable mangohud.";
+    enable = lib.mkEnableOption "mangohud";
   };
 
   config = mkIf cfg.enable {

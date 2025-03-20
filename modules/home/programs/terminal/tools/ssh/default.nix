@@ -11,7 +11,7 @@ let
     mkIf
     foldl
     ;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.ssh;
 
@@ -60,7 +60,7 @@ let
 in
 {
   options.${namespace}.programs.terminal.tools.ssh = with types; {
-    enable = mkBoolOpt false "Whether or not to configure ssh support.";
+    enable = lib.mkEnableOption "ssh support";
     authorizedKeys = mkOpt (listOf str) authorizedKeys "The public keys to apply.";
     extraConfig = mkOpt str "" "Extra configuration to apply.";
     port = mkOpt port 2222 "The port to listen on (in addition to 22).";

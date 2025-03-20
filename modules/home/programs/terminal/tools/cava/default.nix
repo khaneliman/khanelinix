@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.cava;
 in
 {
   options.${namespace}.programs.terminal.tools.cava = {
-    enable = mkBoolOpt false "Whether or not to enable cava.";
+    enable = lib.mkEnableOption "cava";
   };
 
   config = mkIf cfg.enable {

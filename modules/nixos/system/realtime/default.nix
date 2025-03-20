@@ -6,13 +6,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.system.realtime;
 in
 {
   options.${namespace}.system.realtime = {
-    enable = mkBoolOpt false "Whether or not to configure realtime.";
+    enable = lib.mkEnableOption "realtime";
   };
 
   config = mkIf cfg.enable {

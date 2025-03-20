@@ -6,13 +6,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.graphical.apps.virtualbox;
 in
 {
   options.${namespace}.programs.graphical.apps.virtualbox = {
-    enable = mkBoolOpt false "Whether or not to enable Virtualbox.";
+    enable = lib.mkEnableOption "Virtualbox";
   };
 
   config = mkIf cfg.enable {

@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.tools.qmk;
 in
 {
   options.${namespace}.tools.qmk = {
-    enable = mkBoolOpt false "Whether or not to enable QMK";
+    enable = lib.mkEnableOption "QMK";
   };
 
   config = mkIf cfg.enable {

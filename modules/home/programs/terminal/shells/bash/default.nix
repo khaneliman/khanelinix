@@ -6,13 +6,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.shell.bash;
 in
 {
   options.${namespace}.programs.terminal.shell.bash = {
-    enable = mkBoolOpt false "Whether to enable bash.";
+    enable = lib.mkEnableOption "bash";
   };
 
   config = mkIf cfg.enable {

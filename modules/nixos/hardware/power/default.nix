@@ -6,13 +6,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.hardware.power;
 in
 {
   options.${namespace}.hardware.power = {
-    enable = mkBoolOpt false "Whether or not to enable support for extra power devices.";
+    enable = lib.mkEnableOption "support for extra power devices";
   };
 
   config = mkIf cfg.enable {

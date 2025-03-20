@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.graphical.file-managers.dolphin;
 in
 {
   options.${namespace}.programs.graphical.file-managers.dolphin = {
-    enable = mkBoolOpt false "Whether or not to enable Dolphin.";
+    enable = lib.mkEnableOption "Dolphin";
   };
 
   config = mkIf cfg.enable {

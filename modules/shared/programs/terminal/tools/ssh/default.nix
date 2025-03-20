@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.ssh;
 
@@ -55,7 +55,7 @@ let
 in
 {
   options.${namespace}.programs.terminal.tools.ssh = {
-    enable = mkBoolOpt false "Whether or not to configure ssh support.";
+    enable = lib.mkEnableOption "ssh support";
     extraConfig = mkOpt lib.types.str "" "Extra configuration to apply.";
     port = mkOpt lib.types.port 2222 "The port to listen on (in addition to 22).";
   };

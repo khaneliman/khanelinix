@@ -6,14 +6,13 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.editors.micro;
 in
 {
   options.${namespace}.programs.terminal.editors.micro = {
-    enable = mkBoolOpt false "Whether or not to enable micro.";
-    default = mkBoolOpt false "Whether to set micro as the session EDITOR";
+    enable = lib.mkEnableOption "micro";
+    default = lib.mkEnableOption "setting micro as the session EDITOR";
   };
 
   config = mkIf cfg.enable {

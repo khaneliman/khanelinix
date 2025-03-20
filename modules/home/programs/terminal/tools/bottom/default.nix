@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.bottom;
 in
 {
   options.${namespace}.programs.terminal.tools.bottom = {
-    enable = mkBoolOpt false "Whether or not to enable bottom.";
+    enable = lib.mkEnableOption "bottom";
   };
 
   config = mkIf cfg.enable {

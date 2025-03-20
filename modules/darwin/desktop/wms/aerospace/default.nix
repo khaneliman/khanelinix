@@ -6,13 +6,13 @@
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt mkOpt enabled;
+  inherit (lib.${namespace}) mkOpt enabled;
   cfg = config.${namespace}.desktop.wms.aerospace;
 in
 {
   options.${namespace}.desktop.wms.aerospace = {
-    enable = mkBoolOpt false "Whether or not to enable aerospace.";
-    debug = mkBoolOpt false "Whether to enable debug output.";
+    enable = lib.mkEnableOption "aerospace";
+    debug = lib.mkEnableOption "debug output";
     logFile =
       mkOpt lib.types.str "/Users/khaneliman/Library/Logs/aerospace.log"
         "Filepath of log output";

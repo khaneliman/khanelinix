@@ -7,13 +7,13 @@
 }:
 let
   inherit (lib) mkIf getExe' stringAfter;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (lib.${namespace}) enabled;
 
   cfg = config.${namespace}.display-managers.sddm;
 in
 {
   options.${namespace}.display-managers.sddm = {
-    enable = mkBoolOpt false "Whether or not to enable sddm.";
+    enable = lib.mkEnableOption "sddm";
   };
 
   config = mkIf cfg.enable {

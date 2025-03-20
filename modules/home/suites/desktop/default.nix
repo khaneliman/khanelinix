@@ -7,13 +7,13 @@
 }:
 let
   inherit (lib) mkDefault mkIf;
-  inherit (lib.${namespace}) enabled mkBoolOpt;
+  inherit (lib.${namespace}) enabled;
 
   cfg = config.${namespace}.suites.desktop;
 in
 {
   options.${namespace}.suites.desktop = {
-    enable = mkBoolOpt false "Whether or not to enable common desktop applications.";
+    enable = lib.mkEnableOption "common desktop applications";
   };
 
   config = mkIf cfg.enable {

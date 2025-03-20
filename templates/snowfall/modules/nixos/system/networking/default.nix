@@ -18,7 +18,7 @@ let
 in
 {
   options.${namespace}.system.networking = with types; {
-    enable = mkBoolOpt false "Whether or not to enable networking support";
+    enable = lib.mkEnableOption "networking support";
     hosts = mkOpt attrs { } "An attribute set to merge with <option>networking.hosts</option>";
     optimizeTcp = mkBoolOpt false "Optimize TCP connections";
     dns = mkOpt (types.enum [

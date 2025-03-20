@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.emulators.foot;
 in
 {
   options.${namespace}.programs.terminal.emulators.foot = {
-    enable = mkBoolOpt false "Whether or not to enable foot.";
+    enable = lib.mkEnableOption "foot";
   };
 
   config = mkIf cfg.enable {

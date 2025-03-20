@@ -5,13 +5,13 @@
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (lib.${namespace}) enabled;
 
   cfg = config.${namespace}.archetypes.workstation;
 in
 {
   options.${namespace}.archetypes.workstation = {
-    enable = mkBoolOpt false "Whether or not to enable the workstation archetype.";
+    enable = lib.mkEnableOption "the workstation archetype";
   };
 
   config = lib.mkIf cfg.enable {

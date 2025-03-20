@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.nix-ld;
 in
 {
   options.${namespace}.programs.terminal.tools.nix-ld = {
-    enable = mkBoolOpt false "Whether or not to enable nix-ld.";
+    enable = lib.mkEnableOption "nix-ld";
   };
 
   config = mkIf cfg.enable {

@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.oh-my-posh;
 in
 {
   options.${namespace}.programs.terminal.tools.oh-my-posh = {
-    enable = mkBoolOpt false "Whether or not to enable oh-my-posh.";
+    enable = lib.mkEnableOption "oh-my-posh";
   };
 
   config = mkIf cfg.enable {

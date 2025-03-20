@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.go;
 in
 {
   options.${namespace}.programs.terminal.tools.go = {
-    enable = mkBoolOpt false "Whether or not to enable Go support.";
+    enable = lib.mkEnableOption "Go support";
   };
 
   config = mkIf cfg.enable {

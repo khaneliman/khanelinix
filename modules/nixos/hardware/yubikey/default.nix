@@ -7,7 +7,6 @@
 }:
 let
   inherit (lib) mkIf getExe';
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.hardware.yubikey;
 
@@ -19,8 +18,8 @@ let
 in
 {
   options.${namespace}.hardware.yubikey = {
-    enable = mkBoolOpt false "Whether or not to enable Yubikey.";
-    enableSSHSupport = mkBoolOpt false "Whether or not to enable SSH support for Yubikey.";
+    enable = lib.mkEnableOption "Yubikey";
+    enableSSHSupport = lib.mkEnableOption "SSH support for Yubikey";
   };
 
   config = mkIf cfg.enable {

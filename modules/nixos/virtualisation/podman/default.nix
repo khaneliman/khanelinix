@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.virtualisation.podman;
 in
 {
   options.${namespace}.virtualisation.podman = {
-    enable = mkBoolOpt false "Whether or not to enable Podman.";
+    enable = lib.mkEnableOption "podman";
   };
 
   config = mkIf cfg.enable {

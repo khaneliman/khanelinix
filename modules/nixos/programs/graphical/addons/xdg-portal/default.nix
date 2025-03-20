@@ -7,14 +7,13 @@
 }:
 let
   inherit (lib) mkEnableOption mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.graphical.addons.xdg-portal;
 in
 {
   options.${namespace}.programs.graphical.addons.xdg-portal = {
-    enable = mkBoolOpt false "Whether or not to add support for xdg portal.";
-    enableDebug = mkEnableOption "Enable debug mode.";
+    enable = lib.mkEnableOption "adding support for xdg portal";
+    enableDebug = mkEnableOption "debug mode";
   };
 
   config = mkIf cfg.enable {

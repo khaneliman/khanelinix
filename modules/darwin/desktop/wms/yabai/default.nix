@@ -7,14 +7,14 @@
 }:
 let
   inherit (lib) getExe;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt enabled;
+  inherit (lib.${namespace}) mkOpt enabled;
 
   cfg = config.${namespace}.desktop.wms.yabai;
 in
 {
   options.${namespace}.desktop.wms.yabai = {
-    enable = mkBoolOpt false "Whether or not to enable yabai.";
-    debug = mkBoolOpt false "Whether to enable debug output.";
+    enable = lib.mkEnableOption "yabai";
+    debug = lib.mkEnableOption "debug output";
     logFile = mkOpt lib.types.str "/Users/khaneliman/Library/Logs/yabai.log" "Filepath of log output";
   };
 

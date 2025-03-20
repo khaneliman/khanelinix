@@ -7,7 +7,6 @@
 }:
 let
   inherit (lib) mkDefault mkIf versionOlder;
-  inherit (lib.${namespace}) mkBoolOpt;
   cfg = config.${namespace}.hardware.gpu.nvidia;
 
   # use the latest possible nvidia package
@@ -22,9 +21,9 @@ let
 in
 {
   options.${namespace}.hardware.gpu.nvidia = {
-    enable = mkBoolOpt false "Whether or not to enable support for nvidia.";
-    enableCudaSupport = mkBoolOpt false "Whether or not to enable support for cuda.";
-    enableNvtop = mkBoolOpt false "Whether or not to install nvtop for nvidia.";
+    enable = lib.mkEnableOption "support for nvidia";
+    enableCudaSupport = lib.mkEnableOption "support for cuda";
+    enableNvtop = lib.mkEnableOption "install nvtop for nvidia";
   };
 
   config = mkIf cfg.enable {

@@ -6,13 +6,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.navi;
 in
 {
   options.${namespace}.programs.terminal.tools.navi = {
-    enable = mkBoolOpt false "Whether or not to enable navi.";
+    enable = lib.mkEnableOption "navi";
   };
 
   config = mkIf cfg.enable {

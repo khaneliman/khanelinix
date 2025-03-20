@@ -6,13 +6,13 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (lib.${namespace}) enabled;
 
   cfg = config.${namespace}.suites.business;
 in
 {
   options.${namespace}.suites.business = {
-    enable = mkBoolOpt false "Whether or not to enable business configuration.";
+    enable = lib.mkEnableOption "business configuration";
   };
 
   config = mkIf cfg.enable {

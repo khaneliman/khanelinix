@@ -6,13 +6,13 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (lib.${namespace}) enabled;
 
   cfg = config.${namespace}.archetypes.server;
 in
 {
   options.${namespace}.archetypes.server = {
-    enable = mkBoolOpt false "Whether or not to enable the server archetype.";
+    enable = lib.mkEnableOption "the server archetype";
   };
 
   config = mkIf cfg.enable {

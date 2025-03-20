@@ -7,13 +7,13 @@
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkOpt;
 
   cfg = config.${namespace}.programs.terminal.emulators.alacritty;
 in
 {
   options.${namespace}.programs.terminal.emulators.alacritty = with types; {
-    enable = mkBoolOpt false "Whether to enable alacritty.";
+    enable = lib.mkEnableOption "alacritty";
     font = {
       normal = mkOpt str "MonaspaceNeon" "Font to use for alacritty.";
       bold = mkOpt str "MonaspaceXenon" "Font to use for alacritty.";

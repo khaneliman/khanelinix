@@ -42,7 +42,7 @@ in
 {
   # TODO: consolidate home-manager and nixos module
   options.${namespace}.theme = {
-    enable = mkEnableOption "Enable custom theme use for applications.";
+    enable = mkEnableOption "custom theme use for applications";
 
     cursor = {
       name = mkOpt types.str "catppuccin-macchiato-blue-cursors" "The name of the cursor theme to apply.";

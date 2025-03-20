@@ -5,13 +5,12 @@
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.security.pam;
 in
 {
   options.${namespace}.security.pam = {
-    enable = mkBoolOpt false "Whether or not to configure pam support.";
+    enable = lib.mkEnableOption "pam support";
   };
 
   config = lib.mkIf cfg.enable {

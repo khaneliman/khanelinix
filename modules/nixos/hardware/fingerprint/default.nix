@@ -6,13 +6,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.hardware.fingerprint;
 in
 {
   options.${namespace}.hardware.fingerprint = {
-    enable = mkBoolOpt false "Whether or not to enable fingerprint support.";
+    enable = lib.mkEnableOption "fingerprint support";
   };
 
   config = mkIf cfg.enable { services.fprintd.enable = true; };

@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.graphical.apps.partitionmanager;
 in
 {
   options.${namespace}.programs.graphical.apps.partitionmanager = {
-    enable = mkBoolOpt false "Whether or not to enable partitionmanager.";
+    enable = lib.mkEnableOption "partitionmanager";
   };
 
   config = mkIf cfg.enable {

@@ -7,7 +7,6 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.lsd;
 
@@ -20,7 +19,7 @@ let
 in
 {
   options.${namespace}.programs.terminal.tools.lsd = {
-    enable = mkBoolOpt false "Whether or not to enable lsd.";
+    enable = lib.mkEnableOption "lsd";
   };
 
   config = mkIf cfg.enable {

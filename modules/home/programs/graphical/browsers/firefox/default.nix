@@ -20,7 +20,7 @@ in
   imports = lib.snowfall.fs.get-non-default-nix-files ./.;
 
   options.${namespace}.programs.graphical.browsers.firefox = with types; {
-    enable = mkBoolOpt false "Whether or not to enable Firefox.";
+    enable = lib.mkEnableOption "Firefox";
 
     extraConfig = mkOpt str "" "Extra configuration for the user profile JS file.";
     gpuAcceleration = mkBoolOpt false "Enable GPU acceleration.";

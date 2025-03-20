@@ -6,13 +6,12 @@
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.security.sudo;
 in
 {
   options.${namespace}.security.sudo = {
-    enable = mkBoolOpt false "Whether or not to enable sudo.";
+    enable = lib.mkEnableOption "sudo";
   };
   config = lib.mkIf cfg.enable {
     security = {

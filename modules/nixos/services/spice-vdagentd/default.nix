@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf getExe';
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.services.spice-vdagentd;
 in
 {
   options.${namespace}.services.spice-vdagentd = {
-    enable = mkBoolOpt false "Whether or not to configure spice-vdagent support.";
+    enable = lib.mkEnableOption "spice-vdagent support";
   };
 
   config = mkIf cfg.enable {

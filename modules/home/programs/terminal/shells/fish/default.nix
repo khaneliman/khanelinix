@@ -8,13 +8,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.shell.fish;
 in
 {
   options.${namespace}.programs.terminal.shell.fish = {
-    enable = mkBoolOpt false "Whether to enable fish.";
+    enable = lib.mkEnableOption "fish";
   };
 
   config = mkIf cfg.enable {

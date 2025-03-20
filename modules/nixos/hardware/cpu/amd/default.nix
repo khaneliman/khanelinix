@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.hardware.cpu.amd;
 in
 {
   options.${namespace}.hardware.cpu.amd = {
-    enable = mkBoolOpt false "Whether or not to enable support for amd cpu.";
+    enable = lib.mkEnableOption "support for amd cpu";
   };
 
   config = mkIf cfg.enable {

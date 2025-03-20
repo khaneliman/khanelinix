@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.services.ddccontrol;
 in
 {
   options.${namespace}.services.ddccontrol = {
-    enable = mkBoolOpt false "Whether or not to configure ddccontrol";
+    enable = lib.mkEnableOption "ddccontrol";
   };
 
   config = mkIf cfg.enable {

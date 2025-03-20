@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.k9s;
 in
 {
   options.${namespace}.programs.terminal.tools.k9s = {
-    enable = mkBoolOpt false "Whether or not to enable k9s.";
+    enable = lib.mkEnableOption "k9s";
   };
 
   config = mkIf cfg.enable {

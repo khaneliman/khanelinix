@@ -5,13 +5,12 @@
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.security.doas;
 in
 {
   options.${namespace}.security.doas = {
-    enable = mkBoolOpt false "Whether or not to replace sudo with doas.";
+    enable = lib.mkEnableOption "replacing sudo with doas";
   };
 
   config = lib.mkIf cfg.enable {

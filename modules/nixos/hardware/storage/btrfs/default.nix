@@ -12,7 +12,7 @@ let
     genAttrs
     getExe
     ;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkOpt;
   inherit (cfg) dedupeFilesystems;
 
   cfg = config.${namespace}.hardware.storage.btrfs;
@@ -32,9 +32,9 @@ let
 in
 {
   options.${namespace}.hardware.storage.btrfs = with types; {
-    enable = mkBoolOpt false "Whether or not to enable support for btrfs devices.";
-    autoScrub = mkBoolOpt false "Whether to enable btrfs autoScrub;";
-    dedupe = mkBoolOpt false "Whether to enable btrfs deduplication;";
+    enable = lib.mkEnableOption "support for btrfs devices";
+    autoScrub = lib.mkEnableOption "btrfs autoScrub;";
+    dedupe = lib.mkEnableOption "btrfs deduplication;";
     dedupeFilesystems = mkOpt (listOf str) [ ] "Unique btrfs filesystems to dedupe;";
     scrubMounts = mkOpt (listOf path) [ ] "Btrfs mount paths to scrub;";
   };

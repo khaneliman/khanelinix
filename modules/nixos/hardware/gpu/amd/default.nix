@@ -7,15 +7,14 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.hardware.gpu.amd;
 in
 {
   options.${namespace}.hardware.gpu.amd = {
-    enable = mkBoolOpt false "Whether or not to enable support for amdgpu.";
-    enableRocmSupport = mkBoolOpt false "Whether or not to enable support for rocm.";
-    enableNvtop = mkBoolOpt false "Whether or not to install nvtop for amd.";
+    enable = lib.mkEnableOption "support for amdgpu";
+    enableRocmSupport = lib.mkEnableOption "support for rocm";
+    enableNvtop = lib.mkEnableOption "install nvtop for amd";
   };
 
   config = mkIf cfg.enable {

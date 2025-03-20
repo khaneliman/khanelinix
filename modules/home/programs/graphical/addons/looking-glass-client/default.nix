@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.graphical.addons.looking-glass-client;
 in
 {
   options.${namespace}.programs.graphical.addons.looking-glass-client = {
-    enable = mkBoolOpt false "Whether or not to enable the Looking Glass client.";
+    enable = lib.mkEnableOption "the Looking Glass client";
   };
 
   config = mkIf cfg.enable {

@@ -5,7 +5,6 @@
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.services.ollama;
 
@@ -14,7 +13,7 @@ let
 in
 {
   options.${namespace}.services.ollama = {
-    enable = mkBoolOpt false "Whether to enable ollama.";
+    enable = lib.mkEnableOption "ollama";
     enableDebug = lib.mkEnableOption "debug";
   };
 

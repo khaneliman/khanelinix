@@ -14,7 +14,7 @@ let
     mkForce
     getExe'
     ;
-  inherit (lib.${namespace}) mkOpt mkBoolOpt enabled;
+  inherit (lib.${namespace}) mkOpt enabled;
   inherit (config.${namespace}) user;
 
   cfg = config.${namespace}.programs.terminal.tools.git;
@@ -43,11 +43,11 @@ in
         "The key ID to sign commits with.";
     userName = mkOpt types.str user.fullName "The name to configure git with.";
     userEmail = mkOpt types.str user.email "The email to configure git with.";
-    wslAgentBridge = mkBoolOpt false "Whether to enable the wsl agent bridge.";
+    wslAgentBridge = lib.mkEnableOption "the wsl agent bridge";
     wslGitCredentialManagerPath =
       mkOpt types.str "/mnt/c/Program Files/Git/mingw64/bin/git-credential-manager.exe"
         "The windows git credential manager path.";
-    _1password = mkBoolOpt false "Whether to enable 1Password integration.";
+    _1password = lib.mkEnableOption "1Password integration";
   };
 
   config = mkIf cfg.enable {

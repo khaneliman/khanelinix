@@ -5,13 +5,13 @@
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkOpt;
 
   cfg = config.${namespace}.security.sops;
 in
 {
   options.${namespace}.security.sops = {
-    enable = mkBoolOpt false "Whether to enable sops.";
+    enable = lib.mkEnableOption "sops";
     defaultSopsFile = mkOpt lib.types.path null "Default sops file.";
     sshKeyPaths = mkOpt (with lib.types; listOf path) [
       "/etc/ssh/ssh_host_ed25519_key"

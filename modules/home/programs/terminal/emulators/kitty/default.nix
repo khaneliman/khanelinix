@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkOpt;
 
   cfg = config.${namespace}.programs.terminal.emulators.kitty;
 
@@ -25,7 +25,7 @@ let
 in
 {
   options.${namespace}.programs.terminal.emulators.kitty = with types; {
-    enable = mkBoolOpt false "Whether to enable kitty.";
+    enable = lib.mkEnableOption "kitty";
     font = {
       normal = mkOpt str monaspaceNeon "Font to use for alacritty.";
       bold = mkOpt str monaspaceXenon "Font to use for alacritty.";

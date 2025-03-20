@@ -14,7 +14,7 @@ let
 in
 {
   options.${namespace}.programs.graphical.editors.vscode = {
-    enable = mkEnableOption "Whether or not to enable vscode.";
+    enable = mkEnableOption "Whether or not to enable vscode";
     declarativeConfig = mkBoolOpt true "Whether or not to enable vscode.";
   };
 

@@ -7,13 +7,13 @@
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkOpt;
 
   cfg = config.${namespace}.theme.gtk;
 in
 {
   options.${namespace}.theme.gtk = with types; {
-    enable = mkBoolOpt false "Whether to customize GTK and apply themes.";
+    enable = lib.mkEnableOption "customizing GTK and apply themes";
 
     theme = {
       name = mkOpt str "catppuccin-macchiato-blue-standard" "The name of the GTK theme to apply.";

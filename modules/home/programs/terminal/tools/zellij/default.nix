@@ -7,7 +7,6 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.zellij;
 
@@ -21,7 +20,7 @@ let
 in
 {
   options.${namespace}.programs.terminal.tools.zellij = {
-    enable = mkBoolOpt false "Whether or not to enable zellij.";
+    enable = lib.mkEnableOption "zellij";
   };
 
   config = mkIf cfg.enable {

@@ -8,15 +8,15 @@
 let
   inherit (lib) types mkIf;
   inherit (lib.modules) mkBefore;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkOpt;
 
   cfg = config.${namespace}.services.tailscale;
 in
 {
   options.${namespace}.services.tailscale = with types; {
-    enable = mkBoolOpt false "Whether or not to configure Tailscale";
+    enable = lib.mkEnableOption "Tailscale";
     autoconnect = {
-      enable = mkBoolOpt false "Whether or not to enable automatic connection to Tailscale";
+      enable = lib.mkEnableOption "automatic connection to Tailscale";
       key = mkOpt str "" "The authentication key to use";
     };
   };

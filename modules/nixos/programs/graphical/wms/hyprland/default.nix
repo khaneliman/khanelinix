@@ -12,7 +12,7 @@ let
     mkIf
     types
     ;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt enabled;
+  inherit (lib.${namespace}) mkOpt enabled;
 
   cfg = config.${namespace}.programs.graphical.wms.hyprland;
 
@@ -29,7 +29,7 @@ let
 in
 {
   options.${namespace}.programs.graphical.wms.hyprland = with types; {
-    enable = mkBoolOpt false "Whether or not to enable Hyprland.";
+    enable = lib.mkEnableOption "Hyprland";
     enableDebug = lib.mkEnableOption "debug mode";
     customConfigFiles =
       mkOpt attrs { }

@@ -19,7 +19,7 @@ let
 in
 {
   options.${namespace}.display-managers.gdm = with types; {
-    enable = mkBoolOpt false "Whether or not to enable gdm.";
+    enable = lib.mkEnableOption "gdm";
     autoSuspend = mkBoolOpt true "Whether or not to suspend the machine after inactivity.";
     defaultSession = mkOpt (nullOr str) null "The default session to use.";
     monitors = mkOpt (nullOr path) null "The monitors.xml file to create.";

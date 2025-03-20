@@ -6,13 +6,12 @@
 }:
 let
   inherit (lib) mkDefault mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.hardware.tpm;
 in
 {
   options.${namespace}.hardware.tpm = {
-    enable = mkBoolOpt false "Whether or not to enable Trusted Platform Module 2 (TPM2).";
+    enable = lib.mkEnableOption "Trusted Platform Module 2 (TPM2)";
   };
 
   config = mkIf cfg.enable {

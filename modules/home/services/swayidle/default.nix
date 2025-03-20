@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) getExe getExe';
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.services.swayidle;
 in
 {
   options.${namespace}.services.swayidle = {
-    enable = mkBoolOpt false "Whether to enable swayidle service.";
+    enable = lib.mkEnableOption "swayidle service";
   };
 
   config = lib.mkIf cfg.enable {

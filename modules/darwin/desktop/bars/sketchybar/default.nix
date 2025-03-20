@@ -6,13 +6,13 @@
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkOpt;
 
   cfg = config.${namespace}.desktop.bars.sketchybar;
 in
 {
   options.${namespace}.desktop.bars.sketchybar = {
-    enable = mkBoolOpt false "Whether or not to enable sketchybar.";
+    enable = lib.mkEnableOption "sketchybar";
     logFile =
       mkOpt lib.types.str "/Users/khaneliman/Library/Logs/sketchybar.log"
         "Filepath of log output";

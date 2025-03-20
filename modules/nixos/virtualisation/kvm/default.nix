@@ -14,14 +14,14 @@ let
     concatStringsSep
     getExe
     ;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt enabled;
+  inherit (lib.${namespace}) mkOpt enabled;
   inherit (config.${namespace}) user;
 
   cfg = config.${namespace}.virtualisation.kvm;
 in
 {
   options.${namespace}.virtualisation.kvm = with types; {
-    enable = mkBoolOpt false "Whether or not to enable KVM virtualisation.";
+    enable = lib.mkEnableOption "KVM virtualisation";
     # Use `machinectl` and then `machinectl status <name>` to
     # get the unit "*.scope" of the virtual machine.
     machineUnits = mkOpt (listOf str) [

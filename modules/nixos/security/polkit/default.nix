@@ -6,13 +6,12 @@
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.security.polkit;
 in
 {
   options.${namespace}.security.polkit = {
-    enable = mkBoolOpt false "Whether or not to enable polkit.";
+    enable = lib.mkEnableOption "polkit";
   };
 
   config = lib.mkIf cfg.enable {

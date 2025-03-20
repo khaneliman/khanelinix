@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.hardware.opengl;
 in
 {
   options.${namespace}.hardware.opengl = {
-    enable = mkBoolOpt false "Whether or not to enable support for opengl.";
+    enable = lib.mkEnableOption "support for opengl";
   };
 
   config = mkIf cfg.enable {

@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.services.logrotate;
 in
 {
   options.${namespace}.services.logrotate = {
-    enable = mkBoolOpt false "Whether or not to configure logrotate.";
+    enable = lib.mkEnableOption "logrotate";
   };
 
   config = mkIf cfg.enable {

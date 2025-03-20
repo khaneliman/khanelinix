@@ -6,13 +6,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.terminal.tools.topgrade;
 in
 {
   options.${namespace}.programs.terminal.tools.topgrade = {
-    enable = mkBoolOpt false "Whether or not to enable topgrade.";
+    enable = lib.mkEnableOption "topgrade";
   };
 
   config = mkIf cfg.enable {

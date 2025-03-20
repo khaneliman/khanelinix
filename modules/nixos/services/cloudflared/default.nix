@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.services.cloudflared;
 in
 {
   options.${namespace}.services.cloudflared = {
-    enable = mkBoolOpt false "Whether or not to configure cloudflared";
+    enable = lib.mkEnableOption "cloudflared";
   };
 
   config = mkIf cfg.enable {

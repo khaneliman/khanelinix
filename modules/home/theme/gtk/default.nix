@@ -10,7 +10,6 @@ let
   inherit (lib) mkIf mkDefault types;
   inherit (lib.${namespace})
     boolToNum
-    mkBoolOpt
     mkOpt
     nested-default-attrs
     ;
@@ -19,8 +18,8 @@ let
 in
 {
   options.${namespace}.theme.gtk = {
-    enable = mkBoolOpt false "Whether to customize GTK and apply themes.";
-    usePortal = mkBoolOpt false "Whether to use the GTK Portal.";
+    enable = lib.mkEnableOption "customizing GTK and apply themes";
+    usePortal = lib.mkEnableOption "using the GTK Portal";
 
     cursor = {
       name = mkOpt types.str "catppuccin-macchiato-blue-cursors" "The name of the cursor theme to apply.";

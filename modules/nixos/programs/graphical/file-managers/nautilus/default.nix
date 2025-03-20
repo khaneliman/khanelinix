@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.graphical.file-managers.nautilus;
 in
 {
   options.${namespace}.programs.graphical.file-managers.nautilus = {
-    enable = mkBoolOpt false "Whether to enable the gnome file manager.";
+    enable = lib.mkEnableOption "the gnome file manager";
   };
 
   config = mkIf cfg.enable {

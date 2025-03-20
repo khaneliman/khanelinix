@@ -14,7 +14,7 @@ let
     getExe
     getExe'
     ;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.${namespace}) mkOpt;
   inherit (inputs) hyprland;
 
   cfg = config.${namespace}.display-managers.regreet;
@@ -42,7 +42,7 @@ let
 in
 {
   options.${namespace}.display-managers.regreet = with types; {
-    enable = mkBoolOpt false "Whether or not to enable greetd.";
+    enable = lib.mkEnableOption "greetd";
     hyprlandOutput = mkOpt lines "" "Hyprlands Outputs config.";
   };
 

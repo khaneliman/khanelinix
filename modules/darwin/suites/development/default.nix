@@ -13,9 +13,9 @@ let
 in
 {
   options.${namespace}.suites.development = {
-    enable = mkBoolOpt false "Whether or not to enable common development configuration.";
+    enable = lib.mkEnableOption "common development configuration";
     dockerEnable = mkBoolOpt true "Whether or not to enable docker development configuration.";
-    aiEnable = mkBoolOpt false "Whether or not to enable ai development configuration.";
+    aiEnable = lib.mkEnableOption "ai development configuration";
   };
 
   config = mkIf cfg.enable {

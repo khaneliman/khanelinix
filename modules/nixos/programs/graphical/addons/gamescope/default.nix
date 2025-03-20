@@ -7,13 +7,12 @@
 }:
 let
   inherit (lib) getExe mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.programs.graphical.addons.gamescope;
 in
 {
   options.${namespace}.programs.graphical.addons.gamescope = {
-    enable = mkBoolOpt false "Whether or not to enable gamescope.";
+    enable = lib.mkEnableOption "gamescope";
   };
 
   config = mkIf cfg.enable {

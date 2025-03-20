@@ -7,13 +7,13 @@
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.${namespace}) mkBoolOpt enabled;
+  inherit (lib.${namespace}) enabled;
 
   cfg = config.${namespace}.suites.common;
 in
 {
   options.${namespace}.suites.common = {
-    enable = mkBoolOpt false "Whether or not to enable common configuration.";
+    enable = lib.mkEnableOption "common configuration";
   };
 
   config = mkIf cfg.enable {

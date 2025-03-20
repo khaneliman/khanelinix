@@ -6,13 +6,12 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
 
   cfg = config.${namespace}.services.oomd;
 in
 {
   options.${namespace}.services.oomd = {
-    enable = mkBoolOpt false "Whether or not to configure oomd.";
+    enable = lib.mkEnableOption "oomd";
   };
 
   config = mkIf cfg.enable {
