@@ -64,7 +64,7 @@ in
         earlyoom = mkDefault enabled;
         logind = mkDefault enabled;
         logrotate = mkDefault enabled;
-        # oomd = mkDefault enabled;
+        oomd = mkDefault enabled;
         openssh = mkDefault enabled;
         printing = mkDefault enabled;
       };
