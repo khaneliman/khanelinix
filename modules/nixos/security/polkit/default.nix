@@ -19,9 +19,6 @@ in
       with pkgs;
       lib.optionals (!config.${namespace}.programs.graphical.wms.hyprland.enable) [
         libsForQt5.polkit-kde-agent
-      ]
-      ++ lib.optionals config.${namespace}.programs.graphical.wms.hyprland.enable [
-        hyprpolkitagent
       ];
 
     security.polkit = {

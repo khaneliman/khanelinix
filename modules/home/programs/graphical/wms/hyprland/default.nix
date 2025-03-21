@@ -125,6 +125,8 @@ in
       };
     };
 
+    services.hyprpolkitagent = enabled;
+
     wayland.windowManager.hyprland =
       let
         systemctl = lib.getExe' pkgs.systemd "systemctl";
