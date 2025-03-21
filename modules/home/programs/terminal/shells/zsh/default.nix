@@ -23,7 +23,6 @@ in
         package = pkgs.zsh;
 
         autocd = true;
-        autosuggestion.enable = true;
 
         completionInit = # bash
           ''
@@ -140,12 +139,9 @@ in
               source ${config.programs.git.package}/share/git/contrib/completion/git-prompt.sh
             ''
           )
+
           # Bash
           ''
-            # Auto suggests otherwise breaks these widgets.
-            # <https://github.com/zsh-users/zsh-autosuggestions/issues/619>
-            ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-beginning-search-backward-end history-beginning-search-forward-end)
-
             # binds, zsh modules and everything else
             ${fileContents ./rc/binds.zsh}
             ${fileContents ./rc/modules.zsh}
