@@ -105,12 +105,15 @@ in
       system.input.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isDarwin;
     };
 
-    programs.readline = {
-      enable = mkDefault true;
+    programs = {
+      pay-respects = mkDefault enabled;
+      readline = {
+        enable = mkDefault true;
 
-      extraConfig = ''
-        set completion-ignore-case on
-      '';
+        extraConfig = ''
+          set completion-ignore-case on
+        '';
+      };
     };
 
     xdg.configFile.wgetrc.text = "";
