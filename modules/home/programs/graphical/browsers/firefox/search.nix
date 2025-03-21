@@ -24,26 +24,6 @@ in
         "ebay".metaData.hidden = true;
         "wikipedia".metaData.hidden = true;
 
-        "Nix Packages" = {
-          urls = [
-            {
-              template = "https://search.nixos.org/packages";
-              params = [
-                {
-                  name = "type";
-                  value = "packages";
-                }
-                {
-                  name = "query";
-                  value = "{searchTerms}";
-                }
-              ];
-            }
-          ];
-          icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-          definedAliases = [ "@np" ];
-        };
-
         "NixOs Options" = {
           urls = [
             {
@@ -64,6 +44,32 @@ in
           definedAliases = [ "@no" ];
         };
 
+        "Nix Packages" = {
+          urls = [
+            {
+              template = "https://search.nixos.org/packages";
+              params = [
+                {
+                  name = "type";
+                  value = "packages";
+                }
+                {
+                  name = "query";
+                  value = "{searchTerms}";
+                }
+              ];
+            }
+          ];
+          icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+          definedAliases = [ "@np" ];
+        };
+
+        "NixOS Wiki" = {
+          urls = [ { template = "https://wiki.nixos.org/w/index.php?search={searchTerms}"; } ];
+          icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+          definedAliases = [ "@nw" ];
+        };
+
         "Nixvim Options" = {
           urls = [
             {
@@ -78,22 +84,6 @@ in
           ];
           icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
           definedAliases = [ "@nv" ];
-        };
-
-        "Searchix" = {
-          urls = [
-            {
-              template = "https://searchix.alanpearce.eu/";
-              params = [
-                {
-                  name = "query";
-                  value = "{searchTerms}";
-                }
-              ];
-            }
-          ];
-          icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-          definedAliases = [ "@sx" ];
         };
 
         "NüschtOS" = {
@@ -112,11 +102,22 @@ in
           definedAliases = [ "@nos" ];
         };
 
-        "NixOS Wiki" = {
-          urls = [ { template = "https://wiki.nixos.org/w/index.php?search={searchTerms}"; } ];
+        "Searchix" = {
+          urls = [
+            {
+              template = "https://searchix.alanpearce.eu/";
+              params = [
+                {
+                  name = "query";
+                  value = "{searchTerms}";
+                }
+              ];
+            }
+          ];
           icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-          definedAliases = [ "@nw" ];
+          definedAliases = [ "@sx" ];
         };
+
       };
     } "Search configuration";
   };
