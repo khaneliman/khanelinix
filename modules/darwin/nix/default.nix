@@ -69,9 +69,9 @@ in
         # limit number to see if it helps
         http-connections = lib.mkForce 25;
 
-        # FIX: shouldn't disable, but getting sandbox max size errors on darwin
-        # darwin-rebuild --rollback on testing changing
-        sandbox = lib.mkForce false;
+        # FIXME: upstream bug needs to be resolved before fully enabling
+        # https://github.com/NixOS/nix/issues/12698
+        sandbox = lib.mkForce "relaxed";
       };
     };
   };
