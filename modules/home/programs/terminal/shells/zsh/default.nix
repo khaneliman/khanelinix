@@ -151,11 +151,6 @@ in
             ${fileContents ./rc/modules.zsh}
             ${fileContents ./rc/fzf-tab.zsh}
             ${fileContents ./rc/misc.zsh}
-
-            # Set LS_COLORS by parsing dircolors output
-            LS_COLORS="$(${lib.getExe' pkgs.coreutils "dircolors"} --sh)"
-            LS_COLORS="''${''${LS_COLORS#*\'}%\'*}"
-            export LS_COLORS
           ''
 
           # Should be last thing to run
