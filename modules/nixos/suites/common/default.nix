@@ -67,6 +67,7 @@ in
         oomd = mkDefault enabled;
         openssh = mkDefault enabled;
         printing = mkDefault enabled;
+        resources-limiter = mkDefault enabled;
       };
 
       system = {
