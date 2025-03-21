@@ -181,6 +181,10 @@ in
               }
               // lib.optionalAttrs (host == "khanelimac") {
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+                # Prefer local builds for personal usage
+                systems = [
+                  "x86_64-darwin"
+                ];
               }
             )
             (
