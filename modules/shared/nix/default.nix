@@ -152,7 +152,7 @@ in
                   "x86_64-darwin"
                 ];
                 hostName = "khanelimac.local";
-                maxJobs = 8;
+                maxJobs = 4;
                 speedFactor = 10;
                 supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
               }
