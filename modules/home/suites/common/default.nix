@@ -74,6 +74,7 @@ in
             carapace = mkDefault enabled;
             colorls = mkDefault enabled;
             comma = mkDefault enabled;
+            dircolors = mkDefault enabled;
             direnv = mkDefault enabled;
             eza = mkDefault enabled;
             fastfetch = mkDefault enabled;
