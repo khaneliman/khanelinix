@@ -19,7 +19,7 @@ in
       # DOCS https://www.freedesktop.org/software/systemd/man/latest/systemd.resource-control.html
       slices.resources-limiter.sliceConfig = {
         CPUAccounting = true;
-        CPUQuota = "50%";
+        CPUQuota = "200%";
         MemoryAccounting = true;
         MemoryHigh = "50%";
         MemoryMax = "75%";
