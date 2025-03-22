@@ -53,6 +53,7 @@ in
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       bfg-repo-cleaner
+      git-absorb
       git-crypt
       git-filter-repo
       git-lfs
