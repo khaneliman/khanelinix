@@ -73,6 +73,8 @@ in
           configurationLimit = 20;
           editor = false;
         };
+
+        timeout = 1;
       };
 
       plymouth = {
