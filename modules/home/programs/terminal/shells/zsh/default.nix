@@ -91,7 +91,7 @@ in
         };
 
         initContent = lib.mkMerge [
-          (lib.mkBefore # Bash
+          (lib.mkOrder 450 # Bash
             ''
               # Offer to correct the spelling of commands
               setopt correct
@@ -141,13 +141,13 @@ in
           )
 
           # Bash
-          ''
+          (lib.mkOrder 600 ''
             # binds, zsh modules and everything else
             ${fileContents ./rc/binds.zsh}
             ${fileContents ./rc/modules.zsh}
             ${fileContents ./rc/fzf-tab.zsh}
             ${fileContents ./rc/misc.zsh}
-          ''
+          '')
 
           # Should be last thing to run
           (lib.mkOrder 5000 (lib.optionalString config.programs.fastfetch.enable "fastfetch"))
