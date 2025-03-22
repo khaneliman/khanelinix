@@ -27,7 +27,10 @@ in
         MemoryZSwapMax = "50%";
       };
 
-      services.nix-daemon.serviceConfig.Slice = "resources-limiter.slice";
+      services = {
+        nixos-upgrade.serviceConfig.Slice = "resources-limiter.slice";
+        nix-daemon.serviceConfig.Slice = "resources-limiter.slice";
+      };
     };
   };
 }
