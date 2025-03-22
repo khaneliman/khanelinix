@@ -31,6 +31,8 @@ in
       ++ lib.optionals cfg.secureBoot [ sbctl ];
 
     boot = {
+      initrd.systemd.network.wait-online.enable = false;
+
       kernelParams =
         lib.optionals cfg.plymouth [ "quiet" ]
         ++ lib.optionals cfg.silentBoot [
