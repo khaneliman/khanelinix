@@ -83,5 +83,7 @@ in
       autosuggestions.enable = true;
       histFile = "$XDG_CACHE_HOME/zsh.history";
     };
+
+    zramSwap.enable = true;
   };
 }
