@@ -214,6 +214,7 @@ in
             )
           ];
 
+        checkConfig = true;
         distributedBuilds = true;
 
         gc = {
