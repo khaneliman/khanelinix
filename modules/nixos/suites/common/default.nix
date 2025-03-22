@@ -15,22 +15,23 @@ in
   imports = [ (lib.snowfall.fs.get-file "modules/shared/suites/common/default.nix") ];
 
   config = mkIf cfg.enable {
-
     environment = {
       defaultPackages = lib.mkForce [ ];
 
       systemPackages = with pkgs; [
         curl
         dnsutils
+        fortune
         isd
+        lolcat
         lshw
         pciutils
         pkgs.${namespace}.trace-symlink
         pkgs.${namespace}.trace-which
         rsync
+        usbimager
         util-linux
         wget
-        usbimager
       ];
     };
 

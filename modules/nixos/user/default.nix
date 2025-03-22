@@ -24,11 +24,6 @@ in
   };
 
   config = {
-    environment.systemPackages = with pkgs; [
-      fortune
-      lolcat
-    ];
-
     users.users.${cfg.name} = {
       inherit (cfg) name initialPassword;
 

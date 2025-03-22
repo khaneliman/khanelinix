@@ -24,14 +24,6 @@ in
   };
 
   config = {
-    environment.pathsToLink = [ "/share/zsh" ];
-
-    programs.zsh = {
-      enable = true;
-      autosuggestions.enable = true;
-      histFile = "$XDG_CACHE_HOME/zsh.history";
-    };
-
     users.users.${cfg.name} = {
       inherit (cfg) name initialPassword;
 
