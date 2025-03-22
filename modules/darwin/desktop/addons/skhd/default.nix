@@ -17,7 +17,9 @@ in
 {
   options.${namespace}.desktop.addons.skhd = {
     enable = lib.mkEnableOption "skhd";
-    logFile = mkOpt lib.types.str "/Users/khaneliman/Library/Logs/skhd.log" "Filepath of log output";
+    logFile = mkOpt lib.types.str "${
+      config.snowfallorg.users.${config.${namespace}.user.name}.home.path
+    }/Library/Logs/skhd.log" "Filepath of log output";
   };
 
   config = mkIf cfg.enable {

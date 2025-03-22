@@ -13,9 +13,9 @@ in
 {
   options.${namespace}.desktop.bars.sketchybar = {
     enable = lib.mkEnableOption "sketchybar";
-    logFile =
-      mkOpt lib.types.str "/Users/khaneliman/Library/Logs/sketchybar.log"
-        "Filepath of log output";
+    logFile = mkOpt lib.types.str "${
+      config.snowfallorg.users.${config.${namespace}.user.name}.home.path
+    }/Library/Logs/sketchybar.log" "Filepath of log output";
   };
 
   config = lib.mkIf cfg.enable {

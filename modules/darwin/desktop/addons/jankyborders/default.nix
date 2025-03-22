@@ -22,9 +22,9 @@ in
       description = "The jankyborders package to use.";
       example = lib.literalExpression "pkgs.${namespace}.jankyborders";
     };
-    logFile =
-      mkOpt lib.types.str "/Users/khaneliman/Library/Logs/jankyborders.log"
-        "Filepath of log output";
+    logFile = mkOpt lib.types.str "${
+      config.snowfallorg.users.${config.${namespace}.user.name}.home.path
+    }/Library/Logs/jankyborders.log" "Filepath of log output";
   };
 
   config = lib.mkIf cfg.enable {

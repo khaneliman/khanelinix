@@ -15,7 +15,9 @@ in
   options.${namespace}.desktop.wms.yabai = {
     enable = lib.mkEnableOption "yabai";
     debug = lib.mkEnableOption "debug output";
-    logFile = mkOpt lib.types.str "/Users/khaneliman/Library/Logs/yabai.log" "Filepath of log output";
+    logFile = mkOpt lib.types.str "${
+      config.snowfallorg.users.${config.${namespace}.user.name}.home.path
+    }/Library/Logs/yabai.log" "Filepath of log output";
   };
 
   config = lib.mkIf cfg.enable {
