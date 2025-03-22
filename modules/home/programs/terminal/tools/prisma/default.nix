@@ -23,7 +23,7 @@ in
   config = mkIf cfg.enable {
     home.packages = [ cfg.pkgs.npm ];
 
-    programs.zsh.initExtra = # bash
+    programs.zsh.initContent = # bash
       ''
         export PRISMA_MIGRATION_ENGINE_BINARY="${getExe' cfg.pkgs.engines "migration-engine"}"
         export PRISMA_QUERY_ENGINE_BINARY="${getExe' cfg.pkgs.engines "query-engine"}"

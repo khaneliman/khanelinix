@@ -168,7 +168,7 @@ in
 
       bash.initExtra = tokenExports;
       fish.shellInit = tokenExports;
-      zsh.initExtra = tokenExports;
+      zsh.initContent = tokenExports;
     };
 
     home = {

@@ -121,7 +121,7 @@ in
       fish.shellInit = tokenExports;
       nix-your-shell = mkDefault enabled;
       vinegar.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
-      zsh.initExtra = tokenExports;
+      zsh.initContent = tokenExports;
     };
 
     khanelinix = {

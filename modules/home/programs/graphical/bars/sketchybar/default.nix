@@ -23,7 +23,7 @@ in
   config = mkIf cfg.enable {
     home.shellAliases = shellAliases;
 
-    programs.zsh.initExtra = # bash
+    programs.zsh.initContent = # bash
       ''
         brew() {
           command brew "$@" && ${getExe pkgs.sketchybar} --trigger brew_update
