@@ -107,7 +107,8 @@ in
     };
 
     programs = {
-      pay-respects = mkDefault enabled;
+      # FIXME: breaks zsh aliases
+      # pay-respects = mkDefault enabled;
       readline = {
         enable = mkDefault true;
 
