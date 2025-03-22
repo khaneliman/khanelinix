@@ -22,7 +22,6 @@ in
 
   config = lib.mkIf cfg.enable {
     ${namespace} = {
-      desktop.addons.jankyborders = enabled;
 
       home.extraOptions = {
         home.shellAliases = {

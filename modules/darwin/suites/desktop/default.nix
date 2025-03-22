@@ -33,7 +33,6 @@ in
     ${namespace}.desktop = {
       addons = {
         skhd = mkDefault enabled;
-        jankyborders = mkDefault enabled;
       };
 
       bars = {

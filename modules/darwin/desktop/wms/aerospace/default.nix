@@ -20,8 +20,6 @@ in
 
   config = lib.mkIf cfg.enable {
     ${namespace} = {
-      desktop.addons.jankyborders = enabled;
-
       home.extraOptions = {
         home.shellAliases = {
           restart-aerospace = ''launchctl kickstart -k gui/"$(id -u)"/org.nixos.aerospace'';

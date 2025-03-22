@@ -8,10 +8,10 @@
 let
   inherit (lib.${namespace}) mkOpt;
 
-  cfg = config.${namespace}.desktop.addons.jankyborders;
+  cfg = config.${namespace}.services.jankyborders;
 in
 {
-  options.${namespace}.desktop.addons.jankyborders = {
+  options.${namespace}.services.jankyborders = {
     enable =
       lib.${namespace}.mkBoolOpt false
         "Whether to enable jankyborders in the desktop environment.";
@@ -28,26 +28,17 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    launchd.user.agents.jankyborders.serviceConfig = {
-      StandardErrorPath = cfg.logFile;
-      StandardOutPath = cfg.logFile;
-      KeepAlive = lib.mkForce {
-        PathState = {
-          "/run/current-system/sw/bin/borders" = true;
-        };
-      };
-    };
-
     services.jankyborders = {
       enable = true;
 
-      style = "round";
-      width = 6.0;
-      hidpi = false;
-      active_color = "0xff7793d1";
-      inactive_color = "0xff5e6798";
-      background_color = "0x302c2e34";
-      blur_radius = 25.0;
+      settings = {
+        style = "round";
+        width = 6.0;
+        hidpi = "off";
+        active_color = "0xff7793d1";
+        inactive_color = "0xff5e6798";
+        background_color = "0x302c2e34";
+      };
     };
   };
 }

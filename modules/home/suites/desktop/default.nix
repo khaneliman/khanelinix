@@ -25,6 +25,7 @@ in
           };
         };
       };
+      services.jankyborders = mkDefault enabled;
       theme = {
         gtk.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
         qt.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
