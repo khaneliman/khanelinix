@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) getExe;
-  inherit (lib.${namespace}) mkOpt enabled;
+  inherit (lib.${namespace}) mkOpt;
 
   cfg = config.${namespace}.desktop.wms.yabai;
 in
