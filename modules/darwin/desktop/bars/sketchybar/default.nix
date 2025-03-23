@@ -51,6 +51,7 @@ in
         gh-notify
         gnugrep
         gnused
+        jankyborders
         jq
         lua5_4
         wttrbar
