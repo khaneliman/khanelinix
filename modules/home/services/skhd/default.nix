@@ -3,19 +3,20 @@
   lib,
   pkgs,
   namespace,
+  osConfig,
   ...
 }:
 let
   inherit (lib) mkIf getExe;
   inherit (lib.${namespace}) mkOpt;
 
-  sketchybar = getExe config.services.sketchybar.package;
-  yabai = getExe config.services.yabai.package;
+  sketchybar = getExe osConfig.services.sketchybar.package;
+  yabai = getExe osConfig.services.yabai.package;
 
-  cfg = config.${namespace}.desktop.addons.skhd;
+  cfg = config.${namespace}.services.skhd;
 in
 {
-  options.${namespace}.desktop.addons.skhd = {
+  options.${namespace}.services.skhd = {
     enable = lib.mkEnableOption "skhd";
     logFile = mkOpt lib.types.str "${
       config.snowfallorg.users.${config.${namespace}.user.name}.home.path
@@ -23,31 +24,15 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment = {
-      systemPackages = [ config.services.skhd.package ];
-    };
-
-    ${namespace}.home.extraOptions = {
-      home.shellAliases = {
-        restart-skhd = ''launchctl kickstart -k gui/"$(id -u)"/org.nixos.skhd'';
-      };
-    };
-
-    launchd.user.agents.skhd.serviceConfig = {
-      StandardErrorPath = cfg.logFile;
-      StandardOutPath = cfg.logFile;
-      KeepAlive = lib.mkForce {
-        PathState = {
-          "/run/current-system/sw/bin/skhd" = true;
-        };
-      };
+    home.shellAliases = {
+      restart-skhd = ''launchctl kickstart -k gui/"$(id -u)"/org.nix-community.home.skhd'';
     };
 
     services.skhd = {
       enable = true;
       package = pkgs.skhd;
 
-      skhdConfig = # bash
+      config = # bash
         ''
           # hyper (cmd + shift + alt + ctrl)
           # meh (shift + alt + ctrl)
@@ -261,11 +246,5 @@ in
           default < shift + lalt - c : ${yabai} -m space --layout stack
         '';
     };
-
-    # Hot-reload workaround until https://github.com/koekeishiya/skhd/issues/342 is fixed
-    system.activationScripts.postActivation.text = ''
-      echo "Restarting skhd..."
-      launchctl kickstart -k gui/"$(id -u ${config.${namespace}.user.name})"/org.nixos.skhd
-    '';
   };
 }

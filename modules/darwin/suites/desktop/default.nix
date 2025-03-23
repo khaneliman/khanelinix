@@ -31,10 +31,6 @@ in
     ];
 
     ${namespace}.desktop = {
-      addons = {
-        skhd = mkDefault enabled;
-      };
-
       bars = {
         sketchybar = mkDefault enabled;
       };
