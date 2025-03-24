@@ -27,8 +27,8 @@ in
       };
 
       services = {
-        jankyborders = mkDefault enabled;
-        skhd = mkDefault enabled;
+        jankyborders.enable = mkDefault pkgs.stdenv.hostPlatform.isDarwin;
+        skhd.enable = mkDefault pkgs.stdenv.hostPlatform.isDarwin;
       };
 
       theme = {
