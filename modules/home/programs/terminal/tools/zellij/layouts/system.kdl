@@ -33,40 +33,34 @@ layout {
             pane command="zsh" size="25%" name="Shell"
         }
     }
-    tab name="khanelinix" focus=true {
+    tab name="khanelinix" focus=true cwd="$HOME/khanelinix/" {
         pane {
-            cwd "$HOME/khanelinix/"
-            edit "flake.nix"
+            command "nvim"
         }
     }
-    tab name="Git" split_direction="horizontal" name="Git" {
+    tab name="Git" split_direction="horizontal" cwd="$HOME/khanelinix/" {
         pane {
-            cwd "$HOME/khanelinix/"
             command "lazygit"
         }
     }
-    tab name="Files" split_direction="horizontal" name="Files" {
+    tab name="Files" split_direction="horizontal" cwd="$HOME" {
         pane {
-            cwd "$HOME"
             command "yazi"
         }
     }
-    tab name="Shell" split_direction="horizontal" name="Shell" {
+    tab name="Shell" split_direction="horizontal" cwd="$HOME/khanelinix/" {
         pane {
-            cwd "$HOME/khanelinix/"
             command "zsh"
         }
     }
-    tab name="Processes" split_direction="vertical" {
+    tab name="Processes" split_direction="vertical" cwd="$HOME" {
         pane {
-            cwd "$HOME"
             command "btop"
         }
     }
-    tab name="Media" split_direction="vertical" {
+    tab name="Media" split_direction="vertical" cwd="$HOME/Music" {
         pane split_direction="horizontal" name="Player" {
             pane {
-                cwd "$HOME/Music"
                 command "musikcube"
             }
         }
