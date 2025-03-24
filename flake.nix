@@ -165,7 +165,7 @@
         # TODO: cleanup when available
         permittedInsecurePackages = [
           # NOTE: needed by emulationstation
-          "freeimage-unstable-2021-11-01"
+          "freeimage-3.18.0-unstable-2024-04-18"
           # dev shells
           "aspnetcore-runtime-6.0.36"
           "aspnetcore-runtime-7.0.20"
