@@ -82,6 +82,13 @@ in
           };
         };
 
+        difftastic = {
+          enableAsDifftool = true;
+
+          background = "dark";
+          display = "inline";
+        };
+
         extraConfig = {
           credential = {
             helper =
