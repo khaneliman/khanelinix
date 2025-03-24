@@ -36,11 +36,6 @@ in
       zellij = {
         enable = true;
 
-        # These enable auto starting
-        enableBashIntegration = false;
-        enableFishIntegration = false;
-        enableZshIntegration = false;
-
         settings = {
           # custom defined layouts
           layout_dir = "${./layouts}";
