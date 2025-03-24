@@ -10,12 +10,12 @@ let
 
   cfg = config.${namespace}.programs.terminal.tools.zellij;
 
-  zns = "zellij -s $(basename $(pwd)) -l dev options --default-cwd $(pwd)";
+  zns = "zellij -s $(basename $(pwd)) options --default-cwd $(pwd)";
   zas = "zellij a $(basename $(pwd))";
   zo = ''
     session_name=$(basename "$(pwd)")
 
-    zellij --layout dev  attach --create "$session_name" options --default-cwd "$(pwd)"
+    zellij attach --create "$session_name" options --default-cwd "$(pwd)"
   '';
 in
 {
@@ -56,7 +56,7 @@ in
 
           auto_layouts = true;
 
-          default_layout = "system"; # or compact
+          default_layout = "dev";
           default_mode = "locked";
           support_kitty_keyboard_protocol = true;
 
