@@ -18,7 +18,6 @@ in
       graphical = {
         apps = {
           thunderbird = {
-            enable = true;
             extraAccounts =
               let
                 # Not super secret, just doesn't need to be scraped so easily.

@@ -21,7 +21,6 @@ in
         addons.looking-glass-client = enabled;
         apps = {
           thunderbird = {
-            enable = true;
             extraAccounts =
               let
                 # Not super secret, just doesn't need to be scraped so easily.

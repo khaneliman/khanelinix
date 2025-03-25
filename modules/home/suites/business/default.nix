@@ -34,6 +34,11 @@ in
 
     khanelinix = {
       programs = {
+        graphical = {
+          apps = {
+            thunderbird = lib.mkDefault enabled;
+          };
+        };
         terminal = {
           tools = {
             _1password-cli = lib.mkDefault enabled;
