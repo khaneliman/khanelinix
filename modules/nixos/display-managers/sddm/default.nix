@@ -19,15 +19,15 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       catppuccin-sddm-corners
-      # TODO: update theme support
-      # kdePackages.sddm
     ];
 
     services = {
       displayManager = {
         sddm = {
           inherit (cfg) enable;
-          package = pkgs.libsForQt5.sddm;
+          # package = pkgs.libsForQt5.sddm;
+          # TODO: update theme support
+          package = pkgs.kdePackages.sddm;
           theme = "catppuccin-sddm-corners";
           wayland = enabled;
         };
