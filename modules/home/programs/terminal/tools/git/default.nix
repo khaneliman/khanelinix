@@ -172,6 +172,8 @@ in
       };
       # dashboard with pull requests and issues
       gh-dash = enabled;
+      # Merge helper
+      mergiraf = enabled;
 
       bash.initExtra = tokenExports;
       fish.shellInit = tokenExports;
