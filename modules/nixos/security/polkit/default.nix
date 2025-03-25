@@ -6,7 +6,6 @@
   ...
 }:
 let
-
   cfg = config.${namespace}.security.polkit;
 in
 {
@@ -18,7 +17,7 @@ in
     environment.systemPackages =
       with pkgs;
       lib.optionals (!config.${namespace}.programs.graphical.wms.hyprland.enable) [
-        libsForQt5.polkit-kde-agent
+        kdePackages.polkit-kde-agent
       ];
 
     security.polkit = {
