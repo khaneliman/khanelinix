@@ -27,6 +27,7 @@ in
                 "fastmail.com"
                 "yandex.com"
                 "outlook.office365.com"
+                "davmail"
               ]) null "Email flavor";
             };
           };
@@ -55,16 +56,32 @@ in
             flavor,
           }:
           {
-            inherit address primary flavor;
+            inherit address primary;
+            flavor = if (flavor == "davmail") then "plain" else flavor;
             realName = config.${namespace}.user.fullName;
+            userName = lib.mkIf (flavor == "davmail") address;
+            imap = lib.mkIf (flavor == "davmail") {
+              host = "localhost";
+              port = 1143;
+              tls = {
+                enable = false;
+                useStartTls = false;
+              };
+            };
+            smtp = lib.mkIf (flavor == "davmail") {
+              host = "localhost";
+              port = 1025;
+              tls = {
+                enable = false;
+                useStartTls = false;
+              };
+            };
             thunderbird = {
               enable = true;
               profiles = [
                 config.${namespace}.user.name
               ];
-              settings = id: {
-                "mail.server.server_${id}.authMethod" = 10;
-                "mail.server.server_${id}.is_gmail" = lib.mkIf (flavor == "gmail.com") true;
+              settings = _id: {
               };
             };
           };
