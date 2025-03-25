@@ -43,7 +43,6 @@ in
       with pkgs;
       [
         birdtray
-        davmail
       ]
     );
 

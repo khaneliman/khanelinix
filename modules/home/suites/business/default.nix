@@ -46,6 +46,7 @@ in
         };
       };
       services = {
+        davmail.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isLinux;
         syncthing = lib.mkDefault enabled;
       };
     };
