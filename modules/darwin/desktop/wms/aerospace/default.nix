@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib.${namespace}) mkOpt enabled;
+  inherit (lib.${namespace}) mkOpt;
   cfg = config.${namespace}.desktop.wms.aerospace;
 in
 {
