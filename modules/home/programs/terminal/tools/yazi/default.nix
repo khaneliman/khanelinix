@@ -28,14 +28,18 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      miller
-      ouch
-      config.programs.ripgrep.package
-      xdragon
-      zoxide
-      glow
-    ];
+    home.packages =
+      with pkgs;
+      [
+        miller
+        ouch
+        config.programs.ripgrep.package
+        zoxide
+        glow
+      ]
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+        xdragon
+      ];
 
     programs.yazi = {
       enable = true;

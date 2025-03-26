@@ -28,7 +28,8 @@ in
     environment.systemPackages = with pkgs; [
       # Yubico's official tools
       yubikey-manager # cli
-      yubikey-manager-qt # gui
+      # FIXME: insecure
+      # yubikey-manager-qt # gui
       yubikey-personalization # cli
       yubikey-personalization-gui # gui
       yubico-piv-tool # cli

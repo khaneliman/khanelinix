@@ -97,7 +97,6 @@
     khanelivim = {
       url = "github:khaneliman/khanelivim";
       inputs = {
-        yazi.follows = "yazi";
         git-hooks-nix.follows = "git-hooks-nix";
         treefmt-nix.follows = "treefmt-nix";
       };
