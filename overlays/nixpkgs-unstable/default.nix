@@ -1,5 +1,5 @@
 { channels, ... }:
-_final: _prev: {
+_final: prev: {
   inherit (channels.nixpkgs-unstable)
     # Core
     jankyborders

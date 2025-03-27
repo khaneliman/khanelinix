@@ -135,6 +135,8 @@
       url = "github:yazi-rs/plugins";
       flake = false;
     };
+
+    nixpkgs-master.url = "github:NixOS/nixpkgs";
   };
 
   outputs =
