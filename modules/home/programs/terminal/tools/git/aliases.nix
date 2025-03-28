@@ -66,7 +66,7 @@
     ## History / Listing
 
     ### One-line log
-    l = "git log --pretty=format:\"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]\" --decorate --date=short";
+    l = "!git log --pretty=format:\"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]\" --decorate --date=short";
     ### Pretty formatted git log
     lg = "!git log - -pretty=format:\"%C(magenta)%h%Creset -%C(red)%d%Creset %s %C(dim green)(%cr) [%an]\" --abbrev-commit -30";
     ### List aliases
@@ -78,7 +78,7 @@
     ### Display current branch
     b = "rev-parse --abbrev-ref HEAD";
     ### Aside from providing one-line logs, it also shows the branching in/out
-    hist = "git log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short";
+    hist = "!git log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short";
 
     # Random
     ### Random dad joke if typo on git add
