@@ -140,11 +140,7 @@ in
 
     programs.waybar = {
       enable = true;
-      # TODO: remove override after waybar is updated in nixpkgs
-      package = waybar.packages.${system}.waybar.overrideAttrs (_oldAttrs: {
-        patches = [ ];
-        nativeInstallCheckInputs = [ ];
-      });
+      package = waybar.packages.${system}.waybar;
 
       systemd.enable = true;
 
