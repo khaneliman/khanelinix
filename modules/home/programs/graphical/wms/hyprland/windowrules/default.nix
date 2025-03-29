@@ -11,6 +11,7 @@ in
 {
   imports = [
     ./floating.nix
+    ./fullscreen.nix
     ./idleinhibit.nix
     ./input.nix
     ./opacity.nix
