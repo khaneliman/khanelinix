@@ -4,7 +4,6 @@
   pkgs,
   namespace,
   inputs,
-  system,
   ...
 }:
 let
@@ -43,7 +42,6 @@ in
 
     programs.yazi = {
       enable = true;
-      package = yazi.packages.${system}.default;
 
       # NOTE: wrapper alias is yy
       enableBashIntegration = true;
