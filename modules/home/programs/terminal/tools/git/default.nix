@@ -19,8 +19,9 @@ let
 
   cfg = config.${namespace}.programs.terminal.tools.git;
 
-  aliases = import ./aliases.nix { inherit lib pkgs; };
+  aliases = import ./aliases.nix;
   ignores = import ./ignores.nix;
+  shell-aliases = import ./shell-aliases.nix { inherit config lib pkgs; };
 
   tokenExports =
     lib.optionalString osConfig.${namespace}.security.sops.enable # Bash
@@ -156,7 +157,7 @@ in
     };
 
     home = {
-      inherit (aliases) shellAliases;
+      inherit (shell-aliases) shellAliases;
     };
 
     sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
