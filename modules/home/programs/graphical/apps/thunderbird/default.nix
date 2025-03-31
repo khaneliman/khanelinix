@@ -33,7 +33,7 @@ in
           };
         in
         lib.types.attrsOf accountType;
-      default = null;
+      default = { };
       description = "Extra email accounts to configure.";
     };
   };
