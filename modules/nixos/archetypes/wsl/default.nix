@@ -28,6 +28,11 @@ in
       ];
     };
 
-    khanelinix.system.networking.enable = mkForce false;
+    khanelinix = {
+      # Networking handled by host
+      system.networking.enable = mkForce false;
+      # WSL Doesn't support `oomd`
+      services.oomd.enable = mkForce false;
+    };
   };
 }
