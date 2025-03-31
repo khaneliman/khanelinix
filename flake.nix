@@ -185,7 +185,7 @@
 
       homes.modules = with inputs; [
         anyrun.homeManagerModules.default
-        catppuccin.homeManagerModules.catppuccin
+        catppuccin.homeModules.catppuccin
         hypr-socket-watch.homeManagerModules.default
         nix-index-database.hmModules.nix-index
         sops-nix.homeManagerModules.sops
