@@ -24,7 +24,7 @@ in
       home.file = mkAliasDefinitions options.${namespace}.home.file;
       home.stateVersion = lib.mkOptionDefault config.system.stateVersion;
       xdg.configFile = mkAliasDefinitions options.${namespace}.home.configFile;
-      xdg.enable = true;
+      xdg.enable = lib.mkOptionDefault true;
     };
 
     home-manager = {
