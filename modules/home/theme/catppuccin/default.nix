@@ -101,6 +101,10 @@ in
         transparent = true;
       };
       kitty = enabled;
+      kvantum = {
+        enable = true;
+        inherit (cfg) accent;
+      };
       lazygit = {
         enable = true;
         inherit (cfg) accent;

@@ -35,7 +35,7 @@ in
       enable = true;
 
       platformTheme = {
-        name = "qtct";
+        name = "kvantum";
       };
 
       style = {

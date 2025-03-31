@@ -89,7 +89,6 @@ in
     };
 
     xdg.configFile = {
-      "Kvantum".source = ./Kvantum;
       "qt5ct/qt5ct.conf".text = lib.generators.toINI { } cfg.settings;
       "qt6ct/qt6ct.conf".text = lib.generators.toINI { } cfg.settings;
     };
@@ -98,7 +97,7 @@ in
       enable = true;
 
       platformTheme = {
-        name = "qtct";
+        name = mkDefault "qtct";
       };
 
       style = mkDefault { name = "qt6ct-style"; };
