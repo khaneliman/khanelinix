@@ -25,6 +25,7 @@ in
         "wikipedia".metaData.hidden = true;
 
         "NixOs Options" = {
+          metaData.hideOneOffButton = true;
           urls = [
             {
               template = "https://search.nixos.org/options";
@@ -45,6 +46,7 @@ in
         };
 
         "Nix Packages" = {
+          metaData.hideOneOffButton = true;
           urls = [
             {
               template = "https://search.nixos.org/packages";
@@ -65,12 +67,14 @@ in
         };
 
         "NixOS Wiki" = {
+          metaData.hideOneOffButton = true;
           urls = [ { template = "https://wiki.nixos.org/w/index.php?search={searchTerms}"; } ];
           icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
           definedAliases = [ "@nw" ];
         };
 
         "Nixvim Options" = {
+          metaData.hideOneOffButton = true;
           urls = [
             {
               template = "https://nix-community.github.io/nixvim/NeovimOptions/index.html";
@@ -87,6 +91,7 @@ in
         };
 
         "Noogle" = {
+          metaData.hideOneOffButton = true;
           urls = [
             {
               template = "https://noogle.dev/q";
@@ -103,6 +108,7 @@ in
         };
 
         "NüschtOS" = {
+          metaData.hideOneOffButton = true;
           urls = [
             {
               template = "https://search.xn--nschtos-n2a.de/";
@@ -119,6 +125,7 @@ in
         };
 
         "Searchix" = {
+          metaData.hideOneOffButton = true;
           urls = [
             {
               template = "https://searchix.alanpearce.eu/";
