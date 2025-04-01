@@ -130,6 +130,10 @@ in
             default = "current";
           };
 
+          rerere = {
+            enabled = true;
+          };
+
           rebase = {
             autoStash = true;
           };
