@@ -76,7 +76,8 @@ in
 
           options = {
             dark = true;
-            features = mkForce "decorations side-by-side navigate";
+            # FIXME: module should accept a mergable list be composable
+            features = mkForce "decorations side-by-side navigate catppuccin-macchiato";
             line-numbers = true;
             navigate = true;
             side-by-side = true;
