@@ -112,6 +112,7 @@ in
             lib.getExe config.programs.firefox.package
         } result/share/doc/home-manager/index.xhtml'';
         hmt = ''f(){ nix-shell --pure tests -A "run.$1"; }; f'';
+        hmtf = ''f(){ nix build -L --reference-lock-file flake.lock "./tests#test-$1"; }; f'';
         hmts = ''f(){ nix build -L --reference-lock-file flake.lock "./tests#test-$1" && nix path-info -rSh ./result; }; f'';
         hmt-repl = ''nix repl --reference-lock-file flake.lock ./tests'';
       };
