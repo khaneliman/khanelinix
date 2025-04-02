@@ -51,6 +51,8 @@ in
       ];
     };
 
+    # Shared config options
+    # Check corresponding nixos/nix-darwin imported module
     nix =
       let
         mappedRegistry = lib.pipe inputs [

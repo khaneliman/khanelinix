@@ -26,6 +26,8 @@ in
       };
     };
 
+    # NixOS config options
+    # Check corresponding shared imported module
     nix = {
       # make builds run with low priority so my system stays responsive
       daemonCPUSchedPolicy = "batch";

@@ -11,6 +11,8 @@ in
   imports = [ (lib.snowfall.fs.get-file "modules/shared/nix/default.nix") ];
 
   config = lib.mkIf cfg.enable {
+    # Nix-Darwin config options
+    # Check corresponding shared imported module
     nix = {
       # Options that aren't supported through nix-darwin
       extraOptions = ''
