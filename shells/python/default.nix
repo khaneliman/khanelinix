@@ -2,7 +2,7 @@
 mkShell {
   packages = with pkgs; [
     black
-    (python3.withPackages (
+    (python.withPackages (
       ps: with ps; [
         flake8
         ipython
