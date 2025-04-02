@@ -22,7 +22,15 @@ in
       package = pkgs.mpv;
 
       defaultProfiles = [ "gpu-hq" ];
-      scripts = lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.mpvScripts.mpris ];
+
+      scripts = lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+        # Control using media keys
+        pkgs.mpvScripts.mpris
+        # mpv keyboard shortcuts
+        pkgs.mpvScripts.mpv-cheatsheet
+        # UI Tweaks
+        pkgs.mpvScripts.uosc
+      ];
     };
 
     services.plex-mpv-shim.enable = pkgs.stdenv.hostPlatform.isLinux;
