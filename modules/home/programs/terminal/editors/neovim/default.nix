@@ -40,6 +40,7 @@ in
     home = {
       sessionVariables = {
         EDITOR = lib.mkIf cfg.default "nvim";
+        MANPAGER = "nvim -c 'set ft=man bt=nowrite noswapfile nobk shada=\\\"NONE\\\" ro noma' +Man! -o -";
       };
       packages = [
         khanelivim
