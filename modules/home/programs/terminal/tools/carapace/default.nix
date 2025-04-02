@@ -21,7 +21,8 @@ in
 
         enableBashIntegration = true;
         enableFishIntegration = true;
-        enableZshIntegration = true;
+        # Prefer fzf-tab plugin
+        enableZshIntegration = false;
         enableNushellIntegration = true;
       };
 
