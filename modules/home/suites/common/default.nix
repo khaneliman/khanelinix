@@ -23,6 +23,11 @@ in
         ".hushlogin".text = "";
       };
 
+      sessionVariables = {
+        LESSHISTFILE = "${config.xdg.cacheHome}/less.history";
+        WGETRC = "${config.xdg.configHome}/wgetrc";
+      };
+
       shellAliases = {
         nixcfg = "nvim ~/${namespace}/flake.nix";
         ndu = "nix-du -s=200MB | dot -Tsvg > store.svg && ${
