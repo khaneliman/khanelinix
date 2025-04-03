@@ -1,9 +1,9 @@
-# Define a function to unset Zsh options
 function __unset_zsh_options() {
     local options=(
         "CORRECT_ALL"   # try to correct the spelling of all arguments in a line.
         "HIST_BEEP"     # beep in ZLE when a widget attempts to access a history entry which isn’t there
         "SHARE_HISTORY" # read the documentation for more details (too long)
+        "NOMATCH"       # Disable "no matches found" check
     )
 
     for option in "${options[@]}"; do
@@ -12,7 +12,6 @@ function __unset_zsh_options() {
 }
 __unset_zsh_options
 
-# Define a function to set Zsh options
 function __set_zsh_options() {
     local options=(
         "AUTO_CD"              # if not command, then directory
@@ -30,7 +29,6 @@ function __set_zsh_options() {
         "INC_APPEND_HISTORY"   # new history lines are added to the $HISTFILE incrementally (as soon as they are entered)
         "INTERACTIVE_COMMENTS" # allow comments even in interactive shells
         "MENU_COMPLETE"        # insert the first match immediately on ambiguous completion
-        "NO_NOMATCH"           # not explained, probably disables NOMATCH lmao
         "PUSHD_IGNORE_DUPS"    # don’t push multiple copies of the same directory
         "PUSHD_TO_HOME"        # have pushd with no arguments act like `pushd $HOME`
         "PUSHD_SILENT"         # do not print the directory stack
@@ -38,7 +36,8 @@ function __set_zsh_options() {
         "PROMPT_SUBST"         # allow substitutions as part of prompt format string
         # NOTE: causing weird unicode escape in prompt in kitty
         # "SH_WORD_SPLIT"        # perform field splitting on unquoted parameter expansions
-        "MULTIOS" # perform implicit tees or cats when multiple redirections are attempted
+        "MULTIOS"              # perform implicit tees or cats when multiple redirections are attempted
+        "NOFLOWCONTROL"        # Disable Ctrl-S and Ctrl-Q flow control
     )
 
     for option in "${options[@]}"; do

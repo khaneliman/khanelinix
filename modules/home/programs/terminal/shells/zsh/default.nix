@@ -93,17 +93,7 @@ in
         initContent = lib.mkMerge [
           (lib.mkOrder 450 # Bash
             ''
-              # Offer to correct the spelling of commands
-              setopt correct
-              # Disable C-S/C-Q
-              setopt noflowcontrol
-              # Disable "no matches found" check
-              unsetopt nomatch
-
-              # Raf's helper functions for setting zsh options that I normally use on my shell
-              # a description of each option can be found in the Zsh manual
-              # <https://zsh.sourceforge.io/Doc/Release/Options.html>
-              # NOTE: this slows down shell startup time considerably
+              # https://zsh.sourceforge.io/Doc/Release/Options.html
               ${fileContents ./rc/opts.zsh}
 
               # Prevent the command from being written to history before it's
