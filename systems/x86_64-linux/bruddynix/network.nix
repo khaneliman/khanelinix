@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ config, lib, ... }:
 {
   networking = {
     nameservers = lib.mkForce [
@@ -16,7 +16,8 @@
         matchConfig.Name = "en* | eth* | usb*";
         networkConfig = {
           DHCP = "ipv4";
-          MulticastDNS = true;
+          # Enable if `mdns` is not handled by avahi
+          MulticastDNS = !config.services.avahi.enable;
         };
       };
     };
