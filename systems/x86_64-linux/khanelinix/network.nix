@@ -1,4 +1,5 @@
-_: {
+{ config, ... }:
+{
   networking = {
     networkmanager = {
       ensureProfiles = {
@@ -17,7 +18,8 @@ _: {
           # Address = "192.168.1.3/24";
           # Gateway = "192.168.1.1";
           DHCP = "ipv4";
-          MulticastDNS = true;
+          # Enable if `mdns` is not handled by avahi
+          MulticastDNS = !config.services.avahi.enable;
           # IPv6AcceptRA = true;
           # IPForward = "yes";
           # IPMasquerade = "no";
