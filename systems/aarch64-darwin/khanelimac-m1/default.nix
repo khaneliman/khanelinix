@@ -41,6 +41,8 @@ in
       "Wi-Fi"
       "Thunderbolt Bridge"
     ];
+
+    wakeOnLan = enabled;
   };
 
   nix.settings = {
