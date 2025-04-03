@@ -18,7 +18,8 @@ in
       enable = true;
 
       connectionConfig = {
-        "connection.mdns" = "2";
+        # Enable if `mdns` is not handled by avahi
+        "connection.mdns" = lib.mkIf (!config.services.avahi.enable) "2";
       };
 
       plugins = with pkgs; [
