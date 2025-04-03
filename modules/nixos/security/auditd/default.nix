@@ -24,6 +24,8 @@ in
       };
     };
 
+    services.journald.audit = true;
+
     systemd = {
       # a systemd timer to clean /var/log/audit.log daily
       # this can probably be weekly, but daily means we get to clean it every 2-3 days instead of once a week
