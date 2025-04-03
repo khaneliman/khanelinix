@@ -60,6 +60,7 @@ in
               "$mainMod, T, exec, $term btop"
               "$mainMod, N, exec, $notification_center -t -sw"
               "$mainMod, V, exec, $cliphist"
+              # TODO: handle when you need to specify port manually `-p 5901`
               "$mainMod, W, exec, $looking-glass"
             ];
 

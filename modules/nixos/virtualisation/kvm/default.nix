@@ -60,7 +60,6 @@ in
     ];
 
     systemd.tmpfiles.rules = [
-      "f /dev/shm/looking-glass 0660 ${user.name} qemu-libvirtd -"
       "f /dev/shm/scream 0660 ${user.name} qemu-libvirtd -"
     ];
 
@@ -101,7 +100,10 @@ in
       };
 
       programs.graphical.addons = {
-        looking-glass-client = enabled;
+        looking-glass-client = {
+          enable = true;
+          enableKvmfr = true;
+        };
       };
 
       home = {
