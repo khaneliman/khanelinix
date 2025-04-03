@@ -93,6 +93,7 @@ in
       programs = {
         graphical = {
           apps = {
+            gnome-disks = enabled;
             partitionmanager = enabled;
           };
 
