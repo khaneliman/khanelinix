@@ -44,7 +44,7 @@ in
             "${getExe pkgs.steam}"
             "${getExe pkgs.discord}"
             "${getExe pkgs.thunderbird}"
-            "${getExe pkgs.openrgb-with-all-plugins} --startminimized --profile default"
+            "${getExe pkgs.openrgb-with-all-plugins} -c blue"
             "${getExe pkgs._1password-gui} --silent"
             "${getExe pkgs.tailscale-systray}"
             "${getExe pkgs.networkmanagerapplet}"
