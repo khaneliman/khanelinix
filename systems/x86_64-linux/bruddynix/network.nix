@@ -1,14 +1,15 @@
-{ config, lib, ... }:
+{ config, ... }:
 {
-  networking = {
-    nameservers = lib.mkForce [
-      # Cloudflare for families
-      "1.1.1.3"
-      "1.0.0.3"
-      "2606:4700:4700::1113"
-      "2606:4700:4700::1003"
-    ];
-  };
+  # FIXME: breaks internet access for some reason
+  # networking = {
+  #   nameservers = lib.mkForce [
+  #     # Cloudflare for families
+  #     "1.1.1.3"
+  #     "1.0.0.3"
+  #     "2606:4700:4700::1113"
+  #     "2606:4700:4700::1003"
+  #   ];
+  # };
 
   systemd = {
     network.networks = {
