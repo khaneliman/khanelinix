@@ -5,6 +5,7 @@
     "/dev/nvme1n1"
     "/dev/sda"
   ],
+  namespace,
   ...
 }:
 let
@@ -23,58 +24,47 @@ in
         device = builtins.elemAt disks 0;
         type = "disk";
         content = {
-          type = "table";
-          format = "gpt";
+          type = "gpt";
           partitions = {
-            EFI = {
+            efi = {
               priority = 1;
-              name = "EFI";
-              start = "0%";
-              end = "1024MiB";
-              bootable = true;
+              name = "efi";
+              size = "1G";
               type = "EF00";
               content = {
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot";
+                extraArgs = [
+                  "-LEFI"
+                ];
               };
             };
-            root = {
-              name = "NixOS";
-              end = "-64G";
+            linux = {
+              size = "100%";
+              name = "linux";
+
               content = {
                 type = "btrfs";
-                name = "NixOS";
-                extraOpenArgs = [ "--allow-discards" ];
-
-                content = {
-                  type = "btrfs";
-                  # Override existing partition
-                  extraArgs = [ "-f" ];
-
-                  subvolumes = {
-                    "@" = {
-                      mountpoint = "/";
-                      mountOptions = defaultBtrfsOpts;
-                    };
-                    "@home" = {
-                      mountpoint = "/home";
-                      mountOptions = defaultBtrfsOpts;
-                    };
-                    "@nix" = {
-                      mountpoint = "/nix";
-                      mountOptions = defaultBtrfsOpts;
-                    };
+                extraArgs = [ "-LLinux" ];
+                subvolumes = {
+                  "@kvm" = {
+                    mountpoint = "/mnt/kvm";
+                    mountOptions = defaultBtrfsOpts;
                   };
                 };
               };
             };
             swap = {
-              size = "100%";
+              size = "64GB";
               content = {
                 type = "swap";
+                discardPolicy = "both";
                 randomEncryption = true;
-                resumeDevice = true; # resume from hiberation from this device
+                resumeDevice = true;
+                extraArgs = [
+                  "-Lswap"
+                ];
               };
             };
           };
@@ -85,19 +75,32 @@ in
         device = builtins.elemAt disks 1;
         type = "disk";
         content = {
-          type = "table";
-          format = "gpt";
+          type = "gpt";
           partitions = {
-            root = {
+            nixos = {
+              name = "nixos";
               size = "100%";
-              type = "btrfs";
-              name = "Linux";
-
               content = {
                 type = "btrfs";
-                # Override existing partition
-                extraArgs = [ "-f" ];
-                subvolumes = { };
+                extraArgs = [
+                  "-Lnixos"
+                ];
+
+                subvolumes = {
+                  "@" = {
+                    mountpoint = "/";
+                    mountOptions = defaultBtrfsOpts;
+                  };
+                  # TODO:
+                  # "@home" = {
+                  #   mountpoint = "/home";
+                  #   mountOptions = defaultBtrfsOpts;
+                  # };
+                  # "@nix" = {
+                  #   mountpoint = "/nix";
+                  #   mountOptions = defaultBtrfsOpts;
+                  # };
+                };
               };
             };
           };
@@ -108,13 +111,11 @@ in
         device = builtins.elemAt disks 2;
         type = "disk";
         content = {
-          type = "table";
-          format = "gpt";
+          type = "gpt";
           partitions = {
             root = {
               size = "100%";
-              type = "btrfs";
-              name = "BtrProductive";
+              name = "btrproductive";
 
               content = {
                 type = "btrfs";
@@ -126,32 +127,28 @@ in
                     mountpoint = "/mnt/games";
                     mountOptions = defaultBtrfsOpts;
                   };
-                  "@kvm" = {
-                    mountpoint = "/mnt/kvm";
-                    mountOptions = defaultBtrfsOpts;
-                  };
                   "@steam" = {
                     mountpoint = "/mnt/steam";
                     mountOptions = defaultBtrfsOpts;
                   };
                   "@userdata/@documents" = {
-                    mountpoint = "/home/${config.snowfallorg.users.name}/Documents";
+                    mountpoint = "/home/${config.${namespace}.user.name}/Documents";
                     mountOptions = defaultBtrfsOpts;
                   };
                   "@userdata/@downloads" = {
-                    mountpoint = "/home/${config.snowfallorg.users.name}/Downloads";
+                    mountpoint = "/home/${config.${namespace}.user.name}/Downloads";
                     mountOptions = defaultBtrfsOpts;
                   };
                   "@userdata/@music" = {
-                    mountpoint = "/home/${config.snowfallorg.users.name}/Music";
+                    mountpoint = "/home/${config.${namespace}.user.name}/Music";
                     mountOptions = defaultBtrfsOpts;
                   };
                   "@userdata/@pictures" = {
-                    mountpoint = "/home/${config.snowfallorg.users.name}/Pictures";
+                    mountpoint = "/home/${config.${namespace}.user.name}/Pictures";
                     mountOptions = defaultBtrfsOpts;
                   };
                   "@userdata/@videos" = {
-                    mountpoint = "/home/${config.snowfallorg.users.name}/Videos";
+                    mountpoint = "/home/${config.${namespace}.user.name}/Videos";
                     mountOptions = defaultBtrfsOpts;
                   };
                 };
