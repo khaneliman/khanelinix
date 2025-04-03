@@ -36,6 +36,9 @@ in
       # 100 is the default for user slices and 500 is `systemd-coredumpd@`
       # nuke nix-daemon if it gets too memory hungry
       services.nix-daemon.serviceConfig.OOMScoreAdjust = lib.mkDefault 350;
+
+      # Make sure it loads after the swap is setup.
+      services.systemd-oomd.after = [ "swap.target" ];
     };
   };
 }
