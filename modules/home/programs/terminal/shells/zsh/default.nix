@@ -12,6 +12,10 @@ let
   cfg = config.${namespace}.programs.terminal.shell.zsh;
 in
 {
+  imports = [
+    ./opts.nix
+  ];
+
   options.${namespace}.programs.terminal.shell.zsh = {
     enable = mkEnableOption "ZSH";
   };
@@ -93,9 +97,6 @@ in
         initContent = lib.mkMerge [
           (lib.mkOrder 450 # Bash
             ''
-              # https://zsh.sourceforge.io/Doc/Release/Options.html
-              ${fileContents ./rc/opts.zsh}
-
               # Prevent the command from being written to history before it's
               # executed; save it to LASTHIST instead.  Write it to history
               # in precmd.
