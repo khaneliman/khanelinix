@@ -53,7 +53,7 @@ in
       };
 
       security = {
-        auditd = mkDefault enabled;
+        # auditd = mkDefault enabled;
         clamav = mkDefault enabled;
         gpg = mkDefault enabled;
         pam = mkDefault enabled;
