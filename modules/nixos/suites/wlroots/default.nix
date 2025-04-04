@@ -24,7 +24,6 @@ in
       };
     };
     programs = {
-      nm-applet.enable = mkDefault true;
       xwayland.enable = mkDefault true;
 
       wshowkeys = {

@@ -48,7 +48,7 @@ in
     };
 
     # using nixos module
-    # services.network-manager-applet.enable = mkDefault true;
+    services.network-manager-applet.enable = mkDefault true;
     services = {
       blueman-applet.enable = mkDefault true;
     };
