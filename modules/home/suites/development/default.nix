@@ -27,6 +27,10 @@ let
           OPENAI_API_KEY="$(cat ${config.sops.secrets.OPENAI_API_KEY.path})"
           export OPENAI_API_KEY
         fi
+        if [ -f ${config.sops.secrets.TAVILY_API_KEY.path} ]; then
+          TAVILY_API_KEY="$(cat ${config.sops.secrets.TAVILY_API_KEY.path})"
+          export TAVILY_API_KEY
+        fi
       '';
 
   cfg = config.${namespace}.suites.development;
@@ -173,6 +177,10 @@ in
       OPENAI_API_KEY = {
         sopsFile = lib.snowfall.fs.get-file "secrets/CORE/default.yaml";
         path = "${config.home.homeDirectory}/.OPENAI_API_KEY";
+      };
+      TAVILY_API_KEY = {
+        sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
+        path = "${config.home.homeDirectory}/.TAVILY_API_KEY";
       };
     };
   };
