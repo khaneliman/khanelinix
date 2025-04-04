@@ -34,52 +34,6 @@ in
       };
     };
 
-    hardware = {
-      audio = {
-        enable = true;
-      };
-      bluetooth = enabled;
-      cpu.amd = enabled;
-      gpu = {
-        amd = {
-          enable = true;
-          enableRocmSupport = true;
-          enableNvtop = true;
-        };
-        nvidia = enabled;
-      };
-      opengl = enabled;
-
-      rgb = {
-        openrgb.enable = true;
-      };
-
-      storage = {
-        enable = true;
-
-        btrfs = {
-          enable = true;
-          autoScrub = true;
-          # dedupe = true;
-
-          dedupeFilesystems = [
-            "nixos"
-            "BtrProductive"
-          ];
-
-          scrubMounts = [
-            "/"
-            "/mnt/steam"
-          ];
-        };
-
-        ssdEnable = true;
-      };
-
-      tpm = enabled;
-      yubikey = enabled;
-    };
-
     programs = {
       graphical = {
         addons = {
@@ -206,24 +160,6 @@ in
       realtime = enabled;
       time = enabled;
     };
-
-    #   IOMMU Group 24:
-    # 	05:00.0 VGA compatible controller [0300]: NVIDIA Corporation GA102 [GeForce RTX 3080] [10de:2206] (rev a1)
-    # 	05:00.1 Audio device [0403]: NVIDIA Corporation GA102 High Definition Audio Controller [10de:1aef] (rev a1)
-    virtualisation.kvm = {
-      enable = true;
-      machineUnits = [ "machine-qemu\\x2d4\\x2dwin11\\x2dGPU.scope" ];
-      platform = "amd";
-      vfioIds = [
-        "10de:2206"
-        "10de:1aef"
-      ];
-    };
-  };
-
-  nix.settings = {
-    cores = 16;
-    max-jobs = 8;
   };
 
   services = {
