@@ -1102,6 +1102,7 @@
         "sops-nix": "sops-nix",
         "treefmt-nix": "treefmt-nix",
         "waybar": "waybar",
+        "yazi-flavors": "yazi-flavors",
         "yazi-plugins": "yazi-plugins"
       }
     },
@@ -1399,6 +1400,22 @@
       "original": {
         "owner": "hyprwm",
         "repo": "xdg-desktop-portal-hyprland",
+        "type": "github"
+      }
+    },
+    "yazi-flavors": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1742023253,
+        "narHash": "sha256-nhIhCMBqr4VSzesplQRF6Ik55b3Ljae0dN+TYbzQb5s=",
+        "owner": "yazi-rs",
+        "repo": "flavors",
+        "rev": "68326b4ca4b5b66da3d4a4cce3050e5e950aade5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "yazi-rs",
+        "repo": "flavors",
         "type": "github"
       }
     },

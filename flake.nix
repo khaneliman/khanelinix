@@ -124,6 +124,10 @@
         flake-compat.follows = "";
       };
     };
+    yazi-flavors = {
+      url = "github:yazi-rs/flavors";
+      flake = false;
+    };
     yazi-plugins = {
       url = "github:yazi-rs/plugins";
       flake = false;
