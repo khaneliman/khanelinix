@@ -15,7 +15,7 @@ let
   manager = import ./keymap/manager.nix { inherit config lib namespace; };
   select = import ./keymap/select.nix { };
   tasks = import ./keymap/tasks.nix { };
-  inherit (inputs) yazi yazi-plugins;
+  inherit (inputs) yazi yazi-flavors yazi-plugins;
 
   cfg = config.${namespace}.programs.terminal.tools.yazi;
 in
@@ -59,6 +59,11 @@ in
         select
         tasks
       ];
+
+      flavors = {
+        dark = "${yazi-flavors}/catppuccin-macchiato.yazi";
+        light = "${yazi-flavors}/catppuccin-frappe.yazi";
+      };
 
       plugins = {
         "arrow" = ./configs/plugins/arrow.yazi;
