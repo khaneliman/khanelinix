@@ -13,7 +13,7 @@ in
     wayland.windowManager.hyprland = {
       settings = {
         # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
-        windowrulev2 = [
+        windowrule = [
           # Secondary Monitor Media
           "workspace 1, title:^(.*(Twitch|TNTdrama|YouTube|Bally Sports|Video Entertainment|Plex)).*(Firefox).*$" # TODO: Doesnt seem to work even though it says it matches
           #Browsers

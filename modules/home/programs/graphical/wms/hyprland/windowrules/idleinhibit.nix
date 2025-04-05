@@ -13,7 +13,7 @@ in
     wayland.windowManager.hyprland = {
       settings = {
         # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
-        windowrulev2 = [
+        windowrule = [
           "idleinhibit focus, class:^(steam_app).*"
           "idleinhibit focus, class:^(gamescope).*"
           "idleinhibit focus, class:.*(cemu|yuzu|Ryujinx|emulationstation|retroarch).*"

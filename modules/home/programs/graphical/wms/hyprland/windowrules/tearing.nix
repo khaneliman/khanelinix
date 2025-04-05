@@ -13,7 +13,7 @@ in
     wayland.windowManager.hyprland = {
       settings = {
         # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
-        windowrulev2 = [
+        windowrule = [
           "immediate, class:^(gamescope|steam_app).*"
         ];
       };

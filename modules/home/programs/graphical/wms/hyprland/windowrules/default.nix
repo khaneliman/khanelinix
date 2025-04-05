@@ -24,7 +24,7 @@ in
     wayland.windowManager.hyprland = {
       settings = {
         # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
-        windowrulev2 = [
+        windowrule = [
           # fix xwayland apps
           "rounding 0, xwayland:1, floating:1"
           "center, class:^(.*jetbrains.*)$, title:^(Confirm Exit|Open Project|win424|win201|splash)$"

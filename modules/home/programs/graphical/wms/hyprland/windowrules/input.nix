@@ -13,7 +13,7 @@ in
     wayland.windowManager.hyprland = {
       settings = {
         # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
-        windowrulev2 = [
+        windowrule = [
           # Require input
           "bordercolor rgba(ed8796FF), class:org.kde.polkit-kde-authentication-agent-1"
           "dimaround, class:org.kde.polkit-kde-authentication-agent-1"
