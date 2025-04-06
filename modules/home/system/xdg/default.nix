@@ -163,6 +163,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.packages = [ pkgs.gcr ];
+
     xdg = {
       enable = true;
       cacheHome = config.home.homeDirectory + "/.local/cache";
@@ -171,6 +173,67 @@ in
         enable = true;
         defaultApplications = associations;
         associations.added = associations;
+      };
+
+      portal = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+        enable = true;
+        xdgOpenUsePortal = true;
+
+        config = {
+          hyprland = mkIf config.${namespace}.programs.graphical.wms.hyprland.enable {
+            default = [
+              "hyprland"
+              "gtk"
+            ];
+            "org.freedesktop.impl.portal.Screencast" = "hyprland";
+            "org.freedesktop.impl.portal.Screenshot" = "hyprland";
+          };
+
+          sway = mkIf config.${namespace}.programs.graphical.wms.sway.enable {
+            default = lib.mkDefault [
+              "wlr"
+              "gtk"
+            ];
+
+            "org.freedesktop.impl.portal.ScreenCast" = "wlr";
+            "org.freedesktop.impl.portal.Screenshot" = "wlr";
+          };
+
+          common = {
+            default = [ "gtk" ];
+
+            "org.freedesktop.impl.portal.Access" = "gtk";
+            "org.freedesktop.impl.portal.Account" = "gtk";
+            "org.freedesktop.impl.portal.AppChooser" = "gtk";
+            "org.freedesktop.impl.portal.DynamicLauncher" = "gtk";
+            "org.freedesktop.impl.portal.Email" = "gtk";
+            "org.freedesktop.impl.portal.FileChooser" = "gtk";
+            "org.freedesktop.impl.portal.Lockdown" = "gtk";
+            "org.freedesktop.impl.portal.Notification" = "gtk";
+            "org.freedesktop.impl.portal.Print" = "gtk";
+            "org.freedesktop.impl.portal.Screencast" = "gtk";
+            "org.freedesktop.impl.portal.Screenshot" = "gtk";
+            "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
+          };
+        };
+
+        configPackages =
+          with pkgs;
+          [
+            xorg.xset
+            gnome-session
+            gnome-keyring
+          ]
+          ++ lib.optional config.wayland.windowManager.hyprland.enable hyprland;
+
+        extraPortals =
+          with pkgs;
+          [
+            xdg-desktop-portal-gtk
+            gnome-keyring
+          ]
+          ++ lib.optional config.wayland.windowManager.hyprland.enable xdg-desktop-portal-hyprland
+          ++ lib.optional config.wayland.windowManager.sway.enable xdg-desktop-portal-wlr;
       };
 
       userDirs = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
