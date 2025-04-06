@@ -245,5 +245,8 @@ in
     theme.catppuccin = enabled;
   };
 
+  # Neo G9
+  xresources.properties."Xft.dpi" = "108";
+
   home.stateVersion = "21.11";
 }
