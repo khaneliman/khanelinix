@@ -92,6 +92,10 @@
         pre-commit-hooks.follows = "git-hooks-nix";
       };
     };
+    hyprpanel = {
+      url = "github:Jas-SinghFSU/HyprPanel";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     hypr-socket-watch.url = "github:khaneliman/hypr-socket-watch";
     khanelivim = {
       url = "github:khaneliman/khanelivim";
@@ -184,11 +188,15 @@
         ];
       };
 
-      overlays = [ inputs.nh.overlays.default ];
+      overlays = [
+        inputs.hyprpanel.overlay
+        inputs.nh.overlays.default
+      ];
 
       homes.modules = with inputs; [
         anyrun.homeManagerModules.default
         catppuccin.homeModules.catppuccin
+        hyprpanel.homeManagerModules.hyprpanel
         hypr-socket-watch.homeManagerModules.default
         nix-index-database.hmModules.nix-index
         sops-nix.homeManagerModules.sops

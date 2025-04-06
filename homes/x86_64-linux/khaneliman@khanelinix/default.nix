@@ -43,6 +43,7 @@ in
         };
 
         bars = {
+          hyprpanel.enable = true;
           waybar = {
             fullSizeOutputs = [ "DP-1" ];
             condensedOutputs = [ "DP-3" ];
