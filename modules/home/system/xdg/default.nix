@@ -184,6 +184,7 @@ in
             default = [
               "hyprland"
               "gtk"
+              "gnome"
             ];
             "org.freedesktop.impl.portal.Screencast" = "hyprland";
             "org.freedesktop.impl.portal.Screenshot" = "hyprland";
@@ -193,6 +194,7 @@ in
             default = lib.mkDefault [
               "wlr"
               "gtk"
+              "gnome"
             ];
 
             "org.freedesktop.impl.portal.ScreenCast" = "wlr";
@@ -200,8 +202,12 @@ in
           };
 
           common = {
-            default = [ "gtk" ];
+            default = [
+              "gtk"
+              "gnome"
+            ];
 
+            # GTK
             "org.freedesktop.impl.portal.Access" = "gtk";
             "org.freedesktop.impl.portal.Account" = "gtk";
             "org.freedesktop.impl.portal.AppChooser" = "gtk";
@@ -213,7 +219,13 @@ in
             "org.freedesktop.impl.portal.Print" = "gtk";
             "org.freedesktop.impl.portal.Screencast" = "gtk";
             "org.freedesktop.impl.portal.Screenshot" = "gtk";
-            "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
+
+            # Gnome
+            "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
+            "org.freedesktop.impl.portal.Background" = "gnome";
+            "org.freedesktop.impl.portal.Clipboard" = "gnome";
+            "org.freedesktop.impl.portal.InputCapture" = "gnome";
+            "org.freedesktop.impl.portal.RemoteDesktop" = "gnome";
           };
         };
 
@@ -230,6 +242,7 @@ in
           with pkgs;
           [
             xdg-desktop-portal-gtk
+            xdg-desktop-portal-gnome
             gnome-keyring
           ]
           ++ lib.optional config.wayland.windowManager.hyprland.enable xdg-desktop-portal-hyprland
