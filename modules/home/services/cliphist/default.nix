@@ -30,6 +30,9 @@ in
         allowImages = true;
         systemdTargets =
           cfg.systemdTargets
+          ++ lib.optionals (
+            config.wayland.windowManager.hyprland.enable && osConfig.programs.hyprland.withUWSM
+          ) [ "graphical-session.target" ]
           ++
             lib.optionals (config.wayland.windowManager.hyprland.enable && !osConfig.programs.hyprland.withUWSM)
               [
