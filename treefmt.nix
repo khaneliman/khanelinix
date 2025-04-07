@@ -76,7 +76,7 @@
       "*makefile"
 
       # Unique files
-      "homes/x86_64-linux/nixos@CORE-PW00LM92/git/windows-compat-config"
+      "homes/x86_64-linux/nixos@CORE-PW0D2M1A/git/windows-compat-config"
       "lib/base64/ascii"
       "modules/darwin/desktop/wms/yabai/extraConfig"
       "modules/home/programs/graphical/bars/sketchybar/dynamic-island-sketchybar/helper/islandhelper"
