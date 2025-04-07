@@ -20,7 +20,6 @@ in
         graphical = {
           addons = {
             keyring = lib.mkDefault enabled;
-            xdg-portal = lib.mkDefault enabled;
           };
 
           apps = {
