@@ -169,6 +169,16 @@ in
       enable = true;
       cacheHome = config.home.homeDirectory + "/.local/cache";
 
+      configFile."xdg-desktop-portal-wlr/config".text =
+        lib.mkIf config.${namespace}.programs.graphical.wms.sway.enable
+          ''
+            [screencast]
+            output_name=
+            max_fps=30
+            chooser_cmd=${lib.getExe pkgs.slurp} -f %o -or
+            chooser_type=simple
+          '';
+
       mimeApps = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
         enable = true;
         defaultApplications = associations;
