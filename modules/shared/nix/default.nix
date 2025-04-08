@@ -82,7 +82,9 @@ in
         buildMachines =
           let
             sshUser = "khaneliman";
-            protocol = if pkgs.stdenv.hostPlatform.isLinux then "ssh-ng" else "ssh";
+            # TODO: update when ssh-ng isn't so slow
+            # protocol = if pkgs.stdenv.hostPlatform.isLinux then "ssh-ng" else "ssh";
+            protocol = "ssh";
             supportedFeatures = [
               "benchmark"
               "big-parallel"
