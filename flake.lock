@@ -935,6 +935,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-yaziPlugins": {
+      "locked": {
+        "lastModified": 1744155405,
+        "narHash": "sha256-ZqcktpbSpn+wSU/oukiLtU2KajOzdqnRkwN850MWcDw=",
+        "owner": "khaneliman",
+        "repo": "nixpkgs",
+        "rev": "ce9b2ffcea4147aad35a38733ba53bc5119ad7cb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "khaneliman",
+        "ref": "yaziPlugins",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1714253743,
@@ -1081,6 +1097,7 @@
         "nixpkgs": "nixpkgs_6",
         "nixpkgs-master": "nixpkgs-master_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
+        "nixpkgs-yaziPlugins": "nixpkgs-yaziPlugins",
         "snowfall-flake": "snowfall-flake",
         "snowfall-lib": "snowfall-lib",
         "sops-nix": "sops-nix",
