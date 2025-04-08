@@ -42,7 +42,8 @@ in
       vm = enabled;
     };
 
-    tools.homebrew.masEnable = true;
+    # FIXME: broken on macOS 15.4
+    # tools.homebrew.masEnable = true;
   };
 
   environment.systemPath = [ "/opt/homebrew/bin" ];
