@@ -13,18 +13,30 @@ let
 
   khanelivimConfiguration = inputs.khanelivim.nixvimConfigurations.${system}.khanelivim;
   khanelivimConfigurationExtended = khanelivimConfiguration.extendModules {
-    # FIXME: insane memory usage
-    # plugins.lsp.servers.nixd.settings =
-    #   let
-    #     flake = ''(builtins.getFlake "${inputs.self}")'';
-    #   in
-    #   {
-    #     options = rec {
-    #       nix-darwin.expr = ''${flake}.darwinConfigurations.khanelimac.options'';
-    #       nixos.expr = ''${flake}.nixosConfigurations.khanelinix.options'';
-    #       home-manager.expr = ''${nixos.expr}.home-manager.users.type.getSubOptions [ ]'';
-    #     };
-    #   };
+    # NOTE: Conflicting package definitions, use the package from this flake.
+    modules = [
+      {
+        config = {
+          plugins = {
+            # FIXME: insane memory usage
+            # plugins.lsp.servers.nixd.settings =
+            #   let
+            #     flake = ''(builtins.getFlake "${inputs.self}")'';
+            #   in
+            #   {
+            #     options = rec {
+            #       nix-darwin.expr = ''${flake}.darwinConfigurations.khanelimac.options'';
+            #       nixos.expr = ''${flake}.nixosConfigurations.khanelinix.options'';
+            #       home-manager.expr = ''${nixos.expr}.home-manager.users.type.getSubOptions [ ]'';
+            #     };
+            #   };
+
+            yazi.yaziPackage = null;
+          };
+        };
+      }
+    ];
+
   };
   khanelivim = khanelivimConfigurationExtended.config.build.package;
 
