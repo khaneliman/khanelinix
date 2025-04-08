@@ -15,7 +15,7 @@ let
   manager = import ./keymap/manager.nix { inherit config lib namespace; };
   select = import ./keymap/select.nix { };
   tasks = import ./keymap/tasks.nix { };
-  inherit (inputs) yazi yazi-flavors yazi-plugins;
+  inherit (inputs) yazi-flavors;
 
   cfg = config.${namespace}.programs.terminal.tools.yazi;
 in
@@ -68,20 +68,22 @@ in
       plugins = {
         "arrow" = ./configs/plugins/arrow.yazi;
         "arrow-parent" = ./configs/plugins/arrow-parent.yazi;
-        "chmod" = "${yazi-plugins}/chmod.yazi";
-        "diff" = "${yazi-plugins}/diff.yazi";
-        "full-border" = "${yazi-plugins}/full-border.yazi";
-        "git" = "${yazi-plugins}/git.yazi";
-        "glow" = ./configs/plugins/glow.yazi;
-        "jump-to-char" = "${yazi-plugins}/jump-to-char.yazi";
-        "miller" = ./configs/plugins/miller.yazi;
-        "mime-ext" = "${yazi-plugins}/mime-ext.yazi";
-        "mount" = "${yazi-plugins}/mount.yazi";
-        "ouch" = ./configs/plugins/ouch.yazi;
-        "smart-enter" = "${yazi-plugins}/smart-enter.yazi";
-        "smart-filter" = "${yazi-plugins}/smart-filter.yazi";
-        "sudo" = ./configs/plugins/sudo.yazi;
-        "toggle-pane" = "${yazi-plugins}/toggle-pane.yazi";
+        inherit (pkgs.yaziPlugins)
+          chmod
+          diff
+          full-border
+          git
+          glow
+          jump-to-char
+          miller
+          mime-ext
+          mount
+          ouch
+          smart-enter
+          smart-filter
+          sudo
+          toggle-pane
+          ;
       };
 
       settings = import ./yazi.nix { inherit config lib pkgs; };
