@@ -17,8 +17,7 @@ in
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      # FIXME: broken nixpkgs
-      # blender
+      blender
       gimp
       inkscape-with-extensions
     ];
