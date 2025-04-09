@@ -1,4 +1,4 @@
-_: {
+{
   input = {
     keymap = [
       {

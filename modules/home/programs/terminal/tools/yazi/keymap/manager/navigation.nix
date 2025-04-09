@@ -1,6 +1,5 @@
-_: {
+{
   keymap = [
-    # Navigation
     {
       on = [ "k" ];
       run = "plugin arrow -1";

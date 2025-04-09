@@ -1,6 +1,5 @@
-_: {
+{
   keymap = [
-    # Copy
     {
       on = [
         "c"

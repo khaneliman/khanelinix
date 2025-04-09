@@ -1,6 +1,5 @@
-_: {
+{
   keymap = [
-    # Tabs
     {
       on = [ "t" ];
       run = "tab_create --current";

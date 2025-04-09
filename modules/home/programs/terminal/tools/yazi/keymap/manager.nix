@@ -5,14 +5,14 @@
   ...
 }:
 let
-  copy = import ./manager/copy.nix { };
-  find = import ./manager/find.nix { };
+  copy = import ./manager/copy.nix;
+  find = import ./manager/find.nix;
   goto = import ./manager/goto.nix { inherit config namespace; };
-  navigation = import ./manager/navigation.nix { };
-  operation = import ./manager/operation.nix { };
-  selection = import ./manager/selection.nix { };
-  sorting = import ./manager/sorting.nix { };
-  tabs = import ./manager/tabs.nix { inherit config; };
+  navigation = import ./manager/navigation.nix;
+  operation = import ./manager/operation.nix;
+  selection = import ./manager/selection.nix;
+  sorting = import ./manager/sorting.nix;
+  tabs = import ./manager/tabs.nix;
 in
 {
   manager = {

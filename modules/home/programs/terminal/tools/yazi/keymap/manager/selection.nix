@@ -1,7 +1,5 @@
-_: {
-
+{
   keymap = [
-    # Selection
     {
       on = [ "<Space>" ];
       run = [

@@ -1,4 +1,4 @@
-_: {
+{
   help = {
     keymap = [
       # Exiting & Hiding

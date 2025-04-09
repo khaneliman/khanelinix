@@ -1,6 +1,5 @@
-_: {
+{
   keymap = [
-    # Operation
     {
       on = [ "o" ];
       run = "open";

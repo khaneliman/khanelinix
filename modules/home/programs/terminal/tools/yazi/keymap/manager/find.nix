@@ -1,6 +1,5 @@
-_: {
+{
   keymap = [
-    # Find
     {
       on = [ "/" ];
       run = "find --smart";
