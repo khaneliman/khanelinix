@@ -97,7 +97,7 @@ in
         ];
 
       shellAliases = {
-        # Nixpkgs aliases
+        # Nixpkgs
         prefetch-sri = "nix store prefetch-file $1";
         nrh = ''${lib.getExe pkgs.nixpkgs-review} rev HEAD'';
         nra = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "all"'';
@@ -108,7 +108,8 @@ in
         nrlp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-linux aarch64-linux" --num-parallel-evals 2 --post-result'';
         nup = ''nix-update --commit -u $1'';
         num = ''nix-shell maintainers/scripts/update.nix --argstr maintainer $1'';
-        # HM aliases
+
+        # Home-Manager
         hmd = ''nix build -L .#docs-html && ${
           if pkgs.stdenv.hostPlatform.isDarwin then
             "open -a /Applications/Firefox\\ Developer\\ Edition.app"

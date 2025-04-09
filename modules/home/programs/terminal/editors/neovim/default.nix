@@ -13,7 +13,6 @@ let
 
   khanelivimConfiguration = inputs.khanelivim.nixvimConfigurations.${system}.khanelivim;
   khanelivimConfigurationExtended = khanelivimConfiguration.extendModules {
-    # NOTE: Conflicting package definitions, use the package from this flake.
     modules = [
       {
         config = {
@@ -31,6 +30,7 @@ let
             #     };
             #   };
 
+            # NOTE: Conflicting package definitions, use the package from this flake.
             yazi.yaziPackage = null;
           };
         };
