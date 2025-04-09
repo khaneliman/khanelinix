@@ -72,7 +72,7 @@ _: {
       desc = "Rename a file or directory";
     }
     {
-      on = [ "," ];
+      on = [ ";" ];
       run = "shell --interactive";
       desc = "Run a shell command";
     }
