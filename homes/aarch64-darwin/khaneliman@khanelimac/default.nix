@@ -17,15 +17,19 @@ in
     programs = {
       graphical = {
         apps = {
-          thunderbird = {
-            extraAccounts =
-              let
-                # Not super secret, just doesn't need to be scraped so easily.
-                outlook = lib.${namespace}.decode "a2hhbmVsaW1hbjEyQG91dGxvb2suY29t";
-                personal = lib.${namespace}.decode "YXVzdGluLm0uaG9yc3RtYW5AZ21haWwuY29t";
-
-              in
-              {
+          thunderbird =
+            let
+              # Not super secret, just doesn't need to be scraped so easily.
+              outlook = lib.${namespace}.decode "a2hhbmVsaW1hbjEyQG91dGxvb2suY29t";
+              personal = lib.${namespace}.decode "YXVzdGluLm0uaG9yc3RtYW5AZ21haWwuY29t";
+            in
+            {
+              accountsOrder = [
+                "khaneliman12@gmail.com"
+                personal
+                outlook
+              ];
+              extraAccounts = {
                 ${outlook} = {
                   address = outlook;
                   flavor = "outlook.office365.com";
@@ -35,7 +39,7 @@ in
                   flavor = "gmail.com";
                 };
               };
-          };
+            };
         };
 
         bars = {
