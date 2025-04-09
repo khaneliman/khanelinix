@@ -41,8 +41,7 @@ in
       [
         dwt1-shell-color-scripts
         ncdu
-        # FIXME: broken nixpkgs
-        # smassh
+        smassh
         toilet
         tree
         nh
