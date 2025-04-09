@@ -24,8 +24,7 @@ in
         pulsemixer
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-        # FIXME: broken nixpkgs
-        # ardour
+        ardour
         mpd-notification
         mpdevil
         tageditor
