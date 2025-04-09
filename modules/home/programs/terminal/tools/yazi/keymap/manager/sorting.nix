@@ -1,85 +1,81 @@
-_: {
-  keymap = [
-    # Sorting
+_:
+let
+  mkSortKeymap =
+    {
+      key,
+      method,
+      desc ? null,
+      reverse ? false,
+    }:
+    let
+      defaultDesc = "Sort by ${method}" + (if reverse then " (reverse)" else "");
+
+      description = if desc != null then desc else defaultDesc;
+
+      reverseFlag = if reverse then "--reverse" else "--reverse=no";
+      runCmd = "sort ${method} ${reverseFlag}";
+    in
     {
       on = [
         ","
-        "a"
+        key
       ];
-      run = "sort alphabetical --reverse=no";
-      desc = "Sort alphabetically";
+      run = runCmd;
+      desc = description;
+    };
+
+  sortMethods = [
+    {
+      key = "a";
+      method = "alphabetical";
     }
     {
-      on = [
-        ","
-        "A"
-      ];
-      run = "sort alphabetical --reverse";
-      desc = "Sort alphabetically (reverse)";
+      key = "A";
+      method = "alphabetical";
+      reverse = true;
     }
     {
-      on = [
-        ","
-        "c"
-      ];
-      run = "sort btime --reverse=no";
+      key = "c";
+      method = "btime";
       desc = "Sort by creation time";
     }
     {
-      on = [
-        ","
-        "C"
-      ];
-      run = "sort btime --reverse";
+      key = "C";
+      method = "btime";
+      reverse = true;
       desc = "Sort by creation time (reverse)";
     }
     {
-      on = [
-        ","
-        "m"
-      ];
-      run = "sort mtime --reverse=no";
+      key = "m";
+      method = "mtime";
       desc = "Sort by modified time";
     }
     {
-      on = [
-        ","
-        "M"
-      ];
-      run = "sort mtime --reverse";
+      key = "M";
+      method = "mtime";
+      reverse = true;
       desc = "Sort by modified time (reverse)";
     }
     {
-      on = [
-        ","
-        "n"
-      ];
-      run = "sort natural --reverse=no";
-      desc = "Sort naturally";
+      key = "n";
+      method = "natural";
     }
     {
-      on = [
-        ","
-        "N"
-      ];
-      run = "sort natural --reverse";
-      desc = "Sort naturally (reverse)";
+      key = "N";
+      method = "natural";
+      reverse = true;
     }
     {
-      on = [
-        ","
-        "s"
-      ];
-      run = "sort size --reverse=no";
-      desc = "Sort by size";
+      key = "s";
+      method = "size";
     }
     {
-      on = [
-        ","
-        "S"
-      ];
-      run = "sort size --reverse";
-      desc = "Sort by size (reverse)";
+      key = "S";
+      method = "size";
+      reverse = true;
     }
   ];
+in
+{
+  keymap = map mkSortKeymap sortMethods;
 }
