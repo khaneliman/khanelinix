@@ -10,25 +10,9 @@ let
   inherit (lib) mkIf;
   inherit (inputs) yazi-flavors;
 
-  completion = import ./keymap/completion.nix;
-  help = import ./keymap/help.nix;
-  input = import ./keymap/input.nix;
-  manager = import ./keymap/manager.nix {
-    inherit
-      config
-      lib
-      namespace
-      pkgs
-      ;
-  };
-  select = import ./keymap/select.nix;
-  tasks = import ./keymap/tasks.nix;
-
   cfg = config.${namespace}.programs.terminal.tools.yazi;
 in
 {
-  imports = lib.snowfall.fs.get-non-default-nix-files ./configs/plugins;
-
   options.${namespace}.programs.terminal.tools.yazi = {
     enable = lib.mkEnableOption "yazi";
   };
@@ -56,15 +40,22 @@ in
       enableNushellIntegration = true;
       enableZshIntegration = true;
 
-      initLua = ./configs/init.lua;
+      inherit (import ./init.nix) initLua;
 
       keymap = lib.mkMerge [
-        completion
-        help
-        input
-        manager
-        select
-        tasks
+        (import ./keymap/completion.nix)
+        (import ./keymap/help.nix)
+        (import ./keymap/input.nix)
+        (import ./keymap/manager.nix {
+          inherit
+            config
+            lib
+            namespace
+            pkgs
+            ;
+        })
+        (import ./keymap/select.nix)
+        (import ./keymap/tasks.nix)
       ];
 
       flavors = {
@@ -73,8 +64,8 @@ in
       };
 
       plugins = {
-        "arrow" = ./configs/plugins/arrow.yazi;
-        "arrow-parent" = ./configs/plugins/arrow-parent.yazi;
+        "arrow" = ./plugins/arrow.yazi;
+        "arrow-parent" = ./plugins/arrow-parent.yazi;
         inherit (pkgs.yaziPlugins)
           chmod
           diff
@@ -94,7 +85,37 @@ in
           ;
       };
 
-      settings = import ./yazi.nix { inherit config lib pkgs; };
+      settings = lib.mkMerge [
+        (import ./settings/input.nix)
+        (import ./settings/manager.nix)
+        (import ./settings/open.nix)
+        (import ./settings/opener.nix { inherit config lib pkgs; })
+        (import ./settings/plugin.nix)
+        (import ./settings/preview.nix)
+        (import ./settings/tasks.nix)
+        {
+          pick = {
+            open_title = "Open with:";
+            open_origin = "hovered";
+            open_offset = [
+              0
+              1
+              50
+              7
+            ];
+          };
+
+          which = {
+            sort_by = "none";
+            sort_sensitive = false;
+            sort_reverse = false;
+          };
+
+          log = {
+            enabled = false;
+          };
+        }
+      ];
     };
   };
 }
