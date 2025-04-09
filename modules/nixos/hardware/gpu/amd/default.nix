@@ -18,9 +18,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    # enable amdgpu kernel module
     boot = {
-      initrd.kernelModules = [ "amdgpu" ]; # load amdgpu kernel module as early as initrd
       kernelModules = [ "amdgpu" ]; # if loading somehow fails during initrd but the boot continues, try again later
     };
 
@@ -45,12 +43,13 @@ in
       amdgpu = {
         amdvlk = {
           enable = true;
-          package = pkgs.amdvlk;
 
           support32Bit = {
             enable = true;
           };
+          supportExperimental.enable = true;
         };
+        initrd.enable = true;
         opencl.enable = true;
       };
 
