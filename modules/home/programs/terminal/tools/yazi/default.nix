@@ -79,6 +79,7 @@ in
           mime-ext
           mount
           ouch
+          restore
           smart-enter
           smart-filter
           sudo

@@ -177,5 +177,10 @@
       run = "plugin sudo --args='remove -P'";
       desc = "sudo delete (permanent)";
     }
+    {
+      on = "u";
+      run = "plugin restore";
+      desc = "Restore last deleted files/folders";
+    }
   ];
 }
