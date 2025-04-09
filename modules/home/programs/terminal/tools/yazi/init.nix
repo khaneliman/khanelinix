@@ -1,10 +1,20 @@
 {
-  initLua = # Lua
-    ''
+  config,
+  lib,
+}:
+let
+  enabledPlugins = config.programs.yazi.plugins;
+in
+{
+  initLua =
+    lib.optionalString (lib.hasAttr "full-border" enabledPlugins) ''
       require("full-border"):setup()
-
+    ''
+    + lib.optionalString (lib.hasAttr "git" enabledPlugins) ''
       require("git"):setup()
-
+    ''
+    # Lua
+    + ''
       -- Cross session yank
       require("session"):setup({
       	sync_yanked = true,

@@ -40,7 +40,7 @@ in
       enableNushellIntegration = true;
       enableZshIntegration = true;
 
-      inherit (import ./init.nix) initLua;
+      inherit (import ./init.nix { inherit config lib; }) initLua;
 
       keymap = lib.mkMerge [
         (import ./keymap/completion.nix)
