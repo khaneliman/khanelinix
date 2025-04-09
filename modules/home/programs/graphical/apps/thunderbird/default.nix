@@ -14,6 +14,11 @@ in
 {
   options.${namespace}.programs.graphical.apps.thunderbird = {
     enable = lib.mkEnableOption "thunderbird";
+    accountsOrder = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      description = "Custom ordering of accounts.";
+    };
     extraAccounts = lib.mkOption {
       type =
         let
@@ -104,6 +109,8 @@ in
 
       profiles.${config.${namespace}.user.name} = {
         isDefault = true;
+
+        inherit (cfg) accountsOrder;
 
         settings = {
           "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
