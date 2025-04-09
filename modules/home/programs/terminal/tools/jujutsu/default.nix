@@ -24,8 +24,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    # FIXME: broken nixpkg
-    # home.packages = with pkgs; [ lazyjj ];
+    home.packages = with pkgs; [ lazyjj ];
 
     programs = {
       jujutsu = {
