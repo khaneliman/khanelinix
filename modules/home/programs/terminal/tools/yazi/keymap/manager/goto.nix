@@ -1,6 +1,8 @@
 {
   config,
+  lib,
   namespace,
+  pkgs,
   ...
 }:
 let
@@ -62,7 +64,7 @@ let
     }
     {
       key = "G";
-      path = "~/Documents/gitlab";
+      path = "~/${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents"}/gitlab";
     }
     {
       key = "M";
@@ -78,7 +80,7 @@ let
     }
     {
       key = "g";
-      path = "~/Documents/github";
+      path = "~/${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents"}/github";
     }
     {
       key = "i";

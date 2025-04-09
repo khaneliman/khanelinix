@@ -2,12 +2,20 @@
   config,
   lib,
   namespace,
+  pkgs,
   ...
 }:
 let
   copy = import ./manager/copy.nix;
   find = import ./manager/find.nix;
-  goto = import ./manager/goto.nix { inherit config namespace; };
+  goto = import ./manager/goto.nix {
+    inherit
+      config
+      lib
+      namespace
+      pkgs
+      ;
+  };
   navigation = import ./manager/navigation.nix;
   operation = import ./manager/operation.nix;
   selection = import ./manager/selection.nix;
