@@ -1,206 +1,134 @@
-{ config, namespace, ... }:
 {
-  keymap = [
-    # Goto
+  config,
+  namespace,
+  ...
+}:
+let
+  mkGotoKeymap =
+    {
+      key,
+      path,
+      desc ? null,
+      isCommand ? false,
+    }:
+    let
+      defaultDesc =
+        if isCommand then
+          null # Commands must provide their own descriptions
+        else
+          "Go to the ${path} directory";
+
+      description = if desc != null then desc else defaultDesc;
+
+      runCmd = if isCommand then path else "cd ${path}";
+    in
     {
       on = [
         "g"
-        "/"
+        key
       ];
-      run = "cd /";
-      desc = "Go to the root directory";
+      run = runCmd;
+      desc = description;
+    };
+
+  # Define all goto locations with minimal required information
+  gotoLocations = [
+    {
+      key = "/";
+      path = "/";
     }
     {
-      on = [
-        "g"
-        "h"
-      ];
-      run = "cd ~";
+      key = "h";
+      path = "~";
       desc = "Go to the home directory";
     }
     {
-      on = [
-        "g"
-        "c"
-      ];
-      run = "cd ~/.config";
-      desc = "Go to the config directory";
+      key = "c";
+      path = "~/.config";
     }
     {
-      on = [
-        "g"
-        "t"
-      ];
-      run = "cd /tmp";
-      desc = "Go to the temporary directory";
+      key = "t";
+      path = "/tmp";
     }
     {
-      on = [
-        "g"
-        "<Space>"
-      ];
-      run = "cd --interactive";
+      key = "<Space>";
+      path = "cd --interactive";
+      isCommand = true;
       desc = "Go to a directory interactively";
     }
     {
-      on = [
-        "g"
-        "D"
-      ];
-      run = "cd ~/Downloads";
-      desc = "Go to the downloads directory";
+      key = "D";
+      path = "~/Downloads";
     }
     {
-      on = [
-        "g"
-        "G"
-      ];
-      run = "cd ~/Documents/gitlab";
-      desc = "Go to the GitLab directory";
+      key = "G";
+      path = "~/Documents/gitlab";
     }
     {
-      on = [
-        "g"
-        "M"
-      ];
-      run = "cd /mnt";
-      desc = "Go to the /mnt directory";
+      key = "M";
+      path = "/mnt";
     }
     {
-      on = [
-        "g"
-        "c"
-      ];
-      run = "cd ~/.config";
-      desc = "Go to the ~/.config directory";
+      key = "d";
+      path = "~/Documents";
     }
     {
-      on = [
-        "g"
-        "d"
-      ];
-      run = "cd ~/Documents";
-      desc = "Go to the Documents directory";
+      key = "e";
+      path = "/etc";
     }
     {
-      on = [
-        "g"
-        "e"
-      ];
-      run = "cd /etc";
-      desc = "Go to the /etc directory";
+      key = "g";
+      path = "~/Documents/github";
     }
     {
-      on = [
-        "g"
-        "g"
-      ];
-      run = "cd ~/Documents/github";
-      desc = "Go to the GitHub directory";
+      key = "i";
+      path = "/run/media/${config.${namespace}.user.name}";
+      desc = "Go to the media directory";
     }
     {
-      on = [
-        "g"
-        "h"
-      ];
-      run = "cd ~";
-      desc = "Go to the home directory";
+      key = "l";
+      path = "~/.local/";
     }
     {
-      on = [
-        "g"
-        "i"
-      ];
-      run = "cd /run/media/${config.${namespace}.user.name}";
-      desc = "Run command to change to media directory";
+      key = "m";
+      path = "/media";
     }
     {
-      on = [
-        "g"
-        "l"
-      ];
-      run = "cd ~/.local/";
-      desc = "Go to the ~/.local/ directory";
+      key = "o";
+      path = "/opt";
     }
     {
-      on = [
-        "g"
-        "m"
-      ];
-      run = "cd /media";
-      desc = "Go to the /media directory";
+      key = "p";
+      path = "~/Pictures";
     }
     {
-      on = [
-        "g"
-        "o"
-      ];
-      run = "cd /opt";
-      desc = "Go to the /opt directory";
+      key = "R";
+      path = "/run";
     }
     {
-      on = [
-        "g"
-        "t"
-      ];
-      run = "cd /tmp";
-      desc = "Go to the /tmp directory";
-    }
-    {
-      on = [
-        "g"
-        "p"
-      ];
-      run = "cd ~/Pictures";
-      desc = "Go to the Pictures directory";
-    }
-    {
-      on = [
-        "g"
-        "R"
-      ];
-      run = "cd /run";
-      desc = "Go to the /run directory";
-    }
-    {
-      on = [
-        "g"
-        "r"
-      ];
-      run = ''shell -- ya emit cd "$(git rev-parse --show-toplevel)"'';
+      key = "r";
+      path = ''shell -- ya emit cd "$(git rev-parse --show-toplevel)"'';
+      isCommand = true;
       desc = "Go to the root of git directory";
     }
     {
-      on = [
-        "g"
-        "s"
-      ];
-      run = "cd /srv";
-      desc = "Go to the /srv directory";
+      key = "s";
+      path = "/srv";
     }
     {
-      on = [
-        "g"
-        "u"
-      ];
-      run = "cd /usr";
-      desc = "Go to the /usr directory";
+      key = "u";
+      path = "/usr";
     }
     {
-      on = [
-        "g"
-        "v"
-      ];
-      run = "cd /var";
-      desc = "Go to the /var directory";
+      key = "v";
+      path = "/var";
     }
     {
-      on = [
-        "g"
-        "w"
-      ];
-      run = "cd ~/.local/share/wallpapers";
-      desc = "Go to the wallpapers directory";
+      key = "w";
+      path = "~/.local/share/wallpapers";
     }
   ];
+in
+{
+  keymap = map mkGotoKeymap gotoLocations;
 }
