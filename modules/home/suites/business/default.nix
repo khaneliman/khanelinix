@@ -21,8 +21,7 @@ in
       with pkgs;
       [
         calcurse
-        # FIXME: broken nixpkg dependency again
-        # dooit
+        dooit
         jrnl
         np
         teams-for-linux
