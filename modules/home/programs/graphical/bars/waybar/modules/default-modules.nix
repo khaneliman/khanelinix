@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  osConfig,
+  pkgs,
+  ...
+}:
 let
   inherit (lib) getExe getExe';
 
@@ -214,7 +219,7 @@ in
       format-linked = "󰈁 {ifname} (No IP)";
       format-disconnected = " Disconnected";
       format-alt = "{ifname}: {ipaddr}/{cidr}";
-      on-click-right = "${nm-editor}";
+      on-click-right = lib.mkIf osConfig.networking.networkmanager.enable "${nm-editor}";
     };
 
   pulseaudio = {

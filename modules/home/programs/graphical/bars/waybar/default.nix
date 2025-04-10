@@ -36,7 +36,7 @@ let
       pkgs
       ;
   };
-  default-modules = import ./modules/default-modules.nix { inherit lib pkgs; };
+  default-modules = import ./modules/default-modules.nix { inherit osConfig lib pkgs; };
   group-modules = import ./modules/group-modules.nix {
     inherit
       config
