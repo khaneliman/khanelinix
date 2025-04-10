@@ -25,10 +25,11 @@ in
       # and allows you to ping connected hosts by hostname
       domains = [ "~." ];
       dnsovertls = "true";
-      # extraConfig =
-      #   mkIf cfg.dns == "dnsmasq" ''
-      #     DNSStubListener=false
-      #   '';
+
+      extraConfig = lib.mkIf config.services.avahi.enable ''
+        MulticastDNS=no
+      '';
+
       fallbackDns = [ "192.168.1.1" ];
     };
   };
