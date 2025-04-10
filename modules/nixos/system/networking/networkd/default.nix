@@ -10,7 +10,7 @@ let
   cfg = config.${namespace}.system.networking;
 in
 {
-  config = mkIf cfg.enable {
+  config = mkIf (cfg.enable && cfg.manager == "systemd-networkd") {
     networking.useNetworkd = mkForce true;
 
     # https://wiki.nixos.org/wiki/Systemd-networkd
@@ -25,7 +25,7 @@ in
 
       # https://wiki.archlinux.org/title/Systemd-networkd
       networks = {
-        # leave the kernel dummy devies unmanagaed
+        # leave the kernel dummy devices unmanagaed
         "10-dummy" = {
           matchConfig.Name = "dummy*";
           networkConfig = { };

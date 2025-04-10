@@ -10,7 +10,6 @@ let
     types
     mkIf
     mkDefault
-    mkForce
     ;
   inherit (lib.${namespace}) mkBoolOpt mkOpt;
 
@@ -21,10 +20,14 @@ in
     enable = lib.mkEnableOption "networking support";
     hosts = mkOpt attrs { } "An attribute set to merge with <option>networking.hosts</option>";
     optimizeTcp = mkBoolOpt false "Optimize TCP connections";
+    manager = mkOpt (types.enum [
+      "networkmanager"
+      "systemd-networkd"
+    ]) "systemd-networkd" "Network manager to use.";
     dns = mkOpt (types.enum [
       "dnsmasq"
       "systemd-resolved"
-    ]) "systemd-resolved" "Dns resolver to use";
+    ]) "systemd-resolved" "Dns resolver to use.";
   };
 
   config = mkIf cfg.enable {
@@ -139,8 +142,8 @@ in
         "2606:4700:4700::1001"
       ];
 
-      useDHCP = mkForce false;
-      usePredictableInterfaceNames = mkForce true;
+      useDHCP = mkDefault false;
+      usePredictableInterfaceNames = true;
     };
   };
 }
