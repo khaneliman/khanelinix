@@ -134,7 +134,6 @@
     };
 
     nixpkgs-master.url = "github:NixOS/nixpkgs";
-    nixpkgs-yaziPlugins.url = "github:khaneliman/nixpkgs/yaziPlugins";
   };
 
   outputs =

@@ -217,11 +217,11 @@
       },
       "locked": {
         "dir": "pkgs/firefox-addons",
-        "lastModified": 1744224429,
-        "narHash": "sha256-ZkRLtzh3KCt0Ve2SYNbo5K6qG01I3aSiTlbrEgE2H08=",
+        "lastModified": 1744317997,
+        "narHash": "sha256-y29WbcPCA7xgHeacjei869oNStY2BSCa81uZ76DZPTU=",
         "owner": "rycee",
         "repo": "nur-expressions",
-        "rev": "706977dba99156d3bcb4a1f097653e8c1ac58cd4",
+        "rev": "d6c909b010352a06f206e4c83acef0753566f343",
         "type": "gitlab"
       },
       "original": {
@@ -429,11 +429,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1744223888,
-        "narHash": "sha256-reYpe0J1J+wH34JFs7KKp0G5nP7+XSQ5z0ZLFJcfJr8=",
+        "lastModified": 1744316889,
+        "narHash": "sha256-qS0BhvsL9J7gt4cOpBZdzT0EqylGPKyKnU9v/6SJvFI=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "79461936709b12e17adb9c91dd02d1c66d577f09",
+        "rev": "543caa313abe45b56520efdaa35d379703f79e3a",
         "type": "github"
       },
       "original": {
@@ -539,11 +539,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1744289664,
-        "narHash": "sha256-mcegUAWyi9AqbXTTASP5YQJmyGqQ/kpjnrxUbu9vsFU=",
+        "lastModified": 1744324490,
+        "narHash": "sha256-NddZqhX+75btNvcxhZD0AVXuAAM4Lnip2c+yrQThSVU=",
         "owner": "hyprwm",
         "repo": "Hyprland",
-        "rev": "d775686380c348efe3a2044a5ca8626505249e38",
+        "rev": "382f0f23f144e11bdccac6c5d3c1ed415b4b1855",
         "type": "github"
       },
       "original": {
@@ -741,11 +741,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1744290513,
-        "narHash": "sha256-V/6Ev+hXM/xXkLZpg0MRpDfS/2nmrSzYWdf3MTrkOhM=",
+        "lastModified": 1744306001,
+        "narHash": "sha256-YHQik+ppBl8V7asJm2P9j90pRCS/1UqThJN7wFs7kZc=",
         "owner": "khaneliman",
         "repo": "khanelivim",
-        "rev": "95985a286331755d557b650b7da820ffa3c059f4",
+        "rev": "464e4f9dfd2d3d19db75c48051999a476449ce8d",
         "type": "github"
       },
       "original": {
@@ -891,11 +891,11 @@
     },
     "nixpkgs-master": {
       "locked": {
-        "lastModified": 1744288426,
-        "narHash": "sha256-+STbhvl+h8W9QimZivg4FOaKEiOjqphF0GqR3vuqD1w=",
+        "lastModified": 1744305555,
+        "narHash": "sha256-VKjFxe5hyk2Mlm0jdhxtZf409tp7bCQzOQgGZcnq0Oo=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "10af2526708481b778042399501a38ce6745c27b",
+        "rev": "1df2fee757a2e0ffc5d890e494fbb4c680425633",
         "type": "github"
       },
       "original": {
@@ -906,11 +906,11 @@
     },
     "nixpkgs-master_2": {
       "locked": {
-        "lastModified": 1744288426,
-        "narHash": "sha256-+STbhvl+h8W9QimZivg4FOaKEiOjqphF0GqR3vuqD1w=",
+        "lastModified": 1744325301,
+        "narHash": "sha256-WjEgeb+OEn0NRoOYdKxGnv6MbXDnu89lPDLRYvJ9GQk=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "10af2526708481b778042399501a38ce6745c27b",
+        "rev": "07111a68e61230a6d6f360b28d1e82d77943f505",
         "type": "github"
       },
       "original": {
@@ -931,22 +931,6 @@
       "original": {
         "owner": "nixos",
         "ref": "nixpkgs-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs-yaziPlugins": {
-      "locked": {
-        "lastModified": 1744248940,
-        "narHash": "sha256-aVHh7/hVlMlNhDYjxn177gRdXHWpDnlLbnzX3gzuVbY=",
-        "owner": "khaneliman",
-        "repo": "nixpkgs",
-        "rev": "581cdfc6de284e42abe9ba67164cbb2d97b4c09c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "khaneliman",
-        "ref": "yaziPlugins",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -1097,7 +1081,6 @@
         "nixpkgs": "nixpkgs_6",
         "nixpkgs-master": "nixpkgs-master_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
-        "nixpkgs-yaziPlugins": "nixpkgs-yaziPlugins",
         "snowfall-flake": "snowfall-flake",
         "snowfall-lib": "snowfall-lib",
         "sops-nix": "sops-nix",
