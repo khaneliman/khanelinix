@@ -40,5 +40,7 @@ in
           ++ lib.optionals config.${namespace}.virtualisation.kvm.enable [ "interface-name:virbr*" ];
       };
     };
+    # Slows down rebuilds timing out for network.
+    systemd.services.NetworkManager-wait-online.enable = lib.mkForce false;
   };
 }

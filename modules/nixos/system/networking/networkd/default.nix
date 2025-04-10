@@ -20,7 +20,8 @@ in
       enable = true;
 
       wait-online = {
-        enable = true;
+        # Slows down rebuilds timing out for network.
+        enable = false;
         anyInterface = true;
         extraArgs = [ "--ipv4" ];
       };
