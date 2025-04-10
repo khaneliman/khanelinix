@@ -126,7 +126,10 @@ in
       } // cfg.hosts;
 
       firewall = {
-        allowedUDPPorts = [ 5353 ];
+        allowedUDPPorts = [
+          # mDNS
+          5353
+        ];
         allowedTCPPorts = [
           443
           8080
