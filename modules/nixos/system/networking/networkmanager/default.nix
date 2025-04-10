@@ -42,7 +42,5 @@ in
 
       resolvconf.enable = false;
     };
-
-    systemd.services.NetworkManager-wait-online.enable = lib.mkForce false;
   };
 }
