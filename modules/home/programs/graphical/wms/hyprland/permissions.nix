@@ -18,6 +18,7 @@ in
           "${lib.getExe pkgs.hyprpicker}, screencopy, allow"
           "${lib.getExe pkgs.${namespace}.record_screen}, screencopy, allow"
           "${lib.getExe config.wayland.windowManager.hyprland.portalPackage}, screencopy, allow"
+          "${lib.getExe config.programs.hyprlock.package}, screencopy, allow"
         ];
       };
     };
