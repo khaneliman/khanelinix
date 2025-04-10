@@ -19,14 +19,18 @@ in
 
   config = mkIf cfg.enable {
     home.packages =
+      let
+        optionalPluginPackage =
+          plugin: package: lib.optional (builtins.hasAttr plugin config.programs.yazi.plugins) package;
+      in
       with pkgs;
       [
-        miller
-        ouch
         config.programs.ripgrep.package
         zoxide
-        glow
       ]
+      ++ optionalPluginPackage "miller" miller
+      ++ optionalPluginPackage "ouch" ouch
+      ++ optionalPluginPackage "glow" glow
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         xdragon
       ];
