@@ -21,6 +21,7 @@ in
     hosts = mkOpt attrs { } "An attribute set to merge with <option>networking.hosts</option>";
     optimizeTcp = mkBoolOpt false "Optimize TCP connections";
     manager = mkOpt (types.enum [
+      "connman"
       "networkmanager"
       "systemd-networkd"
     ]) "systemd-networkd" "Network manager to use.";
