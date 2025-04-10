@@ -20,7 +20,7 @@ in
       enable = true;
 
       wait-online = {
-        enable = false;
+        enable = true;
         anyInterface = true;
         extraArgs = [ "--ipv4" ];
       };
