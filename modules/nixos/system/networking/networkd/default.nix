@@ -13,6 +13,8 @@ in
   config = mkIf (cfg.enable && cfg.manager == "systemd-networkd") {
     networking.useNetworkd = mkForce true;
 
+    services.networkd-dispatcher.enable = true;
+
     # https://wiki.nixos.org/wiki/Systemd-networkd
     systemd.network = {
       enable = true;
