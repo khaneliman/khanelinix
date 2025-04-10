@@ -39,8 +39,6 @@ in
           ++ lib.optionals config.${namespace}.virtualisation.podman.enable [ "interface-name:docker*" ]
           ++ lib.optionals config.${namespace}.virtualisation.kvm.enable [ "interface-name:virbr*" ];
       };
-
-      resolvconf.enable = false;
     };
   };
 }

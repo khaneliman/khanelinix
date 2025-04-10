@@ -11,7 +11,11 @@ let
 in
 {
   config = mkIf (cfg.enable && cfg.dns == "systemd-resolved") {
-    networking.networkmanager.dns = "systemd-resolved";
+    networking = {
+      networkmanager.dns = "systemd-resolved";
+      resolvconf.enable = false;
+    };
+
     services.dnsmasq.enable = mkForce false;
     services.resolved = {
       enable = true;
