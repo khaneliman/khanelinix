@@ -107,6 +107,12 @@ in
         nrlp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-linux aarch64-linux" --num-parallel-evals 2 --post-result'';
         nup = ''nix-update --commit -u $1'';
         num = ''nix-shell maintainers/scripts/update.nix --argstr maintainer $1'';
+        # NOTE: vim-add 'owner/repo'
+        vim-add = ''nix run nixpkgs#vimPluginsUpdater add'';
+        # NOTE: vim-update 'plugin-name'
+        vim-update = ''nix run nixpkgs#vimPluginsUpdater update'';
+        vim-update-all = ''nix run nixpkgs#vimPluginsUpdater -- --github-token=$(echo $GITHUB_TOKEN)'';
+        lua-update-all = ''nix run nixpkgs#luarocks-packages-updater -- --github-token=$(echo $GITHUB_TOKEN)'';
 
         # Home-Manager
         hmd = ''nix build -L .#docs-html && ${
