@@ -2,6 +2,7 @@
   config,
   lib,
   osConfig,
+  pkgs,
   ...
 }:
 let
@@ -144,7 +145,21 @@ in
   };
   "custom/hyprsunset" = {
     interval = 5;
-    exec = ../scripts/hyprsunset-status.sh;
+    exec = lib.getExe (
+      pkgs.writeShellScriptBin "hyprsunset-status.sh" # Bash
+        ''
+          temp=$(hyprctl hyprsunset temperature 2>/dev/null)
+          temp=$(echo "$temp" | tr -d '[:space:]')
+
+          if [ "$temp" -ge 5000 ]; then
+              icon="🌞"
+          else
+              icon="🌙"
+          fi
+
+          echo "{\"text\": \"$icon\", \"alt\": \"$temp\"}"
+        ''
+    );
     exec-on-event = true;
     exec-if = "pidof hyprsunset";
     on-scroll-up = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} hyprsunset temperature +250";
