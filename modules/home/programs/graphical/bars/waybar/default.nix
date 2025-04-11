@@ -11,8 +11,6 @@
 let
   inherit (lib)
     mkIf
-    mkForce
-    getExe
     mkMerge
     types
     ;
@@ -131,7 +129,7 @@ in
 {
   options.${namespace}.programs.graphical.bars.waybar = {
     enable = lib.mkEnableOption "waybar in the desktop environment";
-    debug = lib.mkEnableOption "debug mode";
+    enableDebug = lib.mkEnableOption "debug mode";
     enableInspect = lib.mkEnableOption "inspect mode";
     fullSizeOutputs =
       mkOpt (types.listOf types.str) "Which outputs to use the full size waybar on."
@@ -142,17 +140,13 @@ in
   };
 
   config = mkIf cfg.enable {
-    systemd.user.services.waybar.Service.ExecStart = mkIf cfg.debug (
-      mkForce "${getExe config.programs.waybar.package} -l debug"
-    );
-
     programs.waybar = {
       enable = true;
       package = waybar.packages.${system}.waybar;
 
       systemd = {
         enable = true;
-        inherit (cfg) enableInspect;
+        inherit (cfg) enableDebug enableInspect;
       };
 
       settings = mkMerge [

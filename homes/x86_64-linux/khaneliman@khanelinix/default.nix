@@ -48,6 +48,8 @@ in
 
         bars = {
           waybar = {
+            enableDebug = true;
+            # enableInspect = true;
             fullSizeOutputs = [ "DP-1" ];
             condensedOutputs = [ "DP-3" ];
           };
