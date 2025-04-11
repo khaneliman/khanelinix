@@ -117,7 +117,9 @@
       };
     };
     waybar = {
-      url = "github:Alexays/Waybar";
+      # url = "github:Alexays/Waybar";
+      # TODO: remove after https://github.com/Alexays/Waybar/pull/4045 or similar is merged.
+      url = "github:khaneliman/Waybar/pulse";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         # Optional inputs removed
