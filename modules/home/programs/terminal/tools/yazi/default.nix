@@ -23,16 +23,11 @@ in
         optionalPluginPackage =
           plugin: package: lib.optional (builtins.hasAttr plugin config.programs.yazi.plugins) package;
       in
-      with pkgs;
-      [
-        config.programs.ripgrep.package
-        zoxide
-      ]
-      ++ optionalPluginPackage "miller" miller
-      ++ optionalPluginPackage "ouch" ouch
-      ++ optionalPluginPackage "glow" glow
+      optionalPluginPackage "miller" pkgs.miller
+      ++ optionalPluginPackage "ouch" pkgs.ouch
+      ++ optionalPluginPackage "glow" pkgs.glow
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-        xdragon
+        pkgs.xdragon
       ];
 
     programs.yazi = {
