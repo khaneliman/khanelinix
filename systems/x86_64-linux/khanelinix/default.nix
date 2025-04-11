@@ -152,7 +152,6 @@ in
       };
 
       fonts = enabled;
-      locale = enabled;
       networking = {
         enable = true;
         optimizeTcp = true;
