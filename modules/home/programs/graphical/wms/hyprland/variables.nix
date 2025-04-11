@@ -192,7 +192,7 @@ in
         "$explorer" = "${getExe pkgs.xfce.thunar}";
         "$music" = "${getExe pkgs.youtube-music}";
         "$notification_center" = "${getExe' config.services.swaync.package "swaync-client"}";
-        "$launcher" = "anyrun";
+        "$launcher" = "${getExe config.programs.anyrun.package}";
         # "$launcher_alt" = "${getExe config.programs.rofi.package} -show drun -n";
         # "$launcher_shift" = "${getExe config.programs.rofi.package} -show run -n";
         # "$launchpad" = "${getExe config.programs.rofi.package} -show drun -config '~/.config/rofi/appmenu/rofi.rasi'";
@@ -222,7 +222,7 @@ in
         "$color_picker" =
           "${getExe pkgs.hyprpicker} -a && (${convert} -size 32x32 xc:$(${wl-paste}) /tmp/color.png && ${getExe pkgs.libnotify} \"Color Code:\" \"$(${wl-paste})\" -h \"string:bgcolor:$(${wl-paste})\" --icon /tmp/color.png -u critical -t 4000)";
         "$cliphist" =
-          "${getExe pkgs.cliphist} list | anyrun --show-results-immediately true | ${getExe pkgs.cliphist} decode | ${wl-copy}";
+          "${getExe pkgs.cliphist} list | ${getExe config.programs.anyrun.package} --show-results-immediately true | ${getExe pkgs.cliphist} decode | ${wl-copy}";
       };
     };
   };

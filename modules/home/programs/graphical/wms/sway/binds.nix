@@ -39,7 +39,7 @@ in
             browser = "${getExe config.programs.firefox.package}";
             explorer = "${getExe pkgs.xfce.thunar}";
             notification_center = "${getExe' config.services.swaync.package "swaync-client"}";
-            launcher = "anyrun";
+            launcher = "${getExe config.programs.anyrun.package}";
             looking-glass = "${getExe pkgs.looking-glass-client}";
             screen-locker = "${getExe config.programs.swaylock.package}";
             # window-inspector = "${getExe pkgs.hyprprop}";
@@ -58,7 +58,7 @@ in
 
             # utility commands
             color_picker = "${getExe pkgs.hyprpicker} -a && (${convert} -size 32x32 xc:$(${wl-paste}) /tmp/color.png && ${getExe pkgs.libnotify} \"Color Code:\" \"$(${wl-paste})\" -h \"string:bgcolor:$(${wl-paste})\" --icon /tmp/color.png -u critical -t 4000)";
-            cliphist = "${getExe pkgs.cliphist} list | anyrun --show-results-immediately true | ${getExe pkgs.cliphist} decode | ${wl-copy}";
+            cliphist = "${getExe pkgs.cliphist} list | ${getExe config.programs.anyrun.package} --show-results-immediately true | ${getExe pkgs.cliphist} decode | ${wl-copy}";
           in
           lib.mkMerge [
             (lib.mkOptionDefault {
