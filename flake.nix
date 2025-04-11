@@ -187,7 +187,6 @@
       overlays = [ inputs.nh.overlays.default ];
 
       homes.modules = with inputs; [
-        anyrun.homeManagerModules.default
         catppuccin.homeModules.catppuccin
         hypr-socket-watch.homeManagerModules.default
         nix-index-database.hmModules.nix-index
