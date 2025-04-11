@@ -16,23 +16,20 @@ let
     modules = [
       {
         config = {
-          plugins = {
-            # FIXME: insane memory usage
-            # plugins.lsp.servers.nixd.settings =
-            #   let
-            #     flake = ''(builtins.getFlake "${inputs.self}")'';
-            #   in
-            #   {
-            #     options = rec {
-            #       nix-darwin.expr = ''${flake}.darwinConfigurations.khanelimac.options'';
-            #       nixos.expr = ''${flake}.nixosConfigurations.khanelinix.options'';
-            #       home-manager.expr = ''${nixos.expr}.home-manager.users.type.getSubOptions [ ]'';
-            #     };
-            #   };
-
-            # NOTE: Conflicting package definitions, use the package from this flake.
-            yazi.yaziPackage = null;
-          };
+          # NOTE: Conflicting package definitions, use the package from this flake.
+          dependencies.yazi.enable = false;
+          # FIXME: insane memory usage
+          # plugins.lsp.servers.nixd.settings =
+          #   let
+          #     flake = ''(builtins.getFlake "${inputs.self}")'';
+          #   in
+          #   {
+          #     options = rec {
+          #       nix-darwin.expr = ''${flake}.darwinConfigurations.khanelimac.options'';
+          #       nixos.expr = ''${flake}.nixosConfigurations.khanelinix.options'';
+          #       home-manager.expr = ''${nixos.expr}.home-manager.users.type.getSubOptions [ ]'';
+          #     };
+          #   };
         };
       }
     ];
