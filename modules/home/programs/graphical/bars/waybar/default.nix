@@ -132,6 +132,7 @@ in
   options.${namespace}.programs.graphical.bars.waybar = {
     enable = lib.mkEnableOption "waybar in the desktop environment";
     debug = lib.mkEnableOption "debug mode";
+    enableInspect = lib.mkEnableOption "inspect mode";
     fullSizeOutputs =
       mkOpt (types.listOf types.str) "Which outputs to use the full size waybar on."
         [ ];
@@ -149,7 +150,10 @@ in
       enable = true;
       package = waybar.packages.${system}.waybar;
 
-      systemd.enable = true;
+      systemd = {
+        enable = true;
+        inherit (cfg) enableInspect;
+      };
 
       settings = mkMerge [
         (generateOutputSettings cfg.fullSizeOutputs "fullSize")
