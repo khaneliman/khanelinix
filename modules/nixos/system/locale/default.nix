@@ -47,6 +47,7 @@ in
         in
         lib.genAttrs localeCategories (_: config.i18n.defaultLocale);
       supportedLocales = [
+        "C.UTF-8/UTF-8"
         "en_US.UTF-8/UTF-8"
       ];
     };
