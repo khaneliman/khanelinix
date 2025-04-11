@@ -143,16 +143,17 @@ in
     };
   };
   "custom/hyprsunset" = {
-    interval = "once";
-    exec = "if pgrep hyprsunset >/dev/null 2>&1; then stdbuf -oL printf '{\"alt\": \"on\"}'; else stdbuf -oL printf '{\"alt\": \"off\"}'; fi";
-    on-click = "pkill hyprsunset || hyprsunset";
+    interval = 5;
+    exec = ../scripts/hyprsunset-status.sh;
+    exec-on-event = true;
+    exec-if = "pidof hyprsunset";
+    on-scroll-up = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} hyprsunset temperature +250";
+    on-scroll-down = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} hyprsunset temperature -250";
+    on-click = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} hyprsunset temperature 6500";
+    on-click-right = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} hyprsunset temperature 4500";
     signal = 1;
     return-type = "json";
-    format = "{icon}";
-    tooltip-format = "hyprsunset: {alt}";
-    format-icons = {
-      "off" = "☀️";
-      "on" = "🌙";
-    };
+    format = "{}";
+    tooltip-format = "hyprsunset: {alt}K";
   };
 }
