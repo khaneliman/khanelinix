@@ -26,17 +26,26 @@ in
 
     i18n = {
       defaultLocale = "en_US.UTF-8";
-      extraLocaleSettings = {
-        LC_ADDRESS = config.i18n.defaultLocale;
-        LC_IDENTIFICATION = config.i18n.defaultLocale;
-        LC_MEASUREMENT = config.i18n.defaultLocale;
-        LC_MONETARY = config.i18n.defaultLocale;
-        LC_NAME = config.i18n.defaultLocale;
-        LC_NUMERIC = config.i18n.defaultLocale;
-        LC_PAPER = config.i18n.defaultLocale;
-        LC_TELEPHONE = config.i18n.defaultLocale;
-        LC_TIME = config.i18n.defaultLocale;
-      };
+      extraLocaleSettings =
+        let
+          localeCategories = [
+            "LANG"
+            "LANGUAGE"
+            "LC_ADDRESS"
+            "LC_COLLATE"
+            "LC_CTYPE"
+            "LC_IDENTIFICATION"
+            "LC_MEASUREMENT"
+            "LC_MESSAGES"
+            "LC_MONETARY"
+            "LC_NAME"
+            "LC_NUMERIC"
+            "LC_PAPER"
+            "LC_TELEPHONE"
+            "LC_TIME"
+          ];
+        in
+        lib.genAttrs localeCategories (_: config.i18n.defaultLocale);
       supportedLocales = [
         "en_US.UTF-8/UTF-8"
       ];
