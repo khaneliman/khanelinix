@@ -35,32 +35,14 @@ in
           anyrun-nixos-options.packages.${system}.default
         ];
 
-        # the x coordinate of the runner
-        #x.relative = 800;
-        # the y coordinate of the runner
-        #y.absolute = 500.0;
-        y.fraction = 2.0e-2;
-
-        # Hide match and plugin info icons
-        hideIcons = false;
-
-        # ignore exclusive zones, i.e. Waybar
-        ignoreExclusiveZones = false;
-
-        # Layer shell layer: Background, Bottom, Top, Overlay
-        layer = "overlay";
-
-        # Hide the plugin info panel
-        hidePluginInfo = false;
-
-        # Close window when a click outside the main box is received
         closeOnClick = false;
-
-        # Show search results immediately when Anyrun starts
-        showResultsImmediately = false;
-
-        # Limit amount of entries shown in total
+        hideIcons = false;
+        hidePluginInfo = false;
+        ignoreExclusiveZones = false;
+        layer = "overlay";
         maxEntries = 10;
+        showResultsImmediately = false;
+        y.fraction = 2.0e-2;
       };
 
       extraConfigFiles = {
