@@ -113,6 +113,8 @@ in
           enable = true;
           enableSocketWatch = true;
         };
+
+        hyprsunset = enabled;
       };
 
       suites = {
