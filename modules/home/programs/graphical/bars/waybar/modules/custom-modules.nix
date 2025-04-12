@@ -108,49 +108,49 @@ in
         ''
           <?xml version="1.0" encoding="UTF-8"?>
           <interface>
-            <object class="GtkMenu" id="menu">
-              <child>
-          		  <object class="GtkMenuItem" id="top">
-          			  <property name="label">Activity</property>
-                </object>
-          	  </child>
-              <child>
-                <object class="GtkSeparatorMenuItem" id="delimiter1"/>
-              </child>
-              <child>
-          		  <object class="GtkMenuItem" id="lock">
-          			  <property name="label">Lock</property>
-                </object>
-          	  </child>
-              <child>
-          		  <object class="GtkMenuItem" id="logout">
-          			  <property name="label">Logout</property>
-                </object>
-          	  </child>
-              <child>
-          		  <object class="GtkMenuItem" id="suspend">
-          			  <property name="label">Suspend</property>
-                </object>
-          	  </child>
-          	  <child>
-                <object class="GtkMenuItem" id="hibernate">
-          			  <property name="label">Hibernate</property>
-                </object>
-          	  </child>
-              <child>
-                <object class="GtkSeparatorMenuItem" id="delimiter2"/>
-              </child>
-              <child>
-                <object class="GtkMenuItem" id="shutdown">
-          			  <property name="label">Shutdown</property>
-                </object>
-              </child>
-              <child>
-          		  <object class="GtkMenuItem" id="reboot">
-          			  <property name="label">Reboot</property>
-          		  </object>
-              </child>
-            </object>
+           <object class="GtkMenu" id="menu">
+            <child>
+             <object class="GtkMenuItem" id="top">
+              <property name="label">Activity</property>
+             </object>
+            </child>
+            <child>
+             <object class="GtkSeparatorMenuItem" id="delimiter1"/>
+            </child>
+            <child>
+             <object class="GtkMenuItem" id="lock">
+              <property name="label">Lock</property>
+             </object>
+            </child>
+            <child>
+             <object class="GtkMenuItem" id="logout">
+              <property name="label">Logout</property>
+             </object>
+            </child>
+            <child>
+             <object class="GtkMenuItem" id="suspend">
+              <property name="label">Suspend</property>
+             </object>
+            </child>
+            <child>
+             <object class="GtkMenuItem" id="hibernate">
+              <property name="label">Hibernate</property>
+             </object>
+            </child>
+            <child>
+             <object class="GtkSeparatorMenuItem" id="delimiter2"/>
+            </child>
+            <child>
+             <object class="GtkMenuItem" id="shutdown">
+              <property name="label">Shutdown</property>
+             </object>
+            </child>
+            <child>
+             <object class="GtkMenuItem" id="reboot">
+              <property name="label">Reboot</property>
+             </object>
+            </child>
+           </object>
           </interface>
         '';
     menu-actions =
