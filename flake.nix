@@ -93,13 +93,7 @@
       };
     };
     hypr-socket-watch.url = "github:khaneliman/hypr-socket-watch";
-    khanelivim = {
-      url = "github:khaneliman/khanelivim";
-      inputs = {
-        git-hooks-nix.follows = "git-hooks-nix";
-        treefmt-nix.follows = "treefmt-nix";
-      };
-    };
+    khanelivim.url = "github:khaneliman/khanelivim";
     # nh.url = "github:viperML/nh";
     nh.url = "github:khaneliman/nh/darwin";
     nix-flatpak.url = "github:gmodena/nix-flatpak/latest";

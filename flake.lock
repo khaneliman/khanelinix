@@ -728,24 +728,18 @@
       "inputs": {
         "avante-nvim": "avante-nvim",
         "flake-parts": "flake-parts_3",
-        "git-hooks-nix": [
-          "git-hooks-nix"
-        ],
         "nixpkgs": "nixpkgs_4",
         "nixpkgs-master": "nixpkgs-master",
         "nixvim": "nixvim",
         "pkgs-by-name-for-flake-parts": "pkgs-by-name-for-flake-parts",
-        "snacks-nvim": "snacks-nvim",
-        "treefmt-nix": [
-          "treefmt-nix"
-        ]
+        "snacks-nvim": "snacks-nvim"
       },
       "locked": {
-        "lastModified": 1744430631,
-        "narHash": "sha256-6/3y8PMDxdL7GeKuyg/+6jQQ5JDxyLGrw+b2lqqLciw=",
+        "lastModified": 1744434021,
+        "narHash": "sha256-6iHe0AOC/2JP93dpMOfzAFXC+FWpvc+IFxDHcxqvaEs=",
         "owner": "khaneliman",
         "repo": "khanelivim",
-        "rev": "5010675e719a034b61f15a68a7c0d7449aeb8e3b",
+        "rev": "de740bdd11759b86e7f240d73176c6c88750386e",
         "type": "github"
       },
       "original": {
