@@ -88,7 +88,7 @@ in
         (import ./settings/input.nix)
         (import ./settings/open.nix)
         (import ./settings/opener.nix { inherit config lib pkgs; })
-        (import ./settings/plugin.nix)
+        (import ./settings/plugin.nix { inherit config lib; })
         {
           log = {
             enabled = false;
