@@ -124,10 +124,6 @@
       url = "github:yazi-rs/flavors";
       flake = false;
     };
-    yazi-plugins = {
-      url = "github:yazi-rs/plugins";
-      flake = false;
-    };
 
     nixpkgs-master.url = "github:NixOS/nixpkgs";
   };
