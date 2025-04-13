@@ -24,6 +24,7 @@ in
       lib.optionalString (lib.hasAttr "yatline" enabledPlugins) # Lua
         ''
           require("yatline"):setup({
+                ${lib.optionalString (lib.hasAttr "yatline-catppuccin" enabledPlugins) ''theme = require("yatline-catppuccin"):setup("macchiato"),''}
 
           	show_background = false,
 
