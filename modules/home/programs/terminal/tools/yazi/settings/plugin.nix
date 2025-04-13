@@ -117,90 +117,30 @@ in
       ++ lib.optional (lib.hasAttr "glow" enabledPlugins) {
         name = "*.md";
         run = "glow";
-      };
-
-    previewers =
-      [
-        {
-          name = "*/";
-          run = "folder";
-          sync = true;
-        }
-        # Code
-        {
-          mime = "text/*";
-          run = "code";
-        }
-        {
-          mime = "*/xml";
-          run = "code";
-        }
-        {
-          mime = "*/javascript";
-          run = "code";
-        }
-        {
-          mime = "*/wine-extension-ini";
-          run = "code";
-        }
-        # JSON
-        {
-          mime = "application/json";
-          run = "json";
-        }
-        # Image
-        {
-          mime = "image/vnd.djvu";
-          run = "noop";
-        }
-        {
-          mime = "image/*";
-          run = "image";
-        }
-        # Video
-        {
-          mime = "video/*";
-          run = "video";
-        }
-        # PDF
-        {
-          mime = "application/pdf";
-          run = "pdf";
-        }
-        # Archive
-        {
-          mime = "application/gzip";
-          run = "archive";
-        }
-        # Fallback
-        {
-          name = "*";
-          run = "file";
-        }
-      ]
+      }
       ++ lib.optionals (lib.hasAttr "ouch" enabledPlugins) [
         {
           mime = "application/zip";
           run = "ouch";
         }
         {
-          mime = "application/tar";
+          mime = "application/x-tar";
           run = "ouch";
         }
         {
-          mime = "application/bzip";
+          mime = "application/x-bzip2";
           run = "ouch";
         }
         {
-          mime = "application/bzip2";
+          mime = "application/x-7z-compressed";
           run = "ouch";
         }
         {
-          mime = "application/7z-compressed";
+          mime = "application/x-rar";
           run = "ouch";
         }
         {
-          mime = "application/rar";
+          mime = "application/x-xz";
           run = "ouch";
         }
         {
@@ -208,5 +148,64 @@ in
           run = "ouch";
         }
       ];
+
+    previewers = [
+      {
+        name = "*/";
+        run = "folder";
+        sync = true;
+      }
+      # Code
+      {
+        mime = "text/*";
+        run = "code";
+      }
+      {
+        mime = "*/xml";
+        run = "code";
+      }
+      {
+        mime = "*/javascript";
+        run = "code";
+      }
+      {
+        mime = "*/wine-extension-ini";
+        run = "code";
+      }
+      # JSON
+      {
+        mime = "application/json";
+        run = "json";
+      }
+      # Image
+      {
+        mime = "image/vnd.djvu";
+        run = "noop";
+      }
+      {
+        mime = "image/*";
+        run = "image";
+      }
+      # Video
+      {
+        mime = "video/*";
+        run = "video";
+      }
+      # PDF
+      {
+        mime = "application/pdf";
+        run = "pdf";
+      }
+      # Archive
+      {
+        mime = "application/gzip";
+        run = "archive";
+      }
+      # Fallback
+      {
+        name = "*";
+        run = "file";
+      }
+    ];
   };
 }
