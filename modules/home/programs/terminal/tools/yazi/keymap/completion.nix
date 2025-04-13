@@ -15,7 +15,7 @@
         on = [ "<Enter>" ];
         run = [
           "close --submit"
-          "close_input --submit"
+          "input:close --submit"
         ];
         desc = "Submit the completion and input";
       }

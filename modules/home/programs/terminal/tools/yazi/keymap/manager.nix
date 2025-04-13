@@ -138,7 +138,7 @@ in
         # Tasks
         {
           on = [ "w" ];
-          run = "tasks_show";
+          run = "tasks:show";
           desc = "Show the tasks manager";
         }
         # Help
