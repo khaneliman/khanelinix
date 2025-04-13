@@ -26,6 +26,7 @@ in
       optionalPluginPackage "miller" pkgs.miller
       ++ optionalPluginPackage "ouch" pkgs.ouch
       ++ optionalPluginPackage "glow" pkgs.glow
+      ++ optionalPluginPackage "rich-preview" pkgs.rich-cli
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         pkgs.xdragon
       ];
@@ -77,6 +78,7 @@ in
           mount
           ouch
           restore
+          rich-preview
           smart-enter
           smart-filter
           sudo
