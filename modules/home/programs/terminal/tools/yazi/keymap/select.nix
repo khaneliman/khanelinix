@@ -1,6 +1,6 @@
 {
   select = {
-    keymap = [
+    prepend_keymap = [
       {
         on = [ "<C-q>" ];
         run = "close";

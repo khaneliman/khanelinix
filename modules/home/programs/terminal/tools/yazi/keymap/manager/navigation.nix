@@ -1,15 +1,5 @@
 {
-  keymap = [
-    {
-      on = [ "k" ];
-      run = "plugin arrow -1";
-      desc = "Move cursor up";
-    }
-    {
-      on = [ "j" ];
-      run = "plugin arrow 1";
-      desc = "Move cursor down";
-    }
+  prepend_keymap = [
     {
       on = [ "K" ];
       run = "plugin arrow-parent -1";
@@ -19,46 +9,6 @@
       on = [ "J" ];
       run = "plugin arrow-parent 1";
       desc = "Move parent cursor down";
-    }
-    # {
-    #   on = [ "K" ];
-    #   run = "arrow -5";
-    #   desc = "Move cursor up 5 lines";
-    # }
-    # {
-    #   on = [ "J" ];
-    #   run = "arrow 5";
-    #   desc = "Move cursor down 5 lines";
-    # }
-    {
-      on = [ "<C-u>" ];
-      run = "arrow -50%";
-      desc = "Move cursor up half page";
-    }
-    {
-      on = [ "<C-d>" ];
-      run = "arrow 50%";
-      desc = "Move cursor down half page";
-    }
-    {
-      on = [ "<PageUp>" ];
-      run = "arrow -100%";
-      desc = "Move cursor up one page";
-    }
-    {
-      on = [ "<PageDown>" ];
-      run = "arrow 100%";
-      desc = "Move cursor down one page";
-    }
-    {
-      on = [ "h" ];
-      run = "leave";
-      desc = "Go back to the parent directory";
-    }
-    {
-      on = [ "l" ];
-      run = "enter";
-      desc = "Enter the child directory";
     }
     {
       on = [ "H" ];
@@ -79,26 +29,6 @@
       on = [ "<C-j>" ];
       run = "peek 5";
       desc = "Peek down 5 units in the preview";
-    }
-    {
-      on = [ "<Up>" ];
-      run = "arrow -1";
-      desc = "Move cursor up";
-    }
-    {
-      on = [ "<Down>" ];
-      run = "arrow 1";
-      desc = "Move cursor down";
-    }
-    {
-      on = [ "<Left>" ];
-      run = "leave";
-      desc = "Go back to the parent directory";
-    }
-    {
-      on = [ "<Right>" ];
-      run = "enter";
-      desc = "Enter the child directory";
     }
     {
       on = [

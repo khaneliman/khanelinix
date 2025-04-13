@@ -8,8 +8,6 @@
 let
   enabledPlugins = config.programs.yazi.plugins;
 
-  copy = import ./manager/copy.nix;
-  find = import ./manager/find.nix;
   goto = import ./manager/goto.nix {
     inherit
       config
@@ -20,9 +18,6 @@ let
   };
   navigation = import ./manager/navigation.nix;
   operation = import ./manager/operation.nix;
-  selection = import ./manager/selection.nix;
-  sorting = import ./manager/sorting.nix;
-  tabs = import ./manager/tabs.nix;
 in
 {
   manager = {
@@ -97,56 +92,9 @@ in
             "yank"
           ];
         }
-      ];
-
-    keymap =
-      copy.keymap
-      ++ find.keymap
-      ++ goto.keymap
-      ++ navigation.keymap
-      ++ operation.keymap
-      ++ selection.keymap
-      ++ sorting.keymap
-      ++ tabs.keymap
-      ++ [
-        # Exit
-        {
-          on = [ "<Esc>" ];
-          run = "escape";
-          desc = "Exit visual mode, clear selected, or cancel search";
-        }
-        {
-          on = [ "q" ];
-          run = "close";
-          desc = "Close the current tab; if it's the last tab, exit the process instead.";
-        }
-        {
-          on = [ "Q" ];
-          run = "quit --no-cwd-file";
-          desc = "Exit the process without writing cwd-file";
-        }
-        {
-          on = [ "<C-q>" ];
-          run = "close";
-          desc = "Close the current tab, or quit if it is last tab";
-        }
-        {
-          on = [ "<C-z>" ];
-          run = "suspend";
-          desc = "Suspend the process";
-        }
-        # Tasks
-        {
-          on = [ "w" ];
-          run = "tasks:show";
-          desc = "Show the tasks manager";
-        }
-        # Help
-        {
-          on = [ "~" ];
-          run = "help";
-          desc = "Open help";
-        }
-      ];
+      ]
+      ++ goto.prepend_keymap
+      ++ navigation.prepend_keymap
+      ++ operation.prepend_keymap;
   };
 }

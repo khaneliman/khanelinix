@@ -64,7 +64,7 @@ let
     }
     {
       key = "G";
-      path = "~/${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents"}/gitlab";
+      path = "~/${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents/"}gitlab";
     }
     {
       key = "M";
@@ -80,7 +80,7 @@ let
     }
     {
       key = "g";
-      path = "~/${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents"}/github";
+      path = "~/${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents/"}github";
     }
     {
       key = "i";
@@ -132,5 +132,5 @@ let
   ];
 in
 {
-  keymap = map mkGotoKeymap gotoLocations;
+  prepend_keymap = map mkGotoKeymap gotoLocations;
 }

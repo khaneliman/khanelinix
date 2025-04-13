@@ -1,6 +1,6 @@
 {
   tasks = {
-    keymap = [
+    prepend_keymap = [
       {
         on = [ "<Esc>" ];
         run = "close";

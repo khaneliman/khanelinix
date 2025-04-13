@@ -44,7 +44,6 @@ in
       keymap = lib.mkMerge [
         (import ./keymap/completion.nix)
         (import ./keymap/help.nix)
-        (import ./keymap/input.nix)
         (import ./keymap/manager.nix {
           inherit
             config
@@ -63,7 +62,6 @@ in
       };
 
       plugins = {
-        "arrow" = ./plugins/arrow.yazi;
         "arrow-parent" = ./plugins/arrow-parent.yazi;
         inherit (pkgs.yaziPlugins)
           chmod

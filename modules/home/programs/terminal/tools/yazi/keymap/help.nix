@@ -1,21 +1,10 @@
 {
   help = {
-    keymap = [
-      # Exiting & Hiding
-      {
-        on = [ "<Esc>" ];
-        run = "escape";
-        desc = "Clear the filter, or hide the help";
-      }
+    prepend_keymap = [
       {
         on = [ "q" ];
         run = "close";
         desc = "Exit the process";
-      }
-      {
-        on = [ "<C-q>" ];
-        run = "close";
-        desc = "Hide the help";
       }
 
       # Navigation
@@ -51,7 +40,6 @@
         run = "arrow 1";
         desc = "Move cursor down";
       }
-
       {
         on = [ "<S-Up>" ];
         run = "arrow -5";

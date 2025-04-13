@@ -1,6 +1,6 @@
 {
-  completion = {
-    keymap = [
+  cmp = {
+    prepend_keymap = [
       {
         on = [ "<C-q>" ];
         run = "close";
