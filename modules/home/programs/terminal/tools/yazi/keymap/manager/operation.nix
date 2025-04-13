@@ -101,12 +101,12 @@
       desc = "Cancel the ongoing search";
     }
     {
-      on = [ "z" ];
+      on = [ "Z" ];
       run = "plugin zoxide";
       desc = "Jump to a directory using zoxide";
     }
     {
-      on = [ "Z" ];
+      on = [ "z" ];
       run = "plugin fzf";
       desc = "Jump to a directory, or reveal a file using fzf";
     }
