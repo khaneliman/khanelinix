@@ -210,28 +210,6 @@ in
           mime = "application/xz";
           run = "ouch";
         }
-      ]
-      ++ lib.optionals (lib.hasAttr "rich-preview" enabledPlugins) [
-        {
-          mime = "*.csv";
-          run = "rich-preview";
-        }
-        {
-          mime = "*.rst";
-          run = "rich-preview";
-        }
-        (lib.mkIf (!lib.hasAttr "glow" enabledPlugins) {
-          mime = "*.md";
-          run = "rich-preview";
-        })
-        {
-          mime = "*.json";
-          run = "rich-preview";
-        }
-        {
-          mime = "*.ipynb";
-          run = "rich-preview";
-        }
       ];
   };
 }
