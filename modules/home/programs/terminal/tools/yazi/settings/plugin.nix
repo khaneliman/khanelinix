@@ -95,24 +95,29 @@ in
       }
     ];
 
-    prepend_previewers = lib.optionals (lib.hasAttr "duckdb" enabledPlugins) [
-      {
-        name = "*.csv";
-        run = "duckdb";
-      }
-      {
-        name = "*.tsv";
-        run = "duckdb";
-      }
-      {
-        name = "*.json";
-        run = "duckdb";
-      }
-      {
-        name = "*.parquet";
-        run = "duckdb";
-      }
-    ];
+    prepend_previewers =
+      lib.optionals (lib.hasAttr "duckdb" enabledPlugins) [
+        {
+          name = "*.csv";
+          run = "duckdb";
+        }
+        {
+          name = "*.tsv";
+          run = "duckdb";
+        }
+        {
+          name = "*.json";
+          run = "duckdb";
+        }
+        {
+          name = "*.parquet";
+          run = "duckdb";
+        }
+      ]
+      ++ lib.optional (lib.hasAttr "glow" enabledPlugins) {
+        name = "*.md";
+        run = "glow";
+      };
 
     previewers =
       [
@@ -173,10 +178,6 @@ in
           run = "file";
         }
       ]
-      ++ lib.optional (lib.hasAttr "glow" enabledPlugins) {
-        name = "*.md";
-        run = "glow";
-      }
       ++ lib.optional (lib.hasAttr "miller" enabledPlugins) {
         mime = "*.csv";
         run = "miller";
