@@ -101,7 +101,7 @@ in
           };
 
           manager = {
-            layout = [
+            ratio = [
               1
               3
               4
