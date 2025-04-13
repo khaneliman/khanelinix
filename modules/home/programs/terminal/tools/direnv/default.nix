@@ -16,13 +16,16 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.sessionVariables = {
-      DIRENV_LOG_FORMAT = "";
-    };
-
     programs.direnv = {
       enable = true;
       nix-direnv = enabled;
+
+      config = {
+        global = {
+          log_format = "-";
+          log_filer = "^$";
+        };
+      };
     };
   };
 }
