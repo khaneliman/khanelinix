@@ -6,6 +6,8 @@
   ...
 }:
 let
+  enabledPlugins = config.programs.yazi.plugins;
+
   copy = import ./manager/copy.nix;
   find = import ./manager/find.nix;
   goto = import ./manager/goto.nix {
@@ -78,6 +80,13 @@ in
           on = [ "F" ];
           run = "plugin smart-filter";
           desc = "Smart filter";
+        }
+      ]
+      ++ lib.optionals (lib.hasAttr "ouch" enabledPlugins) [
+        {
+          on = [ "C" ];
+          run = "plugin ouch";
+          desc = "Compress with outch";
         }
       ]
       ++ lib.optionals config.${namespace}.suites.wlroots.enable [
