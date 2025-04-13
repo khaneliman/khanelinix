@@ -41,7 +41,7 @@ in
           		},
           		right = {
           			section_a = {
-                  			{type = "string", custom = false, name = "date", params = {"%A, %d %B %Y"}},
+                  			-- {type = "string", custom = false, name = "date", params = {"%A, %d %B %Y"}},
           			},
           			section_b = {
                   			-- {type = "string", custom = false, name = "date", params = {"%X"}},
