@@ -42,36 +42,29 @@ in
           run = "noop";
         }
       ]
-      ++ lib.optionals (lib.hasAttr "duckdb" enabledPlugins) [
-        {
-          name = "*.csv";
+      ++ lib.optionals (lib.hasAttr "duckdb" enabledPlugins) (
+        let
+          multiFileTypes = [
+            "csv"
+            "tsv"
+            "json"
+            "parquet"
+          ];
+          regularFileTypes = [
+            "db"
+            "duckdb"
+          ];
+        in
+        (map (ext: {
+          name = "*.${ext}";
           run = "duckdb";
           multi = false;
-        }
-        {
-          name = "*.tsv";
+        }) multiFileTypes)
+        ++ (map (ext: {
+          name = "*.${ext}";
           run = "duckdb";
-          multi = false;
-        }
-        {
-          name = "*.json";
-          run = "duckdb";
-          multi = false;
-        }
-        {
-          name = "*.parquet";
-          run = "duckdb";
-          multi = false;
-        }
-        {
-          name = "*.db";
-          run = "duckdb";
-        }
-        {
-          name = "*.duckdb";
-          run = "duckdb";
-        }
-      ];
+        }) regularFileTypes)
+      );
 
     preloaders = [
       # Image
@@ -96,58 +89,45 @@ in
     ];
 
     prepend_previewers =
-      lib.optionals (lib.hasAttr "duckdb" enabledPlugins) [
-        {
-          name = "*.csv";
+      lib.optionals (lib.hasAttr "duckdb" enabledPlugins) (
+        let
+          fileTypes = [
+            "csv"
+            "tsv"
+            "json"
+            "parquet"
+          ];
+        in
+        map (ext: {
+          name = "*.${ext}";
           run = "duckdb";
-        }
-        {
-          name = "*.tsv";
-          run = "duckdb";
-        }
-        {
-          name = "*.json";
-          run = "duckdb";
-        }
-        {
-          name = "*.parquet";
-          run = "duckdb";
-        }
-      ]
+        }) fileTypes
+      )
       ++ lib.optional (lib.hasAttr "glow" enabledPlugins) {
         name = "*.md";
         run = "glow";
       }
-      ++ lib.optionals (lib.hasAttr "ouch" enabledPlugins) [
-        {
-          mime = "application/zip";
+      ++ lib.optionals (lib.hasAttr "ouch" enabledPlugins) (
+        let
+          mimeTypes = [
+            "application/gzip"
+            "application/x-7z-compressed"
+            "application/x-bzip2"
+            "application/x-compressed-tar"
+            "application/x-gzip"
+            "application/x-rar"
+            "application/x-tar"
+            "application/x-tar+gzip"
+            "application/x-xz"
+            "application/xz"
+            "application/zip"
+          ];
+        in
+        map (mime: {
+          inherit mime;
           run = "ouch";
-        }
-        {
-          mime = "application/x-tar";
-          run = "ouch";
-        }
-        {
-          mime = "application/x-bzip2";
-          run = "ouch";
-        }
-        {
-          mime = "application/x-7z-compressed";
-          run = "ouch";
-        }
-        {
-          mime = "application/x-rar";
-          run = "ouch";
-        }
-        {
-          mime = "application/x-xz";
-          run = "ouch";
-        }
-        {
-          mime = "application/xz";
-          run = "ouch";
-        }
-      ];
+        }) mimeTypes
+      );
 
     previewers = [
       {
