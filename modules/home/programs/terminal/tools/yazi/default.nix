@@ -81,6 +81,7 @@ in
           smart-filter
           sudo
           toggle-pane
+          yatline
           ;
       };
 
