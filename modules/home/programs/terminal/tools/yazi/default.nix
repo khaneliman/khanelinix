@@ -26,6 +26,7 @@ in
       optionalPluginPackage "miller" pkgs.miller
       ++ optionalPluginPackage "ouch" pkgs.ouch
       ++ optionalPluginPackage "glow" pkgs.glow
+      ++ optionalPluginPackage "duckdb" pkgs.duckdb
       ++ optionalPluginPackage "rich-preview" pkgs.rich-cli
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         pkgs.xdragon
@@ -69,6 +70,7 @@ in
         inherit (pkgs.yaziPlugins)
           chmod
           diff
+          duckdb
           full-border
           git
           glow

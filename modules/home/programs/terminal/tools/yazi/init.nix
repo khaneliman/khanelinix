@@ -13,6 +13,9 @@ in
     + lib.optionalString (lib.hasAttr "git" enabledPlugins) ''
       require("git"):setup()
     ''
+    + lib.optionalString (lib.hasAttr "duckdb" enabledPlugins) ''
+      require("duckdb"):setup()
+    ''
     # Lua
     + ''
       -- Cross session yank

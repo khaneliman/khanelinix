@@ -27,20 +27,52 @@ in
         prio = "high";
       };
 
-    prepend_preloaders = [
-      {
-        name = "/mnt/austinserver/**";
-        run = "noop";
-      }
-      {
-        name = "/mnt/disk/**";
-        run = "noop";
-      }
-      {
-        name = "/mnt/dropbox/**";
-        run = "noop";
-      }
-    ];
+    prepend_preloaders =
+      [
+        {
+          name = "/mnt/austinserver/**";
+          run = "noop";
+        }
+        {
+          name = "/mnt/disk/**";
+          run = "noop";
+        }
+        {
+          name = "/mnt/dropbox/**";
+          run = "noop";
+        }
+      ]
+      ++ lib.optionals (lib.hasAttr "duckdb" enabledPlugins) [
+        {
+          name = "*.csv";
+          run = "duckdb";
+          multi = false;
+        }
+        {
+          name = "*.tsv";
+          run = "duckdb";
+          multi = false;
+        }
+        {
+          name = "*.json";
+          run = "duckdb";
+          multi = false;
+        }
+        {
+          name = "*.parquet";
+          run = "duckdb";
+          multi = false;
+        }
+        {
+          name = "*.db";
+          run = "duckdb";
+        }
+        {
+          name = "*.duckdb";
+          run = "duckdb";
+        }
+      ];
+
     preloaders = [
       # Image
       {
@@ -60,6 +92,25 @@ in
       {
         mime = "application/pdf";
         run = "pdf";
+      }
+    ];
+
+    prepend_previewers = lib.optionals (lib.hasAttr "duckdb" enabledPlugins) [
+      {
+        name = "*.csv";
+        run = "duckdb";
+      }
+      {
+        name = "*.tsv";
+        run = "duckdb";
+      }
+      {
+        name = "*.json";
+        run = "duckdb";
+      }
+      {
+        name = "*.parquet";
+        run = "duckdb";
       }
     ];
 
