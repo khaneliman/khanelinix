@@ -178,10 +178,6 @@ in
           run = "file";
         }
       ]
-      ++ lib.optional (lib.hasAttr "miller" enabledPlugins) {
-        mime = "*.csv";
-        run = "miller";
-      }
       ++ lib.optionals (lib.hasAttr "ouch" enabledPlugins) [
         {
           mime = "application/zip";

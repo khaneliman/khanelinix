@@ -23,8 +23,7 @@ in
         optionalPluginPackage =
           plugin: package: lib.optional (builtins.hasAttr plugin config.programs.yazi.plugins) package;
       in
-      optionalPluginPackage "miller" pkgs.miller
-      ++ optionalPluginPackage "ouch" pkgs.ouch
+      optionalPluginPackage "ouch" pkgs.ouch
       ++ optionalPluginPackage "glow" pkgs.glow
       ++ optionalPluginPackage "duckdb" pkgs.duckdb
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
@@ -74,7 +73,6 @@ in
           git
           # glow
           jump-to-char
-          miller
           mime-ext
           mount
           ouch
