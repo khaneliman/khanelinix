@@ -103,13 +103,6 @@
         nixpkgs.follows = "nixpkgs";
       };
     };
-    snowfall-flake = {
-      url = "github:snowfallorg/flake";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        snowfall-lib.follows = "snowfall-lib";
-      };
-    };
     waybar = {
       # url = "github:Alexays/Waybar";
       # TODO: remove after https://github.com/Alexays/Waybar/pull/4045 or similar is merged.
