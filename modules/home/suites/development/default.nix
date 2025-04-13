@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   lib,
   osConfig,
   pkgs,
@@ -10,7 +9,6 @@
 let
   inherit (lib) mkIf mkDefault;
   inherit (lib.${namespace}) enabled;
-  inherit (inputs) snowfall-flake;
 
   tokenExports =
     lib.optionalString osConfig.${namespace}.security.sops.enable # Bash
@@ -82,7 +80,6 @@ in
           nixpkgs-hammering
           nixpkgs-lint-community
           nixpkgs-review
-          snowfall-flake.packages.${system}.flake
         ]
         ++ lib.optionals cfg.gameEnable [
           godot_4
