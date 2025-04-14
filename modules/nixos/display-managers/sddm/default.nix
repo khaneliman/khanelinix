@@ -10,6 +10,8 @@ let
   inherit (lib.${namespace}) enabled;
 
   cfg = config.${namespace}.display-managers.sddm;
+
+  userName = config.${namespace}.user.name;
 in
 {
   options.${namespace}.display-managers.sddm = {
@@ -20,6 +22,14 @@ in
     environment.systemPackages = with pkgs; [
       catppuccin-sddm-corners
     ];
+
+    ${namespace}.home.configFile =
+      let
+        icon = config.home-manager.users.${userName}.${namespace}.user.icon;
+      in
+      lib.mkIf (icon != null) {
+        "sddm/faces/.${userName}".source = icon;
+      };
 
     services = {
       displayManager = {
@@ -35,11 +45,11 @@ in
     };
 
     system.activationScripts.postInstallSddm =
-      stringAfter [ "users" ] # bash
+      stringAfter [ "users" ] # Bash
         ''
           echo "Setting sddm permissions for user icon"
-          ${getExe' pkgs.acl "setfacl"} -m u:sddm:x /home/${config.${namespace}.user.name}
-          ${getExe' pkgs.acl "setfacl"} -m u:sddm:r /home/${config.${namespace}.user.name}/.face.icon || true
+          ${getExe' pkgs.acl "setfacl"} -m u:sddm:x /home/${userName}
+          ${getExe' pkgs.acl "setfacl"} -m u:sddm:r /home/${userName}/.face.icon || true
         '';
   };
 }

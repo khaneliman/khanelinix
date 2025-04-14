@@ -128,10 +128,6 @@ in
       };
 
       programs.home-manager = enabled;
-
-      xdg.configFile = {
-        "sddm/faces/.${cfg.name}".source = lib.mkIf (cfg.icon != null) cfg.icon;
-      };
     }
   ]);
 }
