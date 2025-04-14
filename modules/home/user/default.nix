@@ -76,6 +76,7 @@ in
           curgen = "sudo nix-env --list-generations --profile /nix/var/nix/profiles/system";
           gc-check = "nix-store --gc --print-roots | egrep -v \"^(/nix/var|/run/\w+-system|\{memory|/proc)\"";
           repair = "nix-store --verify --check-contents --repair";
+          flake = "nix flake";
           run = "nix run";
           search = "nix search";
           shell = "nix shell";
