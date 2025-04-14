@@ -1,6 +1,5 @@
 {
   lib,
-  namespace,
   stdenvNoCC,
   ...
 }:
@@ -26,22 +25,26 @@ let
       };
     in
     pkg;
-  names = builtins.map lib.snowfall.path.get-file-name-without-extension images;
+  getFileNameWithoutExtension =
+    fileName:
+    let
+      parts = builtins.split "\\." fileName;
+      # Filter out the regex separators (empty strings) and get the first part
+      nameParts = builtins.filter (x: builtins.typeOf x != "list") parts;
+    in
+    if builtins.length nameParts >= 1 then builtins.elemAt nameParts 0 else fileName;
+  names = map getFileNameWithoutExtension images;
   wallpapers = lib.foldl (
     acc: image:
     let
-      # fileName = builtins.baseNameOf image;
-      # lib.getFileName is a helper to get the basename of
-      # the file and then take the name before the file extension.
-      # eg. mywallpaper.png -> mywallpaper
-      name = lib.snowfall.path.get-file-name-without-extension image;
+      name = getFileNameWithoutExtension image;
     in
     acc // { "${name}" = mkWallpaper name (./wallpapers + "/${image}"); }
   ) { } images;
   installTarget = "$out/share/wallpapers";
 in
 stdenvNoCC.mkDerivation {
-  name = "${namespace}.wallpapers";
+  name = "khanelinix.wallpapers";
   src = ./wallpapers;
 
   installPhase = # bash

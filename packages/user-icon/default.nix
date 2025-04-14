@@ -1,4 +1,4 @@
-{ stdenvNoCC }:
+{ stdenvNoCC, ... }:
 stdenvNoCC.mkDerivation {
   name = "default-icon";
   src = ./profile.png;
