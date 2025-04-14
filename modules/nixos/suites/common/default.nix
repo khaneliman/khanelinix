@@ -18,21 +18,23 @@ in
     environment = {
       defaultPackages = lib.mkForce [ ];
 
-      systemPackages = with pkgs; [
-        curl
-        dnsutils
-        fortune
-        isd
-        lolcat
-        lshw
-        pciutils
-        pkgs.${namespace}.trace-symlink
-        pkgs.${namespace}.trace-which
-        rsync
-        usbimager
-        util-linux
-        wget
-      ];
+      systemPackages =
+        with pkgs;
+        lib.trace "${builtins.toJSON pkgs.${namespace}}" [
+          curl
+          dnsutils
+          fortune
+          isd
+          lolcat
+          lshw
+          pciutils
+          pkgs.${namespace}.trace-symlink
+          pkgs.${namespace}.trace-which
+          rsync
+          usbimager
+          util-linux
+          wget
+        ];
     };
 
     khanelinix = {

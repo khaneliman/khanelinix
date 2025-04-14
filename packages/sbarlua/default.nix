@@ -4,6 +4,7 @@
   gcc,
   readline,
   lua,
+  ...
 }:
 lua.stdenv.mkDerivation rec {
   pname = "SBarLua";
