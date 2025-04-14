@@ -121,30 +121,6 @@ in
           # Cryptography
           genpass = "${getExe pkgs.openssl} rand - base64 20"; # Generate a random, 20-character password
           sha = "shasum -a 256"; # Test checksum
-
-          ssh-list-perm-user = # Bash
-            ''find ~/.ssh -exec stat -c "%a %n" {} \;'';
-
-          ssh-perm-user = lib.concatStrings [
-            # Bash
-            ''${getExe' pkgs.findutils "find"} ~/.ssh -type f -exec chmod 600 {} \;;''
-            # Bash
-            ''${getExe' pkgs.findutils "find"} ~/.ssh -type d -exec chmod 700 {} \;;''
-            # Bash
-            ''${getExe' pkgs.findutils "find"} ~/.ssh -type f -name "*.pub" -exec chmod 644 {} \;''
-          ];
-
-          ssh-list-perm-system = # Bash
-            ''sudo find /etc/ssh -exec stat -c "%a %n" {} \;'';
-
-          ssh-perm-system = lib.concatStrings [
-            # Bash
-            ''sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type f -exec chmod 600 {} \;;''
-            # Bash
-            ''sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type d -exec chmod 700 {} \;;''
-            # Bash
-            ''sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type f -name "*.pub" -exec chmod 644 {} \;''
-          ];
         };
 
         username = mkDefault cfg.name;

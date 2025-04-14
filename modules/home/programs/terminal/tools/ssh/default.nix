@@ -3,10 +3,12 @@
   lib,
   inputs,
   namespace,
+  pkgs,
   ...
 }:
 let
   inherit (lib)
+    getExe'
     types
     mkIf
     foldl
@@ -81,9 +83,34 @@ in
     };
 
     home = {
-      shellAliases = foldl (
-        aliases: system: aliases // { "ssh-${system}" = "ssh ${system} -t tmux a"; }
-      ) { } (builtins.attrNames other-hosts);
+      shellAliases =
+        foldl (aliases: system: aliases // { "ssh-${system}" = "ssh ${system} -t tmux a"; })
+          {
+            ssh-list-perm-user = # Bash
+              ''find ~/.ssh -exec stat -c "%a %n" {} \;'';
+
+            ssh-perm-user = lib.concatStrings [
+              # Bash
+              ''${getExe' pkgs.findutils "find"} ~/.ssh -type f -exec chmod 600 {} \;;''
+              # Bash
+              ''${getExe' pkgs.findutils "find"} ~/.ssh -type d -exec chmod 700 {} \;;''
+              # Bash
+              ''${getExe' pkgs.findutils "find"} ~/.ssh -type f -name "*.pub" -exec chmod 644 {} \;''
+            ];
+
+            ssh-list-perm-system = # Bash
+              ''sudo find /etc/ssh -exec stat -c "%a %n" {} \;'';
+
+            ssh-perm-system = lib.concatStrings [
+              # Bash
+              ''sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type f -exec chmod 600 {} \;;''
+              # Bash
+              ''sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type d -exec chmod 700 {} \;;''
+              # Bash
+              ''sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type f -name "*.pub" -exec chmod 644 {} \;''
+            ];
+          }
+          (builtins.attrNames other-hosts);
 
       file = {
         ".ssh/authorized_keys".text = builtins.concatStringsSep "\n" cfg.authorizedKeys;
