@@ -12,9 +12,7 @@ mkShell {
     deadnix
     nh
     statix
-
-    # Adds all the packages required for the pre-commit checks
-    inputs.self.checks.${system}.pre-commit-hooks.enabledPackages
+    (inputs.treefmt-nix.lib.mkWrapper pkgs ../../treefmt.nix)
   ];
 
   shellHook = ''
