@@ -25,7 +25,7 @@ in
 
     ${namespace}.home.configFile =
       let
-        icon = config.home-manager.users.${userName}.${namespace}.user.icon;
+        inherit (config.home-manager.users.${userName}.${namespace}.user) icon;
       in
       lib.mkIf (icon != null) {
         "sddm/faces/.${userName}".source = icon;
