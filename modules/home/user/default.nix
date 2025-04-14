@@ -79,7 +79,6 @@ in
           run = "nix run";
           search = "nix search";
           shell = "nix shell";
-          nixre = "nh ${if pkgs.stdenv.hostPlatform.isLinux then "os" else "darwin"} switch .";
           nix = "nix -vL";
           gsed = "${getExe pkgs.gnused}";
           hmvar-reload = ''__HM_ZSH_SESS_VARS_SOURCED=0 source "/etc/profiles/per-user/${config.${namespace}.user.name}/etc/profile.d/hm-session-vars.sh"'';

@@ -1,8 +1,8 @@
 {
   config,
-  inputs,
   lib,
   namespace,
+  pkgs,
   ...
 }:
 let
@@ -23,11 +23,16 @@ in
         enable = true;
       };
 
-      flake = inputs.self.outPath;
+      flake = "${config.home.homeDirectory}/khanelinix";
     };
 
-    home.sessionVariables = {
-      NH_SEARCH_PLATFORM = 1;
+    home = {
+      sessionVariables = {
+        NH_SEARCH_PLATFORM = 1;
+      };
+      shellAliases = {
+        nixre = "nh ${if pkgs.stdenv.hostPlatform.isLinux then "os" else "darwin"} switch";
+      };
     };
   };
 }
