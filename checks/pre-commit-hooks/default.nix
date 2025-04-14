@@ -7,7 +7,7 @@ let
   inherit (inputs) git-hooks-nix;
 in
 git-hooks-nix.lib.${pkgs.system}.run {
-  src = ./.;
+  src = ../..;
   hooks = {
     clang-tidy.enable = true;
     luacheck.enable = true;
