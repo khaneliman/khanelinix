@@ -44,7 +44,6 @@ in
         smassh
         toilet
         tree
-        nh
         nix-du
         graphviz
       ]
@@ -89,6 +88,7 @@ in
             jq = mkDefault enabled;
             lsd = mkDefault enabled;
             navi = mkDefault enabled;
+            nh = mkDefault enabled;
             oh-my-posh = mkDefault enabled;
             ripgrep = mkDefault enabled;
             tmux = mkDefault enabled;
