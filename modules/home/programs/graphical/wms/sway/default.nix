@@ -47,7 +47,7 @@ in
     };
   };
 
-  imports = lib.snowfall.fs.get-non-default-nix-files ./.;
+  imports = lib.khanelinix.getDefaultNixFiles ./.;
 
   config = mkIf cfg.enable {
     home = {

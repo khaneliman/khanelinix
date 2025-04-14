@@ -125,7 +125,7 @@ in
       sops = {
         enable = true;
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-        defaultSopsFile = lib.snowfall.fs.get-file "secrets/khanelinix/default.yaml";
+        defaultSopsFile = lib.khanelinix.getFile "secrets/khanelinix/default.yaml";
       };
     };
 

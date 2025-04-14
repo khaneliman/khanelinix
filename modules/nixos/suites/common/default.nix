@@ -12,29 +12,31 @@ let
   cfg = config.${namespace}.suites.common;
 in
 {
-  imports = [ (lib.snowfall.fs.get-file "modules/shared/suites/common/default.nix") ];
+  imports = [ (lib.khanelinix.getFile "modules/shared/suites/common/default.nix") ];
 
   config = mkIf cfg.enable {
     environment = {
       defaultPackages = lib.mkForce [ ];
 
-      systemPackages = with pkgs; [
-        curl
-        dnsutils
-        fortune
-        isd
-        lazyjournal
-        lolcat
-        lshw
-        pciutils
-        pkgs.${namespace}.trace-symlink
-        pkgs.${namespace}.trace-which
-        pkgs.${namespace}.why-depends
-        rsync
-        usbimager
-        util-linux
-        wget
-      ];
+      systemPackages =
+        with pkgs;
+        lib.trace "${builtins.toJSON pkgs.${namespace}}" [
+          curl
+          dnsutils
+          fortune
+          isd
+          lazyjournal
+          lolcat
+          lshw
+          pciutils
+          pkgs.${namespace}.trace-symlink
+          pkgs.${namespace}.trace-which
+          pkgs.${namespace}.why-depends
+          rsync
+          usbimager
+          util-linux
+          wget
+        ];
     };
 
     khanelinix = {
