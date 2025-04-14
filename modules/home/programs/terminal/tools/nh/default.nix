@@ -3,7 +3,6 @@
   inputs,
   lib,
   namespace,
-  osConfig,
   ...
 }:
 let
@@ -21,10 +20,12 @@ in
       enable = true;
 
       clean = {
-        enable = !osConfig.nix.gc.automatic;
+        enable = true;
       };
+
       flake = inputs.self.outPath;
     };
+
     home.sessionVariables = {
       NH_SEARCH_PLATFORM = 1;
     };
