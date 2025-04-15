@@ -20,13 +20,6 @@ in
       enable = true;
       nix-direnv = enabled;
       silent = true;
-
-      config = {
-        global = {
-          log_format = "-";
-          log_filer = "^$";
-        };
-      };
     };
   };
 }
