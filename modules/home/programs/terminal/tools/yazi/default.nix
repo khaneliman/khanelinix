@@ -69,7 +69,7 @@ in
           duckdb
           full-border
           git
-          # glow
+          glow
           jump-to-char
           mime-ext
           mount
@@ -82,15 +82,6 @@ in
           yatline
           yatline-catppuccin
           ;
-        # TODO: update nixpkgs plugin after merged
-        glow = pkgs.yaziPlugins.glow.overrideAttrs {
-          patches = [
-            (pkgs.fetchpatch {
-              url = "https://patch-diff.githubusercontent.com/raw/Reledia/glow.yazi/pull/25.patch";
-              hash = "sha256-607nfvbrnrEl0jcwuCgYzNG8VNw3rA+FubXMJ7Mcm0s=";
-            })
-          ];
-        };
       };
 
       settings = lib.mkMerge [
