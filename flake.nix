@@ -22,6 +22,10 @@
         flake-compat.follows = "";
       };
     };
+    nix-rosetta-builder = {
+      url = "github:cpick/nix-rosetta-builder";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     snowfall-lib = {
       url = "github:snowfallorg/lib";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -179,6 +183,7 @@
       systems = {
         modules = {
           darwin = with inputs; [
+            nix-rosetta-builder.darwinModules.default
             sops-nix.darwinModules.sops
           ];
           nixos = with inputs; [
