@@ -28,21 +28,6 @@ in
         };
       };
 
-      linux-builder = {
-        enable = !config.nix-rosetta-builder.enable;
-        ephemeral = true;
-        maxJobs = 4;
-        speedFactor = 15;
-        supportedFeatures = [
-          "big-parallel"
-          "nixos-test"
-        ];
-        config = {
-          virtualisation.darwin-builder.memorySize = 8 * 1024;
-          virtualisation.cores = 8;
-        };
-      };
-
       optimise = {
         interval = {
           Day = 7;
