@@ -22,7 +22,14 @@ in
 {
   manager = {
     prepend_keymap =
-      lib.optional pkgs.stdenv.hostPlatform.isLinux {
+      [
+        {
+          on = [ "q" ];
+          run = "close";
+          desc = "Close the current tab; if it's the last tab, exit the process instead.";
+        }
+      ]
+      ++ lib.optional pkgs.stdenv.hostPlatform.isLinux {
         on = [ "<C-v>" ];
         run = "shell 'dragon -x -i -T \"$1\"'";
         desc = "Drag and drop files";

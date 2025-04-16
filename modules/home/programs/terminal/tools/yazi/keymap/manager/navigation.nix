@@ -43,5 +43,15 @@
       run = "arrow bottom";
       desc = "Move cursor to the bottom";
     }
+    {
+      on = [ "<BackTab>" ];
+      run = "tab_switch -1 --relative";
+      desc = "Switch to the previous tab";
+    }
+    {
+      on = [ "<Tab>" ];
+      run = "tab_switch 1 --relative";
+      desc = "Switch to the next tab";
+    }
   ];
 }
