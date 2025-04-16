@@ -29,7 +29,7 @@ in
       };
 
       linux-builder = {
-        # enable = true;
+        enable = !config.nix-rosetta-builder.enable;
         ephemeral = true;
         maxJobs = 4;
         speedFactor = 15;
