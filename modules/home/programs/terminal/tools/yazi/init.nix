@@ -51,9 +51,9 @@ in
                   			{type = "line", custom = false, name = "tabs", params = {"left"}},
           			},
           			section_b = {
+          			        {type = "string", custom = false, name = "tab_path", params = { trimmed = false, max_length=24, trim_length=10 }},
           			},
           			section_c = {
-          			        {type = "string", custom = false, name = "tab_path", params = { trimmed = false, max_length=24, trim_length=10 }},
           			}
           		},
           		right = {
