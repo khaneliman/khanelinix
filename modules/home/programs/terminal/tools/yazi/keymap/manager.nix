@@ -28,6 +28,11 @@ in
           run = "close";
           desc = "Close the current tab; if it's the last tab, exit the process instead.";
         }
+        {
+          on = [ "<C-n>" ];
+          run = "tab_create --current";
+          desc = "Create a new tab with CWD.";
+        }
       ]
       ++ lib.optional pkgs.stdenv.hostPlatform.isLinux {
         on = [ "<C-v>" ];
