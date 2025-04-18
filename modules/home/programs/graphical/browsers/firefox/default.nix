@@ -50,11 +50,6 @@ in
         "bing@search.mozilla.org".installation_mode = "blocked";
         "ddg@search.mozilla.org".installation_mode = "blocked";
         "wikipedia@search.mozilla.org".installation_mode = "blocked";
-
-        "frankerfacez@frankerfacez.com" = {
-          installation_mode = "force_installed";
-          install_url = "https://cdn.frankerfacez.com/script/frankerfacez-4.0-an+fx.xpi";
-        };
       };
       Preferences = { };
     } "Policies to apply to firefox";

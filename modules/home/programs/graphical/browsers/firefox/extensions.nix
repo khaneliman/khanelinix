@@ -21,6 +21,7 @@ in
         darkreader
         firefox-color
         firenvim
+        frankerfacez
         onepassword-password-manager
         react-devtools
         reduxdevtools
