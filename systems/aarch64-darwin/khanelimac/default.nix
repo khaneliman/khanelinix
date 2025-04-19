@@ -17,7 +17,7 @@ in
     };
 
     security = {
-      pam = enabled;
+      sudo = enabled;
       sops = {
         enable = true;
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];

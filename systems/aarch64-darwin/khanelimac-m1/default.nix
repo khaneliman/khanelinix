@@ -12,7 +12,7 @@ in
 {
   khanelinix = {
     security = {
-      pam = enabled;
+      sudo = enabled;
       sops = {
         enable = false;
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
