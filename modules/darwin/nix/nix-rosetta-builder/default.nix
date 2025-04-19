@@ -28,6 +28,7 @@ in
 
       onDemand = true;
       onDemandLingerMinutes = 30;
+      permitNonRootSshAccess = true;
     };
   };
 }
