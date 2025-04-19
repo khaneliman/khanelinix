@@ -9,6 +9,7 @@ let
   inherit (lib) mkIf mkEnableOption;
 
   cfg = config.${namespace}.system.interface;
+  hmCfg = config.home-manager.users.${config.khanelinix.user.name};
 in
 {
   options.${namespace}.system.interface = {
@@ -97,8 +98,8 @@ in
             "${pkgs.element-desktop}/Applications/Element.app"
             (lib.mkIf config.khanelinix.tools.homebrew.enable { app = "/Applications/Microsoft Teams.app"; })
             "${pkgs.discord}/Applications/Discord.app"
-            (lib.mkIf config.khanelinix.tools.homebrew.enable {
-              app = "/Applications/Thunderbird.app";
+            (lib.mkIf hmCfg.programs.thunderbird.enable {
+              app = "${hmCfg.programs.thunderbird.package}/Applications/Thunderbird.app";
             })
             {
               spacer = {
