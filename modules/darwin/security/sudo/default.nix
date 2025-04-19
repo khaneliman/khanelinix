@@ -20,6 +20,8 @@ in
           touchIdAuth = true;
         };
       };
+      # Set sudo timeout to 30 minutes
+      sudo.extraConfig = "Defaults    timestamp_timeout=30";
     };
   };
 }
