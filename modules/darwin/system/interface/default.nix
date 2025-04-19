@@ -107,10 +107,9 @@ in
               };
             }
           ]
-          # && config.home-manager.users.${config.khanelinix.user.name}.programs.firefox.enable
           ++ [
-            (lib.mkIf (config.khanelinix.tools.homebrew.enable && config.khanelinix.suites.desktop.enable) {
-              app = "/Applications/Firefox Developer Edition.app";
+            (lib.mkIf hmCfg.programs.firefox.enable {
+              app = "${hmCfg.programs.firefox.package}/Applications/Firefox Developer Edition.app";
             })
             "/Applications/Safari.app"
             (lib.mkIf (config.khanelinix.tools.homebrew.enable && config.khanelinix.suites.business.enable) {
