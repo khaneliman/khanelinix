@@ -53,12 +53,12 @@ in
         kdePackages.filelight
         fontpreview
         gparted
-        input-leap
+        # FIXME: broken nixpkgs
+        # input-leap
         kdePackages.ark
         kdePackages.gwenview
         realvnc-vnc-viewer
-        # FIXME:
-        # rustdesk-flutter
+        rustdesk-flutter
       ];
   };
 }

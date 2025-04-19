@@ -38,7 +38,5 @@ in
         };
       };
     };
-
-    home.packages = with pkgs; [ obs-studio-plugins.looking-glass-obs ];
   };
 }

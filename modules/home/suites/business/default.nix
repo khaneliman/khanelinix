@@ -22,7 +22,8 @@ in
       [
         calcurse
         dooit
-        jrnl
+        # FIXME: broken nixpkgs
+        # jrnl
         np
         teams-for-linux
       ]

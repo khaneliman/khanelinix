@@ -20,7 +20,8 @@ in
       with pkgs;
       lib.optionals stdenv.hostPlatform.isLinux [
         darktable
-        digikam
+        # FIXME: broken nixpkgs
+        # digikam
         exiftool
         shotwell
       ];

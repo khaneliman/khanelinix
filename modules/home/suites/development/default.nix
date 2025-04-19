@@ -82,7 +82,8 @@ in
           nixpkgs-review
         ]
         ++ lib.optionals cfg.gameEnable [
-          godot_4
+          # FIXME: broken nixpkgs
+          # godot_4
           # NOTE: removed from nixpkgs
           # ue4
           unityhub
