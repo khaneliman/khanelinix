@@ -35,6 +35,9 @@ in
   };
 
   config = mkIf cfg.enable {
+    # NOTE: Always requires building when providing configuration.
+    # Depends on having linux builders available to... build the linux builder.
+    # If none are available, only enable without customization.
     nix.linux-builder = {
       inherit (cfg) maxJobs speedFactor;
 
@@ -51,6 +54,13 @@ in
           inherit (cfg) cores;
           darwin-builder.memorySize = cfg.memory;
         };
+      };
+    };
+
+    launchd.daemons.linux-builder = {
+      serviceConfig = {
+        StandardOutPath = "/var/log/linux-builder.log";
+        StandardErrorPath = "/var/log/linux-builder.log";
       };
     };
   };
