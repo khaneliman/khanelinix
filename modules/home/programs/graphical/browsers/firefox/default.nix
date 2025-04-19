@@ -60,7 +60,7 @@ in
   config = mkIf cfg.enable {
     programs.firefox = {
       enable = true;
-      package = if pkgs.stdenv.hostPlatform.isLinux then pkgs.firefox-devedition else null;
+      package = pkgs.firefox-devedition;
 
       inherit (cfg) policies;
 
