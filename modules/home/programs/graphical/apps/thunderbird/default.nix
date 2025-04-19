@@ -102,8 +102,7 @@ in
 
     programs.thunderbird = {
       enable = true;
-      package =
-        if pkgs.stdenv.hostPlatform.isDarwin then pkgs.emptyDirectory else pkgs.thunderbird-latest;
+      package = pkgs.thunderbird-latest;
       # yeah, yeah...
       darwinSetupWarning = false;
 
