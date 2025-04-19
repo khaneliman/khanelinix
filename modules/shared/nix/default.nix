@@ -223,7 +223,6 @@ in
 
         gc = {
           automatic = true;
-          options = "--delete-older-than 7d";
         };
 
         # This will additionally add your inputs to the system's legacy channels
