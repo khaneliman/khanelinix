@@ -47,7 +47,6 @@ in
 
       casks = [
         "bitwarden"
-        "firefox@developer-edition"
         "ghostty"
         "gpg-suite"
         "hammerspoon"
