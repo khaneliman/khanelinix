@@ -27,6 +27,7 @@ in
         ardour
         mpd-notification
         mpdevil
+        plexamp
         tageditor
         youtube-music
       ];
