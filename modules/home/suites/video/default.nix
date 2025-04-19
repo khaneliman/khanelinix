@@ -24,6 +24,7 @@ in
         devede
         handbrake
         mediainfo-gui
+        plex-media-player
         shotcut
         vlc
       ]
