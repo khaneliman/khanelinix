@@ -93,7 +93,7 @@ in
         };
 
         ecosystem = {
-          enforce_permissions = true;
+          enforce_permissions = lib.mkIf (lib.versionAtLeast (lib.getVersion config.wayland.windowManager.hyprland.package) "0.48.2") true;
           no_donation_nag = true;
         };
 
