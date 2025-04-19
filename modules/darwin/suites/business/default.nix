@@ -25,7 +25,6 @@ in
         "meetingbar"
         "microsoft-teams"
         "obsidian"
-        "thunderbird"
       ];
 
       masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
