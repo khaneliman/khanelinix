@@ -22,18 +22,20 @@ in
       '';
 
       gc = {
-        interval = {
-          Day = 7;
-          Hour = 3;
-        };
+        interval = [
+          {
+            Hour = 3;
+            Minute = 15;
+            Weekday = 1;
+          }
+        ];
       };
 
-      optimise = {
-        interval = {
-          Day = 7;
-          Hour = 4;
-        };
-      };
+      # Optimize nix store after cleaning
+      optimise.interval = lib.lists.forEach config.nix.gc.interval (e: {
+        inherit (e) Minute Weekday;
+        Hour = e.Hour + 1;
+      });
 
       # NOTE: not sure if i saw any benefits changing this
       # daemonProcessType = "Adaptive";
