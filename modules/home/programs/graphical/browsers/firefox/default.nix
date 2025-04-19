@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   namespace,
@@ -58,9 +59,21 @@ in
   };
 
   config = mkIf cfg.enable {
+    home = mkIf pkgs.stdenv.hostPlatform.isDarwin {
+      activation = {
+        defaultbrowser = inputs.home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          echo "Setting default browser"
+          ${lib.getExe pkgs.defaultbrowser} firefoxdeveloperedition
+        '';
+      };
+      packages = [ pkgs.defaultbrowser ];
+    };
+
     programs.firefox = {
       enable = true;
-      package = pkgs.firefox-devedition;
+      # TODO: Support `-bin` on darwin to fix issues with entitlements
+      package =
+        if pkgs.stdenv.hostPlatform.isLinux then pkgs.firefox-devedition else pkgs.firefox-devedition;
 
       inherit (cfg) policies;
 
