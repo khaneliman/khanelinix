@@ -43,6 +43,19 @@ in
         };
       };
 
+      CustomUserPreferences = {
+        "com.apple.Terminal" = {
+          # skhd requires Secure Keyboard Entry to be disabled.
+          SecureKeyboardEntry = !hmCfg.services.skhd.enable;
+        };
+        "com.apple.SoftwareUpdate" = {
+          AutomaticCheckEnabled = true;
+          AutomaticDownload = 1;
+          CriticalUpdateInstall = 1;
+          ScheduleFrequency = 1;
+        };
+      };
+
       # dock settings
       dock = {
         # auto show and hide dock
@@ -180,6 +193,11 @@ in
         "com.apple.sound.beep.volume" = 0.0;
         AppleShowAllExtensions = true;
         AppleShowScrollBars = "Automatic";
+        NSAutomaticCapitalizationEnabled = false;
+        NSAutomaticDashSubstitutionEnabled = false;
+        NSAutomaticPeriodSubstitutionEnabled = false;
+        NSAutomaticQuoteSubstitutionEnabled = false;
+        NSAutomaticSpellingCorrectionEnabled = false;
         NSAutomaticWindowAnimationsEnabled = false;
         _HIHideMenuBar = config.services.sketchybar.enable;
       };
