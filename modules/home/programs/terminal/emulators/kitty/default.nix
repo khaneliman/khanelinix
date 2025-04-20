@@ -67,6 +67,7 @@ in
     programs = {
       kitty = {
         enable = true;
+        enableGitIntegration = true;
 
         darwinLaunchOptions = [
           "--single-instance"

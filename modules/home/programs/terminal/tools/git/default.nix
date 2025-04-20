@@ -85,7 +85,7 @@ in
         };
 
         difftastic = {
-          enableAsDifftool = true;
+          enableAsDifftool = !config.programs.kitty.enable;
 
           background = "dark";
           display = "inline";
