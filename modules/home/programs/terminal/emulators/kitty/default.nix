@@ -38,6 +38,8 @@ in
     home.shellAliases = {
       # QOL alias for copying terminfo
       ssh = "kitten ssh";
+      # cat for images
+      icat = "kitten icat";
     };
 
     xdg.configFile."kitty/nix.conf".text = ''
