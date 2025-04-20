@@ -35,6 +35,11 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.shellAliases = {
+      # QOL alias for copying terminfo
+      ssh = "kitten ssh";
+    };
+
     xdg.configFile."kitty/nix.conf".text = ''
       launch zellij
 
