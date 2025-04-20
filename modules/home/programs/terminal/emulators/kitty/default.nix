@@ -36,6 +36,8 @@ in
 
   config = mkIf cfg.enable {
     home.shellAliases = {
+      # Pretty diff
+      diff = "kitten diff";
       # QOL alias for copying terminfo
       ssh = "kitten ssh";
       # cat for images
