@@ -27,6 +27,8 @@ in
       extraOptions = [
         "--group-directories-first"
         "--header"
+        "--hyperlink"
+        "--follow-symlinks"
       ];
 
       git = true;
