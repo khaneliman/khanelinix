@@ -36,6 +36,8 @@ in
 
   config = mkIf cfg.enable {
     home.shellAliases = {
+      # Shared clipboard that works over ssh
+      clipboard = "kitten clipboard";
       # Pretty diff
       diff = "kitten diff";
       # QOL alias for copying terminfo
