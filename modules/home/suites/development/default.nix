@@ -91,6 +91,9 @@ in
         ++ lib.optionals cfg.sqlEnable [
           dbeaver-bin
           mysql-workbench
+        ]
+        ++ lib.optionals cfg.aiEnable [
+          claude-code
         ];
 
       shellAliases = {
