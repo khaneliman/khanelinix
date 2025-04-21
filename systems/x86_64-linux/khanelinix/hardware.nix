@@ -42,91 +42,92 @@ in
     };
   };
 
-  fileSystems = {
-    "/mnt/austinserver/appdata" = {
-      device = "austinserver.local:/mnt/user/appdata";
-      fsType = "nfs";
-      options = [
-        "noauto"
-        "x-systemd.automount"
-        "x-systemd.requires=network.target"
-        "x-systemd.mount-timeout=10"
-        "x-systemd.idle-timeout=1min"
-      ];
-    };
-
-    "/mnt/austinserver/data" = {
-      device = "austinserver.local:/mnt/user/data";
-      fsType = "nfs";
-      options = [
-        "noauto"
-        "x-systemd.automount"
-        "x-systemd.requires=network.target"
-        "x-systemd.mount-timeout=10"
-        "x-systemd.idle-timeout=1min"
-      ];
-    };
-
-    "/mnt/austinserver/backup" = {
-      device = "austinserver.local:/mnt/user/backup";
-      fsType = "nfs";
-      options = [
-        "noauto"
-        "x-systemd.automount"
-        "x-systemd.requires=network.target"
-        "x-systemd.mount-timeout=10"
-        "x-systemd.idle-timeout=1min"
-      ];
-    };
-
-    "/mnt/austinserver/isos" = {
-      device = "austinserver.local:/mnt/user/isos";
-      fsType = "nfs";
-      options = [
-        "noauto"
-        "x-systemd.automount"
-        "x-systemd.requires=network.target"
-        "x-systemd.mount-timeout=10"
-        "x-systemd.idle-timeout=1min"
-      ];
-    };
-
-    "/mnt/dropbox" = {
-      device = "austinserver.local:/mnt/disks/dropbox";
-      fsType = "nfs";
-      options = [
-        "noauto"
-        "x-systemd.automount"
-        "x-systemd.requires=network.target"
-        "x-systemd.mount-timeout=10"
-        "x-systemd.idle-timeout=1min"
-      ];
-    };
-
-    "/mnt/disks/googledrive" = {
-      device = "austinserver.local:/mnt/disks/googledrive";
-      fsType = "nfs";
-      options = [
-        "noauto"
-        "x-systemd.automount"
-        "x-systemd.requires=network.target"
-        "x-systemd.mount-timeout=10"
-        "x-systemd.idle-timeout=1min"
-      ];
-    };
-
-    "/mnt/disks/onedrive" = {
-      device = "austinserver.local:/mnt/disks/onedrive";
-      fsType = "nfs";
-      options = [
-        "noauto"
-        "x-systemd.automount"
-        "x-systemd.requires=network.target"
-        "x-systemd.mount-timeout=10"
-        "x-systemd.idle-timeout=1min"
-      ];
-    };
-  };
+  # FIXME: server connection issues breaking whole system
+  # fileSystems = {
+  #   "/mnt/austinserver/appdata" = {
+  #     device = "austinserver.local:/mnt/user/appdata";
+  #     fsType = "nfs";
+  #     options = [
+  #       "noauto"
+  #       "x-systemd.automount"
+  #       "x-systemd.requires=network.target"
+  #       "x-systemd.mount-timeout=10"
+  #       "x-systemd.idle-timeout=1min"
+  #     ];
+  #   };
+  #
+  #   "/mnt/austinserver/data" = {
+  #     device = "austinserver.local:/mnt/user/data";
+  #     fsType = "nfs";
+  #     options = [
+  #       "noauto"
+  #       "x-systemd.automount"
+  #       "x-systemd.requires=network.target"
+  #       "x-systemd.mount-timeout=10"
+  #       "x-systemd.idle-timeout=1min"
+  #     ];
+  #   };
+  #
+  #   "/mnt/austinserver/backup" = {
+  #     device = "austinserver.local:/mnt/user/backup";
+  #     fsType = "nfs";
+  #     options = [
+  #       "noauto"
+  #       "x-systemd.automount"
+  #       "x-systemd.requires=network.target"
+  #       "x-systemd.mount-timeout=10"
+  #       "x-systemd.idle-timeout=1min"
+  #     ];
+  #   };
+  #
+  #   "/mnt/austinserver/isos" = {
+  #     device = "austinserver.local:/mnt/user/isos";
+  #     fsType = "nfs";
+  #     options = [
+  #       "noauto"
+  #       "x-systemd.automount"
+  #       "x-systemd.requires=network.target"
+  #       "x-systemd.mount-timeout=10"
+  #       "x-systemd.idle-timeout=1min"
+  #     ];
+  #   };
+  #
+  #   "/mnt/dropbox" = {
+  #     device = "austinserver.local:/mnt/disks/dropbox";
+  #     fsType = "nfs";
+  #     options = [
+  #       "noauto"
+  #       "x-systemd.automount"
+  #       "x-systemd.requires=network.target"
+  #       "x-systemd.mount-timeout=10"
+  #       "x-systemd.idle-timeout=1min"
+  #     ];
+  #   };
+  #
+  #   "/mnt/disks/googledrive" = {
+  #     device = "austinserver.local:/mnt/disks/googledrive";
+  #     fsType = "nfs";
+  #     options = [
+  #       "noauto"
+  #       "x-systemd.automount"
+  #       "x-systemd.requires=network.target"
+  #       "x-systemd.mount-timeout=10"
+  #       "x-systemd.idle-timeout=1min"
+  #     ];
+  #   };
+  #
+  #   "/mnt/disks/onedrive" = {
+  #     device = "austinserver.local:/mnt/disks/onedrive";
+  #     fsType = "nfs";
+  #     options = [
+  #       "noauto"
+  #       "x-systemd.automount"
+  #       "x-systemd.requires=network.target"
+  #       "x-systemd.mount-timeout=10"
+  #       "x-systemd.idle-timeout=1min"
+  #     ];
+  #   };
+  # };
 
   hardware = {
     display = {
