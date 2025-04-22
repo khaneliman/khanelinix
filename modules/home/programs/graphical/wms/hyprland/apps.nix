@@ -43,6 +43,8 @@ in
             "${getExe config.programs.firefox.package}"
             "${getExe pkgs.steam}"
             "${getExe pkgs.discord}"
+            "${getExe pkgs.element-desktop}"
+            "${getExe pkgs.teams-for-linux}"
             "${getExe pkgs.thunderbird}"
             "${getExe pkgs.openrgb-with-all-plugins} -c blue"
             "${getExe pkgs._1password-gui} --silent"
