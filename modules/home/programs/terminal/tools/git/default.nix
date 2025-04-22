@@ -67,9 +67,12 @@ in
       git = {
         enable = true;
         package = pkgs.gitFull;
+
         inherit (cfg) includes userName userEmail;
         inherit (aliases) aliases;
         inherit (ignores) ignores;
+
+        maintenance.enable = true;
 
         delta = {
           enable = true;
