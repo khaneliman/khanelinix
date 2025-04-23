@@ -42,7 +42,7 @@ in
           map mkStartCommand [
             "${getExe config.programs.firefox.package}"
             "${getExe pkgs.steam}"
-            "${getExe pkgs.discord}"
+            "${getExe config.programs.vesktop.package}"
             "${getExe pkgs.element-desktop}"
             "${getExe pkgs.teams-for-linux}"
             "${getExe pkgs.thunderbird}"
