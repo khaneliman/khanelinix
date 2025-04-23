@@ -59,7 +59,6 @@ in
             foot.enable = pkgs.stdenv.hostPlatform.isLinux;
             ghostty = mkDefault enabled;
             kitty = mkDefault enabled;
-            warp = mkDefault enabled;
             wezterm = mkDefault enabled;
           };
 
