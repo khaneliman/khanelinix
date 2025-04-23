@@ -146,6 +146,7 @@ in
           }
         )
         (mkIf pkgs.stdenv.hostPlatform.isDarwin {
+          # TODO: use packaged version
           "Library/Application Support/BetterDiscord/themes/catppuccin-macchiato.theme.css".source =
             ./catppuccin-macchiato.theme.css;
         })
@@ -195,6 +196,9 @@ in
         }
       ];
 
+      # TODO: use packaged version
+      vesktop.vencord.themes.catppuccin = ./Catppuccin-Macchiato-BD/src.css;
+
       yazi.theme = lib.mkMerge [
         (import ./yazi/filetype.nix { })
         (import ./yazi/manager.nix { })
@@ -206,6 +210,7 @@ in
       mkIf
         (pkgs.stdenv.hostPlatform.isLinux && config.${namespace}.programs.graphical.apps.discord.enable)
         {
+          # TODO: use packaged version
           "ArmCord/themes/Catppuccin-Macchiato-BD".source = ./Catppuccin-Macchiato-BD;
           "BetterDiscord/themes/catppuccin-macchiato.theme.css".source = ./catppuccin-macchiato.theme.css;
         };
