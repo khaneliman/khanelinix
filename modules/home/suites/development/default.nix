@@ -55,7 +55,8 @@ in
           neovide
           onefetch
           postman
-          bruno
+          # FIXME: build hangs
+          (lib.mkIf pkgs.stdenv.hostPlatform.isLinux bruno)
           tree-sitter
           # FIXME: broken nixpkgs
           # (tree-sitter.override {
