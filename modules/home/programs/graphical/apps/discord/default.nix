@@ -20,16 +20,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.vesktop = {
-      enable = true;
-
-      settings = { };
-
-      vencord = {
-        settings = { };
-      };
-    };
-
     home = {
       packages =
         lib.optional cfg.enable pkgs.discord
