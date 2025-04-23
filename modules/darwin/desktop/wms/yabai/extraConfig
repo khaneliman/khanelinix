@@ -93,6 +93,7 @@ COMMS=(
   Slack
   Telegram
   Element
+  Vesktop
 )
 
 for ((i = 1; i <= "${#COMMS[@]}"; i++)); do
