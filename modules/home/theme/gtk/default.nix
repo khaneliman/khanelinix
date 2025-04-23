@@ -61,7 +61,9 @@ in
       ];
 
       pointerCursor = mkDefault {
-        inherit (cfg.cursor) name package size;
+        name = mkDefault cfg.cursor.name;
+        package = mkDefault cfg.cursor.package;
+        size = mkDefault cfg.cursor.size;
         gtk.enable = true;
         x11.enable = true;
       };
@@ -101,7 +103,7 @@ in
       enable = true;
 
       font = {
-        name = osConfig.${namespace}.system.fonts.default;
+        name = mkDefault osConfig.${namespace}.system.fonts.default;
       };
 
       gtk2 = {
@@ -140,11 +142,13 @@ in
       };
 
       iconTheme = {
-        inherit (cfg.icon) name package;
+        name = mkDefault cfg.icon.name;
+        package = mkDefault cfg.icon.package;
       };
 
       theme = {
-        inherit (cfg.theme) name package;
+        name = mkDefault cfg.theme.name;
+        package = mkDefault cfg.theme.package;
       };
     };
 
