@@ -16,7 +16,12 @@ in
     programs.vesktop = {
       enable = true;
 
-      settings = { };
+      settings = {
+        discordBranch = "stable";
+        minimizeToTray = true;
+        arRPC = true;
+        customTitleBar = false;
+      };
 
       vencord = {
         settings = { };
