@@ -39,6 +39,7 @@ in
           "workspace 5 silent, class:^(Caprine)$"
           "workspace 5 silent, class:^(org.telegram.desktop)$"
           "workspace 5 silent, class:^(discord)$"
+          "workspace 5 silent, class:^(vesktop)$"
           "workspace 5 silent, class:^(zoom)$"
           "workspace 5 silent, class:^(Element)$"
           "workspace 5 silent, class:^(teams-for-linux)$"
