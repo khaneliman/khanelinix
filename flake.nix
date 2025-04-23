@@ -107,6 +107,7 @@
         nixpkgs.follows = "nixpkgs";
       };
     };
+    stylix.url = "github:danth/stylix";
     waybar = {
       url = "github:Alexays/Waybar";
       inputs = {
@@ -185,12 +186,14 @@
           darwin = with inputs; [
             nix-rosetta-builder.darwinModules.default
             sops-nix.darwinModules.sops
+            stylix.darwinModules.stylix
           ];
           nixos = with inputs; [
             disko.nixosModules.disko
             lanzaboote.nixosModules.lanzaboote
             nix-flatpak.nixosModules.nix-flatpak
             sops-nix.nixosModules.sops
+            stylix.nixosModules.stylix
           ];
         };
       };
