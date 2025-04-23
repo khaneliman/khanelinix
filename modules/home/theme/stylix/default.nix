@@ -43,7 +43,7 @@ in
   config = mkIf cfg.enable {
     stylix = {
       enable = true;
-      autoEnable = false;
+      # autoEnable = false;
       base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-macchiato.yaml";
 
       inherit (cfg) cursor;
@@ -66,7 +66,7 @@ in
         };
         monospace = {
           package = pkgs.monaspace;
-          name = if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon" else "MonaspaceNeon";
+          name = if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton" else "MonaspaceKrypton";
         };
         emoji = {
           package = pkgs.noto-fonts-color-emoji;
@@ -80,6 +80,13 @@ in
         dark = cfg.icon.name;
         # TODO: support custom light
         light = cfg.icon.name;
+      };
+
+      opacity = {
+        desktop = 1.0;
+        applications = 0.90;
+        terminal = 0.90;
+        popups = 1.0;
       };
 
       targets = {

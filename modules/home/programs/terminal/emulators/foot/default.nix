@@ -39,7 +39,7 @@ in
           selection-target = "clipboard";
 
           # font and font rendering
-          dpi-aware = false; # this looks more readable on a laptop, but it's unreasonably large
+          dpi-aware = lib.mkDefault false; # this looks more readable on a laptop, but it's unreasonably large
           font = "MonaspaceKrypton:size=13";
           font-bold = "MonaspaceKrypton:size=13";
           vertical-letter-offset = "-0.90";
@@ -73,7 +73,7 @@ in
         };
 
         colors = {
-          alpha = "0.85";
+          alpha = lib.mkDefault "0.85";
         };
       };
     };

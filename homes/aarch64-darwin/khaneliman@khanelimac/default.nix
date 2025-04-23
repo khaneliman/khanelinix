@@ -97,7 +97,8 @@ in
       social = enabled;
     };
 
-    theme.catppuccin = enabled;
+    # theme.catppuccin = enabled;
+    theme.stylix = enabled;
   };
 
   home.stateVersion = "24.11";
