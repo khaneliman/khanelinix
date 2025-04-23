@@ -32,8 +32,8 @@ in
     khanelinix = {
       programs = {
         graphical.apps = {
-          discord = lib.mkDefault enabled;
           caprine = lib.mkDefault enabled;
+          vesktop = lib.mkDefault enabled;
         };
 
         terminal.social = {
