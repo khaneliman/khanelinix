@@ -61,7 +61,9 @@ in
       ];
 
       pointerCursor = mkDefault {
-        inherit (cfg.cursor) name package size;
+        name = mkDefault cfg.cursor.name;
+        package = mkDefault cfg.cursor.package;
+        size = mkDefault cfg.cursor.size;
         gtk.enable = true;
         x11.enable = true;
       };
@@ -82,7 +84,7 @@ in
         };
 
         "org/gnome/shell/extensions/user-theme" = {
-          inherit (cfg.theme) name;
+          name = mkDefault cfg.theme.name;
         };
 
         "org/gnome/desktop/interface" = {
@@ -101,7 +103,7 @@ in
       enable = true;
 
       font = {
-        name = osConfig.${namespace}.system.fonts.default;
+        name = mkDefault osConfig.${namespace}.system.fonts.default;
       };
 
       gtk2 = {
@@ -140,11 +142,13 @@ in
       };
 
       iconTheme = {
-        inherit (cfg.icon) name package;
+        name = mkDefault cfg.icon.name;
+        package = mkDefault cfg.icon.package;
       };
 
       theme = {
-        inherit (cfg.theme) name package;
+        name = mkDefault cfg.theme.name;
+        package = mkDefault cfg.theme.package;
       };
     };
 
@@ -154,9 +158,9 @@ in
           gtk4Dir = "${cfg.theme.package}/share/themes/${cfg.theme.name}/gtk-4.0";
         in
         {
-          "gtk-4.0/assets".source = "${gtk4Dir}/assets";
-          "gtk-4.0/gtk.css".source = "${gtk4Dir}/gtk.css";
-          "gtk-4.0/gtk-dark.css".source = "${gtk4Dir}/gtk-dark.css";
+          "gtk-4.0/assets".source = mkDefault "${gtk4Dir}/assets";
+          "gtk-4.0/gtk.css".source = mkDefault "${gtk4Dir}/gtk.css";
+          "gtk-4.0/gtk-dark.css".source = mkDefault "${gtk4Dir}/gtk-dark.css";
         };
 
       systemDirs.data =
