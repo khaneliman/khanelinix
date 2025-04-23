@@ -84,6 +84,7 @@ in
       "class<com.obsproject.Studio" = "󱜠";
       "class<com.usebottles.bottles>" = "󰡔";
       "class<discord>" = "󰙯";
+      "class<vesktop>" = "󰙯";
       "class<dropbox>" = "";
       "class<dupeGuru>" = "";
       "class<firefox.*> title<.*github.*>" = "";
