@@ -196,8 +196,13 @@ in
         }
       ];
 
-      # TODO: use packaged version
-      vesktop.vencord.themes.catppuccin = ./Catppuccin-Macchiato-BD/src.css;
+      vesktop.vencord = {
+        settings.enabledThemes = [
+          "catppuccin.css"
+        ];
+        # TODO: use packaged version
+        themes.catppuccin = ./Catppuccin-Macchiato-BD/src.css;
+      };
 
       yazi.theme = lib.mkMerge [
         (import ./yazi/filetype.nix { })
