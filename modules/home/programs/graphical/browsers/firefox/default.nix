@@ -66,6 +66,21 @@ in
           ${lib.getExe pkgs.defaultbrowser} firefoxdeveloperedition
         '';
       };
+      file =
+        let
+          firefoxPath =
+            if pkgs.stdenv.hostPlatform.isLinux then
+              ".mozilla/firefox/${config.${namespace}.user.name}"
+            else
+              "/Users/${config.${namespace}.user.name}/Library/Application Support/Firefox/Profiles/${config.${namespace}.user.name}";
+        in
+        {
+          "${firefoxPath}/chrome/img" = {
+            source = lib.cleanSourceWith { src = lib.cleanSource ./chrome/img/.; };
+
+            recursive = true;
+          };
+        };
       packages = [ pkgs.defaultbrowser ];
     };
 
@@ -157,7 +172,7 @@ in
           ];
 
           # TODO: support alternative theme loading
-          userChrome = ./chrome;
+          userChrome = ./chrome/userChrome.css;
         };
       };
     };
