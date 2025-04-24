@@ -75,6 +75,13 @@ in
   };
 
   config = mkIf cfg.enable {
+    warnings = lib.optional (cfg.enable && config.stylix.enable) ''
+      The catppuccin theme is enabled, but stylix is also enabled. This may cause
+      conflicts with the theme.
+
+      Specific themes have priority over Stylix.
+    '';
+
     catppuccin = {
       # NOTE: Need some customization and merging of configuration files so cant just enable all
       enable = false;
@@ -96,6 +103,10 @@ in
       gitui = enabled;
       glamour = enabled;
       helix = enabled;
+      hyprland = mkIf config.${namespace}.programs.graphical.wms.hyprland.enable {
+        enable = true;
+        inherit (cfg) accent;
+      };
       k9s = {
         enable = true;
         transparent = true;
@@ -110,21 +121,11 @@ in
         inherit (cfg) accent;
       };
       nvim = enabled;
+      sway = enabled;
       waybar = enabled;
       zathura = enabled;
       zellij = enabled;
       zsh-syntax-highlighting = enabled;
-      sway.enable = true;
-
-      hyprland = mkIf config.${namespace}.programs.graphical.wms.hyprland.enable {
-        enable = true;
-
-        inherit (cfg) accent;
-      };
-
-      # TODO: Make work with personal customizations
-      # yazi.enable = true;
-      # rofi.enable = true;
     };
 
     home = {
@@ -205,9 +206,9 @@ in
       };
 
       yazi.theme = lib.mkMerge [
-        (import ./yazi/filetype.nix { })
-        (import ./yazi/manager.nix { })
-        (import ./yazi/theme.nix { })
+        (import ./yazi/filetype.nix)
+        (import ./yazi/manager.nix)
+        (import ./yazi/theme.nix)
       ];
     };
 

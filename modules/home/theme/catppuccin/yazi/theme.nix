@@ -1,4 +1,3 @@
-_:
 let
   catppuccin = import ../colors.nix;
 in

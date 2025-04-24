@@ -1,4 +1,4 @@
-_: {
+{
   manager =
     let
       catppuccin = import ../colors.nix;
