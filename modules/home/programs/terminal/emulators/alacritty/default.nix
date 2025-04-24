@@ -15,10 +15,18 @@ in
   options.${namespace}.programs.terminal.emulators.alacritty = with types; {
     enable = lib.mkEnableOption "alacritty";
     font = {
-      normal = mkOpt str "MonaspaceNeon" "Font to use for alacritty.";
-      bold = mkOpt str "MonaspaceXenon" "Font to use for alacritty.";
-      italic = mkOpt str "MonaspaceRadon" "Font to use for alacritty.";
-      bold_italic = mkOpt str "MonaspaceKrypton" "Font to use for alacritty.";
+      normal = mkOpt str (
+        if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon" else "MonaspaceNeon"
+      ) "Font to use for alacritty.";
+      bold = mkOpt str (
+        if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Xenon" else "MonaspaceXenon"
+      ) "Font to use for alacritty.";
+      italic = mkOpt str (
+        if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Radon" else "MonaspaceRadon"
+      ) "Font to use for alacritty.";
+      bold_italic = mkOpt str (
+        if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton" else "MonaspaceKrypton"
+      ) "Font to use for alacritty.";
     };
   };
 
