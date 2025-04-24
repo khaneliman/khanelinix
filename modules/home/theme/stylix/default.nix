@@ -99,7 +99,9 @@ in
 
         # TODO: Very custom styling, integrate with their variables
         # Currently setup only for catppuccin/nix
+        swaync.enable = false;
         waybar.enable = false;
+        vscode.enable = false;
 
         # FIXME: not working
         gtk.enable = false;
