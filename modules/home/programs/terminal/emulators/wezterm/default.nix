@@ -24,8 +24,6 @@ in
 
       extraConfig =
         let
-          monaspaceArgon =
-            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Argon Var" else "MonaspaceArgon";
           monaspaceKrypton =
             if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton Var" else "MonaspaceKrypton";
           monaspaceNeon = if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon Var" else "MonaspaceNeon";
