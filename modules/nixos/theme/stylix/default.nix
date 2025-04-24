@@ -46,6 +46,8 @@ in
       base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-macchiato.yaml";
 
       targets = {
+        gtk.enable = !config.${namespace}.theme.gtk.enable;
+        qt.enable = !config.${namespace}.theme.qt.enable;
       };
     };
   };
