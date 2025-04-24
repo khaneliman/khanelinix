@@ -82,6 +82,8 @@ in
         light = cfg.icon.name;
       };
 
+      polarity = "dark";
+
       opacity = {
         desktop = 1.0;
         applications = 0.90;
