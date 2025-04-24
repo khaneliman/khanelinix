@@ -78,8 +78,8 @@ in
 
       plymouth = {
         enable = cfg.plymouth;
-        theme = "${themeCfg.selectedTheme.name}-${themeCfg.selectedTheme.variant}";
-        themePackages = [ pkgs.catppuccin-plymouth ];
+        theme = lib.mkDefault "${themeCfg.selectedTheme.name}-${themeCfg.selectedTheme.variant}";
+        themePackages = lib.mkDefault [ pkgs.catppuccin-plymouth ];
       };
 
       tmp = default-attrs {
