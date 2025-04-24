@@ -1,0 +1,89 @@
+/**
+* Global configuration for theme
+* */
+* {
+  font-family: MonaspaceNeon;
+  font-size: 16px;
+  border-radius: 0.75em;
+}
+
+window#waybar {
+  border: 2px solid @base03;
+  background: @base;
+  box-shadow: 1px 1px 10px 10px @base01;
+  color: @base05;
+  transition-property: background-color;
+  transition-duration: 0.5s;
+}
+
+window#waybar.hidden {
+  opacity: 0.2;
+}
+
+tooltip {
+  background: @base;
+  border: 1px solid @base0D;
+}
+
+tooltip label {
+  color: white;
+}
+
+label:focus {
+  background-color: #000000;
+}
+
+button {
+  /* Use box-shadow instead of border so the text isn't offset */
+  box-shadow: inset 0 -3px transparent;
+  /* Avoid rounded borders under each button name */
+  border: none;
+  border-radius: 0;
+}
+
+/* Remove border from parent waybar */
+box {
+  border: none;
+}
+
+/* Add spacing for right side modules */
+#user,
+#keyboard-state,
+#mpd {
+  padding: 0 1em;
+}
+
+#custom-weather {
+  margin: 0.75em;
+}
+
+/* tray needs less padding */
+#tray {
+  padding: 0em;
+}
+
+#clock {
+  font-size: 16px;
+  font-weight: 900;
+  margin: 0.5em;
+}
+
+#custom-separator-left {
+  font-size: 20px;
+  padding-left: 0.25em;
+  padding-right: 0.5em;
+  color: @base05;
+}
+#custom-separator-right {
+  font-size: 20px;
+  padding-left: 0.5em;
+  padding-right: 0.25em;
+  color: @base05;
+}
+
+@keyframes blink {
+  to {
+    background-color: #ffffff;
+    color: #000000;
+  }
+}

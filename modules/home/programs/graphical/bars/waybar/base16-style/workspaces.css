@@ -1,0 +1,42 @@
+#workspaces {
+  margin: 0.5em;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: @base09;
+  font-weight: bold;
+  background-color: @base02;
+  border: 2px solid @base03;
+}
+
+#workspaces label {
+  font-family: MonaspaceNeon;
+  font-size: 22px;
+}
+
+#workspaces button {
+  padding: 0 0.5em;
+  background-color: @base02;
+  color: @base05;
+  margin: 0.25em;
+}
+
+#workspaces button.empty {
+  /* background-color: @surface2; */
+  color: @base04;
+}
+
+#workspaces button.visible {
+  /* background-color: @surface2; */
+  color: @base0D;
+}
+
+#workspaces button.active {
+  /* background-color: @surface2; */
+  color: @base0B;
+}
+
+#workspaces button.urgent {
+  box-shadow: 2px 2px 2px 2px;
+  border-radius: 1em;
+  color: @base08;
+}

@@ -1,0 +1,103 @@
+#control-center {
+  margin: 0.5em 0.25em 0.5em 0.5em;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: @base09;
+  font-weight: bold;
+  background-color: @base02;
+  border: 2px solid @base03;
+}
+
+#custom-notification,
+#custom-updates,
+#custom-github,
+#idle_inhibitor,
+#custom-hyprsunset,
+#wireplumber,
+#pulseaudio,
+#audio,
+#bluetooth,
+#gamemode,
+#systemd-failed-units
+ {
+  padding: 0 0.5em;
+}
+
+#bluetooth {
+  padding-left: 0.75em;
+}
+
+#custom-notification {
+  padding-right: 0.75em;
+}
+
+#custom-updates.updated {
+  padding-left: 0;
+  padding-right: 1em;
+}
+
+/* Unique colors for modules */
+#idle_inhibitor {
+  font-size: 22px;
+  padding-right: 0;
+  color: @base0A;
+}
+
+#pulseaudio{
+  font-size: 16px;
+  color: @base0B;
+}
+
+#custom-github {
+  color: @base0D;
+}
+
+#custom-updates {
+  color: @base08;
+}
+
+#systemd-failed-units {
+  font-size: 22px;
+  color: @base0E;
+}
+
+#custom-pipewire.muted,
+#pulseaudio.muted {
+  background-color: @base0C;
+  color: @base0B;
+}
+
+#keyboard-state {
+  padding: 0 0px;
+  min-width: 16px;
+  color: @base0E;
+}
+
+#keyboard-state > label {
+  padding: 0 5px;
+}
+
+#keyboard-state > label.locked {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+#pulseaudio-slider slider {
+    min-height: 0px;
+    min-width: 0px;
+    opacity: 0;
+    background-color: @base0B;
+    background-image: none;
+    border: none;
+    box-shadow: none;
+}
+#pulseaudio-slider trough {
+    min-height: 10px;
+    min-width: 80px;
+    border-radius: 5px;
+    background-color: @base;
+}
+#pulseaudio-slider highlight {
+    min-width: 10px;
+    border-radius: 5px;
+    background-color: @base0B;
+}
