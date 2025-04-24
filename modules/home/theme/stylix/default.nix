@@ -102,7 +102,6 @@ in
         # TODO: Very custom styling, integrate with their variables
         # Currently setup only for catppuccin/nix
         swaync.enable = false;
-        waybar.enable = false;
         vscode.enable = false;
 
         # FIXME: not working
@@ -131,6 +130,7 @@ in
         # swaync.enable = !config.catppuccin.enable;
         tmux.enable = !config.catppuccin.enable;
         vesktop.enable = !config.catppuccin.enable;
+        waybar.enable = !config.catppuccin.enable;
         yazi.enable = !config.catppuccin.enable;
         zathura.enable = !config.catppuccin.enable;
         zellij.enable = !config.catppuccin.enable;
