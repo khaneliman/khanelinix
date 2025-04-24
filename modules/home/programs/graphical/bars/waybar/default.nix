@@ -19,11 +19,14 @@ let
 
   cfg = config.${namespace}.programs.graphical.bars.waybar;
 
-  style = builtins.readFile ./styles/style.css;
-  controlCenterStyle = builtins.readFile ./styles/control-center.css;
-  powerStyle = builtins.readFile ./styles/power.css;
-  statsStyle = builtins.readFile ./styles/stats.css;
-  workspacesStyle = builtins.readFile ./styles/workspaces.css;
+  # Determine which style files to use based on whether stylix is enabled and catppuccin is not enabled
+  styleDir = if config.${namespace}.theme.catppuccin.enable then ./styles else ./base16-style;
+
+  style = builtins.readFile "${styleDir}/style.css";
+  controlCenterStyle = builtins.readFile "${styleDir}/control-center.css";
+  powerStyle = builtins.readFile "${styleDir}/power.css";
+  statsStyle = builtins.readFile "${styleDir}/stats.css";
+  workspacesStyle = builtins.readFile "${styleDir}/workspaces.css";
 
   custom-modules = import ./modules/custom-modules.nix {
     inherit
