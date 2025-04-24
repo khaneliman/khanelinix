@@ -84,7 +84,7 @@ in
         };
 
         "org/gnome/shell/extensions/user-theme" = {
-          name = mkDefault cfg.theme.name;
+          inherit (cfg.theme) name;
         };
 
         "org/gnome/desktop/interface" = {
@@ -153,16 +153,6 @@ in
     };
 
     xdg = {
-      configFile =
-        let
-          gtk4Dir = "${cfg.theme.package}/share/themes/${cfg.theme.name}/gtk-4.0";
-        in
-        {
-          "gtk-4.0/assets".source = mkDefault "${gtk4Dir}/assets";
-          "gtk-4.0/gtk.css".source = mkDefault "${gtk4Dir}/gtk.css";
-          "gtk-4.0/gtk-dark.css".source = mkDefault "${gtk4Dir}/gtk-dark.css";
-        };
-
       systemDirs.data =
         let
           schema = pkgs.gsettings-desktop-schemas;
