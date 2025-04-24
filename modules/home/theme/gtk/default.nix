@@ -104,6 +104,7 @@ in
 
       font = {
         name = mkDefault osConfig.${namespace}.system.fonts.default;
+        size = mkDefault osConfig.${namespace}.system.fonts.size;
       };
 
       gtk2 = {
