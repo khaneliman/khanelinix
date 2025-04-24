@@ -2,6 +2,7 @@
   config,
   lib,
   namespace,
+  pkgs,
   ...
 }:
 let
@@ -21,7 +22,19 @@ in
       enableBashIntegration = true;
       enableZshIntegration = true;
 
-      extraConfig = # lua
+      extraConfig =
+        let
+          monaspaceArgon =
+            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Argon Var" else "MonaspaceArgon";
+          monaspaceKrypton =
+            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton Var" else "MonaspaceKrypton";
+          monaspaceNeon = if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon Var" else "MonaspaceNeon";
+          monaspaceRadon =
+            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Radon Var" else "MonaspaceRadon";
+          monaspaceXenon =
+            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Xenon Var" else "MonaspaceXenon";
+        in
+        # lua
         ''
           function scheme_for_appearance(appearance)
             if appearance:find "Dark" then
@@ -116,7 +129,7 @@ in
             font_size = 13.0,
             font = wezterm.font_with_fallback({
               {
-                family = "MonaspaceNeon",
+                family = "${monaspaceNeon}",
                 weight = "Regular",
                 harfbuzz_features={ 'calt', 'liga', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09', 'ss10', 'dlig' },
               },
@@ -127,7 +140,7 @@ in
               {
                 italic = true,
                 font = wezterm.font({
-                        family = "MonaspaceRadon",
+                        family = "${monaspaceRadon}",
                         weight = "Regular",
                         style = "Italic",
                         harfbuzz_features={ 'calt', 'liga', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09', 'ss10', 'dlig' },
@@ -137,7 +150,7 @@ in
                 italic = false,
                 intensity = "Bold",
                 font = wezterm.font({
-                        family = "MonaspaceXenon",
+                        family = "${monaspaceXenon}",
                         weight = "Bold",
                         harfbuzz_features={ 'calt', 'liga', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09', 'ss10', 'dlig' },
                 }),
@@ -146,7 +159,7 @@ in
                 italic = true,
                 intensity = "Bold",
                 font = wezterm.font({
-                        family = "MonaspaceKrypton",
+                        family = "${monaspaceKrypton}",
                         weight = "Bold",
                         style = "Italic",
                         harfbuzz_features={ 'calt', 'liga', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09', 'ss10', 'dlig' },

@@ -39,10 +39,13 @@ in
         focus-follows-mouse = true;
 
         font-size = 13;
-        font-family = "MonaspaceNeon";
-        font-family-bold = "MonaspaceXenon";
-        font-family-italic = "MonaspaceRadon";
-        font-family-bold-italic = "MonaspaceKrypton";
+        font-family = if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon Var" else "MonaspaceNeon";
+        font-family-bold =
+          if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Xenon Var" else "MonaspaceXenon";
+        font-family-italic =
+          if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Radon Var" else "MonaspaceRadon";
+        font-family-bold-italic =
+          if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton Var" else "MonaspaceKrypton";
         font-feature = "+ss01,+ss02,+ss03,+ss04,+ss05,+ss06,+ss07,+ss08,+ss09,+ss10,+liga,+dlig,+calt";
 
         # NOTE: Different methods of using cgroups for every surface.
