@@ -27,7 +27,6 @@ in
     apps = {
       _1password = enabled;
       firefox = enabled;
-      gparted = enabled;
     };
 
     cli-apps = {

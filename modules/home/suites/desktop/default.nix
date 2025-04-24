@@ -52,7 +52,6 @@ in
         feh
         kdePackages.filelight
         fontpreview
-        gparted
         # FIXME: broken nixpkgs
         # input-leap
         kdePackages.ark
