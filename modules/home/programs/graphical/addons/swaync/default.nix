@@ -32,7 +32,7 @@ let
       pkgs
       ;
   };
-  style = import ./style.nix;
+  style = import ./style.nix { inherit lib; };
 in
 {
   options.${namespace}.programs.graphical.addons.swaync = {
