@@ -78,8 +78,8 @@ in
             ignore_window = true;
             range = 20;
             render_power = 3;
-            color = "0x55161925";
-            color_inactive = "0x22161925";
+            color = lib.mkDefault "0x55161925";
+            color_inactive = lib.mkDefault "0x22161925";
           };
         };
 
@@ -100,8 +100,8 @@ in
         general = {
           # allow_tearing = true;
           border_size = 2;
-          "col.active_border" = "rgba(7793D1FF)";
-          "col.inactive_border" = "rgb(5e6798)";
+          "col.active_border" = lib.mkDefault "rgba(7793D1FF)";
+          "col.inactive_border" = lib.mkDefault "rgb(5e6798)";
           gaps_in = 5;
           gaps_out = 20;
           layout = "dwindle";
@@ -119,8 +119,8 @@ in
           # focus on the window that has just been moved out of the group
           focus_removed_window = true;
 
-          "col.border_active" = "rgba(88888888)";
-          "col.border_inactive" = "rgba(00000088)";
+          "col.border_active" = lib.mkDefault "rgba(88888888)";
+          "col.border_inactive" = lib.mkDefault "rgba(00000088)";
 
           groupbar = {
             # groupbar stuff
@@ -163,7 +163,7 @@ in
           allow_session_lock_restore = true;
           disable_hyprland_logo = true;
           enable_swallow = true; # hide windows that spawn other windows
-          font_family = "MonaspaceNeon";
+          font_family = lib.mkDefault "MonaspaceNeon";
           key_press_enables_dpms = true;
           middle_click_paste = false;
           mouse_move_enables_dpms = true;
