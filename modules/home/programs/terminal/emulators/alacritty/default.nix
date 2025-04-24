@@ -37,7 +37,7 @@ in
           };
 
           font = {
-            size = 13.0;
+            size = lib.mkDefault 13.0;
 
             offset = {
               x = 0;
@@ -50,18 +50,18 @@ in
             };
 
             normal = {
-              family = cfg.font.normal;
+              family = lib.mkDefault cfg.font.normal;
             };
             bold = {
-              family = cfg.font.bold;
+              family = lib.mkDefault cfg.font.bold;
               style = "Bold";
             };
             italic = {
-              family = cfg.font.italic;
+              family = lib.mkDefault cfg.font.italic;
               style = "italic";
             };
             bold_italic = {
-              family = cfg.font.bold_italic;
+              family = lib.mkDefault cfg.font.bold_italic;
               style = "bold_italic";
             };
           };
