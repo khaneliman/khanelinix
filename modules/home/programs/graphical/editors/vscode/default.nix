@@ -70,24 +70,25 @@ in
             ];
           commonSettings = {
             # Color theme
-            "workbench.colorTheme" = "Catppuccin Macchiato";
-            "catppuccin.accentColor" = "mauve";
+            "workbench.colorTheme" = lib.mkDefault "Catppuccin Macchiato";
+            "catppuccin.accentColor" = lib.mkDefault "mauve";
             "workbench.iconTheme" = "vscode-icons";
 
+            # TODO: Handle font config with stylix
             # Font family
             "editor.fontFamily" =
-              "MonaspaceArgon, Monaspace Argon, CascadiaCode,Consolas, monospace,Hack Nerd Font";
+              lib.mkForce "MonaspaceArgon, Monaspace Argon, CascadiaCode,Consolas, monospace,Hack Nerd Font";
             "editor.codeLensFontFamily" =
-              "MonaspaceNeon, Monaspace Neon, Liga SFMono Nerd Font, CascadiaCode,Consolas, 'Courier New', monospace,Hack Nerd Font";
-            "editor.inlayHints.fontFamily" = "MonaspaceKrypton, Monaspace Krypton";
-            "debug.console.fontFamily" = "MonaspaceKrypton, Monaspace Krypton";
-            "scm.inputFontFamily" = "MonaspaceRadon, Monaspace Radon";
-            "notebook.output.fontFamily" = "MonaspaceRadon, Monapsace Radon";
-            "chat.editor.fontFamily" = "MonaspaceArgon, Monaspace Argon";
+              lib.mkForce "MonaspaceNeon, Monaspace Neon, Liga SFMono Nerd Font, CascadiaCode,Consolas, 'Courier New', monospace,Hack Nerd Font";
+            "editor.inlayHints.fontFamily" = lib.mkForce "MonaspaceKrypton, Monaspace Krypton";
+            "debug.console.fontFamily" = lib.mkForce "MonaspaceKrypton, Monaspace Krypton";
+            "scm.inputFontFamily" = lib.mkForce "MonaspaceRadon, Monaspace Radon";
+            "notebook.output.fontFamily" = lib.mkForce "MonaspaceRadon, Monapsace Radon";
+            "chat.editor.fontFamily" = lib.mkForce "MonaspaceArgon, Monaspace Argon";
             "markdown.preview.fontFamily" =
-              "MonaspaceXenon, Monaspace Xenon; -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif";
+              lib.mkForce "MonaspaceXenon, Monaspace Xenon; -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif";
             "terminal.integrated.fontFamily" =
-              "MonaspaceKrypton, Monaspace Krypton, JetBrainsMono Nerd Font Mono";
+              lib.mkForce "MonaspaceKrypton, Monaspace Krypton, JetBrainsMono Nerd Font Mono";
 
             # Git settings
             "git.allowForcePush" = true;
@@ -106,7 +107,7 @@ in
             "editor.bracketPairColorization.enabled" = true;
             "editor.fontLigatures" =
               "'calt', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09', 'ss10', 'dlig', 'liga'";
-            "editor.fontSize" = 16;
+            "editor.fontSize" = lib.mkDefault 16;
             "editor.formatOnPaste" = true;
             "editor.formatOnSave" = true;
             "editor.formatOnType" = false;
