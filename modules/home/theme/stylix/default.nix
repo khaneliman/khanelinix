@@ -50,10 +50,10 @@ in
 
       fonts = {
         sizes = {
-          desktop = 14;
-          applications = 13;
+          desktop = 11;
+          applications = 12;
           terminal = 13;
-          popups = 14;
+          popups = 12;
         };
 
         serif = {
