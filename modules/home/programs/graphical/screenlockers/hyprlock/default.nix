@@ -34,7 +34,7 @@ in
           {
             monitor = "";
             brightness = "0.817200";
-            color = "rgba(25, 20, 20, 1.0)";
+            color = lib.mkDefault "rgba(25, 20, 20, 1.0)";
             path = "screenshot";
             blur_passes = 3;
             blur_size = 8;
@@ -54,9 +54,9 @@ in
             dots_size = "0.25";
             dots_spacing = "0.4";
             dots_center = true;
-            outer_color = catppuccin.colors.crust.rgb;
-            inner_color = catppuccin.colors.surface2.rgb;
-            font_color = catppuccin.colors.text.rgb;
+            outer_color = lib.mkDefault catppuccin.colors.crust.rgb;
+            inner_color = lib.mkDefault catppuccin.colors.surface2.rgb;
+            font_color = lib.mkDefault catppuccin.colors.text.rgb;
             font_size = 14;
             font_family = "Maple Mono Bold";
             fade_on_empty = false;
@@ -74,7 +74,7 @@ in
             size = 120;
             position = "0, 45";
             path = "/home/${config.snowfallorg.user.name}/.face";
-            border_color = catppuccin.colors.text.rgb;
+            border_color = lib.mkDefault catppuccin.colors.text.rgb;
             border_size = 5;
             halign = "center";
             valign = "center";
@@ -101,24 +101,24 @@ in
           {
             monitor = "";
             text = "<span font_weight=\"ultrabold\">󰌾 </span>";
-            color = catppuccin.colors.text.rgb;
+            color = lib.mkDefault catppuccin.colors.text.rgb;
             font_size = 50;
-            font_family = osConfig.${namespace}.system.fonts.default;
+            font_family = lib.mkDefault osConfig.${namespace}.system.fonts.default;
             valign = "center";
             halign = "center";
             position = "15, -350";
             shadow_passes = 1;
             rotate = "0.000000";
             shadow_boost = "1.200000";
-            shadow_color = "rgba(0, 0, 0, 1.0)";
+            shadow_color = lib.mkDefault "rgba(0, 0, 0, 1.0)";
             shadow_size = 3;
           }
           {
             monitor = "";
             text = "<span font_weight=\"ultrabold\"> </span>";
-            color = catppuccin.colors.text.rgb;
+            color = lib.mkDefault catppuccin.colors.text.rgb;
             font_size = 25;
-            font_family = osConfig.${namespace}.system.fonts.default;
+            font_family = lib.mkDefault osConfig.${namespace}.system.fonts.default;
             valign = "bottom";
             halign = "right";
             position = "5, 8";
@@ -130,7 +130,7 @@ in
           }
           {
             monitor = "";
-            color = catppuccin.colors.text.rgb;
+            color = lib.mkDefault catppuccin.colors.text.rgb;
             text = "cmd[update:1000] echo \"- $(date +\"%A, %B %d\") -\"";
             font_size = 18;
             font_family = "Maple Mono";
@@ -141,7 +141,7 @@ in
           }
           {
             monitor = "";
-            color = catppuccin.colors.text.rgb;
+            color = lib.mkDefault catppuccin.colors.text.rgb;
             text = "$USER";
             font_size = 15;
             font_family = "Maple Mono Bold";
@@ -155,10 +155,10 @@ in
           {
             monitor = "";
             size = "300, 50";
-            color = "rgba(102, 92, 84, .33)";
+            color = lib.mkDefault "rgba(102, 92, 84, .33)";
             rounding = 10;
             border_size = 0;
-            border_color = "rgba(255, 255, 255, 0)";
+            border_color = lib.mkDefault "rgba(255, 255, 255, 0)";
             rotate = "0";
             position = "0, 270";
             halign = "center";
