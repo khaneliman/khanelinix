@@ -63,7 +63,7 @@
         }
 
         .notification {
-          border-radius: 1em;
+          border-radius: 0.5em;
           margin: 6px 12px;
           box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3),
             0 1px 3px 1px rgba(0, 0, 0, 0.7), 0 2px 6px 2px rgba(0, 0, 0, 0.3);
