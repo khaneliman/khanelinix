@@ -3,13 +3,14 @@
   inputs,
   lib,
   namespace,
+  pkgs,
   system,
   osConfig,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (inputs) anyrun anyrun-nixos-options;
+  inherit (inputs) anyrun-nixos-options;
 
   cfg = config.${namespace}.programs.graphical.launchers.anyrun;
 in
@@ -21,16 +22,17 @@ in
   config = mkIf cfg.enable {
     programs.anyrun = {
       enable = true;
+      package = pkgs.anyrun;
       config = {
-        plugins = with anyrun.packages.${system}; [
-          applications
-          dictionary
-          rink
-          shell
-          symbols
-          stdin
-          translate
-          websearch
+        plugins = [
+          "${config.programs.anyrun.package}/lib/libapplications.so"
+          "${config.programs.anyrun.package}/lib/libdictionary.so"
+          "${config.programs.anyrun.package}/lib/librink.so"
+          "${config.programs.anyrun.package}/lib/libshell.so"
+          "${config.programs.anyrun.package}/lib/libsymbols.so"
+          "${config.programs.anyrun.package}/lib/libstdin.so"
+          "${config.programs.anyrun.package}/lib/libtranslate.so"
+          "${config.programs.anyrun.package}/lib/libwebsearch.so"
 
           anyrun-nixos-options.packages.${system}.default
         ];
