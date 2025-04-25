@@ -77,13 +77,6 @@
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hyprland = {
-      url = "github:hyprwm/Hyprland";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        pre-commit-hooks.follows = "git-hooks-nix";
-      };
-    };
     hypr-socket-watch.url = "github:khaneliman/hypr-socket-watch";
     khanelivim.url = "github:khaneliman/khanelivim";
     # nh.url = "github:viperML/nh";
