@@ -75,7 +75,7 @@
     };
     hypr-socket-watch.url = "github:khaneliman/hypr-socket-watch";
     khanelivim.url = "github:khaneliman/khanelivim";
-    # nh.url = "github:viperML/nh";
+    # nh.url = "github:nix-community/nh";
     nh.url = "github:khaneliman/nh/darwin";
     nix-flatpak.url = "github:gmodena/nix-flatpak/latest";
     nix-index-database = {
@@ -84,7 +84,16 @@
         nixpkgs.follows = "nixpkgs";
       };
     };
-    stylix.url = "github:danth/stylix";
+    stylix = {
+      url = "github:danth/stylix";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        git-hooks.follows = "git-hooks-nix";
+        home-manager.follows = "home-manager";
+        # Optional inputs removed
+        flake-compat.follows = "";
+      };
+    };
     waybar = {
       url = "github:Alexays/Waybar";
       inputs = {
