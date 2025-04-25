@@ -12,8 +12,6 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixos-wsl = {
       url = "github:nix-community/nixos-wsl";
       inputs = {
@@ -22,6 +20,9 @@
         flake-compat.follows = "";
       };
     };
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-master.url = "github:NixOS/nixpkgs";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nix-rosetta-builder = {
       url = "github:cpick/nix-rosetta-builder";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -35,15 +36,6 @@
       url = "github:nix-community/disko/latest";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    git-hooks-nix = {
-      url = "github:cachix/git-hooks.nix";
-      inputs = {
-        nixpkgs.follows = "nixpkgs-unstable";
-        # Optional inputs removed
-        gitignore.follows = "";
-        flake-compat.follows = "";
-      };
-    };
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.4.2";
       inputs = {
@@ -56,10 +48,6 @@
     };
     sops-nix = {
       url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
-    treefmt-nix = {
-      url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
@@ -107,7 +95,21 @@
       flake = false;
     };
 
-    nixpkgs-master.url = "github:NixOS/nixpkgs";
+    # TODO:
+    # Dev flake
+    git-hooks-nix = {
+      url = "github:cachix/git-hooks.nix";
+      inputs = {
+        nixpkgs.follows = "nixpkgs-unstable";
+        # Optional inputs removed
+        gitignore.follows = "";
+        flake-compat.follows = "";
+      };
+    };
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 
   outputs =
