@@ -155,6 +155,12 @@ in
       realtime = enabled;
       time = enabled;
     };
+
+    theme = {
+      # gtk = enabled;
+      # qt = enabled;
+      stylix = enabled;
+    };
   };
 
   services = {

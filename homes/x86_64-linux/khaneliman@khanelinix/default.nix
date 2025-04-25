@@ -248,7 +248,10 @@ in
       video = enabled;
     };
 
-    theme.catppuccin = enabled;
+    theme = {
+      catppuccin = enabled;
+      stylix = enabled;
+    };
   };
 
   # Neo G9
