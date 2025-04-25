@@ -177,26 +177,6 @@
         "type": "github"
       }
     },
-    "catppuccin-cursors": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1740189623,
-        "narHash": "sha256-qis6p+/m7+DdRDYzLq9yB2eZGpfZe5z5xRsa/1HoIG4=",
-        "owner": "catppuccin",
-        "repo": "cursors",
-        "rev": "a7eb08527dcce01010fa0ec46fa2bc4c3154f0d4",
-        "type": "github"
-      },
-      "original": {
-        "owner": "catppuccin",
-        "repo": "cursors",
-        "type": "github"
-      }
-    },
     "crane": {
       "locked": {
         "lastModified": 1731098351,
@@ -1358,7 +1338,6 @@
         "anyrun": "anyrun",
         "anyrun-nixos-options": "anyrun-nixos-options",
         "catppuccin": "catppuccin",
-        "catppuccin-cursors": "catppuccin-cursors",
         "darwin": "darwin",
         "disko": "disko",
         "firefox-addons": "firefox-addons",

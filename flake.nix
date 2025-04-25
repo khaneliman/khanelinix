@@ -69,10 +69,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     anyrun-nixos-options.url = "github:n3oney/anyrun-nixos-options";
-    catppuccin-cursors = {
-      url = "github:catppuccin/cursors";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     catppuccin = {
       url = "github:catppuccin/nix";
       inputs.nixpkgs.follows = "nixpkgs";
