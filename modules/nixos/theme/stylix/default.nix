@@ -19,6 +19,7 @@ in
 {
   options.${namespace}.theme.stylix = {
     enable = mkEnableOption "stylix theme for applications";
+    theme = mkOpt types.str "catppuccin-macchiato" "base16 theme file name";
 
     cursor = {
       name = mkOpt types.str "catppuccin-macchiato-blue-cursors" "The name of the cursor theme to apply.";
@@ -43,7 +44,7 @@ in
   config = mkIf cfg.enable {
     stylix = {
       enable = true;
-      base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-macchiato.yaml";
+      base16Scheme = "${pkgs.base16-schemes}/share/themes/${cfg.theme}.yaml";
 
       targets = {
         gtk.enable = !config.${namespace}.theme.gtk.enable;
