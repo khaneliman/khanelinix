@@ -94,50 +94,52 @@ in
         popups = 1.0;
       };
 
-      targets = {
-        # Set profile names for firefox
-        firefox.profileNames = [ config.${namespace}.user.name ];
+      targets =
+        {
+          # Set profile names for firefox
+          firefox.profileNames = [ config.${namespace}.user.name ];
 
-        # FIXME:: upstream needs module fix
-        hyprlock.useWallpaper = false;
-        hyprlock.enable = false;
+          # TODO: Very custom styling, integrate with their variables
+          # Currently setup only for catppuccin/nix
+          vscode.enable = false;
 
-        # TODO: Very custom styling, integrate with their variables
-        # Currently setup only for catppuccin/nix
-        swaync.enable = false;
-        vscode.enable = false;
-
-        # FIXME: not working
-        gtk.enable = false;
-
-        # Disable targets when catppuccin is enabled
-        alacritty.enable = !config.${namespace}.theme.catppuccin.enable;
-        bat.enable = !config.${namespace}.theme.catppuccin.enable;
-        btop.enable = !config.${namespace}.theme.catppuccin.enable;
-        cava.enable = !config.${namespace}.theme.catppuccin.enable;
-        fish.enable = !config.${namespace}.theme.catppuccin.enable;
-        foot.enable = !config.${namespace}.theme.catppuccin.enable;
-        fzf.enable = !config.${namespace}.theme.catppuccin.enable;
-        ghostty.enable = !config.${namespace}.theme.catppuccin.enable;
-        gitui.enable = !config.${namespace}.theme.catppuccin.enable;
-        gnome.enable = !config.${namespace}.theme.catppuccin.enable;
-        helix.enable = !config.${namespace}.theme.catppuccin.enable;
-        hyprland.enable = !config.${namespace}.theme.catppuccin.enable;
-        k9s.enable = !config.${namespace}.theme.catppuccin.enable;
-        kitty.enable = !config.${namespace}.theme.catppuccin.enable;
-        lazygit.enable = !config.${namespace}.theme.catppuccin.enable;
-        ncspot.enable = !config.${namespace}.theme.catppuccin.enable;
-        neovim.enable = !config.${namespace}.theme.catppuccin.enable;
-        qt.enable = !config.${namespace}.theme.catppuccin.enable;
-        sway.enable = !config.${namespace}.theme.catppuccin.enable;
-        # swaync.enable = !config.${namespace}.theme.catppuccin.enable;
-        tmux.enable = !config.${namespace}.theme.catppuccin.enable;
-        vesktop.enable = !config.${namespace}.theme.catppuccin.enable;
-        waybar.enable = !config.${namespace}.theme.catppuccin.enable;
-        yazi.enable = !config.${namespace}.theme.catppuccin.enable;
-        zathura.enable = !config.${namespace}.theme.catppuccin.enable;
-        zellij.enable = !config.${namespace}.theme.catppuccin.enable;
-      };
+          # Disable targets when catppuccin is enabled
+          alacritty.enable = !config.${namespace}.theme.catppuccin.enable;
+          bat.enable = !config.${namespace}.theme.catppuccin.enable;
+          btop.enable = !config.${namespace}.theme.catppuccin.enable;
+          cava.enable = !config.${namespace}.theme.catppuccin.enable;
+          fish.enable = !config.${namespace}.theme.catppuccin.enable;
+          foot.enable = !config.${namespace}.theme.catppuccin.enable;
+          fzf.enable = !config.${namespace}.theme.catppuccin.enable;
+          ghostty.enable = !config.${namespace}.theme.catppuccin.enable;
+          gitui.enable = !config.${namespace}.theme.catppuccin.enable;
+          helix.enable = !config.${namespace}.theme.catppuccin.enable;
+          k9s.enable = !config.${namespace}.theme.catppuccin.enable;
+          kitty.enable = !config.${namespace}.theme.catppuccin.enable;
+          lazygit.enable = !config.${namespace}.theme.catppuccin.enable;
+          ncspot.enable = !config.${namespace}.theme.catppuccin.enable;
+          neovim.enable = !config.${namespace}.theme.catppuccin.enable;
+          tmux.enable = !config.${namespace}.theme.catppuccin.enable;
+          vesktop.enable = !config.${namespace}.theme.catppuccin.enable;
+          yazi.enable = !config.${namespace}.theme.catppuccin.enable;
+          zathura.enable = !config.${namespace}.theme.catppuccin.enable;
+          zellij.enable = !config.${namespace}.theme.catppuccin.enable;
+        }
+        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+          gnome.enable = !config.${namespace}.theme.catppuccin.enable;
+          # FIXME: not working
+          gtk.enable = false;
+          hyprland.enable = !config.${namespace}.theme.catppuccin.enable;
+          # FIXME:: upstream needs module fix
+          hyprlock.useWallpaper = false;
+          hyprlock.enable = false;
+          qt.enable = !config.${namespace}.theme.catppuccin.enable;
+          sway.enable = !config.${namespace}.theme.catppuccin.enable;
+          # TODO: Very custom styling, integrate with their variables
+          # Currently setup only for catppuccin/nix
+          swaync.enable = false;
+          waybar.enable = !config.${namespace}.theme.catppuccin.enable;
+        };
     };
   };
 }
