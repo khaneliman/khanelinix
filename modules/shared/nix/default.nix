@@ -45,7 +45,6 @@ in
 
       systemPackages = with pkgs; [
         cachix
-        deploy-rs
         git
         nix-prefetch-git
       ];
