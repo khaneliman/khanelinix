@@ -6,6 +6,10 @@
 }:
 let
   inherit (lib.${namespace}) enabled;
+  inherit (lib) mkMerge;
+
+  serverHostname = "austinserver.local";
+  username = config.${namespace}.user.name;
 in
 {
   imports = [
@@ -25,37 +29,22 @@ in
     };
 
     display-managers = {
-      gdm = {
-        monitors = ./monitors.xml;
-      };
-
-      regreet = {
-        hyprlandOutput = builtins.readFile ./hyprlandOutput;
-      };
+      gdm.monitors = ./monitors.xml;
+      regreet.hyprlandOutput = builtins.readFile ./hyprlandOutput;
     };
 
-    programs = {
-      graphical = {
-        addons = {
-          noisetorch = {
-            enable = false;
-
-            threshold = 95;
-            device = "alsa_input.usb-Blue_Microphones_Yeti_Stereo_Microphone_LT_191128065321F39907D0_111000-00.analog-stereo";
-            deviceUnit = "sys-devices-pci0000:00-0000:00:01.2-0000:02:00.0-0000:03:08.0-0000:08:00.3-usb3-3\x2d2-3\x2d2.1-3\x2d2.1.4-3\x2d2.1.4.3-3\x2d2.1.4.3:1.0-sound-card3-controlC3.device";
-          };
-        };
-
-        wms = {
-          hyprland = {
-            enable = true;
-          };
-
-          sway = {
-            enable = true;
-          };
-        };
+    programs.graphical = {
+      addons.noisetorch = {
+        enable = false;
+        threshold = 95;
+        device = "alsa_input.usb-Blue_Microphones_Yeti_Stereo_Microphone_LT_191128065321F39907D0_111000-00.analog-stereo";
+        deviceUnit = "sys-devices-pci0000:00-0000:00:01.2-0000:02:00.0-0000:03:08.0-0000:08:00.3-usb3-3\\x2d2-3\\x2d2.1-3\\x2d2.1.4-3\\x2d2.1.4.3-3\\x2d2.1.4.3:1.0-sound-card3-controlC3.device";
       };
+
+      wms = mkMerge [
+        { hyprland.enable = true; }
+        { sway.enable = true; }
+      ];
     };
 
     services = {
@@ -64,6 +53,7 @@ in
       geoclue = enabled;
       power = enabled;
       printing = enabled;
+
       rustdesk-server = {
         enable = true;
         relayHosts = [ "khanelinix.local" ];
@@ -71,7 +61,6 @@ in
 
       snapper = {
         enable = true;
-
         configs = {
           # Example
           # Don't really store anything worth keeping backups here for
@@ -90,33 +79,42 @@ in
         # TODO: make part of ssh config proper
         extraConfig = ''
           Host server
-            User ${config.${namespace}.user.name}
-            Hostname austinserver.local
+            User ${username}
+            Hostname ${serverHostname}
         '';
       };
 
       samba = {
         enable = true;
+        shares =
+          let
+            mkShare =
+              {
+                path,
+                comment,
+                readOnly ? false,
+                ownerOnly ? false,
+              }:
+              {
+                browseable = true;
+                inherit comment path;
+                only-owner-editable = ownerOnly;
+                public = true;
+                read-only = readOnly;
+              };
+          in
+          {
+            public = mkShare {
+              comment = "Home Public folder";
+              path = "/home/${username}/Public/";
+            };
 
-        shares = {
-          public = {
-            browseable = true;
-            comment = "Home Public folder";
-            only-owner-editable = false;
-            path = "/home/${config.${namespace}.user.name}/Public/";
-            public = true;
-            read-only = false;
+            games = mkShare {
+              comment = "Games folder";
+              path = "/mnt/games/";
+              ownerOnly = true;
+            };
           };
-
-          games = {
-            browseable = true;
-            comment = "Games folder";
-            only-owner-editable = true;
-            path = "/mnt/games/";
-            public = true;
-            read-only = false;
-          };
-        };
       };
     };
 
@@ -131,16 +129,14 @@ in
       };
     };
 
-    suites = {
-      development = {
-        enable = true;
-        dockerEnable = true;
-        gameEnable = true;
-        kubernetesEnable = true;
-        nixEnable = true;
-        sqlEnable = true;
-        aiEnable = true;
-      };
+    suites.development = {
+      enable = true;
+      dockerEnable = true;
+      gameEnable = true;
+      kubernetesEnable = true;
+      nixEnable = true;
+      sqlEnable = true;
+      aiEnable = true;
     };
 
     system = {
@@ -163,17 +159,9 @@ in
 
   services = {
     displayManager.defaultSession = "hyprland-uwsm";
-    mpd = {
-      musicDirectory = "nfs://austinserver.local/mnt/user/data/media/music";
-    };
+    mpd.musicDirectory = "nfs://${serverHostname}/mnt/user/data/media/music";
     rpcbind.enable = true; # needed for NFS
   };
 
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "21.11"; # Did you read the comment?
+  system.stateVersion = "21.11";
 }
