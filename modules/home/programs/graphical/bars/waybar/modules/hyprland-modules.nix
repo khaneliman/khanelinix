@@ -134,6 +134,7 @@ in
       "title<Steam>" = "";
       "class<rustdesk>" = "󰢹";
       "class<org.vinegarhq.Sober>" = "󰆢";
+      "class<robloxstudiobeta.exe>" = "󰆢";
       "class<steam_app.*> title<Battle.net>" = "";
       "class<steam_app.*> title<World of Warcraft>" = "";
       "class<steam_app.*> title<>" = "";
