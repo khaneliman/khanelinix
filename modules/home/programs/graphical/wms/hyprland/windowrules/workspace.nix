@@ -24,6 +24,7 @@ in
           "workspace 3, class:^(neovide)$"
           "workspace 3, class:^(GitHub Desktop)$"
           "workspace 3, class:^(GitKraken)$"
+          "workspace 3, class:^(robloxstudiobeta.exe)$"
           # Gaming
           "workspace 4 silent, class:^(Steam|steam)$"
           "workspace 4 silent, class:^(Steam|steam)., title:^(Steam|steam)$"
