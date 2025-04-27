@@ -128,34 +128,34 @@ in
               "browser.urlbar.suggest.quicksuggest.sponsored" = false;
               "devtools.chrome.enabled" = true;
               "devtools.debugger.remote-enabled" = true;
-              "dom.storage.next_gen" = true;
               "dom.forms.autocomplete.formautofill" = true;
-              "extensions.htmlaboutaddons.recommendations.enabled" = false;
+              "dom.storage.next_gen" = true;
               "extensions.formautofill.addresses.enabled" = false;
               "extensions.formautofill.creditCards.enabled" = false;
-              "general.autoScroll" = false;
-              "general.smoothScroll.msdPhysics.enabled" = true;
-              "geo.enabled" = false;
-              "geo.provider.use_corelocation" = false;
-              "geo.provider.use_geoclue" = false;
-              "geo.provider.use_gpsd" = false;
-              "gfx.font_rendering.directwrite.bold_simulation" = 2;
-              "gfx.font_rendering.cleartype_params.enhanced_contrast" = 25;
-              "gfx.font_rendering.cleartype_params.force_gdi_classic_for_families" = "";
-              "intl.accept_languages" = "en-US,en";
-              "media.eme.enabled" = true;
-              "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
-              "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+              "extensions.htmlaboutaddons.recommendations.enabled" = false;
               "font.name.monospace.x-western" =
                 if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton" else "MonaspaceKrypton";
               "font.name.sans-serif.x-western" =
                 if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon" else "MonaspaceNeon";
               "font.name.serif.x-western" =
                 if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon" else "MonaspaceNeon";
+              "general.autoScroll" = false;
+              "general.smoothScroll.msdPhysics.enabled" = true;
+              "geo.enabled" = false;
+              "geo.provider.use_corelocation" = false;
+              "geo.provider.use_geoclue" = false;
+              "geo.provider.use_gpsd" = false;
+              "gfx.font_rendering.cleartype_params.enhanced_contrast" = 25;
+              "gfx.font_rendering.cleartype_params.force_gdi_classic_for_families" = "";
+              "gfx.font_rendering.directwrite.bold_simulation" = 2;
+              "intl.accept_languages" = "en-US,en";
+              "media.eme.enabled" = true;
+              "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
               "signon.autofillForms" = false;
               "signon.firefoxRelay.feature" = "disabled";
               "signon.generation.enabled" = false;
               "signon.management.page.breach-alerts.enabled" = false;
+              "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
               "xpinstall.signatures.required" = false;
             }
             (optionalAttrs cfg.gpuAcceleration {
