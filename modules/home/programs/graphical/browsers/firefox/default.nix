@@ -115,6 +115,7 @@ in
               "browser.bookmarks.showMobileBookmarks" = true;
               "browser.meta_refresh_when_inactive.disabled" = true;
               "browser.newtabpage.activity-stream.default.sites" = "";
+              "browser.newtabpage.activity-stream.feeds.section.topstories" = false;
               "browser.newtabpage.activity-stream.showSponsored" = false;
               "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
               "browser.search.hiddenOneOffs" = "Google,Amazon.com,Bing,DuckDuckGo,eBay,Wikipedia (en)";
