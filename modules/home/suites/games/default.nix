@@ -27,6 +27,7 @@ in
       protontricks
       protonup-ng
       protonup-qt
+      umu-launcher
       wowup-cf
     ];
 
