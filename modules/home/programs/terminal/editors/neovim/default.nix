@@ -10,6 +10,9 @@
 }:
 let
   inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib) mkOption types;
+
+  cfg = config.${namespace}.programs.terminal.editors.neovim;
 
   khanelivimConfiguration = inputs.khanelivim.nixvimConfigurations.${system}.khanelivim;
   khanelivimConfigurationExtended = khanelivimConfiguration.extendModules {
@@ -32,17 +35,19 @@ let
           #   };
         };
       }
-    ];
-
+    ] ++ cfg.extraModules;
   };
   khanelivim = khanelivimConfigurationExtended.config.build.package;
-
-  cfg = config.${namespace}.programs.terminal.editors.neovim;
 in
 {
   options.${namespace}.programs.terminal.editors.neovim = {
     enable = lib.mkEnableOption "neovim";
     default = mkBoolOpt true "Whether to set Neovim as the session EDITOR";
+    extraModules = mkOption {
+      type = types.listOf types.attrs;
+      default = [ ];
+      description = "Additional nixvim modules to extend the khanelivim configuration";
+    };
   };
 
   config = lib.mkIf cfg.enable {
