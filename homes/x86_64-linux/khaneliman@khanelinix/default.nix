@@ -10,6 +10,14 @@ let
   inherit (lib.${namespace}) enabled;
 in
 {
+  home.packages = [
+    # NOTE: annoyingly need to download separately and prefetch hash manually
+    pkgs.citrix_workspace
+    # (citrix_workspace.override {
+    #   version = "25.03.0.66";
+    # })
+  ];
+
   khanelinix = {
     user = {
       enable = true;
