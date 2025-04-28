@@ -11,7 +11,6 @@ let
   cfg = config.${namespace}.programs.terminal.tools.lsd;
 
   aliases = {
-
     ls = "${lib.getExe pkgs.lsd} -al";
     lt = "${lib.getExe pkgs.lsd} --tree";
     llt = "${lib.getExe pkgs.lsd} -l --tree";
@@ -23,8 +22,14 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.shellAliases = aliases;
+
     programs.lsd = {
       enable = true;
+
+      enableBashIntegration = false;
+      enableZshIntegration = false;
+      enableFishIntegration = false;
 
       settings = {
         blocks = [
@@ -58,7 +63,5 @@ in
         # total-size = true;
       };
     };
-
-    home.shellAliases = aliases;
   };
 }
