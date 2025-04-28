@@ -1,4 +1,4 @@
-use actix_web::{web, App, HttpServer};
+use actix_web::{App, HttpServer, web};
 
 fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(web::resource("/").to(|| async { "Hello Nixers!\n" }));
@@ -16,7 +16,7 @@ async fn main() -> std::io::Result<()> {
 mod tests {
     use super::*;
     use actix_web::dev::Service;
-    use actix_web::{http, test, App, Error};
+    use actix_web::{App, Error, http, test};
 
     #[actix_rt::test]
     async fn test() -> Result<(), Error> {
