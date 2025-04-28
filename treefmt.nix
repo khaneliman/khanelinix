@@ -63,6 +63,7 @@
       "*/config"
       # TODO: formatters?
       "*.ac"
+      "*.css" # Exclude CSS files from formatting since we use Nix template variables
       "*.csproj"
       "*.fsproj"
       "*.in"
