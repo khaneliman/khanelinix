@@ -28,6 +28,25 @@ in
           wezterm = mkForce disabled;
         };
 
+        editors = {
+          neovim = {
+            enable = true;
+            extraModules = [
+              {
+                config = {
+                  plugins = {
+                    # NOTE: Disabling some plugins I won't need on work devices
+                    avante.enable = mkForce false;
+                    windsurf-nvim.enable = mkForce false;
+                    firenvim.enable = mkForce false;
+                    neorg.enable = mkForce false;
+                  };
+                };
+              }
+            ];
+          };
+        };
+
         tools = {
           git = {
             enable = true;
