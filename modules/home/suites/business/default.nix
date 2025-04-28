@@ -30,6 +30,11 @@ in
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         libreoffice
         p3x-onenote
+        # NOTE: annoyingly need to download separately and prefetch hash manually
+        citrix_workspace
+        # (citrix_workspace.override {
+        #   version = "25.03.0.66";
+        # })
       ];
 
     khanelinix = {
