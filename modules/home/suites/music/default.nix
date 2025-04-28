@@ -37,6 +37,7 @@ in
         media = {
           ncmpcpp = lib.mkDefault enabled;
           ncspot = lib.mkDefault enabled;
+          rmpc = mkIf pkgs.stdenv.hostPlatform.isLinux (lib.mkDefault enabled);
         };
 
         tools = {
