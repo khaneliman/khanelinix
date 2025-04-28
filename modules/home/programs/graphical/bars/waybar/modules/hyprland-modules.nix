@@ -143,6 +143,8 @@ in
       "class<org.inkscape.Inkscape>" = "";
       "class<net.lutris.Lutris>" = "󰸸";
       "class<btrfs-assistant>" = "";
+      "class<selfservice>" = "";
+      "class<Wfica>" = "";
     };
   };
   "custom/hyprsunset" = {
