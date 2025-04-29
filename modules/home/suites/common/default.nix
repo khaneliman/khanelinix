@@ -39,11 +39,14 @@ in
     home.packages =
       with pkgs;
       [
+        # colorscript outputs
         dwt1-shell-color-scripts
         ncdu
-        smassh
+        # NOTE: Typing test
+        # smassh
         toilet
         tree
+        # Visualize nix store
         nix-du
         graphviz
       ]
@@ -55,26 +58,19 @@ in
       programs = {
         terminal = {
           emulators = {
-            alacritty = mkDefault enabled;
-            foot.enable = pkgs.stdenv.hostPlatform.isLinux;
-            ghostty = mkDefault enabled;
             kitty = mkDefault enabled;
-            wezterm = mkDefault enabled;
           };
 
           shell = {
             bash = mkDefault enabled;
-            nushell = mkDefault enabled;
             zsh = mkDefault enabled;
           };
 
           tools = {
             atuin = mkDefault enabled;
             bat = mkDefault enabled;
-            bottom = mkDefault enabled;
             btop = mkDefault enabled;
             carapace = mkDefault enabled;
-            colorls = mkDefault enabled;
             comma = mkDefault enabled;
             dircolors = mkDefault enabled;
             direnv = mkDefault enabled;
@@ -85,12 +81,10 @@ in
             git = mkDefault enabled;
             glxinfo.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
             jq = mkDefault enabled;
-            lsd = mkDefault enabled;
             navi = mkDefault enabled;
             nh = mkDefault enabled;
             oh-my-posh = mkDefault enabled;
             ripgrep = mkDefault enabled;
-            tmux = mkDefault enabled;
             topgrade = mkDefault enabled;
             yazi = mkDefault enabled;
             zellij = mkDefault enabled;
