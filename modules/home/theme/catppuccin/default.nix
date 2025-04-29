@@ -75,13 +75,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    warnings = lib.optional (cfg.enable && config.stylix.enable) ''
-      The catppuccin theme is enabled, but stylix is also enabled. This may cause
-      conflicts with the theme.
-
-      Specific themes have priority over Stylix.
-    '';
-
     catppuccin = {
       # NOTE: Need some customization and merging of configuration files so cant just enable all
       enable = false;
