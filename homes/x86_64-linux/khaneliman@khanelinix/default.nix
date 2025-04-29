@@ -12,10 +12,18 @@ in
 {
   home.packages = [
     # NOTE: annoyingly need to download separately and prefetch hash manually
-    pkgs.citrix_workspace
-    # (citrix_workspace.override {
-    #   version = "25.03.0.66";
-    # })
+    # pkgs.citrix_workspace
+    (pkgs.citrix_workspace.overrideAttrs (oldAttrs: rec {
+      version = "25.03.0.66";
+      src = pkgs.requireFile {
+        name = "linuxx64-${version}.tar.gz";
+        sha256 = "052zibykhig9091xl76z2x9vn4f74w5q8i9frlpc473pvfplsczk";
+        message = "Download file and nix-prefetch-url manually";
+      };
+      buildInputs = oldAttrs.buildInputs ++ [
+        pkgs.sane-backends
+      ];
+    }))
   ];
 
   khanelinix = {
