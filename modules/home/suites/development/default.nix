@@ -83,6 +83,7 @@ in
           nixpkgs-review
         ]
         ++ lib.optionals cfg.gameEnable [
+          gdevelop
           # FIXME: broken nixpkgs
           # godot_4
           # NOTE: removed from nixpkgs
