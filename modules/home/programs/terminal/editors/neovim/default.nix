@@ -35,6 +35,12 @@ let
           #   };
         };
       }
+      (lib.mkIf ((osConfig.${namespace}.archetypes ? wsl) && osConfig.${namespace}.archetypes.wsl.enable)
+        {
+          plugins.yanky.settings.ring.permanent_wrapper.__raw =
+            ''require("yanky.wrappers").remove_carriage_return'';
+        }
+      )
     ] ++ cfg.extraModules;
   };
   khanelivim = khanelivimConfigurationExtended.config.build.package;
