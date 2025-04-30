@@ -82,14 +82,15 @@ in
           nixpkgs-lint-community
           nixpkgs-review
         ]
-        ++ lib.optionals cfg.gameEnable [
-          gdevelop
-          # FIXME: broken nixpkgs
-          # godot_4
-          # NOTE: removed from nixpkgs
-          # ue4
-          (lib.mkIf pkgs.stdenv.hostPlatform.isLinux unityhub)
-        ]
+        ++ lib.optionals cfg.gameEnable (
+          [ gdevelop ]
+          ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+            godot_4
+            # NOTE: removed from nixpkgs
+            # ue4
+            unityhub
+          ]
+        )
         ++ lib.optionals cfg.sqlEnable [
           dbeaver-bin
           mysql-workbench
