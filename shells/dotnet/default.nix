@@ -1,4 +1,8 @@
-{ mkShell, pkgs, ... }:
+{
+  mkShell,
+  pkgs,
+  ...
+}:
 mkShell {
   packages = with pkgs; [
     pkgs.khanelinix.avrogen
@@ -22,7 +26,6 @@ mkShell {
   ];
 
   shellHook = ''
-
     export NUGET_PLUGIN_PATHS=${pkgs.khanelinix.artifacts-credprovider}/bin/netcore/CredentialProvider.Microsoft/CredentialProvider.Microsoft.dll
 
     echo 🔨 Dotnet DevShell
