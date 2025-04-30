@@ -1,8 +1,9 @@
 {
   config,
   lib,
-  pkgs,
   namespace,
+  osConfig,
+  pkgs,
   ...
 }:
 let
@@ -42,7 +43,9 @@ in
 
           # clipboard provider
           copy_command =
-            if pkgs.stdenv.hostPlatform.isLinux then
+            if pkgs.stdenv.hostPlatform.isLinux && osConfig.${namespace}.archetypes.wsl.enable then
+              "clip.exe"
+            else if pkgs.stdenv.hostPlatform.isLinux then
               "wl-copy"
             else if pkgs.stdenv.hostPlatform.isDarwin then
               "pbcopy"
