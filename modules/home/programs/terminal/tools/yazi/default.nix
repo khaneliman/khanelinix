@@ -71,7 +71,8 @@ in
           git
           glow
           jump-to-char
-          mime-ext
+          # Faster, less accurate
+          # mime-ext
           mount
           ouch
           restore
