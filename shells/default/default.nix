@@ -12,6 +12,7 @@ mkShell {
     deadnix
     nh
     statix
+    sops
     (inputs.treefmt-nix.lib.mkWrapper pkgs ../../treefmt.nix)
   ];
 
