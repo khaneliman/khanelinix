@@ -89,6 +89,7 @@ in
 
         aiEnable = true;
         dockerEnable = true;
+        gameEnable = true;
         nixEnable = true;
       };
       music = enabled;
