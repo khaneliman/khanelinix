@@ -31,11 +31,9 @@ in
         duckstation
         emulationstation
         mgba
-        # FIXME: broken nixpkgs
-        # mupen64plus
+        mupen64plus
         nestopia-ue
-        # FIXME: broken nixpkgs
-        # rpcs3
+        rpcs3
         ryujinx
         xemu
       ]
