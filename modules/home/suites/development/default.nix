@@ -58,7 +58,7 @@ in
           # FIXME: build hangs
           (lib.mkIf pkgs.stdenv.hostPlatform.isLinux bruno)
           tree-sitter
-          # FIXME: broken nixpkgs
+          # NOTE: when web ui needed. not cached upstream though
           # (tree-sitter.override {
           #   webUISupport = true;
           # })
