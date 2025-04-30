@@ -88,7 +88,7 @@ in
           # godot_4
           # NOTE: removed from nixpkgs
           # ue4
-          unityhub
+          (lib.mkIf pkgs.stdenv.hostPlatform.isLinux unityhub)
         ]
         ++ lib.optionals cfg.sqlEnable [
           dbeaver-bin
