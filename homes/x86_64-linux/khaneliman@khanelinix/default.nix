@@ -272,34 +272,26 @@ in
   };
 
   # Configure monitors independently and override module default
-  programs.hyprlock.settings.background = lib.mkForce [
-    {
-      monitor = "DP-1";
-      brightness = "0.817200";
-      color = lib.mkDefault "rgba(25, 20, 20, 1.0)";
-      # path = "screenshot";
-      path = "${pkgs.${namespace}.wallpapers}/share/wallpapers/cat_pacman.png";
-      blur_passes = 3;
-      blur_size = 8;
-      contrast = "0.891700";
-      noise = "0.011700";
-      vibrancy = "0.168600";
-      vibrancy_darkness = "0.050000";
-    }
-    {
-      monitor = "DP-3";
-      brightness = "0.817200";
-      color = lib.mkDefault "rgba(25, 20, 20, 1.0)";
-      # path = "screenshot";
-      path = "${pkgs.${namespace}.wallpapers}/share/wallpapers/tetris.png";
-      blur_passes = 3;
-      blur_size = 8;
-      contrast = "0.891700";
-      noise = "0.011700";
-      vibrancy = "0.168600";
-      vibrancy_darkness = "0.050000";
-    }
-  ];
+  programs.hyprlock.settings.background = lib.mkForce (
+    let
+      mkBackground = monitor: wallpaper: {
+        inherit monitor;
+        brightness = "0.817200";
+        color = lib.mkDefault "rgba(25, 20, 20, 1.0)";
+        path = "${pkgs.${namespace}.wallpapers}/share/wallpapers/${wallpaper}";
+        blur_passes = 3;
+        blur_size = 8;
+        contrast = "0.891700";
+        noise = "0.011700";
+        vibrancy = "0.168600";
+        vibrancy_darkness = "0.050000";
+      };
+    in
+    [
+      (mkBackground "DP-1" "cat_pacman.png")
+      (mkBackground "DP-3" "tetris.png")
+    ]
+  );
 
   # Neo G9
   xresources.properties."Xft.dpi" = "108";
