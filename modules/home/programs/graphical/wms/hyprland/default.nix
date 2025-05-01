@@ -88,6 +88,7 @@ in
         {
           hl = "cat $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland${lib.optionalString cfg.enableDebug "d"}.log";
           hlc = "cat /home/${config.${namespace}.user.name}/.cache/hyprland/$(command ls -t /home/${config.${namespace}.user.name}/.cache/hyprland/ | grep 'hyprlandCrashReport' | head -n 1)";
+          hlw = ''watch -n 0.1 "grep -v \"arranged\" $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland.log | tail -n 40"'';
         }
         // historicalLogAliases
         // historicalCrashAliases;
