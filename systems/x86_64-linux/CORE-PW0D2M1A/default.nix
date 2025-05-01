@@ -28,10 +28,7 @@ in
       common = enabled;
       development = {
         enable = true;
-        azureEnable = true;
         dockerEnable = true;
-        kubernetesEnable = true;
-        nixEnable = true;
         sqlEnable = true;
       };
     };

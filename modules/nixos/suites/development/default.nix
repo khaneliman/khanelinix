@@ -11,14 +11,9 @@ in
 {
   options.${namespace}.suites.development = {
     enable = lib.mkEnableOption "common development configuration";
-    azureEnable = lib.mkEnableOption "azure development configuration";
-    dockerEnable = lib.mkEnableOption "docker development configuration";
-    gameEnable = lib.mkEnableOption "game development configuration";
-    goEnable = lib.mkEnableOption "go development configuration";
-    kubernetesEnable = lib.mkEnableOption "kubernetes development configuration";
-    nixEnable = lib.mkEnableOption "nix development configuration";
-    sqlEnable = lib.mkEnableOption "sql development configuration";
     aiEnable = lib.mkEnableOption "ai development configuration";
+    dockerEnable = lib.mkEnableOption "docker development configuration";
+    sqlEnable = lib.mkEnableOption "sql development configuration";
   };
 
   config = lib.mkIf cfg.enable {

@@ -131,12 +131,9 @@ in
 
     suites.development = {
       enable = true;
-      dockerEnable = true;
-      gameEnable = true;
-      kubernetesEnable = true;
-      nixEnable = true;
-      sqlEnable = true;
       aiEnable = true;
+      dockerEnable = true;
+      sqlEnable = true;
     };
 
     system = {
