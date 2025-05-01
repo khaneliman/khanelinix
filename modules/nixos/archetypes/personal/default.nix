@@ -23,7 +23,6 @@ in
 
       suites = {
         common = enabled;
-        video = enabled;
       };
     };
   };

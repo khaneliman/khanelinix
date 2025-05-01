@@ -20,7 +20,6 @@ in
       common = enabled;
       desktop = enabled;
       games = enabled;
-      video = enabled;
     };
   };
 }
