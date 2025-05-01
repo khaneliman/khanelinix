@@ -248,7 +248,7 @@ in
             gnome-session
             gnome-keyring
           ]
-          ++ lib.optional config.wayland.windowManager.hyprland.enable hyprland;
+          ++ lib.optional config.wayland.windowManager.hyprland.enable config.wayland.windowManager.hyprland.package;
 
         extraPortals =
           with pkgs;
