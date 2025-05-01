@@ -14,10 +14,12 @@ in
       settings = {
         # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
         windowrule = [
+          #Browsers - Move all Firefox windows to workspace 2 by default
+          "workspace 2, title:.*(Firefox).*$"
           # Secondary Monitor Media
-          "workspace 1, title:^(.*(Twitch|TNTdrama|YouTube|Bally Sports|Video Entertainment|Plex)).*(Firefox).*$" # TODO: Doesnt seem to work even though it says it matches
-          #Browsers
-          "workspace 2, title:^(?!.*(Twitch|TNTdrama|YouTube|Bally Sports|Video Entertainment|Plex)).*(Firefox).*$"
+          # Exception rule to override the above rule - Media sites go to workspace 1
+          "workspace 1, title:.*(Twitch|TNTdrama|YouTube|Bally Sports|Video Entertainment|Plex).*(Firefox).*$" # TODO: Doesnt seem to work even though it says it matches
+
           "workspace special:inactive, title:^(.*(hidden tabs - Workona)).*(Firefox).*$" # TODO: Doesnt seem to work even though it says it matches
           # Code
           "workspace 3, class:^(Code)$"
