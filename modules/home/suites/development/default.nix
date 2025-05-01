@@ -112,6 +112,7 @@ in
         nrlp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-linux aarch64-linux" --num-parallel-evals 2 --post-result'';
         nup = ''nix-update --commit -u $1'';
         num = ''nix-shell maintainers/scripts/update.nix --argstr maintainer $1'';
+        ncs = ''f(){ nix build "nixpkgs#$1" --no-link && nix path-info --recursive --closure-size --human-readable $(nix-build --no-out-link '<nixpkgs>' -A "$1"); }; f'';
         # NOTE: vim-add 'owner/repo'
         vim-add = ''nix run nixpkgs#vimPluginsUpdater add'';
         # NOTE: vim-update 'plugin-name'
