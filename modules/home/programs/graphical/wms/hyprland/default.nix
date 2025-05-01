@@ -15,7 +15,7 @@ let
   historicalLogAliases = builtins.listToAttrs (
     builtins.genList (x: {
       name = "hl${toString (x + 1)}";
-      value = "cat /tmp/hypr/$(command ls -t /tmp/hypr/ | grep -v '\.lock$' | head -n ${toString (x + 2)} | tail -n 1)/hyprland${lib.optionalString cfg.enableDebug "d"}.log";
+      value = "cat $(ls -td $XDG_RUNTIME_DIR/hypr/*/ | sed -n '${toString (x + 2)}p')/hyprland.log 2>/dev/null || echo 'No historical log found at position ${toString (x + 1)}'";
     }) 4
   );
 
