@@ -38,7 +38,7 @@ in
       services = {
         ollama.enable = lib.mkDefault cfg.aiEnable;
         ollama-ui.enable = lib.mkDefault cfg.aiEnable;
-        # FIXME: torch broken upstream
+        # NOTE: 13 GB closure size!!
         # open-webui.enable = lib.mkDefault cfg.aiEnable;
       };
 
