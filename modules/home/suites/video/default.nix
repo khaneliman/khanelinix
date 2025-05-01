@@ -23,6 +23,7 @@ in
         celluloid
         devede
         handbrake
+        kdePackages.k3b
         mediainfo-gui
         plex-media-player
         shotcut
