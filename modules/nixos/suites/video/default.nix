@@ -16,8 +16,7 @@ in
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      # FIXME: broken nixpkgs
-      # kdePackages.k3b
+      kdePackages.k3b
     ];
   };
 }
