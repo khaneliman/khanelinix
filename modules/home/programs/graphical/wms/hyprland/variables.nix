@@ -206,11 +206,11 @@ in
         "$notify-screenshot" = ''${getExe pkgs.libnotify} --icon "$file" "Screenshot Saved"'';
         "$screenshot-path" = "/home/${config.${namespace}.user.name}/Pictures/screenshots";
         "$grimblast_area_file" =
-          ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --freeze --notify save area "$file"'';
+          ''${grimblast} --freeze --notify save area "${screenshot-path}/$(${getDateTime}).png"'';
         "$grimblast_active_file" =
-          ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --notify save active "$file"'';
+          ''${grimblast} --notify save active "${screenshot-path}/$(${getDateTime}).png"'';
         "$grimblast_screen_file" =
-          ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --notify save screen "$file"'';
+          ''${grimblast} --notify save screen "${screenshot-path}/$(${getDateTime}).png"'';
         "$grimblast_area_swappy" = ''${grimblast} --freeze save area - | ${getExe pkgs.swappy} -f -'';
         "$grimblast_active_swappy" = ''${grimblast} save active - | ${getExe pkgs.swappy} -f -'';
         "$grimblast_screen_swappy" = ''${grimblast} save screen - | ${getExe pkgs.swappy} -f -'';
