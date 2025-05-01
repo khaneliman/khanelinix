@@ -22,7 +22,7 @@ let
   historicalCrashAliases = builtins.listToAttrs (
     builtins.genList (x: {
       name = "hlc${toString (x + 1)}";
-      value = "cat /home/${config.${namespace}.user.name}/.local/cache/hyprland/$(command ls -t /home/${config.${namespace}.user.name}/.local/cache/hyprland/ | grep 'hyprlandCrashReport' | head -n ${toString (x + 2)} | tail -n 1)";
+      value = "cat /home/${config.${namespace}.user.name}/.cache/hyprland/$(command ls -t /home/${config.${namespace}.user.name}/.cache/hyprland/ | grep 'hyprlandCrashReport' | head -n ${toString (x + 2)} | tail -n 1)";
     }) 4
   );
 in
@@ -87,7 +87,7 @@ in
       shellAliases =
         {
           hl = "cat $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland${lib.optionalString cfg.enableDebug "d"}.log";
-          hlc = "cat /home/${config.${namespace}.user.name}/.local/cache/hyprland/$(command ls -t /home/${config.${namespace}.user.name}/.local/cache/hyprland/ | grep 'hyprlandCrashReport' | head -n 1)";
+          hlc = "cat /home/${config.${namespace}.user.name}/.cache/hyprland/$(command ls -t /home/${config.${namespace}.user.name}/.cache/hyprland/ | grep 'hyprlandCrashReport' | head -n 1)";
         }
         // historicalLogAliases
         // historicalCrashAliases;
