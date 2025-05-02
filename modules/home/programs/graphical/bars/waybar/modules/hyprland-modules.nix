@@ -100,6 +100,7 @@ in
       "class<libreoffice-draw>" = "󰽉";
       "class<libreoffice-impress>" = "󱎐";
       "class<libreoffice-writer>" = "";
+      "class<libreoffice-startcenter>" = "";
       "class<mGBA>" = "󱎓";
       "class<mediainfo-gui>" = "󱂷";
       "class<melonDS>" = "󱁇";
