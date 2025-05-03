@@ -86,9 +86,8 @@ in
 
     programs.firefox = {
       enable = true;
-      # TODO: Support `-bin` on darwin to fix issues with entitlements
       package =
-        if pkgs.stdenv.hostPlatform.isLinux then pkgs.firefox-devedition else pkgs.firefox-devedition;
+        if pkgs.stdenv.hostPlatform.isLinux then pkgs.firefox-devedition else pkgs.firefox-devedition-bin;
 
       inherit (cfg) policies;
 
