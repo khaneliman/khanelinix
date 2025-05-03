@@ -22,8 +22,9 @@ in
       settings = {
         general = {
           after_sleep_cmd = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms on";
+          before_sleep_cmd = "loginctl lock-session";
           ignore_dbus_inhibit = false;
-          lock_cmd = "${getExe config.programs.hyprlock.package}";
+          lock_cmd = "pgrep hyprlock || ${getExe config.programs.hyprlock.package}";
         };
 
         listener = [
