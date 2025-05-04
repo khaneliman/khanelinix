@@ -45,7 +45,6 @@ in
               catppuccin.catppuccin-vsc
               catppuccin.catppuccin-vsc-icons
               christian-kohler.path-intellisense
-              eamodio.gitlens
               formulahendry.auto-close-tag
               formulahendry.auto-rename-tag
               github.vscode-github-actions
@@ -93,6 +92,7 @@ in
             # Git settings
             "git.allowForcePush" = true;
             "git.autofetch" = true;
+            "git.blame.editorDecoration.enabled" = true;
             "git.confirmSync" = false;
             "git.enableSmartCommit" = true;
             "git.openRepositoryInParentFolders" = "always";
