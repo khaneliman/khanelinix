@@ -103,8 +103,6 @@ in
     programs.thunderbird = {
       enable = true;
       package = pkgs.thunderbird-latest;
-      # yeah, yeah...
-      darwinSetupWarning = false;
 
       profiles.${config.${namespace}.user.name} = {
         isDefault = true;
