@@ -59,8 +59,8 @@ in
   };
 
   config = mkIf cfg.enable {
-    home = mkIf pkgs.stdenv.hostPlatform.isDarwin {
-      activation = {
+    home = {
+      activation = mkIf pkgs.stdenv.hostPlatform.isDarwin {
         defaultbrowser = inputs.home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           echo "Setting default browser"
           ${lib.getExe pkgs.defaultbrowser} firefoxdeveloperedition
@@ -81,7 +81,7 @@ in
             recursive = true;
           };
         };
-      packages = [ pkgs.defaultbrowser ];
+      packages = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin [ pkgs.defaultbrowser ];
     };
 
     programs.firefox = {
