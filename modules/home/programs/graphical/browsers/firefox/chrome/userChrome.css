@@ -663,7 +663,11 @@ scrollbox {
 scrollbox {
   scroll-behavior: smooth;
   overflow-y: auto;
-  font-size: 1.25rem;
+  font-size: 0.8rem;
+}
+
+panelmultiview {
+    font-size: 0.8rem;
 }
 
 .scrollbutton-up[orient="vertical"],
@@ -879,7 +883,7 @@ scrollbar {
   margin-top: 6px !important;
   padding: 10px !important;
   box-shadow: inset 0 12px 11px -5px #00000030 !important;
-
+}
 
 .search-panel-current-engine {
   padding-bottom: 10px !important;
