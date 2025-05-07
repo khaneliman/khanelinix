@@ -49,6 +49,12 @@ in
         style = "auto";
         update_check = false;
         workspaces = true;
+
+        # Filter some commands we don't want to accidentally call from history
+        history_filter = [
+          "^(sudo reboot)$"
+          "^(reboot)$"
+        ];
       };
     };
   };
