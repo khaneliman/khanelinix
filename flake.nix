@@ -68,6 +68,13 @@
         pre-commit-hooks.follows = "git-hooks-nix";
       };
     };
+    hyprland-plugins = {
+      url = "github:hyprwm/hyprland-plugins";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        hyprland.follows = "hyprland";
+      };
+    };
     hypr-socket-watch.url = "github:khaneliman/hypr-socket-watch";
     khanelivim.url = "github:khaneliman/khanelivim";
     # nh.url = "github:nix-community/nh";
