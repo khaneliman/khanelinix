@@ -7,8 +7,7 @@ stdenv.mkDerivation (_finalAttrs: {
   pname = "dynamic-island-helper";
   version = "unstable-2024-02-11";
 
-  buildInputs = with pkgs.darwin.apple_sdk.frameworks; [
-    CoreFoundation
+  buildInputs = [
     pkgs.sqlite
   ];
   src = lib.cleanSource ./.;
