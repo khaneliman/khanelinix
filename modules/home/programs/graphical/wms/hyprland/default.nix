@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   namespace,
@@ -147,8 +148,27 @@ in
 
         inherit (osConfig.programs.hyprland) package;
 
+        plugins = with inputs.hyprland-plugins.packages.${pkgs.system}; [
+          hyprbars
+        ];
+
         settings = {
           exec = [ "${getExe pkgs.libnotify} --icon ~/.face -u normal \"Hello $(whoami)\"" ];
+
+          plugin = {
+            hyprbars = {
+              bar_height = 20;
+              bar_precedence_over_border = true;
+
+              # order is right-to-left
+              hyprbars-button = [
+                # close
+                "rgb(ED8796), 15, , hyprctl dispatch killactive"
+                # maximize
+                "rgb(C6A0F6), 15, , hyprctl dispatch fullscreen 1"
+              ];
+            };
+          };
         };
 
         systemd = {
