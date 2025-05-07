@@ -37,6 +37,7 @@ let
       }
       (lib.mkIf ((osConfig.${namespace}.archetypes ? wsl) && osConfig.${namespace}.archetypes.wsl.enable)
         {
+          plugins.yanky.enable = lib.mkForce false;
           plugins.yanky.settings.ring.permanent_wrapper.__raw =
             ''require("yanky.wrappers").remove_carriage_return'';
 
