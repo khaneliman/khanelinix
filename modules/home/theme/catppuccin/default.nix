@@ -16,6 +16,8 @@ let
 
   inherit (lib.${namespace}) enabled;
 
+  palette = import ./colors.nix;
+
   cfg = config.${namespace}.theme.catppuccin;
 in
 {
@@ -202,6 +204,17 @@ in
         (import ./yazi/filetype.nix)
         (import ./yazi/manager.nix)
         (import ./yazi/theme.nix)
+      ];
+    };
+
+    wayland.windowManager.hyprland.settings.plugin.hyprbars = {
+      bar_color = palette.colors.base.rgb;
+
+      hyprbars-button = lib.mkForce [
+        # close
+        "rgb(ED8796), 15, 󰅖, hyprctl dispatch killactive"
+        # maximize
+        "rgb(C6A0F6), 15, , hyprctl dispatch fullscreen 1"
       ];
     };
 
