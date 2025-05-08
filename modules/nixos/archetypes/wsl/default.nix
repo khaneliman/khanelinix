@@ -30,7 +30,7 @@ in
 
     khanelinix = {
       # Networking handled by host
-      system.networking.enable = mkForce false;
+      system.networking.enable = mkForce (!config.wsl.wslConf.network.generateResolvConf);
       # WSL Doesn't support `oomd`
       services.oomd.enable = mkForce false;
     };
