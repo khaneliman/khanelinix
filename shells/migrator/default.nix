@@ -13,6 +13,7 @@ mkShell {
       typescript
       claude-code
       csharpier
+      csharp-ls
       (
         with dotnetCorePackages;
         combinePackages [
