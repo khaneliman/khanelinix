@@ -17,7 +17,9 @@ in
 
     programs = {
       graphical = {
-        apps = {
+        editors = {
+          # TODO: WSL warns preferring windows VS Code with remote dev
+          vscode.enable = false;
         };
       };
       terminal = {
