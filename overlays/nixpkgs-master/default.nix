@@ -2,6 +2,5 @@
 _final: _prev: {
   inherit (channels.nixpkgs-master)
     yaziPlugins
-    gdevelop
     ;
 }
