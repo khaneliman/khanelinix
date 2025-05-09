@@ -2,6 +2,7 @@
   config,
   lib,
   namespace,
+  pkgs,
   ...
 }:
 let
@@ -15,11 +16,18 @@ in
   };
 
   config = mkIf cfg.enable {
+    programs = {
+      _1password = {
+        enable = true;
+        package = pkgs._1password-cli;
+      };
+      _1password-gui = {
+        enable = true;
+        package = pkgs._1password-gui;
+      };
+    };
+
     homebrew = {
-      taps = [ "1password/tap" ];
-
-      casks = [ "1password" ];
-
       masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
         "1Password for Safari" = 1569813296;
       };
