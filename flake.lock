@@ -866,16 +866,15 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1746757852,
+        "lastModified": 1746758336,
         "narHash": "sha256-HN7R9p94Othop41GXf//vMxoi9HAx42fjySIRDljUVc=",
-        "owner": "khaneliman",
+        "owner": "nix-community",
         "repo": "nh",
-        "rev": "27370e00d66267a70585a3aeffc3f4424f3ab54c",
+        "rev": "28972b6fe193151cd52ed5bc4bb6b91cee21467b",
         "type": "github"
       },
       "original": {
-        "owner": "khaneliman",
-        "ref": "darwin",
+        "owner": "nix-community",
         "repo": "nh",
         "type": "github"
       }
