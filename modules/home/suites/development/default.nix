@@ -85,7 +85,7 @@ in
         ++ lib.optionals cfg.gameEnable (
           [ gdevelop ]
           ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-            godot_4
+            godot
             # NOTE: removed from nixpkgs
             # ue4
             unityhub
