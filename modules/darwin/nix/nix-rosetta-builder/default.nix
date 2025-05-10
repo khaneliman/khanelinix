@@ -20,11 +20,21 @@ in
       default = "8GiB";
       description = "Memory to use for the builder.";
     };
+    speedFactor = lib.mkOption {
+      type = lib.types.int;
+      default = 15;
+      description = "Speed factor for the builder.";
+    };
   };
 
   config = {
     nix-rosetta-builder = {
-      inherit (cfg) enable cores memory;
+      inherit (cfg)
+        enable
+        cores
+        memory
+        speedFactor
+        ;
 
       onDemand = true;
       onDemandLingerMinutes = 30;
