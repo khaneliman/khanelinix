@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   namespace,
   pkgs,
@@ -20,6 +21,9 @@ in
           "${lib.getExe pkgs.${namespace}.record_screen}, screencopy, allow"
           "${lib.getExe config.wayland.windowManager.hyprland.portalPackage}, screencopy, allow"
           "${lib.getExe config.programs.hyprlock.package}, screencopy, allow"
+          "${
+            lib.getLib inputs.hyprland-plugins.packages.${pkgs.system}.hyprbars
+          }/lib/libhyprbars.so, plugin, allow"
         ];
       };
     };
