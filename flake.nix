@@ -24,7 +24,8 @@
     nixpkgs-master.url = "github:NixOS/nixpkgs";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nix-rosetta-builder = {
-      url = "github:cpick/nix-rosetta-builder";
+      # url = "github:cpick/nix-rosetta-builder";
+      url = "github:khaneliman/nix-rosetta-builder/speedfactor";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     snowfall-lib = {

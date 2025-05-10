@@ -923,15 +923,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1745249216,
-        "narHash": "sha256-bNuaIdGrs8LfintWymo9KQTILwVxsw5T6zdfxZY6K0g=",
-        "owner": "cpick",
+        "lastModified": 1746921880,
+        "narHash": "sha256-8YyEuL9QDOmLhnOYZQnFB5XeQKj5LJeuy3QcTX7NzE0=",
+        "owner": "khaneliman",
         "repo": "nix-rosetta-builder",
-        "rev": "5cf6aa1f3f2fbb70443d33b5ef7779b7c7063392",
+        "rev": "94d2ea2da6a600fc97013881d7e0043d375cd5cf",
         "type": "github"
       },
       "original": {
-        "owner": "cpick",
+        "owner": "khaneliman",
+        "ref": "speedfactor",
         "repo": "nix-rosetta-builder",
         "type": "github"
       }
