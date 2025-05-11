@@ -39,7 +39,7 @@ in
           # ░▀░▀░▀░░░▀░░░░░▀▀▀░░▀░░▀░▀░▀░▀░░▀░░▀▀▀░▀░░
 
           # Startup apps that have rules for organizing them
-          map mkStartCommand [
+          (map mkStartCommand [
             "${getExe config.programs.firefox.package}"
             "${getExe pkgs.steam}"
             "${getExe config.programs.vesktop.package}"
@@ -52,7 +52,8 @@ in
             "${getExe pkgs.networkmanagerapplet}"
             "${getExe pkgs.wl-clip-persist} --clipboard both"
             "$(${getExe pkgs.wayvnc} $(${getExe pkgs.tailscale} ip --4))"
-          ];
+          ])
+          ++ lib.optionals osConfig.programs.uwsm.enable [ "uwsm finalize" ];
       };
     };
   };
