@@ -34,6 +34,7 @@ in
       );
 
       pathsToLink = [
+        "/share/icons"
         "/share/zsh" # zsh completions
         "/share/bash-completion" # bash completions
         "/share/nix-direnv" # direnv completions
