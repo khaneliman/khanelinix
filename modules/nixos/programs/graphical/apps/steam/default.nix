@@ -29,7 +29,7 @@ in
       protontricks.enable = true;
       remotePlay.openFirewall = true;
 
-      extraCompatPackages = [ pkgs.proton-ge-bin.steamcompattool ];
+      extraCompatPackages = [ pkgs.proton-ge-bin ];
     };
   };
 }
