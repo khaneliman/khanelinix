@@ -78,7 +78,7 @@
     };
     hypr-socket-watch.url = "github:khaneliman/hypr-socket-watch";
     khanelivim.url = "github:khaneliman/khanelivim";
-    nh.url = "github:nix-community/nh";
+    nh.url = "github:nix-community/nh/28972b6fe193151cd52ed5bc4bb6b91cee21467b";
     nix-flatpak.url = "github:gmodena/nix-flatpak/latest";
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
