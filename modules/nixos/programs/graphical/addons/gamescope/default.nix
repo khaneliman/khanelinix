@@ -6,8 +6,6 @@
   ...
 }:
 let
-  inherit (lib) getExe mkIf;
-
   cfg = config.${namespace}.programs.graphical.addons.gamescope;
 in
 {
@@ -15,17 +13,19 @@ in
     enable = lib.mkEnableOption "gamescope";
   };
 
-  config = mkIf cfg.enable {
-    programs.gamescope = {
-      enable = true;
-      package = pkgs.gamescope;
-    };
+  config = lib.mkIf cfg.enable {
+    programs = {
+      gamescope = {
+        enable = true;
+        package = pkgs.gamescope;
 
-    security.wrappers.gamescope = {
-      owner = "root";
-      group = "root";
-      source = "${getExe config.programs.gamescope.package}";
-      capabilities = "cap_sys_ptrace,cap_sys_nice+pie";
+        capSysNice = true;
+        args = [
+          "--rt"
+          "--expose-wayland"
+        ];
+      };
+      steam.gamescopeSession.enable = true;
     };
   };
 }
