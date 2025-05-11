@@ -14,6 +14,9 @@ in
       settings = {
         # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
         windowrule = [
+          # Don't render `hyprbars` on tiling windows.
+          "plugin:hyprbars:nobar, floating:0"
+
           "float, class:Rofi"
           "float, class:viewnior"
           "float, class:feh"
