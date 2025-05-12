@@ -60,9 +60,15 @@ in
           "fullscreen, class:^(steam_app_0)$, title:^(World of Warcraft)$"
 
           # Workspace 8 (VM) layout
+          # Pin small machine selection to right
           "size 1000 1330, class:^(virt-manager)$, title:^(Virtual Machine Manager)$"
           "float, class:^(virt-manager)$, title:^(Virtual Machine Manager)$"
           "move 80% 6%, class:^(virt-manager)$, title:^(Virtual Machine Manager)$"
+          "size 800 1320, class:^(selfservice)$"
+          "float, class:^(selfservice)$,"
+          "move 80% 6%, class:^(selfservice)$"
+
+          # Size to fill rest of display
           "float, class:^(looking-glass-client)$"
           "size 2360 1330, class:^(looking-glass-client)$"
           "move 25% 6%, class:^(looking-glass-client)$"
@@ -72,6 +78,11 @@ in
           "float,  class:^(qemu)$"
           "size 2360 1330, class:^(qemu)$"
           "move 25% 6%, class:^(qemu)$"
+          "float, class:^(Wfica)$,title:^(VT0-IT-47-D000).*"
+          "size 4240 1320, class:^(Wfica)$,title:^(VT0-IT-47-D000).*"
+          "move 20 8%, class:^(Wfica)$,title:^(VT0-IT-47-D000).*"
+          # Always tries to maximize immediately...
+          "suppressevent fullscreen, class:^(Wfica)$,title:^(VT0-IT-47-D000).*"
 
           # make Firefox PiP window floating and sticky
           "float, title:^(Picture-in-Picture)$"
