@@ -64,9 +64,9 @@ in
           "size 1000 1330, class:^(virt-manager)$, title:^(Virtual Machine Manager)$"
           "float, class:^(virt-manager)$, title:^(Virtual Machine Manager)$"
           "move 80% 6%, class:^(virt-manager)$, title:^(Virtual Machine Manager)$"
-          "size 800 1320, class:^(selfservice)$"
           "float, class:^(selfservice)$,"
-          "move 80% 6%, class:^(selfservice)$"
+          "size 800 90%, class:^(selfservice)$"
+          "move 100%-w-20 8%, class:^(selfservice)$"
 
           # Size to fill rest of display
           "float, class:^(looking-glass-client)$"
@@ -79,7 +79,7 @@ in
           "size 2360 1330, class:^(qemu)$"
           "move 25% 6%, class:^(qemu)$"
           "float, class:^(Wfica)$,title:^(VT0-IT-47-D000).*"
-          "size 4240 1320, class:^(Wfica)$,title:^(VT0-IT-47-D000).*"
+          "size 90% 90%, class:^(Wfica)$,title:^(VT0-IT-47-D000).*"
           "move 20 8%, class:^(Wfica)$,title:^(VT0-IT-47-D000).*"
           # Always tries to maximize immediately...
           "suppressevent fullscreen, class:^(Wfica)$,title:^(VT0-IT-47-D000).*"
