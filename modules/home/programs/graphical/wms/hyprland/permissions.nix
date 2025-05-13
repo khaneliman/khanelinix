@@ -24,6 +24,9 @@ in
           "${
             lib.getLib inputs.hyprland-plugins.packages.${pkgs.system}.hyprbars
           }/lib/libhyprbars.so, plugin, allow"
+          "${
+            lib.getLib inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
+          }/lib/libhyprexpo.so, plugin, allow"
         ];
       };
     };

@@ -150,6 +150,7 @@ in
 
         plugins = with inputs.hyprland-plugins.packages.${pkgs.system}; [
           hyprbars
+          hyprexpo
         ];
 
         settings = {
@@ -167,6 +168,12 @@ in
                 # maximize
                 "rgb(C6A0F6), 15, , hyprctl dispatch fullscreen 1"
               ];
+            };
+
+            hyprexpo = {
+              columns = 3;
+              gap_size = 4;
+              bg_col = "rgb(000000)";
             };
           };
         };
