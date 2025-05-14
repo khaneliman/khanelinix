@@ -8,7 +8,9 @@ mkShell {
   packages =
     with pkgs;
     [
+      bun
       nodejs_22
+      eslint_d
       typescript-language-server
       typescript
       claude-code
