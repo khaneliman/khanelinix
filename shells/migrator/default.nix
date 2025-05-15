@@ -19,9 +19,6 @@ mkShell {
       (
         with dotnetCorePackages;
         combinePackages [
-          dotnet-aspnetcore_9
-          dotnet-runtime_9
-          dotnet-sdk_9
           dotnet-aspnetcore_8
           dotnet-runtime_8
           dotnet-sdk_8
