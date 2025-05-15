@@ -9,7 +9,7 @@ mkShell {
     with pkgs;
     [
       bun
-      nodejs_22
+      nodejs_20
       eslint_d
       typescript-language-server
       typescript
