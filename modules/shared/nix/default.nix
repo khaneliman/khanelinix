@@ -239,10 +239,13 @@ in
           allowed-users = users;
           auto-optimise-store = pkgs.stdenv.hostPlatform.isLinux;
           builders-use-substitutes = true;
-          # TODO: pipe-operators throws annoying warnings
           experimental-features = [
             "nix-command"
-            "flakes "
+            "flakes"
+            "ca-derivations"
+            "auto-allocate-uids"
+            "pipe-operators"
+            "dynamic-derivations"
           ];
           flake-registry = "/etc/nix/registry.json";
           http-connections = 50;
