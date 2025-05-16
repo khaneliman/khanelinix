@@ -236,6 +236,7 @@ in
         registry = mappedRegistry;
 
         settings = {
+          auto-allocate-uids = true;
           allowed-users = users;
           auto-optimise-store = pkgs.stdenv.hostPlatform.isLinux;
           builders-use-substitutes = true;
@@ -254,6 +255,7 @@ in
           keep-going = true;
           keep-outputs = true;
           log-lines = 50;
+          preallocate-contents = true;
           sandbox = true;
           trusted-users = users;
           warn-dirty = false;
