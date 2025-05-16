@@ -44,6 +44,7 @@ in
       };
 
       settings = {
+        auto-allocate-uids = true;
         # bail early on missing cache hits
         connect-timeout = 5;
         experimental-features = [ "cgroups" ];
