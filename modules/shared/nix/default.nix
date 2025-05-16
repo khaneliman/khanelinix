@@ -254,6 +254,10 @@ in
           trusted-users = users;
           warn-dirty = false;
 
+          allowed-impure-host-deps = [
+            "/bin/sh"
+          ];
+
           substituters = [
             "https://cache.nixos.org"
             "https://khanelinix.cachix.org"
