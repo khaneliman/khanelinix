@@ -33,11 +33,23 @@ in
           '') cfg
       );
 
+      extraOutputsToInstall = [
+        "bin"
+        "dev"
+        "doc"
+        "include"
+        "info"
+        "share"
+      ];
+
       pathsToLink = [
-        "/share/icons"
-        "/share/zsh" # zsh completions
-        "/share/bash-completion" # bash completions
-        "/share/nix-direnv" # direnv completions
+        "/bin"
+        "/doc"
+        "/etc"
+        "/info"
+        "/share"
+        "/share/doc"
+        "/usr/bin"
       ];
 
       variables =
