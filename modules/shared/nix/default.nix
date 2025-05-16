@@ -239,6 +239,7 @@ in
           allowed-users = users;
           auto-optimise-store = pkgs.stdenv.hostPlatform.isLinux;
           builders-use-substitutes = true;
+          download-buffer-size = 500000000;
           experimental-features = [
             "nix-command"
             "flakes"
