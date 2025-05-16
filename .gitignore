@@ -43,3 +43,5 @@ result
 flake
 .pre-commit-config.yaml
 .venv
+
+**/.claude/settings.local.json
