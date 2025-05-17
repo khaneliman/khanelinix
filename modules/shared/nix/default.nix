@@ -268,6 +268,7 @@ in
             "/dev/zero"
             "/usr/bin/ditto"
             "/usr/lib/libSystem.B.dylib"
+            "/usr/lib/libc.dylib"
             "/usr/lib/system/libunc.dylib"
           ];
 
