@@ -21,7 +21,6 @@ in
       enable = true;
 
       packages = with pkgs; [
-        dconf
         gcr
       ];
 
