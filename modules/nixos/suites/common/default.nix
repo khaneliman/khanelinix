@@ -23,6 +23,7 @@ in
         dnsutils
         fortune
         isd
+        lazyjournal
         lolcat
         lshw
         pciutils
