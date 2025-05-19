@@ -46,6 +46,7 @@ in
         # smassh
         toilet
         tree
+        wikiman
         # Visualize nix store
         nix-du
         graphviz
