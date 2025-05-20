@@ -96,6 +96,8 @@ in
         };
 
         extraConfig = {
+          branch.sort = "-committerdate";
+
           credential = {
             helper =
               lib.optionalString cfg.wslAgentBridge cfg.wslGitCredentialManagerPath
@@ -146,6 +148,7 @@ in
             directory = [
               "~/${namespace}/"
               "/etc/nixos"
+              "/etc/nix-darwin"
             ];
           };
         };
