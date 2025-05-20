@@ -61,6 +61,7 @@ in
       gitflow
       gitleaks
       gitlint
+      tig
     ];
 
     programs = {
