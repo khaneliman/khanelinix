@@ -73,6 +73,7 @@ in
       enable = true;
 
       addKeysToAgent = "yes";
+      forwardAgent = true;
       matchBlocks = other-hosts-config;
 
       extraConfig =
