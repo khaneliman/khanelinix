@@ -94,7 +94,10 @@ in
       networking = enabled;
     };
 
-    theme.catppuccin = enabled;
+    theme = {
+      catppuccin = enabled;
+      stylix = enabled;
+    };
   };
 
   home.stateVersion = "24.11";

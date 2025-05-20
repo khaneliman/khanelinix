@@ -12,7 +12,7 @@ in
     ./disks.nix
     ./hardware.nix
     ./network.nix
-    ./specializations.nix
+    # ./specializations.nix
   ];
 
   khanelinix = {
@@ -104,6 +104,12 @@ in
       };
       realtime = enabled;
       time = enabled;
+    };
+
+    theme = {
+      # gtk = enabled;
+      # qt = enabled;
+      stylix = enabled;
     };
 
     user.name = "bruddy";
