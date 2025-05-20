@@ -108,6 +108,7 @@ in
             {
               "accessibility.typeaheadfind.enablesound" = false;
               "accessibility.typeaheadfind.flashBar" = 0;
+
               "browser.aboutConfig.showWarning" = false;
               "browser.aboutwelcome.enabled" = false;
               "browser.bookmarks.autoExportHTML" = true;
@@ -126,6 +127,7 @@ in
               "browser.startup.page" = 3;
               "browser.urlbar.keepPanelOpenDuringImeComposition" = true;
               "browser.urlbar.suggest.quicksuggest.sponsored" = false;
+
               "devtools.chrome.enabled" = true;
               "devtools.debugger.remote-enabled" = true;
               "dom.forms.autocomplete.formautofill" = true;
@@ -133,30 +135,93 @@ in
               "extensions.formautofill.addresses.enabled" = false;
               "extensions.formautofill.creditCards.enabled" = false;
               "extensions.htmlaboutaddons.recommendations.enabled" = false;
+
               "font.name.monospace.x-western" =
                 if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton" else "MonaspaceKrypton";
               "font.name.sans-serif.x-western" =
                 if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon" else "MonaspaceNeon";
               "font.name.serif.x-western" =
                 if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon" else "MonaspaceNeon";
+
               "general.autoScroll" = false;
               "general.smoothScroll.msdPhysics.enabled" = true;
               "geo.enabled" = false;
               "geo.provider.use_corelocation" = false;
               "geo.provider.use_geoclue" = false;
               "geo.provider.use_gpsd" = false;
+
               "gfx.font_rendering.cleartype_params.enhanced_contrast" = 25;
               "gfx.font_rendering.cleartype_params.force_gdi_classic_for_families" = "";
               "gfx.font_rendering.directwrite.bold_simulation" = 2;
+
               "intl.accept_languages" = "en-US,en";
               "media.eme.enabled" = true;
               "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
+
               "signon.autofillForms" = false;
               "signon.firefoxRelay.feature" = "disabled";
               "signon.generation.enabled" = false;
               "signon.management.page.breach-alerts.enabled" = false;
+
               "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
               "xpinstall.signatures.required" = false;
+
+              "browser.startup.homepage" = "about:blank";
+              "browser.newtab.url" = "about:blank";
+              "browser.ctrlTab.sortByRecentlyUsed" = false;
+              "browser.tabs.closeWindowWithLastTab" = true;
+              "browser.tabs.tabmanager.enabled" = true;
+
+              "browser.download.start_downloads_in_tmp_dir" = true;
+              # "browser.download.folderList" = 2; # use the last dir
+              "browser.download.useDownloadDir" = true;
+              "browser.download.dir" = "~/Downloads";
+
+              "media.block-autoplay-until-in-foreground" = true;
+              "media.block-play-until-document-interaction" = true;
+              "media.block-play-until-visible" = true;
+
+              "privacy.clearOnShutdown.history" = false;
+              "privacy.donottrackheader.enabled" = true;
+              "privacy.trackingprotection.enabled" = true;
+              "privacy.trackingprotection.socialtracking.enabled" = true;
+              "device.sensors.enabled" = false;
+              # Bluetooth location tracking
+              "beacon.enabled" = false;
+
+              "browser.send_pings" = false;
+              "toolkit.telemetry.archive.enabled" = false;
+              "toolkit.telemetry.enabled" = false;
+              "toolkit.telemetry.server" = "";
+              "toolkit.telemetry.unified" = false;
+              "extensions.webcompat-reporter.enabled" = false;
+              "datareporting.policy.dataSubmissionEnabled" = false;
+              "datareporting.healthreport.uploadEnabled" = false;
+              "browser.ping-centre.telemetry" = false;
+              "browser.urlbar.eventTelemetry.enabled" = false;
+              "browser.tabs.crashReporting.sendReport" = false;
+
+              "app.normandy.enabled" = false;
+              "app.shield.optoutstudies.enabled" = false;
+
+              "extensions.pocket.enabled" = false;
+              "browser.vpn_promo.enabled" = false;
+              "extensions.abuseReport.enabled" = false;
+
+              # Firefox login
+              # "identity.fxaccounts.enabled" = false;
+              # "identity.fxaccounts.toolbar.enabled" = false;
+              # "identity.fxaccounts.pairing.enabled" = false;
+              # "identity.fxaccounts.commands.enabled" = false;
+
+              # Firefox password manager
+              "browser.contentblocking.report.lockwise.enabled" = false;
+              "browser.uitour.enabled" = false;
+
+              "dom.push.enabled" = false;
+              "dom.push.connection.enabled" = false;
+              "dom.battery.enabled" = false;
+              "dom.private-attribution.submission.enabled" = false;
             }
             (optionalAttrs cfg.gpuAcceleration {
               "dom.webgpu.enabled" = true;
