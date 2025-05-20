@@ -154,11 +154,14 @@ in
         };
 
         hooks = {
-          prepare-commit-msg = pkgs.writeShellScriptBin "prepare-commit-msg" ''
-            ${lib.getExe config.programs.git.package} interpret-trailers --if-exists doNothing --trailer \
-              "Signed-off-by: ${cfg.userName} <${cfg.userEmail}>" \
-              --in-place "$1"
-          '';
+          prepare-commit-msg = lib.getExe (
+            pkgs.writeShellScriptBin "prepare-commit-msg" ''
+              echo "Signing off commit"
+              ${lib.getExe config.programs.git.package} interpret-trailers --if-exists doNothing --trailer \
+                "Signed-off-by: ${cfg.userName} <${cfg.userEmail}>" \
+                --in-place "$1"
+            ''
+          );
         };
 
         signing = {
