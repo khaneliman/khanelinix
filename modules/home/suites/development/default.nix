@@ -81,6 +81,7 @@ in
           nixpkgs-hammering
           nixpkgs-lint-community
           nixpkgs-review
+          nurl
         ]
         ++ lib.optionals cfg.gameEnable (
           [ gdevelop ]
