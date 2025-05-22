@@ -825,17 +825,16 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1746758336,
-        "narHash": "sha256-HN7R9p94Othop41GXf//vMxoi9HAx42fjySIRDljUVc=",
+        "lastModified": 1747915809,
+        "narHash": "sha256-9Uagdr3AxISQVNr+OKt7Yyrlc7n/u+xqsw0A5qQ6VXA=",
         "owner": "nix-community",
         "repo": "nh",
-        "rev": "28972b6fe193151cd52ed5bc4bb6b91cee21467b",
+        "rev": "54b878f75cd393597ca7275d516179c04f2caa2e",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
         "repo": "nh",
-        "rev": "28972b6fe193151cd52ed5bc4bb6b91cee21467b",
         "type": "github"
       }
     },
