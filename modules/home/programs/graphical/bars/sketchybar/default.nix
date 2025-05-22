@@ -49,7 +49,7 @@ in
 
             -- Add the sketchybar module to the package cpath (the module could be
             -- installed into the default search path then this would not be needed)
-            package.cpath = package.cpath .. ";${pkgs.khanelinix.sbarlua}/lib/lua/${pkgs.lua.luaversion}/sketchybar.so"
+            package.cpath = package.cpath .. ";${pkgs.lua54Packages.getLuaCPath pkgs.khanelinix.sbarlua}"
 
             Sbar = require("sketchybar")
             Sbar.exec("killall sketchyhelper || sketchyhelper git.felix.sketchyhelper >/dev/null 2>&1 &")

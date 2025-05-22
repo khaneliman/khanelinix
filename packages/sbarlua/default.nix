@@ -1,15 +1,13 @@
 {
-  clang,
+  lib,
   fetchFromGitHub,
   gcc,
+  lua54Packages,
   readline,
-  lua,
 }:
-lua.stdenv.mkDerivation rec {
-  pname = "SBarLua";
+lua54Packages.buildLuaPackage {
+  pname = "sbarLua";
   version = "0-unstable-2024-08-12";
-
-  name = "lua${lua.luaversion}-" + pname + "-" + version;
 
   src = fetchFromGitHub {
     owner = "FelixKratz";
@@ -18,24 +16,17 @@ lua.stdenv.mkDerivation rec {
     hash = "sha256-F0UfNxHM389GhiPQ6/GFbeKQq5EvpiqQdvyf7ygzkPg=";
   };
 
-  nativeBuildInputs = [
-    clang
-    gcc
-  ];
+  nativeBuildInputs = [ gcc ];
 
   buildInputs = [ readline ];
 
-  propagatedBuildInputs = [ lua ];
+  makeFlags = [ "INSTALL_DIR=$(out)/lib/lua/${lua54Packages.lua.luaversion}" ];
 
-  makeFlags = [
-    "PREFIX=$(out)"
-    "LUA_INC=-I${lua}/include"
-    "LUA_LIBDIR=$(out)/lib/lua/${lua.luaversion}"
-    "LUA_VERSION=${lua.luaversion}"
-  ];
-
-  installPhase = ''
-    mkdir -p $out/lib/lua/${lua.luaversion}/
-    cp -r bin/* "$out/lib/lua/${lua.luaversion}/"
-  '';
+  meta = {
+    description = "Lua API for SketchyBar";
+    homepage = "https://github.com/FelixKratz/SbarLua/";
+    maintainers = [ lib.maintainers.khaneliman ];
+    license = lib.licenses.gpl3;
+    platforms = lib.platforms.darwin;
+  };
 }
