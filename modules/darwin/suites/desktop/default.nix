@@ -31,10 +31,6 @@ in
     ];
 
     ${namespace}.desktop = {
-      bars = {
-        sketchybar = mkDefault enabled;
-      };
-
       wms = {
         yabai = mkDefault enabled;
       };
