@@ -126,7 +126,7 @@ in
         # Home-Manager
         hmd = ''nix build -L .#docs-html && ${
           if pkgs.stdenv.hostPlatform.isDarwin then
-            "open -a /Applications/Firefox\\ Developer\\ Edition.app"
+            "open -a ${config.programs.firefox.package}/Applications/Firefox\\ Developer\\ Edition.app"
           else
             lib.getExe config.programs.firefox.package
         } result/share/doc/home-manager/index.xhtml'';
