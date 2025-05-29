@@ -2,7 +2,7 @@
 mkShell {
   packages = with pkgs; [
     nodePackages."@angular/cli"
-    nodejs-18_x
+    nodejs_20
     pnpm
     vimPlugins.nvim-treesitter-parsers.angular
     vscode-extensions.angular.ng-template
