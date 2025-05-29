@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   lib,
   pkgs,
   namespace,
@@ -148,7 +147,7 @@ in
 
         inherit (osConfig.programs.hyprland) package;
 
-        plugins = with inputs.hyprland-plugins.packages.${pkgs.system}; [
+        plugins = with pkgs.hyprlandPlugins; [
           hyprbars
           hyprexpo
         ];

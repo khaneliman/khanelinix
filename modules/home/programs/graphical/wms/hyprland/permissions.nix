@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   lib,
   namespace,
   pkgs,
@@ -21,12 +20,8 @@ in
           "${lib.getExe pkgs.${namespace}.record_screen}, screencopy, allow"
           "${config.wayland.windowManager.hyprland.portalPackage}/libexec/.xdg-desktop-portal-hyprland-wrapped, screencopy, allow"
           "${lib.getExe config.programs.hyprlock.package}, screencopy, allow"
-          "${
-            lib.getLib inputs.hyprland-plugins.packages.${pkgs.system}.hyprbars
-          }/lib/libhyprbars.so, plugin, allow"
-          "${
-            lib.getLib inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
-          }/lib/libhyprexpo.so, plugin, allow"
+          "${lib.getLib pkgs.hyprlandPlugins.hyprbars}/lib/libhyprbars.so, plugin, allow"
+          "${lib.getLib pkgs.hyprlandPlugins.hyprexpo}/lib/libhyprexpo.so, plugin, allow"
         ];
       };
     };
