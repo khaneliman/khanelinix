@@ -2,6 +2,7 @@
   config,
   lib,
   namespace,
+  pkgs,
   ...
 }:
 let
@@ -18,6 +19,7 @@ in
 
     programs.chromium = {
       enable = true;
+      package = mkIf pkgs.stdenv.hostPlatform.isDarwin null;
 
       # extensions = with pkgs.chromium-extensions; [
       #   catppuccin.catppuccin-vsc
