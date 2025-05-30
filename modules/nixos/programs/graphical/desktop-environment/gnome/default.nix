@@ -299,7 +299,7 @@ in
     # Required for app indicators
     services = {
       udev.packages = with pkgs; [ gnome-settings-daemon ];
-      xserver.desktopManager.gnome.enable = true;
+      desktopManager.gnome.enable = true;
     };
 
     systemd = {
