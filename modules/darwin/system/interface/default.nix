@@ -200,7 +200,7 @@ in
         NSAutomaticQuoteSubstitutionEnabled = false;
         NSAutomaticSpellingCorrectionEnabled = false;
         NSAutomaticWindowAnimationsEnabled = false;
-        _HIHideMenuBar = config.services.sketchybar.enable;
+        _HIHideMenuBar = hmCfg.programs.sketchybar.enable;
       };
 
       screencapture = {
