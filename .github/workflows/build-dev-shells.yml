@@ -41,7 +41,7 @@ jobs:
             experimental-features = nix-command flakes
             system = ${{ matrix.system }}
       - name: Setup Cachix
-        uses: cachix/cachix-action@v15
+        uses: cachix/cachix-action@v16
         with:
           name: khanelinix
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
