@@ -36,22 +36,16 @@ in
       );
 
     services = {
-      libinput.enable = true;
       displayManager = {
         inherit (cfg) defaultSession;
+        gdm = {
+          inherit (cfg) enable wayland autoSuspend;
+        };
         #FIXME: wtf
         sddm.enable = lib.mkForce false;
       };
-
-      xserver = {
-        enable = true;
-
-        displayManager = {
-          gdm = {
-            inherit (cfg) enable wayland autoSuspend;
-          };
-        };
-      };
+      libinput.enable = true;
+      xserver.enable = true;
     };
 
     system.activationScripts.postInstallGdm =
