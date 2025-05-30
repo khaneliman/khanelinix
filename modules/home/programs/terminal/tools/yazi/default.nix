@@ -95,7 +95,7 @@ in
             enabled = false;
           };
 
-          manager = {
+          mgr = {
             ratio = [
               1
               3

@@ -1,5 +1,5 @@
 {
-  manager =
+  mgr =
     let
       catppuccin = import ../colors.nix;
     in

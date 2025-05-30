@@ -20,7 +20,7 @@ let
   operation = import ./manager/operation.nix { inherit config lib; };
 in
 {
-  manager = {
+  mgr = {
     prepend_keymap =
       [
         {
