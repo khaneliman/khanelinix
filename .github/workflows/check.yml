@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Check Nix flake inputs
-        uses: DeterminateSystems/flake-checker-action@v9
+        uses: DeterminateSystems/flake-checker-action@v10
     # - uses: cachix/install-nix-action@v23
     #   with:
     #     install_url: https://nixos.org/nix/install
