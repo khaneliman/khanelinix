@@ -66,21 +66,6 @@ in
           ${lib.getExe pkgs.defaultbrowser} firefoxdeveloperedition
         '';
       };
-      file =
-        let
-          firefoxPath =
-            if pkgs.stdenv.hostPlatform.isLinux then
-              ".mozilla/firefox/${config.${namespace}.user.name}"
-            else
-              "/Users/${config.${namespace}.user.name}/Library/Application Support/Firefox/Profiles/${config.${namespace}.user.name}";
-        in
-        {
-          "${firefoxPath}/chrome/img" = {
-            source = lib.cleanSourceWith { src = lib.cleanSource ./chrome/img/.; };
-
-            recursive = true;
-          };
-        };
       packages = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin [ pkgs.defaultbrowser ];
     };
 
@@ -222,6 +207,11 @@ in
               "dom.push.connection.enabled" = false;
               "dom.battery.enabled" = false;
               "dom.private-attribution.submission.enabled" = false;
+
+              # Sidebar
+              "sidebar.revamp" = true;
+              "sidebar.verticalTabs" = true;
+              "sidebar.visibility" = "expand-on-hover";
             }
             (optionalAttrs cfg.gpuAcceleration {
               "dom.webgpu.enabled" = true;
@@ -236,8 +226,8 @@ in
             })
           ];
 
-          # TODO: support alternative theme loading
-          userChrome = ./chrome/userChrome.css;
+          # TODO: update for new firefox version
+          # userChrome = ./chrome/userChrome.css;
         };
       };
     };
