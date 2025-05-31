@@ -54,6 +54,7 @@ in
           			        {type = "string", custom = false, name = "tab_path", params = { trimmed = false, max_length=24, trim_length=10 }},
           			},
           			section_c = {
+                                        {type = "coloreds", custom = false, name = "githead"},
           			}
           		},
           		right = {
@@ -96,6 +97,12 @@ in
           		}
           	},
           })
+        ''
+    +
+      lib.optionalString
+        (lib.hasAttr "yatline" enabledPlugins && lib.hasAttr "yatline-githead" enabledPlugins) # Lua
+        ''
+          require("yatline-githead"):setup()
         ''
     +
       lib.optionalString (!lib.hasAttr "yatline" enabledPlugins) # Lua

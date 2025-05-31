@@ -81,6 +81,7 @@ in
           sudo
           toggle-pane
           yatline
+          yatline-githead
           yatline-catppuccin
           ;
       };
