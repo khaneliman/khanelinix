@@ -25,7 +25,6 @@ in
         onepassword-password-manager
         react-devtools
         reduxdevtools
-        sidebery
         sponsorblock
         stylus
         ublock-origin
