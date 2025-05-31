@@ -68,9 +68,9 @@ in
     xdg.configFile = {
       "dynamic-island-sketchybar" = {
         source = lib.cleanSourceWith { src = lib.cleanSource ./dynamic-island-sketchybar/.; };
-
         recursive = true;
       };
+      "sketchybar/app_icons.lua".source = "${pkgs.sketchybar-app-font}/lib/sketchybar-app-font/icon_map.lua";
     };
   };
 }
