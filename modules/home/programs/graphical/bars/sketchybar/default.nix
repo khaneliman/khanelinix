@@ -71,6 +71,8 @@ in
 
         recursive = true;
       };
+      "sketchybar/icon_map.lua".source =
+        "${pkgs.sketchybar-app-font}/lib/sketchybar-app-font/icon_map.lua";
     };
   };
 }
