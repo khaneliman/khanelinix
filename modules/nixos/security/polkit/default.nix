@@ -20,6 +20,12 @@ in
         kdePackages.polkit-kde-agent
       ];
 
+    # Create directories to suppress polkit warnings
+    systemd.tmpfiles.rules = [
+      "d /etc/polkit-1/actions 0755 root root -"
+      "d /run/polkit-1/actions 0755 root root -"
+      "d /usr/local/share/polkit-1/actions 0755 root root -"
+    ];
     security.polkit = {
       enable = true;
       debug = lib.mkDefault true;
