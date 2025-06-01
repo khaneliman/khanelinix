@@ -16,6 +16,10 @@ in
   config = lib.mkIf cfg.enable {
     security.pam = {
       sshAgentAuth.enable = true;
+      services = {
+        # Only enable gnome-keyring for display manager login to avoid conflicts
+        sddm.enableGnomeKeyring = true;
+      };
       loginLimits = [
         {
           domain = "*";
