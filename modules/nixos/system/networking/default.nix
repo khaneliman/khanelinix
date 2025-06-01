@@ -40,6 +40,12 @@ in
         ++ lib.optionals cfg.optimizeTcp [
           "tls"
           "tcp_bbr"
+        ]
+        ++ [
+          # Netfilter modules for connection tracking
+          "nf_conntrack"
+          "nf_conntrack_ftp"
+          "nf_conntrack_netlink"
         ];
 
       kernel.sysctl = {
