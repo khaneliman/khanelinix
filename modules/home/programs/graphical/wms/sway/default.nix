@@ -55,7 +55,6 @@ in
 
       sessionVariables = {
         CLUTTER_BACKEND = "wayland";
-        GDK_BACKEND = "wayland,x11";
         MOZ_ENABLE_WAYLAND = "1";
         MOZ_USE_XINPUT2 = "1";
         # NOTE: causes gldriverquery crash on wayland

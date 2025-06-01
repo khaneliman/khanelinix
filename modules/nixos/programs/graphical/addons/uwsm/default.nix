@@ -21,7 +21,6 @@ in
       configFile = {
         "uwsm/env".text = ''
           export CLUTTER_BACKEND=wayland
-          export GDK_BACKEND=wayland,x11
           export MOZ_ENABLE_WAYLAND=1
           export MOZ_USE_XINPUT2=1
           export WLR_DRM_NO_ATOMIC=1
