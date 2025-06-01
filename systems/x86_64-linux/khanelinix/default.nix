@@ -166,5 +166,8 @@ in
     rpcbind.enable = true; # needed for NFS
   };
 
+  # Fix rpcbind environment variable warning
+  systemd.services.rpcbind.environment.RPCBIND_OPTIONS = "";
+
   system.stateVersion = "21.11";
 }
