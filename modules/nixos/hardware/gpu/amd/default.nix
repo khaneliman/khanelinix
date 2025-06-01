@@ -18,10 +18,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    boot = {
-      kernelModules = [ "amdgpu" ]; # if loading somehow fails during initrd but the boot continues, try again later
-    };
-
     environment.systemPackages =
       with pkgs;
       [
@@ -71,7 +67,6 @@ in
 
     services.xserver.videoDrivers = lib.mkDefault [
       "modesetting"
-      "amdgpu"
     ];
   };
 }
