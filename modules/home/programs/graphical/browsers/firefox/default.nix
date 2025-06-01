@@ -147,6 +147,7 @@ in
               "signon.firefoxRelay.feature" = "disabled";
               "signon.generation.enabled" = false;
               "signon.management.page.breach-alerts.enabled" = false;
+              "signon.rememberSignons" = false;
 
               "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
               "xpinstall.signatures.required" = false;
