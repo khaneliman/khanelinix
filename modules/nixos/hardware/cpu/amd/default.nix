@@ -17,8 +17,8 @@ in
 
   config = mkIf cfg.enable {
     boot = {
+      blacklistedKernelModules = [ "k10temp" ];
       extraModulePackages = [ config.boot.kernelPackages.zenpower ];
-
       kernelModules = [
         "kvm-amd" # amd virtualization
         "zenpower" # zenpower is for reading cpu info, i.e voltage
