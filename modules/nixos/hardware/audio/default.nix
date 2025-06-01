@@ -37,6 +37,11 @@ in
       user.extraGroups = [ "audio" ];
     };
 
+    # Disable audio power saving to prevent crackling
+    boot.extraModprobeConfig = ''
+      options snd_hda_intel power_save=0
+    '';
+
     security.rtkit.enable = true;
 
     services = {
@@ -47,6 +52,14 @@ in
         jack.enable = true;
         pulse.enable = true;
         wireplumber.enable = true;
+        extraConfig.pipewire."99-low-latency" = {
+          context.properties = {
+            default.clock.rate = 48000;
+            default.clock.quantum = 512;
+            default.clock.min-quantum = 256;
+            default.clock.max-quantum = 8192;
+          };
+        };
       };
       pulseaudio.enable = mkForce false;
     };
