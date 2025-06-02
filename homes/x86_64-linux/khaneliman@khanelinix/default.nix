@@ -111,8 +111,8 @@ in
                 ""
                 (lib.concatStringsSep " " [
                   "exec-once = ${getExe pkgs.xorg.xrandr}"
-                  "--output DP-1 --mode 1920x1080 --pos 1420x0 --rotate normal"
-                  "--output DP-3 --primary --mode 5120x1440 --pos 0x1080 --rotate normal"
+                  "--output DP-3 --mode 1920x1080 --pos 1420x0 --rotate normal"
+                  "--output DP-1 --primary --mode 5120x1440 --pos 0x1080 --rotate normal"
                 ])
                 ""
                 "workspace = 1, monitor:DP-3, persistent:true, default:true"
