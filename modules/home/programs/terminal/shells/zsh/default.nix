@@ -182,10 +182,6 @@ in
             src = pkgs.zsh-command-time;
           })
           {
-            name = "zsh-history-to-fish";
-            src = pkgs.zsh-history-to-fish;
-          }
-          {
             name = "zsh-you-should-use";
             src = pkgs.zsh-you-should-use;
           }
