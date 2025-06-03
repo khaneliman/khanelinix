@@ -176,10 +176,11 @@ in
             file = "share/zsh-better-npm-completion";
             src = pkgs.zsh-better-npm-completion;
           }
-          {
+          (lib.mkIf (!config.programs.oh-my-posh.enable) {
             name = "zsh-command-time";
+            file = "share/zsh/plugins/zsh-command-time/zsh-command-time.plugin.zsh";
             src = pkgs.zsh-command-time;
-          }
+          })
           {
             name = "zsh-history-to-fish";
             src = pkgs.zsh-history-to-fish;
