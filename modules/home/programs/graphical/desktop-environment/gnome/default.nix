@@ -128,29 +128,22 @@ in
                     enable-move-to-workspace-shortcuts = mkBoolOpt true "Enable move to workspace shortcuts";
                   };
                 })
-                {
-                  move-to-workspace-1 = [ "<Shift><Super>1" ];
-                  move-to-workspace-2 = [ "<Shift><Super>2" ];
-                  move-to-workspace-3 = [ "<Shift><Super>3" ];
-                  move-to-workspace-4 = [ "<Shift><Super>4" ];
-                  move-to-workspace-5 = [ "<Shift><Super>5" ];
-                  move-to-workspace-6 = [ "<Shift><Super>6" ];
-                  move-to-workspace-7 = [ "<Shift><Super>7" ];
-                  move-to-workspace-8 = [ "<Shift><Super>8" ];
-                  move-to-workspace-9 = [ "<Shift><Super>9" ];
-                  move-to-workspace-10 = [ "<Shift><Super>0" ];
-
-                  switch-to-application-1 = [ "<Super>1" ];
-                  switch-to-application-2 = [ "<Super>2" ];
-                  switch-to-application-3 = [ "<Super>3" ];
-                  switch-to-application-4 = [ "<Super>4" ];
-                  switch-to-application-5 = [ "<Super>5" ];
-                  switch-to-application-6 = [ "<Super>6" ];
-                  switch-to-application-7 = [ "<Super>7" ];
-                  switch-to-application-8 = [ "<Super>8" ];
-                  switch-to-application-9 = [ "<Super>9" ];
-                  switch-to-application-10 = [ "<Super>0" ];
-                }
+                (
+                  let
+                    workspaceCount = cfg.desktop.wm.preferences.num-workspaces or 10;
+                  in
+                  lib.foldl' (
+                    acc: i:
+                    let
+                      num = if i == 10 then "0" else toString i;
+                    in
+                    acc
+                    // {
+                      "move-to-workspace-${toString i}" = [ "<Shift><Super>${num}" ];
+                      "switch-to-application-${toString i}" = [ "<Super>${num}" ];
+                    }
+                  ) { } (lib.range 1 workspaceCount)
+                )
 
                 "Window manager keybindings";
           };

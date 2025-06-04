@@ -91,7 +91,6 @@ in
           color-scheme = "prefer-dark";
           cursor-size = cfg.cursor.size;
           cursor-theme = cfg.cursor.name;
-          enable-hot-corners = false;
           font-name = "${osConfig.${namespace}.system.fonts.default} ${
             osConfig.${namespace}.system.fonts.size
           }";
