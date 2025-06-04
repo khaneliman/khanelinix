@@ -38,6 +38,8 @@ let
           };
           modules = [
             systemPath
+            # Import namespace definition first
+            ../modules/shared/namespace.nix
             # Import all khanelinix modules
             ../modules/nixos
             inputs.disko.nixosModules.disko
@@ -85,6 +87,8 @@ let
           };
           modules = [
             systemPath
+            # Import namespace definition first
+            ../modules/shared/namespace.nix
             # Import all khanelinix modules
             ../modules/darwin
             inputs.nix-rosetta-builder.darwinModules.default
@@ -142,6 +146,8 @@ let
               };
               modules = [
                 homePath
+                # Import namespace definition first
+                ../modules/shared/namespace.nix
                 # Import all khanelinix modules
                 ../modules/home
                 inputs.catppuccin.homeModules.catppuccin

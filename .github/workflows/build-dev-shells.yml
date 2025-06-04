@@ -49,7 +49,7 @@ jobs:
         id: shells
         run: |
           shells=$(nix flake show --json | jq -r '.devShells."${{ matrix.system }}" | keys[]' | tr '\n' ' ')
-          echo "shells=$shells" >> $GITHUB_OUTPUT
+          echo "shells=${shells}" >> $GITHUB_OUTPUT
       - name: Build and cache dev shells
         run: |
           for shell in ${{ steps.shells.outputs.shells }}; do
