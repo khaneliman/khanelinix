@@ -77,8 +77,8 @@ in
         "net.ipv4.conf.all.log_martians" = true;
         "net.ipv4.conf.default.log_martians" = true;
         "net.ipv4.icmp_echo_ignore_broadcasts" = true;
-        "net.ipv6.conf.default.accept_ra" = 0;
-        "net.ipv6.conf.all.accept_ra" = 0;
+        "net.ipv6.conf.default.accept_ra" = 1;
+        "net.ipv6.conf.all.accept_ra" = 1;
         "net.ipv4.tcp_timestamps" = 0;
 
         # TCP optimization
