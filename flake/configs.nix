@@ -21,24 +21,27 @@ let
         in
         lib.nixosSystem {
           inherit system;
+          lib = lib.extend (
+            _final: _prev: {
+              inherit (self.lib) khanelinix;
+            }
+          );
           specialArgs = {
-            inherit inputs self lib;
+            inherit inputs self;
+            lib = lib.extend (
+              _final: _prev: {
+                inherit (self.lib) khanelinix;
+              }
+            );
             namespace = "khanelinix";
             khanelinix-lib = self.lib.khanelinix;
           };
           modules = [
-            # Module to provide lib.khanelinix
-            {
-              _module.args = {
-                lib = lib.extend (
-                  _final: _prev: {
-                    inherit (self.lib) khanelinix;
-                  }
-                );
-              };
-            }
             systemPath
+            # Import all khanelinix modules
+            ../modules/nixos
             inputs.disko.nixosModules.disko
+            inputs.home-manager.nixosModules.home-manager
             inputs.lanzaboote.nixosModules.lanzaboote
             inputs.nix-flatpak.nixosModules.nix-flatpak
             inputs.sops-nix.nixosModules.sops
@@ -65,23 +68,25 @@ let
         in
         inputs.darwin.lib.darwinSystem {
           inherit system;
+          lib = lib.extend (
+            _final: _prev: {
+              inherit (self.lib) khanelinix;
+            }
+          );
           specialArgs = {
-            inherit inputs self lib;
+            inherit inputs self;
+            lib = lib.extend (
+              _final: _prev: {
+                inherit (self.lib) khanelinix;
+              }
+            );
             namespace = "khanelinix";
             khanelinix-lib = self.lib.khanelinix;
           };
           modules = [
-            # Module to provide lib.khanelinix
-            {
-              _module.args = {
-                lib = lib.extend (
-                  _final: _prev: {
-                    inherit (self.lib) khanelinix;
-                  }
-                );
-              };
-            }
             systemPath
+            # Import all khanelinix modules
+            ../modules/darwin
             inputs.nix-rosetta-builder.darwinModules.default
             inputs.sops-nix.darwinModules.sops
             inputs.stylix.darwinModules.stylix
@@ -116,28 +121,29 @@ let
                 overlays = lib.attrValues self.overlays;
                 config.allowUnfree = true;
               };
+              lib = lib.extend (
+                _final: _prev: {
+                  inherit (self.lib) khanelinix;
+                }
+              );
               extraSpecialArgs = {
                 inherit
                   inputs
                   self
                   system
-                  lib
                   ;
+                lib = lib.extend (
+                  _final: _prev: {
+                    inherit (self.lib) khanelinix;
+                  }
+                );
                 namespace = "khanelinix";
                 khanelinix-lib = self.lib.khanelinix;
               };
               modules = [
-                # Module to provide lib.khanelinix
-                {
-                  _module.args = {
-                    lib = lib.extend (
-                      _final: _prev: {
-                        inherit (self.lib) khanelinix;
-                      }
-                    );
-                  };
-                }
                 homePath
+                # Import all khanelinix modules
+                ../modules/home
                 inputs.catppuccin.homeModules.catppuccin
                 inputs.hypr-socket-watch.homeManagerModules.default
                 inputs.nix-index-database.hmModules.nix-index
