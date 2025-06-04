@@ -29,7 +29,6 @@ in
         enabled-extensions = mkOpt (types.listOf types.str) [
           "native-window-placement@gnome-shell-extensions.gcampax.github.com"
           "drive-menu@gnome-shell-extensions.gcampax.github.com"
-          "user-theme@gnome-shell-extensions.gcampax.github.com"
         ] "List of enabled extensions";
       };
     }) { } "GNOME Shell configuration";
@@ -238,10 +237,6 @@ in
 
       "gtile" = {
         show-icon = false;
-      };
-
-      "user-theme" = {
-        name = "";
       };
     } "GNOME extension settings as attribute set where keys are extension names";
 
