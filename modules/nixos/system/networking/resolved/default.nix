@@ -30,7 +30,10 @@ in
         MulticastDNS=no
       '';
 
-      fallbackDns = [ "192.168.1.1" ];
+      fallbackDns = [
+        "1.1.1.1"
+        "1.0.0.1"
+      ];
     };
   };
 }
