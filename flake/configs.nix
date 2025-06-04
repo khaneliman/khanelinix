@@ -38,9 +38,6 @@ let
           };
           modules = [
             systemPath
-            # Import namespace definition first
-            ../modules/shared/namespace.nix
-            # Import all khanelinix modules
             ../modules/nixos
             inputs.disko.nixosModules.disko
             inputs.home-manager.nixosModules.home-manager
@@ -87,9 +84,6 @@ let
           };
           modules = [
             systemPath
-            # Import namespace definition first
-            ../modules/shared/namespace.nix
-            # Import all khanelinix modules
             ../modules/darwin
             inputs.nix-rosetta-builder.darwinModules.default
             inputs.sops-nix.darwinModules.sops
@@ -146,9 +140,6 @@ let
               };
               modules = [
                 homePath
-                # Import namespace definition first
-                ../modules/shared/namespace.nix
-                # Import all khanelinix modules
                 ../modules/home
                 inputs.catppuccin.homeModules.catppuccin
                 inputs.hypr-socket-watch.homeManagerModules.default
@@ -175,43 +166,16 @@ in
     homeConfigurations = getHomeConfigurations ../homes;
 
     # Module outputs - simplified approach
-    nixosModules = { };
-    darwinModules = { };
-    homeModules = { };
+    # nixosModules = { };
+    # darwinModules = { };
+    # homeModules = { };
 
-    # Templates
     templates =
       let
         templateDirs = builtins.readDir ../templates;
         makeTemplate = name: _: {
           path = ../templates + "/${name}";
-          description =
-            if name == "angular" then
-              "Angular template"
-            else if name == "c" then
-              "C flake template."
-            else if name == "container" then
-              "Container template"
-            else if name == "cpp" then
-              "CPP flake template"
-            else if name == "dotnetf" then
-              "Dotnet FSharp template"
-            else if name == "flake-compat" then
-              "Flake-compat shell and default files."
-            else if name == "go" then
-              "Go template"
-            else if name == "node" then
-              "Node template"
-            else if name == "python" then
-              "Python template"
-            else if name == "rust" then
-              "Rust template"
-            else if name == "rust-web-server" then
-              "Rust web server template"
-            else if name == "snowfall" then
-              "Snowfall-lib template"
-            else
-              "${name} template";
+          description = "${name} template";
         };
       in
       lib.mapAttrs makeTemplate templateDirs;
