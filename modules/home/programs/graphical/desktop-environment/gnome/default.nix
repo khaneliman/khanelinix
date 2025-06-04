@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib) types mkIf mkDefault;
+  inherit (lib) types mkIf;
   inherit (lib.${namespace}) default-attrs mkBoolOpt mkOpt;
 
   cfg = config.${namespace}.programs.graphical.desktop-environment.gnome;
