@@ -73,6 +73,14 @@
             "*flake.lock"
             "assets/*"
             "justfile"
+            # CSS files with template variables
+            "**/waybar/**/style.css"
+            "**/waybar/**/*.css"
+            "**/anyrun/**/*.css"
+            "**/caprine/**/*.css"
+            "**/firefox/**/*.css"
+            "**/wofi/**/*.css"
+            "**/catppuccin/**/*.css"
           ];
 
           formatter.ruff-format.options = [ "--isolated" ];
