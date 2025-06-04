@@ -8,7 +8,7 @@
 let
   inherit (lib) mkIf;
 
-  catppuccin = import (lib.snowfall.fs.get-file "modules/home/theme/catppuccin/colors.nix");
+  catppuccin = import (lib.khanelinix.getFile "modules/home/theme/catppuccin/colors.nix");
 
   cfg = config.${namespace}.programs.graphical.screenlockers.hyprlock;
 in
@@ -73,7 +73,7 @@ in
             monitor = "";
             size = 120;
             position = "0, 45";
-            path = "/home/${config.snowfallorg.user.name}/.face";
+            path = "/home/${config.${namespace}.user.name}/.face";
             border_color = lib.mkDefault catppuccin.colors.text.rgb;
             border_size = 5;
             halign = "center";

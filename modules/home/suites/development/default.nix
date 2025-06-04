@@ -182,19 +182,19 @@ in
 
     sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
       ANTHROPIC_API_KEY = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/CORE/default.yaml";
+        sopsFile = lib.khanelinix.getFile "secrets/CORE/default.yaml";
         path = "${config.home.homeDirectory}/.ANTHROPIC_API_KEY";
       };
       AZURE_OPENAI_API_KEY = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/CORE/default.yaml";
+        sopsFile = lib.khanelinix.getFile "secrets/CORE/default.yaml";
         path = "${config.home.homeDirectory}/.AZURE_OPENAI_API_KEY";
       };
       OPENAI_API_KEY = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/CORE/default.yaml";
+        sopsFile = lib.khanelinix.getFile "secrets/CORE/default.yaml";
         path = "${config.home.homeDirectory}/.OPENAI_API_KEY";
       };
       TAVILY_API_KEY = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
+        sopsFile = lib.khanelinix.getFile "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.TAVILY_API_KEY";
       };
     };

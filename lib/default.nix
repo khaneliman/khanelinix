@@ -44,6 +44,7 @@ lib.makeExtensible (
       getDefaultNixFiles
       getDefaultNixFilesRecursive
       getFile
+      getFilesList
       ;
   }
 )

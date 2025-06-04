@@ -291,7 +291,7 @@ in
 
     sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
       wakatime = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
+        sopsFile = lib.khanelinix.getFile "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.wakatime.cfg";
       };
     };

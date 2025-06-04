@@ -10,7 +10,7 @@ let
   cfg = config.${namespace}.nix;
 in
 {
-  imports = [ (lib.snowfall.fs.get-file "modules/shared/nix/default.nix") ];
+  imports = [ (lib.khanelinix.getFile "modules/shared/nix/default.nix") ];
 
   config = mkIf cfg.enable {
     documentation = {

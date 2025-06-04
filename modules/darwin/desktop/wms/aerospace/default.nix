@@ -14,7 +14,7 @@ in
     enable = lib.mkEnableOption "aerospace";
     debug = lib.mkEnableOption "debug output";
     logFile = mkOpt lib.types.str "${
-      config.snowfallorg.users.${config.${namespace}.user.name}.home.path
+      config.users.users.${config.${namespace}.user.name}.home
     }/Library/Logs/aerospace.log" "Filepath of log output";
   };
 

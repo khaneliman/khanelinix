@@ -31,10 +31,6 @@
       url = "github:khaneliman/nix-rosetta-builder/speedfactor";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    snowfall-lib = {
-      url = "github:snowfallorg/lib";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     disko = {
       url = "github:nix-community/disko/latest";

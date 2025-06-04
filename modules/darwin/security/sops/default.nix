@@ -31,7 +31,7 @@ in
 
     sops.secrets = {
       "khanelimac_khaneliman_ssh_key" = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/khanelimac/khaneliman/default.yaml";
+        sopsFile = lib.khanelinix.getFile "secrets/khanelimac/khaneliman/default.yaml";
       };
     };
   };

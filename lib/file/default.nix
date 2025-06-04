@@ -63,6 +63,16 @@ rec {
 
   getFile = path: "${root}/${path}";
 
+  # Function equivalent to snowfall-lib's get-files
+  getFilesList =
+    dir:
+    let
+      actualPath = if lib.hasPrefix "/" (toString dir) then toString dir else "${root}/${dir}";
+      entries = safeReadDirectory actualPath;
+      filteredEntries = filterAttrs (_name: kind: kind == "regular") entries;
+    in
+    mapAttrsToList (name: _kind: "${actualPath}/${name}") filteredEntries;
+
   safeReadDirectory = path: if pathExists path then readDir path else { };
 
   getDirectories =

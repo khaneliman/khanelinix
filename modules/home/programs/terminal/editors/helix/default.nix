@@ -11,7 +11,7 @@ let
   cfg = config.${namespace}.programs.terminal.editors.helix;
 in
 {
-  imports = lib.snowfall.fs.get-non-default-nix-files ./.;
+  imports = lib.khanelinix.getDefaultNixFiles ./.;
 
   options.${namespace}.programs.terminal.editors.helix = {
     enable = mkEnableOption "Helix";
