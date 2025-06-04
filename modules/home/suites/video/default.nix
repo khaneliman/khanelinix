@@ -25,7 +25,7 @@ in
         handbrake
         kdePackages.k3b
         mediainfo-gui
-        plex-media-player
+        plex-desktop
         shotcut
         vlc
       ]
