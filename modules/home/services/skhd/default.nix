@@ -19,7 +19,7 @@ in
   options.${namespace}.services.skhd = {
     enable = lib.mkEnableOption "skhd";
     logFile = mkOpt lib.types.str "${
-      config.snowfallorg.users.${config.${namespace}.user.name}.home.path
+      config.users.users.${config.${namespace}.user.name}.home
     }/Library/Logs/skhd.log" "Filepath of log output";
   };
 

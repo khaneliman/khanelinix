@@ -12,7 +12,7 @@ let
   cfg = config.${namespace}.suites.common;
 in
 {
-  imports = [ (lib.snowfall.fs.get-file "modules/shared/suites/common/default.nix") ];
+  imports = [ (lib.khanelinix.getFile "modules/shared/suites/common/default.nix") ];
 
   config = mkIf cfg.enable {
     environment = {

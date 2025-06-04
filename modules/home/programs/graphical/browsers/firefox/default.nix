@@ -18,7 +18,7 @@ let
   cfg = config.${namespace}.programs.graphical.browsers.firefox;
 in
 {
-  imports = lib.snowfall.fs.get-non-default-nix-files ./.;
+  imports = lib.khanelinix.getDefaultNixFiles ./.;
 
   options.${namespace}.programs.graphical.browsers.firefox = with types; {
     enable = lib.mkEnableOption "Firefox";

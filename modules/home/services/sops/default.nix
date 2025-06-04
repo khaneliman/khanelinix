@@ -37,7 +37,7 @@ in
 
       secrets = {
         nix = {
-          sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
+          sopsFile = lib.khanelinix.getFile "secrets/khaneliman/default.yaml";
           path = "${config.home.homeDirectory}/.config/nix/nix.conf";
         };
       };

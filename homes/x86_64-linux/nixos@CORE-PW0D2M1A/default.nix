@@ -13,7 +13,7 @@ in
   khanelinix = {
     user = {
       enable = true;
-      inherit (config.snowfallorg.user) name;
+      name = "nixos";
     };
 
     programs = {
@@ -68,7 +68,7 @@ in
     services = {
       sops = {
         enable = true;
-        defaultSopsFile = lib.snowfall.fs.get-file "secrets/CORE/nixos/default.yaml";
+        defaultSopsFile = lib.khanelinix.getFile "secrets/CORE/nixos/default.yaml";
         sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
       };
     };

@@ -9,7 +9,7 @@ let
   inherit (lib) mkIf;
 
   cfg = config.${namespace}.programs.terminal.tools.tmux;
-  configFiles = lib.snowfall.fs.get-files ./config;
+  configFiles = lib.khanelinix.getFilesList ./config;
 
   plugins = with pkgs.tmuxPlugins; [
     # FIXME: broken upstream package

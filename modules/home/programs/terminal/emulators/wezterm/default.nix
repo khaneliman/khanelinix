@@ -9,7 +9,7 @@ let
   inherit (lib) mkIf;
 
   cfg = config.${namespace}.programs.terminal.emulators.wezterm;
-  catppuccin = import (lib.snowfall.fs.get-file "modules/home/theme/catppuccin/colors.nix");
+  catppuccin = import (lib.khanelinix.getFile "modules/home/theme/catppuccin/colors.nix");
 in
 {
   options.${namespace}.programs.terminal.emulators.wezterm = {

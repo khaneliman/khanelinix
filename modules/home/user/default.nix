@@ -35,7 +35,7 @@ in
     icon =
       mkOpt (types.nullOr types.package) pkgs.${namespace}.user-icon
         "The profile picture to use for the user.";
-    name = mkOpt (types.nullOr types.str) config.snowfallorg.user.name "The user account.";
+    name = mkOpt (types.nullOr types.str) config.${namespace}.user.name "The user account.";
   };
 
   config = mkIf cfg.enable (mkMerge [

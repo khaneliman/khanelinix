@@ -23,7 +23,7 @@ in
       example = lib.literalExpression "pkgs.${namespace}.jankyborders";
     };
     logFile = mkOpt lib.types.str "${
-      config.snowfallorg.users.${config.${namespace}.user.name}.home.path
+      config.users.users.${config.${namespace}.user.name}.home
     }/Library/Logs/jankyborders.log" "Filepath of log output";
   };
 

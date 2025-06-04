@@ -185,7 +185,7 @@ in
 
     sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
       "github/access-token" = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
+        sopsFile = lib.khanelinix.getFile "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.config/gh/access-token";
       };
     };

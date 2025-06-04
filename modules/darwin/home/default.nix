@@ -27,7 +27,7 @@ in
       xdg.configFile = lib.mkAliasDefinitions options.${namespace}.home.configFile;
     };
 
-    snowfallorg.users.${config.${namespace}.user.name}.home.config =
+    home-manager.users.${config.${namespace}.user.name} =
       lib.mkAliasDefinitions
         options.${namespace}.home.extraOptions;
 

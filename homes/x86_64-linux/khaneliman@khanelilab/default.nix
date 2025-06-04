@@ -11,7 +11,7 @@ in
   khanelinix = {
     user = {
       enable = true;
-      inherit (config.snowfallorg.user) name;
+      name = "khaneliman";
     };
 
     programs = {
@@ -26,7 +26,7 @@ in
     services = {
       sops = {
         enable = true;
-        defaultSopsFile = lib.snowfall.fs.get-file "secrets/khanelilab/khaneliman/default.yaml";
+        defaultSopsFile = lib.khanelinix.getFile "secrets/khanelilab/khaneliman/default.yaml";
         sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
       };
     };
