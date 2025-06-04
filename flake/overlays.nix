@@ -34,7 +34,7 @@ let
     builtins.filter (path: lib.hasSuffix ".nix" path) processedPaths;
 
   # Create an overlay that adds all packages to pkgs.${namespace}
-  packagesOverlay = final: prev: {
+  packagesOverlay = final: _prev: {
     ${namespace} = inputs.self.packages.${final.system} or { };
   };
 in
@@ -43,6 +43,7 @@ in
     # Add the packages overlay
     {
       ${namespace} = packagesOverlay;
+      nh = inputs.nh.overlays.default;
     }
     # Add all other overlays from the overlays directory
     // lib.listToAttrs (
