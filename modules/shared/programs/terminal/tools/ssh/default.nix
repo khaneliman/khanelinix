@@ -13,16 +13,15 @@ let
   user = config.users.users.${config.${namespace}.user.name};
   user-id = builtins.toString user.uid;
 
-  nixosConfigurations = inputs.self.nixosConfigurations or { };
-  darwinConfigurations = inputs.self.darwinConfigurations or { };
+  # FIXME: Temporarily disabled due to circular dependency issues during flake-parts migration
+  # nixosConfigurations = inputs.self.nixosConfigurations or { };
+  # darwinConfigurations = inputs.self.darwinConfigurations or { };
 
   ## NOTE This is the cause of evaluating all configurations per system
   ## TODO: Find a more elegant way that doesn't require bloating eval complications
-  other-hosts =
-    lib.filterAttrs (
-      _key: host: (host.config.${namespace}.user.name or null) != null
-    ) nixosConfigurations
-    // darwinConfigurations;
+  other-hosts = {
+    # Temporarily empty to avoid circular dependency
+  };
 
   other-hosts-config = lib.concatMapStringsSep "\n" (
     name:
