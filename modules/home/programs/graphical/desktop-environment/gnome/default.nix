@@ -131,17 +131,44 @@ in
                   let
                     workspaceCount = cfg.desktop.wm.preferences.num-workspaces or 10;
                   in
-                  lib.foldl' (
-                    acc: i:
-                    let
-                      num = if i == 10 then "0" else toString i;
-                    in
-                    acc
-                    // {
-                      "move-to-workspace-${toString i}" = [ "<Shift><Super>${num}" ];
-                      "switch-to-application-${toString i}" = [ "<Super>${num}" ];
+                  lib.foldl'
+                    (
+                      acc: i:
+                      let
+                        num = if i == 10 then "0" else toString i;
+                      in
+                      acc
+                      // {
+                        "move-to-workspace-${toString i}" = [ "<Shift><Super>${num}" ];
+                        "switch-to-application-${toString i}" = [ "<Super>${num}" ];
+                        "switch-to-workspace-${toString i}" = [ "<Control><Alt>${num}" ];
+                      }
+                    )
+                    {
+                      "move-to-workspace-right" = [
+                        "<Shift><Super>Right"
+                        "<Shift><Super>l"
+                      ];
+                      "move-to-workspace-left" = [
+                        "<Shift><Super>Left"
+                        "<Shift><Super>h"
+                      ];
+                      "switch-to-workspace-right" = [
+                        "<Control><Alt>Right"
+                        "<Control><Alt>l"
+                      ];
+                      "switch-to-workspace-left" = [
+                        "<Control><Alt>Left"
+                        "<Control><Alt>h"
+                      ];
+                      "switch-applications" = [
+                        "<Super><Tab>"
+                      ];
+                      "switch-applications-backward" = [
+                        "<Shift><Super><Tab>"
+                      ];
                     }
-                  ) { } (lib.range 1 workspaceCount)
+                    (lib.range 1 workspaceCount)
                 )
 
                 "Window manager keybindings";
