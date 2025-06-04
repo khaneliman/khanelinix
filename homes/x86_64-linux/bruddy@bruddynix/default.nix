@@ -29,6 +29,17 @@ in
             };
           };
         };
+
+        desktop-environment.gnome = {
+          enable = true;
+          shell.favorite-apps = [
+            "org.gnome.Nautilus.desktop"
+            "org.gnome.Console.desktop"
+            "firefox-devedition.desktop"
+            "steam.desktop"
+            "org.vinegarhq.Sober.desktop"
+          ];
+        };
       };
 
       terminal = {
