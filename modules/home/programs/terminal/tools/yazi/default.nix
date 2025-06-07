@@ -69,7 +69,7 @@ in
           duckdb
           full-border
           git
-          glow
+          # glow
           jump-to-char
           # Faster, less accurate
           # mime-ext
@@ -84,6 +84,14 @@ in
           yatline-githead
           yatline-catppuccin
           ;
+        glow = pkgs.yaziPlugins.glow.overrideAttrs {
+          patches = [
+            (pkgs.fetchpatch {
+              url = "https://github.com/Reledia/glow.yazi/pull/28.patch";
+              hash = "sha256-wNAqaCMucfw8BZvUi1vqARoraXWGIzZN6YoWcFAelTw=";
+            })
+          ];
+        };
       };
 
       settings = lib.mkMerge [
