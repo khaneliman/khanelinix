@@ -146,10 +146,11 @@ in
 
         inherit (osConfig.programs.hyprland) package;
 
-        plugins = with pkgs.hyprlandPlugins; [
-          hyprbars
-          hyprexpo
-        ];
+        # ehhhhh
+        # plugins = with pkgs.hyprlandPlugins; [
+        #   hyprbars
+        #   hyprexpo
+        # ];
 
         settings = {
           exec = [ "${getExe pkgs.libnotify} --icon ~/.face -u normal \"Hello $(whoami)\"" ];
