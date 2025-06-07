@@ -146,33 +146,38 @@ in
 
         inherit (osConfig.programs.hyprland) package;
 
-        plugins = with pkgs.hyprlandPlugins; [
-          hyprbars
-          hyprexpo
-        ];
+        # ehhhhh
+        # plugins = with pkgs.hyprlandPlugins; [
+        #   hyprbars
+        #   hyprexpo
+        # ];
 
         settings = {
           exec = [ "${getExe pkgs.libnotify} --icon ~/.face -u normal \"Hello $(whoami)\"" ];
 
           plugin = {
-            hyprbars = {
-              bar_height = 20;
-              bar_precedence_over_border = true;
+            hyprbars =
+              lib.mkIf (lib.elem pkgs.hyprlandPlugins.hyprbars config.wayland.windowManager.hyprland.plugins)
+                {
+                  bar_height = 20;
+                  bar_precedence_over_border = true;
 
-              # order is right-to-left
-              hyprbars-button = [
-                # close
-                "rgb(ED8796), 15, , hyprctl dispatch killactive"
-                # maximize
-                "rgb(C6A0F6), 15, , hyprctl dispatch fullscreen 1"
-              ];
-            };
+                  # order is right-to-left
+                  hyprbars-button = [
+                    # close
+                    "rgb(ED8796), 15, , hyprctl dispatch killactive"
+                    # maximize
+                    "rgb(C6A0F6), 15, , hyprctl dispatch fullscreen 1"
+                  ];
+                };
 
-            hyprexpo = {
-              columns = 3;
-              gap_size = 4;
-              bg_col = "rgb(000000)";
-            };
+            hyprexpo =
+              lib.mkIf (lib.elem pkgs.hyprlandPlugins.hyprexpo config.wayland.windowManager.hyprland.plugins)
+                {
+                  columns = 3;
+                  gap_size = 4;
+                  bg_col = "rgb(000000)";
+                };
           };
         };
 

@@ -186,8 +186,9 @@ in
             "$mainMod, I, exec, ${getExe pkgs.libnotify} \"$($window-inspector)\""
             "$mainMod, PERIOD, exec, ${getExe pkgs.smile}"
             "$CTRL_SHIFT, B, exec, ${getExe pkgs.killall} -SIGUSR1 $bar"
-            "SUPER, Escape, hyprexpo:expo, toggle"
           ]
+          ++ lib.optional (lib.elem pkgs.hyprlandPlugins.hyprexpo config.wayland.windowManager.hyprland.plugins) "SUPER, Escape, hyprexpo:expo, toggle"
+
           # ░█░█░█▀█░█▀▄░█░█░█▀▀░█▀█░█▀█░█▀▀░█▀▀
           # ░█▄█░█░█░█▀▄░█▀▄░▀▀█░█▀▀░█▀█░█░░░█▀▀
           # ░▀░▀░▀▀▀░▀░▀░▀░▀░▀▀▀░▀░░░▀░▀░▀▀▀░▀▀▀
