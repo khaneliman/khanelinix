@@ -78,7 +78,7 @@ in
                   			{type = "string", custom = false, name = "hovered_size"},
           			},
           			section_c = {
-                  			{type = "string", custom = false, name = "hovered_name"},
+                  			{type = "string", custom = false, name = "hovered_name", params = { { show_symlink = true } } },
                   			{type = "coloreds", custom = false, name = "count"},
           			}
           		},
