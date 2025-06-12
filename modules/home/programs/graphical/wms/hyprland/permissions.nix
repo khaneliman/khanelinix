@@ -13,7 +13,7 @@ in
   config = mkIf cfg.enable {
     wayland.windowManager.hyprland = {
       settings = {
-        permission = (
+        permission =
           [
             "${lib.getExe pkgs.grimblast}, screencopy, allow"
             "${lib.getExe pkgs.grim}, screencopy, allow"
@@ -23,8 +23,7 @@ in
             "${lib.getExe config.programs.hyprlock.package}, screencopy, allow"
           ]
           ++ lib.optional (lib.elem pkgs.hyprlandPlugins.hyprbars config.wayland.windowManager.hyprland.plugins) "${lib.getLib pkgs.hyprlandPlugins.hyprbars}/lib/libhyprbars.so, plugin, allow"
-          ++ lib.optional (lib.elem pkgs.hyprlandPlugins.hyprexpo config.wayland.windowManager.hyprland.plugins) "${lib.getLib pkgs.hyprlandPlugins.hyprexpo}/lib/libhyprexpo.so, plugin, allow"
-        );
+          ++ lib.optional (lib.elem pkgs.hyprlandPlugins.hyprexpo config.wayland.windowManager.hyprland.plugins) "${lib.getLib pkgs.hyprlandPlugins.hyprexpo}/lib/libhyprexpo.so, plugin, allow";
       };
     };
   };
