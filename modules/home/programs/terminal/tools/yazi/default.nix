@@ -80,7 +80,7 @@ in
           smart-filter
           sudo
           toggle-pane
-          # yatline
+          yatline
           yatline-githead
           yatline-catppuccin
           ;
@@ -90,15 +90,6 @@ in
             (pkgs.fetchpatch {
               url = "https://github.com/Reledia/glow.yazi/pull/28.patch";
               hash = "sha256-wNAqaCMucfw8BZvUi1vqARoraXWGIzZN6YoWcFAelTw=";
-            })
-          ];
-        };
-        # TODO: remove when upstream is fixed
-        yatline = pkgs.yaziPlugins.yatline.overrideAttrs {
-          patches = [
-            (pkgs.fetchpatch {
-              url = "https://github.com/imsi32/yatline.yazi/pull/57.patch";
-              hash = "sha256-WMmS2NTYjs6ThFDNQyFl6FXmvMGQQYZ0I84O2UaqWFw=";
             })
           ];
         };
