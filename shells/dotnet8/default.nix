@@ -14,7 +14,6 @@ mkShell {
           dotnet-sdk_8
         ]
       )
-      csharp-ls
     ]
     ++ dotnetDevShell.nativeBuildInputs;
 

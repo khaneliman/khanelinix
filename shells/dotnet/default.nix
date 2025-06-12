@@ -16,7 +16,6 @@ mkShell {
     mono
     msbuild
     netcoredbg
-    omnisharp-roslyn
     powershell
     roslyn
     roslyn-ls
