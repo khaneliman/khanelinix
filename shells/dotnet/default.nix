@@ -19,6 +19,7 @@ mkShell {
     powershell
     roslyn
     roslyn-ls
+    rzls
     vimPlugins.neotest-dotnet
     vscode-extensions.ms-dotnettools.csharp
     upgrade-assistant
