@@ -4,7 +4,8 @@ _final: _prev: {
     # Core
     jankyborders
     raycast
-    sketchybar
+    # NOTE: Conflicts with sketchybar version overlay
+    # sketchybar
     skhd
     yabai
 
