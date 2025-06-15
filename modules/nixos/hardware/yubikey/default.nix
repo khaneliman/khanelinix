@@ -31,7 +31,6 @@ in
       # FIXME: insecure
       # yubikey-manager-qt # gui
       yubikey-personalization # cli
-      yubikey-personalization-gui # gui
       yubico-piv-tool # cli
       yubioath-flutter # gui
       reload-yubikey
