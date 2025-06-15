@@ -10,6 +10,7 @@ let
   inherit (lib.${namespace}) mkOpt;
 
   cfg = config.${namespace}.desktop.wms.yabai;
+  hmCfg = config.home-manager.users.${config.khanelinix.user.name};
 in
 {
   options.${namespace}.desktop.wms.yabai = {
@@ -87,7 +88,7 @@ in
 
       extraConfig =
         let
-          inherit (pkgs) sketchybar;
+          sketchybar = hmCfg.programs.sketchybar.finalPackage;
           inherit (pkgs.${namespace}) yabai-helper;
           yabai = config.services.yabai.package;
         in
