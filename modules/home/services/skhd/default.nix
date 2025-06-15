@@ -10,7 +10,7 @@ let
   inherit (lib) mkIf getExe;
   inherit (lib.${namespace}) mkOpt;
 
-  sketchybar = getExe osConfig.services.sketchybar.package;
+  sketchybar = getExe config.programs.sketchybar.finalPackage;
   yabai = getExe osConfig.services.yabai.package;
 
   cfg = config.${namespace}.services.skhd;
