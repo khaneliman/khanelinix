@@ -77,36 +77,28 @@ in
         # Enable a plugin (here grc for colorized command output) from nixpkgs
         # { name = "grc"; src = pkgs.fishPlugins.grc.src; }
         {
-          name = "autopair";
-          inherit (pkgs.fishPlugins.autopair) src;
+          inherit (pkgs.fishPlugins.autopair) name src;
         }
         {
-          name = "done";
-          inherit (pkgs.fishPlugins.done) src;
+          inherit (pkgs.fishPlugins.done) name src;
         }
         {
-          name = "fzf-fish";
-          inherit (pkgs.fishPlugins.fzf-fish) src;
+          inherit (pkgs.fishPlugins.fzf-fish) name src;
         }
         {
-          name = "forgit";
-          inherit (pkgs.fishPlugins.forgit) src;
+          inherit (pkgs.fishPlugins.forgit) name src;
         }
         {
-          name = "tide";
-          inherit (pkgs.fishPlugins.tide) src;
+          inherit (pkgs.fishPlugins.tide) name src;
         }
         {
-          name = "sponge";
-          inherit (pkgs.fishPlugins.sponge) src;
+          inherit (pkgs.fishPlugins.sponge) name src;
         }
         {
-          name = "wakatime";
-          inherit (pkgs.fishPlugins.wakatime-fish) src;
+          inherit (pkgs.fishPlugins.wakatime-fish) name src;
         }
         {
-          name = "z";
-          inherit (pkgs.fishPlugins.z) src;
+          inherit (pkgs.fishPlugins.z) name src;
         }
       ];
     };
