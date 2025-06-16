@@ -29,7 +29,7 @@ in
                 personal
                 outlook
               ];
-              extraAccounts = {
+              extraEmailAccounts = {
                 ${outlook} = {
                   address = outlook;
                   flavor = "outlook.office365.com";

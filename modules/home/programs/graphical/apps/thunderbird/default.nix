@@ -19,7 +19,7 @@ in
       default = [ ];
       description = "Custom ordering of accounts.";
     };
-    extraAccounts = lib.mkOption {
+    extraEmailAccounts = lib.mkOption {
       type =
         let
           accountType = lib.types.submodule {
@@ -115,7 +115,7 @@ in
             flavor = "gmail.com";
           };
         }
-        // lib.mapAttrs (_name: mkEmailConfig) cfg.extraAccounts;
+        // lib.mapAttrs (_name: mkEmailConfig) cfg.extraEmailAccounts;
     };
 
     programs.thunderbird = {
