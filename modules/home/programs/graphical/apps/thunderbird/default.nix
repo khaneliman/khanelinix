@@ -19,6 +19,40 @@ in
       default = [ ];
       description = "Custom ordering of accounts.";
     };
+    extraCalendarAccounts = lib.mkOption {
+      type =
+        let
+          accountType = lib.types.submodule {
+            options = {
+              url = mkOpt lib.types.str null "Calendar url";
+              type = mkOpt (lib.types.enum [
+                "caldav"
+                "http"
+              ]) null "Calendar flavor";
+              color = mkOpt lib.types.str null "color";
+            };
+          };
+        in
+        lib.types.attrsOf accountType;
+      default = {
+        "Milwaukee Bucks" = {
+          url = "https://apidata.googleusercontent.com/caldav/v2/jeb1pn12iqgftnq21ae2qjljetlr43cv%40import.calendar.google.com/events/";
+          type = "caldav";
+          color = "#05491C";
+        };
+        "US Holidays" = {
+          url = "https://apidata.googleusercontent.com/caldav/v2/cln2stbjc4hmgrrcd5i62ua0ctp6utbg5pr2sor1dhimsp31e8n6errfctm6abj3dtmg%40virtual/events/";
+          type = "caldav";
+          color = "#92cfe1";
+        };
+        "Green Bay Packers" = {
+          url = "https://sports.yahoo.com/nfl/teams/gnb/ical.ics";
+          type = "http";
+          color = "#F9BC12";
+        };
+      };
+      description = "Extra calendar accounts to configure.";
+    };
     extraEmailAccounts = lib.mkOption {
       type =
         let
@@ -53,22 +87,49 @@ in
     );
 
     accounts = {
-      calendar.accounts = {
-        "${config.${namespace}.user.email}" = {
-          remote = {
-            type = "caldav";
-            url = "https://apidata.googleusercontent.com/caldav/v2/khaneliman12%40gmail.com/events/";
-            userName = config.${namespace}.user.email;
+      calendar.accounts =
+        let
+          mkCalendarConfig =
+            {
+              url,
+              type,
+              color ? "#9a9cff",
+            }:
+            {
+              remote = {
+                inherit type url;
+                userName = config.${namespace}.user.email;
+              };
+              local = {
+                inherit color;
+              };
+              thunderbird = {
+                enable = true;
+                profiles = [
+                  config.${namespace}.user.name
+                ];
+                inherit color;
+              };
+            };
+        in
+        {
+          "${config.${namespace}.user.email}" = {
+            remote = {
+              type = "caldav";
+              url = "https://apidata.googleusercontent.com/caldav/v2/khaneliman12%40gmail.com/events/";
+              userName = config.${namespace}.user.email;
+            };
+            primary = true;
+            thunderbird = {
+              enable = true;
+              profiles = [
+                config.${namespace}.user.name
+              ];
+              color = "#16a765";
+            };
           };
-          primary = true;
-          thunderbird = {
-            enable = true;
-            profiles = [
-              config.${namespace}.user.name
-            ];
-          };
-        };
-      };
+        }
+        // lib.mapAttrs (_name: mkCalendarConfig) cfg.extraCalendarAccounts;
       email.accounts =
         let
           mkEmailConfig =
