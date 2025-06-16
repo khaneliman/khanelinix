@@ -52,53 +52,71 @@ in
       ]
     );
 
-    accounts.email.accounts =
-      let
-        mkEmailConfig =
-          {
-            address,
-            primary ? false,
-            flavor,
-          }:
-          {
-            inherit address primary;
-            flavor = if (flavor == "davmail") then "plain" else flavor;
-            realName = config.${namespace}.user.fullName;
-            userName = lib.mkIf (flavor == "davmail") address;
-            imap = lib.mkIf (flavor == "davmail") {
-              host = "localhost";
-              port = 1143;
-              tls = {
-                enable = false;
-                useStartTls = false;
-              };
-            };
-            smtp = lib.mkIf (flavor == "davmail") {
-              host = "localhost";
-              port = 1025;
-              tls = {
-                enable = false;
-                useStartTls = false;
-              };
-            };
-            thunderbird = {
-              enable = true;
-              profiles = [
-                config.${namespace}.user.name
-              ];
-              settings = _id: {
-              };
-            };
+    accounts = {
+      calendar.accounts = {
+        "${config.${namespace}.user.email}" = {
+          remote = {
+            type = "caldav";
+            url = "https://apidata.googleusercontent.com/caldav/v2/khaneliman12%40gmail.com/events/";
+            userName = config.${namespace}.user.email;
           };
-      in
-      {
-        "${config.${namespace}.user.email}" = mkEmailConfig {
-          address = config.${namespace}.user.email;
           primary = true;
-          flavor = "gmail.com";
+          thunderbird = {
+            enable = true;
+            profiles = [
+              config.${namespace}.user.name
+            ];
+          };
         };
-      }
-      // lib.mapAttrs (_name: mkEmailConfig) cfg.extraAccounts;
+      };
+      email.accounts =
+        let
+          mkEmailConfig =
+            {
+              address,
+              primary ? false,
+              flavor,
+            }:
+            {
+              inherit address primary;
+              flavor = if (flavor == "davmail") then "plain" else flavor;
+              realName = config.${namespace}.user.fullName;
+              userName = lib.mkIf (flavor == "davmail") address;
+              imap = lib.mkIf (flavor == "davmail") {
+                host = "localhost";
+                port = 1143;
+                tls = {
+                  enable = false;
+                  useStartTls = false;
+                };
+              };
+              smtp = lib.mkIf (flavor == "davmail") {
+                host = "localhost";
+                port = 1025;
+                tls = {
+                  enable = false;
+                  useStartTls = false;
+                };
+              };
+              thunderbird = {
+                enable = true;
+                profiles = [
+                  config.${namespace}.user.name
+                ];
+                settings = _id: {
+                };
+              };
+            };
+        in
+        {
+          "${config.${namespace}.user.email}" = mkEmailConfig {
+            address = config.${namespace}.user.email;
+            primary = true;
+            flavor = "gmail.com";
+          };
+        }
+        // lib.mapAttrs (_name: mkEmailConfig) cfg.extraAccounts;
+    };
 
     programs.thunderbird = {
       enable = true;
