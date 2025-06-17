@@ -36,8 +36,6 @@ in
       reload-yubikey
     ];
 
-    programs.ssh.startAgent = !cfg.enableSSHSupport;
-
     services = {
       pcscd.enable = true;
       udev.packages = [ pkgs.yubikey-personalization ];
