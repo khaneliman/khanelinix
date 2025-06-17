@@ -30,6 +30,7 @@ in
 {
   options.${namespace}.services.openssh = with types; {
     enable = lib.mkEnableOption "OpenSSH support";
+    startAgent = lib.mkEnableOption "starting openssh agent";
     authorizedKeys = mkOpt (listOf str) authorizedKeys "The public keys to apply.";
     extraConfig = mkOpt str "" "Extra configuration to apply.";
     port = mkOpt port 2222 "The port to listen on (in addition to 22).";
@@ -91,8 +92,7 @@ in
     };
 
     programs.ssh = {
-      startAgent = lib.mkDefault true;
-      inherit (cfg) extraConfig;
+      inherit (cfg) extraConfig startAgent;
     };
 
     khanelinix = {
