@@ -71,8 +71,7 @@ in
 
     programs.firefox = {
       enable = true;
-      package =
-        if pkgs.stdenv.hostPlatform.isLinux then pkgs.firefox-devedition else pkgs.firefox-devedition-bin;
+      package = pkgs.firefox-devedition;
 
       inherit (cfg) policies;
 
