@@ -56,7 +56,6 @@ in
     };
 
     programs = {
-      ssh.startAgent = !cfg.enableSSHSupport;
       gnupg.agent = {
         enable = true;
         inherit (cfg) enableSSHSupport;
