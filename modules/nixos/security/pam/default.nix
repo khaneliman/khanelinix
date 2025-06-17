@@ -19,6 +19,7 @@ in
       services = {
         # Only enable gnome-keyring for display manager login to avoid conflicts
         sddm.enableGnomeKeyring = true;
+        login.enableGnomeKeyring = true;
       };
       loginLimits = [
         {
