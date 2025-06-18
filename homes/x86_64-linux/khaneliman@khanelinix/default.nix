@@ -73,8 +73,6 @@ in
         };
 
         browsers = {
-          chromium = enabled;
-
           firefox = {
             gpuAcceleration = true;
             hardwareDecoding = true;
