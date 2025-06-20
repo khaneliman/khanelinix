@@ -217,7 +217,8 @@ in
               ++ [
                 ms-dotnettools.vscode-dotnet-runtime
                 ms-dotnettools.csharp
-                ms-dotnettools.csdevkit
+                # FIXME: broken nixpkgs
+                # ms-dotnettools.csdevkit
               ];
             userSettings = lib.mkIf cfg.declarativeConfig (
               commonSettings

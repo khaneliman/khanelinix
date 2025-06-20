@@ -29,7 +29,8 @@ in
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         cemu
         duckstation
-        emulationstation
+        #FIXME: broken by https://github.com/NixOS/nixpkgs/pull/412425
+        # emulationstation
         mgba
         mupen64plus
         nestopia-ue

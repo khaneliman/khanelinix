@@ -4,6 +4,12 @@ _final: _prev: {
     yaziPlugins
 
     # TODO: remove after hits channel
+    dvdauthor
+    handbrake
+    mpd
+    mysql-workbench
+    plex-desktop
     pngpaste
+    rocmPackages
     ;
 }
