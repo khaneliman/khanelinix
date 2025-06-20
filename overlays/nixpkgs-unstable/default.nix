@@ -19,5 +19,7 @@ _final: _prev: {
     monitorcontrol
     stats
     switchaudio-osx
+
+    nixVersions
     ;
 }

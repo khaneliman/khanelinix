@@ -48,7 +48,8 @@ in
         bleachbit
         clac
         dropbox
-        dupeguru
+        # FIXME: broken nixpkgs
+        # dupeguru
         feh
         kdePackages.filelight
         fontpreview

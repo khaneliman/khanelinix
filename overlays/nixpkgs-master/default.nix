@@ -4,7 +4,9 @@ _final: _prev: {
     claude-code
     yaziPlugins
 
-    # TODO: remove after hits channel
-    pngpaste
+    # TODO: cleanup after channel update
+    citrix_workspace
+    plex-desktop
+    mysql-workbench
     ;
 }
