@@ -1,4 +1,4 @@
-on: [push]
+on: [merge_group, push, pull_request]
 name: Lint Nix code
 jobs:
   statix:
