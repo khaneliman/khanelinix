@@ -59,8 +59,10 @@ in
           "workspace 8 silent, class:^(virt-manager|qemu)$"
           "workspace 8 silent, class:^(gnome-connections)$"
           "workspace 8, class:^(looking-glass-client)$"
+          # Citrix
           "workspace 8, class:^(selfservice)$"
           "workspace 8, class:^(Wfica)$"
+          "workspace 8, class:^(Icasessionmgr)$"
         ];
       };
     };
