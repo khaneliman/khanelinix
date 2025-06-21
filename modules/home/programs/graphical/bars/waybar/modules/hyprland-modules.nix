@@ -146,6 +146,7 @@ in
       "class<btrfs-assistant>" = "";
       "class<selfservice>" = "";
       "class<Wfica>" = "";
+      "class<Icasessionmgr>" = "";
     };
   };
   "custom/hyprsunset" = {
