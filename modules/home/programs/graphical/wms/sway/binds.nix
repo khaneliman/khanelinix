@@ -42,7 +42,8 @@ in
             launcher = "${getExe config.programs.anyrun.package}";
             looking-glass = "${getExe pkgs.looking-glass-client}";
             screen-locker = "${getExe config.programs.swaylock.package}";
-            # window-inspector = "${getExe pkgs.hyprprop}";
+            # TODO: package upstream
+            # window-inspector = "${getExe pkgs.swayprop}";
             screen-recorder = "${getExe pkgs.${namespace}.record_screen}";
 
             # screenshot commands
@@ -62,6 +63,9 @@ in
           in
           lib.mkMerge [
             (lib.mkOptionDefault {
+              "${swayCfg.modifier}+l" = "exec ${screen-locker}";
+              # TODO: enable after swayprop available
+              # "${swayCfg.modifier}+i" = "exec ${getExe pkgs.libnotify} ${window-inspector}";
               "${swayCfg.modifier}+BackSpace" =
                 "exec pkill -SIGUSR1 swaylock || WAYLAND_DISPLAY=wayland-1 $screen-locker";
               "${swayCfg.modifier}+Return" = "exec ${swayCfg.terminal}";
