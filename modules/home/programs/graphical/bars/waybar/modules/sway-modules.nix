@@ -69,6 +69,7 @@ in
       "class<com.obsproject.Studio" = "󱜠";
       "class<com.usebottles.bottles>" = "󰡔";
       "class<discord>" = "󰙯";
+      "class<vesktop>" = "󰙯";
       "class<dropbox>" = "";
       "class<dupeGuru>" = "";
       "class<firefox.*> title<.*github.*>" = "";
@@ -116,6 +117,9 @@ in
       "title<RPCS3.*>" = "";
       "title<Spotify Free>" = "";
       "title<Steam>" = "";
+      "class<selfservice>" = "";
+      "class<Wfica>" = "";
+      "class<Icasessionmgr>" = "";
     };
   };
 }
