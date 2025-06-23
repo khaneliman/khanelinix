@@ -24,6 +24,7 @@ in
 
         # TODO: use sway's app_id for wayland and class for xwayland
         # use xlsclients to check which are x11
+        # swaymsg -t get_tree for app_id/class/title
         assigns = {
           "1" = [
             { title = "^(.*(Twitch|TNTdrama|YouTube|Bally Sports|Video Entertainment|Plex)).*(Firefox).*$"; }
@@ -53,6 +54,7 @@ in
             { class = "[Cc]aprine$"; }
             { app_id = "^org.telegram.desktop$"; }
             { app_id = "^discord$"; }
+            { app_id = "^vesktop$"; }
             # { class = "^zoom$"; }
             { app_id = "^Element$"; }
             { app_id = "^teams-for-linux$"; }
@@ -72,6 +74,9 @@ in
             { class = "^virt-manager|qemu$"; }
             { class = "^gnome-connections$"; }
             { class = "^looking-glass-client$"; }
+            { class = "^selfservice$"; }
+            { class = "^Wfica$"; }
+            { class = "^Icasessionmgr$"; }
           ];
         };
 
