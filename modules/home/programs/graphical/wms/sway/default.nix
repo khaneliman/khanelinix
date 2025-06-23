@@ -122,7 +122,7 @@ in
 
         modifier = "Mod4";
 
-        terminal = "${getExe config.programs.wezterm.package}";
+        terminal = "${getExe config.programs.kitty.package}";
 
         workspaceAutoBackAndForth = true;
         workspaceLayout = "default";
