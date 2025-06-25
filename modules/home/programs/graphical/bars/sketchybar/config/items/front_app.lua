@@ -23,7 +23,7 @@ yabai:subscribe("window_focus", function()
 		local stackIndex = tonumber(window["stack-index"])
 		local isFloating = window["is-floating"]
 
-		if stackIndex > 0 then
+		if stackIndex and stackIndex > 0 then
 			Sbar.exec("yabai -m query --windows --window stack.last", function(lastWindow)
 				local lastStackIndex = tonumber(lastWindow["stack-index"])
 

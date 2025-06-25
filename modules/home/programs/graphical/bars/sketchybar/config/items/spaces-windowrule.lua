@@ -20,7 +20,8 @@ for i = 1, 10, 1 do
 		padding_left = 2,
 		padding_right = 2,
 		label = {
-			padding_right = 20,
+			padding_left = 6,
+			padding_right = 12,
 			color = colors.grey,
 			highlight_color = colors.getRandomCatColor(),
 			font = "sketchybar-app-font:Regular:16.0",
@@ -124,7 +125,8 @@ space_creator:subscribe("space_windows_change", function(env)
 	if no_app then
 		icon_line = ""
 	end
-	Sbar.animate("tanh", 10, function()
-		spaces[env.INFO.space]:set({ label = icon_line })
-	end)
+	-- TODO: figure out animation after https://github.com/FelixKratz/SketchyBar/commit/1a192019c171e9cc7d87069dbd1822b5f25cdc89
+	-- Sbar.animate("tanh", 10, function()
+	spaces[env.INFO.space]:set({ label = icon_line })
+	-- end)
 end)
