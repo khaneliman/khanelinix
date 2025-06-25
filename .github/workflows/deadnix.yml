@@ -1,5 +1,5 @@
 name: Dead code analysis
-on: [push]
+on: [merge_group, push, pull_request]
 jobs:
   deadnix:
     name: Deadnix
