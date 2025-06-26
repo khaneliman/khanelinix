@@ -35,6 +35,7 @@ in
           gnutls
           pkgs.${namespace}.trace-symlink
           pkgs.${namespace}.trace-which
+          pkgs.${namespace}.why-depends
           terminal-notifier
           trash-cli
           wtfutil
