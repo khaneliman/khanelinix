@@ -20,6 +20,9 @@ in
     khanelinix = {
       programs = {
         graphical = {
+          bars = {
+            sketchybar.enable = mkDefault pkgs.stdenv.hostPlatform.isDarwin;
+          };
           browsers = {
             firefox = mkDefault enabled;
           };

@@ -42,10 +42,6 @@ in
             };
         };
 
-        bars = {
-          sketchybar = enabled;
-        };
-
         browsers = {
           firefox = {
             hardwareDecoding = true;
