@@ -32,7 +32,7 @@ def convert_to_svg(dot_path="graph.dot", svg_path="graph.svg"):
     """Converts a DOT file to an SVG file using graphviz."""
     try:
         print(f"🎨 Converting {dot_path} to {svg_path}...")
-        subprocess.run(["dot", "-Tsvg", dot_path, "-o", svg_path], check=True)
+        subprocess.run(["sfdp", "-Tsvg", "-x", "-o", svg_path, dot_path], check=True)
         print(f"✅ SVG written to: {svg_path}")
     except FileNotFoundError:
         print("⚠️ 'dot' (graphviz) not found. Skipping SVG generation.")
