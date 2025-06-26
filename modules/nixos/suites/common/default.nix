@@ -29,6 +29,7 @@ in
         pciutils
         pkgs.${namespace}.trace-symlink
         pkgs.${namespace}.trace-which
+        pkgs.${namespace}.why-depends
         rsync
         usbimager
         util-linux
