@@ -220,15 +220,11 @@ in
 
         checkConfig = true;
         distributedBuilds = true;
-
-        gc = {
-          automatic = true;
-        };
+        gc.automatic = true;
 
         # This will additionally add your inputs to the system's legacy channels
         # Making legacy nix commands consistent as well
         nixPath = lib.mapAttrsToList (key: _: "${key}=flake:${key}") config.nix.registry;
-
         optimise.automatic = true;
 
         # pin the registry to avoid downloading and evaluating a new nixpkgs version every time
