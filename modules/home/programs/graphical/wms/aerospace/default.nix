@@ -8,6 +8,8 @@
 let
   inherit (lib.${namespace}) mkOpt;
   cfg = config.${namespace}.programs.graphical.wms.aerospace;
+
+  sketchybar = lib.getExe config.programs.sketchybar.finalPackage;
 in
 {
   options.${namespace}.programs.graphical.wms.aerospace = {
@@ -57,7 +59,7 @@ in
         exec-on-workspace-change = [
           "/bin/bash"
           "-c"
-          "${lib.getExe config.programs.sketchybar.finalPackage} --trigger aerospace_workspace_change FOCUSED=$AEROSPACE_FOCUSED_WORKSPACE"
+          "${sketchybar} --trigger aerospace_workspace_change FOCUSED=$AEROSPACE_FOCUSED_WORKSPACE"
         ];
 
         # Startup commands
@@ -407,8 +409,8 @@ in
           "cmd-r" = "exec-and-forget launchctl kickstart -k gui/$(id -u)/org.nix-community.home.aerospace";
 
           # Toggle sketchybar
-          "b" = "exec-and-forget sketchybar --bar hidden=toggle";
-          "shift-b" = "exec-and-forget sketchybar --exit";
+          "b" = "exec-and-forget ${sketchybar} --bar hidden=toggle";
+          "shift-b" = "exec-and-forget ${sketchybar} --exit";
 
           # Exit service mode
           "enter" = "mode main";
