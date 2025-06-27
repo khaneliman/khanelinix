@@ -50,8 +50,6 @@ in
           # ░█▀█░█▀█░█▀█░░░█░░░█▀█░█░█░█▀█░█▀▀░█░█░█▀▀░█▀▄░█▀▀
           # ░█▀█░█▀▀░█▀▀░░░█░░░█▀█░█░█░█░█░█░░░█▀█░█▀▀░█▀▄░▀▀█
           # ░▀░▀░▀░░░▀░░░░░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀
-          # default < cmd + shift - return : ${getExe pkgs.wezterm} start -- zellij
-          # default < cmd - return : ${getExe pkgs.wezterm}
           default < cmd + shift - return : ${getExe pkgs.kitty} --listen-on=unix:/tmp/kitty.sock --single-instance -d ~ -- zellij
           default < cmd + alt + shift - return : ${getExe pkgs.kitty} --session nix.conf
           default < cmd - return : ${getExe pkgs.kitty} --single-instance -d ~
@@ -59,7 +57,6 @@ in
           default < cmd + alt + ctrl - o : open /Applications/Microsoft\ Outlook.app
           default < cmd + alt + ctrl - p : open /Applications/Microsoft\ PowerPoint.app
           default < cmd + alt + ctrl - f : open /Applications/Firefox\ Developer\ Edition.app
-          default < cmd + alt + ctrl - t : ${getExe pkgs.wezterm}
 
           # ░█▀▀░█░█░█▀▀░▀█▀░█▀▀░█▄█
           # ░▀▀█░░█░░▀▀█░░█░░█▀▀░█░█
