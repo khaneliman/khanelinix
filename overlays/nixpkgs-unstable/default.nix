@@ -21,5 +21,7 @@ _final: _prev: {
     switchaudio-osx
 
     nixVersions
+    firefox-devedition-unwrapped
+    firefox-devedition
     ;
 }
