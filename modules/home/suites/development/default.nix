@@ -70,7 +70,6 @@ in
         ++ lib.optionals cfg.nixEnable [
           hydra-check
           khanelinix.build-by-path
-          nh
           nix-bisect
           nix-diff
           nix-fast-build
