@@ -60,6 +60,16 @@ in
         after-startup-command = [
           "exec-and-forget open ${pkgs.raycast}/Applications/Raycast.app"
           "exec-and-forget open -a Amphetamine"
+          # Ensure numbered workspaces 1-8 are created
+          "workspace 1"
+          "workspace 2"
+          "workspace 3"
+          "workspace 4"
+          "workspace 5"
+          "workspace 6"
+          "workspace 7"
+          "workspace 8"
+          "workspace 1" # Go back to workspace 1
         ];
 
         # Window detection rules for workspace assignment
