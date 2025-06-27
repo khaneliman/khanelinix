@@ -334,11 +334,13 @@ in
           "alt-shift-s" = "layout tiles horizontal vertical";
 
           # Application Launchers
-          "cmd-enter" = "exec-and-forget open -a Kitty";
-          "cmd-shift-enter" = "exec-and-forget open -a Kitty -- zellij";
+          "cmd-enter" = "exec-and-forget ${lib.getExe pkgs.kitty} --single-instance -d ~";
+          "cmd-shift-enter" =
+            "exec-and-forget ${lib.getExe pkgs.kitty} --listen-on=unix:/tmp/kitty.sock --single-instance -d ~ -- zellij
+";
           "cmd-alt-ctrl-v" = "exec-and-forget open -a 'Visual Studio Code'";
           "cmd-alt-ctrl-f" = "exec-and-forget open -a 'Firefox Developer Edition'";
-          "cmd-alt-ctrl-t" = "exec-and-forget open -a WezTerm";
+          # "cmd-alt-ctrl-t" = "exec-and-forget open -a WezTerm";
 
           # System Controls
           "ctrl-alt-cmd-r" = "reload-config";
