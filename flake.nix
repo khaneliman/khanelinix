@@ -159,6 +159,8 @@
         ];
       };
 
+      overlays = [ inputs.nh.overlays.default ];
+
       homes.modules = with inputs; [
         catppuccin.homeModules.catppuccin
         hypr-socket-watch.homeManagerModules.default
