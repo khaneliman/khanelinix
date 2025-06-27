@@ -369,25 +369,26 @@ writeShellApplication {
         yabai -m window "$APP" --stack "$NEW_APP"
       }
 
-      kuake() {
-        if [[ $(yabai -m query --windows | jq "[.[]|select(.\"title\"==\"KUAKE\").\"title\"]| length") -eq 0 ]]; then
-          ${lib.getExe pkgs.wezterm} -1 -T KUAKE -d ~ &
-          disown
-          KUAKE_ID=$(yabai -m query --windows | jq ".[]|select(.\"title\"==\"KUAKE\").\"id\"")
-          return 0
-        fi
-
-        KUAKE_ID=$(yabai -m query --windows | jq ".[]|select(.\"title\"==\"KUAKE\").\"id\"")
-        KUAKE_SPACE=$(yabai -m query --windows --window "$KUAKE_ID" | jq '."space"')
-        CURRENT_SPACE=$(yabai -m query --spaces --space | jq '."index"')
-
-        if [[ $KUAKE_SPACE -eq $CURRENT_SPACE ]]; then
-          yabai -m window "$KUAKE_ID" --space scratch
-          return 0
-        fi
-
-        yabai -m window "$KUAKE_ID" --opacity 0.1 --space "$CURRENT_SPACE" --focus "$KUAKE_ID" --opacity 0.0
-      }
+      # TODO: revisit and update
+      # kuake() {
+      #   if [[ $(yabai -m query --windows | jq "[.[]|select(.\"title\"==\"KUAKE\").\"title\"]| length") -eq 0 ]]; then
+      #     ${lib.getExe pkgs.wezterm} -1 -T KUAKE -d ~ &
+      #     disown
+      #     KUAKE_ID=$(yabai -m query --windows | jq ".[]|select(.\"title\"==\"KUAKE\").\"id\"")
+      #     return 0
+      #   fi
+      #
+      #   KUAKE_ID=$(yabai -m query --windows | jq ".[]|select(.\"title\"==\"KUAKE\").\"id\"")
+      #   KUAKE_SPACE=$(yabai -m query --windows --window "$KUAKE_ID" | jq '."space"')
+      #   CURRENT_SPACE=$(yabai -m query --spaces --space | jq '."index"')
+      #
+      #   if [[ $KUAKE_SPACE -eq $CURRENT_SPACE ]]; then
+      #     yabai -m window "$KUAKE_ID" --space scratch
+      #     return 0
+      #   fi
+      #
+      #   yabai -m window "$KUAKE_ID" --opacity 0.1 --space "$CURRENT_SPACE" --focus "$KUAKE_ID" --opacity 0.0
+      # }
 
     '';
 }
