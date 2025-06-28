@@ -8,6 +8,7 @@ return setmetatable({
 	["Electron"] = ":element:",
 	["Vesktop"] = ":discord:",
 	["LaunchControl"] = "󱓞",
+	["Font Book"] = ":sioyek:",
 }, {
 	__index = app_icons,
 })
