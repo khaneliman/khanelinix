@@ -25,8 +25,6 @@ in
     ];
 
     homebrew = {
-      taps = [ "arthurk/virt-manager" ];
-
       casks = [ "utm" ];
     };
   };

@@ -54,7 +54,6 @@ in
       taps = [
         "beeftornado/rmtree"
         "felixkratz/homebrew-formulae"
-        "khanhas/tap"
       ];
 
       masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
