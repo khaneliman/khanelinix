@@ -36,11 +36,6 @@ in
         cleanup = "uninstall";
         upgrade = true;
       };
-
-      taps = [
-        "homebrew/bundle"
-        "homebrew/services"
-      ];
     };
   };
 }
