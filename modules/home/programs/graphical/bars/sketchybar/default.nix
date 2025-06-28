@@ -48,11 +48,11 @@ in
             pkgs.${namespace}.sketchyhelper
             wttrbar
           ]
-          ++ lib.optionals (config.${namespace}.desktop.wms.yabai.enable or false) [
-            yabai
+          ++ lib.optionals osConfig.${namespace}.desktop.wms.yabai.enable [
+            osConfig.services.yabai.package
           ]
-          ++ lib.optionals (config.${namespace}.programs.graphical.wms.aerospace.enable or false) [
-            pkgs.aerospace
+          ++ lib.optionals config.${namespace}.programs.graphical.wms.aerospace.enable [
+            config.programs.aerospace.package
           ];
 
         config = {
