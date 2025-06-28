@@ -7,6 +7,7 @@ return setmetatable({
 	-- Element from nixpkgs doesn't have name set properly on macos
 	["Electron"] = ":element:",
 	["Vesktop"] = ":discord:",
+	["LaunchControl"] = "󱓞",
 }, {
 	__index = app_icons,
 })
