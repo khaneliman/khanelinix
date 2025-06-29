@@ -14,6 +14,7 @@ in
   options.${namespace}.suites.development = {
     enable = lib.mkEnableOption "common development configuration";
     dockerEnable = mkBoolOpt true "Whether or not to enable docker development configuration.";
+    podmanEnable = lib.mkEnableOption "podman development configuration";
     aiEnable = lib.mkEnableOption "ai development configuration";
   };
 
@@ -29,6 +30,9 @@ in
           "powershell"
         ]
         ++ lib.optionals cfg.dockerEnable [ "docker-desktop" ]
+        ++ lib.optionals cfg.podmanEnable [
+          "podman-desktop"
+        ]
         ++ lib.optionals cfg.aiEnable [ "ollamac" ];
 
       masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
