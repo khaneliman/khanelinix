@@ -18,7 +18,9 @@ in
       sshAgentAuth.enable = true;
       services = {
         # Only enable gnome-keyring for display manager login to avoid conflicts
-        sddm.enableGnomeKeyring = true;
+        sddm = lib.mkIf config.services.displayManager.sddm.enable {
+          enableGnomeKeyring = true;
+        };
         login.enableGnomeKeyring = true;
       };
       loginLimits = [
