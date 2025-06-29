@@ -101,12 +101,7 @@ local window_tracker = Sbar.add("item", {
 	padding_left = 10,
 	padding_right = 8,
 	icon = {
-		string = "􀆊",
-		font = {
-			family = settings.nerd_font,
-			style = "Regular",
-			size = 16.0,
-		},
+		string = "",
 	},
 	label = { drawing = false },
 	associated_display = "active",
