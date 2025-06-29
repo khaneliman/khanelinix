@@ -70,6 +70,10 @@ in
           github-desktop
           qtcreator
         ]
+        ++ lib.optionals cfg.dockerEnable [
+          podman
+          podman-tui
+        ]
         ++ lib.optionals cfg.nixEnable [
           hydra-check
           khanelinix.build-by-path
