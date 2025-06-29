@@ -28,7 +28,7 @@ in
           "electron"
           "powershell"
         ]
-        ++ lib.optionals cfg.dockerEnable [ "docker" ]
+        ++ lib.optionals cfg.dockerEnable [ "docker-desktop" ]
         ++ lib.optionals cfg.aiEnable [ "ollamac" ];
 
       masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
