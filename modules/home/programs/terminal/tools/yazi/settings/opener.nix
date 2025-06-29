@@ -2,8 +2,13 @@
   config,
   lib,
   pkgs,
+  osConfig,
+  namespace,
   ...
 }:
+let
+  isWSL = (osConfig.${namespace}.archetypes ? wsl) && osConfig.${namespace}.archetypes.wsl.enable;
+in
 {
   opener = {
     edit = [
@@ -94,12 +99,12 @@
         desc = "Show media info";
         for = "unix";
       }
-      (lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      (lib.mkIf (pkgs.stdenv.hostPlatform.isLinux && !isWSL) {
         run = "${lib.getExe config.programs.mpv.package} \"$@\"";
         orphan = true;
         for = "unix";
       })
-      (lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      (lib.mkIf (pkgs.stdenv.hostPlatform.isLinux && !isWSL) {
         run = "${lib.getExe config.programs.mpv.package} \"%1\"";
         orphan = true;
         for = "windows";

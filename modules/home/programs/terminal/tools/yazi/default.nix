@@ -3,6 +3,7 @@
   lib,
   pkgs,
   namespace,
+  osConfig,
   inputs,
   ...
 }:
@@ -98,7 +99,15 @@ in
       settings = lib.mkMerge [
         (import ./settings/input.nix)
         (import ./settings/open.nix)
-        (import ./settings/opener.nix { inherit config lib pkgs; })
+        (import ./settings/opener.nix {
+          inherit
+            config
+            lib
+            namespace
+            osConfig
+            pkgs
+            ;
+        })
         (import ./settings/plugin.nix { inherit config lib; })
         {
           log = {
