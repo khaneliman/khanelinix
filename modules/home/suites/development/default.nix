@@ -32,6 +32,7 @@ let
       '';
 
   cfg = config.${namespace}.suites.development;
+  isWSL = (osConfig.${namespace}.archetypes ? wsl) && osConfig.${namespace}.archetypes.wsl.enable;
 in
 {
   options.${namespace}.suites.development = {
@@ -52,18 +53,20 @@ in
         with pkgs;
         [
           jqp
-          neovide
           onefetch
-          postman
-          # FIXME: build hangs
-          (lib.mkIf pkgs.stdenv.hostPlatform.isLinux bruno)
           tree-sitter
           # NOTE: when web ui needed. not cached upstream though
           # (tree-sitter.override {
           #   webUISupport = true;
           # })
         ]
-        ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+        ++ lib.optionals (!isWSL) [
+          neovide
+          postman
+        ]
+        ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && !isWSL) [
+          # FIXME: build hangs
+          bruno
           github-desktop
           qtcreator
         ]
@@ -138,7 +141,7 @@ in
       bash.initExtra = tokenExports;
       fish.shellInit = tokenExports;
       nix-your-shell = mkDefault enabled;
-      vinegar.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
+      vinegar.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
       zsh.initContent = tokenExports;
     };
 
@@ -146,7 +149,7 @@ in
       programs = {
         graphical = {
           editors = {
-            vscode = mkDefault enabled;
+            vscode.enable = mkDefault (!isWSL);
           };
         };
 
