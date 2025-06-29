@@ -33,6 +33,34 @@ in
       system.networking.enable = mkForce (!config.wsl.wslConf.network.generateResolvConf);
       # WSL Doesn't support `oomd`
       services.oomd.enable = mkForce false;
+
+      # WSL-specific overrides - disable hardware-specific and desktop services
+      hardware = {
+        power.enable = mkForce false;
+      };
+
+      programs = {
+        terminal = {
+          tools = {
+            # Network monitoring less useful in WSL
+            bandwhich.enable = mkForce false;
+          };
+        };
+      };
+
+      security = {
+        # Antivirus not needed in WSL
+        clamav.enable = mkForce false;
+        # USB devices not available in WSL
+        usbguard.enable = mkForce false;
+      };
+
+      services = {
+        # Display management not applicable in WSL
+        ddccontrol.enable = mkForce false;
+        # Printing not applicable in WSL
+        printing.enable = mkForce false;
+      };
     };
   };
 }
