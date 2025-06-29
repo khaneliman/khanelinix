@@ -3,6 +3,7 @@
   lib,
   pkgs,
   namespace,
+  osConfig,
   ...
 }:
 let
@@ -10,6 +11,7 @@ let
   inherit (lib.${namespace}) enabled;
 
   cfg = config.${namespace}.suites.common;
+  isWSL = (osConfig.${namespace}.archetypes ? wsl) && osConfig.${namespace}.archetypes.wsl.enable;
 in
 {
   options.${namespace}.suites.common = {
@@ -34,9 +36,10 @@ in
         ncs-sys = ''f(){ nix build ".#nixosConfigurations.$1.config.system.build.toplevel" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#nixosConfigurations.$1.config.system.build.toplevel.outPath") | tail -1; }; f'';
         ncs-darwin = ''f(){ nix build ".#darwinConfigurations.$1.config.system.build.toplevel" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#darwinConfigurations.$1.config.system.build.toplevel.outPath") | tail -1; }; f'';
         ncs-home = ''f(){ nix build ".#homeConfigurations.$1.activationPackage" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#homeConfigurations.$1.activationPackage.outPath") | tail -1; }; f'';
-        ndu = "nix-du -s=200MB | dot -Tsvg > store.svg && ${
-          if pkgs.stdenv.hostPlatform.isDarwin then "open" else "xdg-open"
-        } store.svg";
+        ndu = "nix-du -s=200MB | dot -Tsvg > store.svg ${
+          lib.optionalString (!isWSL)
+            "&& ${if pkgs.stdenv.hostPlatform.isDarwin then "open" else "xdg-open"} store.svg"
+        }";
       };
     };
 
@@ -63,7 +66,7 @@ in
       programs = {
         terminal = {
           emulators = {
-            kitty = mkDefault enabled;
+            kitty.enable = mkDefault (!isWSL);
           };
 
           shell = {
@@ -84,7 +87,7 @@ in
             fzf = mkDefault enabled;
             fup-repl = mkDefault enabled;
             git = mkDefault enabled;
-            glxinfo.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
+            glxinfo.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
             jq = mkDefault enabled;
             navi = mkDefault enabled;
             nh = mkDefault enabled;
@@ -100,9 +103,9 @@ in
 
       services = {
         # easyeffects.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
-        udiskie.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
+        udiskie.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
         # ssh-agent.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
-        tray.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
+        tray.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
       };
 
       system.input.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isDarwin;
