@@ -3,6 +3,7 @@
   lib,
   pkgs,
   namespace,
+  osConfig,
   ...
 }:
 let
@@ -10,6 +11,7 @@ let
   inherit (lib.${namespace}) enabled;
 
   cfg = config.${namespace}.suites.business;
+  isWSL = (osConfig.${namespace}.archetypes ? wsl) && osConfig.${namespace}.archetypes.wsl.enable;
 in
 {
   options.${namespace}.suites.business = {
@@ -24,9 +26,11 @@ in
         dooit
         jrnl
         np
+      ]
+      ++ lib.optionals (!isWSL) [
         teams-for-linux
       ]
-      ++ lib.optionals stdenv.hostPlatform.isLinux [
+      ++ lib.optionals (stdenv.hostPlatform.isLinux && !isWSL) [
         libreoffice
         p3x-onenote
       ];
@@ -35,7 +39,7 @@ in
       programs = {
         graphical = {
           apps = {
-            thunderbird = lib.mkDefault enabled;
+            thunderbird.enable = lib.mkDefault (!isWSL); # No GUI email client in WSL
           };
         };
         terminal = {
@@ -47,7 +51,7 @@ in
       services = {
         # FIXME: requires approval
         # davmail.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isLinux;
-        syncthing = lib.mkDefault enabled;
+        syncthing.enable = lib.mkDefault (!isWSL);
       };
     };
   };
