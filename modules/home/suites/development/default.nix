@@ -125,10 +125,7 @@ in
 
         # Home-Manager
         hmd = ''nix build -L .#docs-html && ${
-          if pkgs.stdenv.hostPlatform.isDarwin then
-            "open -a ${config.programs.firefox.package}/Applications/Firefox\\ Developer\\ Edition.app"
-          else
-            lib.getExe config.programs.firefox.package
+          if pkgs.stdenv.hostPlatform.isDarwin then "open" else "xdg-open"
         } result/share/doc/home-manager/index.xhtml'';
         hmt = ''f(){ nix-build -j auto --show-trace --pure --option allow-import-from-derivation false tests -A build."$1"; }; f'';
         hmtf = ''f(){ nix build -L --option allow-import-from-derivation false --reference-lock-file flake.lock "./tests#test-$1"; }; f'';
