@@ -28,6 +28,15 @@ in
       ];
     };
 
+    # Limit to main fonts only
+    fonts.packages = mkForce (
+      with pkgs;
+      [
+        monaspace
+        nerd-fonts.symbols-only
+      ]
+    );
+
     khanelinix = {
       # Networking handled by host
       system.networking.enable = mkForce (!config.wsl.wslConf.network.generateResolvConf);
@@ -62,5 +71,7 @@ in
         printing.enable = mkForce false;
       };
     };
+
+    services.chrony.enable = mkForce false;
   };
 }
