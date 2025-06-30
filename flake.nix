@@ -200,8 +200,6 @@
         snowfall.description = "Snowfall-lib template";
       };
 
-      deploy = lib.mkDeploy { inherit (inputs) self; };
-
       outputs-builder = channels: {
         formatter = inputs.treefmt-nix.lib.mkWrapper channels.nixpkgs ./treefmt.nix;
       };
