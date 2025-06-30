@@ -33,5 +33,10 @@ in
         libdrm
       ];
     };
+
+    khanelinix.user.extraGroups = [
+      "render"
+      "video"
+    ];
   };
 }
