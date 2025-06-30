@@ -224,6 +224,7 @@ in
             "org.freedesktop.impl.portal.Access" = "gtk";
             "org.freedesktop.impl.portal.Account" = "gtk";
             "org.freedesktop.impl.portal.AppChooser" = "gtk";
+            "org.freedesktop.impl.portal.Device" = "gtk";
             "org.freedesktop.impl.portal.DynamicLauncher" = "gtk";
             "org.freedesktop.impl.portal.Email" = "gtk";
             "org.freedesktop.impl.portal.FileChooser" = "gtk";
