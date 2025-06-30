@@ -1,12 +1,8 @@
 { channels, ... }:
 _final: _prev: {
   inherit (channels.nixpkgs-master)
+    # Fast updating / want latest always
     claude-code
     yaziPlugins
-
-    # TODO: cleanup after channel update
-    citrix_workspace
-    plex-desktop
-    mysql-workbench
     ;
 }
