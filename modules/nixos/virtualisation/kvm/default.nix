@@ -35,7 +35,7 @@ in
 
   config = mkIf cfg.enable {
     boot = {
-      kernelModules = [
+      initrd.kernelModules = [
         "kvm-${cfg.platform}"
         "vfio"
         "vfio_iommu_type1"
