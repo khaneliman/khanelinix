@@ -20,7 +20,15 @@ in
       "riscv64-linux"
     ];
 
-    blacklistedKernelModules = [ "eeepc_wmi" ];
+    blacklistedKernelModules = [
+      "nouveau"
+      "nvidia"
+      "nvidia_drm"
+      "nvidia_modeset"
+      "nvidia_uvm"
+
+      "eeepc_wmi"
+    ];
 
     # consoleLogLevel = 0;
 
