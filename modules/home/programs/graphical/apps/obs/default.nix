@@ -19,16 +19,17 @@ in
       enable = true;
       package = pkgs.obs-studio;
 
-      plugins = with pkgs.obs-studio-plugins; [
-        obs-gstreamer
-        obs-move-transition
-        obs-multi-rtmp
-        obs-pipewire-audio-capture
-        obs-vkcapture
-        wlrobs
-      ];
-      # FIXME: broken nixpkgs
-      # ++ lib.optional config.programs.looking-glass-client.enable looking-glass-obs;
+      plugins =
+        with pkgs.obs-studio-plugins;
+        [
+          obs-gstreamer
+          obs-move-transition
+          obs-multi-rtmp
+          obs-pipewire-audio-capture
+          obs-vkcapture
+          wlrobs
+        ]
+        ++ lib.optional config.programs.looking-glass-client.enable looking-glass-obs;
     };
   };
 }
