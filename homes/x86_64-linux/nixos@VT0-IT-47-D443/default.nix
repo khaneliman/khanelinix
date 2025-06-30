@@ -54,6 +54,12 @@ in
               }
             ];
           };
+          gh = {
+            gitCredentialHelper.hosts = [
+              "https://core-bts-02@dev.azure.com"
+              "https://github.com/SECURAInsurance"
+            ];
+          };
 
           ssh = enabled;
         };
