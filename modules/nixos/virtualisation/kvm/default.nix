@@ -42,8 +42,8 @@ in
         "vfio_pci"
       ];
       kernelParams = [
-        "${cfg.platform}_iommu=on"
-        "${cfg.platform}_iommu=pt"
+        "${cfg.platform}_iommu=force_isolation"
+        "iommu=pt"
         "kvm.ignore_msrs=1"
       ];
       extraModprobeConfig = optionalString (
