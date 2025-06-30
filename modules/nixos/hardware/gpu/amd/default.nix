@@ -38,7 +38,8 @@ in
     hardware = {
       amdgpu = {
         amdvlk = {
-          enable = true;
+          # NOTE: prefer mesa over amdvlk
+          enable = false;
 
           support32Bit = {
             enable = true;
@@ -50,6 +51,7 @@ in
       };
 
       graphics = {
+        enable = true;
         extraPackages = with pkgs; [
           # mesa
           mesa
