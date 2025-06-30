@@ -43,7 +43,8 @@ in
 
       services = {
         cliphist = mkDefault enabled;
-        keyring = mkDefault enabled;
+        # NOTE: doesn't provide anything extra compared to nixos module
+        # keyring = mkDefault enabled;
       };
     };
 
