@@ -158,11 +158,11 @@ let
   };
 in
 {
+  # NOTE: Can test with `, ashpd-demo`
   options.${namespace}.system.xdg = {
     enable = mkEnableOption "xdg";
   };
 
-  # TODO: remove gnome hard dependencies
   config = mkIf cfg.enable {
     home.packages = [ pkgs.gcr ];
 
@@ -241,15 +241,6 @@ in
             "org.freedesktop.impl.portal.RemoteDesktop" = "gnome";
           };
         };
-
-        configPackages =
-          with pkgs;
-          [
-            xorg.xset
-            gnome-session
-            gnome-keyring
-          ]
-          ++ lib.optional config.wayland.windowManager.hyprland.enable config.wayland.windowManager.hyprland.package;
 
         extraPortals =
           with pkgs;
