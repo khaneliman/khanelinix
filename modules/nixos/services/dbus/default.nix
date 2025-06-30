@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   namespace,
   ...
 }:
@@ -19,10 +18,6 @@ in
   config = mkIf cfg.enable {
     services.dbus = {
       enable = true;
-
-      packages = with pkgs; [
-        gcr
-      ];
 
       implementation = "broker";
     };
