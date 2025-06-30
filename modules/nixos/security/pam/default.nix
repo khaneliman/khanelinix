@@ -21,7 +21,6 @@ in
         sddm = lib.mkIf config.services.displayManager.sddm.enable {
           enableGnomeKeyring = true;
         };
-        login.enableGnomeKeyring = true;
       };
       loginLimits = [
         {
