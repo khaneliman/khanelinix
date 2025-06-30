@@ -2,7 +2,7 @@
   config,
   lib,
   namespace,
-  osConfig,
+  osConfig ? { },
   ...
 }:
 let
@@ -90,7 +90,7 @@ in
     theme.catppuccin = enabled;
   };
 
-  sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
+  sops.secrets = lib.mkIf (osConfig.${namespace}.security.sops.enable or false) {
     kubernetes = {
       path = "${config.home.homeDirectory}/.kube/config";
     };

@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  osConfig,
+  osConfig ? { },
   pkgs,
   namespace,
   ...
@@ -10,7 +10,7 @@ let
   inherit (lib) getExe getExe';
 
   githubHelper = pkgs.writeShellScriptBin "githubHelper" ''
-    ${lib.optionalString osConfig.${namespace}.security.sops.enable ''
+    ${lib.optionalString (osConfig.${namespace}.security.sops.enable or false) ''
       ${getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
     ''}
 

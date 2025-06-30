@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  osConfig,
+  osConfig ? { },
   namespace,
   ...
 }:
@@ -93,8 +93,8 @@ in
           color-scheme = "prefer-dark";
           cursor-size = cfg.cursor.size;
           cursor-theme = cfg.cursor.name;
-          font-name = "${osConfig.${namespace}.system.fonts.default} ${
-            osConfig.${namespace}.system.fonts.size
+          font-name = "${osConfig.${namespace}.system.fonts.default or "MonaspaceNeon"} ${
+            toString (osConfig.${namespace}.system.fonts.size or 10)
           }";
           gtk-theme = cfg.theme.name;
           icon-theme = cfg.icon.name;
@@ -106,8 +106,8 @@ in
       enable = true;
 
       font = {
-        name = mkDefault osConfig.${namespace}.system.fonts.default;
-        size = mkDefault osConfig.${namespace}.system.fonts.size;
+        name = mkDefault (osConfig.${namespace}.system.fonts.default or "MonaspaceNeon");
+        size = mkDefault (osConfig.${namespace}.system.fonts.size or 10);
       };
 
       gtk2 = {

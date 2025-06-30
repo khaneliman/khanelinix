@@ -3,7 +3,7 @@
   inputs,
   lib,
   namespace,
-  osConfig,
+  osConfig ? { },
   pkgs,
   system,
   ...
@@ -35,26 +35,24 @@ let
           #   };
         };
       }
-      (lib.mkIf ((osConfig.${namespace}.archetypes ? wsl) && osConfig.${namespace}.archetypes.wsl.enable)
-        {
-          plugins.yanky.enable = lib.mkForce false;
-          plugins.yanky.settings.ring.permanent_wrapper.__raw =
-            ''require("yanky.wrappers").remove_carriage_return'';
+      (lib.mkIf (osConfig.${namespace}.archetypes.wsl.enable or false) {
+        plugins.yanky.enable = lib.mkForce false;
+        plugins.yanky.settings.ring.permanent_wrapper.__raw =
+          ''require("yanky.wrappers").remove_carriage_return'';
 
-          extraConfigLuaPost = ''
-            in_wsl = os.getenv('WSL_DISTRO_NAME') ~= nil
+        extraConfigLuaPost = ''
+          in_wsl = os.getenv('WSL_DISTRO_NAME') ~= nil
 
-            if in_wsl then
-                vim.g.clipboard = {
-                    name = 'wsl clipboard',
-                    copy =  { ["+"] = { "clip.exe" },   ["*"] = { "clip.exe" } },
-                    paste = { ["+"] = { "win32yank.exe -o --lf" }, ["*"] = { "win32yank.exe -o --lf" } },
-                    cache_enabled = true
-                }
-            end
-          '';
-        }
-      )
+          if in_wsl then
+              vim.g.clipboard = {
+                  name = 'wsl clipboard',
+                  copy =  { ["+"] = { "clip.exe" },   ["*"] = { "clip.exe" } },
+                  paste = { ["+"] = { "win32yank.exe -o --lf" }, ["*"] = { "win32yank.exe -o --lf" } },
+                  cache_enabled = true
+              }
+          end
+        '';
+      })
     ] ++ cfg.extraModules;
   };
   khanelivim = khanelivimConfigurationExtended.config.build.package;
@@ -82,7 +80,7 @@ in
       ];
     };
 
-    sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
+    sops.secrets = lib.mkIf (osConfig.${namespace}.security.sops.enable or false) {
       wakatime = {
         sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.wakatime.cfg";

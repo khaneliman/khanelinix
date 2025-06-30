@@ -3,7 +3,7 @@
   lib,
   pkgs,
   namespace,
-  osConfig,
+  osConfig ? { },
   ...
 }:
 let
@@ -63,7 +63,7 @@ in
         enable = true;
       };
 
-      sessionVariables = lib.mkIf (!osConfig.programs.uwsm.enable) (
+      sessionVariables = lib.mkIf (!(osConfig.programs.uwsm.enable or false)) (
         {
           CLUTTER_BACKEND = "wayland";
           MOZ_ENABLE_WAYLAND = "1";
@@ -144,7 +144,7 @@ in
             ${cfg.appendConfig}
           '';
 
-        inherit (osConfig.programs.hyprland) package;
+        package = lib.mkIf (osConfig ? programs.hyprland.package) osConfig.programs.hyprland.package;
 
         # ehhhhh
         # plugins = with pkgs.hyprlandPlugins; [
@@ -182,7 +182,7 @@ in
         };
 
         systemd = {
-          enable = !osConfig.programs.uwsm.enable;
+          enable = !(osConfig.programs.uwsm.enable or false);
           enableXdgAutostart = true;
           extraCommands = [
             "${systemctl} --user stop hyprland-session.target"

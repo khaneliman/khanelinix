@@ -3,7 +3,7 @@
   lib,
   pkgs,
   namespace,
-  osConfig,
+  osConfig ? { },
   ...
 }:
 let
@@ -11,7 +11,11 @@ let
   inherit (lib.${namespace}) mkOpt;
 
   sketchybar = getExe config.programs.sketchybar.finalPackage;
-  yabai = getExe osConfig.services.yabai.package;
+  yabai =
+    if (osConfig ? services.yabai.package) then
+      getExe osConfig.services.yabai.package
+    else
+      getExe pkgs.yabai;
 
   cfg = config.${namespace}.services.skhd;
 in

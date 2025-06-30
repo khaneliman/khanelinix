@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  osConfig,
+  osConfig ? { },
   namespace,
   ...
 }:
@@ -103,7 +103,7 @@ in
             text = "<span font_weight=\"ultrabold\">󰌾 </span>";
             color = lib.mkDefault catppuccin.colors.text.rgb;
             font_size = 50;
-            font_family = lib.mkDefault osConfig.${namespace}.system.fonts.default;
+            font_family = lib.mkDefault (osConfig.${namespace}.system.fonts.default or "MonaspaceNeon");
             valign = "center";
             halign = "center";
             position = "15, -350";
@@ -118,7 +118,7 @@ in
             text = "<span font_weight=\"ultrabold\"> </span>";
             color = lib.mkDefault catppuccin.colors.text.rgb;
             font_size = 25;
-            font_family = lib.mkDefault osConfig.${namespace}.system.fonts.default;
+            font_family = lib.mkDefault (osConfig.${namespace}.system.fonts.default or "MonaspaceNeon");
             valign = "bottom";
             halign = "right";
             position = "5, 8";

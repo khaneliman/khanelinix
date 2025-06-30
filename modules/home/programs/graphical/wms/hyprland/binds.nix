@@ -3,7 +3,7 @@
   lib,
   pkgs,
   namespace,
-  osConfig,
+  osConfig ? { },
   ...
 }:
 let
@@ -13,7 +13,8 @@ let
 
   # Helper functions
   mkStartCommand =
-    cmd: if osConfig.programs.uwsm.enable then "uwsm app -- ${cmd}" else "run-as-service ${cmd}";
+    cmd:
+    if (osConfig.programs.uwsm.enable or false) then "uwsm app -- ${cmd}" else "run-as-service ${cmd}";
   mkExecBind =
     bind:
     let

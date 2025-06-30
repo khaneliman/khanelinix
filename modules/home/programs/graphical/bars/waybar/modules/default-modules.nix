@@ -1,6 +1,6 @@
 {
   lib,
-  osConfig,
+  osConfig ? { },
   pkgs,
   ...
 }:
@@ -219,7 +219,7 @@ in
       format-linked = "󰈁 {ifname} (No IP)";
       format-disconnected = " Disconnected";
       format-alt = "{ifname}: {ipaddr}/{cidr}";
-      on-click-right = lib.mkIf osConfig.networking.networkmanager.enable "${nm-editor}";
+      on-click-right = lib.mkIf (osConfig.networking.networkmanager.enable or false) "${nm-editor}";
     };
 
   pulseaudio = {

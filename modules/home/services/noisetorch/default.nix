@@ -1,15 +1,16 @@
 {
-  osConfig,
+  osConfig ? { },
   config,
   lib,
   namespace,
+  pkgs,
   ...
 }:
 let
   inherit (lib) getExe mkIf mkEnableOption;
 
   cfg = config.${namespace}.services.noisetorch;
-  osCfg = osConfig.${namespace}.programs.graphical.addons.noisetorch;
+  osCfg = osConfig.${namespace}.programs.graphical.addons.noisetorch or { };
 in
 {
   options = {
@@ -18,7 +19,7 @@ in
     };
   };
 
-  config = mkIf (cfg.enable && osCfg.enable) {
+  config = mkIf (cfg.enable && (osCfg.enable or false)) {
     systemd.user.services.noisetorch = {
       Install = {
         WantedBy = [ "default.target" ];
@@ -26,14 +27,16 @@ in
 
       Unit = {
         Description = "Noisetorch Noise Cancelling";
-        Requires = [ "${osCfg.deviceUnit}" ];
-        After = [ "${osCfg.deviceUnit}" ];
+        Requires = [ "${osCfg.deviceUnit or ""}" ];
+        After = [ "${osCfg.deviceUnit or ""}" ];
       };
 
       Service = {
         Type = "simple";
-        ExecStart = "${getExe osCfg.package} -i -s ${osCfg.device} -t ${builtins.toString osCfg.threshold}";
-        ExecStop = "${getExe osCfg.package} -u";
+        ExecStart = "${getExe (osCfg.package or pkgs.noisetorch)} -i -s ${osCfg.device or ""} -t ${
+          builtins.toString (osCfg.threshold or 95)
+        }";
+        ExecStop = "${getExe (osCfg.package or pkgs.noisetorch)} -u";
         Restart = "always";
         RestartSec = 3;
         Nice = -10;

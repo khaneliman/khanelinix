@@ -2,7 +2,7 @@
   config,
   lib,
   namespace,
-  osConfig,
+  osConfig ? { },
   ...
 }:
 {
@@ -44,7 +44,7 @@
         "systemd-failed-units"
         "custom/notification"
       ]
-      ++ lib.optionals osConfig.${namespace}.security.sops.enable [ "custom/github" ]
+      ++ lib.optionals (osConfig.${namespace}.security.sops.enable or false) [ "custom/github" ]
       ++ [
         "bluetooth"
         "group/audio"

@@ -1,7 +1,7 @@
 {
   lib,
   namespace,
-  osConfig,
+  osConfig ? { },
   pkgs,
 }:
 
@@ -98,7 +98,7 @@ in
         ];
       };
 
-      "menu#powermode-buttons" = mkIf osConfig.services.power-profiles-daemon.enable {
+      "menu#powermode-buttons" = mkIf (osConfig.services.power-profiles-daemon.enable or false) {
         label = "";
         position = "left";
         actions = [

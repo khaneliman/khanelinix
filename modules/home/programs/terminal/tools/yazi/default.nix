@@ -3,7 +3,7 @@
   lib,
   pkgs,
   namespace,
-  osConfig,
+  osConfig ? { },
   inputs,
   ...
 }:

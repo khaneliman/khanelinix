@@ -2,12 +2,12 @@
   config,
   lib,
   pkgs,
-  osConfig,
+  osConfig ? { },
   namespace,
   ...
 }:
 let
-  isWSL = (osConfig.${namespace}.archetypes ? wsl) && osConfig.${namespace}.archetypes.wsl.enable;
+  isWSL = osConfig.${namespace}.archetypes.wsl.enable or false;
 in
 {
   opener = {

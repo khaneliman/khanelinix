@@ -3,7 +3,7 @@
   lib,
   pkgs,
   namespace,
-  osConfig,
+  osConfig ? { },
   ...
 }:
 let
@@ -48,7 +48,7 @@ in
             pkgs.${namespace}.sketchyhelper
             wttrbar
           ]
-          ++ lib.optionals osConfig.${namespace}.desktop.wms.yabai.enable [
+          ++ lib.optionals (osConfig.${namespace}.desktop.wms.yabai.enable or false) [
             osConfig.services.yabai.package
           ]
           ++ lib.optionals config.${namespace}.programs.graphical.wms.aerospace.enable [

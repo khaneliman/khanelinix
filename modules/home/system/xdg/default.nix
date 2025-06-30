@@ -162,6 +162,7 @@ in
     enable = mkEnableOption "xdg";
   };
 
+  # TODO: remove gnome hard dependencies
   config = mkIf cfg.enable {
     home.packages = [ pkgs.gcr ];
 

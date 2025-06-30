@@ -5,7 +5,7 @@
   namespace,
   pkgs,
   system,
-  osConfig,
+  osConfig ? { },
   ...
 }:
 let
@@ -61,7 +61,8 @@ in
 
         "nixos-options.ron".text =
           let
-            nixos-options = osConfig.system.build.manual.optionsJSON + "/share/doc/nixos/options.json";
+            nixos-options =
+              (osConfig.system.build.manual.optionsJSON or "/dev/null") + "/share/doc/nixos/options.json";
             options = builtins.toJSON { ":nix" = [ nixos-options ]; };
           in
           ''

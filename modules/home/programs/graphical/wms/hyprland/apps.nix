@@ -3,7 +3,7 @@
   lib,
   pkgs,
   namespace,
-  osConfig,
+  osConfig ? { },
   ...
 }:
 let
@@ -32,7 +32,8 @@ in
         exec-once =
           let
             # Helper function to conditionally prefix with uwsm
-            mkStartCommand = cmd: if osConfig.programs.uwsm.enable then "uwsm app -- ${cmd}" else cmd;
+            mkStartCommand =
+              cmd: if (osConfig.programs.uwsm.enable or false) then "uwsm app -- ${cmd}" else cmd;
           in
           # ░█▀█░█▀█░█▀█░░░█▀▀░▀█▀░█▀█░█▀▄░▀█▀░█░█░█▀█
           # ░█▀█░█▀▀░█▀▀░░░▀▀█░░█░░█▀█░█▀▄░░█░░█░█░█▀▀
@@ -53,7 +54,7 @@ in
             "${getExe pkgs.wl-clip-persist} --clipboard both"
             "$(${getExe pkgs.wayvnc} $(${getExe pkgs.tailscale} ip --4))"
           ])
-          ++ lib.optionals osConfig.programs.uwsm.enable [ "uwsm finalize" ];
+          ++ lib.optionals (osConfig.programs.uwsm.enable or false) [ "uwsm finalize" ];
       };
     };
   };

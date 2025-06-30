@@ -3,7 +3,7 @@
   lib,
   pkgs,
   namespace,
-  osConfig,
+  osConfig ? { },
   ...
 }:
 let
@@ -290,7 +290,7 @@ in
         };
     };
 
-    sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
+    sops.secrets = lib.mkIf (osConfig.${namespace}.security.sops.enable or false) {
       wakatime = {
         sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.wakatime.cfg";

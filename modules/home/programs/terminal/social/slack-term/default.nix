@@ -3,7 +3,7 @@
   lib,
   pkgs,
   namespace,
-  osConfig,
+  osConfig ? { },
   ...
 }:
 let
@@ -19,7 +19,7 @@ in
   config = mkIf cfg.enable {
     home.packages = [ pkgs.slack-term ];
 
-    sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
+    sops.secrets = lib.mkIf (osConfig.${namespace}.security.sops.enable or false) {
       slack-term = {
         sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.config/slack-term/config";

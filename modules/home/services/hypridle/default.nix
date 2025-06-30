@@ -2,7 +2,7 @@
   config,
   lib,
   namespace,
-  osConfig,
+  osConfig ? { },
   ...
 }:
 let
@@ -42,7 +42,7 @@ in
     };
 
     systemd.user.services.hypridle.Install.WantedBy = lib.optionals (
-      !osConfig.programs.hyprland.withUWSM
+      !(osConfig.programs.hyprland.withUWSM or false)
     ) [ "hyprland-session.target" ];
   };
 }

@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  osConfig,
+  osConfig ? { },
   namespace,
   ...
 }:
@@ -38,7 +38,7 @@ in
           ''
             export NIX_PATH="darwin-config=$HOME/.nixpkgs/darwin-configuration.nix:$HOME/.nix-defexpr/channels:$NIX_PATH"
             fish_add_path --move --prepend --path ${
-              lib.concatMapStringsSep " " dquote (makeBinPathList osConfig.environment.profiles)
+              lib.concatMapStringsSep " " dquote (makeBinPathList (osConfig.environment.profiles or [ ]))
             }
             set fish_user_paths $fish_user_paths
           '';

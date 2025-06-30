@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  osConfig,
+  osConfig ? { },
   pkgs,
   namespace,
   ...
@@ -11,7 +11,7 @@ let
   inherit (lib.${namespace}) enabled;
 
   tokenExports =
-    lib.optionalString osConfig.${namespace}.security.sops.enable # Bash
+    lib.optionalString (osConfig.${namespace}.security.sops.enable or false) # Bash
       ''
         if [ -f ${config.sops.secrets.ANTHROPIC_API_KEY.path} ]; then
           ANTHROPIC_API_KEY="$(cat ${config.sops.secrets.ANTHROPIC_API_KEY.path})"
@@ -32,7 +32,7 @@ let
       '';
 
   cfg = config.${namespace}.suites.development;
-  isWSL = (osConfig.${namespace}.archetypes ? wsl) && osConfig.${namespace}.archetypes.wsl.enable;
+  isWSL = osConfig.${namespace}.archetypes.wsl.enable or false;
 in
 {
   options.${namespace}.suites.development = {
@@ -184,7 +184,7 @@ in
       services.ollama.enable = mkDefault (cfg.aiEnable && pkgs.stdenv.hostPlatform.isDarwin);
     };
 
-    sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
+    sops.secrets = lib.mkIf (osConfig.${namespace}.security.sops.enable or false) {
       ANTHROPIC_API_KEY = {
         sopsFile = lib.snowfall.fs.get-file "secrets/CORE/default.yaml";
         path = "${config.home.homeDirectory}/.ANTHROPIC_API_KEY";

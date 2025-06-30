@@ -3,7 +3,7 @@
   lib,
   pkgs,
   namespace,
-  osConfig,
+  osConfig ? { },
   ...
 }:
 let
@@ -24,7 +24,7 @@ let
   shell-aliases = import ./shell-aliases.nix { inherit config lib pkgs; };
 
   tokenExports =
-    lib.optionalString osConfig.${namespace}.security.sops.enable # Bash
+    lib.optionalString (osConfig.${namespace}.security.sops.enable or false) # Bash
       ''
         if [ -f ${config.sops.secrets."github/access-token".path} ]; then
           GITHUB_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
@@ -183,7 +183,7 @@ in
       inherit (shell-aliases) shellAliases;
     };
 
-    sops.secrets = lib.mkIf osConfig.${namespace}.security.sops.enable {
+    sops.secrets = lib.mkIf (osConfig.${namespace}.security.sops.enable or false) {
       "github/access-token" = {
         sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.config/gh/access-token";

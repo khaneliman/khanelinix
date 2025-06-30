@@ -3,7 +3,7 @@
   lib,
   pkgs,
   namespace,
-  osConfig,
+  osConfig ? { },
   ...
 }:
 let
@@ -11,7 +11,7 @@ let
   inherit (lib.${namespace}) enabled;
 
   cfg = config.${namespace}.suites.common;
-  isWSL = (osConfig.${namespace}.archetypes ? wsl) && osConfig.${namespace}.archetypes.wsl.enable;
+  isWSL = osConfig.${namespace}.archetypes.wsl.enable or false;
 in
 {
   options.${namespace}.suites.common = {

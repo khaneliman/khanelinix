@@ -2,7 +2,7 @@
   config,
   lib,
   namespace,
-  osConfig,
+  osConfig ? { },
   ...
 }:
 let
@@ -31,10 +31,11 @@ in
         systemdTargets =
           cfg.systemdTargets
           ++ lib.optionals (
-            config.wayland.windowManager.hyprland.enable && osConfig.programs.hyprland.withUWSM
+            config.wayland.windowManager.hyprland.enable && (osConfig.programs.hyprland.withUWSM or false)
           ) [ "graphical-session.target" ]
           ++
-            lib.optionals (config.wayland.windowManager.hyprland.enable && !osConfig.programs.hyprland.withUWSM)
+            lib.optionals
+              (config.wayland.windowManager.hyprland.enable && !(osConfig.programs.hyprland.withUWSM or false))
               [
                 "hyprland-session.target"
               ]
