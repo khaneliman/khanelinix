@@ -37,7 +37,7 @@ in
 
             screenshot-path = "/home/${config.${namespace}.user.name}/Pictures/screenshots";
             browser = "${getExe config.programs.firefox.package}";
-            explorer = "${getExe pkgs.xfce.thunar}";
+            explorer = "${getExe pkgs.nautilus}";
             notification_center = "${getExe' config.services.swaync.package "swaync-client"}";
             launcher = "${getExe config.programs.anyrun.package}";
             looking-glass = "${getExe pkgs.looking-glass-client}";

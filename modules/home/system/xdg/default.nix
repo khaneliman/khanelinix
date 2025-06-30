@@ -16,7 +16,7 @@ let
   ];
   editor = [ "nvim.desktop" ];
   excel = [ "libreoffice-calc.desktop" ];
-  fileManager = [ "thunar.desktop" ];
+  fileManager = [ "nautilus.desktop" ];
   image = [ "feh.desktop" ];
   mail = [ "thunderbird.desktop" ];
   powerpoint = [ "libreoffice-impress.desktop" ];

@@ -189,7 +189,7 @@ in
         "$browser" = "${getExe config.programs.firefox.package}";
         "$mail" = "${getExe pkgs.thunderbird}";
         "$editor" = "${getExe pkgs.neovim}";
-        "$explorer" = "${getExe pkgs.xfce.thunar}";
+        "$explorer" = "${getExe pkgs.nautilus}";
         "$music" = "${getExe pkgs.youtube-music}";
         "$notification_center" = "${getExe' config.services.swaync.package "swaync-client"}";
         "$launcher" = "${getExe config.programs.anyrun.package}";
