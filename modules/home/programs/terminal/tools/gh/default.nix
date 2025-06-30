@@ -9,6 +9,8 @@ let
   inherit (lib)
     mkEnableOption
     mkIf
+    mkOption
+    types
     ;
   inherit (lib.${namespace}) enabled;
 
@@ -16,7 +18,21 @@ let
 in
 {
   options.${namespace}.programs.terminal.tools.gh = {
-    enable = mkEnableOption "Git";
+    enable = mkEnableOption "the gh CLI tool";
+
+    gitCredentialHelper = {
+      hosts = mkOption {
+        type = types.listOf types.str;
+        default = [
+          "https://github.com"
+          "https://gist.github.com"
+        ];
+        description = "A list of hosts for which gh should be used as a credential helper.";
+        example = ''
+          [ "github.com" "enterprise.github.com" ]
+        '';
+      };
+    };
   };
 
   config = mkIf cfg.enable {
@@ -33,11 +49,7 @@ in
 
         gitCredentialHelper = {
           enable = true;
-          hosts = [
-            "https://github.com"
-            "https://gist.github.com"
-            "https://core-bts-02@dev.azure.com"
-          ];
+          inherit (cfg.gitCredentialHelper) hosts;
         };
 
         settings = {
