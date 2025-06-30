@@ -177,6 +177,11 @@ in
             includes = [
             ];
           };
+          gh = {
+            gitCredentialHelper.hosts = lib.mkOptionDefault [
+              "https://core-bts-02@dev.azure.com"
+            ];
+          };
 
           run-as-service = enabled;
           ssh = enabled;
