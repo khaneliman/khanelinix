@@ -59,6 +59,11 @@ in
               }
             ];
           };
+          gh = {
+            gitCredentialHelper.hosts = lib.mkOptionDefault [
+              "https://core-bts-02@dev.azure.com"
+            ];
+          };
 
           ssh = enabled;
         };
