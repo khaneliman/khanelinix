@@ -9,6 +9,7 @@ return setmetatable({
 	["Vesktop"] = ":discord:",
 	["LaunchControl"] = "󱓞",
 	["Font Book"] = ":sioyek:",
+	["Podman Desktop"] = ":docker:",
 }, {
 	__index = app_icons,
 })
