@@ -3,6 +3,7 @@
   lib,
   pkgs,
   namespace,
+  osConfig ? { },
   ...
 }:
 let
@@ -67,6 +68,10 @@ in
         set -ga update-environment TERM_PROGRAM
 
         set -g set-titles
+
+        ${lib.optionalString (
+          config.programs.tmux.sensibleOnTop && (osConfig != { })
+        ) "set -g default-command ${osConfig.users.users.${config.${namespace}.user.name}.shell}"}
       '';
 
       inherit plugins;
