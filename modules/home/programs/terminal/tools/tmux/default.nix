@@ -12,17 +12,16 @@ let
   configFiles = lib.snowfall.fs.get-files ./config;
 
   plugins = with pkgs.tmuxPlugins; [
-    # FIXME: broken upstream package
-    # {
-    #   plugin = resurrect;
-    #   extraConfig = ''
-    #     set -g @resurrect-strategy-vim 'session'
-    #     set -g @resurrect-strategy-nvim 'session'
-    #     set -g @resurrect-capture-pane-contents 'on'
-    #     set -g @resurrect-processes 'ssh lazygit yazi'
-    #     set -g @resurrect-dir '~/.tmux/resurrect'
-    #   '';
-    # }
+    {
+      plugin = resurrect;
+      extraConfig = ''
+        set -g @resurrect-strategy-vim 'session'
+        set -g @resurrect-strategy-nvim 'session'
+        set -g @resurrect-capture-pane-contents 'on'
+        set -g @resurrect-processes 'ssh lazygit yazi'
+        set -g @resurrect-dir '~/.tmux/resurrect'
+      '';
+    }
     {
       plugin = continuum;
       extraConfig = ''
