@@ -53,6 +53,10 @@ in
         };
 
         bars = {
+          ashell = {
+            fullSizeOutputs = [ "DP-1" ];
+            condensedOutputs = [ "DP-3" ];
+          };
           waybar = {
             enableDebug = true;
             # enableInspect = true;

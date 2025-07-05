@@ -60,89 +60,178 @@ in
             fi
           '';
 
-          # Weather helper
-          weatherHelper = pkgs.writeShellScriptBin "ashell-weather-helper" ''
-            if [ -f "${config.home.homeDirectory}/weather_config.json" ]; then
-              WEATHER=$(${lib.getExe pkgs.curl} -s "$(cat ${config.home.homeDirectory}/weather_config.json | ${lib.getExe pkgs.jq} -r .url)" | \
-              ${lib.getExe pkgs.jq} -r '.current.condition.text + " " + (.current.temp_c | tostring) + "°C"' 2>/dev/null || echo "Weather N/A")
-              echo "{\"text\": \"$WEATHER\", \"alt\": \"weather\"}"
+          # Detailed weather popup
+          weatherDetailPopup = pkgs.writeShellScriptBin "ashell-weather-detail" ''
+            # Get comprehensive weather information
+            CURRENT_WEATHER=$(${lib.getExe pkgs.curl} -s "wttr.in?format=j1" 2>/dev/null)
+
+            if [ $? -eq 0 ] && [ -n "$CURRENT_WEATHER" ]; then
+              # Parse JSON for detailed info
+              LOCATION=$(echo "$CURRENT_WEATHER" | ${lib.getExe pkgs.jq} -r '.nearest_area[0].areaName[0].value + ", " + .nearest_area[0].country[0].value')
+              CURRENT_TEMP=$(echo "$CURRENT_WEATHER" | ${lib.getExe pkgs.jq} -r '.current_condition[0].temp_F + "°F (" + .current_condition[0].temp_C + "°C)"')
+              FEELS_LIKE=$(echo "$CURRENT_WEATHER" | ${lib.getExe pkgs.jq} -r '.current_condition[0].FeelsLikeF + "°F (" + .current_condition[0].FeelsLikeC + "°C)"')
+              CONDITION=$(echo "$CURRENT_WEATHER" | ${lib.getExe pkgs.jq} -r '.current_condition[0].weatherDesc[0].value')
+              HUMIDITY=$(echo "$CURRENT_WEATHER" | ${lib.getExe pkgs.jq} -r '.current_condition[0].humidity + "%"')
+              WIND=$(echo "$CURRENT_WEATHER" | ${lib.getExe pkgs.jq} -r '.current_condition[0].windspeedMiles + " mph " + .current_condition[0].winddir16Point')
+              UV_INDEX=$(echo "$CURRENT_WEATHER" | ${lib.getExe pkgs.jq} -r '.current_condition[0].uvIndex')
+              VISIBILITY=$(echo "$CURRENT_WEATHER" | ${lib.getExe pkgs.jq} -r '.current_condition[0].visibility + " miles"')
+
+              # Get today's forecast
+              TODAY_HIGH=$(echo "$CURRENT_WEATHER" | ${lib.getExe pkgs.jq} -r '.weather[0].maxtempF + "°F"')
+              TODAY_LOW=$(echo "$CURRENT_WEATHER" | ${lib.getExe pkgs.jq} -r '.weather[0].mintempF + "°F"')
+
+              WEATHER_DETAIL="🌍 Location: $LOCATION
+
+              🌡️  Current: $CURRENT_TEMP
+              🤚 Feels like: $FEELS_LIKE
+              ☁️  Condition: $CONDITION
+
+              📊 Today's Range: $TODAY_LOW - $TODAY_HIGH
+              💧 Humidity: $HUMIDITY
+              💨 Wind: $WIND
+              ☀️  UV Index: $UV_INDEX
+              👁️  Visibility: $VISIBILITY"
             else
-              echo "{\"text\": \"Weather N/A\", \"alt\": \"none\"}"
+              WEATHER_DETAIL="❌ Unable to fetch detailed weather information"
+            fi
+
+            # Show in rofi popup
+            if command -v ${lib.getExe pkgs.rofi} &> /dev/null; then
+              echo "$WEATHER_DETAIL" | ${lib.getExe pkgs.rofi} -dmenu -p "Weather Details" -theme-str 'window {width: 500px; height: 350px;}' -no-custom
+            else
+              # Fallback to terminal notification
+              echo "$WEATHER_DETAIL"
             fi
           '';
 
+          # Power menu helper with rofi integration
+          powerMenuHelper = pkgs.writeShellScriptBin "ashell-power-menu" ''
+            # Create power menu options
+            POWER_OPTIONS="🔒 Lock
+            🌙 Sleep
+            🔄 Restart
+            ⏻ Shutdown
+            🚪 Logout"
+
+            # Use rofi to display power options
+            SELECTED=$(echo "$POWER_OPTIONS" | ${lib.getExe pkgs.rofi} -dmenu -p "Power Menu" -theme-str 'window {width: 200px;}' -no-custom)
+
+            case "$SELECTED" in
+              "🔒 Lock")
+                ${lib.getExe config.programs.hyprlock.package} &
+                ;;
+              "🌙 Sleep")
+                systemctl suspend
+                ;;
+              "🔄 Restart")
+                systemctl reboot
+                ;;
+              "⏻ Shutdown")
+                systemctl poweroff
+                ;;
+              "🚪 Logout")
+                ${lib.getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch exit
+                ;;
+            esac
+          '';
+
           # Default custom modules
-          defaultCustomModules = [
-            {
-              name = "CustomNotifications";
-              icon = "󰂚";
-              command = "${lib.getExe' config.services.swaync.package "swaync-client"} -t -sw";
-              listen_cmd = "${lib.getExe notificationHelper}";
-              icons = {
-                "dnd.*" = "󰂛";
-                "notification" = "󰂚";
-                "none" = "󰂜";
-              };
-              alert = ".*notification";
-            }
-            {
-              name = "CustomGithub";
-              icon = "󰊤";
-              command = "${lib.getExe' pkgs.xdg-utils "xdg-open"} https://github.com/notifications";
-              listen_cmd = "${lib.getExe githubHelper}";
-              icons = {
-                "notification" = "󰊤";
-                "none" = "󰊤";
-              };
-              alert = ".*notification";
-            }
-            {
-              name = "CustomWeather";
-              icon = "󰖕";
-              command = "${lib.getExe' pkgs.xdg-utils "xdg-open"} https://weather.com";
-              listen_cmd = "${lib.getExe weatherHelper}";
-              icons = {
-                "weather" = "󰖕";
-                "none" = "󰖕";
-              };
-            }
-          ];
+          CustomPowerMenu = {
+            name = "CustomPowerMenu";
+            icon = "󰐥";
+            command = "${lib.getExe powerMenuHelper}";
+            icons = {
+              "power" = "󰐥";
+              "none" = "󰐥";
+            };
+          };
+          CustomNotifications = {
+            name = "CustomNotifications";
+            icon = "󰂚";
+            command = "${lib.getExe' config.services.swaync.package "swaync-client"} -t -sw";
+            listen_cmd = "${lib.getExe notificationHelper}";
+            icons = {
+              "dnd.*" = "󰂛";
+              "notification" = "󰂚";
+              "none" = "󰂜";
+            };
+            alert = ".*notification";
+          };
+          CustomGithub = {
+            name = "CustomGithub";
+            icon = "󰊤";
+            command = "${lib.getExe' pkgs.xdg-utils "xdg-open"} https://github.com/notifications";
+            listen_cmd = "${lib.getExe githubHelper}";
+            icons = {
+              "notification" = "󰊤";
+              "none" = "󰊤";
+            };
+            alert = ".*notification";
+          };
+          CustomWeather = {
+            name = "CustomWeather";
+            icon = "󰖕 ";
+            command = "${lib.getExe weatherDetailPopup}";
+            listen_cmd = "${
+              lib.getExe (
+                pkgs.wttrbar.overrideAttrs {
+                  # Ashell needs `alt` instead of tooltip
+                  postPatch = ''
+                    substituteInPlace src/main.rs \
+                    --replace-fail "data.insert(\"tooltip\", tooltip);" \
+                                   "data.insert(\"alt\", tooltip);"
+                  '';
+                }
+              )
+            } --fahrenheit --ampm";
+            icons = {
+              "weather" = "󰖕";
+              "none" = "󰖕";
+            };
+          };
 
           # All custom modules (default + user-defined)
-          allCustomModules = defaultCustomModules ++ cfg.customModules;
+          allCustomModules = [
+            CustomGithub
+            CustomNotifications
+            CustomPowerMenu
+            CustomWeather
+          ] ++ cfg.customModules;
+
+          leftModules = [
+            "CustomPowerMenu"
+            "Workspaces"
+            "WindowTitle"
+          ];
+
+          rightModules = [
+            "SystemInfo"
+            [
+              "Clipboard"
+              "CustomNotifications"
+              "CustomGithub"
+            ]
+            [
+              "CustomWeather"
+              "Clock"
+              "Privacy"
+              "Settings"
+            ]
+          ];
 
           # Configuration for different bar sizes
           commonModules = {
-            left = [ "Workspaces" ];
-            center = [ "WindowTitle" ];
-            right =
-              [ "SystemInfo" ]
-              ++ (builtins.map (mod: mod.name) allCustomModules)
-              ++ [
-                [
-                  "Clock"
-                  "Privacy"
-                  "Settings"
-                ]
-              ];
+            left = leftModules;
+            center = [ ];
+            right = rightModules;
           };
 
           fullSizeModules = {
-            left = [ "Workspaces" ];
-            center = [ "WindowTitle" ];
-            right =
-              [
-                "Tray"
-                "SystemInfo"
-              ]
-              ++ (builtins.map (mod: mod.name) allCustomModules)
-              ++ [
-                [
-                  "Clock"
-                  "Privacy"
-                  "Settings"
-                ]
-              ];
+            left = leftModules;
+            center = [ "MediaPlayer" ];
+            right = [
+              "Tray"
+            ] ++ rightModules;
           };
         in
         {
@@ -150,7 +239,7 @@ in
           outputs = "All";
           position = "Top";
 
-          app_launcher_cmd = "~/.config/rofi/launcher.sh";
+          app_launcher_cmd = "anyrun";
           clipboard_cmd = "cliphist-rofi-img | wl-copy";
           truncate_title_after_length = 150;
 
@@ -167,6 +256,8 @@ in
 
           system = {
             indicators = [
+              "DownloadSpeed"
+              "UploadSpeed"
               "Cpu"
               "Memory"
               "Temperature"
