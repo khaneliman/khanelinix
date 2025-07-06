@@ -138,6 +138,8 @@
 
         # TODO: cleanup when available
         permittedInsecurePackages = [
+          # NOTE: citrix
+          "libxml2-2.13.8"
           # NOTE: needed by emulationstation
           "freeimage-3.18.0-unstable-2024-04-18"
           # dev shells
