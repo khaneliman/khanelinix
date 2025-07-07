@@ -29,7 +29,8 @@ in
       programs = {
         graphical = {
           addons = {
-            electron-support = mkDefault enabled;
+            # FIXME: breaks 1password
+            # electron-support = mkDefault enabled;
             swappy = mkDefault enabled;
             swaync = mkDefault enabled;
             wlogout = mkDefault enabled;
