@@ -5,17 +5,66 @@ on:
   schedule:
     - cron: "0 0 * * *"
 jobs:
-  createPullRequest:
+  update-flake-lock:
     runs-on: ubuntu-latest
     steps:
+      - name: Create GitHub App token
+        uses: actions/create-github-app-token@v2
+        if: vars.CI_APP_ID
+        id: app-token
+        with:
+          app-id: ${{ vars.CI_APP_ID }}
+          private-key: ${{ secrets.CI_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+          permission-issues: write
+      - name: Get GitHub App user info
+        id: user-info
+        if: vars.CI_APP_ID
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          slug: ${{ steps.app-token.outputs.app-slug }}
+        run: |
+          name="$slug[bot]"
+          id=$(gh api "/users/$name" --jq .id)
+          {
+            echo "id=$id"
+            echo "name=$name"
+            echo "email=$id+$name@users.noreply.github.com"
+          } >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v4
+      - name: Setup Git
+        env:
+          name: ${{ steps.user-info.outputs.name || 'github-actions[bot]' }}
+          email: ${{ steps.user-info.outputs.email || '41898282+github-actions[bot]@users.noreply.github.com' }}
+        run: |
+          git config user.name "$name"
+          git config user.email "$email"
       - name: Install Nix
         uses: cachix/install-nix-action@v31
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token || github.token }}
         with:
           extra_nix_config: |
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+            access-tokens = github.com=${{github.token}}
       - name: Update flake.lock
         uses: DeterminateSystems/update-flake-lock@v26
         with:
+          token: ${{ steps.app-token.outputs.token || github.token }}
+          git-committer-name: ${{ steps.user-info.outputs.name || 'github-actions[bot]' }}
+          git-committer-email: ${{ steps.user-info.outputs.email || '41898282+github-actions[bot]@users.noreply.github.com' }}
+          git-author-name: ${{ steps.user-info.outputs.name || 'github-actions[bot]' }}
+          git-author-email: ${{ steps.user-info.outputs.email || '41898282+github-actions[bot]@users.noreply.github.com' }}
+          pr-body: |
+            Automated update by the [update-flake-lock] GitHub Action.
+
+            ```
+            {{ env.GIT_COMMIT_MESSAGE }}
+            ```
+
+            This PR was most recently updated by workflow run [${{ github.run_id }}].
+
+            [update-flake-lock]: https://github.com/DeterminateSystems/update-flake-lock
+            [${{ github.run_id }}]: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           pr-labels: |
             merge-queue
