@@ -75,10 +75,6 @@
       url = "github:danth/stylix";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        git-hooks.follows = "git-hooks-nix";
-        home-manager.follows = "home-manager";
-        # Optional inputs removed
-        flake-compat.follows = "";
       };
     };
     waybar = {
