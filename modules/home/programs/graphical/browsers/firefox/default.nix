@@ -46,11 +46,16 @@ in
         SkipOnboarding = true;
       };
       ExtensionSettings = {
+        # Disable default search engines
         "ebay@search.mozilla.org".installation_mode = "blocked";
         "amazondotcom@search.mozilla.org".installation_mode = "blocked";
         "bing@search.mozilla.org".installation_mode = "blocked";
         "ddg@search.mozilla.org".installation_mode = "blocked";
         "wikipedia@search.mozilla.org".installation_mode = "blocked";
+
+        # Run in private
+        "uBlock0@raymondhill.net".private_browsing = true;
+        "addon@darkreader.org.xpi".private_browsing = true;
       };
       Preferences = { };
     } "Policies to apply to firefox";
