@@ -66,9 +66,9 @@ in
       };
 
       # flake-utils-plus
-      generateNixPathFromInputs = true;
-      generateRegistryFromInputs = true;
-      linkInputs = true;
+      # generateNixPathFromInputs = true;
+      # generateRegistryFromInputs = true;
+      # linkInputs = true;
     };
   };
 }
