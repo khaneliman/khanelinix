@@ -3,10 +3,6 @@
   namespace,
   ...
 }:
-let
-  inherit (lib.${namespace}) mkOpt;
-  inherit (lib) types;
-in
 {
   # FIXME: THIS IS A HACK I SHOULDNT NEED THIS MODULE
   options.${namespace} = {
