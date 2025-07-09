@@ -36,9 +36,10 @@ let
             namespace = "khanelinix";
             khanelinix-lib = self.lib.khanelinix;
           };
-          modules = [
+          modules = builtins.trace "TRACE: Creating NixOS system ${name} with modules" [
             systemPath
             ../modules/nixos
+            ../modules/shared/namespace.nix
             inputs.disko.nixosModules.disko
             inputs.home-manager.nixosModules.home-manager
             inputs.lanzaboote.nixosModules.lanzaboote
@@ -85,6 +86,7 @@ let
           modules = [
             systemPath
             ../modules/darwin
+            ../modules/shared/namespace.nix
             inputs.nix-rosetta-builder.darwinModules.default
             inputs.sops-nix.darwinModules.sops
             inputs.stylix.darwinModules.stylix

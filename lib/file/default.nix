@@ -48,8 +48,9 @@ rec {
       pathStr = toString path;
       # Match the nix store path pattern and extract the path after the hash
       match = builtins.match "/nix/store/[a-z0-9]+-source(.*)" pathStr;
+      result = if match != null then builtins.head match else pathStr;
     in
-    if match != null then builtins.head match else pathStr;
+    result;
 
   # Convert a store path to a relative path by removing the root prefix
   makeRelative =
@@ -93,7 +94,8 @@ rec {
   getFilesRecursive =
     path:
     let
-      actualPath = sourcePathFromStorePath path;
+      # Try using the path directly for now
+      actualPath = toString path;
       entries = safeReadDirectory actualPath;
       filteredEntries = filterAttrs (_: kind: (kind == "regular") || (kind == "directory")) entries;
       mapFile =
@@ -102,8 +104,9 @@ rec {
           path' = "${actualPath}/${name}";
         in
         if kind == "directory" then getFilesRecursive path' else makeRelative path';
+      result = lib.flatten (mapAttrsToList mapFile filteredEntries);
     in
-    lib.flatten (mapAttrsToList mapFile filteredEntries);
+    builtins.trace "TRACE: getFilesRecursive(${toString path}) actualPath=${actualPath} entries=${toString (builtins.attrNames entries)} result=${toString result}" result;
 
   getNixFiles = path: builtins.filter (hasFileExtension "nix") (getFiles path);
 
@@ -118,8 +121,18 @@ rec {
       allFiles = getFilesRecursive path;
       # Ignore the top-level default.nix
       topLevelDefaultNix = "${makeRelative path}/default.nix";
+      pathPrefix = makeRelative path;
+      filteredFiles = builtins.filter (
+        name: (builtins.baseNameOf name == "default.nix") && (name != topLevelDefaultNix)
+      ) allFiles;
+      result = builtins.map (
+        name:
+        let
+          # Remove the path prefix and make it relative to the input path
+          relativePath = lib.removePrefix "${pathPrefix}/" name;
+        in
+        path + "/${relativePath}"
+      ) filteredFiles;
     in
-    builtins.filter (
-      name: (builtins.baseNameOf name == "default.nix") && (name != topLevelDefaultNix)
-    ) allFiles;
+    builtins.trace "TRACE: getDefaultNixFilesRecursive(${toString path}) -> ${toString result}" result;
 }

@@ -8,43 +8,37 @@ let
   inherit (lib) types;
 in
 {
+  # FIXME: THIS IS A HACK I SHOULDNT NEED THIS MODULE
   options.${namespace} = {
     # Core namespace structure that other modules can extend
     # This replaces what snowfall-lib used to auto-generate
 
-    # User configuration
-    user = {
-      name = mkOpt types.str "khaneliman" "The user account name";
-      fullName = mkOpt types.str "Austin Horstman" "The user's full name";
-      email = mkOpt types.str "austin@horstman.io" "The user's email address";
-    };
-
     # System configuration
-    system = mkOpt types.attrs { } "System configuration options";
+    system = mkOpt (types.submodule { }) { } "System configuration options";
 
     # Programs configuration
-    programs = mkOpt types.attrs { } "Programs configuration options";
+    programs = mkOpt (types.submodule { }) { } "Programs configuration options";
 
     # Services configuration
-    services = mkOpt types.attrs { } "Services configuration options";
+    services = mkOpt (types.submodule { }) { } "Services configuration options";
 
     # Security configuration
-    security = mkOpt types.attrs { } "Security configuration options";
+    security = mkOpt (types.submodule { }) { } "Security configuration options";
 
     # Hardware configuration
-    hardware = mkOpt types.attrs { } "Hardware configuration options";
+    hardware = mkOpt (types.submodule { }) { } "Hardware configuration options";
 
     # Theme configuration
-    theme = mkOpt types.attrs { } "Theme configuration options";
+    theme = mkOpt (types.submodule { }) { } "Theme configuration options";
 
     # Suites configuration
-    suites = mkOpt types.attrs { } "Suites configuration options";
+    suites = mkOpt (types.submodule { }) { } "Suites configuration options";
 
     # Apps configuration (for compatibility)
-    apps = mkOpt types.attrs { } "Apps configuration options";
+    apps = mkOpt (types.submodule { }) { } "Apps configuration options";
 
     # CLI Apps configuration (for compatibility)
-    cli-apps = mkOpt types.attrs { } "CLI Apps configuration options";
+    cli-apps = mkOpt (types.submodule { }) { } "CLI Apps configuration options";
 
     # Archetypes configuration (for compatibility)
     archetypes = mkOpt (types.submodule { }) { } "Archetypes configuration options";
