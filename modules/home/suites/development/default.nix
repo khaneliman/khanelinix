@@ -128,6 +128,8 @@ in
         # NOTE: vim-update 'plugin-name'
         vim-update = ''nix run nixpkgs#vimPluginsUpdater update'';
         vim-update-all = ''nix run nixpkgs#vimPluginsUpdater -- --github-token=$(echo $GITHUB_TOKEN)'';
+        tree-update-all = ''./pkgs/applications/editors/vim/plugins/utils/nvim-treesitter/update.py && git add ./pkgs/applications/editors/vim/plugins/nvim-treesitter/generated.nix && git commit -m "vimPlugins.nvim-treesitter: update grammars"'';
+        tree-check = ''nix build .#vimPlugins.nvim-treesitter.passthru.tests.check-queries'';
         lua-update-all = ''nix run nixpkgs#luarocks-packages-updater -- --github-token=$(echo $GITHUB_TOKEN)'';
 
         # Home-Manager
