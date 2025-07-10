@@ -7,7 +7,6 @@
 }:
 let
   inherit (lib) mkDefault mkIf;
-  inherit (lib.${namespace}) enabled;
 
   cfg = config.${namespace}.suites.desktop;
 in
@@ -24,7 +23,31 @@ in
             sketchybar.enable = mkDefault pkgs.stdenv.hostPlatform.isDarwin;
           };
           browsers = {
-            firefox = mkDefault enabled;
+            firefox = {
+              enable = mkDefault true;
+              extensions.settings = {
+                "uBlock0@raymondhill.net" = {
+                  # Home-manager skip collision check
+                  force = true;
+                  settings = {
+                    selectedFilterLists = [
+                      "easylist"
+                      "easylist-annoyances"
+                      "easylist-chat"
+                      "easylist-newsletters"
+                      "easylist-notifications"
+                      "fanboy-cookiemonster"
+                      "ublock-badware"
+                      "ublock-cookies-easylist"
+                      "ublock-filters"
+                      "ublock-privacy"
+                      "ublock-quick-fixes"
+                      "ublock-unbreak"
+                    ];
+                  };
+                };
+              };
+            };
           };
         };
       };
