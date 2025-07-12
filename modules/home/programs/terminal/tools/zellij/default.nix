@@ -41,6 +41,93 @@ in
           # custom defined layouts
           layout_dir = "${./layouts}";
 
+          # TODO: implement layouts in home manager
+          # layouts = {
+          #   dev = {
+          #     _children = [
+          #       {
+          #         pane = {
+          #           size = 1;
+          #           borderless = true;
+          #           plugin = {
+          #             location = "zellij:tab-bar";
+          #           };
+          #         };
+          #       }
+          #       # The special "children" keyword tells Zellij where to place the tabs.
+          #       { "children" = { }; }
+          #       {
+          #         pane = {
+          #           size = 2;
+          #           borderless = true;
+          #           plugin = {
+          #             location = "zellij:status-bar";
+          #           };
+          #         };
+          #       }
+          #
+          #       # Multiple `tab` nodes in KDL are represented as a list in Nix.
+          #       {
+          #         tab = {
+          #           _props = {
+          #             name = "Project";
+          #             focus = true;
+          #           };
+          #           _children = [
+          #             {
+          #               pane = {
+          #                 command = "nvim";
+          #               };
+          #             }
+          #           ];
+          #         };
+          #       }
+          #       {
+          #         tab = {
+          #           _props = {
+          #             name = "Git";
+          #           };
+          #           _children = [
+          #             {
+          #               pane = {
+          #                 command = "lazygit";
+          #               };
+          #             }
+          #           ];
+          #         };
+          #       }
+          #       {
+          #         tab = {
+          #           _props = {
+          #             name = "Files";
+          #           };
+          #           _children = [
+          #             {
+          #               pane = {
+          #                 command = "yazi";
+          #               };
+          #             }
+          #           ];
+          #         };
+          #       }
+          #       {
+          #         tab = {
+          #           _props = {
+          #             name = "Shell";
+          #           };
+          #           _children = [
+          #             {
+          #               pane = {
+          #                 command = "zsh";
+          #               };
+          #             }
+          #           ];
+          #         };
+          #       }
+          #     ];
+          #   };
+          # };
+
           # clipboard provider
           copy_command =
             if pkgs.stdenv.hostPlatform.isLinux && (osConfig.${namespace}.archetypes.wsl.enable or false) then
