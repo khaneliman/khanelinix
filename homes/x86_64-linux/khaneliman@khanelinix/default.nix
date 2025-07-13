@@ -12,7 +12,6 @@ in
 {
   home.packages = [
     # NOTE: annoyingly need to download separately and prefetch hash manually
-    # FIXME:failure to start app with VM
     pkgs.citrix_workspace
   ];
 

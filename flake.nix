@@ -162,7 +162,7 @@
       homes.modules = with inputs; [
         catppuccin.homeModules.catppuccin
         hypr-socket-watch.homeManagerModules.default
-        nix-index-database.hmModules.nix-index
+        nix-index-database.homeModules.nix-index
         sops-nix.homeManagerModules.sops
       ];
 

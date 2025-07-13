@@ -4,5 +4,9 @@ _final: _prev: {
     # Fast updating / want latest always
     claude-code
     yaziPlugins
+
+    # TODO: remove after channel update
+    # Somehow randomly broke on missing package error ??
+    citrix_workspace
     ;
 }
