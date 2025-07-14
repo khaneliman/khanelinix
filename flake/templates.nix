@@ -20,4 +20,3 @@ in
     inherit (template) path description;
   }) allTemplates;
 }
-
