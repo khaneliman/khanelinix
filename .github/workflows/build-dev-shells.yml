@@ -36,9 +36,6 @@ jobs:
         uses: cachix/install-nix-action@v31
         with:
           extra_nix_config: |
-            auto-optimise-store = true
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
-            experimental-features = nix-command flakes
             system = ${{ matrix.system }}
       - name: Setup Cachix
         uses: cachix/cachix-action@v16
