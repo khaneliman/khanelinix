@@ -32,7 +32,7 @@ let
           useUserPackages = true;
           extraSpecialArgs = {
             inherit inputs system;
-            inherit (flake) self;
+            inherit (inputs) self;
             lib = extendedLib;
             flake-parts-lib = inputs.flake-parts.lib;
           };
@@ -68,7 +68,7 @@ inputs.nixpkgs.lib.nixosSystem {
 
   specialArgs = {
     inherit inputs hostname username;
-    inherit (flake) self;
+    inherit (inputs) self;
     lib = extendedLib;
     flake-parts-lib = inputs.flake-parts.lib;
     format = "system";

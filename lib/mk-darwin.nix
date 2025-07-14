@@ -66,7 +66,7 @@ inputs.darwin.lib.darwinSystem {
 
   specialArgs = {
     inherit inputs hostname username;
-    inherit (flake) self;
+    inherit (inputs) self;
     lib = extendedLib;
     flake-parts-lib = inputs.flake-parts.lib;
     format = "system";

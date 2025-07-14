@@ -3,6 +3,7 @@
   inputs,
   lib,
   pkgs,
+  self,
 
   host,
   ...
@@ -28,12 +29,11 @@ in
 
     environment = {
       etc =
-        with inputs;
         {
           # set channels (backwards compatibility)
           "nix/flake-channels/system".source = self;
-          "nix/flake-channels/nixpkgs".source = nixpkgs;
-          "nix/flake-channels/home-manager".source = home-manager;
+          "nix/flake-channels/nixpkgs".source = inputs.nixpkgs;
+          "nix/flake-channels/home-manager".source = inputs.home-manager;
         }
         # preserve current flake in /etc
         // lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
@@ -210,7 +210,8 @@ in
 
         # This will additionally add your inputs to the system's legacy channels
         # Making legacy nix commands consistent as well
-        nixPath = lib.mapAttrsToList (key: _: "${key}=flake:${key}") config.nix.registry;
+        # NOTE: We link inputs here
+        nixPath = [ "/etc/nix/inputs" ];
         optimise.automatic = true;
 
         # pin the registry to avoid downloading and evaluating a new nixpkgs version every time
