@@ -26,4 +26,6 @@ jobs:
     # - name: clear hostedtoolcache
     #   run: rm -rf /opt/hostedtoolcache
     # - name: run flake check
-    #   run: nix flake check --system ${{ matrix.arch }}
+    #   env:
+    #     ARCH: ${{ matrix.arch }}
+    #   run: nix flake check --system $ARCH
