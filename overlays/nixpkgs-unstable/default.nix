@@ -1,5 +1,5 @@
 { inputs, mkPkgs, ... }:
-final: prev: 
+final: _prev: 
 let
   unstable = mkPkgs inputs.nixpkgs-unstable final.system final.config;
 in {

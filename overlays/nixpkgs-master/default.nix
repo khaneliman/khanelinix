@@ -1,5 +1,5 @@
 { inputs, mkPkgs, ... }:
-final: prev: 
+final: _prev: 
 let
   master = mkPkgs inputs.nixpkgs-master final.system final.config;
 in {
