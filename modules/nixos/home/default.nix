@@ -2,16 +2,16 @@
   config,
   lib,
   options,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) types mkAliasDefinitions;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 in
 {
 
-  options.${namespace}.home = with types; {
+  options.khanelinix.home = with types; {
     configFile =
       mkOpt attrs { }
         "A set of files to be managed by home-manager's <option>xdg.configFile</option>.";
@@ -20,11 +20,11 @@ in
   };
 
   config = {
-    ${namespace}.home.extraOptions = {
-      home.file = mkAliasDefinitions options.${namespace}.home.file;
+    khanelinix.home.extraOptions = {
+      home.file = mkAliasDefinitions options.khanelinix.home.file;
       home.stateVersion = lib.mkOptionDefault config.system.stateVersion;
-      xdg.configFile = mkAliasDefinitions options.${namespace}.home.configFile;
-      xdg.enable = lib.mkOptionDefault true;
+      xdg.configFile = mkAliasDefinitions options.khanelinix.home.configFile;
+      xdg.enable = lib.mkDefault true;
     };
 
     home-manager = {
@@ -34,7 +34,7 @@ in
       useGlobalPkgs = true;
       useUserPackages = true;
 
-      users.${config.${namespace}.user.name} = mkAliasDefinitions options.${namespace}.home.extraOptions;
+      users.${config.khanelinix.user.name} = mkAliasDefinitions options.khanelinix.home.extraOptions;
 
       verbose = true;
     };

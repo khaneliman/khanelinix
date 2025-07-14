@@ -2,13 +2,13 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   osConfig ? { },
   ...
 }:
 let
   inherit (lib) mkIf getExe;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 
   sketchybar = getExe config.programs.sketchybar.finalPackage;
   yabai =
@@ -17,14 +17,14 @@ let
     else
       getExe pkgs.yabai;
 
-  cfg = config.${namespace}.services.skhd;
+  cfg = config.khanelinix.services.skhd;
 in
 {
-  options.${namespace}.services.skhd = {
+  options.khanelinix.services.skhd = {
     enable = lib.mkEnableOption "skhd";
-    logFile = mkOpt lib.types.str "${
-      config.snowfallorg.users.${config.${namespace}.user.name}.home.path
-    }/Library/Logs/skhd.log" "Filepath of log output";
+    logFile =
+      mkOpt lib.types.str "${config.khanelinix.user.home}/Library/Logs/skhd.log"
+        "Filepath of log output";
   };
 
   config = mkIf cfg.enable {

@@ -1,14 +1,14 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  cfg = config.${namespace}.programs.graphical.apps.vesktop;
+  cfg = config.khanelinix.programs.graphical.apps.vesktop;
 in
 {
-  options.${namespace}.programs.graphical.apps.vesktop = {
+  options.khanelinix.programs.graphical.apps.vesktop = {
     enable = lib.mkEnableOption "Vesktop";
   };
 

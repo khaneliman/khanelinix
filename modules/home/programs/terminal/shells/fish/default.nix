@@ -3,16 +3,16 @@
   lib,
   pkgs,
   osConfig ? { },
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.shell.fish;
+  cfg = config.khanelinix.programs.terminal.shell.fish;
 in
 {
-  options.${namespace}.programs.terminal.shell.fish = {
+  options.khanelinix.programs.terminal.shell.fish = {
     enable = lib.mkEnableOption "fish";
   };
 

@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.services.oomd;
+  cfg = config.khanelinix.services.oomd;
 in
 {
-  options.${namespace}.services.oomd = {
+  options.khanelinix.services.oomd = {
     enable = lib.mkEnableOption "oomd";
   };
 

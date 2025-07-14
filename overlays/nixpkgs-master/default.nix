@@ -1,12 +1,11 @@
-{ channels, ... }:
-_final: _prev: {
-  inherit (channels.nixpkgs-master)
+{ inputs, mkPkgs, ... }:
+final: prev: 
+let
+  master = mkPkgs inputs.nixpkgs-master final.system final.config;
+in {
+  inherit (master)
     # Fast updating / want latest always
     claude-code
     yaziPlugins
-
-    # TODO: remove after channel update
-    # Somehow randomly broke on missing package error ??
-    citrix_workspace
     ;
 }

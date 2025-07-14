@@ -2,16 +2,16 @@
   lib,
   pkgs,
   config,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.services.ddccontrol;
+  cfg = config.khanelinix.services.ddccontrol;
 in
 {
-  options.${namespace}.services.ddccontrol = {
+  options.khanelinix.services.ddccontrol = {
     enable = lib.mkEnableOption "ddccontrol";
   };
 

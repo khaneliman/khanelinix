@@ -3,21 +3,20 @@
   lib,
   pkgs,
   osConfig ? { },
-  namespace,
   ...
 }:
 let
-  inherit (lib) mkIf mkDefault types;
-  inherit (lib.${namespace})
-    boolToNum
-    mkOpt
-    nested-default-attrs
+  inherit (lib)
+    mkIf
+    mkDefault
+    types
     ;
+  inherit (lib.khanelinix) mkOpt boolToNum nested-default-attrs;
 
-  cfg = config.${namespace}.theme.gtk;
+  cfg = config.khanelinix.theme.gtk;
 in
 {
-  options.${namespace}.theme.gtk = {
+  options.khanelinix.theme.gtk = {
     enable = lib.mkEnableOption "customizing GTK and apply themes";
     usePortal = lib.mkEnableOption "using the GTK Portal";
 
@@ -93,8 +92,8 @@ in
           color-scheme = "prefer-dark";
           cursor-size = cfg.cursor.size;
           cursor-theme = cfg.cursor.name;
-          font-name = "${osConfig.${namespace}.system.fonts.default or "MonaspaceNeon"} ${
-            toString (osConfig.${namespace}.system.fonts.size or 10)
+          font-name = "${osConfig.khanelinix.system.fonts.default or "MonaspaceNeon"} ${
+            toString (osConfig.khanelinix.system.fonts.size or 10)
           }";
           gtk-theme = cfg.theme.name;
           icon-theme = cfg.icon.name;
@@ -106,8 +105,8 @@ in
       enable = true;
 
       font = {
-        name = mkDefault (osConfig.${namespace}.system.fonts.default or "MonaspaceNeon");
-        size = mkDefault (osConfig.${namespace}.system.fonts.size or 10);
+        name = mkDefault (osConfig.khanelinix.system.fonts.default or "MonaspaceNeon");
+        size = mkDefault (osConfig.khanelinix.system.fonts.size or 10);
       };
 
       gtk2 = {

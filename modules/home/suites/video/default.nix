@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
-  cfg = config.${namespace}.suites.video;
+  cfg = config.khanelinix.suites.video;
 in
 {
-  options.${namespace}.suites.video = {
+  options.khanelinix.suites.video = {
     enable = lib.mkEnableOption "video configuration";
   };
 

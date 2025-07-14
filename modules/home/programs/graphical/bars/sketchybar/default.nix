@@ -2,14 +2,14 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   osConfig ? { },
   ...
 }:
 let
   inherit (lib) mkIf getExe;
 
-  cfg = config.${namespace}.programs.graphical.bars.sketchybar;
+  cfg = config.khanelinix.programs.graphical.bars.sketchybar;
 
   shellAliases = {
     push = # bash
@@ -18,7 +18,7 @@ let
   };
 in
 {
-  options.${namespace}.programs.graphical.bars.sketchybar = {
+  options.khanelinix.programs.graphical.bars.sketchybar = {
     enable = lib.mkEnableOption "sketchybar in the desktop environment";
   };
 
@@ -44,14 +44,14 @@ in
             gnused
             jankyborders
             jq
-            pkgs.${namespace}.dynamic-island-helper
-            pkgs.${namespace}.sketchyhelper
+            pkgs.khanelinix.dynamic-island-helper
+            pkgs.khanelinix.sketchyhelper
             wttrbar
           ]
-          ++ lib.optionals (osConfig.${namespace}.desktop.wms.yabai.enable or false) [
+          ++ lib.optionals (osConfig.khanelinix.desktop.wms.yabai.enable or false) [
             osConfig.services.yabai.package
           ]
-          ++ lib.optionals config.${namespace}.programs.graphical.wms.aerospace.enable [
+          ++ lib.optionals config.khanelinix.programs.graphical.wms.aerospace.enable [
             config.programs.aerospace.package
           ];
 
@@ -85,10 +85,10 @@ in
         -- Window manager configuration for sketchybar
         return {
           use_aerospace = ${
-            if (config.${namespace}.programs.graphical.wms.aerospace.enable or false) then "true" else "false"
+            if (config.khanelinix.programs.graphical.wms.aerospace.enable or false) then "true" else "false"
           },
           use_yabai = ${
-            if (osConfig.${namespace}.desktop.wms.yabai.enable or false) then "true" else "false"
+            if (osConfig.khanelinix.desktop.wms.yabai.enable or false) then "true" else "false"
           },
         }
       '';

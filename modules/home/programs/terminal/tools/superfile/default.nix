@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.superfile;
+  cfg = config.khanelinix.programs.terminal.tools.superfile;
 in
 {
-  options.${namespace}.programs.terminal.tools.superfile = {
+  options.khanelinix.programs.terminal.tools.superfile = {
     enable = lib.mkEnableOption "superfile";
   };
 

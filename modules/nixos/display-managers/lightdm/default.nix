@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.display-managers.lightdm;
+  cfg = config.khanelinix.display-managers.lightdm;
 in
 {
-  options.${namespace}.display-managers.lightdm = {
+  options.khanelinix.display-managers.lightdm = {
     enable = lib.mkEnableOption "lightdm";
   };
 
@@ -21,25 +21,25 @@ in
 
       displayManager.lightdm = {
         enable = true;
-        background = pkgs.${namespace}.wallpapers.flatppuccin_macchiato;
+        background = "${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png";
 
         greeters = {
           gtk = {
             enable = true;
 
             cursorTheme = {
-              inherit (config.${namespace}.desktop.addons.gtk.cursor) name;
-              package = config.${namespace}.desktop.addons.gtk.cursor.pkg;
+              inherit (config.khanelinix.desktop.addons.gtk.cursor) name;
+              package = config.khanelinix.desktop.addons.gtk.cursor.pkg;
             };
 
             iconTheme = {
-              inherit (config.${namespace}.desktop.addons.gtk.icon) name;
-              package = config.${namespace}.desktop.addons.gtk.icon.pkg;
+              inherit (config.khanelinix.desktop.addons.gtk.icon) name;
+              package = config.khanelinix.desktop.addons.gtk.icon.pkg;
             };
 
             theme = {
-              name = "${config.${namespace}.desktop.addons.gtk.theme.name}";
-              package = config.${namespace}.desktop.addons.gtk.theme.pkg;
+              name = "${config.khanelinix.desktop.addons.gtk.theme.name}";
+              package = config.khanelinix.desktop.addons.gtk.theme.pkg;
             };
           };
         };

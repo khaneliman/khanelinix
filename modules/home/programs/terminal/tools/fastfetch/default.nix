@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.fastfetch;
+  cfg = config.khanelinix.programs.terminal.tools.fastfetch;
 in
 {
-  options.${namespace}.programs.terminal.tools.fastfetch = {
+  options.khanelinix.programs.terminal.tools.fastfetch = {
     enable = lib.mkEnableOption "fastfetch";
   };
 

@@ -1,15 +1,15 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
 
-  cfg = config.${namespace}.services.ssh-agent;
+  cfg = config.khanelinix.services.ssh-agent;
 in
 {
-  options.${namespace}.services.ssh-agent = {
+  options.khanelinix.services.ssh-agent = {
     enable = lib.mkEnableOption "ssh-agent service";
   };
 

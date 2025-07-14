@@ -10,7 +10,9 @@ Press Command/Ctrl+R in Caprine to see your changes.
 }
 
 /* Scrollbar fixes. */
-::-webkit-scrollbar-track, ::-webkit-scrollbar, ::-webkit-scrollbar-corner {
+::-webkit-scrollbar-track,
+::-webkit-scrollbar,
+::-webkit-scrollbar-corner {
   background-color: #1e2030;
 }
 ::-webkit-scrollbar {

@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
 
-  cfg = config.${namespace}.programs.terminal.shell.nushell;
+  cfg = config.khanelinix.programs.terminal.shell.nushell;
 in
 {
-  options.${namespace}.programs.terminal.shell.nushell = {
+  options.khanelinix.programs.terminal.shell.nushell = {
     enable = mkEnableOption "nushell";
   };
 

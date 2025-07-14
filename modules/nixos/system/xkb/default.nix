@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.system.xkb;
+  cfg = config.khanelinix.system.xkb;
 in
 {
-  options.${namespace}.system.xkb = {
+  options.khanelinix.system.xkb = {
     enable = lib.mkEnableOption "xkb";
   };
 

@@ -99,7 +99,7 @@ expander list #entry {
 expander list #entry:hover,
 expander list #entry:active {
   /* color: #8fbcbb;
-  background: #e5e9f0; */
+     background: #e5e9f0; */
 }
 
 expander list #entry #selected {

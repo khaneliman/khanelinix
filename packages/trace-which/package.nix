@@ -1,8 +1,7 @@
 {
   writeShellApplication,
-  pkgs,
   lib,
-  namespace,
+  trace-symlink,
   ...
 }:
 writeShellApplication {
@@ -16,6 +15,6 @@ writeShellApplication {
 
   text = # bash
     ''
-      a=$(which "$1") && exec ${lib.getExe pkgs.${namespace}.trace-symlink} "$a"
+      a=$(which "$1") && exec ${lib.getExe trace-symlink} "$a"
     '';
 }

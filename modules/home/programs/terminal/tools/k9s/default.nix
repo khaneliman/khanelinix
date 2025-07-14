@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.k9s;
+  cfg = config.khanelinix.programs.terminal.tools.k9s;
 in
 {
-  options.${namespace}.programs.terminal.tools.k9s = {
+  options.khanelinix.programs.terminal.tools.k9s = {
     enable = lib.mkEnableOption "k9s";
   };
 

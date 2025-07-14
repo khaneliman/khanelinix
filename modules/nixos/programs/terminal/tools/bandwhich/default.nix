@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.bandwhich;
+  cfg = config.khanelinix.programs.terminal.tools.bandwhich;
 in
 {
-  options.${namespace}.programs.terminal.tools.bandwhich = {
+  options.khanelinix.programs.terminal.tools.bandwhich = {
     enable = lib.mkEnableOption "bandwhich";
   };
 

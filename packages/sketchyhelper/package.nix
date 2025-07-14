@@ -1,22 +1,15 @@
-{
-  lib,
-  pkgs,
-  stdenv,
-}:
+{ lib, stdenv, ... }:
 stdenv.mkDerivation (_finalAttrs: {
-  pname = "dynamic-island-helper";
+  pname = "sketchybarhelper";
   version = "unstable-2024-02-11";
 
-  buildInputs = [
-    pkgs.sqlite
-  ];
   src = lib.cleanSource ./.;
 
   meta = {
-    description = "A helper program for direct communication with SketchyBar Dynamic Island";
+    description = "A helper program for direct communication with SketchyBar";
     homepage = "https://github.com/FelixKratz/SketchyBarHelper";
     license = lib.licenses.gpl3;
-    mainProgram = "dynamic-island-helper";
+    mainProgram = "sketchyhelper";
     platforms = lib.platforms.darwin;
   };
 })

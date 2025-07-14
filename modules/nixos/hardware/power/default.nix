@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.hardware.power;
+  cfg = config.khanelinix.hardware.power;
 in
 {
-  options.${namespace}.hardware.power = {
+  options.khanelinix.hardware.power = {
     enable = lib.mkEnableOption "support for extra power devices";
   };
 

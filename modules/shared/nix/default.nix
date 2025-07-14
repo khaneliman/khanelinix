@@ -3,22 +3,25 @@
   inputs,
   lib,
   pkgs,
-  namespace,
+
   host,
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.khanelinix) mkBoolOpt mkOpt;
 
-  cfg = config.${namespace}.nix;
+  cfg = config.khanelinix.nix;
 in
 {
-  options.${namespace}.nix = {
+  options.khanelinix.nix = {
     enable = mkBoolOpt true "Whether or not to manage nix configuration.";
     package = mkOpt lib.types.package pkgs.nixVersions.latest "Which nix package to use.";
   };
 
   config = lib.mkIf cfg.enable {
+    # Allow unfree packages
+    nixpkgs.config.allowUnfree = true;
+
     # faster rebuilding
     documentation = {
       doc.enable = false;
@@ -73,7 +76,7 @@ in
           "root"
           "@wheel"
           "nix-builder"
-          config.${namespace}.user.name
+          config.khanelinix.user.name
         ];
       in
       {
@@ -92,7 +95,7 @@ in
             ];
           in
           # Linux builders
-          lib.optionals config.${namespace}.security.sops.enable [
+          lib.optionals config.khanelinix.security.sops.enable [
             (
               lib.mkIf (host != "bruddynix" && host != "khanelinix") {
                 inherit sshUser;
