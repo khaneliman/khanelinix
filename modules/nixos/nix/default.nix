@@ -70,5 +70,7 @@ in
       generateRegistryFromInputs = true;
       linkInputs = true;
     };
+
+    system.rebuild.enableNg = true;
   };
 }
