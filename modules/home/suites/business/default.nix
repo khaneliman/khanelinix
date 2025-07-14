@@ -2,19 +2,19 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   osConfig ? { },
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
-  cfg = config.${namespace}.suites.business;
-  isWSL = osConfig.${namespace}.archetypes.wsl.enable or false;
+  cfg = config.khanelinix.suites.business;
+  isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
 in
 {
-  options.${namespace}.suites.business = {
+  options.khanelinix.suites.business = {
     enable = lib.mkEnableOption "business configuration";
   };
 

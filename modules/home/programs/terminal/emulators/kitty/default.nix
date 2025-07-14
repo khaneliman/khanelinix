@@ -2,14 +2,14 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.programs.terminal.emulators.kitty;
+  cfg = config.khanelinix.programs.terminal.emulators.kitty;
 
   monaspaceArgon =
     if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Argon Var" else "MonaspaceArgon";
@@ -24,7 +24,7 @@ let
   removeSpaces = builtins.replaceStrings [ " " ] [ "" ];
 in
 {
-  options.${namespace}.programs.terminal.emulators.kitty = with types; {
+  options.khanelinix.programs.terminal.emulators.kitty = with types; {
     enable = lib.mkEnableOption "kitty";
     font = {
       normal = mkOpt str monaspaceNeon "Font to use for alacritty.";

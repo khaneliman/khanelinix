@@ -2,16 +2,16 @@
   config,
   pkgs,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.emulators.foot;
+  cfg = config.khanelinix.programs.terminal.emulators.foot;
 in
 {
-  options.${namespace}.programs.terminal.emulators.foot = {
+  options.khanelinix.programs.terminal.emulators.foot = {
     enable = lib.mkEnableOption "foot";
   };
 

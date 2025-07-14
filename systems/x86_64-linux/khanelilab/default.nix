@@ -1,11 +1,11 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 in
 {
   imports = [
@@ -110,7 +110,7 @@ in
       sops = {
         enable = true;
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-        defaultSopsFile = lib.snowfall.fs.get-file "secrets/khanelilab/default.yaml";
+        defaultSopsFile = lib.getFile "secrets/khanelilab/default.yaml";
       };
     };
 

@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.suites.emulation;
+  cfg = config.khanelinix.suites.emulation;
 in
 {
-  options.${namespace}.suites.emulation = {
+  options.khanelinix.suites.emulation = {
     enable = lib.mkEnableOption "emulation configuration";
     retroarchFull = lib.mkEnableOption "emulation configuration";
   };

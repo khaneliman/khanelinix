@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (config.${namespace}) user;
+  inherit (config.khanelinix) user;
 
-  cfg = config.${namespace}.programs.graphical.addons.looking-glass-client;
+  cfg = config.khanelinix.programs.graphical.addons.looking-glass-client;
 in
 {
-  options.${namespace}.programs.graphical.addons.looking-glass-client = {
+  options.khanelinix.programs.graphical.addons.looking-glass-client = {
     enable = lib.mkEnableOption "the Looking Glass client";
     enableKvmfr = lib.mkEnableOption "ivshmem support";
   };

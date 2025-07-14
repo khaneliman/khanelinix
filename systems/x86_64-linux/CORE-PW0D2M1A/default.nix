@@ -1,7 +1,7 @@
-{ lib, namespace, ... }:
+{ lib, ... }:
 let
   inherit (lib) mkForce;
-  inherit (lib.${namespace}) enabled disabled;
+  inherit (lib.khanelinix) enabled disabled;
 in
 {
   imports = [ ./hardware.nix ];

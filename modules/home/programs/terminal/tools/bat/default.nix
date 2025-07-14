@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) getExe mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.bat;
+  cfg = config.khanelinix.programs.terminal.tools.bat;
 in
 {
-  options.${namespace}.programs.terminal.tools.bat = {
+  options.khanelinix.programs.terminal.tools.bat = {
     enable = lib.mkEnableOption "bat";
   };
 

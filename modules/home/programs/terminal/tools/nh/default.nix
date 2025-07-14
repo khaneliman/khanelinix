@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.nh;
+  cfg = config.khanelinix.programs.terminal.tools.nh;
 in
 {
-  options.${namespace}.programs.terminal.tools.nh = {
+  options.khanelinix.programs.terminal.tools.nh = {
     enable = lib.mkEnableOption "nh";
   };
 

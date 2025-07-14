@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  namespace,
+
   osConfig ? { },
   ...
 }:
@@ -37,14 +37,14 @@
   "group/control-center" = {
     orientation = "horizontal";
     modules =
-      lib.optionals config.${namespace}.programs.graphical.wms.hyprland.enable [ "custom/hyprsunset" ]
+      lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [ "custom/hyprsunset" ]
       ++ [
         "gamemode"
         "idle_inhibitor"
         "systemd-failed-units"
         "custom/notification"
       ]
-      ++ lib.optionals (osConfig.${namespace}.security.sops.enable or false) [ "custom/github" ]
+      ++ lib.optionals (osConfig.khanelinix.security.sops.enable or false) [ "custom/github" ]
       ++ [
         "bluetooth"
         "group/audio"

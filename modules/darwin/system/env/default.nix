@@ -1,14 +1,14 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  cfg = config.${namespace}.system.env;
+  cfg = config.khanelinix.system.env;
 in
 {
-  options.${namespace}.system.env = lib.mkOption {
+  options.khanelinix.system.env = lib.mkOption {
     apply = lib.mapAttrs (
       _n: v: if lib.isList v then lib.concatMapStringsSep ":" toString v else (toString v)
     );

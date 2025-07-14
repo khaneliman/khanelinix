@@ -3,15 +3,15 @@
   lib,
   osConfig ? { },
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
   tokenExports =
-    lib.optionalString (osConfig.${namespace}.security.sops.enable or false) # Bash
+    lib.optionalString (osConfig.khanelinix.security.sops.enable or false) # Bash
       ''
         if [ -f ${config.sops.secrets.ANTHROPIC_API_KEY.path} ]; then
           ANTHROPIC_API_KEY="$(cat ${config.sops.secrets.ANTHROPIC_API_KEY.path})"
@@ -31,11 +31,11 @@ let
         fi
       '';
 
-  cfg = config.${namespace}.suites.development;
-  isWSL = osConfig.${namespace}.archetypes.wsl.enable or false;
+  cfg = config.khanelinix.suites.development;
+  isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
 in
 {
-  options.${namespace}.suites.development = {
+  options.khanelinix.suites.development = {
     enable = lib.mkEnableOption "common development configuration";
     azureEnable = lib.mkEnableOption "azure development configuration";
     dockerEnable = lib.mkEnableOption "docker development configuration";
@@ -186,21 +186,21 @@ in
       services.ollama.enable = mkDefault (cfg.aiEnable && pkgs.stdenv.hostPlatform.isDarwin);
     };
 
-    sops.secrets = lib.mkIf (osConfig.${namespace}.security.sops.enable or false) {
+    sops.secrets = lib.mkIf (osConfig.khanelinix.security.sops.enable or false) {
       ANTHROPIC_API_KEY = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/CORE/default.yaml";
+        sopsFile = lib.getFile "secrets/CORE/default.yaml";
         path = "${config.home.homeDirectory}/.ANTHROPIC_API_KEY";
       };
       AZURE_OPENAI_API_KEY = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/CORE/default.yaml";
+        sopsFile = lib.getFile "secrets/CORE/default.yaml";
         path = "${config.home.homeDirectory}/.AZURE_OPENAI_API_KEY";
       };
       OPENAI_API_KEY = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/CORE/default.yaml";
+        sopsFile = lib.getFile "secrets/CORE/default.yaml";
         path = "${config.home.homeDirectory}/.OPENAI_API_KEY";
       };
       TAVILY_API_KEY = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
+        sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.TAVILY_API_KEY";
       };
     };

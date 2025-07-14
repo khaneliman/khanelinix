@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.zoxide;
+  cfg = config.khanelinix.programs.terminal.tools.zoxide;
 in
 {
-  options.${namespace}.programs.terminal.tools.zoxide = {
+  options.khanelinix.programs.terminal.tools.zoxide = {
     enable = lib.mkEnableOption "zoxide";
   };
 

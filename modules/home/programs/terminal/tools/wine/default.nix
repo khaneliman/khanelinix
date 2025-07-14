@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.wine;
+  cfg = config.khanelinix.programs.terminal.tools.wine;
 in
 {
-  options.${namespace}.programs.terminal.tools.wine = {
+  options.khanelinix.programs.terminal.tools.wine = {
     enable = lib.mkEnableOption "Wine";
   };
 

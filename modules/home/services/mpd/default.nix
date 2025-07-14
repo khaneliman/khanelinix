@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
@@ -13,10 +13,10 @@ let
     types
     ;
 
-  cfg = config.${namespace}.services.mpd;
+  cfg = config.khanelinix.services.mpd;
 in
 {
-  options.${namespace}.services.mpd = {
+  options.khanelinix.services.mpd = {
     enable = mkEnableOption "mpd";
     musicDirectory = mkOption {
       type = with types; either path str;

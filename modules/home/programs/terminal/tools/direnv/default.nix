@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
-  cfg = config.${namespace}.programs.terminal.tools.direnv;
+  cfg = config.khanelinix.programs.terminal.tools.direnv;
 in
 {
-  options.${namespace}.programs.terminal.tools.direnv = {
+  options.khanelinix.programs.terminal.tools.direnv = {
     enable = lib.mkEnableOption "direnv";
   };
 

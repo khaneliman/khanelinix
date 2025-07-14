@@ -1,10 +1,10 @@
 {
   lib,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) enabled disabled;
+  inherit (lib.khanelinix) enabled disabled;
 in
 {
   khanelinix = {
@@ -59,7 +59,6 @@ in
         tools = {
           # No need for all these on his computer
           carapace.enable = false;
-          fup-repl.enable = false;
           jujutsu.enable = false;
           topgrade.enable = false;
 
@@ -80,7 +79,7 @@ in
 
       # sops = {
       #   enable = true;
-      #   defaultSopsFile = lib.snowfall.fs.get-file "secrets/khanelinix/khaneliman/default.yaml";
+      #   defaultSopsFile = lib.getFile "secrets/khanelinix/khaneliman/default.yaml";
       #   sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
       # };
     };

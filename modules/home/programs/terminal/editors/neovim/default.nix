@@ -2,17 +2,17 @@
   config,
   inputs,
   lib,
-  namespace,
+
   osConfig ? { },
   pkgs,
   system,
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
   inherit (lib) mkOption types;
 
-  cfg = config.${namespace}.programs.terminal.editors.neovim;
+  cfg = config.khanelinix.programs.terminal.editors.neovim;
 
   khanelivimConfiguration = inputs.khanelivim.nixvimConfigurations.${system}.khanelivim;
   khanelivimConfigurationExtended = khanelivimConfiguration.extendModules {
@@ -35,7 +35,7 @@ let
           #   };
         };
       }
-      (lib.mkIf (osConfig.${namespace}.archetypes.wsl.enable or false) {
+      (lib.mkIf (osConfig.khanelinix.archetypes.wsl.enable or false) {
         plugins.yanky.enable = lib.mkForce false;
         plugins.yanky.settings.ring.permanent_wrapper.__raw =
           ''require("yanky.wrappers").remove_carriage_return'';
@@ -58,7 +58,7 @@ let
   khanelivim = khanelivimConfigurationExtended.config.build.package;
 in
 {
-  options.${namespace}.programs.terminal.editors.neovim = {
+  options.khanelinix.programs.terminal.editors.neovim = {
     enable = lib.mkEnableOption "neovim";
     default = mkBoolOpt true "Whether to set Neovim as the session EDITOR";
     extraModules = mkOption {
@@ -80,9 +80,9 @@ in
       ];
     };
 
-    sops.secrets = lib.mkIf (osConfig.${namespace}.security.sops.enable or false) {
+    sops.secrets = lib.mkIf (osConfig.khanelinix.security.sops.enable or false) {
       wakatime = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
+        sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.wakatime.cfg";
       };
     };

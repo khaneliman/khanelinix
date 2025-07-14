@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.system.time;
+  cfg = config.khanelinix.system.time;
 in
 {
-  options.${namespace}.system.time = {
+  options.khanelinix.system.time = {
     enable = lib.mkEnableOption "time related settings";
   };
 

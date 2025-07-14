@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.security.sops;
+  cfg = config.khanelinix.security.sops;
 in
 {
-  options.${namespace}.security.sops = {
+  options.khanelinix.security.sops = {
     enable = lib.mkEnableOption "sops";
     defaultSopsFile = mkOpt lib.types.path null "Default sops file.";
     sshKeyPaths = mkOpt (with lib.types; listOf path) [
@@ -25,13 +25,13 @@ in
       age = {
         inherit (cfg) sshKeyPaths;
 
-        keyFile = "${config.users.users.${config.${namespace}.user.name}.home}/.config/sops/age/keys.txt";
+        keyFile = "${config.users.users.${config.khanelinix.user.name}.home}/.config/sops/age/keys.txt";
       };
     };
 
     sops.secrets = {
       "khanelimac_khaneliman_ssh_key" = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/khanelimac/khaneliman/default.yaml";
+        sopsFile = lib.getFile "secrets/khanelimac/khaneliman/default.yaml";
       };
     };
   };
