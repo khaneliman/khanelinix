@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) types mkIf mkForce;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.hardware.audio;
+  cfg = config.khanelinix.hardware.audio;
 in
 {
-  options.${namespace}.hardware.audio = with types; {
+  options.khanelinix.hardware.audio = with types; {
     enable = lib.mkEnableOption "audio support";
     alsa-monitor = mkOpt attrs { } "Alsa configuration.";
     extra-packages = mkOpt (listOf package) [

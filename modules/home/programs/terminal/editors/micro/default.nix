@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.editors.micro;
+  cfg = config.khanelinix.programs.terminal.editors.micro;
 in
 {
-  options.${namespace}.programs.terminal.editors.micro = {
+  options.khanelinix.programs.terminal.editors.micro = {
     enable = lib.mkEnableOption "micro";
     default = lib.mkEnableOption "setting micro as the session EDITOR";
   };

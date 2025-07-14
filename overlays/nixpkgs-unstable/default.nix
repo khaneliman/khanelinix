@@ -1,6 +1,10 @@
-{ channels, ... }:
-_final: _prev: {
-  inherit (channels.nixpkgs-unstable)
+{ inputs, mkPkgs, ... }:
+final: _prev:
+let
+  unstable = mkPkgs inputs.nixpkgs-unstable final.system final.config;
+in
+{
+  inherit (unstable)
     # Core
     jankyborders
     nixVersions

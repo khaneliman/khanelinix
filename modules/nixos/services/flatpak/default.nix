@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.services.flatpak;
+  cfg = config.khanelinix.services.flatpak;
 in
 {
-  options.${namespace}.services.flatpak = {
+  options.khanelinix.services.flatpak = {
     enable = lib.mkEnableOption "flatpak support";
     extraRepos = lib.mkOption {
       default = [

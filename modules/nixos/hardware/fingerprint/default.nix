@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.hardware.fingerprint;
+  cfg = config.khanelinix.hardware.fingerprint;
 in
 {
-  options.${namespace}.hardware.fingerprint = {
+  options.khanelinix.hardware.fingerprint = {
     enable = lib.mkEnableOption "fingerprint support";
   };
 

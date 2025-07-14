@@ -1,15 +1,15 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
 
-  cfg = config.${namespace}.security.pam;
+  cfg = config.khanelinix.security.pam;
 in
 {
-  options.${namespace}.security.pam = {
+  options.khanelinix.security.pam = {
     enable = lib.mkEnableOption "pam";
   };
 

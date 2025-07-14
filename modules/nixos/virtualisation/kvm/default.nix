@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
@@ -14,13 +14,13 @@ let
     concatStringsSep
     getExe
     ;
-  inherit (lib.${namespace}) mkOpt enabled;
-  inherit (config.${namespace}) user;
+  inherit (lib.khanelinix) mkOpt enabled;
+  inherit (config.khanelinix) user;
 
-  cfg = config.${namespace}.virtualisation.kvm;
+  cfg = config.khanelinix.virtualisation.kvm;
 in
 {
-  options.${namespace}.virtualisation.kvm = with types; {
+  options.khanelinix.virtualisation.kvm = with types; {
     enable = lib.mkEnableOption "KVM virtualisation";
     # Use `machinectl` and then `machinectl status <name>` to
     # get the unit "*.scope" of the virtual machine.
@@ -79,7 +79,7 @@ in
           swtpm.enable = true;
 
           verbatimConfig = ''
-            namespaces = []
+            s = []
             user = "+${builtins.toString config.users.users.${user.name}.uid}"
           '';
         };

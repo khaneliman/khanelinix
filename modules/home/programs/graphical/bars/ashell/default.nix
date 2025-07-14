@@ -1,19 +1,19 @@
 {
   config,
   lib,
-  namespace,
+
   osConfig ? { },
   pkgs,
   ...
 }:
 let
   inherit (lib) mkIf types;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.programs.graphical.bars.ashell;
+  cfg = config.khanelinix.programs.graphical.bars.ashell;
 in
 {
-  options.${namespace}.programs.graphical.bars.ashell = {
+  options.khanelinix.programs.graphical.bars.ashell = {
     enable = lib.mkEnableOption "ashell in the desktop environment";
 
     style = mkOpt types.str "Islands" "Style of the bar";
@@ -48,7 +48,7 @@ in
 
           # GitHub notifications helper
           githubHelper = pkgs.writeShellScriptBin "ashell-github-helper" ''
-            ${lib.optionalString (osConfig.${namespace}.security.sops.enable or false) ''
+            ${lib.optionalString (osConfig.khanelinix.security.sops.enable or false) ''
               ${lib.getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
             ''}
 
@@ -314,9 +314,9 @@ in
         };
     };
 
-    sops.secrets = mkIf (osConfig.${namespace}.security.sops.enable or false) {
+    sops.secrets = mkIf (osConfig.khanelinix.security.sops.enable or false) {
       weather_config = {
-        sopsFile = lib.snowfall.fs.get-file "secrets/khaneliman/default.yaml";
+        sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/weather_config.json";
       };
     };

@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+  options,
   ...
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.system.fonts;
+  cfg = config.khanelinix.system.fonts;
 in
 {
-  options.${namespace}.system.fonts = with types; {
+  options.khanelinix.system.fonts = with types; {
     enable = lib.mkEnableOption "managing fonts";
     fonts =
       with pkgs;

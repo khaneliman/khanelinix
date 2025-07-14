@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf mkForce;
 
-  cfg = config.${namespace}.system.locale;
+  cfg = config.khanelinix.system.locale;
 in
 {
-  options.${namespace}.system.locale = {
+  options.khanelinix.system.locale = {
     enable = lib.mkEnableOption " manage locale settings";
   };
 

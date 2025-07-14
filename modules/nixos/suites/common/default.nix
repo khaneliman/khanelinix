@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
-  cfg = config.${namespace}.suites.common;
+  cfg = config.khanelinix.suites.common;
 in
 {
-  imports = [ (lib.snowfall.fs.get-file "modules/shared/suites/common/default.nix") ];
+  imports = [ (lib.getFile "modules/shared/suites/common/default.nix") ];
 
   config = mkIf cfg.enable {
     environment = {
@@ -27,9 +27,9 @@ in
         lolcat
         lshw
         pciutils
-        pkgs.${namespace}.trace-symlink
-        pkgs.${namespace}.trace-which
-        pkgs.${namespace}.why-depends
+        pkgs.khanelinix.trace-symlink
+        pkgs.khanelinix.trace-which
+        pkgs.khanelinix.why-depends
         rsync
         usbimager
         util-linux

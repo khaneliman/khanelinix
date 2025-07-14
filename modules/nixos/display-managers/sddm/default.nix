@@ -2,19 +2,19 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf getExe' stringAfter;
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
-  cfg = config.${namespace}.display-managers.sddm;
+  cfg = config.khanelinix.display-managers.sddm;
 
-  userName = config.${namespace}.user.name;
+  userName = config.khanelinix.user.name;
 in
 {
-  options.${namespace}.display-managers.sddm = {
+  options.khanelinix.display-managers.sddm = {
     enable = lib.mkEnableOption "sddm";
   };
 
@@ -23,9 +23,9 @@ in
       catppuccin-sddm-corners
     ];
 
-    ${namespace}.home.configFile =
+    khanelinix.home.configFile =
       let
-        inherit (config.home-manager.users.${userName}.${namespace}.user) icon;
+        inherit (config.home-manager.users.${userName}.khanelinix.user) icon;
       in
       lib.mkIf (icon != null) {
         "sddm/faces/.${userName}".source = icon;

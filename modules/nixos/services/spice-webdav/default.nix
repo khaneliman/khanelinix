@@ -2,7 +2,7 @@
   config,
   pkgs,
   lib,
-  namespace,
+
   ...
 }:
 let
@@ -13,10 +13,10 @@ let
     getExe'
     ;
 
-  cfg = config.${namespace}.services.spice-webdav;
+  cfg = config.khanelinix.services.spice-webdav;
 in
 {
-  options.${namespace}.services.spice-webdav = with types; {
+  options.khanelinix.services.spice-webdav = with types; {
     enable = lib.mkEnableOption "spice-webdav proxy support";
     package = mkOption {
       default = pkgs.phodav;

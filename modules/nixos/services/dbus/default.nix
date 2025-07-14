@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkBoolOpt;
+  inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.${namespace}.services.dbus;
+  cfg = config.khanelinix.services.dbus;
 in
 {
-  options.${namespace}.services.dbus = {
+  options.khanelinix.services.dbus = {
     enable = mkBoolOpt true "Whether or not to enable dbus service.";
   };
 

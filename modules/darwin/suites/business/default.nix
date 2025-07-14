@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
-  cfg = config.${namespace}.suites.business;
+  cfg = config.khanelinix.suites.business;
 in
 {
-  options.${namespace}.suites.business = {
+  options.khanelinix.suites.business = {
     enable = lib.mkEnableOption "business configuration";
   };
 
@@ -27,7 +27,7 @@ in
         "obsidian"
       ];
 
-      masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
+      masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
         "Brother iPrint&Scan" = 1193539993;
         "Keynote" = 409183694;
         "Microsoft OneNote" = 784801555;

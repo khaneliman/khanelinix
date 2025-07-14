@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.theme.qt;
+  cfg = config.khanelinix.theme.qt;
 in
 {
-  options.${namespace}.theme.qt = with types; {
+  options.khanelinix.theme.qt = with types; {
     enable = lib.mkEnableOption "customizing qt and apply themes";
 
     theme = {
@@ -28,8 +28,7 @@ in
     environment = {
       systemPackages =
         with pkgs;
-        [ cfg.theme.package ]
-        ++ lib.optional config.${namespace}.suites.wlroots.enable kdePackages.qtwayland;
+        [ cfg.theme.package ] ++ lib.optional config.khanelinix.suites.wlroots.enable kdePackages.qtwayland;
     };
 
     qt = {

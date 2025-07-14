@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.git-crypt;
+  cfg = config.khanelinix.programs.terminal.tools.git-crypt;
 in
 {
-  options.${namespace}.programs.terminal.tools.git-crypt = {
+  options.khanelinix.programs.terminal.tools.git-crypt = {
     enable = lib.mkEnableOption "git-crypt";
   };
 

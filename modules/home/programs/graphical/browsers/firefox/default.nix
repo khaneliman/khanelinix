@@ -3,7 +3,7 @@
   inputs,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
@@ -13,14 +13,17 @@ let
     mkMerge
     optionalAttrs
     ;
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.khanelinix) mkBoolOpt mkOpt;
 
-  cfg = config.${namespace}.programs.graphical.browsers.firefox;
+  cfg = config.khanelinix.programs.graphical.browsers.firefox;
 in
 {
-  imports = lib.snowfall.fs.get-non-default-nix-files ./.;
+  imports = [
+    ./extensions.nix
+    ./search.nix
+  ];
 
-  options.${namespace}.programs.graphical.browsers.firefox = with types; {
+  options.khanelinix.programs.graphical.browsers.firefox = with types; {
     enable = lib.mkEnableOption "Firefox";
 
     extraConfig = mkOpt str "" "Extra configuration for the user profile JS file.";
@@ -83,12 +86,12 @@ in
       profiles = {
         "dev-edition-default" = {
           id = 0;
-          path = "${config.${namespace}.user.name}";
+          path = "${config.khanelinix.user.name}";
         };
 
-        ${config.${namespace}.user.name} = {
+        ${config.khanelinix.user.name} = {
           inherit (cfg) extraConfig;
-          inherit (config.${namespace}.user) name;
+          inherit (config.khanelinix.user) name;
 
           id = 1;
 

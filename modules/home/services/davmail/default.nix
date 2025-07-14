@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
 
-  cfg = config.${namespace}.services.davmail;
+  cfg = config.khanelinix.services.davmail;
 in
 {
-  options.${namespace}.services.davmail = {
+  options.khanelinix.services.davmail = {
     enable = mkEnableOption "davmail";
   };
 

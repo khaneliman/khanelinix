@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
-  cfg = config.${namespace}.archetypes.workstation;
+  cfg = config.khanelinix.archetypes.workstation;
 in
 {
-  options.${namespace}.archetypes.workstation = {
+  options.khanelinix.archetypes.workstation = {
     enable = lib.mkEnableOption "the workstation archetype";
   };
 

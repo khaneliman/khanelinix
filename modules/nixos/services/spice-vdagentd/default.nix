@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf getExe';
 
-  cfg = config.${namespace}.services.spice-vdagentd;
+  cfg = config.khanelinix.services.spice-vdagentd;
 in
 {
-  options.${namespace}.services.spice-vdagentd = {
+  options.khanelinix.services.spice-vdagentd = {
     enable = lib.mkEnableOption "spice-vdagent support";
   };
 

@@ -1,11 +1,11 @@
 {
   pkgs,
   lib,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 in
 {
   environment.systemPackages = with pkgs; [

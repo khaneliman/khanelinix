@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.services.logrotate;
+  cfg = config.khanelinix.services.logrotate;
 in
 {
-  options.${namespace}.services.logrotate = {
+  options.khanelinix.services.logrotate = {
     enable = lib.mkEnableOption "logrotate";
   };
 

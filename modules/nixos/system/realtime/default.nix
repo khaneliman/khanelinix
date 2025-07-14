@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.system.realtime;
+  cfg = config.khanelinix.system.realtime;
 in
 {
-  options.${namespace}.system.realtime = {
+  options.khanelinix.system.realtime = {
     enable = lib.mkEnableOption "realtime";
   };
 
@@ -20,7 +20,7 @@ in
     # tldr: realtime processes have higher priority than normal processes
     # and that's a good thing
     users = {
-      users."${config.${namespace}.user.name}".extraGroups = [ "realtime" ];
+      users."${config.khanelinix.user.name}".extraGroups = [ "realtime" ];
       groups.realtime = { };
     };
 

@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.graphical.addons.electron-support;
+  cfg = config.khanelinix.programs.graphical.addons.electron-support;
 in
 {
-  options.${namespace}.programs.graphical.addons.electron-support = {
+  options.khanelinix.programs.graphical.addons.electron-support = {
     enable = lib.mkEnableOption "wayland electron support in the desktop environment";
   };
 

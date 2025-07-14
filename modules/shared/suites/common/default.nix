@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.suites.common;
+  cfg = config.khanelinix.suites.common;
 in
 {
-  options.${namespace}.suites.common = {
+  options.khanelinix.suites.common = {
     enable = lib.mkEnableOption "common configuration";
   };
 

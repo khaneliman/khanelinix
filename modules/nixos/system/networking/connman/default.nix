@@ -1,13 +1,13 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.system.networking;
+  cfg = config.khanelinix.system.networking;
 in
 {
   config = mkIf (cfg.enable && cfg.manager == "connman") {
@@ -22,8 +22,8 @@ in
           "ifb"
           "ve"
         ]
-        ++ lib.optionals config.${namespace}.services.tailscale.enable [ "tailscale*" ]
-        ++ lib.optionals config.${namespace}.virtualisation.podman.enable [ "docker*" ];
+        ++ lib.optionals config.khanelinix.services.tailscale.enable [ "tailscale*" ]
+        ++ lib.optionals config.khanelinix.virtualisation.podman.enable [ "docker*" ];
     };
   };
 }

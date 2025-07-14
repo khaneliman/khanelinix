@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.graphical.file-managers.nautilus;
+  cfg = config.khanelinix.programs.graphical.file-managers.nautilus;
 in
 {
-  options.${namespace}.programs.graphical.file-managers.nautilus = {
+  options.khanelinix.programs.graphical.file-managers.nautilus = {
     enable = lib.mkEnableOption "the gnome file manager";
   };
 

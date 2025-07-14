@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.hardware.bluetooth;
+  cfg = config.khanelinix.hardware.bluetooth;
 in
 {
-  options.${namespace}.hardware.bluetooth = {
+  options.khanelinix.hardware.bluetooth = {
     enable = lib.mkEnableOption "support for extra bluetooth devices";
     autoConnect = lib.mkOption {
       type = lib.types.bool;
