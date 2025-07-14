@@ -10,6 +10,7 @@
     clang-format.enable = true;
     deadnix = {
       enable = true;
+      no-lambda-arg = true;
     };
     deno = {
       enable = true;
