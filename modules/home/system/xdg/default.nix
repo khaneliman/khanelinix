@@ -1,14 +1,14 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
 
-  cfg = config.${namespace}.system.xdg;
+  cfg = config.khanelinix.system.xdg;
 
   browser = [
     "firefox-devedition.desktop"
@@ -159,7 +159,7 @@ let
 in
 {
   # NOTE: Can test with `, ashpd-demo`
-  options.${namespace}.system.xdg = {
+  options.khanelinix.system.xdg = {
     enable = mkEnableOption "xdg";
   };
 
@@ -171,7 +171,7 @@ in
       cacheHome = config.home.homeDirectory + "/.local/cache";
 
       configFile."xdg-desktop-portal-wlr/config" =
-        lib.mkIf config.${namespace}.programs.graphical.wms.sway.enable
+        lib.mkIf config.khanelinix.programs.graphical.wms.sway.enable
           {
             text = ''
               [screencast]
@@ -193,7 +193,7 @@ in
         xdgOpenUsePortal = true;
 
         config = {
-          hyprland = mkIf config.${namespace}.programs.graphical.wms.hyprland.enable {
+          hyprland = mkIf config.khanelinix.programs.graphical.wms.hyprland.enable {
             default = [
               "hyprland"
               "gtk"
@@ -203,7 +203,7 @@ in
             "org.freedesktop.impl.portal.Screenshot" = "hyprland";
           };
 
-          sway = mkIf config.${namespace}.programs.graphical.wms.sway.enable {
+          sway = mkIf config.khanelinix.programs.graphical.wms.sway.enable {
             default = lib.mkDefault [
               "wlr"
               "gtk"

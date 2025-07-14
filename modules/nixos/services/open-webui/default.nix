@@ -1,15 +1,15 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
 
-  cfg = config.${namespace}.services.open-webui;
+  cfg = config.khanelinix.services.open-webui;
 in
 {
-  options.${namespace}.services.open-webui = {
+  options.khanelinix.services.open-webui = {
     enable = lib.mkEnableOption "ollama ui";
   };
 

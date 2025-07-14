@@ -1,18 +1,18 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.emulators.wezterm;
-  catppuccin = import (lib.snowfall.fs.get-file "modules/home/theme/catppuccin/colors.nix");
+  cfg = config.khanelinix.programs.terminal.emulators.wezterm;
+  catppuccin = import (lib.getFile "modules/home/theme/catppuccin/colors.nix");
 in
 {
-  options.${namespace}.programs.terminal.emulators.wezterm = {
+  options.khanelinix.programs.terminal.emulators.wezterm = {
     enable = lib.mkEnableOption "wezterm";
   };
 

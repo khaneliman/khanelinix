@@ -2,19 +2,19 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   osConfig ? { },
   ...
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
-  cfg = config.${namespace}.suites.common;
-  isWSL = osConfig.${namespace}.archetypes.wsl.enable or false;
+  cfg = config.khanelinix.suites.common;
+  isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
 in
 {
-  options.${namespace}.suites.common = {
+  options.khanelinix.suites.common = {
     enable = lib.mkEnableOption "common configuration";
   };
 
@@ -31,7 +31,7 @@ in
       };
 
       shellAliases = {
-        nixcfg = "nvim ~/${namespace}/flake.nix";
+        nixcfg = "nvim ~/khanelinix/flake.nix";
         # Closure size checking aliases
         ncs-sys = ''f(){ nix build ".#nixosConfigurations.$1.config.system.build.toplevel" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#nixosConfigurations.$1.config.system.build.toplevel.outPath") | tail -1; }; f'';
         ncs-darwin = ''f(){ nix build ".#darwinConfigurations.$1.config.system.build.toplevel" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#darwinConfigurations.$1.config.system.build.toplevel.outPath") | tail -1; }; f'';
@@ -85,7 +85,6 @@ in
             eza = mkDefault enabled;
             fastfetch = mkDefault enabled;
             fzf = mkDefault enabled;
-            fup-repl = mkDefault enabled;
             git = mkDefault enabled;
             glxinfo.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
             jq = mkDefault enabled;

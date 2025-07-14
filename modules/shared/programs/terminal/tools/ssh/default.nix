@@ -2,15 +2,15 @@
   config,
   lib,
   inputs,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.programs.terminal.tools.ssh;
+  cfg = config.khanelinix.programs.terminal.tools.ssh;
 
-  user = config.users.users.${config.${namespace}.user.name};
+  user = config.users.users.${config.khanelinix.user.name};
   user-id = builtins.toString user.uid;
 
   nixosConfigurations = inputs.self.nixosConfigurations or { };
@@ -19,16 +19,14 @@ let
   ## NOTE This is the cause of evaluating all configurations per system
   ## TODO: Find a more elegant way that doesn't require bloating eval complications
   other-hosts =
-    lib.filterAttrs (
-      _key: host: (host.config.${namespace}.user.name or null) != null
-    ) nixosConfigurations
+    lib.filterAttrs (_key: host: (host.config.khanelinix.user.name or null) != null) nixosConfigurations
     // darwinConfigurations;
 
   other-hosts-config = lib.concatMapStringsSep "\n" (
     name:
     let
       remote = other-hosts.${name};
-      remote-user-name = remote.config.${namespace}.user.name;
+      remote-user-name = remote.config.khanelinix.user.name;
       remote-user-id = builtins.toString remote.config.users.users.${remote-user-name}.uid;
 
       forward-gpg =
@@ -54,7 +52,7 @@ let
   ) (builtins.attrNames other-hosts);
 in
 {
-  options.${namespace}.programs.terminal.tools.ssh = {
+  options.khanelinix.programs.terminal.tools.ssh = {
     enable = lib.mkEnableOption "ssh support";
     extraConfig = mkOpt lib.types.str "" "Extra configuration to apply.";
     port = mkOpt lib.types.port 2222 "The port to listen on (in addition to 22).";

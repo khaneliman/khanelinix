@@ -1,15 +1,15 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  cfg = config.${namespace}.suites.development;
+  cfg = config.khanelinix.suites.development;
 in
 {
-  options.${namespace}.suites.development = {
+  options.khanelinix.suites.development = {
     enable = lib.mkEnableOption "common development configuration";
     dockerEnable = lib.mkEnableOption "docker development configuration";
     aiEnable = lib.mkEnableOption "ai development configuration";
@@ -32,7 +32,7 @@ in
         ]
         ++ lib.optionals cfg.aiEnable [ "ollamac" ];
 
-      masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
+      masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
         "Patterns" = 429449079;
         "Xcode" = 497799835;
       };

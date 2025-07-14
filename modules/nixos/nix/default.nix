@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkDefault mkIf;
 
-  cfg = config.${namespace}.nix;
+  cfg = config.khanelinix.nix;
 in
 {
-  imports = [ (lib.snowfall.fs.get-file "modules/shared/nix/default.nix") ];
+  imports = [ (lib.getFile "modules/shared/nix/default.nix") ];
 
   config = mkIf cfg.enable {
     documentation = {
@@ -64,13 +64,6 @@ in
           "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
         ];
       };
-
-      # flake-utils-plus
-      generateNixPathFromInputs = true;
-      generateRegistryFromInputs = true;
-      linkInputs = true;
     };
-
-    system.rebuild.enableNg = true;
   };
 }

@@ -1,12 +1,12 @@
 {
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkForce getExe getExe';
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
   gpgConf = pkgs.fetchurl {
     url = "https://raw.githubusercontent.com/drduh/config/master/gpg.conf";

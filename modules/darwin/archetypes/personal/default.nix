@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
-  cfg = config.${namespace}.archetypes.personal;
+  cfg = config.khanelinix.archetypes.personal;
 in
 {
-  options.${namespace}.archetypes.personal = {
+  options.khanelinix.archetypes.personal = {
     enable = lib.mkEnableOption "the personal archetype";
   };
 

@@ -2,18 +2,18 @@
   config,
   lib,
   virtual,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.security.acme;
+  cfg = config.khanelinix.security.acme;
 in
 {
-  options.${namespace}.security.acme = {
+  options.khanelinix.security.acme = {
     enable = lib.mkEnableOption "default ACME configuration";
-    email = mkOpt lib.types.str config.${namespace}.user.email "The email to use.";
+    email = mkOpt lib.types.str config.khanelinix.user.email "The email to use.";
     staging = mkOpt lib.types.bool virtual "Whether to use the staging server or not.";
   };
 

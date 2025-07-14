@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
@@ -12,12 +12,12 @@ let
     mkOption
     types
     ;
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
-  cfg = config.${namespace}.programs.terminal.tools.gh;
+  cfg = config.khanelinix.programs.terminal.tools.gh;
 in
 {
-  options.${namespace}.programs.terminal.tools.gh = {
+  options.khanelinix.programs.terminal.tools.gh = {
     enable = mkEnableOption "the gh CLI tool";
 
     gitCredentialHelper = {

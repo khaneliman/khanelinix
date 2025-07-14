@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.hardware.gpu.amd;
+  cfg = config.khanelinix.hardware.gpu.amd;
 in
 {
-  options.${namespace}.hardware.gpu.amd = {
+  options.khanelinix.hardware.gpu.amd = {
     enable = lib.mkEnableOption "support for amdgpu";
     enableRocmSupport = lib.mkEnableOption "support for rocm";
     enableNvtop = lib.mkEnableOption "install nvtop for amd";

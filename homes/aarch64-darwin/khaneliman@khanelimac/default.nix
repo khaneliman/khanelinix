@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 in
 {
   khanelinix = {
     user = {
       enable = true;
-      inherit (config.snowfallorg.user) name;
+      name = "khaneliman";
     };
 
     programs = {
@@ -20,8 +20,8 @@ in
           thunderbird =
             let
               # Not super secret, just doesn't need to be scraped so easily.
-              outlook = lib.${namespace}.decode "a2hhbmVsaW1hbjEyQG91dGxvb2suY29t";
-              personal = lib.${namespace}.decode "YXVzdGluLm0uaG9yc3RtYW5AZ21haWwuY29t";
+              outlook = lib.khanelinix.decode "a2hhbmVsaW1hbjEyQG91dGxvb2suY29t";
+              personal = lib.khanelinix.decode "YXVzdGluLm0uaG9yc3RtYW5AZ21haWwuY29t";
             in
             {
               accountsOrder = [
@@ -70,7 +70,7 @@ in
     services = {
       sops = {
         enable = true;
-        defaultSopsFile = lib.snowfall.fs.get-file "secrets/khanelimac/khaneliman/default.yaml";
+        defaultSopsFile = lib.getFile "secrets/khanelimac/khaneliman/default.yaml";
         sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
       };
     };

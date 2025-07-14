@@ -1,11 +1,11 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 in
 {
   imports = [
@@ -71,7 +71,7 @@ in
         # TODO: make part of ssh config proper
         extraConfig = ''
           Host server
-            User ${config.${namespace}.user.name}
+            User ${config.khanelinix.user.name}
             Hostname austinserver.local
         '';
       };
@@ -83,7 +83,7 @@ in
       # sops = {
       #   enable = true;
       #   sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-      #   defaultSopsFile = lib.snowfall.fs.get-file "secrets/bruddynix/default.yaml";
+      #   defaultSopsFile = lib.getFile "secrets/bruddynix/default.yaml";
       # };
     };
 

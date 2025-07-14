@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  namespace,
   pkgs,
   options,
   ...
@@ -10,15 +9,19 @@ let
   inherit (lib)
     mkEnableOption
     mkIf
+    mkOption
     types
     ;
 
-  inherit (lib.${namespace}) mkOpt;
+  # Use direct mkOpt implementation to avoid circular dependency
+  mkOpt =
+    type: default: description:
+    lib.mkOption { inherit type default description; };
 
-  cfg = config.${namespace}.theme.stylix;
+  cfg = config.khanelinix.theme.stylix;
 in
 {
-  options.${namespace}.theme.stylix = {
+  options.khanelinix.theme.stylix = {
     enable = mkEnableOption "stylix theme for applications";
     theme = mkOpt types.str "catppuccin-macchiato" "base16 theme file name";
 
@@ -49,7 +52,7 @@ in
         # autoEnable = false;
         base16Scheme = "${pkgs.base16-schemes}/share/themes/${cfg.theme}.yaml";
 
-        cursor = if (!config.${namespace}.theme.catppuccin.enable) then cfg.cursor else null;
+        cursor = lib.mkOptionDefault cfg.cursor;
 
         fonts = {
           sizes = {
@@ -77,15 +80,13 @@ in
           };
         };
 
-        iconTheme =
-          lib.mkIf (pkgs.stdenv.hostPlatform.isLinux && (!config.${namespace}.theme.catppuccin.enable))
-            {
-              enable = true;
-              inherit (cfg.icon) package;
-              dark = cfg.icon.name;
-              # TODO: support custom light
-              light = cfg.icon.name;
-            };
+        iconTheme = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+          enable = lib.mkDefault true;
+          inherit (cfg.icon) package;
+          dark = cfg.icon.name;
+          # TODO: support custom light
+          light = cfg.icon.name;
+        };
 
         polarity = "dark";
 
@@ -99,48 +100,48 @@ in
         targets =
           {
             # Set profile names for firefox
-            firefox.profileNames = [ config.${namespace}.user.name ];
+            firefox.profileNames = [ config.khanelinix.user.name ];
 
             # TODO: Very custom styling, integrate with their variables
             # Currently setup only for catppuccin/nix
             vscode.enable = false;
 
             # Disable targets when catppuccin is enabled
-            alacritty.enable = !config.${namespace}.theme.catppuccin.enable;
-            bat.enable = !config.${namespace}.theme.catppuccin.enable;
-            btop.enable = !config.${namespace}.theme.catppuccin.enable;
-            cava.enable = !config.${namespace}.theme.catppuccin.enable;
-            fish.enable = !config.${namespace}.theme.catppuccin.enable;
-            foot.enable = !config.${namespace}.theme.catppuccin.enable;
-            fzf.enable = !config.${namespace}.theme.catppuccin.enable;
-            ghostty.enable = !config.${namespace}.theme.catppuccin.enable;
-            gitui.enable = !config.${namespace}.theme.catppuccin.enable;
-            helix.enable = !config.${namespace}.theme.catppuccin.enable;
-            k9s.enable = !config.${namespace}.theme.catppuccin.enable;
-            kitty.enable = !config.${namespace}.theme.catppuccin.enable;
-            lazygit.enable = !config.${namespace}.theme.catppuccin.enable;
-            ncspot.enable = !config.${namespace}.theme.catppuccin.enable;
-            neovim.enable = !config.${namespace}.theme.catppuccin.enable;
-            tmux.enable = !config.${namespace}.theme.catppuccin.enable;
-            vesktop.enable = !config.${namespace}.theme.catppuccin.enable;
-            yazi.enable = !config.${namespace}.theme.catppuccin.enable;
-            zathura.enable = !config.${namespace}.theme.catppuccin.enable;
-            zellij.enable = !config.${namespace}.theme.catppuccin.enable;
+            alacritty.enable = !config.khanelinix.theme.catppuccin.enable;
+            bat.enable = !config.khanelinix.theme.catppuccin.enable;
+            btop.enable = !config.khanelinix.theme.catppuccin.enable;
+            cava.enable = !config.khanelinix.theme.catppuccin.enable;
+            fish.enable = !config.khanelinix.theme.catppuccin.enable;
+            foot.enable = !config.khanelinix.theme.catppuccin.enable;
+            fzf.enable = !config.khanelinix.theme.catppuccin.enable;
+            ghostty.enable = !config.khanelinix.theme.catppuccin.enable;
+            gitui.enable = !config.khanelinix.theme.catppuccin.enable;
+            helix.enable = !config.khanelinix.theme.catppuccin.enable;
+            k9s.enable = !config.khanelinix.theme.catppuccin.enable;
+            kitty.enable = !config.khanelinix.theme.catppuccin.enable;
+            lazygit.enable = !config.khanelinix.theme.catppuccin.enable;
+            ncspot.enable = !config.khanelinix.theme.catppuccin.enable;
+            neovim.enable = !config.khanelinix.theme.catppuccin.enable;
+            tmux.enable = !config.khanelinix.theme.catppuccin.enable;
+            vesktop.enable = !config.khanelinix.theme.catppuccin.enable;
+            yazi.enable = !config.khanelinix.theme.catppuccin.enable;
+            zathura.enable = !config.khanelinix.theme.catppuccin.enable;
+            zellij.enable = !config.khanelinix.theme.catppuccin.enable;
           }
           // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-            gnome.enable = !config.${namespace}.theme.catppuccin.enable;
+            gnome.enable = !config.khanelinix.theme.catppuccin.enable;
             # FIXME: not working
             gtk.enable = false;
-            hyprland.enable = !config.${namespace}.theme.catppuccin.enable;
+            hyprland.enable = !config.khanelinix.theme.catppuccin.enable;
             # FIXME:: upstream needs module fix
             hyprlock.useWallpaper = false;
             hyprlock.enable = false;
-            qt.enable = !config.${namespace}.theme.catppuccin.enable;
-            sway.enable = !config.${namespace}.theme.catppuccin.enable;
+            qt.enable = !config.khanelinix.theme.catppuccin.enable;
+            sway.enable = !config.khanelinix.theme.catppuccin.enable;
             # TODO: Very custom styling, integrate with their variables
             # Currently setup only for catppuccin/nix
             swaync.enable = false;
-            waybar.enable = !config.${namespace}.theme.catppuccin.enable;
+            waybar.enable = !config.khanelinix.theme.catppuccin.enable;
           };
       };
     }

@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.go;
+  cfg = config.khanelinix.programs.terminal.tools.go;
 in
 {
-  options.${namespace}.programs.terminal.tools.go = {
+  options.khanelinix.programs.terminal.tools.go = {
     enable = lib.mkEnableOption "Go support";
   };
 

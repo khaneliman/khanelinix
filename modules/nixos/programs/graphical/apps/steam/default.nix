@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.graphical.apps.steam;
+  cfg = config.khanelinix.programs.graphical.apps.steam;
 in
 {
-  options.${namespace}.programs.graphical.apps.steam = {
+  options.khanelinix.programs.graphical.apps.steam = {
     enable = lib.mkEnableOption "support for Steam";
   };
 

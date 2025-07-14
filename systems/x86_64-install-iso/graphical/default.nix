@@ -1,12 +1,12 @@
 {
   pkgs,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkForce;
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 in
 {
   # `install-iso` adds wireless support that

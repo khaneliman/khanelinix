@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
@@ -12,12 +12,12 @@ let
     types
     ;
 
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.theme.stylix;
+  cfg = config.khanelinix.theme.stylix;
 in
 {
-  options.${namespace}.theme.stylix = {
+  options.khanelinix.theme.stylix = {
     enable = mkEnableOption "stylix theme for applications";
     theme = mkOpt types.str "catppuccin-macchiato" "base16 theme file name";
 
@@ -47,8 +47,8 @@ in
       base16Scheme = "${pkgs.base16-schemes}/share/themes/${cfg.theme}.yaml";
 
       targets = {
-        gtk.enable = !config.${namespace}.theme.gtk.enable;
-        qt.enable = !config.${namespace}.theme.qt.enable;
+        gtk.enable = !config.khanelinix.theme.gtk.enable;
+        qt.enable = !config.khanelinix.theme.qt.enable;
       };
     };
   };

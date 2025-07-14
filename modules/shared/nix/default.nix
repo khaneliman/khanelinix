@@ -3,17 +3,17 @@
   inputs,
   lib,
   pkgs,
-  namespace,
+
   host,
   ...
 }:
 let
-  inherit (lib.${namespace}) mkBoolOpt mkOpt;
+  inherit (lib.khanelinix) mkBoolOpt mkOpt;
 
-  cfg = config.${namespace}.nix;
+  cfg = config.khanelinix.nix;
 in
 {
-  options.${namespace}.nix = {
+  options.khanelinix.nix = {
     enable = mkBoolOpt true "Whether or not to manage nix configuration.";
     package = mkOpt lib.types.package pkgs.nixVersions.latest "Which nix package to use.";
   };
@@ -55,25 +55,11 @@ in
     # Check corresponding nixos/nix-darwin imported module
     nix =
       let
-        mappedRegistry = lib.pipe inputs [
-          (lib.filterAttrs (_: lib.isType "flake"))
-          (lib.mapAttrs (_: flake: { inherit flake; }))
-          (
-            x:
-            x
-            // {
-              nixpkgs.flake =
-                if pkgs.stdenv.hostPlatform.isLinux then inputs.nixpkgs else inputs.nixpkgs-unstable;
-            }
-          )
-          (x: if pkgs.stdenv.hostPlatform.isDarwin then lib.removeAttrs x [ "nixpkgs-unstable" ] else x)
-        ];
-
         users = [
           "root"
           "@wheel"
           "nix-builder"
-          config.${namespace}.user.name
+          config.khanelinix.user.name
         ];
       in
       {
@@ -92,7 +78,7 @@ in
             ];
           in
           # Linux builders
-          lib.optionals config.${namespace}.security.sops.enable [
+          lib.optionals config.khanelinix.security.sops.enable [
             (
               lib.mkIf (host != "bruddynix" && host != "khanelinix") {
                 inherit sshUser;
@@ -229,7 +215,19 @@ in
 
         # pin the registry to avoid downloading and evaluating a new nixpkgs version every time
         # this will add each flake input as a registry to make nix3 commands consistent with your flake
-        registry = mappedRegistry;
+        registry = lib.pipe inputs [
+          (lib.filterAttrs (_: lib.isType "flake"))
+          (lib.mapAttrs (_: flake: { inherit flake; }))
+          (
+            x:
+            x
+            // {
+              nixpkgs.flake =
+                if pkgs.stdenv.hostPlatform.isLinux then inputs.nixpkgs else inputs.nixpkgs-unstable;
+            }
+          )
+          (x: if pkgs.stdenv.hostPlatform.isDarwin then lib.removeAttrs x [ "nixpkgs-unstable" ] else x)
+        ];
 
         settings = {
           allowed-users = users;

@@ -1,8 +1,59 @@
-{ lib, ... }:
+{ inputs }:
 let
-  inherit (lib) mapAttrs mkOption types;
+  inherit (inputs.nixpkgs.lib)
+    mapAttrs
+    mkOption
+    types
+    toUpper
+    substring
+    stringLength
+    mkDefault
+    mkForce
+    ;
+
+  base64Lib = import ../base64 { inherit inputs; };
 in
 rec {
+  # Original flake-parts module utilities
+  # Enable a module with optional configuration
+  enable =
+    module: config:
+    {
+      imports = [ module ];
+    }
+    // config;
+
+  # Conditionally enable modules based on system
+  enableForSystem =
+    system: modules:
+    builtins.filter (
+      mod: mod.systems or [ ] == [ ] || builtins.elem system (mod.systems or [ ])
+    ) modules;
+
+  # Create a module with common options
+  mkModule =
+    {
+      name,
+      description ? "",
+      options ? { },
+      config ? { },
+    }:
+    { lib, ... }:
+    {
+      options.khanelinix.${name} = lib.mkOption {
+        type = lib.types.submodule {
+          options = {
+            enable = lib.mkEnableOption description;
+          } // options;
+        };
+        default = { };
+      };
+
+      config = lib.mkIf config.khanelinix.${name}.enable config;
+    };
+
+  # Migrated khanelinix utilities
+  # Option creation helpers
   mkOpt =
     type: default: description:
     mkOption { inherit type default description; };
@@ -13,6 +64,7 @@ rec {
 
   mkBoolOpt' = mkOpt' types.bool;
 
+  # Standard enable/disable patterns
   enabled = {
     enable = true;
   };
@@ -21,22 +73,24 @@ rec {
     enable = false;
   };
 
+  # String utilities
   capitalize =
     s:
     let
-      len = lib.stringLength s;
+      len = stringLength s;
     in
-    if len == 0 then "" else (lib.toUpper (lib.substring 0 1 s)) + (lib.substring 1 len s);
+    if len == 0 then "" else (toUpper (substring 0 1 s)) + (substring 1 len s);
 
-  # return an int (1/0) based on boolean value
-  # `boolToNum true` -> 1
+  # Boolean utilities
   boolToNum = bool: if bool then 1 else 0;
 
-  default-attrs = mapAttrs (_key: lib.mkDefault);
+  # Attribute manipulation utilities
+  default-attrs = mapAttrs (_key: mkDefault);
 
-  force-attrs = mapAttrs (_key: lib.mkForce);
+  force-attrs = mapAttrs (_key: mkForce);
 
   nested-default-attrs = mapAttrs (_key: default-attrs);
 
   nested-force-attrs = mapAttrs (_key: force-attrs);
 }
+// base64Lib

@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  namespace,
+
   osConfig ? { },
   pkgs,
   ...
@@ -9,7 +9,7 @@
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.zellij;
+  cfg = config.khanelinix.programs.terminal.tools.zellij;
 
   zns = "zellij -s $(basename $(pwd)) options --default-cwd $(pwd)";
   zas = "zellij a $(basename $(pwd))";
@@ -26,7 +26,7 @@ in
     ./layouts/system.nix
   ];
 
-  options.${namespace}.programs.terminal.tools.zellij = {
+  options.khanelinix.programs.terminal.tools.zellij = {
     enable = lib.mkEnableOption "zellij";
   };
 
@@ -46,7 +46,7 @@ in
         settings = {
           # clipboard provider
           copy_command =
-            if pkgs.stdenv.hostPlatform.isLinux && (osConfig.${namespace}.archetypes.wsl.enable or false) then
+            if pkgs.stdenv.hostPlatform.isLinux && (osConfig.khanelinix.archetypes.wsl.enable or false) then
               "clip.exe"
             else if pkgs.stdenv.hostPlatform.isLinux then
               "wl-copy"

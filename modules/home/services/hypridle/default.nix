@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   osConfig ? { },
   ...
 }:
 let
   inherit (lib) mkIf getExe getExe';
 
-  cfg = config.${namespace}.services.hypridle;
+  cfg = config.khanelinix.services.hypridle;
 in
 {
-  options.${namespace}.services.hypridle = {
+  options.khanelinix.services.hypridle = {
     enable = lib.mkEnableOption "hypridle service";
   };
 

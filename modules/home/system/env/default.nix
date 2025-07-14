@@ -1,10 +1,10 @@
 {
   lib,
-  namespace,
+
   ...
 }:
 {
-  options.${namespace}.system.env = lib.mkOption {
+  options.khanelinix.system.env = lib.mkOption {
     apply = lib.mapAttrs (
       _n: v: if lib.isList v then lib.concatMapStringsSep ":" toString v else (toString v)
     );

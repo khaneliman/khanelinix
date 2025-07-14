@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
 
-  cfg = config.${namespace}.security.sudo;
+  cfg = config.khanelinix.security.sudo;
 in
 {
-  options.${namespace}.security.sudo = {
+  options.khanelinix.security.sudo = {
     enable = lib.mkEnableOption "sudo";
   };
   config = lib.mkIf cfg.enable {

@@ -1,18 +1,18 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
-  cfg = config.${namespace}.suites.desktop;
+  cfg = config.khanelinix.suites.desktop;
 in
 {
-  options.${namespace}.suites.desktop = {
+  options.khanelinix.suites.desktop = {
     enable = lib.mkEnableOption "common desktop configuration";
   };
 
@@ -30,7 +30,7 @@ in
       # xquartz
     ];
 
-    ${namespace}.desktop = {
+    khanelinix.desktop = {
       wms = {
         yabai = mkDefault enabled;
       };
@@ -56,7 +56,7 @@ in
         "felixkratz/homebrew-formulae"
       ];
 
-      masApps = mkIf config.${namespace}.tools.homebrew.masEnable {
+      masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
         "AmorphousMemoryMark" = 1495719766;
         "Amphetamine" = 937984704;
         "AutoMounter" = 1160435653;

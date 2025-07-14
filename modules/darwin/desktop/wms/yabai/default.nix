@@ -2,27 +2,27 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) getExe;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.desktop.wms.yabai;
+  cfg = config.khanelinix.desktop.wms.yabai;
   hmCfg = config.home-manager.users.${config.khanelinix.user.name};
 in
 {
-  options.${namespace}.desktop.wms.yabai = {
+  options.khanelinix.desktop.wms.yabai = {
     enable = lib.mkEnableOption "yabai";
     debug = lib.mkEnableOption "debug output";
-    logFile = mkOpt lib.types.str "${
-      config.snowfallorg.users.${config.${namespace}.user.name}.home.path
-    }/Library/Logs/yabai.log" "Filepath of log output";
+    logFile =
+      mkOpt lib.types.str "${config.users.users.${config.khanelinix.user.name}.home}/Library/Logs/yabai.log"
+        "Filepath of log output";
   };
 
   config = lib.mkIf cfg.enable {
-    ${namespace} = {
+    khanelinix = {
 
       home.extraOptions = {
         home.shellAliases = {
@@ -89,7 +89,7 @@ in
       extraConfig =
         let
           sketchybar = hmCfg.programs.sketchybar.finalPackage;
-          inherit (pkgs.${namespace}) yabai-helper;
+          inherit (pkgs.khanelinix) yabai-helper;
           yabai = config.services.yabai.package;
         in
         # bash

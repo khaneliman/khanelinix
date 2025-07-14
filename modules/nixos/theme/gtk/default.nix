@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.theme.gtk;
+  cfg = config.khanelinix.theme.gtk;
 in
 {
-  options.${namespace}.theme.gtk = with types; {
+  options.khanelinix.theme.gtk = with types; {
     enable = lib.mkEnableOption "customizing GTK and apply themes";
 
     theme = {

@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.dircolors;
+  cfg = config.khanelinix.programs.terminal.tools.dircolors;
 in
 {
-  options.${namespace}.programs.terminal.tools.dircolors = {
+  options.khanelinix.programs.terminal.tools.dircolors = {
     enable = lib.mkEnableOption "dircolors";
   };
 

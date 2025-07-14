@@ -2,20 +2,20 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.${namespace}) default-attrs mkBoolOpt mkOpt;
+  inherit (lib.khanelinix) default-attrs mkBoolOpt mkOpt;
 
-  cfg = config.${namespace}.programs.graphical.desktop-environment.gnome;
+  cfg = config.khanelinix.programs.graphical.desktop-environment.gnome;
 
   get-wallpaper =
     wallpaper: if lib.isDerivation wallpaper then builtins.toString wallpaper else wallpaper;
 in
 {
-  options.${namespace}.programs.graphical.desktop-environment.gnome = {
+  options.khanelinix.programs.graphical.desktop-environment.gnome = {
     enable = lib.mkEnableOption "GNOME desktop environment customization";
 
     shell = mkOpt (types.submodule {
@@ -64,8 +64,8 @@ in
               };
             })
             {
-              picture-uri = get-wallpaper pkgs.${namespace}.wallpapers.flatppuccin_macchiato;
-              picture-uri-dark = get-wallpaper pkgs.${namespace}.wallpapers.cat-sound;
+              picture-uri = get-wallpaper "${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png";
+              picture-uri-dark = get-wallpaper "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat-sound.png";
             }
             "Desktop background settings";
 
@@ -79,8 +79,8 @@ in
               };
             })
             {
-              picture-uri = get-wallpaper pkgs.${namespace}.wallpapers.flatppuccin_macchiato;
-              picture-uri-dark = get-wallpaper pkgs.${namespace}.wallpapers.cat-sound;
+              picture-uri = get-wallpaper "${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png";
+              picture-uri-dark = get-wallpaper "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat-sound.png";
             }
             "Screensaver settings";
 

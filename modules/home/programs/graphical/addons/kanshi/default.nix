@@ -2,18 +2,18 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf getExe;
-  inherit (config.${namespace}) user;
+  inherit (config.khanelinix) user;
   inherit (config.users.users.${user.name}) home;
 
-  cfg = config.${namespace}.programs.graphical.addons.kanshi;
+  cfg = config.khanelinix.programs.graphical.addons.kanshi;
 in
 {
-  options.${namespace}.programs.graphical.addons.kanshi = {
+  options.khanelinix.programs.graphical.addons.kanshi = {
     enable = lib.mkEnableOption "Kanshi in the desktop environment";
   };
 

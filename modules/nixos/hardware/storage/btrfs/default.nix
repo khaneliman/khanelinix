@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
@@ -12,10 +12,10 @@ let
     genAttrs
     getExe
     ;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
   inherit (cfg) dedupeFilesystems;
 
-  cfg = config.${namespace}.hardware.storage.btrfs;
+  cfg = config.khanelinix.hardware.storage.btrfs;
 
   dedupeFilesystemsAttrSets = genAttrs dedupeFilesystems (name: {
     spec = "LABEL=${name}";
@@ -116,7 +116,7 @@ let
     };
 in
 {
-  options.${namespace}.hardware.storage.btrfs = with types; {
+  options.khanelinix.hardware.storage.btrfs = with types; {
     enable = lib.mkEnableOption "support for btrfs devices";
     autoScrub = lib.mkEnableOption "btrfs autoScrub;";
     dedupe = lib.mkEnableOption "btrfs deduplication;";

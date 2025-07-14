@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
 
-  cfg = config.${namespace}.services.syncthing;
+  cfg = config.khanelinix.services.syncthing;
 in
 {
-  options.${namespace}.services.syncthing = {
+  options.khanelinix.services.syncthing = {
     enable = mkEnableOption "syncthing";
   };
 

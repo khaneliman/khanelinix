@@ -1,18 +1,18 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkForce;
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 in
 {
   khanelinix = {
     user = {
       enable = true;
-      inherit (config.snowfallorg.user) name;
+      name = "khaneliman";
     };
 
     programs = {
@@ -69,7 +69,7 @@ in
     services = {
       sops = {
         # enable = true;
-        defaultSopsFile = lib.snowfall.fs.get-file "secrets/CORE/nixos/default.yaml";
+        defaultSopsFile = lib.getFile "secrets/CORE/nixos/default.yaml";
         sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
       };
     };

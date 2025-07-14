@@ -2,17 +2,17 @@
   config,
   pkgs,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.emulators.warp;
+  cfg = config.khanelinix.programs.terminal.emulators.warp;
 
 in
 {
-  options.${namespace}.programs.terminal.emulators.warp = {
+  options.khanelinix.programs.terminal.emulators.warp = {
     enable = lib.mkEnableOption "warp";
   };
 
