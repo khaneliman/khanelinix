@@ -155,7 +155,7 @@ in
       };
     };
 
-    khanelinix = {
+    khanelinix = lib.mkIf (config.khanelinix.home ? extraOptions) {
       home.extraOptions = {
         programs.zsh.shellAliases = lib.foldl (
           aliases: system: aliases // { "ssh-${system}" = "ssh ${system} -t tmux a"; }
