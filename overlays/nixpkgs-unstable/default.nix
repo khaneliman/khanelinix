@@ -30,7 +30,8 @@ in
     element-desktop
     firefox-devedition
     firefox-devedition-unwrapped
-    teams-for-linux
+    # TODO: enable when hits unstable
+    # teams-for-linux
     telegram-desktop
     ;
 }
