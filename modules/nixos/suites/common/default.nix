@@ -22,7 +22,8 @@ in
         curl
         dnsutils
         fortune
-        isd
+        # FIXME: broken textual
+        # isd
         lazyjournal
         lolcat
         lshw

@@ -23,7 +23,8 @@ in
       with pkgs;
       [
         calcurse
-        dooit
+        # FIXME broken dependency on textual
+        # dooit
         jrnl
         np
       ]

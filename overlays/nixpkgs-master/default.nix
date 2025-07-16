@@ -8,5 +8,8 @@ in
     # Fast updating / want latest always
     claude-code
     yaziPlugins
+
+    # TODO: remove when hits unstable
+    teams-for-linux
     ;
 }
