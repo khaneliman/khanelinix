@@ -1,9 +1,22 @@
-{ inputs, mkPkgs, ... }:
+{ inputs }:
 final: _prev:
 let
-  unstable = mkPkgs inputs.nixpkgs-unstable final.system final.config;
+  master = import inputs.nixpkgs-master {
+    inherit (final) system config;
+  };
+  unstable = import inputs.nixpkgs-unstable {
+    inherit (final) system config;
+  };
 in
 {
+  # From nixpkgs-master (fast updating / want latest always)
+  inherit (master)
+    claude-code
+    yaziPlugins
+    teams-for-linux # TODO: remove when hits unstable
+    ;
+
+  # From nixpkgs-unstable
   inherit (unstable)
     # Core
     jankyborders

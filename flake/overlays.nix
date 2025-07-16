@@ -16,18 +16,7 @@ let
           overlayPath = overlaysPath + "/${name}";
           overlayFn = import overlayPath;
         in
-        if lib.isFunction overlayFn then
-          overlayFn {
-            inherit inputs;
-            # Helper function to import nixpkgs with proper config
-            mkPkgs =
-              input: system: config:
-              import input {
-                inherit system config;
-              };
-          }
-        else
-          overlayFn
+        if lib.isFunction overlayFn then overlayFn { inherit inputs; } else overlayFn
       )
     else
       { };
@@ -57,7 +46,7 @@ in
   flake = {
     overlays = dynamicOverlaysSet // {
       default = khanelinixPackagesOverlay;
-      khanelinix = khanelinixPackagesOverlay; # Alias for clarity
+      khanelinix = khanelinixPackagesOverlay;
     };
 
     perSystem =
