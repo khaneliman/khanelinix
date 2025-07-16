@@ -43,7 +43,6 @@ in
   # Create home-manager configuration for system builders
   mkHomeManagerConfig =
     {
-      flake,
       extendedLib,
       inputs,
       system,
