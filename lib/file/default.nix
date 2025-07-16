@@ -10,7 +10,7 @@ let
     foldl'
     ;
 in
-rec {
+{
   # Read a file and return its contents
   readFile = path: builtins.readFile path;
 

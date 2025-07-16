@@ -3,11 +3,11 @@ final: _prev: {
   # Add our extended khanelinix functions to lib
   khanelinix = import ./module { inherit inputs; };
 
-  # Add file utilities
   file = import ./file {
     inherit inputs;
     self = ../.;
   };
+  inherit (final.file) getFile importModulesRecursive;
 
   # Also add individual namespaces for convenience
   inherit (final.khanelinix)
@@ -26,9 +26,6 @@ final: _prev: {
     nested-force-attrs
     decode
     ;
-
-  # Add file utilities to root lib for easy access
-  inherit (final.file) getFile importModulesRecursive;
 
   # Add home-manager lib functions
   inherit (inputs.home-manager.lib) hm;
