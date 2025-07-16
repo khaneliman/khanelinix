@@ -3,16 +3,13 @@ let
   inherit (inputs.nixpkgs.lib) getExe;
 in
 {
-  # Common theme utilities
   mkColorScheme = name: colors: {
     inherit name colors;
     type = "colorScheme";
   };
 
-  # Extract colors from a scheme
   getColors = scheme: scheme.colors or { };
 
-  # Theme variants
   variants = {
     light = "light";
     dark = "dark";
