@@ -3,5 +3,5 @@
   ...
 }:
 {
-  imports = [ (lib.getFile "modules/shared/programs/terminal/tools/ssh/default.nix") ];
+  imports = [ (lib.getFile "modules/common/programs/terminal/tools/ssh/default.nix") ];
 }
