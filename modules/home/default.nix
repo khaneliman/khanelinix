@@ -1,4 +1,0 @@
-{ lib, ... }:
-{
-  imports = lib.importModulesRecursive ./.;
-}
