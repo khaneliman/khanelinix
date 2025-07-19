@@ -30,7 +30,7 @@ configuration.
 ### Shared Suites (Cross-Platform)
 
 <details>
-<summary><strong>Common Suite</strong> (<code>modules/shared/suites/common/</code>)</summary>
+<summary><strong>Common Suite</strong> (<code>modules/common/suites/common/</code>)</summary>
 
 | Category           | Items                                       |
 | ------------------ | ------------------------------------------- |

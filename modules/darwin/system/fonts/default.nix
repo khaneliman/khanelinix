@@ -11,7 +11,7 @@ let
   cfg = config.khanelinix.system.fonts;
 in
 {
-  imports = [ (lib.getFile "modules/shared/system/fonts/default.nix") ];
+  imports = [ (lib.getFile "modules/common/system/fonts/default.nix") ];
 
   config = mkIf cfg.enable {
     fonts = {

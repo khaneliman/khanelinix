@@ -11,7 +11,7 @@ let
   cfg = config.khanelinix.nix;
 in
 {
-  imports = [ (lib.getFile "modules/shared/nix/default.nix") ];
+  imports = [ (lib.getFile "modules/common/nix/default.nix") ];
 
   config = lib.mkIf cfg.enable {
     # TODO: This configuration should be in the shared module but environment.etc
