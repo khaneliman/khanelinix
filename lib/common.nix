@@ -75,8 +75,8 @@ in
               inputs.hypr-socket-watch.homeManagerModules.default
               inputs.nix-index-database.homeModules.nix-index
               inputs.sops-nix.homeManagerModules.sops
-              ../modules/home
-            ];
+            ]
+            ++ (extendedLib.importModulesRecursive ../modules/home);
           users = mapAttrs' (_name: homeConfig: {
             name = homeConfig.username;
             value =

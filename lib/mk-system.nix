@@ -40,29 +40,34 @@ inputs.nixpkgs.lib.nixosSystem {
       ;
   };
 
-  modules = [
-    { _module.args.lib = extendedLib; }
+  modules =
+    [
+      { _module.args.lib = extendedLib; }
 
-    # Configure nixpkgs with overlays
-    {
-      nixpkgs = {
-        inherit system;
-      } // common.mkNixpkgsConfig flake;
-    }
+      # Configure nixpkgs with overlays
+      {
+        nixpkgs = {
+          inherit system;
+        } // common.mkNixpkgsConfig flake;
+      }
 
-    inputs.home-manager.nixosModules.home-manager
-    inputs.lanzaboote.nixosModules.lanzaboote
-    inputs.sops-nix.nixosModules.sops
-    inputs.disko.nixosModules.disko
-    inputs.stylix.nixosModules.stylix
-    inputs.catppuccin.nixosModules.catppuccin
-    inputs.nix-index-database.nixosModules.nix-index
-    inputs.nix-flatpak.nixosModules.nix-flatpak
+      inputs.home-manager.nixosModules.home-manager
+      inputs.lanzaboote.nixosModules.lanzaboote
+      inputs.sops-nix.nixosModules.sops
+      inputs.disko.nixosModules.disko
+      inputs.stylix.nixosModules.stylix
+      inputs.catppuccin.nixosModules.catppuccin
+      inputs.nix-index-database.nixosModules.nix-index
+      inputs.nix-flatpak.nixosModules.nix-flatpak
 
-    # Auto-inject home configurations for this system+hostname
-    homeManagerConfig
+      # Auto-inject home configurations for this system+hostname
+      homeManagerConfig
 
-    ../modules/nixos
-    ../systems/${system}/${hostname}
-  ] ++ modules;
+      # Import all nixos modules recursively
+    ]
+    ++ (extendedLib.importModulesRecursive ../modules/nixos)
+    ++ [
+      ../systems/${system}/${hostname}
+    ]
+    ++ modules;
 }
