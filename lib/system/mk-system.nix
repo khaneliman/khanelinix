@@ -65,9 +65,9 @@ inputs.nixpkgs.lib.nixosSystem {
 
       # Import all nixos modules recursively
     ]
-    ++ (extendedLib.importModulesRecursive ../modules/nixos)
+    ++ (extendedLib.importModulesRecursive ../../modules/nixos)
     ++ [
-      ../systems/${system}/${hostname}
+      ../../systems/${system}/${hostname}
     ]
     ++ modules;
 }

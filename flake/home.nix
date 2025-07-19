@@ -22,7 +22,7 @@ let
     }:
     {
       name = userAtHost; # Use the full "username@hostname" as key
-      value = self.lib.mkHome {
+      value = self.lib.system.mkHome {
         inherit
           inputs
           system

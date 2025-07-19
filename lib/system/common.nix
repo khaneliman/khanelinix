@@ -32,7 +32,7 @@ in
     }:
     let
       inherit (flake.lib.file) scanHomes;
-      homesPath = ../homes;
+      homesPath = ../../homes;
       allHomes = scanHomes homesPath;
     in
     filterAttrs (
@@ -76,7 +76,7 @@ in
               inputs.nix-index-database.homeModules.nix-index
               inputs.sops-nix.homeManagerModules.sops
             ]
-            ++ (extendedLib.importModulesRecursive ../modules/home);
+            ++ (extendedLib.importModulesRecursive ../../modules/home);
           users = mapAttrs' (_name: homeConfig: {
             name = homeConfig.username;
             value =
