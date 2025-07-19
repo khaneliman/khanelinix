@@ -33,9 +33,6 @@ in
           gnupg
           gnused
           gnutls
-          pkgs.khanelinix.trace-symlink
-          pkgs.khanelinix.trace-which
-          pkgs.khanelinix.why-depends
           terminal-notifier
           trash-cli
           wtfutil
