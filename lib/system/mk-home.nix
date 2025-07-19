@@ -42,6 +42,6 @@ inputs.home-manager.lib.homeManagerConfiguration {
 
       # Import all home modules recursively
     ]
-    ++ (extendedLib.importModulesRecursive ../modules/home)
+    ++ (extendedLib.importModulesRecursive ../../modules/home)
     ++ modules;
 }

@@ -61,9 +61,9 @@ inputs.darwin.lib.darwinSystem {
 
       # Import all darwin modules recursively
     ]
-    ++ (extendedLib.importModulesRecursive ../modules/darwin)
+    ++ (extendedLib.importModulesRecursive ../../modules/darwin)
     ++ [
-      ../systems/${system}/${hostname}
+      ../../systems/${system}/${hostname}
     ]
     ++ modules;
 }

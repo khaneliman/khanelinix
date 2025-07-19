@@ -9,6 +9,9 @@ final: _prev: {
   };
   inherit (final.file) getFile importModulesRecursive;
 
+  # System configuration builders
+  system = import ./system { inherit inputs; };
+
   # Also add individual namespaces for convenience
   inherit (final.khanelinix)
     mkOpt

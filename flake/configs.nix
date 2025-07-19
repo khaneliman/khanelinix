@@ -17,7 +17,7 @@ in
       { system, hostname, ... }:
       {
         name = hostname;
-        value = self.lib.mkSystem {
+        value = self.lib.system.mkSystem {
           inherit inputs system hostname;
           username = "khaneliman";
         };
@@ -29,7 +29,7 @@ in
       { system, hostname, ... }:
       {
         name = hostname;
-        value = self.lib.mkDarwin {
+        value = self.lib.system.mkDarwin {
           inherit inputs system hostname;
           username = "khaneliman";
         };
