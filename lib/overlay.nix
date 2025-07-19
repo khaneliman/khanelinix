@@ -1,28 +1,31 @@
 { inputs }:
-final: _prev: {
-  # Add our extended khanelinix functions to lib
-  khanelinix = import ./module { inherit inputs; };
+_final: _prev:
+let
+  khanelinixLib = import ./default.nix { inherit inputs; };
+in
+{
+  # Expose khanelinix module functions directly
+  khanelinix = khanelinixLib.flake.lib.module;
 
-  file = import ./file {
-    inherit inputs;
-    self = ../.;
-  };
-  inherit (final.file) getFile importModulesRecursive;
+  # Expose all khanelinix lib namespaces
+  inherit (khanelinixLib.flake.lib)
+    file
+    system
+    theme
+    base64
+    ;
 
-  # System configuration builders
-  system = import ./system { inherit inputs; };
+  inherit (khanelinixLib.flake.lib.file) getFile importModulesRecursive;
 
-  # Also add individual namespaces for convenience
-  inherit (final.khanelinix)
+  inherit (khanelinixLib.flake.lib.module)
     mkOpt
     mkOpt'
     mkBoolOpt
     mkBoolOpt'
     enabled
     disabled
-    ;
-  inherit (final.khanelinix) capitalize boolToNum;
-  inherit (final.khanelinix)
+    capitalize
+    boolToNum
     default-attrs
     force-attrs
     nested-default-attrs
