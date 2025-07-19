@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf mkEnableOption;
 
-  cfg = config.${namespace}.services.resources-limiter;
+  cfg = config.khanelinix.services.resources-limiter;
 in
 {
-  options.${namespace}.services.resources-limiter = {
+  options.khanelinix.services.resources-limiter = {
     enable = mkEnableOption "resources limiter slice";
   };
 

@@ -5,7 +5,7 @@
     "/dev/nvme1n1"
     "/dev/sda"
   ],
-  namespace,
+
   ...
 }:
 let
@@ -133,23 +133,23 @@ in
                     mountOptions = defaultBtrfsOpts;
                   };
                   "@userdata/@documents" = {
-                    mountpoint = "/home/${config.${namespace}.user.name}/Documents";
+                    mountpoint = "/home/${config.khanelinix.user.name}/Documents";
                     mountOptions = defaultBtrfsOpts;
                   };
                   "@userdata/@downloads" = {
-                    mountpoint = "/home/${config.${namespace}.user.name}/Downloads";
+                    mountpoint = "/home/${config.khanelinix.user.name}/Downloads";
                     mountOptions = defaultBtrfsOpts;
                   };
                   "@userdata/@music" = {
-                    mountpoint = "/home/${config.${namespace}.user.name}/Music";
+                    mountpoint = "/home/${config.khanelinix.user.name}/Music";
                     mountOptions = defaultBtrfsOpts;
                   };
                   "@userdata/@pictures" = {
-                    mountpoint = "/home/${config.${namespace}.user.name}/Pictures";
+                    mountpoint = "/home/${config.khanelinix.user.name}/Pictures";
                     mountOptions = defaultBtrfsOpts;
                   };
                   "@userdata/@videos" = {
-                    mountpoint = "/home/${config.${namespace}.user.name}/Videos";
+                    mountpoint = "/home/${config.khanelinix.user.name}/Videos";
                     mountOptions = defaultBtrfsOpts;
                   };
                 };

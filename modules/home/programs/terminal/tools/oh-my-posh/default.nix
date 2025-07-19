@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.oh-my-posh;
+  cfg = config.khanelinix.programs.terminal.tools.oh-my-posh;
 in
 {
-  options.${namespace}.programs.terminal.tools.oh-my-posh = {
+  options.khanelinix.programs.terminal.tools.oh-my-posh = {
     enable = lib.mkEnableOption "oh-my-posh";
   };
 

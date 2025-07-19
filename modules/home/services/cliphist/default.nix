@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   osConfig ? { },
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
 
-  cfg = config.${namespace}.services.cliphist;
+  cfg = config.khanelinix.services.cliphist;
 in
 {
-  options.${namespace}.services.cliphist = {
+  options.khanelinix.services.cliphist = {
     enable = mkEnableOption "cliphist";
 
     systemdTargets = lib.mkOption {

@@ -1,13 +1,13 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) mkIf;
-  cfg = config.${namespace}.programs.graphical.wms.hyprland;
+  cfg = config.khanelinix.programs.graphical.wms.hyprland;
 in
 {
   config = mkIf cfg.enable {
@@ -18,7 +18,7 @@ in
             "${lib.getExe pkgs.grimblast}, screencopy, allow"
             "${lib.getExe pkgs.grim}, screencopy, allow"
             "${lib.getExe pkgs.hyprpicker}, screencopy, allow"
-            "${lib.getExe pkgs.${namespace}.record_screen}, screencopy, allow"
+            "${lib.getExe pkgs.khanelinix.record_screen}, screencopy, allow"
             "${config.wayland.windowManager.hyprland.portalPackage}/libexec/.xdg-desktop-portal-hyprland-wrapped, screencopy, allow"
             "${lib.getExe config.programs.hyprlock.package}, screencopy, allow"
           ]

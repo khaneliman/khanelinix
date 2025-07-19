@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.system.networking;
+  cfg = config.khanelinix.system.networking;
 in
 {
-  options.${namespace}.system.networking = {
+  options.khanelinix.system.networking = {
     enable = lib.mkEnableOption "networking support";
   };
 

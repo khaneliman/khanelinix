@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) getExe mkForce mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.ripgrep;
+  cfg = config.khanelinix.programs.terminal.tools.ripgrep;
 in
 {
-  options.${namespace}.programs.terminal.tools.ripgrep = {
+  options.khanelinix.programs.terminal.tools.ripgrep = {
     enable = lib.mkEnableOption "ripgrep";
   };
 

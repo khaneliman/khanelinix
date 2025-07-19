@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf mkForce;
 
-  cfg = config.${namespace}.archetypes.wsl;
+  cfg = config.khanelinix.archetypes.wsl;
 in
 {
-  options.${namespace}.archetypes.wsl = {
+  options.khanelinix.archetypes.wsl = {
     enable = lib.mkEnableOption "the wsl archetype";
   };
 

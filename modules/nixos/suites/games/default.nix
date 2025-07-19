@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkDefault;
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
-  cfg = config.${namespace}.suites.games;
+  cfg = config.khanelinix.suites.games;
 in
 {
-  options.${namespace}.suites.games = {
+  options.khanelinix.suites.games = {
     enable = lib.mkEnableOption "common games configuration";
   };
 

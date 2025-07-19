@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
@@ -10,10 +10,10 @@ let
     mkEnableOption
     ;
 
-  cfg = config.${namespace}.services.hyprsunset;
+  cfg = config.khanelinix.services.hyprsunset;
 in
 {
-  options.${namespace}.services.hyprsunset = {
+  options.khanelinix.services.hyprsunset = {
     enable = mkEnableOption "Hyprsunset";
   };
 

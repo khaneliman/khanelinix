@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) getExe getExe';
 
-  cfg = config.${namespace}.services.swayidle;
+  cfg = config.khanelinix.services.swayidle;
 in
 {
-  options.${namespace}.services.swayidle = {
+  options.khanelinix.services.swayidle = {
     enable = lib.mkEnableOption "swayidle service";
   };
 

@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.suites.art;
+  cfg = config.khanelinix.suites.art;
 in
 {
-  options.${namespace}.suites.art = {
+  options.khanelinix.suites.art = {
     enable = lib.mkEnableOption "art configuration";
   };
 
@@ -29,7 +29,7 @@ in
         "mediainfo"
       ];
 
-      masApps = mkIf config.${namespace}.tools.homebrew.masEnable { "Pixelmator" = 407963104; };
+      masApps = mkIf config.khanelinix.tools.homebrew.masEnable { "Pixelmator" = 407963104; };
     };
   };
 }

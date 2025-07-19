@@ -25,7 +25,7 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           SLUG: ${{ steps.app-token.outputs.app-slug }}
         run: |
-          name="$SLUG[bot]"
+          name="${SLUG}[bot]"
           id=$(gh api "/users/$name" --jq .id)
           {
             echo "id=$id"

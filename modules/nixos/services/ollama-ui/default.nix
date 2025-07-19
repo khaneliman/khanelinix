@@ -1,15 +1,15 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
 
-  cfg = config.${namespace}.services.ollama-ui;
+  cfg = config.khanelinix.services.ollama-ui;
 in
 {
-  options.${namespace}.services.ollama-ui = {
+  options.khanelinix.services.ollama-ui = {
     enable = lib.mkEnableOption "ollama ui";
   };
 

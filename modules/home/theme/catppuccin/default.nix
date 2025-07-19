@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
@@ -14,11 +14,11 @@ let
     types
     ;
 
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
   palette = import ./colors.nix;
 
-  cfg = config.${namespace}.theme.catppuccin;
+  cfg = config.khanelinix.theme.catppuccin;
 in
 {
   imports = [
@@ -28,7 +28,7 @@ in
     ./sway.nix
   ];
 
-  options.${namespace}.theme.catppuccin = {
+  options.khanelinix.theme.catppuccin = {
     enable = mkEnableOption "catppuccin theme for applications";
 
     accent = mkOption {
@@ -98,7 +98,7 @@ in
       gitui = enabled;
       glamour = enabled;
       helix = enabled;
-      hyprland = mkIf config.${namespace}.programs.graphical.wms.hyprland.enable {
+      hyprland = mkIf config.khanelinix.programs.graphical.wms.hyprland.enable {
         enable = true;
         inherit (cfg) accent;
       };
@@ -149,11 +149,11 @@ in
       ];
 
       pointerCursor = mkIf pkgs.stdenv.hostPlatform.isLinux {
-        inherit (config.${namespace}.theme.gtk.cursor) name package size;
+        inherit (config.khanelinix.theme.gtk.cursor) name package size;
       };
 
       sessionVariables = mkIf pkgs.stdenv.hostPlatform.isLinux {
-        CURSOR_THEME = config.${namespace}.theme.gtk.cursor.name;
+        CURSOR_THEME = config.khanelinix.theme.gtk.cursor.name;
       };
     };
 
@@ -219,8 +219,7 @@ in
     };
 
     xdg.configFile =
-      mkIf
-        (pkgs.stdenv.hostPlatform.isLinux && config.${namespace}.programs.graphical.apps.discord.enable)
+      mkIf (pkgs.stdenv.hostPlatform.isLinux && config.khanelinix.programs.graphical.apps.discord.enable)
         {
           # TODO: use packaged version
           "ArmCord/themes/Catppuccin-Macchiato-BD".source = ./Catppuccin-Macchiato-BD;

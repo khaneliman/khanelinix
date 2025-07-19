@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.security.keyring;
+  cfg = config.khanelinix.security.keyring;
 in
 {
-  options.${namespace}.security.keyring = {
+  options.khanelinix.security.keyring = {
     enable = lib.mkEnableOption "gnome keyring";
   };
 

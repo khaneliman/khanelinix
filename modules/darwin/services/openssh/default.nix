@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
@@ -9,12 +9,12 @@ let
     types
     mkIf
     ;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.services.openssh;
+  cfg = config.khanelinix.services.openssh;
 in
 {
-  options.${namespace}.services.openssh = with types; {
+  options.khanelinix.services.openssh = with types; {
     enable = lib.mkEnableOption "OpenSSH support";
     authorizedKeys = mkOpt (listOf str) [ ] "The public keys to apply.";
     extraConfig = mkOpt str "" "Extra configuration to apply.";

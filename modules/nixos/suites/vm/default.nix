@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
-  cfg = config.${namespace}.suites.vm;
+  cfg = config.khanelinix.suites.vm;
 in
 {
-  options.${namespace}.suites.vm = {
+  options.khanelinix.suites.vm = {
     enable = lib.mkEnableOption "common vm configuration";
   };
 

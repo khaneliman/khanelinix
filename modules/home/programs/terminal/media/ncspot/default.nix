@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
 
-  cfg = config.${namespace}.programs.terminal.media.ncspot;
+  cfg = config.khanelinix.programs.terminal.media.ncspot;
 in
 {
-  options.${namespace}.programs.terminal.media.ncspot = {
+  options.khanelinix.programs.terminal.media.ncspot = {
     enable = mkEnableOption "ncspot";
   };
 

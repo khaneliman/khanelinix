@@ -1,18 +1,18 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.emulators.ghostty;
+  cfg = config.khanelinix.programs.terminal.emulators.ghostty;
 
 in
 {
-  options.${namespace}.programs.terminal.emulators.ghostty = {
+  options.khanelinix.programs.terminal.emulators.ghostty = {
     enable = lib.mkEnableOption "ghostty";
   };
 

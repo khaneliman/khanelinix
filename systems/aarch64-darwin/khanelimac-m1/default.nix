@@ -1,13 +1,13 @@
 {
   lib,
   config,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
-  cfg = config.${namespace}.user;
+  cfg = config.khanelinix.user;
 in
 {
   khanelinix = {
@@ -16,7 +16,7 @@ in
       sops = {
         enable = false;
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-        defaultSopsFile = lib.snowfall.fs.get-file "secrets/khanelimac/default.yaml";
+        defaultSopsFile = lib.getFile "secrets/khanelimac/default.yaml";
       };
     };
 

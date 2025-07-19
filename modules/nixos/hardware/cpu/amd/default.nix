@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.hardware.cpu.amd;
+  cfg = config.khanelinix.hardware.cpu.amd;
 in
 {
-  options.${namespace}.hardware.cpu.amd = {
+  options.khanelinix.hardware.cpu.amd = {
     enable = lib.mkEnableOption "support for amd cpu";
   };
 

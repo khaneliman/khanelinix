@@ -1,15 +1,15 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
 
-  cfg = config.${namespace}.services.keyring;
+  cfg = config.khanelinix.services.keyring;
 in
 {
-  options.${namespace}.services.keyring = {
+  options.khanelinix.services.keyring = {
     enable = lib.mkEnableOption "gnome keyring";
   };
 

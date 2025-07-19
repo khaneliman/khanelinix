@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.comma;
+  cfg = config.khanelinix.programs.terminal.tools.comma;
 in
 {
-  options.${namespace}.programs.terminal.tools.comma = {
+  options.khanelinix.programs.terminal.tools.comma = {
     enable = lib.mkEnableOption "comma";
   };
 

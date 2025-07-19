@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.suites.social;
+  cfg = config.khanelinix.suites.social;
 in
 {
-  options.${namespace}.suites.social = {
+  options.khanelinix.suites.social = {
     enable = lib.mkEnableOption "social configuration";
   };
 

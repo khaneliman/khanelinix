@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
 
-  cfg = config.${namespace}.services.tray;
+  cfg = config.khanelinix.services.tray;
 in
 {
-  options.${namespace}.services.tray = {
+  options.khanelinix.services.tray = {
     enable = mkEnableOption "tray";
   };
 

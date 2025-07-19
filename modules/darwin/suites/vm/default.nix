@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.suites.vm;
+  cfg = config.khanelinix.suites.vm;
 in
 {
-  options.${namespace}.suites.vm = {
+  options.khanelinix.suites.vm = {
     enable = lib.mkEnableOption "vm";
   };
 

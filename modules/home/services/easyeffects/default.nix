@@ -1,14 +1,14 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  cfg = config.${namespace}.services.easyeffects;
+  cfg = config.khanelinix.services.easyeffects;
 in
 {
-  options.${namespace}.services.easyeffects = {
+  options.khanelinix.services.easyeffects = {
     enable = lib.mkEnableOption "easyeffects";
   };
 

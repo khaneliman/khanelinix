@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.suites.photo;
+  cfg = config.khanelinix.suites.photo;
 in
 {
-  options.${namespace}.suites.photo = {
+  options.khanelinix.suites.photo = {
     enable = lib.mkEnableOption "photo configuration";
   };
 

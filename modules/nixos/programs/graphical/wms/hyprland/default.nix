@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
@@ -12,9 +12,9 @@ let
     mkIf
     types
     ;
-  inherit (lib.${namespace}) mkOpt enabled;
+  inherit (lib.khanelinix) mkOpt enabled;
 
-  cfg = config.${namespace}.programs.graphical.wms.hyprland;
+  cfg = config.khanelinix.programs.graphical.wms.hyprland;
 
   programs = makeBinPath (
     with pkgs;
@@ -28,7 +28,7 @@ let
   );
 in
 {
-  options.${namespace}.programs.graphical.wms.hyprland = with types; {
+  options.khanelinix.programs.graphical.wms.hyprland = with types; {
     enable = lib.mkEnableOption "Hyprland";
     enableDebug = lib.mkEnableOption "debug mode";
     customConfigFiles =
@@ -41,8 +41,8 @@ in
   config = mkIf cfg.enable {
     environment = {
       sessionVariables = lib.mkIf (!config.programs.uwsm.enable) {
-        HYPRCURSOR_THEME = config.${namespace}.theme.cursor.name;
-        HYPRCURSOR_SIZE = "${toString config.${namespace}.theme.cursor.size}";
+        HYPRCURSOR_THEME = config.khanelinix.theme.cursor.name;
+        HYPRCURSOR_SIZE = "${toString config.khanelinix.theme.cursor.size}";
       };
     };
 
@@ -76,8 +76,8 @@ in
                 export XDG_CURRENT_DESKTOP=Hyprland
                 export XDG_SESSION_TYPE=wayland
                 export XDG_SESSION_DESKTOP=Hyprland
-                export HYPRCURSOR_THEME=${config.${namespace}.theme.cursor.name};
-                export HYPRCURSOR_SIZE=${toString config.${namespace}.theme.cursor.size};
+                export HYPRCURSOR_THEME=${config.khanelinix.theme.cursor.name};
+                export HYPRCURSOR_SIZE=${toString config.khanelinix.theme.cursor.size};
               ''
               + lib.optionalString cfg.enableDebug ''
                 export AQ_TRACE=1;

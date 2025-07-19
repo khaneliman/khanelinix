@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.graphical.apps.mpv;
+  cfg = config.khanelinix.programs.graphical.apps.mpv;
 
 in
 {
-  options.${namespace}.programs.graphical.apps.mpv = {
+  options.khanelinix.programs.graphical.apps.mpv = {
     enable = lib.mkEnableOption "support for mpv";
   };
 

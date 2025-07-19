@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.tools.homebrew;
+  cfg = config.khanelinix.tools.homebrew;
 in
 {
-  options.${namespace}.tools.homebrew = {
+  options.khanelinix.tools.homebrew = {
     enable = lib.mkEnableOption "homebrew";
     masEnable = lib.mkEnableOption "Mac App Store downloads";
   };

@@ -2,18 +2,18 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) default-attrs;
+  inherit (lib.khanelinix) default-attrs;
 
-  cfg = config.${namespace}.system.boot;
-  themeCfg = config.${namespace}.theme;
+  cfg = config.khanelinix.system.boot;
+  themeCfg = config.khanelinix.theme;
 in
 {
-  options.${namespace}.system.boot = {
+  options.khanelinix.system.boot = {
     enable = lib.mkEnableOption "booting";
     plymouth = lib.mkEnableOption "plymouth boot splash";
     secureBoot = lib.mkEnableOption "secure boot";

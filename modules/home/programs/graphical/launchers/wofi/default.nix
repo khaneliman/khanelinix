@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.graphical.addons.wofi;
+  cfg = config.khanelinix.programs.graphical.addons.wofi;
 in
 {
-  options.${namespace}.programs.graphical.addons.wofi = {
+  options.khanelinix.programs.graphical.addons.wofi = {
     enable = lib.mkEnableOption "the Wofi in the desktop environment";
   };
 

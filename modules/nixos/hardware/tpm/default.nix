@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkDefault mkIf;
 
-  cfg = config.${namespace}.hardware.tpm;
+  cfg = config.khanelinix.hardware.tpm;
 in
 {
-  options.${namespace}.hardware.tpm = {
+  options.khanelinix.hardware.tpm = {
     enable = lib.mkEnableOption "Trusted Platform Module 2 (TPM2)";
   };
 

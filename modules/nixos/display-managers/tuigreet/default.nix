@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf getExe;
 
-  cfg = config.${namespace}.display-managers.tuigreet;
+  cfg = config.khanelinix.display-managers.tuigreet;
 in
 {
-  options.${namespace}.display-managers.tuigreet = {
+  options.khanelinix.display-managers.tuigreet = {
     enable = lib.mkEnableOption "tuigreet";
   };
 

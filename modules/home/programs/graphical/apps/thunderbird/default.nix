@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.programs.graphical.apps.thunderbird;
+  cfg = config.khanelinix.programs.graphical.apps.thunderbird;
 in
 {
-  options.${namespace}.programs.graphical.apps.thunderbird = {
+  options.khanelinix.programs.graphical.apps.thunderbird = {
     enable = lib.mkEnableOption "thunderbird";
     accountsOrder = lib.mkOption {
       type = lib.types.listOf lib.types.str;
@@ -98,7 +98,7 @@ in
             {
               remote = {
                 inherit type url;
-                userName = config.${namespace}.user.email;
+                userName = config.khanelinix.user.email;
               };
               local = {
                 inherit color;
@@ -106,24 +106,24 @@ in
               thunderbird = {
                 enable = true;
                 profiles = [
-                  config.${namespace}.user.name
+                  config.khanelinix.user.name
                 ];
                 inherit color;
               };
             };
         in
         {
-          "${config.${namespace}.user.email}" = {
+          "${config.khanelinix.user.email}" = {
             remote = {
               type = "caldav";
               url = "https://apidata.googleusercontent.com/caldav/v2/khaneliman12%40gmail.com/events/";
-              userName = config.${namespace}.user.email;
+              userName = config.khanelinix.user.email;
             };
             primary = true;
             thunderbird = {
               enable = true;
               profiles = [
-                config.${namespace}.user.name
+                config.khanelinix.user.name
               ];
               color = "#16a765";
             };
@@ -141,7 +141,7 @@ in
             {
               inherit address primary;
               flavor = if (flavor == "davmail") then "plain" else flavor;
-              realName = config.${namespace}.user.fullName;
+              realName = config.khanelinix.user.fullName;
               userName = lib.mkIf (flavor == "davmail") address;
               imap = lib.mkIf (flavor == "davmail") {
                 host = "localhost";
@@ -162,7 +162,7 @@ in
               thunderbird = {
                 enable = true;
                 profiles = [
-                  config.${namespace}.user.name
+                  config.khanelinix.user.name
                 ];
                 settings = _id: {
                 };
@@ -170,8 +170,8 @@ in
             };
         in
         {
-          "${config.${namespace}.user.email}" = mkEmailConfig {
-            address = config.${namespace}.user.email;
+          "${config.khanelinix.user.email}" = mkEmailConfig {
+            address = config.khanelinix.user.email;
             primary = true;
             flavor = "gmail.com";
           };
@@ -183,7 +183,7 @@ in
       enable = true;
       package = pkgs.thunderbird-latest;
 
-      profiles.${config.${namespace}.user.name} = {
+      profiles.${config.khanelinix.user.name} = {
         isDefault = true;
 
         inherit (cfg) accountsOrder;

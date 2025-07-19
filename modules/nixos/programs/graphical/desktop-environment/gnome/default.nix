@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
@@ -10,17 +10,17 @@ let
     types
     mkIf
     ;
-  inherit (lib.${namespace})
+  inherit (lib.khanelinix)
     enabled
     mkBoolOpt
     mkOpt
     ;
 
-  cfg = config.${namespace}.programs.graphical.desktop-environment.gnome;
+  cfg = config.khanelinix.programs.graphical.desktop-environment.gnome;
   gdmHome = config.users.users.gdm.home;
 in
 {
-  options.${namespace}.programs.graphical.desktop-environment.gnome = with types; {
+  options.khanelinix.programs.graphical.desktop-environment.gnome = with types; {
     enable = lib.mkEnableOption "using Gnome as the desktop environment";
     color-scheme = mkOpt (enum [
       "light"

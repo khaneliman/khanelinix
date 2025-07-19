@@ -1,18 +1,18 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
-  cfg = config.${namespace}.suites.wlroots;
+  cfg = config.khanelinix.suites.wlroots;
 in
 {
-  options.${namespace}.suites.wlroots = {
+  options.khanelinix.suites.wlroots = {
     enable = lib.mkEnableOption "common wlroots configuration";
   };
 

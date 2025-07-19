@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.graphical.file-managers.thunar;
+  cfg = config.khanelinix.programs.graphical.file-managers.thunar;
 in
 {
-  options.${namespace}.programs.graphical.file-managers.thunar = {
+  options.khanelinix.programs.graphical.file-managers.thunar = {
     enable = lib.mkEnableOption "the xfce file manager";
   };
 

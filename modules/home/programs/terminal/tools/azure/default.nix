@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.azure;
+  cfg = config.khanelinix.programs.terminal.tools.azure;
 in
 {
-  options.${namespace}.programs.terminal.tools.azure = {
+  options.khanelinix.programs.terminal.tools.azure = {
     enable = lib.mkEnableOption "common Azure utilities";
   };
 

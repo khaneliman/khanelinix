@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
@@ -84,7 +84,7 @@ let
     }
     {
       key = "i";
-      path = "/run/media/${config.${namespace}.user.name}";
+      path = "/run/media/${config.khanelinix.user.name}";
       desc = "Go to the media directory";
     }
     {

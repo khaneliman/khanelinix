@@ -2,14 +2,14 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   osConfig ? { },
   ...
 }:
 let
   inherit (lib) mkIf getExe;
 
-  cfg = config.${namespace}.programs.graphical.wms.hyprland;
+  cfg = config.khanelinix.programs.graphical.wms.hyprland;
 
   # Helper functions
   mkStartCommand =

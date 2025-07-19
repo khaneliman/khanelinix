@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.graphical.addons.uwsm;
+  cfg = config.khanelinix.programs.graphical.addons.uwsm;
 in
 {
-  options.${namespace}.programs.graphical.addons.uwsm = {
+  options.khanelinix.programs.graphical.addons.uwsm = {
     enable = lib.mkEnableOption "uwsm";
   };
 

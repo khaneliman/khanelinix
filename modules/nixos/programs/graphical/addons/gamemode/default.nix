@@ -2,13 +2,13 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.programs.graphical.addons.gamemode;
+  cfg = config.khanelinix.programs.graphical.addons.gamemode;
 
   defaultStartScript = ''
     ${lib.getExe' pkgs.libnotify "notify-send"} 'GameMode started'
@@ -19,7 +19,7 @@ let
   '';
 in
 {
-  options.${namespace}.programs.graphical.addons.gamemode = {
+  options.khanelinix.programs.graphical.addons.gamemode = {
     enable = lib.mkEnableOption "gamemode";
     endscript = mkOpt (with lib.types; nullOr str) null "The script to run when disabling gamemode.";
     startscript = mkOpt (with lib.types; nullOr str) null "The script to run when enabling gamemode.";

@@ -2,7 +2,7 @@
   config,
   inputs,
   lib,
-  namespace,
+
   pkgs,
   system,
   osConfig ? { },
@@ -12,10 +12,10 @@ let
   inherit (lib) mkIf;
   inherit (inputs) anyrun-nixos-options;
 
-  cfg = config.${namespace}.programs.graphical.launchers.anyrun;
+  cfg = config.khanelinix.programs.graphical.launchers.anyrun;
 in
 {
-  options.${namespace}.programs.graphical.launchers.anyrun = {
+  options.khanelinix.programs.graphical.launchers.anyrun = {
     enable = lib.mkEnableOption "anyrun in the desktop environment";
   };
 

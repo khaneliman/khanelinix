@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) concatStringsSep mkIf;
 
-  cfg = config.${namespace}.services.earlyoom;
+  cfg = config.khanelinix.services.earlyoom;
 in
 {
-  options.${namespace}.services.earlyoom = {
+  options.khanelinix.services.earlyoom = {
     enable = lib.mkEnableOption "oomd";
   };
 

@@ -1,16 +1,16 @@
 {
   lib,
   config,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.services.power;
+  cfg = config.khanelinix.services.power;
 in
 {
-  options.${namespace}.services.power = {
+  options.khanelinix.services.power = {
     enable = lib.mkEnableOption "power profiles";
   };
 

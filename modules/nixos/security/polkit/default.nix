@@ -2,21 +2,21 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
-  cfg = config.${namespace}.security.polkit;
+  cfg = config.khanelinix.security.polkit;
 in
 {
-  options.${namespace}.security.polkit = {
+  options.khanelinix.security.polkit = {
     enable = lib.mkEnableOption "polkit";
   };
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages =
       with pkgs;
-      lib.optionals (!config.${namespace}.programs.graphical.wms.hyprland.enable) [
+      lib.optionals (!config.khanelinix.programs.graphical.wms.hyprland.enable) [
         kdePackages.polkit-kde-agent
       ];
 
@@ -41,7 +41,7 @@ in
     systemd = {
       user.services = {
         polkit-kde-authentication-agent-1 =
-          lib.mkIf (!config.${namespace}.programs.graphical.wms.hyprland.enable)
+          lib.mkIf (!config.khanelinix.programs.graphical.wms.hyprland.enable)
             {
               after = [ "graphical-session.target" ];
               description = "polkit-kde-authentication-agent-1";

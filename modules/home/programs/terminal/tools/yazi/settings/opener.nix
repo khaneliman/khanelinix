@@ -3,11 +3,11 @@
   lib,
   pkgs,
   osConfig ? { },
-  namespace,
+
   ...
 }:
 let
-  isWSL = osConfig.${namespace}.archetypes.wsl.enable or false;
+  isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
 in
 {
   opener = {

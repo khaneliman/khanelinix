@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.services.printing;
+  cfg = config.khanelinix.services.printing;
 in
 {
-  options.${namespace}.services.printing = {
+  options.khanelinix.services.printing = {
     enable = lib.mkEnableOption "printing support";
   };
 

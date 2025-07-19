@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.virtualisation.podman;
+  cfg = config.khanelinix.virtualisation.podman;
 in
 {
-  options.${namespace}.virtualisation.podman = {
+  options.khanelinix.virtualisation.podman = {
     enable = lib.mkEnableOption "podman";
   };
 

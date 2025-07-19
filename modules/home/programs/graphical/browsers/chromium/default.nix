@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.graphical.browsers.chromium;
+  cfg = config.khanelinix.programs.graphical.browsers.chromium;
 in
 {
-  options.${namespace}.programs.graphical.browsers.chromium = {
+  options.khanelinix.programs.graphical.browsers.chromium = {
     enable = lib.mkEnableOption "chromium";
   };
 

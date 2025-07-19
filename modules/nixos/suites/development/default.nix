@@ -1,15 +1,15 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
 
-  cfg = config.${namespace}.suites.development;
+  cfg = config.khanelinix.suites.development;
 in
 {
-  options.${namespace}.suites.development = {
+  options.khanelinix.suites.development = {
     enable = lib.mkEnableOption "common development configuration";
     aiEnable = lib.mkEnableOption "ai development configuration";
     dockerEnable = lib.mkEnableOption "docker development configuration";

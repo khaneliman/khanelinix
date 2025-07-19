@@ -2,12 +2,12 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkDefault mkIf versionOlder;
-  cfg = config.${namespace}.hardware.gpu.nvidia;
+  cfg = config.khanelinix.hardware.gpu.nvidia;
 
   # use the latest possible nvidia package
   nvStable = config.boot.kernelPackages.nvidiaPackages.stable.version;
@@ -20,7 +20,7 @@ let
       config.boot.kernelPackages.nvidiaPackages.beta;
 in
 {
-  options.${namespace}.hardware.gpu.nvidia = {
+  options.khanelinix.hardware.gpu.nvidia = {
     enable = lib.mkEnableOption "support for nvidia";
     enableCudaSupport = lib.mkEnableOption "support for cuda";
     enableNvtop = lib.mkEnableOption "install nvtop for nvidia";
@@ -48,7 +48,7 @@ in
       ];
 
     hardware = {
-      nvidia = mkIf (!config.${namespace}.hardware.gpu.amd.enable) {
+      nvidia = mkIf (!config.khanelinix.hardware.gpu.amd.enable) {
         package = mkDefault nvidiaPackage;
         modesetting.enable = mkDefault true;
 

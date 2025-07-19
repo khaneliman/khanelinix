@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.cava;
+  cfg = config.khanelinix.programs.terminal.tools.cava;
 in
 {
-  options.${namespace}.programs.terminal.tools.cava = {
+  options.khanelinix.programs.terminal.tools.cava = {
     enable = lib.mkEnableOption "cava";
   };
 

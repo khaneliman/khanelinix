@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.graphical.apps.gnome-disks;
+  cfg = config.khanelinix.programs.graphical.apps.gnome-disks;
 in
 {
-  options.${namespace}.programs.graphical.apps.gnome-disks = {
+  options.khanelinix.programs.graphical.apps.gnome-disks = {
     enable = lib.mkEnableOption "gnome-disks";
   };
 

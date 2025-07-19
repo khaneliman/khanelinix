@@ -1,13 +1,13 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
-  inherit (lib.${namespace}) capitalize;
-  cfg = config.${namespace}.theme.catppuccin;
+  inherit (lib.khanelinix) capitalize;
+  cfg = config.khanelinix.theme.catppuccin;
 in
 {
   config = lib.mkIf cfg.enable {
@@ -40,7 +40,7 @@ in
 
       style = {
         name = "kvantum";
-        inherit (config.${namespace}.theme.qt.theme) package;
+        inherit (config.khanelinix.theme.qt.theme) package;
       };
     };
   };

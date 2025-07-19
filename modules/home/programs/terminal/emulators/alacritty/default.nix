@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.programs.terminal.emulators.alacritty;
+  cfg = config.khanelinix.programs.terminal.emulators.alacritty;
 in
 {
-  options.${namespace}.programs.terminal.emulators.alacritty = with types; {
+  options.khanelinix.programs.terminal.emulators.alacritty = with types; {
     enable = lib.mkEnableOption "alacritty";
     font = {
       normal = mkOpt str (

@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 
-  cfg = config.${namespace}.archetypes.vm;
+  cfg = config.khanelinix.archetypes.vm;
 in
 {
-  options.${namespace}.archetypes.vm = {
+  options.khanelinix.archetypes.vm = {
     enable = lib.mkEnableOption "the vm archetype";
   };
 

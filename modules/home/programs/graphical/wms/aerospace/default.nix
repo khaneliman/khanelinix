@@ -2,22 +2,22 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) mkOpt;
-  cfg = config.${namespace}.programs.graphical.wms.aerospace;
+  inherit (lib.khanelinix) mkOpt;
+  cfg = config.khanelinix.programs.graphical.wms.aerospace;
 
   sketchybar = lib.getExe config.programs.sketchybar.finalPackage;
 in
 {
-  options.${namespace}.programs.graphical.wms.aerospace = {
+  options.khanelinix.programs.graphical.wms.aerospace = {
     enable = lib.mkEnableOption "aerospace";
     debug = lib.mkEnableOption "debug output";
-    logFile = mkOpt lib.types.str "${
-      config.snowfallorg.users.${config.${namespace}.user.name}.home.path
-    }/Library/Logs/aerospace.log" "Filepath of log output";
+    logFile =
+      mkOpt lib.types.str "${config.khanelinix.user.home}/Library/Logs/aerospace.log"
+        "Filepath of log output";
   };
 
   config = lib.mkIf cfg.enable {

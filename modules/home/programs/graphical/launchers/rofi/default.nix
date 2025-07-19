@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.graphical.launchers.rofi;
+  cfg = config.khanelinix.programs.graphical.launchers.rofi;
 in
 {
-  options.${namespace}.programs.graphical.launchers.rofi = {
+  options.khanelinix.programs.graphical.launchers.rofi = {
     enable = lib.mkEnableOption "Rofi in the desktop environment";
   };
 

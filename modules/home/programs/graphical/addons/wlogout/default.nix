@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.graphical.addons.wlogout;
+  cfg = config.khanelinix.programs.graphical.addons.wlogout;
 in
 {
-  options.${namespace}.programs.graphical.addons.wlogout = {
+  options.khanelinix.programs.graphical.addons.wlogout = {
     enable = lib.mkEnableOption "wlogout in the desktop environment";
   };
 

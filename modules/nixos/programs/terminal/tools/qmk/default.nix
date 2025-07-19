@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.tools.qmk;
+  cfg = config.khanelinix.tools.qmk;
 in
 {
-  options.${namespace}.tools.qmk = {
+  options.khanelinix.tools.qmk = {
     enable = lib.mkEnableOption "QMK";
   };
 

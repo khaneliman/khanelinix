@@ -2,29 +2,27 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.services.jankyborders;
+  cfg = config.khanelinix.services.jankyborders;
 in
 {
-  options.${namespace}.services.jankyborders = {
-    enable =
-      lib.${namespace}.mkBoolOpt false
-        "Whether to enable jankyborders in the desktop environment.";
+  options.khanelinix.services.jankyborders = {
+    enable = lib.khanelinix.mkBoolOpt false "Whether to enable jankyborders in the desktop environment.";
     package = lib.mkOption {
       type = lib.types.package;
       default = pkgs.jankyborders;
       defaultText = lib.literalExpression "pkgs.jankyborders";
       description = "The jankyborders package to use.";
-      example = lib.literalExpression "pkgs.${namespace}.jankyborders";
+      example = lib.literalExpression "pkgs.khanelinix.jankyborders";
     };
-    logFile = mkOpt lib.types.str "${
-      config.snowfallorg.users.${config.${namespace}.user.name}.home.path
-    }/Library/Logs/jankyborders.log" "Filepath of log output";
+    logFile =
+      mkOpt lib.types.str "${config.khanelinix.user.home}/Library/Logs/jankyborders.log"
+        "Filepath of log output";
   };
 
   config = lib.mkIf cfg.enable {

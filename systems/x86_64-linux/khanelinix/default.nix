@@ -1,15 +1,15 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
   inherit (lib) mkMerge;
 
   serverHostname = "austinserver.local";
-  username = config.${namespace}.user.name;
+  username = config.khanelinix.user.name;
 in
 {
   imports = [
@@ -125,7 +125,7 @@ in
       sops = {
         enable = true;
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-        defaultSopsFile = lib.snowfall.fs.get-file "secrets/khanelinix/default.yaml";
+        defaultSopsFile = lib.getFile "secrets/khanelinix/default.yaml";
       };
     };
 

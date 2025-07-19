@@ -47,7 +47,7 @@ jobs:
         env:
           SYSTEM: ${{ matrix.system }}
         run: |
-          shells=$(nix flake show --json | jq -r '.devShells."'$SYSTEM'" | keys[]' | tr '\n' ' ')
+          shells=$(nix flake show --json | jq -r '.devShells."'"$SYSTEM"'" | keys[]' | tr '\n' ' ')
           echo "shells=$shells" >> "$GITHUB_OUTPUT"
       - name: Build and cache dev shells
         env:
@@ -55,7 +55,7 @@ jobs:
         run: |
           for shell in $SHELLS; do
             echo "Building dev shell: $shell"
-            nix develop .#$shell --command echo "Dev shell $shell built successfully"
+            nix develop ".#$shell" --command echo "Dev shell $shell built successfully"
           done
       - name: Build default dev shell
         run: |-

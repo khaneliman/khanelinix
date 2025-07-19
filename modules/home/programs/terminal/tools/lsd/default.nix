@@ -2,13 +2,13 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.lsd;
+  cfg = config.khanelinix.programs.terminal.tools.lsd;
 
   aliases = {
     ls = "${lib.getExe pkgs.lsd} -al";
@@ -17,7 +17,7 @@ let
   };
 in
 {
-  options.${namespace}.programs.terminal.tools.lsd = {
+  options.khanelinix.programs.terminal.tools.lsd = {
     enable = lib.mkEnableOption "lsd";
   };
 

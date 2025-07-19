@@ -2,11 +2,11 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
-  cfg = config.${namespace}.theme.catppuccin;
+  cfg = config.khanelinix.theme.catppuccin;
 in
 {
   config = lib.mkIf cfg.enable {

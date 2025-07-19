@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.suites.games;
+  cfg = config.khanelinix.suites.games;
 in
 {
-  options.${namespace}.suites.games = {
+  options.khanelinix.suites.games = {
     enable = lib.mkEnableOption "games configuration";
   };
 

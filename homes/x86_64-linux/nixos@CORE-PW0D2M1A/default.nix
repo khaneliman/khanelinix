@@ -1,19 +1,19 @@
 {
   config,
   lib,
-  namespace,
+
   osConfig ? { },
   ...
 }:
 let
   inherit (lib) mkForce;
-  inherit (lib.${namespace}) enabled disabled;
+  inherit (lib.khanelinix) enabled disabled;
 in
 {
   khanelinix = {
     user = {
       enable = true;
-      inherit (config.snowfallorg.user) name;
+      name = "khaneliman";
     };
 
     programs = {
@@ -73,7 +73,7 @@ in
     services = {
       sops = {
         enable = true;
-        defaultSopsFile = lib.snowfall.fs.get-file "secrets/CORE/nixos/default.yaml";
+        defaultSopsFile = lib.getFile "secrets/CORE/nixos/default.yaml";
         sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
       };
     };
@@ -95,7 +95,7 @@ in
     theme.catppuccin = enabled;
   };
 
-  sops.secrets = lib.mkIf (osConfig.${namespace}.security.sops.enable or false) {
+  sops.secrets = lib.mkIf (osConfig.khanelinix.security.sops.enable or false) {
     kubernetes = {
       path = "${config.home.homeDirectory}/.kube/config";
     };

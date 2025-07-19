@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.services.geoclue;
+  cfg = config.khanelinix.services.geoclue;
 in
 {
-  options.${namespace}.services.geoclue = {
+  options.khanelinix.services.geoclue = {
     enable = lib.mkEnableOption "geoclue support";
   };
 

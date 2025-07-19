@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.hardware.opengl;
+  cfg = config.khanelinix.hardware.opengl;
 in
 {
-  options.${namespace}.hardware.opengl = {
+  options.khanelinix.hardware.opengl = {
     enable = lib.mkEnableOption "support for opengl";
   };
 

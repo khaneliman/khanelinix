@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.graphical.screenlockers.swaylock;
+  cfg = config.khanelinix.programs.graphical.screenlockers.swaylock;
 in
 {
-  options.${namespace}.programs.graphical.screenlockers.swaylock = {
+  options.khanelinix.programs.graphical.screenlockers.swaylock = {
     enable = lib.mkEnableOption "swaylock in the desktop environment";
   };
 
@@ -30,7 +30,7 @@ in
         timestr = "%R";
         datestr = "%a, %e of %B";
 
-        image = "${pkgs.${namespace}.wallpapers}/share/wallpapers/flatppuccin_macchiato.png";
+        image = "${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png";
 
         fade-in = "0.2";
 

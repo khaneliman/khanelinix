@@ -1,18 +1,18 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
 
-  cfg = config.${namespace}.services.ollama;
+  cfg = config.khanelinix.services.ollama;
 
   amdCfg = config.khanelinix.hardware.gpu.amd;
 
 in
 {
-  options.${namespace}.services.ollama = {
+  options.khanelinix.services.ollama = {
     enable = lib.mkEnableOption "ollama";
     enableDebug = lib.mkEnableOption "debug";
   };

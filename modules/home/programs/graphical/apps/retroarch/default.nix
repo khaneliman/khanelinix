@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.graphical.apps.retroarch;
+  cfg = config.khanelinix.programs.graphical.apps.retroarch;
 in
 {
-  options.${namespace}.programs.graphical.apps.retroarch = {
+  options.khanelinix.programs.graphical.apps.retroarch = {
     enable = lib.mkEnableOption "retroarch";
   };
 

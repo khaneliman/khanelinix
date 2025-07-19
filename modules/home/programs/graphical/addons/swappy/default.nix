@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.graphical.addons.swappy;
+  cfg = config.khanelinix.programs.graphical.addons.swappy;
 in
 {
-  options.${namespace}.programs.graphical.addons.swappy = {
+  options.khanelinix.programs.graphical.addons.swappy = {
     enable = lib.mkEnableOption "Swappy in the desktop environment";
   };
 

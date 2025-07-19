@@ -1,14 +1,14 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  cfg = config.${namespace}.nix.nix-rosetta-builder;
+  cfg = config.khanelinix.nix.nix-rosetta-builder;
 in
 {
-  options.${namespace}.nix.nix-rosetta-builder = {
+  options.khanelinix.nix.nix-rosetta-builder = {
     enable = lib.mkEnableOption "nix-rosetta-builder";
     cores = lib.mkOption {
       type = lib.types.int;

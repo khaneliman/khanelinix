@@ -1,17 +1,17 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.nix-ld;
+  cfg = config.khanelinix.programs.terminal.tools.nix-ld;
 in
 {
-  options.${namespace}.programs.terminal.tools.nix-ld = {
+  options.khanelinix.programs.terminal.tools.nix-ld = {
     enable = lib.mkEnableOption "nix-ld";
   };
 

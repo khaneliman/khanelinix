@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.topgrade;
+  cfg = config.khanelinix.programs.terminal.tools.topgrade;
 in
 {
-  options.${namespace}.programs.terminal.tools.topgrade = {
+  options.khanelinix.programs.terminal.tools.topgrade = {
     enable = lib.mkEnableOption "topgrade";
   };
 

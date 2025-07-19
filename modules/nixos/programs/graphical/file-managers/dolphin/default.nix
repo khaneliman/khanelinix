@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.graphical.file-managers.dolphin;
+  cfg = config.khanelinix.programs.graphical.file-managers.dolphin;
 in
 {
-  options.${namespace}.programs.graphical.file-managers.dolphin = {
+  options.khanelinix.programs.graphical.file-managers.dolphin = {
     enable = lib.mkEnableOption "Dolphin";
   };
 

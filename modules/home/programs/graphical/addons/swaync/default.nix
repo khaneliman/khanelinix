@@ -3,13 +3,13 @@
   lib,
   osConfig ? { },
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.graphical.addons.swaync;
+  cfg = config.khanelinix.programs.graphical.addons.swaync;
 
   dependencies = with pkgs; [
     bash
@@ -27,7 +27,6 @@ let
   settings = import ./settings.nix {
     inherit
       lib
-      namespace
       osConfig
       pkgs
       ;
@@ -35,7 +34,7 @@ let
   style = import ./style.nix { inherit lib; };
 in
 {
-  options.${namespace}.programs.graphical.addons.swaync = {
+  options.khanelinix.programs.graphical.addons.swaync = {
     enable = lib.mkEnableOption "swaync in the desktop environment";
   };
 

@@ -2,15 +2,15 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
 
-  cfg = config.${namespace}.programs.terminal.tools.eza;
+  cfg = config.khanelinix.programs.terminal.tools.eza;
 in
 {
-  options.${namespace}.programs.terminal.tools.eza = {
+  options.khanelinix.programs.terminal.tools.eza = {
     enable = lib.mkEnableOption "eza";
   };
 

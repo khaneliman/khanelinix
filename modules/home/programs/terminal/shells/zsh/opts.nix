@@ -1,11 +1,11 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  cfg = config.${namespace}.programs.terminal.shell.zsh;
+  cfg = config.khanelinix.programs.terminal.shell.zsh;
 in
 {
   config = lib.mkIf cfg.enable {

@@ -1,22 +1,22 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.suites.music;
+  cfg = config.khanelinix.suites.music;
 in
 {
-  options.${namespace}.suites.music = {
+  options.khanelinix.suites.music = {
     enable = lib.mkEnableOption "music configuration";
   };
 
   config = mkIf cfg.enable {
     homebrew = {
-      masApps = mkIf config.${namespace}.tools.homebrew.masEnable { "GarageBand" = 682658836; };
+      masApps = mkIf config.khanelinix.tools.homebrew.masEnable { "GarageBand" = 682658836; };
     };
   };
 }

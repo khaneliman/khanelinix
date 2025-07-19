@@ -2,14 +2,14 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   osConfig ? { },
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.tmux;
+  cfg = config.khanelinix.programs.terminal.tools.tmux;
 
   plugins = with pkgs.tmuxPlugins; [
     {
@@ -33,7 +33,7 @@ let
   ];
 in
 {
-  options.${namespace}.programs.terminal.tools.tmux = {
+  options.khanelinix.programs.terminal.tools.tmux = {
     enable = lib.mkEnableOption "tmux";
   };
 
@@ -71,7 +71,7 @@ in
 
         ${lib.optionalString (
           config.programs.tmux.sensibleOnTop && (osConfig != { })
-        ) "set -g default-command ${osConfig.users.users.${config.${namespace}.user.name}.shell}"}
+        ) "set -g default-command ${osConfig.users.users.${config.khanelinix.user.name}.shell}"}
       '';
 
       inherit plugins;

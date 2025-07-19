@@ -1,13 +1,13 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf mkForce;
 
-  cfg = config.${namespace}.system.networking;
+  cfg = config.khanelinix.system.networking;
 in
 {
   config = mkIf (cfg.enable && cfg.dns == "dnsmasq") {

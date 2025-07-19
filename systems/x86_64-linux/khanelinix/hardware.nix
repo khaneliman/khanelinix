@@ -2,11 +2,11 @@
   lib,
   pkgs,
   modulesPath,
-  namespace,
+
   ...
 }:
 let
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 in
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];

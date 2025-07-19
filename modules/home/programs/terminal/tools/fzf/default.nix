@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.fzf;
+  cfg = config.khanelinix.programs.terminal.tools.fzf;
 in
 {
-  options.${namespace}.programs.terminal.tools.fzf = {
+  options.khanelinix.programs.terminal.tools.fzf = {
     enable = lib.mkEnableOption "fzf";
   };
 

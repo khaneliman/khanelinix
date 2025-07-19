@@ -2,14 +2,14 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
-  cfg = config.${namespace}.programs.graphical.addons.gamescope;
+  cfg = config.khanelinix.programs.graphical.addons.gamescope;
 in
 {
-  options.${namespace}.programs.graphical.addons.gamescope = {
+  options.khanelinix.programs.graphical.addons.gamescope = {
     enable = lib.mkEnableOption "gamescope";
   };
 

@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.programs.terminal.tools.lazydocker;
+  cfg = config.khanelinix.programs.terminal.tools.lazydocker;
 in
 {
-  options.${namespace}.programs.terminal.tools.lazydocker = {
+  options.khanelinix.programs.terminal.tools.lazydocker = {
     enable = lib.mkEnableOption "lazydocker";
   };
 

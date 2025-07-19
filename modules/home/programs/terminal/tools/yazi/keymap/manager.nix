@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  namespace,
+
   pkgs,
   ...
 }:
@@ -12,7 +12,6 @@ let
     inherit
       config
       lib
-      namespace
       pkgs
       ;
   };
@@ -95,7 +94,7 @@ in
         run = "plugin ouch";
         desc = "Compress with outch";
       }
-      ++ lib.optional config.${namespace}.suites.wlroots.enable {
+      ++ lib.optional config.khanelinix.suites.wlroots.enable {
         on = [ "y" ];
         run = [
           ''shell -- for path in "$@"; do echo "file://$path"; done | wl-copy -t text/uri-list''

@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
 
-  cfg = config.${namespace}.nix.linux-builder;
+  cfg = config.khanelinix.nix.linux-builder;
 in
 {
-  options.${namespace}.nix.linux-builder = {
+  options.khanelinix.nix.linux-builder = {
     enable = lib.mkEnableOption "linux-builder";
     cores = lib.mkOption {
       type = lib.types.int;

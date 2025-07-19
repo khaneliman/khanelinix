@@ -2,15 +2,15 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
 
-  cfg = config.${namespace}.programs.graphical.apps.obs;
+  cfg = config.khanelinix.programs.graphical.apps.obs;
 in
 {
-  options.${namespace}.programs.graphical.apps.obs = {
+  options.khanelinix.programs.graphical.apps.obs = {
     enable = lib.mkEnableOption "support for OBS";
   };
 

@@ -2,7 +2,8 @@
   config,
   lib,
   pkgs,
-  namespace,
+  username ? null,
+
   ...
 }:
 let
@@ -14,9 +15,9 @@ let
     getExe
     getExe'
     ;
-  inherit (lib.${namespace}) mkOpt enabled;
+  inherit (lib.khanelinix) mkOpt enabled;
 
-  cfg = config.${namespace}.user;
+  cfg = config.khanelinix.user;
 
   home-directory =
     if cfg.name == null then
@@ -27,15 +28,15 @@ let
       "/home/${cfg.name}";
 in
 {
-  options.${namespace}.user = {
+  options.khanelinix.user = {
     enable = mkOpt types.bool false "Whether to configure the user account.";
     email = mkOpt types.str "khaneliman12@gmail.com" "The email of the user.";
     fullName = mkOpt types.str "Austin Horstman" "The full name of the user.";
     home = mkOpt (types.nullOr types.str) home-directory "The user's home directory.";
     icon =
-      mkOpt (types.nullOr types.package) pkgs.${namespace}.user-icon
+      mkOpt (types.nullOr types.package) pkgs.khanelinix.user-icon
         "The profile picture to use for the user.";
-    name = mkOpt (types.nullOr types.str) config.snowfallorg.user.name "The user account.";
+    name = mkOpt (types.nullOr types.str) username "The user account.";
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -43,11 +44,11 @@ in
       assertions = [
         {
           assertion = cfg.name != null;
-          message = "${namespace}.user.name must be set";
+          message = "khanelinix.user.name must be set";
         }
         {
           assertion = cfg.home != null;
-          message = "${namespace}.user.home must be set";
+          message = "khanelinix.user.home must be set";
         }
       ];
 
@@ -67,7 +68,8 @@ in
             "Pictures/${cfg.icon.fileName or (builtins.baseNameOf cfg.icon)}".source = cfg.icon;
           };
 
-        homeDirectory = mkDefault cfg.home;
+        # Only set homeDirectory if cfg.home is not null
+        homeDirectory = mkIf (cfg.home != null) (mkDefault cfg.home);
 
         shellAliases = {
           # nix specific aliases
@@ -95,7 +97,7 @@ in
           flake = "nix flake";
           nix = "nix -vL";
           gsed = "${getExe pkgs.gnused}";
-          hmvar-reload = ''__HM_ZSH_SESS_VARS_SOURCED=0 source "/etc/profiles/per-user/${config.${namespace}.user.name}/etc/profile.d/hm-session-vars.sh"'';
+          hmvar-reload = ''__HM_ZSH_SESS_VARS_SOURCED=0 source "/etc/profiles/per-user/${config.khanelinix.user.name}/etc/profile.d/hm-session-vars.sh"'';
 
           # File management
           rcp = "${getExe pkgs.rsync} -rahP --mkpath --modify-window=1"; # Rsync copy keeping all attributes,timestamps,permissions"

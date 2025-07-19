@@ -2,17 +2,17 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) types mkIf mkOption;
-  inherit (lib.${namespace}) mkOpt;
+  inherit (lib.khanelinix) mkOpt;
 
-  cfg = config.${namespace}.hardware.rgb.openrgb;
+  cfg = config.khanelinix.hardware.rgb.openrgb;
 in
 {
-  options.${namespace}.hardware.rgb.openrgb = with types; {
+  options.khanelinix.hardware.rgb.openrgb = with types; {
     enable = lib.mkEnableOption "support for rgb controls";
     motherboard = mkOption {
       type = types.nullOr (
@@ -32,7 +32,7 @@ in
       i2c-tools
     ];
 
-    ${namespace}.home.configFile =
+    khanelinix.home.configFile =
       { }
       // lib.optionalAttrs (cfg.openRGBConfig != null) {
         "OpenRGB/sizes.ors".source = cfg.openRGBConfig + "/sizes.ors";

@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   osConfig ? { },
   inputs,
   ...
@@ -11,10 +11,10 @@ let
   inherit (lib) mkIf;
   inherit (inputs) yazi-flavors;
 
-  cfg = config.${namespace}.programs.terminal.tools.yazi;
+  cfg = config.khanelinix.programs.terminal.tools.yazi;
 in
 {
-  options.${namespace}.programs.terminal.tools.yazi = {
+  options.khanelinix.programs.terminal.tools.yazi = {
     enable = lib.mkEnableOption "yazi";
   };
 
@@ -49,7 +49,6 @@ in
           inherit
             config
             lib
-            namespace
             pkgs
             ;
         })
@@ -103,7 +102,6 @@ in
           inherit
             config
             lib
-            namespace
             osConfig
             pkgs
             ;

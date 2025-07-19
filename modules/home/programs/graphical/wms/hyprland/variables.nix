@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
@@ -20,9 +20,9 @@ let
       ''
   );
 
-  screenshot-path = "/home/${config.${namespace}.user.name}/Pictures/screenshots";
+  screenshot-path = "/home/${config.khanelinix.user.name}/Pictures/screenshots";
 
-  cfg = config.${namespace}.programs.graphical.wms.hyprland;
+  cfg = config.khanelinix.programs.graphical.wms.hyprland;
 in
 {
   config = mkIf cfg.enable {
@@ -199,12 +199,12 @@ in
         "$looking-glass" = "${getExe pkgs.looking-glass-client}";
         "$screen-locker" = "${getExe config.programs.hyprlock.package}";
         "$window-inspector" = "${getExe pkgs.hyprprop}";
-        "$screen-recorder" = "${getExe pkgs.${namespace}.record_screen}";
+        "$screen-recorder" = "${getExe pkgs.khanelinix.record_screen}";
         "$bar" = ".waybar-wrapped";
 
         # screenshot commands
         "$notify-screenshot" = ''${getExe pkgs.libnotify} --icon "$file" "Screenshot Saved"'';
-        "$screenshot-path" = "/home/${config.${namespace}.user.name}/Pictures/screenshots";
+        "$screenshot-path" = "/home/${config.khanelinix.user.name}/Pictures/screenshots";
         "$grimblast_area_file" =
           ''${grimblast} --freeze --notify save area "${screenshot-path}/$(${getDateTime}).png"'';
         "$grimblast_active_file" =

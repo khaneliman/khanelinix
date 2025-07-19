@@ -2,21 +2,21 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
   inherit (lib.strings) fileContents;
 
-  cfg = config.${namespace}.programs.terminal.shell.zsh;
+  cfg = config.khanelinix.programs.terminal.shell.zsh;
 in
 {
   imports = [
     ./opts.nix
   ];
 
-  options.${namespace}.programs.terminal.shell.zsh = {
+  options.khanelinix.programs.terminal.shell.zsh = {
     enable = mkEnableOption "ZSH";
   };
 

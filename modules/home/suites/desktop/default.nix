@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkDefault mkIf;
 
-  cfg = config.${namespace}.suites.desktop;
+  cfg = config.khanelinix.suites.desktop;
 in
 {
-  options.${namespace}.suites.desktop = {
+  options.khanelinix.suites.desktop = {
     enable = lib.mkEnableOption "common desktop applications";
   };
 

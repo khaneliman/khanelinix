@@ -2,16 +2,16 @@
   config,
   lib,
   pkgs,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf literalExpression;
 
-  cfg = config.${namespace}.programs.graphical.mangohud;
+  cfg = config.khanelinix.programs.graphical.mangohud;
 in
 {
-  options.${namespace}.programs.graphical.mangohud = {
+  options.khanelinix.programs.graphical.mangohud = {
     enable = lib.mkEnableOption "mangohud";
   };
 

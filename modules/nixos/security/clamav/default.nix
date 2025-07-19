@@ -1,14 +1,14 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
-  cfg = config.${namespace}.security.clamav;
+  cfg = config.khanelinix.security.clamav;
 in
 {
-  options.${namespace}.security.clamav = {
+  options.khanelinix.security.clamav = {
     enable = lib.mkEnableOption "default clamav configuration";
   };
 

@@ -1,6 +1,6 @@
-{ lib, namespace, ... }:
+{ lib, ... }:
 let
-  inherit (lib.${namespace}) enabled;
+  inherit (lib.khanelinix) enabled;
 in
 {
   imports = [ ./hardware.nix ];

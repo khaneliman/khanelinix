@@ -1,12 +1,12 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkIf;
-  cfg = config.${namespace}.programs.graphical.wms.sway;
+  cfg = config.khanelinix.programs.graphical.wms.sway;
 in
 {
   config = mkIf cfg.enable {

@@ -1,16 +1,16 @@
 {
   config,
   lib,
-  namespace,
+
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
 
-  cfg = config.${namespace}.programs.graphical.apps.zathura;
+  cfg = config.khanelinix.programs.graphical.apps.zathura;
 in
 {
-  options.${namespace}.programs.graphical.apps.zathura = {
+  options.khanelinix.programs.graphical.apps.zathura = {
     enable = mkEnableOption "zathura";
   };
 
