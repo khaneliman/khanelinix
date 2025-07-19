@@ -19,7 +19,6 @@ in
       defaultPackages = lib.mkForce [ ];
 
       systemPackages = with pkgs; [
-        curl
         dnsutils
         fortune
         # FIXME: broken textual
@@ -28,9 +27,6 @@ in
         lolcat
         lshw
         pciutils
-        pkgs.khanelinix.trace-symlink
-        pkgs.khanelinix.trace-which
-        pkgs.khanelinix.why-depends
         rsync
         usbimager
         util-linux
