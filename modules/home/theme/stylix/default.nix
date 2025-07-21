@@ -80,7 +80,7 @@ in
           };
         };
 
-        iconTheme = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+        icons = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
           enable = lib.mkDefault true;
           inherit (cfg.icon) package;
           dark = cfg.icon.name;
