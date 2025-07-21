@@ -18,14 +18,6 @@ in
   config = mkIf cfg.enable {
     programs.nh = {
       enable = true;
-      package = pkgs.nh.overrideAttrs {
-        patches = [
-          (pkgs.fetchpatch {
-            url = "https://github.com/nix-community/nh/pull/340.patch";
-            hash = "sha256-AYrogYKEbwCO4MWoiGIt9I5gDv8XiPEA7DiPaYtNnD8=";
-          })
-        ];
-      };
 
       clean = {
         enable = true;
