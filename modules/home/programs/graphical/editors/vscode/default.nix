@@ -274,7 +274,11 @@ in
               with pkgs.vscode-extensions;
               commonExtensions
               ++ [
-                ms-python.python
+                # FIXME: incorrect hash
+                # error: hash mismatch in fixed-output derivation '/nix/store/fasa6wib6pa5vviq04a9v2vacap94jiv-ms-python-python.zip.drv':
+                # ┃specified: sha256-8dc1uM/6iUNF+9y4yKH7w4/FsrzgVoOJlIFfQOvY8YM=
+                # ┃got: sha256-uD6NWGD5GyYwd7SeoGsgYEH26NI+hDxCx3f2EhqoOXk=
+                # ms-python.python
                 ms-python.debugpy
                 njpwerner.autodocstring
               ];
