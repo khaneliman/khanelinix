@@ -1,8 +1,7 @@
 {
-  inputs,
   mkShell,
   pkgs,
-  system,
+  self',
   ...
 }:
 mkShell {
@@ -12,13 +11,16 @@ mkShell {
     nh
     statix
     sops
-    (inputs.treefmt-nix.lib.mkWrapper pkgs ../../treefmt.nix)
+    self'.formatter
   ];
 
   shellHook = ''
-    ${inputs.self.checks.${system}.pre-commit-hooks.shellHook}
-    echo 🔨 Welcome to Khanelinix! 
-
-
+    ${self'.checks.pre-commit-hooks.shellHook or ""}
+    echo "🚀 Khanelinix development environment"
+    echo "Available commands:"
+    echo "  nix flake check       - Run all checks"
+    echo "  nix fmt -- --no-cache - Format without cache"
+    echo "  statix check          - Check for anti-patterns"
+    echo "  deadnix               - Find unused code"
   '';
 }
