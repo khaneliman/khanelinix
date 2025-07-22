@@ -11,9 +11,6 @@
   <a href="https://wiki.nixos.org/wiki/Flakes" target="_blank">
  <img alt="Nix Flakes Ready" src="https://img.shields.io/static/v1?logo=nixos&logoColor=d8dee9&label=Nix%20Flakes&labelColor=5e81ac&message=Ready&color=d8dee9&style=for-the-badge">
 </a>
-<a href="https://github.com/snowfallorg/lib" target="_blank">
- <img alt="Built With Snowfall" src="https://img.shields.io/static/v1?logoColor=d8dee9&label=Built%20With&labelColor=5e81ac&message=Snowfall&color=d8dee9&style=for-the-badge">
-</a>
 </p>
 
 Welcome to khanelinix, a personal Nix configuration repository. This repository
@@ -45,7 +42,7 @@ follow the installation instruction on
 # New machine without git
 nix-shell -p git
 
-# Clone 
+# Clone
 git clone https://github.com/khaneliman/khanelinix.git
 cd khanelinix
 
@@ -58,7 +55,10 @@ nix run github:lnl7/nix-darwin#darwin-rebuild -- switch --flake github:khanelima
 
 darwin-rebuild switch --flake .
 
- # Direnv
+ # With nh (Nix Helper)
+nh os switch .
+
+# With direnv
 flake switch
 ```
 
@@ -67,11 +67,10 @@ flake switch
 Here's an overview of what my Nix configuration offers:
 
 - **External Dependency Integrations**:
-  - [Nixvim](https://github.com/nix-community/nixvim) neovim configuration.
-  - Access the Nix User Repository (NUR) for additional packages and
-    enhancements.
-  - Incorporate Nixpkgs-Wayland to provide an up-to-date Wayland package
-    repository.
+  - [Khanelivim](https://github.com/khaneliman/khanelivim) custom neovim
+    configuration built with nixvim.
+  - Access NUR expressions for Firefox addons and other enhancements.
+  - Integration with Hyprland and other Wayland compositors.
 
 - **macOS Support**: Seamlessly configure and manage Nix on macOS using the
   power of [Nix-darwin](https://github.com/LnL7/nix-darwin), also leveraging
@@ -96,46 +95,44 @@ Here's an overview of what my Nix configuration offers:
 
 ## Customization
 
-My Nix configuration, based on the
-[SnowfallOrg lib](https://github.com/snowfallorg/lib) structure, provides a
-flexible and organized approach to managing your Nix environment. Here's how it
-works:
+My Nix configuration is built using
+[flake-parts](https://github.com/hercules-ci/flake-parts), providing a flexible
+and modular approach to managing your Nix environment. Here's how it works:
 
-- **Custom Library**: An optional custom library in the `lib/` directory
-  contains a Nix function called with `inputs`, `snowfall-inputs`, and `lib`.
-  The function should return an attribute set to merge with `lib`.
+- **Flake Parts Structure**: The configuration uses flake-parts to organize
+  outputs into modular parts, with the main flake definition importing from the
+  `flake/` directory for better organization.
 
-- **Modular Directory Structure**: You can create any (nestable) directory
-  structure within `lib/`, `packages/`, `modules/`, `overlays/`, `systems/`, and
-  `homes/`. Each directory should contain a Nix function that returns an
-  attribute set to merge with the corresponding section.
+- **Custom Library**: The `lib/` directory contains custom library functions and
+  utilities that extend the standard nixpkgs lib, providing additional helpers
+  for system configuration.
 
-- **Package Overlays**: The `packages/` directory includes an optional set of
-  packages to export. Each package is instantiated with `callPackage`, and the
-  files should contain functions that take an attribute set of packages and the
-  required `lib` to return a derivation.
+- **Package Management**: The `packages/` directory contains custom packages
+  exported by the flake. Each package is built using `callPackage` and can be
+  used across different system configurations.
 
-- **Modules for Configuration**: In the `modules/` directory, you can define
-  NixOS modules for various platforms, such as `nixos`, `darwin`, and `home`.
-  This modular approach simplifies system configuration management.
+- **Modular Configurations**: The `modules/` directory defines reusable NixOS,
+  Darwin, and Home Manager modules. This modular approach allows for consistent
+  configuration across different platforms and systems.
 
-- **Custom Overlays**: The `overlays/` directory is for optional custom
-  overlays. Each overlay file should contain a function that takes three
-  arguments: an attribute set of your flake's inputs and a `channels` attribute
-  containing all available channels, the final set of `pkgs`, and the previous
-  set of `pkgs`. This allows you to customize package sets effectively.
+- **Overlay System**: Custom overlays in the `overlays/` directory modify and
+  extend the nixpkgs package set, allowing for package customizations and
+  additions.
 
-- **System Configurations**: The `systems/` directory organizes system
-  configurations based on architecture and format. You can create configurations
-  for different architectures and formats, such as `x86_64-linux`,
-  `aarch64-darwin`, and more.
+- **System Configurations**: Host-specific configurations are organized in
+  `systems/` with separate directories for different architectures
+  (`x86_64-linux`, `aarch64-darwin`).
 
-- **Home Configurations**: Similar to system configurations, the `homes/`
-  directory organizes home configurations based on architecture and format. This
-  is especially useful if you want to manage home environments with Nix.
+- **Home Configurations**: User-specific Home Manager configurations in the
+  `homes/` directory, organized by user and system architecture.
 
-This structured approach to Nix configuration makes it easier to manage and
-customize your Nix environment while maintaining flexibility and modularity.
+- **Development Environment**: A partitioned development environment in
+  `flake/dev/` provides development shells, formatting tools, and checks
+  separate from the main flake outputs.
+
+This flake-parts based approach provides excellent modularity and makes it easy
+to maintain and extend the configuration while keeping related functionality
+organized.
 
 # Exported packages
 
