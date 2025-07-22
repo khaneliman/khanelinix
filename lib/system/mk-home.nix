@@ -10,14 +10,13 @@ let
   flake = inputs.self or (throw "mkHome requires 'inputs.self' to be passed");
   common = import ./common.nix { inherit inputs; };
 
-  extendedLib = common.mkExtendedLib flake inputs.nixpkgs;
+  extendedLib = common.mkExtendedLib flake inputs.nixpkgs-unstable;
 in
 inputs.home-manager.lib.homeManagerConfiguration {
-  pkgs =
-    import inputs.nixpkgs {
-      inherit system;
-    }
-    // common.mkNixpkgsConfig flake;
+  pkgs = import inputs.nixpkgs-unstable {
+    inherit system;
+    inherit ((common.mkNixpkgsConfig flake)) config overlays;
+  };
 
   extraSpecialArgs = {
     inherit

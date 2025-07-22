@@ -10,7 +10,7 @@ let
   flake = inputs.self or (throw "mkDarwin requires 'inputs.self' to be passed");
   common = import ./common.nix { inherit inputs; };
 
-  extendedLib = common.mkExtendedLib flake inputs.nixpkgs;
+  extendedLib = common.mkExtendedLib flake inputs.nixpkgs-unstable;
   matchingHomes = common.mkHomeConfigs {
     inherit
       flake
