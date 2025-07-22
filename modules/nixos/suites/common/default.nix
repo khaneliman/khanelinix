@@ -37,6 +37,7 @@ in
     khanelinix = {
       hardware = {
         power = mkDefault enabled;
+        fans = mkDefault enabled;
       };
 
       nix = mkDefault enabled;
