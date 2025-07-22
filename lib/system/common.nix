@@ -8,6 +8,7 @@ in
   mkNixpkgsConfig = flake: {
     overlays = builtins.attrValues flake.overlays;
     config = {
+      allowAliases = false;
       allowUnfree = true;
       permittedInsecurePackages = [
         # NOTE: citrix
