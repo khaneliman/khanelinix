@@ -1,4 +1,5 @@
 {
+  config,
   mkShell,
   pkgs,
   self',
@@ -15,7 +16,8 @@ mkShell {
   ];
 
   shellHook = ''
-    ${self'.checks.pre-commit-hooks.shellHook or ""}
+    ${config.pre-commit.installationScript}
+
     echo "🚀 Khanelinix development environment"
     echo "Available commands:"
     echo "  nix flake check       - Run all checks"
