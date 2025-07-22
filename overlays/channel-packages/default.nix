@@ -2,10 +2,12 @@
 final: _prev:
 let
   master = import inputs.nixpkgs-master {
-    inherit (final) system config;
+    inherit (final.stdenv.hostPlatform) system;
+    inherit (final) config;
   };
   unstable = import inputs.nixpkgs-unstable {
-    inherit (final) system config;
+    inherit (final.stdenv.hostPlatform) system;
+    inherit (final) config;
   };
 in
 {

@@ -70,7 +70,7 @@ in
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         appimage-run
-        bitwarden
+        bitwarden-desktop
         bleachbit
         clac
         dropbox

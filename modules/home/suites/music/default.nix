@@ -26,7 +26,7 @@ in
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         ardour
         mpd-notification
-        mpdevil
+        plattenalbum
         plexamp
         tageditor
         youtube-music

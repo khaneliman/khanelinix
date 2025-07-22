@@ -28,7 +28,7 @@ in
       ++ optionalPluginPackage "glow" pkgs.glow
       ++ optionalPluginPackage "duckdb" pkgs.duckdb
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-        pkgs.xdragon
+        pkgs.dragon-drop
       ];
 
     programs.yazi = {

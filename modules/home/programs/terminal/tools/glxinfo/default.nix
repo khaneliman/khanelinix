@@ -15,5 +15,5 @@ in
     enable = lib.mkEnableOption "glxinfo";
   };
 
-  config = mkIf cfg.enable { home.packages = with pkgs; [ glxinfo ]; };
+  config = mkIf cfg.enable { home.packages = with pkgs; [ mesa-demos ]; };
 }
