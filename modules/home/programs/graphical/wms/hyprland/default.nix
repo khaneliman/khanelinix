@@ -152,6 +152,9 @@ in
           '';
 
         package = lib.mkIf (osConfig ? programs.hyprland.package) osConfig.programs.hyprland.package;
+        portalPackage = lib.mkIf (
+          osConfig ? programs.hyprland.portalPackage
+        ) osConfig.programs.hyprland.portalPackage;
 
         # ehhhhh
         # plugins = with pkgs.hyprlandPlugins; [

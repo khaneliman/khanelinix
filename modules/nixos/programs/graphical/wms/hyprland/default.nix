@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-
   ...
 }:
 let
@@ -51,8 +50,6 @@ in
         enable = true;
         withUWSM = true;
 
-        # package = pkgs.hyprland.override { debug = cfg.enableDebug; };
-        # TODO: remove after next release
         package = pkgs.hyprland.override { debug = cfg.enableDebug; };
       };
     };
