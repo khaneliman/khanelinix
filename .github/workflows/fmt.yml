@@ -9,4 +9,4 @@ jobs:
       - uses: cachix/install-nix-action@v31
         with:
           install_url: https://nixos.org/nix/install
-      - run: nix run nixpkgs#nixfmt-rfc-style -- --check .
+      - run: nix build .#checks.x86_64-linux.treefmt
