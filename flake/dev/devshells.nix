@@ -53,7 +53,7 @@
 
       buildShell = name: {
         ${name} = import (shellsPath + "/${name}.nix") {
-          inherit system self';
+          inherit lib system self';
           inherit (devPkgs) mkShell;
           pkgs = devPkgs;
         };
