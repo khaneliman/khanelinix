@@ -58,6 +58,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hypr-socket-watch.url = "github:khaneliman/hypr-socket-watch";
+    hyprland = {
+      url = "github:hyprwm/hyprland";
+    };
     khanelivim.url = "github:khaneliman/khanelivim";
     nh.url = "github:nix-community/nh";
     nix-flatpak.url = "github:gmodena/nix-flatpak/latest";
