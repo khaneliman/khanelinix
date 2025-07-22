@@ -1,10 +1,7 @@
 {
   config,
-  inputs,
   lib,
   pkgs,
-  system,
-
   ...
 }:
 let
@@ -15,7 +12,6 @@ let
     getExe'
     ;
   inherit (lib.khanelinix) mkOpt;
-  inherit (inputs) hyprland;
 
   cfg = config.khanelinix.display-managers.regreet;
   themeCfg = config.khanelinix.theme;
@@ -35,9 +31,7 @@ let
 
     exec-once = ${lib.getExe' pkgs.dbus "dbus-update-activation-environment"} --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE
 
-    exec-once = ${getExe pkgs.greetd.regreet} -l debug && ${
-      getExe' hyprland.packages.${system}.hyprland-unwrapped "hyprctl"
-    } exit
+    exec-once = ${getExe pkgs.greetd.regreet} -l debug && ${getExe' pkgs.hyprland-unwrapped "hyprctl"} exit
   '';
 in
 {
@@ -75,9 +69,7 @@ in
     services.greetd = {
       settings = {
         default_session = {
-          command = "${
-            getExe hyprland.packages.${system}.hyprland-unwrapped
-          } --config ${greetdHyprlandConfig} > /tmp/hyprland-log-out.txt 2>&1";
+          command = "${getExe pkgs.hyprland-unwrapped} --config ${greetdHyprlandConfig} > /tmp/hyprland-log-out.txt 2>&1";
         };
       };
 
