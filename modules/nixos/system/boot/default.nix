@@ -33,6 +33,13 @@ in
     boot = {
       initrd.systemd.network.wait-online.enable = false;
 
+      kernel.sysctl = {
+        "vm.swappiness" = 10;
+        "vm.vfs_cache_pressure" = 50;
+        "vm.dirty_ratio" = 15;
+        "vm.dirty_background_ratio" = 5;
+      };
+
       kernelParams =
         lib.optionals cfg.plymouth [ "quiet" ]
         ++ lib.optionals cfg.silentBoot [
