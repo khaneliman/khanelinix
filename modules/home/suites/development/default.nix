@@ -131,6 +131,7 @@ in
         tree-update-all = ''./pkgs/applications/editors/vim/plugins/utils/nvim-treesitter/update.py && git add ./pkgs/applications/editors/vim/plugins/nvim-treesitter/generated.nix && git commit -m "vimPlugins.nvim-treesitter: update grammars"'';
         tree-check = ''nix build .#vimPlugins.nvim-treesitter.passthru.tests.check-queries'';
         lua-update-all = ''nix run nixpkgs#luarocks-packages-updater -- --github-token=$(echo $GITHUB_TOKEN)'';
+        yazi-update-all = ''./pkgs/by-name/ya/yazi/plugins/update.py --all --commit'';
 
         # Home-Manager
         hmd = ''nix build -L .#docs-html && ${
