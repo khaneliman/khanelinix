@@ -21,7 +21,7 @@ in
     package = mkOption {
       default = pkgs.phodav;
       defaultText = literalExpression "pkgs.phodav";
-      description = lib.mdDoc "spice-webdavd provider package to use.";
+      description = "spice-webdavd provider package to use.";
       type = types.package;
     };
   };

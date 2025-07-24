@@ -22,7 +22,7 @@ in
         ]
       );
       default = "amd";
-      description = lib.mdDoc "CPU family of motherboard. Allows for addition motherboard i2c support.";
+      description = "CPU family of motherboard. Allows for addition motherboard i2c support.";
     };
     openRGBConfig = mkOpt (nullOr path) null "The openrgb file to create.";
   };
