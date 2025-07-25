@@ -25,20 +25,21 @@ let
       # Assume standard UID 1000 for primary users, or use a default
       remote-user-id = "1000";
 
-      forward-gpg = lib.optionalString (config.programs.gnupg.agent.enable && remote.gpgAgent) ''
-        RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra
-        RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh
-      '';
-      port-expr = if remote.system == "nixos" then "Port ${builtins.toString cfg.port}" else "";
+      forward-gpg =
+        lib.optionalString (config.programs.gnupg.agent.enable && remote.gpgAgent)
+          "  RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra\n  RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh";
+      port-expr = lib.optionalString (remote.system == "nixos") "  Port ${builtins.toString cfg.port}";
     in
-    ''
-      Host ${name}
-        Hostname ${remote.hostname}
-        User ${remote-user-name}
-        ForwardAgent yes
-        ${port-expr}
-        ${forward-gpg}
-    ''
+    lib.concatStringsSep "\n" (
+      lib.filter (x: x != "") [
+        "Host ${name}"
+        "  Hostname ${remote.hostname}"
+        "  User ${remote-user-name}"
+        "  ForwardAgent yes"
+        port-expr
+        forward-gpg
+      ]
+    )
   ) (builtins.attrNames other-hosts);
 in
 {
@@ -51,9 +52,11 @@ in
   config = lib.mkIf cfg.enable {
     programs.ssh = {
       extraConfig = ''
-        ${other-hosts-config}
+        ${other-hosts-config}${
+          lib.optionalString (cfg.extraConfig != "") ''
 
-        ${cfg.extraConfig}
+            ${cfg.extraConfig}''
+        }
       '';
 
       knownHosts = lib.mapAttrs (_: lib.mkForce) (
