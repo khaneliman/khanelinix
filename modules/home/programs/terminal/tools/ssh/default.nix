@@ -78,6 +78,7 @@ in
       extraConfig =
         ''
           StreamLocalBindUnlink yes
+          ConnectTimeout 5
         ''
         + lib.optionalString (cfg.extraConfig != "") cfg.extraConfig;
     };

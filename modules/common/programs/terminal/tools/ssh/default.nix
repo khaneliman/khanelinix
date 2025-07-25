@@ -36,6 +36,7 @@ let
         "  Hostname ${remote.hostname}"
         "  User ${remote-user-name}"
         "  ForwardAgent yes"
+        "  ConnectTimeout 10"
         port-expr
         forward-gpg
       ]
