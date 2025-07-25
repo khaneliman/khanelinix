@@ -22,8 +22,8 @@ let
     let
       remote = other-hosts.${name};
       remote-user-name = remote.username;
-      # Assume standard UID 1000 for primary users, or use a default
-      remote-user-id = "1000";
+      # Use system-specific default UIDs: macOS starts at 501, Linux at 1000
+      remote-user-id = if remote.system == "darwin" then "501" else "1000";
 
       forward-gpg =
         lib.optionalString (config.programs.gnupg.agent.enable && remote.gpgAgent)
