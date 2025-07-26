@@ -85,7 +85,7 @@ in
           }
           {
             label = " Lock";
-            command = "hyprlock --immediate";
+            command = "hyprlock";
           }
           {
             label = " Logout";

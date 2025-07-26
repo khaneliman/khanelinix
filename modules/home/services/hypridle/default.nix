@@ -30,7 +30,7 @@ in
         listener = [
           {
             timeout = 300;
-            on-timeout = "${getExe config.programs.hyprlock.package}";
+            on-timeout = "${getExe config.programs.hyprlock.package} --grace 300";
           }
           {
             timeout = 600;

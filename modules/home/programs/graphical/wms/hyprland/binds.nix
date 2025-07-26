@@ -216,7 +216,7 @@ in
           # ░▀▀█░░█░░▀▀█░░█░░█▀▀░█░█
           # ░▀▀▀░░▀░░▀▀▀░░▀░░▀▀▀░▀░▀
           # Kill and restart crashed hyprlock
-          "$mainMod, BackSpace, exec, pkill -SIGUSR1 hyprlock || WAYLAND_DISPLAY=wayland-1 $screen-locker --immediate"
+          "$mainMod, BackSpace, exec, pkill -SIGUSR1 hyprlock || WAYLAND_DISPLAY=wayland-1 $screen-locker"
           "$LHYPER, L, exec, systemctl --user exit"
           "$LHYPER, L, exit,"
           "$RHYPER, R, exec, reboot"
