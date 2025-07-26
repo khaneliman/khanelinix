@@ -16,6 +16,14 @@ in
 
   config = mkIf cfg.enable {
     networking = {
+      applicationFirewall = {
+        enable = true;
+
+        allowSignedApp = true;
+        blockAllIncoming = false;
+        enableStealthMode = false;
+      };
+
       dns = [
         "1.1.1.1"
         "1.0.0.1"

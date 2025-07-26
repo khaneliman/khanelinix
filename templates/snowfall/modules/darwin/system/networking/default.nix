@@ -16,20 +16,18 @@ in
 
   config = mkIf cfg.enable {
     networking = {
+      applicationFirewall = {
+        enable = true;
+
+        allowSignedApp = true;
+        blockAllIncoming = false;
+        enableStealthMode = false;
+      };
+
       dns = [
         "1.1.1.1"
         "8.8.8.8"
       ];
-    };
-
-    system.defaults = {
-      # firewall settings
-      alf = {
-        # 0 = disabled 1 = enabled 2 = blocks all connections except for essential services
-        globalstate = 1;
-        loggingenabled = 0;
-        stealthenabled = 0;
-      };
     };
   };
 }
