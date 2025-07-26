@@ -24,13 +24,13 @@ in
           after_sleep_cmd = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms on";
           before_sleep_cmd = "loginctl lock-session";
           ignore_dbus_inhibit = false;
-          lock_cmd = "pgrep hyprlock || ${getExe config.programs.hyprlock.package}";
+          lock_cmd = "pidof hyprlock || ${getExe config.programs.hyprlock.package} --grace 300";
         };
 
         listener = [
           {
             timeout = 300;
-            on-timeout = "${getExe config.programs.hyprlock.package} --grace 300";
+            on-timeout = "loginctl lock-session";
           }
           {
             timeout = 600;
