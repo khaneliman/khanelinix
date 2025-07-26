@@ -53,7 +53,6 @@ in
 
       taps = [
         "beeftornado/rmtree"
-        "felixkratz/homebrew-formulae"
       ];
 
       masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
