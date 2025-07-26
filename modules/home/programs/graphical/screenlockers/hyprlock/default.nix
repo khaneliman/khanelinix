@@ -24,6 +24,9 @@ in
       settings = {
         general = {
           hide_cursor = true;
+          ignore_empty_input = true;
+          # NOTE: see if it helps with crashes
+          screencopy_mode = 1;
         };
 
         animations = {
