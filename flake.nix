@@ -19,7 +19,8 @@
     };
 
     darwin = {
-      url = "github:nix-darwin/nix-darwin";
+      # url = "github:nix-darwin/nix-darwin";
+      url = "github:khaneliman/nix-darwin/copy";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
