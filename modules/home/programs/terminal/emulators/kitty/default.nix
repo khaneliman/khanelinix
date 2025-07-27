@@ -216,6 +216,10 @@ in
           adjust_column_width = 0;
           box_drawing_scale = "0.001, 1, 1.5, 2";
 
+          # clipboard
+          copy_on_select = "yes";
+          strip_trailing_spaces = "always";
+
           # Cursor
           cursor_shape = "underline";
           cursor_blink_interval = -1;
@@ -231,7 +235,6 @@ in
           # FIXME: removed option https://sw.kovidgoyal.net/kitty/changelog/#id41
           # open_url_modifiers = "ctrl + shift";
           open_url_with = "default";
-          copy_on_select = "yes";
 
           # Selection
           # FIXME: removed option https://sw.kovidgoyal.net/kitty/changelog/#id41
