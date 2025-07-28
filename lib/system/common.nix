@@ -13,6 +13,7 @@ in
       permittedInsecurePackages = [
         # NOTE: citrix
         "libxml2-2.13.8"
+        "libsoup-2.74.3"
         # NOTE: needed by emulationstation
         "freeimage-3.18.0-unstable-2024-04-18"
         # dev shells
