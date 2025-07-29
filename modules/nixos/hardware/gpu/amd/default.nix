@@ -27,13 +27,6 @@ in
         nvtopPackages.amd
       ];
 
-    environment.variables = {
-      # VAAPI and VDPAU config for accelerated video.
-      # See https://wiki.archlinux.org/index.php/Hardware_video_acceleration
-      "VDPAU_DRIVER" = "radeonsi";
-      "LIBVA_DRIVER_NAME" = "radeonsi";
-    };
-
     # enables AMDVLK & OpenCL support
     hardware = {
       amdgpu = {
@@ -53,22 +46,11 @@ in
       graphics = {
         enable = true;
         extraPackages = with pkgs; [
-          # mesa
-          mesa
-
-          # vulkan
           vulkan-tools
-          vulkan-loader
-          vulkan-validation-layers
-          vulkan-extension-layer
         ];
       };
     };
 
     nixpkgs.config.rocmSupport = cfg.enableRocmSupport;
-
-    services.xserver.videoDrivers = lib.mkDefault [
-      "modesetting"
-    ];
   };
 }
