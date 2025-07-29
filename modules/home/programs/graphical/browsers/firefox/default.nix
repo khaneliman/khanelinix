@@ -220,6 +220,8 @@ in
               "sidebar.revamp" = true;
               "sidebar.verticalTabs" = true;
               "sidebar.visibility" = "expand-on-hover";
+
+              "widget.wayland.fractional-scale.enabled" = config.khanelinix.suites.wlroots.enable;
             }
             (optionalAttrs cfg.gpuAcceleration {
               "dom.webgpu.enabled" = true;
