@@ -23,19 +23,18 @@ in
         enable = true;
         extraArgs = [ "--identity" ];
 
-        transitions = {
-          sunrise = {
-            calendar = "*-*-* 05:30:00";
-            requests = [
-              [ "temperature 6500" ]
-              [ "identity" ]
-            ];
-          };
-
-          sunset = {
-            calendar = "*-*-* 20:00:00";
-            requests = [ [ "temperature 3500" ] ];
-          };
+        settings = {
+          profile = [
+            {
+              time = "5:30";
+              temperature = 6500;
+              identity = true;
+            }
+            {
+              time = "20:00";
+              temperature = 3500;
+            }
+          ];
         };
       };
     };

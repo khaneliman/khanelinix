@@ -59,7 +59,6 @@ in
     home = {
       packages = with pkgs; [
         grim
-        hyprsunset
         hyprsysteminfo
         pkgs.khanelinix.record_screen
         slurp
