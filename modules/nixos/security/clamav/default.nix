@@ -24,6 +24,14 @@ in
 
       scanner = {
         enable = true;
+        interval = "weekly";
+        scanDirectories = [
+          "/home"
+          "/tmp"
+          "/var/lib"
+          "/var/log"
+          "/var/tmp"
+        ];
       };
 
       updater = {
