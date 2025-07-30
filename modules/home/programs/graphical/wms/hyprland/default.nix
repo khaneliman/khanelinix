@@ -22,7 +22,7 @@ let
   historicalCrashAliases = builtins.listToAttrs (
     builtins.genList (x: {
       name = "hlc${toString (x + 1)}";
-      value = "cat /home/${config.khanelinix.user.name}/.cache/hyprland/$(command ls -t /home/${config.khanelinix.user.name}/.cache/hyprland/ | grep 'hyprlandCrashReport' | head -n ${toString (x + 2)} | tail -n 1)";
+      value = "cat ${config.xdg.cacheHome}/hyprland/$(command ls -t ${config.xdg.cacheHome}/hyprland/ | grep 'hyprlandCrashReport' | head -n ${toString (x + 2)} | tail -n 1)";
     }) 4
   );
 in
@@ -92,7 +92,7 @@ in
       shellAliases =
         {
           hl = "cat $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland.log";
-          hlc = "cat /home/${config.khanelinix.user.name}/.cache/hyprland/$(command ls -t /home/${config.khanelinix.user.name}/.cache/hyprland/ | grep 'hyprlandCrashReport' | head -n 1)";
+          hlc = "cat ${config.xdg.cacheHome}/hyprland/$(command ls -t ${config.xdg.cacheHome}/hyprland/ | grep 'hyprlandCrashReport' | head -n 1)";
           hlw = ''watch -n 0.1 "grep -v \"arranged\" $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland.log | tail -n 40"'';
         }
         // historicalLogAliases
