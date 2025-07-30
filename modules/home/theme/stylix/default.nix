@@ -52,6 +52,10 @@ in
         };
       };
 
+      gtk.gtk3 = mkIf (pkgs.stdenv.hostPlatform.isLinux && !config.khanelinix.theme.catppuccin.enable) {
+        font = null;
+      };
+
       stylix = {
         enable = true;
         # autoEnable = false;
