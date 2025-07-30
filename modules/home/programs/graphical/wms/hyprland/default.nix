@@ -92,7 +92,18 @@ in
       shellAliases =
         {
           hl = "cat $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland.log";
-          hlc = "cat ${config.xdg.cacheHome}/hyprland/$(command ls -t ${config.xdg.cacheHome}/hyprland/ | grep 'hyprlandCrashReport' | head -n 1)";
+          hlc = ''
+            local report_dir="${config.xdg.cacheHome}/hyprland"
+            local latest_report
+
+            latest_report=$(command ls -t "$report_dir" 2>/dev/null | grep 'hyprlandCrashReport' | head -n 1)
+
+            if [[ -n "$latest_report" ]]; then
+                cat "''${report_dir}/''${latest_report}"
+            else
+                echo "No Hyprland crash reports found. ✨"
+            fi
+          '';
           hlw = ''watch -n 0.1 "grep -v \"arranged\" $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland.log | tail -n 40"'';
         }
         // historicalLogAliases
