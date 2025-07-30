@@ -20,17 +20,16 @@ in
     # khanelinix.nix.nix-rosetta-builder.enable = true;
 
     homebrew = {
-      casks =
-        [
-          "cutter"
-          "electron"
-          "powershell"
-        ]
-        ++ lib.optionals cfg.dockerEnable [
-          "docker-desktop"
-          "podman-desktop"
-        ]
-        ++ lib.optionals cfg.aiEnable [ "ollamac" ];
+      casks = [
+        "cutter"
+        "electron"
+        "powershell"
+      ]
+      ++ lib.optionals cfg.dockerEnable [
+        "docker-desktop"
+        "podman-desktop"
+      ]
+      ++ lib.optionals cfg.aiEnable [ "ollamac" ];
 
       masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
         "Patterns" = 429449079;

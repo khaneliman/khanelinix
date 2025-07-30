@@ -201,99 +201,99 @@ in
           "ctrl+shift+minus" = "decrease_font_size";
           "ctrl+shift+backspace" = "restore_font_size";
           "ctrl+shift+f6" = "set_font_size 16.0";
-        } // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin { "cmd+opt+s" = "noop"; };
+        }
+        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin { "cmd+opt+s" = "noop"; };
 
-        settings =
-          {
-            # Fonts
-            font_family = cfg.font.normal;
-            italic_font = cfg.font.italic;
-            bold_font = cfg.font.bold;
-            bold_italic_font = cfg.font.bold_italic;
-            font_size = 13;
+        settings = {
+          # Fonts
+          font_family = cfg.font.normal;
+          italic_font = cfg.font.italic;
+          bold_font = cfg.font.bold;
+          bold_italic_font = cfg.font.bold_italic;
+          font_size = 13;
 
-            adjust_line_height = 0;
-            adjust_column_width = 0;
-            box_drawing_scale = "0.001, 1, 1.5, 2";
+          adjust_line_height = 0;
+          adjust_column_width = 0;
+          box_drawing_scale = "0.001, 1, 1.5, 2";
 
-            # Cursor
-            cursor_shape = "underline";
-            cursor_blink_interval = -1;
-            cursor_stop_blinking_after = "15.0";
+          # Cursor
+          cursor_shape = "underline";
+          cursor_blink_interval = -1;
+          cursor_stop_blinking_after = "15.0";
 
-            # Scrollback
-            scrollback_lines = 10000;
-            scrollback_pager = "less";
-            wheel_scroll_multiplier = "5.0";
+          # Scrollback
+          scrollback_lines = 10000;
+          scrollback_pager = "less";
+          wheel_scroll_multiplier = "5.0";
 
-            # URLs
-            url_style = "double";
-            # FIXME: removed option https://sw.kovidgoyal.net/kitty/changelog/#id41
-            # open_url_modifiers = "ctrl + shift";
-            open_url_with = "default";
-            copy_on_select = "yes";
+          # URLs
+          url_style = "double";
+          # FIXME: removed option https://sw.kovidgoyal.net/kitty/changelog/#id41
+          # open_url_modifiers = "ctrl + shift";
+          open_url_with = "default";
+          copy_on_select = "yes";
 
-            # Selection
-            # FIXME: removed option https://sw.kovidgoyal.net/kitty/changelog/#id41
-            # rectangle_select_modifiers = "ctrl + shift";
-            select_by_word_characters = ":@-./_~?& = %+#";
+          # Selection
+          # FIXME: removed option https://sw.kovidgoyal.net/kitty/changelog/#id41
+          # rectangle_select_modifiers = "ctrl + shift";
+          select_by_word_characters = ":@-./_~?& = %+#";
 
-            # Mouse
-            click_interval = "0.5";
-            mouse_hide_wait = 0;
-            focus_follows_mouse = "no";
+          # Mouse
+          click_interval = "0.5";
+          mouse_hide_wait = 0;
+          focus_follows_mouse = "no";
 
-            # Performance
-            repaint_delay = 20;
-            input_delay = 2;
-            sync_to_monitor = "no";
+          # Performance
+          repaint_delay = 20;
+          input_delay = 2;
+          sync_to_monitor = "no";
 
-            # Bell
-            visual_bell_duration = "0.0";
-            enable_audio_bell = "yes";
-            bell_on_tab = "yes";
+          # Bell
+          visual_bell_duration = "0.0";
+          enable_audio_bell = "yes";
+          bell_on_tab = "yes";
 
-            # Window
-            remember_window_size = "no";
-            initial_window_width = 700;
-            initial_window_height = 400;
-            window_border_width = 0;
-            window_margin_width = 0;
-            window_padding_width = 0;
-            inactive_text_alpha = "1.0";
-            background_opacity = lib.mkDefault "0.90";
-            placement_strategy = "center";
-            hide_window_decorations = "yes";
-            confirm_os_window_close = -1;
-            # 0 if you dont want confirmation to close kitty instances with running commands
+          # Window
+          remember_window_size = "no";
+          initial_window_width = 700;
+          initial_window_height = 400;
+          window_border_width = 0;
+          window_margin_width = 0;
+          window_padding_width = 0;
+          inactive_text_alpha = "1.0";
+          background_opacity = lib.mkDefault "0.90";
+          placement_strategy = "center";
+          hide_window_decorations = "yes";
+          confirm_os_window_close = -1;
+          # 0 if you dont want confirmation to close kitty instances with running commands
 
-            # Layouts
-            enabled_layouts = "*";
+          # Layouts
+          enabled_layouts = "*";
 
-            # Tabs
-            tab_bar_edge = "bottom";
-            tab_bar_margin_width = "0.0";
-            tab_bar_min_tabs = 1;
-            tab_bar_style = "powerline";
-            tab_powerline_style = "slanted";
-            tab_separator = " ┇ ";
-            tab_title_template = "{title}{' :{}:'.format(num_windows) if num_windows > 1 else ''}";
-            active_tab_font_style = "bold";
-            inactive_tab_font_style = "normal";
+          # Tabs
+          tab_bar_edge = "bottom";
+          tab_bar_margin_width = "0.0";
+          tab_bar_min_tabs = 1;
+          tab_bar_style = "powerline";
+          tab_powerline_style = "slanted";
+          tab_separator = " ┇ ";
+          tab_title_template = "{title}{' :{}:'.format(num_windows) if num_windows > 1 else ''}";
+          active_tab_font_style = "bold";
+          inactive_tab_font_style = "normal";
 
-            # Shell
-            shell = ".";
-            close_on_child_death = "no";
-            allow_remote_control = "yes";
-            term = "xterm-kitty";
-          }
-          // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
-            hide_window_decorations = "titlebar-only";
-            macos_option_as_alt = "both";
-            macos_custom_beam_cursor = "yes";
-            macos_thicken_font = 0;
-            macos_colorspace = "displayp3";
-          };
+          # Shell
+          shell = ".";
+          close_on_child_death = "no";
+          allow_remote_control = "yes";
+          term = "xterm-kitty";
+        }
+        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
+          hide_window_decorations = "titlebar-only";
+          macos_option_as_alt = "both";
+          macos_custom_beam_cursor = "yes";
+          macos_thicken_font = 0;
+          macos_colorspace = "displayp3";
+        };
 
         shellIntegration = {
           enableBashIntegration = true;

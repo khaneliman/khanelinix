@@ -40,30 +40,30 @@ inputs.darwin.lib.darwinSystem {
       ;
   };
 
-  modules =
-    [
-      { _module.args.lib = extendedLib; }
+  modules = [
+    { _module.args.lib = extendedLib; }
 
-      # Configure nixpkgs with overlays
-      {
-        nixpkgs = {
-          inherit system;
-        } // common.mkNixpkgsConfig flake;
+    # Configure nixpkgs with overlays
+    {
+      nixpkgs = {
+        inherit system;
       }
+      // common.mkNixpkgsConfig flake;
+    }
 
-      inputs.home-manager.darwinModules.home-manager
-      inputs.sops-nix.darwinModules.sops
-      inputs.stylix.darwinModules.stylix
-      inputs.nix-rosetta-builder.darwinModules.default
+    inputs.home-manager.darwinModules.home-manager
+    inputs.sops-nix.darwinModules.sops
+    inputs.stylix.darwinModules.stylix
+    inputs.nix-rosetta-builder.darwinModules.default
 
-      # Auto-inject home configurations for this system+hostname
-      homeManagerConfig
+    # Auto-inject home configurations for this system+hostname
+    homeManagerConfig
 
-      # Import all darwin modules recursively
-    ]
-    ++ (extendedLib.importModulesRecursive ../../modules/darwin)
-    ++ [
-      ../../systems/${system}/${hostname}
-    ]
-    ++ modules;
+    # Import all darwin modules recursively
+  ]
+  ++ (extendedLib.importModulesRecursive ../../modules/darwin)
+  ++ [
+    ../../systems/${system}/${hostname}
+  ]
+  ++ modules;
 }

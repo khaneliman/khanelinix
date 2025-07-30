@@ -53,7 +53,8 @@ let
           end
         '';
       })
-    ] ++ cfg.extraModules;
+    ]
+    ++ cfg.extraModules;
   };
   khanelivim = khanelivimConfigurationExtended.config.build.package;
 in

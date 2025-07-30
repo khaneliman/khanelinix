@@ -27,44 +27,43 @@ in
         prio = "high";
       };
 
-    prepend_preloaders =
-      [
-        {
-          name = "/mnt/austinserver/**";
-          run = "noop";
-        }
-        {
-          name = "/mnt/disk/**";
-          run = "noop";
-        }
-        {
-          name = "/mnt/dropbox/**";
-          run = "noop";
-        }
-      ]
-      ++ lib.optionals (lib.hasAttr "duckdb" enabledPlugins) (
-        let
-          multiFileTypes = [
-            "csv"
-            "tsv"
-            "json"
-            "parquet"
-          ];
-          regularFileTypes = [
-            "db"
-            "duckdb"
-          ];
-        in
-        (map (ext: {
-          name = "*.${ext}";
-          run = "duckdb";
-          multi = false;
-        }) multiFileTypes)
-        ++ (map (ext: {
-          name = "*.${ext}";
-          run = "duckdb";
-        }) regularFileTypes)
-      );
+    prepend_preloaders = [
+      {
+        name = "/mnt/austinserver/**";
+        run = "noop";
+      }
+      {
+        name = "/mnt/disk/**";
+        run = "noop";
+      }
+      {
+        name = "/mnt/dropbox/**";
+        run = "noop";
+      }
+    ]
+    ++ lib.optionals (lib.hasAttr "duckdb" enabledPlugins) (
+      let
+        multiFileTypes = [
+          "csv"
+          "tsv"
+          "json"
+          "parquet"
+        ];
+        regularFileTypes = [
+          "db"
+          "duckdb"
+        ];
+      in
+      (map (ext: {
+        name = "*.${ext}";
+        run = "duckdb";
+        multi = false;
+      }) multiFileTypes)
+      ++ (map (ext: {
+        name = "*.${ext}";
+        run = "duckdb";
+      }) regularFileTypes)
+    );
 
     preloaders = [
       # Image

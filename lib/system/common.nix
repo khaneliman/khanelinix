@@ -60,45 +60,43 @@ in
             lib = extendedLib;
             flake-parts-lib = inputs.flake-parts.lib;
           };
-          sharedModules =
-            [
-              { _module.args.lib = extendedLib; }
-            ]
-            ++ (
-              if isNixOS then
-                [
-                  inputs.home-manager.flakeModules.home-manager
-                ]
-              else
-                [ ]
-            )
-            ++ [
-              inputs.catppuccin.homeModules.catppuccin
-              inputs.hypr-socket-watch.homeManagerModules.default
-              inputs.nix-index-database.homeModules.nix-index
-              inputs.sops-nix.homeManagerModules.sops
-            ]
-            ++ (extendedLib.importModulesRecursive ../../modules/home);
+          sharedModules = [
+            { _module.args.lib = extendedLib; }
+          ]
+          ++ (
+            if isNixOS then
+              [
+                inputs.home-manager.flakeModules.home-manager
+              ]
+            else
+              [ ]
+          )
+          ++ [
+            inputs.catppuccin.homeModules.catppuccin
+            inputs.hypr-socket-watch.homeManagerModules.default
+            inputs.nix-index-database.homeModules.nix-index
+            inputs.sops-nix.homeManagerModules.sops
+          ]
+          ++ (extendedLib.importModulesRecursive ../../modules/home);
           users = mapAttrs' (_name: homeConfig: {
             name = homeConfig.username;
-            value =
-              {
-                imports = [ homeConfig.path ];
-                home = {
-                  inherit (homeConfig) username;
-                  homeDirectory = inputs.nixpkgs.lib.mkDefault (
-                    if isNixOS then "/home/${homeConfig.username}" else "/Users/${homeConfig.username}"
-                  );
-                };
-              }
-              // (
-                if isNixOS then
-                  {
-                    _module.args.username = homeConfig.username;
-                  }
-                else
-                  { }
-              );
+            value = {
+              imports = [ homeConfig.path ];
+              home = {
+                inherit (homeConfig) username;
+                homeDirectory = inputs.nixpkgs.lib.mkDefault (
+                  if isNixOS then "/home/${homeConfig.username}" else "/Users/${homeConfig.username}"
+                );
+              };
+            }
+            // (
+              if isNixOS then
+                {
+                  _module.args.username = homeConfig.username;
+                }
+              else
+                { }
+            );
           }) matchingHomes;
         };
       }

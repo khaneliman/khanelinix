@@ -15,7 +15,8 @@ mainPkg.overrideAttrs (oa: {
     (mkNpxAlias "tsc")
     (mkNpxAlias "tsserver")
     (mkNpxAlias "--package @angular/cli ng")
-  ] ++ (oa.nativeBuildInputs or [ ]);
+  ]
+  ++ (oa.nativeBuildInputs or [ ]);
 
   shellHook = ''
     eslint_d start # start eslint daemon

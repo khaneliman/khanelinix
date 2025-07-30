@@ -75,12 +75,11 @@ in
       forwardAgent = true;
       matchBlocks = other-hosts-config;
 
-      extraConfig =
-        ''
-          StreamLocalBindUnlink yes
-          ConnectTimeout 5
-        ''
-        + lib.optionalString (cfg.extraConfig != "") cfg.extraConfig;
+      extraConfig = ''
+        StreamLocalBindUnlink yes
+        ConnectTimeout 5
+      ''
+      + lib.optionalString (cfg.extraConfig != "") cfg.extraConfig;
     };
 
     home = {

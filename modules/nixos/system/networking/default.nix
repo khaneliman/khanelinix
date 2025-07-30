@@ -36,18 +36,19 @@ in
     boot = {
       extraModprobeConfig = "options bonding max_bonds=0";
 
-      kernelModules =
-        [ "af_packet" ]
-        ++ lib.optionals cfg.optimizeTcp [
-          "tls"
-          "tcp_bbr"
-        ]
-        ++ [
-          # Netfilter modules for connection tracking
-          "nf_conntrack"
-          "nf_conntrack_ftp"
-          "nf_conntrack_netlink"
-        ];
+      kernelModules = [
+        "af_packet"
+      ]
+      ++ lib.optionals cfg.optimizeTcp [
+        "tls"
+        "tcp_bbr"
+      ]
+      ++ [
+        # Netfilter modules for connection tracking
+        "nf_conntrack"
+        "nf_conntrack_ftp"
+        "nf_conntrack_netlink"
+      ];
 
       kernel.sysctl = {
         # TCP hardening
@@ -132,7 +133,8 @@ in
 
       hosts = {
         "127.0.0.1" = cfg.hosts."127.0.0.1" or [ ];
-      } // cfg.hosts;
+      }
+      // cfg.hosts;
 
       firewall = {
         allowedUDPPorts = [

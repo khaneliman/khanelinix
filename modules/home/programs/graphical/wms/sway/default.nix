@@ -130,7 +130,8 @@ in
 
         workspaceAutoBackAndForth = true;
         workspaceLayout = "default";
-      } // cfg.settings;
+      }
+      // cfg.settings;
 
       extraConfig = ''
         blur enable

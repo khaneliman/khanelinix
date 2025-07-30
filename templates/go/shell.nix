@@ -12,5 +12,6 @@ mainPkg.overrideAttrs (oa: {
     delve
     go
     gopls
-  ] ++ (oa.nativeBuildInputs or [ ]);
+  ]
+  ++ (oa.nativeBuildInputs or [ ]);
 })

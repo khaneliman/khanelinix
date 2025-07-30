@@ -30,17 +30,16 @@ inputs.home-manager.lib.homeManagerConfiguration {
     flake-parts-lib = inputs.flake-parts.lib;
   };
 
-  modules =
-    [
-      { _module.args.lib = extendedLib; }
+  modules = [
+    { _module.args.lib = extendedLib; }
 
-      inputs.catppuccin.homeModules.catppuccin
-      inputs.hypr-socket-watch.homeManagerModules.default
-      inputs.nix-index-database.homeModules.nix-index
-      inputs.sops-nix.homeManagerModules.sops
+    inputs.catppuccin.homeModules.catppuccin
+    inputs.hypr-socket-watch.homeManagerModules.default
+    inputs.nix-index-database.homeModules.nix-index
+    inputs.sops-nix.homeManagerModules.sops
 
-      # Import all home modules recursively
-    ]
-    ++ (extendedLib.importModulesRecursive ../../modules/home)
-    ++ modules;
+    # Import all home modules recursively
+  ]
+  ++ (extendedLib.importModulesRecursive ../../modules/home)
+  ++ modules;
 }

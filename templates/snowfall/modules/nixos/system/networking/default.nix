@@ -31,12 +31,13 @@ in
     boot = {
       extraModprobeConfig = "options bonding max_bonds=0";
 
-      kernelModules =
-        [ "af_packet" ]
-        ++ lib.optionals cfg.optimizeTcp [
-          "tls"
-          "tcp_bbr"
-        ];
+      kernelModules = [
+        "af_packet"
+      ]
+      ++ lib.optionals cfg.optimizeTcp [
+        "tls"
+        "tcp_bbr"
+      ];
 
       kernel.sysctl = {
         # TCP hardening
@@ -119,7 +120,8 @@ in
     networking = {
       hosts = {
         "127.0.0.1" = cfg.hosts."127.0.0.1" or [ ];
-      } // cfg.hosts;
+      }
+      // cfg.hosts;
 
       firewall = {
         allowedUDPPorts = [ 5353 ];

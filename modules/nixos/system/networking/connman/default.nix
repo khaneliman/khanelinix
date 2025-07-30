@@ -14,16 +14,15 @@ in
     services.connman = {
       enable = true;
 
-      networkInterfaceBlacklist =
-        [
-          "vmnet"
-          "vboxnet"
-          "virbr"
-          "ifb"
-          "ve"
-        ]
-        ++ lib.optionals config.khanelinix.services.tailscale.enable [ "tailscale*" ]
-        ++ lib.optionals config.khanelinix.virtualisation.podman.enable [ "docker*" ];
+      networkInterfaceBlacklist = [
+        "vmnet"
+        "vboxnet"
+        "virbr"
+        "ifb"
+        "ve"
+      ]
+      ++ lib.optionals config.khanelinix.services.tailscale.enable [ "tailscale*" ]
+      ++ lib.optionals config.khanelinix.virtualisation.podman.enable [ "docker*" ];
     };
   };
 }

@@ -102,13 +102,14 @@ in
     };
 
     systemd = {
-      tmpfiles.rules =
-        [ "d ${gdmHome}/.config 0711 gdm gdm" ]
-        ++ (
-          # "./monitors.xml" comes from ~/.config/monitors.xml when GNOME
-          # display information is updated.
-          lib.optional (cfg.monitors != null) "L+ ${gdmHome}/.config/monitors.xml - - - - ${cfg.monitors}"
-        );
+      tmpfiles.rules = [
+        "d ${gdmHome}/.config 0711 gdm gdm"
+      ]
+      ++ (
+        # "./monitors.xml" comes from ~/.config/monitors.xml when GNOME
+        # display information is updated.
+        lib.optional (cfg.monitors != null) "L+ ${gdmHome}/.config/monitors.xml - - - - ${cfg.monitors}"
+      );
     };
   };
 }

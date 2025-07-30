@@ -8,50 +8,50 @@ creation_rules:
   - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
-          - *admin_khaneliman 
+          - *admin_khaneliman
   - path_regex: secrets/CORE/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
-          - *admin_khaneliman 
-          - *admin_khanelimac_khaneliman 
-          - *user_khanelinix_khaneliman 
-          - *user_khanelimac_khaneliman 
+          - *admin_khaneliman
+          - *admin_khanelimac_khaneliman
+          - *user_khanelinix_khaneliman
+          - *user_khanelimac_khaneliman
   - path_regex: secrets/CORE/nixos/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
-          - *admin_khaneliman 
-          - *user_CORE_nixos 
+          - *admin_khaneliman
+          - *user_CORE_nixos
   - path_regex: secrets/khanelilab/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
-          - *admin_khaneliman 
+          - *admin_khaneliman
   - path_regex: secrets/khanelimac/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
-          - *admin_khaneliman 
-          - *admin_khanelimac_khaneliman 
-          - *user_khanelimac_khaneliman 
+          - *admin_khaneliman
+          - *admin_khanelimac_khaneliman
+          - *user_khanelimac_khaneliman
   - path_regex: secrets/khanelimac/khaneliman/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
-          - *admin_khaneliman 
-          - *admin_khanelimac_khaneliman 
-          - *user_khanelimac_khaneliman 
+          - *admin_khaneliman
+          - *admin_khanelimac_khaneliman
+          - *user_khanelimac_khaneliman
   - path_regex: secrets/khanelinix/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
-          - *admin_khaneliman 
-          - *user_khanelinix_khaneliman 
+          - *admin_khaneliman
+          - *user_khanelinix_khaneliman
   - path_regex: secrets/khanelinix/khaneliman/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
-          - *admin_khaneliman 
-          - *user_khanelinix_khaneliman 
+          - *admin_khaneliman
+          - *user_khanelinix_khaneliman
   - path_regex: secrets/khaneliman/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
-          - *admin_khaneliman 
-          - *admin_khanelimac_khaneliman 
-          - *user_khanelinix_khaneliman 
-          - *user_CORE_nixos 
-          - *user_khanelimac_khaneliman 
+          - *admin_khaneliman
+          - *admin_khanelimac_khaneliman
+          - *user_khanelinix_khaneliman
+          - *user_CORE_nixos
+          - *user_khanelimac_khaneliman

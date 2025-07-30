@@ -125,7 +125,8 @@ in
                 "pipewire-pulse.service"
                 "pipewire.service"
                 "sound.target"
-              ] ++ cfg.machineUnits;
+              ]
+              ++ cfg.machineUnits;
             };
           };
         };

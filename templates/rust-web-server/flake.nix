@@ -54,26 +54,25 @@
               # in the Nix store.
               src = if inShell then null else ./.;
 
-              buildInputs =
-                [
-                  rustc
-                  cargo
-                ]
-                ++ (
-                  if inShell then
-                    [
-                      # In 'nix develop', provide some developer tools.
-                      rustfmt
-                      clippy
-                    ]
-                  else
-                    [
-                      (import-cargo.builders.importCargo {
-                        lockFile = ./Cargo.lock;
-                        inherit pkgs;
-                      }).cargoHome
-                    ]
-                );
+              buildInputs = [
+                rustc
+                cargo
+              ]
+              ++ (
+                if inShell then
+                  [
+                    # In 'nix develop', provide some developer tools.
+                    rustfmt
+                    clippy
+                  ]
+                else
+                  [
+                    (import-cargo.builders.importCargo {
+                      lockFile = ./Cargo.lock;
+                      inherit pkgs;
+                    }).cargoHome
+                  ]
+              );
 
               target = "--release";
 

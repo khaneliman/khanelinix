@@ -31,5 +31,6 @@ mainPkg.overrideAttrs (oa: {
     glm
     SDL2
     SDL2_gfx
-  ] ++ (oa.nativeBuildInputs or [ ]);
+  ]
+  ++ (oa.nativeBuildInputs or [ ]);
 })

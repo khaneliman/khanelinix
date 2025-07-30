@@ -24,13 +24,12 @@ in
       enableZshIntegration = true;
       enableNushellIntegration = true;
 
-      daemon =
-        {
-          enable = true;
-        }
-        // lib.optionalAttrs cfg.enableDebug {
-          logLevel = "debug";
-        };
+      daemon = {
+        enable = true;
+      }
+      // lib.optionalAttrs cfg.enableDebug {
+        logLevel = "debug";
+      };
 
       # flags = [
       #   "--disable-up-arrow"

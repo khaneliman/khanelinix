@@ -44,7 +44,8 @@ rec {
         type = lib.types.submodule {
           options = {
             enable = lib.mkEnableOption description;
-          } // options;
+          }
+          // options;
         };
         default = { };
       };

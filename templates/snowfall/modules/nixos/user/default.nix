@@ -39,13 +39,15 @@ in
         "tss"
         "power"
         "nix"
-      ] ++ cfg.extraGroups;
+      ]
+      ++ cfg.extraGroups;
 
       group = "users";
       home = "/home/${cfg.name}";
       isNormalUser = true;
       shell = pkgs.zsh;
       uid = 1000;
-    } // cfg.extraOptions;
+    }
+    // cfg.extraOptions;
   };
 }

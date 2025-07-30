@@ -24,14 +24,12 @@ mkShell {
     ]
     ++ dotnetDevShell.nativeBuildInputs;
 
-  shellHook =
-    dotnetDevShell.shellHook
-    + ''
+  shellHook = dotnetDevShell.shellHook + ''
 
-      export DOTNET_ROOT="${pkgs.dotnet-sdk_6}";
+    export DOTNET_ROOT="${pkgs.dotnet-sdk_6}";
 
-      echo 🔨 Dotnet 6 DevShell
+    echo 🔨 Dotnet 6 DevShell
 
 
-    '';
+  '';
 }

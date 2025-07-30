@@ -14,7 +14,8 @@ mainPkg.overrideAttrs (oa: {
     prettierd
     (mkNpxAlias "tsc")
     (mkNpxAlias "tsserver")
-  ] ++ (oa.nativeBuildInputs or [ ]);
+  ]
+  ++ (oa.nativeBuildInputs or [ ]);
 
   shellHook = ''
     eslint_d start # start eslint daemon

@@ -28,20 +28,19 @@ in
     };
 
     environment = {
-      etc =
-        {
-          # set channels (backwards compatibility)
-          "nix/flake-channels/system".source = self;
-          "nix/flake-channels/nixpkgs".source = inputs.nixpkgs;
-          "nix/flake-channels/home-manager".source = inputs.home-manager;
-        }
-        # preserve current flake in /etc
-        // lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-          "nixos".source = self;
-        }
-        // lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-          "nix-darwin".source = self;
-        };
+      etc = {
+        # set channels (backwards compatibility)
+        "nix/flake-channels/system".source = self;
+        "nix/flake-channels/nixpkgs".source = inputs.nixpkgs;
+        "nix/flake-channels/home-manager".source = inputs.home-manager;
+      }
+      # preserve current flake in /etc
+      // lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+        "nixos".source = self;
+      }
+      // lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+        "nix-darwin".source = self;
+      };
 
       systemPackages = with pkgs; [
         # FIXME: broken pkg

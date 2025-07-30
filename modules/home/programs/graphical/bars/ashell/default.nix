@@ -196,7 +196,8 @@ in
             CustomNotifications
             CustomPowerMenu
             CustomWeather
-          ] ++ cfg.customModules;
+          ]
+          ++ cfg.customModules;
 
           leftModules = [
             "CustomPowerMenu"
@@ -231,7 +232,8 @@ in
             center = [ "MediaPlayer" ];
             right = [
               "Tray"
-            ] ++ rightModules;
+            ]
+            ++ rightModules;
           };
         in
         {

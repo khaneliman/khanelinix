@@ -60,29 +60,28 @@ in
       enable = true;
       openFirewall = true;
 
-      settings =
+      settings = {
+        global = {
+          browseable = bool-to-yes-no cfg.browseable;
+        };
+      }
+      // mapAttrs (
+        name: value:
         {
-          global = {
-            browseable = bool-to-yes-no cfg.browseable;
-          };
-        }
-        // mapAttrs (
-          name: value:
-          {
-            inherit (value) path comment;
+          inherit (value) path comment;
 
-            public = bool-to-yes-no value.public;
-            browseable = bool-to-yes-no value.browseable;
-            "read only" = bool-to-yes-no value.read-only;
-          }
-          // (optionalAttrs value.only-owner-editable {
-            "write list" = config.khanelinix.user.name;
-            "read list" = "guest, nobody";
-            "create mask" = "0755";
-            "directory mask" = "0755";
-          })
-          // value.extra-config
-        ) cfg.shares;
+          public = bool-to-yes-no value.public;
+          browseable = bool-to-yes-no value.browseable;
+          "read only" = bool-to-yes-no value.read-only;
+        }
+        // (optionalAttrs value.only-owner-editable {
+          "write list" = config.khanelinix.user.name;
+          "read list" = "guest, nobody";
+          "create mask" = "0755";
+          "directory mask" = "0755";
+        })
+        // value.extra-config
+      ) cfg.shares;
     };
 
     # TODO: figure out samba user and pass setup

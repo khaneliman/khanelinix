@@ -94,70 +94,69 @@ in
         wvous-bl-corner = 14;
         wvous-br-corner = 4;
 
-        persistent-apps =
-          [
-            "/System/Applications/Launchpad.app"
-            "/System/Applications/System Settings.app"
-            "/System/Applications/App Store.app"
-            {
-              spacer = {
-                small = true;
-              };
-            }
-            "/System/Applications/Messages.app"
-          ]
-          ++ lib.optionals config.khanelinix.suites.social.enable [
-            "${pkgs.caprine-bin}/Applications/Caprine.app"
-            "${pkgs.element-desktop}/Applications/Element.app"
-            (lib.mkIf config.khanelinix.tools.homebrew.enable { app = "/Applications/Microsoft Teams.app"; })
-            "${pkgs.discord}/Applications/Discord.app"
-            (lib.mkIf hmCfg.programs.thunderbird.enable {
-              app = "${hmCfg.programs.thunderbird.package}/Applications/Thunderbird.app";
-            })
-            {
-              spacer = {
-                small = true;
-              };
-            }
-          ]
-          ++ [
-            (lib.mkIf hmCfg.programs.firefox.enable {
-              app = "${hmCfg.programs.firefox.package}/Applications/Firefox Developer Edition.app";
-            })
-            "/Applications/Safari.app"
-            (lib.mkIf (config.khanelinix.tools.homebrew.enable && config.khanelinix.suites.business.enable) {
-              app = "/Applications/Fantastical.app";
-            })
-            "/System/Applications/Reminders.app"
-            "/System/Applications/Notes.app"
-            {
-              spacer = {
-                small = true;
-              };
-            }
-            "/System/Applications/Music.app"
-            (lib.mkIf (config.khanelinix.tools.homebrew.enable && config.khanelinix.suites.video.enable) {
-              app = "/Applications/Plex.app";
-            })
-            {
-              spacer = {
-                small = true;
-              };
-            }
-          ]
-          ++ lib.optionals config.khanelinix.suites.development.enable [
-            "${pkgs.vscode}/Applications/Visual Studio Code.app"
-            # FIXME: build hangs
-            # "${pkgs.bruno}/Applications/Bruno.app"
-            {
-              spacer = {
-                small = true;
-              };
-            }
-          ]
-          ++ [
-            "${pkgs.kitty}/Applications/Kitty.app"
-          ];
+        persistent-apps = [
+          "/System/Applications/Launchpad.app"
+          "/System/Applications/System Settings.app"
+          "/System/Applications/App Store.app"
+          {
+            spacer = {
+              small = true;
+            };
+          }
+          "/System/Applications/Messages.app"
+        ]
+        ++ lib.optionals config.khanelinix.suites.social.enable [
+          "${pkgs.caprine-bin}/Applications/Caprine.app"
+          "${pkgs.element-desktop}/Applications/Element.app"
+          (lib.mkIf config.khanelinix.tools.homebrew.enable { app = "/Applications/Microsoft Teams.app"; })
+          "${pkgs.discord}/Applications/Discord.app"
+          (lib.mkIf hmCfg.programs.thunderbird.enable {
+            app = "${hmCfg.programs.thunderbird.package}/Applications/Thunderbird.app";
+          })
+          {
+            spacer = {
+              small = true;
+            };
+          }
+        ]
+        ++ [
+          (lib.mkIf hmCfg.programs.firefox.enable {
+            app = "${hmCfg.programs.firefox.package}/Applications/Firefox Developer Edition.app";
+          })
+          "/Applications/Safari.app"
+          (lib.mkIf (config.khanelinix.tools.homebrew.enable && config.khanelinix.suites.business.enable) {
+            app = "/Applications/Fantastical.app";
+          })
+          "/System/Applications/Reminders.app"
+          "/System/Applications/Notes.app"
+          {
+            spacer = {
+              small = true;
+            };
+          }
+          "/System/Applications/Music.app"
+          (lib.mkIf (config.khanelinix.tools.homebrew.enable && config.khanelinix.suites.video.enable) {
+            app = "/Applications/Plex.app";
+          })
+          {
+            spacer = {
+              small = true;
+            };
+          }
+        ]
+        ++ lib.optionals config.khanelinix.suites.development.enable [
+          "${pkgs.vscode}/Applications/Visual Studio Code.app"
+          # FIXME: build hangs
+          # "${pkgs.bruno}/Applications/Bruno.app"
+          {
+            spacer = {
+              small = true;
+            };
+          }
+        ]
+        ++ [
+          "${pkgs.kitty}/Applications/Kitty.app"
+        ];
       };
 
       # file viewer settings

@@ -62,45 +62,44 @@ let
     margin-left = 20;
     margin-right = 20;
 
-    modules-left =
-      [ "custom/power" ]
-      ++ lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [
-        "hyprland/workspaces"
-      ]
-      ++ lib.optionals config.khanelinix.programs.graphical.wms.sway.enable [ "sway/workspaces" ]
-      ++ [ "custom/separator-left" ]
-      ++ lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [ "hyprland/window" ]
-      ++ lib.optionals config.khanelinix.programs.graphical.wms.sway.enable [ "sway/window" ];
+    modules-left = [
+      "custom/power"
+    ]
+    ++ lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [
+      "hyprland/workspaces"
+    ]
+    ++ lib.optionals config.khanelinix.programs.graphical.wms.sway.enable [ "sway/workspaces" ]
+    ++ [ "custom/separator-left" ]
+    ++ lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [ "hyprland/window" ]
+    ++ lib.optionals config.khanelinix.programs.graphical.wms.sway.enable [ "sway/window" ];
   };
 
   fullSizeModules = {
-    modules-right =
-      [
-        "group/tray"
-        "custom/separator-right"
-        "group/stats"
-        "custom/separator-right"
-        "group/control-center"
-      ]
-      ++ lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [ "hyprland/submap" ]
-      ++ [
-        "custom/weather"
-        "clock"
-      ];
+    modules-right = [
+      "group/tray"
+      "custom/separator-right"
+      "group/stats"
+      "custom/separator-right"
+      "group/control-center"
+    ]
+    ++ lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [ "hyprland/submap" ]
+    ++ [
+      "custom/weather"
+      "clock"
+    ];
   };
 
   condensedModules = {
-    modules-right =
-      [
-        "group/tray-drawer"
-        "group/stats-drawer"
-        "group/control-center"
-      ]
-      ++ lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [ "hyprland/submap" ]
-      ++ [
-        "custom/weather"
-        "clock"
-      ];
+    modules-right = [
+      "group/tray-drawer"
+      "group/stats-drawer"
+      "group/control-center"
+    ]
+    ++ lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [ "hyprland/submap" ]
+    ++ [
+      "custom/weather"
+      "clock"
+    ];
   };
 
   mkBarSettings =

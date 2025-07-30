@@ -106,52 +106,53 @@ in
           popups = 1.0;
         };
 
-        targets =
-          {
-            # Set profile names for firefox
-            firefox.profileNames = [ config.khanelinix.user.name ];
+        targets = {
+          # Set profile names for firefox
+          firefox.profileNames = [ config.khanelinix.user.name ];
 
-            # TODO: Very custom styling, integrate with their variables
-            # Currently setup only for catppuccin/nix
-            vscode.enable = false;
+          # TODO: Very custom styling, integrate with their variables
+          # Currently setup only for catppuccin/nix
+          vscode.enable = false;
 
-            # Disable targets when catppuccin is enabled
-            alacritty.enable = !config.khanelinix.theme.catppuccin.enable;
-            bat.enable = !config.khanelinix.theme.catppuccin.enable;
-            btop.enable = !config.khanelinix.theme.catppuccin.enable;
-            cava.enable = !config.khanelinix.theme.catppuccin.enable;
-            fish.enable = !config.khanelinix.theme.catppuccin.enable;
-            foot.enable = !config.khanelinix.theme.catppuccin.enable;
-            fzf.enable = !config.khanelinix.theme.catppuccin.enable;
-            ghostty.enable = !config.khanelinix.theme.catppuccin.enable;
-            gitui.enable = !config.khanelinix.theme.catppuccin.enable;
-            helix.enable = !config.khanelinix.theme.catppuccin.enable;
-            k9s.enable = !config.khanelinix.theme.catppuccin.enable;
-            kitty.enable = !config.khanelinix.theme.catppuccin.enable;
-            lazygit.enable = !config.khanelinix.theme.catppuccin.enable;
-            ncspot.enable = !config.khanelinix.theme.catppuccin.enable;
-            neovim.enable = !config.khanelinix.theme.catppuccin.enable;
-            tmux.enable = !config.khanelinix.theme.catppuccin.enable;
-            vesktop.enable = !config.khanelinix.theme.catppuccin.enable;
-            yazi.enable = !config.khanelinix.theme.catppuccin.enable;
-            zathura.enable = !config.khanelinix.theme.catppuccin.enable;
-            zellij.enable = !config.khanelinix.theme.catppuccin.enable;
-          }
-          // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-            gnome.enable = !config.khanelinix.theme.catppuccin.enable;
-            # FIXME: not working
-            gtk.enable = false;
-            hyprland.enable = !config.khanelinix.theme.catppuccin.enable;
-            # FIXME:: upstream needs module fix
-            hyprlock.useWallpaper = false;
-            hyprlock.enable = false;
-            qt.enable = !config.khanelinix.theme.catppuccin.enable;
-            sway.enable = !config.khanelinix.theme.catppuccin.enable;
-            # TODO: Very custom styling, integrate with their variables
-            # Currently setup only for catppuccin/nix
-            swaync.enable = false;
-            waybar.enable = !config.khanelinix.theme.catppuccin.enable;
+          # Disable targets when catppuccin is enabled
+          alacritty.enable = !config.khanelinix.theme.catppuccin.enable;
+          bat.enable = !config.khanelinix.theme.catppuccin.enable;
+          btop.enable = !config.khanelinix.theme.catppuccin.enable;
+          cava.enable = !config.khanelinix.theme.catppuccin.enable;
+          fish.enable = !config.khanelinix.theme.catppuccin.enable;
+          foot.enable = !config.khanelinix.theme.catppuccin.enable;
+          fzf.enable = !config.khanelinix.theme.catppuccin.enable;
+          ghostty.enable = !config.khanelinix.theme.catppuccin.enable;
+          gitui.enable = !config.khanelinix.theme.catppuccin.enable;
+          helix.enable = !config.khanelinix.theme.catppuccin.enable;
+          k9s.enable = !config.khanelinix.theme.catppuccin.enable;
+          kitty = {
+            enable = !config.khanelinix.theme.catppuccin.enable;
           };
+          lazygit.enable = !config.khanelinix.theme.catppuccin.enable;
+          ncspot.enable = !config.khanelinix.theme.catppuccin.enable;
+          neovim.enable = !config.khanelinix.theme.catppuccin.enable;
+          tmux.enable = !config.khanelinix.theme.catppuccin.enable;
+          vesktop.enable = !config.khanelinix.theme.catppuccin.enable;
+          yazi.enable = !config.khanelinix.theme.catppuccin.enable;
+          zathura.enable = !config.khanelinix.theme.catppuccin.enable;
+          zellij.enable = !config.khanelinix.theme.catppuccin.enable;
+        }
+        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+          gnome.enable = !config.khanelinix.theme.catppuccin.enable;
+          # FIXME: not working
+          gtk.enable = false;
+          hyprland.enable = !config.khanelinix.theme.catppuccin.enable;
+          # FIXME:: upstream needs module fix
+          hyprlock.useWallpaper = false;
+          hyprlock.enable = false;
+          qt.enable = !config.khanelinix.theme.catppuccin.enable;
+          sway.enable = !config.khanelinix.theme.catppuccin.enable;
+          # TODO: Very custom styling, integrate with their variables
+          # Currently setup only for catppuccin/nix
+          swaync.enable = false;
+          waybar.enable = !config.khanelinix.theme.catppuccin.enable;
+        };
       };
     }
   );
