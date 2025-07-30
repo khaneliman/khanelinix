@@ -9,7 +9,6 @@ let
   inherit (lib)
     mkEnableOption
     mkIf
-    mkOption
     types
     ;
 
@@ -47,6 +46,12 @@ in
 
   config = mkIf cfg.enable (
     lib.optionalAttrs (options ? stylix) {
+      home = mkIf (pkgs.stdenv.hostPlatform.isLinux && !config.khanelinix.theme.catppuccin.enable) {
+        pointerCursor = {
+          inherit (cfg.cursor) name package size;
+        };
+      };
+
       stylix = {
         enable = true;
         # autoEnable = false;
