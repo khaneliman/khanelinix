@@ -26,6 +26,11 @@ in
       flake = "${config.home.homeDirectory}/khanelinix";
     };
 
+    launchd.agents.nh-clean.config = {
+      StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/nh/nh.err.log";
+      StandardOutPath = "${config.home.homeDirectory}/Library/Logs/nh/nh.out.log";
+    };
+
     home = {
       sessionVariables = {
         NH_SEARCH_PLATFORM = 1;
