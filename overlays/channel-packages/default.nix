@@ -15,6 +15,10 @@ in
   inherit (master)
     claude-code
     yaziPlugins
+
+    # TODO: remove once makes it to unstable
+    firefox-devedition
+    firefox-devedition-unwrapped
     ;
 
   # From nixpkgs-unstable
@@ -24,8 +28,8 @@ in
 
     # Online services to keep up to date
     element-desktop
-    firefox-devedition
-    firefox-devedition-unwrapped
+    # firefox-devedition
+    # firefox-devedition-unwrapped
     teams-for-linux
     telegram-desktop
     ;
