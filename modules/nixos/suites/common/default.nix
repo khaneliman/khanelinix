@@ -21,8 +21,7 @@ in
       systemPackages = with pkgs; [
         dnsutils
         fortune
-        # FIXME: broken textual
-        # isd
+        isd
         lazyjournal
         lolcat
         lshw
