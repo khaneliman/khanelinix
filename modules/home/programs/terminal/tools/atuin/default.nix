@@ -16,6 +16,11 @@ in
   };
 
   config = mkIf cfg.enable {
+    launchd.agents.atuin-daemon.config = {
+      StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/atuin/atuin.err.log";
+      StandardOutPath = "${config.home.homeDirectory}/Library/Logs/atuin/atuin.out.log";
+    };
+
     programs.atuin = {
       enable = true;
 
