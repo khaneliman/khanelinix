@@ -43,6 +43,8 @@ in
       vm = enabled;
     };
 
+    system.logging = enabled;
+
     tools.homebrew.masEnable = true;
   };
 
