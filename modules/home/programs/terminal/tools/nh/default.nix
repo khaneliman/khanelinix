@@ -1,7 +1,7 @@
 {
   config,
   lib,
-
+  osConfig,
   pkgs,
   ...
 }:
@@ -9,6 +9,19 @@ let
   inherit (lib) mkIf;
 
   cfg = config.khanelinix.programs.terminal.tools.nh;
+
+  # Get log paths from Darwin system config if available, otherwise use defaults
+  logPaths =
+    if
+      pkgs.stdenv.hostPlatform.isDarwin
+      && (osConfig.khanelinix.programs.terminal.tools.nh.enable or false)
+    then
+      osConfig.khanelinix.programs.terminal.tools.nh.logPaths
+    else
+      {
+        stdout = "${config.home.homeDirectory}/Library/Logs/nh/nh.out.log";
+        stderr = "${config.home.homeDirectory}/Library/Logs/nh/nh.err.log";
+      };
 in
 {
   options.khanelinix.programs.terminal.tools.nh = {
@@ -27,8 +40,8 @@ in
     };
 
     launchd.agents.nh-clean.config = {
-      StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/nh/nh.err.log";
-      StandardOutPath = "${config.home.homeDirectory}/Library/Logs/nh/nh.out.log";
+      StandardErrorPath = logPaths.stderr;
+      StandardOutPath = logPaths.stdout;
     };
 
     home = {

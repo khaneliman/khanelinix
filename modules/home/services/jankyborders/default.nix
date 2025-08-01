@@ -1,14 +1,16 @@
 {
   config,
   lib,
+  osConfig,
   pkgs,
-
   ...
 }:
 let
+  inherit (lib) mkIf;
   inherit (lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.services.jankyborders;
+  inherit (osConfig.khanelinix.services.jankyborders) logPath;
 in
 {
   options.khanelinix.services.jankyborders = {
@@ -20,12 +22,10 @@ in
       description = "The jankyborders package to use.";
       example = lib.literalExpression "pkgs.khanelinix.jankyborders";
     };
-    logFile =
-      mkOpt lib.types.str "${config.khanelinix.user.home}/Library/Logs/jankyborders.log"
-        "Filepath of log output";
+    logFile = mkOpt lib.types.str logPath "Filepath of log output";
   };
 
-  config = lib.mkIf cfg.enable {
+  config = mkIf cfg.enable {
     services.jankyborders = {
       enable = true;
 

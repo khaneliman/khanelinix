@@ -18,13 +18,12 @@ let
       getExe pkgs.yabai;
 
   cfg = config.khanelinix.services.skhd;
+  inherit (osConfig.khanelinix.services.skhd) logPath;
 in
 {
   options.khanelinix.services.skhd = {
     enable = lib.mkEnableOption "skhd";
-    logFile =
-      mkOpt lib.types.str "${config.khanelinix.user.home}/Library/Logs/skhd.log"
-        "Filepath of log output";
+    logFile = mkOpt lib.types.str logPath "Filepath of log output";
   };
 
   config = mkIf cfg.enable {

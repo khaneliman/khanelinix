@@ -52,7 +52,11 @@ in
 
       nix = mkDefault enabled;
 
-      programs.terminal.tools.ssh = mkDefault enabled;
+      programs.terminal.tools = {
+        atuin = mkDefault enabled;
+        nh = mkDefault enabled;
+        ssh = mkDefault enabled;
+      };
 
       tools = {
         homebrew = mkDefault enabled;
@@ -66,6 +70,7 @@ in
         fonts = mkDefault enabled;
         input = mkDefault enabled;
         interface = mkDefault enabled;
+        logging = mkDefault enabled;
         networking = mkDefault enabled;
       };
     };

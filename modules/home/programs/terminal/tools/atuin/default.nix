@@ -1,13 +1,27 @@
 {
   config,
   lib,
-
+  osConfig,
+  pkgs,
   ...
 }:
 let
   inherit (lib) mkIf;
 
   cfg = config.khanelinix.programs.terminal.tools.atuin;
+
+  # Get log paths from Darwin system config if available, otherwise use defaults
+  logPaths =
+    if
+      pkgs.stdenv.hostPlatform.isDarwin
+      && (osConfig.khanelinix.programs.terminal.tools.atuin.enable or false)
+    then
+      osConfig.khanelinix.programs.terminal.tools.atuin.logPaths
+    else
+      {
+        stdout = "${config.home.homeDirectory}/Library/Logs/atuin/atuin.out.log";
+        stderr = "${config.home.homeDirectory}/Library/Logs/atuin/atuin.err.log";
+      };
 in
 {
   options.khanelinix.programs.terminal.tools.atuin = {
@@ -17,8 +31,8 @@ in
 
   config = mkIf cfg.enable {
     launchd.agents.atuin-daemon.config = {
-      StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/atuin/atuin.err.log";
-      StandardOutPath = "${config.home.homeDirectory}/Library/Logs/atuin/atuin.out.log";
+      StandardErrorPath = logPaths.stderr;
+      StandardOutPath = logPaths.stdout;
     };
 
     programs.atuin = {

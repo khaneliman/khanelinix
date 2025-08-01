@@ -30,10 +30,20 @@ in
       # xquartz
     ];
 
-    khanelinix.desktop = {
-      wms = {
-        yabai = mkDefault enabled;
+    khanelinix = {
+      desktop = {
+        wms = {
+          yabai = mkDefault enabled;
+        };
       };
+
+      # Enable log rotation for desktop services
+      services = {
+        jankyborders = mkDefault enabled;
+        skhd = mkDefault enabled;
+      };
+
+      programs.graphical.bars.sketchybar = mkDefault enabled;
     };
 
     homebrew = {
