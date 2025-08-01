@@ -155,7 +155,7 @@ in
           }
         ]
         ++ [
-          "${pkgs.kitty}/Applications/Kitty.app"
+          "${hmCfg.programs.kitty.package}/Applications/Kitty.app"
         ];
       };
 
