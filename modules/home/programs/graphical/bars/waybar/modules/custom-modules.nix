@@ -187,7 +187,10 @@ in
   };
 
   "custom/weather" = {
-    exec = "${getExe pkgs.wttrbar} --fahrenheit --ampm";
+    exec = "${getExe pkgs.wttrbar} --fahrenheit --ampm${
+      lib.optionalString (osConfig.khanelinix.security.sops.enable or false
+      ) " --location $(jq '.wttr.location' ~/weather_config.json)"
+    }";
     return-type = "json";
     format = "{}";
     tooltip = true;
