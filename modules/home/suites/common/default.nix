@@ -92,6 +92,7 @@ in
             nh = mkDefault enabled;
             oh-my-posh = mkDefault enabled;
             ripgrep = mkDefault enabled;
+            television = mkDefault enabled;
             topgrade = mkDefault enabled;
             yazi = mkDefault enabled;
             zellij = mkDefault enabled;
