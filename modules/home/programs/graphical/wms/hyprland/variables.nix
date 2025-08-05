@@ -192,7 +192,8 @@ in
         "$explorer" = "${getExe pkgs.nautilus}";
         "$music" = "${getExe pkgs.youtube-music}";
         "$notification_center" = "${getExe' config.services.swaync.package "swaync-client"}";
-        "$launcher" = "${getExe config.programs.anyrun.package}";
+        "$launcher" = "${getExe pkgs.sherlock-launcher}";
+        # "$launcher" = "${getExe config.programs.anyrun.package}";
         # "$launcher_alt" = "${getExe config.programs.rofi.package} -show drun -n";
         # "$launcher_shift" = "${getExe config.programs.rofi.package} -show run -n";
         # "$launchpad" = "${getExe config.programs.rofi.package} -show drun -config '~/.config/rofi/appmenu/rofi.rasi'";
