@@ -89,6 +89,7 @@ in
             glxinfo.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
             jq = mkDefault enabled;
             navi = mkDefault enabled;
+            nix-search-tv = mkDefault enabled;
             nh = mkDefault enabled;
             oh-my-posh = mkDefault enabled;
             ripgrep = mkDefault enabled;
