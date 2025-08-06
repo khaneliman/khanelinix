@@ -23,6 +23,8 @@ in
       {
         logfilename = cfg.logPath;
         mode = "644";
+        owner = config.khanelinix.user.name;
+        group = "staff";
         count = 7;
         size = "1M";
         flags = [

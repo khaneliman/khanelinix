@@ -31,6 +31,8 @@ in
       {
         logfilename = cfg.logPaths.stdout;
         mode = "644";
+        owner = config.khanelinix.user.name;
+        group = "staff";
         count = 7;
         size = "1M";
         flags = [
@@ -41,6 +43,8 @@ in
       {
         logfilename = cfg.logPaths.stderr;
         mode = "644";
+        owner = config.khanelinix.user.name;
+        group = "staff";
         count = 7;
         size = "1M";
         flags = [
