@@ -114,6 +114,7 @@ in
         graphical = {
           launchers = {
             anyrun = enabled;
+            sherlock = enabled;
           };
 
           screenlockers = {
