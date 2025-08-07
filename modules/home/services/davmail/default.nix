@@ -17,12 +17,11 @@ in
   config = mkIf cfg.enable {
     services.davmail = {
       enable = true;
+      imitateOutlook = true;
 
       # NOTE: https://davmail.sourceforge.net/serversetup.html
       settings = {
-        # FIXME: doesn't work with interactive
-        "davmail.mode" = "O365Manual";
-        "davmail.url" = "https://outlook.office365.com";
+        "davmail.mode" = "O365Interactive";
       };
     };
   };
