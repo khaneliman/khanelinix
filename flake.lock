@@ -121,27 +121,6 @@
         "type": "github"
       }
     },
-    "darwin": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs-unstable"
-        ]
-      },
-      "locked": {
-        "lastModified": 1754524683,
-        "narHash": "sha256-NtSZUAUyPMf2pRITLWLq8usfiXlHbcIA7BZ3HHBNgsc=",
-        "owner": "khaneliman",
-        "repo": "nix-darwin",
-        "rev": "7f423b680ba99bd9af7d06195f3723d0242864c0",
-        "type": "github"
-      },
-      "original": {
-        "owner": "khaneliman",
-        "ref": "copy",
-        "repo": "nix-darwin",
-        "type": "github"
-      }
-    },
     "disko": {
       "inputs": {
         "nixpkgs": [
@@ -491,6 +470,27 @@
       "original": {
         "owner": "nix-community",
         "repo": "nh",
+        "type": "github"
+      }
+    },
+    "nix-darwin": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1754524683,
+        "narHash": "sha256-NtSZUAUyPMf2pRITLWLq8usfiXlHbcIA7BZ3HHBNgsc=",
+        "owner": "khaneliman",
+        "repo": "nix-darwin",
+        "rev": "7f423b680ba99bd9af7d06195f3723d0242864c0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "khaneliman",
+        "ref": "copy",
+        "repo": "nix-darwin",
         "type": "github"
       }
     },
@@ -883,7 +883,6 @@
       "inputs": {
         "anyrun-nixos-options": "anyrun-nixos-options",
         "catppuccin": "catppuccin",
-        "darwin": "darwin",
         "disko": "disko",
         "firefox-addons": "firefox-addons",
         "flake-compat": "flake-compat",
@@ -893,6 +892,7 @@
         "khanelivim": "khanelivim",
         "lanzaboote": "lanzaboote",
         "nh": "nh",
+        "nix-darwin": "nix-darwin",
         "nix-flatpak": "nix-flatpak",
         "nix-index-database": "nix-index-database",
         "nix-rosetta-builder": "nix-rosetta-builder",

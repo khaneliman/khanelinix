@@ -28,7 +28,7 @@ let
     isNixOS = false;
   };
 in
-inputs.darwin.lib.darwinSystem {
+inputs.nix-darwin.lib.darwinSystem {
   inherit system;
 
   specialArgs = common.mkSpecialArgs {
