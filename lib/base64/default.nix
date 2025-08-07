@@ -1,23 +1,26 @@
 { inputs }:
 let
   inherit (inputs.nixpkgs.lib)
+    concatLists
+    concatMapStrings
+    foldl'
+    genList
+    hasSuffix
     imap0
+    length
+    mod
     nameValuePair
     stringToCharacters
-    concatLists
-    genList
-    foldl'
     sublist
-    length
-    concatMapStrings
     substring
-    mod
+    take
     ;
 in
 rec {
   base64Table = builtins.listToAttrs (
     imap0 (i: c: nameValuePair c i) (
-      stringToCharacters "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+      # The '=' is included so the main algorithm doesn't fail before we can trim the result
+      stringToCharacters "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
     )
   );
 
@@ -28,11 +31,17 @@ rec {
   decode =
     str:
     let
-      # List of base-64 numbers
+      paddingCount =
+        if hasSuffix "==" str then
+          2
+        else if hasSuffix "=" str then
+          1
+        else
+          0;
+
       numbers64 = map (c: base64Table.${c}) (stringToCharacters str);
 
-      # List of base-256 numbers
-      numbers256 = concatLists (
+      allBytes = concatLists (
         genList (
           i:
           let
@@ -46,11 +55,8 @@ rec {
         ) (length numbers64 / 4)
       );
 
+      finalBytes = take (length allBytes - paddingCount) allBytes;
+
     in
-    # Converts base-256 numbers to ascii
-    concatMapStrings (
-      n:
-      # Can't represent the null byte in Nix..
-      substring (n - 1) 1 ascii
-    ) numbers256;
+    concatMapStrings (n: substring (n - 1) 1 ascii) finalBytes;
 }
