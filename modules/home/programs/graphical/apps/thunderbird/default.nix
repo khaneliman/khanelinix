@@ -58,6 +58,7 @@ in
         let
           accountType = lib.types.submodule {
             options = {
+              enable = mkOpt lib.types.bool true "Enable this account";
               address = mkOpt lib.types.str null "Email address";
               flavor = mkOpt (lib.types.enum [
                 "plain"
@@ -136,14 +137,27 @@ in
             {
               address,
               primary ? false,
+              enable ? true,
               flavor,
             }:
+            let
+              finalEnable =
+                if flavor == "davmail" && !config.khanelinix.services.davmail.enable then
+                  lib.warn "Davmail account '${address}' is disabled because davmail service is not enabled." false
+                else
+                  enable;
+            in
             {
-              inherit address flavor primary;
+              enable = finalEnable;
+              inherit
+                address
+                flavor
+                primary
+                ;
               realName = config.khanelinix.user.fullName;
               userName = lib.mkIf (flavor == "davmail") address;
               thunderbird = {
-                enable = true;
+                enable = finalEnable;
                 profiles = [
                   config.khanelinix.user.name
                 ];
