@@ -31,12 +31,14 @@ in
               # Not super secret, just doesn't need to be scraped so easily.
               outlook = lib.khanelinix.decode "a2hhbmVsaW1hbjEyQG91dGxvb2suY29t";
               personal = lib.khanelinix.decode "YXVzdGluLm0uaG9yc3RtYW5AZ21haWwuY29t";
+              work = lib.khanelinix.decode "YXVzdGluLmhvcnN0bWFuQG5yaS1uYS5jb20=";
             in
             {
               accountsOrder = [
                 "khaneliman12@gmail.com"
                 personal
                 outlook
+                work
               ];
               extraEmailAccounts = {
                 ${outlook} = {
@@ -46,6 +48,10 @@ in
                 ${personal} = {
                   address = personal;
                   flavor = "gmail.com";
+                };
+                ${work} = {
+                  address = work;
+                  flavor = "davmail";
                 };
               };
             };
