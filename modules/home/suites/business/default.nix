@@ -50,7 +50,7 @@ in
       };
       services = {
         # FIXME: requires approval
-        # davmail.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isLinux;
+        davmail.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isLinux;
         syncthing.enable = lib.mkDefault (!isWSL);
       };
     };
