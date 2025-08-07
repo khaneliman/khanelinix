@@ -35,7 +35,8 @@ in
         mupen64plus
         nestopia-ue
         rpcs3
-        ryujinx
+        # TODO: replacement, removed upstream
+        # ryujinx
         xemu
       ]
       ++ lib.optionals cfg.retroarchFull [ retroarchFull ];

@@ -17,13 +17,8 @@ in
     yaziPlugins
 
     # TODO: remove once makes it to unstable
+    sherlock-launcher
     ;
-
-  sherlock-launcher = master.sherlock-launcher.overrideAttrs (oldAttrs: {
-    nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [
-      final.wrapGAppsHook4
-    ];
-  });
 
   # From nixpkgs-unstable
   inherit (unstable)
