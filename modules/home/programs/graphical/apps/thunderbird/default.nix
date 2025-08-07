@@ -139,26 +139,9 @@ in
               flavor,
             }:
             {
-              inherit address primary;
-              flavor = if (flavor == "davmail") then "plain" else flavor;
+              inherit address flavor primary;
               realName = config.khanelinix.user.fullName;
               userName = lib.mkIf (flavor == "davmail") address;
-              imap = lib.mkIf (flavor == "davmail") {
-                host = "localhost";
-                port = 1143;
-                tls = {
-                  enable = false;
-                  useStartTls = false;
-                };
-              };
-              smtp = lib.mkIf (flavor == "davmail") {
-                host = "localhost";
-                port = 1025;
-                tls = {
-                  enable = false;
-                  useStartTls = false;
-                };
-              };
               thunderbird = {
                 enable = true;
                 profiles = [
