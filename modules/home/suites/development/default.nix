@@ -105,6 +105,7 @@ in
         ]
         ++ lib.optionals cfg.aiEnable [
           claude-code
+          gemini-cli
         ];
 
       shellAliases = {
