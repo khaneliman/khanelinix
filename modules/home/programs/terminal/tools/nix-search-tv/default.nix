@@ -27,7 +27,7 @@ in
           "nixos"
         ]
         ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
-          "nix-darwin"
+          "darwin"
         ];
       };
     };
