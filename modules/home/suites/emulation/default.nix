@@ -28,7 +28,8 @@ in
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         cemu
-        duckstation
+        # FIXME: removed for unmaintained
+        # duckstation
         #FIXME: broken by https://github.com/NixOS/nixpkgs/pull/412425
         # emulationstation
         mgba
