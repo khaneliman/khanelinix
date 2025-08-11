@@ -94,6 +94,7 @@ in
             oh-my-posh = mkDefault enabled;
             ripgrep = mkDefault enabled;
             television = mkDefault enabled;
+            tray-tui.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
             topgrade = mkDefault enabled;
             yazi = mkDefault enabled;
             zellij = mkDefault enabled;
