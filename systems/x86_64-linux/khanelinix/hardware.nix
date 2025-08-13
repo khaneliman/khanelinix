@@ -21,12 +21,6 @@ in
     ];
 
     blacklistedKernelModules = [
-      "nouveau"
-      "nvidia"
-      "nvidia_drm"
-      "nvidia_modeset"
-      "nvidia_uvm"
-
       "eeepc_wmi"
     ];
 
@@ -164,7 +158,6 @@ in
           enableRocmSupport = true;
           enableNvtop = true;
         };
-        nvidia = enabled;
       };
       opengl = enabled;
 
@@ -196,19 +189,6 @@ in
 
       tpm = enabled;
       yubikey = enabled;
-    };
-
-    #   IOMMU Group 24:
-    # 	05:00.0 VGA compatible controller [0300]: NVIDIA Corporation GA102 [GeForce RTX 3080] [10de:2206] (rev a1)
-    # 	05:00.1 Audio device [0403]: NVIDIA Corporation GA102 High Definition Audio Controller [10de:1aef] (rev a1)
-    virtualisation.kvm = {
-      enable = true;
-      machineUnits = [ "machine-qemu\\x2d4\\x2dwin11\\x2dGPU.scope" ];
-      platform = "amd";
-      vfioIds = [
-        "10de:2206"
-        "10de:1aef"
-      ];
     };
   };
 
