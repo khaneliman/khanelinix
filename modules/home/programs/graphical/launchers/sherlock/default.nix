@@ -16,6 +16,7 @@ in
   config = mkIf cfg.enable {
     programs.sherlock = {
       enable = true;
+      systemd.enable = true;
 
       settings = {
         appearance = {
