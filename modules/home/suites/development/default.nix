@@ -106,6 +106,7 @@ in
         ++ lib.optionals cfg.aiEnable [
           claude-code
           gemini-cli
+          github-mcp-server
         ];
 
       shellAliases = {
