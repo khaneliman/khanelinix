@@ -30,7 +30,6 @@ in
       settings = {
         animations = {
           enabled = "yes";
-          first_launch_animation = true; # fade in on first launch
 
           # Some default animations, see https://wiki.hyprland.org/Configuring/Animations/ for more
           bezier = [
