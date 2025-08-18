@@ -84,26 +84,30 @@ in
 
             # Screenshot binds
             screenshotBinds = [
-              # File
-              ", Print, exec, $grimblast_active_file"
-              "SHIFT, Print, exec, $grimblast_area_file"
-              # "SHIFT_CTRL, S, exec, $grimblast_area_file"
-              "SUPER, Print, exec, $grimblast_screen_file"
-
-              # Area / Window
+              # Common binds always present
               "ALT, Print, exec, $grimblast_active_swappy"
               "ALT_CTRL, Print, exec, $grimblast_area_swappy"
               "ALT_SUPER, Print, exec, $grimblast_screen_swappy"
-              # "SUPER_CTRL_SHIFT, S, exec, $grimblast_screen_swappy"
-
-              # Clipboard
-              "CTRL, Print, exec, $grimblast_active_clipboard"
-              "CTRL_SHIFT, Print, exec, $grimblast_area_clipboard"
-              "SUPER_CTRL, Print, exec, $grimblast_screen_clipboard"
 
               # Screen recording
               "SUPER_CTRLALT, Print, exec, $screen-recorder screen"
               "SUPER_CTRLALTSHIFT, Print, exec, $screen-recorder area"
+            ]
+            ++ lib.optionals config.programs.hyprshot.enable [
+              ", Print, exec, ${getExe pkgs.hyprshot} -m window --clipboard-only"
+              "SHIFT, Print, exec, ${getExe pkgs.hyprshot} -m region --clipboard-only"
+              "SUPER, Print, exec, ${getExe pkgs.hyprshot} -m output --clipboard-only"
+              "CTRL, Print, exec, ${getExe pkgs.hyprshot} -m window"
+              "CTRL_SHIFT, Print, exec, ${getExe pkgs.hyprshot} -m region"
+              "SUPER_CTRL, Print, exec, ${getExe pkgs.hyprshot} -m output"
+            ]
+            ++ lib.optionals (!config.programs.hyprshot.enable) [
+              ", Print, exec, $grimblast_active_clipboard"
+              "SHIFT, Print, exec, $grimblast_area_clipboard"
+              "SUPER, Print, exec, $grimblast_screen_clipboard"
+              "CTRL, Print, exec, $grimblast_active_file"
+              "CTRL_SHIFT, Print, exec, $grimblast_area_file"
+              "SUPER_CTRL, Print, exec, $grimblast_screen_file"
             ];
 
             # Window movement binds

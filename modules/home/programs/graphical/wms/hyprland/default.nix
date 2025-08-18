@@ -144,6 +144,8 @@ in
       };
     };
 
+    programs.hyprshot.enable = true;
+
     services.hyprpolkitagent = enabled;
 
     wayland.windowManager.hyprland =
