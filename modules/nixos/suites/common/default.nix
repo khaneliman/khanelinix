@@ -72,6 +72,7 @@ in
 
       system = {
         fonts = mkDefault enabled;
+        hostname = mkDefault enabled;
         locale = mkDefault enabled;
         time = mkDefault enabled;
       };
