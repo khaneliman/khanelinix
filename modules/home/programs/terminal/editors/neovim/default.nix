@@ -22,7 +22,7 @@ let
           # NOTE: Conflicting package definitions, use the package from this flake.
           dependencies.yazi.enable = false;
           # FIXME: insane memory usage
-          # plugins.lsp.servers.nixd.settings =
+          # lsp.servers.nixd.settings.settings.nixd =
           #   let
           #     flake = ''(builtins.getFlake "${inputs.self}")'';
           #   in
