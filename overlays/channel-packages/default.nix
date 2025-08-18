@@ -15,9 +15,6 @@ in
   inherit (master)
     claude-code
     yaziPlugins
-
-    # TODO: remove once makes it to unstable
-    sherlock-launcher
     ;
 
   # From nixpkgs-unstable
