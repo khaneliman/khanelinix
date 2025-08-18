@@ -47,6 +47,7 @@ in
             launcherBinds = [
               "$mainMod, SPACE, exec, $($launcher)"
               "CTRL, SPACE, exec, $($launcher)"
+              "ALT, SPACE, exec, $($launcher-alt)"
             ];
 
             # App launch binds
