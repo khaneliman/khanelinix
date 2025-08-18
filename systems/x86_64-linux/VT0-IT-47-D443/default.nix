@@ -61,6 +61,7 @@ in
   #   "172.18.118.101"
   #   "172.18.118.102"
   # ];
+  networking.hostName = "VT0-IT-47-D443";
   networking.search = [
     "intranet.secura.net"
   ];
