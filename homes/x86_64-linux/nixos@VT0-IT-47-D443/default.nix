@@ -83,6 +83,7 @@ in
       common = enabled;
       development = {
         enable = true;
+        aiEnable = true;
       };
     };
 
