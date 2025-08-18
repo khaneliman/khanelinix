@@ -35,6 +35,7 @@ in
                     windsurf-nvim.enable = mkForce false;
                     firenvim.enable = mkForce false;
                     neorg.enable = mkForce false;
+                    neotest.enable = mkForce false;
                   };
                 };
               }

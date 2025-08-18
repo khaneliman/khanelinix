@@ -17,7 +17,19 @@ in
       wsl = enabled;
     };
 
-    nix = enabled;
+    hardware = {
+      power = disabled;
+      fans = disabled;
+    };
+
+    programs = {
+      terminal = {
+        tools = {
+          bandwhich = enabled;
+          ssh = disabled;
+        };
+      };
+    };
 
     security = {
       # FIX: make gpg work on wsl
