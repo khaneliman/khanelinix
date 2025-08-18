@@ -104,7 +104,6 @@ in
           mysql-workbench
         ]
         ++ lib.optionals cfg.aiEnable [
-          gemini-cli
           github-mcp-server
         ];
 
@@ -174,6 +173,7 @@ in
             act = mkDefault enabled;
             azure.enable = cfg.azureEnable;
             claude-code.enable = cfg.aiEnable;
+            gemini-cli.enable = cfg.aiEnable;
             git-crypt = mkDefault enabled;
             go.enable = cfg.goEnable;
             gh = mkDefault enabled;
