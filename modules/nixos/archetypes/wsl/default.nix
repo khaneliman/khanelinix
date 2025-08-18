@@ -46,6 +46,7 @@ in
       # WSL-specific overrides - disable hardware-specific and desktop services
       hardware = {
         power.enable = mkForce false;
+        fans.enable = mkForce false;
       };
 
       programs = {
