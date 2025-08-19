@@ -163,6 +163,38 @@ in
 
         programs = {
           # Additional program settings that don't follow the common pattern
+          satty.settings = mkIf config.khanelinix.programs.graphical.addons.satty.enable {
+            color-palette = {
+              palette = [
+                palette.colors.red.hex
+                palette.colors.peach.hex
+                palette.colors.yellow.hex
+                palette.colors.green.hex
+                palette.colors.teal.hex
+                palette.colors.blue.hex
+                palette.colors.mauve.hex
+                palette.colors.pink.hex
+              ];
+
+              custom = [
+                palette.colors.red.hex
+                palette.colors.maroon.hex
+                palette.colors.peach.hex
+                palette.colors.yellow.hex
+                palette.colors.green.hex
+                palette.colors.teal.hex
+                palette.colors.sky.hex
+                palette.colors.sapphire.hex
+                palette.colors.blue.hex
+                palette.colors.lavender.hex
+                palette.colors.mauve.hex
+                palette.colors.pink.hex
+                palette.colors.flamingo.hex
+                palette.colors.rosewater.hex
+              ];
+            };
+          };
+
           ncspot.settings = {
             theme = {
               background = "#24273A";
