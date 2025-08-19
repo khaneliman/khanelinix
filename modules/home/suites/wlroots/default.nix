@@ -38,6 +38,7 @@ in
           addons = {
             # FIXME: breaks 1password
             # electron-support = mkDefault enabled;
+            satty = mkDefault enabled;
             swappy = mkDefault enabled;
             swaync = mkDefault enabled;
             wlogout = mkDefault enabled;
