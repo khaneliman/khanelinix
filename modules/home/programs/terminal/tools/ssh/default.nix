@@ -1,7 +1,7 @@
 {
   config,
+  inputs,
   lib,
-
   pkgs,
   ...
 }:
@@ -19,6 +19,10 @@ let
   user = config.users.users.${config.khanelinix.user.name};
   user-id = builtins.toString user.uid;
 
+  other-hosts = lib.filterAttrs (_key: host: (host.config.khanelinix.user.name or null) != null) (
+    (inputs.self.nixosConfigurations or { }) // (inputs.self.darwinConfigurations or { })
+  );
+
   authorizedKeys = [
     # `khanelinix`
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFuMXeT21L3wnxnuzl0rKuE5+8inPSi8ca/Y3ll4s9pC"
@@ -30,34 +34,6 @@ let
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFeLt5cnRnKeil39Ds+CimMJQq/5dln32YqQ+EfYSCvc"
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEqCiZgjOmhsBTAFD0LbuwpfeuCnwXwMl2wByxC1UiRt"
   ];
-
-  # Note: Removed circular dependency on inputs.self configurations
-  # This should be configured statically or through other means
-  other-hosts = { };
-
-  other-hosts-config = lib.foldl' (
-    acc: name:
-    let
-      remote = other-hosts.${name};
-      remote-user-name = remote.config.khanelinix.user.name;
-      remote-user-id = builtins.toString remote.config.users.users.${remote-user-name}.uid;
-    in
-    acc
-    // {
-      ${name} = {
-        hostname = "${name}.local";
-        user = remote-user-name;
-        forwardAgent = true;
-        inherit (cfg) port;
-        remoteForwards =
-          lib.optionals (config.services.gpg-agent.enable && remote.config.services.gpg-agent.enable)
-            [
-              "/run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra"
-              "/run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh"
-            ];
-      };
-    }
-  ) { } (builtins.attrNames other-hosts);
 in
 {
   options.khanelinix.programs.terminal.tools.ssh = with types; {
@@ -73,7 +49,33 @@ in
 
       addKeysToAgent = "yes";
       forwardAgent = true;
-      matchBlocks = other-hosts-config;
+      matchBlocks =
+        let
+          other-hosts-config = lib.foldl' (
+            acc: name:
+            let
+              remote = other-hosts.${name};
+              remote-user-name = remote.config.khanelinix.user.name;
+              remote-user-id = builtins.toString remote.config.users.users.${remote-user-name}.uid;
+            in
+            acc
+            // {
+              ${name} = {
+                hostname = "${name}.local";
+                user = remote-user-name;
+                forwardAgent = true;
+                inherit (cfg) port;
+                remoteForwards =
+                  lib.optionals (config.services.gpg-agent.enable && remote.config.services.gpg-agent.enable)
+                    [
+                      "/run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra"
+                      "/run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh"
+                    ];
+              };
+            }
+          ) { } (builtins.attrNames other-hosts);
+        in
+        other-hosts-config;
 
       extraConfig = ''
         StreamLocalBindUnlink yes
