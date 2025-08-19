@@ -60,6 +60,7 @@ in
       packages = with pkgs; [
         grim
         hyprsysteminfo
+        hyprpicker
         pkgs.khanelinix.record_screen
         slurp
         kdePackages.xwaylandvideobridge

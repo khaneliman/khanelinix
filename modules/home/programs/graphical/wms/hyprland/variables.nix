@@ -27,13 +27,13 @@ let
       {
         # Note: hyprshot --raw outputs PNG format, but satty expects PPM for best performance
         # We convert PNG to PPM using imagemagick for compatibility
-        area = "${getExe pkgs.hyprshot} -m region --raw | ${convert} png:- ppm:-";
+        area = "${getExe pkgs.hyprshot} -m region --freeze --raw | ${convert} png:- ppm:-";
         active = "${getExe pkgs.hyprshot} -m active -m window --raw | ${convert} png:- ppm:-";
         screen = "${getExe pkgs.hyprshot} -m output --raw | ${convert} png:- ppm:-";
-        area_file = "${getExe pkgs.hyprshot} -m region -o \"${screenshot-path}\" -f \"$(${getDateTime}).png\"";
+        area_file = "${getExe pkgs.hyprshot} -m region --freeze -o \"${screenshot-path}\" -f \"$(${getDateTime}).png\"";
         active_file = "${getExe pkgs.hyprshot} -m active -m window -o \"${screenshot-path}\" -f \"$(${getDateTime}).png\"";
         screen_file = "${getExe pkgs.hyprshot} -m output -o \"${screenshot-path}\" -f \"$(${getDateTime}).png\"";
-        area_clipboard = "${getExe pkgs.hyprshot} -m region --clipboard-only";
+        area_clipboard = "${getExe pkgs.hyprshot} -m region --freeze --clipboard-only";
         active_clipboard = "${getExe pkgs.hyprshot} -m active -m window --clipboard-only";
         screen_clipboard = "${getExe pkgs.hyprshot} -m output --clipboard-only";
       }
