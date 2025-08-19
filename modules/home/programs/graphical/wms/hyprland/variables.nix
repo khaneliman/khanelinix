@@ -9,7 +9,6 @@ let
   inherit (lib) mkIf getExe getExe';
 
   convert = getExe' pkgs.imagemagick "convert";
-  grimblast = getExe pkgs.grimblast;
   wl-copy = getExe' pkgs.wl-clipboard "wl-copy";
   wl-paste = getExe' pkgs.wl-clipboard "wl-paste";
 
@@ -21,6 +20,43 @@ let
   );
 
   screenshot-path = "/home/${config.khanelinix.user.name}/Pictures/screenshots";
+
+  # Screenshot tool priority: hyprshot (if enabled) > grimblast
+  screenshot_tool =
+    if config.programs.hyprshot.enable then
+      {
+        # Note: hyprshot --raw outputs PNG format, but satty expects PPM for best performance
+        # We convert PNG to PPM using imagemagick for compatibility
+        area = "${getExe pkgs.hyprshot} -m region --raw | ${convert} png:- ppm:-";
+        active = "${getExe pkgs.hyprshot} -m active -m window --raw | ${convert} png:- ppm:-";
+        screen = "${getExe pkgs.hyprshot} -m output --raw | ${convert} png:- ppm:-";
+        area_file = "${getExe pkgs.hyprshot} -m region -o \"${screenshot-path}\" -f \"$(${getDateTime}).png\"";
+        active_file = "${getExe pkgs.hyprshot} -m active -m window -o \"${screenshot-path}\" -f \"$(${getDateTime}).png\"";
+        screen_file = "${getExe pkgs.hyprshot} -m output -o \"${screenshot-path}\" -f \"$(${getDateTime}).png\"";
+        area_clipboard = "${getExe pkgs.hyprshot} -m region --clipboard-only";
+        active_clipboard = "${getExe pkgs.hyprshot} -m active -m window --clipboard-only";
+        screen_clipboard = "${getExe pkgs.hyprshot} -m output --clipboard-only";
+      }
+    else
+      {
+        # Use PPM format for better performance with annotation tools
+        area = "${getExe pkgs.grimblast} --freeze --type ppm save area -";
+        active = "${getExe pkgs.grimblast} --type ppm save active -";
+        screen = "${getExe pkgs.grimblast} --type ppm save screen -";
+        area_file = "${getExe pkgs.grimblast} --freeze --notify save area \"${screenshot-path}/$(${getDateTime}).png\"";
+        active_file = "${getExe pkgs.grimblast} --notify save active \"${screenshot-path}/$(${getDateTime}).png\"";
+        screen_file = "${getExe pkgs.grimblast} --notify save screen \"${screenshot-path}/$(${getDateTime}).png\"";
+        area_clipboard = "${getExe pkgs.grimblast} --freeze --notify copy area";
+        active_clipboard = "${getExe pkgs.grimblast} --notify copy active";
+        screen_clipboard = "${getExe pkgs.grimblast} --notify copy screen";
+      };
+
+  # Annotation tool priority: satty (if enabled) > swappy
+  annotation_tool =
+    if config.khanelinix.programs.graphical.addons.satty.enable then
+      "${getExe pkgs.satty} --filename -"
+    else
+      "${getExe pkgs.swappy} -f -";
 
   cfg = config.khanelinix.programs.graphical.wms.hyprland;
 in
@@ -202,18 +238,15 @@ in
         # screenshot commands
         "$notify-screenshot" = ''${getExe pkgs.libnotify} --icon "$file" "Screenshot Saved"'';
         "$screenshot-path" = "/home/${config.khanelinix.user.name}/Pictures/screenshots";
-        "$grimblast_area_file" =
-          ''${grimblast} --freeze --notify save area "${screenshot-path}/$(${getDateTime}).png"'';
-        "$grimblast_active_file" =
-          ''${grimblast} --notify save active "${screenshot-path}/$(${getDateTime}).png"'';
-        "$grimblast_screen_file" =
-          ''${grimblast} --notify save screen "${screenshot-path}/$(${getDateTime}).png"'';
-        "$grimblast_area_swappy" = ''${grimblast} --freeze save area - | ${getExe pkgs.swappy} -f -'';
-        "$grimblast_active_swappy" = ''${grimblast} save active - | ${getExe pkgs.swappy} -f -'';
-        "$grimblast_screen_swappy" = ''${grimblast} save screen - | ${getExe pkgs.swappy} -f -'';
-        "$grimblast_area_clipboard" = "${grimblast} --freeze --notify copy area";
-        "$grimblast_active_clipboard" = "${grimblast} --notify copy active";
-        "$grimblast_screen_clipboard" = "${grimblast} --notify copy screen";
+        "$screenshot_area_file" = screenshot_tool.area_file;
+        "$screenshot_active_file" = screenshot_tool.active_file;
+        "$screenshot_screen_file" = screenshot_tool.screen_file;
+        "$screenshot_area_clipboard" = screenshot_tool.area_clipboard;
+        "$screenshot_active_clipboard" = screenshot_tool.active_clipboard;
+        "$screenshot_screen_clipboard" = screenshot_tool.screen_clipboard;
+        "$screenshot_area_annotate" = "${screenshot_tool.area} | ${annotation_tool}";
+        "$screenshot_active_annotate" = "${screenshot_tool.active} | ${annotation_tool}";
+        "$screenshot_screen_annotate" = "${screenshot_tool.screen} | ${annotation_tool}";
 
         # utility commands
         "$color_picker" =
