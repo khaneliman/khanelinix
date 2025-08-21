@@ -119,7 +119,7 @@ in
         ''
           * {
             transition: 200ms ease;
-            font-family: Lexend;
+            font-family: MonaspaceNeon;
             font-size: 1.3rem;
           }
 
