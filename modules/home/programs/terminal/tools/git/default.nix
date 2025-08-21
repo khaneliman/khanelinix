@@ -31,6 +31,9 @@ let
           export GITHUB_TOKEN
           GH_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
           export GH_TOKEN
+          # For github-mcp-server
+          GITHUB_PERSONAL_ACCESS_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
+          export GITHUB_PERSONAL_ACCESS_TOKEN
         fi
       '';
 in
