@@ -116,6 +116,7 @@ in
           launchers = {
             anyrun = enabled;
             sherlock = enabled;
+            walker = enabled;
           };
 
           screenlockers = {
