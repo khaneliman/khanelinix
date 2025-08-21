@@ -62,7 +62,7 @@ in
           # Citrix
           "workspace 8, class:^(selfservice)$"
           "workspace 8, class:^(Wfica)$"
-          "workspace 8, class:^(Icasessionmgr)$"
+          "workspace 8 silent, class:^(Icasessionmgr)$"
         ];
       };
     };
