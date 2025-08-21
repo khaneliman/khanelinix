@@ -94,9 +94,9 @@ in
         };
       };
 
-      agents = import ./agents.nix;
+      agents = import ./agents.nix { inherit lib; };
 
-      commands = import ./commands.nix;
+      commands = import ./commands.nix { inherit lib; };
     };
   };
 }
