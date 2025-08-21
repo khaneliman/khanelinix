@@ -23,6 +23,8 @@ in
           type = "stdio";
           command = lib.getExe pkgs.github-mcp-server;
           args = [
+            # NOTE: avoid accidentally causing unexpected changes with default MCP and whitelist allow
+            "--read-only"
             "stdio"
           ];
         };
@@ -65,7 +67,8 @@ in
             "BashOutput(*)"
             "KillBash(*)"
             "ExitPlanMode(*)"
-            "mcp__*"
+            "mcp__github"
+            "mcp__mulesoft-analyzer"
           ];
           ask = [
             "WebFetch(*)"
@@ -78,7 +81,7 @@ in
             "Bash(rsync*)"
           ];
           deny = [ ];
-          defaultMode = "plan";
+          defaultMode = "default";
         };
         model = "claude-sonnet-4-20250514";
         verbose = true;
