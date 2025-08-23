@@ -26,7 +26,7 @@ in
         owner = config.khanelinix.user.name;
         group = "staff";
         count = 7;
-        size = "1M";
+        size = "1000";
         flags = [
           "Z"
           "C"
