@@ -236,8 +236,7 @@ in
             })
           ];
 
-          # TODO: update for new firefox version
-          # userChrome = ./chrome/userChrome.css;
+          userChrome = ./chrome/userChrome.css;
         };
       };
     };
