@@ -46,9 +46,8 @@ in
   config = mkIf cfg.enable {
     programs.ssh = {
       enable = true;
+      enableDefaultConfig = false;
 
-      addKeysToAgent = "yes";
-      forwardAgent = true;
       matchBlocks =
         let
           other-hosts-config = lib.foldl' (
@@ -75,7 +74,13 @@ in
             }
           ) { } (builtins.attrNames other-hosts);
         in
-        other-hosts-config;
+        {
+          "*" = {
+            addKeysToAgent = "yes";
+            forwardAgent = true;
+          };
+        }
+        // other-hosts-config;
 
       extraConfig = ''
         StreamLocalBindUnlink yes
