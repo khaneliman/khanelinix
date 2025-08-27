@@ -70,7 +70,9 @@ _: {
           );
         };
 
-      groupApps = lib.mapAttrs mkUpdateApp inputGroups;
+      groupApps = lib.mapAttrs' (
+        name: value: lib.nameValuePair "update-${name}" (mkUpdateApp name value)
+      ) inputGroups;
     in
     {
       apps = groupApps // {
