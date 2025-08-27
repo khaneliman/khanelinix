@@ -54,3 +54,86 @@ code in this repository.
 - Handle user specific customization in user home configuration
 - Prefer handling customization in home configuration, wherever possible
 - Use sops-nix for secrets management
+
+## Specialized Agents and Commands
+
+The khanelinix configuration includes specialized Claude Code agents and
+commands designed for this Nix-based dotfiles system:
+
+### Agents
+
+#### Nix Specialists
+
+- **Nix Expert**: General Nix language and NixOS configuration specialist
+- **Nix Module Expert**: NixOS/Home Manager module creation and options design
+  specialist
+- **Nix Refactor**: Comprehensive Nix code refactoring, formatting, and
+  optimization specialist
+- **Flake Expert**: Nix flake management, inputs, and dependency specialist
+
+#### Project Specialists
+
+- **Dotfiles Expert**: khanelinix configuration specialist and maintainer -
+  knows the complete module structure, host/user customizations, theme system,
+  and patterns
+- **System Config Expert**: NixOS system configuration and administration
+  specialist
+- **Template Designer**: Development environment and template creation
+  specialist
+
+#### General Development
+
+- **Code Reviewer**: Specialized code review agent for development tasks
+- **Security Auditor**: Security analysis and vulnerability assessment
+  specialist
+- **Documenter**: Technical documentation and README writer
+
+### Custom Commands
+
+#### Nix Commands
+
+- `nix-refactor [path] [--style-only] [--fix-let-blocks] [--fix-lib-usage]`:
+  Automatically fix Nix code style violations and refactor patterns
+- `nix-check [path] [--build] [--eval] [--format]`: Comprehensive Nix code
+  validation and formatting
+- `module-scaffold [name] [--nixos] [--home] [--darwin]`: Create new module
+  templates with proper structure
+- `option-migrate [from] [to]`: Migrate deprecated options to new alternatives
+- `template-new [template-name] [target-dir]`: Create new projects from
+  khanelinix templates
+- `flake-update [input] [--all] [--commit]`: Update flake inputs with proper
+  commit messages
+
+#### Git Commands
+
+- `add-and-format [files]`: Stage files and run formatters before commit
+- `commit-changes [--all] [--amend]`: Commit with contextual messages based on
+  changes
+- `commit-msg [type] [message]`: Generate conventional commit messages
+- `git-review [target-branch]`: Comprehensive git history and diff review
+
+#### Quality Assurance
+
+- `quick-check [path]`: Fast validation of code quality and formatting
+- `deep-check [path] [--security] [--performance]`: Comprehensive code analysis
+- `style-audit [path] [--fix]`: Style and convention compliance check
+- `dependency-audit [--unused] [--conflicts] [--security]`: Analyze and optimize
+  dependencies
+- `module-lint [path] [--fix]`: Lint Nix modules for common issues
+
+#### Project Management
+
+- `changelog [version] [--auto] [--format=md|nix]`: Generate changelogs from git
+  history
+
+### When to Use Specialized Agents
+
+- **Use Dotfiles Expert** when working with khanelinix-specific configurations,
+  understanding module interactions, or making system-wide changes
+- **Use Nix specialists** for language-specific tasks, module creation, or
+  refactoring Nix code
+- **Use Security Auditor** when reviewing security configurations, analyzing
+  dependencies, or implementing security features
+- **Use Code Reviewer** after significant changes or before committing complex
+  modifications
+- **Use quality commands** before commits or when maintaining code health
