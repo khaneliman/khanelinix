@@ -29,8 +29,7 @@
       };
     };
     nix-darwin = {
-      # url = "github:nix-darwin/nix-darwin";
-      url = "github:khaneliman/nix-darwin/copy";
+      url = "github:nix-darwin/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     nix-rosetta-builder = {

@@ -812,16 +812,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1754524683,
-        "narHash": "sha256-NtSZUAUyPMf2pRITLWLq8usfiXlHbcIA7BZ3HHBNgsc=",
-        "owner": "khaneliman",
+        "lastModified": 1755825449,
+        "narHash": "sha256-XkiN4NM9Xdy59h69Pc+Vg4PxkSm9EWl6u7k6D5FZ5cM=",
+        "owner": "nix-darwin",
         "repo": "nix-darwin",
-        "rev": "7f423b680ba99bd9af7d06195f3723d0242864c0",
+        "rev": "8df64f819698c1fee0c2969696f54a843b2231e8",
         "type": "github"
       },
       "original": {
-        "owner": "khaneliman",
-        "ref": "copy",
+        "owner": "nix-darwin",
         "repo": "nix-darwin",
         "type": "github"
       }
