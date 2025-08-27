@@ -58,8 +58,8 @@ in
     in
     walkDir path;
 
-  # Recursively scan systems directory structure
-  scanSystems =
+  # Recursively parse systems directory structure
+  parseSystemConfigurations =
     systemsPath:
     let
       systemArchs = builtins.attrNames (builtins.readDir systemsPath);
@@ -91,8 +91,8 @@ in
       _name: { system, ... }: hasPrefix "aarch64-darwin" system || hasPrefix "x86_64-darwin" system
     ) systems;
 
-  # Scan homes directory structure for home configurations
-  scanHomes =
+  # Parse homes directory structure for home configurations
+  parseHomeConfigurations =
     homesPath:
     let
       systemArchs = builtins.attrNames (builtins.readDir homesPath);

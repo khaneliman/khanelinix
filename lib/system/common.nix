@@ -33,9 +33,9 @@ in
       hostname,
     }:
     let
-      inherit (flake.lib.file) scanHomes;
+      inherit (flake.lib.file) parseHomeConfigurations;
       homesPath = ../../homes;
-      allHomes = scanHomes homesPath;
+      allHomes = parseHomeConfigurations homesPath;
     in
     filterAttrs (
       _name: homeConfig: homeConfig.system == system && homeConfig.hostname == hostname

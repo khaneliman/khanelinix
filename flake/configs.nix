@@ -5,10 +5,10 @@
   ...
 }:
 let
-  inherit (self.lib.file) scanSystems filterNixOSSystems filterDarwinSystems;
+  inherit (self.lib.file) parseSystemConfigurations filterNixOSSystems filterDarwinSystems;
 
   systemsPath = ../systems;
-  allSystems = scanSystems systemsPath;
+  allSystems = parseSystemConfigurations systemsPath;
 in
 {
   flake = {

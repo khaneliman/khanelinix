@@ -5,10 +5,10 @@
   ...
 }:
 let
-  inherit (self.lib.file) scanHomes;
+  inherit (self.lib.file) parseHomeConfigurations;
 
   homesPath = ../homes;
-  allHomes = scanHomes homesPath;
+  allHomes = parseHomeConfigurations homesPath;
 
   generateHomeConfiguration =
     name:
