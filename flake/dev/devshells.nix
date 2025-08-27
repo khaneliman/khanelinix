@@ -47,10 +47,15 @@
       };
 
       shellsPath = ./shells;
-      shellFiles = lib.filterAttrs (name: type: type == "regular" && lib.hasSuffix ".nix" name) (
-        builtins.readDir shellsPath
-      );
+      shellFiles = lib.filterAttrs (
+        name: type: type == "regular" && lib.hasSuffix ".nix" name && name != "dotnet.nix" # Handle dotnet specially
+      ) (builtins.readDir shellsPath);
       shellNames = lib.mapAttrsToList (name: _: lib.removeSuffix ".nix" name) shellFiles;
+
+      # Import dotnet shells (special case that generates multiple shells)
+      dotnetShells = import (shellsPath + "/dotnet.nix") {
+        inherit lib devPkgs;
+      };
 
       buildShell = name: {
         ${name} = import (shellsPath + "/${name}.nix") {
@@ -68,6 +73,6 @@
       };
     in
     {
-      devShells = lib.foldl' (acc: name: acc // buildShell name) { } shellNames;
+      devShells = lib.foldl' (acc: name: acc // buildShell name) dotnetShells shellNames;
     };
 }
