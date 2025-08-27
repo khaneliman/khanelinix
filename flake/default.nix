@@ -6,7 +6,6 @@
     ./packages.nix
     ./configs.nix
     ./home.nix
-    ./templates.nix
     ./apps.nix
     inputs.flake-parts.flakeModules.partitions
   ];
@@ -20,5 +19,6 @@
     "checks"
     "devShells"
     "formatter"
+    "templates"
   ] (_: "dev");
 }

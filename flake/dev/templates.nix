@@ -1,6 +1,6 @@
 { lib, ... }:
 let
-  templatesPath = ../templates;
+  templatesPath = ../../templates;
 
   scanTemplates =
     path:
