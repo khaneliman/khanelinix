@@ -33,6 +33,7 @@ in
       ];
     };
 
-    services.plex-mpv-shim.enable = pkgs.stdenv.hostPlatform.isLinux;
+    # FIXME: high cpu usage
+    # services.plex-mpv-shim.enable = pkgs.stdenv.hostPlatform.isLinux;
   };
 }
