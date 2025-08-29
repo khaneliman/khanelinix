@@ -142,12 +142,6 @@ in
           layout = "dwindle";
         };
 
-        gestures = {
-          workspace_swipe = true;
-          workspace_swipe_fingers = 3;
-          workspace_swipe_invert = false;
-        };
-
         group = {
           # new windows in a group spawn after current or at group tail
           insert_after_current = true;
