@@ -101,7 +101,8 @@ in
         )
         ++ lib.optionals cfg.sqlEnable [
           dbeaver-bin
-          mysql-workbench
+          # FIXME: broken nixpkgs
+          # mysql-workbench
         ]
         ++ lib.optionals cfg.aiEnable [
           github-mcp-server
@@ -173,8 +174,7 @@ in
             act = mkDefault enabled;
             azure.enable = cfg.azureEnable;
             claude-code.enable = cfg.aiEnable;
-            # gemini-cli.enable = cfg.aiEnable;
-            gemini-cli.enable = cfg.aiEnable && pkgs.stdenv.hostPlatform.isLinux; # FIXME: broken nixpkgs on darwin
+            gemini-cli.enable = cfg.aiEnable;
             git-crypt = mkDefault enabled;
             go.enable = cfg.goEnable;
             gh = mkDefault enabled;

@@ -15,6 +15,11 @@ in
   inherit (master)
     claude-code
     yaziPlugins
+
+    # TODO: remove after hits channel
+    firefox-devedition
+    firefox-devedition-unwrapped
+    gemini-cli
     ;
 
   # From nixpkgs-unstable
@@ -24,8 +29,8 @@ in
 
     # Online services to keep up to date
     element-desktop
-    firefox-devedition
-    firefox-devedition-unwrapped
+    # firefox-devedition
+    # firefox-devedition-unwrapped
     teams-for-linux
     telegram-desktop
     thunderbird-unwrapped

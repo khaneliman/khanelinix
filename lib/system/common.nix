@@ -22,6 +22,8 @@ in
         "aspnetcore-runtime-wrapped-7.0.20"
         "aspnetcore-runtime-wrapped-6.0.36"
         "dotnet-combined"
+        # FIXME:
+        "qtwebengine-5.15.19"
       ];
     };
   };
