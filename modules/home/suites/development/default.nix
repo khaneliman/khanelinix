@@ -173,7 +173,8 @@ in
             act = mkDefault enabled;
             azure.enable = cfg.azureEnable;
             claude-code.enable = cfg.aiEnable;
-            gemini-cli.enable = cfg.aiEnable;
+            # gemini-cli.enable = cfg.aiEnable;
+            gemini-cli.enable = cfg.aiEnable && pkgs.stdenv.hostPlatform.isLinux; # FIXME: broken nixpkgs on darwin
             git-crypt = mkDefault enabled;
             go.enable = cfg.goEnable;
             gh = mkDefault enabled;
