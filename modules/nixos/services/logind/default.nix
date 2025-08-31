@@ -16,8 +16,8 @@ in
 
   config = mkIf cfg.enable {
     services = {
-      logind = {
-        killUserProcesses = true;
+      logind.settings.Login = {
+        KillUserProcesses = true;
       };
     };
   };
