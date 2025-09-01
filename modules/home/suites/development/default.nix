@@ -17,6 +17,10 @@ let
           ANTHROPIC_API_KEY="$(cat ${config.sops.secrets.ANTHROPIC_API_KEY.path})"
           export ANTHROPIC_API_KEY
         fi
+        if [ -f ${config.sops.secrets.GEMINI_API_KEY.path} ]; then
+          GEMINI_API_KEY="$(cat ${config.sops.secrets.GEMINI_API_KEY.path})"
+          export GEMINI_API_KEY
+        fi
         if [ -f ${config.sops.secrets.AZURE_OPENAI_API_KEY.path} ]; then
           AZURE_OPENAI_API_KEY="$(cat ${config.sops.secrets.AZURE_OPENAI_API_KEY.path})"
           export AZURE_OPENAI_API_KEY
@@ -199,6 +203,10 @@ in
       AZURE_OPENAI_API_KEY = {
         sopsFile = lib.getFile "secrets/CORE/default.yaml";
         path = "${config.home.homeDirectory}/.AZURE_OPENAI_API_KEY";
+      };
+      GEMINI_API_KEY = {
+        sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
+        path = "${config.home.homeDirectory}/.GEMINI_API_KEY";
       };
       OPENAI_API_KEY = {
         sopsFile = lib.getFile "secrets/CORE/default.yaml";
