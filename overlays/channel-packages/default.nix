@@ -17,8 +17,6 @@ in
     yaziPlugins
 
     # TODO: remove after hits channel
-    firefox-devedition
-    firefox-devedition-unwrapped
     gemini-cli
     ;
 
@@ -29,8 +27,8 @@ in
 
     # Online services to keep up to date
     element-desktop
-    # firefox-devedition
-    # firefox-devedition-unwrapped
+    firefox-devedition
+    firefox-devedition-unwrapped
     teams-for-linux
     telegram-desktop
     thunderbird-unwrapped
