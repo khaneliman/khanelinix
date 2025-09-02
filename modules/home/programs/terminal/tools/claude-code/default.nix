@@ -157,9 +157,9 @@ in
         };
       };
 
-      agents = import ./agents.nix { inherit lib; };
+      inherit ((import (lib.getFile "modules/common/ai-tools") { inherit lib; }).claudeCode) agents;
 
-      commands = import ./commands.nix { inherit lib; };
+      inherit ((import (lib.getFile "modules/common/ai-tools") { inherit lib; }).claudeCode) commands;
     };
   };
 }
