@@ -182,7 +182,6 @@ in
                 inherit protocol sshUser;
                 systems = [
                   "aarch64-darwin"
-                  "x86_64-darwin"
                 ];
                 hostName = "darwin-build-box.nix-community.org";
                 maxJobs = 3;
@@ -193,13 +192,10 @@ in
               // lib.optionalAttrs (host == "khanelinix") {
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
               }
-              // lib.optionalAttrs (host == "khanelimac") {
-                sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
-                # Prefer local builds for personal usage
-                systems = [
-                  "x86_64-darwin"
-                ];
-              }
+              # TODO: figure out preferring local over remote
+              # // lib.optionalAttrs (host == "khanelimac") {
+              #   sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+              # }
             )
           ];
 
