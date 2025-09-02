@@ -19,10 +19,15 @@ let
     bind:
     let
       parts = builtins.split "exec, " bind;
-      pre = builtins.head parts;
-      cmd = builtins.elemAt parts 2;
     in
-    "${pre}exec, ${mkStartCommand cmd}";
+    if builtins.length parts >= 3 then
+      let
+        pre = builtins.head parts;
+        cmd = builtins.elemAt parts 2;
+      in
+      "${pre}exec, ${mkStartCommand cmd}"
+    else
+      bind; # Return unchanged if no "exec, " found
 in
 {
   config = mkIf cfg.enable {
