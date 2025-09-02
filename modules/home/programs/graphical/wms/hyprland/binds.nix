@@ -71,45 +71,25 @@ in
               "$mainMod, W, exec, $looking-glass"
             ];
 
-            # System binds (non-exec)
+            # System binds (non-exec) - keeping most used shortcuts
             systemBinds = [
               "$mainMod, Q, killactive,"
               "CTRL_SHIFT, Q, killactive,"
-              "SUPER_ALT, V, togglefloating,"
-              "$mainMod, P, pseudo, #dwindle"
-              "$mainMod, J, togglesplit, #dwindle"
-              "$mainMod, K, swapsplit, #dwindle"
-              "$mainMod, F, fullscreen"
-              # "SUPER_SHIFT, V, workspaceopt, allfloat"
-
-              # kill window
-              "$mainMod, Q, killactive,"
-              "CTRL_SHIFT, Q, killactive,"
+              "$mainMod, F, fullscreen" # Keep F for fullscreen as it's commonly used
             ];
 
-            # Screenshot binds
+            # Screenshot binds - keep Print key shortcuts for compatibility
             screenshotBinds = [
-              # Screenshot to clipboard
+              # Quick screenshot shortcuts (original binds)
               ", Print, exec, $screenshot_active_clipboard"
               "SHIFT, Print, exec, $screenshot_area_clipboard"
               "SUPER, Print, exec, $screenshot_screen_clipboard"
 
-              # Screenshot to file
-              "CTRL, Print, exec, $screenshot_active_file"
-              "CTRL_SHIFT, Print, exec, $screenshot_area_file"
-              "SUPER_CTRL, Print, exec, $screenshot_screen_file"
-
-              # Screenshot annotation
-              "ALT, Print, exec, $screenshot_active_annotate"
-              "ALT_CTRL, Print, exec, $screenshot_area_annotate"
-              "ALT_SUPER, Print, exec, $screenshot_screen_annotate"
-
-              # Screen recording
-              "SUPER_CTRLALT, Print, exec, $screen-recorder screen"
-              "SUPER_CTRLALTSHIFT, Print, exec, $screen-recorder area"
+              # Enter screenshot submap
+              "$mainMod, S, submap, screenshot"
             ];
 
-            # Window movement binds
+            # Window movement binds - keeping basic movement
             movementBinds = [
               # Window Focus
               "ALT,left,movefocus,l"
@@ -121,9 +101,6 @@ in
               "SUPER,right,movewindow,r"
               "SUPER,up,movewindow,u"
               "SUPER,down,movewindow,d"
-              # Resize Window
-              "CTRL_SHIFT,h,resizeactive,-10% 0"
-              "CTRL_SHIFT,l,resizeactive,10% 0"
             ];
 
             # Workspace management binds
@@ -150,23 +127,8 @@ in
 
             # Monitor management binds
             monitorBinds = [
-              "SUPER_ALT, up, focusmonitor, u"
-              "SUPER_ALT, k, focusmonitor, u"
-              "SUPER_ALT, down, focusmonitor, d"
-              "SUPER_ALT, j, focusmonitor, d"
-              "SUPER_ALT, left, focusmonitor, l"
-              "SUPER_ALT, h, focusmonitor, l"
-              "SUPER_ALT, right, focusmonitor, r"
-              "SUPER_ALT, l, focusmonitor, r"
-              # moving current workspace to monitor
-              "$HYPER,down,movecurrentworkspacetomonitor,d"
-              "$HYPER,j,movecurrentworkspacetomonitor,d"
-              "$HYPER,up,movecurrentworkspacetomonitor,u"
-              "$HYPER,k,movecurrentworkspacetomonitor,u"
-              "$HYPER,left,movecurrentworkspacetomonitor,l"
-              "$HYPER,h,movecurrentworkspacetomonitor,l"
-              "$HYPER,right,movecurrentworkspacetomonitor,r"
-              "$HYPER,l,movecurrentworkspacetomonitor,r"
+              # Enter monitor submap
+              "$mainMod, M, submap, monitor"
             ];
 
             # Special workspace binds
@@ -178,6 +140,12 @@ in
               "ALT_SHIFT,grave,movetoworkspace,special:inactive"
               "ALT,grave,togglespecialworkspace,inactive"
             ];
+
+            # System and window submap triggers
+            submapTriggerBinds = [
+              "$mainMod, X, submap, system"
+              "$mainMod, R, submap, window"
+            ];
           in
           # Apply mkStartCommand only to the exec commands
           (map mkExecBind (launcherBinds ++ appBinds ++ screenshotBinds))
@@ -187,6 +155,7 @@ in
           ++ workspaceBinds
           ++ monitorBinds
           ++ specialBinds
+          ++ submapTriggerBinds
           ++ [
             "$mainMod, I, exec, ${getExe pkgs.libnotify} \"$($window-inspector)\""
             "$mainMod, PERIOD, exec, ${getExe pkgs.smile}"
@@ -221,10 +190,6 @@ in
           # ░▀▀▀░░▀░░▀▀▀░░▀░░▀▀▀░▀░▀
           # Kill and restart crashed hyprlock
           "$mainMod, BackSpace, exec, pkill -SIGUSR1 hyprlock || WAYLAND_DISPLAY=wayland-1 $screen-locker"
-          "$LHYPER, L, exec, systemctl --user exit"
-          "$LHYPER, L, exit,"
-          "$RHYPER, R, exec, reboot"
-          "$RHYPER, P, exec, shutdown"
 
           # ░█▄█░█▀▀░█▀▄░▀█▀░█▀█
           # ░█░█░█▀▀░█░█░░█░░█▀█
@@ -247,6 +212,114 @@ in
           "$mainMod, mouse:273, resizewindow #right click"
           "CTRL_SHIFT, mouse:273, resizewindow #right click"
         ];
+
+      };
+
+      # Submap definitions for better keybind organization
+      submaps = {
+        screenshot = {
+          settings = {
+            bind =
+              (map mkExecBind [
+                # Clipboard screenshots
+                ", w, exec, $screenshot_active_clipboard" # current window
+                ", a, exec, $screenshot_area_clipboard" # area selection
+                ", s, exec, $screenshot_screen_clipboard" # full screen
+
+                # File screenshots
+                "SHIFT, w, exec, $screenshot_active_file"
+                "SHIFT, a, exec, $screenshot_area_file"
+                "SHIFT, s, exec, $screenshot_screen_file"
+
+                # Annotated screenshots
+                "ALT, w, exec, $screenshot_active_annotate"
+                "ALT, a, exec, $screenshot_area_annotate"
+                "ALT, s, exec, $screenshot_screen_annotate"
+
+                # Screen recording
+                ", r, exec, $screen-recorder screen"
+                "SHIFT, r, exec, $screen-recorder area"
+              ])
+              ++ [
+                # Exit submap
+                ", escape, submap, reset"
+                "SUPER, S, submap, reset"
+              ];
+          };
+        };
+
+        monitor = {
+          settings = {
+            bind = [
+              # Focus monitor
+              ", up, focusmonitor, u"
+              ", k, focusmonitor, u"
+              ", down, focusmonitor, d"
+              ", j, focusmonitor, d"
+              ", left, focusmonitor, l"
+              ", h, focusmonitor, l"
+              ", right, focusmonitor, r"
+              ", l, focusmonitor, r"
+
+              # Move workspace to monitor
+              "SHIFT, up, movecurrentworkspacetomonitor, u"
+              "SHIFT, k, movecurrentworkspacetomonitor, u"
+              "SHIFT, down, movecurrentworkspacetomonitor, d"
+              "SHIFT, j, movecurrentworkspacetomonitor, d"
+              "SHIFT, left, movecurrentworkspacetomonitor, l"
+              "SHIFT, h, movecurrentworkspacetomonitor, l"
+              "SHIFT, right, movecurrentworkspacetomonitor, r"
+              "SHIFT, l, movecurrentworkspacetomonitor, r"
+
+              # Exit submap
+              ", escape, submap, reset"
+              "SUPER, M, submap, reset"
+            ];
+          };
+        };
+
+        system = {
+          settings = {
+            bind =
+              (map mkExecBind [
+                # System controls
+                ", l, exec, systemctl --user exit"
+                ", r, exec, reboot"
+                ", p, exec, shutdown"
+              ])
+              ++ [
+                # Direct hyprland commands
+                ", l, exit," # logout (both systemctl and hyprland exit)
+
+                # Exit submap
+                ", escape, submap, reset"
+                "SUPER, X, submap, reset"
+              ];
+          };
+        };
+
+        window = {
+          settings = {
+            bind = [
+              # Window operations
+              ", f, fullscreen"
+              ", v, togglefloating"
+              ", p, pseudo"
+              ", j, togglesplit"
+              ", k, swapsplit"
+
+              # Resize operations
+              ", h, resizeactive, -10% 0"
+              ", l, resizeactive, 10% 0"
+              "SHIFT, h, resizeactive, 0 -10%"
+              "SHIFT, l, resizeactive, 0 10%"
+
+              # Exit submap
+              ", escape, submap, reset"
+              "SUPER, R, submap, reset"
+            ];
+          };
+        };
       };
     };
   };
