@@ -258,6 +258,9 @@ in
           enable_audio_bell = "yes";
           bell_on_tab = "yes";
 
+          # Notification
+          notify_on_cmd_finish = "unfocused";
+
           # Window
           remember_window_size = "no";
           initial_window_width = 700;
