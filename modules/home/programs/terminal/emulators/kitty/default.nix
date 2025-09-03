@@ -245,7 +245,7 @@ in
 
           # Mouse
           click_interval = "0.5";
-          mouse_hide_wait = 0;
+          mouse_hide_wait = -1;
           focus_follows_mouse = "no";
 
           # Performance
