@@ -40,40 +40,40 @@ in
         permissions = {
           allow = [
             # Safe read-only git commands
-            "Bash(git add*)"
+            "Bash(git add:*)"
             "Bash(git status)"
-            "Bash(git log*)"
-            "Bash(git diff*)"
-            "Bash(git show*)"
-            "Bash(git branch*)"
-            "Bash(git remote*)"
+            "Bash(git log:*)"
+            "Bash(git diff:*)"
+            "Bash(git show:*)"
+            "Bash(git branch:*)"
+            "Bash(git remote:*)"
 
             # Safe Nix commands (mostly read-only)
-            "Bash(nix*)"
+            "Bash(nix:*)"
 
             # Safe file system operations
-            "Bash(ls*)"
-            "Bash(find*)"
-            "Bash(grep*)"
-            "Bash(rg*)"
-            "Bash(cat*)"
-            "Bash(head*)"
-            "Bash(tail*)"
-            "Bash(mkdir*)"
-            "Bash(chmod*)"
+            "Bash(ls:*)"
+            "Bash(find:*)"
+            "Bash(grep:*)"
+            "Bash(rg:*)"
+            "Bash(cat:*)"
+            "Bash(head:*)"
+            "Bash(tail:*)"
+            "Bash(mkdir:*)"
+            "Bash(chmod:*)"
 
             # Safe system info commands
-            "Bash(systemctl list-units*)"
-            "Bash(systemctl list-timers*)"
-            "Bash(systemctl status*)"
-            "Bash(journalctl*)"
-            "Bash(dmesg*)"
+            "Bash(systemctl list-units:*)"
+            "Bash(systemctl list-timers:*)"
+            "Bash(systemctl status:*)"
+            "Bash(journalctl:*)"
+            "Bash(dmesg:*)"
             "Bash(env)"
             "Bash(claude --version)"
-            "Bash(nh search*)"
+            "Bash(nh search:*)"
 
             # Audio system (read-only)
-            "Bash(pactl list*)"
+            "Bash(pactl list:*)"
             "Bash(pw-top)"
 
             # Core Claude Code tools
@@ -99,49 +99,47 @@ in
           ];
           ask = [
             # Potentially destructive git commands
-            "Bash(git reset*)"
-            "Bash(git commit*)"
-            "Bash(git push*)"
-            "Bash(git pull*)"
-            "Bash(git merge*)"
-            "Bash(git rebase*)"
-            "Bash(git checkout*)"
-            "Bash(git switch*)"
-            "Bash(git stash*)"
+            "Bash(git reset:*)"
+            "Bash(git commit:*)"
+            "Bash(git push:*)"
+            "Bash(git pull:*)"
+            "Bash(git merge:*)"
+            "Bash(git rebase:*)"
+            "Bash(git checkout:*)"
+            "Bash(git switch:*)"
+            "Bash(git stash:*)"
 
             # File deletion and modification
-            "Bash(rm*)"
-            "Bash(mv*)"
-            "Bash(cp*)"
+            "Bash(rm:*)"
+            "Bash(mv:*)"
+            "Bash(cp:*)"
 
             # System control operations
-            "Bash(systemctl start*)"
-            "Bash(systemctl stop*)"
-            "Bash(systemctl restart*)"
-            "Bash(systemctl reload*)"
-            "Bash(systemctl enable*)"
-            "Bash(systemctl disable*)"
-            "Bash(systemctl mask*)"
-            "Bash(systemctl unmask*)"
+            "Bash(systemctl start:*)"
+            "Bash(systemctl stop:*)"
+            "Bash(systemctl restart:*)"
+            "Bash(systemctl reload:*)"
+            "Bash(systemctl enable:*)"
+            "Bash(systemctl disable:*)"
+            "Bash(systemctl mask:*)"
+            "Bash(systemctl unmask:*)"
 
             # Network operations
-            "WebFetch(*)"
-            "WebSearch(*)"
-            "Bash(curl*)"
-            "Bash(wget*)"
-            "Bash(ping*)"
-            "Bash(ssh*)"
-            "Bash(scp*)"
-            "Bash(rsync*)"
+            "Bash(curl:*)"
+            "Bash(wget:*)"
+            "Bash(ping:*)"
+            "Bash(ssh:*)"
+            "Bash(scp:*)"
+            "Bash(rsync:*)"
 
             # Package management
-            "Bash(sudo*)"
-            "Bash(nixos-rebuild*)"
+            "Bash(sudo:*)"
+            "Bash(nixos-rebuild:*)"
 
             # Process management
-            "Bash(kill*)"
-            "Bash(killall*)"
-            "Bash(pkill*)"
+            "Bash(kill:*)"
+            "Bash(killall:*)"
+            "Bash(pkill:*)"
           ];
           deny = [ ];
           defaultMode = "default";
