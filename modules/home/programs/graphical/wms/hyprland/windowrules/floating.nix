@@ -87,6 +87,11 @@ in
           # make Firefox PiP window floating and sticky
           "float, title:^(Picture-in-Picture)$"
           "pin, title:^(Picture-in-Picture)$"
+
+          # Lutris dialogs - center and constrain size to prevent off-screen positioning
+          "float, class:^(net.lutris.Lutris)$, title:^(Select new location for the game)$"
+          "center, class:^(net.lutris.Lutris)$, title:^(Select new location for the game)$"
+          "size 1200 600, class:^(net.lutris.Lutris)$, title:^(Select new location for the game)$"
         ];
       };
     };
