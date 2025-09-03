@@ -193,9 +193,10 @@ in
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
               }
               # TODO: figure out preferring local over remote
-              # // lib.optionalAttrs (host == "khanelimac") {
-              #   sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
-              # }
+              // lib.optionalAttrs (host == "khanelimac") {
+                sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+                maxJobs = 0;
+              }
             )
           ];
 
