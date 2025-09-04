@@ -167,8 +167,6 @@
 }
 
 /* Hide specific text selection context menu items */
-#context-searchselect-separator,
-#context-searchselect,
 #context-sendlinktodevice,
 #context-sep-sendlinktodevice {
   display: none !important;
