@@ -187,14 +187,17 @@ in
 
         settings = {
           "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
-          "layers.acceleration.force-enabled" = true;
+          "layers.acceleration.disabled" = true;
+          # "layers.acceleration.force-enabled" = true;
           "gfx.webrender.all" = true;
           "gfx.webrender.enabled" = true;
+          "gfx.direct2d.disabled" = false;
           "svg.context-properties.content.enabled" = true;
           "browser.display.use_system_colors" = true;
           "browser.theme.dark-toolbar-theme" = true;
           "mailnews.default_sort_type" = 18;
           "mailnews.default_sort_order" = 2;
+          "mail.tabs.drawInTitlebar" = false;
         };
 
         userChrome = # css
