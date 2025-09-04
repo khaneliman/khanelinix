@@ -41,6 +41,7 @@ in
         };
         initrd.enable = true;
         opencl.enable = true;
+        overdrive.enable = true;
       };
 
       graphics = {
