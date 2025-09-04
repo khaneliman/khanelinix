@@ -62,6 +62,7 @@ in
       services = {
         ddccontrol = mkDefault enabled;
         earlyoom = mkDefault enabled;
+        lact = mkDefault enabled;
         logind = mkDefault enabled;
         logrotate = mkDefault enabled;
         oomd = mkDefault enabled;
