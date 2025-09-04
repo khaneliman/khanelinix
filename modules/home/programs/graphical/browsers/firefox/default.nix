@@ -233,6 +233,7 @@ in
             (optionalAttrs cfg.hardwareDecoding {
               "media.ffmpeg.vaapi.enabled" = true;
               "media.gpu-process-decoder" = true;
+              "media.gpu-process-encoder" = true;
               "media.hardware-video-decoding.enabled" = true;
             })
           ];
