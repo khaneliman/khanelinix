@@ -43,7 +43,12 @@ in
 
       wms = mkMerge [
         { hyprland.enable = true; }
-        { sway.enable = true; }
+        {
+          sway = {
+            enable = true;
+            withUWSM = true;
+          };
+        }
       ];
     };
 
