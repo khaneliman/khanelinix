@@ -22,7 +22,7 @@ in
       events = [
         {
           event = "before-sleep";
-          command = "swaylock -defF";
+          command = "loginctl lock-session";
         }
         {
           event = "after-resume";
@@ -30,16 +30,16 @@ in
         }
         {
           event = "lock";
-          command = "swaylock -defF";
+          command = "pidof swaylock || swaylock -defF";
         }
       ];
       timeouts = [
         {
-          timeout = 300;
-          command = "swaylock -defF";
+          timeout = 600;
+          command = "loginctl lock-session";
         }
         {
-          timeout = 600;
+          timeout = 3600;
           command = ''swaymsg "output * dpms off"'';
         }
       ];
