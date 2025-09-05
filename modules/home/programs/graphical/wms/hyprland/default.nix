@@ -59,12 +59,13 @@ in
     home = {
       packages = with pkgs; [
         grim
-        hyprsysteminfo
         hyprpicker
         hyprprop
-        pkgs.khanelinix.record_screen
-        slurp
+        hyprsysteminfo
         kdePackages.xwaylandvideobridge
+        khanelinix.record_screen
+        networkmanagerapplet
+        slurp
       ];
 
       pointerCursor.hyprcursor = {

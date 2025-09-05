@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
 
   osConfig ? { },
   ...
@@ -40,20 +39,41 @@ in
           # ░▀░▀░▀░░░▀░░░░░▀▀▀░░▀░░▀░▀░▀░▀░░▀░░▀▀▀░▀░░
 
           # Startup apps that have rules for organizing them
-          (map mkStartCommand [
-            "${getExe config.programs.firefox.package}"
-            "${getExe pkgs.steam}"
-            "${getExe config.programs.vesktop.package}"
-            "${getExe pkgs.element-desktop}"
-            "${getExe pkgs.teams-for-linux}"
-            "${getExe pkgs.thunderbird}"
-            "${getExe pkgs.openrgb-with-all-plugins} -c blue"
-            "${getExe pkgs._1password-gui} --silent"
-            "${getExe pkgs.tailscale-systray}"
-            "${getExe pkgs.networkmanagerapplet}"
-            "${getExe pkgs.wl-clip-persist} --clipboard both"
-            "$(${getExe pkgs.wayvnc} $(${getExe pkgs.tailscale} ip --4))"
-          ])
+          (map mkStartCommand (
+            lib.optionals config.programs.firefox.enable [
+              "${getExe config.programs.firefox.package}"
+            ]
+            ++ lib.optionals config.programs.vesktop.enable [
+              "${getExe config.programs.vesktop.package}"
+            ]
+            ++ lib.optionals (osConfig.programs.steam.enable or false) [
+              "steam"
+            ]
+            ++ lib.optionals config.khanelinix.suites.social.enable [
+              "element-desktop"
+            ]
+            ++ lib.optionals config.khanelinix.suites.business.enable [
+              "teams-for-linux"
+              "thunderbird"
+            ]
+            ++ lib.optionals (osConfig.services.hardware.openrgb.enable or false) [
+              "openrgb -c blue"
+            ]
+            ++ lib.optionals (osConfig.programs._1password-gui.enable or false) [
+              "1password --silent"
+            ]
+            ++ lib.optionals (osConfig.services.tailscale.enable or false) [
+              "tailscale-systray"
+            ]
+            ++ lib.optionals (osConfig.networking.networkmanager.enable or false) [
+              "nm-applet"
+            ]
+            ++ [
+              # Always start these utilities
+              "wl-clip-persist --clipboard both"
+              "wayvnc $(tailscale ip --4)"
+            ]
+          ))
           ++ lib.optionals (osConfig.programs.uwsm.enable or false) [ "uwsm finalize" ];
       };
     };
