@@ -3,6 +3,7 @@
   lib,
 
   pkgs,
+  osConfig ? { },
   ...
 }:
 let
@@ -14,6 +15,25 @@ let
     ;
 
   cfg = config.khanelinix.programs.graphical.wms.sway;
+
+  # UWSM integration helpers
+  mkStartCommand =
+    let
+      # Two-argument version: mkStartCommand { slice = "b"; } "command"
+      withArgs =
+        args: cmd:
+        let
+          slice = args.slice or null;
+        in
+        if (osConfig.programs.uwsm.enable or false) then
+          "uwsm app ${if slice == null then "" else "-s ${slice}"} -- ${cmd}"
+        else
+          cmd;
+
+      # Single-argument version: mkStartCommand "command"
+      withoutArgs = cmd: if (osConfig.programs.uwsm.enable or false) then "uwsm app -- ${cmd}" else cmd;
+    in
+    args: if lib.isString args then withoutArgs args else withArgs args;
 in
 {
   config = mkIf cfg.enable {
@@ -68,7 +88,7 @@ in
               # TODO: enable after swayprop available
               "${swayCfg.modifier}+BackSpace" =
                 "exec pkill -SIGUSR1 swaylock || WAYLAND_DISPLAY=wayland-1 $screen-locker";
-              "${swayCfg.modifier}+Return" = "exec ${swayCfg.terminal}";
+              "${swayCfg.modifier}+Return" = "exec ${mkStartCommand swayCfg.terminal}";
               "${swayCfg.modifier}+Shift+q" = "kill";
 
               # "${swayCfg.modifier}+${swayCfg.left}" = "focus left";
@@ -79,20 +99,20 @@ in
               # Additional bindings - Multiple launchers like Hyprland
               # FIXME: error on load
               # "${swayCfg.modifier}+Space" = mkForce "exec ${sherlock}";
-              "Control+Space" = "exec ${launcher}";
-              "Alt+Space" = "exec ${walker}";
-              "Super_L+Shift+Return" = "exec ${swayCfg.terminal} zellij";
+              "Control+Space" = "exec ${mkStartCommand launcher}";
+              "Alt+Space" = "exec ${mkStartCommand walker}";
+              "Super_L+Shift+Return" = "exec ${mkStartCommand "${swayCfg.terminal} zellij"}";
               "Super_L+Shift+P" = "exec ${color_picker}";
-              "${swayCfg.modifier}+b" = "exec ${browser}";
-              "Super_L+Shift+E" = "exec ${explorer}";
-              "${swayCfg.modifier}+e" = "exec ${swayCfg.terminal} yazi";
+              "${swayCfg.modifier}+b" = "exec ${mkStartCommand browser}";
+              "Super_L+Shift+E" = "exec ${mkStartCommand explorer}";
+              "${swayCfg.modifier}+e" = "exec ${mkStartCommand "${swayCfg.terminal} yazi"}";
               "${swayCfg.modifier}+Control+l" = mkForce "exec ${screen-locker} --immediate";
-              "${swayCfg.modifier}+t" = "exec ${swayCfg.terminal} btop";
+              "${swayCfg.modifier}+t" = "exec ${mkStartCommand "${swayCfg.terminal} btop"}";
               "${swayCfg.modifier}+n" = "exec ${notification_center} -t -sw";
               "${swayCfg.modifier}+v" = "exec ${cliphist}";
-              "${swayCfg.modifier}+w" = "exec ${looking-glass}";
+              "${swayCfg.modifier}+w" = "exec ${mkStartCommand looking-glass}";
               "${swayCfg.modifier}+i" = "exec ${window-inspector}";
-              "${swayCfg.modifier}+period" = "exec ${smile}";
+              "${swayCfg.modifier}+period" = "exec ${mkStartCommand smile}";
 
               # Kill window
               "${swayCfg.modifier}+Q" = "kill";
