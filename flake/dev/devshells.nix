@@ -4,13 +4,13 @@
   ...
 }:
 {
-  imports = lib.optional (inputs.devshell ? flakeModule) inputs.devshell.flakeModule;
+  imports = lib.optional (inputs.devenv ? flakeModule) inputs.devenv.flakeModule;
 
   perSystem =
     {
       pkgs,
       lib,
-      inputs,
+      inputs',
       self,
       self',
       config,
@@ -19,7 +19,8 @@
     let
       # Import the overlay configuration
       overlaysConfig = import ../overlays.nix {
-        inherit inputs lib self;
+        inputs = inputs';
+        inherit lib self;
       };
 
       # Custom pkgs with insecure packages allowed for devshells
@@ -53,21 +54,22 @@
       };
 
       shellsPath = ./shells;
-
       shellFiles = lib.filterAttrs (name: type: type == "regular" && lib.hasSuffix ".nix" name) (
         builtins.readDir shellsPath
       );
-
       shellNames = lib.mapAttrsToList (name: _: lib.removeSuffix ".nix" name) shellFiles;
 
       buildShell =
         name:
-        import (shellsPath + "/${name}.nix") {
-          inherit lib config self';
-          pkgs = devPkgs;
-        };
+        let
+          shellConfig = import (shellsPath + "/${name}.nix") {
+            inherit lib config self';
+            pkgs = devPkgs;
+          };
+        in
+        shellConfig;
     in
     {
-      devshells = lib.foldl' (acc: name: acc // buildShell name) { } shellNames;
+      devenv.shells = lib.foldl' (acc: name: acc // buildShell name) { } shellNames;
     };
 }

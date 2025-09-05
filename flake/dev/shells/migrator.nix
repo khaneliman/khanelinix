@@ -6,6 +6,14 @@
 {
   migrator = {
     name = "migrator";
+
+    languages.javascript = {
+      enable = true;
+      npm.enable = true;
+      yarn.enable = true;
+      pnpm.enable = true;
+    };
+
     packages =
       with pkgs;
       [
@@ -17,9 +25,6 @@
         claude-code
         csharpier
         (csharp-ls.overrideAttrs (_oldAttrs: {
-          # NOTE: csharp-ls requires a very new dotnet 8 sdk. This causes issues with workspace dotnet
-          # collisions because dotnet commands will run off the newest SDK breaking working with lower
-          # version projects.
           useDotnetFromEnv = false;
           meta.badPlatforms = [ ];
         }))
@@ -35,6 +40,11 @@
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         react-native-debugger
       ];
-    devshell.motd = "🔨 Migrator DevShell";
+
+    enterShell = ''
+      echo "🔨 Migrator DevShell"
+      echo "Node.js $(node --version)"
+      echo "Full-stack development environment ready"
+    '';
   };
 }

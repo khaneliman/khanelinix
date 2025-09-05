@@ -154,6 +154,18 @@
         "type": "github"
       }
     },
+    "devenv-root": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-d6xi4mKdjkX2JFicDIv5niSzpyI0m/Hnm8GGAIU04kY=",
+        "type": "file",
+        "url": "file:///dev/null"
+      },
+      "original": {
+        "type": "file",
+        "url": "file:///dev/null"
+      }
+    },
     "disko": {
       "inputs": {
         "nixpkgs": [
@@ -1237,6 +1249,7 @@
       "inputs": {
         "anyrun-nixos-options": "anyrun-nixos-options",
         "catppuccin": "catppuccin",
+        "devenv-root": "devenv-root",
         "disko": "disko",
         "firefox-addons": "firefox-addons",
         "flake-compat": "flake-compat",

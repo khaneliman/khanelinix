@@ -2,6 +2,7 @@
 {
   nix = {
     name = "nix";
+
     packages = with pkgs; [
       deadnix
       hydra-check
@@ -22,6 +23,10 @@
       nixpkgs-review
       statix
     ];
-    devshell.motd = "🔨 Nix DevShell";
+
+    enterShell = ''
+      echo "🔨 Nix DevShell"
+      echo "Comprehensive Nix development tooling available"
+    '';
   };
 }

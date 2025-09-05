@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   self',
   ...
@@ -7,6 +6,7 @@
 {
   default = {
     name = "khanelinix";
+
     packages = with pkgs; [
       act
       deadnix
@@ -15,28 +15,38 @@
       sops
       self'.formatter
     ];
-    commands = [
-      {
-        name = "check";
-        help = "Run all flake checks";
-        command = "nix flake check";
-      }
-      {
-        name = "fmt";
-        help = "Format code without cache";
-        command = "nix fmt -- --no-cache";
-      }
-      {
-        name = "lint";
-        help = "Check for anti-patterns";
-        command = "statix check";
-      }
-      {
-        name = "find-dead";
-        help = "Find unused code";
-        command = "deadnix";
-      }
-    ];
-    devshell.startup.pre-commit.text = config.pre-commit.installationScript;
+
+    scripts = {
+      check = {
+        description = "Run all flake checks";
+        exec = "nix flake check";
+      };
+      fmt = {
+        description = "Format code without cache";
+        exec = "nix fmt -- --no-cache";
+      };
+      lint = {
+        description = "Check for anti-patterns";
+        exec = "statix check";
+      };
+      find-dead = {
+        description = "Find unused code";
+        exec = "deadnix";
+      };
+    };
+
+    git-hooks.hooks = {
+      treefmt = {
+        enable = true;
+        package = self'.formatter;
+      };
+    };
+
+    enterShell = ''
+      eval "$(direnv hook zsh)"
+
+      echo "🚀 Khanelinix development environment"
+      echo "Available commands: check, fmt, lint, find-dead"
+    '';
   };
 }

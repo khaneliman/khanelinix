@@ -1,14 +1,27 @@
-{ pkgs, ... }:
-{
+_: {
   rust = {
     name = "rust";
-    packages = with pkgs; [
-      cargo
-      clippy
-      rust-analyzer
-      rustc
-      rustfmt
-    ];
-    devshell.motd = "🔨 Rust DevShell";
+
+    languages.rust = {
+      enable = true;
+      channel = "stable";
+      version = "latest";
+      components = [
+        "rustc"
+        "cargo"
+        "clippy"
+        "rustfmt"
+        "rust-analyzer"
+      ];
+      targets = [ ];
+      rustflags = "";
+      mold.enable = false;
+    };
+
+    enterShell = ''
+      echo "🔨 Rust DevShell"
+      echo "Rust $(rustc --version)"
+      echo "Components: rustc, cargo, clippy, rustfmt, rust-analyzer"
+    '';
   };
 }

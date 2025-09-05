@@ -42,5 +42,6 @@ result
 .ccls-cache
 .pre-commit-config.yaml
 .venv
+.devenv
 
 **/.claude/settings.local.json

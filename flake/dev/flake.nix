@@ -10,8 +10,8 @@
     flake-compat.follows = "root/flake-compat";
 
     # keep-sorted start block=yes newline_separated=yes
-    devshell = {
-      url = "github:numtide/devshell";
+    devenv = {
+      url = "github:cachix/devenv";
       inputs.nixpkgs.follows = "root/nixpkgs";
     };
 
@@ -19,6 +19,11 @@
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "root/nixpkgs";
       inputs.flake-compat.follows = "flake-compat";
+    };
+
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "root/nixpkgs";
     };
 
     treefmt-nix = {

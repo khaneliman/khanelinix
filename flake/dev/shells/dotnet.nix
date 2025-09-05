@@ -27,12 +27,9 @@ let
       upgrade-assistant
     ];
 
-    env = [
-      {
-        name = "NUGET_PLUGIN_PATHS";
-        value = "${pkgs.khanelinix.artifacts-credprovider}/bin/netcore/CredentialProvider.Microsoft/CredentialProvider.Microsoft.dll";
-      }
-    ];
+    shellHook = ''
+      export NUGET_PLUGIN_PATHS=${pkgs.khanelinix.artifacts-credprovider}/bin/netcore/CredentialProvider.Microsoft/CredentialProvider.Microsoft.dll
+    '';
   };
 
   # Create version-specific dotnet shell
@@ -79,8 +76,7 @@ let
       selectedPackages = versionPackages.${version} or (throw "Unsupported .NET version: ${version}");
       selectedSdk = versionSdks.${version} or (throw "Unsupported .NET version: ${version}");
     in
-    {
-      name = "dotnet${version}";
+    pkgs.mkShell {
       packages = [
         (pkgs.dotnetCorePackages.combinePackages selectedPackages)
       ]
@@ -98,12 +94,10 @@ let
       )
       ++ baseDotnetShell.packages;
 
-      env = baseDotnetShell.env ++ [
-        {
-          name = "DOTNET_ROOT";
-          value = "${selectedSdk}";
-        }
-      ];
+      shellHook = baseDotnetShell.shellHook + ''
+        export DOTNET_ROOT="${selectedSdk}";
+        echo 🔨 Dotnet ${version} DevShell
+      '';
     };
 
   # Generate dotnet shells for each version
@@ -123,9 +117,11 @@ let
 
   # Base dotnet shell (defaults to .NET 8)
   baseShell = {
-    dotnet = {
-      name = "dotnet";
-      inherit (baseDotnetShell) packages env;
+    dotnet = pkgs.mkShell {
+      inherit (baseDotnetShell) packages;
+      shellHook = baseDotnetShell.shellHook + ''
+        echo 🔨 Dotnet DevShell
+      '';
     };
   };
 in

@@ -1,31 +1,27 @@
 { pkgs, lib, ... }:
 let
   llvm = pkgs.llvmPackages_latest;
-
-  # simple script which replaces the functionality of make
-  # it works with <math.h> and includes debugging symbols by default
-  # it will be updated as per needs
-
-  # arguments: outfile
-  # basic usage example: mk main [flags]
-  mymake =
-    pkgs.writeShellScriptBin "mk" # bash
-      ''
-        if [ -f "$1.c" ]; then
-          i="$1.c"
-          c=$CC
-        else
-          i="$1.cpp"
-          c=$CXX
-        fi
-        o=$1
-        shift
-        $c -ggdb $i -o $o -lm -Wall $@
-      '';
+  mymake = pkgs.writeShellScriptBin "mk" ''
+    if [ -f "$1.c" ]; then
+      i="$1.c"
+      c=$CC
+    else
+      i="$1.cpp"
+      c=$CXX
+    fi
+    o=$1
+    shift
+    $c -ggdb $i -o $o -lm -Wall $@
+  '';
 in
 {
   c = {
     name = "c";
+
+    languages.c = {
+      enable = true;
+    };
+
     packages =
       with pkgs;
       [
@@ -63,6 +59,10 @@ in
         gdb
         valgrind
       ];
-    devshell.motd = "🔨 Cpp DevShell";
+
+    enterShell = ''
+      echo "🔨 C/C++ DevShell"
+      echo "GCC $(gcc --version | head -n1)"
+    '';
   };
 }

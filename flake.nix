@@ -92,6 +92,12 @@
       url = "github:yazi-rs/flavors";
       flake = false;
     };
+
+    # Required for devenv to determine project root
+    devenv-root = {
+      url = "file+file:///dev/null";
+      flake = false;
+    };
   };
 
   outputs =

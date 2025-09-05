@@ -2,15 +2,23 @@
 {
   java = {
     name = "java";
+
+    languages.java = {
+      enable = true;
+      jdk.package = pkgs.jdk17;
+      maven.enable = true;
+      gradle.enable = true;
+    };
+
     packages = with pkgs; [
-      jdk
       jdk8
       jdk11
-      jdk17
       temurin-jre-bin-17
-      maven
-      gradle
     ];
-    devshell.motd = "🔨 Java DevShell";
+
+    enterShell = ''
+      echo "🔨 Java DevShell"
+      echo "Java $(java -version 2>&1 | head -n1)"
+    '';
   };
 }

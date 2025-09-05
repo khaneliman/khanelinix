@@ -2,23 +2,21 @@
 {
   python = {
     name = "python";
+
+    languages.python = {
+      enable = true;
+      version = "3.12";
+      venv.enable = true;
+    };
+
     packages = with pkgs; [
       black
-      (python3.withPackages (
-        ps: with ps; [
-          flake8
-          ipython
-          mypy
-          pip
-          pytest
-        ]
-      ))
       ruff
     ];
-    devshell.startup.create-venv = {
-      deps = [ ];
-      text = ''python3 -m venv .venv && source .venv/bin/activate'';
-    };
-    devshell.motd = "🔨 Python DevShell";
+
+    enterShell = ''
+      echo "🔨 Python DevShell"
+      echo "Python $(python --version)"
+    '';
   };
 }
