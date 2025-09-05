@@ -3,10 +3,11 @@
   lib,
   pkgs,
 
+  osConfig ? { },
   ...
 }:
 let
-  inherit (lib) mkIf mkEnableOption getExe;
+  inherit (lib) mkIf mkEnableOption;
   inherit (lib.khanelinix) enabled;
 
   cfg = config.khanelinix.programs.graphical.wms.sway;
@@ -100,7 +101,7 @@ in
 
     wayland.windowManager.sway = {
       enable = true;
-      package = pkgs.swayfx;
+      package = lib.mkIf (osConfig ? programs.sway.package) osConfig.programs.sway.package;
       checkConfig = false;
 
       config = {
@@ -138,6 +139,7 @@ in
         blur_passes 4
         blur_radius 5
 
+        shadows enable
         shadows_on_csd enable
         titlebar_separator disable
         scratchpad_minimize disable

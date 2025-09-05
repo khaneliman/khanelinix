@@ -66,10 +66,10 @@ in
 
     programs.sway = {
       enable = true;
-      package = pkgs.sway;
+      package = pkgs.swayfx;
     };
 
-    services.displayManager.sessionPackages = [ pkgs.sway ];
+    services.displayManager.sessionPackages = [ pkgs.swayfx ];
 
     # UWSM integration
     programs.uwsm = lib.mkIf cfg.withUWSM {
