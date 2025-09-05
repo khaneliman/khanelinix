@@ -71,7 +71,7 @@ in
         wayvnc
       ];
 
-      sessionVariables = {
+      sessionVariables = lib.mkIf (!(osConfig.khanelinix.programs.graphical.wms.sway.withUWSM or false)) {
         CLUTTER_BACKEND = "wayland";
         MOZ_ENABLE_WAYLAND = "1";
         MOZ_USE_XINPUT2 = "1";
@@ -166,7 +166,7 @@ in
       inherit (cfg) extraSessionCommands;
 
       systemd = {
-        enable = true;
+        enable = !(osConfig.khanelinix.programs.graphical.wms.sway.withUWSM or false);
         xdgAutostart = true;
 
         variables = [

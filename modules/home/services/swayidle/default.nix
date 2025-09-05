@@ -2,6 +2,8 @@
   config,
   lib,
   pkgs,
+
+  osConfig ? { },
   ...
 }:
 let
@@ -17,7 +19,7 @@ in
       enable = true;
       package = pkgs.swayidle;
 
-      systemdTarget = "sway-session.target";
+      systemdTarget = lib.mkIf (!(osConfig.programs.uwsm.enable or false)) "sway-session.target";
 
       events = [
         {

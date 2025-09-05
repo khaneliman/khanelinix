@@ -31,7 +31,8 @@ in
         systemdTargets =
           cfg.systemdTargets
           ++ lib.optionals (
-            config.wayland.windowManager.hyprland.enable && (osConfig.programs.hyprland.withUWSM or false)
+            (config.wayland.windowManager.hyprland.enable && (osConfig.programs.hyprland.withUWSM or false))
+            || (config.wayland.windowManager.sway.enable && (osConfig.programs.uwsm.enable or false))
           ) [ "graphical-session.target" ]
           ++
             lib.optionals
@@ -39,7 +40,9 @@ in
               [
                 "hyprland-session.target"
               ]
-          ++ lib.optionals config.wayland.windowManager.sway.enable [ "sway-session.target" ];
+          ++ lib.optionals (
+            config.wayland.windowManager.sway.enable && !(osConfig.programs.uwsm.enable or false)
+          ) [ "sway-session.target" ];
 
       };
     };
