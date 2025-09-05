@@ -1,42 +1,28 @@
 {
   config,
+  mkShell,
   pkgs,
   self',
   ...
 }:
-{
-  default = {
-    name = "khanelinix";
-    packages = with pkgs; [
-      act
-      deadnix
-      nh
-      statix
-      sops
-      self'.formatter
-    ];
-    commands = [
-      {
-        name = "check";
-        help = "Run all flake checks";
-        command = "nix flake check";
-      }
-      {
-        name = "fmt";
-        help = "Format code without cache";
-        command = "nix fmt -- --no-cache";
-      }
-      {
-        name = "lint";
-        help = "Check for anti-patterns";
-        command = "statix check";
-      }
-      {
-        name = "find-dead";
-        help = "Find unused code";
-        command = "deadnix";
-      }
-    ];
-    devshell.startup.pre-commit.text = config.pre-commit.installationScript;
-  };
+mkShell {
+  packages = with pkgs; [
+    act
+    deadnix
+    nh
+    statix
+    sops
+    self'.formatter
+  ];
+
+  shellHook = ''
+    ${config.pre-commit.installationScript}
+
+    echo "🚀 Khanelinix development environment"
+    echo "Available commands:"
+    echo "  nix flake check       - Run all checks"
+    echo "  nix fmt -- --no-cache - Format without cache"
+    echo "  statix check          - Check for anti-patterns"
+    echo "  deadnix               - Find unused code"
+  '';
 }

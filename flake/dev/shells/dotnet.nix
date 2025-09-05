@@ -1,12 +1,12 @@
 {
   lib,
-  pkgs,
+  devPkgs,
   ...
 }:
 let
   # Base dotnet packages and configuration
   baseDotnetShell = {
-    packages = with pkgs; [
+    packages = with devPkgs; [
       khanelinix.avrogen
       # FIXME: broken nixpkgs
       # azure-cli
@@ -27,12 +27,9 @@ let
       upgrade-assistant
     ];
 
-    env = [
-      {
-        name = "NUGET_PLUGIN_PATHS";
-        value = "${pkgs.khanelinix.artifacts-credprovider}/bin/netcore/CredentialProvider.Microsoft/CredentialProvider.Microsoft.dll";
-      }
-    ];
+    shellHook = ''
+      export NUGET_PLUGIN_PATHS=${devPkgs.khanelinix.artifacts-credprovider}/bin/netcore/CredentialProvider.Microsoft/CredentialProvider.Microsoft.dll
+    '';
   };
 
   # Create version-specific dotnet shell
@@ -41,27 +38,27 @@ let
     let
       # Version mapping for packages
       versionPackages = {
-        "6" = with pkgs; [
+        "6" = with devPkgs; [
           dotnet-aspnetcore_6
           dotnet-runtime_6
           dotnet-sdk_6
         ];
-        "7" = with pkgs; [
+        "7" = with devPkgs; [
           dotnet-aspnetcore_7
           dotnet-runtime_7
           dotnet-sdk_7
         ];
-        "8" = with pkgs; [
+        "8" = with devPkgs; [
           dotnet-aspnetcore_8
           dotnet-runtime_8
           dotnet-sdk_8
         ];
-        "9" = with pkgs; [
+        "9" = with devPkgs; [
           dotnet-aspnetcore_9
           dotnet-runtime_9
           dotnet-sdk_9
         ];
-        "10" = with pkgs; [
+        "10" = with devPkgs; [
           dotnet-aspnetcore_10
           dotnet-runtime_10
           dotnet-sdk_10
@@ -69,26 +66,25 @@ let
       };
 
       versionSdks = {
-        "6" = pkgs.dotnet-sdk_6;
-        "7" = pkgs.dotnet-sdk_7;
-        "8" = pkgs.dotnet-sdk_8;
-        "9" = pkgs.dotnet-sdk_9;
-        "10" = pkgs.dotnet-sdk_10;
+        "6" = devPkgs.dotnet-sdk_6;
+        "7" = devPkgs.dotnet-sdk_7;
+        "8" = devPkgs.dotnet-sdk_8;
+        "9" = devPkgs.dotnet-sdk_9;
+        "10" = devPkgs.dotnet-sdk_10;
       };
 
       selectedPackages = versionPackages.${version} or (throw "Unsupported .NET version: ${version}");
       selectedSdk = versionSdks.${version} or (throw "Unsupported .NET version: ${version}");
     in
-    {
-      name = "dotnet${version}";
+    devPkgs.mkShell {
       packages = [
-        (pkgs.dotnetCorePackages.combinePackages selectedPackages)
+        (devPkgs.dotnetCorePackages.combinePackages selectedPackages)
       ]
       ++ (
         if version == "6" then
           [
             # Special handling for .NET 6 csharp-ls override
-            (pkgs.csharp-ls.overrideAttrs (_oldAttrs: {
+            (devPkgs.csharp-ls.overrideAttrs (_oldAttrs: {
               useDotnetFromEnv = false;
               meta.badPlatforms = [ ];
             }))
@@ -98,12 +94,10 @@ let
       )
       ++ baseDotnetShell.packages;
 
-      env = baseDotnetShell.env ++ [
-        {
-          name = "DOTNET_ROOT";
-          value = "${selectedSdk}";
-        }
-      ];
+      shellHook = baseDotnetShell.shellHook + ''
+        export DOTNET_ROOT="${selectedSdk}";
+        echo 🔨 Dotnet ${version} DevShell
+      '';
     };
 
   # Generate dotnet shells for each version
@@ -123,9 +117,11 @@ let
 
   # Base dotnet shell (defaults to .NET 8)
   baseShell = {
-    dotnet = {
-      name = "dotnet";
-      inherit (baseDotnetShell) packages env;
+    dotnet = devPkgs.mkShell {
+      inherit (baseDotnetShell) packages;
+      shellHook = baseDotnetShell.shellHook + ''
+        echo 🔨 Dotnet DevShell
+      '';
     };
   };
 in

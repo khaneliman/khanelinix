@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ mkShell, pkgs, ... }:
 let
   llvm = pkgs.llvmPackages_latest;
 
@@ -23,46 +23,49 @@ let
         $c -ggdb $i -o $o -lm -Wall $@
       '';
 in
-{
-  c = {
-    name = "c";
-    packages =
-      with pkgs;
-      [
-        # builder
-        gnumake
-        cmake
-        bear
-        meson
-        ninja
+mkShell {
+  packages =
+    with pkgs;
+    [
+      # builder
+      gnumake
+      cmake
+      bear
+      meson
+      ninja
 
-        # debugger
-        llvm.lldb
+      # debugger
+      llvm.lldb
 
-        # fix headers not found
-        clang-tools
+      # fix headers not found
+      clang-tools
 
-        # LSP and compiler
-        llvm.libstdcxxClang
+      # LSP and compiler
+      llvm.libstdcxxClang
 
-        # other tools
-        cppcheck
-        cpplint
-        llvm.libllvm
-        mymake
+      # other tools
+      cppcheck
+      cpplint
+      llvm.libllvm
+      mymake
 
-        # stdlib for cpp
-        llvm.libcxx
+      # stdlib for cpp
+      llvm.libcxx
 
-        # libs
-        glm
-        SDL2
-        SDL2_gfx
-      ]
-      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-        gdb
-        valgrind
-      ];
-    devshell.motd = "🔨 Cpp DevShell";
-  };
+      # libs
+      glm
+      SDL2
+      SDL2_gfx
+    ]
+    ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+      gdb
+      valgrind
+    ];
+
+  shellHook = ''
+
+    echo 🔨 Cpp DevShell
+
+
+  '';
 }
