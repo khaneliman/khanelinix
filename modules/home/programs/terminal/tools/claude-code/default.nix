@@ -77,10 +77,11 @@ in
             "Bash(pw-top)"
 
             # Core Claude Code tools
-            "Read(*)"
             "Glob(*)"
             "Grep(*)"
             "LS(*)"
+            "Read(*)"
+            "Search(*)"
             "Task(*)"
             "TodoWrite(*)"
 
