@@ -18,6 +18,7 @@ in
 
     # TODO: remove after hits channel
     gemini-cli
+    anyrun
     ;
 
   # From nixpkgs-unstable

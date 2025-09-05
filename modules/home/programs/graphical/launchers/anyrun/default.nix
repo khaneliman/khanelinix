@@ -123,33 +123,48 @@ in
             font-size: 1.3rem;
           }
 
-          #window,
-          #match,
-          #entry,
-          #plugin,
-          #main {
+          /* Main window */
+          window {
             background: transparent;
           }
 
-          #match:selected {
-            background: rgba(203, 166, 247, 0.7);
-          }
-
-          #match {
-            padding: 3px;
-            border-radius: 16px;
-          }
-
-          #entry,
-          #plugin:hover {
-            border-radius: 16px;
-          }
-
-          box#main {
+          /* Main container box */
+          .main {
             background: rgba(30, 30, 46, 1);
             border: 2px solid #494d64;
             border-radius: 16px;
             padding: 8px;
+          }
+
+          /* Entry text field */
+          text {
+            background: transparent;
+            border-radius: 16px;
+          }
+
+          /* Results container */
+          .matches {
+            background: transparent;
+          }
+
+          /* Individual match */
+          .match {
+            padding: 3px;
+            border-radius: 16px;
+            background: transparent;
+          }
+
+          .match:selected {
+            background: rgba(203, 166, 247, 0.7);
+          }
+
+          /* Plugin containers */
+          .plugin {
+            background: transparent;
+          }
+
+          .plugin:hover {
+            border-radius: 16px;
           }
         '';
     };
