@@ -128,7 +128,6 @@ in
         };
 
         ecosystem = {
-          enforce_permissions = true;
           no_donation_nag = true;
         };
 

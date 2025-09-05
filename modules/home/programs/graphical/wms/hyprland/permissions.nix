@@ -36,6 +36,10 @@ in
   config = lib.mkIf cfg.enable {
     wayland.windowManager.hyprland = {
       settings = {
+        ecosystem = {
+          enforce_permissions = false;
+        };
+
         permission =
           mkPackagePermissions [
             config.programs.hyprlock.package
