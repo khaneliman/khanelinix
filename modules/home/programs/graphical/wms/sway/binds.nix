@@ -18,55 +18,54 @@ in
 {
   config = mkIf cfg.enable {
     wayland.windowManager.sway = {
-      config = {
-        keybindings =
-          let
-            swayCfg = config.wayland.windowManager.sway.config;
+      config =
+        let
+          swayCfg = config.wayland.windowManager.sway.config;
 
-            getDateTime = getExe (
-              pkgs.writeShellScriptBin "getDateTime" # bash
-                ''
-                  echo $(date +'%Y%m%d_%H%M%S')
-                ''
-            );
+          getDateTime = getExe (
+            pkgs.writeShellScriptBin "getDateTime" # bash
+              ''
+                echo $(date +'%Y%m%d_%H%M%S')
+              ''
+          );
 
-            screenshot-path = "/home/${config.khanelinix.user.name}/Pictures/screenshots";
-            browser = "${getExe config.programs.firefox.package}";
-            explorer = "nautilus";
-            notification_center = "${getExe' config.services.swaync.package "swaync-client"}";
-            launcher = "${getExe config.programs.anyrun.package}";
-            looking-glass = "looking-glass-client";
-            screen-locker = "${getExe config.programs.swaylock.package}";
-            # TODO: package upstream
-            # window-inspector = "swayprop"; # TODO: package upstream
-            screen-recorder = "record_screen";
+          screenshot-path = "/home/${config.khanelinix.user.name}/Pictures/screenshots";
+          browser = "${getExe config.programs.firefox.package}";
+          explorer = "nautilus";
+          notification_center = "${getExe' config.services.swaync.package "swaync-client"}";
+          launcher = "${getExe config.programs.anyrun.package}";
+          looking-glass = "looking-glass-client";
+          screen-locker = "${getExe config.programs.swaylock.package}";
+          # TODO: package upstream
+          # window-inspector = "swayprop"; # TODO: package upstream
+          screen-recorder = "record_screen";
 
-            # screenshot commands
-            grimblast_area_file = ''file="${screenshot-path}/$(${getDateTime}).png" && grimblast --freeze --notify save area "$file"'';
-            grimblast_active_file = ''file="${screenshot-path}/$(${getDateTime}).png" && grimblast --notify save active "$file"'';
-            grimblast_screen_file = ''file="${screenshot-path}/$(${getDateTime}).png" && grimblast --notify save screen "$file"'';
+          # screenshot commands using grim/slurp for sway
+          sway_area_file = ''file="${screenshot-path}/$(${getDateTime}).png" && grim -g "$(slurp)" "$file" && notify-send "Screenshot" "Area saved to $file"'';
+          sway_active_file = ''file="${screenshot-path}/$(${getDateTime}).png" && grim -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')" "$file" && notify-send "Screenshot" "Window saved to $file"'';
+          sway_screen_file = ''file="${screenshot-path}/$(${getDateTime}).png" && grim "$file" && notify-send "Screenshot" "Screen saved to $file"'';
 
-            grimblast_area_swappy = ''grimblast --freeze save area - | swappy -f -'';
-            grimblast_active_swappy = ''grimblast save active - | swappy -f -'';
-            grimblast_screen_swappy = ''grimblast save screen - | swappy -f -'';
+          sway_area_swappy = ''grim -g "$(slurp)" - | swappy -f -'';
+          sway_active_swappy = ''grim -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')" - | swappy -f -'';
+          sway_screen_swappy = ''grim - | swappy -f -'';
 
-            grimblast_area_clipboard = "grimblast --freeze --notify copy area";
-            grimblast_active_clipboard = "grimblast --notify copy active";
-            grimblast_screen_clipboard = "grimblast --notify copy screen";
+          sway_area_clipboard = ''grim -g "$(slurp)" - | wl-copy && notify-send "Screenshot" "Area copied to clipboard"'';
+          sway_active_clipboard = ''grim -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')" - | wl-copy && notify-send "Screenshot" "Window copied to clipboard"'';
+          sway_screen_clipboard = ''grim - | wl-copy && notify-send "Screenshot" "Screen copied to clipboard"'';
 
-            # utility commands
-            color_picker = "hyprpicker -a && (${getExe' pkgs.imagemagick "convert"} -size 32x32 xc:$(wl-paste) /tmp/color.png && notify-send \"Color Code:\" \"$(wl-paste)\" -h \"string:bgcolor:$(wl-paste)\" --icon /tmp/color.png -u critical -t 4000)";
-            cliphist = "cliphist list | anyrun --show-results-immediately true | cliphist decode | wl-copy";
-            sherlock = "sherlock";
-            walker = "walker";
-            smile = "smile";
-            window-inspector = "swaymsg -t get_tree | jq -r '.. | select(.focused? == true)' | notify-send 'Window Info' -t 5000";
-          in
-          lib.mkMerge [
+          # utility commands
+          color_picker = "grim -g \"$(slurp -p)\" -t ppm - | ${getExe' pkgs.imagemagick "convert"} - -format '%[pixel:p{0,0}]' txt:- | tail -n1 | cut -d' ' -f4 | wl-copy && (${getExe' pkgs.imagemagick "convert"} -size 32x32 xc:$(wl-paste) /tmp/color.png && notify-send \"Color Code:\" \"$(wl-paste)\" -h \"string:bgcolor:$(wl-paste)\" --icon /tmp/color.png -u critical -t 4000)";
+          cliphist = "cliphist list | anyrun --show-results-immediately true | cliphist decode | wl-copy";
+          walker = "walker";
+          smile = "smile";
+          window-inspector = "swaymsg -t get_tree | jq -r '.. | select(.focused? == true)' | notify-send 'Window Info' -t 5000";
+        in
+        {
+          keybindings = lib.mkMerge [
             (lib.mkOptionDefault {
               "${swayCfg.modifier}+l" = "exec ${screen-locker}";
               # TODO: enable after swayprop available
-              # "${swayCfg.modifier}+i" = "exec ${getExe pkgs.libnotify} ${window-inspector}";
+              # TODO: enable after swayprop available
               "${swayCfg.modifier}+BackSpace" =
                 "exec pkill -SIGUSR1 swaylock || WAYLAND_DISPLAY=wayland-1 $screen-locker";
               "${swayCfg.modifier}+Return" = "exec ${swayCfg.terminal}";
@@ -100,23 +99,23 @@ in
               "Control+Shift+q" = "kill";
 
               # File screenshots
-              "Print" = "exec ${grimblast_active_file}";
-              "Shift+Print" = "exec ${grimblast_area_file}";
-              "Super_L+Print" = "exec ${grimblast_screen_file}";
+              "Print" = "exec ${sway_active_file}";
+              "Shift+Print" = "exec ${sway_area_file}";
+              "Super_L+Print" = "exec ${sway_screen_file}";
 
               # Area / Window screenshots
-              "Alt+Print" = "exec ${grimblast_active_swappy}";
-              "Alt+Control+Print" = "exec ${grimblast_area_swappy}";
-              "Alt+Super_L+Print" = "exec ${grimblast_screen_swappy}";
+              "Alt+Print" = "exec ${sway_active_swappy}";
+              "Alt+Control+Print" = "exec ${sway_area_swappy}";
+              "Alt+Super_L+Print" = "exec ${sway_screen_swappy}";
 
               # Clipboard screenshots
-              "Control+Print" = "exec ${grimblast_active_clipboard}";
-              "Control+Shift+Print" = "exec ${grimblast_area_clipboard}";
-              "Super_L+Control+Print" = "exec ${grimblast_screen_clipboard}";
+              "Control+Print" = "exec ${sway_active_clipboard}";
+              "Control+Shift+Print" = "exec ${sway_area_clipboard}";
+              "Super_L+Control+Print" = "exec ${sway_screen_clipboard}";
 
               # Screen recording
-              "Super_L+Control+Alt+Print" = "exec ${screen-recorder} screen";
-              "Super_L+Control+Alt+Shift+Print" = "exec ${screen-recorder} area";
+              "${swayCfg.modifier}+Control+Alt+Print" = "exec ${screen-recorder} screen";
+              "${swayCfg.modifier}+Control+Alt+Shift+Print" = "exec ${screen-recorder} area";
 
               # Floating toggle
               "Super_L+Alt+v" = "floating toggle";
@@ -217,8 +216,75 @@ in
                 )
               )
             ))
+            # Additional mode keybindings similar to Hyprland submaps
+            (lib.mkOptionDefault {
+              "${swayCfg.modifier}+s" = "mode screenshot";
+              "${swayCfg.modifier}+x" = "mode system";
+              "${swayCfg.modifier}+r" = "mode resize";
+              "${swayCfg.modifier}+m" = "mode monitor";
+            })
           ];
-      };
+
+          modes = {
+            screenshot = {
+              "w" = "exec ${sway_active_clipboard}, mode default";
+              "a" = "exec ${sway_area_clipboard}, mode default";
+              "s" = "exec ${sway_screen_clipboard}, mode default";
+              "Shift+w" = "exec ${sway_active_file}, mode default";
+              "Shift+a" = "exec ${sway_area_file}, mode default";
+              "Shift+s" = "exec ${sway_screen_file}, mode default";
+              "Alt+w" = "exec ${sway_active_swappy}, mode default";
+              "Alt+a" = "exec ${sway_area_swappy}, mode default";
+              "Alt+s" = "exec ${sway_screen_swappy}, mode default";
+              "r" = "exec record_screen screen, mode default";
+              "Shift+r" = "exec record_screen area, mode default";
+              "Escape" = "mode default";
+              "Mod4+s" = "mode default";
+            };
+
+            system = {
+              "l" = "exit";
+              "r" = "exec systemctl reboot";
+              "p" = "exec systemctl poweroff";
+              "Escape" = "mode default";
+              "Mod4+x" = "mode default";
+            };
+
+            resize = {
+              "h" = "resize shrink width 10 px or 10 ppt";
+              "j" = "resize grow height 10 px or 10 ppt";
+              "k" = "resize shrink height 10 px or 10 ppt";
+              "l" = "resize grow width 10 px or 10 ppt";
+              "left" = "resize shrink width 10 px or 10 ppt";
+              "down" = "resize grow height 10 px or 10 ppt";
+              "up" = "resize shrink height 10 px or 10 ppt";
+              "right" = "resize grow width 10 px or 10 ppt";
+              "Escape" = "mode default";
+              "Mod4+r" = "mode default";
+            };
+
+            monitor = {
+              "h" = "focus output left";
+              "j" = "focus output down";
+              "k" = "focus output up";
+              "l" = "focus output right";
+              "left" = "focus output left";
+              "down" = "focus output down";
+              "up" = "focus output up";
+              "right" = "focus output right";
+              "Shift+h" = "move workspace to output left";
+              "Shift+j" = "move workspace to output down";
+              "Shift+k" = "move workspace to output up";
+              "Shift+l" = "move workspace to output right";
+              "Shift+left" = "move workspace to output left";
+              "Shift+down" = "move workspace to output down";
+              "Shift+up" = "move workspace to output up";
+              "Shift+right" = "move workspace to output right";
+              "Escape" = "mode default";
+              "Mod4+m" = "mode default";
+            };
+          };
+        };
     };
   };
 }
