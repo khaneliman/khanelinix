@@ -61,6 +61,7 @@ in
         grim
         hyprsysteminfo
         hyprpicker
+        hyprprop
         pkgs.khanelinix.record_screen
         slurp
         kdePackages.xwaylandvideobridge
