@@ -1,13 +1,10 @@
 {
   config,
   lib,
-
   pkgs,
   ...
 }:
 let
-  inherit (lib) getExe getExe';
-
   cfg = config.khanelinix.services.swayidle;
 in
 {
@@ -25,25 +22,25 @@ in
       events = [
         {
           event = "before-sleep";
-          command = "${getExe config.programs.swaylock.package} -defF";
+          command = "swaylock -defF";
         }
         {
           event = "after-resume";
-          command = ''${getExe' config.wayland.windowManager.sway.package "swaymsg"} "output * dpms on"'';
+          command = ''swaymsg "output * dpms on"'';
         }
         {
           event = "lock";
-          command = "${getExe config.programs.swaylock.package} -defF";
+          command = "swaylock -defF";
         }
       ];
       timeouts = [
         {
           timeout = 300;
-          command = "${getExe config.programs.swaylock.package} -defF";
+          command = "swaylock -defF";
         }
         {
           timeout = 600;
-          command = ''${getExe' config.wayland.windowManager.sway.package "swaymsg"} "output * dpms off"'';
+          command = ''swaymsg "output * dpms off"'';
         }
       ];
     };
