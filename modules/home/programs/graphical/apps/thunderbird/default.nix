@@ -187,8 +187,7 @@ in
 
         settings = {
           "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
-          "layers.acceleration.disabled" = true;
-          # "layers.acceleration.force-enabled" = true;
+          "layers.acceleration.force-enabled" = true;
           "gfx.webrender.all" = true;
           "gfx.webrender.enabled" = true;
           "gfx.direct2d.disabled" = false;
