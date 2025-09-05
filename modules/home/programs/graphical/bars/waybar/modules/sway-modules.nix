@@ -3,6 +3,12 @@ let
   inherit (lib) getExe';
 in
 {
+  "sway/mode" = {
+    format = " {}";
+    max-length = 50;
+    tooltip = false;
+  };
+
   "sway/window" = {
     format = "{}";
     separate-outputs = true;

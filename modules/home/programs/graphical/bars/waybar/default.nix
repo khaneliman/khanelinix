@@ -83,6 +83,7 @@ let
       "group/control-center"
     ]
     ++ lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [ "hyprland/submap" ]
+    ++ lib.optionals config.khanelinix.programs.graphical.wms.sway.enable [ "sway/mode" ]
     ++ [
       "custom/weather"
       "clock"
@@ -96,6 +97,7 @@ let
       "group/control-center"
     ]
     ++ lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [ "hyprland/submap" ]
+    ++ lib.optionals config.khanelinix.programs.graphical.wms.sway.enable [ "sway/mode" ]
     ++ [
       "custom/weather"
       "clock"
