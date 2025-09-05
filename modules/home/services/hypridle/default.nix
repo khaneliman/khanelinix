@@ -1,13 +1,10 @@
 {
   config,
   lib,
-
   osConfig ? { },
   ...
 }:
 let
-  inherit (lib) mkIf getExe getExe';
-
   cfg = config.khanelinix.services.hypridle;
 in
 {
@@ -15,27 +12,27 @@ in
     enable = lib.mkEnableOption "hypridle service";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     services.hypridle = {
       enable = true;
 
       settings = {
         general = {
-          after_sleep_cmd = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms on";
+          after_sleep_cmd = "hyprctl dispatch dpms on";
           before_sleep_cmd = "loginctl lock-session";
           ignore_dbus_inhibit = false;
-          lock_cmd = "pidof hyprlock || ${getExe config.programs.hyprlock.package} --grace 300";
+          lock_cmd = "pidof hyprlock || hyprlock --grace 600";
         };
 
         listener = [
           {
-            timeout = 300;
+            timeout = 600;
             on-timeout = "loginctl lock-session";
           }
           {
-            timeout = 600;
-            on-timeout = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms off";
-            on-resume = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch dpms on";
+            timeout = 3600;
+            on-timeout = "hyprctl dispatch dpms off";
+            on-resume = "hyprctl dispatch dpms on";
           }
         ];
       };
