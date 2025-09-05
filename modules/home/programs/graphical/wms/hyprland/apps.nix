@@ -31,50 +31,67 @@ in
         exec-once =
           let
             # Helper function to conditionally prefix with uwsm
+            # Usage: mkStartCommand "command" or mkStartCommand { slice = "b"; } "command"
             mkStartCommand =
-              cmd: if (osConfig.programs.uwsm.enable or false) then "uwsm app -- ${cmd}" else cmd;
+              let
+                # Two-argument version: mkStartCommand { slice = "b"; } "command"
+                withArgs =
+                  args: cmd:
+                  let
+                    slice = args.slice or null;
+                  in
+                  if (osConfig.programs.uwsm.enable or false) then
+                    "uwsm app ${if slice == null then "" else "-s ${slice}"} -- ${cmd}"
+                  else
+                    cmd;
+
+                # Single-argument version: mkStartCommand "command"
+                withoutArgs = cmd: if (osConfig.programs.uwsm.enable or false) then "uwsm app -- ${cmd}" else cmd;
+              in
+              args: if lib.isString args then withoutArgs args else withArgs args;
           in
           # ░█▀█░█▀█░█▀█░░░█▀▀░▀█▀░█▀█░█▀▄░▀█▀░█░█░█▀█
           # ░█▀█░█▀▀░█▀▀░░░▀▀█░░█░░█▀█░█▀▄░░█░░█░█░█▀▀
           # ░▀░▀░▀░░░▀░░░░░▀▀▀░░▀░░▀░▀░▀░▀░░▀░░▀▀▀░▀░░
 
-          # Startup apps that have rules for organizing them
-          (map mkStartCommand (
-            lib.optionals config.programs.firefox.enable [
-              "${getExe config.programs.firefox.package}"
+          # Regular applications (app-graphical.slice)
+          (
+            lib.optionals (osConfig.programs.uwsm.enable or false) [ "uwsm finalize" ]
+            ++ lib.optionals config.programs.firefox.enable [
+              (mkStartCommand "${getExe config.programs.firefox.package}")
             ]
             ++ lib.optionals config.programs.vesktop.enable [
-              "${getExe config.programs.vesktop.package}"
+              (mkStartCommand "${getExe config.programs.vesktop.package}")
             ]
             ++ lib.optionals (osConfig.programs.steam.enable or false) [
-              "steam"
+              (mkStartCommand "steam")
             ]
             ++ lib.optionals config.khanelinix.suites.social.enable [
-              "element-desktop"
+              (mkStartCommand "element-desktop")
             ]
             ++ lib.optionals config.khanelinix.suites.business.enable [
-              "teams-for-linux"
-              "thunderbird"
+              (mkStartCommand "teams-for-linux")
+              (mkStartCommand "thunderbird")
             ]
+            # Background applications (background-graphical.slice)
             ++ lib.optionals (osConfig.services.hardware.openrgb.enable or false) [
-              "openrgb -c blue"
+              (mkStartCommand { slice = "b"; } "openrgb -c blue")
             ]
             ++ lib.optionals (osConfig.programs._1password-gui.enable or false) [
-              "1password --silent"
+              (mkStartCommand { slice = "b"; } "1password --silent")
             ]
             ++ lib.optionals (osConfig.services.tailscale.enable or false) [
-              "tailscale-systray"
+              (mkStartCommand { slice = "b"; } "tailscale-systray")
             ]
             ++ lib.optionals (osConfig.networking.networkmanager.enable or false) [
-              "nm-applet"
+              (mkStartCommand { slice = "b"; } "nm-applet")
             ]
-            ++ [
-              # Always start these utilities
-              "wl-clip-persist --clipboard both"
-              "wayvnc $(tailscale ip --4)"
-            ]
-          ))
-          ++ lib.optionals (osConfig.programs.uwsm.enable or false) [ "uwsm finalize" ];
+          )
+          ++ [
+            # Always start these utilities (no UWSM wrapping needed)
+            (mkStartCommand { slice = "b"; } "wl-clip-persist --clipboard both")
+            (mkStartCommand { slice = "b"; } "wayvnc $(tailscale ip --4)")
+          ];
       };
     };
   };

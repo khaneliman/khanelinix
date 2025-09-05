@@ -16,13 +16,32 @@ in
         startup =
           let
             # Helper function to conditionally prefix with uwsm
+            # Usage: mkStartCommand "command" or mkStartCommand { slice = "b"; } "command"
             mkStartCommand =
-              cmd: if (osConfig.programs.uwsm.enable or false) then "uwsm app -- ${cmd}" else cmd;
+              let
+                # Two-argument version: mkStartCommand { slice = "b"; } "command"
+                withArgs =
+                  args: cmd:
+                  let
+                    slice = args.slice or null;
+                  in
+                  if (osConfig.programs.uwsm.enable or false) then
+                    "uwsm app ${if slice == null then "" else "-s ${slice}"} -- ${cmd}"
+                  else
+                    cmd;
+
+                # Single-argument version: mkStartCommand "command"
+                withoutArgs = cmd: if (osConfig.programs.uwsm.enable or false) then "uwsm app -- ${cmd}" else cmd;
+              in
+              args: if lib.isString args then withoutArgs args else withArgs args;
           in
           (
-            lib.optionals config.programs.firefox.enable [
-              { command = mkStartCommand (getExe config.programs.firefox.package); }
-            ]
+            lib.optionals (osConfig.programs.uwsm.enable or false) [ { command = "uwsm finalize"; } ]
+            ++
+              # Regular applications (app-graphical.slice)
+              lib.optionals config.programs.firefox.enable [
+                { command = mkStartCommand (getExe config.programs.firefox.package); }
+              ]
             ++ lib.optionals config.programs.vesktop.enable [
               { command = mkStartCommand (getExe config.programs.vesktop.package); }
             ]
@@ -36,22 +55,23 @@ in
               { command = mkStartCommand "teams-for-linux"; }
               { command = mkStartCommand "thunderbird"; }
             ]
+            # Background applications (background-graphical.slice)
             ++ lib.optionals (osConfig.services.hardware.openrgb.enable or false) [
-              { command = mkStartCommand "openrgb -c blue"; }
+              { command = mkStartCommand { slice = "b"; } "openrgb -c blue"; }
             ]
             ++ lib.optionals (osConfig.programs._1password-gui.enable or false) [
-              { command = mkStartCommand "1password --silent"; }
+              { command = mkStartCommand { slice = "b"; } "1password --silent"; }
             ]
             ++ lib.optionals (osConfig.services.tailscale.enable or false) [
-              { command = mkStartCommand "tailscale-systray"; }
+              { command = mkStartCommand { slice = "b"; } "tailscale-systray"; }
             ]
             ++ lib.optionals (osConfig.networking.networkmanager.enable or false) [
-              { command = mkStartCommand "nm-applet"; }
+              { command = mkStartCommand { slice = "b"; } "nm-applet"; }
             ]
           )
           ++ [
-            { command = "wl-clip-persist --clipboard both"; }
-            { command = "$(wayvnc $(tailscale ip --4))"; }
+            { command = mkStartCommand { slice = "b"; } "wl-clip-persist --clipboard both"; }
+            { command = mkStartCommand { slice = "b"; } "$(wayvnc $(tailscale ip --4))"; }
             { command = "notify-send --icon ~/.face -u normal \"Hello $(whoami)\""; }
           ];
       };
