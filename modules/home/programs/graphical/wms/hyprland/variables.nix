@@ -2,17 +2,16 @@
   config,
   lib,
   pkgs,
-
   ...
 }:
 let
-  inherit (lib) mkIf getExe getExe';
+  inherit (lib) mkIf;
 
-  convert = getExe' pkgs.imagemagick "convert";
-  wl-copy = getExe' pkgs.wl-clipboard "wl-copy";
-  wl-paste = getExe' pkgs.wl-clipboard "wl-paste";
+  convert = "convert";
+  wl-copy = "wl-copy";
+  wl-paste = "wl-paste";
 
-  getDateTime = getExe (
+  getDateTime = lib.getExe (
     pkgs.writeShellScriptBin "getDateTime" # bash
       ''
         echo $(date +'%Y%m%d_%H%M%S')
@@ -27,36 +26,36 @@ let
       {
         # Note: hyprshot --raw outputs PNG format, but satty expects PPM for best performance
         # We convert PNG to PPM using imagemagick for compatibility
-        area = "${getExe config.programs.hyprshot.package} -m region --freeze --raw | ${convert} png:- ppm:-";
-        active = "${getExe config.programs.hyprshot.package} -m active -m window --raw | ${convert} png:- ppm:-";
-        screen = "${getExe config.programs.hyprshot.package} -m output --raw | ${convert} png:- ppm:-";
-        area_file = "${getExe config.programs.hyprshot.package} -m region --freeze -o \"${screenshot-path}\" -f \"$(${getDateTime}).png\"";
-        active_file = "${getExe config.programs.hyprshot.package} -m active -m window -o \"${screenshot-path}\" -f \"$(${getDateTime}).png\"";
-        screen_file = "${getExe config.programs.hyprshot.package} -m output -o \"${screenshot-path}\" -f \"$(${getDateTime}).png\"";
-        area_clipboard = "${getExe config.programs.hyprshot.package} -m region --freeze --clipboard-only";
-        active_clipboard = "${getExe config.programs.hyprshot.package} -m active -m window --clipboard-only";
-        screen_clipboard = "${getExe config.programs.hyprshot.package} -m output --clipboard-only";
+        area = "hyprshot -m region --freeze --raw | ${convert} png:- ppm:-";
+        active = "hyprshot -m active -m window --raw | ${convert} png:- ppm:-";
+        screen = "hyprshot -m output --raw | ${convert} png:- ppm:-";
+        area_file = "hyprshot -m region --freeze -o \"${screenshot-path}\" -f \"$(${getDateTime}).png\"";
+        active_file = "hyprshot -m active -m window -o \"${screenshot-path}\" -f \"$(${getDateTime}).png\"";
+        screen_file = "hyprshot -m output -o \"${screenshot-path}\" -f \"$(${getDateTime}).png\"";
+        area_clipboard = "hyprshot -m region --freeze --clipboard-only";
+        active_clipboard = "hyprshot -m active -m window --clipboard-only";
+        screen_clipboard = "hyprshot -m output --clipboard-only";
       }
     else
       {
         # Use PPM format for better performance with annotation tools
-        area = "${getExe pkgs.grimblast} --freeze --type ppm save area -";
-        active = "${getExe pkgs.grimblast} --type ppm save active -";
-        screen = "${getExe pkgs.grimblast} --type ppm save screen -";
-        area_file = "${getExe pkgs.grimblast} --freeze --notify save area \"${screenshot-path}/$(${getDateTime}).png\"";
-        active_file = "${getExe pkgs.grimblast} --notify save active \"${screenshot-path}/$(${getDateTime}).png\"";
-        screen_file = "${getExe pkgs.grimblast} --notify save screen \"${screenshot-path}/$(${getDateTime}).png\"";
-        area_clipboard = "${getExe pkgs.grimblast} --freeze --notify copy area";
-        active_clipboard = "${getExe pkgs.grimblast} --notify copy active";
-        screen_clipboard = "${getExe pkgs.grimblast} --notify copy screen";
+        area = "grimblast --freeze --type ppm save area -";
+        active = "grimblast --type ppm save active -";
+        screen = "grimblast --type ppm save screen -";
+        area_file = "grimblast --freeze --notify save area \"${screenshot-path}/$(${getDateTime}).png\"";
+        active_file = "grimblast --notify save active \"${screenshot-path}/$(${getDateTime}).png\"";
+        screen_file = "grimblast --notify save screen \"${screenshot-path}/$(${getDateTime}).png\"";
+        area_clipboard = "grimblast --freeze --notify copy area";
+        active_clipboard = "grimblast --notify copy active";
+        screen_clipboard = "grimblast --notify copy screen";
       };
 
   # Annotation tool priority: satty (if enabled) > swappy
   annotation_tool =
     if config.khanelinix.programs.graphical.addons.satty.enable then
-      "${getExe pkgs.satty} --filename -"
+      "satty --filename -"
     else
-      "${getExe pkgs.swappy} -f -";
+      "swappy -f -";
 
   cfg = config.khanelinix.programs.graphical.wms.hyprland;
 in
@@ -212,24 +211,24 @@ in
 
         # default applications
         # FIX: broken clipboard with new hyprland impl
-        # "$term" = "[float;tile] ${getExe pkgs.wezterm} start --always-new-process";
-        "$term" = "${getExe pkgs.kitty}";
-        "$browser" = "${getExe config.programs.firefox.package}";
-        "$mail" = "${getExe pkgs.thunderbird}";
-        "$editor" = "${getExe pkgs.neovim}";
-        "$explorer" = "${getExe pkgs.nautilus}";
-        "$music" = "${getExe pkgs.youtube-music}";
-        "$notification_center" = "${getExe' config.services.swaync.package "swaync-client"}";
-        "$launcher" = "${getExe pkgs.sherlock-launcher}";
-        "$launcher-alt" = "${getExe config.programs.anyrun.package}";
-        "$looking-glass" = "${getExe pkgs.looking-glass-client}";
-        "$screen-locker" = "${getExe config.programs.hyprlock.package}";
-        "$window-inspector" = "${getExe pkgs.hyprprop}";
-        "$screen-recorder" = "${getExe pkgs.khanelinix.record_screen}";
+        # "$term" = "[float;tile] wezterm start --always-new-process";
         "$bar" = ".waybar-wrapped";
+        "$browser" = "${lib.getExe config.programs.firefox.package}";
+        "$editor" = "nvim";
+        "$explorer" = "nautilus";
+        "$launcher" = "sherlock";
+        "$launcher-alt" = "anyrun";
+        "$looking-glass" = "looking-glass-client";
+        "$mail" = "thunderbird";
+        "$music" = "youtube-music";
+        "$notification_center" = "swaync-client";
+        "$screen-locker" = "hyprlock";
+        "$screen-recorder" = "record_screen";
+        "$term" = "kitty";
+        "$window-inspector" = "hyprprop";
 
         # screenshot commands
-        "$notify-screenshot" = ''${getExe pkgs.libnotify} --icon "$file" "Screenshot Saved"'';
+        "$notify-screenshot" = ''notify-send --icon "$file" "Screenshot Saved"'';
         "$screenshot-path" = "/home/${config.khanelinix.user.name}/Pictures/screenshots";
         "$screenshot_area_file" = screenshot_tool.area_file;
         "$screenshot_active_file" = screenshot_tool.active_file;
@@ -243,9 +242,9 @@ in
 
         # utility commands
         "$color_picker" =
-          "${getExe pkgs.hyprpicker} -a && (${convert} -size 32x32 xc:$(${wl-paste}) /tmp/color.png && ${getExe pkgs.libnotify} \"Color Code:\" \"$(${wl-paste})\" -h \"string:bgcolor:$(${wl-paste})\" --icon /tmp/color.png -u critical -t 4000)";
+          "hyprpicker -a && (${convert} -size 32x32 xc:$(${wl-paste}) /tmp/color.png && notify-send \"Color Code:\" \"$(${wl-paste})\" -h \"string:bgcolor:$(${wl-paste})\" --icon /tmp/color.png -u critical -t 4000)";
         "$cliphist" =
-          "${getExe pkgs.cliphist} list | ${getExe config.programs.anyrun.package} --show-results-immediately true | ${getExe pkgs.cliphist} decode | ${wl-copy}";
+          "cliphist list | anyrun --show-results-immediately true | cliphist decode | ${wl-copy}";
       };
     };
   };

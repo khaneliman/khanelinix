@@ -7,7 +7,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf getExe;
+  inherit (lib) mkIf;
 
   cfg = config.khanelinix.programs.graphical.wms.hyprland;
 
@@ -157,9 +157,9 @@ in
           ++ specialBinds
           ++ submapTriggerBinds
           ++ [
-            "$mainMod, I, exec, ${getExe pkgs.libnotify} \"$($window-inspector)\""
-            "$mainMod, PERIOD, exec, ${getExe pkgs.smile}"
-            "$CTRL_SHIFT, B, exec, ${getExe pkgs.killall} -SIGUSR1 $bar"
+            "$mainMod, I, exec, notify-send \"$($window-inspector)\""
+            "$mainMod, PERIOD, exec, smile"
+            "$CTRL_SHIFT, B, exec, killall -SIGUSR1 $bar"
           ]
           ++ lib.optional (lib.elem pkgs.hyprlandPlugins.hyprexpo config.wayland.windowManager.hyprland.plugins) "SUPER, Escape, hyprexpo:expo, toggle"
 
@@ -199,11 +199,11 @@ in
           ",XF86AudioMute,exec,wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
           ",XF86MonBrightnessUp,exec,light -A 5"
           ",XF86MonBrightnessDown,exec,light -U 5"
-          ",XF86AudioMedia,exec,${getExe pkgs.playerctl} play-pause"
-          ",XF86AudioPlay,exec,${getExe pkgs.playerctl} play-pause"
-          ",XF86AudioStop,exec,${getExe pkgs.playerctl} stop"
-          ",XF86AudioPrev,exec,${getExe pkgs.playerctl} previous"
-          ",XF86AudioNext,exec,${getExe pkgs.playerctl} next"
+          ",XF86AudioMedia,exec,playerctl play-pause"
+          ",XF86AudioPlay,exec,playerctl play-pause"
+          ",XF86AudioStop,exec,playerctl stop"
+          ",XF86AudioPrev,exec,playerctl previous"
+          ",XF86AudioNext,exec,playerctl next"
         ];
         bindm = [
           # Move/resize windows with mainMod + LMB/RMB and dragging
