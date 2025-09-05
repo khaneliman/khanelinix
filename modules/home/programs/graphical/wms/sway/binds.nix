@@ -23,11 +23,6 @@ in
           let
             swayCfg = config.wayland.windowManager.sway.config;
 
-            convert = getExe' pkgs.imagemagick "convert";
-            grimblast = getExe pkgs.grimblast;
-            wl-copy = getExe' pkgs.wl-clipboard "wl-copy";
-            wl-paste = getExe' pkgs.wl-clipboard "wl-paste";
-
             getDateTime = getExe (
               pkgs.writeShellScriptBin "getDateTime" # bash
                 ''
@@ -37,29 +32,35 @@ in
 
             screenshot-path = "/home/${config.khanelinix.user.name}/Pictures/screenshots";
             browser = "${getExe config.programs.firefox.package}";
-            explorer = "${getExe pkgs.nautilus}";
+            explorer = "nautilus";
             notification_center = "${getExe' config.services.swaync.package "swaync-client"}";
             launcher = "${getExe config.programs.anyrun.package}";
-            looking-glass = "${getExe pkgs.looking-glass-client}";
+            looking-glass = "looking-glass-client";
             screen-locker = "${getExe config.programs.swaylock.package}";
             # TODO: package upstream
-            # window-inspector = "${getExe pkgs.swayprop}";
-            screen-recorder = "${getExe pkgs.khanelinix.record_screen}";
+            # window-inspector = "swayprop"; # TODO: package upstream
+            screen-recorder = "record_screen";
 
             # screenshot commands
-            grimblast_area_file = ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --freeze --notify save area "$file"'';
-            grimblast_active_file = ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --notify save active "$file"'';
-            grimblast_screen_file = ''file="${screenshot-path}/$(${getDateTime}).png" && ${grimblast} --notify save screen "$file"'';
-            grimblast_area_swappy = ''${grimblast} --freeze save area - | ${getExe pkgs.swappy} -f -'';
-            grimblast_active_swappy = ''${grimblast} save active - | ${getExe pkgs.swappy} -f -'';
-            grimblast_screen_swappy = ''${grimblast} save screen - | ${getExe pkgs.swappy} -f -'';
-            grimblast_area_clipboard = "${grimblast} --freeze --notify copy area";
-            grimblast_active_clipboard = "${grimblast} --notify copy active";
-            grimblast_screen_clipboard = "${grimblast} --notify copy screen";
+            grimblast_area_file = ''file="${screenshot-path}/$(${getDateTime}).png" && grimblast --freeze --notify save area "$file"'';
+            grimblast_active_file = ''file="${screenshot-path}/$(${getDateTime}).png" && grimblast --notify save active "$file"'';
+            grimblast_screen_file = ''file="${screenshot-path}/$(${getDateTime}).png" && grimblast --notify save screen "$file"'';
+
+            grimblast_area_swappy = ''grimblast --freeze save area - | swappy -f -'';
+            grimblast_active_swappy = ''grimblast save active - | swappy -f -'';
+            grimblast_screen_swappy = ''grimblast save screen - | swappy -f -'';
+
+            grimblast_area_clipboard = "grimblast --freeze --notify copy area";
+            grimblast_active_clipboard = "grimblast --notify copy active";
+            grimblast_screen_clipboard = "grimblast --notify copy screen";
 
             # utility commands
-            color_picker = "${getExe pkgs.hyprpicker} -a && (${convert} -size 32x32 xc:$(${wl-paste}) /tmp/color.png && ${getExe pkgs.libnotify} \"Color Code:\" \"$(${wl-paste})\" -h \"string:bgcolor:$(${wl-paste})\" --icon /tmp/color.png -u critical -t 4000)";
-            cliphist = "${getExe pkgs.cliphist} list | ${getExe config.programs.anyrun.package} --show-results-immediately true | ${getExe pkgs.cliphist} decode | ${wl-copy}";
+            color_picker = "hyprpicker -a && (${getExe' pkgs.imagemagick "convert"} -size 32x32 xc:$(wl-paste) /tmp/color.png && notify-send \"Color Code:\" \"$(wl-paste)\" -h \"string:bgcolor:$(wl-paste)\" --icon /tmp/color.png -u critical -t 4000)";
+            cliphist = "cliphist list | anyrun --show-results-immediately true | cliphist decode | wl-copy";
+            sherlock = "sherlock";
+            walker = "walker";
+            smile = "smile";
+            window-inspector = "swaymsg -t get_tree | jq -r '.. | select(.focused? == true)' | notify-send 'Window Info' -t 5000";
           in
           lib.mkMerge [
             (lib.mkOptionDefault {
@@ -76,9 +77,11 @@ in
               # "${swayCfg.modifier}+${swayCfg.up}" = "focus up";
               # "${swayCfg.modifier}+${swayCfg.right}" = "focus right";
 
-              # Additional bindings
-              # "${swayCfg.modifier}+Space" = "exec run-as-service ${launcher}";
-              "Control+Space" = "exec run-as-service ${launcher}";
+              # Additional bindings - Multiple launchers like Hyprland
+              # FIXME: error on load
+              # "${swayCfg.modifier}+Space" = mkForce "exec ${sherlock}";
+              "Control+Space" = "exec ${launcher}";
+              "Alt+Space" = "exec ${walker}";
               "Super_L+Shift+Return" = "exec ${swayCfg.terminal} zellij";
               "Super_L+Shift+P" = "exec ${color_picker}";
               "${swayCfg.modifier}+b" = "exec ${browser}";
@@ -89,7 +92,8 @@ in
               "${swayCfg.modifier}+n" = "exec ${notification_center} -t -sw";
               "${swayCfg.modifier}+v" = "exec ${cliphist}";
               "${swayCfg.modifier}+w" = "exec ${looking-glass}";
-              # "${swayCfg.modifier}+I" = "exec ${lib.getExe' pkgs.libnotify "notify-send"} ${window-inspector}";
+              "${swayCfg.modifier}+i" = "exec ${window-inspector}";
+              "${swayCfg.modifier}+period" = "exec ${smile}";
 
               # Kill window
               "${swayCfg.modifier}+Q" = "kill";
@@ -168,14 +172,20 @@ in
               XF86AudioMute = "exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
               XF86MonBrightnessUp = "exec light -A 5";
               XF86MonBrightnessDown = "exec light -U 5";
-              XF86AudioMedia = "exec ${getExe pkgs.playerctl} play-pause";
-              XF86AudioPlay = "exec ${getExe pkgs.playerctl} play-pause";
-              XF86AudioStop = "exec ${getExe pkgs.playerctl} stop";
-              XF86AudioPrev = "exec ${getExe pkgs.playerctl} previous";
-              XF86AudioNext = "exec ${getExe pkgs.playerctl} next";
+              XF86AudioMedia = "exec playerctl play-pause";
+              XF86AudioPlay = "exec playerctl play-pause";
+              XF86AudioStop = "exec playerctl stop";
+              XF86AudioPrev = "exec playerctl previous";
+              XF86AudioNext = "exec playerctl next";
 
-              "${swayCfg.modifier}+u" =
-                ''${getExe' config.wayland.windowManager.sway.package "swaymsg"} "output * dpms on"'';
+              # Power management and utility
+              "${swayCfg.modifier}+u" = ''swaymsg "output * power on"'';
+
+              # Bar toggle (similar to Hyprland)
+              "Control+Shift+b" = "exec pkill -SIGUSR1 waybar || waybar &";
+
+              # Additional workspace navigation similar to Hyprland
+              # Note: Sway doesn't support mouse_up/mouse_down bindings like Hyprland
             })
             (lib.mkOptionDefault (
               builtins.listToAttrs (

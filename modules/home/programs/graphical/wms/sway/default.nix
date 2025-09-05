@@ -56,7 +56,20 @@ in
 
   config = mkIf cfg.enable {
     home = {
-      packages = with pkgs; [ kdePackages.xwaylandvideobridge ];
+      packages = with pkgs; [
+        grim
+        grimblast
+        hyprpicker
+        kdePackages.xwaylandvideobridge
+        khanelinix.record_screen
+        libnotify
+        networkmanagerapplet
+        playerctl
+        slurp
+        smile
+        swappy
+        wayvnc
+      ];
 
       sessionVariables = {
         CLUTTER_BACKEND = "wayland";
@@ -77,6 +90,8 @@ in
         graphical = {
           launchers = {
             anyrun = enabled;
+            sherlock = enabled;
+            walker = enabled;
           };
 
           screenlockers = {
@@ -127,7 +142,7 @@ in
 
         modifier = "Mod4";
 
-        terminal = "${getExe config.programs.kitty.package}";
+        terminal = "kitty";
 
         workspaceAutoBackAndForth = true;
         workspaceLayout = "default";

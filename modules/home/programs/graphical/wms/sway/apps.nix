@@ -1,8 +1,7 @@
 {
   config,
   lib,
-  pkgs,
-
+  osConfig ? { },
   ...
 }:
 let
@@ -14,32 +13,41 @@ in
   config = mkIf cfg.enable {
     wayland.windowManager.sway = {
       config = {
-        startup = [
-          # 1/2
-          { command = getExe config.programs.firefox.package; }
-
-          # 4
-          { command = getExe pkgs.steam; }
-
-          # 5
-          { command = getExe config.programs.vesktop.package; }
-          { command = getExe pkgs.element-desktop; }
-          { command = getExe pkgs.teams-for-linux; }
-
-          # 6
-          { command = getExe pkgs.thunderbird; }
-
-          # Startup background apps
-          { command = "${getExe pkgs.openrgb-with-all-plugins} -c blue"; }
-          { command = "${getExe pkgs._1password-gui} --silent"; }
-          { command = getExe pkgs.tailscale-systray; }
-          { command = getExe pkgs.networkmanagerapplet; }
-          { command = "${getExe pkgs.wl-clip-persist} --clipboard both"; }
-
-          { command = "$(${getExe pkgs.wayvnc} $(${getExe pkgs.tailscale} ip --4))"; }
-
-          { command = "${lib.getExe pkgs.libnotify} --icon ~/.face -u normal \"Hello $(whoami)\""; }
-        ];
+        startup =
+          lib.optionals config.programs.firefox.enable [
+            { command = getExe config.programs.firefox.package; }
+          ]
+          ++ lib.optionals config.programs.vesktop.enable [
+            { command = getExe config.programs.vesktop.package; }
+          ]
+          ++ lib.optionals (osConfig.programs.steam.enable or false) [
+            { command = "steam"; }
+          ]
+          ++ lib.optionals config.khanelinix.suites.social.enable [
+            { command = "element-desktop"; }
+          ]
+          ++ lib.optionals config.khanelinix.suites.business.enable [
+            { command = "teams-for-linux"; }
+            { command = "thunderbird"; }
+          ]
+          ++ lib.optionals (osConfig.services.hardware.openrgb.enable or false) [
+            { command = "openrgb -c blue"; }
+          ]
+          ++ lib.optionals (osConfig.programs._1password-gui.enable or false) [
+            { command = "1password --silent"; }
+          ]
+          ++ lib.optionals (osConfig.services.tailscale.enable or false) [
+            { command = "tailscale-systray"; }
+          ]
+          ++ lib.optionals (osConfig.networking.networkmanager.enable or false) [
+            { command = "nm-applet"; }
+          ]
+          ++ [
+            # Always start these utilities
+            { command = "wl-clip-persist --clipboard both"; }
+            { command = "$(wayvnc $(tailscale ip --4))"; }
+            { command = "notify-send --icon ~/.face -u normal \"Hello $(whoami)\""; }
+          ];
       };
     };
   };
