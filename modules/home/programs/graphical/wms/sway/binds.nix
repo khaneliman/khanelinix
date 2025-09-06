@@ -104,9 +104,10 @@ in
               "Super_L+Shift+P" = "exec ${color_picker}";
               "${swayCfg.modifier}+b" = "exec ${mkStartCommand browser}";
               "Super_L+Shift+E" = "exec ${mkStartCommand explorer}";
-              "${swayCfg.modifier}+e" = "exec ${mkStartCommand "${swayCfg.terminal} yazi"}";
+              # Background tools - use background slice for monitoring/file management
+              "${swayCfg.modifier}+e" = "exec ${mkStartCommand { slice = "b"; } "${swayCfg.terminal} yazi"}";
               "${swayCfg.modifier}+Control+l" = mkForce "exec ${screen-locker} --immediate";
-              "${swayCfg.modifier}+t" = "exec ${mkStartCommand "${swayCfg.terminal} btop"}";
+              "${swayCfg.modifier}+t" = "exec ${mkStartCommand { slice = "b"; } "${swayCfg.terminal} btop"}";
               "${swayCfg.modifier}+n" = "exec ${notification_center} -t -sw";
               "${swayCfg.modifier}+v" = "exec ${cliphist}";
               "${swayCfg.modifier}+w" = "exec ${mkStartCommand looking-glass}";

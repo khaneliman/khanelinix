@@ -54,26 +54,27 @@ in
           # ░█▀█░█▀▀░█▀▀░░░▀▀█░░█░░█▀█░█▀▄░░█░░█░█░█▀▀
           # ░▀░▀░▀░░░▀░░░░░▀▀▀░░▀░░▀░▀░▀░▀░░▀░░▀▀▀░▀░░
 
-          # Regular applications (app-graphical.slice)
+          # Regular applications (app-graphical.slice) - actively used, interactive
           (
             lib.optionals (osConfig.programs.uwsm.enable or false) [ "uwsm finalize" ]
             ++ lib.optionals config.programs.firefox.enable [
               (mkStartCommand "${getExe config.programs.firefox.package}")
             ]
+            # Background applications (background-graphical.slice) - communication clients, often idle
             ++ lib.optionals config.programs.vesktop.enable [
-              (mkStartCommand "${getExe config.programs.vesktop.package}")
+              (mkStartCommand { slice = "b"; } "${getExe config.programs.vesktop.package}")
             ]
             ++ lib.optionals (osConfig.programs.steam.enable or false) [
-              (mkStartCommand "steam")
+              (mkStartCommand { slice = "b"; } "steam")
             ]
             ++ lib.optionals config.khanelinix.suites.social.enable [
-              (mkStartCommand "element-desktop")
+              (mkStartCommand { slice = "b"; } "element-desktop")
             ]
             ++ lib.optionals config.khanelinix.suites.business.enable [
-              (mkStartCommand "teams-for-linux")
-              (mkStartCommand "thunderbird")
+              (mkStartCommand { slice = "b"; } "teams-for-linux")
+              (mkStartCommand { slice = "b"; } "thunderbird")
             ]
-            # Background applications (background-graphical.slice)
+            # System services and utilities (background-graphical.slice)
             ++ lib.optionals (osConfig.services.hardware.openrgb.enable or false) [
               (mkStartCommand { slice = "b"; } "openrgb -c blue")
             ]

@@ -13,8 +13,24 @@ let
 
   # Helper functions
   mkStartCommand =
-    cmd:
-    if (osConfig.programs.uwsm.enable or false) then "uwsm app -- ${cmd}" else "run-as-service ${cmd}";
+    let
+      # Two-argument version: mkStartCommand { slice = "b"; } "command"
+      withArgs =
+        args: cmd:
+        let
+          slice = args.slice or null;
+        in
+        if (osConfig.programs.uwsm.enable or false) then
+          "uwsm app ${if slice == null then "" else "-s ${slice}"} -- ${cmd}"
+        else
+          "run-as-service ${cmd}";
+
+      # Single-argument version: mkStartCommand "command"
+      withoutArgs =
+        cmd:
+        if (osConfig.programs.uwsm.enable or false) then "uwsm app -- ${cmd}" else "run-as-service ${cmd}";
+    in
+    args: if lib.isString args then withoutArgs args else withArgs args;
   mkExecBind =
     bind:
     let
@@ -57,18 +73,23 @@ in
 
             # App launch binds
             appBinds = [
+              # Interactive applications (app-graphical.slice)
               "$mainMod, RETURN, exec, $term"
               "SUPER_SHIFT, RETURN, exec, $term zellij"
               "SUPER_SHIFT, P, exec, $color_picker"
               "$mainMod, B, exec, $browser"
               "SUPER_SHIFT, E, exec, $explorer"
-              "$mainMod, E, exec, $term yazi"
               "$mainMod, L, exec, $screen-locker --immediate"
-              "$mainMod, T, exec, $term btop"
               "$mainMod, N, exec, $notification_center -t -sw"
               "$mainMod, V, exec, $cliphist"
               # TODO: handle when you need to specify port manually `-p 5901`
               "$mainMod, W, exec, $looking-glass"
+            ];
+
+            # Background tools binds (background-graphical.slice)
+            backgroundBinds = [
+              "$mainMod, E, exec, ${mkStartCommand { slice = "b"; } "$term yazi"}"
+              "$mainMod, T, exec, ${mkStartCommand { slice = "b"; } "$term btop"}"
             ];
 
             # System binds (non-exec) - keeping most used shortcuts
@@ -149,6 +170,8 @@ in
           in
           # Apply mkStartCommand only to the exec commands
           (map mkExecBind (launcherBinds ++ appBinds ++ screenshotBinds))
+          # Background binds already have mkStartCommand applied
+          ++ backgroundBinds
           # Direct binds that don't need command wrapping
           ++ systemBinds
           ++ movementBinds
