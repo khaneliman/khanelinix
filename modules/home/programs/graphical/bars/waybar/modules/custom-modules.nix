@@ -162,8 +162,6 @@ in
         reboot = getExe' pkgs.systemd "reboot";
         terminal = getExe config.programs.kitty.package;
         top = getExe config.programs.btop.package;
-        hyprctl = getExe' config.wayland.windowManager.hyprland.package "hyprctl";
-        swaymsg = getExe' config.wayland.windowManager.sway.package "swaymsg";
       in
       {
         inherit poweroff reboot;
@@ -172,7 +170,8 @@ in
         lock = ''([[ "$XDG_CURRENT_DESKTOP" == "sway" ]] && ${swaylock} -defF) || ([[ "$XDG_CURRENT_DESKTOP" == "Hyprland" ]] && ${hyprlock} --immediate)'';
         suspend = "${systemctl} suspend";
         top = "${terminal} ${top}";
-        logout = "$(${hyprctl} dispatch exit || ${swaymsg} exit) && ${systemctl} --user exit ";
+        logout =
+          if (osConfig.programs.uwsm.enable or false) then "uwsm stop" else "loginctl terminate-user $USER";
       };
   };
 

@@ -16,7 +16,6 @@ let
 
   cfg = config.khanelinix.programs.graphical.wms.sway;
 
-  # UWSM integration helpers
   mkStartCommand =
     let
       # Two-argument version: mkStartCommand { slice = "b"; } "command"
@@ -263,7 +262,9 @@ in
             };
 
             system = {
-              "l" = "exit";
+              "l" = "exec ${
+                if (osConfig.programs.uwsm.enable or false) then "uwsm stop" else "loginctl terminate-user $USER"
+              }";
               "r" = "exec systemctl reboot";
               "p" = "exec systemctl poweroff";
               "Escape" = "mode default";

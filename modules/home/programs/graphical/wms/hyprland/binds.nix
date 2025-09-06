@@ -282,15 +282,13 @@ in
           settings = {
             bind =
               (map mkExecBind [
-                # System controls
-                ", l, exec, systemctl --user exit"
-                ", r, exec, reboot"
-                ", p, exec, shutdown"
+                ", l, exec, ${
+                  if (osConfig.programs.uwsm.enable or false) then "uwsm stop" else "loginctl terminate-user $USER"
+                }"
+                ", r, exec, systemctl reboot"
+                ", p, exec, systemctl poweroff"
               ])
               ++ [
-                # Direct hyprland commands
-                ", l, exit," # logout (both systemctl and hyprland exit)
-
                 # Exit submap
                 ", escape, submap, reset"
                 "SUPER, X, submap, reset"

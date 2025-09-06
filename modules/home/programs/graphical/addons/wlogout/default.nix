@@ -1,8 +1,9 @@
 {
   config,
   lib,
-
   pkgs,
+
+  osConfig ? { },
   ...
 }:
 let
@@ -35,7 +36,8 @@ in
         }
         {
           label = "logout";
-          action = "loginctl terminate-user $USER";
+          action =
+            if (osConfig.programs.uwsm.enable or false) then "uwsm stop" else "loginctl terminate-user $USER";
           text = "Logout";
           keybind = "e";
         }
