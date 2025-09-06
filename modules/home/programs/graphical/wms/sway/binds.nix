@@ -74,7 +74,7 @@ in
 
           # utility commands
           color_picker = "grim -g \"$(slurp -p)\" -t ppm - | ${getExe' pkgs.imagemagick "convert"} - -format '%[pixel:p{0,0}]' txt:- | tail -n1 | cut -d' ' -f4 | wl-copy && (${getExe' pkgs.imagemagick "convert"} -size 32x32 xc:$(wl-paste) /tmp/color.png && notify-send \"Color Code:\" \"$(wl-paste)\" -h \"string:bgcolor:$(wl-paste)\" --icon /tmp/color.png -u critical -t 4000)";
-          cliphist = "cliphist list | anyrun --show-results-immediately true | cliphist decode | wl-copy";
+          cliphist = "cliphist list | sherlock | cliphist decode | wl-copy";
           walker = "walker";
           smile = "smile";
           window-inspector = "swaymsg -t get_tree | jq -r '.. | select(.focused? == true)' | notify-send 'Window Info' -t 5000";

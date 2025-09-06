@@ -243,8 +243,7 @@ in
         # utility commands
         "$color_picker" =
           "hyprpicker -a && (${convert} -size 32x32 xc:$(${wl-paste}) /tmp/color.png && notify-send \"Color Code:\" \"$(${wl-paste})\" -h \"string:bgcolor:$(${wl-paste})\" --icon /tmp/color.png -u critical -t 4000)";
-        "$cliphist" =
-          "cliphist list | anyrun --show-results-immediately true | cliphist decode | ${wl-copy}";
+        "$cliphist" = "cliphist list | sherlock | cliphist decode | ${wl-copy}";
       };
     };
   };
