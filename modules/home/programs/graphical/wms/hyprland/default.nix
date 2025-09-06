@@ -49,6 +49,7 @@ in
   imports = [
     ./apps.nix
     ./binds.nix
+    ./layers.nix
     ./permissions.nix
     ./variables.nix
     ./windowrules
