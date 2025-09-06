@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  osConfig ? { },
   ...
 }:
 let
@@ -25,6 +26,10 @@ in
           gsk_renderer = "cairo";
           icon_size = 32;
           opacity = 0.95;
+        };
+
+        behavior = {
+          global_prefix = lib.mkIf (osConfig.programs.uwsm.enable or false) "uwsm app --";
         };
 
         caching = {
