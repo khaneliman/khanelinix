@@ -9,7 +9,6 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (inputs) anyrun-nixos-options;
 
   cfg = config.khanelinix.programs.graphical.launchers.anyrun;
@@ -19,7 +18,7 @@ in
     enable = lib.mkEnableOption "anyrun in the desktop environment";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     programs.anyrun = {
       enable = true;
       package = pkgs.anyrun;
@@ -48,15 +47,21 @@ in
       };
 
       extraConfigFiles = {
-        "applications.ron".text = # Ron
+        "applications.ron".text =
+          let
+            preprocessScript = pkgs.writeShellScriptBin "anyrun-preprocess-application-exec" ''
+              shift
+              echo "uwsm app -- $*"
+            '';
+          in
+          # Ron
           ''
             Config(
-              // Also show the Desktop Actions defined in the desktop files, e.g. "New Window" from LibreWolf
               desktop_actions: true,
               max_entries: 10,
-              // The terminal used for running terminal based desktop entries, if left as `None` a static list of terminals is used
-              // to determine what terminal to use.
-              terminal: Some("foot"),
+              terminal: Some("kitty"),
+              ${lib.optionalString (osConfig.programs.uwsm.enable or false
+              ) "preprocess_exec_script: Some(\"${lib.getExe preprocessScript}\"),"}
             )
           '';
 
@@ -74,6 +79,12 @@ in
               max_entries: Some(3),
             )
           '';
+
+        "shell.ron".text = ''
+          Config(
+            prefix: ">"
+          )
+        '';
 
         "symbols.ron".text = # Ron
           ''
