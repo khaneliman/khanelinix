@@ -16,6 +16,10 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.packages = [
+      pkgs.caprine-bin
+    ];
+
     xdg.configFile = mkIf pkgs.stdenv.hostPlatform.isLinux {
       "Caprine/custom.css".source = ./custom.css;
     };

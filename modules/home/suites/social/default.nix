@@ -20,7 +20,6 @@ in
     home.packages =
       with pkgs;
       [
-        caprine-bin
         element-desktop
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
