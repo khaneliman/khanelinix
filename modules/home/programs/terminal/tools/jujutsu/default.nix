@@ -24,7 +24,10 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ lazyjj ];
+    home.packages = with pkgs; [
+      # FIXME: broken
+      # lazyjj
+    ];
 
     programs = {
       jujutsu = {
