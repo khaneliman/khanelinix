@@ -25,6 +25,7 @@ in
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
+      jjui
       # FIXME: broken
       # lazyjj
     ];
