@@ -83,6 +83,9 @@ in
         ''[class="nm-connection-editor"] floating enable''
         ''[title="^(floatterm)$"] floating enable''
 
+        # Hide xwaylandvideobridge window for screen sharing
+        ''[class="^xwaylandvideobridge$"] floating enable; resize set 1 1; opacity 0; move scratchpad''
+
         # TODO: convert rules
         # # Floating terminal
         # ''[title="floatterm"] floating enable; resize set 1100 600; move position center''
