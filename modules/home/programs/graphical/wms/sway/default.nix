@@ -17,6 +17,7 @@ in
   options.khanelinix.programs.graphical.wms.sway = {
     enable = mkEnableOption "sway";
     enableDebug = mkEnableOption "debug mode";
+
     appendConfig = lib.mkOption {
       type = lib.types.lines;
       default = "";
@@ -24,13 +25,7 @@ in
         Extra configuration lines to add to bottom of `~/.config/hypr/sway.conf`.
       '';
     };
-    prependConfig = lib.mkOption {
-      type = lib.types.lines;
-      default = "";
-      description = ''
-        Extra configuration lines to add to top of `~/.config/hypr/sway.conf`.
-      '';
-    };
+
     extraSessionCommands = lib.mkOption {
       type = lib.types.lines;
       default = "";
@@ -118,19 +113,37 @@ in
       enable = true;
       package = lib.mkIf (osConfig ? programs.sway.package) osConfig.programs.sway.package;
       checkConfig = false;
+      config = null;
 
-      config = {
-        bars = [ ];
+      settings = {
+        # Font
+        font = "pango:monospace 8.000000";
 
-        floating = {
-          modifier = "Shift";
-        };
+        # Borders
+        default_border = "pixel 2";
+        default_floating_border = "pixel 2";
+        hide_edge_borders = "none";
 
+        # Focus behavior
+        focus_wrapping = "no";
+        focus_follows_mouse = "yes";
+        focus_on_window_activation = "smart";
+        mouse_warping = "output";
+
+        # Layout
+        workspace_layout = "default";
+        workspace_auto_back_and_forth = "yes";
+
+        # Modifier
+        floating_modifier = "Shift";
+
+        # Gaps
         gaps = {
           inner = 5;
           outer = 20;
         };
 
+        # Input
         input = {
           "*" = {
             xkb_layout = "us";
@@ -140,29 +153,23 @@ in
           };
         };
 
-        modifier = "Mod4";
+        # Variables
+        set = {
+          "$mod" = "Mod4";
+          "$term" = "kitty";
+        };
 
-        terminal = "kitty";
-
-        workspaceAutoBackAndForth = true;
-        workspaceLayout = "default";
+        # Sway extensions (blur, shadows, etc.)
+        blur = "enable";
+        blur_passes = 4;
+        blur_radius = 5;
+        shadows = "enable";
+        shadows_on_csd = "enable";
+        titlebar_separator = "disable";
+        scratchpad_minimize = "disable";
       }
       // cfg.settings;
 
-      extraConfig = ''
-        blur enable
-        blur_passes 4
-        blur_radius 5
-
-        shadows enable
-        shadows_on_csd enable
-        titlebar_separator disable
-        scratchpad_minimize disable
-
-        ${cfg.appendConfig}
-      '';
-
-      extraConfigEarly = cfg.prependConfig;
       inherit (cfg) extraSessionCommands;
 
       systemd = {
