@@ -66,6 +66,7 @@ in
       for_window = [
         # Float specific applications
         ''[class="Rofi"] floating enable''
+        ''[class="sherlock"] floating enable; sticky enable; inhibit_idle focus''
         ''[class="viewnior"] floating enable''
         ''[class="feh"] floating enable''
         ''[class="wlogout"] floating enable''

@@ -52,7 +52,8 @@ in
       browser = "${getExe config.programs.firefox.package}";
       explorer = "nautilus";
       notification_center = "${getExe' config.services.swaync.package "swaync-client"}";
-      launcher = "${getExe config.programs.anyrun.package}";
+      launcher = "sherlock";
+      launcher-alt = "${getExe config.programs.anyrun.package}";
       looking-glass = "looking-glass-client";
       screen-locker = "${getExe config.programs.swaylock.package}";
       # TODO: package upstream
@@ -94,10 +95,10 @@ in
           # "${modifier}+${swayCfg.right}" = "focus right";
 
           # Additional bindings - Multiple launchers like Hyprland
-          # FIXME: error on load
-          # "${modifier}+Space" = mkForce "exec ${sherlock}";
+          "${modifier}+Space" = "exec ${mkStartCommand launcher}";
           "Control+Space" = "exec ${mkStartCommand launcher}";
-          "Alt+Space" = "exec ${mkStartCommand walker}";
+          "Alt+Space" = "exec ${mkStartCommand launcher-alt}";
+          "Shift+Alt+Space" = "exec ${mkStartCommand walker}";
           # Dynamic slice selection - hold SHIFT to launch with background slice
         }
         // lib.optionalAttrs (osConfig.programs.uwsm.enable or false) {
