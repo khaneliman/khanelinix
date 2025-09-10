@@ -122,20 +122,10 @@ in
           "${modifier}+Q" = "kill";
           "Control+Shift+q" = "kill";
 
-          # File screenshots
-          "Print" = "exec ${sway_active_file}";
-          "Shift+Print" = "exec ${sway_area_file}";
-          "Super_L+Print" = "exec ${sway_screen_file}";
-
-          # Area / Window screenshots
-          "Alt+Print" = "exec ${sway_active_swappy}";
-          "Alt+Control+Print" = "exec ${sway_area_swappy}";
-          "Alt+Super_L+Print" = "exec ${sway_screen_swappy}";
-
-          # Clipboard screenshots
-          "Control+Print" = "exec ${sway_active_clipboard}";
-          "Control+Shift+Print" = "exec ${sway_area_clipboard}";
-          "Super_L+Control+Print" = "exec ${sway_screen_clipboard}";
+          # Quick screenshot shortcuts (matching Hyprland)
+          "Print" = "exec ${sway_active_clipboard}";
+          "Shift+Print" = "exec ${sway_area_clipboard}";
+          "Super_L+Print" = "exec ${sway_screen_clipboard}";
 
           # Screen recording
           "${modifier}+Control+Alt+Print" = "exec ${screen-recorder} screen";
