@@ -64,7 +64,7 @@ in
             condensedOutputs = [ "DP-3" ];
           };
           waybar = {
-            enableDebug = true;
+            enableDebug = false;
             # enableInspect = true;
             fullSizeOutputs = [ "DP-1" ];
             condensedOutputs = [ "DP-3" ];
@@ -89,7 +89,7 @@ in
         wms = {
           hyprland = {
             enable = true;
-            enableDebug = true;
+            enableDebug = false;
 
             appendConfig = # bash
               ''
