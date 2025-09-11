@@ -15,10 +15,6 @@ in
   inherit (master)
     claude-code
     yaziPlugins
-
-    # TODO: remove after hits channel
-    gemini-cli
-    anyrun
     ;
 
   # From nixpkgs-unstable
