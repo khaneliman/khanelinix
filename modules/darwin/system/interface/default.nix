@@ -110,7 +110,7 @@ in
           ++ lib.optionals config.khanelinix.suites.social.enable [
             "${hmApps}/Caprine.app"
             "${hmApps}/Element.app"
-            (lib.mkIf config.khanelinix.tools.homebrew.enable { app = "/Applications/Microsoft Teams.app"; })
+            (lib.mkIf config.khanelinix.tools.homebrew.enable { app = "${hmApps}/teams-for-linux.app"; })
             "${hmApps}/Vesktop.app"
             (lib.mkIf hmCfg.programs.thunderbird.enable {
               app = "${hmApps}/Thunderbird.app";
