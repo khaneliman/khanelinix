@@ -30,6 +30,24 @@ in
             key = [ "d" ];
             revset = "";
           };
+          "edit immutable" = {
+            key = [ "e" ];
+            args = [
+              "edit"
+              "--ignore-immutable"
+              "-r"
+              "$change_id"
+            ];
+          };
+          "squash immutable" = {
+            key = [ "s" ];
+            args = [
+              "squash"
+              "--ignore-immutable"
+              "-r"
+              "$change_id"
+            ];
+          };
         };
 
         preview = {
