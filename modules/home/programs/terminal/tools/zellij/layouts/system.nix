@@ -138,6 +138,21 @@
                 {
                   tab = {
                     _props = {
+                      name = "Jujutsu";
+                      cwd = "$HOME/khanelinix/";
+                    };
+                    _children = [
+                      {
+                        pane = {
+                          command = "jjui";
+                        };
+                      }
+                    ];
+                  };
+                }
+                {
+                  tab = {
+                    _props = {
                       name = "Files";
                       split_direction = "horizontal";
                       cwd = "$HOME";

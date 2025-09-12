@@ -63,6 +63,20 @@
                 {
                   tab = {
                     _props = {
+                      name = "Jujutsu";
+                    };
+                    _children = [
+                      {
+                        pane = {
+                          command = "jjui";
+                        };
+                      }
+                    ];
+                  };
+                }
+                {
+                  tab = {
+                    _props = {
                       name = "Files";
                     };
                     _children = [
