@@ -68,7 +68,8 @@
                     _children = [
                       {
                         pane = {
-                          command = "yazi";
+                          # Get at least some image previews in zellij
+                          command = "TERM=xterm-kitty yazi";
                         };
                       }
                     ];
