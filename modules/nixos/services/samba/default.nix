@@ -66,7 +66,7 @@ in
         };
       }
       // mapAttrs (
-        name: value:
+        _name: value:
         {
           inherit (value) path comment;
 

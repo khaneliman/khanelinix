@@ -13,7 +13,7 @@ in
 {
   flake = {
     nixosConfigurations = lib.mapAttrs' (
-      name:
+      _name:
       { system, hostname, ... }:
       {
         name = hostname;
@@ -25,7 +25,7 @@ in
     ) (filterNixOSSystems allSystems);
 
     darwinConfigurations = lib.mapAttrs' (
-      name:
+      _name:
       { system, hostname, ... }:
       {
         name = hostname;

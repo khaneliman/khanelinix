@@ -11,7 +11,7 @@ let
   allHomes = parseHomeConfigurations homesPath;
 
   generateHomeConfiguration =
-    name:
+    _name:
     {
       system,
       username,
