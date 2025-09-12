@@ -183,6 +183,7 @@ in
             go.enable = cfg.goEnable;
             gh = mkDefault enabled;
             jujutsu = mkDefault enabled;
+            jjui = mkDefault enabled;
             k9s.enable = cfg.kubernetesEnable;
             lazydocker.enable = cfg.dockerEnable;
             lazygit = mkDefault enabled;
