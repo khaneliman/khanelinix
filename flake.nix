@@ -55,10 +55,7 @@
       url = "github:catppuccin/nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    firefox-addons = {
-      url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    firefox-addons.url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
     hypr-socket-watch.url = "github:khaneliman/hypr-socket-watch";
     khanelivim.url = "github:khaneliman/khanelivim";
     nh.url = "github:nix-community/nh";
