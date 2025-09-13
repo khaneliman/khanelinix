@@ -74,6 +74,23 @@ in
                   branch_icon = " ";
                 };
               }
+              {
+                type = "jujutsu";
+                style = "powerline";
+                powerline_symbol = "";
+                background = "#4e9a06";
+                foreground = "#000000";
+                # background_templates = [
+                #   "{{ if or (.Working.Changed) (.Staging.Changed) }}${catppuccin.colors.yellow.hex}{{ end }}"
+                #   "{{ if and (gt .Ahead 0) (gt .Behind 0) }}${catppuccin.colors.peach.hex}{{ end }}"
+                #   "{{ if gt .Ahead 0 }}${catppuccin.colors.sky.hex}{{ end }}"
+                #   "{{ if gt .Behind 0 }}${catppuccin.colors.green.hex}{{ end }}"
+                # ];
+                # template = " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }} ";
+                properties = {
+                  fetch_status = true;
+                };
+              }
             ];
           }
           {
