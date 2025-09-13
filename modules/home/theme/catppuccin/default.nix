@@ -24,6 +24,7 @@ in
   imports = [
     ./firefox.nix
     ./gtk.nix
+    ./oh-my-posh.nix
     ./qt.nix
     ./sway.nix
   ];
