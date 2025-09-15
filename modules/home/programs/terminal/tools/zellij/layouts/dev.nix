@@ -83,7 +83,11 @@
                       {
                         pane = {
                           # Get at least some image previews in zellij
-                          command = "TERM=xterm-kitty yazi";
+                          command = "sh";
+                          args = [
+                            "-c"
+                            "TERM=xterm-kitty yazi"
+                          ];
                         };
                       }
                     ];
