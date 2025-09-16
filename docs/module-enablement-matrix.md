@@ -196,12 +196,12 @@ configuration.
 <details>
 <summary><strong>Development Suite</strong></summary>
 
-| Category           | Items                              | Condition      |
-| ------------------ | ---------------------------------- | -------------- |
-| **Homebrew Casks** | `cutter`, `electron`, `powershell` | Always         |
-| **Homebrew Casks** | `docker`                           | `dockerEnable` |
-| **Homebrew Casks** | `ollamac`                          | `aiEnable`     |
-| **Mac App Store**  | Patterns, Xcode                    | Always         |
+| Category           | Items           | Condition      |
+| ------------------ | --------------- | -------------- |
+| **Homebrew Casks** | `cutter`        | Always         |
+| **Homebrew Casks** | `docker`        | `dockerEnable` |
+| **Homebrew Casks** | `ollamac`       | `aiEnable`     |
+| **Mac App Store**  | Patterns, Xcode | Always         |
 
 </details>
 
@@ -213,8 +213,7 @@ configuration.
 | **Games**      | `moonlight`, `steam` (Homebrew)                                     |
 | **Music**      | GarageBand (Mac App Store)                                          |
 | **Networking** | `tailscale` service                                                 |
-| **Photo**      | `digikam` (Homebrew)                                                |
-| **Social**     | `betterdiscord-installer`, `slack@beta` (Homebrew)                  |
+| **Social**     | ``slack@beta` (Homebrew)                                            |
 | **Video**      | `ffmpeg` (system), `plex` (Homebrew), Infuse/iMovie (Mac App Store) |
 | **VM**         | `vte` (system), `utm` (Homebrew)                                    |
 

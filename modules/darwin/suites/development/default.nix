@@ -22,8 +22,6 @@ in
     homebrew = {
       casks = [
         "cutter"
-        "electron"
-        "powershell"
       ]
       ++ lib.optionals cfg.dockerEnable [
         "docker-desktop"

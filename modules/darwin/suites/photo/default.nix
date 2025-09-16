@@ -16,7 +16,7 @@ in
 
   config = mkIf cfg.enable {
     homebrew = {
-      casks = [ "digikam" ];
+      casks = [ ];
     };
   };
 }

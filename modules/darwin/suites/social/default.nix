@@ -17,7 +17,6 @@ in
   config = mkIf cfg.enable {
     homebrew = {
       casks = [
-        "betterdiscord-installer"
         "slack@beta"
       ];
     };
