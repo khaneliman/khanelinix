@@ -1,0 +1,28 @@
+{
+  config,
+  lib,
+  ...
+}:
+let
+  inherit (lib) mkIf mkEnableOption;
+
+  cfg = config.khanelinix.programs.terminal.tools.opencode;
+in
+{
+  options.khanelinix.programs.terminal.tools.opencode = {
+    enable = mkEnableOption "OpenCode configuration";
+  };
+
+  config = mkIf cfg.enable {
+    programs.opencode = {
+      enable = true;
+
+      settings = {
+        theme = "opencode";
+        model = "anthropic/claude-sonnet-4-20250514";
+        autoshare = false;
+        autoupdate = false;
+      };
+    };
+  };
+}

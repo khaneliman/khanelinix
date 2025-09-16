@@ -179,6 +179,7 @@ in
             azure.enable = cfg.azureEnable;
             claude-code.enable = cfg.aiEnable;
             gemini-cli.enable = cfg.aiEnable;
+            opencode.enable = cfg.aiEnable;
             git-crypt = mkDefault enabled;
             go.enable = cfg.goEnable;
             gh = mkDefault enabled;
