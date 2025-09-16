@@ -35,7 +35,8 @@ in
         hidpi = "off";
         active_color = "0xff7793d1";
         inactive_color = "0xff5e6798";
-        background_color = "0x302c2e34";
+        # FIXME: broken atm
+        # background_color = "0x302c2e34";
       };
     };
   };
