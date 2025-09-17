@@ -23,6 +23,10 @@ in
         autoshare = false;
         autoupdate = false;
       };
+
+      inherit ((import (lib.getFile "modules/common/ai-tools") { inherit lib; }).claudeCode) agents;
+
+      inherit ((import (lib.getFile "modules/common/ai-tools") { inherit lib; }).claudeCode) commands;
     };
   };
 }
