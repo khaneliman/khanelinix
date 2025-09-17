@@ -218,6 +218,8 @@ in
             };
           };
 
+          opencode.settings.theme = lib.mkForce "catppuccin";
+
           tmux.plugins = [
             {
               plugin = pkgs.tmuxPlugins.catppuccin;
