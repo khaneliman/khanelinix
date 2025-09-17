@@ -2,7 +2,7 @@
   module-lint = ''
     ---
     allowed-tools: Read, Grep, Bash(eslint*), Bash(pylint*), Bash(flake8*), Bash(cargo clippy*)
-    argument-hint: [path] [--fix] [--strict] [--focus=structure|interfaces|docs]
+    argument-hint: "[path] [--fix] [--strict] [--focus=structure|interfaces|docs]"
     description: Software module best practices and compliance checking
     ---
 

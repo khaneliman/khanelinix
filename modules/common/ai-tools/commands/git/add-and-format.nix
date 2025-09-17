@@ -2,7 +2,7 @@
   add-and-format = ''
     ---
     allowed-tools: Bash(git*), Bash(prettier*), Bash(black*), Bash(rustfmt*), Bash(gofmt*), Bash(eslint*), Bash(pylint*), Bash(nix fmt*), Bash(nixfmt*), Bash(treefmt*), Read, Grep
-    argument-hint: [files...] [--all] [--check]
+    argument-hint: "[files...] [--all] [--check]"
     description: Smart git add with automatic formatting and style checking for files
     ---
 

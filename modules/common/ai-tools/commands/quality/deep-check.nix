@@ -2,7 +2,7 @@
   deep-check = ''
     ---
     allowed-tools: Bash(npm*), Bash(cargo*), Bash(make*), Bash(python*), Bash(go*), Bash(node*), Read, Grep
-    argument-hint: [scope] [--with-builds] [--security] [--performance]
+    argument-hint: "[scope] [--with-builds] [--security] [--performance]"
     description: Comprehensive codebase analysis including unused code detection and optimization
     ---
 

@@ -2,7 +2,7 @@
   flake-update = ''
     ---
     allowed-tools: Bash(nix flake update*), Bash(nix flake lock*), Bash(nix flake show*), Bash(git*), Read, Grep
-    argument-hint: [input...] [--commit] [--test] [--interactive]
+    argument-hint: "[input...] [--commit] [--test] [--interactive]"
     description: Comprehensive flake input management and update workflow
     ---
 

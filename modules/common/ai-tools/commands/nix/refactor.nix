@@ -2,7 +2,7 @@
   nix-refactor = ''
     ---
     allowed-tools: Read, Edit, MultiEdit, Grep, Bash(nix fmt)
-    argument-hint: [path] [--style-only] [--fix-let-blocks] [--fix-lib-usage] [--fix-options] [--fix-modules]
+    argument-hint: "[path] [--style-only] [--fix-let-blocks] [--fix-lib-usage] [--fix-options] [--fix-modules]"
     description: Automatically fix Nix code style violations and refactor patterns according to project conventions
     ---
 

@@ -2,7 +2,7 @@
   template-new = ''
     ---
     allowed-tools: Write, Read, Edit, Bash(mkdir*), Bash(cp*), Bash(chmod*), Grep
-    argument-hint: <name> [--type=project|library|api|webapp] [--language=rust|go|node|python|etc] [--interactive]
+    argument-hint: "<name> [--type=project|library|api|webapp] [--language=rust|go|node|python|etc] [--interactive]"
     description: Interactive development template creation with project conventions integration
     ---
 

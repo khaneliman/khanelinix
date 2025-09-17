@@ -2,7 +2,7 @@
   style-audit = ''
     ---
     allowed-tools: Read, Grep, Bash(eslint*), Bash(prettier*), Bash(black*), Bash(flake8*), Bash(rustfmt*), Bash(gofmt*), Bash(nix fmt*), Bash(nixfmt*), Bash(treefmt*)
-    argument-hint: [path] [--fix] [--report] [--focus=naming|structure|imports|organization]
+    argument-hint: "[path] [--fix] [--report] [--focus=naming|structure|imports|organization]"
     description: Comprehensive style compliance checking against project standards
     ---
 

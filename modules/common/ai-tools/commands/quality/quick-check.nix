@@ -2,7 +2,7 @@
   quick-check = ''
     ---
     allowed-tools: Bash(git*), Bash(eslint*), Bash(tsc*), Bash(python*), Bash(cargo check*), Bash(npm*), Bash(prettier*), Bash(nix fmt*), Bash(nixfmt*), Bash(treefmt*), Read, Grep
-    argument-hint: [path] [--fix] [--verbose]
+    argument-hint: "[path] [--fix] [--verbose]"
     description: Fast syntax, build, and format validation for immediate feedback
     ---
 

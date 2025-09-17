@@ -2,7 +2,7 @@
   dependency-audit = ''
     ---
     allowed-tools: Bash(npm audit*), Bash(npm ls*), Bash(pip-audit*), Bash(cargo audit*), Bash(bundle audit*), Read, Grep
-    argument-hint: [--unused] [--conflicts] [--updates] [--security] [--report]
+    argument-hint: "[--unused] [--conflicts] [--updates] [--security] [--report]"
     description: Check and optimize project dependencies and package management
     ---
 

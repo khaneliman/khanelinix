@@ -2,7 +2,7 @@
   option-migrate = ''
     ---
     allowed-tools: Read, Edit, MultiEdit, Grep
-    argument-hint: <old-key> <new-key> [--dry-run] [--with-aliases]
+    argument-hint: "<old-key> <new-key> [--dry-run] [--with-aliases]"
     description: Help migrate configuration keys/options to new format across the project
     ---
 

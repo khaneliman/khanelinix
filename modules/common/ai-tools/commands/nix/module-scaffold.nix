@@ -2,7 +2,7 @@
   module-scaffold = ''
     ---
     allowed-tools: Write, Read, Edit, Grep, Bash(nix fmt)
-    argument-hint: <module-path> [--type=home|nixos|darwin] [--namespace] [--with-options] [--template=basic|advanced]
+    argument-hint: "<module-path> [--type=home|nixos|darwin] [--namespace] [--with-options] [--template=basic|advanced]"
     description: Generate new Nix module boilerplate following project conventions
     ---
 
