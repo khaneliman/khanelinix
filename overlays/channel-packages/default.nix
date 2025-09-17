@@ -15,8 +15,6 @@ in
   inherit (master)
     claude-code
     yaziPlugins
-
-    lazyjj
     ;
 
   # From nixpkgs-unstable
