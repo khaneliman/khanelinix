@@ -193,8 +193,7 @@ in
         };
       };
 
-      # FIXME: broken nixpkgs
-      # services.ollama.enable = mkDefault (cfg.aiEnable && pkgs.stdenv.hostPlatform.isDarwin);
+      services.ollama.enable = mkDefault (cfg.aiEnable && pkgs.stdenv.hostPlatform.isDarwin);
     };
 
     sops.secrets = lib.mkIf (osConfig.khanelinix.security.sops.enable or false) {
