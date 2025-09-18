@@ -105,9 +105,6 @@ in
               ", Print, exec, $screenshot_active_clipboard"
               "SHIFT, Print, exec, $screenshot_area_clipboard"
               "SUPER, Print, exec, $screenshot_screen_clipboard"
-
-              # Enter screenshot submap
-              "$mainMod, S, submap, screenshot"
             ];
 
             # Window movement binds - keeping basic movement
@@ -164,8 +161,9 @@ in
 
             # System and window submap triggers
             submapTriggerBinds = [
+              "$mainMod, S, submap, screenshot"
               "$mainMod, X, submap, system"
-              "$mainMod, R, submap, window"
+              "$mainMod, W, submap, window"
             ];
           in
           # Apply mkStartCommand only to the exec commands
