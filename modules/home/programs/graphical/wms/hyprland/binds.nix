@@ -323,6 +323,8 @@ in
               # Window operations
               ", f, fullscreen"
               ", v, togglefloating"
+              ", i, togglefloating"
+              ", i, pin"
               ", p, pseudo"
               ", j, togglesplit"
               ", k, swapsplit"
