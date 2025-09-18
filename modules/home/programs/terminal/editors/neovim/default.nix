@@ -36,9 +36,12 @@ let
         };
       }
       (lib.mkIf (osConfig.khanelinix.archetypes.wsl.enable or false) {
-        plugins.yanky.enable = lib.mkForce false;
-        plugins.yanky.settings.ring.permanent_wrapper.__raw =
-          ''require("yanky.wrappers").remove_carriage_return'';
+        plugins = {
+          yanky = {
+            enable = lib.mkForce false;
+            settings.ring.permanent_wrapper.__raw = ''require("yanky.wrappers").remove_carriage_return'';
+          };
+        };
 
         extraConfigLuaPost = ''
           in_wsl = os.getenv('WSL_DISTRO_NAME') ~= nil
