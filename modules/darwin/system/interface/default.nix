@@ -148,8 +148,7 @@ in
           ]
           ++ lib.optionals config.khanelinix.suites.development.enable [
             "${hmApps}/Visual Studio Code.app"
-            # FIXME: build hangs
-            # "${pkgs.bruno}/Applications/Bruno.app"
+            "${hmApps}/Bruno.app"
             {
               spacer = {
                 small = true;
