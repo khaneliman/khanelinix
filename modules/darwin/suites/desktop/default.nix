@@ -26,8 +26,7 @@ in
       raycast
       switchaudio-osx
       stats
-      # Broken nixpkgs
-      # xquartz
+      xquartz
     ];
 
     khanelinix = {
@@ -58,7 +57,6 @@ in
         "hammerspoon"
         "launchcontrol"
         "sf-symbols"
-        "xquartz"
       ];
 
       taps = [
