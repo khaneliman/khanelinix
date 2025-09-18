@@ -56,7 +56,6 @@ in
       packages =
         with pkgs;
         [
-          bruno
           jqp
           onefetch
           tree-sitter
@@ -66,6 +65,7 @@ in
           # })
         ]
         ++ lib.optionals (!isWSL) [
+          bruno
           neovide
           postman
         ]
