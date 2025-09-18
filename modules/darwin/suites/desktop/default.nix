@@ -57,8 +57,7 @@ in
         "gpg-suite"
         "hammerspoon"
         "launchcontrol"
-        # FIXME: broken homebrew hash
-        # "sf-symbols"
+        "sf-symbols"
         "xquartz"
       ];
 
