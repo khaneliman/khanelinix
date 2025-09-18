@@ -102,10 +102,6 @@ in
           run = "duckdb";
         }) fileTypes
       )
-      ++ lib.optional (lib.hasAttr "glow" enabledPlugins) {
-        name = "*.md";
-        run = "glow";
-      }
       ++ lib.optionals (lib.hasAttr "ouch" enabledPlugins) (
         let
           mimeTypes = [
