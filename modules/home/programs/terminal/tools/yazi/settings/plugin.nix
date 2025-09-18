@@ -122,7 +122,25 @@ in
           inherit mime;
           run = "ouch";
         }) mimeTypes
-      );
+      )
+      ++ lib.optionals (lib.hasAttr "piper" enabledPlugins) [
+        {
+          name = "*.tar*";
+          run = ''piper --format=url -- tar tf "$1"'';
+        }
+        {
+          name = "*.csv";
+          run = ''piper -- bat -p --color=always "$1"'';
+        }
+        {
+          name = "*.md";
+          run = ''piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"'';
+        }
+        {
+          name = "*/";
+          run = ''piper -- eza -TL=3 --color=always --icons=always --group-directories-first --no-quotes "$1"'';
+        }
+      ];
 
     previewers = [
       {

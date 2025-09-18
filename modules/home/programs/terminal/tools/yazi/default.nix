@@ -25,8 +25,10 @@ in
           plugin: package: lib.optional (builtins.hasAttr plugin config.programs.yazi.plugins) package;
       in
       optionalPluginPackage "ouch" pkgs.ouch
-      ++ optionalPluginPackage "glow" pkgs.glow
       ++ optionalPluginPackage "duckdb" pkgs.duckdb
+      ++ optionalPluginPackage "piper" pkgs.bat
+      ++ optionalPluginPackage "piper" pkgs.eza
+      ++ optionalPluginPackage "piper" pkgs.glow
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         pkgs.dragon-drop
       ];
@@ -75,6 +77,7 @@ in
           # mime-ext
           mount
           ouch
+          piper
           restore
           smart-enter
           smart-filter
