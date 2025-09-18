@@ -74,13 +74,11 @@ in
         bleachbit
         clac
         dropbox
-        # FIXME: broken nixpkgs
-        # dupeguru
+        dupeguru
         feh
         kdePackages.filelight
         fontpreview
-        # FIXME: broken nixpkgs
-        # input-leap
+        input-leap
         kdePackages.ark
         kdePackages.gwenview
         realvnc-vnc-viewer
