@@ -1,7 +1,9 @@
 {
   config,
+  inputs,
   lib,
-
+  system,
+  pkgs,
   ...
 }:
 let
@@ -36,6 +38,42 @@ in
                     firenvim.enable = mkForce false;
                     neorg.enable = mkForce false;
                     neotest.enable = mkForce false;
+
+                    # WSL-specific optimizations to reduce closure size
+                    # Disable formatters that pull in large dependencies
+                    conform-nvim.settings.formatters = mkForce {
+                      csharpier.command = lib.getExe pkgs.csharpier;
+                      nixfmt.command = lib.getExe pkgs.nixfmt;
+                    };
+
+                    # WSL-specific treesitter grammar filtering to reduce closure size
+                    treesitter.grammarPackages = mkForce (
+                      let
+                        # Get base khanelivim configuration
+                        khanelivimConfig = inputs.khanelivim.nixvimConfigurations.${system}.khanelivim.config;
+
+                        # Only include essential grammars for work machine
+                        wslIncludedGrammars = [
+                          "typescript-grammar"
+                          "javascript-grammar"
+                          "python-grammar"
+                          "c_sharp-grammar"
+                          # Core editing grammars that are always useful
+                          "json-grammar"
+                          "yaml-grammar"
+                          "markdown-grammar"
+                          "nix-grammar"
+                          "bash-grammar"
+                          "regex-grammar"
+                          "gitignore-grammar"
+                          "gitcommit-grammar"
+                          "diff-grammar"
+                        ];
+                      in
+                      lib.filter (
+                        g: lib.elem g.pname wslIncludedGrammars
+                      ) khanelivimConfig.plugins.treesitter.package.passthru.allGrammars
+                    );
                   };
                 };
               }
