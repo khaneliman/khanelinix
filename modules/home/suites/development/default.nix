@@ -56,6 +56,7 @@ in
       packages =
         with pkgs;
         [
+          bruno
           jqp
           onefetch
           tree-sitter
@@ -69,8 +70,6 @@ in
           postman
         ]
         ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && !isWSL) [
-          # FIXME: build hangs
-          bruno
           github-desktop
           qtcreator
         ]
