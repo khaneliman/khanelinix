@@ -24,6 +24,34 @@ in
         autoshare = false;
         autoupdate = false;
 
+        formatter = {
+          nixfmt = {
+            command = [
+              (lib.getExe pkgs.nixfmt)
+              "$FILE"
+            ];
+            extensions = [ ".nix" ];
+          };
+
+          csharpier = {
+            command = [
+              (lib.getExe pkgs.csharpier)
+              "$FILE"
+            ];
+            extensions = [
+              ".cs"
+            ];
+          };
+
+          rustfmt = {
+            command = [
+              (lib.getExe pkgs.rustfmt)
+              "$FILE"
+            ];
+            extensions = [ ".rs" ];
+          };
+        };
+
         mcp = {
           github = {
             type = "local";
