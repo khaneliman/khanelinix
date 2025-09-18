@@ -43,8 +43,6 @@ in
       };
 
       systemPackages = with pkgs; [
-        # FIXME: broken pkg
-        # cachix
         git
         nix-prefetch-git
       ];
