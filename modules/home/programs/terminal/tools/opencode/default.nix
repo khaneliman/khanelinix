@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -22,6 +23,24 @@ in
         model = "anthropic/claude-sonnet-4-20250514";
         autoshare = false;
         autoupdate = false;
+
+        mcp = {
+          github = {
+            type = "local";
+            command = [
+              (lib.getExe pkgs.github-mcp-server)
+              "--read-only"
+              "stdio"
+            ];
+            enabled = true;
+          };
+
+          socket = {
+            type = "remote";
+            url = "https://mcp.socket.dev/";
+            enabled = true;
+          };
+        };
       };
 
       inherit ((import (lib.getFile "modules/common/ai-tools") { inherit lib; }).claudeCode) agents;
