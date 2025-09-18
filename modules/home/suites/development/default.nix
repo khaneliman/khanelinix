@@ -104,7 +104,7 @@ in
         )
         ++ lib.optionals cfg.sqlEnable [
           dbeaver-bin
-          # FIXME: broken nixpkgs
+          # NOTE: 1 GB closure addition
           # mysql-workbench
         ]
         ++ lib.optionals cfg.aiEnable [
