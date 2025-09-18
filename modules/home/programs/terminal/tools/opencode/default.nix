@@ -148,6 +148,7 @@ in
           };
         };
 
+        # FIXME: seems to cause opencode to just hang
         mcp = {
           github = {
             type = "local";
@@ -156,13 +157,13 @@ in
               "--read-only"
               "stdio"
             ];
-            enabled = true;
+            enabled = false;
           };
 
           socket = {
             type = "remote";
             url = "https://mcp.socket.dev/";
-            enabled = true;
+            enabled = false;
           };
         };
       };
