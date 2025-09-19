@@ -97,7 +97,6 @@ in
             hmApps = "/Users/${config.khanelinix.user.name}/Applications/Home Manager Apps";
           in
           [
-            "/System/Applications/Launchpad.app"
             "/System/Applications/System Settings.app"
             "/System/Applications/App Store.app"
             {
