@@ -19,22 +19,25 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages =
-      let
-        optionalPluginPackage =
-          plugin: package: lib.optional (builtins.hasAttr plugin config.programs.yazi.plugins) package;
-      in
-      optionalPluginPackage "ouch" pkgs.ouch
-      ++ optionalPluginPackage "duckdb" pkgs.duckdb
-      ++ optionalPluginPackage "piper" pkgs.bat
-      ++ optionalPluginPackage "piper" pkgs.eza
-      ++ optionalPluginPackage "piper" pkgs.glow
-      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-        pkgs.dragon-drop
-      ];
 
     programs.yazi = {
       enable = true;
+
+      package = pkgs.yazi.override {
+        extraPackages =
+          let
+            optionalPluginPackage =
+              plugin: package: lib.optional (builtins.hasAttr plugin config.programs.yazi.plugins) package;
+          in
+          optionalPluginPackage "ouch" pkgs.ouch
+          ++ optionalPluginPackage "duckdb" pkgs.duckdb
+          ++ optionalPluginPackage "piper" pkgs.bat
+          ++ optionalPluginPackage "piper" pkgs.eza
+          ++ optionalPluginPackage "piper" pkgs.glow
+          ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+            pkgs.dragon-drop
+          ];
+      };
 
       # NOTE: wrapper alias is yy
       enableBashIntegration = true;
