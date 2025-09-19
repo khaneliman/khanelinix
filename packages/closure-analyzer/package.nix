@@ -33,6 +33,11 @@ python3Packages.buildPythonApplication rec {
       - Package categorization
       - WSL-specific optimization suggestions
       - JSON output for automation
+
+
+      Example
+      nix run .#closure-analyzer -- '.#nixosConfigurations.VT0-IT-47-D443.config.system.build.toplevel' --threshold 0.5
+      nix run .#closure-analyzer -- '.#nixosConfigurations.VT0-IT-47-D443.config.system.build.toplevel' --threshold 0.5 --no-build
     '';
     license = lib.licenses.mit;
     maintainers = [ ];
