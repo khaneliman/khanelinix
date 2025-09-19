@@ -16,7 +16,8 @@ in
     claude-code
     yaziPlugins
 
-    # TODO
+    # TODO remove once makes it to channel
+    opencode
     firefox-devedition
     firefox-devedition-unwrapped
     ;
