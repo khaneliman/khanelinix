@@ -27,17 +27,33 @@ python3Packages.buildPythonApplication rec {
       where closure size matters for performance and storage.
 
       Features:
-      - Total closure size analysis
-      - Identification of largest packages
-      - Dependency chain analysis
-      - Package categorization
+      - Total closure size analysis with both actual and dependency-inclusive sizes
+      - Identification of largest packages and dependency burden analysis
+      - Package categorization with 15+ predefined categories
+      - Comparison with previous analyses via caching
       - WSL-specific optimization suggestions
-      - JSON output for automation
+      - Enhanced JSON output for automation and CI integration
+      - Robust error handling and timeout protection
+      - Batch processing to handle large closures efficiently
 
-
-      Example
-      nix run .#closure-analyzer -- '.#nixosConfigurations.VT0-IT-47-D443.config.system.build.toplevel' --threshold 0.5
-      nix run .#closure-analyzer -- '.#nixosConfigurations.VT0-IT-47-D443.config.system.build.toplevel' --threshold 0.5 --no-build
+      Example Usage:
+        # Analyze a NixOS system
+        nix run .#closure-analyzer -- '.#nixosConfigurations.myhost.config.system.build.toplevel'
+        
+        # Set custom threshold for "large" packages
+        nix run .#closure-analyzer -- '.#nixosConfigurations.myhost.config.system.build.toplevel' --threshold 0.5
+        
+        # Skip building if result already exists
+        nix run .#closure-analyzer -- '.#nixosConfigurations.myhost.config.system.build.toplevel' --no-build
+        
+        # Generate JSON output for CI/automation
+        nix run .#closure-analyzer -- '.#nixosConfigurations.myhost.config.system.build.toplevel' --json
+        
+        # Compare with previous run
+        nix run .#closure-analyzer -- '.#nixosConfigurations.myhost.config.system.build.toplevel' --compare-only
+        
+        # Save report to file
+        nix run .#closure-analyzer -- '.#nixosConfigurations.myhost.config.system.build.toplevel' -o report.txt
     '';
     license = lib.licenses.mit;
     maintainers = [ ];
