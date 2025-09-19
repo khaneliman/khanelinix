@@ -31,43 +31,47 @@ in
             extraModules = [
               {
                 config = {
+                  # Disable heavy language servers not needed for work
+                  lsp.servers = {
+                    rust_analyzer.enable = mkForce false;
+                    clangd.enable = mkForce false;
+                  };
+
                   plugins = {
                     # NOTE: Disabling some plugins I won't need on work devices
                     avante.enable = mkForce false;
-                    windsurf-nvim.enable = mkForce false;
-                    firenvim.enable = mkForce false;
-                    neorg.enable = mkForce false;
-                    neotest.enable = mkForce false;
-
-                    # WSL-specific optimizations to reduce closure size
-                    # Disable formatters that pull in large dependencies
+                    clangd-extensions.enable = mkForce false;
                     conform-nvim.settings.formatters = mkForce {
                       csharpier.command = lib.getExe pkgs.csharpier;
                       nixfmt.command = lib.getExe pkgs.nixfmt;
                     };
-
-                    # WSL-specific treesitter grammar filtering to reduce closure size
+                    firenvim.enable = mkForce false;
+                    lint.linters = {
+                      clangtidy.cmd = mkForce null;
+                      clippy.cmd = mkForce null;
+                    };
+                    neorg.enable = mkForce false;
+                    neotest.enable = mkForce false;
+                    windsurf-nvim.enable = mkForce false;
+                    rustaceanvim.enable = mkForce false;
                     treesitter.grammarPackages = mkForce (
                       let
-                        # Get base khanelivim configuration
                         khanelivimConfig = inputs.khanelivim.nixvimConfigurations.${system}.khanelivim.config;
 
-                        # Only include essential grammars for work machine
                         wslIncludedGrammars = [
-                          "typescript-grammar"
-                          "javascript-grammar"
-                          "python-grammar"
+                          "bash-grammar"
                           "c_sharp-grammar"
-                          # Core editing grammars that are always useful
+                          "diff-grammar"
+                          "gitcommit-grammar"
+                          "gitignore-grammar"
+                          "javascript-grammar"
                           "json-grammar"
-                          "yaml-grammar"
                           "markdown-grammar"
                           "nix-grammar"
-                          "bash-grammar"
+                          "python-grammar"
                           "regex-grammar"
-                          "gitignore-grammar"
-                          "gitcommit-grammar"
-                          "diff-grammar"
+                          "typescript-grammar"
+                          "yaml-grammar"
                         ];
                       in
                       lib.filter (
@@ -126,6 +130,31 @@ in
     };
 
     theme.catppuccin = enabled;
+  };
+
+  programs = {
+    opencode.settings = {
+      lsp = {
+        clangd.command = mkForce [ ];
+        rust-analyzer.command = mkForce [ ];
+      };
+      formatter = mkForce {
+        nixfmt.command = [ (lib.getExe pkgs.nixfmt) ];
+        csharpier.command = [ (lib.getExe pkgs.csharpier) ];
+      };
+    };
+
+    bat.extraPackages = mkForce (
+      with pkgs.bat-extras;
+      [
+        batdiff
+        batgrep
+        batman
+        batpipe
+        batwatch
+        # prettybat excluded - saves ~12GB in Rust/Clang toolchains
+      ]
+    );
   };
 
   home.stateVersion = "25.05";
