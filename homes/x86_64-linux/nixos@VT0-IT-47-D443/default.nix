@@ -41,6 +41,8 @@ in
                     # NOTE: Disabling some plugins I won't need on work devices
                     avante.enable = mkForce false;
                     clangd-extensions.enable = mkForce false;
+                    dap.enable = mkForce false;
+                    dap-ui.enable = mkForce false;
                     conform-nvim.settings.formatters = mkForce {
                       csharpier.command = lib.getExe pkgs.csharpier;
                       nixfmt.command = lib.getExe pkgs.nixfmt;
