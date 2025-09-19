@@ -99,6 +99,11 @@ _: {
             }
           );
         };
+
+        closure-analyzer = {
+          type = "app";
+          program = lib.getExe (pkgs.callPackage ../packages/closure-analyzer/package.nix { });
+        };
       };
     };
 }
