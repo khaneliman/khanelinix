@@ -31,17 +31,17 @@ in
             "PATH"
             ":"
             (lib.makeBinPath [
+              bash-language-server
               clang-tools
               marksman
               nil
               nixd
-              nixfmt-rfc-style
-              bash-language-server
-              vscode-langservers-extracted
+              nixfmt
               nodePackages.prettier
-              rustfmt
               rust-analyzer
+              rustfmt
               shellcheck
+              vscode-langservers-extracted
             ])
           ];
       });
