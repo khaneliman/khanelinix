@@ -12,6 +12,7 @@ let
   inherit (inputs) yazi-flavors;
 
   cfg = config.khanelinix.programs.terminal.tools.yazi;
+  isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
 in
 {
   options.khanelinix.programs.terminal.tools.yazi = {
@@ -23,21 +24,34 @@ in
     programs.yazi = {
       enable = true;
 
-      package = pkgs.yazi.override {
-        extraPackages =
-          let
-            optionalPluginPackage =
-              plugin: package: lib.optional (builtins.hasAttr plugin config.programs.yazi.plugins) package;
-          in
-          optionalPluginPackage "ouch" pkgs.ouch
-          ++ optionalPluginPackage "duckdb" pkgs.duckdb
-          ++ optionalPluginPackage "piper" pkgs.bat
-          ++ optionalPluginPackage "piper" pkgs.eza
-          ++ optionalPluginPackage "piper" pkgs.glow
-          ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-            pkgs.dragon-drop
+      package =
+        pkgs.yazi.override {
+          extraPackages =
+            let
+              optionalPluginPackage =
+                plugin: package: lib.optional (builtins.hasAttr plugin config.programs.yazi.plugins) package;
+            in
+            optionalPluginPackage "ouch" pkgs.ouch
+            ++ optionalPluginPackage "duckdb" pkgs.duckdb
+            ++ optionalPluginPackage "piper" pkgs.bat
+            ++ optionalPluginPackage "piper" pkgs.eza
+            ++ optionalPluginPackage "piper" pkgs.glow
+            ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && !isWSL) [
+              pkgs.dragon-drop
+            ];
+        }
+        // lib.optionalAttrs isWSL {
+          optionalDeps = with pkgs; [
+            # Keep essential tools, exclude heavy media dependencies
+            jq
+            _7zz
+            fd
+            ripgrep
+            fzf
+            zoxide
+            # Remove: ffmpeg, poppler-utils, imagemagick, chafa, resvg
           ];
-      };
+        };
 
       # NOTE: wrapper alias is yy
       enableBashIntegration = true;
