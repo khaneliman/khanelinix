@@ -132,7 +132,7 @@
 
       jsonls = {
         command = [
-          (lib.getExe pkgs.vscode-langservers-extracted)
+          (lib.getExe' pkgs.vscode-langservers-extracted "vscode-json-language-server")
           "--stdio"
         ];
         extensions = [
