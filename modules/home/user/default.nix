@@ -112,7 +112,6 @@ in
 
           # Navigation shortcuts
           home = "cd ~";
-          dots = "cd $DOTS_DIR";
           ".." = "cd ..";
           "..." = "cd ../..";
           "...." = "cd ../../..";
