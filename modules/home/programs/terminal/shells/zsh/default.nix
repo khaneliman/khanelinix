@@ -33,7 +33,7 @@ in
           "ALWAYS_TO_END" # cursor is moved to the end of the word after completion
           "CORRECT" # try to correct the spelling of commands
           "INTERACTIVE_COMMENTS" # allow comments even in interactive shells
-          "MENU_COMPLETE" # insert the first match immediately on ambiguous completion
+
           "PUSHD_IGNORE_DUPS" # don't push multiple copies of the same directory
           "PUSHD_TO_HOME" # have pushd with no arguments act like `pushd $HOME`
           "PUSHD_SILENT" # do not print the directory stack
