@@ -71,6 +71,7 @@ in
 
           shell = {
             bash = mkDefault enabled;
+            nushell = mkDefault enabled;
             zsh = mkDefault enabled;
           };
 
