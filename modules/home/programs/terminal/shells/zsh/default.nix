@@ -86,9 +86,6 @@ in
         '';
 
         history = {
-          # share history between different zsh sessions
-          share = true;
-
           # avoid cluttering $HOME with the histfile
           path = "${config.xdg.dataHome}/zsh/zsh_history";
 
