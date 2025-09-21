@@ -93,15 +93,10 @@ in
       };
 
       services = {
+        colord.enable = mkForce false;
+        gnome.gnome-settings-daemon.enable = mkForce false;
         pipewire.enable = mkForce false;
         pulseaudio.enable = mkForce false;
-      };
-
-      services = {
-        xserver.enable = mkForce false;
-        gnome.gnome-settings-daemon.enable = mkForce false;
-        colord.enable = mkForce false;
-        dbus.packages = mkForce [ ];
       };
 
       xdg.portal = {
