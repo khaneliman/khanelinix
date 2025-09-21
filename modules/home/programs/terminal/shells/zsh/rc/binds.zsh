@@ -1,5 +1,5 @@
-# Enable Vi mode
-bindkey -v
+# Note: Vi mode is handled by zsh-vi-mode plugin
+# bindkey -v # This is redundant with the plugin
 
 # C-right / C-left for word skips
 bindkey "^[[1;5C" forward-word
