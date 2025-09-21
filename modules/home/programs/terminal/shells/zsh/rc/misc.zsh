@@ -30,7 +30,7 @@ autoload -Uz colors && colors
 # Autosuggest
 ZSH_AUTOSUGGEST_USE_ASYNC="true"
 ZSH_AUTOSUGGEST_MANUAL_REBIND=1
-ZSH_AUTOSUGGEST_HISTORY_IGNORE=$'*\n*'
+# ZSH_AUTOSUGGEST_HISTORY_IGNORE moved to main config to be conditional
 
 # Improve paste delay for nix store paths
 # FIXME: broken with default priority

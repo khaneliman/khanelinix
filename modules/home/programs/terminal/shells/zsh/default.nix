@@ -32,8 +32,6 @@ in
           "AUTO_PUSHD" # make cd push the old directory onto the directory stack
           "ALWAYS_TO_END" # cursor is moved to the end of the word after completion
           "CORRECT" # try to correct the spelling of commands
-          "HIST_FCNTL_LOCK" # use system's fcntl call to lock the history file
-          "HIST_VERIFY" # don't execute the line directly; instead perform history expansion and reload the line into the editing buffer
           "INTERACTIVE_COMMENTS" # allow comments even in interactive shells
           "MENU_COMPLETE" # insert the first match immediately on ambiguous completion
           "PUSHD_IGNORE_DUPS" # don't push multiple copies of the same directory
@@ -46,8 +44,13 @@ in
 
           # Disable options (prefix with NO_)
           "NO_CORRECT_ALL" # don't try to correct the spelling of all arguments in a line
-          "NO_HIST_BEEP" # don't beep in ZLE when a widget attempts to access a history entry which isn't there
           "NO_NOMATCH" # enable "no matches found" check
+        ]
+        ++ lib.optionals (!config.khanelinix.programs.terminal.tools.atuin.enable) [
+          # History options - only when Atuin is disabled
+          "HIST_FCNTL_LOCK" # use system's fcntl call to lock the history file
+          "HIST_VERIFY" # don't execute the line directly; instead perform history expansion and reload the line into the editing buffer
+          "NO_HIST_BEEP" # don't beep in ZLE when a widget attempts to access a history entry which isn't there
         ];
 
         completionInit = # bash
@@ -85,7 +88,7 @@ in
           setopt no_global_rcs
         '';
 
-        history = {
+        history = lib.mkIf (!config.khanelinix.programs.terminal.tools.atuin.enable) {
           # avoid cluttering $HOME with the histfile
           path = "${config.xdg.dataHome}/zsh/zsh_history";
 
@@ -114,37 +117,42 @@ in
         };
 
         initContent = lib.mkMerge [
-          (lib.mkOrder 450 # Bash
-            ''
-              # Prevent the command from being written to history before it's
-              # executed; save it to LASTHIST instead.  Write it to history
-              # in precmd.
-              #
-              # called before a history line is saved.  See zshmisc(1).
-              function zshaddhistory() {
-                # Remove line continuations since otherwise a "\" will eventually
-                # get written to history with no newline.
-                LASTHIST=''${1//\\$'\n'/}
-                # Return value 2: "... the history line will be saved on the internal
-                # history list, but not written to the history file".
-                return 2
-              }
-
-              # zsh hook called before the prompt is printed.  See zshmisc(1).
-              function precmd() {
-                  # Write the last command if successful, using the history buffered by
-                  # zshaddhistory().
-                  if [[ $? == 0 && -n ''${LASTHIST//[[:space:]\n]/} && -n $HISTFILE ]] ; then
-                    print -sr -- ''${=''${LASTHIST%%'\n'}}
-                  fi
+          (lib.mkOrder 450 (
+            lib.optionalString (!config.khanelinix.programs.terminal.tools.atuin.enable) # Bash
+              ''
+                # Prevent the command from being written to history before it's
+                # executed; save it to LASTHIST instead.  Write it to history
+                # in precmd.
+                #
+                # called before a history line is saved.  See zshmisc(1).
+                function zshaddhistory() {
+                  # Remove line continuations since otherwise a "\" will eventually
+                  # get written to history with no newline.
+                  LASTHIST=''${1//\\$'\n'/}
+                  # Return value 2: "... the history line will be saved on the internal
+                  # history list, but not written to the history file".
+                  return 2
                 }
 
-              # Do this early so fast-syntax-highlighting can wrap and override this
-              if autoload history-search-end; then
-                zle -N history-beginning-search-backward-end history-search-end
-                zle -N history-beginning-search-forward-end  history-search-end
-              fi
+                # zsh hook called before the prompt is printed.  See zshmisc(1).
+                function precmd() {
+                    # Write the last command if successful, using the history buffered by
+                    # zshaddhistory().
+                    if [[ $? == 0 && -n ''${LASTHIST//[[:space:]\n]/} && -n $HISTFILE ]] ; then
+                      print -sr -- ''${=''${LASTHIST%%'\n'}}
+                    fi
+                  }
 
+                # Do this early so fast-syntax-highlighting can wrap and override this
+                if autoload history-search-end; then
+                  zle -N history-beginning-search-backward-end history-search-end
+                  zle -N history-beginning-search-forward-end  history-search-end
+                fi
+              ''
+          ))
+
+          (lib.mkOrder 500 # Bash
+            ''
               source <(${lib.getExe config.programs.fzf.package} --zsh)
               source ${config.programs.git.package}/share/git/contrib/completion/git-prompt.sh
             ''
@@ -157,6 +165,12 @@ in
             ${fileContents ./rc/modules.zsh}
             ${fileContents ./rc/fzf-tab.zsh}
             ${fileContents ./rc/misc.zsh}
+
+            # Conditional autosuggest history filtering
+            ${lib.optionalString (!config.khanelinix.programs.terminal.tools.atuin.enable) ''
+              # Ignore multiline commands in autosuggestions when using native zsh history
+              ZSH_AUTOSUGGEST_HISTORY_IGNORE=$'*\n*'
+            ''}
           '')
 
           # Should be last thing to run
