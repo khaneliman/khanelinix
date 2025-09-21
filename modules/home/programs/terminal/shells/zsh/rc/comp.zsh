@@ -43,9 +43,6 @@ zstyle ':completion:*' squeeze-slashes true
 # insert all expansions for expand completer
 zstyle ':completion:*:expand:*' tag-order all-expansions
 
-# match uppercase from lowercase
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-
 # separate matches into groups
 zstyle ':completion:*:matches' group 'yes'
 zstyle ':completion:*' group-name ''
