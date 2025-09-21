@@ -12,9 +12,6 @@ let
   cfg = config.khanelinix.programs.terminal.shell.zsh;
 in
 {
-  imports = [
-    ./opts.nix
-  ];
 
   options.khanelinix.programs.terminal.shell.zsh = {
     enable = mkEnableOption "ZSH";
@@ -27,6 +24,31 @@ in
         package = pkgs.zsh;
 
         autocd = true;
+
+        setOptions = [
+          # Enable options
+          "AUTO_LIST" # list choices on ambiguous completion
+          "AUTO_PARAM_SLASH" # if parameter is completed whose content is the name of a directory, then add trailing slash instead of space
+          "AUTO_PUSHD" # make cd push the old directory onto the directory stack
+          "ALWAYS_TO_END" # cursor is moved to the end of the word after completion
+          "CORRECT" # try to correct the spelling of commands
+          "HIST_FCNTL_LOCK" # use system's fcntl call to lock the history file
+          "HIST_VERIFY" # don't execute the line directly; instead perform history expansion and reload the line into the editing buffer
+          "INTERACTIVE_COMMENTS" # allow comments even in interactive shells
+          "MENU_COMPLETE" # insert the first match immediately on ambiguous completion
+          "PUSHD_IGNORE_DUPS" # don't push multiple copies of the same directory
+          "PUSHD_TO_HOME" # have pushd with no arguments act like `pushd $HOME`
+          "PUSHD_SILENT" # do not print the directory stack
+          "NOTIFY" # report the status of background jobs immediately
+          "PROMPT_SUBST" # allow substitutions as part of prompt format string
+          "MULTIOS" # perform implicit tees or cats when multiple redirections are attempted
+          "NOFLOWCONTROL" # Disable Ctrl-S and Ctrl-Q flow control
+
+          # Disable options (prefix with NO_)
+          "NO_CORRECT_ALL" # don't try to correct the spelling of all arguments in a line
+          "NO_HIST_BEEP" # don't beep in ZLE when a widget attempts to access a history entry which isn't there
+          "NO_NOMATCH" # enable "no matches found" check
+        ];
 
         completionInit = # bash
           ''
