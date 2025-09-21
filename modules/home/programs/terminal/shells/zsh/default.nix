@@ -112,8 +112,8 @@ in
         };
 
         syntaxHighlighting = {
-          enable = true;
-          package = pkgs.zsh-syntax-highlighting;
+          # Use alternative plugin
+          enable = false;
         };
 
         initContent = lib.mkMerge [
