@@ -46,9 +46,8 @@ in
           "NO_CORRECT_ALL" # don't try to correct the spelling of all arguments in a line
           "NO_NOMATCH" # enable "no matches found" check
         ]
+        # History options - only when Atuin is disabled
         ++ lib.optionals (!config.khanelinix.programs.terminal.tools.atuin.enable) [
-          # History options - only when Atuin is disabled
-          "HIST_FCNTL_LOCK" # use system's fcntl call to lock the history file
           "HIST_VERIFY" # don't execute the line directly; instead perform history expansion and reload the line into the editing buffer
           "NO_HIST_BEEP" # don't beep in ZLE when a widget attempts to access a history entry which isn't there
         ];
