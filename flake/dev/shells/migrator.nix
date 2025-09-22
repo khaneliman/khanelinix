@@ -5,6 +5,7 @@
 }:
 mkShell {
   packages = with pkgs; [
+    bun
     claude-code
     (
       with dotnetCorePackages;
