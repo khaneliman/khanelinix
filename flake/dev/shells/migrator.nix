@@ -11,6 +11,7 @@ mkShell {
     python3
     # Main tooling
     claude-code
+    opencode
     # Dotnet repo
     (
       with dotnetCorePackages;
