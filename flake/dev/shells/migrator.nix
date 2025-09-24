@@ -5,8 +5,13 @@
 }:
 mkShell {
   packages = with pkgs; [
+    # MCP
     bun
+    # AI Scripts
+    python3
+    # Main tooling
     claude-code
+    # Dotnet repo
     (
       with dotnetCorePackages;
       combinePackages [
