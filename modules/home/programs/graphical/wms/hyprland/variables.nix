@@ -216,8 +216,8 @@ in
         "$browser" = "${lib.getExe config.programs.firefox.package}";
         "$editor" = "nvim";
         "$explorer" = "nautilus";
-        "$launcher" = "sherlock";
-        "$launcher-alt" = "anyrun";
+        "$launcher" = "anyrun";
+        "$launcher-alt" = "sherlock";
         "$looking-glass" = "looking-glass-client";
         "$mail" = "thunderbird";
         "$music" = "youtube-music";
@@ -243,7 +243,8 @@ in
         # utility commands
         "$color_picker" =
           "hyprpicker -a && (${convert} -size 32x32 xc:$(${wl-paste}) /tmp/color.png && notify-send \"Color Code:\" \"$(${wl-paste})\" -h \"string:bgcolor:$(${wl-paste})\" --icon /tmp/color.png -u critical -t 4000)";
-        "$cliphist" = "cliphist list | sherlock | cliphist decode | ${wl-copy}";
+        "$cliphist" =
+          "cliphist list | anyrun --show-results-immediately true | cliphist decode | ${wl-copy}";
       };
     };
   };
