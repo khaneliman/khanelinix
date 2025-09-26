@@ -4,7 +4,28 @@
   inputs = {
     # By pointing to the parent directory, this flake can "follow" the inputs
     # of the root flake, ensuring dependency versions are kept in sync.
-    root.url = "path:./../..";
+    root = {
+      url = "path:./../..";
+      # Unneeded in dev flake
+      inputs = {
+        khanelivim.follows = "";
+        disko.follows = "";
+        lanzaboote.follows = "";
+        nix-darwin.follows = "";
+        nix-rosetta-builder.follows = "";
+        nixos-wsl.follows = "";
+        anyrun-nixos-options.follows = "";
+        catppuccin.follows = "";
+        firefox-addons.follows = "";
+        hypr-socket-watch.follows = "";
+        nh.follows = "";
+        nix-flatpak.follows = "";
+        nix-index-database.follows = "";
+        stylix.follows = "";
+        waybar.follows = "";
+        yazi-flavors.follows = "";
+      };
+    };
 
     nixpkgs.follows = "root/nixpkgs";
     flake-compat.follows = "root/flake-compat";
