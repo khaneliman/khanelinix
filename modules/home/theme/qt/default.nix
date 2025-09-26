@@ -81,8 +81,7 @@ in
         kdePackages.qt6ct
         qt6.qtsvg # needed to load breeze icons
         qt6.qtwayland
-        # FIXME: broken nixpkgs
-        # qt6Packages.qt6gtk2
+        qt6Packages.qt6gtk2
         qt6Packages.qtstyleplugin-kvantum
       ];
 

@@ -38,8 +38,7 @@ in
         rpcs3
         # TODO: replacement, removed upstream
         # ryujinx
-        # FIXME: broken nixpkgs
-        # xemu
+        xemu
       ]
       ++ lib.optionals cfg.retroarchFull [ retroarchFull ];
 

@@ -98,8 +98,7 @@ in
             godot
             # NOTE: removed from nixpkgs
             # ue4
-            # FIXME: broken nixpkgs
-            # unityhub
+            unityhub
           ]
         )
         ++ lib.optionals cfg.sqlEnable [
