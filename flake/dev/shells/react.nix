@@ -8,8 +8,8 @@ mkShell {
   packages =
     with pkgs;
     [
-      # FIXME: broken nixpkg
-      # create-react-app
+      # Modern React tooling (replacing deprecated create-react-app)
+      vite
       nodejs_22
       pnpm
       yarn

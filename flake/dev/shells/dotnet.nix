@@ -8,8 +8,7 @@ let
   baseDotnetShell = {
     packages = with devPkgs; [
       khanelinix.avrogen
-      # FIXME: broken nixpkgs
-      # azure-cli
+      azure-cli
       bicep
       csharpier
       dotnetbuildhelpers
