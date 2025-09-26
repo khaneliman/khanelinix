@@ -90,7 +90,6 @@ in
         let
           sketchybar = hmCfg.programs.sketchybar.finalPackage;
           inherit (pkgs.khanelinix) yabai-helper;
-          yabai = config.services.yabai.package;
         in
         # bash
         ''
@@ -98,20 +97,20 @@ in
 
           # Set external_bar here in case we launch after sketchybar
           BAR_HEIGHT=$(${getExe sketchybar} -m --query bar | jq -r '.height')
-          ${getExe yabai} -m config external_bar all:"$BAR_HEIGHT":0
+          yabai -m config external_bar all:"$BAR_HEIGHT":0
 
           ${builtins.readFile ./extraConfig}
 
           # Signal hooks
-          ${getExe yabai} -m signal --add event=dock_did_restart action="sudo ${getExe yabai} --load-sa"
-          ${getExe yabai} -m signal --add event=window_focused action="${getExe sketchybar} --trigger window_focus"
-          ${getExe yabai} -m signal --add event=display_added action="sleep 1 && source ${getExe yabai-helper} && create_spaces 7"
-          ${getExe yabai} -m signal --add event=display_removed action="sleep 1 && source ${getExe yabai-helper} && create_spaces 7"
-          ${getExe yabai} -m signal --add event=window_created action="${getExe sketchybar} --trigger windows_on_spaces"
-          ${getExe yabai} -m signal --add event=window_destroyed action="${getExe sketchybar} --trigger windows_on_spaces"
-          ${getExe yabai} -m signal --add event=window_created app="Code" action="source ${getExe yabai-helper} && auto_stack Code"
-          # ${getExe yabai} -m signal --add event=window_created app="Firefox" title!="(— Private Browsing$|^Picture-in-Picture$)" action="source ${getExe yabai-helper} && auto_stack Firefox"
-          # ${getExe yabai} -m signal --add event=window_title_changed app="Firefox" title="- noVNC$" action="${getExe yabai} -m window $WINDOW_ID --toggle native-fullscreen"
+          yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+          yabai -m signal --add event=window_focused action="${getExe sketchybar} --trigger window_focus"
+          yabai -m signal --add event=display_added action="sleep 1 && source ${getExe yabai-helper} && create_spaces 7"
+          yabai -m signal --add event=display_removed action="sleep 1 && source ${getExe yabai-helper} && create_spaces 7"
+          yabai -m signal --add event=window_created action="${getExe sketchybar} --trigger windows_on_spaces"
+          yabai -m signal --add event=window_destroyed action="${getExe sketchybar} --trigger windows_on_spaces"
+          yabai -m signal --add event=window_created app="Code" action="source ${getExe yabai-helper} && auto_stack Code"
+          # yabai -m signal --add event=window_created app="Firefox" title!="(— Private Browsing$|^Picture-in-Picture$)" action="source ${getExe yabai-helper} && auto_stack Firefox"
+          # yabai -m signal --add event=window_title_changed app="Firefox" title="- noVNC$" action="yabai -m window $WINDOW_ID --toggle native-fullscreen"
 
           if ! pgrep "Raycast"; then
             open ${pkgs.raycast}/Applications/Raycast.app
