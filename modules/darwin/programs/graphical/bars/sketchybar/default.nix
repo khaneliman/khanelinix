@@ -14,13 +14,13 @@ in
     logPaths = {
       stdout = mkOption {
         type = types.str;
-        default = "${userHome}/Library/Logs/sketchybar.out.log";
+        default = "${userHome}/Library/Logs/sketchybar/sketchybar.out.log";
         description = "Path to sketchybar stdout log file";
       };
 
       stderr = mkOption {
         type = types.str;
-        default = "${userHome}/Library/Logs/sketchybar.err.log";
+        default = "${userHome}/Library/Logs/sketchybar/sketchybar.err.log";
         description = "Path to sketchybar stderr log file";
       };
     };
