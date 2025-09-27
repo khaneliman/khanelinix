@@ -67,11 +67,11 @@ in
                   type = types.nullOr types.str;
                   default = null;
                   description = ''
-                    Maximum size before rotation (e.g., "100K", "1M", "10G").
+                    Maximum size (in KB) before rotation (e.g., "100", "1024", "4096").
 
                     If `null`, size-based rotation is disabled.
                   '';
-                  example = "10M";
+                  example = "2048";
                 };
 
                 when = mkOption {
