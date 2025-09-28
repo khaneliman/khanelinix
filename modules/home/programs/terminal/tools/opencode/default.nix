@@ -14,6 +14,7 @@ in
     ./lsp.nix
     ./mcp.nix
     ./permission.nix
+    ./provider.nix
   ];
 
   options.khanelinix.programs.terminal.tools.opencode = {
