@@ -10,10 +10,10 @@ let
 in
 {
   imports = [
-    ./permissions.nix
     ./formatters.nix
-    ./mcp.nix
     ./lsp.nix
+    ./mcp.nix
+    ./permission.nix
   ];
 
   options.khanelinix.programs.terminal.tools.opencode = {
