@@ -66,9 +66,9 @@ in
           let
             # Launcher binds
             launcherBinds = [
-              "$mainMod, SPACE, exec, $($launcher)"
               "CTRL, SPACE, exec, $($launcher)"
               "ALT, SPACE, exec, $($launcher-alt)"
+              "$mainMod, SPACE, exec, $($launcher-backup)"
             ];
 
             # App launch binds
