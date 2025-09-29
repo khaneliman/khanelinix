@@ -42,7 +42,7 @@
 
         hello =
           with final;
-          stdenv.mkDerivation rec {
+          stdenv.mkDerivation {
             pname = "hello";
             inherit version;
 
