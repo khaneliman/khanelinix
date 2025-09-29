@@ -92,17 +92,17 @@
       };
 
       # Provide some binary packages for selected system types.
-      packages = forAllSystems (system: {
+      packages = forEachSystem (system: {
         inherit (nixpkgsFor.${system}) rust-web-server;
       });
 
       # The default package for 'nix build'. This makes sense if the
       # flake provides only one package or there is a clear "main"
       # package.
-      defaultPackage = forAllSystems (system: self.packages.${system}.rust-web-server);
+      defaultPackage = forEachSystem (system: self.packages.${system}.rust-web-server);
 
       # Provide a 'nix develop' environment for interactive hacking.
-      devShell = forAllSystems (
+      devShell = forEachSystem (
         system: self.packages.${system}.rust-web-server.override { inShell = true; }
       );
 
@@ -119,7 +119,7 @@
         };
 
       # Tests run by 'nix flake check' and by Hydra.
-      checks = forAllSystems (
+      checks = forEachSystem (
         system:
         with nixpkgsFor.${system};
 
