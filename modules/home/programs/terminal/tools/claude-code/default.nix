@@ -37,6 +37,21 @@ in
 
       settings = {
         theme = "dark";
+
+        hooks = {
+          Notification = [
+            {
+              matcher = "";
+              hooks = [
+                {
+                  type = "command";
+                  command = "notify-send 'Claude Code' 'Awaiting your input'";
+                }
+              ];
+            }
+          ];
+        };
+
         permissions = {
           allow = [
             # Safe read-only git commands
