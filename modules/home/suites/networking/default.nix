@@ -3,6 +3,7 @@
   lib,
   pkgs,
 
+  osConfig ? { },
   ...
 }:
 let
@@ -26,5 +27,7 @@ in
         ssh-copy-id
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [ iproute2 ];
+
+    khanelinix.services.tailscale.enable = osConfig.services.tailscale.enable or false;
   };
 }
