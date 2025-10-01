@@ -1,3 +1,4 @@
+{ lib, pkgs, ... }:
 {
   config = {
     programs = {
@@ -226,7 +227,7 @@
                           ];
                         };
                       }
-                      {
+                      (lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
                         pane = {
                           split_direction = "horizontal";
                           _props = {
@@ -241,7 +242,7 @@
                             }
                           ];
                         };
-                      }
+                      })
                     ];
                   };
                 }
