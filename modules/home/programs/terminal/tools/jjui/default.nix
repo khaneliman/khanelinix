@@ -40,9 +40,18 @@ in
             ];
           };
           "squash immutable" = {
-            key = [ "s" ];
+            key = [ "S" ];
             args = [
               "squash"
+              "--ignore-immutable"
+              "-r"
+              "$change_id"
+            ];
+          };
+          "split immutable" = {
+            key = [ "s" ];
+            args = [
+              "split"
               "--ignore-immutable"
               "-r"
               "$change_id"
