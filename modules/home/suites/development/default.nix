@@ -108,6 +108,7 @@ in
         ]
         ++ lib.optionals cfg.aiEnable [
           github-mcp-server
+          github-copilot-cli
         ];
 
       shellAliases = {
