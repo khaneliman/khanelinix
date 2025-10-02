@@ -30,15 +30,6 @@ in
     # enables AMDVLK & OpenCL support
     hardware = {
       amdgpu = {
-        amdvlk = {
-          # NOTE: prefer mesa over amdvlk
-          enable = false;
-
-          support32Bit = {
-            enable = true;
-          };
-          supportExperimental.enable = true;
-        };
         initrd.enable = true;
         opencl.enable = true;
         overdrive.enable = true;

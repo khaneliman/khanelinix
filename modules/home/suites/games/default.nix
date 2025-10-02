@@ -23,7 +23,6 @@ in
       heroic
       lutris
       prismlauncher
-      proton-caller
       protontricks
       protonup-ng
       protonup-qt
