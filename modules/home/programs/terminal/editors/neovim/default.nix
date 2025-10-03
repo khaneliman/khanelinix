@@ -36,6 +36,12 @@ let
         };
       }
       (lib.mkIf (osConfig.khanelinix.archetypes.wsl.enable or false) {
+        # FIXME: upstream dependency has LONG build time and transient failures
+        # Usually crashes WSL
+        lsp.servers.roslyn_ls = {
+          enable = lib.mkForce false;
+        };
+
         plugins = {
           yanky = {
             enable = lib.mkForce false;
