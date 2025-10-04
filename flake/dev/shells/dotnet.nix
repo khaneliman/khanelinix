@@ -4,7 +4,6 @@
   ...
 }:
 let
-  # Base dotnet packages and configuration
   baseDotnetShell = {
     packages = with devPkgs; [
       khanelinix.avrogen
@@ -28,6 +27,17 @@ let
 
     shellHook = ''
       export NUGET_PLUGIN_PATHS=${devPkgs.khanelinix.artifacts-credprovider}/bin/netcore/CredentialProvider.Microsoft/CredentialProvider.Microsoft.dll
+      export PATH="$PATH:$HOME/.dotnet/tools"
+
+      # Install global tools if not already installed
+      if ! command -v dotnet-easydotnet &> /dev/null; then
+        echo "Installing EasyDotnet..."
+        dotnet tool install --global EasyDotnet
+      fi
+      if ! command -v dotnet-ef &> /dev/null; then
+        echo "Installing dotnet-ef..."
+        dotnet tool install --global dotnet-ef
+      fi
     '';
   };
 
@@ -35,35 +45,6 @@ let
   mkDotnetVersionShell =
     version:
     let
-      # Version mapping for packages
-      versionPackages = {
-        "6" = with devPkgs; [
-          dotnet-aspnetcore_6
-          dotnet-runtime_6
-          dotnet-sdk_6
-        ];
-        "7" = with devPkgs; [
-          dotnet-aspnetcore_7
-          dotnet-runtime_7
-          dotnet-sdk_7
-        ];
-        "8" = with devPkgs; [
-          dotnet-aspnetcore_8
-          dotnet-runtime_8
-          dotnet-sdk_8
-        ];
-        "9" = with devPkgs; [
-          dotnet-aspnetcore_9
-          dotnet-runtime_9
-          dotnet-sdk_9
-        ];
-        "10" = with devPkgs; [
-          dotnet-aspnetcore_10
-          dotnet-runtime_10
-          dotnet-sdk_10
-        ];
-      };
-
       versionSdks = {
         "6" = devPkgs.dotnet-sdk_6;
         "7" = devPkgs.dotnet-sdk_7;
@@ -72,30 +53,47 @@ let
         "10" = devPkgs.dotnet-sdk_10;
       };
 
-      selectedPackages = versionPackages.${version} or (throw "Unsupported .NET version: ${version}");
       selectedSdk = versionSdks.${version} or (throw "Unsupported .NET version: ${version}");
+
+      # Combine the SDK with all runtimes
+      combinedDotnet = devPkgs.dotnetCorePackages.combinePackages (
+        with devPkgs;
+        [
+          selectedSdk
+          dotnet-runtime_6
+          dotnet-runtime_7
+          dotnet-runtime_8
+          dotnet-runtime_9
+          dotnet-runtime_10
+          dotnet-aspnetcore_6
+          dotnet-aspnetcore_7
+          dotnet-aspnetcore_8
+          dotnet-aspnetcore_9
+          dotnet-aspnetcore_10
+        ]
+      );
     in
     devPkgs.mkShell {
-      packages = [
-        (devPkgs.dotnetCorePackages.combinePackages selectedPackages)
-      ]
-      ++ (
-        if version == "6" then
-          [
-            # Special handling for .NET 6 csharp-ls override
-            (devPkgs.csharp-ls.overrideAttrs (_oldAttrs: {
-              useDotnetFromEnv = false;
-              meta.badPlatforms = [ ];
-            }))
-          ]
-        else
-          [ ]
-      )
-      ++ baseDotnetShell.packages;
+      packages =
+        baseDotnetShell.packages
+        ++ [ combinedDotnet ]
+        ++ (
+          if version < "9" then
+            [
+              # Special handling for .NET csharp-ls override
+              (devPkgs.csharp-ls.overrideAttrs (_oldAttrs: {
+                useDotnetFromEnv = false;
+                meta.badPlatforms = [ ];
+              }))
+            ]
+          else
+            [ ]
+        );
 
-      shellHook = baseDotnetShell.shellHook + ''
-        export DOTNET_ROOT="${selectedSdk}";
+      shellHook = ''
+        export DOTNET_ROOT="${combinedDotnet}/share/dotnet";
         echo 🔨 Dotnet ${version} DevShell
+        ${baseDotnetShell.shellHook}
       '';
     };
 
@@ -114,18 +112,32 @@ let
     }) dotnetVersions
   );
 
+  # Combine SDK 10 with all runtimes
+  combinedDotnet10 = devPkgs.dotnetCorePackages.combinePackages (
+    with devPkgs;
+    [
+      dotnet-sdk_10
+      dotnet-runtime_6
+      dotnet-runtime_7
+      dotnet-runtime_8
+      dotnet-runtime_9
+      dotnet-runtime_10
+      dotnet-aspnetcore_6
+      dotnet-aspnetcore_7
+      dotnet-aspnetcore_8
+      dotnet-aspnetcore_9
+      dotnet-aspnetcore_10
+    ]
+  );
+
   baseShell = {
     dotnet = devPkgs.mkShell {
-      packages =
-        baseDotnetShell.packages
-        ++ (with devPkgs; [
-          dotnet-aspnetcore_10
-          dotnet-runtime_10
-          dotnet-sdk_10
-        ]);
+      packages = baseDotnetShell.packages ++ [ combinedDotnet10 ];
 
-      shellHook = baseDotnetShell.shellHook + ''
+      shellHook = ''
+        export DOTNET_ROOT="${combinedDotnet10}/share/dotnet";
         echo 🔨 Dotnet DevShell
+        ${baseDotnetShell.shellHook}
       '';
     };
   };
