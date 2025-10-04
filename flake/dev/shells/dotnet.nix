@@ -114,10 +114,16 @@ let
     }) dotnetVersions
   );
 
-  # Base dotnet shell (defaults to .NET 8)
   baseShell = {
     dotnet = devPkgs.mkShell {
-      inherit (baseDotnetShell) packages;
+      packages =
+        baseDotnetShell.packages
+        ++ (with devPkgs; [
+          dotnet-aspnetcore_10
+          dotnet-runtime_10
+          dotnet-sdk_10
+        ]);
+
       shellHook = baseDotnetShell.shellHook + ''
         echo 🔨 Dotnet DevShell
       '';
