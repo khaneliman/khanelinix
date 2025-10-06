@@ -57,6 +57,7 @@ in
       enable = true;
       permitCertUid = "root";
       useRoutingFeatures = "both";
+      extraSetFlags = [ "--operator=${config.khanelinix.user.name}" ];
     };
 
     systemd = {
