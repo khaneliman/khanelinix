@@ -71,6 +71,10 @@ in
         graph = {
           batch_size = 100;
         };
+
+        ui = {
+          tracer.enabled = true;
+        };
       };
     };
   };
