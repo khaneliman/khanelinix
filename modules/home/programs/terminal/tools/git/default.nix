@@ -94,8 +94,10 @@ in
         difftastic = {
           enableAsDifftool = !config.programs.kitty.enable;
 
-          background = "dark";
-          display = "inline";
+          options = {
+            background = "dark";
+            display = "inline";
+          };
         };
 
         extraConfig = {
