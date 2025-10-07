@@ -15,9 +15,6 @@ in
   inherit (master)
     claude-code
     yaziPlugins
-
-    # TODO: remove after it hits channel
-    github-copilot-cli
     ;
 
   # From nixpkgs-unstable
