@@ -6,22 +6,12 @@
 let
   baseDotnetShell = {
     packages = with devPkgs; [
-      khanelinix.avrogen
-      azure-cli
-      bicep
-      csharpier
       dotnetbuildhelpers
       dotnetPackages.Nuget
-      fsautocomplete
       mono
       msbuild
       netcoredbg
-      powershell
       roslyn
-      roslyn-ls
-      rzls
-      vimPlugins.neotest-dotnet
-      vscode-extensions.ms-dotnettools.csharp
       upgrade-assistant
     ];
 
