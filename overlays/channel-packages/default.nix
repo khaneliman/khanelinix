@@ -15,6 +15,9 @@ in
   inherit (master)
     claude-code
     yaziPlugins
+
+    # TODO: remove after hits channel
+    yabai
     ;
 
   # From nixpkgs-unstable
