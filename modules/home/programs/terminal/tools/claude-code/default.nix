@@ -39,6 +39,18 @@ in
         theme = "dark";
 
         hooks = {
+          SessionStart = [
+            {
+              matcher = "*";
+              hooks = [
+                {
+                  type = "command";
+                  command = "echo '=== Git Status ===' && git status && echo '\n=== Recent Commits ===' && git log --oneline -5";
+                }
+              ];
+            }
+          ];
+
           Notification = [
             {
               matcher = "";
