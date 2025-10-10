@@ -48,21 +48,14 @@ in
           "tsv"
           "json"
           "parquet"
-        ];
-        regularFileTypes = [
-          "db"
-          "duckdb"
+          "xlsx"
         ];
       in
-      (map (ext: {
+      map (ext: {
         name = "*.${ext}";
         run = "duckdb";
         multi = false;
-      }) multiFileTypes)
-      ++ (map (ext: {
-        name = "*.${ext}";
-        run = "duckdb";
-      }) regularFileTypes)
+      }) multiFileTypes
     );
 
     preloaders = [
@@ -92,9 +85,12 @@ in
         let
           fileTypes = [
             "csv"
-            "tsv"
+            "db"
+            "duckdb"
             "json"
             "parquet"
+            "tsv"
+            "xlsx"
           ];
         in
         map (ext: {
