@@ -38,40 +38,107 @@ in
       settings = {
         theme = "dark";
 
-        hooks = {
-          SessionStart = [
-            {
-              matcher = "*";
-              hooks = [
-                {
-                  type = "command";
-                  command = ''
-                    echo '=== Git Status ==='
-                    git status
-                    echo '\n=== Recent Commits ==='
-                    git log --oneline -5
-                    echo '\n=== Jujutsu Status ==='
-                    jj status 2>/dev/null
-                    echo '\n=== Current Jujutsu Change ==='
-                    jj log -r @ --no-graph 2>/dev/null || echo 'Not a jujutsu repository'
-                  '';
-                }
-              ];
-            }
-          ];
+        hooks =
+          let
+            notify =
+              title: message:
+              if pkgs.stdenv.hostPlatform.isDarwin then
+                ''osascript -e 'display notification "${message}" with title "${title}"' ''
+              else
+                ''notify-send '${title}' '${message}' '';
+          in
+          {
+            SessionStart = [
+              {
+                matcher = "*";
+                hooks = [
+                  {
+                    type = "command";
+                    command = ''
+                      echo '=== Git Status ==='
+                      git status
+                      echo '\n=== Recent Commits ==='
+                      git log --oneline -5
+                      echo '\n=== Jujutsu Status ==='
+                      jj status 2>/dev/null
+                      echo '\n=== Current Jujutsu Change ==='
+                      jj log -r @ --no-graph 2>/dev/null || echo 'Not a jujutsu repository'
+                    '';
+                  }
+                ];
+              }
+            ];
 
-          Notification = [
-            {
-              matcher = "";
-              hooks = [
-                {
-                  type = "command";
-                  command = "notify-send 'Claude Code' 'Awaiting your input'";
-                }
-              ];
-            }
-          ];
-        };
+            Notification = [
+              {
+                matcher = "";
+                hooks = [
+                  {
+                    type = "command";
+                    command = notify "Claude Code" "Awaiting your input";
+                  }
+                ];
+              }
+            ];
+
+            SubagentStop = [
+              {
+                matcher = "*";
+                hooks = [
+                  {
+                    type = "command";
+                    command = ''
+                      agent_type=$(cat | jq -r '.subagent_type // "Unknown"')
+                      ${
+                        if pkgs.stdenv.hostPlatform.isDarwin then
+                          ''osascript -e "display notification \"Subagent completed: $agent_type\" with title \"Claude Code\""''
+                        else
+                          ''notify-send 'Claude Code' "Subagent completed: $agent_type"''
+                      }
+                    '';
+                  }
+                ];
+              }
+            ];
+
+            PreCompact = [
+              {
+                matcher = "*";
+                hooks = [
+                  {
+                    type = "command";
+                    command = ''
+                      mkdir -p ~/.local/share/claude-code/context-backups
+                      backup_file="$HOME/.local/share/claude-code/context-backups/compact-$(date +%Y%m%d-%H%M%S).log"
+                      echo "=== Context Compaction at $(date) ===" >> "$backup_file"
+                      echo "Working Directory: $(pwd)" >> "$backup_file"
+                      echo "Git Status:" >> "$backup_file"
+                      git status --short 2>/dev/null >> "$backup_file" || echo "Not a git repository" >> "$backup_file"
+                    '';
+                  }
+                ];
+              }
+            ];
+
+            SessionEnd = [
+              {
+                matcher = "*";
+                hooks = [
+                  {
+                    type = "command";
+                    command = ''
+                      mkdir -p ~/.local/share/claude-code/sessions
+                      session_log="$HOME/.local/share/claude-code/sessions/$(date +%Y-%m).log"
+                      echo "=== Session End: $(date) ===" >> "$session_log"
+                      echo "Directory: $(pwd)" >> "$session_log"
+                      git status --short 2>/dev/null >> "$session_log" || echo "Not a git repository" >> "$session_log"
+                      echo "" >> "$session_log"
+                    '';
+                  }
+                ];
+              }
+            ];
+          };
 
         permissions = {
           allow = [
