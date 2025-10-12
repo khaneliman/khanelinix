@@ -28,6 +28,10 @@ in
 
       defaultModel = "gemini-2.5-pro";
 
+      context = {
+        GEMINI = lib.getFile "modules/common/ai-tools/base.md";
+      };
+
       commands =
         sharedAiTools.geminiCli.commands
         // sharedAiTools.geminiCli.agents
