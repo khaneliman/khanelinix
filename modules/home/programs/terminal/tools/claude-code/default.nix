@@ -170,6 +170,8 @@ in
       inherit ((import (lib.getFile "modules/common/ai-tools") { inherit lib; }).claudeCode) agents;
 
       inherit ((import (lib.getFile "modules/common/ai-tools") { inherit lib; }).claudeCode) commands;
+
+      memory.source = lib.getFile "modules/common/ai-tools/base.md";
     };
   };
 }
