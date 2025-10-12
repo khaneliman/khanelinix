@@ -27,12 +27,14 @@ in
         snes9x
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
-        cemu
+        # FIXME: broken nixpkgs
+        # cemu
         # FIXME: removed for unmaintained
         # duckstation
         #FIXME: broken by https://github.com/NixOS/nixpkgs/pull/412425
         # emulationstation
-        mgba
+        # FIXME: broken nixpkgs
+        # mgba
         mupen64plus
         nestopia-ue
         rpcs3

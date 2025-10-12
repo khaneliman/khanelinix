@@ -16,7 +16,8 @@
         projectRootFile = "flake.nix";
 
         programs = {
-          actionlint.enable = true;
+          # FIXME: broken dependency on darwin
+          actionlint.enable = pkgs.stdenv.hostPlatform.isLinux;
           biome = {
             enable = true;
             settings.formatter.formatWithErrors = true;

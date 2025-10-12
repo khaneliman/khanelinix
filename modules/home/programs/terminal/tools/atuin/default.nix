@@ -26,7 +26,8 @@ in
     programs.atuin = {
       enable = true;
 
-      enableBashIntegration = true;
+      # FIXME: nixpkgs broken dependency
+      enableBashIntegration = pkgs.stdenv.hostPlatform.isLinux;
       enableFishIntegration = true;
       enableZshIntegration = true;
       enableNushellIntegration = true;
