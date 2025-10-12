@@ -35,6 +35,8 @@ in
       inherit ((import (lib.getFile "modules/common/ai-tools") { inherit lib; }).claudeCode) agents;
 
       inherit ((import (lib.getFile "modules/common/ai-tools") { inherit lib; }).claudeCode) commands;
+
+      rules = builtins.readFile (lib.getFile "modules/common/ai-tools/base.md");
     };
   };
 }
