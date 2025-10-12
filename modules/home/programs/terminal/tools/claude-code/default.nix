@@ -10,12 +10,7 @@ let
   cfg = config.khanelinix.programs.terminal.tools.claude-code;
 
   # Import all hook modules from the hooks directory
-  hooksDir = ./hooks;
-  hookFiles = builtins.readDir hooksDir;
-  importHook = name: import (hooksDir + "/${name}") { inherit pkgs; };
-  hooks = lib.foldl' (acc: name: acc // (importHook name)) { } (
-    lib.filter (name: lib.hasSuffix ".nix" name) (builtins.attrNames hookFiles)
-  );
+  hooks = lib.importDir ./hooks { inherit pkgs; };
 in
 {
   options.khanelinix.programs.terminal.tools.claude-code = {
