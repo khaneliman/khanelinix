@@ -7,8 +7,19 @@ let
     genAttrs
     filterAttrs
     hasPrefix
+    hasSuffix
+    filter
     foldl'
     ;
+
+  getNixFiles' =
+    path:
+    let
+      entries = builtins.readDir path;
+    in
+    filter (name: hasSuffix ".nix" name) (builtins.attrNames entries);
+
+  mergeAttrs' = attrsList: foldl' (acc: attrs: acc // attrs) { } attrsList;
 in
 {
   # Read a file and return its contents
@@ -25,6 +36,37 @@ in
 
   # Get a file path relative to the flake root (similar to Snowfall's get-file)
   getFile = relativePath: self + "/${relativePath}";
+
+  # Get all .nix files from a directory
+  # Returns a list of file names (without paths)
+  # Usage: getNixFiles ./hooks
+  getNixFiles = getNixFiles';
+
+  # Merge a list of attribute sets into a single attribute set
+  # Later values override earlier ones
+  # Usage: mergeAttrs [ { a = 1; } { b = 2; } { a = 3; } ] => { a = 3; b = 2; }
+  mergeAttrs = mergeAttrs';
+
+  # Import all .nix files from a directory
+  # Returns a list of imported values
+  # Usage: importFiles ./hooks { inherit pkgs; }
+  importFiles =
+    path: args:
+    let
+      nixFiles = getNixFiles' path;
+    in
+    map (name: import (path + "/${name}") args) nixFiles;
+
+  # Import all .nix files from a directory and merge them into a single attribute set
+  # Convenience function combining importFiles and mergeAttrs
+  # Usage: importDir ./hooks { inherit pkgs; }
+  importDir =
+    path: args:
+    let
+      nixFiles = getNixFiles' path;
+      imported = map (name: import (path + "/${name}") args) nixFiles;
+    in
+    mergeAttrs' imported;
 
   # Recursively discover and import all Nix modules in a directory tree
   importModulesRecursive =

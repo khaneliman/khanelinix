@@ -15,7 +15,14 @@ in
     base64
     ;
 
-  inherit (khanelinixLib.flake.lib.file) getFile importModulesRecursive;
+  inherit (khanelinixLib.flake.lib.file)
+    getFile
+    getNixFiles
+    importFiles
+    importDir
+    importModulesRecursive
+    mergeAttrs
+    ;
 
   inherit (khanelinixLib.flake.lib.module)
     mkOpt
