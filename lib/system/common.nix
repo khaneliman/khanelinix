@@ -16,6 +16,7 @@ in
         "libsoup-2.74.3"
         # NOTE: needed by emulationstation
         "freeimage-3.18.0-unstable-2024-04-18"
+        "mbedtls-2.28.10"
         # dev shells
         "aspnetcore-runtime-6.0.36"
         "aspnetcore-runtime-7.0.20"

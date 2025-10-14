@@ -17,7 +17,7 @@ in
     yaziPlugins
 
     # TODO: remove after hits channel
-    yabai
+    opencode
     ;
 
   # From nixpkgs-unstable
