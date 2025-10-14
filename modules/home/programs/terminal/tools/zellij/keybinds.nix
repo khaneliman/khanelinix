@@ -71,13 +71,13 @@
                 } # New tab
                 {
                   bind = {
-                    _args = [ "Ctrl l" ];
+                    _args = [ "Alt Tab" ];
                     _children = [ { GoToNextTab = { }; } ];
                   };
                 } # Go to next tab
                 {
                   bind = {
-                    _args = [ "Ctrl h" ];
+                    _args = [ "Alt Shift Tab" ];
                     _children = [ { GoToPreviousTab = { }; } ];
                   };
                 } # Go to previous tab
