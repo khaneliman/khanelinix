@@ -106,42 +106,43 @@ in
           ];
           ask = [
             # Potentially destructive git commands
-            "Bash(git reset:*)"
-            "Bash(git commit:*)"
-            "Bash(git push:*)"
-            "Bash(git pull:*)"
-            "Bash(git merge:*)"
-            "Bash(git rebase:*)"
             "Bash(git checkout:*)"
-            "Bash(git switch:*)"
+            "Bash(git commit:*)"
+            "Bash(git merge:*)"
+            "Bash(git pull:*)"
+            "Bash(git push:*)"
+            "Bash(git rebase:*)"
+            "Bash(git reset:*)"
+            "Bash(git restore:*)"
             "Bash(git stash:*)"
+            "Bash(git switch:*)"
 
             # File deletion and modification
-            "Bash(rm:*)"
-            "Bash(mv:*)"
             "Bash(cp:*)"
+            "Bash(mv:*)"
+            "Bash(rm:*)"
 
             # System control operations
+            "Bash(systemctl disable:*)"
+            "Bash(systemctl enable:*)"
+            "Bash(systemctl mask:*)"
+            "Bash(systemctl reload:*)"
+            "Bash(systemctl restart:*)"
             "Bash(systemctl start:*)"
             "Bash(systemctl stop:*)"
-            "Bash(systemctl restart:*)"
-            "Bash(systemctl reload:*)"
-            "Bash(systemctl enable:*)"
-            "Bash(systemctl disable:*)"
-            "Bash(systemctl mask:*)"
             "Bash(systemctl unmask:*)"
 
             # Network operations
             "Bash(curl:*)"
-            "Bash(wget:*)"
             "Bash(ping:*)"
-            "Bash(ssh:*)"
-            "Bash(scp:*)"
             "Bash(rsync:*)"
+            "Bash(scp:*)"
+            "Bash(ssh:*)"
+            "Bash(wget:*)"
 
             # Package management
-            "Bash(sudo:*)"
             "Bash(nixos-rebuild:*)"
+            "Bash(sudo:*)"
 
             # Process management
             "Bash(kill:*)"
