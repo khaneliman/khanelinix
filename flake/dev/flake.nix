@@ -28,6 +28,8 @@
     };
 
     nixpkgs.follows = "root/nixpkgs";
+    nixpkgs-master.follows = "root/nixpkgs-master";
+    nixpkgs-unstable.follows = "root/nixpkgs-unstable";
     flake-compat.follows = "root/flake-compat";
 
     # keep-sorted start block=yes newline_separated=yes

@@ -1,9 +1,12 @@
 {
+  inputs,
+  ...
+}:
+{
   perSystem =
     {
       pkgs,
       lib,
-      inputs,
       self,
       self',
       system,
@@ -41,9 +44,7 @@
             "dotnet-wrapped-combined"
           ];
         };
-        overlays = [
-          overlaysConfig.flake.overlays.khanelinix
-        ];
+        overlays = lib.attrValues overlaysConfig.flake.overlays;
       };
 
       shellsPath = ./shells;
@@ -60,12 +61,12 @@
       buildShell = name: {
         ${name} = import (shellsPath + "/${name}.nix") {
           inherit
+            config
+            inputs
             lib
-            system
             self
             self'
-            inputs
-            config
+            system
             ;
           inherit (devPkgs) mkShell;
           pkgs = devPkgs;
