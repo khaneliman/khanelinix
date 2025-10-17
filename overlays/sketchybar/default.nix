@@ -1,12 +1,12 @@
 _: _final: prev: {
   sketchybar = prev.sketchybar.overrideAttrs (oldAttrs: {
     doInstallCheck = false;
-    version = "2.22.1-2025-09-11";
+    version = "2.22.1-2025-10-11";
     src = prev.fetchFromGitHub {
       owner = "FelixKratz";
       repo = "SketchyBar";
-      rev = "1b751317d6ab4d48d4a58f209425d5560b8ed38b";
-      hash = "sha256-6fVcQPRqMI7nWfj4bPMt/myK5uYNtjZQ3gvO48UP2AI=";
+      rev = "bd9030fe1478c2546ef5791d4bc6ffbcb0eac3be";
+      hash = "sha256-4XjU59auyVjE+ER8ffmqhrKrW79kuLJ4aHfkxUNt+IY=";
     };
     # Create secondary sketchybar executable for dynamic island
     installPhase = # bash
