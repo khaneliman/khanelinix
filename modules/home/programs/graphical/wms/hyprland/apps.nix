@@ -87,7 +87,6 @@ in
           )
           ++ [
             # Always start these utilities (no UWSM wrapping needed)
-            (mkStartCommand { slice = "b"; } "wl-clip-persist --clipboard both")
             (mkStartCommand { slice = "b"; } "wayvnc $(tailscale ip --4)")
           ];
       };

@@ -27,7 +27,6 @@ in
     home.packages = with pkgs; [
       wdisplays
       wl-clipboard
-      wl-clip-persist
       wlr-randr
       wl-screenrec
     ];
@@ -51,6 +50,7 @@ in
 
       services = {
         cliphist = mkDefault enabled;
+        wl-clip-persist = mkDefault enabled;
         # NOTE: doesn't provide anything extra compared to nixos module
         # keyring = mkDefault enabled;
       };
