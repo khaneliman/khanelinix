@@ -1,4 +1,9 @@
-{ mkShell, pkgs, ... }:
+{
+  lib,
+  mkShell,
+  pkgs,
+  ...
+}:
 let
   llvm = pkgs.llvmPackages_latest;
 
@@ -63,9 +68,16 @@ mkShell {
     ];
 
   shellHook = ''
-
-    echo 🔨 Cpp DevShell
-
-
+    echo "🔨 C/C++ DevShell"
+    echo ""
+    echo "📦 Available tools:"
+    echo "  Build tools: gnumake, cmake, bear, meson, ninja"
+    echo "  Debuggers: lldb${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ", gdb, valgrind"}"
+    echo "  Compilers: clang, clang++"
+    echo "  Analysis: cppcheck, cpplint"
+    echo "  Libraries: SDL2, SDL2_gfx, glm"
+    echo "  Custom: mk (simplified make script)"
+    echo ""
+    echo "🛠️  Ready for C/C++ development!"
   '';
 }

@@ -15,19 +15,39 @@ let
       upgrade-assistant
     ];
 
-    shellHook = ''
+    shellHook = versionLabel: ''
       export NUGET_PLUGIN_PATHS=${devPkgs.khanelinix.artifacts-credprovider}/bin/netcore/CredentialProvider.Microsoft/CredentialProvider.Microsoft.dll
       export PATH="$PATH:$HOME/.dotnet/tools"
 
+      echo "🔨 ${versionLabel}"
+      echo ""
+      echo "📦 Available tools:"
+      echo "  - dotnet (SDK with all runtimes)"
+      echo "  - dotnetbuildhelpers"
+      echo "  - nuget"
+      echo "  - mono"
+      echo "  - msbuild"
+      echo "  - netcoredbg"
+      echo "  - roslyn"
+      echo "  - upgrade-assistant"
+      echo ""
+      echo "🛠️  Global tools:"
+
       # Install global tools if not already installed
       if ! command -v dotnet-easydotnet &> /dev/null; then
-        echo "Installing EasyDotnet..."
+        echo "  Installing EasyDotnet..."
         dotnet tool install --global EasyDotnet
+      else
+        echo "  ✓ dotnet-easydotnet"
       fi
       if ! command -v dotnet-ef &> /dev/null; then
-        echo "Installing dotnet-ef..."
+        echo "  Installing dotnet-ef..."
         dotnet tool install --global dotnet-ef
+      else
+        echo "  ✓ dotnet-ef"
       fi
+      echo ""
+      echo "💡 Azure Artifacts credential provider configured"
     '';
   };
 
@@ -82,8 +102,7 @@ let
 
       shellHook = ''
         export DOTNET_ROOT="${combinedDotnet}/share/dotnet";
-        echo 🔨 Dotnet ${version} DevShell
-        ${baseDotnetShell.shellHook}
+        ${baseDotnetShell.shellHook "Dotnet ${version} DevShell"}
       '';
     };
 
@@ -126,8 +145,7 @@ let
 
       shellHook = ''
         export DOTNET_ROOT="${combinedDotnet10}/share/dotnet";
-        echo 🔨 Dotnet DevShell
-        ${baseDotnetShell.shellHook}
+        ${baseDotnetShell.shellHook "Dotnet DevShell (latest - SDK 10)"}
       '';
     };
   };
