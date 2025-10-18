@@ -1,6 +1,8 @@
 {
   config,
   lib,
+
+  osConfig ? { },
   ...
 }:
 let
@@ -24,6 +26,11 @@ in
         vimMode = true;
         preferredEditor = "nvim";
         autoAccept = false;
+        security = {
+          auth = {
+            selectedType = lib.mkIf (osConfig.khanelinix.security.sops.enable or false) "gemini-api-key";
+          };
+        };
       };
 
       defaultModel = "gemini-2.5-pro";
