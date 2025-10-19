@@ -54,7 +54,6 @@ in
 
     services = {
       # avahi = enabled;
-      # TODO: input-leap replace barrier
       geoclue = enabled;
       power = enabled;
       printing = enabled;

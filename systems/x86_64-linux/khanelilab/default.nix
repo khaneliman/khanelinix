@@ -32,7 +32,6 @@ in
 
     services = {
       # avahi = enabled;
-      # TODO: input-leap replace barrier
       geoclue = enabled;
       printing = enabled;
       openssh = enabled;

@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
 
   ...
 }:
@@ -16,6 +17,10 @@ in
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = [
+      pkgs.deskflow
+    ];
+
     khanelinix = {
       suites = {
         common = enabled;
