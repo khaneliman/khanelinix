@@ -68,39 +68,46 @@ in
     ];
 
     programs = {
+      delta = {
+        enable = true;
+        enableGitIntegration = true;
+
+        options = {
+          dark = true;
+          # FIXME: module should accept a mergeable list be composable
+          features = mkForce "decorations side-by-side navigate catppuccin-macchiato";
+          line-numbers = true;
+          navigate = true;
+          side-by-side = true;
+        };
+      };
+
+      difftastic = {
+        enable = !config.programs.kitty.enable;
+
+        git = {
+          enable = true;
+          diffToolMode = !config.programs.kitty.enable;
+        };
+
+        options = {
+          background = "dark";
+          display = "inline";
+        };
+      };
+
       git = {
         enable = true;
         package = pkgs.gitFull;
 
-        inherit (cfg) includes userName userEmail;
-        inherit (aliases) aliases;
+        inherit (cfg) includes;
         inherit (ignores) ignores;
 
         maintenance.enable = true;
 
-        delta = {
-          enable = true;
+        settings = {
+          inherit (aliases) aliases;
 
-          options = {
-            dark = true;
-            # FIXME: module should accept a mergable list be composable
-            features = mkForce "decorations side-by-side navigate catppuccin-macchiato";
-            line-numbers = true;
-            navigate = true;
-            side-by-side = true;
-          };
-        };
-
-        difftastic = {
-          enableAsDifftool = !config.programs.kitty.enable;
-
-          options = {
-            background = "dark";
-            display = "inline";
-          };
-        };
-
-        extraConfig = {
           branch.sort = "-committerdate";
 
           credential = {
@@ -155,6 +162,11 @@ in
               "/etc/nixos"
               "/etc/nix-darwin"
             ];
+          };
+
+          user = {
+            name = cfg.userName;
+            email = cfg.userEmail;
           };
         };
 
