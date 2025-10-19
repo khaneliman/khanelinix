@@ -106,6 +106,8 @@ in
               "browser.aboutwelcome.enabled" = false;
               "browser.bookmarks.autoExportHTML" = true;
               "browser.bookmarks.showMobileBookmarks" = true;
+              # FIXME: workaround for https://github.com/NixOS/nixpkgs/issues/453372
+              "browser.chrome.site_icons" = false;
               "browser.meta_refresh_when_inactive.disabled" = true;
               "browser.newtabpage.activity-stream.default.sites" = "";
               "browser.newtabpage.activity-stream.feeds.section.topstories" = false;
