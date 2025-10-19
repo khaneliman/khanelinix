@@ -15,9 +15,14 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    khanelinix = {
-      # TODO: input-leap replace barrier
+    homebrew = {
+      taps = [
+        "deskflow/homebrew-tap"
+      ];
+      casks = [ "deskflow" ];
+    };
 
+    khanelinix = {
       suites = {
         business = enabled;
         common = enabled;
