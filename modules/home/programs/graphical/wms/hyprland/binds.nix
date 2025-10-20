@@ -262,6 +262,19 @@ in
                 "SHIFT, r, exec, $screen-recorder area"
               ])
               ++ [
+                # Reset submap after each command
+                ", w, submap, reset"
+                ", a, submap, reset"
+                ", s, submap, reset"
+                "SHIFT, w, submap, reset"
+                "SHIFT, a, submap, reset"
+                "SHIFT, s, submap, reset"
+                "ALT, w, submap, reset"
+                "ALT, a, submap, reset"
+                "ALT, s, submap, reset"
+                ", r, submap, reset"
+                "SHIFT, r, submap, reset"
+
                 # Exit submap
                 ", escape, submap, reset"
                 "SUPER, S, submap, reset"
@@ -310,6 +323,11 @@ in
                 ", p, exec, systemctl poweroff"
               ])
               ++ [
+                # Reset submap after each command
+                ", l, submap, reset"
+                ", r, submap, reset"
+                ", p, submap, reset"
+
                 # Exit submap
                 ", escape, submap, reset"
                 "SUPER, X, submap, reset"
