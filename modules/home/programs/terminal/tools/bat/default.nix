@@ -23,14 +23,19 @@ in
         style = "auto,header-filesize";
       };
 
-      extraPackages = with pkgs.bat-extras; [
-        batdiff
-        batgrep
-        batman
-        batpipe
-        batwatch
-        prettybat
-      ];
+      extraPackages =
+        with pkgs.bat-extras;
+        [
+          batdiff
+          batman
+          batpipe
+          batwatch
+          prettybat
+        ]
+        # FIXME: broken darwin
+        ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+          batgrep
+        ];
     };
 
     home.shellAliases = {
