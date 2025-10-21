@@ -21,12 +21,14 @@ in
         darkreader
         firefox-color
         firenvim
-        frankerfacez
+        # Replaced with tampermonkey script
+        # frankerfacez
         onepassword-password-manager
         react-devtools
         reduxdevtools
         sponsorblock
         stylus
+        tampermonkey
         ublock-origin
         user-agent-string-switcher
       ]) "Extensions to install";
