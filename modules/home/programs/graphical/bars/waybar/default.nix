@@ -148,6 +148,22 @@ in
         patches = [
           ./workspaces.patch
         ];
+        # TODO: remove after https://github.com/Alexays/Waybar/pull/4577
+        postUnpack =
+          let
+            libcava = pkgs.fetchFromGitHub {
+              owner = "LukashonakV";
+              repo = "cava";
+              rev = "23efcced43b5a395747b18a2e5f2171fc0925d18";
+              hash = "sha256-CNspaoK5KuME0GfaNijpC24BfALngzNi04/VNwPqMvo=";
+            };
+          in
+          ''
+            pushd "$sourceRoot"
+            cp -R --no-preserve=mode,ownership ${libcava} subprojects/cava
+            patchShebangs .
+            popd
+          '';
       });
 
       systemd = {
