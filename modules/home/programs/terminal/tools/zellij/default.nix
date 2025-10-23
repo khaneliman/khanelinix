@@ -7,17 +7,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
-
   cfg = config.khanelinix.programs.terminal.tools.zellij;
-
-  zns = "zellij -s $(basename $(pwd)) options --default-cwd $(pwd)";
-  zas = "zellij a $(basename $(pwd))";
-  zo = ''
-    session_name=$(basename "$(pwd)")
-
-    zellij attach --create "$session_name" options --default-cwd "$(pwd)"
-  '';
 in
 {
   imports = [
@@ -30,59 +20,80 @@ in
     enable = lib.mkEnableOption "zellij";
   };
 
-  config = mkIf cfg.enable {
-    programs = {
-      bash.shellAliases = {
-        inherit zns zas zo;
-      };
+  config = lib.mkIf cfg.enable {
+    programs =
+      let
+        zns = "zellij -s $(basename $(pwd)) options --default-cwd $(pwd)";
+        zas = "zellij a $(basename $(pwd))";
+        zds = "zellij delete-session $(basename $(pwd))";
+        zo = ''
+          session_name=$(basename "$(pwd)")
 
-      zsh.shellAliases = {
-        inherit zns zas zo;
-      };
+          zellij attach --create "$session_name" options --default-cwd "$(pwd)"
+        '';
+      in
+      {
+        bash.shellAliases = {
+          inherit
+            zas
+            zds
+            zns
+            zo
+            ;
+        };
 
-      zellij = {
-        enable = true;
+        zsh.shellAliases = {
+          inherit
+            zas
+            zds
+            zns
+            zo
+            ;
+        };
 
-        settings = {
-          # clipboard provider
-          copy_command =
-            if pkgs.stdenv.hostPlatform.isLinux && (osConfig.khanelinix.archetypes.wsl.enable or false) then
-              "clip.exe"
-            else if pkgs.stdenv.hostPlatform.isLinux then
-              "wl-copy"
-            else if pkgs.stdenv.hostPlatform.isDarwin then
-              "pbcopy"
-            else
-              "";
+        zellij = {
+          enable = true;
 
-          auto_layouts = true;
+          settings = {
+            # clipboard provider
+            copy_command =
+              if pkgs.stdenv.hostPlatform.isLinux && (osConfig.khanelinix.archetypes.wsl.enable or false) then
+                "clip.exe"
+              else if pkgs.stdenv.hostPlatform.isLinux then
+                "wl-copy"
+              else if pkgs.stdenv.hostPlatform.isDarwin then
+                "pbcopy"
+              else
+                "";
 
-          default_layout = "dev";
-          default_mode = "locked";
-          support_kitty_keyboard_protocol = true;
+            auto_layouts = true;
 
-          on_force_close = "quit";
-          pane_frames = true;
-          pane_viewport_serialization = true;
-          scrollback_lines_to_serialize = 1000;
-          session_serialization = true;
+            default_layout = "dev";
+            default_mode = "locked";
+            support_kitty_keyboard_protocol = true;
 
-          ui.pane_frames = {
-            rounded_corners = true;
-            hide_session_name = true;
+            on_force_close = "quit";
+            pane_frames = true;
+            pane_viewport_serialization = true;
+            scrollback_lines_to_serialize = 1000;
+            session_serialization = true;
+
+            ui.pane_frames = {
+              rounded_corners = true;
+              hide_session_name = true;
+            };
+
+            # load internal plugins from built-in paths
+            plugins = {
+              tab-bar.path = "tab-bar";
+              status-bar.path = "status-bar";
+              strider.path = "strider";
+              compact-bar.path = "compact-bar";
+            };
+
+            theme = "catppuccin-macchiato";
           };
-
-          # load internal plugins from built-in paths
-          plugins = {
-            tab-bar.path = "tab-bar";
-            status-bar.path = "status-bar";
-            strider.path = "strider";
-            compact-bar.path = "compact-bar";
-          };
-
-          theme = "catppuccin-macchiato";
         };
       };
-    };
   };
 }
