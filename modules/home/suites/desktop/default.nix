@@ -84,5 +84,10 @@ in
         realvnc-vnc-viewer
         rustdesk-flutter
       ];
+
+    targets.darwin = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+      copyApps.enable = true;
+      linkApps.enable = false;
+    };
   };
 }
