@@ -149,11 +149,11 @@
       },
       "locked": {
         "dir": "pkgs/firefox-addons",
-        "lastModified": 1761105810,
-        "narHash": "sha256-h1hNPjW3DLrIbT4cTv/27mN0DfsrSSU9mJa4xRmtGeE=",
+        "lastModified": 1761192212,
+        "narHash": "sha256-X3vyI+bD9bC5Yqpxv+ENPa20k+nTF4a8Xc+YGDYmQNY=",
         "owner": "rycee",
         "repo": "nur-expressions",
-        "rev": "4e0b79686a41e34e76aa72aef7f834a4daf8b6c3",
+        "rev": "f7cb4f5b05fd542a7c2b6d612b6340c3c59f1314",
         "type": "gitlab"
       },
       "original": {
@@ -1372,11 +1372,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1760873938,
-        "narHash": "sha256-oKmQUUqprJNFZfSNFtYu9pOmLXMkP7M51kF1lX8WPp4=",
+        "lastModified": 1761204979,
+        "narHash": "sha256-QWS3FCd6sTbr1runpZPdpVrhqFu8E5fNOpfp0r9ifLk=",
         "owner": "Alexays",
         "repo": "Waybar",
-        "rev": "84ec25bbebef8a9ce0720675214a078808e73c39",
+        "rev": "161367d9617673a4ef9caf8299411dc5153464d1",
         "type": "github"
       },
       "original": {
@@ -1388,11 +1388,11 @@
     "yazi-flavors": {
       "flake": false,
       "locked": {
-        "lastModified": 1761030755,
-        "narHash": "sha256-0CZrJ1f5lDY75XF5eR6m4hbg973pTZoAxzJKMCv+hag=",
+        "lastModified": 1761204921,
+        "narHash": "sha256-bavHcmeGZ49nNeM+0DSdKvxZDPVm3e6eaNmfmwfCid0=",
         "owner": "yazi-rs",
         "repo": "flavors",
-        "rev": "f9ae9f271812628191c67f3f6801c52bce5a96d0",
+        "rev": "f6b425a6d57af39c10ddfd94790759f4d7612332",
         "type": "github"
       },
       "original": {
