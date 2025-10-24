@@ -120,6 +120,7 @@ in
           };
           nvim = enabled;
           sway = enabled;
+          thunderbird = enabled;
           waybar = enabled;
           zathura = enabled;
           zellij = enabled;
