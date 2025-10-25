@@ -12,8 +12,7 @@ let
   cfg = config.khanelinix.programs.graphical.bars.sketchybar;
 
   shellAliases = {
-    push = # bash
-      ''command git push && ${getExe config.programs.sketchybar.finalPackage} --trigger git_push'';
+    push = /* bash */ ''command git push && ${getExe config.programs.sketchybar.finalPackage} --trigger git_push'';
     restart-sketchybar = ''launchctl kickstart -k gui/"$(id -u)"/org.nix-community.home.sketchybar'';
   };
 in
@@ -61,16 +60,15 @@ in
         };
       };
 
-      zsh.initContent = # bash
-        ''
-          brew() {
-            command brew "$@" && ${getExe config.programs.sketchybar.finalPackage} --trigger brew_update
-          }
+      zsh.initContent = /* bash */ ''
+        brew() {
+          command brew "$@" && ${getExe config.programs.sketchybar.finalPackage} --trigger brew_update
+        }
 
-          mas() {
-            command mas "$@" && ${getExe config.programs.sketchybar.finalPackage} --trigger brew_update
-          }
-        '';
+        mas() {
+          command mas "$@" && ${getExe config.programs.sketchybar.finalPackage} --trigger brew_update
+        }
+      '';
     };
 
     xdg.configFile = {

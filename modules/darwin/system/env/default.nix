@@ -26,11 +26,9 @@ in
   config = {
     environment = {
       extraInit = lib.concatStringsSep "\n" (
-        lib.mapAttrsToList (
-          n: v: # bash
-          ''
-            export ${n}="${v}"
-          '') cfg
+        lib.mapAttrsToList (n: v: /* bash */ ''
+          export ${n}="${v}"
+        '') cfg
       );
 
       extraOutputsToInstall = [

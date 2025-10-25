@@ -23,19 +23,17 @@ let
   ignores = import ./ignores.nix;
   shell-aliases = import ./shell-aliases.nix { inherit config lib pkgs; };
 
-  tokenExports =
-    lib.optionalString (osConfig.khanelinix.security.sops.enable or false) # Bash
-      ''
-        if [ -f ${config.sops.secrets."github/access-token".path} ]; then
-          GITHUB_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
-          export GITHUB_TOKEN
-          GH_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
-          export GH_TOKEN
-          # For github-mcp-server
-          GITHUB_PERSONAL_ACCESS_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
-          export GITHUB_PERSONAL_ACCESS_TOKEN
-        fi
-      '';
+  tokenExports = lib.optionalString (osConfig.khanelinix.security.sops.enable or false) /* Bash */ ''
+    if [ -f ${config.sops.secrets."github/access-token".path} ]; then
+      GITHUB_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
+      export GITHUB_TOKEN
+      GH_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
+      export GH_TOKEN
+      # For github-mcp-server
+      GITHUB_PERSONAL_ACCESS_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
+      export GITHUB_PERSONAL_ACCESS_TOKEN
+    fi
+  '';
 in
 {
   options.khanelinix.programs.terminal.tools.git = {

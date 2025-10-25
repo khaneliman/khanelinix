@@ -54,8 +54,7 @@ in
               echo "uwsm app -- $*"
             '';
           in
-          # Ron
-          ''
+          /* Ron */ ''
             Config(
               desktop_actions: true,
               max_entries: 10,
@@ -71,8 +70,7 @@ in
               (osConfig.system.build.manual.optionsJSON or "/dev/null") + "/share/doc/nixos/options.json";
             options = builtins.toJSON { ":nix" = [ nixos-options ]; };
           in
-          # Ron
-          ''
+          /* Ron */ ''
             Config(
               options: ${options},
               min_score: 5,
@@ -86,98 +84,94 @@ in
           )
         '';
 
-        "symbols.ron".text = # Ron
-          ''
-            Config(
-              // The prefix that the search needs to begin with to yield symbol results
-              prefix: ":sy",
+        "symbols.ron".text = /* Ron */ ''
+          Config(
+            // The prefix that the search needs to begin with to yield symbol results
+            prefix: ":sy",
 
-              // Custom user defined symbols to be included along the unicode symbols
-              symbols: {
-                // "name": "text to be copied"
-                "shrug": "¯\\_(ツ)_/¯",
-              },
+            // Custom user defined symbols to be included along the unicode symbols
+            symbols: {
+              // "name": "text to be copied"
+              "shrug": "¯\\_(ツ)_/¯",
+            },
 
-              // The number of entries to be displayed
-              max_entries: 10,
-            )
-          '';
+            // The number of entries to be displayed
+            max_entries: 10,
+          )
+        '';
 
         # NOTE: usage information
         # <prefix><src lang><language_delimiter><target lang> <text to translate>
         # ie: ':trenglish>spanish test this out'
         # <prefix><target lang> <text to translate>
         # ie: ':trspanish test this out'
-        "translate.ron".text = # Ron
-          ''
-            Config(
-              prefix: ":tr",
-              language_delimiter: ">",
-              max_entries: 3,
-            )
-          '';
+        "translate.ron".text = /* Ron */ ''
+          Config(
+            prefix: ":tr",
+            language_delimiter: ">",
+            max_entries: 3,
+          )
+        '';
 
-        "websearch.ron".text = # Ron
-          ''
-            Config(
-              prefix: "?",
-              engines: [DuckDuckGo]
-            )
-          '';
+        "websearch.ron".text = /* Ron */ ''
+          Config(
+            prefix: "?",
+            engines: [DuckDuckGo]
+          )
+        '';
       };
 
-      extraCss = # CSS
-        ''
-          * {
-            transition: 200ms ease;
-            font-family: MonaspaceNeon;
-            font-size: 1.3rem;
-          }
+      extraCss = /* CSS */ ''
+        * {
+          transition: 200ms ease;
+          font-family: MonaspaceNeon;
+          font-size: 1.3rem;
+        }
 
-          /* Main window */
-          window {
-            background: transparent;
-          }
+        /* Main window */
+        window {
+          background: transparent;
+        }
 
-          /* Main container box */
-          .main {
-            background: rgba(30, 30, 46, 1);
-            border: 2px solid #494d64;
-            border-radius: 16px;
-            padding: 8px;
-          }
+        /* Main container box */
+        .main {
+          background: rgba(30, 30, 46, 1);
+          border: 2px solid #494d64;
+          border-radius: 16px;
+          padding: 8px;
+        }
 
-          /* Entry text field */
-          text {
-            background: transparent;
-            border-radius: 16px;
-          }
+        /* Entry text field */
+        text {
+          background: transparent;
+          border-radius: 16px;
+        }
 
-          /* Results container */
-          .matches {
-            background: transparent;
-          }
+        /* Results container */
+        .matches {
+          background: transparent;
+        }
 
-          /* Individual match */
-          .match {
-            padding: 3px;
-            border-radius: 16px;
-            background: transparent;
-          }
+        /* Individual match */
+        .match {
+          padding: 3px;
+          border-radius: 16px;
+          background: transparent;
+        }
 
-          .match:selected {
-            background: rgba(203, 166, 247, 0.7);
-          }
+        .match:selected {
+          background: rgba(203, 166, 247, 0.7);
+        }
 
-          /* Plugin containers */
-          .plugin {
-            background: transparent;
-          }
+        /* Plugin containers */
+        .plugin {
+          background: transparent;
+        }
 
-          .plugin:hover {
-            border-radius: 16px;
-          }
-        '';
+        .plugin:hover {
+          border-radius: 16px;
+        }
+      '';
     };
   };
 }

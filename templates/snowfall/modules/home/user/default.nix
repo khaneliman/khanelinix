@@ -30,10 +30,9 @@ let
 
     dontUnpack = true;
 
-    installPhase = # bash
-      ''
-        cp $src $out
-      '';
+    installPhase = /* bash */ ''
+      cp $src $out
+    '';
 
     passthru = {
       fileName = defaultIconFileName;

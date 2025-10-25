@@ -10,30 +10,28 @@ let
   inherit (lib) mkIf mkDefault;
   inherit (lib.khanelinix) enabled;
 
-  tokenExports =
-    lib.optionalString (osConfig.khanelinix.security.sops.enable or false) # Bash
-      ''
-        if [ -f ${config.sops.secrets.ANTHROPIC_API_KEY.path} ]; then
-          ANTHROPIC_API_KEY="$(cat ${config.sops.secrets.ANTHROPIC_API_KEY.path})"
-          export ANTHROPIC_API_KEY
-        fi
-        if [ -f ${config.sops.secrets.GEMINI_API_KEY.path} ]; then
-          GEMINI_API_KEY="$(cat ${config.sops.secrets.GEMINI_API_KEY.path})"
-          export GEMINI_API_KEY
-        fi
-        if [ -f ${config.sops.secrets.AZURE_OPENAI_API_KEY.path} ]; then
-          AZURE_OPENAI_API_KEY="$(cat ${config.sops.secrets.AZURE_OPENAI_API_KEY.path})"
-          export AZURE_OPENAI_API_KEY
-        fi
-        if [ -f ${config.sops.secrets.OPENAI_API_KEY.path} ]; then
-          OPENAI_API_KEY="$(cat ${config.sops.secrets.OPENAI_API_KEY.path})"
-          export OPENAI_API_KEY
-        fi
-        if [ -f ${config.sops.secrets.TAVILY_API_KEY.path} ]; then
-          TAVILY_API_KEY="$(cat ${config.sops.secrets.TAVILY_API_KEY.path})"
-          export TAVILY_API_KEY
-        fi
-      '';
+  tokenExports = lib.optionalString (osConfig.khanelinix.security.sops.enable or false) /* Bash */ ''
+    if [ -f ${config.sops.secrets.ANTHROPIC_API_KEY.path} ]; then
+      ANTHROPIC_API_KEY="$(cat ${config.sops.secrets.ANTHROPIC_API_KEY.path})"
+      export ANTHROPIC_API_KEY
+    fi
+    if [ -f ${config.sops.secrets.GEMINI_API_KEY.path} ]; then
+      GEMINI_API_KEY="$(cat ${config.sops.secrets.GEMINI_API_KEY.path})"
+      export GEMINI_API_KEY
+    fi
+    if [ -f ${config.sops.secrets.AZURE_OPENAI_API_KEY.path} ]; then
+      AZURE_OPENAI_API_KEY="$(cat ${config.sops.secrets.AZURE_OPENAI_API_KEY.path})"
+      export AZURE_OPENAI_API_KEY
+    fi
+    if [ -f ${config.sops.secrets.OPENAI_API_KEY.path} ]; then
+      OPENAI_API_KEY="$(cat ${config.sops.secrets.OPENAI_API_KEY.path})"
+      export OPENAI_API_KEY
+    fi
+    if [ -f ${config.sops.secrets.TAVILY_API_KEY.path} ]; then
+      TAVILY_API_KEY="$(cat ${config.sops.secrets.TAVILY_API_KEY.path})"
+      export TAVILY_API_KEY
+    fi
+  '';
 
   cfg = config.khanelinix.suites.development;
   isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;

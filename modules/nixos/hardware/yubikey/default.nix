@@ -10,11 +10,9 @@ let
 
   cfg = config.khanelinix.hardware.yubikey;
 
-  reload-yubikey =
-    pkgs.writeShellScriptBin "reload-yubikey" # bash
-      ''
-        ${getExe' pkgs.gnupg "gpg-connect-agent"} "scd serialno" "learn --force" /bye
-      '';
+  reload-yubikey = pkgs.writeShellScriptBin "reload-yubikey" /* bash */ ''
+    ${getExe' pkgs.gnupg "gpg-connect-agent"} "scd serialno" "learn --force" /bye
+  '';
 in
 {
   options.khanelinix.hardware.yubikey = {

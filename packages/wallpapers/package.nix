@@ -14,10 +14,9 @@ let
 
         dontUnpack = true;
 
-        installPhase = # bash
-          ''
-            cp $src $out
-          '';
+        installPhase = /* bash */ ''
+          cp $src $out
+        '';
 
         passthru = {
           inherit fileName;
@@ -51,12 +50,11 @@ stdenvNoCC.mkDerivation {
   name = "khanelinix.wallpapers";
   src = ./assets;
 
-  installPhase = # bash
-    ''
-      mkdir -p ${installTarget}
+  installPhase = /* bash */ ''
+    mkdir -p ${installTarget}
 
-      find * -type f -mindepth 0 -maxdepth 0 -exec cp ./{} ${installTarget}/{} ';'
-    '';
+    find * -type f -mindepth 0 -maxdepth 0 -exec cp ./{} ${installTarget}/{} ';'
+  '';
 
   passthru = {
     inherit names;

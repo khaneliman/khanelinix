@@ -44,12 +44,10 @@ in
       };
     };
 
-    system.activationScripts.postInstallSddm =
-      stringAfter [ "users" ] # Bash
-        ''
-          echo "Setting sddm permissions for user icon"
-          ${getExe' pkgs.acl "setfacl"} -m u:sddm:x /home/${userName}
-          ${getExe' pkgs.acl "setfacl"} -m u:sddm:r /home/${userName}/.face.icon || true
-        '';
+    system.activationScripts.postInstallSddm = stringAfter [ "users" ] /* Bash */ ''
+      echo "Setting sddm permissions for user icon"
+      ${getExe' pkgs.acl "setfacl"} -m u:sddm:x /home/${userName}
+      ${getExe' pkgs.acl "setfacl"} -m u:sddm:r /home/${userName}/.face.icon || true
+    '';
   };
 }

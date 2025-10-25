@@ -94,41 +94,39 @@ in
 
           addons = {
             gamemode = {
-              startscript = # bash
-                ''
-                  export PATH=$PATH:${programs}
-                  export HYPRLAND_INSTANCE_SIGNATURE=$(command ls -t $XDG_RUNTIME_DIR/hypr | head -n 1)
+              startscript = /* bash */ ''
+                export PATH=$PATH:${programs}
+                export HYPRLAND_INSTANCE_SIGNATURE=$(command ls -t $XDG_RUNTIME_DIR/hypr | head -n 1)
 
-                  hyprctl --batch '${
-                    concatStringsSep " " [
-                      "keyword animations:enabled 0;"
-                      "keyword decoration:drop_shadow 0;"
-                      "keyword decoration:blur:enabled 0;"
-                      "keyword misc:vfr 0"
-                    ]
-                  }'
+                hyprctl --batch '${
+                  concatStringsSep " " [
+                    "keyword animations:enabled 0;"
+                    "keyword decoration:drop_shadow 0;"
+                    "keyword decoration:blur:enabled 0;"
+                    "keyword misc:vfr 0"
+                  ]
+                }'
 
-                  powerprofilesctl set performance
-                  notify-send -a 'Gamemode' 'Optimizations activated' -u 'low'
-                '';
+                powerprofilesctl set performance
+                notify-send -a 'Gamemode' 'Optimizations activated' -u 'low'
+              '';
 
-              endscript = # bash
-                ''
-                  export PATH=$PATH:${programs}
-                  export HYPRLAND_INSTANCE_SIGNATURE=$(command ls -t $XDG_RUNTIME_DIR/hypr | head -n 1)
+              endscript = /* bash */ ''
+                export PATH=$PATH:${programs}
+                export HYPRLAND_INSTANCE_SIGNATURE=$(command ls -t $XDG_RUNTIME_DIR/hypr | head -n 1)
 
-                  hyprctl --batch '${
-                    concatStringsSep " " [
-                      "keyword animations:enabled 1;"
-                      "keyword decoration:drop_shadow 1;"
-                      "keyword decoration:blur:enabled 1;"
-                      "keyword misc:vfr 1"
-                    ]
-                  }'
+                hyprctl --batch '${
+                  concatStringsSep " " [
+                    "keyword animations:enabled 1;"
+                    "keyword decoration:drop_shadow 1;"
+                    "keyword decoration:blur:enabled 1;"
+                    "keyword misc:vfr 1"
+                  ]
+                }'
 
-                  powerprofilesctl set balanced
-                  notify-send -a 'Gamemode' 'Optimizations deactivated' -u 'low'
-                '';
+                powerprofilesctl set balanced
+                notify-send -a 'Gamemode' 'Optimizations deactivated' -u 'low'
+              '';
             };
           };
 

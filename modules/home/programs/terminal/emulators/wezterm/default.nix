@@ -32,8 +32,7 @@ in
           monaspaceXenon =
             if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Xenon Var" else "MonaspaceXenon";
         in
-        # lua
-        ''
+        /* lua */ ''
           function scheme_for_appearance(appearance)
             if appearance:find "Dark" then
               return "Catppuccin Macchiato"

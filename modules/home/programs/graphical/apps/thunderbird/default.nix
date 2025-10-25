@@ -199,17 +199,16 @@ in
           "mail.tabs.drawInTitlebar" = false;
         };
 
-        userChrome = # css
-          ''
-            #spacesToolbar,
-            #agenda-container,
-            #agenda,
-            #agenda-toolbar,
-            #mini-day-box
-            {
-              background-color: #24273a !important;
-            }
-          '';
+        userChrome = /* css */ ''
+          #spacesToolbar,
+          #agenda-container,
+          #agenda,
+          #agenda-toolbar,
+          #mini-day-box
+          {
+            background-color: #24273a !important;
+          }
+        '';
 
         # TODO: Bundle extensions
       };

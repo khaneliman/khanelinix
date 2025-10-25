@@ -90,10 +90,9 @@ in
             enable = true;
             enableDebug = false;
 
-            appendConfig = # bash
-              ''
-                exec-once = hyprctl setcursor ${config.khanelinix.theme.gtk.cursor.name} ${builtins.toString config.khanelinix.theme.gtk.cursor.size}
-              '';
+            appendConfig = /* bash */ ''
+              exec-once = hyprctl setcursor ${config.khanelinix.theme.gtk.cursor.name} ${builtins.toString config.khanelinix.theme.gtk.cursor.size}
+            '';
 
             prependConfig = # bash
               lib.concatStringsSep "\n" [

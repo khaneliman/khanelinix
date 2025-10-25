@@ -49,12 +49,10 @@ in
       xserver.enable = true;
     };
 
-    system.activationScripts.postInstallGdm =
-      stringAfter [ "users" ] # bash
-        ''
-          echo "Setting gdm permissions for user icon"
-          ${getExe' pkgs.acl "setfacl"} -m u:gdm:x /home/${config.khanelinix.user.name}
-          ${getExe' pkgs.acl "setfacl"} -m u:gdm:r /home/${config.khanelinix.user.name}/.face.icon || true
-        '';
+    system.activationScripts.postInstallGdm = stringAfter [ "users" ] /* bash */ ''
+      echo "Setting gdm permissions for user icon"
+      ${getExe' pkgs.acl "setfacl"} -m u:gdm:x /home/${config.khanelinix.user.name}
+      ${getExe' pkgs.acl "setfacl"} -m u:gdm:r /home/${config.khanelinix.user.name}/.face.icon || true
+    '';
   };
 }

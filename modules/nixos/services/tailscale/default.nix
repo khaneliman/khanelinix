@@ -82,21 +82,19 @@ in
 
           serviceConfig.Type = "oneshot";
 
-          script =
-            with pkgs; # bash
-            ''
-              # Wait for tailscaled to settle
-              sleep 2
+          script = with pkgs; /* bash */ ''
+            # Wait for tailscaled to settle
+            sleep 2
 
-              # Check if we are already authenticated to tailscale
-              status="$(${getExe tailscale} status -json | ${getExe jq} -r .BackendState)"
-              if [ $status = "Running" ]; then # if so, then do nothing
-                exit 0
-              fi
+            # Check if we are already authenticated to tailscale
+            status="$(${getExe tailscale} status -json | ${getExe jq} -r .BackendState)"
+            if [ $status = "Running" ]; then # if so, then do nothing
+              exit 0
+            fi
 
-              # Otherwise authenticate with tailscale
-              ${getExe tailscale} up -authkey "${cfg.autoconnect.key}"
-            '';
+            # Otherwise authenticate with tailscale
+            ${getExe tailscale} up -authkey "${cfg.autoconnect.key}"
+          '';
         };
       };
     };

@@ -5,10 +5,9 @@ stdenvNoCC.mkDerivation {
 
   dontUnpack = true;
 
-  installPhase = # bash
-    ''
-      cp $src $out
-    '';
+  installPhase = /* bash */ ''
+    cp $src $out
+  '';
 
   passthru = {
     fileName = "profile.png";

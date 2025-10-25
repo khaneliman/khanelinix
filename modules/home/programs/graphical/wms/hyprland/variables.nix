@@ -12,10 +12,9 @@ let
   wl-paste = "wl-paste";
 
   getDateTime = lib.getExe (
-    pkgs.writeShellScriptBin "getDateTime" # bash
-      ''
-        echo $(date +'%Y%m%d_%H%M%S')
-      ''
+    pkgs.writeShellScriptBin "getDateTime" /* bash */ ''
+      echo $(date +'%Y%m%d_%H%M%S')
+    ''
   );
 
   screenshot-path = "/home/${config.khanelinix.user.name}/Pictures/screenshots";

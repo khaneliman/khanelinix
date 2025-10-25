@@ -42,10 +42,9 @@ in
           swayCfg = config.wayland.windowManager.sway.config;
 
           getDateTime = getExe (
-            pkgs.writeShellScriptBin "getDateTime" # bash
-              ''
-                echo $(date +'%Y%m%d_%H%M%S')
-              ''
+            pkgs.writeShellScriptBin "getDateTime" /* bash */ ''
+              echo $(date +'%Y%m%d_%H%M%S')
+            ''
           );
 
           screenshot-path = "/home/${config.khanelinix.user.name}/Pictures/screenshots";

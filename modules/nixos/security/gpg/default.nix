@@ -30,17 +30,16 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.shellInit = # bash
-      ''
-        ${getExe' pkgs.coreutils "timeout"} ${builtins.toString cfg.agentTimeout} ${getExe' pkgs.gnupg "gpgconf"} --launch gpg-agent
-        gpg_agent_timeout_status=$?
+    environment.shellInit = /* bash */ ''
+      ${getExe' pkgs.coreutils "timeout"} ${builtins.toString cfg.agentTimeout} ${getExe' pkgs.gnupg "gpgconf"} --launch gpg-agent
+      gpg_agent_timeout_status=$?
 
-        if [ "$gpg_agent_timeout_status" = 124 ]; then
-          # Command timed out...
-          echo "GPG Agent timed out..."
-          echo 'Run "gpgconf --launch gpg-agent" to try and launch it again.'
-        fi
-      '';
+      if [ "$gpg_agent_timeout_status" = 124 ]; then
+        # Command timed out...
+        echo "GPG Agent timed out..."
+        echo 'Run "gpgconf --launch gpg-agent" to try and launch it again.'
+      fi
+    '';
 
     environment.systemPackages = with pkgs; [
       cryptsetup

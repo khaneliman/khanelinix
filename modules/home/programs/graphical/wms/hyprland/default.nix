@@ -156,13 +156,11 @@ in
     wayland.windowManager.hyprland = {
       enable = true;
 
-      extraConfig =
-        # bash
-        ''
-          ${cfg.prependConfig}
+      extraConfig = /* bash */ ''
+        ${cfg.prependConfig}
 
-          ${cfg.appendConfig}
-        '';
+        ${cfg.appendConfig}
+      '';
 
       package = lib.mkIf (osConfig ? programs.hyprland.package) osConfig.programs.hyprland.package;
       portalPackage = lib.mkIf (
@@ -171,8 +169,8 @@ in
 
       # ehhhhh
       # plugins = with pkgs.hyprlandPlugins; [
-      #   hyprbars
-      #   hyprexpo
+      # hyprbars
+      # hyprexpo
       # ];
 
       settings = {

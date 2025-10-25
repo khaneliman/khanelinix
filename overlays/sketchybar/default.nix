@@ -9,10 +9,9 @@ _: _final: prev: {
       hash = "sha256-4XjU59auyVjE+ER8ffmqhrKrW79kuLJ4aHfkxUNt+IY=";
     };
     # Create secondary sketchybar executable for dynamic island
-    installPhase = # bash
-      ''
-        ${oldAttrs.installPhase}
-         cp ./bin/sketchybar $out/bin/dynamic-island-sketchybar
-      '';
+    installPhase = /* bash */ ''
+      ${oldAttrs.installPhase}
+       cp ./bin/sketchybar $out/bin/dynamic-island-sketchybar
+    '';
   });
 }

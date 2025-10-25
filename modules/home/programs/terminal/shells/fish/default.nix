@@ -34,18 +34,16 @@ in
 
           makeBinPathList = map (path: path + "/bin");
         in
-        lib.optionalString pkgs.stdenv.hostPlatform.isDarwin # fish
-          ''
-            export NIX_PATH="darwin-config=$HOME/.nixpkgs/darwin-configuration.nix:$HOME/.nix-defexpr/channels:$NIX_PATH"
-            fish_add_path --move --prepend --path ${
-              lib.concatMapStringsSep " " dquote (makeBinPathList (osConfig.environment.profiles or [ ]))
-            }
-            set fish_user_paths $fish_user_paths
-          '';
+        lib.optionalString pkgs.stdenv.hostPlatform.isDarwin /* fish */ ''
+          export NIX_PATH="darwin-config=$HOME/.nixpkgs/darwin-configuration.nix:$HOME/.nix-defexpr/channels:$NIX_PATH"
+          fish_add_path --move --prepend --path ${
+            lib.concatMapStringsSep " " dquote (makeBinPathList (osConfig.environment.profiles or [ ]))
+          }
+          set fish_user_paths $fish_user_paths
+        '';
 
       interactiveShellInit =
-        # fish
-        ''
+        /* fish */ ''
           # 1password plugin
           if [ -f ~/.config/op/plugins.sh ];
               source ~/.config/op/plugins.sh

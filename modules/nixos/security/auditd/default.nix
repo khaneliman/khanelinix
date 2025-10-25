@@ -41,15 +41,14 @@ in
       # clean audit log if it's more than 524,288,000 bytes, which is roughly 500 megabytes
       # it can grow MASSIVE in size if left unchecked
       services."clean-audit-log" = {
-        script = # bash
-          ''
-            set -eu
-            if [[ $(stat -c "%s" /var/log/audit/audit.log) -gt 524288000 ]]; then
-              echo "Clearing Audit Log";
-              rm -rvf /var/log/audit/audit.log;
-              echo "Done!"
-            fi
-          '';
+        script = /* bash */ ''
+          set -eu
+          if [[ $(stat -c "%s" /var/log/audit/audit.log) -gt 524288000 ]]; then
+            echo "Clearing Audit Log";
+            rm -rvf /var/log/audit/audit.log;
+            echo "Done!"
+          fi
+        '';
 
         serviceConfig = {
           Type = "oneshot";

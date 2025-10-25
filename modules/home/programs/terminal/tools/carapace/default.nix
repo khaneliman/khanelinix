@@ -26,12 +26,11 @@ in
         enableNushellIntegration = true;
       };
 
-      zsh.initContent = # Bash
-        ''
-          export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense' 
-          zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
-          zstyle ':completion:*:git:*' group-order 'main commands' 'alias commands' 'external commands'
-        '';
+      zsh.initContent = /* Bash */ ''
+        export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense' 
+        zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
+        zstyle ':completion:*:git:*' group-order 'main commands' 'alias commands' 'external commands'
+      '';
     };
   };
 }

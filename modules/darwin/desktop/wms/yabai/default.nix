@@ -91,8 +91,7 @@ in
           sketchybar = hmCfg.programs.sketchybar.finalPackage;
           inherit (pkgs.khanelinix) yabai-helper;
         in
-        # bash
-        ''
+        /* bash */ ''
           source ${getExe yabai-helper}
 
           # Set external_bar here in case we launch after sketchybar
