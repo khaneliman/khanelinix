@@ -22,7 +22,7 @@
     ### Commit all, commit all with message, add and commit all, amend commit
     ca = "commit -a --verbose";
     cam = "commit -a -m";
-    ac = "!git add.&& git commit -am";
+    ac = "!git add . && git commit -am";
     m = "commit --amend --verbose";
     ### Checkout, create and checkout new branch, checkout master, checkout develop
     cob = "checkout -b";
@@ -97,27 +97,27 @@
 
     ### Pull only the current branch and dont update refs of all remotes
     pullhead = # bash
-      "!f() {                                                                \
-	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                              \
-	          git pull origin $b;                                                             \
+      "!f() { \
+	          local b=\${1:-$(git rev-parse --abbrev-ref HEAD)}; \
+	          git pull origin $b; \
           }; f";
 
     ### Blow up local branch and repull from remote
     smash = # bash
-      "!f() {                                                                   \
-	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                              \
-	          echo 'Are you sure you want to run this? It will delete your current '$b'.';    \
-	          read -p 'Enter to continue, ctrl-C to quit: ' response;                         \
-	          git checkout master;                                                            \
-	          git branch -D $b;                                                               \
-	          git fetch origin $b;                                                            \
-	          git checkout $b;                                                                \
+      "!f() { \
+	          local b=\${1:-$(git rev-parse --abbrev-ref HEAD)}; \
+	          echo 'Are you sure you want to run this? It will delete your current '$b'.'; \
+	          read -p 'Enter to continue, ctrl-C to quit: ' response; \
+	          git checkout master; \
+	          git branch -D $b; \
+	          git fetch origin $b; \
+	          git checkout $b; \
           }; f";
 
     ### Rebase current branch off master
     rbm = # bash
       "!f() {                                                                \
-	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                              \
+	          local b=\${1:-$(git rev-parse --abbrev-ref HEAD)};                              \
 	          echo 'Are you sure you want to run this? It will delete your current '$b'.';    \
 	          read -p 'Enter to continue, ctrl-C to quit: ' response;                         \
 	          git checkout master;                                                            \
@@ -129,7 +129,7 @@
     ### Rebase current branch off develop
     rbd = # bash
       "!f() {                                                                \
-	          local b=$${1:-$(git rev-parse --abbrev-ref HEAD)};                              \
+	          local b=\${1:-$(git rev-parse --abbrev-ref HEAD)};                              \
 	          echo 'Are you sure you want to run this? It will delete your current '$b'.';    \
 	          read -p 'Enter to continue, ctrl-C to quit: ' response;                         \
 	          git checkout develop;                                                           \
@@ -151,7 +151,7 @@
       "!f() {                                                 \
             case $1 in                                                      \
                 -a) refs='--'; shift;;                                      \
-                -a*) refs='--'; one=$${1/-a/-}; shift; set -- $one $@;;     \
+                -a*) refs='--'; one=\${1/-a/-}; shift; set -- $one $@;;     \
                 *) refs='refs/heads/';;                                     \
             esac;                                                           \
             git for-each-ref --color --count=1 1>/dev/null 2>&1 && color_flag=yes;              \
@@ -166,7 +166,7 @@
                 awk '{sub(/^refs\\/tags\\/[^x00]*x00([^x00]*)x00([^x00]*)/, \"\\1(tag) \\2\"); sub(/^[^x00]*x00([^x00]*)x00/, \"\\1\"); sub(/x00([^x00]{0,50})([^x00]*)x00/, \"\\1\\033[1;30m\\2\\033[0m\"); print}' | \
                 sort -n -k1,1 |                                                                 \
                 cut -d' ' -f2- |                                                                \
-                tail $${@:--n+0};                                                                \
+                tail \${@:--n+0};                                                                \
           }; f";
 
     #   l = "!f() {  \
