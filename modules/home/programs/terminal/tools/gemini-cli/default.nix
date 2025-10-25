@@ -22,10 +22,12 @@ in
       enable = true;
 
       settings = {
-        theme = "Default";
-        vimMode = true;
-        preferredEditor = "nvim";
-        autoAccept = false;
+        ui.theme = "Default";
+        general = {
+          vimMode = true;
+          preferredEditor = "nvim";
+        };
+        tools.autoAccept = false;
         security = {
           auth = {
             selectedType = lib.mkIf (osConfig.khanelinix.security.sops.enable or false) "gemini-api-key";
