@@ -25,9 +25,15 @@ in
       loginLimits = [
         {
           domain = "*";
+          type = "soft";
           item = "nofile";
-          type = "-";
-          value = "524288";
+          value = "65536";
+        }
+        {
+          domain = "*";
+          type = "hard";
+          item = "nofile";
+          value = "1048576";
         }
       ];
     };
