@@ -106,7 +106,7 @@ in
         maintenance.enable = true;
 
         settings = {
-          inherit (aliases) aliases;
+          alias = aliases.aliases;
 
           branch.sort = "-committerdate";
 
