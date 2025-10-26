@@ -113,14 +113,14 @@ in
       shellAliases = {
         # Nixpkgs
         prefetch-sri = "nix store prefetch-file $1";
-        nrh = ''${lib.getExe pkgs.nixpkgs-review} rev HEAD'';
-        nra = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux"'';
-        nrap = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux" --post-result --num-parallel-evals 3'';
-        nrapa = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux" --post-result --num-parallel-evals 3 --approve-pr'';
-        nrd = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "aarch64-darwin"'';
-        nrdp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "aarch64-darwin" --post-result'';
-        nrl = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-linux aarch64-linux" --num-parallel-evals 2'';
-        nrlp = ''${lib.getExe pkgs.nixpkgs-review} pr $1 --systems "x86_64-linux aarch64-linux" --num-parallel-evals 2 --post-result'';
+        nrh = ''nixpkgs-review rev HEAD'';
+        nra = ''nixpkgs-review pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux"'';
+        nrap = ''nixpkgs-review pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux" --post-result --num-parallel-evals 3'';
+        nrapa = ''nixpkgs-review pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux" --post-result --num-parallel-evals 3 --approve-pr'';
+        nrd = ''nixpkgs-review pr $1 --systems "aarch64-darwin"'';
+        nrdp = ''nixpkgs-review pr $1 --systems "aarch64-darwin" --post-result'';
+        nrl = ''nixpkgs-review pr $1 --systems "x86_64-linux aarch64-linux" --num-parallel-evals 2'';
+        nrlp = ''nixpkgs-review pr $1 --systems "x86_64-linux aarch64-linux" --num-parallel-evals 2 --post-result'';
         nup = ''nix-update --commit -u $1'';
         num = ''nix-shell maintainers/scripts/update.nix --argstr maintainer $1'';
         ncs = ''f(){ nix build "nixpkgs#$1" --no-link && nix path-info --recursive --closure-size --human-readable $(nix-build --no-out-link '<nixpkgs>' -A "$1"); }; f'';
