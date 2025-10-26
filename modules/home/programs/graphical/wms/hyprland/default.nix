@@ -63,7 +63,8 @@ in
         hyprpicker
         hyprprop
         hyprsysteminfo
-        kdePackages.xwaylandvideobridge
+        # NOTE: removed from nixpkgs
+        # kdePackages.xwaylandvideobridge
         khanelinix.record_screen
         networkmanagerapplet
         slurp

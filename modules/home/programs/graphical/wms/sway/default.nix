@@ -60,7 +60,8 @@ in
         grim
         grimblast
         hyprpicker
-        kdePackages.xwaylandvideobridge
+        # NOTE: removed from nixpkgs
+        # kdePackages.xwaylandvideobridge
         khanelinix.record_screen
         libnotify
         networkmanagerapplet

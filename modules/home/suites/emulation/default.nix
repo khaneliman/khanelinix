@@ -37,7 +37,8 @@ in
         # mgba
         mupen64plus
         nestopia-ue
-        rpcs3
+        # FIXME: broken nixpkgs
+        # rpcs3
         # TODO: replacement, removed upstream
         # ryujinx
         xemu
