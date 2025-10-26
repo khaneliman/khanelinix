@@ -7,7 +7,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf getExe;
+  inherit (lib) mkIf;
 
   cfg = config.khanelinix.programs.graphical.bars.sketchybar;
 
