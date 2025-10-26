@@ -88,14 +88,18 @@ in
 
       extraConfig =
         let
-          sketchybar = hmCfg.programs.sketchybar.finalPackage;
+          sketchybar =
+            if hmCfg.programs.sketchybar.enable or false then
+              lib.attrByPath [ "programs" "sketchybar" "finalPackage" ] pkgs.sketchybar hmCfg
+            else
+              pkgs.sketchybar;
           inherit (pkgs.khanelinix) yabai-helper;
         in
         /* bash */ ''
           source ${getExe yabai-helper}
 
           # Set external_bar here in case we launch after sketchybar
-          BAR_HEIGHT=$(${getExe sketchybar} -m --query bar | jq -r '.height')
+          BAR_HEIGHT=$(${sketchybar} -m --query bar | jq -r '.height')
           yabai -m config external_bar all:"$BAR_HEIGHT":0
 
           ${builtins.readFile ./extraConfig}

@@ -9,7 +9,7 @@ let
   inherit (lib.khanelinix) mkOpt;
   cfg = config.khanelinix.programs.graphical.wms.aerospace;
 
-  sketchybar = lib.getExe config.programs.sketchybar.finalPackage;
+  sketchybar = lib.getExe (config.programs.sketchybar.finalPackage or pkgs.sketchybar);
 in
 {
   options.khanelinix.programs.graphical.wms.aerospace = {

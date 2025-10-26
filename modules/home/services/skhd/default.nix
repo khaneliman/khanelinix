@@ -10,7 +10,7 @@ let
   inherit (lib) mkIf getExe;
   inherit (lib.khanelinix) mkOpt;
 
-  sketchybar = getExe config.programs.sketchybar.finalPackage;
+  sketchybar = getExe (config.programs.sketchybar.finalPackage or pkgs.sketchybar);
   yabai =
     if (osConfig ? services.yabai.package) then
       getExe osConfig.services.yabai.package
