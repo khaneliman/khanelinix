@@ -20,14 +20,6 @@ in
 
     # TODO remove after hits channel
     btrfs-assistant
-    hyprsysteminfo
-    digikam
-    dolphin-emu
-    melonDS
-    qtcreator
-    pcsx2
-    rpcs3
-    qt6gtk2
     ;
 
   # From nixpkgs-unstable
