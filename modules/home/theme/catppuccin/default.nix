@@ -120,7 +120,10 @@ in
           };
           nvim = enabled;
           sway = enabled;
-          thunderbird = enabled;
+          thunderbird = {
+            enable = true;
+            profile = config.khanelinix.user.name;
+          };
           waybar = enabled;
           zathura = enabled;
           zellij = enabled;
