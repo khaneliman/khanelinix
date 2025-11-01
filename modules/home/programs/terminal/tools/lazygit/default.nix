@@ -36,9 +36,5 @@ in
         };
       };
     };
-
-    home.shellAliases = {
-      lg = "lazygit";
-    };
   };
 }
