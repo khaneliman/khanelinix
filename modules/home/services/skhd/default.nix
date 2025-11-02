@@ -38,7 +38,7 @@ in
       config = /* bash */ ''
         # hyper (cmd + shift + alt + ctrl)
         # meh (shift + alt + ctrl)
-        /* Modes */
+        # Modes
         :: default : ${sketchybar} -m --set skhd icon="N" icon.color="0xff8aadf4" drawing=off
         :: window @ : ${sketchybar} -m --set skhd icon="W" icon.color="0xffa6da95" drawing=on
         :: scripts @ : ${sketchybar} -m --set skhd icon="S" icon.color="0xffed8796" drawing=on
@@ -219,7 +219,7 @@ in
         default < shift + ctrl + lalt - l : ${yabai} -m window --insert east
         default < shift + ctrl + lalt - s : ${yabai} -m window --insert stack
 
-        #/* Misc */
+        # Misc
         # New window in hor./ vert. splits for all applications with yabai
         default < lalt - s : ${yabai} -m window --insert east;  skhd -k "cmd - n"
         default < lalt - v : ${yabai} -m window --insert south; skhd -k "cmd - n"
