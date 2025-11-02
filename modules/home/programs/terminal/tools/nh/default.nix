@@ -29,6 +29,9 @@ in
     launchd.agents.nh-clean.config = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
       StandardErrorPath = osConfig.khanelinix.programs.terminal.tools.nh.logPaths.stderr;
       StandardOutPath = osConfig.khanelinix.programs.terminal.tools.nh.logPaths.stdout;
+      EnvironmentVariables = {
+        PATH = "/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin:/usr/bin:/bin:/usr/sbin:/sbin";
+      };
     };
 
     home = {
