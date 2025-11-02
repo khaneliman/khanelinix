@@ -81,11 +81,11 @@ in
       };
 
       difftastic = {
-        enable = !config.programs.kitty.enable;
+        enable = !config.programs.kitty.enable && !config.programs.delta.enable;
 
         git = {
           enable = true;
-          diffToolMode = !config.programs.kitty.enable;
+          diffToolMode = !config.programs.kitty.enable && !config.programs.delta.enable;
         };
 
         options = {
