@@ -99,7 +99,7 @@ in
           source ${getExe yabai-helper}
 
           # Set external_bar here in case we launch after sketchybar
-          BAR_HEIGHT=$(${sketchybar} -m --query bar | jq -r '.height')
+          BAR_HEIGHT=$(${getExe sketchybar} -m --query bar | jq -r '.height')
           yabai -m config external_bar all:"$BAR_HEIGHT":0
 
           ${builtins.readFile ./extraConfig}
@@ -116,10 +116,10 @@ in
           # yabai -m signal --add event=window_title_changed app="Firefox" title="- noVNC$" action="yabai -m window $WINDOW_ID --toggle native-fullscreen"
 
           if ! pgrep "Raycast"; then
-            open ${pkgs.raycast}/Applications/Raycast.app
+            open -a Raycast
           fi
           if ! pgrep "Amphetamine"; then
-            open Applications/Amphetamine.app
+            open -a Amphetamine
           fi
 
           echo "yabai configuration loaded.."
