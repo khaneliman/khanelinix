@@ -21,11 +21,17 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.4.2";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-compat.follows = "";
+        # TODO: remove after https://github.com/nix-community/lanzaboote/issues/485 is fixed
+        rust-overlay.follows = "rust-overlay";
       };
     };
     nix-darwin = {
