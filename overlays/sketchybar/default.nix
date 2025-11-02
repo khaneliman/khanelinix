@@ -1,12 +1,12 @@
 _: _final: prev: {
-  sketchybar = prev.sketchybar.overrideAttrs (oldAttrs: {
-    doInstallCheck = false;
-    version = "2.22.1-2025-10-11";
+  sketchybar = prev.sketchybar.overrideAttrs (oldAttrs: rec {
+    # TODO: remove after https://github.com/NixOS/nixpkgs/pull/457857
+    version = "2.23.0";
     src = prev.fetchFromGitHub {
       owner = "FelixKratz";
       repo = "SketchyBar";
-      rev = "bd9030fe1478c2546ef5791d4bc6ffbcb0eac3be";
-      hash = "sha256-4XjU59auyVjE+ER8ffmqhrKrW79kuLJ4aHfkxUNt+IY=";
+      rev = "v${version}";
+      hash = "sha256-PvKvevsSyRb6OfPWc2+1Bcfj2ngmgeP1URBoBiVeEdk=";
     };
     # Create secondary sketchybar executable for dynamic island
     installPhase = /* bash */ ''
