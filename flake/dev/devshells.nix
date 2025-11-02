@@ -22,7 +22,7 @@
       # Custom pkgs with insecure packages allowed for devshells
       # Use the existing pkgs but allow insecure packages by creating a new instance
       devPkgs = import pkgs.path {
-        inherit (pkgs) system;
+        inherit (pkgs.stdenv.hostPlatform) system;
         config = pkgs.config // {
           allowUnfree = true;
           permittedInsecurePackages = (pkgs.config.permittedInsecurePackages or [ ]) ++ [
