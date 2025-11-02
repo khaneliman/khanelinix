@@ -21,6 +21,10 @@ in
       name = "khaneliman";
     };
 
+    environments = {
+      home-network = enabled;
+    };
+
     programs = {
       graphical = {
         addons.looking-glass-client = enabled;
@@ -218,10 +222,6 @@ in
           "${pkgs.khanelinix.wallpapers}/share/wallpapers/hearts.png"
           "${pkgs.khanelinix.wallpapers}/share/wallpapers/tetris.png"
         ];
-      };
-
-      mpd = {
-        musicDirectory = "nfs://austinserver.local/mnt/user/data/media/music";
       };
 
       rnnoise = enabled;

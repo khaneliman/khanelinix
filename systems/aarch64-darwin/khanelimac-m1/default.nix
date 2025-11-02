@@ -11,6 +11,10 @@ let
 in
 {
   khanelinix = {
+    environments = {
+      home-network = enabled;
+    };
+
     security = {
       sudo = enabled;
       sops = {

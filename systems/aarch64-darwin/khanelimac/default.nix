@@ -16,6 +16,10 @@ in
       workstation = enabled;
     };
 
+    environments = {
+      home-network = enabled;
+    };
+
     security = {
       sudo = enabled;
       sops = {

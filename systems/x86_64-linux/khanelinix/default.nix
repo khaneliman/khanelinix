@@ -7,9 +7,6 @@
 let
   inherit (lib.khanelinix) enabled;
   inherit (lib) mkMerge;
-
-  serverHostname = "austinserver.local";
-  username = config.khanelinix.user.name;
 in
 {
   imports = [
@@ -26,6 +23,10 @@ in
       gaming = enabled;
       personal = enabled;
       workstation = enabled;
+    };
+
+    environments = {
+      home-network = enabled;
     };
 
     display-managers = {
@@ -79,13 +80,6 @@ in
 
       openssh = {
         enable = true;
-
-        # TODO: make part of ssh config proper
-        extraConfig = ''
-          Host server
-            User ${username}
-            Hostname ${serverHostname}
-        '';
       };
 
       samba = {
@@ -110,7 +104,7 @@ in
           {
             public = mkShare {
               comment = "Home Public folder";
-              path = "/home/${username}/Public/";
+              path = "/home/${config.khanelinix.user.name}/Public/";
             };
 
             games = mkShare {
@@ -166,12 +160,7 @@ in
 
   services = {
     displayManager.defaultSession = "hyprland-uwsm";
-    mpd.musicDirectory = "nfs://${serverHostname}/mnt/user/data/media/music";
-    rpcbind.enable = true; # needed for NFS
   };
-
-  # Fix rpcbind environment variable warning
-  systemd.services.rpcbind.environment.RPCBIND_OPTIONS = "";
 
   system.stateVersion = "21.11";
 }

@@ -13,6 +13,10 @@ in
       name = "bruddy";
     };
 
+    environments = {
+      home-network = enabled;
+    };
+
     programs = {
       graphical = {
         browsers = {
@@ -73,10 +77,6 @@ in
     };
 
     services = {
-      mpd = {
-        musicDirectory = "nfs://austinserver.local/mnt/user/data/media/music";
-      };
-
       # sops = {
       #   enable = true;
       #   defaultSopsFile = lib.getFile "secrets/khanelinix/khaneliman/default.yaml";

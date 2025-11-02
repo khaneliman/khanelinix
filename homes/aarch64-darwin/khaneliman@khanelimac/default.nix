@@ -14,6 +14,10 @@ in
       name = "khaneliman";
     };
 
+    environments = {
+      home-network = enabled;
+    };
+
     programs = {
       graphical = {
         apps = {

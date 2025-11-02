@@ -44,33 +44,6 @@ in
     };
   };
 
-  fileSystems =
-    lib.mapAttrs'
-      (mountPoint: serverPath: {
-        name = mountPoint;
-        value = {
-          device = "austinserver.local:${serverPath}";
-          fsType = "nfs";
-          options = [
-            "noauto" # Don't mount at boot.
-            "x-systemd.automount" # Mount on first access.
-            "x-systemd.mount-timeout=10s" # Timeout for the mount operation.
-            "x-systemd.idle-timeout=1min" # Unmount after 1 minute of inactivity.
-            "x-systemd.requires=network-online.target" # Wait for an active connection.
-            "soft" # Prevent hangs if the server goes down.
-          ];
-        };
-      })
-      {
-        "/mnt/austinserver/appdata" = "/mnt/user/appdata";
-        "/mnt/austinserver/data" = "/mnt/user/data";
-        "/mnt/austinserver/backup" = "/mnt/user/backup";
-        "/mnt/austinserver/isos" = "/mnt/user/isos";
-        "/mnt/dropbox" = "/mnt/disks/dropbox";
-        "/mnt/disks/googledrive" = "/mnt/disks/googledrive";
-        "/mnt/disks/onedrive" = "/mnt/disks/onedrive";
-      };
-
   hardware = {
     display = {
       outputs = {

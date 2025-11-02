@@ -1,7 +1,5 @@
 {
-  config,
   lib,
-
   ...
 }:
 let
@@ -21,6 +19,10 @@ in
     archetypes = {
       gaming = enabled;
       personal = enabled;
+    };
+
+    environments = {
+      home-network = enabled;
     };
 
     display-managers = {
@@ -66,13 +68,6 @@ in
 
       openssh = {
         enable = true;
-
-        # TODO: make part of ssh config proper
-        extraConfig = ''
-          Host server
-            User ${config.khanelinix.user.name}
-            Hostname austinserver.local
-        '';
       };
     };
 
@@ -124,13 +119,6 @@ in
   nix.settings = {
     cores = 8;
     max-jobs = 8;
-  };
-
-  services = {
-    mpd = {
-      musicDirectory = "nfs://austinserver.local/mnt/user/data/media/music";
-    };
-    rpcbind.enable = true; # needed for NFS
   };
 
   system.stateVersion = "24.11";
