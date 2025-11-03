@@ -31,11 +31,11 @@ in
     element-desktop
     # FIXME: enable after gtk3 overlay removed
     # firefox-devedition
-    firefox-devedition-unwrapped
+    # firefox-devedition-unwrapped
     teams-for-linux
     telegram-desktop
-    thunderbird-unwrapped
     # FIXME: enable after gtk3 overlay removed
+    # thunderbird-unwrapped
     # thunderbird-latest
     ;
 }
