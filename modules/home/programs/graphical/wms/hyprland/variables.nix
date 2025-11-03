@@ -7,9 +7,9 @@
 let
   inherit (lib) mkIf;
 
-  convert = "convert";
-  wl-copy = "wl-copy";
-  wl-paste = "wl-paste";
+  magick = lib.getExe' pkgs.imagemagick "magick";
+  wl-copy = lib.getExe' pkgs.wl-clipboard "wl-copy";
+  wl-paste = lib.getExe' pkgs.wl-clipboard "wl-paste";
 
   getDateTime = lib.getExe (
     pkgs.writeShellScriptBin "getDateTime" /* bash */ ''
@@ -25,9 +25,9 @@ let
       {
         # Note: hyprshot --raw outputs PNG format, but satty expects PPM for best performance
         # We convert PNG to PPM using imagemagick for compatibility
-        area = "hyprshot -m region --freeze --raw | ${convert} png:- ppm:-";
-        active = "hyprshot -m active -m window --raw | ${convert} png:- ppm:-";
-        screen = "hyprshot -m output --raw | ${convert} png:- ppm:-";
+        area = "hyprshot -m region --freeze --raw | ${magick} convert png:- ppm:-";
+        active = "hyprshot -m active -m window --raw | ${magick} convert png:- ppm:-";
+        screen = "hyprshot -m output --raw | ${magick} convert png:- ppm:-";
         area_file = "hyprshot -m region --freeze -o \"${screenshot-path}\" -f \"$(${getDateTime}).png\"";
         active_file = "hyprshot -m active -m window -o \"${screenshot-path}\" -f \"$(${getDateTime}).png\"";
         screen_file = "hyprshot -m output -o \"${screenshot-path}\" -f \"$(${getDateTime}).png\"";
@@ -242,7 +242,7 @@ in
 
         # utility commands
         "$color_picker" =
-          "hyprpicker -a && (${convert} -size 32x32 xc:$(${wl-paste}) /tmp/color.png && notify-send \"Color Code:\" \"$(${wl-paste})\" -h \"string:bgcolor:$(${wl-paste})\" --icon /tmp/color.png -u critical -t 4000)";
+          "hyprpicker -a && (${magick} convert -size 32x32 xc:$(${wl-paste}) /tmp/color.png && notify-send \"Color Code:\" \"$(${wl-paste})\" -h \"string:bgcolor:$(${wl-paste})\" --icon /tmp/color.png -u critical -t 4000)";
         "$cliphist" =
           "cliphist list | anyrun --show-results-immediately true | cliphist decode | ${wl-copy}";
       };
