@@ -9,7 +9,6 @@ let
     with pkgs;
     [
       # Modern React tooling (replacing deprecated create-react-app)
-      vite
       nodejs_22
       pnpm
       yarn
