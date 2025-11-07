@@ -19,7 +19,7 @@ in
     yaziPlugins
 
     # TODO remove after hits channel
-    btrfs-assistant
+    lutris
     ;
 
   # From nixpkgs-unstable
