@@ -8,9 +8,6 @@ let
   inherit (lib) mkIf mkEnableOption;
 
   cfg = config.khanelinix.programs.terminal.tools.claude-code;
-
-  # Import all hook modules from the hooks directory
-  hooks = lib.importDir ./hooks { inherit pkgs; };
 in
 {
   options.khanelinix.programs.terminal.tools.claude-code = {
@@ -41,7 +38,7 @@ in
       settings = {
         theme = "dark";
 
-        inherit hooks;
+        hooks = lib.importDir ./hooks { inherit pkgs; };
 
         permissions = {
           allow = [
