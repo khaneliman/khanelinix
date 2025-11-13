@@ -223,6 +223,7 @@ in
           };
 
           opencode.settings.theme = lib.mkForce "catppuccin";
+          vicinae.settings.theme.name = lib.mkForce "catppuccin-macchiato";
 
           tmux.plugins = [
             {
