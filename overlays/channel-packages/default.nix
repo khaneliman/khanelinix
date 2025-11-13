@@ -19,7 +19,6 @@ in
     yaziPlugins
 
     # TODO remove after hits channel
-    lutris
     ;
 
   # From nixpkgs-unstable
