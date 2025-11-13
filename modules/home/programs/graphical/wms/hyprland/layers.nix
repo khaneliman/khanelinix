@@ -22,6 +22,9 @@ in
           "blur, walker"
           "blurpopups, walker"
           "dimaround, walker"
+          "blur, vicinae"
+          "blurpopups, vicinae"
+          "dimaround, vicinae"
         ];
       };
     };

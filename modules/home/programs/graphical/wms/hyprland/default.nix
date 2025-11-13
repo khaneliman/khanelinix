@@ -121,6 +121,7 @@ in
             anyrun = enabled;
             sherlock = enabled;
             walker = enabled;
+            vicinae = enabled;
           };
 
           screenlockers = {

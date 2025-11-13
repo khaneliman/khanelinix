@@ -217,7 +217,7 @@ in
         "$explorer" = "nautilus";
         "$launcher" = "anyrun";
         "$launcher-alt" = "sherlock";
-        "$launcher-backup" = "walker";
+        "$launcher-backup" = "vicinae open";
         "$looking-glass" = "looking-glass-client";
         "$mail" = "thunderbird";
         "$music" = "youtube-music";
