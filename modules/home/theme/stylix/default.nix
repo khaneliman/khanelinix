@@ -90,7 +90,7 @@ in
         };
 
         icons = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-          enable = lib.mkDefault true;
+          enable = true;
           inherit (cfg.icon) package;
           dark = cfg.icon.name;
           # TODO: support custom light
