@@ -26,7 +26,8 @@ in
       raycast
       switchaudio-osx
       stats
-      xquartz
+      # FIXME: broken nixpkgs
+      # xquartz
     ];
 
     khanelinix = {

@@ -19,6 +19,8 @@ in
     yaziPlugins
 
     # TODO remove after hits channel
+    mplayer
+    xjadeo
     ;
 
   # From nixpkgs-unstable
