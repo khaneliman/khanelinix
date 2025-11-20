@@ -31,7 +31,7 @@ jobs:
             os: macos-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Install Nix
         uses: cachix/install-nix-action@v31
         with:
