@@ -189,7 +189,7 @@ in
           allow_session_lock_restore = true;
           disable_hyprland_logo = true;
           enable_swallow = true; # hide windows that spawn other windows
-          font_family = lib.mkDefault "MonaspaceNeon";
+          font_family = lib.mkDefault "MonaspaceNeon NF";
           key_press_enables_dpms = true;
           middle_click_paste = false;
           mouse_move_enables_dpms = true;

@@ -30,7 +30,7 @@ in
         };
 
         font = {
-          family = lib.mkDefault (osConfig.khanelinix.system.fonts.default or "MonaspaceNeon");
+          family = lib.mkDefault (osConfig.khanelinix.system.fonts.default or "MonaspaceNeon NF");
           style = "Bold";
         };
       };

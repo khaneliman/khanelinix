@@ -92,7 +92,7 @@ in
           color-scheme = "prefer-dark";
           cursor-size = cfg.cursor.size;
           cursor-theme = cfg.cursor.name;
-          font-name = "${osConfig.khanelinix.system.fonts.default or "MonaspaceNeon"} ${
+          font-name = "${osConfig.khanelinix.system.fonts.default or "MonaspaceNeon NF"} ${
             toString (osConfig.khanelinix.system.fonts.size or 10)
           }";
           gtk-theme = cfg.theme.name;
@@ -105,7 +105,7 @@ in
       enable = true;
 
       font = {
-        name = mkDefault (osConfig.khanelinix.system.fonts.default or "MonaspaceNeon");
+        name = mkDefault (osConfig.khanelinix.system.fonts.default or "MonaspaceNeon NF");
         size = mkDefault (osConfig.khanelinix.system.fonts.size or 10);
       };
 

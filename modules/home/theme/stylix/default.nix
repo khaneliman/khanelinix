@@ -73,15 +73,15 @@ in
 
           serif = {
             package = pkgs.monaspace;
-            name = if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon" else "MonaspaceNeon";
+            name = if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon NF" else "MonaspaceNeon NF";
           };
           sansSerif = {
             package = pkgs.monaspace;
-            name = if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon" else "MonaspaceNeon";
+            name = if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon NF" else "MonaspaceNeon NF";
           };
           monospace = {
             package = pkgs.monaspace;
-            name = if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton" else "MonaspaceKrypton";
+            name = if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton NF" else "MonaspaceKrypton NF";
           };
           emoji = {
             package = pkgs.noto-fonts-color-emoji;

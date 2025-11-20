@@ -76,18 +76,18 @@ in
             # TODO: Handle font config with stylix
             # Font family
             "editor.fontFamily" =
-              lib.mkForce "MonaspaceArgon, Monaspace Argon, CascadiaCode,Consolas, monospace,Hack Nerd Font";
+              lib.mkForce "MonaspaceArgon NF, Monaspace Argon NF, CascadiaCode,Consolas, monospace,Hack Nerd Font";
             "editor.codeLensFontFamily" =
-              lib.mkForce "MonaspaceNeon, Monaspace Neon, Liga SFMono Nerd Font, CascadiaCode,Consolas, 'Courier New', monospace,Hack Nerd Font";
-            "editor.inlayHints.fontFamily" = lib.mkForce "MonaspaceKrypton, Monaspace Krypton";
-            "debug.console.fontFamily" = lib.mkForce "MonaspaceKrypton, Monaspace Krypton";
-            "scm.inputFontFamily" = lib.mkForce "MonaspaceRadon, Monaspace Radon";
-            "notebook.output.fontFamily" = lib.mkForce "MonaspaceRadon, Monapsace Radon";
-            "chat.editor.fontFamily" = lib.mkForce "MonaspaceArgon, Monaspace Argon";
+              lib.mkForce "MonaspaceNeon NF, Monaspace Neon NF, Liga SFMono Nerd Font, CascadiaCode,Consolas, 'Courier New', monospace,Hack Nerd Font";
+            "editor.inlayHints.fontFamily" = lib.mkForce "MonaspaceKrypton NF, Monaspace Krypton NF";
+            "debug.console.fontFamily" = lib.mkForce "MonaspaceKrypton NF, Monaspace Krypton NF";
+            "scm.inputFontFamily" = lib.mkForce "MonaspaceRadon NF, Monaspace Radon NF";
+            "notebook.output.fontFamily" = lib.mkForce "MonaspaceRadon NF, Monapsace Radon";
+            "chat.editor.fontFamily" = lib.mkForce "MonaspaceArgon NF, Monaspace Argon NF";
             "markdown.preview.fontFamily" =
-              lib.mkForce "MonaspaceXenon, Monaspace Xenon; -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif";
+              lib.mkForce "MonaspaceXenon NF, Monaspace Xenon NF; -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif";
             "terminal.integrated.fontFamily" =
-              lib.mkForce "MonaspaceKrypton, Monaspace Krypton, JetBrainsMono Nerd Font Mono";
+              lib.mkForce "MonaspaceKrypton NF, Monaspace Krypton NF, JetBrainsMono Nerd Font Mono";
 
             # Git settings
             "git.allowForcePush" = true;

@@ -23,7 +23,7 @@ in
       settings = {
         ignore-empty-password = true;
         disable-caps-lock-text = true;
-        font = "MonaspaceArgon";
+        font = "MonaspaceArgon NF";
         grace = 300;
 
         clock = true;

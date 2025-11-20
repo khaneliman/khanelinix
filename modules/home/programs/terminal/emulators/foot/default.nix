@@ -40,8 +40,8 @@ in
 
           # font and font rendering
           dpi-aware = lib.mkDefault false; # this looks more readable on a laptop, but it's unreasonably large
-          font = "MonaspaceKrypton:size=13";
-          font-bold = "MonaspaceKrypton:size=13";
+          font = "MonaspaceKrypton NF:size=13";
+          font-bold = "MonaspaceKrypton NF:size=13";
           vertical-letter-offset = "-0.90";
         };
 

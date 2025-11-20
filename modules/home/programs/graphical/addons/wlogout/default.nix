@@ -63,7 +63,7 @@ in
       style = lib.mkDefault /* css */ ''
         * {
           background-image: none;
-          font-family: MonaspaceNeon;
+          font-family: MonaspaceNeon NF;
           font-size: 20px;
         }
         window {

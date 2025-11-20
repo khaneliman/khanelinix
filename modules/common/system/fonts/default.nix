@@ -36,7 +36,7 @@ in
         monaspace
         nerd-fonts.symbols-only
       ] "Custom font packages to install.";
-    default = mkOpt types.str "MonaspaceNeon" "Default font name";
+    default = mkOpt types.str "MonaspaceNeon NF" "Default font name";
     size = mkOpt types.int 13 "Default font size";
   };
 

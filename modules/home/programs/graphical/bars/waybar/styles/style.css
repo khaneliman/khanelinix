@@ -2,7 +2,7 @@
 * Global configuration for theme
 * */
 * {
-  font-family: MonaspaceNeon;
+  font-family: MonaspaceNeon NF;
   font-size: 16px;
   border-radius: 0.75em;
 }

@@ -25,12 +25,13 @@ in
       extraConfig =
         let
           monaspaceKrypton =
-            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton Var" else "MonaspaceKrypton";
-          monaspaceNeon = if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon Var" else "MonaspaceNeon";
+            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton NF Var" else "MonaspaceKrypton NF";
+          monaspaceNeon =
+            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon NF Var" else "MonaspaceNeon NF";
           monaspaceRadon =
-            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Radon Var" else "MonaspaceRadon";
+            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Radon NF Var" else "MonaspaceRadon NF";
           monaspaceXenon =
-            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Xenon Var" else "MonaspaceXenon";
+            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Xenon NF Var" else "MonaspaceXenon NF";
         in
         /* lua */ ''
           function scheme_for_appearance(appearance)

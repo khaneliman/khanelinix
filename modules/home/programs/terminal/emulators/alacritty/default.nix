@@ -16,16 +16,16 @@ in
     enable = lib.mkEnableOption "alacritty";
     font = {
       normal = mkOpt str (
-        if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon" else "MonaspaceNeon"
+        if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon NF" else "MonaspaceNeon NF"
       ) "Font to use for alacritty.";
       bold = mkOpt str (
-        if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Xenon" else "MonaspaceXenon"
+        if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Xenon NF" else "MonaspaceXenon NF"
       ) "Font to use for alacritty.";
       italic = mkOpt str (
-        if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Radon" else "MonaspaceRadon"
+        if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Radon NF" else "MonaspaceRadon NF"
       ) "Font to use for alacritty.";
       bold_italic = mkOpt str (
-        if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton" else "MonaspaceKrypton"
+        if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton NF" else "MonaspaceKrypton NF"
       ) "Font to use for alacritty.";
     };
   };

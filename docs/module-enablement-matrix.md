@@ -42,11 +42,11 @@ configuration.
 
 **Additional Shared Modules:**
 
-| Module          | Purpose            | Key Features                                            |
-| --------------- | ------------------ | ------------------------------------------------------- |
-| **Nix Config**  | Advanced Nix setup | Flakes, distributed builds, binary caches, optimization |
-| **Font System** | Font management    | Desktop, emoji, developer fonts; MonaspaceNeon default  |
-| **SSH Config**  | SSH automation     | Known hosts, GPG forwarding, auto-generated aliases     |
+| Module          | Purpose            | Key Features                                              |
+| --------------- | ------------------ | --------------------------------------------------------- |
+| **Nix Config**  | Advanced Nix setup | Flakes, distributed builds, binary caches, optimization   |
+| **Font System** | Font management    | Desktop, emoji, developer fonts; MonaspaceNeon NF default |
+| **SSH Config**  | SSH automation     | Known hosts, GPG forwarding, auto-generated aliases       |
 
 </details>
 

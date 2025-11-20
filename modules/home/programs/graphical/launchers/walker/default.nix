@@ -157,7 +157,7 @@ in
         style = ''
           * {
             transition: 200ms ease;
-            font-family: MonaspaceNeon;
+            font-family: MonaspaceNeon NF;
             font-size: 1.3rem;
           }
 

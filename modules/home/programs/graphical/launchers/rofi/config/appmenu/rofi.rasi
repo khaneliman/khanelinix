@@ -1,5 +1,5 @@
 configuration {
-	font: "MonaspaceNeon 14";
+	font: "MonaspaceNeon NF 14";
 	show-icons: true;
 	drun-display-format: "{name}";
   icon-theme: "Papirus-Dark";
@@ -28,7 +28,7 @@ window {
 button {
 	action: "ok";
 	str: " ";
-	font: "MonaspaceNeon 11";
+	font: "MonaspaceNeon NF 11";
 	expand: false;
 	text-color: @text;
 	background-color: @base;
@@ -37,7 +37,7 @@ button {
 }
 
 entry {
-	font: "MonaspaceNeon 11";
+	font: "MonaspaceNeon NF 11";
 	background-color: @base;
 	text-color: @text;
 	expand: true;

@@ -35,7 +35,7 @@ in
         defaultFonts =
           let
             common = [
-              "MonaspaceNeon"
+              "MonaspaceNeon NF"
               "CascadiaCode"
               "Symbols Nerd Font"
               "Noto Color Emoji"

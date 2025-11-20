@@ -132,11 +132,11 @@ in
               "extensions.htmlaboutaddons.recommendations.enabled" = false;
 
               "font.name.monospace.x-western" =
-                if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton" else "MonaspaceKrypton";
+                if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton NF" else "MonaspaceKrypton NF";
               "font.name.sans-serif.x-western" =
-                if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon" else "MonaspaceNeon";
+                if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon NF" else "MonaspaceNeon NF";
               "font.name.serif.x-western" =
-                if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon" else "MonaspaceNeon";
+                if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon NF" else "MonaspaceNeon NF";
 
               "general.autoScroll" = false;
               "general.smoothScroll.msdPhysics.enabled" = true;
