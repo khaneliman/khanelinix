@@ -11,7 +11,7 @@ jobs:
         arch: [x86_64-linux, aarch64-darwin]
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Check Nix flake inputs
         uses: DeterminateSystems/flake-checker-action@v12
     # - uses: cachix/install-nix-action@v23
