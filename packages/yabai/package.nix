@@ -1,13 +1,9 @@
 {
   lib,
   apple-sdk_15,
-  bintools-unwrapped,
-  cups,
   fetchFromGitHub,
   installShellFiles,
-  llvmPackages,
   nix-update-script,
-  replaceVars,
   stdenv,
   versionCheckHook,
   xxd,
@@ -47,23 +43,21 @@ stdenv.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
-  patches =
-    let
-      ARCH = stdenv.hostPlatform.darwinArch;
-    in
-    [
-      (replaceVars ./0001-single-arch-build.patch {
-        inherit ARCH;
-        ARCH_SA = "${ARCH}${lib.optionalString stdenv.hostPlatform.isAarch64 "e"}";
-        CLANG_LIB = llvmPackages.libclang.lib;
-        CUPS_DEV = lib.getDev cups;
-      })
-    ];
-
-  # On aarch64-darwin, only the scripting addition is arm64e, prebuild that using the unwrapped clang
-  preBuild = lib.optionalString stdenv.hostPlatform.isAarch64 ''
-    make ./src/osax/payload_bin.c ./src/osax/loader_bin.c "PATH=${bintools-unwrapped}/bin:${llvmPackages.clang-unwrapped}/bin:$PATH"
-  '';
+  postPatch =
+    if stdenv.hostPlatform.isx86_64 then
+      ''
+        substituteInPlace makefile \
+                --replace-fail "-arch arm64e" "" \
+                --replace-fail "-arch arm64" ""
+      ''
+    # bash
+    else if stdenv.hostPlatform.isAarch64 then
+      ''
+        substituteInPlace makefile \
+                --replace-fail "-arch x86_64" ""
+      ''
+    else
+      throw "Unsupported system: ${stdenv.hostPlatform.system}";
 
   nativeInstallCheckInputs = [ versionCheckHook ];
   versionCheckProgramArg = "--version";
