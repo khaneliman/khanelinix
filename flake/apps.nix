@@ -104,6 +104,26 @@ _: {
           type = "app";
           program = lib.getExe (pkgs.callPackage ../packages/closure-analyzer/package.nix { });
         };
+
+        update-plugins =
+          let
+            pythonWithRich = pkgs.python3.withPackages (ps: with ps; [ rich ]);
+          in
+          {
+            type = "app";
+            program = lib.getExe (
+              pkgs.writeShellApplication {
+                name = "update-plugins";
+                runtimeInputs = [
+                  pkgs.git
+                  pythonWithRich
+                ];
+                text = ''
+                  ${pythonWithRich}/bin/python3 ${./apps/scripts/update_plugins.py}
+                '';
+              }
+            );
+          };
       };
     };
 }
