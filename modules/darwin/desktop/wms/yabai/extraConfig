@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # SETUP SPACES
 create_spaces 7
 
