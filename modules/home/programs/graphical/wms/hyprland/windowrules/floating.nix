@@ -78,9 +78,10 @@ in
           "float,  class:^(qemu)$"
           "size 2360 1330, class:^(qemu)$"
           "move 25% 6%, class:^(qemu)$"
-          "float, class:^(Wfica)$,title:^(VT0-IT-47-D000).*"
-          "size 90% 90%, class:^(Wfica)$,title:^(VT0-IT-47-D000).*"
-          "move 20 8%, class:^(Wfica)$,title:^(VT0-IT-47-D000).*"
+          # NOTE: hyprland bug atm causing it to move with monitor wake until it disappears
+          # "float, class:^(Wfica)$,title:^(VT0-IT-47-D000).*"
+          # "size 90% 90%, class:^(Wfica)$,title:^(VT0-IT-47-D000).*"
+          # "move 20 8%, class:^(Wfica)$,title:^(VT0-IT-47-D000).*"
           # Always tries to maximize immediately...
           "suppressevent fullscreen, class:^(Wfica)$,title:^(VT0-IT-47-D000).*"
 
