@@ -29,7 +29,7 @@ in
 
       settings = {
         theme = "opencode";
-        model = "anthropic/claude-sonnet-4-20250514";
+        model = "anthropic/claude-sonnet-4-5";
         autoshare = false;
         autoupdate = false;
       };
