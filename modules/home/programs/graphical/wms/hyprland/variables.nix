@@ -215,9 +215,9 @@ in
         "$browser" = "${lib.getExe config.programs.firefox.package}";
         "$editor" = "nvim";
         "$explorer" = "nautilus";
-        "$launcher" = "anyrun";
-        "$launcher-alt" = "sherlock";
-        "$launcher-backup" = "vicinae open";
+        "$launcher" = "vicinae open";
+        "$launcher-alt" = "anyrun";
+        "$launcher-backup" = "sherlock";
         "$looking-glass" = "looking-glass-client";
         "$mail" = "thunderbird";
         "$music" = "youtube-music";
