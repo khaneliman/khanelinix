@@ -26,6 +26,7 @@ in
         general = {
           vimMode = true;
           preferredEditor = "nvim";
+          previewFeatures = true;
         };
         tools.autoAccept = false;
         security = {
