@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -45,7 +44,6 @@ in
   config = mkIf cfg.enable {
     programs.opencode = {
       enable = true;
-      package = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin null;
 
       settings = {
         theme = "opencode";
