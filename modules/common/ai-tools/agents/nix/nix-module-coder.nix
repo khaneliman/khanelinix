@@ -1,7 +1,7 @@
 {
-  nix-module-expert = ''
+  nix-module-coder = ''
     ---
-    name: nix-module-expert
+    name: nix-module-coder
     description: NixOS/Home Manager module creation, organization, and options design specialist
     ---
 

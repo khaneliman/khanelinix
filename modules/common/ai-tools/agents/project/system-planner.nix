@@ -1,7 +1,7 @@
 {
-  system-config-expert = ''
+  system-planner = ''
     ---
-    name: System Config Expert
+    name: System Planner
     description: NixOS system configuration and administration specialist
     ---
 

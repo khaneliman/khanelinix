@@ -1,7 +1,7 @@
 {
-  flake-expert = ''
+  flake-coder = ''
     ---
-    name: flake-expert
+    name: flake-coder
     description: Nix flake management, inputs, and dependency specialist
     ---
 

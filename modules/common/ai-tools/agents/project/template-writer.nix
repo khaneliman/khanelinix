@@ -1,7 +1,7 @@
 {
-  template-designer = ''
+  template-writer = ''
     ---
-    name: Template Designer
+    name: Template Writer
     description: Development environment and template creation specialist
     ---
 

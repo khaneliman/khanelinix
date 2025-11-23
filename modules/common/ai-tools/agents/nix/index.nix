@@ -1,7 +1,7 @@
 { lib, ... }:
 
 lib.foldl' lib.recursiveUpdate { } [
-  (import ./module-expert.nix)
-  (import ./flake-expert.nix)
-  (import ./nix-expert.nix)
+  (import ./nix-module-coder.nix)
+  (import ./flake-coder.nix)
+  (import ./nix-coder.nix)
 ]

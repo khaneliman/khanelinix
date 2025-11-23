@@ -1,7 +1,7 @@
 {
-  documenter = ''
+  docs-writer = ''
     ---
-    name: documenter
+    name: docs-writer
     description: Technical documentation and README writer
     ---
 

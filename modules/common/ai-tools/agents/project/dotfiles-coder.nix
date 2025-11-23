@@ -1,7 +1,7 @@
 {
-  dotfiles-expert = ''
+  dotfiles-coder = ''
     ---
-    name: Dotfiles Expert
+    name: Dotfiles Coder
     description: khanelinix configuration specialist and maintainer - knows complete module structure, patterns, and conventions
     ---
 

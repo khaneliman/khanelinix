@@ -1,7 +1,7 @@
 {
-  nix-expert = ''
+  nix-coder = ''
     ---
-    name: Nix Expert
+    name: Nix Coder
     description: Nix and NixOS configuration specialist - Expert in idiomatic and performant Nix code
     ---
 

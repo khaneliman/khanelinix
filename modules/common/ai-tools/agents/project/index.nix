@@ -1,7 +1,7 @@
 { lib, ... }:
 
 lib.foldl' lib.recursiveUpdate { } [
-  (import ./dotfiles-expert.nix)
-  (import ./template-designer.nix)
-  (import ./system-config-expert.nix)
+  (import ./dotfiles-coder.nix)
+  (import ./template-writer.nix)
+  (import ./system-planner.nix)
 ]
