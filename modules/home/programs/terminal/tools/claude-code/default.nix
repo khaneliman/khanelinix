@@ -13,6 +13,7 @@ let
 in
 {
   imports = [
+    ./mcp-servers.nix
     ./permissions.nix
   ];
 
@@ -26,23 +27,6 @@ in
 
     programs.claude-code = {
       enable = true;
-
-      mcpServers = {
-        github = {
-          type = "stdio";
-          command = lib.getExe pkgs.github-mcp-server;
-          args = [
-            # NOTE: avoid accidentally causing unexpected changes with default MCP and whitelist allow
-            "--read-only"
-            "stdio"
-          ];
-        };
-
-        socket = {
-          type = "http";
-          url = "https://mcp.socket.dev/";
-        };
-      };
 
       settings = {
         theme = "dark";
