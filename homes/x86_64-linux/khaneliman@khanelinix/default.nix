@@ -181,6 +181,11 @@ in
 
       terminal = {
         tools = {
+          claude-code.mcpServers.filesystem.directories = [
+            "${config.home.homeDirectory}/khanelinix"
+            "${config.home.homeDirectory}/Documents/github"
+          ];
+
           git = {
             enable = true;
 
