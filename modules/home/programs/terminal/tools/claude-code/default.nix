@@ -149,7 +149,8 @@ in
           deny = [ ];
           defaultMode = "default";
         };
-        model = "claude-sonnet-4-5";
+        # Let default do its job
+        # model = "claude-sonnet-4-5";
         verbose = true;
         includeCoAuthoredBy = false;
 
