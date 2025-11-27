@@ -45,6 +45,11 @@ in
             "stdio"
           ];
         };
+
+        sequential-thinking = {
+          type = "stdio";
+          command = getExe pkgs.mcp-server-sequential-thinking;
+        };
       }
     ];
   };
