@@ -68,6 +68,37 @@ in
     in
     mergeAttrs' imported;
 
+  # Import all .nix files from a directory without passing args
+  # For files that are plain attribute sets (not functions)
+  # Usage: importDirPlain ./skills
+  # Usage: importDirPlain ./skills [ "default.nix" ]  # exclude specific files
+  importDirPlain =
+    path: exclude:
+    let
+      excludeList = if builtins.isList exclude then exclude else [ ];
+      nixFiles = filter (name: !(builtins.elem name excludeList)) (getNixFiles' path);
+    in
+    mergeAttrs' (map (name: import (path + "/${name}")) nixFiles);
+
+  # Import all .nix files from all subdirectories, merging results
+  # Useful for organizing related files in subdirs (e.g., skills/nix/, skills/git/)
+  # Usage: importSubdirs ./skills [ "default.nix" ]
+  importSubdirs =
+    path: exclude:
+    let
+      entries = builtins.readDir path;
+      subdirs = filter (name: entries.${name} == "directory") (builtins.attrNames entries);
+      importSubdir =
+        dir:
+        let
+          dirPath = path + "/${dir}";
+          excludeList = if builtins.isList exclude then exclude else [ ];
+          files = filter (f: !(builtins.elem f excludeList)) (getNixFiles' dirPath);
+        in
+        mergeAttrs' (map (f: import (dirPath + "/${f}")) files);
+    in
+    mergeAttrs' (map importSubdir subdirs);
+
   # Recursively discover and import all Nix modules in a directory tree
   importModulesRecursive =
     path:

@@ -20,6 +20,8 @@ in
     getNixFiles
     importFiles
     importDir
+    importDirPlain
+    importSubdirs
     importModulesRecursive
     mergeAttrs
     ;
