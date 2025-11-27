@@ -6,6 +6,19 @@ _: {
         {
           type = "command";
           command = ''
+            # Log session start to audit trail
+            mkdir -p ~/.local/share/claude-code/audit
+            input=$(cat)
+            session_id=$(echo "$input" | jq -r '.session_id // "unknown"')
+            timestamp=$(date -Iseconds)
+
+            echo "$input" | jq -c \
+              --arg ts "$timestamp" \
+              --arg event "session_start" \
+              '{timestamp: $ts, event: $event, session: .session_id, cwd: .cwd}' \
+              >> ~/.local/share/claude-code/audit/sessions.jsonl
+
+            # Display git status for context
             echo '=== Git Status ==='
             git status
             echo '\n=== Recent Commits ==='
