@@ -42,6 +42,19 @@ let
     # MCP tools - read only
     "mcp__github__search_repositories"
     "mcp__github__get_file_contents"
+    "mcp__sequential-thinking__sequentialthinking"
+
+    # Filesystem MCP - read operations
+    "mcp__filesystem__read_file"
+    "mcp__filesystem__read_text_file"
+    "mcp__filesystem__read_media_file"
+    "mcp__filesystem__read_multiple_files"
+    "mcp__filesystem__list_directory"
+    "mcp__filesystem__list_directory_with_sizes"
+    "mcp__filesystem__directory_tree"
+    "mcp__filesystem__search_files"
+    "mcp__filesystem__get_file_info"
+    "mcp__filesystem__list_allowed_directories"
 
     # Trusted web domains
     "WebFetch(domain:github.com)"
