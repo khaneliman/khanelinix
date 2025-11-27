@@ -1,1 +1,1 @@
-{ lib, ... }: lib.importSubdirs ./commands [ ]
+{ lib, ... }: lib.importSubdirs ./commands { }

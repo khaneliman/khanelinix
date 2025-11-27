@@ -1,1 +1,1 @@
-{ lib, ... }: lib.importSubdirs ./agents [ ]
+{ lib, ... }: lib.importSubdirs ./agents { }

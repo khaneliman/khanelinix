@@ -1,1 +1,1 @@
-{ lib }: lib.importSubdirs ./. [ "default.nix" ]
+{ lib }: lib.importSubdirs ./. { exclude = [ "default.nix" ]; }

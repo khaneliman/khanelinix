@@ -82,9 +82,14 @@ in
 
   # Import all .nix files from all subdirectories, merging results
   # Useful for organizing related files in subdirs (e.g., skills/nix/, skills/git/)
-  # Usage: importSubdirs ./skills [ "default.nix" ]
+  # Usage: importSubdirs ./skills { exclude = [ "default.nix" ]; }
+  # Usage: importSubdirs ./commands { args = { inherit lib; }; }  # with args
   importSubdirs =
-    path: exclude:
+    path:
+    {
+      exclude ? [ ],
+      args ? null,
+    }:
     let
       entries = builtins.readDir path;
       subdirs = filter (name: entries.${name} == "directory") (builtins.attrNames entries);
@@ -92,10 +97,11 @@ in
         dir:
         let
           dirPath = path + "/${dir}";
-          excludeList = if builtins.isList exclude then exclude else [ ];
-          files = filter (f: !(builtins.elem f excludeList)) (getNixFiles' dirPath);
+          files = filter (f: !(builtins.elem f exclude)) (getNixFiles' dirPath);
+          importFile =
+            f: if args == null then import (dirPath + "/${f}") else import (dirPath + "/${f}") args;
         in
-        mergeAttrs' (map (f: import (dirPath + "/${f}")) files);
+        mergeAttrs' (map importFile files);
     in
     mergeAttrs' (map importSubdir subdirs);
 
