@@ -18,13 +18,17 @@ _: {
               '{timestamp: $ts, event: $event, session: .session_id, cwd: .cwd}' \
               >> ~/.local/share/claude-code/audit/sessions.jsonl
 
-            # Display git status for context
+            # Git status and recent commits
             echo '=== Git Status ==='
-            git status
+            git status 2>/dev/null || echo 'Not a git repository'
+
             echo '\n=== Recent Commits ==='
-            git log --oneline -5
+            git log --oneline -5 2>/dev/null || true
+
+            # Jujutsu status if available
             echo '\n=== Jujutsu Status ==='
-            jj status 2>/dev/null
+            jj status 2>/dev/null || true
+
             echo '\n=== Current Jujutsu Change ==='
             jj log -r @ --no-graph 2>/dev/null || echo 'Not a jujutsu repository'
           '';
