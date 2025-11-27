@@ -8,6 +8,8 @@ let
   inherit (lib) mkIf mkEnableOption;
 
   cfg = config.khanelinix.programs.terminal.tools.claude-code;
+
+  claudeIcon = ./assets/claude.ico;
 in
 {
   options.khanelinix.programs.terminal.tools.claude-code = {
@@ -15,6 +17,9 @@ in
   };
 
   config = mkIf cfg.enable {
+    # Install Claude icon for notifications
+    xdg.dataFile."icons/claude.ico".source = claudeIcon;
+
     programs.claude-code = {
       enable = true;
 

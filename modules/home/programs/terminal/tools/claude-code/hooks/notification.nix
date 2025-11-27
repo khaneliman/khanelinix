@@ -13,7 +13,7 @@ let
         fi
       ''
     else
-      ''notify-send -a "${title}" -i "claude" '${title}' '${message}' '';
+      ''notify-send -a "${title}" -i "$HOME/.local/share/icons/claude.ico" '${title}' '${message}' '';
 in
 {
   Notification = [

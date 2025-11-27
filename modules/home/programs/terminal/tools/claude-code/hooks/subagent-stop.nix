@@ -77,7 +77,7 @@
                   fi
                 ''
               else
-                ''${pkgs.libnotify}/bin/notify-send -a "Claude Code" -i "claude" "Claude Code" "$notify_msg"''
+                ''notify-send -a "Claude Code" -i "$HOME/.local/share/icons/claude.ico" "Claude Code" "$notify_msg"''
             }
           '';
           timeout = 10;
