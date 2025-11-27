@@ -36,7 +36,8 @@ in
         };
       };
 
-      defaultModel = "gemini-2.5-pro";
+      # Let auto do it's job
+      defaultModel = "auto";
 
       context = {
         GEMINI = lib.getFile "modules/common/ai-tools/base.md";
