@@ -21,6 +21,8 @@ let
         config = {
           # NOTE: Conflicting package definitions, use the package from this flake.
           dependencies.yazi.enable = false;
+          # Use wrapped version of the package
+          dependencies.claude-code.package = config.programs.claude-code.finalPackage;
           # FIXME: insane memory usage
           # lsp.servers.nixd.settings.settings.nixd =
           #   let
