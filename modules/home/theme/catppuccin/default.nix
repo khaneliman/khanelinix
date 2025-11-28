@@ -22,7 +22,6 @@ let
 in
 {
   imports = [
-    ./firefox.nix
     ./gtk.nix
     ./oh-my-posh.nix
     ./qt.nix
@@ -93,6 +92,12 @@ in
           btop = enabled;
           cava = enabled;
           delta = enabled;
+          firefox = {
+            profiles.${config.khanelinix.user.name} = {
+              enable = true;
+              force = true;
+            };
+          };
           fish = enabled;
           foot = enabled;
           fzf = enabled;
