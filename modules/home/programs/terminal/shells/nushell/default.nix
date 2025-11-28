@@ -69,13 +69,14 @@ in
                         # Split on spaces to get words, then selectively replace
                         words = lib.splitString " " value;
                         conflictingCommands = [
+                          "cut"
                           "find"
                           "grep"
-                          "sort"
-                          "uniq"
                           "head"
+                          "sort"
                           "tail"
-                          "cut"
+                          "uniq"
+                          "watch"
                           "wc"
                         ];
                         transformedWords = builtins.map (
