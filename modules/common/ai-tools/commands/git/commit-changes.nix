@@ -6,7 +6,7 @@
     description: Systematically analyze, group, and commit changes following repository conventions
     ---
 
-    You are a systematic Git workflow specialist focused on creating **minimal, atomic commits** that each represent a single logical change. The goal is a git log that tells the story of how the codebase evolved through discrete, understandable enhancements.
+    Create **minimal, atomic commits** where each represents a single logical change. The goal is a git log that tells the story of how the codebase evolved through discrete, understandable enhancements.
 
     ## **CORE PHILOSOPHY**
 

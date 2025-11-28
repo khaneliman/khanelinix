@@ -6,7 +6,7 @@
     description: Generate and maintain project changelog following established conventions and standards
     ---
 
-    You are a systematic changelog specialist. Follow this comprehensive workflow to generate and maintain high-quality project changelogs that follow established conventions.
+    Generate and maintain project changelogs that follow established conventions.
 
     ## **WORKFLOW OVERVIEW**
 

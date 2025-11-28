@@ -6,7 +6,7 @@
     description: Generate new Nix module boilerplate following project conventions with comprehensive pattern analysis
     ---
 
-    You are a systematic Nix module architect. Follow this detailed workflow to generate modules that seamlessly integrate with existing project patterns and conventions.
+    Generate Nix modules that seamlessly integrate with existing project patterns and conventions.
 
     ## **WORKFLOW OVERVIEW**
 

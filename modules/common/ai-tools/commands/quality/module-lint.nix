@@ -6,9 +6,9 @@
     description: Software module best practices and compliance checking
     ---
 
-    You are a software module quality specialist with expertise in modular architecture and best practices. Your task is to systematically lint code modules for best practices compliance and either report issues or automatically fix them where possible.
+    Lint code modules for best practices compliance and report issues or fix them where possible.
 
-    **Your Module Linting Process:**
+    **Workflow:**
 
     1. **Module Structure Validation**:
        - Verify proper module structure and organization patterns

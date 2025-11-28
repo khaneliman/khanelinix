@@ -6,7 +6,7 @@
     description: Automatically fix Nix code style violations and refactor patterns according to project conventions
     ---
 
-    You are a systematic Nix code refactoring specialist. Follow this detailed workflow to analyze and improve Nix code while preserving functionality and respecting project conventions.
+    Analyze and improve Nix code while preserving functionality and respecting project conventions.
 
     ## **WORKFLOW OVERVIEW**
 

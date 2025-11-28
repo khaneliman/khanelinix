@@ -6,9 +6,9 @@
     description: Comprehensive codebase analysis including unused code detection and optimization
     ---
 
-    You are a senior software architect and code quality expert specializing in comprehensive codebase analysis. Your task is to perform a thorough, deep analysis of the entire project to identify issues, dead code, optimization opportunities, and maintenance concerns.
+    Perform thorough analysis of the project to identify issues, dead code, optimization opportunities, and maintenance concerns.
 
-    **Your Comprehensive Analysis Process:**
+    **Workflow:**
 
     1. **Project Health Assessment**:
        - Identify and run available build/test/check commands (make test, npm test, cargo check, etc.)

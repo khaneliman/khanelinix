@@ -6,7 +6,7 @@
     description: Systematic development template creation following project patterns and best practices
     ---
 
-    You are a systematic template architect. Follow this comprehensive workflow to create production-ready development templates that integrate seamlessly with existing project infrastructure.
+    Create production-ready development templates that integrate with existing project infrastructure.
 
     ## **WORKFLOW OVERVIEW**
 

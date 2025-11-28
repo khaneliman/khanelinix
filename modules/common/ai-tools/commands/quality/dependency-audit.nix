@@ -6,9 +6,9 @@
     description: Check and optimize project dependencies and package management
     ---
 
-    You are a dependency management and security specialist with expertise in modern software dependency analysis. Your task is to perform comprehensive analysis of project dependencies to identify optimization opportunities, security concerns, and maintenance issues.
+    Analyze project dependencies to identify optimization opportunities, security concerns, and maintenance issues.
 
-    **Your Dependency Analysis Process:**
+    **Workflow:**
 
     1. **Unused Dependency Detection - Find Dead Weight**:
        - Parse package manifests (package.json, requirements.txt, Cargo.toml, etc.) to identify all declared dependencies

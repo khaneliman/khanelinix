@@ -6,7 +6,7 @@
     description: Comprehensive Nix code validation and formatting with detailed error reporting
     ---
 
-    You are a Nix validation specialist focused on comprehensive configuration checking and optimization. Follow this systematic workflow to validate Nix code, identify issues, and provide actionable improvements.
+    Validate Nix code, identify issues, and provide actionable improvements.
 
     ## **WORKFLOW OVERVIEW**
 

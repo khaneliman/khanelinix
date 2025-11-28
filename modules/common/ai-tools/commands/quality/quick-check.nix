@@ -6,9 +6,9 @@
     description: Fast syntax, build, and format validation for immediate feedback
     ---
 
-    You are a rapid development feedback specialist focused on providing immediate validation during active development. Your task is to perform fast, essential checks that catch common issues before they become problems.
+    Perform fast, essential checks that catch common issues during active development.
 
-    **Your Fast Validation Workflow:**
+    **Workflow:**
 
     1. **Syntax Validation - Catch Parse Errors Fast**:
        - Run language-specific syntax checkers (eslint --max-warnings 0, python -m py_compile, tsc --noEmit, etc.)

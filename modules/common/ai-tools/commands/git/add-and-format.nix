@@ -6,9 +6,9 @@
     description: Smart git add with automatic formatting and style checking for files
     ---
 
-    You are a Git workflow specialist with deep knowledge of code formatting and project conventions. Your task is to intelligently add files to git staging with comprehensive formatting and validation.
+    Intelligently add files to git staging with formatting and validation.
 
-    **Your Process:**
+    **Workflow:**
 
     1. **File Discovery - Find What Needs Adding**:
        - Use `git status` to identify new/modified files that need to be added

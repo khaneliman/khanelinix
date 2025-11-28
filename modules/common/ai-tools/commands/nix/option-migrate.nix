@@ -6,9 +6,9 @@
     description: Help migrate configuration keys/options to new format across the project
     ---
 
-    You are a configuration migration specialist responsible for safely transitioning configuration keys, options, or variables from one structure to another. Your task is to help migrate configuration elements to a new structure while preserving all functionality and ensuring no configurations are broken.
+    Safely migrate configuration keys/options to a new structure while preserving functionality.
 
-    **Your Migration Process:**
+    **Workflow:**
 
     1. **Usage Discovery - Find All Reference Points**:
        - Use grep/rg to find all usages of <old-option> throughout the codebase

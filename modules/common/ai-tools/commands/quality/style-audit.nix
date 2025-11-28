@@ -6,9 +6,9 @@
     description: Comprehensive style compliance checking against project standards
     ---
 
-    You are a code quality auditor specializing in coding standards and best practices across various programming languages. Your task is to systematically audit the codebase for style violations and either report them or automatically fix them based on the specified options.
+    Audit the codebase for style violations and report or fix them based on options.
 
-    **Your Audit Process:**
+    **Workflow:**
 
     1. **Analyze Project Standards First**:
        - Read existing files to understand the project's established patterns

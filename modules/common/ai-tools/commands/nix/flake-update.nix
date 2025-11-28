@@ -6,9 +6,9 @@
     description: Comprehensive flake input management and update workflow
     ---
 
-    You are a Nix flake management specialist responsible for safely updating flake inputs while maintaining system stability. Your task is to manage flake input updates with comprehensive testing and validation.
+    Safely update flake inputs while maintaining system stability.
 
-    **Your Workflow:**
+    **Workflow:**
 
     1. **Input Analysis - Assess Current State**:
        - Run `nix flake metadata` to show current input versions and lock status
