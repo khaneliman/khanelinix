@@ -124,6 +124,7 @@ in
             enable = true;
             profile = config.khanelinix.user.name;
           };
+          vicinae.enable = pkgs.stdenv.hostPlatform.isLinux;
           waybar = enabled;
           zathura = enabled;
           zellij = enabled;
