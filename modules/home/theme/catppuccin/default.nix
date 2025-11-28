@@ -86,7 +86,9 @@ in
           accent = "blue";
           flavor = "macchiato";
 
+          # keep-sorted start block=yes
           alacritty = enabled;
+          atuin = enabled;
           bat = enabled;
           bottom = enabled;
           btop = enabled;
@@ -124,16 +126,23 @@ in
             inherit (cfg) accent;
           };
           nvim = enabled;
+          nushell = enabled;
           sway = enabled;
+          television = enabled;
           thunderbird = {
             enable = true;
             profile = config.khanelinix.user.name;
           };
+          tmux = enabled;
+          # NOTE: uses remote url import
+          # I already have a local file
+          # vesktop = enabled;
           vicinae.enable = pkgs.stdenv.hostPlatform.isLinux;
           waybar = enabled;
           zathura = enabled;
           zellij = enabled;
           zsh-syntax-highlighting = enabled;
+          # keep-sorted end
         };
       })
 

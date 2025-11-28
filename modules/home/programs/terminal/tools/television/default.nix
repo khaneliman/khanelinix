@@ -20,7 +20,7 @@ in
       settings = {
         ui = {
           use_nerd_font_icons = true;
-          theme = "catppuccin";
+          theme = lib.mkIf (!config.khanelinix.theme.catppuccin.enable) "catppuccin";
         };
       };
     };
