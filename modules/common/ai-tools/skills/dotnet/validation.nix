@@ -1,7 +1,7 @@
 {
   dotnet-validation = ''
     ---
-    name: dotnet-validation
+    name: dotnet
     description: "Fast .NET/C# syntax and build validation. Use when checking .cs/.fsproj/.csproj files, fixing compiler errors, or before commits."
     ---
 
