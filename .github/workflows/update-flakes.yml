@@ -48,7 +48,7 @@ jobs:
           extra_nix_config: |
             access-tokens = github.com=${{github.token}}
       - name: Update flake.lock
-        uses: DeterminateSystems/update-flake-lock@v27
+        uses: DeterminateSystems/update-flake-lock@v28
         with:
           token: ${{ steps.app-token.outputs.token || github.token }}
           git-committer-name: ${{ steps.user-info.outputs.name || 'github-actions[bot]' }}
