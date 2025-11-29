@@ -5,7 +5,6 @@ let
 
   aiCommands = import ./commands.nix { inherit lib; };
   aiAgents = import ./agents.nix { inherit lib; };
-  aiSkills = import ./skills { inherit lib; };
 
   # Extract description from agent frontmatter
   extractDescription =
@@ -66,7 +65,6 @@ in
   claudeCode = {
     commands = aiCommands;
     agents = aiAgents;
-    skills = aiSkills;
   };
 
   geminiCli = {
