@@ -21,7 +21,7 @@ in
     filesystem = {
       directories = mkOption {
         type = types.listOf types.str;
-        default = [ config.home.homeDirectory ];
+        default = [ ];
         description = "Directories the filesystem MCP server can access";
       };
     };
@@ -33,7 +33,7 @@ in
         filesystem = {
           type = "stdio";
           command = getExe pkgs.mcp-server-filesystem;
-          args = mcpCfg.filesystem.directories;
+          args = [ config.home.homeDirectory ] ++ mcpCfg.filesystem.directories;
         };
 
         # GitHub MCP - read-only for safety
