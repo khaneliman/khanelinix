@@ -141,7 +141,8 @@ in
   parseSystemConfigurations =
     systemsPath:
     let
-      systemArchs = builtins.attrNames (builtins.readDir systemsPath);
+      entries = builtins.readDir systemsPath;
+      systemArchs = filter (name: entries.${name} == "directory") (builtins.attrNames entries);
 
       generateSystemConfigs =
         system:
@@ -174,7 +175,8 @@ in
   parseHomeConfigurations =
     homesPath:
     let
-      systemArchs = builtins.attrNames (builtins.readDir homesPath);
+      entries = builtins.readDir homesPath;
+      systemArchs = filter (name: entries.${name} == "directory") (builtins.attrNames entries);
 
       generateHomeConfigs =
         system:
