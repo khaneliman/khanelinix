@@ -50,15 +50,33 @@
     };
 
     # Applications & packages
-    anyrun-nixos-options.url = "github:n3oney/anyrun-nixos-options";
+    anyrun-nixos-options = {
+      url = "github:n3oney/anyrun-nixos-options";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     catppuccin = {
       url = "github:catppuccin/nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    firefox-addons.url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
-    hypr-socket-watch.url = "github:khaneliman/hypr-socket-watch";
-    khanelivim.url = "github:khaneliman/khanelivim";
-    nh.url = "github:nix-community/nh";
+    firefox-addons = {
+      url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    hypr-socket-watch = {
+      url = "github:khaneliman/hypr-socket-watch";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
+      };
+    };
+    khanelivim = {
+      url = "github:khaneliman/khanelivim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nh = {
+      url = "github:nix-community/nh";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixpkgs-citrix-workspace.url = "github:NixOS/nixpkgs/87894d3b7116a8e1c4827d66e17b89099d218c50";
     nix-flatpak.url = "github:gmodena/nix-flatpak/latest";
     nix-index-database = {
