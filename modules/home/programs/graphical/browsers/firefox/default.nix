@@ -73,6 +73,12 @@ in
           echo "Setting default browser"
           ${lib.getExe pkgs.defaultbrowser} firefoxdeveloperedition
         '';
+        dutihandlers = inputs.home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          echo "Setting HTML/XHTML/URL handlers via duti"
+          ${lib.getExe pkgs.duti} -s ${config.programs.firefox.darwinDefaultsId} public.xhtml all || true
+          ${lib.getExe pkgs.duti} -s ${config.programs.firefox.darwinDefaultsId} public.html all || true
+          ${lib.getExe pkgs.duti} -s ${config.programs.firefox.darwinDefaultsId} public.url all || true
+        '';
       };
       packages = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin [ pkgs.defaultbrowser ];
     };
