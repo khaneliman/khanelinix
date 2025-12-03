@@ -21,20 +21,11 @@ in
 
       systemdTarget = lib.mkIf (!(osConfig.programs.uwsm.enable or false)) "sway-session.target";
 
-      events = [
-        {
-          event = "before-sleep";
-          command = "loginctl lock-session";
-        }
-        {
-          event = "after-resume";
-          command = ''swaymsg "output * dpms on"'';
-        }
-        {
-          event = "lock";
-          command = "pidof swaylock || swaylock -defF";
-        }
-      ];
+      events = {
+        before-sleep = "loginctl lock-session";
+        after-resume = ''swaymsg "output * dpms on"'';
+        lock = "pidof swaylock || swaylock -defF";
+      };
       timeouts = [
         {
           timeout = 600;
