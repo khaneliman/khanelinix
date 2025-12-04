@@ -29,13 +29,11 @@ in
 
     # Online services to keep up to date
     element-desktop
-    # FIXME: enable after gtk3 overlay removed
-    # firefox-devedition
-    # firefox-devedition-unwrapped
+    firefox-devedition
+    firefox-devedition-unwrapped
     teams-for-linux
     telegram-desktop
-    # FIXME: enable after gtk3 overlay removed
-    # thunderbird-unwrapped
-    # thunderbird-latest
+    thunderbird-unwrapped
+    thunderbird-latest
     ;
 }
