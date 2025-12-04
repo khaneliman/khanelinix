@@ -61,9 +61,10 @@ in
               (mkStartCommand "${getExe config.programs.firefox.package}")
             ]
             # Background applications (background-graphical.slice) - communication clients, often idle
-            ++ lib.optionals config.programs.vesktop.enable [
-              (mkStartCommand { slice = "b"; } "${getExe config.programs.vesktop.package}")
-            ]
+            # NOTE: rarely use anymore
+            # ++ lib.optionals config.programs.vesktop.enable [
+            #   (mkStartCommand { slice = "b"; } "${getExe config.programs.vesktop.package}")
+            # ]
             ++ lib.optionals (osConfig.programs.steam.enable or false) [
               (mkStartCommand { slice = "b"; } "steam")
             ]
