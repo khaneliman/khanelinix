@@ -71,7 +71,7 @@
     };
     khanelivim = {
       url = "github:khaneliman/khanelivim";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     nh = {
       url = "github:nix-community/nh";

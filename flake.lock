@@ -441,7 +441,7 @@
         "flake-parts": "flake-parts_3",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nixpkgs": [
-          "nixpkgs"
+          "nixpkgs-unstable"
         ],
         "nixpkgs-master": "nixpkgs-master",
         "nixvim": "nixvim",
