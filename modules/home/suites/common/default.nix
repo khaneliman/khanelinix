@@ -88,6 +88,7 @@ in
             fzf = mkDefault enabled;
             git = mkDefault enabled;
             glxinfo.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
+            infat.enable = mkDefault pkgs.stdenv.hostPlatform.isDarwin;
             jq = mkDefault enabled;
             navi = mkDefault enabled;
             nix-search-tv = mkDefault enabled;
