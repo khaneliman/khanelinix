@@ -29,12 +29,12 @@ in
         shotcut
         vlc
       ]
-      ++ lib.optionals stdenv.hostPlatform.isDarwin [ iina ];
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [ iina ];
 
     khanelinix = {
       programs = {
         graphical.apps = {
-          obs = lib.mkDefault enabled;
+          obs.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isLinux;
           mpv = lib.mkDefault enabled;
         };
       };
