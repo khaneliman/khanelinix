@@ -100,6 +100,7 @@ in
       networking = enabled;
       photo = enabled;
       social = enabled;
+      video = enabled;
     };
 
     theme.catppuccin = enabled;
