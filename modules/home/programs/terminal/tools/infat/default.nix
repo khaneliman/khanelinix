@@ -13,8 +13,24 @@ let
   # Home Manager installs apps to this directory
   hmAppsPath = "Applications/Home Manager Apps";
 
-  videoPlayer =
-    if elem pkgs.iina config.home.packages then "${hmAppsPath}/IINA.app" else "QuickTime Player";
+  # Bundle IDs for nixpkgs-installed macOS apps
+  # These are stable identifiers that don't change across nixpkgs versions / installation locations
+  bundleIds = {
+    neovide = "com.neovide.neovide";
+    firefox = config.programs.firefox.darwinDefaultsId or "org.nixos.firefoxdeveloperedition";
+    thunderbird = "org.nixos.thunderbird";
+    vesktop = "dev.vencord.vesktop";
+    element = "org.nixos.Element";
+    caprine = "com.sindresorhus.caprine";
+    # teams-for-linux has non-standard bundle ID, use full path instead
+    teams = "${config.home.homeDirectory}/${hmAppsPath}/teams-for-linux.app";
+    vscode = "com.microsoft.VSCode";
+    postman = "com.postmanlabs.mac";
+    iina = "com.colliderli.iina";
+  };
+
+  # Use IINA if installed, otherwise fall back to QuickTime Player
+  videoPlayer = if elem pkgs.iina config.home.packages then bundleIds.iina else "QuickTime Player";
 in
 {
   options.khanelinix.programs.terminal.tools.infat = {
@@ -29,28 +45,28 @@ in
       settings = {
         extensions = {
           # Document files - Neovide (GUI Neovim wrapper)
-          md = "${hmAppsPath}/Neovide.app";
-          txt = "${hmAppsPath}/Neovide.app";
+          md = bundleIds.neovide;
+          txt = bundleIds.neovide;
           pdf = "Preview";
 
           # Code files - Neovide (GUI Neovim)
-          nix = "${hmAppsPath}/Neovide.app";
-          rs = "${hmAppsPath}/Neovide.app";
-          py = "${hmAppsPath}/Neovide.app";
-          go = "${hmAppsPath}/Neovide.app";
-          js = "${hmAppsPath}/Neovide.app";
-          ts = "${hmAppsPath}/Neovide.app";
-          tsx = "${hmAppsPath}/Neovide.app";
-          jsx = "${hmAppsPath}/Neovide.app";
-          json = "${hmAppsPath}/Neovide.app";
-          yaml = "${hmAppsPath}/Neovide.app";
-          yml = "${hmAppsPath}/Neovide.app";
-          toml = "${hmAppsPath}/Neovide.app";
-          xml = "${hmAppsPath}/Neovide.app";
+          nix = bundleIds.neovide;
+          rs = bundleIds.neovide;
+          py = bundleIds.neovide;
+          go = bundleIds.neovide;
+          js = bundleIds.neovide;
+          ts = bundleIds.neovide;
+          tsx = bundleIds.neovide;
+          jsx = bundleIds.neovide;
+          json = bundleIds.neovide;
+          yaml = bundleIds.neovide;
+          yml = bundleIds.neovide;
+          toml = bundleIds.neovide;
+          xml = bundleIds.neovide;
 
           # Web files - Firefox Developer Edition
-          html = "${hmAppsPath}/Firefox Developer Edition.app";
-          htm = "${hmAppsPath}/Firefox Developer Edition.app";
+          html = bundleIds.firefox;
+          htm = bundleIds.firefox;
 
           # Image files - Preview for viewing
           png = "Preview";
@@ -80,43 +96,43 @@ in
 
         schemes = {
           # Web protocols - Firefox Developer Edition
-          web = "${hmAppsPath}/Firefox Developer Edition.app";
-          http = "${hmAppsPath}/Firefox Developer Edition.app";
-          https = "${hmAppsPath}/Firefox Developer Edition.app";
-          feed = "${hmAppsPath}/Firefox Developer Edition.app";
+          web = bundleIds.firefox;
+          http = bundleIds.firefox;
+          https = bundleIds.firefox;
+          feed = bundleIds.firefox;
 
           # Email - Thunderbird
-          mailto = "${hmAppsPath}/Thunderbird.app";
+          mailto = bundleIds.thunderbird;
 
           # Communication apps
-          discord = "${hmAppsPath}/Vesktop.app";
-          element = "${hmAppsPath}/Element.app";
-          # fb = "${hmAppsPath}/Caprine.app";
-          messenger = "${hmAppsPath}/Caprine.app";
-          msteams = "${hmAppsPath}/teams-for-linux.app";
+          discord = bundleIds.vesktop;
+          inherit (bundleIds) element;
+          # fb = bundleIds.caprine;
+          messenger = bundleIds.caprine;
+          msteams = bundleIds.teams;
 
           # FaceTime and phone calls
           facetime = "FaceTime";
           tel = "FaceTime";
 
           # Development tools
-          vscode = "${hmAppsPath}/Visual Studio Code.app";
-          vscode-insiders = "${hmAppsPath}/Visual Studio Code.app";
-          postman = "${hmAppsPath}/Postman.app";
+          inherit (bundleIds) vscode;
+          vscode-insiders = bundleIds.vscode;
+          inherit (bundleIds) postman;
         };
 
         types = {
           # infat supertypes (not macOS UTIs)
           # Text and code
-          plain-text = "${hmAppsPath}/Neovide.app";
-          text = "${hmAppsPath}/Neovide.app";
-          csv = "${hmAppsPath}/Neovide.app";
-          sourcecode = "${hmAppsPath}/Neovide.app";
-          c-source = "${hmAppsPath}/Neovide.app";
-          cpp-source = "${hmAppsPath}/Neovide.app";
-          objc-source = "${hmAppsPath}/Neovide.app";
-          shell = "${hmAppsPath}/Neovide.app";
-          makefile = "${hmAppsPath}/Neovide.app";
+          plain-text = bundleIds.neovide;
+          text = bundleIds.neovide;
+          csv = bundleIds.neovide;
+          sourcecode = bundleIds.neovide;
+          c-source = bundleIds.neovide;
+          cpp-source = bundleIds.neovide;
+          objc-source = bundleIds.neovide;
+          shell = bundleIds.neovide;
+          makefile = bundleIds.neovide;
 
           # Images
           image = "Preview";
