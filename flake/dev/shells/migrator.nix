@@ -8,6 +8,7 @@ let
   migratorPackages = with pkgs; [
     # MCP
     bun
+    nodejs
     # AI Scripts
     python3
     # Main tooling
