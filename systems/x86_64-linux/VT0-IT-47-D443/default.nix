@@ -12,6 +12,11 @@ in
 
   documentation.man.enable = mkForce true;
 
+  environment.pathsToLink = [
+    "/share/applications"
+    "/share/xdg-desktop-portal"
+  ];
+
   khanelinix = {
     archetypes = {
       wsl = enabled;
