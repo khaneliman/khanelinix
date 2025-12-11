@@ -92,9 +92,21 @@
     # Fix corrupt git repo
     fix = /* Bash */ ''
       !f() {
-          find .git/objects/ -type f -empty | xargs rm;
-          git fetch -p;
-          git fsck --full;
+        echo "Cleaning empty objects...";
+        find .git/objects/ -type f -empty -delete;
+
+        echo "Fetching from remote...";
+        git fetch -p;
+
+        echo "Checking for corruption...";
+        git fsck --full;
+
+        echo "Attempting to recover from reflog...";
+        git reflog expire --expire=now --all;
+        git gc --prune=now --aggressive;
+
+        echo "Re-checking...";
+        git fsck --full;
       }; f
     '';
 
