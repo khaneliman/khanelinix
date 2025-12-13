@@ -24,6 +24,7 @@ let
       systemd
       libnotify
       kitty
+      swaynotificationcenter
     ]
   );
 in
@@ -118,6 +119,9 @@ in
                 for socket in $XDG_RUNTIME_DIR/kitty-*; do
                   [ -S "$socket" ] && kitten @ --to unix:"$socket" set-background-opacity 1.0 2>&1 | tee -a "$LOG_FILE"
                 done
+
+                echo "Enabling Do Not Disturb..." >> "$LOG_FILE"
+                swaync-client -dn 2>&1 | tee -a "$LOG_FILE" || echo "✗ swaync-client failed" >> "$LOG_FILE"
                 notify-send -a 'Gamemode' 'Optimizations activated' -u 'low'
               '';
 
@@ -145,6 +149,9 @@ in
                 for socket in $XDG_RUNTIME_DIR/kitty-*; do
                   [ -S "$socket" ] && kitten @ --to unix:"$socket" set-background-opacity 0.90 2>&1 | tee -a "$LOG_FILE"
                 done
+
+                echo "Disabling Do Not Disturb..." >> "$LOG_FILE"
+                swaync-client -df 2>&1 | tee -a "$LOG_FILE" || echo "✗ swaync-client restore failed" >> "$LOG_FILE"
                 notify-send -a 'Gamemode' 'Optimizations deactivated' -u 'low'
               '';
             };
