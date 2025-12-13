@@ -271,6 +271,7 @@ in
           window_padding_width = 0;
           inactive_text_alpha = "1.0";
           background_opacity = lib.mkDefault "0.90";
+          dynamic_background_opacity = "yes";
           placement_strategy = "center";
           hide_window_decorations = "yes";
           confirm_os_window_close = -1;
