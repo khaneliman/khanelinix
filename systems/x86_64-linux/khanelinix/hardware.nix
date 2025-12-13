@@ -26,7 +26,7 @@ in
 
     # consoleLogLevel = 0;
 
-    kernelPackages = pkgs.linuxPackages_latest;
+    kernelPackages = pkgs.linuxPackages_zen;
     kernel.sysctl."kernel.sysrq" = 1;
 
     initrd = {
