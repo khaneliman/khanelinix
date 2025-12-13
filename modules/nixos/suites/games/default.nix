@@ -22,7 +22,6 @@ in
           addons = {
             gamemode = mkDefault enabled;
             gamescope = mkDefault enabled;
-            # mangohud = mkDefault enabled;
           };
 
           apps = {
