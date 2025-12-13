@@ -23,6 +23,7 @@ let
       config.services.power-profiles-daemon.package
       systemd
       libnotify
+      kitty
     ]
   );
 in
@@ -98,6 +99,8 @@ in
                 export PATH=$PATH:${programs}
                 export HYPRLAND_INSTANCE_SIGNATURE=$(command ls -t $XDG_RUNTIME_DIR/hypr | head -n 1)
 
+                LOG_FILE="$XDG_RUNTIME_DIR/gamemode-start.log"
+                echo "=== Gamemode Start: $(date) ===" > "$LOG_FILE"
                 hyprctl --batch '${
                   concatStringsSep " " [
                     "keyword animations:enabled 0;"
@@ -111,12 +114,19 @@ in
                 }'
 
                 powerprofilesctl set performance
+                echo "Setting kitty opacity to 1.0..." >> "$LOG_FILE"
+                for socket in $XDG_RUNTIME_DIR/kitty-*; do
+                  [ -S "$socket" ] && kitten @ --to unix:"$socket" set-background-opacity 1.0 2>&1 | tee -a "$LOG_FILE"
+                done
                 notify-send -a 'Gamemode' 'Optimizations activated' -u 'low'
               '';
 
               endscript = /* bash */ ''
                 export PATH=$PATH:${programs}
                 export HYPRLAND_INSTANCE_SIGNATURE=$(command ls -t $XDG_RUNTIME_DIR/hypr | head -n 1)
+
+                LOG_FILE="$XDG_RUNTIME_DIR/gamemode-end.log"
+                echo "=== Gamemode End: $(date) ===" > "$LOG_FILE"
 
                 hyprctl --batch '${
                   concatStringsSep " " [
@@ -131,6 +141,10 @@ in
                 }'
 
                 powerprofilesctl set balanced
+                echo "Restoring kitty opacity to 0.90..." >> "$LOG_FILE"
+                for socket in $XDG_RUNTIME_DIR/kitty-*; do
+                  [ -S "$socket" ] && kitten @ --to unix:"$socket" set-background-opacity 0.90 2>&1 | tee -a "$LOG_FILE"
+                done
                 notify-send -a 'Gamemode' 'Optimizations deactivated' -u 'low'
               '';
             };
