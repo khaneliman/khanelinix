@@ -101,8 +101,11 @@ in
                 hyprctl --batch '${
                   concatStringsSep " " [
                     "keyword animations:enabled 0;"
-                    "keyword decoration:drop_shadow 0;"
+                    "keyword decoration:shadow:enabled 0;"
                     "keyword decoration:blur:enabled 0;"
+                    "keyword decoration:active_opacity 1.0;"
+                    "keyword decoration:inactive_opacity 1.0;"
+                    "keyword decoration:fullscreen_opacity 1.0;"
                     "keyword misc:vfr 0"
                   ]
                 }'
@@ -118,8 +121,11 @@ in
                 hyprctl --batch '${
                   concatStringsSep " " [
                     "keyword animations:enabled 1;"
-                    "keyword decoration:drop_shadow 1;"
+                    "keyword decoration:shadow:enabled 1;"
                     "keyword decoration:blur:enabled 1;"
+                    "keyword decoration:active_opacity 0.95;"
+                    "keyword decoration:inactive_opacity 0.9;"
+                    "keyword decoration:fullscreen_opacity 1.0;"
                     "keyword misc:vfr 1"
                   ]
                 }'
