@@ -295,6 +295,7 @@ in
           shell = ".";
           close_on_child_death = "no";
           allow_remote_control = "yes";
+          listen_on = "unix:$\{XDG_RUNTIME_DIR}/kitty";
           term = "xterm-kitty";
         }
         // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
