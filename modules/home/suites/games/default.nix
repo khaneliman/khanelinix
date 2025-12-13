@@ -32,6 +32,8 @@ in
 
     khanelinix = {
       programs = {
+        graphical.mangohud = lib.mkDefault enabled;
+
         terminal = {
           tools = {
             wine = lib.mkDefault enabled;
