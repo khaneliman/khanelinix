@@ -5,7 +5,7 @@ _: {
       hooks = [
         {
           type = "command";
-          command = ''
+          command = /* Bash */ ''
             # Log session start to audit trail
             mkdir -p ~/.local/share/claude-code/audit
             input=$(cat)

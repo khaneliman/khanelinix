@@ -69,18 +69,19 @@ in
           "hypr/assets/diamond.png".source = ./hypr/assets/diamond.png;
         }
         // lib.optionalAttrs config.programs.hyprland.withUWSM {
-          "uwsm/env-hyprland".text = ''
-            export XDG_CURRENT_DESKTOP=Hyprland
-            export XDG_SESSION_TYPE=wayland
-            export XDG_SESSION_DESKTOP=Hyprland
-            export HYPRCURSOR_THEME=${config.khanelinix.theme.cursor.name};
-            export HYPRCURSOR_SIZE=${toString config.khanelinix.theme.cursor.size};
-          ''
-          + lib.optionalString cfg.enableDebug ''
-            export AQ_TRACE=1;
-            export HYPRLAND_LOG_WLR=1;
-            export HYPRLAND_TRACE=1;
-          '';
+          "uwsm/env-hyprland".text =
+            /* Bash */ ''
+              export XDG_CURRENT_DESKTOP=Hyprland
+              export XDG_SESSION_TYPE=wayland
+              export XDG_SESSION_DESKTOP=Hyprland
+              export HYPRCURSOR_THEME=${config.khanelinix.theme.cursor.name};
+              export HYPRCURSOR_SIZE=${toString config.khanelinix.theme.cursor.size};
+            ''
+            + lib.optionalString cfg.enableDebug /* Bash */ ''
+              export AQ_TRACE=1;
+              export HYPRLAND_LOG_WLR=1;
+              export HYPRLAND_TRACE=1;
+            '';
         }
         // cfg.customConfigFiles;
 

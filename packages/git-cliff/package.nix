@@ -7,7 +7,7 @@
 let
   git-cliff-config = pkgs.writeTextFile {
     name = "cliff.toml";
-    text = /* toml */ ''
+    text = /* TOML */ ''
        [changelog]
         # changelog header
         header = """

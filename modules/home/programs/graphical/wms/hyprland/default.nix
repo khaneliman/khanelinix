@@ -96,7 +96,7 @@ in
 
       shellAliases = {
         hl = "cat $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland.log";
-        hlc = ''
+        hlc = /* Bash */ ''
           local report_dir="${config.xdg.cacheHome}/hyprland"
           local latest_report
 

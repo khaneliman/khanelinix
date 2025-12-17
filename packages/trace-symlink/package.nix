@@ -10,7 +10,7 @@ writeShellApplication {
 
   runtimeInputs = [ coreutils ];
 
-  text = /* bash */ ''
+  text = ''
     readlinkWithPrint() {
         link=$(readlink "$1")
         p=$link

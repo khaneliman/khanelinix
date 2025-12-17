@@ -8,7 +8,7 @@
         {
           type = "command";
           timeout = 5;
-          command = ''
+          command = /* Bash */ ''
             input=$(cat)
             filepath=$(echo "$input" | jq -r '.tool_input.file_path // ""')
 

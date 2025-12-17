@@ -243,7 +243,7 @@ in
           tmux.plugins = [
             {
               plugin = pkgs.tmuxPlugins.catppuccin;
-              extraConfig = ''
+              extraConfig = /* Bash */ ''
                 set -g @catppuccin_flavour '${cfg.flavor}'
                 set -g @catppuccin_host 'on'
                 set -g @catppuccin_user 'on'

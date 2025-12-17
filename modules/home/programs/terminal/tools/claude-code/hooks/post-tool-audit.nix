@@ -6,7 +6,7 @@ _: {
         {
           type = "command";
           timeout = 10;
-          command = ''
+          command = /* Bash */ ''
             mkdir -p ~/.local/share/claude-code/audit
             input=$(cat)
 

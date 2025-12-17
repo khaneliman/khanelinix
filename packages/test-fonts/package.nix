@@ -11,7 +11,7 @@ writeShellApplication {
 
   checkPhase = "";
 
-  text = /* Bash */ ''
+  text = ''
     smoke_tests="Normal
     \033[1mBold\033[22m
     \033[3mItalic\033[23m

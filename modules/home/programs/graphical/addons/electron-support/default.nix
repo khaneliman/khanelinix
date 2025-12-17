@@ -20,7 +20,7 @@ in
       ELECTRON_OZONE_PLATFORM_HINT = "wayland";
     };
 
-    xdg.configFile."electron-flags.conf".text = ''
+    xdg.configFile."electron-flags.conf".text = /* Bash */ ''
       --enable-features=UseOzonePlatform,WaylandWindowDecorations
       --ozone-platform=wayland
       --ozone-platform-hint=wayland

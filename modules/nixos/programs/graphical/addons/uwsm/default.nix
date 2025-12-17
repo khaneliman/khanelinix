@@ -19,7 +19,7 @@ in
 
     khanelinix.home = {
       configFile = {
-        "uwsm/env".text = ''
+        "uwsm/env".text = /* Bash */ ''
           export CLUTTER_BACKEND=wayland
           export MOZ_ENABLE_WAYLAND=1
           export MOZ_USE_XINPUT2=1

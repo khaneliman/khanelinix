@@ -24,7 +24,7 @@ writeShellApplication {
 
   checkPhase = "";
 
-  text = /* bash */ ''
+  text = ''
     set +o errexit
     set +o nounset
     set +o pipefail

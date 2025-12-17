@@ -22,7 +22,7 @@ in
   config = mkIf cfg.enable {
     khanelinix.home = {
       configFile = lib.optionalAttrs cfg.withUWSM {
-        "uwsm/env-sway".text = ''
+        "uwsm/env-sway".text = /* Bash */ ''
           export XDG_CURRENT_DESKTOP=sway
           export XDG_SESSION_TYPE=wayland
           export XDG_SESSION_DESKTOP=sway

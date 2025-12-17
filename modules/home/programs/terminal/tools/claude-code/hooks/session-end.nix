@@ -5,7 +5,7 @@ _: {
       hooks = [
         {
           type = "command";
-          command = ''
+          command = /* Bash */ ''
             mkdir -p ~/.local/share/claude-code/sessions
             mkdir -p ~/.local/share/claude-code/audit
 

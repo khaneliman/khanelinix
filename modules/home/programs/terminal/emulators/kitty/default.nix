@@ -47,7 +47,7 @@ in
       icat = "kitten icat";
     };
 
-    xdg.configFile."kitty/nix.conf".text = ''
+    xdg.configFile."kitty/nix.conf".text = /* Bash */ ''
       launch zellij
 
       new_tab khanelivim

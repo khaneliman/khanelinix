@@ -35,7 +35,7 @@ in
       enable = true;
       package = pkgs.skhd;
 
-      config = /* bash */ ''
+      config = /* Bash */ ''
         # hyper (cmd + shift + alt + ctrl)
         # meh (shift + alt + ctrl)
         # Modes

@@ -13,7 +13,7 @@ writeShellApplication {
 
   checkPhase = "";
 
-  text = /* bash */ ''
+  text = ''
     a=$(which "$1") && exec ${lib.getExe trace-symlink} "$a"
   '';
 }

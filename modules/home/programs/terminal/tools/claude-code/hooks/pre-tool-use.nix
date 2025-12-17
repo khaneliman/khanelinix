@@ -8,7 +8,7 @@ _: {
         {
           type = "command";
           timeout = 5;
-          command = ''
+          command = /* Bash */ ''
             input=$(cat)
             cmd=$(echo "$input" | jq -r '.tool_input.command // ""')
 

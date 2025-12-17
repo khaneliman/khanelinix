@@ -173,7 +173,7 @@ in
       configFile."xdg-desktop-portal-wlr/config" =
         lib.mkIf config.khanelinix.programs.graphical.wms.sway.enable
           {
-            text = ''
+            text = /* TOML */ ''
               [screencast]
               output_name=
               max_fps=30

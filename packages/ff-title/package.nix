@@ -18,7 +18,7 @@ writeShellApplication {
     libnotify
   ];
 
-  text = /* bash */ ''
+  text = ''
     # Check for the required arguments using a 'set -u' safe expansion
     if [ -z "''${1-}" ] || [ -z "''${2-}" ]; then
       echo "Usage: ff-title <filename> \"<New Title>\""

@@ -156,7 +156,7 @@ nix-darwin uses `system.defaults.*` for macOS preferences. Wrap these in
 Use activation scripts for settings not covered by nix-darwin:
 
 ```nix
-system.activationScripts.postActivation.text = ''
+system.activationScripts.postActivation.text = /* Bash */ ''
   # Example: Set hidden preferences
   defaults write com.apple.finder ShowPathbar -bool true
 '';

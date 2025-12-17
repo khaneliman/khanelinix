@@ -26,7 +26,7 @@ in
         zns = "zellij -s $(basename $(pwd)) options --default-cwd $(pwd)";
         zas = "zellij a $(basename $(pwd))";
         zds = "zellij delete-session $(basename $(pwd))";
-        zo = ''
+        zo = /* Bash */ ''
           session_name=$(basename "$(pwd)")
 
           zellij attach --create "$session_name" options --default-cwd "$(pwd)"

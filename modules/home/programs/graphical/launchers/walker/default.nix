@@ -154,7 +154,7 @@ in
             height = 600;
           };
         };
-        style = ''
+        style = /* Css */ ''
           * {
             transition: 200ms ease;
             font-family: MonaspaceNeon NF;

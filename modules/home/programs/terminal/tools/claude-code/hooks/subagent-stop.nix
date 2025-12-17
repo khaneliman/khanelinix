@@ -6,7 +6,7 @@
       hooks = [
         {
           type = "command";
-          command = ''
+          command = /* Bash */ ''
             input=$(cat)
             transcript_path=$(echo "$input" | jq -r '.agent_transcript_path // empty')
 

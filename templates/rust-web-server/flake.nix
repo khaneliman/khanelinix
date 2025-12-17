@@ -139,7 +139,7 @@
                   };
               };
 
-              testScript = ''
+              testScript = /* Python */ ''
                 start_all()
                 client.wait_for_unit("multi-user.target")
                 assert "Hello Nixers" in client.wait_until_succeeds("curl --fail http://localhost:8080/")

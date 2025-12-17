@@ -5,7 +5,7 @@ _: {
       hooks = [
         {
           type = "command";
-          command = ''
+          command = /* Bash */ ''
             mkdir -p ~/.local/share/claude-code/context-backups
             input=$(cat)
             session_id=$(echo "$input" | jq -r '.session_id // "unknown"')

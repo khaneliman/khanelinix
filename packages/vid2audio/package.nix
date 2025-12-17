@@ -15,7 +15,7 @@ writeShellApplication {
     lame # Provides libmp3lame
   ];
 
-  text = /* Bash */ ''
+  text = ''
     if [ -z "''${1-}" ]; then
       echo "Usage: vid2audio <video_file>"
       exit 1

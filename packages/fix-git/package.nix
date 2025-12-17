@@ -10,7 +10,7 @@ writeShellApplication {
 
   runtimeInputs = [ git ];
 
-  text = /* bash */ ''
+  text = ''
     # Usage: fix-git [REMOTE-URL]
     #   Must be run from the root directory of the repository.
     #   If a remote is not supplied, it will be read from .git/config

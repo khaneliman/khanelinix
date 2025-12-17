@@ -16,7 +16,7 @@ writeShellApplication {
 
   runtimeInputs = [ pciutils ];
 
-  text = /* bash */ ''
+  text = ''
     shopt -s nullglob
 
     for d in /sys/kernel/iommu_groups/*/devices/*; do

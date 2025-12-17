@@ -13,7 +13,7 @@ writeShellApplication {
     ffmpeg
   ];
 
-  text = /* bash */ ''
+  text = ''
     if [ -z "''${1-}" ]; then
       echo "Usage: vid-strip-meta <media_file>"
       exit 1

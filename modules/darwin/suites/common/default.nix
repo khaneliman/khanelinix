@@ -75,7 +75,7 @@ in
       };
     };
 
-    system.activationScripts.postActivation.text = lib.mkIf pkgs.stdenv.hostPlatform.isAarch64 ''
+    system.activationScripts.postActivation.text = lib.mkIf pkgs.stdenv.hostPlatform.isAarch64 /* Bash */ ''
       echo "Installing Rosetta..."
       softwareupdate --install-rosetta --agree-to-license
     '';

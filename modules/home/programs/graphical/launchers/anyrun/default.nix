@@ -78,7 +78,7 @@ in
             )
           '';
 
-        "shell.ron".text = ''
+        "shell.ron".text = /* Ron */ ''
           Config(
             prefix: ">"
           )

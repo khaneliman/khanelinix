@@ -18,7 +18,7 @@ in
     programs.rmpc = {
       enable = true;
 
-      config = ''
+      config = /* Ron */ ''
         (
             address: "127.0.0.1:6600",
             password: None,

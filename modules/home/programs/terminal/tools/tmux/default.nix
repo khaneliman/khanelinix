@@ -14,7 +14,7 @@ let
   plugins = with pkgs.tmuxPlugins; [
     {
       plugin = resurrect;
-      extraConfig = ''
+      extraConfig = /* Bash */ ''
         set -g @resurrect-strategy-vim 'session'
         set -g @resurrect-strategy-nvim 'session'
         set -g @resurrect-capture-pane-contents 'on'
@@ -24,7 +24,7 @@ let
     }
     {
       plugin = continuum;
-      extraConfig = ''
+      extraConfig = /* Bash */ ''
         set -g @continuum-restore 'on'
       '';
     }
@@ -51,7 +51,7 @@ in
       prefix = "C-a";
       sensibleOnTop = true;
       terminal = "xterm-256color";
-      extraConfig = ''
+      extraConfig = /* Bash */ ''
         # Key bindings overrides
         bind-key -T copy-mode-vi v send-keys -X begin-selection
         bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
@@ -71,7 +71,7 @@ in
 
         ${lib.optionalString (
           config.programs.tmux.sensibleOnTop && (osConfig != { })
-        ) "set -g default-command ${osConfig.users.users.${config.khanelinix.user.name}.shell}"}
+        ) /* Bash */ "set -g default-command ${osConfig.users.users.${config.khanelinix.user.name}.shell}"}
       '';
 
       inherit plugins;
