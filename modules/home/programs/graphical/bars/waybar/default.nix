@@ -144,11 +144,30 @@ in
   config = mkIf cfg.enable {
     programs.waybar = {
       enable = true;
-      package = waybar.packages.${system}.waybar.overrideAttrs (_oldAttrs: {
-        patches = [
-          ./workspaces.patch
-        ];
-      });
+      package =
+        let
+          libcava = rec {
+            version = "0.10.7-beta";
+            src = pkgs.fetchFromGitHub {
+              owner = "LukashonakV";
+              repo = "cava";
+              tag = "v${version}";
+              hash = "sha256-IX1B375gTwVDRjpRfwKGuzTAZOV2pgDWzUd4bW2cTDU=";
+            };
+          };
+        in
+        waybar.packages.${system}.waybar.overrideAttrs (_oldAttrs: {
+          patches = [
+            ./workspaces.patch
+          ];
+          # TODO: remove after https://github.com/Alexays/Waybar/pull/4708 is merged
+          postUnpack = ''
+            pushd "$sourceRoot"
+            cp -R --no-preserve=mode,ownership ${libcava.src} subprojects/cava-${libcava.version}
+            patchShebangs .
+            popd
+          '';
+        });
 
       systemd = {
         enable = true;
