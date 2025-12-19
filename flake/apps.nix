@@ -51,6 +51,7 @@ _: {
         { description, inputs }:
         {
           type = "app";
+          meta.description = "Update ${description} inputs";
           program = lib.getExe (
             pkgs.writeShellApplication {
               name = "update-${name}";
@@ -78,6 +79,7 @@ _: {
       apps = groupApps // {
         update-all = {
           type = "app";
+          meta.description = "Update all flake inputs";
           program = lib.getExe (
             pkgs.writeShellApplication {
               name = "update-all";
@@ -102,6 +104,7 @@ _: {
 
         closure-analyzer = {
           type = "app";
+          meta.description = "Analyze Nix store closures";
           program = lib.getExe (pkgs.callPackage ../packages/closure-analyzer/package.nix { });
         };
 
@@ -111,6 +114,7 @@ _: {
           in
           {
             type = "app";
+            meta.description = "Update plugin definitions/locks";
             program = lib.getExe (
               pkgs.writeShellApplication {
                 name = "update-plugins";
