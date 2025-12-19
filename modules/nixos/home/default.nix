@@ -20,6 +20,11 @@ in
   };
 
   config = {
+    environment.pathsToLink = lib.mkAfter [
+      "/share/applications"
+      "/share/xdg-desktop-portal"
+    ];
+
     khanelinix.home.extraOptions = {
       home.file = mkAliasDefinitions options.khanelinix.home.file;
       home.stateVersion = lib.mkOptionDefault config.system.stateVersion;
