@@ -18,24 +18,30 @@ let
   khanelivimConfigurationExtended = khanelivimConfiguration.extendModules {
     modules = [
       {
-        config = {
-          # NOTE: Conflicting package definitions, use the package from this flake.
-          dependencies.yazi.enable = false;
-          # Use wrapped version of the package
-          dependencies.claude-code.package = config.programs.claude-code.finalPackage;
-          # FIXME: insane memory usage
-          # lsp.servers.nixd.settings.settings.nixd =
-          #   let
-          #     flake = ''(builtins.getFlake "${inputs.self}")'';
-          #   in
-          #   {
-          #     options = rec {
-          #       nix-darwin.expr = ''${flake}.darwinConfigurations.khanelimac.options'';
-          #       nixos.expr = ''${flake}.nixosConfigurations.khanelinix.options'';
-          #       home-manager.expr = ''${nixos.expr}.home-manager.users.type.getSubOptions [ ]'';
-          #     };
-          #   };
-        };
+        config = lib.mkMerge [
+          {
+            # NOTE: Conflicting package definitions, use the package from this flake.
+            dependencies.yazi.enable = false;
+          }
+          (lib.mkIf (config.programs.claude-code.enable or false) {
+            # Use wrapped version of the package
+            dependencies.claude-code.package = config.programs.claude-code.finalPackage;
+          })
+          {
+            # FIXME: insane memory usage
+            # lsp.servers.nixd.settings.settings.nixd =
+            #   let
+            #     flake = ''(builtins.getFlake "${inputs.self}")'';
+            #   in
+            #   {
+            #     options = rec {
+            #       nix-darwin.expr = ''${flake}.darwinConfigurations.khanelimac.options'';
+            #       nixos.expr = ''${flake}.nixosConfigurations.khanelinix.options'';
+            #       home-manager.expr = ''${nixos.expr}.home-manager.users.type.getSubOptions [ ]'';
+            #     };
+            #   };
+          }
+        ];
       }
       (lib.mkIf (osConfig.khanelinix.archetypes.wsl.enable or false) {
         # FIXME: upstream dependency has LONG build time and transient failures
