@@ -22,22 +22,44 @@ in
       enable = true;
 
       settings = {
-        ui.theme = "Default";
+        ui = {
+          theme = "Default";
+          footer = {
+            hideContextPercentage = false;
+          };
+          showCitations = true;
+          showModelInfoInChat = true;
+          showStatusInTitle = true;
+        };
         general = {
           vimMode = true;
           preferredEditor = "nvim";
           previewFeatures = true;
         };
+        ide.enabled = true;
+        privacy.usageStatisticsEnabled = false;
         tools.autoAccept = false;
+        context = {
+          discoveryMaxDirs = 1000;
+          includeDirectories = [
+            "lib"
+            "modules"
+            "docs"
+          ];
+          loadMemoryFromIncludeDirectories = true;
+          fileFiltering = {
+            respectGitIgnore = true;
+            respectGeminiIgnore = true;
+            enableRecursiveFileSearch = true;
+            disableFuzzySearch = false;
+          };
+        };
         security = {
           auth = {
-            selectedType = lib.mkIf (osConfig.khanelinix.security.sops.enable or false) "gemini-api-key";
+            selectedType = "oauth-personal";
           };
         };
       };
-
-      # Let auto do it's job
-      defaultModel = "auto";
 
       context = {
         GEMINI = lib.getFile "modules/common/ai-tools/base.md";
