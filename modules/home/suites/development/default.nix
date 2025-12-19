@@ -63,8 +63,7 @@ in
           # })
         ]
         ++ lib.optionals (!isWSL) [
-          # FIXME: broken nixpkgs again
-          # bruno
+          bruno
           neovide
           postman
         ]
