@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -16,6 +17,12 @@ in
   config = mkIf cfg.enable {
     programs.television = {
       enable = true;
+      # TODO: remove after https://nixpkgs-tracker.ocfox.me/?pr=472586
+      package = pkgs.television.overrideAttrs (old: {
+        postInstall = old.postInstall + ''
+          install -Dm644 television/utils/shell/completion.* -t $out/share/television/
+        '';
+      });
 
       settings = {
         ui = {
