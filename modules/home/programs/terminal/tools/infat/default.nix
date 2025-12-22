@@ -27,6 +27,7 @@ let
     vscode = "com.microsoft.VSCode";
     postman = "com.postmanlabs.mac";
     iina = "com.colliderli.iina";
+    inkscape = "org.nixos.Inkscape";
   };
 
   # Use IINA if installed, otherwise fall back to QuickTime Player
@@ -75,7 +76,7 @@ in
           gif = "Preview";
           webp = "Preview";
           bmp = "Preview";
-          svg = "Inkscape";
+          svg = bundleIds.inkscape;
 
           # Video files - IINA if installed, otherwise QuickTime Player
           mp4 = videoPlayer;

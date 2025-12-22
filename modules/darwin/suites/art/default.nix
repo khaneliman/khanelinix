@@ -23,9 +23,9 @@ in
 
     homebrew = {
       casks = [
+        # FIXME: should be done through nixpkgs
         "blender"
         "gimp"
-        "inkscape"
         "mediainfo"
       ];
 
