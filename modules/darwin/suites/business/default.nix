@@ -30,7 +30,8 @@ in
       masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
         "Brother iPrint&Scan" = 1193539993;
         "Keynote" = 409183694;
-        "Microsoft OneNote" = 784801555;
+        # FIXME: keeps wanting to reinstall every switch
+        # "Microsoft OneNote" = 784801555;
         "Notability" = 360593530;
         "Numbers" = 409203825;
         "Pages" = 409201541;
