@@ -129,6 +129,20 @@ let
       key = "w";
       path = "~/.local/share/wallpapers";
     }
+    {
+      key = "n";
+      path = "/run/current-system";
+      desc = "Go to the current NixOS system profile";
+    }
+    {
+      key = "H";
+      path =
+        if pkgs.stdenv.hostPlatform.isLinux then
+          "/nix/var/nix/profiles/per-user/${config.khanelinix.user.name}/home-manager"
+        else
+          "~/.local/state/home-manager/gcroots";
+      desc = "Go to the home-manager profile";
+    }
   ];
 in
 {
