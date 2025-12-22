@@ -27,6 +27,7 @@ in
         "blender"
         "gimp"
         "mediainfo"
+        "orcaslicer"
       ];
 
       masApps = mkIf config.khanelinix.tools.homebrew.masEnable { "Pixelmator" = 407963104; };
