@@ -116,7 +116,7 @@ in
 
         initContent = lib.mkMerge [
           (lib.mkOrder 450 (
-            lib.optionalString (!config.khanelinix.programs.terminal.tools.atuin.enable) /* Bash */ ''
+            lib.optionalString (!config.khanelinix.programs.terminal.tools.atuin.enable) ''
               # Prevent the command from being written to history before it's
               # executed; save it to LASTHIST instead.  Write it to history
               # in precmd.
@@ -147,12 +147,11 @@ in
             ''
           ))
 
-          (lib.mkOrder 500 /* Bash */ ''
+          (lib.mkOrder 500 ''
             source <(${lib.getExe config.programs.fzf.package} --zsh)
             source ${config.programs.git.package}/share/git/contrib/completion/git-prompt.sh
           '')
 
-          # Bash
           (lib.mkOrder 600 ''
             # binds, zsh modules and everything else
             ${fileContents ./rc/binds.zsh}

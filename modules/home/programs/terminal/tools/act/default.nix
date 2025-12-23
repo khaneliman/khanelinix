@@ -19,7 +19,7 @@ in
     home.packages = [ pkgs.act ];
 
     home.file = lib.mkIf (pkgs.stdenv.hostPlatform.isDarwin && pkgs.stdenv.hostPlatform.isAarch64) {
-      ".actrc".text = ''
+      ".actrc".text = /* Bash */ ''
         --container-architecture linux/amd64
       '';
     };

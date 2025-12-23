@@ -96,7 +96,7 @@ in
 
       shellAliases = {
         hl = "cat $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland.log";
-        hlc = /* Bash */ ''
+        hlc = ''
           local report_dir="${config.xdg.cacheHome}/hyprland"
           local latest_report
 
@@ -158,7 +158,7 @@ in
     wayland.windowManager.hyprland = {
       enable = true;
 
-      extraConfig = /* bash */ ''
+      extraConfig = ''
         ${cfg.prependConfig}
 
         ${cfg.appendConfig}
@@ -176,7 +176,7 @@ in
       # ];
 
       settings = {
-        exec = [ "notify-send --icon ~/.face -u normal \"Hello $(whoami)\"" ];
+        exec = [ /* Bash */ "notify-send --icon ~/.face -u normal \"Hello $(whoami)\"" ];
 
         plugin = {
           hyprbars =

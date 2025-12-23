@@ -109,7 +109,7 @@ let
     }
     {
       key = "r";
-      path = ''shell -- ya emit cd "$(git rev-parse --show-toplevel)"'';
+      path = /* Bash */ ''shell -- ya emit cd "$(git rev-parse --show-toplevel)"'';
       isCommand = true;
       desc = "Go to the root of git directory";
     }
