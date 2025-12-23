@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
 
   ...
 }:
@@ -17,7 +18,11 @@ in
   ];
 
   khanelinix = {
-    nix = enabled;
+    nix = {
+      enable = true;
+      package = pkgs.lixPackageSets.stable.lix;
+      useLix = true;
+    };
 
     archetypes = {
       gaming = enabled;
