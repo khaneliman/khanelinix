@@ -59,7 +59,7 @@ in
     };
 
     # System MPD music directory default
-    services.mpd.musicDirectory = lib.mkDefault "nfs://${cfg.serverHostname}/mnt/user/data/media/music";
+    services.mpd.settings.music_directory = lib.mkDefault "nfs://${cfg.serverHostname}/mnt/user/data/media/music";
 
     # SSH config for home server
     khanelinix.programs.terminal.tools.ssh = {
