@@ -100,7 +100,7 @@ in
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
               }
             )
-            (
+            (lib.mkIf (host != "khanelinix") (
               {
                 inherit protocol sshUser;
                 hostName = "khanelinix.local";
@@ -114,11 +114,7 @@ in
               // lib.optionalAttrs (host == "khanelimac") {
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
               }
-              // lib.optionalAttrs (host == "khanelinix") {
-                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
-                maxJobs = 0;
-              }
-            )
+            ))
             (
               {
                 inherit protocol sshUser;
@@ -140,7 +136,7 @@ in
               }
             )
             # Darwin builders
-            (
+            (lib.mkIf (host != "khanelimac") (
               {
                 inherit protocol sshUser;
                 systems = [
@@ -155,12 +151,8 @@ in
               // lib.optionalAttrs (host == "khanelinix") {
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
               }
-              // lib.optionalAttrs (host == "khanelinix") {
-                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
-                maxJobs = 0;
-              }
-            )
-            (
+            ))
+            (lib.mkIf (host != "khanelimac-m1") (
               {
                 inherit protocol sshUser;
                 systems = [
@@ -182,7 +174,7 @@ in
                   "x86_64-darwin"
                 ];
               }
-            )
+            ))
             (
               # NOTE: git clone --reference /var/lib/nixpkgs.git https://github.com/NixOS/nixpkgs.git
               {
