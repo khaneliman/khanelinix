@@ -16,10 +16,22 @@ in
 {
   options.khanelinix.nix = {
     enable = mkBoolOpt true "Whether or not to manage nix configuration.";
+    useLix = mkBoolOpt false "Whether or not to use Lix.";
     package = mkOpt lib.types.package pkgs.nixVersions.latest "Which nix package to use.";
   };
 
   config = lib.mkIf cfg.enable {
+    nixpkgs.overlays = lib.optional cfg.useLix (
+      _final: prev: {
+        inherit (inputs.nixpkgs.legacyPackages.${prev.stdenv.hostPlatform.system}.lixPackageSets.stable)
+          nixpkgs-review
+          nix-eval-jobs
+          nix-fast-build
+          colmena
+          ;
+      }
+    );
+
     # faster rebuilding
     documentation = {
       doc.enable = false;
@@ -59,10 +71,10 @@ in
           config.khanelinix.user.name
         ];
 
-        isLix = (lib.getName cfg.package) == "lix";
+        isLix = cfg.useLix || (lib.getName cfg.package) == "lix";
       in
       {
-        inherit (cfg) package;
+        package = if cfg.useLix then pkgs.lixPackageSets.stable.lix else cfg.package;
 
         buildMachines =
           let
