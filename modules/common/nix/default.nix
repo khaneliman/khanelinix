@@ -251,9 +251,7 @@ in
           fallback = true;
           flake-registry = "/etc/nix/registry.json";
           http-connections = 0;
-          keep-derivations = true;
           keep-going = true;
-          keep-outputs = true;
           log-lines = 50;
           preallocate-contents = true;
           sandbox = true;
