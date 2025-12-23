@@ -44,5 +44,10 @@ in
     };
 
     nixpkgs.config.rocmSupport = cfg.enableRocmSupport;
+
+    # Allow userspace tools (like gamemode) to control GPU performance
+    services.udev.extraRules = ''
+      KERNEL=="card[0-9]", SUBSYSTEM=="drm", ACTION=="add", RUN+="${pkgs.coreutils}/bin/chmod 666 /sys/class/drm/%k/device/power_dpm_force_performance_level"
+    '';
   };
 }
