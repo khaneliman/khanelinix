@@ -40,19 +40,14 @@ in
     };
 
     environment = {
-      etc = {
-        # set channels (backwards compatibility)
-        "nix/flake-channels/system".source = self;
-        "nix/flake-channels/nixpkgs".source = inputs.nixpkgs;
-        "nix/flake-channels/home-manager".source = inputs.home-manager;
-      }
       # preserve current flake in /etc
-      // lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-        "nixos".source = self;
-      }
-      // lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-        "nix-darwin".source = self;
-      };
+      etc =
+        lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+          "nixos".source = self;
+        }
+        // lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+          "nix-darwin".source = self;
+        };
 
       systemPackages = with pkgs; [
         git
@@ -160,8 +155,8 @@ in
               // lib.optionalAttrs (host == "khanelinix") {
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
               }
-              // lib.optionalAttrs (host == "khanelimac") {
-                sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+              // lib.optionalAttrs (host == "khanelinix") {
+                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
                 maxJobs = 0;
               }
             )
@@ -219,7 +214,7 @@ in
         # This will additionally add your inputs to the system's legacy channels
         # Making legacy nix commands consistent as well
         # NOTE: We link inputs here
-        nixPath = [ "/etc/nix/inputs" ];
+        nixPath = [ "nixpkgs=flake:nixpkgs" ];
         optimise.automatic = true;
 
         # pin the registry to avoid downloading and evaluating a new nixpkgs version every time
