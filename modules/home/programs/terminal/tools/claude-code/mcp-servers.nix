@@ -46,6 +46,16 @@ in
           ];
         };
 
+        memory = {
+          type = "stdio";
+          command = getExe pkgs.mcp-server-memory;
+        };
+
+        nixos = {
+          type = "stdio";
+          command = getExe pkgs.mcp-nixos;
+        };
+
         sequential-thinking = {
           type = "stdio";
           command = getExe pkgs.mcp-server-sequential-thinking;
