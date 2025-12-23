@@ -34,5 +34,10 @@ in
         "Xcode" = 497799835;
       };
     };
+
+    nix.settings = {
+      keep-derivations = true;
+      keep-outputs = true;
+    };
   };
 }

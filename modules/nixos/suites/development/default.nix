@@ -42,5 +42,10 @@ in
         podman.enable = cfg.dockerEnable;
       };
     };
+
+    nix.settings = {
+      keep-derivations = true;
+      keep-outputs = true;
+    };
   };
 }
