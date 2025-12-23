@@ -58,6 +58,8 @@ in
           "nix-builder"
           config.khanelinix.user.name
         ];
+
+        isLix = (lib.getName cfg.package) == "lix";
       in
       {
         inherit (cfg) package;
@@ -228,12 +230,13 @@ in
           allowed-users = users;
           auto-optimise-store = pkgs.stdenv.hostPlatform.isLinux;
           builders-use-substitutes = true;
-          download-buffer-size = 500000000;
           experimental-features = [
             "nix-command"
             "flakes"
-            "ca-derivations"
             "auto-allocate-uids"
+          ]
+          ++ lib.optionals (!isLix) [
+            "ca-derivations"
             "pipe-operators"
             "dynamic-derivations"
           ];
@@ -282,6 +285,9 @@ in
           ];
 
           use-xdg-base-directories = true;
+        }
+        // lib.optionalAttrs (!isLix) {
+          download-buffer-size = 500000000;
         };
       };
   };
