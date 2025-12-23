@@ -19,7 +19,7 @@ in
     home.packages = with pkgs; [
       winetricks
       # wineWowPackages.stable
-      wineWowPackages.waylandFull
+      wineWowPackages.unstableFull
     ];
   };
 }
