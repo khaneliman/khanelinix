@@ -111,7 +111,8 @@ in
                     "keyword decoration:active_opacity 1.0;"
                     "keyword decoration:inactive_opacity 1.0;"
                     "keyword decoration:fullscreen_opacity 1.0;"
-                    "keyword misc:vfr 0"
+                    "keyword misc:vfr 0;"
+                    "keyword misc:vrr 0"
                   ]
                 }'
 
@@ -141,7 +142,8 @@ in
                     "keyword decoration:active_opacity 0.95;"
                     "keyword decoration:inactive_opacity 0.9;"
                     "keyword decoration:fullscreen_opacity 1.0;"
-                    "keyword misc:vfr 1"
+                    "keyword misc:vfr 1;"
+                    "keyword misc:vrr 2"
                   ]
                 }'
 
