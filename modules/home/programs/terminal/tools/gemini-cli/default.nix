@@ -41,6 +41,9 @@ in
           vimMode = true;
           preferredEditor = "nvim";
           previewFeatures = true;
+          checkpointing = {
+            enabled = true;
+          };
         };
         ide.enabled = true;
         privacy.usageStatisticsEnabled = false;
