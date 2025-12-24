@@ -44,6 +44,11 @@ in
           checkpointing = {
             enabled = true;
           };
+          sessionRetention = {
+            enabled = true;
+            maxAge = "30d";
+            maxCount = 100;
+          };
         };
         ide.enabled = true;
         privacy.usageStatisticsEnabled = false;
