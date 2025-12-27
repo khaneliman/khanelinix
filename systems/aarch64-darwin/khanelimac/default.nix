@@ -1,6 +1,7 @@
 {
-  lib,
   config,
+  lib,
+  pkgs,
 
   ...
 }:
@@ -18,6 +19,12 @@ in
 
     environments = {
       home-network = enabled;
+    };
+
+    nix = {
+      enable = true;
+      package = pkgs.lixPackageSets.stable.lix;
+      useLix = true;
     };
 
     security = {
