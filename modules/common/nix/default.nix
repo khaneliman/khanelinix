@@ -206,7 +206,7 @@ in
         # This will additionally add your inputs to the system's legacy channels
         # Making legacy nix commands consistent as well
         # NOTE: We link inputs here
-        nixPath = [ "nixpkgs=flake:nixpkgs" ];
+        nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
         optimise.automatic = true;
 
         # pin the registry to avoid downloading and evaluating a new nixpkgs version every time
