@@ -48,23 +48,39 @@ jobs:
           extra_nix_config: |
             access-tokens = github.com=${{github.token}}
       - name: Update flake.lock
-        uses: DeterminateSystems/update-flake-lock@v28
+        run: nix flake update
+      - name: Check for nixpkgs updates
+        id: check-nixpkgs
+        run: |
+          if git diff flake.lock | grep -E '"nixpkgs":|"nixpkgs-unstable":'; then
+            echo "nixpkgs_updated=true" >> "$GITHUB_OUTPUT"
+            echo "✓ nixpkgs or nixpkgs-unstable was updated"
+          else
+            echo "nixpkgs_updated=false" >> "$GITHUB_OUTPUT"
+            echo "✗ nixpkgs inputs were not updated, skipping PR"
+          fi
+      - name: Commit changes
+        if: steps.check-nixpkgs.outputs.nixpkgs_updated == 'true'
+        run: |
+          git add flake.lock
+          git commit -m "flake.lock: update"
+      - name: Create Pull Request
+        if: steps.check-nixpkgs.outputs.nixpkgs_updated == 'true'
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ steps.app-token.outputs.token || github.token }}
-          git-committer-name: ${{ steps.user-info.outputs.name || 'github-actions[bot]' }}
-          git-committer-email: ${{ steps.user-info.outputs.email || '41898282+github-actions[bot]@users.noreply.github.com' }}
-          git-author-name: ${{ steps.user-info.outputs.name || 'github-actions[bot]' }}
-          git-author-email: ${{ steps.user-info.outputs.email || '41898282+github-actions[bot]@users.noreply.github.com' }}
-          pr-body: |
-            Automated update by the [update-flake-lock] GitHub Action.
+          branch: update-flake-lock
+          delete-branch: true
+          title: "flake.lock: update"
+          body: |
+            Automated update by the update-flake-lock workflow.
 
-            ```
-            {{ env.GIT_COMMIT_MESSAGE }}
-            ```
+            This PR updates nixpkgs inputs.
 
-            This PR was most recently updated by workflow run [${{ github.run_id }}].
+            This PR was created by workflow run [${{ github.run_id }}].
 
-            [update-flake-lock]: https://github.com/DeterminateSystems/update-flake-lock
             [${{ github.run_id }}]: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          pr-labels: |
+          labels: |
             merge-queue
+          committer: ${{ steps.user-info.outputs.name || 'github-actions[bot]' }} <${{ steps.user-info.outputs.email || '41898282+github-actions[bot]@users.noreply.github.com' }}>
+          author: ${{ steps.user-info.outputs.name || 'github-actions[bot]' }} <${{ steps.user-info.outputs.email || '41898282+github-actions[bot]@users.noreply.github.com' }}>
