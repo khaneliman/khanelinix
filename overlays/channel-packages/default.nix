@@ -34,7 +34,8 @@ in
     thunderbird-unwrapped
     thunderbird-latest
 
-    # TODO: remove after https://nixpkgs-tracker.ocfox.me/?pr=472586
-    television
+    nixd
+    nixf
+    nixt
     ;
 }
