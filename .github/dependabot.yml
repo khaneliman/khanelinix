@@ -12,27 +12,47 @@ updates:
       interval: "weekly"
     commit-message:
       prefix: "templates/angular"
+    groups:
+      angular-dependencies:
+        patterns:
+          - "*"
   - package-ecosystem: "npm"
     directory: "/templates/node"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "templates/node"
+    groups:
+      node-dependencies:
+        patterns:
+          - "*"
   - package-ecosystem: "pip"
     directory: "/templates/python"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "templates/python"
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
   - package-ecosystem: "cargo"
     directory: "/templates/rust"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "templates/rust"
+    groups:
+      rust-dependencies:
+        patterns:
+          - "*"
   - package-ecosystem: "cargo"
     directory: "/templates/rust-web-server"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "templates/rust-web-server"
+    groups:
+      rust-web-server-dependencies:
+        patterns:
+          - "*"
