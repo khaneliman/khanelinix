@@ -1,4 +1,7 @@
 { inputs, ... }:
+let
+  inherit (inputs.nixpkgs) lib;
+in
 {
   imports = [
     ../lib
@@ -15,7 +18,7 @@
     extraInputsFlake = ./dev;
   };
 
-  partitionedAttrs = inputs.nixpkgs.lib.genAttrs [
+  partitionedAttrs = lib.genAttrs [
     "checks"
     "devShells"
     "formatter"
