@@ -12,8 +12,8 @@
 	"author": "NotAShelf",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/node": "^20.1.2",
+		"@types/node": "^25.0.3",
 		"typescript": "^5.0.4",
-		"typescript-language-server": "^3.3.2"
+		"typescript-language-server": "^5.1.3"
 	}
 }
