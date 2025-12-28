@@ -2,6 +2,8 @@
   config,
   lib,
   pkgs,
+  inputs,
+  system,
   ...
 }:
 let
@@ -15,6 +17,7 @@ let
 
   cfg = config.khanelinix.programs.terminal.tools.claude-code;
   mcpCfg = cfg.mcpServers;
+  mcpPkgs = inputs.mcp-servers-nix.packages.${system};
 in
 {
   options.khanelinix.programs.terminal.tools.claude-code.mcpServers = {
@@ -32,7 +35,7 @@ in
       {
         filesystem = {
           type = "stdio";
-          command = getExe pkgs.mcp-server-filesystem;
+          command = getExe mcpPkgs.mcp-server-filesystem;
           args = [ config.home.homeDirectory ] ++ mcpCfg.filesystem.directories;
         };
 
@@ -48,7 +51,7 @@ in
 
         memory = {
           type = "stdio";
-          command = getExe pkgs.mcp-server-memory;
+          command = getExe mcpPkgs.mcp-server-memory;
         };
 
         nixos = {
@@ -58,7 +61,7 @@ in
 
         sequential-thinking = {
           type = "stdio";
-          command = getExe pkgs.mcp-server-sequential-thinking;
+          command = getExe mcpPkgs.mcp-server-sequential-thinking;
         };
       }
     ];
