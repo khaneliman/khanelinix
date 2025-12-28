@@ -5,7 +5,7 @@ authors = ["Austin Horstman <khaneliman12@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-actix-web = "3"
+actix-web = "4"
 
 [dev-dependencies]
-actix-rt = "1"
+actix-rt = "2"
