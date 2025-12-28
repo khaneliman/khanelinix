@@ -9,7 +9,7 @@ let
   mkGotoKeymap =
     {
       key,
-      path,
+      dirPath,
       desc ? null,
       isCommand ? false,
     }:
@@ -18,11 +18,11 @@ let
         if isCommand then
           null # Commands must provide their own descriptions
         else
-          "Go to the ${path} directory";
+          "Go to the ${dirPath} directory";
 
       description = if desc != null then desc else defaultDesc;
 
-      runCmd = if isCommand then path else "cd ${path}";
+      runCmd = if isCommand then dirPath else "cd ${dirPath}";
     in
     {
       on = [
@@ -37,106 +37,106 @@ let
   gotoLocations = [
     {
       key = "/";
-      path = "/";
+      dirPath = "/";
     }
     {
       key = "h";
-      path = "~";
+      dirPath = "~";
       desc = "Go to the home directory";
     }
     {
       key = "c";
-      path = "~/.config";
+      dirPath = "~/.config";
     }
     {
       key = "t";
-      path = "/tmp";
+      dirPath = "/tmp";
     }
     {
       key = "<Space>";
-      path = "cd --interactive";
+      dirPath = "cd --interactive";
       isCommand = true;
       desc = "Go to a directory interactively";
     }
     {
       key = "D";
-      path = "~/Downloads";
+      dirPath = "~/Downloads";
     }
     {
       key = "G";
-      path = "~/${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents/"}gitlab";
+      dirPath = "~/${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents/"}gitlab";
     }
     {
       key = "M";
-      path = "/mnt";
+      dirPath = "/mnt";
     }
     {
       key = "d";
-      path = "~/Documents";
+      dirPath = "~/Documents";
     }
     {
       key = "e";
-      path = "/etc";
+      dirPath = "/etc";
     }
     {
       key = "g";
-      path = "~/${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents/"}github";
+      dirPath = "~/${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents/"}github";
     }
     {
       key = "i";
-      path = "/run/media/${config.khanelinix.user.name}";
+      dirPath = "/run/media/${config.khanelinix.user.name}";
       desc = "Go to the media directory";
     }
     {
       key = "l";
-      path = "~/.local/";
+      dirPath = "~/.local/";
     }
     {
       key = "m";
-      path = "/media";
+      dirPath = "/media";
     }
     {
       key = "o";
-      path = "/opt";
+      dirPath = "/opt";
     }
     {
       key = "p";
-      path = "~/Pictures";
+      dirPath = "~/Pictures";
     }
     {
       key = "R";
-      path = "/run";
+      dirPath = "/run";
     }
     {
       key = "r";
-      path = /* Bash */ ''shell -- ya emit cd "$(git rev-parse --show-toplevel)"'';
+      dirPath = /* Bash */ ''shell -- ya emit cd "$(git rev-parse --show-toplevel)"'';
       isCommand = true;
       desc = "Go to the root of git directory";
     }
     {
       key = "s";
-      path = "/srv";
+      dirPath = "/srv";
     }
     {
       key = "u";
-      path = "/usr";
+      dirPath = "/usr";
     }
     {
       key = "v";
-      path = "/var";
+      dirPath = "/var";
     }
     {
       key = "w";
-      path = "~/.local/share/wallpapers";
+      dirPath = "~/.local/share/wallpapers";
     }
     {
       key = "n";
-      path = "/run/current-system";
+      dirPath = "/run/current-system";
       desc = "Go to the current NixOS system profile";
     }
     {
       key = "H";
-      path =
+      dirPath =
         if pkgs.stdenv.hostPlatform.isLinux then
           "/nix/var/nix/profiles/per-user/${config.khanelinix.user.name}/home-manager"
         else
