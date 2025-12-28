@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib) concatStringsSep mkIf;
+  inherit (lib) mkIf;
 
   cfg = config.khanelinix.services.earlyoom;
 in
@@ -29,7 +29,7 @@ in
       extraArgs =
         let
           # Don't kill please...
-          appsToAvoid = concatStringsSep "|" [
+          appsToAvoid = lib.concatStringsSep "|" [
             "(h|H)yprland"
             "(x|X)wayland"
             "bash"
@@ -56,7 +56,7 @@ in
           ];
 
           # Burn it with fire!
-          appsToPrefer = concatStringsSep "|" [
+          appsToPrefer = lib.concatStringsSep "|" [
             "Web Content"
             "Isolated Web Co"
             "chrom(e|ium).*"

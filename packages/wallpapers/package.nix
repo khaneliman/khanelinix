@@ -8,7 +8,7 @@ let
   mkWallpaper =
     name: src:
     let
-      fileName = builtins.baseNameOf src;
+      fileName = baseNameOf src;
       pkg = stdenvNoCC.mkDerivation {
         inherit name src;
 
@@ -26,14 +26,14 @@ let
     pkg;
   # Helper function to get filename without extension
   getFileNameWithoutExtension =
-    path:
+    filePath:
     let
-      baseName = builtins.baseNameOf path;
+      baseName = baseNameOf filePath;
       splitName = lib.splitString "." baseName;
     in
     if lib.length splitName > 1 then lib.concatStringsSep "." (lib.init splitName) else baseName;
 
-  names = builtins.map getFileNameWithoutExtension images;
+  names = map getFileNameWithoutExtension images;
   wallpapers = lib.foldl (
     acc: image:
     let
