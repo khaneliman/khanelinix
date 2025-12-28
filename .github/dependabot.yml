@@ -5,5 +5,34 @@ updates:
     schedule:
       interval: "daily"
     commit-message:
-      # Prefix all commit messages with "npm: "
       prefix: ".github"
+  - package-ecosystem: "npm"
+    directory: "/templates/angular"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "templates/angular"
+  - package-ecosystem: "npm"
+    directory: "/templates/node"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "templates/node"
+  - package-ecosystem: "pip"
+    directory: "/templates/python"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "templates/python"
+  - package-ecosystem: "cargo"
+    directory: "/templates/rust"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "templates/rust"
+  - package-ecosystem: "cargo"
+    directory: "/templates/rust-web-server"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "templates/rust-web-server"
