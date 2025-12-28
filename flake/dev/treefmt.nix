@@ -43,6 +43,7 @@
           nixf-diagnose = {
             enable = true;
             priority = -1;
+            package = pkgs.nixf-diagnose;
           };
           nixfmt = {
             enable = true;
