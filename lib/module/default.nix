@@ -1,12 +1,11 @@
 { inputs }:
 let
-  inherit (inputs.nixpkgs.lib)
-    mapAttrs
+
+  inherit (inputs.nixpkgs) lib;
+  inherit (lib)
     mkOption
     types
     toUpper
-    substring
-    stringLength
     mkDefault
     mkForce
     ;
@@ -78,20 +77,19 @@ rec {
   capitalize =
     s:
     let
-      len = stringLength s;
+      len = lib.stringLength s;
     in
-    if len == 0 then "" else (toUpper (substring 0 1 s)) + (substring 1 len s);
+    if len == 0 then "" else (toUpper (lib.substring 0 1 s)) + (lib.substring 1 len s);
 
   # Boolean utilities
   boolToNum = bool: if bool then 1 else 0;
 
   # Attribute manipulation utilities
-  default-attrs = mapAttrs (_key: mkDefault);
+  default-attrs = lib.mapAttrs (_key: mkDefault);
 
-  force-attrs = mapAttrs (_key: mkForce);
+  force-attrs = lib.mapAttrs (_key: mkForce);
 
-  nested-default-attrs = mapAttrs (_key: default-attrs);
-
-  nested-force-attrs = mapAttrs (_key: force-attrs);
+  nested-default-attrs = lib.mapAttrs (_key: default-attrs);
+  nested-force-attrs = lib.mapAttrs (_key: force-attrs);
 }
 // base64Lib

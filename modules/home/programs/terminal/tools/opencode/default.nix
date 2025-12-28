@@ -4,7 +4,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkEnableOption mapAttrs;
+  inherit (lib) mkIf mkEnableOption;
 
   cfg = config.khanelinix.programs.terminal.tools.opencode;
 
@@ -14,7 +14,7 @@ let
   # Build OpenCode agent configurations from raw agent data
   buildAgentConfigs =
     agents:
-    mapAttrs (
+    lib.mapAttrs (
       name: agentText:
       let
         description = aiTools.opencode.extractDescription agentText;

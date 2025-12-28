@@ -32,7 +32,7 @@ in
           # it contains a space (which is unlikely!)
           dquote = str: "\"" + str + "\"";
 
-          makeBinPathList = map (path: path + "/bin");
+          makeBinPathList = map (pkgPath: pkgPath + "/bin");
         in
         lib.optionalString pkgs.stdenv.hostPlatform.isDarwin /* fish */ ''
           export NIX_PATH="darwin-config=$HOME/.nixpkgs/darwin-configuration.nix:$HOME/.nix-defexpr/channels:$NIX_PATH"

@@ -79,7 +79,7 @@ in
                           "watch"
                           "wc"
                         ];
-                        transformedWords = builtins.map (
+                        transformedWords = map (
                           word: if builtins.elem word conflictingCommands then "command " + word else word
                         ) words;
                       in
