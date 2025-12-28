@@ -3,8 +3,30 @@ let
   inherit (inputs.nixpkgs.lib) filterAttrs mapAttrs';
 in
 {
+  /**
+    Create an extended library with the flake's overlay.
+
+    # Inputs
+
+    `flake`
+
+    : 1\. Function argument
+
+    `nixpkgs`
+
+    : 2\. Function argument
+  */
   mkExtendedLib = flake: nixpkgs: nixpkgs.lib.extend flake.lib.overlay;
 
+  /**
+    Create a nixpkgs configuration with overlays and unfree packages enabled.
+
+    # Inputs
+
+    `flake`
+
+    : 1\. Function argument
+  */
   mkNixpkgsConfig = flake: {
     overlays = builtins.attrValues flake.overlays;
     config = {
@@ -27,6 +49,23 @@ in
     };
   };
 
+  /**
+    Get home configurations matching a specific system and hostname.
+
+    # Inputs
+
+    `flake`
+
+    : Flake instance
+
+    `system`
+
+    : System architecture
+
+    `hostname`
+
+    : Host name
+  */
   mkHomeConfigs =
     {
       flake,
@@ -42,6 +81,31 @@ in
       _name: homeConfig: homeConfig.system == system && homeConfig.hostname == hostname
     ) allHomes;
 
+  /**
+    Create a Home Manager configuration for a system.
+
+    # Inputs
+
+    `extendedLib`
+
+    : Extended library
+
+    `inputs`
+
+    : Flake inputs
+
+    `system`
+
+    : System architecture
+
+    `matchingHomes`
+
+    : Matching home configurations
+
+    `isNixOS`
+
+    : Whether the system is NixOS
+  */
   mkHomeManagerConfig =
     {
       extendedLib,
@@ -104,6 +168,27 @@ in
     else
       { };
 
+  /**
+    Create special arguments for system configurations.
+
+    # Inputs
+
+    `inputs`
+
+    : Flake inputs
+
+    `hostname`
+
+    : Host name
+
+    `username`
+
+    : User name
+
+    `extendedLib`
+
+    : Extended library
+  */
   mkSpecialArgs =
     {
       inputs,

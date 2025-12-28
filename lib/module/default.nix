@@ -13,8 +13,19 @@ let
   base64Lib = import ../base64 { inherit inputs; };
 in
 rec {
-  # Original flake-parts module utilities
-  # Enable a module with optional configuration
+  /**
+    Enable a module with optional configuration.
+
+    # Inputs
+
+    `module`
+
+    : 1\. Function argument
+
+    `config`
+
+    : 2\. Function argument
+  */
   enable =
     module: config:
     {
@@ -22,14 +33,46 @@ rec {
     }
     // config;
 
-  # Conditionally enable modules based on system
+  /**
+    Conditionally enable modules based on system.
+
+    # Inputs
+
+    `system`
+
+    : 1\. Function argument
+
+    `modules`
+
+    : 2\. Function argument
+  */
   enableForSystem =
     system: modules:
     builtins.filter (
       mod: mod.systems or [ ] == [ ] || builtins.elem system (mod.systems or [ ])
     ) modules;
 
-  # Create a module with common options
+  /**
+    Create a module with common options.
+
+    # Inputs
+
+    `name`
+
+    : Module name
+
+    `description`
+
+    : Module description
+
+    `options`
+
+    : Module options
+
+    `config`
+
+    : Module configuration
+  */
   mkModule =
     {
       name,
@@ -54,26 +97,100 @@ rec {
 
   # Migrated khanelinix utilities
   # Option creation helpers
+
+  /**
+    Create a nixpkgs option.
+
+    # Inputs
+
+    `type`
+
+    : 1\. Function argument
+
+    `default`
+
+    : 2\. Function argument
+
+    `description`
+
+    : 3\. Function argument
+  */
   mkOpt =
     type: default: description:
     mkOption { inherit type default description; };
 
+  /**
+    Create a nixpkgs option without a description.
+
+    # Inputs
+
+    `type`
+
+    : 1\. Function argument
+
+    `default`
+
+    : 2\. Function argument
+  */
   mkOpt' = type: default: mkOpt type default null;
 
+  /**
+    Create a boolean nixpkgs option.
+
+    # Inputs
+
+    `type`
+
+    : 1\. Function argument
+
+    `default`
+
+    : 2\. Function argument
+
+    `description`
+
+    : 3\. Function argument
+  */
   mkBoolOpt = mkOpt types.bool;
 
+  /**
+    Create a boolean nixpkgs option without a description.
+
+    # Inputs
+
+    `type`
+
+    : 1\. Function argument
+
+    `default`
+
+    : 2\. Function argument
+  */
   mkBoolOpt' = mkOpt' types.bool;
 
-  # Standard enable/disable patterns
+  /**
+    Standard enabled pattern.
+  */
   enabled = {
     enable = true;
   };
 
+  /**
+    Standard disabled pattern.
+  */
   disabled = {
     enable = false;
   };
 
-  # String utilities
+  /**
+    Capitalize a string.
+
+    # Inputs
+
+    `s`
+
+    : 1\. Function argument
+  */
   capitalize =
     s:
     let
@@ -81,15 +198,59 @@ rec {
     in
     if len == 0 then "" else (toUpper (lib.substring 0 1 s)) + (lib.substring 1 len s);
 
-  # Boolean utilities
+  /**
+    Convert a boolean to a number.
+
+    # Inputs
+
+    `bool`
+
+    : 1\. Function argument
+  */
   boolToNum = bool: if bool then 1 else 0;
 
-  # Attribute manipulation utilities
+  /**
+    Apply mkDefault to all attributes in a set.
+
+    # Inputs
+
+    `set`
+
+    : 1\. Function argument
+  */
   default-attrs = lib.mapAttrs (_key: mkDefault);
 
+  /**
+    Apply mkForce to all attributes in a set.
+
+    # Inputs
+
+    `set`
+
+    : 1\. Function argument
+  */
   force-attrs = lib.mapAttrs (_key: mkForce);
 
+  /**
+    Apply default-attrs to nested attribute sets.
+
+    # Inputs
+
+    `set`
+
+    : 1\. Function argument
+  */
   nested-default-attrs = lib.mapAttrs (_key: default-attrs);
+
+  /**
+    Apply force-attrs to nested attribute sets.
+
+    # Inputs
+
+    `set`
+
+    : 1\. Function argument
+  */
   nested-force-attrs = lib.mapAttrs (_key: force-attrs);
 }
 // base64Lib

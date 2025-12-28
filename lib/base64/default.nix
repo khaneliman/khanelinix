@@ -24,6 +24,15 @@ rec {
   # print(''.join([ chr(n) for n in range(1, 256) ]), file=open('ascii', 'w'))
   ascii = builtins.readFile ./ascii;
 
+  /**
+    Decode a base64 string.
+
+    # Inputs
+
+    `str`
+
+    : 1\. Function argument
+  */
   decode =
     str:
     let

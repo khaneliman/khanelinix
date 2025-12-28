@@ -1,4 +1,25 @@
 { inputs }:
+/**
+  Create a Darwin system configuration.
+
+  # Inputs
+
+  `system`
+
+  : System architecture
+
+  `hostname`
+
+  : Host name
+
+  `username`
+
+  : User name
+
+  `modules`
+
+  : List of additional modules
+*/
 {
   system,
   hostname,
