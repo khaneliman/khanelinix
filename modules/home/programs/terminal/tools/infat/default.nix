@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf elem;
+  inherit (lib) mkIf;
 
   cfg = config.khanelinix.programs.terminal.tools.infat;
 
@@ -31,7 +31,8 @@ let
   };
 
   # Use IINA if installed, otherwise fall back to QuickTime Player
-  videoPlayer = if elem pkgs.iina config.home.packages then bundleIds.iina else "QuickTime Player";
+  videoPlayer =
+    if lib.elem pkgs.iina config.home.packages then bundleIds.iina else "QuickTime Player";
 in
 {
   options.khanelinix.programs.terminal.tools.infat = {
