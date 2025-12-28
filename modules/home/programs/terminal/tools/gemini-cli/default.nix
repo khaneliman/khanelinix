@@ -39,7 +39,7 @@ in
         };
         general = {
           vimMode = true;
-          preferredEditor = "nvim";
+          preferredEditor = "neovim";
           previewFeatures = true;
           checkpointing = {
             enabled = true;
