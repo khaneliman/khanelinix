@@ -43,6 +43,10 @@ in
           command = "input=$(cat); echo \"[$(echo \"$input\" | jq -r '.model.display_name')] 📁 $(basename \"$(echo \"$input\" | jq -r '.workspace.current_dir')\")\"";
           padding = 0;
         };
+
+        env = {
+          USE_BUILTIN_RIPGREP = "0";
+        };
       };
 
       inherit ((import (lib.getFile "modules/common/ai-tools") { inherit lib; }).claudeCode) agents;
