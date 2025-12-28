@@ -94,7 +94,7 @@ in
           btop = enabled;
           cava = enabled;
           delta = enabled;
-          firefox = {
+          firefox = mkIf config.khanelinix.programs.graphical.browsers.firefox.enable {
             profiles.${config.khanelinix.user.name} = {
               enable = true;
               force = true;
