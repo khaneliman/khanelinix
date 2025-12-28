@@ -11,8 +11,7 @@ let
 
   cfg = config.khanelinix.programs.graphical.desktop-environment.gnome;
 
-  get-wallpaper =
-    wallpaper: if lib.isDerivation wallpaper then builtins.toString wallpaper else wallpaper;
+  get-wallpaper = wallpaper: if lib.isDerivation wallpaper then toString wallpaper else wallpaper;
 in
 {
   options.khanelinix.programs.graphical.desktop-environment.gnome = {

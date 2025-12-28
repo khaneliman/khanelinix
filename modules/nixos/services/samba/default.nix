@@ -6,7 +6,6 @@
 }:
 let
   inherit (lib)
-    mapAttrs
     mkEnableOption
     mkIf
     optionalAttrs
@@ -65,7 +64,7 @@ in
           browseable = bool-to-yes-no cfg.browseable;
         };
       }
-      // mapAttrs (
+      // lib.mapAttrs (
         _name: value:
         {
           inherit (value) path comment;

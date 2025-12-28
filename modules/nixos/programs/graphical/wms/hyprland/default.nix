@@ -6,7 +6,6 @@
 }:
 let
   inherit (lib)
-    concatStringsSep
     makeBinPath
     mkIf
     types
@@ -109,7 +108,7 @@ in
                 echo "=== Gamemode Start: $(date) ===" > "$LOG_FILE"
 
                 hyprctl --batch '${
-                  concatStringsSep " " [
+                  lib.concatStringsSep " " [
                     "keyword animations:enabled 0;"
                     "keyword decoration:shadow:enabled 0;"
                     "keyword decoration:blur:enabled 0;"
@@ -160,7 +159,7 @@ in
                 echo "=== Gamemode End: $(date) ===" > "$LOG_FILE"
 
                 hyprctl --batch '${
-                  concatStringsSep " " [
+                  lib.concatStringsSep " " [
                     "keyword animations:enabled 1;"
                     "keyword decoration:shadow:enabled 1;"
                     "keyword decoration:blur:enabled 1;"

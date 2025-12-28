@@ -7,16 +7,16 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.strings) optionalString concatStringsSep;
+  inherit (lib.strings) optionalString;
   inherit (lib.attrsets) mapAttrsToList;
 
   cfg = config.khanelinix.programs.terminal.tools.run-as-service;
 
   sessionPath = optionalString (config.home.sessionPath != [ ]) ''
-    export PATH=${concatStringsSep ":" config.home.sessionPath}:$PATH
+    export PATH=${lib.strings.concatStringsSep ":" config.home.sessionPath}:$PATH
   '';
 
-  sessionVariables = concatStringsSep "\n" (
+  sessionVariables = lib.strings.concatStringsSep "\n" (
     mapAttrsToList (key: value: ''
       export ${key}="${toString value}"
     '') config.home.sessionVariables

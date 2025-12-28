@@ -1,8 +1,6 @@
 { lib, ... }:
 
 let
-  inherit (lib) mapAttrs;
-
   aiCommands = import ./commands.nix { inherit lib; };
   aiAgents = import ./agents.nix { inherit lib; };
 
@@ -33,7 +31,7 @@ let
 
   convertCommandsToGemini =
     commands:
-    mapAttrs (name: prompt: {
+    lib.mapAttrs (name: prompt: {
       inherit prompt;
       description =
         let
@@ -48,7 +46,7 @@ let
 
   convertAgentsToGemini =
     agents:
-    mapAttrs (
+    lib.mapAttrs (
       name: agentText:
       let
         description = extractDescription agentText;

@@ -9,9 +9,7 @@ let
   inherit (lib)
     types
     mkIf
-    length
     optionalString
-    concatStringsSep
     getExe
     ;
   inherit (lib.khanelinix) mkOpt enabled;
@@ -47,8 +45,8 @@ in
         "kvm.ignore_msrs=1"
       ];
       extraModprobeConfig = optionalString (
-        length cfg.vfioIds > 0
-      ) "options vfio-pci ids=${concatStringsSep "," cfg.vfioIds}";
+        lib.length cfg.vfioIds > 0
+      ) "options vfio-pci ids=${lib.concatStringsSep "," cfg.vfioIds}";
     };
 
     environment.systemPackages = with pkgs; [ virt-manager ];
@@ -80,7 +78,7 @@ in
 
           verbatimConfig = ''
             s = []
-            user = "+${builtins.toString config.users.users.${user.name}.uid}"
+            user = "+${toString config.users.users.${user.name}.uid}"
           '';
         };
       };

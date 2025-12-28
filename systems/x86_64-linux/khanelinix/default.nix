@@ -93,14 +93,15 @@ in
           let
             mkShare =
               {
-                path,
+                sharePath,
                 comment,
                 readOnly ? false,
                 ownerOnly ? false,
               }:
               {
                 browseable = true;
-                inherit comment path;
+                inherit comment;
+                path = sharePath;
                 only-owner-editable = ownerOnly;
                 public = true;
                 read-only = readOnly;
@@ -109,12 +110,12 @@ in
           {
             public = mkShare {
               comment = "Home Public folder";
-              path = "/home/${config.khanelinix.user.name}/Public/";
+              sharePath = "/home/${config.khanelinix.user.name}/Public/";
             };
 
             games = mkShare {
               comment = "Games folder";
-              path = "/mnt/games/";
+              sharePath = "/mnt/games/";
               ownerOnly = true;
             };
           };

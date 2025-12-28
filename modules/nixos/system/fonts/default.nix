@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf mapAttrs;
+  inherit (lib) mkIf;
 
   cfg = config.khanelinix.system.fonts;
 in
@@ -41,7 +41,7 @@ in
               "Noto Color Emoji"
             ];
           in
-          mapAttrs (_: fonts: fonts ++ common) {
+          lib.mapAttrs (_: fonts: fonts ++ common) {
             serif = [ "Noto Serif" ];
             sansSerif = [ "Lexend" ];
             emoji = [ "Noto Color Emoji" ];

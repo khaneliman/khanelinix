@@ -31,7 +31,7 @@ in
 
   config = mkIf cfg.enable {
     environment.shellInit = /* bash */ ''
-      ${getExe' pkgs.coreutils "timeout"} ${builtins.toString cfg.agentTimeout} ${getExe' pkgs.gnupg "gpgconf"} --launch gpg-agent
+      ${getExe' pkgs.coreutils "timeout"} ${toString cfg.agentTimeout} ${getExe' pkgs.gnupg "gpgconf"} --launch gpg-agent
       gpg_agent_timeout_status=$?
 
       if [ "$gpg_agent_timeout_status" = 124 ]; then

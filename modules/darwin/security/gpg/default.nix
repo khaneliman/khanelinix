@@ -35,7 +35,7 @@ in
       export GPG_TTY="$(tty)"
       export SSH_AUTH_SOCK=$(${getExe' pkgs.gnupg "gpgconf"} --list-dirs agent-ssh-socket)
 
-      ${getExe' pkgs.coreutils "timeout"} ${builtins.toString cfg.agentTimeout} ${getExe' pkgs.gnupg "gpgconf"} --launch gpg-agent
+      ${getExe' pkgs.coreutils "timeout"} ${toString cfg.agentTimeout} ${getExe' pkgs.gnupg "gpgconf"} --launch gpg-agent
       gpg_agent_timeout_status=$?
 
       if [ "$gpg_agent_timeout_status" = 124 ]; then

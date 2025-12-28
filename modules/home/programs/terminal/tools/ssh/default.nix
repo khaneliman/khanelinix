@@ -17,7 +17,7 @@ let
   cfg = config.khanelinix.programs.terminal.tools.ssh;
 
   user = config.users.users.${config.khanelinix.user.name};
-  user-id = builtins.toString user.uid;
+  user-id = toString user.uid;
 
   other-hosts = lib.filterAttrs (_key: host: (host.config.khanelinix.user.name or null) != null) (
     (inputs.self.nixosConfigurations or { }) // (inputs.self.darwinConfigurations or { })
@@ -55,7 +55,7 @@ in
             let
               remote = other-hosts.${name};
               remote-user-name = remote.config.khanelinix.user.name;
-              remote-user-id = builtins.toString remote.config.users.users.${remote-user-name}.uid;
+              remote-user-id = toString remote.config.users.users.${remote-user-name}.uid;
             in
             acc
             // {

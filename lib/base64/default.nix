@@ -1,18 +1,14 @@
 { inputs }:
 let
-  inherit (inputs.nixpkgs.lib)
-    concatLists
+  inherit (inputs.nixpkgs) lib;
+  inherit (lib)
     concatMapStrings
-    foldl'
-    genList
     hasSuffix
     imap0
-    length
     mod
     nameValuePair
     stringToCharacters
     sublist
-    substring
     take
     ;
 in
@@ -41,22 +37,22 @@ rec {
 
       numbers64 = map (c: base64Table.${c}) (stringToCharacters str);
 
-      allBytes = concatLists (
-        genList (
+      allBytes = lib.concatLists (
+        lib.genList (
           i:
           let
-            v = foldl' (acc: el: acc * 64 + el) 0 (sublist (i * 4) 4 numbers64);
+            v = lib.foldl' (acc: el: acc * 64 + el) 0 (sublist (i * 4) 4 numbers64);
           in
           [
             (mod (v / 256 / 256) 256)
             (mod (v / 256) 256)
             (mod v 256)
           ]
-        ) (length numbers64 / 4)
+        ) (lib.length numbers64 / 4)
       );
 
-      finalBytes = take (length allBytes - paddingCount) allBytes;
+      finalBytes = take (lib.length allBytes - paddingCount) allBytes;
 
     in
-    concatMapStrings (n: substring (n - 1) 1 ascii) finalBytes;
+    concatMapStrings (n: lib.strings.substring (n - 1) 1 ascii) finalBytes;
 }

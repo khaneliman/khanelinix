@@ -1,6 +1,6 @@
 { lib, ... }:
 let
-  inherit (lib) mapAttrs mkOption types;
+  inherit (lib) mkOption types;
 in
 rec {
   mkOpt =
@@ -32,11 +32,11 @@ rec {
   # `boolToNum true` -> 1
   boolToNum = bool: if bool then 1 else 0;
 
-  default-attrs = mapAttrs (_key: lib.mkDefault);
+  default-attrs = lib.mapAttrs (_key: lib.mkDefault);
 
-  force-attrs = mapAttrs (_key: lib.mkForce);
+  force-attrs = lib.mapAttrs (_key: lib.mkForce);
 
-  nested-default-attrs = mapAttrs (_key: default-attrs);
+  nested-default-attrs = lib.mapAttrs (_key: default-attrs);
 
-  nested-force-attrs = mapAttrs (_key: force-attrs);
+  nested-force-attrs = lib.mapAttrs (_key: force-attrs);
 }

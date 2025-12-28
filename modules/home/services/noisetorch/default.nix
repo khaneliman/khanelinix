@@ -34,7 +34,7 @@ in
       Service = {
         Type = "simple";
         ExecStart = "${getExe (osCfg.package or pkgs.noisetorch)} -i -s ${osCfg.device or ""} -t ${
-          builtins.toString (osCfg.threshold or 95)
+          toString (osCfg.threshold or 95)
         }";
         ExecStop = "${getExe (osCfg.package or pkgs.noisetorch)} -u";
         Restart = "always";

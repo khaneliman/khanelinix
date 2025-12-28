@@ -73,7 +73,7 @@ in
           "Music/.keep".text = "";
           "Pictures/.keep".text = "";
           "Videos/.keep".text = "";
-          "Pictures/${cfg.icon.fileName or (builtins.baseNameOf cfg.icon)}".source = cfg.icon;
+          "Pictures/${cfg.icon.fileName or (baseNameOf cfg.icon)}".source = cfg.icon;
         };
 
         homeDirectory = mkDefault cfg.home;

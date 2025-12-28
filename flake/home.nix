@@ -12,14 +12,16 @@ let
 
   generateHomeConfiguration =
     _name:
-    {
+    args@{
       system,
       username,
       userAtHost,
       hostname,
-      path,
       ...
     }:
+    let
+      configPath = args.path;
+    in
     {
       name = userAtHost; # Use the full "username@hostname" as key
       value = self.lib.system.mkHome {
@@ -29,7 +31,7 @@ let
           hostname
           username
           ;
-        modules = [ path ];
+        modules = [ configPath ];
       };
     };
 in

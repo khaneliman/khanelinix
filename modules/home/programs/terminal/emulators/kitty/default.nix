@@ -79,7 +79,7 @@ in
 
         extraConfig =
           let
-            fontFeatures = ffs: builtins.concatStringsSep "\n" (builtins.map (ff: "font_features ${ff}") ffs);
+            fontFeatures = ffs: builtins.concatStringsSep "\n" (map (ff: "font_features ${ff}") ffs);
 
             # TODO: move to font specific module
             monaspaceFontFeatures = "+calt +liga +dlig +ss01 +ss02 +ss03 +ss04 +ss05 +ss06 +ss07 +ss08 +ss09 +ss10";
@@ -131,15 +131,13 @@ in
             [
               (fontFeatures (
                 builtins.concatLists (
-                  builtins.map
-                    (font: builtins.map (style: "${font}-${style} ${monaspaceFontFeatures}") monaspaceStyles)
-                    [
-                      (removeSpaces monaspaceArgon)
-                      (removeSpaces monaspaceKrypton)
-                      (removeSpaces monaspaceNeon)
-                      (removeSpaces monaspaceRadon)
-                      (removeSpaces monaspaceXenon)
-                    ]
+                  map (font: map (style: "${font}-${style} ${monaspaceFontFeatures}") monaspaceStyles) [
+                    (removeSpaces monaspaceArgon)
+                    (removeSpaces monaspaceKrypton)
+                    (removeSpaces monaspaceNeon)
+                    (removeSpaces monaspaceRadon)
+                    (removeSpaces monaspaceXenon)
+                  ]
                 )
               ))
 

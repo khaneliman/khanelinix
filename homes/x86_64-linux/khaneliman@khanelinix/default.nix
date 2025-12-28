@@ -95,7 +95,7 @@ in
             enableDebug = false;
 
             appendConfig = /* bash */ ''
-              exec-once = hyprctl setcursor ${config.khanelinix.theme.gtk.cursor.name} ${builtins.toString config.khanelinix.theme.gtk.cursor.size}
+              exec-once = hyprctl setcursor ${config.khanelinix.theme.gtk.cursor.name} ${toString config.khanelinix.theme.gtk.cursor.size}
             '';
 
             prependConfig = # bash

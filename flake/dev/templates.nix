@@ -3,13 +3,13 @@ let
   templatesPath = ../../templates;
 
   scanTemplates =
-    path:
+    dirPath:
     let
-      entries = builtins.readDir path;
+      entries = builtins.readDir dirPath;
       templateDirs = lib.filterAttrs (_name: type: type == "directory") entries;
     in
     lib.mapAttrs (name: _: {
-      path = path + "/${name}";
+      path = dirPath + "/${name}";
       description = "${name} template";
     }) templateDirs;
 

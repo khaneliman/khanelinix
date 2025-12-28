@@ -10,7 +10,7 @@ let
   cfg = config.khanelinix.programs.terminal.tools.ssh;
 
   user = config.users.users.${config.khanelinix.user.name};
-  user-id = builtins.toString user.uid;
+  user-id = toString user.uid;
 
   hosts = import ./hosts.nix;
 
@@ -28,7 +28,7 @@ let
       forward-gpg =
         lib.optionalString (config.programs.gnupg.agent.enable && remote.gpgAgent)
           "  RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra\n  RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh";
-      port-expr = lib.optionalString (remote.system == "nixos") "  Port ${builtins.toString cfg.port}";
+      port-expr = lib.optionalString (remote.system == "nixos") "  Port ${toString cfg.port}";
     in
     lib.concatStringsSep "\n" (
       lib.filter (x: x != "") [

@@ -119,7 +119,7 @@ let
   generateOutputSettings =
     outputList: barType:
     builtins.listToAttrs (
-      builtins.map (outputName: {
+      map (outputName: {
         name = outputName;
         value = mkMerge [
           (mkBarSettings barType)

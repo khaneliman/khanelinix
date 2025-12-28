@@ -64,7 +64,7 @@ in
         // lib.optionalAttrs (cfg.icon != null) {
           ".face".source = cfg.icon;
           ".face.icon".source = cfg.icon;
-          "Pictures/${cfg.icon.fileName or (builtins.baseNameOf cfg.icon)}".source = cfg.icon;
+          "Pictures/${cfg.icon.fileName or (baseNameOf cfg.icon)}".source = cfg.icon;
         };
 
         # Only set homeDirectory if cfg.home is not null

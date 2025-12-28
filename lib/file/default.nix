@@ -3,36 +3,35 @@
   self,
 }:
 let
-  inherit (inputs.nixpkgs.lib)
+  inherit (inputs.nixpkgs) lib;
+  inherit (lib)
     genAttrs
     filterAttrs
     hasPrefix
     hasSuffix
-    filter
-    foldl'
     ;
 
   getNixFiles' =
-    path:
+    dirPath:
     let
-      entries = builtins.readDir path;
+      entries = builtins.readDir dirPath;
     in
-    filter (name: hasSuffix ".nix" name) (builtins.attrNames entries);
+    lib.filter (name: hasSuffix ".nix" name) (builtins.attrNames entries);
 
-  mergeAttrs' = attrsList: foldl' (acc: attrs: acc // attrs) { } attrsList;
+  mergeAttrs' = attrsList: lib.foldl' (acc: attrs: acc // attrs) { } attrsList;
 in
 {
   # Read a file and return its contents
-  readFile = path: builtins.readFile path;
+  readFile = filePath: builtins.readFile filePath;
 
   # Check if a file exists
-  pathExists = path: builtins.pathExists path;
+  pathExists = filePath: builtins.pathExists filePath;
 
   # Import a nix file with error handling
-  safeImport = path: default: if builtins.pathExists path then import path else default;
+  safeImport = filePath: default: if builtins.pathExists filePath then import filePath else default;
 
   # Scan a directory and return directory names
-  scanDir = path: builtins.attrNames (builtins.readDir path);
+  scanDir = dirPath: builtins.attrNames (builtins.readDir dirPath);
 
   # Get a file path relative to the flake root (similar to Snowfall's get-file)
   getFile = relativePath: self + "/${relativePath}";
@@ -51,20 +50,20 @@ in
   # Returns a list of imported values
   # Usage: importFiles ./hooks { inherit pkgs; }
   importFiles =
-    path: args:
+    dirPath: args:
     let
-      nixFiles = getNixFiles' path;
+      nixFiles = getNixFiles' dirPath;
     in
-    map (name: import (path + "/${name}") args) nixFiles;
+    map (name: import (dirPath + "/${name}") args) nixFiles;
 
   # Import all .nix files from a directory and merge them into a single attribute set
   # Convenience function combining importFiles and mergeAttrs
   # Usage: importDir ./hooks { inherit pkgs; }
   importDir =
-    path: args:
+    dirPath: args:
     let
-      nixFiles = getNixFiles' path;
-      imported = map (name: import (path + "/${name}") args) nixFiles;
+      nixFiles = getNixFiles' dirPath;
+      imported = map (name: import (dirPath + "/${name}") args) nixFiles;
     in
     mergeAttrs' imported;
 
@@ -73,33 +72,33 @@ in
   # Usage: importDirPlain ./skills
   # Usage: importDirPlain ./skills [ "default.nix" ]  # exclude specific files
   importDirPlain =
-    path: exclude:
+    dirPath: exclude:
     let
       excludeList = if builtins.isList exclude then exclude else [ ];
-      nixFiles = filter (name: !(builtins.elem name excludeList)) (getNixFiles' path);
+      nixFiles = lib.filter (name: !(builtins.elem name excludeList)) (getNixFiles' dirPath);
     in
-    mergeAttrs' (map (name: import (path + "/${name}")) nixFiles);
+    mergeAttrs' (map (name: import (dirPath + "/${name}")) nixFiles);
 
   # Import all .nix files from all subdirectories, merging results
   # Useful for organizing related files in subdirs (e.g., skills/nix/, skills/git/)
   # Usage: importSubdirs ./skills { exclude = [ "default.nix" ]; }
   # Usage: importSubdirs ./commands { args = { inherit lib; }; }  # with args
   importSubdirs =
-    path:
+    dirPath:
     {
       exclude ? [ ],
       args ? null,
     }:
     let
-      entries = builtins.readDir path;
-      subdirs = filter (name: entries.${name} == "directory") (builtins.attrNames entries);
+      entries = builtins.readDir dirPath;
+      subdirs = lib.filter (name: entries.${name} == "directory") (builtins.attrNames entries);
       importSubdir =
         dir:
         let
-          dirPath = path + "/${dir}";
-          files = filter (f: !(builtins.elem f exclude)) (getNixFiles' dirPath);
+          subDirPath = dirPath + "/${dir}";
+          files = lib.filter (f: !(builtins.elem f exclude)) (getNixFiles' subDirPath);
           importFile =
-            f: if args == null then import (dirPath + "/${f}") else import (dirPath + "/${f}") args;
+            f: if args == null then import (subDirPath + "/${f}") else import (subDirPath + "/${f}") args;
         in
         mergeAttrs' (map importFile files);
     in
@@ -107,7 +106,7 @@ in
 
   # Recursively discover and import all Nix modules in a directory tree
   importModulesRecursive =
-    path:
+    dirPath:
     let
       # Helper function to recursively walk directories
       walkDir =
@@ -117,7 +116,7 @@ in
           entryNames = builtins.attrNames currentEntries;
 
           # Get all directories that contain default.nix
-          directoriesWithDefault = builtins.filter (
+          directoriesWithDefault = lib.filter (
             name:
             currentEntries.${name} == "directory" && builtins.pathExists (currentPath + "/${name}/default.nix")
           ) entryNames;
@@ -135,14 +134,14 @@ in
         directoryImports ++ subDirImports;
 
     in
-    walkDir path;
+    walkDir dirPath;
 
   # Recursively parse systems directory structure
   parseSystemConfigurations =
     systemsPath:
     let
       entries = builtins.readDir systemsPath;
-      systemArchs = filter (name: entries.${name} == "directory") (builtins.attrNames entries);
+      systemArchs = lib.filter (name: entries.${name} == "directory") (builtins.attrNames entries);
 
       generateSystemConfigs =
         system:
@@ -155,7 +154,7 @@ in
           path = systemPath + "/${hostname}";
         });
     in
-    foldl' (acc: system: acc // generateSystemConfigs system) { } systemArchs;
+    builtins.foldl' (acc: system: acc // generateSystemConfigs system) { } systemArchs;
 
   # Filter systems for NixOS (Linux)
   filterNixOSSystems =
@@ -176,7 +175,7 @@ in
     homesPath:
     let
       entries = builtins.readDir homesPath;
-      systemArchs = filter (name: entries.${name} == "directory") (builtins.attrNames entries);
+      systemArchs = lib.filter (name: entries.${name} == "directory") (builtins.attrNames entries);
 
       generateHomeConfigs =
         system:
@@ -204,5 +203,5 @@ in
         in
         genAttrs userAtHosts parseUserAtHost;
     in
-    foldl' (acc: system: acc // generateHomeConfigs system) { } systemArchs;
+    builtins.foldl' (acc: system: acc // generateHomeConfigs system) { } systemArchs;
 }
