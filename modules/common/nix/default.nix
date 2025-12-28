@@ -175,7 +175,7 @@ in
                 ];
               }
             ))
-            (
+            (lib.mkIf (host != "khanelimac") (
               # NOTE: git clone --reference /var/lib/nixpkgs.git https://github.com/NixOS/nixpkgs.git
               {
                 inherit protocol sshUser;
@@ -191,12 +191,10 @@ in
               // lib.optionalAttrs (host == "khanelinix") {
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
               }
-              # TODO: figure out preferring local over remote
-              // lib.optionalAttrs (host == "khanelimac") {
+              // lib.optionalAttrs (host == "khanelimac-m1") {
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
-                maxJobs = 0;
               }
-            )
+            ))
           ];
 
         checkConfig = true;
