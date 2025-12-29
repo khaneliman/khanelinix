@@ -220,7 +220,7 @@ in
         "$launcher-backup" = "sherlock";
         "$looking-glass" = "looking-glass-client";
         "$mail" = "thunderbird";
-        "$music" = "youtube-music";
+        "$music" = "pear-desktop";
         "$notification_center" = "swaync-client";
         "$screen-locker" = "hyprlock";
         "$screen-recorder" = "record_screen";

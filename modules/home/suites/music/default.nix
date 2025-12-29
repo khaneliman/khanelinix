@@ -29,7 +29,7 @@ in
         plattenalbum
         plexamp
         tageditor
-        youtube-music
+        pear-desktop
       ];
 
     khanelinix = {
