@@ -105,7 +105,8 @@ in
           # mysql-workbench
         ]
         ++ lib.optionals cfg.aiEnable [
-          antigravity
+          # NOTE: hard to get out of neovim
+          # antigravity
           github-mcp-server
           github-copilot-cli
         ];
