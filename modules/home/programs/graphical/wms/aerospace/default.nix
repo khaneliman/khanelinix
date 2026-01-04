@@ -31,7 +31,7 @@ in
 
       launchd.enable = true;
 
-      userSettings = {
+      settings = {
         # Core Settings - matching yabai preferences
         enable-normalization-flatten-containers = true;
         enable-normalization-opposite-orientation-for-nested-containers = true;
