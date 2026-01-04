@@ -329,6 +329,10 @@ in
             "alt-comma" = "layout accordion horizontal vertical";
             "alt-shift-space" = "layout floating tiling";
 
+            # Split orientation
+            "alt-s" = "split horizontal";
+            "alt-v" = "split vertical";
+
             # Window Management
             "alt-f" = "fullscreen";
             "cmd-shift-f" = "fullscreen";
@@ -363,6 +367,7 @@ in
             "alt-shift-y" = "layout tiles vertical horizontal";
 
             # Balance window sizes
+            "alt-e" = "balance-sizes";
             "ctrl-alt-e" = "balance-sizes";
 
             # Additional application shortcuts (from skhd)
