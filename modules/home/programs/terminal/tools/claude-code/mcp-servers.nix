@@ -17,7 +17,7 @@ let
 
   cfg = config.khanelinix.programs.terminal.tools.claude-code;
   mcpCfg = cfg.mcpServers;
-  mcpPkgs = inputs.mcp-servers-nix.packages.${system};
+  # mcpPkgs = inputs.mcp-servers-nix.packages.${system};
 in
 {
   options.khanelinix.programs.terminal.tools.claude-code.mcpServers = {
@@ -35,14 +35,16 @@ in
       {
         filesystem = {
           type = "stdio";
-          command = getExe mcpPkgs.mcp-server-filesystem;
+          # FIXME: mcp servers fail to build
+          # command = getExe mcpPkgs.mcp-server-filesystem;
           args = [ config.home.homeDirectory ] ++ mcpCfg.filesystem.directories;
         };
 
         # GitHub MCP - read-only for safety
         github = {
           type = "stdio";
-          command = getExe pkgs.github-mcp-server;
+          # FIXME: mcp servers fail to build
+          # command = getExe pkgs.github-mcp-server;
           args = [
             "--read-only"
             "stdio"
@@ -51,17 +53,20 @@ in
 
         memory = {
           type = "stdio";
-          command = getExe mcpPkgs.mcp-server-memory;
+          # FIXME: mcp servers fail to build
+          # command = getExe mcpPkgs.mcp-server-memory;
         };
 
         nixos = {
           type = "stdio";
-          command = getExe pkgs.mcp-nixos;
+          # FIXME: mcp servers fail to build
+          # command = getExe pkgs.mcp-nixos;
         };
 
         sequential-thinking = {
           type = "stdio";
-          command = getExe mcpPkgs.mcp-server-sequential-thinking;
+          # FIXME: mcp servers fail to build
+          # command = getExe mcpPkgs.mcp-server-sequential-thinking;
         };
       }
     ];

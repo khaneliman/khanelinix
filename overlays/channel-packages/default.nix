@@ -18,7 +18,17 @@ in
     gemini-cli
     opencode
     yaziPlugins
+
+    # TODO: remove after hitting channel
     ;
+
+  python3 = _prev.python3.override {
+    packageOverrides = _pyFinal: _pyPrev: {
+      inherit (master.python3Packages) fastmcp mcp;
+    };
+  };
+
+  python3Packages = final.python3.pkgs;
 
   # From nixpkgs-unstable
   inherit (unstable)

@@ -24,7 +24,8 @@ in
       [
         calcurse
         dooit
-        jrnl
+        # FIXME: broken nixpkgs
+        # jrnl
         np
       ]
       ++ lib.optionals (!isWSL) [
