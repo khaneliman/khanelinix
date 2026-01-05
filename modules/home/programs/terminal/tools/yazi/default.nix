@@ -82,6 +82,15 @@ in
 
       plugins = {
         "arrow-parent" = ./plugins/arrow-parent.yazi;
+        # TODO: remove once merged
+        yazi = pkgs.yaziPlugins.yatline.overrideAttrs {
+          patches = [
+            (pkgs.fetchpatch {
+              url = "https://github.com/imsi32/yatline.yazi/pull/68.patch";
+              hash = "sha256-8ksGgeZL+TK4mKXBLtEIfsVla9ISg7q5zAvPRL0i8Uw=";
+            })
+          ];
+        };
         inherit (pkgs.yaziPlugins)
           chmod
           diff
