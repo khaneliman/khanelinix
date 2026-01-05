@@ -100,7 +100,8 @@ in
           smart-filter
           sudo
           toggle-pane
-          yatline
+          # FIXME: broken
+          # yatline
           yatline-githead
           yatline-catppuccin
           ;
