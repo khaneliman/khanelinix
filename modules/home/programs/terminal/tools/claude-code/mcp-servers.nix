@@ -1,9 +1,6 @@
 {
   config,
   lib,
-  pkgs,
-  inputs,
-  system,
   ...
 }:
 let
@@ -11,7 +8,6 @@ let
     mkIf
     mkMerge
     mkOption
-    getExe
     types
     ;
 
