@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.khanelinix) enabled;
+  inherit (lib.khanelinix) enabled disabled;
 
   cfg = config.khanelinix.suites.desktop;
 in
@@ -31,14 +31,14 @@ in
     khanelinix = {
       desktop = {
         wms = {
-          yabai = mkDefault enabled;
+          yabai = mkDefault disabled;
         };
       };
 
       # Enable log rotation for desktop services
       services = {
         jankyborders = mkDefault enabled;
-        skhd = mkDefault enabled;
+        skhd = mkDefault disabled;
       };
 
       programs.graphical.bars.sketchybar = mkDefault enabled;
