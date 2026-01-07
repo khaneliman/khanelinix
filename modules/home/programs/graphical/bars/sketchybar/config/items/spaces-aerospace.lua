@@ -107,37 +107,63 @@ local window_tracker = Sbar.add("item", {
 	associated_display = "active",
 })
 
-window_tracker:subscribe("aerospace_workspace_change", function()
+local function update_windows()
 	for workspace_num = 1, 8 do
-		Sbar.exec("aerospace list-windows --workspace " .. workspace_num .. ' --format "%{app-name}"', function(result)
-			local icon_line = ""
-			local no_app = true
+		Sbar.exec(
+			[[aerospace list-windows --workspace ]] .. workspace_num .. [[ --format '%{app-name}']],
+			function(result)
+				local icon_line = ""
+				local no_app = true
 
-			if result and result ~= "" then
-				local apps = {}
-				for app in result:gmatch("[^\n]+") do
-					if app and app ~= "" and app ~= "None" then
-						apps[app] = true -- Use as set to avoid duplicates
+				if result and result ~= "" then
+					local apps = {}
+					for app in result:gmatch("[^\n]+") do
+						if app and app ~= "" and app ~= "None" then
+							apps[app] = true -- Use as set to avoid duplicates
+						end
+					end
+
+					-- Convert to icon line
+					for app, _ in pairs(apps) do
+						no_app = false
+						local lookup = app_icons[app]
+						local icon = ((lookup == nil) and app_icons["Default"] or lookup)
+						icon_line = icon_line .. " " .. icon
 					end
 				end
 
-				-- Convert to icon line
-				for app, _ in pairs(apps) do
-					no_app = false
-					local lookup = app_icons[app]
-					local icon = ((lookup == nil) and app_icons["Default"] or lookup)
-					icon_line = icon_line .. " " .. icon
+				if no_app then
+					icon_line = ""
+				end
+
+				-- Update the workspace label with app icons
+				if spaces[workspace_num] then
+					spaces[workspace_num]:set({ label = { string = icon_line } })
 				end
 			end
+		)
+	end
+end
 
-			if no_app then
-				icon_line = ""
-			end
+window_tracker:subscribe("aerospace_workspace_change", function()
+	update_windows()
+end)
 
-			-- Update the workspace label with app icons
-			if spaces[workspace_num] then
-				spaces[workspace_num]:set({ label = { string = icon_line } })
-			end
-		end)
+-- Initial window update
+update_windows()
+
+-- Initial focus update
+Sbar.exec("aerospace list-workspaces --focused", function(focused_workspace)
+	local focused_num = tonumber(focused_workspace)
+	if focused_num then
+		for i, space in pairs(spaces) do
+			local is_focused = focused_num == i
+			local color = is_focused and colors.white or colors.surface1
+			space:set({
+				icon = { highlight = is_focused },
+				label = { highlight = is_focused },
+				background = { border_color = color },
+			})
+		end
 	end
 end)
