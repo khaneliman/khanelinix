@@ -1,6 +1,7 @@
 #!/usr/bin/env lua
 
 local colors = require("colors")
+local wm_config = require("wm_config")
 
 local bar_height = 40
 
@@ -24,4 +25,6 @@ Sbar.bar({
 })
 
 -- Set external_bar here in case we launch after sketchybar
-Sbar.exec("yabai -m config external_bar all:" .. bar_height .. ":0")
+if wm_config.use_yabai then
+	Sbar.exec("yabai -m config external_bar all:" .. bar_height .. ":0")
+end
