@@ -6,7 +6,7 @@ local icons = require("icons")
 
 local network = {}
 
-Sbar.exec("killall sketchy_network_load >/dev/null; sketchy_network_load en0 network_update 2.0")
+Sbar.exec("killall sketchy_network_load >/dev/null 2>&1; sketchy_network_load en0 network_update 2.0")
 
 network.down = Sbar.add("item", "network.down", {
 	background = {

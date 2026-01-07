@@ -1,7 +1,7 @@
 #!/usr/bin/env lua
 
 Sbar = require("sketchybar")
-Sbar.exec("killall sketchyhelper || sketchyhelper git.felix.sketchyhelper >/dev/null 2>&1 &")
+Sbar.exec("killall sketchyhelper 2>/dev/null || sketchyhelper git.felix.sketchyhelper >/dev/null 2>&1 &")
 Sbar.begin_config()
 require("init")
 Sbar.hotload(true)
