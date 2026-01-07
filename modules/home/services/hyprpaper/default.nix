@@ -31,6 +31,16 @@ in
           options = {
             name = mkOption { type = str; };
             wallpaper = mkOption { type = path; };
+            fitMode = mkOption {
+              type = types.enum [
+                "contain"
+                "cover"
+                "tile"
+                "fill"
+              ];
+              default = "cover";
+            };
+            timeout = mkOpt types.int 30 "Timeout between each wallpaper change.";
           };
         });
     };
@@ -44,7 +54,12 @@ in
 
         settings = {
           preload = cfg.wallpapers;
-          wallpaper = map (monitor: "${monitor.name},${monitor.wallpaper}") cfg.monitors;
+          wallpaper = map (monitor: {
+            monitor = monitor.name;
+            path = monitor.wallpaper;
+            fit_mode = monitor.fitMode;
+            inherit (monitor) timeout;
+          }) cfg.monitors;
           splash = false;
         };
       };
