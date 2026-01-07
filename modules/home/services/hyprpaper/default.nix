@@ -45,6 +45,7 @@ in
         settings = {
           preload = cfg.wallpapers;
           wallpaper = map (monitor: "${monitor.name},${monitor.wallpaper}") cfg.monitors;
+          splash = false;
         };
       };
 
