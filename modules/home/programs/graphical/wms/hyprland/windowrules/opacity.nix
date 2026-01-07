@@ -14,10 +14,10 @@ in
       settings = {
         # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
         windowrule = [
-          "opaque, class:^(virt-manager)$,title:.*(on QEMU).*"
-          "opaque, class:^(looking-glass-client)$"
-          "opaque, title:^(.*(Twitch|TNTdrama|YouTube|Bally Sports|Video Entertainment|Plex)).*(Firefox).*$"
-          "dimaround, class:^(gcr-prompter)$"
+          "match:class ^(virt-manager)$, match:title .*(on QEMU).*, opaque on"
+          "match:class ^(looking-glass-client)$, opaque on"
+          "match:title ^(.*(Twitch|TNTdrama|YouTube|Bally Sports|Video Entertainment|Plex)).*(Firefox).*$, opaque on"
+          "match:class ^(gcr-prompter)$, dim_around on"
         ];
       };
     };

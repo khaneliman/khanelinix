@@ -14,7 +14,7 @@ in
       settings = {
         # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
         windowrule = [
-          "immediate, class:^(gamescope|steam_app).*"
+          "match:class ^(gamescope|steam_app).*, immediate on"
         ];
       };
     };

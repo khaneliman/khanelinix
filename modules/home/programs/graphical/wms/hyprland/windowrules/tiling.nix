@@ -15,9 +15,9 @@ in
         # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
         windowrule = [
           # Fix apps not tiling
-          "tile, class:^(Spotify)$"
-          "tile, class:^(Spotify Free)$"
-          "tile, class:^(steam_app).*, title:^(Battle.net)$"
+          "match:class ^(Spotify)$, tile on"
+          "match:class ^(Spotify Free)$, tile on"
+          "match:class ^(steam_app).*, match:title ^(Battle.net)$, tile on"
         ];
       };
     };

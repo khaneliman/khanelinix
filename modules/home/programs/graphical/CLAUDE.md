@@ -161,9 +161,9 @@ wayland.windowManager.hyprland = {
       "SUPER, Q, killactive"
     ];
 
-    windowrulev2 = [
-      "float, class:^(pavucontrol)$"
-      "workspace 2, class:^(firefox)$"
+    windowrule = [
+      "match:class ^(pavucontrol)$, float on"
+      "match:class ^(firefox)$, workspace 2"
     ];
   };
 };

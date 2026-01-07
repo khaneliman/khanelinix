@@ -4,7 +4,7 @@ monitor=DP-3,	3840x2160@60,	1420x0,	2
 monitor=DP-1,	5120x1440@120,	0x1080,	1
 
 workspace = name:hello, monitor:DP-1, defafult:true
-windowrulev2 = workspace name:hello, class:^(nwg-hello)$
+windowrule = match:class ^(nwg-hello)$, workspace name:hello
 
 env = CLUTTER_BACKEND,"wayland"
 # env = GDK_BACKEND,"wayland,x11"

@@ -18,6 +18,9 @@ in
     gemini-cli
     opencode
     yaziPlugins
+
+    # TODO: remove after hitting channel
+    normalize
     ;
 
   python3 = _prev.python3.override {

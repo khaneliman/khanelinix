@@ -15,8 +15,8 @@ in
         # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
         windowrule = [
           # Fix apps not staying fullscreen
-          "fullscreen, class:^(steam_app).*, title:^(MTGA)$"
-          "fullscreenstate 2 2, class:^(steam_app).*, title:^(MTGA)$"
+          "match:class ^(steam_app).*, match:title ^(MTGA)$, fullscreen on"
+          "match:class ^(steam_app).*, match:title ^(MTGA)$, fullscreen_state 2 2"
         ];
       };
     };

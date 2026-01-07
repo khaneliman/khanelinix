@@ -13,18 +13,18 @@ in
     wayland.windowManager.hyprland = {
       settings = {
         layerrule = [
-          "blur, anyrun"
-          "blurpopups, anyrun"
-          "dimaround, anyrun"
-          "blur, sherlock"
-          "blurpopups, sherlock"
-          "dimaround, sherlock"
-          "blur, walker"
-          "blurpopups, walker"
-          "dimaround, walker"
-          "blur, vicinae"
-          "blurpopups, vicinae"
-          "dimaround, vicinae"
+          "match:namespace anyrun, blur on"
+          "match:namespace anyrun, blur_popups on"
+          "match:namespace anyrun, dim_around on"
+          "match:namespace sherlock, blur on"
+          "match:namespace sherlock, blur_popups on"
+          "match:namespace sherlock, dim_around on"
+          "match:namespace walker, blur on"
+          "match:namespace walker, blur_popups on"
+          "match:namespace walker, dim_around on"
+          "match:namespace vicinae, blur on"
+          "match:namespace vicinae, blur_popups on"
+          "match:namespace vicinae, dim_around on"
         ];
       };
     };

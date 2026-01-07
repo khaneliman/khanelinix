@@ -134,6 +134,7 @@ in
           neovim.enable = !config.khanelinix.theme.catppuccin.enable;
           tmux.enable = !config.khanelinix.theme.catppuccin.enable;
           vesktop.enable = !config.khanelinix.theme.catppuccin.enable;
+          vicinae.enable = !config.khanelinix.theme.catppuccin.enable;
           yazi.enable = !config.khanelinix.theme.catppuccin.enable;
           zathura.enable = !config.khanelinix.theme.catppuccin.enable;
           zellij.enable = !config.khanelinix.theme.catppuccin.enable;
