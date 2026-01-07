@@ -22,21 +22,21 @@ in
       }
       # Orphan symbolic links
       {
-        name = "*";
+        url = "*";
         is = "orphan";
         fg = catppuccin.colors.red.hex;
       }
       {
-        name = "*";
+        url = "*";
         is = "link";
         fg = catppuccin.colors.green.hex;
       }
       {
-        name = "*/";
+        url = "*/";
         fg = catppuccin.colors.blue.hex;
       }
       {
-        name = "*";
+        url = "*";
         fg = catppuccin.colors.text.hex;
       }
     ];

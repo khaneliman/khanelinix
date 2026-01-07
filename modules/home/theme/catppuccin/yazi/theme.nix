@@ -43,7 +43,7 @@ in
     };
   };
 
-  select = {
+  pick = {
     border = {
       fg = catppuccin.colors.blue.hex;
     };
