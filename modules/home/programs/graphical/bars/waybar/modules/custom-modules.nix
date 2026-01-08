@@ -16,7 +16,7 @@ let
 
     # Get notifications and format them for the tooltip
     NOTIFICATIONS="$(${getExe pkgs.gh} api notifications)"
-    COUNT="$(${getExe pkgs.gh} api notifications --jq 'length')"
+    COUNT=$(echo "$NOTIFICATIONS" | ${getExe pkgs.jq} 'length')
 
     if [ "$COUNT" -eq 0 ]; then
       echo '{"text":"0","tooltip":"No notifications","class":""}'
@@ -53,7 +53,7 @@ in
   };
 
   "custom/github" = {
-    format = " {}";
+    format = " {text}";
     return-type = "json";
     interval = 60;
     exec = "${getExe githubHelper}";
@@ -80,7 +80,7 @@ in
 
   "custom/notification" = {
     tooltip = true;
-    format = "{icon} {}";
+    format = "{icon} {text}";
     format-icons = {
       notification = "<span foreground='red'><sup></sup></span>";
       none = "";
