@@ -11,33 +11,33 @@ in
       lib.optionals (lib.hasAttr "git" enabledPlugins) [
         {
           id = "git";
-          name = "*";
+          url = "*";
           run = "git";
         }
         {
           id = "git";
-          name = "*/";
+          url = "*/";
           run = "git";
         }
       ]
       ++ lib.optional (lib.hasAttr "mime-ext" enabledPlugins) {
         id = "mime";
-        name = "*";
+        url = "*";
         run = "mime-ext";
         prio = "high";
       };
 
     prepend_preloaders = [
       {
-        name = "/mnt/austinserver/**";
+        url = "/mnt/austinserver/**";
         run = "noop";
       }
       {
-        name = "/mnt/disk/**";
+        url = "/mnt/disk/**";
         run = "noop";
       }
       {
-        name = "/mnt/dropbox/**";
+        url = "/mnt/dropbox/**";
         run = "noop";
       }
     ]
@@ -52,7 +52,7 @@ in
         ];
       in
       map (ext: {
-        name = "*.${ext}";
+        url = "*.${ext}";
         run = "duckdb";
         multi = false;
       }) multiFileTypes
@@ -94,7 +94,7 @@ in
           ];
         in
         map (ext: {
-          name = "*.${ext}";
+          url = "*.${ext}";
           run = "duckdb";
         }) fileTypes
       )
@@ -121,26 +121,26 @@ in
       )
       ++ lib.optionals (lib.hasAttr "piper" enabledPlugins) [
         {
-          name = "*.tar*";
+          url = "*.tar*";
           run = ''piper --format=url -- tar tf "$1"'';
         }
         {
-          name = "*.csv";
+          url = "*.csv";
           run = ''piper -- bat -p --color=always "$1"'';
         }
         {
-          name = "*.md";
+          url = "*.md";
           run = ''piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"'';
         }
         {
-          name = "*/";
+          url = "*/";
           run = ''piper -- eza -TL=3 --color=always --icons=always --group-directories-first --no-quotes "$1"'';
         }
       ];
 
     previewers = [
       {
-        name = "*/";
+        url = "*/";
         run = "folder";
         sync = true;
       }
@@ -192,7 +192,7 @@ in
       }
       # Fallback
       {
-        name = "*";
+        url = "*";
         run = "file";
       }
     ];
