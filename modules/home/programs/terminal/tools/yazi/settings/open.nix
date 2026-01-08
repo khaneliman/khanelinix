@@ -29,7 +29,7 @@
       ];
 
       generateArchiveRule = ext: {
-        name = "*.${ext}";
+        url = "*.${ext}";
         use = [
           "extract"
           "reveal"
@@ -41,14 +41,14 @@
     {
       rules = archiveRules ++ [
         {
-          name = "*.dmg";
+          url = "*.dmg";
           use = [
             "dmg"
             "reveal"
           ];
         }
         {
-          name = "*/";
+          url = "*/";
           use = [
             "edit"
             "open"
