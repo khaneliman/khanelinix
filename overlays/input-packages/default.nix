@@ -1,10 +1,6 @@
 { inputs }:
 final: _prev:
 let
-  citrix = import inputs.nixpkgs-citrix-workspace {
-    inherit (final.stdenv.hostPlatform) system;
-    inherit (final) config;
-  };
   master = import inputs.nixpkgs-master {
     inherit (final.stdenv.hostPlatform) system;
     inherit (final) config;
@@ -15,13 +11,6 @@ let
   };
 in
 {
-  #          ╭──────────────────────────────────────────────────────────╮
-  #          │                Citrix last known working                 │
-  #          ╰──────────────────────────────────────────────────────────╯
-  inherit (citrix)
-    citrix_workspace
-    ;
-
   #          ╭──────────────────────────────────────────────────────────╮
   #          │                 Firefox Addon repository                 │
   #          ╰──────────────────────────────────────────────────────────╯
@@ -42,6 +31,7 @@ in
     yaziPlugins
 
     # TODO: remove after hitting channel
+    citrix_workspace
     normalize
     vicinae
     ;
