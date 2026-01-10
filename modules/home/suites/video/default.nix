@@ -2,7 +2,8 @@
   config,
   lib,
   pkgs,
-
+  self,
+  system,
   ...
 }:
 let
@@ -19,7 +20,8 @@ in
   config = mkIf cfg.enable {
     home.packages =
       with pkgs;
-      lib.optionals stdenv.hostPlatform.isLinux [
+      [ self.packages.${system}.ff-title ]
+      ++ lib.optionals stdenv.hostPlatform.isLinux [
         celluloid
         devede
         handbrake
