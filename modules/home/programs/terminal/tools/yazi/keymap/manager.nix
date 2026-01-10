@@ -37,6 +37,11 @@ in
         desc = "Create a tab and enter the hovered directory";
       }
     ]
+    ++ lib.lists.map (i: {
+      on = [ "${toString i}" ];
+      run = "plugin smart-switch ${toString (i - 1)}";
+      desc = "Switch to tab ${toString i}";
+    }) (lib.lists.range 1 9)
     ++ lib.optional pkgs.stdenv.hostPlatform.isLinux {
       on = [ "<C-v>" ];
       run = "shell 'dragon -x -i -T \"$1\"'";

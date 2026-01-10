@@ -83,6 +83,7 @@ in
 
       plugins = {
         "arrow-parent" = ./plugins/arrow-parent.yazi;
+        "smart-switch" = ./plugins/smart-switch.yazi;
         "smart-tab" = ./plugins/smart-tab.yazi;
         # TODO: remove once merged
         yatline = pkgs.yaziPlugins.yatline.overrideAttrs {
