@@ -26,6 +26,7 @@ in
 
       package =
         pkgs.yazi.override {
+          _7zz = pkgs._7zz-rar; # Support for RAR extraction
           extraPackages =
             let
               optionalPluginPackage =
@@ -44,7 +45,7 @@ in
           optionalDeps = with pkgs; [
             # Keep essential tools, exclude heavy media dependencies
             jq
-            _7zz
+            _7zz-rar
             fd
             ripgrep
             fzf
