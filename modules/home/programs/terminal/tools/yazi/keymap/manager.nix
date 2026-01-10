@@ -31,6 +31,11 @@ in
         run = "tab_create --current";
         desc = "Create a new tab with CWD.";
       }
+      {
+        on = [ "t" ];
+        run = "plugin smart-tab";
+        desc = "Create a tab and enter the hovered directory";
+      }
     ]
     ++ lib.optional pkgs.stdenv.hostPlatform.isLinux {
       on = [ "<C-v>" ];
