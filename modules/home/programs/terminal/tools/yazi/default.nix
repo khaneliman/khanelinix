@@ -84,11 +84,11 @@ in
       plugins = {
         "arrow-parent" = ./plugins/arrow-parent.yazi;
         # TODO: remove once merged
-        yazi = pkgs.yaziPlugins.yatline.overrideAttrs {
+        yatline = pkgs.yaziPlugins.yatline.overrideAttrs {
           patches = [
             (pkgs.fetchpatch {
-              url = "https://github.com/imsi32/yatline.yazi/pull/68.patch";
-              hash = "sha256-8ksGgeZL+TK4mKXBLtEIfsVla9ISg7q5zAvPRL0i8Uw=";
+              url = "https://github.com/imsi32/yatline.yazi/pull/71.patch";
+              hash = "sha256-YUFlDzSx8X4XIeYVOX+PRVZxND7588nl0vr3V+h6hus=";
             })
           ];
         };
