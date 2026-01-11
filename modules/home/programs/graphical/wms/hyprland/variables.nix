@@ -67,6 +67,7 @@ let
     (lib.optional launchers.rofi.enable "rofi -show drun")
   ];
   count = builtins.length enabledLaunchers;
+
 in
 {
   config = mkIf cfg.enable {
@@ -255,7 +256,16 @@ in
         "$color_picker" =
           /* Bash */ "hyprpicker -a && (${magick} convert -size 32x32 xc:$(${wl-paste}) /tmp/color.png && notify-send \"Color Code:\" \"$(${wl-paste})\" -h \"string:bgcolor:$(${wl-paste})\" --icon /tmp/color.png -u critical -t 4000)";
         "$cliphist" =
-          /* Bash */ "cliphist list | anyrun --show-results-immediately true | cliphist decode | ${wl-copy}";
+          let
+            enabledDmenuLaunchers = lib.flatten [
+              (lib.optional launchers.vicinae.enable "vicinae dmenu")
+              (lib.optional launchers.anyrun.enable "anyrun --show-results-immediately true")
+              (lib.optional launchers.walker.enable "walker --stream")
+              (lib.optional launchers.sherlock.enable "sherlock")
+              (lib.optional launchers.rofi.enable "rofi -dmenu")
+            ];
+          in
+          /* Bash */ "cliphist list | ${builtins.head enabledDmenuLaunchers} | cliphist decode | ${wl-copy}";
       };
     };
   };
