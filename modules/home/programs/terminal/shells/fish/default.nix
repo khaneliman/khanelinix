@@ -35,7 +35,7 @@ in
           makeBinPathList = map (pkgPath: pkgPath + "/bin");
         in
         lib.optionalString pkgs.stdenv.hostPlatform.isDarwin /* fish */ ''
-          export NIX_PATH="darwin-config=$HOME/.nixpkgs/darwin-configuration.nix:$HOME/.nix-defexpr/channels:$NIX_PATH"
+          export NIX_PATH="darwin-config=${config.home.homeDirectory}/.nixpkgs/darwin-configuration.nix:${config.home.homeDirectory}/.nix-defexpr/channels:$NIX_PATH"
           fish_add_path --move --prepend --path ${
             lib.concatMapStringsSep " " dquote (makeBinPathList (osConfig.environment.profiles or [ ]))
           }
@@ -45,8 +45,8 @@ in
       interactiveShellInit =
         /* fish */ ''
           # 1password plugin
-          if [ -f ~/.config/op/plugins.sh ];
-              source ~/.config/op/plugins.sh
+          if [ -f ${config.xdg.configHome}/op/plugins.sh ];
+              source ${config.xdg.configHome}/op/plugins.sh
           end
         ''
         + lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''

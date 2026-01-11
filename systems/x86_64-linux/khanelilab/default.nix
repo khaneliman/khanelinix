@@ -55,7 +55,7 @@ in
             browseable = true;
             comment = "Application Data folder";
             only-owner-editable = true;
-            path = "/home/${config.khanelinix.user.name}/.config/";
+            path = "${config.users.users.${config.khanelinix.user.name}.home}/.config/";
             public = false;
             read-only = false;
           };
@@ -65,7 +65,7 @@ in
             browseable = true;
             comment = "Data folder";
             only-owner-editable = true;
-            path = "/home/${config.khanelinix.user.name}/.local/share/";
+            path = "${config.users.users.${config.khanelinix.user.name}.home}/.local/share/";
             public = false;
             read-only = false;
           };
@@ -75,7 +75,7 @@ in
             browseable = true;
             comment = "Virtual Machines folder";
             only-owner-editable = true;
-            path = "/home/${config.khanelinix.user.name}/vms/";
+            path = "${config.users.users.${config.khanelinix.user.name}.home}/vms/";
             public = false;
             read-only = false;
           };
@@ -85,7 +85,7 @@ in
             browseable = true;
             comment = "ISO Images folder";
             only-owner-editable = true;
-            path = "/home/${config.khanelinix.user.name}/isos/";
+            path = "${config.users.users.${config.khanelinix.user.name}.home}/isos/";
             public = false;
             read-only = false;
           };
@@ -95,7 +95,7 @@ in
             browseable = true;
             comment = "Time Machine backups folder";
             only-owner-editable = true;
-            path = "/home/${config.khanelinix.user.name}/.timemachine/";
+            path = "${config.users.users.${config.khanelinix.user.name}.home}/.timemachine/";
             public = false;
             read-only = true;
           };

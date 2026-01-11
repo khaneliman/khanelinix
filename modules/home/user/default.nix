@@ -26,6 +26,13 @@ let
       "/Users/${cfg.name}"
     else
       "/home/${cfg.name}";
+
+  getDir =
+    dir: default:
+    if config.xdg.userDirs.enable then
+      lib.removePrefix "${config.home.homeDirectory}/" dir
+    else
+      default;
 in
 {
   options.khanelinix.user = {
@@ -54,17 +61,20 @@ in
 
       home = {
         file = {
-          "Desktop/.keep".text = "";
-          "Documents/.keep".text = "";
-          "Downloads/.keep".text = "";
-          "Music/.keep".text = "";
-          "Pictures/.keep".text = "";
-          "Videos/.keep".text = "";
+          "${getDir config.xdg.userDirs.desktop "Desktop"}/.keep".text = "";
+          "${getDir config.xdg.userDirs.documents "Documents"}/.keep".text = "";
+          "${getDir config.xdg.userDirs.download "Downloads"}/.keep".text = "";
+          "${getDir config.xdg.userDirs.music "Music"}/.keep".text = "";
+          "${getDir config.xdg.userDirs.pictures "Pictures"}/.keep".text = "";
+          "${getDir config.xdg.userDirs.videos "Videos"}/.keep".text = "";
         }
         // lib.optionalAttrs (cfg.icon != null) {
           ".face".source = cfg.icon;
           ".face.icon".source = cfg.icon;
-          "Pictures/${cfg.icon.fileName or (baseNameOf cfg.icon)}".source = cfg.icon;
+          "${getDir config.xdg.userDirs.pictures "Pictures"}/${
+            cfg.icon.fileName or (baseNameOf cfg.icon)
+          }".source =
+            cfg.icon;
         };
 
         # Only set homeDirectory if cfg.home is not null

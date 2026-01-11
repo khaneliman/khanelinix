@@ -1,4 +1,5 @@
-_: {
+{ config, ... }:
+{
   PreToolUse = [
     {
       matcher = "*";
@@ -7,7 +8,7 @@ _: {
           type = "command";
           timeout = 10;
           command = /* Bash */ ''
-            mkdir -p ~/.local/share/claude-code/audit
+            mkdir -p ${config.xdg.dataHome}/claude-code/audit
             input=$(cat)
 
             # Extract fields for logging
@@ -20,7 +21,7 @@ _: {
             echo "$input" | jq -c \
               --arg ts "$timestamp" \
               '{timestamp: $ts, session: .session_id, tool: .tool_name, cwd: .cwd, input: .tool_input}' \
-              >> ~/.local/share/claude-code/audit/pre-tool.jsonl
+              >> ${config.xdg.dataHome}/claude-code/audit/pre-tool.jsonl
 
             exit 0
           '';

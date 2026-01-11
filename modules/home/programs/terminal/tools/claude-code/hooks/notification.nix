@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 let
   notify =
     title: message:
@@ -13,7 +13,7 @@ let
         fi
       ''
     else
-      ''notify-send -a "${title}" -i "$HOME/.local/share/icons/claude.ico" '${title}' '${message}' '';
+      ''notify-send -a "${title}" -i "${config.xdg.dataHome}/icons/claude.ico" '${title}' '${message}' '';
 in
 {
   Notification = [

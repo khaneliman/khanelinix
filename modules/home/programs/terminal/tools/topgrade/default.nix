@@ -8,6 +8,12 @@ let
   inherit (lib) mkIf;
 
   cfg = config.khanelinix.programs.terminal.tools.topgrade;
+
+  documentsDir =
+    if config.xdg.userDirs.enable then
+      config.xdg.userDirs.documents
+    else
+      "${config.home.homeDirectory}/Documents";
 in
 {
   options.khanelinix.programs.terminal.tools.topgrade = {
@@ -26,10 +32,10 @@ in
         };
         git = {
           repos = [
-            "~/Documents/github/*/"
-            "~/Documents/gitlab/*/"
-            "~/.config/.dotfiles/"
-            "~/.config/nvim/"
+            "${documentsDir}/github/*/"
+            "${documentsDir}/gitlab/*/"
+            "${config.xdg.configHome}/.dotfiles/"
+            "${config.xdg.configHome}/nvim/"
           ];
         };
       };

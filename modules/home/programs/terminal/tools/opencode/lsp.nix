@@ -1,6 +1,11 @@
 # OpenCode LSP (Language Server Protocol) configuration module
 # Defines language servers for different programming languages
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   config = {
     programs.opencode.settings.lsp = {
@@ -13,10 +18,10 @@
           };
           options = {
             nixos = {
-              expr = "(builtins.getFlake \"/home/khaneliman/khanelinix\").nixosConfigurations.khanelinix.options";
+              expr = "(builtins.getFlake \"${config.home.homeDirectory}/khanelinix\").nixosConfigurations.khanelinix.options";
             };
             home-manager = {
-              expr = "(builtins.getFlake \"/home/khaneliman/khanelinix\").homeConfigurations.\"khaneliman@khanelinix\".options";
+              expr = "(builtins.getFlake \"${config.home.homeDirectory}/khanelinix\").homeConfigurations.\"khaneliman@khanelinix\".options";
             };
           };
         };
@@ -37,7 +42,7 @@
             workspace = {
               library = [
                 "/nix/store/*/share/lua/5.1"
-                "/etc/profiles/per-user/khaneliman/share/lua/5.1"
+                "/etc/profiles/per-user/${config.khanelinix.user.name}/share/lua/5.1"
               ];
             };
           };

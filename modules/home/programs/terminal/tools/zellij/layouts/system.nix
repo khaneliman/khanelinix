@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   config = {
     programs = {
@@ -109,7 +114,7 @@
                     _props = {
                       name = "khanelinix";
                       focus = true;
-                      cwd = "$HOME/khanelinix/";
+                      cwd = "${config.home.homeDirectory}/khanelinix/";
                     };
                     _children = [
                       {
@@ -125,7 +130,7 @@
                     _props = {
                       name = "Git";
                       split_direction = "horizontal";
-                      cwd = "$HOME/khanelinix/";
+                      cwd = "${config.home.homeDirectory}/khanelinix/";
                     };
                     _children = [
                       {
@@ -140,7 +145,7 @@
                   tab = {
                     _props = {
                       name = "Jujutsu";
-                      cwd = "$HOME/khanelinix/";
+                      cwd = "${config.home.homeDirectory}/khanelinix/";
                     };
                     _children = [
                       {
@@ -156,7 +161,7 @@
                     _props = {
                       name = "Files";
                       split_direction = "horizontal";
-                      cwd = "$HOME";
+                      cwd = "${config.home.homeDirectory}";
                     };
                     _children = [
                       {
@@ -177,7 +182,7 @@
                     _props = {
                       name = "Shell";
                       split_direction = "horizontal";
-                      cwd = "$HOME/khanelinix/";
+                      cwd = "${config.home.homeDirectory}/khanelinix/";
                     };
                     _children = [
                       {
@@ -193,7 +198,7 @@
                     _props = {
                       name = "Processes";
                       split_direction = "vertical";
-                      cwd = "$HOME";
+                      cwd = "${config.home.homeDirectory}";
                     };
                     _children = [
                       {
@@ -209,7 +214,11 @@
                     _props = {
                       name = "Media";
                       split_direction = "vertical";
-                      cwd = "$HOME/Music";
+                      cwd =
+                        if config.xdg.userDirs.enable then
+                          config.xdg.userDirs.music
+                        else
+                          "${config.home.homeDirectory}/Music";
                     };
                     _children = [
                       {

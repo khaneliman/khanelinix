@@ -174,7 +174,7 @@ in
       # ];
 
       settings = {
-        exec = [ /* Bash */ "notify-send --icon ~/.face -u normal \"Hello $(whoami)\"" ];
+        exec = [ /* Bash */ "notify-send --icon ${config.home.homeDirectory}/.face -u normal \"Hello $(whoami)\"" ];
 
         plugin = {
           hyprbars =

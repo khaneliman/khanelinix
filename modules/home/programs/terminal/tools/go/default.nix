@@ -23,7 +23,7 @@ in
       ];
 
       sessionVariables = {
-        GOPATH = "$HOME/work/go";
+        GOPATH = "${config.home.homeDirectory}/work/go";
       };
     };
   };

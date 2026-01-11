@@ -52,9 +52,9 @@ in
         # ░█▀█░█▀█░█▀█░░░█░░░█▀█░█░█░█▀█░█▀▀░█░█░█▀▀░█▀▄░█▀▀
         # ░█▀█░█▀▀░█▀▀░░░█░░░█▀█░█░█░█░█░█░░░█▀█░█▀▀░█▀▄░▀▀█
         # ░▀░▀░▀░░░▀░░░░░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀
-        default < cmd + shift - return : ${getExe pkgs.kitty} --listen-on=unix:/tmp/kitty.sock --single-instance -d ~ -- zellij
+        default < cmd + shift - return : ${getExe pkgs.kitty} --listen-on=unix:/tmp/kitty.sock --single-instance -d ${config.home.homeDirectory} -- zellij
         default < cmd + alt + shift - return : ${getExe pkgs.kitty} --session nix.conf
-        default < cmd - return : ${getExe pkgs.kitty} --single-instance -d ~
+        default < cmd - return : ${getExe pkgs.kitty} --single-instance -d ${config.home.homeDirectory}
         default < cmd + alt + ctrl - v : open /Applications/Visual\ Studio\ Code.app
         default < cmd + alt + ctrl - o : open /Applications/Microsoft\ Outlook.app
         default < cmd + alt + ctrl - p : open /Applications/Microsoft\ PowerPoint.app

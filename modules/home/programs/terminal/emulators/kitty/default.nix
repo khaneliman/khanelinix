@@ -51,19 +51,19 @@ in
       launch zellij
 
       new_tab khanelivim
-      cd $HOME/github/khanelivim
+      cd ${config.home.homeDirectory}/github/khanelivim
       launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
 
       new_tab nixvim
-      cd $HOME/github/nixvim
+      cd ${config.home.homeDirectory}/github/nixvim
       launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
 
       new_tab home-manager
-      cd $HOME/github/home-manager
+      cd ${config.home.homeDirectory}/github/home-manager
       launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
 
       new_tab nixpkgs
-      cd $HOME/github/nixpkgs
+      cd ${config.home.homeDirectory}/github/nixpkgs
       launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
     '';
 

@@ -1,4 +1,5 @@
-_: {
+{ config, ... }:
+{
   PreCompact = [
     {
       matcher = "*";
@@ -6,11 +7,11 @@ _: {
         {
           type = "command";
           command = /* Bash */ ''
-            mkdir -p ~/.local/share/claude-code/context-backups
+            mkdir -p ${config.xdg.dataHome}/claude-code/context-backups
             input=$(cat)
             session_id=$(echo "$input" | jq -r '.session_id // "unknown"')
 
-            backup_file="$HOME/.local/share/claude-code/context-backups/compact-$(date +%Y%m%d-%H%M%S).log"
+            backup_file="${config.xdg.dataHome}/claude-code/context-backups/compact-$(date +%Y%m%d-%H%M%S).log"
 
             echo "=== Context Compaction at $(date) ===" >> "$backup_file"
             echo "Session ID: $session_id" >> "$backup_file"
@@ -19,8 +20,8 @@ _: {
             # Record recent tool activity from this session
             echo "" >> "$backup_file"
             echo "Recent Tool Activity:" >> "$backup_file"
-            if [ -f ~/.local/share/claude-code/audit/pre-tool.jsonl ]; then
-              grep "\"session\":\"$session_id\"" ~/.local/share/claude-code/audit/pre-tool.jsonl 2>/dev/null | \
+            if [ -f ${config.xdg.dataHome}/claude-code/audit/pre-tool.jsonl ]; then
+              grep "\"session\":\"$session_id\"" ${config.xdg.dataHome}/claude-code/audit/pre-tool.jsonl 2>/dev/null | \
                 tail -20 | jq -r '.tool' 2>/dev/null | sort | uniq -c | sort -rn >> "$backup_file" || \
                 echo "No tool activity recorded" >> "$backup_file"
             else

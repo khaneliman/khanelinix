@@ -31,7 +31,7 @@ in
       };
 
       shellAliases = {
-        nixcfg = "nvim ~/khanelinix/flake.nix";
+        nixcfg = "nvim ${config.home.homeDirectory}/khanelinix/flake.nix";
         # Closure size checking aliases
         ncs-sys = ''f(){ nix build ".#nixosConfigurations.$1.config.system.build.toplevel" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#nixosConfigurations.$1.config.system.build.toplevel.outPath") | tail -1; }; f'';
         ncs-darwin = ''f(){ nix build ".#darwinConfigurations.$1.config.system.build.toplevel" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#darwinConfigurations.$1.config.system.build.toplevel.outPath") | tail -1; }; f'';

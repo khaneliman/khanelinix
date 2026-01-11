@@ -1,4 +1,5 @@
-_: {
+{ config, ... }:
+{
   SessionStart = [
     {
       matcher = "*";
@@ -7,7 +8,7 @@ _: {
           type = "command";
           command = /* Bash */ ''
             # Log session start to audit trail
-            mkdir -p ~/.local/share/claude-code/audit
+            mkdir -p ${config.xdg.dataHome}/claude-code/audit
             input=$(cat)
             session_id=$(echo "$input" | jq -r '.session_id // "unknown"')
             timestamp=$(date -Iseconds)
@@ -16,7 +17,7 @@ _: {
               --arg ts "$timestamp" \
               --arg event "session_start" \
               '{timestamp: $ts, event: $event, session: .session_id, cwd: .cwd}' \
-              >> ~/.local/share/claude-code/audit/sessions.jsonl
+              >> ${config.xdg.dataHome}/claude-code/audit/sessions.jsonl
 
             # Git status and recent commits
             echo '=== Git Status ==='

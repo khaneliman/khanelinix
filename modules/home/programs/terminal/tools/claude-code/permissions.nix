@@ -110,8 +110,8 @@ let
     "mcp__mulesoft-analyzer"
 
     # Additional home directory reads
-    "Read(/home/khaneliman/Documents/github/home-manager/**)"
-    "Read(/home/khaneliman/.config/sway/**)"
+    "Read(${config.home.homeDirectory}/Documents/github/home-manager/**)"
+    "Read(${config.home.homeDirectory}/.config/sway/**)"
   ];
 
   # Autonomous profile additions - full autonomy for trusted workflows

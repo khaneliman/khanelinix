@@ -19,7 +19,7 @@ let
         set -g @resurrect-strategy-nvim 'session'
         set -g @resurrect-capture-pane-contents 'on'
         set -g @resurrect-processes 'ssh lazygit yazi'
-        set -g @resurrect-dir '~/.tmux/resurrect'
+        set -g @resurrect-dir '${config.home.homeDirectory}/.tmux/resurrect'
       '';
     }
     {

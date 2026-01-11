@@ -33,6 +33,9 @@ let
       desc = description;
     };
 
+  getDir =
+    dir: default: if config.xdg.userDirs.enable then dir else "${config.home.homeDirectory}/${default}";
+
   # Define all goto locations with minimal required information
   gotoLocations = [
     {
@@ -41,12 +44,12 @@ let
     }
     {
       key = "h";
-      dirPath = "~";
+      dirPath = config.home.homeDirectory;
       desc = "Go to the home directory";
     }
     {
       key = "c";
-      dirPath = "~/.config";
+      dirPath = config.xdg.configHome;
     }
     {
       key = "t";
@@ -60,11 +63,11 @@ let
     }
     {
       key = "D";
-      dirPath = "~/Downloads";
+      dirPath = getDir config.xdg.userDirs.download "Downloads";
     }
     {
       key = "G";
-      dirPath = "~/${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents/"}gitlab";
+      dirPath = "${getDir config.xdg.userDirs.documents (lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents")}/gitlab";
     }
     {
       key = "M";
@@ -72,7 +75,7 @@ let
     }
     {
       key = "d";
-      dirPath = "~/Documents";
+      dirPath = getDir config.xdg.userDirs.documents "Documents";
     }
     {
       key = "e";
@@ -80,7 +83,7 @@ let
     }
     {
       key = "g";
-      dirPath = "~/${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents/"}github";
+      dirPath = "${getDir config.xdg.userDirs.documents (lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents")}/github";
     }
     {
       key = "i";
@@ -89,7 +92,7 @@ let
     }
     {
       key = "l";
-      dirPath = "~/.local/";
+      dirPath = "${config.home.homeDirectory}/.local/";
     }
     {
       key = "m";
@@ -101,7 +104,7 @@ let
     }
     {
       key = "p";
-      dirPath = "~/Pictures";
+      dirPath = getDir config.xdg.userDirs.pictures "Pictures";
     }
     {
       key = "R";
@@ -127,7 +130,7 @@ let
     }
     {
       key = "w";
-      dirPath = "~/.local/share/wallpapers";
+      dirPath = "${config.xdg.dataHome}/wallpapers";
     }
     {
       key = "n";
@@ -140,7 +143,7 @@ let
         if pkgs.stdenv.hostPlatform.isLinux then
           "/nix/var/nix/profiles/per-user/${config.khanelinix.user.name}/home-manager"
         else
-          "~/.local/state/home-manager/gcroots";
+          "${config.xdg.stateHome}/home-manager/gcroots";
       desc = "Go to the home-manager profile";
     }
   ];

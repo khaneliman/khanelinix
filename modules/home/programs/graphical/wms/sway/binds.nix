@@ -47,7 +47,11 @@ in
             ''
           );
 
-          screenshot-path = "/home/${config.khanelinix.user.name}/Pictures/screenshots";
+          screenshot-path =
+            if config.xdg.userDirs.enable then
+              "${config.xdg.userDirs.pictures}/screenshots"
+            else
+              "${config.home.homeDirectory}/Pictures/screenshots";
           browser = "${getExe config.programs.firefox.package}";
           explorer = "nautilus";
           notification_center = "${getExe' config.services.swaync.package "swaync-client"}";

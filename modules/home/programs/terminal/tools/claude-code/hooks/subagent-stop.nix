@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 {
   SubagentStop = [
     {
@@ -77,7 +77,7 @@
                   fi
                 ''
               else
-                ''notify-send -a "Claude Code" -i "$HOME/.local/share/icons/claude.ico" "Claude Code" "$notify_msg"''
+                ''notify-send -a "Claude Code" -i "${config.xdg.dataHome}/icons/claude.ico" "Claude Code" "$notify_msg"''
             }
           '';
           timeout = 10;

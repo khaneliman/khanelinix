@@ -110,7 +110,7 @@ in
           {
             public = mkShare {
               comment = "Home Public folder";
-              sharePath = "/home/${config.khanelinix.user.name}/Public/";
+              sharePath = "${config.users.users.${config.khanelinix.user.name}.home}/Public/";
             };
 
             games = mkShare {

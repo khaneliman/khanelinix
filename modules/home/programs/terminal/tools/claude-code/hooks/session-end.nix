@@ -1,4 +1,5 @@
-_: {
+{ config, ... }:
+{
   SessionEnd = [
     {
       matcher = "*";
@@ -6,8 +7,8 @@ _: {
         {
           type = "command";
           command = /* Bash */ ''
-            mkdir -p ~/.local/share/claude-code/sessions
-            mkdir -p ~/.local/share/claude-code/audit
+            mkdir -p ${config.xdg.dataHome}/claude-code/sessions
+            mkdir -p ${config.xdg.dataHome}/claude-code/audit
 
             input=$(cat)
             session_id=$(echo "$input" | jq -r '.session_id // "unknown"')
@@ -18,16 +19,16 @@ _: {
               --arg ts "$timestamp" \
               --arg event "session_end" \
               '{timestamp: $ts, event: $event, session: .session_id, cwd: .cwd}' \
-              >> ~/.local/share/claude-code/audit/sessions.jsonl
+              >> ${config.xdg.dataHome}/claude-code/audit/sessions.jsonl
 
             # Count tool usage from this session if audit log exists
             tool_count=0
-            if [ -f ~/.local/share/claude-code/audit/pre-tool.jsonl ]; then
-              tool_count=$(grep -c "\"session\":\"$session_id\"" ~/.local/share/claude-code/audit/pre-tool.jsonl 2>/dev/null || echo "0")
+            if [ -f ${config.xdg.dataHome}/claude-code/audit/pre-tool.jsonl ]; then
+              tool_count=$(grep -c "\"session\":\"$session_id\"" ${config.xdg.dataHome}/claude-code/audit/pre-tool.jsonl 2>/dev/null || echo "0")
             fi
 
             # Write human-readable session log
-            session_log="$HOME/.local/share/claude-code/sessions/$(date +%Y-%m).log"
+            session_log="${config.xdg.dataHome}/claude-code/sessions/$(date +%Y-%m).log"
             echo "=== Session End: $(date) ===" >> "$session_log"
             echo "Session ID: $session_id" >> "$session_log"
             echo "Directory: $(pwd)" >> "$session_log"

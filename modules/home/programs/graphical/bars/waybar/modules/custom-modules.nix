@@ -75,7 +75,7 @@ in
       default = "🎜";
     };
     escape = true;
-    exec = "$HOME/.config/waybar/mediaplayer.py 2> /dev/null";
+    exec = "${config.xdg.configHome}/waybar/mediaplayer.py 2> /dev/null";
   };
 
   "custom/notification" = {
@@ -186,7 +186,7 @@ in
   "custom/weather" = {
     exec = "${getExe pkgs.wttrbar} --fahrenheit --ampm${
       lib.optionalString (osConfig.khanelinix.security.sops.enable or false
-      ) " --location $(jq '.wttr.location' ~/weather_config.json)"
+      ) " --location $(jq '.wttr.location' ${config.home.homeDirectory}/weather_config.json)"
     }";
     return-type = "json";
     format = "{}";

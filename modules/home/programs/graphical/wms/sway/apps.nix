@@ -69,7 +69,7 @@ in
           )
           ++ [
             { command = mkStartCommand { slice = "b"; } "$(wayvnc $(tailscale ip --4))"; }
-            { command = "notify-send --icon ~/.face -u normal \"Hello $(whoami)\""; }
+            { command = "notify-send --icon ${config.home.homeDirectory}/.face -u normal \"Hello $(whoami)\""; }
           ];
       };
     };

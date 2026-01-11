@@ -17,7 +17,11 @@ let
     ''
   );
 
-  screenshot-path = "/home/${config.khanelinix.user.name}/Pictures/screenshots";
+  screenshot-path =
+    if config.xdg.userDirs.enable then
+      "${config.xdg.userDirs.pictures}/screenshots"
+    else
+      "${config.home.homeDirectory}/Pictures/screenshots";
 
   # Screenshot tool priority: hyprshot (if enabled) > grimblast
   screenshot_tool =
@@ -241,7 +245,7 @@ in
 
         # screenshot commands
         "$notify-screenshot" = ''notify-send --icon "$file" "Screenshot Saved"'';
-        "$screenshot-path" = "/home/${config.khanelinix.user.name}/Pictures/screenshots";
+        "$screenshot-path" = screenshot-path;
         "$screenshot_area_file" = screenshot_tool.area_file;
         "$screenshot_active_file" = screenshot_tool.active_file;
         "$screenshot_screen_file" = screenshot_tool.screen_file;

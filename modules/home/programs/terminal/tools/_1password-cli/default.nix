@@ -26,7 +26,7 @@ in
       ssh.extraConfig = lib.optionalString cfg.enableSshSocket ''
         Host *
           AddKeysToAgent yes
-          IdentityAgent ~/.1password/agent.sock
+          IdentityAgent ${config.home.homeDirectory}/.1password/agent.sock
       '';
     };
   };

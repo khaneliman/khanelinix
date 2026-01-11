@@ -14,7 +14,7 @@
     pull = "git pull";
     gdiff = "git diff HEAD";
     vdiff = "git difftool HEAD";
-    cfg = "git --git-dir=$HOME/.config/.dotfiles/ --work-tree=$HOME";
+    cfg = "git --git-dir=${config.home.homeDirectory}/.config/.dotfiles/ --work-tree=${config.home.homeDirectory}";
 
     g = "git";
     ga = "git add";

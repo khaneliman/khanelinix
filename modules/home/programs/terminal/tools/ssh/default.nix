@@ -93,12 +93,12 @@ in
       shellAliases =
         foldl (aliases: system: aliases // { "ssh-${system}" = "ssh ${system} -t tmux a"; })
           {
-            ssh-list-perm-user = ''find ~/.ssh -exec stat -c "%a %n" {} \;'';
+            ssh-list-perm-user = ''find ${config.home.homeDirectory}/.ssh -exec stat -c "%a %n" {} \;'';
 
             ssh-perm-user = lib.concatStrings [
-              ''${getExe' pkgs.findutils "find"} ~/.ssh -type f -exec chmod 600 {} \;;''
-              ''${getExe' pkgs.findutils "find"} ~/.ssh -type d -exec chmod 700 {} \;;''
-              ''${getExe' pkgs.findutils "find"} ~/.ssh -type f -name "*.pub" -exec chmod 644 {} \;''
+              ''${getExe' pkgs.findutils "find"} ${config.home.homeDirectory}/.ssh -type f -exec chmod 600 {} \;;''
+              ''${getExe' pkgs.findutils "find"} ${config.home.homeDirectory}/.ssh -type d -exec chmod 700 {} \;;''
+              ''${getExe' pkgs.findutils "find"} ${config.home.homeDirectory}/.ssh -type f -name "*.pub" -exec chmod 644 {} \;''
             ];
 
             ssh-list-perm-system = ''sudo find /etc/ssh -exec stat -c "%a %n" {} \;'';
