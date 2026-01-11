@@ -98,11 +98,21 @@ in
         bind =
           let
             # Launcher binds
-            launcherBinds = [
-              "CTRL, SPACE, exec, $($launcher)"
-              "ALT, SPACE, exec, $($launcher-alt)"
-              "$mainMod, SPACE, exec, $($launcher-backup)"
-            ];
+            launcherBinds =
+              let
+                inherit (config.khanelinix.programs.graphical) launchers;
+                enabledLaunchers = lib.flatten [
+                  (lib.optional launchers.vicinae.enable "vicinae open")
+                  (lib.optional launchers.anyrun.enable "anyrun")
+                  (lib.optional launchers.walker.enable "walker")
+                  (lib.optional launchers.sherlock.enable "sherlock")
+                  (lib.optional launchers.rofi.enable "rofi -show drun")
+                ];
+                count = builtins.length enabledLaunchers;
+              in
+              lib.optional (count > 0) "CTRL, SPACE, exec, $($launcher)"
+              ++ lib.optional (count > 1) "ALT, SPACE, exec, $($launcher-alt)"
+              ++ lib.optional (count > 2) "$mainMod, SPACE, exec, $($launcher-backup)";
 
             # App launch binds
             appBinds = [

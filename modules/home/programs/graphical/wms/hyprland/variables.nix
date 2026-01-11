@@ -57,6 +57,16 @@ let
       "swappy -f -";
 
   cfg = config.khanelinix.programs.graphical.wms.hyprland;
+
+  inherit (config.khanelinix.programs.graphical) launchers;
+  enabledLaunchers = lib.flatten [
+    (lib.optional launchers.vicinae.enable "vicinae open")
+    (lib.optional launchers.anyrun.enable "anyrun")
+    (lib.optional launchers.walker.enable "walker")
+    (lib.optional launchers.sherlock.enable "sherlock")
+    (lib.optional launchers.rofi.enable "rofi -show drun")
+  ];
+  count = builtins.length enabledLaunchers;
 in
 {
   config = mkIf cfg.enable {
@@ -215,9 +225,6 @@ in
         "$browser" = "${lib.getExe config.programs.firefox.package}";
         "$editor" = "nvim";
         "$explorer" = "nautilus";
-        "$launcher" = "vicinae open";
-        "$launcher-alt" = "anyrun";
-        "$launcher-backup" = "sherlock";
         "$looking-glass" = "looking-glass-client";
         "$mail" = "thunderbird";
         "$music" = "pear-desktop";
@@ -226,6 +233,10 @@ in
         "$screen-recorder" = "record_screen";
         "$term" = "kitty";
         "$window-inspector" = "hyprprop";
+
+        "$launcher" = mkIf (count > 0) (builtins.elemAt enabledLaunchers 0);
+        "$launcher-alt" = mkIf (count > 1) (builtins.elemAt enabledLaunchers 1);
+        "$launcher-backup" = mkIf (count > 2) (builtins.elemAt enabledLaunchers 2);
 
         # screenshot commands
         "$notify-screenshot" = ''notify-send --icon "$file" "Screenshot Saved"'';
