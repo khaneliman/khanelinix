@@ -51,7 +51,6 @@ in
           browser = "${getExe config.programs.firefox.package}";
           explorer = "nautilus";
           notification_center = "${getExe' config.services.swaync.package "swaync-client"}";
-          launcher = "${getExe config.programs.anyrun.package}";
           looking-glass = "looking-glass-client";
           screen-locker = "${getExe config.programs.swaylock.package}";
           # TODO: package upstream
@@ -65,7 +64,7 @@ in
 
           sway_area_swappy = ''grim -g "$(slurp)" - | swappy -f -'';
           sway_active_swappy = ''grim -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')" - | swappy -f -'';
-          sway_screen_swappy = ''grim - | swappy -f -'';
+          sway_screen_swappy = "grim - | swappy -f -";
 
           sway_area_clipboard = ''grim -g "$(slurp)" - | wl-copy && notify-send "Screenshot" "Area copied to clipboard"'';
           sway_active_clipboard = ''grim -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')" - | wl-copy && notify-send "Screenshot" "Window copied to clipboard"'';
@@ -74,12 +73,36 @@ in
           # utility commands
           color_picker = "grim -g \"$(slurp -p)\" -t ppm - | ${getExe' pkgs.imagemagick "convert"} - -format '%[pixel:p{0,0}]' txt:- | tail -n1 | cut -d' ' -f4 | wl-copy && (${getExe' pkgs.imagemagick "convert"} -size 32x32 xc:$(wl-paste) /tmp/color.png && notify-send \"Color Code:\" \"$(wl-paste)\" -h \"string:bgcolor:$(wl-paste)\" --icon /tmp/color.png -u critical -t 4000)";
           cliphist = "cliphist list | sherlock | cliphist decode | wl-copy";
-          walker = "walker";
           smile = "smile";
           window-inspector = "swaymsg -t get_tree | jq -r '.. | select(.focused? == true)' | notify-send 'Window Info' -t 5000";
+
+          inherit (config.khanelinix.programs.graphical) launchers;
+          enabledLaunchers = lib.flatten [
+            (lib.optional launchers.vicinae.enable "vicinae open")
+            (lib.optional launchers.anyrun.enable "${getExe config.programs.anyrun.package}")
+            (lib.optional launchers.walker.enable "walker")
+            (lib.optional launchers.sherlock.enable "sherlock")
+            (lib.optional launchers.rofi.enable "rofi -show drun")
+          ];
         in
         {
           keybindings = lib.mkMerge [
+            (
+              let
+                count = builtins.length enabledLaunchers;
+              in
+              lib.mkOptionDefault (
+                (lib.optionalAttrs (count > 0) {
+                  "Control+Space" = "exec ${mkStartCommand (builtins.elemAt enabledLaunchers 0)}";
+                })
+                // (lib.optionalAttrs (count > 1) {
+                  "Alt+Space" = "exec ${mkStartCommand (builtins.elemAt enabledLaunchers 1)}";
+                })
+                // (lib.optionalAttrs (count > 2) {
+                  "${swayCfg.modifier}+Space" = "exec ${mkStartCommand (builtins.elemAt enabledLaunchers 2)}";
+                })
+              )
+            )
             (lib.mkOptionDefault {
               "${swayCfg.modifier}+l" = "exec ${screen-locker}";
               # TODO: enable after swayprop available
@@ -95,10 +118,7 @@ in
               # "${swayCfg.modifier}+${swayCfg.right}" = "focus right";
 
               # Additional bindings - Multiple launchers like Hyprland
-              # FIXME: error on load
-              # "${swayCfg.modifier}+Space" = mkForce "exec ${sherlock}";
-              "Control+Space" = "exec ${mkStartCommand launcher}";
-              "Alt+Space" = "exec ${mkStartCommand walker}";
+              # bindings are generated dynamically above based on enabled launchers
               "Super_L+Shift+Return" = "exec ${mkStartCommand "${swayCfg.terminal} zellij"}";
               "Super_L+Shift+P" = "exec ${color_picker}";
               "${swayCfg.modifier}+b" = "exec ${mkStartCommand browser}";
