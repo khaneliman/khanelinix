@@ -119,8 +119,6 @@ in
         graphical = {
           launchers = {
             anyrun = enabled;
-            sherlock = enabled;
-            walker = enabled;
             vicinae = enabled;
           };
 
