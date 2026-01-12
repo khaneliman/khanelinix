@@ -85,6 +85,7 @@ in
         "arrow-parent" = ./plugins/arrow-parent.yazi;
         "smart-switch" = ./plugins/smart-switch.yazi;
         "smart-tab" = ./plugins/smart-tab.yazi;
+        "folder-rules" = ./plugins/folder-rules.yazi;
         # TODO: remove once merged
         yatline = pkgs.yaziPlugins.yatline.overrideAttrs {
           patches = [

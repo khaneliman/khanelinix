@@ -16,6 +16,9 @@ in
     + lib.optionalString (lib.hasAttr "duckdb" enabledPlugins) ''
       require("duckdb"):setup()
     ''
+    + lib.optionalString (lib.hasAttr "folder-rules" enabledPlugins) ''
+      require("folder-rules"):setup()
+    ''
     # Lua
     + ''
       -- Cross session yank
