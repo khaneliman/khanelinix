@@ -1,14 +1,9 @@
 {
   config,
   lib,
-  pkgs,
-  osConfig ? { },
 
   ...
 }:
-let
-  isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
-in
 {
   opener = {
     edit = [
@@ -62,7 +57,7 @@ in
         for = "windows";
       }
       {
-        run = "${lib.getExe pkgs.exiftool} \"$1\"; echo \"Press enter to exit\"; read _";
+        run = "exiftool \"$1\"; echo \"Press enter to exit\"; read _";
         block = true;
         desc = "Show EXIF";
         for = "unix";
@@ -70,7 +65,7 @@ in
     ];
     dmg = [
       {
-        run = "${lib.getExe pkgs.undmg} \"$1\"";
+        run = "undmg \"$1\"";
         desc = "Extract here";
         for = "unix";
       }
@@ -78,34 +73,34 @@ in
     extract = [
       {
         desc = "Extract with atool";
-        run = "${lib.getExe pkgs.atool} --extract --each --subdir --quiet -- \"$@\"";
+        run = "atool --extract --each --subdir --quiet -- \"$@\"";
         block = true;
       }
       {
-        run = "${lib.getExe pkgs.unar} \"$1\"";
+        run = "unar \"$1\"";
         desc = "Extract here";
         for = "unix";
       }
       {
-        run = "${lib.getExe pkgs.unar} \"%1\"";
+        run = "unar \"%1\"";
         desc = "Extract here";
         for = "windows";
       }
     ];
     play = [
       {
-        run = "${lib.getExe pkgs.mediainfo} \"$1\"; echo \"Press enter to exit\"; read _";
+        run = "mediainfo \"$1\"; echo \"Press enter to exit\"; read _";
         block = true;
         desc = "Show media info";
         for = "unix";
       }
-      (lib.mkIf (pkgs.stdenv.hostPlatform.isLinux && !isWSL) {
-        run = "${lib.getExe config.programs.mpv.package} \"$@\"";
+      (lib.mkIf config.programs.mpv.enable {
+        run = "mpv \"$@\"";
         orphan = true;
         for = "unix";
       })
-      (lib.mkIf (pkgs.stdenv.hostPlatform.isLinux && !isWSL) {
-        run = "${lib.getExe config.programs.mpv.package} \"%1\"";
+      (lib.mkIf config.programs.mpv.enable {
+        run = "mpv \"%1\"";
         orphan = true;
         for = "windows";
       })

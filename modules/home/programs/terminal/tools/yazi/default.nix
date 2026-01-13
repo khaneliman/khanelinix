@@ -32,7 +32,14 @@ in
               optionalPluginPackage =
                 plugin: package: lib.optional (builtins.hasAttr plugin config.programs.yazi.plugins) package;
             in
-            optionalPluginPackage "ouch" pkgs.ouch
+            (with pkgs; [
+              atool
+              exiftool
+              mediainfo
+              unar
+              undmg
+            ])
+            ++ optionalPluginPackage "ouch" pkgs.ouch
             ++ optionalPluginPackage "duckdb" pkgs.duckdb
             ++ optionalPluginPackage "piper" pkgs.bat
             ++ optionalPluginPackage "piper" pkgs.eza
