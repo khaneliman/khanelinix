@@ -212,6 +212,11 @@ in
           vrr = 2;
         };
 
+        render = {
+          new_render_scheduling = true;
+          direct_scanout = 2;
+        };
+
         # unscale XWayland
         xwayland = {
           force_zero_scaling = false;
