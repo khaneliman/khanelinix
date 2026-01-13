@@ -25,7 +25,7 @@
             src = pkgs.fetchNuGet {
               pname = name;
               inherit version sha256;
-              installPhase = ''mkdir -p $out/bin && cp -r tools/net6.0/any/* $out/bin'';
+              installPhase = "mkdir -p $out/bin && cp -r tools/net6.0/any/* $out/bin";
             };
             installPhase = ''
               runHook preInstall

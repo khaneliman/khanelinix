@@ -13,7 +13,7 @@ let
 
   sketchybar = lib.getExe (config.programs.sketchybar.finalPackage or pkgs.sketchybar);
   shellAliases = {
-    push = /* bash */ ''command git push && ${sketchybar} --trigger git_push'';
+    push = /* bash */ "command git push && ${sketchybar} --trigger git_push";
     restart-sketchybar = ''launchctl kickstart -k gui/"$(id -u)"/org.nix-community.home.sketchybar'';
   };
 in

@@ -114,7 +114,7 @@ in
       shellAliases = {
         # Nixpkgs
         prefetch-sri = "nix store prefetch-file $1";
-        nrh = ''nixpkgs-review rev HEAD'';
+        nrh = "nixpkgs-review rev HEAD";
         nra = ''nixpkgs-review pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux"'';
         nrap = ''nixpkgs-review pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux" --post-result --num-parallel-evals 3'';
         nrapa = ''nixpkgs-review pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux" --post-result --num-parallel-evals 3 --approve-pr'';
@@ -122,31 +122,31 @@ in
         nrdp = ''nixpkgs-review pr $1 --systems "aarch64-darwin" --post-result'';
         nrl = ''nixpkgs-review pr $1 --systems "x86_64-linux aarch64-linux" --num-parallel-evals 2'';
         nrlp = ''nixpkgs-review pr $1 --systems "x86_64-linux aarch64-linux" --num-parallel-evals 2 --post-result'';
-        nup = ''nix-update --commit -u $1'';
-        num = ''nix-shell maintainers/scripts/update.nix --argstr maintainer $1'';
+        nup = "nix-update --commit -u $1";
+        num = "nix-shell maintainers/scripts/update.nix --argstr maintainer $1";
         ncs = ''f(){ nix build "nixpkgs#$1" --no-link && nix path-info --recursive --closure-size --human-readable $(nix-build --no-out-link '<nixpkgs>' -A "$1"); }; f'';
         ncsnc = ''f(){ nix build ".#nixosConfigurations.$1.config.system.build.toplevel" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#nixosConfigurations.$1.config.system.build.toplevel.outPath"); }; f'';
         ncsdc = ''f(){ nix build ".#darwinConfigurations.$1.config.system.build.toplevel" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#darwinConfigurations.$1.config.system.build.toplevel.outPath"); }; f'';
         # NOTE: vim-add 'owner/repo'
-        vim-add = ''nix run nixpkgs#vimPluginsUpdater add'';
+        vim-add = "nix run nixpkgs#vimPluginsUpdater add";
         # NOTE: vim-update 'plugin-name'
-        vim-update = ''nix run nixpkgs#vimPluginsUpdater update'';
-        vim-update-all = ''nix run nixpkgs#vimPluginsUpdater -- --github-token=$(echo $GITHUB_TOKEN)'';
+        vim-update = "nix run nixpkgs#vimPluginsUpdater update";
+        vim-update-all = "nix run nixpkgs#vimPluginsUpdater -- --github-token=$(echo $GITHUB_TOKEN)";
         tree-update-all = ''./pkgs/applications/editors/vim/plugins/utils/nvim-treesitter/update.py && git add ./pkgs/applications/editors/vim/plugins/nvim-treesitter/generated.nix && git commit -m "vimPlugins.nvim-treesitter: update grammars"'';
-        tree-check = ''nix build .#vimPlugins.nvim-treesitter.passthru.tests.check-queries'';
-        lua-update = ''nix run nixpkgs#luarocks-packages-updater update'';
-        lua-update-all = ''nix run nixpkgs#luarocks-packages-updater -- --github-token=$(echo $GITHUB_TOKEN)'';
-        yazi-update = ''f(){ ./pkgs/by-name/ya/yazi/plugins/update.py --plugin $1 --commit }; f'';
-        yazi-update-all = ''./pkgs/by-name/ya/yazi/plugins/update.py --all --commit'';
+        tree-check = "nix build .#vimPlugins.nvim-treesitter.passthru.tests.check-queries";
+        lua-update = "nix run nixpkgs#luarocks-packages-updater update";
+        lua-update-all = "nix run nixpkgs#luarocks-packages-updater -- --github-token=$(echo $GITHUB_TOKEN)";
+        yazi-update = "f(){ ./pkgs/by-name/ya/yazi/plugins/update.py --plugin $1 --commit }; f";
+        yazi-update-all = "./pkgs/by-name/ya/yazi/plugins/update.py --all --commit";
 
         # Home-Manager
-        hmd = ''nix build -L .#docs-html && ${
+        hmd = "nix build -L .#docs-html && ${
           if pkgs.stdenv.hostPlatform.isDarwin then "open" else "xdg-open"
-        } result/share/doc/home-manager/index.xhtml'';
+        } result/share/doc/home-manager/index.xhtml";
         hmt = ''f(){ nix-build -j auto --show-trace --pure --option allow-import-from-derivation false tests -A build."$1"; }; f'';
         hmtf = ''f(){ nix build -L --option allow-import-from-derivation false --reference-lock-file flake.lock "./tests#test-$1"; }; f'';
         hmts = ''f(){ nix build -L --option allow-import-from-derivation false --reference-lock-file flake.lock "./tests#test-$1" && nix path-info -rSh ./result; }; f'';
-        hmt-repl = ''nix repl --reference-lock-file flake.lock ./tests'';
+        hmt-repl = "nix repl --reference-lock-file flake.lock ./tests";
       };
     };
 
