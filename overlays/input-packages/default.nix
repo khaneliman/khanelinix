@@ -31,9 +31,7 @@ in
     yaziPlugins
 
     # TODO: remove after hitting channel
-    citrix_workspace
-    normalize
-    vicinae
+    vinegar
     ;
 
   python3 = _prev.python3.override {
