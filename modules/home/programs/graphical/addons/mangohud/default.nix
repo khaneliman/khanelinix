@@ -91,6 +91,13 @@ in
         # Logging
         log_duration = 0;
         autostart_log = 0;
+
+        blacklist = [
+          "vinegar"
+          "sober"
+          "RobloxPlayerBeta.exe"
+          "RobloxStudioBeta.exe"
+        ];
       };
     };
   };
