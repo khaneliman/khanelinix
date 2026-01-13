@@ -55,10 +55,7 @@ in
         enable = true;
         withUWSM = true;
 
-        package = (pkgs.hyprland.override { debug = cfg.enableDebug; }).overrideAttrs (old: {
-          # TODO: remove after https://github.com/NixOS/nixpkgs/pull/478472 is available
-          passthru.providedSessions = old.passthru.providedSessions ++ [ "hyprland-uwsm" ];
-        });
+        package = pkgs.hyprland.override { debug = cfg.enableDebug; };
       };
     };
 
