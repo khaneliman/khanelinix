@@ -25,7 +25,8 @@
       url = "github:nix-community/lanzaboote/v0.4.3";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        flake-compat.follows = "";
+        flake-compat.follows = "flake-compat";
+        flake-parts.follows = "flake-parts";
       };
     };
     nix-darwin = {
@@ -41,7 +42,7 @@
       url = "github:nix-community/nixos-wsl";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        flake-compat.follows = "";
+        flake-compat.follows = "flake-compat";
       };
     };
     sops-nix = {
@@ -52,7 +53,10 @@
     # Applications & packages
     anyrun-nixos-options = {
       url = "github:n3oney/anyrun-nixos-options";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+      };
     };
     catppuccin = {
       url = "github:catppuccin/nix";
@@ -71,7 +75,10 @@
     };
     khanelivim = {
       url = "github:khaneliman/khanelivim";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs = {
+        nixpkgs.follows = "nixpkgs-unstable";
+        flake-parts.follows = "flake-parts";
+      };
     };
     nh = {
       url = "github:nix-community/nh";
@@ -88,13 +95,14 @@
       url = "github:danth/stylix";
       inputs = {
         nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
       };
     };
     waybar = {
       url = "github:Alexays/Waybar";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        flake-compat.follows = "";
+        flake-compat.follows = "flake-compat";
       };
     };
     yazi-flavors = {
