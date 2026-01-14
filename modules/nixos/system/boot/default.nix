@@ -34,10 +34,25 @@ in
       initrd.systemd.network.wait-online.enable = false;
 
       kernel.sysctl = {
+        # Memory management - Desktop optimized
         "vm.swappiness" = 10;
         "vm.vfs_cache_pressure" = 50;
         "vm.dirty_ratio" = 15;
         "vm.dirty_background_ratio" = 5;
+
+        # Memory overcommit - better for desktop responsiveness
+        # 1 = always overcommit, let OOM killer handle it (better than freezing)
+        "vm.overcommit_memory" = 1;
+        "vm.overcommit_ratio" = 50;
+
+        # Swap I/O optimization - read 8 pages at a time
+        "vm.page-cluster" = 3;
+
+        # Disable zone reclaim (bad for desktop, causes latency spikes)
+        "vm.zone_reclaim_mode" = 0;
+
+        # Security: prevent NULL pointer dereference attacks
+        "vm.mmap_min_addr" = 65536;
       };
 
       kernelParams =
