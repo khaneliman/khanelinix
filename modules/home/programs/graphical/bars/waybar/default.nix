@@ -144,11 +144,7 @@ in
   config = mkIf cfg.enable {
     programs.waybar = {
       enable = true;
-      package = waybar.packages.${system}.waybar.overrideAttrs (_oldAttrs: {
-        patches = [
-          ./workspaces.patch
-        ];
-      });
+      package = waybar.packages.${system}.waybar;
 
       systemd = {
         enable = true;
