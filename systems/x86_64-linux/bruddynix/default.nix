@@ -93,7 +93,6 @@ in
       fonts = enabled;
       locale = enabled;
       networking.enable = true;
-      realtime = enabled;
       time = enabled;
     };
 
