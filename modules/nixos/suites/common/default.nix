@@ -86,5 +86,12 @@ in
     };
 
     zramSwap.enable = true;
+
+    # Kernel Same-page Merging: Deduplicates identical memory pages
+    # Useful for browsers, Electron apps, VMs, containers
+    hardware.ksm = {
+      enable = true;
+      sleep = 100; # ms between scans (lower = more aggressive dedup, slightly more CPU)
+    };
   };
 }
