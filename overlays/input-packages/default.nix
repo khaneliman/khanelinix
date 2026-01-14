@@ -26,7 +26,7 @@ in
   inherit (master)
     antigravity
     claude-code
-    # gemini-cli
+    gemini-cli
     opencode
     yaziPlugins
 
