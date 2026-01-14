@@ -149,10 +149,7 @@ in
       };
 
       fonts = enabled;
-      networking = {
-        enable = true;
-        optimizeTcp = true;
-      };
+      networking.enable = true;
       realtime = enabled;
       time = enabled;
     };
