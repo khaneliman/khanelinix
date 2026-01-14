@@ -63,7 +63,14 @@ in
         exec-on-workspace-change = [
           "/bin/bash"
           "-c"
-          "${sketchybar} --trigger aerospace_workspace_change FOCUSED=$AEROSPACE_FOCUSED_WORKSPACE"
+          ''
+            ${sketchybar} --trigger aerospace_workspace_change FOCUSED=$AEROSPACE_FOCUSED_WORKSPACE
+            if [ "$AEROSPACE_FOCUSED_WORKSPACE" == "2" ] || [ "$AEROSPACE_FOCUSED_WORKSPACE" == "6" ]; then
+              ${lib.getExe pkgs.aerospace} layout accordion
+            else
+              ${lib.getExe pkgs.aerospace} layout tiles
+            fi
+          ''
         ];
 
         # Startup commands
