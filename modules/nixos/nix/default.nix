@@ -55,10 +55,12 @@ in
     # NixOS config options
     # Check corresponding shared imported module
     nix = {
-      # make builds run with low priority so my system stays responsive
+      # Make builds run with low priority so desktop stays responsive
+      # "batch" = low CPU priority, "idle" = only use disk when nothing else needs it
+      # Change daemonIOSchedClass to "best-effort" if you want faster builds at cost of responsiveness
       daemonCPUSchedPolicy = "batch";
-      daemonIOSchedClass = "idle";
-      daemonIOSchedPriority = 7;
+      daemonIOSchedClass = "best-effort";
+      daemonIOSchedPriority = 7; # 0-7, higher = lower priority
 
       gc = {
         dates = "Sun *-*-* 03:00";
