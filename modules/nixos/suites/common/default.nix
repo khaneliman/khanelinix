@@ -60,6 +60,7 @@ in
       };
 
       services = {
+        ananicy = mkDefault enabled;
         ddccontrol = mkDefault enabled;
         earlyoom = mkDefault enabled;
         lact = mkDefault enabled;
