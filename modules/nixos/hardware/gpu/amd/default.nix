@@ -32,7 +32,12 @@ in
       amdgpu = {
         initrd.enable = true;
         opencl.enable = true;
-        overdrive.enable = true;
+        overdrive = {
+          enable = true;
+          # Full feature mask for all power management features
+          # Default 0xfffd7fff is conservative; 0xffffffff enables all (may cause flicker on some cards)
+          ppfeaturemask = "0xffffffff";
+        };
       };
 
       graphics = {
