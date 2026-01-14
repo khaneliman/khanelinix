@@ -15,6 +15,7 @@ in
   options.khanelinix.hardware.storage = {
     enable = lib.mkEnableOption "support for extra storage devices";
     ssdEnable = mkBoolOpt true "Whether or not to enable support for SSD storage devices.";
+    disableUsbAutoSuspend = mkBoolOpt false "Disable USB autosuspend to prevent USB device lag.";
   };
 
   config = mkIf cfg.enable {
@@ -38,5 +39,10 @@ in
         "sd[a-z]" = "bfq";
       };
     };
+
+    # Disable USB autosuspend to prevent input device lag (mouse, keyboard, etc.)
+    services.udev.extraRules = lib.mkIf cfg.disableUsbAutoSuspend ''
+      ACTION=="add", SUBSYSTEM=="usb", TEST=="power/control", ATTR{power/control}="on"
+    '';
   };
 }
