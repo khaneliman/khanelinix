@@ -26,5 +26,17 @@ in
     ];
 
     services.fstrim.enable = lib.mkDefault cfg.ssdEnable;
+
+    # I/O Scheduler optimization for interactive latency
+    hardware.block = {
+      # NVMe: 'kyber' for latency-oriented scheduling under mixed workloads
+      defaultScheduler = "kyber";
+      # HDDs and SATA: BFQ provides better interactive latency
+      defaultSchedulerRotational = "bfq";
+      # Per-device overrides: SATA SSDs also benefit from BFQ
+      scheduler = {
+        "sd[a-z]" = "bfq";
+      };
+    };
   };
 }
