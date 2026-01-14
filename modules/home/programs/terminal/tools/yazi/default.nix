@@ -100,6 +100,10 @@ in
               url = "https://github.com/imsi32/yatline.yazi/pull/71.patch";
               hash = "sha256-YUFlDzSx8X4XIeYVOX+PRVZxND7588nl0vr3V+h6hus=";
             })
+            (pkgs.fetchpatch {
+              url = "https://github.com/imsi32/yatline.yazi/pull/67.patch";
+              hash = "sha256-omNbc2dSldLZyuoSwx8hjvDR11cb0tozpqp/ooY0sMs=";
+            })
           ];
         };
         # TODO: remove once merged
