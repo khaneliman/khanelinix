@@ -11,7 +11,6 @@
 let
   inherit (lib)
     mkIf
-    mkMerge
     types
     ;
   inherit (lib.khanelinix) mkOpt;
@@ -19,32 +18,7 @@ let
 
   cfg = config.khanelinix.programs.graphical.bars.waybar;
 
-  # Determine which style files to use based on whether stylix is enabled and catppuccin is not enabled
-  styleDir = if config.khanelinix.theme.catppuccin.enable then ./styles else ./base16-style;
-
-  style = builtins.readFile "${styleDir}/style.css";
-  controlCenterStyle = builtins.readFile "${styleDir}/control-center.css";
-  powerStyle = builtins.readFile "${styleDir}/power.css";
-  statsStyle = builtins.readFile "${styleDir}/stats.css";
-  workspacesStyle = builtins.readFile "${styleDir}/workspaces.css";
-
-  custom-modules = import ./modules/custom-modules.nix {
-    inherit
-      osConfig
-      config
-      lib
-      pkgs
-      ;
-  };
-  default-modules = import ./modules/default-modules.nix { inherit osConfig lib pkgs; };
-  group-modules = import ./modules/group-modules.nix {
-    inherit
-      config
-      lib
-      osConfig
-      ;
-  };
-  hyprland-modules = import ./modules/hyprland-modules.nix {
+  generateSettings = import ./lib/settings.nix {
     inherit
       config
       lib
@@ -52,81 +26,6 @@ let
       pkgs
       ;
   };
-  sway-modules = import ./modules/sway-modules.nix { inherit config lib; };
-
-  commonAttributes = {
-    layer = "top";
-    position = "top";
-
-    margin-top = 10;
-    margin-left = 20;
-    margin-right = 20;
-
-    modules-left = [
-      "custom/power"
-    ]
-    ++ lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [
-      "hyprland/workspaces"
-    ]
-    ++ lib.optionals config.khanelinix.programs.graphical.wms.sway.enable [ "sway/workspaces" ]
-    ++ [ "custom/separator-left" ]
-    ++ lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [ "hyprland/window" ]
-    ++ lib.optionals config.khanelinix.programs.graphical.wms.sway.enable [ "sway/window" ];
-  };
-
-  fullSizeModules = {
-    modules-right = [
-      "group/tray"
-      "custom/separator-right"
-      "group/stats"
-      "custom/separator-right"
-      "group/control-center"
-    ]
-    ++ lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [ "hyprland/submap" ]
-    ++ lib.optionals config.khanelinix.programs.graphical.wms.sway.enable [ "sway/mode" ]
-    ++ [
-      "custom/weather"
-      "clock"
-    ];
-  };
-
-  condensedModules = {
-    modules-right = [
-      "group/tray-drawer"
-      "group/stats-drawer"
-      "group/control-center"
-    ]
-    ++ lib.optionals config.khanelinix.programs.graphical.wms.hyprland.enable [ "hyprland/submap" ]
-    ++ lib.optionals config.khanelinix.programs.graphical.wms.sway.enable [ "sway/mode" ]
-    ++ [
-      "custom/weather"
-      "clock"
-    ];
-  };
-
-  mkBarSettings =
-    barType:
-    mkMerge [
-      commonAttributes
-      (if barType == "fullSize" then fullSizeModules else condensedModules)
-      custom-modules
-      default-modules
-      group-modules
-      (lib.mkIf config.khanelinix.programs.graphical.wms.hyprland.enable hyprland-modules)
-      (lib.mkIf config.khanelinix.programs.graphical.wms.sway.enable sway-modules)
-    ];
-
-  generateOutputSettings =
-    outputList: barType:
-    builtins.listToAttrs (
-      map (outputName: {
-        name = outputName;
-        value = mkMerge [
-          (mkBarSettings barType)
-          { output = outputName; }
-        ];
-      }) outputList
-    );
 in
 {
   options.khanelinix.programs.graphical.bars.waybar = {
@@ -151,12 +50,21 @@ in
         inherit (cfg) enableDebug enableInspect;
       };
 
-      settings = mkMerge [
-        (generateOutputSettings cfg.fullSizeOutputs "fullSize")
-        (generateOutputSettings cfg.condensedOutputs "condensed")
-      ];
+      settings = generateSettings {
+        inherit (cfg) fullSizeOutputs condensedOutputs;
+      };
 
-      style = "${style}${controlCenterStyle}${powerStyle}${statsStyle}${workspacesStyle}";
+      style =
+        let
+          styleDir =
+            if config.khanelinix.theme.catppuccin.enable then ./styles/catppuccin else ./styles/base16;
+          style = builtins.readFile "${styleDir}/style.css";
+          controlCenterStyle = builtins.readFile "${styleDir}/control-center.css";
+          powerStyle = builtins.readFile "${styleDir}/power.css";
+          statsStyle = builtins.readFile "${styleDir}/stats.css";
+          workspacesStyle = builtins.readFile "${styleDir}/workspaces.css";
+        in
+        "${style}${controlCenterStyle}${powerStyle}${statsStyle}${workspacesStyle}";
     };
 
     sops.secrets = lib.mkIf (osConfig.khanelinix.security.sops.enable or false) {
