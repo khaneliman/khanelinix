@@ -94,5 +94,8 @@ in
       enable = true;
       sleep = 100; # ms between scans (lower = more aggressive dedup, slightly more CPU)
     };
+
+    # IRQBalance: Distributes hardware interrupts across CPUs for better multi-core utilization
+    services.irqbalance.enable = true;
   };
 }
