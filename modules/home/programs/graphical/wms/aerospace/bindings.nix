@@ -14,19 +14,27 @@ in
       # Main mode key bindings
       mode = {
         main.binding = {
-          # Window Navigation (vim-style hjkl)
-          "alt-h" = "focus left";
-          "alt-j" = "focus down";
-          "alt-k" = "focus up";
-          "alt-l" = "focus right";
+          # Window Navigation (vim-style hjkl and arrows)
+          "alt-h" = "focus --boundaries-action wrap-around-the-workspace left";
+          "alt-j" = "focus --boundaries-action wrap-around-the-workspace down";
+          "alt-k" = "focus --boundaries-action wrap-around-the-workspace up";
+          "alt-l" = "focus --boundaries-action wrap-around-the-workspace right";
+          "alt-left" = "focus --boundaries-action wrap-around-the-workspace left";
+          "alt-down" = "focus --boundaries-action wrap-around-the-workspace down";
+          "alt-up" = "focus --boundaries-action wrap-around-the-workspace up";
+          "alt-right" = "focus --boundaries-action wrap-around-the-workspace right";
 
           # Window Movement
           "alt-shift-h" = "move left";
           "alt-shift-j" = "move down";
           "alt-shift-k" = "move up";
           "alt-shift-l" = "move right";
+          "alt-shift-left" = "move left";
+          "alt-shift-down" = "move down";
+          "alt-shift-up" = "move up";
+          "alt-shift-right" = "move right";
 
-          # Workspace Navigation (matching skhd workspace shortcuts)
+          # Workspace Navigation
           "cmd-ctrl-1" = "workspace 1";
           "cmd-ctrl-2" = "workspace 2";
           "cmd-ctrl-3" = "workspace 3";
@@ -36,11 +44,11 @@ in
           "cmd-ctrl-7" = "workspace 7";
           "cmd-ctrl-8" = "workspace 8";
 
-          # Previous/Next workspace navigation (from skhd)
+          # Previous/Next workspace navigation
           "cmd-ctrl-left" = "workspace --wrap-around prev";
           "cmd-ctrl-right" = "workspace --wrap-around next";
 
-          # Move windows to workspaces (matching skhd behavior)
+          # Move windows to workspaces
           "alt-shift-1" = "move-node-to-workspace 1";
           "alt-shift-2" = "move-node-to-workspace 2";
           "alt-shift-3" = "move-node-to-workspace 3";
@@ -50,9 +58,9 @@ in
           "alt-shift-7" = "move-node-to-workspace 7";
           "alt-shift-8" = "move-node-to-workspace 8";
 
-          # Move windows to previous/next workspace (from skhd)
-          "alt-shift-left" = "move-node-to-workspace --wrap-around prev";
-          "alt-shift-right" = "move-node-to-workspace --wrap-around next";
+          # Move windows to previous/next workspace
+          "alt-shift-p" = "move-node-to-workspace --wrap-around prev";
+          "alt-shift-n" = "move-node-to-workspace --wrap-around next";
 
           # Layout Controls
           "alt-slash" = "layout tiles horizontal vertical";
@@ -86,20 +94,40 @@ in
           # Service mode
           "cmd-ctrl-s" = "mode service";
 
-          # Additional window management (from skhd)
+          # Additional window management
           "alt-t" = "layout floating tiling"; # toggle float/tiling
 
-          # Window splitting shortcuts (from skhd) - using different key to avoid conflict
+          # Window splitting shortcuts - using different key to avoid conflict
 
-          # Mirror space (from skhd yabai functionality - limited in aerospace)
-          "alt-shift-x" = "layout tiles horizontal vertical";
+          # Resize
+          "ctrl-alt-h" = "resize smart -50";
+          "ctrl-alt-j" = "resize smart +50";
+          "ctrl-alt-k" = "resize smart -50";
+          "ctrl-alt-l" = "resize smart +50";
+
+          # Stacking
+          "ctrl-shift-h" = "join-with left";
+          "ctrl-shift-j" = "join-with down";
+          "ctrl-shift-k" = "join-with up";
+          "ctrl-shift-l" = "join-with right";
+          "ctrl-shift-n" = "focus --boundaries-action wrap-around-the-workspace dfs-next";
+          "ctrl-shift-p" = "focus --boundaries-action wrap-around-the-workspace dfs-prev";
+          "ctrl-shift-right" = "focus --boundaries-action wrap-around-the-workspace dfs-next";
+          "ctrl-shift-left" = "focus --boundaries-action wrap-around-the-workspace dfs-prev";
+
+          # Layouts
+          "alt-shift-z" = "layout tiles horizontal vertical"; # bsp equivalent
+          "alt-shift-c" = "layout accordion horizontal vertical"; # stack equivalent
+          "alt-shift-x" = "layout floating tiling"; # float equivalent
+
+          # Mirror space
           "alt-shift-y" = "layout tiles vertical horizontal";
 
           # Balance window sizes
           "alt-e" = "balance-sizes";
           "ctrl-alt-e" = "balance-sizes";
 
-          # Additional application shortcuts (from skhd)
+          # Additional application shortcuts
           "cmd-alt-ctrl-w" = "exec-and-forget open -a WezTerm";
           "cmd-alt-ctrl-o" = "exec-and-forget open -a 'Microsoft Outlook'";
           "cmd-alt-ctrl-p" = "exec-and-forget open -a 'Microsoft PowerPoint'";
@@ -107,7 +135,7 @@ in
 
         # Resize mode bindings
         resize.binding = {
-          # Fine-grained resize controls (matching skhd behavior)
+          # Fine-grained resize controls
           "h" = "resize smart -50";
           "j" = "resize smart +50";
           "k" = "resize smart -50";
