@@ -24,9 +24,16 @@ in
       fuseiso
       nfs-utils
       ntfs3g
+      nvme-cli
     ];
 
     services.fstrim.enable = lib.mkDefault cfg.ssdEnable;
+
+    # NVMe power management: allow deeper power states but limit latency
+    # Default is 25000us (25ms) - we use 100us for low-latency desktop
+    boot.kernelParams = lib.optionals cfg.ssdEnable [
+      "nvme_core.default_ps_max_latency_us=100"
+    ];
 
     # I/O Scheduler optimization for interactive latency
     hardware.block = {
@@ -40,9 +47,23 @@ in
       };
     };
 
-    # Disable USB autosuspend to prevent input device lag (mouse, keyboard, etc.)
-    services.udev.extraRules = lib.mkIf cfg.disableUsbAutoSuspend ''
-      ACTION=="add", SUBSYSTEM=="usb", TEST=="power/control", ATTR{power/control}="on"
-    '';
+    # Storage device tuning via udev
+    services.udev.extraRules = lib.concatStringsSep "\n" (
+      lib.optionals cfg.ssdEnable [
+        # NVMe: Optimize queue depth and read-ahead for low latency
+        ''ACTION=="add|change", KERNEL=="nvme[0-9]*n[0-9]*", ATTR{queue/nr_requests}="32"''
+        ''ACTION=="add|change", KERNEL=="nvme[0-9]*n[0-9]*", ATTR{queue/read_ahead_kb}="128"''
+        # SATA SSD: Moderate read-ahead, higher queue depth
+        ''ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/read_ahead_kb}="256"''
+        ''ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/nr_requests}="64"''
+        # HDD: Higher read-ahead for sequential performance
+        ''ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/read_ahead_kb}="1024"''
+        ''ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/nr_requests}="256"''
+      ]
+      ++ lib.optionals cfg.disableUsbAutoSuspend [
+        # Disable USB autosuspend to prevent input device lag
+        ''ACTION=="add", SUBSYSTEM=="usb", TEST=="power/control", ATTR{power/control}="on"''
+      ]
+    );
   };
 }
