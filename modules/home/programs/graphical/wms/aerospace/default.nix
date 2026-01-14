@@ -37,7 +37,7 @@ in
 
       settings = {
         # Core Settings - matching yabai preferences
-        enable-normalization-flatten-containers = false;
+        enable-normalization-flatten-containers = true;
         enable-normalization-opposite-orientation-for-nested-containers = true;
         accordion-padding = 30;
         default-root-container-layout = "tiles";

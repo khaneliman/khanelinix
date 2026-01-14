@@ -67,10 +67,6 @@ in
           "alt-comma" = "layout accordion horizontal vertical";
           "alt-shift-space" = "layout floating tiling";
 
-          # Split orientation
-          "alt-s" = "split horizontal";
-          "alt-v" = "split vertical";
-
           # Window Management
           "alt-f" = "fullscreen";
           "cmd-shift-f" = "fullscreen";
