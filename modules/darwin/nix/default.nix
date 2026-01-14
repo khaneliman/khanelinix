@@ -63,8 +63,9 @@ in
         Hour = e.Hour + 1;
       });
 
-      # NOTE: not sure if i saw any benefits changing this
-      # daemonProcessType = "Adaptive";
+      # Run builds with low priority to keep the system responsive
+      # Equivalent to daemonIOSchedClass/daemonCPUSchedPolicy on NixOS
+      daemonProcessType = "Adaptive";
 
       settings = {
         build-users-group = "nixbld";
