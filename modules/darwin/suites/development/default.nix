@@ -16,8 +16,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    # FIXME: not working again
-    # khanelinix.nix.nix-rosetta-builder.enable = true;
+    khanelinix.nix.nix-rosetta-builder.enable = true;
 
     homebrew = {
       casks = [
