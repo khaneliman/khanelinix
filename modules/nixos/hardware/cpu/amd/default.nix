@@ -16,6 +16,9 @@ in
   };
 
   config = mkIf cfg.enable {
+    # Ryzen SMU: Low-level access to System Management Unit for monitoring/tuning
+    hardware.cpu.amd.ryzen-smu.enable = true;
+
     boot = {
       blacklistedKernelModules = [ "k10temp" ];
       extraModulePackages = [ config.boot.kernelPackages.zenpower ];
