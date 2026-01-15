@@ -100,6 +100,7 @@ in
         cursor = {
           enable_hyprcursor = true;
           sync_gsettings_theme = true;
+          hide_on_key_press = true;
         };
 
         debug = mkIf cfg.enableDebug {
@@ -119,6 +120,7 @@ in
             enabled = "yes";
             passes = 4;
             size = 5;
+            xray = true;
           };
 
           shadow = {
@@ -142,6 +144,7 @@ in
 
         ecosystem = {
           no_donation_nag = true;
+          no_update_news = true;
         };
 
         general = {
@@ -189,6 +192,7 @@ in
           };
 
           sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
+          force_no_accel = true;
           scroll_factor = 1.0;
           emulate_discrete_scroll = 1;
           # repeat_delay = 500; # Mimic the responsiveness of mac setup
@@ -204,6 +208,7 @@ in
           allow_session_lock_restore = true;
           disable_hyprland_logo = true;
           enable_swallow = true; # hide windows that spawn other windows
+          focus_on_activate = true;
           font_family = lib.mkDefault "MonaspaceNeon NF";
           key_press_enables_dpms = true;
           middle_click_paste = false;
