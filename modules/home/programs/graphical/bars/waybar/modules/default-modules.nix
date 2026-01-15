@@ -88,8 +88,12 @@ in
   };
 
   clock = {
+    timezones = [
+      ""
+      "UTC"
+    ];
     tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
-    format = "󰃭 {:%a %d %b \n 󰅐 %I:%M %p}";
+    format = "󰃭 {:%a %d %b  \n󰅐 %I:%M %p %Z}";
     calendar = {
       mode = "month";
       mode-mon-col = 3;
@@ -104,11 +108,12 @@ in
       };
     };
     actions = {
+      on-click = "tz_up";
       on-click-right = "mode";
-      on-click-forward = "tz_up";
-      on-click-backward = "tz_down";
-      on-scroll-up = "shift_up";
-      on-scroll-down = "shift_down";
+      on-scroll-up = "tz_up";
+      on-scroll-down = "tz_down";
+      # on-scroll-up = "shift_up";
+      # on-scroll-down = "shift_down";
     };
   };
 
