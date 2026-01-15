@@ -209,7 +209,9 @@ in
           middle_click_paste = false;
           mouse_move_enables_dpms = true;
           swallow_regex = ".*(foot|thunar|nemo|wezterm).*"; # windows for which swallow is applied
-          vrr = 2;
+          # Disabled - one monitor doesn't support adaptive sync
+          # Is enabled in monitor rules for one that supports
+          vrr = 0;
         };
 
         render = {
