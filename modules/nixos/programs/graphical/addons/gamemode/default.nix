@@ -10,12 +10,16 @@ let
 
   cfg = config.khanelinix.programs.graphical.addons.gamemode;
 
+  powerprofilesctl = lib.getExe' pkgs.power-profiles-daemon "powerprofilesctl";
+
   defaultStartScript = ''
-    ${lib.getExe' pkgs.libnotify "notify-send"} 'GameMode started'
+    ${powerprofilesctl} set performance
+    ${lib.getExe' pkgs.libnotify "notify-send"} -u low 'GameMode' 'Performance mode enabled'
   '';
 
   defaultEndScript = ''
-    ${lib.getExe' pkgs.libnotify "notify-send"} 'GameMode ended'
+    ${powerprofilesctl} set balanced
+    ${lib.getExe' pkgs.libnotify "notify-send"} -u low 'GameMode' 'Balanced mode restored'
   '';
 in
 {
@@ -46,7 +50,14 @@ in
         settings = {
           general = {
             softrealtime = "auto";
-            renice = 15;
+            renice = 10;
+          };
+
+          gpu = {
+            # AMD GPU optimization - switch to high performance level
+            apply_gpu_optimisations = "accept-responsibility";
+            gpu_device = 0;
+            amd_performance_level = "high";
           };
 
           custom = {
