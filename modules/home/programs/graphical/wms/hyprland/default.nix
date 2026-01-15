@@ -44,6 +44,11 @@ in
         Extra configuration lines to add to top of `~/.config/hypr/hyprland.conf`.
       '';
     };
+    settings = lib.mkOption {
+      type = lib.types.attrs;
+      default = { };
+      description = "Hyprland configuration settings.";
+    };
   };
 
   imports = [
@@ -173,34 +178,37 @@ in
       # hyprexpo
       # ];
 
-      settings = {
-        exec = [ /* Bash */ "notify-send --icon ${config.home.homeDirectory}/.face -u normal \"Hello $(whoami)\"" ];
+      settings = lib.mkMerge [
+        cfg.settings
+        {
+          exec = [ /* Bash */ "notify-send --icon ${config.home.homeDirectory}/.face -u normal \"Hello $(whoami)\"" ];
 
-        plugin = {
-          hyprbars =
-            lib.mkIf (lib.elem pkgs.hyprlandPlugins.hyprbars config.wayland.windowManager.hyprland.plugins)
-              {
-                bar_height = 20;
-                bar_precedence_over_border = true;
+          plugin = {
+            hyprbars =
+              lib.mkIf (lib.elem pkgs.hyprlandPlugins.hyprbars config.wayland.windowManager.hyprland.plugins)
+                {
+                  bar_height = 20;
+                  bar_precedence_over_border = true;
 
-                # order is right-to-left
-                hyprbars-button = [
-                  # close
-                  "rgb(ED8796), 15, , hyprctl dispatch killactive"
-                  # maximize
-                  "rgb(C6A0F6), 15, , hyprctl dispatch fullscreen 1"
-                ];
-              };
+                  # order is right-to-left
+                  hyprbars-button = [
+                    # close
+                    "rgb(ED8796), 15, , hyprctl dispatch killactive"
+                    # maximize
+                    "rgb(C6A0F6), 15, , hyprctl dispatch fullscreen 1"
+                  ];
+                };
 
-          hyprexpo =
-            lib.mkIf (lib.elem pkgs.hyprlandPlugins.hyprexpo config.wayland.windowManager.hyprland.plugins)
-              {
-                columns = 3;
-                gap_size = 4;
-                bg_col = "rgb(000000)";
-              };
-        };
-      };
+            hyprexpo =
+              lib.mkIf (lib.elem pkgs.hyprlandPlugins.hyprexpo config.wayland.windowManager.hyprland.plugins)
+                {
+                  columns = 3;
+                  gap_size = 4;
+                  bg_col = "rgb(000000)";
+                };
+          };
+        }
+      ];
 
       systemd = {
         enable = !(osConfig.programs.uwsm.enable or false);
