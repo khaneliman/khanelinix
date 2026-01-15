@@ -91,7 +91,7 @@ in
     tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
     format = "󰃭 {:%a %d %b \n 󰅐 %I:%M %p}";
     calendar = {
-      mode = "year";
+      mode = "month";
       mode-mon-col = 3;
       weeks-pos = "right";
       on-scroll = 1;
