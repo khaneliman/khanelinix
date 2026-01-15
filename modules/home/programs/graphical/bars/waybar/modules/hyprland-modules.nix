@@ -150,7 +150,7 @@ in
     };
   };
   "custom/hyprsunset" = {
-    interval = 5;
+    interval = 60;
     exec = lib.getExe (
       pkgs.writeShellScriptBin "hyprsunset-status.sh" /* Bash */ ''
         temp=$(hyprctl hyprsunset temperature 2>/dev/null)
