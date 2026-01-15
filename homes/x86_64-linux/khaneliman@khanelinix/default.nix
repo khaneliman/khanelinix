@@ -94,34 +94,46 @@ in
             enable = true;
             enableDebug = false;
 
-            appendConfig = /* bash */ ''
-              exec-once = hyprctl setcursor ${config.khanelinix.theme.gtk.cursor.name} ${toString config.khanelinix.theme.gtk.cursor.size}
-            '';
+            settings = {
+              monitorv2 = [
+                {
+                  output = "DP-3";
+                  mode = "3840x2160@60";
+                  position = "1420x0";
+                  scale = 2;
+                  bitdepth = 10;
+                }
+                {
+                  output = "DP-1";
+                  mode = "5120x1440@120";
+                  position = "0x1080";
+                  scale = 1;
+                  vrr = 1;
+                  bitdepth = 10;
+                }
+              ];
 
-            prependConfig = # bash
-              lib.concatStringsSep "\n" [
-                "# See https://wiki.hyprland.org/Configuring/Monitors/"
-                # "monitor=DP-3,	3840x2160@60,	1420x0,	2, bitdepth, 10"
-                # "monitor=DP-1,	5120x1440@120,	0x1080,	1, bitdepth, 10"
-                "monitor=DP-3,	3840x2160@60,	1420x0,	2, bitdepth, 10"
-                "monitor=DP-1,	5120x1440@120,	0x1080,	1, vrr, 1, bitdepth, 10"
-                ""
+              exec-once = [
                 (lib.concatStringsSep " " [
-                  "exec-once = ${getExe pkgs.xorg.xrandr}"
+                  "${getExe pkgs.xorg.xrandr}"
                   "--output DP-3 --mode 1920x1080 --pos 1420x0 --rotate normal"
                   "--output DP-1 --primary --mode 5120x1440 --pos 0x1080 --rotate normal"
                 ])
-                ""
-                "workspace = 1, monitor:DP-3, persistent:true, default:true"
-                "workspace = 2, monitor:DP-1, persistent:true, default:true"
-                "workspace = 3, monitor:DP-1, persistent:true"
-                "workspace = 4, monitor:DP-1, persistent:true"
-                "workspace = 5, monitor:DP-1, persistent:true"
-                "workspace = 6, monitor:DP-1, persistent:true"
-                "workspace = 7, monitor:DP-1, persistent:true"
-                "workspace = 8, monitor:DP-1, persistent:true"
-                "workspace = 9, monitor:DP-1, persistent:true"
+                "hyprctl setcursor ${config.khanelinix.theme.gtk.cursor.name} ${toString config.khanelinix.theme.gtk.cursor.size}"
               ];
+
+              workspace = [
+                "1, monitor:DP-3, persistent:true, default:true"
+                "2, monitor:DP-1, persistent:true, default:true"
+                "3, monitor:DP-1, persistent:true"
+                "4, monitor:DP-1, persistent:true"
+                "5, monitor:DP-1, persistent:true"
+                "6, monitor:DP-1, persistent:true"
+                "7, monitor:DP-1, persistent:true"
+                "8, monitor:DP-1, persistent:true"
+                "9, monitor:DP-1, persistent:true"
+              ];
+            };
           };
 
           sway = {
