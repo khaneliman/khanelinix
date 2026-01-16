@@ -75,6 +75,13 @@ in
         wine = true;
         winesync = true;
 
+        # Latency debugging
+        frame_count = true;
+        vulkan_driver = true;
+        present_mode = true;
+        procmem = true;
+        procmem_shared = true;
+
         # Display
         position = "top-left";
         background_alpha = lib.mkDefault 0.5;
