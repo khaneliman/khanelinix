@@ -182,7 +182,7 @@ in
               # ^(<<<<<<< |>>>>>>> )  -> Matches start/end markers (which always have a trailing space)
               # |                     -> OR
               # ^=======( |$)         -> Matches middle marker followed by a space OR end-of-line (handles \n and \r\n)
-              if git grep -qE "^(<<<<<<< |>>>>>>> |=======( |$))" --cached; then
+              if git grep --cached -qE "^(<<<<<<< |>>>>>>> |=======( |$))"; then
                 echo "Error: You have leftover merge conflict markers."
                 exit 1
               fi
