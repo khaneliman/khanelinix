@@ -27,6 +27,9 @@ in
     enable = lib.mkEnableOption "gamemode";
     endscript = mkOpt (with lib.types; nullOr str) null "The script to run when disabling gamemode.";
     startscript = mkOpt (with lib.types; nullOr str) null "The script to run when enabling gamemode.";
+    gpuDevice =
+      mkOpt lib.types.int 0
+        "GPU device index to apply optimizations (check /sys/class/drm/cardN)";
   };
 
   config =
@@ -56,7 +59,7 @@ in
           gpu = {
             # AMD GPU optimization - switch to high performance level
             apply_gpu_optimisations = "accept-responsibility";
-            gpu_device = 0;
+            gpu_device = cfg.gpuDevice;
             amd_performance_level = "high";
           };
 
