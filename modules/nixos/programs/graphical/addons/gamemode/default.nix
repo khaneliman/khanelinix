@@ -88,6 +88,13 @@ in
         });
       '';
 
+      # Allow reading CPU power consumption for gamemode monitoring
+      systemd.tmpfiles.settings."10-gamemode-powercap" = {
+        "/sys/devices/virtual/powercap/intel-rapl/intel-rapl:0/intel-rapl:0:0/energy_uj".z = {
+          mode = "0644";
+        };
+      };
+
       # <https://www.phoronix.com/news/Fedora-39-VM-Max-Map-Count>
       # <https://github.com/pop-os/default-settings/blob/master_jammy/etc/sysctl.d/10-pop-default-settings.conf>
       boot.kernel.sysctl = {
