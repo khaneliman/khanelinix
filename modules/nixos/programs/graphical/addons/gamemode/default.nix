@@ -77,6 +77,17 @@ in
         capabilities = "cap_sys_ptrace,cap_sys_nice+pie";
       };
 
+      security.polkit.extraConfig = ''
+        polkit.addRule(function(action, subject) {
+          if ((action.id == "com.feralinteractive.GameMode.governor-helper" ||
+               action.id == "com.feralinteractive.GameMode.procsys-helper" ||
+               action.id == "com.feralinteractive.GameMode.gpu-helper") &&
+              subject.isInGroup("users")) {
+            return polkit.Result.YES;
+          }
+        });
+      '';
+
       # <https://www.phoronix.com/news/Fedora-39-VM-Max-Map-Count>
       # <https://github.com/pop-os/default-settings/blob/master_jammy/etc/sysctl.d/10-pop-default-settings.conf>
       boot.kernel.sysctl = {
