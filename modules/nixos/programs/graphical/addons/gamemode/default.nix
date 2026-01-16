@@ -52,8 +52,15 @@ in
 
         settings = {
           general = {
-            softrealtime = "auto";
-            renice = 10;
+            renice = 10; # Nice game processes for better priority
+            ioprio = 0; # Highest IO priority for game processes
+            inhibit_screensaver = 1;
+            disable_splitlock = 1; # Disable split-lock mitigation for performance
+          };
+
+          cpu = {
+            park_cores = "no"; # Don't park cores
+            pin_cores = "yes"; # Pin game to optimal cores (auto-detected)
           };
 
           gpu = {
@@ -69,6 +76,9 @@ in
           };
         };
       };
+
+      # Add user to gamemode group for renice and parking permissions
+      users.users.${config.khanelinix.user.name}.extraGroups = [ "gamemode" ];
 
       security.wrappers.gamemode = {
         owner = "root";
