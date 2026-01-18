@@ -20,7 +20,8 @@ let
     firefox = config.programs.firefox.darwinDefaultsId or "org.nixos.firefoxdeveloperedition";
     thunderbird = "org.nixos.thunderbird";
     vesktop = "dev.vencord.vesktop";
-    element = "org.nixos.Element";
+    # element = "org.nixos.Element";
+    element = "im.riot.app";
     caprine = "com.sindresorhus.caprine";
     # teams-for-linux has non-standard bundle ID, use full path instead
     teams = "${config.home.homeDirectory}/${hmAppsPath}/teams-for-linux.app";
