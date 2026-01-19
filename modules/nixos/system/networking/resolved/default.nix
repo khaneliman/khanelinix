@@ -21,19 +21,22 @@ in
       enable = true;
 
       # dnssec = "true";
-      # this is necessary to get tailscale picking up your headscale instance
-      # and allows you to ping connected hosts by hostname
-      domains = [ "~." ];
-      dnsovertls = "true";
-
       extraConfig = lib.mkIf config.services.avahi.enable ''
         MulticastDNS=no
       '';
 
-      fallbackDns = [
-        "1.1.1.1"
-        "1.0.0.1"
-      ];
+      settings = {
+        Resolve = {
+          # this is necessary to get tailscale picking up your headscale instance
+          # and allows you to ping connected hosts by hostname
+          Domains = [ "~." ];
+          DNSOverTLS = "true";
+          FallbackDNS = [
+            "1.1.1.1"
+            "1.0.0.1"
+          ];
+        };
+      };
     };
   };
 }
