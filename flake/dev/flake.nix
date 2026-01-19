@@ -19,7 +19,6 @@
         firefox-addons.follows = "";
         hypr-socket-watch.follows = "";
         nh.follows = "";
-        nixpkgs-citrix-workspace.follows = "";
         nix-flatpak.follows = "";
         nix-index-database.follows = "";
         stylix.follows = "";
