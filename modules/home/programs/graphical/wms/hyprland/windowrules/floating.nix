@@ -83,8 +83,6 @@ in
           # "match:class ^(Wfica)$, match:title ^(VT0-IT-47-D000).*, float on"
           # "match:class ^(Wfica)$, match:title ^(VT0-IT-47-D000).*, size 90% 90%"
           # "match:class ^(Wfica)$, match:title ^(VT0-IT-47-D000).*, move 20 8%"
-          # Always tries to maximize immediately...
-          "match:class ^(Wfica)$, match:title ^(VT0-IT-47-D000).*, suppress_event fullscreen"
 
           # make Firefox PiP window floating and sticky
           "match:title ^(Picture-in-Picture)$, float on"
