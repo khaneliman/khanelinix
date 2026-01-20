@@ -1,5 +1,5 @@
 let
-  commandName = "git-history";
+  commandName = "analyze-git-history";
   description = "Deep analysis of git history to find patterns, regressions, or understand code evolution";
   allowedTools = "Bash(git log:*), Bash(git blame:*), Bash(git show:*), Bash(git diff:*), Read, Grep";
   argumentHint = "[path] [--since=date] [--author=name] [--search=string]";

@@ -1,5 +1,5 @@
 let
-  commandName = "git-resolve";
+  commandName = "resolve-conflicts";
   description = "Guided merge conflict resolution with context and recommendations";
   allowedTools = "Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git show:*), Read, Edit";
   argumentHint = "[file] [--strategy=ours|theirs|manual]";
