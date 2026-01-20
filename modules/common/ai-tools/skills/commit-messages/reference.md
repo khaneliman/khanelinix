@@ -28,6 +28,7 @@ lib/utils/format.ts   → utils
 ```
 
 **Omit scope when:**
+
 - Changes span multiple unrelated areas
 - The type alone is sufficient (e.g., `docs`, `ci`)
 - The scope would be too generic (e.g., `code`)
@@ -44,6 +45,7 @@ instead of raw data array.
 ```
 
 **What counts as breaking:**
+
 - API response/request format changes
 - Removed or renamed exports
 - Changed function signatures
@@ -53,16 +55,20 @@ instead of raw data array.
 ## Alternative Conventions
 
 ### Path-Based (Scoped)
+
 Used in some monorepos or specific projects (e.g., Nixpkgs-style).
 
 **Format:** `path/to/component: subject` or `filename: subject`
 
 **Examples:**
+
 - `programs/waybar: update to 0.9.13`
 - `modules/nixos/docker: fix socket permissions`
 - `init.lua: refactor plugin loading`
 
 **When to use:**
+
 - When the project strictly follows a file-path based convention.
-- When working in large monorepos where the path is the most significant context.
+- When working in large monorepos where the path is the most significant
+  context.
 - **Check `git log` first** to confirm if this is the active convention.

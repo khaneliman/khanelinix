@@ -3,6 +3,7 @@
 ## Good Examples
 
 ### Standard Feature
+
 ```
 feat(auth): add password reset flow
 
@@ -13,6 +14,7 @@ Closes #42
 ```
 
 ### Bug Fix
+
 ```
 fix(checkout): prevent duplicate order submission
 
@@ -23,6 +25,7 @@ Fixes #128
 ```
 
 ### Refactor
+
 ```
 refactor(utils): extract date formatting to shared module
 
@@ -31,6 +34,7 @@ into single source of truth. No behavior change.
 ```
 
 ### Path-Based (Alternative)
+
 ```
 modules/home/git: enable delta diff viewer
 

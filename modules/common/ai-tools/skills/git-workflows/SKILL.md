@@ -18,28 +18,34 @@ conflict resolution.
 
 ## Detailed Reference Material
 
-- [examples.md](examples.md) - Common workflows, including Feature Branch, Trunk-Based, and Conflict Resolution.
-- [reference.md](reference.md) - Branch naming conventions, conflict strategies, and command reference tables.
+- [examples.md](examples.md) - Common workflows, including Feature Branch,
+  Trunk-Based, and Conflict Resolution.
+- [reference.md](reference.md) - Branch naming conventions, conflict strategies,
+  and command reference tables.
 
 ## Quick Summary
 
 ### Branch Naming
 
-Use prefixes like `feat/`, `fix/`, `docs/`, `refactor/` to categorize your branches.
+Use prefixes like `feat/`, `fix/`, `docs/`, `refactor/` to categorize your
+branches.
 
 ### Workflow Checklist
 
 **Before starting work:**
+
 - [ ] Pull latest from main
 - [ ] Create appropriately named branch
 - [ ] Understand the task scope
 
 **During work:**
+
 - [ ] Commit frequently with clear messages
 - [ ] Keep changes focused on one concern
 - [ ] Rebase on main periodically for long branches
 
 **Before PR:**
+
 - [ ] Rebase on latest main
 - [ ] Squash fixup commits
 - [ ] Run tests and linting

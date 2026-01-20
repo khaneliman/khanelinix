@@ -19,24 +19,29 @@ informative.
 ## Commit Formats
 
 ### 1. Conventional Commits (Standard)
+
 The most common standard, widely used across the industry.
 
 ```
 <type>(<scope>): <subject>
 ```
-*Example:* `feat(auth): add login page`
+
+_Example:_ `feat(auth): add login page`
 
 ### 2. Path-Based / Scoped (Alternative)
+
 Common in monorepos or systems like Nixpkgs.
 
 ```
 <path/to/component>: <subject>
 ```
-*Example:* `programs/waybar: update config`
+
+_Example:_ `programs/waybar: update config`
 
 ## Detailed Reference Material
 
-- [reference.md](reference.md) - **Commit Types** table, Scope determination, **Breaking Changes**, and **Alternative Conventions**.
+- [reference.md](reference.md) - **Commit Types** table, Scope determination,
+  **Breaking Changes**, and **Alternative Conventions**.
 - [examples.md](examples.md) - Good and bad examples for various scenarios.
 
 ## Analyzing Changes for Commit Type
@@ -59,4 +64,5 @@ Common in monorepos or systems like Nixpkgs.
 ## See Also
 
 - **Code review**: See [code-review](../code-review/) for reviewing commits
-- **Git workflows**: See [git-workflows](../git-workflows/) for branching strategies
+- **Git workflows**: See [git-workflows](../git-workflows/) for branching
+  strategies
