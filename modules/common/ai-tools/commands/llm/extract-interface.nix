@@ -1,11 +1,9 @@
-{
-  extract-interface = ''
-    ---
-    allowed-tools: Read, Grep, Glob, Write
-    argument-hint: "<file-path> [--output=file] [--style=types|interface|abstract]"
-    description: Extract interface, types, or abstract definitions from implementation code
-    ---
-
+let
+  commandName = "extract-interface";
+  description = "Extract interface, types, or abstract definitions from implementation code";
+  allowedTools = "Read, Grep, Glob, Write";
+  argumentHint = "<file-path> [--output=file] [--style=types|interface|abstract]";
+  prompt = ''
     Extract clean interfaces and type definitions from implementation code.
 
     **Workflow:**
@@ -105,4 +103,16 @@
 
     Extract interfaces that are stable, minimal, and represent the essential contract.
   '';
+
+in
+{
+  ${commandName} = {
+    inherit
+      commandName
+      description
+      allowedTools
+      argumentHint
+      prompt
+      ;
+  };
 }

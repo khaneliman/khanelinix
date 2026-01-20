@@ -1,11 +1,9 @@
-{
-  git-resolve = ''
-    ---
-    allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git show:*), Read, Edit
-    argument-hint: "[file] [--strategy=ours|theirs|manual]"
-    description: Guided merge conflict resolution with context and recommendations
-    ---
-
+let
+  commandName = "git-resolve";
+  description = "Guided merge conflict resolution with context and recommendations";
+  allowedTools = "Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git show:*), Read, Edit";
+  argumentHint = "[file] [--strategy=ours|theirs|manual]";
+  prompt = ''
     Guide through understanding and resolving git merge conflicts.
 
     **Workflow:**
@@ -39,33 +37,18 @@
     - `--strategy=theirs`: Accept incoming branch version
     - `--strategy=manual`: Guide through manual resolution
 
-    **Conflict Understanding:**
-
-    ```
-    <<<<<<< HEAD (ours - current branch)
-    Code from your current branch
-    =======
-    Code from the incoming branch
-    >>>>>>> feature (theirs - incoming)
-    ```
-
-    **Resolution Commands:**
-
-    ```bash
-    # Accept ours (current branch)
-    git checkout --ours path/to/file
-
-    # Accept theirs (incoming branch)
-    git checkout --theirs path/to/file
-
-    # See what we're merging
-    git log --oneline HEAD..MERGE_HEAD
-    ```
-
-    **Safety Rules:**
-    - Always verify conflict markers are completely removed
-    - Run `git diff --check` to verify no markers remain
-    - Suggest running tests after resolution
-    - Never stage files with remaining conflict markers
+    Resolve conflicts carefully and ensure resulting code is correct and consistent.
   '';
+
+in
+{
+  ${commandName} = {
+    inherit
+      commandName
+      description
+      allowedTools
+      argumentHint
+      prompt
+      ;
+  };
 }

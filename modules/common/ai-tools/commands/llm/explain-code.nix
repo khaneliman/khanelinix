@@ -1,11 +1,9 @@
-{
-  explain-code = ''
-    ---
-    allowed-tools: Read, Grep, Glob
-    argument-hint: "<file-path> [--depth=shallow|deep] [--focus=logic|types|flow]"
-    description: Generate detailed explanation of code section for understanding or documentation
-    ---
-
+let
+  commandName = "explain-code";
+  description = "Generate detailed explanation of code section for understanding or documentation";
+  allowedTools = "Read, Grep, Glob";
+  argumentHint = "<file-path> [--depth=shallow|deep] [--focus=logic|types|flow]";
+  prompt = ''
     Analyze code and produce clear explanations suitable for documentation or onboarding.
 
     **Workflow:**
@@ -61,4 +59,16 @@
 
     Tailor the explanation to the audience - assume competent developers but don't assume domain knowledge.
   '';
+
+in
+{
+  ${commandName} = {
+    inherit
+      commandName
+      description
+      allowedTools
+      argumentHint
+      prompt
+      ;
+  };
 }

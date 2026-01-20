@@ -1,11 +1,9 @@
-{
-  refactor-suggest = ''
-    ---
-    allowed-tools: Read, Grep, Glob
-    argument-hint: "<file-path> [--focus=complexity|duplication|naming|structure]"
-    description: Analyze code and suggest refactoring improvements with specific recommendations
-    ---
-
+let
+  commandName = "refactor-suggest";
+  description = "Analyze code and suggest refactoring improvements with specific recommendations";
+  allowedTools = "Read, Grep, Glob";
+  argumentHint = "<file-path> [--focus=complexity|duplication|naming|structure]";
+  prompt = ''
     Analyze code and provide actionable refactoring suggestions that improve quality.
 
     **Workflow:**
@@ -83,4 +81,16 @@
 
     Suggest improvements that are practical and provide real value, not just stylistic preferences.
   '';
+
+in
+{
+  ${commandName} = {
+    inherit
+      commandName
+      description
+      allowedTools
+      argumentHint
+      prompt
+      ;
+  };
 }

@@ -1,11 +1,9 @@
-{
-  summarize-module = ''
-    ---
-    allowed-tools: Read, Grep, Glob
-    argument-hint: "<module-path> [--include-private] [--with-examples]"
-    description: Generate concise summary of module's purpose, API, and usage patterns
-    ---
-
+let
+  commandName = "summarize-module";
+  description = "Generate concise summary of module's purpose, API, and usage patterns";
+  allowedTools = "Read, Grep, Glob";
+  argumentHint = "<module-path> [--include-private] [--with-examples]";
+  prompt = ''
     Produce concise, actionable summaries of code modules.
 
     **Workflow:**
@@ -77,4 +75,16 @@
 
     Focus on what developers need to USE the module, not how it's implemented internally.
   '';
+
+in
+{
+  ${commandName} = {
+    inherit
+      commandName
+      description
+      allowedTools
+      argumentHint
+      prompt
+      ;
+  };
 }

@@ -1,11 +1,9 @@
-{
-  git-cleanup = ''
-    ---
-    allowed-tools: Bash(git branch:*), Bash(git remote:*), Bash(git fetch:*), Bash(git log:*)
-    argument-hint: "[--dry-run] [--remote] [--age=days]"
-    description: Identify and clean stale branches, merged branches, and remote tracking refs
-    ---
-
+let
+  commandName = "git-cleanup";
+  description = "Identify and clean stale branches, merged branches, and remote tracking refs";
+  allowedTools = "Bash(git branch:*), Bash(git remote:*), Bash(git fetch:*), Bash(git log:*)";
+  argumentHint = "[--dry-run] [--remote] [--age=days]";
+  prompt = ''
     Identify and clean stale branches to keep the repository organized.
 
     **Workflow:**
@@ -38,31 +36,18 @@
     - `--remote`: Include remote branch analysis
     - `--age=days`: Consider branches stale if no commits in N days (default: 30)
 
-    **Safety Rules:**
-    - NEVER delete `main`, `master`, or `develop` branches
-    - NEVER delete the currently checked out branch
-    - Always confirm with user before deleting unmerged branches
-    - Use `--dry-run` by default if user doesn't specify
-
-    **Useful Commands:**
-
-    ```bash
-    # Merged into main
-    git branch --merged main
-
-    # Not merged into main
-    git branch --no-merged main
-
-    # Delete merged branches
-    git branch --merged main | grep -v main | xargs git branch -d
-
-    # Prune stale remote refs
-    git remote prune origin
-
-    # Fetch and prune
-    git fetch --prune
-    ```
-
-    Present findings in a clear table format and always ask for confirmation before deletions.
+    Always confirm before deleting any branches. Use dry-run by default.
   '';
+
+in
+{
+  ${commandName} = {
+    inherit
+      commandName
+      description
+      allowedTools
+      argumentHint
+      prompt
+      ;
+  };
 }

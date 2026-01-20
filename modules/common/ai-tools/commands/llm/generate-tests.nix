@@ -1,11 +1,9 @@
-{
-  generate-tests = ''
-    ---
-    allowed-tools: Read, Grep, Glob, Write, Edit
-    argument-hint: "<file-path> [--framework=jest|pytest|cargo|xunit] [--coverage=basic|comprehensive]"
-    description: Analyze code and generate test cases covering key functionality and edge cases
-    ---
-
+let
+  commandName = "generate-tests";
+  description = "Analyze code and generate test cases covering key functionality and edge cases";
+  allowedTools = "Read, Grep, Glob, Write, Edit";
+  argumentHint = "<file-path> [--framework=jest|pytest|cargo|xunit] [--coverage=basic|comprehensive]";
+  prompt = ''
     Analyze code and generate comprehensive, idiomatic test cases.
 
     **Workflow:**
@@ -38,62 +36,57 @@
 
     | Category | Description |
     |----------|-------------|
-    | Unit | Single function/method in isolation |
-    | Integration | Multiple components working together |
-    | Edge Cases | Boundary conditions, empty/null inputs |
-    | Error Handling | Expected errors are thrown/returned |
-    | Regression | Specific bug prevention |
+    | Happy Path | Expected inputs/outputs |
+    | Edge Cases | Boundaries, nulls, empties |
+    | Error Cases | Invalid input, exceptions |
+    | Integration | Interactions with dependencies |
 
-    **Framework Patterns:**
+    **Output Format:**
 
-    - **Jest (TypeScript/JavaScript)**:
-      ```typescript
-      describe('functionName', () => {
-        it('should do X when Y', () => {
-          expect(result).toBe(expected);
-        });
+    ```markdown
+    # Test Plan for [file]
 
-        // For async functions
-        it('should do X when Y (async)', async () => {
-          const result = await asyncFunction();
-          expect(result).toBe(expected);
-        });
-      });
-      ```
+    ## Summary
+    - [X] tests generated
+    - [Y] edge cases covered
 
-    - **pytest (Python)**:
-      ```python
-      def test_function_does_x_when_y():
-          assert result == expected
+    ## Tests
 
-      # For async functions
-      @pytest.mark.asyncio
-      async def test_async_function_does_x_when_y():
-          result = await async_function()
-          assert result == expected
-      ```
+    ### [Test Group 1]
+    ```[language]
+    [Test code]
+    ```
 
-    - **Cargo (Rust)**:
-      ```rust
-      #[test]
-      fn test_function_does_x_when_y() {
-          assert_eq!(result, expected);
-      }
+    ### [Test Group 2]
+    ```[language]
+    [Test code]
+    ```
 
-      // For async functions (requires tokio test runtime)
-      #[tokio::test]
-      async fn test_async_function_does_x_when_y() {
-          let result = async_function().await;
-          assert_eq!(result, expected);
-      }
-      ```
+    ## Notes
+    - [Any setup or mocking considerations]
+    ```
 
     **Command Arguments:**
-    - `<file-path>`: File containing code to test
-    - `--framework=jest|pytest|cargo|xunit`: Testing framework to use
-    - `--coverage=basic`: Essential happy path tests only
-    - `--coverage=comprehensive`: Include edge cases, errors, and integration
+    - `<file-path>`: File or directory to test
+    - `--framework=jest`: JavaScript/TypeScript (default)
+    - `--framework=pytest`: Python
+    - `--framework=cargo`: Rust
+    - `--framework=xunit`: .NET
+    - `--coverage=basic`: Core behaviors (default)
+    - `--coverage=comprehensive`: Include edge cases and error paths
 
-    Generate tests that are maintainable, readable, and actually catch bugs.
+    Generate tests that are realistic, maintainable, and aligned with project style.
   '';
+
+in
+{
+  ${commandName} = {
+    inherit
+      commandName
+      description
+      allowedTools
+      argumentHint
+      prompt
+      ;
+  };
 }

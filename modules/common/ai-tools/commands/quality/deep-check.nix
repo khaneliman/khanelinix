@@ -1,11 +1,9 @@
-{
-  deep-check = ''
-    ---
-    allowed-tools: Bash(npm*), Bash(cargo*), Bash(make*), Bash(python*), Bash(go*), Bash(node*), Read, Grep
-    argument-hint: "[scope] [--with-builds] [--security] [--performance]"
-    description: Comprehensive codebase analysis including unused code detection and optimization
-    ---
-
+let
+  commandName = "deep-check";
+  description = "Comprehensive codebase analysis including unused code detection and optimization";
+  allowedTools = "Bash(npm*), Bash(cargo*), Bash(make*), Bash(python*), Bash(go*), Bash(node*), Read, Grep";
+  argumentHint = "[scope] [--with-builds] [--security] [--performance]";
+  prompt = ''
     Perform thorough analysis of the project to identify issues, dead code, optimization opportunities, and maintenance concerns.
 
     **Workflow:**
@@ -18,34 +16,63 @@
 
     2. **Dead Code Detection - Find What's Unused**:
        - Search for unused imports across all source files
-       - Identify functions, variables, classes, and modules that are defined but never referenced
-       - Find orphaned files that aren't imported or included anywhere
-       - Detect redundant or duplicate code patterns across the codebase
+       - Identify unreferenced functions, classes, or modules
+       - Flag old configuration options or deprecated flags
+       - Detect dead branches (if/else paths never taken)
 
-    3. **Dependency Analysis - Map Relationships**:
-       - Create a dependency map showing how modules/components relate to each other
-       - Identify any circular dependencies between components
-       - Check package.json, Cargo.toml, requirements.txt, or similar for unused dependencies
-       - If --performance is specified, analyze bundle sizes and build impacts
+    3. **Architecture Review - Evaluate Structure**:
+       - Assess module boundaries and coupling
+       - Identify overly complex or tangled areas
+       - Check for duplicated logic across the codebase
+       - Review configuration layering and override patterns
 
-    4. **Quality Assessment - Measure Code Health**:
-       - Assess code complexity and maintainability using available metrics
-       - Check for proper documentation and comments
-       - Identify performance bottlenecks if --performance is specified
-       - If --security is specified, review security practices and potential vulnerabilities
+    4. **Performance & Optimization**:
+       - Identify slow build or runtime paths
+       - Highlight large dependencies or redundant work
+       - Suggest caching or memoization opportunities
+       - Flag expensive operations inside loops
 
-    5. **Actionable Recommendations**:
-       - Provide specific refactoring recommendations with file paths and line numbers
-       - Suggest performance improvements with measurable impact
-       - Recommend structural optimizations for better maintainability
-       - Highlight maintenance issues that need immediate attention
+    5. **Security & Compliance**:
+       - Check for obvious secret exposure or unsafe defaults
+       - Identify missing input validation or error handling
+       - Ensure permissions or access rules are explicit
 
-    **Command Arguments:**
-    - [scope]: Focus your analysis on specific areas (src, tests, docs, all)
-    - --with-builds: Actually build/compile the project to test for build-time issues
-    - --security: Include security analysis and vulnerability recommendations
-    - --performance: Focus heavily on performance analysis and optimization opportunities
+    **Output Format:**
 
-    Provide actionable insights with specific file references for comprehensive maintenance planning.
+    ```markdown
+    ## Deep Check Results
+
+    ### Summary
+    - Critical issues: X
+    - Warnings: Y
+    - Suggestions: Z
+
+    ### Critical Issues
+    - `path/to/file:line` - [issue]
+
+    ### Warnings
+    - `path/to/file:line` - [issue]
+
+    ### Suggestions
+    - `path/to/file:line` - [issue]
+
+    ### Recommended Actions
+    - [Action item 1]
+    - [Action item 2]
+    ```
+
+    Be practical and prioritize issues by impact.
   '';
+
+in
+{
+  ${commandName} = {
+    inherit
+      commandName
+      description
+      allowedTools
+      argumentHint
+      prompt
+      ;
+  };
 }

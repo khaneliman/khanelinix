@@ -1,11 +1,9 @@
-{
-  option-migrate = ''
-    ---
-    allowed-tools: Read, Edit, MultiEdit, Grep
-    argument-hint: "<old-key> <new-key> [--dry-run] [--with-aliases]"
-    description: Help migrate configuration keys/options to new format across the project
-    ---
-
+let
+  commandName = "option-migrate";
+  description = "Help migrate configuration keys/options to new format across the project";
+  allowedTools = "Read, Edit, MultiEdit, Grep";
+  argumentHint = "<old-key> <new-key> [--dry-run] [--with-aliases]";
+  prompt = ''
     Safely migrate configuration keys/options to a new structure while preserving functionality.
 
     **Workflow:**
@@ -18,34 +16,54 @@
 
     2. **Migration Planning - Analyze Impact**:
        - Generate a comprehensive migration plan showing all files and lines that need changes
-       - Identify potential conflicts or issues with the new structure
-       - If --dry-run is specified, show exactly what changes would be made without applying them
-       - Plan for backup and rollback procedures for complex migrations
+       - Identify ordering dependencies (definitions before usage)
+       - Determine if aliases or compatibility layers are needed
 
-    3. **Automated Migration Execution**:
-       - Update configuration definitions to use the new <new-option> structure
-       - Migrate all references from old to new configuration paths/keys
-       - Update any documentation, comments, or examples that reference the old path
-       - Preserve all functionality, defaults, and type definitions exactly
+    3. **Implementation - Apply Changes**:
+       - Update option definitions to the new key
+       - Update all references and documentation
+       - Add alias options if --with-aliases is specified
+       - Ensure all changes are consistent
 
-    4. **Backward Compatibility (if --with-aliases)**:
-       - Create compatibility mappings that support old configuration paths
-       - Ensure existing configurations continue to work without changes
-       - Add deprecation warnings for the old configuration paths
-       - Document the migration path for users
+    4. **Validation**:
+       - Review changes for correctness
+       - Run relevant build or evaluation checks if possible
 
-    5. **Validation and Verification**:
-       - Verify that all references have been successfully updated
-       - Run basic validation checks to ensure configurations still parse/load
-       - Test that the migrated functionality works identically to before
-       - Generate a summary report of all changes made
+    **Output Format:**
+
+    ```markdown
+    ## Option Migration Plan
+
+    ### Summary
+    - Old key: `<old-key>`
+    - New key: `<new-key>`
+    - Files impacted: X
+
+    ### Planned Changes
+    - `path/to/file:line` - update option usage
+
+    ### Notes
+    - [Any migration risks or warnings]
+    ```
 
     **Command Arguments:**
-    - <old-option>: Current configuration path/key that needs to be migrated
-    - <new-option>: New configuration path/key structure
-    - --dry-run: Preview all changes without applying them
-    - --with-aliases: Create backward compatibility mappings for smooth transition
+    - `<old-key>`: Existing option/key to migrate
+    - `<new-key>`: New option/key to use
+    - `--dry-run`: Show changes without applying
+    - `--with-aliases`: Add alias options for backward compatibility
 
-    Ensure zero-disruption migrations that preserve all existing functionality.
+    Ensure a safe migration path and avoid breaking changes.
   '';
+
+in
+{
+  ${commandName} = {
+    inherit
+      commandName
+      description
+      allowedTools
+      argumentHint
+      prompt
+      ;
+  };
 }

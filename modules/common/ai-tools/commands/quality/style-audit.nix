@@ -1,11 +1,9 @@
-{
-  style-audit = ''
-    ---
-    allowed-tools: Read, Grep, Bash(eslint*), Bash(prettier*), Bash(black*), Bash(flake8*), Bash(rustfmt*), Bash(gofmt*), Bash(nix fmt*), Bash(nixfmt*), Bash(treefmt*)
-    argument-hint: "[path] [--fix] [--report] [--focus=naming|structure|imports|organization]"
-    description: Comprehensive style compliance checking against project standards
-    ---
-
+let
+  commandName = "style-audit";
+  description = "Comprehensive style compliance checking against project standards";
+  allowedTools = "Read, Grep, Bash(eslint*), Bash(prettier*), Bash(black*), Bash(flake8*), Bash(rustfmt*), Bash(gofmt*), Bash(nix fmt*), Bash(nixfmt*), Bash(treefmt*)";
+  argumentHint = "[path] [--fix] [--report] [--focus=naming|structure|imports|organization]";
+  prompt = ''
     Audit the codebase for style violations and report or fix them based on options.
 
     **Workflow:**
@@ -18,47 +16,45 @@
        - Determine the project's style preferences for consistency
 
     2. **Language-Specific Style Audit**:
-       - Apply language-appropriate linting and formatting rules
-       - Check for consistent import/require statement organization
-       - Verify proper use of language-specific patterns and idioms
-       - Validate adherence to established style guides (PEP 8, Google Style Guide, etc.)
+       - Run appropriate formatters and linters in check mode
+       - Focus on naming, imports, spacing, and structural conventions
+       - Record style violations with file:line references
 
-    3. **Code Structure Analysis**:
-       - Identify overly complex functions or classes that should be simplified
-       - Find code blocks that could be better organized or refactored
-       - Look for inconsistent patterns across similar code sections
-       - Check for proper separation of concerns and modularity
+    3. **Fixing (if --fix)**:
+       - Apply formatters or auto-fixes where safe
+       - Re-run checks to confirm fixes
+       - Report any remaining issues
 
-    4. **Naming Convention Verification**:
-       - Verify variables, functions, classes follow project conventions
-       - Check that files and directories use consistent naming patterns
-       - Validate that API endpoints, database fields, etc. follow consistent patterns
-       - Ensure naming is descriptive and follows established conventions
+    **Output Format:**
 
-    5. **Project Organization Assessment**:
-       - Review file/directory structure and organization
-       - Check that imports/dependencies are organized logically
-       - Verify proper separation of concerns within the codebase
-       - Assess overall architectural organization patterns
+    ```markdown
+    ## Style Audit Results
 
-    6. **Best Practices Review**:
-       - Find areas where established best practices aren't being followed
-       - Check for proper error handling patterns
-       - Validate adherence to language/framework-specific principles
-       - Identify opportunities for better abstraction and code reuse
+    ### Summary
+    - Files checked: X
+    - Violations found: Y
+    - Auto-fixed: Z
 
-    **Execution Based on Arguments:**
-    - If --fix is specified: Automatically correct violations where safe to do so
-    - If --report is specified: Generate a detailed compliance report with file:line references
-    - If --focus is specified: Concentrate only on that aspect (naming, structure, imports, etc.)
-    - Use [path] to limit scope to specific directory or file
+    ### Violations
+    - `path/to/file:line` - [issue]
 
-    **Command Arguments:**
-    - [path]: Directory or file to audit (defaults to current directory)
-    - --fix: Automatically fix violations that can be safely corrected
-    - --report: Generate detailed compliance report with specific locations
-    - --focus: Focus on specific style aspect (naming, structure, imports, organization)
+    ### Recommendations
+    - [Recommendation 1]
+    - [Recommendation 2]
+    ```
 
-    Provide actionable feedback with specific file locations and suggested improvements.
+    Prioritize consistency with existing style over personal preferences.
   '';
+
+in
+{
+  ${commandName} = {
+    inherit
+      commandName
+      description
+      allowedTools
+      argumentHint
+      prompt
+      ;
+  };
 }

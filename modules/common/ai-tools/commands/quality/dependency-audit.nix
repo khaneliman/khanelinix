@@ -1,11 +1,9 @@
-{
-  dependency-audit = ''
-    ---
-    allowed-tools: Bash(npm audit*), Bash(npm ls*), Bash(pip-audit*), Bash(cargo audit*), Bash(bundle audit*), Read, Grep
-    argument-hint: "[--unused] [--conflicts] [--updates] [--security] [--report]"
-    description: Check and optimize project dependencies and package management
-    ---
-
+let
+  commandName = "dependency-audit";
+  description = "Check and optimize project dependencies and package management";
+  allowedTools = "Bash(npm audit*), Bash(npm ls*), Bash(pip-audit*), Bash(cargo audit*), Bash(bundle audit*), Read, Grep";
+  argumentHint = "[--unused] [--conflicts] [--updates] [--security] [--report]";
+  prompt = ''
     Analyze project dependencies to identify optimization opportunities, security concerns, and maintenance issues.
 
     **Workflow:**
@@ -18,42 +16,56 @@
 
     2. **Dependency Conflict Analysis - Identify Issues**:
        - Check for version conflicts between different dependencies
-       - Identify cases where multiple packages provide similar functionality
-       - Look for overlapping functionality that could cause conflicts
-       - Analyze build-time vs runtime dependency mismatches
+       - Identify duplicate dependencies or overlapping functionality
+       - Look for outdated or deprecated packages
 
-    3. **Update Opportunity Analysis - Find Improvements**:
-       - Check which dependencies have newer versions available
-       - Identify packages that have known security updates
-       - Look for optimization opportunities in package selection
-       - Check for deprecated packages that should be replaced
+    3. **Security Audit - Check Vulnerabilities**:
+       - Run appropriate audit tools (npm audit, pip-audit, cargo audit, bundle audit)
+       - Identify known vulnerabilities and severity levels
+       - Suggest patches or upgrades for critical issues
 
-    4. **Security Assessment (if --security)**:
-       - Check dependencies against known vulnerability databases (npm audit, pip-audit, etc.)
-       - Validate that dependency sources are from trusted, official repositories
-       - Review any packages from non-standard or third-party sources
-       - Assess overall supply chain security posture
+    4. **Optimization Opportunities - Trim and Improve**:
+       - Suggest removing unused dependencies
+       - Recommend version upgrades where safe
+       - Highlight packages that can be consolidated
+       - Identify heavy dependencies with lighter alternatives
 
-    5. **Optimization Recommendations - Suggest Improvements**:
-       - Identify opportunities to consolidate similar dependencies
-       - Find over-specified dependencies that could use lighter alternatives
-       - Recommend package alternatives that reduce bundle/build sizes
-       - Suggest structural improvements for dependency management
+    **Output Format:**
 
-    **Analysis Focus Based on Arguments:**
-    - --unused: Focus specifically on finding and reporting unused dependencies
-    - --conflicts: Deep-dive into dependency conflict analysis
-    - --updates: Concentrate on available updates and migration paths
-    - --security: Emphasize security analysis and vulnerability assessment
-    - --report: Generate comprehensive report covering all aspects
+    ```markdown
+    ## Dependency Audit Results
 
-    **Command Arguments:**
-    - --unused: Focus analysis on finding unused dependencies
-    - --conflicts: Analyze and report on dependency conflicts
-    - --updates: Check for available updates and upgrade opportunities
-    - --security: Focus on security analysis and vulnerability assessment
-    - --report: Generate comprehensive dependency report with all findings
+    ### Summary
+    - Total dependencies: X
+    - Unused dependencies: Y
+    - Vulnerabilities: Z (Critical: A, High: B)
 
-    Provide actionable recommendations with specific commands and file references.
+    ### Unused Dependencies
+    - `package-name` - [reason]
+
+    ### Vulnerabilities
+    - `package-name` (Severity: High) - [fix]
+
+    ### Upgrade Opportunities
+    - `package-name` -> `new-version` - [benefit]
+
+    ### Recommendations
+    - [Action item 1]
+    - [Action item 2]
+    ```
+
+    Prioritize security fixes and remove unused dependencies where possible.
   '';
+
+in
+{
+  ${commandName} = {
+    inherit
+      commandName
+      description
+      allowedTools
+      argumentHint
+      prompt
+      ;
+  };
 }

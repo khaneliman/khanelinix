@@ -1,11 +1,9 @@
-{
-  generate-docs = ''
-    ---
-    allowed-tools: Read, Grep, Glob, Write, Edit
-    argument-hint: "<file-path> [--format=jsdoc|docstring|rustdoc|xmldoc] [--level=public|all]"
-    description: Generate documentation comments for code based on implementation analysis
-    ---
-
+let
+  commandName = "generate-docs";
+  description = "Generate documentation comments for code based on implementation analysis";
+  allowedTools = "Read, Grep, Glob, Write, Edit";
+  argumentHint = "<file-path> [--format=jsdoc|docstring|rustdoc|xmldoc] [--level=public|all]";
+  prompt = ''
     Analyze code and generate clear, useful documentation comments.
 
     **Workflow:**
@@ -38,65 +36,77 @@
        * @param paramName - Description of the parameter
        * @returns Description of return value
        * @throws {ErrorType} When error condition occurs
-       * @example
-       * const result = myFunction('input');
        */
+      function example(paramName: string): ReturnType {
+        ...
+      }
       ```
 
     - **Python Docstring**:
       ```python
-      """Brief description of what the function does.
+      def example(param_name: str) -> ReturnType:
+          """
+          Brief description.
 
-      Args:
-          param_name: Description of the parameter.
+          Args:
+              param_name: Description of the parameter.
 
-      Returns:
-          Description of return value.
-
-      Raises:
-          ErrorType: When error condition occurs.
-
-      Example:
-          >>> my_function('input')
-          'output'
-      """
+          Returns:
+              Description of return value.
+          """
       ```
 
-    - **Rustdoc**:
+    - **Rust Doc Comments**:
       ```rust
-      /// Brief description of what the function does.
+      /// Brief description.
       ///
       /// # Arguments
-      ///
       /// * `param_name` - Description of the parameter
       ///
       /// # Returns
-      ///
       /// Description of return value
-      ///
-      /// # Examples
-      ///
-      /// ```
-      /// let result = my_function("input");
-      /// ```
+      pub fn example(param_name: String) -> ReturnType {
+          ...
+      }
       ```
 
-    - **XML Doc (C#)**:
-      ```csharp
-      /// <summary>
-      /// Brief description of what the function does.
-      /// </summary>
-      /// <param name="paramName">Description of the parameter.</param>
-      /// <returns>Description of return value.</returns>
-      /// <exception cref="ErrorType">When error condition occurs.</exception>
-      ```
+    **Output Format:**
+
+    ```markdown
+    # Documentation Update
+
+    ## Summary
+    - [X] functions documented
+    - [Y] parameters covered
+
+    ## Changes Made
+    - `path/to/file.ts:42` - Added JSDoc for `functionName`
+
+    ## Notes
+    - [Any special considerations]
+    ```
 
     **Command Arguments:**
-    - `<file-path>`: File to document
-    - `--format=jsdoc|docstring|rustdoc|xmldoc`: Documentation format
-    - `--level=public`: Only document public/exported items (default)
-    - `--level=all`: Document all items including private
+    - `<file-path>`: File or directory to document
+    - `--format=jsdoc`: JSDoc (default)
+    - `--format=docstring`: Python docstrings
+    - `--format=rustdoc`: Rust doc comments
+    - `--format=xmldoc`: XML documentation (C#)
+    - `--level=public`: Public API only (default)
+    - `--level=all`: Include internal functions
 
-    Write documentation that helps developers USE the code, not just repeat what it does.
+    Document what the code does and how to use it, not how it is implemented.
   '';
+
+in
+{
+  ${commandName} = {
+    inherit
+      commandName
+      description
+      allowedTools
+      argumentHint
+      prompt
+      ;
+  };
 }

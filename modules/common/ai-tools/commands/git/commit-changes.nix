@@ -1,11 +1,9 @@
-{
-  commit-changes = ''
-    ---
-    allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*), Bash(git reset:*), Read, Grep
-    argument-hint: "[--all] [--amend] [--dry-run] [--interactive]"
-    description: Systematically analyze, group, and commit changes following repository conventions
-    ---
-
+let
+  commandName = "commit-changes";
+  description = "Systematically analyze, group, and commit changes following repository conventions";
+  allowedTools = "Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*), Bash(git reset:*), Read, Grep";
+  argumentHint = "[--all] [--amend] [--dry-run] [--interactive]";
+  prompt = ''
     Create **minimal, atomic commits** where each represents a single logical change. The goal is a git log that tells the story of how the codebase evolved through discrete, understandable enhancements.
 
     ## **CORE PHILOSOPHY**
@@ -78,222 +76,80 @@
               - Is it a refactor?
               - Is it documentation?
               - Is it formatting/style?
-
-            Group hunks by PURPOSE, not by file location
     ```
 
-    **Example decomposition:**
-    ```
-    File: modules/home/programs/git/default.nix
+    ### **Step 1.3: Cross-File Grouping**
+    - Group related hunks across different files
+    - Ensure each group represents ONE logical change
+    - Identify dependencies between groups
 
-    Hunk 1 (lines 10-15): Adds new option 'signing.enable'
-      -> Commit A: "feat(home/programs/git): add commit signing option"
+    ## **PHASE 2: STAGING STRATEGY**
 
-    Hunk 2 (lines 45-50): Fixes typo in existing option description
-      -> Commit B: "fix(home/programs/git): correct option description typo"
+    ### **Step 2.1: Create Staging Plan**
+    - List each logical change group
+    - Order groups by dependency (if any)
+    - Plan staging sequence
 
-    Hunk 3 (lines 80-90): Refactors conditional logic
-      -> Commit C: "refactor(home/programs/git): simplify conditional logic"
-
-    These are THREE commits, not one "update git module" commit!
-    ```
-
-    ### **Step 1.3: Convention Detection**
+    ### **Step 2.2: Selective Staging**
     ```bash
-    # Analyze recent commit patterns
-    git log --oneline -20
-    git log --pretty=format:"%s" -50
-    ```
-
-    **Detect and follow repository patterns** (conventional commits, gitmoji, etc.)
-
-    ## **PHASE 2: SELECTIVE STAGING WITH GIT ADD -P**
-
-    ### **Step 2.1: Interactive Patch Mode**
-    ```bash
-    # Stage hunks interactively
-    git add -p <file>
-
-    # Or for all files
+    # Stage specific hunks
     git add -p
+
+    # Stage specific files
+    git add path/to/file
+
+    # Stage specific lines (advanced)
+    git add -e
     ```
 
-    **Patch mode commands:**
-    ```
-    y - stage this hunk
-    n - do not stage this hunk
-    q - quit; do not stage this hunk or remaining hunks
-    s - split the hunk into smaller hunks
-    e - manually edit the hunk (for line-level control)
-    ? - print help
-    ```
+    ### **Step 2.3: Verify Staging**
+    - Check `git status` after staging each group
+    - Review staged diff with `git diff --cached`
+    - Ensure no unrelated changes are staged
 
-    ### **Step 2.2: Line-Level Staging**
-    When a hunk contains multiple unrelated changes, use **split (s)** or **edit (e)**:
+    ## **PHASE 3: COMMIT CREATION**
 
+    ### **Step 3.1: Commit Message**
+    - Follow conventional commit format
+    - Describe WHY the change is needed
+    - Keep subject line under 72 characters
+
+    ### **Step 3.2: Validate Commit**
+    - Ensure commit builds/tests pass
+    - Confirm commit contains only intended changes
+
+    ## **Output Format:**
+
+    ```markdown
+    ## Commit Plan
+    - **Commit 1:** [Description]
+    - **Commit 2:** [Description]
+
+    ## Staging Commands
     ```bash
-    # If 's' doesn't split small enough, use 'e' to edit
-    # In edit mode:
-    # - Lines starting with '-' are deletions (remove line to keep deletion)
-    # - Lines starting with '+' are additions (remove line to skip addition)
-    # - Context lines starting with ' ' stay unchanged
+    git add <files>
     ```
 
-    ### **Step 2.3: Staging Strategy Per Commit**
-    ```
-    FOR each logical change identified:
-        1. Reset staging area if needed:
-           git reset HEAD
+    ## Commit Messages
+    - `feat: add ...`
+    - `fix: correct ...`
 
-        2. Stage ONLY hunks for THIS logical change:
-           git add -p
-           - Answer 'y' only for hunks belonging to this change
-           - Answer 'n' for hunks belonging to other changes
-           - Use 's' to split hunks that contain mixed changes
-           - Use 'e' for fine-grained line control
-
-        3. Verify staged content:
-           git diff --cached
-
-        4. Ensure ONLY intended changes are staged:
-           - No unrelated hunks
-           - No formatting changes mixed with logic changes
-           - No multiple features bundled together
+    ## Notes
+    - [Any warnings or considerations]
     ```
 
-    ## **PHASE 3: ATOMIC COMMIT EXECUTION**
-
-    ### **Step 3.1: Pre-Commit Verification**
-    ```bash
-    # ALWAYS verify before committing
-    git diff --cached
-
-    # Ask yourself:
-    # - Does this diff represent ONE logical change?
-    # - Would this commit message accurately describe EVERYTHING staged?
-    # - If I had to revert this commit, would it revert exactly one thing?
-    ```
-
-    ### **Step 3.2: Commit with Precise Message**
-    ```bash
-    git commit -m "type(scope): precise description of single change"
-    ```
-
-    **Message must describe exactly what's staged - nothing more, nothing less**
-
-    ### **Step 3.3: Repeat for Remaining Changes**
-    ```
-    WHILE unstaged changes remain:
-        1. Identify next logical change
-        2. Stage only hunks for that change (git add -p)
-        3. Verify staged diff represents one thing
-        4. Commit with precise message
-        5. Verify: git log -1 --stat
-    ```
-
-    ## **PHASE 4: COMMIT ORDERING**
-
-    ### **Logical Commit Sequence**
-    Order commits so the git history tells a coherent story:
-
-    ```
-    PREFERRED ORDER:
-    1. Infrastructure/foundation changes first
-    2. Core functionality
-    3. Supporting features
-    4. Tests for the above
-    5. Documentation
-    6. Formatting/style (always last and separate)
-    ```
-
-    ### **Dependency Awareness**
-    ```
-    IF change B depends on change A:
-        Option 1: Commit A first, then B (preferred if A is independently useful)
-        Option 2: Commit A and B together (if A has no value without B)
-
-    IF changes are independent:
-        Commit in logical narrative order
-
-    CRITICAL: Test buildability after staging, BEFORE committing:
-        nix flake check --no-build  # or appropriate validation
-        If it fails, you're missing a dependency - stage more or reorder
-
-    NEVER commit something that references uncommitted code
-    ```
-
-    ## **EXAMPLES OF PROPER DECOMPOSITION**
-
-    ### **Bad: One monolithic commit**
-    ```
-    "feat(home/programs): add wezterm configuration"
-    - modules/home/programs/wezterm/default.nix (new module)
-    - modules/home/programs/wezterm/themes.nix (themes)
-    - modules/home/suites/desktop/default.nix (enable in suite)
-    - modules/common/ai-tools/agents/general/docs-writer.nix (unrelated fix)
-    ```
-
-    ### **Good: Multiple atomic commits**
-    ```
-    Commit 1: "feat(home/programs/wezterm): add base module with enable option"
-    Commit 2: "feat(home/programs/wezterm): add theme configuration"
-    Commit 3: "feat(home/suites/desktop): enable wezterm in desktop suite"
-    Commit 4: "fix(common/ai-tools): correct docs-writer agent description"
-    ```
-
-    ### **Example: Single file, multiple commits**
-    ```
-    File has these changes:
-    - Line 10: Fixed typo in comment
-    - Lines 25-40: Added new feature function
-    - Line 55: Changed default value (bug fix)
-    - Lines 80-85: Refactored existing function
-
-    This becomes FOUR commits:
-    1. git add -p (stage only line 55) -> "fix(module): correct default value for X"
-    2. git add -p (stage only lines 25-40) -> "feat(module): add Y functionality"
-    3. git add -p (stage only lines 80-85) -> "refactor(module): simplify Z function"
-    4. git add -p (stage only line 10) -> "docs(module): fix typo in comment"
-    ```
-
-    ## **COMMAND FLAGS**
-
-    ```
-    --all: Include all tracked files with changes
-    --amend: Amend the last commit (use carefully)
-    --dry-run: Show proposed commits without executing
-    --interactive: Prompt for confirmation on each commit
-    ```
-
-    ## **ERROR HANDLING**
-
-    ```
-    IF hunk cannot be split small enough:
-        Use 'e' in git add -p to manually edit
-
-    IF accidentally staged too much:
-        git reset HEAD <file>
-        Start over with git add -p
-
-    IF commit message doesn't match staged changes:
-        git reset --soft HEAD~1
-        Re-stage properly and recommit
-    ```
-
-    ## **FINAL CHECKLIST**
-
-    Before each commit, verify:
-    - [ ] **BUILDS**: Staged changes pass validation (`nix flake check` or equivalent)
-    - [ ] **COMPLETE**: No references to unstaged/uncommitted code
-    - [ ] **ATOMIC**: `git diff --cached` shows exactly ONE logical change
-    - [ ] **ACCURATE**: Commit message precisely describes what's staged
-    - [ ] **ISOLATED**: No unrelated changes are bundled
-    - [ ] **CLEAN**: No formatting mixed with logic changes
-    - [ ] **REVERTIBLE**: Commit could be reverted independently without breaking things
-    - [ ] **READABLE**: Git log will read as a clear changelog of improvements
-
-    **THE GOLDEN RULE:** Every commit in history should be a working, buildable state. If `git checkout <any-commit>` results in a broken build, you've failed.
-
-    **REMEMBER:** The goal is a git history where each commit is a discrete, understandable, and FUNCTIONAL unit of change. Future developers (including yourself) should be able to check out any commit and have a working system.
+    Provide a clear, minimal commit plan and ask for confirmation before committing.
   '';
+
+in
+{
+  ${commandName} = {
+    inherit
+      commandName
+      description
+      allowedTools
+      argumentHint
+      prompt
+      ;
+  };
 }

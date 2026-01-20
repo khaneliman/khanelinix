@@ -1,11 +1,9 @@
-{
-  flake-update = ''
-    ---
-    allowed-tools: Bash(nix flake update*), Bash(nix flake lock*), Bash(nix flake show*), Bash(git*), Read, Grep
-    argument-hint: "[input...] [--commit] [--test] [--interactive]"
-    description: Comprehensive flake input management and update workflow
-    ---
-
+let
+  commandName = "flake-update";
+  description = "Comprehensive flake input management and update workflow";
+  allowedTools = "Bash(nix flake update*), Bash(nix flake lock*), Bash(nix flake show*), Bash(git*), Read, Grep";
+  argumentHint = "[input...] [--commit] [--test] [--interactive]";
+  prompt = ''
     Safely update flake inputs while maintaining system stability.
 
     **Workflow:**
@@ -38,8 +36,20 @@
     - [input...]: Update only these specific inputs (e.g., nixpkgs, home-manager)
     - --commit: Automatically commit the update with a descriptive message
     - --test: Run comprehensive tests including template builds
-    - --interactive: Prompt for user confirmation at key steps
+    - --interactive: Ask for confirmation before each step
 
-    Always prioritize system stability over getting the latest versions.
+    Always summarize changes clearly and avoid updating inputs unnecessarily.
   '';
+
+in
+{
+  ${commandName} = {
+    inherit
+      commandName
+      description
+      allowedTools
+      argumentHint
+      prompt
+      ;
+  };
 }

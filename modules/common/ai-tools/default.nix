@@ -4,21 +4,6 @@ let
   aiCommands = import ./commands.nix { inherit lib; };
   aiAgents = import ./agents.nix { inherit lib; };
 
-  convertCommandsToGemini =
-    commands:
-    lib.mapAttrs (name: prompt: {
-      inherit prompt;
-      description =
-        let
-          lines = lib.splitString "\n" prompt;
-          descLine = lib.findFirst (line: lib.hasPrefix "description:" line) "" lines;
-        in
-        if descLine != "" then
-          lib.removePrefix "description: " (lib.trim descLine)
-        else
-          "AI command: ${name}";
-    }) commands;
-
   convertAgentsToGemini =
     agents:
     lib.mapAttrs (name: agent: {
@@ -29,17 +14,17 @@ let
 in
 {
   claudeCode = {
-    commands = aiCommands;
+    commands = aiCommands.toClaudeMarkdown;
     agents = aiAgents.toClaudeMarkdown;
   };
 
   geminiCli = {
-    commands = convertCommandsToGemini aiCommands;
+    commands = aiCommands.toGeminiCommands;
     agents = convertAgentsToGemini aiAgents.agents;
   };
 
   opencode = {
-    commands = aiCommands;
+    commands = aiCommands.toOpenCodeMarkdown;
     inherit (aiAgents) agents;
     renderAgents = aiAgents.toOpenCodeMarkdown;
   };

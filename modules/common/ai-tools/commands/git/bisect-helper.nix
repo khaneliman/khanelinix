@@ -1,11 +1,9 @@
-{
-  git-bisect = ''
-    ---
-    allowed-tools: Bash(git bisect:*), Bash(git log:*), Bash(git show:*), Bash(git checkout:*), Read, Grep
-    argument-hint: "<good-ref> <bad-ref> [--test=command]"
-    description: Guided git bisect workflow to find the commit that introduced a regression
-    ---
-
+let
+  commandName = "git-bisect";
+  description = "Guided git bisect workflow to find the commit that introduced a regression";
+  allowedTools = "Bash(git bisect:*), Bash(git log:*), Bash(git show:*), Bash(git checkout:*), Read, Grep";
+  argumentHint = "<good-ref> <bad-ref> [--test=command]";
+  prompt = ''
     Use git bisect to efficiently find the commit that introduced a regression.
 
     **Workflow:**
@@ -39,52 +37,18 @@
     - `<bad-ref>`: Known bad commit (where the bug exists)
     - `--test=command`: Automated test command (exit 0 = good, non-zero = bad)
 
-    **Bisect Commands:**
-
-    ```bash
-    # Start bisect
-    git bisect start
-    git bisect bad HEAD
-    git bisect good v1.0.0
-
-    # Manual marking
-    git bisect good  # Current commit is good
-    git bisect bad   # Current commit is bad
-
-    # Automated bisect
-    git bisect run ./test-script.sh
-
-    # Skip untestable commit
-    git bisect skip
-
-    # View bisect log
-    git bisect log
-
-    # End bisect
-    git bisect reset
-    ```
-
-    **Automated Test Script Example:**
-
-    ```bash
-    #!/bin/bash
-    # test-regression.sh
-    make build && ./run-specific-test
-    # Exit code determines good (0) or bad (non-zero)
-    ```
-
-    **Tips:**
-    - If a commit can't be tested, use `git bisect skip`
-    - Save progress with `git bisect log > bisect.log`
-    - Replay bisect with `git bisect replay bisect.log`
-    - For build failures, script should exit 125 to skip
-
-    **Important Limitations:**
-    - Bisect works best with linear history
-    - With merge commits, bisect may check commits from merged branches
-    - Consider using `git bisect --first-parent` to stay on main branch
-    - For complex merge histories, you may need to bisect manually
-
-    Guide the user through each step, explaining what git is doing and why.
+    Provide clear guidance on each step and confirm before marking commits.
   '';
+
+in
+{
+  ${commandName} = {
+    inherit
+      commandName
+      description
+      allowedTools
+      argumentHint
+      prompt
+      ;
+  };
 }

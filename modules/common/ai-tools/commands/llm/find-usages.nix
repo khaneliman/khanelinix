@@ -1,11 +1,9 @@
-{
-  find-usages = ''
-    ---
-    allowed-tools: Grep, Read, Glob
-    argument-hint: "<symbol> [--type=function|type|variable|class] [--exclude=pattern] [--regex]"
-    description: Find all usages of a function, type, variable, or class across the codebase
-    ---
-
+let
+  commandName = "find-usages";
+  description = "Find all usages of a function, type, variable, or class across the codebase";
+  allowedTools = "Grep, Read, Glob";
+  argumentHint = "<symbol> [--type=function|type|variable|class] [--exclude=pattern] [--regex]";
+  prompt = ''
     Comprehensively find and categorize all usages of a given symbol.
 
     **Workflow:**
@@ -58,26 +56,28 @@
     - [Pattern 1]: [description and examples]
     - [Pattern 2]: [description and examples]
 
-    ## Files Affected
-    | File | Usage Count |
-    |------|-------------|
-    | `path/to/file1.ts` | 5 |
+    ## Related Code
+    - `path/to/related.ts` - [relationship]
     ```
 
     **Command Arguments:**
-    - `<symbol>`: Name of function, type, variable, or class to find
-    - `--type=function`: Filter to function calls only
-    - `--type=type`: Filter to type annotations only
-    - `--type=variable`: Filter to variable references only
-    - `--type=class`: Filter to class instantiations only
-    - `--exclude=pattern`: Exclude files matching pattern (e.g., `*.test.ts`)
-    - `--regex`: Treat symbol as regex pattern for complex searches (e.g., `handle.*Error`)
+    - `<symbol>`: Function, type, variable, or class name
+    - `--type`: Limit search to specific symbol type (function, type, variable, class)
+    - `--exclude`: File or directory pattern to exclude
+    - `--regex`: Treat symbol as regex pattern
 
-    **Advanced Search Examples:**
-    - `--regex` for patterns: `find-usages "handle.*Error" --regex`
-    - Multiple word symbols: `find-usages "MyClass.method"`
-    - Destructured imports: Will find `import { symbol }` patterns
-
-    Be thorough - missing usages can lead to breaking changes during refactoring.
+    Include file paths with line numbers. Group results by category.
   '';
+
+in
+{
+  ${commandName} = {
+    inherit
+      commandName
+      description
+      allowedTools
+      argumentHint
+      prompt
+      ;
+  };
 }
