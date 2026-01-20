@@ -32,6 +32,10 @@ in
         model = "anthropic/claude-sonnet-4-5";
         autoshare = false;
         autoupdate = false;
+
+        plugin = [
+          "opencode-gemini-auth@latest"
+        ];
       };
 
       inherit (aiTools.opencode) commands;
