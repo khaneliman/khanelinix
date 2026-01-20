@@ -154,39 +154,32 @@ let
   '';
 
   # Render permission value (string or attrset with glob patterns)
-  renderPermissionValue =
-    indent: value:
-    if builtins.isString value then
-      value
-    else if builtins.isAttrs value then
-      lib.concatStringsSep "\n" (
-        lib.mapAttrsToList (pattern: action: "${indent}  \"${pattern}\": ${action}") value
-      )
-    else
-      "ask";
 
   # Render permissions block
-  renderPermissions =
-    indent: perms:
-    lib.concatStringsSep "\n" (
-      lib.mapAttrsToList (
-        key: value:
-        if builtins.isAttrs value then
-          "${indent}${key}:\n${renderPermissionValue indent value}"
-        else
-          "${indent}${key}: ${value}"
-      ) perms
-    );
 
-  # OpenCode expects YAML frontmatter with: description, mode, model, permission
+  # OpenCode expects YAML frontmatter with: description, mode, model, tools
+  renderOpenCodeTools =
+    agent:
+    let
+      allowed = map lib.toLower agent.tools;
+      isAllowed = t: lib.elem t allowed;
+      coreTools = [
+        "bash"
+        "edit"
+        "write"
+      ];
+      coreToolLines = map (t: "  ${t}: ${if isAllowed t then "true" else "false"}") coreTools;
+    in
+    lib.concatStringsSep "\n" coreToolLines;
+
   renderOpenCodeFrontmatter = agent: ''
     ---
     description: ${agent.description}
-    mode: subagent
-      model: ${agent.model.opencode or agent.model}
+    mode: all
+    model: ${agent.model.opencode or agent.model}
 
-    permission:
-    ${renderPermissions "  " agent.permission}
+    tools:
+    ${renderOpenCodeTools agent}
     ---
   '';
 
