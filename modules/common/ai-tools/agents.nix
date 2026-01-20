@@ -45,7 +45,7 @@ let
         edit = "deny";
         bash = "ask";
       };
-      content = builtins.readFile (agentsBasePath + "/general/researcher.md");
+      content = builtins.readFile (agentsBasePath + "/general/doc-writer.md");
     };
     refactorer = {
       name = "refactorer";

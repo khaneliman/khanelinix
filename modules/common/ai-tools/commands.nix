@@ -6,10 +6,10 @@ let
   agentModels = lib.mapAttrs (_name: agent: agent.model) aiAgents.agents;
 
   commandAgents = {
-    "explain-code" = "researcher";
-    "extract-interface" = "researcher";
-    "find-usages" = "researcher";
-    "summarize-module" = "researcher";
+    "explain-code" = "explore";
+    "extract-interface" = "explore";
+    "find-usages" = "explore";
+    "summarize-module" = "explore";
     "refactor-suggest" = "refactorer";
     "generate-docs" = "doc-writer";
     "generate-tests" = "test-runner";
@@ -40,7 +40,7 @@ let
   normalizeCommand =
     name: command:
     let
-      agent = command.agent or (commandAgents.${name} or "researcher");
+      agent = command.agent or (commandAgents.${name} or "explore");
       model = command.model or (agentModels.${agent} or { });
     in
     {
