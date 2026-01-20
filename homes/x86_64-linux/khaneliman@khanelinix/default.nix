@@ -10,11 +10,6 @@ let
   inherit (lib.khanelinix) enabled;
 in
 {
-  home.packages = [
-    # NOTE: annoyingly need to download separately and prefetch hash manually
-    pkgs.citrix_workspace
-  ];
-
   khanelinix = {
     user = {
       enable = true;
@@ -29,6 +24,13 @@ in
       graphical = {
         addons.looking-glass-client = enabled;
         apps = {
+          citrix-workspace = {
+            enable = true;
+            settings = {
+              # Enable webcam background blur/effects for VDA vt0-it-47-d000
+              vt0-it-47-d000.HDXWebCamEnableBackgndEffectPerVDA = "True";
+            };
+          };
           thunderbird =
             let
               # Not super secret, just doesn't need to be scraped so easily.
