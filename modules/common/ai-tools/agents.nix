@@ -5,6 +5,26 @@ let
   agentsBasePath = ./agents;
 
   agents = {
+    code-reviewer = {
+      name = "code-reviewer";
+      description = "Code review specialist for analyzing changes, ensuring quality, and creating atomic commits. Use for code reviews and committing changes.";
+      tools = [
+        "Read"
+        "Bash"
+        "Grep"
+        "Glob"
+      ];
+      model = {
+        claude = "sonnet";
+        gemini = "gemini-3-pro-preview";
+        opencode = "anthropic/claude-sonnet-4-5";
+      };
+      permission = {
+        edit = "deny";
+        bash = "ask";
+      };
+      content = builtins.readFile (agentsBasePath + "/general/code-reviewer.md");
+    };
     debugger = {
       name = "debugger";
       description = "Debugging specialist for errors, exceptions, test failures, and unexpected behavior. Use when encountering any issues that need root cause analysis.";
