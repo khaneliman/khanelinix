@@ -94,6 +94,8 @@ in
     ];
     tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
     format = "󰃭 {:%a %d %b  \n󰅐 %I:%M %p %Z}";
+    format-alt = "󰃭 {:%a %d %b  \n󰅐 %H:%M %p %Z}";
+    format-alt-click = 1;
     calendar = {
       mode = "month";
       mode-mon-col = 3;
@@ -108,12 +110,10 @@ in
       };
     };
     actions = {
-      on-click = "tz_up";
-      on-click-right = "mode";
-      on-scroll-up = "tz_up";
-      on-scroll-down = "tz_down";
-      # on-scroll-up = "shift_up";
-      # on-scroll-down = "shift_down";
+      on-click-right = "tz_up";
+      on-click-middle = "mode";
+      on-scroll-up = "shift_up";
+      on-scroll-down = "shift_down";
     };
   };
 
