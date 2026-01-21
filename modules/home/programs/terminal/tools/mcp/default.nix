@@ -40,16 +40,8 @@ in
           ];
         };
 
-        memory = {
-          command = getExe mcpPkgs.mcp-server-memory;
-        };
-
         nixos = {
           command = getExe pkgs.mcp-nixos;
-        };
-
-        sequential-thinking = {
-          command = getExe mcpPkgs.mcp-server-sequential-thinking;
         };
       };
     };
