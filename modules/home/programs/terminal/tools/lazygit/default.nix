@@ -30,9 +30,26 @@ in
             "^dev" = "#8bd5ca";
           };
           nerdFontsVersion = "3";
+          # Hide X of N on lists
+          showListFooter = false;
+          showRandomTip = false;
+          # Hide keymap hints
+          # showBottomLine = false;
+          expandFocusedSidePanel = true;
+          shortTimeFormat = "15:04";
         };
+
         git = {
           overrideGpg = true;
+          mainBranches = [
+            "main"
+            "master"
+            "develop"
+          ];
+        };
+
+        os = {
+          editPreset = "nvim";
         };
 
         customCommands = import ./custom-commands.nix;
