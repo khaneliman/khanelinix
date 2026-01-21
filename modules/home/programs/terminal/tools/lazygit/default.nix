@@ -34,6 +34,8 @@ in
         git = {
           overrideGpg = true;
         };
+
+        customCommands = import ./custom-commands.nix;
       };
     };
   };
