@@ -128,7 +128,7 @@
     context = "global";
     description = "Create conventional commit";
     loadingText = "Creating conventional commit...";
-    command = "git commit --message '{{.Form.Type}}{{ if .Form.Scope }}({{ .Form.Scope }}){{ end }}{{.Form.Breaking}}: {{.Form.Message}}'";
+    command = "git commit --message '{{.Form.Type}}{{ if .Form.Scope }}({{ .Form.Scope }}){{ end }}{{.Form.Breaking}}: {{.Form.Message}}'{{ if .Form.Body }} --message '{{ .Form.Body }}'{{ end }}";
     prompts = [
       {
         type = "menu";
@@ -215,8 +215,14 @@
       }
       {
         type = "input";
-        title = "Commit message";
+        title = "Commit subject";
         key = "Message";
+        initialValue = "";
+      }
+      {
+        type = "input";
+        title = "Commit body (optional)";
+        key = "Body";
         initialValue = "";
       }
       {
