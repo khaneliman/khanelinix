@@ -34,7 +34,9 @@ in
 
       settings = {
         theme = "opencode";
-        model = "anthropic/claude-sonnet-4-5";
+        model = "github-copilot/gpt-5.2";
+        # TODO: enable
+        # model = "github-copilot/gpt-5.2-codex";
         autoshare = false;
         autoupdate = false;
 
