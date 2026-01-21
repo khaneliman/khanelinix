@@ -17,7 +17,7 @@ let
       model = {
         claude = "opus";
         gemini = "gemini-3-pro-preview";
-        opencode = "anthropic/claude-opus-4-5";
+        opencode = "github-copilot/claude-opus-4.5";
       };
       permission = {
         edit = "deny";
@@ -38,7 +38,7 @@ let
       model = {
         claude = "sonnet";
         gemini = "gemini-3-pro-preview";
-        opencode = "anthropic/claude-opus-4-5";
+        opencode = "github-copilot/claude-opus-4.5";
       };
       permission = {
         edit = "ask";
@@ -59,7 +59,7 @@ let
       model = {
         claude = "haiku";
         gemini = "gemini-2.5-flash";
-        opencode = "anthropic/claude-sonnet-4-5";
+        opencode = "github-copilot/claude-sonnet-4.5";
       };
       permission = {
         edit = "deny";
@@ -81,7 +81,7 @@ let
       model = {
         claude = "sonnet";
         gemini = "gemini-3-pro-preview";
-        opencode = "anthropic/claude-sonnet-4-5";
+        opencode = "github-copilot/claude-sonnet-4.5";
       };
       permission = {
         edit = "ask";
@@ -102,7 +102,7 @@ let
       model = {
         claude = "haiku";
         gemini = "flash";
-        opencode = "anthropic/claude-haiku-4-5";
+        opencode = "github-copilot/claude-haiku-4.5";
       };
       permission = {
         edit = "ask";
@@ -122,7 +122,7 @@ let
       model = {
         claude = "haiku";
         gemini = "flash";
-        opencode = "anthropic/claude-haiku-4-5";
+        opencode = "github-copilot/claude-haiku-4.5";
       };
       permission = {
         edit = "deny";
