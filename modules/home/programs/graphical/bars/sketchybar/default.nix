@@ -78,17 +78,10 @@ in
 
         recursive = true;
       };
-      "sketchybar/icon_map.lua".source = "${
-        (pkgs.sketchybar-app-font.overrideAttrs {
-          # TODO: remove after flake lock update
-          patches = [
-            (pkgs.fetchpatch {
-              url = "https://github.com/kvndrsslr/sketchybar-app-font/commit/f6735ef0acacc700b84b31b2cc3f430bf0f01f6e.patch";
-              hash = "sha256-Fj3oqRdEvRcM0Bz6E97lN02H+nRx5vonW1p2jcSig7s=";
-            })
-          ];
-        })
-      }/lib/sketchybar-app-font/icon_map.lua";
+
+      "sketchybar/icon_map.lua".source =
+        "${pkgs.sketchybar-app-font}/lib/sketchybar-app-font/icon_map.lua";
+
       "sketchybar/wm_config.lua".text = ''
         -- Window manager configuration for sketchybar
         return {
