@@ -128,7 +128,8 @@
     context = "global";
     description = "Create conventional commit";
     loadingText = "Creating conventional commit...";
-    command = "git commit --message '{{.Form.Type}}{{ if .Form.Scope }}({{ .Form.Scope }}){{ end }}{{.Form.Breaking}}: {{.Form.Message}}'{{ if .Form.Body }} --message '{{ .Form.Body }}'{{ end }}";
+    command = "git commit --message '{{.Form.Type}}{{ if .Form.Scope }}({{ .Form.Scope }}){{ end }}{{.Form.Breaking}}: {{.Form.Message}}'{{ if .Form.Body }} --message {{ .Form.Body | quote }}{{ end }}";
+
     prompts = [
       {
         type = "menu";
