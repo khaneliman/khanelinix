@@ -15,9 +15,9 @@ let
         "Glob"
       ];
       model = {
-        claude = "sonnet";
+        claude = "opus";
         gemini = "gemini-3-pro-preview";
-        opencode = "anthropic/claude-sonnet-4-5";
+        opencode = "anthropic/claude-opus-4-5";
       };
       permission = {
         edit = "deny";
