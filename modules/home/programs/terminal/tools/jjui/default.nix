@@ -21,43 +21,7 @@ in
       settings = {
         limit = 0;
 
-        custom_commands = {
-          "show all commits" = {
-            key = [ "a" ];
-            revset = "all()";
-          };
-          "show default view" = {
-            key = [ "d" ];
-            revset = "";
-          };
-          "edit immutable" = {
-            key = [ "e" ];
-            args = [
-              "edit"
-              "--ignore-immutable"
-              "-r"
-              "$change_id"
-            ];
-          };
-          "squash immutable" = {
-            key = [ "S" ];
-            args = [
-              "squash"
-              "--ignore-immutable"
-              "-r"
-              "$change_id"
-            ];
-          };
-          "split immutable" = {
-            key = [ "s" ];
-            args = [
-              "split"
-              "--ignore-immutable"
-              "-r"
-              "$change_id"
-            ];
-          };
-        };
+        custom_commands = import ./custom-commands.nix;
 
         preview = {
           show_at_start = true;
