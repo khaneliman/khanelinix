@@ -14,7 +14,6 @@ in
   imports = [
     ./formatters.nix
     ./lsp.nix
-    ./mcp.nix
     ./permission.nix
     ./provider.nix
   ];
@@ -27,6 +26,12 @@ in
     programs.opencode = {
       enable = true;
 
+      enableMcpIntegration =
+        let
+          mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
+        in
+        mkIf mcpModuleEnabled true;
+
       settings = {
         theme = "opencode";
         model = "anthropic/claude-sonnet-4-5";
@@ -36,6 +41,13 @@ in
         plugin = [
           "opencode-gemini-auth@latest"
         ];
+
+        # Disable socket.dev by default
+        mcp.socket = {
+          type = "remote";
+          url = "https://mcp.socket.dev/";
+          enabled = false;
+        };
       };
 
       inherit (aiTools.opencode) commands;
