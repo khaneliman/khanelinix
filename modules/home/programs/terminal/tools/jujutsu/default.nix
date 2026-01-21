@@ -45,12 +45,19 @@ in
             default_branch = "main";
           };
           lfs = enabled;
+          signing = {
+            backend = "ssh";
+            key = cfg.signingKey;
+          };
           push = {
-            # autoSetupRemote = true;
+            autoSetupRemote = true;
             default = "current";
           };
           rebase = {
             auto_stash = true;
+          };
+          ui = {
+            default-command = "log";
           };
         };
       };
