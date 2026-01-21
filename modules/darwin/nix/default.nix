@@ -86,7 +86,8 @@ in
 
         # FIXME: upstream bug needs to be resolved before fully enabling
         # https://github.com/NixOS/nix/issues/12698
-        sandbox = lib.mkForce "relaxed";
+        # TODO: sandbox causes "Bus error: 10" on Darwin 25.2.0, disabling for now.
+        sandbox = lib.mkForce false;
       };
     };
   };
