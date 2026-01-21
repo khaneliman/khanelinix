@@ -195,11 +195,6 @@ in
 
       terminal = {
         tools = {
-          claude-code.mcpServers.filesystem.directories = [
-            "${config.home.homeDirectory}/khanelinix"
-            "${config.home.homeDirectory}/Documents/github"
-          ];
-
           git = {
             enable = true;
 
@@ -309,6 +304,13 @@ in
       (mkBackground "DP-3" "tetris.png")
     ]
   );
+
+  programs.mcp.servers.filesystem.args = [
+    config.home.homeDirectory
+    "${config.home.homeDirectory}/Documents"
+    "${config.home.homeDirectory}/khanelinix"
+    "${config.home.homeDirectory}/Documents/github"
+  ];
 
   # Neo G9
   xresources.properties."Xft.dpi" = "108";

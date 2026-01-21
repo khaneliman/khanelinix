@@ -65,11 +65,6 @@ in
 
       terminal = {
         tools = {
-          claude-code.mcpServers.filesystem.directories = [
-            "${config.home.homeDirectory}/khanelinix"
-            "${config.home.homeDirectory}/github"
-          ];
-
           ssh = enabled;
           tmux = enabled;
         };
@@ -106,6 +101,13 @@ in
 
     theme.catppuccin = enabled;
   };
+
+  programs.mcp.servers.filesystem.args = [
+    config.home.homeDirectory
+    "${config.home.homeDirectory}/Documents"
+    "${config.home.homeDirectory}/khanelinix"
+    "${config.home.homeDirectory}/github"
+  ];
 
   home.stateVersion = "24.11";
 }

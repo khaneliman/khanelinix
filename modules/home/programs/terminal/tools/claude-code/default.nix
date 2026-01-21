@@ -8,12 +8,12 @@ let
   inherit (lib) mkIf mkEnableOption;
 
   cfg = config.khanelinix.programs.terminal.tools.claude-code;
+  mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
 
   claudeIcon = ./assets/claude.ico;
 in
 {
   imports = [
-    ./mcp-servers.nix
     ./permissions.nix
   ];
 
@@ -27,6 +27,8 @@ in
 
     programs.claude-code = {
       enable = true;
+
+      enableMcpIntegration = mkIf mcpModuleEnabled true;
 
       settings = {
         theme = "dark";
