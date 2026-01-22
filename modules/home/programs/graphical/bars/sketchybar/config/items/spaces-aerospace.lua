@@ -149,6 +149,10 @@ window_tracker:subscribe("aerospace_workspace_change", function()
 	update_windows()
 end)
 
+window_tracker:subscribe("aerospace_windows_change", function()
+	update_windows()
+end)
+
 -- Initial window update
 update_windows()
 
