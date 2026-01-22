@@ -11,8 +11,13 @@ let
   cfg = config.khanelinix.system.fonts;
 in
 {
+  imports = [
+    (lib.getFile "modules/common/fonts/default.nix")
+  ];
+
   options.khanelinix.system.fonts = with types; {
     enable = lib.mkEnableOption "managing fonts";
+
     fonts =
       with pkgs;
       mkOpt (listOf package) [
@@ -36,7 +41,11 @@ in
         monaspace
         nerd-fonts.symbols-only
       ] "Custom font packages to install.";
-    default = mkOpt types.str "MonaspaceNeon NF" "Default font name";
+
+    default =
+      mkOpt types.str config.khanelinix.fonts.monaspace.families.neon
+        "Default UI font family name";
+
     size = mkOpt types.int 13 "Default font size";
   };
 

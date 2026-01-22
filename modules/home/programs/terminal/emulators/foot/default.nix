@@ -9,6 +9,7 @@ let
   inherit (lib) mkIf;
 
   cfg = config.khanelinix.programs.terminal.emulators.foot;
+  fontCfg = config.khanelinix.fonts;
 in
 {
   options.khanelinix.programs.terminal.emulators.foot = {
@@ -40,8 +41,8 @@ in
 
           # font and font rendering
           dpi-aware = lib.mkDefault false; # this looks more readable on a laptop, but it's unreasonably large
-          font = "MonaspaceKrypton NF:size=13";
-          font-bold = "MonaspaceKrypton NF:size=13";
+          font = "${fontCfg.monaspace.families.krypton}:size=13";
+          font-bold = "${fontCfg.monaspace.families.krypton}:size=13";
           vertical-letter-offset = "-0.90";
         };
 

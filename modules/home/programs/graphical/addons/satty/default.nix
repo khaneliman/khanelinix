@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  osConfig ? { },
+
   ...
 }:
 let
@@ -37,7 +37,7 @@ in
         };
 
         font = {
-          family = lib.mkDefault (osConfig.khanelinix.system.fonts.default or "MonaspaceNeon NF");
+          family = lib.mkDefault config.khanelinix.home.fonts.default;
           style = "Bold";
         };
       };

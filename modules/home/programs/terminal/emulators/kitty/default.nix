@@ -10,17 +10,13 @@ let
   inherit (lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.programs.terminal.emulators.kitty;
+  fontCfg = config.khanelinix.fonts;
 
-  monaspaceArgon =
-    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Argon NF" else "MonaspaceArgon NF";
-  monaspaceKrypton =
-    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton NF" else "MonaspaceKrypton NF";
-  monaspaceNeon =
-    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon NF" else "MonaspaceNeon NF";
-  monaspaceRadon =
-    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Radon NF" else "MonaspaceRadon NF";
-  monaspaceXenon =
-    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Xenon NF" else "MonaspaceXenon NF";
+  monaspaceArgon = fontCfg.monaspace.families.argon;
+  monaspaceKrypton = fontCfg.monaspace.families.krypton;
+  monaspaceNeon = fontCfg.monaspace.families.neon;
+  monaspaceRadon = fontCfg.monaspace.families.radon;
+  monaspaceXenon = fontCfg.monaspace.families.xenon;
 
   removeSpaces = builtins.replaceStrings [ " " ] [ "" ];
 in

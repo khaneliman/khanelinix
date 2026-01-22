@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  osConfig ? { },
 
   ...
 }:
@@ -114,7 +113,7 @@ in
             text = "<span font_weight=\"ultrabold\">󰌾 </span>";
             color = lib.mkDefault catppuccin.colors.text.rgb;
             font_size = 50;
-            font_family = lib.mkDefault (osConfig.khanelinix.system.fonts.default or "MonaspaceNeon NF");
+            font_family = lib.mkDefault config.khanelinix.home.fonts.default;
             valign = "center";
             halign = "center";
             position = "15, -350";
@@ -129,7 +128,7 @@ in
             text = "<span font_weight=\"ultrabold\"> </span>";
             color = lib.mkDefault catppuccin.colors.text.rgb;
             font_size = 25;
-            font_family = lib.mkDefault (osConfig.khanelinix.system.fonts.default or "MonaspaceNeon NF");
+            font_family = lib.mkDefault config.khanelinix.home.fonts.default;
             valign = "bottom";
             halign = "right";
             position = "5, 8";

@@ -16,6 +16,7 @@ let
   inherit (lib.khanelinix) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.programs.graphical.browsers.firefox;
+  fontCfg = config.khanelinix.fonts;
 in
 {
   imports = [
@@ -138,12 +139,9 @@ in
               "extensions.formautofill.creditCards.enabled" = false;
               "extensions.htmlaboutaddons.recommendations.enabled" = false;
 
-              "font.name.monospace.x-western" =
-                if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton NF" else "MonaspaceKrypton NF";
-              "font.name.sans-serif.x-western" =
-                if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon NF" else "MonaspaceNeon NF";
-              "font.name.serif.x-western" =
-                if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon NF" else "MonaspaceNeon NF";
+              "font.name.monospace.x-western" = fontCfg.monaspace.families.krypton;
+              "font.name.sans-serif.x-western" = fontCfg.monaspace.families.neon;
+              "font.name.serif.x-western" = fontCfg.monaspace.families.neon;
 
               "general.autoScroll" = false;
               "general.smoothScroll.msdPhysics.enabled" = true;

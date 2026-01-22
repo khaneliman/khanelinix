@@ -2,7 +2,9 @@
   config,
   lib,
   pkgs,
-  osConfig ? { },
+  # Prefer shared font namespace when HM evaluates standalone.
+  # `osConfig` remains optional for compatibility.
+
   ...
 }:
 let
@@ -92,9 +94,7 @@ in
           color-scheme = "prefer-dark";
           cursor-size = cfg.cursor.size;
           cursor-theme = cfg.cursor.name;
-          font-name = "${osConfig.khanelinix.system.fonts.default or "MonaspaceNeon NF"} ${
-            toString (osConfig.khanelinix.system.fonts.size or 10)
-          }";
+          font-name = "${config.khanelinix.home.fonts.default} ${toString config.khanelinix.home.fonts.size}";
           gtk-theme = cfg.theme.name;
           icon-theme = cfg.icon.name;
         };
@@ -105,8 +105,8 @@ in
       enable = true;
 
       font = {
-        name = mkDefault (osConfig.khanelinix.system.fonts.default or "MonaspaceNeon NF");
-        size = mkDefault (osConfig.khanelinix.system.fonts.size or 10);
+        name = mkDefault config.khanelinix.home.fonts.default;
+        size = mkDefault config.khanelinix.home.fonts.size;
       };
 
       gtk2 = {

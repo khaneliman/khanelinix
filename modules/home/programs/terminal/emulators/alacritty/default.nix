@@ -10,23 +10,16 @@ let
   inherit (lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.programs.terminal.emulators.alacritty;
+  fontCfg = config.khanelinix.fonts;
 in
 {
   options.khanelinix.programs.terminal.emulators.alacritty = with types; {
     enable = lib.mkEnableOption "alacritty";
     font = {
-      normal = mkOpt str (
-        if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon NF" else "MonaspaceNeon NF"
-      ) "Font to use for alacritty.";
-      bold = mkOpt str (
-        if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Xenon NF" else "MonaspaceXenon NF"
-      ) "Font to use for alacritty.";
-      italic = mkOpt str (
-        if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Radon NF" else "MonaspaceRadon NF"
-      ) "Font to use for alacritty.";
-      bold_italic = mkOpt str (
-        if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton NF" else "MonaspaceKrypton NF"
-      ) "Font to use for alacritty.";
+      normal = mkOpt str fontCfg.monaspace.families.neon "Font to use for alacritty.";
+      bold = mkOpt str fontCfg.monaspace.families.xenon "Font to use for alacritty.";
+      italic = mkOpt str fontCfg.monaspace.families.radon "Font to use for alacritty.";
+      bold_italic = mkOpt str fontCfg.monaspace.families.krypton "Font to use for alacritty.";
     };
   };
 

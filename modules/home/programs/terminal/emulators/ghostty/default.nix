@@ -9,6 +9,7 @@ let
   inherit (lib) mkIf;
 
   cfg = config.khanelinix.programs.terminal.emulators.ghostty;
+  fontCfg = config.khanelinix.fonts;
 
 in
 {
@@ -30,14 +31,10 @@ in
 
       settings =
         let
-          monaspaceKrypton =
-            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton NF" else "MonaspaceKrypton NF";
-          monaspaceNeon =
-            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon NF" else "MonaspaceNeon NF";
-          monaspaceRadon =
-            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Radon NF" else "MonaspaceRadon NF";
-          monaspaceXenon =
-            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Xenon NF" else "MonaspaceXenon NF";
+          monaspaceKrypton = fontCfg.monaspace.families.krypton;
+          monaspaceNeon = fontCfg.monaspace.families.neon;
+          monaspaceRadon = fontCfg.monaspace.families.radon;
+          monaspaceXenon = fontCfg.monaspace.families.xenon;
         in
         {
           adw-toolbar-style = "flat";

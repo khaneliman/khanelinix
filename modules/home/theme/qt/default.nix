@@ -19,6 +19,7 @@ let
   mkBoolOpt = mkOpt types.bool;
 
   cfg = config.khanelinix.theme.qt;
+  fontCfg = config.khanelinix.fonts;
 in
 {
   options.khanelinix.theme.qt = with types; {
@@ -42,8 +43,8 @@ in
       };
 
       Fonts = {
-        fixed = mkOpt types.str "MonaspaceKrypton NF 10" "Fixed font type";
-        general = mkOpt types.str "MonaspaceNeon NF 10" "General font type";
+        fixed = mkOpt types.str "${fontCfg.monaspace.families.krypton} 10" "Fixed font type";
+        general = mkOpt types.str "${fontCfg.monaspace.families.neon} 10" "General font type";
       };
 
       Interface = {

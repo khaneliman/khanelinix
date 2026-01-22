@@ -1,14 +1,13 @@
 {
   config,
   lib,
-
-  pkgs,
   ...
 }:
 let
   inherit (lib) mkIf;
 
   cfg = config.khanelinix.programs.terminal.emulators.wezterm;
+  fontCfg = config.khanelinix.fonts;
   catppuccin = import (lib.getFile "modules/home/theme/catppuccin/colors.nix");
 in
 {
@@ -24,14 +23,10 @@ in
 
       extraConfig =
         let
-          monaspaceKrypton =
-            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton NF Var" else "MonaspaceKrypton NF";
-          monaspaceNeon =
-            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon NF Var" else "MonaspaceNeon NF";
-          monaspaceRadon =
-            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Radon NF Var" else "MonaspaceRadon NF";
-          monaspaceXenon =
-            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Xenon NF Var" else "MonaspaceXenon NF";
+          monaspaceKrypton = fontCfg.monaspace.families.kryptonVar;
+          monaspaceNeon = fontCfg.monaspace.families.neonVar;
+          monaspaceRadon = fontCfg.monaspace.families.radonVar;
+          monaspaceXenon = fontCfg.monaspace.families.xenonVar;
         in
         /* lua */ ''
           function scheme_for_appearance(appearance)

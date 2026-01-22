@@ -11,6 +11,7 @@ let
   inherit (lib.khanelinix) mkBoolOpt;
 
   cfg = config.khanelinix.programs.graphical.editors.vscode;
+  fontCfg = config.khanelinix.fonts;
 in
 {
   options.khanelinix.programs.graphical.editors.vscode = {
@@ -75,19 +76,48 @@ in
 
             # TODO: Handle font config with stylix
             # Font family
-            "editor.fontFamily" =
-              lib.mkForce "MonaspaceArgon NF, Monaspace Argon NF, CascadiaCode,Consolas, monospace,Hack Nerd Font";
-            "editor.codeLensFontFamily" =
-              lib.mkForce "MonaspaceNeon NF, Monaspace Neon NF, Liga SFMono Nerd Font, CascadiaCode,Consolas, 'Courier New', monospace,Hack Nerd Font";
-            "editor.inlayHints.fontFamily" = lib.mkForce "MonaspaceKrypton NF, Monaspace Krypton NF";
-            "debug.console.fontFamily" = lib.mkForce "MonaspaceKrypton NF, Monaspace Krypton NF";
-            "scm.inputFontFamily" = lib.mkForce "MonaspaceRadon NF, Monaspace Radon NF";
-            "notebook.output.fontFamily" = lib.mkForce "MonaspaceRadon NF, Monapsace Radon";
-            "chat.editor.fontFamily" = lib.mkForce "MonaspaceArgon NF, Monaspace Argon NF";
-            "markdown.preview.fontFamily" =
-              lib.mkForce "MonaspaceXenon NF, Monaspace Xenon NF; -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif";
-            "terminal.integrated.fontFamily" =
-              lib.mkForce "MonaspaceKrypton NF, Monaspace Krypton NF, JetBrainsMono Nerd Font Mono";
+            "editor.fontFamily" = lib.mkForce fontCfg.monaspace.stacks.editor;
+            "editor.codeLensFontFamily" = lib.mkForce fontCfg.monaspace.stacks.ui;
+            "editor.inlayHints.fontFamily" = lib.mkForce (
+              lib.concatStringsSep ", " [
+                "MonaspaceKrypton NF"
+                "Monaspace Krypton NF"
+              ]
+            );
+            "debug.console.fontFamily" = lib.mkForce (
+              lib.concatStringsSep ", " [
+                "MonaspaceKrypton NF"
+                "Monaspace Krypton NF"
+              ]
+            );
+            "scm.inputFontFamily" = lib.mkForce (
+              lib.concatStringsSep ", " [
+                "MonaspaceRadon NF"
+                "Monaspace Radon NF"
+              ]
+            );
+            "notebook.output.fontFamily" = lib.mkForce (
+              lib.concatStringsSep ", " [
+                "MonaspaceRadon NF"
+                "Monaspace Radon NF"
+              ]
+            );
+            "chat.editor.fontFamily" = lib.mkForce fontCfg.monaspace.stacks.editor;
+            "markdown.preview.fontFamily" = lib.mkForce (
+              lib.concatStringsSep ", " [
+                "MonaspaceXenon NF"
+                "Monaspace Xenon NF"
+                "-apple-system"
+                "BlinkMacSystemFont"
+                "'Segoe WPC'"
+                "'Segoe UI'"
+                "system-ui"
+                "'Ubuntu'"
+                "'Droid Sans'"
+                "sans-serif"
+              ]
+            );
+            "terminal.integrated.fontFamily" = lib.mkForce fontCfg.monaspace.stacks.terminal;
 
             # Git settings
             "git.allowForcePush" = true;

@@ -18,6 +18,7 @@ let
     lib.mkOption { inherit type default description; };
 
   cfg = config.khanelinix.theme.stylix;
+  fontCfg = config.khanelinix.fonts;
 in
 {
   options.khanelinix.theme.stylix = {
@@ -73,15 +74,15 @@ in
 
           serif = {
             package = pkgs.monaspace;
-            name = if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon NF" else "MonaspaceNeon NF";
+            name = fontCfg.monaspace.families.neon;
           };
           sansSerif = {
             package = pkgs.monaspace;
-            name = if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon NF" else "MonaspaceNeon NF";
+            name = fontCfg.monaspace.families.neon;
           };
           monospace = {
             package = pkgs.monaspace;
-            name = if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton NF" else "MonaspaceKrypton NF";
+            name = fontCfg.monaspace.families.krypton;
           };
           emoji = {
             package = pkgs.noto-fonts-color-emoji;
