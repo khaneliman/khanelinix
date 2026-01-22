@@ -31,13 +31,13 @@ in
       settings =
         let
           monaspaceKrypton =
-            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton NF Var" else "MonaspaceKrypton NF";
+            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton NF" else "MonaspaceKrypton NF";
           monaspaceNeon =
-            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon NF Var" else "MonaspaceNeon NF";
+            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon NF" else "MonaspaceNeon NF";
           monaspaceRadon =
-            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Radon NF Var" else "MonaspaceRadon NF";
+            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Radon NF" else "MonaspaceRadon NF";
           monaspaceXenon =
-            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Xenon NF Var" else "MonaspaceXenon NF";
+            if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Xenon NF" else "MonaspaceXenon NF";
         in
         {
           adw-toolbar-style = "flat";
