@@ -37,7 +37,6 @@ in
   python3 = _prev.python3.override {
     packageOverrides = _pyFinal: _pyPrev: {
       # TODO: remove after hitting channel
-      inherit (master.python3Packages) fastmcp mcp;
     };
   };
 
