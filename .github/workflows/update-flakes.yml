@@ -71,7 +71,7 @@ jobs:
           token: ${{ steps.app-token.outputs.token || github.token }}
           branch: update-flake-lock
           delete-branch: true
-          title: "flake.lock: update"
+          title: "chore(flake): lock update"
           body: |
             Automated update by the update-flake-lock workflow.
 
