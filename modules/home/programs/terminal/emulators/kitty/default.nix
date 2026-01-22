@@ -12,15 +12,15 @@ let
   cfg = config.khanelinix.programs.terminal.emulators.kitty;
 
   monaspaceArgon =
-    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Argon NF Var" else "MonaspaceArgon NF";
+    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Argon NF" else "MonaspaceArgon NF";
   monaspaceKrypton =
-    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton NF Var" else "MonaspaceKrypton NF";
+    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Krypton NF" else "MonaspaceKrypton NF";
   monaspaceNeon =
-    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon NF Var" else "MonaspaceNeon NF";
+    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Neon NF" else "MonaspaceNeon NF";
   monaspaceRadon =
-    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Radon NF Var" else "MonaspaceRadon NF";
+    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Radon NF" else "MonaspaceRadon NF";
   monaspaceXenon =
-    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Xenon NF Var" else "MonaspaceXenon NF";
+    if pkgs.stdenv.hostPlatform.isDarwin then "Monaspace Xenon NF" else "MonaspaceXenon NF";
 
   removeSpaces = builtins.replaceStrings [ " " ] [ "" ];
 in
@@ -28,10 +28,10 @@ in
   options.khanelinix.programs.terminal.emulators.kitty = with types; {
     enable = lib.mkEnableOption "kitty";
     font = {
-      normal = mkOpt str monaspaceNeon "Font to use for alacritty.";
-      bold = mkOpt str monaspaceXenon "Font to use for alacritty.";
-      italic = mkOpt str monaspaceRadon "Font to use for alacritty.";
-      bold_italic = mkOpt str monaspaceKrypton "Font to use for alacritty.";
+      normal = mkOpt str monaspaceNeon "Font to use for kitty.";
+      bold = mkOpt str monaspaceXenon "Font to use for kitty.";
+      italic = mkOpt str monaspaceRadon "Font to use for kitty.";
+      bold_italic = mkOpt str monaspaceKrypton "Font to use for kitty.";
     };
   };
 
