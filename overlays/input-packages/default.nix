@@ -31,7 +31,6 @@ in
     yaziPlugins
 
     # TODO: remove after hitting channel
-    vinegar
     ;
 
   python3 = _prev.python3.override {
