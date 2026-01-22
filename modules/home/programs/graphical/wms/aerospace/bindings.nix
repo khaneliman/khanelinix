@@ -49,18 +49,48 @@ in
           "cmd-ctrl-right" = "workspace --wrap-around next";
 
           # Move windows to workspaces
-          "alt-shift-1" = "move-node-to-workspace 1";
-          "alt-shift-2" = "move-node-to-workspace 2";
-          "alt-shift-3" = "move-node-to-workspace 3";
-          "alt-shift-4" = "move-node-to-workspace 4";
-          "alt-shift-5" = "move-node-to-workspace 5";
-          "alt-shift-6" = "move-node-to-workspace 6";
-          "alt-shift-7" = "move-node-to-workspace 7";
-          "alt-shift-8" = "move-node-to-workspace 8";
+          "alt-shift-1" = [
+            "move-node-to-workspace 1"
+            "exec-and-forget ${sketchybar} --trigger aerospace_windows_change"
+          ];
+          "alt-shift-2" = [
+            "move-node-to-workspace 2"
+            "exec-and-forget ${sketchybar} --trigger aerospace_windows_change"
+          ];
+          "alt-shift-3" = [
+            "move-node-to-workspace 3"
+            "exec-and-forget ${sketchybar} --trigger aerospace_windows_change"
+          ];
+          "alt-shift-4" = [
+            "move-node-to-workspace 4"
+            "exec-and-forget ${sketchybar} --trigger aerospace_windows_change"
+          ];
+          "alt-shift-5" = [
+            "move-node-to-workspace 5"
+            "exec-and-forget ${sketchybar} --trigger aerospace_windows_change"
+          ];
+          "alt-shift-6" = [
+            "move-node-to-workspace 6"
+            "exec-and-forget ${sketchybar} --trigger aerospace_windows_change"
+          ];
+          "alt-shift-7" = [
+            "move-node-to-workspace 7"
+            "exec-and-forget ${sketchybar} --trigger aerospace_windows_change"
+          ];
+          "alt-shift-8" = [
+            "move-node-to-workspace 8"
+            "exec-and-forget ${sketchybar} --trigger aerospace_windows_change"
+          ];
 
           # Move windows to previous/next workspace
-          "alt-shift-p" = "move-node-to-workspace --wrap-around prev";
-          "alt-shift-n" = "move-node-to-workspace --wrap-around next";
+          "alt-shift-p" = [
+            "move-node-to-workspace --wrap-around prev"
+            "exec-and-forget ${sketchybar} --trigger aerospace_windows_change"
+          ];
+          "alt-shift-n" = [
+            "move-node-to-workspace --wrap-around next"
+            "exec-and-forget ${sketchybar} --trigger aerospace_windows_change"
+          ];
 
           # Layout Controls
           "alt-slash" = "layout tiles horizontal vertical";
