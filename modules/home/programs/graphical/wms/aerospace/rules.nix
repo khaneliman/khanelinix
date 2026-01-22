@@ -1,6 +1,12 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.khanelinix.programs.graphical.wms.aerospace;
+  sketchybar = lib.getExe (config.programs.sketchybar.finalPackage or pkgs.sketchybar);
 in
 {
   config = lib.mkIf cfg.enable {
@@ -73,6 +79,12 @@ in
           ];
         in
         lib.flatten [
+          [
+            {
+              check-further-callbacks = true;
+              run = "exec-and-forget ${sketchybar} --trigger aerospace_windows_change";
+            }
+          ]
           # Browsers -> workspace 1 (main)
           (mkWorkspaceRules "1" browserApps)
           # Communication apps -> workspace 2 (comms)
