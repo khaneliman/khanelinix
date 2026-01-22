@@ -29,7 +29,10 @@ in
           "match:class ^(robloxstudiobeta.exe)$, workspace 3"
           # Gaming
           "match:class ^(Steam|steam)$, workspace 4 silent"
-          "match:class ^(Steam|steam)., match:title ^(Steam|steam)$, workspace 4 silent"
+          "match:class ^(Steam|steam)$, match:title ^(Steam|steam)$, workspace 4 silent"
+          "match:class ^(steamwebhelper)$, workspace 4 silent"
+          "match:class ^(steam)$, no_initial_focus on"
+          "match:class ^(steam)$, focus_on_activate off"
           "match:class ^(gamescope|steam_app).*, workspace 4 silent"
           "match:class ^(heroic)$, workspace 4"
           "match:class ^(lutris)$, workspace 4"
