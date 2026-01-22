@@ -25,7 +25,11 @@
           };
           luacheck.enable = true;
           pre-commit-hook-ensure-sops.enable = true;
-          statix.enable = true;
+          statix = {
+            enable = true;
+            # Only staged changes
+            pass_filenames = true;
+          };
           treefmt.enable = true;
           typos = {
             enable = true;
