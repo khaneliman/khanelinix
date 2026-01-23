@@ -189,22 +189,6 @@ in
                 enable = true;
                 path = lib.getExe pkgs.xwayland-satellite;
               };
-
-              spawn-at-startup = lib.mkAfter [
-                {
-                  argv = [
-                    (lib.getExe pkgs.swaybg)
-                    "-o"
-                    "DP-3"
-                    "-i"
-                    (wallpaperPath wallpaperCfg.primary)
-                    "-o"
-                    "DP-1"
-                    "-i"
-                    (wallpaperPath wallpaperCfg.secondary)
-                  ];
-                }
-              ];
             };
           };
 
