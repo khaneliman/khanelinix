@@ -69,7 +69,10 @@ in
       };
     };
 
-    programs.niri.settings = cfg.settings;
+    programs.niri.settings = {
+      hotkey-overlay.skip-at-startup = true;
+    }
+    // cfg.settings;
 
     khanelinix.services.niri-wallpaper-watch = {
       enable = true;
