@@ -323,7 +323,7 @@ in
     };
 
     theme = {
-      catppuccin = enabled;
+      nord = enabled;
       stylix = enabled;
     };
   };
