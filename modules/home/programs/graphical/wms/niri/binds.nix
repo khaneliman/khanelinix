@@ -11,13 +11,23 @@ let
 
   inherit (config.khanelinix.programs.graphical) launchers;
 
-  enabledLaunchers = lib.flatten [
-    (lib.optional launchers.vicinae.enable "vicinae open")
-    (lib.optional launchers.anyrun.enable "anyrun")
-    (lib.optional launchers.walker.enable "walker")
-    (lib.optional launchers.sherlock.enable "sherlock")
-    (lib.optional launchers.rofi.enable "rofi -show drun")
-  ];
+  enabledLaunchers =
+    (lib.optionals launchers.vicinae.enable [
+      [
+        "vicinae"
+        "open"
+      ]
+    ])
+    ++ (lib.optionals launchers.anyrun.enable [ [ "anyrun" ] ])
+    ++ (lib.optionals launchers.walker.enable [ [ "walker" ] ])
+    ++ (lib.optionals launchers.sherlock.enable [ [ "sherlock" ] ])
+    ++ (lib.optionals launchers.rofi.enable [
+      [
+        "rofi"
+        "-show"
+        "drun"
+      ]
+    ]);
 
   launcherCount = builtins.length enabledLaunchers;
 
