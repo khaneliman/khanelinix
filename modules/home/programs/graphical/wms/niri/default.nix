@@ -71,6 +71,7 @@ in
 
     programs.niri.settings = {
       hotkey-overlay.skip-at-startup = true;
+      input.focus-follows-mouse.enable = true;
     }
     // cfg.settings;
 
