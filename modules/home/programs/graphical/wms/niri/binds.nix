@@ -154,32 +154,41 @@ in
         "Ctrl+Shift+Q".action.close-window = [ ];
         "Mod+F".action.maximize-column = [ ];
         "Mod+Shift+F".action.fullscreen-window = [ ];
-        "Mod+Shift+L".action.spawn = lockCommand;
 
+        # Focus bindings (matching Hyprland ALT pattern, adapted for Niri's scrolling)
         "Alt+Left".action.focus-column-left = [ ];
         "Alt+Right".action.focus-column-right = [ ];
-        "Alt+Up".action.focus-window-up = [ ];
-        "Alt+Down".action.focus-window-down = [ ];
+        "Alt+Down".action.focus-workspace-down = [ ];
+        "Alt+Up".action.focus-workspace-up = [ ];
+        "Alt+H".action.focus-column-left = [ ];
+        "Alt+L".action.focus-column-right = [ ];
+        "Alt+J".action.focus-workspace-down = [ ];
+        "Alt+K".action.focus-workspace-up = [ ];
 
+        # Move window bindings (using Mod+Shift to avoid conflict with Mod+L lock)
         "Mod+Left".action.move-column-left = [ ];
         "Mod+Right".action.move-column-right = [ ];
-        "Mod+Up".action.move-window-up = [ ];
-        "Mod+Down".action.move-window-down = [ ];
-        "Ctrl+Shift+Up".action.move-window-to-monitor-up = [ ];
-        "Ctrl+Shift+Down".action.move-window-to-monitor-down = [ ];
-        "Ctrl+Shift+K".action.move-window-to-monitor-up = [ ];
-        "Ctrl+Shift+J".action.move-window-to-monitor-down = [ ];
-        "Ctrl+Alt+Up".action.focus-monitor-up = [ ];
-        "Ctrl+Alt+Down".action.focus-monitor-down = [ ];
+        "Mod+Down".action.move-column-to-workspace-down = [ ];
+        "Mod+Up".action.move-column-to-workspace-up = [ ];
+        "Mod+Shift+H".action.move-column-left = [ ];
+        "Mod+Shift+L".action.move-column-right = [ ];
+        "Mod+Shift+J".action.move-column-to-workspace-down = [ ];
+        "Mod+Shift+K".action.move-column-to-workspace-up = [ ];
 
-        "Ctrl+Alt+Right".action.focus-workspace-down = [ ];
-        "Ctrl+Alt+L".action.focus-workspace-down = [ ];
-        "Ctrl+Alt+Left".action.focus-workspace-up = [ ];
-        "Ctrl+Alt+H".action.focus-workspace-up = [ ];
-        "Ctrl+Alt+Shift+Right".action.move-column-to-workspace-down = [ ];
-        "Ctrl+Alt+Shift+L".action.move-column-to-workspace-down = [ ];
-        "Ctrl+Alt+Shift+Left".action.move-column-to-workspace-up = [ ];
-        "Ctrl+Alt+Shift+H".action.move-column-to-workspace-up = [ ];
+        # Wheel scrolling
+        "Mod+WheelScrollDown" = {
+          cooldown-ms = 150;
+          action.focus-workspace-down = [ ];
+        };
+        "Mod+WheelScrollUp" = {
+          cooldown-ms = 150;
+          action.focus-workspace-up = [ ];
+        };
+        "Mod+WheelScrollRight".action.focus-column-right = [ ];
+        "Mod+WheelScrollLeft".action.focus-column-left = [ ];
+
+        "Mod+Ctrl+Shift+K".action.move-column-to-monitor-up = [ ];
+        "Mod+Ctrl+Shift+J".action.move-column-to-monitor-down = [ ];
 
         "Mod+Page_Down".action.focus-workspace-down = [ ];
         "Mod+Page_Up".action.focus-workspace-up = [ ];
@@ -201,11 +210,30 @@ in
         "Mod+Period".action.expel-window-from-column = [ ];
         "Mod+R".action.switch-preset-column-width = [ ];
 
-        "Print".action.screenshot = [ ];
-        "Shift+Print".action.screenshot = [ ];
-        "Mod+Print".action.screenshot-screen = [ ];
-        "Ctrl+Print".action.screenshot-screen = [ ];
-        "Alt+Print".action.screenshot-window = [ ];
+        # Screenshot bindings (adapted from Hyprland workflow):
+        # Since Niri doesn't support submaps, using modifier combinations instead
+
+        # Base Print keys (quick access)
+        "Print" = {
+          action.screenshot = {
+            show-pointer = false;
+          };
+        }; # Interactive area selection (like Hyprland's default)
+        "Alt+Print".action.screenshot-window = [ ]; # Window screenshot
+        "Mod+Print".action.screenshot-screen = [ ]; # Full screen screenshot
+
+        # Shift+Print variants (save to disk instead of clipboard-only)
+        "Shift+Print".action.screenshot = [ ]; # Interactive with pointer shown
+        "Alt+Shift+Print" = {
+          action.screenshot-window = {
+            show-pointer = false;
+          };
+        }; # Window with pointer hidden
+        "Mod+Shift+Print" = {
+          action.screenshot-screen = {
+            show-pointer = false;
+          };
+        }; # Screen with pointer hidden
 
         "Mod+I".action.spawn = "notify-send \"niri\" \"No window inspector configured\"";
         "Mod+Shift+Period".action.spawn = "smile";
