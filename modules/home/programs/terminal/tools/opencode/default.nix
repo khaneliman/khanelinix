@@ -4,7 +4,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkEnableOption;
+  inherit (lib) mkDefault mkIf mkEnableOption;
 
   cfg = config.khanelinix.programs.terminal.tools.opencode;
 
@@ -33,7 +33,7 @@ in
         mkIf mcpModuleEnabled true;
 
       settings = {
-        theme = "opencode";
+        theme = mkDefault "opencode";
         model = "github-copilot/gpt-5.2";
         # TODO: enable
         # model = "github-copilot/gpt-5.2-codex";
