@@ -80,6 +80,13 @@ in
   config = mkIf cfg.enable (
     lib.mkMerge [
       {
+        assertions = [
+          {
+            assertion = !config.khanelinix.theme.nord.enable;
+            message = "Nord and Catppuccin themes cannot be enabled at the same time";
+          }
+        ];
+
         khanelinix.theme.wallpaper = {
           theme = mkDefault "catppuccin";
           primary = mkDefault "flatppuccin_macchiato.png";

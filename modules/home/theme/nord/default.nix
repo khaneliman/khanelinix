@@ -39,6 +39,13 @@ in
   };
 
   config = mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = !config.khanelinix.theme.catppuccin.enable;
+        message = "Nord and Catppuccin themes cannot be enabled at the same time";
+      }
+    ];
+
     khanelinix.theme = {
       wallpaper = {
         theme = mkDefault "nord";
