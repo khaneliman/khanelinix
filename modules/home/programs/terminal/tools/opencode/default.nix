@@ -50,13 +50,6 @@ in
           #
           "oh-my-opencode"
         ];
-
-        # Disable socket.dev by default
-        mcp.socket = {
-          type = "remote";
-          url = "https://mcp.socket.dev/";
-          enabled = false;
-        };
       };
 
       inherit (aiTools.opencode) commands;
