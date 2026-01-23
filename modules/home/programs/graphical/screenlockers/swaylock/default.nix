@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkDefault mkIf;
 
   cfg = config.khanelinix.programs.graphical.screenlockers.swaylock;
 in
@@ -30,7 +30,7 @@ in
         timestr = "%R";
         datestr = "%a, %e of %B";
 
-        image = "${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png";
+        image = mkDefault "${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png";
 
         fade-in = "0.2";
 
@@ -42,36 +42,36 @@ in
         indicator-thickness = 20;
         indicator-caps-lock = true;
 
-        key-hl-color = "#8aadf4";
-        bs-hl-color = "#ed8796";
-        caps-lock-key-hl-color = "#f5a97f";
-        caps-lock-bs-hl-color = "#ed8796";
+        key-hl-color = mkDefault "#8aadf4";
+        bs-hl-color = mkDefault "#ed8796";
+        caps-lock-key-hl-color = mkDefault "#f5a97f";
+        caps-lock-bs-hl-color = mkDefault "#ed8796";
 
-        separator-color = "#181926";
+        separator-color = mkDefault "#181926";
 
-        inside-color = "#24273a";
-        inside-clear-color = "#24273a";
-        inside-caps-lock-color = "#24273a";
-        inside-ver-color = "#24273a";
-        inside-wrong-color = "#24273a";
+        inside-color = mkDefault "#24273a";
+        inside-clear-color = mkDefault "#24273a";
+        inside-caps-lock-color = mkDefault "#24273a";
+        inside-ver-color = mkDefault "#24273a";
+        inside-wrong-color = mkDefault "#24273a";
 
-        ring-color = "#1e2030";
-        ring-clear-color = "#8aadf4";
-        ring-caps-lock-color = "231f20D9";
-        ring-ver-color = "#1e2030";
-        ring-wrong-color = "#ed8796";
+        ring-color = mkDefault "#1e2030";
+        ring-clear-color = mkDefault "#8aadf4";
+        ring-caps-lock-color = mkDefault "231f20D9";
+        ring-ver-color = mkDefault "#1e2030";
+        ring-wrong-color = mkDefault "#ed8796";
 
-        line-color = "#8aadf4";
-        line-clear-color = "#8aadf4";
-        line-caps-lock-color = "#f5a97f";
-        line-ver-color = "#181926";
-        line-wrong-color = "#ed8796";
+        line-color = mkDefault "#8aadf4";
+        line-clear-color = mkDefault "#8aadf4";
+        line-caps-lock-color = mkDefault "#f5a97f";
+        line-ver-color = mkDefault "#181926";
+        line-wrong-color = mkDefault "#ed8796";
 
-        text-color = "#8aadf4";
-        text-clear-color = "#24273a";
-        text-caps-lock-color = "#f5a97f";
-        text-ver-color = "#24273a";
-        text-wrong-color = "#24273a";
+        text-color = mkDefault "#8aadf4";
+        text-clear-color = mkDefault "#24273a";
+        text-caps-lock-color = mkDefault "#f5a97f";
+        text-ver-color = mkDefault "#24273a";
+        text-wrong-color = mkDefault "#24273a";
 
         debug = true;
       };
