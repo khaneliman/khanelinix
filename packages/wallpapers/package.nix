@@ -4,7 +4,8 @@
   ...
 }:
 let
-  images = builtins.attrNames (builtins.readDir ./assets);
+  assets = builtins.readDir ./assets;
+  images = lib.filter (name: assets.${name} == "regular") (builtins.attrNames assets);
   mkWallpaper =
     name: src:
     let
@@ -53,7 +54,7 @@ stdenvNoCC.mkDerivation {
   installPhase = /* bash */ ''
     mkdir -p ${installTarget}
 
-    find * -type f -mindepth 0 -maxdepth 0 -exec cp ./{} ${installTarget}/{} ';'
+    cp -r . "${installTarget}/"
   '';
 
   passthru = {
