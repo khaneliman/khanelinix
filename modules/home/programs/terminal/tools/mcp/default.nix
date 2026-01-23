@@ -28,7 +28,6 @@ in
           args = lib.mkDefault [
             config.home.homeDirectory
             "${config.home.homeDirectory}/Documents"
-            "${config.home.homeDirectory}/Projects"
           ];
         };
 
