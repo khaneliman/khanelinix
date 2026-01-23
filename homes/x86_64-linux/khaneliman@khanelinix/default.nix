@@ -138,6 +138,73 @@ in
             };
           };
 
+          niri = {
+            enable = true;
+
+            settings = {
+              outputs = {
+                "DP-3" = {
+                  name = "DP-3";
+                  mode = {
+                    width = 3840;
+                    height = 2160;
+                    refresh = 60.0;
+                  };
+                  position = {
+                    x = 1420;
+                    y = 0;
+                  };
+                  scale = 2.0;
+                };
+
+                "DP-1" = {
+                  name = "DP-1";
+                  mode = {
+                    width = 5120;
+                    height = 1440;
+                    refresh = 120.0;
+                  };
+                  position = {
+                    x = 0;
+                    y = 1080;
+                  };
+                  scale = 1.0;
+                  focus-at-startup = true;
+                };
+              };
+
+              workspaces = {
+                "1" = {
+                  open-on-output = "DP-3";
+                };
+              }
+              // lib.genAttrs (map toString (lib.range 2 9)) (_: {
+                open-on-output = "DP-1";
+              });
+
+              xwayland-satellite = {
+                enable = true;
+                path = lib.getExe pkgs.xwayland-satellite;
+              };
+
+              spawn-at-startup = lib.mkAfter [
+                {
+                  argv = [
+                    (lib.getExe pkgs.swaybg)
+                    "-o"
+                    "DP-3"
+                    "-i"
+                    "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat_pacman.png"
+                    "-o"
+                    "DP-1"
+                    "-i"
+                    "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat-sound.png"
+                  ];
+                }
+              ];
+            };
+          };
+
           sway = {
             enable = true;
 
