@@ -71,7 +71,15 @@ let
         '';
       })
     ]
-    ++ cfg.extraModules;
+    ++ cfg.extraModules
+    ++ [
+      (lib.mkIf (config.khanelinix.theme.catppuccin.enable or false) {
+        khanelivim.ui.theme = "catppuccin";
+      })
+      (lib.mkIf (config.khanelinix.theme.nord.enable or false) {
+        khanelivim.ui.theme = "nord";
+      })
+    ];
   };
   khanelivim = khanelivimConfigurationExtended.config.build.package;
 in
