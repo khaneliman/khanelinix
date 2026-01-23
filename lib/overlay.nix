@@ -5,7 +5,9 @@ let
 in
 {
   # Expose khanelinix module functions directly
-  khanelinix = khanelinixLib.flake.lib.module;
+  khanelinix = khanelinixLib.flake.lib.module // {
+    inherit (khanelinixLib.flake.lib) theme;
+  };
 
   # Expose all khanelinix lib namespaces
   inherit (khanelinixLib.flake.lib)

@@ -12,6 +12,7 @@ let
   cfg = config.khanelinix.programs.graphical.desktop-environment.gnome;
 
   get-wallpaper = wallpaper: if lib.isDerivation wallpaper then toString wallpaper else wallpaper;
+  wallpaperPath = name: lib.khanelinix.theme.wallpaperPath { inherit config pkgs name; };
 in
 {
   options.khanelinix.programs.graphical.desktop-environment.gnome = {
@@ -63,8 +64,8 @@ in
               };
             })
             {
-              picture-uri = get-wallpaper "${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png";
-              picture-uri-dark = get-wallpaper "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat-sound.png";
+              picture-uri = get-wallpaper (wallpaperPath config.khanelinix.theme.wallpaper.primary);
+              picture-uri-dark = get-wallpaper (wallpaperPath config.khanelinix.theme.wallpaper.secondary);
             }
             "Desktop background settings";
 
@@ -78,8 +79,8 @@ in
               };
             })
             {
-              picture-uri = get-wallpaper "${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png";
-              picture-uri-dark = get-wallpaper "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat-sound.png";
+              picture-uri = get-wallpaper (wallpaperPath config.khanelinix.theme.wallpaper.primary);
+              picture-uri-dark = get-wallpaper (wallpaperPath config.khanelinix.theme.wallpaper.secondary);
             }
             "Screensaver settings";
 
