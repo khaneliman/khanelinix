@@ -41,7 +41,14 @@ in
         autoupdate = false;
 
         plugin = [
+          # Support google account auth
           "opencode-gemini-auth@latest"
+          # Dynamic context pruning
+          "@tarquinen/opencode-dcp@latest"
+          # Support background shell commands
+          "opencode-pty"
+          #
+          "oh-my-opencode"
         ];
 
         # Disable socket.dev by default
