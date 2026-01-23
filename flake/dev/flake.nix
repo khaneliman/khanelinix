@@ -19,6 +19,7 @@
         firefox-addons.follows = "";
         hypr-socket-watch.follows = "";
         nh.follows = "";
+        niri.follows = "";
         nix-flatpak.follows = "";
         nix-index-database.follows = "";
         stylix.follows = "";

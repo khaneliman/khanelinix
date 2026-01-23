@@ -110,11 +110,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1769132734,
-        "narHash": "sha256-gmU9cRplrQWqoback9PgQX7Dlsdx8JlhlVZwf0q1F7E=",
+        "lastModified": 1769187349,
+        "narHash": "sha256-clG+nT6I2qxjIgk5WoSDKJyNhzKJs9jzbCujPF2S/yg=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "d055b309a6277343cb1033a11d7500f0a0f669fc",
+        "rev": "082a4cd87c6089d1d9c58ebe52655f9e07245fcb",
         "type": "github"
       },
       "original": {
@@ -162,11 +162,11 @@
     },
     "nixpkgs-master": {
       "locked": {
-        "lastModified": 1769142543,
-        "narHash": "sha256-bBQ9rDHSaoLB95UgGP+dlYbk47nSuFPnjlJ9nnAD+YM=",
+        "lastModified": 1769209987,
+        "narHash": "sha256-R5kog/sz9X7zb+N0SnaNqVGz3lE3M53kQrOd947pYCo=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e6fcdcbedfc917ec00fe9505db808c921f2fb7d5",
+        "rev": "1b85ce8b51ad797f6b89745dafcfe5facc23a94d",
         "type": "github"
       },
       "original": {
@@ -177,11 +177,11 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1768875095,
-        "narHash": "sha256-dYP3DjiL7oIiiq3H65tGIXXIT1Waiadmv93JS0sS+8A=",
+        "lastModified": 1769092226,
+        "narHash": "sha256-6h5sROT/3CTHvzPy9koKBmoCa2eJKh4fzQK8eYFEgl8=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "ed142ab1b3a092c4d149245d0c4126a5d7ea00b0",
+        "rev": "b579d443b37c9c5373044201ea77604e37e748c8",
         "type": "github"
       },
       "original": {
@@ -229,6 +229,7 @@
         "lanzaboote": [],
         "mcp-servers-nix": "mcp-servers-nix",
         "nh": [],
+        "niri": [],
         "nix-darwin": [],
         "nix-flatpak": [],
         "nix-index-database": [],
@@ -244,7 +245,7 @@
       },
       "locked": {
         "lastModified": 0,
-        "narHash": "sha256-/TQosfB3bSGZ562QhF66TQ133ZhxCqKBwfuBjIJSbKM=",
+        "narHash": "sha256-LsikWJLMmaXNNGd8k+qBeIXoVsv27eI8VwDo1+ZbRAY=",
         "path": "./../..",
         "type": "path"
       },
