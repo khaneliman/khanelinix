@@ -70,5 +70,13 @@ in
     };
 
     programs.niri.settings = cfg.settings;
+
+    khanelinix.services.niri-wallpaper-watch = {
+      enable = true;
+      wallpapers = lib.khanelinix.theme.wallpaperPaths {
+        inherit config pkgs;
+        names = config.khanelinix.theme.wallpaper.list;
+      };
+    };
   };
 }
