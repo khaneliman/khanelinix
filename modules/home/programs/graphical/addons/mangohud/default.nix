@@ -100,6 +100,7 @@ in
         autostart_log = 0;
 
         blacklist = [
+          "ashell"
           "vinegar"
           "sober"
           "RobloxPlayerBeta.exe"
