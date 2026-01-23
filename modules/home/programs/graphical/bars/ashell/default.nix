@@ -11,6 +11,20 @@ let
   inherit (lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.programs.graphical.bars.ashell;
+
+  lockCommand =
+    if config.khanelinix.programs.graphical.screenlockers.hyprlock.enable then
+      lib.getExe config.programs.hyprlock.package
+    else if config.khanelinix.programs.graphical.screenlockers.swaylock.enable then
+      lib.getExe config.programs.swaylock.package
+    else
+      "loginctl lock-session";
+
+  logoutCommand =
+    if config.khanelinix.programs.graphical.wms.hyprland.enable then
+      "${lib.getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch exit"
+    else
+      "systemctl --user exit";
 in
 {
   options.khanelinix.programs.graphical.bars.ashell = {
@@ -118,7 +132,7 @@ in
 
             case "$SELECTED" in
               "🔒 Lock")
-                ${lib.getExe config.programs.hyprlock.package} &
+                ${lockCommand} &
                 ;;
               "🌙 Sleep")
                 systemctl suspend
@@ -130,7 +144,7 @@ in
                 systemctl poweroff
                 ;;
               "🚪 Logout")
-                ${lib.getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch exit
+                ${logoutCommand}
                 ;;
             esac
           '';
@@ -291,7 +305,7 @@ in
           };
 
           settings = {
-            lock_cmd = "${lib.getExe config.programs.hyprlock.package}";
+            lock_cmd = "${lockCommand}";
             audio_sinks_more_cmd = "${lib.getExe pkgs.pavucontrol} -t 3";
             audio_sources_more_cmd = "${lib.getExe pkgs.pavucontrol} -t 4";
             wifi_more_cmd = "${lib.getExe' pkgs.networkmanagerapplet "nm-connection-editor"}";

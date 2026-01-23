@@ -216,6 +216,16 @@ in
             "org.freedesktop.impl.portal.Screenshot" = "wlr";
           };
 
+          niri = mkIf config.khanelinix.programs.graphical.wms.niri.enable {
+            default = lib.mkDefault [
+              "gnome"
+              "gtk"
+            ];
+
+            "org.freedesktop.impl.portal.Screencast" = "gnome";
+            "org.freedesktop.impl.portal.Screenshot" = "gnome";
+          };
+
           common = {
             default = [
               "gtk"
