@@ -8,6 +8,9 @@
 let
   inherit (lib) getExe;
   inherit (lib.khanelinix) enabled;
+  wallpaperCfg = config.khanelinix.theme.wallpaper;
+  wallpaperPath = name: lib.khanelinix.theme.wallpaperPath { inherit config pkgs name; };
+  wallpaperPaths = names: lib.khanelinix.theme.wallpaperPaths { inherit config pkgs names; };
 in
 {
   khanelinix = {
@@ -194,11 +197,11 @@ in
                     "-o"
                     "DP-3"
                     "-i"
-                    "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat_pacman.png"
+                    (wallpaperPath wallpaperCfg.primary)
                     "-o"
                     "DP-1"
                     "-i"
-                    "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat-sound.png"
+                    (wallpaperPath wallpaperCfg.secondary)
                   ];
                 }
               ];
@@ -285,24 +288,15 @@ in
         monitors = [
           {
             name = "DP-3";
-            wallpaper = "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat_pacman.png";
+            wallpaper = wallpaperPath wallpaperCfg.primary;
           }
           {
             name = "DP-1";
-            wallpaper = "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat-sound.png";
+            wallpaper = wallpaperPath wallpaperCfg.secondary;
           }
         ];
 
-        wallpapers = [
-          "${pkgs.khanelinix.wallpapers}/share/wallpapers/buttons.png"
-          "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat_pacman.png"
-          "${pkgs.khanelinix.wallpapers}/share/wallpapers/cat-sound.png"
-          "${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png"
-          "${pkgs.khanelinix.wallpapers}/share/wallpapers/hashtags-black.png"
-          "${pkgs.khanelinix.wallpapers}/share/wallpapers/hashtags-new.png"
-          "${pkgs.khanelinix.wallpapers}/share/wallpapers/hearts.png"
-          "${pkgs.khanelinix.wallpapers}/share/wallpapers/tetris.png"
-        ];
+        wallpapers = wallpaperPaths wallpaperCfg.list;
       };
 
       rnnoise = enabled;
@@ -357,7 +351,7 @@ in
         inherit monitor;
         brightness = "0.817200";
         color = lib.mkDefault "rgba(25, 20, 20, 1.0)";
-        path = "${pkgs.khanelinix.wallpapers}/share/wallpapers/${wallpaper}";
+        path = wallpaperPath wallpaper;
         blur_passes = 3;
         blur_size = 8;
         contrast = "0.891700";
@@ -367,8 +361,8 @@ in
       };
     in
     [
-      (mkBackground "DP-1" "cat_pacman.png")
-      (mkBackground "DP-3" "tetris.png")
+      (mkBackground "DP-1" wallpaperCfg.secondary)
+      (mkBackground "DP-3" wallpaperCfg.primary)
     ]
   );
 

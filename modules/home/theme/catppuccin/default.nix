@@ -8,6 +8,7 @@
 let
   inherit (lib)
     mkEnableOption
+    mkDefault
     mkIf
     mkMerge
     mkOption
@@ -78,6 +79,19 @@ in
 
   config = mkIf cfg.enable (
     lib.mkMerge [
+      {
+        khanelinix.theme.wallpaper = {
+          theme = mkDefault "catppuccin";
+          primary = mkDefault "flatppuccin_macchiato.png";
+          secondary = mkDefault "cat-sound.png";
+          lock = mkDefault "flatppuccin_macchiato.png";
+          list = mkDefault [
+            "flatppuccin_macchiato.png"
+            "cat_pacman.png"
+            "cat-sound.png"
+          ];
+        };
+      }
       (lib.optionalAttrs (inputs ? catppuccin && inputs.catppuccin ? homeModules) {
         catppuccin = {
           # NOTE: Need some customization and merging of configuration files so cant just enable all

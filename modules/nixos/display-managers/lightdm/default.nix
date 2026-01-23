@@ -21,7 +21,10 @@ in
 
       displayManager.lightdm = {
         enable = true;
-        background = "${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png";
+        background = lib.khanelinix.theme.wallpaperPath {
+          inherit config pkgs;
+          name = config.khanelinix.theme.wallpaper.primary;
+        };
 
         greeters = {
           gtk = {

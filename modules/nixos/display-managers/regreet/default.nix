@@ -52,7 +52,10 @@ in
 
       settings = {
         background = {
-          path = "${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png";
+          path = lib.khanelinix.theme.wallpaperPath {
+            inherit config pkgs;
+            name = config.khanelinix.theme.wallpaper.primary;
+          };
           fit = "Cover";
         };
 
