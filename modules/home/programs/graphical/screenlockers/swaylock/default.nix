@@ -9,6 +9,7 @@ let
   inherit (lib) mkDefault mkIf;
 
   cfg = config.khanelinix.programs.graphical.screenlockers.swaylock;
+  wallpaperPath = name: lib.khanelinix.theme.wallpaperPath { inherit config pkgs name; };
 in
 {
   options.khanelinix.programs.graphical.screenlockers.swaylock = {
@@ -30,7 +31,7 @@ in
         timestr = "%R";
         datestr = "%a, %e of %B";
 
-        image = mkDefault "${pkgs.khanelinix.wallpapers}/share/wallpapers/flatppuccin_macchiato.png";
+        image = mkDefault (wallpaperPath config.khanelinix.theme.wallpaper.lock);
 
         fade-in = "0.2";
 

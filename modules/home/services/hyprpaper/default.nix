@@ -69,7 +69,9 @@ in
         package = hypr-socket-watch.packages.${system}.hypr-socket-watch;
 
         monitor = "DP-1";
-        wallpapers = "${pkgs.khanelinix.wallpapers}/share/wallpapers/";
+        wallpapers = lib.khanelinix.theme.wallpaperDir {
+          inherit config pkgs;
+        };
         debug = false;
       };
     };

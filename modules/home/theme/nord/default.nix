@@ -7,6 +7,7 @@
 let
   inherit (lib)
     mkEnableOption
+    mkDefault
     mkIf
     mkOption
     types
@@ -38,22 +39,43 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix.theme.catppuccin.enable = lib.mkForce false;
-
-    khanelinix.theme.stylix = {
-      enable = true;
-      theme = "nord";
-
-      cursor = {
-        name = "Nordzy-cursors";
-        package = pkgs.nordzy-cursor-theme;
-        size = 32;
+    khanelinix.theme = {
+      wallpaper = {
+        theme = mkDefault "nord";
+        primary = mkDefault "arctic-landscape.png";
+        secondary = mkDefault "Abstract-Nord.png";
+        lock = mkDefault "Abstract-Nord.png";
+        list = mkDefault [
+          "Abstract-Nord.png"
+          "BirdNord.png"
+          "Minimal-Nord.png"
+          "arctic-landscape.png"
+          "chemical_nord.png"
+          "ign-0001.png"
+          "ign-0011.png"
+          "nixos.png"
+        ];
       };
+      stylix = {
+        enable = true;
+        theme = "nord";
 
-      icon = {
-        name = "Nordzy-dark";
-        package = pkgs.nordzy-icon-theme;
+        cursor = {
+          name = "Nordzy-cursors";
+          package = pkgs.nordzy-cursor-theme;
+          size = 32;
+        };
+
+        icon = {
+          name = "Nordzy-dark";
+          package = pkgs.nordzy-icon-theme;
+        };
       };
+    };
+
+    stylix.image = lib.khanelinix.theme.wallpaperPath {
+      inherit config pkgs;
+      name = config.khanelinix.theme.wallpaper.primary;
     };
   };
 }
