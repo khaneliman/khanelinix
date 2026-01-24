@@ -11,6 +11,7 @@ let
   inherit (lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.programs.graphical.bars.ashell;
+  isNiri = config.khanelinix.programs.graphical.wms.niri.enable;
 
   lockCommand =
     if config.khanelinix.programs.graphical.screenlockers.hyprlock.enable then
@@ -266,7 +267,9 @@ in
               commonModules;
 
           workspaces = {
-            visibility_mode = "MonitorSpecific";
+            # Hyprland: workspaces are global and can be pinned to monitors.
+            # Niri: workspaces are per-monitor; show all workspaces on every bar.
+            visibility_mode = if isNiri then "All" else "MonitorSpecific";
             enable_workspace_filling = false;
           };
 
