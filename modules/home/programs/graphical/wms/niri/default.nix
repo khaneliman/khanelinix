@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  options,
   ...
 }:
 let
@@ -9,6 +10,9 @@ let
   inherit (lib.khanelinix) disabled enabled;
 
   cfg = config.khanelinix.programs.graphical.wms.niri;
+
+  # Check if the Home Manager niri module exists (Linux only)
+  niriAvailable = options ? programs.niri;
 in
 {
   options.khanelinix.programs.graphical.wms.niri = {
@@ -28,59 +32,65 @@ in
     ./window-rules.nix
   ];
 
-  config = mkIf cfg.enable {
-    home = {
-      packages = with pkgs; [
-        grim
-        light
-        playerctl
-        slurp
-        swaybg
-        wl-clipboard
-      ];
-    };
+  config = mkIf cfg.enable (
+    lib.mkMerge [
+      # Common config that doesn't depend on programs.niri
+      {
+        home.packages = with pkgs; [
+          grim
+          light
+          playerctl
+          slurp
+          swaybg
+          wl-clipboard
+        ];
 
-    khanelinix = {
-      programs = {
-        graphical = {
-          bars = {
-            ashell = lib.mkDefault enabled;
-            waybar = lib.mkDefault disabled;
+        khanelinix = {
+          programs = {
+            graphical = {
+              bars = {
+                ashell = lib.mkDefault enabled;
+                waybar = lib.mkDefault disabled;
+              };
+
+              launchers = {
+                anyrun = enabled;
+                vicinae = enabled;
+              };
+
+              screenlockers = {
+                swaylock = enabled;
+              };
+            };
           };
 
-          launchers = {
-            anyrun = enabled;
-            vicinae = enabled;
+          suites = {
+            wlroots = enabled;
           };
 
-          screenlockers = {
-            swaylock = enabled;
+          theme = {
+            gtk = enabled;
+            qt = enabled;
           };
         };
-      };
 
-      suites = {
-        wlroots = enabled;
-      };
+        khanelinix.services.niri-wallpaper-watch = {
+          enable = true;
+          wallpapers = lib.khanelinix.theme.wallpaperPaths {
+            inherit config pkgs;
+            names = config.khanelinix.theme.wallpaper.list;
+          };
+        };
+      }
 
-      theme = {
-        gtk = enabled;
-        qt = enabled;
-      };
-    };
-
-    programs.niri.settings = {
-      hotkey-overlay.skip-at-startup = true;
-      input.focus-follows-mouse.enable = true;
-    }
-    // cfg.settings;
-
-    khanelinix.services.niri-wallpaper-watch = {
-      enable = true;
-      wallpapers = lib.khanelinix.theme.wallpaperPaths {
-        inherit config pkgs;
-        names = config.khanelinix.theme.wallpaper.list;
-      };
-    };
-  };
+      # Programs.niri config (only when available)
+      (lib.optionalAttrs niriAvailable {
+        programs.niri.settings = {
+          hotkey-overlay.skip-at-startup = true;
+          input.focus-follows-mouse.enable = true;
+        }
+        // cfg.settings;
+      })
+    ]
+  );
 }

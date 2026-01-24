@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  options,
   ...
 }:
 let
@@ -14,6 +15,7 @@ let
     ;
 
   cfg = config.khanelinix.theme.nord;
+  stylixAvailable = options ? stylix;
 in
 {
   imports = [
@@ -38,51 +40,57 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
-    assertions = [
+  config = mkIf cfg.enable (
+    lib.mkMerge [
       {
-        assertion = !config.khanelinix.theme.catppuccin.enable;
-        message = "Nord and Catppuccin themes cannot be enabled at the same time";
-      }
-    ];
-
-    khanelinix.theme = {
-      wallpaper = {
-        theme = mkDefault "nord";
-        primary = mkDefault "arctic-landscape.png";
-        secondary = mkDefault "Abstract-Nord.png";
-        lock = mkDefault "Abstract-Nord.png";
-        list = mkDefault [
-          "Abstract-Nord.png"
-          "BirdNord.png"
-          "Minimal-Nord.png"
-          "arctic-landscape.png"
-          "chemical_nord.png"
-          "ign-0001.png"
-          "ign-0011.png"
-          "nixos.png"
+        assertions = [
+          {
+            assertion = !config.khanelinix.theme.catppuccin.enable;
+            message = "Nord and Catppuccin themes cannot be enabled at the same time";
+          }
         ];
-      };
-      stylix = {
-        enable = true;
-        theme = "nord";
 
-        cursor = {
-          name = "Nordzy-cursors";
-          package = pkgs.nordzy-cursor-theme;
-          size = 32;
+        khanelinix.theme = {
+          wallpaper = {
+            theme = mkDefault "nord";
+            primary = mkDefault "arctic-landscape.png";
+            secondary = mkDefault "Abstract-Nord.png";
+            lock = mkDefault "Abstract-Nord.png";
+            list = mkDefault [
+              "Abstract-Nord.png"
+              "BirdNord.png"
+              "Minimal-Nord.png"
+              "arctic-landscape.png"
+              "chemical_nord.png"
+              "ign-0001.png"
+              "ign-0011.png"
+              "nixos.png"
+            ];
+          };
+          stylix = {
+            enable = true;
+            theme = "nord";
+
+            cursor = {
+              name = "Nordzy-cursors";
+              package = pkgs.nordzy-cursor-theme;
+              size = 32;
+            };
+
+            icon = {
+              name = "Nordzy-dark";
+              package = pkgs.nordzy-icon-theme;
+            };
+          };
         };
+      }
 
-        icon = {
-          name = "Nordzy-dark";
-          package = pkgs.nordzy-icon-theme;
+      (lib.optionalAttrs stylixAvailable {
+        stylix.image = lib.khanelinix.theme.wallpaperPath {
+          inherit config pkgs;
+          name = config.khanelinix.theme.wallpaper.primary;
         };
-      };
-    };
-
-    stylix.image = lib.khanelinix.theme.wallpaperPath {
-      inherit config pkgs;
-      name = config.khanelinix.theme.wallpaper.primary;
-    };
-  };
+      })
+    ]
+  );
 }
