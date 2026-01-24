@@ -16,7 +16,7 @@ from rich.text import Text
 
 TASKS = {
     "vim": {
-        "command": "nix run nixpkgs#vimPluginsUpdater -- --github-token=${GITHUB_TOKEN}",
+        "command": "nix run .#vimPluginsUpdater -- --github-token=${GITHUB_TOKEN}",
         "self_committing": False,
         "worktree": "vim",
         "depends_on": None,
@@ -28,7 +28,7 @@ TASKS = {
         "depends_on": "vim",
     },
     "lua": {
-        "command": "nix run nixpkgs#luarocks-packages-updater -- --github-token=${GITHUB_TOKEN}",
+        "command": "nix run .#luarocks-packages-updater -- --github-token=${GITHUB_TOKEN}",
         "self_committing": False,
         "worktree": "lua",
         "depends_on": None,
@@ -150,10 +150,23 @@ def setup_full_worktree(worktree_name: str):
     worktree_dir = Path(f"/tmp/{worktree_name}-worktree")
 
     run_command(f"git branch -D {branch_name}")
+
     if worktree_dir.exists():
         shutil.rmtree(worktree_dir)
+
     run_command("git worktree prune")
-    run_command(f"git worktree add {worktree_dir} -B {branch_name}")
+
+    result = run_command(
+        f"git worktree add {worktree_dir} -B {branch_name}", capture_output=True
+    )
+
+    if result and result.returncode != 0:
+        raise RuntimeError(
+            f"Failed to create worktree {worktree_name}: {result.stderr}"
+        )
+
+    if not worktree_dir.exists():
+        raise RuntimeError(f"Worktree directory {worktree_dir} was not created")
 
 
 def run_update_in_worktree(task_name: str, task_details: dict, task_events: dict):
@@ -163,6 +176,7 @@ def run_update_in_worktree(task_name: str, task_details: dict, task_events: dict
     command = task_details["command"]
     self_committing = task_details["self_committing"]
     depends_on = task_details["depends_on"]
+    log_file = Path(f"/tmp/{task_name}-update.log")
 
     # Wait for dependency if specified
     if depends_on:
@@ -175,32 +189,34 @@ def run_update_in_worktree(task_name: str, task_details: dict, task_events: dict
         )
 
     update_task_state(task_name, status="RUNNING", output="Starting update...")
+    update_task_state(task_name, output=f"Full log: {log_file}")
 
     try:
-        # Run the update command and capture output
-        process = subprocess.Popen(
-            command,
-            shell=True,
-            cwd=worktree_dir,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            env=os.environ.copy(),
-        )
+        with open(log_file, "w") as log:
+            process = subprocess.Popen(
+                command,
+                shell=True,
+                cwd=worktree_dir,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                env=os.environ.copy(),
+            )
 
-        # Read output line by line
-        for line in process.stdout:
-            line = line.strip()
-            if line:
-                update_task_state(task_name, output=line)
+            for line in process.stdout:
+                line = line.strip()
+                if line:
+                    log.write(line + "\n")
+                    log.flush()
+                    update_task_state(task_name, output=line)
 
-        process.wait()
+            process.wait()
 
         if process.returncode != 0:
             update_task_state(
                 task_name,
                 status="ERROR",
-                output=f"Command failed with code {process.returncode}",
+                output=f"Command failed with code {process.returncode}. See {log_file}",
                 error=True,
             )
             return
