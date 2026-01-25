@@ -5,13 +5,13 @@ updates:
     schedule:
       interval: "daily"
     commit-message:
-      prefix: ".github"
+      prefix: "chore(github)"
   - package-ecosystem: "npm"
     directory: "/templates/angular"
     schedule:
       interval: "weekly"
     commit-message:
-      prefix: "templates/angular"
+      prefix: "chore(templates/angular)"
     groups:
       angular-dependencies:
         patterns:
@@ -21,7 +21,7 @@ updates:
     schedule:
       interval: "weekly"
     commit-message:
-      prefix: "templates/node"
+      prefix: "chore(templates/node)"
     groups:
       node-dependencies:
         patterns:
@@ -31,7 +31,7 @@ updates:
     schedule:
       interval: "weekly"
     commit-message:
-      prefix: "templates/python"
+      prefix: "chore(templates/python)"
     groups:
       python-dependencies:
         patterns:
@@ -41,7 +41,7 @@ updates:
     schedule:
       interval: "weekly"
     commit-message:
-      prefix: "templates/rust"
+      prefix: "chore(templates/rust)"
     groups:
       rust-dependencies:
         patterns:
@@ -51,7 +51,7 @@ updates:
     schedule:
       interval: "weekly"
     commit-message:
-      prefix: "templates/rust-web-server"
+      prefix: "chore(templates/rust-web-server)"
     groups:
       rust-web-server-dependencies:
         patterns:
