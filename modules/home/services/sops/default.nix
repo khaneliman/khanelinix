@@ -42,5 +42,11 @@ in
         };
       };
     };
+
+    # TODO: remove after https://github.com/Mic92/sops-nix/issues/890
+    launchd.agents.sops-nix = {
+      enable = true;
+      config.EnvironmentVariables.PATH = lib.mkForce "/usr/bin:/bin:/usr/sbin:/sbin";
+    };
   };
 }
