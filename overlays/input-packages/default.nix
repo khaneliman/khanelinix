@@ -24,10 +24,10 @@ in
   #          │ From nixpkgs-master (fast updating / want latest always) │
   #          ╰──────────────────────────────────────────────────────────╯
   inherit (master)
-    antigravity
     claude-code
     gemini-cli
     opencode
+    yazi-unwrapped
     yaziPlugins
 
     # TODO: remove after hitting channel
