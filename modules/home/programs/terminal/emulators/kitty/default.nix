@@ -261,7 +261,7 @@ in
           window_border_width = 0;
           window_margin_width = 0;
           window_padding_width = 0;
-          inactive_text_alpha = "0.6";
+          inactive_text_alpha = "0.8";
           background_opacity = lib.mkDefault "0.90";
           dynamic_background_opacity = "yes";
           placement_strategy = "center";
