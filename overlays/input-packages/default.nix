@@ -28,6 +28,7 @@ in
     claude-code
     gemini-cli
     opencode
+    yazi-unwrapped
     yaziPlugins
 
     # TODO: remove after hitting channel
