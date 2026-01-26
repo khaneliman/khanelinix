@@ -110,8 +110,17 @@ in
         };
 
         syntaxHighlighting = {
-          # Use alternative plugin
-          enable = false;
+          enable = true;
+          highlighters = [
+            # NOTE: default priority included
+            # "main"
+            "brackets"
+            "pattern"
+            "regexp"
+            "cursor"
+            "root"
+            "line"
+          ];
         };
 
         initContent = lib.mkMerge [
@@ -186,11 +195,6 @@ in
             name = "zsh-vi-mode";
             src = pkgs.zsh-vi-mode;
             file = "share/zsh-vi-mode/zsh-vi-mode.plugin.zsh";
-          }
-          {
-            name = "fast-syntax-highlighting";
-            file = "share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh";
-            src = pkgs.zsh-fast-syntax-highlighting;
           }
           {
             name = "zsh-autosuggestions";
