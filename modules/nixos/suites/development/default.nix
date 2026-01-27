@@ -31,8 +31,7 @@ in
       };
 
       services = {
-        # FIXME: broken nixpkgs
-        # ollama.enable = lib.mkDefault cfg.aiEnable;
+        ollama.enable = lib.mkDefault cfg.aiEnable;
         ollama-ui.enable = lib.mkDefault cfg.aiEnable;
         # NOTE: 13 GB closure size!!
         # open-webui.enable = lib.mkDefault cfg.aiEnable;
