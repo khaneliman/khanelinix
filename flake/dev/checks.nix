@@ -35,6 +35,16 @@
           treefmt.enable = true;
           typos = {
             enable = true;
+            settings.ignored-words = [
+              # Package name
+              "ue"
+              "ue4"
+              # Option name
+              "browseable"
+              # Application name
+              "shotcut"
+              "Shotcut"
+            ];
             excludes = [
               "generated/.*"
               ".*\\.xsd$"
