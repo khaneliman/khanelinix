@@ -35,7 +35,7 @@
           treefmt.enable = true;
           typos = {
             enable = true;
-            excludes = [ "generated/*" ];
+            excludes = [ "generated/.*" ];
           };
         };
       };
