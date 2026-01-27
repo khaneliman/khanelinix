@@ -35,29 +35,42 @@
           treefmt.enable = true;
           typos = {
             enable = true;
-            settings.ignored-words = [
-              # Package name
-              "ue"
-              "ue4"
-              # Option name
-              "browseable"
-              # Application name
-              "shotcut"
-              "Shotcut"
-            ];
-            excludes = [
-              "generated/.*"
-              ".*\\.xsd$"
-              ".*\\.svg$"
-              ".*\\.yaml$"
-              ".*\\.lock$"
-              "flake\\.lock$"
-              "package-lock\\.json$"
-              ".*\\.(png|jpg|jpeg|gif|ico|webp)$"
-              ".*/nix/deps\\.nix$"
-              ".*/ssh/hosts\\.nix$"
-              "custom\\.css$"
-            ];
+            settings.config = {
+              default = {
+                extend-words = {
+                  # Package name
+                  ue = "ue";
+                  ue4 = "ue4";
+                  # Option name
+                  browseable = "browseable";
+                  # Application name
+                  shotcut = "shotcut";
+                  Shotcut = "Shotcut";
+                };
+                extend-ignore-re = [
+                  # SSH public keys (ssh-rsa, ssh-ed25519, etc.)
+                  "ssh-[a-z0-9]+ [A-Za-z0-9+/=]+"
+                ];
+              };
+              files.extend-exclude = [
+                "generated/*"
+                "*.xsd"
+                "*.svg"
+                "*.yaml"
+                "*.lock"
+                "flake.lock"
+                "package-lock.json"
+                "*.png"
+                "*.jpg"
+                "*.jpeg"
+                "*.gif"
+                "*.ico"
+                "*.webp"
+                "*/nix/deps.nix"
+                "*/ssh/hosts.nix"
+                "custom.css"
+              ];
+            };
           };
         };
       };
