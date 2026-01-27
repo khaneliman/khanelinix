@@ -50,7 +50,7 @@ in
 
       settings = {
         # TODO: see how much UI customization can be done
-        # Miscelaneous
+        # Miscellaneous
         ncmpcpp_directory = "${config.xdg.configHome}/ncmpcpp";
         ignore_leading_the = true;
         external_editor = "nvim";

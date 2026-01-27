@@ -83,7 +83,7 @@
 /* SIDEBAR HACK PATCHES */
 
 @media (max-width: 50px) {
-  /* Fix to tab tree identation when minimised */
+  /* Fix to tab tree indentation when minimised */
   #root:not(:hover) .Tab {
     --tabs-indent: 0px;
   }

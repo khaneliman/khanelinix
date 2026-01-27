@@ -164,7 +164,7 @@ configuration.
 | ------------------ | ------------------------------------------------------------------------------------------------- |
 | **Homebrew Casks** | `bitwarden`, `calibre`, `fantastical`, `libreoffice`, `meetingbar`, `microsoft-teams`, `obsidian` |
 | **Mac App Store**  | Brother iPrint&Scan, Keynote, Microsoft OneNote, Notability, Numbers, Pages                       |
-| **KhaneLinix**     | `_1password`                                                                                      |
+| **Khanelinix**     | `_1password`                                                                                      |
 
 </details>
 
@@ -175,7 +175,7 @@ configuration.
 | ---------------------- | ---------------------------------------------------------------------------------------------------------- |
 | **System Packages**    | `duti`, `gawk`, `gnugrep`, `gnupg`, `gnused`, `gnutls`, `terminal-notifier`, `trash-cli`, `wtfutil`, `mas` |
 | **Homebrew Brews**     | `bashdb`                                                                                                   |
-| **KhaneLinix Modules** | `nix`, `ssh`, `homebrew`, `openssh`, `fonts`, `input`, `interface`, `networking`                           |
+| **Khanelinix Modules** | `nix`, `ssh`, `homebrew`, `openssh`, `fonts`, `input`, `interface`, `networking`                           |
 | **Custom Tools**       | `trace-symlink`, `trace-which`                                                                             |
 
 </details>

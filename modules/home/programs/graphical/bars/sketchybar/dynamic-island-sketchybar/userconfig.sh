@@ -30,7 +30,7 @@ export P_DYNAMIC_ISLAND_DEFAULT_HEIGHT=44
 export P_DYNAMIC_ISLAND_DEFAULT_WIDTH=100
 export P_DYNAMIC_ISLAND_CORNER_RADIUS=10
 
-# in case of built-in display, it must be divded by 2, e.g.: MBP 14 has 3024 resolution, so 3024/2=1512
+# in case of built-in display, it must be divided by 2, e.g.: MBP 14 has 3024 resolution, so 3024/2=1512
 export P_DYNAMIC_ISLAND_MONITOR_HORIZONTAL_RESOLUTION=1512
 
 # Animation Settings

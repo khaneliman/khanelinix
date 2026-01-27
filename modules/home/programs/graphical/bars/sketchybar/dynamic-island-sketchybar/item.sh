@@ -70,7 +70,7 @@ dynamic-island-sketchybar --bar display="$P_DYNAMIC_ISLAND_DISPLAY"
 dynamic-island-sketchybar --subscribe island dynamic_island_queue \
     --subscribe island dynamic_island_request
 
-# module initalization
+# module initialization
 if [[ $P_DYNAMIC_ISLAND_MUSIC_ENABLED == 1 ]]; then
     if [[ $P_DYNAMIC_ISLAND_MUSIC_SOURCE == "Music" ]]; then
         MUSIC_EVENT="com.apple.Music.playerInfo"

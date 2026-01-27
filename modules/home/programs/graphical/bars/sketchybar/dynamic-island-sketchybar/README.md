@@ -151,7 +151,7 @@ following:
 P_DYNAMIC_ISLAND_MONITOR_HORIZONTAL_RESOLUTION=1920
 ```
 
-In case of built-in display, it must be divded by 2, e.g.: MBP 14 has 3024
+In case of built-in display, it must be divided by 2, e.g.: MBP 14 has 3024
 resolution, so 3024/2=1512.
 
 # Features

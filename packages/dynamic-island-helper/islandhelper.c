@@ -31,7 +31,7 @@ void handler(env env) {
       return;
     }
 
-    // Create new queuable item
+    // Create new queueable item
     struct islandItem *newItem =
         (struct islandItem *)malloc(sizeof(struct islandItem));
     sprintf(newItem->identifier, "%s", id);
