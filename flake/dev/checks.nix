@@ -35,7 +35,19 @@
           treefmt.enable = true;
           typos = {
             enable = true;
-            excludes = [ "generated/.*" ];
+            excludes = [
+              "generated/.*"
+              ".*\\.xsd$"
+              ".*\\.svg$"
+              ".*\\.yaml$"
+              ".*\\.lock$"
+              "flake\\.lock$"
+              "package-lock\\.json$"
+              ".*\\.(png|jpg|jpeg|gif|ico|webp)$"
+              ".*/nix/deps\\.nix$"
+              ".*/ssh/hosts\\.nix$"
+              "custom\\.css$"
+            ];
           };
         };
       };
