@@ -23,6 +23,7 @@
         nix-flatpak.follows = "";
         nix-index-database.follows = "";
         stylix.follows = "";
+        tokyonight.follows = "";
         waybar.follows = "";
         yazi-flavors.follows = "";
       };

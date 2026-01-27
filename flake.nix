@@ -114,6 +114,11 @@
       url = "github:yazi-rs/flavors";
       flake = false;
     };
+    tokyonight = {
+      flake = false;
+      url = "github:folke/tokyonight.nvim";
+    };
+
     mcp-servers-nix = {
       url = "github:natsukium/mcp-servers-nix";
       inputs.nixpkgs.follows = "nixpkgs";

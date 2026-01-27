@@ -240,12 +240,13 @@
         "nixpkgs-unstable": "nixpkgs-unstable",
         "sops-nix": "sops-nix",
         "stylix": [],
+        "tokyonight": [],
         "waybar": [],
         "yazi-flavors": []
       },
       "locked": {
         "lastModified": 0,
-        "narHash": "sha256-EjfPCLCHwf8/UoKQ1TMoo60mqjftlVwKQX5sfMW/DCM=",
+        "narHash": "sha256-0ySQvKp6zbGss96T9VPDw0fOq8MeT9pbFHqYPSzznD0=",
         "path": "./../..",
         "type": "path"
       },

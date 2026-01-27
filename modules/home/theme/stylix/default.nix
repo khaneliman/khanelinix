@@ -54,6 +54,33 @@ let
       "tmux"
       "yazi"
     ];
+    tokyonight = [
+      "alacritty"
+      "bat"
+      "btop"
+      "delta"
+      "fish"
+      "foot"
+      "fzf"
+      "ghostty"
+      "gitui"
+      "helix"
+      "kitty"
+      "lazygit"
+      "ncspot"
+      "neovim"
+      "tmux"
+      "vesktop"
+      "vicinae"
+      "wezterm"
+      "yazi"
+      "zathura"
+      "zellij"
+      # Wayland/Linux specific
+      "hyprland"
+      "qt"
+      "sway"
+    ];
   };
 
   isThemedBy =
@@ -64,8 +91,7 @@ let
       "tokyonight"
     ];
 
-  
-  anyCuratedTheme = themeCfg.catppuccin.enable || themeCfg.nord.enable;
+  anyCuratedTheme = themeCfg.catppuccin.enable || themeCfg.nord.enable || themeCfg.tokyonight.enable;
 in
 {
   options.khanelinix.theme.stylix = {
@@ -187,6 +213,7 @@ in
           tmux.enable = !(isThemedBy "tmux");
           vesktop.enable = !(isThemedBy "vesktop");
           vicinae.enable = !(isThemedBy "vicinae");
+          wezterm.enable = !(isThemedBy "wezterm");
           yazi.enable = !(isThemedBy "yazi");
           zathura.enable = !(isThemedBy "zathura");
           zellij.enable = !(isThemedBy "zellij");

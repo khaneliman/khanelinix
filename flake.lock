@@ -911,6 +911,7 @@
         "nixpkgs-unstable": "nixpkgs-unstable",
         "sops-nix": "sops-nix",
         "stylix": "stylix",
+        "tokyonight": "tokyonight",
         "waybar": "waybar",
         "yazi-flavors": "yazi-flavors"
       }
@@ -1137,6 +1138,22 @@
       "original": {
         "owner": "tinted-theming",
         "repo": "base16-zed",
+        "type": "github"
+      }
+    },
+    "tokyonight": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1762332530,
+        "narHash": "sha256-4zfkv3egdWJ/GCWUehV0MAIXxsrGT82Wd1Qqj1SCGOk=",
+        "owner": "folke",
+        "repo": "tokyonight.nvim",
+        "rev": "5da1b76e64daf4c5d410f06bcb6b9cb640da7dfd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "folke",
+        "repo": "tokyonight.nvim",
         "type": "github"
       }
     },
