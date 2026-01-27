@@ -31,7 +31,8 @@ in
           ];
         };
 
-        github = {
+        # FIXME: broken darwin
+        github = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
           command = getExe pkgs.github-mcp-server;
           args = [
             "--read-only"
@@ -39,7 +40,8 @@ in
           ];
         };
 
-        nixos = {
+        # FIXME: broken darwin
+        nixos = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
           command = getExe pkgs.mcp-nixos;
         };
       };

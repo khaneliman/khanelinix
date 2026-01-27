@@ -35,7 +35,8 @@ in
     khanelinix = {
       programs.terminal = {
         media = {
-          ncmpcpp = lib.mkDefault enabled;
+          # FIXME: broken darwin
+          ncmpcpp = mkIf pkgs.stdenv.hostPlatform.isLinux (lib.mkDefault enabled);
           ncspot = lib.mkDefault enabled;
           rmpc = mkIf pkgs.stdenv.hostPlatform.isLinux (lib.mkDefault enabled);
         };

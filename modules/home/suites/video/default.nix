@@ -24,7 +24,8 @@ in
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         celluloid
         devede
-        handbrake
+        # FIXME: https://github.com/NixOS/nixpkgs/issues/484121
+        # handbrake
         kdePackages.k3b
         mediainfo-gui
         mkvtoolnix

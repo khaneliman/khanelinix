@@ -51,11 +51,23 @@ in
 
     # Online services to keep up to date
     element-desktop
-    firefox-devedition
-    firefox-devedition-unwrapped
+    # firefox-devedition
+    # firefox-devedition-unwrapped
     teams-for-linux
     telegram-desktop
-    thunderbird-unwrapped
-    thunderbird-latest
+    # thunderbird-unwrapped
+    # thunderbird-latest
+
+    # Kernel packages
+    linuxPackages_zen
     ;
+
+  # Override linuxKernel.packages.linux_zen specifically
+  linuxKernel = _prev.linuxKernel // {
+    packages = _prev.linuxKernel.packages // {
+      # TODO: remove after hitting nixos-unstable
+      # https://nixpkgs-tracker.ocfox.me/?pr=482971
+      inherit (unstable.linuxKernel.packages) linux_zen;
+    };
+  };
 }

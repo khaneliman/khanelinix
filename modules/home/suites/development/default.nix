@@ -107,8 +107,11 @@ in
         ++ lib.optionals cfg.aiEnable [
           # NOTE: hard to get out of neovim
           # antigravity
-          github-mcp-server
           github-copilot-cli
+        ]
+        # FIXME: broken swift darwin
+        ++ lib.optionals (cfg.aiEnable && pkgs.stdenv.hostPlatform.isLinux) [
+          github-mcp-server
         ];
 
       shellAliases = {

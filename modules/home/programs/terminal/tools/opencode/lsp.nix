@@ -115,7 +115,8 @@
         extensions = [ ".rs" ];
       };
 
-      csharp = {
+      # FIXME: swift broken darwin
+      csharp = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
         command = [ (lib.getExe pkgs.roslyn-ls) ];
         extensions = [
           ".cs"
