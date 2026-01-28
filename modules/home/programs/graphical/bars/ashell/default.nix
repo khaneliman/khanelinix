@@ -75,6 +75,21 @@ in
             fi
           '';
 
+          # Detect enabled dmenu launchers
+          enabledDmenuLaunchers =
+            let
+              inherit (config.khanelinix.programs.graphical) launchers;
+            in
+            lib.flatten [
+              (lib.optional launchers.vicinae.enable "vicinae dmenu")
+              (lib.optional launchers.anyrun.enable "anyrun --show-results-immediately true")
+              (lib.optional launchers.walker.enable "walker --stream")
+              (lib.optional launchers.sherlock.enable "sherlock")
+              (lib.optional launchers.rofi.enable "rofi -dmenu")
+            ];
+
+          dmenuCommand = builtins.head enabledDmenuLaunchers;
+
           # Detailed weather popup
           weatherDetailPopup = pkgs.writeShellScriptBin "ashell-weather-detail" ''
             # Get comprehensive weather information
@@ -110,16 +125,11 @@ in
               WEATHER_DETAIL="❌ Unable to fetch detailed weather information"
             fi
 
-            # Show in rofi popup
-            if command -v ${lib.getExe pkgs.rofi} &> /dev/null; then
-              echo "$WEATHER_DETAIL" | ${lib.getExe pkgs.rofi} -dmenu -p "Weather Details" -theme-str 'window {width: 500px; height: 350px;}' -no-custom
-            else
-              # Fallback to terminal notification
-              echo "$WEATHER_DETAIL"
-            fi
+            # Show in dmenu
+            echo "$WEATHER_DETAIL" | ${dmenuCommand} -p "Weather Details"
           '';
 
-          # Power menu helper with rofi integration
+          # Power menu helper with dmenu integration
           powerMenuHelper = pkgs.writeShellScriptBin "ashell-power-menu" ''
             # Create power menu options
             POWER_OPTIONS="🔒 Lock
@@ -128,8 +138,8 @@ in
             ⏻ Shutdown
             🚪 Logout"
 
-            # Use rofi to display power options
-            SELECTED=$(echo "$POWER_OPTIONS" | ${lib.getExe pkgs.rofi} -dmenu -p "Power Menu" -theme-str 'window {width: 200px;}' -no-custom)
+            # Use dmenu to display power options
+            SELECTED=$(echo "$POWER_OPTIONS" | ${dmenuCommand} -p "Power Menu")
 
             case "$SELECTED" in
               "🔒 Lock")
@@ -256,8 +266,19 @@ in
           outputs = "All";
           position = "Top";
 
-          app_launcher_cmd = "anyrun";
-          clipboard_cmd = "cliphist-rofi-img | wl-copy";
+          app_launcher_cmd =
+            let
+              inherit (config.khanelinix.programs.graphical) launchers;
+              enabledAppLaunchers = lib.flatten [
+                (lib.optional launchers.vicinae.enable "vicinae open")
+                (lib.optional launchers.anyrun.enable "anyrun")
+                (lib.optional launchers.walker.enable "walker")
+                (lib.optional launchers.sherlock.enable "sherlock")
+                (lib.optional launchers.rofi.enable "rofi -show drun")
+              ];
+            in
+            builtins.head enabledAppLaunchers;
+          clipboard_cmd = "cliphist list | ${dmenuCommand} | cliphist decode | wl-copy";
           truncate_title_after_length = 150;
 
           modules =
