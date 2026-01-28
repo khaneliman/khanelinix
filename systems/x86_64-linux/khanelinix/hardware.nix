@@ -108,8 +108,8 @@ in
   # Tune CPU with nix
   # Currently 5950x
   nix.settings = {
-    cores = 16;
-    max-jobs = 8;
+    cores = 6;
+    max-jobs = 4;
   };
 
 }
