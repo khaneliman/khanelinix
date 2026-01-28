@@ -13,19 +13,38 @@ let
   cfg = config.khanelinix.programs.graphical.bars.ashell;
   isNiri = config.khanelinix.programs.graphical.wms.niri.enable;
 
-  lockCommand =
-    if config.khanelinix.programs.graphical.screenlockers.hyprlock.enable then
-      lib.getExe config.programs.hyprlock.package
-    else if config.khanelinix.programs.graphical.screenlockers.swaylock.enable then
-      lib.getExe config.programs.swaylock.package
+  lockScript = pkgs.writeShellScriptBin "ashell-lock" ''
+    # Try to detect and use available screen locker
+    if command -v ${lib.getExe config.programs.hyprlock.package} &> /dev/null; then
+      ${lib.getExe config.programs.hyprlock.package}
+    elif command -v ${lib.getExe config.programs.swaylock.package} &> /dev/null; then
+      ${lib.getExe config.programs.swaylock.package}
     else
-      "loginctl lock-session";
+      loginctl lock-session
+    fi
+  '';
 
-  logoutCommand =
-    if config.khanelinix.programs.graphical.wms.hyprland.enable then
-      "${lib.getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch exit"
-    else
-      "systemctl --user exit";
+  lockCommand = "${lib.getExe lockScript}";
+
+  logoutScript = pkgs.writeShellScriptBin "ashell-logout" ''
+    # Detect running window manager and use appropriate exit command
+    case "$XDG_CURRENT_DESKTOP" in
+      Hyprland)
+        ${lib.getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch exit
+        ;;
+      niri)
+        ${lib.getExe' config.programs.niri.package "niri"} msg action quit
+        ;;
+      sway)
+        ${lib.getExe' config.wayland.windowManager.sway.package "swaymsg"} exit
+        ;;
+      *)
+        systemctl --user exit
+        ;;
+    esac
+  '';
+
+  logoutCommand = "${lib.getExe logoutScript}";
 in
 {
   options.khanelinix.programs.graphical.bars.ashell = {
