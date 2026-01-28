@@ -323,7 +323,7 @@ in
     };
 
     theme = {
-      nord = enabled;
+      tokyonight = enabled;
       stylix = enabled;
     };
   };
