@@ -65,7 +65,7 @@ in
 
       # Run builds with low priority to keep the system responsive
       # Equivalent to daemonIOSchedClass/daemonCPUSchedPolicy on NixOS
-      daemonProcessType = "Adaptive";
+      daemonProcessType = "Standard";
 
       settings = {
         build-users-group = "nixbld";
