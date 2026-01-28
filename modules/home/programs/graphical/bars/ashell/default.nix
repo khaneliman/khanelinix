@@ -71,7 +71,6 @@ in
       systemd.enable = true;
       settings =
         let
-          # Custom notification helper for swaync integration
           notificationHelper = pkgs.writeShellScriptBin "ashell-notification-helper" ''
             if command -v ${lib.getExe' config.services.swaync.package "swaync-client"} &> /dev/null; then
               ${lib.getExe' config.services.swaync.package "swaync-client"} -swb
@@ -80,7 +79,6 @@ in
             fi
           '';
 
-          # GitHub notifications helper
           githubHelper = pkgs.writeShellScriptBin "ashell-github-helper" ''
             ${lib.optionalString (osConfig.khanelinix.security.sops.enable or false) ''
               ${lib.getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
@@ -91,6 +89,37 @@ in
               echo "{\"text\": \"$COUNT\", \"alt\": \"notification\"}"
             else
               echo "{\"text\": \"0\", \"alt\": \"none\"}"
+            fi
+          '';
+
+          githubMenuHelper = pkgs.writeShellScriptBin "ashell-github-menu" ''
+            ${lib.optionalString (osConfig.khanelinix.security.sops.enable or false) ''
+              ${lib.getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
+            ''}
+
+            # Fetch notifications as JSON
+            NOTIFICATIONS_JSON=$(${lib.getExe pkgs.gh} api notifications 2>/dev/null)
+
+            if [ -z "$NOTIFICATIONS_JSON" ] || [ "$NOTIFICATIONS_JSON" = "[]" ]; then
+              echo "No notifications" | ${dmenuCommand} -p "GitHub Notifications"
+              exit 0
+            fi
+
+            # Format for dmenu: "repo: title"
+            SELECTED=$(echo "$NOTIFICATIONS_JSON" | ${lib.getExe pkgs.jq} -r '.[] | "\(.repository.full_name): \(.subject.title)"' | ${dmenuCommand} -p "GitHub Notifications")
+
+            if [ -n "$SELECTED" ]; then
+              # Find the matching notification and get its URL
+              REPO=$(echo "$SELECTED" | cut -d: -f1)
+              TITLE=$(echo "$SELECTED" | cut -d: -f2- | ${lib.getExe pkgs.gnused} 's/^ //')
+
+              # Get the web URL from the notification
+              URL=$(echo "$NOTIFICATIONS_JSON" | ${lib.getExe pkgs.jq} -r --arg repo "$REPO" --arg title "$TITLE" '.[] | select(.repository.full_name == $repo and .subject.title == $title) | .subject.url')
+
+              # Convert API URL to web URL using jq-friendly string manipulation
+              WEB_URL=$(echo "$URL" | ${lib.getExe pkgs.gnused} -E 's|api\.github\.com/repos/|github.com/|; s|/pulls/|/pull/|')
+
+              ${lib.getExe' pkgs.xdg-utils "xdg-open"} "$WEB_URL"
             fi
           '';
 
@@ -204,7 +233,7 @@ in
           CustomGithub = {
             name = "CustomGithub";
             icon = "󰊤";
-            command = "${lib.getExe' pkgs.xdg-utils "xdg-open"} https://github.com/notifications";
+            command = "${lib.getExe githubMenuHelper}";
             listen_cmd = "${lib.getExe githubHelper}";
             icons = {
               "notification" = "󰊤";
