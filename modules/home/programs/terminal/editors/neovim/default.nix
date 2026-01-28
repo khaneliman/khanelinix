@@ -79,6 +79,9 @@ let
       (lib.mkIf (config.khanelinix.theme.nord.enable or false) {
         khanelivim.ui.theme = "nord";
       })
+      (lib.mkIf (config.khanelinix.theme.tokyonight.enable or false) {
+        khanelivim.ui.theme = "tokyonight";
+      })
     ];
   };
   khanelivim = khanelivimConfigurationExtended.config.build.package;

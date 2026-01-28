@@ -371,11 +371,11 @@
         "pkgs-by-name-for-flake-parts": "pkgs-by-name-for-flake-parts"
       },
       "locked": {
-        "lastModified": 1769531427,
-        "narHash": "sha256-2i+qUaP4vvnVMsn+HK2kvsdGfix/uHQqmLy986N+ZVo=",
+        "lastModified": 1769573651,
+        "narHash": "sha256-+5gD+jc+ZBbu+Fu/4br3VhA6ep0X2oUkp090yoBmvLU=",
         "owner": "khaneliman",
         "repo": "khanelivim",
-        "rev": "cc1176ff6a7e21ef7569037aca9f861ac42eaf35",
+        "rev": "7069ee51bf71f109ad192ea2e0d09d30236afac9",
         "type": "github"
       },
       "original": {

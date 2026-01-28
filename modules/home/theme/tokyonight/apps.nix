@@ -38,7 +38,7 @@ in
 
       btop.settings.color_theme = mkForce "tokyonight_${variant}";
 
-      git.delta.options = mkIf config.programs.git.delta.enable (
+      delta.options = mkIf config.programs.delta.enable (
         let
           deltaConfig = builtins.readFile "${tokyonight}/extras/delta/tokyonight_${variant}.gitconfig";
           lines = lib.splitString "\n" deltaConfig;
