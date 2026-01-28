@@ -84,12 +84,15 @@ in
               ${lib.getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
             ''}
 
-            COUNT="$(${lib.getExe pkgs.gh} api notifications --jq 'length' 2>/dev/null || echo "0")"
-            if [ "$COUNT" -gt 0 ]; then
-              echo "{\"text\": \"$COUNT\", \"alt\": \"notification\"}"
-            else
-              echo "{\"text\": \"0\", \"alt\": \"none\"}"
-            fi
+            while true; do
+              COUNT="$(${lib.getExe pkgs.gh} api notifications --jq 'length' 2>/dev/null || echo "0")"
+              if [ "$COUNT" -gt 0 ]; then
+                echo "{\"text\": \"$COUNT\", \"alt\": \"notification\"}"
+              else
+                echo "{\"text\": \"0\", \"alt\": \"none\"}"
+              fi
+              sleep 300  # Update every 5 minutes
+            done
           '';
 
           githubMenuHelper = pkgs.writeShellScriptBin "ashell-github-menu" ''
