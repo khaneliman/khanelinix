@@ -74,8 +74,8 @@ in
   };
 
   nix.settings = {
-    cores = 16;
-    max-jobs = 8;
+    cores = 4;
+    max-jobs = 4;
   };
 
   users.users.${cfg.name} = {
