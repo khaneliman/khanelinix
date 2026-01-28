@@ -91,7 +91,7 @@ in
               compact-bar.path = "compact-bar";
             };
 
-            theme = "catppuccin-macchiato";
+            theme = lib.mkDefault "catppuccin-macchiato";
           };
         };
       };
