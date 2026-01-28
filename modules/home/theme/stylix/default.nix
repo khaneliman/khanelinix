@@ -11,14 +11,61 @@ let
     mkIf
     types
     ;
-
-  # Use direct mkOpt implementation to avoid circular dependency
-  mkOpt =
-    type: default: description:
-    lib.mkOption { inherit type default description; };
+  inherit (lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.theme.stylix;
   fontCfg = config.khanelinix.fonts;
+  themeCfg = config.khanelinix.theme;
+
+  themeApps = {
+    catppuccin = [
+      "alacritty"
+      "bat"
+      "btop"
+      "cava"
+      "fish"
+      "foot"
+      "fzf"
+      "ghostty"
+      "gitui"
+      "helix"
+      "k9s"
+      "kitty"
+      "lazygit"
+      "ncspot"
+      "neovim"
+      "tmux"
+      "vesktop"
+      "vicinae"
+      "zathura"
+      "zellij"
+      # Wayland/Linux specific
+      "gnome"
+      "hyprland"
+      "qt"
+      "sway"
+      "waybar"
+    ];
+    nord = [
+      "alacritty"
+      "helix"
+      "kitty"
+      "neovim"
+      "tmux"
+      "yazi"
+    ];
+  };
+
+  isThemedBy =
+    app:
+    lib.any (theme: themeCfg.${theme}.enable && lib.elem app themeApps.${theme}) [
+      "catppuccin"
+      "nord"
+      "tokyonight"
+    ];
+
+  
+  anyCuratedTheme = themeCfg.catppuccin.enable || themeCfg.nord.enable;
 in
 {
   options.khanelinix.theme.stylix = {
@@ -47,13 +94,15 @@ in
 
   config = mkIf cfg.enable (
     lib.optionalAttrs (options ? stylix) {
-      home = mkIf (pkgs.stdenv.hostPlatform.isLinux && !config.khanelinix.theme.catppuccin.enable) {
+      # Each theme sets their own pointerCursor
+      home = mkIf (pkgs.stdenv.hostPlatform.isLinux && !anyCuratedTheme) {
         pointerCursor = {
           inherit (cfg.cursor) name package size;
         };
       };
 
-      gtk.gtk3 = mkIf (pkgs.stdenv.hostPlatform.isLinux && !config.khanelinix.theme.catppuccin.enable) {
+      # Each theme has its own fonts
+      gtk.gtk3 = mkIf pkgs.stdenv.hostPlatform.isLinux {
         font = null;
       };
 
@@ -107,53 +156,55 @@ in
           popups = 1.0;
         };
 
+        # ╭──────────────────────────────────────────────────────────╮
+        # │     Prefer custom themes over generic color palette      │
+        # │   Check which themes support which feature and toggle    │
+        # ╰──────────────────────────────────────────────────────────╯
         targets = {
-          # Set profile names for firefox
           firefox.profileNames = [ config.khanelinix.user.name ];
 
           # TODO: Very custom styling, integrate with their variables
           # Currently setup only for catppuccin/nix
           vscode.enable = false;
 
-          # Disable targets when catppuccin is enabled
-          alacritty.enable = !config.khanelinix.theme.catppuccin.enable;
-          bat.enable = !config.khanelinix.theme.catppuccin.enable;
-          btop.enable = !config.khanelinix.theme.catppuccin.enable;
-          cava.enable = !config.khanelinix.theme.catppuccin.enable;
-          fish.enable = !config.khanelinix.theme.catppuccin.enable;
-          foot.enable = !config.khanelinix.theme.catppuccin.enable;
-          fzf.enable = !config.khanelinix.theme.catppuccin.enable;
-          ghostty.enable = !config.khanelinix.theme.catppuccin.enable;
-          gitui.enable = !config.khanelinix.theme.catppuccin.enable;
-          helix.enable = !config.khanelinix.theme.catppuccin.enable;
-          k9s.enable = !config.khanelinix.theme.catppuccin.enable;
+          alacritty.enable = !(isThemedBy "alacritty");
+          bat.enable = !(isThemedBy "bat");
+          btop.enable = !(isThemedBy "btop");
+          cava.enable = !(isThemedBy "cava");
+          fish.enable = !(isThemedBy "fish");
+          foot.enable = !(isThemedBy "foot");
+          fzf.enable = !(isThemedBy "fzf");
+          ghostty.enable = !(isThemedBy "ghostty");
+          gitui.enable = !(isThemedBy "gitui");
+          helix.enable = !(isThemedBy "helix");
+          k9s.enable = !(isThemedBy "k9s");
           kitty = {
-            enable = !config.khanelinix.theme.catppuccin.enable;
+            enable = !(isThemedBy "kitty");
           };
-          lazygit.enable = !config.khanelinix.theme.catppuccin.enable;
-          ncspot.enable = !config.khanelinix.theme.catppuccin.enable;
-          neovim.enable = !config.khanelinix.theme.catppuccin.enable;
-          tmux.enable = !config.khanelinix.theme.catppuccin.enable;
-          vesktop.enable = !config.khanelinix.theme.catppuccin.enable;
-          vicinae.enable = !config.khanelinix.theme.catppuccin.enable;
-          yazi.enable = !config.khanelinix.theme.catppuccin.enable;
-          zathura.enable = !config.khanelinix.theme.catppuccin.enable;
-          zellij.enable = !config.khanelinix.theme.catppuccin.enable;
+          lazygit.enable = !(isThemedBy "lazygit");
+          ncspot.enable = !(isThemedBy "ncspot");
+          neovim.enable = !(isThemedBy "neovim");
+          tmux.enable = !(isThemedBy "tmux");
+          vesktop.enable = !(isThemedBy "vesktop");
+          vicinae.enable = !(isThemedBy "vicinae");
+          yazi.enable = !(isThemedBy "yazi");
+          zathura.enable = !(isThemedBy "zathura");
+          zellij.enable = !(isThemedBy "zellij");
         }
         // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-          gnome.enable = !config.khanelinix.theme.catppuccin.enable;
+          gnome.enable = !(isThemedBy "gnome");
           # FIXME: not working
           gtk.enable = false;
-          hyprland.enable = !config.khanelinix.theme.catppuccin.enable;
+          hyprland.enable = !(isThemedBy "hyprland");
           # FIXME:: upstream needs module fix
           hyprlock.useWallpaper = false;
           hyprlock.enable = false;
-          qt.enable = !config.khanelinix.theme.catppuccin.enable;
-          sway.enable = !config.khanelinix.theme.catppuccin.enable;
+          qt.enable = !(isThemedBy "qt");
+          sway.enable = !(isThemedBy "sway");
           # TODO: Very custom styling, integrate with their variables
           # Currently setup only for catppuccin/nix
           swaync.enable = false;
-          waybar.enable = !config.khanelinix.theme.catppuccin.enable;
+          waybar.enable = !(isThemedBy "waybar");
         };
       };
     }

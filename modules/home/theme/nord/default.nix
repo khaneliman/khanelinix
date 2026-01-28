@@ -83,6 +83,16 @@ in
             };
           };
         };
+
+        home = {
+          pointerCursor = mkIf pkgs.stdenv.hostPlatform.isLinux {
+            inherit (config.khanelinix.theme.gtk.cursor) name package size;
+          };
+
+          sessionVariables = mkIf pkgs.stdenv.hostPlatform.isLinux {
+            CURSOR_THEME = config.khanelinix.theme.gtk.cursor.name;
+          };
+        };
       }
 
       (lib.optionalAttrs stylixAvailable {
