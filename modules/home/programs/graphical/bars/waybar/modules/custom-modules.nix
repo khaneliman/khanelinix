@@ -9,6 +9,20 @@
 let
   inherit (lib) getExe getExe';
 
+  enabledDmenuLaunchers =
+    let
+      inherit (config.khanelinix.programs.graphical) launchers;
+    in
+    lib.flatten [
+      (lib.optional launchers.vicinae.enable "vicinae dmenu")
+      (lib.optional launchers.anyrun.enable "anyrun --show-results-immediately true")
+      (lib.optional launchers.walker.enable "walker --stream")
+      (lib.optional launchers.sherlock.enable "sherlock")
+      (lib.optional launchers.rofi.enable "rofi -dmenu")
+    ];
+
+  dmenuCommand = builtins.head enabledDmenuLaunchers;
+
   githubHelper = pkgs.writeShellScriptBin "githubHelper" ''
     ${lib.optionalString (osConfig.khanelinix.security.sops.enable or false) ''
       ${getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
@@ -29,10 +43,10 @@ let
         gsub("&";"&amp;") | gsub("<";"&lt;") | gsub(">";"&gt;") | gsub("\"";"&quot;");
 
       def get_icon:
-        if .subject.type == "Issue" then ""
-        elif .subject.type == "Discussion" then ""
-        elif .subject.type == "PullRequest" then ""
-        elif .subject.type == "Commit" then ""
+        if .subject.type == "Issue" then ""
+        elif .subject.type == "Discussion" then ""
+        elif .subject.type == "PullRequest" then ""
+        elif .subject.type == "Commit" then ""
         else ""
         end;
 
@@ -45,6 +59,32 @@ let
 
     echo "{\"text\":\"$COUNT\",\"tooltip\":$(echo "$TOOLTIP" | jq -R -s .),\"class\":\"has-notifications\"}"
   '';
+
+  githubMenuHelper = pkgs.writeShellScriptBin "waybar-github-menu" ''
+    ${lib.optionalString (osConfig.khanelinix.security.sops.enable or false) ''
+      ${getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
+    ''}
+
+    NOTIFICATIONS_JSON=$(${getExe pkgs.gh} api notifications 2>/dev/null)
+
+    if [ -z "$NOTIFICATIONS_JSON" ] || [ "$NOTIFICATIONS_JSON" = "[]" ]; then
+      echo "No notifications" | ${dmenuCommand} -p "GitHub Notifications"
+      exit 0
+    fi
+
+    # Format for dmenu: "repo: title"
+    SELECTED=$(echo "$NOTIFICATIONS_JSON" | ${getExe pkgs.jq} -r '.[] | "\(.repository.full_name): \(.subject.title)"' | ${dmenuCommand} -p "GitHub Notifications")
+
+    if [ -n "$SELECTED" ]; then
+      # Find the matching notification and get its URL
+      REPO=$(echo "$SELECTED" | cut -d: -f1)
+      TITLE=$(echo "$SELECTED" | cut -d: -f2- | ${getExe pkgs.gnused} 's/^ //')
+      URL=$(echo "$NOTIFICATIONS_JSON" | ${getExe pkgs.jq} -r --arg repo "$REPO" --arg title "$TITLE" '.[] | select(.repository.full_name == $repo and .subject.title == $title) | .subject.url')
+      WEB_URL=$(echo "$URL" | ${getExe pkgs.gnused} -E 's|api\.github\.com/repos/|github.com/|; s|/pulls/|/pull/|')
+
+      ${getExe' pkgs.xdg-utils "xdg-open"} "$WEB_URL"
+    fi
+  '';
 in
 {
   "custom/ellipses" = {
@@ -53,11 +93,11 @@ in
   };
 
   "custom/github" = {
-    format = " {text}";
+    format = " {text}";
     return-type = "json";
     interval = 60;
     exec = "${getExe githubHelper}";
-    on-click = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe' pkgs.xdg-utils "xdg-open"} https://github.com/notifications";
+    on-click = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe githubMenuHelper}";
   };
 
   "custom/lock" = {
