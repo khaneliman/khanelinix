@@ -44,7 +44,7 @@ in
     }) (lib.lists.range 1 9)
     ++ lib.optional pkgs.stdenv.hostPlatform.isLinux {
       on = [ "<C-v>" ];
-      run = "shell 'dragon -x -i -T \"$1\"'";
+      run = "shell 'dragon -x -i -T %h'";
       desc = "Drag and drop files";
     }
     ++ lib.optionals (lib.hasAttr "smart-enter" enabledPlugins) [
@@ -106,7 +106,7 @@ in
     ++ lib.optional config.khanelinix.suites.wlroots.enable {
       on = [ "y" ];
       run = [
-        ''shell -- for path in "$@"; do echo "file://$path"; done | wl-copy -t text/uri-list''
+        ''shell -- for path in %s; do echo "file://$path"; done | wl-copy -t text/uri-list''
         "yank"
       ];
     }
