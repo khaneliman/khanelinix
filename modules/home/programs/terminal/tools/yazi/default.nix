@@ -92,11 +92,13 @@ in
             dark = "nord";
             light = "nord";
           }
-        else
+        else if config.khanelinix.theme.catppuccin.enable then
           {
             dark = "${yazi-flavors}/catppuccin-macchiato.yazi";
             light = "${yazi-flavors}/catppuccin-frappe.yazi";
-          };
+          }
+        else
+          { };
 
       plugins = {
         "arrow-parent" = ./plugins/arrow-parent.yazi;
@@ -133,11 +135,13 @@ in
           sudo
           toggle-pane
           yatline
-          yatline-catppuccin
           ;
       }
       // lib.optionalAttrs config.khanelinix.theme.nord.enable {
         inherit (pkgs.yaziPlugins) nord;
+      }
+      // lib.optionalAttrs config.khanelinix.theme.catppuccin.enable {
+        inherit (pkgs.yaziPlugins) yatline-catppuccin;
       };
 
       settings = lib.mkMerge [

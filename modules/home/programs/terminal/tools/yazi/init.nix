@@ -49,8 +49,10 @@ in
           ${
             if config.khanelinix.theme.nord.enable then
               ''theme = require("nord"):setup(),''
-            else
+            else if config.khanelinix.theme.catppuccin.enable then
               lib.optionalString (lib.hasAttr "yatline-catppuccin" enabledPlugins) ''theme = require("yatline-catppuccin"):setup("macchiato"),''
+            else
+              ""
           }
         	show_background = false,
         	header_line = {
