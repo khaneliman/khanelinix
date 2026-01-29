@@ -14,7 +14,6 @@
   ...
 }:
 {
-  # Power menu custom module
   CustomPowerMenu = {
     name = "CustomPowerMenu";
     icon = "󰐥";
@@ -25,21 +24,19 @@
     };
   };
 
-  # Notification center integration
   CustomNotifications = {
     name = "CustomNotifications";
-    icon = "󰂚";
+    icon = "󰂚 ";
     command = "${lib.getExe' config.services.swaync.package "swaync-client"} -t -sw";
     listen_cmd = "${lib.getExe helpers.notificationHelper}";
     icons = {
-      "dnd.*" = "󰂛";
-      "notification" = "󰂚";
-      "none" = "󰂜";
+      "dnd.*" = "󰂛 ";
+      "notification" = "󰂚 ";
+      "none" = "󰂜 ";
     };
     alert = ".*notification";
   };
 
-  # GitHub notifications with interactive menu
   CustomGithub = {
     name = "CustomGithub";
     icon = "󰊤";
@@ -52,7 +49,6 @@
     alert = ".*notification";
   };
 
-  # Weather display with detailed popup
   CustomWeather = {
     name = "CustomWeather";
     icon = "󰖕 ";
