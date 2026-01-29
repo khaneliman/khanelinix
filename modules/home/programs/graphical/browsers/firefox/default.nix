@@ -74,7 +74,12 @@ in
           {
             defaultbrowser = inputs.home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
               echo "Setting default browser"
-              ${lib.getExe pkgs.defaultbrowser} firefoxdeveloperedition
+              ${lib.getExe pkgs.defaultbrowser} ${
+                if config.programs.firefox.package.pname == "firefox-devedition" then
+                  "firefoxdeveloperedition"
+                else
+                  "firefox"
+              }
             '';
             dutihandlers = inputs.home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
               echo "Setting HTML/XHTML/URL handlers via duti"
@@ -88,8 +93,13 @@ in
 
     programs.firefox = {
       enable = true;
-      package = pkgs.firefox-devedition;
-      darwinDefaultsId = "org.nixos.firefoxdeveloperedition";
+      # FIXME: build not cached hydra hangs around 12 hours indefinitely
+      package = if pkgs.stdenv.hostPlatform.isDarwin then pkgs.firefox-bin else pkgs.firefox-devedition;
+      darwinDefaultsId =
+        if config.programs.firefox.package.pname == "firefox-devedition" then
+          "org.nixos.firefoxdeveloperedition"
+        else
+          "org.mozilla.firefox";
 
       inherit (cfg) policies;
 
