@@ -1,8 +1,6 @@
 {
   config,
   lib,
-  pkgs,
-
   ...
 }:
 let
@@ -23,7 +21,6 @@ in
 
     nix = {
       enable = true;
-      package = pkgs.lixPackageSets.stable.lix;
       useLix = true;
     };
 

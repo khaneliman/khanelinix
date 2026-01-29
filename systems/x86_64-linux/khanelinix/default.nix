@@ -20,7 +20,6 @@ in
   khanelinix = {
     nix = {
       enable = true;
-      package = pkgs.lixPackageSets.stable.lix;
       useLix = true;
     };
 
