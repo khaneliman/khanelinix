@@ -243,9 +243,6 @@ in
             "pipe-operators"
             "dynamic-derivations"
           ];
-          extra-deprecated-features = lib.mkIf cfg.useLix [
-            "url-literals"
-          ];
           # Prevent builds failing just because we can't contact a substituter
           fallback = true;
           flake-registry = "/etc/nix/registry.json";
