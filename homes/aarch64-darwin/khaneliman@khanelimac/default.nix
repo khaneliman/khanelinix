@@ -99,7 +99,7 @@ in
       video = enabled;
     };
 
-    theme.catppuccin = enabled;
+    theme.tokyonight = enabled;
   };
 
   programs.mcp.servers.filesystem.args = [
