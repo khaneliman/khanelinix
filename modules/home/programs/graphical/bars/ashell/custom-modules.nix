@@ -2,14 +2,17 @@
   config,
   lib,
   pkgs,
+  osConfig ? { },
+  helpers ? import ./helpers.nix {
+    inherit
+      config
+      lib
+      pkgs
+      osConfig
+      ;
+  },
   ...
 }:
-let
-  helpers = import ./helpers.nix {
-    inherit config lib pkgs;
-    osConfig = { };
-  };
-in
 {
   # Power menu custom module
   CustomPowerMenu = {
@@ -65,7 +68,10 @@ in
           '';
         }
       )
-    } --fahrenheit --ampm";
+    } --fahrenheit --ampm${
+      lib.optionalString (osConfig.khanelinix.security.sops.enable or false
+      ) " --location $(jq '.wttr.location' ${config.home.homeDirectory}/weather_config.json)"
+    }";
     icons = {
       "weather" = "󰖕";
       "none" = "󰖕";

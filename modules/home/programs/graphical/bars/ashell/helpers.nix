@@ -161,8 +161,16 @@ in
 
   # Detailed weather popup with dmenu
   weatherDetailPopup = pkgs.writeShellScriptBin "ashell-weather-detail" ''
+    LOCATION_ARG=""
+    ${lib.optionalString (osConfig.khanelinix.security.sops.enable or false) ''
+      if [ -f "${config.home.homeDirectory}/weather_config.json" ]; then
+         LOCATION_NAME=$(${lib.getExe pkgs.jq} -r '.wttr.location' "${config.home.homeDirectory}/weather_config.json")
+         LOCATION_ARG="/$LOCATION_NAME"
+      fi
+    ''}
+
     # Get comprehensive weather information
-    CURRENT_WEATHER=$(${lib.getExe pkgs.curl} -s "wttr.in?format=j1" 2>/dev/null)
+    CURRENT_WEATHER=$(${lib.getExe pkgs.curl} -s "wttr.in$LOCATION_ARG?format=j1" 2>/dev/null)
 
     if [ $? -eq 0 ] && [ -n "$CURRENT_WEATHER" ]; then
       # Parse JSON for detailed info

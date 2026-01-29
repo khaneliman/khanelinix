@@ -21,7 +21,15 @@ let
       ;
   };
 
-  customModules = import ./custom-modules.nix { inherit config lib pkgs; };
+  customModules = import ./custom-modules.nix {
+    inherit
+      config
+      lib
+      pkgs
+      osConfig
+      helpers
+      ;
+  };
 in
 {
   options.khanelinix.programs.graphical.bars.ashell = {
