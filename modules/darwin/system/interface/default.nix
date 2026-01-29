@@ -95,72 +95,79 @@ in
         persistent-apps =
           let
             hmApps = "/Users/${config.khanelinix.user.name}/Applications/Home Manager Apps";
-          in
-          [
-            "/System/Applications/System Settings.app"
-            "/System/Applications/App Store.app"
-            {
-              spacer = {
-                small = true;
-              };
-            }
-            "/System/Applications/Messages.app"
-          ]
-          ++ lib.optionals config.khanelinix.suites.social.enable [
-            "${hmApps}/Caprine.app"
-            "${hmApps}/Element.app"
-            (lib.mkIf config.khanelinix.tools.homebrew.enable { app = "${hmApps}/teams-for-linux.app"; })
-            "${hmApps}/Vesktop.app"
-            (lib.mkIf hmCfg.programs.thunderbird.enable {
-              app = "${hmApps}/Thunderbird.app";
-            })
-            {
-              spacer = {
-                small = true;
-              };
-            }
-          ]
-          ++ [
-            (lib.mkIf hmCfg.programs.firefox.enable {
-              app = "${hmCfg.programs.firefox.package}/Applications/Firefox${
-                lib.optionalString (
-                  hmCfg.programs.firefox.package.pname == "firefox-devedition"
-                ) "Developer Edition"
-              }.app";
-            })
-            "/Applications/Safari.app"
-            (lib.mkIf (config.khanelinix.tools.homebrew.enable && config.khanelinix.suites.business.enable) {
-              app = "/Applications/Fantastical.app";
-            })
-            "/System/Applications/Reminders.app"
-            "/System/Applications/Notes.app"
-            {
-              spacer = {
-                small = true;
-              };
-            }
-            "/System/Applications/Music.app"
-            (lib.mkIf (config.khanelinix.tools.homebrew.enable && config.khanelinix.suites.video.enable) {
+            hasPkg = p: builtins.any (x: (x.pname or x.name) == p) hmCfg.home.packages;
+
+            systemApps = [
+              "/System/Applications/System Settings.app"
+              "/System/Applications/App Store.app"
+            ];
+
+            socialApps = lib.optionals config.khanelinix.suites.social.enable (
+              lib.optional (hmCfg.khanelinix.programs.graphical.apps.caprine.enable or false
+              ) "${hmApps}/Caprine.app"
+              ++ lib.optional (hasPkg "element-desktop") "${hmApps}/Element.app"
+              ++ lib.optional (hasPkg "teams-for-linux") { app = "${hmApps}/teams-for-linux.app"; }
+              ++ lib.optional (hmCfg.khanelinix.programs.graphical.apps.vesktop.enable or false
+              ) "${hmApps}/Vesktop.app"
+              ++ lib.optional (hmCfg.programs.thunderbird.enable or false) {
+                app = "${hmApps}/Thunderbird.app";
+              }
+            );
+
+            communicationApps = [ "/System/Applications/Messages.app" ] ++ socialApps;
+
+            browserApps =
+              lib.optional (hmCfg.programs.firefox.enable or false) {
+                app = "${hmCfg.programs.firefox.package}/Applications/Firefox${
+                  lib.optionalString (
+                    hmCfg.programs.firefox.package.pname == "firefox-devedition"
+                  ) "Developer Edition"
+                }.app";
+              }
+              ++ [ "/Applications/Safari.app" ];
+
+            productivityApps =
+              lib.optional (config.khanelinix.tools.homebrew.enable && config.khanelinix.suites.business.enable) {
+                app = "/Applications/Fantastical.app";
+              }
+              ++ [
+                "/System/Applications/Reminders.app"
+                "/System/Applications/Notes.app"
+              ];
+
+            mediaApps = [
+              "/System/Applications/Music.app"
+            ]
+            ++ lib.optional (config.khanelinix.tools.homebrew.enable && config.khanelinix.suites.video.enable) {
               app = "/Applications/Plex.app";
-            })
-            {
+            };
+
+            devApps = lib.optionals config.khanelinix.suites.development.enable (
+              lib.optional (hmCfg.khanelinix.programs.graphical.editors.vscode.enable or false
+              ) "${hmApps}/Visual Studio Code.app"
+              ++ lib.optional (hasPkg "bruno") "${hmApps}/Bruno.app"
+            );
+
+            terminalApps = [ "${hmApps}/kitty.app" ];
+
+            spacer = {
               spacer = {
                 small = true;
               };
-            }
-          ]
-          ++ lib.optionals config.khanelinix.suites.development.enable [
-            "${hmApps}/Visual Studio Code.app"
-            "${hmApps}/Bruno.app"
-            {
-              spacer = {
-                small = true;
-              };
-            }
-          ]
-          ++ [
-            "${hmApps}/kitty.app"
-          ];
+            };
+          in
+          systemApps
+          ++ [ spacer ]
+          ++ communicationApps
+          ++ [ spacer ]
+          ++ browserApps
+          ++ productivityApps
+          ++ [ spacer ]
+          ++ mediaApps
+          ++ [ spacer ]
+          ++ devApps
+          ++ lib.optional (devApps != [ ]) spacer
+          ++ terminalApps;
       };
 
       # file viewer settings
