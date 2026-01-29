@@ -110,6 +110,9 @@ in
           require("yatline-githead"):setup()
         ''
       )
+      (lib.optionalString (lib.hasAttr "githead" enabledPlugins) /* Lua */ ''
+        require("githead"):setup()
+      '')
       (lib.optionalString (!lib.hasAttr "yatline" enabledPlugins) /* Lua */ ''
         Header:children_add(function()
         	if ya.target_family() ~= "unix" then

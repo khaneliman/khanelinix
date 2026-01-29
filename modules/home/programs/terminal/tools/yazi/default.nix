@@ -13,6 +13,8 @@ let
 
   cfg = config.khanelinix.programs.terminal.tools.yazi;
   isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
+
+  mkYaziPlugin = pkgs.callPackage ./mkYaziPlugin.nix { };
 in
 {
   options.khanelinix.programs.terminal.tools.yazi = {
@@ -94,15 +96,17 @@ in
         "smart-switch" = ./plugins/smart-switch.yazi;
         "smart-tab" = ./plugins/smart-tab.yazi;
         "folder-rules" = ./plugins/folder-rules.yazi;
-        # TODO: remove once merged
-        # yatline-githead = pkgs.yaziPlugins.yatline-githead.overrideAttrs {
-        #   patches = [
-        #     (pkgs.fetchpatch {
-        #       url = "https://github.com/imsi32/yatline-githead.yazi/pull/7.patch";
-        #       hash = "sha256-0W2gE3QlSWTYsWhow09zWxNkZlNDd+mZP9FMFP0P5pc=";
-        #     })
-        #   ];
-        # };
+        githead = mkYaziPlugin {
+          pname = "githead.yazi";
+          version = "26.1.22-unstable-2026-01-26";
+
+          src = pkgs.fetchFromGitHub {
+            owner = "llanosrocas";
+            repo = "githead.yazi";
+            rev = "317d09f728928943f0af72ff6ce31ea335351202";
+            hash = "sha256-o2EnQYOxp5bWn0eLn0sCUXcbtu6tbO9pdUdoquFCTVw=";
+          };
+        };
         inherit (pkgs.yaziPlugins)
           chmod
           diff
@@ -122,8 +126,6 @@ in
           sudo
           toggle-pane
           yatline
-          # FIXME: deprecations
-          # yatline-githead
           yatline-catppuccin
           ;
       };
