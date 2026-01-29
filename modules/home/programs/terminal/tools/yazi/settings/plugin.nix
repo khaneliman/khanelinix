@@ -40,23 +40,7 @@ in
         url = "/mnt/dropbox/**";
         run = "noop";
       }
-    ]
-    ++ lib.optionals (lib.hasAttr "duckdb" enabledPlugins) (
-      let
-        multiFileTypes = [
-          "csv"
-          "tsv"
-          "json"
-          "parquet"
-          "xlsx"
-        ];
-      in
-      map (ext: {
-        url = "*.${ext}";
-        run = "duckdb";
-        multi = false;
-      }) multiFileTypes
-    );
+    ];
 
     preloaders = [
       # Image
@@ -81,23 +65,28 @@ in
     ];
 
     prepend_previewers =
-      lib.optionals (lib.hasAttr "duckdb" enabledPlugins) (
-        let
-          fileTypes = [
-            "csv"
-            "db"
-            "duckdb"
-            "json"
-            "parquet"
-            "tsv"
-            "xlsx"
-          ];
-        in
-        map (ext: {
-          url = "*.${ext}";
-          run = "duckdb";
-        }) fileTypes
-      )
+      lib.optionals (lib.hasAttr "piper" enabledPlugins) [
+        {
+          url = "*.parquet";
+          run = ''piper -- duckdb -c "SELECT * FROM read_parquet('$1') LIMIT 50"'';
+        }
+        {
+          url = "*.xlsx";
+          run = ''piper -- xlsx2csv "$1" | bat -p --color=always --file-name "$1.csv"'';
+        }
+        {
+          url = "*.json";
+          run = ''piper -- bat -p --color=always "$1"'';
+        }
+        {
+          url = "*.sqlite";
+          run = ''piper -- duckdb -c "SELECT * FROM sqlite_scan('$1') LIMIT 50"'';
+        }
+        {
+          url = "*.db";
+          run = ''piper -- duckdb -c "SELECT * FROM sqlite_scan('$1') LIMIT 50"'';
+        }
+      ]
       ++ lib.optionals (lib.hasAttr "ouch" enabledPlugins) (
         let
           mimeTypes = [

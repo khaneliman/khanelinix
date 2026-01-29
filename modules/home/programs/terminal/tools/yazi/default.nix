@@ -44,6 +44,7 @@ in
             ++ optionalPluginPackage "piper" pkgs.bat
             ++ optionalPluginPackage "piper" pkgs.eza
             ++ optionalPluginPackage "piper" pkgs.glow
+            ++ optionalPluginPackage "piper" pkgs.xlsx2csv
             ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && !isWSL) [
               pkgs.dragon-drop
             ];
