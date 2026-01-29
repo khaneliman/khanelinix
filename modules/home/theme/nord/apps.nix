@@ -68,5 +68,66 @@ in
         text-wrong-color = palette.nord5.hex;
       };
     };
+
+    xdg.configFile."sketchybar/colors.lua".text =
+      let
+        toLuaColor = hex: "0xff" + builtins.substring 1 6 hex;
+      in
+      lib.mkIf config.khanelinix.programs.graphical.bars.sketchybar.enable ''
+        #!/usr/bin/env lua
+
+        local colors = {
+          base = ${toLuaColor palette.nord0.hex},
+          mantle = ${toLuaColor palette.nord1.hex},
+          crust = ${toLuaColor palette.nord0.hex},
+          text = ${toLuaColor palette.nord6.hex},
+          subtext0 = ${toLuaColor palette.nord5.hex},
+          subtext1 = ${toLuaColor palette.nord4.hex},
+          surface0 = ${toLuaColor palette.nord1.hex},
+          surface1 = ${toLuaColor palette.nord2.hex},
+          surface2 = ${toLuaColor palette.nord3.hex},
+          overlay0 = ${toLuaColor palette.nord3.hex},
+          overlay1 = ${toLuaColor palette.nord3.hex},
+          overlay2 = ${toLuaColor palette.nord3.hex},
+          blue = ${toLuaColor palette.nord10.hex},
+          lavender = ${toLuaColor palette.nord9.hex},
+          sapphire = ${toLuaColor palette.nord8.hex},
+          sky = ${toLuaColor palette.nord8.hex},
+          teal = ${toLuaColor palette.nord7.hex},
+          green = ${toLuaColor palette.nord14.hex},
+          yellow = ${toLuaColor palette.nord13.hex},
+          peach = ${toLuaColor palette.nord12.hex},
+          maroon = ${toLuaColor palette.nord11.hex},
+          red = ${toLuaColor palette.nord11.hex},
+          mauve = ${toLuaColor palette.nord15.hex},
+          pink = ${toLuaColor palette.nord15.hex},
+          flamingo = ${toLuaColor palette.nord12.hex},
+          rosewater = ${toLuaColor palette.nord6.hex},
+        }
+
+        colors.random_cat_color = {
+          colors.blue,
+          colors.lavender,
+          colors.sapphire,
+          colors.sky,
+          colors.teal,
+          colors.green,
+          colors.yellow,
+          colors.peach,
+          colors.maroon,
+          colors.red,
+          colors.mauve,
+          colors.pink,
+          colors.flamingo,
+          colors.rosewater,
+        }
+
+        colors.getRandomCatColor = function()
+          return colors.random_cat_color[math.random(1, #colors.random_cat_color)]
+        end
+
+        return colors
+      '';
+
   };
 }
