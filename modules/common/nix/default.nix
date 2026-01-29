@@ -69,7 +69,13 @@ in
         isLix = cfg.useLix || (lib.getName cfg.package) == "lix";
       in
       {
-        package = if cfg.useLix then pkgs.lixPackageSets.stable.lix else cfg.package;
+        package =
+          if cfg.useLix then
+            (pkgs.lixPackageSets.stable.lix.overrideAttrs {
+              doInstallCheck = pkgs.stdenv.hostPlatform.isLinux;
+            })
+          else
+            cfg.package;
 
         buildMachines =
           let
