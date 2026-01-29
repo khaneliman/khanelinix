@@ -95,14 +95,14 @@ in
         "smart-tab" = ./plugins/smart-tab.yazi;
         "folder-rules" = ./plugins/folder-rules.yazi;
         # TODO: remove once merged
-        yatline-githead = pkgs.yaziPlugins.yatline-githead.overrideAttrs {
-          patches = [
-            (pkgs.fetchpatch {
-              url = "https://github.com/imsi32/yatline-githead.yazi/pull/7.patch";
-              hash = "sha256-0W2gE3QlSWTYsWhow09zWxNkZlNDd+mZP9FMFP0P5pc=";
-            })
-          ];
-        };
+        # yatline-githead = pkgs.yaziPlugins.yatline-githead.overrideAttrs {
+        #   patches = [
+        #     (pkgs.fetchpatch {
+        #       url = "https://github.com/imsi32/yatline-githead.yazi/pull/7.patch";
+        #       hash = "sha256-0W2gE3QlSWTYsWhow09zWxNkZlNDd+mZP9FMFP0P5pc=";
+        #     })
+        #   ];
+        # };
         inherit (pkgs.yaziPlugins)
           chmod
           diff
