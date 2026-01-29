@@ -29,11 +29,12 @@ in
         })
       ''
       /* Lua */ ''
+        local current_year = os.date("%Y")
+
         function Linemode:custom()
-        	local year = os.date("%Y")
         	local time = (self._file.cha.mtime or 0) // 1
 
-        	if time > 0 and os.date("%Y", time) == year then
+        	if time > 0 and os.date("%Y", time) == current_year then
         		time = os.date("%b %d %H:%M", time)
         	else
         		time = time and os.date("%b %d  %Y", time) or ""
