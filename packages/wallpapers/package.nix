@@ -55,6 +55,7 @@ stdenvNoCC.mkDerivation {
     mkdir -p ${installTarget}
 
     cp -r . "${installTarget}/"
+    find "${installTarget}" -name "LICENSE" -delete
   '';
 
   passthru = {
