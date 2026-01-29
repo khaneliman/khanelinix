@@ -112,5 +112,38 @@ in
         # might help with gaming performance
         "vm.max_map_count" = 2147483642;
       };
+
+      environment.systemPackages = [
+        (pkgs.writeShellScriptBin "gamemode-register" ''
+          PID=$1
+          if [ -z "$PID" ]; then
+              PIDS=$(pgrep -af 'steam_.*game|proton|wine-preloader|wine64-preloader|lutris|heroic|gamemoderun' | awk '{print $1}')
+              if [ -n "$PIDS" ]; then
+                  PID=$(echo "$PIDS" | head -n 1)
+                  echo "No PID provided. Auto-detected likely game PID: $PID"
+              else
+                  echo "Usage: gamemode-register <PID>"
+                  echo "Could not auto-detect any running games."
+                  exit 1
+              fi
+          fi
+          ${lib.getExe' pkgs.systemd "busctl"} --user call com.feralinteractive.GameMode /com/feralinteractive/GameMode com.feralinteractive.GameMode RegisterGame i "$PID"
+        '')
+        (pkgs.writeShellScriptBin "gamemode-unregister" ''
+          PID=$1
+          if [ -z "$PID" ]; then
+              PIDS=$(pgrep -af 'steam_.*game|proton|wine-preloader|wine64-preloader|lutris|heroic|gamemoderun' | awk '{print $1}')
+              if [ -n "$PIDS" ]; then
+                  PID=$(echo "$PIDS" | head -n 1)
+                  echo "No PID provided. Auto-detected likely game PID: $PID"
+              else
+                  echo "Usage: gamemode-unregister <PID>"
+                  echo "Could not auto-detect any running games."
+                  exit 1
+              fi
+          fi
+          ${lib.getExe' pkgs.systemd "busctl"} --user call com.feralinteractive.GameMode /com/feralinteractive/GameMode com.feralinteractive.GameMode UnregisterGame i "$PID"
+        '')
+      ];
     };
 }
