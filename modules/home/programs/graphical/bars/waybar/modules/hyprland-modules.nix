@@ -19,7 +19,7 @@ in
         if (osConfig.programs.uwsm.enable or false) then
           "${getExe' osConfig.programs.uwsm.package "uwsm"} stop"
         else
-          "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch exit";
+          "${lib.getExe pkgs.hyprshutdown}";
     };
   };
 

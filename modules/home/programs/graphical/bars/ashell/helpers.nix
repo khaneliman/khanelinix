@@ -32,7 +32,7 @@ in
   logoutScript = pkgs.writeShellScriptBin "ashell-logout" ''
     case "$XDG_CURRENT_DESKTOP" in
       Hyprland)
-        ${lib.getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch exit
+        ${lib.getExe pkgs.hyprshutdown}
         ;;
       niri)
         ${lib.getExe' config.programs.niri.package "niri"} msg action quit

@@ -31,6 +31,7 @@ in
     yaziPlugins
 
     # TODO: remove after hitting channel
+    hyprshutdown
     ;
 
   python3 = _prev.python3.override {

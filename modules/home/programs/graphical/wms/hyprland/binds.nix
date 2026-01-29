@@ -346,7 +346,7 @@ in
             bind =
               (mkSubmapBinds { autoReset = true; } [
                 ", l, exec, ${
-                  if (osConfig.programs.uwsm.enable or false) then "uwsm stop" else "loginctl terminate-user $USER"
+                  if (osConfig.programs.uwsm.enable or false) then "uwsm stop" else lib.getExe pkgs.hyprshutdown
                 }"
                 ", r, exec, systemctl reboot"
                 ", p, exec, systemctl poweroff"
