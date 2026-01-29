@@ -212,7 +212,11 @@ in
       })
 
       (mkIf config.programs.yazi.enable {
-        "yazi/theme.toml".source = mkForce "${tokyonight}/extras/yazi/tokyonight_${variant}.toml";
+        "yazi/theme.toml".source = mkForce (
+          pkgs.runCommand "tokyonight-yazi-theme.toml" { } ''
+            sed 's/name =/url =/g' ${tokyonight}/extras/yazi/tokyonight_${variant}.toml > $out
+          ''
+        );
       })
 
       (mkIf config.programs.zathura.enable {
