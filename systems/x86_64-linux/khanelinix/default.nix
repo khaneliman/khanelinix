@@ -20,7 +20,7 @@ in
   khanelinix = {
     nix = {
       enable = true;
-      useLix = true;
+      # useLix = true;
     };
 
     archetypes = {

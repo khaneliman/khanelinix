@@ -21,7 +21,7 @@ in
 
     nix = {
       enable = true;
-      useLix = true;
+      # useLix = true;
     };
 
     security = {
