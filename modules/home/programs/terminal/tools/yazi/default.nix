@@ -86,10 +86,17 @@ in
         (import ./keymap/tasks.nix)
       ];
 
-      flavors = {
-        dark = "${yazi-flavors}/catppuccin-macchiato.yazi";
-        light = "${yazi-flavors}/catppuccin-frappe.yazi";
-      };
+      flavors =
+        if config.khanelinix.theme.nord.enable then
+          {
+            dark = "nord";
+            light = "nord";
+          }
+        else
+          {
+            dark = "${yazi-flavors}/catppuccin-macchiato.yazi";
+            light = "${yazi-flavors}/catppuccin-frappe.yazi";
+          };
 
       plugins = {
         "arrow-parent" = ./plugins/arrow-parent.yazi;
@@ -128,6 +135,9 @@ in
           yatline
           yatline-catppuccin
           ;
+      }
+      // lib.optionalAttrs config.khanelinix.theme.nord.enable {
+        inherit (pkgs.yaziPlugins) nord;
       };
 
       settings = lib.mkMerge [
