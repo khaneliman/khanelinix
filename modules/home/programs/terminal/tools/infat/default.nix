@@ -13,6 +13,8 @@ let
   # Home Manager installs apps to this directory
   hmAppsPath = "Applications/Home Manager Apps";
 
+  hasPkg = p: builtins.any (x: (x.pname or x.name) == p) config.home.packages;
+
   # Bundle IDs for nixpkgs-installed macOS apps
   # These are stable identifiers that don't change across nixpkgs versions / installation locations
   bundleIds = {
@@ -68,8 +70,8 @@ in
           xml = bundleIds.neovide;
 
           # Web files - Firefox Developer Edition
-          html = bundleIds.firefox;
-          htm = bundleIds.firefox;
+          html = mkIf config.programs.firefox.enable bundleIds.firefox;
+          htm = mkIf config.programs.firefox.enable bundleIds.firefox;
 
           # Image files - Preview for viewing
           png = "Preview";
@@ -78,7 +80,7 @@ in
           gif = "Preview";
           webp = "Preview";
           bmp = "Preview";
-          svg = bundleIds.inkscape;
+          svg = mkIf (hasPkg "inkscape") bundleIds.inkscape;
 
           # Video files - IINA if installed, otherwise QuickTime Player
           mp4 = videoPlayer;
@@ -99,29 +101,29 @@ in
 
         schemes = {
           # Web protocols - Firefox Developer Edition
-          web = bundleIds.firefox;
-          http = bundleIds.firefox;
-          https = bundleIds.firefox;
-          feed = bundleIds.firefox;
+          web = mkIf config.programs.firefox.enable bundleIds.firefox;
+          http = mkIf config.programs.firefox.enable bundleIds.firefox;
+          https = mkIf config.programs.firefox.enable bundleIds.firefox;
+          feed = mkIf config.programs.firefox.enable bundleIds.firefox;
 
           # Email - Thunderbird
-          mailto = bundleIds.thunderbird;
+          mailto = mkIf config.programs.thunderbird.enable bundleIds.thunderbird;
 
           # Communication apps
-          discord = bundleIds.vesktop;
-          inherit (bundleIds) element;
+          discord = mkIf config.khanelinix.programs.graphical.apps.vesktop.enable bundleIds.vesktop;
+          element = mkIf (hasPkg "element-desktop") bundleIds.element;
           # fb = bundleIds.caprine;
-          messenger = bundleIds.caprine;
-          msteams = bundleIds.teams;
+          messenger = mkIf config.khanelinix.programs.graphical.apps.caprine.enable bundleIds.caprine;
+          msteams = mkIf (hasPkg "teams-for-linux") bundleIds.teams;
 
           # FaceTime and phone calls
           facetime = "FaceTime";
           tel = "FaceTime";
 
           # Development tools
-          inherit (bundleIds) vscode;
-          vscode-insiders = bundleIds.vscode;
-          inherit (bundleIds) postman;
+          vscode = mkIf config.khanelinix.programs.graphical.editors.vscode.enable bundleIds.vscode;
+          vscode-insiders = mkIf config.khanelinix.programs.graphical.editors.vscode.enable bundleIds.vscode;
+          postman = mkIf (hasPkg "postman") bundleIds.postman;
         };
 
         types = {
