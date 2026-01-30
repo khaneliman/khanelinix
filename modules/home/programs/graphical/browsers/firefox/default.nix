@@ -93,8 +93,7 @@ in
 
     programs.firefox = {
       enable = true;
-      # FIXME: build not cached hydra hangs around 12 hours indefinitely
-      package = if pkgs.stdenv.hostPlatform.isDarwin then pkgs.firefox-bin else pkgs.firefox-devedition;
+      package = pkgs.firefox-devedition;
       darwinDefaultsId =
         if config.programs.firefox.package.pname == "firefox-devedition" then
           "org.nixos.firefoxdeveloperedition"

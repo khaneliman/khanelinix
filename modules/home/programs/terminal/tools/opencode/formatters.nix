@@ -12,8 +12,7 @@
         extensions = [ ".nix" ];
       };
 
-      # FIXME: swift broken darwin
-      csharpier = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      csharpier = {
         command = [
           (lib.getExe pkgs.csharpier)
           "$FILE"

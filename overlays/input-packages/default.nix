@@ -32,6 +32,9 @@ in
 
     # TODO: remove after hitting channel
     hyprshutdown
+    swift
+    roslyn-ls
+    csharpier
     ;
 
   python3 = _prev.python3.override {
@@ -51,6 +54,7 @@ in
     _1password-gui
 
     # Online services to keep up to date
+    # FIXME: broken nixpkgs
     element-desktop
     # firefox-devedition
     # firefox-devedition-unwrapped

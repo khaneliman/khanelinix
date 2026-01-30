@@ -104,9 +104,6 @@ in
           # NOTE: hard to get out of neovim
           # antigravity
           github-copilot-cli
-        ]
-        # FIXME: broken swift darwin
-        ++ lib.optionals (cfg.aiEnable && pkgs.stdenv.hostPlatform.isLinux) [
           github-mcp-server
         ];
 

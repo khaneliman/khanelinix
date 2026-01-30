@@ -121,7 +121,7 @@ in
                 app = "${hmCfg.programs.firefox.package}/Applications/Firefox${
                   lib.optionalString (
                     hmCfg.programs.firefox.package.pname == "firefox-devedition"
-                  ) "Developer Edition"
+                  ) " Developer Edition"
                 }.app";
               }
               ++ [ "/Applications/Safari.app" ];
