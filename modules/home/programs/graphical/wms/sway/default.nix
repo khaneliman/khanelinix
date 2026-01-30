@@ -102,6 +102,13 @@ in
 
       services = {
         swayidle = enabled;
+        sway-wallpaper-watch = {
+          enable = true;
+          wallpapers = lib.khanelinix.theme.wallpaperPaths {
+            inherit config pkgs;
+            names = config.khanelinix.theme.wallpaper.list;
+          };
+        };
       };
 
       suites = {
