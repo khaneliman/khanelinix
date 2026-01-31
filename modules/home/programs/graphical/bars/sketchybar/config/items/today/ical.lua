@@ -64,6 +64,7 @@ ical:subscribe({ "routine", "forced" }, function()
 		end
 
 		-- Parse and organize events
+		local has_all_day_header = false
 		for _, line in ipairs(STR_SPLIT(events, "\n")) do
 			local title, time = line:match("^(.-)%s*%%(.*)$")
 
@@ -72,6 +73,10 @@ ical:subscribe({ "routine", "forced" }, function()
 					icon = {
 						string = time,
 						color = colors.yellow,
+						font = {
+							style = "Bold",
+							size = 12.0,
+						},
 					},
 					label = {
 						string = title,
@@ -80,9 +85,32 @@ ical:subscribe({ "routine", "forced" }, function()
 					click_script = "sketchybar --set $NAME popup.drawing=off",
 				})
 			else
+				if not has_all_day_header then
+					Sbar.add("item", "ical_event_all_day_header", {
+						icon = {
+							string = "All Day",
+							color = colors.yellow,
+							font = {
+								style = "Bold",
+								size = 12.0,
+							},
+						},
+						label = {
+							string = "",
+						},
+						position = "popup." .. ical.name,
+						click_script = "sketchybar --set $NAME popup.drawing=off",
+					})
+					has_all_day_header = true
+				end
+
 				Sbar.add("item", "ical_event_" .. line, {
 					icon = {
-						color = colors.yellow,
+						string = "•",
+						color = colors.white,
+						font = {
+							size = 12.0,
+						},
 					},
 					label = {
 						string = line,
