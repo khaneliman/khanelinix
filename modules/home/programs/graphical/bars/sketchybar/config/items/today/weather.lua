@@ -1,6 +1,7 @@
 #!/usr/bin/env lua
 
 local settings = require("settings")
+local colors = require("colors")
 
 local weather = {}
 
@@ -60,26 +61,19 @@ weather.details = Sbar.add("item", "weather.details", {
 	click_script = "sketchybar --set $NAME popup.drawing=off",
 })
 
--- Update function
 weather.temp:subscribe({ "routine", "forced", "system_woke", "weather_update" }, function()
-	-- Reset popup state
 	weather.temp:set({ popup = { drawing = false } })
 
-	-- Fetch events from calendar
 	Sbar.exec("wttrbar --fahrenheit --ampm --location $(jq '.wttr.location' ~/weather_config.json)", function(forecast)
-		-- Extract icon and temperature
 		for i, value in ipairs(STR_SPLIT(forecast.text)) do
-			-- first part of response is icon
 			if i == 1 then
 				weather.icon:set({ icon = { string = value } })
 			end
-			-- second part of response is temperature
 			if i == 2 then
 				weather.temp:set({ icon = "", label = { string = value .. "°" } })
 			end
 		end
 
-		-- Clear existing events in tooltip
 		local existingEvents = weather.temp:query()
 		if existingEvents.popup and next(existingEvents.popup.items) ~= nil then
 			for _, item in pairs(existingEvents.popup.items) do
@@ -87,29 +81,44 @@ weather.temp:subscribe({ "routine", "forced", "system_woke", "weather_update" },
 			end
 		end
 
-		for _, line in ipairs(STR_SPLIT(forecast.tooltip, "\n")) do
+		weather.event = {}
+		for i, line in ipairs(STR_SPLIT(forecast.tooltip, "\n")) do
 			if string.find(line, "<b>") then
 				local replacedString = string.gsub(line, "<b>", "")
 				replacedString = string.gsub(replacedString, "</b>", "")
 
-				weather.event = {}
+				if i > 1 then
+					weather.event.separator = Sbar.add("item", "weather.event.separator_" .. i, {
+						icon = {
+							string = "─────────────────",
+							color = colors.grey,
+							align = "center",
+							font = {
+								size = 10.0,
+							},
+						},
+						label = {
+							drawing = false,
+						},
+						background = {
+							height = 1,
+						},
+						padding_left = 0,
+						padding_right = 0,
+						position = "popup." .. weather.temp.name,
+						click_script = "sketchybar --set $NAME popup.drawing=off",
+					})
+				end
 
-				weather.event.separator = Sbar.add("item", "weather.event.separator_" .. _, {
-					icon = {
-						drawing = true,
-						string = "",
-					},
-					label = {
-						drawing = false,
-					},
-					position = "popup." .. weather.temp.name,
-					click_script = "sketchybar --set $NAME popup.drawing=off",
-				})
-
-				weather.event.title = Sbar.add("item", "weather.event.title_" .. _, {
+				weather.event.title = Sbar.add("item", "weather.event.title_" .. i, {
 					icon = {
 						drawing = true,
 						string = replacedString,
+						font = {
+							style = "Bold",
+							size = 16.0,
+						},
+						color = colors.yellow,
 					},
 					label = {
 						drawing = false,
@@ -117,14 +126,41 @@ weather.temp:subscribe({ "routine", "forced", "system_woke", "weather_update" },
 					position = "popup." .. weather.temp.name,
 					click_script = "sketchybar --set $NAME popup.drawing=off",
 				})
-			else
-				weather.event = Sbar.add("item", "weather.event." .. _, {
+			elseif string.find(line, "⬆") or string.find(line, "⬇") then
+				weather.event[i] = Sbar.add("item", "weather.event." .. i, {
 					icon = {
 						drawing = false,
 					},
 					label = {
 						string = line,
 						drawing = true,
+						font = {
+							size = 13.0,
+							style = "Bold",
+						},
+					},
+					position = "popup." .. weather.temp.name,
+					click_script = "sketchybar --set $NAME popup.drawing=off",
+				})
+
+				Sbar.add("item", "weather.event.padding_highlow_" .. i, {
+					icon = { drawing = false },
+					label = { drawing = false },
+					background = { height = 8 },
+					position = "popup." .. weather.temp.name,
+					width = "100%",
+				})
+			else
+				weather.event[i] = Sbar.add("item", "weather.event." .. i, {
+					icon = {
+						drawing = false,
+					},
+					label = {
+						string = line,
+						drawing = true,
+						font = {
+							size = 12.0,
+						},
 					},
 					position = "popup." .. weather.temp.name,
 					click_script = "sketchybar --set $NAME popup.drawing=off",
