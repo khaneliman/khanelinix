@@ -6,6 +6,36 @@ local colors = require("colors")
 
 local popup_off = "sketchybar --set github popup.drawing=off"
 
+local function sanitize_item_key(value)
+	if value == nil then
+		return "unknown"
+	end
+
+	local sanitized = tostring(value):gsub("[^%w%._-]", "_")
+	if sanitized == "" then
+		return "unknown"
+	end
+
+	return sanitized
+end
+
+local function truncate_label(value, max_length)
+	if value == nil then
+		return ""
+	end
+
+	local text = tostring(value)
+	if max_length == nil or max_length <= 0 then
+		return text
+	end
+
+	if #text <= max_length then
+		return text
+	end
+
+	return text:sub(1, max_length - 1) .. "…"
+end
+
 local github = Sbar.add("item", "github", {
 	position = "right",
 	icon = {
@@ -89,6 +119,7 @@ github:subscribe({
 		-- PRINT_TABLE(notifications)
 
 		local count = 0
+		local repo_headers = {}
 		for _, notification in pairs(notifications) do
 			-- PRINT_TABLE(notification)
 			-- increment count for label
@@ -96,7 +127,7 @@ github:subscribe({
 
 			local id = notification.id
 			local url = notification.subject.latest_comment_url or notification.subject.url
-			local repo = notification.repository.name
+			local repo = notification.repository and notification.repository.name or "Unknown"
 			local title = notification.subject.title
 			local type = notification.subject.type
 
@@ -107,16 +138,6 @@ github:subscribe({
 				local tempUrl = url:gsub("^'", ""):gsub("'$", "")
 				Sbar.exec('gh api "' .. tempUrl .. '" | jq .html_url', function(html_url)
 					local cmd = "sketchybar -m --set github.notification"
-
-					if IS_EMPTY(repo) == false then
-						cmd = cmd .. ".repo."
-						cmd = cmd .. tostring(id) .. ' click_script="open ' .. html_url .. '"'
-						Sbar.exec(cmd, function()
-							Sbar.exec(popup_off)
-						end)
-					end
-
-					cmd = "sketchybar -m --set github.notification"
 					if IS_EMPTY(title) == false then
 						cmd = cmd .. ".message."
 						cmd = cmd .. tostring(id) .. ' click_script="open ' .. html_url .. '"'
@@ -148,39 +169,55 @@ github:subscribe({
 			end
 
 			-- add notification to popup
-			github.notification = {}
+			local repo_label = repo
+			if IS_EMPTY(repo_label) then
+				repo_label = "Unknown"
+			end
 
-			if IS_EMPTY(repo) == false then
-				github.notification.repo = Sbar.add("item", "github.notification.repo." .. tostring(id), {
+			local repo_key = sanitize_item_key(repo_label)
+			repo_headers[repo_key] = repo_headers[repo_key]
+				or Sbar.add("item", "github.notification.repo_header." .. repo_key, {
 					label = {
+						string = repo_label,
+						color = colors.blue,
 						padding_right = settings.paddings,
+						padding_left = settings.paddings,
+						font = {
+							family = settings.font,
+							size = 14.0,
+							style = "Bold",
+						},
 					},
 					icon = {
-						string = icon .. " " .. repo,
-						color = color,
+						string = icons.git.indicator,
+						color = colors.blue,
 						font = {
 							family = settings.nerd_font,
 							size = 14.0,
 							style = "Bold",
 						},
-						padding_left = settings.paddings,
 					},
 					drawing = true,
-					-- TODO: trigger update after clicking since notification is cleared on github
-					click_script = "open " .. url .. "; " .. popup_off,
+					click_script = popup_off,
 					position = "popup." .. github.name,
 				})
-			end
 
 			if IS_EMPTY(title) == false then
+				github.notification = {}
 				github.notification.message = Sbar.add("item", "github.notification.message." .. tostring(id), {
 					label = {
-						string = title,
+						string = truncate_label(title, 60),
 						padding_right = 10,
 					},
 					icon = {
-						drawing = "off",
-						padding_left = settings.paddings,
+						string = icon,
+						color = color,
+						font = {
+							family = settings.nerd_font,
+							size = 12.0,
+							style = "Bold",
+						},
+						padding_left = settings.paddings + 12,
 					},
 					drawing = true,
 					-- TODO: trigger update after clicking since notification is cleared on github
@@ -190,22 +227,13 @@ github:subscribe({
 			end
 		end
 
-		-- Change icon and color depending on packages
+		local icon_string = count > 0 and icons.bell or icons.bell_dot
 		github:set({
 			icon = {
-				string = icons.bell_dot,
+				string = icon_string,
 			},
-			label = 0,
+			label = count,
 		})
-
-		if count > 0 then
-			github:set({
-				icon = {
-					string = icons.bell,
-				},
-				label = count,
-			})
-		end
 	end)
 end)
 
