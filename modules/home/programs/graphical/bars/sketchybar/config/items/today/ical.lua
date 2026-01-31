@@ -65,10 +65,42 @@ ical:subscribe({ "routine", "forced" }, function()
 
 		-- Parse and organize events
 		local has_all_day_header = false
-		for _, line in ipairs(STR_SPLIT(events, "\n")) do
+		local has_separator = false
+		local lines = STR_SPLIT(events, "\n")
+		local max_length = 0
+
+		for _, line in ipairs(lines) do
+			if #line > max_length then
+				max_length = #line
+			end
+		end
+
+		for _, line in ipairs(lines) do
 			local title, time = line:match("^(.-)%s*%%(.*)$")
 
 			if title and time then
+				if has_all_day_header and not has_separator then
+					local dashes = string.rep("─", math.floor(max_length * 0.65))
+
+					Sbar.add("item", "ical_event_separator", {
+						icon = {
+							string = "",
+							width = 0,
+						},
+						label = {
+							string = dashes,
+							color = colors.grey,
+							align = "center",
+						},
+						background = {
+							height = 1,
+						},
+						padding_left = 0,
+						padding_right = 0,
+						position = "popup." .. ical.name,
+					})
+					has_separator = true
+				end
 				Sbar.add("item", "ical_event_" .. title, {
 					icon = {
 						string = time,
