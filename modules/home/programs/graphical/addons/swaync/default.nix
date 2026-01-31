@@ -26,11 +26,13 @@ let
 
   settings = import ./settings.nix {
     inherit
+      config
       lib
       osConfig
       pkgs
       ;
   };
+
   style = import ./style.nix { inherit lib; };
 in
 {
