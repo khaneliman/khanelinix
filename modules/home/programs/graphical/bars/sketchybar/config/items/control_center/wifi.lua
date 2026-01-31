@@ -34,7 +34,7 @@ local ssid = Sbar.add("item", {
 		font = {
 			style = "Bold",
 		},
-		string = icons.wifi.router,
+		string = icons.wifi,
 	},
 	width = popup_width,
 	align = "center",
@@ -43,8 +43,9 @@ local ssid = Sbar.add("item", {
 			size = 15,
 			style = "Bold",
 		},
-		max_chars = 18,
+		max_chars = 25,
 		string = "????????????",
+		color = colors.yellow,
 	},
 	background = {
 		height = 2,
@@ -57,14 +58,16 @@ local hostname = Sbar.add("item", {
 	position = "popup." .. wifi.name,
 	icon = {
 		align = "left",
-		string = "Hostname:",
-		width = popup_width / 2,
+		string = "",
+		width = 30,
+		color = colors.yellow,
 	},
 	label = {
 		max_chars = 20,
 		string = "????????????",
-		width = popup_width / 2,
+		width = popup_width - 30,
 		align = "right",
+		color = colors.white,
 	},
 })
 
@@ -72,13 +75,15 @@ local ip = Sbar.add("item", {
 	position = "popup." .. wifi.name,
 	icon = {
 		align = "left",
-		string = "IP:",
-		width = popup_width / 2,
+		string = "",
+		width = 30,
+		color = colors.yellow,
 	},
 	label = {
 		string = "???.???.???.???",
-		width = popup_width / 2,
+		width = popup_width - 30,
 		align = "right",
+		color = colors.white,
 	},
 })
 
@@ -86,13 +91,18 @@ local mask = Sbar.add("item", {
 	position = "popup." .. wifi.name,
 	icon = {
 		align = "left",
-		string = "Subnet mask:",
-		width = popup_width / 2,
+		string = icons.lock,
+		width = 30,
+		color = colors.yellow,
+		font = {
+			size = 14.0,
+		},
 	},
 	label = {
 		string = "???.???.???.???",
-		width = popup_width / 2,
+		width = popup_width - 30,
 		align = "right",
+		color = colors.white,
 	},
 })
 
@@ -100,13 +110,15 @@ local router = Sbar.add("item", {
 	position = "popup." .. wifi.name,
 	icon = {
 		align = "left",
-		string = "Router:",
-		width = popup_width / 2,
+		string = icons.stats.network,
+		width = 30,
+		color = colors.yellow,
 	},
 	label = {
 		string = "???.???.???.???",
-		width = popup_width / 2,
+		width = popup_width - 30,
 		align = "right",
+		color = colors.white,
 	},
 })
 
