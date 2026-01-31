@@ -8,11 +8,7 @@
 
 let
   inherit (lib) getExe getExe' mkIf;
-
-  hyprlandEnabled = config.wayland.windowManager.hyprland.enable;
   # niridEnabled = config.programs.niri.enable;
-  hyprlockEnabled = config.programs.hyprlock.enable;
-  swaylockEnabled = config.programs.swaylock.enable;
 in
 {
   "$schema" = "/etc/xdg/swaync/configSchema.json";
