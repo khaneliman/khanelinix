@@ -1,4 +1,5 @@
 {
+  config,
   lib,
 
   osConfig ? { },
@@ -6,7 +7,12 @@
 }:
 
 let
-  inherit (lib) getExe' mkIf;
+  inherit (lib) getExe getExe' mkIf;
+
+  hyprlandEnabled = config.wayland.windowManager.hyprland.enable;
+  # niridEnabled = config.programs.niri.enable;
+  hyprlockEnabled = config.programs.hyprlock.enable;
+  swaylockEnabled = config.programs.swaylock.enable;
 in
 {
   "$schema" = "/etc/xdg/swaync/configSchema.json";
@@ -85,7 +91,14 @@ in
           }
           {
             label = " Lock";
-            command = "hyprlock";
+            command = ''
+              sh -c '
+                # FIXME: env variable not available
+                if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ];
+                  then ${getExe config.programs.hyprlock.package};
+                else ${getExe config.programs.swaylock.package};
+                fi'
+            '';
           }
           {
             label = " Logout";
@@ -130,11 +143,25 @@ in
         actions = [
           {
             label = "󰹑  Whole screen";
-            command = "${lib.getExe pkgs.grimblast} --notify save screen ";
+            command = ''
+              sh -c '
+                # FIXME: env variable not available
+                if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ];
+                  then ${getExe pkgs.grimblast} --notify save screen;
+                else ${getExe pkgs.grim} - | ${getExe' pkgs.wl-clipboard "wl-copy"};
+                fi'
+            '';
           }
           {
             label = "󰩭  Window / Region";
-            command = "${lib.getExe pkgs.grimblast} --notify --freeze save area ";
+            command = ''
+              sh -c '
+                # FIXME: env variable not available
+                if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ];
+                  then ${getExe pkgs.grimblast} --notify --freeze save area;
+                else ${getExe pkgs.grim} -g "$(${getExe pkgs.slurp})" - | ${getExe' pkgs.wl-clipboard "wl-copy"};
+                fi'
+            '';
           }
           {
             label = "  Record area";
