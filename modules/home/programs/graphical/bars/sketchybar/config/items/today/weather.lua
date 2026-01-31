@@ -151,6 +151,18 @@ weather.temp:subscribe({ "routine", "forced", "system_woke", "weather_update" },
 					width = "100%",
 				})
 			else
+				-- Clean up and align the line
+				local time, icon, temp, desc = line:match("^(%S+)%s+(%S+)%s+(%S+)%s+(.*)$")
+				if time then
+					-- Pad time to fixed length (e.g., 5 chars)
+					local padded_time = string.format("%-5s", time)
+
+					-- Truncate description at first comma
+					local short_desc = desc:match("^([^,]+)") or desc
+
+					line = padded_time .. " " .. icon .. " " .. temp .. " " .. short_desc
+				end
+
 				weather.event[i] = Sbar.add("item", "weather.event." .. i, {
 					icon = {
 						drawing = false,
