@@ -81,6 +81,12 @@ in
 
       lanzaboote = mkIf cfg.secureBoot {
         enable = true;
+        autoEnrollKeys = {
+          enable = true;
+          # Automatically reboot to enroll the keys in the firmware
+          # autoReboot = true;
+        };
+        autoGenerateKeys.enable = true;
         pkiBundle = "/var/lib/sbctl";
       };
 
