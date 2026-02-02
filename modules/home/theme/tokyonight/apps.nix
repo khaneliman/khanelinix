@@ -165,7 +165,7 @@ in
         source-file ${tokyonight}/extras/tmux/tokyonight_${variant}.tmux
       '';
 
-      vicinae.settings.theme.name = lib.mkForce "tokyonight_${cfg.variant}";
+      vicinae.settings.theme.name = lib.mkForce "tokyo-night";
 
       vesktop.vencord = mkIf config.khanelinix.programs.graphical.apps.discord.enable {
         settings.enabledThemes = [ "tokyonight.css" ];
