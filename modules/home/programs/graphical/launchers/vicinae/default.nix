@@ -80,11 +80,9 @@ in
         enable = true;
       };
 
-      # settings = {
-      #   theme = {
-      #     name = "catppuccin-macchiato";
-      #   };
-      # };
+      settings = {
+        "$schema" = "https://vicinae.com/schemas/config.json";
+      };
     };
   };
 }
