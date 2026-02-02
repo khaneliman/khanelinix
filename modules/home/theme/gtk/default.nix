@@ -51,116 +51,154 @@ in
     };
   };
 
-  config = mkIf (cfg.enable && pkgs.stdenv.hostPlatform.isLinux) {
-    home = {
-      packages = with pkgs; [
-        # NOTE: required explicitly with noXlibs and home-manager
-        dconf
-        glib # gsettings
-        gtk3.out # for gtk-launch
-        libappindicator-gtk3
-      ];
+  config =
+    let
+      themeDir = "${cfg.theme.package}/share/themes/${cfg.theme.name}";
+      gtk4Dir = "${themeDir}/gtk-4.0";
 
-      pointerCursor = mkDefault {
-        name = mkDefault cfg.cursor.name;
-        package = mkDefault cfg.cursor.package;
-        size = mkDefault cfg.cursor.size;
-        gtk.enable = true;
-        x11.enable = true;
-      };
+      # Some GTK themes only partially ship GTK4 assets (or omit gtk-dark.css).
+      # Build-time checks keep evaluation pure and avoid HM activation failures.
+      gtk4Export = pkgs.runCommand "gtk4-theme-${cfg.theme.name}" { } /* Bash */ ''
+        mkdir -p "$out"
 
-      sessionVariables = {
-        GTK_USE_PORTAL = "${toString (boolToNum cfg.usePortal)}";
-        CURSOR_THEME = mkDefault cfg.cursor.name;
-      };
-    };
+        if [ -d "${gtk4Dir}/assets" ]; then
+          ln -s "${gtk4Dir}/assets" "$out/assets"
+        else
+          mkdir -p "$out/assets"
+        fi
 
-    dbus.packages = [ pkgs.dconf ];
+        if [ -f "${gtk4Dir}/gtk.css" ]; then
+          ln -s "${gtk4Dir}/gtk.css" "$out/gtk.css"
+        else
+          : > "$out/gtk.css"
+        fi
 
-    dconf = {
-      enable = true;
+        if [ -f "${gtk4Dir}/gtk-dark.css" ]; then
+          ln -s "${gtk4Dir}/gtk-dark.css" "$out/gtk-dark.css"
+        else
+          ln -s "$out/gtk.css" "$out/gtk-dark.css"
+        fi
+      '';
+    in
+    mkIf (cfg.enable && pkgs.stdenv.hostPlatform.isLinux) {
+      home = {
+        packages = with pkgs; [
+          # NOTE: required explicitly with noXlibs and home-manager
+          dconf
+          glib # gsettings
+          gtk3.out # for gtk-launch
+          libappindicator-gtk3
+        ];
 
-      settings = nested-default-attrs {
-        "org/gnome/shell" = {
-          disable-user-extensions = false;
-          enabled-extensions = [ "user-theme@gnome-shell-extensions.gcampax.github.com" ];
+        pointerCursor = mkDefault {
+          name = mkDefault cfg.cursor.name;
+          package = mkDefault cfg.cursor.package;
+          size = mkDefault cfg.cursor.size;
+          gtk.enable = true;
+          x11.enable = true;
         };
 
-        "org/gnome/shell/extensions/user-theme" = {
-          inherit (cfg.theme) name;
-        };
-
-        "org/gnome/desktop/interface" = {
-          color-scheme = "prefer-dark";
-          cursor-size = cfg.cursor.size;
-          cursor-theme = cfg.cursor.name;
-          font-name = "${config.khanelinix.home.fonts.default} ${toString config.khanelinix.home.fonts.size}";
-          gtk-theme = cfg.theme.name;
-          icon-theme = cfg.icon.name;
+        sessionVariables = {
+          GTK_USE_PORTAL = "${toString (boolToNum cfg.usePortal)}";
+          CURSOR_THEME = mkDefault cfg.cursor.name;
         };
       };
+
+      dbus.packages = [ pkgs.dconf ];
+
+      dconf = {
+        enable = true;
+
+        settings = nested-default-attrs {
+          "org/gnome/shell" = {
+            disable-user-extensions = false;
+            enabled-extensions = [ "user-theme@gnome-shell-extensions.gcampax.github.com" ];
+          };
+
+          "org/gnome/shell/extensions/user-theme" = {
+            inherit (cfg.theme) name;
+          };
+
+          "org/gnome/desktop/interface" = {
+            color-scheme = "prefer-dark";
+            cursor-size = cfg.cursor.size;
+            cursor-theme = cfg.cursor.name;
+            font-name = "${config.khanelinix.home.fonts.default} ${toString config.khanelinix.home.fonts.size}";
+            gtk-theme = cfg.theme.name;
+            icon-theme = cfg.icon.name;
+          };
+        };
+      };
+
+      gtk = {
+        enable = true;
+
+        font = {
+          name = mkDefault config.khanelinix.home.fonts.default;
+          size = mkDefault config.khanelinix.home.fonts.size;
+        };
+
+        gtk2 = {
+          configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
+          extraConfig = ''
+            gtk-xft-antialias=1
+            gtk-xft-hinting=1
+            gtk-xft-hintstyle="hintslight"
+            gtk-xft-rgba="rgb"
+          '';
+        };
+
+        gtk3.extraConfig = {
+          gtk-application-prefer-dark-theme = true;
+          gtk-button-images = 1;
+          gtk-decoration-layout = "appmenu:none";
+          gtk-enable-event-sounds = 0;
+          gtk-enable-input-feedback-sounds = 0;
+          gtk-error-bell = 0;
+          gtk-menu-images = 1;
+          gtk-toolbar-icon-size = "GTK_ICON_SIZE_LARGE_TOOLBAR";
+          gtk-toolbar-style = "GTK_TOOLBAR_BOTH";
+          gtk-xft-antialias = 1;
+          gtk-xft-hinting = 1;
+          gtk-xft-hintstyle = "hintslight";
+        };
+
+        gtk4.extraConfig = {
+          gtk-decoration-layout = "appmenu:none";
+          gtk-enable-event-sounds = 0;
+          gtk-enable-input-feedback-sounds = 0;
+          gtk-error-bell = 0;
+          gtk-xft-antialias = 1;
+          gtk-xft-hinting = 1;
+          gtk-xft-hintstyle = "hintslight";
+        };
+
+        iconTheme = {
+          name = mkDefault cfg.icon.name;
+          package = mkDefault cfg.icon.package;
+        };
+
+        theme = {
+          name = mkDefault cfg.theme.name;
+          package = mkDefault cfg.theme.package;
+        };
+      };
+
+      # GTK3 theme discovery (some apps still consult ~/.themes).
+      home.file.".themes/${cfg.theme.name}".source = themeDir;
+      xdg = {
+        dataFile."themes/${cfg.theme.name}".source = themeDir;
+        # GTK4 CSS/assets live in ~/.config/gtk-4.0.
+        configFile = {
+          "gtk-4.0/assets".source = "${gtk4Export}/assets";
+          "gtk-4.0/gtk.css".source = "${gtk4Export}/gtk.css";
+          "gtk-4.0/gtk-dark.css".source = "${gtk4Export}/gtk-dark.css";
+        };
+        systemDirs.data =
+          let
+            schema = pkgs.gsettings-desktop-schemas;
+          in
+          [ "${schema}/share/gsettings-schemas/${schema.name}" ];
+      };
     };
-
-    gtk = {
-      enable = true;
-
-      font = {
-        name = mkDefault config.khanelinix.home.fonts.default;
-        size = mkDefault config.khanelinix.home.fonts.size;
-      };
-
-      gtk2 = {
-        configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
-        extraConfig = ''
-          gtk-xft-antialias=1
-          gtk-xft-hinting=1
-          gtk-xft-hintstyle="hintslight"
-          gtk-xft-rgba="rgb"
-        '';
-      };
-
-      gtk3.extraConfig = {
-        gtk-application-prefer-dark-theme = true;
-        gtk-button-images = 1;
-        gtk-decoration-layout = "appmenu:none";
-        gtk-enable-event-sounds = 0;
-        gtk-enable-input-feedback-sounds = 0;
-        gtk-error-bell = 0;
-        gtk-menu-images = 1;
-        gtk-toolbar-icon-size = "GTK_ICON_SIZE_LARGE_TOOLBAR";
-        gtk-toolbar-style = "GTK_TOOLBAR_BOTH";
-        gtk-xft-antialias = 1;
-        gtk-xft-hinting = 1;
-        gtk-xft-hintstyle = "hintslight";
-      };
-
-      gtk4.extraConfig = {
-        gtk-decoration-layout = "appmenu:none";
-        gtk-enable-event-sounds = 0;
-        gtk-enable-input-feedback-sounds = 0;
-        gtk-error-bell = 0;
-        gtk-xft-antialias = 1;
-        gtk-xft-hinting = 1;
-        gtk-xft-hintstyle = "hintslight";
-      };
-
-      iconTheme = {
-        name = mkDefault cfg.icon.name;
-        package = mkDefault cfg.icon.package;
-      };
-
-      theme = {
-        name = mkDefault cfg.theme.name;
-        package = mkDefault cfg.theme.package;
-      };
-    };
-
-    xdg = {
-      systemDirs.data =
-        let
-          schema = pkgs.gsettings-desktop-schemas;
-        in
-        [ "${schema}/share/gsettings-schemas/${schema.name}" ];
-    };
-  };
 }
