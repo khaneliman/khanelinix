@@ -149,7 +149,9 @@ in
         };
 
         gtk3.extraConfig = {
-          gtk-application-prefer-dark-theme = true;
+          # Handy-WARNING **: Using GtkSettings:gtk-application-prefer-dark-theme together with HdyStyleManager is unsupported.
+          # Please use HdyStyleManager:color-scheme instead.
+          # gtk-application-prefer-dark-theme = true;
           gtk-button-images = 1;
           gtk-decoration-layout = "appmenu:none";
           gtk-enable-event-sounds = 0;
