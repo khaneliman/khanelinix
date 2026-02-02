@@ -169,6 +169,7 @@ in
         enable = true;
         theme = "tokyo-night-dark";
       };
+      tokyonight = enabled;
     };
   };
 
