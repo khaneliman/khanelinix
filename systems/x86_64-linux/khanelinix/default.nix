@@ -165,7 +165,10 @@ in
     theme = {
       # gtk = enabled;
       # qt = enabled;
-      stylix = enabled;
+      stylix = {
+        enable = true;
+        theme = "tokyo-night-dark";
+      };
     };
   };
 
