@@ -31,6 +31,12 @@ in
         { plugin = pkgs.tmuxPlugins.nord; }
       ];
 
+      vicinae.settings.theme = lib.mkForce {
+        name = "nord";
+        light.name = "nord-light";
+        dark.name = "nord";
+      };
+
       yazi = {
         theme = lib.mkForce (import ./yazi/theme.nix { inherit (import ./colors.nix) palette; });
       };
