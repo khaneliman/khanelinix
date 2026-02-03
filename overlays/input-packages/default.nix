@@ -32,10 +32,6 @@ in
     yaziPlugins
 
     # TODO: remove after hitting channel
-    hyprshutdown
-    swift
-    roslyn-ls
-    csharpier
     ;
 
   python3 = _prev.python3.override {

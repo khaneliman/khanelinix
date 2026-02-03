@@ -21,8 +21,7 @@ in
 
   config = lib.mkIf cfg.enable {
     services.ollama = {
-      # FIXME: broken upstream
-      enable = pkgs.stdenv.hostPlatform.isLinux;
+      enable = true;
       host = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "0.0.0.0";
 
       environmentVariables =
