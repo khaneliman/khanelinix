@@ -31,14 +31,6 @@ in
           ];
         };
 
-        github = {
-          command = getExe pkgs.github-mcp-server;
-          args = [
-            "--read-only"
-            "stdio"
-          ];
-        };
-
         nixos = {
           command = getExe pkgs.mcp-nixos;
         };
