@@ -104,6 +104,7 @@ in
           # NOTE: hard to get out of neovim
           # antigravity
           github-copilot-cli
+          codex
         ];
 
       shellAliases = {
