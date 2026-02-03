@@ -51,8 +51,11 @@ in
     services.udev.extraRules = lib.concatStringsSep "\n" (
       lib.optionals cfg.ssdEnable [
         # NVMe: Optimize queue depth and read-ahead for low latency
-        ''ACTION=="add|change", KERNEL=="nvme[0-9]*n[0-9]*", ATTR{queue/nr_requests}="32"''
-        ''ACTION=="add|change", KERNEL=="nvme[0-9]*n[0-9]*", ATTR{queue/read_ahead_kb}="128"''
+        # Note: udev KERNEL globs are not regex; without excluding partitions
+        # this also matches e.g. nvme0n1p1 (and partitions don't always expose
+        # queue/* attributes), causing noisy udev-worker errors.
+        ''ACTION=="add|change", KERNEL=="nvme[0-9]*n[0-9]*", KERNEL!="*p*", ATTR{queue/nr_requests}="32"''
+        ''ACTION=="add|change", KERNEL=="nvme[0-9]*n[0-9]*", KERNEL!="*p*", ATTR{queue/read_ahead_kb}="128"''
         # SATA SSD: Moderate read-ahead, higher queue depth
         ''ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/read_ahead_kb}="256"''
         ''ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/nr_requests}="64"''
