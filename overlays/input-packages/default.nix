@@ -25,6 +25,7 @@ in
   #          ╰──────────────────────────────────────────────────────────╯
   inherit (master)
     claude-code
+    codex
     gemini-cli
     opencode
     yazi-unwrapped
