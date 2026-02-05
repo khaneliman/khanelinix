@@ -89,6 +89,8 @@ in
 
       gh-dash.settings.theme.selected_line = mkForce "bg:default fg:white bold";
 
+      ghostty.settings.theme = "tokyonight_${variant}";
+
       helix.settings.theme = "tokyonight_${variant}";
 
       kitty.extraConfig = ''
