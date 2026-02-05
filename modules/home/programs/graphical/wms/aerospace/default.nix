@@ -27,6 +27,11 @@ in
   config = lib.mkIf cfg.enable {
     home.shellAliases = {
       restart-aerospace = ''launchctl kickstart -k gui/"$(id -u)"/org.nix-community.home.aerospace'';
+
+      # AeroSpace debugging helpers
+      as-apps = "aerospace list-apps";
+      as-wins = "aerospace list-windows --all --format '%{window-id} | %{app-name} | %{app-bundle-id} | ws=%{workspace} | %{window-layout} | %{window-title}'";
+      as-bundle = "mdls -name kMDItemCFBundleIdentifier -raw";
     };
 
     programs.aerospace = {
