@@ -1,4 +1,9 @@
-{ inputs, lib, ... }:
+{
+  inputs,
+  lib,
+  self,
+  ...
+}:
 {
   imports = lib.optional (inputs.git-hooks-nix ? flakeModule) inputs.git-hooks-nix.flakeModule;
 
@@ -75,13 +80,11 @@
         };
       };
 
-      checks = {
-        # TODO:
-        # Custom checks can go here
-        # nix-syntax = pkgs.runCommand "check-nix-syntax" { } ''
-        #   find ${./../..} -name "*.nix" -exec ${pkgs.nix}/bin/nix-instantiate --parse {} \; > /dev/null
-        #   touch $out
-        # '';
-      };
+      checks = lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin (
+        lib.mapAttrs' (name: cfg: {
+          name = "darwin-${name}";
+          value = cfg.system;
+        }) self.darwinConfigurations
+      );
     };
 }
