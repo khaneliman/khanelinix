@@ -29,14 +29,6 @@ in
           monaspaceXenon = fontCfg.monaspace.families.xenonVar;
         in
         /* lua */ ''
-          function scheme_for_appearance(appearance)
-            if appearance:find "Dark" then
-              return "Catppuccin Macchiato"
-            else
-              return "Catppuccin Frappe"
-            end
-          end
-
           local act = wezterm.action
           local custom = wezterm.color.get_builtin_schemes()[scheme_for_appearance(wezterm.gui.get_appearance())]
           local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_right_hard_divider
