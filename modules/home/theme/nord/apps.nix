@@ -17,7 +17,9 @@ in
         "${pkgs.alacritty-theme}/share/alacritty-theme/nord.toml"
       ];
 
-      helix.settings.theme = mkDefault "nord";
+      ghostty.settings.theme = "nord";
+
+      helix.settings.theme = mkDefault "Nord";
 
       kitty.extraConfig = ''
         include ${pkgs.kitty-themes}/share/kitty-themes/themes/Nord.conf
