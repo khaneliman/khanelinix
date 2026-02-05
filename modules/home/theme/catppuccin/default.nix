@@ -284,6 +284,16 @@ in
             themes.catppuccin = ./Catppuccin-Macchiato-BD/src.css;
           };
 
+          wezterm.extraConfig = /* Lua */ ''
+            function scheme_for_appearance(appearance)
+              if appearance:find "Dark" then
+                return "Catppuccin Macchiato"
+              else
+                return "Catppuccin Frappe"
+              end
+            end
+          '';
+
           yazi.theme = lib.mkMerge [
             (import ./yazi/filetype.nix)
             (import ./yazi/manager.nix)
