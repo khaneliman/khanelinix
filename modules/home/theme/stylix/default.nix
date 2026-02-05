@@ -119,7 +119,7 @@ in
   };
 
   config = mkIf cfg.enable (
-    lib.optionalAttrs (options ? stylix) {
+    lib.optionalAttrs (lib.hasAttrByPath [ "stylix" ] options) {
       # Each theme sets their own pointerCursor
       home = mkIf (pkgs.stdenv.hostPlatform.isLinux && !anyCuratedTheme) {
         pointerCursor = {

@@ -115,6 +115,15 @@ in
       isNixOS ? true,
     }:
     if matchingHomes != { } then
+      { config, ... }:
+      let
+        stylixHomeModule =
+          if inputs.stylix ? homeModules && inputs.stylix.homeModules ? stylix then
+            inputs.stylix.homeModules.stylix
+          else
+            null;
+        enableStylixHomeModule = stylixHomeModule != null && !(config.stylix.enable or false);
+      in
       {
         home-manager = {
           useGlobalPkgs = true;
@@ -128,6 +137,7 @@ in
           sharedModules = [
             { _module.args.lib = extendedLib; }
           ]
+          ++ extendedLib.optional enableStylixHomeModule stylixHomeModule
           ++ (
             if isNixOS then
               [
