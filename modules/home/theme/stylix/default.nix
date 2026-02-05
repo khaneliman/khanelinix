@@ -137,8 +137,6 @@ in
         # autoEnable = false;
         base16Scheme = "${pkgs.base16-schemes}/share/themes/${cfg.theme}.yaml";
 
-        cursor = lib.mkOptionDefault cfg.cursor;
-
         fonts = {
           sizes = {
             desktop = 11;
@@ -233,6 +231,9 @@ in
           swaync.enable = false;
           waybar.enable = !(isThemedBy "waybar");
         };
+      }
+      // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+        cursor = lib.mkOptionDefault cfg.cursor;
       };
     }
   );
