@@ -37,6 +37,16 @@ in
         dark.name = "nord";
       };
 
+      wezterm.extraConfig = /* Lua */ ''
+        function scheme_for_appearance(appearance)
+          if appearance:find "Dark" then
+            return "nord"
+          else
+            return "nord-light"
+          end
+        end
+      '';
+
       yazi = {
         theme = lib.mkForce (import ./yazi/theme.nix { inherit (import ./colors.nix) palette; });
       };
