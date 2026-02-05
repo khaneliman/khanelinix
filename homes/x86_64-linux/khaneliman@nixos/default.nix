@@ -41,5 +41,5 @@ in
     };
   };
 
-  home.stateVersion = "21.11";
+  home.stateVersion = "25.11";
 }
