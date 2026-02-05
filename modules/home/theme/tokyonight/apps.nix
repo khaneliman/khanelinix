@@ -176,8 +176,14 @@ in
         themes.tokyonight = "${tokyonight}/extras/discord/tokyonight_${cfg.variant}.css";
       };
 
-      wezterm.extraConfig = ''
-        config.color_scheme = "tokyonight_${variant}"
+      wezterm.extraConfig = /* Lua */ ''
+        function scheme_for_appearance(appearance)
+          if appearance:find "Dark" then
+            return "tokyonight_night"
+          else
+            return "tokyonight_day"
+          end
+        end
       '';
 
       zellij.settings.theme = "tokyonight_${variant}";
