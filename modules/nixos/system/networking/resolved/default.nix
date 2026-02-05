@@ -20,11 +20,6 @@ in
     services.resolved = {
       enable = true;
 
-      # dnssec = "true";
-      extraConfig = lib.mkIf config.services.avahi.enable ''
-        MulticastDNS=no
-      '';
-
       settings = {
         Resolve = {
           # this is necessary to get tailscale picking up your headscale instance
@@ -35,6 +30,9 @@ in
             "1.1.1.1"
             "1.0.0.1"
           ];
+        }
+        // lib.optionalAttrs config.services.avahi.enable {
+          MulticastDNS = "no";
         };
       };
     };
