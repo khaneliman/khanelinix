@@ -84,6 +84,12 @@ in
               check-further-callbacks = true;
               run = "exec-and-forget ${sketchybar} --trigger aerospace_windows_change";
             }
+            {
+              "if" = {
+                app-id = "com.apple.systempreferences";
+              };
+              run = "layout tiling";
+            }
           ]
           # Browsers -> workspace 1 (main)
           (mkWorkspaceRules "1" browserApps)
