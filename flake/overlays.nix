@@ -38,9 +38,6 @@ let
         ) packageFunctions
       );
     };
-
-  allOverlays = (lib.attrValues dynamicOverlaysSet) ++ [ khanelinixPackagesOverlay ];
-
 in
 {
   flake = {
@@ -48,13 +45,5 @@ in
       default = khanelinixPackagesOverlay;
       khanelinix = khanelinixPackagesOverlay;
     };
-
-    perSystem =
-      { config, pkgs, ... }:
-      {
-        pkgs = pkgs.extend (lib.composeManyExtensions allOverlays);
-
-        packages = config.pkgs.khanelinix;
-      };
   };
 }
