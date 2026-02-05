@@ -34,7 +34,7 @@ _: {
             "catppuccin"
             "firefox-addons"
             "hypr-socket-watch"
-            # "hyprland"
+            "hyprland"
             "khanelivim"
             "nh"
             "nix-flatpak"
