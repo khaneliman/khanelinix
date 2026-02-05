@@ -294,11 +294,13 @@ in
             end
           '';
 
-          yazi.theme = lib.mkMerge [
-            (import ./yazi/filetype.nix)
-            (import ./yazi/manager.nix)
-            (import ./yazi/theme.nix)
-          ];
+          yazi.theme = lib.mkForce (
+            lib.mkMerge [
+              (import ./yazi/filetype.nix)
+              (import ./yazi/manager.nix)
+              (import ./yazi/theme.nix)
+            ]
+          );
         };
 
         wayland.windowManager.hyprland.settings.plugin.hyprbars = {
