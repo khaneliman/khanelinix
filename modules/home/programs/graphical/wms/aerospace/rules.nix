@@ -24,6 +24,8 @@ in
             }) appIds;
 
           browserApps = [
+            "org.nixos.firefoxdeveloperedition"
+            "org.nixos.firefox"
             "org.mozilla.firefoxdeveloperedition"
             "org.mozilla.firefox"
             "com.google.Chrome"
@@ -32,6 +34,7 @@ in
 
           communicationApps = [
             "com.microsoft.teams2"
+            "teams-for-linux"
             "com.apple.mail"
             "com.apple.MobileSMS"
             "com.readdle.smartemail-Mac"
@@ -39,6 +42,7 @@ in
             "org.mozilla.thunderbird"
             "org.mozilla.Thunderbird"
             "org.nixos.thunderbird"
+            "com.sindresorhus.caprine"
             "com.facebook.archon.developerID"
             "com.facebook.messenger.desktop"
             "com.tinyspeck.slackmacgap"
@@ -52,6 +56,15 @@ in
             "com.microsoft.VSCode"
             "com.microsoft.visual-studio"
             "com.apple.dt.Xcode"
+            "com.usebruno.app"
+          ];
+
+          terminalApps = [
+            "net.kovidgoyal.kitty"
+            "com.apple.Terminal"
+            "com.mitchellh.ghostty"
+            "com.github.wez.wezterm"
+            "org.alacritty"
           ];
 
           gitApps = [
@@ -59,7 +72,12 @@ in
             "com.axosoft.gitkraken"
           ];
 
+          systemApps = [
+            "com.soma-zone.LaunchControl"
+          ];
+
           productivityApps = [
+            "com.apple.AppStore"
             "com.apple.Notes"
             "com.apple.reminders"
             "com.apple.iCal"
@@ -96,9 +114,9 @@ in
           # Communication apps -> workspace 2 (comms)
           (mkWorkspaceRules "2" communicationApps)
           # Development tools -> workspace 3 (code)
-          (mkWorkspaceRules "3" developmentApps)
+          (mkWorkspaceRules "3" (developmentApps ++ terminalApps))
           # Git tools -> workspace 4 (ref)
-          (mkWorkspaceRules "4" gitApps)
+          (mkWorkspaceRules "4" (gitApps ++ systemApps))
           # Productivity apps -> workspace 5 (productivity)
           (mkWorkspaceRules "5" productivityApps)
           # Media apps -> workspace 6 (media)
