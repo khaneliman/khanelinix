@@ -177,5 +177,5 @@ in
     displayManager.defaultSession = "hyprland-uwsm";
   };
 
-  system.stateVersion = "21.11";
+  system.stateVersion = "25.11";
 }
