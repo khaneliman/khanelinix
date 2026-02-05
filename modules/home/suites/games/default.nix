@@ -22,7 +22,6 @@ in
       bottles
       heroic
       lutris
-      prismlauncher
       protontricks
       protonup-ng
       protonup-qt
@@ -32,7 +31,10 @@ in
 
     khanelinix = {
       programs = {
-        graphical.mangohud = lib.mkDefault enabled;
+        graphical = {
+          apps.prismlauncher = lib.mkDefault enabled;
+          mangohud = lib.mkDefault enabled;
+        };
 
         terminal = {
           tools = {
