@@ -53,6 +53,14 @@ in
 
         zellij = {
           enable = true;
+          package = pkgs.zellij.overrideAttrs (_oldAttrs: {
+            patches = [
+              (pkgs.fetchpatch2 {
+                url = "https://github.com/zellij-org/zellij/commit/60acd439985339e518f090821c0e4eb366ce6014.patch?full_index=1";
+                hash = "sha256-pCFDEbgceNzZAjxSXme/nQ4iQc8qNw2IOMtec16cr8k=";
+              })
+            ];
+          });
 
           settings = {
             # clipboard provider
