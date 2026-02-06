@@ -1,7 +1,7 @@
 _: {
   "niri/workspaces" = {
     all-outputs = false;
-    format = "{icon}";
+    format = "{index} {icon}";
     format-icons = {
       focused = "";
       active = "";
