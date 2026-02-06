@@ -7,10 +7,9 @@
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.khanelinix) disabled enabled;
+  inherit (lib.khanelinix) enabled;
 
   cfg = config.khanelinix.suites.wlroots;
-  isNiri = config.khanelinix.programs.graphical.wms.niri.enable;
 in
 {
   options.khanelinix.suites.wlroots = {
@@ -44,8 +43,7 @@ in
           };
 
           bars = {
-            ashell = mkDefault (if isNiri then enabled else disabled);
-            waybar = mkDefault (if isNiri then disabled else enabled);
+            waybar = mkDefault enabled;
           };
         };
       };
