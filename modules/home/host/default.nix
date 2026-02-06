@@ -1,6 +1,6 @@
 {
   lib,
-  host ? null,
+  hostname ? null,
 
   ...
 }:
@@ -10,6 +10,6 @@ let
 in
 {
   options.khanelinix.host = {
-    name = mkOpt (types.nullOr types.str) host "The host name.";
+    name = mkOpt (types.nullOr types.str) hostname "The host name.";
   };
 }

@@ -216,6 +216,5 @@ in
       lib = extendedLib;
       flake-parts-lib = inputs.flake-parts.lib;
       format = "system";
-      host = hostname;
     };
 }

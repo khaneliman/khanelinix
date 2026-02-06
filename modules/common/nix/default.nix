@@ -5,7 +5,7 @@
   pkgs,
   self,
 
-  host,
+  hostname,
   ...
 }:
 let
@@ -92,7 +92,7 @@ in
           # Linux builders
           lib.optionals config.khanelinix.security.sops.enable [
             (
-              lib.mkIf (host != "bruddynix" && host != "khanelinix") {
+              lib.mkIf (hostname != "bruddynix" && hostname != "khanelinix") {
                 inherit sshUser;
                 hostName = "bruddynix.local";
                 systems = [
@@ -102,11 +102,11 @@ in
                 speedFactor = 1;
                 inherit protocol supportedFeatures;
               }
-              // lib.optionalAttrs (host == "khanelimac") {
+              // lib.optionalAttrs (hostname == "khanelimac") {
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
               }
             )
-            (lib.mkIf (host != "khanelinix") (
+            (lib.mkIf (hostname != "khanelinix") (
               {
                 inherit protocol sshUser;
                 hostName = "khanelinix.local";
@@ -117,7 +117,7 @@ in
                 speedFactor = 2;
                 supportedFeatures = supportedFeatures ++ [ "kvm" ];
               }
-              // lib.optionalAttrs (host == "khanelimac") {
+              // lib.optionalAttrs (hostname == "khanelimac") {
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
               }
             ))
@@ -134,15 +134,15 @@ in
                   "nixos-test"
                 ];
               }
-              // lib.optionalAttrs (host == "khanelimac") {
+              // lib.optionalAttrs (hostname == "khanelimac") {
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
               }
-              // lib.optionalAttrs (host == "khanelinix") {
+              // lib.optionalAttrs (hostname == "khanelinix") {
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
               }
             )
             # Darwin builders
-            (lib.mkIf (host != "khanelimac") (
+            (lib.mkIf (hostname != "khanelimac") (
               {
                 inherit protocol sshUser;
                 systems = [
@@ -154,11 +154,11 @@ in
                 speedFactor = 10;
                 supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
               }
-              // lib.optionalAttrs (host == "khanelinix") {
+              // lib.optionalAttrs (hostname == "khanelinix") {
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
               }
             ))
-            (lib.mkIf (host != "khanelimac-m1") (
+            (lib.mkIf (hostname != "khanelimac-m1") (
               {
                 inherit protocol sshUser;
                 systems = [
@@ -170,10 +170,10 @@ in
                 speedFactor = 3;
                 supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
               }
-              // lib.optionalAttrs (host == "khanelinix") {
+              // lib.optionalAttrs (hostname == "khanelinix") {
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
               }
-              // lib.optionalAttrs (host == "khanelimac") {
+              // lib.optionalAttrs (hostname == "khanelimac") {
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
                 # Prefer local builds for personal usage
                 systems = [
@@ -181,7 +181,7 @@ in
                 ];
               }
             ))
-            (lib.mkIf (host != "khanelimac") (
+            (lib.mkIf (hostname != "khanelimac") (
               # NOTE: git clone --reference /var/lib/nixpkgs.git https://github.com/NixOS/nixpkgs.git
               {
                 inherit protocol sshUser;
@@ -194,10 +194,10 @@ in
                 supportedFeatures = [ "big-parallel" ];
                 publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUtNSGhsY243ZlVwVXVpT0ZlSWhEcUJ6Qk5Gc2JOcXErTnB6dUdYM2U2enYgCg";
               }
-              // lib.optionalAttrs (host == "khanelinix") {
+              // lib.optionalAttrs (hostname == "khanelinix") {
                 sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
               }
-              // lib.optionalAttrs (host == "khanelimac-m1") {
+              // lib.optionalAttrs (hostname == "khanelimac-m1") {
                 sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
               }
             ))
