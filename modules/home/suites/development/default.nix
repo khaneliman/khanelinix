@@ -11,18 +11,6 @@ let
   inherit (lib.khanelinix) enabled;
 
   tokenExports = lib.optionalString (osConfig.khanelinix.security.sops.enable or false) /* Bash */ ''
-    if [ -f ${config.sops.secrets.ANTHROPIC_API_KEY.path} ]; then
-      ANTHROPIC_API_KEY="$(cat ${config.sops.secrets.ANTHROPIC_API_KEY.path})"
-      export ANTHROPIC_API_KEY
-    fi
-    if [ -f ${config.sops.secrets.AZURE_OPENAI_API_KEY.path} ]; then
-      AZURE_OPENAI_API_KEY="$(cat ${config.sops.secrets.AZURE_OPENAI_API_KEY.path})"
-      export AZURE_OPENAI_API_KEY
-    fi
-    if [ -f ${config.sops.secrets.OPENAI_API_KEY.path} ]; then
-      OPENAI_API_KEY="$(cat ${config.sops.secrets.OPENAI_API_KEY.path})"
-      export OPENAI_API_KEY
-    fi
     if [ -f ${config.sops.secrets.TAVILY_API_KEY.path} ]; then
       TAVILY_API_KEY="$(cat ${config.sops.secrets.TAVILY_API_KEY.path})"
       export TAVILY_API_KEY
@@ -195,18 +183,6 @@ in
     };
 
     sops.secrets = lib.mkIf (osConfig.khanelinix.security.sops.enable or false) {
-      ANTHROPIC_API_KEY = {
-        sopsFile = lib.getFile "secrets/CORE/default.yaml";
-        path = "${config.home.homeDirectory}/.ANTHROPIC_API_KEY";
-      };
-      AZURE_OPENAI_API_KEY = {
-        sopsFile = lib.getFile "secrets/CORE/default.yaml";
-        path = "${config.home.homeDirectory}/.AZURE_OPENAI_API_KEY";
-      };
-      OPENAI_API_KEY = {
-        sopsFile = lib.getFile "secrets/CORE/default.yaml";
-        path = "${config.home.homeDirectory}/.OPENAI_API_KEY";
-      };
       TAVILY_API_KEY = {
         sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.TAVILY_API_KEY";
