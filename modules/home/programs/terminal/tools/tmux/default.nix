@@ -10,6 +10,11 @@ let
   inherit (lib) mkIf;
 
   cfg = config.khanelinix.programs.terminal.tools.tmux;
+  userShell = lib.attrByPath [ "users" "users" config.khanelinix.user.name "shell" ] (lib.attrByPath [
+    "home"
+    "sessionVariables"
+    "SHELL"
+  ] "" config) osConfig;
 
   plugins = with pkgs.tmuxPlugins; [
     {
@@ -70,8 +75,8 @@ in
         set -g set-titles
 
         ${lib.optionalString (
-          config.programs.tmux.sensibleOnTop && (osConfig != { })
-        ) /* Bash */ "set -g default-command ${osConfig.users.users.${config.khanelinix.user.name}.shell}"}
+          config.programs.tmux.sensibleOnTop && (userShell != "")
+        ) /* Bash */ "set -g default-command ${userShell}"}
       '';
 
       inherit plugins;
