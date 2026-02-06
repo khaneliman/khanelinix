@@ -30,6 +30,7 @@ let
       pkgs
       ;
   };
+  niri-modules = import ../modules/niri-modules.nix { };
   sway-modules = import ../modules/sway-modules.nix {
     inherit config lib;
   };
@@ -50,9 +51,11 @@ let
           "custom/power"
         ]
         ++ optionals config.khanelinix.programs.graphical.wms.hyprland.enable [ "hyprland/workspaces" ]
+        ++ optionals config.khanelinix.programs.graphical.wms.niri.enable [ "niri/workspaces" ]
         ++ optionals config.khanelinix.programs.graphical.wms.sway.enable [ "sway/workspaces" ]
         ++ [ "custom/separator-left" ]
         ++ optionals config.khanelinix.programs.graphical.wms.hyprland.enable [ "hyprland/window" ]
+        ++ optionals config.khanelinix.programs.graphical.wms.niri.enable [ "niri/window" ]
         ++ optionals config.khanelinix.programs.graphical.wms.sway.enable [ "sway/window" ];
       };
 
@@ -93,6 +96,7 @@ let
       default-modules
       group-modules
       (mkIf config.khanelinix.programs.graphical.wms.hyprland.enable hyprland-modules)
+      (mkIf config.khanelinix.programs.graphical.wms.niri.enable niri-modules)
       (mkIf config.khanelinix.programs.graphical.wms.sway.enable sway-modules)
     ];
 
