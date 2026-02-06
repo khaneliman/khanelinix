@@ -16,11 +16,11 @@ let
   cfg = config.khanelinix.services.spice-webdav;
 in
 {
-  options.khanelinix.services.spice-webdav = with types; {
+  options.khanelinix.services.spice-webdav = {
     enable = lib.mkEnableOption "spice-webdav proxy support";
     package = mkOption {
       default = pkgs.phodav;
-      defaultText = literalExpression "pkgs.phodav";
+      defaultText = lib.literalExpression "pkgs.phodav";
       description = "spice-webdavd provider package to use.";
       type = types.package;
     };
