@@ -9,6 +9,21 @@ let
   inherit (lib) mkIf;
 
   cfg = config.khanelinix.programs.terminal.tools.nh;
+
+  userHome = config.home.homeDirectory;
+
+  nhLogPaths = lib.attrByPath [ "khanelinix" "programs" "terminal" "tools" "nh" "logPaths" ] (
+    if pkgs.stdenv.hostPlatform.isDarwin then
+      {
+        stdout = "${userHome}/Library/Logs/nh/nh.out.log";
+        stderr = "${userHome}/Library/Logs/nh/nh.err.log";
+      }
+    else
+      {
+        stdout = "${userHome}/.local/state/nh/nh.out.log";
+        stderr = "${userHome}/.local/state/nh/nh.err.log";
+      }
+  ) osConfig;
 in
 {
   options.khanelinix.programs.terminal.tools.nh = {
@@ -27,8 +42,8 @@ in
     };
 
     launchd.agents.nh-clean.config = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-      StandardErrorPath = osConfig.khanelinix.programs.terminal.tools.nh.logPaths.stderr;
-      StandardOutPath = osConfig.khanelinix.programs.terminal.tools.nh.logPaths.stdout;
+      StandardErrorPath = nhLogPaths.stderr;
+      StandardOutPath = nhLogPaths.stdout;
       EnvironmentVariables = {
         PATH = "/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin:/usr/bin:/bin:/usr/sbin:/sbin";
       };
