@@ -35,6 +35,10 @@
     flake-compat.follows = "root/flake-compat";
 
     # keep-sorted start block=yes newline_separated=yes
+    flake-parts-website = {
+      url = "github:hercules-ci/flake.parts-website";
+    };
+
     devshell = {
       url = "github:numtide/devshell";
       inputs.nixpkgs.follows = "root/nixpkgs";
