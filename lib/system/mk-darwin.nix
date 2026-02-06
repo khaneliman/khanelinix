@@ -44,6 +44,7 @@ let
       extendedLib
       inputs
       system
+      hostname
       matchingHomes
       ;
     isNixOS = false;
@@ -62,8 +63,6 @@ inputs.nix-darwin.lib.darwinSystem {
   };
 
   modules = [
-    { _module.args.lib = extendedLib; }
-
     # Configure nixpkgs with overlays
     {
       nixpkgs = {

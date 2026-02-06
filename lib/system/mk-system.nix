@@ -44,6 +44,7 @@ let
       extendedLib
       inputs
       system
+      hostname
       matchingHomes
       ;
     isNixOS = true;
@@ -62,8 +63,6 @@ inputs.nixpkgs.lib.nixosSystem {
   };
 
   modules = [
-    { _module.args.lib = extendedLib; }
-
     # Configure nixpkgs with overlays
     {
       nixpkgs = {
