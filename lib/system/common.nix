@@ -1,8 +1,23 @@
 { inputs }:
 let
   inherit (inputs.nixpkgs.lib) filterAttrs mapAttrs';
+
+  /**
+    Shared Home Manager modules used by both standalone (mkHome) and integrated
+    (mkHomeManagerConfig) paths. Single source of truth to prevent drift.
+  */
+  hmSharedModules =
+    extendedLib:
+    [
+      inputs.catppuccin.homeModules.catppuccin
+      inputs.hypr-socket-watch.homeManagerModules.default
+      inputs.nix-index-database.homeModules.nix-index
+      inputs.sops-nix.homeManagerModules.sops
+    ]
+    ++ (extendedLib.importModulesRecursive ../../modules/home);
 in
 {
+  inherit hmSharedModules;
   /**
     Create an extended library with the flake's overlay.
 
@@ -111,6 +126,7 @@ in
       extendedLib,
       inputs,
       system,
+      hostname,
       matchingHomes,
       isNixOS ? true,
     }:
@@ -129,26 +145,18 @@ in
           useGlobalPkgs = true;
           useUserPackages = true;
           extraSpecialArgs = {
-            inherit inputs system;
+            inherit inputs system hostname;
             inherit (inputs) self;
             lib = extendedLib;
             flake-parts-lib = inputs.flake-parts.lib;
           };
-          sharedModules = [
-            { _module.args.lib = extendedLib; }
-          ]
-          ++ extendedLib.optional enableStylixHomeModule stylixHomeModule
-          # NOTE: https://github.com/nix-community/stylix/issues/1832
-          ++ extendedLib.optional enableStylixHomeModule {
-            stylix.overlays.enable = false;
-          }
-          ++ [
-            inputs.catppuccin.homeModules.catppuccin
-            inputs.hypr-socket-watch.homeManagerModules.default
-            inputs.nix-index-database.homeModules.nix-index
-            inputs.sops-nix.homeManagerModules.sops
-          ]
-          ++ (extendedLib.importModulesRecursive ../../modules/home);
+          sharedModules =
+            hmSharedModules extendedLib
+            ++ extendedLib.optional enableStylixHomeModule stylixHomeModule
+            # NOTE: https://github.com/nix-community/stylix/issues/1832
+            ++ extendedLib.optional enableStylixHomeModule {
+              stylix.overlays.enable = false;
+            };
           users = mapAttrs' (_name: homeConfig: {
             name = homeConfig.username;
             value = {

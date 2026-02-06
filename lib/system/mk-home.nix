@@ -46,21 +46,10 @@ inputs.home-manager.lib.homeManagerConfiguration {
       username
       system
       ;
-    inherit (flake) self;
+    inherit (inputs) self;
     lib = extendedLib;
     flake-parts-lib = inputs.flake-parts.lib;
   };
 
-  modules = [
-    { _module.args.lib = extendedLib; }
-
-    inputs.catppuccin.homeModules.catppuccin
-    inputs.hypr-socket-watch.homeManagerModules.default
-    inputs.nix-index-database.homeModules.nix-index
-    inputs.sops-nix.homeManagerModules.sops
-
-    # Import all home modules recursively
-  ]
-  ++ (extendedLib.importModulesRecursive ../../modules/home)
-  ++ modules;
+  modules = (common.hmSharedModules extendedLib) ++ modules;
 }
