@@ -44,7 +44,7 @@ in
     };
 
     xdg.configFile."kitty/nix.conf".text = /* Bash */ ''
-      launch zellij
+      launch zellij -l system
 
       new_tab khanelivim
       cd ${config.home.homeDirectory}/github/khanelivim
