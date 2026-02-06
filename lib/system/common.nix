@@ -138,14 +138,6 @@ in
             { _module.args.lib = extendedLib; }
           ]
           ++ extendedLib.optional enableStylixHomeModule stylixHomeModule
-          ++ (
-            if isNixOS then
-              [
-                inputs.home-manager.flakeModules.home-manager
-              ]
-            else
-              [ ]
-          )
           ++ [
             inputs.catppuccin.homeModules.catppuccin
             inputs.hypr-socket-watch.homeManagerModules.default
