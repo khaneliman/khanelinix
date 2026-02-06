@@ -138,6 +138,10 @@ in
             { _module.args.lib = extendedLib; }
           ]
           ++ extendedLib.optional enableStylixHomeModule stylixHomeModule
+          # NOTE: https://github.com/nix-community/stylix/issues/1832
+          ++ extendedLib.optional enableStylixHomeModule {
+            stylix.overlays.enable = false;
+          }
           ++ [
             inputs.catppuccin.homeModules.catppuccin
             inputs.hypr-socket-watch.homeManagerModules.default
