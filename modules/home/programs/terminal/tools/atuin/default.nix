@@ -10,6 +10,20 @@ let
 
   cfg = config.khanelinix.programs.terminal.tools.atuin;
 
+  userHome = config.home.homeDirectory;
+
+  atuinLogPaths = lib.attrByPath [ "khanelinix" "programs" "terminal" "tools" "atuin" "logPaths" ] (
+    if pkgs.stdenv.hostPlatform.isDarwin then
+      {
+        stdout = "${userHome}/Library/Logs/atuin/atuin.out.log";
+        stderr = "${userHome}/Library/Logs/atuin/atuin.err.log";
+      }
+    else
+      {
+        stdout = "${userHome}/.local/state/atuin/atuin.out.log";
+        stderr = "${userHome}/.local/state/atuin/atuin.err.log";
+      }
+  ) osConfig;
 in
 {
   options.khanelinix.programs.terminal.tools.atuin = {
@@ -19,8 +33,8 @@ in
 
   config = mkIf cfg.enable {
     launchd.agents.atuin-daemon.config = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-      StandardErrorPath = osConfig.khanelinix.programs.terminal.tools.atuin.logPaths.stderr;
-      StandardOutPath = osConfig.khanelinix.programs.terminal.tools.atuin.logPaths.stdout;
+      StandardErrorPath = atuinLogPaths.stderr;
+      StandardOutPath = atuinLogPaths.stdout;
     };
 
     programs.atuin = {
