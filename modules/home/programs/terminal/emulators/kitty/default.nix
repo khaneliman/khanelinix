@@ -211,6 +211,7 @@ in
           # clipboard
           copy_on_select = "yes";
           strip_trailing_spaces = "always";
+          clipboard_control = "write-clipboard write-primary read-clipboard read-primary";
 
           # Cursor
           cursor_shape = "underline";
