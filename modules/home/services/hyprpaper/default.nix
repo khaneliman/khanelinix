@@ -29,8 +29,14 @@ in
         with types;
         listOf (submodule {
           options = {
-            name = mkOption { type = str; };
-            wallpaper = mkOption { type = path; };
+            name = mkOption {
+              type = str;
+              description = "Monitor name (e.g. DP-1, HDMI-A-1).";
+            };
+            wallpaper = mkOption {
+              type = path;
+              description = "Wallpaper image path for this monitor.";
+            };
             fitMode = mkOption {
               type = types.enum [
                 "contain"
@@ -39,6 +45,7 @@ in
                 "fill"
               ];
               default = "cover";
+              description = "How the wallpaper fits this monitor (contain, cover, tile, fill).";
             };
             timeout = mkOpt types.int 30 "Timeout between each wallpaper change.";
           };
