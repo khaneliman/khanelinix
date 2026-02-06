@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) mkEnableOption mkIf;
-  inherit (lib.khanelinix) disabled enabled;
+  inherit (lib.khanelinix) enabled;
 
   cfg = config.khanelinix.programs.graphical.wms.niri;
 
@@ -48,11 +48,6 @@ in
         khanelinix = {
           programs = {
             graphical = {
-              bars = {
-                ashell = lib.mkDefault enabled;
-                waybar = lib.mkDefault disabled;
-              };
-
               launchers = {
                 anyrun = enabled;
                 vicinae = enabled;
