@@ -10,6 +10,7 @@ in
     ./configs.nix
     ./home.nix
     ./apps.nix
+    ./docs.nix
     inputs.flake-parts.flakeModules.partitions
   ];
 

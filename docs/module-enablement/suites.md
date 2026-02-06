@@ -1,33 +1,8 @@
-# Module Enablement Matrix
+# Suites
 
-This document provides a comprehensive overview of which modules, programs, and
-services are enabled by each archetype and suite in the khanelinix
-configuration.
+Suites bundle related modules by platform and purpose.
 
-## Archetype → Suite Mapping
-
-### NixOS Archetypes
-
-| Archetype   | Common | Desktop | Development | Games | VM | Wlroots | Special Services  |
-| ----------- | ------ | ------- | ----------- | ----- | -- | ------- | ----------------- |
-| workstation | ✅     | ✅      | ✅          | ❌    | ❌ | ❌      | -                 |
-| personal    | ✅     | ❌      | ❌          | ❌    | ❌ | ❌      | tailscale         |
-| gaming      | ✅     | ✅      | ❌          | ✅    | ❌ | ❌      | -                 |
-| server      | ✅     | ❌      | ❌          | ❌    | ❌ | ❌      | -                 |
-| vm          | ✅     | ✅      | ✅          | ❌    | ✅ | ❌      | -                 |
-| wsl         | ❌     | ❌      | ❌          | ❌    | ❌ | ❌      | Custom WSL config |
-
-### Darwin Archetypes
-
-| Archetype   | Business | Common | Desktop | Development | Art | Music | Photo | Social | Video | VM |
-| ----------- | -------- | ------ | ------- | ----------- | --- | ----- | ----- | ------ | ----- | -- |
-| workstation | ✅       | ✅     | ✅      | ✅          | ❌  | ❌    | ❌    | ❌     | ❌    | ❌ |
-| personal    | ❌       | ✅     | ❌      | ❌          | ✅  | ✅    | ✅    | ✅     | ✅    | ❌ |
-| vm          | ❌       | ✅     | ✅      | ✅          | ❌  | ❌    | ❌    | ❌     | ❌    | ✅ |
-
-## Suite Module Breakdown
-
-### Shared Suites (Cross-Platform)
+## Shared Suites (Cross-Platform)
 
 <details>
 <summary><strong>Common Suite</strong> (<code>modules/common/suites/common/</code>)</summary>
@@ -50,7 +25,7 @@ configuration.
 
 </details>
 
-### NixOS Suites
+## NixOS Suites
 
 <details>
 <summary><strong>Common Suite</strong> (<code>modules/nixos/suites/common/</code>)</summary>
@@ -144,7 +119,7 @@ configuration.
 
 </details>
 
-### Darwin Suites
+## Darwin Suites
 
 <details>
 <summary><strong>Art Suite</strong></summary>
@@ -213,13 +188,13 @@ configuration.
 | **Games**      | `moonlight`, `steam` (Homebrew)                                     |
 | **Music**      | GarageBand (Mac App Store)                                          |
 | **Networking** | `tailscale` service                                                 |
-| **Social**     | ``slack@beta` (Homebrew)                                            |
+| **Social**     | `slack@beta` (Homebrew)                                             |
 | **Video**      | `ffmpeg` (system), `plex` (Homebrew), Infuse/iMovie (Mac App Store) |
 | **VM**         | `vte` (system), `utm` (Homebrew)                                    |
 
 </details>
 
-### Home Manager Suites
+## Home Manager Suites
 
 <details>
 <summary><strong>Common Suite</strong></summary>
@@ -275,34 +250,3 @@ Extensive nixpkgs and home-manager development shortcuts
 | **Wlroots**    | Wayland tools     | `waybar`, `swaync`, clipboard/screen tools                 |
 
 </details>
-
-## Usage Patterns
-
-| Archetype       | Purpose                                    | Best For                      |
-| --------------- | ------------------------------------------ | ----------------------------- |
-| **Workstation** | Full development + desktop                 | Professional development work |
-| **Personal**    | Basic system (NixOS) / multimedia (Darwin) | Home use, media consumption   |
-| **Gaming**      | Desktop + gaming optimization              | Gaming systems                |
-| **Server**      | Minimal system only                        | Headless servers              |
-| **VM**          | Desktop + development + VM services        | Virtual machine guests        |
-| **WSL**         | Windows subsystem optimization             | Windows development           |
-
-## Override System
-
-The configuration uses `lib.mkDefault enabled` pattern, allowing easy
-customization:
-
-```nix
-# Enable a suite
-khanelinix.suites.development.enable = true;
-
-# Override individual modules
-khanelinix.programs.graphical.apps.steam.enable = false;
-
-# Configure suite options
-khanelinix.suites.development = {
-  enable = true;
-  aiEnable = true;
-  dockerEnable = true;
-};
-```

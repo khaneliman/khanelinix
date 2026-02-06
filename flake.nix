@@ -11,6 +11,7 @@
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
+    flake-parts-website.url = "github:hercules-ci/flake.parts-website";
 
     # System management
     disko = {
