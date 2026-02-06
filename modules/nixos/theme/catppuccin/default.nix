@@ -65,6 +65,7 @@ in
         inherit (cfg) accent;
         variant = cfg.flavor;
       };
+      description = "Catppuccin package configured with the selected accent and flavor.";
     };
   };
 
