@@ -21,6 +21,7 @@ in
     musicDirectory = mkOption {
       type = with types; either path str;
       default = config.xdg.userDirs.music;
+      defaultText = lib.literalExpression "config.xdg.userDirs.music";
       apply = toString; # Prevent copies to Nix store.
       description = ''
         The directory where mpd reads music from.
