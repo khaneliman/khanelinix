@@ -15,8 +15,8 @@ in
   options.khanelinix.programs.terminal.tools.prisma = with types; {
     enable = lib.mkEnableOption "Prisma";
     pkgs = {
-      npm = mkOpt package pkgs.nodePackages.prisma "The NPM package to install";
-      engines = mkOpt package pkgs.prisma-engines "The package to get prisma engines from";
+      npm = mkOpt package pkgs.prisma_7 "The NPM package to install";
+      engines = mkOpt package pkgs.prisma-engines_7 "The package to get prisma engines from";
     };
   };
 
