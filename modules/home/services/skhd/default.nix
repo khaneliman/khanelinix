@@ -10,15 +10,24 @@ let
   inherit (lib) mkIf getExe;
   inherit (lib.khanelinix) mkOpt;
 
+  cfg = config.khanelinix.services.skhd;
+
+  userHome = config.home.homeDirectory;
+
   sketchybar = getExe (config.programs.sketchybar.finalPackage or pkgs.sketchybar);
+
   yabai =
     if (osConfig ? services.yabai.package) then
       getExe osConfig.services.yabai.package
     else
       getExe pkgs.yabai;
 
-  cfg = config.khanelinix.services.skhd;
-  inherit (osConfig.khanelinix.services.skhd) logPath;
+  logPath = lib.attrByPath [ "khanelinix" "services" "skhd" "logPath" ] (
+    if pkgs.stdenv.hostPlatform.isDarwin then
+      "${userHome}/Library/Logs/skhd/skhd.out.log"
+    else
+      "${userHome}/.local/state/skhd/skhd.out.log"
+  ) osConfig;
 in
 {
   options.khanelinix.services.skhd = {
