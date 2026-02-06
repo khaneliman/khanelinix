@@ -43,7 +43,6 @@ in
   flake = {
     overlays = dynamicOverlaysSet // {
       default = khanelinixPackagesOverlay;
-      khanelinix = khanelinixPackagesOverlay;
     };
   };
 }
