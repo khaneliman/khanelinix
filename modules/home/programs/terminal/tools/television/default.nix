@@ -18,10 +18,20 @@ in
       enable = true;
 
       settings = {
-        ui = {
-          use_nerd_font_icons = true;
-          theme = lib.mkIf (!config.khanelinix.theme.catppuccin.enable) "catppuccin";
-        };
+        ui = lib.mkMerge [
+          {
+            use_nerd_font_icons = true;
+          }
+          (lib.mkIf config.khanelinix.theme.catppuccin.enable {
+            theme = "catppuccin";
+          })
+          (lib.mkIf config.khanelinix.theme.nord.enable {
+            theme = "nord";
+          })
+          (lib.mkIf config.khanelinix.theme.tokyonight.enable {
+            theme = "tokyonight";
+          })
+        ];
       };
     };
   };

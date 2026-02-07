@@ -34,6 +34,7 @@ let
       "lazygit"
       "ncspot"
       "neovim"
+      "television"
       "tmux"
       "vesktop"
       "vicinae"
@@ -51,6 +52,7 @@ let
       "helix"
       "kitty"
       "neovim"
+      "television"
       "tmux"
       "yazi"
     ];
@@ -70,6 +72,7 @@ let
       "lazygit"
       "ncspot"
       "neovim"
+      "television"
       "tmux"
       "vesktop"
       "vicinae"
