@@ -22,12 +22,13 @@ in
             background = colors.bg_dark;
             foreground = colors.fg;
             leading_diamond = "<${colors.comment},transparent>╭─</>";
+            trailing_diamond = "";
             template = " {{ if .WSL }}WSL at {{ end }}{{.Icon}} ";
           }
           {
             type = "path";
             style = "powerline";
-            powerline_symbol = "";
+            powerline_symbol = "";
             background = colors.blue;
             foreground = colors.bg;
             template = "  {{ .Path }} ";
@@ -39,7 +40,7 @@ in
           {
             type = "git";
             style = "powerline";
-            powerline_symbol = "";
+            powerline_symbol = "";
             background = colors.green;
             foreground = colors.bg;
             background_templates = [
@@ -59,7 +60,7 @@ in
           {
             type = "jujutsu";
             style = "powerline";
-            powerline_symbol = "";
+            powerline_symbol = "";
             background = colors.green;
             foreground = colors.bg;
             properties = {
@@ -76,7 +77,7 @@ in
           {
             type = "node";
             style = "powerline";
-            powerline_symbol = "";
+            powerline_symbol = "";
             invert_powerline = true;
             background = colors.green;
             foreground = colors.fg;
@@ -88,7 +89,7 @@ in
           {
             type = "go";
             style = "powerline";
-            powerline_symbol = "";
+            powerline_symbol = "";
             invert_powerline = true;
             background = colors.cyan;
             foreground = colors.bg;
@@ -100,7 +101,7 @@ in
           {
             type = "julia";
             style = "powerline";
-            powerline_symbol = "";
+            powerline_symbol = "";
             invert_powerline = true;
             background = colors.blue;
             foreground = colors.bg;
@@ -112,7 +113,7 @@ in
           {
             type = "python";
             style = "powerline";
-            powerline_symbol = "";
+            powerline_symbol = "";
             invert_powerline = true;
             background = colors.yellow;
             foreground = colors.bg;
@@ -125,7 +126,7 @@ in
           {
             type = "ruby";
             style = "powerline";
-            powerline_symbol = "";
+            powerline_symbol = "";
             invert_powerline = true;
             background = colors.red;
             foreground = colors.fg;
@@ -138,7 +139,7 @@ in
           {
             type = "azfunc";
             style = "powerline";
-            powerline_symbol = "";
+            powerline_symbol = "";
             invert_powerline = true;
             background = colors.orange;
             foreground = colors.fg;
@@ -151,7 +152,7 @@ in
           {
             type = "aws";
             style = "powerline";
-            powerline_symbol = "";
+            powerline_symbol = "";
             invert_powerline = true;
             foreground = colors.fg;
             background_templates = [
@@ -166,7 +167,7 @@ in
           {
             type = "root";
             style = "powerline";
-            powerline_symbol = "";
+            powerline_symbol = "";
             invert_powerline = true;
             background = colors.yellow;
             foreground = colors.bg;
@@ -175,7 +176,7 @@ in
           {
             type = "executiontime";
             style = "powerline";
-            powerline_symbol = "";
+            powerline_symbol = "";
             invert_powerline = true;
             background = colors.yellow;
             foreground = colors.bg;
@@ -184,7 +185,7 @@ in
           {
             type = "exit";
             style = "powerline";
-            powerline_symbol = "";
+            powerline_symbol = "";
             invert_powerline = true;
             background = colors.bg_dark;
             foreground = colors.green;
