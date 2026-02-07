@@ -50,12 +50,15 @@ let
     ];
     nord = [
       "alacritty"
+      "ghostty"
       "helix"
       "kitty"
       "neovim"
       "superfile"
       "television"
       "tmux"
+      "vicinae"
+      "wezterm"
       "yazi"
     ];
     tokyonight = [
