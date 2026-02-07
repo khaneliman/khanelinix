@@ -185,12 +185,14 @@ in
           # Focus bindings (matching Hyprland ALT pattern, adapted for Niri's scrolling)
           "Alt+Left".action.focus-column-left = [ ];
           "Alt+Right".action.focus-column-right = [ ];
-          "Alt+Down".action.focus-workspace-down = [ ];
-          "Alt+Up".action.focus-workspace-up = [ ];
           "Alt+H".action.focus-column-left = [ ];
           "Alt+L".action.focus-column-right = [ ];
-          "Alt+J".action.focus-workspace-down = [ ];
-          "Alt+K".action.focus-workspace-up = [ ];
+
+          # Workspace focus bindings
+          "Ctrl+Alt+Down".action.focus-workspace-down = [ ];
+          "Ctrl+Alt+Up".action.focus-workspace-up = [ ];
+          "Ctrl+Alt+J".action.focus-workspace-down = [ ];
+          "Ctrl+Alt+K".action.focus-workspace-up = [ ];
 
           # Move window bindings (using Mod+Shift to avoid conflict with Mod+L lock)
           "Mod+Left".action.move-column-left = [ ];
