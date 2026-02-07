@@ -17,10 +17,20 @@ in
   config = mkIf cfg.enable {
     programs.superfile = {
       enable = true;
-      settings = {
-        # transparent_background = false;
-        theme = "catppuccin";
-      };
+      settings = lib.mkMerge [
+        {
+          # transparent_background = false;
+        }
+        (lib.mkIf config.khanelinix.theme.catppuccin.enable {
+          theme = "catppuccin";
+        })
+        (lib.mkIf config.khanelinix.theme.nord.enable {
+          theme = "nord";
+        })
+        (lib.mkIf config.khanelinix.theme.tokyonight.enable {
+          theme = "tokyonight";
+        })
+      ];
     };
   };
 }
