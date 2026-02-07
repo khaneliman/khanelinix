@@ -11,12 +11,12 @@ let
 in
 {
   "$schema" = "/etc/xdg/swaync/configSchema.json";
-  control-center-height = 600;
+  control-center-height = 640;
   control-center-margin-bottom = 0;
-  control-center-margin-left = 0;
-  control-center-margin-right = 10;
-  control-center-margin-top = 10;
-  control-center-width = 500;
+  control-center-margin-left = 12;
+  control-center-margin-right = 12;
+  control-center-margin-top = 12;
+  control-center-width = 480;
   cssPriority = "user";
   fit-to-screen = true;
   hide-on-action = true;
@@ -24,19 +24,19 @@ in
   image-visibility = "when-available";
   keyboard-shortcuts = true;
   layer = "top";
-  notification-body-image-height = 100;
-  notification-body-image-width = 200;
-  notification-icon-size = 64;
+  notification-body-image-height = 120;
+  notification-body-image-width = 240;
+  notification-icon-size = 56;
   notification-visibility = { };
-  notification-window-width = 500;
+  notification-window-width = 460;
   positionX = "right";
   positionY = "top";
   script-fail-notify = true;
   scripts = { };
-  timeout = 10;
+  timeout = 8;
   timeout-critical = 0;
-  timeout-low = 5;
-  transition-time = 200;
+  timeout-low = 4;
+  transition-time = 220;
 
   widgets = [
     "label"
@@ -63,8 +63,8 @@ in
       text = "Control Center";
     };
     mpris = {
-      image-size = 96;
-      image-radius = 12;
+      image-size = 112;
+      image-radius = 16;
     };
     "backlight#KB" = {
       label = " ";

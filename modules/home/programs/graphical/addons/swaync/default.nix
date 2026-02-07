@@ -33,7 +33,7 @@ let
       ;
   };
 
-  style = import ./style.nix { inherit lib; };
+  style = import ./style.nix { inherit config lib; };
 in
 {
   options.khanelinix.programs.graphical.addons.swaync = {
