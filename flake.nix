@@ -90,6 +90,7 @@
         flake-parts.follows = "flake-parts";
       };
     };
+    llm-agents.url = "github:numtide/llm-agents.nix";
     nh = {
       url = "github:nix-community/nh";
       inputs.nixpkgs.follows = "nixpkgs";
