@@ -9,7 +9,7 @@
 
 window#waybar {
   border: 2px solid @base03;
-  background: @base;
+  background: @base00;
   box-shadow: 1px 1px 10px 10px @base01;
   color: @base05;
   transition-property: background-color;
@@ -21,7 +21,7 @@ window#waybar.hidden {
 }
 
 tooltip {
-  background: @base;
+  background: @base00;
   border: 1px solid @base0D;
 }
 
