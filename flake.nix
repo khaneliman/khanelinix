@@ -33,8 +33,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     nix-rosetta-builder = {
-      # url = "github:cpick/nix-rosetta-builder";
-      url = "github:khaneliman/nix-rosetta-builder/speedfactor";
+      url = "github:cpick/nix-rosetta-builder";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     nixos-wsl = {
