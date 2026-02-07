@@ -57,7 +57,7 @@ in
     _1password-gui
 
     # Online services to keep up to date
-    element-desktop
+    # element-desktop
     firefox-devedition
     firefox-devedition-unwrapped
     teams-for-linux
