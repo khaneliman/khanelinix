@@ -21,13 +21,19 @@ in
   };
 
   #          ╭──────────────────────────────────────────────────────────╮
+  #          │                       LLM programs                       │
+  #          ╰──────────────────────────────────────────────────────────╯
+  inherit (inputs.llm-agents.packages.${final.stdenv.hostPlatform.system})
+    claude-code
+    codex
+    opencode
+    gemini-cli
+    ;
+
+  #          ╭──────────────────────────────────────────────────────────╮
   #          │ From nixpkgs-master (fast updating / want latest always) │
   #          ╰──────────────────────────────────────────────────────────╯
   inherit (master)
-    claude-code
-    codex
-    gemini-cli
-    opencode
     yazi-unwrapped
     yaziPlugins
 
