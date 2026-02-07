@@ -120,7 +120,7 @@ in
 
               exec-once = [
                 (lib.concatStringsSep " " [
-                  "${getExe pkgs.xorg.xrandr}"
+                  "${getExe pkgs.xrandr}"
                   "--output DP-3 --mode 1920x1080 --pos 1420x0 --rotate normal"
                   "--output DP-1 --primary --mode 5120x1440 --pos 0x1080 --rotate normal"
                 ])
