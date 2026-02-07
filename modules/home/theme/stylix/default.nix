@@ -58,6 +58,7 @@ let
       "alacritty"
       "bat"
       "btop"
+      "cava"
       "delta"
       "fish"
       "foot"
