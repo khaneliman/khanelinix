@@ -277,6 +277,7 @@ in
             "https://niri.cachix.org"
             "https://nixpkgs-unfree.cachix.org"
             "https://numtide.cachix.org"
+            "https://cache.numtide.com"
           ];
 
           trusted-public-keys = [
@@ -287,6 +288,7 @@ in
             "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
             "nixpkgs-unfree.cachix.org-1:hqvoInulhbV4nJ9yJOEr+4wxhDV4xq2d1DK7S6Nj6rs="
             "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE="
+            "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
           ];
 
           use-xdg-base-directories = true;
