@@ -26,8 +26,7 @@ let
           {
             # Automatically disable dependencies that are already in home.packages
             dependencies = lib.genAttrs neovimLib.dependenciesToDisable (_: disabled);
-          }
-          {
+
             # FIXME: insane memory usage
             # lsp.servers.nixd.settings.settings.nixd =
             #   let
@@ -43,6 +42,15 @@ let
           }
         ];
       }
+      (lib.mkIf (config.khanelinix.theme.catppuccin.enable or false) {
+        khanelivim.ui.theme = "catppuccin";
+      })
+      (lib.mkIf (config.khanelinix.theme.nord.enable or false) {
+        khanelivim.ui.theme = "nord";
+      })
+      (lib.mkIf (config.khanelinix.theme.tokyonight.enable or false) {
+        khanelivim.ui.theme = "tokyonight";
+      })
       (lib.mkIf (osConfig.khanelinix.archetypes.wsl.enable or false) {
         # FIXME: upstream dependency has LONG build time and transient failures
         # Usually crashes WSL
@@ -71,19 +79,9 @@ let
         '';
       })
     ]
-    ++ cfg.extraModules
-    ++ [
-      (lib.mkIf (config.khanelinix.theme.catppuccin.enable or false) {
-        khanelivim.ui.theme = "catppuccin";
-      })
-      (lib.mkIf (config.khanelinix.theme.nord.enable or false) {
-        khanelivim.ui.theme = "nord";
-      })
-      (lib.mkIf (config.khanelinix.theme.tokyonight.enable or false) {
-        khanelivim.ui.theme = "tokyonight";
-      })
-    ];
+    ++ cfg.extraModules;
   };
+
   khanelivim = khanelivimConfigurationExtended.config.build.package;
 in
 {
