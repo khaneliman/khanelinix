@@ -4,12 +4,10 @@
   pkgs,
 
   osConfig ? { },
-  inputs,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (inputs) yazi-flavors;
 
   cfg = config.khanelinix.programs.terminal.tools.yazi;
   isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
@@ -85,20 +83,6 @@ in
         (import ./keymap/select.nix)
         (import ./keymap/tasks.nix)
       ];
-
-      flavors =
-        if config.khanelinix.theme.nord.enable then
-          {
-            dark = "nord";
-            light = "nord";
-          }
-        else if config.khanelinix.theme.catppuccin.enable then
-          {
-            dark = "${yazi-flavors}/catppuccin-macchiato.yazi";
-            light = "${yazi-flavors}/catppuccin-frappe.yazi";
-          }
-        else
-          { };
 
       plugins = {
         "arrow-parent" = ./plugins/arrow-parent.yazi;

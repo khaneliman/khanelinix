@@ -16,6 +16,7 @@ let
     ;
 
   inherit (lib.khanelinix) enabled;
+  inherit (inputs) yazi-flavors;
 
   palette = import ./colors.nix;
 
@@ -295,13 +296,19 @@ in
             end
           '';
 
-          yazi.theme = lib.mkForce (
-            lib.mkMerge [
-              (import ./yazi/filetype.nix)
-              (import ./yazi/manager.nix)
-              (import ./yazi/theme.nix)
-            ]
-          );
+          yazi = {
+            flavors = {
+              dark = "${yazi-flavors}/catppuccin-macchiato.yazi";
+              light = "${yazi-flavors}/catppuccin-frappe.yazi";
+            };
+            theme = lib.mkForce (
+              lib.mkMerge [
+                (import ./yazi/filetype.nix)
+                (import ./yazi/manager.nix)
+                (import ./yazi/theme.nix)
+              ]
+            );
+          };
         };
 
         wayland.windowManager.hyprland.settings.plugin.hyprbars = {
