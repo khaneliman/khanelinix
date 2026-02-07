@@ -2,31 +2,31 @@
   config,
   inputs,
   lib,
-
-  osConfig ? { },
+  options,
   pkgs,
   system,
+
+  osConfig ? { },
   ...
 }:
 let
-  inherit (lib.khanelinix) mkBoolOpt;
+  inherit (lib.khanelinix) disabled mkBoolOpt;
   inherit (lib) mkOption types;
 
   cfg = config.khanelinix.programs.terminal.editors.neovim;
 
   khanelivimConfiguration = inputs.khanelivim.nixvimConfigurations.${system}.khanelivim;
+
+  neovimLib = import ./lib.nix { inherit lib options khanelivimConfiguration; };
+
   khanelivimConfigurationExtended = khanelivimConfiguration.extendModules {
     modules = [
       {
         config = lib.mkMerge [
           {
-            # NOTE: Conflicting package definitions, use the package from this flake.
-            dependencies.yazi.enable = false;
+            # Automatically disable dependencies that are already in home.packages
+            dependencies = lib.genAttrs neovimLib.dependenciesToDisable (_: disabled);
           }
-          (lib.mkIf (config.programs.claude-code.enable or false) {
-            # Use wrapped version of the package
-            dependencies.claude-code.package = config.programs.claude-code.finalPackage;
-          })
           {
             # FIXME: insane memory usage
             # lsp.servers.nixd.settings.settings.nixd =
