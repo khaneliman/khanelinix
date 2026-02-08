@@ -92,7 +92,6 @@ in
           # NOTE: hard to get out of neovim
           # antigravity
           github-copilot-cli
-          codex
           tuicr
         ];
 
@@ -164,6 +163,7 @@ in
             act = mkDefault enabled;
             azure.enable = cfg.azureEnable;
             claude-code.enable = cfg.aiEnable;
+            codex.enable = cfg.aiEnable;
             gemini-cli.enable = cfg.aiEnable;
             mcp.enable = cfg.aiEnable;
             opencode.enable = cfg.aiEnable;
