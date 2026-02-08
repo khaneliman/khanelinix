@@ -15,8 +15,8 @@ let
     "generate-tests" = "test-runner";
 
     "commit-changes" = "code-reviewer";
-    "git-history" = "code-reviewer";
-    "git-resolve" = "code-reviewer";
+    "analyze-git-history" = "code-reviewer";
+    "resolve-conflicts" = "code-reviewer";
     "git-bisect" = "code-reviewer";
     "git-cleanup" = "code-reviewer";
 
