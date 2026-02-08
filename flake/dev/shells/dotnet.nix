@@ -56,8 +56,6 @@ let
     version:
     let
       versionSdks = {
-        "6" = devPkgs.dotnet-sdk_6;
-        "7" = devPkgs.dotnet-sdk_7;
         "8" = devPkgs.dotnet-sdk_8;
         "9" = devPkgs.dotnet-sdk_9;
         "10" = devPkgs.dotnet-sdk_10;
@@ -70,13 +68,9 @@ let
         with devPkgs;
         [
           selectedSdk
-          dotnet-runtime_6
-          dotnet-runtime_7
           dotnet-runtime_8
           dotnet-runtime_9
           dotnet-runtime_10
-          dotnet-aspnetcore_6
-          dotnet-aspnetcore_7
           dotnet-aspnetcore_8
           dotnet-aspnetcore_9
           dotnet-aspnetcore_10
@@ -108,8 +102,6 @@ let
 
   # Generate dotnet shells for each version
   dotnetVersions = [
-    "6"
-    "7"
     "8"
     "9"
     "10"
@@ -126,13 +118,9 @@ let
     with devPkgs;
     [
       dotnet-sdk_10
-      dotnet-runtime_6
-      dotnet-runtime_7
       dotnet-runtime_8
       dotnet-runtime_9
       dotnet-runtime_10
-      dotnet-aspnetcore_6
-      dotnet-aspnetcore_7
       dotnet-aspnetcore_8
       dotnet-aspnetcore_9
       dotnet-aspnetcore_10

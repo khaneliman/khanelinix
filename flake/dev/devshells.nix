@@ -25,24 +25,7 @@
         inherit (pkgs.stdenv.hostPlatform) system;
         config = pkgs.config // {
           allowUnfree = true;
-          permittedInsecurePackages = (pkgs.config.permittedInsecurePackages or [ ]) ++ [
-            # dotnet packages
-            "aspnetcore-runtime-6.0.36"
-            "aspnetcore-runtime-7.0.20"
-            "aspnetcore-runtime-wrapped-7.0.20"
-            "aspnetcore-runtime-wrapped-6.0.36"
-            "dotnet-combined"
-            "dotnet-core-combined"
-            "dotnet-runtime-6.0.36"
-            "dotnet-runtime-7.0.20"
-            "dotnet-runtime-wrapped-6.0.36"
-            "dotnet-runtime-wrapped-7.0.20"
-            "dotnet-sdk-6.0.428"
-            "dotnet-sdk-7.0.410"
-            "dotnet-sdk-wrapped-6.0.428"
-            "dotnet-sdk-wrapped-7.0.410"
-            "dotnet-wrapped-combined"
-          ];
+          permittedInsecurePackages = pkgs.config.permittedInsecurePackages or [ ];
         };
         overlays = lib.attrValues overlaysConfig.flake.overlays;
       };
