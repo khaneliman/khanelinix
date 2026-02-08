@@ -131,7 +131,9 @@ When using Claude Code, specialized agents are available:
 
 ## Getting Help
 
-- Check the [CLAUDE.md](./CLAUDE.md) file for detailed development guidelines
+- Check the [AGENTS.md](./AGENTS.md) file for shared agent guidelines
+- If using Claude Code, also check [CLAUDE.md](./CLAUDE.md) for Claude-specific
+  extensions
 - Use the specialized Claude Code agents for complex tasks
 - Ensure you understand the module structure before making changes
 

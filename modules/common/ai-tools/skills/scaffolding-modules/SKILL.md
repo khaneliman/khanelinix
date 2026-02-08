@@ -73,7 +73,7 @@ Module Creation Progress:
 - [ ] Step 4: Implement config with mkIf guard
 - [ ] Step 5: Test module in isolation
 - [ ] Step 6: Verify auto-discovery worked
-- [ ] Step 7: Document in appropriate CLAUDE.md
+- [ ] Step 7: Document in AGENTS.md (and CLAUDE.md if Claude-specific)
 ```
 
 ### Step 1: Determine Location
@@ -134,7 +134,8 @@ nix eval .#homeConfigurations.<user>@<host>.config.khanelinix.programs.terminal.
 
 ### Step 7: Document
 
-Update the appropriate CLAUDE.md file with your new module.
+Update `AGENTS.md` with new module guidance when needed. If the change is
+Claude-specific, also update `CLAUDE.md`.
 
 ## Module Location Quick Reference
 
