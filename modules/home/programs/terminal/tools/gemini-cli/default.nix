@@ -28,6 +28,8 @@ in
       enable = true;
 
       settings = {
+        contextFilename = "AGENTS.md";
+
         ui = {
           theme = "Default";
           footer = {
@@ -76,7 +78,7 @@ in
       };
 
       context = {
-        GEMINI = lib.getFile "modules/common/ai-tools/base.md";
+        AGENTS = lib.getFile "modules/common/ai-tools/base.md";
       };
 
       commands =
