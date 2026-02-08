@@ -171,18 +171,13 @@ in
         hooks = {
           pre-commit = lib.getExe (
             pkgs.writeShellScriptBin "pre-commit" ''
-              #  CONFLICT_PATTERNS = [
-              #     b'<<<<<<< ',
-              #     b'======= ',
-              #     b'=======\r\n',
-              #     b'=======\n',
-              #     b'>>>>>>> ',
-              # ]
-              # Regex breakdown:
-              # ^(<<<<<<< |>>>>>>> )  -> Matches start/end markers (which always have a trailing space)
-              # |                     -> OR
-              # ^=======( |$)         -> Matches middle marker followed by a space OR end-of-line (handles \n and \r\n)
-              if git grep --cached -qE "^(<<<<<<< |>>>>>>> |=======( |$))"; then
+              # Check only staged files for unambiguous conflict start/end markers.
+              mapfile -t stagedFiles < <(
+                git diff --cached --name-only --diff-filter=ACMR
+              )
+
+              if ((''${#stagedFiles[@]})) && \
+                git grep --cached -I -qE "^(<<<<<<< |>>>>>>> )" -- "''${stagedFiles[@]}"; then
                 echo "Error: You have leftover merge conflict markers."
                 exit 1
               fi
