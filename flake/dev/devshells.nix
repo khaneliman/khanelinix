@@ -14,22 +14,6 @@
       ...
     }:
     let
-      # Import the overlay configuration
-      overlaysConfig = import ../overlays.nix {
-        inherit inputs lib self;
-      };
-
-      # Custom pkgs with insecure packages allowed for devshells
-      # Use the existing pkgs but allow insecure packages by creating a new instance
-      devPkgs = import pkgs.path {
-        inherit (pkgs.stdenv.hostPlatform) system;
-        config = pkgs.config // {
-          allowUnfree = true;
-          permittedInsecurePackages = pkgs.config.permittedInsecurePackages or [ ];
-        };
-        overlays = lib.attrValues overlaysConfig.flake.overlays;
-      };
-
       shellsPath = ./shells;
       shellFiles = lib.filterAttrs (
         name: type: type == "regular" && lib.hasSuffix ".nix" name && name != "dotnet.nix" # Handle dotnet specially
@@ -38,7 +22,7 @@
 
       # Import dotnet shells (special case that generates multiple shells)
       dotnetShells = import (shellsPath + "/dotnet.nix") {
-        inherit lib devPkgs;
+        inherit lib pkgs;
       };
 
       buildShell = name: {
@@ -47,12 +31,12 @@
             config
             inputs
             lib
+            pkgs
             self
             self'
             system
             ;
-          inherit (devPkgs) mkShell;
-          pkgs = devPkgs;
+          inherit (pkgs) mkShell;
         };
       };
     in

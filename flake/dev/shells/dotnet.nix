@@ -1,11 +1,11 @@
 {
   lib,
-  devPkgs,
+  pkgs,
   ...
 }:
 let
   baseDotnetShell = {
-    packages = with devPkgs; [
+    packages = with pkgs; [
       dotnetbuildhelpers
       dotnetPackages.Nuget
       mono
@@ -16,7 +16,7 @@ let
     ];
 
     shellHook = versionLabel: ''
-      export NUGET_PLUGIN_PATHS=${devPkgs.khanelinix.artifacts-credprovider}/bin/netcore/CredentialProvider.Microsoft/CredentialProvider.Microsoft.dll
+      export NUGET_PLUGIN_PATHS=${pkgs.khanelinix.artifacts-credprovider}/bin/netcore/CredentialProvider.Microsoft/CredentialProvider.Microsoft.dll
       export PATH="$PATH:$HOME/.dotnet/tools"
 
       echo "🔨 ${versionLabel}"
@@ -56,16 +56,16 @@ let
     version:
     let
       versionSdks = {
-        "8" = devPkgs.dotnet-sdk_8;
-        "9" = devPkgs.dotnet-sdk_9;
-        "10" = devPkgs.dotnet-sdk_10;
+        "8" = pkgs.dotnet-sdk_8;
+        "9" = pkgs.dotnet-sdk_9;
+        "10" = pkgs.dotnet-sdk_10;
       };
 
       selectedSdk = versionSdks.${version} or (throw "Unsupported .NET version: ${version}");
 
       # Combine the SDK with all runtimes
-      combinedDotnet = devPkgs.dotnetCorePackages.combinePackages (
-        with devPkgs;
+      combinedDotnet = pkgs.dotnetCorePackages.combinePackages (
+        with pkgs;
         [
           selectedSdk
           dotnet-runtime_8
@@ -77,7 +77,7 @@ let
         ]
       );
     in
-    devPkgs.mkShell {
+    pkgs.mkShell {
       packages =
         baseDotnetShell.packages
         ++ [ combinedDotnet ]
@@ -85,7 +85,7 @@ let
           if version < "9" then
             [
               # Special handling for .NET csharp-ls override
-              (devPkgs.csharp-ls.overrideAttrs (_oldAttrs: {
+              (pkgs.csharp-ls.overrideAttrs (_oldAttrs: {
                 useDotnetFromEnv = false;
                 meta.badPlatforms = [ ];
               }))
@@ -114,8 +114,8 @@ let
   );
 
   # Combine SDK 10 with all runtimes
-  combinedDotnet10 = devPkgs.dotnetCorePackages.combinePackages (
-    with devPkgs;
+  combinedDotnet10 = pkgs.dotnetCorePackages.combinePackages (
+    with pkgs;
     [
       dotnet-sdk_10
       dotnet-runtime_8
@@ -128,7 +128,7 @@ let
   );
 
   baseShell = {
-    dotnet = devPkgs.mkShell {
+    dotnet = pkgs.mkShell {
       packages = baseDotnetShell.packages ++ [ combinedDotnet10 ];
 
       shellHook = ''
