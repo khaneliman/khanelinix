@@ -69,6 +69,34 @@ in
 
         sandbox_mode = "workspace-write";
 
+        profiles = {
+          # Deep, deliberate analysis mode.
+          deep = {
+            model_reasoning_effort = "xhigh";
+            model_verbosity = "high";
+            approval_policy = "on-request";
+          };
+
+          # Faster implementation loop for coding tasks.
+          quick = {
+            model_reasoning_effort = "medium";
+            model_reasoning_summary = "none";
+            model_verbosity = "low";
+            approval_policy = "on-request";
+          };
+
+          # Force local-only behavior when you do not want network access.
+          offline = {
+            sandbox_workspace_write.network_access = false;
+          };
+
+          # Token-enabled profile for package updates and other API-heavy workflows.
+          unsafe = {
+            approval_policy = "on-request";
+            shell_environment_policy.ignore_default_excludes = true;
+          };
+        };
+
         projects =
           let
             khanelinixPath = "${config.home.homeDirectory}/khanelinix";
