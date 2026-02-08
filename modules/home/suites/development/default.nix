@@ -93,6 +93,7 @@ in
           # antigravity
           github-copilot-cli
           codex
+          tuicr
         ];
 
       shellAliases = {
