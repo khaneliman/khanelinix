@@ -43,10 +43,31 @@ in
       enable = true;
 
       settings = {
+        features = {
+          shell_snapshot = true;
+          collab = true;
+          apps = true;
+        };
+
+        history = {
+          persistence = "save-all";
+          max_bytes = 104857600;
+        };
+
         model = "gpt-5.3-codex";
-        model_reasoning_effort = "xhigh";
-        personality = "pragmatic";
+        model_reasoning_effort = "high";
+
         notify = [ (lib.getExe codexNotify) ];
+        personality = "pragmatic";
+
+        project_root_markers = [
+          ".git"
+          ".jj"
+          ".hg"
+          ".sl"
+        ];
+
+        sandbox_mode = "workspace-write";
 
         projects =
           let
@@ -70,12 +91,6 @@ in
               trust_level = "trusted";
             };
           };
-
-        features = {
-          shell_snapshot = true;
-          collab = true;
-          apps = true;
-        };
       };
 
       custom-instructions = builtins.readFile (lib.getFile "modules/common/ai-tools/base.md");
