@@ -43,7 +43,15 @@ in
   config = mkIf cfg.enable {
     programs.waybar = {
       enable = true;
-      package = waybar.packages.${system}.waybar;
+      package = waybar.packages.${system}.waybar.overrideAttrs (_: {
+        # TODO: remove after https://github.com/Alexays/Waybar/pull/4834 merges
+        patches = [
+          (pkgs.fetchpatch2 {
+            url = "https://github.com/Alexays/Waybar/pull/4834.patch?full_index=1";
+            hash = "sha256-QIXSCj4SMR2Rn5b4NOB+aTaWFn8KRIbvw1XGp7ovLMY=";
+          })
+        ];
+      });
 
       systemd = {
         enable = true;
