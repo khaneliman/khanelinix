@@ -41,6 +41,7 @@ in
   config = mkIf cfg.enable {
     programs.codex = {
       enable = true;
+      enableMcpIntegration = true;
 
       settings = {
         features = {
