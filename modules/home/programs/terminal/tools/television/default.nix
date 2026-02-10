@@ -22,9 +22,6 @@ in
           {
             use_nerd_font_icons = true;
           }
-          (lib.mkIf config.khanelinix.theme.catppuccin.enable {
-            theme = "catppuccin";
-          })
           (lib.mkIf config.khanelinix.theme.nord.enable {
             theme = "nord";
           })
