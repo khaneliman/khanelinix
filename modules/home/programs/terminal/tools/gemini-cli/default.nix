@@ -57,17 +57,18 @@ in
         tools.autoAccept = false;
         context = {
           discoveryMaxDirs = 1000;
-          includeDirectories = [
-            "lib"
-            "modules"
-            "docs"
-          ];
+          # NOTE: bombs out on repos that don't have them
+          # includeDirectories = [
+          #   "lib"
+          #   "modules"
+          #   "docs"
+          # ];
           loadMemoryFromIncludeDirectories = true;
           fileFiltering = {
-            respectGitIgnore = true;
-            respectGeminiIgnore = true;
+            enableFuzzySearch = true;
             enableRecursiveFileSearch = true;
-            disableFuzzySearch = false;
+            respectGeminiIgnore = true;
+            respectGitIgnore = true;
           };
         };
         security = {
