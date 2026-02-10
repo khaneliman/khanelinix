@@ -93,6 +93,7 @@ in
         tools = {
           git = {
             enable = true;
+            userEmail = "Austin_Horstman@secura.net";
             wslAgentBridge = true;
             wslGitCredentialManagerPath = ''/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe'';
             includes = [
