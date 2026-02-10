@@ -93,7 +93,7 @@ in
   };
 
   "custom/github" = {
-    format = " {text}";
+    format = " {text}";
     return-type = "json";
     interval = 60;
     exec = "${getExe githubHelper}";
