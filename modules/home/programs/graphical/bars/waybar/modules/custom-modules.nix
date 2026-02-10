@@ -134,6 +134,73 @@ let
       ${getExe' pkgs.xdg-utils "xdg-open"} "$WEB_URL"
     fi
   '';
+
+  weatherHelper = pkgs.writeShellScriptBin "waybar-weather-helper" ''
+    WEATHER_JSON="$(${getExe pkgs.wttrbar} --fahrenheit --ampm${
+      lib.optionalString (osConfig.khanelinix.security.sops.enable or false
+      ) " --location $(jq '.wttr.location' ${config.home.homeDirectory}/weather_config.json)"
+    })"
+
+    if ! echo "$WEATHER_JSON" | ${getExe pkgs.jq} -e . >/dev/null 2>&1; then
+      echo "$WEATHER_JSON"
+      exit 0
+    fi
+
+    WEATHER_TOOLTIP=$(echo "$WEATHER_JSON" | ${getExe pkgs.jq} -r '.tooltip // ""' | ${getExe pkgs.gawk} '
+      function trim(s) {
+        sub(/^[[:space:]]+/, "", s)
+        sub(/[[:space:]]+$/, "", s)
+        return s
+      }
+
+      BEGIN {
+        firstHeader = 1
+      }
+
+      {
+        line = $0
+        if (line ~ /<b>/) {
+          gsub(/<\/?b>/, "", line)
+          line = trim(line)
+
+          if (line == "") {
+            next
+          }
+
+          if (!firstHeader) {
+            print ""
+            print "────────────────────"
+          }
+
+          print line
+          firstHeader = 0
+          next
+        }
+
+        line = trim(line)
+        if (line == "") {
+          next
+        }
+
+        if (line ~ /⬆/ || line ~ /⬇/) {
+          print "  " line
+          print ""
+          next
+        }
+
+        if (match(line, /^([^[:space:]]+)[[:space:]]+([^[:space:]]+)[[:space:]]+([^[:space:]]+)[[:space:]]+(.*)$/, fields)) {
+          split(fields[4], descParts, ",")
+          shortDesc = trim(descParts[1])
+          print "  " fields[1] " " fields[2] " " fields[3] " " shortDesc
+          next
+        }
+
+        print "  " line
+      }
+    ')
+
+    echo "$WEATHER_JSON" | ${getExe pkgs.jq} -c --arg tooltip "$WEATHER_TOOLTIP" '.tooltip = $tooltip'
+  '';
 in
 {
   "custom/ellipses" = {
@@ -273,10 +340,7 @@ in
   };
 
   "custom/weather" = {
-    exec = "${getExe pkgs.wttrbar} --fahrenheit --ampm${
-      lib.optionalString (osConfig.khanelinix.security.sops.enable or false
-      ) " --location $(jq '.wttr.location' ${config.home.homeDirectory}/weather_config.json)"
-    }";
+    exec = "${getExe weatherHelper}";
     return-type = "json";
     format = "{}";
     tooltip = true;
