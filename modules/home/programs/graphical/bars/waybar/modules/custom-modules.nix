@@ -43,18 +43,30 @@ let
         gsub("&";"&amp;") | gsub("<";"&lt;") | gsub(">";"&gt;") | gsub("\"";"&quot;");
 
       def get_icon:
-        if .subject.type == "Issue" then ""
-        elif .subject.type == "Discussion" then ""
-        elif .subject.type == "PullRequest" then ""
-        elif .subject.type == "Commit" then ""
-        else ""
+        if .subject.type == "Issue" then ""
+        elif .subject.type == "Discussion" then "󰙯"
+        elif .subject.type == "PullRequest" then ""
+        elif .subject.type == "Commit" then ""
+        else ""
         end;
 
-      . | map(
-        "<span color=\"#7aa2f7\"><b>󰳏 " + (.repository.full_name | escape_html) + "</b></span>\n" +
-        "<span color=\"#565f89\">" + (get_icon) + "</span> " +
-        (.subject.title | escape_html) + "\n\n"
-      ) | join("")
+      def repo_name:
+        .repository.full_name // .repository.name // "Unknown";
+
+      def indent:
+        "  ";
+
+      def notification_line:
+        indent + "<span color=\"#565f89\">" + (get_icon | escape_html) + "</span> " +
+        ((.subject.title // "Untitled") | escape_html);
+
+      sort_by(repo_name, (.subject.title // ""))
+      | group_by(repo_name)
+      | map(
+        "<span color=\"#7aa2f7\"><b>󰳏 " + ((.[0] | repo_name) | escape_html) + "</b></span>\n" +
+        (map(notification_line) | join("\n"))
+      )
+      | join("\n\n")
     ' | sed 's/api.github.com\/repos/github.com/g' | sed 's/\/pulls\//\/pull\//g' | sed 's/\/commits\//\/commit\//g')
 
     echo "{\"text\":\"$COUNT\",\"tooltip\":$(echo "$TOOLTIP" | jq -R -s .),\"class\":\"has-notifications\"}"
@@ -72,14 +84,51 @@ let
       exit 0
     fi
 
-    # Format for dmenu: "repo: title"
-    SELECTED=$(echo "$NOTIFICATIONS_JSON" | ${getExe pkgs.jq} -r '.[] | "\(.repository.full_name): \(.subject.title)"' | ${dmenuCommand} -p "GitHub Notifications")
+    # Format for dmenu: grouped by repo with icon + title entries.
+    MENU_ENTRIES=$(echo "$NOTIFICATIONS_JSON" | ${getExe pkgs.jq} -r '
+      def repo_name:
+        .repository.full_name // .repository.name // "Unknown";
 
-    if [ -n "$SELECTED" ]; then
-      # Find the matching notification and get its URL
-      REPO=$(echo "$SELECTED" | cut -d: -f1)
-      TITLE=$(echo "$SELECTED" | cut -d: -f2- | ${getExe pkgs.gnused} 's/^ //')
-      URL=$(echo "$NOTIFICATIONS_JSON" | ${getExe pkgs.jq} -r --arg repo "$REPO" --arg title "$TITLE" '.[] | select(.repository.full_name == $repo and .subject.title == $title) | .subject.url')
+      def indent:
+        "  ";
+
+      def get_icon:
+        if .subject.type == "Issue" then ""
+        elif .subject.type == "Discussion" then "󰙯"
+        elif .subject.type == "PullRequest" then ""
+        elif .subject.type == "Commit" then ""
+        else ""
+        end;
+
+      sort_by(repo_name, (.subject.title // ""))
+      | group_by(repo_name)
+      | map(
+        map(indent + "\(repo_name): \(get_icon) \(.subject.title // "Untitled")")
+        | join("\n")
+      )
+      | join("\n\n")
+    ')
+    SELECTED=$(echo "$MENU_ENTRIES" | ${dmenuCommand} -p "GitHub Notifications")
+    SELECTED_NORMALIZED=$(echo "$SELECTED" | ${getExe pkgs.gnused} 's/^ *//')
+
+    if [ -n "$SELECTED_NORMALIZED" ] && [ "''${SELECTED_NORMALIZED#*: }" != "$SELECTED_NORMALIZED" ]; then
+      # Find the matching notification and get its URL.
+      URL=$(echo "$NOTIFICATIONS_JSON" | ${getExe pkgs.jq} -r --arg selected "$SELECTED_NORMALIZED" '
+        def repo_name:
+          .repository.full_name // .repository.name // "Unknown";
+
+        def get_icon:
+          if .subject.type == "Issue" then ""
+          elif .subject.type == "Discussion" then "󰙯"
+          elif .subject.type == "PullRequest" then ""
+          elif .subject.type == "Commit" then ""
+          else ""
+          end;
+
+        .[]
+        | select("\(repo_name): \(get_icon) \(.subject.title // "Untitled")" == $selected)
+        | .subject.url
+      ' | ${getExe' pkgs.coreutils "head"} -n1)
       WEB_URL=$(echo "$URL" | ${getExe pkgs.gnused} -E 's|api\.github\.com/repos/|github.com/|; s|/pulls/|/pull/|')
 
       ${getExe' pkgs.xdg-utils "xdg-open"} "$WEB_URL"
