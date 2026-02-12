@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -17,13 +16,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    # Force Gemini to use the system's (newer) ripgrep
-    # This prevents crashes when the agent's bundled (older) rg reads the global config
-    # containing flags it doesn't understand (like --hyperlink-format).
-    home.file.".gemini/tmp/bin/rg" = {
-      source = lib.getExe pkgs.ripgrep;
-    };
-
     programs.gemini-cli = {
       enable = true;
 
