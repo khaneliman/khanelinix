@@ -85,6 +85,16 @@ in
             pane_viewport_serialization = true;
             scrollback_lines_to_serialize = 1000;
             session_serialization = true;
+            post_command_discovery_hook = ''
+              case "$RESURRECT_COMMAND" in
+                /nix/store/*/bin/*)
+                  printf '%s\n' "''${RESURRECT_COMMAND#*/bin/}"
+                  ;;
+                *)
+                  printf '%s\n' "$RESURRECT_COMMAND"
+                  ;;
+              esac
+            '';
 
             ui.pane_frames = {
               rounded_corners = true;
