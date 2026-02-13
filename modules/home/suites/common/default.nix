@@ -95,6 +95,7 @@ in
             nix-search-tv = mkDefault enabled;
             nh = mkDefault enabled;
             oh-my-posh = mkDefault enabled;
+            pay-respects = mkDefault enabled;
             ripgrep = mkDefault enabled;
             television = mkDefault enabled;
             tray-tui.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
@@ -117,8 +118,6 @@ in
     };
 
     programs = {
-      # FIXME: breaks zsh aliases
-      # pay-respects = mkDefault enabled;
       readline = {
         enable = mkDefault true;
 
