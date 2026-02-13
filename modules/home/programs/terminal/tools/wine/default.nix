@@ -18,8 +18,8 @@ in
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       winetricks
-      # wineWowPackages.stable
-      wineWowPackages.unstableFull
+      # wineWow64Packages.stable
+      wineWow64Packages.unstableFull
     ];
   };
 }

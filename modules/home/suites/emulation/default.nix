@@ -22,7 +22,7 @@ in
       [
         mame
         mednafen
-        melonDS
+        melonds
         pcsx2
         snes9x
       ]
