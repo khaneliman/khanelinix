@@ -1,68 +1,77 @@
-# khanelinix Agent Guide
+This file provides guidance to AI coding agents like Claude Code
+(claude.ai/code), Cursor AI, Codex, Gemini CLI, GitHub Copilot, and other AI
+coding assistants when working with code in this repository.
 
-`AGENTS.md` is the canonical AI agent guide for this repository. If `CLAUDE.md`
-is present, treat it as Claude-specific extensions layered on top of this file.
+# khanelinix AI Agent Guide
 
-## Project Snapshot
+## Project Overview
 
-Flake-based NixOS + nix-darwin + Home Manager configuration for khanelinix.
+Flake-based NixOS, nix-darwin, and Home Manager configuration for khanelinix.
+Built using `flake-parts` for modularity.
+
+## Core Architecture
+
+- **`modules/`**: Reusable modules split by platform.
+  - `common/`: Shared between NixOS and Darwin.
+  - `home/`: Home Manager modules (user-space).
+  - `nixos/` / `darwin/`: System-level configurations.
+- **`systems/`**: Host-specific system configurations (NixOS/Darwin).
+- **`homes/`**: User-specific Home Manager configurations.
+- **`lib/`**: Custom Nix library extensions.
+- **`packages/`**: Custom package derivations.
+- **`flake/`**: Partitioned flake outputs (apps, overlays, etc.).
 
 ## Core Principles
 
-1. Modular architecture split by platform (`modules/nixos`, `modules/darwin`,
-   `modules/home`, `modules/common`)
-2. Namespace scoping under `khanelinix.*`
-3. Home-first: prefer Home Manager modules when root privileges are not required
-4. Functional style with explicit, composable Nix expressions
+1. **Home-First**: Prefer Home Manager (`modules/home`) for user-space configs
+   (dotfiles, programs) over system modules.
+2. **Namespace Scoping**: Always place options under `khanelinix.*`.
+3. **Explicit Imports**: Never use `with lib;`. Use `inherit (lib) ...` or
+   explicit `lib.<fn>`.
+4. **Modular & Composable**: Split large modules (>200 lines) into sub-modules
+   in a directory.
 
 ## Essential Commands
 
-- `nix fmt`
-- `nix flake check`
-- `nix build .#nixosConfigurations.<host>.config.system.build.toplevel`
-- `sudo nixos-rebuild switch --flake .#<host>`
-- `darwin-rebuild switch --flake .#<host>`
+- **Format Code**: `nix fmt`
+- **Check Flake**: `nix flake check`
+- **Build System (NixOS)**: `nh os build` or
+  `nix build .#nixosConfigurations.<host>.config.system.build.toplevel`
+- **Switch System (NixOS)**: `nh os switch .` or
+  `sudo nixos-rebuild switch --flake .#<host>`
+- **Build/Switch Darwin**: `nh darwin build` / `nh darwin switch .`
+- **Update All Inputs**: `nix run .#update-all`
 
-## Repository Map
+## Coding Style & Patterns
 
-- `flake.nix`, `flake/`: top-level flake outputs and flake-parts modules
-- `modules/`: reusable modules by platform
-- `systems/`: per-host system configs
-- `homes/`: per-user Home Manager configs
-- `lib/`: custom library functions
-- `packages/`: custom package derivations
-- `templates/`: flake templates
-- `secrets/`: encrypted secret material (sops-nix)
+- **Naming**: `camelCase` for Nix variables/options, `kebab-case` for files and
+  directories.
+- **Option Path**: `khanelinix.{category}.{subcategory}.{name}`.
+- **Home Manager + System Access**: HM modules use `osConfig ? {}` to access the
+  host system's configuration.
+- **Conditionals**: Prefer `lib.mkIf` for entire configuration blocks.
+- **Secrets**: Use `sops-nix`. Never commit secrets in plaintext. Use
+  `lib.getFile "secrets/..."` helpers.
+- **Custom Helpers**: Check `lib.khanelinix` for common helpers like `enabled`
+  and `disabled`.
 
-## Coding Rules
+## Module Template
 
-- Never use `with lib;`; prefer explicit `inherit (lib) ...` or `lib.<fn>`.
-- Keep options under `khanelinix.*` when building reusable modules.
-- Prefer `lib.mkIf`, `lib.optionals`, and `lib.optionalString` over broad
-  `if/then/else` in module configs.
-- Use camelCase for variables and kebab-case for files/directories.
-- Keep changes scoped. Do not perform broad refactors unless requested.
+```nix
+{ config, lib, pkgs, osConfig ? {}, ... }:
+let
+  inherit (lib) mkIf mkEnableOption;
+  cfg = config.khanelinix.category.name;
+in {
+  options.khanelinix.category.name.enable = mkEnableOption "Description";
+  config = mkIf cfg.enable {
+    # implementation
+  };
+}
+```
 
-## Path-Specific Guidance
+## Specific Guidance
 
-Read these when touching matching paths:
-
-- `modules/**`: `.claude/rules/nix-style.md`
-- `modules/common/**`: `.claude/rules/common.md`
-- `modules/nixos/**`: `.claude/rules/nixos.md`
-- `modules/darwin/**`: `.claude/rules/darwin.md`
-- `modules/home/**`: `.claude/rules/home-manager.md`
-- `systems/**`, `homes/**`: `.claude/rules/hosts.md`
-- `lib/**`: `.claude/rules/lib.md`
-- `packages/**`, `templates/**`: `.claude/rules/packages.md`
-
-## Validation and Safety
-
-- Run the smallest meaningful validation for the changed scope.
-- Never commit secrets or plaintext keys.
-- Use `sops-nix` patterns for sensitive data.
-
-## Commit Style
-
-Use component-based commit messages: `component: description` Examples:
-`darwin: tune dock defaults`, `docs: update agent guidance`
+- Refer to `.claude/rules/*.md` for platform-specific deep dives (NixOS, Darwin,
+  Home Manager, Lib, etc.).
+- When adding a new module, ensure it is imported in its parent `default.nix`.
