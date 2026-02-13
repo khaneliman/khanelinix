@@ -8,7 +8,6 @@ let
   inherit (lib) mkIf;
 
   magick = lib.getExe' pkgs.imagemagick "magick";
-  wl-paste = lib.getExe' pkgs.wl-clipboard "wl-paste";
 
   getDateTime = lib.getExe (
     pkgs.writeShellScriptBin "getDateTime" /* bash */ ''
@@ -269,7 +268,7 @@ in
 
         # utility commands
         "$color_picker" =
-          /* Bash */ "hyprpicker -a && (${magick} convert -size 32x32 xc:$(${wl-paste}) /tmp/color.png && notify-send \"Color Code:\" \"$(${wl-paste})\" -h \"string:bgcolor:$(${wl-paste})\" --icon /tmp/color.png -u critical -t 4000)";
+          /* Bash */ "hyprpicker -a && (${magick} convert -size 32x32 xc:$(wl-paste) /tmp/color.png && notify-send \"Color Code:\" \"$(wl-paste)\" -h \"string:bgcolor:$(wl-paste)\" --icon /tmp/color.png -u critical -t 4000)";
         "$cliphist" =
           let
             enabledDmenuLaunchers = lib.flatten [
