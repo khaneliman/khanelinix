@@ -8,7 +8,6 @@ let
   inherit (lib) mkIf;
 
   magick = lib.getExe' pkgs.imagemagick "magick";
-  wl-copy = lib.getExe' pkgs.wl-clipboard "wl-copy";
   wl-paste = lib.getExe' pkgs.wl-clipboard "wl-paste";
 
   getDateTime = lib.getExe (
@@ -281,7 +280,7 @@ in
               (lib.optional launchers.rofi.enable "rofi -dmenu")
             ];
           in
-          /* Bash */ "cliphist list | ${builtins.head enabledDmenuLaunchers} | cliphist decode | ${wl-copy}";
+          /* Bash */ "cliphist list  | tr -d '\\000' | ${builtins.head enabledDmenuLaunchers} | cliphist decode | wl-copy";
       };
     };
   };
