@@ -34,6 +34,7 @@ let
     "nix-refactor" = "nix-builder";
     "template-new" = "nix-builder";
 
+    "initialization" = "doc-writer";
     "changelog" = "doc-writer";
   };
 
