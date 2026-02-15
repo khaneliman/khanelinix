@@ -50,11 +50,6 @@ in
           end
         ''
         + lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
-          # Brew environment
-          if [ -f /opt/homebrew/bin/brew ];
-          	eval "$("/opt/homebrew/bin/brew" shellenv)"
-          end
-
           # Nix
           if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish' ];
            source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish'

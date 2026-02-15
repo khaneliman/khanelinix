@@ -25,6 +25,9 @@ in
 
     homebrew = {
       enable = true;
+      enableBashIntegration = true;
+      enableFishIntegration = true;
+      enableZshIntegration = true;
 
       global = {
         brewfile = true;
