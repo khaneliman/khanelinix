@@ -62,11 +62,11 @@ in
           ];
         };
 
-      # NOTE: wrapper alias is yy
       enableBashIntegration = true;
       enableFishIntegration = true;
       enableNushellIntegration = true;
       enableZshIntegration = true;
+      shellWrapperName = "y";
 
       inherit (import ./init.nix { inherit config lib; }) initLua;
 
