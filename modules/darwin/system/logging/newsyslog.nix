@@ -5,7 +5,6 @@ let
 
   cfg = config.system.newsyslog;
 in
-
 {
   options = {
     system.newsyslog = {
@@ -19,7 +18,10 @@ in
                 logfilename = mkOption {
                   type = types.str;
                   description = ''
-                    Path to the log file to rotate.
+                    Path to the log file to rotate, or the literal string `<default>`.
+
+                    The `<default>` entry applies when newsyslog is invoked with an explicit
+                    log file argument that does not match another entry.
                   '';
                   example = "/var/log/myapp.log";
                 };
@@ -30,7 +32,8 @@ in
                   description = ''
                     Owner of the log file.
 
-                    If `null`, no owner will be specified.
+                    If `null`, the owner portion of `owner:group` is left blank.
+                    See `newsyslog.conf(5)` for default ownership behavior (`root:admin`).
                   '';
                   example = "myuser";
                 };
@@ -41,7 +44,8 @@ in
                   description = ''
                     Group of the log file.
 
-                    If `null`, no group will be specified.
+                    If `null`, the group portion of `owner:group` is left blank.
+                    See `newsyslog.conf(5)` for default ownership behavior (`root:admin`).
                   '';
                   example = "wheel";
                 };
@@ -78,9 +82,15 @@ in
                   type = types.nullOr types.str;
                   default = null;
                   description = ''
-                    Time-based rotation schedule. Can be:
-                    - Hours: @T00, @T06, @T12, @T18 (every 6 hours starting at midnight)
+                    Time-based rotation schedule.
+
+                    The value may be an interval in hours, a specific time, or both.
+                    If both are specified, both conditions must be satisfied.
+
+                    Examples:
+                    - Interval only: 24
                     - Daily: @T00 (daily at midnight)
+                    - Interval and time: 24@T00
                     - Weekly: $W0D00 (weekly on Sunday at midnight)
                     - Monthly: $M1D00 (monthly on the 1st at midnight)
 
@@ -90,16 +100,31 @@ in
                 };
 
                 flags = mkOption {
-                  type = types.listOf types.str;
+                  type = types.listOf (
+                    types.enum [
+                      "B"
+                      "C"
+                      "D"
+                      "G"
+                      "J"
+                      "N"
+                      "U"
+                      "Z"
+                      "-"
+                    ]
+                  );
                   default = [ ];
                   description = ''
-                    List of flags for newsyslog. Common flags include:
+                    List of flags for newsyslog.
                     - "B" - Binary file, don't add status message
-                    - "C" - Create log file if it doesn't exist
+                    - "C" - Create log file if missing when newsyslog runs with `-C`/`-CC`
+                    - "D" - Mark rotated files with the UF_NODUMP flag
                     - "G" - Indicates that logfilename is a shell pattern
                     - "J" - Compress rotated logs with bzip2
-                    - "N" - Don't rotate empty files
+                    - "N" - Do not signal a daemon after rotating this log
+                    - "U" - pidFile points to a process group ID (negative value)
                     - "Z" - Compress rotated logs with gzip
+                    - "-" - Placeholder when specifying pidFile/signal without other flags
                   '';
                   example = [
                     "Z"
@@ -114,6 +139,7 @@ in
                     Path to PID file.
 
                     If specified, the process will be signaled after rotation.
+                    This path must be absolute (start with `/`).
                   '';
                   example = "/var/run/myapp.pid";
                 };
@@ -169,39 +195,56 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = lib.flatten (
+      lib.mapAttrsToList (
+        fileName: entries:
+        lib.flatten (
+          lib.imap0 (index: entry: [
+            {
+              assertion = entry.signal == null || entry.pidFile != null;
+              message = "system.newsyslog.files.${fileName}[${toString index}].signal requires pidFile to be set.";
+            }
+            {
+              assertion = entry.pidFile == null || builtins.match "/.*" entry.pidFile != null;
+              message = "system.newsyslog.files.${fileName}[${toString index}].pidFile must be an absolute path starting with '/'.";
+            }
+          ]) entries
+        )
+      ) cfg.files
+    );
+
     environment.etc =
       let
+        orStar = value: if value == null then "*" else value;
+
+        formatOwnerGroup =
+          entry:
+          "${lib.optionalString (entry.owner != null) entry.owner}:${
+            lib.optionalString (entry.group != null) entry.group
+          }";
+
+        formatFlags =
+          entry:
+          lib.optional (entry.flags != [ ]) (lib.concatStrings entry.flags)
+          ++ lib.optional (entry.flags == [ ] && (entry.pidFile != null || entry.signal != null)) "-";
+
         formatEntry =
           entry:
-          let
-            ownerGroup =
-              if entry.owner != null && entry.group != null then
-                "${entry.owner}:${entry.group}"
-              else if entry.owner != null then
-                entry.owner
-              else if entry.group != null then
-                ":${entry.group}"
-              else
-                "";
-
-            baseParts = [
+          lib.concatStringsSep "\t" (
+            [
               entry.logfilename
             ]
-            ++ (lib.optional (ownerGroup != "") ownerGroup)
+            ++ lib.optional (entry.owner != null || entry.group != null) (formatOwnerGroup entry)
             ++ [
               entry.mode
               (toString entry.count)
-              (if entry.size != null then entry.size else "*")
-              (if entry.when != null then entry.when else "*")
-              (lib.concatStrings entry.flags)
-            ];
-
-            optionalParts = lib.filter (p: p != null && p != "") [
-              entry.pidFile
-              entry.signal
-            ];
-          in
-          lib.concatStringsSep "\t" (baseParts ++ optionalParts);
+              (orStar entry.size)
+              (orStar entry.when)
+            ]
+            ++ formatFlags entry
+            ++ lib.optionals (entry.pidFile != null) [ entry.pidFile ]
+            ++ lib.optionals (entry.signal != null) [ entry.signal ]
+          );
 
         generateFileContent = entries: ''
           # Generated by nix-darwin
