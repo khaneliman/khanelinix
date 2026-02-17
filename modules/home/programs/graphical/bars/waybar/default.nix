@@ -44,11 +44,24 @@ in
     programs.waybar = {
       enable = true;
       package = waybar.packages.${system}.waybar.overrideAttrs (_: {
-        # TODO: remove after https://github.com/Alexays/Waybar/pull/4834 merges
         patches = [
+          # TODO: remove after https://github.com/Alexays/Waybar/pull/4834 merges
           (pkgs.fetchpatch2 {
+            name = "niri-workspaces";
             url = "https://github.com/Alexays/Waybar/pull/4834.patch?full_index=1";
             hash = "sha256-QIXSCj4SMR2Rn5b4NOB+aTaWFn8KRIbvw1XGp7ovLMY=";
+          })
+          # TODO: remove after https://github.com/Alexays/Waybar/pull/4843 merges
+          (pkgs.fetchpatch2 {
+            name = "interval-min";
+            url = "https://github.com/Alexays/Waybar/pull/4843.patch?full_index=1";
+            hash = "sha256-F98AF+23y7zJFJTR63c/3dvMgLcP1AwOI5W5vZgWayQ=";
+          })
+          # TODO: remove after https://github.com/Alexays/Waybar/pull/4846 merges
+          (pkgs.fetchpatch2 {
+            name = "mpris-fallback";
+            url = "https://github.com/Alexays/Waybar/pull/4846.patch?full_index=1";
+            hash = "sha256-EgTeYaHotBkfrGgRcZza3eD/js2bdSgSTnl0gRpXCwY=";
           })
         ];
       });
