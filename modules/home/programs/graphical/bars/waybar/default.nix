@@ -63,6 +63,12 @@ in
             url = "https://github.com/Alexays/Waybar/pull/4846.patch?full_index=1";
             hash = "sha256-EgTeYaHotBkfrGgRcZza3eD/js2bdSgSTnl0gRpXCwY=";
           })
+          # TODO: remove after https://github.com/Alexays/Waybar/pull/4861 merges
+          (pkgs.fetchpatch2 {
+            name = "hyprland-workspace-grouping";
+            url = "https://github.com/Alexays/Waybar/pull/4861.patch?full_index=1";
+            hash = "sha256-9HbVkjeTXtBi3O9IAr3YCt/qSU2XymWW4u2HXM3DiHs=";
+          })
         ];
       });
 

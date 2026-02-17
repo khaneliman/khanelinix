@@ -56,6 +56,7 @@ in
       "empty" = "󱓼";
     };
     # "format-window-separator" = "->";
+    window-rewrite-group-threshold = 3;
     window-rewrite-default = "";
     window-rewrite = {
       "class<.blueman-manager-wrapped>" = "";
