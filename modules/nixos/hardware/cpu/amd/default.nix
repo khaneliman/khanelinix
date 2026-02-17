@@ -34,7 +34,7 @@ in
       # active (EPP): In this mode, also known as Energy Performance Preference (EPP), the driver provides a simple "hint" to the CPU firmware, biasing it towards either performance or energy efficiency. The firmware then autonomously makes the final, granular frequency decisions based on real-time workload, thermal, and power conditions.
       # guided: This mode represents a hybrid approach. The OS governor requests a minimum and maximum performance level, and the hardware platform is then free to autonomously select the most appropriate frequency within that range.
       kernelParams = [
-        "amd_pstate=guided"
+        "amd_pstate=active"
 
         # Potential stability fixes
         "amdgpu.sg_display=0"
