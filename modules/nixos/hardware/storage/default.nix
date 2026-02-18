@@ -15,6 +15,9 @@ in
   options.khanelinix.hardware.storage = {
     enable = lib.mkEnableOption "support for extra storage devices";
     ssdEnable = mkBoolOpt true "Whether or not to enable support for SSD storage devices.";
+    nvmeMaxLatencyUs =
+      lib.mkOpt lib.types.int 100
+        "NVMe power management: allow deeper power states but limit latency. 0 disables power management.";
     disableUsbAutoSuspend = mkBoolOpt false "Disable USB autosuspend to prevent USB device lag.";
   };
 
@@ -33,7 +36,7 @@ in
     # Default is 25000us (25ms) - we use 100us for low-latency desktop
     boot.kernelParams =
       lib.optionals cfg.ssdEnable [
-        "nvme_core.default_ps_max_latency_us=100"
+        "nvme_core.default_ps_max_latency_us=${toString cfg.nvmeMaxLatencyUs}"
       ]
       ++ lib.optionals cfg.disableUsbAutoSuspend [
         "usbcore.autosuspend=-1"
