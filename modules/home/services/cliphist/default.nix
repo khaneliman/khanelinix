@@ -46,5 +46,8 @@ in
 
       };
     };
+
+    systemd.user.services.cliphist.Unit.ConditionEnvironment = "WAYLAND_DISPLAY";
+    systemd.user.services.cliphist-images.Unit.ConditionEnvironment = "WAYLAND_DISPLAY";
   };
 }

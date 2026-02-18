@@ -46,5 +46,7 @@ in
 
       };
     };
+
+    systemd.user.services.wl-clip-persist.Unit.ConditionEnvironment = "WAYLAND_DISPLAY";
   };
 }
