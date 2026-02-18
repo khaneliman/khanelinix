@@ -82,8 +82,5 @@ in
         debug = false;
       };
     };
-
-    # Ensure hypr-socket-watch only runs when in a hyprland session
-    systemd.user.services.hypr-socket-watch.Unit.ConditionEnvironment = "HYPRLAND_INSTANCE_SIGNATURE";
   };
 }
