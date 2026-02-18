@@ -38,5 +38,8 @@ in
         };
       };
     };
+
+    systemd.user.services.hyprsunset.Unit.ConditionEnvironment =
+      lib.mkForce "HYPRLAND_INSTANCE_SIGNATURE";
   };
 }

@@ -38,8 +38,11 @@ in
       };
     };
 
-    systemd.user.services.hypridle.Install.WantedBy = lib.optionals (
-      !(osConfig.programs.hyprland.withUWSM or false)
-    ) [ "hyprland-session.target" ];
+    systemd.user.services.hypridle = {
+      Unit.ConditionEnvironment = lib.mkForce "HYPRLAND_INSTANCE_SIGNATURE";
+      Install.WantedBy = lib.optionals (!(osConfig.programs.hyprland.withUWSM or false)) [
+        "hyprland-session.target"
+      ];
+    };
   };
 }

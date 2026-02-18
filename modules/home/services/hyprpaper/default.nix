@@ -82,5 +82,8 @@ in
         debug = false;
       };
     };
+
+    systemd.user.services.hyprpaper.Unit.ConditionEnvironment =
+      lib.mkForce "HYPRLAND_INSTANCE_SIGNATURE";
   };
 }
