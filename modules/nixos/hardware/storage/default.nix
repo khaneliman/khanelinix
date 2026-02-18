@@ -31,9 +31,13 @@ in
 
     # NVMe power management: allow deeper power states but limit latency
     # Default is 25000us (25ms) - we use 100us for low-latency desktop
-    boot.kernelParams = lib.optionals cfg.ssdEnable [
-      "nvme_core.default_ps_max_latency_us=100"
-    ];
+    boot.kernelParams =
+      lib.optionals cfg.ssdEnable [
+        "nvme_core.default_ps_max_latency_us=100"
+      ]
+      ++ lib.optionals cfg.disableUsbAutoSuspend [
+        "usbcore.autosuspend=-1"
+      ];
 
     # I/O Scheduler optimization for interactive latency
     hardware.block = {
@@ -62,10 +66,6 @@ in
         # HDD: Higher read-ahead for sequential performance
         ''ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/read_ahead_kb}="1024"''
         ''ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/nr_requests}="256"''
-      ]
-      ++ lib.optionals cfg.disableUsbAutoSuspend [
-        # Disable USB autosuspend to prevent input device lag
-        ''ACTION=="add", SUBSYSTEM=="usb", TEST=="power/control", ATTR{power/control}="on"''
       ]
     );
   };
