@@ -15,6 +15,8 @@ in
 
     services.networkd-dispatcher.enable = true;
 
+    systemd.services."systemd-networkd".environment.SYSTEMD_LOG_LEVEL = mkIf cfg.debug "debug";
+
     # https://wiki.nixos.org/wiki/Systemd-networkd
     systemd.network = {
       enable = true;

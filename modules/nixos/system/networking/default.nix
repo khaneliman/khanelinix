@@ -29,6 +29,7 @@ in
       "dnsmasq"
       "systemd-resolved"
     ]) "systemd-resolved" "Dns resolver to use.";
+    debug = mkBoolOpt false "Enable debug logging for network manager";
   };
 
   config = mkIf cfg.enable {
