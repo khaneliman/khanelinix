@@ -27,6 +27,7 @@ in
         Description = "Watch Niri workspaces and update swaybg";
         After = [ "graphical-session.target" ];
         PartOf = [ "graphical-session.target" ];
+        ConditionEnvironment = "NIRI_SOCKET";
       };
 
       Install = {
