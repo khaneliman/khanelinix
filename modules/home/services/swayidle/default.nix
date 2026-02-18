@@ -37,5 +37,7 @@ in
         }
       ];
     };
+
+    systemd.user.services.swayidle.Unit.ConditionEnvironment = lib.mkForce "SWAYSOCK";
   };
 }

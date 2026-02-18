@@ -29,6 +29,7 @@ in
         Description = "Watch Sway workspaces and update swaybg";
         After = [ "sway-session.target" ];
         PartOf = [ "sway-session.target" ];
+        ConditionEnvironment = "SWAYSOCK";
       };
 
       Install = {
