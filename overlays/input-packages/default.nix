@@ -5,19 +5,46 @@ let
     inherit (final.stdenv.hostPlatform) system;
     inherit (final) config;
   };
+
   unstable = import inputs.nixpkgs-unstable {
     inherit (final.stdenv.hostPlatform) system;
     inherit (final) config;
   };
+
+  # FIXME: shouldn't have to do this
+  buildMozillaXpiAddon = final.lib.makeOverridable (
+    {
+      pname,
+      version,
+      addonId,
+      url ? "",
+      urls ? [ ],
+      sha256,
+      meta,
+      ...
+    }:
+    final.stdenv.mkDerivation {
+      name = "${pname}-${version}";
+      inherit meta;
+      src = final.fetchurl { inherit url urls sha256; };
+      preferLocalBuild = true;
+      allowSubstitutes = true;
+      passthru = { inherit addonId; };
+      buildCommand = ''
+        dst="$out/share/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
+        mkdir -p "$dst"
+        install -v -m644 "$src" "$dst/${addonId}.xpi"
+      '';
+    }
+  );
 in
 {
   #          ╭──────────────────────────────────────────────────────────╮
   #          │                 Firefox Addon repository                 │
   #          ╰──────────────────────────────────────────────────────────╯
   firefox-addons = import inputs.firefox-addons {
-    inherit (final) fetchurl;
-    inherit (final) lib;
-    inherit (final) stdenv;
+    inherit buildMozillaXpiAddon;
+    inherit (final) fetchurl lib stdenv;
   };
 
   #          ╭──────────────────────────────────────────────────────────╮
@@ -41,6 +68,9 @@ in
     # TODO: remove after hitting channel
     ;
 
+  #          ╭──────────────────────────────────────────────────────────╮
+  #          │                 Python package overrides                 │
+  #          ╰──────────────────────────────────────────────────────────╯
   python3 = _prev.python3.override {
     packageOverrides = _pyFinal: _pyPrev: {
       # TODO: remove after hitting channel
@@ -67,7 +97,9 @@ in
     thunderbird-latest
     ;
 
-  # Override linuxKernel.packages.linux_zen specifically
+  #          ╭──────────────────────────────────────────────────────────╮
+  #          │   Override linuxKernel.packages.linux_zen specifically   │
+  #          ╰──────────────────────────────────────────────────────────╯
   linuxKernel = _prev.linuxKernel // {
     packages = _prev.linuxKernel.packages // {
       # inherit (unstable.linuxKernel.packages) linux_zen;
