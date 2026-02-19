@@ -26,7 +26,13 @@ in
 
       font = "MonaspaceNeon NF 14";
       location = "center";
-      theme = "catppuccin";
+      theme =
+        if config.khanelinix.theme.catppuccin.enable then
+          "catppuccin"
+        else if config.khanelinix.theme.tokyonight.enable then
+          "tokyonight"
+        else
+          "catppuccin";
 
       pass = {
         enable = true;
