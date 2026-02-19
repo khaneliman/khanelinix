@@ -43,6 +43,7 @@ in
   flake = {
     overlays = dynamicOverlaysSet // {
       default = khanelinixPackagesOverlay;
+      firefox-addons = inputs.firefox-addons.overlays.default;
     };
   };
 }
