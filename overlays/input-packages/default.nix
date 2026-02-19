@@ -10,43 +10,8 @@ let
     inherit (final.stdenv.hostPlatform) system;
     inherit (final) config;
   };
-
-  # FIXME: shouldn't have to do this
-  buildMozillaXpiAddon = final.lib.makeOverridable (
-    {
-      pname,
-      version,
-      addonId,
-      url ? "",
-      urls ? [ ],
-      sha256,
-      meta,
-      ...
-    }:
-    final.stdenv.mkDerivation {
-      name = "${pname}-${version}";
-      inherit meta;
-      src = final.fetchurl { inherit url urls sha256; };
-      preferLocalBuild = true;
-      allowSubstitutes = true;
-      passthru = { inherit addonId; };
-      buildCommand = ''
-        dst="$out/share/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
-        mkdir -p "$dst"
-        install -v -m644 "$src" "$dst/${addonId}.xpi"
-      '';
-    }
-  );
 in
 {
-  #          ╭──────────────────────────────────────────────────────────╮
-  #          │                 Firefox Addon repository                 │
-  #          ╰──────────────────────────────────────────────────────────╯
-  firefox-addons = import inputs.firefox-addons {
-    inherit buildMozillaXpiAddon;
-    inherit (final) fetchurl lib stdenv;
-  };
-
   #          ╭──────────────────────────────────────────────────────────╮
   #          │                       LLM programs                       │
   #          ╰──────────────────────────────────────────────────────────╯
