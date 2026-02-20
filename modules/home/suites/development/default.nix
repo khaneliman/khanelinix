@@ -170,6 +170,7 @@ in
             git-crypt = mkDefault enabled;
             go.enable = cfg.goEnable;
             gh = mkDefault enabled;
+            glab = mkDefault enabled;
             jujutsu = mkDefault enabled;
             jjui = mkDefault enabled;
             k9s.enable = cfg.kubernetesEnable;
