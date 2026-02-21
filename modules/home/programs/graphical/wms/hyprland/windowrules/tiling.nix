@@ -18,6 +18,7 @@ in
           "match:class ^(Spotify)$, tile on"
           "match:class ^(Spotify Free)$, tile on"
           "match:class ^(steam_app).*, match:title ^(Battle.net)$, tile on"
+          "match:class ^(Godot|org\\.godotengine\\.Godot)$, tile on"
         ];
       };
     };
