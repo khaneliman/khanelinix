@@ -56,6 +56,9 @@ in
           "match:class ^(thunar)$, match:title ^(File Operation Progress)$, move 78% 6%"
           "match:class ^(thunar)$, match:title ^(File Operation Progress)$, pin on"
 
+          "match:class ^(Godot)$, float on"
+          "match:class ^(Godot)$, center on"
+
           "match:class ^(steam_app_0)$, match:title ^(World of Warcraft)$, min_size 5120 1440"
           "match:class ^(steam_app_0)$, match:title ^(World of Warcraft)$, center on"
           "match:class ^(steam_app_0)$, match:title ^(World of Warcraft)$, fullscreen on"
