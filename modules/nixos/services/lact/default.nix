@@ -14,6 +14,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    # LACT documentation
+    # See: https://github.com/ilya-zlobintsev/LACT
     services.lact.enable = true;
   };
 }

@@ -19,6 +19,8 @@ in
 
   config = mkIf cfg.enable {
     programs.mangohud = {
+      # MangoHud documentation
+      # See: https://github.com/flightlessmango/MangoHud
       enable = true;
       package = pkgs.mangohud;
       inherit (cfg) enableSessionWide;

@@ -19,6 +19,8 @@ in
   config = mkIf cfg.enable {
     services = {
       rustdesk-server = {
+        # RustDesk Server documentation
+        # See: https://rustdesk.com/docs/en/self-host/
         enable = true;
         # Default
         # relay.enable = true;

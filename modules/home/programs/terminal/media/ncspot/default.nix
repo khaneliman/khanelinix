@@ -16,6 +16,8 @@ in
 
   config = mkIf cfg.enable {
     programs.ncspot = {
+      # Ncspot documentation
+      # See: https://github.com/hrkfdn/ncspot
       enable = true;
 
       settings = { };

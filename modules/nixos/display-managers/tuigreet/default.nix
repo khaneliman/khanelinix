@@ -17,6 +17,8 @@ in
 
   config = mkIf cfg.enable {
     services.greetd = {
+      # TuiGreet documentation
+      # See: https://github.com/apognu/tuigreet
       enable = true;
       settings = {
         default_session = {

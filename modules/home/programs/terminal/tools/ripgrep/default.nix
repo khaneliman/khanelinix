@@ -17,6 +17,8 @@ in
 
   config = mkIf cfg.enable {
     programs.ripgrep = {
+      # Ripgrep documentation
+      # See: https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
       enable = true;
       package = pkgs.ripgrep;
 

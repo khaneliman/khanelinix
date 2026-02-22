@@ -17,6 +17,8 @@ in
 
   config = mkIf cfg.enable {
     programs.nix-ld = {
+      # Nix-ld documentation
+      # See: https://github.com/nix-community/nix-ld
       enable = true;
       package = pkgs.nix-ld;
 

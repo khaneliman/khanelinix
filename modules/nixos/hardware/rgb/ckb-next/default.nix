@@ -17,6 +17,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    # ckb-next documentation
+    # See: https://github.com/ckb-next/ckb-next
     hardware.ckb-next.enable = true;
 
     khanelinix.home.configFile =

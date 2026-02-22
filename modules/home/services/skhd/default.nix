@@ -41,6 +41,8 @@ in
     };
 
     services.skhd = {
+      # Skhd documentation
+      # See: https://github.com/koekeishiya/skhd
       enable = true;
       package = pkgs.skhd;
 

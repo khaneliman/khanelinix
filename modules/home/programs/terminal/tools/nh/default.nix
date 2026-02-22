@@ -32,6 +32,8 @@ in
 
   config = mkIf cfg.enable {
     programs.nh = {
+      # Nh documentation
+      # See: https://github.com/viperML/nh
       enable = true;
 
       clean = {

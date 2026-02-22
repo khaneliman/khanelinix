@@ -103,6 +103,8 @@ in
 
         maintenance.enable = true;
 
+        # Git configuration
+        # See: https://git-scm.com/docs/git-config
         settings = {
           alias = aliases.aliases;
 

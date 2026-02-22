@@ -16,6 +16,8 @@ in
 
   config = mkIf cfg.enable {
     programs.dircolors = {
+      # Dircolors documentation
+      # See: https://www.gnu.org/software/coreutils/manual/html_node/dircolors-invocation.html
       enable = true;
     };
   };

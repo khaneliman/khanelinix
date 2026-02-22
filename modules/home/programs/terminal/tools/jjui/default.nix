@@ -16,6 +16,8 @@ in
 
   config = mkIf cfg.enable {
     programs.jjui = {
+      # Jjui documentation
+      # See: https://github.com/idursun/jjui
       enable = true;
 
       settings = {

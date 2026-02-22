@@ -20,6 +20,8 @@ in
     home.packages = with pkgs; [ wtype ];
 
     programs.rofi = {
+      # Rofi documentation
+      # See: https://github.com/davatorium/rofi/blob/next/doc/rofi.1.markdown
       enable = true;
       # NOTE: rofi-wayland doesn't support plugins with HM module. But... non wayland sucks... sooo
       package = pkgs.rofi-wayland;

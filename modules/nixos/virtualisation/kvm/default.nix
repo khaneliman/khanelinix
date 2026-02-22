@@ -63,6 +63,8 @@ in
 
     virtualisation = {
       libvirtd = {
+        # Libvirt documentation
+        # See: https://libvirt.org/docs.html
         enable = true;
         extraConfig = ''
           user="${user.name}"

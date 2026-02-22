@@ -29,6 +29,8 @@ in
       enableFishIntegration = true;
       enableZshIntegration = true;
 
+      # Ghostty configuration
+      # See: https://ghostty.org/docs/config/reference
       settings =
         let
           monaspaceKrypton = fontCfg.monaspace.families.krypton;

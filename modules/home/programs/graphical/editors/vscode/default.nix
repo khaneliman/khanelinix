@@ -31,6 +31,8 @@ in
     };
 
     programs.vscode = {
+      # VSCode documentation
+      # See: https://code.visualstudio.com/docs
       enable = true;
       package = pkgs.vscode;
 

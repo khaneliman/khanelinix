@@ -25,6 +25,8 @@ in
 
       server.enable = false;
 
+      # Foot configuration
+      # See: https://codeberg.org/dnkl/foot/src/branch/master/foot.ini
       settings = {
         main = {
           # window settings

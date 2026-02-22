@@ -17,6 +17,8 @@ in
 
   config = mkIf cfg.enable {
     programs.zoxide = {
+      # Zoxide documentation
+      # See: https://github.com/ajeetdsouza/zoxide
       enable = true;
       package = pkgs.zoxide;
 

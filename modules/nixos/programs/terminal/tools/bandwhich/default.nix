@@ -16,6 +16,8 @@ in
 
   config = mkIf cfg.enable {
     programs.bandwhich = {
+      # Bandwhich documentation
+      # See: https://github.com/imsnif/bandwhich
       enable = true;
     };
   };

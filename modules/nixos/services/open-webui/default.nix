@@ -15,6 +15,8 @@ in
 
   config = lib.mkIf cfg.enable {
     services.open-webui = {
+      # Open WebUI documentation
+      # See: https://docs.openwebui.com/
       enable = true;
       openFirewall = true;
     };

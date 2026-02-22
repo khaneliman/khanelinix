@@ -17,6 +17,8 @@ in
 
   config = mkIf cfg.enable {
     programs.gemini-cli = {
+      # Gemini CLI documentation
+      # See: https://github.com/google-gemini/gemini-cli
       enable = true;
 
       settings = {

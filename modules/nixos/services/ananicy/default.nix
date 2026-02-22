@@ -16,6 +16,8 @@ in
 
   config = mkIf cfg.enable {
     services.ananicy = {
+      # Ananicy-cpp documentation
+      # See: https://gitlab.com/ananicy-cpp/ananicy-cpp
       enable = true;
       package = pkgs.ananicy-cpp;
       # CachyOS rules are more aggressive and optimized for desktop performance

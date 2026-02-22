@@ -16,6 +16,8 @@ in
 
   config = mkIf cfg.enable {
     programs.thunar = {
+      # Thunar documentation
+      # See: https://docs.xfce.org/xfce/thunar/start
       enable = true;
     };
   };

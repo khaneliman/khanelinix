@@ -21,6 +21,8 @@ in
 
   config = lib.mkIf cfg.enable {
     services.ollama = {
+      # Ollama documentation
+      # See: https://github.com/ollama/ollama/blob/main/docs/api.md
       enable = true;
       host = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "0.0.0.0";
 

@@ -14,6 +14,8 @@ in
 
   config = lib.mkIf cfg.enable {
     services.easyeffects = {
+      # Easyeffects documentation
+      # See: https://github.com/wwmm/easyeffects/wiki
       enable = true;
 
       preset = "quiet";

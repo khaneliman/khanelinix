@@ -16,6 +16,8 @@ in
 
   config = mkIf cfg.enable {
     services.walker = {
+      # Walker documentation
+      # See: https://github.com/abenz1267/walker
       enable = true;
       systemd.enable = true;
 

@@ -18,6 +18,8 @@ in
     programs.lazygit = {
       enable = true;
 
+      # Lazygit configuration
+      # See: https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md
       settings = {
         gui = {
           authorColors = {

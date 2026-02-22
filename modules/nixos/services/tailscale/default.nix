@@ -54,6 +54,8 @@ in
     };
 
     services.tailscale = {
+      # Tailscale documentation
+      # See: https://tailscale.com/kb/
       enable = true;
       permitCertUid = "root";
       useRoutingFeatures = "both";

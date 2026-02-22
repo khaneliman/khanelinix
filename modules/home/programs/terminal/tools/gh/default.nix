@@ -52,6 +52,8 @@ in
           inherit (cfg.gitCredentialHelper) hosts;
         };
 
+        # Gh configuration
+        # See: https://cli.github.com/manual/gh_config
         settings = {
           version = "1";
         };

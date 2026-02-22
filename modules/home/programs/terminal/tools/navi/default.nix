@@ -16,6 +16,8 @@ in
 
   config = mkIf cfg.enable {
     programs.navi = {
+      # Navi documentation
+      # See: https://github.com/denisidoro/navi
       enable = true;
 
       settings = {

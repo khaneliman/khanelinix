@@ -21,6 +21,8 @@ in
     };
 
     programs.cava = {
+      # Cava documentation
+      # See: https://github.com/karlstav/cava
       enable = true;
       package = if pkgs.stdenv.hostPlatform.isLinux then pkgs.cava else pkgs.emptyDirectory;
 

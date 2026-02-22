@@ -44,6 +44,8 @@ in
       default = { };
       description = ''
         Configuration to pass through to the main sway module.
+
+        See <https://github.com/swaywm/sway/wiki>
       '';
     };
   };

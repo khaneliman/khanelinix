@@ -47,6 +47,8 @@ in
     in
     lib.mkIf cfg.enable {
       programs.gamemode = {
+        # Gamemode documentation
+        # See: https://github.com/FeralInteractive/gamemode
         enable = true;
         enableRenice = true;
 

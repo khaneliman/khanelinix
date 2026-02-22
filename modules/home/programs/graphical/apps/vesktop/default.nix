@@ -14,6 +14,8 @@ in
 
   config = lib.mkIf cfg.enable {
     programs.vesktop = {
+      # Vesktop/Vencord documentation
+      # See: https://vencord.dev/
       enable = true;
 
       settings = {

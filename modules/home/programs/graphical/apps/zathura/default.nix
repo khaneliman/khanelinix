@@ -16,6 +16,8 @@ in
 
   config = mkIf cfg.enable {
     programs.zathura = {
+      # Zathura documentation
+      # See: https://pwmt.org/projects/zathura/documentation/
       enable = true;
 
       options = {

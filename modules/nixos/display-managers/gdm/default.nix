@@ -40,6 +40,8 @@ in
       displayManager = {
         inherit (cfg) defaultSession;
         gdm = {
+          # GDM documentation
+          # See: https://wiki.gnome.org/Projects/GDM
           inherit (cfg) enable wayland autoSuspend;
         };
         #FIXME: wtf

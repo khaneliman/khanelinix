@@ -28,6 +28,8 @@ in
       enable = true;
       package = pkgs.alacritty;
 
+      # Alacritty configuration
+      # See: https://alacritty.org/config-alacritty.html
       settings = {
         cursor = {
           style = {

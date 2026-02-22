@@ -20,6 +20,8 @@ in
   config = mkIf cfg.enable {
     programs = {
       zsh = {
+        # Zsh configuration
+        # See: https://zsh.sourceforge.io/Doc/
         enable = true;
         package = pkgs.zsh;
 

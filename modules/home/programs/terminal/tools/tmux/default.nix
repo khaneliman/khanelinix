@@ -44,6 +44,8 @@ in
 
   config = mkIf cfg.enable {
     programs.tmux = {
+      # Tmux documentation
+      # See: https://github.com/tmux/tmux/wiki
       enable = true;
       aggressiveResize = true;
       baseIndex = 1;

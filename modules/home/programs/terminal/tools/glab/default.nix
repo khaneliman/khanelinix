@@ -33,6 +33,8 @@ in
   config = mkIf cfg.enable {
     home.packages = [ pkgs.glab ];
 
+    # Glab configuration
+    # See: https://docs.gitlab.com/ee/gitlab-cli/commands/config.html
     programs.git.settings.credential = builtins.listToAttrs (
       map (
         host:

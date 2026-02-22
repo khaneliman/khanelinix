@@ -20,6 +20,8 @@ in
 
   config = lib.mkIf cfg.enable {
     programs.anyrun = {
+      # Anyrun documentation
+      # See: https://github.com/anyrun-org/anyrun
       enable = true;
       package = pkgs.anyrun;
       config = {

@@ -40,6 +40,8 @@ in
       };
 
     services.hardware.openrgb = {
+      # OpenRGB documentation
+      # See: https://openrgb.org/
       enable = true;
       package = pkgs.openrgb-with-all-plugins;
 

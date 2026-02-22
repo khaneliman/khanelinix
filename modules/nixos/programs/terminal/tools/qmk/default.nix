@@ -16,6 +16,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    # QMK documentation
+    # See: https://docs.qmk.fm/
     environment.systemPackages = with pkgs; [ qmk ];
 
     services.udev.packages = with pkgs; [ qmk-udev-rules ];

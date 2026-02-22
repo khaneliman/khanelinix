@@ -17,6 +17,8 @@ in
 
   config = mkIf cfg.enable {
     programs.jq = {
+      # Jq documentation
+      # See: https://jqlang.github.io/jq/manual/
       enable = true;
       package = pkgs.jq;
     };

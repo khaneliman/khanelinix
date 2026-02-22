@@ -20,6 +20,8 @@ in
       enable = true;
 
       displayManager.lightdm = {
+        # LightDM documentation
+        # See: https://github.com/canonical/lightdm
         enable = true;
         background = lib.khanelinix.theme.wallpaperPath {
           inherit config pkgs;

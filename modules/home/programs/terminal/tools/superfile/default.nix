@@ -16,6 +16,8 @@ in
 
   config = mkIf cfg.enable {
     programs.superfile = {
+      # Superfile documentation
+      # See: https://github.com/yorukot/superfile
       enable = true;
       settings = lib.mkMerge [
         {

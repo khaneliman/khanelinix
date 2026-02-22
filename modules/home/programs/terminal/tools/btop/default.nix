@@ -20,6 +20,8 @@ in
       enable = true;
       package = pkgs.btop;
 
+      # btop configuration
+      # See: https://github.com/aristocratos/btop#configuration
       settings = {
         #* Name of a btop++/bpytop/bashtop formatted ".theme" file, "Default" and "TTY" for builtin themes.
         #* Themes should be placed in "../share/btop/themes" relative to binary or "$HOME/.config/btop/themes"

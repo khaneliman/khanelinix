@@ -20,6 +20,8 @@ in
   config = mkIf cfg.enable {
     services = {
       hyprsunset = {
+        # Hyprsunset documentation
+        # See: https://github.com/hyprwm/hyprsunset
         enable = true;
         extraArgs = [ "--identity" ];
 

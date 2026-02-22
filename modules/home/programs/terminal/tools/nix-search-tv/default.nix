@@ -16,6 +16,8 @@ in
 
   config = mkIf cfg.enable {
     programs.nix-search-tv = {
+      # Nix-search-tv documentation
+      # See: https://github.com/3timeslazy/nix-search-tv
       enable = true;
 
       settings = {

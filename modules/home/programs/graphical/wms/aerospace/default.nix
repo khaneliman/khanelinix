@@ -35,6 +35,8 @@ in
     };
 
     programs.aerospace = {
+      # Aerospace documentation
+      # See: https://nikitabobko.github.io/AeroSpace/guide
       enable = true;
       package = pkgs.aerospace;
 

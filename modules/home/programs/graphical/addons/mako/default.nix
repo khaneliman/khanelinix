@@ -21,6 +21,8 @@ in
       libnotify
     ];
 
+    # Mako configuration
+    # See: https://man.archlinux.org/man/mako.5
     xdg.configFile."mako/config".source = ./config;
 
     systemd.user.services.mako = {

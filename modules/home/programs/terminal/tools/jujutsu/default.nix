@@ -33,6 +33,8 @@ in
         enable = true;
         package = pkgs.jujutsu;
 
+        # Jujutsu configuration
+        # See: https://docs.jj-vcs.dev/latest/config/
         settings = {
           user = {
             name = cfg.userName;

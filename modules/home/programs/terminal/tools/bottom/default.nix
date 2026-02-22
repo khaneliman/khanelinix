@@ -20,6 +20,8 @@ in
       enable = true;
       package = pkgs.bottom;
 
+      # Bottom configuration
+      # See: https://github.com/ClementTsang/bottom#configuration
       settings = {
         flags.group_processes = true;
 

@@ -21,6 +21,8 @@ in
     programs = {
       _1password = enabled;
       _1password-gui = {
+        # 1Password documentation
+        # See: https://support.1password.com/
         enable = true;
         package = pkgs._1password-gui;
 

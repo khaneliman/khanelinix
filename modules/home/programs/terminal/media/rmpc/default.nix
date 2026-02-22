@@ -16,6 +16,8 @@ in
 
   config = mkIf cfg.enable {
     programs.rmpc = {
+      # Rmpc documentation
+      # See: https://github.com/mierak/rmpc
       enable = true;
 
       config = /* Ron */ ''

@@ -16,6 +16,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    # Twitch-tui documentation
+    # See: https://github.com/Xithrius/twitch-tui
     home.packages = [ pkgs.twitch-tui ];
 
     sops.secrets = lib.mkIf (osConfig.khanelinix.security.sops.enable or false) {

@@ -44,6 +44,8 @@ in
 
   config = mkIf cfg.enable {
     programs.infat = {
+      # Infat documentation
+      # See: https://github.com/khaneliman/infat
       enable = true;
       autoActivate = true;
 

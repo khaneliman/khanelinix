@@ -17,6 +17,8 @@ in
 
   config = mkIf cfg.enable {
     programs.looking-glass-client = {
+      # Looking Glass documentation
+      # See: https://looking-glass.io/docs/
       enable = true;
       package = pkgs.looking-glass-client;
 

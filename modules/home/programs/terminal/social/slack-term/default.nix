@@ -17,6 +17,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    # Slack-term documentation
+    # See: https://github.com/erroneousboat/slack-term
     home.packages = [ pkgs.slack-term ];
 
     sops.secrets = lib.mkIf (osConfig.khanelinix.security.sops.enable or false) {

@@ -16,6 +16,8 @@ in
 
   config = mkIf cfg.enable {
     services.udiskie = {
+      # Udiskie documentation
+      # See: https://github.com/coldfix/udiskie/wiki
       enable = true;
       automount = true;
       notify = true;

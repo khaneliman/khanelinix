@@ -20,6 +20,8 @@ in
   config = mkIf cfg.enable {
     home.packages = with pkgs; [ kanshi ];
 
+    # Kanshi configuration
+    # See: https://git.sr.ht/~emersion/kanshi/tree/master/item/doc/kanshi.5.scd
     xdg.configFile."kanshi/config".source = ./config;
 
     # configuring kanshi

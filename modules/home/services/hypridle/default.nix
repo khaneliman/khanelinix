@@ -14,6 +14,8 @@ in
 
   config = lib.mkIf cfg.enable {
     services.hypridle = {
+      # Hypridle documentation
+      # See: https://wiki.hypr.land/Hypr-ecosystem/hypridle/
       enable = true;
 
       settings = {

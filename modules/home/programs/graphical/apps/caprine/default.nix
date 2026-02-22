@@ -16,6 +16,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    # Caprine documentation
+    # See: https://github.com/sindresorhus/caprine
     home.packages = [
       pkgs.caprine-bin
     ];

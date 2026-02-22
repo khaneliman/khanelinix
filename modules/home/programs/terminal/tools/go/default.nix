@@ -16,6 +16,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    # Go documentation
+    # See: https://go.dev/doc/
     home = {
       packages = with pkgs; [
         go

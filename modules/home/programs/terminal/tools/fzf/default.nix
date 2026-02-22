@@ -17,6 +17,8 @@ in
 
   config = mkIf cfg.enable {
     programs.fzf = {
+      # Fzf documentation
+      # See: https://github.com/junegunn/fzf#configuration
       enable = true;
 
       defaultCommand = "${lib.getExe pkgs.fd} --type=f --hidden --exclude=.git";

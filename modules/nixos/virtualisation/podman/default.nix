@@ -44,6 +44,8 @@ in
 
     virtualisation = {
       podman = {
+        # Podman documentation
+        # See: https://podman.io/
         inherit (cfg) enable;
 
         # prune images and containers periodically

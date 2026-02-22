@@ -20,6 +20,8 @@ in
       nix-index-database.comma.enable = true;
 
       nix-index = {
+        # Nix-index documentation
+        # See: https://github.com/nix-community/nix-index
         enable = true;
         package = pkgs.nix-index;
 

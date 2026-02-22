@@ -38,6 +38,8 @@ in
 
   config = mkIf cfg.enable {
     services.openssh = {
+      # OpenSSH documentation
+      # See: https://www.openssh.com/manual.html
       enable = true;
 
       hostKeys = mkDefault [

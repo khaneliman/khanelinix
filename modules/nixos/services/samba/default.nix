@@ -56,6 +56,8 @@ in
     };
 
     services.samba = {
+      # Samba documentation
+      # See: https://www.samba.org/samba/docs/
       enable = true;
       openFirewall = true;
 

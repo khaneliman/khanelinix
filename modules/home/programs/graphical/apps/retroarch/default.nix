@@ -16,6 +16,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    # RetroArch documentation
+    # See: https://docs.libretro.com/
     home.packages = [
       (pkgs.retroarch.withCores (
         cores: with cores; [

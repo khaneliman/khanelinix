@@ -20,8 +20,12 @@ in
 
     configs = lib.mkOption {
       default = { };
-      description = "Subvolume configuration. Any option mentioned in man:snapper-configs(5)
-        is valid here, even if NixOS doesn't document it.";
+      description = ''
+        Subvolume configuration. Any option mentioned in man:snapper-configs(5)
+        is valid here, even if NixOS doesn't document it.
+
+        See <https://en.opensuse.org/openSUSE:Snapper_Tutorial>
+      '';
       type = types.attrsOf (
         types.submodule {
           freeformType = types.attrsOf (

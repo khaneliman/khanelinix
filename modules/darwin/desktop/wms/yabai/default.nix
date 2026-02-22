@@ -42,6 +42,8 @@ in
     };
 
     services.yabai = {
+      # Yabai documentation
+      # See: https://github.com/koekeishiya/yabai
       enable = true;
       package = pkgs.yabai;
       # NOTE: You need to disable SIP and set nvram boot args for this.

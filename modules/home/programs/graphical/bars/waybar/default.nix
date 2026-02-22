@@ -42,6 +42,8 @@ in
 
   config = mkIf cfg.enable {
     programs.waybar = {
+      # Waybar configuration
+      # See: https://github.com/Alexays/Waybar/wiki/Configuration
       enable = true;
       package = waybar.packages.${system}.waybar.overrideAttrs (_: {
         patches = [

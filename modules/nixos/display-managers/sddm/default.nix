@@ -34,6 +34,8 @@ in
     services = {
       displayManager = {
         sddm = {
+          # SDDM documentation
+          # See: https://github.com/sddm/sddm
           inherit (cfg) enable;
           # package = pkgs.libsForQt5.sddm;
           # TODO: update theme support

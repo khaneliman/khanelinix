@@ -16,6 +16,8 @@ in
   config = mkIf cfg.enable {
     programs = {
       nushell = {
+        # Nushell documentation
+        # See: https://www.nushell.sh/book/
         enable = true;
 
         shellAliases = lib.mkForce (

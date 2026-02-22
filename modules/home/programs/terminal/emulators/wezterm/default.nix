@@ -17,6 +17,8 @@ in
 
   config = mkIf cfg.enable {
     programs.wezterm = {
+      # Wezterm documentation
+      # See: https://wezterm.org/config/files.html
       enable = true;
       enableBashIntegration = true;
       enableZshIntegration = true;

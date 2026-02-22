@@ -20,7 +20,11 @@ in
     settings = lib.mkOption {
       type = lib.types.attrs;
       default = { };
-      description = "Configuration to pass through to the niri module.";
+      description = ''
+        Configuration to pass through to the niri module.
+
+        See <https://github.com/niri-wm/niri/wiki/Configuration:-Overview>
+      '';
     };
   };
 

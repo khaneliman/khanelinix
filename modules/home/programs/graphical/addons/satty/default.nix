@@ -26,6 +26,8 @@ in
       "";
 
     programs.satty = {
+      # Satty documentation
+      # See: https://github.com/gabm/satty
       enable = true;
 
       settings = {

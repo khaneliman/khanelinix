@@ -18,6 +18,8 @@ in
   config = mkIf cfg.enable {
 
     programs.chromium = {
+      # Chromium policies
+      # See: https://chromeenterprise.google/policies/
       enable = true;
       package = mkIf pkgs.stdenv.hostPlatform.isDarwin null;
 

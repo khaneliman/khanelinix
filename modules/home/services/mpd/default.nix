@@ -46,6 +46,8 @@ in
 
     services = {
       mpd = {
+        # MPD documentation
+        # See: https://www.musicpd.org/doc/html/
         enable = true;
         inherit (cfg) musicDirectory;
 

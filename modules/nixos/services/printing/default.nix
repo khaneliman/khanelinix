@@ -20,6 +20,8 @@ in
       colord.enable = true;
 
       printing = {
+        # CUPS documentation
+        # See: https://www.cups.org/documentation.html
         enable = true;
         browsing = true;
 

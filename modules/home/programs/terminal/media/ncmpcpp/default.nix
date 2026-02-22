@@ -17,6 +17,8 @@ in
 
   config = mkIf cfg.enable {
     programs.ncmpcpp = {
+      # Ncmpcpp documentation
+      # See: https://github.com/ncmpcpp/ncmpcpp
       enable = true;
 
       package = pkgs.ncmpcpp.override { visualizerSupport = true; };

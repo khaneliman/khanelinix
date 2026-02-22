@@ -16,6 +16,8 @@ in
   config = lib.mkIf cfg.enable {
     programs = {
       gamescope = {
+        # Gamescope documentation
+        # See: https://github.com/ValveSoftware/gamescope
         enable = true;
         package = pkgs.gamescope;
 

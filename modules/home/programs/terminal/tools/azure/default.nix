@@ -16,6 +16,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    # Azure CLI documentation
+    # See: https://learn.microsoft.com/en-us/cli/azure/
     home.packages =
       with pkgs;
       [

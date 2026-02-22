@@ -15,6 +15,8 @@ in
 
   config = mkIf cfg.enable {
     services.jankyborders = {
+      # Jankyborders documentation
+      # See: https://github.com/FelixKratz/JankyBorders
       enable = true;
 
       settings = {

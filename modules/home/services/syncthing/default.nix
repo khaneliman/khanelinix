@@ -17,6 +17,8 @@ in
 
   config = mkIf cfg.enable {
     services.syncthing = {
+      # Syncthing documentation
+      # See: https://docs.syncthing.net/
       enable = true;
 
       tray.enable = pkgs.stdenv.hostPlatform.isLinux;

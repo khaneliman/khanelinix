@@ -41,6 +41,8 @@ in
 
   config = mkIf cfg.enable {
     services.flatpak = {
+      # Flatpak documentation
+      # See: https://docs.flatpak.org/en/latest/
       enable = true;
 
       remotes = cfg.extraRepos;

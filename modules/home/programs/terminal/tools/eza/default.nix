@@ -16,6 +16,8 @@ in
 
   config = lib.mkIf cfg.enable {
     programs.eza = {
+      # Eza documentation
+      # See: https://github.com/eza-community/eza
       enable = true;
       package = pkgs.eza;
 

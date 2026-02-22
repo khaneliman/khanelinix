@@ -57,6 +57,8 @@ in
   config = mkIf cfg.enable {
     services = {
       hyprpaper = {
+        # Hyprpaper documentation
+        # See: https://wiki.hypr.land/Hypr-ecosystem/hyprpaper/
         enable = true;
 
         settings = {

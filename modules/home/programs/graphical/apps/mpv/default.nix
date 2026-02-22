@@ -18,6 +18,8 @@ in
 
   config = mkIf cfg.enable {
     programs.mpv = {
+      # Mpv documentation
+      # See: https://mpv.io/manual/stable/
       enable = pkgs.stdenv.hostPlatform.isLinux;
       package = pkgs.mpv;
 

@@ -15,6 +15,8 @@ in
 
   config = mkIf cfg.enable {
     programs.pay-respects = {
+      # Pay-respects documentation
+      # See: https://github.com/iffse/pay-respects
       enable = true;
 
       enableBashIntegration = true;

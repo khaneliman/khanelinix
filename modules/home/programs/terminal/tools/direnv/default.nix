@@ -17,6 +17,8 @@ in
 
   config = mkIf cfg.enable {
     programs.direnv = {
+      # Direnv configuration
+      # See: https://direnv.net/
       enable = true;
       nix-direnv = enabled;
       silent = true;

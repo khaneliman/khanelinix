@@ -26,6 +26,8 @@ in
   config = mkIf cfg.enable {
     services = {
       cliphist = {
+        # Cliphist documentation
+        # See: https://github.com/sentriz/cliphist
         enable = true;
         allowImages = true;
         systemdTargets =

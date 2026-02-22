@@ -15,6 +15,10 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.prismlauncher.enable = true;
+    programs.prismlauncher = {
+      # Prism Launcher documentation
+      # See: https://prismlauncher.org/wiki/
+      enable = true;
+    };
   };
 }

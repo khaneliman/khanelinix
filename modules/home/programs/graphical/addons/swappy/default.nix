@@ -22,6 +22,8 @@ in
       "";
 
     programs.swappy = {
+      # Swappy documentation
+      # See: https://github.com/jtheoof/swappy
       enable = true;
 
       settings = {

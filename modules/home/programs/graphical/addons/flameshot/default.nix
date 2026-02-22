@@ -25,6 +25,8 @@ in
       "";
 
     services.flameshot = {
+      # Flameshot documentation
+      # See: https://flameshot.org/docs/
       enable = true;
     };
   };

@@ -42,6 +42,8 @@ in
 
   config = mkIf cfg.enable {
     programs.noisetorch = {
+      # Noisetorch documentation
+      # See: https://github.com/noisetorch/NoiseTorch
       enable = true;
 
       inherit (cfg) package;

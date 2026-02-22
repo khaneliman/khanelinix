@@ -21,6 +21,8 @@ in
 
   config = lib.mkIf cfg.enable {
     programs.mcp = {
+      # MCP documentation
+      # See: https://modelcontextprotocol.io/
       enable = true;
       servers = {
         filesystem = {

@@ -128,6 +128,8 @@ in
         inherit (pkgs.yaziPlugins) yatline-catppuccin;
       };
 
+      # Yazi configuration
+      # See: https://yazi-rs.github.io/docs/configuration/overview/
       settings = lib.mkMerge [
         (import ./settings/input.nix)
         (import ./settings/open.nix)

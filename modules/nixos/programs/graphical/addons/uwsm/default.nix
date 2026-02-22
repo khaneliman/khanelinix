@@ -15,6 +15,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    # UWSM documentation
+    # See: https://github.com/Vladimir-csp/uwsm
     programs.uwsm.enable = true;
 
     khanelinix.home = {

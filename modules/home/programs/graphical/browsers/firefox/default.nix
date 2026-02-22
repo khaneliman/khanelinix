@@ -92,6 +92,8 @@ in
     };
 
     programs.firefox = {
+      # Firefox configuration and policies
+      # See: https://mozilla.github.io/policy-templates/
       enable = true;
       package = pkgs.firefox-devedition;
 

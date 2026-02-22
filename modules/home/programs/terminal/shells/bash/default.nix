@@ -16,6 +16,8 @@ in
 
   config = mkIf cfg.enable {
     programs.bash = {
+      # Bash documentation
+      # See: https://www.gnu.org/software/bash/manual/
       enable = true;
       enableCompletion = true;
 

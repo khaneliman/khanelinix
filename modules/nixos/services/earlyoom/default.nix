@@ -17,6 +17,8 @@ in
 
   config = mkIf cfg.enable {
     services.earlyoom = {
+      # Earlyoom documentation
+      # See: https://github.com/rfjakob/earlyoom
       enable = true;
       enableNotifications = true;
 

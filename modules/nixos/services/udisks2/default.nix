@@ -17,6 +17,8 @@ in
 
   config = mkIf cfg.enable {
     services.udisks2 = {
+      # Udisks2 documentation
+      # See: https://www.freedesktop.org/wiki/Software/udisks/
       enable = true;
     };
   };

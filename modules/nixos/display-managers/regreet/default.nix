@@ -48,6 +48,8 @@ in
     ];
 
     programs.regreet = {
+      # ReGreet documentation
+      # See: https://github.com/rharish101/ReGreet
       enable = true;
 
       settings = {

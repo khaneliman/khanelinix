@@ -23,6 +23,8 @@ in
     ];
 
     services.ddccontrol = {
+      # DDCControl documentation
+      # See: https://github.com/ddccontrol/ddccontrol
       enable = true;
     };
   };

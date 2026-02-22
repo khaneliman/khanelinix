@@ -22,6 +22,8 @@ in
 
   config = mkIf cfg.enable {
     programs.topgrade = {
+      # Topgrade documentation
+      # See: https://github.com/topgrade-rs/topgrade
       enable = true;
 
       settings = {

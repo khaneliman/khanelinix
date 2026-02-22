@@ -19,6 +19,8 @@ in
     programs.bat = {
       enable = true;
 
+      # Bat configuration
+      # See: https://github.com/sharkdp/bat#configuration-file
       config = {
         style = "auto,header-filesize";
       };

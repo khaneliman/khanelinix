@@ -15,6 +15,8 @@ in
 
   config = lib.mkIf cfg.enable {
     services.gnome-keyring = {
+      # Gnome-keyring documentation
+      # See: https://wiki.gnome.org/Projects/GnomeKeyring
       enable = true;
 
       components = [

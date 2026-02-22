@@ -46,6 +46,8 @@ in
           ];
       });
 
+      # Helix configuration
+      # See: https://docs.helix-editor.com/configuration.html
       settings = {
         editor = {
           bufferline = "always";

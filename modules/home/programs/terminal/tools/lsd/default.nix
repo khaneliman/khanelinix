@@ -31,6 +31,8 @@ in
       enableZshIntegration = false;
       enableFishIntegration = false;
 
+      # Lsd configuration
+      # See: https://github.com/lsd-rs/lsd#configuration
       settings = {
         blocks = [
           "permission"

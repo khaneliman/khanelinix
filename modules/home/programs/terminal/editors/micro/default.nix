@@ -18,6 +18,8 @@ in
   config = mkIf cfg.enable {
     programs = {
       micro = {
+        # Micro documentation
+        # See: https://github.com/zyedidia/micro/blob/master/runtime/help/options.md
         enable = true;
 
         settings = {

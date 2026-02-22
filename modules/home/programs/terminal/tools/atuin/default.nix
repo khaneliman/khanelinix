@@ -56,6 +56,8 @@ in
       #   "--disable-up-arrow"
       # ];
 
+      # Atuin configuration
+      # See: https://docs.atuin.sh/configuration/config/
       settings = {
         enter_accept = true;
         # Filter modes can still be toggled via `ctrl-r`

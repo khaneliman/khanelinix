@@ -23,6 +23,8 @@ in
     };
 
     programs.fish = {
+      # Fish documentation
+      # See: https://fishshell.com/docs/current/index.html
       enable = true;
 
       loginShellInit =

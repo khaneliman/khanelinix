@@ -18,10 +18,14 @@ in
   config = mkIf cfg.enable {
     programs = {
       _1password = {
+        # 1Password CLI documentation
+        # See: https://developer.1password.com/docs/cli/
         enable = true;
         package = pkgs._1password-cli;
       };
       _1password-gui = {
+        # 1Password GUI documentation
+        # See: https://support.1password.com/
         enable = true;
         package = pkgs._1password-gui;
       };

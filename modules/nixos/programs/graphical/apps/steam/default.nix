@@ -23,6 +23,8 @@ in
     hardware.steam-hardware.enable = true;
 
     programs.steam = {
+      # Steam/Proton documentation
+      # See: https://github.com/ValveSoftware/Proton
       enable = true;
       extest.enable = true;
       localNetworkGameTransfers.openFirewall = true;

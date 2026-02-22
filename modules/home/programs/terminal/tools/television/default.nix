@@ -15,6 +15,8 @@ in
 
   config = mkIf cfg.enable {
     programs.television = {
+      # Television documentation
+      # See: https://github.com/alexpasmantier/television
       enable = true;
 
       settings = {

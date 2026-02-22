@@ -62,6 +62,8 @@ in
             ];
           });
 
+          # Zellij configuration
+          # See: https://zellij.dev/documentation/
           settings = {
             # clipboard provider
             copy_command =

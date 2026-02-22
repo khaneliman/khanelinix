@@ -18,6 +18,8 @@ in
 
   config = mkIf cfg.enable {
     programs.hyprlock = {
+      # Hyprlock documentation
+      # See: https://wiki.hypr.land/Hypr-ecosystem/hyprlock/
       enable = true;
 
       settings = {

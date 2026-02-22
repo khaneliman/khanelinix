@@ -18,6 +18,8 @@ in
 
   config = mkIf cfg.enable {
     programs.swaylock = {
+      # Swaylock documentation
+      # See: https://github.com/swaywm/swaylock
       enable = true;
       package = pkgs.swaylock-effects;
 

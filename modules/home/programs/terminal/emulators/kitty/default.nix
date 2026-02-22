@@ -196,6 +196,8 @@ in
         }
         // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin { "cmd+opt+s" = "noop"; };
 
+        # Kitty configuration
+        # See: https://sw.kovidgoyal.net/kitty/conf/
         settings = {
           # Fonts
           font_family = cfg.font.normal;

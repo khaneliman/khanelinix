@@ -47,7 +47,11 @@ in
     settings = lib.mkOption {
       type = lib.types.attrs;
       default = { };
-      description = "Hyprland configuration settings.";
+      description = ''
+        Hyprland configuration settings.
+
+        See <https://wiki.hypr.land/Configuring/Configuring-Hyprland/>
+      '';
     };
   };
 

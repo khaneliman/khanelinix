@@ -16,6 +16,8 @@ in
 
   config = lib.mkIf cfg.enable {
     services.swayidle = {
+      # Swayidle documentation
+      # See: https://github.com/swaywm/swayidle
       enable = true;
       package = pkgs.swayidle;
 

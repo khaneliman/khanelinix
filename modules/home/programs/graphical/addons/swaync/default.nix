@@ -42,6 +42,8 @@ in
 
   config = mkIf cfg.enable {
     services.swaync = {
+      # SwayNC configuration
+      # See: https://github.com/ErikReider/SwayNotificationCenter
       enable = true;
       package = pkgs.swaynotificationcenter;
 

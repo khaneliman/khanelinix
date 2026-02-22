@@ -31,6 +31,8 @@ in
         enable = true;
         package = pkgs.k9s;
 
+        # K9s configuration
+        # See: https://k9scli.io/topics/config/
         settings.k9s = {
           liveViewAutoRefresh = true;
           refreshRate = 1;

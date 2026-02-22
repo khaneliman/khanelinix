@@ -18,6 +18,8 @@ in
 
   config = mkIf cfg.enable {
     programs.wlogout = {
+      # Wlogout documentation
+      # See: https://github.com/ArtsyMacaw/wlogout
       enable = true;
       package = pkgs.wlogout;
 

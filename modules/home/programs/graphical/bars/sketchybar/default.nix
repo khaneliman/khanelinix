@@ -27,6 +27,8 @@ in
 
     programs = {
       sketchybar = {
+        # Sketchybar documentation
+        # See: https://felixkratz.github.io/SketchyBar/setup
         enable = true;
         configType = "lua";
 

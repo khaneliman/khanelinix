@@ -25,6 +25,8 @@ in
     # ];
 
     services.cloudflared = {
+      # Cloudflared documentation
+      # See: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/
       enable = true;
       package = pkgs.cloudflared;
 

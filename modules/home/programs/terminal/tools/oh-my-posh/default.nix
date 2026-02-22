@@ -22,6 +22,8 @@ in
       enableNushellIntegration = true;
       enableZshIntegration = true;
 
+      # Oh-my-posh configuration
+      # See: https://ohmyposh.dev/docs/
       settings = {
         "$schema" = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json";
 

@@ -16,6 +16,8 @@ in
 
   config = lib.mkIf cfg.enable {
     programs.obs-studio = {
+      # OBS Studio documentation
+      # See: https://obsproject.com/wiki/
       enable = true;
       package = pkgs.obs-studio;
 

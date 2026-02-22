@@ -17,6 +17,8 @@ in
   config = mkIf cfg.enable {
     programs = {
       carapace = {
+        # Carapace documentation
+        # See: https://carapace-sh.github.io/carapace-bin/
         enable = true;
 
         enableBashIntegration = true;
