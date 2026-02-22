@@ -19,7 +19,7 @@
   {
     key = "R";
     context = "commits";
-    command = "git commit --amend --only --no-verify";
+    command = "sha=\"{{.SelectedLocalCommit.Sha}}\"; prefix=$(printf '%s' \"$sha\" | cut -c1-7); GIT_SEQUENCE_EDITOR=\"perl -i -pe \\\"s/^pick ($prefix\\\"\\\"[0-9a-f]*) /reword \\\\\\$1 /\\\"\" git rebase -i --no-verify \"$sha^\"";
     description = "Reword commit (skip hooks)";
     output = "terminal";
   }
