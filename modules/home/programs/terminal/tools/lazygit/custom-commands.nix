@@ -24,6 +24,78 @@
     output = "terminal";
   }
   {
+    key = "<c-f>";
+    context = "commits";
+    command = ''
+      /bin/sh -lc '
+      set -eu
+
+      rc=0
+      oldest="$(
+        git log --reverse --format="%H%x09%s" HEAD | awk -F "\t" "
+          BEGIN { fixupCount = 0; resolvedCount = 0; nextIdx = 0; }
+          {
+            sha = \$1;
+            subject = \$2;
+            if (subject ~ /^(fixup! |squash! )/) {
+              fixupCount++;
+              targetSubject = subject;
+              sub(/^(fixup! |squash! )/, \"\", targetSubject);
+              targetSha = latest[targetSubject];
+              if (targetSha != \"\") {
+                resolvedCount++;
+                used[targetSha] = 1;
+              }
+            } else {
+              nextIdx++;
+              idx[sha] = nextIdx;
+              latest[subject] = sha;
+            }
+          }
+          END {
+            if (fixupCount == 0) exit 2;
+            if (resolvedCount == 0) exit 3;
+            oldestSha = \"\";
+            oldestIdx = 0;
+            for (sha in used) {
+              if (oldestSha == \"\" || idx[sha] < oldestIdx) {
+                oldestSha = sha;
+                oldestIdx = idx[sha];
+              }
+            }
+            if (oldestSha == \"\") exit 4;
+            print oldestSha;
+          }
+        "
+      )" || rc=$?
+
+      if [ "$rc" -eq 2 ]; then
+        echo "No fixup!/squash! commits found on this branch."
+        exit 1
+      elif [ "$rc" -eq 3 ]; then
+        echo "Found fixup!/squash! commits, but could not resolve target commits."
+        exit 1
+      elif [ "$rc" -ne 0 ] || [ -z "$oldest" ]; then
+        echo "Unable to determine oldest target commit."
+        exit 1
+      fi
+
+      GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash --no-verify "$oldest^"
+      '
+    '';
+    description = "Autosquash all fixup/squash commits (auto-detect oldest target, skip hooks)";
+    loadingText = "Autosquashing fixup commits...";
+    output = "terminal";
+    prompts = [
+      {
+        type = "confirm";
+        key = "ConfirmAutosquash";
+        title = "Rewrite commit history?";
+        body = "This auto-detects the oldest fixup target commit, rebases from its parent, and rewrites commit hashes.";
+      }
+    ];
+  }
+  {
     key = "<c-a>";
     context = "files";
     command = "git commit --amend --no-edit --no-verify";
