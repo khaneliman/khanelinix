@@ -46,7 +46,7 @@ in
       settings = {
         features = {
           shell_snapshot = true;
-          collab = true;
+          multi_agent = true;
           apps = true;
         };
 
