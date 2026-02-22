@@ -75,3 +75,9 @@ in {
 - Refer to `.claude/rules/*.md` for platform-specific deep dives (NixOS, Darwin,
   Home Manager, Lib, etc.).
 - When adding a new module, ensure it is imported in its parent `default.nix`.
+
+## AI Tools Skills
+
+- For atomic commit cleanup with follow-up fixes, use the `git-workflows` skill
+  in `modules/common/ai-tools/skills/git-workflows/` (see `reference.md` and
+  `examples.md` for the fixup + autosquash flow).

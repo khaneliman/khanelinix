@@ -19,9 +19,9 @@ conflict resolution.
 ## Detailed Reference Material
 
 - [examples.md](examples.md) - Common workflows, including Feature Branch,
-  Trunk-Based, and Conflict Resolution.
+  Trunk-Based, Conflict Resolution, and fixup/autosquash examples.
 - [reference.md](reference.md) - Branch naming conventions, conflict strategies,
-  and command reference tables.
+  command reference tables, and fixup/autosquash strategy.
 
 ## Quick Summary
 
@@ -50,6 +50,23 @@ branches.
 - [ ] Squash fixup commits
 - [ ] Run tests and linting
 - [ ] Write clear PR description
+
+### Fixup + Autosquash
+
+Use this when follow-up fixes belong to earlier commits and you want clean,
+atomic history:
+
+```bash
+git commit --fixup=<target-commit-hash>
+GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash <oldest-target-hash>^
+```
+
+Then verify with:
+
+```bash
+git log --oneline -n 20
+git status --short
+```
 
 ## Useful Git Commands
 

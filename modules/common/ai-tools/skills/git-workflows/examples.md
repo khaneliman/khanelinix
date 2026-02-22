@@ -97,3 +97,28 @@ git fetch --prune
 # Find merged branches to clean
 git branch --merged main
 ```
+
+## Fixup + Autosquash (Atomic History)
+
+```bash
+# Existing history
+git log --oneline -n 6
+# aaaaaaa feat(api): add v2 routes
+# bbbbbbb test(api): add v2 integration tests
+# ccccccc docs(api): add v2 migration notes
+
+# Follow-up fix belongs to feature commit
+git add src/api/v2/routes.nix
+git commit --fixup=aaaaaaa
+
+# Follow-up test fix belongs to test commit
+git add tests/api/v2-integration.nix
+git commit --fixup=bbbbbbb
+
+# Fold both fixups into original commits
+GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash aaaaaaa^
+
+# Verify no standalone "fixup!" commits remain
+git log --oneline -n 10
+git status --short
+```
