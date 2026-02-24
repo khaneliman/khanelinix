@@ -11,31 +11,9 @@ let
     "find-usages" = "explore";
     "summarize-module" = "explore";
     "refactor-suggest" = "refactorer";
-    "generate-docs" = "doc-writer";
     "generate-tests" = "test-runner";
-
-    "commit-changes" = "code-reviewer";
-    "analyze-git-history" = "code-reviewer";
-    "resolve-conflicts" = "code-reviewer";
-    "git-bisect" = "code-reviewer";
-    "git-cleanup" = "code-reviewer";
-
-    "code-review" = "code-reviewer";
-    "deep-check" = "code-reviewer";
-    "dependency-audit" = "code-reviewer";
-    "module-lint" = "code-reviewer";
-    "style-audit" = "code-reviewer";
-    "check-todos" = "code-reviewer";
-    "parse-sarif" = "code-reviewer";
-
-    "flake-update" = "nix-builder";
-    "module-scaffold" = "nix-builder";
-    "option-migrate" = "nix-builder";
-    "nix-refactor" = "nix-builder";
-    "template-new" = "nix-builder";
-
-    "initialization" = "doc-writer";
-    "changelog" = "doc-writer";
+    "initialization" = "explore";
+    "changelog" = "explore";
   };
 
   normalizeCommand =

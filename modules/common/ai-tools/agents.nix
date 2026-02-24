@@ -5,26 +5,6 @@ let
   agentsBasePath = ./agents;
 
   agents = {
-    code-reviewer = {
-      name = "code-reviewer";
-      description = "Code review specialist for analyzing changes, ensuring quality, and creating atomic commits. Use for code reviews and committing changes.";
-      tools = [
-        "Read"
-        "Bash"
-        "Grep"
-        "Glob"
-      ];
-      model = {
-        claude = "opus";
-        gemini = "gemini-3-pro-preview";
-        opencode = "github-copilot/gpt-5.2";
-      };
-      permission = {
-        edit = "deny";
-        bash = "ask";
-      };
-      content = builtins.readFile (agentsBasePath + "/general/code-reviewer.md");
-    };
     debugger = {
       name = "debugger";
       description = "Debugging specialist for errors, exceptions, test failures, and unexpected behavior. Use when encountering any issues that need root cause analysis.";
@@ -45,27 +25,6 @@ let
         bash = "ask";
       };
       content = builtins.readFile (agentsBasePath + "/general/debugger.md");
-    };
-    doc-writer = {
-      name = "doc-writer";
-      description = "Documentation specialist for writing READMEs, API docs, guides, and technical documentation. Use when documentation work would benefit from isolated context.";
-      tools = [
-        "Read"
-        "Write"
-        "Edit"
-        "Grep"
-        "Glob"
-      ];
-      model = {
-        claude = "sonnet";
-        gemini = "gemini-2.5-flash";
-        opencode = "github-copilot/gpt-5.1-codex";
-      };
-      permission = {
-        edit = "deny";
-        bash = "ask";
-      };
-      content = builtins.readFile (agentsBasePath + "/general/doc-writer.md");
     };
     refactorer = {
       name = "refactorer";
@@ -109,31 +68,6 @@ let
         bash = "ask";
       };
       content = builtins.readFile (agentsBasePath + "/general/test-runner.md");
-    };
-    nix-builder = {
-      name = "nix-builder";
-      description = "Nix build and evaluation specialist. Use for running nix builds, checking flakes, debugging evaluation errors, and validating Nix configurations.";
-      tools = [
-        "Read"
-        "Bash"
-        "Grep"
-        "Glob"
-      ];
-      model = {
-        claude = "opus";
-        gemini = "gemini-3-pro-preview";
-        opencode = "github-copilot/gpt-5.2";
-      };
-      permission = {
-        edit = "deny";
-        bash = {
-          "*" = "ask";
-          "nix build*" = "allow";
-          "nix flake*" = "allow";
-          "nix eval*" = "allow";
-        };
-      };
-      content = builtins.readFile (agentsBasePath + "/nix/nix-builder.md");
     };
   };
 
