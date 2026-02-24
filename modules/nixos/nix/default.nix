@@ -63,7 +63,9 @@ in
       daemonIOSchedPriority = 7; # 0-7, higher = lower priority
 
       gc = {
-        dates = "Sun *-*-* 03:00";
+        dates = "daily";
+        options = "--delete-older-than 7d";
+        randomizedDelaySec = "45min";
       };
 
       optimise = {
