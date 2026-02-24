@@ -22,6 +22,10 @@ in
     home.packages = with pkgs; [
       age
       sops
+      # NOTE: Adding a new machine key
+      # 1. Convert SSH key: ssh-to-age -private-key -i ~/.ssh/id_ed25519 > ~/.config/sops/age/keys.txt
+      # 2. Add the public key to `.sops.yaml` under both the machine-specific and `secrets/khaneliman/` rules
+      # 3. Run `sops updatekeys` on all affected secret files from a machine that can already decrypt them
       ssh-to-age
     ];
 
