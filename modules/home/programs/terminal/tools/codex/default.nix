@@ -56,7 +56,7 @@ in
         };
 
         model = "gpt-5.3-codex";
-        model_reasoning_effort = "high";
+        model_reasoning_effort = "medium";
 
         notify = [ (lib.getExe codexNotify) ];
         personality = "pragmatic";
@@ -73,14 +73,14 @@ in
         profiles = {
           # Deep, deliberate analysis mode.
           deep = {
-            model_reasoning_effort = "xhigh";
+            model_reasoning_effort = "high";
             model_verbosity = "high";
             approval_policy = "on-request";
           };
 
           # Faster implementation loop for coding tasks.
           quick = {
-            model_reasoning_effort = "medium";
+            model_reasoning_effort = "low";
             model_reasoning_summary = "none";
             model_verbosity = "low";
             approval_policy = "on-request";
