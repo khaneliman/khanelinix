@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib.khanelinix) enabled;
-  inherit (lib) mkMerge;
+  inherit (lib) mkForce mkMerge;
 in
 {
   imports = [
@@ -176,6 +176,9 @@ in
   services = {
     displayManager.defaultSession = "hyprland-uwsm";
   };
+
+  # Keep EFI usage predictable when specialisations multiply boot artifacts.
+  boot.loader.systemd-boot.configurationLimit = mkForce 10;
 
   system.stateVersion = "25.11";
 }
