@@ -117,7 +117,7 @@ in
 
     services = {
       sops = {
-        # enable = true;
+        enable = true;
         defaultSopsFile = lib.getFile "secrets/CORE/nixos/default.yaml";
         sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
       };
