@@ -24,31 +24,6 @@ in
       settings = {
         contextFilename = "AGENTS.md";
 
-        ui = {
-          theme = "Default";
-          footer = {
-            hideContextPercentage = false;
-          };
-          showCitations = true;
-          showModelInfoInChat = true;
-          showStatusInTitle = true;
-        };
-        general = {
-          vimMode = true;
-          preferredEditor = "neovim";
-          previewFeatures = true;
-          checkpointing = {
-            enabled = true;
-          };
-          sessionRetention = {
-            enabled = true;
-            maxAge = "30d";
-            maxCount = 100;
-          };
-        };
-        ide.enabled = true;
-        privacy.usageStatisticsEnabled = false;
-        tools.autoAccept = false;
         context = {
           discoveryMaxDirs = 1000;
           # NOTE: bombs out on repos that don't have them
@@ -65,10 +40,42 @@ in
             respectGitIgnore = true;
           };
         };
+        experimental.plan = true;
+        general = {
+          checkpointing = {
+            enabled = true;
+          };
+          enablePromptCompletion = true;
+          preferredEditor = "neovim";
+          previewFeatures = true;
+          sessionRetention = {
+            enabled = true;
+            maxAge = "30d";
+            maxCount = 100;
+          };
+          vimMode = true;
+        };
+        ide.enabled = true;
+        privacy.usageStatisticsEnabled = false;
         security = {
           auth = {
             selectedType = "oauth-personal";
           };
+        };
+        tools = {
+          autoAccept = false;
+          shell.showColor = true;
+        };
+        ui = {
+          footer = {
+            hideContextPercentage = false;
+          };
+          inlineThinkingMode = "full";
+          showCitations = true;
+          showModelInfoInChat = true;
+          showStatusInTitle = true;
+          theme = "Default";
+          useAlternateBuffer = true;
         };
       };
 
