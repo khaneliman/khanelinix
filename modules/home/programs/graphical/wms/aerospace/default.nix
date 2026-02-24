@@ -67,6 +67,7 @@ in
 
         # Integration hooks
         on-focused-monitor-changed = [ "move-mouse monitor-lazy-center" ];
+        on-focus-changed = [ "exec-and-forget ${sketchybar} --trigger aerospace_windows_change" ];
         exec-on-workspace-change = [
           "/bin/bash"
           "-c"

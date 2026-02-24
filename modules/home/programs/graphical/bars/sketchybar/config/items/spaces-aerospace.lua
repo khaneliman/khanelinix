@@ -153,6 +153,10 @@ window_tracker:subscribe("aerospace_windows_change", function()
 	update_windows()
 end)
 
+window_tracker:subscribe("front_app_switched", function()
+	update_windows()
+end)
+
 -- Initial window update
 update_windows()
 
