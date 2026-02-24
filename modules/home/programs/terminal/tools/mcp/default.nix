@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  pkgs,
+  # pkgs,
   inputs,
   system,
   ...
@@ -33,9 +33,10 @@ in
           ];
         };
 
-        nixos = {
-          command = getExe pkgs.mcp-nixos;
-        };
+        # FIXME: broken nixpkgs
+        # nixos = {
+        #   command = getExe pkgs.mcp-nixos;
+        # };
       };
     };
   };

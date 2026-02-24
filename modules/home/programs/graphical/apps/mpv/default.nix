@@ -29,7 +29,8 @@ in
         # Control using media keys
         pkgs.mpvScripts.mpris
         # mpv keyboard shortcuts
-        pkgs.mpvScripts.mpv-cheatsheet
+        # FIXME: broken nixpkgs
+        # pkgs.mpvScripts.mpv-cheatsheet
         # UI Tweaks
         pkgs.mpvScripts.uosc
       ];

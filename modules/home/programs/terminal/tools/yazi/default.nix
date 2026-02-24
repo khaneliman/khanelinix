@@ -37,7 +37,8 @@ in
               exiftool
               mediainfo
               unar
-              undmg
+              # FIXME: broken nixpkgs
+              # undmg
             ])
             ++ optionalPluginPackage "ouch" pkgs.ouch
             ++ optionalPluginPackage "duckdb" pkgs.duckdb
