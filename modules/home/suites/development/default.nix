@@ -11,6 +11,10 @@ let
   inherit (lib.khanelinix) enabled;
 
   tokenExports = lib.optionalString (osConfig.khanelinix.security.sops.enable or false) /* Bash */ ''
+    if [ -f ${config.sops.secrets.OPENAI_SECURA_KEY.path} ]; then
+      OPENAI_SECURA_KEY="$(cat ${config.sops.secrets.OPENAI_SECURA_KEY.path})"
+      export OPENAI_SECURA_KEY
+    fi
     if [ -f ${config.sops.secrets.TAVILY_API_KEY.path} ]; then
       TAVILY_API_KEY="$(cat ${config.sops.secrets.TAVILY_API_KEY.path})"
       export TAVILY_API_KEY
@@ -185,6 +189,10 @@ in
     };
 
     sops.secrets = lib.mkIf (osConfig.khanelinix.security.sops.enable or false) {
+      OPENAI_SECURA_KEY = {
+        sopsFile = lib.getFile "secrets/CORE/default.yaml";
+        path = "${config.home.homeDirectory}/.OPENAI_SECURA_KEY";
+      };
       TAVILY_API_KEY = {
         sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.TAVILY_API_KEY";

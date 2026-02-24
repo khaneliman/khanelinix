@@ -20,6 +20,10 @@ in
     security = {
       # FIX: make gpg work on wsl
       gpg = mkForce disabled;
+      sops = {
+        enable = true;
+        defaultSopsFile = lib.getFile "secrets/CORE/default.yaml";
+      };
     };
 
     suites = {
@@ -50,6 +54,13 @@ in
   networking.search = [
     "intranet.secura.net"
   ];
+
+  environment.shellInit = ''
+    if [ -n "$OPENAI_SECURA_KEY" ]; then
+      export OPENAI_API_KEY="$OPENAI_SECURA_KEY"
+    fi
+  '';
+
   # wsl.wslConf = {
   # network.generateResolvConf = false;
   # };
