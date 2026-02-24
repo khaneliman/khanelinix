@@ -12,7 +12,7 @@ in
 {
   config = mkIf cfg.enable {
     documentation = {
-      man.generateCaches = mkDefault true;
+      man.cache.enable = mkDefault true;
 
       nixos = {
         enable = true;
