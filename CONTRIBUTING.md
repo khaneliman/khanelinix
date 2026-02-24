@@ -66,12 +66,13 @@ type(scope): description
 ### Guidelines:
 
 - Use lowercase for the description
-- Keep the subject line under 72 characters when possible
+- Keep the subject line under 50 characters when possible
 - Use imperative mood ("add", "fix", "update", not "added", "fixed", "updated")
 - No trailing period in the subject line
 - Keep `type` to standard values (`feat`, `fix`, `refactor`, `docs`, `chore`)
 - Keep `scope` specific to the primary area affected
 - Breaking changes may use `!` (for example: `refactor(devShells)!: ...`)
+- Subject is the what, Body is the how/why
 
 ## Development Workflow
 
@@ -95,48 +96,6 @@ type(scope): description
 2. Follow the commit message convention
 3. Ensure pre-commit hooks pass
 4. Test that the configuration builds successfully
-
-## Available Tools
-
-### Claude Code Commands
-
-The repository includes specialized Claude Code commands:
-
-#### Nix Commands
-
-- `nix-refactor [path] [--style-only] [--fix-let-blocks] [--fix-lib-usage]`
-- `nix-check [path] [--build] [--eval] [--format]`
-- `module-scaffold [name] [--nixos] [--home] [--darwin]`
-
-#### Git Commands
-
-- `commit-changes [--all] [--amend]`: Analyze and commit changes following repo
-  conventions
-- `add-and-format [files]`: Stage files and run formatters
-- `commit-msg [type] [message]`: Generate conventional commit messages
-
-#### Quality Assurance
-
-- `quick-check [path]`: Fast validation of code quality and formatting
-- `deep-check [path] [--security] [--performance]`: Comprehensive code analysis
-- `style-audit [path] [--fix]`: Style and convention compliance check
-
-### Specialized Agents
-
-When using Claude Code, specialized agents are available:
-
-- **Dotfiles Expert**: khanelinix configuration specialist
-- **Nix Expert/Module Expert/Refactor**: Nix language specialists
-- **System Config Expert**: NixOS system configuration specialist
-- **Security Auditor**: Security analysis specialist
-
-## Getting Help
-
-- Check the [AGENTS.md](./AGENTS.md) file for shared agent guidelines
-- If using Claude Code, also check [CLAUDE.md](./CLAUDE.md) for Claude-specific
-  extensions
-- Use the specialized Claude Code agents for complex tasks
-- Ensure you understand the module structure before making changes
 
 ## Security
 
