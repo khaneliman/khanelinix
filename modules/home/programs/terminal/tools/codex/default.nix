@@ -70,6 +70,18 @@ in
 
         sandbox_mode = "workspace-write";
 
+        tui = {
+          status_line = [
+            "model-with-reasoning"
+            "current-dir"
+            "project-root"
+            "git-branch"
+            "context-remaining"
+            "context-used"
+            "five-hour-limit"
+          ];
+        };
+
         profiles = {
           # Deep, deliberate analysis mode.
           deep = {
