@@ -49,28 +49,29 @@ provides guidelines for contributing to this Nix-based dotfiles configuration.
 
 ## Commit Message Convention
 
-This repository follows a **component-based** commit message format:
+This repository follows a **Conventional Commits style** format:
 
 ```
-component: description
+type(scope): description
 ```
 
 ### Examples:
 
-- `claude-code: enhance commit-changes with pattern recognition`
-- `firefox: userchrome trimmed down`
-- `hyprland: add walker to test`
-- `flake.lock: update`
-- `docs: add specialized agents and commands section`
+- `feat(codex): add mcp integration`
+- `fix(waybar): restore accidentally deleted icon`
+- `refactor(nix): tweak gc schedule`
+- `docs(ai-tools): add fixup/autosquash workflow to git skill`
+- `chore(flake): lock update`
 
 ### Guidelines:
 
 - Use lowercase for the description
-- Keep the subject line under 50 characters when possible
+- Keep the subject line under 72 characters when possible
 - Use imperative mood ("add", "fix", "update", not "added", "fixed", "updated")
 - No trailing period in the subject line
-- Component should match the primary area affected (module name, config area,
-  etc.)
+- Keep `type` to standard values (`feat`, `fix`, `refactor`, `docs`, `chore`)
+- Keep `scope` specific to the primary area affected
+- Breaking changes may use `!` (for example: `refactor(devShells)!: ...`)
 
 ## Development Workflow
 
