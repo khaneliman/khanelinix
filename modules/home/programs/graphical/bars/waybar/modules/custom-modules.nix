@@ -24,7 +24,7 @@ let
   dmenuCommand = builtins.head enabledDmenuLaunchers;
 
   githubHelper = pkgs.writeShellScriptBin "githubHelper" ''
-    ${lib.optionalString (osConfig.khanelinix.security.sops.enable or false) ''
+    ${lib.optionalString (config.khanelinix.services.sops.enable or false) ''
       ${getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
     ''}
 
@@ -73,7 +73,7 @@ let
   '';
 
   githubMenuHelper = pkgs.writeShellScriptBin "waybar-github-menu" ''
-    ${lib.optionalString (osConfig.khanelinix.security.sops.enable or false) ''
+    ${lib.optionalString (config.khanelinix.services.sops.enable or false) ''
       ${getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
     ''}
 
@@ -137,7 +137,7 @@ let
 
   weatherHelper = pkgs.writeShellScriptBin "waybar-weather-helper" ''
     WEATHER_JSON="$(${getExe pkgs.wttrbar} --fahrenheit --ampm${
-      lib.optionalString (osConfig.khanelinix.security.sops.enable or false
+      lib.optionalString (config.khanelinix.services.sops.enable or false
       ) " --location $(jq '.wttr.location' ${config.home.homeDirectory}/weather_config.json)"
     })"
 

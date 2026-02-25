@@ -1,8 +1,6 @@
 {
   config,
   lib,
-
-  osConfig ? { },
   ...
 }:
 {
@@ -44,7 +42,7 @@
         "systemd-failed-units"
         "custom/notification"
       ]
-      ++ lib.optionals (osConfig.khanelinix.security.sops.enable or false) [ "custom/github" ]
+      ++ lib.optionals (config.khanelinix.services.sops.enable or false) [ "custom/github" ]
       ++ [
         "bluetooth"
         "group/audio"

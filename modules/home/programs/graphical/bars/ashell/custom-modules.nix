@@ -65,7 +65,7 @@
         }
       )
     } --fahrenheit --ampm${
-      lib.optionalString (osConfig.khanelinix.security.sops.enable or false
+      lib.optionalString (config.khanelinix.services.sops.enable or false
       ) " --location $(jq '.wttr.location' ${config.home.homeDirectory}/weather_config.json)"
     }";
     icons = {

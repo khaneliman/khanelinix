@@ -102,7 +102,7 @@ in
   '';
 
   githubHelper = pkgs.writeShellScriptBin "ashell-github-helper" ''
-    ${lib.optionalString (osConfig.khanelinix.security.sops.enable or false) ''
+    ${lib.optionalString (config.khanelinix.services.sops.enable or false) ''
       ${lib.getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
     ''}
 
@@ -118,7 +118,7 @@ in
   '';
 
   githubMenuHelper = pkgs.writeShellScriptBin "ashell-github-menu" ''
-    ${lib.optionalString (osConfig.khanelinix.security.sops.enable or false) ''
+    ${lib.optionalString (config.khanelinix.services.sops.enable or false) ''
       ${lib.getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
     ''}
 
@@ -144,7 +144,7 @@ in
 
   weatherDetailPopup = pkgs.writeShellScriptBin "ashell-weather-detail" ''
     LOCATION_ARG=""
-    ${lib.optionalString (osConfig.khanelinix.security.sops.enable or false) ''
+    ${lib.optionalString (config.khanelinix.services.sops.enable or false) ''
       if [ -f "${config.home.homeDirectory}/weather_config.json" ]; then
          LOCATION_NAME=$(${lib.getExe pkgs.jq} -r '.wttr.location' "${config.home.homeDirectory}/weather_config.json")
          LOCATION_ARG="/$LOCATION_NAME"

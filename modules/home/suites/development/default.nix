@@ -10,7 +10,7 @@ let
   inherit (lib) mkIf mkDefault;
   inherit (lib.khanelinix) enabled;
 
-  tokenExports = lib.optionalString (osConfig.khanelinix.security.sops.enable or false) /* Bash */ ''
+  tokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) /* Bash */ ''
     if [ -f ${config.sops.secrets.OPENAI_SECURA_KEY.path} ]; then
       OPENAI_SECURA_KEY="$(cat ${config.sops.secrets.OPENAI_SECURA_KEY.path})"
       export OPENAI_SECURA_KEY
@@ -188,7 +188,7 @@ in
       services.ollama.enable = mkDefault (cfg.aiEnable && pkgs.stdenv.hostPlatform.isDarwin);
     };
 
-    sops.secrets = lib.mkIf (osConfig.khanelinix.security.sops.enable or false) {
+    sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {
       OPENAI_SECURA_KEY = {
         sopsFile = lib.getFile "secrets/CORE/default.yaml";
         path = "${config.home.homeDirectory}/.OPENAI_SECURA_KEY";

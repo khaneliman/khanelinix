@@ -2,8 +2,6 @@
   config,
   lib,
   pkgs,
-
-  osConfig ? { },
   ...
 }:
 let
@@ -23,7 +21,7 @@ let
   ignores = import ./ignores.nix;
   shell-aliases = import ./shell-aliases.nix { inherit config lib pkgs; };
 
-  tokenExports = lib.optionalString (osConfig.khanelinix.security.sops.enable or false) /* Bash */ ''
+  tokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) /* Bash */ ''
     if [ -f ${config.sops.secrets."github/access-token".path} ]; then
       GITHUB_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
       export GITHUB_TOKEN
@@ -214,7 +212,7 @@ in
       inherit (shell-aliases) shellAliases;
     };
 
-    sops.secrets = lib.mkIf (osConfig.khanelinix.security.sops.enable or false) {
+    sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {
       "github/access-token" = {
         sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.config/gh/access-token";
