@@ -13,6 +13,7 @@ let
     python3
     # Main tooling
     claude-code
+    codex
     opencode
     # Dotnet repo
     (
@@ -37,7 +38,7 @@ mkShell {
     ) migratorPackages}
     echo ""
     echo "🤖 AI-powered migration tooling"
-    echo "🌐 MCP support via Bun"
+    echo "🌐 MCP support via Bun / npm"
     echo "⚙️  .NET 8 SDK included"
   '';
 }
