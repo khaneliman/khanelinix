@@ -35,7 +35,11 @@ in
           "interface-name:rndis*"
         ]
         ++ lib.optionals config.khanelinix.services.tailscale.enable [ "interface-name:tailscale*" ]
-        ++ lib.optionals config.khanelinix.virtualisation.podman.enable [ "interface-name:docker*" ]
+        ++ lib.optionals config.khanelinix.virtualisation.podman.enable [
+          "interface-name:docker*"
+          "interface-name:podman*"
+          "interface-name:cni-podman*"
+        ]
         ++ lib.optionals config.khanelinix.virtualisation.kvm.enable [ "interface-name:virbr*" ];
       };
     };
