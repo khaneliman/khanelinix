@@ -22,7 +22,11 @@ in
         "ve"
       ]
       ++ lib.optionals config.khanelinix.services.tailscale.enable [ "tailscale*" ]
-      ++ lib.optionals config.khanelinix.virtualisation.podman.enable [ "docker*" ];
+      ++ lib.optionals config.khanelinix.virtualisation.podman.enable [
+        "docker*"
+        "podman*"
+        "cni-podman*"
+      ];
     };
   };
 }
