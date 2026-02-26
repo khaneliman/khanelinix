@@ -33,7 +33,11 @@ in
         "interface-name:rndis*"
       ]
       ++ lib.optionals config.${namespace}.services.tailscale.enable [ "interface-name:tailscale*" ]
-      ++ lib.optionals config.${namespace}.virtualisation.podman.enable [ "interface-name:docker*" ]
+      ++ lib.optionals config.${namespace}.virtualisation.podman.enable [
+        "interface-name:docker*"
+        "interface-name:podman*"
+        "interface-name:cni-podman*"
+      ]
       ++ lib.optionals config.${namespace}.virtualisation.kvm.enable [ "interface-name:virbr*" ];
     };
 
