@@ -173,7 +173,7 @@ in
         dark.name = "tokyo-night-storm";
       };
 
-      vesktop.vencord = mkIf config.khanelinix.programs.graphical.apps.discord.enable {
+      vesktop.vencord = mkIf config.khanelinix.programs.graphical.apps.vesktop.enable {
         settings.enabledThemes = [ "tokyonight.css" ];
         themes.tokyonight = "${tokyonight}/extras/discord/tokyonight_${cfg.variant}.css";
       };
