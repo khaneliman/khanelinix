@@ -70,6 +70,8 @@ in
         default < cmd + alt + ctrl - o : open /Applications/Microsoft\ Outlook.app
         default < cmd + alt + ctrl - p : open /Applications/Microsoft\ PowerPoint.app
         default < cmd + alt + ctrl - f : open /Applications/Firefox\ Developer\ Edition.app
+        default < cmd + alt + ctrl - d : ${getExe pkgs.khanelinix.voice-dictate} toggle --insert
+        default < cmd + alt + ctrl - g : ${getExe pkgs.khanelinix.voice-dictate} toggle-translate --insert
 
         # ░█▀▀░█░█░█▀▀░▀█▀░█▀▀░█▄█
         # ░▀▀█░░█░░▀▀█░░█░░█▀▀░█░█

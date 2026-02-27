@@ -24,6 +24,7 @@ else
 end
 
 require("items.skhd")
+require("items.voice_dictate")
 require("items.front_app")
 require("items.today")
 require("items.media")

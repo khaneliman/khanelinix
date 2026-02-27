@@ -60,6 +60,7 @@ in
           # TODO: package upstream
           # window-inspector = "swayprop"; # TODO: package upstream
           screen-recorder = "record_screen";
+          voiceDictate = getExe pkgs.khanelinix.voice-dictate;
 
           # screenshot commands using grim/slurp for sway
           sway_area_file = ''file="${screenshot-path}/$(${getDateTime}).png" && grim -g "$(slurp)" "$file" && notify-send "Screenshot" "Area saved to $file"'';
@@ -144,6 +145,8 @@ in
               "${swayCfg.modifier}+w" = "exec ${mkStartCommand looking-glass}";
               "${swayCfg.modifier}+i" = "exec ${window-inspector}";
               "${swayCfg.modifier}+period" = "exec ${mkStartCommand smile}";
+              "${swayCfg.modifier}+Shift+d" = "exec ${mkStartCommand "${voiceDictate} --insert"}";
+              "${swayCfg.modifier}+Shift+g" = "exec ${mkStartCommand "${voiceDictate} translate --insert"}";
 
               # Kill window
               "${swayCfg.modifier}+Q" = "kill";

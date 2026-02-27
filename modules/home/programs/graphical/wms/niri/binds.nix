@@ -6,10 +6,11 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf getExe;
 
   cfg = config.khanelinix.programs.graphical.wms.niri;
   niriAvailable = options ? programs.niri;
+  voiceDictate = getExe pkgs.khanelinix.voice-dictate;
 
   inherit (config.khanelinix.programs.graphical) launchers;
 
@@ -175,6 +176,8 @@ in
           "Mod+N".action.spawn = notificationCommand;
           "Mod+V".action.spawn = cliphistCommand;
           "Mod+W".action.spawn = lookingGlassCommand;
+          "Mod+Shift+D".action.spawn = "${voiceDictate} --insert";
+          "Mod+Shift+G".action.spawn = "${voiceDictate} translate --insert";
 
           "Mod+E".action.spawn = "kitty yazi";
           "Mod+T".action.spawn = "kitty btop";

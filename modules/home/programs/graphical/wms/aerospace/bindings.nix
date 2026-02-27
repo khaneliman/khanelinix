@@ -7,6 +7,7 @@
 let
   cfg = config.khanelinix.programs.graphical.wms.aerospace;
   sketchybar = lib.getExe (config.programs.sketchybar.finalPackage or pkgs.sketchybar);
+  voiceDictate = lib.getExe pkgs.khanelinix.voice-dictate;
 in
 {
   config = lib.mkIf cfg.enable {
@@ -108,6 +109,8 @@ in
             "exec-and-forget ${lib.getExe pkgs.kitty} --listen-on=unix:/tmp/kitty.sock --single-instance -d ~ -- zellij";
           "cmd-alt-ctrl-v" = "exec-and-forget open -a 'Visual Studio Code'";
           "cmd-alt-ctrl-f" = "exec-and-forget open -a 'Firefox Developer Edition'";
+          "cmd-alt-ctrl-d" = "exec-and-forget ${voiceDictate} toggle --insert";
+          "cmd-alt-ctrl-g" = "exec-and-forget ${voiceDictate} toggle-translate --insert";
           # "cmd-alt-ctrl-t" = "exec-and-forget open -a WezTerm";
 
           # System Controls

@@ -97,6 +97,8 @@ in
         # "$LHYPER" = "SUPER_ALT_L_CTRL_L";
         bind =
           let
+            voiceDictate = lib.getExe pkgs.khanelinix.voice-dictate;
+
             # Launcher binds
             launcherBinds =
               let
@@ -127,6 +129,8 @@ in
               "$mainMod, V, exec, $cliphist"
               # TODO: handle when you need to specify port manually `-p 5901`
               "$mainMod, W, exec, $looking-glass"
+              "SUPER_SHIFT, D, exec, ${voiceDictate} --insert"
+              "SUPER_SHIFT, G, exec, ${voiceDictate} translate --insert"
             ];
 
             # Background tools binds (background-graphical.slice)

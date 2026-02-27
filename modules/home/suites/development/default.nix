@@ -96,6 +96,8 @@ in
           # NOTE: hard to get out of neovim
           # antigravity
           github-copilot-cli
+          khanelinix.voice-dictate
+          openai-whisper
           tuicr
         ];
 
