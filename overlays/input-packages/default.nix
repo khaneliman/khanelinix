@@ -36,13 +36,13 @@ in
   #          ╭──────────────────────────────────────────────────────────╮
   #          │                 Python package overrides                 │
   #          ╰──────────────────────────────────────────────────────────╯
-  python3 = _prev.python3.override {
-    packageOverrides = _pyFinal: _pyPrev: {
-      # TODO: remove after hitting channel
-    };
-  };
-
-  python3Packages = final.python3.pkgs;
+  # Keep this disabled unless we need explicit python package overrides.
+  # python3 = _prev.python3.override {
+  #   packageOverrides = _pyFinal: _pyPrev: {
+  #     # TODO: remove after hitting channel
+  #   };
+  # };
+  # python3Packages = final.python3.pkgs;
 
   #          ╭──────────────────────────────────────────────────────────╮
   #          │   From nixpkgs-unstable (reasonable update / stability   │
@@ -65,9 +65,9 @@ in
   #          ╭──────────────────────────────────────────────────────────╮
   #          │   Override linuxKernel.packages.linux_zen specifically   │
   #          ╰──────────────────────────────────────────────────────────╯
-  linuxKernel = _prev.linuxKernel // {
-    packages = _prev.linuxKernel.packages // {
-      # inherit (unstable.linuxKernel.packages) linux_zen;
-    };
-  };
+  # linuxKernel = _prev.linuxKernel // {
+  #   packages = _prev.linuxKernel.packages // {
+  #     inherit (unstable.linuxKernel.packages) linux_zen;
+  #   };
+  # };
 }
