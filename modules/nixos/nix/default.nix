@@ -20,7 +20,7 @@ in
       man.cache.enable = mkDefault true;
 
       nixos = {
-        enable = true;
+        enable = mkDefault false;
 
         options = {
           warningsAreErrors = true;
