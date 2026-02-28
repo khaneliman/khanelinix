@@ -24,6 +24,9 @@ let
       {
         config = lib.mkMerge [
           {
+            # Avoid evaluating/building Nixvim man docs unless explicitly enabled.
+            enableMan = lib.mkDefault false;
+
             # Automatically disable dependencies that are already in home.packages
             dependencies = lib.genAttrs neovimLib.dependenciesToDisable (_: disabled);
 
