@@ -1,21 +1,23 @@
 { inputs }:
-final: _prev:
+final: prev:
 let
+  inherit (final.stdenv.hostPlatform) system;
+
   master = import inputs.nixpkgs-master {
-    inherit (final.stdenv.hostPlatform) system;
-    inherit (final) config;
+    inherit system;
+    inherit (prev) config;
   };
 
   unstable = import inputs.nixpkgs-unstable {
-    inherit (final.stdenv.hostPlatform) system;
-    inherit (final) config;
+    inherit system;
+    inherit (prev) config;
   };
 in
 {
   #          ╭──────────────────────────────────────────────────────────╮
   #          │                       LLM programs                       │
   #          ╰──────────────────────────────────────────────────────────╯
-  inherit (inputs.llm-agents.packages.${final.stdenv.hostPlatform.system})
+  inherit (inputs.llm-agents.packages.${system})
     claude-code
     codex
     opencode
