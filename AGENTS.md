@@ -16,6 +16,10 @@
 - **Home Manager + System Access**: HM modules use `osConfig ? {}` to access the
   host system's configuration.
 - **Conditionals**: Prefer `lib.mkIf` for entire configuration blocks.
+- **PATH vs Store Paths**: Prefer adding required tools to `home.packages` /
+  `environment.systemPackages` so configs can use plain command names, instead
+  of inlining store paths with `lib.getExe`/`getExe'` in shell aliases or config
+  strings (unless a fixed store path is explicitly needed).
 - **Secrets**: Use `sops-nix`. Never commit secrets in plaintext. Use
   `lib.getFile "secrets/..."` helpers.
 - **Custom Helpers**: Check `lib.khanelinix` for common helpers like `enabled`
