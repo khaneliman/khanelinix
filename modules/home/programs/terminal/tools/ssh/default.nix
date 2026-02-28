@@ -10,7 +10,6 @@ let
     getExe'
     types
     mkIf
-    foldl
     ;
   inherit (lib.khanelinix) mkOpt;
 
@@ -50,29 +49,25 @@ in
 
       matchBlocks =
         let
-          other-hosts-config = lib.foldl' (
-            acc: name:
+          other-hosts-config = lib.mapAttrs (
+            name: remote:
             let
-              remote = other-hosts.${name};
               remote-user-name = remote.config.khanelinix.user.name;
               remote-user-id = toString remote.config.users.users.${remote-user-name}.uid;
             in
-            acc
-            // {
-              ${name} = {
-                hostname = "${name}.local";
-                user = remote-user-name;
-                forwardAgent = true;
-                inherit (cfg) port;
-                remoteForwards =
-                  lib.optionals (config.services.gpg-agent.enable && remote.config.services.gpg-agent.enable)
-                    [
-                      "/run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra"
-                      "/run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh"
-                    ];
-              };
+            {
+              hostname = "${name}.local";
+              user = remote-user-name;
+              forwardAgent = true;
+              inherit (cfg) port;
+              remoteForwards =
+                lib.optionals (config.services.gpg-agent.enable && remote.config.services.gpg-agent.enable)
+                  [
+                    "/run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra"
+                    "/run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh"
+                  ];
             }
-          ) { } (builtins.attrNames other-hosts);
+          ) other-hosts;
         in
         {
           "*" = {
@@ -90,26 +85,29 @@ in
     };
 
     home = {
-      shellAliases =
-        foldl (aliases: system: aliases // { "ssh-${system}" = "ssh ${system} -t tmux a"; })
-          {
-            ssh-list-perm-user = ''find ${config.home.homeDirectory}/.ssh -exec stat -c "%a %n" {} \;'';
+      shellAliases = {
+        ssh-list-perm-user = ''find ${config.home.homeDirectory}/.ssh -exec stat -c "%a %n" {} \;'';
 
-            ssh-perm-user = lib.concatStrings [
-              ''${getExe' pkgs.findutils "find"} ${config.home.homeDirectory}/.ssh -type f -exec chmod 600 {} \;;''
-              ''${getExe' pkgs.findutils "find"} ${config.home.homeDirectory}/.ssh -type d -exec chmod 700 {} \;;''
-              ''${getExe' pkgs.findutils "find"} ${config.home.homeDirectory}/.ssh -type f -name "*.pub" -exec chmod 644 {} \;''
-            ];
+        ssh-perm-user = lib.concatStrings [
+          ''${getExe' pkgs.findutils "find"} ${config.home.homeDirectory}/.ssh -type f -exec chmod 600 {} \;;''
+          ''${getExe' pkgs.findutils "find"} ${config.home.homeDirectory}/.ssh -type d -exec chmod 700 {} \;;''
+          ''${getExe' pkgs.findutils "find"} ${config.home.homeDirectory}/.ssh -type f -name "*.pub" -exec chmod 644 {} \;''
+        ];
 
-            ssh-list-perm-system = ''sudo find /etc/ssh -exec stat -c "%a %n" {} \;'';
+        ssh-list-perm-system = ''sudo find /etc/ssh -exec stat -c "%a %n" {} \;'';
 
-            ssh-perm-system = lib.concatStrings [
-              ''sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type f -exec chmod 600 {} \;;''
-              ''sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type d -exec chmod 700 {} \;;''
-              ''sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type f -name "*.pub" -exec chmod 644 {} \;''
-            ];
-          }
-          (builtins.attrNames other-hosts);
+        ssh-perm-system = lib.concatStrings [
+          ''sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type f -exec chmod 600 {} \;;''
+          ''sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type d -exec chmod 700 {} \;;''
+          ''sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type f -name "*.pub" -exec chmod 644 {} \;''
+        ];
+      }
+      // builtins.listToAttrs (
+        map (system: {
+          name = "ssh-${system}";
+          value = "ssh ${system} -t tmux a";
+        }) (builtins.attrNames other-hosts)
+      );
 
       file = {
         ".ssh/authorized_keys".text = builtins.concatStringsSep "\n" cfg.authorizedKeys;
