@@ -7,7 +7,6 @@
 }:
 let
   inherit (lib)
-    getExe'
     types
     mkIf
     ;
@@ -85,21 +84,23 @@ in
     };
 
     home = {
+      packages = [ pkgs.findutils ];
+
       shellAliases = {
         ssh-list-perm-user = ''find ${config.home.homeDirectory}/.ssh -exec stat -c "%a %n" {} \;'';
 
         ssh-perm-user = lib.concatStrings [
-          ''${getExe' pkgs.findutils "find"} ${config.home.homeDirectory}/.ssh -type f -exec chmod 600 {} \;;''
-          ''${getExe' pkgs.findutils "find"} ${config.home.homeDirectory}/.ssh -type d -exec chmod 700 {} \;;''
-          ''${getExe' pkgs.findutils "find"} ${config.home.homeDirectory}/.ssh -type f -name "*.pub" -exec chmod 644 {} \;''
+          ''find ${config.home.homeDirectory}/.ssh -type f -exec chmod 600 {} \;;''
+          ''find ${config.home.homeDirectory}/.ssh -type d -exec chmod 700 {} \;;''
+          ''find ${config.home.homeDirectory}/.ssh -type f -name "*.pub" -exec chmod 644 {} \;''
         ];
 
         ssh-list-perm-system = ''sudo find /etc/ssh -exec stat -c "%a %n" {} \;'';
 
         ssh-perm-system = lib.concatStrings [
-          ''sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type f -exec chmod 600 {} \;;''
-          ''sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type d -exec chmod 700 {} \;;''
-          ''sudo ${getExe' pkgs.findutils "find"} /etc/ssh -type f -name "*.pub" -exec chmod 644 {} \;''
+          ''sudo find /etc/ssh -type f -exec chmod 600 {} \;;''
+          ''sudo find /etc/ssh -type d -exec chmod 700 {} \;;''
+          ''sudo find /etc/ssh -type f -name "*.pub" -exec chmod 644 {} \;''
         ];
       }
       // builtins.listToAttrs (
