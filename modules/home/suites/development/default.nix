@@ -43,6 +43,7 @@ in
         with pkgs;
         [
           jqp
+          lazyworktree
           onefetch
           tree-sitter
           # NOTE: when web ui needed. not cached upstream though
