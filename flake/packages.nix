@@ -29,13 +29,10 @@
         ) packageFunctions
       );
 
-      supportedPackages = lib.filterAttrs (
-        _name: package:
-        package != null
-        && (!(package ? meta.platforms) || lib.meta.availableOn pkgs.stdenv.hostPlatform package)
-      ) builtPackages;
     in
     {
-      packages = supportedPackages;
+      # Keep packages lazy. Eager platform filtering here forces full package
+      # evaluation and slows unrelated config eval.
+      packages = builtPackages;
     };
 }
