@@ -7,6 +7,8 @@
    explicit `lib.<fn>`.
 4. **Modular & Composable**: Split large modules (>200 lines) into sub-modules
    in a directory.
+5. **Skill Usage (Nix Work)**: For any Nix code or module task, use the
+   `writing-nix` skill before making edits.
 
 ## Coding Style & Patterns
 
