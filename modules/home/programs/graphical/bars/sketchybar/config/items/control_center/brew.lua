@@ -15,7 +15,7 @@ local brew = Sbar.add("item", "brew", {
 		},
 	},
 	label = "?",
-	update_freq = 300,
+	update_freq = 14400,
 	popup = {
 		align = "right",
 		height = 20,
@@ -86,7 +86,6 @@ brew:subscribe({
 	brew.skipCleanup = false
 
 	-- fetch new information
-	Sbar.exec("command brew update")
 	Sbar.exec("command brew outdated", function(outdated)
 		-- NOTE: sbar.exec will not run callback if command doesn't return anything.
 		-- We use a variable to determine if we should skip cleaning up the count
