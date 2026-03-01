@@ -36,6 +36,9 @@ static inline void pop_head() {
   struct islandItemNode *nextNode = NULL;
   nextNode = head->nextNode;
 
+  if (head->data != NULL) {
+    free(head->data);
+  }
   free(head);
 
   head = nextNode;
@@ -99,6 +102,9 @@ static inline int queue_island(struct dynamicIsland *dynamic_island,
 
         while (temp != NULL) {
           if (strcmp(temp->data->identifier, newNode->data->identifier) == 0) {
+            if (temp->data != NULL) {
+              free(temp->data);
+            }
             temp->data = newNode->data;
             free(newNode);
             return 0;

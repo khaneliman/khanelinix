@@ -72,7 +72,7 @@ static inline void parse_notification_details(const UInt8 *rawData, int dataLen,
       if (titl_value) {
         if (CFStringGetCString(titl_value, titl_buffer, sizeof(titl_buffer),
                                kCFStringEncodingUTF8)) {
-          *title = titl_buffer;
+          *title = strdup(titl_buffer);
         }
       }
 
@@ -80,7 +80,7 @@ static inline void parse_notification_details(const UInt8 *rawData, int dataLen,
       if (subt_value) {
         if (CFStringGetCString(subt_value, subt_buffer, sizeof(subt_buffer),
                                kCFStringEncodingUTF8)) {
-          *subtitle = subt_buffer;
+          *subtitle = strdup(subt_buffer);
         }
       }
 
@@ -88,7 +88,7 @@ static inline void parse_notification_details(const UInt8 *rawData, int dataLen,
       if (body_value) {
         if (CFStringGetCString(body_value, body_buffer, sizeof(body_buffer),
                                kCFStringEncodingUTF8)) {
-          *body = body_buffer;
+          *body = strdup(body_buffer);
         }
       }
 
@@ -197,9 +197,9 @@ check_notifications(struct notificationHelper *notificationHelper) {
           return NULL;
         }
 
-        char *title;
-        char *subtitle;
-        char *body;
+        char *title = NULL;
+        char *subtitle = NULL;
+        char *body = NULL;
         parse_notification_details((const UInt8 *)plist_data, plist_data_len,
                                    &title, &subtitle, &body);
 
@@ -208,8 +208,16 @@ check_notifications(struct notificationHelper *notificationHelper) {
             (struct islandItem *)malloc(sizeof(struct islandItem));
 
         snprintf(newNotificationItem->identifier, 32, "notifications");
-        snprintf(newNotificationItem->args, 512, "%s|%s|%s|%s", title, subtitle,
-                 body, app);
+        snprintf(newNotificationItem->args, 512, "%s|%s|%s|%s",
+                 title ? title : "", subtitle ? subtitle : "", body ? body : "",
+                 app);
+
+        if (title)
+          free(title);
+        if (subtitle)
+          free(subtitle);
+        if (body)
+          free(body);
 
         lastNotifCount = notifCount;
 
