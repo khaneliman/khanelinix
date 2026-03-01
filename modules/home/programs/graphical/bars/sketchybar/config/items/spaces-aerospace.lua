@@ -108,41 +108,39 @@ local window_tracker = Sbar.add("item", {
 })
 
 local function update_windows()
-	for workspace_num = 1, 8 do
-		Sbar.exec(
-			[[aerospace list-windows --workspace ]] .. workspace_num .. [[ --format '%{app-name}']],
-			function(result)
-				local icon_line = ""
-				local no_app = true
+	Sbar.exec([[aerospace list-windows --all --format '%{workspace}|%{app-name}']], function(result)
+		local workspace_apps = {}
+		for i = 1, 8 do
+			workspace_apps[tostring(i)] = {}
+		end
 
-				if result and result ~= "" then
-					local apps = {}
-					for app in result:gmatch("[^\n]+") do
-						if app and app ~= "" and app ~= "None" then
-							apps[app] = true -- Use as set to avoid duplicates
-						end
-					end
-
-					-- Convert to icon line
-					for app, _ in pairs(apps) do
-						no_app = false
-						local lookup = app_icons[app]
-						local icon = ((lookup == nil) and app_icons["Default"] or lookup)
-						icon_line = icon_line .. " " .. icon
-					end
-				end
-
-				if no_app then
-					icon_line = ""
-				end
-
-				-- Update the workspace label with app icons
-				if spaces[workspace_num] then
-					spaces[workspace_num]:set({ label = { string = icon_line } })
+		if result and result ~= "" then
+			for line in result:gmatch("[^\n]+") do
+				local workspace, app = line:match("^(.-)|(.*)$")
+				if workspace and app and workspace_apps[workspace] and app ~= "" and app ~= "None" then
+					workspace_apps[workspace][app] = true
 				end
 			end
-		)
-	end
+		end
+
+		for workspace_num, apps in pairs(workspace_apps) do
+			local icon_line = ""
+			local no_app = true
+			for app, _ in pairs(apps) do
+				no_app = false
+				local lookup = app_icons[app]
+				local icon = ((lookup == nil) and app_icons["Default"] or lookup)
+				icon_line = icon_line .. " " .. icon
+			end
+			if no_app then
+				icon_line = ""
+			end
+			local ws_num = tonumber(workspace_num)
+			if ws_num and spaces[ws_num] then
+				spaces[ws_num]:set({ label = { string = icon_line } })
+			end
+		end
+	end)
 end
 
 window_tracker:subscribe("aerospace_workspace_change", function()
