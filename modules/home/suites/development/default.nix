@@ -43,7 +43,6 @@ in
         with pkgs;
         [
           jqp
-          lazyworktree
           onefetch
           tree-sitter
           # NOTE: when web ui needed. not cached upstream though
@@ -179,6 +178,7 @@ in
             jujutsu = mkDefault enabled;
             jjui = mkDefault enabled;
             k9s.enable = cfg.kubernetesEnable;
+            lazyworktree = mkDefault enabled;
             lazydocker.enable = cfg.dockerEnable;
             lazygit = mkDefault enabled;
             oh-my-posh = mkDefault enabled;
