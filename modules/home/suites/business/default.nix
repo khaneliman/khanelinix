@@ -28,9 +28,6 @@ in
         # jrnl
         np
       ]
-      ++ lib.optionals (!isWSL) [
-        teams-for-linux
-      ]
       ++ lib.optionals (stdenv.hostPlatform.isLinux && !isWSL) [
         libreoffice
         p3x-onenote
@@ -40,6 +37,7 @@ in
       programs = {
         graphical = {
           apps = {
+            teams-for-linux.enable = lib.mkDefault (!isWSL);
             thunderbird.enable = lib.mkDefault (!isWSL); # No GUI email client in WSL
           };
         };
