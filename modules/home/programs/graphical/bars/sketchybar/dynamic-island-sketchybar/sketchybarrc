@@ -1,7 +1,8 @@
-#!/usr/bin/env sh
+#!/usr/bin/env lua
 
-DYNAMIC_ISLAND_DIR="$HOME/.config/dynamic-island-sketchybar"
-
-source "$DYNAMIC_ISLAND_DIR/item.sh" # Loads Dynamic-Island item
-
-dynamic-island-sketchybar --update
+Sbar = require("sketchybar")
+Sbar.begin_config()
+dofile((os.getenv("HOME") or "") .. "/.config/dynamic-island-sketchybar/init.lua")
+Sbar.hotload(true)
+Sbar.end_config()
+Sbar.event_loop()

@@ -11,7 +11,18 @@ let
 
   cfg = config.khanelinix.programs.graphical.bars.sketchybar;
 
+  userHome = config.home.homeDirectory;
   sketchybar = lib.getExe (config.programs.sketchybar.finalPackage or pkgs.sketchybar);
+  finalSketchybar = config.programs.sketchybar.finalPackage or pkgs.sketchybar;
+  dynamicIslandFinalPackage = pkgs.runCommand "dynamic-island-sketchybar-final-bin" { } ''
+    mkdir -p "$out/bin"
+    ln -s ${lib.getExe finalSketchybar} "$out/bin/dynamic-island-sketchybar"
+  '';
+  dynamicIslandConfig = "${userHome}/.config/dynamic-island-sketchybar/sketchybarrc";
+  dynamicIslandLogPaths = {
+    stdout = "${userHome}/Library/Logs/sketchybar/dynamic-island.out.log";
+    stderr = "${userHome}/Library/Logs/sketchybar/dynamic-island.err.log";
+  };
   shellAliases = {
     push = /* bash */ "command git push && ${sketchybar} --trigger git_push";
     restart-sketchybar = ''launchctl kickstart -k gui/"$(id -u)"/org.nix-community.home.sketchybar'';
@@ -23,6 +34,30 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.packages = [
+      dynamicIslandFinalPackage
+    ];
+
+    launchd.agents.dynamic-island-sketchybar = mkIf pkgs.stdenv.hostPlatform.isDarwin {
+      enable = true;
+      config = {
+        EnvironmentVariables = {
+          BAR_NAME = "dynamic-island-sketchybar";
+          PATH = "${userHome}/.nix-profile/bin:/etc/profiles/per-user/${config.home.username}/bin:/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin";
+        };
+        KeepAlive = true;
+        ProcessType = "Interactive";
+        ProgramArguments = [
+          "/bin/sh"
+          "-lc"
+          "exec dynamic-island-sketchybar --config ${lib.escapeShellArg dynamicIslandConfig}"
+        ];
+        RunAtLoad = true;
+        StandardErrorPath = dynamicIslandLogPaths.stderr;
+        StandardOutPath = dynamicIslandLogPaths.stdout;
+      };
+    };
+
     home.shellAliases = shellAliases;
 
     programs = {
@@ -46,7 +81,6 @@ in
             gnused
             jankyborders
             jq
-            pkgs.khanelinix.dynamic-island-helper
             pkgs.khanelinix.sketchyhelper
             wttrbar
           ]
