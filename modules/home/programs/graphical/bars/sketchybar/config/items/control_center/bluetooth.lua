@@ -5,7 +5,7 @@ local colors = require("colors")
 local settings = require("settings")
 
 local dashes = "─────────────────"
-local device_type_cache_ttl = 300
+local device_type_cache_ttl = 3600
 local device_type_lookup = {}
 local device_type_lookup_updated = 0
 
