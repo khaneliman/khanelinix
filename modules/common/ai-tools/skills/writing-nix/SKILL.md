@@ -1,6 +1,6 @@
 ---
 name: writing-nix
-description: Writes idiomatic, performant, and maintainable Nix code. Covers best practices, anti-patterns to avoid (like `with`), module system design, and performance optimization.
+description: Write idiomatic, maintainable, and performant Nix code. Use when creating or refactoring Nix expressions, modules, overlays, packages, flake outputs, and helper functions, including anti-pattern avoidance and evaluation/build performance practices.
 ---
 
 # Writing Nix
@@ -47,83 +47,79 @@ in {
 }
 ```
 
-## Module System
+### 3. Over-wide option surfaces
 
-### Standard Pattern
+Do not expose options for hypothetical use cases. Keep interfaces minimal and
+intentional.
 
-All modules must follow this structure:
+## Module Design
+
+Use clear module structure:
 
 ```nix
 { config, lib, pkgs, ... }:
 let
-  cfg = config.khanelinix.path.to.module;
-  inherit (lib) mkIf mkEnableOption mkOption types;
+  inherit (lib) mkEnableOption mkIf mkOption types;
+  cfg = config.some.path;
 in {
-  options.khanelinix.path.to.module = {
-    enable = mkEnableOption "module description";
-    # Other options...
+  options.some.path = {
+    enable = mkEnableOption "description";
   };
 
   config = mkIf cfg.enable {
-    # Configuration implementation
+    # implementation
   };
 }
 ```
 
-### Option Design
+Guidelines:
 
-- **Namespacing**: Always prefix with `khanelinix.`.
-- **Types**: Use strict types (`types.bool`, `types.str`,
-  `types.listOf types.package`).
-- **Defaults**: Use `mkDefault` for overridable values.
+- Define strict option types.
+- Use `mkDefault` for overridable defaults.
+- Prefer `mkMerge` + `mkIf` for conditional composition.
+- Prefer `inherit (...)` when names match.
 
-## Performance Optimization
+## Expression Style
 
-### Evaluation
+- Prefer attrset lookup over long if/else chains for multi-branch selection.
+- Keep temporary variables close to usage.
+- Keep functions small and names descriptive.
 
-- **Laziness**: Nix is lazy. Don't force evaluation of unused attributes.
-- **Imports**: Avoid importing large files if only a small part is needed.
-- **Regex**: Avoid expensive regex operations in hot loops.
+## Performance Practices
 
-### Build
+Evaluation:
 
-- **Closure Size**: Split outputs (`dev`, `doc`, `lib`) to reduce runtime
-  dependencies.
-- **Filters**: Use `lib.cleanSource` or `nix-filter` to avoid rebuilding on
-  irrelevant file changes (e.g., README updates).
+- Avoid forcing large attrsets when not needed.
+- Avoid expensive repeated imports and computations.
+- Keep hot-path expressions straightforward.
 
-## Idiomatic Functions
+Build:
 
-### Destructuring
+- Minimize runtime closures.
+- Keep sources clean (`cleanSource`/filters) to avoid rebuild churn.
 
-Always destructure arguments in function headers.
+## Function Patterns
 
-```nix
-# BAD
-args: stdenv.mkDerivation { name = args.pname; ... }
+- Destructure arguments in function headers.
+- Use `override` for function arguments and `overrideAttrs` for derivation
+  attrs.
 
-# GOOD
-{ stdenv, pname, version, ... }: stdenv.mkDerivation {
-  inherit pname version;
-  ...
-}
+## Validation
+
+After edits, run the most relevant checks available in the target repo
+(eval/build/test).
+
+## Output Contract
+
+Report:
+
+```text
+CHANGES MADE:
+- <file>: <what changed and why>
+
+THINGS I DIDN'T TOUCH:
+- <file>: <why intentionally unchanged>
+
+POTENTIAL CONCERNS:
+- <risk or follow-up checks>
 ```
-
-### Overrides
-
-- **`override`**: Change function arguments (inputs).
-- **`overrideAttrs`**: Change derivation attributes (steps, build inputs).
-
-## Formatting
-
-- Use `nixfmt` (or `treefmt`).
-- `camelCase` for variables.
-- `kebab-case` for attributes/files.
-
-## See Also
-
-- **Validation**: See [validating-nix](../validating-nix/) for checking syntax,
-  formatting, and building code
-- **Module scaffolding**: See
-  [../../khanelinix/scaffolding-modules/](../../khanelinix/scaffolding-modules/)
-  for creating new modules with proper structure
