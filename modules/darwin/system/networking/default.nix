@@ -19,6 +19,7 @@ in
       applicationFirewall = {
         enable = true;
 
+        allowSigned = true;
         allowSignedApp = true;
         blockAllIncoming = false;
         enableStealthMode = false;
@@ -31,5 +32,24 @@ in
         "2606:4700:4700::1001"
       ];
     };
+
+    # Nix store/build paths rotate often, so stale ALF app rules can accumulate.
+    system.activationScripts.applicationFirewallCleanup.text = /* Bash */ ''
+      alf="/usr/libexec/ApplicationFirewall/socketfilterfw"
+      if [ ! -x "$alf" ]; then
+        exit 0
+      fi
+
+      "$alf" --listapps \
+        | /usr/bin/sed -n 's/^[[:space:]]*[0-9][0-9]*[[:space:]]:[[:space:]]//p' \
+        | /usr/bin/sed 's/[[:space:]]*$//' \
+        | while IFS= read -r app; do
+            case "$app" in
+              /nix/store/*|/nix/var/nix/*|/private/tmp/nix-build*)
+                "$alf" --remove "$app" >/dev/null 2>&1 || true
+                ;;
+            esac
+          done
+    '';
   };
 }
