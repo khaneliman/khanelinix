@@ -59,11 +59,17 @@ in
     # element-desktop
     firefox-devedition
     firefox-devedition-unwrapped
-    teams-for-linux
     telegram-desktop
     thunderbird-unwrapped
     thunderbird-latest
     ;
+
+  teams-for-linux = unstable.teams-for-linux.overrideAttrs (old: {
+    postPatch = (old.postPatch or "") + ''
+      substituteInPlace app/customCSS/index.js \
+        --replace-fail "style.innerHTML = " "style.textContent = "
+    '';
+  });
 
   #          ╭──────────────────────────────────────────────────────────╮
   #          │   Override linuxKernel.packages.linux_zen specifically   │
