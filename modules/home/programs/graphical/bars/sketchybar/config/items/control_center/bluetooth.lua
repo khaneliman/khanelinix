@@ -5,14 +5,14 @@ local colors = require("colors")
 local settings = require("settings")
 
 local dashes = "─────────────────"
-local device_type_cache_ttl = 3600
-local device_type_lookup = {}
-local device_type_lookup_updated = 0
+local max_rows_per_section = 16
+local popup_is_open = false
+local refresh_generation = 0
 
 local bluetooth = Sbar.add("item", "bluetooth", {
 	position = "right",
 	align = "right",
-	update_freq = 60,
+	update_freq = 120,
 	icon = {
 		drawing = true,
 		string = icons.bluetooth,
@@ -22,40 +22,46 @@ local bluetooth = Sbar.add("item", "bluetooth", {
 		padding_right = 0,
 	},
 	popup = {
-		height = 30,
+		align = "right",
 	},
 })
 
-local function build_device_type_lookup(callback)
-	local now = os.time()
-	if device_type_lookup_updated > 0 and now - device_type_lookup_updated < device_type_cache_ttl then
-		callback(device_type_lookup)
+local function clear_existing_popup_items()
+	local existing = bluetooth:query()
+	if not existing.popup or next(existing.popup.items) == nil then
 		return
 	end
 
-	Sbar.exec(
-		[[system_profiler SPBluetoothDataType -json | jq -r '.SPBluetoothDataType[0] | ((.device_connected // []) + (.device_not_connected // [])) | .[] | to_entries[] | "\(.key)|\(.value.device_minorType // "")"']],
-		function(result)
-			local lookup = {}
-			for line in result:gmatch("[^\n]+") do
-				local name, minor_type = line:match("^(.-)|%s*(.*)$")
-				if name and name ~= "" then
-					lookup[name] = minor_type
-				end
-			end
-
-			device_type_lookup = lookup
-			device_type_lookup_updated = now
-			callback(lookup)
-		end
-	)
+	for _, item in pairs(existing.popup.items) do
+		Sbar.remove(item)
+	end
 end
 
-local function device_icon_for(name, minor_type)
-	local source = string.lower(minor_type or "")
-	if source == "" and name then
-		source = string.lower(name)
+local function trim(value)
+	return (value:gsub("^%s+", ""):gsub("%s+$", ""))
+end
+
+local function parse_device_label(device)
+	local quoted_label = device:match('"(.-)"')
+	if quoted_label and quoted_label ~= "" then
+		return trim(quoted_label)
 	end
+	return trim(device)
+end
+
+local function parse_devices(result)
+	local devices = {}
+	for line in result:gmatch("[^\n]+") do
+		local label = parse_device_label(line)
+		if label ~= "" then
+			table.insert(devices, label)
+		end
+	end
+	return devices
+end
+
+local function device_icon_for(name)
+	local source = string.lower(name or "")
 
 	if source:find("head") or source:find("airpods") then
 		return icons.bluetooth_devices.headphones
@@ -82,29 +88,238 @@ local function device_icon_for(name, minor_type)
 	return icons.bluetooth_devices.default
 end
 
-bluetooth:subscribe("mouse.entered", function()
-	bluetooth:set({ popup = { drawing = true } })
-end)
+local function create_header(name, title)
+	return Sbar.add("item", name, {
+		icon = { drawing = false },
+		label = {
+			string = title,
+			color = colors.blue,
+			padding_left = settings.paddings,
+			padding_right = settings.paddings,
+			font = {
+				family = settings.font,
+				size = 14.0,
+				style = "Bold",
+			},
+		},
+		position = "popup." .. bluetooth.name,
+		click_script = "sketchybar --set $NAME popup.drawing=off",
+	})
+end
+
+local function create_device_row(name)
+	return Sbar.add("item", name, {
+		icon = { drawing = false },
+		label = { drawing = false },
+		position = "popup." .. bluetooth.name,
+		click_script = "sketchybar --set $NAME popup.drawing=off",
+	})
+end
+
+local function hide_row(row)
+	row:set({
+		drawing = false,
+		icon = {
+			drawing = false,
+		},
+		label = {
+			drawing = false,
+		},
+	})
+end
+
+local function set_none_row(row)
+	row:set({
+		drawing = true,
+		icon = {
+			drawing = false,
+		},
+		label = {
+			drawing = true,
+			string = "None",
+			color = colors.grey,
+			padding_left = settings.paddings + 12,
+			font = {
+				family = settings.font,
+				size = 13.0,
+				style = "Italic",
+			},
+		},
+	})
+end
+
+local function set_device_row(row, label)
+	row:set({
+		drawing = true,
+		icon = {
+			drawing = true,
+			string = device_icon_for(label),
+			color = colors.blue,
+			padding_left = settings.paddings + 12,
+			font = {
+				family = settings.nerd_font,
+				size = 12.0,
+				style = "Bold",
+			},
+		},
+		label = {
+			drawing = true,
+			string = label,
+			padding_left = 6,
+			font = {
+				family = settings.font,
+				size = 13.0,
+				style = "Regular",
+			},
+		},
+	})
+end
+
+local function set_loading_row(row)
+	row:set({
+		drawing = true,
+		icon = {
+			drawing = false,
+		},
+		label = {
+			drawing = true,
+			string = "Loading...",
+			color = colors.grey,
+			padding_left = settings.paddings + 12,
+			font = {
+				family = settings.font,
+				size = 13.0,
+				style = "Italic",
+			},
+		},
+	})
+end
+
+local function hide_extra_rows(rows, from_index)
+	for i = from_index, #rows do
+		hide_row(rows[i])
+	end
+end
+
+local function render_rows(rows, devices)
+	if #devices == 0 then
+		set_none_row(rows[1])
+		hide_extra_rows(rows, 2)
+		return
+	end
+
+	for i = 1, #rows do
+		local label = devices[i]
+		if label then
+			set_device_row(rows[i], label)
+		else
+			hide_row(rows[i])
+		end
+	end
+end
+
+clear_existing_popup_items()
+
+create_header("bluetooth.paired.header", "Paired Devices")
+local paired_rows = {}
+for i = 1, max_rows_per_section do
+	paired_rows[i] = create_device_row("bluetooth.paired.device." .. i)
+	hide_row(paired_rows[i])
+end
+
+Sbar.add("item", "bluetooth.separator", {
+	icon = {
+		string = "",
+		width = 0,
+	},
+	label = {
+		string = dashes,
+		color = colors.grey,
+		align = "center",
+	},
+	background = {
+		height = 1,
+	},
+	padding_left = 0,
+	padding_right = 0,
+	position = "popup." .. bluetooth.name,
+	click_script = "sketchybar --set $NAME popup.drawing=off",
+})
+
+create_header("bluetooth.connected.header", "Connected Devices")
+local connected_rows = {}
+for i = 1, max_rows_per_section do
+	connected_rows[i] = create_device_row("bluetooth.connected.device." .. i)
+	hide_row(connected_rows[i])
+end
+
+local function refresh_icon()
+	Sbar.exec("blueutil -p", function(state)
+		if tonumber(state) == 0 then
+			bluetooth:set({ icon = icons.bluetooth_off })
+		else
+			bluetooth:set({ icon = icons.bluetooth })
+		end
+	end)
+end
+
+local function refresh_popup()
+	refresh_generation = refresh_generation + 1
+	local generation = refresh_generation
+
+	set_loading_row(paired_rows[1])
+	hide_extra_rows(paired_rows, 2)
+
+	set_loading_row(connected_rows[1])
+	hide_extra_rows(connected_rows, 2)
+
+	Sbar.exec("blueutil --paired", function(result)
+		if generation ~= refresh_generation or not popup_is_open then
+			return
+		end
+		render_rows(paired_rows, parse_devices(result))
+	end)
+
+	Sbar.exec("blueutil --connected", function(result)
+		if generation ~= refresh_generation or not popup_is_open then
+			return
+		end
+		render_rows(connected_rows, parse_devices(result))
+	end)
+end
 
 bluetooth:subscribe({
-	"mouse.exited.global",
 	"mouse.exited",
+	"mouse.exited.global",
 }, function()
+	popup_is_open = false
+	refresh_generation = refresh_generation + 1
 	bluetooth:set({ popup = { drawing = false } })
+end)
+
+bluetooth:subscribe("mouse.entered", function()
+	if popup_is_open then
+		return
+	end
+
+	popup_is_open = true
+	bluetooth:set({ popup = { drawing = true } })
+	refresh_popup()
 end)
 
 bluetooth:subscribe("mouse.clicked", function()
 	Sbar.exec("blueutil -p", function(state)
 		if tonumber(state) == 0 then
 			Sbar.exec("blueutil -p 1")
-			bluetooth:set({ icon = icons.bluetooth })
 		else
 			Sbar.exec("blueutil -p 0")
-			bluetooth:set({ icon = icons.bluetooth_off })
 		end
 
 		SLEEP(1)
 		Sbar.trigger("bluetooth_update")
+		if popup_is_open then
+			refresh_popup()
+		end
 	end)
 end)
 
@@ -114,139 +329,7 @@ bluetooth:subscribe({
 	"bluetooth_update",
 	"system_woke",
 }, function()
-	Sbar.exec("blueutil -p", function(state)
-		local existingEvents = bluetooth:query()
-		if existingEvents.popup and next(existingEvents.popup.items) ~= nil then
-			for _, item in pairs(existingEvents.popup.items) do
-				Sbar.remove(item)
-			end
-		end
-
-		if tonumber(state) == 0 then
-			bluetooth:set({ icon = icons.bluetooth_off })
-		else
-			bluetooth:set({ icon = icons.bluetooth })
-		end
-
-		Sbar.exec("blueutil --paired", function(paired)
-			build_device_type_lookup(function(device_type_lookup)
-				bluetooth.paired = {}
-
-				bluetooth.paired.header = Sbar.add("item", "bluetooth.paired.header", {
-					icon = { drawing = false },
-					label = {
-						string = "Paired Devices",
-						color = colors.blue,
-						padding_left = settings.paddings,
-						padding_right = settings.paddings,
-						font = {
-							family = settings.font,
-							size = 14.0,
-							style = "Bold",
-						},
-					},
-					position = "popup." .. bluetooth.name,
-					click_script = "sketchybar --set $NAME popup.drawing=off",
-				})
-
-				for device in paired:gmatch("[^\n]+") do
-					local label = device:match('"(.*)"')
-					local device_icon = device_icon_for(label, device_type_lookup[label])
-					bluetooth.paired.device = Sbar.add("item", "bluetooth.paired.device." .. label, {
-						icon = {
-							string = device_icon,
-							color = colors.blue,
-							padding_left = settings.paddings + 12,
-							font = {
-								family = settings.nerd_font,
-								size = 12.0,
-								style = "Bold",
-							},
-						},
-						label = {
-							string = label,
-							padding_left = 6,
-							font = {
-								family = settings.font,
-								size = 13.0,
-								style = "Regular",
-							},
-						},
-						position = "popup." .. bluetooth.name,
-						click_script = "sketchybar --set $NAME popup.drawing=off",
-					})
-				end
-
-				Sbar.add("item", "bluetooth.separator", {
-					icon = {
-						string = "",
-						width = 0,
-					},
-					label = {
-						string = dashes,
-						color = colors.grey,
-						align = "center",
-					},
-					background = {
-						height = 1,
-					},
-					padding_left = 0,
-					padding_right = 0,
-					position = "popup." .. bluetooth.name,
-					click_script = "sketchybar --set $NAME popup.drawing=off",
-				})
-
-				Sbar.exec("blueutil --connected", function(connected)
-					bluetooth.connected = {}
-
-					bluetooth.connected.header = Sbar.add("item", "bluetooth.connected.header", {
-						icon = { drawing = false },
-						label = {
-							string = "Connected Devices",
-							color = colors.blue,
-							padding_left = settings.paddings,
-							padding_right = settings.paddings,
-							font = {
-								family = settings.font,
-								size = 14.0,
-								style = "Bold",
-							},
-						},
-						position = "popup." .. bluetooth.name,
-						click_script = "sketchybar --set $NAME popup.drawing=off",
-					})
-
-					for device in connected:gmatch("[^\n]+") do
-						local label = device:match('"(.*)"')
-						local device_icon = device_icon_for(label, device_type_lookup[label])
-						bluetooth.connected.device = Sbar.add("item", "bluetooth.connected.device." .. label, {
-							icon = {
-								string = device_icon,
-								color = colors.blue,
-								padding_left = settings.paddings + 12,
-								font = {
-									family = settings.nerd_font,
-									size = 12.0,
-									style = "Bold",
-								},
-							},
-							label = {
-								string = label,
-								padding_left = 6,
-								font = {
-									family = settings.font,
-									size = 13.0,
-									style = "Regular",
-								},
-							},
-							position = "popup." .. bluetooth.name,
-							click_script = "sketchybar --set $NAME popup.drawing=off",
-						})
-					end
-				end)
-			end)
-		end)
-	end)
+	refresh_icon()
 end)
 
 return bluetooth
