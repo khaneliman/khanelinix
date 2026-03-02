@@ -59,6 +59,11 @@ in
             url = "https://github.com/Alexays/Waybar/pull/4861.patch?full_index=1";
             hash = "sha256-9HbVkjeTXtBi3O9IAr3YCt/qSU2XymWW4u2HXM3DiHs=";
           })
+          (pkgs.fetchpatch2 {
+            name = "scopedfd";
+            url = "https://github.com/Alexays/Waybar/pull/4891.patch?full_index=1";
+            hash = "sha256-K7EOoc04kBKBbdi+CS2eSwBJoDsY6cSw4sO4wuLeSD4=";
+          })
         ];
       });
 
