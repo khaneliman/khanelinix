@@ -22,6 +22,12 @@ in
 
     blacklistedKernelModules = [
       "eeepc_wmi"
+      "ccp"
+    ];
+
+    kernelParams = [
+      "iommu=pt"
+      "pcie_aspm=off"
     ];
 
     # consoleLogLevel = 0;
@@ -48,7 +54,7 @@ in
     display = {
       outputs = {
         "DP-1" = {
-          mode = "5120x1440@120";
+          mode = "5120x1440@60";
         };
         "DP-3" = {
           mode = "3840x2160@60";
@@ -98,6 +104,8 @@ in
         };
 
         ssdEnable = true;
+        nvmeMaxLatencyUs = 0;
+        disableUsbAutoSuspend = true;
       };
 
       tpm = enabled;
