@@ -45,38 +45,6 @@ let
       "${pre}exec, ${mkStartCommand cmd}"
     else
       bind; # Return unchanged if no "exec, " found
-
-  # Helper to create submap binds with automatic reset
-  # Usage: mkSubmapBinds { autoReset = true; } [ "bind1" "bind2" ]
-  mkSubmapBinds =
-    args: binds:
-    let
-      autoReset = args.autoReset or false;
-      processedBinds = map mkExecBind binds;
-
-      # Extract key combination from bind string (e.g., ", w, exec, ..." -> ", w")
-      extractKey =
-        bind:
-        let
-          parts = lib.splitString ", " bind;
-        in
-        if builtins.length parts >= 2 then
-          "${builtins.elemAt parts 0}, ${builtins.elemAt parts 1}"
-        else
-          null;
-
-      # Generate reset binds for each key
-      resetBinds = lib.filter (x: x != null) (
-        map (
-          bind:
-          let
-            key = extractKey bind;
-          in
-          if key != null then "${key}, submap, reset" else null
-        ) binds
-      );
-    in
-    if autoReset then processedBinds ++ resetBinds else processedBinds;
 in
 {
   config = mkIf cfg.enable {
@@ -281,9 +249,10 @@ in
       # Submap definitions for better keybind organization
       submaps = {
         screenshot = {
+          onDispatch = "reset";
           settings = {
             bind =
-              (mkSubmapBinds { autoReset = true; } [
+              (map mkExecBind [
                 # Clipboard screenshots
                 ", w, exec, $screenshot_active_clipboard" # current window
                 ", a, exec, $screenshot_area_clipboard" # area selection
@@ -306,7 +275,6 @@ in
               ++ [
                 # Exit submap
                 ", escape, submap, reset"
-                "SUPER, S, submap, reset"
               ];
           };
         };
@@ -342,9 +310,10 @@ in
         };
 
         system = {
+          onDispatch = "reset";
           settings = {
             bind =
-              (mkSubmapBinds { autoReset = true; } [
+              (map mkExecBind [
                 ", l, exec, ${
                   if (osConfig.programs.uwsm.enable or false) then "uwsm stop" else lib.getExe pkgs.hyprshutdown
                 }"
@@ -354,7 +323,6 @@ in
               ++ [
                 # Exit submap
                 ", escape, submap, reset"
-                "SUPER, X, submap, reset"
               ];
           };
         };
