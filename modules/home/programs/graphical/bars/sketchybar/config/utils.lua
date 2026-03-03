@@ -20,6 +20,9 @@ IS_EMPTY = function(s)
 end
 
 STR_SPLIT = function(inputstr, sep)
+	if inputstr == nil then
+		return {}
+	end
 	if sep == nil then
 		sep = "%s"
 	end

@@ -36,6 +36,61 @@ local function truncate_label(value, max_length)
 	return text:sub(1, max_length - 1) .. "…"
 end
 
+local function notification_repo_name(notification)
+	local repository = notification and notification.repository or nil
+	if repository == nil then
+		return "Unknown"
+	end
+
+	if IS_EMPTY(repository.full_name) == false then
+		return tostring(repository.full_name)
+	end
+
+	local owner = repository.owner and repository.owner.login or nil
+	local name = repository.name
+	if IS_EMPTY(owner) == false and IS_EMPTY(name) == false then
+		return tostring(owner) .. "/" .. tostring(name)
+	end
+
+	if IS_EMPTY(name) == false then
+		return tostring(name)
+	end
+
+	return "Unknown"
+end
+
+local function collect_sorted_notifications(raw_notifications)
+	local sorted_notifications = {}
+	if type(raw_notifications) ~= "table" then
+		return sorted_notifications
+	end
+	for _, notification in pairs(raw_notifications or {}) do
+		if type(notification) == "table" then
+			table.insert(sorted_notifications, notification)
+		end
+	end
+
+	table.sort(sorted_notifications, function(left, right)
+		local left_repo = string.lower(notification_repo_name(left))
+		local right_repo = string.lower(notification_repo_name(right))
+		if left_repo ~= right_repo then
+			return left_repo < right_repo
+		end
+
+		local left_updated_at = tostring(left.updated_at or "")
+		local right_updated_at = tostring(right.updated_at or "")
+		if left_updated_at ~= right_updated_at then
+			return left_updated_at > right_updated_at
+		end
+
+		local left_title = tostring((left.subject and left.subject.title) or "")
+		local right_title = tostring((right.subject and right.subject.title) or "")
+		return left_title < right_title
+	end)
+
+	return sorted_notifications
+end
+
 local github = Sbar.add("item", "github", {
 	position = "right",
 	icon = {
@@ -118,18 +173,18 @@ github:subscribe({
 
 		-- PRINT_TABLE(notifications)
 
-		local count = 0
-		local repo_headers = {}
-		for _, notification in pairs(notifications) do
-			-- PRINT_TABLE(notification)
-			-- increment count for label
-			count = count + 1
+		local sorted_notifications = collect_sorted_notifications(notifications)
+		local count = #sorted_notifications
+		local current_repo_group = nil
 
-			local id = notification.id
-			local url = notification.subject.latest_comment_url or notification.subject.url
-			local repo = notification.repository and notification.repository.name or "Unknown"
-			local title = notification.subject.title
-			local type = notification.subject.type
+		for index, notification in ipairs(sorted_notifications) do
+			-- PRINT_TABLE(notification)
+			local subject = notification.subject or {}
+			local id = notification.id or index
+			local url = subject.latest_comment_url or subject.url
+			local repo_label = notification_repo_name(notification)
+			local title = subject.title
+			local type = subject.type
 
 			-- set click_script for each notification
 			if url == nil then
@@ -169,14 +224,15 @@ github:subscribe({
 			end
 
 			-- add notification to popup
-			local repo_label = repo
 			if IS_EMPTY(repo_label) then
 				repo_label = "Unknown"
 			end
 
-			local repo_key = sanitize_item_key(repo_label)
-			repo_headers[repo_key] = repo_headers[repo_key]
-				or Sbar.add("item", "github.notification.repo_header." .. repo_key, {
+			local repo_group = string.lower(repo_label)
+			if current_repo_group ~= repo_group then
+				current_repo_group = repo_group
+				local repo_key = sanitize_item_key(repo_label)
+				Sbar.add("item", "github.notification.repo_header." .. repo_key .. "." .. tostring(index), {
 					label = {
 						string = repo_label,
 						color = colors.blue,
@@ -201,6 +257,7 @@ github:subscribe({
 					click_script = popup_off,
 					position = "popup." .. github.name,
 				})
+			end
 
 			if IS_EMPTY(title) == false then
 				github.notification = {}
