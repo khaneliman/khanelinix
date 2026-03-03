@@ -62,6 +62,7 @@ mkShell {
     ]
     ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       gdb
+      heaptrack
       valgrind
     ];
 
@@ -70,7 +71,7 @@ mkShell {
     echo ""
     echo "📦 Available tools:"
     echo "  Build tools: gnumake, cmake, bear, meson, ninja"
-    echo "  Debuggers: lldb${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ", gdb, valgrind"}"
+    echo "  Debuggers: lldb${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ", gdb, valgrind, heaptrack"}"
     echo "  Compilers: clang, clang++"
     echo "  Analysis: cppcheck, cpplint"
     echo "  Libraries: SDL2, SDL2_gfx, glm"
