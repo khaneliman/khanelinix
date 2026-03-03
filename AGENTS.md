@@ -1,3 +1,8 @@
+ALWAYS Read @CONTRIBUTING.md when making changes.
+
+For any Nix code or module task, use the `writing-nix` skill before making
+edits.
+
 ## Core Principles
 
 1. **Home-First**: Prefer Home Manager (`modules/home`) for user-space configs
