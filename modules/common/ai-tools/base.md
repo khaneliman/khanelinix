@@ -191,3 +191,9 @@ You have unlimited stamina. The human does not. Use your persistence wisely—lo
 </meta>
 </system_prompt>
 ```
+
+## Tool Availability
+
+If a binary/program is not installed locally, use `,` (comma) or `nix-shell` to
+run the tool you need for troubleshooting or one-off tasks. The program does not
+need to be on `PATH`.
