@@ -46,14 +46,13 @@ in
       # See: https://github.com/Alexays/Waybar/wiki/Configuration
       enable = true;
       package = waybar.packages.${system}.waybar.overrideAttrs (_: {
+        # TODO: remove after PR merges and flake lock update
         patches = [
-          # TODO: remove after https://github.com/Alexays/Waybar/pull/4843 merges
           (pkgs.fetchpatch2 {
             name = "interval-min";
             url = "https://github.com/Alexays/Waybar/pull/4843.patch?full_index=1";
             hash = "sha256-F98AF+23y7zJFJTR63c/3dvMgLcP1AwOI5W5vZgWayQ=";
           })
-          # TODO: remove after https://github.com/Alexays/Waybar/pull/4861 merges
           (pkgs.fetchpatch2 {
             name = "hyprland-workspace-grouping";
             url = "https://github.com/Alexays/Waybar/pull/4861.patch?full_index=1";
@@ -63,6 +62,21 @@ in
             name = "scopedfd";
             url = "https://github.com/Alexays/Waybar/pull/4891.patch?full_index=1";
             hash = "sha256-K7EOoc04kBKBbdi+CS2eSwBJoDsY6cSw4sO4wuLeSD4=";
+          })
+          (pkgs.fetchpatch2 {
+            name = "command-exit-code";
+            url = "https://github.com/Alexays/Waybar/pull/4892.patch?full_index=1";
+            hash = "sha256-9/e5vXcgD/aeuW0a/B5EwS2Gi4bLJH2M/S4je+JK60w=";
+          })
+          (pkgs.fetchpatch2 {
+            name = "network-text-log";
+            url = "https://github.com/Alexays/Waybar/pull/4897.patch?full_index=1";
+            hash = "sha256-PcZFQ3X9dvJYeZcJs4Y9UHPlIFPjpcSa/GK7g3fjPpI=";
+          })
+          (pkgs.fetchpatch2 {
+            name = "memory-optimizations";
+            url = "https://github.com/Alexays/Waybar/pull/4898.patch?full_index=1";
+            hash = "sha256-+Sr2+0ZuR/jTrq3O0wMBtIDs3KKTwQ9/kXc4JSdiGeM=";
           })
         ];
       });
