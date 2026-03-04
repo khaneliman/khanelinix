@@ -1,5 +1,6 @@
 return function(ctx)
 	local token = 0
+	local lastBatteryState = nil
 
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands.power.maxExpandWidth", "190"), 190)
 	local expandHeight = ctx.asNumber(ctx.get("islands.power.expandHeight", "56"), 56)
@@ -18,30 +19,17 @@ return function(ctx)
 	local listener = ctx.Sbar.add("item", "powerChangeListener", {
 		position = "center",
 		width = 0,
+		update_freq = 60, -- check battery every 60 seconds
 	})
 
-	listener:subscribe("power_source_change", function(env)
-		local source = ctx.trim(env.INFO or "")
-		local icon = ctx.get("icons.power.onBattery", "􀺸")
-		local text = "On Battery"
-
-		if source == "AC" then
-			icon = ctx.get("icons.power.connectedAC", "􀢋")
-			text = "Charging"
-		elseif source == "BATTERY" then
-			text = "On Battery"
-		else
-			text = source ~= "" and source or text
-		end
-
+	local function showIsland(text, textColor, duration)
 		token = token + 1
 		local current = token
-		ctx.appendLog(ctx.debugLogPath, "[power][lua] source='" .. source .. "'")
 
 		textItem:set({
 			drawing = true,
 			label = {
-				string = icon .. " " .. text,
+				string = text,
 			},
 		})
 
@@ -52,11 +40,11 @@ return function(ctx)
 				height = expandHeight,
 			})
 			textItem:set({
-				label = { color = ctx.colorWhite },
+				label = { color = textColor },
 			})
 		end)
 
-		ctx.Sbar.exec("sleep 0.8", function()
+		ctx.Sbar.exec("sleep " .. tostring(duration), function()
 			if current ~= token then
 				return
 			end
@@ -79,6 +67,53 @@ return function(ctx)
 					})
 				end)
 			end)
+		end)
+	end
+
+	listener:subscribe("power_source_change", function(env)
+		local source = ctx.trim(env.INFO or "")
+		local icon = ctx.get("icons.power.onBattery", "􀺸")
+		local text = "On Battery"
+
+		if source == "AC" then
+			icon = ctx.get("icons.power.connectedAC", "􀢋")
+			text = "Charging"
+		elseif source == "BATTERY" then
+			text = "On Battery"
+		else
+			text = source ~= "" and source or text
+		end
+
+		ctx.appendLog(ctx.debugLogPath, "[power][lua] source='" .. source .. "'")
+		showIsland(icon .. " " .. text, ctx.colorWhite, 0.8)
+	end)
+
+	listener:subscribe("routine", function()
+		ctx.Sbar.exec("pmset -g batt", function(batt_info)
+			local found, _, percent = string.find(batt_info, "(%d+)%%")
+			if found then
+				local current_percent = tonumber(percent)
+				local is_charging = string.find(batt_info, "AC Power")
+
+				-- If battery drops below 20% and we aren't charging
+				if current_percent <= 20 and not is_charging then
+					-- Only alert once when it drops into the low state, or every 5% drop
+					if lastBatteryState == nil or lastBatteryState > current_percent then
+						ctx.appendLog(
+							ctx.debugLogPath,
+							"[power][lua] low battery warning: " .. tostring(current_percent) .. "%"
+						)
+						showIsland("􀛨 Low Battery: " .. tostring(current_percent) .. "%", 0xffff3333, 3.0)
+						-- Update last known state, snap to nearest 5% step so we alert again if it keeps dropping
+						lastBatteryState = math.floor(current_percent / 5) * 5
+					end
+				else
+					-- Reset state when charged back up
+					if current_percent > 20 then
+						lastBatteryState = nil
+					end
+				end
+			end
 		end)
 	end)
 
