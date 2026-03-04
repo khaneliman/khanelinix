@@ -1,6 +1,9 @@
 #!/usr/bin/env lua
 
 local function trim(value)
+	if type(value) ~= "string" then
+		return value
+	end
 	return (value:gsub("^%s+", ""):gsub("%s+$", ""))
 end
 
