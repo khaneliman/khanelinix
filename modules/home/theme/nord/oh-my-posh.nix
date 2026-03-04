@@ -1,259 +1,69 @@
 {
-  lib,
   config,
+  lib,
   ...
 }:
 let
-  inherit (lib) mkIf mkForce;
   cfg = config.khanelinix.theme.nord;
   nord = import ./colors.nix;
 in
 {
-  config = mkIf cfg.enable {
-    programs.oh-my-posh = {
-      enable = true;
-      settings = mkForce {
-        "$schema" = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json";
+  config = lib.mkIf cfg.enable {
+    programs.oh-my-posh.settings.palette = {
+      osBg = nord.palette.nord9.hex;
+      osFg = nord.palette.nord1.hex;
+      leading = nord.palette.nord14.hex;
+      line = nord.palette.nord14.hex;
 
-        version = 4;
-        final_space = true;
-        async = true;
-        shell_integration = true;
-        tooltips_action = "extend";
-        transient_prompt = {
-          template = "❯ ";
-          foreground = nord.palette.nord14.hex;
-          foreground_templates = [ "{{ if gt .Code 0 }}${nord.palette.nord11.hex}{{ end }}" ];
-        };
-        secondary_prompt = {
-          template = "❯❯ ";
-          foreground = nord.palette.nord9.hex;
-        };
-        tooltips = [
-          {
-            type = "git";
-            style = "plain";
-            foreground = nord.palette.nord14.hex;
-            tips = [
-              "git"
-              "jj"
-              "jujutsu"
-            ];
-            template = "  {{ .HEAD }}{{ if .BranchStatus }} {{ .BranchStatus }}{{ end }} ";
-            properties = {
-              fetch_status = true;
-            };
-          }
-          {
-            type = "aws";
-            style = "plain";
-            foreground = nord.palette.nord9.hex;
-            tips = [
-              "aws"
-              "terraform"
-              "terragrunt"
-            ];
-            template = "  {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} ";
-            properties = {
-              display_default = false;
-            };
-          }
-        ];
-        blocks = [
-          {
-            alignment = "left";
-            type = "prompt";
-            segments = [
-              {
-                background = nord.palette.nord9.hex;
-                foreground = nord.palette.nord1.hex;
-                style = "diamond";
-                leading_diamond = "";
-                trailing_diamond = "";
-                template = "{{ if .WSL }}WSL at {{ end }}{{ .Icon }} ";
-                type = "os";
-              }
-              {
-                background = nord.palette.nord4.hex;
-                foreground = nord.palette.nord0.hex;
-                powerline_symbol = "";
-                style = "powerline";
-                template = "  <b>{{ path .Path .Location }}</b> ";
-                type = "path";
-                properties = {
-                  style = "full";
-                };
-              }
-              {
-                background = nord.palette.nord3.hex;
-                foreground = nord.palette.nord4.hex;
-                powerline_symbol = "";
-                style = "powerline";
-                timeout = 500;
-                template = "  {{ if .UpstreamURL }}{{ url .UpstreamURL }} {{ end }}";
-                type = "git";
-              }
-              {
-                background = nord.palette.nord3.hex;
-                foreground = nord.palette.nord4.hex;
-                powerline_symbol = "";
-                style = "powerline";
-                timeout = 500;
-                template = " {{ .HEAD }}{{ if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} <${nord.palette.nord13.hex}> {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} <${nord.palette.nord14.hex}> {{ .Staging.String }}</>{{ end }} ";
-                type = "git";
-              }
-              {
-                background = nord.palette.nord12.hex;
-                foreground = nord.palette.nord1.hex;
-                powerline_symbol = "";
-                style = "powerline";
-                timeout = 500;
-                template = " 󰱯 jj status ";
-                type = "command";
-                properties = {
-                  command = "jj root > /dev/null && jj log -r @ -n 1 --no-graph -T 'branches \" \" change_id.shortest() \" \"' --ignore-working-copy";
-                  shell = "bash";
-                };
-              }
-            ];
-          }
-          {
-            alignment = "right";
-            type = "prompt";
-            overflow = "hide";
-            filler = "{{ if .Overflow }}<${nord.palette.nord2.hex},transparent> </>{{ else }}<${nord.palette.nord2.hex},transparent>.</>{{ end }}";
-            segments = [
-              {
-                background = nord.palette.nord14.hex;
-                foreground = nord.palette.nord1.hex;
-                powerline_symbol = "";
-                invert_powerline = true;
-                style = "powerline";
-                template = "  {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ";
-                type = "node";
-                properties = {
-                  fetch_version = true;
-                  fetch_package_manager = true;
-                };
-              }
-              {
-                background = nord.palette.nord9.hex;
-                foreground = nord.palette.nord1.hex;
-                powerline_symbol = "";
-                invert_powerline = true;
-                style = "powerline";
-                template = "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ";
-                type = "go";
-              }
-              {
-                background = nord.palette.nord15.hex;
-                foreground = nord.palette.nord1.hex;
-                powerline_symbol = "";
-                invert_powerline = true;
-                style = "powerline";
-                template = "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ";
-                type = "julia";
-              }
-              {
-                background = nord.palette.nord13.hex;
-                foreground = nord.palette.nord1.hex;
-                powerline_symbol = "";
-                invert_powerline = true;
-                style = "powerline";
-                template = "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ";
-                type = "python";
-              }
-              {
-                background = nord.palette.nord11.hex;
-                foreground = nord.palette.nord1.hex;
-                powerline_symbol = "";
-                invert_powerline = true;
-                style = "powerline";
-                template = "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ";
-                type = "ruby";
-              }
-              {
-                background = nord.palette.nord9.hex;
-                foreground = nord.palette.nord1.hex;
-                powerline_symbol = "";
-                invert_powerline = true;
-                style = "powerline";
-                template = "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ";
-                type = "azfunc";
-              }
-              {
-                background = nord.palette.nord12.hex;
-                foreground = nord.palette.nord1.hex;
-                powerline_symbol = "";
-                invert_powerline = true;
-                style = "powerline";
-                timeout = 500;
-                template = "  {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} ";
-                type = "aws";
-              }
-              {
-                background = nord.palette.nord13.hex;
-                foreground = nord.palette.nord1.hex;
-                powerline_symbol = "";
-                invert_powerline = true;
-                style = "powerline";
-                template = "  ";
-                type = "root";
-              }
-              {
-                background = nord.palette.nord13.hex;
-                foreground = nord.palette.nord1.hex;
-                powerline_symbol = "";
-                invert_powerline = true;
-                style = "powerline";
-                template = "  {{ .FormattedMs }} ";
-                type = "executiontime";
-                properties = {
-                  threshold = 500;
-                };
-              }
-              {
-                background = nord.palette.nord11.hex;
-                foreground = nord.palette.nord1.hex;
-                powerline_symbol = "";
-                invert_powerline = true;
-                style = "powerline";
-                template = "  {{ .Code }} ";
-                type = "status";
-                properties = {
-                  always_enabled = false;
-                  color_icon = false;
-                };
-              }
-              {
-                background = nord.palette.nord9.hex;
-                foreground = nord.palette.nord1.hex;
-                invert_powerline = true;
-                style = "diamond";
-                template = "  {{ .CurrentDate | date .Format }} ";
-                type = "time";
-                properties = {
-                  time_format = "15:04:05";
-                };
-              }
-            ];
-          }
-          {
-            alignment = "left";
-            newline = true;
-            type = "prompt";
-            segments = [
-              {
-                background = "transparent";
-                foreground = nord.palette.nord14.hex;
-                style = "plain";
-                template = "╰─";
-                type = "text";
-              }
-            ];
-          }
-        ];
-      };
+      pathBg = nord.palette.nord4.hex;
+      pathFg = nord.palette.nord0.hex;
+
+      gitBg = nord.palette.nord3.hex;
+      gitFg = nord.palette.nord4.hex;
+      gitDirtyBg = nord.palette.nord13.hex;
+      gitDivergedBg = nord.palette.nord12.hex;
+      gitAheadBg = nord.palette.nord8.hex;
+      gitBehindBg = nord.palette.nord14.hex;
+
+      filler = nord.palette.nord2.hex;
+
+      nodeBg = nord.palette.nord14.hex;
+      nodeFg = nord.palette.nord1.hex;
+      goBg = nord.palette.nord9.hex;
+      goFg = nord.palette.nord1.hex;
+      juliaBg = nord.palette.nord15.hex;
+      juliaFg = nord.palette.nord1.hex;
+      pythonBg = nord.palette.nord13.hex;
+      pythonFg = nord.palette.nord1.hex;
+      rubyBg = nord.palette.nord11.hex;
+      rubyFg = nord.palette.nord1.hex;
+      azfuncBg = nord.palette.nord9.hex;
+      azfuncFg = nord.palette.nord1.hex;
+
+      awsFg = nord.palette.nord1.hex;
+      awsDefaultBg = nord.palette.nord13.hex;
+      awsJanBg = nord.palette.nord11.hex;
+
+      rootBg = nord.palette.nord13.hex;
+      rootFg = nord.palette.nord1.hex;
+
+      executionBg = nord.palette.nord13.hex;
+      executionFg = nord.palette.nord1.hex;
+
+      exitBg = nord.palette.nord1.hex;
+      exitFg = nord.palette.nord14.hex;
+      exitErrFg = nord.palette.nord13.hex;
+      exitErrBg = nord.palette.nord11.hex;
+
+      timeBg = nord.palette.nord9.hex;
+      timeFg = nord.palette.nord1.hex;
+
+      transient = nord.palette.nord14.hex;
+      transientError = nord.palette.nord11.hex;
+      secondary = nord.palette.nord9.hex;
+
+      tooltipGit = nord.palette.nord14.hex;
+      tooltipAws = nord.palette.nord12.hex;
     };
   };
 }
