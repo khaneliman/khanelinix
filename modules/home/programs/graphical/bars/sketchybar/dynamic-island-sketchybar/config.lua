@@ -12,6 +12,7 @@ return {
 		brightness = true,
 		wifi = true,
 		power = true,
+		cpu_panic = true,
 	},
 
 	notch = {
@@ -64,6 +65,11 @@ return {
 		power = {
 			maxExpandWidth = 190,
 			expandHeight = 56,
+			cornerRadius = 15,
+		},
+		cpu_panic = {
+			maxExpandWidth = 200,
+			expandHeight = 85,
 			cornerRadius = 15,
 		},
 		notification = {
