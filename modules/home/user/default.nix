@@ -82,11 +82,31 @@ in
 
         shellAliases = {
           # nix specific aliases
-          cleanup = "sudo nix-collect-garbage --delete-older-than 3d && nix-collect-garbage -d";
+          cleanup =
+            if pkgs.stdenv.hostPlatform.isDarwin then
+              ''
+                sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate off
+                sudo nix-collect-garbage --delete-older-than 3d && nix-collect-garbage -d
+                sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
+              ''
+            else
+              ''
+                sudo nix-collect-garbage --delete-older-than 3d && nix-collect-garbage -d
+              '';
           bloat = "nix path-info -Sh /run/current-system";
           curgen = "sudo nix-env --list-generations --profile /nix/var/nix/profiles/system";
           gc-check = "nix-store --gc --print-roots | egrep -v \"^(/nix/var|/run/\w+-system|\{memory|/proc)\"";
-          repair = "nix-store --verify --check-contents --repair";
+          repair =
+            if pkgs.stdenv.hostPlatform.isDarwin then
+              ''
+                sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate off
+                nix-store --verify --check-contents --repair
+                sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
+              ''
+            else
+              ''
+                nix-store --verify --check-contents --repair
+              '';
           nixnuke = ''
             # Kill nix-daemon and nix processes first
             sudo pkill -9 -f "nix-(daemon|store|build)" || true
@@ -97,11 +117,12 @@ in
             done
 
             # Restart nix-daemon based on platform
-            if [ "$(uname)" = "Darwin" ]; then
-              sudo launchctl kickstart -k system/org.nixos.nix-daemon
-            else
-              sudo systemctl restart nix-daemon.service
-            fi
+            ${
+              if pkgs.stdenv.hostPlatform.isDarwin then
+                "sudo launchctl kickstart -k system/org.nixos.nix-daemon"
+              else
+                "sudo systemctl restart nix-daemon.service"
+            }
           '';
           flake = "nix flake";
           nix = "nix -vL";
