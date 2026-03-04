@@ -107,7 +107,17 @@ local window_tracker = Sbar.add("item", {
 	associated_display = "active",
 })
 
-local function update_windows()
+local updating = false
+local pending_update = false
+
+local function do_update()
+	if updating then
+		pending_update = true
+		return
+	end
+	updating = true
+	pending_update = false
+
 	Sbar.exec([[aerospace list-windows --all --format '%{workspace}|%{app-name}']], function(result)
 		local workspace_apps = {}
 		for i = 1, 8 do
@@ -140,12 +150,17 @@ local function update_windows()
 				spaces[ws_num]:set({ label = { string = icon_line } })
 			end
 		end
+
+		updating = false
+		if pending_update then
+			do_update()
+		end
 	end)
 end
 
-window_tracker:subscribe("aerospace_workspace_change", function()
-	update_windows()
-end)
+local function update_windows()
+	do_update()
+end
 
 window_tracker:subscribe("aerospace_windows_change", function()
 	update_windows()
