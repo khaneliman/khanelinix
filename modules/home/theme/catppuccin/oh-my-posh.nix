@@ -21,6 +21,7 @@ in
             background = catppuccin.colors.surface0.hex;
             foreground = catppuccin.colors.text.hex;
             leading_diamond = "<${catppuccin.colors.overlay0.hex},transparent>╭─</>";
+            trailing_diamond = "";
             template = " {{ if .WSL }}WSL at {{ end }}{{.Icon}} ";
           }
           {

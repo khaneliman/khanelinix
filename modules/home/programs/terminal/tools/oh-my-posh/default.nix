@@ -30,6 +30,12 @@ in
         version = 2;
         final_space = true;
         console_title_template = "{{ .Shell }} in {{ .Folder }}";
+        transient_prompt = {
+          template = "❯ ";
+        };
+        secondary_prompt = {
+          template = "❯❯ ";
+        };
 
         blocks = [
           {

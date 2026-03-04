@@ -31,7 +31,7 @@ in
             powerline_symbol = "";
             background = colors.blue;
             foreground = colors.bg;
-            template = "  {{ .Path }} ";
+            template = "  {{ .Path }} ";
             properties = {
               style = "full";
               home_icon = "~";
@@ -49,12 +49,12 @@ in
               "{{ if gt .Ahead 0 }}${colors.cyan}{{ end }}"
               "{{ if gt .Behind 0 }}${colors.green}{{ end }}"
             ];
-            template = " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }} ";
+            template = "  {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }} ";
             properties = {
               fetch_status = true;
               fetch_upstream_icon = true;
               fetch_stash_count = true;
-              branch_icon = " ";
+              branch_icon = " ";
             };
           }
           {
@@ -81,7 +81,7 @@ in
             invert_powerline = true;
             background = colors.green;
             foreground = colors.fg;
-            template = " {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}  ";
+            template = "  {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ";
             properties = {
               fetch_version = true;
             };
@@ -93,7 +93,7 @@ in
             invert_powerline = true;
             background = colors.cyan;
             foreground = colors.bg;
-            template = " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  ";
+            template = "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ";
             properties = {
               fetch_version = true;
             };
@@ -105,7 +105,7 @@ in
             invert_powerline = true;
             background = colors.blue;
             foreground = colors.bg;
-            template = " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  ";
+            template = "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ";
             properties = {
               fetch_version = true;
             };
@@ -117,7 +117,7 @@ in
             invert_powerline = true;
             background = colors.yellow;
             foreground = colors.bg;
-            template = " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  ";
+            template = "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ";
             properties = {
               display_mode = "files";
               fetch_virtual_env = false;
@@ -130,7 +130,7 @@ in
             invert_powerline = true;
             background = colors.red;
             foreground = colors.fg;
-            template = " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  ";
+            template = "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ";
             properties = {
               display_mode = "files";
               fetch_version = true;
@@ -143,7 +143,7 @@ in
             invert_powerline = true;
             background = colors.orange;
             foreground = colors.fg;
-            template = " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ";
+            template = "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ";
             properties = {
               display_mode = "files";
               fetch_version = false;
@@ -159,7 +159,7 @@ in
               "{{if contains \"default\" .Profile}}${colors.yellow}{{end}}"
               "{{if contains \"jan\" .Profile}}${colors.red}{{end}}"
             ];
-            template = " {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}  ";
+            template = "  {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} ";
             properties = {
               display_default = false;
             };
@@ -171,7 +171,7 @@ in
             invert_powerline = true;
             background = colors.yellow;
             foreground = colors.bg;
-            template = "  ";
+            template = "  ";
           }
           {
             type = "executiontime";
@@ -180,7 +180,7 @@ in
             invert_powerline = true;
             background = colors.yellow;
             foreground = colors.bg;
-            template = " {{ .FormattedMs }}  ";
+            template = "  {{ .FormattedMs }} ";
           }
           {
             type = "exit";
@@ -191,7 +191,7 @@ in
             foreground = colors.green;
             foreground_templates = [ "{{ if gt .Code 0 }}${colors.yellow}{{ end }}" ];
             background_templates = [ "{{ if gt .Code 0 }}${colors.red}{{ end }}" ];
-            template = " {{ if gt .Code 0 }} {{ .Code }} {{ else }}✔ {{ end }}";
+            template = " {{ if gt .Code 0 }} {{ .Code }} {{ else }}✔ {{ end }}";
             properties = {
               always_enabled = true;
             };
@@ -202,7 +202,7 @@ in
             invert_powerline = true;
             background = colors.fg;
             foreground = colors.bg;
-            template = " {{ .CurrentDate | date .Format }}  ";
+            template = "  {{ .CurrentDate | date .Format }} ";
             properties = {
               time_format = "03:04:05 PM";
             };

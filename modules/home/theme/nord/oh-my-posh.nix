@@ -13,6 +13,13 @@ in
     programs.oh-my-posh = {
       enable = true;
       settings = mkForce {
+        final_space = true;
+        transient_prompt = {
+          template = "❯ ";
+        };
+        secondary_prompt = {
+          template = "❯❯ ";
+        };
         blocks = [
           {
             alignment = "left";
@@ -32,7 +39,7 @@ in
                 foreground = nord.palette.nord0.hex;
                 powerline_symbol = "";
                 style = "powerline";
-                template = " <b>{{ .Path }}</b> ";
+                template = "  <b>{{ .Path }}</b> ";
                 type = "path";
                 properties = {
                   style = "full";
@@ -43,7 +50,7 @@ in
                 foreground = nord.palette.nord4.hex;
                 powerline_symbol = "";
                 style = "powerline";
-                template = " {{ if .UpstreamURL }}{{ url .UpstreamURL }} {{ end }}";
+                template = "  {{ if .UpstreamURL }}{{ url .UpstreamURL }} {{ end }}";
                 type = "git";
               }
               {
@@ -51,7 +58,7 @@ in
                 foreground = nord.palette.nord4.hex;
                 powerline_symbol = "";
                 style = "powerline";
-                template = "{{ .HEAD }}{{ if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} <${nord.palette.nord13.hex}> {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} <${nord.palette.nord14.hex}> {{ .Staging.String }}</>{{ end }} ";
+                template = " {{ .HEAD }}{{ if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} <${nord.palette.nord13.hex}> {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} <${nord.palette.nord14.hex}> {{ .Staging.String }}</>{{ end }} ";
                 type = "git";
               }
               {
@@ -59,7 +66,7 @@ in
                 foreground = nord.palette.nord1.hex;
                 powerline_symbol = "";
                 style = "powerline";
-                template = " jj status ";
+                template = " 󰱯 jj status ";
                 type = "command";
                 properties = {
                   command = "jj root > /dev/null && jj log -r @ -n 1 --no-graph -T 'branches \" \" change_id.shortest() \" \"' --ignore-working-copy";
@@ -124,7 +131,7 @@ in
                 powerline_symbol = "";
                 invert_powerline = true;
                 style = "powerline";
-                template = " ﳆ {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ";
+                template = "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ";
                 type = "azfunc";
               }
               {
@@ -151,7 +158,7 @@ in
                 powerline_symbol = "";
                 invert_powerline = true;
                 style = "powerline";
-                template = " took {{ .FormattedMs }} ";
+                template = "  {{ .FormattedMs }} ";
                 type = "executiontime";
                 properties = {
                   threshold = 500;
@@ -163,7 +170,7 @@ in
                 powerline_symbol = "";
                 invert_powerline = true;
                 style = "powerline";
-                template = " exit {{ .Code }} ";
+                template = "  {{ .Code }} ";
                 type = "status";
                 properties = {
                   always_enabled = false;
@@ -175,7 +182,7 @@ in
                 foreground = nord.palette.nord1.hex;
                 invert_powerline = true;
                 style = "diamond";
-                template = " {{ .CurrentDate | date .Format }}  ";
+                template = "  {{ .CurrentDate | date .Format }} ";
                 type = "time";
                 properties = {
                   time_format = "15:04:05";
