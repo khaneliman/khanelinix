@@ -14,6 +14,7 @@ return {
 		power = true,
 		cpu_panic = true,
 		clipboard = true,
+		privacy = true,
 	},
 
 	notch = {
