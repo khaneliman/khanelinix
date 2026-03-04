@@ -6,11 +6,29 @@ return function(ctx)
 	local cornerRad = ctx.asNumber(ctx.get("islands.appswitch.cornerRadius", "15"), 15)
 	local maxExpandHeight = expandHeight + math.floor(ctx.squishAmount / 2)
 
+	local iconItem = ctx.Sbar.add("item", "island.appicon", {
+		position = "left",
+		drawing = false,
+		icon = {
+			drawing = false,
+		},
+		background = {
+			color = ctx.colorTransparent,
+			image = {
+				scale = 0.5,
+			},
+		},
+		padding_left = 10,
+		padding_right = 5,
+		y_offset = -10, -- Pushing it below the notch
+	})
+
 	local labelItem = ctx.Sbar.add("item", "island.appname", {
-		position = "right",
+		position = "left",
 		drawing = false,
 		label = {
 			color = ctx.colorTransparent,
+			y_offset = -10, -- Pushing it below the notch
 		},
 	})
 
@@ -28,10 +46,19 @@ return function(ctx)
 		token = token + 1
 		local current = token
 		local charLength = string.len(appName)
-		local expandSize = maxExpandWidth + charLength * 7
+		local expandSize = maxExpandWidth + charLength * 7 + 40 -- added width for icon
 		local expandMargin = math.floor(ctx.monitorResolution / 2 - expandSize)
 
 		ctx.appendLog(ctx.debugLogPath, "[appswitch][lua] app='" .. appName .. "' expandSize=" .. tostring(expandSize))
+
+		iconItem:set({
+			drawing = true,
+			background = {
+				image = {
+					string = "app." .. appName,
+				},
+			},
+		})
 
 		labelItem:set({
 			drawing = true,
@@ -71,6 +98,7 @@ return function(ctx)
 				end
 
 				labelItem:set({ drawing = false })
+				iconItem:set({ drawing = false })
 				ctx.Sbar.animate("tanh", 10, function()
 					ctx.Sbar.bar({
 						height = ctx.defaultHeight,
@@ -82,6 +110,7 @@ return function(ctx)
 		end)
 	end)
 
+	ctx.registry.appswitchIconItem = iconItem
 	ctx.registry.appswitchLabelItem = labelItem
 	ctx.registry.appswitchListener = listener
 	ctx.subscribeItem("frontAppSwitchListener", "front_app_switched")
