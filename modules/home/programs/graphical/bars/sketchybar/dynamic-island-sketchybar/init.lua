@@ -240,6 +240,13 @@ if asBool(get("enabled.cpu_panic", true)) then
 	end
 end
 
+if asBool(get("enabled.clipboard", true)) then
+	local mod = loadIslandModule("clipboard")
+	if mod ~= nil then
+		mod(baseCtx)
+	end
+end
+
 if asBool(get("enabled.notification", true)) then
 	appendLog(debugLogPath, "[notification][lua] not migrated yet; currently disabled in lua-only runtime")
 end

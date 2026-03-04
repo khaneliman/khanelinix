@@ -13,6 +13,7 @@ return {
 		wifi = true,
 		power = true,
 		cpu_panic = true,
+		clipboard = true,
 	},
 
 	notch = {
@@ -69,6 +70,11 @@ return {
 		},
 		cpu_panic = {
 			maxExpandWidth = 200,
+			expandHeight = 85,
+			cornerRadius = 15,
+		},
+		clipboard = {
+			maxExpandWidth = 180,
 			expandHeight = 85,
 			cornerRadius = 15,
 		},
