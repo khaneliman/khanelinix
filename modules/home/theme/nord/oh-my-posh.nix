@@ -13,13 +13,52 @@ in
     programs.oh-my-posh = {
       enable = true;
       settings = mkForce {
+        "$schema" = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json";
+
+        version = 4;
         final_space = true;
+        async = true;
+        shell_integration = true;
+        tooltips_action = "extend";
         transient_prompt = {
           template = "❯ ";
+          foreground = nord.palette.nord14.hex;
+          foreground_templates = [ "{{ if gt .Code 0 }}${nord.palette.nord11.hex}{{ end }}" ];
         };
         secondary_prompt = {
           template = "❯❯ ";
+          foreground = nord.palette.nord9.hex;
         };
+        tooltips = [
+          {
+            type = "git";
+            style = "plain";
+            foreground = nord.palette.nord14.hex;
+            tips = [
+              "git"
+              "jj"
+              "jujutsu"
+            ];
+            template = "  {{ .HEAD }}{{ if .BranchStatus }} {{ .BranchStatus }}{{ end }} ";
+            properties = {
+              fetch_status = true;
+            };
+          }
+          {
+            type = "aws";
+            style = "plain";
+            foreground = nord.palette.nord9.hex;
+            tips = [
+              "aws"
+              "terraform"
+              "terragrunt"
+            ];
+            template = "  {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} ";
+            properties = {
+              display_default = false;
+            };
+          }
+        ];
         blocks = [
           {
             alignment = "left";
@@ -39,7 +78,7 @@ in
                 foreground = nord.palette.nord0.hex;
                 powerline_symbol = "";
                 style = "powerline";
-                template = "  <b>{{ .Path }}</b> ";
+                template = "  <b>{{ path .Path .Location }}</b> ";
                 type = "path";
                 properties = {
                   style = "full";
@@ -50,6 +89,7 @@ in
                 foreground = nord.palette.nord4.hex;
                 powerline_symbol = "";
                 style = "powerline";
+                timeout = 500;
                 template = "  {{ if .UpstreamURL }}{{ url .UpstreamURL }} {{ end }}";
                 type = "git";
               }
@@ -58,6 +98,7 @@ in
                 foreground = nord.palette.nord4.hex;
                 powerline_symbol = "";
                 style = "powerline";
+                timeout = 500;
                 template = " {{ .HEAD }}{{ if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} <${nord.palette.nord13.hex}> {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} <${nord.palette.nord14.hex}> {{ .Staging.String }}</>{{ end }} ";
                 type = "git";
               }
@@ -66,6 +107,7 @@ in
                 foreground = nord.palette.nord1.hex;
                 powerline_symbol = "";
                 style = "powerline";
+                timeout = 500;
                 template = " 󰱯 jj status ";
                 type = "command";
                 properties = {
@@ -78,7 +120,8 @@ in
           {
             alignment = "right";
             type = "prompt";
-            filler = "<${nord.palette.nord2.hex},transparent>.</>";
+            overflow = "hide";
+            filler = "{{ if .Overflow }}<${nord.palette.nord2.hex},transparent> </>{{ else }}<${nord.palette.nord2.hex},transparent>.</>{{ end }}";
             segments = [
               {
                 background = nord.palette.nord14.hex;
@@ -88,6 +131,10 @@ in
                 style = "powerline";
                 template = "  {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ";
                 type = "node";
+                properties = {
+                  fetch_version = true;
+                  fetch_package_manager = true;
+                };
               }
               {
                 background = nord.palette.nord9.hex;
@@ -140,6 +187,7 @@ in
                 powerline_symbol = "";
                 invert_powerline = true;
                 style = "powerline";
+                timeout = 500;
                 template = "  {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} ";
                 type = "aws";
               }
@@ -205,7 +253,6 @@ in
             ];
           }
         ];
-        version = 2;
       };
     };
   };

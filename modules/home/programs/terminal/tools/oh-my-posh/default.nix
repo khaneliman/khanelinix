@@ -27,14 +27,20 @@ in
       settings = {
         "$schema" = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json";
 
-        version = 2;
+        version = 4;
         final_space = true;
+        async = true;
+        shell_integration = true;
+        tooltips_action = "extend";
         console_title_template = "{{ .Shell }} in {{ .Folder }}";
         transient_prompt = {
           template = "❯ ";
+          foreground = "#4e9a06";
+          foreground_templates = [ "{{ if gt .Code 0 }}#f1184c{{ end }}" ];
         };
         secondary_prompt = {
           template = "❯❯ ";
+          foreground = "#689f63";
         };
 
         blocks = [
@@ -56,7 +62,7 @@ in
                 powerline_symbol = "";
                 background = "#3465a4";
                 foreground = "#e4e4e4";
-                template = "  {{ .Path }} ";
+                template = "  {{ path .Path .Location }} ";
                 properties = {
                   style = "full";
                   home_icon = "~";
@@ -68,6 +74,7 @@ in
                 powerline_symbol = "";
                 background = "#4e9a06";
                 foreground = "#000000";
+                timeout = 500;
                 background_templates = [
                   "{{ if or (.Working.Changed) (.Staging.Changed) }}#c4a000{{ end }}"
                   "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#f26d50{{ end }}"
@@ -88,6 +95,7 @@ in
                 powerline_symbol = "";
                 background = "#4e9a06";
                 foreground = "#000000";
+                timeout = 500;
                 # background_templates = [
                 #   "{{ if or (.Working.Changed) (.Staging.Changed) }}${catppuccin.colors.yellow.hex}{{ end }}"
                 #   "{{ if and (gt .Ahead 0) (gt .Behind 0) }}${catppuccin.colors.peach.hex}{{ end }}"
@@ -104,7 +112,8 @@ in
           {
             type = "prompt";
             alignment = "right";
-            filler = "<#686869,transparent>.</>";
+            overflow = "hide";
+            filler = "{{ if .Overflow }}<#686869,transparent> </>{{ else }}<#686869,transparent>.</>{{ end }}";
             segments = [
               {
                 type = "node";
@@ -116,6 +125,7 @@ in
                 template = " {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}  ";
                 properties = {
                   fetch_version = true;
+                  fetch_package_manager = true;
                 };
               }
               {
@@ -187,6 +197,7 @@ in
                 powerline_symbol = "";
                 invert_powerline = true;
                 foreground = "#ffffff";
+                timeout = 500;
                 background_templates = [
                   "{{if contains \"default\" .Profile}}#FFA400{{end}}"
                   "{{if contains \"jan\" .Profile}}#f1184c{{end}}"
