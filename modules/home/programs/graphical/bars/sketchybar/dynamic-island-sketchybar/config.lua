@@ -15,6 +15,7 @@ return {
 		cpu_panic = true,
 		clipboard = true,
 		privacy = true,
+		github = true,
 	},
 
 	notch = {
@@ -78,6 +79,11 @@ return {
 			maxExpandWidth = 180,
 			expandHeight = 85,
 			cornerRadius = 15,
+		},
+		github = {
+			maxExpandWidth = 220,
+			expandHeight = 95,
+			cornerRadius = 42,
 		},
 		notification = {
 			maxExpandWidth = 180,

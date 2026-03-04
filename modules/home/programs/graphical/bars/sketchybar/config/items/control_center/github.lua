@@ -177,6 +177,14 @@ github:subscribe({
 		local count = #sorted_notifications
 		local current_repo_group = nil
 
+		-- Trigger Dynamic Island if there's a new notification
+		if count > 0 then
+			local first = sorted_notifications[1]
+			local repo = notification_repo_name(first)
+			local title = first.subject and first.subject.title or "New Notification"
+			Sbar.trigger("github_notification", { COUNT = count, TITLE = title, REPO = repo })
+		end
+
 		for index, notification in ipairs(sorted_notifications) do
 			-- PRINT_TABLE(notification)
 			local subject = notification.subject or {}
