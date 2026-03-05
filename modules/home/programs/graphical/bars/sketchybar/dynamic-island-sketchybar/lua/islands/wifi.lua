@@ -22,13 +22,12 @@ return function(ctx)
 
 	listener:subscribe("wifi_change", function(env)
 		local info = ctx.trim(env.INFO or "")
-		local icon = ctx.get("icons.wifi.disconnected", "􀙈")
-		local text = "Wi-Fi Disconnected"
-
-		if info ~= "" then
-			icon = ctx.get("icons.wifi.connected", "􀙇")
-			text = info
+		if info == "" then
+			return
 		end
+
+		local icon = ctx.get("icons.wifi.connected", "􀙇")
+		local text = info
 
 		token = token + 1
 		local current = token
