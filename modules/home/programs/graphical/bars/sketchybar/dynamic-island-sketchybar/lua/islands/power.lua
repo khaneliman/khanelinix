@@ -84,7 +84,7 @@ return function(ctx)
 			text = source ~= "" and source or text
 		end
 
-		ctx.appendLog(ctx.debugLogPath, "[power][lua] source='" .. source .. "'")
+		ctx.logDebug("[power][lua] source='" .. source .. "'")
 		showIsland(icon .. " " .. text, ctx.colorWhite, 0.8)
 	end)
 
@@ -99,10 +99,7 @@ return function(ctx)
 				if current_percent <= 20 and not is_charging then
 					-- Only alert once when it drops into the low state, or every 5% drop
 					if lastBatteryState == nil or lastBatteryState > current_percent then
-						ctx.appendLog(
-							ctx.debugLogPath,
-							"[power][lua] low battery warning: " .. tostring(current_percent) .. "%"
-						)
+						ctx.logWarn("[power][lua] low battery warning: " .. tostring(current_percent) .. "%")
 						showIsland("􀛨 Low Battery: " .. tostring(current_percent) .. "%", 0xffff3333, 3.0)
 						-- Update last known state, snap to nearest 5% step so we alert again if it keeps dropping
 						lastBatteryState = math.floor(current_percent / 5) * 5
@@ -120,5 +117,5 @@ return function(ctx)
 	ctx.registry.powerTextItem = textItem
 	ctx.registry.powerListener = listener
 	ctx.subscribeItem("powerChangeListener", "power_source_change")
-	ctx.appendLog(ctx.debugLogPath, "[power][lua] module loaded")
+	ctx.logDebug("[power][lua] module loaded")
 end

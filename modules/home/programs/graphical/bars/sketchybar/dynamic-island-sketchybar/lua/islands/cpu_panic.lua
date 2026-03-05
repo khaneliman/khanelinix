@@ -89,10 +89,7 @@ return function(ctx)
 					if cpuVal > 90 then
 						-- Alert if it's a new panic or the same app still panicking after some time
 						if lastPanicApp ~= appName then
-							ctx.appendLog(
-								ctx.debugLogPath,
-								"[cpu_panic][lua] high cpu detected: " .. appName .. " (" .. cpu .. "%)"
-							)
+							ctx.logWarn("[cpu_panic][lua] high cpu detected: " .. appName .. " (" .. cpu .. "%)")
 							showPanic(appName, cpu)
 							lastPanicApp = appName
 						end
@@ -107,5 +104,5 @@ return function(ctx)
 	ctx.registry.cpuPanicTextItem = textItem
 	ctx.registry.cpuPanicListener = listener
 	ctx.subscribeItem("cpuPanicListener", "routine")
-	ctx.appendLog(ctx.debugLogPath, "[cpu_panic][lua] module loaded")
+	ctx.logDebug("[cpu_panic][lua] module loaded")
 end

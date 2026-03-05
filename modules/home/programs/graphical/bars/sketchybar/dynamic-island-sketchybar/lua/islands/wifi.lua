@@ -31,7 +31,7 @@ return function(ctx)
 
 		token = token + 1
 		local current = token
-		ctx.appendLog(ctx.debugLogPath, "[wifi][lua] info='" .. info .. "'")
+		ctx.logDebug("[wifi][lua] info='" .. info .. "'")
 
 		textItem:set({
 			drawing = true,
@@ -80,5 +80,5 @@ return function(ctx)
 	ctx.registry.wifiTextItem = textItem
 	ctx.registry.wifiListener = listener
 	ctx.subscribeItem("wifiChangeListener", "wifi_change")
-	ctx.appendLog(ctx.debugLogPath, "[wifi][lua] module loaded")
+	ctx.logDebug("[wifi][lua] module loaded")
 end

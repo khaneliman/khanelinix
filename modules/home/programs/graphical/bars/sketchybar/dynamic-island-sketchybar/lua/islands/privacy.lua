@@ -57,5 +57,5 @@ return function(ctx)
 	ctx.registry.privacyMicDot = micDot
 	ctx.registry.privacyListener = listener
 	ctx.subscribeItem("privacyListener", "routine")
-	ctx.appendLog(ctx.debugLogPath, "[privacy][lua] module loaded")
+	ctx.logDebug("[privacy][lua] module loaded")
 end

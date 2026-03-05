@@ -33,7 +33,7 @@ return function(ctx)
 		local title = env.TITLE or "New GitHub Notifications"
 		local repo = env.REPO or "GitHub"
 
-		ctx.appendLog(ctx.debugLogPath, "[github][lua] notification received: " .. repo)
+		ctx.logDebug("[github][lua] notification received: " .. repo)
 
 		textItem:set({
 			drawing = true,
@@ -80,5 +80,5 @@ return function(ctx)
 	ctx.registry.githubTextItem = textItem
 	ctx.registry.githubIslandListener = listener
 	ctx.subscribeItem("githubIslandListener", "github_notification")
-	ctx.appendLog(ctx.debugLogPath, "[github][lua] module loaded")
+	ctx.logDebug("[github][lua] module loaded")
 end

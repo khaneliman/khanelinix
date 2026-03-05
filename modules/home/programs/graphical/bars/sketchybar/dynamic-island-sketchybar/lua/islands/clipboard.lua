@@ -90,7 +90,7 @@ return function(ctx)
 			end
 
 			if trimmed ~= lastClipboard then
-				ctx.appendLog(ctx.debugLogPath, "[clipboard][lua] new content detected")
+				ctx.logDebug("[clipboard][lua] new content detected")
 				showClipboard(trimmed)
 				lastClipboard = trimmed
 			end
@@ -100,5 +100,5 @@ return function(ctx)
 	ctx.registry.clipboardTextItem = textItem
 	ctx.registry.clipboardListener = listener
 	ctx.subscribeItem("clipboardListener", "routine")
-	ctx.appendLog(ctx.debugLogPath, "[clipboard][lua] module loaded")
+	ctx.logDebug("[clipboard][lua] module loaded")
 end

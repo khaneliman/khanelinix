@@ -126,7 +126,7 @@ return function(ctx)
 			icon = ctx.get("icons.volume.low", "􀊥")
 		end
 
-		ctx.appendLog(ctx.debugLogPath, "[volume][lua] info=" .. tostring(env.INFO) .. " percent=" .. tostring(volume))
+		ctx.logDebug("[volume][lua] info=" .. tostring(env.INFO) .. " percent=" .. tostring(volume))
 		stateToken = stateToken + 1
 		local token = stateToken
 
@@ -182,5 +182,5 @@ return function(ctx)
 	end
 
 	ctx.subscribeItem("volumeChangeListener", "volume_change")
-	ctx.appendLog(ctx.debugLogPath, "[volume][lua] module loaded")
+	ctx.logDebug("[volume][lua] module loaded")
 end

@@ -122,10 +122,7 @@ return function(ctx)
 			icon = ctx.get("icons.brightness.high", "􀆭")
 		end
 
-		ctx.appendLog(
-			ctx.debugLogPath,
-			"[brightness][lua] info=" .. tostring(env.INFO) .. " percent=" .. tostring(brightness)
-		)
+		ctx.logDebug("[brightness][lua] info=" .. tostring(env.INFO) .. " percent=" .. tostring(brightness))
 		stateToken = stateToken + 1
 		local token = stateToken
 
@@ -181,5 +178,5 @@ return function(ctx)
 	end
 
 	ctx.subscribeItem("brightnessChangeListener", "brightness_change")
-	ctx.appendLog(ctx.debugLogPath, "[brightness][lua] module loaded")
+	ctx.logDebug("[brightness][lua] module loaded")
 end

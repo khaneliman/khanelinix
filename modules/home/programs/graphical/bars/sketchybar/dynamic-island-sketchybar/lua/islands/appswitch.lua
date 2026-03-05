@@ -49,7 +49,7 @@ return function(ctx)
 		local expandSize = maxExpandWidth + charLength * 7 + 40 -- added width for icon
 		local expandMargin = math.floor(ctx.monitorResolution / 2 - expandSize)
 
-		ctx.appendLog(ctx.debugLogPath, "[appswitch][lua] app='" .. appName .. "' expandSize=" .. tostring(expandSize))
+		ctx.logDebug("[appswitch][lua] app='" .. appName .. "' expandSize=" .. tostring(expandSize))
 
 		iconItem:set({
 			drawing = true,
@@ -114,5 +114,5 @@ return function(ctx)
 	ctx.registry.appswitchLabelItem = labelItem
 	ctx.registry.appswitchListener = listener
 	ctx.subscribeItem("frontAppSwitchListener", "front_app_switched")
-	ctx.appendLog(ctx.debugLogPath, "[appswitch][lua] module loaded")
+	ctx.logDebug("[appswitch][lua] module loaded")
 end

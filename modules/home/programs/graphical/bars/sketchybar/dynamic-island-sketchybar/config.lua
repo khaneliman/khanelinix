@@ -4,6 +4,11 @@ return {
 		font = "SF Pro",
 	},
 
+	logging = {
+		-- Supported levels: debug, info, warn, error
+		level = "info",
+	},
+
 	enabled = {
 		music = true,
 		appswitch = true,

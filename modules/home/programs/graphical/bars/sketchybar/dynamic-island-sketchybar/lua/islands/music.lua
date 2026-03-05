@@ -86,7 +86,7 @@ return function(ctx)
 			token = token + 1
 			local current = token
 
-			ctx.appendLog(ctx.debugLogPath, "[music][lua] track updated: " .. display_text)
+			ctx.logDebug("[music][lua] track updated: " .. display_text)
 
 			-- Check if artwork was extracted
 			ctx.Sbar.exec("ls /tmp/sketchybar_cover.jpg", function(ls_result)
@@ -153,7 +153,7 @@ return function(ctx)
 	end
 
 	listener:subscribe({ "apple_music_update", "spotify_update" }, function(env)
-		ctx.appendLog(ctx.debugLogPath, "[music][lua] notification received from " .. tostring(env.SENDER))
+		ctx.logDebug("[music][lua] notification received from " .. tostring(env.SENDER))
 		updateMusic(env)
 	end)
 
@@ -161,5 +161,5 @@ return function(ctx)
 	ctx.registry.musicArtItem = artItem
 	ctx.registry.musicListener = listener
 	ctx.subscribeItem("musicListener", { "apple_music_update", "spotify_update" })
-	ctx.appendLog(ctx.debugLogPath, "[music][lua] module loaded with darwin notifications & artwork")
+	ctx.logDebug("[music][lua] module loaded with darwin notifications & artwork")
 end
