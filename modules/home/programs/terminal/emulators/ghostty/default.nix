@@ -20,7 +20,7 @@ in
   config = mkIf cfg.enable {
     programs.ghostty = {
       enable = true;
-      package = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin null;
+      package = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin pkgs.ghostty-bin;
 
       installBatSyntax = pkgs.stdenv.hostPlatform.isLinux;
       installVimSyntax = pkgs.stdenv.hostPlatform.isLinux;

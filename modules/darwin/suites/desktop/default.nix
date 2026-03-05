@@ -51,7 +51,6 @@ in
 
       casks = [
         "bitwarden"
-        "ghostty"
         "gpg-suite"
         "hammerspoon"
         "launchcontrol"
