@@ -39,6 +39,12 @@ provides guidelines for contributing to this Nix-based dotfiles configuration.
 8. **Reduce Repetition**: Utilize Nix functions and abstractions to minimize
    duplicated code
 
+9. **Source Patching in Derivations**:
+   - Prefer `substituteInPlace` over ad-hoc `sed`/`perl` when patching source
+     files in `postPatch`.
+   - Prefer `--replace-fail` so builds fail loudly when upstream source changes,
+     signaling that the patch should be reviewed or removed.
+
 ### Module Organization
 
 - **Host specific customization**: Place in host named configuration modules
