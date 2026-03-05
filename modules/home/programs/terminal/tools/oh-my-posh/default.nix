@@ -90,7 +90,8 @@ in
           tooltipAws = "#FEAC19";
         };
 
-        transient_prompt = {
+        # Disable transient prompt to avoid Atuin redraw/visibility conflicts.
+        transient_prompt = lib.mkIf (!config.programs.atuin.enable) {
           template = "❯ ";
           foreground = "p:transient";
           foreground_templates = [ "{{ if gt .Code 0 }}p:transientError{{ end }}" ];
