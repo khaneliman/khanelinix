@@ -41,6 +41,7 @@ in
         {
           adw-toolbar-style = "flat";
 
+          background-blur-radius = 20;
           background-opacity = lib.mkDefault 0.8;
 
           clipboard-trim-trailing-spaces = true;
@@ -61,6 +62,8 @@ in
 
           # Breaks tab functionality, but tab functionality is broken with yabai
           macos-titlebar-style = "hidden";
+          window-colorspace = "srgb";
+          window-theme = "ghostty";
           macos-option-as-alt = true;
 
           quit-after-last-window-closed = true;
