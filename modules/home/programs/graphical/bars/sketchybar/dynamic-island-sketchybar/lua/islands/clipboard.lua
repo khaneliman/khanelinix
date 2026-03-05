@@ -73,12 +73,13 @@ return function(ctx)
 	end
 
 	listener:subscribe("routine", function()
-		ctx.Sbar.exec("pbpaste | head -n 1", function(content)
+		ctx.Sbar.exec("pbpaste", function(content)
 			if not content or content == "" then
 				return
 			end
 
-			local trimmed = ctx.trim(content)
+			local firstLine = content:match("([^\r\n]+)") or ""
+			local trimmed = ctx.trim(firstLine)
 			if trimmed == "" then
 				return
 			end

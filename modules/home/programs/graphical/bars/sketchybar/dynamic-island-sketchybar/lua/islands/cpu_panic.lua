@@ -72,32 +72,36 @@ return function(ctx)
 	end
 
 	listener:subscribe("routine", function()
-		-- Get top CPU consuming process, excluding Sketchybar itself
-		ctx.Sbar.exec("ps -Ao %cpu,comm -r | grep -v 'sketchybar' | head -n 1", function(result)
-			if not result or result == "" then
-				return
-			end
+		-- Get top CPU consuming process, excluding Sketchybar itself.
+		-- Avoid head/early-close pipelines that cause broken-pipe noise in logs.
+		ctx.Sbar.exec(
+			"ps -Ao %cpu,comm -r | awk 'BEGIN{IGNORECASE=1} $2 !~ /sketchybar/ && printed==0 {print; printed=1}'",
+			function(result)
+				if not result or result == "" then
+					return
+				end
 
-			local cpu, comm = result:match("^%s*(%d+%.?%d*)%s+(.*)$")
-			if cpu and comm then
-				local cpuVal = tonumber(cpu)
-				local appName = comm:match("([^/]+)$") or comm
+				local cpu, comm = result:match("^%s*(%d+%.?%d*)%s+(.*)$")
+				if cpu and comm then
+					local cpuVal = tonumber(cpu)
+					local appName = comm:match("([^/]+)$") or comm
 
-				if cpuVal > 90 then
-					-- Alert if it's a new panic or the same app still panicking after some time
-					if lastPanicApp ~= appName then
-						ctx.appendLog(
-							ctx.debugLogPath,
-							"[cpu_panic][lua] high cpu detected: " .. appName .. " (" .. cpu .. "%)"
-						)
-						showPanic(appName, cpu)
-						lastPanicApp = appName
+					if cpuVal > 90 then
+						-- Alert if it's a new panic or the same app still panicking after some time
+						if lastPanicApp ~= appName then
+							ctx.appendLog(
+								ctx.debugLogPath,
+								"[cpu_panic][lua] high cpu detected: " .. appName .. " (" .. cpu .. "%)"
+							)
+							showPanic(appName, cpu)
+							lastPanicApp = appName
+						end
+					else
+						lastPanicApp = nil
 					end
-				else
-					lastPanicApp = nil
 				end
 			end
-		end)
+		)
 	end)
 
 	ctx.registry.cpuPanicTextItem = textItem

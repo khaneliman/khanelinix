@@ -34,17 +34,23 @@ return function(ctx)
 
 	listener:subscribe("routine", function()
 		-- Check Camera (Lightweight check using lsof for the system camera driver)
-		ctx.Sbar.exec("lsof -n | grep -i 'AppleCamera' | grep -v 'grep' | head -n 1", function(cam_result)
-			local camActive = cam_result ~= ""
-			camDot:set({ drawing = camActive })
-		end)
+		ctx.Sbar.exec(
+			"lsof -n | awk 'BEGIN{IGNORECASE=1} /AppleCamera/ && printed==0 {print; printed=1}'",
+			function(cam_result)
+				local camActive = cam_result ~= ""
+				camDot:set({ drawing = camActive })
+			end
+		)
 
 		-- Check Microphone (Checking if any process has an open handle to the CoreAudio input)
 		-- This is a bit tricky without a specialized tool, but checking for 'Capture' handles in lsof works for many apps.
-		ctx.Sbar.exec("lsof -n | grep -i 'Capture' | grep -v 'grep' | head -n 1", function(mic_result)
-			local micActive = mic_result ~= ""
-			micDot:set({ drawing = micActive })
-		end)
+		ctx.Sbar.exec(
+			"lsof -n | awk 'BEGIN{IGNORECASE=1} /Capture/ && printed==0 {print; printed=1}'",
+			function(mic_result)
+				local micActive = mic_result ~= ""
+				micDot:set({ drawing = micActive })
+			end
+		)
 	end)
 
 	ctx.registry.privacyCamDot = camDot
