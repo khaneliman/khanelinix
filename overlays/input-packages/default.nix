@@ -29,12 +29,24 @@ in
   #          │ From nixpkgs-master (fast updating / want latest always) │
   #          ╰──────────────────────────────────────────────────────────╯
   inherit (master)
-    yazi-unwrapped
+    # yazi-unwrapped
     yaziPlugins
 
     # TODO: remove after hitting channel
     libreoffice
     ;
+
+  # TODO: remove after next release
+  yazi-unwrapped = master.yazi-unwrapped.overrideAttrs (old: {
+    postPatch = (old.postPatch or "") + ''
+      oldPattern=$'"--relative",\n\t\t\t\t"off",'
+      newPattern=$'"--relative",\n\t\t\t\t"off",\n\t\t\t\t"--probe",\n\t\t\t\t"off",'
+      substituteInPlace yazi-adapter/src/drivers/chafa.rs \
+        --replace-fail \
+        "$oldPattern" \
+        "$newPattern"
+    '';
+  });
 
   #          ╭──────────────────────────────────────────────────────────╮
   #          │                 Python package overrides                 │
