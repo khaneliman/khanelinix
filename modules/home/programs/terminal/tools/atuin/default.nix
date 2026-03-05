@@ -32,6 +32,11 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.shellAliases = {
+      atuin-prune-failed = "atuin search --exclude-exit 0 --delete \"\"";
+      atuin-prune-failed-dry-run = "atuin search --exclude-exit 0 --format \"{exit}\t{time}\t{command}\" | rg '^[1-9][0-9]*\t'";
+    };
+
     launchd.agents.atuin-daemon.config = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
       StandardErrorPath = atuinLogPaths.stderr;
       StandardOutPath = atuinLogPaths.stdout;
