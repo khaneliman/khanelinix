@@ -93,14 +93,14 @@ in
             infat.enable = mkDefault pkgs.stdenv.hostPlatform.isDarwin;
             jq = mkDefault enabled;
             navi = mkDefault enabled;
-            nix-search-tv = mkDefault enabled;
             nh = mkDefault enabled;
+            nix-search-tv = mkDefault enabled;
             oh-my-posh = mkDefault enabled;
             pay-respects = mkDefault enabled;
             ripgrep = mkDefault enabled;
             television = mkDefault enabled;
-            tray-tui.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
             topgrade = mkDefault enabled;
+            tray-tui.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
             yazi = mkDefault enabled;
             zellij = mkDefault enabled;
             zoxide = mkDefault enabled;
