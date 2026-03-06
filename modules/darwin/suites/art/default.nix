@@ -18,10 +18,8 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       imagemagick
-      mediainfo
       pngcheck
     ];
-
     homebrew = {
       casks = [
         # FIXME: should be done through nixpkgs

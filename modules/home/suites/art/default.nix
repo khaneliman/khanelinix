@@ -20,6 +20,7 @@ in
       with pkgs;
       [
         inkscape-with-extensions
+        mediainfo
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         # FIXME: marked broken on nixpkgs for darwin

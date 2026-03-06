@@ -42,6 +42,7 @@ in
       packages =
         with pkgs;
         [
+          cutter
           jqp
           onefetch
           tree-sitter
@@ -61,6 +62,7 @@ in
         ]
         ++ lib.optionals cfg.dockerEnable [
           podman
+          podman-desktop
           podman-tui
         ]
         ++ lib.optionals cfg.nixEnable [

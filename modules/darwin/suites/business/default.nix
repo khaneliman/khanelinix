@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
 
   ...
 }:
@@ -17,12 +16,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      bitwarden-desktop
-      meetingbar
-      obsidian
-    ];
-
     homebrew = {
       casks = [
         "calibre"

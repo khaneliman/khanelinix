@@ -18,16 +18,21 @@ in
 
   config = mkIf cfg.enable {
     # TODO: sober/roblox?
-    home.packages = with pkgs; [
-      bottles
-      heroic
-      lutris
-      protontricks
-      protonup-ng
-      protonup-qt
-      umu-launcher
-      wowup-cf
-    ];
+    home.packages =
+      with pkgs;
+      [
+        moonlight-qt
+      ]
+      ++ pkgs.stdenv.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+        bottles
+        heroic
+        lutris
+        protontricks
+        protonup-ng
+        protonup-qt
+        umu-launcher
+        wowup-cf
+      ];
 
     khanelinix = {
       programs = {

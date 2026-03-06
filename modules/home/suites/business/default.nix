@@ -22,11 +22,16 @@ in
     home.packages =
       with pkgs;
       [
+        bitwarden-desktop
         calcurse
         dooit
         # FIXME: broken nixpkgs
         # jrnl
         np
+        obsidian
+      ]
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
+        meetingbar
       ]
       ++ lib.optionals (stdenv.hostPlatform.isLinux && !isWSL) [
         libreoffice

@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
 
   ...
 }:
@@ -17,15 +16,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages =
-      with pkgs;
-      [
-        cutter
-      ]
-      ++ lib.optionals cfg.dockerEnable [
-        podman-desktop
-      ];
-
     khanelinix.nix.nix-rosetta-builder.enable = true;
 
     homebrew = {

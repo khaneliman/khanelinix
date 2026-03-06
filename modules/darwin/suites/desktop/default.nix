@@ -21,7 +21,6 @@ in
       alt-tab-macos
       appcleaner
       bartender
-      bitwarden-desktop
       blueutil
       monitorcontrol
       raycast
@@ -49,7 +48,6 @@ in
       brews = [
         "ical-buddy"
       ];
-
       casks = [
         "gpg-suite"
         "hammerspoon"
