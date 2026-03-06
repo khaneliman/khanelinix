@@ -13,6 +13,8 @@ in
 {
   options.khanelinix.suites.desktop = {
     enable = lib.mkEnableOption "common desktop applications";
+    remoteDesktopEnable = lib.mkEnableOption "remote desktop applications";
+    fileManagementEnable = lib.mkEnableOption "file management applications";
   };
 
   config = mkIf cfg.enable {
@@ -69,25 +71,35 @@ in
     home.packages =
       with pkgs;
       [
-        bleachbit
         clac
         feh
+      ]
+      ++ lib.optionals cfg.remoteDesktopEnable [
         input-leap
         meshcentral
         realvnc-vnc-viewer
       ]
-      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-        appimage-run
-        dropbox
-        # FIXME: broken nixpkgs
-        # dupeguru
-        # FIXME: remove xdotool hard dependency
-        fontpreview
-        kdePackages.filelight
-        kdePackages.ark
-        kdePackages.gwenview
-        rustdesk-flutter
-      ];
+      ++ lib.optionals cfg.fileManagementEnable [
+        bleachbit
+      ]
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux (
+        [
+          appimage-run
+          # FIXME: remove xdotool hard dependency
+          fontpreview
+        ]
+        ++ lib.optionals cfg.remoteDesktopEnable [
+          rustdesk-flutter
+        ]
+        ++ lib.optionals cfg.fileManagementEnable [
+          dropbox
+          # FIXME: broken nixpkgs
+          # dupeguru
+          kdePackages.filelight
+          kdePackages.ark
+          kdePackages.gwenview
+        ]
+      );
 
     targets.darwin = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
       copyApps.enable = true;

@@ -296,30 +296,18 @@ in
       xdg = enabled;
     };
 
-    suites = {
-      art = enabled;
-      business = enabled;
-      common = enabled;
+    roles = {
       desktop = enabled;
+      developer = enabled;
+      creator = enabled;
+      gamer = enabled;
+    };
 
-      development = {
-        enable = true;
-
-        aiEnable = true;
-        dockerEnable = true;
-        gameEnable = true;
-        kubernetesEnable = true;
-        nixEnable = true;
-        sqlEnable = true;
-      };
-
-      emulation = enabled;
-      games = enabled;
-      music = enabled;
-      networking = enabled;
-      photo = enabled;
-      social = enabled;
-      video = enabled;
+    suites.development = {
+      dockerEnable = true;
+      gameEnable = true;
+      kubernetesEnable = true;
+      sqlEnable = true;
     };
 
     theme = {

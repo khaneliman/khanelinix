@@ -34,13 +34,8 @@ in
       };
     };
 
-    suites = {
-      common = enabled;
-      development = {
-        enable = true;
-        nixEnable = true;
-      };
-      networking = enabled;
+    roles = {
+      developer = enabled;
     };
 
     theme.catppuccin = enabled;

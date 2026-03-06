@@ -14,6 +14,8 @@ in
 {
   options.khanelinix.suites.music = {
     enable = lib.mkEnableOption "common music configuration";
+    productionEnable = lib.mkEnableOption "audio production applications";
+    managementEnable = lib.mkEnableOption "audio management applications";
   };
 
   config = mkIf cfg.enable {
@@ -21,16 +23,23 @@ in
       with pkgs;
       [
         musikcube
-        pear-desktop
         pulsemixer
+      ]
+      ++ lib.optionals cfg.managementEnable [
+        pear-desktop
         tageditor
       ]
-      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-        ardour
-        mpd-notification
-        plattenalbum
-        plexamp
-      ];
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux (
+        [
+          plexamp
+        ]
+        ++ lib.optionals cfg.productionEnable [
+          ardour
+        ]
+        ++ lib.optionals cfg.managementEnable [
+          plattenalbum
+        ]
+      );
 
     khanelinix = {
       programs.terminal = {

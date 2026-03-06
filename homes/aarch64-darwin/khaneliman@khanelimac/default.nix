@@ -79,24 +79,15 @@ in
       };
     };
 
-    suites = {
-      art = enabled;
-      business = enabled;
-      common = enabled;
+    roles = {
       desktop = enabled;
-      development = {
-        enable = true;
+      developer = enabled;
+      creator = enabled;
+    };
 
-        aiEnable = true;
-        dockerEnable = true;
-        gameEnable = true;
-        nixEnable = true;
-      };
-      music = enabled;
-      networking = enabled;
-      photo = enabled;
-      social = enabled;
-      video = enabled;
+    suites.development = {
+      dockerEnable = true;
+      gameEnable = true;
     };
 
     theme.tokyonight = enabled;

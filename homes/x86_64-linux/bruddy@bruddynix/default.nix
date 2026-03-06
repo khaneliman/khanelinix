@@ -88,19 +88,18 @@ in
       xdg = enabled;
     };
 
-    suites = {
-      common = enabled;
+    roles = {
       desktop = enabled;
+      gamer = enabled;
+    };
 
+    suites = {
       development = {
         enable = true;
-
         gameEnable = true;
         nixEnable = true;
       };
 
-      emulation = enabled;
-      games = enabled;
       networking = enabled;
     };
 

@@ -19,7 +19,6 @@ in
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       element-desktop
-      slack
       telegram-desktop
     ];
 
@@ -32,7 +31,6 @@ in
         };
 
         terminal.social = {
-          slack-term = lib.mkDefault enabled;
           twitch-tui = lib.mkDefault enabled;
         };
       };

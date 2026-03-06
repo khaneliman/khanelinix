@@ -82,14 +82,8 @@ in
       xdg = enabled;
     };
 
-    suites = {
-      business = enabled;
-      common = enabled;
-      development = {
-        enable = true;
-        dockerEnable = true;
-        kubernetesEnable = true;
-      };
+    roles = {
+      work = enabled;
     };
 
     theme.catppuccin = enabled;

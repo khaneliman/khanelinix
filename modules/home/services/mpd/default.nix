@@ -42,6 +42,7 @@ in
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         cava # CLI music visualizer (cavalier is a gui alternative)
+        mpd-notification
       ];
 
     services = {

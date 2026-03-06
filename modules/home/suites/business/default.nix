@@ -16,6 +16,8 @@ in
 {
   options.khanelinix.suites.business = {
     enable = lib.mkEnableOption "business configuration";
+    officeEnable = lib.mkEnableOption "office applications";
+    pimEnable = lib.mkEnableOption "personal information management applications";
   };
 
   config = mkIf cfg.enable {
@@ -23,20 +25,25 @@ in
       with pkgs;
       [
         bitwarden-desktop
-        calcurse
-        dooit
         # FIXME: broken nixpkgs
         # jrnl
         np
         obsidian
+        slack
+      ]
+      ++ lib.optionals cfg.pimEnable [
+        calcurse
+        dooit
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
         meetingbar
       ]
-      ++ lib.optionals (stdenv.hostPlatform.isLinux && !isWSL) [
-        libreoffice
-        p3x-onenote
-      ];
+      ++ lib.optionals (stdenv.hostPlatform.isLinux && !isWSL) (
+        lib.optionals cfg.officeEnable [
+          libreoffice
+          p3x-onenote
+        ]
+      );
 
     khanelinix = {
       programs = {
@@ -47,6 +54,9 @@ in
           };
         };
         terminal = {
+          social = {
+            slack-term = lib.mkDefault enabled;
+          };
           tools = {
             _1password-cli = lib.mkDefault enabled;
           };

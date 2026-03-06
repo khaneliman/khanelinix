@@ -13,14 +13,17 @@ in
 {
   options.khanelinix.suites.photo = {
     enable = lib.mkEnableOption "photo configuration";
+    editingEnable = lib.mkEnableOption "photo editing applications";
   };
 
   config = mkIf cfg.enable {
     home.packages =
       with pkgs;
       [
-        darktable
         exiftool
+      ]
+      ++ lib.optionals cfg.editingEnable [
+        darktable
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         digikam
