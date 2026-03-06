@@ -20,16 +20,20 @@ in
   config = mkIf cfg.enable {
     home.packages =
       with pkgs;
-      [ self.packages.${system}.ff-title ]
+      [
+        mediainfo-gui
+        mkvtoolnix
+        self.packages.${system}.ff-title
+      ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         celluloid
+        # FIXME: broken on darwin due to mplayer dependency
         devede
         # FIXME: https://github.com/NixOS/nixpkgs/issues/484121
         # handbrake
         kdePackages.k3b
-        mediainfo-gui
-        mkvtoolnix
         plex-desktop
+        # FIXME: remove qtwayland hard dependency
         shotcut
         vlc
       ]

@@ -25,6 +25,7 @@ in
         melonds
         pcsx2
         snes9x
+        xemu
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         # FIXME: broken nixpkgs
@@ -41,7 +42,6 @@ in
         # rpcs3
         # TODO: replacement, removed upstream
         # ryujinx
-        xemu
       ]
       ++ lib.optionals cfg.retroarchFull [ retroarchFull ];
 

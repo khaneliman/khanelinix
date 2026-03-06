@@ -17,15 +17,11 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages =
-      with pkgs;
-      [
-        element-desktop
-        slack
-      ]
-      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-        telegram-desktop
-      ];
+    home.packages = with pkgs; [
+      element-desktop
+      slack
+      telegram-desktop
+    ];
 
     khanelinix = {
       programs = {

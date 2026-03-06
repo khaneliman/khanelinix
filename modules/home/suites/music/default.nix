@@ -21,15 +21,15 @@ in
       with pkgs;
       [
         musikcube
+        pear-desktop
         pulsemixer
+        tageditor
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         ardour
         mpd-notification
         plattenalbum
         plexamp
-        tageditor
-        pear-desktop
       ];
 
     khanelinix = {

@@ -69,23 +69,23 @@ in
     home.packages =
       with pkgs;
       [
+        bleachbit
+        clac
+        feh
+        input-leap
         meshcentral
+        realvnc-vnc-viewer
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         appimage-run
-        bitwarden-desktop
-        bleachbit
-        clac
         dropbox
         # FIXME: broken nixpkgs
         # dupeguru
-        feh
-        kdePackages.filelight
+        # FIXME: remove xdotool hard dependency
         fontpreview
-        input-leap
+        kdePackages.filelight
         kdePackages.ark
         kdePackages.gwenview
-        realvnc-vnc-viewer
         rustdesk-flutter
       ];
 
