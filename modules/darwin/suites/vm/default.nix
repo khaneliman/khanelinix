@@ -17,15 +17,12 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
+      utm
       # FIX: broken nixpkg on darwin
       # qemu
       vte
       # FIX: broken nixpkg on darwin
       # libvirt
     ];
-
-    homebrew = {
-      casks = [ "utm" ];
-    };
   };
 }

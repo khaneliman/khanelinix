@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
 
   ...
 }:
@@ -15,9 +16,12 @@ in
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      moonlight-qt
+    ];
+
     homebrew = {
       casks = [
-        "moonlight"
         "steam"
       ];
     };

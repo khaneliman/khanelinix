@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
 
   ...
 }:
@@ -16,15 +17,18 @@ in
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      bitwarden-desktop
+      meetingbar
+      obsidian
+    ];
+
     homebrew = {
       casks = [
-        "bitwarden"
         "calibre"
         "fantastical"
         "libreoffice"
-        "meetingbar"
         "microsoft-teams"
-        "obsidian"
       ];
 
       masApps = mkIf config.khanelinix.tools.homebrew.masEnable {

@@ -66,6 +66,7 @@ in
       programs = {
         terminal = {
           emulators = {
+            ghostty.enable = mkDefault (!isWSL);
             kitty.enable = mkDefault (!isWSL);
           };
 

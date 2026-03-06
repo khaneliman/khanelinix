@@ -18,6 +18,7 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       imagemagick
+      mediainfo
       pngcheck
     ];
 
@@ -26,7 +27,6 @@ in
         # FIXME: should be done through nixpkgs
         "blender"
         "gimp"
-        "mediainfo"
         "orcaslicer"
       ];
 

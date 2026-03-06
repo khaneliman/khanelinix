@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
 
   ...
 }:
@@ -16,17 +17,23 @@ in
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages =
+      with pkgs;
+      [
+        cutter
+      ]
+      ++ lib.optionals cfg.dockerEnable [
+        podman-desktop
+      ];
+
     khanelinix.nix.nix-rosetta-builder.enable = true;
 
     homebrew = {
-      casks = [
-        "cutter"
-      ]
-      ++ lib.optionals cfg.dockerEnable [
-        "docker-desktop"
-        "podman-desktop"
-      ]
-      ++ lib.optionals cfg.aiEnable [ "ollamac" ];
+      casks =
+        lib.optionals cfg.dockerEnable [
+          "docker-desktop"
+        ]
+        ++ lib.optionals cfg.aiEnable [ "ollamac" ];
 
       masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
         "Patterns" = 429449079;

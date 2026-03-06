@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
 
   ...
 }:
@@ -15,10 +16,12 @@ in
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      slack
+    ];
+
     homebrew = {
-      casks = [
-        "slack@beta"
-      ];
+      casks = [ ];
     };
   };
 }

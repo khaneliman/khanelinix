@@ -21,6 +21,7 @@ in
       alt-tab-macos
       appcleaner
       bartender
+      bitwarden-desktop
       blueutil
       monitorcontrol
       raycast
@@ -50,7 +51,6 @@ in
       ];
 
       casks = [
-        "bitwarden"
         "gpg-suite"
         "hammerspoon"
         "launchcontrol"
