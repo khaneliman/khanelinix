@@ -40,8 +40,18 @@ provides guidelines for contributing to this Nix-based dotfiles configuration.
    duplicated code
 
 9. **Source Patching in Derivations**:
-   - Prefer `substituteInPlace` over ad-hoc `sed`/`perl` when patching source
-     files in `postPatch`.
+   - Prefer `fetchpatch2` for upstream commits and pull requests when a fixed
+     patch URL is available.
+   - For `fetchpatch2`, start with `hash = lib.fakeHash;`, build once, and copy
+     the `got:` SRI hash from the fixed-output derivation failure into the
+     derivation.
+   - Do **not** use `nix-prefetch-url` as the final hash source for
+     `fetchpatch2`. `nix-prefetch-url` hashes the raw downloaded bytes, while
+     `fetchpatch2` normalizes the patch before hashing its output.
+   - `nix-prefetch-url` is still appropriate for plain `fetchurl` and similar
+     raw-download fetchers.
+   - Prefer `substituteInPlace` over ad-hoc `sed`/`perl` for local source edits
+     inside derivations.
    - Prefer `--replace-fail` so builds fail loudly when upstream source changes,
      signaling that the patch should be reviewed or removed.
 
