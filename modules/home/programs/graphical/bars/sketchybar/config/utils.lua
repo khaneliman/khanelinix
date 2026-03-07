@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+-- luacheck: globals DELAY
 
 POPUP_TOGGLE = function(name)
 	print("Toggling " .. name)
@@ -44,10 +45,18 @@ PRINT_TABLE = function(t)
 	end
 end
 
-SLEEP = function(seconds)
-	local start = os.time()
-	while os.time() - start < seconds do
+DELAY = function(seconds, callback)
+	if type(callback) ~= "function" then
+		return
 	end
+
+	local duration = tonumber(seconds) or 0
+	if duration <= 0 then
+		callback()
+		return
+	end
+
+	Sbar.delay(duration, callback)
 end
 
 COLOR_TO_HEX = function(color)

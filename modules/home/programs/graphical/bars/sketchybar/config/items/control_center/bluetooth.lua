@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+-- luacheck: globals DELAY
 
 local icons = require("icons")
 local colors = require("colors")
@@ -315,11 +316,12 @@ bluetooth:subscribe("mouse.clicked", function()
 			Sbar.exec("blueutil -p 0")
 		end
 
-		SLEEP(1)
-		Sbar.trigger("bluetooth_update")
-		if popup_is_open then
-			refresh_popup()
-		end
+		DELAY(1, function()
+			Sbar.trigger("bluetooth_update")
+			if popup_is_open then
+				refresh_popup()
+			end
+		end)
 	end)
 end)
 

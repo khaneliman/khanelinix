@@ -109,6 +109,28 @@ local window_tracker = Sbar.add("item", {
 
 local updating = false
 local pending_update = false
+local last_workspace_labels = {}
+
+local function icon_line_for_workspace(apps)
+	local app_names = {}
+	for app, _ in pairs(apps) do
+		table.insert(app_names, app)
+	end
+
+	table.sort(app_names)
+
+	if #app_names == 0 then
+		return ""
+	end
+
+	local icon_parts = {}
+	for _, app in ipairs(app_names) do
+		local lookup = app_icons[app]
+		table.insert(icon_parts, (lookup == nil) and app_icons["Default"] or lookup)
+	end
+
+	return " " .. table.concat(icon_parts, " ")
+end
 
 local function do_update()
 	if updating then
@@ -133,21 +155,11 @@ local function do_update()
 			end
 		end
 
-		for workspace_num, apps in pairs(workspace_apps) do
-			local icon_line = ""
-			local no_app = true
-			for app, _ in pairs(apps) do
-				no_app = false
-				local lookup = app_icons[app]
-				local icon = ((lookup == nil) and app_icons["Default"] or lookup)
-				icon_line = icon_line .. " " .. icon
-			end
-			if no_app then
-				icon_line = ""
-			end
-			local ws_num = tonumber(workspace_num)
-			if ws_num and spaces[ws_num] then
-				spaces[ws_num]:set({ label = { string = icon_line } })
+		for workspace_num = 1, 8 do
+			local icon_line = icon_line_for_workspace(workspace_apps[tostring(workspace_num)])
+			if last_workspace_labels[workspace_num] ~= icon_line and spaces[workspace_num] ~= nil then
+				last_workspace_labels[workspace_num] = icon_line
+				spaces[workspace_num]:set({ label = { string = icon_line } })
 			end
 		end
 
@@ -163,10 +175,6 @@ local function update_windows()
 end
 
 window_tracker:subscribe("aerospace_windows_change", function()
-	update_windows()
-end)
-
-window_tracker:subscribe("front_app_switched", function()
 	update_windows()
 end)
 

@@ -6,6 +6,11 @@ local colors = require("colors")
 
 local popup_width = 250
 
+local function shell_quote(value)
+	local text = tostring(value or "")
+	return "'" .. text:gsub("'", [['"'"']]) .. "'"
+end
+
 local wifi = Sbar.add("item", "wifi", {
 	position = "right",
 	align = "right",
@@ -22,7 +27,6 @@ local wifi = Sbar.add("item", "wifi", {
 		padding_left = 5,
 	},
 	label = { drawing = false },
-	update_freq = 60,
 	popup = {
 		align = "right",
 	},
@@ -122,7 +126,7 @@ local router = Sbar.add("item", {
 	},
 })
 
-wifi:subscribe({ "wifi_change", "system_woke" }, function()
+local function refresh_status()
 	Sbar.exec("ipconfig getifaddr en0", function(ip_address)
 		local connected = (ip_address ~= "")
 		wifi:set({
@@ -131,7 +135,27 @@ wifi:subscribe({ "wifi_change", "system_woke" }, function()
 			},
 		})
 	end)
-end)
+end
+
+local function refresh_popup_details()
+	Sbar.exec("networksetup -getcomputername", function(result)
+		hostname:set({ label = result })
+	end)
+	Sbar.exec("ipconfig getifaddr en0", function(result)
+		ip:set({ label = result })
+	end)
+	Sbar.exec("ipconfig getsummary en0 | awk -F ' SSID : '  '/ SSID : / {print $2}'", function(result)
+		ssid:set({ label = result })
+	end)
+	Sbar.exec("networksetup -getinfo Wi-Fi", function(result)
+		local subnet = result:match("Subnet mask:%s*([^\n]+)") or ""
+		local gateway = result:match("Router:%s*([^\n]+)") or ""
+		mask:set({ label = subnet })
+		router:set({ label = gateway })
+	end)
+end
+
+wifi:subscribe({ "wifi_change", "system_woke", "forced" }, refresh_status)
 
 wifi:subscribe({
 	"mouse.exited",
@@ -144,26 +168,12 @@ wifi:subscribe({
 	"mouse.entered",
 }, function(_)
 	wifi:set({ popup = { drawing = true } })
-	Sbar.exec("networksetup -getcomputername", function(result)
-		hostname:set({ label = result })
-	end)
-	Sbar.exec("ipconfig getifaddr en0", function(result)
-		ip:set({ label = result })
-	end)
-	Sbar.exec("ipconfig getsummary en0 | awk -F ' SSID : '  '/ SSID : / {print $2}'", function(result)
-		ssid:set({ label = result })
-	end)
-	Sbar.exec("networksetup -getinfo Wi-Fi | awk -F 'Subnet mask: ' '/^Subnet mask: / {print $2}'", function(result)
-		mask:set({ label = result })
-	end)
-	Sbar.exec("networksetup -getinfo Wi-Fi | awk -F 'Router: ' '/^Router: / {print $2}'", function(result)
-		router:set({ label = result })
-	end)
+	refresh_popup_details()
 end)
 
 local function copy_label_to_clipboard(env)
 	local label = Sbar.query(env.NAME).label.value
-	Sbar.exec('echo "' .. label .. '" | pbcopy')
+	Sbar.exec("printf %s " .. shell_quote(label) .. " | pbcopy")
 	Sbar.set(env.NAME, { label = { string = icons.clipboard, align = "center" } })
 	Sbar.delay(1, function()
 		Sbar.set(env.NAME, { label = { string = label, align = "right" } })
@@ -175,5 +185,7 @@ hostname:subscribe("mouse.clicked", copy_label_to_clipboard)
 ip:subscribe("mouse.clicked", copy_label_to_clipboard)
 mask:subscribe("mouse.clicked", copy_label_to_clipboard)
 router:subscribe("mouse.clicked", copy_label_to_clipboard)
+
+refresh_status()
 
 return wifi

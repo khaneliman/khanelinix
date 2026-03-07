@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+-- luacheck: globals DELAY
 
 local separator = require("items.stats.separator_right")
 local cpu = require("items.stats.cpu")
@@ -19,13 +20,13 @@ stats.close = function()
 
 	separator:set({ icon = "" })
 
-	SLEEP(0.1)
-
-	cpu:set({ drawing = false })
-	memory:set({ drawing = false })
-	disk:set({ drawing = false })
-	network.up:set({ drawing = false })
-	network.down:set({ drawing = false })
+	DELAY(0.1, function()
+		cpu:set({ drawing = false })
+		memory:set({ drawing = false })
+		disk:set({ drawing = false })
+		network.up:set({ drawing = false })
+		network.down:set({ drawing = false })
+	end)
 end
 
 stats.open = function()

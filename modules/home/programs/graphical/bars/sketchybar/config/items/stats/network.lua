@@ -30,7 +30,6 @@ network.down = Sbar.add("item", "network.down", {
 		color = colors.green,
 		highlight_color = colors.blue,
 	},
-	update_freq = 1,
 	position = "right",
 	y_offset = -7,
 })
@@ -57,7 +56,6 @@ network.up = Sbar.add("item", "network.up", {
 		color = colors.green,
 		highlight_color = colors.blue,
 	},
-	update_freq = 1,
 	position = "right",
 	y_offset = 7,
 })

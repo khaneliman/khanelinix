@@ -26,7 +26,6 @@ local cpu = Sbar.add("item", "cpu", {
 			size = 15,
 		},
 	},
-	update_freq = 2,
 	position = "right",
 })
 
