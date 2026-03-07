@@ -6,6 +6,10 @@ local settings = require("settings")
 
 local spaces = {}
 
+local function focus_workspace(workspace)
+	Sbar.exec("aerospace workspace --fail-if-noop " .. workspace .. " >/dev/null 2>&1 || true")
+end
+
 for i = 1, 8, 1 do
 	local space = Sbar.add("item", {
 		position = "left",
@@ -84,11 +88,11 @@ for i = 1, 8, 1 do
 			})
 			space:set({ popup = { drawing = "toggle" } })
 		elseif env.BUTTON == "left" then
-			Sbar.exec("aerospace workspace " .. i)
+			focus_workspace(i)
 		elseif env.BUTTON == "right" then
 			-- TODO: destroy / create?
 			-- For right-click, just focus the workspace
-			Sbar.exec("aerospace workspace " .. i)
+			focus_workspace(i)
 		end
 	end)
 
