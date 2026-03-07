@@ -6,6 +6,7 @@
 - [Platforms](platforms/index.md)
   - [NixOS](platforms/nixos.md)
   - [Darwin](platforms/darwin.md)
+  - [Darwin WindowServer Investigation](platforms/darwin-windowserver-instability.md)
   - [Home Manager](platforms/home-manager.md)
 - [Module Enablement](module-enablement/index.md)
   - [Archetypes](module-enablement/archetypes.md)
