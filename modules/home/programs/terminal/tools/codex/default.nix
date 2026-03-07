@@ -39,6 +39,13 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.shellAliases = {
+      codex-deep = "codex --profile deep";
+      codex-offline = "codex --profile offline";
+      codex-quick = "codex --profile quick";
+      codex-unsafe = "codex --profile unsafe";
+    };
+
     programs.codex = {
       enable = true;
       enableMcpIntegration = true;
