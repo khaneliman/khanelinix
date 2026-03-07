@@ -18,9 +18,22 @@ int main(int argc, char **argv) {
   sketchybar(event_message);
 
   char trigger_message[512];
+  int last_user_load = -1;
+  int last_sys_load = -1;
+  int last_total_load = -1;
   for (;;) {
     // Acquire new info
     cpu_update(&cpu);
+
+    if (cpu.user_load == last_user_load && cpu.sys_load == last_sys_load &&
+        cpu.total_load == last_total_load) {
+      usleep(update_freq * 1000000);
+      continue;
+    }
+
+    last_user_load = cpu.user_load;
+    last_sys_load = cpu.sys_load;
+    last_total_load = cpu.total_load;
 
     // Prepare the event message
     snprintf(trigger_message, 512,

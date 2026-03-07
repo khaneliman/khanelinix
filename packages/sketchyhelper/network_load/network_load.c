@@ -19,9 +19,25 @@ int main(int argc, char **argv) {
   struct network network;
   network_init(&network, argv[1]);
   char trigger_message[512];
+  int last_up = -1;
+  int last_down = -1;
+  enum unit last_up_unit = -1;
+  enum unit last_down_unit = -1;
   for (;;) {
     // Acquire new info
     network_update(&network);
+
+    if (network.up == last_up && network.down == last_down &&
+        network.up_unit == last_up_unit &&
+        network.down_unit == last_down_unit) {
+      usleep(update_freq * 1000000);
+      continue;
+    }
+
+    last_up = network.up;
+    last_down = network.down;
+    last_up_unit = network.up_unit;
+    last_down_unit = network.down_unit;
 
     // Prepare the event message
     snprintf(trigger_message, 512,
