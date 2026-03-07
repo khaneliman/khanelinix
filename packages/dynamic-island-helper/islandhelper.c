@@ -7,10 +7,13 @@ struct notificationHelper g_notification_helper;
 
 void handler(env env) {
   // Environment variables passed from sketchybar can be accessed as seen below
-  char *name = env_get_value_for_key(env, "NAME");
   char *sender = env_get_value_for_key(env, "SENDER");
   char *id = env_get_value_for_key(env, "INFO");
   char *args = env_get_value_for_key(env, "ISLAND_ARGS");
+
+  if (sender == NULL) {
+    return;
+  }
 
   if (strcmp(sender, "dynamic_island_request") == 0) {
     // Request to deliver new island
@@ -27,7 +30,7 @@ void handler(env env) {
     }
   } else if (strcmp(sender, "dynamic_island_queue") == 0) {
     // Check data is not null
-    if (args[0] == '\0' || id[0] == '\0') {
+    if (args == NULL || id == NULL || args[0] == '\0' || id[0] == '\0') {
       return;
     }
 

@@ -88,6 +88,7 @@ static inline int queue_island(struct dynamicIsland *dynamic_island,
   struct islandItemNode *newNode =
       (struct islandItemNode *)malloc(sizeof(struct islandItemNode));
   newNode->data = itemToQueue;
+  newNode->nextNode = NULL;
 
   if (currentDisplaying[0] != 0) {
     if (strcmp(currentDisplaying, newNode->data->identifier) == 0) {

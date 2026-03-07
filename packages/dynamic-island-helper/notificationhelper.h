@@ -30,7 +30,10 @@ database_init(struct notificationHelper *notificationHelper) {
   if (!output) {
     return;
   }
-  fgets(DBPATH, sizeof(DBPATH), output);
+  if (fgets(DBPATH, sizeof(DBPATH), output) == NULL) {
+    DBPATH[0] = '\0';
+  }
+  pclose(output);
   // Remove trailing new line character from fgets
   DBPATH[strcspn(DBPATH, "\n")] = 0;
 }
@@ -40,79 +43,75 @@ static inline void parse_notification_details(const UInt8 *rawData, int dataLen,
                                               char **body) {
   CFDataRef ref = CFDataCreate(kCFAllocatorDefault, rawData, dataLen);
 
-  if (ref) {
-    CFDictionaryRef detailsPlist =
-        (CFDictionaryRef)CFPropertyListCreateWithData(
-            NULL, ref, kCFPropertyListMutableContainers, NULL, NULL);
-    if (detailsPlist) {
-      // First access req value dictionary
-      CFStringRef key =
-          CFStringCreateWithCString(NULL, "req", kCFStringEncodingUTF8);
-
-      CFDictionaryRef req_dict =
-          (CFDictionaryRef)CFDictionaryGetValue(detailsPlist, key);
-
-      // Prepare to read values
-      CFStringRef titl_key =
-          CFStringCreateWithCString(NULL, "titl", kCFStringEncodingUTF8);
-      CFStringRef subt_key =
-          CFStringCreateWithCString(NULL, "subt", kCFStringEncodingUTF8);
-      CFStringRef body_key =
-          CFStringCreateWithCString(NULL, "body", kCFStringEncodingUTF8);
-
-      // Read values
-      CFStringRef titl_value =
-          (CFStringRef)CFDictionaryGetValue(req_dict, titl_key);
-      CFStringRef subt_value =
-          (CFStringRef)CFDictionaryGetValue(req_dict, subt_key);
-      CFStringRef body_value =
-          (CFStringRef)CFDictionaryGetValue(req_dict, body_key);
-
-      char titl_buffer[1024];
-      if (titl_value) {
-        if (CFStringGetCString(titl_value, titl_buffer, sizeof(titl_buffer),
-                               kCFStringEncodingUTF8)) {
-          *title = strdup(titl_buffer);
-        }
-      }
-
-      char subt_buffer[1024];
-      if (subt_value) {
-        if (CFStringGetCString(subt_value, subt_buffer, sizeof(subt_buffer),
-                               kCFStringEncodingUTF8)) {
-          *subtitle = strdup(subt_buffer);
-        }
-      }
-
-      char body_buffer[1024];
-      if (body_value) {
-        if (CFStringGetCString(body_value, body_buffer, sizeof(body_buffer),
-                               kCFStringEncodingUTF8)) {
-          *body = strdup(body_buffer);
-        }
-      }
-
-      // Release
-      CFRelease(titl_key);
-      CFRelease(subt_key);
-      CFRelease(body_key);
-      CFRelease(key);
-      CFRelease(detailsPlist);
-    } else {
-      // Failed to create plist with provided data
-      fprintf(stderr, "Failed to create plist with provided data!");
-
-      CFRelease(detailsPlist);
-    }
-  } else {
+  if (!ref) {
     fprintf(stderr, "Failed to create data ref with provided data!");
+    return;
   }
 
+  CFDictionaryRef detailsPlist = (CFDictionaryRef)CFPropertyListCreateWithData(
+      NULL, ref, kCFPropertyListMutableContainers, NULL, NULL);
+  if (!detailsPlist) {
+    fprintf(stderr, "Failed to create plist with provided data!");
+    CFRelease(ref);
+    return;
+  }
+
+  CFStringRef key =
+      CFStringCreateWithCString(NULL, "req", kCFStringEncodingUTF8);
+  CFStringRef titl_key =
+      CFStringCreateWithCString(NULL, "titl", kCFStringEncodingUTF8);
+  CFStringRef subt_key =
+      CFStringCreateWithCString(NULL, "subt", kCFStringEncodingUTF8);
+  CFStringRef body_key =
+      CFStringCreateWithCString(NULL, "body", kCFStringEncodingUTF8);
+
+  CFDictionaryRef req_dict =
+      (CFDictionaryRef)CFDictionaryGetValue(detailsPlist, key);
+
+  if (req_dict) {
+    CFStringRef titl_value =
+        (CFStringRef)CFDictionaryGetValue(req_dict, titl_key);
+    CFStringRef subt_value =
+        (CFStringRef)CFDictionaryGetValue(req_dict, subt_key);
+    CFStringRef body_value =
+        (CFStringRef)CFDictionaryGetValue(req_dict, body_key);
+
+    char titl_buffer[1024];
+    if (titl_value &&
+        CFStringGetCString(titl_value, titl_buffer, sizeof(titl_buffer),
+                           kCFStringEncodingUTF8)) {
+      *title = strdup(titl_buffer);
+    }
+
+    char subt_buffer[1024];
+    if (subt_value &&
+        CFStringGetCString(subt_value, subt_buffer, sizeof(subt_buffer),
+                           kCFStringEncodingUTF8)) {
+      *subtitle = strdup(subt_buffer);
+    }
+
+    char body_buffer[1024];
+    if (body_value &&
+        CFStringGetCString(body_value, body_buffer, sizeof(body_buffer),
+                           kCFStringEncodingUTF8)) {
+      *body = strdup(body_buffer);
+    }
+  }
+
+  CFRelease(titl_key);
+  CFRelease(subt_key);
+  CFRelease(body_key);
+  CFRelease(key);
+  CFRelease(detailsPlist);
   CFRelease(ref);
 }
 
 static inline struct islandItem *
 check_notifications(struct notificationHelper *notificationHelper) {
+  if (DBPATH[0] == '\0') {
+    return NULL;
+  }
+
   // Open the database
   rc = sqlite3_open_v2(DBPATH, &db, SQLITE_OPEN_READONLY, NULL);
   if (rc != SQLITE_OK) {
