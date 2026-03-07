@@ -1,5 +1,7 @@
 return function(ctx)
 	local token = 0
+	local lastDisplayText = nil
+	local lastHasArt = nil
 
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands.music.info.maxExpandWidth", "190"), 190)
 	local expandHeight = ctx.asNumber(ctx.get("islands.music.info.expandHeight", "100"), 100)
@@ -83,69 +85,71 @@ return function(ctx)
 			end
 
 			local display_text = ctx.trim(result)
+			local has_art = ctx.fileExists("/tmp/sketchybar_cover.jpg")
+			if display_text == lastDisplayText and has_art == lastHasArt then
+				return
+			end
+			lastDisplayText = display_text
+			lastHasArt = has_art
+
 			token = token + 1
 			local current = token
 
 			ctx.logDebug("[music][lua] track updated: " .. display_text)
 
-			-- Check if artwork was extracted
-			ctx.Sbar.exec("ls /tmp/sketchybar_cover.jpg", function(ls_result)
-				local has_art = ls_result and ls_result ~= "" and string.find(ls_result, "No such file") == nil
+			if has_art then
+				artItem:set({
+					drawing = true,
+					icon = { drawing = false },
+					background = { image = { string = "/tmp/sketchybar_cover.jpg" } },
+				})
+			else
+				artItem:set({
+					drawing = true,
+					background = { image = { string = "" } },
+					icon = { drawing = true, string = "􀑪", color = ctx.colorWhite, font = { size = 20 } },
+				})
+			end
 
-				if has_art then
-					artItem:set({
-						drawing = true,
-						background = { image = { string = "/tmp/sketchybar_cover.jpg" } },
-					})
-				else
-					-- Fallback icon if no artwork
-					artItem:set({
-						drawing = true,
-						background = { image = { string = "" } },
-						icon = { drawing = true, string = "􀑪", color = ctx.colorWhite, font = { size = 20 } },
-					})
+			textItem:set({
+				drawing = true,
+				label = {
+					string = display_text,
+				},
+			})
+
+			ctx.Sbar.animate("tanh", 10, function()
+				ctx.Sbar.bar({
+					margin = expandMargin,
+					corner_radius = cornerRad,
+					height = expandHeight,
+				})
+				textItem:set({ label = { color = ctx.colorWhite } })
+			end)
+
+			ctx.delay(3.5, function()
+				if current ~= token then
+					return
 				end
 
-				textItem:set({
-					drawing = true,
-					label = {
-						string = display_text,
-					},
-				})
-
 				ctx.Sbar.animate("tanh", 10, function()
-					ctx.Sbar.bar({
-						margin = expandMargin,
-						corner_radius = cornerRad,
-						height = expandHeight,
-					})
-					textItem:set({ label = { color = ctx.colorWhite } })
+					textItem:set({ label = { color = ctx.colorTransparent } })
 				end)
 
-				ctx.Sbar.exec("sleep 3.5", function()
+				ctx.delay(0.2, function()
 					if current ~= token then
 						return
 					end
 
+					textItem:set({ drawing = false })
+					artItem:set({ drawing = false, icon = { drawing = false } })
+
 					ctx.Sbar.animate("tanh", 10, function()
-						textItem:set({ label = { color = ctx.colorTransparent } })
-					end)
-
-					ctx.Sbar.exec("sleep 0.2", function()
-						if current ~= token then
-							return
-						end
-
-						textItem:set({ drawing = false })
-						artItem:set({ drawing = false, icon = { drawing = false } })
-
-						ctx.Sbar.animate("tanh", 10, function()
-							ctx.Sbar.bar({
-								height = ctx.defaultHeight,
-								corner_radius = ctx.cornerRadius,
-								margin = ctx.margin,
-							})
-						end)
+						ctx.Sbar.bar({
+							height = ctx.defaultHeight,
+							corner_radius = ctx.cornerRadius,
+							margin = ctx.margin,
+						})
 					end)
 				end)
 			end)

@@ -60,7 +60,7 @@ return function(ctx)
 	})
 
 	local function resetMeter(token)
-		ctx.Sbar.exec("sleep 0.8", function()
+		ctx.delay(0.8, function()
 			if stateToken ~= token then
 				return
 			end
@@ -79,7 +79,7 @@ return function(ctx)
 				})
 			end)
 
-			ctx.Sbar.exec("sleep 0.1", function()
+			ctx.delay(0.1, function()
 				if stateToken ~= token then
 					return
 				end
@@ -90,7 +90,7 @@ return function(ctx)
 					})
 				end)
 
-				ctx.Sbar.exec("sleep 0.4", function()
+				ctx.delay(0.4, function()
 					if stateToken ~= token then
 						return
 					end

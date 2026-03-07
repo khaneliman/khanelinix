@@ -1,11 +1,21 @@
 return function(ctx)
 	local token = 0
 	local lastClipboard = nil
+	local inFlight = false
 
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands.clipboard.maxExpandWidth", "180"), 180)
 	local expandHeight = ctx.asNumber(ctx.get("islands.clipboard.expandHeight", "85"), 85)
 	local cornerRad = ctx.asNumber(ctx.get("islands.clipboard.cornerRadius", "15"), 15)
 	local expandMargin = math.floor(ctx.monitorResolution / 2 - maxExpandWidth)
+	local pollInterval = ctx.asNumber(ctx.get("islands.clipboard.pollInterval", "5"), 5)
+	local maxPreviewLength = ctx.asNumber(ctx.get("islands.clipboard.maxPreviewLength", "120"), 120)
+
+	local function truncatePreview(value)
+		if #value <= maxPreviewLength then
+			return value
+		end
+		return value:sub(1, maxPreviewLength - 1) .. "…"
+	end
 
 	local textItem = ctx.Sbar.add("item", "island.clipboard_text", {
 		position = "left",
@@ -21,7 +31,7 @@ return function(ctx)
 	local listener = ctx.Sbar.add("item", "clipboardListener", {
 		position = "center",
 		width = 0,
-		update_freq = 2, -- Check every 2 seconds
+		update_freq = pollInterval,
 	})
 
 	local function showClipboard(content)
@@ -46,7 +56,7 @@ return function(ctx)
 			})
 		end)
 
-		ctx.Sbar.exec("sleep 1.2", function()
+		ctx.delay(1.2, function()
 			if current ~= token then
 				return
 			end
@@ -55,7 +65,7 @@ return function(ctx)
 				textItem:set({ label = { color = ctx.colorTransparent } })
 			end)
 
-			ctx.Sbar.exec("sleep 0.2", function()
+			ctx.delay(0.2, function()
 				if current ~= token then
 					return
 				end
@@ -73,13 +83,19 @@ return function(ctx)
 	end
 
 	listener:subscribe("routine", function()
+		if inFlight then
+			return
+		end
+		inFlight = true
+
 		ctx.Sbar.exec("pbpaste", function(content)
+			inFlight = false
 			if not content or content == "" then
 				return
 			end
 
 			local firstLine = content:match("([^\r\n]+)") or ""
-			local trimmed = ctx.trim(firstLine)
+			local trimmed = truncatePreview(ctx.trim(firstLine))
 			if trimmed == "" then
 				return
 			end

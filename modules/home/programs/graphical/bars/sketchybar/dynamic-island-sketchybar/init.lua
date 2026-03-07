@@ -128,6 +128,30 @@ local function get(key, fallback)
 	return value
 end
 
+local function delay(seconds, callback)
+	if type(callback) ~= "function" then
+		return
+	end
+
+	local duration = tonumber(seconds) or 0
+	if duration <= 0 then
+		callback()
+		return
+	end
+
+	Sbar.delay(duration, callback)
+end
+
+local function fileExists(path)
+	local handle = io.open(path, "r")
+	if handle == nil then
+		return false
+	end
+
+	handle:close()
+	return true
+end
+
 local function subscribeItem(itemName, events)
 	local eventList = events
 	if type(eventList) == "string" then
@@ -237,6 +261,8 @@ local baseCtx = {
 	asNumber = asNumber,
 	asBool = asBool,
 	trim = trim,
+	delay = delay,
+	fileExists = fileExists,
 	subscribeItem = subscribeItem,
 	barName = barName,
 	fontFamily = fontFamily,

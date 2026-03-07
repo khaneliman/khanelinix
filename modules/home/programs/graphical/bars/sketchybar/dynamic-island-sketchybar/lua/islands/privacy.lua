@@ -1,6 +1,10 @@
 return function(ctx)
 	-- Privacy dots are small, persistent indicators that appear within the island boundary
 	-- when camera or microphone are in use.
+	local inFlight = false
+	local lastCameraState = nil
+	local lastMicState = nil
+	local pollInterval = ctx.asNumber(ctx.get("islands.privacy.pollInterval", "12"), 12)
 
 	local camDot = ctx.Sbar.add("item", "island.privacy.camera", {
 		position = "center",
@@ -29,28 +33,35 @@ return function(ctx)
 	local listener = ctx.Sbar.add("item", "privacyListener", {
 		position = "center",
 		width = 0,
-		update_freq = 5, -- Check every 5 seconds
+		update_freq = pollInterval,
 	})
 
 	listener:subscribe("routine", function()
-		-- Check Camera (Lightweight check using lsof for the system camera driver)
-		ctx.Sbar.exec(
-			"lsof -n | awk 'BEGIN{IGNORECASE=1} /AppleCamera/ && printed==0 {print; printed=1}'",
-			function(cam_result)
-				local camActive = cam_result ~= ""
+		if inFlight then
+			return
+		end
+		inFlight = true
+
+		local privacyCheckCommand = [[lsof -n 2>/dev/null | awk 'BEGIN{IGNORECASE=1} ]]
+			.. [[/AppleCamera/ {cam=1} /Capture/ {mic=1} ]]
+			.. [[END {printf "%d|%d", cam ? 1 : 0, mic ? 1 : 0}']]
+
+		ctx.Sbar.exec(privacyCheckCommand, function(result)
+			inFlight = false
+			local cameraFlag, micFlag = tostring(result or ""):match("^(%d)|(%d)$")
+			local camActive = cameraFlag == "1"
+			local micActive = micFlag == "1"
+
+			if lastCameraState ~= camActive then
+				lastCameraState = camActive
 				camDot:set({ drawing = camActive })
 			end
-		)
 
-		-- Check Microphone (Checking if any process has an open handle to the CoreAudio input)
-		-- This is a bit tricky without a specialized tool, but checking for 'Capture' handles in lsof works for many apps.
-		ctx.Sbar.exec(
-			"lsof -n | awk 'BEGIN{IGNORECASE=1} /Capture/ && printed==0 {print; printed=1}'",
-			function(mic_result)
-				local micActive = mic_result ~= ""
+			if lastMicState ~= micActive then
+				lastMicState = micActive
 				micDot:set({ drawing = micActive })
 			end
-		)
+		end)
 	end)
 
 	ctx.registry.privacyCamDot = camDot

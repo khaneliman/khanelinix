@@ -51,7 +51,7 @@ return function(ctx)
 			})
 		end)
 
-		ctx.Sbar.exec("sleep 0.8", function()
+		ctx.delay(0.8, function()
 			if current ~= token then
 				return
 			end
@@ -60,7 +60,7 @@ return function(ctx)
 				textItem:set({ label = { color = ctx.colorTransparent } })
 			end)
 
-			ctx.Sbar.exec("sleep 0.2", function()
+			ctx.delay(0.2, function()
 				if current ~= token then
 					return
 				end

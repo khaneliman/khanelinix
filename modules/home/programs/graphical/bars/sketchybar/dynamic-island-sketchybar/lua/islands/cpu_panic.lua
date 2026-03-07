@@ -1,11 +1,14 @@
 return function(ctx)
 	local token = 0
 	local lastPanicApp = nil
+	local inFlight = false
 
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands.cpu_panic.maxExpandWidth", "200"), 200)
 	local expandHeight = ctx.asNumber(ctx.get("islands.cpu_panic.expandHeight", "85"), 85)
 	local cornerRad = ctx.asNumber(ctx.get("islands.cpu_panic.cornerRadius", "15"), 15)
 	local expandMargin = math.floor(ctx.monitorResolution / 2 - maxExpandWidth)
+	local pollInterval = ctx.asNumber(ctx.get("islands.cpu_panic.pollInterval", "12"), 12)
+	local panicThreshold = ctx.asNumber(ctx.get("islands.cpu_panic.threshold", "90"), 90)
 
 	local textItem = ctx.Sbar.add("item", "island.cpu_panic_text", {
 		position = "right",
@@ -20,7 +23,7 @@ return function(ctx)
 	local listener = ctx.Sbar.add("item", "cpuPanicListener", {
 		position = "center",
 		width = 0,
-		update_freq = 5, -- Check every 5 seconds
+		update_freq = pollInterval,
 	})
 
 	local function showPanic(appName, cpuUsage)
@@ -45,7 +48,7 @@ return function(ctx)
 			})
 		end)
 
-		ctx.Sbar.exec("sleep 4.0", function()
+		ctx.delay(4.0, function()
 			if current ~= token then
 				return
 			end
@@ -54,7 +57,7 @@ return function(ctx)
 				textItem:set({ label = { color = ctx.colorTransparent } })
 			end)
 
-			ctx.Sbar.exec("sleep 0.2", function()
+			ctx.delay(0.2, function()
 				if current ~= token then
 					return
 				end
@@ -72,11 +75,15 @@ return function(ctx)
 	end
 
 	listener:subscribe("routine", function()
-		-- Get top CPU consuming process, excluding Sketchybar itself.
-		-- Avoid head/early-close pipelines that cause broken-pipe noise in logs.
+		if inFlight then
+			return
+		end
+		inFlight = true
+
 		ctx.Sbar.exec(
 			"ps -Ao %cpu,comm -r | awk 'BEGIN{IGNORECASE=1} $2 !~ /sketchybar/ && printed==0 {print; printed=1}'",
 			function(result)
+				inFlight = false
 				if not result or result == "" then
 					return
 				end
@@ -86,8 +93,7 @@ return function(ctx)
 					local cpuVal = tonumber(cpu)
 					local appName = comm:match("([^/]+)$") or comm
 
-					if cpuVal > 90 then
-						-- Alert if it's a new panic or the same app still panicking after some time
+					if cpuVal > panicThreshold then
 						if lastPanicApp ~= appName then
 							ctx.logWarn("[cpu_panic][lua] high cpu detected: " .. appName .. " (" .. cpu .. "%)")
 							showPanic(appName, cpu)

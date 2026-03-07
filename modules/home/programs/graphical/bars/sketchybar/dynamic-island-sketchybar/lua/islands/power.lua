@@ -1,11 +1,13 @@
 return function(ctx)
 	local token = 0
 	local lastBatteryState = nil
+	local inFlight = false
 
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands.power.maxExpandWidth", "190"), 190)
 	local expandHeight = ctx.asNumber(ctx.get("islands.power.expandHeight", "56"), 56)
 	local cornerRad = ctx.asNumber(ctx.get("islands.power.cornerRadius", "15"), 15)
 	local expandMargin = math.floor(ctx.monitorResolution / 2 - maxExpandWidth)
+	local pollInterval = ctx.asNumber(ctx.get("islands.power.pollInterval", "120"), 120)
 
 	local textItem = ctx.Sbar.add("item", "island.power_text", {
 		position = "right",
@@ -19,7 +21,7 @@ return function(ctx)
 	local listener = ctx.Sbar.add("item", "powerChangeListener", {
 		position = "center",
 		width = 0,
-		update_freq = 60, -- check battery every 60 seconds
+		update_freq = pollInterval,
 	})
 
 	local function showIsland(text, textColor, duration)
@@ -44,7 +46,7 @@ return function(ctx)
 			})
 		end)
 
-		ctx.Sbar.exec("sleep " .. tostring(duration), function()
+		ctx.delay(duration, function()
 			if current ~= token then
 				return
 			end
@@ -53,7 +55,7 @@ return function(ctx)
 				textItem:set({ label = { color = ctx.colorTransparent } })
 			end)
 
-			ctx.Sbar.exec("sleep 0.2", function()
+			ctx.delay(0.2, function()
 				if current ~= token then
 					return
 				end
@@ -89,7 +91,13 @@ return function(ctx)
 	end)
 
 	listener:subscribe("routine", function()
+		if inFlight then
+			return
+		end
+		inFlight = true
+
 		ctx.Sbar.exec("pmset -g batt", function(batt_info)
+			inFlight = false
 			local found, _, percent = string.find(batt_info, "(%d+)%%")
 			if found then
 				local current_percent = tonumber(percent)
