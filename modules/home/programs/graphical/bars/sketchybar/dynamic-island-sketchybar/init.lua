@@ -276,19 +276,21 @@ local baseCtx = {
 	margin = margin,
 }
 
-if asBool(get("enabled.volume", true)) then
-	local mod = loadIslandModule("volume")
-	if mod ~= nil then
-		mod(baseCtx)
-	end
-end
-
-if asBool(get("enabled.brightness", true)) then
-	local mod = loadIslandModule("brightness")
-	if mod ~= nil then
-		mod(baseCtx)
-	end
-end
+-- TODO: figure out disable macos OSD
+-- if asBool(get("enabled.volume", true)) then
+-- 	local mod = loadIslandModule("volume")
+-- 	if mod ~= nil then
+-- 		mod(baseCtx)
+-- 	end
+-- end
+--
+-- TODO: figure out disable macos OSD
+-- if asBool(get("enabled.brightness", true)) then
+-- 	local mod = loadIslandModule("brightness")
+-- 	if mod ~= nil then
+-- 		mod(baseCtx)
+-- 	end
+-- end
 
 if asBool(get("enabled.appswitch", true)) then
 	local mod = loadIslandModule("appswitch")
