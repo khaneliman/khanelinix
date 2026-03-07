@@ -55,7 +55,7 @@ in
           max_bytes = 104857600;
         };
 
-        model = "gpt-5.3-codex";
+        model = "gpt-5.4";
         model_reasoning_effort = "medium";
 
         notify = [ (lib.getExe codexNotify) ];
