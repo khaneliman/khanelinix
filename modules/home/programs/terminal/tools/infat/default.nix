@@ -1,8 +1,6 @@
 {
   config,
   lib,
-  pkgs,
-
   ...
 }:
 let
@@ -14,6 +12,18 @@ let
   hmAppsPath = "Applications/Home Manager Apps";
 
   hasPkg = p: builtins.any (x: (x.pname or x.name) == p) config.home.packages;
+
+  hasCaprine = config.khanelinix.programs.graphical.apps.caprine.enable or false;
+  hasElement = hasPkg "element-desktop";
+  hasFirefox = config.programs.firefox.enable or false;
+  hasIina = hasPkg "iina";
+  hasInkscape = hasPkg "inkscape" || hasPkg "inkscape-with-extensions";
+  hasNeovide = hasPkg "neovide";
+  hasPostman = hasPkg "postman";
+  hasTeams = hasPkg "teams-for-linux";
+  hasThunderbird = config.programs.thunderbird.enable or false;
+  hasVSCode = config.khanelinix.programs.graphical.editors.vscode.enable or false;
+  hasVesktop = config.khanelinix.programs.graphical.apps.vesktop.enable or false;
 
   # Bundle IDs for nixpkgs-installed macOS apps
   # These are stable identifiers that don't change across nixpkgs versions / installation locations
@@ -34,14 +44,11 @@ let
   };
 
   # Use IINA if installed, otherwise fall back to QuickTime Player
-  videoPlayer =
-    if lib.elem pkgs.iina config.home.packages then bundleIds.iina else "QuickTime Player";
+  videoPlayer = if hasIina then bundleIds.iina else "QuickTime Player";
 
   preferredTextEditors =
-    (lib.optionals (hasPkg "neovide") [ bundleIds.neovide ])
-    ++ (lib.optionals (config.khanelinix.programs.graphical.editors.vscode.enable or false) [
-      bundleIds.vscode
-    ])
+    (lib.optionals hasNeovide [ bundleIds.neovide ])
+    ++ (lib.optionals hasVSCode [ bundleIds.vscode ])
     ++ [ "TextEdit" ];
 
   textEditor = builtins.head preferredTextEditors;
@@ -81,8 +88,8 @@ in
           xml = textEditor;
 
           # Web files - Firefox Developer Edition
-          html = mkIf config.programs.firefox.enable bundleIds.firefox;
-          htm = mkIf config.programs.firefox.enable bundleIds.firefox;
+          html = mkIf hasFirefox bundleIds.firefox;
+          htm = mkIf hasFirefox bundleIds.firefox;
 
           # Image files - Preview for viewing
           png = "Preview";
@@ -91,7 +98,7 @@ in
           gif = "Preview";
           webp = "Preview";
           bmp = "Preview";
-          svg = mkIf (hasPkg "inkscape") bundleIds.inkscape;
+          svg = mkIf hasInkscape bundleIds.inkscape;
 
           # Video files - IINA if installed, otherwise QuickTime Player
           mp4 = videoPlayer;
@@ -112,29 +119,29 @@ in
 
         schemes = {
           # Web protocols - Firefox Developer Edition
-          web = mkIf config.programs.firefox.enable bundleIds.firefox;
-          http = mkIf config.programs.firefox.enable bundleIds.firefox;
-          https = mkIf config.programs.firefox.enable bundleIds.firefox;
-          feed = mkIf config.programs.firefox.enable bundleIds.firefox;
+          web = mkIf hasFirefox bundleIds.firefox;
+          http = mkIf hasFirefox bundleIds.firefox;
+          https = mkIf hasFirefox bundleIds.firefox;
+          feed = mkIf hasFirefox bundleIds.firefox;
 
           # Email - Thunderbird
-          mailto = mkIf config.programs.thunderbird.enable bundleIds.thunderbird;
+          mailto = mkIf hasThunderbird bundleIds.thunderbird;
 
           # Communication apps
-          discord = mkIf config.khanelinix.programs.graphical.apps.vesktop.enable bundleIds.vesktop;
-          element = mkIf (hasPkg "element-desktop") bundleIds.element;
+          discord = mkIf hasVesktop bundleIds.vesktop;
+          element = mkIf hasElement bundleIds.element;
           # fb = bundleIds.caprine;
-          messenger = mkIf config.khanelinix.programs.graphical.apps.caprine.enable bundleIds.caprine;
-          msteams = mkIf (hasPkg "teams-for-linux") bundleIds.teams;
+          messenger = mkIf hasCaprine bundleIds.caprine;
+          msteams = mkIf hasTeams bundleIds.teams;
 
           # FaceTime and phone calls
           facetime = "FaceTime";
           tel = "FaceTime";
 
           # Development tools
-          vscode = mkIf config.khanelinix.programs.graphical.editors.vscode.enable bundleIds.vscode;
-          vscode-insiders = mkIf config.khanelinix.programs.graphical.editors.vscode.enable bundleIds.vscode;
-          postman = mkIf (hasPkg "postman") bundleIds.postman;
+          vscode = mkIf hasVSCode bundleIds.vscode;
+          vscode-insiders = mkIf hasVSCode bundleIds.vscode;
+          postman = mkIf hasPostman bundleIds.postman;
         };
 
         types = {
