@@ -65,7 +65,8 @@ in
       services = {
         # FIXME: requires approval
         davmail.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isLinux;
-        syncthing.enable = lib.mkDefault (!isWSL);
+        # FIXME: not even being used on darwin and causing network/fs issues
+        syncthing.enable = lib.mkDefault (!isWSL && !pkgs.stdenv.hostPlatform.isDarwin);
       };
     };
   };
