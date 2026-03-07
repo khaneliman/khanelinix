@@ -21,7 +21,7 @@ in
         # 1. Temporarily disable the firewall: sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate off
         # 2. Kill the stuck process: sudo killall socketfilterfw
         # 3. Nuke the corrupted database and restart: sudo rm /Library/Preferences/com.apple.alf.plist && sudo killall socketfilterfw
-        enable = false;
+        enable = true;
 
         allowSigned = true;
         allowSignedApp = true;
