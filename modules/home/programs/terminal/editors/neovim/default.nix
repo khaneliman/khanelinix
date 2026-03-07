@@ -19,6 +19,14 @@ let
 
   neovimLib = import ./lib.nix { inherit lib options khanelivimConfiguration; };
 
+  nvrEditor = pkgs.writeShellScriptBin "nvr-editor" ''
+    if [ -n "$NVIM" ] || [ -n "$NVIM_LISTEN_ADDRESS" ]; then
+      exec ${lib.getExe pkgs.nvrh} --remote-wait "$@"
+    fi
+
+    exec ${lib.getExe khanelivim} "$@"
+  '';
+
   khanelivimConfigurationExtended = khanelivimConfiguration.extendModules {
     modules = [
       {
@@ -102,11 +110,14 @@ in
     home = {
       sessionVariables = {
         EDITOR = lib.mkIf cfg.default "nvim";
+        VISUAL = lib.mkIf cfg.default "nvr-editor";
+        GIT_EDITOR = lib.mkIf cfg.default "nvr-editor";
         MANPAGER = "nvim -c 'set ft=man bt=nowrite noswapfile nobk shada=\\\"NONE\\\" ro noma' +Man! -o -";
       };
       packages = [
         khanelivim
         pkgs.nvrh
+        nvrEditor
       ];
     };
 
