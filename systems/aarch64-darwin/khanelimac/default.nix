@@ -55,6 +55,8 @@ in
     tools.homebrew.masEnable = true;
   };
 
+  services.karabiner-elements.enable = true;
+
   networking = {
     computerName = "Austins MacBook Pro";
     hostName = "khanelimac";
