@@ -5,25 +5,13 @@ local settings = require("settings")
 local colors = require("colors")
 
 local popup_off = "sketchybar --set github popup.drawing=off"
-local popup_items = {}
+local github
 local last_notification_signature = nil
+local last_rendered_signature = nil
 
 local function shell_quote(value)
 	local text = tostring(value or "")
 	return "'" .. text:gsub("'", [['"'"']]) .. "'"
-end
-
-local function sanitize_item_key(value)
-	if value == nil then
-		return "unknown"
-	end
-
-	local sanitized = tostring(value):gsub("[^%w%._-]", "_")
-	if sanitized == "" then
-		return "unknown"
-	end
-
-	return sanitized
 end
 
 local function truncate_label(value, max_length)
@@ -99,15 +87,12 @@ local function collect_sorted_notifications(raw_notifications)
 end
 
 local function clear_popup_items()
-	for _, item_name in ipairs(popup_items) do
-		Sbar.remove(item_name)
+	local existing_notifications = github:query()
+	if existing_notifications.popup and next(existing_notifications.popup.items) ~= nil then
+		for _, item_name in pairs(existing_notifications.popup.items) do
+			Sbar.remove(item_name)
+		end
 	end
-	popup_items = {}
-end
-
-local function add_popup_item(item_name, properties)
-	table.insert(popup_items, item_name)
-	return Sbar.add("item", item_name, properties)
 end
 
 local function notification_signature(sorted_notifications)
@@ -163,7 +148,7 @@ local function notification_click_url(notification)
 	return "https://github.com/notifications"
 end
 
-local github = Sbar.add("item", "github", {
+github = Sbar.add("item", "github", {
 	position = "right",
 	icon = {
 		string = icons.bell,
@@ -219,8 +204,6 @@ github:subscribe({
 }, function(_)
 	-- fetch new information
 	Sbar.exec("gh api notifications", function(notifications)
-		clear_popup_items()
-
 		local sorted_notifications = collect_sorted_notifications(notifications)
 		local count = #sorted_notifications
 		local current_repo_group = nil
@@ -234,9 +217,28 @@ github:subscribe({
 		end
 		last_notification_signature = current_signature
 
-		for index, notification in ipairs(sorted_notifications) do
+		local icon_string = count > 0 and icons.bell or icons.bell_dot
+		github:set({
+			icon = {
+				string = icon_string,
+			},
+			label = count,
+		})
+
+		if current_signature == last_rendered_signature then
+			return
+		end
+		last_rendered_signature = current_signature
+		clear_popup_items()
+
+		local popup_index = 0
+		local function next_popup_name(kind)
+			popup_index = popup_index + 1
+			return "github." .. kind .. "." .. tostring(popup_index)
+		end
+
+		for _, notification in ipairs(sorted_notifications) do
 			local subject = notification.subject or {}
-			local id = notification.id or index
 			local url = notification_click_url(notification)
 			local repo_label = notification_repo_name(notification)
 			local title = subject.title
@@ -268,8 +270,7 @@ github:subscribe({
 			local repo_group = string.lower(repo_label)
 			if current_repo_group ~= repo_group then
 				current_repo_group = repo_group
-				local repo_key = sanitize_item_key(repo_label)
-				add_popup_item("github.notification.repo_header." .. repo_key .. "." .. tostring(index), {
+				Sbar.add("item", next_popup_name("repo_header"), {
 					label = {
 						string = repo_label,
 						color = colors.blue,
@@ -297,7 +298,7 @@ github:subscribe({
 			end
 
 			if IS_EMPTY(title) == false then
-				add_popup_item("github.notification.message." .. tostring(id), {
+				Sbar.add("item", next_popup_name("message"), {
 					label = {
 						string = truncate_label(title, 60),
 						padding_right = 10,
@@ -318,14 +319,6 @@ github:subscribe({
 				})
 			end
 		end
-
-		local icon_string = count > 0 and icons.bell or icons.bell_dot
-		github:set({
-			icon = {
-				string = icon_string,
-			},
-			label = count,
-		})
 	end)
 end)
 
