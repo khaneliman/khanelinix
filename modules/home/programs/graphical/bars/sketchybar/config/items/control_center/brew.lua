@@ -3,6 +3,26 @@
 local icons = require("icons")
 local settings = require("settings")
 local colors = require("colors")
+local popup_off = "sketchybar --set brew popup.drawing=off"
+local brew_done_marker = "__SKETCHYBAR_DONE__"
+
+local function shell_quote(value)
+	local text = tostring(value or "")
+	return "'" .. text:gsub("'", [['"'"']]) .. "'"
+end
+
+local brew_outdated_cmd = table.concat({
+	"env -i",
+	"HOME=" .. shell_quote(os.getenv("HOME") or ""),
+	"USER=" .. shell_quote(os.getenv("USER") or ""),
+	"LOGNAME=" .. shell_quote(os.getenv("LOGNAME") or ""),
+	"TMPDIR=" .. shell_quote(os.getenv("TMPDIR") or "/tmp"),
+	"PATH=" .. shell_quote("/opt/homebrew/bin:/opt/homebrew/sbin:/usr/bin:/bin:/usr/sbin:/sbin"),
+	"HOMEBREW_NO_AUTO_UPDATE=1",
+	"HOMEBREW_NO_ANALYTICS=1",
+	"/opt/homebrew/bin/brew outdated --quiet 2>/dev/null || true;",
+	"printf %s " .. shell_quote(brew_done_marker .. "\n"),
+}, " ")
 
 local brew = Sbar.add("item", "brew", {
 	position = "right",
@@ -22,27 +42,15 @@ local brew = Sbar.add("item", "brew", {
 	},
 })
 
-brew.details = Sbar.add("item", "brew.details", {
-	position = "popup." .. brew.name,
-	click_script = "sketchybar --set brew popup.drawing=off",
-	background = {
-		corner_radius = 12,
-		padding_left = 5,
-		padding_right = 10,
-	},
-})
-
-brew.clearPopup = function()
+local function clear_popup()
 	-- Clear existing packages
-	local existingPackages = brew:query()
-	if existingPackages.popup and next(existingPackages.popup.items) ~= nil then
-		for _, item in pairs(existingPackages.popup.items) do
+	local existing_packages = brew:query()
+	if existing_packages.popup and next(existing_packages.popup.items) ~= nil then
+		for _, item in pairs(existing_packages.popup.items) do
 			Sbar.remove(item)
 		end
 	end
 end
-
-brew.skipCleanup = false
 
 brew:subscribe({
 	"mouse.clicked",
@@ -70,28 +78,11 @@ brew:subscribe({
 end)
 
 brew:subscribe({
-	"brew_cleanup",
-}, function(_)
-	if brew.skipCleanup == false then
-		brew:set({ label = 0 })
-		brew.clearPopup()
-	end
-end)
-
-brew:subscribe({
 	"routine",
 	"forced",
 	"brew_update",
 }, function(_)
-	brew.skipCleanup = false
-
-	-- fetch new information
-	Sbar.exec("command brew outdated", function(outdated)
-		-- NOTE: sbar.exec will not run callback if command doesn't return anything.
-		-- We use a variable to determine if we should skip cleaning up the count
-		-- and popup
-		brew.skipCleanup = true
-
+	Sbar.exec(brew_outdated_cmd, function(outdated)
 		local thresholds = {
 			{ count = 30, color = colors.red },
 			{ count = 20, color = colors.peach },
@@ -100,17 +91,22 @@ brew:subscribe({
 			{ count = 0, color = colors.text },
 		}
 
+		local packages = {}
+		for package in outdated:gmatch("[^\n]+") do
+			if package ~= brew_done_marker and package ~= "" then
+				table.insert(packages, package)
+			end
+		end
+
 		local count = 0
-		for _ in outdated:gmatch("\n") do
+		for _ in ipairs(packages) do
 			count = count + 1
 		end
 
-		-- Clear existing packages
-		brew.clearPopup()
+		clear_popup()
 
-		-- Add packages to popup
-		for package in outdated:gmatch("[^\n]+") do
-			Sbar.add("item", "brew.package." .. package, {
+		for index, package in ipairs(packages) do
+			Sbar.add("item", "brew.package." .. tostring(index), {
 				label = {
 					string = tostring(package),
 					align = "right",
@@ -121,12 +117,11 @@ brew:subscribe({
 					string = tostring(package),
 					drawing = false,
 				},
-				click_script = POPUP_OFF("brew"),
+				click_script = popup_off,
 				position = "popup." .. brew.name,
 			})
 		end
 
-		-- Change icon and color depending on packages
 		for _, threshold in ipairs(thresholds) do
 			if count >= threshold.count then
 				brew:set({
@@ -139,7 +134,6 @@ brew:subscribe({
 			end
 		end
 	end)
-	Sbar.trigger("brew_cleanup")
 end)
 
 return brew
