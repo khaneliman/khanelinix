@@ -53,7 +53,6 @@ in
         ]
         ++ lib.optionals (!isWSL) [
           bruno
-          neovide
           postman
         ]
         ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && !isWSL) [

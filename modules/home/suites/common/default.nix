@@ -99,7 +99,6 @@ in
             pay-respects = mkDefault enabled;
             ripgrep = mkDefault enabled;
             television = mkDefault enabled;
-            topgrade = mkDefault enabled;
             tray-tui.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
             yazi = mkDefault enabled;
             zellij = mkDefault enabled;

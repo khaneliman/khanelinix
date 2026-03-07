@@ -41,7 +41,6 @@ in
         enable = true;
 
         aiEnable = true;
-        dockerEnable = true;
       };
       games = enabled;
       music = enabled;
