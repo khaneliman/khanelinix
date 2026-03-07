@@ -36,6 +36,15 @@ let
   # Use IINA if installed, otherwise fall back to QuickTime Player
   videoPlayer =
     if lib.elem pkgs.iina config.home.packages then bundleIds.iina else "QuickTime Player";
+
+  preferredTextEditors =
+    (lib.optionals (hasPkg "neovide") [ bundleIds.neovide ])
+    ++ (lib.optionals (config.khanelinix.programs.graphical.editors.vscode.enable or false) [
+      bundleIds.vscode
+    ])
+    ++ [ "TextEdit" ];
+
+  textEditor = builtins.head preferredTextEditors;
 in
 {
   options.khanelinix.programs.terminal.tools.infat = {
@@ -51,25 +60,25 @@ in
 
       settings = {
         extensions = {
-          # Document files - Neovide (GUI Neovim wrapper)
-          md = bundleIds.neovide;
-          txt = bundleIds.neovide;
+          # Document files
+          md = textEditor;
+          txt = textEditor;
           pdf = "Preview";
 
-          # Code files - Neovide (GUI Neovim)
-          nix = bundleIds.neovide;
-          rs = bundleIds.neovide;
-          py = bundleIds.neovide;
-          go = bundleIds.neovide;
-          js = bundleIds.neovide;
-          ts = bundleIds.neovide;
-          tsx = bundleIds.neovide;
-          jsx = bundleIds.neovide;
-          json = bundleIds.neovide;
-          yaml = bundleIds.neovide;
-          yml = bundleIds.neovide;
-          toml = bundleIds.neovide;
-          xml = bundleIds.neovide;
+          # Code files
+          nix = textEditor;
+          rs = textEditor;
+          py = textEditor;
+          go = textEditor;
+          js = textEditor;
+          ts = textEditor;
+          tsx = textEditor;
+          jsx = textEditor;
+          json = textEditor;
+          yaml = textEditor;
+          yml = textEditor;
+          toml = textEditor;
+          xml = textEditor;
 
           # Web files - Firefox Developer Edition
           html = mkIf config.programs.firefox.enable bundleIds.firefox;
@@ -131,15 +140,15 @@ in
         types = {
           # infat supertypes (not macOS UTIs)
           # Text and code
-          plain-text = bundleIds.neovide;
-          text = bundleIds.neovide;
-          csv = bundleIds.neovide;
-          sourcecode = bundleIds.neovide;
-          c-source = bundleIds.neovide;
-          cpp-source = bundleIds.neovide;
-          objc-source = bundleIds.neovide;
-          shell = bundleIds.neovide;
-          makefile = bundleIds.neovide;
+          plain-text = textEditor;
+          text = textEditor;
+          csv = textEditor;
+          sourcecode = textEditor;
+          c-source = textEditor;
+          cpp-source = textEditor;
+          objc-source = textEditor;
+          shell = textEditor;
+          makefile = textEditor;
 
           # Images
           image = "Preview";
