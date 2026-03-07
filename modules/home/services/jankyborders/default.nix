@@ -23,6 +23,9 @@ in
         style = "round";
         width = 6.0;
         hidpi = "off";
+        # AeroSpace modifies window state, so use AX-backed focus resolution
+        # for better border/focus consistency.
+        ax_focus = "on";
         active_color = "0xff7793d1";
         inactive_color = "0xff5e6798";
         # FIXME: broken atm
