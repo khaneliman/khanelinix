@@ -9,6 +9,18 @@ let
   cfg = config.khanelinix.programs.graphical.wms.aerospace;
 
   sketchybar = lib.getExe (config.programs.sketchybar.finalPackage or pkgs.sketchybar);
+  debouncedWindowChangeTrigger = pkgs.writeShellScript "aerospace-window-change-trigger" ''
+    lockDir="''${TMPDIR:-/tmp}/aerospace-windows-change.lock"
+
+    if ! mkdir "$lockDir" 2>/dev/null; then
+      exit 0
+    fi
+
+    trap 'rmdir "$lockDir"' EXIT
+
+    sleep 0.2
+    ${sketchybar} --trigger aerospace_windows_change
+  '';
 in
 {
   imports = [
@@ -67,7 +79,7 @@ in
 
         # Integration hooks
         on-focused-monitor-changed = [ "move-mouse monitor-lazy-center" ];
-        on-focus-changed = [ "exec-and-forget ${sketchybar} --trigger aerospace_windows_change" ];
+        on-focus-changed = [ "exec-and-forget ${debouncedWindowChangeTrigger}" ];
         exec-on-workspace-change = [
           "/bin/bash"
           "-c"
