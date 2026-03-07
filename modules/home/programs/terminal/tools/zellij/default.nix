@@ -18,6 +18,7 @@ in
 
   options.khanelinix.programs.terminal.tools.zellij = {
     enable = lib.mkEnableOption "zellij";
+    resurrect.enable = lib.mkEnableOption "session resurrection support";
   };
 
   config = lib.mkIf cfg.enable {
@@ -56,6 +57,7 @@ in
           package = pkgs.zellij.overrideAttrs (_oldAttrs: {
             patches = lib.optionals pkgs.stdenv.hostPlatform.isLinux [
               (pkgs.fetchpatch2 {
+                name = "osc52-support";
                 url = "https://github.com/zellij-org/zellij/commit/60acd439985339e518f090821c0e4eb366ce6014.patch?full_index=1";
                 hash = "sha256-pCFDEbgceNzZAjxSXme/nQ4iQc8qNw2IOMtec16cr8k=";
               })
@@ -84,19 +86,6 @@ in
 
             on_force_close = "quit";
             pane_frames = true;
-            pane_viewport_serialization = true;
-            scrollback_lines_to_serialize = 1000;
-            session_serialization = true;
-            post_command_discovery_hook = ''
-              case "$RESURRECT_COMMAND" in
-                /nix/store/*/bin/*)
-                  printf '%s\n' "''${RESURRECT_COMMAND#*/bin/}"
-                  ;;
-                *)
-                  printf '%s\n' "$RESURRECT_COMMAND"
-                  ;;
-              esac
-            '';
 
             ui.pane_frames = {
               rounded_corners = true;
@@ -112,6 +101,21 @@ in
             };
 
             theme = lib.mkDefault "catppuccin-macchiato";
+          }
+          // lib.optionalAttrs cfg.resurrect.enable {
+            pane_viewport_serialization = true;
+            scrollback_lines_to_serialize = 1000;
+            session_serialization = true;
+            post_command_discovery_hook = ''
+              case "$RESURRECT_COMMAND" in
+                /nix/store/*/bin/*)
+                  printf '%s\n' "''${RESURRECT_COMMAND#*/bin/}"
+                  ;;
+                *)
+                  printf '%s\n' "$RESURRECT_COMMAND"
+                  ;;
+              esac
+            '';
           };
         };
       };
