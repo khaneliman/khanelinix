@@ -2,6 +2,8 @@ return function(ctx)
 	local token = 0
 	local lastDisplayText = nil
 	local lastHasArt = nil
+	local artPath = "/tmp/sketchybar_cover.jpg"
+	local noTrackMarker = "__DYNAMIC_ISLAND_NO_TRACK__"
 
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands.music.info.maxExpandWidth", "190"), 190)
 	local expandHeight = ctx.asNumber(ctx.get("islands.music.info.expandHeight", "100"), 100)
@@ -56,26 +58,36 @@ return function(ctx)
 		local script
 		if app == "Music" then
 			script = [[
-				tell application "Music"
-					set trackArtist to artist of current track
-					set trackName to name of current track
-					try
-						set theArt to raw data of artwork 1 of current track
-						set fileName to "/tmp/sketchybar_cover.jpg"
-						set fileRef to open for access fileName with write permission
-						set eof fileRef to 0
-						write theArt to fileRef starting at 0
-						close access fileRef
-					on error
-						do shell script "rm -f /tmp/sketchybar_cover.jpg"
-					end try
-					return trackArtist & " - " & trackName
-				end tell
+				try
+					tell application "Music"
+						set trackArtist to artist of current track
+						set trackName to name of current track
+						try
+							set theArt to raw data of artwork 1 of current track
+							set fileName to "]] .. artPath .. [["
+							set fileRef to open for access fileName with write permission
+							set eof fileRef to 0
+							write theArt to fileRef starting at 0
+							close access fileRef
+						on error
+							do shell script "rm -f ]] .. artPath .. [["
+						end try
+						return trackArtist & " - " & trackName
+					end tell
+				on error
+					do shell script "rm -f ]] .. artPath .. [["
+					return "]] .. noTrackMarker .. [["
+				end try
 			]]
 		else
 			script = [[
-				do shell script "rm -f /tmp/sketchybar_cover.jpg"
-				tell application "Spotify" to get artist of current track & " - " & name of current track
+				try
+					do shell script "rm -f ]] .. artPath .. [["
+					tell application "Spotify" to get artist of current track & " - " & name of current track
+				on error
+					do shell script "rm -f ]] .. artPath .. [["
+					return "]] .. noTrackMarker .. [["
+				end try
 			]]
 		end
 
@@ -85,7 +97,13 @@ return function(ctx)
 			end
 
 			local display_text = ctx.trim(result)
-			local has_art = ctx.fileExists("/tmp/sketchybar_cover.jpg")
+			if display_text == noTrackMarker then
+				lastDisplayText = nil
+				lastHasArt = nil
+				return
+			end
+
+			local has_art = ctx.fileExists(artPath)
 			if display_text == lastDisplayText and has_art == lastHasArt then
 				return
 			end
@@ -101,7 +119,7 @@ return function(ctx)
 				artItem:set({
 					drawing = true,
 					icon = { drawing = false },
-					background = { image = { string = "/tmp/sketchybar_cover.jpg" } },
+					background = { image = { string = artPath } },
 				})
 			else
 				artItem:set({
