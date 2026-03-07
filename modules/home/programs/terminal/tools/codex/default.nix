@@ -113,6 +113,7 @@ in
           # Token-enabled profile for package updates and other API-heavy workflows.
           unsafe = {
             approval_policy = "on-request";
+            sandbox_mode = "danger-full-access";
             shell_environment_policy.ignore_default_excludes = true;
           };
         };
