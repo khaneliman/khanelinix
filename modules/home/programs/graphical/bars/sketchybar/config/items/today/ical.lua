@@ -3,6 +3,20 @@
 local settings = require("settings")
 local colors = require("colors")
 local icons = require("icons")
+local popup_items = {}
+local last_events = nil
+
+local function clear_popup_items()
+	for _, item_name in ipairs(popup_items) do
+		Sbar.remove(item_name)
+	end
+	popup_items = {}
+end
+
+local function add_popup_item(item_name, properties)
+	table.insert(popup_items, item_name)
+	return Sbar.add("item", item_name, properties)
+end
 
 local ical = Sbar.add("item", "ical", {
 	icon = {
@@ -27,47 +41,27 @@ local ical = Sbar.add("item", "ical", {
 	update_freq = 900,
 })
 
-ical.details = Sbar.add("item", "ical.details", {
-	icon = {
-		drawing = false,
-		background = {
-			corner_radius = 12,
-		},
-		padding_left = 7,
-		padding_right = 7,
-		font = {
-			family = settings.font,
-			style = "Bold",
-			size = 14.0,
-		},
-	},
-	position = "popup." .. ical.name,
-	click_script = "sketchybar --set $NAME popup.drawing=off",
-})
-
 -- Update function
 ical:subscribe({ "routine", "forced" }, function()
-	-- Constants
-	local SEP = "%" -- Separator for icalBuddy output
+	local SEP = "%"
 
-	-- Reset popup state
-	ical:set({ popup = { drawing = false } })
-
-	-- Fetch events from calendar
 	Sbar.exec("icalBuddy -nc -nrd -eed -iep datetime,title -b '' -ps '|" .. SEP .. "|' eventsToday", function(events)
-		-- Clear existing events
-		local existingEvents = ical:query()
-		if existingEvents.popup and next(existingEvents.popup.items) ~= nil then
-			for _, item in pairs(existingEvents.popup.items) do
-				Sbar.remove(item)
-			end
+		if events == last_events then
+			return
 		end
+		last_events = events
+		clear_popup_items()
 
-		-- Parse and organize events
 		local has_all_day_header = false
 		local has_separator = false
 		local lines = STR_SPLIT(events, "\n")
 		local max_length = 0
+		local item_index = 0
+
+		local function next_item_name(prefix)
+			item_index = item_index + 1
+			return "ical.popup." .. prefix .. "." .. tostring(item_index)
+		end
 
 		for _, line in ipairs(lines) do
 			if #line > max_length then
@@ -82,7 +76,7 @@ ical:subscribe({ "routine", "forced" }, function()
 				if has_all_day_header and not has_separator then
 					local dashes = string.rep("─", math.floor(max_length * 0.65))
 
-					Sbar.add("item", "ical_event_separator", {
+					add_popup_item(next_item_name("separator"), {
 						icon = {
 							string = "",
 							width = 0,
@@ -101,7 +95,7 @@ ical:subscribe({ "routine", "forced" }, function()
 					})
 					has_separator = true
 				end
-				Sbar.add("item", "ical_event_" .. title, {
+				add_popup_item(next_item_name("timed"), {
 					icon = {
 						string = time,
 						color = colors.yellow,
@@ -118,7 +112,7 @@ ical:subscribe({ "routine", "forced" }, function()
 				})
 			else
 				if not has_all_day_header then
-					Sbar.add("item", "ical_event_all_day_header", {
+					add_popup_item(next_item_name("all_day_header"), {
 						icon = {
 							string = "All Day",
 							color = colors.yellow,
@@ -136,7 +130,7 @@ ical:subscribe({ "routine", "forced" }, function()
 					has_all_day_header = true
 				end
 
-				Sbar.add("item", "ical_event_" .. line, {
+				add_popup_item(next_item_name("all_day"), {
 					icon = {
 						string = "•",
 						color = colors.white,

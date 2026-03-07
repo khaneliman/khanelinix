@@ -5,6 +5,13 @@ local settings = require("settings")
 local colors = require("colors")
 
 local popup_off = "sketchybar --set github popup.drawing=off"
+local popup_items = {}
+local last_notification_signature = nil
+
+local function shell_quote(value)
+	local text = tostring(value or "")
+	return "'" .. text:gsub("'", [['"'"']]) .. "'"
+end
 
 local function sanitize_item_key(value)
 	if value == nil then
@@ -91,6 +98,71 @@ local function collect_sorted_notifications(raw_notifications)
 	return sorted_notifications
 end
 
+local function clear_popup_items()
+	for _, item_name in ipairs(popup_items) do
+		Sbar.remove(item_name)
+	end
+	popup_items = {}
+end
+
+local function add_popup_item(item_name, properties)
+	table.insert(popup_items, item_name)
+	return Sbar.add("item", item_name, properties)
+end
+
+local function notification_signature(sorted_notifications)
+	local parts = { tostring(#sorted_notifications) }
+	for index, notification in ipairs(sorted_notifications) do
+		if index > 16 then
+			break
+		end
+		table.insert(parts, tostring(notification.id or ""))
+		table.insert(parts, tostring(notification.updated_at or ""))
+	end
+	return table.concat(parts, "|")
+end
+
+local function notification_click_url(notification)
+	local subject = notification and notification.subject or {}
+	local repository = notification and notification.repository or {}
+	local repo_url = repository.html_url
+	if IS_EMPTY(repo_url) then
+		local repo_name = notification_repo_name(notification)
+		if repo_name ~= "Unknown" then
+			repo_url = "https://github.com/" .. repo_name
+		end
+	end
+
+	local subject_url = tostring(subject.url or ""):gsub("^'", ""):gsub("'$", "")
+	if IS_EMPTY(subject_url) == false and IS_EMPTY(repo_url) == false then
+		local issue_number = subject_url:match("/issues/(%d+)$")
+		if issue_number ~= nil then
+			return repo_url .. "/issues/" .. issue_number
+		end
+
+		local pull_number = subject_url:match("/pulls/(%d+)$")
+		if pull_number ~= nil then
+			return repo_url .. "/pull/" .. pull_number
+		end
+
+		local discussion_number = subject_url:match("/discussions/(%d+)$")
+		if discussion_number ~= nil then
+			return repo_url .. "/discussions/" .. discussion_number
+		end
+
+		local commit_sha = subject_url:match("/commits/([%w]+)$")
+		if commit_sha ~= nil then
+			return repo_url .. "/commit/" .. commit_sha
+		end
+	end
+
+	if IS_EMPTY(repo_url) == false then
+		return repo_url
+	end
+
+	return "https://github.com/notifications"
+end
+
 local github = Sbar.add("item", "github", {
 	position = "right",
 	icon = {
@@ -112,22 +184,6 @@ local github = Sbar.add("item", "github", {
 	update_freq = 180,
 	popup = {
 		align = "right",
-	},
-})
-
-github.details = Sbar.add("item", "github.details", {
-	position = "popup." .. github.name,
-	click_script = popup_off,
-	background = {
-		corner_radius = 12,
-		padding_left = 7,
-		padding_right = 7,
-	},
-	icon = {
-		background = {
-			height = 2,
-			y_offset = -12,
-		},
 	},
 })
 
@@ -163,56 +219,29 @@ github:subscribe({
 }, function(_)
 	-- fetch new information
 	Sbar.exec("gh api notifications", function(notifications)
-		-- Clear existing packages
-		local existingNotifications = github:query()
-		if existingNotifications.popup and next(existingNotifications.popup.items) ~= nil then
-			for _, item in pairs(existingNotifications.popup.items) do
-				Sbar.remove(item)
-			end
-		end
-
-		-- PRINT_TABLE(notifications)
+		clear_popup_items()
 
 		local sorted_notifications = collect_sorted_notifications(notifications)
 		local count = #sorted_notifications
 		local current_repo_group = nil
+		local current_signature = notification_signature(sorted_notifications)
 
-		-- Trigger Dynamic Island if there's a new notification
-		if count > 0 then
+		if count > 0 and current_signature ~= last_notification_signature then
 			local first = sorted_notifications[1]
 			local repo = notification_repo_name(first)
 			local title = first.subject and first.subject.title or "New Notification"
 			Sbar.trigger("github_notification", { COUNT = count, TITLE = title, REPO = repo })
 		end
+		last_notification_signature = current_signature
 
 		for index, notification in ipairs(sorted_notifications) do
-			-- PRINT_TABLE(notification)
 			local subject = notification.subject or {}
 			local id = notification.id or index
-			local url = subject.latest_comment_url or subject.url
+			local url = notification_click_url(notification)
 			local repo_label = notification_repo_name(notification)
 			local title = subject.title
 			local type = subject.type
 
-			-- set click_script for each notification
-			if url == nil then
-				url = "https://www.github.com/notifications"
-			else
-				local tempUrl = url:gsub("^'", ""):gsub("'$", "")
-				Sbar.exec('gh api "' .. tempUrl .. '" | jq .html_url', function(html_url)
-					local cmd = "sketchybar -m --set github.notification"
-					if IS_EMPTY(title) == false then
-						cmd = cmd .. ".message."
-						cmd = cmd .. tostring(id) .. ' click_script="open ' .. html_url .. '"'
-						Sbar.exec(cmd, function()
-							Sbar.exec(popup_off)
-						end)
-					end
-				end)
-			end
-
-			-- get icon and color for each notification
-			-- depending on the type
 			local color, icon
 			if type == "Issue" then
 				color = colors.green
@@ -240,7 +269,7 @@ github:subscribe({
 			if current_repo_group ~= repo_group then
 				current_repo_group = repo_group
 				local repo_key = sanitize_item_key(repo_label)
-				Sbar.add("item", "github.notification.repo_header." .. repo_key .. "." .. tostring(index), {
+				add_popup_item("github.notification.repo_header." .. repo_key .. "." .. tostring(index), {
 					label = {
 						string = repo_label,
 						color = colors.blue,
@@ -268,8 +297,7 @@ github:subscribe({
 			end
 
 			if IS_EMPTY(title) == false then
-				github.notification = {}
-				github.notification.message = Sbar.add("item", "github.notification.message." .. tostring(id), {
+				add_popup_item("github.notification.message." .. tostring(id), {
 					label = {
 						string = truncate_label(title, 60),
 						padding_right = 10,
@@ -285,8 +313,7 @@ github:subscribe({
 						padding_left = settings.paddings + 12,
 					},
 					drawing = true,
-					-- TODO: trigger update after clicking since notification is cleared on github
-					click_script = "open " .. url .. "; " .. popup_off,
+					click_script = "open " .. shell_quote(url) .. "; " .. popup_off,
 					position = "popup." .. github.name,
 				})
 			end
