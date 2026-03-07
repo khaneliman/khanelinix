@@ -28,7 +28,6 @@ in
         # FIXME: broken nixpkgs
         # jrnl
         np
-        obsidian
         slack
       ]
       ++ lib.optionals cfg.pimEnable [
