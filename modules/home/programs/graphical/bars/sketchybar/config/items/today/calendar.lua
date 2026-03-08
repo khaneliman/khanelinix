@@ -38,7 +38,7 @@ today.clock = Sbar.add("item", "clock", {
 		padding_right = -20,
 	},
 	position = "right",
-	update_freq = 1,
+	update_freq = 15,
 	y_offset = -8,
 })
 

@@ -192,16 +192,25 @@ return function(ctx)
 		if app == "Music" then
 			script = [[
 				try
+					if application "Music" is not running then
+						do shell script "rm -f ]] .. artPath .. [["
+						return "stopped|||__DYNAMIC_ISLAND_NO_TRACK__"
+					end if
 					tell application "Music"
 						set playbackState to player state as string
 						if playbackState is "stopped" or playbackState is "paused" then
 							do shell script "rm -f ]] .. artPath .. [["
 							return playbackState & "]] .. resultSeparator .. [[" & "]] .. noTrackMarker .. [["
 						end if
-						set trackArtist to artist of current track
-						set trackName to name of current track
+						set currentTrack to current track
+						if currentTrack is missing value then
+							do shell script "rm -f ]] .. artPath .. [["
+							return playbackState & "]] .. resultSeparator .. [[" & "]] .. noTrackMarker .. [["
+						end if
+						set trackArtist to artist of currentTrack
+						set trackName to name of currentTrack
 						try
-							set theArt to raw data of artwork 1 of current track
+							set theArt to raw data of artwork 1 of currentTrack
 							set fileName to "]] .. artPath .. [["
 							set fileRef to open for access fileName with write permission
 							set eof fileRef to 0
@@ -220,14 +229,23 @@ return function(ctx)
 		else
 			script = [[
 				try
+					if application "Spotify" is not running then
+						do shell script "rm -f ]] .. artPath .. [["
+						return "stopped|||__DYNAMIC_ISLAND_NO_TRACK__"
+					end if
 					tell application "Spotify"
 						set playbackState to player state as string
 						if playbackState is "stopped" or playbackState is "paused" then
 							do shell script "rm -f ]] .. artPath .. [["
 							return playbackState & "]] .. resultSeparator .. [[" & "]] .. noTrackMarker .. [["
 						end if
+						set currentTrack to current track
+						if currentTrack is missing value then
+							do shell script "rm -f ]] .. artPath .. [["
+							return playbackState & "]] .. resultSeparator .. [[" & "]] .. noTrackMarker .. [["
+						end if
 						do shell script "rm -f ]] .. artPath .. [["
-						return playbackState & "]] .. resultSeparator .. [[" & artist of current track & " - " & name of current track
+						return playbackState & "]] .. resultSeparator .. [[" & artist of currentTrack & " - " & name of currentTrack
 					end tell
 				on error
 					do shell script "rm -f ]] .. artPath .. [["

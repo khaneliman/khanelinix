@@ -23,7 +23,7 @@ local memory = Sbar.add("item", "memory", {
 			size = 15,
 		},
 	},
-	update_freq = 15,
+	update_freq = 60,
 	position = "right",
 })
 

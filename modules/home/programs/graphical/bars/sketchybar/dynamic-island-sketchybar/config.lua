@@ -79,11 +79,16 @@ return {
 			maxExpandWidth = 200,
 			expandHeight = 85,
 			cornerRadius = 15,
+			pollInterval = 20,
 		},
 		clipboard = {
 			maxExpandWidth = 180,
 			expandHeight = 85,
 			cornerRadius = 15,
+			pollInterval = 15,
+		},
+		privacy = {
+			pollInterval = 30,
 		},
 		github = {
 			maxExpandWidth = 220,
