@@ -1,5 +1,6 @@
 return function(ctx)
 	local token = 0
+	local artworkRetryToken = 0
 	local lastDisplayText = nil
 	local lastHasArt = nil
 	local lastPlaybackState = nil
@@ -16,6 +17,8 @@ return function(ctx)
 	local artSlotWidth = 118
 	local textWidth = math.max(120, maxExpandWidth * 2 - artSlotWidth - 28)
 	local contentYOffset = -12
+	local maxArtworkRetryAttempts = 4
+	local artworkRetryDelaySeconds = 0.6
 
 	-- Art item on the left
 	local artItem = ctx.Sbar.add("item", "island.music_art", {
@@ -72,7 +75,13 @@ return function(ctx)
 		})
 		artItem:set({
 			drawing = false,
-			icon = { drawing = false },
+			icon = { drawing = false, string = "" },
+			background = {
+				image = {
+					drawing = false,
+					string = "",
+				},
+			},
 		})
 
 		ctx.Sbar.animate("tanh", 10, function()
@@ -91,7 +100,13 @@ return function(ctx)
 		})
 		artItem:set({
 			drawing = false,
-			icon = { drawing = false },
+			icon = { drawing = false, string = "" },
+			background = {
+				image = {
+					drawing = false,
+					string = "",
+				},
+			},
 		})
 	end
 
@@ -99,7 +114,6 @@ return function(ctx)
 		if hasArt then
 			artItem:set({
 				drawing = true,
-				icon = { drawing = false },
 				background = {
 					image = {
 						drawing = true,
@@ -111,13 +125,14 @@ return function(ctx)
 						padding_right = 6,
 					},
 				},
+				icon = { drawing = false, string = "" },
 			})
 		else
 			artItem:set({
 				drawing = true,
 				background = {
 					image = {
-						drawing = true,
+						drawing = false,
 						string = "",
 						scale = imageScale,
 						y_offset = imageYOffset,
@@ -183,7 +198,12 @@ return function(ctx)
 		return string.lower(playbackState), displayText
 	end
 
-	local function updateMusic(env)
+	local function cancelArtworkRetry()
+		artworkRetryToken = artworkRetryToken + 1
+	end
+
+	local function updateMusic(env, attempt, expectedDisplayText)
+		attempt = attempt or 0
 		local app = "Music"
 		if env.SENDER == "spotify_update" then
 			app = "Spotify"
@@ -211,13 +231,23 @@ return function(ctx)
 						set trackArtist to artist of currentTrack
 						set trackName to name of currentTrack
 						try
-							set theArt to raw data of artwork 1 of currentTrack
-							set fileName to "]] .. artPath .. [["
-							set fileRef to open for access fileName with write permission
-							set eof fileRef to 0
-							write theArt to fileRef starting at 0
-							close access fileRef
+							set artFile to POSIX file "]] .. artPath .. [["
+							try
+								close access artFile
+							end try
+							if (count of artworks of currentTrack) is 0 then
+								do shell script "rm -f ]] .. artPath .. [["
+							else
+								set theArt to raw data of artwork 1 of currentTrack
+								set fileRef to open for access artFile with write permission
+								set eof of fileRef to 0
+								write theArt to fileRef starting at eof
+								close access fileRef
+							end if
 						on error
+							try
+								close access (POSIX file "]] .. artPath .. [[")
+							end try
 							do shell script "rm -f ]] .. artPath .. [["
 						end try
 						return playbackState & "]] .. resultSeparator .. [[" & trackArtist & " - " & trackName
@@ -271,8 +301,12 @@ return function(ctx)
 			if displayText == nil then
 				return
 			end
+			if expectedDisplayText ~= nil and displayText ~= expectedDisplayText then
+				return
+			end
 
 			if displayText == noTrackMarker or playbackState ~= "playing" then
+				cancelArtworkRetry()
 				lastDisplayText = nil
 				lastHasArt = nil
 				lastPlaybackState = playbackState
@@ -283,6 +317,34 @@ return function(ctx)
 			end
 
 			local hasArt = ctx.fileExists(artPath)
+			if app == "Music" and not hasArt and attempt < maxArtworkRetryAttempts then
+				local retryToken = artworkRetryToken + 1
+				artworkRetryToken = retryToken
+				ctx.logDebug(
+					"[music][lua] artwork missing; retry "
+						.. tostring(attempt + 1)
+						.. "/"
+						.. tostring(maxArtworkRetryAttempts)
+						.. " for "
+						.. displayText
+				)
+				ctx.delay(artworkRetryDelaySeconds, function()
+					if retryToken ~= artworkRetryToken then
+						return
+					end
+					if lastPlaybackState ~= "playing" then
+						return
+					end
+					if lastDisplayText ~= nil and lastDisplayText ~= displayText then
+						return
+					end
+
+					updateMusic({ SENDER = "apple_music_update" }, attempt + 1, displayText)
+				end)
+			else
+				cancelArtworkRetry()
+			end
+
 			if displayText == lastDisplayText and hasArt == lastHasArt and playbackState == lastPlaybackState then
 				return
 			end
@@ -292,7 +354,14 @@ return function(ctx)
 			lastPlaybackState = playbackState
 
 			syncPersistentMusic()
-			ctx.logDebug("[music][lua] track updated state=" .. tostring(playbackState) .. " text=" .. displayText)
+			ctx.logInfo(
+				"[music][lua] track updated state="
+					.. tostring(playbackState)
+					.. " hasArt="
+					.. tostring(hasArt)
+					.. " text="
+					.. displayText
+			)
 			expandMusic(displayText, hasArt)
 		end)
 	end
