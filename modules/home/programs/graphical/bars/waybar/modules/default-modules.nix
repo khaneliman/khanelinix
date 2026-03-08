@@ -292,7 +292,7 @@ in
   wireplumber = {
     format = "{volume}% {icon}";
     format-muted = "";
-    on-click = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe pkgs.helvum}";
+    on-click = "${getExe' pkgs.coreutils "sleep"} 0.1 && ${getExe pkgs.crosspipe}";
     format-icons = [
       ""
       ""

@@ -27,9 +27,9 @@ in
     environment.systemPackages =
       with pkgs;
       [
+        crosspipe
         pulsemixer
         pavucontrol
-        helvum
       ]
       ++ cfg.extra-packages;
 

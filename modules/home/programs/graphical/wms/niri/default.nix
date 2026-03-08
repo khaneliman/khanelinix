@@ -42,7 +42,7 @@ in
       {
         home.packages = with pkgs; [
           grim
-          light
+          brightnessctl
           playerctl
           slurp
           swaybg
