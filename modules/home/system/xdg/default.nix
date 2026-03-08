@@ -17,8 +17,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = [ pkgs.gcr ];
-
     xdg = {
       enable = true;
       cacheHome = config.home.homeDirectory + "/.local/cache";
@@ -260,7 +258,6 @@ in
           [
             xdg-desktop-portal-gtk
             xdg-desktop-portal-gnome
-            gnome-keyring
           ]
           ++ lib.optional config.wayland.windowManager.hyprland.enable xdg-desktop-portal-hyprland
           ++ lib.optional config.wayland.windowManager.sway.enable xdg-desktop-portal-wlr;
