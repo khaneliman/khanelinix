@@ -85,8 +85,9 @@ in
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux (
         [
           appimage-run
-          # FIXME: remove xdotool hard dependency
+          font-manager
           fontpreview
+          smile
         ]
         ++ lib.optionals cfg.remoteDesktopEnable [
           rustdesk-flutter

@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
 
   ...
 }:
@@ -14,14 +13,6 @@ in
   imports = [ (lib.getFile "modules/common/system/fonts/default.nix") ];
 
   config = mkIf cfg.enable {
-    environment.systemPackages =
-      with pkgs;
-      (lib.optionals (!config.khanelinix.archetypes.wsl.enable or false) [
-        font-manager
-        fontpreview
-        smile
-      ]);
-
     fonts = {
       packages = cfg.fonts;
       enableDefaultPackages = true;
