@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  osConfig ? { },
 
   pkgs,
   ...
@@ -59,7 +60,7 @@ in
     # using nixos module
     services.network-manager-applet.enable = mkDefault true;
     services = {
-      blueman-applet.enable = mkDefault true;
+      blueman-applet.enable = mkDefault (!(osConfig.services.blueman.enable or false));
     };
   };
 }
