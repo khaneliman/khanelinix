@@ -162,6 +162,11 @@ in
 
     services.hyprpolkitagent = enabled;
 
+    systemd.user.services.hyprpolkitagent.Unit = {
+      After = lib.mkAfter [ "xdg-desktop-portal.service" ];
+      Wants = [ "xdg-desktop-portal.service" ];
+    };
+
     wayland.windowManager.hyprland = {
       enable = true;
 

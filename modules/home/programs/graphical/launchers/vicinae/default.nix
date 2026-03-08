@@ -84,5 +84,12 @@ in
         "$schema" = "https://vicinae.com/schemas/config.json";
       };
     };
+
+    systemd.user.services.vicinae = lib.mkIf config.programs.vicinae.systemd.enable {
+      Unit = {
+        After = lib.mkAfter [ "xdg-desktop-portal.service" ];
+        Wants = [ "xdg-desktop-portal.service" ];
+      };
+    };
   };
 }

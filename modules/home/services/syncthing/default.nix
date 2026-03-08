@@ -23,5 +23,12 @@ in
 
       tray.enable = pkgs.stdenv.hostPlatform.isLinux;
     };
+
+    systemd.user.services.syncthingtray = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      Unit = {
+        After = lib.mkAfter [ "xdg-desktop-portal.service" ];
+        Wants = [ "xdg-desktop-portal.service" ];
+      };
+    };
   };
 }
