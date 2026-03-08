@@ -77,8 +77,6 @@ let
 
       condensedModules = {
         modules-right = [
-          "group/tray-drawer"
-          "group/stats-drawer"
           "group/control-center"
         ]
         ++ optionals config.khanelinix.programs.graphical.wms.hyprland.enable [ "hyprland/submap" ]
