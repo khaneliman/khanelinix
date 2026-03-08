@@ -175,6 +175,7 @@ in
 
   services = {
     displayManager.defaultSession = "hyprland-uwsm";
+    irqbalance.enable = mkForce false;
   };
 
   # Keep EFI usage predictable when specialisations multiply boot artifacts.
