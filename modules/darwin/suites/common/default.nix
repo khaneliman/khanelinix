@@ -75,9 +75,20 @@ in
       };
     };
 
-    system.activationScripts.postActivation.text = lib.mkIf pkgs.stdenv.hostPlatform.isAarch64 /* Bash */ ''
-      echo "Installing Rosetta..."
-      softwareupdate --install-rosetta --agree-to-license
-    '';
+    system.activationScripts.postActivation.text = lib.mkMerge [
+      (lib.mkIf pkgs.stdenv.hostPlatform.isAarch64 /* Bash */ ''
+        if ! /usr/sbin/pkgutil --pkgs | /usr/bin/grep -q "com.apple.pkg.RosettaUpdateAuto"; then
+          echo >&2 "Installing Rosetta..."
+          softwareupdate --install-rosetta --agree-to-license
+        fi
+      '')
+      /* Bash */ ''
+        echo >&2 "Disabling Spotlight indexing for the Nix store..."
+        sudo touch /nix/store/.metadata_never_index
+
+        echo >&2 "Excluding the Nix store from Time Machine backups..."
+        sudo tmutil addexclusion -p /nix/store >/dev/null || true
+      ''
+    ];
   };
 }
