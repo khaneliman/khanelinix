@@ -22,7 +22,6 @@ in
   config = {
     environment.pathsToLink = lib.mkAfter [
       "/share/applications"
-      "/share/xdg-desktop-portal"
     ];
 
     khanelinix.home.extraOptions = {

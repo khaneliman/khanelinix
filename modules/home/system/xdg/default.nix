@@ -17,21 +17,100 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.sessionVariables = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      NIXOS_XDG_OPEN_USE_PORTAL = "1";
+    };
+
     xdg = {
       enable = true;
       cacheHome = config.home.homeDirectory + "/.local/cache";
 
-      configFile."xdg-desktop-portal-wlr/config" =
-        lib.mkIf config.khanelinix.programs.graphical.wms.sway.enable
-          {
-            text = /* TOML */ ''
-              [screencast]
-              output_name=
-              max_fps=30
-              chooser_cmd=${lib.getExe pkgs.slurp} -f %o -or
-              chooser_type=simple
-            '';
+      configFile =
+        let
+          mkPortalPreferences =
+            conf:
+            lib.mapAttrs (_: value: if lib.isList value then lib.concatStringsSep ";" value else value) conf;
+
+          portalConfigs = {
+            hyprland = lib.optionalAttrs config.khanelinix.programs.graphical.wms.hyprland.enable {
+              default = [
+                "hyprland"
+                "gtk"
+                "gnome"
+              ];
+              "org.freedesktop.impl.portal.Screencast" = "hyprland";
+              "org.freedesktop.impl.portal.Screenshot" = "hyprland";
+            };
+
+            sway = lib.optionalAttrs config.khanelinix.programs.graphical.wms.sway.enable {
+              default = [
+                "wlr"
+                "gtk"
+                "gnome"
+              ];
+              "org.freedesktop.impl.portal.Screencast" = "wlr";
+              "org.freedesktop.impl.portal.Screenshot" = "wlr";
+            };
+
+            niri = lib.optionalAttrs config.khanelinix.programs.graphical.wms.niri.enable {
+              default = [
+                "gnome"
+                "gtk"
+              ];
+              "org.freedesktop.impl.portal.Screencast" = "gnome";
+              "org.freedesktop.impl.portal.Screenshot" = "gnome";
+            };
+
+            common = {
+              default = [
+                "gtk"
+                "gnome"
+              ];
+
+              # GTK
+              "org.freedesktop.impl.portal.Access" = "gtk";
+              "org.freedesktop.impl.portal.Account" = "gtk";
+              "org.freedesktop.impl.portal.AppChooser" = "gtk";
+              "org.freedesktop.impl.portal.Device" = "gtk";
+              "org.freedesktop.impl.portal.DynamicLauncher" = "gtk";
+              "org.freedesktop.impl.portal.Email" = "gtk";
+              "org.freedesktop.impl.portal.FileChooser" = "gtk";
+              "org.freedesktop.impl.portal.Lockdown" = "gtk";
+              "org.freedesktop.impl.portal.Notification" = "gtk";
+              "org.freedesktop.impl.portal.Print" = "gtk";
+              "org.freedesktop.impl.portal.Screencast" = "gtk";
+              "org.freedesktop.impl.portal.Screenshot" = "gtk";
+
+              # GNOME
+              "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
+              "org.freedesktop.impl.portal.Background" = "gnome";
+              "org.freedesktop.impl.portal.Clipboard" = "gnome";
+              "org.freedesktop.impl.portal.InputCapture" = "gnome";
+              "org.freedesktop.impl.portal.RemoteDesktop" = "gnome";
+            };
           };
+        in
+        lib.mkMerge [
+          (lib.mkIf config.khanelinix.programs.graphical.wms.sway.enable {
+            "xdg-desktop-portal-wlr/config" = {
+              text = /* TOML */ ''
+                [screencast]
+                output_name=
+                max_fps=30
+                chooser_cmd=${lib.getExe pkgs.slurp} -f %o -or
+                chooser_type=simple
+              '';
+            };
+          })
+          (lib.concatMapAttrs (
+            desktop: conf:
+            lib.optionalAttrs (conf != { }) {
+              "xdg-desktop-portal/${lib.optionalString (desktop != "common") "${desktop}-"}portals.conf".text =
+                lib.generators.toINI { }
+                  { preferred = mkPortalPreferences conf; };
+            }
+          ) portalConfigs)
+        ];
 
       mimeApps =
         let
@@ -187,80 +266,6 @@ in
           defaultApplications = associations;
           associations.added = associations;
         };
-
-      portal = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-        enable = true;
-        xdgOpenUsePortal = true;
-
-        config = {
-          hyprland = mkIf config.khanelinix.programs.graphical.wms.hyprland.enable {
-            default = [
-              "hyprland"
-              "gtk"
-              "gnome"
-            ];
-            "org.freedesktop.impl.portal.Screencast" = "hyprland";
-            "org.freedesktop.impl.portal.Screenshot" = "hyprland";
-          };
-
-          sway = mkIf config.khanelinix.programs.graphical.wms.sway.enable {
-            default = lib.mkDefault [
-              "wlr"
-              "gtk"
-              "gnome"
-            ];
-
-            "org.freedesktop.impl.portal.Screencast" = "wlr";
-            "org.freedesktop.impl.portal.Screenshot" = "wlr";
-          };
-
-          niri = mkIf config.khanelinix.programs.graphical.wms.niri.enable {
-            default = lib.mkDefault [
-              "gnome"
-              "gtk"
-            ];
-
-            "org.freedesktop.impl.portal.Screencast" = "gnome";
-            "org.freedesktop.impl.portal.Screenshot" = "gnome";
-          };
-
-          common = {
-            default = [
-              "gtk"
-              "gnome"
-            ];
-
-            # GTK
-            "org.freedesktop.impl.portal.Access" = "gtk";
-            "org.freedesktop.impl.portal.Account" = "gtk";
-            "org.freedesktop.impl.portal.AppChooser" = "gtk";
-            "org.freedesktop.impl.portal.Device" = "gtk";
-            "org.freedesktop.impl.portal.DynamicLauncher" = "gtk";
-            "org.freedesktop.impl.portal.Email" = "gtk";
-            "org.freedesktop.impl.portal.FileChooser" = "gtk";
-            "org.freedesktop.impl.portal.Lockdown" = "gtk";
-            "org.freedesktop.impl.portal.Notification" = "gtk";
-            "org.freedesktop.impl.portal.Print" = "gtk";
-            "org.freedesktop.impl.portal.Screencast" = "gtk";
-            "org.freedesktop.impl.portal.Screenshot" = "gtk";
-
-            # Gnome
-            "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
-            "org.freedesktop.impl.portal.Background" = "gnome";
-            "org.freedesktop.impl.portal.Clipboard" = "gnome";
-            "org.freedesktop.impl.portal.InputCapture" = "gnome";
-            "org.freedesktop.impl.portal.RemoteDesktop" = "gnome";
-          };
-        };
-
-        extraPortals =
-          with pkgs;
-          [
-            xdg-desktop-portal-gtk
-            xdg-desktop-portal-gnome
-          ]
-          ++ lib.optional config.wayland.windowManager.sway.enable xdg-desktop-portal-wlr;
-      };
 
       userDirs = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
         enable = true;
