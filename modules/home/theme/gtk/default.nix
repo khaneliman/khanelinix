@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  osConfig ? { },
   pkgs,
   # Prefer shared font namespace when HM evaluates standalone.
   # `osConfig` remains optional for compatibility.
@@ -82,13 +83,16 @@ in
     in
     mkIf (cfg.enable && pkgs.stdenv.hostPlatform.isLinux) {
       home = {
-        packages = with pkgs; [
-          # NOTE: required explicitly with noXlibs and home-manager
-          dconf
-          glib # gsettings
-          gtk3.out # for gtk-launch
-          libappindicator-gtk3
-        ];
+        packages =
+          (lib.optionals (!(osConfig.programs.dconf.enable or false)) [
+            # NOTE: required explicitly with noXlibs and standalone home-manager
+            pkgs.dconf
+          ])
+          ++ (with pkgs; [
+            glib # gsettings
+            gtk3.out # for gtk-launch
+            libappindicator-gtk3
+          ]);
 
         pointerCursor = mkDefault {
           name = mkDefault cfg.cursor.name;

@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  osConfig ? { },
 
   ...
 }:
@@ -14,7 +15,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    services.gnome-keyring = {
+    services.gnome-keyring = lib.mkIf (!(osConfig.services.gnome.gnome-keyring.enable or false)) {
       # Gnome-keyring documentation
       # See: https://wiki.gnome.org/Projects/GnomeKeyring
       enable = true;

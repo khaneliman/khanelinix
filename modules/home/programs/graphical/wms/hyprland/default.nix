@@ -11,6 +11,7 @@ let
   inherit (lib.khanelinix) enabled;
 
   cfg = config.khanelinix.programs.graphical.wms.hyprland;
+  useSystemHyprland = osConfig ? programs.hyprland.enable && osConfig.programs.hyprland.enable;
 
   historicalLogAliases = builtins.listToAttrs (
     builtins.genList (x: {
@@ -167,73 +168,74 @@ in
       Wants = [ "xdg-desktop-portal.service" ];
     };
 
-    wayland.windowManager.hyprland = {
-      enable = true;
+    wayland.windowManager.hyprland = lib.mkMerge [
+      {
+        enable = true;
 
-      extraConfig = ''
-        ${cfg.prependConfig}
+        extraConfig = ''
+          ${cfg.prependConfig}
 
-        ${cfg.appendConfig}
-      '';
+          ${cfg.appendConfig}
+        '';
 
-      package = lib.mkIf (osConfig ? programs.hyprland.package) osConfig.programs.hyprland.package;
-      portalPackage = lib.mkIf (
-        osConfig ? programs.hyprland.portalPackage
-      ) osConfig.programs.hyprland.portalPackage;
+        # ehhhhh
+        # plugins = with pkgs.hyprlandPlugins; [
+        # hyprbars
+        # hyprexpo
+        # ];
 
-      # ehhhhh
-      # plugins = with pkgs.hyprlandPlugins; [
-      # hyprbars
-      # hyprexpo
-      # ];
+        settings = lib.mkMerge [
+          cfg.settings
+          {
+            exec = [ /* Bash */ "notify-send --icon ${config.home.homeDirectory}/.face -u normal \"Hello $(whoami)\"" ];
 
-      settings = lib.mkMerge [
-        cfg.settings
-        {
-          exec = [ /* Bash */ "notify-send --icon ${config.home.homeDirectory}/.face -u normal \"Hello $(whoami)\"" ];
+            plugin = {
+              hyprbars =
+                lib.mkIf (lib.elem pkgs.hyprlandPlugins.hyprbars config.wayland.windowManager.hyprland.plugins)
+                  {
+                    bar_height = 20;
+                    bar_precedence_over_border = true;
 
-          plugin = {
-            hyprbars =
-              lib.mkIf (lib.elem pkgs.hyprlandPlugins.hyprbars config.wayland.windowManager.hyprland.plugins)
-                {
-                  bar_height = 20;
-                  bar_precedence_over_border = true;
+                    # order is right-to-left
+                    hyprbars-button = [
+                      # close
+                      "rgb(ED8796), 15, , hyprctl dispatch killactive"
+                      # maximize
+                      "rgb(C6A0F6), 15, , hyprctl dispatch fullscreen 1"
+                    ];
+                  };
 
-                  # order is right-to-left
-                  hyprbars-button = [
-                    # close
-                    "rgb(ED8796), 15, , hyprctl dispatch killactive"
-                    # maximize
-                    "rgb(C6A0F6), 15, , hyprctl dispatch fullscreen 1"
-                  ];
-                };
-
-            hyprexpo =
-              lib.mkIf (lib.elem pkgs.hyprlandPlugins.hyprexpo config.wayland.windowManager.hyprland.plugins)
-                {
-                  columns = 3;
-                  gap_size = 4;
-                  bg_col = "rgb(000000)";
-                };
-          };
-        }
-      ];
-
-      systemd = {
-        enable = !(osConfig.programs.uwsm.enable or false);
-        enableXdgAutostart = true;
-        extraCommands = [
-          "systemctl --user stop hyprland-session.target"
-          "systemctl --user reset-failed"
-          "systemctl --user start hyprland-session.target"
+              hyprexpo =
+                lib.mkIf (lib.elem pkgs.hyprlandPlugins.hyprexpo config.wayland.windowManager.hyprland.plugins)
+                  {
+                    columns = 3;
+                    gap_size = 4;
+                    bg_col = "rgb(000000)";
+                  };
+            };
+          }
         ];
 
-        variables = [
-          "--all"
-        ];
-      };
+        systemd = {
+          enable = !(osConfig.programs.uwsm.enable or false);
+          enableXdgAutostart = true;
+          extraCommands = [
+            "systemctl --user stop hyprland-session.target"
+            "systemctl --user reset-failed"
+            "systemctl --user start hyprland-session.target"
+          ];
 
-      xwayland.enable = true;
-    };
+          variables = [
+            "--all"
+          ];
+        };
+
+        xwayland.enable = true;
+      }
+      (lib.mkIf useSystemHyprland {
+        package = null;
+        portalPackage = null;
+      })
+    ];
   };
 }

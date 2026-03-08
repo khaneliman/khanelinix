@@ -1,11 +1,17 @@
 {
   config,
   lib,
+  osConfig ? { },
   pkgs,
   ...
 }:
 let
   cfg = config.khanelinix.programs.graphical.wms.hyprland;
+  portalPackage =
+    if config.wayland.windowManager.hyprland.portalPackage != null then
+      config.wayland.windowManager.hyprland.portalPackage
+    else
+      osConfig.programs.hyprland.portalPackage;
 
   mkPackagePermission =
     pkg: permission: action:
@@ -50,9 +56,7 @@ in
             pkgs.khanelinix.record_screen
           ] "screencopy" "allow"
           ++ [
-            (mkPackagePathPermission config.wayland.windowManager.hyprland.portalPackage
-              "libexec/.xdg-desktop-portal-hyprland-wrapped"
-              "screencopy"
+            (mkPackagePathPermission portalPackage "libexec/.xdg-desktop-portal-hyprland-wrapped" "screencopy"
               "allow"
             )
           ]

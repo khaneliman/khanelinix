@@ -7,6 +7,11 @@
 }:
 let
   inherit (lib) getExe';
+  hyprlandPackage =
+    if config.wayland.windowManager.hyprland.package != null then
+      config.wayland.windowManager.hyprland.package
+    else
+      osConfig.programs.hyprland.package;
 in
 {
   "custom/quit" = {
@@ -37,8 +42,8 @@ in
   "hyprland/workspaces" = {
     all-outputs = false;
     active-only = "false";
-    on-scroll-up = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch workspace e+1";
-    on-scroll-down = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} dispatch workspace e-1";
+    on-scroll-up = "${getExe' hyprlandPackage "hyprctl"} dispatch workspace e+1";
+    on-scroll-down = "${getExe' hyprlandPackage "hyprctl"} dispatch workspace e-1";
     format = "{icon} {windows}";
     format-icons = {
       "1" = "󰎤";
@@ -168,10 +173,10 @@ in
     );
     exec-on-event = true;
     exec-if = "pidof hyprsunset";
-    on-scroll-up = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} hyprsunset temperature +250";
-    on-scroll-down = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} hyprsunset temperature -250";
-    on-click = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} hyprsunset temperature 6500";
-    on-click-right = "${getExe' config.wayland.windowManager.hyprland.package "hyprctl"} hyprsunset temperature 4500";
+    on-scroll-up = "${getExe' hyprlandPackage "hyprctl"} hyprsunset temperature +250";
+    on-scroll-down = "${getExe' hyprlandPackage "hyprctl"} hyprsunset temperature -250";
+    on-click = "${getExe' hyprlandPackage "hyprctl"} hyprsunset temperature 6500";
+    on-click-right = "${getExe' hyprlandPackage "hyprctl"} hyprsunset temperature 4500";
     signal = 1;
     return-type = "json";
     format = "{}";
