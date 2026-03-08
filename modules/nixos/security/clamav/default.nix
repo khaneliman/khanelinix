@@ -1,11 +1,19 @@
 {
   config,
   lib,
+  pkgs,
 
   ...
 }:
 let
   cfg = config.khanelinix.security.clamav;
+  scanDirectories = [
+    "/home"
+    "/var/lib"
+    "/tmp"
+    "/var/log"
+    "/var/tmp"
+  ];
 in
 {
   options.khanelinix.security.clamav = {
@@ -14,28 +22,42 @@ in
 
   config = lib.mkIf cfg.enable {
     services.clamav = {
-      daemon = {
-        enable = true;
-      };
+      daemon.enable = false;
+      scanner.enable = false;
 
       fangfrisch = {
         enable = true;
       };
 
-      scanner = {
-        enable = true;
-        interval = "weekly";
-        scanDirectories = [
-          "/home"
-          "/tmp"
-          "/var/lib"
-          "/var/log"
-          "/var/tmp"
-        ];
-      };
-
       updater = {
         enable = true;
+      };
+    };
+
+    systemd.services.clamav-scan = {
+      description = "Scheduled ClamAV scan";
+      serviceConfig = {
+        Type = "oneshot";
+        Nice = 19;
+        IOSchedulingClass = "best-effort";
+        IOSchedulingPriority = 7;
+        SuccessExitStatus = [ 1 ];
+      };
+      script = ''
+        ${pkgs.clamav}/bin/clamscan \
+          --recursive \
+          --infected \
+          ${lib.concatStringsSep " " scanDirectories}
+      '';
+    };
+
+    systemd.timers.clamav-scan = {
+      wantedBy = [ "timers.target" ];
+      timerConfig = {
+        OnCalendar = "weekly";
+        Persistent = true;
+        RandomizedDelaySec = "1h";
+        Unit = "clamav-scan.service";
       };
     };
   };
