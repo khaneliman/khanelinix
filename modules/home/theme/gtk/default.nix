@@ -100,8 +100,13 @@ in
 
         sessionVariables = {
           GTK_USE_PORTAL = "${toString (boolToNum cfg.usePortal)}";
+          GTK_THEME = mkDefault cfg.theme.name;
           CURSOR_THEME = mkDefault cfg.cursor.name;
         };
+      };
+
+      systemd.user.sessionVariables = {
+        GTK_THEME = cfg.theme.name;
       };
 
       dconf = {
