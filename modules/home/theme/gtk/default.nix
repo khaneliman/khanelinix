@@ -55,7 +55,28 @@ in
   config =
     let
       themeDir = "${cfg.theme.package}/share/themes/${cfg.theme.name}";
-      gtk4Dir = "${themeDir}/gtk-4.0";
+      themeExport = pkgs.runCommand "gtk-theme-${cfg.theme.name}" { } /* Bash */ ''
+        cp -a ${themeDir} "$out"
+
+        # Tokyonight's GTK3 theme currently ships `border-spacing`, which GTK3
+        # warns about in several tray/util apps at startup. Strip the invalid
+        # declarations here instead of patching the package globally.
+        patchedInodes="|"
+        for css in "$out/gtk-3.0/gtk.css" "$out/gtk-3.0/gtk-dark.css"; do
+          if [ ! -f "$css" ]; then
+            continue
+          fi
+
+          inode=$(stat -c '%d:%i' "$css")
+          case "$patchedInodes" in
+            *"|$inode|"*) continue ;;
+          esac
+
+          patchedInodes="''${patchedInodes}''${inode}|"
+          substituteInPlace "$css" --replace-fail "  border-spacing: 6px;" ""
+        done
+      '';
+      gtk4Dir = "${themeExport}/gtk-4.0";
 
       # Some GTK themes only partially ship GTK4 assets (or omit gtk-dark.css).
       # Build-time checks keep evaluation pure and avoid HM activation failures.
@@ -194,9 +215,9 @@ in
       };
 
       # GTK3 theme discovery (some apps still consult ~/.themes).
-      home.file.".themes/${cfg.theme.name}".source = themeDir;
+      home.file.".themes/${cfg.theme.name}".source = themeExport;
       xdg = {
-        dataFile."themes/${cfg.theme.name}".source = themeDir;
+        dataFile."themes/${cfg.theme.name}".source = themeExport;
         # GTK4 CSS/assets live in ~/.config/gtk-4.0.
         configFile = {
           "gtk-4.0/assets".source = "${gtk4Export}/assets";
