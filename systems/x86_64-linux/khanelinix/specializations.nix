@@ -7,11 +7,20 @@
         # Use the regular kernel stack instead of zen for a conservative fallback.
         boot.kernelPackages = lib.mkForce pkgs.linuxPackages;
 
+        # Keep boot verbose so failures are visible instead of hidden behind splash/quiet.
+        khanelinix = {
+          system.boot.plymouth = lib.mkForce false;
+          system.boot.silentBoot = lib.mkForce false;
+          services.lact.enable = lib.mkForce false;
+        };
+
         # Disable userspace/kernel tuning knobs that can push unstable clocks.
-        hardware.amdgpu.overdrive.enable = lib.mkForce false;
-        khanelinix.services.lact.enable = lib.mkForce false;
+        hardware = {
+          amdgpu.overdrive.enable = lib.mkForce false;
+          cpu.amd.ryzen-smu.enable = lib.mkForce false;
+        };
+
         services.lact.enable = lib.mkForce false;
-        hardware.cpu.amd.ryzen-smu.enable = lib.mkForce false;
       };
     };
   };
