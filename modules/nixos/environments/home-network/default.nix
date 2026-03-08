@@ -29,11 +29,16 @@ in
             fsType = "nfs";
             options = [
               "noauto" # Don't mount at boot.
+              "nofail" # Don't leave the system degraded if the server/export is unavailable.
+              "_netdev" # Treat these as network mounts for ordering/shutdown.
               "x-systemd.automount" # Mount on first access.
-              "x-systemd.mount-timeout=10s" # Timeout for the mount operation.
+              "x-systemd.mount-timeout=5s" # Fail quickly when the server/export is unavailable.
               "x-systemd.idle-timeout=1min" # Unmount after 1 minute of inactivity.
               "x-systemd.requires=network-online.target" # Wait for an active connection.
+              "x-systemd.after=network-online.target" # Don't race network startup.
               "soft" # Prevent hangs if the server goes down.
+              "timeo=20" # Keep access failures responsive.
+              "retrans=1" # Don't spend long retrying missing exports.
             ];
           };
         })
