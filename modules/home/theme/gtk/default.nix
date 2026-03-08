@@ -104,8 +104,6 @@ in
         };
       };
 
-      dbus.packages = [ pkgs.dconf ];
-
       dconf = {
         enable = true;
 

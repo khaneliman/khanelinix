@@ -25,7 +25,7 @@ let
 
   githubHelper = pkgs.writeShellScriptBin "githubHelper" ''
     ${lib.optionalString (config.khanelinix.services.sops.enable or false) ''
-      ${getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
+      export GH_TOKEN="$(< ${config.sops.secrets."github/access-token".path})"
     ''}
 
     # Get notifications and format them for the tooltip
@@ -74,7 +74,7 @@ let
 
   githubMenuHelper = pkgs.writeShellScriptBin "waybar-github-menu" ''
     ${lib.optionalString (config.khanelinix.services.sops.enable or false) ''
-      ${getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
+      export GH_TOKEN="$(< ${config.sops.secrets."github/access-token".path})"
     ''}
 
     NOTIFICATIONS_JSON=$(${getExe pkgs.gh} api notifications 2>/dev/null)

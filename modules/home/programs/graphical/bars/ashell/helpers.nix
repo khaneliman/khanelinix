@@ -103,7 +103,7 @@ in
 
   githubHelper = pkgs.writeShellScriptBin "ashell-github-helper" ''
     ${lib.optionalString (config.khanelinix.services.sops.enable or false) ''
-      ${lib.getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
+      export GH_TOKEN="$(< ${config.sops.secrets."github/access-token".path})"
     ''}
 
     while true; do
@@ -119,7 +119,7 @@ in
 
   githubMenuHelper = pkgs.writeShellScriptBin "ashell-github-menu" ''
     ${lib.optionalString (config.khanelinix.services.sops.enable or false) ''
-      ${lib.getExe pkgs.gh} auth login --with-token < ${config.sops.secrets."github/access-token".path}
+      export GH_TOKEN="$(< ${config.sops.secrets."github/access-token".path})"
     ''}
 
     NOTIFICATIONS_JSON=$(${lib.getExe pkgs.gh} api notifications 2>/dev/null)
