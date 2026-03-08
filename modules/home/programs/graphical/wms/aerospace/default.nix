@@ -11,6 +11,7 @@ let
   sketchybar = lib.getExe (config.programs.sketchybar.finalPackage or pkgs.sketchybar);
   debouncedWindowChangeTrigger = pkgs.writeShellScript "aerospace-window-change-trigger" ''
     lockDir="''${TMPDIR:-/tmp}/aerospace-windows-change.lock"
+    signatureFile="''${TMPDIR:-/tmp}/aerospace-workspace-apps.signature"
 
     if ! mkdir "$lockDir" 2>/dev/null; then
       exit 0
@@ -19,6 +20,22 @@ let
     trap 'rmdir "$lockDir"' EXIT
 
     sleep 0.2
+
+    currentSignature="$(
+      ${lib.getExe pkgs.aerospace} list-windows --all --format '%{workspace}|%{app-name}' \
+        | awk -F'|' '
+            $1 != "" && $2 != "" && $2 != "None" { seen[$1 "|" $2] = 1 }
+            END { for (key in seen) print key }
+          ' \
+        | sort
+    )"
+    previousSignature="$(cat "$signatureFile" 2>/dev/null || true)"
+
+    if [ "$currentSignature" = "$previousSignature" ]; then
+      exit 0
+    fi
+
+    printf '%s' "$currentSignature" > "$signatureFile"
     ${sketchybar} --trigger aerospace_windows_change
   '';
 in
