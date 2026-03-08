@@ -40,6 +40,7 @@ return {
 			expandHeight = 56,
 			cornerRadius = 15,
 			iconSize = 0.4,
+			repeatCooldownSeconds = 2,
 		},
 		volume = {
 			maxExpandWidth = 130,

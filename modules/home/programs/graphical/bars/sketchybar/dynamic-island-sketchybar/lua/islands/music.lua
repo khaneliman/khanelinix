@@ -1,6 +1,5 @@
 return function(ctx)
 	local token = 0
-	local restoreToken = 0
 	local lastDisplayText = nil
 	local lastHasArt = nil
 	local lastPlaybackState = nil
@@ -148,22 +147,24 @@ return function(ctx)
 		end)
 	end
 
-	local function scheduleRestore(delaySeconds, reason)
-		restoreToken = restoreToken + 1
-		local current = restoreToken
+	local function restoreMusic()
+		if lastPlaybackState ~= "playing" or lastDisplayText == nil then
+			return
+		end
 
-		ctx.delay(delaySeconds, function()
-			if current ~= restoreToken then
-				return
-			end
+		expandMusic(lastDisplayText, lastHasArt == true)
+	end
 
-			if lastPlaybackState ~= "playing" or lastDisplayText == nil then
-				return
-			end
+	local function syncPersistentMusic()
+		if lastPlaybackState == "playing" and lastDisplayText ~= nil then
+			ctx.setPersistentIsland("music", {
+				hide = suspendMusic,
+				restore = restoreMusic,
+			})
+			return
+		end
 
-			ctx.logDebug("[music][lua] restoring after " .. tostring(reason))
-			expandMusic(lastDisplayText, lastHasArt == true)
-		end)
+		ctx.clearPersistentIsland("music")
 	end
 
 	local function parseMusicResult(result)
@@ -275,6 +276,7 @@ return function(ctx)
 				lastDisplayText = nil
 				lastHasArt = nil
 				lastPlaybackState = playbackState
+				syncPersistentMusic()
 				ctx.logDebug("[music][lua] collapsing state=" .. tostring(playbackState))
 				collapseMusic()
 				return
@@ -289,20 +291,13 @@ return function(ctx)
 			lastHasArt = hasArt
 			lastPlaybackState = playbackState
 
+			syncPersistentMusic()
 			ctx.logDebug("[music][lua] track updated state=" .. tostring(playbackState) .. " text=" .. displayText)
 			expandMusic(displayText, hasArt)
 		end)
 	end
 
-	listener:subscribe({ "apple_music_update", "spotify_update", "front_app_switched" }, function(env)
-		if env.SENDER == "front_app_switched" then
-			if lastPlaybackState == "playing" and lastDisplayText ~= nil then
-				suspendMusic()
-			end
-			scheduleRestore(1.05, env.SENDER)
-			return
-		end
-
+	listener:subscribe({ "apple_music_update", "spotify_update" }, function(env)
 		ctx.logDebug("[music][lua] notification received from " .. tostring(env.SENDER))
 		updateMusic(env)
 	end)
@@ -310,6 +305,6 @@ return function(ctx)
 	ctx.registry.musicTextItem = textItem
 	ctx.registry.musicArtItem = artItem
 	ctx.registry.musicListener = listener
-	ctx.subscribeItem("musicListener", { "apple_music_update", "spotify_update", "front_app_switched" })
+	ctx.subscribeItem("musicListener", { "apple_music_update", "spotify_update" })
 	ctx.logDebug("[music][lua] module loaded with darwin notifications & artwork")
 end

@@ -230,6 +230,63 @@ Sbar.add("item", "island", {
 logDebug("[init] island item created")
 
 local islandRegistry = {}
+local islandState = {
+	persistentOwner = nil,
+	persistentRestore = nil,
+	persistentHide = nil,
+}
+
+local function setPersistentIsland(owner, handlers)
+	if type(owner) ~= "string" or owner == "" then
+		return
+	end
+	if type(handlers) ~= "table" then
+		return
+	end
+	if type(handlers.restore) ~= "function" or type(handlers.hide) ~= "function" then
+		return
+	end
+
+	islandState.persistentOwner = owner
+	islandState.persistentRestore = handlers.restore
+	islandState.persistentHide = handlers.hide
+	logDebug("[init] persistent island owner=" .. owner)
+end
+
+local function clearPersistentIsland(owner)
+	if owner ~= nil and islandState.persistentOwner ~= owner then
+		return
+	end
+
+	islandState.persistentOwner = nil
+	islandState.persistentRestore = nil
+	islandState.persistentHide = nil
+	logDebug("[init] persistent island cleared")
+end
+
+local function hidePersistentIsland(excludedOwner)
+	if islandState.persistentOwner == nil or islandState.persistentOwner == excludedOwner then
+		return false
+	end
+	if type(islandState.persistentHide) ~= "function" then
+		return false
+	end
+
+	islandState.persistentHide()
+	return true
+end
+
+local function restorePersistentIsland(excludedOwner)
+	if islandState.persistentOwner == nil or islandState.persistentOwner == excludedOwner then
+		return false
+	end
+	if type(islandState.persistentRestore) ~= "function" then
+		return false
+	end
+
+	islandState.persistentRestore()
+	return true
+end
 
 local function loadIslandModule(moduleName)
 	local path = dynamicIslandDir .. "/lua/islands/" .. moduleName .. ".lua"
@@ -264,6 +321,10 @@ local baseCtx = {
 	delay = delay,
 	fileExists = fileExists,
 	subscribeItem = subscribeItem,
+	setPersistentIsland = setPersistentIsland,
+	clearPersistentIsland = clearPersistentIsland,
+	hidePersistentIsland = hidePersistentIsland,
+	restorePersistentIsland = restorePersistentIsland,
 	barName = barName,
 	fontFamily = fontFamily,
 	colorWhite = colorWhite,

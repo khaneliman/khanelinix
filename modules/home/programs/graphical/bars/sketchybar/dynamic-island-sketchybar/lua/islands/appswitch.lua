@@ -1,10 +1,13 @@
 return function(ctx)
 	local token = 0
+	local lastAppName = nil
+	local lastAppDeadline = 0
 
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands.appswitch.maxExpandWidth", "110"), 110)
 	local expandHeight = ctx.asNumber(ctx.get("islands.appswitch.expandHeight", "56"), 56)
 	local cornerRad = ctx.asNumber(ctx.get("islands.appswitch.cornerRadius", "15"), 15)
 	local maxExpandHeight = expandHeight + math.floor(ctx.squishAmount / 2)
+	local repeatCooldownSeconds = ctx.asNumber(ctx.get("islands.appswitch.repeatCooldownSeconds", "2"), 2)
 
 	local iconItem = ctx.Sbar.add("item", "island.appicon", {
 		position = "left",
@@ -42,6 +45,16 @@ return function(ctx)
 		if appName == "" then
 			return
 		end
+
+		local now = os.time()
+		if appName == lastAppName and now < lastAppDeadline then
+			ctx.logDebug("[appswitch][lua] suppress duplicate app switch for '" .. appName .. "'")
+			return
+		end
+
+		lastAppName = appName
+		lastAppDeadline = now + repeatCooldownSeconds
+		ctx.hidePersistentIsland("appswitch")
 
 		token = token + 1
 		local current = token
@@ -99,13 +112,15 @@ return function(ctx)
 
 				labelItem:set({ drawing = false })
 				iconItem:set({ drawing = false })
-				ctx.Sbar.animate("tanh", 10, function()
-					ctx.Sbar.bar({
-						height = ctx.defaultHeight,
-						corner_radius = ctx.cornerRadius,
-						margin = ctx.margin,
-					})
-				end)
+				if not ctx.restorePersistentIsland("appswitch") then
+					ctx.Sbar.animate("tanh", 10, function()
+						ctx.Sbar.bar({
+							height = ctx.defaultHeight,
+							corner_radius = ctx.cornerRadius,
+							margin = ctx.margin,
+						})
+					end)
+				end
 			end)
 		end)
 	end)
