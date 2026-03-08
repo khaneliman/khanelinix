@@ -102,6 +102,14 @@ in
     xdg.configFile = {
       "qt5ct/qt5ct.conf".text = lib.generators.toINI { } cfg.settings;
       "qt6ct/qt6ct.conf".text = lib.generators.toINI { } cfg.settings;
+      "Kvantum/kvantum.kvconfig".text = ''
+        [General]
+        theme=${cfg.theme.name}
+      '';
+      "Kvantum/${cfg.theme.name}" = {
+        source = "${cfg.theme.package}/share/Kvantum/${cfg.theme.name}";
+        recursive = true;
+      };
     };
 
     qt = {

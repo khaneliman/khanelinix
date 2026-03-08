@@ -11,8 +11,11 @@ in
   config = lib.mkIf cfg.enable {
     khanelinix.theme.qt = {
       theme = {
-        name = "Tokyonight-Dark";
-        package = pkgs.tokyonight-gtk-theme;
+        name = "catppuccin-macchiato-blue";
+        package = pkgs.catppuccin-kvantum.override {
+          accent = "blue";
+          variant = "macchiato";
+        };
       };
     };
   };
