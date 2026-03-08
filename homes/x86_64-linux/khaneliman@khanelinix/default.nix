@@ -6,7 +6,6 @@
   ...
 }:
 let
-  inherit (lib) getExe;
   inherit (lib.khanelinix) enabled;
   wallpaperCfg = config.khanelinix.theme.wallpaper;
   wallpaperPath = name: lib.khanelinix.theme.wallpaperPath { inherit config pkgs name; };
@@ -119,11 +118,6 @@ in
               ];
 
               exec-once = [
-                (lib.concatStringsSep " " [
-                  "${getExe pkgs.xrandr}"
-                  "--output DP-3 --mode 1920x1080 --pos 1420x0 --rotate normal"
-                  "--output DP-1 --primary --mode 5120x1440 --pos 0x1080 --rotate normal"
-                ])
                 "hyprctl setcursor ${config.khanelinix.theme.gtk.cursor.name} ${toString config.khanelinix.theme.gtk.cursor.size}"
               ];
 
