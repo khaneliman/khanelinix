@@ -174,7 +174,7 @@ in
       finder = {
         AppleShowAllExtensions = true;
         AppleShowAllFiles = true;
-        CreateDesktop = true;
+        CreateDesktop = false;
         FXDefaultSearchScope = "SCcf";
         FXEnableExtensionChangeWarning = false;
         # NOTE: Four-letter codes for the other view modes: `icnv`, `clmv`, `glyv`
