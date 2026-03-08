@@ -87,6 +87,24 @@ in
       ]
     );
 
+    systemd.user.services.birdtray = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      Unit = {
+        Description = "Birdtray email notifier";
+        After = [
+          "graphical-session.target"
+          "tray.target"
+        ];
+        Wants = [ "tray.target" ];
+      };
+      Service = {
+        ExecStart = "${lib.getExe pkgs.birdtray}";
+        Restart = "on-failure";
+      };
+      Install = {
+        WantedBy = [ "graphical-session.target" ];
+      };
+    };
+
     accounts = {
       calendar.accounts =
         let
