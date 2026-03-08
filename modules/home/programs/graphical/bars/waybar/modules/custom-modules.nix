@@ -318,7 +318,8 @@ in
         top = getExe config.programs.btop.package;
       in
       {
-        inherit poweroff reboot;
+        inherit reboot;
+        shutdown = poweroff;
 
         hibernate = "${systemctl} hibernate";
         lock = /* Bash */ ''([[ "$XDG_CURRENT_DESKTOP" == "sway" ]] && ${swaylock} -defF) || ([[ "$XDG_CURRENT_DESKTOP" == "Hyprland" ]] && ${hyprlock} --immediate)'';
