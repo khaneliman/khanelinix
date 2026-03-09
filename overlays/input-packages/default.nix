@@ -33,7 +33,6 @@ in
     yaziPlugins
 
     # TODO: remove after hitting channel
-    libreoffice
     ;
 
   # TODO: remove after next release
