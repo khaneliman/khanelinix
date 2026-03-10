@@ -23,9 +23,13 @@ in
         firenvim
         # Replaced with tampermonkey script
         # frankerfacez
+        gitako-github-file-tree
+        github-file-icons
+        github-issue-link-status
         onepassword-password-manager
         react-devtools
         reduxdevtools
+        refined-github
         sponsorblock
         stylus
         tampermonkey
