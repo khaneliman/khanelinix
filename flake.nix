@@ -5,7 +5,7 @@
     # Core Nix ecosystem
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nixpkgs-master.url = "github:NixOS/nixpkgs";
+    nixpkgs-master.url = "github:nixos/nixpkgs";
     flake-compat.url = "https://flakehub.com/f/edolstra/flake-compat/1.tar.gz";
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
@@ -86,6 +86,7 @@
       url = "github:khaneliman/khanelivim";
       inputs = {
         nixpkgs.follows = "nixpkgs-unstable";
+        nixpkgs-master.follows = "nixpkgs-master";
         flake-parts.follows = "flake-parts";
       };
     };
