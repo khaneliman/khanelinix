@@ -1,12 +1,14 @@
 {
   config,
   inputs,
+  hostname,
   lib,
   pkgs,
   ...
 }:
 let
   inherit (lib)
+    hasSuffix
     types
     mkIf
     ;
@@ -15,11 +17,32 @@ let
   cfg = config.khanelinix.programs.terminal.tools.ssh;
 
   user = config.users.users.${config.khanelinix.user.name};
-  user-id = toString user.uid;
+  userId = toString user.uid;
 
-  other-hosts = lib.filterAttrs (_key: host: (host.config.khanelinix.user.name or null) != null) (
-    (inputs.self.nixosConfigurations or { }) // (inputs.self.darwinConfigurations or { })
-  );
+  discoveredHosts =
+    let
+      allHosts =
+        let
+          parsedHosts = inputs.self.lib.file.parseSystemConfigurations (inputs.self + "/systems");
+        in
+        inputs.self.lib.file.filterNixOSSystems parsedHosts
+        // inputs.self.lib.file.filterDarwinSystems parsedHosts;
+    in
+    lib.mapAttrs (_name: host: {
+      hostname = "${host.hostname}.local";
+      system = if hasSuffix "darwin" host.system then "darwin" else "nixos";
+      username = config.khanelinix.user.name;
+    }) (lib.filterAttrs (name: _: name != hostname) allHosts);
+
+  # TODO: Move per-host SSH overrides into an external host map outside Nix so
+  # aliases stay cheap to evaluate without requiring repo edits for exceptions.
+  hostOverrides = import (inputs.self + "/modules/common/programs/terminal/tools/ssh/hosts.nix");
+
+  otherHosts = lib.mapAttrs (
+    name: _host:
+    discoveredHosts.${name}
+    // lib.optionalAttrs (builtins.hasAttr name hostOverrides) hostOverrides.${name}
+  ) discoveredHosts;
 
   authorizedKeys = [
     # `khanelinix`
@@ -48,25 +71,24 @@ in
 
       matchBlocks =
         let
-          other-hosts-config = lib.mapAttrs (
-            name: remote:
+          otherHostsConfig = lib.mapAttrs (
+            _name: remote:
             let
-              remote-user-name = remote.config.khanelinix.user.name;
-              remote-user-id = toString remote.config.users.users.${remote-user-name}.uid;
+              remoteUserId = toString (remote.uid or (if remote.system == "darwin" then 501 else 1000));
             in
             {
-              hostname = "${name}.local";
-              user = remote-user-name;
+              inherit (remote) hostname;
+              user = remote.username;
               forwardAgent = true;
-              inherit (cfg) port;
-              remoteForwards =
-                lib.optionals (config.services.gpg-agent.enable && remote.config.services.gpg-agent.enable)
-                  [
-                    "/run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra"
-                    "/run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh"
-                  ];
+              remoteForwards = lib.optionals (config.services.gpg-agent.enable && (remote.gpgAgent or false)) [
+                "/run/user/${remoteUserId}/gnupg/S.gpg-agent /run/user/${userId}/gnupg/S.gpg-agent.extra"
+                "/run/user/${remoteUserId}/gnupg/S.gpg-agent.ssh /run/user/${userId}/gnupg/S.gpg-agent.ssh"
+              ];
             }
-          ) other-hosts;
+            // lib.optionalAttrs (remote.system == "nixos") {
+              inherit (cfg) port;
+            }
+          ) otherHosts;
         in
         {
           "*" = {
@@ -74,7 +96,7 @@ in
             forwardAgent = true;
           };
         }
-        // other-hosts-config;
+        // otherHostsConfig;
 
       extraConfig = ''
         StreamLocalBindUnlink yes
@@ -104,10 +126,10 @@ in
         ];
       }
       // builtins.listToAttrs (
-        map (system: {
-          name = "ssh-${system}";
-          value = "ssh ${system} -t tmux a";
-        }) (builtins.attrNames other-hosts)
+        map (hostName: {
+          name = "ssh-${hostName}";
+          value = "ssh ${hostName} -t tmux a";
+        }) (builtins.attrNames otherHosts)
       );
 
       file = {
