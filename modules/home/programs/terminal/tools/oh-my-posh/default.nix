@@ -29,7 +29,8 @@ in
 
         version = 4;
         final_space = true;
-        async = true;
+        # async Breaks autocomplete for me
+        # async = true;
         shell_integration = true;
         tooltips_action = "extend";
         console_title_template = "{{ .Shell }} in {{ .Folder }}";
@@ -96,10 +97,10 @@ in
           foreground = "p:transient";
           foreground_templates = [ "{{ if gt .Code 0 }}p:transientError{{ end }}" ];
         };
-        secondary_prompt = {
-          template = "❯❯ ";
-          foreground = "p:secondary";
-        };
+        # secondary_prompt = {
+        #   template = "❯❯ ";
+        #   foreground = "p:secondary";
+        # };
         tooltips = [
           {
             type = "git";
