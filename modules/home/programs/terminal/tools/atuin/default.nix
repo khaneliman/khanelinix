@@ -11,6 +11,7 @@ let
   cfg = config.khanelinix.programs.terminal.tools.atuin;
 
   userHome = config.home.homeDirectory;
+  atuinSocketPath = "${userHome}/.local/share/atuin/daemon.sock";
 
   atuinLogPaths = lib.attrByPath [ "khanelinix" "programs" "terminal" "tools" "atuin" "logPaths" ] (
     if pkgs.stdenv.hostPlatform.isDarwin then
@@ -38,6 +39,21 @@ in
     };
 
     launchd.agents.atuin-daemon.config = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+      ProgramArguments = [
+        "/bin/sh"
+        "-c"
+        ''
+          /bin/wait4path /nix/store || exit 1
+
+          # macOS can leave the socket behind across reboots if the daemon is
+          # terminated before its shutdown handler runs.
+          if [ -S '${atuinSocketPath}' ] && ! /usr/sbin/lsof '${atuinSocketPath}' >/dev/null 2>&1; then
+            rm -f '${atuinSocketPath}'
+          fi
+
+          exec ${lib.getExe pkgs.atuin} daemon
+        ''
+      ];
       StandardErrorPath = atuinLogPaths.stderr;
       StandardOutPath = atuinLogPaths.stdout;
     };
