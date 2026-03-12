@@ -39,6 +39,11 @@ in
         # model = "claude-sonnet-4-5";
         verbose = true;
         includeCoAuthoredBy = false;
+        gitAttribution = false;
+        attribution = {
+          commit = "";
+          pr = "";
+        };
 
         statusLine = {
           type = "command";
