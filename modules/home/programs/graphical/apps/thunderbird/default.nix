@@ -7,14 +7,40 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib)
+    mkIf
+    optionalString
+    ;
   inherit (lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.programs.graphical.apps.thunderbird;
+  themeCfg = cfg.theme;
 in
 {
   options.khanelinix.programs.graphical.apps.thunderbird = {
     enable = lib.mkEnableOption "thunderbird";
+    theme = lib.mkOption {
+      type = lib.types.submodule {
+        options = {
+          enable = lib.mkEnableOption "Thunderbird theme palette";
+          isDark = mkOpt lib.types.bool true "Whether the Thunderbird theme uses dark chrome.";
+          colors = {
+            bg = mkOpt (lib.types.nullOr lib.types.str) null "Main Thunderbird background color.";
+            surface = mkOpt (lib.types.nullOr lib.types.str) null "Toolbar and sidebar surface color.";
+            surfaceAlt = mkOpt (lib.types.nullOr lib.types.str) null "Raised control surface color.";
+            fg = mkOpt (lib.types.nullOr lib.types.str) null "Primary Thunderbird foreground color.";
+            accent = mkOpt (lib.types.nullOr lib.types.str) null "Selection and active accent color.";
+            accentSoft = mkOpt (lib.types.nullOr lib.types.str) null "Secondary accent color.";
+            accentFg =
+              mkOpt (lib.types.nullOr lib.types.str) null
+                "Foreground color used on accent backgrounds.";
+            border = mkOpt (lib.types.nullOr lib.types.str) null "Border and separator color.";
+          };
+        };
+      };
+      default = { };
+      description = "Theme palette used to generate Thunderbird chrome CSS.";
+    };
     accountsOrder = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
@@ -80,6 +106,13 @@ in
   };
 
   config = mkIf cfg.enable {
+    assertions = [
+      {
+        assertion =
+          !themeCfg.enable || builtins.all (value: value != null) (builtins.attrValues themeCfg.colors);
+        message = "Thunderbird theme colors must all be set when khanelinix.programs.graphical.apps.thunderbird.theme.enable is true.";
+      }
+    ];
 
     home.packages = lib.optionals pkgs.stdenv.hostPlatform.isLinux (
       with pkgs;
@@ -214,20 +247,132 @@ in
           "gfx.direct2d.disabled" = false;
           "svg.context-properties.content.enabled" = true;
           "browser.display.use_system_colors" = true;
-          "browser.theme.dark-toolbar-theme" = true;
+          "browser.theme.dark-toolbar-theme" = themeCfg.isDark;
           "mailnews.default_sort_type" = 18;
           "mailnews.default_sort_order" = 2;
           "mail.tabs.drawInTitlebar" = false;
         };
 
-        userChrome = /* css */ ''
-          #spacesToolbar,
+        userChrome = optionalString themeCfg.enable /* css */ ''
+          :root {
+            color-scheme: ${if themeCfg.isDark then "dark" else "light"} !important;
+            --khanelinix-thunderbird-bg: ${themeCfg.colors.bg};
+            --khanelinix-thunderbird-surface: ${themeCfg.colors.surface};
+            --khanelinix-thunderbird-surface-alt: ${themeCfg.colors.surfaceAlt};
+            --khanelinix-thunderbird-fg: ${themeCfg.colors.fg};
+            --khanelinix-thunderbird-accent: ${themeCfg.colors.accent};
+            --khanelinix-thunderbird-accent-soft: ${themeCfg.colors.accentSoft};
+            --khanelinix-thunderbird-accent-fg: ${themeCfg.colors.accentFg};
+            --khanelinix-thunderbird-border: ${themeCfg.colors.border};
+
+            --lwt-accent-color: var(--khanelinix-thunderbird-surface-alt) !important;
+            --lwt-text-color: var(--khanelinix-thunderbird-fg) !important;
+            --toolbar-bgcolor: var(--khanelinix-thunderbird-surface) !important;
+            --toolbar-color: var(--khanelinix-thunderbird-fg) !important;
+            --toolbar-field-background-color: var(--khanelinix-thunderbird-bg) !important;
+            --toolbar-field-border-color: var(--khanelinix-thunderbird-border) !important;
+            --toolbar-field-color: var(--khanelinix-thunderbird-fg) !important;
+            --toolbar-field-focus-background-color: var(--khanelinix-thunderbird-bg) !important;
+            --toolbar-field-focus-border-color: var(--khanelinix-thunderbird-accent) !important;
+            --toolbar-field-focus-color: var(--khanelinix-thunderbird-fg) !important;
+            --chrome-content-separator-color: var(--khanelinix-thunderbird-border) !important;
+            --sidebar-background-color: var(--khanelinix-thunderbird-surface) !important;
+            --sidebar-text-color: var(--khanelinix-thunderbird-fg) !important;
+            --sidebar-border-color: var(--khanelinix-thunderbird-border) !important;
+            --sidebar-highlight-background-color: var(--khanelinix-thunderbird-accent) !important;
+            --sidebar-highlight-text-color: var(--khanelinix-thunderbird-accent-fg) !important;
+            --lwt-selected-tab-background-color: var(--khanelinix-thunderbird-bg) !important;
+            --tab-selected-bgcolor: var(--khanelinix-thunderbird-bg) !important;
+            --tab-selected-textcolor: var(--khanelinix-thunderbird-fg) !important;
+            --tab-line-color: var(--khanelinix-thunderbird-accent) !important;
+            --tree-row-hover-background-color: var(--khanelinix-thunderbird-surface-alt) !important;
+            --tree-selection-background: var(--khanelinix-thunderbird-accent-soft) !important;
+            --tree-selection-color: var(--khanelinix-thunderbird-accent-fg) !important;
+            background-color: var(--khanelinix-thunderbird-bg) !important;
+            color: var(--khanelinix-thunderbird-fg) !important;
+          }
+
+          #messengerWindow,
+          #tabmail,
+          #mail3PaneTabBrowser,
+          #messageBrowser,
+          browser[type="content"],
+          #folderPane,
+          #threadPane,
+          #calendarDisplayBox,
+          #calendar-task-box,
+          #taskBox,
+          #today-pane-panel,
           #agenda-container,
-          #agenda,
+          #agenda {
+            background-color: var(--khanelinix-thunderbird-bg) !important;
+            color: var(--khanelinix-thunderbird-fg) !important;
+            border-color: var(--khanelinix-thunderbird-border) !important;
+          }
+
+          #spacesToolbar,
+          #spacesToolbar > *,
+          #folderPaneHeaderBar,
+          #mail-toolbox,
+          #navigation-toolbox,
+          #tabs-toolbar,
+          #titlebar,
+          #calendar-toolbar2,
+          #task-toolbar2,
+          #event-toolbox,
+          #today-pane-header,
           #agenda-toolbar,
-          #mini-day-box
-          {
-            background-color: #24273a !important;
+          #mini-day-box {
+            background-color: var(--khanelinix-thunderbird-surface) !important;
+            color: var(--khanelinix-thunderbird-fg) !important;
+            border-color: var(--khanelinix-thunderbird-border) !important;
+          }
+
+          #folderTree,
+          #threadTree,
+          tree,
+          treechildren,
+          richlistbox,
+          html|table[is="tree-view-table"] {
+            background-color: var(--khanelinix-thunderbird-bg) !important;
+            color: var(--khanelinix-thunderbird-fg) !important;
+            border-color: var(--khanelinix-thunderbird-border) !important;
+          }
+
+          treechildren::-moz-tree-row(selected),
+          treechildren::-moz-tree-row(current, selected),
+          richlistitem[selected="true"],
+          .selected {
+            background-color: var(--khanelinix-thunderbird-accent) !important;
+            color: var(--khanelinix-thunderbird-accent-fg) !important;
+          }
+
+          treechildren::-moz-tree-cell-text(selected),
+          treechildren::-moz-tree-cell-text(current, selected),
+          richlistitem[selected="true"] *,
+          .selected * {
+            color: var(--khanelinix-thunderbird-accent-fg) !important;
+          }
+
+          button,
+          input,
+          select,
+          textarea,
+          search-textbox,
+          .button-background {
+            background-color: var(--khanelinix-thunderbird-surface-alt) !important;
+            color: var(--khanelinix-thunderbird-fg) !important;
+            border-color: var(--khanelinix-thunderbird-border) !important;
+          }
+
+          a,
+          .text-link,
+          .button-link {
+            color: var(--khanelinix-thunderbird-accent-soft) !important;
+          }
+
+          splitter {
+            border-color: var(--khanelinix-thunderbird-border) !important;
           }
         '';
 

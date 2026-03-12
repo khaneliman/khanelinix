@@ -15,6 +15,7 @@ let
     ;
 
   cfg = config.khanelinix.theme.tokyonight;
+  palette = import ./colors.nix;
 
   stylixAvailable = options ? stylix;
 in
@@ -96,6 +97,27 @@ in
             };
           };
         };
+
+        khanelinix.programs.graphical.apps.thunderbird.theme =
+          let
+            colors = palette.getVariant cfg.variant;
+          in
+          {
+            enable = true;
+            isDark = cfg.variant != "day";
+            colors = {
+              inherit (colors)
+                bg
+                fg
+                ;
+              surface = colors.bg_dark;
+              surfaceAlt = colors.bg_highlight;
+              accent = colors.blue;
+              accentSoft = colors.cyan;
+              accentFg = if cfg.variant == "day" then "#ffffff" else colors.fg;
+              border = colors.blue7;
+            };
+          };
 
         home = {
           pointerCursor = mkIf pkgs.stdenv.hostPlatform.isLinux {

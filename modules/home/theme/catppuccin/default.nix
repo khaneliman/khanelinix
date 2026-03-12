@@ -100,6 +100,20 @@ in
             "cat-sound.png"
           ];
         };
+        khanelinix.programs.graphical.apps.thunderbird.theme = {
+          enable = true;
+          isDark = true;
+          colors = {
+            bg = palette.colors.base.hex;
+            surface = palette.colors.surface0.hex;
+            surfaceAlt = palette.colors.mantle.hex;
+            fg = palette.colors.text.hex;
+            accent = palette.colors.${cfg.accent}.hex;
+            accentSoft = palette.colors.${cfg.accent}.hex;
+            accentFg = palette.colors.base.hex;
+            border = palette.colors.overlay0.hex;
+          };
+        };
       }
       (lib.optionalAttrs (inputs ? catppuccin && inputs.catppuccin ? homeModules) {
         catppuccin = {

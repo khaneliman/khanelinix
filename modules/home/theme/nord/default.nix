@@ -15,6 +15,7 @@ let
     ;
 
   cfg = config.khanelinix.theme.nord;
+  palette = import ./colors.nix;
   stylixAvailable = options ? stylix;
 in
 {
@@ -81,6 +82,21 @@ in
               name = "Nordzy-dark";
               package = pkgs.nordzy-icon-theme;
             };
+          };
+        };
+
+        khanelinix.programs.graphical.apps.thunderbird.theme = {
+          enable = true;
+          isDark = true;
+          colors = {
+            bg = palette.palette.nord0.hex;
+            surface = palette.palette.nord1.hex;
+            surfaceAlt = palette.palette.nord2.hex;
+            fg = palette.palette.nord6.hex;
+            accent = palette.palette.nord10.hex;
+            accentSoft = palette.palette.nord8.hex;
+            accentFg = palette.palette.nord6.hex;
+            border = palette.palette.nord3.hex;
           };
         };
 
