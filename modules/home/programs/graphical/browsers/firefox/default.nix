@@ -3,6 +3,7 @@
   inputs,
   lib,
   pkgs,
+  pkgsUnstable,
 
   ...
 }:
@@ -95,7 +96,7 @@ in
       # Firefox configuration and policies
       # See: https://mozilla.github.io/policy-templates/
       enable = true;
-      package = pkgs.firefox-devedition;
+      package = pkgsUnstable.firefox-devedition;
 
       # TODO: remove after stateVersion bump
       configPath = lib.mkIf pkgs.stdenv.hostPlatform.isLinux "${config.xdg.configHome}/mozilla/firefox";

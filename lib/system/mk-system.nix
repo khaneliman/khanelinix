@@ -32,6 +32,9 @@ let
   common = import ./common.nix { inherit inputs; };
 
   extendedLib = common.mkExtendedLib flake inputs.nixpkgs;
+  inputPackageSets = common.mkInputPackageSets {
+    inherit flake system;
+  };
   matchingHomes = common.mkHomeConfigs {
     inherit
       flake
@@ -46,6 +49,7 @@ let
       system
       hostname
       matchingHomes
+      inputPackageSets
       ;
     isNixOS = true;
   };
@@ -59,6 +63,7 @@ inputs.nixpkgs.lib.nixosSystem {
       hostname
       username
       extendedLib
+      inputPackageSets
       ;
   };
 

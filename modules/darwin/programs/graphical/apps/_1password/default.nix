@@ -3,6 +3,7 @@
   lib,
 
   pkgs,
+  pkgsUnstable,
   ...
 }:
 let
@@ -27,7 +28,7 @@ in
         # 1Password GUI documentation
         # See: https://support.1password.com/
         enable = true;
-        package = pkgs._1password-gui;
+        package = pkgsUnstable._1password-gui;
       };
     };
 

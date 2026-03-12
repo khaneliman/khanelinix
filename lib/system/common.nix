@@ -2,6 +2,44 @@
 let
   inherit (inputs.nixpkgs.lib) filterAttrs mapAttrs';
 
+  mkNixpkgsConfig = flake: {
+    overlays = builtins.attrValues flake.overlays;
+    config = {
+      allowAliases = false;
+      allowUnfree = true;
+      permittedInsecurePackages = [
+        # NOTE: citrix
+        "libxml2-2.13.8"
+        "libsoup-2.74.3"
+        # NOTE: needed by emulationstation
+        "freeimage-3.18.0-unstable-2024-04-18"
+        "mbedtls-2.28.10"
+        # dev shells
+        "aspnetcore-runtime-6.0.36"
+        "aspnetcore-runtime-7.0.20"
+        "aspnetcore-runtime-wrapped-7.0.20"
+        "aspnetcore-runtime-wrapped-6.0.36"
+        "dotnet-combined"
+      ];
+    };
+  };
+
+  mkInputPackageSets =
+    {
+      flake,
+      system,
+    }:
+    let
+      nixpkgsConfig = mkNixpkgsConfig flake;
+    in
+    {
+      pkgsUnstable = import inputs.nixpkgs-unstable {
+        inherit system;
+        inherit (nixpkgsConfig) config;
+        overlays = [ ];
+      };
+    };
+
   /**
     Shared Home Manager modules used by both standalone (mkHome) and integrated
     (mkHomeManagerConfig) paths. Single source of truth to prevent drift.
@@ -42,27 +80,7 @@ in
 
     : 1\. Function argument
   */
-  mkNixpkgsConfig = flake: {
-    overlays = builtins.attrValues flake.overlays;
-    config = {
-      allowAliases = false;
-      allowUnfree = true;
-      permittedInsecurePackages = [
-        # NOTE: citrix
-        "libxml2-2.13.8"
-        "libsoup-2.74.3"
-        # NOTE: needed by emulationstation
-        "freeimage-3.18.0-unstable-2024-04-18"
-        "mbedtls-2.28.10"
-        # dev shells
-        "aspnetcore-runtime-6.0.36"
-        "aspnetcore-runtime-7.0.20"
-        "aspnetcore-runtime-wrapped-7.0.20"
-        "aspnetcore-runtime-wrapped-6.0.36"
-        "dotnet-combined"
-      ];
-    };
-  };
+  inherit mkNixpkgsConfig mkInputPackageSets;
 
   /**
     Get home configurations matching a specific system and hostname.
@@ -128,6 +146,7 @@ in
       system,
       hostname,
       matchingHomes,
+      inputPackageSets,
       isNixOS ? true,
     }:
     if matchingHomes != { } then
@@ -149,7 +168,8 @@ in
             inherit (inputs) self;
             lib = extendedLib;
             flake-parts-lib = inputs.flake-parts.lib;
-          };
+          }
+          // inputPackageSets;
           sharedModules =
             hmSharedModules extendedLib
             ++ extendedLib.optional enableStylixHomeModule stylixHomeModule
@@ -209,6 +229,7 @@ in
       hostname,
       username,
       extendedLib,
+      inputPackageSets,
     }:
     {
       inherit inputs hostname username;
@@ -216,5 +237,6 @@ in
       lib = extendedLib;
       flake-parts-lib = inputs.flake-parts.lib;
       format = "system";
-    };
+    }
+    // inputPackageSets;
 }

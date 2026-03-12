@@ -3,6 +3,7 @@
   lib,
 
   pkgs,
+  pkgsUnstable,
   ...
 }:
 let
@@ -17,10 +18,14 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      element-desktop
-      telegram-desktop
-    ];
+    home.packages =
+      with pkgs;
+      [
+        element-desktop
+      ]
+      ++ [
+        pkgsUnstable.telegram-desktop
+      ];
 
     khanelinix = {
       programs = {

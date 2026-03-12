@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  pkgsUnstable,
   ...
 }:
 let
@@ -127,8 +128,10 @@ in
 
           # TODO: verify still works
           "gpg \"ssh\"".program = mkIf cfg._1password (
-            lib.optionalString pkgs.stdenv.hostPlatform.isLinux (getExe' pkgs._1password-gui "op-ssh-sign")
-            + lib.optionalString pkgs.stdenv.hostPlatform.isDarwin "${pkgs._1password-gui}/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+            lib.optionalString pkgs.stdenv.hostPlatform.isLinux (
+              getExe' pkgsUnstable._1password-gui "op-ssh-sign"
+            )
+            + lib.optionalString pkgs.stdenv.hostPlatform.isDarwin "${pkgsUnstable._1password-gui}/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
           );
 
           init = {

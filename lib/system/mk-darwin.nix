@@ -32,6 +32,9 @@ let
   common = import ./common.nix { inherit inputs; };
 
   extendedLib = common.mkExtendedLib flake inputs.nixpkgs-unstable;
+  inputPackageSets = common.mkInputPackageSets {
+    inherit flake system;
+  };
   matchingHomes = common.mkHomeConfigs {
     inherit
       flake
@@ -46,6 +49,7 @@ let
       system
       hostname
       matchingHomes
+      inputPackageSets
       ;
     isNixOS = false;
   };
@@ -59,6 +63,7 @@ inputs.nix-darwin.lib.darwinSystem {
       hostname
       username
       extendedLib
+      inputPackageSets
       ;
   };
 

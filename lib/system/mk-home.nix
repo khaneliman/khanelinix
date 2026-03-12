@@ -32,6 +32,9 @@ let
   common = import ./common.nix { inherit inputs; };
 
   extendedLib = common.mkExtendedLib flake inputs.nixpkgs-unstable;
+  inputPackageSets = common.mkInputPackageSets {
+    inherit flake system;
+  };
 in
 inputs.home-manager.lib.homeManagerConfiguration {
   pkgs = import inputs.nixpkgs-unstable {
@@ -49,7 +52,8 @@ inputs.home-manager.lib.homeManagerConfiguration {
     inherit (inputs) self;
     lib = extendedLib;
     flake-parts-lib = inputs.flake-parts.lib;
-  };
+  }
+  // inputPackageSets;
 
   modules = (common.hmSharedModules extendedLib) ++ modules;
 }

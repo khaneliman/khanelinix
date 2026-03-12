@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  pkgs,
+  pkgsUnstable,
 
   ...
 }:
@@ -24,7 +24,7 @@ in
         # 1Password documentation
         # See: https://support.1password.com/
         enable = true;
-        package = pkgs._1password-gui;
+        package = pkgsUnstable._1password-gui;
 
         polkitPolicyOwners = [ config.khanelinix.user.name ];
       };

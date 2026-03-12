@@ -7,11 +7,6 @@ let
     inherit system;
     inherit (prev) config;
   };
-
-  unstable = import inputs.nixpkgs-unstable {
-    inherit system;
-    inherit (prev) config;
-  };
 in
 {
   #          ╭──────────────────────────────────────────────────────────╮
@@ -57,30 +52,6 @@ in
   #   };
   # };
   # python3Packages = final.python3.pkgs;
-
-  #          ╭──────────────────────────────────────────────────────────╮
-  #          │   From nixpkgs-unstable (reasonable update / stability   │
-  #          │                         balance)                         │
-  #          ╰──────────────────────────────────────────────────────────╯
-  inherit (unstable)
-    # Misc
-    _1password-gui
-
-    # Online services to keep up to date
-    # element-desktop
-    firefox-devedition
-    firefox-devedition-unwrapped
-    telegram-desktop
-    thunderbird-unwrapped
-    thunderbird-latest
-    ;
-
-  teams-for-linux = unstable.teams-for-linux.overrideAttrs (old: {
-    postPatch = (old.postPatch or "") + ''
-      substituteInPlace app/customCSS/index.js \
-        --replace-fail "style.innerHTML = " "style.textContent = "
-    '';
-  });
 
   #          ╭──────────────────────────────────────────────────────────╮
   #          │   Override linuxKernel.packages.linux_zen specifically   │
