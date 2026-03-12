@@ -203,8 +203,11 @@ in
         };
       };
 
-      # Merge helper
-      mergiraf = enabled;
+      mergiraf = {
+        enable = true;
+        enableGitIntegration = true;
+        enableJujutsuIntegration = true;
+      };
 
       bash.initExtra = tokenExports;
       fish.shellInit = tokenExports;
