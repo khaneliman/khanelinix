@@ -16,6 +16,37 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.file.".gemini/policies/read-only-shell.toml".text = ''
+      [[rule]]
+      toolName = "run_shell_command"
+      commandPrefix = [
+        "ls",
+        "ls ",
+        "find ",
+        "cat ",
+        "head ",
+        "tail ",
+        "rg ",
+        "grep ",
+        "git status",
+        "git diff",
+        "git log",
+        "git show",
+        "git branch",
+        "git remote",
+        "git ls-files",
+        "nix eval",
+        "nix search",
+        "nix log",
+        "nix path-info",
+        "type ",
+        "which ",
+        "whereis "
+      ]
+      decision = "allow"
+      priority = 100
+    '';
+
     programs.gemini-cli = {
       # Gemini CLI documentation
       # See: https://github.com/google-gemini/gemini-cli
@@ -60,6 +91,9 @@ in
         security = {
           auth = {
             selectedType = "oauth-personal";
+          };
+          folderTrust = {
+            enabled = true;
           };
         };
         tools = {
