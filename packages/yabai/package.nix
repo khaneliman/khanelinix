@@ -11,14 +11,13 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "yabai";
-  version = "7.1.16-unstable";
+  version = "7.1.17";
 
   src = fetchFromGitHub {
-    owner = "koekeishiya";
+    owner = "asmvik";
     repo = "yabai";
-    # tag = "v${finalAttrs.version}";
-    rev = "e33e94c0b25f807891e0e70101122afaec796e02";
-    hash = "sha256-lb6RC/kzvxV5IQrzi8iFrKCg1AZicjnPBdlYhrdE7pg=";
+    rev = "v${finalAttrs.version}";
+    hash = "sha256-XBJUh2l1DurftKZtved0D4LXe+kQ5od9SfIL6J/ymKI=";
   };
 
   nativeBuildInputs = [
