@@ -4,11 +4,137 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkEnableOption;
+  inherit (builtins)
+    attrNames
+    concatStringsSep
+    toJSON
+    ;
+  inherit (lib) concatMapStringsSep mkEnableOption mkIf;
 
   cfg = config.khanelinix.programs.terminal.tools.gemini-cli;
 
   sharedAiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
+
+  renderTomlRule =
+    rule:
+    ''
+      [[rule]]
+    ''
+    + concatMapStringsSep "\n" (name: "${name} = ${toJSON rule.${name}}") (attrNames rule);
+
+  renderTomlRules = rules: concatStringsSep "\n\n" (map renderTomlRule rules) + "\n";
+
+  readOnlyShellRules = [
+    {
+      toolName = "run_shell_command";
+      commandPrefix = [
+        "ls "
+        "find "
+        "cat "
+        "head "
+        "tail "
+        "rg "
+        "grep "
+        "type "
+        "which "
+        "whereis "
+      ];
+      decision = "allow";
+      priority = 100;
+    }
+    {
+      toolName = "run_shell_command";
+      commandRegex = "ls(\\s|$)";
+      decision = "allow";
+      priority = 100;
+    }
+    {
+      toolName = "run_shell_command";
+      commandRegex = "git (status|diff|log|show|branch|remote|ls-files)(\\s|$)";
+      decision = "allow";
+      priority = 100;
+    }
+    {
+      toolName = "run_shell_command";
+      commandRegex = "nix (eval|search|log|path-info)(\\s|$)";
+      decision = "allow";
+      priority = 100;
+    }
+  ];
+
+  riskyShellRules = [
+    {
+      toolName = "run_shell_command";
+      commandPrefix = [
+        "git add "
+        "cp "
+        "mv "
+        "chmod "
+        "chown "
+        "curl "
+        "wget "
+        "ssh "
+        "scp "
+        "rsync "
+        "nix build "
+        "nix run "
+        "nix shell "
+        "nixos-rebuild "
+        "darwin-rebuild "
+        "nh "
+        "kill "
+        "killall "
+        "pkill "
+        "build-by-path "
+        "why-depends "
+      ];
+      decision = "ask_user";
+      priority = 200;
+    }
+    {
+      toolName = "run_shell_command";
+      commandRegex = "git (commit|checkout|switch|restore|reset|stash|merge|rebase|pull|push)(\\s|$)";
+      decision = "ask_user";
+      priority = 200;
+    }
+    {
+      toolName = "run_shell_command";
+      commandRegex = "fix-git(\\s|$)";
+      decision = "ask_user";
+      priority = 200;
+    }
+  ];
+
+  denyDangerousShellRules = [
+    {
+      toolName = "run_shell_command";
+      commandRegex = "sudo rm(\\s|$)";
+      decision = "deny";
+      priority = 300;
+      deny_message = "Blocked by Gemini CLI safety policy.";
+    }
+    {
+      toolName = "run_shell_command";
+      commandRegex = "rm -rf (/$|~(/|$))";
+      decision = "deny";
+      priority = 300;
+      deny_message = "Blocked by Gemini CLI safety policy.";
+    }
+    {
+      toolName = "run_shell_command";
+      commandRegex = "(dd|mkfs)(\\s|$)";
+      decision = "deny";
+      priority = 300;
+      deny_message = "Blocked by Gemini CLI safety policy.";
+    }
+    {
+      toolName = "run_shell_command";
+      commandRegex = "(shutdown|reboot)(\\s|$)";
+      decision = "deny";
+      priority = 300;
+      deny_message = "Blocked by Gemini CLI safety policy.";
+    }
+  ];
 in
 {
   options.khanelinix.programs.terminal.tools.gemini-cli = {
@@ -17,95 +143,11 @@ in
 
   config = mkIf cfg.enable {
     home.file = {
-      ".gemini/policies/read-only-shell.toml".text = ''
-        [[rule]]
-        toolName = "run_shell_command"
-        commandPrefix = [
-          "ls",
-          "ls ",
-          "find ",
-          "cat ",
-          "head ",
-          "tail ",
-          "rg ",
-          "grep ",
-          "git status",
-          "git diff",
-          "git log",
-          "git show",
-          "git branch",
-          "git remote",
-          "git ls-files",
-          "nix eval",
-          "nix search",
-          "nix log",
-          "nix path-info",
-          "type ",
-          "which ",
-          "whereis "
-        ]
-        decision = "allow"
-        priority = 100
-      '';
+      ".gemini/policies/read-only-shell.toml".text = renderTomlRules readOnlyShellRules;
 
-      ".gemini/policies/risky-shell.toml".text = ''
-        [[rule]]
-        toolName = "run_shell_command"
-        commandPrefix = [
-          "git add ",
-          "git commit",
-          "git checkout",
-          "git switch",
-          "git restore",
-          "git reset",
-          "git stash",
-          "git merge",
-          "git rebase",
-          "git pull",
-          "git push",
-          "cp ",
-          "mv ",
-          "chmod ",
-          "chown ",
-          "curl ",
-          "wget ",
-          "ssh ",
-          "scp ",
-          "rsync ",
-          "nix build ",
-          "nix run ",
-          "nix shell ",
-          "nixos-rebuild ",
-          "darwin-rebuild ",
-          "nh ",
-          "kill ",
-          "killall ",
-          "pkill ",
-          "fix-git",
-          "build-by-path ",
-          "why-depends "
-        ]
-        decision = "ask_user"
-        priority = 200
-      '';
+      ".gemini/policies/risky-shell.toml".text = renderTomlRules riskyShellRules;
 
-      ".gemini/policies/deny-dangerous-shell.toml".text = ''
-        [[rule]]
-        toolName = "run_shell_command"
-        commandPrefix = [
-          "sudo rm",
-          "rm -rf /",
-          "rm -rf ~",
-          "rm -rf ~/",
-          "dd ",
-          "mkfs ",
-          "shutdown",
-          "reboot"
-        ]
-        decision = "deny"
-        priority = 300
-        deny_message = "Blocked by Gemini CLI safety policy."
-      '';
+      ".gemini/policies/deny-dangerous-shell.toml".text = renderTomlRules denyDangerousShellRules;
     };
 
     programs.gemini-cli = {
