@@ -132,7 +132,17 @@ in
             respectGitIgnore = true;
           };
         };
-        experimental.plan = true;
+
+        experimental = {
+          plan = true;
+          taskTracker = true;
+          modelSteering = true;
+          toolOutputMasking = {
+            enabled = true;
+            protectLatestTurn = true;
+          };
+        };
+
         general = {
           checkpointing = {
             enabled = true;
@@ -146,9 +156,14 @@ in
             maxCount = 100;
           };
           vimMode = true;
+          plan = {
+            modelRouting = true;
+          };
         };
+
         ide.enabled = true;
         privacy.usageStatisticsEnabled = false;
+
         security = {
           auth = {
             selectedType = "oauth-personal";
@@ -156,11 +171,18 @@ in
           folderTrust = {
             enabled = true;
           };
+          environmentVariableRedaction = {
+            enabled = true;
+          };
         };
+
         tools = {
           autoAccept = false;
           shell.showColor = true;
+          useRipgrep = true;
+          truncateToolOutputThreshold = 50000;
         };
+
         ui = {
           footer = {
             hideContextPercentage = false;
@@ -171,6 +193,7 @@ in
           showStatusInTitle = true;
           theme = "Default";
           useAlternateBuffer = true;
+          showMemoryUsage = true;
         };
       };
 
@@ -207,6 +230,32 @@ in
               Analyze the changes and create an appropriate commit message.
             '';
             description = "Generate conventional commit message based on staged changes";
+          };
+
+          "git/fix-git" = {
+            prompt = ''
+              If you suspect the local git repository is corrupted, use the `fix-git`
+              utility to replace your local history with that of the remote.
+              This will rewrite history but leave the working tree intact.
+            '';
+            description = "Replace local git history with remote when corruption is suspected";
+          };
+
+          "nix/build-by-path" = {
+            prompt = ''
+              Your task is to build a nixpkgs package by its attribute path using
+              `build-by-path.sh`. This avoids evaluating the entire nixpkgs.
+              Input should be the attribute path.
+            '';
+            description = "Build a nixpkgs package by attribute path efficiently";
+          };
+
+          "nix/why-depends" = {
+            prompt = ''
+              Your task is to determine why a package depends on another in the
+              Nix closure. Use `why-depends.sh` with the source and target paths.
+            '';
+            description = "Determine closure dependency reasons between two packages";
           };
         };
     };
