@@ -75,6 +75,7 @@ in
           ".sl"
         ];
 
+        approval_policy = "untrusted";
         sandbox_mode = "workspace-write";
 
         tui = {
@@ -94,7 +95,6 @@ in
           deep = {
             model_reasoning_effort = "high";
             model_verbosity = "high";
-            approval_policy = "on-request";
           };
 
           # Faster implementation loop for coding tasks.
@@ -102,7 +102,6 @@ in
             model_reasoning_effort = "low";
             model_reasoning_summary = "none";
             model_verbosity = "low";
-            approval_policy = "on-request";
           };
 
           # Force local-only behavior when you do not want network access.
