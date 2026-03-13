@@ -25,7 +25,7 @@ in
             sketchybar.enable = mkDefault pkgs.stdenv.hostPlatform.isDarwin;
           };
           wms = {
-            aerospace.enable = mkDefault pkgs.stdenv.hostPlatform.isDarwin;
+            aerospace.enable = mkDefault false;
           };
           browsers = {
             firefox = {
@@ -59,7 +59,7 @@ in
 
       services = {
         jankyborders.enable = mkDefault pkgs.stdenv.hostPlatform.isDarwin;
-        skhd.enable = mkDefault false;
+        skhd.enable = mkDefault pkgs.stdenv.hostPlatform.isDarwin;
       };
 
       theme = {

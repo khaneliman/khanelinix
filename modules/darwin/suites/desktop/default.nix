@@ -31,7 +31,7 @@ in
     khanelinix = {
       desktop = {
         wms = {
-          yabai = mkDefault disabled;
+          yabai = mkDefault enabled;
         };
       };
 
