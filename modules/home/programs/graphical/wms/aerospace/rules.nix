@@ -104,6 +104,13 @@ in
             }
             {
               "if" = {
+                app-id = "com.mitchellh.ghostty";
+              };
+              check-further-callbacks = true;
+              run = [ "layout tiling" ];
+            }
+            {
+              "if" = {
                 app-id = "com.apple.systempreferences";
               };
               run = "layout tiling";
