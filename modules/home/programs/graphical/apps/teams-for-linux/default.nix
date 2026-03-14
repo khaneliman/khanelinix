@@ -46,12 +46,6 @@ in
         if enabledThemes == [ ] then "none" else builtins.head enabledThemes;
 
       tokyonightVariant = attrByPath [ "khanelinix" "theme" "tokyonight" "variant" ] "night" config;
-      teamsForLinux = pkgsUnstable.teams-for-linux.overrideAttrs (old: {
-        postPatch = (old.postPatch or "") + ''
-          substituteInPlace app/customCSS/index.js \
-            --replace-fail "style.innerHTML = " "style.textContent = "
-        '';
-      });
 
       themePalettes = {
         catppuccin = {
@@ -301,7 +295,7 @@ in
       });
     in
     {
-      home.packages = [ teamsForLinux ];
+      home.packages = [ pkgsUnstable.teams-for-linux ];
 
       xdg.configFile = mkIf isLinux (mkMerge [
         {
