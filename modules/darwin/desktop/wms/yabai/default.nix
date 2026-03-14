@@ -113,6 +113,8 @@ in
           yabai -m signal --add event=display_removed action="sleep 1 && source ${getExe yabai-helper} && create_spaces 7"
           yabai -m signal --add event=window_created action="${getExe sketchybar} --trigger windows_on_spaces"
           yabai -m signal --add event=window_destroyed action="${getExe sketchybar} --trigger windows_on_spaces"
+          yabai -m signal --add app="^Ghostty$" event=window_created action="yabai -m space --layout bsp"
+          yabai -m signal --add app="^Ghostty$" event=window_destroyed action="yabai -m space --layout bsp"
           yabai -m signal --add event=window_created app="Code" action="source ${getExe yabai-helper} && auto_stack Code"
           # yabai -m signal --add event=window_created app="Firefox" title!="(— Private Browsing$|^Picture-in-Picture$)" action="source ${getExe yabai-helper} && auto_stack Firefox"
           # yabai -m signal --add event=window_title_changed app="Firefox" title="- noVNC$" action="yabai -m window $WINDOW_ID --toggle native-fullscreen"
