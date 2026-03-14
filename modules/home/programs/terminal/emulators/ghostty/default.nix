@@ -60,8 +60,7 @@ in
           # linux-cgroup = "always";
           gtk-single-instance = false;
 
-          # Breaks tab functionality, but tab functionality is broken with yabai
-          macos-titlebar-style = "hidden";
+          macos-titlebar-style = "tabs";
           window-colorspace = "srgb";
           window-theme = "ghostty";
           macos-option-as-alt = true;
