@@ -314,7 +314,7 @@ github:subscribe({
 						padding_left = settings.paddings + 12,
 					},
 					drawing = true,
-					click_script = "open " .. shell_quote(url) .. "; " .. popup_off,
+					click_script = "open " .. shell_quote(url),
 					position = "popup." .. github.name,
 				})
 			end
