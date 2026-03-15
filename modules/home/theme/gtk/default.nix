@@ -60,7 +60,7 @@ in
 
         # Tokyonight's GTK3 theme currently ships `border-spacing`, which GTK3
         # warns about in several tray/util apps at startup. Strip the invalid
-        # declarations here instead of patching the package globally.
+        # declaration when present instead of patching the package globally.
         patchedInodes="|"
         for css in "$out/gtk-3.0/gtk.css" "$out/gtk-3.0/gtk-dark.css"; do
           if [ ! -f "$css" ]; then
@@ -73,7 +73,9 @@ in
           esac
 
           patchedInodes="''${patchedInodes}''${inode}|"
-          substituteInPlace "$css" --replace-fail "  border-spacing: 6px;" ""
+          if grep -Fq "  border-spacing: 6px;" "$css"; then
+            substituteInPlace "$css" --replace-fail "  border-spacing: 6px;" ""
+          fi
         done
       '';
       gtk4Dir = "${themeExport}/gtk-4.0";
