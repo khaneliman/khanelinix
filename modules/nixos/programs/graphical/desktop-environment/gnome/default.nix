@@ -27,7 +27,7 @@ in
       "dark"
     ]) "dark" "The color scheme to use.";
     extensions = mkOpt (listOf package) [
-      # appindicator
+      pkgs.gnomeExtensions.appindicator
       # aylurs-widgets
       # dash-to-dock
       # emoji-selector

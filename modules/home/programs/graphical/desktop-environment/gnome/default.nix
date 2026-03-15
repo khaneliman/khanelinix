@@ -27,6 +27,7 @@ in
         ] "List of favorite applications";
         disable-user-extensions = mkBoolOpt false "Whether to disable user extensions";
         enabled-extensions = mkOpt (types.listOf types.str) [
+          "appindicatorsupport@rgcjonas.gmail.com"
           "native-window-placement@gnome-shell-extensions.gcampax.github.com"
           "drive-menu@gnome-shell-extensions.gcampax.github.com"
         ] "List of enabled extensions";
