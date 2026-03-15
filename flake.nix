@@ -73,7 +73,8 @@
       url = "github:khaneliman/hypr-socket-watch";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
+        # FIXME: works on khanelinix no one else
+        # rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
       };
     };
     hyprland = {
