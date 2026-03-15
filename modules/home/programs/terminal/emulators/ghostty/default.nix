@@ -10,7 +10,6 @@ let
 
   cfg = config.khanelinix.programs.terminal.emulators.ghostty;
   fontCfg = config.khanelinix.fonts;
-
 in
 {
   options.khanelinix.programs.terminal.emulators.ghostty = {
@@ -44,6 +43,9 @@ in
           background-opacity = lib.mkDefault 0.8;
           clipboard-trim-trailing-spaces = true;
           copy-on-select = "clipboard";
+          cursor-click-to-move = true;
+          cursor-style = "block";
+          cursor-style-blink = false;
           focus-follows-mouse = true;
           font-family = lib.mkForce monaspaceNeon;
           font-family-bold = lib.mkForce monaspaceXenon;
@@ -62,10 +64,24 @@ in
           macos-secure-input-indication = true;
           macos-titlebar-style = "tabs";
           macos-icon-frame = lib.mkDefault "plastic";
+          macos-titlebar-proxy-icon = "hidden";
 
+          mouse-hide-while-typing = true;
+          notify-on-command-finish = "always";
           quit-after-last-window-closed = true;
+          unfocused-split-opacity = 0.8;
           window-colorspace = "srgb";
           window-theme = "ghostty";
+          window-padding-x = 2;
+          window-padding-y = 2;
+          window-padding-balance = true;
+          window-save-state = "always";
+          window-step-resize = true;
+
+          selection-background = "cell-foreground";
+          selection-foreground = "cell-background";
+          split-divider-color = "#313244";
+
           # NOTE: Disables some functionality available through window
           # But, doesn't fit theme of a clean WM with its GTK interface
           window-decoration = lib.mkIf pkgs.stdenv.hostPlatform.isLinux false;
