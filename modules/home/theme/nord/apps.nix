@@ -18,7 +18,16 @@ in
         "${pkgs.alacritty-theme}/share/alacritty-theme/nord.toml"
       ];
 
-      ghostty.settings.theme = "nord";
+      ghostty.settings = lib.mkMerge [
+        {
+          theme = "nord";
+        }
+        (mkIf pkgs.stdenv.hostPlatform.isDarwin {
+          macos-icon = "custom-style";
+          macos-icon-ghost-color = palette.nord8.hex;
+          macos-icon-screen-color = "${palette.nord3.hex},${palette.nord0.hex}";
+        })
+      ];
 
       helix.settings.theme = mkDefault "Nord";
 

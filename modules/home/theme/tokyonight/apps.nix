@@ -89,7 +89,16 @@ in
 
       gh-dash.settings.theme.selected_line = mkForce "bg:default fg:white bold";
 
-      ghostty.settings.theme = "tokyonight_${variant}";
+      ghostty.settings = lib.mkMerge [
+        {
+          theme = "tokyonight_${variant}";
+        }
+        (mkIf pkgs.stdenv.hostPlatform.isDarwin {
+          macos-icon = "custom-style";
+          macos-icon-ghost-color = colors.blue;
+          macos-icon-screen-color = "${colors.bg_highlight},${colors.bg}";
+        })
+      ];
 
       helix.settings.theme = "tokyonight_${variant}";
 

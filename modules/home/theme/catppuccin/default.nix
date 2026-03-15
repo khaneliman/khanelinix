@@ -220,6 +220,12 @@ in
 
         programs = {
           # Additional program settings that don't follow the common pattern
+          ghostty.settings = mkIf pkgs.stdenv.hostPlatform.isDarwin {
+            macos-icon = "custom-style";
+            macos-icon-ghost-color = palette.colors.${cfg.accent}.hex;
+            macos-icon-screen-color = "${palette.colors.surface0.hex},${palette.colors.base.hex}";
+          };
+
           satty.settings = mkIf config.khanelinix.programs.graphical.addons.satty.enable {
             color-palette = {
               palette = [
