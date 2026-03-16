@@ -43,26 +43,6 @@ in
       icat = "kitten icat";
     };
 
-    xdg.configFile."kitty/nix.conf".text = /* Bash */ ''
-      launch zellij -l system
-
-      new_tab khanelivim
-      cd ${config.home.homeDirectory}/github/khanelivim
-      launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
-
-      new_tab nixvim
-      cd ${config.home.homeDirectory}/github/nixvim
-      launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
-
-      new_tab home-manager
-      cd ${config.home.homeDirectory}/github/home-manager
-      launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
-
-      new_tab nixpkgs
-      cd ${config.home.homeDirectory}/github/nixpkgs
-      launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
-    '';
-
     programs = {
       kitty = {
         enable = true;
@@ -314,11 +294,30 @@ in
           mode = "no-title";
         };
       };
-
-      # Enable hyperlinks in ripgrep results
       ripgrep.arguments = [
+        # Enable hyperlinks in ripgrep results
         "--hyperlink-format=kitty"
       ];
     };
+
+    xdg.configFile."kitty/nix.conf".text = /* Bash */ ''
+      launch zellij -l system
+
+      new_tab khanelivim
+      cd ${config.home.homeDirectory}/github/khanelivim
+      launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
+
+      new_tab nixvim
+      cd ${config.home.homeDirectory}/github/nixvim
+      launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
+
+      new_tab home-manager
+      cd ${config.home.homeDirectory}/github/home-manager
+      launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
+
+      new_tab nixpkgs
+      cd ${config.home.homeDirectory}/github/nixpkgs
+      launch zellij --layout dev  attach --create "$(basename "$(pwd)")" options --default-cwd "$(pwd)"
+    '';
   };
 }
