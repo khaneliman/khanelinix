@@ -109,9 +109,10 @@ type(scope): description
 ### Submitting Changes
 
 1. Create atomic commits - each commit should represent one logical change
-2. Follow the commit message convention
-3. Ensure pre-commit hooks pass
-4. Test that the configuration builds successfully
+2. Prefer one module per commit when changes are logically independent
+3. Follow the commit message convention
+4. Ensure pre-commit hooks pass
+5. Test that the configuration builds successfully
 
 ## Security
 
