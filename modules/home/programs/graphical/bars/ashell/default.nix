@@ -132,6 +132,11 @@ in
           clipboard_cmd = "cliphist list | ${dmenuCommand} | cliphist decode | wl-copy";
           truncate_title_after_length = 150;
 
+          # TODO: Ashell 0.7.0 exposes one global `modules` layout per instance.
+          # These output lists currently only control where the bar appears, not
+          # which modules appear on each output. Supporting a real split layout
+          # will require either running separate Ashell instances per output or
+          # dropping Ashell from the condensed output entirely.
           modules =
             if cfg.fullSizeOutputs != [ ] || cfg.condensedOutputs != [ ] then
               fullSizeModules
