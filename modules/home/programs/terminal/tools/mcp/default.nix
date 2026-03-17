@@ -9,10 +9,12 @@
 let
   inherit (lib)
     getExe
+    hasAttrByPath
     ;
 
   cfg = config.khanelinix.programs.terminal.tools.mcp;
   mcpPkgs = inputs.mcp-servers-nix.packages.${system};
+  hasTavilyApiKey = hasAttrByPath [ "sops" "secrets" "TAVILY_API_KEY" ] config;
 in
 {
   options.khanelinix.programs.terminal.tools.mcp = {
@@ -48,6 +50,8 @@ in
 
         tavily = {
           command = getExe mcpPkgs.tavily-mcp;
+        }
+        // lib.optionalAttrs hasTavilyApiKey {
           env = {
             # Handled by development suite via shell exports, but good to be explicit
             TAVILY_API_KEY = "$(cat ${config.sops.secrets.TAVILY_API_KEY.path})";
