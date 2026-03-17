@@ -7,7 +7,8 @@
   ...
 }:
 let
-  inherit (lib) getExe getExe';
+  inherit (lib) getExe getExe' hasAttrByPath;
+  hasGithubAccessToken = hasAttrByPath [ "sops" "secrets" "github/access-token" ] config;
 
   enabledDmenuLaunchers =
     let
@@ -24,7 +25,7 @@ let
   dmenuCommand = builtins.head enabledDmenuLaunchers;
 
   githubHelper = pkgs.writeShellScriptBin "githubHelper" ''
-    ${lib.optionalString (config.khanelinix.services.sops.enable or false) ''
+    ${lib.optionalString ((config.khanelinix.services.sops.enable or false) && hasGithubAccessToken) ''
       export GH_TOKEN="$(< ${config.sops.secrets."github/access-token".path})"
     ''}
 
@@ -73,7 +74,7 @@ let
   '';
 
   githubMenuHelper = pkgs.writeShellScriptBin "waybar-github-menu" ''
-    ${lib.optionalString (config.khanelinix.services.sops.enable or false) ''
+    ${lib.optionalString ((config.khanelinix.services.sops.enable or false) && hasGithubAccessToken) ''
       export GH_TOKEN="$(< ${config.sops.secrets."github/access-token".path})"
     ''}
 
