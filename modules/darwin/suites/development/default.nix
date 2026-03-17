@@ -16,8 +16,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix.nix.nix-rosetta-builder.enable = true;
-
     homebrew = {
       casks =
         lib.optionals cfg.dockerEnable [

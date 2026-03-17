@@ -21,6 +21,7 @@ in
 
     nix = {
       enable = true;
+      nix-rosetta-builder.enable = true;
       # useLix = true;
     };
 
