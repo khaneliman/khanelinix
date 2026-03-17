@@ -246,7 +246,9 @@ in
           # Prevent builds failing just because we can't contact a substituter
           fallback = true;
           flake-registry = "/etc/nix/registry.json";
-          http-connections = 0;
+          # Unlimited HTTP fetch concurrency is brittle for large flake graphs
+          # that fan out across many GitHub-backed inputs.
+          http-connections = 25;
           keep-going = true;
           log-lines = 50;
           preallocate-contents = true;

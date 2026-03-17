@@ -75,8 +75,10 @@ in
 
       settings = {
         auto-allocate-uids = true;
-        # bail early on missing cache hits
-        connect-timeout = 5;
+        # Large flake graphs hit multiple GitHub-backed fetches, so keep network
+        # timeouts tolerant enough for lock updates and direnv evaluation.
+        connect-timeout = 30;
+        stalled-download-timeout = 300;
         experimental-features = [ "cgroups" ];
         keep-going = true;
         use-cgroups = true;

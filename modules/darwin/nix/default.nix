@@ -76,11 +76,6 @@ in
           "/private/var/tmp"
           "/usr/bin/env"
         ];
-
-        # Frequent issues with networking failures on darwin
-        # limit number to see if it helps
-        http-connections = lib.mkForce 25;
-
         # FIXME: upstream bug needs to be resolved before fully enabling
         # https://github.com/NixOS/nix/issues/12698
         # TODO: sandbox causes "Bus error: 10" on Darwin 25.2.0, disabling for now.
