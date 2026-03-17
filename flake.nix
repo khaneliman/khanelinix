@@ -18,7 +18,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:khaneliman/home-manager/darwin";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     lanzaboote = {
