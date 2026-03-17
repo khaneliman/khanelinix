@@ -25,6 +25,7 @@ in
   #          ╰──────────────────────────────────────────────────────────╯
   inherit (master)
     # TODO: remove after hitting channel
+    electron_39
     ;
 
   # TODO: remove after next release

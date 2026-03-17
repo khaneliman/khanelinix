@@ -2,7 +2,8 @@
   config,
   lib,
   pkgs,
-  pkgsUnstable,
+  # pkgsUnstable,
+  pkgsMaster,
   ...
 }:
 let
@@ -295,7 +296,7 @@ in
       });
     in
     {
-      home.packages = [ pkgsUnstable.teams-for-linux ];
+      home.packages = [ pkgsMaster.teams-for-linux ];
 
       xdg.configFile = mkIf isLinux (mkMerge [
         {
