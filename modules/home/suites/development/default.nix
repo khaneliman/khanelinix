@@ -10,12 +10,14 @@ let
   inherit (lib) mkIf mkDefault;
   inherit (lib.khanelinix) enabled;
 
+  hasOpenAISecuraKey = lib.hasAttrByPath [ "sops" "secrets" "OPENAI_SECURA_KEY" ] config;
+  hasTavilyApiKey = lib.hasAttrByPath [ "sops" "secrets" "TAVILY_API_KEY" ] config;
   tokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) /* Bash */ ''
-    if [ -f ${config.sops.secrets.OPENAI_SECURA_KEY.path} ]; then
+    if ${lib.boolToString hasOpenAISecuraKey} && [ -f ${config.sops.secrets.OPENAI_SECURA_KEY.path} ]; then
       OPENAI_SECURA_KEY="$(cat ${config.sops.secrets.OPENAI_SECURA_KEY.path})"
       export OPENAI_SECURA_KEY
     fi
-    if [ -f ${config.sops.secrets.TAVILY_API_KEY.path} ]; then
+    if ${lib.boolToString hasTavilyApiKey} && [ -f ${config.sops.secrets.TAVILY_API_KEY.path} ]; then
       TAVILY_API_KEY="$(cat ${config.sops.secrets.TAVILY_API_KEY.path})"
       export TAVILY_API_KEY
     fi
