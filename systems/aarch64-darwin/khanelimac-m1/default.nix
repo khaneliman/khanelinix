@@ -26,7 +26,6 @@ in
 
     suites = {
       common = enabled;
-      development = enabled;
       networking = enabled;
     };
 

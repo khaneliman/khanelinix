@@ -34,10 +34,6 @@ in
       };
     };
 
-    roles = {
-      developer = enabled;
-    };
-
     theme.catppuccin = enabled;
   };
 
