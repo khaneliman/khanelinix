@@ -32,6 +32,11 @@ edits.
 - **Custom Helpers**: Check `lib.khanelinix` for common helpers like `enabled`
   and `disabled`.
 
+## Git Workflow
+
+- In sandboxed agent environments, set `PRE_COMMIT_HOME=/tmp/pre-commit` before
+  `git commit` if pre-commit cannot write to `~/.local/cache/pre-commit`.
+
 ## Module Template
 
 ```nix
