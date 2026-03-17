@@ -33,6 +33,11 @@ let
       nixpkgsConfig = mkNixpkgsConfig flake;
     in
     {
+      pkgsMaster = import inputs.nixpkgs-master {
+        inherit system;
+        inherit (nixpkgsConfig) config;
+        overlays = [ ];
+      };
       pkgsUnstable = import inputs.nixpkgs-unstable {
         inherit system;
         inherit (nixpkgsConfig) config;

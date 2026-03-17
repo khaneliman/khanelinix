@@ -24,9 +24,6 @@ in
   #          │ From nixpkgs-master (fast updating / want latest always) │
   #          ╰──────────────────────────────────────────────────────────╯
   inherit (master)
-    # yazi-unwrapped
-    yaziPlugins
-
     # TODO: remove after hitting channel
     ;
 

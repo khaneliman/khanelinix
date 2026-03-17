@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  pkgsMaster,
 
   osConfig ? { },
   ...
@@ -101,7 +102,7 @@ in
             hash = "sha256-o2EnQYOxp5bWn0eLn0sCUXcbtu6tbO9pdUdoquFCTVw=";
           };
         };
-        inherit (pkgs.yaziPlugins)
+        inherit (pkgsMaster.yaziPlugins)
           chmod
           diff
           duckdb
