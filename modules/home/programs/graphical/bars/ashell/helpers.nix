@@ -7,6 +7,7 @@
 }:
 let
   inherit (config.khanelinix.programs.graphical) launchers;
+  hasGithubAccessToken = lib.hasAttrByPath [ "sops" "secrets" "github/access-token" ] config;
 
   enabledDmenuLaunchers = lib.flatten [
     (lib.optional launchers.vicinae.enable "vicinae dmenu")
@@ -102,7 +103,7 @@ in
   '';
 
   githubHelper = pkgs.writeShellScriptBin "ashell-github-helper" ''
-    ${lib.optionalString (config.khanelinix.services.sops.enable or false) ''
+    ${lib.optionalString ((config.khanelinix.services.sops.enable or false) && hasGithubAccessToken) ''
       export GH_TOKEN="$(< ${config.sops.secrets."github/access-token".path})"
     ''}
 
@@ -118,7 +119,7 @@ in
   '';
 
   githubMenuHelper = pkgs.writeShellScriptBin "ashell-github-menu" ''
-    ${lib.optionalString (config.khanelinix.services.sops.enable or false) ''
+    ${lib.optionalString ((config.khanelinix.services.sops.enable or false) && hasGithubAccessToken) ''
       export GH_TOKEN="$(< ${config.sops.secrets."github/access-token".path})"
     ''}
 
