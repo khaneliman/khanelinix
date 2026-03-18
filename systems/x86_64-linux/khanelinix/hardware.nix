@@ -53,10 +53,6 @@ in
   hardware = {
     display = {
       outputs = {
-        "DP-1" = {
-          # NOTE: computer fails to boot at 120
-          mode = "5120x1440@60";
-        };
         "DP-3" = {
           mode = "3840x2160@60";
         };
