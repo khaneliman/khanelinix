@@ -40,9 +40,9 @@ in
         "vm.dirty_ratio" = 15;
         "vm.dirty_background_ratio" = 5;
 
-        # Memory overcommit - better for desktop responsiveness
-        # 1 = always overcommit, let OOM killer handle it (better than freezing)
-        "vm.overcommit_memory" = 1;
+        # Memory overcommit - heuristic overcommit prevents unpredictable OOMs
+        # 0 = heuristic overcommit, default behavior
+        "vm.overcommit_memory" = 0;
         "vm.overcommit_ratio" = 50;
 
         # Swap I/O optimization - read 8 pages at a time
