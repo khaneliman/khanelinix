@@ -58,6 +58,11 @@ in
             url = "https://github.com/Alexays/Waybar/pull/4861.patch?full_index=1";
             hash = "sha256-9HbVkjeTXtBi3O9IAr3YCt/qSU2XymWW4u2HXM3DiHs=";
           })
+          (pkgs.fetchpatch2 {
+            name = "systemd-failed-units-tooltip";
+            url = "https://github.com/Alexays/Waybar/pull/4929.patch?full_index=1";
+            hash = "sha256-W7pogKWlefkRiecLsv3bp6vfD6HVT74H9bV77TI0X/g=";
+          })
         ];
       });
 
