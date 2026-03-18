@@ -112,7 +112,7 @@ in
             '')
           ];
 
-        mkFishFunction = name: helper: /* fish */ ''
+        mkFishFunction = _name: helper: /* fish */ ''
           if set -q KITTY_WINDOW_ID; and test -n "$KITTY_WINDOW_ID"
               kitten ${helper.kittenCommand} $argv
           else
