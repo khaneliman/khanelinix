@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+-- luacheck: globals IS_SYSTEM_SLEEPING
 
 local settings = require("settings")
 local colors = require("colors")
@@ -6,7 +7,7 @@ local icons = require("icons")
 
 local network = {}
 
-Sbar.exec("killall sketchy_network_load >/dev/null 2>&1; sketchy_network_load en0 network_update 2.0")
+Sbar.exec("killall sketchy_network_load >/dev/null 2>&1; sketchy_network_load en0 network_update 10.0")
 
 network.down = Sbar.add("item", "network.down", {
 	background = {
@@ -61,6 +62,9 @@ network.up = Sbar.add("item", "network.up", {
 })
 
 network.down:subscribe("network_update", function(env)
+	if IS_SYSTEM_SLEEPING then
+		return
+	end
 	local up_color = (env.upload == "000 Bps") and colors.subtext0 or colors.green
 	local down_color = (env.download == "000 Bps") and colors.subtext0 or colors.blue
 	network.up:set({

@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+-- luacheck: globals IS_SYSTEM_SLEEPING
 
 local icons = require("icons")
 local settings = require("settings")
@@ -166,7 +167,7 @@ github = Sbar.add("item", "github", {
 		string = icons.loading,
 		highlight_color = colors.blue,
 	},
-	update_freq = 180,
+	update_freq = 0,
 	popup = {
 		align = "right",
 	},
@@ -202,6 +203,9 @@ github:subscribe({
 	"forced",
 	"github_update",
 }, function(_)
+	if IS_SYSTEM_SLEEPING then
+		return
+	end
 	-- fetch new information
 	Sbar.exec("gh api notifications", function(notifications)
 		local sorted_notifications = collect_sorted_notifications(notifications)
