@@ -2,9 +2,6 @@
   config,
   lib,
 
-  self,
-  inputs,
-
   ...
 }:
 let
@@ -14,29 +11,6 @@ in
   imports = [ (lib.getFile "modules/common/nix/default.nix") ];
 
   config = lib.mkIf cfg.enable {
-    # TODO: This configuration should be in the shared module but environment.etc
-    # from shared modules imported via lib.getFile doesn't work properly in flake-parts.
-    # The shared module's other configurations (nix.registry, nix.nixPath, etc.) work fine,
-    # but environment.etc gets ignored. This is likely due to how lib.getFile imports
-    # don't participate in the module system's attribute merging.
-    # Fix: Find a way to properly import shared modules so environment.etc works.
-    environment.etc = {
-      # set channels (backwards compatibility)
-      "nix/flake-channels/system".source = self;
-      "nix/flake-channels/nixpkgs".source = inputs.nixpkgs;
-      "nix/flake-channels/home-manager".source = inputs.home-manager;
-
-      # preserve current flake in /etc
-      "nix-darwin".source = self;
-    }
-    # Create /etc/nix/inputs symlinks for all flake inputs
-    // lib.mapAttrs' (
-      name: input:
-      lib.nameValuePair "nix/inputs/${name}" {
-        source = input.outPath or input;
-      }
-    ) inputs;
-
     # Nix-Darwin config options
     # Check corresponding shared imported module
     nix = {
