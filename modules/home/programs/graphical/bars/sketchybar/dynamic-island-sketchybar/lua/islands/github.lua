@@ -23,6 +23,9 @@ return function(ctx)
 	})
 
 	listener:subscribe("github_notification", function(env)
+		if ctx.islandState.isSleeping then
+			return
+		end
 		local count = tonumber(env.COUNT) or 0
 		if count <= 0 then
 			return

@@ -116,6 +116,9 @@ return function(ctx)
 	})
 
 	volumeChangeListener:subscribe("volume_change", function(env)
+		if ctx.islandState.isSleeping then
+			return
+		end
 		local volume = toPercent(env.INFO)
 		local icon = ctx.get("icons.volume.muted", "􀊡")
 		if volume >= 70 then

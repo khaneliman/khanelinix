@@ -367,6 +367,9 @@ return function(ctx)
 	end
 
 	listener:subscribe({ "apple_music_update", "spotify_update" }, function(env)
+		if ctx.islandState.isSleeping then
+			return
+		end
 		ctx.logDebug("[music][lua] notification received from " .. tostring(env.SENDER))
 		updateMusic(env)
 	end)

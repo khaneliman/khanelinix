@@ -1,5 +1,21 @@
 #!/usr/bin/env lua
--- luacheck: globals DELAY
+-- luacheck: globals DELAY IS_SYSTEM_SLEEPING
+
+IS_SYSTEM_SLEEPING = false
+
+local system_watcher = Sbar.add("item", {
+	drawing = false,
+})
+
+system_watcher:subscribe("system_will_sleep", function()
+	print("System going to sleep, setting IS_SYSTEM_SLEEPING = true")
+	IS_SYSTEM_SLEEPING = true
+end)
+
+system_watcher:subscribe("system_woke", function()
+	print("System woke up, setting IS_SYSTEM_SLEEPING = false")
+	IS_SYSTEM_SLEEPING = false
+end)
 
 POPUP_TOGGLE = function(name)
 	print("Toggling " .. name)

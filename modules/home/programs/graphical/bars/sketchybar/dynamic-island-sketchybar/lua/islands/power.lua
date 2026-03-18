@@ -73,6 +73,9 @@ return function(ctx)
 	end
 
 	listener:subscribe("power_source_change", function(env)
+		if ctx.islandState.isSleeping then
+			return
+		end
 		local source = ctx.trim(env.INFO or "")
 		local icon = ctx.get("icons.power.onBattery", "􀺸")
 		local text = "On Battery"
@@ -91,6 +94,9 @@ return function(ctx)
 	end)
 
 	listener:subscribe("routine", function()
+		if ctx.islandState.isSleeping then
+			return
+		end
 		if inFlight then
 			return
 		end

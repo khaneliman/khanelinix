@@ -234,7 +234,20 @@ local islandState = {
 	persistentOwner = nil,
 	persistentRestore = nil,
 	persistentHide = nil,
+	isSleeping = false,
 }
+
+local systemWatcher = Sbar.add("item", "island_system_watcher", {
+	drawing = false,
+})
+systemWatcher:subscribe("system_will_sleep", function()
+	logDebug("[init] system_will_sleep received")
+	islandState.isSleeping = true
+end)
+systemWatcher:subscribe("system_woke", function()
+	logDebug("[init] system_woke received")
+	islandState.isSleeping = false
+end)
 
 local function setPersistentIsland(owner, handlers)
 	if type(owner) ~= "string" or owner == "" then
@@ -335,8 +348,8 @@ local baseCtx = {
 	defaultWidth = defaultWidth,
 	cornerRadius = cornerRadius,
 	margin = margin,
+	islandState = islandState,
 }
-
 -- TODO: figure out disable macos OSD
 -- if asBool(get("enabled.volume", true)) then
 -- 	local mod = loadIslandModule("volume")

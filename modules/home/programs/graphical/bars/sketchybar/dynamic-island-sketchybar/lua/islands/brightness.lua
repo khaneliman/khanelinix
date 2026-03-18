@@ -116,6 +116,9 @@ return function(ctx)
 	})
 
 	brightnessChangeListener:subscribe("brightness_change", function(env)
+		if ctx.islandState.isSleeping then
+			return
+		end
 		local brightness = toPercent(env.INFO)
 		local icon = ctx.get("icons.brightness.low", "􀆫")
 		if brightness >= 40 then

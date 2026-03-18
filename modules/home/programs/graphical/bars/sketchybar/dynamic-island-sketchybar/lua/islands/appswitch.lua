@@ -41,6 +41,9 @@ return function(ctx)
 	})
 
 	listener:subscribe("front_app_switched", function(env)
+		if ctx.islandState.isSleeping then
+			return
+		end
 		local appName = ctx.trim(env.INFO or "")
 		if appName == "" then
 			return

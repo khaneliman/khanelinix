@@ -21,6 +21,9 @@ return function(ctx)
 	})
 
 	listener:subscribe("wifi_change", function(env)
+		if ctx.islandState.isSleeping then
+			return
+		end
 		local info = ctx.trim(env.INFO or "")
 		if info == "" then
 			return

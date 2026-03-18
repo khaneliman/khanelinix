@@ -83,6 +83,9 @@ return function(ctx)
 	end
 
 	listener:subscribe("routine", function()
+		if ctx.islandState.isSleeping then
+			return
+		end
 		if inFlight then
 			return
 		end

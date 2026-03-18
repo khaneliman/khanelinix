@@ -3,6 +3,7 @@ files["**/sketchybar/**"] = {
 		"Sbar",
 		"COLOR_TO_HEX",
 		"IS_EMPTY",
+		"IS_SYSTEM_SLEEPING",
 		"POPUP_OFF",
 		"POPUP_ON",
 		"POPUP_TOGGLE",
