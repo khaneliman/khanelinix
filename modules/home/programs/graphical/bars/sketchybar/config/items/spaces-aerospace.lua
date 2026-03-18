@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+-- luacheck: globals IS_SYSTEM_SLEEPING
 
 local colors = require("colors")
 local app_icons = require("app_icons")
@@ -111,8 +112,8 @@ local window_tracker = Sbar.add("item", {
 	associated_display = "active",
 })
 
-local updating = false
 local pending_update = false
+local update_timer_active = false
 local last_workspace_labels = {}
 
 local function icon_line_for_workspace(apps)
@@ -137,13 +138,6 @@ local function icon_line_for_workspace(apps)
 end
 
 local function do_update()
-	if updating then
-		pending_update = true
-		return
-	end
-	updating = true
-	pending_update = false
-
 	Sbar.exec([[aerospace list-windows --all --format '%{workspace}|%{app-name}']], function(result)
 		local workspace_apps = {}
 		for i = 1, 8 do
@@ -167,18 +161,29 @@ local function do_update()
 			end
 		end
 
-		updating = false
 		if pending_update then
-			do_update()
+			pending_update = false
+			Sbar.exec("sleep 0.2", do_update)
+		else
+			update_timer_active = false
 		end
 	end)
 end
 
 local function update_windows()
+	if update_timer_active then
+		pending_update = true
+		return
+	end
+	update_timer_active = true
+	pending_update = false
 	do_update()
 end
 
 window_tracker:subscribe("aerospace_windows_change", function()
+	if IS_SYSTEM_SLEEPING then
+		return
+	end
 	update_windows()
 end)
 

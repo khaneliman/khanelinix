@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+-- luacheck: globals IS_SYSTEM_SLEEPING
 
 local settings = require("settings")
 local icons = require("icons")
@@ -20,7 +21,15 @@ if wm_config.use_yabai then
 		label = { drawing = false },
 	})
 
-	yabai:subscribe("window_focus", function()
+	local is_sleeping = false
+	local update_yabai_icon = false
+
+	local function do_yabai_update()
+		if is_sleeping then
+			update_yabai_icon = false
+			return
+		end
+
 		Sbar.exec("yabai -m query --windows --window", function(window)
 			local stackIndex = tonumber(window["stack-index"])
 			local isFloating = window["is-floating"]
@@ -81,7 +90,28 @@ if wm_config.use_yabai then
 			})
 
 			Sbar.exec("borders active_color=" .. COLOR_TO_HEX(colors.blue))
+			update_yabai_icon = false
 		end)
+	end
+
+	yabai:subscribe("window_focus", function()
+		if is_sleeping or update_yabai_icon then
+			return
+		end
+		update_yabai_icon = true
+		Sbar.exec("sleep 0.1", do_yabai_update)
+	end)
+
+	yabai:subscribe("system_will_sleep", function()
+		is_sleeping = true
+	end)
+
+	yabai:subscribe("system_woke", function()
+		is_sleeping = false
+		if not update_yabai_icon then
+			update_yabai_icon = true
+			Sbar.exec("sleep 2.0", do_yabai_update)
+		end
 	end)
 end
 
@@ -104,6 +134,9 @@ local front_app = Sbar.add("item", "front_app", {
 })
 
 front_app:subscribe("front_app_switched", function(env)
+	if IS_SYSTEM_SLEEPING then
+		return
+	end
 	local window_name = env.INFO
 
 	local window_rewrite_map = {
