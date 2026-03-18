@@ -79,6 +79,9 @@ in
         ];
 
         isLix = cfg.useLix || (lib.getName cfg.package) == "lix";
+        hasRemoteBuilders =
+          config.khanelinix.security.sops.enable
+          && (config.khanelinix.environments.home-network.enable or false);
       in
       {
         package =
@@ -101,8 +104,8 @@ in
               "nixos-test"
             ];
           in
-          # Linux builders
-          lib.optionals config.khanelinix.security.sops.enable [
+          # Linux and Darwin builders are only reachable on the home network.
+          lib.optionals hasRemoteBuilders [
             (
               lib.mkIf (hostname != "bruddynix" && hostname != "khanelinix") {
                 inherit sshUser;
@@ -216,7 +219,7 @@ in
           ];
 
         checkConfig = true;
-        distributedBuilds = true;
+        distributedBuilds = hasRemoteBuilders;
         gc.automatic = true;
 
         # This will additionally add your inputs to the system's legacy channels
