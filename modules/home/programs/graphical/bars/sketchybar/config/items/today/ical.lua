@@ -1,10 +1,12 @@
 #!/usr/bin/env lua
+-- luacheck: globals IS_SYSTEM_SLEEPING
 
 local settings = require("settings")
 local colors = require("colors")
 local icons = require("icons")
 local popup_items = {}
 local last_events = nil
+local item_index = 0
 
 local function clear_popup_items()
 	for _, item_name in ipairs(popup_items) do
@@ -43,6 +45,9 @@ local ical = Sbar.add("item", "ical", {
 
 -- Update function
 ical:subscribe({ "routine", "forced" }, function()
+	if IS_SYSTEM_SLEEPING then
+		return
+	end
 	local SEP = "%"
 
 	Sbar.exec("icalBuddy -nc -nrd -eed -iep datetime,title -b '' -ps '|" .. SEP .. "|' eventsToday", function(events)
@@ -56,7 +61,6 @@ ical:subscribe({ "routine", "forced" }, function()
 		local has_separator = false
 		local lines = STR_SPLIT(events, "\n")
 		local max_length = 0
-		local item_index = 0
 
 		local function next_item_name(prefix)
 			item_index = item_index + 1
