@@ -17,10 +17,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.sessionVariables = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-      NIXOS_XDG_OPEN_USE_PORTAL = "1";
-    };
-
     xdg = {
       enable = true;
       cacheHome = config.home.homeDirectory + "/.local/cache";
