@@ -7,18 +7,28 @@
 }:
 let
   inherit (lib) getExe;
-  inherit (lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.desktop.wms.yabai;
   hmCfg = config.home-manager.users.${config.khanelinix.user.name};
+  userHome = config.users.users.${config.khanelinix.user.name}.home;
 in
 {
   options.khanelinix.desktop.wms.yabai = {
     enable = lib.mkEnableOption "yabai";
     debug = lib.mkEnableOption "debug output";
-    logFile = mkOpt lib.types.str "${
-      config.users.users.${config.khanelinix.user.name}.home
-    }/Library/Logs/yabai.log" "Filepath of log output";
+    logPaths = {
+      stdout = lib.mkOption {
+        type = lib.types.str;
+        default = "${userHome}/Library/Logs/yabai/yabai.out.log";
+        description = "Path to yabai stdout log file";
+      };
+
+      stderr = lib.mkOption {
+        type = lib.types.str;
+        default = "${userHome}/Library/Logs/yabai/yabai.err.log";
+        description = "Path to yabai stderr log file";
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -32,8 +42,8 @@ in
     };
 
     launchd.user.agents.yabai.serviceConfig = {
-      StandardErrorPath = cfg.logFile;
-      StandardOutPath = cfg.logFile;
+      StandardErrorPath = cfg.logPaths.stderr;
+      StandardOutPath = cfg.logPaths.stdout;
       KeepAlive = lib.mkForce {
         PathState = {
           "/run/current-system/sw/bin/yabai" = true;
