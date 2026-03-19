@@ -37,6 +37,12 @@ in
       ];
     };
 
+    system.defaults.CustomSystemPreferences = {
+      "SystemConfiguration/com.apple.captive.control" = {
+        Active = false;
+      };
+    };
+
     # Nix store/build paths rotate often, so stale ALF app rules can accumulate.
     system.activationScripts.applicationFirewallCleanup.text = /* Bash */ ''
       alf="/usr/libexec/ApplicationFirewall/socketfilterfw"
