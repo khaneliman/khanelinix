@@ -12,7 +12,7 @@ in
     enable = lib.mkEnableOption "nix-rosetta-builder";
     cores = lib.mkOption {
       type = lib.types.int;
-      default = 8;
+      default = 2;
       description = "Number of cores to use for the builder.";
     };
     memory = lib.mkOption {
@@ -27,7 +27,7 @@ in
     };
     speedFactor = lib.mkOption {
       type = lib.types.int;
-      default = 15;
+      default = 4;
       description = "Speed factor for the builder.";
     };
   };

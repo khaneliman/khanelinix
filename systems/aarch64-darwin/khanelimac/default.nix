@@ -21,7 +21,10 @@ in
 
     nix = {
       enable = true;
-      nix-rosetta-builder.enable = true;
+      nix-rosetta-builder = {
+        enable = true;
+        cores = 4;
+      };
       # useLix = true;
     };
 
