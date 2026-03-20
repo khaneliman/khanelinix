@@ -141,6 +141,12 @@ in
   };
 
   programs = {
+    mcp.servers.filesystem.args = [
+      config.home.homeDirectory
+      "${config.home.homeDirectory}/khanelinix"
+      "/mnt/c/Users/au09163/source/"
+    ];
+
     opencode.settings = {
       lsp = {
         clangd.command = mkForce [ ];
