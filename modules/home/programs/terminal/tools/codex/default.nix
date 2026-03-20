@@ -50,6 +50,7 @@ in
       enable = true;
       enableMcpIntegration = true;
 
+      # https://developers.openai.com/codex/config-schema.json
       settings = {
         features = {
           shell_snapshot = true;
@@ -64,6 +65,7 @@ in
 
         model = "gpt-5.4";
         model_reasoning_effort = "medium";
+        plan_mode_reasoning_effort = "high";
 
         notify = [ (lib.getExe codexNotify) ];
         personality = "pragmatic";
@@ -95,6 +97,7 @@ in
           deep = {
             model_reasoning_effort = "high";
             model_verbosity = "high";
+            plan_mode_reasoning_effort = "xhigh";
           };
 
           # Faster implementation loop for coding tasks.
