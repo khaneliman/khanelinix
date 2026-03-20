@@ -21,12 +21,6 @@ TASKS = {
         "worktree": "vim",
         "depends_on": None,
     },
-    "treesitter": {
-        "command": "nix-shell -p python3Packages.requests --run 'python3 ./pkgs/applications/editors/vim/plugins/utils/nvim-treesitter/update.py && git add ./pkgs/applications/editors/vim/plugins/nvim-treesitter/generated.nix && git commit -m \"vimPlugins.nvim-treesitter: update grammars\"'",
-        "self_committing": True,
-        "worktree": "vim",
-        "depends_on": "vim",
-    },
     "lua": {
         "command": "nix run .#luarocks-packages-updater -- --github-token=${GITHUB_TOKEN}",
         "self_committing": False,
