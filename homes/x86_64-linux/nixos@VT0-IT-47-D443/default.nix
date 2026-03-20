@@ -141,6 +141,8 @@ in
   };
 
   programs = {
+    codex.settings.features.apps = mkForce false;
+
     mcp.servers.dynatrace = {
       command = "npx";
       args = [
