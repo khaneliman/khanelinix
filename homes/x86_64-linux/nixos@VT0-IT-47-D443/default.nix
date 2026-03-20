@@ -141,6 +141,24 @@ in
   };
 
   programs = {
+    mcp.servers.dynatrace = {
+      command = "npx";
+      args = [
+        "-y"
+        "-p"
+        "@dynatrace-oss/dynatrace-mcp-server"
+        "-p"
+        "ajv@8"
+        "--"
+        "mcp-server-dynatrace"
+      ];
+      startup_timeout_sec = 60;
+      env = {
+        DT_ENVIRONMENT = "https://rqq48700.apps.dynatrace.com";
+        NPM_CONFIG_CACHE = "${config.xdg.cacheHome}/npm";
+      };
+    };
+
     mcp.servers.filesystem.args = [
       config.home.homeDirectory
       "${config.home.homeDirectory}/khanelinix"
