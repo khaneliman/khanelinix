@@ -163,6 +163,24 @@ in
             source ${config.programs.git.package}/share/git/contrib/completion/git-prompt.sh
           '')
 
+          (lib.mkOrder 550 (
+            lib.optionalString
+              (builtins.any (plugin: (plugin.name or null) == "zsh-you-should-use") config.programs.zsh.plugins)
+              ''
+                # These aliases intentionally form a family, so suppress
+                # zsh-you-should-use reminders about "shorter" variants.
+                YSU_IGNORED_ALIASES+=(
+                  nra
+                  nrap
+                  nrapa
+                  nrd
+                  nrdp
+                  nrl
+                  nrlp
+                )
+              ''
+          ))
+
           (lib.mkOrder 600 ''
             # binds, zsh modules and everything else
             ${fileContents ./rc/binds.zsh}
