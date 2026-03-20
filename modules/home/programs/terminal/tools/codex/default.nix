@@ -56,6 +56,8 @@ in
           shell_snapshot = true;
           multi_agent = true;
           apps = true;
+          prevent_idle_sleep = true;
+          undo = true;
         };
 
         history = {
