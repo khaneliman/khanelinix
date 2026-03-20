@@ -40,6 +40,20 @@ in
       restart-skhd = ''launchctl kickstart -k gui/"$(id -u)"/org.nix-community.home.skhd'';
     };
 
+    home.activation.skhdTccShim = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      echo >&2 "Setting up stable TCC shim for skhd..."
+      $DRY_RUN_CMD mkdir -p "${userHome}/.local/bin"
+      # We must copy, not symlink, so TCC sees a stable inode path.
+      $DRY_RUN_CMD cp -f "${pkgs.skhd}/bin/skhd" "${userHome}/.local/bin/skhd-stable"
+      $DRY_RUN_CMD chmod +x "${userHome}/.local/bin/skhd-stable"
+    '';
+
+    launchd.agents.skhd.config.ProgramArguments = lib.mkForce [
+      "/bin/sh"
+      "-c"
+      "/bin/wait4path /nix/store && exec ${userHome}/.local/bin/skhd-stable"
+    ];
+
     services.skhd = {
       # Skhd documentation
       # See: https://github.com/koekeishiya/skhd
