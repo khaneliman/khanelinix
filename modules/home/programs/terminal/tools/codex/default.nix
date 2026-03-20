@@ -91,11 +91,12 @@ in
         };
 
         profiles = {
-          # Deep, deliberate analysis mode.
+          # Deep analysis and live-research mode.
           deep = {
             model_reasoning_effort = "high";
             model_verbosity = "high";
             plan_mode_reasoning_effort = "xhigh";
+            web_search = "live";
           };
 
           # Faster implementation loop for coding tasks.
@@ -103,11 +104,15 @@ in
             model_reasoning_effort = "low";
             model_reasoning_summary = "none";
             model_verbosity = "low";
+            plan_mode_reasoning_effort = "medium";
+            service_tier = "fast";
+            web_search = "disabled";
           };
 
           # Force local-only behavior when you do not want network access.
           offline = {
             sandbox_workspace_write.network_access = false;
+            web_search = "disabled";
           };
 
           # Token-enabled profile for package updates and other API-heavy workflows.
