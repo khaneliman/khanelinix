@@ -91,6 +91,8 @@ in
         };
 
         tools = {
+          "claude-code".enable = mkForce true;
+          codex.enable = mkForce true;
           git = {
             enable = true;
             userEmail = "Austin_Horstman@secura.net";
@@ -110,6 +112,7 @@ in
             ];
           };
 
+          mcp.enable = mkForce true;
           ssh = enabled;
         };
       };
@@ -161,6 +164,8 @@ in
       ]
     );
   };
+
+  home.packages = [ pkgs.nodejs ];
 
   home.stateVersion = "25.11";
 }
