@@ -84,8 +84,6 @@ in
           status_line = [
             "model-with-reasoning"
             "current-dir"
-            "project-root"
-            "git-branch"
             "context-remaining"
             "context-used"
             "five-hour-limit"
