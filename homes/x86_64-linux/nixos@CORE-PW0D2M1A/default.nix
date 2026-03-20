@@ -93,6 +93,10 @@ in
     kubernetes = {
       path = "${config.home.homeDirectory}/.kube/config";
     };
+    nix = {
+      sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
+      path = "${config.home.homeDirectory}/.config/nix/nix.conf";
+    };
   };
 
   home.stateVersion = "25.11";

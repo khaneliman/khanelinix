@@ -173,6 +173,10 @@ in
     };
   };
 
+  sops.secrets."khanelinix_khaneliman_ssh_key" = {
+    sopsFile = lib.getFile "secrets/khanelinix/khaneliman/default.yaml";
+  };
+
   services = {
     displayManager.defaultSession = "hyprland-uwsm";
     irqbalance.enable = mkForce false;

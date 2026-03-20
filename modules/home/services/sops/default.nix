@@ -38,13 +38,6 @@ in
         keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
         sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ] ++ cfg.sshKeyPaths;
       };
-
-      secrets = {
-        nix = {
-          sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
-          path = "${config.home.homeDirectory}/.config/nix/nix.conf";
-        };
-      };
     };
   };
 }

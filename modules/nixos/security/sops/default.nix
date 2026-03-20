@@ -28,11 +28,5 @@ in
         keyFile = "${config.users.users.${config.khanelinix.user.name}.home}/.config/sops/age/keys.txt";
       };
     };
-
-    sops.secrets = {
-      "khanelinix_khaneliman_ssh_key" = {
-        sopsFile = lib.getFile "secrets/khanelinix/khaneliman/default.yaml";
-      };
-    };
   };
 }

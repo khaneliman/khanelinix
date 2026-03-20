@@ -310,6 +310,13 @@ in
     };
   };
 
+  sops.secrets = lib.mkIf config.khanelinix.services.sops.enable {
+    nix = {
+      sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
+      path = "${config.home.homeDirectory}/.config/nix/nix.conf";
+    };
+  };
+
   # Configure monitors independently and override module default
   programs.hyprlock.settings.background = lib.mkForce (
     let

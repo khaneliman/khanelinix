@@ -100,5 +100,12 @@ in
     "${config.home.homeDirectory}/github"
   ];
 
+  sops.secrets = lib.mkIf config.khanelinix.services.sops.enable {
+    nix = {
+      sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
+      path = "${config.home.homeDirectory}/.config/nix/nix.conf";
+    };
+  };
+
   home.stateVersion = "25.11";
 }
