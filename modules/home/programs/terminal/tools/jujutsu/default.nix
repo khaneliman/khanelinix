@@ -24,9 +24,16 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      lazyjj
-    ];
+    home = {
+      packages = with pkgs; [
+        lazyjj
+      ];
+
+      shellAliases = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+        # Work around https://github.com/martinvonz/jj/issues/4508
+        jj = "RAYON_NUM_THREADS=4 command jj";
+      };
+    };
 
     programs = {
       jujutsu = {
