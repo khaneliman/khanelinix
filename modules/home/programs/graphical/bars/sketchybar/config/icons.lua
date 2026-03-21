@@ -69,6 +69,7 @@ return {
 		watch = "􀟤",
 	},
 	brew = "􀐛",
+	nix = "",
 	wifi = "􀙇",
 	wifi_off = "􀙈",
 	git = {
