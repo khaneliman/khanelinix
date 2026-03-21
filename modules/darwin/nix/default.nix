@@ -11,6 +11,10 @@ in
   imports = [ (lib.getFile "modules/common/nix/default.nix") ];
 
   config = lib.mkIf cfg.enable {
+    # Wrap gc and optimise in caffeinate to prevent sleep while running
+    launchd.daemons.nix-gc.command = lib.mkForce "/usr/bin/caffeinate -i -s ${config.nix.package}/bin/nix-collect-garbage ${config.nix.gc.options}";
+    launchd.daemons.nix-optimise.command = lib.mkForce "/usr/bin/caffeinate -i -s ${config.nix.package}/bin/nix-store --optimise";
+
     # Nix-Darwin config options
     # Check corresponding shared imported module
     nix = {
