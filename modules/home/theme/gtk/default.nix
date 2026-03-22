@@ -17,6 +17,7 @@ let
   inherit (lib.khanelinix) mkOpt boolToNum nested-default-attrs;
 
   cfg = config.khanelinix.theme.gtk;
+  inherit (pkgs.stdenv.hostPlatform) isLinux;
 in
 {
   options.khanelinix.theme.gtk = {
@@ -36,19 +37,29 @@ in
 
     icon = {
       name = mkOpt types.str "Papirus-Dark" "The name of the icon theme to apply.";
-      package = mkOpt types.package (pkgs.catppuccin-papirus-folders.override {
-        accent = "blue";
-        flavor = "macchiato";
-      }) "The package to use for the icon theme.";
+      package = mkOpt types.package (
+        if isLinux then
+          pkgs.catppuccin-papirus-folders.override {
+            accent = "blue";
+            flavor = "macchiato";
+          }
+        else
+          pkgs.emptyDirectory
+      ) "The package to use for the icon theme.";
     };
 
     theme = {
       name = mkOpt types.str "catppuccin-macchiato-blue-standard" "The name of the theme to apply";
-      package = mkOpt types.package (pkgs.catppuccin-gtk.override {
-        accents = [ "blue" ];
-        size = "standard";
-        variant = "macchiato";
-      }) "The package to use for the theme";
+      package = mkOpt types.package (
+        if isLinux then
+          pkgs.catppuccin-gtk.override {
+            accents = [ "blue" ];
+            size = "standard";
+            variant = "macchiato";
+          }
+        else
+          pkgs.emptyDirectory
+      ) "The package to use for the theme";
     };
   };
 
@@ -104,7 +115,7 @@ in
         fi
       '';
     in
-    mkIf (cfg.enable && pkgs.stdenv.hostPlatform.isLinux) {
+    mkIf (cfg.enable && isLinux) {
       home = {
         packages =
           (lib.optionals (!(osConfig.programs.dconf.enable or false)) [

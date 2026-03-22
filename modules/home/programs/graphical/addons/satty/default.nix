@@ -7,6 +7,7 @@
 }:
 let
   inherit (lib) mkIf;
+  inherit (pkgs.stdenv.hostPlatform) isLinux;
 
   cfg = config.khanelinix.programs.graphical.addons.satty;
 
@@ -21,28 +22,38 @@ in
     enable = lib.mkEnableOption "satty";
   };
 
-  config = mkIf cfg.enable {
-    home.file."${lib.removePrefix "${config.home.homeDirectory}/" picturesDir}/screenshots/.keep".text =
-      "";
+  config = lib.mkMerge [
+    (mkIf cfg.enable {
+      assertions = [
+        {
+          assertion = isLinux;
+          message = "Satty is only available on linux";
+        }
+      ];
+    })
+    (mkIf (cfg.enable && isLinux) {
+      home.file."${lib.removePrefix "${config.home.homeDirectory}/" picturesDir}/screenshots/.keep".text =
+        "";
 
-    programs.satty = {
-      # Satty documentation
-      # See: https://github.com/gabm/satty
-      enable = true;
+      programs.satty = {
+        # Satty documentation
+        # See: https://github.com/gabm/satty
+        enable = true;
 
-      settings = {
-        general = {
-          copy-command = lib.getExe' pkgs.wl-clipboard "wl-copy";
-          output-filename = "${picturesDir}/screenshots/satty-%Y-%m-%d_%H:%M:%S.png";
-          save-after-copy = false;
-          default-hide-toolbars = false;
-        };
+        settings = {
+          general = {
+            copy-command = lib.getExe' pkgs.wl-clipboard "wl-copy";
+            output-filename = "${picturesDir}/screenshots/satty-%Y-%m-%d_%H:%M:%S.png";
+            save-after-copy = false;
+            default-hide-toolbars = false;
+          };
 
-        font = {
-          family = lib.mkDefault config.khanelinix.home.fonts.default;
-          style = "Bold";
+          font = {
+            family = lib.mkDefault config.khanelinix.home.fonts.default;
+            style = "Bold";
+          };
         };
       };
-    };
-  };
+    })
+  ];
 }

@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -10,7 +11,7 @@ let
   colors = tokyonight.getVariant cfg.variant;
 in
 {
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf (cfg.enable && pkgs.stdenv.hostPlatform.isLinux) {
     wayland.windowManager.sway = {
       config.colors = {
         background = colors.bg;

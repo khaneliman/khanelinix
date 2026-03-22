@@ -8,6 +8,7 @@
 }:
 let
   inherit (lib) mkIf;
+  inherit (pkgs.stdenv.hostPlatform) isLinux;
 
   cfg = config.khanelinix.programs.graphical.addons.swaync;
 
@@ -40,18 +41,28 @@ in
     enable = lib.mkEnableOption "swaync in the desktop environment";
   };
 
-  config = mkIf cfg.enable {
-    services.swaync = {
-      # SwayNC configuration
-      # See: https://github.com/ErikReider/SwayNotificationCenter
-      enable = true;
-      package = pkgs.swaynotificationcenter;
+  config = lib.mkMerge [
+    (mkIf cfg.enable {
+      assertions = [
+        {
+          assertion = isLinux;
+          message = "SwayNC is only available on linux";
+        }
+      ];
+    })
+    (mkIf (cfg.enable && isLinux) {
+      services.swaync = {
+        # SwayNC configuration
+        # See: https://github.com/ErikReider/SwayNotificationCenter
+        enable = true;
+        package = pkgs.swaynotificationcenter;
 
-      inherit settings;
-      inherit (style) style;
-    };
+        inherit settings;
+        inherit (style) style;
+      };
 
-    systemd.user.services.swaync.Service.Environment =
-      "PATH=/run/wrappers/bin:${lib.makeBinPath dependencies}";
-  };
+      systemd.user.services.swaync.Service.Environment =
+        "PATH=/run/wrappers/bin:${lib.makeBinPath dependencies}";
+    })
+  ];
 }

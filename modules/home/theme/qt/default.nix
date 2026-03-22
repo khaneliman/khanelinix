@@ -20,6 +20,7 @@ let
 
   cfg = config.khanelinix.theme.qt;
   fontCfg = config.khanelinix.fonts;
+  inherit (pkgs.stdenv.hostPlatform) isLinux;
 in
 {
   options.khanelinix.theme.qt = with types; {
@@ -27,17 +28,24 @@ in
 
     theme = {
       name = mkOpt str "Catppuccin-Macchiato-Blue" "The name of the kvantum theme to apply.";
-      package = mkOpt package (pkgs.catppuccin-kvantum.override {
-        accent = "blue";
-        variant = "macchiato";
-      }) "The package to use for the theme.";
+      package = mkOpt package (
+        if isLinux then
+          pkgs.catppuccin-kvantum.override {
+            accent = "blue";
+            variant = "macchiato";
+          }
+        else
+          pkgs.emptyDirectory
+      ) "The package to use for the theme.";
     };
 
     settings = {
       Appearance = {
         color_scheme_path = mkOpt types.str "" "Color scheme path";
         custom_palette = mkBoolOpt true "Whether to use custom palette";
-        icon_theme = mkOpt types.str config.khanelinix.theme.gtk.icon.name "Icon theme";
+        icon_theme = mkOpt types.str (
+          if isLinux then config.khanelinix.theme.gtk.icon.name else ""
+        ) "Icon theme";
         standard_dialogs = mkOpt types.str "gtk3" "Dialog type";
         style = mkOpt types.str "kvantum" "Style";
       };
@@ -72,7 +80,7 @@ in
     };
   };
 
-  config = mkIf (cfg.enable && pkgs.stdenv.hostPlatform.isLinux) {
+  config = mkIf (cfg.enable && isLinux) {
     home = {
       packages = with pkgs; [
         # libraries and programs to ensure that qt applications load without issue

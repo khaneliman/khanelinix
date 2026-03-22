@@ -16,6 +16,7 @@ let
   cfg = config.khanelinix.theme.stylix;
   fontCfg = config.khanelinix.fonts;
   themeCfg = config.khanelinix.theme;
+  inherit (pkgs.stdenv.hostPlatform) isLinux;
 
   themeApps = {
     catppuccin = [
@@ -121,27 +122,20 @@ in
 
     icon = {
       name = mkOpt types.str "Papirus-Dark" "The name of the icon theme to apply.";
-      package = mkOpt types.package (pkgs.catppuccin-papirus-folders.override {
-        accent = "blue";
-        flavor = "macchiato";
-      }) "The package to use for the icon theme.";
+      package = mkOpt types.package (
+        if isLinux then
+          pkgs.catppuccin-papirus-folders.override {
+            accent = "blue";
+            flavor = "macchiato";
+          }
+        else
+          pkgs.emptyDirectory
+      ) "The package to use for the icon theme.";
     };
   };
 
   config = mkIf cfg.enable (
     lib.optionalAttrs (lib.hasAttrByPath [ "stylix" ] options) {
-      # Each theme sets their own pointerCursor
-      home = mkIf (pkgs.stdenv.hostPlatform.isLinux && !anyCuratedTheme) {
-        pointerCursor = {
-          inherit (cfg.cursor) name package size;
-        };
-      };
-
-      # Each theme has its own fonts
-      gtk.gtk3 = mkIf pkgs.stdenv.hostPlatform.isLinux {
-        font = null;
-      };
-
       stylix = {
         enable = true;
         # autoEnable = false;
@@ -173,7 +167,7 @@ in
           };
         };
 
-        icons = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+        icons = lib.mkIf isLinux {
           enable = true;
           inherit (cfg.icon) package;
           dark = cfg.icon.name;
@@ -226,7 +220,7 @@ in
           zathura.enable = !(isThemedBy "zathura");
           zellij.enable = !(isThemedBy "zellij");
         }
-        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+        // lib.optionalAttrs isLinux {
           gnome.enable = !(isThemedBy "gnome");
           # FIXME: not working
           gtk.enable = false;
@@ -240,10 +234,25 @@ in
           # Currently setup only for catppuccin/nix
           swaync.enable = false;
           waybar.enable = !(isThemedBy "waybar");
+        }
+        // lib.optionalAttrs (!isLinux) {
+          gtk.enable = false;
+          qt.enable = false;
         };
-      }
-      // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-        cursor = lib.mkOptionDefault cfg.cursor;
+
+        cursor = lib.mkIf isLinux (lib.mkOptionDefault cfg.cursor);
+      };
+
+      # Each theme sets their own pointerCursor.
+      home = lib.mkIf (isLinux && !anyCuratedTheme) {
+        pointerCursor = {
+          inherit (cfg.cursor) name package size;
+        };
+      };
+
+      # GTK font overrides are only relevant when Home Manager manages GTK.
+      gtk.gtk3 = lib.mkIf isLinux {
+        font = null;
       };
     }
   );

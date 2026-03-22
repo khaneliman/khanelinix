@@ -9,6 +9,7 @@
 let
   inherit (lib) mkIf mkEnableOption;
   inherit (lib.khanelinix) enabled;
+  inherit (pkgs.stdenv.hostPlatform) isLinux;
 
   cfg = config.khanelinix.programs.graphical.wms.sway;
 
@@ -56,136 +57,146 @@ in
     ./windowrules.nix
   ];
 
-  config = mkIf cfg.enable {
-    home = {
-      packages = with pkgs; [
-        grim
-        grimblast
-        hyprpicker
-        # NOTE: removed from nixpkgs
-        # kdePackages.xwaylandvideobridge
-        khanelinix.record_screen
-        libnotify
-        networkmanagerapplet
-        playerctl
-        slurp
-        smile
-        swappy
-        wayvnc
+  config = lib.mkMerge [
+    (mkIf cfg.enable {
+      assertions = [
+        {
+          assertion = isLinux;
+          message = "Sway is only available on linux";
+        }
       ];
-
-      sessionVariables = lib.mkIf (!(osConfig.khanelinix.programs.graphical.wms.sway.withUWSM or false)) {
-        CLUTTER_BACKEND = "wayland";
-        MOZ_ENABLE_WAYLAND = "1";
-        MOZ_USE_XINPUT2 = "1";
-        # NOTE: causes gldriverquery crash on wayland
-        # SDL_VIDEODRIVER = "wayland";
-        WLR_DRM_NO_ATOMIC = "1";
-        XDG_SESSION_TYPE = "wayland";
-        _JAVA_AWT_WM_NONREPARENTING = "1";
-        __GL_GSYNC_ALLOWED = "0";
-        __GL_VRR_ALLOWED = "0";
-      };
-    };
-
-    khanelinix = {
-      programs = {
-        graphical = {
-          launchers = {
-            anyrun = enabled;
-            vicinae = enabled;
-          };
-
-          screenlockers = {
-            swaylock = enabled;
-          };
-        };
-      };
-
-      services = {
-        swayidle = enabled;
-        sway-wallpaper-watch = {
-          enable = true;
-          wallpapers = lib.khanelinix.theme.wallpaperPaths {
-            inherit config pkgs;
-            names = config.khanelinix.theme.wallpaper.list;
-          };
-        };
-      };
-
-      suites = {
-        wlroots = enabled;
-      };
-
-      theme = {
-        gtk = enabled;
-        qt = enabled;
-      };
-    };
-
-    wayland.windowManager.sway = {
-      enable = true;
-      package = lib.mkIf (osConfig ? programs.sway.package) osConfig.programs.sway.package;
-      checkConfig = false;
-
-      config = {
-        bars = [ ];
-
-        floating = {
-          modifier = "Shift";
-        };
-
-        gaps = {
-          inner = 5;
-          outer = 20;
-        };
-
-        input = {
-          "*" = {
-            xkb_layout = "us";
-            xkb_numlock = "enabled";
-            # repeat_delay = 0;
-            # repeat_rate = 50;
-          };
-        };
-
-        modifier = "Mod4";
-
-        terminal = "kitty";
-
-        workspaceAutoBackAndForth = true;
-        workspaceLayout = "default";
-      }
-      // cfg.settings;
-
-      extraConfig = ''
-        blur enable
-        blur_passes 4
-        blur_radius 5
-
-        shadows enable
-        shadows_on_csd enable
-        titlebar_separator disable
-        scratchpad_minimize disable
-
-        ${cfg.appendConfig}
-      '';
-
-      extraConfigEarly = cfg.prependConfig;
-      inherit (cfg) extraSessionCommands;
-
-      systemd = {
-        enable = !(osConfig.khanelinix.programs.graphical.wms.sway.withUWSM or false);
-        xdgAutostart = true;
-
-        variables = [
-          "--all"
+    })
+    (mkIf (cfg.enable && isLinux) {
+      home = {
+        packages = with pkgs; [
+          grim
+          grimblast
+          hyprpicker
+          # NOTE: removed from nixpkgs
+          # kdePackages.xwaylandvideobridge
+          khanelinix.record_screen
+          libnotify
+          networkmanagerapplet
+          playerctl
+          slurp
+          smile
+          swappy
+          wayvnc
         ];
+
+        sessionVariables = lib.mkIf (!(osConfig.khanelinix.programs.graphical.wms.sway.withUWSM or false)) {
+          CLUTTER_BACKEND = "wayland";
+          MOZ_ENABLE_WAYLAND = "1";
+          MOZ_USE_XINPUT2 = "1";
+          # NOTE: causes gldriverquery crash on wayland
+          # SDL_VIDEODRIVER = "wayland";
+          WLR_DRM_NO_ATOMIC = "1";
+          XDG_SESSION_TYPE = "wayland";
+          _JAVA_AWT_WM_NONREPARENTING = "1";
+          __GL_GSYNC_ALLOWED = "0";
+          __GL_VRR_ALLOWED = "0";
+        };
       };
 
-      xwayland = true;
-    };
-  };
+      khanelinix = {
+        programs = {
+          graphical = {
+            launchers = {
+              anyrun = enabled;
+              vicinae = enabled;
+            };
+
+            screenlockers = {
+              swaylock = enabled;
+            };
+          };
+        };
+
+        services = {
+          swayidle = enabled;
+          sway-wallpaper-watch = {
+            enable = true;
+            wallpapers = lib.khanelinix.theme.wallpaperPaths {
+              inherit config pkgs;
+              names = config.khanelinix.theme.wallpaper.list;
+            };
+          };
+        };
+
+        suites = {
+          wlroots = enabled;
+        };
+
+        theme = {
+          gtk = enabled;
+          qt = enabled;
+        };
+      };
+
+      wayland.windowManager.sway = {
+        enable = true;
+        package = lib.mkIf (osConfig ? programs.sway.package) osConfig.programs.sway.package;
+        checkConfig = false;
+
+        config = {
+          bars = [ ];
+
+          floating = {
+            modifier = "Shift";
+          };
+
+          gaps = {
+            inner = 5;
+            outer = 20;
+          };
+
+          input = {
+            "*" = {
+              xkb_layout = "us";
+              xkb_numlock = "enabled";
+              # repeat_delay = 0;
+              # repeat_rate = 50;
+            };
+          };
+
+          modifier = "Mod4";
+
+          terminal = "kitty";
+
+          workspaceAutoBackAndForth = true;
+          workspaceLayout = "default";
+        }
+        // cfg.settings;
+
+        extraConfig = ''
+          blur enable
+          blur_passes 4
+          blur_radius 5
+
+          shadows enable
+          shadows_on_csd enable
+          titlebar_separator disable
+          scratchpad_minimize disable
+
+          ${cfg.appendConfig}
+        '';
+
+        extraConfigEarly = cfg.prependConfig;
+        inherit (cfg) extraSessionCommands;
+
+        systemd = {
+          enable = !(osConfig.khanelinix.programs.graphical.wms.sway.withUWSM or false);
+          xdgAutostart = true;
+
+          variables = [
+            "--all"
+          ];
+        };
+
+        xwayland = true;
+      };
+    })
+  ];
 }
 
 # TODO: get what we can into sway

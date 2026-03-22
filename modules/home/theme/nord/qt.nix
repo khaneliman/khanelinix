@@ -17,7 +17,7 @@ let
 in
 {
   config = lib.mkIf cfg.enable {
-    khanelinix.theme.qt = {
+    khanelinix.theme.qt = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       theme = {
         name = qtThemeName;
         package = pkgs.nordic;

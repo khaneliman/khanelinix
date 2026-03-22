@@ -19,7 +19,7 @@ let
 in
 {
   config = lib.mkIf cfg.enable {
-    khanelinix.theme.gtk = {
+    khanelinix.theme.gtk = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       cursor = {
         name = "Nordzy-cursors";
         package = pkgs.nordzy-cursor-theme;

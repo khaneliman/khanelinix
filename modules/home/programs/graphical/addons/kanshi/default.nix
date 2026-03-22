@@ -9,6 +9,7 @@ let
   inherit (lib) mkIf getExe;
   inherit (config.khanelinix) user;
   inherit (config.users.users.${user.name}) home;
+  inherit (pkgs.stdenv.hostPlatform) isLinux;
 
   cfg = config.khanelinix.programs.graphical.addons.kanshi;
 in
@@ -17,33 +18,43 @@ in
     enable = lib.mkEnableOption "Kanshi in the desktop environment";
   };
 
-  config = mkIf cfg.enable {
-    home.packages = with pkgs; [ kanshi ];
+  config = lib.mkMerge [
+    (mkIf cfg.enable {
+      assertions = [
+        {
+          assertion = isLinux;
+          message = "Kanshi is only available on linux";
+        }
+      ];
+    })
+    (mkIf (cfg.enable && isLinux) {
+      home.packages = with pkgs; [ kanshi ];
 
-    # Kanshi configuration
-    # See: https://git.sr.ht/~emersion/kanshi/tree/master/item/doc/kanshi.5.scd
-    xdg.configFile."kanshi/config".source = ./config;
+      # Kanshi configuration
+      # See: https://git.sr.ht/~emersion/kanshi/tree/master/item/doc/kanshi.5.scd
+      xdg.configFile."kanshi/config".source = ./config;
 
-    # configuring kanshi
-    systemd.user.services.kanshi = {
-      description = "Kanshi output autoconfig ";
-      environment = {
-        XDG_CONFIG_HOME = "${home}/.config";
+      # configuring kanshi
+      systemd.user.services.kanshi = {
+        description = "Kanshi output autoconfig ";
+        environment = {
+          XDG_CONFIG_HOME = "${home}/.config";
+        };
+        partOf = [ "graphical-session.target" ];
+        wantedBy = [ "graphical-session.target" ];
+        serviceConfig = {
+          ExecCondition = /* bash */ ''
+            ${getExe pkgs.bash} -c '[ -n "$WAYLAND_DISPLAY" ]'
+          '';
+
+          ExecStart = /* bash */ ''
+            ${getExe pkgs.kanshi}
+          '';
+
+          RestartSec = 5;
+          Restart = "always";
+        };
       };
-      partOf = [ "graphical-session.target" ];
-      wantedBy = [ "graphical-session.target" ];
-      serviceConfig = {
-        ExecCondition = /* bash */ ''
-          ${getExe pkgs.bash} -c '[ -n "$WAYLAND_DISPLAY" ]'
-        '';
-
-        ExecStart = /* bash */ ''
-          ${getExe pkgs.kanshi}
-        '';
-
-        RestartSec = 5;
-        Restart = "always";
-      };
-    };
-  };
+    })
+  ];
 }

@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
 
   ...
 }:
@@ -8,7 +9,7 @@ let
   cfg = config.khanelinix.theme.catppuccin;
 in
 {
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf (cfg.enable && pkgs.stdenv.hostPlatform.isLinux) {
     wayland.windowManager.sway = {
       config.colors = {
         background = "$base";

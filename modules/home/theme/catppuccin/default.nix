@@ -21,6 +21,7 @@ let
   palette = import ./colors.nix;
 
   cfg = config.khanelinix.theme.catppuccin;
+  inherit (pkgs.stdenv.hostPlatform) isLinux;
 in
 {
   imports = [
@@ -138,33 +139,23 @@ in
             };
           };
           fish = enabled;
-          foot = enabled;
           fzf = enabled;
           gh-dash = enabled;
           ghostty = enabled;
           gitui = enabled;
           glamour = enabled;
           helix = enabled;
-          hyprland = mkIf config.khanelinix.programs.graphical.wms.hyprland.enable {
-            enable = true;
-            inherit (cfg) accent;
-          };
           k9s = {
             enable = true;
             transparent = true;
           };
           kitty = enabled;
-          kvantum = {
-            enable = true;
-            inherit (cfg) accent;
-          };
           lazygit = {
             enable = true;
             inherit (cfg) accent;
           };
           nvim = enabled;
           nushell = enabled;
-          sway = enabled;
           television = enabled;
           thunderbird = {
             enable = true;
@@ -174,12 +165,24 @@ in
           # NOTE: uses remote url import
           # I already have a local file
           # vesktop = enabled;
-          vicinae.enable = pkgs.stdenv.hostPlatform.isLinux;
-          waybar = enabled;
+          vicinae.enable = isLinux;
           zathura = enabled;
           zellij = enabled;
           zsh-syntax-highlighting = enabled;
           # keep-sorted end
+        }
+        // lib.optionalAttrs isLinux {
+          foot = enabled;
+          hyprland = mkIf config.khanelinix.programs.graphical.wms.hyprland.enable {
+            enable = true;
+            inherit (cfg) accent;
+          };
+          kvantum = {
+            enable = true;
+            inherit (cfg) accent;
+          };
+          sway = enabled;
+          waybar = enabled;
         };
       })
 
@@ -331,7 +334,7 @@ in
           };
         };
 
-        wayland.windowManager.hyprland.settings.plugin.hyprbars = {
+        wayland.windowManager.hyprland.settings.plugin.hyprbars = mkIf isLinux {
           bar_color = palette.colors.base.rgb;
 
           hyprbars-button = lib.mkForce [

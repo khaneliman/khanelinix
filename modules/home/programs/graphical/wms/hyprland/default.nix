@@ -9,6 +9,7 @@
 let
   inherit (lib) mkIf mkEnableOption;
   inherit (lib.khanelinix) enabled;
+  inherit (pkgs.stdenv.hostPlatform) isLinux;
 
   cfg = config.khanelinix.programs.graphical.wms.hyprland;
   useSystemHyprland = osConfig ? programs.hyprland.enable && osConfig.programs.hyprland.enable;
@@ -66,176 +67,186 @@ in
     ./workspacerules.nix
   ];
 
-  config = mkIf cfg.enable {
-    home = {
-      packages = with pkgs; [
-        grim
-        hyprpicker
-        hyprprop
-        hyprsysteminfo
-        # NOTE: removed from nixpkgs
-        # kdePackages.xwaylandvideobridge
-        khanelinix.record_screen
-        networkmanagerapplet
-        slurp
-      ];
-
-      pointerCursor.hyprcursor = {
-        enable = true;
-      };
-
-      sessionVariables = lib.mkIf (!(osConfig.programs.uwsm.enable or false)) (
+  config = lib.mkMerge [
+    (mkIf cfg.enable {
+      assertions = [
         {
-          CLUTTER_BACKEND = "wayland";
-          MOZ_ENABLE_WAYLAND = "1";
-          MOZ_USE_XINPUT2 = "1";
-          # NOTE: causes gldriverquery crash on wayland
-          # SDL_VIDEODRIVER = "wayland";
-          WLR_DRM_NO_ATOMIC = "1";
-          XDG_SESSION_TYPE = "wayland";
-          _JAVA_AWT_WM_NONREPARENTING = "1";
-          __GL_GSYNC_ALLOWED = "0";
-          __GL_VRR_ALLOWED = "0";
+          assertion = isLinux;
+          message = "Hyprland is only available on linux";
         }
-        // mkIf cfg.enableDebug {
-          AQ_TRACE = "1";
-          HYPRLAND_LOG_WLR = "1";
-          HYPRLAND_TRACE = "1";
-        }
-      );
-
-      shellAliases = {
-        hl = "cat $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland.log";
-        hlc = ''
-          local report_dir="${config.xdg.cacheHome}/hyprland"
-          local latest_report
-
-          latest_report=$(command ls -t "$report_dir" 2>/dev/null | grep 'hyprlandCrashReport' | head -n 1)
-
-          if [[ -n "$latest_report" ]]; then
-              cat "''${report_dir}/''${latest_report}"
-          else
-              echo "No Hyprland crash reports found. ✨"
-          fi
-        '';
-        hlw = ''watch -n 0.1 "grep -v \"arranged\" $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland.log | tail -n 40"'';
-      }
-      // historicalLogAliases
-      // historicalCrashAliases;
-    };
-
-    khanelinix = {
-      programs = {
-        graphical = {
-          launchers = {
-            anyrun = enabled;
-            vicinae = enabled;
-          };
-
-          screenlockers = {
-            hyprlock = enabled;
-          };
-        };
-      };
-
-      services = {
-        hypridle = enabled;
-
-        hyprpaper = {
-          enable = true;
-          enableSocketWatch = true;
-        };
-
-        hyprsunset = enabled;
-      };
-
-      suites = {
-        wlroots = enabled;
-      };
-
-      theme = {
-        gtk = enabled;
-        qt = enabled;
-      };
-    };
-
-    programs.hyprshot.enable = true;
-
-    services.hyprpolkitagent = enabled;
-
-    systemd.user.services.hyprpolkitagent.Unit = {
-      After = lib.mkAfter [ "xdg-desktop-portal.service" ];
-      Wants = [ "xdg-desktop-portal.service" ];
-    };
-
-    wayland.windowManager.hyprland = lib.mkMerge [
-      {
-        enable = true;
-
-        extraConfig = ''
-          ${cfg.prependConfig}
-
-          ${cfg.appendConfig}
-        '';
-
-        # ehhhhh
-        # plugins = with pkgs.hyprlandPlugins; [
-        # hyprbars
-        # hyprexpo
-        # ];
-
-        settings = lib.mkMerge [
-          cfg.settings
-          {
-            exec = [ /* Bash */ "notify-send --icon ${config.home.homeDirectory}/.face -u normal \"Hello $(whoami)\"" ];
-
-            plugin = {
-              hyprbars =
-                lib.mkIf (lib.elem pkgs.hyprlandPlugins.hyprbars config.wayland.windowManager.hyprland.plugins)
-                  {
-                    bar_height = 20;
-                    bar_precedence_over_border = true;
-
-                    # order is right-to-left
-                    hyprbars-button = [
-                      # close
-                      "rgb(ED8796), 15, , hyprctl dispatch killactive"
-                      # maximize
-                      "rgb(C6A0F6), 15, , hyprctl dispatch fullscreen 1"
-                    ];
-                  };
-
-              hyprexpo =
-                lib.mkIf (lib.elem pkgs.hyprlandPlugins.hyprexpo config.wayland.windowManager.hyprland.plugins)
-                  {
-                    columns = 3;
-                    gap_size = 4;
-                    bg_col = "rgb(000000)";
-                  };
-            };
-          }
+      ];
+    })
+    (mkIf (cfg.enable && isLinux) {
+      home = {
+        packages = with pkgs; [
+          grim
+          hyprpicker
+          hyprprop
+          hyprsysteminfo
+          # NOTE: removed from nixpkgs
+          # kdePackages.xwaylandvideobridge
+          khanelinix.record_screen
+          networkmanagerapplet
+          slurp
         ];
 
-        systemd = {
-          enable = !(osConfig.programs.uwsm.enable or false);
-          enableXdgAutostart = true;
-          extraCommands = [
-            "systemctl --user stop hyprland-session.target"
-            "systemctl --user reset-failed"
-            "systemctl --user start hyprland-session.target"
-          ];
-
-          variables = [
-            "--all"
-          ];
+        pointerCursor.hyprcursor = {
+          enable = true;
         };
 
-        xwayland.enable = true;
-      }
-      (lib.mkIf useSystemHyprland {
-        package = null;
-        portalPackage = null;
-      })
-    ];
-  };
+        sessionVariables = lib.mkIf (!(osConfig.programs.uwsm.enable or false)) (
+          {
+            CLUTTER_BACKEND = "wayland";
+            MOZ_ENABLE_WAYLAND = "1";
+            MOZ_USE_XINPUT2 = "1";
+            # NOTE: causes gldriverquery crash on wayland
+            # SDL_VIDEODRIVER = "wayland";
+            WLR_DRM_NO_ATOMIC = "1";
+            XDG_SESSION_TYPE = "wayland";
+            _JAVA_AWT_WM_NONREPARENTING = "1";
+            __GL_GSYNC_ALLOWED = "0";
+            __GL_VRR_ALLOWED = "0";
+          }
+          // mkIf cfg.enableDebug {
+            AQ_TRACE = "1";
+            HYPRLAND_LOG_WLR = "1";
+            HYPRLAND_TRACE = "1";
+          }
+        );
+
+        shellAliases = {
+          hl = "cat $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland.log";
+          hlc = ''
+            local report_dir="${config.xdg.cacheHome}/hyprland"
+            local latest_report
+
+            latest_report=$(command ls -t "$report_dir" 2>/dev/null | grep 'hyprlandCrashReport' | head -n 1)
+
+            if [[ -n "$latest_report" ]]; then
+                cat "''${report_dir}/''${latest_report}"
+            else
+                echo "No Hyprland crash reports found. ✨"
+            fi
+          '';
+          hlw = ''watch -n 0.1 "grep -v \"arranged\" $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland.log | tail -n 40"'';
+        }
+        // historicalLogAliases
+        // historicalCrashAliases;
+      };
+
+      khanelinix = {
+        programs = {
+          graphical = {
+            launchers = {
+              anyrun = enabled;
+              vicinae = enabled;
+            };
+
+            screenlockers = {
+              hyprlock = enabled;
+            };
+          };
+        };
+
+        services = {
+          hypridle = enabled;
+
+          hyprpaper = {
+            enable = true;
+            enableSocketWatch = true;
+          };
+
+          hyprsunset = enabled;
+        };
+
+        suites = {
+          wlroots = enabled;
+        };
+
+        theme = {
+          gtk = enabled;
+          qt = enabled;
+        };
+      };
+
+      programs.hyprshot.enable = true;
+
+      services.hyprpolkitagent = enabled;
+
+      systemd.user.services.hyprpolkitagent.Unit = {
+        After = lib.mkAfter [ "xdg-desktop-portal.service" ];
+        Wants = [ "xdg-desktop-portal.service" ];
+      };
+
+      wayland.windowManager.hyprland = lib.mkMerge [
+        {
+          enable = true;
+
+          extraConfig = ''
+            ${cfg.prependConfig}
+
+            ${cfg.appendConfig}
+          '';
+
+          # ehhhhh
+          # plugins = with pkgs.hyprlandPlugins; [
+          # hyprbars
+          # hyprexpo
+          # ];
+
+          settings = lib.mkMerge [
+            cfg.settings
+            {
+              exec = [ /* Bash */ "notify-send --icon ${config.home.homeDirectory}/.face -u normal \"Hello $(whoami)\"" ];
+
+              plugin = {
+                hyprbars =
+                  lib.mkIf (lib.elem pkgs.hyprlandPlugins.hyprbars config.wayland.windowManager.hyprland.plugins)
+                    {
+                      bar_height = 20;
+                      bar_precedence_over_border = true;
+
+                      # order is right-to-left
+                      hyprbars-button = [
+                        # close
+                        "rgb(ED8796), 15, , hyprctl dispatch killactive"
+                        # maximize
+                        "rgb(C6A0F6), 15, , hyprctl dispatch fullscreen 1"
+                      ];
+                    };
+
+                hyprexpo =
+                  lib.mkIf (lib.elem pkgs.hyprlandPlugins.hyprexpo config.wayland.windowManager.hyprland.plugins)
+                    {
+                      columns = 3;
+                      gap_size = 4;
+                      bg_col = "rgb(000000)";
+                    };
+              };
+            }
+          ];
+
+          systemd = {
+            enable = !(osConfig.programs.uwsm.enable or false);
+            enableXdgAutostart = true;
+            extraCommands = [
+              "systemctl --user stop hyprland-session.target"
+              "systemctl --user reset-failed"
+              "systemctl --user start hyprland-session.target"
+            ];
+
+            variables = [
+              "--all"
+            ];
+          };
+
+          xwayland.enable = true;
+        }
+        (lib.mkIf useSystemHyprland {
+          package = null;
+          portalPackage = null;
+        })
+      ];
+    })
+  ];
 }

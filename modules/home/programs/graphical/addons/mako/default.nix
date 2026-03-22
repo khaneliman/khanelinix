@@ -7,6 +7,7 @@
 }:
 let
   inherit (lib) mkIf getExe getExe';
+  inherit (pkgs.stdenv.hostPlatform) isLinux;
 
   cfg = config.khanelinix.programs.graphical.addons.mako;
 in
@@ -15,41 +16,51 @@ in
     enable = lib.mkEnableOption "Mako in Sway";
   };
 
-  config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      mako
-      libnotify
-    ];
+  config = lib.mkMerge [
+    (mkIf cfg.enable {
+      assertions = [
+        {
+          assertion = isLinux;
+          message = "Mako is only available on linux";
+        }
+      ];
+    })
+    (mkIf (cfg.enable && isLinux) {
+      home.packages = with pkgs; [
+        mako
+        libnotify
+      ];
 
-    # Mako configuration
-    # See: https://man.archlinux.org/man/mako.5
-    xdg.configFile."mako/config".source = ./config;
+      # Mako configuration
+      # See: https://man.archlinux.org/man/mako.5
+      xdg.configFile."mako/config".source = ./config;
 
-    systemd.user.services.mako = {
-      after = [ "graphical-session.target" ];
-      description = "Mako notification daemon";
-      partOf = [ "graphical-session.target" ];
-      wantedBy = [ "graphical-session.target" ];
-      serviceConfig = {
-        Type = "dbus";
-        BusName = "org.freedesktop.Notifications";
+      systemd.user.services.mako = {
+        after = [ "graphical-session.target" ];
+        description = "Mako notification daemon";
+        partOf = [ "graphical-session.target" ];
+        wantedBy = [ "graphical-session.target" ];
+        serviceConfig = {
+          Type = "dbus";
+          BusName = "org.freedesktop.Notifications";
 
-        ExecCondition = /* bash */ ''
-          ${getExe pkgs.bash} -c '[ -n "$WAYLAND_DISPLAY" ]'
-        '';
+          ExecCondition = /* bash */ ''
+            ${getExe pkgs.bash} -c '[ -n "$WAYLAND_DISPLAY" ]'
+          '';
 
-        ExecStart = /* bash */ ''
-          ${getExe pkgs.mako}
-        '';
+          ExecStart = /* bash */ ''
+            ${getExe pkgs.mako}
+          '';
 
-        ExecReload = /* bash */ ''
-          ${getExe' pkgs.mako "makoctl"} reload
-        '';
+          ExecReload = /* bash */ ''
+            ${getExe' pkgs.mako "makoctl"} reload
+          '';
 
-        Restart = "on-failure";
-        RestartSec = 1;
-        TimeoutStopSec = 10;
+          Restart = "on-failure";
+          RestartSec = 1;
+          TimeoutStopSec = 10;
+        };
       };
-    };
-  };
+    })
+  ];
 }
