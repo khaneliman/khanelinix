@@ -37,6 +37,7 @@ in
             config.home.homeDirectory
             "${config.home.homeDirectory}/Documents"
             "${config.home.homeDirectory}/khanelinix"
+            "/nix/store"
           ];
         };
 
