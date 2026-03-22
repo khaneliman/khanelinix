@@ -233,7 +233,7 @@ in
           showCitations = true;
           showModelInfoInChat = true;
           showStatusInTitle = true;
-          theme = "Default";
+          theme = "GitHub";
           useAlternateBuffer = true;
           showMemoryUsage = true;
         };
