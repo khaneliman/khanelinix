@@ -206,14 +206,17 @@ in
           gtk-xft-hintstyle = "hintslight";
         };
 
-        gtk4.extraConfig = {
-          gtk-decoration-layout = "appmenu:none";
-          gtk-enable-event-sounds = 0;
-          gtk-enable-input-feedback-sounds = 0;
-          gtk-error-bell = 0;
-          gtk-xft-antialias = 1;
-          gtk-xft-hinting = 1;
-          gtk-xft-hintstyle = "hintslight";
+        gtk4 = {
+          inherit (config.gtk) theme;
+          extraConfig = {
+            gtk-decoration-layout = "appmenu:none";
+            gtk-enable-event-sounds = 0;
+            gtk-enable-input-feedback-sounds = 0;
+            gtk-error-bell = 0;
+            gtk-xft-antialias = 1;
+            gtk-xft-hinting = 1;
+            gtk-xft-hintstyle = "hintslight";
+          };
         };
 
         iconTheme = {
