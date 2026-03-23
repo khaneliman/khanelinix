@@ -84,7 +84,8 @@ in
             carapace = mkDefault enabled;
             comma = mkDefault enabled;
             dircolors = mkDefault enabled;
-            direnv = mkDefault enabled;
+            # FIXME: direnv 2.37.1 is currently failing to build on Darwin.
+            direnv.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
             eza = mkDefault enabled;
             fastfetch = mkDefault enabled;
             fzf = mkDefault enabled;
