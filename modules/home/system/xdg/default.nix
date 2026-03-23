@@ -266,6 +266,8 @@ in
       userDirs = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
         enable = true;
         createDirectories = true;
+        setSessionVariables = true;
+
         extraConfig = {
           SCREENSHOTS = "${config.xdg.userDirs.pictures}/screenshots";
         };
