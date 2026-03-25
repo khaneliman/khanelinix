@@ -27,7 +27,7 @@ fi
 echo "(import \"$NIXPKGS_PATH\" { }).$ATTR_PATH" >"$TMP_DIR/to-eval.nix"
 
 nix-env \
-    --extra-experimental-features no-url-literals \
+    --option lint-url-literals fatal \
     --option system "$SYSTEM" \
     -f "$TMP_DIR/to-eval.nix" \
     -qaP \
@@ -97,7 +97,8 @@ EOF
 
 "$NIX" build \
     --file "$TMP_DIR/to-build.nix" \
-    --extra-experimental-features 'nix-command no-url-literals' \
+    --extra-experimental-features 'nix-command' \
+    --option lint-url-literals fatal \
     --no-link \
     --keep-going \
     --show-trace \
