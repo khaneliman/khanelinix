@@ -62,11 +62,6 @@ let
       (lib.mkIf (config.khanelinix.theme.tokyonight.enable or false) {
         khanelivim.ui.theme = "tokyonight";
       })
-      (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-        # FIXME: khanelivim enables direnv.vim by default, which currently
-        # pulls in a broken direnv build on Darwin.
-        plugins.direnv.enable = lib.mkForce false;
-      })
       (lib.mkIf (osConfig.khanelinix.archetypes.wsl.enable or false) {
         # FIXME: upstream dependency has LONG build time and transient failures
         # Usually crashes WSL

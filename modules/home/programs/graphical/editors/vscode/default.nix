@@ -52,16 +52,13 @@ in
               github.vscode-pull-request-github
               gruntfuggly.todo-tree
               irongeek.vscode-env
+              mkhl.direnv
               ms-vscode-remote.remote-ssh
               ms-vsliveshare.vsliveshare
               shardulm94.trailing-spaces
               usernamehw.errorlens
               wakatime.vscode-wakatime
               yzhang.markdown-all-in-one
-            ]
-            # FIXME: mkhl.direnv currently pulls a broken direnv build on Darwin.
-            ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-              mkhl.direnv
             ]
             ++ lib.optionals config.khanelinix.suites.development.dockerEnable [
               ms-azuretools.vscode-docker
