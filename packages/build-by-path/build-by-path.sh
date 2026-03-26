@@ -1,21 +1,29 @@
 #! /usr/bin/env nix-shell
 #! nix-shell -i bash -p jq
+# shellcheck shell=bash
 # Build nixpkgs packages by path without completely evaluating nixpkgs
 #
 # Usage:
-#   build-by-path.sh NIXPKGS_PATH NIX_PATH 'SYSTEM'
+#   build-by-path.sh NIXPKGS_PATH ATTR_PATH [SYSTEM]
 #
 # Examples:
 #   build-by-path.sh . 'vimPlugins' 'aarch64-darwin'
+#   build-by-path.sh . 'vimPlugins'
 #   build-by-path.sh ~/nixpkgs hello 'x86_64-linux'
 
-set -ex
+set -euo pipefail
+
+if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
+    echo "Usage: $0 NIXPKGS_PATH ATTR_PATH [SYSTEM]"
+    exit 1
+fi
 
 NIXPKGS_PATH=$(realpath "$1")
 ATTR_PATH=$2
-SYSTEM=$3
+SYSTEM=${3:-$(nix eval --raw --impure --expr "builtins.currentSystem")}
 
 TMP_DIR=$(mktemp -d)
+trap 'rm -rf "$TMP_DIR"' EXIT
 
 if command -v nom >/dev/null 2>&1; then
     echo "NOM found, using it"
@@ -60,35 +68,29 @@ let
     name':
     let
       name = if name' == "" then root-path else name';
-      stringAttrPath = if builtins.length attrs > 1 then root-path + "." + name else name;
+      stringAttrPath = if length attrs > 1 then root-path + "." + name else name;
       attrPath = lib.splitString "." stringAttrPath;
       pkg = lib.attrByPath attrPath null pkgs;
       exists = lib.hasAttrByPath attrPath pkgs;
     in
-    if pkg == null then
-      {
-        inherit name;
-        path = pkgs.hello;
-      }
+    if pkg == null || !exists then
+      [ ]
     else
-      lib.forEach (pkg.outputs or [ "out" ]) (
+      lib.concatMap (
         output:
         let
-          # some packages are set to null if they aren't compatible with a platform or package set
           maybePath = tryEval "\${lib.getOutput output pkg}";
-          broken = !exists || !maybePath.success;
         in
-        if broken then
-          {
-            name = name;
-            path = pkgs.hello;
-          }
+        if maybePath.success then
+          [
+            {
+              name = (if output == "out" then name else "\${name}.\${output}");
+              path = pkg;
+            }
+          ]
         else
-          {
-            name = (if output == "out" then name else "\${name}.\${output}");
-            path = pkg;
-          }
-      );
+          [ ]
+      ) (pkg.outputs or [ "out" ]);
 
   filteredPackages = concatMap getProperties attrs;
 in
@@ -104,5 +106,3 @@ EOF
     --show-trace \
     --no-allow-import-from-derivation \
     --nix-path "$NIXPKGS_PATH"
-
-rm -rf "$TMP_DIR"
