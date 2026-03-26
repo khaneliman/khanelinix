@@ -2,12 +2,16 @@
   config,
   inputs,
   lib,
-
   pkgs,
+
+  # osConfig ? { },
   ...
 }:
 let
   cfg = config.khanelinix.programs.graphical.launchers.vicinae;
+
+  # isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
+
   mkRaycastExtension =
     name:
     let
@@ -38,29 +42,62 @@ in
       package = pkgs.vicinae;
 
       # NOTE: These track the repo pinned in flake.lock via raycast-extensions.
-      extensions = [
-        (mkRaycastExtension "1password")
-        (mkRaycastExtension "base64")
-        # FIXME: broken build
-        # (config.lib.vicinae.mkRayCastExtension {
-        #   name = "bitwarden";
-        #   rev = "b8c8fcd7ebd441a5452b396923f2a40e879565ba";
-        #   sha256 = "sha256-N1zAPZJmmfvSw425MQDopSm/stu1IRI2t17xo8Ml+8g=";
-        # })
-        # (config.lib.vicinae.mkRayCastExtension {
-        #   name = "claude";
-        #   rev = "d9ec03d0ce2290682b8d03749c09807ff2c1e064";
-        #   sha256 = "sha256-vSm64genQfBpLb541aqNkObi9Ri0T71nrw8wDFfM/Rc=";
-        # })
-        # (mkRaycastExtension "conventional-commits")
-        (mkRaycastExtension "dad-jokes")
-        (mkRaycastExtension "gif-search")
-        (mkRaycastExtension "github")
-      ]
-      ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
-        (mkRaycastExtension "amphetamine")
-        (mkRaycastExtension "brew")
-      ];
+      extensions = map mkRaycastExtension (
+        [
+          "base64"
+          "browser-bookmarks"
+          "browser-history"
+          "browser-tabs"
+          "calendar"
+          "cheatsheets"
+          # FIXME: hangs forever
+          # "color-picker"
+          "conventional-commits"
+          "dad-jokes"
+          "gif-search"
+          "tldr"
+          "weather"
+          "window-walker"
+          "world-clock"
+          # FIXME:
+          # npm error path /build/bitwarden/node_modules/electron
+          # npm error RequestError: getaddrinfo EAI_AGAIN github.com
+          # npm error     at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+          # "bitwarden"
+          # FIXME:
+          # /build/claude/node_modules/.bin/ray: line 36: curl: command not found
+          # /build/claude/node_modules/.bin/ray: line 71: /build/claude/node_modules/@raycast/api/bin/linux/ray: No such file or directory
+          # "claude"
+        ]
+        # FIXME:
+        # /build/postman/node_modules/.bin/ray: line 30: curl: command not found
+        # /build/postman/node_modules/.bin/ray: line 65: /build/postman/node_modules/@raycast/api/bin/linux/ray: No such file or directory
+        # ++ lib.optional (config.khanelinix.suites.development.enable && !isWSL) "postman"
+        # FIXME:
+        # cp: missing destination file operand after '/nix/store/big3djc5djq0lgx3xi00ygwbmd22jnxk-visual-studio-code-recent-projects/'
+        # ++ lib.optional config.khanelinix.programs.graphical.editors.vscode.enable "visual-studio-code-recent-projects"
+        ++ lib.optional config.khanelinix.programs.terminal.emulators.warp.enable "warp"
+        ++ lib.optionals config.khanelinix.suites.business.enable [
+          "1password"
+          "slack"
+        ]
+        ++ lib.optionals config.khanelinix.suites.development.enable [
+          "github"
+          "gitlab"
+        ]
+        ++ lib.optional config.khanelinix.suites.development.dockerEnable "docker"
+        ++ lib.optionals config.khanelinix.suites.social.enable [
+          "telegram"
+          "twitch"
+        ]
+        ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin (
+          [
+            "amphetamine"
+            "brew"
+          ]
+          ++ lib.optional config.khanelinix.programs.graphical.wms.aerospace.enable "aerospace"
+        )
+      );
 
       systemd = {
         enable = true;
