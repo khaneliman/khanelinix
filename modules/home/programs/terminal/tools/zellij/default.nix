@@ -93,6 +93,7 @@ in
             };
 
             theme = lib.mkDefault "catppuccin-macchiato";
+            theme_dir = "${config.xdg.configHome}/zellij/themes";
           }
           // lib.optionalAttrs cfg.resurrect.enable {
             pane_viewport_serialization = true;
