@@ -63,6 +63,10 @@
     niri = {
       url = "github:sodiboo/niri-flake";
     };
+    raycast-extensions = {
+      url = "github:raycast/extensions";
+      flake = false;
+    };
     firefox-addons = {
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
