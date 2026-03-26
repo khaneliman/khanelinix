@@ -23,13 +23,13 @@ in
       extensions = [
         (config.lib.vicinae.mkRayCastExtension {
           name = "1password";
-          rev = "1d1357202ec181978a698871b311f93d656122f6";
-          sha256 = "sha256-JZdM4l3m3JQWoGqJOPoaywpSnlWA7pcEJjII24YMSEA=";
+          rev = "a85ee78f874a6366549cdb59b87bb6a3e00327da";
+          sha256 = "sha256-O3rnnjwzAsA9odQnK8V9VcWoaVl1miOkRqXv6mS8m4E=";
         })
         (config.lib.vicinae.mkRayCastExtension {
           name = "base64";
-          rev = "9befbb8bad621365a0f2896a13f6fb26fecb8d55";
-          sha256 = "sha256-T/utRy3ptNlC+v3X9ebnzRuCLVlSkZnm7sRwikIVeAk=";
+          rev = "04ca0dccbfffc425de8ec56934964802fa48d387";
+          sha256 = "sha256-WPeUJt41OE2EwwjVV46jScR25R2wJUoylZyd1IEc/a4=";
         })
         # FIXME: broken build
         # (config.lib.vicinae.mkRayCastExtension {
@@ -54,25 +54,25 @@ in
         })
         (config.lib.vicinae.mkRayCastExtension {
           name = "gif-search";
-          rev = "4d417c2dfd86a5b2bea202d4a7b48d8eb3dbaeb1";
-          sha256 = "sha256-G7il8T1L+P/2mXWJsb68n4BCbVKcrrtK8GnBNxzt73Q=";
+          rev = "6d32581cfaeabd8d7b3d570183b52bae31745ce2";
+          sha256 = "sha256-/59ZaKe6gUkemauakgSvwkb76kN3aciKHgAh2yYk6jI=";
         })
         (config.lib.vicinae.mkRayCastExtension {
           name = "github";
-          rev = "238052eeb0e2fb9acb1f9418dd7178eafac5e5cf";
-          sha256 = "sha256-WjikX+a0h7Z65jhwclpjHLweEuPulG4wptGJiJfMT+0=";
+          rev = "9c0dffd40db3ee0ca852645b4513b536df73bc8b";
+          sha256 = "sha256-bZKhSOz5u6rFRX97J6bxDvNQJGKXh/EtkNxDjUJBKIQ=";
         })
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
         (config.lib.vicinae.mkRayCastExtension {
           name = "amphetamine";
-          rev = "d480d47a5c3271f36134614ecdc49b2d447bccf2";
-          sha256 = "sha256-DiAtPqcFWGNwBl2ZYXaDYBqIbD0yAevsHjL3YTbXGwI=";
+          rev = "ad9f7d6a489332bc17d8428f602e507884b2f652";
+          sha256 = "sha256-dqJhfcZCb2UP2NN6s9emkEFe773kxUczaYCkBzwvekE=";
         })
         (config.lib.vicinae.mkRayCastExtension {
           name = "brew";
-          rev = "b8c8fcd7ebd441a5452b396923f2a40e879565ba";
-          sha256 = "sha256-c0FdaXt24JF6cmjVd8aXQ6TrO5QiEJ4vt2DntAj9MlM=";
+          rev = "9811ea6931ade6fb9116d9001a26d29edeb2f5fb";
+          sha256 = "sha256-mL3Hm1w3AdpOjSLIXusPegXKe5j6njVBm0nWZYrQIWo=";
         })
       ];
 
