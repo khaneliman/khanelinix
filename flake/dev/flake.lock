@@ -3849,22 +3849,6 @@
         "type": "github"
       }
     },
-    "raycast-extensions": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1774538021,
-        "narHash": "sha256-VeLVXcDNyXLCVQZxmcJEvGL6Do8gGxIWgVM2QagSOdo=",
-        "owner": "raycast",
-        "repo": "extensions",
-        "rev": "423bccfbd1cc8bdbfa624e6a45b145a0d68bb964",
-        "type": "github"
-      },
-      "original": {
-        "owner": "raycast",
-        "repo": "extensions",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "devshell": "devshell",
@@ -3915,7 +3899,6 @@
         "nixpkgs": "nixpkgs_6",
         "nixpkgs-master": "nixpkgs-master",
         "nixpkgs-unstable": "nixpkgs-unstable",
-        "raycast-extensions": "raycast-extensions",
         "sops-nix": "sops-nix",
         "stylix": [],
         "tokyonight": [],

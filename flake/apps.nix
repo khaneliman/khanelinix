@@ -128,6 +128,23 @@ _: {
               }
             );
           };
+
+        update-vicinae-extensions = {
+          type = "app";
+          meta.description = "Update pinned Vicinae Raycast extensions";
+          program = lib.getExe (
+            pkgs.writeShellApplication {
+              name = "update-vicinae-extensions";
+              runtimeInputs = [
+                pkgs.git
+                pkgs.python3
+              ];
+              text = ''
+                ${pkgs.python3}/bin/python3 ${./apps/scripts/update_vicinae_extensions.py}
+              '';
+            }
+          );
+        };
       };
     };
 }
