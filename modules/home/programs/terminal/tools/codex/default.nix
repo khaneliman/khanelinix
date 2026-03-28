@@ -79,8 +79,8 @@ in
           ".sl"
         ];
 
-        approval_policy = "untrusted";
-        sandbox_mode = "workspace-write";
+        approval_policy = "on-request";
+        sandbox_mode = "danger-full-access";
 
         tui = {
           status_line = [
