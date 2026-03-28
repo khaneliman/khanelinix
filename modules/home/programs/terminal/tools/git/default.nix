@@ -189,14 +189,15 @@ in
               fi
             ''
           );
-          prepare-commit-msg = lib.getExe (
-            pkgs.writeShellScriptBin "prepare-commit-msg" ''
-              echo "Signing off commit"
-              ${lib.getExe config.programs.git.package} interpret-trailers --if-exists doNothing --trailer \
-                "Signed-off-by: ${cfg.userName} <${cfg.userEmail}>" \
-                --in-place "$1"
-            ''
-          );
+          # NOTE: Appends 'Signed-off-by: Austin Horstman <khaneliman12@gmail.com>'
+          # prepare-commit-msg = lib.getExe (
+          #   pkgs.writeShellScriptBin "prepare-commit-msg" ''
+          #     echo "Signing off commit"
+          #     ${lib.getExe config.programs.git.package} interpret-trailers --if-exists doNothing --trailer \
+          #       "Signed-off-by: ${cfg.userName} <${cfg.userEmail}>" \
+          #       --in-place "$1"
+          #   ''
+          # );
         };
 
         signing = {
