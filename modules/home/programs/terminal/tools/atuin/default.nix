@@ -51,7 +51,7 @@ in
             rm -f '${atuinSocketPath}'
           fi
 
-          exec ${lib.getExe pkgs.atuin} daemon
+          exec ${lib.getExe pkgs.atuin} daemon start
         ''
       ];
       StandardErrorPath = atuinLogPaths.stderr;
