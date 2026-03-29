@@ -73,4 +73,6 @@ in
     primaryUser = "khaneliman";
     stateVersion = 5;
   };
+
+  system.defaults.universalaccess.reduceMotion = lib.mkForce null;
 }
