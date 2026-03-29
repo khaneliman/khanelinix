@@ -53,6 +53,8 @@ in
     max-jobs = 3;
   };
 
+  khanelinix.system.networking.pruneStaleLocalNetworkPermissions = false;
+
   users.users.${cfg.name} = {
     openssh = {
       authorizedKeys.keys = [

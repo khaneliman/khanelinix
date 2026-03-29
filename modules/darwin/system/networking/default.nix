@@ -13,6 +13,11 @@ in
 {
   options.khanelinix.system.networking = {
     enable = lib.mkEnableOption "networking support";
+    pruneStaleLocalNetworkPermissions = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Whether to remove stale Local Network permission entries from NetworkExtension plists during activation.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -65,45 +70,47 @@ in
               done
         fi
 
-        networkExtensionPlist="/Library/Preferences/com.apple.networkextension.plist"
-        networkExtensionUuidCache="/Library/Preferences/com.apple.networkextension.uuidcache.plist"
+        ${lib.optionalString cfg.pruneStaleLocalNetworkPermissions ''
+          networkExtensionPlist="/Library/Preferences/com.apple.networkextension.plist"
+          networkExtensionUuidCache="/Library/Preferences/com.apple.networkextension.uuidcache.plist"
 
-        echo >&2 "Auditing Local Network permission entries..."
+          echo >&2 "Auditing Local Network permission entries..."
 
-        if [ ! -f "$networkExtensionPlist" ] || [ ! -f "$networkExtensionUuidCache" ]; then
-          echo >&2 "Skipping Local Network permission audit: required NetworkExtension plists are missing."
-        else
-          tempDir="$(/usr/bin/mktemp -d /tmp/khanelinix-local-network.XXXXXX)"
-
-          export KHANELINIX_NETWORK_EXTENSION_PLIST="$networkExtensionPlist"
-          export KHANELINIX_NETWORK_EXTENSION_UUID_CACHE="$networkExtensionUuidCache"
-          export KHANELINIX_NETWORK_EXTENSION_PLIST_OUT="$tempDir/com.apple.networkextension.plist"
-          export KHANELINIX_NETWORK_EXTENSION_UUID_CACHE_OUT="$tempDir/com.apple.networkextension.uuidcache.plist"
-          export KHANELINIX_NETWORK_EXTENSION_CHANGED="$tempDir/changed"
-          export KHANELINIX_NETWORK_EXTENSION_SUMMARY="$tempDir/summary"
-
-          "${python3}" "${localNetworkPrivilegesCleanup}"
-
-          summary="$(
-            /bin/cat "$KHANELINIX_NETWORK_EXTENSION_SUMMARY" 2>/dev/null \
-              || /bin/echo "Local Network permission audit completed without a summary."
-          )"
-
-          if [ "$(/bin/cat "$KHANELINIX_NETWORK_EXTENSION_CHANGED" 2>/dev/null || true)" != "1" ]; then
-            echo >&2 "$summary"
+          if [ ! -f "$networkExtensionPlist" ] || [ ! -f "$networkExtensionUuidCache" ]; then
+            echo >&2 "Skipping Local Network permission audit: required NetworkExtension plists are missing."
           else
-            echo >&2 "Cleaning stale Local Network permission entries..."
-            /usr/bin/install -m 0644 -o root -g wheel \
-              "$KHANELINIX_NETWORK_EXTENSION_PLIST_OUT" \
-              "$networkExtensionPlist"
-            /usr/bin/install -m 0644 -o root -g wheel \
-              "$KHANELINIX_NETWORK_EXTENSION_UUID_CACHE_OUT" \
-              "$networkExtensionUuidCache"
-            echo >&2 "$summary"
-          fi
+            tempDir="$(/usr/bin/mktemp -d /tmp/khanelinix-local-network.XXXXXX)"
 
-          /bin/rm -rf "$tempDir"
-        fi
+            export KHANELINIX_NETWORK_EXTENSION_PLIST="$networkExtensionPlist"
+            export KHANELINIX_NETWORK_EXTENSION_UUID_CACHE="$networkExtensionUuidCache"
+            export KHANELINIX_NETWORK_EXTENSION_PLIST_OUT="$tempDir/com.apple.networkextension.plist"
+            export KHANELINIX_NETWORK_EXTENSION_UUID_CACHE_OUT="$tempDir/com.apple.networkextension.uuidcache.plist"
+            export KHANELINIX_NETWORK_EXTENSION_CHANGED="$tempDir/changed"
+            export KHANELINIX_NETWORK_EXTENSION_SUMMARY="$tempDir/summary"
+
+            "${python3}" "${localNetworkPrivilegesCleanup}"
+
+            summary="$(
+              /bin/cat "$KHANELINIX_NETWORK_EXTENSION_SUMMARY" 2>/dev/null \
+                || /bin/echo "Local Network permission audit completed without a summary."
+            )"
+
+            if [ "$(/bin/cat "$KHANELINIX_NETWORK_EXTENSION_CHANGED" 2>/dev/null || true)" != "1" ]; then
+              echo >&2 "$summary"
+            else
+              echo >&2 "Cleaning stale Local Network permission entries..."
+              /usr/bin/install -m 0644 -o root -g wheel \
+                "$KHANELINIX_NETWORK_EXTENSION_PLIST_OUT" \
+                "$networkExtensionPlist"
+              /usr/bin/install -m 0644 -o root -g wheel \
+                "$KHANELINIX_NETWORK_EXTENSION_UUID_CACHE_OUT" \
+                "$networkExtensionUuidCache"
+              echo >&2 "$summary"
+            fi
+
+            /bin/rm -rf "$tempDir"
+          fi
+        ''}
       '';
     };
   };
