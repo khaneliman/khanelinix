@@ -18,9 +18,12 @@ in
       home-network = enabled;
     };
 
+    suites.common = enabled;
+
     programs = {
       terminal = {
         tools = {
+          lazygit = enabled;
           ssh = enabled;
         };
       };
@@ -35,6 +38,10 @@ in
     };
 
     theme.catppuccin = enabled;
+  };
+
+  home.shellAliases = {
+    lg = "lazygit";
   };
 
   home.stateVersion = "25.11";
