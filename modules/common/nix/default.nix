@@ -251,8 +251,8 @@ in
           experimental-features = [
             "nix-command"
             "flakes"
-            "auto-allocate-uids"
           ]
+          ++ lib.optional pkgs.stdenv.hostPlatform.isLinux "auto-allocate-uids"
           ++ lib.optionals (!isLix) [
             "ca-derivations"
             "pipe-operators"
