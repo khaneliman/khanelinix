@@ -94,6 +94,8 @@ in
           "*" = {
             addKeysToAgent = "yes";
             forwardAgent = true;
+            serverAliveInterval = 30;
+            serverAliveCountMax = 2;
           };
         }
         // otherHostsConfig;

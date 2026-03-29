@@ -53,6 +53,10 @@ in
   config = lib.mkIf cfg.enable {
     programs.ssh = {
       extraConfig = ''
+        Host *
+          ServerAliveInterval 30
+          ServerAliveCountMax 2
+
         ${other-hosts-config}${
           lib.optionalString (cfg.extraConfig != "") ''
 
