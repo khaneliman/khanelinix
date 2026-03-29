@@ -21,7 +21,7 @@ in
       # Options that aren't supported through nix-darwin
       extraOptions = ''
         # bail early on missing cache hits
-        connect-timeout = 30
+        connect-timeout = 10
         stalled-download-timeout = 300
         keep-going = true
       '';

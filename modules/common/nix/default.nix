@@ -95,9 +95,7 @@ in
         buildMachines =
           let
             sshUser = "khaneliman";
-            # TODO: update when ssh-ng isn't so slow
-            # protocol = if pkgs.stdenv.hostPlatform.isLinux then "ssh-ng" else "ssh";
-            protocol = "ssh";
+            protocol = "ssh-ng";
             supportedFeatures = [
               "benchmark"
               "big-parallel"
@@ -247,7 +245,9 @@ in
         settings = {
           allowed-users = users;
           auto-optimise-store = pkgs.stdenv.hostPlatform.isLinux;
-          builders-use-substitutes = true;
+          builders-use-substitutes = false;
+          max-silent-time = 300;
+          connect-timeout = 10;
           experimental-features = [
             "nix-command"
             "flakes"

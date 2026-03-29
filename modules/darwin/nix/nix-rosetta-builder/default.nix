@@ -22,7 +22,7 @@ in
     };
     sshProtocol = lib.mkOption {
       type = lib.types.str;
-      default = "ssh";
+      default = "ssh-ng";
       description = "SSH protocol to use for the builder.";
     };
     speedFactor = lib.mkOption {
