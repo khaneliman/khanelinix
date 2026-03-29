@@ -104,21 +104,24 @@ in
           in
           # Linux and Darwin builders are only reachable on the home network.
           lib.optionals hasRemoteBuilders [
-            (
-              lib.mkIf (hostname != "bruddynix" && hostname != "khanelinix") {
-                inherit sshUser;
-                hostName = "bruddynix.local";
-                systems = [
-                  "x86_64-linux"
-                ];
-                maxJobs = 2;
-                speedFactor = 1;
-                inherit protocol supportedFeatures;
-              }
-              // lib.optionalAttrs (hostname == "khanelimac") {
-                sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
-              }
-            )
+            /*
+              NOTE: Disabled due to host being unreachable and causing build hangs
+              (
+                lib.mkIf (hostname != "bruddynix" && hostname != "khanelinix") {
+                  inherit sshUser;
+                  hostName = "bruddynix.local";
+                  systems = [
+                    "x86_64-linux"
+                  ];
+                  maxJobs = 2;
+                  speedFactor = 1;
+                  inherit protocol supportedFeatures;
+                }
+                // lib.optionalAttrs (hostname == "khanelimac") {
+                  sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+                }
+              )
+            */
             (lib.mkIf (hostname != "khanelinix") (
               {
                 inherit protocol sshUser;

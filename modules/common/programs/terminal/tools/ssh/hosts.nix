@@ -2,14 +2,16 @@
 # This replaces the dynamic cross-configuration evaluation that caused multiple evaluations
 {
   # NixOS hosts
-  bruddynix = {
-    hostname = "bruddynix.local";
-    username = "bruddy";
-    system = "nixos";
-    gpgAgent = true;
-    publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFeLt5cnRnKeil39Ds+CimMJQq/5dln32YqQ+EfYSCvc";
-    userPublicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEqCiZgjOmhsBTAFD0LbuwpfeuCnwXwMl2wByxC1UiRt";
-  };
+  /*
+    bruddynix = {
+      hostname = "bruddynix.local";
+      username = "bruddy";
+      system = "nixos";
+      gpgAgent = true;
+      publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFeLt5cnRnKeil39Ds+CimMJQq/5dln32YqQ+EfYSCvc";
+      userPublicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEqCiZgjOmhsBTAFD0LbuwpfeuCnwXwMl2wByxC1UiRt";
+    };
+  */
 
   khanelinix = {
     hostname = "khanelinix.local";
