@@ -172,6 +172,7 @@ in
       config.home.homeDirectory
       "${config.home.homeDirectory}/khanelinix"
       "/mnt/c/Users/au09163/source/"
+      "/nix/store"
     ];
 
     opencode.settings = {
