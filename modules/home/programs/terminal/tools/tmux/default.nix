@@ -80,6 +80,7 @@ in
           plugin = pkgs.tmuxPlugins.tmux-fzf;
           extraConfig = /* Bash */ ''
             set-environment -g TMUX_FZF_OPTIONS "-p -w 62% -h 38% -m"
+            set-environment -g TMUX_FZF_ORDER "session|window|pane|keybinding"
           '';
         }
         {
