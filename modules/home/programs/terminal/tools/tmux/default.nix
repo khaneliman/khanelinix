@@ -32,9 +32,27 @@ in
       shellAliases = {
         sl = "sesh list";
         tl = "sesh last";
+        tr = ''sesh connect --root "$(pwd)"'';
         ts = ''sesh connect "$(sesh list | fzf)"'';
       };
     };
+
+    xdg.configFile."sesh/sesh.toml".text = /* toml */ ''
+      blacklist = ["scratch"]
+      dir_length = 2
+      sort_order = ["config", "tmux", "zoxide"]
+
+      [default_session]
+      preview_command = "eza --all --git --icons --color=always {}"
+
+      [[wildcard]]
+      pattern = "${config.home.homeDirectory}/github/**"
+      preview_command = "eza --all --git --icons --color=always {}"
+
+      [[wildcard]]
+      pattern = "${config.xdg.dataHome}/worktrees/**"
+      preview_command = "eza --all --git --icons --color=always {}"
+    '';
 
     programs.tmux = {
       # Tmux documentation
@@ -97,6 +115,7 @@ in
 
         # Restore a clear-screen shortcut after vim-tmux-navigator takes over C-l.
         bind C-l send-keys C-l
+        bind-key 9 run-shell "sesh connect --root '#{pane_current_path}'"
         bind-key L run-shell "sesh last"
         bind r source-file ~/.config/tmux/tmux.conf \; display-message 'tmux config reloaded'
         bind-key S display-popup -E -w 80% -h 70% "sesh connect \"$(sesh list | fzf)\""
