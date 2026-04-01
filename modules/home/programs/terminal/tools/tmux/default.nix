@@ -75,6 +75,7 @@ in
       extraConfig = /* Bash */ ''
         # Key bindings overrides
         bind-key -T copy-mode-vi v send-keys -X begin-selection
+        bind-key -T copy-mode-vi Enter send-keys -X copy-selection-and-cancel
         bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
         bind-key -T copy-mode-vi Escape send-keys -X cancel
         bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
@@ -125,6 +126,8 @@ in
         set -s extended-keys always
         set -s extended-keys-format csi-u
         set -g set-titles
+
+        ${optionalString pkgs.stdenv.hostPlatform.isDarwin "set -s copy-command pbcopy"}
 
         ${optionalString (
           config.programs.tmux.sensibleOnTop && (userShell != "")
