@@ -344,6 +344,7 @@ in
     "${config.home.homeDirectory}/Documents"
     "${config.home.homeDirectory}/khanelinix"
     "${config.home.homeDirectory}/Documents/github"
+    "/nix/store"
   ];
 
   # Neo G9

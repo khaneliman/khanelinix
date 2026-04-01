@@ -98,6 +98,7 @@ in
     "${config.home.homeDirectory}/Documents"
     "${config.home.homeDirectory}/khanelinix"
     "${config.home.homeDirectory}/github"
+    "/nix/store"
   ];
 
   sops.secrets = lib.mkIf config.khanelinix.services.sops.enable {
