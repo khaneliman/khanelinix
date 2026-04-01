@@ -59,7 +59,7 @@ in
         {
           plugin = pkgs.tmuxPlugins.continuum;
           extraConfig = /* Bash */ ''
-            set -g @continuum-restore 'on'
+            set -g @continuum-restore 'off'
           '';
         }
       ];
