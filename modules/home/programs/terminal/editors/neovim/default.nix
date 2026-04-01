@@ -38,6 +38,12 @@ let
             # Automatically disable dependencies that are already in home.packages
             dependencies = lib.genAttrs neovimLib.dependenciesToDisable (_: disabled);
 
+            plugins.tmux-navigator = {
+              autoLoad = true;
+              inherit (config.khanelinix.programs.terminal.tools.tmux) enable;
+              settings.preserve_zoom = 1;
+            };
+
             # FIXME: insane memory usage
             # lsp.servers.nixd.settings.settings.nixd =
             #   let
