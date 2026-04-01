@@ -51,7 +51,7 @@ in
           {
             name = "khanelinix";
             path = "~/khanelinix";
-            startup_command = "nvim";
+            startup_command = "tmux rename-window editor && exec nvim";
             windows = seshWindowNames;
           }
         ]
@@ -60,7 +60,7 @@ in
             (name: {
               inherit name;
               path = "~/github/${name}";
-              startup_command = "nvim";
+              startup_command = "tmux rename-window editor && exec nvim";
               windows = seshWindowNames;
             })
             [

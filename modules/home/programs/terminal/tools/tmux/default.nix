@@ -115,6 +115,7 @@ in
         set -ga terminal-overrides ",xterm-kitty:Tc"
 
         set -g allow-passthrough on
+        set -g allow-rename off
         set -g bell-action any
         set -g detach-on-destroy off
         set -g focus-events on
@@ -122,6 +123,7 @@ in
         set -g renumber-windows on
         set -g set-clipboard on
         set -g status-position top
+        setw -g automatic-rename off
         set -g visual-activity on
         set -ga update-environment TERM
         set -ga update-environment TERM_PROGRAM
