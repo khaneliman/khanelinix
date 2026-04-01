@@ -187,6 +187,8 @@ in
 
         setw -g window-status-format "#[fg=${colors.bg_dark},bg=${colors.bg_highlight},nobold,nounderscore,noitalics]#[fg=${colors.fg_dark},bg=${colors.bg_highlight}] #I  #W #[fg=${colors.bg_highlight},bg=${colors.bg_dark},nobold,nounderscore,noitalics]"
         setw -g window-status-current-format "#[fg=${colors.bg_dark},bg=${colors.blue},nobold,nounderscore,noitalics]#[fg=${colors.bg},bg=${colors.blue},bold] #I  #W #[fg=${colors.blue},bg=${colors.bg_dark},nobold,nounderscore,noitalics]"
+        setw -g window-status-activity-style "fg=${colors.yellow},bg=${colors.bg_highlight},bold"
+        setw -g window-status-bell-style "fg=${colors.bg},bg=${colors.orange},bold"
       '';
 
       vicinae.settings.theme = lib.mkForce {

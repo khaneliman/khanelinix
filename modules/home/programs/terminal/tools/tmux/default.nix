@@ -115,11 +115,14 @@ in
         set -ga terminal-overrides ",xterm-kitty:Tc"
 
         set -g allow-passthrough on
+        set -g bell-action any
         set -g detach-on-destroy off
         set -g focus-events on
+        set -g monitor-activity on
         set -g renumber-windows on
         set -g set-clipboard on
         set -g status-position top
+        set -g visual-activity on
         set -ga update-environment TERM
         set -ga update-environment TERM_PROGRAM
 
