@@ -48,7 +48,6 @@ in
         }
         pkgs.tmuxPlugins.prefix-highlight
         pkgs.tmuxPlugins.resurrect
-        pkgs.tmuxPlugins.vim-tmux-navigator
         {
           plugin = pkgs.tmuxPlugins.tmux-fzf;
           extraConfig = /* Bash */ ''
@@ -94,7 +93,7 @@ in
         bind n next-window
         bind p previous-window
 
-        # Restore a clear-screen shortcut after vim-tmux-navigator takes over C-l.
+        # Keep a prefix clear-screen shortcut available.
         bind C-l send-keys C-l
         bind r source-file ~/.config/tmux/tmux.conf \; display-message 'tmux config reloaded'
         bind-key x kill-pane
