@@ -134,6 +134,7 @@ in
         set -g focus-events on
         set -g renumber-windows on
         set -g set-clipboard on
+        set -g status-position top
         set -ga update-environment TERM
         set -ga update-environment TERM_PROGRAM
 
