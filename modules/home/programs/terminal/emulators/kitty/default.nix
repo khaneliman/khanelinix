@@ -241,6 +241,10 @@ in
             );
 
           keybindings = {
+            "shift+enter" = "send_text all \\x1b[13;2u";
+            "alt+enter" = "send_text all \\x1b[13;3u";
+            "alt+shift+enter" = "send_text all \\x1b[13;4u";
+            "ctrl+enter" = "send_text all \\x1b[13;5u";
             "ctrl+shift+v" = "paste_from_clipboard";
             "ctrl+shift+s" = "paste_from_selection";
             "ctrl+shift+c" = "copy_to_clipboard";
