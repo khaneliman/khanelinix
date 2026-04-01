@@ -51,8 +51,13 @@ in
         {
           plugin = pkgs.tmuxPlugins.tmux-fzf;
           extraConfig = /* Bash */ ''
-            set-environment -g TMUX_FZF_OPTIONS "-p -w 62% -h 38% -m"
+            set-environment -g TMUX_FZF_LAUNCH_KEY "G"
+            set-environment -g TMUX_FZF_OPTIONS "-p -w 70% -h 60% -m"
             set-environment -g TMUX_FZF_ORDER "session|window|pane|keybinding"
+            set-environment -g TMUX_FZF_PREVIEW 0
+            set-environment -g TMUX_FZF_SESSION_FORMAT "#{session_name}#{?session_attached, [attached],}"
+            set-environment -g TMUX_FZF_WINDOW_FORMAT "[#{session_name}] #I:#W  #{pane_current_command}"
+            set-environment -g TMUX_FZF_PANE_FORMAT "[#{session_name}:#{window_name}] #{pane_current_command}  #{pane_current_path}"
           '';
         }
         {
