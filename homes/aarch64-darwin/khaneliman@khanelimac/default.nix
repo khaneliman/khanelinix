@@ -65,6 +65,7 @@ in
 
       terminal = {
         tools = {
+          sesh = enabled;
           ssh = enabled;
           tmux = enabled;
         };
