@@ -100,6 +100,7 @@ in
 
         # Keep a prefix clear-screen shortcut available.
         bind C-l send-keys C-l
+        bind-key T display-popup -E -w 80% -h 80% -d '#{pane_current_path}'
         bind r source-file ~/.config/tmux/tmux.conf \; display-message 'tmux config reloaded'
         bind-key x kill-pane
 
