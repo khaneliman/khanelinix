@@ -174,6 +174,19 @@ in
 
       tmux.extraConfig = ''
         source-file ${tokyonight}/extras/tmux/tokyonight_${variant}.tmux
+
+        set -g status-left-length 24
+        set -g status-right-length 40
+        set -g status-left "#[fg=${colors.fg},bg=default,bold] #S #[fg=${colors.bg_dark},bg=default,nobold]"
+        set -g status-right "#[fg=${colors.yellow},bg=${colors.bg_dark}]#{prefix_highlight}#[fg=${colors.comment},bg=${colors.bg_dark}] #h "
+
+        set -g window-style "bg=${colors.bg}"
+        set -g window-active-style "bg=${colors.bg}"
+        set -g popup-style "fg=${colors.fg},bg=${colors.bg_dark}"
+        set -g popup-border-style "fg=${colors.blue},bg=${colors.bg_dark}"
+
+        setw -g window-status-format "#[fg=${colors.bg_dark},bg=${colors.bg_highlight},nobold,nounderscore,noitalics]#[fg=${colors.fg_dark},bg=${colors.bg_highlight}] #I  #W #[fg=${colors.bg_highlight},bg=${colors.bg_dark},nobold,nounderscore,noitalics]"
+        setw -g window-status-current-format "#[fg=${colors.bg_dark},bg=${colors.blue},nobold,nounderscore,noitalics]#[fg=${colors.bg},bg=${colors.blue},bold] #I  #W #[fg=${colors.blue},bg=${colors.bg_dark},nobold,nounderscore,noitalics]"
       '';
 
       vicinae.settings.theme = lib.mkForce {
