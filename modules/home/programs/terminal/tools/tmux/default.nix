@@ -117,7 +117,8 @@ in
         set -ga update-environment TERM
         set -ga update-environment TERM_PROGRAM
 
-        set -s extended-keys on
+        set -s extended-keys always
+        set -s extended-keys-format csi-u
         set -g set-titles
 
         ${optionalString (
