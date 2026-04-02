@@ -94,6 +94,11 @@ in
     };
 
     suites = {
+      business = {
+        # NOTE: Enabled through desktop role
+        enable = lib.mkForce false;
+      };
+
       development = {
         enable = true;
         gameEnable = true;
