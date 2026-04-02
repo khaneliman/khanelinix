@@ -130,26 +130,33 @@ in
 
         projects =
           let
-            khanelinixPath = "${config.home.homeDirectory}/khanelinix";
-            githubPath =
-              let
-                documentsPath =
-                  if config.xdg.userDirs.enable then
-                    config.xdg.userDirs.documents
-                  else
-                    config.home.homeDirectory + lib.optionalString pkgs.stdenv.hostPlatform.isLinux "/Documents";
-              in
-              "${documentsPath}/github";
-            khanelivimPath = "${githubPath}/khanelivim";
+            documentsPath =
+              if config.xdg.userDirs.enable then
+                config.xdg.userDirs.documents
+              else
+                config.home.homeDirectory + lib.optionalString pkgs.stdenv.hostPlatform.isLinux "/Documents";
+
+            trustedGithubProjects = [
+              "home-manager"
+              "khanelivim"
+              "nixpkgs"
+              "nixvim"
+              "waybar"
+            ];
           in
           {
-            "${khanelinixPath}" = {
+            "${config.home.homeDirectory}/khanelinix" = {
               trust_level = "trusted";
             };
-            "${khanelivimPath}" = {
-              trust_level = "trusted";
-            };
-          };
+          }
+          // builtins.listToAttrs (
+            map (project: {
+              name = "${documentsPath}/github/${project}";
+              value = {
+                trust_level = "trusted";
+              };
+            }) trustedGithubProjects
+          );
       };
 
       custom-instructions = builtins.readFile (lib.getFile "modules/common/ai-tools/base.md");
