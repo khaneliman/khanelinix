@@ -119,12 +119,12 @@ in
         set -g bell-action any
         set -g detach-on-destroy off
         set -g focus-events on
-        set -g monitor-activity on
+        set -g monitor-activity off
         set -g renumber-windows on
         set -g set-clipboard on
         set -g status-position top
         setw -g automatic-rename off
-        set -g visual-activity on
+        set -g visual-activity off
         set -ga update-environment TERM
         set -ga update-environment TERM_PROGRAM
 
