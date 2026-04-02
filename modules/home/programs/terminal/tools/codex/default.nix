@@ -161,6 +161,7 @@ in
 
       custom-instructions = builtins.readFile (lib.getFile "modules/common/ai-tools/base.md");
       skills = lib.getFile "modules/common/ai-tools/skills";
+      rules = import ./rules.nix;
     };
   };
 }
