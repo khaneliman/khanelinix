@@ -256,7 +256,9 @@ in
           };
 
           run-as-service = enabled;
+          sesh = enabled;
           ssh = enabled;
+          tmux = enabled;
         };
       };
     };
