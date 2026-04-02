@@ -8,30 +8,6 @@ let
   inherit (lib) mkEnableOption mkIf;
 
   cfg = config.khanelinix.programs.terminal.tools.codex;
-
-  codexNotify = pkgs.writeShellApplication {
-    name = "codex-notify";
-    runtimeInputs = [
-      pkgs.jq
-    ]
-    ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.libnotify ]
-    ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [ pkgs.terminal-notifier ];
-    text = ''
-      payload="$1"
-      eventType="$(printf '%s' "$payload" | jq -r '.type // ""')"
-      [ "$eventType" = "agent-turn-complete" ] || exit 0
-
-      message="$(printf '%s' "$payload" | jq -r '.["last-assistant-message"] // "Turn complete"')"
-      summary="$(printf '%s' "$message" | cut -c1-180)"
-
-      ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
-        ${lib.getExe pkgs.terminal-notifier} -title "Codex" -message "$summary" -group "codex-turn" >/dev/null 2>&1
-      ''}
-      ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
-        ${lib.getExe pkgs.libnotify}/bin/notify-send "Codex" "$summary" >/dev/null 2>&1
-      ''}
-    '';
-  };
 in
 {
   options.khanelinix.programs.terminal.tools.codex = {
@@ -69,7 +45,34 @@ in
         model_reasoning_effort = "medium";
         plan_mode_reasoning_effort = "high";
 
-        notify = [ (lib.getExe codexNotify) ];
+        notify =
+          let
+            codexNotify = pkgs.writeShellApplication {
+              name = "codex-notify";
+              runtimeInputs = [
+                pkgs.jq
+              ]
+              ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.libnotify ]
+              ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [ pkgs.terminal-notifier ];
+              text = ''
+                payload="$1"
+                eventType="$(printf '%s' "$payload" | jq -r '.type // ""')"
+                [ "$eventType" = "agent-turn-complete" ] || exit 0
+
+                message="$(printf '%s' "$payload" | jq -r '.["last-assistant-message"] // "Turn complete"')"
+                summary="$(printf '%s' "$message" | cut -c1-180)"
+
+                ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
+                  ${lib.getExe pkgs.terminal-notifier} -title "Codex" -message "$summary" -group "codex-turn" >/dev/null 2>&1
+                ''}
+                ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
+                  ${lib.getExe pkgs.libnotify}/bin/notify-send "Codex" "$summary" >/dev/null 2>&1
+                ''}
+              '';
+            };
+          in
+          [ (lib.getExe codexNotify) ];
+
         personality = "pragmatic";
 
         project_root_markers = [
