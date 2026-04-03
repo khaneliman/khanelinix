@@ -16,10 +16,26 @@ decorative abstractions.
 2. Identify the task shape and load only the relevant reference files:
    - [references/module-style.md](references/module-style.md): module templates,
      option design, merge priority, `mkDefault`, `mkForce`, and `mkMerge`.
+   - [references/option-design.md](references/option-design.md): when to expose
+     an option, option shape, enums vs booleans, and avoiding hypothetical
+     flexibility.
+   - [references/module-boundaries.md](references/module-boundaries.md): when to
+     keep a module single-file versus split it into submodules.
+   - [references/merge-order.md](references/merge-order.md): `mkBefore`,
+     `mkAfter`, `mkOrder`, and when order control is justified.
    - [references/bindings.md](references/bindings.md): `let` locality,
      single-use bindings, `inherit (...)`, and bulky inline expressions.
+   - [references/imports-and-args.md](references/imports-and-args.md): module
+     headers, `osConfig ? {}`, import grouping, and explicit arguments.
+   - [references/packages-and-exes.md](references/packages-and-exes.md): PATH
+     management, plain command names, and when `lib.getExe` is justified.
+   - [references/strings-and-shell.md](references/strings-and-shell.md): inline
+     strings, `writeShellScript`, `writeShellApplication`, and shell snippet
+     boundaries.
    - [references/assertions-and-warnings.md](references/assertions-and-warnings.md):
      when to fail evaluation, when to warn, and when simpler typing is better.
+   - [references/derivation-style.md](references/derivation-style.md): boring
+     packaging style, build inputs, and patching conventions.
    - [references/anti-patterns.md](references/anti-patterns.md): `with`, `rec`,
      chained conditionals, and other style hazards that should usually block a
      proposed refactor.
