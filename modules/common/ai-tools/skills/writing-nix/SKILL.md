@@ -18,6 +18,8 @@ decorative abstractions.
      option design, merge priority, `mkDefault`, `mkForce`, and `mkMerge`.
    - [references/bindings.md](references/bindings.md): `let` locality,
      single-use bindings, `inherit (...)`, and bulky inline expressions.
+   - [references/assertions-and-warnings.md](references/assertions-and-warnings.md):
+     when to fail evaluation, when to warn, and when simpler typing is better.
    - [references/anti-patterns.md](references/anti-patterns.md): `with`, `rec`,
      chained conditionals, and other style hazards that should usually block a
      proposed refactor.
