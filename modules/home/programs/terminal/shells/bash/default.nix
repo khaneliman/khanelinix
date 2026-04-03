@@ -5,8 +5,6 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
-
   cfg = config.khanelinix.programs.terminal.shell.bash;
 in
 {
@@ -14,16 +12,23 @@ in
     enable = lib.mkEnableOption "bash";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     programs.bash = {
       # Bash documentation
       # See: https://www.gnu.org/software/bash/manual/
       enable = true;
       enableCompletion = true;
 
-      initExtra = lib.optionalString config.programs.fastfetch.enable ''
-        fastfetch
-      '';
+      initExtra = lib.mkMerge [
+        (lib.mkBefore ''
+          if [[ -n "''${IN_NIX_SHELL:-}" && "''${PWD:-}" == "''${HOME}/.local/cache/nixpkgs-review/"* ]]; then
+            return
+          fi
+        '')
+        (lib.optionalString config.programs.fastfetch.enable ''
+          fastfetch
+        '')
+      ];
     };
   };
 }

@@ -46,6 +46,10 @@ in
 
       interactiveShellInit =
         /* fish */ ''
+          if set -q IN_NIX_SHELL; and string match -q "$HOME/.local/cache/nixpkgs-review/*" -- "$PWD"
+              return
+          end
+
           # 1password plugin
           if [ -f ${config.xdg.configHome}/op/plugins.sh ];
               source ${config.xdg.configHome}/op/plugins.sh

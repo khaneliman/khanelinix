@@ -20,6 +20,12 @@ in
         # See: https://www.nushell.sh/book/
         enable = true;
 
+        extraConfig = ''
+          if (($env.IN_NIX_SHELL? | default "") != "") and (($env.PWD? | default "") | str starts-with $"($env.HOME)/.local/cache/nixpkgs-review/") {
+            return
+          }
+        '';
+
         shellAliases = lib.mkForce (
           lib.mapAttrs (
             _name: value:

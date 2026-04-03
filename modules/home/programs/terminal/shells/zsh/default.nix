@@ -126,6 +126,11 @@ in
         };
 
         initContent = lib.mkMerge [
+          (lib.mkOrder 50 ''
+            if [[ -n "''${IN_NIX_SHELL:-}" && "''${PWD:-}" == "''${HOME}/.local/cache/nixpkgs-review/"* ]]; then
+              return
+            fi
+          '')
           (lib.mkOrder 450 (
             lib.optionalString (!config.khanelinix.programs.terminal.tools.atuin.enable) ''
               # Prevent the command from being written to history before it's
