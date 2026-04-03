@@ -137,15 +137,52 @@ Guidelines:
 
 - Define strict option types.
 - Use `mkDefault` for overridable defaults.
-- Prefer `mkMerge` + `mkIf` for conditional composition.
+- In modules, prefer `lib.mkIf` for conditional attrsets.
+- Use `lib.mkMerge` only when composing multiple attrset fragments that need to
+  merge together; do not reach for it for a single conditional block.
 - Prefer `inherit (...)` when names match and the binding is reused enough in
   the same local scope to justify introducing it. Do not create single-use
   aliases for `lib` helpers; prefer `lib.mkIf`, `lib.optionalString`, etc.
   inline.
 
+## Conditional Style
+
+Treat plain `if/else` as a last resort in Nix.
+
+Conditional decision rule:
+
+1. If you are composing module config, prefer `lib.mkIf` and the module system's
+   merge semantics over `if/else` returning attrsets.
+2. If you are conditionally adding to a list, string, or attrset in a plain
+   expression, prefer `lib.optional`, `lib.optionals`, `lib.optionalString`, or
+   `lib.optionalAttrs`.
+3. If you are selecting from a fixed set of static values, prefer attrset lookup
+   over chained `if/else`.
+4. Use plain `if/else` only when module merging is unavailable and the
+   `lib.optional*` helpers are not practical or make the result harder to read.
+
+```nix
+# BAD
+config = if cfg.enable then {
+  services.foo.enable = true;
+} else { };
+
+# GOOD
+config = lib.mkIf cfg.enable {
+  services.foo.enable = true;
+};
+
+# GOOD
+home.packages = [ pkgs.git ] ++ lib.optionals cfg.extraTools [
+  pkgs.fd
+  pkgs.ripgrep
+];
+```
+
 ## Expression Style
 
-- Prefer attrset lookup over long if/else chains for multi-branch selection.
+- Prefer attrset lookup over chained `if/else` for static multi-branch
+  selection.
 - Keep temporary variables close to usage.
 - Avoid naming single-use values unless the expression is unreadable without a
   small local `let`.
