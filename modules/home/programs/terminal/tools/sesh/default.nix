@@ -29,6 +29,7 @@ in
     xdg.configFile."sesh/sesh.toml".source =
       let
         seshFormat = pkgs.formats.toml { };
+        githubRoot = if pkgs.stdenv.isLinux then "~/Documents/github" else "~/github";
         seshWindowNames = [
           "git"
           "files"
@@ -59,7 +60,7 @@ in
           map
             (name: {
               inherit name;
-              path = "~/github/${name}";
+              path = "${githubRoot}/${name}";
               startup_command = "tmux rename-window editor && exec nvim";
               windows = seshWindowNames;
             })
@@ -82,7 +83,7 @@ in
           session = seshSessions;
           wildcard = [
             {
-              pattern = "~/github/*";
+              pattern = "${githubRoot}/*";
               preview_command = "eza --all --git --icons --color=always {}";
             }
             {
