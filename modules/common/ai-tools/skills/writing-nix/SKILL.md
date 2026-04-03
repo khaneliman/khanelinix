@@ -136,7 +136,14 @@ in {
 Guidelines:
 
 - Define strict option types.
-- Use `mkDefault` for overridable defaults.
+- In `mkOption`, use `default = ...;` for the option's default value.
+- In config, use a normal assignment when the behavior should require an
+  explicit override.
+- Use `lib.mkDefault` only for soft defaults that should silently yield to a
+  normal assignment from another module.
+- A common pattern is generic defaults with `lib.mkDefault`, specialized themes
+  or modules overriding them with a normal assignment, and `lib.mkForce` only
+  for targeted fixes that must win over an existing definition.
 - In modules, prefer `lib.mkIf` for conditional attrsets.
 - Use `lib.mkMerge` only when composing multiple attrset fragments that need to
   merge together; do not reach for it for a single conditional block.
@@ -144,6 +151,17 @@ Guidelines:
   the same local scope to justify introducing it. Do not create single-use
   aliases for `lib` helpers; prefer `lib.mkIf`, `lib.optionalString`, etc.
   inline.
+
+```nix
+# Generic theme defaults
+programs.kitty.settings.background_opacity = lib.mkDefault 0.9;
+
+# Specialized theme override
+programs.kitty.settings.background_opacity = 1.0;
+
+# Targeted fix that must win
+programs.kitty.settings.confirm_os_window_close = lib.mkForce 0;
+```
 
 ## Conditional Style
 
