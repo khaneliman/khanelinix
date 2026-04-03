@@ -12,6 +12,7 @@ let
 
   hasOpenAISecuraKey = lib.hasAttrByPath [ "sops" "secrets" "OPENAI_SECURA_KEY" ] config;
   hasTavilyApiKey = lib.hasAttrByPath [ "sops" "secrets" "TAVILY_API_KEY" ] config;
+  nixBeastConfig = "NIX_CONFIG=$'max-jobs = auto\\ncores = 0'";
   tokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) /* Bash */ ''
     if ${lib.boolToString hasOpenAISecuraKey} && [ -f ${config.sops.secrets.OPENAI_SECURA_KEY.path} ]; then
       OPENAI_KEY="$(cat ${config.sops.secrets.OPENAI_SECURA_KEY.path})"
@@ -108,17 +109,27 @@ in
         # Nixpkgs
         lua-update = "nix run nixpkgs#luarocks-packages-updater update";
         lua-update-all = "nix run nixpkgs#luarocks-packages-updater -- --github-token=$(echo $GITHUB_TOKEN)";
+        bbp-beast = "${nixBeastConfig} ${lib.getExe pkgs.khanelinix.build-by-path} .";
+        npr-beast = "${nixBeastConfig} nixpkgs-review";
         ncs = ''f(){ nix build "nixpkgs#$1" --no-link && nix path-info --recursive --closure-size --human-readable $(nix-build --no-out-link '<nixpkgs>' -A "$1"); }; f'';
         ncsdc = ''f(){ nix build ".#darwinConfigurations.$1.config.system.build.toplevel" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#darwinConfigurations.$1.config.system.build.toplevel.outPath"); }; f'';
         ncsnc = ''f(){ nix build ".#nixosConfigurations.$1.config.system.build.toplevel" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#nixosConfigurations.$1.config.system.build.toplevel.outPath"); }; f'';
         nra = ''nixpkgs-review pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux"'';
+        nrab = ''${nixBeastConfig} nixpkgs-review pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux"'';
         nrap = ''nixpkgs-review pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux" --post-result --num-parallel-evals 3'';
+        nrapb = ''${nixBeastConfig} nixpkgs-review pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux" --post-result --num-parallel-evals 3'';
         nrapa = ''nixpkgs-review pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux" --post-result --num-parallel-evals 3 --approve-pr'';
+        nrapab = ''${nixBeastConfig} nixpkgs-review pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux" --post-result --num-parallel-evals 3 --approve-pr'';
         nrd = ''nixpkgs-review pr $1 --systems "aarch64-darwin"'';
+        nrdb = ''${nixBeastConfig} nixpkgs-review pr $1 --systems "aarch64-darwin"'';
         nrdp = ''nixpkgs-review pr $1 --systems "aarch64-darwin" --post-result'';
+        nrdpb = ''${nixBeastConfig} nixpkgs-review pr $1 --systems "aarch64-darwin" --post-result'';
         nrh = "nixpkgs-review rev HEAD";
+        nrhb = "${nixBeastConfig} nixpkgs-review rev HEAD";
         nrl = ''nixpkgs-review pr $1 --systems "x86_64-linux aarch64-linux" --num-parallel-evals 2'';
+        nrlb = ''${nixBeastConfig} nixpkgs-review pr $1 --systems "x86_64-linux aarch64-linux" --num-parallel-evals 2'';
         nrlp = ''nixpkgs-review pr $1 --systems "x86_64-linux aarch64-linux" --num-parallel-evals 2 --post-result'';
+        nrlpb = ''${nixBeastConfig} nixpkgs-review pr $1 --systems "x86_64-linux aarch64-linux" --num-parallel-evals 2 --post-result'';
         num = "nix-shell maintainers/scripts/update.nix --argstr maintainer $1";
         nup = "nix-update --commit -u $1";
         prefetch-sri = "nix store prefetch-file $1";
