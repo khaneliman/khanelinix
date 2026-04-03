@@ -1,6 +1,6 @@
 ---
 name: writing-nix
-description: Write idiomatic, maintainable, and performant Nix code. Use when creating or refactoring Nix expressions, modules, overlays, packages, flake outputs, and helper functions, including anti-pattern avoidance and evaluation/build performance practices.
+description: Write idiomatic and maintainable Nix code. Use when creating or refactoring Nix expressions, modules, overlays, packages, flake outputs, and helper functions, including anti-pattern avoidance and style guidance for modules and expressions.
 ---
 
 # Writing Nix
@@ -192,19 +192,6 @@ home.packages = [ pkgs.git ] ++ lib.optionals cfg.extraTools [
 - Ask two questions before adding a binding: "Is this shared?" and "Does the
   inline form damage readability?" If both answers are no, do not bind it.
 - Keep functions small and names descriptive.
-
-## Performance Practices
-
-Evaluation:
-
-- Avoid forcing large attrsets when not needed.
-- Avoid expensive repeated imports and computations.
-- Keep hot-path expressions straightforward.
-
-Build:
-
-- Minimize runtime closures.
-- Keep sources clean (`cleanSource`/filters) to avoid rebuild churn.
 
 ## Function Patterns
 
