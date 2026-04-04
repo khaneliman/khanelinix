@@ -19,62 +19,107 @@
   {
     key = "S";
     context = "commits";
-    command = ''
-      /bin/sh -lc '
+    command = /* Bash */ ''
       set -eu
 
-      rc=0
-      oldest="$(
-        git log --reverse --format="%H%x09%s" HEAD | awk -F "\t" "
-          BEGIN { fixupCount = 0; resolvedCount = 0; nextIdx = 0; }
-          {
-            sha = \$1;
-            subject = \$2;
-            if (subject ~ /^(fixup! |squash! )/) {
-              fixupCount++;
-              targetSubject = subject;
-              sub(/^(fixup! |squash! )/, \"\", targetSubject);
-              targetSha = latest[targetSubject];
-              if (targetSha != \"\") {
-                resolvedCount++;
-                used[targetSha] = 1;
-              }
-            } else {
-              nextIdx++;
-              idx[sha] = nextIdx;
-              latest[subject] = sha;
-            }
-          }
-          END {
-            if (fixupCount == 0) exit 2;
-            if (resolvedCount == 0) exit 3;
-            oldestSha = \"\";
-            oldestIdx = 0;
-            for (sha in used) {
-              if (oldestSha == \"\" || idx[sha] < oldestIdx) {
-                oldestSha = sha;
-                oldestIdx = idx[sha];
-              }
-            }
-            if (oldestSha == \"\") exit 4;
-            print oldestSha;
-          }
-        "
-      )" || rc=$?
-
-      if [ "$rc" -eq 2 ]; then
-        echo "No fixup!/squash! commits found on this branch."
-        exit 1
-      elif [ "$rc" -eq 3 ]; then
-        echo "Found fixup!/squash! commits, but could not resolve target commits."
-        exit 1
-      elif [ "$rc" -ne 0 ] || [ -z "$oldest" ]; then
-        echo "Unable to determine oldest target commit."
+      if ! git rev-parse --verify HEAD >/dev/null 2>&1; then
+        echo "No commits found on this branch."
         exit 1
       fi
 
-      GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash --no-verify "$oldest^"
-      '
+      workDir="''${TMPDIR:-/tmp}/lazygit-autosquash-$$"
+      rm -rf "$workDir"
+      mkdir -p "$workDir"
+      trap 'rm -rf "$workDir"' EXIT HUP INT TERM
+
+      historyFile="$workDir/history"
+      latestFile="$workDir/latest"
+      orderFile="$workDir/order"
+      usedFile="$workDir/used"
+      tab="$(printf '\t')"
+
+      : > "$latestFile"
+      : > "$orderFile"
+      : > "$usedFile"
+
+      git --no-pager log --reverse --format='%H%x09%s' HEAD > "$historyFile"
+
+      fixupCount=0
+      resolvedCount=0
+
+      while IFS= read -r line; do
+        sha="''${line%%"$tab"*}"
+        subject="''${line#*"$tab"}"
+
+        case "$subject" in
+          "fixup! "*)
+            fixupCount=$((fixupCount + 1))
+            targetSubject="''${subject#fixup! }"
+            ;;
+          "squash! "*)
+            fixupCount=$((fixupCount + 1))
+            targetSubject="''${subject#squash! }"
+            ;;
+          *)
+            printf '%s\t%s\n' "$sha" "$subject" >> "$latestFile"
+            printf '%s\n' "$sha" >> "$orderFile"
+            continue
+            ;;
+        esac
+
+        targetSha=""
+        while IFS= read -r entry; do
+          entrySha="''${entry%%"$tab"*}"
+          entrySubject="''${entry#*"$tab"}"
+
+          if [ "$entrySubject" = "$targetSubject" ]; then
+            targetSha="$entrySha"
+          fi
+        done < "$latestFile"
+
+        if [ -n "$targetSha" ]; then
+          resolvedCount=$((resolvedCount + 1))
+          printf '%s\n' "$targetSha" >> "$usedFile"
+        fi
+      done < "$historyFile"
+
+      if [ "$fixupCount" -eq 0 ]; then
+        echo "No fixup!/squash! commits found on this branch."
+        exit 1
+      fi
+
+      if [ "$resolvedCount" -eq 0 ]; then
+        echo "Found fixup!/squash! commits, but could not resolve target commits."
+        exit 1
+      fi
+
+      oldestTargetSha=""
+      while IFS= read -r candidateSha; do
+        targetUsed=0
+
+        while IFS= read -r usedSha; do
+          if [ "$usedSha" = "$candidateSha" ]; then
+            targetUsed=1
+            break
+          fi
+        done < "$usedFile"
+
+        if [ "$targetUsed" -eq 1 ]; then
+          oldestTargetSha="$candidateSha"
+          break
+        fi
+      done < "$orderFile"
+
+      if [ -z "$oldestTargetSha" ]; then
+        echo "Unable to determine the oldest fixup target commit."
+        exit 1
+      fi
+
+      if git rev-parse --verify "$oldestTargetSha^" >/dev/null 2>&1; then
+        GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash --no-verify "$oldestTargetSha^"
+      else
+        GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash --no-verify --root
+      fi
     '';
     description = "Autosquash all fixup/squash commits (auto-detect oldest target, skip hooks)";
     loadingText = "Autosquashing fixup commits...";
