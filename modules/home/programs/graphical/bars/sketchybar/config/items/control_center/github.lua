@@ -167,7 +167,7 @@ github = Sbar.add("item", "github", {
 		string = icons.loading,
 		highlight_color = colors.blue,
 	},
-	update_freq = 0,
+	update_freq = 60,
 	popup = {
 		align = "right",
 	},
