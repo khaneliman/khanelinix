@@ -27,6 +27,8 @@
         exit 1
       fi
 
+      maxScanCommits=100
+
       workDir="''${TMPDIR:-/tmp}/lazygit-autosquash-$$"
       rm -rf "$workDir"
       mkdir -p "$workDir"
@@ -42,7 +44,7 @@
       : > "$orderFile"
       : > "$usedFile"
 
-      git --no-pager log --reverse --format='%H%x09%s' HEAD > "$historyFile"
+      git --no-pager log --reverse -n "$maxScanCommits" --format='%H%x09%s' HEAD > "$historyFile"
 
       fixupCount=0
       resolvedCount=0
@@ -84,12 +86,12 @@
       done < "$historyFile"
 
       if [ "$fixupCount" -eq 0 ]; then
-        echo "No fixup!/squash! commits found on this branch."
+        echo "No fixup!/squash! commits found in the last $maxScanCommits commits."
         exit 1
       fi
 
       if [ "$resolvedCount" -eq 0 ]; then
-        echo "Found fixup!/squash! commits, but could not resolve target commits."
+        echo "Found fixup!/squash! commits in the last $maxScanCommits commits, but none target commits in that window."
         exit 1
       fi
 
@@ -121,7 +123,7 @@
         GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash --no-verify --root
       fi
     '';
-    description = "Autosquash all fixup/squash commits (auto-detect oldest target, skip hooks)";
+    description = "Autosquash recent fixup/squash commits (last 100 commits)";
     loadingText = "Autosquashing fixup commits...";
     output = "log";
     prompts = [
@@ -129,7 +131,7 @@
         type = "confirm";
         key = "ConfirmAutosquash";
         title = "Rewrite commit history?";
-        body = "This auto-detects the oldest fixup target commit, rebases from its parent, and rewrites commit hashes.";
+        body = "This searches the last 100 commits, rebases from the oldest fixup target it finds, and rewrites commit hashes.";
       }
     ];
   }
