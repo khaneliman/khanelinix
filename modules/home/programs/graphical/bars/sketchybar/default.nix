@@ -81,6 +81,7 @@ in
             gnused
             jankyborders
             jq
+            pkgs.khanelinix.clamshell
             pkgs.khanelinix.sketchyhelper
             wttrbar
           ]
@@ -127,6 +128,15 @@ in
           use_yabai = ${
             if (osConfig.khanelinix.desktop.wms.yabai.enable or false) then "true" else "false"
           },
+        }
+      '';
+
+      "sketchybar/power_config.lua".text = ''
+        return {
+          use_closed_lid_awake = ${
+            if (osConfig.khanelinix.system.power.enable or false) then "true" else "false"
+          },
+          clamshell = "${lib.getExe pkgs.khanelinix.clamshell}",
         }
       '';
 
