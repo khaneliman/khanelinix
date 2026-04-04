@@ -132,9 +132,6 @@ in
           if ! pgrep "Raycast"; then
             open -a Raycast
           fi
-          if ! pgrep "Amphetamine"; then
-            open -a Amphetamine
-          fi
 
           echo "yabai configuration loaded.."
         '';

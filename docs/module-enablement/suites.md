@@ -158,13 +158,13 @@ Suites bundle related modules by platform and purpose.
 <details>
 <summary><strong>Desktop Suite</strong></summary>
 
-| Category            | Items                                                                                                                                                |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **System Packages** | `alt-tab-macos`, `appcleaner`, `bartender`, `blueutil`, `monitorcontrol`, `raycast`, `switchaudio-osx`, `stats`                                      |
-| **Desktop WM**      | `yabai`                                                                                                                                              |
-| **Homebrew Brews**  | `ical-buddy`                                                                                                                                         |
-| **Homebrew Casks**  | `bitwarden`, `ghostty`, `gpg-suite`, `hammerspoon`, `launchcontrol`, `sf-symbols`, `xquartz`                                                         |
-| **Mac App Store**   | AmorphousMemoryMark, Amphetamine, AutoMounter, Dark Reader for Safari, Disk Speed Test, Microsoft Remote Desktop, PopClip, TestFlight, WiFi Explorer |
+| Category            | Items                                                                                                                                   |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **System Packages** | `alt-tab-macos`, `appcleaner`, `bartender`, `blueutil`, `monitorcontrol`, `raycast`, `switchaudio-osx`, `stats`                         |
+| **Desktop WM**      | `yabai`                                                                                                                                 |
+| **Homebrew Brews**  | `ical-buddy`                                                                                                                            |
+| **Homebrew Casks**  | `bitwarden`, `ghostty`, `gpg-suite`, `hammerspoon`, `launchcontrol`, `sf-symbols`, `xquartz`                                            |
+| **Mac App Store**   | AmorphousMemoryMark, AutoMounter, Dark Reader for Safari, Disk Speed Test, Microsoft Remote Desktop, PopClip, TestFlight, WiFi Explorer |
 
 </details>
 

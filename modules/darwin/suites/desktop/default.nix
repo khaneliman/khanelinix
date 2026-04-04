@@ -61,7 +61,6 @@ in
 
       masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
         "AmorphousMemoryMark" = 1495719766;
-        "Amphetamine" = 937984704;
         "AutoMounter" = 1160435653;
         "Dark Reader for Safari" = 1438243180;
         "Disk Speed Test" = 425264550;

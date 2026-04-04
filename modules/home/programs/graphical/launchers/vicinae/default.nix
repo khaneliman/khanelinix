@@ -150,10 +150,6 @@ in
         ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin (
           [
             {
-              name = "amphetamine";
-              sha256 = "sha256-k4N+6nNAQrc9tEVA1Looe1HuAyzZcml5zhBBX7XohyQ=";
-            }
-            {
               name = "brew";
               sha256 = "sha256-mL3Hm1w3AdpOjSLIXusPegXKe5j6njVBm0nWZYrQIWo=";
             }

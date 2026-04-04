@@ -113,7 +113,6 @@ in
         # Startup commands
         after-startup-command = [
           "exec-and-forget open ${pkgs.raycast}/Applications/Raycast.app"
-          "exec-and-forget open -a Amphetamine"
           # Ensure numbered workspaces 1-8 are created
           "workspace 1"
           "workspace 2"
