@@ -28,7 +28,14 @@
             enable = true;
             package = pkgs.eslint_d;
           };
-          luacheck.enable = true;
+          luals = {
+            enable = true;
+            description = "LuaLS diagnostics";
+            entry = "${lib.getExe pkgs.lua-language-server} --configpath=.luarc.json --check=. --check_format=pretty --checklevel=Warning";
+            files = "\\.lua$";
+            language = "system";
+            pass_filenames = false;
+          };
           pre-commit-hook-ensure-sops.enable = true;
           statix = {
             enable = true;

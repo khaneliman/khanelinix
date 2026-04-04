@@ -73,7 +73,6 @@
             "*.git-blame-ignore-revs"
             "*.gitignore"
             "*.gitattributes"
-            "*.luacheckrc"
             "*CODEOWNERS"
             "*LICENSE"
             "*flake.lock"

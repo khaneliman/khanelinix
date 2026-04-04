@@ -121,7 +121,10 @@ battery:subscribe({
 
 		local found, _, charge = batt_info:find("(%d+)%%")
 		if found then
-			percent = tonumber(charge)
+			local parsedPercent = tonumber(charge)
+			if parsedPercent then
+				percent = parsedPercent
+			end
 		end
 
 		for _, threshold in ipairs(thresholds) do

@@ -1,3 +1,40 @@
 {
-	"diagnostics.globals": ["vim", "Sbar", "IS_SYSTEM_SLEEPING"]
+	"$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
+	"runtime": {
+		"version": "LuaJIT"
+	},
+	"workspace": {
+		"checkThirdParty": "Disable",
+		"ignoreDir": [".direnv", ".git", "result"]
+	},
+	"diagnostics": {
+		"globals": [
+			"COLOR_TO_HEX",
+			"Current",
+			"DELAY",
+			"Header",
+			"IS_EMPTY",
+			"IS_SYSTEM_SLEEPING",
+			"Linemode",
+			"Manager",
+			"POPUP_OFF",
+			"POPUP_ON",
+			"POPUP_TOGGLE",
+			"PRINT_TABLE",
+			"Parent",
+			"Preview",
+			"Progress",
+			"SLEEP",
+			"Sbar",
+			"STR_SPLIT",
+			"Status",
+			"Tab",
+			"cx",
+			"ps",
+			"spoon",
+			"ui",
+			"vim",
+			"ya"
+		]
+	}
 }
