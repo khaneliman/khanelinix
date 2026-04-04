@@ -60,22 +60,23 @@ in
       ];
 
       home = {
-        file = {
-          "${getDir config.xdg.userDirs.desktop "Desktop"}/.keep".text = "";
-          "${getDir config.xdg.userDirs.documents "Documents"}/.keep".text = "";
-          "${getDir config.xdg.userDirs.download "Downloads"}/.keep".text = "";
-          "${getDir config.xdg.userDirs.music "Music"}/.keep".text = "";
-          "${getDir config.xdg.userDirs.pictures "Pictures"}/.keep".text = "";
-          "${getDir config.xdg.userDirs.videos "Videos"}/.keep".text = "";
-        }
-        // lib.optionalAttrs (cfg.icon != null) {
-          ".face".source = cfg.icon;
-          ".face.icon".source = cfg.icon;
-          "${getDir config.xdg.userDirs.pictures "Pictures"}/${
-            cfg.icon.fileName or (baseNameOf cfg.icon)
-          }".source =
-            cfg.icon;
-        };
+        file =
+          lib.optionalAttrs (!pkgs.stdenv.hostPlatform.isDarwin) {
+            "${getDir config.xdg.userDirs.desktop "Desktop"}/.keep".text = "";
+            "${getDir config.xdg.userDirs.documents "Documents"}/.keep".text = "";
+            "${getDir config.xdg.userDirs.download "Downloads"}/.keep".text = "";
+            "${getDir config.xdg.userDirs.music "Music"}/.keep".text = "";
+            "${getDir config.xdg.userDirs.pictures "Pictures"}/.keep".text = "";
+            "${getDir config.xdg.userDirs.videos "Videos"}/.keep".text = "";
+          }
+          // lib.optionalAttrs (cfg.icon != null) {
+            ".face".source = cfg.icon;
+            ".face.icon".source = cfg.icon;
+            "${getDir config.xdg.userDirs.pictures "Pictures"}/${
+              cfg.icon.fileName or (baseNameOf cfg.icon)
+            }".source =
+              cfg.icon;
+          };
 
         # Only set homeDirectory if cfg.home is not null
         homeDirectory = mkIf (cfg.home != null) (mkDefault cfg.home);
