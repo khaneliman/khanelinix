@@ -1,6 +1,4 @@
 #!/usr/bin/env lua
--- luacheck: globals DELAY
-
 local separator = require("items.stats.separator_right")
 local cpu = require("items.stats.cpu")
 local memory = require("items.stats.memory")

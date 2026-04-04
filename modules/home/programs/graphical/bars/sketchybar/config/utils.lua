@@ -1,6 +1,4 @@
 #!/usr/bin/env lua
--- luacheck: globals DELAY IS_SYSTEM_SLEEPING
-
 IS_SYSTEM_SLEEPING = false
 
 local system_watcher = Sbar.add("item", {

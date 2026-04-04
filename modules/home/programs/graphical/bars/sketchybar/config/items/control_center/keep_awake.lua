@@ -1,6 +1,4 @@
 #!/usr/bin/env lua
--- luacheck: globals DELAY
-
 local colors = require("colors")
 local icons = require("icons")
 local power_config = require("power_config")

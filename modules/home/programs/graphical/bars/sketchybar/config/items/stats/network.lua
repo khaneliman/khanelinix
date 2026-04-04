@@ -1,6 +1,4 @@
 #!/usr/bin/env lua
--- luacheck: globals IS_SYSTEM_SLEEPING
-
 local settings = require("settings")
 local colors = require("colors")
 local icons = require("icons")
