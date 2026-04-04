@@ -72,6 +72,7 @@ in
         interface = mkDefault enabled;
         logging = mkDefault enabled;
         networking = mkDefault enabled;
+        power = mkDefault enabled;
       };
     };
 
