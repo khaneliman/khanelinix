@@ -49,7 +49,15 @@ pre-commit-hooks-nix.lib.${pkgs.stdenv.hostPlatform.system}.run {
         stages = [ "pre-push" ];
       };
 
-      luacheck.enable = true;
+      luals = {
+        enable = true;
+
+        description = "LuaLS diagnostics";
+        entry = "${lib.getExe pkgs.lua-language-server} --check=. --check_format=pretty --checklevel=Warning";
+        files = "\\.lua$";
+        language = "system";
+        pass_filenames = false;
+      };
 
       nixfmt = {
         enable = true;
