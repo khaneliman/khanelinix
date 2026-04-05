@@ -138,7 +138,7 @@ in
         };
       };
 
-      opencode.settings.theme = lib.mkForce "tokyonight";
+      opencode.tui.theme = lib.mkForce "tokyonight";
 
       satty.settings = mkIf config.khanelinix.programs.graphical.addons.satty.enable {
         color-palette = {

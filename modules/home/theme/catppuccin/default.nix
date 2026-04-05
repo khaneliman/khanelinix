@@ -283,7 +283,7 @@ in
             };
           };
 
-          opencode.settings.theme = lib.mkForce "catppuccin";
+          opencode.tui.theme = lib.mkForce "catppuccin";
           vicinae.settings.theme = lib.mkForce {
             name = "catppuccin-macchiato";
             light.name = "catppuccin-latte";

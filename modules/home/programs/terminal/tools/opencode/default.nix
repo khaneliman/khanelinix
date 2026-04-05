@@ -33,7 +33,6 @@ in
         mkIf mcpModuleEnabled true;
 
       settings = {
-        theme = mkDefault "opencode";
         model = "github-copilot/gpt-5.2";
         # TODO: enable
         # model = "github-copilot/gpt-5.2-codex";
@@ -50,6 +49,10 @@ in
           #
           "oh-my-opencode"
         ];
+      };
+
+      tui = {
+        theme = mkDefault "opencode";
       };
 
       inherit (aiTools.opencode) commands;
