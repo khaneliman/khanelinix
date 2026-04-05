@@ -35,6 +35,7 @@ let
       "lazygit"
       "ncspot"
       "neovim"
+      "opencode"
       "superfile"
       "television"
       "tmux"
@@ -78,6 +79,7 @@ let
       "lazygit"
       "ncspot"
       "neovim"
+      "opencode"
       "superfile"
       "television"
       "tmux"
@@ -212,6 +214,7 @@ in
           lazygit.enable = !(isThemedBy "lazygit");
           ncspot.enable = !(isThemedBy "ncspot");
           neovim.enable = !(isThemedBy "neovim");
+          opencode.enable = !(isThemedBy "opencode");
           tmux.enable = !(isThemedBy "tmux");
           vesktop.enable = !(isThemedBy "vesktop");
           vicinae.enable = !(isThemedBy "vicinae");
