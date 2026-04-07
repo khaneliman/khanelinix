@@ -12,6 +12,17 @@ let
   inherit (lib.khanelinix) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.nix;
+  nhCleanEnabled = lib.attrByPath [
+    "home-manager"
+    "users"
+    config.khanelinix.user.name
+    "khanelinix"
+    "programs"
+    "terminal"
+    "tools"
+    "nh"
+    "enable"
+  ] false config;
 in
 {
   options.khanelinix.nix = {
@@ -221,7 +232,7 @@ in
 
         checkConfig = true;
         distributedBuilds = hasRemoteBuilders;
-        gc.automatic = true;
+        gc.automatic = !nhCleanEnabled;
 
         # This will additionally add your inputs to the system's legacy channels
         # Making legacy nix commands consistent as well
