@@ -81,6 +81,8 @@ in
         # Only set homeDirectory if cfg.home is not null
         homeDirectory = mkIf (cfg.home != null) (mkDefault cfg.home);
 
+        preferXdgDirectories = true;
+
         shellAliases = {
           # nix specific aliases
           cleanup =
