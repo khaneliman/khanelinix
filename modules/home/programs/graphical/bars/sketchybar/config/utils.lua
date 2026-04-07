@@ -76,3 +76,67 @@ end
 COLOR_TO_HEX = function(color)
 	return string.format("0x%x", color)
 end
+
+TRUNCATE_TEXT = function(value, maxLength)
+	if value == nil then
+		return ""
+	end
+
+	local text = tostring(value)
+	local limit = tonumber(maxLength)
+	if limit == nil or limit <= 0 or #text <= limit then
+		return text
+	end
+
+	if limit == 1 then
+		return "…"
+	end
+
+	return text:sub(1, limit - 1) .. "…"
+end
+
+SHELL_QUOTE = function(value)
+	local text = tostring(value or "")
+	return "'" .. text:gsub("'", [['"'"']]) .. "'"
+end
+
+CLEAR_POPUP_ITEMS = function(item_name)
+	local query = Sbar.query(item_name)
+	if query.popup and next(query.popup.items) ~= nil then
+		for _, child in pairs(query.popup.items) do
+			Sbar.remove(child)
+		end
+	end
+end
+
+SETUP_POPUP_HOVER = function(item, additional_entered_logic, additional_exited_logic)
+	item:subscribe("mouse.entered", function()
+		item:set({ popup = { drawing = true } })
+		if additional_entered_logic then
+			additional_entered_logic()
+		end
+	end)
+	item:subscribe({ "mouse.exited", "mouse.exited.global" }, function()
+		item:set({ popup = { drawing = false } })
+		if additional_exited_logic then
+			additional_exited_logic()
+		end
+	end)
+end
+
+SETUP_STANDARD_CLICKS = function(item, update_trigger_name)
+	item:subscribe("mouse.clicked", function(env)
+		if env.BUTTON == "left" then
+			POPUP_TOGGLE(env.NAME)
+		elseif env.BUTTON == "right" and update_trigger_name then
+			Sbar.trigger(update_trigger_name)
+		end
+	end)
+end
+
+EXEC_IF_AWAKE = function(command, callback)
+	if IS_SYSTEM_SLEEPING then
+		return
+	end
+	Sbar.exec(command, callback)
+end
