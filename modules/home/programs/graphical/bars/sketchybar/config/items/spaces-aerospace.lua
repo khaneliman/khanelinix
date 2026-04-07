@@ -2,6 +2,7 @@
 local colors = require("colors")
 local app_icons = require("app_icons")
 local settings = require("settings")
+local spaces_utils = require("items.spaces_utils")
 
 local spaces = {}
 
@@ -10,45 +11,10 @@ local function focus_workspace(workspace)
 end
 
 for i = 1, 8, 1 do
-	local space = Sbar.add("item", {
-		position = "left",
-		icon = {
-			string = tostring(i),
-			padding_left = 7,
-			padding_right = 7,
-			color = colors.text,
-			highlight_color = colors.getRandomCatColor(),
-			font = { family = settings.font, size = 14 },
-		},
-		padding_left = 2,
-		padding_right = 2,
-		label = {
-			padding_left = 6,
-			padding_right = 12,
-			color = colors.grey,
-			highlight_color = colors.getRandomCatColor(),
-			font = "sketchybar-app-font:Regular:16.0",
-			y_offset = -1,
-			background = {
-				height = 26,
-				drawing = true,
-				color = colors.surface1,
-				corner_radius = 8,
-			},
-		},
-		background = {
-			drawing = true,
-			color = colors.surface0,
-			border_color = colors.surface1,
-			border_width = 2,
-			corner_radius = 8,
-		},
-		popup = {
-			background = {
-				border_width = 5,
-			},
-		},
-	})
+	local config = spaces_utils.get_space_item_config(tostring(i), false)
+	config.position = "left"
+
+	local space = Sbar.add("item", config)
 
 	spaces[i] = space
 
