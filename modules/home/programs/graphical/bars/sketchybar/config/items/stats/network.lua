@@ -2,6 +2,7 @@
 local settings = require("settings")
 local colors = require("colors")
 local icons = require("icons")
+require("utils")
 
 local network = {}
 
@@ -37,6 +38,7 @@ network.down = Sbar.add("item", "network.down", {
 	y_offset = -7,
 })
 
+local headerText = " PROC              IN        OUT"
 local popupWidth = 252
 
 network.up = Sbar.add("item", "network.up", {
@@ -76,7 +78,7 @@ network.header = Sbar.add("item", "network.details.header", {
 		drawing = false,
 	},
 	label = {
-		string = " PROC              IN        OUT",
+		string = headerText,
 		font = {
 			family = settings.nerd_font,
 			size = 11.0,
@@ -202,10 +204,8 @@ updateTopConnections = function()
 			for line in (result or ""):gmatch("[^\r\n]+") do
 				local _, proc, inb, outb = line:match("^([^,]+),([^,]+),([^,]+),([^,]+)$")
 				if proc ~= nil then
-					local shortProc = proc
-					if #shortProc > 16 then
-						shortProc = shortProc:sub(1, 16)
-					end
+					---@diagnostic disable-next-line: undefined-global
+					local shortProc = TRUNCATE_TEXT(proc, 16)
 
 					touchRecentProcess(shortProc, inb, outb, true)
 					activeProcesses[shortProc] = true

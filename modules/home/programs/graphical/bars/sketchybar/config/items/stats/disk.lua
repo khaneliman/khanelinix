@@ -31,83 +31,15 @@ local disk = Sbar.add("item", "disk", {
 	position = "right",
 })
 
-local popupWidth = 264
-
-local disk_header = Sbar.add("item", "disk.details.header", {
-	position = "popup." .. disk.name,
-	width = popupWidth,
-	background = {
-		padding_left = 10,
-		padding_right = 10,
-	},
-	icon = {
-		drawing = false,
-	},
-	label = {
-		string = " PID   PGINS   FLTS  PROC",
-		font = {
-			family = settings.nerd_font,
-			size = 11.0,
-			style = "Bold",
-		},
-		align = "left",
-		color = colors.blue,
-		width = "100%",
-	},
-})
-
-local disk_rows = {}
-local disk_row_pids = {}
-local disk_row_commands = {}
-local update_top_processes
-local protectedProcesses = {
-	WindowServer = true,
-	kernel_task = true,
-	launchd = true,
-	loginwindow = true,
-	SystemUIServer = true,
-	tccd = true,
-	nix = true,
-}
-for i = 1, 5 do
-	disk_rows[i] = Sbar.add("item", "disk.details." .. i, {
-		position = "popup." .. disk.name,
-		width = popupWidth,
-		background = {
-			padding_left = 10,
-			padding_right = 10,
-		},
-		icon = {
-			drawing = false,
-		},
-		label = {
-			string = "",
-			font = {
-				family = settings.nerd_font,
-				size = 11.0,
-				style = "Regular",
-			},
-			align = "left",
-			color = colors.text,
-			width = "100%",
-		},
-	})
-
-	disk_rows[i]:subscribe("mouse.clicked", function(env)
-		local pid = disk_row_pids[i]
-		local command = disk_row_commands[i]
-		if env.BUTTON == "right" and pid ~= nil and not protectedProcesses[command] then
-			Sbar.exec("kill -TERM " .. pid .. " >/dev/null 2>&1 || true")
-			Sbar.exec("sleep 0.2", update_top_processes)
-		end
-	end)
-end
-
 local popupVisible = false
+local process_monitor = require("items.stats.process_monitor")
 
-update_top_processes = function()
-	Sbar.exec(
-		[=[
+local monitor = process_monitor(
+	disk.name,
+	264,
+	" PID   PGINS   FLTS  PROC",
+	colors.blue,
+	[=[
 		top -l 1 -o pageins -stats pid,command,pageins,faults,mem | awk '
 			/^PID[[:space:]]+COMMAND/ {
 				capture = 1
@@ -123,30 +55,12 @@ update_top_processes = function()
 			}
 		'
 	]=],
-		function(result)
-			local lines = {}
-
-			for line in (result or ""):gmatch("[^\r\n]+") do
-				table.insert(lines, line)
-			end
-
-			for i, row in ipairs(disk_rows) do
-				local row_string = lines[i] or ""
-				local pid = row_string:match("^%s*(%d+)")
-				local command = row_string:match("^%s*%d+%s+%d+%s+%d+%s+(.+)$")
-				disk_row_pids[i] = pid
-				disk_row_commands[i] = command
-
-				row:set({
-					label = {
-						string = row_string,
-						color = protectedProcesses[command] and colors.yellow or colors.text,
-					},
-				})
-			end
-		end
-	)
-end
+	function(row_string)
+		local pid = row_string:match("^%s*(%d+)")
+		local command = row_string:match("^%s*%d+%s+%d+%s+%d+%s+(.+)$")
+		return pid, command
+	end
+)
 
 disk:subscribe({
 	"routine",
@@ -158,7 +72,7 @@ disk:subscribe({
 	end)
 
 	if popupVisible then
-		update_top_processes()
+		monitor.update()
 	end
 end)
 
@@ -168,7 +82,7 @@ end)
 
 disk:subscribe("mouse.entered", function()
 	popupVisible = true
-	update_top_processes()
+	monitor.update()
 	disk:set({ popup = { drawing = true } })
 end)
 
