@@ -6,22 +6,17 @@ local colors = require("colors")
 local popup_off = "sketchybar --set brew popup.drawing=off"
 local brew_done_marker = "__SKETCHYBAR_DONE__"
 
-local function shell_quote(value)
-	local text = tostring(value or "")
-	return "'" .. text:gsub("'", [['"'"']]) .. "'"
-end
-
 local brew_outdated_cmd = table.concat({
 	"env -i",
-	"HOME=" .. shell_quote(os.getenv("HOME") or ""),
-	"USER=" .. shell_quote(os.getenv("USER") or ""),
-	"LOGNAME=" .. shell_quote(os.getenv("LOGNAME") or ""),
-	"TMPDIR=" .. shell_quote(os.getenv("TMPDIR") or "/tmp"),
-	"PATH=" .. shell_quote("/opt/homebrew/bin:/opt/homebrew/sbin:/usr/bin:/bin:/usr/sbin:/sbin"),
+	"HOME=" .. SHELL_QUOTE(os.getenv("HOME") or ""),
+	"USER=" .. SHELL_QUOTE(os.getenv("USER") or ""),
+	"LOGNAME=" .. SHELL_QUOTE(os.getenv("LOGNAME") or ""),
+	"TMPDIR=" .. SHELL_QUOTE(os.getenv("TMPDIR") or "/tmp"),
+	"PATH=" .. SHELL_QUOTE("/opt/homebrew/bin:/opt/homebrew/sbin:/usr/bin:/bin:/usr/sbin:/sbin"),
 	"HOMEBREW_NO_AUTO_UPDATE=1",
 	"HOMEBREW_NO_ANALYTICS=1",
 	"/opt/homebrew/bin/brew outdated --quiet 2>/dev/null || true;",
-	"printf %s " .. shell_quote(brew_done_marker .. "\n"),
+	"printf %s " .. SHELL_QUOTE(brew_done_marker .. "\n"),
 }, " ")
 
 local brew = Sbar.add("item", "brew", {

@@ -6,11 +6,6 @@ local colors = require("colors")
 
 local popup_width = 250
 
-local function shell_quote(value)
-	local text = tostring(value or "")
-	return "'" .. text:gsub("'", [['"'"']]) .. "'"
-end
-
 local wifi = Sbar.add("item", "wifi", {
 	position = "right",
 	align = "right",
@@ -163,7 +158,7 @@ end)
 
 local function copy_label_to_clipboard(env)
 	local label = Sbar.query(env.NAME).label.value
-	Sbar.exec("printf %s " .. shell_quote(label) .. " | pbcopy")
+	Sbar.exec("printf %s " .. SHELL_QUOTE(label) .. " | pbcopy")
 	Sbar.set(env.NAME, { label = { string = icons.clipboard, align = "center" } })
 	Sbar.delay(1, function()
 		Sbar.set(env.NAME, { label = { string = label, align = "right" } })

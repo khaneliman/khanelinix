@@ -8,11 +8,6 @@ local github
 local last_notification_signature = nil
 local last_rendered_signature = nil
 
-local function shell_quote(value)
-	local text = tostring(value or "")
-	return "'" .. text:gsub("'", [['"'"']]) .. "'"
-end
-
 local function truncate_label(value, max_length)
 	if value == nil then
 		return ""
@@ -285,7 +280,7 @@ github:subscribe({
 						padding_left = settings.paddings + 12,
 					},
 					drawing = true,
-					click_script = "open " .. shell_quote(url),
+					click_script = "open " .. SHELL_QUOTE(url),
 					position = "popup." .. github.name,
 				})
 			end
