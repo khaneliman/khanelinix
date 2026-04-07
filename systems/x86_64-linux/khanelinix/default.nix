@@ -155,6 +155,7 @@ in
         secureBoot = true;
         plymouth = true;
         silentBoot = true;
+        limine.resolution = "3840x2160x32";
       };
 
       fonts = enabled;

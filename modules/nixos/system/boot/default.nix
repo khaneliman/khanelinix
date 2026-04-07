@@ -11,10 +11,26 @@ let
 
   cfg = config.khanelinix.system.boot;
   themeCfg = config.khanelinix.theme;
+  useLimine = cfg.loader == "limine";
+  useSystemdBoot = cfg.loader == "systemd-boot";
 in
 {
   options.khanelinix.system.boot = {
     enable = lib.mkEnableOption "booting";
+    loader = lib.mkOption {
+      type = lib.types.enum [
+        "systemd-boot"
+        "limine"
+      ];
+      default = "systemd-boot";
+      description = "Bootloader to install for this host.";
+    };
+    limine.resolution = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "1920x1080x32";
+      description = "Framebuffer resolution for Limine Linux boot entries on this host.";
+    };
     plymouth = lib.mkEnableOption "plymouth boot splash";
     secureBoot = lib.mkEnableOption "secure boot";
     silentBoot = lib.mkEnableOption "silent boot";
@@ -79,7 +95,7 @@ in
           "vt.global_cursor_default=0"
         ];
 
-      lanzaboote = mkIf cfg.secureBoot {
+      lanzaboote = mkIf (useSystemdBoot && cfg.secureBoot) {
         enable = true;
         autoEnrollKeys = {
           enable = true;
@@ -99,9 +115,22 @@ in
         generationsDir.copyKernels = true;
 
         systemd-boot = {
-          enable = !cfg.secureBoot;
+          enable = useSystemdBoot && !cfg.secureBoot;
           configurationLimit = 20;
           editor = false;
+        };
+
+        limine = mkIf useLimine {
+          enable = true;
+          enableEditor = false;
+          maxGenerations = 10;
+          inherit (cfg.limine) resolution;
+          secureBoot = mkIf cfg.secureBoot {
+            enable = true;
+            autoGenerateKeys = true;
+            autoEnrollKeys.enable = true;
+            inherit (pkgs) sbctl;
+          };
         };
 
         timeout = 1;
