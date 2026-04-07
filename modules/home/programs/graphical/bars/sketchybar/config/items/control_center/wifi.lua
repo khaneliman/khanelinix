@@ -157,17 +157,7 @@ end
 
 wifi:subscribe({ "wifi_change", "system_woke", "forced" }, refresh_status)
 
-wifi:subscribe({
-	"mouse.exited",
-	"mouse.exited.global",
-}, function(_)
-	wifi:set({ popup = { drawing = false } })
-end)
-
-wifi:subscribe({
-	"mouse.entered",
-}, function(_)
-	wifi:set({ popup = { drawing = true } })
+SETUP_POPUP_HOVER(wifi, function()
 	refresh_popup_details()
 end)
 

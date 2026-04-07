@@ -182,37 +182,7 @@ weather.temp:subscribe({ "routine", "forced", "system_woke", "weather_update" },
 	end)
 end)
 
-weather.temp:subscribe("mouse.entered", function()
-	weather.temp:set({ popup = { drawing = true } })
-end)
+SETUP_STANDARD_CLICKS(weather.temp, "weather_update")
+SETUP_POPUP_HOVER(weather.temp)
 
-weather.temp:subscribe({
-	"mouse.exited.global",
-	"mouse.exited",
-}, function()
-	weather.temp:set({ popup = { drawing = false } })
-end)
-
-weather.temp:subscribe({
-	"mouse.clicked",
-}, function(info)
-	if info.BUTTON == "left" then
-		POPUP_TOGGLE(info.NAME)
-	end
-
-	if info.BUTTON == "right" then
-		Sbar.trigger("weather_update")
-	end
-end)
-
-weather.icon:subscribe({
-	"mouse.clicked",
-}, function(info)
-	if info.BUTTON == "left" then
-		POPUP_TOGGLE(info.NAME)
-	end
-
-	if info.BUTTON == "right" then
-		Sbar.trigger("weather_update")
-	end
-end)
+SETUP_STANDARD_CLICKS(weather.icon, "weather_update")

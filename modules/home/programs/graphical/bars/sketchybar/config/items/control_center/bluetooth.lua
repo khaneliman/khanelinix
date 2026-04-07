@@ -287,23 +287,16 @@ local function refresh_popup()
 	end)
 end
 
-bluetooth:subscribe({
-	"mouse.exited",
-	"mouse.exited.global",
-}, function()
-	popup_is_open = false
-	refresh_generation = refresh_generation + 1
-	bluetooth:set({ popup = { drawing = false } })
-end)
-
-bluetooth:subscribe("mouse.entered", function()
+SETUP_POPUP_HOVER(bluetooth, function()
 	if popup_is_open then
 		return
 	end
 
 	popup_is_open = true
-	bluetooth:set({ popup = { drawing = true } })
 	refresh_popup()
+end, function()
+	popup_is_open = false
+	refresh_generation = refresh_generation + 1
 end)
 
 bluetooth:subscribe("mouse.clicked", function()

@@ -52,30 +52,8 @@ local function clear_popup()
 	end
 end
 
-brew:subscribe({
-	"mouse.clicked",
-}, function(info)
-	if info.BUTTON == "left" then
-		POPUP_TOGGLE(info.NAME)
-	end
-
-	if info.BUTTON == "right" then
-		Sbar.trigger("brew_update")
-	end
-end)
-
-brew:subscribe({
-	"mouse.exited",
-	"mouse.exited.global",
-}, function(_)
-	brew:set({ popup = { drawing = false } })
-end)
-
-brew:subscribe({
-	"mouse.entered",
-}, function(_)
-	brew:set({ popup = { drawing = true } })
-end)
+SETUP_STANDARD_CLICKS(brew, "brew_update")
+SETUP_POPUP_HOVER(brew)
 
 brew:subscribe({
 	"routine",

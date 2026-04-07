@@ -171,30 +171,8 @@ github = Sbar.add("item", "github", {
 	},
 })
 
-github:subscribe({
-	"mouse.clicked",
-}, function(info)
-	if info.BUTTON == "left" then
-		POPUP_TOGGLE(info.NAME)
-	end
-
-	if info.BUTTON == "right" then
-		Sbar.trigger("github_update")
-	end
-end)
-
-github:subscribe({
-	"mouse.exited",
-	"mouse.exited.global",
-}, function(_)
-	github:set({ popup = { drawing = false } })
-end)
-
-github:subscribe({
-	"mouse.entered",
-}, function(_)
-	github:set({ popup = { drawing = true } })
-end)
+SETUP_STANDARD_CLICKS(github, "github_update")
+SETUP_POPUP_HOVER(github)
 
 github:subscribe({
 	"routine",

@@ -56,13 +56,7 @@ local nix_details = Sbar.add("item", "nix.details", {
 	},
 })
 
-nix:subscribe("mouse.entered", function()
-	nix:set({ popup = { drawing = true } })
-end)
-
-nix:subscribe("mouse.exited", function()
-	nix:set({ popup = { drawing = false } })
-end)
+SETUP_POPUP_HOVER(nix)
 
 nix:subscribe({ "routine", "forced", "system_woke" }, function()
 	local cmd = [[

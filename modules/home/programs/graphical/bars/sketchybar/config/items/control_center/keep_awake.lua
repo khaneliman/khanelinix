@@ -89,18 +89,7 @@ keep_awake:subscribe("mouse.clicked", function(info)
 	end)
 end)
 
-keep_awake:subscribe({
-	"mouse.entered",
-}, function(_)
-	keep_awake:set({ popup = { drawing = true } })
-end)
-
-keep_awake:subscribe({
-	"mouse.exited",
-	"mouse.exited.global",
-}, function(_)
-	keep_awake:set({ popup = { drawing = false } })
-end)
+SETUP_POPUP_HOVER(keep_awake)
 
 update_item()
 

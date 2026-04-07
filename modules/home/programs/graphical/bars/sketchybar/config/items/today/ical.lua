@@ -151,25 +151,5 @@ ical:subscribe({ "routine", "forced" }, function()
 	end)
 end)
 
-ical:subscribe("mouse.entered", function()
-	ical:set({ popup = { drawing = true } })
-end)
-
-ical:subscribe({
-	"mouse.exited.global",
-	"mouse.exited",
-}, function()
-	ical:set({ popup = { drawing = false } })
-end)
-
-ical:subscribe({
-	"mouse.clicked",
-}, function(info)
-	if info.BUTTON == "left" then
-		POPUP_TOGGLE(info.NAME)
-	end
-
-	if info.BUTTON == "right" then
-		Sbar.trigger("brew_update")
-	end
-end)
+SETUP_STANDARD_CLICKS(ical, "brew_update")
+SETUP_POPUP_HOVER(ical)
