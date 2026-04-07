@@ -42,16 +42,6 @@ local brew = Sbar.add("item", "brew", {
 	},
 })
 
-local function clear_popup()
-	-- Clear existing packages
-	local existing_packages = brew:query()
-	if existing_packages.popup and next(existing_packages.popup.items) ~= nil then
-		for _, item in pairs(existing_packages.popup.items) do
-			Sbar.remove(item)
-		end
-	end
-end
-
 SETUP_STANDARD_CLICKS(brew, "brew_update")
 SETUP_POPUP_HOVER(brew)
 
@@ -81,7 +71,7 @@ brew:subscribe({
 			count = count + 1
 		end
 
-		clear_popup()
+		CLEAR_POPUP_ITEMS(brew.name)
 
 		for index, package in ipairs(packages) do
 			Sbar.add("item", "brew.package." .. tostring(index), {

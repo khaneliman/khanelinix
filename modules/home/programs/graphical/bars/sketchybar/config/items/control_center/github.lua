@@ -85,15 +85,6 @@ local function collect_sorted_notifications(raw_notifications)
 	return sorted_notifications
 end
 
-local function clear_popup_items()
-	local existing_notifications = github:query()
-	if existing_notifications.popup and next(existing_notifications.popup.items) ~= nil then
-		for _, item_name in pairs(existing_notifications.popup.items) do
-			Sbar.remove(item_name)
-		end
-	end
-end
-
 local function notification_signature(sorted_notifications)
 	local parts = { tostring(#sorted_notifications) }
 	for index, notification in ipairs(sorted_notifications) do
@@ -209,7 +200,7 @@ github:subscribe({
 			return
 		end
 		last_rendered_signature = current_signature
-		clear_popup_items()
+		CLEAR_POPUP_ITEMS(github.name)
 
 		local popup_index = 0
 		local function next_popup_name(kind)

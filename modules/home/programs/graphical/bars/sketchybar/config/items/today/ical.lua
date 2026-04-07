@@ -2,21 +2,8 @@
 local settings = require("settings")
 local colors = require("colors")
 local icons = require("icons")
-local popup_items = {}
 local last_events = nil
 local item_index = 0
-
-local function clear_popup_items()
-	for _, item_name in ipairs(popup_items) do
-		Sbar.remove(item_name)
-	end
-	popup_items = {}
-end
-
-local function add_popup_item(item_name, properties)
-	table.insert(popup_items, item_name)
-	return Sbar.add("item", item_name, properties)
-end
 
 local ical = Sbar.add("item", "ical", {
 	icon = {
@@ -53,7 +40,7 @@ ical:subscribe({ "routine", "forced" }, function()
 			return
 		end
 		last_events = events
-		clear_popup_items()
+		CLEAR_POPUP_ITEMS(ical.name)
 
 		local has_all_day_header = false
 		local has_separator = false
@@ -78,7 +65,7 @@ ical:subscribe({ "routine", "forced" }, function()
 				if has_all_day_header and not has_separator then
 					local dashes = string.rep("─", math.floor(max_length * 0.65))
 
-					add_popup_item(next_item_name("separator"), {
+					Sbar.add("item", next_item_name("separator"), {
 						icon = {
 							string = "",
 							width = 0,
@@ -97,7 +84,7 @@ ical:subscribe({ "routine", "forced" }, function()
 					})
 					has_separator = true
 				end
-				add_popup_item(next_item_name("timed"), {
+				Sbar.add("item", next_item_name("timed"), {
 					icon = {
 						string = time,
 						color = colors.yellow,
@@ -114,7 +101,7 @@ ical:subscribe({ "routine", "forced" }, function()
 				})
 			else
 				if not has_all_day_header then
-					add_popup_item(next_item_name("all_day_header"), {
+					Sbar.add("item", next_item_name("all_day_header"), {
 						icon = {
 							string = "All Day",
 							color = colors.yellow,
@@ -132,7 +119,7 @@ ical:subscribe({ "routine", "forced" }, function()
 					has_all_day_header = true
 				end
 
-				add_popup_item(next_item_name("all_day"), {
+				Sbar.add("item", next_item_name("all_day"), {
 					icon = {
 						string = "•",
 						color = colors.white,

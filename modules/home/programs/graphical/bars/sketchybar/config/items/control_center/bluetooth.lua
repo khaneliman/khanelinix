@@ -25,17 +25,6 @@ local bluetooth = Sbar.add("item", "bluetooth", {
 	},
 })
 
-local function clear_existing_popup_items()
-	local existing = bluetooth:query()
-	if not existing.popup or next(existing.popup.items) == nil then
-		return
-	end
-
-	for _, item in pairs(existing.popup.items) do
-		Sbar.remove(item)
-	end
-end
-
 local function trim(value)
 	return (value:gsub("^%s+", ""):gsub("%s+$", ""))
 end
@@ -217,7 +206,7 @@ local function render_rows(rows, devices)
 	end
 end
 
-clear_existing_popup_items()
+CLEAR_POPUP_ITEMS(bluetooth.name)
 
 create_header("bluetooth.paired.header", "Paired Devices")
 local paired_rows = {}

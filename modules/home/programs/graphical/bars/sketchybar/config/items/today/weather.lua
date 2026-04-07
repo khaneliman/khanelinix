@@ -74,12 +74,7 @@ weather.temp:subscribe({ "routine", "forced", "system_woke", "weather_update" },
 			end
 		end
 
-		local existingEvents = weather.temp:query()
-		if existingEvents.popup and next(existingEvents.popup.items) ~= nil then
-			for _, item in pairs(existingEvents.popup.items) do
-				Sbar.remove(item)
-			end
-		end
+		CLEAR_POPUP_ITEMS(weather.temp.name)
 
 		weather.event = {}
 		for i, line in ipairs(STR_SPLIT(forecast.tooltip, "\n")) do
