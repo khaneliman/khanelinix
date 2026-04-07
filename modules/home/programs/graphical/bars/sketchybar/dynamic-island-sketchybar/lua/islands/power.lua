@@ -25,9 +25,6 @@ return function(ctx)
 	})
 
 	local function showIsland(text, textColor, duration)
-		token = token + 1
-		local current = token
-
 		textItem:set({
 			drawing = true,
 			label = {
@@ -35,41 +32,21 @@ return function(ctx)
 			},
 		})
 
-		ctx.Sbar.animate("tanh", 10, function()
-			ctx.Sbar.bar({
-				margin = expandMargin,
-				corner_radius = cornerRad,
-				height = expandHeight,
-			})
-			textItem:set({
-				label = { color = textColor },
-			})
-		end)
-
-		ctx.delay(duration, function()
-			if current ~= token then
-				return
-			end
-
-			ctx.Sbar.animate("tanh", 10, function()
+		ctx.animateIsland({
+			margin = expandMargin,
+			cornerRadius = cornerRad,
+			height = expandHeight,
+			duration = duration,
+			onExpand = function()
+				textItem:set({ label = { color = textColor } })
+			end,
+			onHideContent = function()
 				textItem:set({ label = { color = ctx.colorTransparent } })
-			end)
-
-			ctx.delay(0.2, function()
-				if current ~= token then
-					return
-				end
-
+			end,
+			onCleanup = function()
 				textItem:set({ drawing = false })
-				ctx.Sbar.animate("tanh", 10, function()
-					ctx.Sbar.bar({
-						height = ctx.defaultHeight,
-						corner_radius = ctx.cornerRadius,
-						margin = ctx.margin,
-					})
-				end)
-			end)
-		end)
+			end,
+		})
 	end
 
 	listener:subscribe("power_source_change", function(env)

@@ -59,8 +59,6 @@ return function(ctx)
 		lastAppDeadline = now + repeatCooldownSeconds
 		ctx.hidePersistentIsland("appswitch")
 
-		token = token + 1
-		local current = token
 		local charLength = string.len(appName)
 		local expandSize = maxExpandWidth + charLength * 7 + 40 -- added width for icon
 		local expandMargin = math.floor(ctx.monitorResolution / 2 - expandSize)
@@ -83,36 +81,20 @@ return function(ctx)
 			},
 		})
 
-		ctx.Sbar.animate("tanh", 10, function()
-			ctx.Sbar.bar({
-				margin = expandMargin,
-				corner_radius = cornerRad,
-				height = maxExpandHeight,
-			})
-			ctx.Sbar.bar({
-				height = expandHeight,
-			})
-			labelItem:set({
-				label = { color = ctx.colorWhite },
-			})
-		end)
-
-		ctx.delay(0.8, function()
-			if current ~= token then
-				return
-			end
-
-			ctx.Sbar.animate("tanh", 10, function()
-				labelItem:set({
-					label = { color = ctx.colorTransparent },
-				})
-			end)
-
-			ctx.delay(0.2, function()
-				if current ~= token then
-					return
-				end
-
+		ctx.animateIsland({
+			margin = expandMargin,
+			cornerRadius = cornerRad,
+			height = expandHeight,
+			maxExpandHeight = maxExpandHeight,
+			duration = 0.8,
+			preventCollapse = true,
+			onExpand = function()
+				labelItem:set({ label = { color = ctx.colorWhite } })
+			end,
+			onHideContent = function()
+				labelItem:set({ label = { color = ctx.colorTransparent } })
+			end,
+			onCleanup = function()
 				labelItem:set({ drawing = false })
 				iconItem:set({ drawing = false })
 				if not ctx.restorePersistentIsland("appswitch") then
@@ -124,8 +106,8 @@ return function(ctx)
 						})
 					end)
 				end
-			end)
-		end)
+			end,
+		})
 	end)
 
 	ctx.registry.appswitchIconItem = iconItem

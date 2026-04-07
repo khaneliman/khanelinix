@@ -35,9 +35,6 @@ return function(ctx)
 	})
 
 	local function showClipboard(content)
-		token = token + 1
-		local current = token
-
 		textItem:set({
 			drawing = true,
 			label = {
@@ -45,41 +42,21 @@ return function(ctx)
 			},
 		})
 
-		ctx.Sbar.animate("tanh", 10, function()
-			ctx.Sbar.bar({
-				margin = expandMargin,
-				corner_radius = cornerRad,
-				height = expandHeight,
-			})
-			textItem:set({
-				label = { color = ctx.colorWhite },
-			})
-		end)
-
-		ctx.delay(1.2, function()
-			if current ~= token then
-				return
-			end
-
-			ctx.Sbar.animate("tanh", 10, function()
+		ctx.animateIsland({
+			margin = expandMargin,
+			cornerRadius = cornerRad,
+			height = expandHeight,
+			duration = 1.2,
+			onExpand = function()
+				textItem:set({ label = { color = ctx.colorWhite } })
+			end,
+			onHideContent = function()
 				textItem:set({ label = { color = ctx.colorTransparent } })
-			end)
-
-			ctx.delay(0.2, function()
-				if current ~= token then
-					return
-				end
-
+			end,
+			onCleanup = function()
 				textItem:set({ drawing = false })
-				ctx.Sbar.animate("tanh", 10, function()
-					ctx.Sbar.bar({
-						height = ctx.defaultHeight,
-						corner_radius = ctx.cornerRadius,
-						margin = ctx.margin,
-					})
-				end)
-			end)
-		end)
+			end,
+		})
 	end
 
 	listener:subscribe("routine", function()

@@ -249,6 +249,72 @@ systemWatcher:subscribe("system_woke", function()
 	islandState.isSleeping = false
 end)
 
+local islandAnimationToken = 0
+
+local function animateIsland(options)
+	islandAnimationToken = islandAnimationToken + 1
+	local current = islandAnimationToken
+
+	Sbar.animate("tanh", 10, function()
+		if options.margin and options.cornerRadius and options.height then
+			if options.maxExpandHeight then
+				Sbar.bar({
+					margin = options.margin,
+					corner_radius = options.cornerRadius,
+					height = options.maxExpandHeight,
+				})
+				Sbar.bar({
+					height = options.height,
+				})
+			else
+				Sbar.bar({
+					margin = options.margin,
+					corner_radius = options.cornerRadius,
+					height = options.height,
+				})
+			end
+		end
+
+		if type(options.onExpand) == "function" then
+			options.onExpand()
+		end
+	end)
+
+	delay(options.duration or 2.0, function()
+		if current ~= islandAnimationToken then
+			return
+		end
+
+		Sbar.animate("tanh", 10, function()
+			if type(options.onHideContent) == "function" then
+				options.onHideContent()
+			end
+		end)
+
+		delay(0.2, function()
+			if current ~= islandAnimationToken then
+				return
+			end
+
+			if type(options.onCleanup) == "function" then
+				options.onCleanup()
+			end
+
+			if not options.preventCollapse then
+				Sbar.animate("tanh", 10, function()
+					Sbar.bar({
+						height = defaultHeight,
+						corner_radius = cornerRadius,
+						margin = margin,
+					})
+				end)
+			end
+		end)
+	end)
+
+	return current
+end
+
 local function setPersistentIsland(owner, handlers)
 	if type(owner) ~= "string" or owner == "" then
 		return
@@ -349,6 +415,7 @@ local baseCtx = {
 	cornerRadius = cornerRadius,
 	margin = margin,
 	islandState = islandState,
+	animateIsland = animateIsland,
 }
 -- TODO: figure out disable macos OSD
 -- if asBool(get("enabled.volume", true)) then

@@ -31,8 +31,6 @@ return function(ctx)
 			return
 		end
 
-		token = token + 1
-		local current = token
 		local title = env.TITLE or "New GitHub Notifications"
 		local repo = env.REPO or "GitHub"
 
@@ -45,39 +43,21 @@ return function(ctx)
 			},
 		})
 
-		ctx.Sbar.animate("tanh", 10, function()
-			ctx.Sbar.bar({
-				margin = expandMargin,
-				corner_radius = cornerRad,
-				height = expandHeight,
-			})
-			textItem:set({ label = { color = ctx.colorWhite } })
-		end)
-
-		ctx.delay(4.0, function()
-			if current ~= token then
-				return
-			end
-
-			ctx.Sbar.animate("tanh", 10, function()
+		ctx.animateIsland({
+			margin = expandMargin,
+			cornerRadius = cornerRad,
+			height = expandHeight,
+			duration = 4.0,
+			onExpand = function()
+				textItem:set({ label = { color = ctx.colorWhite } })
+			end,
+			onHideContent = function()
 				textItem:set({ label = { color = ctx.colorTransparent } })
-			end)
-
-			ctx.delay(0.2, function()
-				if current ~= token then
-					return
-				end
-
+			end,
+			onCleanup = function()
 				textItem:set({ drawing = false })
-				ctx.Sbar.animate("tanh", 10, function()
-					ctx.Sbar.bar({
-						height = ctx.defaultHeight,
-						corner_radius = ctx.cornerRadius,
-						margin = ctx.margin,
-					})
-				end)
-			end)
-		end)
+			end,
+		})
 	end)
 
 	ctx.registry.githubTextItem = textItem
