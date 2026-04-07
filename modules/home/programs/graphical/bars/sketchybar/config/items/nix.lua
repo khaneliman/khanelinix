@@ -10,6 +10,7 @@ local nix = Sbar.add("item", "nix", {
 		padding_left = 5,
 		padding_right = 5,
 	},
+	updates = true,
 	label = {
 		font = {
 			family = settings.font,
@@ -64,32 +65,64 @@ nix:subscribe("mouse.exited", function()
 end)
 
 nix:subscribe({ "routine", "forced", "system_woke" }, function()
-	-- Check for specific nix operations and get runtime
 	local cmd = [[
-		if pgrep -f 'nix-collect-garbage' >/dev/null; then
-			pid=$(pgrep -f 'nix-collect-garbage' | head -n 1)
-			runtime=$(ps -o etime= -p "$pid" | tr -d ' ')
-			echo "GC|$runtime"
-		elif pgrep -f 'nix-store --optimise' >/dev/null; then
-			pid=$(pgrep -f 'nix-store --optimise' | head -n 1)
-			runtime=$(ps -o etime= -p "$pid" | tr -d ' ')
-			echo "Optimize|$runtime"
-		else
-			echo ""
+		launchd_pid() {
+			launchctl print "$1" 2>/dev/null | awk '
+				/state = running/ { running = 1 }
+				$1 == "pid" && $2 == "=" { pid = $3 }
+				END {
+					if (running && pid != "") {
+						print pid
+					}
+				}
+			'
+		}
+
+		print_status() {
+			runtime=$(ps -o etime= -p "$2" | tr -d ' ')
+
+			if [ -n "$runtime" ]; then
+				printf '%s|%s|%s\n' "$1" "$runtime" "$3"
+			fi
+		}
+
+		pid=$(launchd_pid system/org.nixos.nix-gc)
+		if [ -n "$pid" ]; then
+			print_status "GC" "$pid" "system"
+			exit 0
+		fi
+
+		pid=$(launchd_pid system/org.nixos.nix-optimise)
+		if [ -n "$pid" ]; then
+			print_status "Optimize" "$pid" "system"
+			exit 0
+		fi
+
+		pid=$(launchd_pid "gui/$(id -u)/org.nix-community.home.nh-clean")
+		if [ -n "$pid" ]; then
+			print_status "GC" "$pid" "user"
+			exit 0
+		fi
+
+		pid=$(pgrep -f -u "$(id -u)" 'nix store gc' | head -n 1)
+		if [ -n "$pid" ]; then
+			print_status "GC" "$pid" "user"
 		fi
 	]]
 	Sbar.exec(cmd, function(result)
 		result = result:gsub("\n", "")
 		if result ~= "" then
-			local op_type, runtime = result:match("([^|]+)|([^|]+)")
-			if op_type and runtime then
+			local op_type, runtime, scope = result:match("([^|]+)|([^|]+)|([^|]+)")
+			if op_type and runtime and scope then
+				local icon_color = op_type == "Optimize" and colors.yellow or colors.red
+
 				nix:set({
 					drawing = true,
 					label = op_type,
-					icon = { color = colors.red },
+					icon = { color = icon_color },
 				})
 				nix_details:set({
-					label = "Runtime: " .. runtime,
+					label = "Runtime: " .. runtime .. " (" .. scope .. ")",
 				})
 			end
 		else
@@ -106,8 +139,10 @@ nix:subscribe("mouse.clicked", function(env)
 			'osascript -e \'do shell script "pkill -f \\"nix-store --optimise\\"" with administrator privileges\''
 		)
 	else
-		-- Left click kills nix-collect-garbage
-		Sbar.exec('osascript -e \'do shell script "pkill -f \\"nix-collect-garbage\\"" with administrator privileges\'')
+		-- Left click kills active garbage-collection jobs
+		Sbar.exec(
+			'osascript -e \'do shell script "pkill -f \\"nix-collect-garbage\\"; pkill -f \\"nix store gc\\"; pkill -f \\"nh clean user\\"" with administrator privileges\''
+		)
 	end
 end)
 
