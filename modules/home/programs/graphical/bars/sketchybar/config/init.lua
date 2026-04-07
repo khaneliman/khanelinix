@@ -1,6 +1,6 @@
 #!/usr/bin/env lua
 
-require("utils")
-require("bar")
-require("default")
+require("helpers.utils")
+require("core.bar")
+require("core.default")
 require("items")

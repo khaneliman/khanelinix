@@ -116,10 +116,10 @@ in
         recursive = true;
       };
 
-      "sketchybar/icon_map.lua".source =
+      "sketchybar/helpers/icon_map.lua".source =
         "${pkgs.sketchybar-app-font}/lib/sketchybar-app-font/icon_map.lua";
 
-      "sketchybar/wm_config.lua".text = ''
+      "sketchybar/helpers/wm_config.lua".text = ''
         -- Window manager configuration for sketchybar
         return {
           use_aerospace = ${
@@ -131,7 +131,7 @@ in
         }
       '';
 
-      "sketchybar/power_config.lua".text = ''
+      "sketchybar/helpers/power_config.lua".text = ''
         return {
           use_closed_lid_awake = ${
             if (osConfig.khanelinix.system.power.enable or false) then "true" else "false"
@@ -140,7 +140,7 @@ in
         }
       '';
 
-      "sketchybar/colors.lua".text = lib.mkDefault ''
+      "sketchybar/helpers/colors.lua".text = lib.mkDefault ''
         #!/usr/bin/env lua
 
         local colors = {

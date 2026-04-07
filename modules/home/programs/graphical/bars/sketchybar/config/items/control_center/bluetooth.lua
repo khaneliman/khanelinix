@@ -1,7 +1,7 @@
 #!/usr/bin/env lua
-local icons = require("icons")
-local colors = require("colors")
-local settings = require("settings")
+local icons = require("helpers.icons")
+local colors = require("helpers.colors")
+local settings = require("helpers.settings")
 
 local dashes = "─────────────────"
 local max_rows_per_section = 16

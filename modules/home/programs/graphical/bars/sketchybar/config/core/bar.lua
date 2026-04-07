@@ -1,7 +1,7 @@
 #!/usr/bin/env lua
 
-local colors = require("colors")
-local wm_config = require("wm_config")
+local colors = require("helpers.colors")
+local wm_config = require("helpers.wm_config")
 
 local bar_height = 40
 

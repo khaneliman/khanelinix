@@ -1,8 +1,8 @@
 #!/usr/bin/env lua
 
-local settings = require("settings")
-local colors = require("colors")
-local icons = require("icons")
+local settings = require("helpers.settings")
+local colors = require("helpers.colors")
+local icons = require("helpers.icons")
 
 Sbar.exec("killall sketchy_cpu_load >/dev/null 2>&1; sketchy_cpu_load cpu_update 2.0")
 

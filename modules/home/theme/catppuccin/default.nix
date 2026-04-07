@@ -355,7 +355,7 @@ in
           )
 
           (mkIf config.khanelinix.programs.graphical.bars.sketchybar.enable {
-            "sketchybar/colors.lua".text = ''
+            "sketchybar/helpers/colors.lua".text = ''
               #!/usr/bin/env lua
 
               local colors = {

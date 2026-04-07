@@ -1,7 +1,7 @@
 #!/usr/bin/env lua
 
-local colors = require("colors")
-local power_config = require("power_config")
+local colors = require("helpers.colors")
+local power_config = require("helpers.power_config")
 
 -- require order determines ui order on bar
 local keep_awake = nil

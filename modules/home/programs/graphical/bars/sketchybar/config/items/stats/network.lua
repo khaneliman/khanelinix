@@ -1,8 +1,8 @@
 #!/usr/bin/env lua
-local settings = require("settings")
-local colors = require("colors")
-local icons = require("icons")
-require("utils")
+local settings = require("helpers.settings")
+local colors = require("helpers.colors")
+local icons = require("helpers.icons")
+require("helpers.utils")
 
 local network = {}
 

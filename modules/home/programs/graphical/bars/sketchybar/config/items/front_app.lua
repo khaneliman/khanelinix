@@ -1,8 +1,8 @@
 #!/usr/bin/env lua
-local settings = require("settings")
-local icons = require("icons")
-local colors = require("colors")
-local wm_config = require("wm_config")
+local settings = require("helpers.settings")
+local icons = require("helpers.icons")
+local colors = require("helpers.colors")
+local wm_config = require("helpers.wm_config")
 
 if wm_config.use_yabai then
 	local yabai = Sbar.add("item", "yabai", {

@@ -1,8 +1,8 @@
 #!/usr/bin/env lua
 
-local icons = require("icons")
-local settings = require("settings")
-local colors = require("colors")
+local icons = require("helpers.icons")
+local settings = require("helpers.settings")
+local colors = require("helpers.colors")
 local popup_off = "sketchybar --set brew popup.drawing=off"
 local brew_done_marker = "__SKETCHYBAR_DONE__"
 

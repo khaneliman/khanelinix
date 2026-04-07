@@ -1,7 +1,7 @@
 #!/usr/bin/env lua
 
-local colors = require("colors")
-local icons = require("icons")
+local colors = require("helpers.colors")
+local icons = require("helpers.icons")
 
 local volume = {}
 

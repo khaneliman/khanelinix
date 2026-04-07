@@ -1,9 +1,9 @@
 #!/usr/bin/env lua
 
-local colors = require("colors")
-local icons = require("icons")
-local settings = require("settings")
-local spaces_utils = require("items.spaces_utils")
+local colors = require("helpers.colors")
+local icons = require("helpers.icons")
+local settings = require("helpers.settings")
+local spaces_utils = require("items.spaces.utils")
 
 local function getIcon(i)
 	local numSpaces = #icons.spaces -- Get the number of entries in the spaces table

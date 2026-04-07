@@ -1,8 +1,8 @@
 #!/usr/bin/env lua
 
-local settings = require("settings")
-local colors = require("colors")
-local icons = require("icons")
+local settings = require("helpers.settings")
+local colors = require("helpers.colors")
+local icons = require("helpers.icons")
 
 local memory = Sbar.add("item", "memory", {
 	background = {

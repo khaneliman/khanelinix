@@ -1,5 +1,5 @@
-local colors = require("colors")
-local settings = require("settings")
+local colors = require("helpers.colors")
+local settings = require("helpers.settings")
 
 return {
 	get_space_item_config = function(icon_string, is_basic)

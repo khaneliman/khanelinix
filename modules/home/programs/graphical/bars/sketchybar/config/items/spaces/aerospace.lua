@@ -1,8 +1,8 @@
 #!/usr/bin/env lua
-local colors = require("colors")
-local app_icons = require("app_icons")
-local settings = require("settings")
-local spaces_utils = require("items.spaces_utils")
+local colors = require("helpers.colors")
+local app_icons = require("helpers.app_icons")
+local settings = require("helpers.settings")
+local spaces_utils = require("items.spaces.utils")
 
 local spaces = {}
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env lua
 
-local colors = require("colors")
+local colors = require("helpers.colors")
 
 Sbar.add("item", "skhd", {
 	icon = {

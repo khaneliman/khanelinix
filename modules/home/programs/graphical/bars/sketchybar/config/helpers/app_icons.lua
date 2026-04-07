@@ -1,6 +1,6 @@
 #!/usr/bin/env lua
 
-local app_icons = require("icon_map")
+local app_icons = require("helpers.icon_map")
 
 -- Return the base icons extended with custom mappings and aliases
 return setmetatable({

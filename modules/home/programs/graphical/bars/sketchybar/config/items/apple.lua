@@ -1,7 +1,7 @@
 #!/usr/bin/env lua
 
-local icons = require("icons")
-local colors = require("colors")
+local icons = require("helpers.icons")
+local colors = require("helpers.colors")
 
 local popup_toggle = "sketchybar --set $NAME popup.drawing=toggle"
 

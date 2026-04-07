@@ -1,6 +1,6 @@
 #!/usr/bin/env lua
 
-local colors = require("colors")
+local colors = require("helpers.colors")
 
 local separator_right = Sbar.add("item", "separator_right", {
 	background = {

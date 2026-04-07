@@ -1,8 +1,8 @@
 #!/usr/bin/env lua
-local colors = require("colors")
-local icons = require("icons")
-local power_config = require("power_config")
-local settings = require("settings")
+local colors = require("helpers.colors")
+local icons = require("helpers.icons")
+local power_config = require("helpers.power_config")
+local settings = require("helpers.settings")
 
 local keep_awake = Sbar.add("item", "keep_awake", {
 	position = "right",

@@ -293,7 +293,7 @@ in
       })
 
       (mkIf config.khanelinix.programs.graphical.bars.sketchybar.enable {
-        "sketchybar/colors.lua".text =
+        "sketchybar/helpers/colors.lua".text =
           let
             toLuaColor = hex: "0xff" + builtins.substring 1 6 hex;
           in

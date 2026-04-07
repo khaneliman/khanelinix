@@ -1,7 +1,7 @@
 #!/usr/bin/env lua
 
-local settings = require("settings")
-local colors = require("colors")
+local settings = require("helpers.settings")
+local colors = require("helpers.colors")
 
 return function(parent_name, popup_width, header_text, header_color, exec_command, match_func)
 	local protectedProcesses = {
