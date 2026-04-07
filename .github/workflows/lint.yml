@@ -1,5 +1,7 @@
 on: [push]
 name: Lint Nix code
+permissions:
+  contents: read
 jobs:
   statix:
     name: Lint code

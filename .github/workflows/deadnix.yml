@@ -1,4 +1,6 @@
 name: Dead code analysis
+permissions:
+  contents: read
 on: [push]
 jobs:
   deadnix:

@@ -5,6 +5,10 @@
 # file with configuration.  For more information, see:
 # https://github.com/actions/labeler
 name: Labeler
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
 on: [pull_request]
 jobs:
   label:
