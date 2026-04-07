@@ -27,39 +27,31 @@ apple.logo = Sbar.add("item", "apple.logo", {
 	},
 })
 
-apple.prefs = Sbar.add("item", "apple.prefs", {
-	position = "popup." .. apple.logo.name,
-	icon = icons.preferences,
-	label = "Preferences",
-	background = {
-		color = 0x00000000,
-		height = 30,
-		drawing = true,
-	},
-})
+local function add_apple_item(name, icon_string, label_string, click_cmd)
+	local item = Sbar.add("item", "apple." .. name, {
+		position = "popup." .. apple.logo.name,
+		icon = {
+			string = icon_string,
+			padding_left = 7,
+		},
+		label = label_string,
+		background = {
+			color = 0x00000000,
+			height = 30,
+			drawing = true,
+		},
+	})
 
-apple.prefs:subscribe("mouse.clicked", function(_)
-	Sbar.exec("open -a 'System Preferences'")
-	apple.logo:set({ popup = { drawing = false } })
-end)
+	item:subscribe("mouse.clicked", function(_)
+		Sbar.exec(click_cmd)
+		apple.logo:set({ popup = { drawing = false } })
+	end)
 
-apple.activity = Sbar.add("item", "apple.activity", {
-	position = "popup." .. apple.logo.name,
-	icon = {
-		string = icons.activity,
-	},
-	label = "Activity",
-	background = {
-		color = 0x00000000,
-		height = 30,
-		drawing = true,
-	},
-	click_script = "open -a 'Activity Monitor'; " .. popup_toggle,
-})
+	return item
+end
 
-apple.activity:subscribe("mouse.clicked", function(_)
-	apple.logo:set({ popup = { drawing = false } })
-end)
+apple.prefs = add_apple_item("prefs", icons.preferences, "Preferences", "open -a 'System Preferences'")
+apple.activity = add_apple_item("activity", icons.activity, "Activity", "open -a 'Activity Monitor'")
 
 apple.divider = Sbar.add("item", "apple.divider", {
 	position = "popup." .. apple.logo.name,
@@ -79,98 +71,20 @@ apple.divider = Sbar.add("item", "apple.divider", {
 	width = 110,
 })
 
-apple.lock = Sbar.add("item", "apple.lock", {
-	position = "popup." .. apple.logo.name,
-	icon = {
-		string = icons.lock,
-	},
-	label = "Lock Screen",
-	background = {
-		color = 0x00000000,
-		height = 30,
-		drawing = true,
-	},
-	click_script = 'osascript -e \'tell application "System Events" to keystroke "q" using {command down,control down}\'; '
-		.. popup_toggle,
-})
-
-apple.lock:subscribe("mouse.clicked", function(_)
-	apple.logo:set({ popup = { drawing = false } })
-end)
-
-apple.logout = Sbar.add("item", "apple.logout", {
-	position = "popup." .. apple.logo.name,
-	icon = {
-		string = icons.logout,
-		padding_left = 7,
-	},
-	label = "Logout",
-	background = {
-		color = 0x00000000,
-		height = 30,
-		drawing = true,
-	},
-	click_script = 'osascript -e \'tell application "System Events" to keystroke "q" using {command down,shift down}\'; '
-		.. popup_toggle,
-})
-
-apple.logout:subscribe("mouse.clicked", function(_)
-	apple.logo:set({ popup = { drawing = false } })
-end)
-
-apple.sleep = Sbar.add("item", "apple.sleep", {
-	position = "popup." .. apple.logo.name,
-	icon = {
-		string = icons.sleep,
-		padding_left = 7,
-	},
-	label = "Sleep",
-	background = {
-		color = 0x00000000,
-		height = 30,
-		drawing = true,
-	},
-	click_script = "osascript -e 'tell app \"System Events\" to sleep'; " .. popup_toggle,
-})
-
-apple.sleep:subscribe("mouse.clicked", function(_)
-	apple.logo:set({ popup = { drawing = false } })
-end)
-
-apple.reboot = Sbar.add("item", "apple.reboot", {
-	position = "popup." .. apple.logo.name,
-	icon = {
-		string = icons.reboot,
-		padding_left = 7,
-	},
-	label = "Reboot",
-	background = {
-		color = 0x00000000,
-		height = 30,
-		drawing = true,
-	},
-	click_script = "osascript -e 'tell app \"loginwindow\" to «event aevtrrst»'; " .. popup_toggle,
-})
-
-apple.reboot:subscribe("mouse.clicked", function(_)
-	apple.logo:set({ popup = { drawing = false } })
-end)
-
-apple.shutdown = Sbar.add("item", "apple.shutdown", {
-	position = "popup." .. apple.logo.name,
-	icon = {
-		string = icons.power,
-		padding_left = 7,
-	},
-	label = "Shutdown",
-	background = {
-		color = 0x00000000,
-		height = 30,
-		drawing = true,
-	},
-	click_script = "osascript -e 'tell app \"loginwindow\" to «event aevtrsdn»'; " .. popup_toggle,
-})
-
-apple.shutdown:subscribe("mouse.clicked", function(_)
-	apple.logo:set({ popup = { drawing = false } })
-end)
+apple.lock = add_apple_item(
+	"lock",
+	icons.lock,
+	"Lock Screen",
+	'osascript -e \'tell application "System Events" to keystroke "q" using {command down,control down}\''
+)
+apple.logout = add_apple_item(
+	"logout",
+	icons.logout,
+	"Logout",
+	'osascript -e \'tell application "System Events" to keystroke "q" using {command down,shift down}\''
+)
+apple.sleep = add_apple_item("sleep", icons.sleep, "Sleep", "osascript -e 'tell app \"System Events\" to sleep'")
+apple.reboot =
+	add_apple_item("reboot", icons.reboot, "Reboot", "osascript -e 'tell app \"loginwindow\" to «event aevtrrst»'")
+apple.shutdown =
+	add_apple_item("shutdown", icons.power, "Shutdown", "osascript -e 'tell app \"loginwindow\" to «event aevtrsdn»'")
