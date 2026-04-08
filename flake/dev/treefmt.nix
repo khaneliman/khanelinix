@@ -19,6 +19,10 @@
           actionlint.enable = true;
           biome = {
             enable = true;
+            excludes = [
+              "*.html"
+              "*.scss"
+            ];
             settings.formatter.formatWithErrors = true;
           };
           clang-format.enable = true;
@@ -30,6 +34,8 @@
             enable = true;
             # Using biome for these
             excludes = [
+              "*.html"
+              "*.scss"
               "*.ts"
               "*.js"
               "*.json"
@@ -48,6 +54,13 @@
           nixfmt = {
             enable = true;
             package = pkgs.nixfmt;
+          };
+          prettier = {
+            enable = true;
+            includes = [
+              "*.html"
+              "*.scss"
+            ];
           };
           ruff-check.enable = true;
           ruff-format.enable = true;
