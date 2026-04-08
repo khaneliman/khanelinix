@@ -65,10 +65,15 @@ provides guidelines for contributing to this Nix-based dotfiles configuration.
 
 ## Commit Message Convention
 
-This repository follows a **Conventional Commits style** format:
+This repository follows a **Conventional Commits style** format with a subject
+and, for anything non-trivial, a body explaining the reason for the change:
 
 ```
 type(scope): description
+
+[blank line]
+[why this change was needed]
+[important context, constraints, or tradeoffs]
 ```
 
 ### Examples:
@@ -88,7 +93,11 @@ type(scope): description
 - Keep `type` to standard values (`feat`, `fix`, `refactor`, `docs`, `chore`)
 - Keep `scope` specific to the primary area affected
 - Breaking changes may use `!` (for example: `refactor(devShells)!: ...`)
-- Subject is the what, Body is the how/why
+- Prefer a commit body for any change that is not completely obvious
+- Subject is the what; body is the why, plus any important implementation
+  context or constraints
+- Avoid one-line commits unless the change is genuinely trivial
+- Write the body as short prose, not a changelog dump
 
 ## Development Workflow
 
@@ -110,7 +119,7 @@ type(scope): description
 
 1. Create atomic commits - each commit should represent one logical change
 2. Prefer one module per commit when changes are logically independent
-3. Follow the commit message convention
+3. Follow the commit message convention, including a body that explains why
 4. Ensure pre-commit hooks pass
 5. Test that the configuration builds successfully
 
