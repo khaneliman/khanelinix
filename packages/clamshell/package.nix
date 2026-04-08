@@ -9,9 +9,16 @@ writeShellApplication {
 
     lockDir="''${TMPDIR:-/tmp}/clamshell.lock"
     pidFile="$lockDir/pid"
+    caffeinateBin="/usr/bin/caffeinate"
+    caffeinateArgs="-d -i -m -s"
 
     readPid() {
       /bin/cat "$pidFile" 2>/dev/null || true
+    }
+
+    isRunning() {
+      pid="$(readPid)"
+      [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null
     }
 
     isSleepDisabled() {
@@ -21,25 +28,9 @@ writeShellApplication {
       [ -n "$stateLine" ] && printf '%s\n' "$stateLine" | /usr/bin/grep -Eq '(^|[^0-9])1([^0-9]|$)'
     }
 
-    isRunning() {
-      pid="$(readPid)"
-      [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null
-    }
-
     removeRuntimeState() {
       /bin/rm -f "$pidFile"
       /bin/rmdir "$lockDir" 2>/dev/null || true
-    }
-
-    restoreSleep() {
-      /usr/bin/sudo -n /usr/bin/pmset disablesleep 0 >/dev/null
-    }
-
-    cleanup() {
-      if [ -f "$pidFile" ] && [ "$(/bin/cat "$pidFile" 2>/dev/null || true)" = "$$" ]; then
-        restoreSleep || true
-        removeRuntimeState
-      fi
     }
 
     requirePmsetAccess() {
@@ -49,75 +40,122 @@ writeShellApplication {
       fi
     }
 
-    printInfo() {
-      echo "pmset sleep override:"
-      /usr/bin/pmset -g | /usr/bin/grep -Ei 'SleepDisabled|sleep disabled|disablesleep' || echo "not active"
+    enablePmsetSleepOverride() {
+      /usr/bin/sudo -n /usr/bin/pmset disablesleep 1 >/dev/null
+    }
 
-      if [ -f "$pidFile" ]; then
-        echo "controller pid: $(/bin/cat "$pidFile")"
+    restorePmsetSleepOverride() {
+      /usr/bin/sudo -n /usr/bin/pmset disablesleep 0 >/dev/null
+    }
+
+    ensureRuntimeDir() {
+      if ! /bin/mkdir "$lockDir" 2>/dev/null; then
+        if isRunning; then
+          echo "clamshell is already active; use clamshell disable to stop it" >&2
+          exit 0
+        fi
+
+        removeRuntimeState
+
+        if ! /bin/mkdir "$lockDir" 2>/dev/null; then
+          echo "unable to create clamshell runtime state" >&2
+          exit 1
+        fi
       fi
     }
 
-    printState() {
+    waitForExit() {
+      pid="$1"
+
+      for _ in 1 2 3 4 5; do
+        if ! kill -0 "$pid" 2>/dev/null; then
+          return 0
+        fi
+        /bin/sleep 0.2
+      done
+
+      return 1
+    }
+
+    printInfo() {
+      if isRunning; then
+        echo "caffeinate assertion active"
+        echo "controller pid: $(readPid)"
+      else
+        echo "caffeinate assertion inactive"
+      fi
+
       if isSleepDisabled; then
+        echo "pmset disablesleep active"
+      else
+        echo "pmset disablesleep inactive"
+      fi
+
+      /usr/bin/pmset -g assertions | /usr/bin/grep -E 'PreventUserIdleSystemSleep|PreventSystemSleep' || true
+    }
+
+    printState() {
+      if isRunning && isSleepDisabled; then
         echo "on"
       else
         echo "off"
       fi
     }
 
-    startHold() {
+    startDetached() {
       requirePmsetAccess
+      ensureRuntimeDir
+      enablePmsetSleepOverride
 
-      if isRunning; then
-        echo "clamshell is already active; use clamshell disable to stop it" >&2
-        exit 0
-      fi
+      "$caffeinateBin" $caffeinateArgs >/dev/null 2>&1 &
+      pid="$!"
+      printf '%s\n' "$pid" > "$pidFile"
 
-      if ! /bin/mkdir "$lockDir" 2>/dev/null; then
+      if ! kill -0 "$pid" 2>/dev/null; then
+        restorePmsetSleepOverride || true
         removeRuntimeState
-      fi
-
-      if ! /bin/mkdir "$lockDir" 2>/dev/null; then
-        echo "clamshell is already active; use clamshell disable to stop it" >&2
+        echo "failed to start caffeinate assertion" >&2
         exit 1
       fi
 
-      printf '%s\n' "$$" > "$pidFile"
-      trap cleanup EXIT HUP INT TERM
+      echo "enabled"
+    }
 
+    startHold() {
+      requirePmsetAccess
+      ensureRuntimeDir
       echo "Clamshell keep-awake enabled. Press Ctrl+C to restore normal sleep."
       echo "Avoid heavy workloads in a bag or other enclosed space."
 
-      /usr/bin/sudo -n /usr/bin/pmset disablesleep 1 >/dev/null
+      enablePmsetSleepOverride
 
-      while :; do
-        /bin/sleep 3600
-      done
+      "$caffeinateBin" $caffeinateArgs >/dev/null 2>&1 &
+      pid="$!"
+      printf '%s\n' "$pid" > "$pidFile"
+
+      cleanup() {
+        disableKeepAwake >/dev/null 2>&1 || true
+      }
+
+      trap cleanup EXIT HUP INT TERM
+      wait "$pid"
     }
 
     disableKeepAwake() {
       requirePmsetAccess
 
       if [ -f "$pidFile" ]; then
-        pid="$(/bin/cat "$pidFile" 2>/dev/null || true)"
+        pid="$(readPid)"
         if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
-          kill "$pid"
+          kill "$pid" 2>/dev/null || true
 
-          for _ in 1 2 3 4 5; do
-            if ! kill -0 "$pid" 2>/dev/null; then
-              break
-            fi
-            /bin/sleep 0.2
-          done
-
-          if kill -0 "$pid" 2>/dev/null; then
+          if ! waitForExit "$pid"; then
             kill -9 "$pid" 2>/dev/null || true
           fi
         fi
       fi
 
-      restoreSleep
+      restorePmsetSleepOverride
       removeRuntimeState
       echo "normal sleep restored"
     }
@@ -125,13 +163,13 @@ writeShellApplication {
     enableKeepAwake() {
       requirePmsetAccess
 
-      if isSleepDisabled; then
+      if isRunning && isSleepDisabled; then
         echo "already enabled"
         exit 0
       fi
 
-      /usr/bin/sudo -n /usr/bin/pmset disablesleep 1 >/dev/null
-      echo "enabled"
+      disableKeepAwake >/dev/null 2>&1 || true
+      startDetached
     }
 
     case "''${1:-hold}" in
@@ -160,7 +198,7 @@ writeShellApplication {
         printInfo
         ;;
       toggle)
-        if isSleepDisabled; then
+        if isRunning && isSleepDisabled; then
           disableKeepAwake
         else
           enableKeepAwake
