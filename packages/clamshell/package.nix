@@ -8,16 +8,21 @@ writeShellApplication {
     set -eu
 
     lockDir="''${TMPDIR:-/tmp}/clamshell.lock"
-    pidFile="$lockDir/pid"
     caffeinateBin="/usr/bin/caffeinate"
-    caffeinateArgs="-d -i -m -s"
+
+    modePidFile() {
+      mode="$1"
+      printf '%s/%s.pid\n' "$lockDir" "$mode"
+    }
 
     readPid() {
-      /bin/cat "$pidFile" 2>/dev/null || true
+      mode="$1"
+      /bin/cat "$(modePidFile "$mode")" 2>/dev/null || true
     }
 
     isRunning() {
-      pid="$(readPid)"
+      mode="$1"
+      pid="$(readPid "$mode")"
       [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null
     }
 
@@ -29,8 +34,24 @@ writeShellApplication {
     }
 
     removeRuntimeState() {
-      /bin/rm -f "$pidFile"
+      mode="$1"
+      /bin/rm -f "$(modePidFile "$mode")"
       /bin/rmdir "$lockDir" 2>/dev/null || true
+    }
+
+    caffeinateArgsForMode() {
+      case "$1" in
+        awake)
+          printf '%s\n' "-d -i -m"
+          ;;
+        clamshell)
+          printf '%s\n' "-i -m -s"
+          ;;
+        *)
+          echo "unknown mode: $1" >&2
+          exit 1
+          ;;
+      esac
     }
 
     requirePmsetAccess() {
@@ -49,19 +70,11 @@ writeShellApplication {
     }
 
     ensureRuntimeDir() {
-      if ! /bin/mkdir "$lockDir" 2>/dev/null; then
-        if isRunning; then
-          echo "clamshell is already active; use clamshell disable to stop it" >&2
-          exit 0
-        fi
-
-        removeRuntimeState
-
-        if ! /bin/mkdir "$lockDir" 2>/dev/null; then
-          echo "unable to create clamshell runtime state" >&2
-          exit 1
-        fi
+      if [ -d "$lockDir" ]; then
+        return
       fi
+
+      /bin/mkdir -p "$lockDir"
     }
 
     waitForExit() {
@@ -78,11 +91,18 @@ writeShellApplication {
     }
 
     printInfo() {
-      if isRunning; then
-        echo "caffeinate assertion active"
-        echo "controller pid: $(readPid)"
+      if isRunning awake; then
+        echo "awake caffeinate active"
+        echo "awake pid: $(readPid awake)"
       else
-        echo "caffeinate assertion inactive"
+        echo "awake caffeinate inactive"
+      fi
+
+      if isRunning clamshell; then
+        echo "clamshell caffeinate active"
+        echo "clamshell pid: $(readPid clamshell)"
+      else
+        echo "clamshell caffeinate inactive"
       fi
 
       if isSleepDisabled; then
@@ -94,58 +114,93 @@ writeShellApplication {
       /usr/bin/pmset -g assertions | /usr/bin/grep -E 'PreventUserIdleSystemSleep|PreventSystemSleep' || true
     }
 
-    printState() {
-      if isRunning && isSleepDisabled; then
+    printModeState() {
+      mode="$1"
+
+      if [ "$mode" = "clamshell" ]; then
+        if isRunning clamshell && isSleepDisabled; then
+          echo "on"
+        else
+          echo "off"
+        fi
+        return
+      fi
+
+      if isRunning awake; then
         echo "on"
       else
         echo "off"
       fi
     }
 
-    startDetached() {
-      requirePmsetAccess
-      ensureRuntimeDir
-      enablePmsetSleepOverride
+    printSnapshot() {
+      awakeState="$(printModeState awake)"
+      clamshellState="$(printModeState clamshell)"
+      printf 'awake=%s\nclamshell=%s\n' "$awakeState" "$clamshellState"
+    }
 
+    startModeDetached() {
+      mode="$1"
+      ensureRuntimeDir
+
+      if [ "$mode" = "clamshell" ]; then
+        requirePmsetAccess
+        enablePmsetSleepOverride
+      fi
+
+      caffeinateArgs="$(caffeinateArgsForMode "$mode")"
       "$caffeinateBin" $caffeinateArgs >/dev/null 2>&1 &
       pid="$!"
-      printf '%s\n' "$pid" > "$pidFile"
+      printf '%s\n' "$pid" > "$(modePidFile "$mode")"
 
       if ! kill -0 "$pid" 2>/dev/null; then
-        restorePmsetSleepOverride || true
-        removeRuntimeState
-        echo "failed to start caffeinate assertion" >&2
+        if [ "$mode" = "clamshell" ]; then
+          restorePmsetSleepOverride || true
+        fi
+        removeRuntimeState "$mode"
+        echo "failed to start ''${mode} assertion" >&2
         exit 1
       fi
 
       echo "enabled"
     }
 
-    startHold() {
-      requirePmsetAccess
+    startModeHold() {
+      mode="$1"
       ensureRuntimeDir
-      echo "Clamshell keep-awake enabled. Press Ctrl+C to restore normal sleep."
-      echo "Avoid heavy workloads in a bag or other enclosed space."
 
-      enablePmsetSleepOverride
+      if [ "$mode" = "clamshell" ]; then
+        requirePmsetAccess
+        echo "Clamshell keep-awake enabled. Press Ctrl+C to restore normal sleep."
+        echo "Avoid heavy workloads in a bag or other enclosed space."
+        enablePmsetSleepOverride
+      else
+        echo "Keep-awake enabled. Press Ctrl+C to restore normal sleep."
+      fi
 
+      caffeinateArgs="$(caffeinateArgsForMode "$mode")"
       "$caffeinateBin" $caffeinateArgs >/dev/null 2>&1 &
       pid="$!"
-      printf '%s\n' "$pid" > "$pidFile"
+      printf '%s\n' "$pid" > "$(modePidFile "$mode")"
 
       cleanup() {
-        disableKeepAwake >/dev/null 2>&1 || true
+        disableMode "$mode" >/dev/null 2>&1 || true
       }
 
       trap cleanup EXIT HUP INT TERM
       wait "$pid"
     }
 
-    disableKeepAwake() {
-      requirePmsetAccess
+    disableMode() {
+      mode="$1"
 
+      if [ "$mode" = "clamshell" ]; then
+        requirePmsetAccess
+      fi
+
+      pidFile="$(modePidFile "$mode")"
       if [ -f "$pidFile" ]; then
-        pid="$(readPid)"
+        pid="$(readPid "$mode")"
         if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
           kill "$pid" 2>/dev/null || true
 
@@ -155,60 +210,105 @@ writeShellApplication {
         fi
       fi
 
-      restorePmsetSleepOverride
-      removeRuntimeState
+      if [ "$mode" = "clamshell" ] && isSleepDisabled; then
+        restorePmsetSleepOverride
+      fi
+
+      removeRuntimeState "$mode"
       echo "normal sleep restored"
     }
 
-    enableKeepAwake() {
-      requirePmsetAccess
+    enableMode() {
+      mode="$1"
 
-      if isRunning && isSleepDisabled; then
+      if [ "$mode" = "clamshell" ]; then
+        requirePmsetAccess
+        if isRunning clamshell && isSleepDisabled; then
+          echo "already enabled"
+          exit 0
+        fi
+      elif isRunning awake; then
         echo "already enabled"
         exit 0
       fi
 
-      disableKeepAwake >/dev/null 2>&1 || true
-      startDetached
+      disableMode "$mode" >/dev/null 2>&1 || true
+      startModeDetached "$mode"
+    }
+
+    modeAction() {
+      mode="$1"
+      action="$2"
+
+      case "$action" in
+        hold)
+          startModeHold "$mode"
+          ;;
+        enable|start|on)
+          enableMode "$mode"
+          ;;
+        disable|off)
+          disableMode "$mode"
+          ;;
+        status|state)
+          printModeState "$mode"
+          ;;
+        toggle)
+          if [ "$(printModeState "$mode")" = "on" ]; then
+            disableMode "$mode"
+          else
+            enableMode "$mode"
+          fi
+          ;;
+        *)
+          echo "usage: clamshell [awake|clamshell] [hold|enable|disable|start|off|status|state|toggle|on]" >&2
+          exit 1
+          ;;
+      esac
     }
 
     case "''${1:-hold}" in
+      awake)
+        modeAction awake "''${2:-status}"
+        ;;
+      clamshell)
+        modeAction clamshell "''${2:-status}"
+        ;;
       hold)
-        startHold
+        startModeHold clamshell
         ;;
       enable)
-        enableKeepAwake
+        enableMode clamshell
         ;;
       disable)
-        disableKeepAwake
+        disableMode clamshell
         ;;
       start)
-        enableKeepAwake
+        enableMode clamshell
         ;;
       off)
-        disableKeepAwake
+        disableMode clamshell
         ;;
       status)
-        printState
+        printModeState clamshell
         ;;
       state)
-        printState
+        printModeState clamshell
+        ;;
+      snapshot)
+        printSnapshot
         ;;
       info)
         printInfo
         ;;
       toggle)
-        if isRunning && isSleepDisabled; then
-          disableKeepAwake
-        else
-          enableKeepAwake
-        fi
+        modeAction clamshell toggle
         ;;
       on)
-        enableKeepAwake
+        enableMode clamshell
         ;;
       *)
-        echo "usage: clamshell [hold|enable|disable|start|off|status|state|info|toggle]" >&2
+        echo "usage: clamshell [awake|clamshell] [hold|enable|disable|start|off|status|state|toggle|on|snapshot|info]" >&2
         exit 1
         ;;
     esac
