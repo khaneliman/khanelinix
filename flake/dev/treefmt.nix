@@ -40,6 +40,8 @@
               "*.js"
               "*.json"
               "*.jsonc"
+              "*.yaml"
+              "*.yml"
             ];
           };
           fantomas.enable = true;
