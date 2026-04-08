@@ -152,6 +152,7 @@ in
     system = {
       boot = {
         enable = true;
+        loader = "limine";
         secureBoot = true;
         plymouth = true;
         silentBoot = true;
