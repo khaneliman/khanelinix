@@ -1,1 +1,11 @@
+disabled = [
+  # False positives
+  "bool_comparison",
+  "bool_simplification",
+  # Not actually deprecated
+  "deprecated_is_null",
+  "faster_groupby",
+  "faster_zipattrswith",
+]
+
 ignore = ["*record_screen*"]
