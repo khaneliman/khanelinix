@@ -194,7 +194,7 @@ in
                 ];
                 hostName = "khanelimac-m1.local";
                 maxJobs = 2;
-                speedFactor = 3;
+                speedFactor = 5;
                 supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
               }
               // lib.optionalAttrs (hostname == "khanelinix") {
@@ -217,7 +217,7 @@ in
                 ];
                 hostName = "darwin-build-box.nix-community.org";
                 maxJobs = 3;
-                speedFactor = 5;
+                speedFactor = 3;
                 supportedFeatures = [ "big-parallel" ];
                 publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUtNSGhsY243ZlVwVXVpT0ZlSWhEcUJ6Qk5Gc2JOcXErTnB6dUdYM2U2enYgCg";
               }
