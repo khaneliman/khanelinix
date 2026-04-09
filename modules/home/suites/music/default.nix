@@ -27,7 +27,8 @@ in
       ]
       ++ lib.optionals cfg.managementEnable [
         pear-desktop
-        tageditor
+        # FIXME: broken dependency
+        # tageditor
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux (
         [
