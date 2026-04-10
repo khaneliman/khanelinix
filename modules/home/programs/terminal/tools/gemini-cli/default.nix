@@ -7,13 +7,20 @@ let
   inherit (builtins)
     attrNames
     concatStringsSep
+    readDir
     toJSON
     ;
   inherit (lib) concatMapStringsSep mkEnableOption mkIf;
 
   cfg = config.khanelinix.programs.terminal.tools.gemini-cli;
+  codexEnabled = config.khanelinix.programs.terminal.tools.codex.enable or false;
+  mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
 
   sharedAiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
+  sharedSkillsDir = lib.getFile "modules/common/ai-tools/skills";
+  sharedSkills = lib.mapAttrs (name: _: sharedSkillsDir + "/${name}") (
+    lib.filterAttrs (_: type: type == "directory") (readDir sharedSkillsDir)
+  );
 
   renderTomlRule =
     rule:
@@ -154,6 +161,7 @@ in
       # Gemini CLI documentation
       # See: https://github.com/google-gemini/gemini-cli
       enable = true;
+      enableMcpIntegration = mkIf mcpModuleEnabled true;
 
       settings = {
         contextFilename = "AGENTS.md";
@@ -300,6 +308,9 @@ in
             description = "Determine closure dependency reasons between two packages";
           };
         };
+    }
+    // lib.optionalAttrs (!codexEnabled) {
+      skills = sharedSkills;
     };
   };
 }
