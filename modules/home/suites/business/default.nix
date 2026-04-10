@@ -25,8 +25,7 @@ in
       with pkgs;
       [
         bitwarden-desktop
-        # FIXME: broken nixpkgs
-        # jrnl
+        jrnl
         np
         slack
       ]
