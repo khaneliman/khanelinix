@@ -26,8 +26,6 @@ in
     environment.systemPackages = with pkgs; [
       # Yubico's official tools
       yubikey-manager # cli
-      # FIXME: insecure
-      # yubikey-manager-qt # gui
       yubikey-personalization # cli
       yubico-piv-tool # cli
       yubioath-flutter # gui
