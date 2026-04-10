@@ -28,16 +28,13 @@ in
         xemu
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
-        # FIXME: broken nixpkgs
-        # cemu
+        cemu
         #FIXME: broken by https://github.com/NixOS/nixpkgs/pull/412425
         # emulationstation
-        # FIXME: broken nixpkgs
-        # mgba
+        mgba
         mupen64plus
         nestopia-ue
-        # FIXME: broken nixpkgs
-        # rpcs3
+        rpcs3
       ]
       ++ lib.optionals cfg.retroarchFull [ retroarchFull ];
 
