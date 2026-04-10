@@ -17,8 +17,8 @@ let
       ];
       model = {
         claude = "opus";
-        gemini = "gemini-3-pro-preview";
-        opencode = "github-copilot/gpt-5.2";
+        gemini = "gemini-3.1-pro-preview";
+        opencode = "gpt-5.4";
       };
       permission = {
         edit = "ask";
@@ -39,8 +39,8 @@ let
       ];
       model = {
         claude = "sonnet";
-        gemini = "gemini-3-pro-preview";
-        opencode = "github-copilot/gpt-5.2";
+        gemini = "gemini-3.1-pro-preview";
+        opencode = "gpt-5.4";
       };
       permission = {
         edit = "ask";
@@ -60,7 +60,7 @@ let
       ];
       model = {
         claude = "haiku";
-        gemini = "gemini-2.5-flash";
+        gemini = "gemini-3.1-flash-lite-preview";
         opencode = "github-copilot/gpt-5-mini";
       };
       permission = {

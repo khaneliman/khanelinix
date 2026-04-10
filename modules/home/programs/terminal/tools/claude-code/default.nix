@@ -36,7 +36,7 @@ in
         hooks = lib.importDir ./hooks { inherit pkgs config lib; };
 
         # Let default do its job
-        # model = "claude-sonnet-4-5";
+        # model = "claude-sonnet-4-6";
         verbose = true;
         includeCoAuthoredBy = false;
         gitAttribution = false;

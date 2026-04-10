@@ -555,7 +555,7 @@ positional arguments:
 optional arguments:
   -h, --help            Show help message
   -t, --transport       Transport type: stdio, sse, or http (default: stdio)
-  -m, --model           Claude model to use (default: claude-3-7-sonnet-20250219)
+  -m, --model           Claude model to use (default: claude-sonnet-4-20250514)
   -o, --output          Output file for report (default: print to stdout)
 
 stdio options:
@@ -669,7 +669,7 @@ If many evaluations fail:
 
 If tasks are timing out:
 
-- Use a more capable model (e.g., `claude-3-7-sonnet-20250219`)
+- Use a more capable model (e.g., `claude-sonnet-4-20250514`)
 - Check if tools are returning too much data
 - Verify pagination is working correctly
 - Consider simplifying complex questions

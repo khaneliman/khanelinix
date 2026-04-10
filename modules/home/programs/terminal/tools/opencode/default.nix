@@ -33,9 +33,9 @@ in
         mkIf mcpModuleEnabled true;
 
       settings = {
-        model = "github-copilot/gpt-5.2";
+        model = "gpt-5.4";
         # TODO: enable
-        # model = "github-copilot/gpt-5.2-codex";
+        # model = "gpt-5.4";
         autoshare = false;
         autoupdate = false;
 
