@@ -8,8 +8,9 @@ edits.
 1. **Home-First**: Prefer Home Manager (`modules/home`) for user-space configs
    (dotfiles, programs) over system modules.
 2. **Namespace Scoping**: Always place options under `khanelinix.*`.
-3. **Explicit Imports**: Never use `with lib;`. Use `inherit (lib) ...` or
-   explicit `lib.<fn>`.
+3. **Explicit Imports**: Single-line `with lib;` and `with pkgs;` are
+   acceptable. Avoid block-level `with lib;`. Use `inherit (lib) ...` or
+   explicit `lib.<fn>` for larger scopes.
 4. **Modular & Composable**: Split large modules (>200 lines) into sub-modules
    in a directory.
 5. **Skill Usage (Nix Work)**: For any Nix code or module task, use the

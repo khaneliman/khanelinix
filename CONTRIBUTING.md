@@ -8,8 +8,9 @@ provides guidelines for contributing to this Nix-based dotfiles configuration.
 ### Nix Code Style
 
 1. **Library Usage**:
-   - Avoid using `with lib;` - instead use `inherit (lib) ...` or inline `lib.`
-     prefixes
+   - Single-line `with lib;` and general `with pkgs;` usage are acceptable
+     patterns that do not break static analysis. Avoid block-level `with lib;`
+     that obscures variable origin.
    - Prefer inlining `lib.` usages to `inherit (lib)` when 1 or 2 usages of the
      library function
    - Keep `let in` blocks scoped as close to usage as possible
