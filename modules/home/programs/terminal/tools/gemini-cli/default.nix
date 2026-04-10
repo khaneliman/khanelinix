@@ -185,12 +185,14 @@ in
         experimental = {
           taskTracker = true;
           modelSteering = true;
+          topicUpdateNarration = true;
         };
 
         general = {
           checkpointing = {
             enabled = true;
           };
+          enableNotifications = true;
           preferredEditor = "neovim";
           sessionRetention = {
             enabled = true;
@@ -226,6 +228,8 @@ in
         };
 
         ui = {
+          compactToolOutput = true;
+          dynamicWindowTitle = true;
           footer = {
             hideContextPercentage = false;
           };
