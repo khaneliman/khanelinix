@@ -4,32 +4,13 @@
   ...
 }:
 let
-  inherit (builtins)
-    attrNames
-    concatStringsSep
-    readDir
-    toJSON
-    ;
-  inherit (lib) concatMapStringsSep mkEnableOption mkIf;
+  inherit (lib) mkEnableOption mkIf;
 
   cfg = config.khanelinix.programs.terminal.tools.gemini-cli;
   codexEnabled = config.khanelinix.programs.terminal.tools.codex.enable or false;
   mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
 
   sharedAiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
-  sharedSkillsDir = lib.getFile "modules/common/ai-tools/skills";
-  sharedSkills = lib.mapAttrs (name: _: sharedSkillsDir + "/${name}") (
-    lib.filterAttrs (_: type: type == "directory") (readDir sharedSkillsDir)
-  );
-
-  renderTomlRule =
-    rule:
-    ''
-      [[rule]]
-    ''
-    + concatMapStringsSep "\n" (name: "${name} = ${toJSON rule.${name}}") (attrNames rule);
-
-  renderTomlRules = rules: concatStringsSep "\n\n" (map renderTomlRule rules) + "\n";
 
   readOnlyShellRules = [
     {
@@ -149,14 +130,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.file = {
-      ".gemini/policies/read-only-shell.toml".text = renderTomlRules readOnlyShellRules;
-
-      ".gemini/policies/risky-shell.toml".text = renderTomlRules riskyShellRules;
-
-      ".gemini/policies/deny-dangerous-shell.toml".text = renderTomlRules denyDangerousShellRules;
-    };
-
     programs.gemini-cli = {
       # Gemini CLI documentation
       # See: https://github.com/google-gemini/gemini-cli
@@ -165,8 +138,15 @@ in
 
       settings = {
         context = {
-          fileName = "AGENTS.md";
+          fileName = [
+            "AGENTS.md"
+            "GEMINI.md"
+          ];
           discoveryMaxDirs = 1000;
+          memoryBoundaryMarkers = [
+            ".git"
+            ".jj"
+          ];
           # NOTE: bombs out on repos that don't have them
           # includeDirectories = [
           #   "lib"
@@ -186,6 +166,10 @@ in
           taskTracker = true;
           modelSteering = true;
           topicUpdateNarration = true;
+        };
+
+        advanced = {
+          autoConfigureMemory = true;
         };
 
         general = {
@@ -243,8 +227,14 @@ in
         };
       };
 
+      policies = {
+        read-only-shell.rule = readOnlyShellRules;
+        risky-shell.rule = riskyShellRules;
+        deny-dangerous-shell.rule = denyDangerousShellRules;
+      };
+
       context = {
-        AGENTS = lib.getFile "modules/common/ai-tools/base.md";
+        AGENTS = sharedAiTools.base;
       };
 
       commands =
@@ -306,7 +296,7 @@ in
         };
     }
     // lib.optionalAttrs (!codexEnabled) {
-      skills = sharedSkills;
+      inherit (sharedAiTools.geminiCli) skills;
     };
   };
 }
