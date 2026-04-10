@@ -164,9 +164,8 @@ in
       enableMcpIntegration = mkIf mcpModuleEnabled true;
 
       settings = {
-        contextFilename = "AGENTS.md";
-
         context = {
+          fileName = "AGENTS.md";
           discoveryMaxDirs = 1000;
           # NOTE: bombs out on repos that don't have them
           # includeDirectories = [
@@ -184,22 +183,15 @@ in
         };
 
         experimental = {
-          plan = true;
           taskTracker = true;
           modelSteering = true;
-          toolOutputMasking = {
-            enabled = true;
-            protectLatestTurn = true;
-          };
         };
 
         general = {
           checkpointing = {
             enabled = true;
           };
-          enablePromptCompletion = true;
           preferredEditor = "neovim";
-          previewFeatures = true;
           sessionRetention = {
             enabled = true;
             maxAge = "30d";
@@ -207,6 +199,7 @@ in
           };
           vimMode = true;
           plan = {
+            enabled = true;
             modelRouting = true;
           };
         };
@@ -227,7 +220,6 @@ in
         };
 
         tools = {
-          autoAccept = false;
           shell.showColor = true;
           useRipgrep = true;
           truncateToolOutputThreshold = 50000;
