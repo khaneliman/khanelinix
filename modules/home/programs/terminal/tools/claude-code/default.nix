@@ -9,6 +9,7 @@ let
 
   cfg = config.khanelinix.programs.terminal.tools.claude-code;
   mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
+  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
 
   claudeIcon = ./assets/claude.ico;
 in
@@ -53,16 +54,15 @@ in
 
         env = {
           USE_BUILTIN_RIPGREP = "0";
+        }
+        // lib.optionalAttrs mcpModuleEnabled {
+          ENABLE_TOOL_SEARCH = "auto:5";
         };
       };
 
-      inherit ((import (lib.getFile "modules/common/ai-tools") { inherit lib; }).claudeCode) agents;
+      inherit (aiTools.claudeCode) agents commands skillsDir;
 
-      inherit ((import (lib.getFile "modules/common/ai-tools") { inherit lib; }).claudeCode) commands;
-
-      skillsDir = lib.getFile "modules/common/ai-tools/skills";
-
-      memory.source = lib.getFile "modules/common/ai-tools/base.md";
+      memory.source = aiTools.base;
     };
   };
 }
