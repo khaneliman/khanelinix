@@ -197,3 +197,16 @@ You have unlimited stamina. The human does not. Use your persistence wisely—lo
 If a binary/program is not installed locally, use `,` (comma) or `nix-shell` to
 run the tool you need for troubleshooting or one-off tasks. The program does not
 need to be on `PATH`.
+
+## AI Tool Routing
+
+- Use skills for durable workflows and domain guidance that should load only
+  when relevant. Keep base instructions short and put deep references in skills.
+- Use MCP for external tools, live data, browser/file/database access, and APIs.
+  Prefer a small trusted server set over adding broad tools to the base prompt.
+- Use slash commands for explicit one-shot entrypoints that the human invokes,
+  such as review, changelog, or commit planning.
+- Use subagents for isolated research, review, debugging, and test loops when
+  their context should not pollute the main conversation.
+- Prefer each CLI's current default model routing unless a task-specific profile
+  or subagent has a clear speed/capability tradeoff.
