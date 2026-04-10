@@ -30,8 +30,6 @@ in
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         # FIXME: broken nixpkgs
         # cemu
-        # FIXME: removed for unmaintained
-        # duckstation
         #FIXME: broken by https://github.com/NixOS/nixpkgs/pull/412425
         # emulationstation
         # FIXME: broken nixpkgs
@@ -40,8 +38,6 @@ in
         nestopia-ue
         # FIXME: broken nixpkgs
         # rpcs3
-        # TODO: replacement, removed upstream
-        # ryujinx
       ]
       ++ lib.optionals cfg.retroarchFull [ retroarchFull ];
 
