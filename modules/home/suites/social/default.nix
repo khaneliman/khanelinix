@@ -31,8 +31,7 @@ in
       programs = {
         graphical.apps = {
           caprine = lib.mkDefault enabled;
-          # FIXME: broken darwin
-          vesktop = mkIf pkgs.stdenv.hostPlatform.isLinux (lib.mkDefault enabled);
+          vesktop = lib.mkDefault enabled;
         };
 
         terminal.social = {
