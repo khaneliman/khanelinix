@@ -8,6 +8,7 @@ let
   inherit (lib) mkEnableOption mkIf;
 
   cfg = config.khanelinix.programs.terminal.tools.codex;
+  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
 in
 {
   options.khanelinix.programs.terminal.tools.codex = {
@@ -29,11 +30,22 @@ in
       # https://developers.openai.com/codex/config-schema.json
       settings = {
         features = {
-          shell_snapshot = true;
-          multi_agent = true;
           apps = true;
+          # Opt-in only: fast mode can reduce latency, but may use more
+          # speculative work and higher token/cost depending on the request.
+          # fast_mode = true;
+          multi_agent = true;
           prevent_idle_sleep = true;
+          shell_snapshot = true;
+          skill_mcp_dependency_install = true;
+          unified_exec = true;
           undo = true;
+        };
+
+        agents = {
+          max_threads = 6;
+          max_depth = 1;
+          job_max_runtime_seconds = 3600;
         };
 
         history = {
@@ -159,8 +171,8 @@ in
           );
       };
 
-      custom-instructions = builtins.readFile (lib.getFile "modules/common/ai-tools/base.md");
-      skills = lib.getFile "modules/common/ai-tools/skills";
+      custom-instructions = builtins.readFile aiTools.base;
+      skills = aiTools.codex.skillsDir;
       rules = import ./rules.nix;
     };
   };
