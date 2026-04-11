@@ -28,7 +28,8 @@ in
         xemu
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
-        cemu
+        # FIXME: broken nixpkgs
+        # cemu
         #FIXME: broken by https://github.com/NixOS/nixpkgs/pull/412425
         # emulationstation
         mgba
