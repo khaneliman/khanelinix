@@ -60,9 +60,9 @@ in
         };
       };
 
-      inherit (aiTools.claudeCode) agents commands skillsDir;
-
-      memory.source = aiTools.base;
+      inherit (aiTools.claudeCode) agents commands;
+      skills = aiTools.claudeCode.skillsDir;
+      context = aiTools.base;
     };
   };
 }
