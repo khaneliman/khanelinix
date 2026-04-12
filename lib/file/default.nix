@@ -11,12 +11,20 @@ let
     hasSuffix
     ;
 
-  getNixFiles' =
+  getNixFiles' = dirPath: listNamesMatching' (name: hasSuffix ".nix" name) dirPath;
+
+  listDir' = dirPath: builtins.readDir dirPath;
+
+  listNames' = dirPath: builtins.attrNames (listDir' dirPath);
+
+  listDirectories' =
     dirPath:
     let
-      entries = builtins.readDir dirPath;
+      entries = listDir' dirPath;
     in
-    lib.filter (name: hasSuffix ".nix" name) (builtins.attrNames entries);
+    lib.filter (name: entries.${name} == "directory") (builtins.attrNames entries);
+
+  listNamesMatching' = predicate: dirPath: lib.filter predicate (listNames' dirPath);
 
   mergeAttrs' = attrsList: lib.foldl' (acc: attrs: acc // attrs) { } attrsList;
 in
@@ -31,6 +39,17 @@ in
     : 1\. Function argument
   */
   readFile = filePath: builtins.readFile filePath;
+
+  /**
+    Read a directory and return its entries.
+
+    # Inputs
+
+    `dirPath`
+
+    : 1\. Function argument
+  */
+  listDir = listDir';
 
   /**
     Check if a file exists.
@@ -59,7 +78,7 @@ in
   safeImport = filePath: default: if builtins.pathExists filePath then import filePath else default;
 
   /**
-    Scan a directory and return directory names.
+    Return all entry names in a directory.
 
     # Inputs
 
@@ -67,7 +86,44 @@ in
 
     : 1\. Function argument
   */
-  scanDir = dirPath: builtins.attrNames (builtins.readDir dirPath);
+  listNames = listNames';
+
+  /**
+    Return directory names within a directory.
+
+    # Inputs
+
+    `dirPath`
+
+    : 1\. Function argument
+  */
+  listDirectories = listDirectories';
+
+  /**
+    Return entry names matching a predicate.
+
+    # Inputs
+
+    `predicate`
+
+    : 1\. Function argument
+
+    `dirPath`
+
+    : 2\. Function argument
+  */
+  listNamesMatching = listNamesMatching';
+
+  /**
+    Scan a directory and return entry names.
+
+    # Inputs
+
+    `dirPath`
+
+    : 1\. Function argument
+  */
+  scanDir = listNames';
 
   /**
     Get a file path relative to the flake root.
@@ -194,8 +250,7 @@ in
       args ? null,
     }:
     let
-      entries = builtins.readDir dirPath;
-      subdirs = lib.filter (name: entries.${name} == "directory") (builtins.attrNames entries);
+      subdirs = listDirectories' dirPath;
       importSubdir =
         dir:
         let

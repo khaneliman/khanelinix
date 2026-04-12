@@ -82,6 +82,7 @@
 
         settings =
           let
+            fileLib = inputs.self.lib.file;
             repoRoot = ../..;
 
             licenseMarkers = [
@@ -94,9 +95,7 @@
             findLicensedDirectories =
               dir:
               let
-                subdirectories = lib.mapAttrsToList (name: _: dir + "/${name}") (
-                  lib.filterAttrs (_: type: type == "directory") (builtins.readDir dir)
-                );
+                subdirectories = map (name: dir + "/${name}") (fileLib.listDirectories dir);
                 nestedDirectories = lib.concatMap findLicensedDirectories subdirectories;
                 relativeDirectory = lib.removePrefix rootPrefix (toString dir);
               in
