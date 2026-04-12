@@ -59,7 +59,7 @@ in
       agents = aiTools.opencode.renderAgents;
       skills = lib.getFile "modules/common/ai-tools/skills";
 
-      rules = builtins.readFile (lib.getFile "modules/common/ai-tools/base.md");
+      context = builtins.readFile (lib.getFile "modules/common/ai-tools/base.md");
     };
   };
 }
