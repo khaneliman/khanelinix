@@ -10,6 +10,17 @@ let
   inherit (lib) mkIf;
 
   cfg = config.khanelinix.programs.terminal.shell.fish;
+  nixpkgsReviewGuard = /* fish */ ''
+    if set -q NIXPKGS_REVIEW_ROOT
+        return
+    end
+    if set -q IN_NIX_SHELL; and set -q XDG_CACHE_HOME; and string match -q "$XDG_CACHE_HOME/nixpkgs-review/*" -- "$PWD"
+        return
+    end
+    if set -q IN_NIX_SHELL; and string match -q "$HOME/.cache/nixpkgs-review/*" -- "$PWD"
+        return
+    end
+  '';
 in
 {
   options.khanelinix.programs.terminal.shell.fish = {
@@ -37,6 +48,8 @@ in
           makeBinPathList = map (pkgPath: pkgPath + "/bin");
         in
         lib.optionalString pkgs.stdenv.hostPlatform.isDarwin /* fish */ ''
+          ${nixpkgsReviewGuard}
+
           export NIX_PATH="darwin-config=${config.home.homeDirectory}/.nixpkgs/darwin-configuration.nix:${config.home.homeDirectory}/.nix-defexpr/channels:$NIX_PATH"
           fish_add_path --move --prepend --path ${
             lib.concatMapStringsSep " " dquote (makeBinPathList (osConfig.environment.profiles or [ ]))
@@ -46,9 +59,7 @@ in
 
       interactiveShellInit =
         /* fish */ ''
-          if set -q IN_NIX_SHELL; and string match -q "$HOME/.local/cache/nixpkgs-review/*" -- "$PWD"
-              return
-          end
+          ${nixpkgsReviewGuard}
 
           # 1password plugin
           if [ -f ${config.xdg.configHome}/op/plugins.sh ];

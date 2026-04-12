@@ -21,7 +21,10 @@ in
         enable = true;
 
         extraConfig = ''
-          if (($env.IN_NIX_SHELL? | default "") != "") and (($env.PWD? | default "") | str starts-with $"($env.HOME)/.local/cache/nixpkgs-review/") {
+          if (($env.NIXPKGS_REVIEW_ROOT? | default "") != "") {
+            return
+          }
+          if (($env.IN_NIX_SHELL? | default "") != "") and (($env.PWD? | default "") | str starts-with $"(($env.XDG_CACHE_HOME? | default $"($env.HOME)/.cache"))/nixpkgs-review/") {
             return
           }
         '';

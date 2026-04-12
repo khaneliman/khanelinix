@@ -21,7 +21,7 @@ in
 
       initExtra = lib.mkMerge [
         (lib.mkBefore ''
-          if [[ -n "''${IN_NIX_SHELL:-}" && "''${PWD:-}" == "''${HOME}/.local/cache/nixpkgs-review/"* ]]; then
+          if [[ -n "''${NIXPKGS_REVIEW_ROOT:-}" ]] || [[ -n "''${IN_NIX_SHELL:-}" && "''${PWD:-}" == "''${XDG_CACHE_HOME:-''${HOME}/.cache}/nixpkgs-review/"* ]]; then
             return
           fi
         '')
