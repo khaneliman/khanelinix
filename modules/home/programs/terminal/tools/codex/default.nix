@@ -171,7 +171,7 @@ in
           );
       };
 
-      custom-instructions = builtins.readFile aiTools.base;
+      context = builtins.readFile aiTools.base;
       skills = aiTools.codex.skillsDir;
       rules = import ./rules.nix;
     };
