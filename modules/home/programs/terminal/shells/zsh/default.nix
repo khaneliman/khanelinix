@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  osConfig ? { },
   pkgs,
 
   ...
@@ -10,6 +11,7 @@ let
   inherit (lib.strings) fileContents;
 
   cfg = config.khanelinix.programs.terminal.shell.zsh;
+  hasSystemZsh = osConfig.programs.zsh.enable or false;
 in
 {
 
@@ -84,7 +86,7 @@ in
         # Disable /etc/{zshrc,zprofile} that contains the "sane-default" setup out of the box
         # in order avoid issues with incorrect precedence to our own zshrc.
         # See `/etc/zshrc` for more info.
-        envExtra = mkIf pkgs.stdenv.hostPlatform.isLinux ''
+        envExtra = mkIf (!hasSystemZsh) ''
           setopt no_global_rcs
         '';
 
