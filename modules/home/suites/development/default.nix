@@ -166,7 +166,8 @@ in
       programs = {
         graphical = {
           editors = {
-            vscode.enable = mkDefault (!isWSL);
+            # FIXME: broken darwin
+            vscode.enable = mkDefault (!isWSL && !pkgs.stdenv.hostPlatform.isDarwin);
           };
         };
 
