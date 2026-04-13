@@ -182,6 +182,7 @@ in
 
           tools = {
             act = mkDefault enabled;
+            agents.enable = cfg.aiEnable;
             azure.enable = cfg.azureEnable;
             claude-code.enable = cfg.aiEnable;
             codex.enable = cfg.aiEnable;
