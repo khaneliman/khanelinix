@@ -163,9 +163,15 @@ in
         };
 
         experimental = {
-          taskTracker = true;
+          contextManagement = true;
+          directWebFetch = true;
+          memoryManager = true;
           modelSteering = true;
+          taskTracker = true;
           topicUpdateNarration = true;
+          useOSC52Copy = true;
+          useOSC52Paste = true;
+          worktrees = true;
         };
 
         advanced = {
@@ -191,6 +197,11 @@ in
         };
 
         ide.enabled = true;
+
+        model = {
+          compressionThreshold = 0.7;
+        };
+
         privacy.usageStatisticsEnabled = false;
 
         security = {
@@ -203,6 +214,7 @@ in
           environmentVariableRedaction = {
             enabled = true;
           };
+          enablePermanentToolApproval = true;
         };
 
         tools = {
@@ -216,14 +228,17 @@ in
           dynamicWindowTitle = true;
           footer = {
             hideContextPercentage = false;
+            hideSandboxStatus = true;
           };
           inlineThinkingMode = "full";
+          loadingPhrases = "tips";
           showCitations = true;
+          showMemoryUsage = true;
           showModelInfoInChat = true;
           showStatusInTitle = true;
+          showUserIdentity = false;
           theme = "GitHub";
           useAlternateBuffer = true;
-          showMemoryUsage = true;
         };
       };
 
