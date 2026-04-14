@@ -141,6 +141,34 @@
     command = "git commit --amend --no-edit --no-verify";
     description = "Amend last commit without editing (skip hooks)";
   }
+  {
+    key = "<c-l>";
+    context = "global";
+    command = /* Bash */ ''
+      set -eu
+
+      lockFile="$(git rev-parse --git-path index.lock)"
+
+      if [ ! -e "$lockFile" ]; then
+        echo "No index.lock file found for this repo."
+        exit 1
+      fi
+
+      rm -f "$lockFile"
+      echo "Removed $lockFile"
+    '';
+    description = "Remove current repo index.lock";
+    loadingText = "Removing index.lock...";
+    output = "log";
+    prompts = [
+      {
+        type = "confirm";
+        key = "ConfirmRemoveIndexLock";
+        title = "Remove index.lock?";
+        body = "This deletes the current repo's Git index lock file. Only continue if no other Git process is using it.";
+      }
+    ];
+  }
 
   # GitHub integration
   {
