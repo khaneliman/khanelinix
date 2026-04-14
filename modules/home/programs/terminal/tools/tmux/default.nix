@@ -102,6 +102,7 @@ in
         # Keep a prefix clear-screen shortcut available.
         bind C-l send-keys C-l
         bind-key T display-popup -E -w 80% -h 80% -d '#{pane_current_path}'
+        bind-key R respawn-pane -k
         bind r source-file ~/.config/tmux/tmux.conf \; display-message 'tmux config reloaded'
         bind-key x kill-pane
 
@@ -120,6 +121,7 @@ in
         set -g detach-on-destroy off
         set -g focus-events on
         set -g monitor-activity off
+        set -g remain-on-exit on
         set -g renumber-windows on
         set -g set-clipboard on
         set -g status-position top
