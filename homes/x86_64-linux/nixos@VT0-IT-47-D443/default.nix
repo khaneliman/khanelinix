@@ -148,7 +148,10 @@ in
   };
 
   programs = {
-    codex.settings.features.apps = mkForce false;
+    codex.settings = {
+      features.apps = mkForce false;
+      projects."/mnt/c/Users/au09163/source".trust_level = "trusted";
+    };
 
     mcp.servers.dynatrace = {
       command = "npx";
