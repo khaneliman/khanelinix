@@ -12,6 +12,8 @@ let
   cfg = config.khanelinix.display-managers.sddm;
 
   userName = config.khanelinix.user.name;
+
+  themePackage = pkgs.catppuccin-sddm-corners;
 in
 {
   options.khanelinix.display-managers.sddm = {
@@ -19,10 +21,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      catppuccin-sddm-corners
-    ];
-
     khanelinix.home.configFile =
       let
         inherit (config.home-manager.users.${userName}.khanelinix.user) icon;
@@ -40,8 +38,12 @@ in
           # package = pkgs.libsForQt5.sddm;
           # TODO: update theme support
           package = pkgs.kdePackages.sddm;
-          theme = "catppuccin-sddm-corners";
+          theme = "${themePackage}/share/sddm/themes/catppuccin-sddm-corners";
           wayland = enabled;
+
+          extraPackages = [
+            themePackage
+          ];
         };
       };
     };
