@@ -296,7 +296,16 @@ in
       });
     in
     {
-      home.packages = [ pkgsMaster.teams-for-linux ];
+      home.packages = [
+        (pkgsMaster.teams-for-linux.overrideAttrs (old: {
+          # NOTE: Fix electron app_id
+          postPatch = (old.postPatch or "") + ''
+                    substituteInPlace package.json \
+                      --replace-fail '"name": "teams-for-linux",' '"desktopName": "teams-for-linux.desktop",
+            "name": "teams-for-linux",'
+          '';
+        }))
+      ];
 
       xdg.configFile = mkIf isLinux (mkMerge [
         {
