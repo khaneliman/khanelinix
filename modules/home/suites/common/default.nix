@@ -72,7 +72,8 @@ in
 
           shell = {
             bash = mkDefault enabled;
-            nushell = mkDefault enabled;
+            # FIXME: broken again on darwin
+            nushell.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
             zsh = mkDefault enabled;
           };
 
