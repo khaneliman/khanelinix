@@ -18,14 +18,19 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages =
-      with pkgs;
-      [
-        element-desktop
-      ]
-      ++ [
-        pkgsUnstable.telegram-desktop
-      ];
+    home.packages = [
+      (pkgs.element-desktop.overrideAttrs (old: {
+        # NOTE: Fix electron app_id
+        postPatch = (old.postPatch or "") + ''
+            substituteInPlace apps/desktop/package.json \
+              --replace-fail '"productName": "Element",' '"desktopName": "Element.desktop",
+          "productName": "Element",'
+        '';
+      }))
+    ]
+    ++ [
+      pkgsUnstable.telegram-desktop
+    ];
 
     khanelinix = {
       programs = {
