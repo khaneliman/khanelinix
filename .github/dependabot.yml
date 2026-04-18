@@ -56,3 +56,10 @@ updates:
       rust-web-server-dependencies:
         patterns:
           - "*"
+  - package-ecosystem: "nix"
+    directory: "/"
+    target-branch: "main"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore(flake):"
