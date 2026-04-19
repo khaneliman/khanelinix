@@ -18,8 +18,10 @@ in
   config = mkIf cfg.enable {
     home.shellAliases = {
       codex-deep = "codex --profile deep";
+      codex-nano = "codex --profile nano";
       codex-offline = "codex --profile offline";
       codex-quick = "codex --profile quick";
+      codex-spark = "codex --profile spark";
       codex-unsafe = "codex --profile unsafe";
     };
 
@@ -31,9 +33,7 @@ in
       settings = {
         features = {
           apps = true;
-          # Opt-in only: fast mode can reduce latency, but may use more
-          # speculative work and higher token/cost depending on the request.
-          # fast_mode = true;
+          fast_mode = true;
           multi_agent = true;
           prevent_idle_sleep = true;
           shell_snapshot = true;
@@ -56,6 +56,7 @@ in
         model = "gpt-5.4";
         model_reasoning_effort = "medium";
         plan_mode_reasoning_effort = "high";
+        service_tier = "fast";
 
         notify =
           let
@@ -110,18 +111,42 @@ in
         profiles = {
           # Deep analysis and live-research mode.
           deep = {
+            model = "gpt-5.4";
+            model_auto_compact_token_limit = 900000;
+            model_context_window = 1050000;
             model_reasoning_effort = "high";
             model_verbosity = "high";
             plan_mode_reasoning_effort = "xhigh";
             web_search = "live";
           };
 
+          # Cheapest local utility profile for triage and simple transforms.
+          nano = {
+            model = "gpt-5.4-nano";
+            model_reasoning_effort = "none";
+            model_verbosity = "low";
+            plan_mode_reasoning_effort = "low";
+            service_tier = "flex";
+            web_search = "disabled";
+          };
+
           # Faster implementation loop for coding tasks.
           quick = {
-            model_reasoning_effort = "low";
+            model_reasoning_effort = "medium";
+            model = "gpt-5.3-codex-spark";
             model_reasoning_summary = "none";
             model_verbosity = "low";
             plan_mode_reasoning_effort = "medium";
+            service_tier = "fast";
+            web_search = "disabled";
+          };
+
+          # High-effort coding profile for coding-first work.
+          spark = {
+            model = "gpt-5.3-codex-spark";
+            model_reasoning_effort = "medium";
+            model_verbosity = "medium";
+            plan_mode_reasoning_effort = "high";
             service_tier = "fast";
             web_search = "disabled";
           };
