@@ -2,6 +2,7 @@
 
 local icons = require("helpers.icons")
 local colors = require("helpers.colors")
+local logger = require("helpers.logger")
 
 local popup_toggle = "sketchybar --set $NAME popup.drawing=toggle"
 
@@ -43,6 +44,7 @@ local function add_apple_item(name, icon_string, label_string, click_cmd)
 	})
 
 	item:subscribe("mouse.clicked", function(_)
+		logger.debug("apple", "menu_item_clicked", { item = "apple." .. name })
 		Sbar.exec(click_cmd)
 		apple.logo:set({ popup = { drawing = false } })
 	end)

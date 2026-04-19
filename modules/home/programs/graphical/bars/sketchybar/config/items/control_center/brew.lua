@@ -3,6 +3,7 @@
 local icons = require("helpers.icons")
 local settings = require("helpers.settings")
 local colors = require("helpers.colors")
+local logger = require("helpers.logger")
 local popup_off = "sketchybar --set brew popup.drawing=off"
 local brew_done_marker = "__SKETCHYBAR_DONE__"
 
@@ -45,7 +46,13 @@ brew:subscribe({
 	"forced",
 	"brew_update",
 }, function(_)
+	logger.debug("brew", "refresh_start", {})
 	Sbar.exec(brew_outdated_cmd, function(outdated)
+		if IS_EMPTY(outdated) then
+			logger.warn("brew", "command_empty", {})
+			return
+		end
+
 		local thresholds = {
 			{ count = 30, color = colors.red },
 			{ count = 20, color = colors.peach },
@@ -64,6 +71,10 @@ brew:subscribe({
 		local count = 0
 		for _ in ipairs(packages) do
 			count = count + 1
+		end
+		logger.info("brew", "count_updated", { count = count })
+		if count > 20 then
+			logger.warn("brew", "many_outdated", { count = count })
 		end
 
 		CLEAR_POPUP_ITEMS(brew.name)

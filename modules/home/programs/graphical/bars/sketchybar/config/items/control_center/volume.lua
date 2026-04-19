@@ -2,6 +2,7 @@
 
 local colors = require("helpers.colors")
 local icons = require("helpers.icons")
+local logger = require("helpers.logger")
 
 local volume = {}
 
@@ -48,11 +49,17 @@ volume.icon = Sbar.add("item", "volume.icon", {
 })
 
 volume.slider:subscribe("mouse.clicked", function(env)
+	logger.debug("volume", "slider_set", { percentage = tostring(env.PERCENTAGE) })
 	Sbar.exec("osascript -e 'set volume output volume " .. env["PERCENTAGE"] .. "'")
 end)
 
 volume.slider:subscribe("volume_change", function(env)
 	local new_volume = tonumber(env.INFO)
+	if new_volume == nil then
+		logger.warn("volume", "invalid_volume", { payload = tostring(env.INFO) })
+		return
+	end
+
 	local icon = icons.volume._0
 
 	if new_volume > 60 then
@@ -67,6 +74,7 @@ volume.slider:subscribe("volume_change", function(env)
 
 	volume.icon:set({ label = icon })
 	volume.slider:set({ slider = { percentage = new_volume } })
+	logger.debug("volume", "volume_changed", { volume = new_volume, icon = tostring(icon) })
 end)
 
 local function animate_slider_width(width)
@@ -77,8 +85,10 @@ end
 
 volume.icon:subscribe("mouse.clicked", function()
 	if tonumber(volume.slider:query().slider.width) > 0 then
+		logger.debug("volume", "slider_hidden", {})
 		animate_slider_width(0)
 	else
+		logger.debug("volume", "slider_shown", {})
 		animate_slider_width(100)
 	end
 end)

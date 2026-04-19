@@ -3,6 +3,7 @@
 local settings = require("helpers.settings")
 local colors = require("helpers.colors")
 local icons = require("helpers.icons")
+local logger = require("helpers.logger")
 
 local nix = Sbar.add("item", "nix", {
 	position = "right",
@@ -59,6 +60,7 @@ local nix_details = Sbar.add("item", "nix.details", {
 SETUP_POPUP_HOVER(nix)
 
 nix:subscribe({ "forced", "system_woke", "routine", "nix_update" }, function()
+	logger.debug("nix", "update_start", {})
 	local cmd = [[
 		launchd_pid() {
 			launchctl print "$1" 2>/dev/null | awk '
@@ -104,6 +106,13 @@ nix:subscribe({ "forced", "system_woke", "routine", "nix_update" }, function()
 		fi
 	]]
 	Sbar.exec(cmd, function(result)
+		if IS_EMPTY(result) then
+			logger.debug("nix", "no_active_jobs", {})
+			nix:set({ drawing = false })
+			nix:set({ popup = { drawing = false } })
+			return
+		end
+
 		result = result:gsub("\n", "")
 		if result ~= "" then
 			local op_type, runtime, scope = result:match("([^|]+)|([^|]+)|([^|]+)")
@@ -118,15 +127,18 @@ nix:subscribe({ "forced", "system_woke", "routine", "nix_update" }, function()
 				nix_details:set({
 					label = "Runtime: " .. runtime .. " (" .. scope .. ")",
 				})
+				logger.info("nix", "job_active", { type = op_type, runtime = runtime, scope = scope })
+			else
+				logger.warn("nix", "parse_failed", { payload = result })
+				nix:set({ drawing = false })
+				nix:set({ popup = { drawing = false } })
 			end
-		else
-			nix:set({ drawing = false })
-			nix:set({ popup = { drawing = false } })
 		end
 	end)
 end)
 
 nix:subscribe("mouse.clicked", function(env)
+	logger.debug("nix", "manual_kill_requested", { button = env.BUTTON })
 	if env.BUTTON == "right" then
 		-- Right click kills nix-store --optimise
 		Sbar.exec(

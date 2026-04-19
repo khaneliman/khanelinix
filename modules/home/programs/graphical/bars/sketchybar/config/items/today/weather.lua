@@ -2,6 +2,7 @@
 
 local settings = require("helpers.settings")
 local colors = require("helpers.colors")
+local logger = require("helpers.logger")
 
 local weather = {}
 
@@ -62,9 +63,20 @@ weather.details = Sbar.add("item", "weather.details", {
 })
 
 weather.temp:subscribe({ "routine", "forced", "system_woke", "weather_update" }, function()
+	if IS_SYSTEM_SLEEPING then
+		logger.debug("weather", "update_skipped_sleeping", {})
+		return
+	end
+
 	weather.temp:set({ popup = { drawing = false } })
 
 	Sbar.exec("wttrbar --fahrenheit --ampm --location $(jq '.wttr.location' ~/weather_config.json)", function(forecast)
+		if IS_EMPTY(forecast) or IS_EMPTY(forecast.text) then
+			logger.warn("weather", "empty_forecast", {})
+			return
+		end
+
+		logger.debug("weather", "forecast_updated", { text = forecast.text })
 		for i, value in ipairs(STR_SPLIT(forecast.text)) do
 			if i == 1 then
 				weather.icon:set({ icon = { string = value } })
@@ -76,8 +88,10 @@ weather.temp:subscribe({ "routine", "forced", "system_woke", "weather_update" },
 
 		CLEAR_POPUP_ITEMS(weather.temp.name)
 
+		local line_count = 0
 		weather.event = {}
 		for i, line in ipairs(STR_SPLIT(forecast.tooltip, "\n")) do
+			line_count = line_count + 1
 			if string.find(line, "<b>") then
 				local replacedString = string.gsub(line, "<b>", "")
 				replacedString = string.gsub(replacedString, "</b>", "")
@@ -174,6 +188,7 @@ weather.temp:subscribe({ "routine", "forced", "system_woke", "weather_update" },
 				})
 			end
 		end
+		logger.debug("weather", "forecast_tooltip_rendered", { lines = line_count })
 	end)
 end)
 

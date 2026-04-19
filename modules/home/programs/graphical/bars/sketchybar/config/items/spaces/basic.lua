@@ -4,6 +4,7 @@ local colors = require("helpers.colors")
 local icons = require("helpers.icons")
 local settings = require("helpers.settings")
 local spaces_utils = require("items.spaces.utils")
+local logger = require("helpers.logger")
 
 local function getIcon(i)
 	local numSpaces = #icons.spaces -- Get the number of entries in the spaces table
@@ -21,6 +22,7 @@ for i = 1, 10, 1 do
 	spaces[i] = space.name
 	space:subscribe("space_change", function(env)
 		local color = env.SELECTED == "true" and colors.text or colors.overlay0
+		logger.debug("spaces", "space_change", { name = env.NAME, selected = tostring(env.SELECTED) })
 
 		Sbar.set(env.NAME, {
 			icon = { highlight = env.SELECTED },
@@ -29,6 +31,7 @@ for i = 1, 10, 1 do
 		})
 	end)
 	space:subscribe("mouse.clicked", function(env)
+		logger.debug("spaces", "space_clicked", { button = env.BUTTON, sid = env.SID })
 		if env.BUTTON == "right" then
 			Sbar.exec("yabai -m space --destroy " .. env.SID .. " && sketchybar --trigger space_change")
 		else
@@ -61,5 +64,6 @@ spaces.creator = Sbar.add("item", "spaces.creator", {
 })
 
 spaces.creator:subscribe("mouse.clicked", function(_)
+	logger.debug("spaces", "space_creator_clicked", {})
 	Sbar.exec("yabai -m space --create && sketchybar --trigger space_change")
 end)

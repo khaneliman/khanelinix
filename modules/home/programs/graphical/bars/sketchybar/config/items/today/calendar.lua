@@ -1,5 +1,6 @@
 #!/usr/bin/env lua
 local settings = require("helpers.settings")
+local logger = require("helpers.logger")
 
 local today = {}
 
@@ -43,6 +44,7 @@ today.clock = Sbar.add("item", "clock", {
 
 local function date_update()
 	if IS_SYSTEM_SLEEPING then
+		logger.debug("today", "date_update_skipped_sleeping", {})
 		return
 	end
 	local date = os.date("%a. %d %b.")
@@ -51,6 +53,7 @@ end
 
 local function clock_update()
 	if IS_SYSTEM_SLEEPING then
+		logger.debug("today", "clock_update_skipped_sleeping", {})
 		return
 	end
 	local time = os.date("%I:%M %p")

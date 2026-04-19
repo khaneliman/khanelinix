@@ -3,6 +3,7 @@ local colors = require("helpers.colors")
 local icons = require("helpers.icons")
 local power_config = require("helpers.power_config")
 local settings = require("helpers.settings")
+local logger = require("helpers.logger")
 
 local power_modes = Sbar.add("item", "power_modes", {
 	position = "right",
@@ -104,6 +105,11 @@ end
 
 local function update_item()
 	Sbar.exec(power_config.clamshell .. " snapshot", function(output)
+		if IS_EMPTY(output) then
+			logger.warn("keep_awake", "snapshot_empty", {})
+			return
+		end
+
 		local states = parse_snapshot(output)
 		local active_count = 0
 		if states.awake then
@@ -132,6 +138,7 @@ local function update_item()
 			summary_color = colors.blue
 		end
 
+		logger.debug("keep_awake", "state_updated", { awake = states.awake, clamshell = states.clamshell })
 		power_modes:set({
 			icon = {
 				string = icon_string,
@@ -172,6 +179,7 @@ local function update_item()
 end
 
 local function toggle_mode(mode)
+	logger.debug("keep_awake", "toggle_requested", { mode = mode })
 	Sbar.exec(power_config.clamshell .. " " .. mode .. " toggle", function(_)
 		update_item()
 		DELAY(0.5, update_item)

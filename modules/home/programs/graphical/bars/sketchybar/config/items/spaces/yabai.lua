@@ -4,6 +4,7 @@ local colors = require("helpers.colors")
 local app_icons = require("helpers.app_icons")
 local settings = require("helpers.settings")
 local spaces_utils = require("items.spaces.utils")
+local logger = require("helpers.logger")
 
 local spaces = {}
 
@@ -79,7 +80,7 @@ space_creator:subscribe("space_windows_change", function(env)
 		no_app = false
 		local lookup = app_icons[app]
 		if lookup == nil then
-			print(app .. " not found in icon lookup")
+			logger.debug("spaces", "missing_app_icon", { app = app })
 		end
 		local icon = ((lookup == nil) and app_icons["Default"] or lookup)
 		icon_line = icon_line .. " " .. icon

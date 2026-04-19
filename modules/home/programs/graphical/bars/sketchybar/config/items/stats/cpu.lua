@@ -3,6 +3,7 @@
 local settings = require("helpers.settings")
 local colors = require("helpers.colors")
 local icons = require("helpers.icons")
+local logger = require("helpers.logger")
 
 Sbar.exec("killall sketchy_cpu_load >/dev/null 2>&1; sketchy_cpu_load cpu_update 2.0")
 
@@ -61,6 +62,10 @@ local monitor = process_monitor(
 cpu:subscribe("cpu_update", function(env)
 	-- Also available: env.user_load, env.sys_load
 	local load = tonumber(env.total_load)
+	if load == nil then
+		logger.warn("cpu", "parse_failed", { payload = tostring(env.total_load) })
+		return
+	end
 
 	local color = colors.text
 	if load > 30 then
@@ -79,6 +84,7 @@ cpu:subscribe("cpu_update", function(env)
 			color = color,
 		},
 	})
+	logger.debug("cpu", "load_updated", { load = load, color = tostring(color) })
 
 	if popupVisible then
 		monitor.update()
@@ -86,6 +92,7 @@ cpu:subscribe("cpu_update", function(env)
 end)
 
 cpu:subscribe("mouse.clicked", function()
+	logger.debug("cpu", "open_activity_monitor", {})
 	Sbar.exec("open -a 'Activity Monitor'")
 end)
 
@@ -93,6 +100,7 @@ cpu:subscribe("mouse.entered", function()
 	popupVisible = true
 	monitor.update()
 	cpu:set({ popup = { drawing = true } })
+	logger.debug("cpu", "popup_opened", {})
 end)
 
 cpu:subscribe({
@@ -101,6 +109,7 @@ cpu:subscribe({
 }, function()
 	popupVisible = false
 	cpu:set({ popup = { drawing = false } })
+	logger.debug("cpu", "popup_closed", {})
 end)
 
 return cpu

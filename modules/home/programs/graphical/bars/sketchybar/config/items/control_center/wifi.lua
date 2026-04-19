@@ -3,6 +3,7 @@
 local icons = require("helpers.icons")
 local settings = require("helpers.settings")
 local colors = require("helpers.colors")
+local logger = require("helpers.logger")
 
 local popup_width = 250
 
@@ -123,7 +124,15 @@ local router = Sbar.add("item", {
 
 local function refresh_status()
 	Sbar.exec("ipconfig getifaddr en0", function(ip_address)
-		local connected = (ip_address ~= "")
+		local ip_clean = (ip_address or ""):gsub("[\r\n]", "")
+		local connected = (ip_clean ~= "")
+		if IS_SYSTEM_SLEEPING then
+			return
+		end
+		logger.debug("wifi", "refresh_status", { connected = connected, ip = ip_clean })
+		if connected == false then
+			logger.debug("wifi", "wifi_disconnected", { ip_lookup = "failed" })
+		end
 		wifi:set({
 			icon = {
 				string = connected and icons.wifi or icons.wifi_off,
@@ -133,24 +142,30 @@ local function refresh_status()
 end
 
 local function refresh_popup_details()
+	logger.debug("wifi", "refresh_popup_details", {})
 	Sbar.exec(
 		[[
 	network_name=$(networksetup -getcomputername 2>/dev/null)
 	ip_address=$(ipconfig getifaddr en0 2>/dev/null || true)
 	ssid=$(ipconfig getsummary en0 2>/dev/null | awk -F ' SSID : ' '/ SSID : / {print $2; exit}')
 	network_info=$(networksetup -getinfo Wi-Fi 2>/dev/null)
-	subnet=$(printf '%s\n' "$network_info" | awk -F ':' '/Subnet mask:/ {print $2}' | awk 'NR==1 {gsub(/^ +| +$/, \"\", $0); print; exit}')
-	gateway=$(printf '%s\n' "$network_info" | awk -F ':' '/Router:/ {print $2}' | awk 'NR==1 {gsub(/^ +| +$/, \"\", $0); print; exit}')
-	printf '%s\n%s\n%s\n%s\n%s\n' "$network_name" "$ip_address" "$ssid" "$subnet" "$gateway"
+		subnet=$(printf '%s\n' "$network_info" | awk -F ':' '/Subnet mask:/ {print $2}' | awk 'NR==1 {gsub(/^ +| +$/, "", $0); print; exit}')
+		gateway=$(printf '%s\n' "$network_info" | awk -F ':' '/Router:/ {print $2}' | awk 'NR==1 {gsub(/^ +| +$/, "", $0); print; exit}')
+		printf '%s\n%s\n%s\n%s\n%s\n' "$network_name" "$ip_address" "$ssid" "$subnet" "$gateway"
 		]],
 		function(result)
-		local parts = STR_SPLIT(result or "", "\n")
-		hostname:set({ label = parts[1] or "" })
-		ip:set({ label = parts[2] or "" })
-		ssid:set({ label = parts[3] or "" })
-		mask:set({ label = parts[4] or "" })
-		router:set({ label = parts[5] or "" })
-	end)
+			if IS_EMPTY(result) then
+				logger.warn("wifi", "popup_details_empty", {})
+				return
+			end
+			local parts = STR_SPLIT(result or "", "\n")
+			hostname:set({ label = parts[1] or "" })
+			ip:set({ label = parts[2] or "" })
+			ssid:set({ label = parts[3] or "" })
+			mask:set({ label = parts[4] or "" })
+			router:set({ label = parts[5] or "" })
+		end
+	)
 end
 
 wifi:subscribe({ "wifi_change", "system_woke", "forced" }, refresh_status)
@@ -161,6 +176,11 @@ end)
 
 local function copy_label_to_clipboard(env)
 	local label = Sbar.query(env.NAME).label.value
+	if IS_EMPTY(label) then
+		logger.warn("wifi", "copy_label_empty", { item = env.NAME })
+	else
+		logger.debug("wifi", "copy_label", { item = env.NAME })
+	end
 	Sbar.exec("printf %s " .. SHELL_QUOTE(label) .. " | pbcopy")
 	Sbar.set(env.NAME, { label = { string = icons.clipboard, align = "center" } })
 	Sbar.delay(1, function()

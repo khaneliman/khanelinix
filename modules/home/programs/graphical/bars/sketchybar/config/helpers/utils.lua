@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+local logger = require("helpers.logger")
 IS_SYSTEM_SLEEPING = false
 
 local function _popup_item_name(target)
@@ -89,10 +90,10 @@ end
 PRINT_TABLE = function(t)
 	for key, value in pairs(t) do
 		if type(value) == "table" then
-			print(key, ":")
+			logger.trace("utils", "print_table", { key = key, type = "table" })
 			PRINT_TABLE(value)
 		else
-			print(key, ":", value)
+			logger.trace("utils", "print_table", { key = key, value = tostring(value) })
 		end
 	end
 end

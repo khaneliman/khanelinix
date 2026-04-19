@@ -3,6 +3,7 @@
 local settings = require("helpers.settings")
 local colors = require("helpers.colors")
 local icons = require("helpers.icons")
+local logger = require("helpers.logger")
 
 local disk = Sbar.add("item", "disk", {
 	background = {
@@ -68,6 +69,10 @@ disk:subscribe({
 	"system_woke",
 }, function()
 	Sbar.exec("df -H | grep -E '^(/dev/disk3s1s1 ).' | awk '{ printf (\"%s\\n\", $5) }'", function(diskUsage)
+		if IS_EMPTY(diskUsage) then
+			logger.warn("disk", "empty_usage", {})
+			return
+		end
 		disk:set({ label = diskUsage })
 	end)
 
@@ -77,6 +82,7 @@ disk:subscribe({
 end)
 
 disk:subscribe("mouse.clicked", function()
+	logger.debug("disk", "open_activity_monitor", {})
 	Sbar.exec("open -a 'Activity Monitor'")
 end)
 
@@ -84,6 +90,7 @@ disk:subscribe("mouse.entered", function()
 	popupVisible = true
 	monitor.update()
 	disk:set({ popup = { drawing = true } })
+	logger.debug("disk", "popup_opened", {})
 end)
 
 disk:subscribe({
@@ -92,6 +99,7 @@ disk:subscribe({
 }, function()
 	popupVisible = false
 	disk:set({ popup = { drawing = false } })
+	logger.debug("disk", "popup_closed", {})
 end)
 
 return disk

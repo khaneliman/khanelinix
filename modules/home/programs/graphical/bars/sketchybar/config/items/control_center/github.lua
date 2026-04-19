@@ -2,6 +2,7 @@
 local icons = require("helpers.icons")
 local settings = require("helpers.settings")
 local colors = require("helpers.colors")
+local logger = require("helpers.logger")
 
 local popup_off = "sketchybar --set github popup.drawing=off"
 local github
@@ -80,21 +81,38 @@ local function collect_sorted_notifications(raw_notifications)
 	return sorted_notifications
 end
 
+local function notification_thread_id(notification)
+	local candidate_ids = {
+		notification and notification.id or nil,
+		notification and notification.thread_id or nil,
+	}
+	for _, candidate in ipairs(candidate_ids) do
+		if IS_EMPTY(candidate) == false then
+			return tostring(candidate)
+		end
+	end
+
+	return nil
+end
+
 local function notification_signature(sorted_notifications)
 	local parts = { tostring(#sorted_notifications) }
 	for index, notification in ipairs(sorted_notifications) do
 		if index > 16 then
 			break
 		end
-		table.insert(parts, tostring(notification.id or ""))
+		table.insert(parts, notification_thread_id(notification) or "")
 		table.insert(parts, tostring(notification.updated_at or ""))
 	end
 	return table.concat(parts, "|")
 end
 
 local function notification_mark_read_command(notification)
-	local thread_id = tostring(notification and notification.id or "")
+	local thread_id = notification_thread_id(notification)
 	if IS_EMPTY(thread_id) then
+		logger.warn("github", "missing_thread_id", {
+			subject_type = tostring((notification and notification.subject and notification.subject.type) or "unknown"),
+		})
 		return nil
 	end
 
@@ -184,11 +202,17 @@ github:subscribe({
 	"forced",
 	"github_update",
 }, function(_)
+	logger.debug("github", "refresh_start", {})
 	if IS_SYSTEM_SLEEPING then
+		logger.debug("github", "refresh_skipped_sleeping", {})
 		return
 	end
 	-- fetch new information
 	Sbar.exec("gh api notifications", function(notifications)
+		if type(notifications) ~= "table" then
+			logger.warn("github", "invalid_payload", { type = type(notifications) })
+			notifications = {}
+		end
 		local sorted_notifications = collect_sorted_notifications(notifications)
 		local count = #sorted_notifications
 		local current_repo_group = nil
@@ -198,6 +222,7 @@ github:subscribe({
 			local first = sorted_notifications[1]
 			local repo = notification_repo_name(first)
 			local title = first.subject and first.subject.title or "New Notification"
+			logger.info("github", "notifications_changed", { count = count, repo = repo, title = title })
 			Sbar.trigger("github_notification", { COUNT = count, TITLE = title, REPO = repo })
 		end
 		last_notification_signature = current_signature
@@ -242,6 +267,9 @@ github:subscribe({
 			elseif type == "Commit" then
 				color = colors.text
 				icon = icons.git.commit
+			elseif type == "Release" then
+				color = colors.green
+				icon = icons.git.discussion
 			else
 				color = colors.text
 				icon = icons.git.issue
@@ -284,6 +312,11 @@ github:subscribe({
 
 			if IS_EMPTY(title) == false then
 				local click_script = notification_click_script(notification, url)
+				logger.debug(
+					"github",
+					"add_notification",
+					{ repo = repo_label, type = type, has_url = (IS_EMPTY(url) == false) }
+				)
 				Sbar.add("item", next_popup_name("message"), {
 					label = {
 						string = truncate_label(title, 60),

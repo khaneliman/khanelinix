@@ -1,6 +1,7 @@
 #!/usr/bin/env lua
 
 local colors = require("helpers.colors")
+local logger = require("helpers.logger")
 
 local separator_right = Sbar.add("item", "separator_right", {
 	background = {
@@ -18,6 +19,7 @@ local separator_right = Sbar.add("item", "separator_right", {
 })
 
 separator_right:subscribe("mouse.clicked", function()
+	logger.debug("stats", "toggle_stats_requested", {})
 	Sbar.trigger("toggle_stats")
 end)
 

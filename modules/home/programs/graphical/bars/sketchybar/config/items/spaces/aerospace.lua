@@ -3,10 +3,12 @@ local colors = require("helpers.colors")
 local app_icons = require("helpers.app_icons")
 local settings = require("helpers.settings")
 local spaces_utils = require("items.spaces.utils")
+local logger = require("helpers.logger")
 
 local spaces = {}
 
 local function focus_workspace(workspace)
+	logger.debug("spaces", "focus_request", { workspace = tostring(workspace) })
 	Sbar.exec("aerospace workspace --fail-if-noop " .. workspace .. " >/dev/null 2>&1 || true")
 end
 
@@ -34,8 +36,13 @@ for i = 1, 8, 1 do
 	-- Subscribe to aerospace workspace change for focus updates
 	space:subscribe("aerospace_workspace_change", function(env)
 		local focused_num = tonumber(env.FOCUSED)
+		if focused_num == nil then
+			logger.warn("spaces", "invalid_workspace_event", { payload = tostring(env.FOCUSED) })
+			return
+		end
 		local is_focused = focused_num == i
 		local color = is_focused and colors.white or colors.surface1
+		logger.debug("spaces", "workspace_focus_changed", { workspace = i, focused = tostring(is_focused) })
 
 		space:set({
 			icon = { highlight = is_focused },
@@ -45,6 +52,7 @@ for i = 1, 8, 1 do
 	end)
 
 	space:subscribe("mouse.clicked", function(env)
+		logger.debug("spaces", "space_clicked", { workspace = tostring(i), button = env.BUTTON })
 		if env.BUTTON == "other" then
 			space_popup:set({
 				background = {
@@ -103,6 +111,10 @@ end
 
 local function do_update()
 	Sbar.exec([[aerospace list-windows --all --format '%{workspace}|%{app-name}']], function(result)
+		if IS_EMPTY(result) then
+			logger.debug("spaces", "no_windows_result", {})
+			result = ""
+		end
 		local workspace_apps = {}
 		for i = 1, 8 do
 			workspace_apps[tostring(i)] = {}
@@ -137,15 +149,18 @@ end
 local function update_windows()
 	if update_timer_active then
 		pending_update = true
+		logger.debug("spaces", "window_update_deferred", {})
 		return
 	end
 	update_timer_active = true
 	pending_update = false
+	logger.debug("spaces", "window_update_start", {})
 	do_update()
 end
 
 window_tracker:subscribe("aerospace_windows_change", function()
 	if IS_SYSTEM_SLEEPING then
+		logger.debug("spaces", "window_change_skipped_sleeping", {})
 		return
 	end
 	update_windows()
@@ -167,5 +182,7 @@ Sbar.exec("aerospace list-workspaces --focused", function(focused_workspace)
 				background = { border_color = color },
 			})
 		end
+	else
+		logger.warn("spaces", "focused_parse_failed", { payload = tostring(focused_workspace) })
 	end
 end)

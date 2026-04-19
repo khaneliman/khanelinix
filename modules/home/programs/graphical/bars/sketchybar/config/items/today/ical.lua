@@ -2,6 +2,7 @@
 local settings = require("helpers.settings")
 local colors = require("helpers.colors")
 local icons = require("helpers.icons")
+local logger = require("helpers.logger")
 local last_events = nil
 local item_index = 0
 
@@ -31,11 +32,18 @@ local ical = Sbar.add("item", "ical", {
 -- Update function
 ical:subscribe({ "routine", "forced" }, function()
 	if IS_SYSTEM_SLEEPING then
+		logger.debug("ical", "update_skipped_sleeping", {})
 		return
 	end
 	local SEP = "%"
 
 	Sbar.exec("icalBuddy -nc -nrd -eed -iep datetime,title -b '' -ps '|" .. SEP .. "|' eventsToday", function(events)
+		if IS_EMPTY(events) then
+			logger.warn("ical", "empty_events", {})
+			CLEAR_POPUP_ITEMS(ical.name)
+			return
+		end
+
 		if events == last_events then
 			return
 		end
@@ -46,6 +54,7 @@ ical:subscribe({ "routine", "forced" }, function()
 		local has_separator = false
 		local lines = STR_SPLIT(events, "\n")
 		local max_length = 0
+		local line_count = 0
 
 		local function next_item_name(prefix)
 			item_index = item_index + 1
@@ -59,12 +68,12 @@ ical:subscribe({ "routine", "forced" }, function()
 		end
 
 		for _, line in ipairs(lines) do
+			line_count = line_count + 1
 			local title, time = line:match("^(.-)%s*%%(.*)$")
 
 			if title and time then
 				if has_all_day_header and not has_separator then
 					local dashes = string.rep("─", math.floor(max_length * 0.65))
-
 					Sbar.add("item", next_item_name("separator"), {
 						icon = {
 							string = "",
@@ -135,6 +144,7 @@ ical:subscribe({ "routine", "forced" }, function()
 				})
 			end
 		end
+		logger.info("ical", "events_rendered", { count = line_count, total_lines = #lines })
 	end)
 end)
 

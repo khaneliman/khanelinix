@@ -3,6 +3,7 @@
 local icons = require("helpers.icons")
 local settings = require("helpers.settings")
 local colors = require("helpers.colors")
+local logger = require("helpers.logger")
 local percent = 0
 
 local battery = Sbar.add("item", "battery", {
@@ -45,10 +46,17 @@ battery:subscribe({
 	"power_source_change",
 	"system_woke",
 }, function(_)
+	logger.debug("battery", "refresh", {})
 	Sbar.exec("pmset -g batt", function(batt_info)
+		if IS_EMPTY(batt_info) then
+			logger.warn("battery", "pmset_empty", {})
+			return
+		end
+
 		local icon = "!"
 		local color = colors.green
 		local charging = string.find(batt_info, "AC Power")
+		local previous_percent = percent
 
 		local thresholds = {
 			{
@@ -125,6 +133,16 @@ battery:subscribe({
 			if parsedPercent then
 				percent = parsedPercent
 			end
+		else
+			logger.warn("battery", "percent_parse_failed", { output = batt_info })
+		end
+
+		if percent ~= previous_percent then
+			logger.info("battery", "charge_changed", { previous = previous_percent, current = percent })
+		end
+
+		if percent <= 15 then
+			logger.warn("battery", "low_battery", { percent = percent, charging = (charging ~= nil) })
 		end
 
 		for _, threshold in ipairs(thresholds) do

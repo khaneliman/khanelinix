@@ -2,6 +2,7 @@
 local settings = require("helpers.settings")
 local colors = require("helpers.colors")
 local icons = require("helpers.icons")
+local logger = require("helpers.logger")
 require("helpers.utils")
 
 local network = {}
@@ -180,6 +181,7 @@ updateTopConnections = function()
 	end
 
 	updateTopConnectionsInFlight = true
+	logger.debug("network", "top_connections_update_start", {})
 	Sbar.exec(
 		[=[
 		nettop -P -d -L 2 -J bytes_in,bytes_out -x -n 2>/dev/null | awk -F, '
@@ -223,6 +225,10 @@ updateTopConnections = function()
 				end
 			end
 
+			if #visibleRows == 0 then
+				logger.debug("network", "top_connections_empty", {})
+			end
+
 			for proc, entry in pairs(recentProcesses) do
 				if not activeProcesses[proc] then
 					entry.inb = 0
@@ -264,6 +270,14 @@ network.down:subscribe("network_update", function(env)
 	if IS_SYSTEM_SLEEPING then
 		return
 	end
+	if env == nil or IS_EMPTY(env.upload) or IS_EMPTY(env.download) then
+		logger.warn("network", "update_missing_fields", {
+			upload = tostring(env and env.upload or ""),
+			download = tostring(env and env.download or ""),
+		})
+		return
+	end
+
 	local up_color = (env.upload == "000 Bps") and colors.subtext0 or colors.green
 	local down_color = (env.download == "000 Bps") and colors.subtext0 or colors.blue
 	network.up:set({

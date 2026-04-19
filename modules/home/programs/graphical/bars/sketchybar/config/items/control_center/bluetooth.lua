@@ -2,6 +2,7 @@
 local icons = require("helpers.icons")
 local colors = require("helpers.colors")
 local settings = require("helpers.settings")
+local logger = require("helpers.logger")
 
 local dashes = "─────────────────"
 local max_rows_per_section = 16
@@ -27,6 +28,15 @@ local bluetooth = Sbar.add("item", "bluetooth", {
 
 local function trim(value)
 	return (value:gsub("^%s+", ""):gsub("%s+$", ""))
+end
+
+local function parse_state_number(state)
+	local normalized = trim((state or ""):gsub("[\r\n]", ""))
+	if normalized == "" then
+		return nil
+	end
+
+	return tonumber(normalized)
 end
 
 local function parse_device_label(device)
@@ -243,7 +253,13 @@ end
 
 local function refresh_icon()
 	Sbar.exec("blueutil -p", function(state)
-		if tonumber(state) == 0 then
+		local enabled = parse_state_number(state)
+		if enabled == nil then
+			logger.warn("bluetooth", "refresh_icon_parse_failed", { state = tostring(state) })
+			return
+		end
+		logger.debug("bluetooth", "refresh_icon", { enabled = (enabled == 1) })
+		if enabled == 0 then
 			bluetooth:set({ icon = icons.bluetooth_off })
 		else
 			bluetooth:set({ icon = icons.bluetooth })
@@ -263,16 +279,31 @@ local function refresh_popup()
 
 	Sbar.exec("blueutil --paired", function(result)
 		if generation ~= refresh_generation or not popup_is_open then
+			logger.debug("bluetooth", "refresh_paired_stale", { generation = generation, current = refresh_generation })
 			return
 		end
-		render_rows(paired_rows, parse_devices(result))
+
+		local devices = parse_devices(result)
+		if #devices == 0 then
+			logger.debug("bluetooth", "paired_devices_empty", { generation = generation })
+		end
+		render_rows(paired_rows, devices)
 	end)
 
 	Sbar.exec("blueutil --connected", function(result)
 		if generation ~= refresh_generation or not popup_is_open then
+			logger.debug(
+				"bluetooth",
+				"refresh_connected_stale",
+				{ generation = generation, current = refresh_generation }
+			)
 			return
 		end
-		render_rows(connected_rows, parse_devices(result))
+		local devices = parse_devices(result)
+		if #devices == 0 then
+			logger.debug("bluetooth", "connected_devices_empty", { generation = generation })
+		end
+		render_rows(connected_rows, devices)
 	end)
 end
 
@@ -289,10 +320,18 @@ end, function()
 end)
 
 bluetooth:subscribe("mouse.clicked", function()
+	logger.debug("bluetooth", "toggle_requested", {})
 	Sbar.exec("blueutil -p", function(state)
-		if tonumber(state) == 0 then
+		local parsed = parse_state_number(state)
+		if parsed == nil then
+			logger.warn("bluetooth", "toggle_state_parse_failed", { state = tostring(state) })
+			return
+		end
+		if parsed == 0 then
+			logger.debug("bluetooth", "toggle_turning_on", {})
 			Sbar.exec("blueutil -p 1")
 		else
+			logger.debug("bluetooth", "toggle_turning_off", {})
 			Sbar.exec("blueutil -p 0")
 		end
 
