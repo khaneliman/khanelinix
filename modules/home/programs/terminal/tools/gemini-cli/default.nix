@@ -10,7 +10,7 @@ let
   codexEnabled = config.khanelinix.programs.terminal.tools.codex.enable or false;
   mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
 
-  sharedAiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
+  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
 in
 {
   imports = [
@@ -28,7 +28,7 @@ in
       enable = true;
       enableMcpIntegration = mkIf mcpModuleEnabled true;
 
-      inherit (sharedAiTools.geminiCli) commands;
+      inherit (aiTools.geminiCli) commands;
 
       settings = {
         context = {
@@ -137,12 +137,12 @@ in
       };
 
       context = {
-        AGENTS = sharedAiTools.base;
+        AGENTS = aiTools.base;
       };
 
       # NOTE: `codex` deploys to `.agents/skill`
       # Gemini picks up both and duplicates context
-      skills = lib.mkIf (!codexEnabled) sharedAiTools.geminiCli.skills;
+      skills = lib.mkIf (!codexEnabled) aiTools.skills;
     };
   };
 }

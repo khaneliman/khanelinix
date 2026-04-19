@@ -1,6 +1,6 @@
 { lib, ... }:
 let
-  commands = lib.importSubdirs ./commands { };
+  importedCommands = lib.importSubdirs ./commands { };
   aiAgents = import ./agents.nix { inherit lib; };
 
   agentModels = lib.mapAttrs (_name: agent: agent.model) aiAgents.agents;
@@ -9,13 +9,13 @@ let
     "analyze-git-history" = "explore";
     "code-review" = "debugger";
     "commit-changes" = "refactorer";
-    "changelog" = "refactorer";
+    changelog = "refactorer";
     "check-todos" = "refactorer";
     "deep-check" = "test-runner";
     "dependency-audit" = "test-runner";
     "git-bisect" = "explore";
     "git-cleanup" = "explore";
-    "initialization" = "refactorer";
+    initialization = "refactorer";
     "module-lint" = "test-runner";
     "parse-sarif" = "test-runner";
     "resolve-conflicts" = "refactorer";
@@ -38,7 +38,7 @@ let
       subtask = command.subtask or false;
     };
 
-  normalizedCommands = lib.mapAttrs normalizeCommand commands;
+  commands = lib.mapAttrs normalizeCommand importedCommands;
 
   modelValue = provider: model: if builtins.isAttrs model then model.${provider} or null else model;
 
@@ -82,21 +82,24 @@ let
     ${lib.trim command.prompt}
   '';
 
-  toClaudeMarkdown = lib.mapAttrs (_name: renderClaudeMarkdown) normalizedCommands;
+  toClaudeMarkdown = lib.mapAttrs (_name: renderClaudeMarkdown) commands;
 
-  toOpenCodeMarkdown = lib.mapAttrs (_name: renderOpenCodeMarkdown) normalizedCommands;
+  toOpenCodeMarkdown = lib.mapAttrs (_name: renderOpenCodeMarkdown) commands;
 
   toGeminiCommands = lib.mapAttrs (_name: command: {
     inherit (command) prompt;
     description = command.description or "AI command";
-  }) normalizedCommands;
-
+  }) commands;
 in
 {
   inherit
-    normalizedCommands
+    commands
+    renderClaudeMarkdown
+    renderOpenCodeMarkdown
     toClaudeMarkdown
     toOpenCodeMarkdown
     toGeminiCommands
     ;
+
+  normalizedCommands = commands;
 }

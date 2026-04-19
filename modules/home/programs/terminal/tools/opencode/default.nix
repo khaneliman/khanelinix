@@ -30,67 +30,74 @@ in
       opencode-research = "opencode --agent refactorer";
     };
 
-    programs.opencode = {
-      enable = true;
+    programs.opencode =
+      let
+        aiToolAgents = import (lib.getFile "modules/common/ai-tools/agents.nix") { inherit lib; };
+        aiToolCommands = import (lib.getFile "modules/common/ai-tools/commands.nix") { inherit lib; };
+      in
+      {
+        enable = true;
 
-      enableMcpIntegration =
-        let
-          mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
-        in
-        mkIf mcpModuleEnabled true;
+        enableMcpIntegration =
+          let
+            mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
+          in
+          mkIf mcpModuleEnabled true;
 
-      settings = {
-        model = "openai/gpt-5.4";
-        share = "manual";
-        autoupdate = false;
-        small_model = "openai/gpt-5.3-codex-spark";
-        default_agent = "refactorer";
-        compaction = {
-          auto = true;
-          prune = true;
-          reserved = 20000;
+        settings = {
+          model = "openai/gpt-5.4";
+          share = "manual";
+          autoupdate = false;
+          small_model = "openai/gpt-5.3-codex-spark";
+          default_agent = "refactorer";
+          compaction = {
+            auto = true;
+            prune = true;
+            reserved = 20000;
+          };
+          command = {
+            quick = {
+              template = "Make fast, minimal edits and keep responses concise.";
+              model = "openai/gpt-5.3-codex-spark";
+              agent = "refactorer";
+              subtask = true;
+            };
+            research = {
+              template = "Do deliberate analysis before edits, include caveats and verification steps.";
+              model = "openai/gpt-5.4";
+              agent = "refactorer";
+            };
+            nano = {
+              template = "Keep each action minimal and targeted for small-surface modifications.";
+              model = "openai/gpt-5.4-nano";
+              agent = "refactorer";
+              subtask = true;
+            };
+          };
+
+          plugin = [
+            # Support google account auth
+            "opencode-gemini-auth@latest"
+            # Dynamic context pruning
+            "@tarquinen/opencode-dcp@latest"
+            # Support background shell commands
+            "opencode-pty@latest"
+            #
+            "oh-my-openagent@latest"
+          ];
         };
-        command = {
-          quick = {
-            template = "Make fast, minimal edits and keep responses concise.";
-            model = "openai/gpt-5.3-codex-spark";
-            agent = "refactorer";
-            subtask = true;
-          };
-          research = {
-            template = "Do deliberate analysis before edits, include caveats and verification steps.";
-            model = "openai/gpt-5.4";
-            agent = "refactorer";
-          };
-          nano = {
-            template = "Keep each action minimal and targeted for small-surface modifications.";
-            model = "openai/gpt-5.4-nano";
-            agent = "refactorer";
-            subtask = true;
-          };
+
+        tui = {
+          theme = mkDefault "opencode";
         };
 
-        plugin = [
-          # Support google account auth
-          "opencode-gemini-auth@latest"
-          # Dynamic context pruning
-          "@tarquinen/opencode-dcp@latest"
-          # Support background shell commands
-          "opencode-pty@latest"
-          #
-          "oh-my-openagent@latest"
-        ];
+        commands = lib.mapAttrs (
+          _: command: aiToolCommands.renderOpenCodeMarkdown command
+        ) aiTools.commands;
+        agents = lib.mapAttrs (_: agent: aiToolAgents.renderOpenCodeAgent agent) aiTools.agents;
+        skills = aiTools.skillsDir;
+
+        context = builtins.readFile aiTools.base;
       };
-
-      tui = {
-        theme = mkDefault "opencode";
-      };
-
-      inherit (aiTools.opencode) commands;
-      agents = aiTools.opencode.renderAgents;
-      skills = lib.getFile "modules/common/ai-tools/skills";
-
-      context = builtins.readFile (lib.getFile "modules/common/ai-tools/base.md");
-    };
   };
 }

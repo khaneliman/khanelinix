@@ -1,7 +1,5 @@
 { lib, ... }:
 let
-  inherit (lib) mapAttrs;
-
   agentsBasePath = ./agents;
 
   agents = {
@@ -71,7 +69,6 @@ let
     };
   };
 
-  # Claude Code expects YAML frontmatter with: name, description, tools (comma-sep), model
   renderClaudeFrontmatter = agent: ''
     ---
     name: ${agent.name}
@@ -87,22 +84,17 @@ let
     ${lib.trim agent.content}
   '';
 
-  # Render permission value (string or attrset with glob patterns)
-
-  # Render permissions block
-
-  # OpenCode expects YAML frontmatter with: description, mode, model, tools
   renderOpenCodeTools =
     agent:
     let
       allowed = map lib.toLower agent.tools;
-      isAllowed = t: lib.elem t allowed;
+      isAllowed = tool: lib.elem tool allowed;
       coreTools = [
         "bash"
         "edit"
         "write"
       ];
-      coreToolLines = map (t: "  ${t}: ${if isAllowed t then "true" else "false"}") coreTools;
+      coreToolLines = map (tool: "  ${tool}: ${if isAllowed tool then "true" else "false"}") coreTools;
     in
     lib.concatStringsSep "\n" coreToolLines;
 
@@ -137,9 +129,20 @@ let
     ${lib.trim agent.content}
   '';
 
-  toClaudeMarkdown = mapAttrs (_name: renderClaudeAgent) agents;
-  toOpenCodeMarkdown = mapAttrs (_name: renderOpenCodeAgent) agents;
+  toClaudeMarkdown = lib.mapAttrs (_name: renderClaudeAgent) agents;
+  toGeminiAgents = lib.mapAttrs (_name: agent: {
+    prompt = agent.content;
+    description = agent.description or "AI agent";
+  }) agents;
+  toOpenCodeMarkdown = lib.mapAttrs (_name: renderOpenCodeAgent) agents;
 in
 {
-  inherit agents toClaudeMarkdown toOpenCodeMarkdown;
+  inherit
+    agents
+    renderClaudeAgent
+    renderOpenCodeAgent
+    toClaudeMarkdown
+    toGeminiAgents
+    toOpenCodeMarkdown
+    ;
 }

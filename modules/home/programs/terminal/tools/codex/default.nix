@@ -197,7 +197,7 @@ in
       };
 
       context = builtins.readFile aiTools.base;
-      skills = aiTools.codex.skillsDir;
+      skills = aiTools.skillsDir;
       rules = import ./rules.nix;
     };
   };

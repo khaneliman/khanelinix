@@ -61,7 +61,7 @@ in
       };
 
       inherit (aiTools.claudeCode) agents commands;
-      skills = aiTools.claudeCode.skillsDir;
+      skills = aiTools.skillsDir;
       context = aiTools.base;
     };
   };

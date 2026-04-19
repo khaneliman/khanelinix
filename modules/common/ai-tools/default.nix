@@ -3,21 +3,25 @@
 let
   aiCommands = import ./commands.nix { inherit lib; };
   aiAgents = import ./agents.nix { inherit lib; };
+
   base = ./base.md;
   skillsDir = ./skills;
   skills = lib.mapAttrs (name: _: skillsDir + "/${name}") (
     lib.filterAttrs (_: type: type == "directory") (builtins.readDir skillsDir)
   );
 
-  convertAgentsToGemini =
-    agents:
-    lib.mapAttrs (name: agent: {
-      prompt = agent.content;
-      description = agent.description or "AI agent: ${name}";
-    }) agents;
-
+  inherit (aiCommands) commands;
+  inherit (aiAgents) agents;
 in
 {
+  inherit
+    agents
+    base
+    commands
+    skills
+    skillsDir
+    ;
+
   claudeCode = {
     commands = aiCommands.toClaudeMarkdown;
     agents = aiAgents.toClaudeMarkdown;
@@ -26,7 +30,7 @@ in
 
   geminiCli = {
     commands = aiCommands.toGeminiCommands;
-    agents = convertAgentsToGemini aiAgents.agents;
+    agents = aiAgents.toGeminiAgents;
     inherit skills;
   };
 
@@ -36,11 +40,9 @@ in
 
   opencode = {
     commands = aiCommands.toOpenCodeMarkdown;
-    inherit (aiAgents) agents;
+    inherit agents;
     renderAgents = aiAgents.toOpenCodeMarkdown;
   };
-
-  inherit base skills skillsDir;
 
   mergeCommands = existingCommands: newCommands: existingCommands // newCommands;
 }
