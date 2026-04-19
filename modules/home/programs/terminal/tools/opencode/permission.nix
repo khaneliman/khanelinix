@@ -31,6 +31,11 @@ _: {
         "nix flake check*" = "allow";
         "nix log*" = "allow";
 
+        # Side-effectful Nix execution stays on explicit ask.
+        "nix build*" = "ask";
+        "nix run*" = "ask";
+        "nix shell*" = "ask";
+
         # Safe file system operations
         "ls*" = "allow";
         "pwd*" = "allow";
@@ -69,10 +74,18 @@ _: {
 
         # File deletion and modification
         "rm*" = "ask";
+        # Phase 1 destructive-command baseline is ask for the explicit
+        # primitives this surface can express directly.
+        "rm -rf*" = "ask";
+        "dd*" = "ask";
+        "mkfs*" = "ask";
+        "shutdown*" = "ask";
+        "reboot*" = "ask";
         "mv*" = "ask";
         "cp*" = "ask";
 
-        # System control operations
+        # System control mutation operations stay on explicit ask.
+        # Keep the broader service-mutation verbs already in scope aligned here.
         "systemctl start*" = "ask";
         "systemctl stop*" = "ask";
         "systemctl restart*" = "ask";

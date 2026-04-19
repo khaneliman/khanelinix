@@ -80,35 +80,35 @@
             decision = "ask_user";
             priority = 200;
           }
-        ];
-        deny-dangerous-shell.rule = [
           {
             toolName = "run_shell_command";
-            commandRegex = "sudo rm(\\s|$)";
-            decision = "deny";
-            priority = 300;
-            deny_message = "Blocked by Gemini CLI safety policy.";
+            commandRegex = "systemctl (start|stop|restart|reload|enable|disable)(\\s|$)";
+            decision = "ask_user";
+            priority = 200;
           }
+        ];
+        destructive-shell.rule = [
+          # Phase 1 destructive-command baseline is ask, not deny parity.
           {
             toolName = "run_shell_command";
-            commandRegex = "rm -rf (/$|~(/|$))";
-            decision = "deny";
+            commandPrefix = [
+              "rm -rf "
+              "sudo rm -rf "
+            ];
+            decision = "ask_user";
             priority = 300;
-            deny_message = "Blocked by Gemini CLI safety policy.";
           }
           {
             toolName = "run_shell_command";
             commandRegex = "(dd|mkfs)(\\s|$)";
-            decision = "deny";
+            decision = "ask_user";
             priority = 300;
-            deny_message = "Blocked by Gemini CLI safety policy.";
           }
           {
             toolName = "run_shell_command";
             commandRegex = "(shutdown|reboot)(\\s|$)";
-            decision = "deny";
+            decision = "ask_user";
             priority = 300;
-            deny_message = "Blocked by Gemini CLI safety policy.";
           }
         ];
       };

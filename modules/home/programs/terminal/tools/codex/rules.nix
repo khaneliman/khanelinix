@@ -1,6 +1,10 @@
 {
   "read-only" = ''
     # Read-only shell commands that should not require repeated approvals.
+    # Destructive primitives intentionally stay off this allowlist so Codex falls
+    # back to approval_policy = "on-request" in default.nix. Phase 1 keeps the
+    # repo baseline at ask for `rm -rf`, `dd`, `mkfs`, `shutdown`, and `reboot`
+    # instead of inventing unsupported hard-deny shell rules here.
     prefix_rule(pattern = ["basename"], decision = "allow")
     prefix_rule(pattern = ["cat"], decision = "allow")
     prefix_rule(pattern = ["command", "-v"], decision = "allow")

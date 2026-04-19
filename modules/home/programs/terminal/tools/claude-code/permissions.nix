@@ -89,8 +89,12 @@ in
           # Git staging
           "Bash(git add:*)"
 
-          # All nix commands
-          "Bash(nix:*)"
+          # Read-only nix commands
+          "Bash(nix search:*)"
+          "Bash(nix log:*)"
+          "Bash(nix path-info:*)"
+          "Bash(nix show-config:*)"
+          "Bash(nix flake check:*)"
 
           # Directory creation
           "Bash(mkdir:*)"
@@ -165,6 +169,14 @@ in
           "Bash(cp:*)"
           "Bash(mv:*)"
           "Bash(rm:*)"
+          # Phase 1 destructive-command baseline is ask for explicit primitives.
+          "Bash(rm -rf:*)"
+          "Bash(dd:*)"
+          "Bash(mkfs:*)"
+          "Bash(shutdown)"
+          "Bash(shutdown:*)"
+          "Bash(reboot)"
+          "Bash(reboot:*)"
 
           # System control operations
           "Bash(systemctl disable:*)"
@@ -185,6 +197,9 @@ in
           "Bash(wget:*)"
 
           # Package management
+          "Bash(nix build:*)"
+          "Bash(nix run:*)"
+          "Bash(nix shell:*)"
           "Bash(nixos-rebuild:*)"
           "Bash(sudo:*)"
 
@@ -192,6 +207,7 @@ in
           "Bash(kill:*)"
           "Bash(killall:*)"
           "Bash(pkill:*)"
+
         ];
 
         # Autonomous mode still requires confirmation for these
@@ -203,6 +219,9 @@ in
 
           # System operations
           "Bash(systemctl:*)"
+          "Bash(nix build:*)"
+          "Bash(nix run:*)"
+          "Bash(nix shell:*)"
           "Bash(nixos-rebuild:*)"
           "Bash(sudo:*)"
 
@@ -217,6 +236,15 @@ in
           "Bash(kill:*)"
           "Bash(killall:*)"
           "Bash(pkill:*)"
+
+          # Keep destructive primitives on ask even for trusted profiles.
+          "Bash(rm -rf:*)"
+          "Bash(dd:*)"
+          "Bash(mkfs:*)"
+          "Bash(shutdown)"
+          "Bash(shutdown:*)"
+          "Bash(reboot)"
+          "Bash(reboot:*)"
         ];
       in
       {
@@ -236,12 +264,12 @@ in
           else
             standardAsk ++ standardAllow; # Conservative: ask for everything standard allows
 
-        # Never allowed - dangerous operations
+        # Keep only catastrophic root deletion on deny; Phase 1 baseline for
+        # the explicit destructive primitives is ask so Claude matches the repo
+        # safety target without inventing broader deny parity.
         deny = [
           "Bash(rm -rf /*)"
           "Bash(rm -rf /)"
-          "Bash(dd:*)"
-          "Bash(mkfs:*)"
         ];
 
         defaultMode = if cfg.permissionProfile == "autonomous" then "acceptEdits" else "default";
