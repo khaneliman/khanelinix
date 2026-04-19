@@ -6,14 +6,20 @@ let
   agentModels = lib.mapAttrs (_name: agent: agent.model) aiAgents.agents;
 
   commandAgents = {
-    "explain-code" = "explore";
-    "extract-interface" = "explore";
-    "find-usages" = "explore";
-    "summarize-module" = "explore";
-    "refactor-suggest" = "refactorer";
-    "generate-tests" = "test-runner";
-    "initialization" = "explore";
-    "changelog" = "explore";
+    "analyze-git-history" = "explore";
+    "code-review" = "debugger";
+    "commit-changes" = "refactorer";
+    "changelog" = "refactorer";
+    "check-todos" = "refactorer";
+    "deep-check" = "test-runner";
+    "dependency-audit" = "test-runner";
+    "git-bisect" = "explore";
+    "git-cleanup" = "explore";
+    "initialization" = "refactorer";
+    "module-lint" = "test-runner";
+    "parse-sarif" = "test-runner";
+    "resolve-conflicts" = "refactorer";
+    "style-audit" = "test-runner";
   };
 
   normalizeCommand =
@@ -29,6 +35,7 @@ let
       argumentHint = command.argumentHint or null;
       prompt = command.prompt or "";
       inherit agent model;
+      subtask = command.subtask or false;
     };
 
   normalizedCommands = lib.mapAttrs normalizeCommand commands;
@@ -65,6 +72,7 @@ let
       ${lib.optionalString (command.description != null) "description: ${command.description}"}
       ${lib.optionalString (command.agent != null) "agent: ${command.agent}"}
       ${lib.optionalString (model != null) "model: ${model}"}
+      ${lib.optionalString (command.subtask or false) "subtask: true"}
       ---
     '';
 
