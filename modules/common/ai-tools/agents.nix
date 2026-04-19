@@ -106,15 +106,29 @@ let
     in
     lib.concatStringsSep "\n" coreToolLines;
 
-  renderOpenCodeFrontmatter = agent: ''
-    ---
-    description: ${agent.description}
-    mode: all
-    model: ${agent.model.opencode or agent.model}
+  renderOpenCodePermission =
+    permission:
+    if permission == null then
+      ""
+    else
+      let
+        render = key: value: ''"${key}": ${toString value}'';
+      in
+      ''
+        permission:
+        ${lib.concatStringsSep "\n" (lib.mapAttrsToList render permission)}
+      '';
 
-    tools:
-    ${renderOpenCodeTools agent}
-    ---
+  renderOpenCodeFrontmatter = agent: ''
+        ---
+        description: ${agent.description}
+        mode: ${agent.mode or "all"}
+        model: ${agent.model.opencode or agent.model}
+
+        tools:
+        ${renderOpenCodeTools agent}
+    ${renderOpenCodePermission agent.permission}
+        ---
   '';
 
   renderOpenCodeAgent = agent: ''
