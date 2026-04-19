@@ -16,7 +16,7 @@ let
       model = {
         claude = "opus";
         gemini = "gemini-3.1-pro-preview";
-        opencode = "gpt-5.4";
+        opencode = "openai/gpt-5.4";
       };
       permission = {
         edit = "ask";
@@ -38,7 +38,7 @@ let
       model = {
         claude = "sonnet";
         gemini = "gemini-3.1-pro-preview";
-        opencode = "gpt-5.4";
+        opencode = "openai/gpt-5.4";
       };
       permission = {
         edit = "ask";

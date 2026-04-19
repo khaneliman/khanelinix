@@ -24,17 +24,22 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.shellAliases = {
-      opencode-coding = "opencode --model openai/gpt-5.3-codex-spark";
-      opencode-deep = "opencode --model openai/gpt-5.4";
-      opencode-nano = "opencode --model openai/gpt-5.4-nano";
-      opencode-research = "opencode --agent refactorer";
-    };
+    home.shellAliases =
+      let
+        refactorerModel = aiTools.agents.refactorer.model.opencode;
+      in
+      {
+        opencode-coding = "opencode --model openai/gpt-5.3-codex-spark";
+        opencode-deep = "opencode --model ${refactorerModel}";
+        opencode-nano = "opencode --model openai/gpt-5.4-nano";
+        opencode-research = "opencode --agent refactorer";
+      };
 
     programs.opencode =
       let
         aiToolAgents = import (lib.getFile "modules/common/ai-tools/agents.nix") { inherit lib; };
         aiToolCommands = import (lib.getFile "modules/common/ai-tools/commands.nix") { inherit lib; };
+        refactorerModel = aiTools.agents.refactorer.model.opencode;
       in
       {
         enable = true;
@@ -46,7 +51,7 @@ in
           mkIf mcpModuleEnabled true;
 
         settings = {
-          model = "openai/gpt-5.4";
+          model = refactorerModel;
           share = "manual";
           autoupdate = false;
           small_model = "openai/gpt-5.3-codex-spark";
@@ -65,7 +70,7 @@ in
             };
             research = {
               template = "Do deliberate analysis before edits, include caveats and verification steps.";
-              model = "openai/gpt-5.4";
+              model = refactorerModel;
               agent = "refactorer";
             };
             nano = {
