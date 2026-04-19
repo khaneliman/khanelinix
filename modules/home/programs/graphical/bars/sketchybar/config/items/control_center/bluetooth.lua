@@ -30,15 +30,6 @@ local function trim(value)
 	return (value:gsub("^%s+", ""):gsub("%s+$", ""))
 end
 
-local function parse_state_number(state)
-	local normalized = trim((state or ""):gsub("[\r\n]", ""))
-	if normalized == "" then
-		return nil
-	end
-
-	return tonumber(normalized)
-end
-
 local function parse_device_label(device)
 	local quoted_label = device:match('"(.-)"')
 	if quoted_label and quoted_label ~= "" then
@@ -253,7 +244,7 @@ end
 
 local function refresh_icon()
 	Sbar.exec("blueutil -p", function(state)
-		local enabled = parse_state_number(state)
+		local enabled = PARSE_NUMBER(state)
 		if enabled == nil then
 			logger.warn("bluetooth", "refresh_icon_parse_failed", { state = tostring(state) })
 			return
@@ -322,7 +313,7 @@ end)
 bluetooth:subscribe("mouse.clicked", function()
 	logger.debug("bluetooth", "toggle_requested", {})
 	Sbar.exec("blueutil -p", function(state)
-		local parsed = parse_state_number(state)
+		local parsed = PARSE_NUMBER(state)
 		if parsed == nil then
 			logger.warn("bluetooth", "toggle_state_parse_failed", { state = tostring(state) })
 			return

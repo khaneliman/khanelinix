@@ -98,6 +98,21 @@ PRINT_TABLE = function(t)
 	end
 end
 
+PARSE_NUMBER = function(value)
+	local text = tostring(value or "")
+	if text == "" then
+		return nil
+	end
+
+	text = text:gsub("[\r\n]", "")
+	text = text:gsub("^%s+", ""):gsub("%s+$", "")
+	if text == "" then
+		return nil
+	end
+
+	return tonumber(text)
+end
+
 DELAY = function(seconds, callback)
 	if type(callback) ~= "function" then
 		return
