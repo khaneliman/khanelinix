@@ -14,6 +14,7 @@ in
   imports = [
     ./formatters.nix
     ./lsp.nix
+    ./oh-my-openagent.nix
     ./permission.nix
     ./provider.nix
   ];
@@ -78,11 +79,9 @@ in
           plugin = [
             # Support google account auth
             "opencode-gemini-auth@latest"
-            # Dynamic context pruning
-            "@tarquinen/opencode-dcp@latest"
             # Support background shell commands
             "opencode-pty@latest"
-            #
+            # Enhanced agent orchestration and plugin workflow
             "oh-my-openagent@latest"
           ];
         };
