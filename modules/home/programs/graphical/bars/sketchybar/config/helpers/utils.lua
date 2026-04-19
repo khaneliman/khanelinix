@@ -1,33 +1,71 @@
 #!/usr/bin/env lua
 IS_SYSTEM_SLEEPING = false
 
+local function _popup_item_name(target)
+	if type(target) == "table" and type(target.name) == "string" then
+		return target.name
+	end
+	if type(target) == "string" then
+		return target
+	end
+	return nil
+end
+
+local function _is_popup_drawing(item_name)
+	local query = Sbar.query(item_name)
+	if query == nil or query.popup == nil then
+		return false
+	end
+
+	local drawing = query.popup.drawing
+	if drawing == true or drawing == "on" or drawing == "1" then
+		return true
+	end
+	if drawing == false or drawing == "off" or drawing == "0" then
+		return false
+	end
+
+	return false
+end
+
 local system_watcher = Sbar.add("item", {
 	drawing = false,
 })
 
 system_watcher:subscribe("system_will_sleep", function()
-	print("System going to sleep, setting IS_SYSTEM_SLEEPING = true")
 	IS_SYSTEM_SLEEPING = true
 end)
 
 system_watcher:subscribe("system_woke", function()
-	print("System woke up, setting IS_SYSTEM_SLEEPING = false")
 	IS_SYSTEM_SLEEPING = false
 end)
 
 POPUP_TOGGLE = function(name)
-	print("Toggling " .. name)
-	Sbar.exec("sketchybar --set " .. name .. " popup.drawing=toggle")
+	local popup_name = _popup_item_name(name)
+	if popup_name == nil then
+		return
+	end
+
+	local currently_open = _is_popup_drawing(popup_name)
+	Sbar.set(popup_name, { popup = { drawing = not currently_open } })
 end
 
 POPUP_OFF = function(name)
-	print("Hiding " .. name)
-	Sbar.exec("sketchybar --set " .. name .. " popup.drawing=off")
+	local popup_name = _popup_item_name(name)
+	if popup_name == nil then
+		return
+	end
+
+	Sbar.set(popup_name, { popup = { drawing = false } })
 end
 
 POPUP_ON = function(name)
-	print("Showing " .. name)
-	Sbar.exec("sketchybar --set " .. name .. " popup.drawing=on")
+	local popup_name = _popup_item_name(name)
+	if popup_name == nil then
+		return
+	end
+
+	Sbar.set(popup_name, { popup = { drawing = true } })
 end
 
 IS_EMPTY = function(s)

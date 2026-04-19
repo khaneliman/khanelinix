@@ -133,20 +133,23 @@ local function refresh_status()
 end
 
 local function refresh_popup_details()
-	Sbar.exec("networksetup -getcomputername", function(result)
-		hostname:set({ label = result })
-	end)
-	Sbar.exec("ipconfig getifaddr en0", function(result)
-		ip:set({ label = result })
-	end)
-	Sbar.exec("ipconfig getsummary en0 | awk -F ' SSID : '  '/ SSID : / {print $2}'", function(result)
-		ssid:set({ label = result })
-	end)
-	Sbar.exec("networksetup -getinfo Wi-Fi", function(result)
-		local subnet = result:match("Subnet mask:%s*([^\n]+)") or ""
-		local gateway = result:match("Router:%s*([^\n]+)") or ""
-		mask:set({ label = subnet })
-		router:set({ label = gateway })
+	Sbar.exec(
+		[[
+	network_name=$(networksetup -getcomputername 2>/dev/null)
+	ip_address=$(ipconfig getifaddr en0 2>/dev/null || true)
+	ssid=$(ipconfig getsummary en0 2>/dev/null | awk -F ' SSID : ' '/ SSID : / {print $2; exit}')
+	network_info=$(networksetup -getinfo Wi-Fi 2>/dev/null)
+	subnet=$(printf '%s\n' "$network_info" | awk -F ':' '/Subnet mask:/ {print $2}' | awk 'NR==1 {gsub(/^ +| +$/, \"\", $0); print; exit}')
+	gateway=$(printf '%s\n' "$network_info" | awk -F ':' '/Router:/ {print $2}' | awk 'NR==1 {gsub(/^ +| +$/, \"\", $0); print; exit}')
+	printf '%s\n%s\n%s\n%s\n%s\n' "$network_name" "$ip_address" "$ssid" "$subnet" "$gateway"
+		]],
+		function(result)
+		local parts = STR_SPLIT(result or "", "\n")
+		hostname:set({ label = parts[1] or "" })
+		ip:set({ label = parts[2] or "" })
+		ssid:set({ label = parts[3] or "" })
+		mask:set({ label = parts[4] or "" })
+		router:set({ label = parts[5] or "" })
 	end)
 end
 

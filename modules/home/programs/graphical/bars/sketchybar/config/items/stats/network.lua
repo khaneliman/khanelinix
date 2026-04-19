@@ -95,6 +95,7 @@ local updateTopConnections
 local recentProcesses = {}
 local recentOrder = {}
 local recentTtlSeconds = 20
+local updateTopConnectionsInFlight = false
 for i = 1, 5 do
 	network.rows[i] = Sbar.add("item", "network.details." .. i, {
 		position = "popup." .. network.down.name,
@@ -174,6 +175,11 @@ local function expireRecentProcesses()
 end
 
 updateTopConnections = function()
+	if updateTopConnectionsInFlight then
+		return
+	end
+
+	updateTopConnectionsInFlight = true
 	Sbar.exec(
 		[=[
 		nettop -P -d -L 2 -J bytes_in,bytes_out -x -n 2>/dev/null | awk -F, '
@@ -198,6 +204,7 @@ updateTopConnections = function()
 		' | sort -t, -k1,1nr | head -n 5
 	]=],
 		function(result)
+			updateTopConnectionsInFlight = false
 			local activeProcesses = {}
 			local visibleRows = {}
 
@@ -283,7 +290,7 @@ local function refreshPopupLoop()
 	end
 
 	updateTopConnections()
-	DELAY(1, refreshPopupLoop)
+	DELAY(2, refreshPopupLoop)
 end
 
 local function showPopup()

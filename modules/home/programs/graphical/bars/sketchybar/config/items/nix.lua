@@ -33,7 +33,7 @@ local nix = Sbar.add("item", "nix", {
 		align = "center",
 		height = 30,
 	},
-	update_freq = 5,
+	update_freq = 120,
 	drawing = false,
 })
 
@@ -58,7 +58,7 @@ local nix_details = Sbar.add("item", "nix.details", {
 
 SETUP_POPUP_HOVER(nix)
 
-nix:subscribe({ "routine", "forced", "system_woke" }, function()
+nix:subscribe({ "forced", "system_woke", "routine", "nix_update" }, function()
 	local cmd = [[
 		launchd_pid() {
 			launchctl print "$1" 2>/dev/null | awk '
@@ -132,11 +132,13 @@ nix:subscribe("mouse.clicked", function(env)
 		Sbar.exec(
 			'osascript -e \'do shell script "pkill -f \\"nix-store --optimise\\"" with administrator privileges\''
 		)
+		Sbar.trigger("nix_update")
 	else
 		-- Left click kills active garbage-collection jobs
 		Sbar.exec(
 			'osascript -e \'do shell script "pkill -f \\"nix-collect-garbage\\"; pkill -f \\"nix store gc\\"; pkill -f \\"nh clean user\\"" with administrator privileges\''
 		)
+		Sbar.trigger("nix_update")
 	end
 end)
 
