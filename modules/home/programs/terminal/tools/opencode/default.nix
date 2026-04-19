@@ -23,6 +23,13 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.shellAliases = {
+      opencode-coding = "opencode --model openai/gpt-5.3-codex-spark";
+      opencode-deep = "opencode --model openai/gpt-5.4";
+      opencode-nano = "opencode --model openai/gpt-5.4-nano";
+      opencode-research = "opencode --agent refactorer";
+    };
+
     programs.opencode = {
       enable = true;
 
@@ -33,11 +40,35 @@ in
         mkIf mcpModuleEnabled true;
 
       settings = {
-        model = "gpt-5.4";
-        # TODO: enable
-        # model = "gpt-5.4";
-        autoshare = false;
+        model = "openai/gpt-5.4";
+        share = "manual";
         autoupdate = false;
+        small_model = "openai/gpt-5.3-codex-spark";
+        default_agent = "refactorer";
+        compaction = {
+          auto = true;
+          prune = true;
+          reserved = 20000;
+        };
+        command = {
+          quick = {
+            template = "Make fast, minimal edits and keep responses concise.";
+            model = "openai/gpt-5.3-codex-spark";
+            agent = "refactorer";
+            subtask = true;
+          };
+          research = {
+            template = "Do deliberate analysis before edits, include caveats and verification steps.";
+            model = "openai/gpt-5.4";
+            agent = "refactorer";
+          };
+          nano = {
+            template = "Keep each action minimal and targeted for small-surface modifications.";
+            model = "openai/gpt-5.4-nano";
+            agent = "refactorer";
+            subtask = true;
+          };
+        };
 
         plugin = [
           # Support google account auth
@@ -45,9 +76,9 @@ in
           # Dynamic context pruning
           "@tarquinen/opencode-dcp@latest"
           # Support background shell commands
-          "opencode-pty"
+          "opencode-pty@latest"
           #
-          "oh-my-opencode"
+          "oh-my-openagent@latest"
         ];
       };
 
