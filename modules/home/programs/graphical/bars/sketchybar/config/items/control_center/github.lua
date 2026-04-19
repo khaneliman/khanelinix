@@ -92,6 +92,25 @@ local function notification_signature(sorted_notifications)
 	return table.concat(parts, "|")
 end
 
+local function notification_mark_read_command(notification)
+	local thread_id = tostring(notification and notification.id or "")
+	if IS_EMPTY(thread_id) then
+		return nil
+	end
+
+	return "gh api --method PATCH notifications/threads/" .. thread_id .. " >/dev/null 2>&1"
+end
+
+local function notification_click_script(notification, url)
+	local open_script = "open " .. SHELL_QUOTE(url)
+	local mark_script = notification_mark_read_command(notification)
+	if mark_script == nil then
+		return open_script
+	end
+
+	return mark_script .. "; " .. open_script .. "; sketchybar --trigger github_update"
+end
+
 local function notification_click_url(notification)
 	local subject = notification and notification.subject or {}
 	local repository = notification and notification.repository or {}
@@ -264,6 +283,7 @@ github:subscribe({
 			end
 
 			if IS_EMPTY(title) == false then
+				local click_script = notification_click_script(notification, url)
 				Sbar.add("item", next_popup_name("message"), {
 					label = {
 						string = truncate_label(title, 60),
@@ -280,7 +300,7 @@ github:subscribe({
 						padding_left = settings.paddings + 12,
 					},
 					drawing = true,
-					click_script = "open " .. SHELL_QUOTE(url),
+					click_script = click_script,
 					position = "popup." .. github.name,
 				})
 			end
