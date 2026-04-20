@@ -22,6 +22,32 @@ if wm_config.use_yabai then
 
 	local is_sleeping = false
 	local update_yabai_icon = false
+	local last_border_color = nil
+
+	local function set_active_border_color(color)
+		if last_border_color == color then
+			return
+		end
+
+		last_border_color = color
+		Sbar.exec("borders active_color=" .. COLOR_TO_HEX(color))
+	end
+
+	local function finish_yabai_update(icon_string, icon_color, label_string, label_drawing, border_color)
+		yabai:set({
+			icon = {
+				string = icon_string,
+				color = icon_color,
+			},
+			label = {
+				string = label_string or "",
+				drawing = label_drawing == true,
+			},
+		})
+
+		set_active_border_color(border_color)
+		update_yabai_icon = false
+	end
 
 	local function do_yabai_update()
 		if is_sleeping then
@@ -43,73 +69,51 @@ if wm_config.use_yabai then
 				Sbar.exec("yabai -m query --windows --window stack.last", function(lastWindow)
 					if type(lastWindow) ~= "table" then
 						logger.warn("front_app", "stack_query_failed", { payload = tostring(lastWindow) })
+						update_yabai_icon = false
 						return
 					end
-					local lastStackIndex = tonumber(lastWindow["stack-index"])
+					local lastStackIndex = tonumber(lastWindow["stack-index"]) or stackIndex
 
-					yabai:set({
-						icon = {
-							string = icons.yabai.stack,
-							color = colors.red,
-						},
-						label = {
-							string = string.format("[%s/%s]", stackIndex, lastStackIndex),
-							drawing = true,
-						},
-					})
-
-					Sbar.exec("borders active_color=" .. COLOR_TO_HEX(colors.red))
+					finish_yabai_update(
+						icons.yabai.stack,
+						colors.red,
+						string.format("[%s/%s]", stackIndex, lastStackIndex),
+						true,
+						colors.red
+					)
 				end)
 			else
+				local icon_string = icons.yabai.grid
+				local icon_color = colors.peach
+
 				if isFloating == true then
-					yabai:set({
-						icon = {
-							string = icons.yabai.float,
-							color = colors.maroon,
-						},
-					})
+					icon_string = icons.yabai.float
+					icon_color = colors.maroon
 				elseif window["has-fullscreen-zoom"] == true then
-					yabai:set({
-						icon = {
-							string = icons.yabai.fullscreen_zoom,
-							color = colors.green,
-						},
-					})
+					icon_string = icons.yabai.fullscreen_zoom
+					icon_color = colors.green
 				elseif window["has-parent-zoom"] == true then
-					yabai:set({
-						icon = {
-							string = icons.yabai.parent_zoom,
-							color = colors.blue,
-						},
-					})
-				else
-					yabai:set({
-						icon = {
-							string = icons.yabai.grid,
-							color = colors.peach,
-						},
-					})
+					icon_string = icons.yabai.parent_zoom
+					icon_color = colors.blue
 				end
+
+				finish_yabai_update(icon_string, icon_color, "", false, colors.blue)
 			end
-
-			yabai:set({
-				label = {
-					drawing = false,
-				},
-			})
-
-			Sbar.exec("borders active_color=" .. COLOR_TO_HEX(colors.blue))
-			update_yabai_icon = false
 		end)
 	end
 
-	yabai:subscribe("window_focus", function()
+	local function schedule_yabai_update(delay_seconds)
 		if is_sleeping or update_yabai_icon then
 			return
 		end
-		logger.debug("front_app", "window_focus", {})
+
 		update_yabai_icon = true
-		Sbar.exec("sleep 0.1", do_yabai_update)
+		DELAY(delay_seconds, do_yabai_update)
+	end
+
+	yabai:subscribe("window_focus", function()
+		logger.debug("front_app", "window_focus", {})
+		schedule_yabai_update(0.1)
 	end)
 
 	yabai:subscribe("system_will_sleep", function()
@@ -119,11 +123,8 @@ if wm_config.use_yabai then
 
 	yabai:subscribe("system_woke", function()
 		is_sleeping = false
-		if not update_yabai_icon then
-			logger.debug("front_app", "system_woke", {})
-			update_yabai_icon = true
-			Sbar.exec("sleep 2.0", do_yabai_update)
-		end
+		logger.debug("front_app", "system_woke", {})
+		schedule_yabai_update(2.0)
 	end)
 end
 

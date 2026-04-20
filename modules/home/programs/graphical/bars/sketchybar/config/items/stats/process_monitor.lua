@@ -73,7 +73,7 @@ return function(parent_name, popup_width, header_text, header_color, exec_comman
 			if env.BUTTON == "right" and pid ~= nil and not protectedProcesses[command] then
 				logger.info("process_monitor", "kill_requested", { pid = pid, command = tostring(command) })
 				Sbar.exec("kill -TERM " .. pid .. " >/dev/null 2>&1 || true")
-				Sbar.exec("sleep 0.2", update_top_processes)
+				DELAY(0.2, update_top_processes)
 			else
 				logger.debug("process_monitor", "kill_blocked", {
 					pid = tostring(pid),
