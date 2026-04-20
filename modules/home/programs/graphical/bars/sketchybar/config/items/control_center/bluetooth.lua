@@ -8,6 +8,13 @@ local dashes = "─────────────────"
 local max_rows_per_section = 16
 local popup_is_open = false
 local refresh_generation = 0
+local icon_refresh_in_flight = false
+local icon_refresh_pending = false
+local popup_refresh_in_flight = false
+local popup_refresh_pending = false
+local blueutil_in_flight = false
+local blueutil_queue = {}
+local cached_power_state = nil
 
 local bluetooth = Sbar.add("item", "bluetooth", {
 	position = "right",
@@ -207,6 +214,30 @@ local function render_rows(rows, devices)
 	end
 end
 
+local function run_next_blueutil()
+	if blueutil_in_flight or #blueutil_queue == 0 then
+		return
+	end
+
+	blueutil_in_flight = true
+	local job = table.remove(blueutil_queue, 1)
+	Sbar.exec(job.command, function(result)
+		blueutil_in_flight = false
+		if type(job.callback) == "function" then
+			job.callback(result)
+		end
+		run_next_blueutil()
+	end)
+end
+
+local function exec_blueutil(command, callback)
+	table.insert(blueutil_queue, {
+		command = command,
+		callback = callback,
+	})
+	run_next_blueutil()
+end
+
 CLEAR_POPUP_ITEMS(bluetooth.name)
 
 create_header("bluetooth.paired.header", "Paired Devices")
@@ -243,24 +274,59 @@ for i = 1, max_rows_per_section do
 end
 
 local function refresh_icon()
-	Sbar.exec("blueutil -p", function(state)
+	if icon_refresh_in_flight then
+		icon_refresh_pending = true
+		logger.debug("bluetooth", "refresh_icon_coalesced", {})
+		return
+	end
+
+	icon_refresh_in_flight = true
+	exec_blueutil("blueutil -p", function(state)
+		icon_refresh_in_flight = false
 		local enabled = PARSE_NUMBER(state)
 		if enabled == nil then
 			logger.warn("bluetooth", "refresh_icon_parse_failed", { state = tostring(state) })
-			return
-		end
-		logger.debug("bluetooth", "refresh_icon", { enabled = (enabled == 1) })
-		if enabled == 0 then
-			bluetooth:set({ icon = icons.bluetooth_off })
 		else
-			bluetooth:set({ icon = icons.bluetooth })
+			cached_power_state = enabled
+			logger.debug("bluetooth", "refresh_icon", { enabled = (enabled == 1) })
+			if enabled == 0 then
+				bluetooth:set({ icon = icons.bluetooth_off })
+			else
+				bluetooth:set({ icon = icons.bluetooth })
+			end
+		end
+
+		if icon_refresh_pending then
+			icon_refresh_pending = false
+			refresh_icon()
 		end
 	end)
 end
 
-local function refresh_popup()
+local refresh_popup
+
+local function finish_popup_refresh()
+	popup_refresh_in_flight = false
+	if popup_refresh_pending and popup_is_open then
+		popup_refresh_pending = false
+		refresh_popup()
+		return
+	end
+
+	popup_refresh_pending = false
+end
+
+refresh_popup = function()
 	refresh_generation = refresh_generation + 1
 	local generation = refresh_generation
+
+	if popup_refresh_in_flight then
+		popup_refresh_pending = true
+		logger.debug("bluetooth", "refresh_popup_coalesced", { generation = generation })
+		return
+	end
+
+	popup_refresh_in_flight = true
 
 	set_loading_row(paired_rows[1])
 	hide_extra_rows(paired_rows, 2)
@@ -268,9 +334,10 @@ local function refresh_popup()
 	set_loading_row(connected_rows[1])
 	hide_extra_rows(connected_rows, 2)
 
-	Sbar.exec("blueutil --paired", function(result)
+	exec_blueutil("blueutil --paired", function(result)
 		if generation ~= refresh_generation or not popup_is_open then
 			logger.debug("bluetooth", "refresh_paired_stale", { generation = generation, current = refresh_generation })
+			finish_popup_refresh()
 			return
 		end
 
@@ -279,22 +346,24 @@ local function refresh_popup()
 			logger.debug("bluetooth", "paired_devices_empty", { generation = generation })
 		end
 		render_rows(paired_rows, devices)
-	end)
 
-	Sbar.exec("blueutil --connected", function(result)
-		if generation ~= refresh_generation or not popup_is_open then
-			logger.debug(
-				"bluetooth",
-				"refresh_connected_stale",
-				{ generation = generation, current = refresh_generation }
-			)
-			return
-		end
-		local devices = parse_devices(result)
-		if #devices == 0 then
-			logger.debug("bluetooth", "connected_devices_empty", { generation = generation })
-		end
-		render_rows(connected_rows, devices)
+		exec_blueutil("blueutil --connected", function(connected_result)
+			if generation ~= refresh_generation or not popup_is_open then
+				logger.debug(
+					"bluetooth",
+					"refresh_connected_stale",
+					{ generation = generation, current = refresh_generation }
+				)
+				finish_popup_refresh()
+				return
+			end
+			local connected_devices = parse_devices(connected_result)
+			if #connected_devices == 0 then
+				logger.debug("bluetooth", "connected_devices_empty", { generation = generation })
+			end
+			render_rows(connected_rows, connected_devices)
+			finish_popup_refresh()
+		end)
 	end)
 end
 
@@ -308,30 +377,37 @@ SETUP_POPUP_HOVER(bluetooth, function()
 end, function()
 	popup_is_open = false
 	refresh_generation = refresh_generation + 1
+	popup_refresh_pending = false
 end)
+
+local function apply_toggle(parsed)
+	if parsed == 0 then
+		logger.debug("bluetooth", "toggle_turning_on", {})
+		cached_power_state = 1
+		exec_blueutil("blueutil -p 1")
+	else
+		logger.debug("bluetooth", "toggle_turning_off", {})
+		cached_power_state = 0
+		exec_blueutil("blueutil -p 0")
+	end
+
+	DELAY(1, function()
+		Sbar.trigger("bluetooth_update")
+		if popup_is_open then
+			refresh_popup()
+		end
+	end)
+end
 
 bluetooth:subscribe("mouse.clicked", function()
 	logger.debug("bluetooth", "toggle_requested", {})
-	Sbar.exec("blueutil -p", function(state)
+	exec_blueutil("blueutil -p", function(state)
 		local parsed = PARSE_NUMBER(state)
 		if parsed == nil then
 			logger.warn("bluetooth", "toggle_state_parse_failed", { state = tostring(state) })
 			return
 		end
-		if parsed == 0 then
-			logger.debug("bluetooth", "toggle_turning_on", {})
-			Sbar.exec("blueutil -p 1")
-		else
-			logger.debug("bluetooth", "toggle_turning_off", {})
-			Sbar.exec("blueutil -p 0")
-		end
-
-		DELAY(1, function()
-			Sbar.trigger("bluetooth_update")
-			if popup_is_open then
-				refresh_popup()
-			end
-		end)
+		apply_toggle(parsed)
 	end)
 end)
 
