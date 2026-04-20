@@ -7,7 +7,7 @@ return function(ctx)
 	local expandHeight = ctx.asNumber(ctx.get("islands.cpu_panic.expandHeight", "85"), 85)
 	local cornerRad = ctx.asNumber(ctx.get("islands.cpu_panic.cornerRadius", "15"), 15)
 	local expandMargin = math.floor(ctx.monitorResolution / 2 - maxExpandWidth)
-	local pollInterval = ctx.asNumber(ctx.get("islands.cpu_panic.pollInterval", "12"), 12)
+	local pollInterval = ctx.asNumber(ctx.get("islands.cpu_panic.pollInterval", "30"), 30)
 	local panicThreshold = ctx.asNumber(ctx.get("islands.cpu_panic.threshold", "90"), 90)
 
 	local textItem = ctx.Sbar.add("item", "island.cpu_panic_text", {

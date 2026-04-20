@@ -7,6 +7,8 @@ return {
 	logging = {
 		-- Supported levels: debug, info, warn, error
 		level = "info",
+		flushSeconds = 1.0,
+		maxBufferSize = 80,
 	},
 
 	enabled = {
@@ -75,21 +77,24 @@ return {
 			maxExpandWidth = 190,
 			expandHeight = 56,
 			cornerRadius = 15,
+			pollInterval = 300,
 		},
 		cpu_panic = {
 			maxExpandWidth = 200,
 			expandHeight = 85,
 			cornerRadius = 15,
-			pollInterval = 20,
+			pollInterval = 30,
+			threshold = 90,
 		},
 		clipboard = {
 			maxExpandWidth = 180,
 			expandHeight = 85,
 			cornerRadius = 15,
-			pollInterval = 15,
+			pollInterval = 20,
+			maxPreviewLength = 120,
 		},
 		privacy = {
-			pollInterval = 30,
+			pollInterval = 60,
 		},
 		github = {
 			maxExpandWidth = 220,

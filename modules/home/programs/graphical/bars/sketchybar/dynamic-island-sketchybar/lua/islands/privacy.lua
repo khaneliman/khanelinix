@@ -4,7 +4,7 @@ return function(ctx)
 	local inFlight = false
 	local lastCameraState = nil
 	local lastMicState = nil
-	local pollInterval = ctx.asNumber(ctx.get("islands.privacy.pollInterval", "12"), 12)
+	local pollInterval = ctx.asNumber(ctx.get("islands.privacy.pollInterval", "60"), 60)
 
 	local camDot = ctx.Sbar.add("item", "island.privacy.camera", {
 		position = "center",

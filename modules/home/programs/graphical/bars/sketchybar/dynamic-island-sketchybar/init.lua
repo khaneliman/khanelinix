@@ -27,38 +27,48 @@ local barName = os.getenv("BAR_NAME") or "dynamic-island-sketchybar"
 local dynamicIslandDir = home .. "/.config/dynamic-island-sketchybar"
 local configPath = dynamicIslandDir .. "/config.lua"
 local logPath = home .. "/Library/Logs/sketchybar/dynamic-island.out.log"
-local LOG_LEVELS = { debug = 10, info = 20, warn = 30, error = 40 }
-local activeLogLevel = "info"
-local logLevelThreshold = LOG_LEVELS.info
+local errorLogPath = home .. "/Library/Logs/sketchybar/dynamic-island.err.log"
 
 local function normalizeLogLevel(level)
 	local value = trim(tostring(level or ""))
+	if value == "" then
+		return nil
+	end
 	value = string.lower(value)
-	if LOG_LEVELS[value] ~= nil then
+	if value == "trace" then
+		return "debug"
+	end
+	if value == "debug" or value == "info" or value == "warn" or value == "error" then
 		return value
 	end
 	return nil
 end
 
-local function shouldLog(level)
-	local resolvedLevel = trim(tostring(level or "info"))
-	resolvedLevel = string.lower(resolvedLevel)
-	local resolvedValue = LOG_LEVELS[resolvedLevel]
-	if resolvedValue == nil then
-		return false
+local function normalizePositiveNumber(value, fallback)
+	local numeric = tonumber(value)
+	if numeric == nil or numeric <= 0 then
+		return fallback
 	end
-	return resolvedValue >= logLevelThreshold
+	return numeric
 end
 
-local function appendLog(_path, message, level)
-	local resolvedLevel = trim(tostring(level or "info"))
-	resolvedLevel = string.lower(resolvedLevel)
-	if not shouldLog(resolvedLevel) then
-		return
+local function normalizePositiveInteger(value, fallback)
+	local numeric = tonumber(value)
+	if numeric == nil or numeric < 1 then
+		return fallback
 	end
-	local line = os.date("%Y-%m-%d %H:%M:%S") .. " [" .. resolvedLevel .. "] " .. message
-	io.stdout:write(line, "\n")
-	io.stdout:flush()
+	return math.floor(numeric)
+end
+
+local createLogger = dofile(dynamicIslandDir .. "/lua/helpers/logger.lua").create
+local logger = createLogger({
+	level = normalizeLogLevel(os.getenv("DYNAMIC_ISLAND_LOG_LEVEL")) or "info",
+	flush_seconds = normalizePositiveNumber(os.getenv("DYNAMIC_ISLAND_LOG_FLUSH_SECONDS"), 1.0),
+	max_buffer_size = normalizePositiveInteger(os.getenv("DYNAMIC_ISLAND_LOG_MAX_BUFFER_SIZE"), 80),
+})
+
+local function appendLog(_path, message, level)
+	logger.raw(level, message)
 end
 
 local function logDebug(message)
@@ -75,6 +85,14 @@ end
 
 local function logError(message)
 	appendLog(logPath, message, "error")
+end
+
+local function emitStructuredLog(level, moduleName, event, fields)
+	local write = logger[level]
+	if type(write) ~= "function" then
+		return
+	end
+	write(moduleName, event, fields)
 end
 
 logInfo("[init] startup bar=" .. barName)
@@ -98,16 +116,25 @@ end
 local cfg = cfgOrErr
 
 local configuredLogLevel = normalizeLogLevel((cfg.logging or {}).level)
-if configuredLogLevel ~= nil then
-	activeLogLevel = configuredLogLevel
-	logLevelThreshold = LOG_LEVELS[activeLogLevel]
-end
+local configuredFlushSeconds = normalizePositiveNumber((cfg.logging or {}).flushSeconds, 1.0)
+local configuredMaxBufferSize = normalizePositiveInteger((cfg.logging or {}).maxBufferSize, 80)
 local envLogLevel = normalizeLogLevel(os.getenv("DYNAMIC_ISLAND_LOG_LEVEL"))
-if envLogLevel ~= nil then
-	activeLogLevel = envLogLevel
-	logLevelThreshold = LOG_LEVELS[activeLogLevel]
-end
+local envFlushSeconds = normalizePositiveNumber(os.getenv("DYNAMIC_ISLAND_LOG_FLUSH_SECONDS"), configuredFlushSeconds)
+local envMaxBufferSize = normalizePositiveInteger(os.getenv("DYNAMIC_ISLAND_LOG_MAX_BUFFER_SIZE"), configuredMaxBufferSize)
+
+logger.set_runtime(
+	configuredLogLevel or "info",
+	configuredFlushSeconds,
+	configuredMaxBufferSize
+)
+logger.set_runtime(
+	envLogLevel or configuredLogLevel or "info",
+	envFlushSeconds,
+	envMaxBufferSize
+)
+local activeLogLevel = envLogLevel or configuredLogLevel or "info"
 logInfo("[init] log level=" .. activeLogLevel)
+logDebug("[init] stdout log path=" .. logPath .. " stderr log path=" .. errorLogPath)
 
 local function getByPath(tbl, path)
 	local current = tbl
@@ -388,11 +415,13 @@ local baseCtx = {
 	Sbar = Sbar,
 	registry = islandRegistry,
 	appendLog = appendLog,
+	logger = logger,
 	logDebug = logDebug,
 	logInfo = logInfo,
 	logWarn = logWarn,
 	logError = logError,
 	logPath = logPath,
+	errorLogPath = errorLogPath,
 	get = get,
 	asNumber = asNumber,
 	asBool = asBool,
