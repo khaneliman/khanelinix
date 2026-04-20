@@ -289,10 +289,36 @@ systemWatcher:subscribe("system_woke", function()
 end)
 
 local islandAnimationToken = 0
+local activeIslandLifecycle = nil
+
+local function interruptActiveIsland()
+	local lifecycle = activeIslandLifecycle
+	if lifecycle == nil then
+		return false
+	end
+
+	activeIslandLifecycle = nil
+
+	if lifecycle.hidden ~= true and type(lifecycle.onHideContent) == "function" then
+		lifecycle.onHideContent(true)
+	end
+	if type(lifecycle.onCleanup) == "function" then
+		lifecycle.onCleanup(true)
+	end
+
+	return true
+end
 
 local function animateIsland(options)
+	interruptActiveIsland()
 	islandAnimationToken = islandAnimationToken + 1
 	local current = islandAnimationToken
+	activeIslandLifecycle = {
+		token = current,
+		hidden = false,
+		onHideContent = options.onHideContent,
+		onCleanup = options.onCleanup,
+	}
 
 	Sbar.animate("tanh", 10, function()
 		if options.margin and options.cornerRadius and options.height then
@@ -325,6 +351,9 @@ local function animateIsland(options)
 		end
 
 		Sbar.animate("tanh", 10, function()
+			if activeIslandLifecycle ~= nil and activeIslandLifecycle.token == current then
+				activeIslandLifecycle.hidden = true
+			end
 			if type(options.onHideContent) == "function" then
 				options.onHideContent()
 			end
@@ -333,6 +362,10 @@ local function animateIsland(options)
 		delay(0.2, function()
 			if current ~= islandAnimationToken then
 				return
+			end
+
+			if activeIslandLifecycle ~= nil and activeIslandLifecycle.token == current then
+				activeIslandLifecycle = nil
 			end
 
 			if type(options.onCleanup) == "function" then
@@ -445,6 +478,7 @@ local baseCtx = {
 	clearPersistentIsland = clearPersistentIsland,
 	hidePersistentIsland = hidePersistentIsland,
 	restorePersistentIsland = restorePersistentIsland,
+	interruptActiveIsland = interruptActiveIsland,
 	barName = barName,
 	fontFamily = fontFamily,
 	colorWhite = colorWhite,

@@ -94,9 +94,12 @@ return function(ctx)
 			onHideContent = function()
 				labelItem:set({ label = { color = ctx.colorTransparent } })
 			end,
-			onCleanup = function()
+			onCleanup = function(interrupted)
 				labelItem:set({ drawing = false })
 				iconItem:set({ drawing = false })
+				if interrupted then
+					return
+				end
 				if not ctx.restorePersistentIsland("appswitch") then
 					ctx.Sbar.animate("tanh", 10, function()
 						ctx.Sbar.bar({
