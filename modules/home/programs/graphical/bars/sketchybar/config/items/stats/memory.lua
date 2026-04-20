@@ -33,6 +33,7 @@ local memory = Sbar.add("item", "memory", {
 })
 
 local popupVisible = false
+local isActive = true
 local process_monitor = require("items.stats.process_monitor")
 
 local monitor = process_monitor(
@@ -57,11 +58,11 @@ local monitor = process_monitor(
 	end
 )
 
-memory:subscribe({
-	"routine",
-	"forced",
-	"system_woke",
-}, function()
+local function refresh_memory()
+	if not isActive then
+		return
+	end
+
 	Sbar.exec(
 		"memory_pressure | grep 'System-wide memory free percentage:' | awk '{ printf(\"%02.0f\\n\", 100-$5\"%\") }'",
 		function(memoryUsage)
@@ -76,7 +77,13 @@ memory:subscribe({
 	if popupVisible then
 		monitor.update()
 	end
-end)
+end
+
+memory:subscribe({
+	"routine",
+	"forced",
+	"system_woke",
+}, refresh_memory)
 
 memory:subscribe("mouse.clicked", function()
 	logger.debug("memory", "open_activity_monitor", {})
@@ -98,5 +105,24 @@ memory:subscribe({
 	memory:set({ popup = { drawing = false } })
 	logger.debug("memory", "popup_closed", {})
 end)
+
+function memory.activate()
+	if isActive then
+		return
+	end
+
+	isActive = true
+	refresh_memory()
+end
+
+function memory.deactivate()
+	if not isActive then
+		return
+	end
+
+	isActive = false
+	popupVisible = false
+	memory:set({ popup = { drawing = false } })
+end
 
 return memory

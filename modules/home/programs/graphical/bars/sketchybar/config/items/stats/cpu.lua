@@ -5,8 +5,6 @@ local colors = require("helpers.colors")
 local icons = require("helpers.icons")
 local logger = require("helpers.logger")
 
-Sbar.exec("killall sketchy_cpu_load >/dev/null 2>&1; sketchy_cpu_load cpu_update 2.0")
-
 local cpu = Sbar.add("item", "cpu", {
 	background = {
 		padding_left = 0,
@@ -34,7 +32,10 @@ local cpu = Sbar.add("item", "cpu", {
 	},
 })
 
+local helper_command = "killall sketchy_cpu_load >/dev/null 2>&1; sketchy_cpu_load cpu_update 2.0"
+local stop_helper_command = "killall sketchy_cpu_load >/dev/null 2>&1"
 local popupVisible = false
+local isActive = true
 local process_monitor = require("items.stats.process_monitor")
 
 local monitor = process_monitor(
@@ -59,7 +60,20 @@ local monitor = process_monitor(
 	end
 )
 
+local function start_helper()
+	Sbar.exec(helper_command)
+end
+
+local function stop_helper()
+	Sbar.exec(stop_helper_command)
+end
+
+start_helper()
+
 cpu:subscribe("cpu_update", function(env)
+	if not isActive then
+		return
+	end
 	-- Also available: env.user_load, env.sys_load
 	local load = tonumber(env.total_load)
 	if load == nil then
@@ -111,5 +125,25 @@ cpu:subscribe({
 	cpu:set({ popup = { drawing = false } })
 	logger.debug("cpu", "popup_closed", {})
 end)
+
+function cpu.activate()
+	if isActive then
+		return
+	end
+
+	isActive = true
+	start_helper()
+end
+
+function cpu.deactivate()
+	if not isActive then
+		return
+	end
+
+	isActive = false
+	popupVisible = false
+	cpu:set({ popup = { drawing = false } })
+	stop_helper()
+end
 
 return cpu

@@ -7,8 +7,6 @@ require("helpers.utils")
 
 local network = {}
 
-Sbar.exec("killall sketchy_network_load >/dev/null 2>&1; sketchy_network_load en0 network_update 10.0")
-
 network.down = Sbar.add("item", "network.down", {
 	background = {
 		padding_left = 0,
@@ -92,11 +90,14 @@ network.header = Sbar.add("item", "network.details.header", {
 })
 
 network.rows = {}
+local helper_command = "killall sketchy_network_load >/dev/null 2>&1; sketchy_network_load en0 network_update 10.0"
+local stop_helper_command = "killall sketchy_network_load >/dev/null 2>&1"
 local updateTopConnections
 local recentProcesses = {}
 local recentOrder = {}
 local recentTtlSeconds = 20
 local updateTopConnectionsInFlight = false
+local isActive = true
 for i = 1, 5 do
 	network.rows[i] = Sbar.add("item", "network.details." .. i, {
 		position = "popup." .. network.down.name,
@@ -123,6 +124,16 @@ for i = 1, 5 do
 end
 
 local popupVisible = false
+
+local function start_helper()
+	Sbar.exec(helper_command)
+end
+
+local function stop_helper()
+	Sbar.exec(stop_helper_command)
+end
+
+start_helper()
 
 local function formatBytes(bytes)
 	local value = tonumber(bytes) or 0
@@ -267,6 +278,9 @@ updateTopConnections = function()
 end
 
 network.down:subscribe("network_update", function(env)
+	if not isActive then
+		return
+	end
 	if IS_SYSTEM_SLEEPING then
 		return
 	end
@@ -334,5 +348,25 @@ network.up:subscribe({
 	"mouse.exited",
 	"mouse.exited.global",
 }, hidePopup)
+
+function network.activate()
+	if isActive then
+		return
+	end
+
+	isActive = true
+	start_helper()
+end
+
+function network.deactivate()
+	if not isActive then
+		return
+	end
+
+	isActive = false
+	popupVisible = false
+	network.down:set({ popup = { drawing = false } })
+	stop_helper()
+end
 
 return network

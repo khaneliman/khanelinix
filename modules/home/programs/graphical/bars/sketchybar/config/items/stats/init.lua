@@ -7,7 +7,23 @@ local network = require("items.stats.network")
 
 local stats = {}
 
+local function activate_stats()
+	cpu.activate()
+	memory.activate()
+	disk.activate()
+	network.activate()
+end
+
+local function deactivate_stats()
+	cpu.deactivate()
+	memory.deactivate()
+	disk.deactivate()
+	network.deactivate()
+end
+
 stats.close = function()
+	deactivate_stats()
+
 	Sbar.animate("tanh", 30, function()
 		cpu:set({ background = { padding_right = -10 } })
 		memory:set({ background = { padding_right = -50 } })
@@ -28,6 +44,7 @@ stats.close = function()
 end
 
 stats.open = function()
+	activate_stats()
 	separator:set({ icon = "" })
 
 	Sbar.animate("tanh", 30, function()
