@@ -27,7 +27,8 @@ return {
 
 	notch = {
 		defaultHeight = 44,
-		defaultWidth = 100,
+		-- This is half-width in margin logic; effective island width is 2x this.
+		defaultWidth = 80,
 		cornerRadius = 10,
 		monitorHorizontalResolution = "auto",
 	},
