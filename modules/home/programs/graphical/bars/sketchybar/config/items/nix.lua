@@ -34,7 +34,7 @@ local nix = Sbar.add("item", "nix", {
 		align = "center",
 		height = 30,
 	},
-	update_freq = 120,
+	update_freq = 300,
 	drawing = false,
 })
 

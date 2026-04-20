@@ -17,7 +17,7 @@ local battery = Sbar.add("item", "battery", {
 		},
 	},
 	label = { drawing = false },
-	update_freq = 30,
+	update_freq = 120,
 })
 
 battery.details = Sbar.add("item", "battery.details", {

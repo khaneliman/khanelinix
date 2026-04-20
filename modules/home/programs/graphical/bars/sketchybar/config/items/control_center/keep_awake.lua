@@ -7,7 +7,7 @@ local logger = require("helpers.logger")
 
 local power_modes = Sbar.add("item", "power_modes", {
 	position = "right",
-	update_freq = 60,
+	update_freq = 300,
 	icon = {
 		string = icons.sleep,
 		font = {
