@@ -8,6 +8,8 @@ local popup_off = "sketchybar --set github popup.drawing=off"
 local github
 local last_notification_signature = nil
 local last_rendered_signature = nil
+local refresh_in_flight = false
+local refresh_pending = false
 
 local function truncate_label(value, max_length)
 	if value == nil then
@@ -188,27 +190,36 @@ github = Sbar.add("item", "github", {
 		string = icons.loading,
 		highlight_color = colors.blue,
 	},
-	update_freq = 60,
+	update_freq = 180,
 	popup = {
 		align = "right",
 	},
 })
 
 SETUP_STANDARD_CLICKS(github, "github_update")
-SETUP_POPUP_HOVER(github)
 
-github:subscribe({
-	"routine",
-	"forced",
-	"github_update",
-}, function(_)
+local function refresh_github()
+	if refresh_in_flight then
+		refresh_pending = true
+		return
+	end
+
 	logger.debug("github", "refresh_start", {})
 	if IS_SYSTEM_SLEEPING then
 		logger.debug("github", "refresh_skipped_sleeping", {})
 		return
 	end
-	-- fetch new information
+
+	refresh_in_flight = true
 	Sbar.exec("gh api notifications", function(notifications)
+		refresh_in_flight = false
+		local function finish_refresh()
+			if refresh_pending then
+				refresh_pending = false
+				DELAY(0, refresh_github)
+			end
+		end
+
 		if type(notifications) ~= "table" then
 			logger.warn("github", "invalid_payload", { type = type(notifications) })
 			notifications = {}
@@ -236,6 +247,7 @@ github:subscribe({
 		})
 
 		if current_signature == last_rendered_signature then
+			finish_refresh()
 			return
 		end
 		last_rendered_signature = current_signature
@@ -338,7 +350,21 @@ github:subscribe({
 				})
 			end
 		end
+
+		finish_refresh()
 	end)
+end
+
+SETUP_POPUP_HOVER(github, function()
+	refresh_github()
+end)
+
+github:subscribe({
+	"routine",
+	"forced",
+	"github_update",
+}, function(_)
+	refresh_github()
 end)
 
 return github
