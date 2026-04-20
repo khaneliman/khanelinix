@@ -13,7 +13,7 @@ let
   hasOpenAISecuraKey = lib.hasAttrByPath [ "sops" "secrets" "OPENAI_SECURA_KEY" ] config;
   hasTavilyApiKey = lib.hasAttrByPath [ "sops" "secrets" "TAVILY_API_KEY" ] config;
   nixBeastConfig = "NIX_CONFIG=$'max-jobs = auto\\ncores = 0'";
-  tokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) /* Bash */ ''
+  posixTokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) ''
     if ${lib.boolToString hasOpenAISecuraKey} && [ -f ${config.sops.secrets.OPENAI_SECURA_KEY.path} ]; then
       OPENAI_KEY="$(cat ${config.sops.secrets.OPENAI_SECURA_KEY.path})"
       export OPENAI_KEY
@@ -22,6 +22,14 @@ let
       TAVILY_API_KEY="$(cat ${config.sops.secrets.TAVILY_API_KEY.path})"
       export TAVILY_API_KEY
     fi
+  '';
+  fishTokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) /* fish */ ''
+    if ${lib.boolToString hasOpenAISecuraKey}; and test -f ${config.sops.secrets.OPENAI_SECURA_KEY.path}
+      set -gx OPENAI_KEY (cat ${config.sops.secrets.OPENAI_SECURA_KEY.path})
+    end
+    if ${lib.boolToString hasTavilyApiKey}; and test -f ${config.sops.secrets.TAVILY_API_KEY.path}
+      set -gx TAVILY_API_KEY (cat ${config.sops.secrets.TAVILY_API_KEY.path})
+    end
   '';
 
   cfg = config.khanelinix.suites.development;
@@ -155,11 +163,11 @@ in
     };
 
     programs = {
-      bash.initExtra = tokenExports;
-      fish.shellInit = tokenExports;
+      bash.initExtra = posixTokenExports;
+      fish.shellInit = fishTokenExports;
       nix-your-shell = mkDefault enabled;
       vinegar.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
-      zsh.initContent = tokenExports;
+      zsh.initContent = posixTokenExports;
     };
 
     khanelinix = {

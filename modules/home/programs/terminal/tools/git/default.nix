@@ -23,7 +23,7 @@ let
   shell-aliases = import ./shell-aliases.nix { inherit config lib pkgs; };
 
   hasGithubAccessToken = lib.hasAttrByPath [ "sops" "secrets" "github/access-token" ] config;
-  tokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) /* Bash */ ''
+  posixTokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) ''
     if ${lib.boolToString hasGithubAccessToken} && [ -f ${
       config.sops.secrets."github/access-token".path
     } ]; then
@@ -35,6 +35,16 @@ let
       GITHUB_PERSONAL_ACCESS_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
       export GITHUB_PERSONAL_ACCESS_TOKEN
     fi
+  '';
+  fishTokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) /* fish */ ''
+    if ${lib.boolToString hasGithubAccessToken}; and test -f ${
+      config.sops.secrets."github/access-token".path
+    }
+      set -gx GITHUB_TOKEN (cat ${config.sops.secrets."github/access-token".path})
+      set -gx GH_TOKEN (cat ${config.sops.secrets."github/access-token".path})
+      # For github-mcp-server
+      set -gx GITHUB_PERSONAL_ACCESS_TOKEN (cat ${config.sops.secrets."github/access-token".path})
+    end
   '';
 in
 {
@@ -213,9 +223,9 @@ in
         enableJujutsuIntegration = true;
       };
 
-      bash.initExtra = tokenExports;
-      fish.shellInit = tokenExports;
-      zsh.initContent = tokenExports;
+      bash.initExtra = posixTokenExports;
+      fish.shellInit = fishTokenExports;
+      zsh.initContent = posixTokenExports;
     };
 
     home = {
