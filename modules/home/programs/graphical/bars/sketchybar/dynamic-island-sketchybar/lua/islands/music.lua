@@ -4,6 +4,7 @@ return function(ctx)
 	local lastDisplayText = nil
 	local lastHasArt = nil
 	local lastPlaybackState = nil
+	local lastSourceName = nil
 	local artPath = "/tmp/sketchybar_cover.jpg"
 	local noTrackMarker = "__DYNAMIC_ISLAND_NO_TRACK__"
 	local resultSeparator = "|||"
@@ -14,50 +15,104 @@ return function(ctx)
 	local cornerRad = ctx.asNumber(ctx.get("islands.music.info.cornerRadius", "19"), 19)
 	local expandMargin = ctx.calculateMargin(maxExpandWidth)
 	local imageScale = 0.15
-	local imageYOffset = -10
-	local artSlotWidth = 118
-	local textWidth = math.max(120, maxExpandWidthPx - artSlotWidth - 28)
-	local contentYOffset = -12
+	local imageYOffset = -6
+	local artworkSlotWidth = 92
+	local compactSlotWidth = 44
+	local slotPaddingLeft = 18
+	local slotPaddingRight = 8
+	local slotYOffset = -10
+	local contentPaddingRight = 20
+	local titleYOffset = -16
+	local subtitleYOffset = 0
+	local titleColor = ctx.colorWhite
+	local subtitleColor = ctx.get("colors.musicSecondary", "0xffb8b8b8")
+	local compactBadgeColor = ctx.get("colors.musicBadge", "0x22ffffff")
 	local maxArtworkRetryAttempts = 4
 	local artworkRetryDelaySeconds = 0.6
 	local musicUpdateDebounceSeconds = 0.15
 	local musicUpdateRequestToken = 0
 	local pendingMusicUpdateSender = nil
 
+	local function resolveTextWidth(slotWidth)
+		return math.max(140, maxExpandWidthPx - slotWidth - slotPaddingLeft - slotPaddingRight - contentPaddingRight)
+	end
+
+	local function splitDisplayText(displayText, sourceName)
+		local trimmed = ctx.trim(displayText or "")
+		if trimmed == "" then
+			return "", sourceName or "Now Playing"
+		end
+
+		local artist, track = trimmed:match("^(.-)%s+%-%s+(.+)$")
+		if artist ~= nil and track ~= nil then
+			return ctx.trim(track), ctx.trim(artist)
+		end
+
+		return trimmed, sourceName or "Now Playing"
+	end
+
 	-- Art item on the left
 	local artItem = ctx.Sbar.add("item", "island.music_art", {
 		position = "left",
 		drawing = false,
-		icon = { drawing = false },
+		icon = {
+			drawing = false,
+			align = "center",
+		},
 		background = {
 			color = ctx.colorTransparent,
-			corner_radius = 10,
+			corner_radius = 14,
 			image = {
 				drawing = true,
 				scale = imageScale,
 				y_offset = imageYOffset,
-				corner_radius = 10,
+				corner_radius = 12,
 				padding_left = 6,
 				padding_right = 6,
 			},
 		},
-		padding_left = 16,
-		padding_right = 0,
-		width = artSlotWidth,
-		y_offset = contentYOffset,
+		padding_left = slotPaddingLeft,
+		padding_right = slotPaddingRight,
+		width = artworkSlotWidth,
+		y_offset = slotYOffset,
 	})
 
-	-- Text item on the right
-	local textItem = ctx.Sbar.add("item", "island.music_text", {
+	local titleItem = ctx.Sbar.add("item", "island.music_title", {
 		position = "left",
 		drawing = false,
 		label = {
 			align = "left",
 			color = ctx.colorTransparent,
-			width = textWidth,
-			y_offset = contentYOffset,
+			width = resolveTextWidth(artworkSlotWidth),
+			max_chars = 34,
+			y_offset = titleYOffset,
 			padding_left = 4,
-			padding_right = 18,
+			padding_right = contentPaddingRight,
+			font = {
+				family = ctx.fontFamily,
+				style = "Bold",
+				size = 16.0,
+			},
+		},
+		width = 0,
+	})
+
+	local subtitleItem = ctx.Sbar.add("item", "island.music_subtitle", {
+		position = "left",
+		drawing = false,
+		label = {
+			align = "left",
+			color = ctx.colorTransparent,
+			width = resolveTextWidth(artworkSlotWidth),
+			max_chars = 38,
+			y_offset = subtitleYOffset,
+			padding_left = 4,
+			padding_right = contentPaddingRight,
+			font = {
+				family = ctx.fontFamily,
+				style = "Medium",
+				size = 12.0,
+			},
 		},
 		width = 0,
 	})
@@ -73,14 +128,21 @@ return function(ctx)
 	ctx.Sbar.add("event", "spotify_update", "com.spotify.client.PlaybackStateChanged")
 
 	local function collapseMusic()
-		textItem:set({
+		titleItem:set({
+			drawing = false,
+			label = { color = ctx.colorTransparent },
+		})
+		subtitleItem:set({
 			drawing = false,
 			label = { color = ctx.colorTransparent },
 		})
 		artItem:set({
 			drawing = false,
+			width = artworkSlotWidth,
 			icon = { drawing = false, string = "" },
 			background = {
+				color = ctx.colorTransparent,
+				height = 0,
 				image = {
 					drawing = false,
 					string = "",
@@ -98,14 +160,21 @@ return function(ctx)
 	end
 
 	local function suspendMusic()
-		textItem:set({
+		titleItem:set({
+			drawing = false,
+			label = { color = ctx.colorTransparent },
+		})
+		subtitleItem:set({
 			drawing = false,
 			label = { color = ctx.colorTransparent },
 		})
 		artItem:set({
 			drawing = false,
+			width = artworkSlotWidth,
 			icon = { drawing = false, string = "" },
 			background = {
+				color = ctx.colorTransparent,
+				height = 0,
 				image = {
 					drawing = false,
 					string = "",
@@ -114,17 +183,24 @@ return function(ctx)
 		})
 	end
 
-	local function expandMusic(displayText, hasArt)
+	local function expandMusic(displayText, hasArt, sourceName)
+		local titleText, subtitleText = splitDisplayText(displayText, sourceName)
+		local slotWidth = hasArt and artworkSlotWidth or compactSlotWidth
+		local textWidth = resolveTextWidth(slotWidth)
+
 		if hasArt then
 			artItem:set({
 				drawing = true,
+				width = slotWidth,
 				background = {
+					color = ctx.colorTransparent,
+					height = 0,
 					image = {
 						drawing = true,
 						string = artPath,
 						scale = imageScale,
 						y_offset = imageYOffset,
-						corner_radius = 10,
+						corner_radius = 12,
 						padding_left = 6,
 						padding_right = 6,
 					},
@@ -134,26 +210,48 @@ return function(ctx)
 		else
 			artItem:set({
 				drawing = true,
+				width = slotWidth,
 				background = {
+					color = compactBadgeColor,
+					height = 32,
+					corner_radius = 16,
 					image = {
 						drawing = false,
 						string = "",
 						scale = imageScale,
 						y_offset = imageYOffset,
-						corner_radius = 10,
+						corner_radius = 12,
 						padding_left = 6,
 						padding_right = 6,
 					},
 				},
-				icon = { drawing = true, string = "􀑪", color = ctx.colorWhite, font = { size = 20 } },
+				icon = {
+					drawing = true,
+					string = "􀑪",
+					color = ctx.colorWhite,
+					font = {
+						family = ctx.fontFamily,
+						style = "Bold",
+						size = 18.0,
+					},
+				},
 			})
 		end
 
-		textItem:set({
+		titleItem:set({
 			drawing = true,
 			label = {
-				string = displayText,
-				color = ctx.colorWhite,
+				string = titleText,
+				color = titleColor,
+				width = textWidth,
+			},
+		})
+		subtitleItem:set({
+			drawing = subtitleText ~= "",
+			label = {
+				string = subtitleText,
+				color = subtitleColor,
+				width = textWidth,
 			},
 		})
 
@@ -171,7 +269,7 @@ return function(ctx)
 			return
 		end
 
-		expandMusic(lastDisplayText, lastHasArt == true)
+		expandMusic(lastDisplayText, lastHasArt == true, lastSourceName)
 	end
 
 	local function syncPersistentMusic()
@@ -332,6 +430,7 @@ return function(ctx)
 				lastDisplayText = nil
 				lastHasArt = nil
 				lastPlaybackState = playbackState
+				lastSourceName = nil
 				syncPersistentMusic()
 				ctx.logDebug("[music][lua] collapsing state=" .. tostring(playbackState))
 				collapseMusic()
@@ -367,13 +466,14 @@ return function(ctx)
 				cancelArtworkRetry()
 			end
 
-			if displayText == lastDisplayText and hasArt == lastHasArt and playbackState == lastPlaybackState then
+			if displayText == lastDisplayText and hasArt == lastHasArt and playbackState == lastPlaybackState and app == lastSourceName then
 				return
 			end
 
 			lastDisplayText = displayText
 			lastHasArt = hasArt
 			lastPlaybackState = playbackState
+			lastSourceName = app
 
 			syncPersistentMusic()
 			ctx.logInfo(
@@ -381,10 +481,12 @@ return function(ctx)
 					.. tostring(playbackState)
 					.. " hasArt="
 					.. tostring(hasArt)
+					.. " source="
+					.. tostring(app)
 					.. " text="
 					.. displayText
 			)
-			expandMusic(displayText, hasArt)
+			expandMusic(displayText, hasArt, app)
 		end)
 	end
 
@@ -396,7 +498,8 @@ return function(ctx)
 		requestMusicUpdate(env.SENDER)
 	end)
 
-	ctx.registry.musicTextItem = textItem
+	ctx.registry.musicTitleItem = titleItem
+	ctx.registry.musicSubtitleItem = subtitleItem
 	ctx.registry.musicArtItem = artItem
 	ctx.registry.musicListener = listener
 	ctx.subscribeItem("musicListener", { "apple_music_update", "spotify_update" })
