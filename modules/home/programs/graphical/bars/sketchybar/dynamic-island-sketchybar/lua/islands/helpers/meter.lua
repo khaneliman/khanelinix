@@ -26,7 +26,7 @@ return function(ctx, options)
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands." .. name .. ".maxExpandWidth", "130"), 130)
 	local expandHeight = ctx.asNumber(ctx.get("islands." .. name .. ".expandHeight", "65"), 65)
 	local cornerRadius = ctx.asNumber(ctx.get("islands." .. name .. ".cornerRadius", "12"), 12)
-	local expandMargin = math.floor(ctx.monitorResolution / 2 - maxExpandWidth)
+	local expandMargin = ctx.calculateMargin(maxExpandWidth)
 	local maxExpandHeight = expandHeight + math.floor(ctx.squishAmount / 2)
 
 	local iconItem = ctx.Sbar.add("item", "island." .. name .. "_icon", {

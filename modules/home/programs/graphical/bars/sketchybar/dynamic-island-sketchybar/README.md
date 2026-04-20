@@ -151,6 +151,13 @@ following:
 P_DYNAMIC_ISLAND_MONITOR_HORIZONTAL_RESOLUTION=1920
 ```
 
+If you leave the value unset, the bar will attempt to auto-detect the
+main display width at runtime and use that as `monitorHorizontalResolution`.
+If detection fails, it falls back to `1728`.
+
+Set this to a numeric value if you need a fixed width for a non-standard setup,
+or if you want to pin layout tuning after calibrating on one monitor.
+
 In case of built-in display, it must be divided by 2, e.g.: MBP 14 has 3024
 resolution, so 3024/2=1512.
 

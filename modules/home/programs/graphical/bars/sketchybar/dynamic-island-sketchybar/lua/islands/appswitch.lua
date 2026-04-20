@@ -61,7 +61,7 @@ return function(ctx)
 
 		local charLength = string.len(appName)
 		local expandSize = maxExpandWidth + charLength * 7 + 40 -- added width for icon
-		local expandMargin = math.floor(ctx.monitorResolution / 2 - expandSize)
+		local expandMargin = ctx.calculateMargin(expandSize)
 
 		ctx.logDebug("[appswitch][lua] app='" .. appName .. "' expandSize=" .. tostring(expandSize))
 

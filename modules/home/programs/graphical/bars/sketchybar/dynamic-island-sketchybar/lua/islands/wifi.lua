@@ -4,7 +4,7 @@ return function(ctx)
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands.wifi.maxExpandWidth", "190"), 190)
 	local expandHeight = ctx.asNumber(ctx.get("islands.wifi.expandHeight", "56"), 56)
 	local cornerRad = ctx.asNumber(ctx.get("islands.wifi.cornerRadius", "15"), 15)
-	local expandMargin = math.floor(ctx.monitorResolution / 2 - maxExpandWidth)
+	local expandMargin = ctx.calculateMargin(maxExpandWidth)
 
 	local textItem = ctx.Sbar.add("item", "island.wifi_text", {
 		position = "right",

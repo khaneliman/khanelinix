@@ -6,7 +6,7 @@ return function(ctx)
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands.power.maxExpandWidth", "190"), 190)
 	local expandHeight = ctx.asNumber(ctx.get("islands.power.expandHeight", "56"), 56)
 	local cornerRad = ctx.asNumber(ctx.get("islands.power.cornerRadius", "15"), 15)
-	local expandMargin = math.floor(ctx.monitorResolution / 2 - maxExpandWidth)
+	local expandMargin = ctx.calculateMargin(maxExpandWidth)
 	local pollInterval = ctx.asNumber(ctx.get("islands.power.pollInterval", "300"), 300)
 
 	local textItem = ctx.Sbar.add("item", "island.power_text", {

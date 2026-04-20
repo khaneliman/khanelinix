@@ -6,7 +6,7 @@ return function(ctx)
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands.cpu_panic.maxExpandWidth", "200"), 200)
 	local expandHeight = ctx.asNumber(ctx.get("islands.cpu_panic.expandHeight", "85"), 85)
 	local cornerRad = ctx.asNumber(ctx.get("islands.cpu_panic.cornerRadius", "15"), 15)
-	local expandMargin = math.floor(ctx.monitorResolution / 2 - maxExpandWidth)
+	local expandMargin = ctx.calculateMargin(maxExpandWidth)
 	local pollInterval = ctx.asNumber(ctx.get("islands.cpu_panic.pollInterval", "30"), 30)
 	local panicThreshold = ctx.asNumber(ctx.get("islands.cpu_panic.threshold", "90"), 90)
 

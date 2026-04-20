@@ -29,7 +29,7 @@ return {
 		defaultHeight = 44,
 		defaultWidth = 100,
 		cornerRadius = 10,
-		monitorHorizontalResolution = 1728,
+		monitorHorizontalResolution = "auto",
 	},
 
 	animation = {

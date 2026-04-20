@@ -11,7 +11,7 @@ return function(ctx)
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands.music.info.maxExpandWidth", "190"), 190)
 	local expandHeight = ctx.asNumber(ctx.get("islands.music.info.expandHeight", "100"), 100)
 	local cornerRad = ctx.asNumber(ctx.get("islands.music.info.cornerRadius", "19"), 19)
-	local expandMargin = math.floor(ctx.monitorResolution / 2 - maxExpandWidth)
+	local expandMargin = ctx.calculateMargin(maxExpandWidth)
 	local imageScale = 0.15
 	local imageYOffset = -10
 	local artSlotWidth = 118

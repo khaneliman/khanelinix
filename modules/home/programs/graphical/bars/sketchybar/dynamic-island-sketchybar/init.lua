@@ -61,6 +61,7 @@ local function normalizePositiveInteger(value, fallback)
 end
 
 local createLogger = dofile(dynamicIslandDir .. "/lua/helpers/logger.lua").create
+local monitorHelpers = dofile(dynamicIslandDir .. "/lua/helpers/monitor.lua")
 local logger = createLogger({
 	level = normalizeLogLevel(os.getenv("DYNAMIC_ISLAND_LOG_LEVEL")) or "info",
 	flush_seconds = normalizePositiveNumber(os.getenv("DYNAMIC_ISLAND_LOG_FLUSH_SECONDS"), 1.0),
@@ -195,7 +196,14 @@ local padding = 3
 local defaultHeight = asNumber(get("notch.defaultHeight", 44), 44)
 local defaultWidth = asNumber(get("notch.defaultWidth", 100), 100)
 local cornerRadius = asNumber(get("notch.cornerRadius", 10), 10)
-local monitorResolution = asNumber(get("notch.monitorHorizontalResolution", 1728), 1728)
+local monitorResolution = monitorHelpers.resolveMonitorResolution({
+	get = get,
+	barName = barName,
+	query = Sbar.query,
+	logInfo = logInfo,
+	logWarn = logWarn,
+})
+local calculateMargin = monitorHelpers.calculateMargin(monitorResolution)
 local barColor = get("colors.black", "0xff000000")
 local display = get("main.display", "main")
 local fontFamily = get("main.font", "SF Pro")
@@ -203,7 +211,9 @@ local colorWhite = get("colors.white", "0xffffffff")
 local colorTransparent = get("colors.transparent", "0x00000000")
 local squishAmount = asNumber(get("animation.squishAmount", 6), 6)
 
-local margin = math.floor(monitorResolution / 2 - defaultWidth)
+logInfo("[init] monitor width final value: " .. tostring(monitorResolution))
+
+local margin = calculateMargin(defaultWidth) or 0
 
 Sbar.bar({
 	height = defaultHeight,
@@ -438,6 +448,7 @@ local baseCtx = {
 	colorWhite = colorWhite,
 	colorTransparent = colorTransparent,
 	monitorResolution = monitorResolution,
+	calculateMargin = calculateMargin,
 	squishAmount = squishAmount,
 	defaultHeight = defaultHeight,
 	defaultWidth = defaultWidth,

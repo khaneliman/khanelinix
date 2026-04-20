@@ -4,7 +4,7 @@ return function(ctx)
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands.github.maxExpandWidth", "220"), 220)
 	local expandHeight = ctx.asNumber(ctx.get("islands.github.expandHeight", "95"), 95)
 	local cornerRad = ctx.asNumber(ctx.get("islands.github.cornerRadius", "42"), 42)
-	local expandMargin = math.floor(ctx.monitorResolution / 2 - maxExpandWidth)
+	local expandMargin = ctx.calculateMargin(maxExpandWidth)
 
 	local textItem = ctx.Sbar.add("item", "island.github_text", {
 		position = "right",
