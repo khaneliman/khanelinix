@@ -19,6 +19,9 @@ return function(ctx)
 	local contentYOffset = -12
 	local maxArtworkRetryAttempts = 4
 	local artworkRetryDelaySeconds = 0.6
+	local musicUpdateDebounceSeconds = 0.15
+	local musicUpdateRequestToken = 0
+	local pendingMusicUpdateSender = nil
 
 	-- Art item on the left
 	local artItem = ctx.Sbar.add("item", "island.music_art", {
@@ -198,11 +201,29 @@ return function(ctx)
 		return string.lower(playbackState), displayText
 	end
 
+	local updateMusic
+
 	local function cancelArtworkRetry()
 		artworkRetryToken = artworkRetryToken + 1
 	end
 
-	local function updateMusic(env, attempt, expectedDisplayText)
+	local function requestMusicUpdate(sender)
+		musicUpdateRequestToken = musicUpdateRequestToken + 1
+		pendingMusicUpdateSender = sender or "apple_music_update"
+		local current = musicUpdateRequestToken
+
+		ctx.delay(musicUpdateDebounceSeconds, function()
+			if current ~= musicUpdateRequestToken then
+				return
+			end
+
+			local updateSender = pendingMusicUpdateSender
+			pendingMusicUpdateSender = nil
+			updateMusic({ SENDER = updateSender })
+		end)
+	end
+
+	updateMusic = function(env, attempt, expectedDisplayText)
 		attempt = attempt or 0
 		local app = "Music"
 		if env.SENDER == "spotify_update" then
@@ -371,7 +392,7 @@ return function(ctx)
 			return
 		end
 		ctx.logDebug("[music][lua] notification received from " .. tostring(env.SENDER))
-		updateMusic(env)
+		requestMusicUpdate(env.SENDER)
 	end)
 
 	ctx.registry.musicTextItem = textItem
