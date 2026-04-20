@@ -212,7 +212,51 @@ local function makeMarginCalculator(monitorResolution)
 	end
 end
 
+local function makeIslandWidthCalculator(monitorResolution)
+	local safeResolution = tonumber(monitorResolution) or 0
+	if safeResolution < 0 then
+		safeResolution = 0
+	end
+
+	if safeResolution <= 0 then
+		return function(width)
+			return 0
+		end
+	end
+
+	local maxHalf = math.floor(safeResolution / 2)
+
+	return function(width)
+		if maxHalf <= 0 then
+			return 0
+		end
+
+		local halfWidth = asPositiveInteger(width)
+		if halfWidth == nil then
+			return 0
+		end
+
+		halfWidth = clamp(halfWidth, 1, maxHalf)
+		return halfWidth * 2
+	end
+end
+
+local function makeVisibleMarginCalculator(monitorResolution)
+	local halfMarginCalculator = makeMarginCalculator(monitorResolution)
+
+	return function(visibleWidth)
+		local width = tonumber(visibleWidth) or 0
+		if width <= 0 then
+			return 0
+		end
+
+		return halfMarginCalculator(math.floor(width / 2))
+	end
+end
+
 return {
 	calculateMargin = makeMarginCalculator,
+	calculateIslandWidth = makeIslandWidthCalculator,
+	calculateVisibleMargin = makeVisibleMarginCalculator,
 	resolveMonitorResolution = resolveMonitorResolution,
 }

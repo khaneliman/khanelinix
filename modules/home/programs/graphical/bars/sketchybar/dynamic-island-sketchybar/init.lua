@@ -204,6 +204,8 @@ local monitorResolution = monitorHelpers.resolveMonitorResolution({
 	logWarn = logWarn,
 })
 local calculateMargin = monitorHelpers.calculateMargin(monitorResolution)
+local calculateIslandWidth = monitorHelpers.calculateIslandWidth(monitorResolution)
+local calculateVisibleMargin = monitorHelpers.calculateVisibleMargin(monitorResolution)
 local barColor = get("colors.black", "0xff000000")
 local display = get("main.display", "main")
 local fontFamily = get("main.font", "SF Pro")
@@ -449,6 +451,8 @@ local baseCtx = {
 	colorTransparent = colorTransparent,
 	monitorResolution = monitorResolution,
 	calculateMargin = calculateMargin,
+	calculateVisibleMargin = calculateVisibleMargin,
+	calculateIslandWidth = calculateIslandWidth,
 	squishAmount = squishAmount,
 	defaultHeight = defaultHeight,
 	defaultWidth = defaultWidth,

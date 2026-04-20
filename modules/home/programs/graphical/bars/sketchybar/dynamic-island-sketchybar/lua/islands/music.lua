@@ -9,13 +9,14 @@ return function(ctx)
 	local resultSeparator = "|||"
 
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands.music.info.maxExpandWidth", "190"), 190)
+	local maxExpandWidthPx = ctx.calculateIslandWidth(maxExpandWidth)
 	local expandHeight = ctx.asNumber(ctx.get("islands.music.info.expandHeight", "100"), 100)
 	local cornerRad = ctx.asNumber(ctx.get("islands.music.info.cornerRadius", "19"), 19)
 	local expandMargin = ctx.calculateMargin(maxExpandWidth)
 	local imageScale = 0.15
 	local imageYOffset = -10
 	local artSlotWidth = 118
-	local textWidth = math.max(120, maxExpandWidth * 2 - artSlotWidth - 28)
+	local textWidth = math.max(120, maxExpandWidthPx - artSlotWidth - 28)
 	local contentYOffset = -12
 	local maxArtworkRetryAttempts = 4
 	local artworkRetryDelaySeconds = 0.6
