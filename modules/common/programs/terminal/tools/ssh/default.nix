@@ -132,7 +132,7 @@ in
 
     khanelinix = {
       home.extraOptions = {
-        programs.zsh.shellAliases = lib.foldl (
+        home.shellAliases = lib.foldl (
           aliases: system: aliases // { "ssh-${system}" = "ssh ${system} -t tmux a"; }
         ) { } (builtins.attrNames other-hosts);
       };

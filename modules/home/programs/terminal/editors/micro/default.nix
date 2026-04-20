@@ -16,6 +16,10 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.shellAliases = lib.mkIf cfg.default {
+      vimdiff = "micro -d";
+    };
+
     programs = {
       micro = {
         # Micro documentation
@@ -26,10 +30,6 @@ in
           colorscheme = "catppuccin-macchiato";
         };
       };
-
-      bash.shellAliases.vimdiff = mkIf cfg.default "micro -d";
-      fish.shellAliases.vimdiff = mkIf cfg.default "micro -d";
-      zsh.shellAliases.vimdiff = mkIf cfg.default "micro -d";
     };
 
     home.sessionVariables = {

@@ -26,6 +26,14 @@ in
       kubeseal
     ];
 
+    home.shellAliases = {
+      k = "kubecolor";
+      kc = "kubectx";
+      kn = "kubens";
+      ks = "kubeseal";
+      kubectl = "kubecolor";
+    };
+
     programs = {
       k9s = {
         enable = true;
@@ -41,14 +49,6 @@ in
             enableMouse = true;
           };
         };
-      };
-
-      zsh.shellAliases = {
-        k = "kubecolor";
-        kc = "kubectx";
-        kn = "kubens";
-        ks = "kubeseal";
-        kubectl = "kubecolor";
       };
     };
   };
