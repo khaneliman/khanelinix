@@ -62,13 +62,144 @@ weather.details = Sbar.add("item", "weather.details", {
 	click_script = "sketchybar --set $NAME popup.drawing=off",
 })
 
+local popupVisible = false
+local latestForecast = nil
+local lastRenderedSignature = nil
+
+local function forecast_signature(forecast)
+	return tostring(forecast.text or "") .. "|" .. tostring(forecast.tooltip or "")
+end
+
+local function apply_forecast_summary(forecast)
+	logger.debug("weather", "forecast_updated", { text = forecast.text })
+	for i, value in ipairs(STR_SPLIT(forecast.text)) do
+		if i == 1 then
+			weather.icon:set({ icon = { string = value } })
+		end
+		if i == 2 then
+			weather.temp:set({ icon = "", label = { string = value .. "°" } })
+		end
+	end
+end
+
+local function render_forecast_tooltip()
+	if latestForecast == nil or IS_EMPTY(latestForecast.tooltip) then
+		return
+	end
+
+	local signature = forecast_signature(latestForecast)
+	if signature == lastRenderedSignature then
+		return
+	end
+	lastRenderedSignature = signature
+
+	CLEAR_POPUP_ITEMS(weather.temp.name)
+
+	local line_count = 0
+	weather.event = {}
+	for i, line in ipairs(STR_SPLIT(latestForecast.tooltip, "\n")) do
+		line_count = line_count + 1
+		if string.find(line, "<b>") then
+			local replacedString = string.gsub(line, "<b>", "")
+			replacedString = string.gsub(replacedString, "</b>", "")
+
+			if i > 1 then
+				weather.event.separator = Sbar.add("item", "weather.event.separator_" .. i, {
+					icon = {
+						string = "─────────────────",
+						color = colors.grey,
+						align = "center",
+						font = {
+							size = 10.0,
+						},
+					},
+					label = {
+						drawing = false,
+					},
+					background = {
+						height = 1,
+					},
+					padding_left = 0,
+					padding_right = 0,
+					position = "popup." .. weather.temp.name,
+					click_script = "sketchybar --set $NAME popup.drawing=off",
+				})
+			end
+
+			weather.event.title = Sbar.add("item", "weather.event.title_" .. i, {
+				icon = {
+					drawing = true,
+					string = replacedString,
+					font = {
+						style = "Bold",
+						size = 16.0,
+					},
+					color = colors.yellow,
+				},
+				label = {
+					drawing = false,
+				},
+				position = "popup." .. weather.temp.name,
+				click_script = "sketchybar --set $NAME popup.drawing=off",
+			})
+		elseif string.find(line, "⬆") or string.find(line, "⬇") then
+			weather.event[i] = Sbar.add("item", "weather.event." .. i, {
+				icon = {
+					drawing = false,
+				},
+				label = {
+					string = line,
+					drawing = true,
+					font = {
+						size = 13.0,
+						style = "Bold",
+					},
+				},
+				position = "popup." .. weather.temp.name,
+				click_script = "sketchybar --set $NAME popup.drawing=off",
+			})
+
+			Sbar.add("item", "weather.event.padding_highlow_" .. i, {
+				icon = { drawing = false },
+				label = { drawing = false },
+				background = { height = 8 },
+				position = "popup." .. weather.temp.name,
+				width = "100%",
+			})
+		else
+			local time, icon, temp, desc = line:match("^(%S+)%s+(%S+)%s+(%S+)%s+(.*)$")
+			if time then
+				local padded_time = string.format("%-5s", time)
+				local short_desc = desc:match("^([^,]+)") or desc
+
+				line = padded_time .. " " .. icon .. " " .. temp .. " " .. short_desc
+			end
+
+			weather.event[i] = Sbar.add("item", "weather.event." .. i, {
+				icon = {
+					drawing = false,
+				},
+				label = {
+					string = line,
+					drawing = true,
+					font = {
+						size = 12.0,
+					},
+				},
+				position = "popup." .. weather.temp.name,
+				click_script = "sketchybar --set $NAME popup.drawing=off",
+			})
+		end
+	end
+
+	logger.debug("weather", "forecast_tooltip_rendered", { lines = line_count })
+end
+
 weather.temp:subscribe({ "routine", "forced", "system_woke", "weather_update" }, function()
 	if IS_SYSTEM_SLEEPING then
 		logger.debug("weather", "update_skipped_sleeping", {})
 		return
 	end
-
-	weather.temp:set({ popup = { drawing = false } })
 
 	Sbar.exec("wttrbar --fahrenheit --ampm --location $(jq '.wttr.location' ~/weather_config.json)", function(forecast)
 		if IS_EMPTY(forecast) or IS_EMPTY(forecast.text) then
@@ -76,123 +207,26 @@ weather.temp:subscribe({ "routine", "forced", "system_woke", "weather_update" },
 			return
 		end
 
-		logger.debug("weather", "forecast_updated", { text = forecast.text })
-		for i, value in ipairs(STR_SPLIT(forecast.text)) do
-			if i == 1 then
-				weather.icon:set({ icon = { string = value } })
-			end
-			if i == 2 then
-				weather.temp:set({ icon = "", label = { string = value .. "°" } })
-			end
+		local signature = forecast_signature(forecast)
+		latestForecast = forecast
+		apply_forecast_summary(forecast)
+		if popupVisible and signature ~= lastRenderedSignature then
+			render_forecast_tooltip()
 		end
-
-		CLEAR_POPUP_ITEMS(weather.temp.name)
-
-		local line_count = 0
-		weather.event = {}
-		for i, line in ipairs(STR_SPLIT(forecast.tooltip, "\n")) do
-			line_count = line_count + 1
-			if string.find(line, "<b>") then
-				local replacedString = string.gsub(line, "<b>", "")
-				replacedString = string.gsub(replacedString, "</b>", "")
-
-				if i > 1 then
-					weather.event.separator = Sbar.add("item", "weather.event.separator_" .. i, {
-						icon = {
-							string = "─────────────────",
-							color = colors.grey,
-							align = "center",
-							font = {
-								size = 10.0,
-							},
-						},
-						label = {
-							drawing = false,
-						},
-						background = {
-							height = 1,
-						},
-						padding_left = 0,
-						padding_right = 0,
-						position = "popup." .. weather.temp.name,
-						click_script = "sketchybar --set $NAME popup.drawing=off",
-					})
-				end
-
-				weather.event.title = Sbar.add("item", "weather.event.title_" .. i, {
-					icon = {
-						drawing = true,
-						string = replacedString,
-						font = {
-							style = "Bold",
-							size = 16.0,
-						},
-						color = colors.yellow,
-					},
-					label = {
-						drawing = false,
-					},
-					position = "popup." .. weather.temp.name,
-					click_script = "sketchybar --set $NAME popup.drawing=off",
-				})
-			elseif string.find(line, "⬆") or string.find(line, "⬇") then
-				weather.event[i] = Sbar.add("item", "weather.event." .. i, {
-					icon = {
-						drawing = false,
-					},
-					label = {
-						string = line,
-						drawing = true,
-						font = {
-							size = 13.0,
-							style = "Bold",
-						},
-					},
-					position = "popup." .. weather.temp.name,
-					click_script = "sketchybar --set $NAME popup.drawing=off",
-				})
-
-				Sbar.add("item", "weather.event.padding_highlow_" .. i, {
-					icon = { drawing = false },
-					label = { drawing = false },
-					background = { height = 8 },
-					position = "popup." .. weather.temp.name,
-					width = "100%",
-				})
-			else
-				-- Clean up and align the line
-				local time, icon, temp, desc = line:match("^(%S+)%s+(%S+)%s+(%S+)%s+(.*)$")
-				if time then
-					-- Pad time to fixed length (e.g., 5 chars)
-					local padded_time = string.format("%-5s", time)
-
-					-- Truncate description at first comma
-					local short_desc = desc:match("^([^,]+)") or desc
-
-					line = padded_time .. " " .. icon .. " " .. temp .. " " .. short_desc
-				end
-
-				weather.event[i] = Sbar.add("item", "weather.event." .. i, {
-					icon = {
-						drawing = false,
-					},
-					label = {
-						string = line,
-						drawing = true,
-						font = {
-							size = 12.0,
-						},
-					},
-					position = "popup." .. weather.temp.name,
-					click_script = "sketchybar --set $NAME popup.drawing=off",
-				})
-			end
-		end
-		logger.debug("weather", "forecast_tooltip_rendered", { lines = line_count })
 	end)
 end)
 
 SETUP_STANDARD_CLICKS(weather.temp, "weather_update")
-SETUP_POPUP_HOVER(weather.temp)
+SETUP_POPUP_HOVER(weather.temp, function()
+	popupVisible = true
+	if latestForecast == nil then
+		Sbar.trigger("weather_update")
+		return
+	end
+
+	render_forecast_tooltip()
+end, function()
+	popupVisible = false
+end)
 
 SETUP_STANDARD_CLICKS(weather.icon, "weather_update")
