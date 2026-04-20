@@ -1,10 +1,12 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
   inherit (lib) mkEnableOption mkIf;
+  aliasCompat = import ../alias-compat.nix { inherit lib pkgs; };
 
   cfg = config.khanelinix.programs.terminal.shell.nushell;
 in
@@ -33,43 +35,9 @@ in
           lib.mapAttrs (
             _name: value:
             let
-              isComplexScript =
-                lib.hasInfix "\n" value && (lib.hasInfix "for " value || lib.hasInfix "if " value);
-              hasPositionalParams =
-                # Check for positional params but exclude awk field references like '{print $1}'
-                let
-                  hasBasicPositionalParams =
-                    lib.hasInfix "$1" value || lib.hasInfix "$2" value || lib.hasInfix "$@" value;
-                  isAwkFieldReference = lib.hasInfix "{print $1}" value || lib.hasInfix "'{print $1}'" value;
-                in
-                hasBasicPositionalParams && !isAwkFieldReference;
-              hasMultipleCommands = lib.hasInfix "&&" value || lib.hasInfix "||" value || lib.hasInfix ";" value;
-
               transformedValue =
-                if isComplexScript || hasPositionalParams || hasMultipleCommands then
-                  # For complex scripts, wrap in bash -c and preserve original bash syntax
-                  let
-                    # Remove comment lines that start with # (they cause nushell parsing issues)
-                    lines = lib.splitString "\n" value;
-                    nonCommentLines = builtins.filter (
-                      line:
-                      let
-                        trimmed = lib.trim line;
-                      in
-                      trimmed != "" && !lib.hasPrefix "#" trimmed
-                    ) lines;
-                    cleanScript = lib.concatStringsSep "\n" nonCommentLines;
-                  in
-                  if hasPositionalParams then
-                    # For aliases with positional params, create a bash function wrapper
-                    let
-                      # Convert the command to a function that accepts arguments
-                      functionScript = "f() { " + cleanScript + "; }; f \"$@\"";
-                    in
-                    "bash -c " + lib.escapeShellArg functionScript + " --"
-                  else
-                    # Use single quotes but escape any single quotes in the script
-                    "bash -c '" + (lib.replaceStrings [ "'" ] [ "'\"'\"'" ] cleanScript) + "'"
+                if aliasCompat.isComplexAlias value then
+                  aliasCompat.translatedAliasValue value
                 else
                   # For simple single-command aliases, apply nushell transformations
                   let

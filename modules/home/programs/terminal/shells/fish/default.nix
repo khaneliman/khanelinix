@@ -8,6 +8,7 @@
 }:
 let
   inherit (lib) mkIf;
+  aliasCompat = import ../alias-compat.nix { inherit lib pkgs; };
 
   cfg = config.khanelinix.programs.terminal.shell.fish;
   nixpkgsReviewGuard = /* fish */ ''
@@ -37,6 +38,11 @@ in
       # Fish documentation
       # See: https://fishshell.com/docs/current/index.html
       enable = true;
+      # TODO: Fix upstream Home Manager fish alias quoting. `programs.fish.shellAliases`
+      # currently emits `alias ... ${lib.escapeShellArg value}`, which is POSIX
+      # quoting and breaks complex alias bodies containing embedded single quotes.
+      shellAliases = lib.mkForce (aliasCompat.translateFishAliasMap config.home.shellAliases);
+      functions = aliasCompat.translateFishFunctions config.home.shellAliases;
 
       loginShellInit =
         let

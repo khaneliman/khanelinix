@@ -9,6 +9,7 @@
 let
   inherit (lib) mkEnableOption mkIf;
   inherit (lib.strings) fileContents;
+  aliasCompat = import ../alias-compat.nix { inherit lib pkgs; };
 
   cfg = config.khanelinix.programs.terminal.shell.zsh;
   hasSystemZsh = osConfig.programs.zsh.enable or false;
@@ -26,6 +27,7 @@ in
         # See: https://zsh.sourceforge.io/Doc/
         enable = true;
         package = pkgs.zsh;
+        shellAliases = lib.mkForce (aliasCompat.translateAliasMap config.home.shellAliases);
 
         autocd = true;
 
@@ -201,7 +203,6 @@ in
               ZSH_AUTOSUGGEST_HISTORY_IGNORE=$'*\n*'
             ''}
           '')
-
           # Should be last thing to run
           (lib.mkOrder 5000 (lib.optionalString config.programs.fastfetch.enable "fastfetch"))
         ];

@@ -1,10 +1,12 @@
 {
   config,
   lib,
+  pkgs,
 
   ...
 }:
 let
+  aliasCompat = import ../alias-compat.nix { inherit lib pkgs; };
   cfg = config.khanelinix.programs.terminal.shell.bash;
 in
 {
@@ -18,6 +20,7 @@ in
       # See: https://www.gnu.org/software/bash/manual/
       enable = true;
       enableCompletion = true;
+      shellAliases = lib.mkForce (aliasCompat.translateAliasMap config.home.shellAliases);
 
       initExtra = lib.mkMerge [
         (lib.mkBefore ''
