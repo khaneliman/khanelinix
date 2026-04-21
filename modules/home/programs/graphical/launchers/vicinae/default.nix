@@ -86,24 +86,24 @@ in
             name = "world-clock";
             sha256 = "sha256-7HGaEwwLxUKz9h+WrWep6hA5dJpqFbAHPKAfFVjF+7I=";
           }
-          # FIXME:
+          # FIXME: broken extension candidates (build/runtime issues in CI)
           # npm error path /build/bitwarden/node_modules/electron
           # npm error RequestError: getaddrinfo EAI_AGAIN github.com
           # npm error     at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
           # "bitwarden"
-          # FIXME:
+          # FIXME: broken extension candidates (build/runtime issues in CI)
           # /build/claude/node_modules/.bin/ray: line 36: curl: command not found
           # /build/claude/node_modules/.bin/ray: line 71: /build/claude/node_modules/@raycast/api/bin/linux/ray: No such file or directory
           # "claude"
         ]
-        # FIXME:
+        # FIXME: broken extension candidates (build/runtime issues in CI)
         # /build/postman/node_modules/.bin/ray: line 30: curl: command not found
         # /build/postman/node_modules/.bin/ray: line 65: /build/postman/node_modules/@raycast/api/bin/linux/ray: No such file or directory
         # ++ lib.optional (config.khanelinix.suites.development.enable && !isWSL) {
         #   name = "postman";
         #   sha256 = "";
         # }
-        # FIXME:
+        # FIXME: broken extension candidates (build/runtime issues in CI)
         # cp: missing destination file operand after '/nix/store/big3djc5djq0lgx3xi00ygwbmd22jnxk-visual-studio-code-recent-projects/'
         # ++ lib.optional config.khanelinix.programs.graphical.editors.vscode.enable {
         #   name = "visual-studio-code-recent-projects";

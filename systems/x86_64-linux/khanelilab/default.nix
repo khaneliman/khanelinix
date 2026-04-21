@@ -9,7 +9,7 @@ let
 in
 {
   imports = [
-    # TODO:
+    # TODO: re-enable disk partition module when target layout is finalized
     # ./disks.nix
     ./hardware.nix
   ];

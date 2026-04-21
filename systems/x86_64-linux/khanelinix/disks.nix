@@ -92,7 +92,7 @@ in
                     mountpoint = "/";
                     mountOptions = defaultBtrfsOpts;
                   };
-                  # TODO:
+                  # TODO: decide whether to split @home and @nix subvolumes here
                   # "@home" = {
                   #   mountpoint = "/home";
                   #   mountOptions = defaultBtrfsOpts;

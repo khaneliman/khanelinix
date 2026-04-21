@@ -51,7 +51,7 @@ in
       mpdMusicDir = mkIf config.khanelinix.services.mpd.enable config.khanelinix.services.mpd.musicDirectory;
 
       settings = {
-        # TODO: see how much UI customization can be done
+        # TODO: evaluate whether more ncmpcpp UI customization is worth adding here
         # Miscellaneous
         ncmpcpp_directory = "${config.xdg.configHome}/ncmpcpp";
         ignore_leading_the = true;
@@ -63,7 +63,7 @@ in
         allow_for_physical_item_deletion = "no";
         lines_scrolled = "0";
         follow_now_playing_lyrics = "yes";
-        # TODO: Implement
+        # TODO: finish lyrics integration instead of only hard-coding the fetcher
         lyrics_fetchers = "musixmatch";
 
         # visualizer

@@ -126,7 +126,7 @@
               "*.svg"
               "*.tmux"
               "*/config"
-              # TODO: formatters?
+              # Excludes for formatter inputs that break template/style assumptions
               "*.ac"
               "*.css" # Exclude CSS files from formatting since we use Nix template variables
               "*.csproj"

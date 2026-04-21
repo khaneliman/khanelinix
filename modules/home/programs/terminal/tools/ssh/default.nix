@@ -34,8 +34,9 @@ let
       username = config.khanelinix.user.name;
     }) (lib.filterAttrs (name: _: name != hostname) allHosts);
 
-  # TODO: Move per-host SSH overrides into an external host map outside Nix so
-  # aliases stay cheap to evaluate without requiring repo edits for exceptions.
+  # Per-host SSH overrides are maintained in a dedicated hosts map
+  # (modules/common/programs/terminal/tools/ssh/hosts.nix) to keep aliases
+  # cheap to evaluate and avoid per-host module edits.
   hostOverrides = import (inputs.self + "/modules/common/programs/terminal/tools/ssh/hosts.nix");
 
   otherHosts = lib.mapAttrs (

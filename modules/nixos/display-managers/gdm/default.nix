@@ -44,7 +44,7 @@ in
           # See: https://wiki.gnome.org/Projects/GDM
           inherit (cfg) enable wayland autoSuspend;
         };
-        #FIXME: wtf
+        # Keep SDDM disabled because this module manages the GDM session directly.
         sddm.enable = lib.mkForce false;
       };
       libinput.enable = true;
