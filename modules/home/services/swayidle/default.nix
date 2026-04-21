@@ -21,7 +21,7 @@ in
       enable = true;
       package = pkgs.swayidle;
 
-      systemdTarget = lib.mkIf (!(osConfig.programs.uwsm.enable or false)) "sway-session.target";
+      systemdTargets = lib.mkIf (!(osConfig.programs.uwsm.enable or false)) [ "sway-session.target" ];
 
       events = {
         before-sleep = "loginctl lock-session";
