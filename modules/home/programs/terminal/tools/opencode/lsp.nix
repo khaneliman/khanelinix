@@ -116,7 +116,8 @@
       };
 
       csharp = {
-        command = [ (lib.getExe pkgs.roslyn-ls) ];
+        # FIXME: broken nixpkgs
+        # command = [ (lib.getExe pkgs.roslyn-ls) ];
         extensions = [
           ".cs"
           ".csx"
