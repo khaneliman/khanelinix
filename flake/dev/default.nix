@@ -11,6 +11,7 @@ in
   imports = [
     ./devshells.nix
     ./checks.nix
+    ./parse.nix
     ./templates.nix
     ./treefmt.nix
   ];
