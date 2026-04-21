@@ -48,7 +48,7 @@ writeShellApplication {
     }
 
     cleanup() {
-    	debug_log "Running cleanup (caller: ''\${FUNCNAME[1]})"
+    	debug_log "Running cleanup (caller: ''${FUNCNAME[1]})"
     	local -a tmp_files=(
     		"$TMP_FILE_UNOPTIMIZED"
     		"$TMP_PALETTE_FILE"
@@ -58,7 +58,7 @@ writeShellApplication {
     		"$TMP_PID_FILE"
     		"/tmp/recording_in_progress"
     	)
-    	for file in "''\${tmp_files[@]}"; do
+    	for file in "''${tmp_files[@]}"; do
     		if [[ -f "$file" ]]; then
     			debug_log "Removing file: $file"
     			rm -f "$file"
@@ -112,15 +112,15 @@ writeShellApplication {
     	local mime_type="$3"
 
     	local save_path
-    	save_path=$(zenity --file-selection --save --file-filter="*''\${default_ext}" --filename="''\${OUT_DIR}/''\${default_ext}")
+    	save_path=$(zenity --file-selection --save --file-filter="*''${default_ext}" --filename="''${OUT_DIR}/''${default_ext}")
 
     	# Use default filename if no selection made
     	if [[ -z "$save_path" ]]; then
-    		save_path="''\${FILENAME}''\${default_ext#.}"
+    		save_path="''${FILENAME}''${default_ext#.}"
     	fi
 
     	# Ensure correct extension
-    	[[ $save_path =~ ''\${default_ext}$ ]] || save_path+="$default_ext"
+    	[[ $save_path =~ ''${default_ext}$ ]] || save_path+="$default_ext"
 
     	if ! mv "$source" "$save_path"; then
     		notify "Error" "Failed to save file to $save_path"
@@ -205,7 +205,7 @@ writeShellApplication {
     	local width height
     	width=$(hyprctl -j monitors | jq -r ".[] | select(.name == \"$output\") | .width")
     	height=$(hyprctl -j monitors | jq -r ".[] | select(.name == \"$output\") | .height")
-    	debug_log "Screen dimensions: ''\${width}x''\${height}"
+    	debug_log "Screen dimensions: ''${width}x''${height}"
 
     	# Calculate scale factor if dimensions exceed maximum supported
     	local scale_factor=1.0
@@ -225,14 +225,14 @@ writeShellApplication {
     		local scaled_width scaled_height
     		scaled_width=$(echo "$width * $scale_factor" | bc | cut -d. -f1)
     		scaled_height=$(echo "$height * $scale_factor" | bc | cut -d. -f1)
-    		debug_log "Scaled dimensions: ''\${scaled_width}x''\${scaled_height}"
+    		debug_log "Scaled dimensions: ''${scaled_width}x''${scaled_height}"
 
     		wl-screenrec \
     			--audio \
     			--audio-device alsa_output.pci-0000_0c_00.4.analog-stereo.monitor \
     			--low-power=off \
     			--codec=avc \
-    			--encode-resolution="''\${scaled_width}x''\${scaled_height}" \
+    			--encode-resolution="''${scaled_width}x''${scaled_height}" \
     			-f "$TMP_MP4_FILE" \
     			-o "$output" &
     	else
@@ -330,7 +330,7 @@ writeShellApplication {
     }
 
     stop() {
-    	local was_interrupted=''\${1:-false}
+    	local was_interrupted=''${1:-false}
     	debug_log "Stop called (was_interrupted: $was_interrupted)"
 
     	if ! is_recorder_running && [[ ! -f "$TMP_MP4_FILE" ]]; then
@@ -401,20 +401,20 @@ writeShellApplication {
     }
 
     main() {
-    	debug_log "Script started with argument: ''\${1:-none}"
+    	debug_log "Script started with argument: ''${1:-none}"
 
     	# If recording is running and command is not 'stop', stop it first
-    	if is_recorder_running && [[ "''\${1:-}" != "stop" ]]; then
+    	if is_recorder_running && [[ "''${1:-}" != "stop" ]]; then
     		debug_log "Stopping existing recording"
     		stop
     	fi
 
     	# Only clean up if we're not stopping an existing recording
-    	if [[ "''\${1:-}" != "stop" ]]; then
+    	if [[ "''${1:-}" != "stop" ]]; then
     		cleanup
     	fi
 
-    	case "''\${1:-}" in
+    	case "''${1:-}" in
     	screen)
     		debug_log "Starting screen recording"
     		screen

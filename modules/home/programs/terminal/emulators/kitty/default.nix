@@ -392,7 +392,7 @@ in
             term = "xterm-kitty";
           }
           // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-            listen_on = "unix:$\{XDG_RUNTIME_DIR}/kitty";
+            listen_on = "unix:\${XDG_RUNTIME_DIR}/kitty";
           }
           // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
             hide_window_decorations = "titlebar-only";
