@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  pkgsUnstable,
+  getPkgsUnstable,
   ...
 }:
 let
@@ -141,6 +141,9 @@ in
 
           # TODO: verify still works
           "gpg \"ssh\"".program = mkIf cfg._1password (
+            let
+              pkgsUnstable = getPkgsUnstable pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
+            in
             lib.optionalString pkgs.stdenv.hostPlatform.isLinux (
               getExe' pkgsUnstable._1password-gui "op-ssh-sign"
             )

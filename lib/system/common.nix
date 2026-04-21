@@ -31,18 +31,30 @@ let
     }:
     let
       nixpkgsConfig = mkNixpkgsConfig flake;
+      mkPkgs =
+        source:
+        let
+          cached = import source {
+            inherit system;
+            inherit (nixpkgsConfig) config;
+            overlays = [ ];
+          };
+        in
+        inputSystem: inputNixpkgsConfig:
+        if inputSystem == system then
+          cached
+        else
+          import source {
+            system = inputSystem;
+            config = inputNixpkgsConfig.config or nixpkgsConfig.config;
+            overlays = [ ];
+          };
+
+      getPkgsMaster = mkPkgs inputs.nixpkgs-master;
+      getPkgsUnstable = mkPkgs inputs.nixpkgs-unstable;
     in
     {
-      pkgsMaster = import inputs.nixpkgs-master {
-        inherit system;
-        inherit (nixpkgsConfig) config;
-        overlays = [ ];
-      };
-      pkgsUnstable = import inputs.nixpkgs-unstable {
-        inherit system;
-        inherit (nixpkgsConfig) config;
-        overlays = [ ];
-      };
+      inherit getPkgsMaster getPkgsUnstable;
     };
 
   /**

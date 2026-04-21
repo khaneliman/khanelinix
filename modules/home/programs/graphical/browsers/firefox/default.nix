@@ -3,7 +3,7 @@
   inputs,
   lib,
   pkgs,
-  pkgsUnstable,
+  getPkgsUnstable,
 
   ...
 }:
@@ -92,182 +92,186 @@ in
       packages = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin [ pkgs.defaultbrowser ];
     };
 
-    programs.firefox = {
-      # Firefox configuration and policies
-      # See: https://mozilla.github.io/policy-templates/
-      enable = true;
-      package = pkgsUnstable.firefox-devedition;
+    programs.firefox =
+      let
+        pkgsUnstable = getPkgsUnstable pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
+      in
+      {
+        # Firefox configuration and policies
+        # See: https://mozilla.github.io/policy-templates/
+        enable = true;
+        package = pkgsUnstable.firefox-devedition;
 
-      # TODO: remove after stateVersion bump
-      configPath = lib.mkIf pkgs.stdenv.hostPlatform.isLinux "${config.xdg.configHome}/mozilla/firefox";
+        # TODO: remove after stateVersion bump
+        configPath = lib.mkIf pkgs.stdenv.hostPlatform.isLinux "${config.xdg.configHome}/mozilla/firefox";
 
-      darwinDefaultsId =
-        if config.programs.firefox.package.pname == "firefox-devedition" then
-          "org.nixos.firefoxdeveloperedition"
-        else
-          "org.mozilla.firefox";
+        darwinDefaultsId =
+          if config.programs.firefox.package.pname == "firefox-devedition" then
+            "org.nixos.firefoxdeveloperedition"
+          else
+            "org.mozilla.firefox";
 
-      inherit (cfg) policies;
+        inherit (cfg) policies;
 
-      profiles = {
-        "dev-edition-default" = {
-          id = 0;
-          path = "${config.khanelinix.user.name}";
-        };
+        profiles = {
+          "dev-edition-default" = {
+            id = 0;
+            path = "${config.khanelinix.user.name}";
+          };
 
-        ${config.khanelinix.user.name} = {
-          inherit (cfg) extraConfig;
-          inherit (config.khanelinix.user) name;
+          ${config.khanelinix.user.name} = {
+            inherit (cfg) extraConfig;
+            inherit (config.khanelinix.user) name;
 
-          id = 1;
+            id = 1;
 
-          settings = mkMerge [
-            cfg.settings
-            {
-              "accessibility.typeaheadfind.enablesound" = false;
-              "accessibility.typeaheadfind.flashBar" = 0;
+            settings = mkMerge [
+              cfg.settings
+              {
+                "accessibility.typeaheadfind.enablesound" = false;
+                "accessibility.typeaheadfind.flashBar" = 0;
 
-              "browser.aboutConfig.showWarning" = false;
-              "browser.aboutwelcome.enabled" = false;
-              "browser.bookmarks.autoExportHTML" = true;
-              "browser.bookmarks.showMobileBookmarks" = true;
-              "browser.chrome.site_icons" = true;
-              "browser.meta_refresh_when_inactive.disabled" = true;
-              "browser.newtabpage.activity-stream.default.sites" = "";
-              "browser.newtabpage.activity-stream.feeds.section.topstories" = false;
-              "browser.newtabpage.activity-stream.showSponsored" = false;
-              "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
-              "browser.search.hiddenOneOffs" = "Google,Amazon.com,Bing,DuckDuckGo,eBay,Wikipedia (en)";
-              "browser.search.suggest.enabled" = false;
-              "browser.sessionstore.warnOnQuit" = true;
-              "browser.shell.checkDefaultBrowser" = false;
-              "browser.ssb.enabled" = true;
-              "browser.startup.homepage.abouthome_cache.enabled" = true;
-              "browser.startup.page" = 3;
-              "browser.urlbar.keepPanelOpenDuringImeComposition" = true;
-              "browser.urlbar.suggest.quicksuggest.sponsored" = false;
+                "browser.aboutConfig.showWarning" = false;
+                "browser.aboutwelcome.enabled" = false;
+                "browser.bookmarks.autoExportHTML" = true;
+                "browser.bookmarks.showMobileBookmarks" = true;
+                "browser.chrome.site_icons" = true;
+                "browser.meta_refresh_when_inactive.disabled" = true;
+                "browser.newtabpage.activity-stream.default.sites" = "";
+                "browser.newtabpage.activity-stream.feeds.section.topstories" = false;
+                "browser.newtabpage.activity-stream.showSponsored" = false;
+                "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
+                "browser.search.hiddenOneOffs" = "Google,Amazon.com,Bing,DuckDuckGo,eBay,Wikipedia (en)";
+                "browser.search.suggest.enabled" = false;
+                "browser.sessionstore.warnOnQuit" = true;
+                "browser.shell.checkDefaultBrowser" = false;
+                "browser.ssb.enabled" = true;
+                "browser.startup.homepage.abouthome_cache.enabled" = true;
+                "browser.startup.page" = 3;
+                "browser.urlbar.keepPanelOpenDuringImeComposition" = true;
+                "browser.urlbar.suggest.quicksuggest.sponsored" = false;
 
-              "devtools.chrome.enabled" = true;
-              "devtools.debugger.remote-enabled" = true;
-              "dom.forms.autocomplete.formautofill" = true;
-              "dom.storage.next_gen" = true;
-              "extensions.formautofill.addresses.enabled" = false;
-              "extensions.formautofill.creditCards.enabled" = false;
-              "extensions.htmlaboutaddons.recommendations.enabled" = false;
+                "devtools.chrome.enabled" = true;
+                "devtools.debugger.remote-enabled" = true;
+                "dom.forms.autocomplete.formautofill" = true;
+                "dom.storage.next_gen" = true;
+                "extensions.formautofill.addresses.enabled" = false;
+                "extensions.formautofill.creditCards.enabled" = false;
+                "extensions.htmlaboutaddons.recommendations.enabled" = false;
 
-              "font.name.monospace.x-western" = fontCfg.monaspace.families.krypton;
-              "font.name.sans-serif.x-western" = fontCfg.monaspace.families.neon;
-              "font.name.serif.x-western" = fontCfg.monaspace.families.neon;
+                "font.name.monospace.x-western" = fontCfg.monaspace.families.krypton;
+                "font.name.sans-serif.x-western" = fontCfg.monaspace.families.neon;
+                "font.name.serif.x-western" = fontCfg.monaspace.families.neon;
 
-              "general.autoScroll" = false;
-              "general.smoothScroll.msdPhysics.enabled" = true;
-              "geo.enabled" = false;
-              "geo.provider.use_corelocation" = false;
-              "geo.provider.use_geoclue" = false;
-              "geo.provider.use_gpsd" = false;
+                "general.autoScroll" = false;
+                "general.smoothScroll.msdPhysics.enabled" = true;
+                "geo.enabled" = false;
+                "geo.provider.use_corelocation" = false;
+                "geo.provider.use_geoclue" = false;
+                "geo.provider.use_gpsd" = false;
 
-              "gfx.font_rendering.cleartype_params.enhanced_contrast" = 25;
-              "gfx.font_rendering.cleartype_params.force_gdi_classic_for_families" = "";
-              "gfx.font_rendering.directwrite.bold_simulation" = 2;
+                "gfx.font_rendering.cleartype_params.enhanced_contrast" = 25;
+                "gfx.font_rendering.cleartype_params.force_gdi_classic_for_families" = "";
+                "gfx.font_rendering.directwrite.bold_simulation" = 2;
 
-              "intl.accept_languages" = "en-US,en";
-              "media.eme.enabled" = true;
-              "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
+                "intl.accept_languages" = "en-US,en";
+                "media.eme.enabled" = true;
+                "media.videocontrols.picture-in-picture.video-toggle.enabled" = false;
 
-              "signon.autofillForms" = false;
-              "signon.firefoxRelay.feature" = "disabled";
-              "signon.generation.enabled" = false;
-              "signon.management.page.breach-alerts.enabled" = false;
-              "signon.rememberSignons" = false;
+                "signon.autofillForms" = false;
+                "signon.firefoxRelay.feature" = "disabled";
+                "signon.generation.enabled" = false;
+                "signon.management.page.breach-alerts.enabled" = false;
+                "signon.rememberSignons" = false;
 
-              "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
-              "xpinstall.signatures.required" = false;
+                "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+                "xpinstall.signatures.required" = false;
 
-              "browser.startup.homepage" = "about:blank";
-              "browser.newtab.url" = "about:blank";
-              "browser.ctrlTab.sortByRecentlyUsed" = false;
-              "browser.tabs.closeWindowWithLastTab" = true;
-              "browser.tabs.tabmanager.enabled" = true;
+                "browser.startup.homepage" = "about:blank";
+                "browser.newtab.url" = "about:blank";
+                "browser.ctrlTab.sortByRecentlyUsed" = false;
+                "browser.tabs.closeWindowWithLastTab" = true;
+                "browser.tabs.tabmanager.enabled" = true;
 
-              "browser.download.start_downloads_in_tmp_dir" = true;
-              # "browser.download.folderList" = 2; # use the last dir
-              "browser.download.useDownloadDir" = true;
-              "browser.download.dir" =
-                if config.xdg.userDirs.enable then
-                  config.xdg.userDirs.download
-                else
-                  "${config.home.homeDirectory}/Downloads";
+                "browser.download.start_downloads_in_tmp_dir" = true;
+                # "browser.download.folderList" = 2; # use the last dir
+                "browser.download.useDownloadDir" = true;
+                "browser.download.dir" =
+                  if config.xdg.userDirs.enable then
+                    config.xdg.userDirs.download
+                  else
+                    "${config.home.homeDirectory}/Downloads";
 
-              "media.block-autoplay-until-in-foreground" = true;
-              "media.block-play-until-document-interaction" = true;
-              "media.block-play-until-visible" = true;
+                "media.block-autoplay-until-in-foreground" = true;
+                "media.block-play-until-document-interaction" = true;
+                "media.block-play-until-visible" = true;
 
-              "privacy.clearOnShutdown.history" = false;
-              "privacy.donottrackheader.enabled" = true;
-              "privacy.trackingprotection.enabled" = true;
-              "privacy.trackingprotection.socialtracking.enabled" = true;
-              "device.sensors.enabled" = false;
-              # Bluetooth location tracking
-              "beacon.enabled" = false;
+                "privacy.clearOnShutdown.history" = false;
+                "privacy.donottrackheader.enabled" = true;
+                "privacy.trackingprotection.enabled" = true;
+                "privacy.trackingprotection.socialtracking.enabled" = true;
+                "device.sensors.enabled" = false;
+                # Bluetooth location tracking
+                "beacon.enabled" = false;
 
-              "browser.send_pings" = false;
-              "toolkit.telemetry.archive.enabled" = false;
-              "toolkit.telemetry.enabled" = false;
-              "toolkit.telemetry.server" = "";
-              "toolkit.telemetry.unified" = false;
-              "extensions.webcompat-reporter.enabled" = false;
-              "datareporting.policy.dataSubmissionEnabled" = false;
-              "datareporting.healthreport.uploadEnabled" = false;
-              "browser.ping-centre.telemetry" = false;
-              "browser.urlbar.eventTelemetry.enabled" = false;
-              "browser.tabs.crashReporting.sendReport" = false;
+                "browser.send_pings" = false;
+                "toolkit.telemetry.archive.enabled" = false;
+                "toolkit.telemetry.enabled" = false;
+                "toolkit.telemetry.server" = "";
+                "toolkit.telemetry.unified" = false;
+                "extensions.webcompat-reporter.enabled" = false;
+                "datareporting.policy.dataSubmissionEnabled" = false;
+                "datareporting.healthreport.uploadEnabled" = false;
+                "browser.ping-centre.telemetry" = false;
+                "browser.urlbar.eventTelemetry.enabled" = false;
+                "browser.tabs.crashReporting.sendReport" = false;
 
-              "app.normandy.enabled" = false;
-              "app.shield.optoutstudies.enabled" = false;
+                "app.normandy.enabled" = false;
+                "app.shield.optoutstudies.enabled" = false;
 
-              "extensions.pocket.enabled" = false;
-              "browser.vpn_promo.enabled" = false;
-              "extensions.abuseReport.enabled" = false;
+                "extensions.pocket.enabled" = false;
+                "browser.vpn_promo.enabled" = false;
+                "extensions.abuseReport.enabled" = false;
 
-              # Firefox login
-              # "identity.fxaccounts.enabled" = false;
-              # "identity.fxaccounts.toolbar.enabled" = false;
-              # "identity.fxaccounts.pairing.enabled" = false;
-              # "identity.fxaccounts.commands.enabled" = false;
+                # Firefox login
+                # "identity.fxaccounts.enabled" = false;
+                # "identity.fxaccounts.toolbar.enabled" = false;
+                # "identity.fxaccounts.pairing.enabled" = false;
+                # "identity.fxaccounts.commands.enabled" = false;
 
-              # Firefox password manager
-              "browser.contentblocking.report.lockwise.enabled" = false;
-              "browser.uitour.enabled" = false;
+                # Firefox password manager
+                "browser.contentblocking.report.lockwise.enabled" = false;
+                "browser.uitour.enabled" = false;
 
-              "dom.push.enabled" = false;
-              "dom.push.connection.enabled" = false;
-              "dom.battery.enabled" = false;
-              "dom.private-attribution.submission.enabled" = false;
+                "dom.push.enabled" = false;
+                "dom.push.connection.enabled" = false;
+                "dom.battery.enabled" = false;
+                "dom.private-attribution.submission.enabled" = false;
 
-              # Sidebar
-              "sidebar.revamp" = true;
-              "sidebar.verticalTabs" = true;
-              "sidebar.visibility" = "expand-on-hover";
+                # Sidebar
+                "sidebar.revamp" = true;
+                "sidebar.verticalTabs" = true;
+                "sidebar.visibility" = "expand-on-hover";
 
-              "widget.wayland.fractional-scale.enabled" = config.khanelinix.suites.wlroots.enable;
-            }
-            (optionalAttrs cfg.gpuAcceleration {
-              "dom.webgpu.enabled" = true;
-              "gfx.webrender.all" = true;
-              "layers.gpu-process.enabled" = true;
-              "layers.mlgpu.enabled" = true;
-            })
-            (optionalAttrs cfg.hardwareDecoding {
-              "media.ffmpeg.vaapi.enabled" = true;
-              "media.gpu-process-decoder" = true;
-              "media.gpu-process-encoder" = true;
-              "media.hardware-video-decoding.enabled" = true;
-            })
-          ];
+                "widget.wayland.fractional-scale.enabled" = config.khanelinix.suites.wlroots.enable;
+              }
+              (optionalAttrs cfg.gpuAcceleration {
+                "dom.webgpu.enabled" = true;
+                "gfx.webrender.all" = true;
+                "layers.gpu-process.enabled" = true;
+                "layers.mlgpu.enabled" = true;
+              })
+              (optionalAttrs cfg.hardwareDecoding {
+                "media.ffmpeg.vaapi.enabled" = true;
+                "media.gpu-process-decoder" = true;
+                "media.gpu-process-encoder" = true;
+                "media.hardware-video-decoding.enabled" = true;
+              })
+            ];
 
-          userChrome = ./chrome/userChrome.css;
+            userChrome = ./chrome/userChrome.css;
+          };
         };
       };
-    };
   };
 }

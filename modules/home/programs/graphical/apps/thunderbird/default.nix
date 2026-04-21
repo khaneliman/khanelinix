@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  pkgsUnstable,
+  getPkgsUnstable,
 
   ...
 }:
@@ -232,7 +232,8 @@ in
       # Thunderbird documentation
       # See: https://support.mozilla.org/en-US/products/thunderbird
       enable = true;
-      package = pkgsUnstable.thunderbird-latest;
+      package =
+        (getPkgsUnstable pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; }).thunderbird-latest;
 
       profiles.${config.khanelinix.user.name} = {
         isDefault = true;

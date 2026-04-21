@@ -2,8 +2,7 @@
   config,
   lib,
   pkgs,
-  # pkgsUnstable,
-  pkgsMaster,
+  getPkgsMaster,
   ...
 }:
 let
@@ -29,6 +28,7 @@ in
       catppuccin = import (lib.getFile "modules/home/theme/catppuccin/colors.nix");
       nord = import (lib.getFile "modules/home/theme/nord/colors.nix");
       tokyonight = import (lib.getFile "modules/home/theme/tokyonight/colors.nix");
+      pkgsMaster = getPkgsMaster pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
 
       themeEnabled = {
         catppuccin = config.khanelinix.theme.catppuccin.enable;
