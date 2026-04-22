@@ -113,6 +113,44 @@ let
     - Follow conventional commit format
     - Describe WHY the change is needed
     - Keep subject line under 72 characters
+    - Do NOT put `\n` inside a normal quoted `git commit -m` string and expect a newline; git takes that text literally
+    - Prefer `git commit -F <file>` or `git commit -F-` for longer messages
+    - If using `-m`, prefer multiple `-m` flags for separate paragraphs
+    - Literal newlines inside a quoted shell string are valid
+    - In bash/zsh, ANSI-C quoting like `$'line one\nline two'` interprets escapes, but `-F` or multiple `-m` flags are less error-prone
+
+    ### **Step 3.1a: Safe CLI Patterns**
+    ```bash
+    # Good: separate paragraphs with multiple -m flags
+    git commit \
+      -m "docs(ai-tools): clarify git commit newlines" \
+      -m "Document that normal quoted \\n stays literal in git commit bodies.
+
+    Prefer -F or multiple -m flags for longer messages."
+
+    # Good: include literal newlines inside the quoted body
+    git commit -m "subject" -m "first line
+    second line
+
+    third paragraph"
+
+    # Good: use ANSI-C quoting when shell escapes are intentional
+    git commit -m "subject" -m $'first line\nsecond line\n\nthird paragraph'
+
+    # Safest for long messages
+    git commit -F- <<'EOF'
+    docs(ai-tools): clarify git commit newlines
+
+    Document that normal quoted \n stays literal in git commit bodies.
+
+    Prefer -F or multiple -m flags for longer messages.
+    EOF
+    ```
+
+    **Rule of thumb:**
+    - `"\n"` in normal shell quotes is usually literal
+    - `$'...\n...'` interprets escapes in bash/zsh
+    - For commit messages, `-F` or multiple `-m` flags are the least error-prone
 
     ### **Step 3.2: Validate Commit**
     - Ensure commit builds/tests pass
