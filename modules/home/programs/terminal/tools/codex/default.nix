@@ -54,8 +54,8 @@ in
         };
 
         model = "gpt-5.4";
-        model_reasoning_effort = "medium";
-        plan_mode_reasoning_effort = "high";
+        model_reasoning_effort = "high";
+        plan_mode_reasoning_effort = "xhigh";
         service_tier = "fast";
 
         notify =
