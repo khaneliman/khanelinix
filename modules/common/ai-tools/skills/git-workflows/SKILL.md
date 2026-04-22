@@ -68,6 +68,52 @@ git log --oneline -n 20
 git status --short
 ```
 
+### Multiline Commit Messages
+
+Do not put `\n` inside a normal quoted `git commit -m` string and expect a
+newline. Git takes that text literally.
+
+Bad:
+
+```bash
+git commit -m "subject" -m "line one\nline two"
+```
+
+Prefer one of these patterns instead:
+
+```bash
+# Separate paragraphs with multiple -m flags
+git commit \
+  -m "docs(ai-tools): clarify git commit newlines" \
+  -m "Document that normal quoted \n stays literal in git commit bodies.
+
+Prefer -F or multiple -m flags for longer messages."
+
+# Put literal newlines directly in the quoted string
+git commit -m "subject" -m "first line
+second line
+
+third paragraph"
+
+# In bash/zsh, ANSI-C quoting interprets escapes
+git commit -m "subject" -m $'first line\nsecond line\n\nthird paragraph'
+
+# Safest for longer messages
+git commit -F- <<'EOF'
+docs(ai-tools): clarify git commit newlines
+
+Document that normal quoted \n stays literal in git commit bodies.
+
+Prefer -F or multiple -m flags for longer messages.
+EOF
+```
+
+Rule of thumb:
+
+- `"\n"` in normal shell quotes is usually literal
+- `$'...\n...'` interprets escapes in bash/zsh
+- For commit messages, `-F` or multiple `-m` flags are the least error-prone
+
 ## Useful Git Commands
 
 ### Inspection Commands
