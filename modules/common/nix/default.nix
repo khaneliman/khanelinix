@@ -93,6 +93,14 @@ in
         hasRemoteBuilders =
           config.khanelinix.security.sops.enable
           && (config.khanelinix.environments.home-network.enable or false);
+        experimentalFeatures = [
+          "nix-command"
+          "flakes"
+          "ca-derivations"
+          "dynamic-derivations"
+          (if isLix then "pipe-operator" else "pipe-operators")
+        ]
+        ++ lib.optional pkgs.stdenv.hostPlatform.isLinux "auto-allocate-uids";
       in
       {
         package =
@@ -262,16 +270,7 @@ in
           builders-use-substitutes = false;
           max-silent-time = 300;
           connect-timeout = 10;
-          experimental-features = [
-            "nix-command"
-            "flakes"
-          ]
-          ++ lib.optional pkgs.stdenv.hostPlatform.isLinux "auto-allocate-uids"
-          ++ lib.optionals (!isLix) [
-            "ca-derivations"
-            "pipe-operators"
-            "dynamic-derivations"
-          ];
+          experimental-features = experimentalFeatures;
           # Prevent builds failing just because we can't contact a substituter
           fallback = true;
           flake-registry = "/etc/nix/registry.json";
@@ -323,9 +322,6 @@ in
           ];
 
           use-xdg-base-directories = true;
-        }
-        // lib.optionalAttrs (!isLix) {
-          download-buffer-size = 500000000;
         };
       };
   };
