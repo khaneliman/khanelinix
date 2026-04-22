@@ -94,7 +94,7 @@ _: {
                 nix flake update
 
                 echo "🔄 Updating dev flake lock..."
-                cd flake/dev && nix flake update
+                nix flake update --flake ./flake/dev
 
                 echo "✅ All flake locks updated successfully!"
               '';
