@@ -29,8 +29,10 @@ in
           citrix-workspace = {
             enable = true;
             settings = {
-              # Enable webcam background blur/effects for VDA vt0-it-47-d000
-              vt0-it-47-d000.HDXWebCamEnableBackgndEffectPerVDA = "True";
+              WFClient = {
+                AllowAudioInput = "True";
+                HDXH264InputEnabled = "True";
+              };
             };
           };
           thunderbird =
