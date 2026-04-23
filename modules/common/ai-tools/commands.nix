@@ -6,20 +6,21 @@ let
   agentModels = lib.mapAttrs (_name: agent: agent.model) aiAgents.agents;
 
   commandAgents = {
-    "analyze-git-history" = "explore";
-    "code-review" = "debugger";
-    "commit-changes" = "refactorer";
+    analyze-git-history = "explore";
     changelog = "refactorer";
-    "check-todos" = "refactorer";
-    "deep-check" = "test-runner";
-    "dependency-audit" = "test-runner";
-    "git-bisect" = "explore";
-    "git-cleanup" = "explore";
+    check-todos = "refactorer";
+    code-review = "debugger";
+    commit-changes = "refactorer";
+    deep-check = "test-runner";
+    dependency-audit = "test-runner";
+    git-bisect = "explore";
+    git-cleanup = "explore";
+    illustrator-brief = "explore";
     initialization = "refactorer";
-    "module-lint" = "test-runner";
-    "parse-sarif" = "test-runner";
-    "resolve-conflicts" = "refactorer";
-    "style-audit" = "test-runner";
+    module-lint = "test-runner";
+    parse-sarif = "test-runner";
+    resolve-conflicts = "refactorer";
+    style-audit = "test-runner";
   };
 
   normalizeCommand =
