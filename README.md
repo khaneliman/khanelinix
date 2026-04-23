@@ -26,6 +26,8 @@ customizations to enhance the Nix experience.
 5. [Screenshots](#screenshots)
 6. [Resources](#resources)
 
+![Overview](assets/overview.png)
+
 ## Getting Started
 
 Before diving in, ensure that you have Nix installed on your system. If not, you
