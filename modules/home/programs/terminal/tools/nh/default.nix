@@ -11,6 +11,7 @@ let
   cfg = config.khanelinix.programs.terminal.tools.nh;
 
   userHome = config.home.homeDirectory;
+  switchTarget = if pkgs.stdenv.hostPlatform.isLinux then "os" else "darwin";
 
   nhLogPaths = lib.attrByPath [ "khanelinix" "programs" "terminal" "tools" "nh" "logPaths" ] (
     if pkgs.stdenv.hostPlatform.isDarwin then
@@ -56,7 +57,8 @@ in
         NH_SEARCH_PLATFORM = 1;
       };
       shellAliases = {
-        nixre = "nh ${if pkgs.stdenv.hostPlatform.isLinux then "os" else "darwin"} switch";
+        nixre = "nh ${switchTarget} switch";
+        nixre-fast = "NIX_CONFIG=$'max-jobs = auto\\ncores = 0' nh ${switchTarget} switch";
       };
     };
   };
