@@ -84,7 +84,8 @@ in
             carapace = mkDefault enabled;
             comma = mkDefault enabled;
             dircolors = mkDefault enabled;
-            direnv = mkDefault enabled;
+            # FIXME: broken darwin
+            direnv.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
             eza = mkDefault enabled;
             fastfetch = mkDefault enabled;
             fzf = mkDefault enabled;
