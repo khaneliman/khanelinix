@@ -53,10 +53,14 @@ in
           max_bytes = 104857600;
         };
 
-        model = "gpt-5.4";
-        model_reasoning_effort = "high";
-        plan_mode_reasoning_effort = "xhigh";
-        service_tier = "fast";
+        # GPT-5.5 is more expensive per token than GPT-5.4, but Codex is tuned
+        # to complete most work with fewer tokens. Keep routine turns at medium
+        # and reserve higher reasoning for explicit profiles.
+        model = "gpt-5.5";
+        model_reasoning_effort = "medium";
+        plan_mode_reasoning_effort = "medium";
+        # NOTE: 5.5 is already 2x cost
+        # service_tier = "fast";
 
         notify =
           let
@@ -109,14 +113,16 @@ in
         };
 
         profiles = {
-          # Deep analysis and live-research mode.
+          # Deep analysis and live-research mode. Intentionally expensive:
+          # GPT-5.5 is strongest for long-horizon Codex work, but the announced
+          # Codex context window is 400K rather than the API's upcoming 1M.
           deep = {
-            model = "gpt-5.4";
-            model_auto_compact_token_limit = 900000;
-            model_context_window = 1050000;
+            model = "gpt-5.5";
+            model_auto_compact_token_limit = 350000;
+            model_context_window = 400000;
             model_reasoning_effort = "high";
             model_verbosity = "high";
-            plan_mode_reasoning_effort = "xhigh";
+            plan_mode_reasoning_effort = "high";
             web_search = "live";
           };
 
