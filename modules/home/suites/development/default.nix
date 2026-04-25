@@ -207,6 +207,7 @@ in
             mcp.enable = cfg.aiEnable;
             oh-my-posh = mkDefault enabled;
             opencode.enable = cfg.aiEnable;
+            pi-coding-agent.enable = cfg.aiEnable;
           };
         };
       };
