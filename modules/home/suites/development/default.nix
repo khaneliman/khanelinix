@@ -53,7 +53,8 @@ in
       packages =
         with pkgs;
         [
-          cutter
+          # FIXME: broken nixpkgs
+          # cutter
           jqp
           onefetch
           tree-sitter

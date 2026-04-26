@@ -281,7 +281,7 @@ in
         wallpapers = wallpaperPaths wallpaperCfg.list;
       };
 
-      rnnoise = enabled;
+      rnnoise = lib.khanelinix.disabled;
 
       sops = {
         enable = true;

@@ -41,7 +41,9 @@ in
       with pkgs;
       [
         efibootmgr
-        efitools
+        # FIXME: broken nixpkgs
+        # https://github.com/NixOS/nixpkgs/issues/512925
+        # efitools
         efivar
       ]
       ++ lib.optionals cfg.secureBoot [ sbctl ];
