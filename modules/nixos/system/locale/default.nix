@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
 
   ...
 }:
@@ -16,7 +17,8 @@ in
 
   config = mkIf cfg.enable {
     console = {
-      font = "Lat2-Terminus16";
+      font = "ter-116n";
+      packages = [ pkgs.terminus_font ];
       keyMap = mkForce "us";
     };
 
