@@ -60,7 +60,7 @@ in
 
         # Run in private
         "uBlock0@raymondhill.net".private_browsing = true;
-        "addon@darkreader.org.xpi".private_browsing = true;
+        "addon@darkreader.org".private_browsing = true;
       };
       Preferences = { };
     } "Policies to apply to firefox";
