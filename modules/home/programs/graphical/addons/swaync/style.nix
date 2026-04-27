@@ -234,7 +234,6 @@ in
     }
 
     .notification-default-action:hover {
-      -gtk-icon-effect: none;
       background: linear-gradient(90deg, alpha(@blue, 0.18), alpha(@sky, 0.1));
     }
 
@@ -244,7 +243,6 @@ in
     }
 
     .notification-action:hover {
-      -gtk-icon-effect: none;
       background: linear-gradient(90deg, alpha(@blue, 0.28), alpha(@sky, 0.18));
     }
 
