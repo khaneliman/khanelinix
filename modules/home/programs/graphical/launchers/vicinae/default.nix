@@ -167,6 +167,14 @@ in
 
       settings = {
         "$schema" = "https://vicinae.com/schemas/config.json";
+        fallbacks = [ ];
+        search_files_in_root = false;
+        providers.files.preferences = {
+          autoIndexing = false;
+          paths = "";
+          excludedPaths = config.home.homeDirectory;
+          watcherPaths = "";
+        };
       };
     };
 
