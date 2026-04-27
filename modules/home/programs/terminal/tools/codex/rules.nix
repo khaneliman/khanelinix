@@ -18,6 +18,8 @@
     prefix_rule(pattern = ["file"], decision = "allow")
     prefix_rule(pattern = ["find"], decision = "allow")
 
+    prefix_rule(pattern = ["gh", "auth", "status"], decision = "allow")
+    prefix_rule(pattern = ["gh", "pr", "view"], decision = "allow")
     prefix_rule(pattern = ["git", "blame"], decision = "allow")
     prefix_rule(pattern = ["git", "branch"], decision = "allow")
     prefix_rule(pattern = ["git", "diff"], decision = "allow")
