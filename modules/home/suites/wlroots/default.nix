@@ -63,7 +63,9 @@ in
       # using nixos module
       services.network-manager-applet.enable = mkDefault true;
       services = {
-        blueman-applet.enable = mkDefault (!(osConfig.services.blueman.enable or false));
+        blueman-applet.enable = mkDefault (
+          !(osConfig.services.blueman.enable or false) || !(osConfig.services.blueman.withApplet or true)
+        );
       };
     })
   ];
