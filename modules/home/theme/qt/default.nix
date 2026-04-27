@@ -125,7 +125,7 @@ in
       qt5ctSettings = cfg.settings;
       qt6ctSettings = cfg.settings;
 
-      style = mkDefault { name = "qt6ct-style"; };
+      style = mkDefault { name = "kvantum"; };
     };
   };
 }
