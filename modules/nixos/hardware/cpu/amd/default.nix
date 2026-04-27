@@ -48,7 +48,6 @@ in
 
     powerManagement = {
       enable = true;
-      cpuFreqGovernor = "schedutil";
     };
   };
 }
