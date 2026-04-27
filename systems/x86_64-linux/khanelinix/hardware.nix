@@ -61,6 +61,8 @@ in
     enableRedistributableFirmware = true;
   };
 
+  powerManagement.cpuFreqGovernor = "powersave";
+
   khanelinix = {
     hardware = {
       audio = {
