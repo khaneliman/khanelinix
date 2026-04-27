@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib) mkEnableOption;
+  inherit (lib) getExe' mkEnableOption mkIf;
 
   json = pkgs.formats.json { };
 
@@ -19,8 +19,8 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    xdg.configFile."pipewire/pipewire.conf.d/99-input-denoising.conf" = {
+  config = mkIf cfg.enable {
+    xdg.configFile."pipewire/filter-chain.conf.d/99-input-denoising.conf" = {
       source = json.generate "99-input-denoising.conf" {
         "context.modules" = [
           {
@@ -33,7 +33,7 @@ in
                   {
                     "type" = "ladspa";
                     "name" = "rnnoise";
-                    "plugin" = "${pkgs.rnnoise-plugin}/lib/ladspa/librnnoise_ladspa.so";
+                    "plugin" = "librnnoise_ladspa";
                     "label" = "noise_suppressor_stereo";
                     "control" = {
                       "VAD Threshold (%)" = 70.0;
@@ -56,6 +56,29 @@ in
             };
           }
         ];
+      };
+    };
+
+    systemd.user.services.rnnoise-filter-chain = {
+      Unit = {
+        Description = "PipeWire filter chain daemon";
+        After = [
+          "pipewire.service"
+          "pipewire-session-manager.service"
+        ];
+        BindsTo = [ "pipewire.service" ];
+      };
+
+      Service = {
+        Type = "simple";
+        ExecStart = "${getExe' pkgs.pipewire "pipewire"} -c filter-chain.conf";
+        Environment = "LADSPA_PATH=${pkgs.rnnoise-plugin}/lib/ladspa";
+        Restart = "on-failure";
+        Slice = "session.slice";
+      };
+
+      Install = {
+        WantedBy = [ "default.target" ];
       };
     };
   };
