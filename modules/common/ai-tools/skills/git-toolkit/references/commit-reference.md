@@ -72,3 +72,40 @@ Used in some monorepos or specific projects (e.g., Nixpkgs-style).
 - When working in large monorepos where the path is the most significant
   context.
 - **Check `git log` first** to confirm if this is the active convention.
+
+## Atomic Commit Planning
+
+Use this when asked to group or create commits from an existing worktree.
+
+- Analyze changes at hunk level, not file level.
+- Each commit must represent the smallest complete logical change.
+- Every commit should leave the project buildable and runnable.
+- If change A references change B, commit B first or keep them together.
+- Group by behavior or purpose, not directory.
+- Keep formatting-only changes separate from functional changes.
+- Prefer `git add -p` or equivalent selective staging when files contain mixed
+  concerns.
+- Before committing, compare `git diff --cached` against the intended commit
+  contents.
+
+Avoid:
+
+- staging whole files just because one hunk belongs in the commit
+- committing imports before the imported module exists
+- committing option usage before option definition
+- bundling unrelated bug fixes or feature pieces
+- mixing generated formatting churn with semantic edits
+
+## Commit CLI Safety
+
+Do not put `\n` inside a normal quoted `git commit -m` string and expect a
+newline; git records that text literally. Prefer one of:
+
+```bash
+git commit -m "subject" -m "body paragraph"
+git commit -F path/to/message.txt
+git commit -F-
+```
+
+Multiple `-m` flags are the simplest way to create subject/body paragraphs from
+the shell.

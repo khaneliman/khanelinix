@@ -64,7 +64,8 @@ ready-to-file GitHub issue.
 
 ## 2) PR Review Mode
 
-Use for review-comment triage on the PR associated with the current branch.
+Use for review-comment triage or high-signal review of the PR associated with
+the current branch.
 
 ### Workflow
 
@@ -77,6 +78,36 @@ Use for review-comment triage on the PR associated with the current branch.
 5. Implement only selected items, then report what changed.
 
 If auth/rate limiting fails, ask the user to rerun `gh auth login` and retry.
+
+### High-Signal Review Policy
+
+When asked to provide a review, prioritize only issues that are highly likely to
+matter:
+
+- syntax, type, compile, or unresolved-reference failures
+- logic that definitely produces wrong behavior
+- clear security or data-loss defects in changed code
+- clear repository-instruction violations scoped to the changed file
+
+Do not flag style, subjective quality, pre-existing problems, speculative edge
+cases, or issues a normal linter would catch unless the repository instructions
+explicitly require it. Validate each issue against the diff and relevant local
+instructions before posting.
+
+For inline comments:
+
+- post one comment per unique issue
+- include a committable suggestion only when it completely fixes the issue
+- cite local instruction files when instruction compliance is the basis
+- use full GitHub URLs with a concrete commit SHA when linking code
+
+If no issues are found and commenting is requested, post:
+
+```markdown
+## Code review
+
+No issues found. Checked for bugs and AGENTS.md/CLAUDE.md compliance.
+```
 
 ## 3) CI Fix Mode
 
