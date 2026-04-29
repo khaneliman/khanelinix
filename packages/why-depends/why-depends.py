@@ -94,10 +94,37 @@ def find_package_in_derivation(flake_output, search_term):
 
     try:
         derivation_data = json.loads(stdout)
+        derivation_map = None
+
+        if isinstance(derivation_data, dict):
+            if "derivations" in derivation_data and isinstance(
+                derivation_data.get("derivations"), dict
+            ):
+                derivation_map = derivation_data["derivations"]
+            else:
+                # Legacy format from older Nix versions: map of drv paths to metadata
+                derivation_map = derivation_data
+
+        if not isinstance(derivation_map, dict):
+            print("❌ Unexpected derivation JSON shape from `nix derivation show -r`.")
+            print(f"   Top-level type: {type(derivation_data).__name__}")
+            return []
+
+        non_mapping_values = [
+            key for key, value in derivation_map.items() if not isinstance(value, dict)
+        ]
+        if non_mapping_values:
+            print("❌ Unexpected derivation JSON shape from `nix derivation show -r`.")
+            print(
+                "   Non-mapping derivation entry for key(s): "
+                + ", ".join(non_mapping_values[:3])
+            )
+            return []
+
         matches = []
 
         # Search through all derivations recursively
-        for drv_path, drv_info in derivation_data.items():
+        for drv_path, drv_info in derivation_map.items():
             # Check the derivation path itself
             if search_term in drv_path:
                 matches.append(drv_path)
