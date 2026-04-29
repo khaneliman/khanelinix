@@ -1,6 +1,6 @@
 # GitHub Issue Creator Acceptance Criteria
 
-**Skill**: `github-issue-creator` **Purpose**: Transform raw notes, error logs,
+**Skill**: `github-toolkit` **Purpose**: Transform raw notes, error logs,
 voice dictation, or screenshots into structured GitHub issues **Focus**: Issue
 format, structured sections, appropriate severity classification
 

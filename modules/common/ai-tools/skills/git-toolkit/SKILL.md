@@ -1,11 +1,11 @@
 ---
 name: git-toolkit
-description: Git and GitHub PR workflows, commit discipline, review-comment handling, and CI failure triage for repository workflows.
+description: Git workflows, commit discipline, and safe local history operations.
 ---
 
 # Git Toolkit
 
-Use this single skill as the entry point for Git/GitHub work.
+Use this skill for branch strategy, conflict handling, and commit quality.
 
 ## How I choose what to do (progressive disclosure)
 
@@ -14,8 +14,7 @@ When invoked, route to one mode:
 1. **workflow** — branching strategy, conflict resolution, commit history, and
    basic Git operations.
 2. **commit-message** — conventional commit style, scope, and quality checks.
-3. **pr-review** — GitHub PR comment discovery and correction workflow.
-4. **ci-fix** — failing GitHub Actions checks and log-driven fix planning.
+3. **github-toolkit** — any GH PR review comments, check triage, or issue creation.
 
 If intent is unclear, ask for the mode before applying changes.
 
@@ -42,40 +41,15 @@ Core policy:
 - Prefer imperative, short, scoped subjects.
 - Avoid `\n` as a literal escape in normal quoted `git commit -m`.
 
-## 3) PR Review Mode
+## 3) GitHub Extensions
 
-Use for loading and addressing review/issue comments on the current branch PR.
+Use [`github-toolkit`](../github-toolkit/) for:
 
-### Workflow
+- GitHub PR review comment triage
+- Failing PR check triage
+- GitHub issue creation
 
-1. Verify GitHub CLI auth: `gh auth status`.
-2. Run:
-
-   - `python "<path-to-skill>/scripts/fetch_comments.py"`
-
-3. Summarize actionable comments and ask the user which threads to resolve.
-4. Apply only selected changes and report what was updated.
-
-If auth/rate limits fail, ask the user to re-run `gh auth login`.
-
-## 4) CI Fix Mode
-
-Use for failing checks in the current branch PR.
-
-### Workflow
-
-1. Verify `gh auth status`.
-2. Resolve PR (`current branch` or user-provided PR number/URL).
-3. Fetch and summarize failures:
-
-   - `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "<num-or-url>"`
-   - Add `--json` when automation-friendly output is needed.
-
-4. For each failure, provide the check name, run URL/log context, and a fix plan.
-5. Ask for explicit approval before implementation.
-
-If checks are not GitHub Actions, report URL-only and avoid claiming internal
-details.
+This keeps Git logic and GitHub workflow logic separate.
 
 ## Cross-Mode Notes
 
@@ -83,5 +57,5 @@ details.
   risk explicitly before running them.
 - For multi-step changes, default to minimal safe steps and stop at user
   confirmation points.
-- Re-use `git-toolkit` references instead of duplicating logic across skills.
-
+- Cross-skill references are intentionally non-duplicative: only `git` materials stay
+  in this toolkit.
