@@ -14,11 +14,18 @@ python3Packages.buildPythonApplication rec {
 
   src = ./audio-stream-fixer.py;
   dontUnpack = true;
+  nativeBuildInputs = [ python3Packages.ruff ];
+  doCheck = true;
 
   installPhase = ''
     mkdir -p $out/bin
     cp ${src} $out/bin/audio-stream-fixer
     chmod +x $out/bin/audio-stream-fixer
+  '';
+
+  checkPhase = ''
+    python -m py_compile ${src}
+    ruff check ${src}
   '';
 
   propagatedBuildInputs = [
