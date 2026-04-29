@@ -37,9 +37,7 @@ def parse_derivation_show_output(raw_output):
 
     derivation_map = payload.get("derivations", payload)
     if not isinstance(derivation_map, dict):
-        raise DerivationShowParseError(
-            "'derivations' key exists but is not an object"
-        )
+        raise DerivationShowParseError("'derivations' key exists but is not an object")
 
     bad_entries = [
         key for key, value in derivation_map.items() if not isinstance(value, dict)
@@ -300,7 +298,9 @@ def parse_args():
         ),
     )
     parser.add_argument("target", help="Host name or flake output path.")
-    parser.add_argument("partial_pname", help="Partial package/dependency name to search.")
+    parser.add_argument(
+        "partial_pname", help="Partial package/dependency name to search."
+    )
     parser.add_argument(
         "--fast",
         action="store_true",
@@ -340,9 +340,7 @@ def main():
         print(f"🎯 Using provided flake output: {flake_output}")
 
         if not fast_mode:
-            success, reason, out_path = nix_build_safe(
-                flake_output, emit_out_path=True
-            )
+            success, reason, out_path = nix_build_safe(flake_output, emit_out_path=True)
             if not success:
                 if reason == "build_failed":
                     print("❌ Configuration exists but failed to build")
@@ -424,7 +422,9 @@ def main():
                     print(
                         "💡 Make sure the host name matches a configuration in your flake."
                     )
-                    print("   You can check available configurations with: nix flake build")
+                    print(
+                        "   You can check available configurations with: nix flake build"
+                    )
                     sys.exit(1)
 
     if not flake_output:
@@ -442,7 +442,9 @@ def main():
         if not toplevel_path:
             print("❌ Build did not return an output path.")
             if reason == "missing_out_path":
-                print("💡 Try again or inspect: nix build --print-out-paths <flake-output>")
+                print(
+                    "💡 Try again or inspect: nix build --print-out-paths <flake-output>"
+                )
             else:
                 print(f"❌ Failed while resolving build output path: {reason}")
             sys.exit(1)
