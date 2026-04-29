@@ -31,7 +31,7 @@
             no-lambda-arg = true;
           };
           deno = {
-            enable = true;
+            enable = pkgs.stdenv.hostPlatform.isLinux;
             # Using biome for these
             excludes = [
               "*.html"
