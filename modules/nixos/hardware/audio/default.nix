@@ -79,7 +79,40 @@ in
         pulse.enable = true;
         wireplumber = {
           enable = true;
-          extraConfig = lib.optionalAttrs (cfg.alsa-monitor != { }) {
+          extraConfig = {
+            "50-bluez" = {
+              "monitor.bluez.properties" = {
+                "bluez5.enable-sbc-xq" = true;
+                "bluez5.default.rate" = 48000;
+                "bluez5.default.channels" = 2;
+                "bluez5.dummy-avrcp-player" = true;
+              };
+              "monitor.bluez.rules" = [
+                {
+                  matches = [
+                    {
+                      "device.name" = "~bluez_card.*";
+                    }
+                  ];
+                  actions.update-props = {
+                    "bluez5.auto-connect" = [
+                      "hfp_hf"
+                      "a2dp_sink"
+                    ];
+                    "bluez5.hw-volume" = [
+                      "hfp_hf"
+                      "a2dp_sink"
+                    ];
+                    "bluez5.a2dp.ldac.quality" = "auto";
+                    "bluez5.a2dp.aac.bitratemode" = 0;
+                    "bluez5.a2dp.opus.pro.application" = "audio";
+                    "bluez5.a2dp.opus.pro.bidi.application" = "audio";
+                  };
+                }
+              ];
+            };
+          }
+          // lib.optionalAttrs (cfg.alsa-monitor != { }) {
             "50-alsa" = {
               "monitor.alsa.properties" = cfg.alsa-monitor;
             };
