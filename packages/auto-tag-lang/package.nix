@@ -17,7 +17,11 @@ python3Packages.buildPythonApplication rec {
   dontUnpack = true;
   dontBuild = true;
 
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [
+    makeWrapper
+    python3Packages.ruff
+  ];
+  doCheck = true;
 
   propagatedBuildInputs = with python3Packages; [
     openai-whisper
@@ -32,6 +36,11 @@ python3Packages.buildPythonApplication rec {
     mkdir -p $out/bin
     cp ${src} $out/bin/auto-language-tagger
     chmod +x $out/bin/auto-language-tagger
+  '';
+
+  checkPhase = ''
+    python -m py_compile ${src}
+    ruff check ${src}
   '';
 
   postFixup = ''
