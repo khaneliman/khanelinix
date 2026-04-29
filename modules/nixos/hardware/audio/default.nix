@@ -6,21 +6,44 @@
   ...
 }:
 let
-  inherit (lib) types mkIf mkForce;
+  inherit (lib) mkForce mkIf types;
   inherit (lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.hardware.audio;
+
+  profileSettings = {
+    desktop = {
+      "default.clock.rate" = 48000;
+      "default.clock.quantum" = 512;
+      "default.clock.min-quantum" = 256;
+      "default.clock.max-quantum" = 8192;
+    };
+    creation = {
+      "default.clock.rate" = 48000;
+      "default.clock.quantum" = 256;
+      "default.clock.min-quantum" = 128;
+      "default.clock.max-quantum" = 8192;
+    };
+  };
 in
 {
-  options.khanelinix.hardware.audio = with types; {
+  options.khanelinix.hardware.audio = {
     enable = lib.mkEnableOption "audio support";
-    alsa-monitor = mkOpt attrs { } "Alsa configuration.";
-    extra-packages = mkOpt (listOf package) [
+    alsa-monitor = mkOpt types.attrs { } "Alsa configuration.";
+    extra-packages = mkOpt (types.listOf types.package) [
       pkgs.qjackctl
       pkgs.easyeffects
     ] "Additional packages to install.";
-    modules = mkOpt (listOf attrs) [ ] "Audio modules to pass to Pipewire as `context.modules`.";
-    nodes = mkOpt (listOf attrs) [ ] "Audio nodes to pass to Pipewire as `context.objects`.";
+    modules =
+      mkOpt (types.listOf types.attrs) [ ]
+        "Audio modules to pass to Pipewire as `context.modules`.";
+    nodes =
+      mkOpt (types.listOf types.attrs) [ ]
+        "Audio nodes to pass to Pipewire as `context.objects`.";
+    profile = mkOpt (types.enum [
+      "desktop"
+      "creation"
+    ]) "desktop" "PipeWire latency profile.";
   };
 
   config = mkIf cfg.enable {
@@ -55,17 +78,8 @@ in
         jack.enable = true;
         pulse.enable = true;
         wireplumber.enable = true;
-        extraConfig.pipewire."99-low-latency" = {
-          context.properties = {
-            default = {
-              clock = {
-                rate = 48000;
-                quantum = 512;
-                min-quantum = 256;
-                max-quantum = 8192;
-              };
-            };
-          };
+        extraConfig.pipewire."50-audio-profile" = {
+          "context.properties" = profileSettings.${cfg.profile};
         };
       };
       pulseaudio.enable = mkForce false;
