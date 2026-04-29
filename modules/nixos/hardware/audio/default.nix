@@ -53,6 +53,8 @@ in
         crosspipe
         pulsemixer
         pavucontrol
+        pwvucontrol
+        qpwgraph
       ]
       ++ cfg.extra-packages;
 
