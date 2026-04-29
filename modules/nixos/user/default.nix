@@ -31,7 +31,6 @@ in
         "wheel"
         "systemd-journal"
         "mpd"
-        "audio"
         "video"
         "input"
         "plugdev"

@@ -58,10 +58,6 @@ in
       ]
       ++ cfg.extra-packages;
 
-    khanelinix = {
-      user.extraGroups = [ "audio" ];
-    };
-
     # Disable audio power saving to prevent crackling
     boot.extraModprobeConfig = ''
       options snd_hda_intel power_save=0
