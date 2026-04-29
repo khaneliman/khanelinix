@@ -13,11 +13,18 @@ python3Packages.buildPythonApplication rec {
 
   src = ./dep-graph.py;
   dontUnpack = true;
+  nativeBuildInputs = [ python3Packages.ruff ];
+  doCheck = true;
 
   installPhase = ''
     mkdir -p $out/bin
     cp ${src} $out/bin/nix-dep-graph
     chmod +x $out/bin/nix-dep-graph
+  '';
+
+  checkPhase = ''
+    python -m py_compile ${src}
+    ruff check ${src}
   '';
 
   propagatedBuildInputs = [ graphviz ];
