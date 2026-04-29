@@ -6,6 +6,7 @@
 }:
 let
   cfg = config.khanelinix.programs.terminal.tools.opencode;
+  opencodeSkills = config.programs.opencode.skills or null;
 
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
 
@@ -48,6 +49,15 @@ in
         ];
 
         defaultConfig = {
+          skills = lib.optionalAttrs (opencodeSkills != null) {
+            sources = [
+              {
+                path = toString aiTools.skillsDir;
+                recursive = true;
+              }
+            ];
+          };
+
           "$schema" =
             "https://raw.githubusercontent.com/code-yeongyu/oh-my-openagent/dev/assets/oh-my-opencode.schema.json";
 
@@ -137,13 +147,6 @@ in
             auto_refresh_on_start = true;
             refresh_timeout_ms = 5000;
           };
-
-          skills.sources = [
-            {
-              path = toString aiTools.skillsDir;
-              recursive = true;
-            }
-          ];
 
           experimental = {
             task_system = true;
