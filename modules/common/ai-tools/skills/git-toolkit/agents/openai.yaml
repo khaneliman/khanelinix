@@ -1,0 +1,6 @@
+interface:
+  display_name: "Git Toolkit"
+  short_description: "Git workflows, commit messaging, GitHub PR reviews, and CI triage"
+  icon_small: "./assets/github-small.svg"
+  icon_large: "./assets/github.png"
+  default_prompt: "Help with git workflows, commit messaging, GitHub PR comments, and failing GitHub Actions checks."
