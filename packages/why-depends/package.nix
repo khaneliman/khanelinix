@@ -12,6 +12,8 @@ python3Packages.buildPythonApplication rec {
 
   src = ./why-depends.py;
   dontUnpack = true;
+  nativeBuildInputs = [ python3Packages.ruff ];
+  doCheck = true;
 
   installPhase = ''
     mkdir -p $out/bin
@@ -20,6 +22,14 @@ python3Packages.buildPythonApplication rec {
   '';
 
   propagatedBuildInputs = [ ];
+
+  checkPhase = ''
+    python -m py_compile ${src}
+    ruff check ${src}
+    cp ${./why-depends_test.py} $PWD/why-depends_test.py
+    cp ${src} $PWD/why-depends.py
+    python why-depends_test.py
+  '';
 
   meta = {
     mainProgram = "why-depends";
