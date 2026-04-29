@@ -1,0 +1,4 @@
+interface:
+  display_name: "Security Toolkit"
+  short_description: "Consolidated security review, threat-model, and ownership analysis workflows"
+  default_prompt: "Use the security toolkit to review for security best practices, create a threat model, or run security ownership mapping as requested."
