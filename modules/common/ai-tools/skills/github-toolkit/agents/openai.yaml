@@ -1,6 +1,6 @@
 interface:
   display_name: "GitHub Toolkit"
-  short_description: "GitHub issue writing, PR review triage, and CI check triage"
+  short_description: "GitHub issue triage, issue writing, PR review triage, and CI check triage"
   icon_small: "./assets/github-small.svg"
   icon_large: "./assets/github.png"
-  default_prompt: "Handle GitHub issue drafting, review-comment triage, and failing PR check investigation."
+  default_prompt: "Handle GitHub issue triage, issue drafting, review-comment triage, and failing PR check investigation."

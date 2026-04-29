@@ -1,6 +1,6 @@
 ---
 name: github-toolkit
-description: GitHub issue creation, PR review triage, and CI check-fix workflows using gh CLI.
+description: GitHub issue triage, issue creation, PR review, and CI check-fix workflows using gh CLI.
 ---
 
 # GitHub Toolkit
@@ -13,9 +13,11 @@ When invoked, choose one mode:
 
 1. **issue-creation** — convert messy inputs into a structured GitHub issue
    markdown file.
-2. **pr-review** — collect, prioritize, and address review comments on the PR for
+2. **issue-triage** — find, filter, and summarize GitHub issues for selection
+   or contribution.
+3. **pr-review** — collect, prioritize, and address review comments on the PR for
    the current branch.
-3. **ci-fix** — inspect failing PR checks and summarize actionable fix context.
+4. **ci-fix** — inspect failing PR checks and summarize actionable fix context.
 
 If intent is unclear, ask for the mode before acting.
 
@@ -62,7 +64,16 @@ ready-to-file GitHub issue.
 ## Additional Context
 ```
 
-## 2) PR Review Mode
+## 2) Issue Triage Mode
+
+Use when the user asks to find issues, recommend issues to work on, audit open
+issues, compare labels, or inspect issue activity in a GitHub repository.
+
+Read [issue-triage.md](references/issue-triage.md) before running searches. It
+contains the current `gh` command patterns, field-name quirks, and reporting
+checklist for efficient issue discovery.
+
+## 3) PR Review Mode
 
 Use for review-comment triage or high-signal review of the PR associated with
 the current branch.
@@ -109,7 +120,7 @@ If no issues are found and commenting is requested, post:
 No issues found. Checked for bugs and AGENTS.md/CLAUDE.md compliance.
 ```
 
-## 3) CI Fix Mode
+## 4) CI Fix Mode
 
 Use for failing checks in the PR linked to the current branch (or provided PR).
 
