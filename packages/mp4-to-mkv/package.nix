@@ -2,6 +2,7 @@
   lib,
   ffmpeg,
   python3,
+  python3Packages,
   makeWrapper,
   ...
 }:
@@ -15,8 +16,8 @@ python3.pkgs.buildPythonApplication rec {
   src = ./mp4-to-mkv.py;
   dontUnpack = true;
   dontBuild = true;
-
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [ makeWrapper python3Packages.ruff ];
+  doCheck = true;
 
   propagatedBuildInputs = [ ffmpeg ];
 
@@ -29,6 +30,11 @@ python3.pkgs.buildPythonApplication rec {
   postFixup = ''
     wrapProgram $out/bin/mp4-to-mkv \
       --prefix PATH : ${lib.makeBinPath [ ffmpeg ]}
+  '';
+
+  checkPhase = ''
+    python -m py_compile ${src}
+    ruff check ${src}
   '';
 
   meta = {
