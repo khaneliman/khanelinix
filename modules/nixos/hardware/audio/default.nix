@@ -29,7 +29,7 @@ in
 {
   options.khanelinix.hardware.audio = {
     enable = lib.mkEnableOption "audio support";
-    alsa-monitor = mkOpt types.attrs { } "Alsa configuration.";
+    alsa-monitor = mkOpt types.attrs { } "Alsa monitor properties to pass to WirePlumber.";
     extra-packages = mkOpt (types.listOf types.package) [
       pkgs.qjackctl
       pkgs.easyeffects
@@ -77,9 +77,28 @@ in
         audio.enable = true;
         jack.enable = true;
         pulse.enable = true;
-        wireplumber.enable = true;
-        extraConfig.pipewire."50-audio-profile" = {
-          "context.properties" = profileSettings.${cfg.profile};
+        wireplumber = {
+          enable = true;
+          extraConfig = lib.optionalAttrs (cfg.alsa-monitor != { }) {
+            "50-alsa" = {
+              "monitor.alsa.properties" = cfg.alsa-monitor;
+            };
+          };
+        };
+        extraConfig.pipewire = {
+          "50-audio-profile" = {
+            "context.properties" = profileSettings.${cfg.profile};
+          };
+        }
+        // lib.optionalAttrs (cfg.modules != [ ]) {
+          "60-audio-modules" = {
+            "context.modules" = cfg.modules;
+          };
+        }
+        // lib.optionalAttrs (cfg.nodes != [ ]) {
+          "60-audio-nodes" = {
+            "context.objects" = cfg.nodes;
+          };
         };
       };
       pulseaudio.enable = mkForce false;
