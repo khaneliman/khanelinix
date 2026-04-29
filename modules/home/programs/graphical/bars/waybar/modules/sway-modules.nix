@@ -105,6 +105,7 @@ in
       "class<org.telegram.desktop>" = "";
       "class<org.wezfurlong.wezterm>" = "";
       "class<pavucontrol>" = "";
+      "class<pwvucontrol>" = "";
       "class<pcsx2-qt>" = "";
       "class<pcsxr>" = "";
       "class<shotwell>" = "";
