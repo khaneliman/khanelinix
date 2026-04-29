@@ -235,6 +235,22 @@ in
       package =
         (getPkgsUnstable pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; }).thunderbird-latest;
 
+      languagePacks = [
+        "en-US"
+      ];
+
+      policies = {
+        DisableAppUpdate = true;
+        DisableFeedbackCommands = true;
+        DisableFirefoxStudies = true;
+        DisableTelemetry = true;
+        InAppNotification = {
+          Disabled = true;
+        };
+        OfferToSaveLogins = false;
+        PasswordManagerEnabled = false;
+      };
+
       profiles.${config.khanelinix.user.name} = {
         isDefault = true;
 
