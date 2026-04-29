@@ -88,9 +88,20 @@ Use this when asked to group or create commits from an existing worktree.
 - Before committing, compare `git diff --cached` against the intended commit
   contents.
 
+For breaking regressions introduced in recent commits, use `fixup` + `autosquash`
+instead of tiny follow-up commits:
+
+- Commit the correction with `git commit --fixup=<bad-commit-sha>`.
+- Then run `git rebase -i --autosquash <parent-of-bad-commit>` and reorder if
+  needed to keep related logic adjacent.
+- If history is already shared/pushed, treat this as a policy exception and ask
+  for explicit confirmation before rewriting history.
+
 Avoid:
 
 - staging whole files just because one hunk belongs in the commit
+- adding a tiny follow-up fix for a known regression instead of amending the
+  introducing commit when history rewrite is safe
 - committing imports before the imported module exists
 - committing option usage before option definition
 - bundling unrelated bug fixes or feature pieces

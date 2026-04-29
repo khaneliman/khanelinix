@@ -55,6 +55,9 @@ This keeps Git logic and GitHub workflow logic separate.
 
 - For commands that touch shared history or remote state, call out destructive
   risk explicitly before running them.
+- If a recent commit introduced a breaking regression, prefer `fixup` +
+  `--autosquash` to fold the correction into the originating commit, instead of
+  stacking tiny follow-up commits.
 - For multi-step changes, default to minimal safe steps and stop at user
   confirmation points.
 - Cross-skill references are intentionally non-duplicative: only `git` materials stay
