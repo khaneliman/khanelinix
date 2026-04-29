@@ -35,6 +35,7 @@ in
         {
           matches = [
             { app-id = "^pavucontrol$"; }
+            { app-id = "^pwvucontrol$"; }
           ];
           open-floating = true;
         }
