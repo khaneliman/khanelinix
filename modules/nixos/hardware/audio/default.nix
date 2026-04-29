@@ -47,7 +47,10 @@ in
     services = {
       pipewire = {
         enable = true;
-        alsa.enable = true;
+        alsa = {
+          enable = true;
+          support32Bit = pkgs.stdenv.hostPlatform.isx86_64;
+        };
         audio.enable = true;
         jack.enable = true;
         pulse.enable = true;
