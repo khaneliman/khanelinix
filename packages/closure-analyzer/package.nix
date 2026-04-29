@@ -12,11 +12,18 @@ python3Packages.buildPythonApplication rec {
 
   src = ./closure-analyzer.py;
   dontUnpack = true;
+  nativeBuildInputs = [ python3Packages.ruff ];
+  doCheck = true;
 
   installPhase = ''
     mkdir -p $out/bin
     cp ${src} $out/bin/closure-analyzer
     chmod +x $out/bin/closure-analyzer
+  '';
+
+  checkPhase = ''
+    python -m py_compile ${src}
+    ruff check ${src}
   '';
 
   meta = {
