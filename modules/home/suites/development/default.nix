@@ -53,6 +53,7 @@ in
       packages =
         with pkgs;
         [
+          python3
           # FIXME: broken nixpkgs
           # cutter
           jqp
