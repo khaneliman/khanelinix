@@ -69,6 +69,7 @@ in
       bfg-repo-cleaner
       git-absorb
       git-crypt
+      pkgs.khanelinix.git-surgeon
       git-filter-repo
       git-lfs
       gitflow
