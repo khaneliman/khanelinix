@@ -26,6 +26,7 @@ in
   config = mkIf cfg.enable {
     home = {
       packages = with pkgs; [
+        pkgs.khanelinix.jj-hunk-tool
         lazyjj
       ];
 
