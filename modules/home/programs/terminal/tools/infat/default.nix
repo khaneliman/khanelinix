@@ -31,7 +31,7 @@ let
     neovide = "com.neovide.neovide";
     firefox = config.programs.firefox.darwinDefaultsId or "org.nixos.firefoxdeveloperedition";
     thunderbird = "org.nixos.thunderbird";
-    vesktop = "dev.vencord.vesktop";
+    vesktop = "${config.home.homeDirectory}/${hmAppsPath}/Vesktop.app";
     # element = "org.nixos.Element";
     element = "im.riot.app";
     caprine = "com.sindresorhus.caprine";
