@@ -42,8 +42,8 @@ in
   "hyprland/workspaces" = {
     all-outputs = false;
     active-only = "false";
-    on-scroll-up = "${getExe' hyprlandPackage "hyprctl"} dispatch workspace e+1";
-    on-scroll-down = "${getExe' hyprlandPackage "hyprctl"} dispatch workspace e-1";
+    on-scroll-up = "${getExe' hyprlandPackage "hyprctl"} dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'";
+    on-scroll-down = "${getExe' hyprlandPackage "hyprctl"} dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'";
     format = "{icon} {windows}";
     format-icons = {
       "1" = "󰎤";
