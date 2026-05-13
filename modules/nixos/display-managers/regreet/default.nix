@@ -17,27 +17,34 @@ let
   themeCfg = config.khanelinix.theme;
   gtkCfg = config.khanelinix.desktop.addons.gtk;
 
-  greetdHyprlandConfig = pkgs.writeText "greetd-hyprland-config" ''
+  greetdHyprlandConfig = pkgs.writeText "greetd-hyprland.lua" ''
     ${cfg.hyprlandOutput}
 
-    animations {
-      enabled=false
-      first_launch_animation=false
-    }
+    hl.config({
+      animations = {
+        enabled = false,
+      },
+      misc = {
+        disable_hyprland_logo = true,
+        force_default_wallpaper = 0,
+      },
+    })
 
-    bind=SUPER, RETURN, exec, ${getExe pkgs.wezterm}
-    bind=SUPER_SHIFT, RETURN, exec, ${getExe pkgs.nwg-hello}
-    bind=SUPER_CTRL_SHIFT, RETURN, exec, ${getExe pkgs.greetd.regreet}
+    hl.bind("SUPER + RETURN", hl.dsp.exec_cmd(${builtins.toJSON (getExe pkgs.wezterm)}))
+    hl.bind("SUPER + SHIFT + RETURN", hl.dsp.exec_cmd(${builtins.toJSON (getExe pkgs.nwg-hello)}))
+    hl.bind("SUPER + CTRL + SHIFT + RETURN", hl.dsp.exec_cmd(${builtins.toJSON (getExe pkgs.greetd.regreet)}))
 
-    exec-once = ${lib.getExe' pkgs.dbus "dbus-update-activation-environment"} --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE
+    hl.on("hyprland.start", function()
+      hl.exec_cmd(${builtins.toJSON "${lib.getExe' pkgs.dbus "dbus-update-activation-environment"} --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE"})
+      hl.exec_cmd(${builtins.toJSON "${getExe pkgs.greetd.regreet} -l debug && ${getExe' pkgs.hyprland-unwrapped "hyprctl"} exit"})
+    end)
 
-    exec-once = ${getExe pkgs.greetd.regreet} -l debug && ${getExe' pkgs.hyprland-unwrapped "hyprctl"} exit
   '';
 in
 {
   options.khanelinix.display-managers.regreet = with types; {
     enable = lib.mkEnableOption "greetd";
-    hyprlandOutput = mkOpt lines "" "Hyprlands Outputs config.";
+    hyprlandOutput = mkOpt lines "" "Hyprland Lua output config.";
   };
 
   config = mkIf cfg.enable {
