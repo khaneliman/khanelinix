@@ -5,6 +5,7 @@
   ffmpeg,
   gifsicle,
   slurp,
+  jq,
   wl-clipboard,
   wl-screenrec,
   writeShellApplication,
@@ -25,6 +26,7 @@ writeShellApplication {
     bc
     gifsicle
     ffmpeg
+    jq
     libnotify
     slurp
     wl-clipboard
@@ -136,14 +138,28 @@ writeShellApplication {
     	return 0
     }
 
-    get_active_monitor() {
-    	local output
-    	output=$(hyprctl -j monitors | jq -r '.[] | select( .focused | IN(true)).name')
-    	if [[ -z "$output" ]]; then
+    get_monitor_state() {
+        local output_arg="''${1:-}"
+        local width_arg="''${2:-}"
+        local height_arg="''${3:-}"
+
+        if [[ -n "$output_arg" && -n "$width_arg" && -n "$height_arg" ]]; then
+            if [[ ! "$width_arg" =~ ^[0-9]+$ || ! "$height_arg" =~ ^[0-9]+$ ]]; then
+                notify "Error" "Invalid monitor dimensions: ''${width_arg}x''${height_arg}"
+                return 1
+            fi
+
+            printf '%s\t%s\t%s\n' "$output_arg" "$width_arg" "$height_arg"
+            return 0
+        fi
+
+        local state
+        state=$(hyprctl -j monitors | jq -r '.[] | select(.focused == true) | [.name, .width, .height] | @tsv')
+        if [[ -z "$state" ]]; then
     		notify "Error" "Failed to detect active monitor"
     		return 1
     	fi
-    	echo "$output"
+        echo "$state"
     }
 
     get_scale_factor() {
@@ -197,14 +213,10 @@ writeShellApplication {
     	trap handle_interrupt SIGINT
 
     	debug_log "Starting screen recording"
-    	local output
-    	output=$(get_active_monitor) || return 1
+        local output width height monitor_state
+        monitor_state=$(get_monitor_state "''${1:-}" "''${2:-}" "''${3:-}") || return 1
+        IFS=$'\t' read -r output width height <<<"$monitor_state"
     	debug_log "Active monitor: $output"
-
-    	# Get screen dimensions
-    	local width height
-    	width=$(hyprctl -j monitors | jq -r ".[] | select(.name == \"$output\") | .width")
-    	height=$(hyprctl -j monitors | jq -r ".[] | select(.name == \"$output\") | .height")
     	debug_log "Screen dimensions: ''${width}x''${height}"
 
     	# Calculate scale factor if dimensions exceed maximum supported
@@ -417,7 +429,7 @@ writeShellApplication {
     	case "''${1:-}" in
     	screen)
     		debug_log "Starting screen recording"
-    		screen
+            screen "''${2:-}" "''${3:-}" "''${4:-}"
     		;;
     	area)
     		debug_log "Starting area recording"
@@ -432,7 +444,7 @@ writeShellApplication {
     		stop
     		;;
     	*)
-    		echo "Usage: $0 {screen|area|gif|stop}" >&2
+            echo "Usage: $0 {screen [output width height]|area|gif|stop}" >&2
     		return 1
     		;;
     	esac

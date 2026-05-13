@@ -271,8 +271,38 @@ let
       toLua (lib.concatStringsSep " " ([ dispatcher ] ++ lib.optional (args != "") args))
     })";
 
+  mkHyprshotOutputDispatcher = args: ''
+    function()
+      local command = ${toLua args}
+      local monitor = hl.get_active_monitor()
+      if monitor ~= nil and monitor.name ~= nil then
+        command = command:gsub("hyprshot %-m output", "hyprshot -m output -m " .. string.format("%q", monitor.name), 1)
+      end
+      hl.exec_cmd(command)
+    end
+  '';
+
+  mkRecordScreenDispatcher = args: ''
+    function()
+      local monitor = hl.get_active_monitor()
+      if monitor == nil or monitor.name == nil or monitor.width == nil or monitor.height == nil then
+        hl.exec_cmd(${toLua args})
+        return
+      end
+      hl.exec_cmd(${toLua args} .. " " .. string.format("%q", monitor.name) .. " " .. tostring(monitor.width) .. " " .. tostring(monitor.height))
+    end
+  '';
+
+  mkExecDispatcher =
+    args:
+    if lib.hasSuffix "record_screen screen" args then
+      mkRecordScreenDispatcher args
+    else if lib.hasInfix "hyprshot -m output" args then
+      mkHyprshotOutputDispatcher args
+    else
+      "hl.dsp.exec_cmd(${toLua args})";
+
   dispatcherMap = {
-    exec = args: "hl.dsp.exec_cmd(${toLua args})";
     submap = args: "hl.dsp.submap(${toLua args})";
     killactive = _: "hl.dsp.window.close()";
     fullscreen = _: "hl.dsp.window.fullscreen()";
@@ -296,7 +326,11 @@ let
   };
 
   mkDispatcher =
-    dispatcher: args: dispatcherMap.${dispatcher} or (mkExecRawDispatcher dispatcher) args;
+    dispatcher: args:
+    if dispatcher == "exec" then
+      mkExecDispatcher args
+    else
+      dispatcherMap.${dispatcher} or (mkExecRawDispatcher dispatcher) args;
 
   mkLuaBindWith =
     opts: bind:
