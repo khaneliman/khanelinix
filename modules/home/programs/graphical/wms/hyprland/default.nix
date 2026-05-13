@@ -113,7 +113,6 @@ in
             MOZ_USE_XINPUT2 = "1";
             # NOTE: causes gldriverquery crash on wayland
             # SDL_VIDEODRIVER = "wayland";
-            WLR_DRM_NO_ATOMIC = "1";
             XDG_SESSION_TYPE = "wayland";
             _JAVA_AWT_WM_NONREPARENTING = "1";
             __GL_GSYNC_ALLOWED = "0";
@@ -121,7 +120,6 @@ in
           }
           // mkIf cfg.enableDebug {
             AQ_TRACE = "1";
-            HYPRLAND_LOG_WLR = "1";
             HYPRLAND_TRACE = "1";
           }
         );

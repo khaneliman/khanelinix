@@ -82,7 +82,6 @@ in
             ''
             + lib.optionalString cfg.enableDebug /* Bash */ ''
               export AQ_TRACE=1;
-              export HYPRLAND_LOG_WLR=1;
               export HYPRLAND_TRACE=1;
             '';
         }
