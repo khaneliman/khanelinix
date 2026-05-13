@@ -6,7 +6,12 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkDefault;
+  inherit (lib)
+    getExe
+    mkIf
+    mkDefault
+    stringAfter
+    ;
   inherit (lib.khanelinix) enabled;
 
   cfg = config.khanelinix.suites.common;
@@ -86,6 +91,23 @@ in
       autosuggestions.enable = true;
       histFile = "$XDG_CACHE_HOME/zsh.history";
     };
+
+    system.activationScripts.reportNeedsReboot = stringAfter [ "users" ] /* Bash */ ''
+      if reboot_reason=$(${getExe pkgs.khanelinix.nixos-needsreboot} --dry-run 2>&1); then
+        echo "NixOS reboot check: no reboot required"
+      else
+        case "$?" in
+          2)
+            echo "NixOS reboot check: reboot required"
+            echo "$reboot_reason"
+            ;;
+          *)
+            echo "NixOS reboot check: unable to determine reboot status"
+            echo "$reboot_reason"
+            ;;
+        esac
+      fi
+    '';
 
     zramSwap.enable = true;
 
