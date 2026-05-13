@@ -1,9 +1,7 @@
 {
   config,
-  inputs,
   lib,
   pkgs,
-  system,
 
   ...
 }:
@@ -14,15 +12,22 @@ let
     types
     mkOption
     ;
-  inherit (inputs) hypr-socket-watch;
   inherit (lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.services.hyprpaper;
+  workspaceWallpaperDir = lib.khanelinix.theme.wallpaperDir {
+    inherit config pkgs;
+  };
+  workspaceWallpapers =
+    let
+      entries = builtins.readDir workspaceWallpaperDir;
+      names = lib.sort lib.lessThan (lib.attrNames entries);
+    in
+    map (name: "${workspaceWallpaperDir}${name}") names;
 in
 {
   options.khanelinix.services.hyprpaper = {
     enable = mkEnableOption "Hyprpaper";
-    enableSocketWatch = mkEnableOption "hypr-socket-watch";
     monitors = mkOption {
       description = "Monitors and their wallpapers";
       type =
@@ -72,18 +77,40 @@ in
           splash = false;
         };
       };
-
-      hypr-socket-watch = {
-        enable = cfg.enableSocketWatch;
-        package = hypr-socket-watch.packages.${system}.hypr-socket-watch;
-
-        monitor = "DP-1";
-        wallpapers = lib.khanelinix.theme.wallpaperDir {
-          inherit config pkgs;
-        };
-        debug = false;
-      };
     };
+
+    wayland.windowManager.hyprland.settings.on =
+      lib.mkIf (config.wayland.windowManager.hyprland.configType == "lua" && workspaceWallpapers != [ ])
+        (
+          lib.mkAfter [
+            {
+              _args = [
+                "workspace.active"
+                (lib.generators.mkLuaInline ''
+                  function(workspace)
+                    if workspace == nil or workspace.special then
+                      return
+                    end
+
+                    local monitor = ${builtins.toJSON "DP-1"}
+                    local wallpapers = ${lib.generators.toLua { } workspaceWallpapers}
+                    local workspace_id = workspace.id
+
+                    if type(workspace_id) ~= "number" or workspace_id < 1 then
+                      return
+                    end
+
+                    local wallpaper = wallpapers[math.min(workspace_id, #wallpapers)]
+
+                    if wallpaper ~= nil then
+                      hl.exec_cmd("hyprctl hyprpaper wallpaper " .. monitor .. "," .. wallpaper)
+                    end
+                  end
+                '')
+              ];
+            }
+          ]
+        );
 
     systemd.user.services.hyprpaper.Unit.ConditionEnvironment =
       lib.mkForce "HYPRLAND_INSTANCE_SIGNATURE";

@@ -470,27 +470,6 @@
         "type": "github"
       }
     },
-    "hypr-socket-watch": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "rust-overlay": "rust-overlay"
-      },
-      "locked": {
-        "lastModified": 1772947172,
-        "narHash": "sha256-z1Bhgo4QuLVU6RR7aV9RZfaSCHez1LeA+6+Z1sK7t1o=",
-        "owner": "khaneliman",
-        "repo": "hypr-socket-watch",
-        "rev": "91b2b0d285e49937e05148c07d936bba292f529d",
-        "type": "github"
-      },
-      "original": {
-        "owner": "khaneliman",
-        "repo": "hypr-socket-watch",
-        "type": "github"
-      }
-    },
     "hyprcursor": {
       "inputs": {
         "hyprlang": [
@@ -1309,7 +1288,6 @@
         "flake-compat": "flake-compat",
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
-        "hypr-socket-watch": "hypr-socket-watch",
         "hyprland": "hyprland",
         "khanelivim": "khanelivim",
         "lanzaboote": "lanzaboote",

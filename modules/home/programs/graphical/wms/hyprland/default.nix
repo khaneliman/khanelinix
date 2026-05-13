@@ -176,7 +176,6 @@ in
 
           hyprpaper = {
             enable = true;
-            enableSocketWatch = true;
           };
 
           hyprsunset = enabled;
@@ -225,18 +224,22 @@ in
           settings = lib.mkMerge [
             cfg.settings
             {
-              on = lib.mkIf (cfg.startupCommands != [ ]) {
-                _args = [
-                  "hyprland.start"
-                  (lib.generators.mkLuaInline ''
-                    function()
-                    ${lib.concatMapStringsSep "\n" (
-                      command: "  hl.exec_cmd(${builtins.toJSON command})"
-                    ) cfg.startupCommands}
-                    end
-                  '')
-                ];
-              };
+              on = lib.mkIf (cfg.startupCommands != [ ]) (
+                lib.mkAfter [
+                  {
+                    _args = [
+                      "hyprland.start"
+                      (lib.generators.mkLuaInline ''
+                        function()
+                        ${lib.concatMapStringsSep "\n" (
+                          command: "  hl.exec_cmd(${builtins.toJSON command})"
+                        ) cfg.startupCommands}
+                        end
+                      '')
+                    ];
+                  }
+                ]
+              );
 
               config.plugin = {
                 hyprexpo =

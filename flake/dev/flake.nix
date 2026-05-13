@@ -12,7 +12,6 @@
         catppuccin.follows = "";
         disko.follows = "";
         firefox-addons.follows = "";
-        hypr-socket-watch.follows = "";
         hyprland.follows = "";
         khanelivim.follows = "";
         lanzaboote.follows = "";

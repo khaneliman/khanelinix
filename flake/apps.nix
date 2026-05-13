@@ -33,7 +33,6 @@ _: {
             "anyrun-nixos-options"
             "catppuccin"
             "firefox-addons"
-            "hypr-socket-watch"
             "hyprland"
             "khanelivim"
             "nh"

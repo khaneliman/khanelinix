@@ -4062,7 +4062,6 @@
         "flake-compat": "flake-compat_12",
         "flake-parts": "flake-parts_18",
         "home-manager": "home-manager_3",
-        "hypr-socket-watch": [],
         "hyprland": [],
         "khanelivim": [],
         "lanzaboote": [],

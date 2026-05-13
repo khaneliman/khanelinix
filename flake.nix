@@ -67,13 +67,6 @@
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hypr-socket-watch = {
-      url = "github:khaneliman/hypr-socket-watch";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
-      };
-    };
     hyprland = {
       url = "github:hyprwm/hyprland";
       inputs = {
