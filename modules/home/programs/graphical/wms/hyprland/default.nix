@@ -13,6 +13,11 @@ let
 
   cfg = config.khanelinix.programs.graphical.wms.hyprland;
   useSystemHyprland = osConfig ? programs.hyprland.enable && osConfig.programs.hyprland.enable;
+  luaLspPackage =
+    if useSystemHyprland then
+      osConfig.programs.hyprland.package
+    else
+      config.wayland.windowManager.hyprland.package;
 
   historicalLogAliases = builtins.listToAttrs (
     builtins.genList (x: {
@@ -53,6 +58,13 @@ in
         Hyprland configuration settings.
 
         See <https://wiki.hypr.land/Configuring/Configuring-Hyprland/>
+      '';
+    };
+    startupCommands = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      description = ''
+        Commands to run from one `hyprland.start` event handler.
       '';
     };
   };
@@ -134,6 +146,19 @@ in
         // historicalCrashAliases;
       };
 
+      xdg.configFile = lib.mkIf (config.wayland.windowManager.hyprland.configType == "lua") {
+        "hypr/.luacheckrc".text = ''
+          read_globals = { "hl" }
+        '';
+
+        "hypr/.luarc.json" = lib.mkIf (luaLspPackage != null) {
+          text = builtins.toJSON {
+            workspace.library = [ "${luaLspPackage}/share/hypr/stubs" ];
+            diagnostics.globals = [ "hl" ];
+          };
+        };
+      };
+
       khanelinix = {
         programs = {
           graphical = {
@@ -171,6 +196,10 @@ in
 
       programs.hyprshot.enable = true;
 
+      khanelinix.programs.graphical.wms.hyprland.startupCommands = lib.mkAfter [
+        "notify-send --icon ${config.home.homeDirectory}/.face -u normal \"Hello $(whoami)\""
+      ];
+
       services.hyprpolkitagent = enabled;
 
       systemd.user.services.hyprpolkitagent.Unit = {
@@ -181,6 +210,7 @@ in
       wayland.windowManager.hyprland = lib.mkMerge [
         {
           enable = true;
+          configType = "lua";
 
           extraConfig = ''
             ${cfg.prependConfig}
@@ -197,24 +227,20 @@ in
           settings = lib.mkMerge [
             cfg.settings
             {
-              exec = [ /* Bash */ "notify-send --icon ${config.home.homeDirectory}/.face -u normal \"Hello $(whoami)\"" ];
+              on = lib.mkIf (cfg.startupCommands != [ ]) {
+                _args = [
+                  "hyprland.start"
+                  (lib.generators.mkLuaInline ''
+                    function()
+                    ${lib.concatMapStringsSep "\n" (
+                      command: "  hl.exec_cmd(${builtins.toJSON command})"
+                    ) cfg.startupCommands}
+                    end
+                  '')
+                ];
+              };
 
-              plugin = {
-                hyprbars =
-                  lib.mkIf (lib.elem pkgs.hyprlandPlugins.hyprbars config.wayland.windowManager.hyprland.plugins)
-                    {
-                      bar_height = 20;
-                      bar_precedence_over_border = true;
-
-                      # order is right-to-left
-                      hyprbars-button = [
-                        # close
-                        "rgb(ED8796), 15, , hyprctl dispatch killactive"
-                        # maximize
-                        "rgb(C6A0F6), 15, , hyprctl dispatch fullscreen 1"
-                      ];
-                    };
-
+              config.plugin = {
                 hyprexpo =
                   lib.mkIf (lib.elem pkgs.hyprlandPlugins.hyprexpo config.wayland.windowManager.hyprland.plugins)
                     {

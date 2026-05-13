@@ -10,6 +10,10 @@ let
   wallpaperCfg = config.khanelinix.theme.wallpaper;
   wallpaperPath = name: lib.khanelinix.theme.wallpaperPath { inherit config pkgs name; };
   wallpaperPaths = names: lib.khanelinix.theme.wallpaperPaths { inherit config pkgs names; };
+  hyprlandMonitorLayoutLua = ''
+    hl.monitor({ output = "DP-3", mode = "3840x2160@60", position = "1280x0", scale = 1.5, bitdepth = 10 })
+    hl.monitor({ output = "DP-1", mode = "5120x1440@120", position = "0x1440", scale = 1, vrr = 1, bitdepth = 10 })
+  '';
 in
 {
   khanelinix = {
@@ -101,40 +105,78 @@ in
             enableDebug = false;
 
             settings = {
-              monitorv2 = [
+              monitor = [
                 {
                   output = "DP-3";
                   mode = "3840x2160@60";
-                  position = "1420x0";
-                  scale = 2;
+                  position = "1280x0";
+                  scale = 1.5;
                   bitdepth = 10;
                 }
                 {
                   output = "DP-1";
                   mode = "5120x1440@120";
-                  position = "0x1080";
+                  position = "0x1440";
                   scale = 1;
                   vrr = 1;
                   bitdepth = 10;
                 }
               ];
 
-              exec-once = [
-                "hyprctl setcursor ${config.khanelinix.theme.gtk.cursor.name} ${toString config.khanelinix.theme.gtk.cursor.size}"
-              ];
-
-              workspace = [
-                "1, monitor:DP-3, persistent:true, default:true"
-                "2, monitor:DP-1, persistent:true, default:true"
-                "3, monitor:DP-1, persistent:true"
-                "4, monitor:DP-1, persistent:true"
-                "5, monitor:DP-1, persistent:true"
-                "6, monitor:DP-1, persistent:true"
-                "7, monitor:DP-1, persistent:true"
-                "8, monitor:DP-1, persistent:true"
-                "9, monitor:DP-1, persistent:true"
+              workspace_rule = [
+                {
+                  workspace = "1";
+                  monitor = "DP-3";
+                  persistent = true;
+                  default = true;
+                }
+                {
+                  workspace = "2";
+                  monitor = "DP-1";
+                  persistent = true;
+                  default = true;
+                }
+                {
+                  workspace = "3";
+                  monitor = "DP-1";
+                  persistent = true;
+                }
+                {
+                  workspace = "4";
+                  monitor = "DP-1";
+                  persistent = true;
+                }
+                {
+                  workspace = "5";
+                  monitor = "DP-1";
+                  persistent = true;
+                }
+                {
+                  workspace = "6";
+                  monitor = "DP-1";
+                  persistent = true;
+                }
+                {
+                  workspace = "7";
+                  monitor = "DP-1";
+                  persistent = true;
+                }
+                {
+                  workspace = "8";
+                  monitor = "DP-1";
+                  persistent = true;
+                }
+                {
+                  workspace = "9";
+                  monitor = "DP-1";
+                  persistent = true;
+                }
               ];
             };
+
+            startupCommands = [
+              "hyprctl setcursor ${config.khanelinix.theme.gtk.cursor.name} ${toString config.khanelinix.theme.gtk.cursor.size}"
+            ];
           };
 
           niri = {
@@ -239,6 +281,7 @@ in
                 }
               ];
             };
+
           };
         };
       };
@@ -353,6 +396,25 @@ in
 
   # Neo G9
   xresources.properties."Xft.dpi" = "108";
+
+  systemd.user.services.hyprland-monitor-layout-fix = {
+    Unit = {
+      Description = "Reapply Hyprland monitor layout after compositor startup";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+      ConditionEnvironment = "HYPRLAND_INSTANCE_SIGNATURE";
+    };
+
+    Service = {
+      Type = "oneshot";
+      ExecStart = pkgs.writeShellScript "hyprland-monitor-layout-fix" ''
+        sleep 5
+        hyprctl eval ${lib.escapeShellArg hyprlandMonitorLayoutLua}
+      '';
+    };
+
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
 
   home.stateVersion = "25.11";
 }

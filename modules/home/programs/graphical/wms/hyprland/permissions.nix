@@ -14,35 +14,47 @@ let
       osConfig.programs.hyprland.portalPackage;
 
   mkPackagePermission =
-    pkg: permission: action:
+    pkg: permissionType: action:
     let
       pname = pkg.pname or (builtins.parseDrvName pkg.name).name;
     in
-    "/nix/store/[a-z0-9]{32}-${pname}-[0-9.]*/bin/${pname}, ${permission}, ${action}";
+    {
+      binary = "/nix/store/[a-z0-9]{32}-${pname}-[0-9.]*/bin/${pname}";
+      type = permissionType;
+      mode = action;
+    };
 
   mkPackagePermissions =
     packages: permission: action:
     map (pkg: mkPackagePermission pkg permission action) packages;
 
   mkPackagePathPermission =
-    pkg: subPath: permission: action:
+    pkg: subPath: permissionType: action:
     let
       pname = pkg.pname or (builtins.parseDrvName pkg.name).name;
     in
-    "/nix/store/[a-z0-9]{32}-${pname}-[0-9.]*/${subPath}, ${permission}, ${action}";
+    {
+      binary = "/nix/store/[a-z0-9]{32}-${pname}-[0-9.]*/${subPath}";
+      type = permissionType;
+      mode = action;
+    };
 
   mkLibPermission =
-    pkg: libPath: permission: action:
+    pkg: libPath: permissionType: action:
     let
       pname = pkg.pname or (builtins.parseDrvName pkg.name).name;
     in
-    "/nix/store/[a-z0-9]{32}-${pname}-[0-9.]*/${libPath}, ${permission}, ${action}";
+    {
+      binary = "/nix/store/[a-z0-9]{32}-${pname}-[0-9.]*/${libPath}";
+      type = permissionType;
+      mode = action;
+    };
 in
 {
   config = lib.mkIf cfg.enable {
     wayland.windowManager.hyprland = {
       settings = {
-        ecosystem = {
+        config.ecosystem = {
           enforce_permissions = false;
         };
 

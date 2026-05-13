@@ -13,8 +13,11 @@ in
     wayland.windowManager.hyprland = {
       settings = {
         # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
-        windowrule = [
-          "match:class ^(gamescope|steam_app).*, immediate on"
+        window_rule = [
+          {
+            match.class = "^(gamescope|steam_app).*";
+            immediate = true;
+          }
         ];
       };
     };

@@ -10,6 +10,8 @@ let
   inherit (lib) mkIf;
 
   cfg = config.khanelinix.programs.graphical.wms.hyprland;
+  toLua = lib.generators.toLua { };
+  lua = lib.generators.mkLuaInline;
 
   # Helper functions
   mkStartCommand =
@@ -45,6 +47,281 @@ let
       "${pre}exec, ${mkStartCommand cmd}"
     else
       bind; # Return unchanged if no "exec, " found
+
+  enabledLaunchers =
+    let
+      inherit (config.khanelinix.programs.graphical) launchers;
+    in
+    lib.flatten [
+      (lib.optional launchers.vicinae.enable "vicinae open")
+      (lib.optional launchers.anyrun.enable "anyrun")
+      (lib.optional launchers.walker.enable "walker")
+      (lib.optional launchers.sherlock.enable "sherlock")
+      (lib.optional launchers.rofi.enable "rofi -show drun")
+    ];
+
+  dmenuLauncher =
+    let
+      inherit (config.khanelinix.programs.graphical) launchers;
+      enabledDmenuLaunchers = lib.flatten [
+        (lib.optional launchers.vicinae.enable "vicinae dmenu")
+        (lib.optional launchers.anyrun.enable "anyrun --show-results-immediately true")
+        (lib.optional launchers.walker.enable "walker --stream")
+        (lib.optional launchers.sherlock.enable "sherlock")
+        (lib.optional launchers.rofi.enable "rofi -dmenu")
+      ];
+    in
+    builtins.head enabledDmenuLaunchers;
+
+  commandReplacements =
+    let
+      launcherCount = builtins.length enabledLaunchers;
+      magick = lib.getExe' pkgs.imagemagick "magick";
+      screenshotPath =
+        if config.xdg.userDirs.enable then
+          "${config.xdg.userDirs.pictures}/screenshots"
+        else
+          "${config.home.homeDirectory}/Pictures/screenshots";
+      getDateTime = lib.getExe (
+        pkgs.writeShellScriptBin "getDateTime" /* bash */ ''
+          echo $(date +'%Y%m%d_%H%M%S')
+        ''
+      );
+      screenshotTool =
+        if config.programs.hyprshot.enable then
+          {
+            area = "hyprshot -m region --freeze --raw | ${magick} convert png:- ppm:-";
+            active = "hyprshot -m active -m window --raw | ${magick} convert png:- ppm:-";
+            screen = "hyprshot -m output --raw | ${magick} convert png:- ppm:-";
+            areaFile = "hyprshot -m region --freeze -o \"${screenshotPath}\" -f \"$(${getDateTime}).png\"";
+            activeFile = "hyprshot -m active -m window -o \"${screenshotPath}\" -f \"$(${getDateTime}).png\"";
+            screenFile = "hyprshot -m output -o \"${screenshotPath}\" -f \"$(${getDateTime}).png\"";
+            areaClipboard = "hyprshot -m region --freeze --clipboard-only";
+            activeClipboard = "hyprshot -m active -m window --clipboard-only";
+            screenClipboard = "hyprshot -m output --clipboard-only";
+          }
+        else
+          {
+            area = "grimblast --freeze --type ppm save area -";
+            active = "grimblast --type ppm save active -";
+            screen = "grimblast --type ppm save screen -";
+            areaFile = "grimblast --freeze --notify save area \"${screenshotPath}/$(${getDateTime}).png\"";
+            activeFile = "grimblast --notify save active \"${screenshotPath}/$(${getDateTime}).png\"";
+            screenFile = "grimblast --notify save screen \"${screenshotPath}/$(${getDateTime}).png\"";
+            areaClipboard = "grimblast --freeze --notify copy area";
+            activeClipboard = "grimblast --notify copy active";
+            screenClipboard = "grimblast --freeze --notify copy screen";
+          };
+      annotationTool =
+        if config.khanelinix.programs.graphical.addons.satty.enable then
+          "satty --filename -"
+        else
+          "swappy -f -";
+    in
+    [
+      {
+        from = "$($launcher)";
+        to = lib.optionalString (launcherCount > 0) (builtins.elemAt enabledLaunchers 0);
+      }
+      {
+        from = "$($launcher-alt)";
+        to = lib.optionalString (launcherCount > 1) (builtins.elemAt enabledLaunchers 1);
+      }
+      {
+        from = "$($launcher-backup)";
+        to = lib.optionalString (launcherCount > 2) (builtins.elemAt enabledLaunchers 2);
+      }
+      {
+        from = "$mainMod";
+        to = "SUPER";
+      }
+      {
+        from = "$HYPER";
+        to = "SUPER_SHIFT_CTRL";
+      }
+      {
+        from = "$ALT-HYPER";
+        to = "SHIFT_ALT_CTRL";
+      }
+      {
+        from = "$RHYPER";
+        to = "SUPER_ALT_R_CTRL_R";
+      }
+      {
+        from = "$LHYPER";
+        to = "SUPER_ALT_L_CTRL_L";
+      }
+      {
+        from = "$CTRL_SHIFT";
+        to = "CTRL_SHIFT";
+      }
+      {
+        from = "$CTRL_ALT";
+        to = "CTRL_ALT";
+      }
+      {
+        from = "$CTRL_ALT_SUPER";
+        to = "CTRL_ALT_SUPER";
+      }
+      {
+        from = "$SUPER_SHIFT";
+        to = "SUPER_SHIFT";
+      }
+      {
+        from = "$term";
+        to = "kitty";
+      }
+      {
+        from = "$browser";
+        to = lib.getExe config.programs.firefox.package;
+      }
+      {
+        from = "$explorer";
+        to = "nautilus";
+      }
+      {
+        from = "$screen-locker";
+        to = "hyprlock";
+      }
+      {
+        from = "$notification_center";
+        to = "swaync-client";
+      }
+      {
+        from = "$cliphist";
+        to = "cliphist list  | tr -d '\\000' | ${dmenuLauncher} | cliphist decode | wl-copy";
+      }
+      {
+        from = "$looking-glass";
+        to = "looking-glass-client";
+      }
+      {
+        from = "$color_picker";
+        to = "hyprpicker -a && (${magick} convert -size 32x32 xc:$(wl-paste) /tmp/color.png && notify-send \"Color Code:\" \"$(wl-paste)\" -h \"string:bgcolor:$(wl-paste)\" --icon /tmp/color.png -u critical -t 4000)";
+      }
+      {
+        from = "$bar";
+        to = ".waybar-wrapped";
+      }
+      {
+        from = "$window-inspector";
+        to = "hyprprop";
+      }
+      {
+        from = "$screenshot_active_clipboard";
+        to = screenshotTool.activeClipboard;
+      }
+      {
+        from = "$screenshot_area_clipboard";
+        to = screenshotTool.areaClipboard;
+      }
+      {
+        from = "$screenshot_screen_clipboard";
+        to = screenshotTool.screenClipboard;
+      }
+      {
+        from = "$screenshot_active_file";
+        to = screenshotTool.activeFile;
+      }
+      {
+        from = "$screenshot_area_file";
+        to = screenshotTool.areaFile;
+      }
+      {
+        from = "$screenshot_screen_file";
+        to = screenshotTool.screenFile;
+      }
+      {
+        from = "$screenshot_active_annotate";
+        to = "${screenshotTool.active} | ${annotationTool}";
+      }
+      {
+        from = "$screenshot_area_annotate";
+        to = "${screenshotTool.area} | ${annotationTool}";
+      }
+      {
+        from = "$screenshot_screen_annotate";
+        to = "${screenshotTool.screen} | ${annotationTool}";
+      }
+      {
+        from = "$screen-recorder";
+        to = "record_screen";
+      }
+    ];
+
+  replaceCommandVars =
+    value:
+    lib.replaceStrings (map (replacement: replacement.from) commandReplacements) (map (
+      replacement: replacement.to
+    ) commandReplacements) value;
+
+  normalizeDirection =
+    direction:
+    {
+      l = "left";
+      r = "right";
+      u = "up";
+      d = "down";
+    }
+    .${direction} or direction;
+
+  mkExecRawDispatcher =
+    dispatcher: args:
+    "hl.dsp.exec_raw(${
+      toLua (lib.concatStringsSep " " ([ dispatcher ] ++ lib.optional (args != "") args))
+    })";
+
+  dispatcherMap = {
+    exec = args: "hl.dsp.exec_cmd(${toLua args})";
+    submap = args: "hl.dsp.submap(${toLua args})";
+    killactive = _: "hl.dsp.window.close()";
+    fullscreen = _: "hl.dsp.window.fullscreen()";
+    movefocus = args: "hl.dsp.focus({ direction = ${toLua (normalizeDirection args)} })";
+    movewindow =
+      args:
+      if args == "" then
+        "hl.dsp.window.drag()"
+      else
+        "hl.dsp.window.move({ direction = ${toLua (normalizeDirection args)} })";
+    resizewindow = _: "hl.dsp.window.resize()";
+    workspace = args: "hl.dsp.focus({ workspace = ${toLua args} })";
+    movetoworkspace = args: "hl.dsp.window.move({ workspace = ${toLua args}, follow = true })";
+    movetoworkspacesilent = args: "hl.dsp.window.move({ workspace = ${toLua args}, follow = false })";
+    focusmonitor = args: "hl.dsp.focus({ monitor = ${toLua args} })";
+    movecurrentworkspacetomonitor = args: "hl.dsp.workspace.move({ monitor = ${toLua args} })";
+    togglespecialworkspace = args: "hl.dsp.workspace.toggle_special(${toLua args})";
+    togglefloating = _: ''hl.dsp.window.float({ action = "toggle" })'';
+    pin = _: "hl.dsp.window.pin()";
+    pseudo = _: "hl.dsp.window.pseudo()";
+  };
+
+  mkDispatcher =
+    dispatcher: args: dispatcherMap.${dispatcher} or (mkExecRawDispatcher dispatcher) args;
+
+  mkLuaBindWith =
+    opts: bind:
+    let
+      parts = map lib.trim (lib.splitString "," (replaceCommandVars bind));
+      mods = builtins.elemAt parts 0;
+      key = builtins.elemAt parts 1;
+      dispatcher = builtins.elemAt parts 2;
+      args = lib.concatStringsSep "," (lib.drop 3 parts);
+      keyCombo = lib.concatStringsSep " + " (
+        lib.filter (part: part != "") [
+          (lib.replaceStrings [ "_" ] [ " + " ] mods)
+          key
+        ]
+      );
+    in
+    {
+      _args = [
+        keyCombo
+        (lua (mkDispatcher dispatcher args))
+      ]
+      ++ lib.optional (opts != { }) opts;
+    };
+
+  mkLuaBind = mkLuaBindWith { };
 in
 {
   config = mkIf cfg.enable {
@@ -174,76 +451,65 @@ in
             submapTriggerBinds = [
               "$mainMod, S, submap, screenshot"
               "$mainMod, X, submap, system"
-              "$mainMod, W, submap, window"
+              "$mainMod, R, submap, window"
+            ];
+
+            lockedBinds = [
+              "$mainMod, BackSpace, exec, pkill -SIGUSR1 hyprlock || WAYLAND_DISPLAY=wayland-1 $screen-locker"
+              ",XF86AudioRaiseVolume,exec,wpctl set-volume @DEFAULT_AUDIO_SINK@ 2.5%+"
+              ",XF86AudioLowerVolume,exec,wpctl set-volume @DEFAULT_AUDIO_SINK@ 2.5%-"
+              ",XF86AudioMute,exec,wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+              ",XF86MonBrightnessUp,exec,light -A 5"
+              ",XF86MonBrightnessDown,exec,light -U 5"
+              ",XF86AudioMedia,exec,playerctl play-pause"
+              ",XF86AudioPlay,exec,playerctl play-pause"
+              ",XF86AudioStop,exec,playerctl stop"
+              ",XF86AudioPrev,exec,playerctl previous"
+              ",XF86AudioNext,exec,playerctl next"
+            ];
+
+            mouseBinds = [
+              "$mainMod, mouse:272, movewindow"
+              "CTRL_SHIFT, mouse:272, movewindow"
+              "$mainMod, mouse:273, resizewindow"
+              "CTRL_SHIFT, mouse:273, resizewindow"
             ];
           in
-          # Apply mkStartCommand only to the exec commands
-          (map mkExecBind (launcherBinds ++ appBinds ++ screenshotBinds))
-          # Background binds already have mkStartCommand applied
-          ++ backgroundBinds
-          # Direct binds that don't need command wrapping
-          ++ systemBinds
-          ++ movementBinds
-          ++ workspaceBinds
-          ++ monitorBinds
-          ++ specialBinds
-          ++ submapTriggerBinds
-          ++ [
-            "$mainMod, I, exec, notify-send \"$($window-inspector)\""
-            "$mainMod, PERIOD, exec, smile"
-            "$CTRL_SHIFT, B, exec, killall -SIGUSR1 $bar"
-          ]
-          ++ lib.optional (lib.elem pkgs.hyprlandPlugins.hyprexpo config.wayland.windowManager.hyprland.plugins) "SUPER, Escape, hyprexpo:expo, toggle"
-
-          # ░█░█░█▀█░█▀▄░█░█░█▀▀░█▀█░█▀█░█▀▀░█▀▀
-          # ░█▄█░█░█░█▀▄░█▀▄░▀▀█░█▀▀░█▀█░█░░░█▀▀
-          # ░▀░▀░▀▀▀░▀░▀░▀░▀░▀▀▀░▀░░░▀░▀░▀▀▀░▀▀▀
-          # Switch workspaces with CTRL_ALT + [0-9]
-          ++ (builtins.concatLists (
-            builtins.genList (
-              x:
-              let
-                ws =
-                  let
-                    c = (x + 1) / 10;
-                  in
-                  toString (x + 1 - (c * 10));
-              in
-              [
-                "$CTRL_ALT, ${ws}, workspace, ${toString (x + 1)}"
-                "$CTRL_ALT_SUPER, ${ws}, movetoworkspace, ${toString (x + 1)}"
-                "$SUPER_SHIFT, ${ws}, movetoworkspacesilent, ${toString (x + 1)}"
-              ]
-            ) 10
-          ));
-        bindl = [
-          # ░█▀▀░█░█░█▀▀░▀█▀░█▀▀░█▄█
-          # ░▀▀█░░█░░▀▀█░░█░░█▀▀░█░█
-          # ░▀▀▀░░▀░░▀▀▀░░▀░░▀▀▀░▀░▀
-          # Kill and restart crashed hyprlock
-          "$mainMod, BackSpace, exec, pkill -SIGUSR1 hyprlock || WAYLAND_DISPLAY=wayland-1 $screen-locker"
-
-          # ░█▄█░█▀▀░█▀▄░▀█▀░█▀█
-          # ░█░█░█▀▀░█░█░░█░░█▀█
-          # ░▀░▀░▀▀▀░▀▀░░▀▀▀░▀░▀
-          ",XF86AudioRaiseVolume,exec,wpctl set-volume @DEFAULT_AUDIO_SINK@ 2.5%+"
-          ",XF86AudioLowerVolume,exec,wpctl set-volume @DEFAULT_AUDIO_SINK@ 2.5%-"
-          ",XF86AudioMute,exec,wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-          ",XF86MonBrightnessUp,exec,light -A 5"
-          ",XF86MonBrightnessDown,exec,light -U 5"
-          ",XF86AudioMedia,exec,playerctl play-pause"
-          ",XF86AudioPlay,exec,playerctl play-pause"
-          ",XF86AudioStop,exec,playerctl stop"
-          ",XF86AudioPrev,exec,playerctl previous"
-          ",XF86AudioNext,exec,playerctl next"
-        ];
-        bindm = [
-          # Move/resize windows with mainMod + LMB/RMB and dragging
-          "$mainMod, mouse:272, movewindow #left click"
-          "CTRL_SHIFT, mouse:272, movewindow #left click"
-          "$mainMod, mouse:273, resizewindow #right click"
-          "CTRL_SHIFT, mouse:273, resizewindow #right click"
-        ];
+          (map mkLuaBind (
+            (map mkExecBind (launcherBinds ++ appBinds ++ screenshotBinds))
+            ++ backgroundBinds
+            ++ systemBinds
+            ++ movementBinds
+            ++ workspaceBinds
+            ++ monitorBinds
+            ++ specialBinds
+            ++ submapTriggerBinds
+            ++ [
+              "$mainMod, I, exec, notify-send \"$($window-inspector)\""
+              "$mainMod, PERIOD, exec, smile"
+              "$CTRL_SHIFT, B, exec, killall -SIGUSR1 $bar"
+            ]
+            ++ lib.optional (lib.elem pkgs.hyprlandPlugins.hyprexpo config.wayland.windowManager.hyprland.plugins) "SUPER, Escape, hyprexpo:expo, toggle"
+            ++ (builtins.concatLists (
+              builtins.genList (
+                x:
+                let
+                  ws =
+                    let
+                      c = (x + 1) / 10;
+                    in
+                    toString (x + 1 - (c * 10));
+                in
+                [
+                  "$CTRL_ALT, ${ws}, workspace, ${toString (x + 1)}"
+                  "$CTRL_ALT_SUPER, ${ws}, movetoworkspace, ${toString (x + 1)}"
+                  "$SUPER_SHIFT, ${ws}, movetoworkspacesilent, ${toString (x + 1)}"
+                ]
+              ) 10
+            ))
+          ))
+          ++ map (mkLuaBindWith { locked = true; }) lockedBinds
+          ++ map (mkLuaBindWith { mouse = true; }) mouseBinds;
       };
 
       # Submap definitions for better keybind organization
@@ -251,7 +517,7 @@ in
         screenshot = {
           onDispatch = "reset";
           settings = {
-            bind =
+            bind = map mkLuaBind (
               (map mkExecBind [
                 # Clipboard screenshots
                 ", w, exec, $screenshot_active_clipboard" # current window
@@ -275,22 +541,23 @@ in
               ++ [
                 # Exit submap
                 ", escape, submap, reset"
-              ];
+              ]
+            );
           };
         };
 
         monitor = {
           settings = {
-            bind = [
+            bind = map mkLuaBind [
               # Focus monitor
-              ", up, focusmonitor, u"
-              ", k, focusmonitor, u"
-              ", down, focusmonitor, d"
-              ", j, focusmonitor, d"
-              ", left, focusmonitor, l"
-              ", h, focusmonitor, l"
-              ", right, focusmonitor, r"
-              ", l, focusmonitor, r"
+              ", up, focusmonitor, DP-3"
+              ", k, focusmonitor, DP-3"
+              ", down, focusmonitor, DP-1"
+              ", j, focusmonitor, DP-1"
+              ", left, focusmonitor, DP-1"
+              ", h, focusmonitor, DP-1"
+              ", right, focusmonitor, DP-1"
+              ", l, focusmonitor, DP-1"
 
               # Move workspace to monitor
               "SHIFT, up, movecurrentworkspacetomonitor, u"
@@ -312,7 +579,7 @@ in
         system = {
           onDispatch = "reset";
           settings = {
-            bind =
+            bind = map mkLuaBind (
               (map mkExecBind [
                 ", l, exec, ${
                   if (osConfig.programs.uwsm.enable or false) then "uwsm stop" else lib.getExe pkgs.hyprshutdown
@@ -323,13 +590,14 @@ in
               ++ [
                 # Exit submap
                 ", escape, submap, reset"
-              ];
+              ]
+            );
           };
         };
 
         window = {
           settings = {
-            bind = [
+            bind = map mkLuaBind [
               # Window operations
               ", f, fullscreen"
               ", v, togglefloating"

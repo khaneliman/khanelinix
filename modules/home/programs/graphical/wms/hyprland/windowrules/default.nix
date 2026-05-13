@@ -24,18 +24,45 @@ in
     wayland.windowManager.hyprland = {
       settings = {
         # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
-        windowrule = [
+        window_rule = [
           # fix xwayland apps
-          "match:xwayland 1, match:float 1, rounding 0"
-          "match:class ^(.*jetbrains.*)$, match:title ^(Confirm Exit|Open Project|win424|win201|splash)$, center on"
-          "match:class ^(.*jetbrains.*)$, match:title ^(splash)$, size 640 400"
+          {
+            match.xwayland = true;
+            match.float = true;
+            rounding = 0;
+          }
+          {
+            match.class = "^(.*jetbrains.*)$";
+            match.title = "^(Confirm Exit|Open Project|win424|win201|splash)$";
+            center = true;
+          }
+          {
+            match.class = "^(.*jetbrains.*)$";
+            match.title = "^(splash)$";
+            size = "640 400";
+          }
 
           # xwaylandvideobridge
-          "match:class ^(xwaylandvideobridge)$, opacity 0.0 override 0.0 override"
-          "match:class ^(xwaylandvideobridge)$, no_anim on"
-          "match:class ^(xwaylandvideobridge)$, no_initial_focus on"
-          "match:class ^(xwaylandvideobridge)$, max_size 1 1"
-          "match:class ^(xwaylandvideobridge)$, no_blur on"
+          {
+            match.class = "^(xwaylandvideobridge)$";
+            opacity = "0.0 override 0.0 override";
+          }
+          {
+            match.class = "^(xwaylandvideobridge)$";
+            no_anim = true;
+          }
+          {
+            match.class = "^(xwaylandvideobridge)$";
+            no_initial_focus = true;
+          }
+          {
+            match.class = "^(xwaylandvideobridge)$";
+            max_size = "1 1";
+          }
+          {
+            match.class = "^(xwaylandvideobridge)$";
+            no_blur = true;
+          }
         ];
       };
     };

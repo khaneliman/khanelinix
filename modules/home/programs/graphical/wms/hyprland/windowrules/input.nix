@@ -13,15 +13,37 @@ in
     wayland.windowManager.hyprland = {
       settings = {
         # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
-        windowrule = [
+        window_rule = [
           # Require input
-          "match:class org.kde.polkit-kde-authentication-agent-1, border_color rgba(ed8796FF)"
-          "match:class org.kde.polkit-kde-authentication-agent-1, dim_around on"
-          "match:class org.kde.polkit-kde-authentication-agent-1, stay_focused on"
-          "match:class Rofi, stay_focused on"
-          "match:class ^(steam)$, match:title ^()$, no_focus on"
-          "match:class ^(xwaylandvideobridge)$, no_focus on"
-          "match:class it.mijorus.smile, stay_focused on"
+          {
+            match.class = "org.kde.polkit-kde-authentication-agent-1";
+            border_color = "rgba(ed8796FF)";
+          }
+          {
+            match.class = "org.kde.polkit-kde-authentication-agent-1";
+            dim_around = true;
+          }
+          {
+            match.class = "org.kde.polkit-kde-authentication-agent-1";
+            stay_focused = true;
+          }
+          {
+            match.class = "Rofi";
+            stay_focused = true;
+          }
+          {
+            match.class = "^(steam)$";
+            match.title = "^()$";
+            no_focus = true;
+          }
+          {
+            match.class = "^(xwaylandvideobridge)$";
+            no_focus = true;
+          }
+          {
+            match.class = "it.mijorus.smile";
+            stay_focused = true;
+          }
         ];
       };
     };

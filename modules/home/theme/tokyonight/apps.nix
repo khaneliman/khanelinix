@@ -362,28 +362,6 @@ in
       })
     ];
 
-    wayland.windowManager.hyprland.settings.plugin.hyprbars =
-      let
-        hexToRgb =
-          hex:
-          let
-            r = builtins.substring 1 2 hex;
-            g = builtins.substring 3 2 hex;
-            b = builtins.substring 5 2 hex;
-          in
-          "rgb(${r}${g}${b})";
-      in
-      {
-        bar_color = hexToRgb colors.bg;
-
-        hyprbars-button = lib.mkForce [
-          # close
-          "${hexToRgb colors.red}, 15, 󰅖, hyprctl dispatch killactive"
-          # maximize
-          "${hexToRgb colors.magenta}, 15, , hyprctl dispatch fullscreen 1"
-        ];
-      };
-
     home.file = mkIf pkgs.stdenv.hostPlatform.isLinux {
       ".Xresources.d/tokyonight".source =
         "${tokyonight}/extras/xresources/tokyonight_${variant}.Xresources";

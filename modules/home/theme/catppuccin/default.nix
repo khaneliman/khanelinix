@@ -363,17 +363,6 @@ in
           };
         };
 
-        wayland.windowManager.hyprland.settings.plugin.hyprbars = mkIf isLinux {
-          bar_color = palette.colors.base.rgb;
-
-          hyprbars-button = lib.mkForce [
-            # close
-            "rgb(ED8796), 15, 󰅖, hyprctl dispatch killactive"
-            # maximize
-            "rgb(C6A0F6), 15, , hyprctl dispatch fullscreen 1"
-          ];
-        };
-
         xdg.configFile = mkMerge [
           (mkIf (pkgs.stdenv.hostPlatform.isLinux && config.khanelinix.programs.graphical.apps.discord.enable)
             {

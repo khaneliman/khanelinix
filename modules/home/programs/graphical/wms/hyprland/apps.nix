@@ -26,38 +26,31 @@ in
     #   };
     # };
 
-    wayland.windowManager.hyprland = {
-      settings = {
-        exec-once =
+    khanelinix.programs.graphical.wms.hyprland.startupCommands =
+      let
+        # Helper function to conditionally prefix with uwsm
+        # Usage: mkStartCommand "command" or mkStartCommand { slice = "b"; } "command"
+        mkStartCommand =
           let
-            # Helper function to conditionally prefix with uwsm
-            # Usage: mkStartCommand "command" or mkStartCommand { slice = "b"; } "command"
-            mkStartCommand =
+            # Two-argument version: mkStartCommand { slice = "b"; } "command"
+            withArgs =
+              args: cmd:
               let
-                # Two-argument version: mkStartCommand { slice = "b"; } "command"
-                withArgs =
-                  args: cmd:
-                  let
-                    slice = args.slice or null;
-                  in
-                  if (osConfig.programs.uwsm.enable or false) then
-                    "uwsm app ${if slice == null then "" else "-s ${slice}"} -- ${cmd}"
-                  else
-                    cmd;
-
-                # Single-argument version: mkStartCommand "command"
-                withoutArgs = cmd: if (osConfig.programs.uwsm.enable or false) then "uwsm app -- ${cmd}" else cmd;
+                slice = args.slice or null;
               in
-              args: if lib.isString args then withoutArgs args else withArgs args;
-          in
-          # ░█▀█░█▀█░█▀█░░░█▀▀░▀█▀░█▀█░█▀▄░▀█▀░█░█░█▀█
-          # ░█▀█░█▀▀░█▀▀░░░▀▀█░░█░░█▀█░█▀▄░░█░░█░█░█▀▀
-          # ░▀░▀░▀░░░▀░░░░░▀▀▀░░▀░░▀░▀░▀░▀░░▀░░▀▀▀░▀░░
+              if (osConfig.programs.uwsm.enable or false) then
+                "uwsm app ${if slice == null then "" else "-s ${slice}"} -- ${cmd}"
+              else
+                cmd;
 
+            # Single-argument version: mkStartCommand "command"
+            withoutArgs = cmd: if (osConfig.programs.uwsm.enable or false) then "uwsm app -- ${cmd}" else cmd;
+          in
+          args: if lib.isString args then withoutArgs args else withArgs args;
+        appCommands =
           # Regular applications (app-graphical.slice) - actively used, interactive
           (
-            lib.optionals (osConfig.programs.uwsm.enable or false) [ "uwsm finalize" ]
-            ++ lib.optionals config.programs.firefox.enable [
+            lib.optionals config.programs.firefox.enable [
               (mkStartCommand "${getExe config.programs.firefox.package}")
             ]
             # Background applications (background-graphical.slice) - communication clients, often idle
@@ -90,7 +83,9 @@ in
             # Always start these utilities (no UWSM wrapping needed)
             (mkStartCommand { slice = "b"; } "wayvnc $(tailscale ip --4)")
           ];
-      };
-    };
+      in
+      lib.mkBefore (
+        if (osConfig.programs.uwsm.enable or false) then [ "uwsm finalize" ] ++ appCommands else appCommands
+      );
   };
 }

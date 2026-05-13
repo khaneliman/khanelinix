@@ -12,7 +12,7 @@ in
   config = mkIf cfg.enable {
     wayland.windowManager.hyprland = {
       settings = {
-        workspace = [
+        workspace_rule = [
           ##
           # ░█░█░█▀█░█▀▄░█░█░█▀▀░█▀█░█▀█░█▀▀░█▀▀░░░█▀▀░█▀█░█▀█░█▀▀░▀█▀░█▀▀
           # ░█▄█░█░█░█▀▄░█▀▄░▀▀█░█▀▀░█▀█░█░░░█▀▀░░░█░░░█░█░█░█░█▀▀░░█░░█░█
@@ -20,15 +20,30 @@ in
           ##
 
           # Code
-          "3, on-created-empty:$term zellij"
+          {
+            workspace = "3";
+            on_created_empty = "kitty zellij";
+          }
           # Gaming
-          "4, on-created-empty:steam"
+          {
+            workspace = "4";
+            on_created_empty = "steam";
+          }
           # Messaging
-          "5, on-created-empty:discord"
+          {
+            workspace = "5";
+            on_created_empty = "discord";
+          }
           # Mail
-          "6, on-created-empty:thunderbird"
+          {
+            workspace = "6";
+            on_created_empty = "thunderbird";
+          }
 
-          "special:scratchpad, on-created-empty:$term"
+          {
+            workspace = "special:scratchpad";
+            on_created_empty = "kitty";
+          }
         ];
       };
     };

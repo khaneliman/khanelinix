@@ -13,12 +13,17 @@ in
     wayland.windowManager.hyprland = {
       settings = {
         # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
-        windowrule = [
+        window_rule = [
           # Fix apps not tiling
-          "match:class ^(Spotify)$, tile on"
-          "match:class ^(Spotify Free)$, tile on"
-          "match:class ^(steam_app).*, match:title ^(Battle.net)$, tile on"
-          "match:class ^(Godot|org\\.godotengine\\.Godot)$, tile on"
+          {
+            match.class = "^(Spotify|Spotify Free|Godot|org\\.godotengine\\.Godot)$";
+            tile = true;
+          }
+          {
+            match.class = "^(steam_app).*";
+            match.title = "^(Battle.net)$";
+            tile = true;
+          }
         ];
       };
     };

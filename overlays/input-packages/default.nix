@@ -23,9 +23,12 @@ in
   #          ╭──────────────────────────────────────────────────────────╮
   #          │ From nixpkgs-master (fast updating / want latest always) │
   #          ╰──────────────────────────────────────────────────────────╯
-  # inherit (master)
-  #   # TODO: remove after hitting channel
-  #   ;
+  inherit (master)
+    # TODO: remove after hitting channel
+    hyprland-unwrapped
+    hyprland
+    xdg-desktop-portal-hyprland
+    ;
 
   # TODO: remove after next release
   yazi-unwrapped = master.yazi-unwrapped.overrideAttrs (old: {

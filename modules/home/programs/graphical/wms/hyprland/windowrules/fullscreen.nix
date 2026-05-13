@@ -13,10 +13,18 @@ in
     wayland.windowManager.hyprland = {
       settings = {
         # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
-        windowrule = [
+        window_rule = [
           # Fix apps not staying fullscreen
-          "match:class ^(steam_app).*, match:title ^(MTGA)$, fullscreen on"
-          "match:class ^(steam_app).*, match:title ^(MTGA)$, fullscreen_state 2 2"
+          {
+            match.class = "^(steam_app).*";
+            match.title = "^(MTGA)$";
+            fullscreen = true;
+          }
+          {
+            match.class = "^(steam_app).*";
+            match.title = "^(MTGA)$";
+            fullscreen_state = "2 2";
+          }
         ];
       };
     };
