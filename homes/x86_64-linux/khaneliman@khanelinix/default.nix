@@ -10,10 +10,6 @@ let
   wallpaperCfg = config.khanelinix.theme.wallpaper;
   wallpaperPath = name: lib.khanelinix.theme.wallpaperPath { inherit config pkgs name; };
   wallpaperPaths = names: lib.khanelinix.theme.wallpaperPaths { inherit config pkgs names; };
-  hyprlandMonitorLayoutLua = ''
-    hl.monitor({ output = "DP-3", mode = "3840x2160@60", position = "1280x0", scale = 1.5, bitdepth = 10 })
-    hl.monitor({ output = "DP-1", mode = "5120x1440@120", position = "0x1440", scale = 1, vrr = 1, bitdepth = 10 })
-  '';
 in
 {
   khanelinix = {
@@ -396,25 +392,6 @@ in
 
   # Neo G9
   xresources.properties."Xft.dpi" = "108";
-
-  systemd.user.services.hyprland-monitor-layout-fix = {
-    Unit = {
-      Description = "Reapply Hyprland monitor layout after compositor startup";
-      After = [ "graphical-session.target" ];
-      PartOf = [ "graphical-session.target" ];
-      ConditionEnvironment = "HYPRLAND_INSTANCE_SIGNATURE";
-    };
-
-    Service = {
-      Type = "oneshot";
-      ExecStart = pkgs.writeShellScript "hyprland-monitor-layout-fix" ''
-        sleep 5
-        hyprctl eval ${lib.escapeShellArg hyprlandMonitorLayoutLua}
-      '';
-    };
-
-    Install.WantedBy = [ "graphical-session.target" ];
-  };
 
   home.stateVersion = "25.11";
 }
