@@ -379,7 +379,7 @@ let
       key = resolvedBind.key or "";
       dispatcher = resolvedBind.dispatcher or "";
       args = resolvedBind.args or "";
-      wrap = resolvedBind.wrap or true;
+      wrap = if resolvedBind ? wrap then resolvedBind.wrap else true;
       expandedArgs =
         if dispatcher == "exec" && wrap then
           mkStartCommand (replaceCommandVars args)
