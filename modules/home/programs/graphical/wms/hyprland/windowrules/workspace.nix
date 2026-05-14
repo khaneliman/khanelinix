@@ -6,7 +6,11 @@
 }:
 let
   inherit (lib) mkIf;
+
   cfg = config.khanelinix.programs.graphical.wms.hyprland;
+
+  firefoxClass = "^(?i:firefox|firefox-devedition)$";
+  mediaTitle = "^(?i).*(Twitch|TNTdrama|YouTube|Bally Sports|Video Entertainment|Plex).*$";
 in
 {
   config = mkIf cfg.enable {
@@ -16,20 +20,22 @@ in
         window_rule = [
           #Browsers - Move all Firefox windows to workspace 2 by default
           {
-            match.title = ".*(Firefox).*$";
+            match.class = firefoxClass;
             workspace = "2";
           }
           # Secondary Monitor Media
           # Exception rule to override the above rule - Media sites go to workspace 1
           {
-            match.title = ".*(Twitch|TNTdrama|YouTube|Bally Sports|Video Entertainment|Plex).*(Firefox).*$";
+            match.class = firefoxClass;
+            match.title = mediaTitle;
             workspace = "1";
-          } # TODO: Doesnt seem to work even though it says it matches
+          }
 
           {
-            match.title = "^(.*(hidden tabs - Workona)).*(Firefox).*$";
+            match.class = firefoxClass;
+            match.title = "^(?i).*(hidden tabs - Workona).*$";
             workspace = "special:inactive";
-          } # TODO: Doesnt seem to work even though it says it matches
+          }
           # Code
           {
             match.class = "^(Code|neovide|GitHub Desktop|GitKraken|robloxstudiobeta.exe)$";
@@ -115,6 +121,55 @@ in
             workspace = "8 silent";
           }
         ];
+
+        on =
+          let
+            routeFirefoxWindows = lib.generators.mkLuaInline ''
+              function()
+                for _, window in ipairs(hl.get_windows()) do
+                  local class = string.lower(window.class or "")
+                  if class == "firefox" or class == "firefox-devedition" then
+                    local title = string.lower(window.title or "")
+                    local target = "2"
+
+                    if title:find("hidden tabs %- workona") then
+                      target = "special:inactive"
+                    elseif title:find("twitch") or title:find("tntdrama") or title:find("youtube") or title:find("bally sports") or title:find("video entertainment") or title:find("plex") then
+                      target = "1"
+                    end
+
+                    if target ~= "2" and window.workspace ~= nil and window.workspace.name ~= "2" then
+                      return
+                    end
+
+                    if window.workspace == nil or window.workspace.name ~= target then
+                      hl.dispatch(hl.dsp.window.move({
+                        workspace = target,
+                        follow = false,
+                        window = "address:" .. window.address,
+                      }))
+                    end
+                  end
+                end
+              end
+            '';
+          in
+          lib.mkIf (config.wayland.windowManager.hyprland.configType == "lua") (
+            lib.mkAfter [
+              {
+                _args = [
+                  "window.open"
+                  routeFirefoxWindows
+                ];
+              }
+              {
+                _args = [
+                  "window.title"
+                  routeFirefoxWindows
+                ];
+              }
+            ]
+          );
       };
     };
   };
