@@ -32,223 +32,224 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.github-copilot-cli = {
-      enable = true;
+    programs = {
+      github-copilot-cli = {
+        enable = true;
 
-      enableMcpIntegration = mkIf mcpModuleEnabled true;
+        enableMcpIntegration = mkIf mcpModuleEnabled true;
 
-      settings = {
-        model = "gpt-5.4";
-        effortLevel = "high";
-        theme = "dark";
-        banner = "once";
-        renderMarkdown = true;
-        autoUpdate = false;
-        includeCoAuthoredBy = false;
-        respectGitignore = true;
-        enabledFeatureFlags = {
-          QUEUED_COMMANDS = true;
+        settings = {
+          model = "gpt-5.4";
+          effortLevel = "high";
+          theme = "dark";
+          banner = "once";
+          renderMarkdown = true;
+          autoUpdate = false;
+          includeCoAuthoredBy = false;
+          respectGitignore = true;
+          enabledFeatureFlags = {
+            QUEUED_COMMANDS = true;
+          };
+
+          trusted_folders =
+            let
+              documentsPath =
+                if config.xdg.userDirs.enable then
+                  config.xdg.userDirs.documents
+                else
+                  config.home.homeDirectory + lib.optionalString pkgs.stdenv.hostPlatform.isLinux "/Documents";
+
+              trustedGithubProjects = [
+                "home-manager"
+                "khanelivim"
+                "nixpkgs"
+                "nixvim"
+                "waybar"
+              ];
+            in
+            [
+              "${config.home.homeDirectory}/khanelinix"
+            ]
+            ++ map (project: "${documentsPath}/github/${project}") trustedGithubProjects;
         };
 
-        trusted_folders =
-          let
-            documentsPath =
-              if config.xdg.userDirs.enable then
-                config.xdg.userDirs.documents
-              else
-                config.home.homeDirectory + lib.optionalString pkgs.stdenv.hostPlatform.isLinux "/Documents";
+        inherit (aiTools.githubCopilotCli)
+          agents
+          context
+          skills
+          ;
 
-            trustedGithubProjects = [
-              "home-manager"
-              "khanelivim"
-              "nixpkgs"
-              "nixvim"
-              "waybar"
+        lspServers = {
+          nixd = {
+            command = lib.getExe pkgs.nixd;
+            fileExtensions = {
+              ".nix" = "nix";
+            };
+            initializationOptions = {
+              formatting.command = [ (lib.getExe pkgs.nixfmt) ];
+            };
+          };
+
+          emmylua-ls = {
+            command = lib.getExe pkgs.emmylua-ls;
+            fileExtensions = {
+              ".lua" = "lua";
+            };
+            initializationOptions.Lua = {
+              diagnostics.globals = [
+                "vim"
+                "Sbar"
+                "spoon"
+              ];
+              workspace.library = [
+                "/nix/store/*/share/lua/5.1"
+                "/etc/profiles/per-user/${config.khanelinix.user.name}/share/lua/5.1"
+              ];
+            };
+          };
+
+          basedpyright = {
+            command = lib.getExe' pkgs.basedpyright "basedpyright-langserver";
+            args = [ "--stdio" ];
+            fileExtensions = {
+              ".py" = "python";
+              ".pyi" = "python";
+              ".pyw" = "python";
+            };
+          };
+
+          ruff = {
+            command = lib.getExe pkgs.ruff;
+            args = [ "server" ];
+            fileExtensions = {
+              ".py" = "python";
+              ".pyi" = "python";
+              ".pyw" = "python";
+            };
+          };
+
+          bashls = {
+            command = lib.getExe pkgs.bash-language-server;
+            args = [ "start" ];
+            fileExtensions = {
+              ".bash" = "shellscript";
+              ".sh" = "shellscript";
+            };
+          };
+
+          clangd = {
+            command = lib.getExe' pkgs.clang-tools "clangd";
+            args = [
+              "--background-index"
+              "--clang-tidy"
+              "--header-insertion=iwyu"
+              "--completion-style=detailed"
+              "--function-arg-placeholders"
+              "--fallback-style=llvm"
             ];
-          in
-          [
-            "${config.home.homeDirectory}/khanelinix"
-          ]
-          ++ map (project: "${documentsPath}/github/${project}") trustedGithubProjects;
+            fileExtensions = {
+              ".c" = "c";
+              ".c++" = "cpp";
+              ".cc" = "cpp";
+              ".cpp" = "cpp";
+              ".cxx" = "cpp";
+              ".h" = "c";
+              ".h++" = "cpp";
+              ".hh" = "cpp";
+              ".hpp" = "cpp";
+              ".hxx" = "cpp";
+            };
+          };
+
+          fish-lsp = {
+            command = lib.getExe pkgs.fish-lsp;
+            fileExtensions = {
+              ".fish" = "fish";
+            };
+          };
+
+          typescript = {
+            command = lib.getExe pkgs.typescript-language-server;
+            args = [ "--stdio" ];
+            fileExtensions = {
+              ".cjs" = "javascript";
+              ".cts" = "typescript";
+              ".js" = "javascript";
+              ".jsx" = "javascriptreact";
+              ".mjs" = "javascript";
+              ".mts" = "typescript";
+              ".ts" = "typescript";
+              ".tsx" = "typescriptreact";
+            };
+          };
+
+          gopls = {
+            command = lib.getExe pkgs.gopls;
+            fileExtensions = {
+              ".go" = "go";
+              ".mod" = "go";
+              ".sum" = "go";
+            };
+          };
+
+          rust-analyzer = {
+            command = lib.getExe pkgs.rust-analyzer;
+            fileExtensions = {
+              ".rs" = "rust";
+            };
+          };
+
+          csharp = {
+            command = lib.getExe pkgs.roslyn-ls;
+            fileExtensions = {
+              ".cs" = "csharp";
+              ".csx" = "csharp";
+              ".cake" = "csharp";
+            };
+          };
+
+          marksman = {
+            command = lib.getExe pkgs.marksman;
+            fileExtensions = {
+              ".md" = "markdown";
+              ".mdx" = "mdx";
+            };
+          };
+
+          yamlls = {
+            command = lib.getExe pkgs.yaml-language-server;
+            args = [ "--stdio" ];
+            fileExtensions = {
+              ".yaml" = "yaml";
+              ".yml" = "yaml";
+            };
+          };
+
+          jsonls = {
+            command = lib.getExe' pkgs.vscode-langservers-extracted "vscode-json-language-server";
+            args = [ "--stdio" ];
+            fileExtensions = {
+              ".json" = "json";
+              ".jsonc" = "jsonc";
+            };
+          };
+
+          taplo = {
+            command = lib.getExe pkgs.taplo;
+            args = [
+              "lsp"
+              "stdio"
+            ];
+            fileExtensions = {
+              ".toml" = "toml";
+            };
+          };
+        };
       };
-
-      inherit (aiTools.githubCopilotCli)
-        agents
-        context
-        skills
-        ;
-
-      lspServers = {
-        nixd = {
-          command = lib.getExe pkgs.nixd;
-          fileExtensions = {
-            ".nix" = "nix";
-          };
-          initializationOptions = {
-            formatting.command = [ (lib.getExe pkgs.nixfmt) ];
-          };
-        };
-
-        emmylua-ls = {
-          command = lib.getExe pkgs.emmylua-ls;
-          fileExtensions = {
-            ".lua" = "lua";
-          };
-          initializationOptions.Lua = {
-            diagnostics.globals = [
-              "vim"
-              "Sbar"
-              "spoon"
-            ];
-            workspace.library = [
-              "/nix/store/*/share/lua/5.1"
-              "/etc/profiles/per-user/${config.khanelinix.user.name}/share/lua/5.1"
-            ];
-          };
-        };
-
-        basedpyright = {
-          command = lib.getExe' pkgs.basedpyright "basedpyright-langserver";
-          args = [ "--stdio" ];
-          fileExtensions = {
-            ".py" = "python";
-            ".pyi" = "python";
-            ".pyw" = "python";
-          };
-        };
-
-        ruff = {
-          command = lib.getExe pkgs.ruff;
-          args = [ "server" ];
-          fileExtensions = {
-            ".py" = "python";
-            ".pyi" = "python";
-            ".pyw" = "python";
-          };
-        };
-
-        bashls = {
-          command = lib.getExe pkgs.bash-language-server;
-          args = [ "start" ];
-          fileExtensions = {
-            ".bash" = "shellscript";
-            ".sh" = "shellscript";
-          };
-        };
-
-        clangd = {
-          command = lib.getExe' pkgs.clang-tools "clangd";
-          args = [
-            "--background-index"
-            "--clang-tidy"
-            "--header-insertion=iwyu"
-            "--completion-style=detailed"
-            "--function-arg-placeholders"
-            "--fallback-style=llvm"
-          ];
-          fileExtensions = {
-            ".c" = "c";
-            ".c++" = "cpp";
-            ".cc" = "cpp";
-            ".cpp" = "cpp";
-            ".cxx" = "cpp";
-            ".h" = "c";
-            ".h++" = "cpp";
-            ".hh" = "cpp";
-            ".hpp" = "cpp";
-            ".hxx" = "cpp";
-          };
-        };
-
-        fish-lsp = {
-          command = lib.getExe pkgs.fish-lsp;
-          fileExtensions = {
-            ".fish" = "fish";
-          };
-        };
-
-        typescript = {
-          command = lib.getExe pkgs.typescript-language-server;
-          args = [ "--stdio" ];
-          fileExtensions = {
-            ".cjs" = "javascript";
-            ".cts" = "typescript";
-            ".js" = "javascript";
-            ".jsx" = "javascriptreact";
-            ".mjs" = "javascript";
-            ".mts" = "typescript";
-            ".ts" = "typescript";
-            ".tsx" = "typescriptreact";
-          };
-        };
-
-        gopls = {
-          command = lib.getExe pkgs.gopls;
-          fileExtensions = {
-            ".go" = "go";
-            ".mod" = "go";
-            ".sum" = "go";
-          };
-        };
-
-        rust-analyzer = {
-          command = lib.getExe pkgs.rust-analyzer;
-          fileExtensions = {
-            ".rs" = "rust";
-          };
-        };
-
-        csharp = {
-          command = lib.getExe pkgs.roslyn-ls;
-          fileExtensions = {
-            ".cs" = "csharp";
-            ".csx" = "csharp";
-            ".cake" = "csharp";
-          };
-        };
-
-        marksman = {
-          command = lib.getExe pkgs.marksman;
-          fileExtensions = {
-            ".md" = "markdown";
-            ".mdx" = "mdx";
-          };
-        };
-
-        yamlls = {
-          command = lib.getExe pkgs.yaml-language-server;
-          args = [ "--stdio" ];
-          fileExtensions = {
-            ".yaml" = "yaml";
-            ".yml" = "yaml";
-          };
-        };
-
-        jsonls = {
-          command = lib.getExe' pkgs.vscode-langservers-extracted "vscode-json-language-server";
-          args = [ "--stdio" ];
-          fileExtensions = {
-            ".json" = "json";
-            ".jsonc" = "jsonc";
-          };
-        };
-
-        taplo = {
-          command = lib.getExe pkgs.taplo;
-          args = [
-            "lsp"
-            "stdio"
-          ];
-          fileExtensions = {
-            ".toml" = "toml";
-          };
-        };
-      };
+      bash.initExtra = posixTokenExports;
+      fish.shellInit = fishTokenExports;
+      zsh.initContent = posixTokenExports;
     };
-
-    programs.bash.initExtra = posixTokenExports;
-    programs.fish.shellInit = fishTokenExports;
-    programs.zsh.initContent = posixTokenExports;
 
     sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {
       "github/copilot-token" = {
