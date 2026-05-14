@@ -24,6 +24,12 @@ let
       names = lib.sort lib.lessThan (lib.attrNames entries);
     in
     map (name: "${workspaceWallpaperDir}${name}") names;
+  monitorWallpapers = builtins.listToAttrs (
+    map (monitor: {
+      inherit (monitor) name;
+      value = monitor.wallpaper;
+    }) cfg.monitors
+  );
 in
 {
   options.khanelinix.services.hyprpaper = {
@@ -80,32 +86,69 @@ in
     };
 
     wayland.windowManager.hyprland.settings.on =
-      lib.mkIf (config.wayland.windowManager.hyprland.configType == "lua" && workspaceWallpapers != [ ])
+      lib.mkIf
+        (
+          config.wayland.windowManager.hyprland.configType == "lua"
+          && (workspaceWallpapers != [ ] || cfg.monitors != [ ])
+        )
         (
           lib.mkAfter [
             {
               _args = [
                 "workspace.active"
                 (lib.generators.mkLuaInline ''
-                  function(workspace)
-                    if workspace == nil or workspace.special then
-                      return
+                  (function()
+                    local monitorWallpapers = ${lib.generators.toLua { } monitorWallpapers}
+                    local fallbackWallpapers = ${lib.generators.toLua { } workspaceWallpapers}
+                    local lastApplied = {}
+
+                    local function resolveMonitor(workspace)
+                      local monitor = workspace and workspace.monitor
+                      if type(monitor) == "table" and type(monitor.name) == "string" then
+                        return monitor.name
+                      end
+
+                      if type(monitor) == "string" then
+                        return monitor
+                      end
+
+                      local active = hl.get_active_monitor()
+                      if active ~= nil and type(active.name) == "string" then
+                        return active.name
+                      end
+
+                      return nil
                     end
 
-                    local monitor = ${builtins.toJSON "DP-1"}
-                    local wallpapers = ${lib.generators.toLua { } workspaceWallpapers}
-                    local workspace_id = workspace.id
+                    return function(workspace)
+                      if workspace == nil or workspace.special then
+                        return
+                      end
 
-                    if type(workspace_id) ~= "number" or workspace_id < 1 then
-                      return
+                      local workspace_id = workspace.id
+                      local monitor = resolveMonitor(workspace)
+                      local wallpaper
+
+                      if type(workspace_id) ~= "number" or workspace_id < 1 then
+                        return
+                      end
+
+                      wallpaper = fallbackWallpapers[math.min(workspace_id, #fallbackWallpapers)]
+
+                      if wallpaper == nil and monitor ~= nil then
+                        wallpaper = monitorWallpapers[monitor]
+                      end
+
+                      if wallpaper == nil or lastApplied[monitor] == wallpaper then
+                        return
+                      end
+
+                      lastApplied[monitor] = wallpaper
+                      if monitor ~= nil then
+                        hl.exec_cmd("hyprctl hyprpaper wallpaper " .. monitor .. "," .. wallpaper)
+                      end
                     end
-
-                    local wallpaper = wallpapers[math.min(workspace_id, #wallpapers)]
-
-                    if wallpaper ~= nil then
-                      hl.exec_cmd("hyprctl hyprpaper wallpaper " .. monitor .. "," .. wallpaper)
-                    end
-                  end
+                  end)()
                 '')
               ];
             }
