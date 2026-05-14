@@ -840,49 +840,49 @@ in
                 mods = "";
                 key = "up";
                 dispatcher = "focusmonitor";
-                args = "DP-3";
+                args = "u";
               })
               (mkBind {
                 mods = "";
                 key = "k";
                 dispatcher = "focusmonitor";
-                args = "DP-3";
+                args = "u";
               })
               (mkBind {
                 mods = "";
                 key = "down";
                 dispatcher = "focusmonitor";
-                args = "DP-1";
+                args = "d";
               })
               (mkBind {
                 mods = "";
                 key = "j";
                 dispatcher = "focusmonitor";
-                args = "DP-1";
+                args = "d";
               })
               (mkBind {
                 mods = "";
                 key = "left";
                 dispatcher = "focusmonitor";
-                args = "DP-1";
+                args = "l";
               })
               (mkBind {
                 mods = "";
                 key = "h";
                 dispatcher = "focusmonitor";
-                args = "DP-1";
+                args = "l";
               })
               (mkBind {
                 mods = "";
                 key = "right";
                 dispatcher = "focusmonitor";
-                args = "DP-1";
+                args = "r";
               })
               (mkBind {
                 mods = "";
                 key = "l";
                 dispatcher = "focusmonitor";
-                args = "DP-1";
+                args = "r";
               })
 
               # Move workspace to monitor
