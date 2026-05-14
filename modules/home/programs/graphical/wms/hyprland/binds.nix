@@ -689,7 +689,7 @@ in
               })
               (mkBind {
                 mods = "$mainMod";
-                key = "R";
+                key = "W";
                 dispatcher = "submap";
                 args = "window";
               })
