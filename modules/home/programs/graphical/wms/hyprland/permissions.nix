@@ -55,7 +55,7 @@ in
     wayland.windowManager.hyprland = {
       settings = {
         config.ecosystem = {
-          enforce_permissions = false;
+          enforce_permissions = cfg.permissions.enforce;
         };
 
         permission =
