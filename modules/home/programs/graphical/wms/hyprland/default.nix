@@ -52,6 +52,7 @@ in
       '';
     };
     permissions.enforce = lib.mkEnableOption "Hyprland permission enforcement";
+    smartGaps.enable = lib.mkEnableOption "smart gaps for single-window workspaces";
     settings = lib.mkOption {
       type = lib.types.attrs;
       default = { };
