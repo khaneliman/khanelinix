@@ -31,6 +31,7 @@ in
         lolcat
         lshw
         pciutils
+        pkgs.khanelinix.nixos-needsreboot
         rsync
         usbimager
         util-linux

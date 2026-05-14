@@ -25,7 +25,6 @@ in
       killall
       lsof
       pciutils
-      pkgs.khanelinix.nixos-needsreboot
       pkgs.khanelinix.trace-symlink
       pkgs.khanelinix.trace-which
       pkgs.khanelinix.why-depends
