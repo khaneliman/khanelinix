@@ -309,6 +309,12 @@ let
     togglefloating = _: ''hl.dsp.window.float({ action = "toggle" })'';
     pin = _: "hl.dsp.window.pin()";
     pseudo = _: "hl.dsp.window.pseudo()";
+    floatandpin = _: ''
+      function()
+        hl.dispatch(hl.dsp.window.float({ action = "toggle" }))
+        hl.dispatch(hl.dsp.window.pin())
+      end
+    '';
   };
 
   mkDispatcher =
@@ -993,12 +999,7 @@ in
               (mkBind {
                 mods = "";
                 key = "i";
-                dispatcher = "togglefloating";
-              })
-              (mkBind {
-                mods = "";
-                key = "i";
-                dispatcher = "pin";
+                dispatcher = "floatandpin";
               })
               (mkBind {
                 mods = "";
