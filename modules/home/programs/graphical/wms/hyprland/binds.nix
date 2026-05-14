@@ -34,20 +34,6 @@ let
     in
     args: if lib.isString args then withoutArgs args else withArgs args;
 
-  mkExecBind =
-    bind:
-    let
-      parts = builtins.split "exec, " bind;
-    in
-    if builtins.length parts >= 3 then
-      let
-        pre = builtins.head parts;
-        cmd = builtins.elemAt parts 2;
-      in
-      "${pre}exec, ${mkStartCommand cmd}"
-    else
-      bind; # Return unchanged if no "exec, " found
-
   enabledLaunchers =
     let
       inherit (config.khanelinix.programs.graphical) launchers;
@@ -332,14 +318,73 @@ let
     else
       dispatcherMap.${dispatcher} or (mkExecRawDispatcher dispatcher) args;
 
+  mkBind =
+    {
+      mods,
+      key,
+      dispatcher,
+      args ? "",
+      wrap ? true,
+    }:
+    {
+      inherit
+        mods
+        key
+        dispatcher
+        args
+        wrap
+        ;
+    };
+
+  mkExecBind =
+    mods: key: args:
+    mkBind {
+      inherit mods key;
+      dispatcher = "exec";
+      inherit args;
+    };
+
+  mkExecBindRaw =
+    mods: key: args:
+    mkBind {
+      inherit mods key;
+      dispatcher = "exec";
+      inherit args;
+      wrap = false;
+    };
+
   mkLuaBindWith =
     opts: bind:
     let
-      parts = map lib.trim (lib.splitString "," (replaceCommandVars bind));
-      mods = builtins.elemAt parts 0;
-      key = builtins.elemAt parts 1;
-      dispatcher = builtins.elemAt parts 2;
-      args = lib.concatStringsSep "," (lib.drop 3 parts);
+      resolvedBind =
+        if lib.isString bind then
+          let
+            parts = map lib.trim (lib.splitString "," (replaceCommandVars bind));
+            mods = builtins.elemAt parts 0;
+            key = builtins.elemAt parts 1;
+            dispatcher = builtins.elemAt parts 2;
+            args = lib.concatStringsSep "," (lib.drop 3 parts);
+          in
+          {
+            inherit
+              mods
+              key
+              dispatcher
+              args
+              ;
+          }
+        else
+          bind;
+      mods = replaceCommandVars (resolvedBind.mods or "");
+      key = resolvedBind.key or "";
+      dispatcher = resolvedBind.dispatcher or "";
+      args = resolvedBind.args or "";
+      wrap = resolvedBind.wrap or true;
+      expandedArgs =
+        if dispatcher == "exec" && wrap then
+          mkStartCommand (replaceCommandVars args)
+        else
+          replaceCommandVars args;
       keyCombo = lib.concatStringsSep " + " (
         lib.filter (part: part != "") [
           (lib.replaceStrings [ "_" ] [ " + " ] mods)
@@ -350,7 +395,7 @@ let
     {
       _args = [
         keyCombo
-        (lua (mkDispatcher dispatcher args))
+        (lua (mkDispatcher dispatcher expandedArgs))
       ]
       ++ lib.optional (opts != { }) opts;
     };
@@ -389,128 +434,308 @@ in
                 ];
                 count = builtins.length enabledLaunchers;
               in
-              lib.optional (count > 0) "CTRL, SPACE, exec, $($launcher)"
-              ++ lib.optional (count > 1) "ALT, SPACE, exec, $($launcher-alt)"
-              ++ lib.optional (count > 2) "$mainMod, SPACE, exec, $($launcher-backup)";
+              lib.optional (count > 0) (mkExecBind "CTRL" "SPACE" "$($launcher)")
+              ++ lib.optional (count > 1) (mkExecBind "ALT" "SPACE" "$($launcher-alt)")
+              ++ lib.optional (count > 2) (mkExecBind "$mainMod" "SPACE" "$($launcher-backup)");
 
             # App launch binds
             appBinds = [
               # Interactive applications (app-graphical.slice)
-              "$mainMod, RETURN, exec, $term"
-              "SUPER_SHIFT, RETURN, exec, $term zellij"
-              "SUPER_SHIFT, P, exec, $color_picker"
-              "$mainMod, B, exec, $browser"
-              "SUPER_SHIFT, E, exec, $explorer"
-              "$mainMod, L, exec, $screen-locker --immediate"
-              "$mainMod, N, exec, $notification_center -t -sw"
-              "$mainMod, V, exec, $cliphist"
+              (mkExecBind "$mainMod" "RETURN" "$term")
+              (mkExecBind "SUPER_SHIFT" "RETURN" "$term zellij")
+              (mkExecBind "SUPER_SHIFT" "P" "$color_picker")
+              (mkExecBind "$mainMod" "B" "$browser")
+              (mkExecBind "SUPER_SHIFT" "E" "$explorer")
+              (mkExecBind "$mainMod" "L" "$screen-locker --immediate")
+              (mkExecBind "$mainMod" "N" "$notification_center -t -sw")
+              (mkExecBind "$mainMod" "V" "$cliphist")
               # TODO: handle when you need to specify port manually `-p 5901`
-              "$mainMod, W, exec, $looking-glass"
+              (mkExecBind "$mainMod" "W" "$looking-glass")
             ];
 
             # Background tools binds (background-graphical.slice)
             backgroundBinds = [
-              "$mainMod, E, exec, ${mkStartCommand { slice = "b"; } "$term yazi"}"
-              "$mainMod, T, exec, ${mkStartCommand { slice = "b"; } "$term btop"}"
+              (mkExecBindRaw "$mainMod" "E" "${mkStartCommand { slice = "b"; } "$term yazi"}")
+              (mkExecBindRaw "$mainMod" "T" "${mkStartCommand { slice = "b"; } "$term btop"}")
             ];
 
             # System binds (non-exec) - keeping most used shortcuts
             systemBinds = [
-              "$mainMod, Q, killactive,"
-              "CTRL_SHIFT, Q, killactive,"
-              "$mainMod, F, fullscreen" # Keep F for fullscreen as it's commonly used
+              (mkBind {
+                mods = "$mainMod";
+                key = "Q";
+                dispatcher = "killactive";
+              })
+              (mkBind {
+                mods = "CTRL_SHIFT";
+                key = "Q";
+                dispatcher = "killactive";
+              })
+              (mkBind {
+                mods = "$mainMod";
+                key = "F";
+                dispatcher = "fullscreen";
+              }) # Keep F for fullscreen as it's commonly used
             ];
 
             # Screenshot binds - keep Print key shortcuts for compatibility
             screenshotBinds = [
               # Quick screenshot shortcuts (original binds)
-              ", Print, exec, $screenshot_active_clipboard"
-              "SHIFT, Print, exec, $screenshot_area_clipboard"
-              "SUPER, Print, exec, $screenshot_screen_clipboard"
+              (mkExecBind "" "Print" "$screenshot_active_clipboard")
+              (mkExecBind "SHIFT" "Print" "$screenshot_area_clipboard")
+              (mkExecBind "SUPER" "Print" "$screenshot_screen_clipboard")
             ];
 
             # Window movement binds - keeping basic movement
             movementBinds = [
               # Window Focus
-              "ALT,left,movefocus,l"
-              "ALT,right,movefocus,r"
-              "ALT,up,movefocus,u"
-              "ALT,down,movefocus,d"
+              (mkBind {
+                mods = "ALT";
+                key = "left";
+                dispatcher = "movefocus";
+                args = "l";
+              })
+              (mkBind {
+                mods = "ALT";
+                key = "right";
+                dispatcher = "movefocus";
+                args = "r";
+              })
+              (mkBind {
+                mods = "ALT";
+                key = "up";
+                dispatcher = "movefocus";
+                args = "u";
+              })
+              (mkBind {
+                mods = "ALT";
+                key = "down";
+                dispatcher = "movefocus";
+                args = "d";
+              })
               # Move window
-              "SUPER,left,movewindow,l"
-              "SUPER,right,movewindow,r"
-              "SUPER,up,movewindow,u"
-              "SUPER,down,movewindow,d"
+              (mkBind {
+                mods = "SUPER";
+                key = "left";
+                dispatcher = "movewindow";
+                args = "l";
+              })
+              (mkBind {
+                mods = "SUPER";
+                key = "right";
+                dispatcher = "movewindow";
+                args = "r";
+              })
+              (mkBind {
+                mods = "SUPER";
+                key = "up";
+                dispatcher = "movewindow";
+                args = "u";
+              })
+              (mkBind {
+                mods = "SUPER";
+                key = "down";
+                dispatcher = "movewindow";
+                args = "d";
+              })
             ];
 
             # Workspace management binds
             workspaceBinds = [
               # Swipe through existing workspaces with CTRL_ALT + left / right
-              "CTRL_ALT, right, workspace, +1"
-              "CTRL_ALT, l, workspace, +1"
-              "CTRL_ALT, left, workspace, -1"
-              "CTRL_ALT, h, workspace, -1"
+              (mkBind {
+                mods = "CTRL_ALT";
+                key = "right";
+                dispatcher = "workspace";
+                args = "+1";
+              })
+              (mkBind {
+                mods = "CTRL_ALT";
+                key = "l";
+                dispatcher = "workspace";
+                args = "+1";
+              })
+              (mkBind {
+                mods = "CTRL_ALT";
+                key = "left";
+                dispatcher = "workspace";
+                args = "-1";
+              })
+              (mkBind {
+                mods = "CTRL_ALT";
+                key = "h";
+                dispatcher = "workspace";
+                args = "-1";
+              })
               # Scroll through existing workspaces with CTRL_ALT + scroll
-              "CTRL_ALT, mouse_down, workspace, e+1"
-              "CTRL_ALT, mouse_up, workspace, e-1"
+              (mkBind {
+                mods = "CTRL_ALT";
+                key = "mouse_down";
+                dispatcher = "workspace";
+                args = "e+1";
+              })
+              (mkBind {
+                mods = "CTRL_ALT";
+                key = "mouse_up";
+                dispatcher = "workspace";
+                args = "e-1";
+              })
               # Move to workspace left/right
-              "$ALT-HYPER, right, movetoworkspace, +1"
-              "$ALT-HYPER, l, movetoworkspace, +1"
-              "$ALT-HYPER, left, movetoworkspace, -1"
-              "$ALT-HYPER, h, movetoworkspace, -1"
+              (mkBind {
+                mods = "$ALT-HYPER";
+                key = "right";
+                dispatcher = "movetoworkspace";
+                args = "+1";
+              })
+              (mkBind {
+                mods = "$ALT-HYPER";
+                key = "l";
+                dispatcher = "movetoworkspace";
+                args = "+1";
+              })
+              (mkBind {
+                mods = "$ALT-HYPER";
+                key = "left";
+                dispatcher = "movetoworkspace";
+                args = "-1";
+              })
+              (mkBind {
+                mods = "$ALT-HYPER";
+                key = "h";
+                dispatcher = "movetoworkspace";
+                args = "-1";
+              })
               # MOVING silently LEFT/RIGHT
-              "SUPER_SHIFT, right, movetoworkspacesilent, +1"
-              "SUPER_SHIFT, l, movetoworkspacesilent, +1"
-              "SUPER_SHIFT, left, movetoworkspacesilent, -1"
-              "SUPER_SHIFT, h, movetoworkspacesilent, -1"
+              (mkBind {
+                mods = "SUPER_SHIFT";
+                key = "right";
+                dispatcher = "movetoworkspacesilent";
+                args = "+1";
+              })
+              (mkBind {
+                mods = "SUPER_SHIFT";
+                key = "l";
+                dispatcher = "movetoworkspacesilent";
+                args = "+1";
+              })
+              (mkBind {
+                mods = "SUPER_SHIFT";
+                key = "left";
+                dispatcher = "movetoworkspacesilent";
+                args = "-1";
+              })
+              (mkBind {
+                mods = "SUPER_SHIFT";
+                key = "h";
+                dispatcher = "movetoworkspacesilent";
+                args = "-1";
+              })
             ];
 
             # Monitor management binds
             monitorBinds = [
               # Enter monitor submap
-              "$mainMod, M, submap, monitor"
+              (mkBind {
+                mods = "$mainMod";
+                key = "M";
+                dispatcher = "submap";
+                args = "monitor";
+              })
             ];
 
             # Special workspace binds
             specialBinds = [
               # Scratchpad
-              "SUPER_SHIFT,grave,movetoworkspace,special:scratchpad"
-              "SUPER,grave,togglespecialworkspace,scratchpad"
+              (mkBind {
+                mods = "SUPER_SHIFT";
+                key = "grave";
+                dispatcher = "movetoworkspace";
+                args = "special:scratchpad";
+              })
+              (mkBind {
+                mods = "SUPER";
+                key = "grave";
+                dispatcher = "togglespecialworkspace";
+                args = "scratchpad";
+              })
               # Inactive
-              "ALT_SHIFT,grave,movetoworkspace,special:inactive"
-              "ALT,grave,togglespecialworkspace,inactive"
+              (mkBind {
+                mods = "ALT_SHIFT";
+                key = "grave";
+                dispatcher = "movetoworkspace";
+                args = "special:inactive";
+              })
+              (mkBind {
+                mods = "ALT";
+                key = "grave";
+                dispatcher = "togglespecialworkspace";
+                args = "inactive";
+              })
             ];
 
             # System and window submap triggers
             submapTriggerBinds = [
-              "$mainMod, S, submap, screenshot"
-              "$mainMod, X, submap, system"
-              "$mainMod, R, submap, window"
+              (mkBind {
+                mods = "$mainMod";
+                key = "S";
+                dispatcher = "submap";
+                args = "screenshot";
+              })
+              (mkBind {
+                mods = "$mainMod";
+                key = "X";
+                dispatcher = "submap";
+                args = "system";
+              })
+              (mkBind {
+                mods = "$mainMod";
+                key = "R";
+                dispatcher = "submap";
+                args = "window";
+              })
             ];
 
             lockedBinds = [
-              "$mainMod, BackSpace, exec, pkill -SIGUSR1 hyprlock || WAYLAND_DISPLAY=wayland-1 $screen-locker"
-              ",XF86AudioRaiseVolume,exec,wpctl set-volume @DEFAULT_AUDIO_SINK@ 2.5%+"
-              ",XF86AudioLowerVolume,exec,wpctl set-volume @DEFAULT_AUDIO_SINK@ 2.5%-"
-              ",XF86AudioMute,exec,wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-              ",XF86MonBrightnessUp,exec,light -A 5"
-              ",XF86MonBrightnessDown,exec,light -U 5"
-              ",XF86AudioMedia,exec,playerctl play-pause"
-              ",XF86AudioPlay,exec,playerctl play-pause"
-              ",XF86AudioStop,exec,playerctl stop"
-              ",XF86AudioPrev,exec,playerctl previous"
-              ",XF86AudioNext,exec,playerctl next"
+              (mkExecBind "$mainMod" "BackSpace"
+                "pkill -SIGUSR1 hyprlock || WAYLAND_DISPLAY=wayland-1 $screen-locker"
+              )
+              (mkExecBind "" "XF86AudioRaiseVolume" "wpctl set-volume @DEFAULT_AUDIO_SINK@ 2.5%+")
+              (mkExecBind "" "XF86AudioLowerVolume" "wpctl set-volume @DEFAULT_AUDIO_SINK@ 2.5%-")
+              (mkExecBind "" "XF86AudioMute" "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")
+              (mkExecBind "" "XF86MonBrightnessUp" "light -A 5")
+              (mkExecBind "" "XF86MonBrightnessDown" "light -U 5")
+              (mkExecBind "" "XF86AudioMedia" "playerctl play-pause")
+              (mkExecBind "" "XF86AudioPlay" "playerctl play-pause")
+              (mkExecBind "" "XF86AudioStop" "playerctl stop")
+              (mkExecBind "" "XF86AudioPrev" "playerctl previous")
+              (mkExecBind "" "XF86AudioNext" "playerctl next")
             ];
 
             mouseBinds = [
-              "$mainMod, mouse:272, movewindow"
-              "CTRL_SHIFT, mouse:272, movewindow"
-              "$mainMod, mouse:273, resizewindow"
-              "CTRL_SHIFT, mouse:273, resizewindow"
+              (mkBind {
+                mods = "$mainMod";
+                key = "mouse:272";
+                dispatcher = "movewindow";
+              })
+              (mkBind {
+                mods = "CTRL_SHIFT";
+                key = "mouse:272";
+                dispatcher = "movewindow";
+              })
+              (mkBind {
+                mods = "$mainMod";
+                key = "mouse:273";
+                dispatcher = "resizewindow";
+              })
+              (mkBind {
+                mods = "CTRL_SHIFT";
+                key = "mouse:273";
+                dispatcher = "resizewindow";
+              })
             ];
           in
           (map mkLuaBind (
-            (map mkExecBind (launcherBinds ++ appBinds ++ screenshotBinds))
+            (launcherBinds ++ appBinds ++ screenshotBinds)
             ++ backgroundBinds
             ++ systemBinds
             ++ movementBinds
@@ -519,11 +744,18 @@ in
             ++ specialBinds
             ++ submapTriggerBinds
             ++ [
-              "$mainMod, I, exec, notify-send \"$($window-inspector)\""
-              "$mainMod, PERIOD, exec, smile"
-              "$CTRL_SHIFT, B, exec, killall -SIGUSR1 $bar"
+              (mkExecBind "$mainMod" "I" "notify-send \"$($window-inspector)\"")
+              (mkExecBind "$mainMod" "PERIOD" "smile")
+              (mkExecBind "$CTRL_SHIFT" "B" "killall -SIGUSR1 $bar")
             ]
-            ++ lib.optional (lib.elem pkgs.hyprlandPlugins.hyprexpo config.wayland.windowManager.hyprland.plugins) "SUPER, Escape, hyprexpo:expo, toggle"
+            ++
+              lib.optional (lib.elem pkgs.hyprlandPlugins.hyprexpo config.wayland.windowManager.hyprland.plugins)
+                (mkBind {
+                  mods = "SUPER";
+                  key = "Escape";
+                  dispatcher = "hyprexpo:expo";
+                  args = "toggle";
+                })
             ++ (builtins.concatLists (
               builtins.genList (
                 x:
@@ -535,9 +767,24 @@ in
                     toString (x + 1 - (c * 10));
                 in
                 [
-                  "$CTRL_ALT, ${ws}, workspace, ${toString (x + 1)}"
-                  "$CTRL_ALT_SUPER, ${ws}, movetoworkspace, ${toString (x + 1)}"
-                  "$SUPER_SHIFT, ${ws}, movetoworkspacesilent, ${toString (x + 1)}"
+                  (mkBind {
+                    mods = "$CTRL_ALT";
+                    key = "${ws}";
+                    dispatcher = "workspace";
+                    args = toString (x + 1);
+                  })
+                  (mkBind {
+                    mods = "$CTRL_ALT_SUPER";
+                    key = "${ws}";
+                    dispatcher = "movetoworkspace";
+                    args = toString (x + 1);
+                  })
+                  (mkBind {
+                    mods = "$SUPER_SHIFT";
+                    key = "${ws}";
+                    dispatcher = "movetoworkspacesilent";
+                    args = toString (x + 1);
+                  })
                 ]
               ) 10
             ))
@@ -552,29 +799,34 @@ in
           onDispatch = "reset";
           settings = {
             bind = map mkLuaBind (
-              (map mkExecBind [
+              [
                 # Clipboard screenshots
-                ", w, exec, $screenshot_active_clipboard" # current window
-                ", a, exec, $screenshot_area_clipboard" # area selection
-                ", s, exec, $screenshot_screen_clipboard" # full screen
+                (mkExecBind "" "w" "$screenshot_active_clipboard") # current window
+                (mkExecBind "" "a" "$screenshot_area_clipboard") # area selection
+                (mkExecBind "" "s" "$screenshot_screen_clipboard") # full screen
 
                 # File screenshots
-                "SHIFT, w, exec, $screenshot_active_file"
-                "SHIFT, a, exec, $screenshot_area_file"
-                "SHIFT, s, exec, $screenshot_screen_file"
+                (mkExecBind "SHIFT" "w" "$screenshot_active_file")
+                (mkExecBind "SHIFT" "a" "$screenshot_area_file")
+                (mkExecBind "SHIFT" "s" "$screenshot_screen_file")
 
                 # Annotated screenshots
-                "ALT, w, exec, $screenshot_active_annotate"
-                "ALT, a, exec, $screenshot_area_annotate"
-                "ALT, s, exec, $screenshot_screen_annotate"
+                (mkExecBind "ALT" "w" "$screenshot_active_annotate")
+                (mkExecBind "ALT" "a" "$screenshot_area_annotate")
+                (mkExecBind "ALT" "s" "$screenshot_screen_annotate")
 
                 # Screen recording
-                ", r, exec, $screen-recorder screen"
-                "SHIFT, r, exec, $screen-recorder area"
-              ])
+                (mkExecBind "" "r" "$screen-recorder screen")
+                (mkExecBind "SHIFT" "r" "$screen-recorder area")
+              ]
               ++ [
                 # Exit submap
-                ", escape, submap, reset"
+                (mkBind {
+                  mods = "";
+                  key = "escape";
+                  dispatcher = "submap";
+                  args = "reset";
+                })
               ]
             );
           };
@@ -584,28 +836,118 @@ in
           settings = {
             bind = map mkLuaBind [
               # Focus monitor
-              ", up, focusmonitor, DP-3"
-              ", k, focusmonitor, DP-3"
-              ", down, focusmonitor, DP-1"
-              ", j, focusmonitor, DP-1"
-              ", left, focusmonitor, DP-1"
-              ", h, focusmonitor, DP-1"
-              ", right, focusmonitor, DP-1"
-              ", l, focusmonitor, DP-1"
+              (mkBind {
+                mods = "";
+                key = "up";
+                dispatcher = "focusmonitor";
+                args = "DP-3";
+              })
+              (mkBind {
+                mods = "";
+                key = "k";
+                dispatcher = "focusmonitor";
+                args = "DP-3";
+              })
+              (mkBind {
+                mods = "";
+                key = "down";
+                dispatcher = "focusmonitor";
+                args = "DP-1";
+              })
+              (mkBind {
+                mods = "";
+                key = "j";
+                dispatcher = "focusmonitor";
+                args = "DP-1";
+              })
+              (mkBind {
+                mods = "";
+                key = "left";
+                dispatcher = "focusmonitor";
+                args = "DP-1";
+              })
+              (mkBind {
+                mods = "";
+                key = "h";
+                dispatcher = "focusmonitor";
+                args = "DP-1";
+              })
+              (mkBind {
+                mods = "";
+                key = "right";
+                dispatcher = "focusmonitor";
+                args = "DP-1";
+              })
+              (mkBind {
+                mods = "";
+                key = "l";
+                dispatcher = "focusmonitor";
+                args = "DP-1";
+              })
 
               # Move workspace to monitor
-              "SHIFT, up, movecurrentworkspacetomonitor, u"
-              "SHIFT, k, movecurrentworkspacetomonitor, u"
-              "SHIFT, down, movecurrentworkspacetomonitor, d"
-              "SHIFT, j, movecurrentworkspacetomonitor, d"
-              "SHIFT, left, movecurrentworkspacetomonitor, l"
-              "SHIFT, h, movecurrentworkspacetomonitor, l"
-              "SHIFT, right, movecurrentworkspacetomonitor, r"
-              "SHIFT, l, movecurrentworkspacetomonitor, r"
+              (mkBind {
+                mods = "SHIFT";
+                key = "up";
+                dispatcher = "movecurrentworkspacetomonitor";
+                args = "u";
+              })
+              (mkBind {
+                mods = "SHIFT";
+                key = "k";
+                dispatcher = "movecurrentworkspacetomonitor";
+                args = "u";
+              })
+              (mkBind {
+                mods = "SHIFT";
+                key = "down";
+                dispatcher = "movecurrentworkspacetomonitor";
+                args = "d";
+              })
+              (mkBind {
+                mods = "SHIFT";
+                key = "j";
+                dispatcher = "movecurrentworkspacetomonitor";
+                args = "d";
+              })
+              (mkBind {
+                mods = "SHIFT";
+                key = "left";
+                dispatcher = "movecurrentworkspacetomonitor";
+                args = "l";
+              })
+              (mkBind {
+                mods = "SHIFT";
+                key = "h";
+                dispatcher = "movecurrentworkspacetomonitor";
+                args = "l";
+              })
+              (mkBind {
+                mods = "SHIFT";
+                key = "right";
+                dispatcher = "movecurrentworkspacetomonitor";
+                args = "r";
+              })
+              (mkBind {
+                mods = "SHIFT";
+                key = "l";
+                dispatcher = "movecurrentworkspacetomonitor";
+                args = "r";
+              })
 
               # Exit submap
-              ", escape, submap, reset"
-              "SUPER, M, submap, reset"
+              (mkBind {
+                mods = "";
+                key = "escape";
+                dispatcher = "submap";
+                args = "reset";
+              })
+              (mkBind {
+                mods = "SUPER";
+                key = "M";
+                dispatcher = "submap";
+                args = "reset";
+              })
             ];
           };
         };
@@ -614,16 +956,21 @@ in
           onDispatch = "reset";
           settings = {
             bind = map mkLuaBind (
-              (map mkExecBind [
-                ", l, exec, ${
+              [
+                (mkExecBind "" "l" (
                   if (osConfig.programs.uwsm.enable or false) then "uwsm stop" else lib.getExe pkgs.hyprshutdown
-                }"
-                ", r, exec, systemctl reboot"
-                ", p, exec, systemctl poweroff"
-              ])
+                ))
+                (mkExecBind "" "r" "systemctl reboot")
+                (mkExecBind "" "p" "systemctl poweroff")
+              ]
               ++ [
                 # Exit submap
-                ", escape, submap, reset"
+                (mkBind {
+                  mods = "";
+                  key = "escape";
+                  dispatcher = "submap";
+                  args = "reset";
+                })
               ]
             );
           };
@@ -633,23 +980,81 @@ in
           settings = {
             bind = map mkLuaBind [
               # Window operations
-              ", f, fullscreen"
-              ", v, togglefloating"
-              ", i, togglefloating"
-              ", i, pin"
-              ", p, pseudo"
-              ", j, togglesplit"
-              ", k, swapsplit"
+              (mkBind {
+                mods = "";
+                key = "f";
+                dispatcher = "fullscreen";
+              })
+              (mkBind {
+                mods = "";
+                key = "v";
+                dispatcher = "togglefloating";
+              })
+              (mkBind {
+                mods = "";
+                key = "i";
+                dispatcher = "togglefloating";
+              })
+              (mkBind {
+                mods = "";
+                key = "i";
+                dispatcher = "pin";
+              })
+              (mkBind {
+                mods = "";
+                key = "p";
+                dispatcher = "pseudo";
+              })
+              (mkBind {
+                mods = "";
+                key = "j";
+                dispatcher = "togglesplit";
+              })
+              (mkBind {
+                mods = "";
+                key = "k";
+                dispatcher = "swapsplit";
+              })
 
               # Resize operations
-              ", h, resizeactive, -10% 0"
-              ", l, resizeactive, 10% 0"
-              "SHIFT, h, resizeactive, 0 -10%"
-              "SHIFT, l, resizeactive, 0 10%"
+              (mkBind {
+                mods = "";
+                key = "h";
+                dispatcher = "resizeactive";
+                args = "-10% 0";
+              })
+              (mkBind {
+                mods = "";
+                key = "l";
+                dispatcher = "resizeactive";
+                args = "10% 0";
+              })
+              (mkBind {
+                mods = "SHIFT";
+                key = "h";
+                dispatcher = "resizeactive";
+                args = "0 -10%";
+              })
+              (mkBind {
+                mods = "SHIFT";
+                key = "l";
+                dispatcher = "resizeactive";
+                args = "0 10%";
+              })
 
               # Exit submap
-              ", escape, submap, reset"
-              "SUPER, R, submap, reset"
+              (mkBind {
+                mods = "";
+                key = "escape";
+                dispatcher = "submap";
+                args = "reset";
+              })
+              (mkBind {
+                mods = "SUPER";
+                key = "R";
+                dispatcher = "submap";
+                args = "reset";
+              })
             ];
           };
         };
