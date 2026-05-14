@@ -12,20 +12,18 @@ let
       config.wayland.windowManager.hyprland.package
     else
       osConfig.programs.hyprland.package;
+  hyprctl = getExe' hyprlandPackage "hyprctl";
+  procps = getExe' pkgs.procps "pidof";
 in
 {
   "custom/quit" = {
     format = "󰗼";
     tooltip = false;
-    "custom/quit" = {
-      format = "󰗼";
-      tooltip = false;
-      on-click =
-        if (osConfig.programs.uwsm.enable or false) then
-          "${getExe' osConfig.programs.uwsm.package "uwsm"} stop"
-        else
-          "${lib.getExe pkgs.hyprshutdown}";
-    };
+    on-click =
+      if (osConfig.programs.uwsm.enable or false) then
+        "${getExe' osConfig.programs.uwsm.package "uwsm"} stop"
+      else
+        "${lib.getExe pkgs.hyprshutdown}";
   };
 
   "hyprland/submap" = {
@@ -42,8 +40,8 @@ in
   "hyprland/workspaces" = {
     all-outputs = false;
     active-only = "false";
-    on-scroll-up = "${getExe' hyprlandPackage "hyprctl"} dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'";
-    on-scroll-down = "${getExe' hyprlandPackage "hyprctl"} dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'";
+    on-scroll-up = "${hyprctl} dispatch ${lib.escapeShellArg ''hl.dsp.focus({ workspace = "e+1" })''}";
+    on-scroll-down = "${hyprctl} dispatch ${lib.escapeShellArg ''hl.dsp.focus({ workspace = "e-1" })''}";
     format = "{icon} {windows}";
     format-icons = {
       "1" = "󰎤";
@@ -87,7 +85,7 @@ in
       "class<Youtube Music>" = "";
       "class<bleachbit>" = "";
       "class<code>" = "󰨞";
-      "class<com.obsproject.Studio" = "󱜠";
+      "class<com.obsproject.Studio>" = "󱜠";
       "class<com.usebottles.bottles>" = "󰡔";
       "class<discord>" = "󰙯";
       "class<vesktop>" = "󰙯";
@@ -97,7 +95,7 @@ in
       "class<firefox.*> title<.*twitch|youtube|plex|tntdrama|bally sports.*>" = "";
       "class<firefox.*>" = "";
       "class<foot>" = "";
-      "class<fr.handbrake.ghb" = "󱁆";
+      "class<fr.handbrake.ghb>" = "󱁆";
       "class<heroic>" = "󱢾";
       "class<info.cemu.Cemu>" = "󰜭";
       "class<io.github.celluloid_player.Celluloid>" = "";
@@ -160,7 +158,7 @@ in
     interval = 60;
     exec = lib.getExe (
       pkgs.writeShellScriptBin "hyprsunset-status.sh" /* Bash */ ''
-        temp=$(hyprctl hyprsunset temperature 2>/dev/null)
+        temp=$(${hyprctl} hyprsunset temperature 2>/dev/null)
         temp=$(echo "$temp" | tr -d '[:space:]')
 
         if [ "$temp" -ge 5000 ]; then
@@ -173,11 +171,11 @@ in
       ''
     );
     exec-on-event = true;
-    exec-if = "pidof hyprsunset";
-    on-scroll-up = "${getExe' hyprlandPackage "hyprctl"} hyprsunset temperature +250";
-    on-scroll-down = "${getExe' hyprlandPackage "hyprctl"} hyprsunset temperature -250";
-    on-click = "${getExe' hyprlandPackage "hyprctl"} hyprsunset temperature 6500";
-    on-click-right = "${getExe' hyprlandPackage "hyprctl"} hyprsunset temperature 4500";
+    exec-if = "${procps} hyprsunset";
+    on-scroll-up = "${hyprctl} hyprsunset temperature +250";
+    on-scroll-down = "${hyprctl} hyprsunset temperature -250";
+    on-click = "${hyprctl} hyprsunset temperature 6500";
+    on-click-right = "${hyprctl} hyprsunset temperature 4500";
     signal = 1;
     return-type = "json";
     format = "{}";
