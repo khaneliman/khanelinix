@@ -331,6 +331,8 @@ let
       dispatcher,
       args ? "",
       wrap ? true,
+      flags ? { },
+      description ? null,
     }:
     {
       inherit
@@ -339,6 +341,8 @@ let
         dispatcher
         args
         wrap
+        flags
+        description
         ;
     };
 
@@ -358,6 +362,15 @@ let
       inherit args;
       wrap = false;
     };
+
+  mkExecBindWith =
+    bind:
+    mkBind (
+      bind
+      // {
+        dispatcher = "exec";
+      }
+    );
 
   mkLuaBindWith =
     opts: bind:
@@ -385,7 +398,9 @@ let
       key = resolvedBind.key or "";
       dispatcher = resolvedBind.dispatcher or "";
       args = resolvedBind.args or "";
-      wrap = if resolvedBind ? wrap then resolvedBind.wrap else true;
+      wrap = resolvedBind.wrap or true;
+      flags = (resolvedBind.flags or { }) // opts;
+      description = resolvedBind.description or null;
       expandedArgs =
         if dispatcher == "exec" && wrap then
           mkStartCommand (replaceCommandVars args)
@@ -403,7 +418,9 @@ let
         keyCombo
         (lua (mkDispatcher dispatcher expandedArgs))
       ]
-      ++ lib.optional (opts != { }) opts;
+      ++ lib.optional (flags != { } || description != null) (
+        flags // lib.optionalAttrs (description != null) { inherit description; }
+      );
     };
 
   mkLuaBind = mkLuaBindWith { };
@@ -702,19 +719,76 @@ in
             ];
 
             lockedBinds = [
-              (mkExecBind "$mainMod" "BackSpace"
-                "pkill -SIGUSR1 hyprlock || WAYLAND_DISPLAY=wayland-1 $screen-locker"
-              )
-              (mkExecBind "" "XF86AudioRaiseVolume" "wpctl set-volume @DEFAULT_AUDIO_SINK@ 2.5%+")
-              (mkExecBind "" "XF86AudioLowerVolume" "wpctl set-volume @DEFAULT_AUDIO_SINK@ 2.5%-")
-              (mkExecBind "" "XF86AudioMute" "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")
-              (mkExecBind "" "XF86MonBrightnessUp" "light -A 5")
-              (mkExecBind "" "XF86MonBrightnessDown" "light -U 5")
-              (mkExecBind "" "XF86AudioMedia" "playerctl play-pause")
-              (mkExecBind "" "XF86AudioPlay" "playerctl play-pause")
-              (mkExecBind "" "XF86AudioStop" "playerctl stop")
-              (mkExecBind "" "XF86AudioPrev" "playerctl previous")
-              (mkExecBind "" "XF86AudioNext" "playerctl next")
+              (mkExecBindWith {
+                mods = "$mainMod";
+                key = "BackSpace";
+                args = "pkill -SIGUSR1 hyprlock || WAYLAND_DISPLAY=wayland-1 $screen-locker";
+                description = "Lock session";
+              })
+              (mkExecBindWith {
+                mods = "";
+                key = "XF86AudioRaiseVolume";
+                args = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 2.5%+";
+                flags.repeating = true;
+                description = "Raise volume";
+              })
+              (mkExecBindWith {
+                mods = "";
+                key = "XF86AudioLowerVolume";
+                args = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 2.5%-";
+                flags.repeating = true;
+                description = "Lower volume";
+              })
+              (mkExecBindWith {
+                mods = "";
+                key = "XF86AudioMute";
+                args = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
+                description = "Mute audio";
+              })
+              (mkExecBindWith {
+                mods = "";
+                key = "XF86MonBrightnessUp";
+                args = "light -A 5";
+                flags.repeating = true;
+                description = "Raise brightness";
+              })
+              (mkExecBindWith {
+                mods = "";
+                key = "XF86MonBrightnessDown";
+                args = "light -U 5";
+                flags.repeating = true;
+                description = "Lower brightness";
+              })
+              (mkExecBindWith {
+                mods = "";
+                key = "XF86AudioMedia";
+                args = "playerctl play-pause";
+                description = "Play or pause media";
+              })
+              (mkExecBindWith {
+                mods = "";
+                key = "XF86AudioPlay";
+                args = "playerctl play-pause";
+                description = "Play or pause media";
+              })
+              (mkExecBindWith {
+                mods = "";
+                key = "XF86AudioStop";
+                args = "playerctl stop";
+                description = "Stop media";
+              })
+              (mkExecBindWith {
+                mods = "";
+                key = "XF86AudioPrev";
+                args = "playerctl previous";
+                description = "Previous media";
+              })
+              (mkExecBindWith {
+                mods = "";
+                key = "XF86AudioNext";
+                args = "playerctl next";
+                description = "Next media";
+              })
             ];
 
             mouseBinds = [
