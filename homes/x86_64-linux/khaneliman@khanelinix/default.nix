@@ -321,7 +321,13 @@ in
         wallpapers = wallpaperPaths wallpaperCfg.list;
       };
 
-      rnnoise = lib.khanelinix.enabled;
+      rnnoise = {
+        enable = true;
+        echoCancel = {
+          enable = true;
+          captureNode = "alsa_input.usb-Blue_Microphones_Yeti_Stereo_Microphone_LT_191128065321F39907D0_111000-00.analog-stereo";
+        };
+      };
 
       sops = {
         enable = true;
