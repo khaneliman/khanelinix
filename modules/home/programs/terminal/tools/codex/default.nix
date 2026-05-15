@@ -65,7 +65,8 @@ in
         model_reasoning_effort = "medium";
         plan_mode_reasoning_effort = "medium";
         # NOTE: 5.5 is already 2x cost
-        # service_tier = "fast";
+        # Plenty of room atm with smaller mcp/agents.md/agents/commands
+        service_tier = "fast";
 
         notify =
           let
