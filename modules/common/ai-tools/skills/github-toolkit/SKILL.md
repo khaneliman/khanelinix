@@ -117,6 +117,9 @@ inputs when they are documented in repository guidance.
 
 For inline comments:
 
+- prefer submitting a single review containing all inline comments over posting
+  several standalone comments in sequence; this keeps code suggestions aligned
+  with their exact diff positions and avoids spamming PR notifications
 - post one comment per unique issue
 - include a committable suggestion only when it completely fixes the issue
 - cite local instruction or contribution files when compliance is the basis
