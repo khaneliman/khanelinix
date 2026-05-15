@@ -20,7 +20,7 @@ in
 
   config = mkIf cfg.enable {
     home.shellAliases = {
-      codex-deep = "codex --profile deep";
+      codex-deep = "codex --profile deep -c model_context_window=1000000 -c model_auto_compact_token_limit=850000";
       codex-nano = "codex --profile nano";
       codex-offline = "codex --profile offline";
       codex-quick = "codex --profile quick";
@@ -60,6 +60,8 @@ in
         # to complete most work with fewer tokens. Keep routine turns at medium
         # and reserve higher reasoning for explicit profiles.
         model = "gpt-5.5";
+        model_auto_compact_token_limit = 240000;
+        model_context_window = 272000;
         model_reasoning_effort = "medium";
         plan_mode_reasoning_effort = "medium";
         # NOTE: 5.5 is already 2x cost
@@ -117,15 +119,14 @@ in
 
         profiles = {
           # Deep analysis and live-research mode. Intentionally expensive:
-          # GPT-5.5 is strongest for long-horizon Codex work, but the announced
-          # Codex context window is 400K rather than the API's upcoming 1M.
+          # GPT-5.4 currently advertises the largest Codex context window.
+          # The deep alias passes context overrides directly via CLI -c because
+          # those fields are top-level settings in the published schema.
           deep = {
-            model = "gpt-5.5";
-            model_auto_compact_token_limit = 350000;
-            model_context_window = 400000;
-            model_reasoning_effort = "high";
+            model = "gpt-5.4";
+            model_reasoning_effort = "xhigh";
             model_verbosity = "high";
-            plan_mode_reasoning_effort = "high";
+            plan_mode_reasoning_effort = "xhigh";
             web_search = "live";
           };
 
