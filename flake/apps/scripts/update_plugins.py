@@ -28,7 +28,7 @@ TASKS = {
         "depends_on": None,
     },
     "yazi": {
-        "command": "nix-shell -p python3Packages.requests -p python3Packages.packaging --run 'python3 ./pkgs/by-name/ya/yazi/plugins/update.py --all --commit'",
+        "command": "./pkgs/by-name/ya/yazi/plugins/update.py --all --commit",
         "self_committing": True,
         "worktree": "yazi",
         "depends_on": None,
