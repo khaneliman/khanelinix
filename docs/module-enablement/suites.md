@@ -216,16 +216,16 @@ aliases
 <details>
 <summary><strong>Development Suite</strong></summary>
 
-| Category            | Items                                                           | Condition                          |
-| ------------------- | --------------------------------------------------------------- | ---------------------------------- |
-| **Core Tools**      | `jqp`, `neovide`, `onefetch`, `postman`, `tree-sitter`          | Always                             |
-| **Editors**         | `vscode`, `neovim`                                              | Always                             |
-| **Version Control** | `act`, `git-crypt`, `gh`, `jujutsu`, `lazygit`                  | Always                             |
-| **Nix Tools**       | `hydra-check`, `nix-diff`, `nix-update`, `nixpkgs-review`, etc. | `nixEnable`                        |
-| **Game Dev**        | `gdevelop`, `godot`                                             | `gameEnable`                       |
-| **SQL Tools**       | `dbeaver-bin`, `mysql-workbench`                                | `sqlEnable`                        |
-| **AI Tools**        | `claude-code`                                                   | `aiEnable`                         |
-| **Container Tools** | `k9s`, `lazydocker`                                             | `kubernetesEnable`, `dockerEnable` |
+| Category            | Items                                                                                                               | Condition                          |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| **Core Tools**      | `jqp`, `neovide`, `onefetch`, `postman`, `tree-sitter`                                                              | Always                             |
+| **Editors**         | `vscode`, `neovim`                                                                                                  | Always                             |
+| **Version Control** | `act`, `git-crypt`, `gh`, `jujutsu`, `lazygit`                                                                      | Always                             |
+| **Nix Tools**       | `hydra-check`, `nix-diff`, `nix-update`, `nixpkgs-review`, etc.                                                     | `nixEnable`                        |
+| **Game Dev**        | `gdevelop`, `godot`                                                                                                 | `gameEnable`                       |
+| **SQL Tools**       | `dbeaver-bin`, `mysql-workbench`                                                                                    | `sqlEnable`                        |
+| **AI Tools**        | `claude-code`, `codex`, `gemini-cli`, `github-copilot-cli`, `mcp`, `opencode`, `pi-coding-agent`, `t3code`, `tuicr` | `aiEnable`                         |
+| **Container Tools** | `k9s`, `lazydocker`                                                                                                 | `kubernetesEnable`, `dockerEnable` |
 
 **Secrets:** API keys for ANTHROPIC, AZURE_OPENAI, OPENAI, TAVILY **Aliases:**
 Extensive nixpkgs and home-manager development shortcuts
