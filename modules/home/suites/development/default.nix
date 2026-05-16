@@ -33,6 +33,9 @@ let
   '';
 
   cfg = config.khanelinix.suites.development;
+  exoLibp2pPort = 52416;
+  exoLogDir = "${config.home.homeDirectory}/Library/Logs/exo";
+  hostName = osConfig.networking.hostName or "";
   isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
 in
 {
@@ -217,6 +220,23 @@ in
       };
 
       services.ollama.enable = mkDefault (cfg.aiEnable && pkgs.stdenv.hostPlatform.isDarwin);
+    };
+
+    services.exo = {
+      enable = mkDefault cfg.aiEnable;
+      environmentVariables.EXO_LIBP2P_NAMESPACE = "khanelinix";
+      extraArgs = [
+        "--libp2p-port"
+        (toString exoLibp2pPort)
+      ]
+      ++ lib.optionals (hostName == "khanelinix") [
+        "--force-master"
+      ];
+    };
+
+    launchd.agents.exo.config = lib.mkIf exoEnabled {
+      StandardOutPath = "${exoLogDir}/exo.out.log";
+      StandardErrorPath = "${exoLogDir}/exo.err.log";
     };
 
     sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {

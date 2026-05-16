@@ -7,6 +7,9 @@
 }:
 let
   cfg = config.khanelinix.system.networking;
+  homeCfg = config.home-manager.users.${config.khanelinix.user.name} or { };
+  exoEnabled = homeCfg.services.exo.enable or false;
+  exoLibp2pPort = 52416;
   python3 = lib.getExe pkgs.python3;
   localNetworkPrivilegesCleanup = ./local-network-privileges-cleanup.py;
 in
@@ -109,6 +112,50 @@ in
             fi
 
             /bin/rm -rf "$tempDir"
+          fi
+        ''}
+
+        anchorName="khanelinix-exo"
+        anchorFile="/etc/pf.anchors/$anchorName"
+        pfConf="/etc/pf.conf"
+        anchorLine="anchor \"$anchorName\""
+        loadLine="load anchor \"$anchorName\" from \"$anchorFile\""
+
+        ${lib.optionalString exoEnabled ''
+          echo >&2 "Configuring PF rules for exo ports..."
+
+          /usr/bin/install -d -m 0755 -o root -g wheel /etc/pf.anchors
+          /usr/bin/printf '%s\n' \
+            "# Allow exo's fixed libp2p port and MLX Ring's random high TCP ports on trusted private IPv4 networks." \
+            "pass in inet proto tcp from { 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 } to any port ${toString exoLibp2pPort}" \
+            "pass in inet proto tcp from { 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 } to any port 49153:65535" \
+            > "$anchorFile.tmp"
+          /usr/bin/install -m 0644 -o root -g wheel "$anchorFile.tmp" "$anchorFile"
+          /bin/rm -f "$anchorFile.tmp"
+
+          if ! /usr/bin/grep -qxF "$anchorLine" "$pfConf"; then
+            /usr/bin/printf '\n%s\n%s\n' "$anchorLine" "$loadLine" >> "$pfConf"
+          elif ! /usr/bin/grep -qxF "$loadLine" "$pfConf"; then
+            /bin/echo "$loadLine" >> "$pfConf"
+          fi
+
+          /sbin/pfctl -f "$pfConf" || echo >&2 "Warning: failed to reload PF configuration."
+          /sbin/pfctl -E >/dev/null 2>&1 || true
+        ''}
+
+        ${lib.optionalString (!exoEnabled) ''
+          if [ -f "$anchorFile" ]; then
+            echo >&2 "Removing PF rules for exo MLX ring ports..."
+            /bin/rm -f "$anchorFile"
+          fi
+
+          if [ -f "$pfConf" ] && /usr/bin/grep -qF "$anchorName" "$pfConf"; then
+            tempPfConf="$(/usr/bin/mktemp /tmp/khanelinix-pf.XXXXXX)"
+            /usr/bin/grep -vxF "$anchorLine" "$pfConf" \
+              | /usr/bin/grep -vxF "$loadLine" > "$tempPfConf"
+            /usr/bin/install -m 0644 -o root -g wheel "$tempPfConf" "$pfConf"
+            /bin/rm -f "$tempPfConf"
+            /sbin/pfctl -f "$pfConf" || echo >&2 "Warning: failed to reload PF configuration."
           fi
         ''}
       '';
