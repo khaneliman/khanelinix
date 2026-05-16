@@ -33,6 +33,7 @@ let
   '';
 
   cfg = config.khanelinix.suites.development;
+  exoEnabled = config.services.exo.enable or false;
   isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
 in
 {
@@ -221,8 +222,41 @@ in
 
     services.exo = {
       enable = mkDefault cfg.aiEnable;
-      environmentVariables.EXO_LIBP2P_NAMESPACE = "khanelinix";
+      environmentVariables = {
+        EXO_LIBP2P_NAMESPACE = "khanelinix";
+        EXO_MODELS_READ_ONLY_DIRS = lib.concatStringsSep ":" [
+          "${config.home.homeDirectory}/.lmstudio/exo-models"
+          "${config.home.homeDirectory}/.lmstudio/models"
+          "${config.home.homeDirectory}/.cache/lm-studio/models"
+        ];
+      };
     };
+
+    home.activation.linkLmStudioExoModels =
+      let
+        lmStudioModelsDir = "${config.home.homeDirectory}/.lmstudio/models";
+        lmStudioExoModelsDir = "${config.home.homeDirectory}/.lmstudio/exo-models";
+        lmStudioExoModelLinks = {
+          "mlx-community--Qwen3-Coder-Next-4bit" =
+            "${lmStudioModelsDir}/lmstudio-community/Qwen3-Coder-Next-MLX-4bit";
+          "mlx-community--gpt-oss-20b-MXFP4-Q8" = "${lmStudioModelsDir}/mlx-community/gpt-oss-20b-MXFP4-Q8";
+        };
+      in
+      lib.mkIf exoEnabled (
+        lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          echo >&2 "Linking LM Studio models for exo..."
+          $DRY_RUN_CMD mkdir -p "${lmStudioExoModelsDir}"
+          ${lib.concatStringsSep "\n" (
+            lib.mapAttrsToList (name: target: ''
+              if [ -d "${target}" ]; then
+                $DRY_RUN_CMD ln -sfn "${target}" "${lmStudioExoModelsDir}/${name}"
+              else
+                $DRY_RUN_CMD rm -f "${lmStudioExoModelsDir}/${name}"
+              fi
+            '') lmStudioExoModelLinks
+          )}
+        ''
+      );
 
     sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {
       OPENAI_SECURA_KEY = {
