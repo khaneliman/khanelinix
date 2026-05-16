@@ -38,6 +38,12 @@ in
         opencode-deep = "opencode --model ${refactorerModel}";
         opencode-nano = "opencode --model openai/gpt-5.4-nano";
         opencode-research = "opencode --agent refactorer";
+      }
+      // lib.optionalAttrs config.services.exo.enable {
+        opencode-exo = ''f(){ model="$1"; shift; opencode --model "exo/$model" "$@"; }; f'';
+        opencode-exo-coder = "opencode --model exo/mlx-community/Qwen3-Coder-Next-4bit";
+        opencode-exo-gpt-oss = "opencode --model exo/mlx-community/gpt-oss-20b-MXFP4-Q8";
+        opencode-exo-qwen = "opencode --model exo/mlx-community/Qwen3.6-35B-A3B-5bit";
       };
 
     programs.opencode =
