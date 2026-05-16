@@ -112,6 +112,7 @@ in
           # NOTE: hard to get out of neovim
           # antigravity
           tuicr
+          lmstudio
         ];
 
       shellAliases = {
