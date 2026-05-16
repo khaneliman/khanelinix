@@ -219,6 +219,11 @@ in
       services.ollama.enable = mkDefault (cfg.aiEnable && pkgs.stdenv.hostPlatform.isDarwin);
     };
 
+    services.exo = {
+      enable = mkDefault cfg.aiEnable;
+      environmentVariables.EXO_LIBP2P_NAMESPACE = "khanelinix";
+    };
+
     sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {
       OPENAI_SECURA_KEY = {
         sopsFile = lib.getFile "secrets/CORE/default.yaml";
