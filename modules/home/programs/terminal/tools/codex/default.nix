@@ -11,6 +11,7 @@ let
     ;
 
   cfg = config.khanelinix.programs.terminal.tools.codex;
+  exoEnabled = config.services.exo.enable or false;
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
 in
 {
@@ -26,6 +27,12 @@ in
       codex-quick = "codex --profile quick";
       codex-spark = "codex --profile spark";
       codex-unsafe = "codex --profile unsafe";
+    }
+    // lib.optionalAttrs exoEnabled {
+      codex-exo = ''f(){ model="$1"; shift; codex -c model_provider='"exo"' -m "$model" "$@"; }; f'';
+      codex-exo-coder = ''codex -c model_provider='"exo"' -m mlx-community/Qwen3-Coder-Next-4bit'';
+      codex-exo-gpt-oss = ''codex -c model_provider='"exo"' -m mlx-community/gpt-oss-20b-MXFP4-Q8'';
+      codex-exo-qwen = ''codex -c model_provider='"exo"' -m mlx-community/Qwen3.6-35B-A3B-5bit'';
     };
 
     programs.codex = {
@@ -67,6 +74,18 @@ in
         # NOTE: 5.5 is already 2x cost
         # Plenty of room atm with smaller mcp/agents.md/agents/commands
         service_tier = "fast";
+
+        model_providers = lib.optionalAttrs exoEnabled {
+          exo = {
+            name = "exo (local cluster)";
+            base_url = "http://localhost:52415/v1";
+            wire_api = "responses";
+            requires_openai_auth = false;
+            request_max_retries = 1;
+            stream_max_retries = 1;
+            stream_idle_timeout_ms = 300000;
+          };
+        };
 
         notify =
           let
