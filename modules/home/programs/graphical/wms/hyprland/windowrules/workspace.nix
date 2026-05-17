@@ -124,48 +124,56 @@ in
 
         on =
           let
-            routeFirefoxWindows = lib.generators.mkLuaInline ''
-              function()
-                for _, window in ipairs(hl.get_windows()) do
-                  local class = string.lower(window.class or "")
-                  if class == "firefox" or class == "firefox-devedition" then
-                    local title = string.lower(window.title or "")
-                    local target = "2"
+            routeFirefoxWindows =
+              allowDefaultRoute:
+              lib.generators.mkLuaInline ''
+                function()
+                  for _, window in ipairs(hl.get_windows()) do
+                    local class = string.lower(window.class or "")
+                    if class == "firefox" or class == "firefox-devedition" then
+                      local title = string.lower(window.title or "")
+                      local target = "2"
 
-                    if title:find("hidden tabs %- workona") then
-                      target = "special:inactive"
-                    elseif title:find("twitch") or title:find("tntdrama") or title:find("youtube") or title:find("bally sports") or title:find("video entertainment") or title:find("plex") then
-                      target = "1"
-                    end
+                      if title:find("hidden tabs %- workona") then
+                        target = "special:inactive"
+                      elseif title:find("twitch") or title:find("tntdrama") or title:find("youtube") or title:find("bally sports") or title:find("video entertainment") or title:find("plex") then
+                        target = "1"
+                      end
 
-                    if target ~= "2" and window.workspace ~= nil and window.workspace.name ~= "2" then
-                      return
-                    end
+                      local shouldRoute = true
 
-                    if window.workspace == nil or window.workspace.name ~= target then
-                      hl.dispatch(hl.dsp.window.move({
-                        workspace = target,
-                        follow = false,
-                        window = "address:" .. window.address,
-                      }))
+                      if target == "2" and ${lib.boolToString (!allowDefaultRoute)} then
+                        shouldRoute = false
+                      end
+
+                      if target ~= "2" and window.workspace ~= nil and window.workspace.name ~= "2" then
+                        shouldRoute = false
+                      end
+
+                      if shouldRoute and (window.workspace == nil or window.workspace.name ~= target) then
+                        hl.dispatch(hl.dsp.window.move({
+                          workspace = target,
+                          follow = false,
+                          window = "address:" .. window.address,
+                        }))
+                      end
                     end
                   end
                 end
-              end
-            '';
+              '';
           in
           lib.mkIf (config.wayland.windowManager.hyprland.configType == "lua") (
             lib.mkAfter [
               {
                 _args = [
                   "window.open"
-                  routeFirefoxWindows
+                  (routeFirefoxWindows true)
                 ];
               }
               {
                 _args = [
                   "window.title"
-                  routeFirefoxWindows
+                  (routeFirefoxWindows false)
                 ];
               }
             ]
