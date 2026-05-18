@@ -37,6 +37,8 @@ let
   exoLogDir = "${config.home.homeDirectory}/Library/Logs/exo";
   hostName = osConfig.networking.hostName or "";
   exoEnabled = config.services.exo.enable or false;
+  # TODO: Re-enable Linux exo workers when upstream supports AMD GPU acceleration.
+  exoDisableWorker = pkgs.stdenv.hostPlatform.isLinux;
   isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
 in
 {
@@ -224,7 +226,7 @@ in
     };
 
     services.exo = {
-      enable = mkDefault cfg.aiEnable;
+      enable = mkDefault (cfg.aiEnable && pkgs.stdenv.hostPlatform.isDarwin);
       environmentVariables = {
         EXO_LIBP2P_NAMESPACE = "khanelinix";
         EXO_MODELS_READ_ONLY_DIRS = lib.concatStringsSep ":" [
@@ -239,6 +241,9 @@ in
       ]
       ++ lib.optionals (hostName == "khanelinix") [
         "--force-master"
+      ]
+      ++ lib.optionals exoDisableWorker [
+        "--no-worker"
       ];
     };
 
