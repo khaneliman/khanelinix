@@ -252,6 +252,10 @@ in
       StandardErrorPath = "${exoLogDir}/exo.err.log";
     };
 
+    # NOTE: Recommended Darwin MLX downloads for LM Studio/exo on 64 GB Apple Silicon:
+    # - Agentic coding: mlx-community/Qwen3-Coder-Next-4bit
+    # - General reasoning / financial analysis: mlx-community/gpt-oss-20b-MXFP4-Q8
+    # - Creative and long-context work: mlx-community/Qwen3.6-35B-A3B-5bit
     home.activation.linkLmStudioExoModels =
       let
         lmStudioModelsDir = "${config.home.homeDirectory}/.lmstudio/models";
