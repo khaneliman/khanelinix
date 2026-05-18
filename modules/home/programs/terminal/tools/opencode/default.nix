@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  osConfig ? { },
   pkgs,
   ...
 }:
@@ -12,6 +13,8 @@ let
     ;
 
   cfg = config.khanelinix.programs.terminal.tools.opencode;
+  ollamaEnabled =
+    (config.services.ollama.enable or false) || (osConfig.services.ollama.enable or false);
 
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
 in
@@ -44,6 +47,13 @@ in
         opencode-exo-coder = "opencode --model exo/mlx-community/Qwen3-Coder-Next-4bit";
         opencode-exo-gpt-oss = "opencode --model exo/mlx-community/gpt-oss-20b-MXFP4-Q8";
         opencode-exo-qwen = "opencode --model exo/mlx-community/Qwen3.6-35B-A3B-5bit";
+      }
+      // lib.optionalAttrs ollamaEnabled {
+        opencode-ollama = ''f(){ model="$1"; shift; opencode --model "ollama/$model" "$@"; }; f'';
+        opencode-ollama-agent = "opencode --model ollama/glm-4.7-flash";
+        opencode-ollama-coder = "opencode --model ollama/qwen3-coder:30b";
+        opencode-ollama-gpt-oss = "opencode --model ollama/gpt-oss:20b";
+        opencode-ollama-qwen = "opencode --model ollama/qwen3.6:27b";
       };
 
     programs.opencode =
