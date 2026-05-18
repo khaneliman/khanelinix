@@ -58,6 +58,9 @@ in
           accent = catppuccin.colors.blue.hex;
           accentSoft = catppuccin.colors.sapphire.hex;
           border = catppuccin.colors.overlay0.hex;
+          selected = catppuccin.colors.surface1.hex;
+          selectedHover = catppuccin.colors.surface2.hex;
+          selectedFg = catppuccin.colors.text.hex;
         };
         nord = {
           bg = nord.palette.nord0.hex;
@@ -68,6 +71,9 @@ in
           accent = nord.palette.nord10.hex;
           accentSoft = nord.palette.nord8.hex;
           border = nord.palette.nord3.hex;
+          selected = nord.palette.nord2.hex;
+          selectedHover = nord.palette.nord3.hex;
+          selectedFg = nord.palette.nord6.hex;
         };
         tokyonight =
           let
@@ -81,6 +87,9 @@ in
             accent = colors.blue;
             accentSoft = colors.cyan;
             border = colors.blue7;
+            selected = colors.bg_highlight;
+            selectedHover = colors.blue7;
+            selectedFg = colors.fg;
           };
       };
 
@@ -102,6 +111,9 @@ in
           --khanelinix-teams-accent: ${themePalette.accent};
           --khanelinix-teams-accent-soft: ${themePalette.accentSoft};
           --khanelinix-teams-border: ${themePalette.border};
+          --khanelinix-teams-selected: ${themePalette.selected};
+          --khanelinix-teams-selected-hover: ${themePalette.selectedHover};
+          --khanelinix-teams-selected-fg: ${themePalette.selectedFg};
 
           /* Fluent v9 token overrides used heavily by Teams V2 */
           --colorNeutralBackground1: var(--khanelinix-teams-bg) !important;
@@ -110,6 +122,12 @@ in
           --colorNeutralBackground4: var(--khanelinix-teams-surface-alt) !important;
           --colorNeutralBackground5: var(--khanelinix-teams-surface-alt) !important;
           --colorNeutralBackground6: var(--khanelinix-teams-surface-alt) !important;
+          --colorNeutralBackground1Hover: var(--khanelinix-teams-surface-alt) !important;
+          --colorNeutralBackground2Hover: var(--khanelinix-teams-surface-alt) !important;
+          --colorNeutralBackground1Selected: var(--khanelinix-teams-selected) !important;
+          --colorNeutralBackground2Selected: var(--khanelinix-teams-selected) !important;
+          --colorNeutralBackground1SelectedHover: var(--khanelinix-teams-selected-hover) !important;
+          --colorNeutralBackground2SelectedHover: var(--khanelinix-teams-selected-hover) !important;
 
           --colorNeutralForeground1: var(--khanelinix-teams-fg) !important;
           --colorNeutralForeground2: var(--khanelinix-teams-fg) !important;
@@ -218,6 +236,43 @@ in
           color: var(--khanelinix-teams-fg) !important;
         }
 
+        [role="treeitem"] [class*="message"],
+        [role="treeitem"] [class*="preview"],
+        [role="treeitem"] [class*="subject"],
+        [role="treeitem"] [class*="thread"],
+        [role="treeitem"] [class*="title"],
+        [role="treeitem"] [data-tid*="message"],
+        [role="treeitem"] [data-tid*="preview"],
+        [role="treeitem"] [data-tid*="thread"],
+        [role="listitem"] [class*="message"],
+        [role="listitem"] [class*="preview"],
+        [role="listitem"] [class*="subject"],
+        [role="listitem"] [class*="thread"],
+        [role="listitem"] [class*="title"],
+        [role="listitem"] [data-tid*="message"],
+        [role="listitem"] [data-tid*="preview"],
+        [role="listitem"] [data-tid*="thread"],
+        [role="option"] [class*="message"],
+        [role="option"] [class*="preview"],
+        [role="option"] [class*="subject"],
+        [role="option"] [class*="thread"],
+        [role="option"] [class*="title"],
+        [role="option"] [data-tid*="message"],
+        [role="option"] [data-tid*="preview"],
+        [role="option"] [data-tid*="thread"] {
+          background: transparent !important;
+          background-color: transparent !important;
+        }
+
+        [role="row"] [data-tid*="message-slice-card-threads"],
+        [role="row"] [data-tid="message-slice-card-timestamp"],
+        .fui-MessageSliceCardThreadsTitle,
+        .fui-MessageSliceCardThreadsSecondaryTitle,
+        .fui-MessageSliceCardPreview {
+          background: transparent !important;
+          background-color: transparent !important;
+        }
+
         .fui-Card,
         .fui-DialogSurface,
         .fui-PopoverSurface,
@@ -244,12 +299,33 @@ in
           background-color: var(--khanelinix-teams-surface-alt) !important;
         }
 
+        [data-tid="entity-header"] .fui-Button.fui-Button.fui-Button.fui-Button {
+          background: transparent !important;
+          background-color: transparent !important;
+        }
+
         .fui-Button[aria-pressed="true"],
         .fui-Tab[aria-selected="true"],
         [aria-selected="true"],
         [aria-current="page"] {
-          background-color: var(--khanelinix-teams-accent) !important;
-          color: var(--khanelinix-teams-bg) !important;
+          background-color: var(--khanelinix-teams-selected) !important;
+          border-color: var(--khanelinix-teams-accent) !important;
+          color: var(--khanelinix-teams-selected-fg) !important;
+        }
+
+        [role="treeitem"][aria-selected="true"] *,
+        [role="listitem"][aria-selected="true"] *,
+        [role="option"][aria-selected="true"] *,
+        .fui-Tab[aria-selected="true"] * {
+          background-color: transparent !important;
+          color: var(--khanelinix-teams-selected-fg) !important;
+        }
+
+        [role="treeitem"][aria-selected="true"]:hover,
+        [role="listitem"][aria-selected="true"]:hover,
+        [role="option"][aria-selected="true"]:hover,
+        .fui-Tab[aria-selected="true"]:hover {
+          background-color: var(--khanelinix-teams-selected-hover) !important;
         }
 
         input,
