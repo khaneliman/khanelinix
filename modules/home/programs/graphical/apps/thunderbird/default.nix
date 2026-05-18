@@ -114,12 +114,13 @@ in
       }
     ];
 
-    home.packages = lib.optionals pkgs.stdenv.hostPlatform.isLinux (
-      with pkgs;
-      [
-        birdtray
-      ]
-    );
+    # FIXME: Fatal error: Sorry, the system tray cannot be controlled by this add-on on your operating system.
+    # home.packages = lib.optionals pkgs.stdenv.hostPlatform.isLinux (
+    #   with pkgs;
+    #   [
+    #     birdtray
+    #   ]
+    # );
 
     systemd.user.services.birdtray = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       Unit = {
