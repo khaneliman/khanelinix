@@ -27,11 +27,9 @@ in
     );
 
     # SSH config for home server
-    programs.ssh.matchBlocks = lib.mkDefault {
-      "server" = {
-        hostname = serverHostname;
-        user = config.khanelinix.user.name;
-      };
+    programs.ssh.settings.server = lib.mkDefault {
+      HostName = serverHostname;
+      User = config.khanelinix.user.name;
     };
   };
 }

@@ -23,11 +23,10 @@ in
     ];
 
     programs = {
-      ssh.extraConfig = lib.optionalString cfg.enableSshSocket ''
-        Host *
-          AddKeysToAgent yes
-          IdentityAgent ${config.home.homeDirectory}/.1password/agent.sock
-      '';
+      ssh.settings."*" = mkIf cfg.enableSshSocket {
+        AddKeysToAgent = "yes";
+        IdentityAgent = "${config.home.homeDirectory}/.1password/agent.sock";
+      };
     };
   };
 }

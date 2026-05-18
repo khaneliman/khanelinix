@@ -61,7 +61,6 @@ in
   options.khanelinix.programs.terminal.tools.ssh = with types; {
     enable = lib.mkEnableOption "ssh support";
     authorizedKeys = mkOpt (listOf str) authorizedKeys "The public keys to apply.";
-    extraConfig = mkOpt str "" "Extra configuration to apply.";
     port = mkOpt port 2222 "The port to listen on (in addition to 22).";
   };
 
@@ -70,7 +69,7 @@ in
       enable = true;
       enableDefaultConfig = false;
 
-      matchBlocks =
+      settings =
         let
           otherHostsConfig = lib.mapAttrs (
             _name: remote:
@@ -78,34 +77,30 @@ in
               remoteUserId = toString (remote.uid or (if remote.system == "darwin" then 501 else 1000));
             in
             {
-              inherit (remote) hostname;
-              user = remote.username;
-              forwardAgent = true;
-              remoteForwards = lib.optionals (config.services.gpg-agent.enable && (remote.gpgAgent or false)) [
+              HostName = remote.hostname;
+              User = remote.username;
+              ForwardAgent = true;
+              RemoteForward = lib.optionals (config.services.gpg-agent.enable && (remote.gpgAgent or false)) [
                 "/run/user/${remoteUserId}/gnupg/S.gpg-agent /run/user/${userId}/gnupg/S.gpg-agent.extra"
                 "/run/user/${remoteUserId}/gnupg/S.gpg-agent.ssh /run/user/${userId}/gnupg/S.gpg-agent.ssh"
               ];
             }
             // lib.optionalAttrs (remote.system == "nixos") {
-              inherit (cfg) port;
+              Port = cfg.port;
             }
           ) otherHosts;
         in
         {
           "*" = {
-            addKeysToAgent = "yes";
-            forwardAgent = true;
-            serverAliveInterval = 30;
-            serverAliveCountMax = 2;
+            AddKeysToAgent = "yes";
+            ForwardAgent = true;
+            ServerAliveInterval = 30;
+            ServerAliveCountMax = 2;
+            StreamLocalBindUnlink = true;
+            ConnectTimeout = 5;
           };
         }
         // otherHostsConfig;
-
-      extraConfig = ''
-        StreamLocalBindUnlink yes
-        ConnectTimeout 5
-      ''
-      + lib.optionalString (cfg.extraConfig != "") cfg.extraConfig;
     };
 
     home = {
