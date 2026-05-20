@@ -115,9 +115,16 @@ in
           # mysql-workbench
         ]
         ++ lib.optionals cfg.aiEnable [
+          agentsview
           antigravity
+          ccusage
+          ck
+          hunk
           tuicr
           lmstudio
+          vibe-kanban
+          workmux
+          zat
         ];
 
       shellAliases = {

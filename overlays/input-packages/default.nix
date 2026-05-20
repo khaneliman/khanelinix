@@ -13,12 +13,19 @@ in
   #          │                       LLM programs                       │
   #          ╰──────────────────────────────────────────────────────────╯
   inherit (inputs.llm-agents.packages.${system})
+    agentsview
     antigravity
+    ccusage
+    ck
     claude-code
     codex
     gemini-cli
+    hunk
     opencode
     tuicr
+    vibe-kanban
+    workmux
+    zat
     ;
 
   #          ╭──────────────────────────────────────────────────────────╮
