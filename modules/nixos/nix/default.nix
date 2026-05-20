@@ -37,13 +37,14 @@ in
       daemonIOSchedPriority = 7; # 0-7, higher = lower priority
 
       gc = {
+        automatic = lib.mkForce false;
         dates = "daily";
         options = "--delete-older-than 7d";
         randomizedDelaySec = "45min";
       };
 
       optimise = {
-        automatic = true;
+        automatic = lib.mkForce false;
         dates = [ "04:00" ];
       };
 
@@ -69,6 +70,22 @@ in
           "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
           "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
         ];
+      };
+    };
+
+    services = {
+      fast-nix-gc = {
+        enable = true;
+        automatic = true;
+        dates = "daily";
+        deleteOlderThan = "7d";
+        randomizedDelaySec = "45min";
+      };
+
+      fast-nix-optimise = {
+        enable = true;
+        automatic = true;
+        dates = [ "04:00" ];
       };
     };
   };

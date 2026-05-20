@@ -43,6 +43,7 @@
               inputs.lanzaboote.nixosModules.lanzaboote
               inputs.sops-nix.nixosModules.sops
               inputs.disko.nixosModules.disko
+              inputs.fast-nix-gc.nixosModules.default
               inputs.stylix.nixosModules.stylix
               inputs.catppuccin.nixosModules.catppuccin
               inputs.nix-index-database.nixosModules.nix-index

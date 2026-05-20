@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   username ? null,
@@ -18,6 +19,27 @@ let
   inherit (lib.khanelinix) mkOpt enabled;
 
   cfg = config.khanelinix.user;
+  fastNixGcPackage =
+    let
+      package = lib.attrByPath [
+        "fast-nix-gc"
+        "packages"
+        pkgs.stdenv.hostPlatform.system
+        "default"
+      ] null inputs;
+    in
+    if package == null then
+      null
+    else
+      package.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [
+          (pkgs.fetchpatch2 {
+            url = "https://github.com/khaneliman/fast-nix-gc/commit/fbe772c5ae00f9a19a6683f882a28a331b70c8ef.patch";
+            hash = "sha256-oN+p7qBbLehgOvGzS0K5Yk7pF4eHfmMfLJa+ceuoTbc=";
+          })
+        ];
+      });
+  gcCommand = if fastNixGcPackage != null then "fast-nix-gc" else "nix-collect-garbage";
 
   home-directory =
     if cfg.name == null then
@@ -83,18 +105,20 @@ in
 
         preferXdgDirectories = true;
 
+        packages = lib.optional (fastNixGcPackage != null) fastNixGcPackage;
+
         shellAliases = {
           # nix specific aliases
           cleanup =
             if pkgs.stdenv.hostPlatform.isDarwin then
               ''
                 sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate off
-                sudo nix-collect-garbage --delete-older-than 3d && nix-collect-garbage -d
+                sudo ${gcCommand} --delete-older-than 3d && ${gcCommand} -d
                 sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
               ''
             else
               ''
-                sudo nix-collect-garbage --delete-older-than 3d && nix-collect-garbage -d
+                sudo ${gcCommand} --delete-older-than 3d && ${gcCommand} -d
               '';
           bloat = "nix path-info -Sh /run/current-system";
           curgen = "sudo nix-env --list-generations --profile /nix/var/nix/profiles/system";
