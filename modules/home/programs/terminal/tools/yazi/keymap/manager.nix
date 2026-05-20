@@ -36,6 +36,11 @@ in
         run = "plugin smart-tab";
         desc = "Create a tab and enter the hovered directory";
       }
+      {
+        on = [ "i" ];
+        run = "spot";
+        desc = "Spot hovered file";
+      }
     ]
     ++ lib.lists.map (i: {
       on = [ "${toString i}" ];
