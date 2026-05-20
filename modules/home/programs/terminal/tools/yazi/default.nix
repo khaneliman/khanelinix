@@ -162,8 +162,14 @@ in
               show_symlink = true;
               sort_by = "alphabetical";
               sort_dir_first = true;
+              sort_fallback = "natural";
               sort_reverse = false;
               sort_sensitive = false;
+              mouse_events = [
+                "click"
+                "scroll"
+                "drag"
+              ];
             };
 
             pick = {

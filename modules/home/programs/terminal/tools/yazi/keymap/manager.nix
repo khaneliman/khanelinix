@@ -32,9 +32,20 @@ in
         desc = "Create a new tab with CWD.";
       }
       {
-        on = [ "t" ];
+        on = [
+          "t"
+          "t"
+        ];
         run = "plugin smart-tab";
         desc = "Create a tab and enter the hovered directory";
+      }
+      {
+        on = [
+          "t"
+          "r"
+        ];
+        run = "tab_rename --interactive";
+        desc = "Rename the current tab";
       }
       {
         on = [ "i" ];
