@@ -28,7 +28,7 @@
     ];
     open = [
       {
-        run = "xdg-open %s";
+        run = "xdg-open %s1";
         desc = "Open";
         for = "linux";
       }
@@ -38,7 +38,7 @@
         for = "macos";
       }
       {
-        run = "start \"\" %s";
+        run = "start \"\" %s1";
         orphan = true;
         desc = "Open";
         for = "windows";
@@ -51,13 +51,13 @@
         for = "macos";
       }
       {
-        run = "explorer /select, %s1";
+        run = "explorer /select,%s1";
         orphan = true;
         desc = "Reveal";
         for = "windows";
       }
       {
-        run = "exiftool %h; echo \"Press enter to exit\"; read _";
+        run = "clear; exiftool %s1; echo \"Press enter to exit\"; read _";
         block = true;
         desc = "Show EXIF";
         for = "unix";
@@ -65,31 +65,35 @@
     ];
     dmg = [
       {
-        run = "undmg %h";
+        run = "undmg %s1";
         desc = "Extract here";
         for = "unix";
       }
     ];
     extract = [
       {
+        run = "ya pub extract --list %s";
+        desc = "Extract here";
+      }
+      {
         desc = "Extract with atool";
         run = "atool --extract --each --subdir --quiet -- %s";
         block = true;
       }
       {
-        run = "unar %h";
+        run = "unar %s";
         desc = "Extract here";
         for = "unix";
       }
       {
-        run = "unar %h";
+        run = "unar %s";
         desc = "Extract here";
         for = "windows";
       }
     ];
     play = [
       {
-        run = "mediainfo %h; echo \"Press enter to exit\"; read _";
+        run = "mediainfo %s1; echo \"Press enter to exit\"; read _";
         block = true;
         desc = "Show media info";
         for = "unix";
