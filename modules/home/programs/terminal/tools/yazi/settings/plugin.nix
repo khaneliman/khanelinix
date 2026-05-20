@@ -10,18 +10,18 @@ in
     prepend_fetchers =
       lib.optionals (lib.hasAttr "git" enabledPlugins) [
         {
-          id = "git";
+          group = "git";
           url = "*";
           run = "git";
         }
         {
-          id = "git";
+          group = "git";
           url = "*/";
           run = "git";
         }
       ]
       ++ lib.optional (lib.hasAttr "mime-ext" enabledPlugins) {
-        id = "mime";
+        group = "mime";
         url = "*";
         run = "mime-ext";
         prio = "high";

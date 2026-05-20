@@ -195,8 +195,11 @@ in
             };
 
             tasks = {
-              micro_workers = 10;
-              macro_workers = 25;
+              file_workers = 3;
+              plugin_workers = 10;
+              fetch_workers = 10;
+              preload_workers = 2;
+              process_workers = 25;
               bizarre_retry = 5;
               image_alloc = 536870912; # 512MB
               image_bound = [
