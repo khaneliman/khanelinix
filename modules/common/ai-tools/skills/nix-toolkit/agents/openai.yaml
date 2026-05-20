@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nix Toolkit"
+  short_description: "Nix build, diff, closure, dependency, flake, and eval playbooks"
+  default_prompt: "Help debug, compare, maintain, or tune Nix builds, flakes, closures, dependencies, and evaluation performance."
