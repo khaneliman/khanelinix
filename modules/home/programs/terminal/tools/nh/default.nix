@@ -38,7 +38,7 @@ in
       enable = true;
 
       clean = {
-        enable = true;
+        enable = !(osConfig.services.fast-nix-gc.enable or false);
       };
 
       flake = "${config.home.homeDirectory}/khanelinix";
