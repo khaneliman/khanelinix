@@ -42,28 +42,6 @@ in
       }
     ];
 
-    preloaders = [
-      # Image
-      {
-        mime = "image/vnd.djvu";
-        run = "noop";
-      }
-      {
-        mime = "image/*";
-        run = "image";
-      }
-      # Video
-      {
-        mime = "video/*";
-        run = "video";
-      }
-      # PDF
-      {
-        mime = "application/pdf";
-        run = "pdf";
-      }
-    ];
-
     prepend_previewers =
       lib.optionals (lib.hasAttr "piper" enabledPlugins) [
         {
@@ -126,64 +104,5 @@ in
           run = ''piper -- eza -TL=3 --color=always --icons=always --group-directories-first --no-quotes "$1"'';
         }
       ];
-
-    previewers = [
-      {
-        url = "*/";
-        run = "folder";
-        sync = true;
-      }
-      # Code
-      {
-        mime = "text/*";
-        run = "code";
-      }
-      {
-        mime = "*/xml";
-        run = "code";
-      }
-      {
-        mime = "*/javascript";
-        run = "code";
-      }
-      {
-        mime = "*/wine-extension-ini";
-        run = "code";
-      }
-      # JSON
-      {
-        mime = "application/json";
-        run = "json";
-      }
-      # Image
-      {
-        mime = "image/vnd.djvu";
-        run = "noop";
-      }
-      {
-        mime = "image/*";
-        run = "image";
-      }
-      # Video
-      {
-        mime = "video/*";
-        run = "video";
-      }
-      # PDF
-      {
-        mime = "application/pdf";
-        run = "pdf";
-      }
-      # Archive
-      {
-        mime = "application/gzip";
-        run = "archive";
-      }
-      # Fallback
-      {
-        url = "*";
-        run = "file";
-      }
-    ];
   };
 }
