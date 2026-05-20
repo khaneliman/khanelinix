@@ -12,6 +12,9 @@ let
 
   userHome = config.home.homeDirectory;
   switchTarget = if pkgs.stdenv.hostPlatform.isLinux then "os" else "darwin";
+  systemGcEnabled =
+    (osConfig.services.fast-nix-gc.enable or false)
+    || (pkgs.stdenv.hostPlatform.isDarwin && (osConfig.nix.gc.automatic or false));
 
   nhLogPaths = lib.attrByPath [ "khanelinix" "programs" "terminal" "tools" "nh" "logPaths" ] (
     if pkgs.stdenv.hostPlatform.isDarwin then
@@ -38,7 +41,7 @@ in
       enable = true;
 
       clean = {
-        enable = true;
+        enable = !systemGcEnabled;
       };
 
       flake = "${config.home.homeDirectory}/khanelinix";

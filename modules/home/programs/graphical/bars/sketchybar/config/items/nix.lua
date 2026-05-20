@@ -148,7 +148,7 @@ nix:subscribe("mouse.clicked", function(env)
 	else
 		-- Left click kills active garbage-collection jobs
 		Sbar.exec(
-			'osascript -e \'do shell script "pkill -f \\"nix-collect-garbage\\"; pkill -f \\"nix store gc\\"; pkill -f \\"nh clean user\\"" with administrator privileges\''
+			'osascript -e \'do shell script "pkill -f \\"fast-nix-gc\\"; pkill -f \\"nix-collect-garbage\\"; pkill -f \\"nix store gc\\"; pkill -f \\"nh clean user\\"" with administrator privileges\''
 		)
 		Sbar.trigger("nix_update")
 	end
