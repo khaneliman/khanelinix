@@ -13,6 +13,7 @@ in
   #          │                       LLM programs                       │
   #          ╰──────────────────────────────────────────────────────────╯
   inherit (inputs.llm-agents.packages.${system})
+    antigravity
     claude-code
     codex
     gemini-cli

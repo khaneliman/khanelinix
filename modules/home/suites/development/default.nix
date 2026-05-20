@@ -115,8 +115,7 @@ in
           # mysql-workbench
         ]
         ++ lib.optionals cfg.aiEnable [
-          # NOTE: hard to get out of neovim
-          # antigravity
+          antigravity
           tuicr
           lmstudio
         ];
