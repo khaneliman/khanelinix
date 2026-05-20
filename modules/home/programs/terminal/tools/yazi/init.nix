@@ -17,9 +17,6 @@ in
       (lib.optionalString (lib.hasAttr "duckdb" enabledPlugins) ''
         require("duckdb"):setup()
       '')
-      (lib.optionalString (lib.hasAttr "folder-rules" enabledPlugins) ''
-        require("folder-rules"):setup()
-      '')
     ])
     + lib.concatStringsSep "\n" [
       /* Lua */ ''
@@ -43,6 +40,31 @@ in
         	local size = self._file:size()
         	return ui.Line(string.format(" %s %s ", size and ya.readable_size(size):gsub(" ", "") or "-", time))
         end
+      ''
+      /* Lua */ ''
+        ps.sub("ind-sort", function(opt)
+        	local cwd = tostring(cx.active.current.cwd)
+        	if
+        		cwd:find("Downloads$")
+        		or cwd:find("Screenshots$")
+        		or cwd:find("DCIM$")
+        		or cwd:find("tmp$")
+        		or cwd:find("Trash/files$")
+        		or cwd:find("Trash$")
+        		or cwd:find("^/var/log")
+        		or cwd:find("/%.local/state$")
+        		or cwd:find("/%.cache$")
+        	then
+        		opt.by = "mtime"
+        		opt.reverse = true
+        		opt.dir_first = false
+        	else
+        		opt.by = "natural"
+        		opt.reverse = false
+        		opt.dir_first = true
+        	end
+        	return opt
+        end)
       ''
       (lib.optionalString (lib.hasAttr "yatline" enabledPlugins) /* Lua */ ''
         require("yatline"):setup({
