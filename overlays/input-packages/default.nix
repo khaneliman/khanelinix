@@ -20,6 +20,7 @@ in
     claude-code
     codex
     gemini-cli
+    git-surgeon
     hunk
     opencode
     tuicr
@@ -27,6 +28,9 @@ in
     workmux
     zat
     ;
+
+  github-copilot-cli = inputs.llm-agents.packages.${system}.copilot-cli;
+  pi-coding-agent = inputs.llm-agents.packages.${system}.pi;
 
   #          ╭──────────────────────────────────────────────────────────╮
   #          │ From nixpkgs-master (fast updating / want latest always) │
