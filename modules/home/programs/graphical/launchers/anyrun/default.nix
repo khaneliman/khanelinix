@@ -53,7 +53,7 @@ in
           let
             preprocessScript = pkgs.writeShellScriptBin "anyrun-preprocess-application-exec" ''
               shift
-              echo "uwsm app -- $*"
+              echo "uwsm app -p TimeoutStopSec=15s -- $*"
             '';
           in
           /* Ron */ ''

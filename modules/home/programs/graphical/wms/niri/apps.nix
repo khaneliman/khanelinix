@@ -12,7 +12,11 @@ let
   niriAvailable = options ? programs.niri;
 
   mkStartCommand =
-    cmd: if (osConfig.programs.uwsm.enable or false) then "uwsm app -- ${cmd}" else cmd;
+    cmd:
+    if (osConfig.programs.uwsm.enable or false) then
+      "uwsm app -p TimeoutStopSec=15s -- ${cmd}"
+    else
+      cmd;
 in
 {
   config = mkIf cfg.enable (

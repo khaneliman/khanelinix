@@ -183,6 +183,11 @@ in
         After = lib.mkAfter [ "xdg-desktop-portal.service" ];
         Wants = [ "xdg-desktop-portal.service" ];
       };
+
+      Service = {
+        KillMode = lib.mkForce "control-group";
+        TimeoutStopSec = "10s";
+      };
     };
   };
 }
