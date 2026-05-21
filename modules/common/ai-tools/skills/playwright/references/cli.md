@@ -1,6 +1,7 @@
 # Playwright CLI Reference
 
-Use the wrapper script unless the CLI is already installed globally:
+Use the wrapper script unless the repository already standardizes on direct
+Playwright calls through its own Nix environment:
 
 ```bash
 export CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
@@ -10,6 +11,9 @@ export PWCLI="$CODEX_HOME/skills/playwright/scripts/playwright_cli.sh"
 
 User-scoped skills install under `$CODEX_HOME/skills` (default:
 `~/.codex/skills`).
+
+The wrapper provides Playwright through `nixpkgs#playwright-test`; do not use
+`npx` or a global npm install for this skill.
 
 Optional convenience alias:
 
