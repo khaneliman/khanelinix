@@ -1,39 +1,28 @@
 ---
 name: "playwright"
-description: "Use when the task requires automating a real browser from the terminal (navigation, form filling, snapshots, screenshots, data extraction, UI-flow debugging) via `playwright-cli` or the bundled wrapper script."
+description: "Use when the task requires automating a real browser from the terminal (navigation, form filling, snapshots, screenshots, data extraction, UI-flow debugging) via the bundled Nix-backed Playwright wrapper script."
 ---
 
 # Playwright CLI Skill
 
-Drive a real browser from the terminal using `playwright-cli`. Prefer the
-bundled wrapper script so the CLI works even when it is not globally installed.
+Drive a real browser from the terminal using the bundled wrapper script. The
+wrapper provides Playwright from Nix, so it does not depend on `npx` or a
+project-local Node install.
 Treat this skill as CLI-first automation. Do not pivot to `@playwright/test`
 unless the user explicitly asks for test files.
 
 ## Prerequisite check (required)
 
-Before proposing commands, check whether `npx` is available (the wrapper depends
-on it):
+No Node/npm prerequisite check is required. The wrapper script provides the
+Playwright CLI through Nix:
 
 ```bash
-command -v npx >/dev/null 2>&1
+"$PWCLI" --help
 ```
 
-If it is not available, pause and ask the user to install Node.js/npm (which
-provides `npx`). Provide these steps verbatim:
-
-```bash
-# Verify Node/npm are installed
-node --version
-npm --version
-
-# If missing, install Node.js/npm, then:
-npm install -g @playwright/cli@latest
-playwright-cli --help
-```
-
-Once `npx` is present, proceed with the wrapper script. A global install of
-`playwright-cli` is optional.
+If this fails because Nix cannot resolve `nixpkgs#playwright-test`, fix the Nix
+registry or package availability. Do not install Playwright through `npx` or
+`npm`.
 
 ## Skill path (set once)
 
@@ -56,13 +45,6 @@ Use the wrapper script:
 "$PWCLI" type "Playwright"
 "$PWCLI" press Enter
 "$PWCLI" screenshot
-```
-
-If the user prefers a global install, this is also valid:
-
-```bash
-npm install -g @playwright/cli@latest
-playwright-cli --help
 ```
 
 ## Core workflow
@@ -126,15 +108,15 @@ Refs can go stale. When a command fails due to a missing ref, snapshot again.
 
 ## Wrapper script
 
-The wrapper script uses `npx --package @playwright/cli playwright-cli` so the
-CLI can run without a global install:
+The wrapper script uses a Nix shebang with `nixpkgs#playwright-test` so the CLI
+can run without `npx` or a global npm install:
 
 ```bash
 "$PWCLI" --help
 ```
 
-Prefer the wrapper unless the repository already standardizes on a global
-install.
+Prefer the wrapper unless the repository already standardizes on direct
+Playwright calls through its own Nix environment.
 
 ## References
 
