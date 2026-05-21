@@ -37,14 +37,28 @@ in
               args: cmd:
               let
                 slice = args.slice or null;
+                timeoutStopSec =
+                  args.timeoutStopSec or {
+                    a = "15s";
+                    b = "10s";
+                    s = "30s";
+                  }
+                  .${if slice == null then "a" else slice} or "15s";
               in
               if (osConfig.programs.uwsm.enable or false) then
-                "uwsm app ${if slice == null then "" else "-s ${slice}"} -- ${cmd}"
+                "uwsm app ${
+                  lib.optionalString (slice != null) "-s ${slice} "
+                }-p TimeoutStopSec=${timeoutStopSec} -- ${cmd}"
               else
                 cmd;
 
             # Single-argument version: mkStartCommand "command"
-            withoutArgs = cmd: if (osConfig.programs.uwsm.enable or false) then "uwsm app -- ${cmd}" else cmd;
+            withoutArgs =
+              cmd:
+              if (osConfig.programs.uwsm.enable or false) then
+                "uwsm app -p TimeoutStopSec=15s -- ${cmd}"
+              else
+                cmd;
           in
           args: if lib.isString args then withoutArgs args else withArgs args;
         appCommands =
