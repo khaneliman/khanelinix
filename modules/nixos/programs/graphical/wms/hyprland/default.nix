@@ -59,13 +59,6 @@ in
       };
     };
 
-    security.wrappers.Hyprland = {
-      owner = "root";
-      group = "root";
-      capabilities = "cap_sys_nice+ep";
-      source = lib.getExe config.programs.hyprland.package;
-    };
-
     khanelinix = {
       display-managers = {
         sddm = {
