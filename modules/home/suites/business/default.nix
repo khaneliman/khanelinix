@@ -24,7 +24,8 @@ in
     home.packages =
       with pkgs;
       [
-        bitwarden-desktop
+        # FIXME: broken nixpkgs
+        # bitwarden-desktop
         jrnl
         np
         slack

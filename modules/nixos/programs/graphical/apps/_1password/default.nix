@@ -2,8 +2,7 @@
   config,
   lib,
   pkgs,
-  getPkgsUnstable,
-
+  getPkgsMaster,
   ...
 }:
 let
@@ -20,7 +19,9 @@ in
 
   config = mkIf cfg.enable (
     let
-      pkgsUnstable = getPkgsUnstable pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
+      # pkgsUnstable = getPkgsUnstable pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
+      # TODO: remove after hits channel
+      pkgsMaster = getPkgsMaster pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
     in
     {
       programs = {
@@ -29,7 +30,7 @@ in
           # 1Password documentation
           # See: https://support.1password.com/
           enable = true;
-          package = pkgsUnstable._1password-gui;
+          package = pkgsMaster._1password-gui;
 
           polkitPolicyOwners = [ config.khanelinix.user.name ];
         };
