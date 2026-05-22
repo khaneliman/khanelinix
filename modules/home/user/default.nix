@@ -28,17 +28,7 @@ let
         "default"
       ] null inputs;
     in
-    if package == null then
-      null
-    else
-      package.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [
-          (pkgs.fetchpatch2 {
-            url = "https://github.com/khaneliman/fast-nix-gc/commit/fbe772c5ae00f9a19a6683f882a28a331b70c8ef.patch";
-            hash = "sha256-oN+p7qBbLehgOvGzS0K5Yk7pF4eHfmMfLJa+ceuoTbc=";
-          })
-        ];
-      });
+    if package == null then null else package;
   gcCommand = if fastNixGcPackage != null then "fast-nix-gc" else "nix-collect-garbage";
 
   home-directory =
