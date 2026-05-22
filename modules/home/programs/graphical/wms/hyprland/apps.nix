@@ -1,12 +1,13 @@
 {
   config,
   lib,
+  pkgs,
 
   osConfig ? { },
   ...
 }:
 let
-  inherit (lib) mkIf getExe;
+  inherit (lib) mkIf getExe getExe';
 
   cfg = config.khanelinix.programs.graphical.wms.hyprland;
 in
@@ -72,9 +73,6 @@ in
             # ++ lib.optionals config.programs.vesktop.enable [
             #   (mkStartCommand { slice = "b"; } "${getExe config.programs.vesktop.package}")
             # ]
-            ++ lib.optionals (osConfig.programs.steam.enable or false) [
-              (mkStartCommand { slice = "b"; } "steam")
-            ]
             ++ lib.optionals config.khanelinix.suites.social.enable [
               (mkStartCommand { slice = "b"; } "element-desktop")
             ]
@@ -101,5 +99,26 @@ in
       lib.mkBefore (
         if (osConfig.programs.uwsm.enable or false) then [ "uwsm finalize" ] ++ appCommands else appCommands
       );
+
+    systemd.user.services.hyprland-start-steam = mkIf (osConfig.programs.steam.enable or false) {
+      Unit = {
+        Description = "Start Steam after Hyprland session";
+        After = [ "graphical-session.target" ];
+        PartOf = [ "graphical-session.target" ];
+        ConditionEnvironment = "WAYLAND_DISPLAY";
+      };
+
+      Install.WantedBy = [ "graphical-session.target" ];
+
+      Service = {
+        Type = "oneshot";
+        ExecStartPre = "${getExe' pkgs.coreutils "sleep"} 5";
+        ExecStart =
+          if (osConfig.programs.uwsm.enable or false) then
+            "${getExe pkgs.uwsm} app -s b -a steam -p TimeoutStopSec=10s -- steam"
+          else
+            "steam";
+      };
+    };
   };
 }
