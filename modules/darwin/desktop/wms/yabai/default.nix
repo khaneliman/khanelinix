@@ -11,6 +11,18 @@ let
   cfg = config.khanelinix.desktop.wms.yabai;
   hmCfg = config.home-manager.users.${config.khanelinix.user.name};
   userHome = config.users.users.${config.khanelinix.user.name}.home;
+
+  yabaiPackage = config.services.yabai.package;
+  yabaiConfig = config.services.yabai.config;
+  yabaiExtraConfig = config.services.yabai.extraConfig;
+  yabaiConfigFile = pkgs.writeScript "yabairc" (
+    lib.optionalString (yabaiConfig != { }) (
+      lib.concatStringsSep "\n" (
+        lib.mapAttrsToList (name: value: "yabai -m config ${name} ${toString value}") yabaiConfig
+      )
+    )
+    + lib.optionalString (yabaiExtraConfig != "") ("\n" + yabaiExtraConfig + "\n")
+  );
 in
 {
   options.khanelinix.desktop.wms.yabai = {
@@ -44,12 +56,29 @@ in
     launchd.user.agents.yabai.serviceConfig = {
       StandardErrorPath = cfg.logPaths.stderr;
       StandardOutPath = cfg.logPaths.stdout;
+      ProgramArguments = lib.mkForce (
+        [ "${userHome}/.local/bin/yabai-stable" ]
+        ++ lib.optionals (yabaiConfig != { } || yabaiExtraConfig != "") [
+          "-c"
+          "${yabaiConfigFile}"
+        ]
+      );
       KeepAlive = lib.mkForce {
         PathState = {
           "/run/current-system/sw/bin/yabai" = true;
         };
       };
     };
+
+    system.activationScripts.extraActivation.text = ''
+      echo >&2 "Setting up stable TCC shim for yabai..."
+      mkdir -p "${userHome}/.local/bin"
+      # We must copy, not symlink, so TCC sees a stable filesystem path.
+      if [[ ! -e "${userHome}/.local/bin/yabai-stable" ]] || ! cmp -s "${yabaiPackage}/bin/yabai" "${userHome}/.local/bin/yabai-stable"; then
+        cp -f "${yabaiPackage}/bin/yabai" "${userHome}/.local/bin/yabai-stable"
+        chmod +x "${userHome}/.local/bin/yabai-stable"
+      fi
+    '';
 
     services.yabai = {
       # Yabai documentation
