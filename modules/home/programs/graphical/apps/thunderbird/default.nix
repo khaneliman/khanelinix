@@ -122,23 +122,24 @@ in
     #   ]
     # );
 
-    systemd.user.services.birdtray = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-      Unit = {
-        Description = "Birdtray email notifier";
-        After = [
-          "graphical-session.target"
-          "tray.target"
-        ];
-        Wants = [ "tray.target" ];
-      };
-      Service = {
-        ExecStart = "${lib.getExe pkgs.birdtray}";
-        Restart = "on-failure";
-      };
-      Install = {
-        WantedBy = [ "graphical-session.target" ];
-      };
-    };
+    # FIXME: Fatal error: Sorry, the system tray cannot be controlled by this add-on on your operating system.
+    # systemd.user.services.birdtray = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+    #   Unit = {
+    #     Description = "Birdtray email notifier";
+    #     After = [
+    #       "graphical-session.target"
+    #       "tray.target"
+    #     ];
+    #     Wants = [ "tray.target" ];
+    #   };
+    #   Service = {
+    #     ExecStart = "${lib.getExe pkgs.birdtray}";
+    #     Restart = "on-failure";
+    #   };
+    #   Install = {
+    #     WantedBy = [ "graphical-session.target" ];
+    #   };
+    # };
 
     accounts = {
       calendar.accounts =
