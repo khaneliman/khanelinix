@@ -17,13 +17,29 @@ let
         ${lib.escapeShellArg sketchybar} --trigger nix_update >/dev/null 2>&1 || true
     fi
   '';
-  wrapNixJob = command: ''
-    ${triggerSketchybarNixUpdate}
-    ${command}
-    status=$?
-    ${triggerSketchybarNixUpdate}
-    exit $status
-  '';
+  mkNixJobWrapper =
+    name: command:
+    pkgs.writeShellScript name ''
+      set +e
+
+      ${triggerSketchybarNixUpdate}
+      ${command}
+      status=$?
+      ${triggerSketchybarNixUpdate}
+      exit $status
+    '';
+  gcWrapper = mkNixJobWrapper "nix-gc-with-sketchybar-update" "/usr/bin/caffeinate -i -s ${fastNixGc}/bin/fast-nix-gc ${config.nix.gc.options}";
+  optimiseWrapper = mkNixJobWrapper "nix-optimise-with-sketchybar-update" "/usr/bin/caffeinate -i -s ${fastNixGc}/bin/fast-nix-optimise";
+  nixJobLogPaths = {
+    gc = {
+      stdout = "/var/log/nix-gc.out.log";
+      stderr = "/var/log/nix-gc.err.log";
+    };
+    optimise = {
+      stdout = "/var/log/nix-optimise.out.log";
+      stderr = "/var/log/nix-optimise.err.log";
+    };
+  };
 in
 {
   imports = [ (lib.getFile "modules/common/nix/default.nix") ];
@@ -32,15 +48,23 @@ in
     lib.mkMerge [
       (lib.mkIf config.nix.gc.automatic {
         # Only override the GC daemon command when the daemon is actually enabled.
-        launchd.daemons.nix-gc.command = lib.mkForce (
-          wrapNixJob "/usr/bin/caffeinate -i -s ${fastNixGc}/bin/fast-nix-gc ${config.nix.gc.options}"
-        );
+        launchd.daemons.nix-gc = {
+          command = lib.mkForce "${gcWrapper}";
+          serviceConfig = {
+            StandardOutPath = nixJobLogPaths.gc.stdout;
+            StandardErrorPath = nixJobLogPaths.gc.stderr;
+          };
+        };
       })
       {
         # Wrap optimise in caffeinate to prevent sleep while running.
-        launchd.daemons.nix-optimise.command = lib.mkForce (
-          wrapNixJob "/usr/bin/caffeinate -i -s ${fastNixGc}/bin/fast-nix-optimise"
-        );
+        launchd.daemons.nix-optimise = {
+          command = lib.mkForce "${optimiseWrapper}";
+          serviceConfig = {
+            StandardOutPath = nixJobLogPaths.optimise.stdout;
+            StandardErrorPath = nixJobLogPaths.optimise.stderr;
+          };
+        };
 
         # Nix-Darwin config options
         # Check corresponding shared imported module
