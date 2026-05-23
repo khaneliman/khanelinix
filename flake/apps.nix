@@ -33,7 +33,6 @@ _: {
             "anyrun-nixos-options"
             "catppuccin"
             "firefox-addons"
-            "hyprland"
             "khanelivim"
             "nh"
             "nix-flatpak"
