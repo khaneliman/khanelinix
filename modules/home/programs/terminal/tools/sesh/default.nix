@@ -97,11 +97,14 @@ in
           ];
           window = seshWindows;
         };
+        generatedToml = seshFormat.generate "sesh.generated.toml" seshConfig;
       in
-      pkgs.writeText "sesh.toml" ''
-        #:schema https://github.com/joshmedeski/sesh/raw/main/sesh.schema.json
-
-        ${builtins.readFile (seshFormat.generate "sesh.toml" seshConfig)}
+      pkgs.runCommand "sesh.toml" { } ''
+        {
+          echo '#:schema https://github.com/joshmedeski/sesh/raw/main/sesh.schema.json'
+          echo
+          cat ${generatedToml}
+        } > "$out"
       '';
   };
 }
