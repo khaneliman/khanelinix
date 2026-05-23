@@ -4,7 +4,7 @@
   rustPlatform,
   ...
 }:
-rustPlatform.buildRustPackage rec {
+rustPlatform.buildRustPackage {
   pname = "jj-hunk-tool";
   version = "0.1.0";
 
@@ -15,9 +15,7 @@ rustPlatform.buildRustPackage rec {
     hash = "sha256-XK6tAXlLUP0kI1UdyQB6ZLY3toRILmmKtQyJ0l4tyeQ=";
   };
 
-  cargoLock = {
-    lockFile = "${src}/Cargo.lock";
-  };
+  cargoHash = "sha256-8CwA837ybNJ65DlcIwKibKBknUFmZ7+1/UD/HrfYP5k=";
 
   # FIXME: upstream integration tests depend on a richer local jj/git environment and
   # fail in nix sandboxed builds; disable checks to keep install working.
