@@ -10,6 +10,7 @@ local last_notification_signature = nil
 local last_rendered_signature = nil
 local refresh_in_flight = false
 local refresh_pending = false
+local click_refresh_debounce_seconds = 2
 
 local function truncate_label(value, max_length)
 	if value == nil then
@@ -121,6 +122,16 @@ local function notification_mark_read_command(notification)
 	return "gh api --method PATCH notifications/threads/" .. thread_id .. " >/dev/null 2>&1"
 end
 
+local function notification_refresh_debounce_command()
+	return "token=$(uuidgen); "
+		.. "debounce_file=${TMPDIR:-/tmp}/sketchybar_github_update_debounce; "
+		.. 'printf %s "$token" > "$debounce_file"; '
+		.. "( sleep "
+		.. tostring(click_refresh_debounce_seconds)
+		.. '; current=$(cat "$debounce_file" 2>/dev/null); '
+		.. '[ "$current" = "$token" ] && sketchybar --trigger github_update ) >/dev/null 2>&1 &'
+end
+
 local function notification_click_script(notification, url)
 	local open_script = "open " .. SHELL_QUOTE(url)
 	local mark_script = notification_mark_read_command(notification)
@@ -128,7 +139,7 @@ local function notification_click_script(notification, url)
 		return open_script
 	end
 
-	return mark_script .. "; " .. open_script .. "; sketchybar --trigger github_update"
+	return mark_script .. "; " .. open_script .. "; " .. notification_refresh_debounce_command()
 end
 
 local function notification_click_url(notification)
