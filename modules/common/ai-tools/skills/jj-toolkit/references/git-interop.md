@@ -96,3 +96,12 @@ commit:
    jj abandon OldDirtyCommitID
    ```
 
+### Advancing Bookmarks Forward
+
+Because bookmarks do not automatically follow new working copy commits, when you
+split a commit or create a new clean commit and want to get it onto your branch
+(e.g., `main`), you must explicitly move the bookmark forward to that commit:
+
+```bash
+jj bookmark set main -r CleanCommitID
+```
