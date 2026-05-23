@@ -161,6 +161,8 @@ in
           btop = enabled;
           cava = enabled;
           delta = enabled;
+          # FIXME: strict no-IFD eval flags upstream Catppuccin generated theme imports.
+          # Fix upstream instead of disabling the integration here.
           firefox = mkIf config.khanelinix.programs.graphical.browsers.firefox.enable {
             profiles.${config.khanelinix.user.name} = {
               enable = true;
@@ -168,7 +170,11 @@ in
             };
           };
           fish = enabled;
+          # FIXME: strict no-IFD eval flags upstream Catppuccin palette imports.
+          # Fix upstream instead of disabling the integration here.
           fzf = enabled;
+          # FIXME: strict no-IFD eval flags upstream Catppuccin config conversion.
+          # Fix upstream instead of disabling the integration here.
           gh-dash = enabled;
           ghostty = enabled;
           gitui = enabled;
