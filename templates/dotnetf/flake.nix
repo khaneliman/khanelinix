@@ -44,28 +44,38 @@
               runtimeIds = map (
                 system: pkgs.dotnetCorePackages.systemToDotnetRid system
               ) dotnet-sdk.meta.platforms;
+              fetchDepsScript =
+                builtins.replaceStrings
+                  [
+                    "@binPath@"
+                    "@pname@"
+                    "@projectFiles@"
+                    "@testProjectFiles@"
+                    "@storeSrc@"
+                    "@rids@"
+                    "@packages@"
+                  ]
+                  [
+                    (pkgs.lib.makeBinPath [
+                      pkgs.coreutils
+                      dotnet-sdk
+                      (pkgs.nuget-to-nix.override { inherit dotnet-sdk; })
+                    ])
+                    pname
+                    (toString (pkgs.lib.toList projectFile))
+                    (toString (pkgs.lib.toList testProjectFile))
+                    (toString (
+                      pkgs.srcOnly {
+                        src = ./.;
+                        inherit pname version;
+                      }
+                    ))
+                    (pkgs.lib.concatStringsSep "\" \"" runtimeIds)
+                    dotnet-sdk.packages
+                  ]
+                  (builtins.readFile ./nix/fetchDeps.sh);
             in
-            pkgs.writeShellScriptBin "fetch-${pname}-deps" (
-              builtins.readFile (
-                pkgs.substituteAll {
-                  src = ./nix/fetchDeps.sh;
-                  inherit pname;
-                  inherit (dotnet-sdk) packages;
-                  binPath = pkgs.lib.makeBinPath [
-                    pkgs.coreutils
-                    dotnet-sdk
-                    (pkgs.nuget-to-nix.override { inherit dotnet-sdk; })
-                  ];
-                  projectFiles = toString (pkgs.lib.toList projectFile);
-                  testProjectFiles = toString (pkgs.lib.toList testProjectFile);
-                  rids = pkgs.lib.concatStringsSep "\" \"" runtimeIds;
-                  storeSrc = pkgs.srcOnly {
-                    src = ./.;
-                    inherit pname version;
-                  };
-                }
-              )
-            );
+            pkgs.writeShellScriptBin "fetch-${pname}-deps" fetchDepsScript;
           default = pkgs.buildDotnetModule {
             pname = "HelloWorld";
             inherit
