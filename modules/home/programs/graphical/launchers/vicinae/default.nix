@@ -30,6 +30,8 @@ in
       package = pkgs.vicinae;
 
       # NOTE: Use `nix run .#update-vicinae-extensions` to refresh these pins.
+      # FIXME: strict no-IFD eval flags upstream Vicinae Raycast extension npm import.
+      # Fix upstream to avoid reading package metadata from fetched extension sources during evaluation.
       extensions = map mkRaycastExtension (
         [
           {

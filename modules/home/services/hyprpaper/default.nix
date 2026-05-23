@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
 
@@ -15,13 +16,17 @@ let
   inherit (lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.services.hyprpaper;
+  wallpaperTheme = lib.khanelinix.theme.wallpaperTheme config;
+  wallpaperSourceDir = inputs.self + "/packages/wallpapers/assets/${wallpaperTheme}";
   workspaceWallpaperDir = lib.khanelinix.theme.wallpaperDir {
     inherit config pkgs;
   };
   workspaceWallpapers =
     let
-      entries = builtins.readDir workspaceWallpaperDir;
-      names = lib.sort lib.lessThan (lib.attrNames entries);
+      entries = builtins.readDir wallpaperSourceDir;
+      names = lib.sort lib.lessThan (
+        lib.filter (name: entries.${name} == "regular") (lib.attrNames entries)
+      );
     in
     map (name: "${workspaceWallpaperDir}${name}") names;
   monitorWallpapers = builtins.listToAttrs (
