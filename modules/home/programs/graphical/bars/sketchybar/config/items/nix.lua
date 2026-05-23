@@ -140,9 +140,9 @@ end)
 nix:subscribe("mouse.clicked", function(env)
 	logger.debug("nix", "manual_kill_requested", { button = env.BUTTON })
 	if env.BUTTON == "right" then
-		-- Right click kills nix-store --optimise
+		-- Right click kills active store optimisation jobs
 		Sbar.exec(
-			'osascript -e \'do shell script "pkill -f \\"nix-store --optimise\\"" with administrator privileges\''
+			'osascript -e \'do shell script "pkill -f \\"nix-store --optimise\\"; pkill -f \\"fast-nix-optimise\\"" with administrator privileges\''
 		)
 		Sbar.trigger("nix_update")
 	else

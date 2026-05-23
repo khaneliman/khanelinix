@@ -240,7 +240,7 @@ in
 
         checkConfig = true;
         distributedBuilds = hasRemoteBuilders;
-        gc.automatic = !nhCleanEnabled;
+        gc.automatic = lib.mkDefault (pkgs.stdenv.hostPlatform.isDarwin || !nhCleanEnabled);
 
         # This will additionally add your inputs to the system's legacy channels
         # Making legacy nix commands consistent as well
