@@ -50,9 +50,11 @@ let
     harnessName:
     let
       harnessSkills = skillsForHarness harnessName;
+      exclude = (harnessSkillFilters.${harnessName} or { }).exclude or [ ];
+      shouldKeep = name: !(lib.elem name exclude);
     in
     lib.mapAttrs (name: _: harnessSkills + "/${name}") (
-      lib.filterAttrs (_: type: type == "directory") (builtins.readDir harnessSkills)
+      lib.filterAttrs (name: _: shouldKeep name) allSkills
     );
 in
 {
