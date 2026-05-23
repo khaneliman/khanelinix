@@ -1,7 +1,7 @@
 {
   config,
   lib,
-
+  inputs,
   pkgs,
   ...
 }:
@@ -44,7 +44,7 @@ in
   config = mkIf cfg.enable {
     stylix = {
       enable = true;
-      base16Scheme = "${pkgs.base16-schemes}/share/themes/${cfg.theme}.yaml";
+      base16Scheme = "${inputs.stylix.inputs.tinted-schemes}/base16/${cfg.theme}.yaml";
 
       targets = {
         gtk.enable = !config.khanelinix.theme.gtk.enable;
