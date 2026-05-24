@@ -4,6 +4,7 @@ import os
 import shutil
 import subprocess
 import threading
+import time
 from pathlib import Path
 from typing import Any, Dict
 
@@ -16,13 +17,13 @@ from rich.text import Text
 
 TASKS = {
     "vim": {
-        "command": "nix run .#vimPluginsUpdater -- --github-token=${GITHUB_TOKEN}",
+        "command": "nix run .#vimPluginsUpdater",
         "self_committing": False,
         "worktree": "vim",
         "depends_on": None,
     },
     "lua": {
-        "command": "nix run .#luarocks-packages-updater -- --github-token=${GITHUB_TOKEN}",
+        "command": "nix run .#luarocks-packages-updater",
         "self_committing": False,
         "worktree": "lua",
         "depends_on": None,
@@ -283,6 +284,7 @@ def main():
         with Live(generate_table(), console=console, refresh_per_second=4) as live:
             while any(t.is_alive() for t in threads):
                 live.update(generate_table())
+                time.sleep(0.25)
             # Final update after all threads complete
             live.update(generate_table())
 
