@@ -34,5 +34,19 @@ in
       IdentitiesOnly = true;
       User = config.khanelinix.user.name;
     };
+
+    # Unraid root inventory alias. Persist the key in
+    # /boot/config/ssh/root.pubkeys, then copy it to /root/.ssh/authorized_keys
+    # and restart sshd when active root key auth needs to be refreshed.
+    programs.ssh.settings."austinserver-root" = lib.mkDefault {
+      BatchMode = true;
+      HostName = serverHostname;
+      IdentityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
+      IdentitiesOnly = true;
+      KbdInteractiveAuthentication = false;
+      PasswordAuthentication = false;
+      PreferredAuthentications = "publickey";
+      User = "root";
+    };
   };
 }
