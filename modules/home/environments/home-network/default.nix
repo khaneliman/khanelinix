@@ -26,9 +26,12 @@ in
       lib.mkDefault "nfs://${serverHostname}/mnt/user/data/media/music"
     );
 
-    # SSH config for home server
-    programs.ssh.settings.server = lib.mkDefault {
+    # Run once from each client host that needs access:
+    # ssh-copy-id -i ~/.ssh/id_ed25519.pub ${config.khanelinix.user.name}@${serverHostname}
+    programs.ssh.settings."austinserver austinserver.local server" = lib.mkDefault {
       HostName = serverHostname;
+      IdentityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
+      IdentitiesOnly = true;
       User = config.khanelinix.user.name;
     };
   };
