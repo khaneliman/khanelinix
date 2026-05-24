@@ -1,4 +1,5 @@
 {
+  config,
   lib,
 
   ...
@@ -72,6 +73,13 @@ in
         platform = "intel";
       };
       podman = enabled;
+    };
+  };
+
+  sops.secrets = lib.mkIf config.khanelinix.security.sops.enable {
+    "cloudflared/khanelimancom.json" = {
+      key = "cloudflared_json";
+      path = "/run/secrets/cloudflared/khanelimancom.json";
     };
   };
 
