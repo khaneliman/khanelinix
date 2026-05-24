@@ -1,5 +1,4 @@
 {
-  config,
   lib,
 
   ...
@@ -12,6 +11,7 @@ in
     # TODO: re-enable disk partition module when target layout is finalized
     # ./disks.nix
     ./hardware.nix
+    ./networking.nix
   ];
 
   khanelinix = {
@@ -31,77 +31,15 @@ in
     };
 
     services = {
-      # avahi = enabled;
+      avahi = enabled;
       geoclue = enabled;
       printing = enabled;
       openssh = enabled;
-
-      # TODO: Set up shares
-      samba = {
-        enable = true;
-
-        shares = {
-          games = {
-            browseable = true;
-            comment = "Games folder";
-            only-owner-editable = true;
-            path = "/mnt/games/";
-            public = true;
-            read-only = false;
-          };
-
-          # Application data folder
-          appData = {
-            browseable = true;
-            comment = "Application Data folder";
-            only-owner-editable = true;
-            path = "${config.users.users.${config.khanelinix.user.name}.home}/.config/";
-            public = false;
-            read-only = false;
-          };
-
-          # Data folder
-          data = {
-            browseable = true;
-            comment = "Data folder";
-            only-owner-editable = true;
-            path = "${config.users.users.${config.khanelinix.user.name}.home}/.local/share/";
-            public = false;
-            read-only = false;
-          };
-
-          # Virtual Machines folder
-          vms = {
-            browseable = true;
-            comment = "Virtual Machines folder";
-            only-owner-editable = true;
-            path = "${config.users.users.${config.khanelinix.user.name}.home}/vms/";
-            public = false;
-            read-only = false;
-          };
-
-          # ISO images folder
-          isos = {
-            browseable = true;
-            comment = "ISO Images folder";
-            only-owner-editable = true;
-            path = "${config.users.users.${config.khanelinix.user.name}.home}/isos/";
-            public = false;
-            read-only = false;
-          };
-
-          # Time Machine backups folder
-          timeMachine = {
-            browseable = true;
-            comment = "Time Machine backups folder";
-            only-owner-editable = true;
-            path = "${config.users.users.${config.khanelinix.user.name}.home}/.timemachine/";
-            public = false;
-            read-only = true;
-          };
-        };
-      };
+      rustdesk-server = enabled;
+      tailscale = enabled;
     };
+
+    archetypes.home-lab = enabled;
 
     security = {
       doas = enabled;
@@ -127,20 +65,14 @@ in
     suites = {
       common = enabled;
     };
-  };
 
-  networking = {
-    defaultGateway = {
-      address = "192.168.1.1";
-      interface = "eth0";
+    virtualisation = {
+      kvm = {
+        enable = true;
+        platform = "intel";
+      };
+      podman = enabled;
     };
-
-    interfaces.eth0.ipv4.addresses = [
-      {
-        address = "192.168.1.37";
-        prefixLength = 24;
-      }
-    ];
   };
 
   system.stateVersion = "25.11";
