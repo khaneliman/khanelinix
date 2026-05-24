@@ -12,7 +12,7 @@ let
     optionalString
     getExe
     ;
-  inherit (lib.khanelinix) mkOpt enabled;
+  inherit (lib.khanelinix) mkOpt;
   inherit (config.khanelinix) user;
 
   cfg = config.khanelinix.virtualisation.kvm;
@@ -75,7 +75,6 @@ in
 
         qemu = {
           package = pkgs.qemu_kvm;
-          ovmf = enabled;
           swtpm.enable = true;
 
           verbatimConfig = ''
