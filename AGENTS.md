@@ -1,4 +1,5 @@
-ALWAYS Read @CONTRIBUTING.md when making changes.
+ALWAYS Read @CONTRIBUTING.md when making changes. Treat it as the source of
+truth for code style, module taxonomy, commit conventions, and validation.
 
 For any Nix code or module task, use the `writing-nix` skill before making
 edits.
@@ -8,11 +9,9 @@ edits.
 1. **Home-First**: Prefer Home Manager (`modules/home`) for user-space configs
    (dotfiles, programs) over system modules.
 2. **Namespace Scoping**: Always place options under `khanelinix.*`.
-3. **Explicit Imports**: Single-line `with lib;` and `with pkgs;` are
-   acceptable. Avoid block-level `with lib;`. Use `inherit (lib) ...` or
-   explicit `lib.<fn>` for larger scopes.
-4. **Modular & Composable**: Split large modules (>200 lines) into sub-modules
-   in a directory.
+3. **Explicit Imports**: Follow the library/import guidance in @CONTRIBUTING.md.
+4. **Modular & Composable**: Follow the module organization and taxonomy in
+   @CONTRIBUTING.md.
 5. **Skill Usage (Nix Work)**: For any Nix code or module task, use the
    `writing-nix` skill before making edits.
 
@@ -20,7 +19,8 @@ edits.
 
 - **Naming**: `camelCase` for Nix variables/options, `kebab-case` for files and
   directories.
-- **Option Path**: `khanelinix.{category}.{subcategory}.{name}`.
+- **Option Path**: `khanelinix.{category}.{subcategory}.{name}`; see
+  @CONTRIBUTING.md for platform module taxonomy.
 - **Home Manager + System Access**: HM modules use `osConfig ? {}` to access the
   host system's configuration.
 - **Conditionals**: Prefer `lib.mkIf` for entire configuration blocks.

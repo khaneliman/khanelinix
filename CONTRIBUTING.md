@@ -70,11 +70,44 @@ provides guidelines for contributing to this Nix-based dotfiles configuration.
 
 ### Module Organization
 
-- **Host specific customization**: Place in host named configuration modules
-- **Platform specific customization**: Place in nixos/darwin modules
-- **Home application specific customization**: Place in home modules
-- **User specific customization**: Place in user home configuration
-- **Prefer handling customization in home configuration**, wherever possible
+- **Host-specific customization**: Place host facts and host-only overrides in
+  host named configuration modules.
+- **Platform-specific customization**: Place reusable platform behavior in
+  `modules/nixos` or `modules/darwin`.
+- **Home application-specific customization**: Place user-space programs,
+  dotfiles, and user-session services in `modules/home` wherever possible.
+- **User-specific customization**: Place per-user settings in user home
+  configurations.
+- **Prefer handling customization in home configuration** wherever possible.
+
+#### Platform Module Taxonomy
+
+Use the same taxonomy for reusable platform modules under both `modules/nixos`
+and `modules/darwin`:
+
+- **`modules/{nixos,darwin}/services/*`**: wrappers for one concrete daemon,
+  subsystem, or platform facility. Examples include `samba`, `cloudflared`,
+  `openssh`, `tailscale`, `nfs`, `launchd`, or `nix-daemon`.
+- **`modules/{nixos,darwin}/suites/*`**: curated sets of capabilities that
+  compose services and low-level system settings. For example, `nas` belongs
+  here on NixOS because it composes Samba shares, NFS exports, FUSE
+  prerequisites, mount directories, and firewall ports.
+- **`modules/{nixos,darwin}/archetypes/*`**: full machine identities or roles.
+  For example, `home-lab` belongs here and should enable suites such as `nas`,
+  `media-server`, or `observability` rather than acting like a single service.
+- **`modules/home/services/*`**: Home Manager-owned user-session services. For
+  example, rclone mounts belong here when the mounts should run as a user.
+
+Keep option paths aligned with the directory taxonomy:
+
+```nix
+khanelinix.services.<name>.enable = true;
+khanelinix.suites.<name>.enable = true;
+khanelinix.archetypes.<name>.enable = true;
+```
+
+Do not put broad roles such as `home-lab` or capability bundles such as `nas`
+under `khanelinix.services.*`.
 
 ## Commit Message Convention
 
