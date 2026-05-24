@@ -24,6 +24,16 @@ in
     };
 
     services = {
+      rclone = {
+        enable = true;
+        mounts = {
+          dropbox.mountPoint = "/mnt/disks/dropbox";
+          googledrive.mountPoint = "/mnt/disks/googledrive";
+          googlephotos.mountPoint = "/mnt/disks/googlephotos";
+          onedrive.mountPoint = "/mnt/disks/onedrive";
+        };
+      };
+
       sops = {
         enable = true;
         defaultSopsFile = lib.getFile "secrets/khanelilab/khaneliman/default.yaml";
