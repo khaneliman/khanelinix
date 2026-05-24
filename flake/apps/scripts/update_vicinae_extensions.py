@@ -10,6 +10,8 @@ REV_RE = re.compile(r'(^\s*raycastRev\s*=\s*")([0-9a-f]{40})(";\s*$)', re.MULTIL
 ENTRY_RE = re.compile(
     r'(?P<prefix>\{\s*name = "(?P<name>[^"]+)";\s*sha256 = ")'
     r'(?P<hash>sha256-[^"]+)'
+    r'(?P<middle>";\s*npmDepsHash = ")'
+    r'(?P<npm_deps_hash>sha256-[^"]+)'
     r'(?P<suffix>";\s*\})',
     re.DOTALL,
 )
@@ -70,6 +72,35 @@ pkgs.fetchgit {{
     return match.group(1)
 
 
+def get_npm_deps_hash(repo_root: Path, name: str, rev: str, source_hash: str) -> str:
+    expr = f"""
+let
+  flake = builtins.getFlake (toString {repo_root});
+  pkgs = import flake.inputs.nixpkgs-unstable {{ system = builtins.currentSystem; }};
+  src = pkgs.fetchgit {{
+    url = "https://github.com/raycast/extensions";
+    rev = "{rev}";
+    hash = "{source_hash}";
+    sparseCheckout = [ "/extensions/{name}" ];
+  }} + "/extensions/{name}";
+in
+pkgs.buildNpmPackage {{
+  name = "{name}";
+  inherit src;
+  npmDepsHash = pkgs.lib.fakeHash;
+  dontNpmBuild = true;
+  installPhase = "mkdir -p $out";
+}}
+"""
+    result = run(["nix", "build", "--impure", "--no-link", "--expr", expr], check=False)
+    output = f"{result.stdout}\n{result.stderr}"
+    match = GOT_HASH_RE.search(output)
+    if match is None:
+        sys.stderr.write(output)
+        raise SystemExit(f"failed to compute npm deps hash for {name}")
+    return match.group(1)
+
+
 def replace_rev(text: str, rev: str) -> str:
     updated, count = REV_RE.subn(rf"\g<1>{rev}\g<3>", text, count=1)
     if count != 1:
@@ -77,19 +108,25 @@ def replace_rev(text: str, rev: str) -> str:
     return updated
 
 
-def replace_hashes(text: str, hashes: dict[str, str]) -> str:
+def replace_hashes(
+    text: str, source_hashes: dict[str, str], npm_deps_hashes: dict[str, str]
+) -> str:
     seen: set[str] = set()
 
     def repl(match: re.Match[str]) -> str:
         name = match.group("name")
-        hash_value = hashes.get(name)
-        if hash_value is None:
+        source_hash = source_hashes.get(name)
+        npm_deps_hash = npm_deps_hashes.get(name)
+        if source_hash is None or npm_deps_hash is None:
             return match.group(0)
         seen.add(name)
-        return f"{match.group('prefix')}{hash_value}{match.group('suffix')}"
+        return (
+            f"{match.group('prefix')}{source_hash}"
+            f"{match.group('middle')}{npm_deps_hash}{match.group('suffix')}"
+        )
 
     updated = ENTRY_RE.sub(repl, text)
-    missing = [name for name in hashes if name not in seen]
+    missing = [name for name in source_hashes if name not in seen]
     if missing:
         raise SystemExit(
             "failed to update inline Vicinae hashes for: " + ", ".join(sorted(missing))
@@ -109,18 +146,33 @@ def main() -> None:
     rev = get_head_rev()
 
     print(f"Updating Vicinae Raycast extensions to {rev}")
-    hashes: dict[str, str] = {}
+    source_hashes: dict[str, str] = {}
+    npm_deps_hashes: dict[str, str] = {}
     for index, name in enumerate(names, start=1):
         print(
             f"[{index}/{len(names)}] Computing sparse fetch hash for extensions/{name}",
             flush=True,
         )
-        hash_value = get_sparse_hash(repo_root, name, rev)
-        print(f"[{index}/{len(names)}] Resolved {name} -> {hash_value}", flush=True)
-        hashes[name] = hash_value
+        source_hash = get_sparse_hash(repo_root, name, rev)
+        print(
+            f"[{index}/{len(names)}] Resolved source {name} -> {source_hash}",
+            flush=True,
+        )
+        source_hashes[name] = source_hash
+
+        print(
+            f"[{index}/{len(names)}] Computing npm deps hash for extensions/{name}",
+            flush=True,
+        )
+        npm_deps_hash = get_npm_deps_hash(repo_root, name, rev, source_hash)
+        print(
+            f"[{index}/{len(names)}] Resolved npm deps {name} -> {npm_deps_hash}",
+            flush=True,
+        )
+        npm_deps_hashes[name] = npm_deps_hash
 
     print("Rewriting inline Raycast pins...", flush=True)
-    updated = replace_hashes(replace_rev(text, rev), hashes)
+    updated = replace_hashes(replace_rev(text, rev), source_hashes, npm_deps_hashes)
     module_path.write_text(updated)
     print(f"Updated {module_path}", flush=True)
 
