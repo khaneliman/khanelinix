@@ -22,6 +22,7 @@ in
         # RustDesk Server documentation
         # See: https://rustdesk.com/docs/en/self-host/
         enable = true;
+        openFirewall = true;
         # Default
         # relay.enable = true;
         signal = {
