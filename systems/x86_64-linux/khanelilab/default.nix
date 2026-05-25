@@ -39,6 +39,11 @@ in
       openssh = enabled;
       rustdesk-server = enabled;
       tailscale = enabled;
+      hermes-agent = {
+        enable = true;
+        # TODO: provide a secrets-backed env file and model defaults before first use.
+        # environmentFiles = [ config.sops.secrets."hermes-env".path ];
+      };
     };
 
     security = {
