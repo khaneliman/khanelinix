@@ -33,6 +33,9 @@ in
   # - /mnt/cache is the 1 TB NVMe Btrfs cache pool.
   # - /mnt/pool is the 2 TB SATA SSD Btrfs appdata pool.
   # - /mnt/user is Unraid shfs. NixOS approximates it with mergerfs.
+  # - /mnt/user/domains keeps old VM disks available for rollback/import.
+  # - /mnt/user/domains/FreeIPA is intentionally preserved but not auto-started
+  #   until LDAP/Kerberos, DNS, and CA dependencies are audited.
   # - The 16 TB WDC WD160EDGZ disk appears to be parity; do not mount it.
   #
   # Quirks:

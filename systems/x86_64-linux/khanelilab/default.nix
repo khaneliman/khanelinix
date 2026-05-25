@@ -41,13 +41,6 @@ in
       tailscale = enabled;
     };
 
-    archetypes.home-lab = {
-      enable = true;
-      appdataDir = "/mnt/user/appdata";
-      cacheAppdataDir = "/mnt/pool/appdata";
-      mediaDir = "/mnt/user/data/media";
-    };
-
     security = {
       doas = enabled;
       keyring = enabled;
@@ -71,6 +64,32 @@ in
 
     suites = {
       common = enabled;
+      media-server = {
+        enable = true;
+        appdataDir = "/mnt/user/appdata";
+        cacheAppdataDir = "/mnt/pool/appdata";
+        mediaDir = "/mnt/user/data/media";
+        dataDir = "/mnt/user/data";
+      };
+      nas = enabled;
+      observability = {
+        enable = true;
+        cacheAppdataDir = "/mnt/pool/appdata";
+      };
+      security = {
+        enable = true;
+        cacheAppdataDir = "/mnt/pool/appdata";
+      };
+      self-hosted = {
+        enable = true;
+        appdataDir = "/mnt/user/appdata";
+        dataDir = "/mnt/user/data";
+      };
+    };
+
+    services.home-assistant = {
+      enable = true;
+      configDir = "/mnt/pool/appdata/home-assistant";
     };
 
     virtualisation = {
