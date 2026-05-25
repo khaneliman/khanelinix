@@ -23,6 +23,7 @@ in
     services = {
       adguardhome = {
         enable = true;
+        # Exposes DNS and web ports via module defaults.
         openFirewall = true;
       };
 
@@ -63,6 +64,10 @@ in
     virtualisation.oci-containers.containers.nginx-proxy-manager = {
       image = "jc21/nginx-proxy-manager:latest";
       autoStart = true;
+      # Ports:
+      # - 1880/tcp: NPM web UI
+      # - 18443/tcp: TLS termination endpoint
+      # - 7818/tcp: NPM admin endpoint
       ports = [
         "1880:80"
         "18443:443"
@@ -74,8 +79,44 @@ in
       ];
     };
 
-    networking.firewall.allowedTCPPorts = [
-      8222
+    # Legacy Unraid auth edge service retained until an equivalent NixOS-native
+    # ingress/auth strategy is finalized.
+    virtualisation.oci-containers.containers.authelia = {
+      image = "authelia/authelia";
+      autoStart = false;
+      # Port:
+      # - 9091/tcp: Authelia auth UI/API
+      ports = [ "9091:9091" ];
+      volumes = [ "/mnt/user/appdata/Authelia:/config" ];
+      environment = {
+        TZ = "America/Chicago";
+        X_AUTHELIA_CONFIG = "/config/configuration.yml";
+        PUID = "99";
+        PGID = "100";
+      };
+    };
+
+    networking.firewall = lib.mkMerge [
+      { allowedTCPPorts = [ ]; }
+
+      {
+        # vaultwarden
+        allowedTCPPorts = [ 8222 ];
+      }
+
+      {
+        # nginx-proxy-manager
+        allowedTCPPorts = [
+          1880
+          18443
+          7818
+        ];
+      }
+
+      {
+        # authelia
+        allowedTCPPorts = [ 9091 ];
+      }
     ];
   };
 }
