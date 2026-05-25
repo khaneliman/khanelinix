@@ -37,25 +37,25 @@ in
     userRoot = lib.mkOption {
       type = lib.types.path;
       default = "/mnt/user";
-      description = "Unraid-compatible user share root.";
+      description = "Unraid-compatible user share root for first-deploy migration.";
     };
 
     cacheRoot = lib.mkOption {
       type = lib.types.path;
       default = "/mnt/cache";
-      description = "Cache pool mount root.";
+      description = "Unraid-compatible cache pool root for first-deploy migration.";
     };
 
     cloudRoot = lib.mkOption {
       type = lib.types.path;
       default = "/mnt/disks";
-      description = "Cloud mount root.";
+      description = "Unraid-compatible external/cloud mount root for first-deploy migration.";
     };
 
     poolRoot = lib.mkOption {
       type = lib.types.path;
       default = "/mnt/pool";
-      description = "Auxiliary pool mount root.";
+      description = "Unraid-compatible auxiliary pool root for first-deploy migration.";
     };
   };
 
@@ -84,16 +84,6 @@ in
           extra-config = recycleConfig;
         };
 
-        backup = {
-          browseable = true;
-          comment = "Backups";
-          only-owner-editable = true;
-          path = "${userRoot}/backup";
-          public = false;
-          read-only = false;
-          extra-config = recycleConfig;
-        };
-
         data = {
           browseable = true;
           comment = "Data";
@@ -112,16 +102,40 @@ in
           extra-config = recycleConfig;
         };
 
-        timemachine = {
+        dropbox = {
           browseable = true;
-          comment = "Time Machine backups";
-          only-owner-editable = true;
-          path = "${userRoot}/timemachine";
-          public = false;
+          comment = "Dropbox cloud mount";
+          path = "${cloudRoot}/dropbox";
+          public = true;
           read-only = false;
-          extra-config = recycleConfig // {
-            "fruit:time machine" = "yes";
-          };
+          extra-config = recycleConfig;
+        };
+
+        googledrive = {
+          browseable = true;
+          comment = "Google Drive cloud mount";
+          path = "${cloudRoot}/googledrive";
+          public = true;
+          read-only = false;
+          extra-config = recycleConfig;
+        };
+
+        googlephotos = {
+          browseable = true;
+          comment = "Google Photos cloud mount";
+          path = "${cloudRoot}/googlephotos";
+          public = true;
+          read-only = false;
+          extra-config = recycleConfig;
+        };
+
+        onedrive = {
+          browseable = true;
+          comment = "OneDrive cloud mount";
+          path = "${cloudRoot}/onedrive";
+          public = true;
+          read-only = false;
+          extra-config = recycleConfig;
         };
       };
     };
@@ -132,6 +146,7 @@ in
         exports = lib.concatStringsSep "\n" (
           map nfsExport [
             "${userRoot}/appdata"
+            "${userRoot}/backup"
             "${userRoot}/data"
             "${userRoot}/isos"
             "${cloudRoot}/dropbox"
@@ -158,17 +173,26 @@ in
       ];
     };
 
+    # TODO: replace these Unraid-compatible /mnt roots with more idiomatic
+    # NixOS mountpoints after the initial khanelilab migration is stable.
     systemd.tmpfiles.rules = [
       "d ${userRoot} 0775 ${config.khanelinix.user.name} users -"
       "d ${cacheRoot} 0775 ${config.khanelinix.user.name} users -"
       "d ${cloudRoot} 0775 ${config.khanelinix.user.name} users -"
       "d ${poolRoot} 0775 ${config.khanelinix.user.name} users -"
       "d ${poolRoot}/vfs 0775 ${config.khanelinix.user.name} users -"
+      "d ${userRoot}/Plex 0775 ${config.khanelinix.user.name} users -"
       "d ${userRoot}/appdata 0775 ${config.khanelinix.user.name} users -"
       "d ${userRoot}/backup 0775 ${config.khanelinix.user.name} users -"
+      "d ${userRoot}/compose 0775 ${config.khanelinix.user.name} users -"
       "d ${userRoot}/data 0775 ${config.khanelinix.user.name} users -"
+      "d ${userRoot}/domains 0775 ${config.khanelinix.user.name} users -"
       "d ${userRoot}/isos 0775 ${config.khanelinix.user.name} users -"
+      "d ${userRoot}/syslog 0775 ${config.khanelinix.user.name} users -"
+      "d ${userRoot}/system 0775 ${config.khanelinix.user.name} users -"
+      "d ${userRoot}/temp 0775 ${config.khanelinix.user.name} users -"
       "d ${userRoot}/timemachine 0775 ${config.khanelinix.user.name} users -"
+      "d ${userRoot}/vfs 0775 ${config.khanelinix.user.name} users -"
       "d ${cloudRoot}/dropbox 0775 ${config.khanelinix.user.name} users -"
       "d ${cloudRoot}/googledrive 0775 ${config.khanelinix.user.name} users -"
       "d ${cloudRoot}/googlephotos 0775 ${config.khanelinix.user.name} users -"

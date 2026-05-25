@@ -13,6 +13,7 @@ in
     # ./disks.nix
     ./hardware.nix
     ./networking.nix
+    ./storage.nix
   ];
 
   khanelinix = {
@@ -40,7 +41,12 @@ in
       tailscale = enabled;
     };
 
-    archetypes.home-lab = enabled;
+    archetypes.home-lab = {
+      enable = true;
+      appdataDir = "/mnt/user/appdata";
+      cacheAppdataDir = "/mnt/pool/appdata";
+      mediaDir = "/mnt/user/data/media";
+    };
 
     security = {
       doas = enabled;
