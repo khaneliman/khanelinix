@@ -48,6 +48,7 @@ let
 in
 {
   imports = [
+    ./lsp.nix
     ./permissions.nix
   ];
 
