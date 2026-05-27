@@ -4,8 +4,16 @@
   config,
   lib,
   pkgs,
+  self,
   ...
 }:
+let
+  # Flake-aware nixd exprs (cwd flake autodetection, falling back to khanelinix).
+  nixdExprs = import (lib.getFile "modules/common/nixd") {
+    inherit self;
+    inherit (pkgs.stdenv.hostPlatform) system;
+  };
+in
 {
   config = {
     programs.opencode.settings.lsp = {
@@ -13,15 +21,16 @@
         command = [ (lib.getExe pkgs.nixd) ];
         extensions = [ ".nix" ];
         initialization = {
+          nixpkgs.expr = nixdExprs.nixpkgs;
           formatting = {
             command = [ (lib.getExe pkgs.nixfmt) ];
           };
           options = {
             nixos = {
-              expr = "(builtins.getFlake \"${config.home.homeDirectory}/khanelinix\").nixosConfigurations.khanelinix.options";
+              expr = nixdExprs.nixosOptions;
             };
             home-manager = {
-              expr = "(builtins.getFlake \"${config.home.homeDirectory}/khanelinix\").homeConfigurations.\"khaneliman@khanelinix\".options";
+              expr = nixdExprs.homeManagerOptions;
             };
           };
         };
@@ -94,6 +103,11 @@
           "--function-arg-placeholders"
           "--fallback-style=llvm"
         ];
+        initialization = {
+          usePlaceholders = true;
+          completeUnimported = true;
+          clangdFileStatus = true;
+        };
         extensions = [
           ".c"
           ".cpp"
@@ -184,12 +198,80 @@
         extensions = [ ".toml" ];
       };
 
+      cmake = {
+        command = [ (lib.getExe pkgs.cmake-language-server) ];
+        extensions = [ ".cmake" ];
+      };
+
+      cssls = {
+        command = [
+          (lib.getExe' pkgs.vscode-langservers-extracted "vscode-css-language-server")
+          "--stdio"
+        ];
+        extensions = [
+          ".css"
+          ".scss"
+          ".less"
+        ];
+      };
+
+      html = {
+        command = [
+          (lib.getExe' pkgs.vscode-langservers-extracted "vscode-html-language-server")
+          "--stdio"
+        ];
+        extensions = [
+          ".html"
+          ".htm"
+        ];
+      };
+
+      sqls = {
+        command = [ (lib.getExe pkgs.sqls) ];
+        extensions = [ ".sql" ];
+      };
+
+      helm-ls = {
+        command = [
+          (lib.getExe pkgs.helm-ls)
+          "serve"
+        ];
+        extensions = [ ".tpl" ];
+      };
+
+      nushell = {
+        command = [
+          (lib.getExe pkgs.nushell)
+          "--lsp"
+        ];
+        extensions = [ ".nu" ];
+      };
+
+      java = {
+        command = [ (lib.getExe' pkgs.jdt-language-server "jdtls") ];
+        extensions = [ ".java" ];
+      };
+
       marksman = {
         command = [ (lib.getExe pkgs.marksman) ];
         extensions = [
           ".md"
+          ".markdown"
           ".mdx"
         ];
+      };
+
+      typos-lsp = {
+        command = [ (lib.getExe pkgs.typos-lsp) ];
+        extensions = [
+          ".md"
+          ".markdown"
+          ".mdx"
+          ".txt"
+        ];
+        initialization = {
+          diagnosticSeverity = "Warning";
+        };
       };
     };
   };
