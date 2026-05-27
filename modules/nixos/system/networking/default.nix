@@ -18,6 +18,7 @@ in
 {
   options.khanelinix.system.networking = with types; {
     enable = lib.mkEnableOption "networking support";
+    hostAddress = mkOpt (nullOr str) null "Primary static IPv4 address for this host.";
     hosts = mkOpt attrs { } "An attribute set to merge with <option>networking.hosts</option>";
     optimizeTcp = mkBoolOpt true "Optimize TCP connections with BBR and buffer tuning";
     manager = mkOpt (types.enum [

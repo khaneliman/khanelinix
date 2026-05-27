@@ -11,6 +11,7 @@ let
   appdata = cfg.appdataDir;
   cacheAppdata = cfg.cacheAppdataDir;
   inherit (cfg) dataDir;
+  hostAddress = config.khanelinix.system.networking.hostAddress;
   media = cfg.mediaDir;
 in
 {
@@ -232,11 +233,11 @@ in
           "${appdata}/immich:/config"
         ];
         environment = {
-          DB_HOSTNAME = "192.168.4.42";
+          DB_HOSTNAME = hostAddress;
           DB_USERNAME = "postgres";
           DB_PASSWORD = "REPLACE_ME_IMMICH_DB_PASSWORD";
           DB_DATABASE_NAME = "immich";
-          REDIS_HOSTNAME = "192.168.4.42";
+          REDIS_HOSTNAME = hostAddress;
           DB_PORT = "5433";
           REDIS_PORT = "6379";
           REDIS_PASSWORD = "";
