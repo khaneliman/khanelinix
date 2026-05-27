@@ -35,7 +35,8 @@ in
         mgba
         mupen64plus
         nestopia-ue
-        rpcs3
+        # FIXME: broken nixpkgs
+        # rpcs3
       ]
       ++ lib.optionals cfg.retroarchFull [ retroarchFull ];
 
