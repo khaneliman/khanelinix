@@ -1,14 +1,15 @@
 # Claude Code LSP (Language Server Protocol) configuration module.
 #
-# Slim, deduplicated roster: at most one navigation/type server per file type so
-# Claude is never fed conflicting or duplicated hover/diagnostics/completions.
-# Claude Code's `.lsp.json` is flat and attaches *every* server matching an
-# extension - it has none of the runtime LspAttach arbitration khanelivim uses -
-# so language linters/formatters that pile onto an already-covered file type
-# (biome, eslint, stylelint, tailwindcss on web; harper on prose) are
-# intentionally left out. A second server is kept only where it is complementary
-# rather than overlapping: python (basedpyright types + ruff lint) and markdown
-# (marksman navigation + typos spelling).
+# Slim, diagnostics-first roster: servers are chosen for the errors/warnings
+# they surface to Claude, not navigation/completion/spelling. Claude Code's
+# `.lsp.json` is flat and attaches *every* server matching an extension - it has
+# none of the runtime LspAttach arbitration khanelivim uses - so overlapping
+# linters/formatters (biome, eslint, stylelint, tailwindcss on web) and prose
+# grammar (harper) are intentionally left out. At most one diagnostic server per
+# file type, plus a second only where it adds distinct diagnostics: python
+# (basedpyright types + ruff lint) and markdown (marksman broken-link warnings +
+# typos misspellings). typos is prose-scoped and raised to Warning severity so
+# it contributes to the errors/warnings signal rather than emitting Hint noise.
 #
 # Choice-gated servers resolve to khanelivim's defaults (cpp=clangd,
 # lua=emmylua-ls, nix=nixd, python=basedpyright, rust=rust-analyzer,
@@ -33,16 +34,11 @@ let
   # Map a list of file extensions to a single LSP language id.
   toLang = lang: exts: genAttrs exts (_: lang);
 
-  # Curry the flake-detection helper with this flake (global) + the host
-  # system, so nixd's exprs can resolve the cwd flake (`local`) at eval time and
-  # fall back to khanelinix (`global`) otherwise.
-  nixdWrapper = builtins.toFile "nixd-expr-wrapper.nix" ''
-    import ${./nixd-expr.nix} {
-      self = ${builtins.toJSON self.outPath};
-      system = ${builtins.toJSON pkgs.stdenv.hostPlatform.system};
-    }
-  '';
-  withFlakes = expr: "with import ${nixdWrapper}; ${expr}";
+  # Flake-aware nixd exprs (cwd flake autodetection, falling back to khanelinix).
+  nixdExprs = import (lib.getFile "modules/common/nixd") {
+    inherit self;
+    inherit (pkgs.stdenv.hostPlatform) system;
+  };
 in
 {
   config = mkIf cfg.enable {
@@ -52,11 +48,11 @@ in
         command = getExe pkgs.nixd;
         extensionToLanguage = toLang "nix" [ ".nix" ];
         initializationOptions = {
-          nixpkgs.expr = withFlakes "import (if local != null && (local.inputs.nixpkgs or null) != null then local.inputs.nixpkgs else global.inputs.nixpkgs) { }";
+          nixpkgs.expr = nixdExprs.nixpkgs;
           formatting.command = [ (getExe pkgs.nixfmt) ];
           options = {
-            nixos.expr = withFlakes "global.nixosConfigurations.khanelinix.options";
-            home-manager.expr = withFlakes "global.homeConfigurations.\"khaneliman@khanelinix\".options";
+            nixos.expr = nixdExprs.nixosOptions;
+            home-manager.expr = nixdExprs.homeManagerOptions;
           };
         };
       };
@@ -263,7 +259,7 @@ in
         extensionToLanguage = toLang "java" [ ".java" ];
       };
 
-      # --- Docs / prose (marksman navigates, typos catches spelling) ---
+      # --- Docs (marksman: broken-link warnings; typos: misspellings) ---
       marksman = {
         command = getExe pkgs.marksman;
         extensionToLanguage = toLang "markdown" [
@@ -281,8 +277,8 @@ in
             ".markdown"
             ".mdx"
           ]
-          // (toLang "plaintext" [ ".txt" ]);
-        initializationOptions.diagnosticSeverity = "Hint";
+          // toLang "plaintext" [ ".txt" ];
+        initializationOptions.diagnosticSeverity = "Warning";
       };
     };
   };
