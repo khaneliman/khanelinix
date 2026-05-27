@@ -21,7 +21,10 @@ in
         lib.optionals cfg.dockerEnable [
           "docker-desktop"
         ]
-        ++ lib.optionals cfg.aiEnable [ "ollamac" ];
+        ++ lib.optionals cfg.aiEnable [
+          "codexbar"
+          "ollamac"
+        ];
 
       masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
         "Patterns" = 429449079;
