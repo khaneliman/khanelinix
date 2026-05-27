@@ -18,6 +18,9 @@ let
   inherit (pkgs.stdenv.hostPlatform) isLinux;
 
   cfg = config.khanelinix.programs.graphical.bars.waybar;
+  hasCopilotToken = lib.hasAttrByPath [ "sops" "secrets" "github/copilot-token" ] config;
+  hasSops = config.khanelinix.services.sops.enable or false;
+  hasSopsCopilotToken = hasSops && hasCopilotToken;
 
   generateSettings = import ./lib/settings.nix {
     inherit
@@ -100,11 +103,21 @@ in
         pkgs.khanelinix.codexbar-waybar
       ];
 
+      systemd.user.services.waybar.Service.EnvironmentFile =
+        lib.mkIf hasSopsCopilotToken
+          config.sops.templates."waybar-codexbar.env".path;
+
       sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {
         weather_config = {
           sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
           path = "${config.home.homeDirectory}/weather_config.json";
         };
+      };
+
+      sops.templates."waybar-codexbar.env" = lib.mkIf hasSopsCopilotToken {
+        content = ''
+          COPILOT_API_TOKEN=${config.sops.placeholder."github/copilot-token"}
+        '';
       };
     })
   ];
