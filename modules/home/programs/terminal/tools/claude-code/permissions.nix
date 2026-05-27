@@ -39,6 +39,12 @@ in
           "TodoWrite(*)"
           "WebSearch"
 
+          # Skill, command, and agent references live outside the project root
+          # (the Claude configDir plus Nix store symlinks), so Read(*) - which is
+          # scoped to the workspace - does not cover them.
+          "Read(${config.home.homeDirectory}/.claude/**)"
+          "Read(/nix/store/**)"
+
           # Safe read-only git commands
           "Bash(git status)"
           "Bash(git status:*)"
@@ -123,6 +129,34 @@ in
           "Bash(nix profile list:*)"
           "Bash(nix-instantiate --parse:*)"
           "Bash(nh search:*)"
+
+          # Jujutsu read-only (jj-toolkit skill)
+          "Bash(jj status:*)"
+          "Bash(jj log:*)"
+          "Bash(jj diff:*)"
+          "Bash(jj show:*)"
+          "Bash(jj evolog:*)"
+          "Bash(jj op log:*)"
+          "Bash(jj file list:*)"
+          "Bash(jj bookmark list:*)"
+
+          # GitHub CLI read-only (github-toolkit skill); gh api stays on ask
+          # since it can mutate via -X POST/PATCH/DELETE.
+          "Bash(gh pr view:*)"
+          "Bash(gh pr list:*)"
+          "Bash(gh pr diff:*)"
+          "Bash(gh pr checks:*)"
+          "Bash(gh pr status:*)"
+          "Bash(gh issue view:*)"
+          "Bash(gh issue list:*)"
+          "Bash(gh issue status:*)"
+          "Bash(gh run list:*)"
+          "Bash(gh run view:*)"
+          "Bash(gh repo view:*)"
+          "Bash(gh release list:*)"
+          "Bash(gh release view:*)"
+          "Bash(gh label list:*)"
+          "Bash(gh search:*)"
 
           # MCP tools - read only
           "mcp__github__search_repositories"
