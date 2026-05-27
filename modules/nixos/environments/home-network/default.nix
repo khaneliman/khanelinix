@@ -45,7 +45,6 @@ in
         {
           "/mnt/austinserver/appdata" = "/mnt/user/appdata";
           "/mnt/austinserver/data" = "/mnt/user/data";
-          "/mnt/austinserver/backup" = "/mnt/user/backup";
           "/mnt/austinserver/isos" = "/mnt/user/isos";
           "/mnt/dropbox" = "/mnt/disks/dropbox";
           "/mnt/disks/googledrive" = "/mnt/disks/googledrive";
