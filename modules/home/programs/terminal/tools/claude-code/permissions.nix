@@ -37,14 +37,29 @@ in
           "Search(*)"
           "Task(*)"
           "TodoWrite(*)"
+          "WebSearch"
 
           # Safe read-only git commands
           "Bash(git status)"
+          "Bash(git status:*)"
           "Bash(git log:*)"
           "Bash(git diff:*)"
           "Bash(git show:*)"
           "Bash(git branch:*)"
           "Bash(git remote:*)"
+          "Bash(git blame:*)"
+          "Bash(git ls-files:*)"
+          "Bash(git rev-parse:*)"
+          "Bash(git describe:*)"
+          "Bash(git shortlog:*)"
+          "Bash(git reflog:*)"
+          "Bash(git cat-file:*)"
+          "Bash(git grep:*)"
+          "Bash(git stash list:*)"
+          "Bash(git worktree list:*)"
+          "Bash(git config --get:*)"
+          "Bash(git config --list:*)"
+          "Bash(git config -l)"
 
           # Safe file system operations
           "Bash(ls:*)"
@@ -52,11 +67,62 @@ in
           "Bash(cat:*)"
           "Bash(head:*)"
           "Bash(tail:*)"
+          "Bash(pwd)"
+          "Bash(stat:*)"
+          "Bash(file:*)"
+          "Bash(wc:*)"
+          "Bash(tree:*)"
+          "Bash(realpath:*)"
+          "Bash(readlink:*)"
+          "Bash(dirname:*)"
+          "Bash(basename:*)"
+          "Bash(du:*)"
+          "Bash(df:*)"
+
+          # Safe read-only text/data inspection
+          "Bash(rg:*)"
+          "Bash(grep:*)"
+          "Bash(diff:*)"
+          "Bash(sort:*)"
+          "Bash(uniq:*)"
+          "Bash(cut:*)"
+          "Bash(comm:*)"
+          "Bash(column:*)"
+          "Bash(jq:*)"
+
+          # Safe read-only system info
+          "Bash(whoami)"
+          "Bash(id)"
+          "Bash(id:*)"
+          "Bash(hostname)"
+          "Bash(uname:*)"
+          "Bash(date)"
+          "Bash(date:*)"
+          "Bash(uptime)"
+          "Bash(env)"
+          "Bash(printenv:*)"
+          "Bash(which:*)"
+          "Bash(type:*)"
+          "Bash(free:*)"
+          "Bash(ps:*)"
 
           # Safe nix read operations
           "Bash(nix eval:*)"
           "Bash(nix flake show:*)"
           "Bash(nix flake metadata:*)"
+          "Bash(nix search:*)"
+          "Bash(nix log:*)"
+          "Bash(nix path-info:*)"
+          "Bash(nix derivation show:*)"
+          "Bash(nix why-depends:*)"
+          "Bash(nix store ls:*)"
+          "Bash(nix store cat:*)"
+          "Bash(nix config show:*)"
+          "Bash(nix show-config:*)"
+          "Bash(nix registry list:*)"
+          "Bash(nix profile list:*)"
+          "Bash(nix-instantiate --parse:*)"
+          "Bash(nh search:*)"
 
           # MCP tools - read only
           "mcp__github__search_repositories"
@@ -75,6 +141,21 @@ in
           "mcp__filesystem__get_file_info"
           "mcp__filesystem__list_allowed_directories"
 
+          # Git MCP - read-only operations
+          "mcp__git__git_status"
+          "mcp__git__git_log"
+          "mcp__git__git_diff"
+          "mcp__git__git_diff_staged"
+          "mcp__git__git_diff_unstaged"
+          "mcp__git__git_show"
+          "mcp__git__git_branch"
+
+          # Fetch / Tavily MCP - read-only web
+          "mcp__fetch__fetch"
+          "mcp__tavily__tavily-search"
+          "mcp__tavily__tavily-extract"
+          "mcp__tavily__tavily-map"
+
           # Trusted web domains
           "WebFetch(domain:github.com)"
           "WebFetch(domain:wiki.hyprland.org)"
@@ -89,20 +170,12 @@ in
           # Git staging
           "Bash(git add:*)"
 
-          # Read-only nix commands
-          "Bash(nix search:*)"
-          "Bash(nix log:*)"
-          "Bash(nix path-info:*)"
-          "Bash(nix show-config:*)"
+          # Nix evaluation/check (can trigger builds)
           "Bash(nix flake check:*)"
 
           # Directory creation
           "Bash(mkdir:*)"
           "Bash(chmod:*)"
-
-          # Search tools
-          "Bash(rg:*)"
-          "Bash(grep:*)"
 
           # System info
           "Bash(systemctl list-units:*)"
@@ -110,9 +183,7 @@ in
           "Bash(systemctl status:*)"
           "Bash(journalctl:*)"
           "Bash(dmesg:*)"
-          "Bash(env)"
           "Bash(claude --version)"
-          "Bash(nh search:*)"
 
           # Audio system (read-only)
           "Bash(pactl list:*)"
