@@ -62,20 +62,20 @@ in
     };
 
     virtualisation.oci-containers.containers.nginx-proxy-manager = {
-      image = "jc21/nginx-proxy-manager:latest";
+      image = "jlesage/nginx-proxy-manager";
       autoStart = true;
       # Ports:
       # - 1880/tcp: NPM web UI
       # - 18443/tcp: TLS termination endpoint
       # - 7818/tcp: NPM admin endpoint
       ports = [
-        "1880:80"
-        "18443:443"
-        "7818:81"
+        "1880:8080"
+        "18443:4443"
+        "7818:8181"
       ];
       volumes = [
-        "${cacheAppdata}/NginxProxyManager:/data"
-        "${cacheAppdata}/NginxProxyManager/letsencrypt:/etc/letsencrypt"
+        "/mnt/user/appdata/NginxProxyManager:/config"
+        "${cacheAppdata}/dmz/goaccess/log:/config/log"
       ];
     };
 
@@ -83,7 +83,7 @@ in
     # ingress/auth strategy is finalized.
     virtualisation.oci-containers.containers.authelia = {
       image = "authelia/authelia";
-      autoStart = false;
+      autoStart = true;
       # Port:
       # - 9091/tcp: Authelia auth UI/API
       ports = [ "9091:9091" ];
