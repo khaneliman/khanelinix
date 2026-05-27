@@ -7,6 +7,7 @@
 }:
 let
   inherit (lib) types mkIf;
+  inherit (lib.strings) concatStringsSep;
   inherit (lib.modules) mkBefore;
   inherit (lib.khanelinix) mkOpt;
 
@@ -19,6 +20,10 @@ in
       enable = lib.mkEnableOption "automatic connection to Tailscale";
       key = mkOpt str "" "The authentication key to use";
     };
+    acceptRoutes = lib.mkEnableOption "routes advertised by other Tailscale nodes";
+    advertiseExitNode = lib.mkEnableOption "this host as a Tailscale exit node";
+    advertiseRoutes = mkOpt (listOf str) [ ] "Subnet routes to advertise through Tailscale";
+    ssh.enable = lib.mkEnableOption "Tailscale SSH";
   };
 
   config = mkIf cfg.enable {
@@ -59,7 +64,15 @@ in
       enable = true;
       permitCertUid = "root";
       useRoutingFeatures = "both";
-      extraSetFlags = [ "--operator=${config.khanelinix.user.name}" ];
+      extraSetFlags = [
+        "--operator=${config.khanelinix.user.name}"
+        "--accept-routes=${lib.boolToString cfg.acceptRoutes}"
+        "--advertise-exit-node=${lib.boolToString cfg.advertiseExitNode}"
+        "--ssh=${lib.boolToString cfg.ssh.enable}"
+      ]
+      ++ lib.optionals (cfg.advertiseRoutes != [ ]) [
+        "--advertise-routes=${concatStringsSep "," cfg.advertiseRoutes}"
+      ];
     };
 
     systemd = {
