@@ -16,6 +16,7 @@ let
   applicationFirewallAllowedApps =
     cfg.applicationFirewall.allowedApps
     ++ lib.optionals tailscaleEnabled [
+      "${pkgs.tailscale}/bin/.tailscaled-wrapped"
       "${pkgs.tailscale}/bin/tailscaled"
     ]
     ++ lib.optionals exoEnabled [
@@ -68,7 +69,7 @@ in
         };
       };
 
-      activationScripts.networking.text = lib.mkAfter /* Bash */ ''
+      activationScripts.networking.text = lib.mkAfter ''
         alf="/usr/libexec/ApplicationFirewall/socketfilterfw"
 
         echo >&2 "Auditing Application Firewall entries..."
