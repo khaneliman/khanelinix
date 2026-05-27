@@ -54,7 +54,7 @@ in
 
       ah-webapp-dev = {
         image = "ghcr.io/khaneliman/austin-horstman-webapp:master";
-        autoStart = true;
+        autoStart = false;
         # Port:
         # - 8099/tcp: dev web UI
         ports = [ "8099:80" ];
@@ -78,7 +78,7 @@ in
         autoStart = true;
         # Port:
         # - 2375/tcp: Docker API proxy endpoint
-        ports = [ "2375:2375" ];
+        ports = [ "127.0.0.1:2375:2375" ];
         volumes = [ "/var/run/docker.sock:/var/run/docker.sock:ro" ];
         environment = {
           CONTAINERS = "0";
@@ -148,7 +148,7 @@ in
       # TODO: decide container or native migration path for Profilarr credentials.
       profilarr = {
         image = "santiagosayshey/profilarr:latest";
-        autoStart = false;
+        autoStart = true;
         # Port:
         # - 6868/tcp: profilarr web UI
         ports = [ "6868:6868" ];
@@ -227,10 +227,9 @@ in
       # TODO: depends on Samba semantics and migration strategy for Mac backup hosts.
       timemachine = {
         image = "mbentley/timemachine";
-        autoStart = false;
+        autoStart = true;
         volumes = [
-          "${dataDir}/timemachine:/opt/khaneliman"
-          "/usr/local/share/docker/tailscale_container_hook:/opt/unraid/tailscale"
+          "/mnt/user/timemachine:/opt/khaneliman"
         ];
         environment = {
           VOLUME_SIZE_LIMIT = "4 T";
@@ -254,6 +253,10 @@ in
           WORKGROUP = "WORKGROUP";
           SHARE_NAME = "TimeMachine";
         };
+        extraOptions = [
+          "--ip=192.168.4.2"
+          "--network=br0"
+        ];
       };
 
       wakapi = {
