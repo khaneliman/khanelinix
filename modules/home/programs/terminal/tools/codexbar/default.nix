@@ -30,7 +30,9 @@ let
     }
     {
       id = "opencode";
-      enabled = config.khanelinix.programs.terminal.tools.opencode.enable or false;
+      enabled =
+        pkgs.stdenv.hostPlatform.isDarwin
+        && (config.khanelinix.programs.terminal.tools.opencode.enable or false);
     }
     {
       id = "copilot";
