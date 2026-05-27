@@ -25,7 +25,10 @@ let
       input=$(cat)
       jq -r '
         def pc(v): (v // 0) | floor | tostring;
-        ( "[" + (.model.display_name // "?")
+        (.model.display_name // "?") as $name |
+        ( "[" + $name
+          + (if ((.model.id // "") | test("\\[1m\\]")) and (($name | ascii_downcase) | test("1m") | not)
+             then " ·1M" else "" end)
           + (if (.effort.level // "") != "" then " " + .effort.level else "" end)
           + (if .thinking.enabled == true then " +think" else "" end)
           + "]" )
@@ -35,6 +38,9 @@ let
            else "" end)
         + (if .rate_limits.five_hour.used_percentage != null
            then " | 5h " + pc(.rate_limits.five_hour.used_percentage) + "%"
+           else "" end)
+        + (if .rate_limits.seven_day.used_percentage != null
+           then " | 7d " + pc(.rate_limits.seven_day.used_percentage) + "%"
            else "" end)
       ' <<<"$input"
     '';
