@@ -39,8 +39,9 @@ in
 
         hooks = lib.importDir ./hooks { inherit pkgs config lib; };
 
-        # Let default do its job
-        # model = "claude-sonnet-4-6";
+        model = "opus[1m]";
+        effortLevel = "xhigh";
+        alwaysThinkingEnabled = true;
         verbose = true;
         includeCoAuthoredBy = false;
         gitAttribution = false;
@@ -57,6 +58,7 @@ in
 
         env = {
           USE_BUILTIN_RIPGREP = "0";
+          ANTHROPIC_DEFAULT_HAIKU_MODEL = "claude-haiku-4-5";
         }
         // lib.optionalAttrs mcpModuleEnabled {
           ENABLE_TOOL_SEARCH = "auto:5";
