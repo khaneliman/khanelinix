@@ -84,14 +84,22 @@ in
           let
             styleDir =
               if config.khanelinix.theme.catppuccin.enable then ./styles/catppuccin else ./styles/base16;
+            codexbarStyle = ''
+              @import url("${pkgs.khanelinix.codexbar-waybar}/share/codexbar-waybar/codexbar.css");
+            '';
             style = builtins.readFile "${styleDir}/style.css";
             controlCenterStyle = builtins.readFile "${styleDir}/control-center.css";
             powerStyle = builtins.readFile "${styleDir}/power.css";
             statsStyle = builtins.readFile "${styleDir}/stats.css";
             workspacesStyle = builtins.readFile "${styleDir}/workspaces.css";
           in
-          "${style}${controlCenterStyle}${powerStyle}${statsStyle}${workspacesStyle}";
+          "${codexbarStyle}${style}${controlCenterStyle}${powerStyle}${statsStyle}${workspacesStyle}";
       };
+
+      home.packages = [
+        pkgs.khanelinix.codexbar-cli
+        pkgs.khanelinix.codexbar-waybar
+      ];
 
       sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {
         weather_config = {

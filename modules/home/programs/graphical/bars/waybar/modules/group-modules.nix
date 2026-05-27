@@ -40,6 +40,7 @@
         "gamemode"
         "idle_inhibitor"
         "systemd-failed-units"
+        "custom/codexbar"
         "custom/notification"
       ]
       ++ lib.optionals (config.khanelinix.services.sops.enable or false) [ "custom/github" ]

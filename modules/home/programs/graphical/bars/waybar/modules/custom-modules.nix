@@ -8,6 +8,8 @@
 }:
 let
   inherit (lib) getExe getExe' hasAttrByPath;
+  codexbar = pkgs.khanelinix.codexbar-cli;
+  codexbarWaybar = pkgs.khanelinix.codexbar-waybar;
   hasGithubAccessToken = hasAttrByPath [ "sops" "secrets" "github/access-token" ] config;
 
   enabledDmenuLaunchers =
@@ -207,6 +209,18 @@ in
   "custom/ellipses" = {
     format = "";
     tooltip = false;
+  };
+
+  "custom/codexbar" = {
+    exec = "CODEXBAR_BIN=${getExe codexbar} ${getExe codexbarWaybar}";
+    return-type = "json";
+    format = "{}";
+    interval = 30;
+    signal = 8;
+    on-click = "CODEXBAR_BIN=${getExe codexbar} ${getExe' codexbarWaybar "codexbar-waybar-popup"}";
+    on-click-right = "${getExe' pkgs.bash "bash"} -c '${getExe' pkgs.libnotify "notify-send"} -a CodexBar -t 8000 \"AI usage\" \"$(CODEXBAR_BIN=${getExe codexbar} ${getExe codexbarWaybar} | ${getExe pkgs.jq} -r .tooltip)\"'";
+    tooltip = true;
+    max-length = 24;
   };
 
   "custom/github" = {
