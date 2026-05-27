@@ -8,33 +8,84 @@
             commandPrefix = [
               "ls "
               "find "
+              "fd "
               "cat "
               "head "
               "tail "
               "rg "
               "grep "
+              "diff "
+              "sort "
+              "uniq "
+              "cut "
+              "comm "
+              "column "
+              "jq "
+              "nl "
+              "tac "
+              "rev "
+              "tr "
+              # sed in print-only mode (-n); excludes default in-place/`w` writes.
+              "sed -n "
+              "od "
+              "xxd "
+              "hexdump "
+              "strings "
+              "base64 "
+              "cksum "
+              "md5sum "
+              "sha1sum "
+              "sha256sum "
+              "sha512sum "
+              "b2sum "
+              "stat "
+              "file "
+              "wc "
+              "tree "
+              "realpath "
+              "readlink "
+              "dirname "
+              "basename "
+              "du "
               "type "
               "which "
               "whereis "
+              "command -v "
+              "getconf "
+              "printenv "
+              "lsof "
+              "getent "
+              "lsblk "
+              "lsusb "
+              "lspci "
+              "findmnt "
+              "nixos-option "
+              "statix check "
             ];
             decision = "allow";
             priority = 100;
           }
           {
             toolName = "run_shell_command";
-            commandRegex = "ls(\\s|$)";
+            commandRegex = "(ls|pwd|whoami|id|hostname|uname|date|uptime|env|free|ps|pgrep|ss|df|groups|locale|lscpu)(\\s|$)";
             decision = "allow";
             priority = 100;
           }
           {
             toolName = "run_shell_command";
-            commandRegex = "git (status|diff|log|show|branch|remote|ls-files)(\\s|$)";
+            commandRegex = "git (status|diff|log|show|branch|remote|ls-files|ls-tree|blame|grep|rev-parse|describe|shortlog|reflog|cat-file|show-ref|for-each-ref|rev-list|merge-base|name-rev|stash list|worktree list|submodule status|config (--get|--list|-l))(\\s|$)";
             decision = "allow";
             priority = 100;
           }
           {
             toolName = "run_shell_command";
-            commandRegex = "nix (eval|search|log|path-info)(\\s|$)";
+            commandRegex = "nix (eval|search|log|path-info|flake (show|metadata)|derivation show|why-depends|store (ls|cat|info)|config show|show-config|registry list|profile list)(\\s|$)";
+            decision = "allow";
+            priority = 100;
+          }
+          {
+            toolName = "run_shell_command";
+            commandRegex = "(nh search|nix-instantiate --parse|nix-store (-q|--query))(\\s|$)";
             decision = "allow";
             priority = 100;
           }
