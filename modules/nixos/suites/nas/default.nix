@@ -93,10 +93,64 @@ in
           extra-config = recycleConfig;
         };
 
+        familyphotos = {
+          browseable = true;
+          comment = "Family photos";
+          path = "${userRoot}/familyphotos";
+          public = true;
+          read-only = false;
+          extra-config = recycleConfig;
+        };
+
+        gamingvideos = {
+          browseable = true;
+          comment = "Gaming videos";
+          path = "${userRoot}/gamingvideos";
+          public = true;
+          read-only = false;
+          extra-config = recycleConfig;
+        };
+
+        homevideos = {
+          browseable = true;
+          comment = "Home videos";
+          path = "${userRoot}/homevideos";
+          public = true;
+          read-only = false;
+          extra-config = recycleConfig;
+        };
+
         isos = {
           browseable = true;
           comment = "ISO images";
           path = "${userRoot}/isos";
+          public = true;
+          read-only = false;
+          extra-config = recycleConfig;
+        };
+
+        pictures = {
+          browseable = true;
+          comment = "Place to drop pictures for import to PhotoPrism.";
+          path = "${userRoot}/pictures";
+          public = true;
+          read-only = false;
+          extra-config = recycleConfig;
+        };
+
+        tv = {
+          browseable = true;
+          comment = "TV";
+          path = "${userRoot}/tv";
+          public = true;
+          read-only = false;
+          extra-config = recycleConfig;
+        };
+
+        tvrecordings = {
+          browseable = true;
+          comment = "TV recordings";
+          path = "${userRoot}/tvrecordings";
           public = true;
           read-only = false;
           extra-config = recycleConfig;
@@ -148,7 +202,13 @@ in
             "${userRoot}/appdata"
             "${userRoot}/backup"
             "${userRoot}/data"
+            "${userRoot}/familyphotos"
+            "${userRoot}/gamingvideos"
+            "${userRoot}/homevideos"
             "${userRoot}/isos"
+            "${userRoot}/pictures"
+            "${userRoot}/tv"
+            "${userRoot}/tvrecordings"
             "${cloudRoot}/dropbox"
             "${cloudRoot}/googledrive"
             "${cloudRoot}/googlephotos"
@@ -187,12 +247,19 @@ in
       "d ${userRoot}/compose 0775 ${config.khanelinix.user.name} users -"
       "d ${userRoot}/data 0775 ${config.khanelinix.user.name} users -"
       "d ${userRoot}/domains 0775 ${config.khanelinix.user.name} users -"
+      "d ${userRoot}/familyphotos 0775 ${config.khanelinix.user.name} users -"
+      "d ${userRoot}/gamingvideos 0775 ${config.khanelinix.user.name} users -"
+      "d ${userRoot}/homevideos 0775 ${config.khanelinix.user.name} users -"
       "d ${userRoot}/isos 0775 ${config.khanelinix.user.name} users -"
+      "d ${userRoot}/pictures 0775 ${config.khanelinix.user.name} users -"
       "d ${userRoot}/syslog 0775 ${config.khanelinix.user.name} users -"
       "d ${userRoot}/system 0775 ${config.khanelinix.user.name} users -"
       "d ${userRoot}/temp 0775 ${config.khanelinix.user.name} users -"
       "d ${userRoot}/timemachine 0775 ${config.khanelinix.user.name} users -"
+      "d ${userRoot}/tv 0775 ${config.khanelinix.user.name} users -"
+      "d ${userRoot}/tvrecordings 0775 ${config.khanelinix.user.name} users -"
       "d ${userRoot}/vfs 0775 ${config.khanelinix.user.name} users -"
+      "d ${userRoot}/vfsMeta 0775 ${config.khanelinix.user.name} users -"
       "d ${cloudRoot}/dropbox 0775 ${config.khanelinix.user.name} users -"
       "d ${cloudRoot}/googledrive 0775 ${config.khanelinix.user.name} users -"
       "d ${cloudRoot}/googlephotos 0775 ${config.khanelinix.user.name} users -"
