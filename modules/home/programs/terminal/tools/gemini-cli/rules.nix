@@ -7,6 +7,9 @@
             toolName = "run_shell_command";
             commandPrefix = [
               "ls "
+              # NOTE: find/fd are read-only by default but can run mutating
+              # commands via -exec/-delete (find) or -x/-X (fd). Trusted here
+              # for workflow smoothness; tighten if exposed to untrusted input.
               "find "
               "fd "
               "cat "
@@ -25,7 +28,9 @@
               "tac "
               "rev "
               "tr "
-              # sed in print-only mode (-n); excludes default in-place/`w` writes.
+              # NOTE: -n suppresses default output and blocks in-place edits,
+              # but `w`/`s///w`/`W` commands can still write a file. Obscure;
+              # kept for parity with the codex allowlist.
               "sed -n "
               "od "
               "xxd "
