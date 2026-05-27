@@ -44,6 +44,10 @@ stdenvNoCC.mkDerivation {
 
   nativeBuildInputs = [ makeWrapper ];
 
+  # TODO: create an upstream issue/PR; reset descriptions should render
+  # resetsAt in the user's local timezone instead of displaying UTC as local.
+  patches = [ ./local-time-resets.patch ];
+
   postPatch = ''
         substituteInPlace codexbar-popup.py \
           --replace-fail 'ICONS_DIR = Path(
