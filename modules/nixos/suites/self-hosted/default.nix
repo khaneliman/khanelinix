@@ -5,6 +5,7 @@
 }:
 let
   cfg = config.khanelinix.suites.self-hosted;
+  hostAddress = config.khanelinix.system.networking.hostAddress;
   inherit (cfg) appdataDir dataDir;
 in
 {
@@ -196,9 +197,20 @@ in
         };
       };
 
+      self-service-password = {
+        image = "ltbproject/self-service-password:latest";
+        autoStart = true;
+        # Port:
+        # - 8282/tcp: self-service password web UI
+        ports = [ "${hostAddress}:8282:80" ];
+        volumes = [
+          "${appdataDir}/self-service-password/conf/config.inc.local.php:/var/www/conf/config.inc.local.php:ro"
+        ];
+      };
+
       pwm = {
         image = "fjudith/pwm";
-        autoStart = true;
+        autoStart = false;
         # Port:
         # - 8282/tcp: Password Manager web UI
         ports = [ "8282:8080" ];
