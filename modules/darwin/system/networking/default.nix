@@ -8,14 +8,29 @@
 let
   cfg = config.khanelinix.system.networking;
   homeCfg = config.home-manager.users.${config.khanelinix.user.name} or { };
+  tailscaleEnabled = config.khanelinix.services.tailscale.enable or false;
   exoEnabled = homeCfg.services.exo.enable or false;
   exoLibp2pPort = 52416;
   python3 = lib.getExe pkgs.python3;
   localNetworkPrivilegesCleanup = ./local-network-privileges-cleanup.py;
+  applicationFirewallAllowedApps =
+    cfg.applicationFirewall.allowedApps
+    ++ lib.optionals tailscaleEnabled [
+      "${pkgs.tailscale}/bin/tailscaled"
+    ]
+    ++ lib.optionals exoEnabled [
+      "${pkgs.exo}/bin/exo"
+    ];
+  applicationFirewallAllowedAppsText = lib.concatStringsSep "\n" applicationFirewallAllowedApps;
 in
 {
   options.khanelinix.system.networking = {
     enable = lib.mkEnableOption "networking support";
+    applicationFirewall.allowedApps = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      description = "Absolute paths to applications that should be allowed through the macOS Application Firewall during activation.";
+    };
     pruneStaleLocalNetworkPermissions = lib.mkOption {
       type = lib.types.bool;
       default = true;
@@ -61,16 +76,44 @@ in
         if [ ! -x "$alf" ]; then
           echo >&2 "Skipping Application Firewall audit: socketfilterfw is unavailable."
         else
+          applicationFirewallAllowedApps="$(/usr/bin/mktemp /tmp/khanelinix-alf-allowed.XXXXXX)"
+          /bin/cat > "$applicationFirewallAllowedApps" <<'KHANELINIX_ALLOWED_FIREWALL_APPS'
+        ${applicationFirewallAllowedAppsText}
+        KHANELINIX_ALLOWED_FIREWALL_APPS
+
           "$alf" --listapps \
             | /usr/bin/sed -n 's/^[[:space:]]*[0-9][0-9]*[[:space:]]:[[:space:]]//p' \
             | /usr/bin/sed 's/[[:space:]]*$//' \
             | while IFS= read -r app; do
+                keepApp=false
+                while IFS= read -r allowedApp; do
+                  if [ "$app" = "$allowedApp" ]; then
+                    keepApp=true
+                    break
+                  fi
+                done < "$applicationFirewallAllowedApps"
+
+                if [ "$keepApp" = true ]; then
+                  continue
+                fi
+
                 case "$app" in
                   /nix/store/*|/nix/var/nix/*|/private/tmp/nix-build*)
                     "$alf" --remove "$app" >/dev/null 2>&1 || true
                     ;;
                 esac
               done
+
+          while IFS= read -r allowedApp; do
+            if [ -e "$allowedApp" ]; then
+              "$alf" --add "$allowedApp" >/dev/null 2>&1 || true
+              "$alf" --unblockapp "$allowedApp" >/dev/null 2>&1 || true
+            else
+              echo >&2 "Skipping missing Application Firewall app: $allowedApp"
+            fi
+          done < "$applicationFirewallAllowedApps"
+
+          /bin/rm -f "$applicationFirewallAllowedApps"
         fi
 
         ${lib.optionalString cfg.pruneStaleLocalNetworkPermissions ''
