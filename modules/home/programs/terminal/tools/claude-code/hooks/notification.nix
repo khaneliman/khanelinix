@@ -1,5 +1,9 @@
 { pkgs, config, ... }:
 let
+  # Ring the terminal bell on the controlling tty so kitty (directly, or via
+  # tmux/zellij bell-forwarding) flags the tab that is waiting on you.
+  ringBell = ''printf '\a' > /dev/tty 2>/dev/null || true'';
+
   notify =
     title: message:
     if pkgs.stdenv.hostPlatform.isDarwin then
@@ -22,7 +26,10 @@ in
       hooks = [
         {
           type = "command";
-          command = notify "Claude Code" "Awaiting your input";
+          command = ''
+            ${notify "Claude Code" "Awaiting your input"}
+            ${ringBell}
+          '';
         }
       ];
     }

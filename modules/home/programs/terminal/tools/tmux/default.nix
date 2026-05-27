@@ -118,6 +118,10 @@ in
         set -g allow-passthrough on
         set -g allow-rename off
         set -g bell-action any
+        # Forward the app bell out to the host terminal (kitty) so it flags the
+        # tab. visual-bell off = pass \a through instead of tmux eating it.
+        set -g monitor-bell on
+        set -g visual-bell off
         set -g detach-on-destroy off
         set -g focus-events on
         set -g monitor-activity off
