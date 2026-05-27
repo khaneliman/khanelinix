@@ -97,7 +97,6 @@ in
       };
 
       home.packages = [
-        pkgs.khanelinix.codexbar-cli
         pkgs.khanelinix.codexbar-waybar
       ];
 

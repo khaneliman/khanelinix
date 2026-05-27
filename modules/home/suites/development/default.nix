@@ -207,6 +207,7 @@ in
             azure.enable = cfg.azureEnable;
             claude-code.enable = cfg.aiEnable;
             codex.enable = cfg.aiEnable;
+            codexbar.enable = cfg.aiEnable;
             gemini-cli.enable = cfg.aiEnable;
             github-copilot-cli.enable = cfg.aiEnable;
             gh = mkDefault enabled;
