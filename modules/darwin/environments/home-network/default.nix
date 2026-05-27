@@ -12,7 +12,7 @@ in
 {
   options.khanelinix.environments.home-network = with types; {
     enable = lib.mkEnableOption "home network environment";
-    serverHostname = mkOpt str "austinserver.local" "Home server hostname";
+    serverHostname = mkOpt str "austinserver.taild8431e.ts.net" "Home server hostname";
   };
 
   config = mkIf cfg.enable {
