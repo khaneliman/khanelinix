@@ -73,6 +73,11 @@ in
       power = enabled;
       printing = enabled;
 
+      tailscale = {
+        enable = true;
+        acceptRoutes = true;
+      };
+
       rustdesk-server = {
         enable = true;
         relayHosts = [ "khanelinix.local" ];

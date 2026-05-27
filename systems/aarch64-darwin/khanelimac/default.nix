@@ -37,6 +37,8 @@ in
       };
     };
 
+    services.tailscale = enabled;
+
     suites = {
       art = enabled;
       common = enabled;
