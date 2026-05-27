@@ -9,7 +9,7 @@
       "khanelilab"
       "khanelilab.local"
     ];
-    "192.168.4.20" = [
+    "192.168.4.42" = [
       "AustinServer"
       "AustinServer.local"
       "austinserver"
@@ -25,11 +25,25 @@
       interface = "br0";
     };
 
-    bridges.br0.interfaces = [ "eth0" ];
+    bonds.bond0 = {
+      driverOptions = {
+        miimon = "100";
+        mode = "active-backup";
+        primary = "eth0";
+      };
+      interfaces = [
+        "eth0"
+        "eth1"
+        "eth2"
+        "eth3"
+      ];
+    };
+
+    bridges.br0.interfaces = [ "bond0" ];
 
     interfaces.br0.ipv4.addresses = [
       {
-        address = "192.168.4.20";
+        address = "192.168.4.42";
         prefixLength = 22;
       }
     ];
