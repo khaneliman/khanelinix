@@ -75,7 +75,7 @@ in
       # };
 
       display-managers.gdm = {
-        inherit (cfg) enable wayland;
+        inherit (cfg) enable;
         autoSuspend = cfg.suspend;
       };
 
