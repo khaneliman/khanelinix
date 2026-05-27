@@ -38,6 +38,21 @@
             decision = "allow";
             priority = 100;
           }
+          # Read-only jj (jj-toolkit skill)
+          {
+            toolName = "run_shell_command";
+            commandRegex = "jj (status|log|diff|show|evolog|op log|file list|bookmark list)(\\s|$)";
+            decision = "allow";
+            priority = 100;
+          }
+          # Read-only gh (github-toolkit skill); gh api stays unlisted since it
+          # can mutate via -X POST/PATCH/DELETE.
+          {
+            toolName = "run_shell_command";
+            commandRegex = "gh (auth status|pr (view|list|diff|checks|status)|issue (view|list|status)|run (view|list)|repo view|release (view|list)|label list|search)(\\s|$)";
+            decision = "allow";
+            priority = 100;
+          }
         ];
         risky-shell.rule = [
           {
