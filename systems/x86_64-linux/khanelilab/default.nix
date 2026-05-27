@@ -38,7 +38,12 @@ in
       printing = enabled;
       openssh = enabled;
       rustdesk-server = enabled;
-      tailscale = enabled;
+      tailscale = {
+        enable = true;
+        advertiseExitNode = true;
+        advertiseRoutes = [ "192.168.4.0/24" ];
+        ssh.enable = true;
+      };
       hermes-agent = {
         enable = true;
         # TODO: provide a secrets-backed env file and model defaults before first use.
