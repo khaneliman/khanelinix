@@ -199,12 +199,12 @@ in
       # workloads; move this to native PostgreSQL when we can codify restore
       # and replication workflows.
       postgresql_immich = {
-        image = "tensorchord/pgvecto-rs:pg16-v0.2.0";
+        image = "ghcr.io/immich-app/postgres:16-vectorchord0.4.3-pgvectors0.2.0";
         autoStart = true;
         # Port:
         # - 5433/tcp: PostgreSQL for immich workload
         ports = [ "5433:5432" ];
-        volumes = [ "${appdata}/postgresql_immich:/var/lib/postgresql/data" ];
+        volumes = [ "${appdata}/PostgreSQL_Immich:/var/lib/postgresql/data" ];
         extraOptions = [
           "-m"
           "8GB"
@@ -227,16 +227,16 @@ in
         ports = [ "8081:8080" ];
         volumes = [
           "${media}/immich:/photos"
-          "${media}/pictures:/import"
+          "${media}/pictures:/import:ro"
           "${media}/pictures:/pictures"
           "${appdata}/immich:/config"
         ];
         environment = {
-          DB_HOSTNAME = "REPLACE_ME_HOST_IP";
+          DB_HOSTNAME = "192.168.4.42";
           DB_USERNAME = "postgres";
           DB_PASSWORD = "REPLACE_ME_IMMICH_DB_PASSWORD";
           DB_DATABASE_NAME = "immich";
-          REDIS_HOSTNAME = "REPLACE_ME_HOST_IP";
+          REDIS_HOSTNAME = "192.168.4.42";
           DB_PORT = "5433";
           REDIS_PORT = "6379";
           REDIS_PASSWORD = "";
@@ -356,7 +356,7 @@ in
       "kometa-ls" = {
         image = "lscr.io/linuxserver/kometa";
         autoStart = true;
-        volumes = [ "${appdata}/kometa:/config" ];
+        volumes = [ "${appdata}/Kometa:/config" ];
         environment = {
           KOMETA_CONFIG = "/config/config.yml";
           KOMETA_TIME = "03:00";
