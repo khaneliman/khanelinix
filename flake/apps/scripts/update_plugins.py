@@ -17,7 +17,7 @@ from rich.text import Text
 
 TASKS = {
     "vim": {
-        "command": "nix run .#vimPluginsUpdater",
+        "command": "nix run github:khaneliman/nixpkgs/updater-fixes#vimPluginsUpdater",
         "self_committing": False,
         "worktree": "vim",
         "depends_on": None,
