@@ -1,4 +1,5 @@
 {
+  nix-fast-build,
   writeShellApplication,
   ...
 }:
@@ -12,7 +13,7 @@ writeShellApplication {
 
   checkPhase = "";
 
-  runtimeInputs = [ ];
+  runtimeInputs = [ nix-fast-build ];
 
   text = builtins.readFile ./build-by-path.sh;
 }

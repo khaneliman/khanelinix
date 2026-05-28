@@ -131,7 +131,7 @@ in
         # Nixpkgs
         lua-update = "nix run nixpkgs#luarocks-packages-updater update";
         lua-update-all = "nix run nixpkgs#luarocks-packages-updater -- --github-token=$(echo $GITHUB_TOKEN)";
-        bbp-beast = "${nixBeastConfig} ${lib.getExe pkgs.khanelinix.build-by-path} .";
+        bbp-beast = "${nixBeastConfig} ${lib.getExe pkgs.khanelinix.build-by-path} --fast .";
         npr-beast = "${nixBeastConfig} nixpkgs-review";
         ncs = ''f(){ nix build "nixpkgs#$1" --no-link && nix path-info --recursive --closure-size --human-readable $(nix-build --no-out-link '<nixpkgs>' -A "$1"); }; f'';
         ncsdc = ''f(){ nix build ".#darwinConfigurations.$1.config.system.build.toplevel" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#darwinConfigurations.$1.config.system.build.toplevel.outPath"); }; f'';
