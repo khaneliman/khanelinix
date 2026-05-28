@@ -42,6 +42,11 @@ in
     condensedOutputs =
       mkOpt (types.listOf types.str) "Which outputs to use the smaller size waybar on."
         [ ];
+    resetTimeFormat = mkOpt (types.enum [
+      "provider"
+      "local"
+      "utc"
+    ]) "provider" "How codexbar-waybar renders reset timestamps.";
   };
 
   config = lib.mkMerge [

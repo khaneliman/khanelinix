@@ -11,6 +11,10 @@ let
   codexbar = pkgs.khanelinix.codexbar-cli;
   codexbarWaybar = pkgs.khanelinix.codexbar-waybar;
   hasGithubAccessToken = hasAttrByPath [ "sops" "secrets" "github/access-token" ] config;
+  codexbarResetTimeFormat = config.khanelinix.programs.graphical.bars.waybar.resetTimeFormat;
+  codexbarEnv = "CODEXBAR_RESET_TIME_FORMAT=${codexbarResetTimeFormat}";
+  codexbarWaybarCommand = "CODEXBAR_BIN=${getExe codexbar} ${codexbarEnv} ${getExe codexbarWaybar}";
+  codexbarPopupCommand = "CODEXBAR_BIN=${getExe codexbar} ${codexbarEnv} ${getExe' codexbarWaybar "codexbar-waybar-popup"}";
 
   enabledDmenuLaunchers =
     let
@@ -212,13 +216,13 @@ in
   };
 
   "custom/codexbar" = {
-    exec = "CODEXBAR_BIN=${getExe codexbar} ${getExe codexbarWaybar}";
+    exec = codexbarWaybarCommand;
     return-type = "json";
     format = "{}";
     interval = 30;
     signal = 8;
-    on-click = "CODEXBAR_BIN=${getExe codexbar} ${getExe' codexbarWaybar "codexbar-waybar-popup"}";
-    on-click-right = "${getExe' pkgs.bash "bash"} -c '${getExe' pkgs.libnotify "notify-send"} -a CodexBar -t 8000 \"AI usage\" \"$(CODEXBAR_BIN=${getExe codexbar} ${getExe codexbarWaybar} | ${getExe pkgs.jq} -r .tooltip)\"'";
+    on-click = codexbarPopupCommand;
+    on-click-right = "${getExe' pkgs.bash "bash"} -c '${getExe' pkgs.libnotify "notify-send"} -a CodexBar -t 8000 \"AI usage\" \"$(${codexbarWaybarCommand} | ${getExe pkgs.jq} -r .tooltip)\"'";
     tooltip = true;
     max-length = 24;
   };

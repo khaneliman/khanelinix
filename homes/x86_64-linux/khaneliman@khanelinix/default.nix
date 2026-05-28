@@ -77,6 +77,7 @@ in
             # enableInspect = true;
             fullSizeOutputs = [ "DP-1" ];
             condensedOutputs = [ "DP-3" ];
+            resetTimeFormat = "local";
           };
         };
 

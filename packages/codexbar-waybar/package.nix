@@ -36,17 +36,14 @@ stdenvNoCC.mkDerivation {
   version = "0.2.0";
 
   src = fetchFromGitHub {
-    owner = "Marouan-chak";
+    owner = "khaneliman";
     repo = "codexbar-waybar";
-    rev = "e75f463d98e3249490f984a77770c5d2169b0659";
-    hash = "sha256-EmW4OciYrqyQiU5itQTMxhCmXI8N+cMem3sZ+KuRXc8=";
+    rev = "b5c53f20ce558674973291545b4da67ad1a9de41";
+    hash = "sha256-wofPj0t3np2EyxkoJmXiEU8WmiEQVTEQzhqugsIb+Vc=";
+    fetchSubmodules = false;
   };
 
   nativeBuildInputs = [ makeWrapper ];
-
-  # TODO: create an upstream issue/PR; reset descriptions should render
-  # resetsAt in the user's local timezone instead of displaying UTC as local.
-  patches = [ ./local-time-resets.patch ];
 
   postPatch = ''
         substituteInPlace codexbar-popup.py \
@@ -138,7 +135,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Waybar custom module and GTK4 popover for CodexBar Linux CLI";
-    homepage = "https://github.com/Marouan-chak/codexbar-waybar";
+    homepage = "https://github.com/khaneliman/codexbar-waybar";
     license = lib.licenses.mit;
     mainProgram = "codexbar-waybar";
     platforms = lib.platforms.linux;
