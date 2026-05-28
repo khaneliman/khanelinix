@@ -36,6 +36,19 @@ easy to verify.
   optimize only if needed.
 - For multi-step tasks, share a short plan before executing unless the change is
   trivial.
+- Be token conscious. Keep thoughts, updates, and discussions concise; skip
+  fancy, emotional, or decorative language and communicate only the important
+  context.
+- Batch independent tool calls and file reads when possible. Prefer `rg`,
+  structured queries, and existing project commands over manual inspection
+  loops.
+- Do not paste noisy command output or repeat status updates. Summarize only the
+  important result, failure, or next decision unless exact output is requested.
+- Avoid repeating expensive command/read/write loops. When a task needs the same
+  operation multiple times, prefer a small script, task runner, or CLI workflow
+  that can be rerun cheaply.
+- Prefer project tooling and CLIs for repetitive mechanical work, such as
+  Angular `ng` commands, migrations, scaffolding, or `dotnet` template commands.
 
 ## Tool Routing
 
