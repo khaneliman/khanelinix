@@ -101,8 +101,26 @@ in
                 eventType="$(printf '%s' "$payload" | jq -r '.type // ""')"
                 [ "$eventType" = "agent-turn-complete" ] || exit 0
 
+                cwd="$(printf '%s' "$payload" | jq -r '.cwd // .workspace.current_dir // empty')"
+                if [ -z "$cwd" ]; then
+                  cwd="$PWD"
+                fi
+                dirName="''${cwd##*/}"
+
                 message="$(printf '%s' "$payload" | jq -r '.["last-assistant-message"] // "Turn complete"')"
-                summary="$(printf '%s' "$message" | cut -c1-180)"
+                summary="''${message:0:180}"
+
+                if [ -n "$dirName" ] && [ "$dirName" != "$cwd" ]; then
+                  summary="[$dirName] $summary"
+                elif [ -n "$cwd" ]; then
+                  summary="[$cwd] $summary"
+                fi
+
+                if [ -n "$cwd" ]; then
+                  printf '\nCodex awaiting input: %s\n' "$cwd" > /dev/tty 2>/dev/null || true
+                else
+                  printf '\nCodex awaiting input\n' > /dev/tty 2>/dev/null || true
+                fi
 
                 ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
                   ${lib.getExe pkgs.terminal-notifier} -title "Codex" -message "$summary" -group "codex-turn" >/dev/null 2>&1
