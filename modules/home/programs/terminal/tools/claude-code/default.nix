@@ -70,8 +70,8 @@ in
 
         hooks = lib.importDir ./hooks { inherit pkgs config lib; };
 
-        model = "opus[1m]";
-        effortLevel = "xhigh";
+        model = "claude-opus-4-8[1m]";
+        effortLevel = "high";
         alwaysThinkingEnabled = true;
         # Usage credits
         # fastMode = true;
