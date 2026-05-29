@@ -63,6 +63,8 @@ in
           max_bytes = 104857600;
         };
 
+        notice.hide_rate_limit_model_nudge = true;
+
         # GPT-5.5 is more expensive per token than GPT-5.4, but Codex is tuned
         # to complete most work with fewer tokens. Keep routine turns at medium
         # and reserve higher reasoning for explicit profiles.
