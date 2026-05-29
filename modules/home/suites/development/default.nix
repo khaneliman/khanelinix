@@ -11,12 +11,17 @@ let
   inherit (lib.khanelinix) enabled;
 
   hasOpenAISecuraKey = lib.hasAttrByPath [ "sops" "secrets" "OPENAI_SECURA_KEY" ] config;
+  hasLuarocksApiKey = lib.hasAttrByPath [ "sops" "secrets" "LUAROCKS_API_KEY" ] config;
   hasTavilyApiKey = lib.hasAttrByPath [ "sops" "secrets" "TAVILY_API_KEY" ] config;
   nixBeastConfig = "NIX_CONFIG=$'max-jobs = auto\\ncores = 0'";
   posixTokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) ''
     if ${lib.boolToString hasOpenAISecuraKey} && [ -f ${config.sops.secrets.OPENAI_SECURA_KEY.path} ]; then
       OPENAI_KEY="$(cat ${config.sops.secrets.OPENAI_SECURA_KEY.path})"
       export OPENAI_KEY
+    fi
+    if ${lib.boolToString hasLuarocksApiKey} && [ -f ${config.sops.secrets.LUAROCKS_API_KEY.path} ]; then
+      LUAROCKS_API_KEY="$(cat ${config.sops.secrets.LUAROCKS_API_KEY.path})"
+      export LUAROCKS_API_KEY
     fi
     if ${lib.boolToString hasTavilyApiKey} && [ -f ${config.sops.secrets.TAVILY_API_KEY.path} ]; then
       TAVILY_API_KEY="$(cat ${config.sops.secrets.TAVILY_API_KEY.path})"
@@ -26,6 +31,9 @@ let
   fishTokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) /* fish */ ''
     if ${lib.boolToString hasOpenAISecuraKey}; and test -f ${config.sops.secrets.OPENAI_SECURA_KEY.path}
       set -gx OPENAI_KEY (cat ${config.sops.secrets.OPENAI_SECURA_KEY.path})
+    end
+    if ${lib.boolToString hasLuarocksApiKey}; and test -f ${config.sops.secrets.LUAROCKS_API_KEY.path}
+      set -gx LUAROCKS_API_KEY (cat ${config.sops.secrets.LUAROCKS_API_KEY.path})
     end
     if ${lib.boolToString hasTavilyApiKey}; and test -f ${config.sops.secrets.TAVILY_API_KEY.path}
       set -gx TAVILY_API_KEY (cat ${config.sops.secrets.TAVILY_API_KEY.path})
@@ -298,6 +306,10 @@ in
       TAVILY_API_KEY = {
         sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
         path = "${config.home.homeDirectory}/.TAVILY_API_KEY";
+      };
+      LUAROCKS_API_KEY = {
+        sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
+        path = "${config.home.homeDirectory}/.LUAROCKS_API_KEY";
       };
     };
   };
