@@ -53,6 +53,12 @@ in
           serviceConfig = {
             StandardOutPath = nixJobLogPaths.gc.stdout;
             StandardErrorPath = nixJobLogPaths.gc.stderr;
+
+            # Idle CPU + throttled disk I/O so maintenance yields to foreground
+            # work instead of stalling the shared APFS container and tripping
+            # the WindowServer watchdog.
+            ProcessType = "Background";
+            LowPriorityIO = true;
           };
         };
       })
@@ -63,6 +69,11 @@ in
           serviceConfig = {
             StandardOutPath = nixJobLogPaths.optimise.stdout;
             StandardErrorPath = nixJobLogPaths.optimise.stderr;
+
+            # Idle CPU + throttled disk I/O (see nix-gc); optimise scans ~2M
+            # link inodes and was the worst APFS-contention offender.
+            ProcessType = "Background";
+            LowPriorityIO = true;
           };
         };
 
@@ -78,8 +89,11 @@ in
           '';
 
           gc = {
+            # Weekly (Sunday) rather than daily. optimise.interval below derives
+            # from this, so both heavy maintenance jobs run once a week.
             interval = [
               {
+                Weekday = 0;
                 Hour = 3;
                 Minute = 15;
               }
@@ -87,7 +101,7 @@ in
             options = "--delete-older-than 7d";
           };
 
-          # Optimize nix store after cleaning
+          # Optimize nix store after cleaning (inherits the weekly schedule, +1h)
           optimise.interval = lib.lists.forEach config.nix.gc.interval (e: e // { Hour = e.Hour + 1; });
 
           # Run builds with low priority to keep the system responsive
