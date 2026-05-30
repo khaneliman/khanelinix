@@ -13,6 +13,7 @@ in
     ./checks.nix
     ./parse.nix
     ./templates.nix
+    ./tests.nix
     ./treefmt.nix
   ];
 

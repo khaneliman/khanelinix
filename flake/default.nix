@@ -24,5 +24,6 @@ in
     "devShells"
     "formatter"
     "templates"
+    "tests"
   ] (_: "dev");
 }
