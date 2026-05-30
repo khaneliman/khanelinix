@@ -26,7 +26,7 @@ let
 
   listNamesMatching' = predicate: dirPath: lib.filter predicate (listNames' dirPath);
 
-  mergeAttrs' = attrsList: lib.foldl' (acc: attrs: acc // attrs) { } attrsList;
+  mergeAttrs' = lib.attrsets.mergeAttrsList;
 in
 {
   /**
@@ -329,7 +329,7 @@ in
           path = systemPath + "/${hostname}";
         });
     in
-    builtins.foldl' (acc: system: acc // generateSystemConfigs system) { } systemArchs;
+    mergeAttrs' (map generateSystemConfigs systemArchs);
 
   /**
     Filter systems for NixOS (Linux).
@@ -402,5 +402,5 @@ in
         in
         genAttrs userAtHosts parseUserAtHost;
     in
-    builtins.foldl' (acc: system: acc // generateHomeConfigs system) { } systemArchs;
+    mergeAttrs' (map generateHomeConfigs systemArchs);
 }
