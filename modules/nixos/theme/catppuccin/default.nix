@@ -2,12 +2,14 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 let
   inherit (lib)
     mkEnableOption
     mkIf
+    mkMerge
     mkOption
     types
     ;
@@ -69,20 +71,28 @@ in
     };
   };
 
-  config = mkIf cfg.enable (
-    lib.mkMerge [
-      {
-        assertions = [
-          {
-            assertion = !config.khanelinix.theme.nord.enable;
-            message = "Nord and Catppuccin themes cannot be enabled at the same time";
-          }
-          {
-            assertion = !config.khanelinix.theme.catppuccin.enable;
-            message = "Nord and Catppuccin themes cannot be enabled at the same time";
-          }
-        ];
-      }
-    ]
-  );
+  config = mkMerge [
+    # catppuccin/nix migration: pin the global toggle and disable auto-enrolling
+    # every port so the deprecation warning stays silent on every system. The
+    # actual catppuccin styling is applied through Home Manager.
+    (lib.optionalAttrs (inputs ? catppuccin && inputs.catppuccin ? nixosModules) {
+      catppuccin = {
+        inherit (cfg) enable;
+        autoEnable = false;
+      };
+    })
+
+    (mkIf cfg.enable {
+      assertions = [
+        {
+          assertion = !config.khanelinix.theme.nord.enable;
+          message = "Nord and Catppuccin themes cannot be enabled at the same time";
+        }
+        {
+          assertion = !config.khanelinix.theme.catppuccin.enable;
+          message = "Nord and Catppuccin themes cannot be enabled at the same time";
+        }
+      ];
+    })
+  ];
 }
