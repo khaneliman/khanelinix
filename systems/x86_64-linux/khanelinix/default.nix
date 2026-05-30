@@ -192,5 +192,8 @@ in
   # Keep EFI usage predictable when specialisations multiply boot artifacts.
   boot.loader.systemd-boot.configurationLimit = mkForce 10;
 
+  # Dev workstation: include developer/library man pages (man 2/3, devman outputs).
+  documentation.dev.enable = true;
+
   system.stateVersion = "26.05";
 }
