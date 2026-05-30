@@ -8,17 +8,12 @@
 let
   cfg = config.khanelinix.system.networking;
   homeCfg = config.home-manager.users.${config.khanelinix.user.name} or { };
-  tailscaleEnabled = config.khanelinix.services.tailscale.enable or false;
   exoEnabled = homeCfg.services.exo.enable or false;
   exoLibp2pPort = 52416;
   python3 = lib.getExe pkgs.python3;
   localNetworkPrivilegesCleanup = ./local-network-privileges-cleanup.py;
   applicationFirewallAllowedApps =
     cfg.applicationFirewall.allowedApps
-    ++ lib.optionals tailscaleEnabled [
-      "${pkgs.tailscale}/bin/.tailscaled-wrapped"
-      "${pkgs.tailscale}/bin/tailscaled"
-    ]
     ++ lib.optionals exoEnabled [
       "${pkgs.exo}/bin/exo"
     ];
