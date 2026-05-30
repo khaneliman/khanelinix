@@ -51,6 +51,12 @@
       inputs.flake-compat.follows = "flake-compat";
     };
 
+    nix-unit = {
+      url = "github:nix-community/nix-unit";
+      inputs.nixpkgs.follows = "root/nixpkgs";
+      inputs.treefmt-nix.follows = "treefmt-nix";
+    };
+
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "root/nixpkgs";
