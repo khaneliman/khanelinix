@@ -3,8 +3,8 @@
   inputs,
   lib,
   pkgs,
+  getPkgsMaster,
   getPkgsUnstable,
-
   ...
 }:
 let
@@ -94,13 +94,18 @@ in
 
     programs.firefox =
       let
+        pkgsMaster = getPkgsMaster pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
         pkgsUnstable = getPkgsUnstable pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
       in
       {
         # Firefox configuration and policies
         # See: https://mozilla.github.io/policy-templates/
         enable = true;
-        package = pkgsUnstable.firefox-devedition;
+        package =
+          if pkgs.stdenv.hostPlatform.isDarwin then
+            pkgsMaster.firefox-devedition
+          else
+            pkgsUnstable.firefox-devedition;
 
         # TODO: remove after stateVersion bump
         configPath = lib.mkIf pkgs.stdenv.hostPlatform.isLinux "${config.xdg.configHome}/mozilla/firefox";
