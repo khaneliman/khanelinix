@@ -41,6 +41,6 @@
       };
     in
     {
-      devShells = lib.foldl' (acc: name: acc // buildShell name) dotnetShells shellNames;
+      devShells = lib.attrsets.mergeAttrsList ([ dotnetShells ] ++ map buildShell shellNames);
     };
 }
