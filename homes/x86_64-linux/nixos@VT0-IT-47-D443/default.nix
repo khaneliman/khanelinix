@@ -204,5 +204,5 @@ in
 
   home.packages = [ pkgs.nodejs ];
 
-  home.stateVersion = "25.11";
+  home.stateVersion = "26.05";
 }

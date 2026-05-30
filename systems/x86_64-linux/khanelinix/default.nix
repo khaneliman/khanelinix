@@ -192,5 +192,5 @@ in
   # Keep EFI usage predictable when specialisations multiply boot artifacts.
   boot.loader.systemd-boot.configurationLimit = mkForce 10;
 
-  system.stateVersion = "25.11";
+  system.stateVersion = "26.05";
 }

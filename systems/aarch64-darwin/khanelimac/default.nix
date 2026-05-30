@@ -98,6 +98,6 @@ in
 
   system = {
     primaryUser = "khaneliman";
-    stateVersion = 5;
+    stateVersion = 7;
   };
 }

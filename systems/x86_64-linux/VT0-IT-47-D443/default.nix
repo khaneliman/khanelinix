@@ -43,7 +43,7 @@ in
     };
   };
 
-  system.stateVersion = "25.11";
+  system.stateVersion = "26.05";
 
   # networking.nameservers = lib.mkForce [
   #   "172.18.16.1"

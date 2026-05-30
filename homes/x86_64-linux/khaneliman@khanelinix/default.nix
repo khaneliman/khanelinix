@@ -401,5 +401,5 @@ in
   # Neo G9
   xresources.properties."Xft.dpi" = "108";
 
-  home.stateVersion = "25.11";
+  home.stateVersion = "26.05";
 }

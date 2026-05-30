@@ -107,9 +107,6 @@ in
           else
             pkgsUnstable.firefox-devedition;
 
-        # TODO: remove after stateVersion bump
-        configPath = lib.mkIf pkgs.stdenv.hostPlatform.isLinux "${config.xdg.configHome}/mozilla/firefox";
-
         darwinDefaultsId =
           if config.programs.firefox.package.pname == "firefox-devedition" then
             "org.nixos.firefoxdeveloperedition"

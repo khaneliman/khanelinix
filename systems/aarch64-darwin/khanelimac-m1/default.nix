@@ -73,7 +73,7 @@ in
 
   system = {
     primaryUser = "khaneliman";
-    stateVersion = 5;
+    stateVersion = 7;
   };
 
   system.defaults.universalaccess.reduceMotion = lib.mkForce null;
