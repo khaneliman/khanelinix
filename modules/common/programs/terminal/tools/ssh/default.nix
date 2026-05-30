@@ -14,6 +14,12 @@ let
 
   hosts = import ./hosts.nix;
 
+  # MagicDNS tailnet suffix. The "-ts" aliases below are only emitted when the
+  # Tailscale daemon/app is enabled, since plain ".local" aliases use mDNS and
+  # avoid Tailscale SSH re-auth for on-LAN connections.
+  magicDnsSuffix = "taild8431e.ts.net";
+  tailscaleEnabled = config.khanelinix.services.tailscale.enable or false;
+
   # Filter out the current host from the SSH configuration
   other-hosts = lib.filterAttrs (name: _: name != config.networking.hostName) hosts;
 
@@ -29,17 +35,24 @@ let
         lib.optionalString (config.programs.gnupg.agent.enable && remote.gpgAgent)
           "  RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra\n  RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh";
       port-expr = lib.optionalString (remote.system == "nixos") "  Port ${toString cfg.port}";
+
+      mkHostBlock =
+        aliasName: hostname:
+        lib.concatStringsSep "\n" (
+          lib.filter (x: x != "") [
+            "Host ${aliasName}"
+            "  Hostname ${hostname}"
+            "  User ${remote-user-name}"
+            "  ForwardAgent yes"
+            "  ConnectTimeout 10"
+            port-expr
+            forward-gpg
+          ]
+        );
     in
     lib.concatStringsSep "\n" (
-      lib.filter (x: x != "") [
-        "Host ${name}"
-        "  Hostname ${remote.hostname}"
-        "  User ${remote-user-name}"
-        "  ForwardAgent yes"
-        "  ConnectTimeout 10"
-        port-expr
-        forward-gpg
-      ]
+      [ (mkHostBlock name remote.hostname) ]
+      ++ lib.optional tailscaleEnabled (mkHostBlock "${name}-ts" "${name}.${magicDnsSuffix}")
     )
   ) (builtins.attrNames other-hosts);
 in
