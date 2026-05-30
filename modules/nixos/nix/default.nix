@@ -14,7 +14,12 @@ in
 
   config = mkIf cfg.enable {
     documentation = {
-      man.cache.enable = mkDefault true;
+      man.cache = {
+        enable = mkDefault true;
+        # Build the apropos/whatis index via a runtime systemd service instead
+        # of at build time, so closure changes don't rebuild the man cache.
+        generateAtRuntime = mkDefault true;
+      };
 
       nixos = {
         enable = mkDefault false;
