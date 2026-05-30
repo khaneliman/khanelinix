@@ -5,10 +5,22 @@
   ...
 }:
 let
-  inherit (self.lib.file) parseSystemConfigurations filterNixOSSystems filterDarwinSystems;
+  inherit (self.lib.file)
+    filterDarwinSystems
+    filterNixOSSystems
+    parseHomeConfigurations
+    parseSystemConfigurations
+    ;
 
   systemsPath = ../systems;
+  homesPath = ../homes;
   allSystems = parseSystemConfigurations systemsPath;
+  allHomes = parseHomeConfigurations homesPath;
+  matchingHomes =
+    system: hostname:
+    lib.filterAttrs (
+      _name: homeConfig: homeConfig.system == system && homeConfig.hostname == hostname
+    ) allHomes;
 in
 {
   flake = {
@@ -20,6 +32,7 @@ in
         value = self.lib.system.mkSystem {
           inherit inputs system hostname;
           username = "khaneliman";
+          matchingHomes = matchingHomes system hostname;
         };
       }
     ) (filterNixOSSystems allSystems);
@@ -32,6 +45,7 @@ in
         value = self.lib.system.mkDarwin {
           inherit inputs system hostname;
           username = "khaneliman";
+          matchingHomes = matchingHomes system hostname;
         };
       }
     ) (filterDarwinSystems allSystems);

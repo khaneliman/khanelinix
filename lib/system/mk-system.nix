@@ -24,6 +24,7 @@
   system,
   hostname,
   username ? "khaneliman",
+  matchingHomes ? null,
   modules ? [ ],
   ...
 }:
@@ -35,22 +36,26 @@ let
   inputPackageSets = common.mkInputPackageSets {
     inherit flake system;
   };
-  matchingHomes = common.mkHomeConfigs {
-    inherit
-      flake
-      system
-      hostname
-      ;
-  };
+  resolvedMatchingHomes =
+    if matchingHomes == null then
+      common.mkHomeConfigs {
+        inherit
+          flake
+          system
+          hostname
+          ;
+      }
+    else
+      matchingHomes;
   homeManagerConfig = common.mkHomeManagerConfig {
     inherit
       extendedLib
       inputs
       system
       hostname
-      matchingHomes
       inputPackageSets
       ;
+    matchingHomes = resolvedMatchingHomes;
     isNixOS = true;
   };
 in
