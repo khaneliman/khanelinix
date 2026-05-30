@@ -84,6 +84,22 @@ Analysis rules:
 - Wide bars usually indicate functions/files consuming the most total time.
 - Deep stacks can indicate recursion or expensive module merging.
 
+### Proving Algorithmic Degradation
+
+The flamegraph samples by time (default 99 Hz), so cheap-but-frequent calls can
+hide. To count exact function invocations instead of sampling time, set the
+frequency to 0:
+
+```bash
+nix-instantiate --eval-profiler flamegraph --eval-profiler-frequency 0 \
+  "$config_path" -A "$attr"
+```
+
+This samples after every call, so it is slow, but it exposes the true call count
+of recursive merges (`binaryMerge`, `recursiveUpdate`) and instantly reveals
+whether a naive fold has produced an O(N^2) call graph. Use it to confirm a
+merge hotspot before refactoring, not for routine timing.
+
 ## 2a. Separate Eval From Build
 
 Use drvPath evaluation when you only want evaluator cost:
@@ -125,6 +141,39 @@ Apply these in order based on profiling output.
 - Avoid generating many options with dynamic names unless the module API
   genuinely needs them; option declaration and merge cost scales with surface
   area.
+- Force strict evaluation of large static datasets (bulk lists, prompt text,
+  port/IP tables) instead of wrapping them in deeply nested lazy `map`/`filter`
+  chains; needless thunk allocation pressures the GC without saving work that is
+  always demanded anyway.
+- Prefer attribute-path lookups (`hasAttrByPath`, `attrByPath`,
+  `getAttrFromPath`) over dynamically concatenating strings and comparing them.
+  Static, interned attribute names compare by pointer; dynamically built strings
+  fall back to character-by-character comparison in the evaluator's symbol
+  table.
+
+### Attribute-Set Merge Complexity
+
+Attribute sets are immutable, so each `//` allocates a new set and copies the
+merged keys. The way many sets are combined dominates cost as the count grows.
+
+| Strategy | Syntax | Time / space | Use when |
+| --- | --- | --- | --- |
+| Sequential chain | `a // b // c` | O(N·m) | small, static, hardcoded (N < ~5) |
+| Linear fold | `foldl' (a: b: a // b) {} list` | O(N^2·m) | avoid for dynamic lists |
+| Binary merge | `lib.attrsets.mergeAttrsList list` | O(N·m·log N) | dynamic/large lists, overlays |
+
+- A `foldl'`/`foldr` of `//` over a list grows a single accumulator, re-copying
+  all prior keys on every step — quadratic. For dynamically sized lists, large
+  package sets, or generated attr arrays, use `lib.attrsets.mergeAttrsList`
+  (balanced binary merge) instead.
+- For surface-level grouping by key across a list, prefer
+  `lib.attrsets.zipAttrsWith`.
+- The same quadratic trap applies to `foldl' lib.recursiveUpdate {} list`. For
+  recursive merges of many sets, fold over a binary-merged structure rather than
+  a linear accumulator, or restructure so deep recursive merging is not needed.
+- Keep `mergeAttrsList` for genuinely dynamic or large inputs; for a trivial
+  fixed merge the plain `a // b // c` chain has lower constant overhead than the
+  recursive helper.
 
 ### Tuning Experiments
 
@@ -145,8 +194,30 @@ Do not keep exploratory Nix edits unless the measured result justifies them.
 - Nixvim and plugin-heavy modules can create large option graphs.
 - Home Manager without global pkgs can evaluate Nixpkgs twice.
 - Overlays that import Nixpkgs internally often multiply evaluation cost.
+- A single overlay does **not** re-evaluate all of Nixpkgs; only the overridden
+  attributes re-evaluate, and unchanged values stay structurally shared. Suspect
+  overlays only when they import Nixpkgs internally or override deep nested
+  attributes (which discards the shared pointers).
+- `specialisations` and NixOS `containers` are the highest-cost structural
+  feature: each duplicates and re-evaluates the configuration graph, so N
+  evaluations across M specialisations/containers is an N×M multiplier. Budget
+  them deliberately and prefer lighter isolation (systemd dynamic users, plain
+  wrappers) when full graph duplication is not required.
 - `flake-parts` or module helpers are not automatically the problem; profile
   before replacing structure.
+
+## 3b. Environmental Factors That Mask Eval Cost
+
+- A dirty (uncommitted) git working tree forces Nix to copy the whole working
+  directory into the store before evaluating a flake, adding disk I/O latency
+  that masks the real eval time. Commit or stash before benchmarking, or compare
+  only clean-tree runs.
+- Single-threaded `nix eval`/`nix-instantiate` bounds large multi-package
+  evaluations to one core. For evaluating many independent installables (CI,
+  bulk package checks), `nix-eval-jobs` spawns parallel workers; cap each with
+  `--max-memory-size` (workers each load the full Nixpkgs graph, so memory
+  scales linearly with worker count) and use `--check-cache-status` /
+  caching to avoid redundant re-evaluation.
 
 ## 4. Verification
 
