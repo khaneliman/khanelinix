@@ -11,6 +11,7 @@ let
     act
     deadnix
     nh
+    nix-unit
     statix
     sops
     self'.formatter
@@ -41,6 +42,7 @@ mkShell {
     echo "  deadnix               - Find unused code"
     echo "  nh search <query>     - Search nixpkgs"
     echo "  sops                  - Manage secrets"
+    echo "  nix-unit --flake .#tests - Run lib unit tests"
     echo "  lua-language-server   - Run LuaLS workspace checks"
     echo ""
     echo "💡 Tip: Run 'nix flake show' to see all available dev shells"
