@@ -35,16 +35,20 @@ let
     if lib.length splitName > 1 then lib.concatStringsSep "." (lib.init splitName) else baseName;
 
   names = map getFileNameWithoutExtension images;
-  wallpapers = lib.foldl (
-    acc: image:
-    let
-      # fileName = builtins.baseNameOf image;
-      # Get the basename of the file and then take the name before the file extension.
-      # eg. mywallpaper.png -> mywallpaper
-      name = getFileNameWithoutExtension image;
-    in
-    acc // { "${name}" = mkWallpaper name (./assets + "/${image}"); }
-  ) { } images;
+  wallpapers = lib.attrsets.mergeAttrsList (
+    map (
+      image:
+      let
+        # fileName = builtins.baseNameOf image;
+        # Get the basename of the file and then take the name before the file extension.
+        # eg. mywallpaper.png -> mywallpaper
+        name = getFileNameWithoutExtension image;
+      in
+      {
+        "${name}" = mkWallpaper name (./assets + "/${image}");
+      }
+    ) images
+  );
   installTarget = "$out/share/wallpapers";
 in
 stdenvNoCC.mkDerivation {
