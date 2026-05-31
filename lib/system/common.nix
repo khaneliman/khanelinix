@@ -163,6 +163,7 @@ in
       hostname,
       matchingHomes,
       inputPackageSets,
+      sharedHomeModules ? null,
       isNixOS ? true,
     }:
     if matchingHomes != { } then
@@ -174,6 +175,8 @@ in
           else
             null;
         enableStylixHomeModule = stylixHomeModule != null && !(config.stylix.enable or false);
+        baseHomeModules = hmSharedModules extendedLib;
+        hmSharedModulesResolved = if sharedHomeModules == null then baseHomeModules else sharedHomeModules;
       in
       {
         home-manager = {
@@ -187,7 +190,7 @@ in
           }
           // inputPackageSets;
           sharedModules =
-            hmSharedModules extendedLib
+            hmSharedModulesResolved
             ++ extendedLib.optional enableStylixHomeModule stylixHomeModule
             # NOTE: https://github.com/nix-community/stylix/issues/1832
             ++ extendedLib.optional enableStylixHomeModule {

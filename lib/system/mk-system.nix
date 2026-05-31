@@ -25,6 +25,8 @@
   hostname,
   username ? "khaneliman",
   matchingHomes ? null,
+  nixosModules ? null,
+  sharedHomeModules ? null,
   modules ? [ ],
   ...
 }:
@@ -33,6 +35,11 @@ let
   common = import ./common.nix { inherit inputs; };
 
   extendedLib = common.mkExtendedLib flake inputs.nixpkgs;
+  baseSystemModules =
+    if nixosModules == null then
+      (extendedLib.importModulesRecursive ../../modules/nixos)
+    else
+      nixosModules;
   inputPackageSets = common.mkInputPackageSets {
     inherit flake system;
   };
@@ -54,6 +61,7 @@ let
       system
       hostname
       inputPackageSets
+      sharedHomeModules
       ;
     matchingHomes = resolvedMatchingHomes;
     isNixOS = true;
@@ -96,7 +104,7 @@ inputs.nixpkgs.lib.nixosSystem {
 
     # Import all nixos modules recursively
   ]
-  ++ (extendedLib.importModulesRecursive ../../modules/nixos)
+  ++ baseSystemModules
   ++ [
     ../../systems/${system}/${hostname}
   ]

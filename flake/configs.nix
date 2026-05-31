@@ -16,6 +16,14 @@ let
   homesPath = ../homes;
   allSystems = parseSystemConfigurations systemsPath;
   allHomes = parseHomeConfigurations homesPath;
+  allNixosModules = self.lib.file.importModulesRecursive ../modules/nixos;
+  allDarwinModules = self.lib.file.importModulesRecursive ../modules/darwin;
+  allHomeModules = [
+    inputs.catppuccin.homeModules.catppuccin
+    inputs.nix-index-database.homeModules.nix-index
+    inputs.sops-nix.homeManagerModules.sops
+  ]
+  ++ self.lib.file.importModulesRecursive ../modules/home;
   matchingHomes =
     system: hostname:
     lib.filterAttrs (
@@ -32,6 +40,8 @@ in
         value = self.lib.system.mkSystem {
           inherit inputs system hostname;
           username = "khaneliman";
+          nixosModules = allNixosModules;
+          sharedHomeModules = allHomeModules;
           matchingHomes = matchingHomes system hostname;
         };
       }
@@ -45,6 +55,8 @@ in
         value = self.lib.system.mkDarwin {
           inherit inputs system hostname;
           username = "khaneliman";
+          darwinModules = allDarwinModules;
+          sharedHomeModules = allHomeModules;
           matchingHomes = matchingHomes system hostname;
         };
       }
