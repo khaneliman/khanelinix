@@ -23,6 +23,9 @@ decorative abstractions.
    - [references/anti-patterns.md](references/anti-patterns.md): `with`, `rec`,
      chained conditionals, and other style hazards that should usually block a
      proposed refactor.
+   - [references/performance-patterns.md](references/performance-patterns.md):
+     strict folds and `genericClosure`, path coercion vs `lib.fileset`, string
+     handling, attribute-path lookups, and import-cost awareness.
 3. Apply the narrowest ruleset needed. Do not bulk-load every reference file
    unless the task truly spans them.
 
