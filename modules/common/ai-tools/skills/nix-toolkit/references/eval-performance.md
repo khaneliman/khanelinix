@@ -131,7 +131,27 @@ Apply these in order based on profiling output.
 ### Nix Language Patterns
 
 - Reduce thunk creation by moving repeated `let` bindings outside loops/maps.
-- Prefer `let` plus standard attrsets over `rec { ... }` when possible.
+- Prefer `let` plus standard attrsets over `rec { ... }` when possible. `rec`
+  resolves interdependent references via fixpoint iteration; binding shared
+  values in a `let` before the set avoids that work.
+- Use strict `builtins.foldl'` / `lib.foldl'` (not `foldl` or hand-written
+  recursion) for list reductions. The strict accumulator avoids a thunk chain
+  that pressures the GC and can overflow the evaluation stack.
+- For transitive-closure traversals (dependency graphs, reachability), use the
+  `builtins.genericClosure` primop instead of manual recursion; it runs in C++,
+  dedups in place, and bypasses the Nix recursion limit.
+- Avoid heavy string manipulation. Repeated split/concat over large strings
+  degrades toward O(N^2). Read structured data with `builtins.fromJSON` /
+  `fromTOML`; if parsing is unavoidable, tokenize with `builtins.match` and
+  reduce with a strict `foldl'`.
+- Do not interpolate local paths into strings (`"${./.}"`). Coercing a path to a
+  string copies the target into the store before the string resolves, so a
+  monorepo root triggers a full-tree copy on every eval. Keep path values as
+  paths, or select sources with `lib.fileset` before they reach the store. This
+  is the authoring-time analogue of the dirty-working-tree copy in section 3b.
+- Remember that importing a NixOS/HM module evaluates it; eval time scales
+  linearly with the import count. Gate optional/expensive modules behind enable
+  options and keep transient configs to a minimal import baseline.
 - If using IFD, consider materializing outputs into repo files to avoid
   evaluator-builder context switches.
 - Avoid repeated imports of Nixpkgs, Home Manager, or flake inputs inside
@@ -156,11 +176,11 @@ Apply these in order based on profiling output.
 Attribute sets are immutable, so each `//` allocates a new set and copies the
 merged keys. The way many sets are combined dominates cost as the count grows.
 
-| Strategy | Syntax | Time / space | Use when |
-| --- | --- | --- | --- |
-| Sequential chain | `a // b // c` | O(N·m) | small, static, hardcoded (N < ~5) |
-| Linear fold | `foldl' (a: b: a // b) {} list` | O(N^2·m) | avoid for dynamic lists |
-| Binary merge | `lib.attrsets.mergeAttrsList list` | O(N·m·log N) | dynamic/large lists, overlays |
+| Strategy         | Syntax                             | Time / space | Use when                          |
+| ---------------- | ---------------------------------- | ------------ | --------------------------------- |
+| Sequential chain | `a // b // c`                      | O(N·m)       | small, static, hardcoded (N < ~5) |
+| Linear fold      | `foldl' (a: b: a // b) {} list`    | O(N^2·m)     | avoid for dynamic lists           |
+| Binary merge     | `lib.attrsets.mergeAttrsList list` | O(N·m·log N) | dynamic/large lists, overlays     |
 
 - A `foldl'`/`foldr` of `//` over a list grows a single accumulator, re-copying
   all prior keys on every step — quadratic. For dynamically sized lists, large
@@ -216,8 +236,8 @@ Do not keep exploratory Nix edits unless the measured result justifies them.
   evaluations to one core. For evaluating many independent installables (CI,
   bulk package checks), `nix-eval-jobs` spawns parallel workers; cap each with
   `--max-memory-size` (workers each load the full Nixpkgs graph, so memory
-  scales linearly with worker count) and use `--check-cache-status` /
-  caching to avoid redundant re-evaluation.
+  scales linearly with worker count) and use `--check-cache-status` / caching to
+  avoid redundant re-evaluation.
 
 ## 4. Verification
 
