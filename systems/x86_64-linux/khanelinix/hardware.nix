@@ -1,4 +1,5 @@
 {
+  getPkgsMaster,
   lib,
   pkgs,
   modulesPath,
@@ -7,6 +8,7 @@
 }:
 let
   inherit (lib.khanelinix) enabled;
+  pkgsMaster = getPkgsMaster pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
 in
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
@@ -32,7 +34,8 @@ in
 
     # consoleLogLevel = 0;
 
-    kernelPackages = pkgs.linuxPackages_zen;
+    # TODO: switch back to pkgs.linuxPackages_zen after 7.0.10 reaches nixos-unstable.
+    kernelPackages = pkgsMaster.linuxPackages_zen;
     kernel.sysctl."kernel.sysrq" = 1;
 
     initrd = {
