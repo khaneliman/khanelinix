@@ -23,6 +23,27 @@ let
     )
     + lib.optionalString (yabaiExtraConfig != "") ("\n" + yabaiExtraConfig + "\n")
   );
+  yabaiStablePath = "${userHome}/.local/bin/yabai-stable";
+  yabaiStartupCommand = ''
+    user_name="$USER"
+    if [ -z "$user_name" ]; then
+      user_name="$(id -un)"
+    fi
+
+    if [ -n "$user_name" ]; then
+      rm -f "/tmp/yabai_$user_name.lock" "/tmp/yabai_$user_name.socket"
+    fi
+
+    exec ${
+      lib.escapeShellArgs (
+        [ yabaiStablePath ]
+        ++ lib.optionals (yabaiConfig != { } || yabaiExtraConfig != "") [
+          "-c"
+          yabaiConfigFile
+        ]
+      )
+    }
+  '';
 in
 {
   options.khanelinix.desktop.wms.yabai = {
@@ -56,13 +77,11 @@ in
     launchd.user.agents.yabai.serviceConfig = {
       StandardErrorPath = cfg.logPaths.stderr;
       StandardOutPath = cfg.logPaths.stdout;
-      ProgramArguments = lib.mkForce (
-        [ "${userHome}/.local/bin/yabai-stable" ]
-        ++ lib.optionals (yabaiConfig != { } || yabaiExtraConfig != "") [
-          "-c"
-          "${yabaiConfigFile}"
-        ]
-      );
+      ProgramArguments = lib.mkForce [
+        "/bin/sh"
+        "-c"
+        yabaiStartupCommand
+      ];
       KeepAlive = lib.mkForce {
         PathState = {
           "/run/current-system/sw/bin/yabai" = true;
