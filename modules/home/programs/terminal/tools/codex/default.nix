@@ -21,7 +21,8 @@ in
 
   config = mkIf cfg.enable {
     home.shellAliases = {
-      codex-deep = "codex --profile deep -c model_context_window=1000000 -c model_auto_compact_token_limit=850000";
+      codex-deep = "codex --profile deep";
+      codex-long = "codex --profile long -c model_context_window=1000000 -c model_auto_compact_token_limit=850000";
       codex-nano = "codex --profile nano";
       codex-offline = "codex --profile offline";
       codex-quick = "codex --profile quick";
@@ -65,14 +66,13 @@ in
 
         notice.hide_rate_limit_model_nudge = true;
 
-        # GPT-5.5 is more expensive per token than GPT-5.4, but Codex is tuned
-        # to complete most work with fewer tokens. Keep routine turns at medium
-        # and reserve higher reasoning for explicit profiles.
+        # DeepSWE favors GPT-5.5 high/xhigh enough to justify high as the
+        # routine default; xhigh stays reserved for explicit deep runs.
         model = "gpt-5.5";
         model_auto_compact_token_limit = 240000;
         model_context_window = 272000;
-        model_reasoning_effort = "medium";
-        plan_mode_reasoning_effort = "medium";
+        model_reasoning_effort = "high";
+        plan_mode_reasoning_effort = "high";
         # NOTE: 5.5 is already 2x cost
         # Plenty of room atm with smaller mcp/agents.md/agents/commands
         service_tier = "fast";
@@ -159,10 +159,19 @@ in
 
         profiles = {
           # Deep analysis and live-research mode. Intentionally expensive:
-          # GPT-5.4 currently advertises the largest Codex context window.
-          # The deep alias passes context overrides directly via CLI -c because
-          # those fields are top-level settings in the published schema.
+          # benchmark preference is GPT-5.5 xhigh for best pass rate.
           deep = {
+            model = "gpt-5.5";
+            model_reasoning_effort = "xhigh";
+            model_verbosity = "high";
+            plan_mode_reasoning_effort = "xhigh";
+            web_search = "live";
+          };
+
+          # Large-context escape hatch. The alias passes context overrides
+          # directly via CLI -c because those fields are top-level settings in
+          # the published schema.
+          long = {
             model = "gpt-5.4";
             model_reasoning_effort = "xhigh";
             model_verbosity = "high";
