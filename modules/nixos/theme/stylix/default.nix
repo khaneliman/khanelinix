@@ -47,6 +47,8 @@ in
       base16Scheme = "${inputs.stylix.inputs.tinted-schemes}/base16/${cfg.theme}.yaml";
 
       targets = {
+        # FIXME: Stylix still writes removed NixOS kmscon options.
+        kmscon.enable = false;
         gtk.enable = !config.khanelinix.theme.gtk.enable;
         qt.enable = !config.khanelinix.theme.qt.enable;
       };
