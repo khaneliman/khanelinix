@@ -59,41 +59,15 @@ mode boundaries.
 
 ## Scripts
 
-Use scripts for first-pass reports and repeatable measurements; use references
-when diagnosis, interpretation, or custom command shaping is needed.
-
-- `scripts/closure-diff-report.sh <before> <after>`: build two installables
-  without linking and report closure drift.
-- `scripts/dependency-trace.sh <target> [dependency]`: inspect direct
-  references, recursive closure, and optional `why-depends` paths.
-- `scripts/package-option-scan.sh <package-list-installable> [pattern]`: inspect
-  package-list options without building the package or system closure.
-- `scripts/drv-graph-grep.sh [--allow-meta] <derivation> <pattern>`: instantiate
-  a derivation graph and search drv names without realizing outputs.
-- `scripts/eval-benchmark.sh [--runs N] [--warmup N] <eval command...>`:
-  benchmark eval commands and capture `NIX_SHOW_STATS`.
+Read [scripts.md](references/scripts.md) when a first-pass report or repeatable
+measurement can replace manual command assembly.
 
 ## Cross-Skill Boundaries
 
-- Use `writing-nix` before editing Nix code or module structure.
-- Use `git-toolkit` for history surgery, commit strategy, and branch hygiene.
-- Use `github-toolkit` for GitHub issues, PR review comments, and CI checks.
-- Prefer one-off tools through `nix shell`, `nix run`, `,`, or `nix-shell`
-  instead of adding persistent dependencies only for investigation.
+Read [operating-rules.md](references/operating-rules.md) for cross-skill
+boundaries, reporting rules, and skill maintenance.
 
 ## Reporting Rules
 
-- Show exact commands used or recommended.
-- Separate measured facts from hypotheses.
-- Label snippets as one of: executed, dry-run checked, syntax checked, or
-  template only.
-- For performance claims, require before/after measurements from the same
-  command shape.
-- For package diffs, report both the compared inputs and the comparison method.
-
-## Skill Maintenance
-
-Run `scripts/validate-snippets.sh` after editing references. It checks shell
-fence syntax and verifies the Nix subcommands/flags used by the playbooks are
-available in the current environment. It intentionally does not build packages,
-fetch remote forks, or update lock files.
+Show exact commands, separate facts from hypotheses, and label snippets as
+executed, dry-run checked, syntax checked, or template only.
