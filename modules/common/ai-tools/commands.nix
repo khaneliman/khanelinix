@@ -13,6 +13,7 @@ let
     commit-changes = "refactorer";
     deep-check = "test-runner";
     dependency-audit = "test-runner";
+    fixup-autosquash = "refactorer";
     git-bisect = "explore";
     git-cleanup = "explore";
     illustrator-brief = "explore";
