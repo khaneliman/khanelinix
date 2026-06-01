@@ -131,38 +131,6 @@ def compact_main_plist(main_plist):
     }
 
 
-def surviving_signing_identifiers(main_plist):
-    objects = main_plist["$objects"]
-    identifiers = set()
-
-    for obj in objects:
-        if not isinstance(obj, dict):
-            continue
-        if class_name(objects, obj.get("$class")) != "NEPathRule":
-            continue
-
-        signing_identifier = resolve(objects, obj.get("SigningIdentifier"))
-        path = resolve(objects, obj.get("Path"))
-        if isinstance(signing_identifier, str) and isinstance(path, str):
-            identifiers.add(signing_identifier)
-
-    return identifiers
-
-
-def prune_uuid_cache(uuid_cache_plist, removed_identifiers, surviving_identifiers):
-    updated = dict(uuid_cache_plist)
-
-    for key in ("uuid-mappings", "synthesized-uuid-mappings"):
-        mappings = dict(updated.get(key, {}))
-        for identifier in removed_identifiers:
-            if identifier in surviving_identifiers:
-                continue
-            mappings.pop(identifier, None)
-        updated[key] = mappings
-
-    return updated
-
-
 def write_summary(message):
     with open(
         os.environ["KHANELINIX_NETWORK_EXTENSION_SUMMARY"],
@@ -174,7 +142,6 @@ def write_summary(message):
 
 def main():
     main_plist = load(os.environ["KHANELINIX_NETWORK_EXTENSION_PLIST"])
-    uuid_cache_plist = load(os.environ["KHANELINIX_NETWORK_EXTENSION_UUID_CACHE"])
 
     stale_rules = find_stale_rule_indices(main_plist)
     removed_indices = {index for index, _ in stale_rules}
@@ -199,21 +166,10 @@ def main():
         rewritten_main["$top"] = rewrite_value(main_plist["$top"], removed_indices)
 
         compacted_main = compact_main_plist(rewritten_main)
-        surviving_identifiers = surviving_signing_identifiers(compacted_main)
-        cleaned_uuid_cache = prune_uuid_cache(
-            uuid_cache_plist,
-            removed_identifiers,
-            surviving_identifiers,
-        )
 
         dump(os.environ["KHANELINIX_NETWORK_EXTENSION_PLIST_OUT"], compacted_main)
-        dump(
-            os.environ["KHANELINIX_NETWORK_EXTENSION_UUID_CACHE_OUT"],
-            cleaned_uuid_cache,
-        )
 
         load(os.environ["KHANELINIX_NETWORK_EXTENSION_PLIST_OUT"])
-        load(os.environ["KHANELINIX_NETWORK_EXTENSION_UUID_CACHE_OUT"])
 
         handle.write("1")
         write_summary(
