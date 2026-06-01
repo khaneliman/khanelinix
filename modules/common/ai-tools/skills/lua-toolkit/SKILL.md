@@ -39,20 +39,10 @@ If intent is unclear, ask first.
 
 ## Core Rules (apply in every mode)
 
-- Target Lua 5.1 / LuaJIT 2.1. Do not use Lua 5.2+ dialect features (new `goto`
-  scoping, integer division, native bitwise operators); use `require("bit")` for
-  bit ops — Neovim guarantees it even on non-JIT builds.
-- Never declare globals. All state, caches, and functions live in `local`
-  bindings or the module table returned by the file.
-- Separate configuration from initialization. Do not force `setup()`; prefer a
-  `vim.g.<plugin>` config table read lazily.
-- Self-lazy-load: keep startup work out of `lua/`, use `plugin/`+`ftplugin/`,
-  and defer `require()` into command/keymap closures. Don't rely on the plugin
-  manager to lazy-load for you.
-- Expose one scoped command with subcommand completion, not many commands.
-- Expose user-bindable actions as `<Plug>` mappings and ship no default keymaps.
-- Prioritize type safety: LuaCATS annotations + lua-ls, gated in CI.
-- Distribute on LuaRocks with SemVer; never `0ver`.
+Target Lua 5.1 / LuaJIT 2.1, avoid globals, self-lazy-load, prefer lazy
+`vim.g.<plugin>` config over forced `setup()`, expose one scoped command plus
+`<Plug>` mappings, and gate types with LuaCATS/lua-ls. Read
+[core-rules.md](references/core-rules.md) when writing or reviewing plugin code.
 
 ## Reference Implementations
 
@@ -61,17 +51,10 @@ Canonical real-world examples: `nvim-best-practices`,
 
 ## Cross-Skill Boundaries
 
-- `writing-nix` before editing Nix that packages/wires the plugin (Nixvim,
-  `vimUtils` derivations).
-- `git-toolkit` for commit strategy and local history surgery.
-- `github-toolkit` for PR review comments and CI check triage.
-- One-off tooling via `nix shell`/`,` (stylua, luacheck, neovim nightly) over
-  persistent lint/test deps.
+Read [operating-rules.md](references/operating-rules.md) for cross-skill
+boundaries, tooling posture, and reporting rules.
 
 ## Reporting Rules
 
-- Show exact commands, paths, and minimal snippets.
-- Label snippets: executed, syntax checked, or template only.
-- Separate measured facts (startup time, test output) from design guidance.
-- Name the Neovim version when behavior is version-gated (e.g. `vim.validate`
-  deprecated in 0.11, removed in 1.0).
+Show exact commands and paths. Label snippets executed, syntax checked, or
+template only.
