@@ -21,10 +21,15 @@ let
     name: command:
     pkgs.writeShellScript name ''
       set +e
+      log() {
+        /bin/printf '%s %s\n' "[$(/bin/date -u '+%FT%TZ')][${name}]" "$1"
+      }
 
+      log "starting"
       ${triggerSketchybarNixUpdate}
       ${command}
       status=$?
+      log "finished status=$status"
       ${triggerSketchybarNixUpdate}
       exit $status
     '';
@@ -39,6 +44,60 @@ let
       stdout = "/var/log/nix-optimise.out.log";
       stderr = "/var/log/nix-optimise.err.log";
     };
+  };
+  nixLogRotationEntries = {
+    gc = [
+      {
+        logfilename = nixJobLogPaths.gc.stderr;
+        mode = "644";
+        owner = "root";
+        group = "wheel";
+        count = 7;
+        size = "2048";
+        flags = [
+          "Z"
+          "C"
+        ];
+      }
+      {
+        logfilename = nixJobLogPaths.gc.stdout;
+        mode = "644";
+        owner = "root";
+        group = "wheel";
+        count = 7;
+        size = "2048";
+        flags = [
+          "Z"
+          "C"
+        ];
+      }
+    ];
+    optimise = [
+      {
+        logfilename = nixJobLogPaths.optimise.stderr;
+        mode = "644";
+        owner = "root";
+        group = "wheel";
+        count = 7;
+        size = "2048";
+        flags = [
+          "Z"
+          "C"
+        ];
+      }
+      {
+        logfilename = nixJobLogPaths.optimise.stdout;
+        mode = "644";
+        owner = "root";
+        group = "wheel";
+        count = 7;
+        size = "2048";
+        flags = [
+          "Z"
+          "C"
+        ];
+      }
+    ];
   };
 in
 {
@@ -63,6 +122,9 @@ in
         };
       })
       {
+        system.newsyslog.files.nix-gc = nixLogRotationEntries.gc;
+        system.newsyslog.files.nix-optimise = nixLogRotationEntries.optimise;
+
         # Wrap optimise in caffeinate to prevent sleep while running.
         launchd.daemons.nix-optimise = {
           command = lib.mkForce "${optimiseWrapper}";

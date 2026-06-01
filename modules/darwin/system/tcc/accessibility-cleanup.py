@@ -12,6 +12,7 @@ def stable_clients():
     return [
         os.path.join(user_home, ".local/bin/skhd-stable"),
         os.path.join(user_home, ".local/bin/yabai-stable"),
+        os.path.join(user_home, ".local/bin/borders-stable"),
     ]
 
 
@@ -32,6 +33,7 @@ def cdhash(path):
 
 def main():
     stable_client_paths = stable_clients()
+    stable_client_placeholders = ", ".join(["?"] * len(stable_client_paths))
 
     with sqlite3.connect(DB_PATH) as connection:
         rows = connection.execute(
@@ -42,9 +44,9 @@ def main():
               and client_type = 1
               and (
                 client like '/nix/store/%'
-                or client in (?, ?)
+                or client in ({})
               )
-            """,
+            """.format(stable_client_placeholders),
             (SERVICE, *stable_client_paths),
         ).fetchall()
 

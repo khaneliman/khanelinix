@@ -93,8 +93,8 @@ in
         default < meh - p : osascript -e 'tell app "loginwindow" to «event aevtrsdn»';
 
         # Reload yabai
-        default < ctrl + lalt + cmd - r : bash -c launchctl kickstart -k gui/501/org.nixos.yabai
-        default < shift + lalt + cmd - r : bash -c launchctl kickstart -k gui/501/org.nixos.skhd
+        default < ctrl + lalt + cmd - r : bash -c launchctl kickstart -k gui/"$(id -u)"/org.nixos.yabai
+        default < shift + lalt + cmd - r : bash -c launchctl kickstart -k gui/"$(id -u)"/org.nix-community.home.skhd
 
         # Toggle sketchybar
         default < shift + lalt - space : ${sketchybar} --bar hidden=toggle
