@@ -44,7 +44,7 @@ in
       settings = {
         features = {
           apps = true;
-          fast_mode = true;
+          fast_mode = false;
           multi_agent = true;
           prevent_idle_sleep = true;
           shell_snapshot = true;
