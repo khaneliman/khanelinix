@@ -4,68 +4,21 @@ let
   allowedTools = "Bash(git log:*), Bash(git diff:*), Bash(git tag:*), Edit, Read, Write";
   argumentHint = "[version] [--auto] [--format=keepachangelog|conventional] [--since=tag|date]";
   prompt = ''
-    Generate and maintain project changelogs that follow established conventions.
+    Generate or update changelog using existing project convention.
 
-    ## **WORKFLOW OVERVIEW**
+    Workflow:
+    1. Find `CHANGELOG.md`, `HISTORY.md`, `CHANGES.md`, `NEWS.md`,
+       `RELEASES.md`, or docs equivalents; infer format, version style, date
+       style, and section names.
+    2. Determine range from `[version]`, `--since`, last tag, or project
+       release pattern. Classify commits by user-visible impact and breaking
+       changes.
+    3. Write concise user-facing entries. Prefer existing format; use
+       `--format` only when no convention exists or user requests override.
+    4. Insert at top without rewriting history. Preserve links and headings.
 
-    This command follows a 4-phase systematic approach:
-    1. **Analysis** - Examine project changelog patterns and git history
-    2. **Classification** - Categorize commits and changes by type and impact
-    3. **Generation** - Create changelog entries following detected conventions
-    4. **Integration** - Update existing changelog or create new one
-
-    ## **PHASE 1: PROJECT AND CHANGELOG ANALYSIS**
-
-    ### **Step 1.1: Existing Changelog Analysis**
-    ```
-    ALWAYS START - Understand current changelog structure and conventions
-    ```
-
-    **Changelog detection and analysis:**
-    ```
-    Check for existing changelog files:
-      - CHANGELOG.md (most common)
-      - HISTORY.md, CHANGES.md, NEWS.md
-      - docs/changelog.md or similar
-      - RELEASES.md or release notes
-
-    IF changelog exists:
-        Analyze format and conventions:
-          - Keep a Changelog format (## [Version] - Date)
-          - Conventional changelog (### Added, ### Changed, etc.)
-          - Semantic versioning patterns (v1.2.3 vs 1.2.3)
-          - Date formats (YYYY-MM-DD vs Month DD, YYYY)
-          - Section organization and naming
-    ```
-
-    ## **PHASE 2: CHANGE CLASSIFICATION**
-
-    ### **Step 2.1: Commit Categorization**
-    - Identify commit types (feat, fix, docs, refactor, etc.)
-    - Group commits into changelog sections
-    - Note breaking changes and migration requirements
-
-    ## **PHASE 3: CHANGELOG GENERATION**
-
-    - Generate new changelog entries
-    - Follow existing format and conventions
-    - Include version, date, and sections
-
-    ## **PHASE 4: UPDATE FILE**
-
-    - Insert new entry at top
-    - Preserve existing history
-    - Validate formatting
-
-    **Command Arguments:**
-    - `[version]`: Optional explicit version
-    - `--auto`: Auto-determine version
-    - `--format=keepachangelog`: Keep a Changelog style
-    - `--format=conventional`: Conventional commits style
-    - `--since=tag`: Use last tag as baseline
-    - `--since=date`: Use date as baseline
-
-    Keep changelog entries concise, user-facing, and consistent.
+    Report baseline, commit range, changed file, and any omitted internal-only
+    commits.
   '';
 
 in

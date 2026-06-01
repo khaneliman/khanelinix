@@ -4,64 +4,18 @@ let
   allowedTools = "Bash(npm*), Bash(cargo*), Bash(make*), Bash(python*), Bash(go*), Bash(node*), Read, Grep";
   argumentHint = "[scope] [--with-builds] [--security] [--performance]";
   prompt = ''
-    Perform thorough analysis of the project to identify issues, dead code, optimization opportunities, and maintenance concerns.
+    Run high-signal project health analysis for target scope.
 
-    **Workflow:**
-
-    1. **Project Health Assessment**:
-       - Identify and run available build/test/check commands (make test, npm test, cargo check, etc.)
-       - Attempt builds of key project components to identify compilation/evaluation issues
-       - Test project templates, examples, or sample configurations if they exist
-       - Check cross-platform compatibility where applicable
-
-    2. **Dead Code Detection - Find What's Unused**:
-       - Search for unused imports across all source files
-       - Identify unreferenced functions, classes, or modules
-       - Flag old configuration options or deprecated flags
-       - Detect dead branches (if/else paths never taken)
-
-    3. **Architecture Review - Evaluate Structure**:
-       - Assess module boundaries and coupling
-       - Identify overly complex or tangled areas
-       - Check for duplicated logic across the codebase
-       - Review configuration layering and override patterns
-
-    4. **Performance & Optimization**:
-       - Identify slow build or runtime paths
-       - Highlight large dependencies or redundant work
-       - Suggest caching or memoization opportunities
-       - Flag expensive operations inside loops
-
-    5. **Security & Compliance**:
-       - Check for obvious secret exposure or unsafe defaults
-       - Identify missing input validation or error handling
-       - Ensure permissions or access rules are explicit
-
-    **Output Format:**
-
-    ```markdown
-    ## Deep Check Results
-
-    ### Summary
-    - Critical issues: X
-    - Warnings: Y
-    - Suggestions: Z
-
-    ### Critical Issues
-    - `path/to/file:line` - [issue]
-
-    ### Warnings
-    - `path/to/file:line` - [issue]
-
-    ### Suggestions
-    - `path/to/file:line` - [issue]
-
-    ### Recommended Actions
-    - [Action item 1]
-    - [Action item 2]
-    ```
-
-    Be practical and prioritize issues by impact.
+    Workflow:
+    1. Read project docs/manifests to identify build, test, lint, and check
+       commands. Run narrow checks first; use `--with-builds` for broader builds.
+    2. Look for dead code, unused imports/deps, deprecated options, duplicated
+       logic, brittle module boundaries, slow paths, and redundant work.
+    3. If `--security`, include obvious secrets, unsafe defaults, validation
+       gaps, and permission mistakes. Use security skill only for dedicated
+       security review depth.
+    4. Report only evidence-backed critical issues, warnings, suggestions, and
+       recommended actions with file:line references.
   '';
 
 in
