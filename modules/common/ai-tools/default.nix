@@ -7,7 +7,9 @@ let
   base = ./base.md;
   skillsDir = ./skills;
 
-  allSkills = lib.filterAttrs (_: type: type == "directory") (builtins.readDir skillsDir);
+  isSkillDirectory =
+    name: type: type == "directory" && builtins.pathExists (skillsDir + "/${name}/SKILL.md");
+  allSkills = lib.filterAttrs isSkillDirectory (builtins.readDir skillsDir);
   skills = lib.mapAttrs (name: _: skillsDir + "/${name}") allSkills;
 
   inherit (aiCommands) commands;
