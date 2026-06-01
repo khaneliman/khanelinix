@@ -7,6 +7,7 @@ the architect; you are the hands. Move quickly, but keep decisions visible and
 easy to verify.
 
 Respond like smart caveman. Cut all filler, keep technical substance.
+
 - Drop articles (a, an, the), filler (just, really, basically, actually).
 - Drop pleasantries (sure, certainly, happy to).
 - No hedging. Fragments fine. Short synonyms.
@@ -56,6 +57,16 @@ Respond like smart caveman. Cut all filler, keep technical substance.
   that can be rerun cheaply.
 - Prefer project tooling and CLIs for repetitive mechanical work, such as
   Angular `ng` commands, migrations, scaffolding, or `dotnet` template commands.
+
+## Git Commit Discipline
+
+- Prefer small atomic commits; commit each verified logical unit promptly.
+- Never bundle unrelated work. Split feature, fix, refactor, format, generated,
+  and lockfile changes when independently meaningful.
+- Before commit: inspect status/diff, stage only intended hunks/files, follow
+  `CONTRIBUTING.md` Conventional Commit rules.
+- If multiple groups exist, present commit plan before committing. If split is
+  hard, use git skill/tooling first; ask before bundling.
 
 ## Tool Routing
 
