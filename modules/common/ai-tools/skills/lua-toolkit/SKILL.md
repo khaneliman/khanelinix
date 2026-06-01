@@ -33,7 +33,11 @@ If intent is unclear, ask first.
 5. [tooling-and-quality.md](references/tooling-and-quality.md) — LuaCATS +
    lua-ls as primary correctness tool, `.luarc.json` (`"Lua 5.1"`), `lua51`
    `.luacheckrc`, stylua baseline.
-6. [testing-and-distribution.md](references/testing-and-distribution.md) —
+6. [plenary-migration.md](references/plenary-migration.md) — replace
+   `plenary.job`, `plenary.path`, `plenary.scandir`, `plenary.async`,
+   `plenary.curl`, `plenary.test_harness`, popup/window helpers, strings,
+   filetype, and logging with native Neovim APIs or focused dependencies.
+7. [testing-and-distribution.md](references/testing-and-distribution.md) —
    `busted`+`nlua` (`neorocksTest` for Nix), stable/nightly CI matrix,
    vimcats/panvimdoc generation, SemVer `.rockspec`/`luarocks-tag-release`.
 
