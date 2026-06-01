@@ -124,7 +124,7 @@ in
         ]
         ++ lib.optionals cfg.aiEnable [
           agentsview
-          antigravity
+          antigravity-cli
           ccusage
           ck
           hunk

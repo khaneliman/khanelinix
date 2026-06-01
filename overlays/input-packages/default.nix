@@ -14,7 +14,7 @@ in
   #          ╰──────────────────────────────────────────────────────────╯
   inherit (inputs.llm-agents.packages.${system})
     agentsview
-    antigravity
+    antigravity-cli
     ccusage
     ck
     claude-code
