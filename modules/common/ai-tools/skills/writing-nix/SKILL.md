@@ -31,7 +31,8 @@ decorative abstractions.
 
 ## Always Prefer
 
-- Explicit `lib.` usage, or a justified local `inherit (...)`.
+- Explicit `lib.` usage, a justified local `inherit (...)`, or expression-local
+  `with` when it is narrower and clearer than repeated prefixes.
 - Local bindings over hoisted helper names.
 - Module-system merging over hand-written `if/else`.
 - Small, intentional option surfaces.
@@ -45,7 +46,11 @@ decorative abstractions.
   module layout, not to dilute the style guidance here.
 - If a repository's local conventions conflict with this skill, call out the
   conflict explicitly instead of silently blending the styles.
-- Avoid `with lib;`.
+- Avoid top-level, block-level, and wide-scope `with`. Expression-local `with`
+  is acceptable for a single value when it reduces noisy repetition and keeps
+  scope obvious, such as `type = with lib.types; nullOr (either str path);`.
+- Do not request a style fix solely because new code uses expression-local
+  `with lib.types;` in one `type = ...;` assignment.
 - Keep edits surgical; do not clean up unrelated Nix while touching a module.
 
 ## Validation

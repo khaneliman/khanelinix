@@ -2,8 +2,11 @@
 
 ## `with`
 
-Never use `with`. It hides scope, hurts static analysis, and makes Nix harder to
-read and refactor.
+Avoid top-level, block-level, and wide-scope `with`. Those forms hide scope,
+hurt static analysis, and make Nix harder to read and refactor.
+
+Expression-local `with` is fine when it applies to one value and makes a dense
+expression clearer than repeated prefixes. This is common for option types.
 
 ```nix
 # BAD
@@ -11,6 +14,31 @@ meta = with lib; { license = licenses.mit; };
 
 # GOOD
 meta = { license = lib.licenses.mit; };
+
+# GOOD
+type = with lib.types; nullOr (either str path);
+```
+
+Decision rule:
+
+1. Reject `with` when it wraps a module body, config block, attrset with
+   multiple unrelated fields, or broad library such as `lib`/`pkgs`.
+2. Allow `with` when it is scoped to a single assignment/expression and every
+   unqualified name clearly comes from that scope.
+3. Prefer `lib.types.*` or `inherit (lib.types) ...` only when that is clearer
+   than expression-local `with`.
+
+```nix
+# BAD
+options.foo = with lib; {
+  enable = mkEnableOption "foo";
+  mode = mkOption { type = types.enum [ "a" "b" ]; };
+};
+
+# GOOD
+options.foo.mode = lib.mkOption {
+  type = with lib.types; nullOr (either str path);
+};
 ```
 
 ## `rec`
