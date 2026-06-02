@@ -46,9 +46,10 @@ _: {
           timeout = 5;
           command = ''
             input=$(cat)
+            paths=$(echo "$input" | jq -r '.tool_input | (.file_path // empty), (.path // empty), (.notebook_path // empty)' 2>/dev/null)
 
-            # Check for path traversal attempts
-            if echo "$input" | jq -r '.tool_input | to_entries[] | .value' 2>/dev/null | grep -qE '\.\./' ; then
+            # Check path fields only; content can legitimately mention ../.
+            if echo "$paths" | grep -qE '(^|/)\.\./' ; then
               echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Path traversal attempt detected"}}'
               exit 0
             fi
