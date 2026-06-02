@@ -23,7 +23,9 @@
 
               # Warn if file is larger than 1MB
               if [ "$size" -gt 1048576 ]; then
-                echo "{\"additionalContext\": \"Warning: Large file written ($size bytes) to $filepath\"}"
+                jq -n \
+                  --arg message "Warning: Large file written ($size bytes) to $filepath" \
+                  '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":$message}}'
               fi
             fi
 
