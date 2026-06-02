@@ -13,6 +13,9 @@ let
   cfg = config.khanelinix.programs.terminal.tools.claude-code;
   mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
+  hooks = lib.zipAttrsWith (_: values: lib.concatLists values) (
+    lib.importFiles ./hooks { inherit pkgs config lib; }
+  );
 
   claudeIcon = ./assets/claude.ico;
 
@@ -68,7 +71,7 @@ in
       settings = {
         theme = "dark";
 
-        hooks = lib.importDir ./hooks { inherit pkgs config lib; };
+        inherit hooks;
 
         model = "claude-opus-4-8[1m]";
         effortLevel = "high";
