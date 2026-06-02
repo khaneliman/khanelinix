@@ -63,7 +63,8 @@ in
       # Infat documentation
       # See: https://github.com/khaneliman/infat
       enable = true;
-      autoActivate = true;
+      # FIXME: infat failures on macos 26.5
+      autoActivate.enable = false;
 
       settings = {
         extensions = {
