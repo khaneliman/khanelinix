@@ -27,8 +27,8 @@ _: {
 
             for pattern in "''${dangerous_patterns[@]}"; do
               if echo "$cmd" | grep -qE "$pattern"; then
-                echo '{"hookSpecificOutput":{"permissionDecision":"deny","permissionDecisionReason":"Dangerous command pattern detected"}}'
-                exit 2
+                echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Dangerous command pattern detected"}}'
+                exit 0
               fi
             done
 
@@ -49,8 +49,8 @@ _: {
 
             # Check for path traversal attempts
             if echo "$input" | jq -r '.tool_input | to_entries[] | .value' 2>/dev/null | grep -qE '\.\./' ; then
-              echo '{"hookSpecificOutput":{"permissionDecision":"deny","permissionDecisionReason":"Path traversal attempt detected"}}'
-              exit 2
+              echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Path traversal attempt detected"}}'
+              exit 0
             fi
 
             exit 0
