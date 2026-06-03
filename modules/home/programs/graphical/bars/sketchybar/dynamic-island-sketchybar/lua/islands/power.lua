@@ -4,16 +4,19 @@ return function(ctx)
 	local inFlight = false
 
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands.power.maxExpandWidth", "190"), 190)
-	local expandHeight = ctx.asNumber(ctx.get("islands.power.expandHeight", "56"), 56)
-	local cornerRad = ctx.asNumber(ctx.get("islands.power.cornerRadius", "15"), 15)
+	local expandHeight = ctx.asNumber(ctx.get("islands.power.expandHeight", "76"), 76)
+	local cornerRad = ctx.asNumber(ctx.get("islands.power.cornerRadius", "22"), 22)
 	local expandMargin = ctx.calculateMargin(maxExpandWidth)
 	local pollInterval = ctx.asNumber(ctx.get("islands.power.pollInterval", "300"), 300)
+	local expandWidth = maxExpandWidth * 2
 
 	local textItem = ctx.Sbar.add("item", "island.power_text", {
-		position = "right",
+		position = "center",
 		drawing = false,
 		label = {
+			align = "center",
 			color = ctx.colorTransparent,
+			y_offset = ctx.contentYOffset,
 		},
 		width = 0,
 	})
@@ -27,6 +30,7 @@ return function(ctx)
 	local function showIsland(text, textColor, duration)
 		textItem:set({
 			drawing = true,
+			width = expandWidth,
 			label = {
 				string = text,
 			},
@@ -44,7 +48,10 @@ return function(ctx)
 				textItem:set({ label = { color = ctx.colorTransparent } })
 			end,
 			onCleanup = function()
-				textItem:set({ drawing = false })
+				textItem:set({
+					drawing = false,
+					width = 0,
+				})
 			end,
 		})
 	end

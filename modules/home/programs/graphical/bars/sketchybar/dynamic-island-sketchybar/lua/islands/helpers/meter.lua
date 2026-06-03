@@ -29,6 +29,7 @@ return function(ctx, options)
 	local cornerRadius = ctx.asNumber(ctx.get("islands." .. name .. ".cornerRadius", "12"), 12)
 	local expandMargin = ctx.calculateMargin(maxExpandWidth)
 	local maxExpandHeight = expandHeight + math.floor(ctx.squishAmount / 2)
+	local contentYOffset = ctx.contentYOffset or -20
 
 	local iconItem = ctx.Sbar.add("item", "island." .. name .. "_icon", {
 		position = "left",
@@ -39,7 +40,7 @@ return function(ctx, options)
 				style = "Bold",
 				size = 14.0,
 			},
-			y_offset = 2,
+			y_offset = contentYOffset + 22,
 		},
 		padding_left = 10,
 		padding_right = 0,
@@ -53,13 +54,13 @@ return function(ctx, options)
 			height = 2,
 			color = ctx.colorTransparent,
 			border_color = ctx.colorTransparent,
-			y_offset = 0,
+			y_offset = contentYOffset + 20,
 			shadow = {
 				drawing = false,
 			},
 		},
 		drawing = false,
-		y_offset = -19,
+		y_offset = contentYOffset + 1,
 		padding_left = 10,
 		width = 0,
 	})

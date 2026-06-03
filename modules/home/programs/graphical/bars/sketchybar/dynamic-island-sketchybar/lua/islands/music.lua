@@ -14,16 +14,17 @@ return function(ctx)
 	local expandHeight = ctx.asNumber(ctx.get("islands.music.info.expandHeight", "100"), 100)
 	local cornerRad = ctx.asNumber(ctx.get("islands.music.info.cornerRadius", "19"), 19)
 	local expandMargin = ctx.calculateMargin(maxExpandWidth)
+	local contentYOffset = ctx.contentYOffset or -20
 	local imageScale = 0.15
-	local imageYOffset = -6
+	local imageYOffset = contentYOffset + 14
 	local artworkSlotWidth = 92
 	local compactSlotWidth = 44
 	local slotPaddingLeft = 18
 	local slotPaddingRight = 8
-	local slotYOffset = -10
+	local slotYOffset = contentYOffset + 10
 	local contentPaddingRight = 20
-	local titleYOffset = -16
-	local subtitleYOffset = 0
+	local titleYOffset = contentYOffset + 4
+	local subtitleYOffset = contentYOffset + 20
 	local titleColor = ctx.colorWhite
 	local subtitleColor = ctx.get("colors.musicSecondary", "0xffb8b8b8")
 	local compactBadgeColor = ctx.get("colors.musicBadge", "0x22ffffff")
@@ -466,7 +467,12 @@ return function(ctx)
 				cancelArtworkRetry()
 			end
 
-			if displayText == lastDisplayText and hasArt == lastHasArt and playbackState == lastPlaybackState and app == lastSourceName then
+			if
+				displayText == lastDisplayText
+				and hasArt == lastHasArt
+				and playbackState == lastPlaybackState
+				and app == lastSourceName
+			then
 				return
 			end
 

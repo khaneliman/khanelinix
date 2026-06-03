@@ -30,6 +30,7 @@ return {
 		-- This is half-width in margin logic; effective island width is 2x this.
 		defaultWidth = 80,
 		cornerRadius = 10,
+		contentYOffset = -20,
 		monitorHorizontalResolution = "auto",
 	},
 
@@ -40,8 +41,8 @@ return {
 	islands = {
 		appswitch = {
 			maxExpandWidth = 110,
-			expandHeight = 56,
-			cornerRadius = 15,
+			expandHeight = 76,
+			cornerRadius = 22,
 			iconSize = 0.4,
 			repeatCooldownSeconds = 2,
 		},
@@ -65,19 +66,19 @@ return {
 			idleExpandWidth = 160,
 			resume = {
 				maxExpandWidth = 155,
-				expandHeight = 56,
-				cornerRadius = 15,
+				expandHeight = 76,
+				cornerRadius = 22,
 			},
 		},
 		wifi = {
 			maxExpandWidth = 190,
-			expandHeight = 56,
-			cornerRadius = 15,
+			expandHeight = 76,
+			cornerRadius = 22,
 		},
 		power = {
 			maxExpandWidth = 190,
-			expandHeight = 56,
-			cornerRadius = 15,
+			expandHeight = 76,
+			cornerRadius = 22,
 			pollInterval = 300,
 		},
 		cpu_panic = {
@@ -96,11 +97,13 @@ return {
 		},
 		privacy = {
 			pollInterval = 60,
+			yOffset = 0,
 		},
 		github = {
-			maxExpandWidth = 220,
+			minExpandWidth = 150,
+			maxExpandWidth = 190,
 			expandHeight = 95,
-			cornerRadius = 42,
+			cornerRadius = 32,
 		},
 		notification = {
 			maxExpandWidth = 180,

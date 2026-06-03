@@ -121,18 +121,11 @@ local configuredFlushSeconds = normalizePositiveNumber((cfg.logging or {}).flush
 local configuredMaxBufferSize = normalizePositiveInteger((cfg.logging or {}).maxBufferSize, 80)
 local envLogLevel = normalizeLogLevel(os.getenv("DYNAMIC_ISLAND_LOG_LEVEL"))
 local envFlushSeconds = normalizePositiveNumber(os.getenv("DYNAMIC_ISLAND_LOG_FLUSH_SECONDS"), configuredFlushSeconds)
-local envMaxBufferSize = normalizePositiveInteger(os.getenv("DYNAMIC_ISLAND_LOG_MAX_BUFFER_SIZE"), configuredMaxBufferSize)
+local envMaxBufferSize =
+	normalizePositiveInteger(os.getenv("DYNAMIC_ISLAND_LOG_MAX_BUFFER_SIZE"), configuredMaxBufferSize)
 
-logger.set_runtime(
-	configuredLogLevel or "info",
-	configuredFlushSeconds,
-	configuredMaxBufferSize
-)
-logger.set_runtime(
-	envLogLevel or configuredLogLevel or "info",
-	envFlushSeconds,
-	envMaxBufferSize
-)
+logger.set_runtime(configuredLogLevel or "info", configuredFlushSeconds, configuredMaxBufferSize)
+logger.set_runtime(envLogLevel or configuredLogLevel or "info", envFlushSeconds, envMaxBufferSize)
 local activeLogLevel = envLogLevel or configuredLogLevel or "info"
 logInfo("[init] log level=" .. activeLogLevel)
 logDebug("[init] stdout log path=" .. logPath .. " stderr log path=" .. errorLogPath)
@@ -212,6 +205,7 @@ local fontFamily = get("main.font", "SF Pro")
 local colorWhite = get("colors.white", "0xffffffff")
 local colorTransparent = get("colors.transparent", "0x00000000")
 local squishAmount = asNumber(get("animation.squishAmount", 6), 6)
+local contentYOffset = asNumber(get("notch.contentYOffset", -20), -20)
 
 logInfo("[init] monitor width final value: " .. tostring(monitorResolution))
 
@@ -313,11 +307,30 @@ local function animateIsland(options)
 	interruptActiveIsland()
 	islandAnimationToken = islandAnimationToken + 1
 	local current = islandAnimationToken
+	local privacySuppressed = false
+	if islandRegistry.setPrivacySuppressed ~= nil and type(islandRegistry.setPrivacySuppressed) == "function" then
+		islandRegistry.setPrivacySuppressed(true)
+		privacySuppressed = true
+	end
+
+	local function restorePrivacy()
+		if not privacySuppressed then
+			return
+		end
+		privacySuppressed = false
+		islandRegistry.setPrivacySuppressed(false)
+	end
+
 	activeIslandLifecycle = {
 		token = current,
 		hidden = false,
 		onHideContent = options.onHideContent,
-		onCleanup = options.onCleanup,
+		onCleanup = function(interrupted)
+			if type(options.onCleanup) == "function" then
+				options.onCleanup(interrupted)
+			end
+			restorePrivacy()
+		end,
 	}
 
 	Sbar.animate("tanh", 10, function()
@@ -371,6 +384,7 @@ local function animateIsland(options)
 			if type(options.onCleanup) == "function" then
 				options.onCleanup()
 			end
+			restorePrivacy()
 
 			if not options.preventCollapse then
 				Sbar.animate("tanh", 10, function()
@@ -488,6 +502,7 @@ local baseCtx = {
 	calculateVisibleMargin = calculateVisibleMargin,
 	calculateIslandWidth = calculateIslandWidth,
 	squishAmount = squishAmount,
+	contentYOffset = contentYOffset,
 	defaultHeight = defaultHeight,
 	defaultWidth = defaultWidth,
 	cornerRadius = cornerRadius,

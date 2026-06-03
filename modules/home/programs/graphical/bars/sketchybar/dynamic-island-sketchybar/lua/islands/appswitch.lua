@@ -4,8 +4,8 @@ return function(ctx)
 	local lastAppDeadline = 0
 
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands.appswitch.maxExpandWidth", "110"), 110)
-	local expandHeight = ctx.asNumber(ctx.get("islands.appswitch.expandHeight", "56"), 56)
-	local cornerRad = ctx.asNumber(ctx.get("islands.appswitch.cornerRadius", "15"), 15)
+	local expandHeight = ctx.asNumber(ctx.get("islands.appswitch.expandHeight", "76"), 76)
+	local cornerRad = ctx.asNumber(ctx.get("islands.appswitch.cornerRadius", "22"), 22)
 	local maxExpandHeight = expandHeight + math.floor(ctx.squishAmount / 2)
 	local repeatCooldownSeconds = ctx.asNumber(ctx.get("islands.appswitch.repeatCooldownSeconds", "2"), 2)
 
@@ -23,7 +23,7 @@ return function(ctx)
 		},
 		padding_left = 10,
 		padding_right = 5,
-		y_offset = -10, -- Pushing it below the notch
+		y_offset = ctx.contentYOffset,
 	})
 
 	local labelItem = ctx.Sbar.add("item", "island.appname", {
@@ -31,7 +31,7 @@ return function(ctx)
 		drawing = false,
 		label = {
 			color = ctx.colorTransparent,
-			y_offset = -10, -- Pushing it below the notch
+			y_offset = ctx.contentYOffset,
 		},
 	})
 

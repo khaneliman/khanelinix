@@ -121,9 +121,7 @@ local function detectMonitorWidthFromSystemProfiler()
 			return asPositiveInteger(uiWidthText)
 		end
 
-		local resolutionWidthText, resolutionDescriptor = block:match(
-			"Resolution:%s*(%d+)%s*[xX]%s*%d+%s*([^\n]*)"
-		)
+		local resolutionWidthText, resolutionDescriptor = block:match("Resolution:%s*(%d+)%s*[xX]%s*%d+%s*([^\n]*)")
 		local resolutionWidth = asPositiveInteger(resolutionWidthText)
 		if resolutionWidth == nil then
 			return nil

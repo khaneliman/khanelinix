@@ -15,7 +15,7 @@ return function(ctx)
 		drawing = false,
 		label = {
 			color = ctx.colorTransparent,
-			y_offset = -15, -- Pushing it below the notch
+			y_offset = ctx.contentYOffset,
 		},
 		width = 0,
 	})

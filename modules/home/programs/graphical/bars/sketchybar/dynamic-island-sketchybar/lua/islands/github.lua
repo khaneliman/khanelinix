@@ -1,18 +1,38 @@
 return function(ctx)
 	local token = 0
 
-	local maxExpandWidth = ctx.asNumber(ctx.get("islands.github.maxExpandWidth", "220"), 220)
+	local minExpandWidth = ctx.asNumber(ctx.get("islands.github.minExpandWidth", "150"), 150)
+	local maxExpandWidth = ctx.asNumber(ctx.get("islands.github.maxExpandWidth", "190"), 190)
 	local expandHeight = ctx.asNumber(ctx.get("islands.github.expandHeight", "95"), 95)
-	local cornerRad = ctx.asNumber(ctx.get("islands.github.cornerRadius", "42"), 42)
-	local expandMargin = ctx.calculateMargin(maxExpandWidth)
+	local cornerRad = ctx.asNumber(ctx.get("islands.github.cornerRadius", "32"), 32)
+
+	local function clamp(value, minimum, maximum)
+		if value < minimum then
+			return minimum
+		end
+		if value > maximum then
+			return maximum
+		end
+		return value
+	end
+
+	local function layoutForText(text)
+		local textLength = string.len(text or "")
+		local halfWidth = clamp(math.floor(textLength * 3.8 + 70), minExpandWidth, maxExpandWidth)
+		return {
+			margin = ctx.calculateMargin(halfWidth),
+			width = halfWidth * 2,
+		}
+	end
 
 	local textItem = ctx.Sbar.add("item", "island.github_text", {
-		position = "right",
+		position = "center",
 		drawing = false,
 		label = {
 			color = ctx.colorTransparent,
 			max_chars = 40,
-			y_offset = -20, -- Pushing it below the notch
+			align = "center",
+			y_offset = ctx.contentYOffset,
 		},
 		width = 0,
 	})
@@ -36,15 +56,19 @@ return function(ctx)
 
 		ctx.logDebug("[github][lua] notification received: " .. repo)
 
+		local displayText = "􀋚 " .. repo .. ": " .. title
+		local layout = layoutForText(displayText)
+
 		textItem:set({
 			drawing = true,
+			width = layout.width,
 			label = {
-				string = "􀋚 " .. repo .. ": " .. title,
+				string = displayText,
 			},
 		})
 
 		ctx.animateIsland({
-			margin = expandMargin,
+			margin = layout.margin,
 			cornerRadius = cornerRad,
 			height = expandHeight,
 			duration = 4.0,
@@ -55,7 +79,10 @@ return function(ctx)
 				textItem:set({ label = { color = ctx.colorTransparent } })
 			end,
 			onCleanup = function()
-				textItem:set({ drawing = false })
+				textItem:set({
+					drawing = false,
+					width = 0,
+				})
 			end,
 		})
 	end)

@@ -23,7 +23,7 @@ return function(ctx)
 		label = {
 			color = ctx.colorTransparent,
 			max_chars = 25,
-			y_offset = -30, -- Pushing it deeper below the notch
+			y_offset = ctx.contentYOffset,
 		},
 		width = 0,
 	})

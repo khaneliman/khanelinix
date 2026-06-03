@@ -4,7 +4,9 @@ return function(ctx)
 	local inFlight = false
 	local lastCameraState = nil
 	local lastMicState = nil
+	local suppressed = false
 	local pollInterval = ctx.asNumber(ctx.get("islands.privacy.pollInterval", "60"), 60)
+	local yOffset = ctx.asNumber(ctx.get("islands.privacy.yOffset", "0"), 0)
 
 	local camDot = ctx.Sbar.add("item", "island.privacy.camera", {
 		position = "center",
@@ -14,7 +16,7 @@ return function(ctx)
 			color = 0xff33ff33, -- Green
 			font = { size = 10 },
 		},
-		y_offset = 0,
+		y_offset = yOffset,
 		width = 0,
 	})
 
@@ -26,9 +28,17 @@ return function(ctx)
 			color = 0xffff9933, -- Orange
 			font = { size = 10 },
 		},
-		y_offset = 0,
+		y_offset = yOffset,
 		width = 0,
 	})
+
+	local function applyCameraState()
+		camDot:set({ drawing = lastCameraState == true and not suppressed })
+	end
+
+	local function applyMicState()
+		micDot:set({ drawing = lastMicState == true and not suppressed })
+	end
 
 	local listener = ctx.Sbar.add("item", "privacyListener", {
 		position = "center",
@@ -57,15 +67,21 @@ return function(ctx)
 
 			if lastCameraState ~= camActive then
 				lastCameraState = camActive
-				camDot:set({ drawing = camActive })
+				applyCameraState()
 			end
 
 			if lastMicState ~= micActive then
 				lastMicState = micActive
-				micDot:set({ drawing = micActive })
+				applyMicState()
 			end
 		end)
 	end)
+
+	ctx.registry.setPrivacySuppressed = function(value)
+		suppressed = value == true
+		applyCameraState()
+		applyMicState()
+	end
 
 	ctx.registry.privacyCamDot = camDot
 	ctx.registry.privacyMicDot = micDot
