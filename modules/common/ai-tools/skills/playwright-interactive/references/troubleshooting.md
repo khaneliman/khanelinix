@@ -18,6 +18,14 @@ Use when persistent Playwright session, server, or handles misbehave.
 
 ## Common Failures
 
+- `import("playwright")` fails: expected in khanelinix. Use the setup bootstrap
+  that resolves Playwright from `playwright-cli`; do not run `npm install`.
+- Browser executable missing and path mentions `~/.cache/ms-playwright`: wrong
+  setup path. Re-run the Nix-backed setup check. Do not run
+  `npx playwright install`.
+- `playwright-cli` missing: verify the home `common` suite or run
+  `nix run ~/khanelinix#playwright-cli -- --help`; report failure instead of
+  installing upstream packages.
 - Element refs stale: re-query/snapshot DOM before interacting.
 - Blank screenshot: wait for `domcontentloaded`, check console, verify canvas or
   WebGL render loop started.
@@ -26,6 +34,9 @@ Use when persistent Playwright session, server, or handles misbehave.
 - Visual and metric checks disagree: trust visible screenshot and investigate.
 
 ## Cleanup
+
+If accidental upstream setup already created `~/.cache/ms-playwright/*`, report
+the path and leave cleanup to the user unless explicitly asked to remove it.
 
 At task end:
 

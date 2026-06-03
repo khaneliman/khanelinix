@@ -12,8 +12,9 @@ export PWCLI="$CODEX_HOME/skills/playwright/scripts/playwright_cli.sh"
 User-scoped skills install under `$CODEX_HOME/skills` (default:
 `~/.codex/skills`).
 
-The wrapper provides Playwright through `nixpkgs#playwright-test`; do not use
-`npx` or a global npm install for this skill.
+The wrapper execs the flake's `playwright-cli` package, which provides
+Playwright plus NixOS-runnable browsers; do not use `npx` or a global npm
+install for this skill.
 
 Optional convenience alias:
 
@@ -98,7 +99,7 @@ pwcli tab-select 0
 ```bash
 pwcli console
 pwcli console warning
-pwcli network
+pwcli requests
 pwcli run-code "await page.waitForTimeout(1000)"
 pwcli tracing-start
 pwcli tracing-stop

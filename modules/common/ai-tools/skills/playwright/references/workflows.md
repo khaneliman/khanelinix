@@ -4,6 +4,10 @@ Use the wrapper script and snapshot often. Assume `PWCLI` is set and `pwcli` is
 an alias for `"$PWCLI"`. In this repo, run commands from
 `output/playwright/<label>/` to keep artifacts contained.
 
+Start target app servers with their project tooling or dev shell, but run
+browser automation through `pwcli` or packaged `playwright-cli`. Do not use
+`nix develop -c playwright-cli` as a browser-path workaround.
+
 ## Standard interaction loop
 
 ```bash
@@ -40,7 +44,7 @@ Capture console messages and network activity after reproducing an issue:
 
 ```bash
 pwcli console warning
-pwcli network
+pwcli requests
 ```
 
 Record a trace around a suspicious flow:
@@ -60,6 +64,7 @@ Use sessions to isolate work across projects:
 pwcli --session marketing open https://example.com
 pwcli --session marketing snapshot
 pwcli --session checkout open https://example.com/checkout
+playwright-cli -s=design-review open http://127.0.0.1:4200/home
 ```
 
 Or set the session once:

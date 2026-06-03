@@ -1,6 +1,6 @@
 ---
 name: "playwright-interactive"
-description: "Persistent browser and Electron interaction through `js_repl` for fast iterative UI debugging."
+description: "Persistent browser and Electron interaction through `js_repl` for fast iterative UI debugging, using Nix-provided `playwright-cli`/browsers when available. Do not install Playwright or browsers with npm/npx as setup."
 ---
 
 # Playwright Interactive
@@ -8,9 +8,15 @@ description: "Persistent browser and Electron interaction through `js_repl` for 
 Use persistent `js_repl` Playwright handles for web or Electron debugging when
 stateful browser sessions make iteration faster than one-shot scripts.
 
+Default to the `playwright` CLI skill when persistent in-process handles are
+not needed. In khanelinix/Nix environments, `playwright-cli` already provides
+Playwright plus runnable browsers. Do not run `npm install playwright`,
+`npx playwright install`, or any command that populates `~/.cache/ms-playwright`
+as setup.
+
 ## Plays
 
-- `references/setup.md`: js_repl enablement, npm setup, bootstrap cell.
+- `references/setup.md`: js_repl enablement, Nix-backed checks, bootstrap cell.
 - `references/web.md`: desktop/mobile/native web sessions and reloads.
 - `references/electron.md`: Electron launch, reload, relaunch.
 - `references/qa.md`: functional QA, visual QA, signoff inventory.
@@ -20,17 +26,10 @@ stateful browser sessions make iteration faster than one-shot scripts.
 ## Preconditions
 
 - `js_repl` enabled in Codex config or session flags.
-- Playwright import works from target workspace.
+- `playwright-cli --help` works from `PATH`, or
+  `nix run ~/khanelinix#playwright-cli -- --help` works.
 - Run from project directory being debugged.
 - Treat `js_repl_reset` as recovery; it destroys handles.
-
-Minimal setup when Playwright is absent:
-
-```bash
-test -f package.json || npm init -y
-npm install playwright
-node -e "import('playwright').then(() => console.log('ok'))"
-```
 
 ## Core Loop
 
