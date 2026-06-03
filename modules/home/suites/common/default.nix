@@ -49,6 +49,7 @@ in
         # colorscript outputs
         dwt1-shell-color-scripts
         ncdu
+        pkgs.khanelinix.playwright-cli
         # NOTE: Typing test
         # smassh
         toilet
