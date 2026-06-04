@@ -77,6 +77,7 @@ in
       ++ lib.optionals cfg.remoteDesktopEnable [
         input-leap
         meshcentral
+        moonlight-qt
         realvnc-vnc-viewer
       ]
       ++ lib.optionals cfg.fileManagementEnable [
@@ -88,9 +89,6 @@ in
           font-manager
           fontpreview
           smile
-        ]
-        ++ lib.optionals cfg.remoteDesktopEnable [
-          rustdesk-flutter
         ]
         ++ lib.optionals cfg.fileManagementEnable [
           dropbox
