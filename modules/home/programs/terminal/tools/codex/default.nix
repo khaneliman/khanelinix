@@ -44,6 +44,7 @@ in
       settings = {
         features = {
           apps = true;
+          codex_git_commit = false;
           fast_mode = false;
           multi_agent = true;
           prevent_idle_sleep = true;
