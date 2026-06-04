@@ -94,6 +94,7 @@ in
         ++ lib.optionals cfg.nixEnable [
           hydra-check
           khanelinix.build-by-path
+          khanelinix.vim-plugins-review
           nix-bisect
           nix-diff
           nix-fast-build
@@ -141,6 +142,8 @@ in
         lua-update-all = "nix run nixpkgs#luarocks-packages-updater -- --github-token=$(echo $GITHUB_TOKEN)";
         bbp-beast = "${nixBeastConfig} ${lib.getExe pkgs.khanelinix.build-by-path} --fast .";
         npr-beast = "${nixBeastConfig} nixpkgs-review";
+        vra = ''f(){ ${nixBeastConfig} ${lib.getExe pkgs.khanelinix.vim-plugins-review} --systems "aarch64-darwin x86_64-linux aarch64-linux" --num-eval-workers 3 "$@"; }; f'';
+        vrap = ''f(){ ${nixBeastConfig} ${lib.getExe pkgs.khanelinix.vim-plugins-review} --systems "aarch64-darwin x86_64-linux aarch64-linux" --num-eval-workers 3 "$@" --post-result; }; f'';
         ncs = ''f(){ nix build "nixpkgs#$1" --no-link && nix path-info --recursive --closure-size --human-readable $(nix-build --no-out-link '<nixpkgs>' -A "$1"); }; f'';
         ncsdc = ''f(){ nix build ".#darwinConfigurations.$1.config.system.build.toplevel" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#darwinConfigurations.$1.config.system.build.toplevel.outPath"); }; f'';
         ncsnc = ''f(){ nix build ".#nixosConfigurations.$1.config.system.build.toplevel" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#nixosConfigurations.$1.config.system.build.toplevel.outPath"); }; f'';
