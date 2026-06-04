@@ -37,7 +37,10 @@ in
       };
     };
 
-    services.tailscale = enabled;
+    services = {
+      lumen = enabled;
+      tailscale = enabled;
+    };
 
     suites = {
       art = enabled;
