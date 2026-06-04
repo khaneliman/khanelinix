@@ -78,9 +78,8 @@ in
         acceptRoutes = true;
       };
 
-      rustdesk-server = {
+      sunshine = {
         enable = true;
-        relayHosts = [ "khanelinix.local" ];
       };
 
       snapper = {

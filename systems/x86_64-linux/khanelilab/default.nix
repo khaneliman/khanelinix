@@ -37,7 +37,7 @@ in
       geoclue = enabled;
       printing = enabled;
       openssh = enabled;
-      rustdesk-server = enabled;
+      sunshine = enabled;
       tailscale = {
         enable = true;
         advertiseExitNode = true;
