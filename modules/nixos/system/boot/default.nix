@@ -155,5 +155,14 @@ in
       enable = true;
       daemonSettings.EspLocation = config.boot.loader.efi.efiSysMountPoint;
     };
+
+    security.polkit.extraConfig = ''
+      polkit.addRule(function(action, subject) {
+        if (action.id == "org.freedesktop.fwupd.refresh-remote" &&
+            subject.user == "fwupd-refresh") {
+          return polkit.Result.YES;
+        }
+      });
+    '';
   };
 }
