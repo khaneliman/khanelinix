@@ -40,6 +40,11 @@ scope rules.
 - Check [commit-discipline.md](references/commit-discipline.md) for local
   history strategy, fixup/autosquash, and message CLI safety.
 
+When asked to commit, inspect the full diff and state an atomic commit plan
+before creating the first commit. Do not treat one user request as one commit
+when the diff contains independently buildable setup, adoption, cleanup,
+formatting, tests, documentation, or generated-file changes.
+
 ## 2a) Hunk-Level Git Strategy
 
 Use `git-surgeon` for non-interactive, hunk-level git operations:

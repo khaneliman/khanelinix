@@ -77,11 +77,15 @@ Used in some monorepos or specific projects (e.g., Nixpkgs-style).
 
 Use this when asked to group or create commits from an existing worktree.
 
+- Inspect the full worktree diff and state the commit plan before creating the
+  first commit.
 - Analyze changes at hunk level, not file level.
 - Each commit must represent the smallest complete logical change.
 - Every commit should leave the project buildable and runnable.
 - If change A references change B, commit B first or keep them together.
 - Group by behavior or purpose, not directory.
+- Split setup, adoption, cleanup, generated files, formatting, tests, and
+  documentation when each can stand alone.
 - Keep formatting-only changes separate from functional changes.
 - Prefer `git add -p` or equivalent selective staging when files contain mixed
   concerns.

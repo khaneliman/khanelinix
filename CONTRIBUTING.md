@@ -163,11 +163,22 @@ type(scope): description
 
 ### Submitting Changes
 
-1. Create atomic commits - each commit should represent one logical change
-2. Prefer one module per commit when changes are logically independent
-3. Follow the commit message convention, including a body that explains why
-4. Ensure pre-commit hooks pass
-5. Test that the configuration builds successfully
+1. Create atomic commits. Each commit should represent one independently
+   buildable logical unit, not the entire user request.
+2. Before committing a multi-file or multi-purpose change, inspect the diff and
+   state the commit split plan. Commit setup, enablement, migration, cleanup,
+   generated files, formatting, tests, and documentation separately when each
+   can stand alone.
+3. Prefer one module per commit when changes are logically independent. For
+   example, adding a reusable module, enabling that module on hosts, and
+   replacing a client package are separate commits when each evaluates on its
+   own.
+4. If a split would leave an intermediate commit broken or misleading, explain
+   why the changes must stay together before committing. Ask before bundling
+   unrelated or only loosely related changes.
+5. Follow the commit message convention, including a body that explains why.
+6. Ensure pre-commit hooks pass.
+7. Test that the configuration builds successfully.
 
 ## Security
 
