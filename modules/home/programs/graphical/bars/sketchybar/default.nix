@@ -14,11 +14,16 @@ let
   userHome = config.home.homeDirectory;
   sketchybar = lib.getExe (config.programs.sketchybar.finalPackage or pkgs.sketchybar);
   finalSketchybar = config.programs.sketchybar.finalPackage or pkgs.sketchybar;
+  dynamicIslandLaunchdLabel = "org.nix-community.home.dynamic-island-sketchybar";
   dynamicIslandFinalPackage = pkgs.runCommand "dynamic-island-sketchybar-final-bin" { } ''
     mkdir -p "$out/bin"
     ln -s ${lib.getExe finalSketchybar} "$out/bin/dynamic-island-sketchybar"
   '';
+  dynamicIslandConfigSource = lib.cleanSourceWith {
+    src = lib.cleanSource ./dynamic-island-sketchybar/.;
+  };
   dynamicIslandConfig = "${userHome}/.config/dynamic-island-sketchybar/sketchybarrc";
+  dynamicIslandConfigState = "${userHome}/.cache/khanelinix/dynamic-island-sketchybar-source";
   dynamicIslandLogPaths = {
     stdout = "${userHome}/Library/Logs/sketchybar/dynamic-island.out.log";
     stderr = "${userHome}/Library/Logs/sketchybar/dynamic-island.err.log";
@@ -34,9 +39,43 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = [
-      dynamicIslandFinalPackage
-    ];
+    home = {
+      packages = [
+        dynamicIslandFinalPackage
+      ];
+
+      activation.restartDynamicIslandSketchybar = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin (
+        lib.hm.dag.entryAfter
+          [
+            "linkGeneration"
+            "setupLaunchAgents"
+          ]
+          ''
+            state_file=${lib.escapeShellArg dynamicIslandConfigState}
+            current_source=${lib.escapeShellArg "${dynamicIslandConfigSource}"}
+            launchd_target="gui/$(id -u)/${dynamicIslandLaunchdLabel}"
+
+            previous_source=
+            if [ -f "$state_file" ]; then
+              previous_source="$(cat "$state_file")"
+            fi
+
+            if [ "$previous_source" != "$current_source" ]; then
+              restarted=1
+              if /bin/launchctl print "$launchd_target" >/dev/null 2>&1; then
+                /bin/launchctl kickstart -k "$launchd_target" || restarted=0
+              fi
+
+              if [ "$restarted" = 1 ]; then
+                mkdir -p "$(dirname "$state_file")"
+                printf '%s\n' "$current_source" > "$state_file"
+              fi
+            fi
+          ''
+      );
+
+      inherit shellAliases;
+    };
 
     launchd.agents.dynamic-island-sketchybar = mkIf pkgs.stdenv.hostPlatform.isDarwin {
       enable = true;
@@ -57,8 +96,6 @@ in
         StandardOutPath = dynamicIslandLogPaths.stdout;
       };
     };
-
-    home.shellAliases = shellAliases;
 
     programs = {
       sketchybar = {
@@ -111,7 +148,7 @@ in
 
     xdg.configFile = {
       "dynamic-island-sketchybar" = {
-        source = lib.cleanSourceWith { src = lib.cleanSource ./dynamic-island-sketchybar/.; };
+        source = dynamicIslandConfigSource;
 
         recursive = true;
       };
