@@ -211,6 +211,33 @@ logInfo("[init] monitor width final value: " .. tostring(monitorResolution))
 
 local margin = calculateMargin(defaultWidth) or 0
 
+local function clamp(value, minimum, maximum)
+	if value < minimum then
+		return minimum
+	end
+	if value > maximum then
+		return maximum
+	end
+	return value
+end
+
+local function layoutForText(text, options)
+	options = options or {}
+	local charWidth = asNumber(options.charWidth, 7)
+	local horizontalPadding = asNumber(options.horizontalPadding, 44)
+	local minHalfWidth = asNumber(options.minHalfWidth, defaultWidth)
+	local maxHalfWidth = asNumber(options.maxHalfWidth, minHalfWidth)
+	local textLength = string.len(text or "")
+	local contentWidth = math.ceil(textLength * charWidth + horizontalPadding)
+	local halfWidth = clamp(math.ceil(contentWidth / 2), minHalfWidth, maxHalfWidth)
+
+	return {
+		halfWidth = halfWidth,
+		width = halfWidth * 2,
+		margin = calculateMargin(halfWidth),
+	}
+end
+
 Sbar.bar({
 	height = defaultHeight,
 	color = barColor,
@@ -501,6 +528,7 @@ local baseCtx = {
 	calculateMargin = calculateMargin,
 	calculateVisibleMargin = calculateVisibleMargin,
 	calculateIslandWidth = calculateIslandWidth,
+	layoutForText = layoutForText,
 	squishAmount = squishAmount,
 	contentYOffset = contentYOffset,
 	defaultHeight = defaultHeight,

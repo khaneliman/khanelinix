@@ -6,23 +6,13 @@ return function(ctx)
 	local expandHeight = ctx.asNumber(ctx.get("islands.github.expandHeight", "95"), 95)
 	local cornerRad = ctx.asNumber(ctx.get("islands.github.cornerRadius", "32"), 32)
 
-	local function clamp(value, minimum, maximum)
-		if value < minimum then
-			return minimum
-		end
-		if value > maximum then
-			return maximum
-		end
-		return value
-	end
-
 	local function layoutForText(text)
-		local textLength = string.len(text or "")
-		local halfWidth = clamp(math.floor(textLength * 3.8 + 70), minExpandWidth, maxExpandWidth)
-		return {
-			margin = ctx.calculateMargin(halfWidth),
-			width = halfWidth * 2,
-		}
+		return ctx.layoutForText(text, {
+			minHalfWidth = minExpandWidth,
+			maxHalfWidth = maxExpandWidth,
+			charWidth = 3.8,
+			horizontalPadding = 66,
+		})
 	end
 
 	local textItem = ctx.Sbar.add("item", "island.github_text", {

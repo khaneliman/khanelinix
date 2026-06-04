@@ -6,7 +6,6 @@ return function(ctx)
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands.cpu_panic.maxExpandWidth", "200"), 200)
 	local expandHeight = ctx.asNumber(ctx.get("islands.cpu_panic.expandHeight", "85"), 85)
 	local cornerRad = ctx.asNumber(ctx.get("islands.cpu_panic.cornerRadius", "15"), 15)
-	local expandMargin = ctx.calculateMargin(maxExpandWidth)
 	local pollInterval = ctx.asNumber(ctx.get("islands.cpu_panic.pollInterval", "30"), 30)
 	local panicThreshold = ctx.asNumber(ctx.get("islands.cpu_panic.threshold", "90"), 90)
 
@@ -27,15 +26,21 @@ return function(ctx)
 	})
 
 	local function showPanic(appName, cpuUsage)
+		local displayText = "􀇿 CPU Panic: " .. appName .. " (" .. cpuUsage .. "%)"
+		local layout = ctx.layoutForText(displayText, {
+			maxHalfWidth = maxExpandWidth,
+			horizontalPadding = 40,
+		})
+
 		textItem:set({
 			drawing = true,
 			label = {
-				string = "􀇿 CPU Panic: " .. appName .. " (" .. cpuUsage .. "%)",
+				string = displayText,
 			},
 		})
 
 		ctx.animateIsland({
-			margin = expandMargin,
+			margin = layout.margin,
 			cornerRadius = cornerRad,
 			height = expandHeight,
 			duration = 4.0,

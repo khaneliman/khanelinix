@@ -40,56 +40,56 @@ return {
 
 	islands = {
 		appswitch = {
-			maxExpandWidth = 110,
+			maxExpandWidth = 100,
 			expandHeight = 76,
 			cornerRadius = 22,
 			iconSize = 0.4,
 			repeatCooldownSeconds = 2,
 		},
 		volume = {
-			maxExpandWidth = 130,
+			maxExpandWidth = 115,
 			expandHeight = 65,
 			cornerRadius = 12,
 		},
 		brightness = {
-			maxExpandWidth = 130,
+			maxExpandWidth = 115,
 			expandHeight = 65,
 			cornerRadius = 12,
 		},
 		music = {
 			source = "Music",
 			info = {
-				maxExpandWidth = 170,
+				maxExpandWidth = 150,
 				expandHeight = 100,
 				cornerRadius = 19,
 			},
-			idleExpandWidth = 160,
+			idleExpandWidth = 140,
 			resume = {
-				maxExpandWidth = 155,
+				maxExpandWidth = 125,
 				expandHeight = 76,
 				cornerRadius = 22,
 			},
 		},
 		wifi = {
-			maxExpandWidth = 190,
+			maxExpandWidth = 135,
 			expandHeight = 76,
 			cornerRadius = 22,
 		},
 		power = {
-			maxExpandWidth = 190,
+			maxExpandWidth = 125,
 			expandHeight = 76,
 			cornerRadius = 22,
 			pollInterval = 300,
 		},
 		cpu_panic = {
-			maxExpandWidth = 200,
+			maxExpandWidth = 170,
 			expandHeight = 85,
 			cornerRadius = 15,
 			pollInterval = 30,
 			threshold = 90,
 		},
 		clipboard = {
-			maxExpandWidth = 180,
+			maxExpandWidth = 160,
 			expandHeight = 85,
 			cornerRadius = 15,
 			pollInterval = 20,
@@ -100,13 +100,13 @@ return {
 			yOffset = 0,
 		},
 		github = {
-			minExpandWidth = 150,
-			maxExpandWidth = 190,
+			minExpandWidth = 120,
+			maxExpandWidth = 165,
 			expandHeight = 95,
 			cornerRadius = 32,
 		},
 		notification = {
-			maxExpandWidth = 180,
+			maxExpandWidth = 160,
 			expandHeight = 90,
 			cornerRadius = 42,
 			maxAllowedBody = 250,

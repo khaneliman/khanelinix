@@ -6,7 +6,6 @@ return function(ctx)
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands.clipboard.maxExpandWidth", "180"), 180)
 	local expandHeight = ctx.asNumber(ctx.get("islands.clipboard.expandHeight", "85"), 85)
 	local cornerRad = ctx.asNumber(ctx.get("islands.clipboard.cornerRadius", "15"), 15)
-	local expandMargin = ctx.calculateMargin(maxExpandWidth)
 	local pollInterval = ctx.asNumber(ctx.get("islands.clipboard.pollInterval", "20"), 20)
 	local maxPreviewLength = ctx.asNumber(ctx.get("islands.clipboard.maxPreviewLength", "120"), 120)
 
@@ -35,15 +34,21 @@ return function(ctx)
 	})
 
 	local function showClipboard(content)
+		local displayText = "􀉂 Copied: " .. content
+		local layout = ctx.layoutForText(displayText, {
+			maxHalfWidth = maxExpandWidth,
+			horizontalPadding = 40,
+		})
+
 		textItem:set({
 			drawing = true,
 			label = {
-				string = "􀉂 Copied: " .. content,
+				string = displayText,
 			},
 		})
 
 		ctx.animateIsland({
-			margin = expandMargin,
+			margin = layout.margin,
 			cornerRadius = cornerRad,
 			height = expandHeight,
 			duration = 1.2,

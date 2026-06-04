@@ -4,8 +4,6 @@ return function(ctx)
 	local maxExpandWidth = ctx.asNumber(ctx.get("islands.wifi.maxExpandWidth", "190"), 190)
 	local expandHeight = ctx.asNumber(ctx.get("islands.wifi.expandHeight", "76"), 76)
 	local cornerRad = ctx.asNumber(ctx.get("islands.wifi.cornerRadius", "22"), 22)
-	local expandMargin = ctx.calculateMargin(maxExpandWidth)
-	local expandWidth = maxExpandWidth * 2
 
 	local textItem = ctx.Sbar.add("item", "island.wifi_text", {
 		position = "center",
@@ -26,19 +24,24 @@ return function(ctx)
 	local function showIsland(info)
 		local icon = ctx.get("icons.wifi.connected", "􀙇")
 		local text = info
+		local displayText = icon .. " " .. text
+		local layout = ctx.layoutForText(displayText, {
+			maxHalfWidth = maxExpandWidth,
+			horizontalPadding = 34,
+		})
 
 		ctx.logDebug("[wifi][lua] info='" .. info .. "'")
 
 		textItem:set({
 			drawing = true,
-			width = expandWidth,
+			width = layout.width,
 			label = {
-				string = icon .. " " .. text,
+				string = displayText,
 			},
 		})
 
 		ctx.animateIsland({
-			margin = expandMargin,
+			margin = layout.margin,
 			cornerRadius = cornerRad,
 			height = expandHeight,
 			duration = 0.8,

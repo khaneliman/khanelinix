@@ -59,11 +59,12 @@ return function(ctx)
 		lastAppDeadline = now + repeatCooldownSeconds
 		ctx.hidePersistentIsland("appswitch")
 
-		local charLength = string.len(appName)
-		local expandSize = maxExpandWidth + charLength * 7 + 40 -- added width for icon
-		local expandMargin = ctx.calculateMargin(expandSize)
+		local layout = ctx.layoutForText(appName, {
+			maxHalfWidth = maxExpandWidth,
+			horizontalPadding = 84,
+		})
 
-		ctx.logDebug("[appswitch][lua] app='" .. appName .. "' expandSize=" .. tostring(expandSize))
+		ctx.logDebug("[appswitch][lua] app='" .. appName .. "' width=" .. tostring(layout.width))
 
 		iconItem:set({
 			drawing = true,
@@ -82,7 +83,7 @@ return function(ctx)
 		})
 
 		ctx.animateIsland({
-			margin = expandMargin,
+			margin = layout.margin,
 			cornerRadius = cornerRad,
 			height = expandHeight,
 			maxExpandHeight = maxExpandHeight,
