@@ -8,6 +8,7 @@ let
   inherit (lib) mkEnableOption mkIf;
 
   cfg = config.khanelinix.services.sunshine;
+  userName = config.khanelinix.user.name;
 in
 {
   options.khanelinix.services.sunshine = {
@@ -23,5 +24,9 @@ in
       capSysAdmin = true;
       openFirewall = true;
     };
+
+    hardware.uinput.enable = true;
+
+    users.users.${userName}.extraGroups = [ "uinput" ];
   };
 }
