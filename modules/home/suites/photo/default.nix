@@ -23,8 +23,7 @@ in
         exiftool
       ]
       ++ lib.optionals cfg.editingEnable [
-        # FIXME: broken nixpkgs
-        # darktable
+        darktable
       ]
       ++ lib.optionals stdenv.hostPlatform.isLinux [
         digikam
