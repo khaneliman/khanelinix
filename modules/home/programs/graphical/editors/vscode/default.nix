@@ -302,8 +302,7 @@ in
               with pkgs.vscode-extensions;
               commonExtensions
               ++ [
-                # FIXME: broken nixpkgs
-                # ms-python.python
+                ms-python.python
                 ms-python.debugpy
                 njpwerner.autodocstring
               ];
