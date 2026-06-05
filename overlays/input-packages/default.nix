@@ -1,12 +1,12 @@
 { inputs }:
-final: _prev:
+final: prev:
 let
   inherit (final.stdenv.hostPlatform) system;
 
-  # master = import inputs.nixpkgs-master {
-  #   inherit system;
-  #   inherit (prev) config;
-  # };
+  master = import inputs.nixpkgs-master {
+    inherit system;
+    inherit (prev) config;
+  };
 in
 {
   #          ╭──────────────────────────────────────────────────────────╮
@@ -35,9 +35,11 @@ in
   #          ╭──────────────────────────────────────────────────────────╮
   #          │ From nixpkgs-master (fast updating / want latest always) │
   #          ╰──────────────────────────────────────────────────────────╯
-  # inherit (master)
-  #   # TODO: remove after hitting channel
-  #   ;
+  inherit (master)
+    # TODO: remove after hitting channel
+    sketchybar
+    yabai
+    ;
   #          ╭──────────────────────────────────────────────────────────╮
   #          │                 Python package overrides                 │
   #          ╰──────────────────────────────────────────────────────────╯
