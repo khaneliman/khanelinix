@@ -244,8 +244,7 @@ in
     };
 
     services.exo = {
-      # FIXME: broken nixpkgs
-      # enable = mkDefault (cfg.aiEnable && pkgs.stdenv.hostPlatform.isDarwin);
+      enable = mkDefault (cfg.aiEnable && pkgs.stdenv.hostPlatform.isDarwin);
       environmentVariables = {
         EXO_LIBP2P_NAMESPACE = "khanelinix";
         EXO_MODELS_READ_ONLY_DIRS = lib.concatStringsSep ":" [
