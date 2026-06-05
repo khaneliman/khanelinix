@@ -328,13 +328,9 @@ in
 
             # URLs
             url_style = "double";
-            # FIXME: removed option https://sw.kovidgoyal.net/kitty/changelog/#id41
-            # open_url_modifiers = "ctrl + shift";
             open_url_with = "default";
 
             # Selection
-            # FIXME: removed option https://sw.kovidgoyal.net/kitty/changelog/#id41
-            # rectangle_select_modifiers = "ctrl + shift";
             select_by_word_characters = ":@-./_~?& = %+#";
 
             # Mouse
