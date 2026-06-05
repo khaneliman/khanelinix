@@ -39,10 +39,8 @@ in
           shotcut
         ]
         ++ lib.optionals cfg.discEnable [
-          # FIXME: broken on darwin due to mplayer dependency
           devede
-          # FIXME: https://github.com/NixOS/nixpkgs/issues/484121
-          # handbrake
+          handbrake
           kdePackages.k3b
         ]
       )
