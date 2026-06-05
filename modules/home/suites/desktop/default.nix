@@ -92,8 +92,7 @@ in
         ]
         ++ lib.optionals cfg.fileManagementEnable [
           dropbox
-          # FIXME: broken nixpkgs
-          # dupeguru
+          dupeguru
           kdePackages.filelight
           kdePackages.ark
           kdePackages.gwenview
