@@ -240,7 +240,8 @@ in
         };
       };
 
-      services.ollama.enable = mkDefault (cfg.aiEnable && pkgs.stdenv.hostPlatform.isDarwin);
+      # NOTE: mlx metal support broken darwin
+      services.ollama.enable = mkDefault (cfg.aiEnable && !pkgs.stdenv.hostPlatform.isDarwin);
     };
 
     services.exo = {

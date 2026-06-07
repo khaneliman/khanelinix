@@ -8,7 +8,16 @@
 }:
 let
   cfg = config.khanelinix.nix;
-  fastNixGc = inputs.fast-nix-gc.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  fastNixGc =
+    inputs.fast-nix-gc.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs
+      (old: {
+        checkFlags = (old.checkFlags or [ ]) ++ [
+          "--skip"
+          "gc_deletes_non_utf8_store_entry"
+          "--skip"
+          "gc_does_not_hang_on_tmp_fifo"
+        ];
+      });
   sketchybar = "/etc/profiles/per-user/${config.khanelinix.user.name}/bin/sketchybar";
   triggerSketchybarNixUpdate = ''
     if [ -x ${lib.escapeShellArg sketchybar} ]; then

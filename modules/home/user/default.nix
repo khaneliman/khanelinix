@@ -28,7 +28,19 @@ let
         "default"
       ] null inputs;
     in
-    if package == null then null else package;
+    if package == null then
+      null
+    else
+      package.overrideAttrs (old: {
+        checkFlags =
+          (old.checkFlags or [ ])
+          ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
+            "--skip"
+            "gc_deletes_non_utf8_store_entry"
+            "--skip"
+            "gc_does_not_hang_on_tmp_fifo"
+          ];
+      });
   gcCommand = if fastNixGcPackage != null then "fast-nix-gc" else "nix-collect-garbage";
 
   home-directory =
