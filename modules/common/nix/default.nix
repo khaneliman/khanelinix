@@ -162,7 +162,9 @@ in
                 hostName = "aarch64-build-box.nix-community.org";
                 maxJobs = 10;
                 speedFactor = 1;
-                system = "aarch64-linux";
+                systems = [
+                  "aarch64-linux"
+                ];
                 supportedFeatures = [
                   "big-parallel"
                   "kvm"
