@@ -125,7 +125,6 @@ in
         ]
         ++ lib.optionals cfg.aiEnable [
           agentsview
-          antigravity-cli
           ccusage
           ck
           hunk
@@ -219,7 +218,7 @@ in
             claude-code.enable = cfg.aiEnable;
             codex.enable = cfg.aiEnable;
             codexbar.enable = cfg.aiEnable;
-            gemini-cli.enable = cfg.aiEnable;
+            antigravity-cli.enable = cfg.aiEnable;
             github-copilot-cli.enable = cfg.aiEnable;
             gh = mkDefault enabled;
             git-crypt = mkDefault enabled;

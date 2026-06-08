@@ -10,7 +10,7 @@ let
     Required first text:
 
     ```
-    This file provides guidance to AI coding agents like Claude Code (claude.ai/code), Cursor AI, Codex, Gemini CLI, GitHub Copilot, and other AI coding assistants when working with code in this repository.
+    This file provides guidance to AI coding agents like Claude Code (claude.ai/code), Cursor AI, Codex, Antigravity CLI, GitHub Copilot, and other AI coding assistants when working with code in this repository.
     ```
 
     Include:

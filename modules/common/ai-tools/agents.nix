@@ -16,7 +16,7 @@ let
       model = {
         claude = "opus";
         copilot = "claude-opus-4.8";
-        gemini = "gemini-3.1-pro-preview";
+        antigravity = "gemini-3.1-pro-preview";
         opencode = "openai/gpt-5.5";
       };
       permission = {
@@ -39,7 +39,7 @@ let
       model = {
         claude = "sonnet";
         copilot = "claude-sonnet-4.6";
-        gemini = "gemini-3.1-pro-preview";
+        antigravity = "gemini-3.1-pro-preview";
         opencode = "openai/gpt-5.5";
       };
       permission = {
@@ -61,7 +61,7 @@ let
       model = {
         claude = "haiku";
         copilot = "claude-haiku-4.5";
-        gemini = "gemini-3.1-flash-lite-preview";
+        antigravity = "gemini-3.1-flash-lite-preview";
         opencode = "openai/gpt-5.4-mini";
       };
       permission = {
@@ -153,7 +153,7 @@ let
 
   toClaudeMarkdown = lib.mapAttrs (_name: renderClaudeAgent) agents;
   toCopilotMarkdown = lib.mapAttrs (_name: renderCopilotAgent) agents;
-  toGeminiAgents = lib.mapAttrs (_name: agent: {
+  toAntigravityAgents = lib.mapAttrs (_name: agent: {
     prompt = agent.content;
     description = agent.description or "AI agent";
   }) agents;
@@ -165,9 +165,9 @@ in
     renderClaudeAgent
     renderCopilotAgent
     renderOpenCodeAgent
+    toAntigravityAgents
     toClaudeMarkdown
     toCopilotMarkdown
-    toGeminiAgents
     toOpenCodeMarkdown
     ;
 }

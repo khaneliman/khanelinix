@@ -105,7 +105,7 @@ let
 
   toOpenCodeMarkdown = lib.mapAttrs (_name: renderOpenCodeMarkdown) commands;
 
-  toGeminiCommands = lib.mapAttrs (_name: command: {
+  toAntigravityCommands = lib.mapAttrs (_name: command: {
     inherit (command) prompt;
     description = command.description or "AI command";
   }) commands;
@@ -116,10 +116,10 @@ in
     renderClaudeMarkdown
     renderCopilotSkill
     renderOpenCodeMarkdown
+    toAntigravityCommands
     toClaudeMarkdown
     toCopilotSkills
     toOpenCodeMarkdown
-    toGeminiCommands
     ;
 
   normalizedCommands = commands;

@@ -110,7 +110,7 @@ class ClosureAnalyzer:
                 "lazygit",
             ],
             "AI & Automation Tools": [
-                "gemini-cli",
+                "antigravity-cli",
                 "claude-code",
                 "opencode",
                 "copilot",

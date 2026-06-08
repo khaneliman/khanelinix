@@ -25,8 +25,8 @@ let
       enabled = config.khanelinix.programs.terminal.tools.claude-code.enable or false;
     }
     {
-      id = "gemini";
-      enabled = config.khanelinix.programs.terminal.tools.gemini-cli.enable or false;
+      id = "antigravity";
+      enabled = config.khanelinix.programs.terminal.tools.antigravity-cli.enable or false;
     }
     {
       id = "opencode";

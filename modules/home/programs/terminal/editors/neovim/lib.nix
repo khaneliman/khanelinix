@@ -32,8 +32,7 @@ let
 in
 {
   # For each nixvim dependency, resolve its actual package name and check
-  # if it's already installed in home.packages (e.g., dependency key "gemini"
-  # maps to package "gemini-cli").
+  # if it's already installed in home.packages.
   dependenciesToDisable =
     let
       deps = khanelivimConfiguration.config.dependencies;

@@ -19,7 +19,6 @@ in
     ck
     claude-code
     codex
-    gemini-cli
     git-surgeon
     hunk
     opencode
