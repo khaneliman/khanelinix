@@ -38,6 +38,22 @@ in
               model = lib.mkDefault "base.en";
               language = lib.mkDefault "en";
             };
+            output = {
+              # Type via uinput (dotool) first. Citrix/RDP/VMs and games read
+              # real evdev input and ignore the Wayland virtual-keyboard
+              # protocol that wtype uses, so wtype output never reaches the
+              # remote session. uinput presents a real kernel HID device.
+              driver_order = lib.mkDefault [
+                "dotool"
+                "wtype"
+                "ydotool"
+                "clipboard"
+              ];
+              # uinput device needs to settle (and the target window to focus)
+              # before keys land, or the first characters drop. Bump
+              # type_delay_ms if Citrix still drops characters over the network.
+              pre_type_delay_ms = lib.mkDefault 60;
+            };
           }
 
           (lib.mkIf config.khanelinix.programs.graphical.wms.hyprland.enable {
