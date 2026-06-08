@@ -96,6 +96,7 @@ in
         userSettings = {
           addProjectBaseDirectory = githubRoot;
 
+          providers.claudeAgent.customModels = [ "claude-opus-4-8[1m]" ];
         };
 
         keybindings = [
@@ -251,6 +252,10 @@ in
             diffIgnoreWhitespace = true;
             diffWordWrap = false;
             favorites = [
+              {
+                provider = "claudeAgent";
+                model = "claude-opus-4-8[1m]";
+              }
               {
                 provider = "codex";
                 model = "gpt-5.5";
