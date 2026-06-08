@@ -89,8 +89,8 @@ in
           message = "Nord and Catppuccin themes cannot be enabled at the same time";
         }
         {
-          assertion = !config.khanelinix.theme.catppuccin.enable;
-          message = "Nord and Catppuccin themes cannot be enabled at the same time";
+          assertion = !config.khanelinix.theme.tokyonight.enable;
+          message = "Catppuccin and Tokyonight themes cannot be enabled at the same time";
         }
       ];
     })

@@ -40,7 +40,7 @@ in
         assertions = [
           {
             assertion = !config.khanelinix.theme.catppuccin.enable;
-            message = "Tokyonight and Catppuccin themes cannot be enabled at the same time";
+            message = "Nord and Catppuccin themes cannot be enabled at the same time";
           }
           {
             assertion = !config.khanelinix.theme.tokyonight.enable;
