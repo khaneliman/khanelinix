@@ -13,6 +13,78 @@ let
   cfg = config.khanelinix.programs.terminal.tools.codex;
   exoEnabled = config.services.exo.enable or false;
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
+  tomlFormat = pkgs.formats.toml { };
+  codexConfigDir =
+    if config.home.preferXdgDirectories then
+      "${lib.removePrefix config.home.homeDirectory config.xdg.configHome}/codex"
+    else
+      ".codex";
+  codexProfiles = {
+    # Deep analysis and live-research mode. Intentionally expensive:
+    # benchmark preference is GPT-5.5 xhigh for best pass rate.
+    deep = {
+      model = "gpt-5.5";
+      model_reasoning_effort = "xhigh";
+      model_verbosity = "high";
+      plan_mode_reasoning_effort = "xhigh";
+      web_search = "live";
+    };
+
+    # Large-context escape hatch. The alias passes context overrides directly
+    # via CLI -c because those fields are top-level settings in the published
+    # schema.
+    long = {
+      model = "gpt-5.4";
+      model_reasoning_effort = "xhigh";
+      model_verbosity = "high";
+      plan_mode_reasoning_effort = "xhigh";
+      web_search = "live";
+    };
+
+    # Cheapest local utility profile for triage and simple transforms.
+    nano = {
+      model = "gpt-5.4-nano";
+      model_reasoning_effort = "none";
+      model_verbosity = "low";
+      plan_mode_reasoning_effort = "low";
+      service_tier = "flex";
+      web_search = "disabled";
+    };
+
+    # Faster implementation loop for coding tasks.
+    quick = {
+      model_reasoning_effort = "medium";
+      model = "gpt-5.3-codex-spark";
+      model_reasoning_summary = "none";
+      model_verbosity = "low";
+      plan_mode_reasoning_effort = "medium";
+      service_tier = "fast";
+      web_search = "disabled";
+    };
+
+    # High-effort coding profile for coding-first work.
+    spark = {
+      model = "gpt-5.3-codex-spark";
+      model_reasoning_effort = "medium";
+      model_verbosity = "medium";
+      plan_mode_reasoning_effort = "high";
+      service_tier = "fast";
+      web_search = "disabled";
+    };
+
+    # Force local-only behavior when you do not want network access.
+    offline = {
+      sandbox_workspace_write.network_access = false;
+      web_search = "disabled";
+    };
+
+    # Token-enabled profile for package updates and other API-heavy workflows.
+    unsafe = {
+      approval_policy = "on-request";
+      sandbox_mode = "danger-full-access";
+      shell_environment_policy.ignore_default_excludes = true;
+    };
+  };
 in
 {
   options.khanelinix.programs.terminal.tools.codex = {
@@ -35,6 +107,13 @@ in
       codex-exo-gpt-oss = ''codex -c model_provider='"exo"' -m mlx-community/gpt-oss-20b-MXFP4-Q8'';
       codex-exo-qwen = ''codex -c model_provider='"exo"' -m mlx-community/Qwen3.6-35B-A3B-5bit'';
     };
+
+    home.file = lib.mapAttrs' (
+      name: profileSettings:
+      lib.nameValuePair "${codexConfigDir}/${name}.config.toml" {
+        source = tomlFormat.generate "codex-${name}-config" profileSettings;
+      }
+    ) codexProfiles;
 
     programs.codex = {
       enable = true;
@@ -169,73 +248,6 @@ in
             "context-used"
             "five-hour-limit"
           ];
-        };
-
-        profiles = {
-          # Deep analysis and live-research mode. Intentionally expensive:
-          # benchmark preference is GPT-5.5 xhigh for best pass rate.
-          deep = {
-            model = "gpt-5.5";
-            model_reasoning_effort = "xhigh";
-            model_verbosity = "high";
-            plan_mode_reasoning_effort = "xhigh";
-            web_search = "live";
-          };
-
-          # Large-context escape hatch. The alias passes context overrides
-          # directly via CLI -c because those fields are top-level settings in
-          # the published schema.
-          long = {
-            model = "gpt-5.4";
-            model_reasoning_effort = "xhigh";
-            model_verbosity = "high";
-            plan_mode_reasoning_effort = "xhigh";
-            web_search = "live";
-          };
-
-          # Cheapest local utility profile for triage and simple transforms.
-          nano = {
-            model = "gpt-5.4-nano";
-            model_reasoning_effort = "none";
-            model_verbosity = "low";
-            plan_mode_reasoning_effort = "low";
-            service_tier = "flex";
-            web_search = "disabled";
-          };
-
-          # Faster implementation loop for coding tasks.
-          quick = {
-            model_reasoning_effort = "medium";
-            model = "gpt-5.3-codex-spark";
-            model_reasoning_summary = "none";
-            model_verbosity = "low";
-            plan_mode_reasoning_effort = "medium";
-            service_tier = "fast";
-            web_search = "disabled";
-          };
-
-          # High-effort coding profile for coding-first work.
-          spark = {
-            model = "gpt-5.3-codex-spark";
-            model_reasoning_effort = "medium";
-            model_verbosity = "medium";
-            plan_mode_reasoning_effort = "high";
-            service_tier = "fast";
-            web_search = "disabled";
-          };
-
-          # Force local-only behavior when you do not want network access.
-          offline = {
-            sandbox_workspace_write.network_access = false;
-            web_search = "disabled";
-          };
-
-          # Token-enabled profile for package updates and other API-heavy workflows.
-          unsafe = {
-            approval_policy = "on-request";
-            sandbox_mode = "danger-full-access";
-            shell_environment_policy.ignore_default_excludes = true;
-          };
         };
 
         projects =
