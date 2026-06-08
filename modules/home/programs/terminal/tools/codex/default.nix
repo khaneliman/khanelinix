@@ -44,14 +44,29 @@ in
       settings = {
         features = {
           apps = true;
-          codex_git_commit = false;
-          fast_mode = false;
+          browser_use = true;
+          browser_use_external = true;
+          computer_use = true;
+          enable_request_compression = true;
+          fast_mode = true;
+          goals = true;
+          guardian_approval = true;
+          hooks = true;
+          image_generation = true;
+          in_app_browser = true;
           multi_agent = true;
+          personality = true;
+          plugin_sharing = true;
+          plugins = true;
           prevent_idle_sleep = true;
           shell_snapshot = true;
+          shell_tool = true;
           skill_mcp_dependency_install = true;
+          terminal_resize_reflow = true;
+          tool_call_mcp_elicitation = true;
+          tool_suggest = true;
           unified_exec = true;
-          undo = true;
+          workspace_dependencies = true;
         };
 
         agents = {
@@ -74,9 +89,7 @@ in
         model_context_window = 272000;
         model_reasoning_effort = "high";
         plan_mode_reasoning_effort = "high";
-        # NOTE: 5.5 is already 2x cost
-        # Plenty of room atm with smaller mcp/agents.md/agents/commands
-        service_tier = "fast";
+        # service_tier = "fast"; # Not preferred by default for now; use /fast on when needed.
 
         model_providers = lib.optionalAttrs exoEnabled {
           exo = {
