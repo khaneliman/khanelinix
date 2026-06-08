@@ -15,6 +15,18 @@ edits.
 5. **Skill Usage (Nix Work)**: For any Nix code or module task, use the
    `writing-nix` skill before making edits.
 
+## Host Context
+
+- Primary `khanelinix` workstation uses a Kinesis Advantage360 Pro split
+  keyboard.
+- For keybind, shortcut, launcher, window-manager, shell, editor, multiplexer,
+  or workflow changes, optimize for split-keyboard ergonomics.
+- Prefer home-row or thumb-cluster reachable binds, modal flows, and consistent
+  cross-app patterns. Treat keyboard firmware layers/macros as available tools
+  when they reduce app-specific chord complexity.
+- Avoid designs that assume laptop/ANSI key placement, function-row reach, or
+  dense same-hand multi-modifier chords.
+
 ## Coding Style & Patterns
 
 - **Naming**: `camelCase` for Nix variables/options, `kebab-case` for files and

@@ -12,6 +12,9 @@ let
   wallpaperPaths = names: lib.khanelinix.theme.wallpaperPaths { inherit config pkgs names; };
 in
 {
+  # Host input profile: Kinesis Advantage360 Pro split keyboard. Keep bind and
+  # workflow choices ergonomic for thumb clusters, home-row access, and hardware
+  # layers/macros instead of dense same-hand modifier chords.
   khanelinix = {
     user = {
       enable = true;
