@@ -54,6 +54,7 @@ in
 
         services = {
           cliphist = mkDefault enabled;
+          voxtype = mkDefault enabled;
           wl-clip-persist = mkDefault enabled;
           # NOTE: doesn't provide anything extra compared to nixos module
           # keyring = mkDefault enabled;
