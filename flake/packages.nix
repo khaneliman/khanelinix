@@ -29,10 +29,12 @@
         ) packageFunctions
       );
 
+      availablePackages = lib.filterAttrs (
+        _name: package: lib.meta.availableOn pkgs.stdenv.hostPlatform package
+      ) builtPackages;
+
     in
     {
-      # Keep packages lazy. Eager platform filtering here forces full package
-      # evaluation and slows unrelated config eval.
-      packages = builtPackages;
+      packages = availablePackages;
     };
 }
