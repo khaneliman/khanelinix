@@ -37,6 +37,11 @@ in
                     clangd.enable = mkForce false;
                   };
 
+                  khanelivim.debugging = {
+                    adapters = mkForce [ "debugprint" ];
+                    ui = mkForce null;
+                  };
+
                   plugins = {
                     # NOTE: Disabling some plugins I won't need on work devices
                     avante.enable = mkForce false;
@@ -45,11 +50,6 @@ in
                       csharpier.command = lib.getExe pkgs.csharpier;
                       nixfmt.command = lib.getExe pkgs.nixfmt;
                     };
-                    dap-go.enable = mkForce false;
-                    dap-python.enable = mkForce false;
-                    dap-ui.enable = mkForce false;
-                    dap-virtual-text.enable = mkForce false;
-                    dap.enable = mkForce false;
                     firenvim.enable = mkForce false;
                     lint.linters = {
                       clangtidy.cmd = mkForce null;
