@@ -4,6 +4,7 @@
   buildNpmPackage,
   cmake,
   curl,
+  fetchFromGitHub,
   fetchzip,
   lib,
   libopus,
@@ -19,12 +20,12 @@ stdenv.mkDerivation (finalAttrs: {
   pname = "lumen";
   version = "unstable-2026-02-18";
 
-  src = fetchTree {
-    type = "git";
-    url = "https://github.com/trollzem/Lumen.git";
+  src = fetchFromGitHub {
+    owner = "trollzem";
+    repo = "Lumen";
     rev = "5c3bd0f4109eb4069d10ee1a8201b9bf3a328018";
-    narHash = "sha256-+vzWBYrXMompedxNKtAaf+KIEdWR+bo1x/ZAtlYmUDw=";
-    submodules = true;
+    hash = "sha256-+vzWBYrXMompedxNKtAaf+KIEdWR+bo1x/ZAtlYmUDw=";
+    fetchSubmodules = true;
   };
 
   ui = buildNpmPackage {
