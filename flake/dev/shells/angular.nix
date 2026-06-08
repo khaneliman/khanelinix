@@ -22,7 +22,7 @@ let
   angularPackages = with pkgs; [
     ng
     bun
-    nodejs_20
+    nodejs_22
     pnpm
     vimPlugins.nvim-treesitter-parsers.angular
     vscode-extensions.angular.ng-template
