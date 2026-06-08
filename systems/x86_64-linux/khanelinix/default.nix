@@ -186,6 +186,18 @@ in
   services = {
     displayManager.defaultSession = "hyprland-uwsm";
     irqbalance.enable = mkForce false;
+    sunshine = {
+      settings = {
+        sunshine_name = "khanelinix";
+        capture = "kms";
+        encoder = "vaapi";
+        adapter_name = "/dev/dri/by-path/pci-0000:0c:00.0-render";
+        output_name = 1;
+        audio_sink = "alsa_output.pci-0000_0e_00.4.analog-stereo";
+        hevc_mode = 3;
+        av1_mode = 3;
+      };
+    };
   };
 
   # Keep EFI usage predictable when specialisations multiply boot artifacts.
