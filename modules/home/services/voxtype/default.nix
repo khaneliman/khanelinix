@@ -47,6 +47,20 @@ in
               post_output_command = lib.mkDefault "hyprctl dispatch 'hl.dsp.submap(\"reset\")'";
             };
           })
+
+          (lib.mkIf
+            (
+              !config.khanelinix.programs.graphical.wms.hyprland.enable
+              && config.khanelinix.programs.graphical.wms.sway.enable
+            )
+            {
+              output = {
+                pre_recording_command = lib.mkDefault "swaymsg mode voxtype_recording";
+                pre_output_command = lib.mkDefault "swaymsg mode voxtype_suppress";
+                post_output_command = lib.mkDefault "swaymsg mode default";
+              };
+            }
+          )
         ];
       };
     })

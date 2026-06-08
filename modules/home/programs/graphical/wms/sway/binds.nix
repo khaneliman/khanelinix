@@ -74,6 +74,8 @@ in
           # TODO: package upstream
           # window-inspector = "swayprop"; # TODO: package upstream
           screen-recorder = "record_screen";
+          voxtype-toggle = "voxtype record toggle";
+          voxtype-cancel = "voxtype record cancel";
 
           # screenshot commands using grim/slurp for sway
           sway_area_file = ''file="${screenshot-path}/$(${getDateTime}).png" && grim -g "$(slurp)" "$file" && notify-send "Screenshot" "Area saved to $file"'';
@@ -252,6 +254,14 @@ in
               # Note: Sway doesn't support mouse_up/mouse_down bindings like Hyprland
             })
             (lib.mkOptionDefault (
+              lib.optionalAttrs config.khanelinix.services.voxtype.enable {
+                "F13" = "exec ${mkStartCommand voxtype-toggle}";
+                "${swayCfg.modifier}+d" = "exec ${mkStartCommand voxtype-toggle}";
+                "F14" = "exec ${mkStartCommand voxtype-cancel}";
+                "${swayCfg.modifier}+Shift+d" = "exec ${mkStartCommand voxtype-cancel}";
+              }
+            ))
+            (lib.mkOptionDefault (
               builtins.listToAttrs (
                 builtins.concatLists (
                   builtins.genList (
@@ -288,9 +298,30 @@ in
               "${swayCfg.modifier}+r" = "mode resize";
               "${swayCfg.modifier}+m" = "mode monitor";
             })
+
           ];
 
           modes = {
+            voxtype_recording = lib.optionalAttrs config.khanelinix.services.voxtype.enable {
+              "F13" = "exec ${mkStartCommand voxtype-toggle}, mode default";
+              "${swayCfg.modifier}+d" = "exec ${mkStartCommand voxtype-toggle}, mode default";
+              "F14" = "exec ${mkStartCommand voxtype-cancel}, mode default";
+              "${swayCfg.modifier}+Shift+d" = "exec ${mkStartCommand voxtype-cancel}, mode default";
+              "F12" = "exec ${mkStartCommand voxtype-cancel}, mode default";
+            };
+
+            voxtype_suppress = lib.optionalAttrs config.khanelinix.services.voxtype.enable {
+              "Super_L" = "nop";
+              "Super_R" = "nop";
+              "Control_L" = "nop";
+              "Control_R" = "nop";
+              "Alt_L" = "nop";
+              "Alt_R" = "nop";
+              "Shift_L" = "nop";
+              "Shift_R" = "nop";
+              "F12" = "mode default";
+            };
+
             screenshot = {
               "w" = "exec ${sway_active_clipboard}, mode default";
               "a" = "exec ${sway_area_clipboard}, mode default";
