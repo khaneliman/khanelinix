@@ -15,12 +15,50 @@ let
     types
     ;
 
-  inherit (lib.khanelinix) enabled;
+  inherit (lib.khanelinix) disabled enabled;
   inherit (inputs) yazi-flavors;
 
-  palette = import ./colors.nix;
-
   cfg = config.khanelinix.theme.catppuccin;
+
+  palette = import ./colors.nix;
+  inherit (palette) colors;
+  fzfColors = {
+    "bg+" = colors.surface0.hex;
+    bg = colors.base.hex;
+    border = colors.overlay0.hex;
+    fg = colors.text.hex;
+    "fg+" = colors.text.hex;
+    header = colors.${cfg.accent}.hex;
+    hl = colors.${cfg.accent}.hex;
+    "hl+" = colors.${cfg.accent}.hex;
+    info = colors.${cfg.accent}.hex;
+    label = colors.text.hex;
+    marker = colors.${cfg.accent}.hex;
+    pointer = colors.${cfg.accent}.hex;
+    prompt = colors.${cfg.accent}.hex;
+    selected-bg = colors.surface1.hex;
+    spinner = colors.rosewater.hex;
+  };
+  ghDashTheme = {
+    theme.colors = {
+      background.selected = colors.surface0.hex;
+      border = {
+        faint = colors.surface0.hex;
+        primary = colors.${cfg.accent}.hex;
+        secondary = colors.surface1.hex;
+      };
+      text = {
+        error = colors.red.hex;
+        faint = colors.subtext1.hex;
+        inverted = colors.crust.hex;
+        primary = colors.text.hex;
+        secondary = colors.${cfg.accent}.hex;
+        success = colors.green.hex;
+        warning = colors.yellow.hex;
+      };
+    };
+  };
+
   inherit (pkgs.stdenv.hostPlatform) isLinux;
   thunderbirdAddon = pkgs.stdenvNoCC.mkDerivation {
     pname = "thunderbird-addon-catppuccin-macchiatio-unofficial";
@@ -173,21 +211,13 @@ in
             btop = enabled;
             cava = enabled;
             delta = enabled;
-            # FIXME: strict no-IFD eval flags upstream Catppuccin generated theme imports.
-            # Fix upstream instead of disabling the integration here.
-            firefox = mkIf config.khanelinix.programs.graphical.browsers.firefox.enable {
-              profiles.${config.khanelinix.user.name} = {
-                enable = true;
-                force = true;
-              };
-            };
+            # Generated theme imports build during eval; local Firefox theme extension stays enabled below.
+            firefox = disabled;
             fish = enabled;
-            # FIXME: strict no-IFD eval flags upstream Catppuccin palette imports.
-            # Fix upstream instead of disabling the integration here.
-            fzf = enabled;
-            # FIXME: strict no-IFD eval flags upstream Catppuccin config conversion.
-            # Fix upstream instead of disabling the integration here.
-            gh-dash = enabled;
+            # Static local settings avoid upstream generated palette imports during eval.
+            fzf = disabled;
+            # Static local settings avoid upstream generated YAML conversion during eval.
+            gh-dash = disabled;
             ghostty = enabled;
             gitui = enabled;
             glamour = enabled;
@@ -270,6 +300,10 @@ in
 
           programs = {
             # Additional program settings that don't follow the common pattern
+            fzf.colors = mkIf config.khanelinix.programs.terminal.tools.fzf.enable fzfColors;
+
+            gh-dash.settings = mkIf config.khanelinix.programs.terminal.tools.gh.enable ghDashTheme;
+
             ghostty.settings = mkIf pkgs.stdenv.hostPlatform.isDarwin {
               macos-icon = "custom-style";
               macos-icon-ghost-color = palette.colors.${cfg.accent}.hex;
