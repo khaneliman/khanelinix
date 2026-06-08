@@ -115,6 +115,14 @@
         flake-compat.follows = "flake-compat";
       };
     };
+    zmk-nix = {
+      url = "github:lilyinstarlight/zmk-nix";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+    adv360-zmk = {
+      url = "github:KinesisCorporation/Adv360-Pro-ZMK/V3.0";
+      flake = false;
+    };
     yazi-flavors = {
       url = "github:yazi-rs/flavors";
       flake = false;

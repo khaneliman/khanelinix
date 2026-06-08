@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "adv360-zmk": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1762980181,
+        "narHash": "sha256-9IOdjWLK86v+EPduHe+4A0SQONGRincopv/w1NC71iw=",
+        "owner": "KinesisCorporation",
+        "repo": "Adv360-Pro-ZMK",
+        "rev": "962cb1d30eb08e9927cf967eea3c1d3bb5d0d53d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "KinesisCorporation",
+        "ref": "V3.0",
+        "repo": "Adv360-Pro-ZMK",
+        "type": "github"
+      }
+    },
     "anyrun-nixos-options": {
       "inputs": {
         "flake-parts": [
@@ -1079,6 +1096,7 @@
     },
     "root": {
       "inputs": {
+        "adv360-zmk": "adv360-zmk",
         "anyrun-nixos-options": "anyrun-nixos-options",
         "catppuccin": "catppuccin",
         "disko": "disko",
@@ -1106,7 +1124,8 @@
         "stylix": "stylix",
         "tokyonight": "tokyonight",
         "waybar": "waybar",
-        "yazi-flavors": "yazi-flavors"
+        "yazi-flavors": "yazi-flavors",
+        "zmk-nix": "zmk-nix"
       }
     },
     "rust-overlay": {
@@ -1536,6 +1555,26 @@
       "original": {
         "owner": "yazi-rs",
         "repo": "flavors",
+        "type": "github"
+      }
+    },
+    "zmk-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1780792982,
+        "narHash": "sha256-ueC1zMl+xbUhjnbLoqpnleKrXd+m3VVLsu+h7UgHe4g=",
+        "owner": "lilyinstarlight",
+        "repo": "zmk-nix",
+        "rev": "d735ef57a9b1637288755a8d8b1f03b33ef6d5b6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "lilyinstarlight",
+        "repo": "zmk-nix",
         "type": "github"
       }
     }

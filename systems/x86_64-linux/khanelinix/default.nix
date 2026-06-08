@@ -33,6 +33,8 @@ in
       home-network = enabled;
     };
 
+    hardware.keyboards.advantage360 = enabled;
+
     display-managers = {
       gdm.monitors = ./monitors.xml;
       regreet.hyprlandOutput = builtins.readFile ./hyprlandOutput;

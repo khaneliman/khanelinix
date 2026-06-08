@@ -497,6 +497,10 @@ in
             ];
 
             voxtypeBinds = lib.optionals config.khanelinix.services.voxtype.enable [
+              # F13/F14 are intended for keyboard firmware layer keys, not the
+              # printed Kinesis Fn row. Advantage360 Pro/ZMK can emit F13/F14
+              # from any thumb/layer position, giving VoxType a cross-OS bind
+              # that does not involve Super/Windows.
               (mkExecBind "" "F13" "$voxtype-toggle")
               (mkExecBind "$mainMod" "D" "$voxtype-toggle")
               (mkExecBind "" "F14" "$voxtype-cancel")

@@ -1,0 +1,20 @@
+macro_ver: macro_ver {
+  compatible = "zmk,behavior-macro";
+  #binding-cells = <0>;
+  bindings =
+    <&kp K>,
+    <&kp H>,
+    <&kp A>,
+    <&kp N>,
+    <&kp E>,
+    <&kp L>,
+    <&kp I>,
+    <&kp N>,
+    <&kp I>,
+    <&kp X>,
+    <&kp MINUS>,
+    <&kp V>,
+    <&kp O>,
+    <&kp X>,
+    <&kp RET>;
+};
