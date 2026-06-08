@@ -163,9 +163,33 @@ in
           pickerBind = lib.optionalAttrs hyprpickerEnabled {
             "Mod+Shift+P".action.spawn = colorPickerCommand;
           };
+
+          voxtypeBinds = lib.optionalAttrs config.khanelinix.services.voxtype.enable {
+            "F13".action.spawn = [
+              "voxtype"
+              "record"
+              "toggle"
+            ];
+            "Mod+D".action.spawn = [
+              "voxtype"
+              "record"
+              "toggle"
+            ];
+            "F14".action.spawn = [
+              "voxtype"
+              "record"
+              "cancel"
+            ];
+            "Mod+Shift+D".action.spawn = [
+              "voxtype"
+              "record"
+              "cancel"
+            ];
+          };
         in
         launcherBinds
         // pickerBind
+        // voxtypeBinds
         // {
           "Mod+Return".action.spawn = "kitty";
           "Mod+Shift+Return".action.spawn = "kitty zellij";
