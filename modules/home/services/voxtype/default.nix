@@ -27,23 +27,23 @@ in
       services.voxtype = {
         enable = true;
 
-        package = lib.mkDefault pkgs.voxtype-vulkan;
-        loadModels = lib.mkDefault [ config.services.voxtype.settings.whisper.model ];
-        wayland.display = lib.mkDefault "wayland-1";
+        package = pkgs.voxtype-vulkan;
+        loadModels = [ config.services.voxtype.settings.whisper.model ];
+        wayland.display = "wayland-1";
         settings = lib.mkMerge [
           {
-            state_file = lib.mkDefault "auto";
-            hotkey.enabled = lib.mkDefault false;
+            state_file = "auto";
+            hotkey.enabled = false;
             whisper = {
-              model = lib.mkDefault "base.en";
-              language = lib.mkDefault "en";
+              model = "base.en";
+              language = "en";
             };
             output = {
               # Type via uinput (dotool) first. Citrix/RDP/VMs and games read
               # real evdev input and ignore the Wayland virtual-keyboard
               # protocol that wtype uses, so wtype output never reaches the
               # remote session. uinput presents a real kernel HID device.
-              driver_order = lib.mkDefault [
+              driver_order = [
                 "dotool"
                 "wtype"
                 "ydotool"
@@ -52,15 +52,15 @@ in
               # uinput device needs to settle (and the target window to focus)
               # before keys land, or the first characters drop. Bump
               # type_delay_ms if Citrix still drops characters over the network.
-              pre_type_delay_ms = lib.mkDefault 60;
+              pre_type_delay_ms = 60;
             };
           }
 
           (lib.mkIf config.khanelinix.programs.graphical.wms.hyprland.enable {
             output = {
-              pre_recording_command = lib.mkDefault "hyprctl dispatch 'hl.dsp.submap(\"voxtype_recording\")'";
-              pre_output_command = lib.mkDefault "hyprctl dispatch 'hl.dsp.submap(\"voxtype_suppress\")'";
-              post_output_command = lib.mkDefault "hyprctl dispatch 'hl.dsp.submap(\"reset\")'";
+              pre_recording_command = "hyprctl dispatch 'hl.dsp.submap(\"voxtype_recording\")'";
+              pre_output_command = "hyprctl dispatch 'hl.dsp.submap(\"voxtype_suppress\")'";
+              post_output_command = "hyprctl dispatch 'hl.dsp.submap(\"reset\")'";
             };
           })
 
@@ -71,9 +71,9 @@ in
             )
             {
               output = {
-                pre_recording_command = lib.mkDefault "swaymsg mode voxtype_recording";
-                pre_output_command = lib.mkDefault "swaymsg mode voxtype_suppress";
-                post_output_command = lib.mkDefault "swaymsg mode default";
+                pre_recording_command = "swaymsg mode voxtype_recording";
+                pre_output_command = "swaymsg mode voxtype_suppress";
+                post_output_command = "swaymsg mode default";
               };
             }
           )
