@@ -7,6 +7,13 @@
 }:
 let
   cfg = config.khanelinix.security.clamav;
+  excludedDirectories = [
+    "(^|/)\\.cache($|/)"
+    "(^|/)\\.git($|/)"
+    "(^|/)\\.hg($|/)"
+    "(^|/)\\.svn($|/)"
+    "(^|/)\\.Trash-[0-9]+($|/)"
+  ];
   scanDirectories = [
     "/home"
     "/var/lib"
@@ -39,14 +46,20 @@ in
       serviceConfig = {
         Type = "oneshot";
         Nice = 19;
-        IOSchedulingClass = "best-effort";
-        IOSchedulingPriority = 7;
+        IOSchedulingClass = "idle";
+        RuntimeMaxSec = "6h";
         SuccessExitStatus = [ 1 ];
       };
       script = ''
         ${pkgs.clamav}/bin/clamscan \
           --recursive \
           --infected \
+          --cross-fs=no \
+          ${
+            lib.concatMapStringsSep " \\\n          " (
+              pattern: "--exclude-dir='${pattern}'"
+            ) excludedDirectories
+          } \
           ${lib.concatStringsSep " " scanDirectories}
       '';
     };
