@@ -245,6 +245,14 @@ let
         from = "$screen-recorder";
         to = "record_screen";
       }
+      {
+        from = "$voxtype-toggle";
+        to = "voxtype record toggle";
+      }
+      {
+        from = "$voxtype-cancel";
+        to = "voxtype record cancel";
+      }
     ];
 
   replaceCommandVars =
@@ -486,6 +494,13 @@ in
               (mkExecBind "$mainMod" "V" "$cliphist")
               # TODO: handle when you need to specify port manually `-p 5901`
               (mkExecBind "$mainMod" "W" "$looking-glass")
+            ];
+
+            voxtypeBinds = lib.optionals config.khanelinix.services.voxtype.enable [
+              (mkExecBind "" "F13" "$voxtype-toggle")
+              (mkExecBind "$mainMod" "D" "$voxtype-toggle")
+              (mkExecBind "" "F14" "$voxtype-cancel")
+              (mkExecBind "$SUPER_SHIFT" "D" "$voxtype-cancel")
             ];
 
             # Background tools binds (background-graphical.slice)
@@ -827,7 +842,7 @@ in
             ];
           in
           (map mkLuaBind (
-            (launcherBinds ++ appBinds ++ screenshotBinds)
+            (launcherBinds ++ appBinds ++ voxtypeBinds ++ screenshotBinds)
             ++ backgroundBinds
             ++ systemBinds
             ++ movementBinds
@@ -887,6 +902,72 @@ in
 
       # Submap definitions for better keybind organization
       submaps = {
+        voxtype_recording = lib.mkIf config.khanelinix.services.voxtype.enable {
+          settings = {
+            bind = map mkLuaBind [
+              (mkExecBind "" "F13" "$voxtype-toggle")
+              (mkBind {
+                mods = "";
+                key = "F13";
+                dispatcher = "submap";
+                args = "reset";
+              })
+              (mkExecBind "$mainMod" "D" "$voxtype-toggle")
+              (mkBind {
+                mods = "$mainMod";
+                key = "D";
+                dispatcher = "submap";
+                args = "reset";
+              })
+              (mkExecBind "" "F14" "$voxtype-cancel")
+              (mkBind {
+                mods = "";
+                key = "F14";
+                dispatcher = "submap";
+                args = "reset";
+              })
+              (mkExecBind "$SUPER_SHIFT" "D" "$voxtype-cancel")
+              (mkBind {
+                mods = "$SUPER_SHIFT";
+                key = "D";
+                dispatcher = "submap";
+                args = "reset";
+              })
+              (mkExecBind "" "F12" "$voxtype-cancel")
+              (mkBind {
+                mods = "";
+                key = "F12";
+                dispatcher = "submap";
+                args = "reset";
+              })
+            ];
+          };
+        };
+
+        voxtype_suppress = lib.mkIf config.khanelinix.services.voxtype.enable {
+          settings = {
+            bind =
+              (map (mkLuaBindWith { release = true; }) [
+                (mkExecBindRaw "SUPER" "SUPER_L" "true")
+                (mkExecBindRaw "SUPER" "SUPER_R" "true")
+                (mkExecBindRaw "CTRL" "Control_L" "true")
+                (mkExecBindRaw "CTRL" "Control_R" "true")
+                (mkExecBindRaw "ALT" "Alt_L" "true")
+                (mkExecBindRaw "ALT" "Alt_R" "true")
+                (mkExecBindRaw "SHIFT" "Shift_L" "true")
+                (mkExecBindRaw "SHIFT" "Shift_R" "true")
+              ])
+              ++ map mkLuaBind [
+                (mkBind {
+                  mods = "";
+                  key = "F12";
+                  dispatcher = "submap";
+                  args = "reset";
+                })
+              ];
+          };
+        };
+
         screenshot = {
           onDispatch = "reset";
           settings = {
