@@ -31,7 +31,6 @@ let
     target:
     optionalAttrs (target != null) {
       "target.object" = target;
-      "node.dont-reconnect" = true;
     };
 in
 {
