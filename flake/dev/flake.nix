@@ -34,6 +34,10 @@
     nixpkgs-master.follows = "root/nixpkgs-master";
     nixpkgs-unstable.follows = "root/nixpkgs-unstable";
     flake-compat.follows = "root/flake-compat";
+    fast-nix-gc.follows = "root/fast-nix-gc";
+    hermes-agent.follows = "root/hermes-agent";
+    home-manager.follows = "root/home-manager";
+    sops-nix.follows = "root/sops-nix";
 
     # keep-sorted start block=yes newline_separated=yes
     flake-parts-website = {

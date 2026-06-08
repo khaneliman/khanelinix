@@ -11,6 +11,7 @@ in
     ./home.nix
     ./apps.nix
     ./docs.nix
+    ./tests.nix
     inputs.flake-parts.flakeModules.partitions
   ];
 
@@ -24,6 +25,5 @@ in
     "devShells"
     "formatter"
     "templates"
-    "tests"
   ] (_: "dev");
 }
