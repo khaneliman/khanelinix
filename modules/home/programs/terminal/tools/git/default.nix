@@ -188,32 +188,6 @@ in
           };
         };
 
-        hooks = {
-          pre-commit = lib.getExe (
-            pkgs.writeShellScriptBin "pre-commit" ''
-              # Check only staged files for unambiguous conflict start/end markers.
-              mapfile -t stagedFiles < <(
-                git diff --cached --name-only --diff-filter=ACMR
-              )
-
-              if ((''${#stagedFiles[@]})) && \
-                git grep --cached -I -qE "^(<<<<<<< |>>>>>>> )" -- "''${stagedFiles[@]}"; then
-                echo "Error: You have leftover merge conflict markers."
-                exit 1
-              fi
-            ''
-          );
-          # NOTE: Appends 'Signed-off-by: Austin Horstman <khaneliman12@gmail.com>'
-          # prepare-commit-msg = lib.getExe (
-          #   pkgs.writeShellScriptBin "prepare-commit-msg" ''
-          #     echo "Signing off commit"
-          #     ${lib.getExe config.programs.git.package} interpret-trailers --if-exists doNothing --trailer \
-          #       "Signed-off-by: ${cfg.userName} <${cfg.userEmail}>" \
-          #       --in-place "$1"
-          #   ''
-          # );
-        };
-
         signing = {
           key = cfg.signingKey;
           format = "ssh";

@@ -14,6 +14,13 @@
         check.enable = false;
 
         settings.hooks = {
+          check-merge-conflicts = {
+            enable = true;
+            args = [ "--assume-in-merge" ];
+            excludes = [
+              "modules/common/ai-tools/skills/jj-toolkit/references/conflict-resolution.md"
+            ];
+          };
           clang-tidy.enable = true;
           eslint = {
             enable = true;
