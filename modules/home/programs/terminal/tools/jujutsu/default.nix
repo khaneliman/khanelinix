@@ -44,6 +44,49 @@ in
         # Jujutsu configuration
         # See: https://docs.jj-vcs.dev/latest/config/
         settings = {
+          aliases = {
+            conflicts = [
+              "log"
+              "--no-pager"
+              "-r"
+              "conflicts()"
+            ];
+            df = [
+              "diff"
+              "--git"
+              "--no-pager"
+            ];
+            mine = [
+              "log"
+              "--no-pager"
+              "-r"
+              "mine_mutable()"
+            ];
+            ops = [
+              "op"
+              "log"
+              "--no-pager"
+              "-n"
+              "10"
+            ];
+            recent = [
+              "log"
+              "--no-pager"
+              "-r"
+              "ancestors(@, 20)"
+            ];
+            sd = [
+              "show"
+              "--git"
+              "--no-pager"
+            ];
+            stack = [
+              "log"
+              "--no-pager"
+              "-r"
+              "stack()"
+            ];
+          };
           user = {
             name = cfg.userName;
             email = cfg.userEmail;
@@ -65,6 +108,10 @@ in
           };
           rebase = {
             auto_stash = true;
+          };
+          "revset-aliases" = {
+            "mine_mutable()" = "mine() & mutable()";
+            "stack()" = "trunk()..@";
           };
           ui = {
             default-command = "log";
