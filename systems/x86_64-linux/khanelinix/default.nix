@@ -77,7 +77,6 @@ in
 
       tailscale = {
         enable = true;
-        acceptRoutes = true;
       };
 
       sunshine = {
