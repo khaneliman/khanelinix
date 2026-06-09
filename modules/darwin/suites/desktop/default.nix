@@ -30,6 +30,7 @@ in
 
     khanelinix = {
       home.extraOptions = {
+        khanelinix.programs.graphical.apps.hammerspoon = mkDefault enabled;
         khanelinix.programs.graphical.apps.raycast = mkDefault enabled;
       };
 
