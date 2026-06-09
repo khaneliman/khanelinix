@@ -9,6 +9,7 @@ let
   inherit (lib) mkIf;
 
   cfg = config.khanelinix.programs.terminal.tools.atuin;
+  hasSops = config.khanelinix.services.sops.enable or false;
 
   userHome = config.home.homeDirectory;
   atuinSocketPath = "${userHome}/.local/share/atuin/daemon.sock";
@@ -30,12 +31,22 @@ in
   options.khanelinix.programs.terminal.tools.atuin = {
     enable = lib.mkEnableOption "atuin";
     enableDebug = lib.mkEnableOption "atuin daemon debug logging";
+    sync = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Whether to enable Atuin remote history sync.";
+      };
+    };
   };
 
   config = mkIf cfg.enable {
     home.shellAliases = {
+      atuin-key = "atuin key";
+      atuin-login = "atuin login";
       atuin-prune-failed = "atuin search --exclude-exit 0 --delete \"\"";
       atuin-prune-failed-dry-run = "atuin search --exclude-exit 0 --format \"{exit}\t{time}\t{command}\" | rg '^[1-9][0-9]*\t'";
+      atuin-sync = "atuin sync";
     };
 
     launchd.agents.atuin-daemon.config = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
@@ -56,6 +67,12 @@ in
       ];
       StandardErrorPath = atuinLogPaths.stderr;
       StandardOutPath = atuinLogPaths.stdout;
+    };
+
+    sops.secrets = mkIf (cfg.sync.enable && hasSops) {
+      "atuin/key" = {
+        sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
+      };
     };
 
     programs.atuin = {
@@ -79,26 +96,36 @@ in
 
       # Atuin configuration
       # See: https://docs.atuin.sh/configuration/config/
-      settings = {
-        enter_accept = true;
-        # Filter modes can still be toggled via `ctrl-r`
-        filter_mode = "workspace";
-        keymap_mode = "auto";
-        show_preview = true;
-        # NOTE: Whether to store commands that failed.
-        # Can be useful to auto prune, but lose commands that might have
-        # a simple typo to fix and would need to type again.
-        # store_failed = false;
-        style = "auto";
-        update_check = false;
-        workspaces = true;
+      settings = lib.mkMerge [
+        {
+          enter_accept = true;
+          # Filter modes can still be toggled via `ctrl-r`
+          filter_mode = "workspace";
+          keymap_mode = "auto";
+          show_preview = true;
+          # NOTE: Whether to store commands that failed.
+          # Can be useful to auto prune, but lose commands that might have
+          # a simple typo to fix and would need to type again.
+          # store_failed = false;
+          style = "auto";
+          update_check = false;
+          workspaces = true;
 
-        # Filter some commands we don't want to accidentally call from history
-        history_filter = [
-          "^(sudo reboot)$"
-          "^(reboot)$"
-        ];
-      };
+          # Filter some commands we don't want to accidentally call from history
+          history_filter = [
+            "^(sudo reboot)$"
+            "^(reboot)$"
+          ];
+        }
+        (mkIf cfg.sync.enable {
+          auto_sync = true;
+          sync_address = "https://api.atuin.sh";
+          sync_frequency = "30m";
+        })
+        (mkIf (cfg.sync.enable && hasSops) {
+          key_path = config.sops.secrets."atuin/key".path;
+        })
+      ];
     };
   };
 }
