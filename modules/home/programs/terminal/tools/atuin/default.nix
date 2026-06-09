@@ -10,6 +10,8 @@ let
 
   cfg = config.khanelinix.programs.terminal.tools.atuin;
   hasSops = config.khanelinix.services.sops.enable or false;
+  syncWithSops = cfg.sync.enable && hasSops;
+  atuinKeyPath = config.sops.secrets."atuin/key".path or null;
 
   userHome = config.home.homeDirectory;
   atuinSocketPath = "${userHome}/.local/share/atuin/daemon.sock";
@@ -55,7 +57,14 @@ in
         "-c"
         ''
           /bin/wait4path /nix/store || exit 1
-
+          ${lib.optionalString syncWithSops ''
+            # launchd has no agent ordering; wait for the sops key so atuin
+            # won't generate a fresh one and break sync (Linux uses systemd).
+            for _ in $(seq 1 60); do
+              [ -f '${atuinKeyPath}' ] && break
+              sleep 1
+            done
+          ''}
           # macOS can leave the socket behind across reboots if the daemon is
           # terminated before its shutdown handler runs.
           if [ -S '${atuinSocketPath}' ] && ! /usr/sbin/lsof '${atuinSocketPath}' >/dev/null 2>&1; then
@@ -67,6 +76,12 @@ in
       ];
       StandardErrorPath = atuinLogPaths.stderr;
       StandardOutPath = atuinLogPaths.stdout;
+    };
+
+    # Order after the sops-nix oneshot so the key exists before atuin starts.
+    systemd.user.services.atuin-daemon.Unit = mkIf (syncWithSops && pkgs.stdenv.hostPlatform.isLinux) {
+      After = [ "sops-nix.service" ];
+      Wants = [ "sops-nix.service" ];
     };
 
     sops.secrets = mkIf (cfg.sync.enable && hasSops) {
