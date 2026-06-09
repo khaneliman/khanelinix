@@ -17,6 +17,17 @@
     dc = "diff --cached";
     ### Add remote origin
     rao = "remote add origin";
+    ### Print remote default branch, falling back to main
+    default-branch = /* Bash */ ''
+      !f() {
+          local ref;
+          if ref=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null); then
+              printf '%s\n' "''${ref#origin/}";
+          else
+              printf '%s\n' main;
+          fi;
+      }; f
+    '';
 
     ## Git Flow Operations
     ### Commit all, commit all with message, add and commit all, amend commit
@@ -24,9 +35,9 @@
     cam = "commit -a -m";
     ac = "!git add . && git commit -am";
     m = "commit --amend --verbose";
-    ### Checkout, create and checkout new branch, checkout master, checkout develop
+    ### Checkout, create and checkout new branch, checkout default branch, checkout develop
     cob = "checkout -b";
-    com = "checkout master";
+    com = "!git checkout $(git default-branch)";
     cod = "checkout develop";
     ### Sync and cleanup with remote
     up = "!git pull --rebase --prune $@ && git submodule update --init --recursive";
@@ -39,16 +50,39 @@
     ### Go back a single commit
     undo = "reset HEAD~1 --mixed";
     ### Reset working directory discarding/removing all files
-    res = "!git reset --hard";
+    res = /* Bash */ ''
+      !f() {
+          printf 'Discard all tracked changes with git reset --hard? [y/N]: ';
+          IFS= read -r response;
+          case "$response" in
+              y|Y|yes|YES) git reset --hard;;
+              *) echo 'Not resetting.'; return 1;;
+          esac;
+      }; f
+    '';
     ### Pushes current branch
     mr = "push -u origin HEAD";
     ### Create a silent savepoint commit and reset back a commit
-    wipe = "!git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard";
+    wipe = /* Bash */ ''
+      !f() {
+          printf 'Create WIPE savepoint, then reset hard? [y/N]: ';
+          IFS= read -r response;
+          case "$response" in
+              y|Y|yes|YES) git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard;;
+              *) echo 'Not wiping.'; return 1;;
+          esac;
+      }; f
+    '';
     ### Add all, commit, and push in one
     rdone = "!f() { git ac \"$1\"; git done; };f";
     ### Branch Delete:
-    #>This checks out your local master branch and deletes all local branches that have already been merged to master
-    brd = "!sh -c \"git checkout master && git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d\"";
+    #>This checks out your local default branch and deletes all local branches that have already been merged there
+    brd = /* Bash */ ''
+      !f() {
+          local base=$(git default-branch);
+          git checkout "$base" && git branch --merged | grep -v '\*' | xargs -n 1 git branch -d;
+      }; f
+    '';
     ### Branch Delete Here:
     #> Deletes all local branches that have already been merged to the branch that you're currently on
     brdhere = "!sh -c \"git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d\"";
@@ -64,8 +98,8 @@
           echo "Merge aborted";
       }; f
     '';
-    ### Rebase interactive against master and dev
-    ria = "!git rebase -i $(git merge-base HEAD master)";
+    ### Rebase interactive against default branch and dev
+    ria = "!git rebase -i $(git merge-base HEAD $(git default-branch))";
     rid = "!git rebase -i $(git merge-base HEAD develop)";
 
     ## History / Listing
@@ -73,7 +107,7 @@
     ### One-line log
     l = "!git log --pretty=format:\"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]\" --decorate --date=short";
     ### Pretty formatted git log
-    lg = "!git log - -pretty=format:\"%C(magenta)%h%Creset -%C(red)%d%Creset %s %C(dim green)(%cr) [%an]\" --abbrev-commit -30";
+    lg = "!git log --pretty=format:\"%C(magenta)%h%Creset -%C(red)%d%Creset %s %C(dim green)(%cr) [%an]\" --abbrev-commit -30";
     ### List aliases
     la = "!git config -l | grep alias | cut -c 7-";
     ### List branches sorted by last modified
@@ -113,7 +147,15 @@
     ### Forced Pull:
     #> You have a local branch (e.g. for reviewing), but someone else did a forced push update on the remote branch. A regular git pull will fail, but this will just set the local branch to match the remote branch. BEWARE: this will overwrite any local commits you have made on this branch that haven't been pushed.
     pullf = /* Bash */ ''
-      !bash -c "git reset --hard origin/$(git rev-parse --abbrev-ref HEAD)"
+      !f() {
+          local b=''${1:-$(git rev-parse --abbrev-ref HEAD)};
+          printf 'Reset %s hard to origin/%s? [y/N]: ' "$b" "$b";
+          IFS= read -r response;
+          case "$response" in
+              y|Y|yes|YES) git fetch origin "$b" && git reset --hard "origin/$b";;
+              *) echo 'Not resetting.'; return 1;;
+          esac;
+      }; f
     '';
 
     ### Pull only the current branch and dont update refs of all remotes
@@ -128,25 +170,37 @@
     smash = /* Bash */ ''
       !f() {
           local b=''${1:-$(git rev-parse --abbrev-ref HEAD)};
-          echo 'Are you sure you want to run this? It will delete your current '$b'.';
-          read -p 'Enter to continue, ctrl-C to quit: ' response;
-          git checkout master;
-          git branch -D $b;
-          git fetch origin $b;
-          git checkout $b;
+          local base=$(git default-branch);
+          printf 'Delete local branch %s and recreate it from origin/%s? [y/N]: ' "$b" "$b";
+          IFS= read -r response;
+          case "$response" in
+              y|Y|yes|YES)
+                  git checkout "$base";
+                  git branch -D "$b";
+                  git fetch origin "$b";
+                  git checkout "$b";
+                  ;;
+              *) echo 'Not deleting branch.'; return 1;;
+          esac;
       }; f
     '';
 
-    ### Rebase current branch off master
+    ### Rebase current branch off default branch
     rbm = /* Bash */ ''
       !f() {
           local b=''${1:-$(git rev-parse --abbrev-ref HEAD)};
-          echo 'Are you sure you want to run this? It will delete your current '$b'.';
-          read -p 'Enter to continue, ctrl-C to quit: ' response;
-          git checkout master;
-          git pull origin master;
-          git checkout $b;
-          git rebase master;
+          local base=$(git default-branch);
+          printf 'Rebase %s onto %s? [y/N]: ' "$b" "$base";
+          IFS= read -r response;
+          case "$response" in
+              y|Y|yes|YES)
+                  git checkout "$base";
+                  git pull --ff-only origin "$base";
+                  git checkout "$b";
+                  git rebase "$base";
+                  ;;
+              *) echo 'Not rebasing.'; return 1;;
+          esac;
       }; f
     '';
 
@@ -154,12 +208,17 @@
     rbd = /* Bash */ ''
       !f() {
           local b=''${1:-$(git rev-parse --abbrev-ref HEAD)};
-          echo 'Are you sure you want to run this? It will delete your current '$b'.';
-          read -p 'Enter to continue, ctrl-C to quit: ' response;
-          git checkout develop;
-          git pull origin develop;
-          git checkout $b;
-          git rebase develop;
+          printf 'Rebase %s onto develop? [y/N]: ' "$b";
+          IFS= read -r response;
+          case "$response" in
+              y|Y|yes|YES)
+                  git checkout develop;
+                  git pull --ff-only origin develop;
+                  git checkout "$b";
+                  git rebase develop;
+                  ;;
+              *) echo 'Not rebasing.'; return 1;;
+          esac;
       }; f
     '';
 
