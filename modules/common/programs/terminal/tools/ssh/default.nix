@@ -67,8 +67,12 @@ in
     programs.ssh = {
       extraConfig = ''
         Host *
+          AddKeysToAgent yes
+          ForwardAgent no
           ServerAliveInterval 30
           ServerAliveCountMax 2
+          StreamLocalBindUnlink yes
+          ConnectTimeout 5
 
         ${other-hosts-config}${
           lib.optionalString (cfg.extraConfig != "") ''
@@ -145,12 +149,16 @@ in
 
     khanelinix = {
       home.extraOptions = {
-        home.shellAliases = builtins.listToAttrs (
-          map (system: {
-            name = "ssh-${system}";
-            value = "ssh ${system} -t tmux a";
-          }) (builtins.attrNames other-hosts)
-        );
+        home = {
+          file.".ssh/controlmasters/.keep".text = "";
+
+          shellAliases = builtins.listToAttrs (
+            map (system: {
+              name = "ssh-${system}";
+              value = ''ssh ${system} -t "tmux new-session -A -s main"'';
+            }) (builtins.attrNames other-hosts)
+          );
+        };
       };
     };
 

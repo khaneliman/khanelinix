@@ -93,7 +93,10 @@ in
         {
           "*" = {
             AddKeysToAgent = "yes";
-            ForwardAgent = true;
+            ControlMaster = "auto";
+            ControlPath = "${config.home.homeDirectory}/.ssh/controlmasters/%C";
+            ControlPersist = "10m";
+            ForwardAgent = false;
             ServerAliveInterval = 30;
             ServerAliveCountMax = 2;
             StreamLocalBindUnlink = true;
@@ -126,12 +129,13 @@ in
       // builtins.listToAttrs (
         map (hostName: {
           name = "ssh-${hostName}";
-          value = "ssh ${hostName} -t tmux a";
+          value = ''ssh ${hostName} -t "tmux new-session -A -s main"'';
         }) (builtins.attrNames otherHosts)
       );
 
       file = {
         ".ssh/authorized_keys".text = builtins.concatStringsSep "\n" cfg.authorizedKeys;
+        ".ssh/controlmasters/.keep".text = "";
       };
     };
   };
