@@ -29,6 +29,10 @@ in
     ];
 
     khanelinix = {
+      home.extraOptions = {
+        khanelinix.programs.graphical.apps.raycast = mkDefault enabled;
+      };
+
       desktop = {
         wms = {
           yabai = mkDefault enabled;
