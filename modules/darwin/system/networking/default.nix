@@ -21,6 +21,9 @@ let
     cfg.applicationFirewall.allowedApps
     ++ lib.optionals exoEnabled [
       "${pkgs.exo}/bin/exo"
+      # exo's bin/exo is a shell wrapper that execs the bare interpreter, so
+      # ALF tracks python itself. exo builds from pkgs.python3Packages.
+      "${pkgs.python3.interpreter}"
     ]
     ++ lib.optionals (moonlightPackage != null) [
       # ALF tracks the real listening executable, not the qt wrapper script.
