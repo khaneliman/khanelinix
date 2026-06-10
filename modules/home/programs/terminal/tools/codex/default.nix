@@ -257,12 +257,19 @@ in
                 config.xdg.userDirs.documents
               else
                 config.home.homeDirectory + lib.optionalString pkgs.stdenv.hostPlatform.isLinux "/Documents";
+            githubRoot =
+              if pkgs.stdenv.hostPlatform.isLinux then
+                "${documentsPath}/github"
+              else
+                "${config.home.homeDirectory}/github";
 
             trustedGithubProjects = [
               "home-manager"
               "khanelivim"
               "nixpkgs"
               "nixvim"
+              "Austin-Horstman"
+              "neotest-nix"
               "waybar"
             ];
           in
@@ -273,7 +280,7 @@ in
           }
           // builtins.listToAttrs (
             map (project: {
-              name = "${documentsPath}/github/${project}";
+              name = "${githubRoot}/${project}";
               value = {
                 trust_level = "trusted";
               };
