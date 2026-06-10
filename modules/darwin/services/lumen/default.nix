@@ -92,10 +92,15 @@ in
 
       install -d -m 0755 -o ${userName} -g staff \
         "${cfg.installDir}" \
+        "${cfg.configDir}" \
         "${cfg.configDir}/scripts" \
         "${userHome}/.local/bin" \
         "$(dirname "${cfg.logPaths.stdout}")" \
         "$(dirname "${cfg.logPaths.stderr}")"
+
+      # install -d only chowns directories it creates; repair configDir if an
+      # earlier activation left it root-owned (sunshine needs to write here).
+      chown ${userName}:staff "${cfg.configDir}"
 
       install -m 0755 -o ${userName} -g staff "${cfg.package}/libexec/lumen/sunshine" "${cfg.installDir}/sunshine"
       install -m 0755 -o ${userName} -g staff "${cfg.package}/libexec/lumen/vd_helper" "${cfg.installDir}/vd_helper"
