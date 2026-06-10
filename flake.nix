@@ -11,6 +11,7 @@
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
+    systems.url = "github:nix-systems/default";
 
     # System management
     disko = {
@@ -61,6 +62,7 @@
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-parts.follows = "flake-parts";
+        uv2nix.inputs.pyproject-nix.follows = "hermes-agent/pyproject-nix";
       };
     };
     catppuccin = {
@@ -80,11 +82,16 @@
         nixpkgs.follows = "nixpkgs-unstable";
         nixpkgs-master.follows = "nixpkgs-master";
         flake-parts.follows = "flake-parts";
+        neovim-nightly-overlay.inputs.flake-parts.follows = "flake-parts";
       };
     };
     llm-agents = {
       url = "github:numtide/llm-agents.nix";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs = {
+        nixpkgs.follows = "nixpkgs-unstable";
+        flake-parts.follows = "flake-parts";
+        systems.follows = "systems";
+      };
     };
     nh = {
       url = "github:nix-community/nh";
@@ -106,6 +113,7 @@
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-parts.follows = "flake-parts";
+        systems.follows = "systems";
       };
     };
     waybar = {
