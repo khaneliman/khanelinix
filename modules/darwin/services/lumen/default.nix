@@ -78,6 +78,12 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = [ cfg.package ];
 
+    # Ad-hoc signed binary outside /Applications; without an explicit ALF
+    # allow entry macOS blocks Moonlight's incoming discovery/session traffic.
+    khanelinix.system.networking.applicationFirewall.allowedApps = [
+      "${cfg.installDir}/sunshine"
+    ];
+
     launchd.user.agents.lumen.serviceConfig = {
       ProgramArguments = [ "${cfg.installDir}/sunshine" ];
       RunAtLoad = cfg.autoStart;
