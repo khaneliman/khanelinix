@@ -11,7 +11,7 @@ let
     if config.wayland.windowManager.hyprland.package != null then
       config.wayland.windowManager.hyprland.package
     else
-      osConfig.programs.hyprland.package;
+      osConfig.programs.hyprland.package or pkgs.hyprland;
   hyprctl = getExe' hyprlandPackage "hyprctl";
   procps = getExe' pkgs.procps "pidof";
 in
