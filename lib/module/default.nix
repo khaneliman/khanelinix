@@ -52,49 +52,6 @@ rec {
       mod: mod.systems or [ ] == [ ] || builtins.elem system (mod.systems or [ ])
     ) modules;
 
-  /**
-    Create a module with common options.
-
-    # Inputs
-
-    `name`
-
-    : Module name
-
-    `description`
-
-    : Module description
-
-    `options`
-
-    : Module options
-
-    `config`
-
-    : Module configuration
-  */
-  mkModule =
-    {
-      name,
-      description ? "",
-      options ? { },
-      config ? { },
-    }:
-    { lib, ... }:
-    {
-      options.khanelinix.${name} = lib.mkOption {
-        type = lib.types.submodule {
-          options = {
-            enable = lib.mkEnableOption description;
-          }
-          // options;
-        };
-        default = { };
-      };
-
-      config = lib.mkIf config.khanelinix.${name}.enable config;
-    };
-
   # Migrated khanelinix utilities
   # Option creation helpers
 

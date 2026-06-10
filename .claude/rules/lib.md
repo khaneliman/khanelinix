@@ -40,7 +40,6 @@ Encoding/decoding utilities for secrets and data.
 - `enabled` / `disabled` - Shorthand for `{ enable = true/false; }`
 - `mkOpt` - Create option with type, default, description
 - `mkBoolOpt` - Boolean option helper
-- `mkModule` - Module creation helper
 
 ### system
 
