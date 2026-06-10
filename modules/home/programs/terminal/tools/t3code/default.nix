@@ -122,7 +122,6 @@ in
             // lib.optionalAttrs (config.programs.claude-code.enable or false) {
               claudeAgent = {
                 binaryPath = lib.getExe config.programs.claude-code.package;
-                customModels = [ "claude-opus-4-8[1m]" ];
               };
             }
             // lib.optionalAttrs (config.programs.opencode.enable or false) {
@@ -285,7 +284,7 @@ in
             favorites = [
               {
                 provider = "claudeAgent";
-                model = "claude-opus-4-8[1m]";
+                model = "claude-opus-4-8";
               }
               {
                 provider = "codex";
