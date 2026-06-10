@@ -63,6 +63,11 @@ in
     # Install Claude icon for notifications
     xdg.dataFile."icons/claude.ico".source = claudeIcon;
 
+    home.shellAliases = {
+      "claude-bypass" = "claude --permission-mode bypassPermissions";
+      "claude-danger" = "claude --dangerously-skip-permissions";
+    };
+
     programs.claude-code = {
       enable = true;
 
