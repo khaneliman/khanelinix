@@ -38,7 +38,10 @@ in
     };
 
     services = {
-      lumen = enabled;
+      lumen = {
+        enable = true;
+        autoStart = true;
+      };
       tailscale = enabled;
     };
 
