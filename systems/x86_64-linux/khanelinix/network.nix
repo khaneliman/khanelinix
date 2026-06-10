@@ -6,7 +6,9 @@
       "30-network-defaults-wired" = {
         matchConfig.Name = "en* | eth* | usb*";
         linkConfig = {
-          Multicast = if !config.services.avahi.enable then "yes" else "no";
+          # Link-level multicast must stay on for mDNS regardless of which
+          # daemon handles it; avahi can't bind interfaces without IFF_MULTICAST.
+          Multicast = true;
         };
         networkConfig = {
           DHCP = "ipv4";
