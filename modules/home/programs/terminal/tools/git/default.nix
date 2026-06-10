@@ -10,7 +10,6 @@ let
     types
     mkEnableOption
     mkIf
-    mkForce
     getExe'
     ;
   inherit (lib.khanelinix) mkOpt enabled;
@@ -85,8 +84,6 @@ in
 
         options = {
           dark = true;
-          # FIXME: module should accept a mergeable list be composable
-          features = mkForce "decorations side-by-side navigate catppuccin-macchiato";
           line-numbers = true;
           navigate = true;
           side-by-side = true;
