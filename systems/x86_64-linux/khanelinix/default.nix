@@ -70,7 +70,7 @@ in
     };
 
     services = {
-      # avahi = enabled;
+      avahi = enabled;
       geoclue = enabled;
       power = enabled;
       printing = enabled;
