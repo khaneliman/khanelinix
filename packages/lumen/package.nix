@@ -115,7 +115,9 @@ stdenv.mkDerivation (finalAttrs: {
 
     mkdir -p "$out/share/lumen/assets"
     cp -R assets/. "$out/share/lumen/assets/"
-    cp -R ${finalAttrs.ui}/build "$out/share/lumen/assets/web"
+    # The npm build's outDir is build/assets/web; copy the inner tree so
+    # index.html lands at assets/web/index.html where sunshine expects it.
+    cp -R ${finalAttrs.ui}/build/assets/web "$out/share/lumen/assets/web"
     install -Dm755 ../scripts/*.sh -t "$out/share/lumen/scripts"
 
     makeWrapper="$out/bin/lumen"
