@@ -24,7 +24,6 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       btrfs-progs
-      fuseiso
       nfs-utils
       ntfs3g
       nvme-cli
