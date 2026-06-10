@@ -40,7 +40,57 @@ in
     services = {
       lumen = {
         enable = true;
-        autoStart = true;
+
+        instances = {
+          # Headless virtual display sized to the client; reuses the original
+          # config dir so existing Moonlight pairings keep working.
+          # Web UI: https://localhost:47990 (default base port 47989 + 1).
+          virtual = {
+            configDir = "/Users/khaneliman/.config/sunshine";
+
+            apps = [
+              { name = "Desktop"; }
+              {
+                name = "Steam";
+                detached = [ "/usr/bin/open -a Steam" ];
+                "prep-cmd" = [
+                  {
+                    do = "";
+                    undo = "/usr/bin/osascript -e 'tell application \"Steam\" to quit'";
+                  }
+                ];
+              }
+              {
+                name = "Battle.net";
+                detached = [ "/usr/bin/open -a 'Battle.net'" ];
+                "prep-cmd" = [
+                  {
+                    do = "";
+                    undo = "/usr/bin/osascript -e 'tell application \"Battle.net\" to quit'";
+                  }
+                ];
+              }
+              {
+                name = "Roblox";
+                detached = [ "/usr/bin/open -a Roblox" ];
+                "prep-cmd" = [
+                  {
+                    do = "";
+                    undo = "/usr/bin/osascript -e 'tell application \"Roblox\" to quit'";
+                  }
+                ];
+              }
+            ];
+          };
+
+          # Captures and controls the physical display: remote desktop mode.
+          # Web UI: https://localhost:48990 (base port + 1).
+          desktop = {
+            virtualDisplay = false;
+            port = 48989;
+            sunshineName = "khanelimac Desktop";
+          };
+        };
       };
       tailscale = enabled;
     };
