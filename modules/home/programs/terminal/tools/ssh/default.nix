@@ -4,6 +4,7 @@
   hostname,
   lib,
   pkgs,
+  osConfig ? { },
   ...
 }:
 let
@@ -44,6 +45,13 @@ let
     discoveredHosts.${name}
     // lib.optionalAttrs (builtins.hasAttr name hostOverrides) hostOverrides.${name}
   ) discoveredHosts;
+
+  # The default aliases use ".local" (mDNS), which only resolves on the same
+  # LAN. When Tailscale is available, also emit "<name>-ts" aliases on the
+  # MagicDNS name so hosts stay reachable when roaming.
+  # Keep in sync with modules/common/programs/terminal/tools/ssh/default.nix.
+  magicDnsSuffix = "taild8431e.ts.net";
+  tailscaleEnabled = osConfig.khanelinix.services.tailscale.enable or false;
 
   authorizedKeys = [
     # `khanelinix`
@@ -89,6 +97,16 @@ in
               Port = cfg.port;
             }
           ) otherHosts;
+
+          tailscaleHostsConfig = lib.mapAttrs' (
+            name: hostConfig:
+            lib.nameValuePair "${name}-ts" (
+              hostConfig
+              // {
+                HostName = "${name}.${magicDnsSuffix}";
+              }
+            )
+          ) otherHostsConfig;
         in
         {
           "*" = {
@@ -103,7 +121,8 @@ in
             ConnectTimeout = 5;
           };
         }
-        // otherHostsConfig;
+        // otherHostsConfig
+        // lib.optionalAttrs tailscaleEnabled tailscaleHostsConfig;
     };
 
     home = {
