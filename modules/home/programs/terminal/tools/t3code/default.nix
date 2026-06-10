@@ -1,5 +1,6 @@
 {
   config,
+  getPkgsMaster,
   lib,
   osConfig ? { },
   pkgs,
@@ -21,9 +22,26 @@ in
 
       githubRoot = "${config.home.homeDirectory}/${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents/"}github";
 
+      t3codePackage =
+        let
+          # TODO: move to regular package after hits channel
+          # otherwise migrate to llm-agents.nix if provided
+          pkgsMaster = getPkgsMaster pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
+        in
+        pkgsMaster.t3code.override {
+          inherit (pkgs) gh;
+          inherit (pkgs) git;
+
+          enableClaude = false;
+          enableCodex = false;
+          enableGit = true;
+          enableGitHub = true;
+          enableJujutsu = false;
+          enableOpencode = false;
+        };
+
       remoteCommand =
         let
-          t3codePackage = config.programs.t3code.package;
           claudeCodePackage = config.programs.claude-code.package or null;
         in
         pkgs.writeShellApplication {
@@ -92,11 +110,24 @@ in
 
       programs.t3code = {
         enable = true;
+        package = t3codePackage;
 
         userSettings = {
           addProjectBaseDirectory = githubRoot;
 
-          providers.claudeAgent.customModels = [ "claude-opus-4-8[1m]" ];
+          providers =
+            lib.optionalAttrs (config.programs.codex.enable or false) {
+              codex.binaryPath = lib.getExe config.programs.codex.package;
+            }
+            // lib.optionalAttrs (config.programs.claude-code.enable or false) {
+              claudeAgent = {
+                binaryPath = lib.getExe config.programs.claude-code.package;
+                customModels = [ "claude-opus-4-8[1m]" ];
+              };
+            }
+            // lib.optionalAttrs (config.programs.opencode.enable or false) {
+              opencode.binaryPath = lib.getExe config.programs.opencode.package;
+            };
         };
 
         keybindings = [
