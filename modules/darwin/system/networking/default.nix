@@ -12,10 +12,19 @@ let
   exoLibp2pPort = 52416;
   python3 = lib.getExe pkgs.python3;
   localNetworkPrivilegesCleanup = ./local-network-privileges-cleanup.py;
+  # Use the package instance from the user's home packages so the allowlisted
+  # path matches what actually launches (overlays could diverge from pkgs here).
+  moonlightPackage = lib.findFirst (p: lib.getName p == "moonlight-qt") null (
+    homeCfg.home.packages or [ ]
+  );
   applicationFirewallAllowedApps =
     cfg.applicationFirewall.allowedApps
     ++ lib.optionals exoEnabled [
       "${pkgs.exo}/bin/exo"
+    ]
+    ++ lib.optionals (moonlightPackage != null) [
+      # ALF tracks the real listening executable, not the qt wrapper script.
+      "${moonlightPackage}/Applications/Moonlight.app/Contents/MacOS/.Moonlight-wrapped"
     ];
   applicationFirewallAllowedAppsText = lib.concatStringsSep "\n" applicationFirewallAllowedApps;
 in
