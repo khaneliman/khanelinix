@@ -191,11 +191,11 @@ github = Sbar.add("item", "github", {
 		font = {
 			family = settings.font,
 			style = "Bold",
-			size = 15.0,
+			size = settings.font_sizes.stats_icon,
 		},
 	},
 	background = {
-		padding_left = 0,
+		padding_left = settings.spacing.none,
 	},
 	label = {
 		string = icons.loading,
@@ -205,7 +205,7 @@ github = Sbar.add("item", "github", {
 		},
 		align = "right",
 		highlight_color = colors.blue,
-		width = settings.count_label_width,
+		width = settings.widths.count_label,
 	},
 	update_freq = 180,
 	popup = {
@@ -320,7 +320,7 @@ local function refresh_github()
 						padding_left = settings.paddings,
 						font = {
 							family = settings.font,
-							size = 14.0,
+							size = settings.font_sizes.popup_header,
 							style = "Bold",
 						},
 					},
@@ -329,7 +329,7 @@ local function refresh_github()
 						color = colors.blue,
 						font = {
 							family = settings.nerd_font,
-							size = 14.0,
+							size = settings.font_sizes.popup_header,
 							style = "Bold",
 						},
 					},
@@ -349,17 +349,17 @@ local function refresh_github()
 				Sbar.add("item", next_popup_name("message"), {
 					label = {
 						string = truncate_label(title, 60),
-						padding_right = 10,
+						padding_right = settings.spacing.large,
 					},
 					icon = {
 						string = icon,
 						color = color,
 						font = {
 							family = settings.nerd_font,
-							size = 12.0,
+							size = settings.font_sizes.popup_message,
 							style = "Bold",
 						},
-						padding_left = settings.paddings + 12,
+						padding_left = settings.spacing.popup_indent,
 					},
 					drawing = true,
 					click_script = click_script,

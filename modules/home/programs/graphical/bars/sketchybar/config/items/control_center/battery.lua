@@ -13,7 +13,7 @@ local battery = Sbar.add("item", "battery", {
 		font = {
 			family = settings.nerd_font,
 			style = "Regular",
-			size = 19.0,
+			size = settings.font_sizes.control_icon,
 		},
 	},
 	label = {
@@ -23,7 +23,7 @@ local battery = Sbar.add("item", "battery", {
 			typographical_width = true,
 		},
 		align = "right",
-		width = settings.percent_label_width,
+		width = settings.widths.percent_label,
 	},
 	update_freq = 120,
 })
@@ -32,24 +32,24 @@ battery.details = Sbar.add("item", "battery.details", {
 	position = "popup." .. battery.name,
 	click_script = "sketchybar --set $NAME popup.drawing=off",
 	background = {
-		corner_radius = 12,
-		padding_left = 5,
-		padding_right = 10,
+		corner_radius = settings.dimensions.popup_corner_radius,
+		padding_left = settings.spacing.compact,
+		padding_right = settings.spacing.large,
 	},
 	icon = {
 		background = {
-			height = 2,
-			y_offset = 12,
+			height = settings.dimensions.rule_height,
+			y_offset = settings.offsets.battery_rule_y,
 		},
 	},
 	label = {
-		padding_right = 0,
+		padding_right = settings.spacing.none,
 		align = "center",
 		font = {
 			features = settings.numeric_font_features,
 			typographical_width = true,
 		},
-		width = settings.percent_label_width,
+		width = settings.widths.percent_label,
 	},
 })
 

@@ -1,12 +1,13 @@
 #!/usr/bin/env lua
 
 local colors = require("helpers.colors")
+local settings = require("helpers.settings")
 local logger = require("helpers.logger")
 
 local separator_right = Sbar.add("item", "separator_right", {
 	background = {
-		padding_left = 10,
-		padding_right = 10,
+		padding_left = settings.spacing.large,
+		padding_right = settings.spacing.large,
 	},
 	label = {
 		drawing = false,

@@ -27,7 +27,7 @@ local brew = Sbar.add("item", "brew", {
 		font = {
 			family = settings.nerd_font,
 			style = "Regular",
-			size = 19.0,
+			size = settings.font_sizes.control_icon,
 		},
 	},
 	label = {
@@ -37,12 +37,12 @@ local brew = Sbar.add("item", "brew", {
 			typographical_width = true,
 		},
 		align = "right",
-		width = settings.count_label_width,
+		width = settings.widths.count_label,
 	},
 	update_freq = 14400,
 	popup = {
 		align = "right",
-		height = 20,
+		height = settings.dimensions.popup_height,
 	},
 })
 
@@ -92,8 +92,8 @@ brew:subscribe({
 				label = {
 					string = tostring(package),
 					align = "right",
-					padding_right = 20,
-					padding_left = 20,
+					padding_left = settings.spacing.popup_wide,
+					padding_right = settings.spacing.popup_wide,
 				},
 				icon = {
 					string = tostring(package),

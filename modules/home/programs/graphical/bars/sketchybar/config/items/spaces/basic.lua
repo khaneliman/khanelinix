@@ -44,19 +44,19 @@ Sbar.add("bracket", spaces, {
 	background = {
 		color = colors.surface0,
 		border_color = colors.surface1,
-		border_width = 2,
+		border_width = settings.dimensions.popup_border_width,
 	},
 })
 
 spaces.creator = Sbar.add("item", "spaces.creator", {
-	padding_left = 10,
-	padding_right = 8,
+	padding_left = settings.spacing.large,
+	padding_right = settings.spacing.medium,
 	icon = {
 		string = "",
 		font = {
 			family = settings.nerd_font,
 			style = "Regular",
-			size = 16.0,
+			size = settings.font_sizes.stats_large_icon,
 		},
 	},
 	label = { drawing = false },

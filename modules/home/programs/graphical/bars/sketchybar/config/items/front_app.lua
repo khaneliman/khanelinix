@@ -11,10 +11,10 @@ if wm_config.use_yabai then
 			color = colors.peach,
 			font = {
 				family = settings.font,
-				size = 16.0,
+				size = settings.font_sizes.stats_large_icon,
 				style = "Bold",
 			},
-			width = 30,
+			width = settings.widths.yabai_icon,
 			string = icons.yabai.grid,
 		},
 		label = { drawing = false },
@@ -133,7 +133,7 @@ local front_app = Sbar.add("item", "front_app", {
 		drawing = false,
 	},
 	background = {
-		padding_left = 0,
+		padding_left = settings.spacing.none,
 	},
 	display = "active",
 	label = {
@@ -141,7 +141,7 @@ local front_app = Sbar.add("item", "front_app", {
 		font = {
 			family = settings.font,
 			style = "Black",
-			size = 12.0,
+			size = settings.font_sizes.front_app,
 		},
 	},
 })

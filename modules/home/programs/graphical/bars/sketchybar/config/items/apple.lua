@@ -2,6 +2,7 @@
 
 local icons = require("helpers.icons")
 local colors = require("helpers.colors")
+local settings = require("helpers.settings")
 local logger = require("helpers.logger")
 
 local popup_toggle = "sketchybar --set $NAME popup.drawing=toggle"
@@ -9,14 +10,14 @@ local popup_toggle = "sketchybar --set $NAME popup.drawing=toggle"
 local apple = {}
 
 apple.logo = Sbar.add("item", "apple.logo", {
-	padding_left = -5,
-	padding_right = 10,
+	padding_left = settings.offsets.apple_logo_left,
+	padding_right = settings.spacing.large,
 	click_script = popup_toggle,
 	icon = {
 		string = icons.apple,
 		font = {
 			style = "Black",
-			size = 20.0,
+			size = settings.font_sizes.default_icon,
 		},
 		color = colors.green,
 	},
@@ -24,7 +25,7 @@ apple.logo = Sbar.add("item", "apple.logo", {
 		drawing = false,
 	},
 	popup = {
-		height = 0,
+		height = settings.spacing.none,
 	},
 })
 
@@ -33,12 +34,12 @@ local function add_apple_item(name, icon_string, label_string, click_cmd)
 		position = "popup." .. apple.logo.name,
 		icon = {
 			string = icon_string,
-			padding_left = 7,
+			padding_left = settings.spacing.regular,
 		},
 		label = label_string,
 		background = {
 			color = 0x00000000,
-			height = 30,
+			height = settings.dimensions.item_height,
 			drawing = true,
 		},
 	})
@@ -65,12 +66,12 @@ apple.divider = Sbar.add("item", "apple.divider", {
 	},
 	background = {
 		color = colors.blue,
-		height = 1,
+		height = settings.dimensions.separator_height,
 		drawing = true,
 	},
-	padding_left = 7,
-	padding_right = 7,
-	width = 110,
+	padding_left = settings.spacing.regular,
+	padding_right = settings.spacing.regular,
+	width = settings.widths.apple_divider,
 })
 
 apple.lock = add_apple_item(

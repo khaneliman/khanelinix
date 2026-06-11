@@ -9,23 +9,23 @@ local item_index = 0
 local ical = Sbar.add("item", "ical", {
 	icon = {
 		align = "left",
-		padding_right = 0,
+		padding_right = settings.spacing.none,
 		string = icons.ical,
 		font = {
 			family = settings.nerd_font,
 			style = "Black",
-			size = 14.0,
+			size = settings.font_sizes.today_date,
 		},
 	},
 	background = {
-		padding_left = 10,
+		padding_left = settings.spacing.large,
 	},
 	popup = {
 		align = "right",
-		height = 20,
+		height = settings.dimensions.popup_height,
 	},
 	position = "right",
-	y_offset = -8,
+	y_offset = settings.offsets.stack_bottom_y,
 	update_freq = 900,
 })
 
@@ -77,7 +77,7 @@ ical:subscribe({ "routine", "forced" }, function()
 					Sbar.add("item", next_item_name("separator"), {
 						icon = {
 							string = "",
-							width = 0,
+							width = settings.spacing.none,
 						},
 						label = {
 							string = dashes,
@@ -85,10 +85,10 @@ ical:subscribe({ "routine", "forced" }, function()
 							align = "center",
 						},
 						background = {
-							height = 1,
+							height = settings.dimensions.separator_height,
 						},
-						padding_left = 0,
-						padding_right = 0,
+						padding_left = settings.spacing.none,
+						padding_right = settings.spacing.none,
 						position = "popup." .. ical.name,
 					})
 					has_separator = true
@@ -99,7 +99,7 @@ ical:subscribe({ "routine", "forced" }, function()
 						color = colors.yellow,
 						font = {
 							style = "Bold",
-							size = 12.0,
+							size = settings.font_sizes.popup_message,
 						},
 					},
 					label = {
@@ -116,7 +116,7 @@ ical:subscribe({ "routine", "forced" }, function()
 							color = colors.yellow,
 							font = {
 								style = "Bold",
-								size = 12.0,
+								size = settings.font_sizes.popup_message,
 							},
 						},
 						label = {
@@ -133,7 +133,7 @@ ical:subscribe({ "routine", "forced" }, function()
 						string = "•",
 						color = colors.white,
 						font = {
-							size = 12.0,
+							size = settings.font_sizes.popup_message,
 						},
 					},
 					label = {

@@ -1,30 +1,29 @@
 #!/usr/bin/env lua
 
 local colors = require("helpers.colors")
+local settings = require("helpers.settings")
 local wm_config = require("helpers.wm_config")
-
-local bar_height = 40
 
 -- Equivalent to the --bar domain
 Sbar.bar({
-	blur_radius = 30,
+	blur_radius = settings.dimensions.bar_blur_radius,
 	border_color = colors.surface1,
-	border_width = 2,
+	border_width = settings.dimensions.bar_border_width,
 	color = colors.base,
-	corner_radius = 9,
-	height = bar_height,
-	margin = 10,
-	notch_width = 0,
-	padding_left = 18,
-	padding_right = 10,
+	corner_radius = settings.dimensions.item_corner_radius,
+	height = settings.dimensions.bar_height,
+	margin = settings.dimensions.bar_margin,
+	notch_width = settings.spacing.none,
+	padding_left = settings.spacing.bar_left,
+	padding_right = settings.spacing.large,
 	position = "top",
 	shadow = true,
 	sticky = true,
 	topmost = false,
-	y_offset = 10,
+	y_offset = settings.offsets.bar_y,
 })
 
 -- Set external_bar here in case we launch after sketchybar
 if wm_config.use_yabai then
-	Sbar.exec("yabai -m config external_bar all:" .. bar_height .. ":0")
+	Sbar.exec("yabai -m config external_bar all:" .. settings.dimensions.bar_height .. ":0")
 end

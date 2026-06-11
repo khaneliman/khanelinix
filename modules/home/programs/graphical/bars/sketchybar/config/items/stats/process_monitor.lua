@@ -19,8 +19,8 @@ return function(parent_name, popup_width, header_text, header_color, exec_comman
 		position = "popup." .. parent_name,
 		width = popup_width,
 		background = {
-			padding_left = 10,
-			padding_right = 10,
+			padding_left = settings.spacing.popup,
+			padding_right = settings.spacing.popup,
 		},
 		icon = {
 			drawing = false,
@@ -29,7 +29,7 @@ return function(parent_name, popup_width, header_text, header_color, exec_comman
 			string = header_text,
 			font = {
 				family = settings.nerd_font,
-				size = 11.0,
+				size = settings.font_sizes.popup_label,
 				style = "Bold",
 				features = settings.nerd_caps_font_features,
 			},
@@ -49,8 +49,8 @@ return function(parent_name, popup_width, header_text, header_color, exec_comman
 			position = "popup." .. parent_name,
 			width = popup_width,
 			background = {
-				padding_left = 10,
-				padding_right = 10,
+				padding_left = settings.spacing.popup,
+				padding_right = settings.spacing.popup,
 			},
 			icon = {
 				drawing = false,
@@ -59,7 +59,7 @@ return function(parent_name, popup_width, header_text, header_color, exec_comman
 				string = "",
 				font = {
 					family = settings.nerd_font,
-					size = 11.0,
+					size = settings.font_sizes.popup_label,
 					style = "Regular",
 					features = settings.nerd_numeric_font_features,
 				},

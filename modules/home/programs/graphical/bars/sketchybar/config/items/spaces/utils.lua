@@ -6,45 +6,45 @@ return {
 		local config = {
 			icon = {
 				string = icon_string,
-				padding_left = 7,
-				padding_right = 7,
+				padding_left = settings.spacing.regular,
+				padding_right = settings.spacing.regular,
 				color = colors.text,
 				highlight_color = colors.getRandomCatColor(),
-				font = { family = settings.font, size = 14 },
+				font = { family = settings.font, size = settings.font_sizes.today_date },
 			},
-			padding_left = 2,
-			padding_right = 2,
+			padding_left = settings.spacing.tight,
+			padding_right = settings.spacing.tight,
 			label = {
-				padding_left = 6,
-				padding_right = 12,
+				padding_left = settings.spacing.row_gap,
+				padding_right = settings.spacing.wide,
 				color = colors.grey,
 				highlight_color = colors.getRandomCatColor(),
 				font = "sketchybar-app-font:Regular:16.0",
-				y_offset = -1,
+				y_offset = settings.offsets.space_label_y,
 				background = {
-					height = 26,
+					height = settings.dimensions.space_label_height,
 					drawing = true,
 					color = colors.surface1,
-					corner_radius = 8,
+					corner_radius = settings.dimensions.space_corner_radius,
 				},
 			},
 			background = {
 				drawing = true,
 				color = colors.surface0,
 				border_color = colors.surface1,
-				border_width = 2,
-				corner_radius = 8,
+				border_width = settings.dimensions.popup_border_width,
+				corner_radius = settings.dimensions.space_corner_radius,
 			},
 			popup = {
 				background = {
-					border_width = 5,
+					border_width = settings.spacing.compact,
 				},
 			},
 		}
 
 		if is_basic then
 			config.label.padding_left = nil
-			config.label.padding_right = 20
+			config.label.padding_right = settings.spacing.popup_wide
 			config.label.highlight_color = colors.text
 			config.label.drawing = false
 			config.background = nil

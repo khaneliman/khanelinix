@@ -2,6 +2,7 @@
 
 local colors = require("helpers.colors")
 local icons = require("helpers.icons")
+local settings = require("helpers.settings")
 local logger = require("helpers.logger")
 
 local volume = {}
@@ -13,10 +14,10 @@ volume.slider = Sbar.add("slider", "volume.slider", 100, {
 	icon = { drawing = false },
 	slider = {
 		highlight_color = colors.blue,
-		width = 0,
+		width = settings.spacing.none,
 		background = {
-			height = 6,
-			corner_radius = 3,
+			height = settings.dimensions.slider_height,
+			corner_radius = settings.dimensions.slider_corner_radius,
 			color = colors.bg2,
 		},
 		knob = {
@@ -30,20 +31,20 @@ volume.icon = Sbar.add("item", "volume.icon", {
 	position = "right",
 	icon = {
 		string = icons.volume._100,
-		width = 0,
+		width = settings.spacing.none,
 		align = "left",
 		color = colors.grey,
 		font = {
 			style = "Regular",
-			size = 14.0,
+			size = settings.font_sizes.popup_header,
 		},
 	},
 	label = {
-		width = 25,
+		width = settings.widths.volume_label,
 		align = "left",
 		font = {
 			style = "Regular",
-			size = 14.0,
+			size = settings.font_sizes.popup_header,
 		},
 	},
 })
@@ -78,18 +79,18 @@ volume.slider:subscribe("volume_change", function(env)
 end)
 
 local function animate_slider_width(width)
-	Sbar.animate("tanh", 30.0, function()
+	Sbar.animate("tanh", settings.animation.default_duration, function()
 		volume.slider:set({ slider = { width = width } })
 	end)
 end
 
 volume.icon:subscribe("mouse.clicked", function()
-	if tonumber(volume.slider:query().slider.width) > 0 then
+	if tonumber(volume.slider:query().slider.width) > settings.spacing.none then
 		logger.debug("volume", "slider_hidden", {})
-		animate_slider_width(0)
+		animate_slider_width(settings.spacing.none)
 	else
 		logger.debug("volume", "slider_shown", {})
-		animate_slider_width(100)
+		animate_slider_width(settings.widths.volume_slider)
 	end
 end)
 

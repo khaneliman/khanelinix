@@ -7,34 +7,34 @@ local logger = require("helpers.logger")
 
 local cpu = Sbar.add("item", "cpu", {
 	background = {
-		padding_left = 0,
-		padding_right = 0,
+		padding_left = settings.spacing.none,
+		padding_right = settings.spacing.none,
 	},
 	label = {
 		font = {
 			family = settings.font,
-			size = 12.0,
+			size = settings.font_sizes.stats_label,
 			style = "Heavy",
 			features = settings.numeric_font_features,
 			typographical_width = true,
 		},
 		align = "right",
 		color = colors.text,
-		padding_left = 2,
-		padding_right = 0,
-		width = settings.percent_label_width,
+		padding_left = settings.spacing.tight,
+		padding_right = settings.spacing.none,
+		width = settings.widths.percent_label,
 	},
 	icon = {
 		string = icons.stats.cpu,
 		color = colors.blue,
 		font = {
-			size = 15,
+			size = settings.font_sizes.stats_icon,
 		},
 	},
 	position = "right",
 	popup = {
 		align = "right",
-		height = 20,
+		height = settings.dimensions.popup_height,
 	},
 })
 
@@ -46,7 +46,7 @@ local process_monitor = require("items.stats.process_monitor")
 
 local monitor = process_monitor(
 	cpu.name,
-	248,
+	settings.widths.popup_process,
 	" PID    CPU  MEM  PROC",
 	colors.blue,
 	[[

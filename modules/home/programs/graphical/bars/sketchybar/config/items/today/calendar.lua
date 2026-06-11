@@ -7,45 +7,45 @@ local today = {}
 today.cal = Sbar.add("item", "date", {
 	icon = {
 		align = "right",
-		padding_right = 0,
+		padding_right = settings.spacing.none,
 		font = {
 			family = settings.font,
 			style = "Black",
-			size = 14.0,
+			size = settings.font_sizes.today_date,
 			features = settings.numeric_font_features,
 			typographical_width = true,
 		},
-		width = settings.date_label_width,
+		width = settings.widths.date_label,
 	},
 	position = "right",
 	update_freq = 60,
-	width = 30,
-	y_offset = 6,
+	width = settings.widths.stack_item,
+	y_offset = settings.offsets.stack_top_y,
 })
 
 today.clock = Sbar.add("item", "clock", {
 	icon = {
 		align = "right",
-		padding_right = 0,
+		padding_right = settings.spacing.none,
 		font = {
 			family = settings.font,
 			style = "Bold",
-			size = 12.0,
+			size = settings.font_sizes.today_time,
 			features = settings.numeric_font_features,
 			typographical_width = true,
 		},
-		width = settings.time_label_width,
+		width = settings.widths.time_label,
 	},
 	label = {
-		padding_left = -50,
+		padding_left = settings.offsets.clock_label_overlap,
 	},
 	background = {
-		padding_left = 0,
-		padding_right = -20,
+		padding_left = settings.spacing.none,
+		padding_right = settings.offsets.clock_background_overlap,
 	},
 	position = "right",
 	update_freq = 60,
-	y_offset = -8,
+	y_offset = settings.offsets.stack_bottom_y,
 })
 
 local function date_update()

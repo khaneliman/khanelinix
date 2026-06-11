@@ -7,32 +7,32 @@ local logger = require("helpers.logger")
 
 local memory = Sbar.add("item", "memory", {
 	background = {
-		padding_left = 0,
+		padding_left = settings.spacing.none,
 	},
 	label = {
 		font = {
 			family = settings.font,
-			size = 12.0,
+			size = settings.font_sizes.stats_label,
 			style = "Heavy",
 			features = settings.numeric_font_features,
 			typographical_width = true,
 		},
 		align = "right",
 		color = colors.text,
-		padding_left = 2,
-		padding_right = 0,
-		width = settings.percent_label_width,
+		padding_left = settings.spacing.tight,
+		padding_right = settings.spacing.none,
+		width = settings.widths.percent_label,
 	},
 	icon = {
 		string = icons.stats.memory,
 		color = colors.green,
 		font = {
-			size = 15,
+			size = settings.font_sizes.stats_icon,
 		},
 	},
 	popup = {
 		align = "right",
-		height = 20,
+		height = settings.dimensions.popup_height,
 	},
 	update_freq = 60,
 	position = "right",
@@ -44,7 +44,7 @@ local process_monitor = require("items.stats.process_monitor")
 
 local monitor = process_monitor(
 	memory.name,
-	248,
+	settings.widths.popup_process,
 	" PID    MEM  CPU  PROC",
 	colors.green,
 	[[

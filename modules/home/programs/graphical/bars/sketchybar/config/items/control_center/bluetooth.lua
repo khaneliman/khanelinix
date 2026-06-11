@@ -26,7 +26,7 @@ local bluetooth = Sbar.add("item", "bluetooth", {
 		color = colors.peach,
 	},
 	background = {
-		padding_right = 0,
+		padding_right = settings.spacing.none,
 	},
 	popup = {
 		align = "right",
@@ -94,7 +94,7 @@ local function create_header(name, title)
 			padding_right = settings.paddings,
 			font = {
 				family = settings.font,
-				size = 14.0,
+				size = settings.font_sizes.popup_header,
 				style = "Bold",
 			},
 		},
@@ -134,10 +134,10 @@ local function set_none_row(row)
 			drawing = true,
 			string = "None",
 			color = colors.grey,
-			padding_left = settings.paddings + 12,
+			padding_left = settings.spacing.popup_indent,
 			font = {
 				family = settings.font,
-				size = 13.0,
+				size = settings.font_sizes.popup_row,
 				style = "Italic",
 			},
 		},
@@ -151,20 +151,20 @@ local function set_device_row(row, label)
 			drawing = true,
 			string = device_icon_for(label),
 			color = colors.blue,
-			padding_left = settings.paddings + 12,
+			padding_left = settings.spacing.popup_indent,
 			font = {
 				family = settings.nerd_font,
-				size = 12.0,
+				size = settings.font_sizes.popup_message,
 				style = "Bold",
 			},
 		},
 		label = {
 			drawing = true,
 			string = label,
-			padding_left = 6,
+			padding_left = settings.spacing.row_gap,
 			font = {
 				family = settings.font,
-				size = 13.0,
+				size = settings.font_sizes.popup_row,
 				style = "Regular",
 			},
 		},
@@ -181,10 +181,10 @@ local function set_loading_row(row)
 			drawing = true,
 			string = "Loading...",
 			color = colors.grey,
-			padding_left = settings.paddings + 12,
+			padding_left = settings.spacing.popup_indent,
 			font = {
 				family = settings.font,
-				size = 13.0,
+				size = settings.font_sizes.popup_row,
 				style = "Italic",
 			},
 		},
@@ -250,7 +250,7 @@ end
 Sbar.add("item", "bluetooth.separator", {
 	icon = {
 		string = "",
-		width = 0,
+		width = settings.spacing.none,
 	},
 	label = {
 		string = dashes,
@@ -258,10 +258,10 @@ Sbar.add("item", "bluetooth.separator", {
 		align = "center",
 	},
 	background = {
-		height = 1,
+		height = settings.dimensions.separator_height,
 	},
-	padding_left = 0,
-	padding_right = 0,
+	padding_left = settings.spacing.none,
+	padding_right = settings.spacing.none,
 	position = "popup." .. bluetooth.name,
 	click_script = "sketchybar --set $NAME popup.drawing=off",
 })

@@ -13,7 +13,7 @@ local power_modes = Sbar.add("item", "power_modes", {
 		font = {
 			family = settings.nerd_font,
 			style = "Regular",
-			size = 19.0,
+			size = settings.font_sizes.control_icon,
 		},
 	},
 	background = {
@@ -24,7 +24,7 @@ local power_modes = Sbar.add("item", "power_modes", {
 	},
 	popup = {
 		align = "right",
-		height = 20,
+		height = settings.dimensions.popup_height,
 	},
 })
 
@@ -33,16 +33,16 @@ local popup_position = "popup." .. power_modes.name
 power_modes.summary = Sbar.add("item", "power_modes.summary", {
 	position = popup_position,
 	background = {
-		corner_radius = 12,
-		padding_left = 8,
-		padding_right = 12,
+		corner_radius = settings.dimensions.popup_corner_radius,
+		padding_left = settings.spacing.medium,
+		padding_right = settings.spacing.wide,
 	},
 	icon = {
 		string = icons.power,
-		padding_right = 8,
+		padding_right = settings.spacing.medium,
 	},
 	label = {
-		padding_right = 0,
+		padding_right = settings.spacing.none,
 		align = "left",
 	},
 	click_script = "sketchybar --set power_modes popup.drawing=off",
@@ -51,16 +51,16 @@ power_modes.summary = Sbar.add("item", "power_modes.summary", {
 power_modes.awake = Sbar.add("item", "power_modes.awake", {
 	position = popup_position,
 	background = {
-		corner_radius = 12,
-		padding_left = 8,
-		padding_right = 12,
+		corner_radius = settings.dimensions.popup_corner_radius,
+		padding_left = settings.spacing.medium,
+		padding_right = settings.spacing.wide,
 	},
 	icon = {
 		string = icons.sleep,
-		padding_right = 8,
+		padding_right = settings.spacing.medium,
 	},
 	label = {
-		padding_right = 0,
+		padding_right = settings.spacing.none,
 		align = "left",
 	},
 })
@@ -68,16 +68,16 @@ power_modes.awake = Sbar.add("item", "power_modes.awake", {
 power_modes.clamshell = Sbar.add("item", "power_modes.clamshell", {
 	position = popup_position,
 	background = {
-		corner_radius = 12,
-		padding_left = 8,
-		padding_right = 12,
+		corner_radius = settings.dimensions.popup_corner_radius,
+		padding_left = settings.spacing.medium,
+		padding_right = settings.spacing.wide,
 	},
 	icon = {
 		string = icons.power,
-		padding_right = 8,
+		padding_right = settings.spacing.medium,
 	},
 	label = {
-		padding_right = 0,
+		padding_right = settings.spacing.none,
 		align = "left",
 	},
 })

@@ -1,6 +1,7 @@
 #!/usr/bin/env lua
 
 local colors = require("helpers.colors")
+local settings = require("helpers.settings")
 local power_config = require("helpers.power_config")
 
 -- require order determines ui order on bar
@@ -36,8 +37,8 @@ Sbar.add("bracket", visible_items, {
 	background = {
 		color = colors.surface0,
 		border_color = colors.surface1,
-		border_width = 2,
-		padding_left = 5,
-		padding_right = 10,
+		border_width = settings.dimensions.popup_border_width,
+		padding_left = settings.spacing.compact,
+		padding_right = settings.spacing.large,
 	},
 })

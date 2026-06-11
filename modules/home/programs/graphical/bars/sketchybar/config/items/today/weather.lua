@@ -9,16 +9,16 @@ local weather = {}
 weather.icon = Sbar.add("item", "weather.icon", {
 	icon = {
 		align = "right",
-		padding_left = 12,
-		padding_right = 2,
+		padding_left = settings.spacing.wide,
+		padding_right = settings.spacing.tight,
 		string = "",
-		width = settings.temperature_label_width,
+		width = settings.widths.temperature_label,
 	},
 	background = {
-		padding_right = -15,
+		padding_right = settings.offsets.weather_icon_overlap,
 	},
 	position = "right",
-	y_offset = 6,
+	y_offset = settings.offsets.stack_top_y,
 })
 
 weather.temp = Sbar.add("item", "weather.temp", {
@@ -29,42 +29,42 @@ weather.temp = Sbar.add("item", "weather.temp", {
 			features = settings.numeric_font_features,
 			typographical_width = true,
 		},
-		padding_left = 0,
-		padding_right = 0,
+		padding_left = settings.spacing.none,
+		padding_right = settings.spacing.none,
 		string = "",
-		width = settings.temperature_label_width,
+		width = settings.widths.temperature_label,
 	},
 	background = {
-		padding_right = -30,
-		padding_left = 5,
+		padding_left = settings.spacing.compact,
+		padding_right = settings.offsets.weather_temp_overlap,
 	},
 	popup = {
 		align = "right",
-		height = 20,
+		height = settings.dimensions.popup_height,
 	},
 	update_freq = 900,
 	position = "right",
-	y_offset = -8,
+	y_offset = settings.offsets.stack_bottom_y,
 })
 
 weather.details = Sbar.add("item", "weather.details", {
 	icon = {
 		background = {
-			height = 2,
-			y_offset = -12,
+			height = settings.dimensions.rule_height,
+			y_offset = settings.offsets.weather_rule_y,
 		},
 		font = {
 			family = settings.font,
 			style = "Bold",
-			size = 14.0,
+			size = settings.font_sizes.popup_header,
 		},
 	},
 	background = {
-		corner_radius = 12,
+		corner_radius = settings.dimensions.popup_corner_radius,
 	},
 	drawing = false,
-	padding_right = 7,
-	padding_left = 7,
+	padding_left = settings.spacing.regular,
+	padding_right = settings.spacing.regular,
 	click_script = "sketchybar --set $NAME popup.drawing=off",
 })
 
@@ -116,17 +116,17 @@ local function render_forecast_tooltip()
 						color = colors.grey,
 						align = "center",
 						font = {
-							size = 10.0,
+							size = settings.font_sizes.stats_network_label,
 						},
 					},
 					label = {
 						drawing = false,
 					},
 					background = {
-						height = 1,
+						height = settings.dimensions.separator_height,
 					},
-					padding_left = 0,
-					padding_right = 0,
+					padding_left = settings.spacing.none,
+					padding_right = settings.spacing.none,
 					position = "popup." .. weather.temp.name,
 					click_script = "sketchybar --set $NAME popup.drawing=off",
 				})
@@ -138,7 +138,7 @@ local function render_forecast_tooltip()
 					string = replacedString,
 					font = {
 						style = "Bold",
-						size = 16.0,
+						size = settings.font_sizes.popup_title,
 					},
 					color = colors.yellow,
 				},
@@ -157,7 +157,7 @@ local function render_forecast_tooltip()
 					string = line,
 					drawing = true,
 					font = {
-						size = 13.0,
+						size = settings.font_sizes.popup_row,
 						style = "Bold",
 					},
 				},
@@ -168,7 +168,7 @@ local function render_forecast_tooltip()
 			Sbar.add("item", "weather.event.padding_highlow_" .. i, {
 				icon = { drawing = false },
 				label = { drawing = false },
-				background = { height = 8 },
+				background = { height = settings.spacing.medium },
 				position = "popup." .. weather.temp.name,
 				width = "100%",
 			})
@@ -189,7 +189,7 @@ local function render_forecast_tooltip()
 					string = line,
 					drawing = true,
 					font = {
-						size = 12.0,
+						size = settings.font_sizes.popup_message,
 					},
 				},
 				position = "popup." .. weather.temp.name,

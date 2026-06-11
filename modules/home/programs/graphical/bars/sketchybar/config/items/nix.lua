@@ -8,32 +8,32 @@ local logger = require("helpers.logger")
 local nix = Sbar.add("item", "nix", {
 	position = "right",
 	background = {
-		padding_left = 5,
-		padding_right = 5,
+		padding_left = settings.spacing.compact,
+		padding_right = settings.spacing.compact,
 	},
 	updates = true,
 	label = {
 		font = {
 			family = settings.font,
-			size = 9.0,
+			size = settings.font_sizes.nix_label,
 			style = "Heavy",
 			features = settings.caps_font_features,
 		},
 		color = colors.text,
-		padding_left = -16, -- Pull label left over the icon
-		y_offset = -6,
+		padding_left = settings.offsets.nix_label_overlap, -- Pull label left over the icon
+		y_offset = settings.offsets.nix_label_y,
 	},
 	icon = {
 		string = icons.nix,
 		color = colors.blue,
 		font = {
-			size = 14,
+			size = settings.font_sizes.today_date,
 		},
-		y_offset = 6,
+		y_offset = settings.offsets.nix_icon_y,
 	},
 	popup = {
 		align = "center",
-		height = 30,
+		height = settings.dimensions.item_height,
 	},
 	update_freq = 300,
 	drawing = false,
@@ -44,7 +44,7 @@ local nix_details = Sbar.add("item", "nix.details", {
 	label = {
 		font = {
 			family = settings.font,
-			size = 12.0,
+			size = settings.font_sizes.stats_label,
 			style = "Heavy",
 			features = settings.numeric_font_features,
 			typographical_width = true,
@@ -52,8 +52,8 @@ local nix_details = Sbar.add("item", "nix.details", {
 		color = colors.text,
 	},
 	background = {
-		padding_left = 10,
-		padding_right = 10,
+		padding_left = settings.spacing.popup,
+		padding_right = settings.spacing.popup,
 	},
 	icon = {
 		drawing = false,

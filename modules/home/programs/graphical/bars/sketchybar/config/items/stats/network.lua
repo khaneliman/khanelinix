@@ -9,89 +9,89 @@ local network = {}
 
 network.down = Sbar.add("item", "network.down", {
 	background = {
-		padding_left = 0,
-		padding_right = 0,
+		padding_left = settings.spacing.none,
+		padding_right = settings.spacing.none,
 	},
 	label = {
 		font = {
 			family = settings.font,
-			size = 10.0,
+			size = settings.font_sizes.stats_network_label,
 			style = "Heavy",
 			features = settings.numeric_font_features,
 			typographical_width = true,
 		},
 		align = "right",
 		color = colors.text,
-		padding_left = 1,
-		padding_right = 0,
-		width = settings.network_label_width,
+		padding_left = settings.spacing.hairline,
+		padding_right = settings.spacing.none,
+		width = settings.widths.network_label,
 	},
 	icon = {
 		font = {
 			family = settings.nerd_font,
-			size = 16.0,
+			size = settings.font_sizes.stats_large_icon,
 			style = "Bold",
 		},
 		align = "center",
 		string = icons.stats.network_down,
 		color = colors.green,
 		highlight_color = colors.blue,
-		width = settings.network_icon_width,
+		width = settings.widths.network_icon,
 	},
 	popup = {
 		align = "right",
-		height = 20,
+		height = settings.dimensions.popup_height,
 	},
 	position = "right",
-	width = settings.network_stack_width,
-	y_offset = -7,
+	width = settings.widths.network_stack,
+	y_offset = settings.offsets.network_down_y,
 })
 
 local headerText = " PROC              IN        OUT"
-local popupWidth = 252
+local popupWidth = settings.widths.popup_network
 
 network.up = Sbar.add("item", "network.up", {
 	background = {
-		padding_left = 0,
-		padding_right = -settings.network_stack_width,
+		padding_left = settings.spacing.none,
+		padding_right = settings.offsets.network_stack_overlap,
 	},
 	label = {
 		font = {
 			family = settings.font,
-			size = 10.0,
+			size = settings.font_sizes.stats_network_label,
 			style = "Heavy",
 			features = settings.numeric_font_features,
 			typographical_width = true,
 		},
 		align = "right",
 		color = colors.text,
-		padding_left = 1,
-		padding_right = 0,
-		width = settings.network_label_width,
+		padding_left = settings.spacing.hairline,
+		padding_right = settings.spacing.none,
+		width = settings.widths.network_label,
 	},
 	icon = {
 		font = {
 			family = settings.nerd_font,
-			size = 16.0,
+			size = settings.font_sizes.stats_large_icon,
 			style = "Bold",
 		},
 		align = "center",
 		string = icons.stats.network_up,
 		color = colors.green,
 		highlight_color = colors.blue,
-		width = settings.network_icon_width,
+		width = settings.widths.network_icon,
 	},
 	position = "right",
-	width = settings.network_stack_width,
-	y_offset = 7,
+	width = settings.widths.network_stack,
+	y_offset = settings.offsets.network_up_y,
 })
 
 network.header = Sbar.add("item", "network.details.header", {
 	position = "popup." .. network.down.name,
 	width = popupWidth,
 	background = {
-		padding_left = 10,
-		padding_right = 10,
+		padding_left = settings.spacing.popup,
+		padding_right = settings.spacing.popup,
 	},
 	icon = {
 		drawing = false,
@@ -100,7 +100,7 @@ network.header = Sbar.add("item", "network.details.header", {
 		string = headerText,
 		font = {
 			family = settings.nerd_font,
-			size = 11.0,
+			size = settings.font_sizes.popup_label,
 			style = "Bold",
 			features = settings.nerd_caps_font_features,
 		},
@@ -124,8 +124,8 @@ for i = 1, 5 do
 		position = "popup." .. network.down.name,
 		width = popupWidth,
 		background = {
-			padding_left = 10,
-			padding_right = 10,
+			padding_left = settings.spacing.popup,
+			padding_right = settings.spacing.popup,
 		},
 		icon = {
 			drawing = false,
@@ -134,7 +134,7 @@ for i = 1, 5 do
 			string = "",
 			font = {
 				family = settings.nerd_font,
-				size = 11.0,
+				size = settings.font_sizes.popup_label,
 				style = "Regular",
 				features = settings.nerd_numeric_font_features,
 			},

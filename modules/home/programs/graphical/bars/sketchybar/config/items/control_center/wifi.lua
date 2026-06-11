@@ -5,7 +5,7 @@ local settings = require("helpers.settings")
 local colors = require("helpers.colors")
 local logger = require("helpers.logger")
 
-local popup_width = 250
+local popup_width = settings.widths.wifi_popup
 
 local wifi = Sbar.add("item", "wifi", {
 	position = "right",
@@ -16,11 +16,11 @@ local wifi = Sbar.add("item", "wifi", {
 		font = {
 			family = settings.nerd_font,
 			style = "Regular",
-			size = 19.0,
+			size = settings.font_sizes.control_icon,
 		},
 	},
 	background = {
-		padding_left = 5,
+		padding_left = settings.spacing.compact,
 	},
 	label = { drawing = false },
 	popup = {
@@ -40,7 +40,7 @@ local ssid = Sbar.add("item", {
 	align = "center",
 	label = {
 		font = {
-			size = 15,
+			size = settings.font_sizes.stats_icon,
 			style = "Bold",
 		},
 		max_chars = 25,
@@ -48,9 +48,9 @@ local ssid = Sbar.add("item", {
 		color = colors.yellow,
 	},
 	background = {
-		height = 2,
+		height = settings.dimensions.rule_height,
 		color = colors.grey,
-		y_offset = -15,
+		y_offset = settings.offsets.wifi_rule_y,
 	},
 })
 
@@ -59,13 +59,13 @@ local hostname = Sbar.add("item", {
 	icon = {
 		align = "left",
 		string = "",
-		width = 30,
+		width = settings.widths.wifi_popup_icon,
 		color = colors.yellow,
 	},
 	label = {
 		max_chars = 20,
 		string = "????????????",
-		width = popup_width - 30,
+		width = settings.widths.wifi_popup_label,
 		align = "right",
 		color = colors.white,
 	},
@@ -76,12 +76,12 @@ local ip = Sbar.add("item", {
 	icon = {
 		align = "left",
 		string = "",
-		width = 30,
+		width = settings.widths.wifi_popup_icon,
 		color = colors.yellow,
 	},
 	label = {
 		string = "???.???.???.???",
-		width = popup_width - 30,
+		width = settings.widths.wifi_popup_label,
 		align = "right",
 		color = colors.white,
 	},
@@ -92,15 +92,15 @@ local mask = Sbar.add("item", {
 	icon = {
 		align = "left",
 		string = icons.lock,
-		width = 30,
+		width = settings.widths.wifi_popup_icon,
 		color = colors.yellow,
 		font = {
-			size = 14.0,
+			size = settings.font_sizes.popup_header,
 		},
 	},
 	label = {
 		string = "???.???.???.???",
-		width = popup_width - 30,
+		width = settings.widths.wifi_popup_label,
 		align = "right",
 		color = colors.white,
 	},
@@ -111,12 +111,12 @@ local router = Sbar.add("item", {
 	icon = {
 		align = "left",
 		string = icons.stats.network,
-		width = 30,
+		width = settings.widths.wifi_popup_icon,
 		color = colors.yellow,
 	},
 	label = {
 		string = "???.???.???.???",
-		width = popup_width - 30,
+		width = settings.widths.wifi_popup_label,
 		align = "right",
 		color = colors.white,
 	},
@@ -183,7 +183,7 @@ local function copy_label_to_clipboard(env)
 	end
 	Sbar.exec("printf %s " .. SHELL_QUOTE(label) .. " | pbcopy")
 	Sbar.set(env.NAME, { label = { string = icons.clipboard, align = "center" } })
-	Sbar.delay(1, function()
+	Sbar.delay(settings.animation.copy_delay, function()
 		Sbar.set(env.NAME, { label = { string = label, align = "right" } })
 	end)
 end

@@ -22,13 +22,13 @@ for i = 1, 8, 1 do
 
 	local space_popup = Sbar.add("item", {
 		position = "popup." .. space.name,
-		padding_left = 5,
-		padding_right = 0,
+		padding_left = settings.spacing.compact,
+		padding_right = settings.spacing.none,
 		background = {
 			drawing = true,
 			image = {
-				corner_radius = 9,
-				scale = 0.2,
+				corner_radius = settings.dimensions.item_corner_radius,
+				scale = settings.dimensions.space_popup_image_scale,
 			},
 		},
 	})
@@ -75,8 +75,8 @@ for i = 1, 8, 1 do
 end
 
 local window_tracker = Sbar.add("item", {
-	padding_left = 10,
-	padding_right = 8,
+	padding_left = settings.spacing.large,
+	padding_right = settings.spacing.medium,
 	icon = {
 		string = "",
 	},
