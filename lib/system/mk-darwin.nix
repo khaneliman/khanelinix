@@ -27,14 +27,19 @@
   matchingHomes ? null,
   darwinModules ? null,
   sharedHomeModules ? null,
+  extraInputPatches ? { },
   modules ? [ ],
   ...
 }:
 let
-  flake = inputs.self or (throw "mkDarwin requires 'inputs.self' to be passed");
-  common = import ./common.nix { inherit inputs; };
+  bootstrapCommon = import ./common.nix { inherit inputs; };
+  patchedInputs = bootstrapCommon.mkPatchedInputs {
+    inherit system extraInputPatches;
+  };
+  common = import ./common.nix { inputs = patchedInputs; };
+  flake = patchedInputs.self or (throw "mkDarwin requires 'inputs.self' to be passed");
 
-  extendedLib = common.mkExtendedLib flake inputs.nixpkgs-unstable;
+  extendedLib = common.mkExtendedLib flake patchedInputs.nixpkgs-unstable;
   baseDarwinModules =
     if darwinModules == null then
       (extendedLib.importModulesRecursive ../../modules/darwin)
@@ -57,27 +62,27 @@ let
   homeManagerConfig = common.mkHomeManagerConfig {
     inherit
       extendedLib
-      inputs
       system
       hostname
       inputPackageSets
       sharedHomeModules
       ;
+    inputs = patchedInputs;
     matchingHomes = resolvedMatchingHomes;
     isNixOS = false;
   };
 in
-inputs.nix-darwin.lib.darwinSystem {
+patchedInputs.nix-darwin.lib.darwinSystem {
   inherit system;
 
   specialArgs = common.mkSpecialArgs {
     inherit
-      inputs
       hostname
       username
       extendedLib
       inputPackageSets
       ;
+    inputs = patchedInputs;
   };
 
   modules = [
@@ -89,10 +94,10 @@ inputs.nix-darwin.lib.darwinSystem {
       // common.mkNixpkgsConfig flake;
     }
 
-    inputs.home-manager.darwinModules.home-manager
-    inputs.sops-nix.darwinModules.sops
-    inputs.stylix.darwinModules.stylix
-    inputs.nix-rosetta-builder.darwinModules.default
+    patchedInputs.home-manager.darwinModules.home-manager
+    patchedInputs.sops-nix.darwinModules.sops
+    patchedInputs.stylix.darwinModules.stylix
+    patchedInputs.nix-rosetta-builder.darwinModules.default
 
     # Auto-inject home configurations for this system+hostname
     homeManagerConfig

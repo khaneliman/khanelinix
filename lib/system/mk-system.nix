@@ -27,14 +27,25 @@
   matchingHomes ? null,
   nixosModules ? null,
   sharedHomeModules ? null,
+  extraInputPatches ? { },
   modules ? [ ],
   ...
 }:
 let
-  flake = inputs.self or (throw "mkSystem requires 'inputs.self' to be passed");
-  common = import ./common.nix { inherit inputs; };
+  bootstrapCommon = import ./common.nix { inherit inputs; };
+  patchedInputs = bootstrapCommon.mkPatchedInputs {
+    inherit system extraInputPatches;
+    patchableInputs = [
+      "nixpkgs"
+      "nixpkgs-unstable"
+      "nixpkgs-master"
+      "home-manager"
+    ];
+  };
+  common = import ./common.nix { inputs = patchedInputs; };
+  flake = patchedInputs.self or (throw "mkSystem requires 'inputs.self' to be passed");
 
-  extendedLib = common.mkExtendedLib flake inputs.nixpkgs;
+  extendedLib = common.mkExtendedLib flake patchedInputs.nixpkgs;
   baseSystemModules =
     if nixosModules == null then
       (extendedLib.importModulesRecursive ../../modules/nixos)
@@ -57,27 +68,27 @@ let
   homeManagerConfig = common.mkHomeManagerConfig {
     inherit
       extendedLib
-      inputs
       system
       hostname
       inputPackageSets
       sharedHomeModules
       ;
+    inputs = patchedInputs;
     matchingHomes = resolvedMatchingHomes;
     isNixOS = true;
   };
 in
-inputs.nixpkgs.lib.nixosSystem {
+patchedInputs.nixpkgs.lib.nixosSystem {
   inherit system;
 
   specialArgs = common.mkSpecialArgs {
     inherit
-      inputs
       hostname
       username
       extendedLib
       inputPackageSets
       ;
+    inputs = patchedInputs;
   };
 
   modules = [
@@ -89,15 +100,15 @@ inputs.nixpkgs.lib.nixosSystem {
       // common.mkNixpkgsConfig flake;
     }
 
-    inputs.home-manager.nixosModules.home-manager
-    inputs.lanzaboote.nixosModules.lanzaboote
-    inputs.sops-nix.nixosModules.sops
-    inputs.disko.nixosModules.disko
-    inputs.fast-nix-gc.nixosModules.default
-    inputs.stylix.nixosModules.stylix
-    inputs.catppuccin.nixosModules.catppuccin
-    inputs.nix-index-database.nixosModules.nix-index
-    inputs.nix-flatpak.nixosModules.nix-flatpak
+    patchedInputs.home-manager.nixosModules.home-manager
+    patchedInputs.lanzaboote.nixosModules.lanzaboote
+    patchedInputs.sops-nix.nixosModules.sops
+    patchedInputs.disko.nixosModules.disko
+    patchedInputs.fast-nix-gc.nixosModules.default
+    patchedInputs.stylix.nixosModules.stylix
+    patchedInputs.catppuccin.nixosModules.catppuccin
+    patchedInputs.nix-index-database.nixosModules.nix-index
+    patchedInputs.nix-flatpak.nixosModules.nix-flatpak
 
     # Auto-inject home configurations for this system+hostname
     homeManagerConfig

@@ -24,34 +24,45 @@
   system,
   hostname,
   username ? "khaneliman",
+  extraInputPatches ? { },
   modules ? [ ],
   ...
 }:
 let
-  flake = inputs.self or (throw "mkHome requires 'inputs.self' to be passed");
-  common = import ./common.nix { inherit inputs; };
+  bootstrapCommon = import ./common.nix { inherit inputs; };
+  patchedInputs = bootstrapCommon.mkPatchedInputs {
+    inherit system extraInputPatches;
+    patchableInputs = [
+      "nixpkgs"
+      "nixpkgs-unstable"
+      "nixpkgs-master"
+      "home-manager"
+    ];
+  };
+  common = import ./common.nix { inputs = patchedInputs; };
+  flake = patchedInputs.self or (throw "mkHome requires 'inputs.self' to be passed");
 
-  extendedLib = common.mkExtendedLib flake inputs.nixpkgs-unstable;
+  extendedLib = common.mkExtendedLib flake patchedInputs.nixpkgs-unstable;
   inputPackageSets = common.mkInputPackageSets {
     inherit flake system;
   };
 in
-inputs.home-manager.lib.homeManagerConfiguration {
-  pkgs = import inputs.nixpkgs-unstable {
+patchedInputs.home-manager.lib.homeManagerConfiguration {
+  pkgs = import patchedInputs.nixpkgs-unstable {
     inherit system;
     inherit ((common.mkNixpkgsConfig flake)) config overlays;
   };
 
   extraSpecialArgs = {
     inherit
-      inputs
       hostname
       username
       system
       ;
-    inherit (inputs) self;
+    inputs = patchedInputs;
+    inherit (patchedInputs) self;
     lib = extendedLib;
-    flake-parts-lib = inputs.flake-parts.lib;
+    flake-parts-lib = patchedInputs.flake-parts.lib;
   }
   // inputPackageSets;
 
