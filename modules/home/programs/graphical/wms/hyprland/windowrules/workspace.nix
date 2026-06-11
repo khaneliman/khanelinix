@@ -10,6 +10,7 @@ let
   cfg = config.khanelinix.programs.graphical.wms.hyprland;
 
   firefoxClass = "^(?i:firefox|firefox-devedition)$";
+  moonlightClass = "^(?i:moonlight|moonlight-qt|com\\.moonlight_stream\\.Moonlight)$";
   mediaTitle = "^(?i).*(Twitch|TNTdrama|YouTube|Bally Sports|Video Entertainment|Plex).*$";
 in
 {
@@ -104,7 +105,7 @@ in
           }
           #Remote
           {
-            match.class = "^(?i:moonlight|moonlight-qt|com\\.moonlight_stream\\.Moonlight)$";
+            match.class = moonlightClass;
             workspace = "8";
           }
           {
@@ -170,6 +171,33 @@ in
                   end
                 end
               '';
+            keepMoonlightOnBottom = lib.generators.mkLuaInline ''
+              function(window)
+                if window == nil or type(window) ~= "table" then
+                  return
+                end
+
+                local class = string.lower(window.class or "")
+                if class ~= "moonlight" and class ~= "moonlight-qt" and class ~= "com.moonlight_stream.moonlight" then
+                  return
+                end
+
+                local workspace = window.workspace and window.workspace.name or nil
+                if workspace == "7" or workspace == "8" then
+                  return
+                end
+
+                if window.address == nil or window.address == "" then
+                  return
+                end
+
+                hl.dispatch(hl.dsp.window.move({
+                  workspace = "8",
+                  follow = false,
+                  window = "address:" .. window.address,
+                }))
+              end
+            '';
           in
           lib.mkIf (config.wayland.windowManager.hyprland.configType == "lua") (
             lib.mkAfter [
@@ -181,8 +209,20 @@ in
               }
               {
                 _args = [
+                  "window.open"
+                  keepMoonlightOnBottom
+                ];
+              }
+              {
+                _args = [
                   "window.title"
                   (routeFirefoxWindow false)
+                ];
+              }
+              {
+                _args = [
+                  "window.title"
+                  keepMoonlightOnBottom
                 ];
               }
             ]
