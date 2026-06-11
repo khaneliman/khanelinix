@@ -40,6 +40,30 @@ Validate each issue against diff and relevant local instructions before posting.
 - Cite local instruction/contribution files for compliance findings.
 - Use full GitHub URLs with concrete commit SHA for code links.
 
+## Posting Pending Reviews (API Mechanics)
+
+When creating a draft/pending review with inline comments programmatically:
+
+- REST `POST /repos/{owner}/{repo}/pulls/{n}/reviews` silently drops
+  `start_line`/`start_side` on its `comments[]` items, storing every comment as
+  single-line. Multi-line `suggestion` blocks then anchor to the end line only —
+  "Commit suggestion" replaces one line and produces broken code.
+- For any review containing a multi-line suggestion, use GraphQL instead:
+  1. `addPullRequestReview(input: {pullRequestId, body})` with no `event` to
+     create the pending review.
+  2. `addPullRequestReviewThread(input: {pullRequestReviewId, path, startLine,
+     startSide, line, side, body})`
+     per comment.
+- Verify ranges via GraphQL
+  (`node(id:) { ... on PullRequestReview {
+  comments { path startLine line } } }`).
+  REST returns `line: null` on pending-review comments even when ranges are
+  stored correctly, so REST output cannot distinguish a broken anchor from a
+  pending one.
+- A suggestion block replaces exactly the anchored range `startLine..line`; the
+  suggestion body must be a drop-in replacement for those lines, including
+  indentation.
+
 ## Conventional Comments
 
 Format:
