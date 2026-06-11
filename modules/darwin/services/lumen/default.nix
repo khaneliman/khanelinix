@@ -22,6 +22,68 @@ let
   userName = config.khanelinix.user.name;
   userHome = config.users.users.${userName}.home;
 
+  formatSettingValue =
+    value: if lib.isBool value then if value then "enabled" else "disabled" else toString value;
+
+  defaultSettingsFor = instance: {
+    sunshine_name = instance.sunshineName;
+    inherit (instance) port;
+    audio_sink = "system";
+    max_bitrate = 80000;
+    virtual_display = instance.virtualDisplay;
+    upnp = true;
+    file_state = "${instance.configDir}/sunshine_state.json";
+    file_apps = "${instance.configDir}/apps.json";
+    log_path = "${instance.configDir}/sunshine.log";
+    pkey = "${instance.configDir}/credentials/cakey.pem";
+    cert = "${instance.configDir}/credentials/cacert.pem";
+  };
+
+  settingsFor = instance: (defaultSettingsFor instance) // instance.settings;
+
+  settingsTextFor =
+    instance:
+    concatStrings (
+      mapAttrsToList (key: value: "${key} = ${formatSettingValue value}\n") (settingsFor instance)
+    );
+
+  managedSettingsCommandsFor =
+    instance:
+    concatStrings (
+      mapAttrsToList (
+        key: value:
+        let
+          args = lib.escapeShellArgs [
+            "${instance.configDir}/sunshine.conf"
+            key
+            (formatSettingValue value)
+          ];
+        in
+        "    set_lumen_setting ${args}\n"
+      ) (settingsFor instance)
+    );
+
+  activationFor = name: instance: ''
+    install -d -m 0755 -o ${userName} -g staff \
+      "${instance.configDir}" \
+      "${instance.configDir}/scripts"
+
+    # install -d only chowns directories it creates; repair configDir if an
+    # earlier activation left it root-owned (sunshine needs to write here).
+    chown ${userName}:staff "${instance.configDir}"
+
+    for script in "${cfg.package}/share/lumen/scripts/"*.sh; do
+      install -m 0755 -o ${userName} -g staff "$script" "${instance.configDir}/scripts/$(basename "$script")"
+    done
+
+    if [ ! -f "${instance.configDir}/sunshine.conf" ]; then
+      install -m 0644 -o ${userName} -g staff "${confFileFor name instance}" "${instance.configDir}/sunshine.conf"
+    fi
+
+    ${managedSettingsCommandsFor instance}
+    install -m 0644 -o ${userName} -g staff "${appsFileFor name instance}" "${instance.configDir}/apps.json"
+  '';
+
   appsFileFor =
     name: instance:
     pkgs.writeText "lumen-${name}-apps.json" (
@@ -34,24 +96,7 @@ let
     );
 
   confFileFor =
-    name: instance:
-    pkgs.writeText "lumen-${name}-sunshine.conf" ''
-      sunshine_name = ${instance.sunshineName}
-      port = ${toString instance.port}
-      audio_sink = system
-      max_bitrate = 80000
-      virtual_display = ${if instance.virtualDisplay then "enabled" else "disabled"}
-      upnp = enabled
-
-      # Relative state paths resolve against the hardcoded ~/.config/sunshine
-      # appdata dir, not this instance's config dir; pin them here so
-      # instances do not share pairing state, apps, or certificates.
-      file_state = ${instance.configDir}/sunshine_state.json
-      file_apps = ${instance.configDir}/apps.json
-      log_path = ${instance.configDir}/sunshine.log
-      pkey = ${instance.configDir}/credentials/cakey.pem
-      cert = ${instance.configDir}/credentials/cacert.pem
-    '';
+    name: instance: pkgs.writeText "lumen-${name}-sunshine.conf" (settingsTextFor instance);
 
   instanceModule =
     { name, ... }:
@@ -91,6 +136,19 @@ let
           type = types.listOf (types.attrsOf types.anything);
           default = [ { name = "Desktop"; } ];
           description = "Application entries written to this instance's apps.json. Managed declaratively; edits made through the web UI are overwritten on activation.";
+        };
+
+        settings = mkOption {
+          type = types.attrsOf (
+            types.oneOf [
+              types.bool
+              types.int
+              types.path
+              types.str
+            ]
+          );
+          default = { };
+          description = "Additional sunshine.conf settings for this instance. Values here override module defaults for duplicate keys.";
         };
       };
     };
@@ -162,27 +220,40 @@ in
       chown ${userName}:staff "${userHome}/.local/bin/lumen"
       chmod 0755 "${userHome}/.local/bin/lumen"
 
-      ${concatStrings (
-        mapAttrsToList (name: instance: ''
-          install -d -m 0755 -o ${userName} -g staff \
-            "${instance.configDir}" \
-            "${instance.configDir}/scripts"
+      set_lumen_setting() {
+        file=$1
+        key=$2
+        value=$3
+        tmp="$file.tmp.$$"
 
-          # install -d only chowns directories it creates; repair configDir if an
-          # earlier activation left it root-owned (sunshine needs to write here).
-          chown ${userName}:staff "${instance.configDir}"
+        /usr/bin/awk -v key="$key" -v value="$value" '
+          BEGIN {
+            done = 0
+            pattern = "^[[:space:]]*" key "[[:space:]]*="
+          }
 
-          for script in "${cfg.package}/share/lumen/scripts/"*.sh; do
-            install -m 0755 -o ${userName} -g staff "$script" "${instance.configDir}/scripts/$(basename "$script")"
-          done
+          $0 ~ pattern {
+            if (!done) {
+              print key " = " value
+              done = 1
+            }
+            next
+          }
 
-          if [ ! -f "${instance.configDir}/sunshine.conf" ]; then
-            install -m 0644 -o ${userName} -g staff "${confFileFor name instance}" "${instance.configDir}/sunshine.conf"
-          fi
+          { print }
 
-          install -m 0644 -o ${userName} -g staff "${appsFileFor name instance}" "${instance.configDir}/apps.json"
-        '') cfg.instances
-      )}
+          END {
+            if (!done) {
+              print key " = " value
+            }
+          }
+        ' "$file" > "$tmp"
+
+        install -m 0644 -o ${userName} -g staff "$tmp" "$file"
+        rm -f "$tmp"
+      }
+
+      ${concatStrings (mapAttrsToList activationFor cfg.instances)}
 
       if /usr/sbin/nvram boot-args 2>/dev/null | /usr/bin/grep -q "amfi_get_out_of_my_way=1"; then
         /usr/bin/codesign --sign - --entitlements "${cfg.installDir}/hid_entitlements.plist" --force "${cfg.installDir}/sunshine" 2>/dev/null || true
