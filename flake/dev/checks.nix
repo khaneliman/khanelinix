@@ -49,6 +49,8 @@
                   # Application name
                   shotcut = "shotcut";
                   Shotcut = "Shotcut";
+                  # Plug and Play (citrix PnP settings keys)
+                  Pn = "Pn";
                 };
                 extend-ignore-re = [
                   # SSH public keys (ssh-rsa, ssh-ed25519, etc.)
