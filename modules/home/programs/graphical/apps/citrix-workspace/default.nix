@@ -117,5 +117,10 @@ in
         $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ${config.home.homeDirectory}/.ICAClient/cache
       '';
     };
+
+    # Citrix leaves one AuthManager log per launch and never prunes them.
+    systemd.user.tmpfiles.rules = [
+      "e %h/.ICAClient/logs - - - 30d"
+    ];
   };
 }
