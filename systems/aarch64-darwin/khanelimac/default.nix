@@ -42,11 +42,19 @@ in
         enable = true;
 
         instances = {
-          # Headless virtual display sized to the client; reuses the original
-          # config dir so existing Moonlight pairings keep working.
+          # Physical-display stream. Reuses the original config dir so existing
+          # Moonlight pairings keep working.
           # Web UI: https://localhost:47990 (default base port 47989 + 1).
-          virtual = {
+          desktop = {
             configDir = "/Users/khaneliman/.config/sunshine";
+            virtualDisplay = false;
+            sunshineName = "khanelimac";
+            settings = {
+              av1_mode = 1;
+              hevc_mode = 0;
+              max_bitrate = 0;
+              vt_realtime = "enabled";
+            };
 
             apps = [
               { name = "Desktop"; }
@@ -81,14 +89,6 @@ in
                 ];
               }
             ];
-          };
-
-          # Captures and controls the physical display: remote desktop mode.
-          # Web UI: https://localhost:48990 (base port + 1).
-          desktop = {
-            virtualDisplay = false;
-            port = 48989;
-            sunshineName = "khanelimac Desktop";
           };
         };
       };
