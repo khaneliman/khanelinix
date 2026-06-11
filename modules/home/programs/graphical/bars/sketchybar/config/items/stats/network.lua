@@ -174,11 +174,11 @@ local function formatBytes(bytes)
 	return string.format("%4.1f%s", value, units[unitIndex])
 end
 
-local function touchRecentProcess(proc, inb, outb, isActive)
+local function touchRecentProcess(proc, inb, outb, active)
 	recentProcesses[proc] = {
 		inb = inb,
 		outb = outb,
-		isActive = isActive,
+		isActive = active,
 		lastSeen = os.time(),
 	}
 

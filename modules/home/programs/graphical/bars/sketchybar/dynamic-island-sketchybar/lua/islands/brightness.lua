@@ -1,4 +1,5 @@
 return function(ctx)
+	---@type fun(ctx: table, options: table)
 	local meter = dofile(os.getenv("HOME") .. "/.config/dynamic-island-sketchybar/lua/islands/helpers/meter.lua")
 
 	meter(ctx, {

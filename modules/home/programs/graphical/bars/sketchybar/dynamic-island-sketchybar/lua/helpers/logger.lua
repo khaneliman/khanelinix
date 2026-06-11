@@ -78,6 +78,13 @@ local function create(options)
 	max_buffer_size = _positive_integer(cfg.env_max_buffer_size, max_buffer_size)
 
 	local active_level = LEVELS[level] or LEVELS.info
+	---@class DynamicIslandLogEntry
+	---@field line string
+	---@field count integer
+	---@class DynamicIslandStreamState
+	---@field entries DynamicIslandLogEntry[]
+	---@field indexes table<string, integer>
+	---@type table<string, DynamicIslandStreamState>
 	local stream_state = {
 		stdout = { entries = {}, indexes = {} },
 		stderr = { entries = {}, indexes = {} },
@@ -139,7 +146,10 @@ local function create(options)
 		local index = state.indexes[line]
 
 		if index ~= nil then
-			state.entries[index].count = state.entries[index].count + 1
+			local entry = state.entries[index]
+			if entry ~= nil then
+				entry.count = entry.count + 1
+			end
 			return
 		end
 

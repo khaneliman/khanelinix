@@ -14,7 +14,6 @@ local popup_refresh_in_flight = false
 local popup_refresh_pending = false
 local blueutil_in_flight = false
 local blueutil_queue = {}
-local cached_power_state = nil
 
 local bluetooth = Sbar.add("item", "bluetooth", {
 	position = "right",
@@ -287,7 +286,6 @@ local function refresh_icon()
 		if enabled == nil then
 			logger.warn("bluetooth", "refresh_icon_parse_failed", { state = tostring(state) })
 		else
-			cached_power_state = enabled
 			logger.debug("bluetooth", "refresh_icon", { enabled = (enabled == 1) })
 			if enabled == 0 then
 				bluetooth:set({ icon = icons.bluetooth_off })
@@ -383,11 +381,9 @@ end)
 local function apply_toggle(parsed)
 	if parsed == 0 then
 		logger.debug("bluetooth", "toggle_turning_on", {})
-		cached_power_state = 1
 		exec_blueutil("blueutil -p 1")
 	else
 		logger.debug("bluetooth", "toggle_turning_off", {})
-		cached_power_state = 0
 		exec_blueutil("blueutil -p 0")
 	end
 

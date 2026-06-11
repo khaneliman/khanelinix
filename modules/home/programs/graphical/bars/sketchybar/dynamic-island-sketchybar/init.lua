@@ -68,32 +68,24 @@ local logger = createLogger({
 	max_buffer_size = normalizePositiveInteger(os.getenv("DYNAMIC_ISLAND_LOG_MAX_BUFFER_SIZE"), 80),
 })
 
-local function appendLog(_path, message, level)
+local function appendLog(message, level)
 	logger.raw(level, message)
 end
 
 local function logDebug(message)
-	appendLog(logPath, message, "debug")
+	appendLog(message, "debug")
 end
 
 local function logInfo(message)
-	appendLog(logPath, message, "info")
+	appendLog(message, "info")
 end
 
 local function logWarn(message)
-	appendLog(logPath, message, "warn")
+	appendLog(message, "warn")
 end
 
 local function logError(message)
-	appendLog(logPath, message, "error")
-end
-
-local function emitStructuredLog(level, moduleName, event, fields)
-	local write = logger[level]
-	if type(write) ~= "function" then
-		return
-	end
-	write(moduleName, event, fields)
+	appendLog(message, "error")
 end
 
 logInfo("[init] startup bar=" .. barName)
@@ -414,6 +406,13 @@ systemWatcher:subscribe("system_woke", function()
 end)
 
 local islandAnimationToken = 0
+---@class IslandLifecycle
+---@field token integer
+---@field owner string?
+---@field hidden boolean
+---@field onHideContent fun(interrupted: boolean, token: integer)?
+---@field onCleanup fun(interrupted: boolean, token: integer?)?
+---@type IslandLifecycle?
 local activeIslandLifecycle = nil
 
 local function interruptActiveIsland(nextOwner)

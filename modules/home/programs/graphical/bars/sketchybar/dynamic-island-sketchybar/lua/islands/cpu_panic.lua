@@ -1,5 +1,4 @@
 return function(ctx)
-	local token = 0
 	local lastPanicApp = nil
 	local inFlight = false
 

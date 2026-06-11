@@ -42,6 +42,7 @@ local function lookupQueryWidth(queryResult)
 	}
 
 	for _, path in ipairs(paths) do
+		---@type any
 		local current = queryResult
 		for _, key in ipairs(path) do
 			if type(current) ~= "table" then
@@ -93,7 +94,9 @@ local function detectMonitorWidthFromSystemProfiler()
 		return nil
 	end
 
+	---@type string[]
 	local displayBlocks = {}
+	---@type string[]?
 	local currentBlock = nil
 
 	for line in output:gmatch("[^\r\n]+") do
@@ -156,8 +159,13 @@ local function resolveMonitorResolution(config)
 	local get = config.get
 	local barName = config.barName
 	local query = config.query
-	local logInfo = config.logInfo or function(...) end
-	local logWarn = config.logWarn or function(...) end
+	local function noopLog(message)
+		if message == nil then
+			return
+		end
+	end
+	local logInfo = config.logInfo or noopLog
+	local logWarn = config.logWarn or noopLog
 
 	local configuredValue = get("notch.monitorHorizontalResolution", "auto")
 	local configured = asPositiveInteger(configuredValue)
@@ -218,6 +226,9 @@ local function makeIslandWidthCalculator(monitorResolution)
 
 	if safeResolution <= 0 then
 		return function(width)
+			if width == nil then
+				return 0
+			end
 			return 0
 		end
 	end

@@ -1,0 +1,25 @@
+std = "lua51"
+
+codes = true
+max_line_length = false
+
+globals = {
+	"CLEAR_POPUP_ITEMS",
+	"COLOR_TO_HEX",
+	"DELAY",
+	"EXEC_IF_AWAKE",
+	"IS_EMPTY",
+	"IS_SYSTEM_SLEEPING",
+	"PARSE_NUMBER",
+	"POPUP_OFF",
+	"POPUP_ON",
+	"POPUP_TOGGLE",
+	"PRINT_TABLE",
+	"SETUP_POPUP_HOVER",
+	"SETUP_STANDARD_CLICKS",
+	"SHELL_QUOTE",
+	"Sbar",
+	"STR_SPLIT",
+	"STR_TRIM",
+	"TRUNCATE_TEXT",
+}

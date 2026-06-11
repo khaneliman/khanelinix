@@ -1,5 +1,4 @@
 return function(ctx)
-	local token = 0
 	local lastBatteryState = nil
 	local inFlight = false
 
@@ -95,6 +94,9 @@ return function(ctx)
 			local found, _, percent = string.find(batt_info, "(%d+)%%")
 			if found then
 				local current_percent = tonumber(percent)
+				if current_percent == nil then
+					return
+				end
 				local is_charging = string.find(batt_info, "AC Power")
 
 				-- If battery drops below 20% and we aren't charging

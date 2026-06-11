@@ -1,5 +1,4 @@
 return function(ctx)
-	local token = 0
 	local lastAppName = nil
 	local lastAppDeadline = 0
 

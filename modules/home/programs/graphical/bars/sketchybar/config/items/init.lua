@@ -1,7 +1,7 @@
 #!/usr/bin/env lua
 
--- Load window manager configuration
-local wm_config = require("helpers.wm_config")
+-- Load generated window manager configuration before item modules.
+require("helpers.wm_config")
 
 require("items.apple")
 require("items.spaces")

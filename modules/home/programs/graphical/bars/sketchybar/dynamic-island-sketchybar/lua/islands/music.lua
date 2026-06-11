@@ -40,8 +40,8 @@ return function(ctx)
 		return viewToken
 	end
 
-	local function isCurrentView(token)
-		return viewToken == token
+	local function isCurrentView(candidateToken)
+		return viewToken == candidateToken
 	end
 
 	local function resolveTextWidth(slotWidth)
@@ -318,7 +318,7 @@ return function(ctx)
 		end
 
 		local separatorStart, separatorEnd = string.find(trimmed, resultSeparator, 1, true)
-		if separatorStart == nil then
+		if separatorStart == nil or separatorEnd == nil then
 			return nil, trimmed
 		end
 
@@ -327,6 +327,7 @@ return function(ctx)
 		return string.lower(playbackState), displayText
 	end
 
+	---@type fun(env: table, attempt?: integer, expectedDisplayText?: string)?
 	local updateMusic
 
 	local function cancelArtworkRetry()
@@ -345,6 +346,9 @@ return function(ctx)
 
 			local updateSender = pendingMusicUpdateSender
 			pendingMusicUpdateSender = nil
+			if updateMusic == nil then
+				return
+			end
 			updateMusic({ SENDER = updateSender })
 		end)
 	end
@@ -484,6 +488,9 @@ return function(ctx)
 						return
 					end
 					if lastDisplayText ~= nil and lastDisplayText ~= displayText then
+						return
+					end
+					if updateMusic == nil then
 						return
 					end
 

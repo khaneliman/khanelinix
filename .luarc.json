@@ -5,18 +5,25 @@
 	},
 	"workspace": {
 		"checkThirdParty": "Disable",
-		"ignoreDir": [".direnv", ".git", "result"]
+		"ignoreDir": [".direnv", ".git", "result", "result-*"],
+		"library": [
+			"modules/home/programs/graphical/bars/sketchybar/.lua-stubs",
+			"modules/home/programs/graphical/bars/sketchybar/config"
+		]
 	},
 	"diagnostics": {
 		"globals": [
+			"CLEAR_POPUP_ITEMS",
 			"COLOR_TO_HEX",
 			"Current",
 			"DELAY",
+			"EXEC_IF_AWAKE",
 			"Header",
 			"IS_EMPTY",
 			"IS_SYSTEM_SLEEPING",
 			"Linemode",
 			"Manager",
+			"PARSE_NUMBER",
 			"POPUP_OFF",
 			"POPUP_ON",
 			"POPUP_TOGGLE",
@@ -25,10 +32,15 @@
 			"Preview",
 			"Progress",
 			"SLEEP",
+			"SETUP_POPUP_HOVER",
+			"SETUP_STANDARD_CLICKS",
+			"SHELL_QUOTE",
 			"Sbar",
+			"STR_TRIM",
 			"STR_SPLIT",
 			"Status",
 			"Tab",
+			"TRUNCATE_TEXT",
 			"cx",
 			"ps",
 			"spoon",
