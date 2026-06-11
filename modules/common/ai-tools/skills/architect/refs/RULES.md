@@ -7,7 +7,7 @@ ensure maximum token efficiency and safety.
 > "Rules" are different mechanisms per platform. Claude rules are path-gated
 > context/style guidance. Codex `.rules` files are command execution policy for
 > the sandbox. For directory-scoped _guidance_ on Codex, use nested `AGENTS.md`
-> files instead — see [agents.md](agents.md).
+> files instead — see [AGENTS.md](AGENTS.md).
 
 ## Claude-Specific Rules
 
