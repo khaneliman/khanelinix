@@ -9,7 +9,7 @@ return function(ctx)
 	local noTrackMarker = "__DYNAMIC_ISLAND_NO_TRACK__"
 	local resultSeparator = "|||"
 
-	local maxExpandWidth = ctx.asNumber(ctx.get("islands.music.info.maxExpandWidth", "190"), 190)
+	local maxExpandWidth = ctx.expandedHalfWidth("islands.music.info.maxExpandWidth", 205)
 	local maxExpandWidthPx = ctx.calculateIslandWidth(maxExpandWidth)
 	local expandHeight = ctx.asNumber(ctx.get("islands.music.info.expandHeight", "100"), 100)
 	local cornerRad = ctx.asNumber(ctx.get("islands.music.info.cornerRadius", "19"), 19)

@@ -23,7 +23,7 @@ return function(ctx, options)
 	local eventName = options.eventName
 	local getIcon = options.getIcon
 
-	local maxExpandWidth = ctx.asNumber(ctx.get("islands." .. name .. ".maxExpandWidth", "130"), 130)
+	local maxExpandWidth = ctx.expandedHalfWidth("islands." .. name .. ".maxExpandWidth", 145)
 	local maxExpandWidthPx = ctx.calculateIslandWidth(maxExpandWidth)
 	local expandHeight = ctx.asNumber(ctx.get("islands." .. name .. ".expandHeight", "65"), 65)
 	local cornerRadius = ctx.asNumber(ctx.get("islands." .. name .. ".cornerRadius", "12"), 12)

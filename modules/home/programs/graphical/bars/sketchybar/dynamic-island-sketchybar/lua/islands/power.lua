@@ -3,7 +3,7 @@ return function(ctx)
 	local lastBatteryState = nil
 	local inFlight = false
 
-	local maxExpandWidth = ctx.asNumber(ctx.get("islands.power.maxExpandWidth", "190"), 190)
+	local maxExpandWidth = ctx.expandedHalfWidth("islands.power.maxExpandWidth", 160)
 	local expandHeight = ctx.asNumber(ctx.get("islands.power.expandHeight", "76"), 76)
 	local cornerRad = ctx.asNumber(ctx.get("islands.power.cornerRadius", "22"), 22)
 	local pollInterval = ctx.asNumber(ctx.get("islands.power.pollInterval", "300"), 300)

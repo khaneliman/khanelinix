@@ -3,7 +3,7 @@ return function(ctx)
 	local lastClipboard = nil
 	local inFlight = false
 
-	local maxExpandWidth = ctx.asNumber(ctx.get("islands.clipboard.maxExpandWidth", "180"), 180)
+	local maxExpandWidth = ctx.expandedHalfWidth("islands.clipboard.maxExpandWidth", 185)
 	local expandHeight = ctx.asNumber(ctx.get("islands.clipboard.expandHeight", "85"), 85)
 	local cornerRad = ctx.asNumber(ctx.get("islands.clipboard.cornerRadius", "15"), 15)
 	local pollInterval = ctx.asNumber(ctx.get("islands.clipboard.pollInterval", "20"), 20)
@@ -17,9 +17,10 @@ return function(ctx)
 	end
 
 	local textItem = ctx.Sbar.add("item", "island.clipboard_text", {
-		position = "left",
+		position = "center",
 		drawing = false,
 		label = {
+			align = "center",
 			color = ctx.colorTransparent,
 			max_chars = ctx.layout.text.clipboardMaxChars,
 			y_offset = ctx.contentYOffset,
@@ -42,6 +43,7 @@ return function(ctx)
 
 		textItem:set({
 			drawing = true,
+			width = layout.width,
 			label = {
 				string = displayText,
 			},
@@ -59,7 +61,10 @@ return function(ctx)
 				textItem:set({ label = { color = ctx.colorTransparent } })
 			end,
 			onCleanup = function()
-				textItem:set({ drawing = false })
+				textItem:set({
+					drawing = false,
+					width = ctx.layout.dimensions.emptyWidth,
+				})
 			end,
 		})
 	end

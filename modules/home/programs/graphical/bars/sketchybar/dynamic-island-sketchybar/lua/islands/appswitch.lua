@@ -3,7 +3,7 @@ return function(ctx)
 	local lastAppName = nil
 	local lastAppDeadline = 0
 
-	local maxExpandWidth = ctx.asNumber(ctx.get("islands.appswitch.maxExpandWidth", "110"), 110)
+	local maxExpandWidth = ctx.expandedHalfWidth("islands.appswitch.maxExpandWidth", 155)
 	local expandHeight = ctx.asNumber(ctx.get("islands.appswitch.expandHeight", "76"), 76)
 	local cornerRad = ctx.asNumber(ctx.get("islands.appswitch.cornerRadius", "22"), 22)
 	local maxExpandHeight = expandHeight + math.floor(ctx.squishAmount / 2)

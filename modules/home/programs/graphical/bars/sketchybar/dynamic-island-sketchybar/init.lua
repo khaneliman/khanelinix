@@ -165,6 +165,7 @@ local layout = {
 	},
 	dimensions = {
 		emptyWidth = configNumber("layout.dimensions.emptyWidth", 0),
+		expandedMinWidth = configNumber("layout.dimensions.expandedMinWidth", 135),
 		meterBarHeight = configNumber("layout.dimensions.meterBarHeight", 2),
 		meterBarInset = configNumber("layout.dimensions.meterBarInset", 20),
 	},
@@ -302,6 +303,15 @@ logInfo("[init] monitor width final value: " .. tostring(monitorResolution))
 
 local margin = calculateMargin(defaultWidth) or 0
 
+local function resolveExpandedHalfWidth(value, fallback)
+	local halfWidth = asNumber(value, fallback)
+	return math.max(halfWidth, defaultWidth, layout.dimensions.expandedMinWidth)
+end
+
+local function expandedHalfWidth(key, fallback)
+	return resolveExpandedHalfWidth(get(key, fallback), fallback)
+end
+
 local function clamp(value, minimum, maximum)
 	if value < minimum then
 		return minimum
@@ -316,8 +326,11 @@ local function layoutForText(text, options)
 	options = options or {}
 	local charWidth = asNumber(options.charWidth, layout.text.defaultCharWidth)
 	local horizontalPadding = asNumber(options.horizontalPadding, layout.text.defaultHorizontalPadding)
-	local minHalfWidth = asNumber(options.minHalfWidth, defaultWidth)
-	local maxHalfWidth = asNumber(options.maxHalfWidth, minHalfWidth)
+	local minHalfWidth = resolveExpandedHalfWidth(options.minHalfWidth, layout.dimensions.expandedMinWidth)
+	local maxHalfWidth = resolveExpandedHalfWidth(options.maxHalfWidth, minHalfWidth)
+	if maxHalfWidth < minHalfWidth then
+		maxHalfWidth = minHalfWidth
+	end
 	local textLength = string.len(text or "")
 	local contentWidth = math.ceil(textLength * charWidth + horizontalPadding)
 	local halfWidth = clamp(math.ceil(contentWidth / 2), minHalfWidth, maxHalfWidth)
@@ -620,6 +633,8 @@ local baseCtx = {
 	calculateVisibleMargin = calculateVisibleMargin,
 	calculateIslandWidth = calculateIslandWidth,
 	layoutForText = layoutForText,
+	expandedHalfWidth = expandedHalfWidth,
+	resolveExpandedHalfWidth = resolveExpandedHalfWidth,
 	layout = layout,
 	squishAmount = squishAmount,
 	contentYOffset = contentYOffset,

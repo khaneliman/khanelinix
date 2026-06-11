@@ -47,12 +47,15 @@ Main options:
 - `logging.level`: one of `debug`, `info`, `warn`, or `error`.
 - `enabled.<island>`: enables or disables Lua island modules.
 - `notch.defaultHeight`: collapsed island height.
-- `notch.defaultWidth`: collapsed island half-width used by margin logic.
+- `notch.defaultWidth`: collapsed island half-width used by margin logic; the
+  visible island is twice this value.
 - `notch.cornerRadius`: collapsed bar corner radius.
 - `notch.monitorHorizontalResolution`: `"auto"` or fixed display width.
 - `animation.squishAmount`: width adjustment used during island expansion.
 - `layout.*`: shared spacing, dimensions, font sizes, text sizing, animation
   timings, meter geometry, and music artwork layout.
+- `layout.dimensions.expandedMinWidth`: minimum expanded half-width, used so
+  short notifications still grow out from the collapsed island.
 - `islands.<name>`: per-island dimensions, polling intervals, and thresholds.
 - `colors` and `icons`: shared color/icon values.
 

@@ -1,7 +1,7 @@
 return function(ctx)
 	local token = 0
 
-	local maxExpandWidth = ctx.asNumber(ctx.get("islands.wifi.maxExpandWidth", "190"), 190)
+	local maxExpandWidth = ctx.expandedHalfWidth("islands.wifi.maxExpandWidth", 170)
 	local expandHeight = ctx.asNumber(ctx.get("islands.wifi.expandHeight", "76"), 76)
 	local cornerRad = ctx.asNumber(ctx.get("islands.wifi.cornerRadius", "22"), 22)
 

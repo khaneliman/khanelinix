@@ -11,6 +11,7 @@ local layout = {
 
 	dimensions = {
 		emptyWidth = 0,
+		expandedMinWidth = 135,
 		meterBarHeight = 2,
 		meterBarInset = 20,
 	},
@@ -122,7 +123,7 @@ return {
 	notch = {
 		defaultHeight = 44,
 		-- This is half-width in margin logic; effective island width is 2x this.
-		defaultWidth = 80,
+		defaultWidth = 104,
 		cornerRadius = 10,
 		contentYOffset = -20,
 		monitorHorizontalResolution = "auto",
@@ -136,56 +137,56 @@ return {
 
 	islands = {
 		appswitch = {
-			maxExpandWidth = 100,
+			maxExpandWidth = 155,
 			expandHeight = 76,
 			cornerRadius = 22,
 			iconSize = 0.4,
 			repeatCooldownSeconds = 2,
 		},
 		volume = {
-			maxExpandWidth = 115,
+			maxExpandWidth = 145,
 			expandHeight = 65,
 			cornerRadius = 12,
 		},
 		brightness = {
-			maxExpandWidth = 115,
+			maxExpandWidth = 145,
 			expandHeight = 65,
 			cornerRadius = 12,
 		},
 		music = {
 			source = "Music",
 			info = {
-				maxExpandWidth = 150,
+				maxExpandWidth = 205,
 				expandHeight = 100,
 				cornerRadius = 19,
 			},
-			idleExpandWidth = 140,
+			idleExpandWidth = 150,
 			resume = {
-				maxExpandWidth = 125,
+				maxExpandWidth = 155,
 				expandHeight = 76,
 				cornerRadius = 22,
 			},
 		},
 		wifi = {
-			maxExpandWidth = 135,
+			maxExpandWidth = 170,
 			expandHeight = 76,
 			cornerRadius = 22,
 		},
 		power = {
-			maxExpandWidth = 125,
+			maxExpandWidth = 160,
 			expandHeight = 76,
 			cornerRadius = 22,
 			pollInterval = 300,
 		},
 		cpu_panic = {
-			maxExpandWidth = 170,
+			maxExpandWidth = 190,
 			expandHeight = 85,
 			cornerRadius = 15,
 			pollInterval = 30,
 			threshold = 90,
 		},
 		clipboard = {
-			maxExpandWidth = 160,
+			maxExpandWidth = 185,
 			expandHeight = 85,
 			cornerRadius = 15,
 			pollInterval = 20,
@@ -196,13 +197,13 @@ return {
 			yOffset = 0,
 		},
 		github = {
-			minExpandWidth = 120,
-			maxExpandWidth = 165,
+			minExpandWidth = 150,
+			maxExpandWidth = 190,
 			expandHeight = 95,
 			cornerRadius = 32,
 		},
 		notification = {
-			maxExpandWidth = 160,
+			maxExpandWidth = 190,
 			expandHeight = 90,
 			cornerRadius = 42,
 			maxAllowedBody = 250,

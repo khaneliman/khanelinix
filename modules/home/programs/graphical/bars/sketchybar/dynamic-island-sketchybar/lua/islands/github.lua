@@ -1,8 +1,8 @@
 return function(ctx)
 	local token = 0
 
-	local minExpandWidth = ctx.asNumber(ctx.get("islands.github.minExpandWidth", "150"), 150)
-	local maxExpandWidth = ctx.asNumber(ctx.get("islands.github.maxExpandWidth", "190"), 190)
+	local minExpandWidth = ctx.expandedHalfWidth("islands.github.minExpandWidth", 150)
+	local maxExpandWidth = ctx.expandedHalfWidth("islands.github.maxExpandWidth", 190)
 	local expandHeight = ctx.asNumber(ctx.get("islands.github.expandHeight", "95"), 95)
 	local cornerRad = ctx.asNumber(ctx.get("islands.github.cornerRadius", "32"), 32)
 

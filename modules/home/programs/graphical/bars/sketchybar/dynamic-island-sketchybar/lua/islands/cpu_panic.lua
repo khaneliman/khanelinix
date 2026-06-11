@@ -3,16 +3,17 @@ return function(ctx)
 	local lastPanicApp = nil
 	local inFlight = false
 
-	local maxExpandWidth = ctx.asNumber(ctx.get("islands.cpu_panic.maxExpandWidth", "200"), 200)
+	local maxExpandWidth = ctx.expandedHalfWidth("islands.cpu_panic.maxExpandWidth", 190)
 	local expandHeight = ctx.asNumber(ctx.get("islands.cpu_panic.expandHeight", "85"), 85)
 	local cornerRad = ctx.asNumber(ctx.get("islands.cpu_panic.cornerRadius", "15"), 15)
 	local pollInterval = ctx.asNumber(ctx.get("islands.cpu_panic.pollInterval", "30"), 30)
 	local panicThreshold = ctx.asNumber(ctx.get("islands.cpu_panic.threshold", "90"), 90)
 
 	local textItem = ctx.Sbar.add("item", "island.cpu_panic_text", {
-		position = "right",
+		position = "center",
 		drawing = false,
 		label = {
+			align = "center",
 			color = ctx.colorTransparent,
 			y_offset = ctx.contentYOffset,
 		},
@@ -34,6 +35,7 @@ return function(ctx)
 
 		textItem:set({
 			drawing = true,
+			width = layout.width,
 			label = {
 				string = displayText,
 			},
@@ -51,7 +53,10 @@ return function(ctx)
 				textItem:set({ label = { color = ctx.colorTransparent } })
 			end,
 			onCleanup = function()
-				textItem:set({ drawing = false })
+				textItem:set({
+					drawing = false,
+					width = ctx.layout.dimensions.emptyWidth,
+				})
 			end,
 		})
 	end
