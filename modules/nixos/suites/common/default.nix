@@ -67,8 +67,10 @@ in
 
       services = {
         ananicy = mkDefault enabled;
+        coredump = mkDefault enabled;
         ddccontrol = mkDefault enabled;
         earlyoom = mkDefault enabled;
+        journald = mkDefault enabled;
         lact = mkDefault enabled;
         logind = mkDefault enabled;
         logrotate = mkDefault enabled;
