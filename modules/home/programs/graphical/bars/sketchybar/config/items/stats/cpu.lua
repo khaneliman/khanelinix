@@ -15,6 +15,8 @@ local cpu = Sbar.add("item", "cpu", {
 			family = settings.font,
 			size = 12.0,
 			style = "Heavy",
+			features = settings.numeric_font_features,
+			typographical_width = true,
 		},
 		color = colors.text,
 	},

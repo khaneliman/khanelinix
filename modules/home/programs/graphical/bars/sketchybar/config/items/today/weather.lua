@@ -24,6 +24,10 @@ weather.temp = Sbar.add("item", "weather.temp", {
 	icon = "",
 	label = {
 		align = "right",
+		font = {
+			features = settings.numeric_font_features,
+			typographical_width = true,
+		},
 		padding_left = 0,
 		padding_right = 0,
 		string = "",

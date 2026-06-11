@@ -12,6 +12,8 @@ today.cal = Sbar.add("item", "date", {
 			family = settings.font,
 			style = "Black",
 			size = 14.0,
+			features = settings.numeric_font_features,
+			typographical_width = true,
 		},
 	},
 	position = "right",
@@ -28,6 +30,8 @@ today.clock = Sbar.add("item", "clock", {
 			family = settings.font,
 			style = "Bold",
 			size = 12.0,
+			features = settings.numeric_font_features,
+			typographical_width = true,
 		},
 	},
 	label = {

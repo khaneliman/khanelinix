@@ -17,6 +17,7 @@ local nix = Sbar.add("item", "nix", {
 			family = settings.font,
 			size = 9.0,
 			style = "Heavy",
+			features = settings.caps_font_features,
 		},
 		color = colors.text,
 		padding_left = -16, -- Pull label left over the icon
@@ -45,6 +46,8 @@ local nix_details = Sbar.add("item", "nix.details", {
 			family = settings.font,
 			size = 12.0,
 			style = "Heavy",
+			features = settings.numeric_font_features,
+			typographical_width = true,
 		},
 		color = colors.text,
 	},

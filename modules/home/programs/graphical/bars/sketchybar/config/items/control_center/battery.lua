@@ -16,7 +16,13 @@ local battery = Sbar.add("item", "battery", {
 			size = 19.0,
 		},
 	},
-	label = { drawing = false },
+	label = {
+		drawing = false,
+		font = {
+			features = settings.numeric_font_features,
+			typographical_width = true,
+		},
+	},
 	update_freq = 120,
 })
 
@@ -37,6 +43,10 @@ battery.details = Sbar.add("item", "battery.details", {
 	label = {
 		padding_right = 0,
 		align = "center",
+		font = {
+			features = settings.numeric_font_features,
+			typographical_width = true,
+		},
 	},
 })
 

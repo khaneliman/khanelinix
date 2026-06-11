@@ -199,6 +199,10 @@ github = Sbar.add("item", "github", {
 	},
 	label = {
 		string = icons.loading,
+		font = {
+			features = settings.numeric_font_features,
+			typographical_width = true,
+		},
 		highlight_color = colors.blue,
 	},
 	update_freq = 180,
