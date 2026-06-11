@@ -3,8 +3,12 @@
   stdenv,
   fetchzip,
   autoPatchelfHook,
+  makeWrapper,
   curl,
+  openssl,
   sqlite,
+  procps,
+  lsof,
   ...
 }:
 
@@ -38,10 +42,14 @@ stdenv.mkDerivation {
 
   src = fetchzip (source // { stripRoot = false; });
 
-  nativeBuildInputs = lib.optionals stdenv.hostPlatform.isLinux [ autoPatchelfHook ];
+  nativeBuildInputs = lib.optionals stdenv.hostPlatform.isLinux [
+    autoPatchelfHook
+    makeWrapper
+  ];
 
   buildInputs = lib.optionals stdenv.hostPlatform.isLinux [
     curl
+    openssl
     sqlite
     stdenv.cc.cc.lib
   ];
@@ -49,8 +57,25 @@ stdenv.mkDerivation {
   installPhase = ''
     runHook preInstall
 
-    install -Dm0755 CodexBarCLI $out/bin/codexbar
+    mkdir -p $out/bin $out/share/codexbar-cli $out/lib
+
+    install -Dm0755 CodexBarCLI $out/bin/.codexbar-wrapped
     install -Dm0644 VERSION $out/share/codexbar-cli/VERSION
+
+    ${lib.optionalString stdenv.hostPlatform.isLinux ''
+      substitute ${./path-redirect.c.in} path-redirect.c \
+        --replace-fail @ps@ ${lib.getExe' procps "ps"} \
+        --replace-fail @lsof@ ${lib.getExe lsof}
+
+      $CC -shared -fPIC path-redirect.c -o $out/lib/codexbar-path-redirect.so -ldl -lssl -lcrypto
+
+      makeWrapper $out/bin/.codexbar-wrapped $out/bin/codexbar \
+        --set LD_PRELOAD $out/lib/codexbar-path-redirect.so
+    ''}
+
+    ${lib.optionalString (!stdenv.hostPlatform.isLinux) ''
+      ln -s $out/bin/.codexbar-wrapped $out/bin/codexbar
+    ''}
 
     runHook postInstall
   '';
