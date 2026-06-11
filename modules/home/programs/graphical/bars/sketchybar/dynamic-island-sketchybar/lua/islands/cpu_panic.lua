@@ -42,6 +42,7 @@ return function(ctx)
 		})
 
 		ctx.animateIsland({
+			owner = "cpu_panic",
 			margin = layout.margin,
 			cornerRadius = cornerRad,
 			height = expandHeight,

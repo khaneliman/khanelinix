@@ -58,6 +58,7 @@ return function(ctx)
 		})
 
 		ctx.animateIsland({
+			owner = "github",
 			margin = layout.margin,
 			cornerRadius = cornerRad,
 			height = expandHeight,

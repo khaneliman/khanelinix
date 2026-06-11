@@ -416,7 +416,7 @@ end)
 local islandAnimationToken = 0
 local activeIslandLifecycle = nil
 
-local function interruptActiveIsland()
+local function interruptActiveIsland(nextOwner)
 	local lifecycle = activeIslandLifecycle
 	if lifecycle == nil then
 		return false
@@ -424,18 +424,26 @@ local function interruptActiveIsland()
 
 	activeIslandLifecycle = nil
 
+	if nextOwner ~= nil and lifecycle.owner == nextOwner then
+		return true
+	end
+
 	if lifecycle.hidden ~= true and type(lifecycle.onHideContent) == "function" then
-		lifecycle.onHideContent(true)
+		lifecycle.onHideContent(true, lifecycle.token)
 	end
 	if type(lifecycle.onCleanup) == "function" then
-		lifecycle.onCleanup(true)
+		lifecycle.onCleanup(true, lifecycle.token)
 	end
 
 	return true
 end
 
+local function isIslandAnimationCurrent(token)
+	return token ~= nil and token == islandAnimationToken
+end
+
 local function animateIsland(options)
-	interruptActiveIsland()
+	interruptActiveIsland(options.owner)
 	islandAnimationToken = islandAnimationToken + 1
 	local current = islandAnimationToken
 	local privacySuppressed = false
@@ -454,17 +462,22 @@ local function animateIsland(options)
 
 	activeIslandLifecycle = {
 		token = current,
+		owner = options.owner,
 		hidden = false,
 		onHideContent = options.onHideContent,
-		onCleanup = function(interrupted)
+		onCleanup = function(interrupted, token)
 			if type(options.onCleanup) == "function" then
-				options.onCleanup(interrupted)
+				options.onCleanup(interrupted, token or current)
 			end
 			restorePrivacy()
 		end,
 	}
 
 	Sbar.animate("tanh", layout.animation.expandDuration, function()
+		if current ~= islandAnimationToken then
+			return
+		end
+
 		if options.margin and options.cornerRadius and options.height then
 			if options.maxExpandHeight then
 				Sbar.bar({
@@ -485,7 +498,10 @@ local function animateIsland(options)
 		end
 
 		if type(options.onExpand) == "function" then
-			options.onExpand()
+			if activeIslandLifecycle == nil or activeIslandLifecycle.token ~= current then
+				return
+			end
+			options.onExpand(current)
 		end
 	end)
 
@@ -495,11 +511,16 @@ local function animateIsland(options)
 		end
 
 		Sbar.animate("tanh", layout.animation.collapseDuration, function()
+			if current ~= islandAnimationToken then
+				return
+			end
 			if activeIslandLifecycle ~= nil and activeIslandLifecycle.token == current then
 				activeIslandLifecycle.hidden = true
+			else
+				return
 			end
 			if type(options.onHideContent) == "function" then
-				options.onHideContent()
+				options.onHideContent(false, current)
 			end
 		end)
 
@@ -513,12 +534,15 @@ local function animateIsland(options)
 			end
 
 			if type(options.onCleanup) == "function" then
-				options.onCleanup()
+				options.onCleanup(false, current)
 			end
 			restorePrivacy()
 
 			if not options.preventCollapse then
 				Sbar.animate("tanh", layout.animation.collapseDuration, function()
+					if current ~= islandAnimationToken then
+						return
+					end
 					Sbar.bar({
 						height = defaultHeight,
 						corner_radius = cornerRadius,
@@ -624,6 +648,7 @@ local baseCtx = {
 	hidePersistentIsland = hidePersistentIsland,
 	restorePersistentIsland = restorePersistentIsland,
 	interruptActiveIsland = interruptActiveIsland,
+	isIslandAnimationCurrent = isIslandAnimationCurrent,
 	barName = barName,
 	fontFamily = fontFamily,
 	colorWhite = colorWhite,

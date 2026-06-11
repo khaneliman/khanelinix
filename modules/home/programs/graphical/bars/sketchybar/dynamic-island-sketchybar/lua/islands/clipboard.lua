@@ -50,6 +50,7 @@ return function(ctx)
 		})
 
 		ctx.animateIsland({
+			owner = "clipboard",
 			margin = layout.margin,
 			cornerRadius = cornerRad,
 			height = expandHeight,

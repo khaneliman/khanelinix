@@ -83,6 +83,7 @@ return function(ctx)
 		})
 
 		ctx.animateIsland({
+			owner = "appswitch",
 			margin = layout.margin,
 			cornerRadius = cornerRad,
 			height = expandHeight,
@@ -95,7 +96,7 @@ return function(ctx)
 			onHideContent = function()
 				labelItem:set({ label = { color = ctx.colorTransparent } })
 			end,
-			onCleanup = function(interrupted)
+			onCleanup = function(interrupted, animationToken)
 				labelItem:set({ drawing = false })
 				iconItem:set({ drawing = false })
 				if interrupted then
@@ -103,6 +104,10 @@ return function(ctx)
 				end
 				if not ctx.restorePersistentIsland("appswitch") then
 					ctx.Sbar.animate("tanh", ctx.layout.animation.collapseDuration, function()
+						if not ctx.isIslandAnimationCurrent(animationToken) then
+							return
+						end
+
 						ctx.Sbar.bar({
 							height = ctx.defaultHeight,
 							corner_radius = ctx.cornerRadius,

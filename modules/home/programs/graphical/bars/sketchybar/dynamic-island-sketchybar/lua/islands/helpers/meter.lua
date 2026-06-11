@@ -23,6 +23,10 @@ return function(ctx, options)
 	local eventName = options.eventName
 	local getIcon = options.getIcon
 
+	local function isCurrent(token)
+		return stateToken == token
+	end
+
 	local maxExpandWidth = ctx.expandedHalfWidth("islands." .. name .. ".maxExpandWidth", 145)
 	local maxExpandWidthPx = ctx.calculateIslandWidth(maxExpandWidth)
 	local expandHeight = ctx.asNumber(ctx.get("islands." .. name .. ".expandHeight", "65"), 65)
@@ -67,11 +71,15 @@ return function(ctx, options)
 
 	local function resetMeter(token)
 		ctx.delay(ctx.layout.animation.meterFadeDelay, function()
-			if stateToken ~= token then
+			if not isCurrent(token) then
 				return
 			end
 
 			ctx.Sbar.animate("tanh", ctx.layout.animation.meterFadeDuration, function()
+				if not isCurrent(token) then
+					return
+				end
+
 				iconItem:set({
 					icon = {
 						color = ctx.colorTransparent,
@@ -86,18 +94,22 @@ return function(ctx, options)
 			end)
 
 			ctx.delay(ctx.layout.animation.meterShrinkDelay, function()
-				if stateToken ~= token then
+				if not isCurrent(token) then
 					return
 				end
 
 				ctx.Sbar.animate("tanh", ctx.layout.animation.meterShrinkDuration, function()
+					if not isCurrent(token) then
+						return
+					end
+
 					barItem:set({
 						width = ctx.layout.dimensions.emptyWidth,
 					})
 				end)
 
 				ctx.delay(ctx.layout.animation.meterCleanupDelay, function()
-					if stateToken ~= token then
+					if not isCurrent(token) then
 						return
 					end
 
@@ -105,6 +117,10 @@ return function(ctx, options)
 					barItem:set({ drawing = false })
 
 					ctx.Sbar.animate("tanh", ctx.layout.animation.collapseDuration, function()
+						if not isCurrent(token) then
+							return
+						end
+
 						ctx.Sbar.bar({
 							height = ctx.defaultHeight,
 							corner_radius = ctx.cornerRadius,
@@ -143,6 +159,10 @@ return function(ctx, options)
 		})
 
 		ctx.Sbar.animate("tanh", ctx.layout.animation.expandDuration, function()
+			if not isCurrent(token) then
+				return
+			end
+
 			ctx.Sbar.bar({
 				margin = expandMargin,
 				corner_radius = cornerRadius,
@@ -158,12 +178,20 @@ return function(ctx, options)
 				+ ctx.layout.meter.roundingBias
 		)
 		ctx.Sbar.animate("tanh", ctx.layout.animation.meterFadeDuration, function()
+			if not isCurrent(token) then
+				return
+			end
+
 			barItem:set({
 				width = barWidth,
 			})
 		end)
 
 		ctx.Sbar.animate("sin", ctx.layout.animation.meterFlashDuration, function()
+			if not isCurrent(token) then
+				return
+			end
+
 			barItem:set({
 				background = {
 					color = ctx.colorWhite,

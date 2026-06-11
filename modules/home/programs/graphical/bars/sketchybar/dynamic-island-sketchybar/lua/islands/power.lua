@@ -40,6 +40,7 @@ return function(ctx)
 		})
 
 		ctx.animateIsland({
+			owner = "power",
 			margin = layout.margin,
 			cornerRadius = cornerRad,
 			height = expandHeight,

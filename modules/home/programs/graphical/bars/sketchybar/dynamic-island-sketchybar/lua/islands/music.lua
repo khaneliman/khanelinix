@@ -5,6 +5,7 @@ return function(ctx)
 	local lastHasArt = nil
 	local lastPlaybackState = nil
 	local lastSourceName = nil
+	local viewToken = 0
 	local artPath = "/tmp/sketchybar_cover.jpg"
 	local noTrackMarker = "__DYNAMIC_ISLAND_NO_TRACK__"
 	local resultSeparator = "|||"
@@ -33,6 +34,15 @@ return function(ctx)
 	local musicUpdateDebounceSeconds = ctx.layout.animation.musicUpdateDebounceSeconds
 	local musicUpdateRequestToken = 0
 	local pendingMusicUpdateSender = nil
+
+	local function nextViewToken()
+		viewToken = viewToken + 1
+		return viewToken
+	end
+
+	local function isCurrentView(token)
+		return viewToken == token
+	end
 
 	local function resolveTextWidth(slotWidth)
 		return math.max(
@@ -132,6 +142,8 @@ return function(ctx)
 	ctx.Sbar.add("event", "spotify_update", "com.spotify.client.PlaybackStateChanged")
 
 	local function collapseMusic()
+		local currentView = nextViewToken()
+
 		titleItem:set({
 			drawing = false,
 			label = { color = ctx.colorTransparent },
@@ -155,6 +167,10 @@ return function(ctx)
 		})
 
 		ctx.Sbar.animate("tanh", ctx.layout.animation.collapseDuration, function()
+			if not isCurrentView(currentView) then
+				return
+			end
+
 			ctx.Sbar.bar({
 				height = ctx.defaultHeight,
 				corner_radius = ctx.cornerRadius,
@@ -164,6 +180,8 @@ return function(ctx)
 	end
 
 	local function suspendMusic()
+		nextViewToken()
+
 		titleItem:set({
 			drawing = false,
 			label = { color = ctx.colorTransparent },
@@ -188,6 +206,7 @@ return function(ctx)
 	end
 
 	local function expandMusic(displayText, hasArt, sourceName)
+		local currentView = nextViewToken()
 		local titleText, subtitleText = splitDisplayText(displayText, sourceName)
 		local slotWidth = hasArt and artworkSlotWidth or compactSlotWidth
 		local textWidth = resolveTextWidth(slotWidth)
@@ -260,6 +279,10 @@ return function(ctx)
 		})
 
 		ctx.Sbar.animate("tanh", ctx.layout.animation.expandDuration, function()
+			if not isCurrentView(currentView) then
+				return
+			end
+
 			ctx.Sbar.bar({
 				margin = expandMargin,
 				corner_radius = cornerRad,
