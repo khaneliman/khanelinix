@@ -12,24 +12,24 @@ return function(ctx)
 		position = "center",
 		drawing = false,
 		icon = {
-			string = "􀌞", -- Camera icon
-			color = 0xff33ff33, -- Green
-			font = { size = 10 },
+			string = ctx.get("icons.privacy.camera", "􀌞"),
+			color = ctx.get("colors.privacyCamera", 0xff33ff33),
+			font = { size = ctx.layout.fontSizes.privacyIcon },
 		},
 		y_offset = yOffset,
-		width = 0,
+		width = ctx.layout.dimensions.emptyWidth,
 	})
 
 	local micDot = ctx.Sbar.add("item", "island.privacy.mic", {
 		position = "center",
 		drawing = false,
 		icon = {
-			string = "􀊰", -- Mic icon
-			color = 0xffff9933, -- Orange
-			font = { size = 10 },
+			string = ctx.get("icons.privacy.microphone", "􀊰"),
+			color = ctx.get("colors.privacyMicrophone", 0xffff9933),
+			font = { size = ctx.layout.fontSizes.privacyIcon },
 		},
 		y_offset = yOffset,
-		width = 0,
+		width = ctx.layout.dimensions.emptyWidth,
 	})
 
 	local function applyCameraState()
@@ -42,7 +42,7 @@ return function(ctx)
 
 	local listener = ctx.Sbar.add("item", "privacyListener", {
 		position = "center",
-		width = 0,
+		width = ctx.layout.dimensions.emptyWidth,
 		update_freq = pollInterval,
 	})
 

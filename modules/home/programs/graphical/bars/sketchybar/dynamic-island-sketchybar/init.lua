@@ -149,6 +149,97 @@ local function get(key, fallback)
 	return value
 end
 
+local function configNumber(key, fallback)
+	return asNumber(get(key, fallback), fallback)
+end
+
+local layout = {
+	spacing = {
+		none = configNumber("layout.spacing.none", 0),
+		default = configNumber("layout.spacing.default", 3),
+		tight = configNumber("layout.spacing.tight", 4),
+		compact = configNumber("layout.spacing.compact", 5),
+		regular = configNumber("layout.spacing.regular", 6),
+		large = configNumber("layout.spacing.large", 10),
+		content = configNumber("layout.spacing.content", 20),
+	},
+	dimensions = {
+		emptyWidth = configNumber("layout.dimensions.emptyWidth", 0),
+		meterBarHeight = configNumber("layout.dimensions.meterBarHeight", 2),
+		meterBarInset = configNumber("layout.dimensions.meterBarInset", 20),
+	},
+	fontSizes = {
+		defaultIcon = configNumber("layout.fontSizes.defaultIcon", 14.0),
+		defaultLabel = configNumber("layout.fontSizes.defaultLabel", 13.0),
+		meterIcon = configNumber("layout.fontSizes.meterIcon", 14.0),
+		musicTitle = configNumber("layout.fontSizes.musicTitle", 16.0),
+		musicSubtitle = configNumber("layout.fontSizes.musicSubtitle", 12.0),
+		musicCompactIcon = configNumber("layout.fontSizes.musicCompactIcon", 18.0),
+		privacyIcon = configNumber("layout.fontSizes.privacyIcon", 10.0),
+	},
+	text = {
+		defaultCharWidth = configNumber("layout.text.defaultCharWidth", 7),
+		defaultHorizontalPadding = configNumber("layout.text.defaultHorizontalPadding", 44),
+		appswitchHorizontalPadding = configNumber("layout.text.appswitchHorizontalPadding", 84),
+		wifiHorizontalPadding = configNumber("layout.text.wifiHorizontalPadding", 34),
+		powerHorizontalPadding = configNumber("layout.text.powerHorizontalPadding", 36),
+		alertHorizontalPadding = configNumber("layout.text.alertHorizontalPadding", 40),
+		githubCharWidth = configNumber("layout.text.githubCharWidth", 3.8),
+		githubHorizontalPadding = configNumber("layout.text.githubHorizontalPadding", 66),
+		githubMaxChars = configNumber("layout.text.githubMaxChars", 40),
+		clipboardMaxChars = configNumber("layout.text.clipboardMaxChars", 25),
+		musicTitleMaxChars = configNumber("layout.text.musicTitleMaxChars", 34),
+		musicSubtitleMaxChars = configNumber("layout.text.musicSubtitleMaxChars", 38),
+		musicMinTextWidth = configNumber("layout.text.musicMinTextWidth", 140),
+	},
+	animation = {
+		defaultDuration = configNumber("layout.animation.defaultDuration", 2.0),
+		expandDuration = configNumber("layout.animation.expandDuration", 10),
+		collapseDuration = configNumber("layout.animation.collapseDuration", 10),
+		contentSettleDelay = configNumber("layout.animation.contentSettleDelay", 0.2),
+		shortEventDuration = configNumber("layout.animation.shortEventDuration", 0.8),
+		clipboardDuration = configNumber("layout.animation.clipboardDuration", 1.2),
+		warningDuration = configNumber("layout.animation.warningDuration", 3.0),
+		longWarningDuration = configNumber("layout.animation.longWarningDuration", 4.0),
+		musicUpdateDebounceSeconds = configNumber("layout.animation.musicUpdateDebounceSeconds", 0.15),
+		meterFadeDelay = configNumber("layout.animation.meterFadeDelay", 0.8),
+		meterFadeDuration = configNumber("layout.animation.meterFadeDuration", 15),
+		meterShrinkDelay = configNumber("layout.animation.meterShrinkDelay", 0.1),
+		meterShrinkDuration = configNumber("layout.animation.meterShrinkDuration", 5),
+		meterCleanupDelay = configNumber("layout.animation.meterCleanupDelay", 0.4),
+		meterFlashDuration = configNumber("layout.animation.meterFlashDuration", 10),
+	},
+	meter = {
+		iconYOffset = configNumber("layout.meter.iconYOffset", 22),
+		barYOffset = configNumber("layout.meter.barYOffset", 20),
+		barItemYOffset = configNumber("layout.meter.barItemYOffset", 1),
+		paddingLeft = configNumber("layout.meter.paddingLeft", 10),
+		percentMax = configNumber("layout.meter.percentMax", 100),
+		roundingBias = configNumber("layout.meter.roundingBias", 0.5),
+	},
+	music = {
+		artworkSlotWidth = configNumber("layout.music.artworkSlotWidth", 92),
+		compactSlotWidth = configNumber("layout.music.compactSlotWidth", 44),
+		artworkScale = configNumber("layout.music.artworkScale", 0.15),
+		artworkYOffset = configNumber("layout.music.artworkYOffset", 14),
+		slotPaddingLeft = configNumber("layout.music.slotPaddingLeft", 18),
+		slotPaddingRight = configNumber("layout.music.slotPaddingRight", 8),
+		slotYOffset = configNumber("layout.music.slotYOffset", 10),
+		titleYOffset = configNumber("layout.music.titleYOffset", 4),
+		subtitleYOffset = configNumber("layout.music.subtitleYOffset", 20),
+		artworkBackgroundCornerRadius = configNumber("layout.music.artworkBackgroundCornerRadius", 14),
+		artworkCornerRadius = configNumber("layout.music.artworkCornerRadius", 12),
+		artworkPadding = configNumber("layout.music.artworkPadding", 6),
+		compactBadgeHeight = configNumber("layout.music.compactBadgeHeight", 32),
+		compactBadgeCornerRadius = configNumber("layout.music.compactBadgeCornerRadius", 16),
+		maxArtworkRetryAttempts = configNumber("layout.music.maxArtworkRetryAttempts", 4),
+		artworkRetryDelaySeconds = configNumber("layout.music.artworkRetryDelaySeconds", 0.6),
+	},
+	appswitch = {
+		iconScale = configNumber("layout.appswitch.iconScale", 0.5),
+	},
+}
+
 local function delay(seconds, callback)
 	if type(callback) ~= "function" then
 		return
@@ -185,10 +276,10 @@ local function subscribeItem(itemName, events)
 	end
 end
 
-local padding = 3
-local defaultHeight = asNumber(get("notch.defaultHeight", 44), 44)
-local defaultWidth = asNumber(get("notch.defaultWidth", 100), 100)
-local cornerRadius = asNumber(get("notch.cornerRadius", 10), 10)
+local padding = layout.spacing.default
+local defaultHeight = configNumber("notch.defaultHeight", 44)
+local defaultWidth = configNumber("notch.defaultWidth", 100)
+local cornerRadius = configNumber("notch.cornerRadius", 10)
 local monitorResolution = monitorHelpers.resolveMonitorResolution({
 	get = get,
 	barName = barName,
@@ -204,8 +295,8 @@ local display = get("main.display", "main")
 local fontFamily = get("main.font", "SF Pro")
 local colorWhite = get("colors.white", "0xffffffff")
 local colorTransparent = get("colors.transparent", "0x00000000")
-local squishAmount = asNumber(get("animation.squishAmount", 6), 6)
-local contentYOffset = asNumber(get("notch.contentYOffset", -20), -20)
+local squishAmount = configNumber("animation.squishAmount", 6)
+local contentYOffset = configNumber("notch.contentYOffset", -20)
 
 logInfo("[init] monitor width final value: " .. tostring(monitorResolution))
 
@@ -223,8 +314,8 @@ end
 
 local function layoutForText(text, options)
 	options = options or {}
-	local charWidth = asNumber(options.charWidth, 7)
-	local horizontalPadding = asNumber(options.horizontalPadding, 44)
+	local charWidth = asNumber(options.charWidth, layout.text.defaultCharWidth)
+	local horizontalPadding = asNumber(options.horizontalPadding, layout.text.defaultHorizontalPadding)
 	local minHalfWidth = asNumber(options.minHalfWidth, defaultWidth)
 	local maxHalfWidth = asNumber(options.maxHalfWidth, minHalfWidth)
 	local textLength = string.len(text or "")
@@ -245,12 +336,12 @@ Sbar.bar({
 	position = "top",
 	sticky = false,
 	topmost = true,
-	padding_left = 0,
-	padding_right = 0,
+	padding_left = layout.spacing.none,
+	padding_right = layout.spacing.none,
 	corner_radius = cornerRadius,
 	y_offset = -cornerRadius,
 	margin = margin,
-	notch_width = 0,
+	notch_width = layout.dimensions.emptyWidth,
 	display = display,
 })
 
@@ -260,7 +351,7 @@ Sbar.default({
 		font = {
 			family = fontFamily,
 			style = "Bold",
-			size = 14.0,
+			size = layout.fontSizes.defaultIcon,
 		},
 		color = colorWhite,
 		padding_left = padding,
@@ -270,7 +361,7 @@ Sbar.default({
 		font = {
 			family = fontFamily,
 			style = "Semibold",
-			size = 13.0,
+			size = layout.fontSizes.defaultLabel,
 		},
 		color = colorWhite,
 		padding_left = padding,
@@ -285,7 +376,7 @@ Sbar.default({
 Sbar.add("item", "island", {
 	position = "center",
 	drawing = true,
-	width = 0,
+	width = layout.dimensions.emptyWidth,
 })
 logDebug("[init] island item created")
 
@@ -360,7 +451,7 @@ local function animateIsland(options)
 		end,
 	}
 
-	Sbar.animate("tanh", 10, function()
+	Sbar.animate("tanh", layout.animation.expandDuration, function()
 		if options.margin and options.cornerRadius and options.height then
 			if options.maxExpandHeight then
 				Sbar.bar({
@@ -385,12 +476,12 @@ local function animateIsland(options)
 		end
 	end)
 
-	delay(options.duration or 2.0, function()
+	delay(options.duration or layout.animation.defaultDuration, function()
 		if current ~= islandAnimationToken then
 			return
 		end
 
-		Sbar.animate("tanh", 10, function()
+		Sbar.animate("tanh", layout.animation.collapseDuration, function()
 			if activeIslandLifecycle ~= nil and activeIslandLifecycle.token == current then
 				activeIslandLifecycle.hidden = true
 			end
@@ -399,7 +490,7 @@ local function animateIsland(options)
 			end
 		end)
 
-		delay(0.2, function()
+		delay(layout.animation.contentSettleDelay, function()
 			if current ~= islandAnimationToken then
 				return
 			end
@@ -414,7 +505,7 @@ local function animateIsland(options)
 			restorePrivacy()
 
 			if not options.preventCollapse then
-				Sbar.animate("tanh", 10, function()
+				Sbar.animate("tanh", layout.animation.collapseDuration, function()
 					Sbar.bar({
 						height = defaultHeight,
 						corner_radius = cornerRadius,
@@ -529,6 +620,7 @@ local baseCtx = {
 	calculateVisibleMargin = calculateVisibleMargin,
 	calculateIslandWidth = calculateIslandWidth,
 	layoutForText = layoutForText,
+	layout = layout,
 	squishAmount = squishAmount,
 	contentYOffset = contentYOffset,
 	defaultHeight = defaultHeight,

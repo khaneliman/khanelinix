@@ -16,20 +16,20 @@ return function(ctx)
 			color = ctx.colorTransparent,
 			y_offset = ctx.contentYOffset,
 		},
-		width = 0,
+		width = ctx.layout.dimensions.emptyWidth,
 	})
 
 	local listener = ctx.Sbar.add("item", "cpuPanicListener", {
 		position = "center",
-		width = 0,
+		width = ctx.layout.dimensions.emptyWidth,
 		update_freq = pollInterval,
 	})
 
 	local function showPanic(appName, cpuUsage)
-		local displayText = "􀇿 CPU Panic: " .. appName .. " (" .. cpuUsage .. "%)"
+		local displayText = ctx.get("icons.cpu.panic", "􀇿") .. " CPU Panic: " .. appName .. " (" .. cpuUsage .. "%)"
 		local layout = ctx.layoutForText(displayText, {
 			maxHalfWidth = maxExpandWidth,
-			horizontalPadding = 40,
+			horizontalPadding = ctx.layout.text.alertHorizontalPadding,
 		})
 
 		textItem:set({
@@ -43,9 +43,9 @@ return function(ctx)
 			margin = layout.margin,
 			cornerRadius = cornerRad,
 			height = expandHeight,
-			duration = 4.0,
+			duration = ctx.layout.animation.longWarningDuration,
 			onExpand = function()
-				textItem:set({ label = { color = 0xffff3333 } }) -- Red color
+				textItem:set({ label = { color = ctx.get("colors.alertRed", 0xffff3333) } })
 			end,
 			onHideContent = function()
 				textItem:set({ label = { color = ctx.colorTransparent } })

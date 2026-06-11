@@ -10,8 +10,8 @@ return function(ctx)
 		return ctx.layoutForText(text, {
 			minHalfWidth = minExpandWidth,
 			maxHalfWidth = maxExpandWidth,
-			charWidth = 3.8,
-			horizontalPadding = 66,
+			charWidth = ctx.layout.text.githubCharWidth,
+			horizontalPadding = ctx.layout.text.githubHorizontalPadding,
 		})
 	end
 
@@ -20,16 +20,16 @@ return function(ctx)
 		drawing = false,
 		label = {
 			color = ctx.colorTransparent,
-			max_chars = 40,
+			max_chars = ctx.layout.text.githubMaxChars,
 			align = "center",
 			y_offset = ctx.contentYOffset,
 		},
-		width = 0,
+		width = ctx.layout.dimensions.emptyWidth,
 	})
 
 	local listener = ctx.Sbar.add("item", "githubIslandListener", {
 		position = "center",
-		width = 0,
+		width = ctx.layout.dimensions.emptyWidth,
 	})
 
 	listener:subscribe("github_notification", function(env)
@@ -46,7 +46,7 @@ return function(ctx)
 
 		ctx.logDebug("[github][lua] notification received: " .. repo)
 
-		local displayText = "􀋚 " .. repo .. ": " .. title
+		local displayText = ctx.get("icons.github.notification", "􀋚") .. " " .. repo .. ": " .. title
 		local layout = layoutForText(displayText)
 
 		textItem:set({
@@ -61,7 +61,7 @@ return function(ctx)
 			margin = layout.margin,
 			cornerRadius = cornerRad,
 			height = expandHeight,
-			duration = 4.0,
+			duration = ctx.layout.animation.longWarningDuration,
 			onExpand = function()
 				textItem:set({ label = { color = ctx.colorWhite } })
 			end,
@@ -71,7 +71,7 @@ return function(ctx)
 			onCleanup = function()
 				textItem:set({
 					drawing = false,
-					width = 0,
+					width = ctx.layout.dimensions.emptyWidth,
 				})
 			end,
 		})

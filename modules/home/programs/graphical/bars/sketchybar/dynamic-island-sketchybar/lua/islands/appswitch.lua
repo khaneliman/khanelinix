@@ -18,11 +18,11 @@ return function(ctx)
 		background = {
 			color = ctx.colorTransparent,
 			image = {
-				scale = 0.5,
+				scale = ctx.layout.appswitch.iconScale,
 			},
 		},
-		padding_left = 10,
-		padding_right = 5,
+		padding_left = ctx.layout.spacing.large,
+		padding_right = ctx.layout.spacing.compact,
 		y_offset = ctx.contentYOffset,
 	})
 
@@ -37,7 +37,7 @@ return function(ctx)
 
 	local listener = ctx.Sbar.add("item", "frontAppSwitchListener", {
 		position = "center",
-		width = 0,
+		width = ctx.layout.dimensions.emptyWidth,
 	})
 
 	listener:subscribe("front_app_switched", function(env)
@@ -61,7 +61,7 @@ return function(ctx)
 
 		local layout = ctx.layoutForText(appName, {
 			maxHalfWidth = maxExpandWidth,
-			horizontalPadding = 84,
+			horizontalPadding = ctx.layout.text.appswitchHorizontalPadding,
 		})
 
 		ctx.logDebug("[appswitch][lua] app='" .. appName .. "' width=" .. tostring(layout.width))
@@ -87,7 +87,7 @@ return function(ctx)
 			cornerRadius = cornerRad,
 			height = expandHeight,
 			maxExpandHeight = maxExpandHeight,
-			duration = 0.8,
+			duration = ctx.layout.animation.shortEventDuration,
 			preventCollapse = true,
 			onExpand = function()
 				labelItem:set({ label = { color = ctx.colorWhite } })
@@ -102,7 +102,7 @@ return function(ctx)
 					return
 				end
 				if not ctx.restorePersistentIsland("appswitch") then
-					ctx.Sbar.animate("tanh", 10, function()
+					ctx.Sbar.animate("tanh", ctx.layout.animation.collapseDuration, function()
 						ctx.Sbar.bar({
 							height = ctx.defaultHeight,
 							corner_radius = ctx.cornerRadius,

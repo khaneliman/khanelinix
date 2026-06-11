@@ -16,19 +16,19 @@ return function(ctx)
 			color = ctx.colorTransparent,
 			y_offset = ctx.contentYOffset,
 		},
-		width = 0,
+		width = ctx.layout.dimensions.emptyWidth,
 	})
 
 	local listener = ctx.Sbar.add("item", "powerChangeListener", {
 		position = "center",
-		width = 0,
+		width = ctx.layout.dimensions.emptyWidth,
 		update_freq = pollInterval,
 	})
 
 	local function showIsland(text, textColor, duration)
 		local layout = ctx.layoutForText(text, {
 			maxHalfWidth = maxExpandWidth,
-			horizontalPadding = 36,
+			horizontalPadding = ctx.layout.text.powerHorizontalPadding,
 		})
 
 		textItem:set({
@@ -53,7 +53,7 @@ return function(ctx)
 			onCleanup = function()
 				textItem:set({
 					drawing = false,
-					width = 0,
+					width = ctx.layout.dimensions.emptyWidth,
 				})
 			end,
 		})
@@ -77,7 +77,7 @@ return function(ctx)
 		end
 
 		ctx.logger.debug("power", "source_changed", { source = source })
-		showIsland(icon .. " " .. text, ctx.colorWhite, 0.8)
+		showIsland(icon .. " " .. text, ctx.colorWhite, ctx.layout.animation.shortEventDuration)
 	end)
 
 	listener:subscribe("routine", function()
@@ -101,7 +101,14 @@ return function(ctx)
 					-- Only alert once when it drops into the low state, or every 5% drop
 					if lastBatteryState == nil or lastBatteryState > current_percent then
 						ctx.logger.warn("power", "low_battery", { percent = current_percent })
-						showIsland("􀛨 Low Battery: " .. tostring(current_percent) .. "%", 0xffff3333, 3.0)
+						showIsland(
+							ctx.get("icons.power.lowBattery", "􀛨")
+								.. " Low Battery: "
+								.. tostring(current_percent)
+								.. "%",
+							ctx.get("colors.alertRed", 0xffff3333),
+							ctx.layout.animation.warningDuration
+						)
 						-- Update last known state, snap to nearest 5% step so we alert again if it keeps dropping
 						lastBatteryState = math.floor(current_percent / 5) * 5
 					end

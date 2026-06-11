@@ -14,9 +14,9 @@ return function(ctx, options)
 	local function toPercent(infoValue)
 		local numeric = tonumber(infoValue) or 0
 		if numeric >= 0 and numeric <= 1 then
-			numeric = numeric * 100
+			numeric = numeric * ctx.layout.meter.percentMax
 		end
-		return clamp(math.floor(numeric + 0.5), 0, 100)
+		return clamp(math.floor(numeric + ctx.layout.meter.roundingBias), 0, ctx.layout.meter.percentMax)
 	end
 
 	local name = options.name
@@ -38,40 +38,40 @@ return function(ctx, options)
 			font = {
 				family = ctx.fontFamily,
 				style = "Bold",
-				size = 14.0,
+				size = ctx.layout.fontSizes.meterIcon,
 			},
-			y_offset = contentYOffset + 22,
+			y_offset = contentYOffset + ctx.layout.meter.iconYOffset,
 		},
-		padding_left = 10,
-		padding_right = 0,
-		width = 0,
+		padding_left = ctx.layout.meter.paddingLeft,
+		padding_right = ctx.layout.spacing.none,
+		width = ctx.layout.dimensions.emptyWidth,
 		drawing = false,
 	})
 
 	local barItem = ctx.Sbar.add("item", "island." .. name .. "_bar", {
 		position = "left",
 		background = {
-			height = 2,
+			height = ctx.layout.dimensions.meterBarHeight,
 			color = ctx.colorTransparent,
 			border_color = ctx.colorTransparent,
-			y_offset = contentYOffset + 20,
+			y_offset = contentYOffset + ctx.layout.meter.barYOffset,
 			shadow = {
 				drawing = false,
 			},
 		},
 		drawing = false,
-		y_offset = contentYOffset + 1,
-		padding_left = 10,
-		width = 0,
+		y_offset = contentYOffset + ctx.layout.meter.barItemYOffset,
+		padding_left = ctx.layout.meter.paddingLeft,
+		width = ctx.layout.dimensions.emptyWidth,
 	})
 
 	local function resetMeter(token)
-		ctx.delay(0.8, function()
+		ctx.delay(ctx.layout.animation.meterFadeDelay, function()
 			if stateToken ~= token then
 				return
 			end
 
-			ctx.Sbar.animate("tanh", 15, function()
+			ctx.Sbar.animate("tanh", ctx.layout.animation.meterFadeDuration, function()
 				iconItem:set({
 					icon = {
 						color = ctx.colorTransparent,
@@ -85,18 +85,18 @@ return function(ctx, options)
 				})
 			end)
 
-			ctx.delay(0.1, function()
+			ctx.delay(ctx.layout.animation.meterShrinkDelay, function()
 				if stateToken ~= token then
 					return
 				end
 
-				ctx.Sbar.animate("tanh", 5, function()
+				ctx.Sbar.animate("tanh", ctx.layout.animation.meterShrinkDuration, function()
 					barItem:set({
-						width = 0,
+						width = ctx.layout.dimensions.emptyWidth,
 					})
 				end)
 
-				ctx.delay(0.4, function()
+				ctx.delay(ctx.layout.animation.meterCleanupDelay, function()
 					if stateToken ~= token then
 						return
 					end
@@ -104,7 +104,7 @@ return function(ctx, options)
 					iconItem:set({ drawing = false })
 					barItem:set({ drawing = false })
 
-					ctx.Sbar.animate("tanh", 10, function()
+					ctx.Sbar.animate("tanh", ctx.layout.animation.collapseDuration, function()
 						ctx.Sbar.bar({
 							height = ctx.defaultHeight,
 							corner_radius = ctx.cornerRadius,
@@ -118,7 +118,7 @@ return function(ctx, options)
 
 	local listener = ctx.Sbar.add("item", name .. "ChangeListener", {
 		position = "center",
-		width = 0,
+		width = ctx.layout.dimensions.emptyWidth,
 	})
 
 	listener:subscribe(eventName, function(env)
@@ -142,7 +142,7 @@ return function(ctx, options)
 			drawing = true,
 		})
 
-		ctx.Sbar.animate("tanh", 10, function()
+		ctx.Sbar.animate("tanh", ctx.layout.animation.expandDuration, function()
 			ctx.Sbar.bar({
 				margin = expandMargin,
 				corner_radius = cornerRadius,
@@ -153,14 +153,17 @@ return function(ctx, options)
 			})
 		end)
 
-		local barWidth = math.floor((percent / 100) * (maxExpandWidthPx - 20) + 0.5)
-		ctx.Sbar.animate("tanh", 15, function()
+		local barWidth = math.floor(
+			(percent / ctx.layout.meter.percentMax) * (maxExpandWidthPx - ctx.layout.dimensions.meterBarInset)
+				+ ctx.layout.meter.roundingBias
+		)
+		ctx.Sbar.animate("tanh", ctx.layout.animation.meterFadeDuration, function()
 			barItem:set({
 				width = barWidth,
 			})
 		end)
 
-		ctx.Sbar.animate("sin", 10, function()
+		ctx.Sbar.animate("sin", ctx.layout.animation.meterFlashDuration, function()
 			barItem:set({
 				background = {
 					color = ctx.colorWhite,

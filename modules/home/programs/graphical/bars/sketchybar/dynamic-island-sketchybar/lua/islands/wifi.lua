@@ -13,12 +13,12 @@ return function(ctx)
 			color = ctx.colorTransparent,
 			y_offset = ctx.contentYOffset,
 		},
-		width = 0,
+		width = ctx.layout.dimensions.emptyWidth,
 	})
 
 	local listener = ctx.Sbar.add("item", "wifiChangeListener", {
 		position = "center",
-		width = 0,
+		width = ctx.layout.dimensions.emptyWidth,
 	})
 
 	local function showIsland(info)
@@ -27,7 +27,7 @@ return function(ctx)
 		local displayText = icon .. " " .. text
 		local layout = ctx.layoutForText(displayText, {
 			maxHalfWidth = maxExpandWidth,
-			horizontalPadding = 34,
+			horizontalPadding = ctx.layout.text.wifiHorizontalPadding,
 		})
 
 		ctx.logDebug("[wifi][lua] info='" .. info .. "'")
@@ -44,7 +44,7 @@ return function(ctx)
 			margin = layout.margin,
 			cornerRadius = cornerRad,
 			height = expandHeight,
-			duration = 0.8,
+			duration = ctx.layout.animation.shortEventDuration,
 			onExpand = function()
 				textItem:set({ label = { color = ctx.colorWhite } })
 			end,
@@ -54,7 +54,7 @@ return function(ctx)
 			onCleanup = function()
 				textItem:set({
 					drawing = false,
-					width = 0,
+					width = ctx.layout.dimensions.emptyWidth,
 				})
 			end,
 		})

@@ -15,27 +15,30 @@ return function(ctx)
 	local cornerRad = ctx.asNumber(ctx.get("islands.music.info.cornerRadius", "19"), 19)
 	local expandMargin = ctx.calculateMargin(maxExpandWidth)
 	local contentYOffset = ctx.contentYOffset or -20
-	local imageScale = 0.15
-	local imageYOffset = contentYOffset + 14
-	local artworkSlotWidth = 92
-	local compactSlotWidth = 44
-	local slotPaddingLeft = 18
-	local slotPaddingRight = 8
-	local slotYOffset = contentYOffset + 10
-	local contentPaddingRight = 20
-	local titleYOffset = contentYOffset + 4
-	local subtitleYOffset = contentYOffset + 20
+	local imageScale = ctx.layout.music.artworkScale
+	local imageYOffset = contentYOffset + ctx.layout.music.artworkYOffset
+	local artworkSlotWidth = ctx.layout.music.artworkSlotWidth
+	local compactSlotWidth = ctx.layout.music.compactSlotWidth
+	local slotPaddingLeft = ctx.layout.music.slotPaddingLeft
+	local slotPaddingRight = ctx.layout.music.slotPaddingRight
+	local slotYOffset = contentYOffset + ctx.layout.music.slotYOffset
+	local contentPaddingRight = ctx.layout.spacing.content
+	local titleYOffset = contentYOffset + ctx.layout.music.titleYOffset
+	local subtitleYOffset = contentYOffset + ctx.layout.music.subtitleYOffset
 	local titleColor = ctx.colorWhite
 	local subtitleColor = ctx.get("colors.musicSecondary", "0xffb8b8b8")
 	local compactBadgeColor = ctx.get("colors.musicBadge", "0x22ffffff")
-	local maxArtworkRetryAttempts = 4
-	local artworkRetryDelaySeconds = 0.6
-	local musicUpdateDebounceSeconds = 0.15
+	local maxArtworkRetryAttempts = ctx.layout.music.maxArtworkRetryAttempts
+	local artworkRetryDelaySeconds = ctx.layout.music.artworkRetryDelaySeconds
+	local musicUpdateDebounceSeconds = ctx.layout.animation.musicUpdateDebounceSeconds
 	local musicUpdateRequestToken = 0
 	local pendingMusicUpdateSender = nil
 
 	local function resolveTextWidth(slotWidth)
-		return math.max(140, maxExpandWidthPx - slotWidth - slotPaddingLeft - slotPaddingRight - contentPaddingRight)
+		return math.max(
+			ctx.layout.text.musicMinTextWidth,
+			maxExpandWidthPx - slotWidth - slotPaddingLeft - slotPaddingRight - contentPaddingRight
+		)
 	end
 
 	local function splitDisplayText(displayText, sourceName)
@@ -62,14 +65,14 @@ return function(ctx)
 		},
 		background = {
 			color = ctx.colorTransparent,
-			corner_radius = 14,
+			corner_radius = ctx.layout.music.artworkBackgroundCornerRadius,
 			image = {
 				drawing = true,
 				scale = imageScale,
 				y_offset = imageYOffset,
-				corner_radius = 12,
-				padding_left = 6,
-				padding_right = 6,
+				corner_radius = ctx.layout.music.artworkCornerRadius,
+				padding_left = ctx.layout.music.artworkPadding,
+				padding_right = ctx.layout.music.artworkPadding,
 			},
 		},
 		padding_left = slotPaddingLeft,
@@ -85,17 +88,17 @@ return function(ctx)
 			align = "left",
 			color = ctx.colorTransparent,
 			width = resolveTextWidth(artworkSlotWidth),
-			max_chars = 34,
+			max_chars = ctx.layout.text.musicTitleMaxChars,
 			y_offset = titleYOffset,
-			padding_left = 4,
+			padding_left = ctx.layout.spacing.tight,
 			padding_right = contentPaddingRight,
 			font = {
 				family = ctx.fontFamily,
 				style = "Bold",
-				size = 16.0,
+				size = ctx.layout.fontSizes.musicTitle,
 			},
 		},
-		width = 0,
+		width = ctx.layout.dimensions.emptyWidth,
 	})
 
 	local subtitleItem = ctx.Sbar.add("item", "island.music_subtitle", {
@@ -105,22 +108,22 @@ return function(ctx)
 			align = "left",
 			color = ctx.colorTransparent,
 			width = resolveTextWidth(artworkSlotWidth),
-			max_chars = 38,
+			max_chars = ctx.layout.text.musicSubtitleMaxChars,
 			y_offset = subtitleYOffset,
-			padding_left = 4,
+			padding_left = ctx.layout.spacing.tight,
 			padding_right = contentPaddingRight,
 			font = {
 				family = ctx.fontFamily,
 				style = "Medium",
-				size = 12.0,
+				size = ctx.layout.fontSizes.musicSubtitle,
 			},
 		},
-		width = 0,
+		width = ctx.layout.dimensions.emptyWidth,
 	})
 
 	local listener = ctx.Sbar.add("item", "musicListener", {
 		position = "center",
-		width = 0,
+		width = ctx.layout.dimensions.emptyWidth,
 		updates = true,
 	})
 
@@ -143,7 +146,7 @@ return function(ctx)
 			icon = { drawing = false, string = "" },
 			background = {
 				color = ctx.colorTransparent,
-				height = 0,
+				height = ctx.layout.dimensions.emptyWidth,
 				image = {
 					drawing = false,
 					string = "",
@@ -151,7 +154,7 @@ return function(ctx)
 			},
 		})
 
-		ctx.Sbar.animate("tanh", 10, function()
+		ctx.Sbar.animate("tanh", ctx.layout.animation.collapseDuration, function()
 			ctx.Sbar.bar({
 				height = ctx.defaultHeight,
 				corner_radius = ctx.cornerRadius,
@@ -175,7 +178,7 @@ return function(ctx)
 			icon = { drawing = false, string = "" },
 			background = {
 				color = ctx.colorTransparent,
-				height = 0,
+				height = ctx.layout.dimensions.emptyWidth,
 				image = {
 					drawing = false,
 					string = "",
@@ -195,15 +198,15 @@ return function(ctx)
 				width = slotWidth,
 				background = {
 					color = ctx.colorTransparent,
-					height = 0,
+					height = ctx.layout.dimensions.emptyWidth,
 					image = {
 						drawing = true,
 						string = artPath,
 						scale = imageScale,
 						y_offset = imageYOffset,
-						corner_radius = 12,
-						padding_left = 6,
-						padding_right = 6,
+						corner_radius = ctx.layout.music.artworkCornerRadius,
+						padding_left = ctx.layout.music.artworkPadding,
+						padding_right = ctx.layout.music.artworkPadding,
 					},
 				},
 				icon = { drawing = false, string = "" },
@@ -214,26 +217,26 @@ return function(ctx)
 				width = slotWidth,
 				background = {
 					color = compactBadgeColor,
-					height = 32,
-					corner_radius = 16,
+					height = ctx.layout.music.compactBadgeHeight,
+					corner_radius = ctx.layout.music.compactBadgeCornerRadius,
 					image = {
 						drawing = false,
 						string = "",
 						scale = imageScale,
 						y_offset = imageYOffset,
-						corner_radius = 12,
-						padding_left = 6,
-						padding_right = 6,
+						corner_radius = ctx.layout.music.artworkCornerRadius,
+						padding_left = ctx.layout.music.artworkPadding,
+						padding_right = ctx.layout.music.artworkPadding,
 					},
 				},
 				icon = {
 					drawing = true,
-					string = "􀑪",
+					string = ctx.get("icons.appswitch.fallback", "􀑪"),
 					color = ctx.colorWhite,
 					font = {
 						family = ctx.fontFamily,
 						style = "Bold",
-						size = 18.0,
+						size = ctx.layout.fontSizes.musicCompactIcon,
 					},
 				},
 			})
@@ -256,7 +259,7 @@ return function(ctx)
 			},
 		})
 
-		ctx.Sbar.animate("tanh", 10, function()
+		ctx.Sbar.animate("tanh", ctx.layout.animation.expandDuration, function()
 			ctx.Sbar.bar({
 				margin = expandMargin,
 				corner_radius = cornerRad,

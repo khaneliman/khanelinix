@@ -21,23 +21,23 @@ return function(ctx)
 		drawing = false,
 		label = {
 			color = ctx.colorTransparent,
-			max_chars = 25,
+			max_chars = ctx.layout.text.clipboardMaxChars,
 			y_offset = ctx.contentYOffset,
 		},
-		width = 0,
+		width = ctx.layout.dimensions.emptyWidth,
 	})
 
 	local listener = ctx.Sbar.add("item", "clipboardListener", {
 		position = "center",
-		width = 0,
+		width = ctx.layout.dimensions.emptyWidth,
 		update_freq = pollInterval,
 	})
 
 	local function showClipboard(content)
-		local displayText = "􀉂 Copied: " .. content
+		local displayText = ctx.get("icons.clipboard.copied", "􀉂") .. " Copied: " .. content
 		local layout = ctx.layoutForText(displayText, {
 			maxHalfWidth = maxExpandWidth,
-			horizontalPadding = 40,
+			horizontalPadding = ctx.layout.text.alertHorizontalPadding,
 		})
 
 		textItem:set({
@@ -51,7 +51,7 @@ return function(ctx)
 			margin = layout.margin,
 			cornerRadius = cornerRad,
 			height = expandHeight,
-			duration = 1.2,
+			duration = ctx.layout.animation.clipboardDuration,
 			onExpand = function()
 				textItem:set({ label = { color = ctx.colorWhite } })
 			end,

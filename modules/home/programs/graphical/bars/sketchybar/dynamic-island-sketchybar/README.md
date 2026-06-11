@@ -51,6 +51,8 @@ Main options:
 - `notch.cornerRadius`: collapsed bar corner radius.
 - `notch.monitorHorizontalResolution`: `"auto"` or fixed display width.
 - `animation.squishAmount`: width adjustment used during island expansion.
+- `layout.*`: shared spacing, dimensions, font sizes, text sizing, animation
+  timings, meter geometry, and music artwork layout.
 - `islands.<name>`: per-island dimensions, polling intervals, and thresholds.
 - `colors` and `icons`: shared color/icon values.
 
