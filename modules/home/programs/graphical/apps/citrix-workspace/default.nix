@@ -70,6 +70,9 @@ in
         Hotkey2Shift = "Ctrl+Shift";
         Hotkey1Shift = "Ctrl+Shift";
         IgnoreErrors = "9,15,32";
+        # Engine trace logging otherwise floods the journal with millions of
+        # OutBuf/TcpSend lines per session; 0 keeps syslog output minimal.
+        SyslogThreshold = 0;
         AllowAudioInput = "True";
         HDXH264InputEnabled = "True";
         EnhancedResizingEnabled = "True";
