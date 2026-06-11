@@ -36,6 +36,8 @@ local brew = Sbar.add("item", "brew", {
 			features = settings.numeric_font_features,
 			typographical_width = true,
 		},
+		align = "right",
+		width = settings.count_label_width,
 	},
 	update_freq = 14400,
 	popup = {

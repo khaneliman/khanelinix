@@ -10,6 +10,7 @@ local network = {}
 network.down = Sbar.add("item", "network.down", {
 	background = {
 		padding_left = 0,
+		padding_right = 0,
 	},
 	label = {
 		font = {
@@ -19,7 +20,11 @@ network.down = Sbar.add("item", "network.down", {
 			features = settings.numeric_font_features,
 			typographical_width = true,
 		},
+		align = "right",
 		color = colors.text,
+		padding_left = 1,
+		padding_right = 0,
+		width = settings.network_label_width,
 	},
 	icon = {
 		font = {
@@ -27,15 +32,18 @@ network.down = Sbar.add("item", "network.down", {
 			size = 16.0,
 			style = "Bold",
 		},
+		align = "center",
 		string = icons.stats.network_down,
 		color = colors.green,
 		highlight_color = colors.blue,
+		width = settings.network_icon_width,
 	},
 	popup = {
 		align = "right",
 		height = 20,
 	},
 	position = "right",
+	width = settings.network_stack_width,
 	y_offset = -7,
 })
 
@@ -44,7 +52,8 @@ local popupWidth = 252
 
 network.up = Sbar.add("item", "network.up", {
 	background = {
-		padding_right = -70,
+		padding_left = 0,
+		padding_right = -settings.network_stack_width,
 	},
 	label = {
 		font = {
@@ -54,7 +63,11 @@ network.up = Sbar.add("item", "network.up", {
 			features = settings.numeric_font_features,
 			typographical_width = true,
 		},
+		align = "right",
 		color = colors.text,
+		padding_left = 1,
+		padding_right = 0,
+		width = settings.network_label_width,
 	},
 	icon = {
 		font = {
@@ -62,11 +75,14 @@ network.up = Sbar.add("item", "network.up", {
 			size = 16.0,
 			style = "Bold",
 		},
+		align = "center",
 		string = icons.stats.network_up,
 		color = colors.green,
 		highlight_color = colors.blue,
+		width = settings.network_icon_width,
 	},
 	position = "right",
+	width = settings.network_stack_width,
 	y_offset = 7,
 })
 

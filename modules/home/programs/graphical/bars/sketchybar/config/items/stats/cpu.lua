@@ -18,7 +18,11 @@ local cpu = Sbar.add("item", "cpu", {
 			features = settings.numeric_font_features,
 			typographical_width = true,
 		},
+		align = "right",
 		color = colors.text,
+		padding_left = 2,
+		padding_right = 0,
+		width = settings.percent_label_width,
 	},
 	icon = {
 		string = icons.stats.cpu,

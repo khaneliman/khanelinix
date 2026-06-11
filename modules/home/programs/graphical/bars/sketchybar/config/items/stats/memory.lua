@@ -17,7 +17,11 @@ local memory = Sbar.add("item", "memory", {
 			features = settings.numeric_font_features,
 			typographical_width = true,
 		},
+		align = "right",
 		color = colors.text,
+		padding_left = 2,
+		padding_right = 0,
+		width = settings.percent_label_width,
 	},
 	icon = {
 		string = icons.stats.memory,
@@ -68,6 +72,7 @@ local function refresh_memory()
 	Sbar.exec(
 		"memory_pressure | grep 'System-wide memory free percentage:' | awk '{ printf(\"%02.0f\\n\", 100-$5\"%\") }'",
 		function(memoryUsage)
+			memoryUsage = STR_TRIM(memoryUsage)
 			if IS_EMPTY(memoryUsage) then
 				logger.warn("memory", "empty_usage", {})
 				return

@@ -15,6 +15,7 @@ today.cal = Sbar.add("item", "date", {
 			features = settings.numeric_font_features,
 			typographical_width = true,
 		},
+		width = settings.date_label_width,
 	},
 	position = "right",
 	update_freq = 60,
@@ -33,6 +34,7 @@ today.clock = Sbar.add("item", "clock", {
 			features = settings.numeric_font_features,
 			typographical_width = true,
 		},
+		width = settings.time_label_width,
 	},
 	label = {
 		padding_left = -50,

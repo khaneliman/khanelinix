@@ -14,5 +14,13 @@ return {
 	nerd_font_features = nerd_font_features,
 	nerd_numeric_font_features = nerd_font_features .. ",+tnum",
 	nerd_caps_font_features = nerd_font_features .. ",+case",
+	percent_label_width = 32,
+	count_label_width = 16,
+	network_label_width = 52,
+	network_icon_width = 14,
+	network_stack_width = 70,
+	temperature_label_width = 30,
+	date_label_width = 112,
+	time_label_width = 72,
 	paddings = 3,
 }

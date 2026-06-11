@@ -203,7 +203,9 @@ github = Sbar.add("item", "github", {
 			features = settings.numeric_font_features,
 			typographical_width = true,
 		},
+		align = "right",
 		highlight_color = colors.blue,
+		width = settings.count_label_width,
 	},
 	update_freq = 180,
 	popup = {

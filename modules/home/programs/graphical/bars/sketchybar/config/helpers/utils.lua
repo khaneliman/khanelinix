@@ -73,6 +73,12 @@ IS_EMPTY = function(s)
 	return s == nil or s == ""
 end
 
+STR_TRIM = function(value)
+	local text = tostring(value or "")
+	text = text:gsub("[\r\n]", "")
+	return text:gsub("^%s+", ""):gsub("%s+$", "")
+end
+
 STR_SPLIT = function(inputstr, sep)
 	if inputstr == nil then
 		return {}
@@ -99,13 +105,7 @@ PRINT_TABLE = function(t)
 end
 
 PARSE_NUMBER = function(value)
-	local text = tostring(value or "")
-	if text == "" then
-		return nil
-	end
-
-	text = text:gsub("[\r\n]", "")
-	text = text:gsub("^%s+", ""):gsub("%s+$", "")
+	local text = STR_TRIM(value)
 	if text == "" then
 		return nil
 	end

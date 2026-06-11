@@ -12,6 +12,7 @@ weather.icon = Sbar.add("item", "weather.icon", {
 		padding_left = 12,
 		padding_right = 2,
 		string = "",
+		width = settings.temperature_label_width,
 	},
 	background = {
 		padding_right = -15,
@@ -31,6 +32,7 @@ weather.temp = Sbar.add("item", "weather.temp", {
 		padding_left = 0,
 		padding_right = 0,
 		string = "",
+		width = settings.temperature_label_width,
 	},
 	background = {
 		padding_right = -30,

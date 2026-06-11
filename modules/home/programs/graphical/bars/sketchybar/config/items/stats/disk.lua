@@ -17,7 +17,11 @@ local disk = Sbar.add("item", "disk", {
 			features = settings.numeric_font_features,
 			typographical_width = true,
 		},
+		align = "right",
 		color = colors.text,
+		padding_left = 2,
+		padding_right = 0,
+		width = settings.percent_label_width,
 	},
 	icon = {
 		string = icons.stats.disk,
@@ -72,6 +76,7 @@ local function refresh_disk()
 	end
 
 	Sbar.exec("df -H | grep -E '^(/dev/disk3s1s1 ).' | awk '{ printf (\"%s\\n\", $5) }'", function(diskUsage)
+		diskUsage = STR_TRIM(diskUsage)
 		if IS_EMPTY(diskUsage) then
 			logger.warn("disk", "empty_usage", {})
 			return

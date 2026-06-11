@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+local settings = require("helpers.settings")
 local separator = require("items.stats.separator_right")
 local cpu = require("items.stats.cpu")
 local memory = require("items.stats.memory")
@@ -28,7 +29,7 @@ stats.close = function()
 		cpu:set({ background = { padding_right = -10 } })
 		memory:set({ background = { padding_right = -50 } })
 		disk:set({ background = { padding_right = -40 } })
-		network.up:set({ background = { padding_right = -70 } })
+		network.up:set({ background = { padding_right = -settings.network_stack_width } })
 		network.down:set({ background = { padding_right = -50 } })
 	end)
 
@@ -57,7 +58,7 @@ stats.open = function()
 		cpu:set({ background = { padding_right = 0 } })
 		memory:set({ background = { padding_right = 0 } })
 		disk:set({ background = { padding_right = 0 } })
-		network.up:set({ background = { padding_right = -70 } })
+		network.up:set({ background = { padding_right = -settings.network_stack_width } })
 		network.down:set({ background = { padding_right = 0 } })
 	end)
 end
