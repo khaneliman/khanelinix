@@ -46,9 +46,31 @@ in
       serviceConfig = {
         Type = "oneshot";
         Nice = 19;
+        CPUSchedulingPolicy = "idle";
         IOSchedulingClass = "idle";
         RuntimeMaxSec = "6h";
         SuccessExitStatus = [ 1 ];
+
+        # The scanner parses untrusted file contents as root; contain it.
+        # ProtectHome stays off (scans /home) and ProtectSystem stays at
+        # "full" so /tmp remains writable for archive extraction.
+        CapabilityBoundingSet = [ "CAP_DAC_READ_SEARCH" ];
+        LockPersonality = true;
+        NoNewPrivileges = true;
+        PrivateDevices = true;
+        PrivateNetwork = true;
+        ProtectClock = true;
+        ProtectControlGroups = true;
+        ProtectHostname = true;
+        ProtectKernelLogs = true;
+        ProtectKernelModules = true;
+        ProtectKernelTunables = true;
+        ProtectSystem = "full";
+        RestrictAddressFamilies = [ "AF_UNIX" ];
+        RestrictNamespaces = true;
+        RestrictRealtime = true;
+        RestrictSUIDSGID = true;
+        SystemCallArchitectures = "native";
       };
       script = ''
         ${pkgs.clamav}/bin/clamscan \
