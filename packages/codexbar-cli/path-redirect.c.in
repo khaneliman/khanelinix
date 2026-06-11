@@ -1,14 +1,19 @@
 #define _GNU_SOURCE
 
 #include <dlfcn.h>
+#include <fcntl.h>
 #include <openssl/evp.h>
 #include <openssl/ssl.h>
 #include <openssl/x509.h>
 #include <spawn.h>
+#include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+#define ZONEINFO_PREFIX "/usr/share/zoneinfo"
 
 static const char *redirect_path(const char *path) {
   if (path == NULL) {
@@ -22,6 +27,17 @@ static const char *redirect_path(const char *path) {
   if (strcmp(path, "/usr/bin/lsof") == 0 ||
       strcmp(path, "/usr/sbin/lsof") == 0) {
     return "@lsof@";
+  }
+
+  // Foundation's CFTimeZone hardcodes /usr/share/zoneinfo and traps
+  // (SIGILL) when the lookup fails, so point it at Nix tzdata.
+  if (strncmp(path, ZONEINFO_PREFIX, sizeof(ZONEINFO_PREFIX) - 1) == 0) {
+    static __thread char buf[4096];
+    int written = snprintf(buf, sizeof(buf), "@tzdata@%s",
+                           path + sizeof(ZONEINFO_PREFIX) - 1);
+    if (written > 0 && (size_t)written < sizeof(buf)) {
+      return buf;
+    }
   }
 
   return path;
@@ -142,6 +158,108 @@ int access(const char *path, int mode) {
   }
 
   return real_access(redirect_path(path), mode);
+}
+
+int open(const char *path, int flags, ...) {
+  static int (*real_open)(const char *, int, ...) = NULL;
+
+  if (real_open == NULL) {
+    real_open = dlsym(RTLD_NEXT, "open");
+  }
+
+  mode_t mode = 0;
+  if (flags & (O_CREAT | O_TMPFILE)) {
+    va_list args;
+    va_start(args, flags);
+    mode = va_arg(args, mode_t);
+    va_end(args);
+  }
+
+  return real_open(redirect_path(path), flags, mode);
+}
+
+int open64(const char *path, int flags, ...) {
+  static int (*real_open64)(const char *, int, ...) = NULL;
+
+  if (real_open64 == NULL) {
+    real_open64 = dlsym(RTLD_NEXT, "open64");
+  }
+
+  mode_t mode = 0;
+  if (flags & (O_CREAT | O_TMPFILE)) {
+    va_list args;
+    va_start(args, flags);
+    mode = va_arg(args, mode_t);
+    va_end(args);
+  }
+
+  return real_open64(redirect_path(path), flags, mode);
+}
+
+int openat(int dirfd, const char *path, int flags, ...) {
+  static int (*real_openat)(int, const char *, int, ...) = NULL;
+
+  if (real_openat == NULL) {
+    real_openat = dlsym(RTLD_NEXT, "openat");
+  }
+
+  mode_t mode = 0;
+  if (flags & (O_CREAT | O_TMPFILE)) {
+    va_list args;
+    va_start(args, flags);
+    mode = va_arg(args, mode_t);
+    va_end(args);
+  }
+
+  return real_openat(dirfd, redirect_path(path), flags, mode);
+}
+
+int openat64(int dirfd, const char *path, int flags, ...) {
+  static int (*real_openat64)(int, const char *, int, ...) = NULL;
+
+  if (real_openat64 == NULL) {
+    real_openat64 = dlsym(RTLD_NEXT, "openat64");
+  }
+
+  mode_t mode = 0;
+  if (flags & (O_CREAT | O_TMPFILE)) {
+    va_list args;
+    va_start(args, flags);
+    mode = va_arg(args, mode_t);
+    va_end(args);
+  }
+
+  return real_openat64(dirfd, redirect_path(path), flags, mode);
+}
+
+FILE *fopen(const char *path, const char *mode) {
+  static FILE *(*real_fopen)(const char *, const char *) = NULL;
+
+  if (real_fopen == NULL) {
+    real_fopen = dlsym(RTLD_NEXT, "fopen");
+  }
+
+  return real_fopen(redirect_path(path), mode);
+}
+
+FILE *fopen64(const char *path, const char *mode) {
+  static FILE *(*real_fopen64)(const char *, const char *) = NULL;
+
+  if (real_fopen64 == NULL) {
+    real_fopen64 = dlsym(RTLD_NEXT, "fopen64");
+  }
+
+  return real_fopen64(redirect_path(path), mode);
+}
+
+int fstatat(int dirfd, const char *path, struct stat *statbuf, int flags) {
+  static int (*real_fstatat)(int, const char *, struct stat *, int) = NULL;
+
+  if (real_fstatat == NULL) {
+    real_fstatat = dlsym(RTLD_NEXT, "fstatat");
+  }
+
+  return real_fstatat(dirfd, redirect_path(path), statbuf, flags);
 }
 
 int stat(const char *path, struct stat *statbuf) {
