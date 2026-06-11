@@ -1,0 +1,219 @@
+* {
+  font-family: "SF Pro", "Monaspace Neon NF", "MonaspaceNeon NF";
+  /* GTK3 parses this as one string of comma-separated tags, not the
+     CSS-spec list of strings. */
+  font-feature-settings: "liga, calt, zero, tnum";
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 9px;
+  min-height: 0;
+}
+
+window#waybar {
+  border-radius: 9px;
+  transition-property: background-color;
+  transition-duration: 0.5s;
+}
+
+tooltip {
+  border-radius: 9px;
+  padding: 6px;
+}
+
+tooltip label {
+  font-size: 16px;
+}
+
+button {
+  box-shadow: inset 0 -3px transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+}
+
+box {
+  border: none;
+}
+
+#workspaces,
+#control-center,
+#stats,
+#stats-drawer {
+  margin: 5px 4px;
+  padding: 0 5px;
+  min-height: 30px;
+  font-weight: 700;
+}
+
+#workspaces button {
+  background: transparent;
+  background-image: none;
+  border: none;
+  border-radius: 6px;
+  box-shadow: none;
+  margin: 3px;
+  padding: 0 7px;
+  min-width: 22px;
+  min-height: 22px;
+  text-shadow: none;
+}
+
+#workspaces button:hover,
+#workspaces button:focus,
+#workspaces button:active,
+#workspaces button:checked,
+#workspaces button.empty,
+#workspaces button.visible,
+#workspaces button.active,
+#workspaces button.focused,
+#workspaces button.urgent,
+#workspaces button.current_output,
+#workspaces button.hosting-monitor,
+#workspaces button.persistent {
+  background: transparent;
+  background-image: none;
+  border: none;
+  border-radius: 6px;
+  text-shadow: none;
+}
+
+#workspaces button label {
+  background: transparent;
+}
+
+#workspaces label {
+  font-family: "Monaspace Neon NF", "MonaspaceNeon NF";
+  font-size: 20px;
+}
+
+#custom-notification,
+#custom-updates,
+#custom-github,
+#custom-codexbar,
+#idle_inhibitor,
+#custom-hyprsunset,
+#wireplumber,
+#pulseaudio,
+#audio,
+#bluetooth,
+#gamemode,
+#systemd-failed-units,
+#battery,
+#cpu,
+#memory,
+#temperature,
+#disk,
+#network {
+  padding: 0 6px;
+}
+
+#bluetooth {
+  padding-left: 8px;
+}
+
+#custom-notification {
+  padding-right: 8px;
+}
+
+#custom-updates.updated {
+  padding-left: 0;
+  padding-right: 13px;
+}
+
+#idle_inhibitor,
+#systemd-failed-units {
+  font-size: 20px;
+}
+
+#idle_inhibitor {
+  padding-right: 0;
+}
+
+#pulseaudio {
+  font-size: 16px;
+}
+
+#keyboard-state {
+  padding: 0;
+  min-width: 16px;
+}
+
+#keyboard-state > label {
+  padding: 0 5px;
+}
+
+#tray {
+  padding: 0 6px;
+}
+
+#custom-weather,
+#clock {
+  margin: 5px 4px;
+  padding: 0 8px;
+  min-height: 30px;
+}
+
+#clock {
+  font-weight: 800;
+  min-width: 128px;
+}
+
+#custom-separator-left,
+#custom-separator-right {
+  font-family: "Monaspace Neon NF", "MonaspaceNeon NF";
+  font-size: 20px;
+}
+
+#custom-separator-left {
+  padding-left: 3px;
+  padding-right: 6px;
+}
+
+#custom-separator-right {
+  padding-left: 6px;
+  padding-right: 3px;
+}
+
+#custom-wlogout,
+#custom-power {
+  font-family: "Monaspace Neon NF", "MonaspaceNeon NF";
+  font-size: 24px;
+  margin: 5px 8px 5px 0;
+  padding: 0 8px;
+  min-width: 30px;
+}
+
+#cpu,
+#memory,
+#disk {
+  min-width: 58px;
+}
+
+#temperature {
+  min-width: 68px;
+}
+
+#network {
+  min-width: 96px;
+}
+
+#pulseaudio-slider slider {
+  min-height: 0;
+  min-width: 0;
+  opacity: 0;
+  background-image: none;
+  border: none;
+  box-shadow: none;
+}
+
+#pulseaudio-slider trough {
+  min-height: 10px;
+  min-width: 80px;
+  border-radius: 5px;
+}
+
+#pulseaudio-slider highlight {
+  min-width: 10px;
+  border-radius: 5px;
+}

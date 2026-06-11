@@ -1,11 +1,8 @@
-/* Custom styling for the logout icon on end */
-#custom-wlogout, #custom-power {
-  font-size: 3em;
-  padding-right: 0.25em;
-  padding-left: 0.4em;
+#custom-wlogout,
+#custom-power {
   color: @blue;
 }
 
 #power .not-power {
-    color: @red;
-  }
+  color: @red;
+}
