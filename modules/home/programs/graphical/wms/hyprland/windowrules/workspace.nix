@@ -104,6 +104,10 @@ in
           }
           #Remote
           {
+            match.class = "^(?i:moonlight|moonlight-qt|com\\.moonlight_stream\\.Moonlight)$";
+            workspace = "8";
+          }
+          {
             match.class = "^(virt-manager|qemu|gnome-connections)$";
             workspace = "8 silent";
           }
