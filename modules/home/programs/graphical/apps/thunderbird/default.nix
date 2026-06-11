@@ -210,6 +210,7 @@ in
                 ;
               realName = config.khanelinix.user.fullName;
               userName = lib.mkIf (flavor == "davmail") address;
+              imap.tls.enable = lib.mkIf (flavor == "davmail") false;
               thunderbird = {
                 enable = finalEnable;
                 profiles = [

@@ -21,7 +21,11 @@ in
 
       # NOTE: https://davmail.sourceforge.net/serversetup.html
       settings = {
-        "davmail.mode" = "O365Interactive";
+        "davmail.disableGuiNotifications" = true;
+        # Thunderbird supplies a saved local password. DavMail prints the
+        # Microsoft device login URL/code to `journalctl --user -u davmail.service -f`;
+        # after auth, it stores the refresh token in ~/.local/state/davmail-tokens.
+        "davmail.mode" = "O365DeviceCode";
       };
     };
   };
