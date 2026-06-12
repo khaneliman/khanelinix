@@ -33,7 +33,7 @@ configurations. This keeps temporary upstream backports close to input plumbing
 instead of hiding them in host modules.
 
 Supported inputs are `nixpkgs`, `nixpkgs-unstable`, `nixpkgs-master`,
-`home-manager`, and `nix-darwin`.
+`home-manager`, `nix-darwin`, and `nix-rosetta-builder`.
 
 Patch sources for each input:
 
@@ -45,7 +45,10 @@ Patch sources for each input:
 
 `mkDarwin` can patch every supported input. `mkSystem` and `mkHome` patch
 `nixpkgs`, `nixpkgs-unstable`, `nixpkgs-master`, and `home-manager`; they skip
-`nix-darwin` because those builders do not evaluate it.
+`nix-darwin` and `nix-rosetta-builder` because those builders do not evaluate
+them. `nix-rosetta-builder` is additionally re-imported against the patched
+`nixpkgs-unstable` whenever that input has patches, because its VM image is
+baked from its own `nixpkgs` input at lock time.
 
 Example `patches/nix-darwin/default.nix`:
 

@@ -98,6 +98,10 @@ let
       input ? inputs.${inputName},
       flakeInputs,
       extraInputPatches ? { },
+      # Re-import the flake even without own patches, for inputs whose
+      # outputs close over a patched dependency in `flakeInputs` that the
+      # locked input would otherwise miss.
+      force ? false,
     }:
     let
       patches = mkInputPatchList {
@@ -123,7 +127,7 @@ let
         }
       );
     in
-    if patches == [ ] then input else patchedFlake;
+    if patches == [ ] && !force then input else patchedFlake;
 
   mkPatchedInputs =
     {
@@ -136,6 +140,7 @@ let
         "nixpkgs-master"
         "home-manager"
         "nix-darwin"
+        "nix-rosetta-builder"
       ],
     }:
     let
@@ -149,6 +154,12 @@ let
           input = inputs.${inputName};
           inherit extraInputPatches;
         };
+      unstableIsPatched =
+        mkInputPatchList {
+          pkgs = bootstrapPkgs;
+          inputName = "nixpkgs-unstable";
+          inherit extraInputPatches;
+        } != [ ];
       patched = rec {
         nixpkgs = mkPatchedFlakeInput "nixpkgs" { };
         nixpkgs-unstable = mkPatchedFlakeInput "nixpkgs-unstable" { };
@@ -158,6 +169,18 @@ let
         };
         nix-darwin = mkPatchedFlakeInput "nix-darwin" {
           nixpkgs = nixpkgs-unstable;
+        };
+        nix-rosetta-builder = mkPatchedFlake {
+          pkgs = bootstrapPkgs;
+          inputName = "nix-rosetta-builder";
+          flakeInputs = {
+            nixpkgs = nixpkgs-unstable;
+          };
+          inherit extraInputPatches;
+          # The builder VM image is baked from this flake's own `nixpkgs`
+          # input at lock time, so nixpkgs-unstable patches only reach the
+          # image through a re-import.
+          force = unstableIsPatched;
         };
       };
     in
@@ -176,6 +199,9 @@ let
     }
     // optionalAttrs (enabled "nix-darwin") {
       inherit (patched) nix-darwin;
+    }
+    // optionalAttrs (enabled "nix-rosetta-builder") {
+      inherit (patched) nix-rosetta-builder;
     };
 
   mkNixpkgsConfig = flake: {

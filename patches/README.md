@@ -11,6 +11,7 @@ Supported inputs:
 - `nixpkgs-master`
 - `home-manager`
 - `nix-darwin`
+- `nix-rosetta-builder`
 
 Patch sources:
 
@@ -23,7 +24,12 @@ Patch sources:
 
 `mkDarwin` can patch every supported input. `mkSystem` and `mkHome` patch
 `nixpkgs`, `nixpkgs-unstable`, `nixpkgs-master`, and `home-manager`; they skip
-`nix-darwin` because those builders do not evaluate it.
+`nix-darwin` and `nix-rosetta-builder` because those builders do not evaluate
+them.
+
+`nix-rosetta-builder` bakes its VM image from its own `nixpkgs` input at lock
+time, so whenever `nixpkgs-unstable` has patches it is re-imported against the
+patched tree even if it has no patches of its own.
 
 Entries with `url` are converted to `pkgs.fetchpatch2` by default:
 
