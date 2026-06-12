@@ -109,7 +109,10 @@ let
         inherit patches;
       };
       patchedFlake = {
-        outPath = patchedSrc;
+        # Plain store-path string, matching real flake inputs; module-system
+        # uniqueness checks (e.g. nix.registry pins) compare definition
+        # values, and equal strings pass where derivation attrsets cannot.
+        outPath = "${patchedSrc}";
         rev = input.rev or null;
         shortRev = input.shortRev or "patched";
       }
