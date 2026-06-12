@@ -8,8 +8,11 @@
 }:
 let
   inherit (lib) mkIf getExe getExe';
+  inherit (lib.khanelinix) suiteProfileIncludes;
 
   cfg = config.khanelinix.programs.graphical.wms.hyprland;
+  socialIncludes = suiteProfileIncludes config config.khanelinix.suites.social;
+  businessIncludes = suiteProfileIncludes config config.khanelinix.suites.business;
 in
 {
   config = mkIf cfg.enable {
@@ -73,10 +76,10 @@ in
             # ++ lib.optionals config.programs.vesktop.enable [
             #   (mkStartCommand { slice = "b"; } "${getExe config.programs.vesktop.package}")
             # ]
-            ++ lib.optionals config.khanelinix.suites.social.enable [
+            ++ lib.optionals (config.khanelinix.suites.social.enable && socialIncludes "standard") [
               (mkStartCommand { slice = "b"; } "element-desktop")
             ]
-            ++ lib.optionals config.khanelinix.suites.business.enable [
+            ++ lib.optionals (config.khanelinix.suites.business.enable && businessIncludes "standard") [
               (mkStartCommand { slice = "b"; } "teams-for-linux")
               (mkStartCommand { slice = "b"; } "thunderbird")
             ]

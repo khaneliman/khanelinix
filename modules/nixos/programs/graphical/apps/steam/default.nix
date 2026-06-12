@@ -7,8 +7,11 @@
 }:
 let
   inherit (lib) mkIf;
+  inherit (lib.khanelinix) suiteProfileIncludes;
 
   cfg = config.khanelinix.programs.graphical.apps.steam;
+  gamesCfg = config.khanelinix.suites.games;
+  maximal = suiteProfileIncludes config gamesCfg "maximal";
 in
 {
   options.khanelinix.programs.graphical.apps.steam = {
@@ -17,7 +20,7 @@ in
 
   config = mkIf cfg.enable {
     environment = {
-      systemPackages = with pkgs; [ steamtinkerlaunch ];
+      systemPackages = with pkgs; lib.optionals maximal [ steamtinkerlaunch ];
     };
 
     hardware.steam-hardware.enable = true;
@@ -28,10 +31,10 @@ in
       enable = true;
       extest.enable = true;
       localNetworkGameTransfers.openFirewall = true;
-      protontricks.enable = true;
+      protontricks.enable = lib.mkDefault maximal;
       remotePlay.openFirewall = true;
 
-      extraCompatPackages = [ pkgs.proton-ge-bin ];
+      extraCompatPackages = lib.optionals maximal [ pkgs.proton-ge-bin ];
     };
   };
 }

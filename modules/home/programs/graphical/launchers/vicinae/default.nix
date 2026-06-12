@@ -7,8 +7,12 @@
   ...
 }:
 let
+  inherit (lib.khanelinix) suiteProfileIncludes;
+
   cfg = config.khanelinix.programs.graphical.launchers.vicinae;
   raycastRev = "e3b6229c1a4b12e31f17689a1be7b03988270556";
+  businessIncludes = suiteProfileIncludes config config.khanelinix.suites.business;
+  socialIncludes = suiteProfileIncludes config config.khanelinix.suites.social;
 
   # isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
 
@@ -131,18 +135,16 @@ in
           sha256 = "sha256-wBu5LzTvTWsT7SDePYY4rBPEToa23PMRvKfiIqABuZ8=";
           npmDepsHash = "sha256-Pirsjf99/2ZPwdRFKF2cZ0QFlQi/YE2DasbTsEJiahM=";
         }
-        ++ lib.optionals config.khanelinix.suites.business.enable [
-          {
-            name = "1password";
-            sha256 = "sha256-wZUe66wjY855zygpOv1lYAyRqXZXJAVgkHnQlygaDzM=";
-            npmDepsHash = "sha256-VIoAMS0/Sl3A8MMsMgqRlZs6dpk2fhMJrREjwj9CDjA=";
-          }
-          {
-            name = "slack";
-            sha256 = "sha256-i0P0z9PNy4CPX79MV7EEhAjmwtUaYN2GDhYfhCFfExY=";
-            npmDepsHash = "sha256-DeUjKPjd/haeBmSw7jrudpNcvc7twCcDpOe50s40ZvI=";
-          }
-        ]
+        ++ lib.optional config.khanelinix.suites.business.enable {
+          name = "1password";
+          sha256 = "sha256-wZUe66wjY855zygpOv1lYAyRqXZXJAVgkHnQlygaDzM=";
+          npmDepsHash = "sha256-VIoAMS0/Sl3A8MMsMgqRlZs6dpk2fhMJrREjwj9CDjA=";
+        }
+        ++ lib.optional (config.khanelinix.suites.business.enable && businessIncludes "maximal") {
+          name = "slack";
+          sha256 = "sha256-i0P0z9PNy4CPX79MV7EEhAjmwtUaYN2GDhYfhCFfExY=";
+          npmDepsHash = "sha256-DeUjKPjd/haeBmSw7jrudpNcvc7twCcDpOe50s40ZvI=";
+        }
         ++ lib.optionals config.khanelinix.suites.development.enable [
           {
             name = "github";
@@ -160,7 +162,7 @@ in
           sha256 = "sha256-K7qiT53LJRDjw6dEHKgZvJjtpBOMalJJADM6hQZf518=";
           npmDepsHash = "sha256-Hnj4w7daE3KJDSrjPNGehQkYV2EjGkhYVlifmHy4pAg=";
         }
-        ++ lib.optionals config.khanelinix.suites.social.enable [
+        ++ lib.optionals (config.khanelinix.suites.social.enable && socialIncludes "maximal") [
           {
             name = "telegram";
             sha256 = "sha256-UTilgwb/OubiJt0Zbb9t/IsaRN1PwVyhn6DCYM9GAFE=";

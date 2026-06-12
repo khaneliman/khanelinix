@@ -11,6 +11,7 @@ let
   inherit (lib.khanelinix)
     enabled
     mkPackageProfileOption
+    suiteProfileIncludes
     ;
 
   hasOpenAISecuraKey = lib.hasAttrByPath [ "sops" "secrets" "OPENAI_SECURA_KEY" ] config;
@@ -44,6 +45,7 @@ let
   '';
 
   cfg = config.khanelinix.suites.development;
+  includes = suiteProfileIncludes config cfg;
   exoLibp2pPort = 52416;
   exoLogDir = "${config.home.homeDirectory}/Library/Logs/exo";
   hostName = osConfig.networking.hostName or "";
@@ -55,8 +57,8 @@ in
 {
   options.khanelinix.suites.development = {
     enable = lib.mkEnableOption "common development configuration";
-    aiEnable = lib.mkEnableOption "ai development configuration";
     packageProfile = mkPackageProfileOption "Package profile override for development applications.";
+    aiEnable = lib.mkEnableOption "ai development configuration";
     azureEnable = lib.mkEnableOption "azure development configuration";
     dockerEnable = lib.mkEnableOption "docker development configuration";
     gameEnable = lib.mkEnableOption "game development configuration";
@@ -82,12 +84,14 @@ in
           #   webUISupport = true;
           # })
         ]
-        ++ lib.optionals (!isWSL) [
+        ++ lib.optionals (!isWSL && includes "standard") [
           bruno
           postman
         ]
-        ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && !isWSL) [
+        ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && !isWSL && includes "standard") [
           github-desktop
+        ]
+        ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && !isWSL && includes "maximal") [
           qtcreator
         ]
         ++ lib.optionals cfg.dockerEnable [
@@ -111,9 +115,8 @@ in
           nixpkgs-review
           nurl
         ]
-        ++ lib.optionals cfg.gameEnable (
+        ++ lib.optionals (cfg.gameEnable && includes "standard") (
           [
-            gdevelop
             godot
           ]
           ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
@@ -122,6 +125,9 @@ in
             unityhub
           ]
         )
+        ++ lib.optionals (cfg.gameEnable && includes "maximal") [
+          gdevelop
+        ]
         ++ lib.optionals cfg.sqlEnable [
           dbeaver-bin
           # NOTE: 1 GB closure addition
@@ -203,7 +209,7 @@ in
         graphical = {
           editors = {
             # FIXME: broken darwin
-            vscode.enable = mkDefault (!isWSL && !pkgs.stdenv.hostPlatform.isDarwin);
+            vscode.enable = mkDefault (!isWSL && !pkgs.stdenv.hostPlatform.isDarwin && includes "maximal");
           };
         };
 

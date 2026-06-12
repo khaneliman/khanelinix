@@ -9,9 +9,11 @@ let
   inherit (lib.khanelinix)
     enabled
     mkPackageProfileOption
+    suiteProfileIncludes
     ;
 
   cfg = config.khanelinix.suites.games;
+  includes = suiteProfileIncludes config cfg;
 in
 {
   options.khanelinix.suites.games = {
@@ -24,17 +26,17 @@ in
       programs = {
         graphical = {
           addons = {
-            gamemode = mkDefault enabled;
-            gamescope = mkDefault enabled;
+            gamemode = lib.mkIf (includes "standard") (mkDefault enabled);
+            gamescope = lib.mkIf (includes "standard") (mkDefault enabled);
           };
 
           apps = {
-            steam = mkDefault enabled;
+            steam = lib.mkIf (includes "standard") (mkDefault enabled);
           };
         };
       };
 
-      services.flatpak.extraPackages = [
+      services.flatpak.extraPackages = lib.optionals (includes "maximal") [
         # Sober for Roblox
         {
           appId = "org.vinegarhq.Sober";

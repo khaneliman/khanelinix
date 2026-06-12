@@ -7,52 +7,52 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.khanelinix)
-    enabled
-    mkPackageProfileOption
-    ;
+  inherit (lib.khanelinix) mkPackageProfileOption suiteProfileIncludes;
 
   cfg = config.khanelinix.suites.games;
+  includes = suiteProfileIncludes config cfg;
 in
 {
   options.khanelinix.suites.games = {
     enable = lib.mkEnableOption "common games configuration";
-    protonToolsEnable = lib.mkEnableOption "proton and wine tools";
     packageProfile = mkPackageProfileOption "Package profile override for game applications.";
+    protonToolsEnable = lib.mkEnableOption "proton and wine tools";
   };
 
   config = mkIf cfg.enable {
     # TODO: sober/roblox?
     home.packages =
       with pkgs;
-      [
+      lib.optionals (includes "standard") [
         moonlight-qt
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux (
-        [
-          wowup-cf
-        ]
-        ++ lib.optionals cfg.protonToolsEnable [
-          bottles
+        lib.optionals (includes "standard") [
           heroic
+        ]
+        ++ lib.optionals (cfg.protonToolsEnable && includes "maximal") [
+          bottles
           lutris
           protontricks
           protonup-ng
           protonup-qt
           umu-launcher
         ]
+        ++ lib.optionals (includes "maximal") [
+          wowup-cf
+        ]
       );
 
     khanelinix = {
       programs = {
         graphical = {
-          apps.prismlauncher = lib.mkDefault enabled;
-          mangohud = lib.mkDefault enabled;
+          apps.prismlauncher.enable = lib.mkDefault (includes "standard");
+          mangohud.enable = lib.mkDefault (includes "standard");
         };
 
         terminal = {
           tools = {
-            wine = mkIf cfg.protonToolsEnable (lib.mkDefault enabled);
+            wine.enable = lib.mkDefault (cfg.protonToolsEnable && includes "maximal");
           };
         };
       };

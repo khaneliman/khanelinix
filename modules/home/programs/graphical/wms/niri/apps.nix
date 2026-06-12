@@ -7,9 +7,12 @@
 }:
 let
   inherit (lib) mkAfter mkIf;
+  inherit (lib.khanelinix) suiteProfileIncludes;
 
   cfg = config.khanelinix.programs.graphical.wms.niri;
   niriAvailable = options ? programs.niri;
+  socialIncludes = suiteProfileIncludes config config.khanelinix.suites.social;
+  businessIncludes = suiteProfileIncludes config config.khanelinix.suites.business;
 
   mkStartCommand =
     cmd:
@@ -28,10 +31,10 @@ in
         ++ lib.optionals (osConfig.programs.steam.enable or false) [
           { sh = mkStartCommand "steam"; }
         ]
-        ++ lib.optionals config.khanelinix.suites.social.enable [
+        ++ lib.optionals (config.khanelinix.suites.social.enable && socialIncludes "standard") [
           { sh = mkStartCommand "element-desktop"; }
         ]
-        ++ lib.optionals config.khanelinix.suites.business.enable [
+        ++ lib.optionals (config.khanelinix.suites.business.enable && businessIncludes "standard") [
           { sh = mkStartCommand "teams-for-linux"; }
           { sh = mkStartCommand "thunderbird"; }
         ]

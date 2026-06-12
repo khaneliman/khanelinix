@@ -11,9 +11,11 @@ let
   inherit (lib.khanelinix)
     enabled
     mkPackageProfileOption
+    suiteProfileIncludes
     ;
 
   cfg = config.khanelinix.suites.business;
+  includes = suiteProfileIncludes config cfg;
   isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
 in
 {
@@ -32,6 +34,8 @@ in
         # bitwarden-desktop
         jrnl
         np
+      ]
+      ++ lib.optionals (includes "maximal") [
         slack
       ]
       ++ lib.optionals cfg.pimEnable [
@@ -52,13 +56,13 @@ in
       programs = {
         graphical = {
           apps = {
-            teams-for-linux.enable = lib.mkDefault (!isWSL);
-            thunderbird.enable = lib.mkDefault (!isWSL); # No GUI email client in WSL
+            teams-for-linux.enable = lib.mkDefault (!isWSL && includes "standard");
+            thunderbird.enable = lib.mkDefault (!isWSL && includes "standard"); # No GUI email client in WSL
           };
         };
         terminal = {
           social = {
-            slack-term = lib.mkDefault enabled;
+            slack-term.enable = lib.mkDefault (includes "maximal");
           };
           tools = {
             _1password-cli = lib.mkDefault enabled;

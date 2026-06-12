@@ -7,9 +7,10 @@
 }:
 let
   inherit (lib) mkDefault mkIf;
-  inherit (lib.khanelinix) mkPackageProfileOption;
+  inherit (lib.khanelinix) mkPackageProfileOption suiteProfileIncludes;
 
   cfg = config.khanelinix.suites.desktop;
+  includes = suiteProfileIncludes config cfg;
 in
 {
   options.khanelinix.suites.desktop = {
@@ -82,7 +83,7 @@ in
         moonlight-qt
         realvnc-vnc-viewer
       ]
-      ++ lib.optionals cfg.fileManagementEnable [
+      ++ lib.optionals (cfg.fileManagementEnable && includes "standard") [
         bleachbit
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux (
@@ -92,12 +93,14 @@ in
           fontpreview
           smile
         ]
-        ++ lib.optionals cfg.fileManagementEnable [
-          dropbox
+        ++ lib.optionals (cfg.fileManagementEnable && includes "standard") [
           dupeguru
           kdePackages.filelight
           kdePackages.ark
           kdePackages.gwenview
+        ]
+        ++ lib.optionals (cfg.fileManagementEnable && includes "maximal") [
+          dropbox
         ]
       );
 
