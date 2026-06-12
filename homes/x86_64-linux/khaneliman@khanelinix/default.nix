@@ -288,6 +288,15 @@ in
       };
 
       terminal = {
+        editors = {
+          neovim.extraProfiles = [
+            "minimal"
+            "basic"
+            "full"
+            "debug"
+          ];
+        };
+
         tools = {
           git = {
             enable = true;
