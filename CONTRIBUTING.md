@@ -40,7 +40,18 @@ provides guidelines for contributing to this Nix-based dotfiles configuration.
 8. **Reduce Repetition**: Utilize Nix functions and abstractions to minimize
    duplicated code
 
-9. **Source Patching in Derivations**:
+9. **Patch and Package Routing**:
+   - Route by what changes:
+
+     | Need                                                                        | Use         | Notes                                                                                                                     |
+     | --------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------- |
+     | Patch a flake input tree (`nixpkgs`, `home-manager`, `nix-darwin`, etc.)    | `patches/`  | Input patches apply before system builders evaluate inputs. See `patches/README.md`.                                      |
+     | Patch, pin, override, or change build flags for an existing nixpkgs package | `overlays/` | Use `overrideAttrs` / `overridePythonAttrs`; extend the derivation's `patches` attr there when source patches are needed. |
+     | Add software not already in nixpkgs, or a complex local build               | `packages/` | Do not create patched copies of existing nixpkgs packages here.                                                           |
+
+   - The name `patches` is overloaded: root `patches/` is for input trees;
+     derivation `patches = ...` is a package build attribute, usually set inside
+     an overlay.
    - Prefer `fetchpatch2` for upstream commits and pull requests when a fixed
      patch URL is available.
    - For `fetchpatch2`, start with `hash = lib.fakeHash;`, build once, and copy

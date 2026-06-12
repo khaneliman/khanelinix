@@ -1,14 +1,19 @@
 ---
 paths:
+  - "patches/**"
   - "packages/**"
   - "overlays/**"
   - "templates/**"
 ---
 
-# Packages, Overlays, and Templates
+# Patches, Packages, Overlays, and Templates
 
-Source patching and licensing rules: `CONTRIBUTING.md` ("Source Patching in
-Derivations", "External Code and Licensing"). Read those before patching.
+Canon: `CONTRIBUTING.md` ("Patch and Package Routing", "Source Patching" hash
+guidance, "External Code and Licensing") and `patches/README.md`.
+
+Common mistake: root `patches/` is for flake input trees, not package overrides.
+For existing nixpkgs packages, use `overlays/`; use `packages/` only for new
+custom derivations.
 
 ## packages/
 

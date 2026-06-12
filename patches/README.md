@@ -1,5 +1,9 @@
 # Input Patches
 
+This directory is only for flake input patches. For existing nixpkgs package
+patches, pins, overrides, or build flag changes, use `overlays/` as described in
+`CONTRIBUTING.md`.
+
 `lib/system/common.nix` patches selected flake inputs before system builders
 evaluate them. Patching is intended for short-lived upstream backports, such as
 testing a merged pull request before the pinned input updates.
