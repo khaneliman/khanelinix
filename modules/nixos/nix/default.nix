@@ -1,6 +1,8 @@
 {
   config,
+  inputs,
   lib,
+  pkgs,
 
   ...
 }:
@@ -81,6 +83,15 @@ in
     services = {
       fast-nix-gc = {
         enable = true;
+        # TODO: Drop once the fix is merged
+        package = inputs.fast-nix-gc.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (_: {
+          src = pkgs.fetchFromGitHub {
+            owner = "khaneliman";
+            repo = "fast-nix-gc";
+            rev = "ce94b85266f1eb4f5417076f372a9146ccf0923e";
+            hash = "sha256-eHrjYLjzdsmfs4xg8/YNpsAEovXJemVer1TlEKLJ+mI=";
+          };
+        });
         automatic = true;
         dates = "daily";
         deleteOlderThan = "7d";

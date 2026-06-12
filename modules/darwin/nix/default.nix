@@ -11,6 +11,13 @@ let
   fastNixGc =
     inputs.fast-nix-gc.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs
       (old: {
+        # TODO: Drop once the fix is merged
+        src = pkgs.fetchFromGitHub {
+          owner = "khaneliman";
+          repo = "fast-nix-gc";
+          rev = "ce94b85266f1eb4f5417076f372a9146ccf0923e";
+          hash = "sha256-eHrjYLjzdsmfs4xg8/YNpsAEovXJemVer1TlEKLJ+mI=";
+        };
         checkFlags = (old.checkFlags or [ ]) ++ [
           "--skip"
           "gc_deletes_non_utf8_store_entry"
