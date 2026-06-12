@@ -16,6 +16,8 @@ in
   # workflow choices ergonomic for thumb clusters, home-row access, and hardware
   # layers/macros instead of dense same-hand modifier chords.
   khanelinix = {
+    packageProfile = "standard";
+
     user = {
       enable = true;
       name = "khaneliman";
