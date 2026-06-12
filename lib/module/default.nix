@@ -167,6 +167,55 @@ rec {
   boolToNum = bool: if bool then 1 else 0;
 
   /**
+    Package profile tiers, from smallest to broadest payload.
+  */
+  packageProfiles = [
+    "core"
+    "standard"
+    "maximal"
+  ];
+
+  /**
+    Package profile option type.
+  */
+  packageProfileType = types.enum packageProfiles;
+
+  /**
+    Package profile ranks for inclusion checks.
+  */
+  packageProfileRank = {
+    core = 0;
+    standard = 1;
+    maximal = 2;
+  };
+
+  /**
+    Whether an active package profile includes a tier.
+  */
+  profileIncludes = active: tier: packageProfileRank.${active} >= packageProfileRank.${tier};
+
+  /**
+    Standard suite package profile override option.
+  */
+  mkPackageProfileOption = description: mkOpt (types.nullOr packageProfileType) null description;
+
+  /**
+    Resolve a package profile override against a global default.
+  */
+  resolvePackageProfile = global: override: if override == null then global else override;
+
+  /**
+    Resolve a suite package profile from module config and suite config.
+  */
+  suitePackageProfile =
+    config: suiteCfg: resolvePackageProfile config.khanelinix.packageProfile suiteCfg.packageProfile;
+
+  /**
+    Whether a suite's effective package profile includes a tier.
+  */
+  suiteProfileIncludes = config: suiteCfg: profileIncludes (suitePackageProfile config suiteCfg);
+
+  /**
     Apply mkDefault to all attributes in a set.
 
     # Inputs

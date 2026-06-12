@@ -59,6 +59,57 @@ in
     expected = 0;
   };
 
+  testProfileIncludesStandardCore = {
+    expr = module.profileIncludes "standard" "core";
+    expected = true;
+  };
+
+  testProfileIncludesStandardMaximal = {
+    expr = module.profileIncludes "standard" "maximal";
+    expected = false;
+  };
+
+  testProfileIncludesMaximalStandard = {
+    expr = module.profileIncludes "maximal" "standard";
+    expected = true;
+  };
+
+  testResolvePackageProfileDefault = {
+    expr = module.resolvePackageProfile "standard" null;
+    expected = "standard";
+  };
+
+  testResolvePackageProfileOverride = {
+    expr = module.resolvePackageProfile "standard" "maximal";
+    expected = "maximal";
+  };
+
+  testSuiteProfileIncludesDefault = {
+    expr =
+      module.suiteProfileIncludes
+        {
+          khanelinix.packageProfile = "standard";
+        }
+        {
+          packageProfile = null;
+        }
+        "maximal";
+    expected = false;
+  };
+
+  testSuiteProfileIncludesOverride = {
+    expr =
+      module.suiteProfileIncludes
+        {
+          khanelinix.packageProfile = "standard";
+        }
+        {
+          packageProfile = "maximal";
+        }
+        "maximal";
+    expected = true;
+  };
+
   # module.enabled / module.disabled
   testEnabled = {
     expr = module.enabled;

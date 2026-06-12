@@ -43,6 +43,14 @@ in
     disabled
     capitalize
     boolToNum
+    packageProfiles
+    packageProfileType
+    packageProfileRank
+    profileIncludes
+    mkPackageProfileOption
+    resolvePackageProfile
+    suitePackageProfile
+    suiteProfileIncludes
     default-attrs
     force-attrs
     nested-default-attrs
