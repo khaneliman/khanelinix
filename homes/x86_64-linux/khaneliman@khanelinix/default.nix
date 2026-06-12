@@ -358,7 +358,6 @@ in
     roles = {
       desktop = enabled;
       developer = enabled;
-      creator = enabled;
       gamer = enabled;
     };
 
