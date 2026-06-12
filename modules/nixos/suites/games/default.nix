@@ -6,13 +6,17 @@
 }:
 let
   inherit (lib) mkDefault;
-  inherit (lib.khanelinix) enabled;
+  inherit (lib.khanelinix)
+    enabled
+    mkPackageProfileOption
+    ;
 
   cfg = config.khanelinix.suites.games;
 in
 {
   options.khanelinix.suites.games = {
     enable = lib.mkEnableOption "common games configuration";
+    packageProfile = mkPackageProfileOption "Package profile override for game system applications.";
   };
 
   config = lib.mkIf cfg.enable {

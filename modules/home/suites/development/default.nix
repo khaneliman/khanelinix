@@ -8,7 +8,10 @@
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.khanelinix) enabled;
+  inherit (lib.khanelinix)
+    enabled
+    mkPackageProfileOption
+    ;
 
   hasOpenAISecuraKey = lib.hasAttrByPath [ "sops" "secrets" "OPENAI_SECURA_KEY" ] config;
   hasLuarocksApiKey = lib.hasAttrByPath [ "sops" "secrets" "LUAROCKS_API_KEY" ] config;
@@ -53,6 +56,7 @@ in
   options.khanelinix.suites.development = {
     enable = lib.mkEnableOption "common development configuration";
     aiEnable = lib.mkEnableOption "ai development configuration";
+    packageProfile = mkPackageProfileOption "Package profile override for development applications.";
     azureEnable = lib.mkEnableOption "azure development configuration";
     dockerEnable = lib.mkEnableOption "docker development configuration";
     gameEnable = lib.mkEnableOption "game development configuration";

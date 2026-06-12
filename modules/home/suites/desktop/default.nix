@@ -7,12 +7,14 @@
 }:
 let
   inherit (lib) mkDefault mkIf;
+  inherit (lib.khanelinix) mkPackageProfileOption;
 
   cfg = config.khanelinix.suites.desktop;
 in
 {
   options.khanelinix.suites.desktop = {
     enable = lib.mkEnableOption "common desktop applications";
+    packageProfile = mkPackageProfileOption "Package profile override for desktop applications.";
     remoteDesktopEnable = lib.mkEnableOption "remote desktop applications";
     fileManagementEnable = lib.mkEnableOption "file management applications";
   };

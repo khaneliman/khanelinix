@@ -12,7 +12,10 @@ let
   cfg = config.khanelinix.suites.common;
 in
 {
-  imports = [ (lib.getFile "modules/common/suites/common/default.nix") ];
+  imports = [
+    (lib.getFile "modules/common/package-profile/default.nix")
+    (lib.getFile "modules/common/suites/common/default.nix")
+  ];
 
   config = mkIf cfg.enable {
     programs.zsh.enable = mkDefault true;

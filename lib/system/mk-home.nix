@@ -59,6 +59,7 @@ patchedInputs.home-manager.lib.homeManagerConfiguration {
       username
       system
       ;
+    osConfig = { };
     inputs = patchedInputs;
     inherit (patchedInputs) self;
     lib = extendedLib;

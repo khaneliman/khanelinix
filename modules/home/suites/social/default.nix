@@ -8,13 +8,17 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.khanelinix) enabled;
+  inherit (lib.khanelinix)
+    enabled
+    mkPackageProfileOption
+    ;
 
   cfg = config.khanelinix.suites.social;
 in
 {
   options.khanelinix.suites.social = {
     enable = lib.mkEnableOption "social configuration";
+    packageProfile = mkPackageProfileOption "Package profile override for social applications.";
   };
 
   config = mkIf cfg.enable (

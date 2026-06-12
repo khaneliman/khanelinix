@@ -7,12 +7,14 @@
 }:
 let
   inherit (lib) mkIf;
+  inherit (lib.khanelinix) mkPackageProfileOption;
 
   cfg = config.khanelinix.suites.art;
 in
 {
   options.khanelinix.suites.art = {
     enable = lib.mkEnableOption "art configuration";
+    packageProfile = mkPackageProfileOption "Package profile override for art applications.";
     threeDimensionalEnable = lib.mkEnableOption "3d art applications";
     printingEnable = lib.mkEnableOption "3d printing applications";
   };

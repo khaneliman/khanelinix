@@ -7,7 +7,10 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.khanelinix) enabled;
+  inherit (lib.khanelinix)
+    enabled
+    mkPackageProfileOption
+    ;
 
   cfg = config.khanelinix.suites.games;
 in
@@ -15,6 +18,7 @@ in
   options.khanelinix.suites.games = {
     enable = lib.mkEnableOption "common games configuration";
     protonToolsEnable = lib.mkEnableOption "proton and wine tools";
+    packageProfile = mkPackageProfileOption "Package profile override for game applications.";
   };
 
   config = mkIf cfg.enable {

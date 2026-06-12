@@ -7,12 +7,14 @@
 }:
 let
   inherit (lib) mkIf;
+  inherit (lib.khanelinix) mkPackageProfileOption;
 
   cfg = config.khanelinix.suites.photo;
 in
 {
   options.khanelinix.suites.photo = {
     enable = lib.mkEnableOption "photo configuration";
+    packageProfile = mkPackageProfileOption "Package profile override for photo applications.";
     editingEnable = lib.mkEnableOption "photo editing applications";
   };
 

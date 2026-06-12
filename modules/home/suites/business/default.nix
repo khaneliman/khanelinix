@@ -8,7 +8,10 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.khanelinix) enabled;
+  inherit (lib.khanelinix)
+    enabled
+    mkPackageProfileOption
+    ;
 
   cfg = config.khanelinix.suites.business;
   isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
@@ -16,6 +19,7 @@ in
 {
   options.khanelinix.suites.business = {
     enable = lib.mkEnableOption "business configuration";
+    packageProfile = mkPackageProfileOption "Package profile override for business applications.";
     officeEnable = lib.mkEnableOption "office applications";
     pimEnable = lib.mkEnableOption "personal information management applications";
   };

@@ -14,6 +14,8 @@ let
   isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
 in
 {
+  imports = [ (lib.getFile "modules/common/package-profile/default.nix") ];
+
   options.khanelinix.suites.common = {
     enable = lib.mkEnableOption "common configuration";
   };
@@ -64,6 +66,8 @@ in
       ];
 
     khanelinix = {
+      packageProfile = mkDefault (osConfig.khanelinix.packageProfile or "maximal");
+
       programs = {
         terminal = {
           emulators = {

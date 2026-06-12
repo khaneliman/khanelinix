@@ -7,12 +7,14 @@
 }:
 let
   inherit (lib) mkIf;
+  inherit (lib.khanelinix) mkPackageProfileOption;
 
   cfg = config.khanelinix.suites.emulation;
 in
 {
   options.khanelinix.suites.emulation = {
     enable = lib.mkEnableOption "emulation configuration";
+    packageProfile = mkPackageProfileOption "Package profile override for emulation applications.";
     retroarchFull = lib.mkEnableOption "emulation configuration";
   };
 

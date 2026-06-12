@@ -116,6 +116,8 @@
               lib = extendedLib;
               hostname = "docs";
               username = "docs";
+              system = pkgs.stdenv.hostPlatform.system;
+              osConfig = { };
             };
           };
         in

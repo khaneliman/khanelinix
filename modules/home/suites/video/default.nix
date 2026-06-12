@@ -8,13 +8,14 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.khanelinix) enabled;
+  inherit (lib.khanelinix) enabled mkPackageProfileOption;
 
   cfg = config.khanelinix.suites.video;
 in
 {
   options.khanelinix.suites.video = {
     enable = lib.mkEnableOption "video configuration";
+    packageProfile = mkPackageProfileOption "Package profile override for video applications.";
     editingEnable = lib.mkEnableOption "video editing applications";
     discEnable = lib.mkEnableOption "disc and physical media applications";
     broadcastingEnable = lib.mkEnableOption "broadcasting applications";
