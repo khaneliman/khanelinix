@@ -361,11 +361,15 @@ in
       gamer = enabled;
     };
 
-    suites.development = {
-      dockerEnable = true;
-      gameEnable = true;
-      kubernetesEnable = true;
-      sqlEnable = true;
+    suites = {
+      development = {
+        dockerEnable = true;
+        gameEnable = true;
+        kubernetesEnable = true;
+        sqlEnable = true;
+      };
+
+      emulation.enable = false;
     };
 
     theme = {
