@@ -15,9 +15,27 @@ let
 
   cfg = config.khanelinix.programs.terminal.editors.neovim;
 
-  khanelivimConfiguration = inputs.khanelivim.nixvimConfigurations.${system}.khanelivim;
+  profileNames = [
+    "minimal"
+    "basic"
+    "standard"
+    "full"
+    "debug"
+  ];
 
-  neovimLib = import ./lib.nix { inherit lib options khanelivimConfiguration; };
+  mkBaseKhanelivimConfiguration =
+    profile:
+    if profile == "standard" then
+      inputs.khanelivim.nixvimConfigurations.${system}.khanelivim
+    else
+      inputs.khanelivim.lib.mkNixvimConfig { inherit system profile; };
+
+  mkNeovimLib =
+    profile:
+    import ./lib.nix {
+      inherit lib options;
+      khanelivimConfiguration = mkBaseKhanelivimConfiguration profile;
+    };
 
   nvrEditor = pkgs.writeShellScriptBin "nvr-editor" ''
     if [ -n "$NVIM" ] || [ -n "$NVIM_LISTEN_ADDRESS" ]; then
@@ -27,8 +45,9 @@ let
     exec ${lib.getExe khanelivim} "$@"
   '';
 
-  khanelivimConfigurationExtended = khanelivimConfiguration.extendModules {
-    modules = [
+  mkKhanelivimModules =
+    profile:
+    [
       {
         config = lib.mkMerge [
           {
@@ -36,7 +55,7 @@ let
             enableMan = lib.mkForce false;
 
             # Automatically disable dependencies that are already in home.packages
-            dependencies = lib.genAttrs neovimLib.dependenciesToDisable (_: disabled);
+            dependencies = lib.genAttrs (mkNeovimLib profile).dependenciesToDisable (_: disabled);
 
             # FIXME: insane memory usage
             # lsp.servers.nixd.settings.settings.nixd =
@@ -91,14 +110,43 @@ let
       })
     ]
     ++ cfg.extraModules;
-  };
 
-  khanelivim = khanelivimConfigurationExtended.config.build.package;
+  mkKhanelivimConfiguration =
+    profile:
+    (mkBaseKhanelivimConfiguration profile).extendModules {
+      modules = mkKhanelivimModules profile;
+    };
+
+  khanelivimConfiguration = mkKhanelivimConfiguration cfg.profile;
+
+  khanelivim = khanelivimConfiguration.config.build.package;
+
+  mkProfileWrapper =
+    profile:
+    pkgs.writeShellScriptBin "nvim-${profile}" ''
+      exec ${lib.getExe (mkKhanelivimConfiguration profile).config.build.package} "$@"
+    '';
+
+  profileWrappers =
+    let
+      profiles = lib.unique (builtins.filter (profile: profile != cfg.profile) cfg.extraProfiles);
+    in
+    map mkProfileWrapper profiles;
 in
 {
   options.khanelinix.programs.terminal.editors.neovim = {
     enable = lib.mkEnableOption "neovim";
     default = mkBoolOpt true "Whether to set Neovim as the session EDITOR";
+    profile = mkOption {
+      type = types.enum profileNames;
+      default = "standard";
+      description = "Primary khanelivim profile installed as nvim";
+    };
+    extraProfiles = mkOption {
+      type = types.listOf (types.enum profileNames);
+      default = [ ];
+      description = "Additional khanelivim profiles installed as nvim-<profile> wrappers";
+    };
     extraModules = mkOption {
       type = types.listOf types.attrs;
       default = [ ];
@@ -118,7 +166,8 @@ in
         khanelivim
         pkgs.nvrh
         nvrEditor
-      ];
+      ]
+      ++ profileWrappers;
     };
 
     sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {
