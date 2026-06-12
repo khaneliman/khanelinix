@@ -74,6 +74,7 @@ in
         with pkgs;
         [
           python3
+          nodejs
           # FIXME: broken nixpkgs
           # cutter
           jqp
