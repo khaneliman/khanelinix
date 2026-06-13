@@ -7,7 +7,7 @@
 }:
 let
   cfg = config.khanelinix.services.hermes-agent;
-  stateDir = "/var/lib/hermes";
+  inherit (cfg) stateDir;
   workingDirectory = "${stateDir}/workspace";
 in
 {
@@ -24,6 +24,12 @@ in
       type = lib.types.listOf (lib.types.either lib.types.path lib.types.str);
       default = [ ];
       description = "Files sourced into Hermes service environment.";
+    };
+
+    stateDir = lib.mkOption {
+      type = lib.types.str;
+      default = "/var/lib/hermes";
+      description = "Hermes state directory.";
     };
 
     settings = lib.mkOption {
@@ -75,6 +81,16 @@ in
           ];
 
           toolsets = [ "all" ];
+
+          discord = {
+            require_mention = true;
+            thread_require_mention = true;
+            auto_thread = true;
+            reactions = true;
+            reply_to_mode = "first";
+          };
+
+          group_sessions_per_user = true;
 
           agent = {
             max_turns = 90;
@@ -208,10 +224,14 @@ in
         pkgs.fd
         pkgs.git
         pkgs.gnumake
+        pkgs.iproute2
         pkgs.jq
+        pkgs.openssh
         (pkgs.nodejs_22 or pkgs.nodejs)
         pkgs.python312
         pkgs.ripgrep
+        pkgs.tailscale
+        pkgs.tmux
         pkgs.uv
       ];
 
