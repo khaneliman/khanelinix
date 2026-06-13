@@ -14,8 +14,8 @@ let
         "Glob"
       ];
       model = {
-        claude = "opus";
-        copilot = "claude-opus-4.8";
+        claude = "sonnet";
+        copilot = "claude-sonnet-4.6";
         antigravity = "gemini-3.1-pro-preview";
         opencode = "openai/gpt-5.5";
       };

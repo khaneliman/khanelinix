@@ -3,7 +3,16 @@ let
   importedCommands = lib.importSubdirs ./commands { };
   aiAgents = import ./agents.nix { inherit lib; };
 
-  agentModels = lib.mapAttrs (_name: agent: agent.model) aiAgents.agents;
+  agentModelDefaults = {
+    explore = {
+      claude = "haiku";
+      copilot = "claude-haiku-4.5";
+      antigravity = "gemini-3.1-flash-lite-preview";
+      opencode = "openai/gpt-5.4-mini";
+    };
+  };
+
+  agentModels = agentModelDefaults // lib.mapAttrs (_name: agent: agent.model) aiAgents.agents;
 
   commandAgents = {
     analyze-git-history = "explore";

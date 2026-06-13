@@ -37,10 +37,11 @@ in
         refactorerModel = aiTools.agents.refactorer.model.opencode;
       in
       {
-        opencode-coding = "opencode --model openai/gpt-5.3-codex-spark";
+        opencode-coding = "opencode --model openai/gpt-5.4-mini";
         opencode-deep = "opencode --model ${refactorerModel}";
-        opencode-nano = "opencode --model openai/gpt-5.4-nano";
+        opencode-nano = "opencode --model openai/gpt-5.4-mini";
         opencode-research = "opencode --agent refactorer";
+        opencode-spark = "opencode --model openai/gpt-5.3-codex-spark";
       }
       // lib.optionalAttrs config.services.exo.enable {
         opencode-exo = ''f(){ model="$1"; shift; opencode --model "exo/$model" "$@"; }; f'';
@@ -75,7 +76,7 @@ in
           model = refactorerModel;
           share = "manual";
           autoupdate = false;
-          small_model = "openai/gpt-5.3-codex-spark";
+          small_model = "openai/gpt-5.4-mini";
           default_agent = "refactorer";
           compaction = {
             auto = true;
@@ -96,7 +97,7 @@ in
             };
             nano = {
               template = "Keep each action minimal and targeted for small-surface modifications.";
-              model = "openai/gpt-5.4-nano";
+              model = "openai/gpt-5.4-mini";
               agent = "refactorer";
               subtask = true;
             };

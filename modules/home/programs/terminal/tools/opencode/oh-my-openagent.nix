@@ -32,21 +32,20 @@ in
         debuggerModel = aiTools.agents.debugger.model.opencode;
         refactorerModel = aiTools.agents.refactorer.model.opencode;
         testRunnerModel = aiTools.agents.test-runner.model.opencode;
-        quickModel = "openai/gpt-5.3-codex-spark";
-        nanoModel = "openai/gpt-5.4-nano";
+        sparkModel = "openai/gpt-5.3-codex-spark";
+        miniModel = "openai/gpt-5.4-mini";
         opencodeSkillsPath = toString config.programs.opencode.skills;
 
         deliberateFallbackModels = [
           {
-            model = "openai/gpt-5.3-codex";
+            model = "openai/gpt-5.4";
             reasoningEffort = "high";
           }
           testRunnerModel
         ];
 
-        fastFallbackModels = [
-          quickModel
-          nanoModel
+        explorationFallbackModels = [
+          sparkModel
         ];
 
         defaultConfig = {
@@ -74,20 +73,19 @@ in
             };
             explore = {
               model = testRunnerModel;
-              fallback_models = fastFallbackModels;
+              fallback_models = explorationFallbackModels;
             };
             librarian = {
               model = testRunnerModel;
-              fallback_models = fastFallbackModels;
+              fallback_models = explorationFallbackModels;
             };
           };
 
           categories = {
             quick = {
-              model = quickModel;
+              model = sparkModel;
               fallback_models = [
-                nanoModel
-                testRunnerModel
+                miniModel
               ];
               description = "Fast, minimal edits and low-surface changes.";
             };
@@ -103,14 +101,13 @@ in
             };
             unspecified-low = {
               model = testRunnerModel;
-              fallback_models = fastFallbackModels;
+              fallback_models = explorationFallbackModels;
               description = "Cheaper general subtasks and verification work.";
             };
             writing = {
               model = testRunnerModel;
               fallback_models = [
-                quickModel
-                nanoModel
+                sparkModel
               ];
               description = "Documentation and prose-heavy tasks.";
             };

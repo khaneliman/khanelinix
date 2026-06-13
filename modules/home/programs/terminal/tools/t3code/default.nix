@@ -296,6 +296,10 @@ in
               }
               {
                 provider = "codex";
+                model = "gpt-5.4-mini";
+              }
+              {
+                provider = "codex";
                 model = "gpt-5.3-codex-spark";
               }
             ];

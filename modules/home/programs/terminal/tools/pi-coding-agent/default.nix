@@ -56,7 +56,7 @@ in
         ".pi/agent/settings.json".text = builtins.toJSON (
           lib.recursiveUpdate {
             defaultProvider = "openai-codex";
-            defaultModel = "gpt-5.3-codex-spark";
+            defaultModel = "gpt-5.4-mini";
             defaultThinkingLevel = "high";
             enableInstallTelemetry = false;
             collapseChangelog = true;

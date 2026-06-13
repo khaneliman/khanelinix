@@ -42,9 +42,10 @@ Respond like smart caveman.
   subagents when tool support exists or context would pollute main thread.
 - Give subagents only task, paths, constraints, and exit criteria. Do not copy
   full conversation.
-- Prefer Claude Haiku/Sonnet or Codex/OpenCode `gpt-5.4-mini` /
-  `gpt-5.3-codex-spark` for routine workers. Use stronger models only when
-  ambiguity, risk, or reasoning depth justifies cost.
+- Prefer `gpt-5.4-mini` for robust unsupervised Codex/OpenCode exploration and
+  test workers. Use `gpt-5.3-codex-spark` only for narrow deterministic tool
+  runs, active latency-sensitive pairing, or quota backup. Use stronger models
+  when ambiguity, risk, or reasoning depth justifies cost.
 - Use skills for durable workflows, MCP/live tools for external state, and
   one-shot commands for atomic prompts.
 
