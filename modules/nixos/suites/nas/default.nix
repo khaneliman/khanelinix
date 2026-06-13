@@ -28,7 +28,17 @@ let
     "recycle:exclude_dir" = "/tmp /temp /cache";
   };
 
-  nfsExport = path: "${path} *(rw,async,no_subtree_check,insecure,all_squash,anonuid=99,anongid=100)";
+  nfsAllowedClient = "100.64.0.0/10";
+  nfsPorts = [
+    111
+    2049
+    20048
+    32765
+    32767
+  ];
+  nfsExport =
+    path:
+    "${path} ${nfsAllowedClient}(rw,async,no_subtree_check,insecure,all_squash,anonuid=99,anongid=100)";
 in
 {
   options.khanelinix.suites.nas = {
@@ -197,6 +207,9 @@ in
     services = {
       nfs.server = {
         enable = true;
+        lockdPort = 32767;
+        mountdPort = 20048;
+        statdPort = 32765;
         exports = lib.concatStringsSep "\n" (
           map nfsExport [
             "${userRoot}/appdata"
@@ -220,17 +233,9 @@ in
       rpcbind.enable = true;
     };
 
-    networking.firewall = {
-      allowedTCPPorts = [
-        111
-        2049
-        20048
-      ];
-      allowedUDPPorts = [
-        111
-        2049
-        20048
-      ];
+    networking.firewall.interfaces.${config.services.tailscale.interfaceName} = {
+      allowedTCPPorts = nfsPorts;
+      allowedUDPPorts = nfsPorts;
     };
 
     # TODO: replace these Unraid-compatible /mnt roots with more idiomatic
