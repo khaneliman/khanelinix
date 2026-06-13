@@ -6,6 +6,7 @@
 }:
 let
   inherit (lib.khanelinix) enabled;
+  magicDnsSuffix = "taild8431e.ts.net";
 in
 {
   imports = [
@@ -46,8 +47,8 @@ in
       };
       hermes-agent = {
         enable = true;
-        # TODO: provide a secrets-backed env file and model defaults before first use.
-        # environmentFiles = [ config.sops.secrets."hermes-env".path ];
+        stateDir = "/mnt/user/appdata/hermes-agent";
+        environmentFiles = [ config.sops.secrets."hermes-agent/env".path ];
       };
     };
 
@@ -115,6 +116,65 @@ in
     "cloudflared/khanelimancom.json" = {
       key = "cloudflared_json";
       path = "/run/secrets/cloudflared/khanelimancom.json";
+    };
+
+    "hermes-agent/env" = {
+      mode = "0400";
+      owner = config.services.hermes-agent.user;
+      group = config.services.hermes-agent.group;
+      restartUnits = [ "hermes-agent.service" ];
+    };
+
+    "hermes-agent/ssh-key" = {
+      mode = "0400";
+      owner = config.services.hermes-agent.user;
+      group = config.services.hermes-agent.group;
+      restartUnits = [ "hermes-agent.service" ];
+    };
+  };
+
+  home-manager.users.${config.services.hermes-agent.user} = {
+    home = {
+      username = config.services.hermes-agent.user;
+      homeDirectory = config.services.hermes-agent.stateDir;
+      stateVersion = config.system.stateVersion;
+    };
+
+    programs.ssh = {
+      enable = true;
+      enableDefaultConfig = false;
+
+      settings = {
+        "*" = {
+          AddKeysToAgent = false;
+          ForwardAgent = false;
+          ServerAliveInterval = 30;
+          ServerAliveCountMax = 2;
+          StreamLocalBindUnlink = true;
+          ConnectTimeout = 5;
+          UserKnownHostsFile = "${config.services.hermes-agent.stateDir}/.ssh/known_hosts";
+        };
+
+        "khanelinix khanelinix-ts" = {
+          HostName = "khanelinix.${magicDnsSuffix}";
+          User = config.khanelinix.user.name;
+          Port = 22;
+          IdentityFile = config.sops.secrets."hermes-agent/ssh-key".path;
+          IdentitiesOnly = true;
+          BatchMode = true;
+          StrictHostKeyChecking = "accept-new";
+        };
+
+        "khanelimac khanelimac-ts" = {
+          HostName = "khanelimac.${magicDnsSuffix}";
+          User = config.khanelinix.user.name;
+          Port = 22;
+          IdentityFile = config.sops.secrets."hermes-agent/ssh-key".path;
+          IdentitiesOnly = true;
+          BatchMode = true;
+          StrictHostKeyChecking = "accept-new";
+        };
+      };
     };
   };
 
