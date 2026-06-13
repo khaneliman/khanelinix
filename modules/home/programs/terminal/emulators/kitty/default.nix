@@ -339,7 +339,6 @@ in
             focus_follows_mouse = "no";
 
             # Performance
-            auto_reload_config = -1;
             repaint_delay = 8; # Hz = 1 / (ms / 1000)
 
             input_delay = 2;
