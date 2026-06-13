@@ -33,6 +33,10 @@ in
         run = "noop";
       }
       {
+        url = "/Volumes/austinserver/**";
+        run = "noop";
+      }
+      {
         url = "/mnt/disk/**";
         run = "noop";
       }
