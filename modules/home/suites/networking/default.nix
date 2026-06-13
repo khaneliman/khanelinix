@@ -26,7 +26,10 @@ in
         speedtest-cli
         ssh-copy-id
       ]
-      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [ iproute2 ];
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+        iproute2
+        sshfs
+      ];
 
     khanelinix.services.tailscale.enable = osConfig.services.tailscale.enable or false;
   };
