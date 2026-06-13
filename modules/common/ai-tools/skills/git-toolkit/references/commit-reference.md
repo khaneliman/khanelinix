@@ -2,6 +2,9 @@
 
 ## Commit Types (Conventional)
 
+Every commit uses a short subject plus a body explaining why the commit exists.
+Body can be one sentence when context is simple.
+
 | Type       | When to Use                 | Example                           |
 | ---------- | --------------------------- | --------------------------------- |
 | `feat`     | New feature or capability   | `feat(auth): add OAuth2 login`    |

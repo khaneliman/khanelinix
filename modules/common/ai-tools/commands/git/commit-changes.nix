@@ -18,8 +18,8 @@ let
     4. Present the commit plan before committing.
     5. Stage only the intended hunks/files for each commit.
     6. Review `git diff --cached` before every commit.
-    7. Use the repository's commit convention and include a body for non-trivial
-       changes.
+    7. Use the repository's commit convention and always include a body
+       explaining why the commit exists.
 
     Do not bundle unrelated changes, mix formatting with behavior, or commit a
     reference before the referenced code exists.

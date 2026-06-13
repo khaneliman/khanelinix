@@ -122,8 +122,8 @@ under `khanelinix.services.*`.
 
 ## Commit Message Convention
 
-This repository follows a **Conventional Commits style** format with a subject
-and, for anything non-trivial, a body explaining the reason for the change:
+This repository follows a **Conventional Commits style** format with a short
+subject and a body explaining the reason for the change:
 
 ```
 type(scope): description
@@ -150,10 +150,11 @@ type(scope): description
 - Keep `type` to standard values (`feat`, `fix`, `refactor`, `docs`, `chore`)
 - Keep `scope` specific to the primary area affected
 - Breaking changes may use `!` (for example: `refactor(devShells)!: ...`)
-- Prefer a commit body for any change that is not completely obvious
+- Always include a commit body. It can be short, but it must explain why the
+  change exists so history stays useful as documentation
 - Subject is the what; body is the why, plus any important implementation
   context or constraints
-- Avoid one-line commits unless the change is genuinely trivial
+- Avoid one-line commits
 - Write the body as short prose, not a changelog dump
 
 ## Development Workflow

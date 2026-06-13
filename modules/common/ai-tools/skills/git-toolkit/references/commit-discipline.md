@@ -7,6 +7,8 @@ Use for commit planning, message drafting, and local history cleanup.
 - Match repository history (`git log`) first.
 - Prefer imperative, short, scoped subjects.
 - Use Conventional Commit style when repo does.
+- Always include a body explaining why the commit exists. One short sentence is
+  fine.
 - Before the first commit, inspect the full diff and state the planned commit
   split when more than one logical unit exists.
 - Stage only intended hunks/files.
