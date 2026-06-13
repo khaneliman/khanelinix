@@ -47,6 +47,7 @@ in
 
     suites = {
       common = enabled;
+      networking = enabled;
     };
   };
 
