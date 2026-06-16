@@ -194,6 +194,13 @@ let
     "shutdown"
     "reboot"
   ];
+
+  denyCommands = [
+    "rm -rf /"
+    "rm -rf /*"
+    "sudo rm -rf /"
+    "sudo rm -rf /*"
+  ];
 in
 {
   config = lib.mkIf cfg.enable {
@@ -201,6 +208,7 @@ in
       settings.permissions = {
         allow = map (command: "command(${command})") readOnlyCommands;
         ask = map (command: "command(${command})") reviewCommands;
+        deny = map (command: "command(${command})") denyCommands;
       };
     };
   };
