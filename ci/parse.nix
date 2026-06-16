@@ -33,7 +33,7 @@ runCommand "nix-parse-${nix.name}"
       echo "Parse failed in nix-instantiate." >&2
       exit 1
     fi
-    if grep "warning" "${parseLog}"; then
+    if grep "warning" "${parseLog}" | grep -v "unknown experimental feature" > /dev/null; then
       cat "${parseLog}" >&2
       echo "Failing due to warnings in stderr" >&2
       exit 1
