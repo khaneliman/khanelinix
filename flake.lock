@@ -1064,6 +1064,7 @@
         "sops-nix": "sops-nix",
         "stylix": "stylix",
         "systems": "systems_2",
+        "t3code": "t3code",
         "tokyonight": "tokyonight",
         "waybar": "waybar",
         "yazi-flavors": "yazi-flavors",
@@ -1241,6 +1242,22 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "t3code": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1781633087,
+        "narHash": "sha256-Re+P3kY3Szpv1mC8S7i6HUq2nhB8UnouO/X+DubVEL4=",
+        "owner": "pingdotgg",
+        "repo": "t3code",
+        "rev": "60b546cf0111f0a041e9fbac025f4c904961ad75",
+        "type": "github"
+      },
+      "original": {
+        "owner": "pingdotgg",
+        "repo": "t3code",
         "type": "github"
       }
     },

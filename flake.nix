@@ -144,6 +144,10 @@
       url = "github:natsukium/mcp-servers-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    t3code = {
+      url = "github:pingdotgg/t3code";
+      flake = false;
+    };
   };
 
   outputs =

@@ -4,6 +4,7 @@
   lib,
   osConfig ? { },
   pkgs,
+  inputs,
   ...
 }:
 let
@@ -28,7 +29,7 @@ in
           # otherwise migrate to llm-agents.nix if provided
           pkgsMaster = getPkgsMaster pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
         in
-        pkgsMaster.t3code.override {
+        (pkgsMaster.t3code.override {
           inherit (pkgs) gh;
           inherit (pkgs) git;
 
@@ -38,7 +39,20 @@ in
           enableGitHub = true;
           enableJujutsu = false;
           enableOpencode = false;
-        };
+        }).overrideAttrs
+          (old: {
+            src = inputs.t3code;
+            version = inputs.t3code.shortRev or "dirty";
+            pnpmDeps = pkgs.fetchPnpmDeps {
+              inherit (old) pname;
+              version = inputs.t3code.shortRev or "dirty";
+              src = inputs.t3code;
+              inherit (old) pnpmWorkspaces;
+              pnpm = pkgsMaster.pnpm_10;
+              fetcherVersion = 4;
+              hash = "sha256-YG7mQxe9AJZNC9piMeFTr4YGgELK1qzkQyBu+Rfgfww=";
+            };
+          });
 
       remoteCommand =
         let
