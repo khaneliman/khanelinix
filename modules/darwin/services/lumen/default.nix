@@ -123,6 +123,7 @@ let
         sunshineName = mkOption {
           type = types.str;
           default = "${config.networking.hostName} ${name}";
+          defaultText = lib.literalExpression "\"\${config.networking.hostName} \${name}\"";
           description = "Host name advertised to Moonlight clients via mDNS.";
         };
 
