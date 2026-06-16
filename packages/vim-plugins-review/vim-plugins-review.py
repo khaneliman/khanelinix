@@ -409,6 +409,22 @@ def main() -> int:
             base, head, candidates, systems, temp_dir
         )
         print(f"actual changed: {len(changed)}", file=sys.stderr)
+        removed_names = {
+            name
+            for name in changed
+            if all(
+                entry["head"]["status"] == "missing"
+                for entry in details
+                if entry["name"] == name
+            )
+        }
+        if removed_names:
+            print(
+                "skipping removed vimPlugins attrs: "
+                + ", ".join(f"vimPlugins.{name}" for name in sorted(removed_names)),
+                file=sys.stderr,
+            )
+        changed = [name for name in changed if name not in removed_names]
 
         if args.details:
             print(json.dumps(details, indent=2, sort_keys=True))
