@@ -199,6 +199,12 @@ in
         audio_sink = "alsa_output.pci-0000_0e_00.4.analog-stereo";
         hevc_mode = 3;
         av1_mode = 3;
+        global_prep_cmd = builtins.toJSON [
+          {
+            do = ''if command -v swaymsg >/dev/null 2>&1; then swaymsg "output * dpms on"; fi; if command -v hyprctl >/dev/null 2>&1; then hyprctl dispatch 'hl.dsp.dpms("on")'; fi'';
+            undo = ''if command -v swaymsg >/dev/null 2>&1; then swaymsg "output * dpms off"; fi; if command -v hyprctl >/dev/null 2>&1; then hyprctl dispatch 'hl.dsp.dpms("off")'; fi'';
+          }
+        ];
       };
     };
   };
