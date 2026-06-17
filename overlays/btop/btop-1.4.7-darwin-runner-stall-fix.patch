@@ -1,0 +1,234 @@
+diff -ruN btop-src-orig/src/btop.cpp btop-src-mod/src/btop.cpp
+--- a/src/btop.cpp	2026-06-17 13:28:48.582354437 -0500
++++ b/src/btop.cpp	2026-06-17 13:29:00.808226528 -0500
+@@ -217,13 +217,11 @@
+ 	#if defined __APPLE__ || defined __OpenBSD__ || defined __NetBSD__
+ 		if (pthread_join(Runner::runner_id, nullptr) != 0) {
+ 			Logger::warning("Failed to join _runner thread on exit!");
+-			pthread_cancel(Runner::runner_id);
+ 		}
+ 	#else
+ 		constexpr struct timespec ts { .tv_sec = 5, .tv_nsec = 0 };
+ 		if (pthread_timedjoin_np(Runner::runner_id, nullptr, &ts) != 0) {
+ 			Logger::warning("Failed to join _runner thread on exit!");
+-			pthread_cancel(Runner::runner_id);
+ 		}
+ 	#endif
+ 	}
+@@ -474,9 +472,9 @@
+ 		//* ----------------------------------------------- THREAD LOOP -----------------------------------------------
+ 		while (not Global::quitting) {
+ 			thread_wait();
+-			atomic_wait_for(active, true, 5000);
++			atomic_wait_for(active, true, 30'000);
+ 			if (active) {
+-				Global::exit_error_msg = "Runner thread failed to get active lock!";
++				Global::exit_error_msg = "Runner thread failed to get active lock (30s)!";
+ 				Global::thread_exception = true;
+ 				Input::interrupt();
+ 				stopping = true;
+@@ -737,24 +735,14 @@
+ 
+ 	//* Runs collect and draw in a secondary thread, unlocks and locks config to update cached values
+ 	void run(const string& box, bool no_update, bool force_redraw) {
+-		atomic_wait_for(active, true, 5000);
++		atomic_wait_for(active, true, 10'000);
+ 		if (active) {
+-			Logger::error("Stall in Runner thread, restarting!");
+-			set_active(false);
+-			// exit(1);
+-			pthread_cancel(Runner::runner_id);
+-
+-			// Wait for the thread to actually terminate before creating a new one
+-			void* thread_result;
+-			int join_result = pthread_join(Runner::runner_id, &thread_result);
+-			if (join_result != 0) {
+-				Logger::warning("Failed to join cancelled thread: {}", strerror(join_result));
+-			}
+-
+-			if (pthread_create(&Runner::runner_id, nullptr, &Runner::_runner, nullptr) != 0) {
+-				Global::exit_error_msg = "Failed to re-create _runner thread!";
+-				clean_quit(1);
+-			}
++			Logger::warning("Runner thread slow (>10s), waiting up to 30s...");
++			atomic_wait_for(active, true, 20'000);
++		}
++		if (active) {
++			Global::exit_error_msg = "Runner thread stalled for 30s, exiting.";
++			clean_quit(1);
+ 		}
+ 		if (stopping or Global::resized) return;
+ 
+@@ -799,14 +787,14 @@
+ 			Global::exit_error_msg = "Runner thread died unexpectedly!";
+ 			clean_quit(1);
+ 		} else if (is_runner_busy) {
+-			atomic_wait_for(active, true, 5000);
++			atomic_wait_for(active, true, 30'000);
+ 			if (active) {
+ 				set_active(false);
+ 				if (Global::quitting) {
+ 					return;
+ 				}
+ 				else {
+-					Global::exit_error_msg = "No response from Runner thread, quitting!";
++					Global::exit_error_msg = "No response from Runner thread (30s), quitting!";
+ 					clean_quit(1);
+ 				}
+ 			}
+diff -ruN btop-src-orig/src/btop_tools.cpp btop-src-mod/src/btop_tools.cpp
+--- a/src/btop_tools.cpp	2026-06-17 13:28:48.582354437 -0500
++++ b/src/btop_tools.cpp	2026-06-17 13:29:03.654472264 -0500
+@@ -546,8 +546,8 @@
+ 	}
+ 
+ 	void atomic_wait_for(const atomic<bool>& atom, bool old, const uint64_t wait_ms) noexcept {
+-		const uint64_t start_time = time_ms();
+-		while (atom.load(std::memory_order_relaxed) == old and (time_ms() - start_time < wait_ms)) sleep_ms(1);
++		const uint64_t start_time = uptime_micros() / 1000;
++		while (atom.load(std::memory_order_relaxed) == old and ((uptime_micros() / 1000) - start_time < wait_ms)) sleep_ms(1);
+ 	}
+ 
+ 	atomic_lock::atomic_lock(atomic<bool>& atom, bool wait) : atom(atom) {
+diff -ruN btop-src-orig/src/btop_tools.hpp btop-src-mod/src/btop_tools.hpp
+--- a/src/btop_tools.hpp	2026-06-17 13:28:48.582354437 -0500
++++ b/src/btop_tools.hpp	2026-06-17 13:29:00.809605357 -0500
+@@ -27,6 +27,7 @@
+ #include <atomic>
+ #include <chrono>
+ #include <cstdint>
++#include <ctime>
+ #include <filesystem>
+ #include <limits.h>
+ #include <ranges>
+@@ -248,6 +249,19 @@
+ 		return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+ 	}
+ 
++	//* Return uptime in microseconds, excluding time spent in system suspend
++	inline uint64_t uptime_micros() {
++		struct timespec ts{};
++#ifdef __APPLE__
++		if (clock_gettime(CLOCK_UPTIME_RAW, &ts) != 0) return 0;
++#elif defined(__FreeBSD__)
++		if (clock_gettime(CLOCK_UPTIME, &ts) != 0) return 0;
++#else
++		if (clock_gettime(CLOCK_MONOTONIC, &ts) != 0) return 0;
++#endif
++		return static_cast<uint64_t>(ts.tv_sec) * 1'000'000 + static_cast<uint64_t>(ts.tv_nsec) / 1000;
++	}
++
+ 	//* Check if a string is a valid bool value
+ 	inline bool isbool(const std::string_view str) {
+ 		return is_in(str, "true", "false", "True", "False");
+diff -ruN btop-src-orig/src/osx/btop_collect.cpp btop-src-mod/src/osx/btop_collect.cpp
+--- a/src/osx/btop_collect.cpp	2026-06-17 13:28:48.584274567 -0500
++++ b/src/osx/btop_collect.cpp	2026-06-17 13:29:00.808726569 -0500
+@@ -49,6 +49,7 @@
+ 
+ #include <cmath>
+ #include <fstream>
++#include <future>
+ #include <mutex>
+ #include <numeric>
+ #include <ranges>
+@@ -817,38 +818,64 @@
+ 		return got_sensors;
+ 	}
+ 
+-	void update_sensors() {
+-		current_cpu.temp_max = 95;  // we have no idea how to get the critical temp
++	struct SensorResult {
++		long long package_temp{};
++		std::vector<long long> core_temps;
++		bool valid{false};
++	};
++
++	static SensorResult collect_sensors() {
++		SensorResult result;
+ 		try {
+ 			if (macM1) {
+ #if __MAC_OS_X_VERSION_MIN_REQUIRED > 101504
+ 				ThermalSensors sensors;
+-				std::vector<long long> core_temps;
+-				current_cpu.temp.at(0).push_back(sensors.getSensors(core_temps));
+-				if (current_cpu.temp.at(0).size() > 20)
+-					current_cpu.temp.at(0).pop_front();
+-				cpu_temp_only = core_temps.empty();
+-
+-				if (Config::getB("show_coretemp") and not core_temps.empty()) {
+-					for (int core = 0; core < Shared::coreCount; core++) {
+-						size_t sensor_index = static_cast<size_t>(core) * core_temps.size() / Shared::coreCount;
+-						long long temp = core_temps.at(sensor_index);
+-						if (cmp_less(core + 1, current_cpu.temp.size())) {
+-							current_cpu.temp.at(core + 1).push_back(temp);
+-							if (current_cpu.temp.at(core + 1).size() > 20)
+-								current_cpu.temp.at(core + 1).pop_front();
+-						}
+-					}
+-				}
++				result.package_temp = sensors.getSensors(result.core_temps);
++				result.valid = true;
+ #endif
+ 			} else {
+ 				SMCConnection smcCon;
+ 				int threadsPerCore = Shared::coreCount / Shared::physicalCoreCount;
+-				long long packageT = smcCon.getTemp(-1); // -1 returns package T
+-				current_cpu.temp.at(0).push_back(packageT);
++				result.package_temp = smcCon.getTemp(-1);
++				for (int core = 0; core < Shared::coreCount; core++) {
++					result.core_temps.push_back(smcCon.getTemp((core / threadsPerCore) + core_offset));
++				}
++				result.valid = true;
++			}
++		} catch (std::runtime_error &e) {
++			Logger::error("failed getting CPU temp: {}", e.what());
++		}
++		return result;
++	}
++
++	void update_sensors() {
++		static std::future<SensorResult> sensor_future;
++		static SensorResult last_result{};
++
++		current_cpu.temp_max = 95;  // we have no idea how to get the critical temp
++
++		if (sensor_future.valid() and
++		    sensor_future.wait_for(std::chrono::seconds(0)) != std::future_status::timeout) {
++			last_result = sensor_future.get();
++			if (not last_result.valid) {
++				got_sensors = false;
++			}
++		}
++
++		if (last_result.valid) {
++			current_cpu.temp.at(0).push_back(last_result.package_temp);
++			if (current_cpu.temp.at(0).size() > 20)
++				current_cpu.temp.at(0).pop_front();
+ 
++			if (macM1) {
++				cpu_temp_only = last_result.core_temps.empty();
++			}
++
++			bool show_coretemp = macM1 ? Config::getB("show_coretemp") : true;
++			if (show_coretemp and not last_result.core_temps.empty()) {
+ 				for (int core = 0; core < Shared::coreCount; core++) {
+-					long long temp = smcCon.getTemp((core / threadsPerCore) + core_offset); // same temp for all threads of same physical core
++					size_t sensor_index = static_cast<size_t>(core) * last_result.core_temps.size() / Shared::coreCount;
++					long long temp = last_result.core_temps.at(sensor_index);
+ 					if (cmp_less(core + 1, current_cpu.temp.size())) {
+ 						current_cpu.temp.at(core + 1).push_back(temp);
+ 						if (current_cpu.temp.at(core + 1).size() > 20)
+@@ -856,10 +883,9 @@
+ 					}
+ 				}
+ 			}
+-		} catch (std::runtime_error &e) {
+-			got_sensors = false;
+-			Logger::error("failed getting CPU temp");
+ 		}
++
++		sensor_future = std::async(std::launch::async, collect_sensors);
+ 	}
+ 
+ 	string get_cpuHz() {
