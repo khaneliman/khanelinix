@@ -164,11 +164,23 @@ let
         nixpkgs = mkPatchedFlakeInput "nixpkgs" { };
         nixpkgs-unstable = mkPatchedFlakeInput "nixpkgs-unstable" { };
         nixpkgs-master = mkPatchedFlakeInput "nixpkgs-master" { };
-        home-manager = mkPatchedFlakeInput "home-manager" {
-          nixpkgs = nixpkgs-unstable;
+        home-manager = mkPatchedFlake {
+          pkgs = bootstrapPkgs;
+          inputName = "home-manager";
+          flakeInputs = {
+            nixpkgs = nixpkgs-unstable;
+          };
+          inherit extraInputPatches;
+          force = unstableIsPatched;
         };
-        nix-darwin = mkPatchedFlakeInput "nix-darwin" {
-          nixpkgs = nixpkgs-unstable;
+        nix-darwin = mkPatchedFlake {
+          pkgs = bootstrapPkgs;
+          inputName = "nix-darwin";
+          flakeInputs = {
+            nixpkgs = nixpkgs-unstable;
+          };
+          inherit extraInputPatches;
+          force = unstableIsPatched;
         };
         nix-rosetta-builder = mkPatchedFlake {
           pkgs = bootstrapPkgs;
