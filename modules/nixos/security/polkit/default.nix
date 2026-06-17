@@ -11,6 +11,11 @@ in
 {
   options.khanelinix.security.polkit = {
     enable = lib.mkEnableOption "polkit";
+    debug = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable polkit debugging/logging.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -28,9 +33,8 @@ in
     ];
     security.polkit = {
       enable = true;
-      debug = lib.mkDefault true;
 
-      extraConfig = lib.mkIf config.security.polkit.debug ''
+      extraConfig = lib.mkIf cfg.debug ''
         /* Log authorization checks. */
         polkit.addRule(function(action, subject) {
           polkit.log("user " +  subject.user + " is attempting action " + action.id + " from PID " + subject.pid);
