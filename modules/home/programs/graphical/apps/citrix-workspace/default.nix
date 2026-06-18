@@ -1,5 +1,6 @@
 {
   config,
+  getPkgsMaster,
   lib,
   pkgs,
   ...
@@ -94,7 +95,12 @@ in
     };
 
     home = {
-      packages = [ pkgs.citrix_workspace ];
+      packages =
+        let
+          # TODO: remove after hits channel
+          pkgsMaster = getPkgsMaster pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
+        in
+        [ pkgsMaster.citrix-workspace ];
 
       # Generate wfclient.ini configuration file
       file.".ICAClient/wfclient.ini" = {

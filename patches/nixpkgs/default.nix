@@ -15,8 +15,4 @@ _: [
   # ./local.patch
   #
   # <patch derivation>
-  {
-    url = "https://github.com/NixOS/nixpkgs/pull/529980.patch";
-    hash = "sha256-Q29wyyEXtp7ysJ98yaOh3WNqX8I6XLUwwS52VJ1HLrc=";
-  }
 ]
