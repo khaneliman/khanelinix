@@ -15,6 +15,10 @@ let
 
   cfg = config.khanelinix.programs.graphical.apps.thunderbird;
   themeCfg = cfg.theme;
+  enabledDavmailAccounts = lib.filterAttrs (
+    _name: account:
+    account.enable && account.flavor == "davmail" && config.khanelinix.services.davmail.enable
+  ) cfg.extraEmailAccounts;
 in
 {
   options.khanelinix.programs.graphical.apps.thunderbird = {
@@ -155,15 +159,36 @@ in
                 inherit type url;
                 userName = config.khanelinix.user.email;
               };
-              local = {
-                inherit color;
-              };
               thunderbird = {
                 enable = true;
                 profiles = [
                   config.khanelinix.user.name
                 ];
                 inherit color;
+              };
+            };
+          mkDavmailCalendarConfig =
+            accountName:
+            { address, ... }:
+            {
+              remote = {
+                type = "caldav";
+                url = "http://localhost:1080/users/${address}/calendar";
+                userName = address;
+              };
+              thunderbird = {
+                enable = true;
+                profiles = [
+                  config.khanelinix.user.name
+                ];
+                color = "#d787ff";
+                settings = id: {
+                  # DavMail's localhost prompt still needs the saved mail password;
+                  # O365DeviceCode uses it to decrypt and refresh the OAuth token.
+                  "calendar.registry.calendar_${id}.disabled" = false;
+                  "calendar.registry.calendar_${id}.imip.identity.key" =
+                    "id_${builtins.hashString "sha256" accountName}";
+                };
               };
             };
         in
@@ -184,6 +209,7 @@ in
             };
           };
         }
+        // lib.mapAttrs mkDavmailCalendarConfig enabledDavmailAccounts
         // lib.mapAttrs (_name: mkCalendarConfig) cfg.extraCalendarAccounts;
       email.accounts =
         let
