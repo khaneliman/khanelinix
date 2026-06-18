@@ -48,6 +48,7 @@ in
 
         browsers = {
           firefox = {
+            extensions.installMethod = "policy";
             hardwareDecoding = true;
             settings = {
               "dom.ipc.processCount.webIsolated" = 9;

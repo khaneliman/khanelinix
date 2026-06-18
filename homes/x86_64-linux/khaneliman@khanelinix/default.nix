@@ -88,6 +88,7 @@ in
 
         browsers = {
           firefox = {
+            extensions.installMethod = "policy";
             gpuAcceleration = true;
             hardwareDecoding = true;
             settings = {
