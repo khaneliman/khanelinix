@@ -116,7 +116,7 @@ in
             };
           };
         };
-        programs.firefox.profiles.${config.khanelinix.user.name}.extensions.packages =
+        khanelinix.programs.graphical.browsers.firefox.extensions.extraPackages =
           mkIf config.khanelinix.programs.graphical.browsers.firefox.enable
             [ pkgs.firefox-addons.tokyo-night-v2 ];
 
