@@ -250,8 +250,6 @@ in
         InAppNotification = {
           Disabled = true;
         };
-        OfferToSaveLogins = false;
-        PasswordManagerEnabled = false;
       };
 
       profiles.${config.khanelinix.user.name} = {
