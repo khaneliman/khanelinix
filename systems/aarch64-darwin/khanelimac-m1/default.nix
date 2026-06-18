@@ -12,7 +12,10 @@ in
 {
   khanelinix = {
     environments = {
-      home-network = enabled;
+      home-network = {
+        enable = true;
+        enableNFSMounts = false;
+      };
     };
 
     security = {
