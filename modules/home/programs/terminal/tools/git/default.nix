@@ -95,7 +95,8 @@ in
 
         git = {
           enable = true;
-          diffToolMode = !config.programs.kitty.enable && !config.programs.delta.enable;
+          mode =
+            if !config.programs.kitty.enable && !config.programs.delta.enable then "both" else "external";
         };
 
         options = {
