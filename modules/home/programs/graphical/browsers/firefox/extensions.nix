@@ -8,22 +8,11 @@ let
   inherit (lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.programs.graphical.browsers.firefox;
-  extensionSettings = builtins.listToAttrs (
-    map (
-      package:
-      let
-        inherit (package) addonId;
-      in
-      {
-        name = addonId;
-        value = {
-          installation_mode = cfg.extensions.policy.installationMode;
-          install_url = "file://${package}/share/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384}/${addonId}.xpi";
-          updates_disabled = true;
-        };
-      }
-    ) cfg.extensions.packages
-  );
+  extensionPackages = cfg.extensions.packages ++ cfg.extensions.extraPackages;
+  globalExtensions = map (package: {
+    inherit package;
+    settings.updates_disabled = true;
+  }) extensionPackages;
 in
 {
   options.khanelinix.programs.graphical.browsers.firefox = {
@@ -58,6 +47,8 @@ in
         user-agent-string-switcher
       ]) "Extensions to install";
 
+      extraPackages = mkOpt (with lib.types; listOf package) [ ] "Additional extensions to install.";
+
       settings = mkOpt (with lib.types; attrsOf anything) {
       } "Settings to apply to the extensions.";
 
@@ -65,7 +56,7 @@ in
         installationMode = mkOpt (lib.types.enum [
           "force_installed"
           "normal_installed"
-        ]) "normal_installed" "Firefox ExtensionSettings installation mode.";
+        ]) "force_installed" "Firefox ExtensionSettings installation mode.";
       };
     };
   };
@@ -77,8 +68,8 @@ in
           {
             assertion =
               cfg.extensions.installMethod != "policy"
-              || builtins.all (package: package ? addonId) cfg.extensions.packages;
-            message = "Firefox ExtensionSettings installs require every extension package to expose addonId.";
+              || cfg.extensions.policy.installationMode == "force_installed";
+            message = "Firefox native globalExtensions only supports force_installed policy installs.";
           }
         ];
 
@@ -90,14 +81,12 @@ in
 
       (lib.mkIf (cfg.extensions.installMethod == "profile") {
         programs.firefox.profiles.${config.khanelinix.user.name}.extensions = {
-          inherit (cfg.extensions) packages;
+          packages = extensionPackages;
         };
       })
 
       (lib.mkIf (cfg.extensions.installMethod == "policy") {
-        home.packages = cfg.extensions.packages;
-
-        programs.firefox.policies.ExtensionSettings = extensionSettings;
+        programs.firefox.globalExtensions = globalExtensions;
       })
     ]
   );
