@@ -23,17 +23,22 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.shellAliases = {
-      # Control overrides
-      "agy-continue" = "agy --continue";
-      "agy-sandbox" = "agy --sandbox";
-      "agy-safe" = "agy --sandbox";
-      "agy-danger" = "agy --dangerously-skip-permissions";
+    home = {
+      # TODO: Upstream to home manager?
+      # NOTE: antigravity will mutate config and replace file.
+      file.".gemini/antigravity-cli/settings.json".force = true;
+      shellAliases = {
+        # Control overrides
+        "agy-continue" = "agy --continue";
+        "agy-sandbox" = "agy --sandbox";
+        "agy-safe" = "agy --sandbox";
+        "agy-danger" = "agy --dangerously-skip-permissions";
 
-      # Task shortcuts
-      "agy-deep" = "agy --model \"Gemini 3.1 Pro (High)\"";
-      "agy-quick" = "agy --model \"Gemini 3.5 Flash (High)\"";
-      "agy-nano" = "agy --model \"Gemini 3.5 Flash (Low)\"";
+        # Task shortcuts
+        "agy-deep" = "agy --model \"Gemini 3.1 Pro (High)\"";
+        "agy-quick" = "agy --model \"Gemini 3.5 Flash (High)\"";
+        "agy-nano" = "agy --model \"Gemini 3.5 Flash (Low)\"";
+      };
     };
 
     programs.antigravity-cli = {
