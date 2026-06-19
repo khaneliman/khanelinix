@@ -17,7 +17,10 @@ in
   config = lib.mkIf cfg.enable {
     homebrew = {
       taps = [
-        "deskflow/homebrew-tap"
+        {
+          name = "deskflow/homebrew-tap";
+          trusted = true;
+        }
       ];
       casks = [ "deskflow" ];
     };

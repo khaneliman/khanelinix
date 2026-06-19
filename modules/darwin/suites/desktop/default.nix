@@ -61,7 +61,10 @@ in
       ];
 
       taps = [
-        "beeftornado/rmtree"
+        {
+          name = "beeftornado/rmtree";
+          trusted = true;
+        }
       ];
 
       masApps = mkIf config.khanelinix.tools.homebrew.masEnable {
