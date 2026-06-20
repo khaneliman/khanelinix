@@ -3,7 +3,6 @@
   inputs,
   lib,
   pkgs,
-  getPkgsMaster,
   getPkgsUnstable,
   ...
 }:
@@ -94,18 +93,13 @@ in
 
     programs.firefox =
       let
-        pkgsMaster = getPkgsMaster pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
         pkgsUnstable = getPkgsUnstable pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
       in
       {
         # Firefox configuration and policies
         # See: https://mozilla.github.io/policy-templates/
         enable = true;
-        package =
-          if pkgs.stdenv.hostPlatform.isDarwin then
-            pkgsMaster.firefox-devedition
-          else
-            pkgsUnstable.firefox-devedition;
+        package = pkgsUnstable.firefox-devedition;
 
         darwinDefaultsId =
           if config.programs.firefox.package.pname == "firefox-devedition" then
