@@ -77,7 +77,6 @@ config = lib.mkIf (cfg.enable && cfg.autoEnableSources) {
 };
 ```
 
-Use a separate override option only when the warning is about behavior that is
-not cleanly represented by the warned option itself, such as automatic
-inference, auto-enablement, or compatibility shims. The extra option should
-change the behavior that caused the warning, not merely hide the message.
+A separate override option is only justified when the behavior causing the
+warning cannot be expressed by the warned option itself (auto-inference,
+compatibility shims). It must change the behavior, not just hide the message.

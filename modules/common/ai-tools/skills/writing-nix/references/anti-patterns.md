@@ -70,13 +70,10 @@ in {
 
 ## Chained `if/else if/else`
 
-Treat chained conditionals as an anti-pattern in Nix.
-
-They are usually a sign that one of the more declarative tools should have been
-used instead:
+Chained conditionals are an anti-pattern. Use instead:
 
 - `lib.mkIf` for module config fragments
-- `lib.optional*` helpers for list/string/attrset composition
+- `lib.optional*` for list/string/attrset composition
 - attrset lookup for static multi-branch selection
 
 Decision rule:

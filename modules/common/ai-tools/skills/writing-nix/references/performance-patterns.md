@@ -6,10 +6,9 @@ reach for while writing; for profiling and before/after measurement use the
 
 ## Folds And Recursion
 
-Prefer the strict `builtins.foldl'` / `lib.foldl'` over `foldl` or hand-written
-recursion for list reductions. The prime (`'`) version forces the accumulator at
-each step, so it does not build a deep chain of lazy thunks that pressures the
-GC and can overflow the evaluation stack.
+Prefer `builtins.foldl'` / `lib.foldl'` over `foldl` or hand-written recursion.
+The strict (`'`) variant forces the accumulator at each step, avoiding lazy
+thunk chains that pressure GC and can overflow the eval stack.
 
 ```nix
 # BAD: lazy accumulator, thunk buildup
@@ -34,9 +33,8 @@ Decision rule:
 
 ## Local Paths In Strings
 
-Interpolating a local path into a string coerces it by **copying the target into
-the Nix store first**. `"${./.}"` at a repo root copies the entire tree on every
-eval.
+Interpolating a local path into a string copies the target into the Nix store.
+`"${./.}"` at a repo root copies the entire tree on every eval.
 
 ```nix
 # BAD: copies the whole directory to the store to resolve the string
@@ -59,8 +57,7 @@ Decision rule:
 
 ## String Manipulation
 
-Nix is not built for heavy string work; repeated split/concat over large strings
-degrades toward `O(N^2)`.
+Repeated split/concat over large strings degrades toward `O(N^2)`.
 
 Decision rule:
 
@@ -80,8 +77,7 @@ comparison.
 
 ## Module Imports Are Evaluations
 
-Importing a module evaluates it; NixOS eval time scales linearly with the number
-of imported modules.
+Importing a module evaluates it; eval time scales with import count.
 
 Decision rule:
 

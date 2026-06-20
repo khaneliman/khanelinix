@@ -4,15 +4,12 @@ Keep bindings as close to their usage as possible.
 
 Binding decision rule:
 
-1. If a value is used once and reads fine inline, inline it.
-2. If a value is used once but is a large multi-line expression that makes the
-   surrounding block hard to scan, put it in a small local `let` around the
-   smallest expression that needs it.
-3. If a value is used multiple times, bind it at the narrowest shared scope of
-   those uses instead of hoisting it to the top of the file or module.
-
-The purpose of a local single-use binding is to preserve the readability of the
-surrounding structure, not to shorten names or avoid typing `lib.` / `pkgs.`.
+1. Used once and reads fine inline → inline it.
+2. Used once but large/multi-line → small local `let` around the smallest
+   expression that needs it. Purpose: readability of surrounding structure, not
+   name-shortening or avoiding `lib.`/`pkgs.`.
+3. Used multiple times → bind at narrowest shared scope, not hoisted to
+   file/module top.
 
 ## `inherit (...)`
 
@@ -59,9 +56,5 @@ in {
 }
 ```
 
-Before adding a binding, ask:
-
-1. Is this shared?
-2. Does the inline form damage readability?
-
-If both answers are no, do not bind it.
+Before adding a binding: if it is not shared AND inline form is readable, do not
+bind it.
