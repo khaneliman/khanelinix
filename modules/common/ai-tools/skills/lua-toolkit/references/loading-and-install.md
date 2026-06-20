@@ -1,24 +1,16 @@
 # Loading and Installation
 
-How the plugin loads itself and how users install it.
-
 ## Self-Lazy-Load — Don't Rely on the Plugin Manager
 
-Don't rely on a plugin manager (lazy.nvim's `event`/`cmd`/`ft` triggers) to
-lazy-load for you. Decide which parts load when, and make the plugin load them:
+Don't rely on `event`/`cmd`/`ft` triggers in the manager. Make the plugin load
+itself:
 
-- **Filetype-specific code** → `ftplugin/<filetype>.lua` (loads only for that
-  filetype). Such a plugin may have **no** `plugin/` directory at all (see
-  apis-and-keymaps).
-- **Everything else** → a small `plugin/<name>.lua` registering commands and
-  `<Plug>` mappings, deferring `require()` of the core into those handlers (see
-  plugin-architecture). Guard with `vim.g.loaded_<name>`.
+- **Filetype-specific** → `ftplugin/<filetype>.lua`. Plugin may have no
+  `plugin/` at all.
+- **Everything else** → `plugin/<name>.lua` registers commands + `<Plug>`
+  mappings, defers `require()` into handlers, guards with `vim.g.loaded_<name>`.
 
-This yields sub-millisecond startup, works regardless of how (or whether) the
-manager lazy-loads it, and needs no `setup()` call (see configuration).
-
-The entry script does a version guard, a `vim.g.loaded_*` guard, and defers
-`require()`; config is read from `vim.g`:
+Yields sub-millisecond startup, works regardless of manager, needs no `setup()`.
 
 ```lua
 -- File: ftplugin/rust.lua  (template only)
@@ -36,62 +28,36 @@ if not vim.g.loaded_my_plugin then
 end
 ```
 
-## lazy.nvim: Documenting Installation
+## lazy.nvim: Minimal Install Spec
 
-Users still install via a manager. Because the plugin self-initializes and reads
-`vim.g.<plugin>`, the spec stays minimal — no `config`/`opts`/`setup()`:
+Plugin self-initializes and reads `vim.g.<plugin>`, so the spec needs no
+`config`/`opts`/`setup()`:
 
 ```lua
--- template only
 { "author/my_plugin.nvim" }
+-- or with config:
+{ "author/my_plugin.nvim", init = function() vim.g.my_plugin = { strategy = "periodic" } end }
 ```
 
-To set config through the manager, set `vim.g.<plugin>` in `init`/`config`
-rather than calling `setup()`:
-
-```lua
--- template only
-{
-  "author/my_plugin.nvim",
-  init = function()
-    vim.g.my_plugin = { strategy = "periodic" }
-  end,
-}
-```
-
-Only document an `opts`/`config`-`setup()` flow if you also expose a `setup()`
-wrapper — never as the only way to use the plugin.
+Only document `setup()` flow if you also expose a `setup()` wrapper.
 
 ## Prefer Native APIs Over Utility Dependencies
 
-Before adding a dependency, check for a native API: `vim.system`/`vim.uv`
-(processes / async I/O), `vim.fs` (paths/files), `vim.treesitter`
-(parsing/queries), `vim.iter`, `vim.json`, `vim.ringbuf`. Modern Neovim replaces
-most of what older helper libraries provided. Don't depend on `plenary.nvim`.
+Check native first: `vim.system`/`vim.uv` (processes/async I/O), `vim.fs`
+(paths/files), `vim.treesitter`, `vim.iter`, `vim.json`, `vim.ringbuf`. Don't
+depend on `plenary.nvim`.
 
-## Dependencies (when genuinely needed)
+## Dependencies
 
-Declare a `dependencies` entry only when the dependency must be installed _and_
-loaded together with the parent. Pure-Lua libraries load on `require()`, so mark
-them `lazy = true` to keep them off the startup path:
+Pure-Lua libraries load on `require()` — mark `lazy = true` to keep them off the
+startup path:
 
 ```lua
--- template only
-{
-  "author/my_plugin.nvim",
-  dependencies = {
-    { "author/some-lua-lib.nvim", lazy = true },
-  },
-}
+{ "author/some-lua-lib.nvim", lazy = true }
 ```
 
 ## Build Steps
 
-`build` accepts a Lua function, shell command, or `build.lua`. Long build work
-must not block the UI thread:
-
-- lazy.nvim runs build functions in a Lua coroutine; use `coroutine.yield()` to
-  emit progress and defer to the next tick.
-- Never change global cwd (`vim.api.nvim_set_current_dir()`) in a build: builds
-  run concurrently and mutating cwd corrupts other in-flight builds. Use
-  absolute paths.
+lazy.nvim runs build functions in a coroutine. Use `coroutine.yield()` for
+progress. Never call `vim.api.nvim_set_current_dir()` in a build — runs
+concurrently, mutating cwd corrupts other in-flight builds. Use absolute paths.

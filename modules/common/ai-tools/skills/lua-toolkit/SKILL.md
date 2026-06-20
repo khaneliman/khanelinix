@@ -53,12 +53,6 @@ Target Lua 5.1 / LuaJIT 2.1, avoid globals, self-lazy-load, prefer lazy
 Canonical real-world examples: `nvim-best-practices`,
 `nvim-lua-nix-plugin-template` (Nix CI), `rustaceanvim`, `neotest-haskell`.
 
-## Cross-Skill Boundaries
+## Cross-Skill Boundaries and Reporting
 
-Read [operating-rules.md](references/operating-rules.md) for cross-skill
-boundaries, tooling posture, and reporting rules.
-
-## Reporting Rules
-
-Show exact commands and paths. Label snippets executed, syntax checked, or
-template only.
+See [operating-rules.md](references/operating-rules.md).
