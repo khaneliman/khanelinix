@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  getPkgsMaster,
+  getPkgsUnstable,
   ...
 }:
 let
@@ -17,9 +17,7 @@ in
 
   config = mkIf cfg.enable (
     let
-      # pkgsUnstable = getPkgsUnstable pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
-      # TODO: remove after hits channel
-      pkgsMaster = getPkgsMaster pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
+      pkgsUnstable = getPkgsUnstable pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
     in
     {
       programs = {
@@ -33,7 +31,7 @@ in
           # 1Password GUI documentation
           # See: https://support.1password.com/
           enable = true;
-          package = pkgsMaster._1password-gui;
+          package = pkgsUnstable._1password-gui;
         };
 
       };
