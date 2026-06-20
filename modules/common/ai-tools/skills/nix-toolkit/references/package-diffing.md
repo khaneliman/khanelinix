@@ -1,21 +1,13 @@
 # Package Diffing
 
-Use this playbook to compare package outputs across local changes, branches,
-forks, or nixpkgs revisions.
+## Protocol
 
-## Default Workflow
-
-1. Build the local package output.
-2. Build the comparison package output to a separate result symlink.
-3. Compare file lists and closure drift before deep byte-level inspection.
-4. Normalize store paths before reviewing textual diffs.
-5. Run `diffoscope` for structured output differences.
-6. Report changed paths, changed metadata, closure drift, and likely impact.
+1. Build local output and comparison output to separate result symlinks.
+2. File-list diff first (cheap), then closure drift, then `diffoscope`.
+3. Normalize store paths before reviewing textual diffs.
+4. Report changed paths, metadata, closure drift, and impact.
 
 ## Local Change vs Base Revision
-
-Use this when the current checkout changed a package and Git can provide the
-base tree:
 
 ```bash
 package="package-name"
@@ -28,12 +20,9 @@ nix store diff-closures result-before result-after
 nix-shell -p diffoscope --run "diffoscope result-before result-after"
 ```
 
-Remove the temporary worktree after investigation. Do not use this if the repo
-already has a user-managed worktree at the target path.
+Remove the temporary worktree after investigation.
 
 ## Local vs Remote Branch
-
-Use this shape when comparing the local checkout against a GitHub fork branch:
 
 ```bash
 remote="owner:branch"
@@ -55,12 +44,10 @@ nix-build -A "$package" -o result-local \
   && nix-shell -p diffoscope --run "diffoscope result-local result-remote"
 ```
 
-Use a fixed nixpkgs revision or hash-pinned fetch when the result must be
-reproducible. Use the branch form for quick review triage only.
+Use branch form for triage only; use fixed revision when result must be
+reproducible.
 
 ## Fixed Revision Template
-
-Prefer this shape when the comparison must be repeatable:
 
 ```bash
 package="package-name"
@@ -78,8 +65,8 @@ nix-build -E '
 ' --argstr owner "$owner" --argstr rev "$rev" --argstr package "$package" -o result-remote
 ```
 
-For durable docs or CI, add `sha256` to `fetchTarball` after one failed run
-prints the expected hash.
+Add `sha256` to `fetchTarball` for durable docs/CI (one failed run prints the
+expected hash).
 
 ## File List First Pass
 
@@ -88,8 +75,6 @@ find -L result-local -type f | sed 's#^result-local/##' | sort > local.files
 find -L result-remote -type f | sed 's#^result-remote/##' | sort > remote.files
 diff -u local.files remote.files
 ```
-
-This catches added, removed, or relocated files before expensive deep diffs.
 
 ## Closure Comparison
 
@@ -101,18 +86,10 @@ nix path-info -rSh result-remote | sort > remote.closure
 diff -u local.closure remote.closure
 ```
 
-Use closure diffs when output files match but dependencies or size may have
-changed.
-
-For a scripted first pass against two installables or store paths, use:
-
-```bash
-scripts/closure-diff-report.sh nixpkgs#hello nixpkgs#hello
-```
+Scripted first pass:
+`scripts/closure-diff-report.sh nixpkgs#hello nixpkgs#hello`
 
 ## Text Diff Normalization
-
-Use this before drawing conclusions from generated text that embeds store paths:
 
 ```bash
 diff -ru result-local result-remote \
@@ -120,25 +97,22 @@ diff -ru result-local result-remote \
   > normalized.diff
 ```
 
-Hash-only changes often indicate rebuild drift, not behavioral change. Path
-names, versions, embedded absolute paths, and generated metadata still matter.
+Hash-only changes usually indicate rebuild drift, not behavioral change.
 
-## Diffoscope Triage Tips
+## Diffoscope Tips
 
-- Start with file lists when the output is large; `diffoscope` can be slow.
-- If only timestamps differ, check whether the package should set
-  `SOURCE_DATE_EPOCH` or strip nondeterministic archive metadata.
-- If ELF differences appear, compare references with
-  `nix-store -q
-  --references result-*` before assuming source changes.
-- For fonts, icons, Python wheels, and jars, inspect generated indexes and
-  archive member ordering; these often explain large binary-looking diffs.
+- Start with file lists; `diffoscope` can be slow on large outputs.
+- Timestamps only → check `SOURCE_DATE_EPOCH` or strip nondeterministic archive
+  metadata.
+- ELF differences → compare `nix-store -q --references result-*` before assuming
+  source changes.
+- Fonts, icons, Python wheels, jars → inspect generated indexes and archive
+  member ordering.
 
 ## Reporting Checklist
 
-- Compared package, source revisions, and system.
+- Package, source revisions, system.
 - Exact build commands or attributes.
-- Whether outputs are byte-identical, file-list different, or structurally
-  different.
-- Largest or riskiest changed paths.
-- Whether closure size or dependencies changed.
+- Outputs: byte-identical | file-list different | structurally different.
+- Largest/riskiest changed paths.
+- Closure size or dependency changes.

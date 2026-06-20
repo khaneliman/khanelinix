@@ -1,7 +1,7 @@
 # Nix Toolkit Scripts
 
 Use scripts for first-pass reports and repeatable measurements; use mode
-playbooks when diagnosis, interpretation, or custom command shaping is needed.
+playbooks when diagnosis or custom command shaping is needed.
 
 ## Available Scripts
 

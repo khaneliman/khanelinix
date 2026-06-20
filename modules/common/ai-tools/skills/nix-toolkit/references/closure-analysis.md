@@ -1,19 +1,14 @@
 # Closure Analysis
 
-Use this playbook for package/system size changes, unexpected dependencies, or
-cache/substitution questions.
-
 ## Scripted Diff
-
-Use the bundled script when comparing two installables or store paths:
 
 ```bash
 scripts/closure-diff-report.sh nixpkgs#hello nixpkgs#hello
 ```
 
-It builds without linking, prints direct closure sizes, runs
-`nix store diff-closures`, shows raw added/removed store paths, and lists the
-largest entries in the resulting closure.
+Builds without linking, prints direct closure sizes, runs
+`nix store diff-closures`, shows added/removed store paths, lists largest
+entries.
 
 ## Size Summary
 
@@ -30,12 +25,8 @@ nix path-info --json --json-format 1 --recursive --closure-size "$out" \
     }'
 ```
 
-For built result symlinks:
-
-```bash
-nix path-info -Sh result
-nix path-info -rSh result | sort -h
-```
+For result symlinks:
+`nix path-info -Sh result && nix path-info -rSh result | sort -h`
 
 ## Dependency Drift
 
@@ -46,61 +37,51 @@ diff -u before.paths after.paths
 nix store diff-closures .#before .#after
 ```
 
-Use names and store paths cautiously: path hashes change when inputs change.
-Focus on package identity, role, and size impact.
+Focus on package identity and size impact; path hashes change when inputs
+change.
 
 ## Interpreting Size Regressions
 
-1. Check whether the direct output grew with `nix path-info -Sh`.
-2. If recursive size grew but direct size did not, inspect added closure paths.
-3. If a dependency appears only in the derivation graph, treat it as build-time
-   until a runtime reference proves otherwise.
-4. If a multi-output package is involved, compare the exact output path, not
-   only the package name.
+1. Direct output grew → `nix path-info -Sh`.
+2. Recursive grew but direct did not → inspect added closure paths.
+3. Dependency only in derivation graph → treat as build-time until runtime
+   reference proves otherwise.
+4. Multi-output package → compare the exact output path, not just package name.
 
-## Reverse Dependency Questions
-
-Use `nix why-depends` when the question is why one output depends on another:
+## Reverse Dependency
 
 ```bash
 nix why-depends .#package nixpkgs#dependency
-nix why-depends --derivation .#package nixpkgs#dependency
+nix why-depends --derivation .#package nixpkgs#dependency  # build-time edges
 nix why-depends --all .#package nixpkgs#dependency
 ```
 
-Use `--derivation` when runtime references do not explain the dependency; it
-shows build-time edges. Use `--all` only after the shortest path is understood.
+Use `--derivation` when runtime references don't explain the dependency. Use
+`--all` only after shortest path is understood.
 
-For deeper unwanted-dependency work, switch to
+For deeper unwanted-dependency work →
 [dependency-forensics.md](dependency-forensics.md).
 
 ## Reference Queries
 
-Use legacy store queries for built outputs when you need exact reference sets:
-
 ```bash
 nix-store -q --references result | sort
-nix-store -q --referrers result | sort
+nix-store -q --referrers result | sort   # local store only; absence ≠ no external referrers
 nix-store -q --tree result
 ```
 
-`--referrers` depends on the local store database; absence of a referrer is not
-proof that no external binary cache or other machine refers to the path.
+## Interpretation Notes
 
-## Advanced Interpretation
-
-- `nix store diff-closures` groups by package name/version, which is better for
-  human review than raw store path diffs.
-- Raw store path diffs are still useful when generated outputs changed name but
-  not version.
-- A larger direct output and a larger recursive closure are different bugs.
-- Multiple versions of the same library usually point to input graph drift,
-  overlays, or mixed `nixpkgs` instances.
+- `nix store diff-closures` groups by package name/version — better for human
+  review than raw path diffs.
+- Raw path diffs catch generated outputs that changed name but not version.
+- Direct output size vs recursive closure size are different bugs.
+- Multiple versions of same library → input graph drift, overlays, or mixed
+  nixpkgs instances.
 
 ## Reporting Checklist
 
 - Total closure size before/after.
-- Largest added dependencies.
-- Removed dependencies.
-- Whether the size change is direct output size or dependency closure.
-- Follow-up build or package changes needed.
+- Largest added/removed dependencies.
+- Whether size change is direct output or dependency closure.
+- Follow-up changes needed.

@@ -1,8 +1,5 @@
 # Flake Maintenance
 
-Use this playbook for flake lock updates, input graph inspection, follows
-cleanup, and cache behavior.
-
 ## Inspect Inputs
 
 ```bash
@@ -14,16 +11,9 @@ nix flake show
 
 ## Update Inputs
 
-Update one input:
-
 ```bash
-nix flake update input-name
-```
-
-Update all inputs:
-
-```bash
-nix flake update
+nix flake update input-name   # one input
+nix flake update              # all inputs
 ```
 
 After updates, inspect `flake.lock` and run the narrowest relevant build or
@@ -31,26 +21,15 @@ eval.
 
 ## Temporary Overrides
 
-Use overrides for investigation without committing lockfile changes:
-
 ```bash
 nix build .#package --override-input nixpkgs github:NixOS/nixpkgs/nixos-unstable
 nix flake metadata --override-input nixpkgs path:/path/to/nixpkgs
-```
-
-Use `--inputs-from` when evaluating another flake with the current repo's input
-pins:
-
-```bash
-nix flake metadata github:owner/repo --inputs-from .
+nix flake metadata github:owner/repo --inputs-from .   # evaluate another flake with current repo's pins
 ```
 
 ## Follows Checks
 
-Use `inputs.<name>.follows = "nixpkgs";` when it safely reduces duplicate input
-graphs. Validate cache-hit tradeoffs before broad follows changes.
-
-Check duplicate nixpkgs-like inputs before and after a follows change:
+Check duplicate nixpkgs-like inputs before/after a follows change:
 
 ```bash
 nix flake metadata --json \
@@ -58,36 +37,29 @@ nix flake metadata --json \
   | sort
 ```
 
-## Cache and Substitution Checks
+Validate cache-hit tradeoffs before broad follows changes.
+
+## Cache and Substitution
 
 ```bash
 out="$(nix eval --raw nixpkgs#hello.outPath)"
 nix path-info --store https://cache.nixos.org/ "$out"
 nix build .#package --dry-run
+nix build .#package --dry-run --refresh   # when metadata may be stale
 ```
 
-Resolve an installable to a store path before querying a remote binary cache.
-Use `--dry-run` to distinguish local build work from substitutable paths.
+Resolve installable to store path before querying remote binary cache.
 
-Use `--refresh` when metadata may be stale:
+## Lockfile Tips
 
-```bash
-nix build .#package --dry-run --refresh
-```
-
-## Lockfile Review Tips
-
-- Compare lockfile changes by input name and revision, not JSON line count.
-- Treat `flake.lock` node count increases as a signal to inspect input graph
-  duplication.
-- Avoid broad follows changes when they reduce source builds but hurt binary
-  cache hits for large upstream projects.
+- Compare lockfile by input name and revision, not JSON line count.
+- Node count increase → inspect input graph duplication.
+- Broad follows changes can hurt binary cache hits for large upstream projects.
 - Verify at least one affected system/package after lock updates; metadata-only
-  checks do not prove builds still work.
+  checks don't prove builds work.
 
 ## Reporting Checklist
 
-- Inputs changed.
-- Lockfile node count or notable graph changes when relevant.
+- Inputs changed, lockfile node count changes.
 - Builds/evals run after update.
-- Any cache-hit risk from follows or input pin changes.
+- Cache-hit risk from follows or input pin changes.
