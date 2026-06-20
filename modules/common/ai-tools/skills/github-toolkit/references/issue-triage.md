@@ -1,34 +1,18 @@
 # GitHub Issue Triage Reference
 
-Use this reference for finding, filtering, ranking, and summarizing GitHub
-issues with `gh`.
-
-## Contents
-
-- Repository Targeting
-- Preferred Commands
-- Comment Counts and Search Metadata
-- `gh search issues` Caveats
-- Reporting Checklist
+Use for finding, filtering, ranking, and summarizing GitHub issues with `gh`.
 
 ## Repository Targeting
 
-1. Determine the target repository before searching.
-   - If the user names a repository, use that exact repository.
-   - If the user says "upstream", resolve it from `git remote -v`.
-   - If the current checkout is a fork, prefer the upstream remote for upstream
-     issue discovery and say so.
-2. Verify auth if private data or higher rate limits matter:
-
-```sh
-gh auth status
-```
+1. If the user names a repo, use it exactly.
+2. If the user says "upstream", resolve from `git remote -v`.
+3. If current checkout is a fork, prefer the upstream remote for upstream issue
+   discovery — say so.
+4. Verify auth when private data or higher rate limits matter: `gh auth status`
 
 ## Preferred Commands
 
-Prefer `gh issue list` for normal repository-scoped issue discovery.
-
-Filtered issue list:
+Filtered issue list (repository-scoped):
 
 ```sh
 gh issue list --repo OWNER/REPO --state open --limit 1000 \
@@ -63,13 +47,9 @@ gh issue list --repo OWNER/REPO --state open --limit 20 \
 
 ## Comment Counts and Search Metadata
 
-Do not request `comments` from `gh issue list` for large result sets unless
-comment bodies are actually needed. In `gh issue list`, `comments` is an array
-of comment objects, not a cheap count, and there is no `commentsCount` JSON
-field. Large `--json comments` queries can fail with GraphQL 502 responses.
-
-Use the REST search endpoint when you need comment counts, sorting by comments,
-or other search metadata without fetching comment bodies.
+**Field-name quirk**: `gh issue list` has no `commentsCount` field. `comments`
+returns full comment objects (not a count) — requesting it on large result sets
+can cause GraphQL 502 responses. Use the REST search endpoint instead.
 
 Count via REST search:
 
@@ -95,33 +75,32 @@ gh api --method GET /search/issues \
   --jq '.items[:25] | map({number, title, comments, updated_at, url: .html_url, labels: [.labels[].name]})'
 ```
 
-Always include `--method GET` with `gh api /search/issues` when passing `-f`
-parameters. Without it, `gh api` may send a POST request and GitHub returns
-`404 Not Found`; that is a method problem, not a repository or auth problem.
+**Always include `--method GET`** with `gh api /search/issues` when passing `-f`
+parameters. Without it, `gh api` may send a POST and GitHub returns
+`404 Not Found` — a method problem, not a repo or auth problem.
 
 ## `gh search issues` Caveats
 
-Use `gh search issues` only for global searches across many repositories or when
-GitHub's search endpoint is specifically needed.
+Use only for global searches across many repos or when GitHub's search endpoint
+is specifically needed.
 
-- For repository-scoped search, pass the repository with `--repo OWNER/REPO`.
-- Do not put `repo:OWNER/REPO` inside a quoted query unless you have verified
-  the local CLI version accepts it.
-- For comment counts, request `commentsCount`, not `comments`.
+- For repo-scoped search, pass `--repo OWNER/REPO` — do not put
+  `repo:OWNER/REPO` inside a quoted query unless the local CLI version is
+  verified to accept it.
+- For comment counts use `commentsCount`, not `comments`.
 - If `gh search issues` returns zero or suspicious results for advanced
-  qualifiers such as `-linked:pr`, verify with `gh issue list` or
+  qualifiers like `-linked:pr`, verify with `gh issue list` or
   `gh api --method GET /search/issues` before trusting it.
 
 ## Reporting Checklist
 
-Summaries should explain:
+Summaries must include:
 
 - repository searched and why
-- filters used, including whether linked PRs were excluded
+- filters used (including whether linked PRs were excluded)
 - sample size and any API/CLI limitations
 - top labels or categories
-- recommended issues with issue number, title, URL, labels, and why each is a
-  good candidate
+- recommended issues: number, title, URL, labels, reason to pick each
 
 If results look inconsistent across commands, report the inconsistency and use
 the command whose output is easiest to verify.
