@@ -51,7 +51,9 @@ git commit -m "line1\nline2"
 Good:
 
 ```bash
-git commit -m "feat(scope): subject" -m "first body paragraph" -m "second paragraph"
+git commit -m "feat(scope): subject" -m "body paragraph"   # multiple -m flags
+git commit -F path/to/message.txt                          # file input
+git commit -F-                                             # stdin (heredoc)
 ```
 
 ## Local History Strategy
@@ -60,9 +62,10 @@ Before committing follow-up fixes, inspect whether history edit is better:
 
 - immediate HEAD correction: prefer `git commit --amend`
 - nearby local-only regression: prefer `git commit --fixup=<target>` then
-  `git rebase -i --autosquash`
+  `GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash <parent>^`
+  (`GIT_SEQUENCE_EDITOR=:` skips the editor — non-interactive)
 - pushed/shared commits: avoid rewrite; use follow-up commit unless user
-  coordinates rewrite
+  coordinates rewrite; confirmed rewrite requires `git push --force-with-lease`
 
 If splitting, squashing, or reordering is needed, state target history shape
 before running commands.
