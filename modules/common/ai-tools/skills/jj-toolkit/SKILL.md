@@ -5,21 +5,14 @@ description: Use for working with Jujutsu (jj) history workflows, including hunk
 
 # Jujutsu Toolkit
 
-Use this skill when a task requires `jj` or `jj-hunk-tool` workflows, including
-stack inspection, revsets, splits/squashes, rebases, conflict handling, and
+Use for `jj` / `jj-hunk-tool` workflows: stack inspection, revsets,
+splits/squashes, rebases, absorb/undo, conflict handling, bisect, and
 line-precise hunk operations.
 
-Before taking action, read the full upstream guide:
+Before acting, read the full upstream guide —
+[references/jj-surgeon.md](references/jj-surgeon.md) — which covers
+`jj-hunk-tool` command mapping and hunk IDs, full `jj` workflows, conflict and
+bisect guidance, and revset/workspace reference tables.
 
-- [references/jj-surgeon.md](references/jj-surgeon.md)
-
-That file includes:
-
-- `jj-hunk-tool` command mapping and hunk ID usage
-- full `jj` workflows (split, squash, rebase, absorb, undo, etc.)
-- conflict and bisect guidance
-- revset and workspace reference tables
-
-Keep MIT license attribution in-tree with:
-
-- [references/LICENSE-jj-hunk-tool](references/LICENSE-jj-hunk-tool)
+MIT attribution:
+[references/LICENSE-jj-hunk-tool](references/LICENSE-jj-hunk-tool).
