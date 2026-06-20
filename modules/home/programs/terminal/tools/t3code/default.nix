@@ -1,6 +1,5 @@
 {
   config,
-  getPkgsMaster,
   lib,
   osConfig ? { },
   pkgs,
@@ -24,12 +23,7 @@ in
       githubRoot = "${config.home.homeDirectory}/${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents/"}github";
 
       t3codePackage =
-        let
-          # TODO: move to regular package after hits channel
-          # otherwise migrate to llm-agents.nix if provided
-          pkgsMaster = getPkgsMaster pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
-        in
-        (pkgsMaster.t3code.override {
+        (pkgs.t3code.override {
           inherit (pkgs) gh;
           inherit (pkgs) git;
 
@@ -48,7 +42,7 @@ in
               version = inputs.t3code.shortRev or "dirty";
               src = inputs.t3code;
               inherit (old) pnpmWorkspaces;
-              pnpm = pkgsMaster.pnpm_10;
+              pnpm = pkgs.pnpm_10;
               fetcherVersion = 4;
               hash = "sha256-6ld/c6PIeJ/jp1RmkMDmIye9TGflez6d2emcf0zgdl4=";
             };
