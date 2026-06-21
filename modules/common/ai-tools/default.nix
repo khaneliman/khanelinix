@@ -153,7 +153,7 @@ in
   antigravityCli = {
     commands = aiCommands.toAntigravityCommands;
     agents = aiAgents.toAntigravityAgents;
-    skills = skillsForHarness "antigravityCli";
+    skills = skillsAttrsForHarness "antigravityCli" // aiAgents.toAntigravitySkills;
   };
 
   codex = {

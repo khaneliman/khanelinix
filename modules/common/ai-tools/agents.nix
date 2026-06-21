@@ -175,16 +175,27 @@ let
     prompt = agent.content;
     description = agent.description or "AI agent";
   }) agents;
+  renderAntigravitySkill = agent: ''
+    ---
+    name: ${builtins.toJSON agent.name}
+    description: ${builtins.toJSON agent.description}
+    ---
+
+    ${lib.trim agent.content}
+  '';
+  toAntigravitySkills = lib.mapAttrs (_name: renderAntigravitySkill) agents;
   toCodexAgents = lib.mapAttrs (_name: renderCodexAgent) agents;
   toOpenCodeMarkdown = lib.mapAttrs (_name: renderOpenCodeAgent) agents;
 in
 {
   inherit
     agents
+    renderAntigravitySkill
     renderClaudeAgent
     renderCopilotAgent
     renderOpenCodeAgent
     toAntigravityAgents
+    toAntigravitySkills
     toClaudeMarkdown
     toCopilotMarkdown
     toCodexAgents
