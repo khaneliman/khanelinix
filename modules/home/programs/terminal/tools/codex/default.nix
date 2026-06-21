@@ -11,6 +11,7 @@ let
     ;
 
   cfg = config.khanelinix.programs.terminal.tools.codex;
+  mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
   exoEnabled = config.services.exo.enable or false;
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
   tomlFormat = pkgs.formats.toml { };
@@ -126,7 +127,7 @@ in
 
     programs.codex = {
       enable = true;
-      enableMcpIntegration = true;
+      enableMcpIntegration = mkIf mcpModuleEnabled true;
 
       # https://developers.openai.com/codex/config-schema.json
       settings = {
