@@ -54,8 +54,7 @@ in
         }
         // lib.optionalAttrs hasTavilyApiKey {
           env = {
-            # Handled by development suite via shell exports, but good to be explicit
-            TAVILY_API_KEY = "$(cat ${config.sops.secrets.TAVILY_API_KEY.path})";
+            TAVILY_API_KEY.file = config.sops.secrets.TAVILY_API_KEY.path;
           };
         };
 
