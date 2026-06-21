@@ -19,6 +19,15 @@ let
       "${lib.removePrefix config.home.homeDirectory config.xdg.configHome}/codex"
     else
       ".codex";
+  codexConfigPath =
+    if config.home.preferXdgDirectories then
+      "${config.xdg.configHome}/codex"
+    else
+      "${config.home.homeDirectory}/.codex";
+  disabledSystemSkillConfig = map (name: {
+    path = "${codexConfigPath}/skills/.system/${name}/SKILL.md";
+    enabled = false;
+  }) aiTools.codex.disabledSystemSkills;
   codexProfiles = {
     # Deep analysis and live-research mode. Intentionally expensive:
     # benchmark preference is GPT-5.5 xhigh for best pass rate.
@@ -239,6 +248,10 @@ in
 
         approval_policy = "on-request";
         sandbox_mode = "danger-full-access";
+
+        skills = lib.optionalAttrs (disabledSystemSkillConfig != [ ]) {
+          config = disabledSystemSkillConfig;
+        };
 
         tui = {
           status_line = [
