@@ -35,6 +35,7 @@ in
         sparkModel = "openai/gpt-5.3-codex-spark";
         miniModel = "openai/gpt-5.4-mini";
         opencodeSkillsPath = toString config.programs.opencode.skills;
+        disabledPluginSkills = aiTools.opencode.disabledPluginSkills;
 
         deliberateFallbackModels = [
           {
@@ -115,12 +116,7 @@ in
 
           # Prefer the repository's local skill implementations for browser, git,
           # and UI workflows to avoid duplicate instructions from OmO built-ins.
-          disabled_skills = [
-            "frontend-ui-ux"
-            "git-master"
-            "playwright"
-            "playwright-cli"
-          ];
+          disabled_skills = disabledPluginSkills;
 
           background_task = {
             providerConcurrency = {
