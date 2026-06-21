@@ -1,7 +1,7 @@
 let
   commandName = "code-review";
   description = "Code review a pull request";
-  allowedTools = "Bash(gh issue view:*), Bash(gh search:*), Bash(gh issue list:*), Bash(gh pr comment:*), Bash(gh pr diff:*), Bash(gh pr view:*), Bash(gh pr list:*), mcp__github_inline_comment__create_inline_comment";
+  allowedTools = "Bash(gh issue view:*), Bash(gh search:*), Bash(gh issue list:*), Bash(gh pr diff:*), Bash(gh pr view:*), Bash(gh pr list:*), Read, Grep";
   prompt = ''
     Provide a high-signal code review for the given pull request.
 
@@ -22,12 +22,12 @@ let
        - clear instruction-file violations scoped to the changed file
     6. Filter out pre-existing issues, style opinions, speculative risks, linter
        findings, and duplicates.
-    7. If commenting, post one inline comment per unique issue using full
-       GitHub code links with the concrete commit SHA.
+    7. Return findings in review format. Do not post GitHub comments from this
+       command; use an explicit GitHub write workflow when requested.
 
     Use committable suggestion blocks only when the suggestion fully fixes the
-    issue. If no issues are found and `--comment` is provided, post the standard
-    no-issues summary from `github-toolkit`.
+    issue. If no issues are found, return the standard no-issues summary from
+    `github-toolkit`.
   '';
 
 in
