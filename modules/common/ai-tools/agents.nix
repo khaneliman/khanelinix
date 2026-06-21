@@ -1,6 +1,7 @@
 { lib, ... }:
 let
   agentsBasePath = ./agents;
+  modelValue = provider: model: if builtins.isAttrs model then model.${provider} or null else model;
 
   agents = {
     debugger = {
@@ -18,6 +19,7 @@ let
         copilot = "claude-sonnet-4.6";
         antigravity = "gemini-3.1-pro-preview";
         opencode = "openai/gpt-5.5";
+        codex = "gpt-5.5";
       };
       permission = {
         edit = "ask";
@@ -41,6 +43,7 @@ let
         copilot = "claude-sonnet-4.6";
         antigravity = "gemini-3.1-pro-preview";
         opencode = "openai/gpt-5.5";
+        codex = "gpt-5.5";
       };
       permission = {
         edit = "ask";
@@ -63,6 +66,7 @@ let
         copilot = "claude-haiku-4.5";
         antigravity = "gemini-3.1-flash-lite-preview";
         opencode = "openai/gpt-5.4-mini";
+        codex = "gpt-5.4-mini";
       };
       permission = {
         edit = "ask";
@@ -151,12 +155,27 @@ let
     ${lib.trim agent.content}
   '';
 
+  renderCodexAgent =
+    agent:
+    let
+      model = modelValue "codex" agent.model;
+    in
+    {
+      inherit (agent) name;
+      inherit (agent) description;
+      developer_instructions = lib.trim agent.content;
+    }
+    // lib.optionalAttrs (model != null) {
+      inherit model;
+    };
+
   toClaudeMarkdown = lib.mapAttrs (_name: renderClaudeAgent) agents;
   toCopilotMarkdown = lib.mapAttrs (_name: renderCopilotAgent) agents;
   toAntigravityAgents = lib.mapAttrs (_name: agent: {
     prompt = agent.content;
     description = agent.description or "AI agent";
   }) agents;
+  toCodexAgents = lib.mapAttrs (_name: renderCodexAgent) agents;
   toOpenCodeMarkdown = lib.mapAttrs (_name: renderOpenCodeAgent) agents;
 in
 {
@@ -168,6 +187,7 @@ in
     toAntigravityAgents
     toClaudeMarkdown
     toCopilotMarkdown
+    toCodexAgents
     toOpenCodeMarkdown
     ;
 }

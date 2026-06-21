@@ -108,9 +108,20 @@ let
     ${lib.trim command.prompt}
   '';
 
+  renderCodexSkill = command: ''
+    ---
+    name: ${builtins.toJSON command.commandName}
+    description: ${builtins.toJSON (command.description or "AI command")}
+    ---
+
+    ${lib.trim command.prompt}
+  '';
+
   toClaudeMarkdown = lib.mapAttrs (_name: renderClaudeMarkdown) commands;
 
   toCopilotSkills = lib.mapAttrs (_name: renderCopilotSkill) commands;
+
+  toCodexSkills = lib.mapAttrs (_name: renderCodexSkill) commands;
 
   toOpenCodeMarkdown = lib.mapAttrs (_name: renderOpenCodeMarkdown) commands;
 
@@ -124,10 +135,12 @@ in
     commands
     renderClaudeMarkdown
     renderCopilotSkill
+    renderCodexSkill
     renderOpenCodeMarkdown
     toAntigravityCommands
     toClaudeMarkdown
     toCopilotSkills
+    toCodexSkills
     toOpenCodeMarkdown
     ;
 

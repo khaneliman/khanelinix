@@ -158,6 +158,8 @@ in
 
   codex = {
     disabledSystemSkills = disabledSystemSkillsForHarness "codex";
+    agents = aiAgents.toCodexAgents;
+    commands = aiCommands.toCodexSkills;
     skills = skillsForHarness "codex";
   };
 

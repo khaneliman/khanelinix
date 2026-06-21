@@ -29,6 +29,18 @@ let
     path = "${codexConfigPath}/skills/.system/${name}/SKILL.md";
     enabled = false;
   }) aiTools.codex.disabledSystemSkills;
+  codexAgentFiles = lib.mapAttrs' (
+    name: agentSettings:
+    lib.nameValuePair "${codexConfigDir}/agents/${name}.toml" {
+      source = tomlFormat.generate "codex-agent-${name}" agentSettings;
+    }
+  ) aiTools.codex.agents;
+  codexCommandFiles = lib.mapAttrs' (
+    name: commandMarkdown:
+    lib.nameValuePair "${codexConfigDir}/skills/${name}/SKILL.md" {
+      text = commandMarkdown;
+    }
+  ) aiTools.codex.commands;
   codexProfiles = {
     # Deep analysis and live-research mode. Intentionally expensive:
     # benchmark preference is GPT-5.5 xhigh for best pass rate.
@@ -118,16 +130,12 @@ in
       codex-exo-qwen = ''codex -c model_provider='"exo"' -m mlx-community/Qwen3.6-35B-A3B-5bit'';
     };
 
-    home.file = lib.mapAttrs' (
-      name: profileSettings:
-      lib.nameValuePair "${codexConfigDir}/${name}.config.toml" {
-        source = tomlFormat.generate "codex-${name}-config" profileSettings;
-      }
-    ) codexProfiles;
+    home.file = codexAgentFiles // codexCommandFiles;
 
     programs.codex = {
       enable = true;
       enableMcpIntegration = mkIf mcpModuleEnabled true;
+      profiles = codexProfiles;
 
       # https://developers.openai.com/codex/config-schema.json
       settings = {
