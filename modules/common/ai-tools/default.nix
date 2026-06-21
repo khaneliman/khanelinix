@@ -15,25 +15,93 @@ let
   inherit (aiCommands) commands;
   inherit (aiAgents) agents;
 
-  harnessSkillFilters = {
+  systemSkillNames = {
+    claudeCode = [
+      "skill-creator"
+    ];
+
+    codex = [
+      "imagegen"
+      "openai-docs"
+      "plugin-creator"
+      "skill-creator"
+      "skill-installer"
+    ];
+  };
+
+  harnessSkillPolicy = {
     codex = {
-      exclude = [
+      preferSystem = [
+        "imagegen"
+        "openai-docs"
         "skill-creator"
+      ];
+      disableSystem = [
+        "plugin-creator"
+        "skill-installer"
       ];
     };
 
     claudeCode = {
-      exclude = [
+      preferSystem = [
         "skill-creator"
       ];
     };
+
+    antigravityCli = { };
+
+    githubCopilotCli = { };
+
+    opencode = {
+      disablePluginSkills = [
+        "frontend-ui-ux"
+        "git-master"
+        "playwright"
+        "playwright-cli"
+      ];
+    };
+
+    piCodingAgent = { };
   };
+
+  validateSkillPolicy =
+    harnessName: policy:
+    let
+      unknownLocalSkills = builtins.filter (name: !(builtins.hasAttr name allSkills)) (
+        policy.excludeLocal or [ ]
+      );
+      knownSystemSkills = systemSkillNames.${harnessName} or [ ];
+      unknownSystemSkills = builtins.filter (name: !(lib.elem name knownSystemSkills)) (
+        (policy.preferSystem or [ ]) ++ (policy.disableSystem or [ ])
+      );
+    in
+    if unknownLocalSkills != [ ] then
+      throw "Unknown local skills in ${harnessName} policy: ${lib.concatStringsSep ", " unknownLocalSkills}"
+    else if unknownSystemSkills != [ ] then
+      throw "Unknown system skills in ${harnessName} policy: ${lib.concatStringsSep ", " unknownSystemSkills}"
+    else
+      policy;
+
+  checkedHarnessSkillPolicy = lib.mapAttrs validateSkillPolicy harnessSkillPolicy;
+
+  skillPolicyFor = harnessName: checkedHarnessSkillPolicy.${harnessName} or { };
+
+  localSkillFilterFor =
+    harnessName:
+    let
+      policy = skillPolicyFor harnessName;
+      exclude = lib.unique ((policy.excludeLocal or [ ]) ++ (policy.preferSystem or [ ]));
+    in
+    {
+      hasFilter = exclude != [ ];
+      keepNames = builtins.filter (name: !(lib.elem name exclude)) (builtins.attrNames allSkills);
+    };
 
   skillsForHarness =
     harnessName:
     let
-      exclude = (harnessSkillFilters.${harnessName} or { }).exclude or [ ];
-      shouldKeep = name: !(lib.elem name exclude);
+      filter = localSkillFilterFor harnessName;
+      shouldKeep = name: lib.elem name filter.keepNames;
 
       shouldKeepPath =
         path:
@@ -43,7 +111,7 @@ let
         in
         topLevel == "" || shouldKeep topLevel;
     in
-    if exclude == [ ] then
+    if !filter.hasFilter then
       skillsDir
     else
       builtins.filterSource (path: _: shouldKeepPath path) skillsDir;
@@ -52,20 +120,27 @@ let
     harnessName:
     let
       harnessSkills = skillsForHarness harnessName;
-      exclude = (harnessSkillFilters.${harnessName} or { }).exclude or [ ];
-      shouldKeep = name: !(lib.elem name exclude);
+      filter = localSkillFilterFor harnessName;
+      shouldKeep = name: lib.elem name filter.keepNames;
     in
     lib.mapAttrs (name: _: harnessSkills + "/${name}") (
       lib.filterAttrs (name: _: shouldKeep name) allSkills
     );
+
+  disabledSystemSkillsForHarness = harnessName: (skillPolicyFor harnessName).disableSystem or [ ];
+
+  disabledPluginSkillsForHarness =
+    harnessName: (skillPolicyFor harnessName).disablePluginSkills or [ ];
 in
 {
   inherit
     agents
     base
     commands
+    checkedHarnessSkillPolicy
     skills
     skillsDir
+    systemSkillNames
     ;
 
   claudeCode = {
@@ -82,12 +157,14 @@ in
   };
 
   codex = {
+    disabledSystemSkills = disabledSystemSkillsForHarness "codex";
     skills = skillsForHarness "codex";
   };
 
   githubCopilotCli = {
     agents = aiAgents.toCopilotMarkdown;
     commandSkills = aiCommands.toCopilotSkills;
+    commands = aiCommands.toClaudeMarkdown;
     context = base;
     skills = skillsAttrsForHarness "githubCopilotCli" // aiCommands.toCopilotSkills;
     inherit base;
@@ -95,6 +172,7 @@ in
 
   opencode = {
     commands = aiCommands.toOpenCodeMarkdown;
+    disabledPluginSkills = disabledPluginSkillsForHarness "opencode";
     skills = skillsForHarness "opencode";
     inherit agents;
     renderAgents = aiAgents.toOpenCodeMarkdown;
