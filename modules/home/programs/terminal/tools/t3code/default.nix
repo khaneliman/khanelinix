@@ -122,6 +122,16 @@ in
 
         userSettings = {
           addProjectBaseDirectory = githubRoot;
+          textGenerationModelSelection = {
+            instanceId = "codex";
+            model = "gpt-5.4-mini";
+            options = [
+              {
+                id = "reasoningEffort";
+                value = "low";
+              }
+            ];
+          };
 
           providers =
             lib.optionalAttrs (config.programs.codex.enable or false) {
