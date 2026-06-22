@@ -70,55 +70,62 @@ in
           }
         ];
 
-        khanelinix.theme = {
-          wallpaper = {
-            theme = mkDefault "nord";
-            primary = mkDefault "arctic-landscape.png";
-            secondary = mkDefault "Abstract-Nord.png";
-            lock = mkDefault "Abstract-Nord.png";
-            list = mkDefault [
-              "Abstract-Nord.png"
-              "BirdNord.png"
-              "Minimal-Nord.png"
-              "arctic-landscape.png"
-              "chemical_nord.png"
-              "ign-0001.png"
-              "ign-0011.png"
-              "nixos.png"
-            ];
-          };
-          stylix = {
-            enable = true;
-            theme = "nord";
-
-            cursor = {
-              name = "Nordzy-cursors";
-              package = pkgs.nordzy-cursor-theme;
-              size = 32;
+        khanelinix = {
+          theme = {
+            wallpaper = {
+              theme = mkDefault "nord";
+              primary = mkDefault "arctic-landscape.png";
+              secondary = mkDefault "Abstract-Nord.png";
+              lock = mkDefault "Abstract-Nord.png";
+              list = mkDefault [
+                "Abstract-Nord.png"
+                "BirdNord.png"
+                "Minimal-Nord.png"
+                "arctic-landscape.png"
+                "chemical_nord.png"
+                "ign-0001.png"
+                "ign-0011.png"
+                "nixos.png"
+              ];
             };
+            stylix = {
+              enable = true;
+              theme = "nord";
 
-            icon = {
-              name = "Nordzy-dark";
-              package = pkgs.nordzy-icon-theme;
+              cursor = {
+                name = "Nordzy-cursors";
+                package = pkgs.nordzy-cursor-theme;
+                size = 32;
+              };
+
+              icon = {
+                name = "Nordzy-dark";
+                package = pkgs.nordzy-icon-theme;
+              };
             };
           };
-        };
-        khanelinix.programs.graphical.browsers.firefox.extensions.extraPackages =
-          mkIf config.khanelinix.programs.graphical.browsers.firefox.enable
-            [ pkgs.firefox-addons.kristofferhagen-nord-theme ];
-
-        khanelinix.programs.graphical.apps.thunderbird.theme = {
-          enable = true;
-          isDark = true;
-          colors = {
-            bg = palette.palette.nord0.hex;
-            surface = palette.palette.nord1.hex;
-            surfaceAlt = palette.palette.nord2.hex;
-            fg = palette.palette.nord6.hex;
-            accent = palette.palette.nord10.hex;
-            accentSoft = palette.palette.nord8.hex;
-            accentFg = palette.palette.nord6.hex;
-            border = palette.palette.nord3.hex;
+          programs = {
+            graphical = {
+              browsers = {
+                firefox.extensions.extraPackages =
+                  mkIf config.khanelinix.programs.graphical.browsers.firefox.enable
+                    [ pkgs.firefox-addons.kristofferhagen-nord-theme ];
+              };
+              apps.thunderbird.theme = {
+                enable = true;
+                isDark = true;
+                colors = {
+                  bg = palette.palette.nord0.hex;
+                  surface = palette.palette.nord1.hex;
+                  surfaceAlt = palette.palette.nord2.hex;
+                  fg = palette.palette.nord6.hex;
+                  accent = palette.palette.nord10.hex;
+                  accentSoft = palette.palette.nord8.hex;
+                  accentFg = palette.palette.nord6.hex;
+                  border = palette.palette.nord3.hex;
+                };
+              };
+            };
           };
         };
 
