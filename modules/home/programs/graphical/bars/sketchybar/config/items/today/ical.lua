@@ -40,7 +40,7 @@ local calendar_popup = {
 	item = ical,
 }
 local popup_anchor = ical
-local hovered_targets = {}
+local hover_targets = {}
 local popup_targets = {}
 
 local function popup_position()
@@ -51,26 +51,33 @@ local function popup_off_script()
 	return "sketchybar --set " .. popup_anchor.name .. " popup.drawing=off"
 end
 
-local function any_target_hovered()
-	for _, hovered in pairs(hovered_targets) do
-		if hovered then
-			return true
-		end
-	end
-
-	return false
-end
-
 local function show_popup()
 	popup_anchor:set({ popup = { drawing = true } })
 end
 
-local function hide_popup_when_idle()
-	DELAY(0.05, function()
-		if not any_target_hovered() then
-			popup_anchor:set({ popup = { drawing = false } })
-		end
+local function hide_popup()
+	popup_anchor:set({ popup = { drawing = false } })
+end
+
+local function setup_hover_target(target)
+	if target == nil or target.name == nil or hover_targets[target.name] then
+		return
+	end
+
+	hover_targets[target.name] = true
+
+	target:subscribe("mouse.entered", function()
+		show_popup()
 	end)
+	target:subscribe({ "mouse.exited", "mouse.exited.global" }, function()
+		hide_popup()
+	end)
+end
+
+local function add_popup_item(name, config)
+	local item = Sbar.add("item", name, config)
+	setup_hover_target(item)
+	return item
 end
 
 local function setup_popup_target(target)
@@ -79,15 +86,8 @@ local function setup_popup_target(target)
 	end
 
 	popup_targets[target.name] = true
+	setup_hover_target(target)
 
-	target:subscribe("mouse.entered", function()
-		hovered_targets[target.name] = true
-		show_popup()
-	end)
-	target:subscribe({ "mouse.exited", "mouse.exited.global" }, function()
-		hovered_targets[target.name] = false
-		hide_popup_when_idle()
-	end)
 	target:subscribe("mouse.clicked", function(env)
 		if env.BUTTON == "left" then
 			POPUP_TOGGLE(popup_anchor.name)
@@ -109,12 +109,13 @@ function calendar_popup.set_popup_anchor(anchor)
 	end
 
 	if popup_anchor.name ~= anchor.name then
-		popup_anchor:set({ popup = { drawing = false } })
+		hide_popup()
 		CLEAR_POPUP_ITEMS(popup_anchor.name)
 		last_events = nil
 	end
 
 	popup_anchor = anchor
+	setup_hover_target(popup_anchor)
 	popup_anchor:set({
 		popup = {
 			align = "right",
@@ -169,7 +170,7 @@ local function update_events()
 			if title and time then
 				if has_all_day_header and not has_separator then
 					local dashes = string.rep("─", math.floor(max_length * 0.65))
-					Sbar.add("item", next_item_name("separator"), {
+					add_popup_item(next_item_name("separator"), {
 						icon = {
 							string = "",
 							width = settings.spacing.none,
@@ -188,7 +189,7 @@ local function update_events()
 					})
 					has_separator = true
 				end
-				Sbar.add("item", next_item_name("timed"), {
+				add_popup_item(next_item_name("timed"), {
 					icon = {
 						string = time,
 						color = colors.yellow,
@@ -205,7 +206,7 @@ local function update_events()
 				})
 			else
 				if not has_all_day_header then
-					Sbar.add("item", next_item_name("all_day_header"), {
+					add_popup_item(next_item_name("all_day_header"), {
 						icon = {
 							string = "All Day",
 							color = colors.yellow,
@@ -223,7 +224,7 @@ local function update_events()
 					has_all_day_header = true
 				end
 
-				Sbar.add("item", next_item_name("all_day"), {
+				add_popup_item(next_item_name("all_day"), {
 					icon = {
 						string = "•",
 						color = colors.white,
@@ -240,7 +241,7 @@ local function update_events()
 			end
 		end
 
-		Sbar.add("item", next_item_name("width_floor"), {
+		add_popup_item(next_item_name("width_floor"), {
 			icon = {
 				drawing = false,
 			},
