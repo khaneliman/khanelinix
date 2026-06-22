@@ -7,9 +7,11 @@ Use when turning raw notes, logs, dictation, or screenshots into a GitHub issue.
 1. Extract summary, environment, reproduction, expected behavior, actual
    behavior, errors, visual evidence, impact, and context.
 2. Discover and enforce repo template (see below).
-3. Keep every section concise and action-oriented.
-4. Save to `/issues/YYYY-MM-DD-short-description.md` unless user requests
-   another destination.
+3. Read contribution guidance before drafting: `CONTRIBUTING.md`, root/local
+   instruction files, and directly relevant docs.
+4. Keep every section concise and action-oriented.
+5. Save to `issues/YYYY-MM-DD-short-description.md` unless user requests another
+   destination.
 
 ## Template Discovery (mandatory)
 

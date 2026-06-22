@@ -6,10 +6,12 @@ planned work summaries.
 ## Workflow
 
 1. Detect mandatory PR template before drafting.
-2. Apply one template verbatim; fill required fields with concise, repo-relevant
+2. Read contribution guidance before drafting: `CONTRIBUTING.md`, root/local
+   instruction files, and directly relevant docs.
+3. Apply one template verbatim; fill required fields with concise, repo-relevant
    detail.
-3. Return PR title/body ready for `gh pr create`.
-4. If template context is missing, request clarification.
+4. Return PR title/body ready for `gh pr create`.
+5. If template or contribution context is missing, request clarification.
 
 ## Template Discovery (mandatory)
 

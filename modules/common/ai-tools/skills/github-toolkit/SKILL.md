@@ -30,6 +30,9 @@ If intent is unclear, ask for the mode before acting.
   in the output.
 - If multiple templates exist and intent is unclear, ask user to pick one before
   drafting.
+- For PR or issue creation, read contribution guidance before drafting:
+  `CONTRIBUTING.md`, root/local instruction files, and directly relevant docs.
+  Treat required tests, docs, security, and licensing rules as hard constraints.
 
 ## 1) Issue Creation Mode
 
@@ -37,6 +40,7 @@ Read [issue-creation.md](references/issue-creation.md). Template usage is
 mandatory:
 
 - Discover repo templates before drafting (paths in the reference).
+- Read contribution guidance before drafting.
 - If an `ISSUE_TEMPLATE` is present, fill strictly from that template.
 - Do not skip template structure, sections, or required fields.
 
@@ -46,6 +50,7 @@ Read [pull-request-creation.md](references/pull-request-creation.md). Template
 usage is mandatory:
 
 - Discover repo templates before drafting PR body.
+- Read contribution guidance before drafting.
 - If a `PULL_REQUEST_TEMPLATE` is present, fill it strictly.
 - Do not skip required template sections.
 
