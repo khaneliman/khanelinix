@@ -76,70 +76,77 @@ in
           }
         ];
 
-        khanelinix.theme = {
-          wallpaper = {
-            theme = mkDefault "tokyonight";
-            primary = mkDefault "pacman_upscayl_realesrgan-x4plus_x2.png";
-            secondary = mkDefault "game_upscayl_realesrgan-x4plus_x2.png";
-            lock = mkDefault "tron_upscayl_realesrgan-x4plus_x2.png";
-            list = mkDefault [
-              "comic_upscayl_realesrgan-x4plus_x2.png"
-              "controls_upscayl_realesrgan-x4plus_x2.png"
-              "game_upscayl_realesrgan-x4plus_x2.png"
-              "gamveover_upscayl_realesrgan-x4plus_x2.png"
-              "heroes_upscayl_realesrgan-x4plus_x2.png"
-              "invader_upscayl_realesrgan-x4plus_x2.png"
-              "joystick_upscayl_realesrgan-x4plus_x2.png"
-              "js_upscayl_realesrgan-x4plus_x2.png"
-              "pacman3_upscayl_realesrgan-x4plus_x2.png"
-              "pacman_upscayl_realesrgan-x4plus_x2.png"
-              "smile_upscayl_realesrgan-x4plus_x2.png"
-              "spookyjs_upscayl_realesrgan-x4plus_x2.png"
-              "tron_upscayl_realesrgan-x4plus_x2.png"
-              "tv_upscayl_realesrgan-x4plus_x2.png"
-              "void_upscayl_realesrgan-x4plus_x2.png"
-            ];
-          };
-          stylix = {
-            enable = true;
-            theme = "tokyo-night-dark";
-
-            cursor = {
-              name = "Bibata-Modern-Ice";
-              package = pkgs.bibata-cursors;
-              size = 32;
+        khanelinix = {
+          theme = {
+            wallpaper = {
+              theme = mkDefault "tokyonight";
+              primary = mkDefault "pacman_upscayl_realesrgan-x4plus_x2.png";
+              secondary = mkDefault "game_upscayl_realesrgan-x4plus_x2.png";
+              lock = mkDefault "tron_upscayl_realesrgan-x4plus_x2.png";
+              list = mkDefault [
+                "comic_upscayl_realesrgan-x4plus_x2.png"
+                "controls_upscayl_realesrgan-x4plus_x2.png"
+                "game_upscayl_realesrgan-x4plus_x2.png"
+                "gamveover_upscayl_realesrgan-x4plus_x2.png"
+                "heroes_upscayl_realesrgan-x4plus_x2.png"
+                "invader_upscayl_realesrgan-x4plus_x2.png"
+                "joystick_upscayl_realesrgan-x4plus_x2.png"
+                "js_upscayl_realesrgan-x4plus_x2.png"
+                "pacman3_upscayl_realesrgan-x4plus_x2.png"
+                "pacman_upscayl_realesrgan-x4plus_x2.png"
+                "smile_upscayl_realesrgan-x4plus_x2.png"
+                "spookyjs_upscayl_realesrgan-x4plus_x2.png"
+                "tron_upscayl_realesrgan-x4plus_x2.png"
+                "tv_upscayl_realesrgan-x4plus_x2.png"
+                "void_upscayl_realesrgan-x4plus_x2.png"
+              ];
             };
+            stylix = {
+              enable = true;
+              theme = "tokyo-night-dark";
 
-            icon = {
-              name = "Papirus-Dark";
-              package = pkgs.papirus-icon-theme;
+              cursor = {
+                name = "Bibata-Modern-Ice";
+                package = pkgs.bibata-cursors;
+                size = 32;
+              };
+
+              icon = {
+                name = "Papirus-Dark";
+                package = pkgs.papirus-icon-theme;
+              };
+            };
+          };
+          programs = {
+            graphical = {
+              browsers = {
+                firefox.extensions.extraPackages =
+                  mkIf config.khanelinix.programs.graphical.browsers.firefox.enable
+                    [ pkgs.firefox-addons.tokyo-night-v2 ];
+              };
+              apps.thunderbird.theme =
+                let
+                  colors = palette.getVariant cfg.variant;
+                in
+                {
+                  enable = true;
+                  isDark = cfg.variant != "day";
+                  colors = {
+                    inherit (colors)
+                      bg
+                      fg
+                      ;
+                    surface = colors.bg_dark;
+                    surfaceAlt = colors.bg_highlight;
+                    accent = colors.blue;
+                    accentSoft = colors.cyan;
+                    accentFg = if cfg.variant == "day" then "#ffffff" else colors.fg;
+                    border = colors.blue7;
+                  };
+                };
             };
           };
         };
-        khanelinix.programs.graphical.browsers.firefox.extensions.extraPackages =
-          mkIf config.khanelinix.programs.graphical.browsers.firefox.enable
-            [ pkgs.firefox-addons.tokyo-night-v2 ];
-
-        khanelinix.programs.graphical.apps.thunderbird.theme =
-          let
-            colors = palette.getVariant cfg.variant;
-          in
-          {
-            enable = true;
-            isDark = cfg.variant != "day";
-            colors = {
-              inherit (colors)
-                bg
-                fg
-                ;
-              surface = colors.bg_dark;
-              surfaceAlt = colors.bg_highlight;
-              accent = colors.blue;
-              accentSoft = colors.cyan;
-              accentFg = if cfg.variant == "day" then "#ffffff" else colors.fg;
-              border = colors.blue7;
-            };
-          };
 
         programs.thunderbird.profiles.${config.khanelinix.user.name} =
           mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable
