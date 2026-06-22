@@ -160,34 +160,44 @@ in
             }
           ];
 
-          khanelinix.theme.wallpaper = {
-            theme = mkDefault "catppuccin";
-            primary = mkDefault "flatppuccin_macchiato.png";
-            secondary = mkDefault "cat-sound.png";
-            lock = mkDefault "flatppuccin_macchiato.png";
-            list = mkDefault [
-              "flatppuccin_macchiato.png"
-              "cat_pacman.png"
-              "cat-sound.png"
-            ];
-          };
-          khanelinix.programs.graphical.apps.thunderbird.theme = {
-            enable = true;
-            isDark = true;
-            colors = {
-              bg = palette.colors.base.hex;
-              surface = palette.colors.surface0.hex;
-              surfaceAlt = palette.colors.mantle.hex;
-              fg = palette.colors.text.hex;
-              accent = palette.colors.${cfg.accent}.hex;
-              accentSoft = palette.colors.${cfg.accent}.hex;
-              accentFg = palette.colors.base.hex;
-              border = palette.colors.overlay0.hex;
+          khanelinix = {
+            theme = {
+              wallpaper = {
+                theme = mkDefault "catppuccin";
+                primary = mkDefault "flatppuccin_macchiato.png";
+                secondary = mkDefault "cat-sound.png";
+                lock = mkDefault "flatppuccin_macchiato.png";
+                list = mkDefault [
+                  "flatppuccin_macchiato.png"
+                  "cat_pacman.png"
+                  "cat-sound.png"
+                ];
+              };
+            };
+            programs = {
+              graphical = {
+                apps.thunderbird.theme = {
+                  enable = true;
+                  isDark = true;
+                  colors = {
+                    bg = palette.colors.base.hex;
+                    surface = palette.colors.surface0.hex;
+                    surfaceAlt = palette.colors.mantle.hex;
+                    fg = palette.colors.text.hex;
+                    accent = palette.colors.${cfg.accent}.hex;
+                    accentSoft = palette.colors.${cfg.accent}.hex;
+                    accentFg = palette.colors.base.hex;
+                    border = palette.colors.overlay0.hex;
+                  };
+                };
+                browsers = {
+                  firefox.extensions.extraPackages =
+                    mkIf config.khanelinix.programs.graphical.browsers.firefox.enable
+                      [ pkgs.firefox-addons.catppuccin-mocha-mauve ];
+                };
+              };
             };
           };
-          khanelinix.programs.graphical.browsers.firefox.extensions.extraPackages =
-            mkIf config.khanelinix.programs.graphical.browsers.firefox.enable
-              [ pkgs.firefox-addons.catppuccin-mocha-mauve ];
 
           programs.thunderbird.profiles.${config.khanelinix.user.name} =
             mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable
