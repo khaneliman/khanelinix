@@ -20,6 +20,8 @@ let
     check-todos = "refactorer";
     code-review = "debugger";
     commit-changes = "refactorer";
+    create-issue = "refactorer";
+    create-pr = "refactorer";
     deep-check = "test-runner";
     dependency-audit = "test-runner";
     fixup-autosquash = "refactorer";
@@ -29,8 +31,10 @@ let
     initialization = "refactorer";
     module-lint = "test-runner";
     parse-sarif = "test-runner";
+    review-pr = "debugger";
     resolve-conflicts = "refactorer";
     style-audit = "test-runner";
+    triage-issue = "explore";
   };
 
   normalizeCommand =
