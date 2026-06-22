@@ -30,12 +30,21 @@ Do not flag style, subjective quality, pre-existing problems, speculative edge
 cases, duplicates, or normal linter findings unless repo instructions require.
 Validate each issue against diff and relevant local instructions before posting.
 
+## Review Writing
+
+- Make the review body short: outcome, confidence, and any global context only.
+- Do not restate inline findings in the review body.
+- Write inline comments like teammate guidance: problem, reason, next step.
+- Keep each inline discussion to 1-3 short sentences unless evidence needs more.
+- Let suggestion blocks stand on their own; do not narrate the patch twice.
+- Avoid canned review phrases like "overall", "it appears", and "great work".
+
 ## Inline Comments
 
 - Prefer one review containing all inline comments over sequential standalone
   comments.
 - Post one comment per unique issue.
-- Write review comments in Conventional Comments style.
+- Use Conventional Comments labels for scanability, but keep prose natural.
 - Include suggestion blocks only when they fully fix issue.
 - Cite local instruction/contribution files for compliance findings.
 - Use full GitHub URLs with concrete commit SHA for code links.
@@ -97,7 +106,7 @@ Rules:
 - Start every inline finding with `<label> [decorations]: <subject>`.
 - Use `(blocking)` only for high-signal review findings from policy above.
 - Keep subject one line and imperative or descriptive.
-- Put evidence, reasoning, and next step in discussion body.
+- Put only necessary evidence, reasoning, and next step in discussion body.
 - Avoid labels that weaken priority; choose one primary label per comment.
 
 Examples:
@@ -105,8 +114,8 @@ Examples:
 ```markdown
 issue (blocking): validate `owner` before using it in shell command
 
-This value comes from PR metadata and reaches `gh` through command construction.
-Use argument arrays or explicit validation before execution.
+`owner` comes from PR metadata and reaches command construction. Pass it as an
+argument array element or validate it before use.
 ```
 
 ```markdown

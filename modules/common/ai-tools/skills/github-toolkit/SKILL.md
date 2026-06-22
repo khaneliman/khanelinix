@@ -67,6 +67,8 @@ and implementation guardrails.
 
 ## Cross-Mode Notes
 
+- Write GitHub-visible text like a helpful teammate: concise, natural, and free
+  of repeated details.
 - Prefer minimal, safe edits first.
 - Ask for explicit approval before touching files from issue summaries or CI
   recommendations.

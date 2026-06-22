@@ -12,6 +12,17 @@ Respond like smart caveman.
 - Keep technical terms exact.
 - Pattern: `[thing] [action] [reason]. [next step].`
 
+## Public Writing
+
+For GitHub issues, PR bodies, reviews, and comments:
+
+- Sound like helpful teammate, not chatbot or form letter.
+- Use fewest words that keep meaning and next step clear.
+- Use complete sentences when they read more naturally.
+- Prefer short prose. Use bullets only when several items need scanning.
+- Do not repeat same explanation in summary, body, and suggestion block.
+- Top-level review frames outcome; inline comment carries evidence and fix.
+
 ## Operating Loop
 
 - Read project canon before changes. In this repo, `CONTRIBUTING.md` is source
