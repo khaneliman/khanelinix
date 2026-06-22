@@ -74,7 +74,7 @@ local widths = {
 	popup_network = 252,
 	stack_item = 30,
 	temperature_label = 30,
-	time_label = 72,
+	time_label = 90,
 	volume_label = 25,
 	volume_slider = 100,
 	wifi_popup = 250,
@@ -83,6 +83,7 @@ local widths = {
 }
 
 widths.wifi_popup_label = widths.wifi_popup - widths.wifi_popup_icon
+widths.today_popup_min = widths.date_label + widths.stack_item
 
 local offsets = {
 	apple_logo_left = -spacing.compact,
@@ -99,6 +100,8 @@ local offsets = {
 	space_label_y = -spacing.hairline,
 	stack_bottom_y = -8,
 	stack_top_y = 6,
+	today_date_indent = 10,
+	today_time_indent = 6,
 	weather_icon_overlap = -15,
 	weather_rule_y = -12,
 	weather_temp_overlap = -30,

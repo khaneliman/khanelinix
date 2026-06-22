@@ -1,5 +1,12 @@
 #!/usr/bin/env lua
 
-require("items.today.calendar")
-require("items.today.ical")
+local calendar = require("items.today.calendar")
+local ical = require("items.today.ical")
+
+ical.set_popup_anchor(calendar.clock)
+ical.attach_popup_targets({
+	calendar.cal,
+	calendar.clock,
+})
+
 require("items.today.weather")

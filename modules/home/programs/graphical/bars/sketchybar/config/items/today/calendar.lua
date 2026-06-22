@@ -6,7 +6,8 @@ local today = {}
 
 today.cal = Sbar.add("item", "date", {
 	icon = {
-		align = "right",
+		align = "left",
+		padding_left = settings.offsets.today_date_indent,
 		padding_right = settings.spacing.none,
 		font = {
 			family = settings.font,
@@ -25,7 +26,8 @@ today.cal = Sbar.add("item", "date", {
 
 today.clock = Sbar.add("item", "clock", {
 	icon = {
-		align = "right",
+		align = "left",
+		padding_left = settings.offsets.today_time_indent,
 		padding_right = settings.spacing.none,
 		font = {
 			family = settings.font,
@@ -43,8 +45,12 @@ today.clock = Sbar.add("item", "clock", {
 		padding_left = settings.spacing.none,
 		padding_right = settings.offsets.clock_background_overlap,
 	},
+	popup = {
+		align = "right",
+		height = settings.dimensions.popup_height,
+	},
 	position = "right",
-	update_freq = 60,
+	update_freq = 1,
 	y_offset = settings.offsets.stack_bottom_y,
 })
 
@@ -62,9 +68,11 @@ local function clock_update()
 		logger.debug("today", "clock_update_skipped_sleeping", {})
 		return
 	end
-	local time = os.date("%I:%M %p")
+	local time = os.date("%I:%M:%S %p")
 	today.clock:set({ icon = time })
 end
 
 today.cal:subscribe({ "forced", "routine" }, date_update)
 today.clock:subscribe({ "forced", "routine" }, clock_update)
+
+return today

@@ -8,29 +8,124 @@ local item_index = 0
 
 local ical = Sbar.add("item", "ical", {
 	icon = {
-		align = "left",
+		align = "right",
+		padding_left = settings.spacing.none,
 		padding_right = settings.spacing.none,
 		string = icons.ical,
+		width = settings.widths.stack_item,
 		font = {
 			family = settings.nerd_font,
 			style = "Black",
 			size = settings.font_sizes.today_date,
 		},
 	},
+	label = {
+		drawing = false,
+	},
 	background = {
-		padding_left = settings.spacing.large,
+		padding_left = settings.spacing.none,
+		padding_right = settings.spacing.none,
 	},
 	popup = {
 		align = "right",
 		height = settings.dimensions.popup_height,
 	},
 	position = "right",
+	width = settings.widths.stack_item,
 	y_offset = settings.offsets.stack_bottom_y,
 	update_freq = 900,
 })
 
--- Update function
-ical:subscribe({ "routine", "forced" }, function()
+local calendar_popup = {
+	item = ical,
+}
+local popup_anchor = ical
+local hovered_targets = {}
+local popup_targets = {}
+
+local function popup_position()
+	return "popup." .. popup_anchor.name
+end
+
+local function popup_off_script()
+	return "sketchybar --set " .. popup_anchor.name .. " popup.drawing=off"
+end
+
+local function any_target_hovered()
+	for _, hovered in pairs(hovered_targets) do
+		if hovered then
+			return true
+		end
+	end
+
+	return false
+end
+
+local function show_popup()
+	popup_anchor:set({ popup = { drawing = true } })
+end
+
+local function hide_popup_when_idle()
+	DELAY(0.05, function()
+		if not any_target_hovered() then
+			popup_anchor:set({ popup = { drawing = false } })
+		end
+	end)
+end
+
+local function setup_popup_target(target)
+	if target == nil or target.name == nil or popup_targets[target.name] then
+		return
+	end
+
+	popup_targets[target.name] = true
+
+	target:subscribe("mouse.entered", function()
+		hovered_targets[target.name] = true
+		show_popup()
+	end)
+	target:subscribe({ "mouse.exited", "mouse.exited.global" }, function()
+		hovered_targets[target.name] = false
+		hide_popup_when_idle()
+	end)
+	target:subscribe("mouse.clicked", function(env)
+		if env.BUTTON == "left" then
+			POPUP_TOGGLE(popup_anchor.name)
+		elseif env.BUTTON == "right" then
+			Sbar.trigger("ical_update")
+		end
+	end)
+end
+
+function calendar_popup.attach_popup_targets(targets)
+	for _, target in ipairs(targets) do
+		setup_popup_target(target)
+	end
+end
+
+function calendar_popup.set_popup_anchor(anchor)
+	if anchor == nil or anchor.name == nil then
+		return
+	end
+
+	if popup_anchor.name ~= anchor.name then
+		popup_anchor:set({ popup = { drawing = false } })
+		CLEAR_POPUP_ITEMS(popup_anchor.name)
+		last_events = nil
+	end
+
+	popup_anchor = anchor
+	popup_anchor:set({
+		popup = {
+			align = "right",
+			height = settings.dimensions.popup_height,
+		},
+	})
+end
+
+local function update_events()
+	item_index = 0
+
 	if IS_SYSTEM_SLEEPING then
 		logger.debug("ical", "update_skipped_sleeping", {})
 		return
@@ -40,7 +135,7 @@ ical:subscribe({ "routine", "forced" }, function()
 	Sbar.exec("icalBuddy -nc -nrd -eed -iep datetime,title -b '' -ps '|" .. SEP .. "|' eventsToday", function(events)
 		if IS_EMPTY(events) then
 			logger.warn("ical", "empty_events", {})
-			CLEAR_POPUP_ITEMS(ical.name)
+			CLEAR_POPUP_ITEMS(popup_anchor.name)
 			return
 		end
 
@@ -48,7 +143,7 @@ ical:subscribe({ "routine", "forced" }, function()
 			return
 		end
 		last_events = events
-		CLEAR_POPUP_ITEMS(ical.name)
+		CLEAR_POPUP_ITEMS(popup_anchor.name)
 
 		local has_all_day_header = false
 		local has_separator = false
@@ -89,7 +184,7 @@ ical:subscribe({ "routine", "forced" }, function()
 						},
 						padding_left = settings.spacing.none,
 						padding_right = settings.spacing.none,
-						position = "popup." .. ical.name,
+						position = popup_position(),
 					})
 					has_separator = true
 				end
@@ -105,8 +200,8 @@ ical:subscribe({ "routine", "forced" }, function()
 					label = {
 						string = title,
 					},
-					position = "popup." .. ical.name,
-					click_script = "sketchybar --set $NAME popup.drawing=off",
+					position = popup_position(),
+					click_script = popup_off_script(),
 				})
 			else
 				if not has_all_day_header then
@@ -122,8 +217,8 @@ ical:subscribe({ "routine", "forced" }, function()
 						label = {
 							string = "",
 						},
-						position = "popup." .. ical.name,
-						click_script = "sketchybar --set $NAME popup.drawing=off",
+						position = popup_position(),
+						click_script = popup_off_script(),
 					})
 					has_all_day_header = true
 				end
@@ -139,14 +234,34 @@ ical:subscribe({ "routine", "forced" }, function()
 					label = {
 						string = line,
 					},
-					position = "popup." .. ical.name,
-					click_script = "sketchybar --set $NAME popup.drawing=off",
+					position = popup_position(),
+					click_script = popup_off_script(),
 				})
 			end
 		end
+
+		Sbar.add("item", next_item_name("width_floor"), {
+			icon = {
+				drawing = false,
+			},
+			label = {
+				drawing = false,
+			},
+			background = {
+				height = settings.spacing.hairline,
+			},
+			padding_left = settings.spacing.none,
+			padding_right = settings.spacing.none,
+			position = popup_position(),
+			width = settings.widths.today_popup_min,
+		})
+
 		logger.info("ical", "events_rendered", { count = line_count, total_lines = #lines })
 	end)
-end)
+end
 
-SETUP_STANDARD_CLICKS(ical, "brew_update")
-SETUP_POPUP_HOVER(ical)
+ical:subscribe({ "routine", "forced", "ical_update" }, update_events)
+
+setup_popup_target(ical)
+
+return calendar_popup
