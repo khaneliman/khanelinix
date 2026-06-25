@@ -400,6 +400,7 @@ in
           enable = true;
           collections = googleCalendarCollections;
         };
+        davmail.enable = true;
       };
     };
 
