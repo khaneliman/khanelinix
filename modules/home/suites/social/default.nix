@@ -1,9 +1,8 @@
 {
   config,
   lib,
-
   pkgs,
-  getPkgsUnstable,
+  # getPkgsUnstable,
   ...
 }:
 let
@@ -19,38 +18,37 @@ in
     packageProfile = mkPackageProfileOption "Package profile override for social applications.";
   };
 
-  config = mkIf cfg.enable (
-    let
-      pkgsUnstable = getPkgsUnstable pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
-    in
-    {
-      home.packages =
-        lib.optionals (includes "standard") [
-          (pkgs.element-desktop.overrideAttrs (old: {
-            # NOTE: Fix electron app_id
-            postPatch = (old.postPatch or "") + ''
-                substituteInPlace apps/desktop/package.json \
-                  --replace-fail '"productName": "Element",' '"desktopName": "Element.desktop",
-              "productName": "Element",'
-            '';
-          }))
-        ]
-        ++ lib.optionals (includes "maximal") [
-          pkgsUnstable.telegram-desktop
-        ];
+  config = mkIf cfg.enable {
+    home.packages =
+      # let
+      #   pkgsUnstable = getPkgsUnstable pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
+      # in
+      lib.optionals (includes "standard") [
+        (pkgs.element-desktop.overrideAttrs (old: {
+          # NOTE: Fix electron app_id
+          postPatch = (old.postPatch or "") + ''
+              substituteInPlace apps/desktop/package.json \
+                --replace-fail '"productName": "Element",' '"desktopName": "Element.desktop",
+            "productName": "Element",'
+          '';
+        }))
+      ]
+      ++ lib.optionals (includes "maximal") [
+        # FIXME: broken nixpkgs
+        # pkgsUnstable.telegram-desktop
+      ];
 
-      khanelinix = {
-        programs = {
-          graphical.apps = {
-            caprine.enable = lib.mkDefault (includes "maximal");
-            vesktop.enable = lib.mkDefault (includes "standard");
-          };
+    khanelinix = {
+      programs = {
+        graphical.apps = {
+          caprine.enable = lib.mkDefault (includes "maximal");
+          vesktop.enable = lib.mkDefault (includes "standard");
+        };
 
-          terminal.social = {
-            twitch-tui.enable = lib.mkDefault (includes "maximal");
-          };
+        terminal.social = {
+          twitch-tui.enable = lib.mkDefault (includes "maximal");
         };
       };
-    }
-  );
+    };
+  };
 }

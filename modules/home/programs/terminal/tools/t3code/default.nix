@@ -44,7 +44,7 @@ in
               inherit (old) pnpmWorkspaces;
               pnpm = pkgs.pnpm_10;
               fetcherVersion = 4;
-              hash = "sha256-Jvkau1fBSMQhd6GMRARAiXTmwDsxqMRnzoMhJFfR+XM=";
+              hash = "sha256-NL7BEVr7LgFlND+WlPBQHrXG0o9HBbUeU4WC5ho3HVU=";
             };
           });
 
