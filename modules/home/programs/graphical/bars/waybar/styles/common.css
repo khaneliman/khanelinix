@@ -178,10 +178,11 @@ box {
 #custom-wlogout,
 #custom-power {
   font-family: "Monaspace Neon NF", "MonaspaceNeon NF";
-  font-size: 24px;
-  margin: 5px 8px 5px 0;
+  font-size: 28px;
+  margin: 5px 8px 5px 12px;
   padding: 0 8px;
   min-width: 30px;
+  min-height: 30px;
 }
 
 #cpu,
