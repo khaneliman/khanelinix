@@ -19,6 +19,9 @@ let
     _name: account:
     account.enable && account.flavor == "davmail" && config.khanelinix.services.davmail.enable
   ) cfg.extraEmailAccounts;
+  enabledExtraCalendarAccounts = lib.filterAttrs (
+    _name: account: account.enable
+  ) cfg.extraCalendarAccounts;
 in
 {
   options.khanelinix.programs.graphical.apps.thunderbird = {
@@ -55,6 +58,7 @@ in
         let
           accountType = lib.types.submodule {
             options = {
+              enable = mkOpt lib.types.bool true "Enable this calendar account";
               url = mkOpt lib.types.str null "Calendar url";
               type = mkOpt (lib.types.enum [
                 "caldav"
@@ -153,6 +157,7 @@ in
               url,
               type,
               color ? "#9a9cff",
+              ...
             }:
             {
               remote = {
@@ -210,7 +215,7 @@ in
           };
         }
         // lib.mapAttrs mkDavmailCalendarConfig enabledDavmailAccounts
-        // lib.mapAttrs (_name: mkCalendarConfig) cfg.extraCalendarAccounts;
+        // lib.mapAttrs (_name: mkCalendarConfig) enabledExtraCalendarAccounts;
       email.accounts =
         let
           mkEmailConfig =
