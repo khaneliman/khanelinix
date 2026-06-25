@@ -6,8 +6,19 @@
 }:
 let
   inherit (lib) mkMerge optionals mkIf;
+  syncedCalendarAccounts = lib.filterAttrs (
+    _name: account: (account.khal.enable or false) && (account.vdirsyncer.enable or false)
+  ) (config.accounts.calendar.accounts or { });
+  hasAgendaTooltip =
+    (config.khanelinix.programs.terminal.tools.khal.enable or false)
+    && (config.khanelinix.services.vdirsyncer.enable or false)
+    && syncedCalendarAccounts != { };
+  clockModule = if hasAgendaTooltip then "custom/calendar" else "clock";
 
   # Import module definitions
+  calendar-module = import ../modules/calendar.nix {
+    inherit config lib pkgs;
+  };
   custom-modules = import ../modules/custom-modules.nix {
     inherit
       osConfig
@@ -71,7 +82,7 @@ let
         ++ optionals config.khanelinix.programs.graphical.wms.sway.enable [ "sway/mode" ]
         ++ [
           "custom/weather"
-          "clock"
+          clockModule
         ];
       };
 
@@ -83,13 +94,14 @@ let
         ++ optionals config.khanelinix.programs.graphical.wms.sway.enable [ "sway/mode" ]
         ++ [
           "custom/weather"
-          "clock"
+          clockModule
         ];
       };
     in
     mkMerge [
       commonAttributes
       (if barType == "fullSize" then fullSizeModules else condensedModules)
+      (mkIf hasAgendaTooltip calendar-module.module)
       custom-modules
       default-modules
       group-modules

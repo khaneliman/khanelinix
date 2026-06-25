@@ -148,12 +148,14 @@ box {
 }
 
 #custom-weather,
+#custom-calendar,
 #clock {
   margin: 5px 4px;
   padding: 0 8px;
   min-height: 30px;
 }
 
+#custom-calendar,
 #clock {
   font-weight: 800;
   min-width: 128px;

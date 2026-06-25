@@ -21,6 +21,16 @@ let
   hasCopilotToken = lib.hasAttrByPath [ "sops" "secrets" "github/copilot-token" ] config;
   hasSops = config.khanelinix.services.sops.enable or false;
   hasSopsCopilotToken = hasSops && hasCopilotToken;
+  syncedCalendarAccounts = lib.filterAttrs (
+    _name: account: (account.khal.enable or false) && (account.vdirsyncer.enable or false)
+  ) (config.accounts.calendar.accounts or { });
+  hasAgendaTooltip =
+    (config.khanelinix.programs.terminal.tools.khal.enable or false)
+    && (config.khanelinix.services.vdirsyncer.enable or false)
+    && syncedCalendarAccounts != { };
+  calendarModule = import ./modules/calendar.nix {
+    inherit config lib pkgs;
+  };
 
   generateSettings = import ./lib/settings.nix {
     inherit
@@ -107,6 +117,9 @@ in
 
       home.packages = [
         pkgs.khanelinix.codexbar-waybar
+      ]
+      ++ lib.optionals hasAgendaTooltip [
+        calendarModule.package
       ];
 
       systemd.user.services.waybar.Service.EnvironmentFile =
