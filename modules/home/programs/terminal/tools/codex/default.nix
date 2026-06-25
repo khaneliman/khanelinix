@@ -182,8 +182,6 @@ in
         # DeepSWE favors GPT-5.5 high/xhigh enough to justify high as the
         # routine default; xhigh stays reserved for explicit deep runs.
         model = "gpt-5.5";
-        model_auto_compact_token_limit = 240000;
-        model_context_window = 272000;
         model_reasoning_effort = "high";
         plan_mode_reasoning_effort = "high";
         # service_tier = "fast"; # Not preferred by default for now; use /fast on when needed.
