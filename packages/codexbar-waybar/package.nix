@@ -33,13 +33,13 @@ let
 in
 stdenvNoCC.mkDerivation {
   pname = "codexbar-waybar";
-  version = "0.3.0-unstable-2026-06-02";
+  version = "0.3.1-unstable-2026-06-25";
 
   src = fetchFromGitHub {
     owner = "khaneliman";
     repo = "codexbar-waybar";
-    rev = "c0b10d85da597831dcdfc81b3393e3c9af1a299d";
-    hash = "sha256-Rtj0xxKSX6QwPHl6J8dwqYnMC9Z0WTbvLj/zsxDP6Dc=";
+    rev = "87be28ddb59ecfdb873e6d743f29491fc73c0594";
+    hash = "sha256-62c1kGCAlScgQiq5O9w9reECFw66GFuj8vRPBKzlbjw=";
     fetchSubmodules = false;
   };
 
