@@ -193,6 +193,12 @@ in
             assertion = davmailAccounts != { };
             message = "khanelinix.services.vdirsyncer.davmail.enable requires at least one Thunderbird extraEmailAccounts entry with flavor = \"davmail\".";
           }
+          {
+            assertion = lib.all (account: (account.passwordCommand or null) != null) (
+              lib.attrValues davmailAccounts
+            );
+            message = "khanelinix.services.vdirsyncer.davmail.enable requires each DavMail extraEmailAccounts entry to set passwordCommand.";
+          }
         ];
 
         accounts.calendar.accounts = lib.mapAttrs (_name: account: {

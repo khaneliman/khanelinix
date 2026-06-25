@@ -110,6 +110,10 @@ in
               ${work} = {
                 address = work;
                 flavor = "davmail";
+                passwordCommand = [
+                  (lib.getExe' pkgs.coreutils "cat")
+                  config.sops.secrets."davmail/work-password".path
+                ];
               };
             };
           };
@@ -432,6 +436,9 @@ in
   };
 
   sops.secrets = lib.mkIf config.khanelinix.services.sops.enable {
+    "davmail/work-password" = {
+      sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
+    };
     nix = {
       sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
       path = "${config.home.homeDirectory}/.config/nix/nix.conf";
