@@ -6,10 +6,43 @@
   ...
 }:
 let
-  inherit (lib.khanelinix) enabled;
+  inherit (lib.khanelinix) decode enabled;
   wallpaperCfg = config.khanelinix.theme.wallpaper;
   wallpaperPath = name: lib.khanelinix.theme.wallpaperPath { inherit config pkgs name; };
   wallpaperPaths = names: lib.khanelinix.theme.wallpaperPaths { inherit config pkgs names; };
+
+  # Not super secret, just doesn't need to be scraped so easily.
+  primaryGoogle = decode "a2hhbmVsaW1hbjEyQGdtYWlsLmNvbQ==";
+  outlook = decode "a2hhbmVsaW1hbjEyQG91dGxvb2suY29t";
+  personal = decode "YXVzdGluLm0uaG9yc3RtYW5AZ21haWwuY29t";
+  work = decode "YXVzdGluLmhvcnN0bWFuQG5yaS1uYS5jb20=";
+  googleCalendarCollections = [
+    {
+      name = decode "SG9saWRheXMgaW4gVW5pdGVkIFN0YXRlcw==";
+      remote = decode "Y2xuMnN0YmpjNGhtZ3JyY2Q1aTYydWEwY3RwNnV0Ymc1cHIyc29yMWRoaW1zcDMxZThuNmVycmZjdG02YWJqM2R0bWdAdmlydHVhbA==";
+      local = decode "aG9saWRheXMtdW5pdGVkLXN0YXRlcw==";
+    }
+    {
+      name = decode "UHJpbWFyeQ==";
+      remote = primaryGoogle;
+      local = decode "cHJpbWFyeQ==";
+    }
+    {
+      name = decode "R1RPIFRhc2tz";
+      remote = decode "aWN1ZXNxNjlwNzFibjg5MzFvdDRiYmdqZzRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ==";
+      local = decode "Z3RvLXRhc2tz";
+    }
+    {
+      name = decode "RmFtaWx5";
+      remote = decode "ZmFtaWx5MDE1MzE2MjQ5NDY3NjkzNjMyMzRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ==";
+      local = decode "ZmFtaWx5";
+    }
+    {
+      name = decode "TWljaGVsbGUgSA==";
+      remote = decode "c2hlbGJlZTMzNzNAZ21haWwuY29t";
+      local = decode "bWljaGVsbGUtaA==";
+    }
+  ];
 in
 {
   # Host input profile: Kinesis Advantage360 Pro split keyboard. Keep bind and
@@ -40,35 +73,46 @@ in
               };
             };
           };
-          thunderbird =
-            let
-              # Not super secret, just doesn't need to be scraped so easily.
-              outlook = lib.khanelinix.decode "a2hhbmVsaW1hbjEyQG91dGxvb2suY29t";
-              personal = lib.khanelinix.decode "YXVzdGluLm0uaG9yc3RtYW5AZ21haWwuY29t";
-              work = lib.khanelinix.decode "YXVzdGluLmhvcnN0bWFuQG5yaS1uYS5jb20=";
-            in
-            {
-              accountsOrder = [
-                "khaneliman12@gmail.com"
-                personal
-                outlook
-                work
-              ];
-              extraEmailAccounts = {
-                ${outlook} = {
-                  address = outlook;
-                  flavor = "outlook.office365.com";
-                };
-                ${personal} = {
-                  address = personal;
-                  flavor = "gmail.com";
-                };
-                ${work} = {
-                  address = work;
-                  flavor = "davmail";
-                };
+          thunderbird = {
+            accountsOrder = [
+              primaryGoogle
+              personal
+              outlook
+              work
+            ];
+            extraCalendarAccounts = {
+              "Birthdays" = {
+                url = "https://apidata.googleusercontent.com/caldav/v2/c5i68sj5edpm4rrfdchm6rreehgm6t3j81jn4rrle0n7cbj3c5m6arj4c5p2sprfdtjmop9ecdnmq%40virtual/events/";
+                type = "caldav";
+                color = "#92e1c0";
+              };
+              "Family" = {
+                url = "https://apidata.googleusercontent.com/caldav/v2/family01531624946769363234%40group.calendar.google.com/events/";
+                type = "caldav";
+                color = "#9a9cff";
+              };
+              "Michelle Z" = {
+                url = "https://apidata.googleusercontent.com/caldav/v2/shelbee3373%40gmail.com/events/";
+                type = "caldav";
+                color = "#9a9cff";
+              };
+              "Milwaukee Bucks".enable = false;
+            };
+            extraEmailAccounts = {
+              ${outlook} = {
+                address = outlook;
+                flavor = "outlook.office365.com";
+              };
+              ${personal} = {
+                address = personal;
+                flavor = "gmail.com";
+              };
+              ${work} = {
+                address = work;
+                flavor = "davmail";
               };
             };
+          };
           zathura = enabled;
         };
 
@@ -349,6 +393,13 @@ in
         enable = true;
         defaultSopsFile = lib.getFile "secrets/khanelinix/khaneliman/default.yaml";
         sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
+      };
+
+      vdirsyncer = {
+        google = {
+          enable = true;
+          collections = googleCalendarCollections;
+        };
       };
     };
 
