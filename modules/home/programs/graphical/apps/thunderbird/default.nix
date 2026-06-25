@@ -104,6 +104,9 @@ in
                 "outlook.office365.com"
                 "davmail"
               ]) null "Email flavor";
+              passwordCommand = mkOpt (lib.types.nullOr (
+                lib.types.listOf lib.types.str
+              )) null "Password command.";
             };
           };
         in
@@ -224,6 +227,7 @@ in
               primary ? false,
               enable ? true,
               flavor,
+              passwordCommand ? null,
             }:
             let
               finalEnable =
@@ -241,6 +245,7 @@ in
                 ;
               realName = config.khanelinix.user.fullName;
               userName = lib.mkIf (flavor == "davmail") address;
+              inherit passwordCommand;
               imap.tls.enable = lib.mkIf (flavor == "davmail") false;
               thunderbird = {
                 enable = finalEnable;
