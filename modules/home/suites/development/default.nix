@@ -245,7 +245,6 @@ in
             oh-my-posh = mkDefault enabled;
             opencode.enable = cfg.aiEnable;
             pi-coding-agent.enable = cfg.aiEnable;
-            agent-orchestrator.enable = cfg.aiEnable;
             t3code.enable = cfg.aiEnable;
           };
         };

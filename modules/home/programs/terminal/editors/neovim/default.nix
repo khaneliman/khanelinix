@@ -72,19 +72,6 @@ let
           }
         ];
       }
-      (lib.mkIf (config.khanelinix.programs.terminal.tools.agent-orchestrator.enable or false) {
-        keymaps = [
-          {
-            mode = "n";
-            key = "<leader>ao";
-            action = "<cmd>vsplit | terminal agent-orchestrator<cr>";
-            options = {
-              desc = "Run Agent Orchestrator Loop";
-              silent = true;
-            };
-          }
-        ];
-      })
       (lib.mkIf (config.khanelinix.theme.catppuccin.enable or false) {
         khanelivim.ui.theme = "catppuccin";
       })
