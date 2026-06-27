@@ -126,11 +126,11 @@ writeShellApplication {
       PADDING_RIGHT=$(yabai -m config right_padding)
       WINDOW_GAP=$(yabai -m config window_gap)
 
-      yabai -m config top_padding $(echo "$PADDING"_TOP + 10 | bc)
-      yabai -m config bottom_padding $(echo "$PADDING"_BOTTOM + 10 | bc)
-      yabai -m config left_padding $(echo "$PADDING"_LEFT + 10 | bc)
-      yabai -m config right_padding $(echo "$PADDING"_RIGHT + 10 | bc)
-      yabai -m config window_gap $(echo "$window"_GAP + 10 | bc)
+      yabai -m config top_padding $(echo "$PADDING_TOP" + 10 | bc)
+      yabai -m config bottom_padding $(echo "$PADDING_BOTTOM" + 10 | bc)
+      yabai -m config left_padding $(echo "$PADDING_LEFT" + 10 | bc)
+      yabai -m config right_padding $(echo "$PADDING_RIGHT" + 10 | bc)
+      yabai -m config window_gap $(echo "$WINDOW_GAP" + 10 | bc)
     }
 
     decrease_padding_top() {
@@ -160,11 +160,11 @@ writeShellApplication {
       PADDING_RIGHT=$(yabai -m config right_padding)
       WINDOW_GAP=$(yabai -m config window_gap)
 
-      yabai -m config top_padding $(echo "$PADDING"_TOP - 10 | bc)
-      yabai -m config bottom_padding $(echo "$PADDING"_BOTTOM - 10 | bc)
-      yabai -m config left_padding $(echo "$PADDING"_LEFT - 10 | bc)
-      yabai -m config right_padding $(echo "$PADDING"_RIGHT - 10 | bc)
-      yabai -m config window_gap $(echo "$window"_GAP - 10 | bc)
+      yabai -m config top_padding $(echo "$PADDING_TOP" - 10 | bc)
+      yabai -m config bottom_padding $(echo "$PADDING_BOTTOM" - 10 | bc)
+      yabai -m config left_padding $(echo "$PADDING_LEFT" - 10 | bc)
+      yabai -m config right_padding $(echo "$PADDING_RIGHT" - 10 | bc)
+      yabai -m config window_gap $(echo "$WINDOW_GAP" - 10 | bc)
     }
 
     new_window() {
