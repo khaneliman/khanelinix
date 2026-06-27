@@ -1,12 +1,13 @@
 {
   callPackage,
+  mkShell,
   clang-tools,
   gnumake,
   cmake,
   bear,
   libcxx,
   cppcheck,
-  llvm,
+  llvmPackages,
   gdb,
   glm,
   SDL2,
@@ -15,22 +16,23 @@
 let
   mainPkg = callPackage ./default.nix { };
 in
-mainPkg.overrideAttrs (oa: {
-  nativeBuildInputs = [
+mkShell {
+  inputsFrom = [ mainPkg ];
+
+  packages = [
     clang-tools # fix headers not found
     gnumake # builder
     cmake # another builder
     bear # bear.
     libcxx # stdlib for cpp
     cppcheck # static analysis
-    llvm.lldb # debugger
+    llvmPackages.lldb # debugger
     gdb # another debugger
-    llvm.libstdcxxClang # LSP and compiler
-    llvm.libcxx # stdlib for C++
+    llvmPackages.libstdcxxClang # LSP and compiler
+    llvmPackages.libcxx # stdlib for C++
     # libs
     glm
     SDL2
     SDL2_gfx
-  ]
-  ++ (oa.nativeBuildInputs or [ ]);
-})
+  ];
+}
