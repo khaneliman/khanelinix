@@ -131,6 +131,8 @@
             with import (nixpkgs + "/nixos/lib/testing-python.nix") { inherit system; };
 
             makeTest {
+              name = "rust-web-server-vm";
+
               nodes = {
                 client =
                   { ... }:

@@ -105,6 +105,8 @@
             with import (nixpkgs + "/nixos/lib/testing-python.nix") { inherit system; };
 
             makeTest {
+              name = "c-template-vm";
+
               nodes = {
                 client =
                   { ... }:
