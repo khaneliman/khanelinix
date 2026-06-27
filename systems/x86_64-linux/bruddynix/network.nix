@@ -15,8 +15,8 @@
     network.networks = {
       "30-network-defaults-wired" = {
         matchConfig.Name = "en* | eth* | usb*";
+        DHCP = "ipv4";
         networkConfig = {
-          DHCP = "ipv4";
           # Enable if `mdns` is not handled by avahi
           MulticastDNS = !config.services.avahi.enable;
         };
