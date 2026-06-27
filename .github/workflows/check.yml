@@ -4,30 +4,16 @@ permissions:
 on: [push, pull_request, workflow_dispatch]
 jobs:
   checks:
-    name: Check expressions on ${{ matrix.arch }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest]
-        arch: [x86_64-linux, aarch64-darwin]
-    if: github.ref == 'refs/heads/main'
+    name: Check flake
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - name: Check Nix flake inputs
         uses: DeterminateSystems/flake-checker-action@v12
-    # - uses: cachix/install-nix-action@v23
-    #   with:
-    #     install_url: https://nixos.org/nix/install
-    #     extra_nix_config: |
-    #       system = ${{ matrix.arch }}
-    # - uses: cachix/cachix-action@v12
-    #   with:
-    #     name: khanelinix
-    #     authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    # - name: clear hostedtoolcache
-    #   run: rm -rf /opt/hostedtoolcache
-    # - name: run flake check
-    #   env:
-    #     ARCH: ${{ matrix.arch }}
-    #   run: nix flake check --system $ARCH
+      - uses: cachix/install-nix-action@v31
+      - uses: cachix/cachix-action@v17
+        with:
+          name: khanelinix
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+      - name: Run flake checks
+        run: nix flake check --system x86_64-linux --print-build-logs
