@@ -28,7 +28,8 @@ let
       (lib.optional launchers.rofi.enable "rofi -dmenu")
     ];
 
-  dmenuCommand = builtins.head enabledDmenuLaunchers;
+  dmenuCommand =
+    if enabledDmenuLaunchers == [ ] then "rofi -dmenu" else builtins.elemAt enabledDmenuLaunchers 0;
 
   githubHelper = pkgs.writeShellScriptBin "githubHelper" ''
     ${lib.optionalString ((config.khanelinix.services.sops.enable or false) && hasGithubAccessToken) ''

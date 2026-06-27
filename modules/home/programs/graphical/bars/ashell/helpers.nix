@@ -17,7 +17,8 @@ let
     (lib.optional launchers.rofi.enable "rofi -dmenu")
   ];
 
-  dmenuCommand = builtins.head enabledDmenuLaunchers;
+  dmenuCommand =
+    if enabledDmenuLaunchers == [ ] then "rofi -dmenu" else builtins.elemAt enabledDmenuLaunchers 0;
 in
 {
   lockScript = pkgs.writeShellScriptBin "ashell-lock" ''

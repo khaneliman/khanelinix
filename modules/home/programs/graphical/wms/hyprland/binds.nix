@@ -58,6 +58,8 @@ let
       (lib.optional launchers.rofi.enable "rofi -show drun")
     ];
 
+  listOrFallback = list: fallback: if list == [ ] then fallback else builtins.elemAt list 0;
+
   dmenuLauncher =
     let
       inherit (config.khanelinix.programs.graphical) launchers;
@@ -69,7 +71,7 @@ let
         (lib.optional launchers.rofi.enable "rofi -dmenu")
       ];
     in
-    builtins.head enabledDmenuLaunchers;
+    listOrFallback enabledDmenuLaunchers "rofi -dmenu";
 
   commandReplacements =
     let

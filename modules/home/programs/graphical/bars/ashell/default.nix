@@ -68,7 +68,8 @@ in
               (lib.optional launchers.rofi.enable "rofi -dmenu")
             ];
 
-          dmenuCommand = builtins.head enabledDmenuLaunchers;
+          dmenuCommand =
+            if enabledDmenuLaunchers == [ ] then "rofi -dmenu" else builtins.elemAt enabledDmenuLaunchers 0;
 
           allCustomModules = [
             customModules.CustomGithub
@@ -128,7 +129,8 @@ in
           outputs = "All";
           position = "Top";
 
-          app_launcher_cmd = builtins.head enabledAppLaunchers;
+          app_launcher_cmd =
+            if enabledAppLaunchers == [ ] then "rofi -show drun" else builtins.elemAt enabledAppLaunchers 0;
           clipboard_cmd = "cliphist list | ${dmenuCommand} | cliphist decode | wl-copy";
           truncate_title_after_length = 150;
 

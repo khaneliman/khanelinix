@@ -78,10 +78,7 @@ in
           ];
 
           dmenuLauncher =
-            if builtins.length enabledDmenuLaunchers > 0 then
-              builtins.head enabledDmenuLaunchers
-            else
-              "rofi -dmenu";
+            if enabledDmenuLaunchers == [ ] then "rofi -dmenu" else builtins.elemAt enabledDmenuLaunchers 0;
 
           wlCopy = lib.getExe' pkgs.wl-clipboard "wl-copy";
           wlPaste = lib.getExe' pkgs.wl-clipboard "wl-paste";
