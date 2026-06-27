@@ -16,7 +16,7 @@ async fn main() -> std::io::Result<()> {
 mod tests {
     use super::*;
     use actix_web::dev::Service;
-    use actix_web::{App, Error, http, test};
+    use actix_web::{App, Error, body::to_bytes, http, test};
 
     #[actix_rt::test]
     async fn test() -> Result<(), Error> {
@@ -29,12 +29,9 @@ mod tests {
 
         assert_eq!(resp.status(), http::StatusCode::OK);
 
-        let body = match resp.response().body().as_ref() {
-            Some(actix_web::body::Body::Bytes(bytes)) => bytes,
-            _ => panic!("Response error"),
-        };
+        let body = to_bytes(resp.into_body()).await.unwrap();
 
-        assert_eq!(body, "Hello Nixers!\n");
+        assert_eq!(body.as_ref(), b"Hello Nixers!\n");
 
         Ok(())
     }
