@@ -42,13 +42,6 @@
       };
     in
     lib.mkFlake {
-      alias = {
-        packages = {
-          default = "khanelisnow";
-          nvim = "khanelisnow";
-        };
-      };
-
       channels-config = {
         allowUnfree = true;
       };
