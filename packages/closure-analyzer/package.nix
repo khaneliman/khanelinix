@@ -1,5 +1,7 @@
 {
+  coreutils,
   lib,
+  nix,
   python3Packages,
   ...
 }:
@@ -25,6 +27,16 @@ python3Packages.buildPythonApplication rec {
     python -m py_compile ${src}
     ruff check ${src}
   '';
+
+  makeWrapperArgs = [
+    "--prefix"
+    "PATH"
+    ":"
+    (lib.makeBinPath [
+      coreutils
+      nix
+    ])
+  ];
 
   meta = {
     description = "Analyze Nix closure size and identify optimization opportunities";

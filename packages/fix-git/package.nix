@@ -1,4 +1,13 @@
-{ writeShellApplication, git, ... }:
+{
+  coreutils,
+  findutils,
+  git,
+  gnugrep,
+  gnused,
+  wget,
+  writeShellApplication,
+  ...
+}:
 writeShellApplication {
   name = "fix-git";
 
@@ -8,7 +17,14 @@ writeShellApplication {
 
   checkPhase = "";
 
-  runtimeInputs = [ git ];
+  runtimeInputs = [
+    coreutils
+    findutils
+    git
+    gnugrep
+    gnused
+    wget
+  ];
 
   text = ''
     # Usage: fix-git [REMOTE-URL]
@@ -57,7 +73,7 @@ writeShellApplication {
 
     url_base="$(echo "$url" | sed -E 's;^([^/]*://)?([^/]*)(/.*)?$;\2;')"
     echo "Attempting to access $url_base before continuing"
-    if ! wget -p "$${url_base}" -O /dev/null -q --dns-timeout=5 --connect-timeout=5 ;
+    if ! wget -p "$url_base" -O /dev/null -q --dns-timeout=5 --connect-timeout=5 ;
     then
         echo "Unable to reach $url_base: Aborting before any damage is done" >&2
         exit 4

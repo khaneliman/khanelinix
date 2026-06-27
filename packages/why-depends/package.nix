@@ -1,5 +1,6 @@
 {
   lib,
+  nix,
   python3Packages,
   ...
 }:
@@ -21,7 +22,12 @@ python3Packages.buildPythonApplication rec {
     chmod +x $out/bin/why-depends
   '';
 
-  propagatedBuildInputs = [ ];
+  makeWrapperArgs = [
+    "--prefix"
+    "PATH"
+    ":"
+    (lib.makeBinPath [ nix ])
+  ];
 
   checkPhase = ''
     ruff check ${src}

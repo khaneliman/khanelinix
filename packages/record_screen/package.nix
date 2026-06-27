@@ -1,11 +1,15 @@
 {
   lib,
-  libnotify,
   bc,
+  coreutils,
   ffmpeg,
   gifsicle,
+  gawk,
+  hyprland,
   slurp,
   jq,
+  libnotify,
+  procps,
   wl-clipboard,
   wl-screenrec,
   writeShellApplication,
@@ -24,10 +28,14 @@ writeShellApplication {
 
   runtimeInputs = [
     bc
+    coreutils
     gifsicle
     ffmpeg
+    gawk
+    hyprland
     jq
     libnotify
+    procps
     slurp
     wl-clipboard
     wl-screenrec
@@ -218,6 +226,7 @@ writeShellApplication {
         IFS=$'\t' read -r output width height <<<"$monitor_state"
     	debug_log "Active monitor: $output"
     	debug_log "Screen dimensions: ''${width}x''${height}"
+        local audio_device="''${RECORD_SCREEN_AUDIO_DEVICE:-alsa_output.pci-0000_0c_00.4.analog-stereo.monitor}"
 
     	# Calculate scale factor if dimensions exceed maximum supported
     	local scale_factor=1.0
@@ -241,7 +250,7 @@ writeShellApplication {
 
     		wl-screenrec \
     			--audio \
-    			--audio-device alsa_output.pci-0000_0c_00.4.analog-stereo.monitor \
+                --audio-device "$audio_device" \
     			--low-power=off \
     			--codec=avc \
     			--encode-resolution="''${scaled_width}x''${scaled_height}" \
@@ -251,7 +260,7 @@ writeShellApplication {
     		debug_log "Recording at native resolution"
     		wl-screenrec \
     			--audio \
-    			--audio-device alsa_output.pci-0000_0c_00.4.analog-stereo.monitor \
+                --audio-device "$audio_device" \
     			--low-power=off \
     			--codec=avc \
     			-f "$TMP_MP4_FILE" \

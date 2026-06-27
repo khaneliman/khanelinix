@@ -14,6 +14,6 @@ writeShellApplication {
   checkPhase = "";
 
   text = ''
-    a=$(which "$1") && exec ${lib.getExe trace-symlink} "$a"
+    a=$(command -v "$1") && exec ${lib.getExe trace-symlink} "$a"
   '';
 }

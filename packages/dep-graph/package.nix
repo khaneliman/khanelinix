@@ -1,6 +1,7 @@
 {
   lib,
   graphviz,
+  nix,
   python3Packages,
   ...
 }:
@@ -27,7 +28,15 @@ python3Packages.buildPythonApplication rec {
     ruff check ${src}
   '';
 
-  propagatedBuildInputs = [ graphviz ];
+  makeWrapperArgs = [
+    "--prefix"
+    "PATH"
+    ":"
+    (lib.makeBinPath [
+      graphviz
+      nix
+    ])
+  ];
 
   meta = {
     description = "Generate a dependency graph (dot/svg) for a Nix flake output";
