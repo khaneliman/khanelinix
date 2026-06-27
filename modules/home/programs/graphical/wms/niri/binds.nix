@@ -81,7 +81,7 @@ in
             if enabledDmenuLaunchers == [ ] then "rofi -dmenu" else builtins.elemAt enabledDmenuLaunchers 0;
 
           wlCopy = lib.getExe' pkgs.wl-clipboard "wl-copy";
-          wlPaste = lib.getExe' pkgs.wl-clipboard "wl-paste";
+
           magick = lib.getExe' pkgs.imagemagick "magick";
 
           lockCommand =
@@ -100,9 +100,13 @@ in
 
           cliphistCommand = "cliphist list | ${dmenuLauncher} | cliphist decode | ${wlCopy}";
 
-          colorPickerCommand = "hyprpicker -a && (${magick} convert -size 32x32 xc:$(${wlPaste}) /tmp/color.png && notify-send \"Color Code:\" \"$(${wlPaste})\" -h \"string:bgcolor:$(${wlPaste})\" --icon /tmp/color.png -u critical -t 4000)";
-
-          hyprpickerEnabled = lib.elem pkgs.hyprpicker config.home.packages;
+          colorPickerCommand = ''
+            color="$(niri msg pick-color | awk '/Hex:/ { print $2 }')" &&
+            [ -n "$color" ] &&
+            printf '%s' "$color" | ${wlCopy} &&
+            ${magick} convert -size 32x32 "xc:$color" /tmp/color.png &&
+            notify-send "Color Code:" "$color" -h "string:bgcolor:$color" --icon /tmp/color.png -u critical -t 4000
+          '';
 
           workspaceDigitBinds = builtins.listToAttrs (
             map (
@@ -157,7 +161,7 @@ in
               "Mod+Space".action.spawn = backupLauncher;
             };
 
-          pickerBind = lib.optionalAttrs hyprpickerEnabled {
+          pickerBind = {
             "Mod+Shift+P".action.spawn = colorPickerCommand;
           };
 
