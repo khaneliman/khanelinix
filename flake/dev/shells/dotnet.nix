@@ -82,7 +82,7 @@ let
         baseDotnetShell.packages
         ++ [ combinedDotnet ]
         ++ (
-          if version < "9" then
+          if lib.versionOlder version "9" then
             [
               # Special handling for .NET csharp-ls override
               (pkgs.csharp-ls.overrideAttrs (_oldAttrs: {
