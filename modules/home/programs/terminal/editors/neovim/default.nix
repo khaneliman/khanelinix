@@ -37,14 +37,6 @@ let
       khanelivimConfiguration = mkBaseKhanelivimConfiguration profile;
     };
 
-  nvrEditor = pkgs.writeShellScriptBin "nvr-editor" ''
-    if [ -n "$NVIM" ] || [ -n "$NVIM_LISTEN_ADDRESS" ]; then
-      exec ${lib.getExe pkgs.nvrh} --remote-wait "$@"
-    fi
-
-    exec ${lib.getExe khanelivim} "$@"
-  '';
-
   mkKhanelivimModules =
     profile:
     [
@@ -162,12 +154,23 @@ in
         GIT_EDITOR = lib.mkIf cfg.default "nvr-editor";
         MANPAGER = "nvim -c 'set ft=man bt=nowrite noswapfile nobk shada=\\\"NONE\\\" ro noma' +Man! -o -";
       };
-      packages = [
-        khanelivim
-        pkgs.nvrh
-        nvrEditor
-      ]
-      ++ profileWrappers;
+      packages =
+        let
+          nvrEditor = pkgs.writeShellScriptBin "nvr-editor" ''
+            if [ -n "$NVIM" ] || [ -n "$NVIM_LISTEN_ADDRESS" ]; then
+              exec ${lib.getExe pkgs.neovim-remote} --remote-wait "$@"
+            fi
+
+            exec ${lib.getExe khanelivim} "$@"
+          '';
+        in
+        [
+          khanelivim
+          nvrEditor
+          pkgs.neovim-remote
+          pkgs.nvrh
+        ]
+        ++ profileWrappers;
     };
 
     sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {
