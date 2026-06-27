@@ -51,7 +51,7 @@ in
       };
     };
 
-    security.pam.services.greetd = {
+    security.pam.services.lightdm = {
       enableGnomeKeyring = true;
       gnupg.enable = true;
     };
