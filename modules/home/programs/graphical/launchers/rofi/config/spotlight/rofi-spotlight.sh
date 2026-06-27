@@ -288,7 +288,7 @@ function find_query() {
     QUERY=${1}
     if [[ ! $QUERY =~ ( |\') ]]; then
         if [ "$FD_INSTALLED" = "" ]; then
-            find "$HOME" -iname *"$QUERY"* | sed "s/\/home\/$USER/\~/" |
+            find "$HOME" -iname "*$QUERY*" | sed "s/\/home\/$USER/\~/" |
                 awk -v MY_PATH="$MY_PATH" '{print $0"\0icon\x1f"MY_PATH"/icons/result.svg\n"}'
         else
             fd -H "$QUERY" "$HOME" | sed "s/\/home\/$USER/\~/" |
@@ -483,45 +483,51 @@ fi
 if [ "$*" != "" ] && [[ "${ALL_OPTIONS[*]} " == *"$*"* ]]; then
     case "${1}" in
     "Run")
+        file_path="$(<"$CURRENT_FILE")"
         coproc (
-            eval "$(<"$CURRENT_FILE")" &
+            "$file_path"
             >/dev/null 2>&1
         )
         kill -9 "$(pgrep rofi)"
         ;;
     "Execute in ${TERM_EMU}")
+        file_path="$(<"$CURRENT_FILE")"
         coproc (
-            eval "${TERM_EMU} \"$(<"$CURRENT_FILE")\"" &
+            "$TERM_EMU" "$file_path"
             >/dev/null 2>&1
         )
         kill -9 "$(pgrep rofi)"
         ;;
     "Open")
+        file_path="$(<"$CURRENT_FILE")"
         coproc (
-            eval "${OPENER} \"$(<"$CURRENT_FILE")\"" &
+            "$OPENER" "$file_path"
             >/dev/null 2>&1
         )
         kill -9 "$(pgrep rofi)"
         ;;
     "Open file location in ${TERM_EMU}")
         file_path="$(<"$CURRENT_FILE")"
+        file_dir="${file_path%/*}"
         coproc (
-            "$TERM_EMU" bash -c "cd ${file_path%/*} ; ${SHELL}" &
+            "$TERM_EMU" bash -lc 'cd "$1" && exec "${SHELL:-sh}"' _ "$file_dir"
             >/dev/null 2>&1
         )
         kill -9 "$(pgrep rofi)"
         ;;
     "Open file location in ${FILE_MANAGER}")
         file_path="$(<"$CURRENT_FILE")"
+        file_dir="${file_path%/*}"
         coproc (
-            eval "${FILE_MANAGER} ""${file_path%/*}" &
+            "$FILE_MANAGER" "$file_dir"
             >/dev/null 2>&1
         )
         kill -9 "$(pgrep rofi)"
         ;;
     "Edit")
+        file_path="$(<"$CURRENT_FILE")"
         coproc (
-            eval "${TERM_EMU} ${TEXT_EDITOR} \"$(<"$CURRENT_FILE")\"" &
+            "$TERM_EMU" "${TEXT_EDITOR:-vi}" "$file_path"
             >/dev/null 2>&1
         )
         kill -9 "$(pgrep rofi)"
