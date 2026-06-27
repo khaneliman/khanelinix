@@ -50,25 +50,35 @@ jobs:
         with:
           extra_nix_config: |
             access-tokens = github.com=${{github.token}}
-      - name: Update flake.lock
-        run: nix flake update
-      - name: Check for nixpkgs updates
-        id: check-nixpkgs
+      - name: Update flake locks
         run: |
-          if git diff flake.lock | grep -E '"nixpkgs":|"nixpkgs-unstable":'; then
+          nix flake update
+          nix flake update --flake ./flake/dev
+      - name: Check for lock updates
+        id: check-locks
+        run: |
+          if git diff --quiet flake.lock flake/dev/flake.lock; then
+            echo "locks_updated=false" >> "$GITHUB_OUTPUT"
+            echo "✗ flake lock files were not updated, skipping PR"
+            exit 0
+          fi
+
+          echo "locks_updated=true" >> "$GITHUB_OUTPUT"
+
+          if git diff flake.lock flake/dev/flake.lock | grep -E '"nixpkgs":|"nixpkgs-unstable":'; then
             echo "nixpkgs_updated=true" >> "$GITHUB_OUTPUT"
             echo "✓ nixpkgs or nixpkgs-unstable was updated"
           else
             echo "nixpkgs_updated=false" >> "$GITHUB_OUTPUT"
-            echo "✗ nixpkgs inputs were not updated, skipping PR"
+            echo "✓ only non-nixpkgs inputs were updated"
           fi
       - name: Commit changes
-        if: steps.check-nixpkgs.outputs.nixpkgs_updated == 'true'
+        if: steps.check-locks.outputs.locks_updated == 'true'
         run: |
-          git add flake.lock
-          git commit -m "flake.lock: update"
+          git add flake.lock flake/dev/flake.lock
+          git commit -m "chore(flake): update locks" -m "Refresh root and dev flake inputs from the scheduled update workflow."
       - name: Create Pull Request
-        if: steps.check-nixpkgs.outputs.nixpkgs_updated == 'true'
+        if: steps.check-locks.outputs.locks_updated == 'true'
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ steps.app-token.outputs.token || github.token }}
@@ -78,7 +88,7 @@ jobs:
           body: |
             Automated update by the update-flake-lock workflow.
 
-            This PR updates nixpkgs inputs.
+            This PR updates root and dev flake lock inputs.
 
             This PR was created by workflow run [${{ github.run_id }}].
 
