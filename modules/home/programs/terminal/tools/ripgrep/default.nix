@@ -23,10 +23,12 @@ in
       package = pkgs.ripgrep;
 
       arguments = [
-        # Don't have ripgrep vomit a bunch of stuff on the screen
-        # show a preview of the match
-        "--max-columns=150"
-        "--max-columns-preview"
+        # --max-columns truncates long matches with a preview marker. Fine when
+        # reading output interactively, but it mangles results when rg is piped
+        # into scripts or tools that parse its output as data. Re-enable for
+        # interactive use.
+        # "--max-columns=150"
+        # "--max-columns-preview"
 
         # ignore git files
         "--glob=!.git/*"
