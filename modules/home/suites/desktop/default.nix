@@ -81,7 +81,8 @@ in
         input-leap
         meshcentral
         moonlight-qt
-        realvnc-vnc-viewer
+        # FIXME: broken nixpkgs
+        # realvnc-vnc-viewer
       ]
       ++ lib.optionals (cfg.fileManagementEnable && includes "standard") [
         bleachbit

@@ -234,6 +234,9 @@ let
         "aspnetcore-runtime-wrapped-7.0.20"
         "aspnetcore-runtime-wrapped-6.0.36"
         "dotnet-combined"
+        # NOTE: vesktop/stylelint
+        "pnpm-9.15.9"
+        "pnpm-10.29.2"
       ];
     };
   };

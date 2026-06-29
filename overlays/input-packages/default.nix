@@ -1,12 +1,12 @@
 { inputs }:
-final: _prev:
+final: prev:
 let
   inherit (final.stdenv.hostPlatform) system;
 
-  # master = import inputs.nixpkgs-master {
-  #   inherit system;
-  #   inherit (prev) config;
-  # };
+  master = import inputs.nixpkgs-master {
+    inherit system;
+    inherit (prev) config;
+  };
 in
 {
   #          ╭──────────────────────────────────────────────────────────╮
@@ -41,19 +41,20 @@ in
   #          │                 Python package overrides                 │
   #          ╰──────────────────────────────────────────────────────────╯
   # Keep this disabled unless we need explicit python package overrides.
-  # python3 = _prev.python3.override {
-  #   packageOverrides = _pyFinal: _pyPrev: {
-  #     # TODO: remove after hitting channel
-  #   };
-  # };
-  # python3Packages = final.python3.pkgs;
+  python3 = prev.python3.override {
+    packageOverrides = _pyFinal: _pyPrev: {
+      # TODO: remove after hitting channel
+      inherit (master.python3Packages) afdko;
+    };
+  };
+  python3Packages = final.python3.pkgs;
 
   #          ╭──────────────────────────────────────────────────────────╮
   #          │   Override linuxKernel.packages.linux_zen specifically   │
   #          ╰──────────────────────────────────────────────────────────╯
-  # linuxKernel = _prev.linuxKernel // {
-  #   packages = _prev.linuxKernel.packages // {
-  #     inherit (unstable.linuxKernel.packages) linux_zen;
-  #   };
-  # };
+  # linux-zen 7.0.12 in the channel installs $out/vmlinuz instead of
+  # $out/bzImage, so the bootloader sanity check fails. master's 7.1.2 build
+  # restores $out/bzImage; pull it until the fix reaches the unstable channel.
+  # TODO: remove after hitting channel
+  inherit (master) linuxPackages_zen;
 }
