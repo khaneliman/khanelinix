@@ -73,6 +73,9 @@ local widths = {
 	popup_process_wide = 264,
 	popup_network = 252,
 	stack_item = 30,
+	today_popup = 310,
+	today_popup_max = 560,
+	today_popup_time = 82,
 	temperature_label = 30,
 	time_label = 90,
 	volume_label = 25,
@@ -84,6 +87,13 @@ local widths = {
 
 widths.wifi_popup_label = widths.wifi_popup - widths.wifi_popup_icon
 widths.today_popup_min = widths.date_label + widths.stack_item
+widths.today_popup_label = widths.today_popup - widths.today_popup_time
+
+local calendar = {
+	char_width = 7,
+	event_limit = 18,
+	title_width = 64,
+}
 
 local offsets = {
 	apple_logo_left = -spacing.compact,
@@ -138,6 +148,7 @@ return {
 	widths = widths,
 	offsets = offsets,
 	animation = animation,
+	calendar = calendar,
 	collapse_padding = collapse_padding,
 	percent_label_width = widths.percent_label,
 	count_label_width = widths.count_label,
