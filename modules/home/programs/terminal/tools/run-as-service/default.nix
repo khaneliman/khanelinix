@@ -36,7 +36,7 @@ let
       --property=ExitType=cgroup \
       --user \
       --wait \
-      bash -lc "exec ${apply-hm-env} $@"
+      ${lib.getExe pkgs.bash} -lc 'exec "$@"' run-as-service ${apply-hm-env} "$@"
   '';
 in
 {
