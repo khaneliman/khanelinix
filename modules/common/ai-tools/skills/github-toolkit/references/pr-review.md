@@ -30,6 +30,22 @@ Do not flag style, subjective quality, pre-existing problems, speculative edge
 cases, duplicates, or normal linter findings unless repo instructions require.
 Validate each issue against diff and relevant local instructions before posting.
 
+## Don't Re-Run CI Work
+
+CI already runs the mechanical checks, and the PR already shows their results.
+Re-running them during review proves nothing new, adds noise, and lengthens the
+review.
+
+- Do not re-run tests, builds, linters, or formatters just to confirm what a
+  green check already reports. Read the check results instead.
+- Do not restate passing checks or paste their output as findings.
+- Do judge whether a check actually exercises the change: does the suite cover
+  the new code path, or pass without touching it? Is there changed behavior with
+  no check behind it? A check that stays green regardless of the diff proves
+  nothing — that gap is the finding worth flagging.
+- Spend review effort on what CI cannot: logic correctness, design, policy
+  compliance, and missing coverage.
+
 ## Review Writing
 
 - Make the review body short: outcome, confidence, and any global context only.
