@@ -163,15 +163,20 @@ in
                   mode = "3840x2160@60";
                   position = "1280x0";
                   scale = 1.5;
-                  bitdepth = 10;
+                  # Troubleshooting Hyprland/AMDGPU DPMS wake crashes: keep
+                  # 10-bit disabled to avoid HDR/wide-color monitor paths.
+                  # bitdepth = 10;
                 }
                 {
                   output = "DP-1";
                   mode = "5120x1440@120";
                   position = "0x1440";
                   scale = 1;
-                  vrr = 1;
-                  bitdepth = 10;
+                  vrr = 2;
+                  # Troubleshooting Hyprland/AMDGPU DPMS wake crashes: keep
+                  # always-on VRR and 10-bit disabled while testing stability.
+                  # vrr = 1;
+                  # bitdepth = 10;
                 }
               ];
 
