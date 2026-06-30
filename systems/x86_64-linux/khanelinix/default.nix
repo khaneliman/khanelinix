@@ -63,10 +63,7 @@ in
           };
         }
         {
-          sway = {
-            enable = true;
-            withUWSM = true;
-          };
+          sway.enable = true;
         }
       ];
     };
@@ -186,8 +183,10 @@ in
     sopsFile = lib.getFile "secrets/khanelinix/khaneliman/default.yaml";
   };
 
+  programs.hyprland.withUWSM = false;
+
   services = {
-    displayManager.defaultSession = "hyprland-uwsm";
+    displayManager.defaultSession = "hyprland";
     irqbalance.enable = mkForce false;
     sunshine = {
       settings = {

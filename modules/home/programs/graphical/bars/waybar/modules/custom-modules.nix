@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  osConfig ? { },
   pkgs,
 
   ...
@@ -345,8 +344,7 @@ in
         lock = /* Bash */ ''([[ "$XDG_CURRENT_DESKTOP" == "sway" ]] && ${swaylock} -defF) || ([[ "$XDG_CURRENT_DESKTOP" == "Hyprland" ]] && ${hyprlock} --immediate)'';
         suspend = "${systemctl} suspend";
         top = "${terminal} ${top}";
-        logout =
-          if (osConfig.programs.uwsm.enable or false) then "uwsm stop" else "loginctl terminate-user $USER";
+        logout = "wayland-session-stop";
       };
   };
 

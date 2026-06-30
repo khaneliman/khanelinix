@@ -19,7 +19,7 @@ let
     if (osConfig.programs.uwsm.enable or false) then
       "uwsm app -p TimeoutStopSec=15s -- ${cmd}"
     else
-      cmd;
+      "run-as-service ${cmd}";
 in
 {
   config = mkIf cfg.enable (

@@ -2,8 +2,6 @@
   config,
   lib,
   pkgs,
-
-  osConfig ? { },
   ...
 }:
 let
@@ -48,8 +46,7 @@ in
           }
           {
             label = "logout";
-            action =
-              if (osConfig.programs.uwsm.enable or false) then "uwsm stop" else "loginctl terminate-user $USER";
+            action = "wayland-session-stop";
             text = "Logout";
             keybind = "e";
           }

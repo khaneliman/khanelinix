@@ -1136,9 +1136,7 @@ in
           settings = {
             bind = map mkLuaBind (
               [
-                (mkExecBind "" "l" (
-                  if (osConfig.programs.uwsm.enable or false) then "uwsm stop" else lib.getExe pkgs.hyprshutdown
-                ))
+                (mkExecBind "" "l" "wayland-session-stop")
                 (mkExecBind "" "r" "systemctl reboot")
                 (mkExecBind "" "p" "systemctl poweroff")
               ]

@@ -44,7 +44,7 @@ in
 
   config = mkIf cfg.enable {
     environment = {
-      sessionVariables = lib.mkIf (!config.programs.uwsm.enable) {
+      sessionVariables = lib.mkIf (!config.programs.hyprland.withUWSM) {
         HYPRCURSOR_THEME = config.khanelinix.theme.cursor.name;
         HYPRCURSOR_SIZE = "${toString config.khanelinix.theme.cursor.size}";
       };
@@ -53,7 +53,6 @@ in
     programs = {
       hyprland = {
         enable = true;
-        withUWSM = true;
 
         package = pkgs.hyprland.override { debug = cfg.enableDebug; };
       };

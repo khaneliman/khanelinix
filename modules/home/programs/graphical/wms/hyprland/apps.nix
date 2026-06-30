@@ -54,7 +54,7 @@ in
                   lib.optionalString (slice != null) "-s ${slice} "
                 }-p TimeoutStopSec=${timeoutStopSec} -- ${cmd}"
               else
-                cmd;
+                "run-as-service ${cmd}";
 
             # Single-argument version: mkStartCommand "command"
             withoutArgs =
@@ -62,7 +62,7 @@ in
               if (osConfig.programs.uwsm.enable or false) then
                 "uwsm app -p TimeoutStopSec=15s -- ${cmd}"
               else
-                cmd;
+                "run-as-service ${cmd}";
           in
           args: if lib.isString args then withoutArgs args else withArgs args;
         appCommands =
@@ -94,7 +94,7 @@ in
             ]
           )
           ++ [
-            # Always start these utilities (no UWSM wrapping needed)
+            # Always start these utilities.
             (mkStartCommand { slice = "b"; } "wayvnc $(tailscale ip --4)")
           ];
       in

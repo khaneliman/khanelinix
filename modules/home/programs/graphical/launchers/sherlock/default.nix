@@ -29,8 +29,11 @@ in
         };
 
         behavior = {
-          global_prefix = lib.mkIf (osConfig.programs.uwsm.enable or false
-          ) "uwsm app -p TimeoutStopSec=15s --";
+          global_prefix =
+            if (osConfig.programs.uwsm.enable or false) then
+              "uwsm app -p TimeoutStopSec=15s --"
+            else
+              "run-as-service";
         };
 
         caching = {

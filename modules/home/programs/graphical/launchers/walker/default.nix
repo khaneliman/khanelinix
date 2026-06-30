@@ -59,8 +59,11 @@ in
             context_aware = false;
             prioritize_new = false;
             show_generic = true;
-            launch_prefix = lib.mkIf (osConfig.programs.uwsm.enable or false
-            ) "uwsm app -p TimeoutStopSec=15s -- ";
+            launch_prefix =
+              if (osConfig.programs.uwsm.enable or false) then
+                "uwsm app -p TimeoutStopSec=15s -- "
+              else
+                "run-as-service ";
             actions = {
               enabled = true;
               hide_category = false;

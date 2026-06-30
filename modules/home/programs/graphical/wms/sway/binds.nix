@@ -36,7 +36,7 @@ let
             lib.optionalString (slice != null) "-s ${slice} "
           }-p TimeoutStopSec=${timeoutStopSec} -- ${cmd}"
         else
-          cmd;
+          "run-as-service ${cmd}";
 
       # Single-argument version: mkStartCommand "command"
       withoutArgs =
@@ -44,7 +44,7 @@ let
         if (osConfig.programs.uwsm.enable or false) then
           "uwsm app -p TimeoutStopSec=15s -- ${cmd}"
         else
-          cmd;
+          "run-as-service ${cmd}";
     in
     args: if lib.isString args then withoutArgs args else withArgs args;
 in
@@ -340,9 +340,7 @@ in
             };
 
             system = {
-              "l" = "exec ${
-                if (osConfig.programs.uwsm.enable or false) then "uwsm stop" else "loginctl terminate-user $USER"
-              }";
+              "l" = "exec wayland-session-stop";
               "r" = "exec systemctl reboot";
               "p" = "exec systemctl poweroff";
               "Escape" = "mode default";

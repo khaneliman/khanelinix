@@ -19,11 +19,7 @@ in
   "custom/quit" = {
     format = "󰗼";
     tooltip = false;
-    on-click =
-      if (osConfig.programs.uwsm.enable or false) then
-        "${getExe' osConfig.programs.uwsm.package "uwsm"} stop"
-      else
-        "${lib.getExe pkgs.hyprshutdown}";
+    on-click = "wayland-session-stop";
   };
 
   "hyprland/submap" = {

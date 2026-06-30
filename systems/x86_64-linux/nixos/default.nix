@@ -9,6 +9,8 @@ in
     WLR_NO_HARDWARE_CURSORS=1
   '';
 
+  programs.hyprland.withUWSM = false;
+
   khanelinix = {
     nix = enabled;
 
@@ -49,7 +51,7 @@ in
     };
   };
 
-  services.displayManager.defaultSession = "hyprland-uwsm";
+  services.displayManager.defaultSession = "hyprland";
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave

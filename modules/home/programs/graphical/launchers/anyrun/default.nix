@@ -51,9 +51,14 @@ in
       extraConfigFiles = {
         "applications.ron".text =
           let
+            preprocessCommandPrefix =
+              if (osConfig.programs.uwsm.enable or false) then
+                "uwsm app -p TimeoutStopSec=15s --"
+              else
+                "run-as-service";
             preprocessScript = pkgs.writeShellScriptBin "anyrun-preprocess-application-exec" ''
               shift
-              echo "uwsm app -p TimeoutStopSec=15s -- $*"
+              echo "${preprocessCommandPrefix} $*"
             '';
           in
           /* Ron */ ''
@@ -61,8 +66,7 @@ in
               desktop_actions: true,
               max_entries: 10,
               terminal: Some("kitty"),
-              ${lib.optionalString (osConfig.programs.uwsm.enable or false
-              ) "preprocess_exec_script: Some(\"${lib.getExe preprocessScript}\"),"}
+              preprocess_exec_script: Some("${lib.getExe preprocessScript}"),
             )
           '';
 
