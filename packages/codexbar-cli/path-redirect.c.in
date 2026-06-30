@@ -29,6 +29,10 @@ static const char *redirect_path(const char *path) {
     return "@lsof@";
   }
 
+  if (strcmp(path, "/usr/bin/which") == 0 || strcmp(path, "/bin/which") == 0) {
+    return "@which@";
+  }
+
   // Foundation's CFTimeZone hardcodes /usr/share/zoneinfo and traps
   // (SIGILL) when the lookup fails, so point it at Nix tzdata.
   if (strncmp(path, ZONEINFO_PREFIX, sizeof(ZONEINFO_PREFIX) - 1) == 0) {

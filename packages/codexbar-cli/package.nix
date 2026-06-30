@@ -9,6 +9,7 @@
   sqlite,
   procps,
   lsof,
+  which,
   tzdata,
   ...
 }:
@@ -67,6 +68,7 @@ stdenv.mkDerivation {
       substitute ${./path-redirect.c.in} path-redirect.c \
         --replace-fail @ps@ ${lib.getExe' procps "ps"} \
         --replace-fail @lsof@ ${lib.getExe lsof} \
+        --replace-fail @which@ ${lib.getExe which} \
         --replace-fail @tzdata@ ${tzdata}/share/zoneinfo
 
       $CC -shared -fPIC path-redirect.c -o $out/lib/codexbar-path-redirect.so -ldl -lssl -lcrypto
