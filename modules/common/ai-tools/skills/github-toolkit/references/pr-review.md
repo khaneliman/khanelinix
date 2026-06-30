@@ -67,27 +67,29 @@ review.
 
 ## Posting Pending Reviews (API Mechanics)
 
-When creating a draft/pending review with inline comments programmatically:
+`gh pr review` cannot post inline comments — only
+approve/comment/request-changes with a body. For inline, multi-line, or
+suggestion comments, use `gh api`.
 
-- REST `POST /repos/{owner}/{repo}/pulls/{n}/reviews` silently drops
-  `start_line`/`start_side` on its `comments[]` items, storing every comment as
-  single-line. Multi-line `suggestion` blocks then anchor to the end line only —
-  "Commit suggestion" replaces one line and produces broken code.
-- For any review containing a multi-line suggestion, use GraphQL instead:
-  1. `addPullRequestReview(input: {pullRequestId, body})` with no `event` to
-     create the pending review.
-  2. `addPullRequestReviewThread(input: {pullRequestReviewId, path, startLine,
-     startSide, line, side, body})`
-     per comment.
-- Verify ranges via GraphQL
-  (`node(id:) { ... on PullRequestReview {
-  comments { path startLine line } } }`).
-  REST returns `line: null` on pending-review comments even when ranges are
-  stored correctly, so REST output cannot distinguish a broken anchor from a
-  pending one.
-- A suggestion block replaces exactly the anchored range `startLine..line`; the
-  suggestion body must be a drop-in replacement for those lines, including
-  indentation.
+- REST works end to end (verified gh 2.95.0 / GitHub API, 2026-06):
+  `POST
+  /repos/{owner}/{repo}/pulls/{n}/reviews` with a `comments[]` array
+  preserves `start_line`/`start_side`. The range survives submission, so
+  suggestion blocks anchor to the full `start_line..line` span and "Commit
+  suggestion" replaces every line in it. One call posts the whole review
+  atomically. Both `--input` JSON and the `-f 'comments[][field]=...'` flag form
+  build the nested objects.
+- Omit `event` to leave the review pending; add `event` (`COMMENT`, `APPROVE`,
+  `REQUEST_CHANGES`) to submit.
+- Read-back trap: `GET .../reviews/{id}/comments` on a pending review returns
+  `line`/`start_line`/`side` as null with only `position` set. That is a read
+  limitation, not a lost write — confirm ranges via GraphQL, not REST:
+  `... on PullRequestReview { comments { path startLine line } }`.
+- GraphQL is an equivalent path (`addPullRequestReview` with no `event`, then
+  `addPullRequestReviewThread` per comment); not required for multi-line
+  correctness.
+- A suggestion block replaces exactly `start_line..line`; its body must be a
+  drop-in replacement for those lines, including indentation.
 
 ## Conventional Comments
 
