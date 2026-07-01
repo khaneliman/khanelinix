@@ -305,6 +305,10 @@ in
                 model = "claude-opus-4-8";
               }
               {
+                provider = "claudeAgent";
+                model = "claude-sonnet-5";
+              }
+              {
                 provider = "codex";
                 model = "gpt-5.5";
               }
