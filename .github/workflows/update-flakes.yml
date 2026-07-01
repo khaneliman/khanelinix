@@ -35,7 +35,7 @@ jobs:
             echo "name=$name"
             echo "email=$id+$name@users.noreply.github.com"
           } >> "$GITHUB_OUTPUT"
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Setup Git
         env:
           GIT_USER_NAME: ${{ steps.user-info.outputs.name || 'github-actions[bot]' }}
