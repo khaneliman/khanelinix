@@ -95,7 +95,8 @@ in
         ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && !isWSL && includes "maximal") [
           qtcreator
         ]
-        ++ lib.optionals cfg.dockerEnable [
+        # FIXME: podman marked broken nixpkgs darwin
+        ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && cfg.dockerEnable) [
           podman
           podman-desktop
           podman-tui
@@ -255,7 +256,8 @@ in
     };
 
     services.exo = {
-      enable = mkDefault (cfg.aiEnable && pkgs.stdenv.hostPlatform.isDarwin);
+      # FIXME: broken nixpkgs dep
+      # enable = mkDefault (cfg.aiEnable && pkgs.stdenv.hostPlatform.isDarwin);
       environmentVariables = {
         EXO_LIBP2P_NAMESPACE = "khanelinix";
         EXO_MODELS_READ_ONLY_DIRS = lib.concatStringsSep ":" [
