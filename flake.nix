@@ -145,7 +145,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     t3code = {
-      url = "github:pingdotgg/t3code";
+      url = "github:khaneliman/t3code/integration/local";
       flake = false;
     };
   };
