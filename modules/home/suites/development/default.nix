@@ -95,7 +95,8 @@ in
         ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && !isWSL && includes "maximal") [
           qtcreator
         ]
-        ++ lib.optionals cfg.dockerEnable [
+        # FIXME: podman marked broken nixpkgs darwin
+        ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && cfg.dockerEnable) [
           podman
           podman-desktop
           podman-tui
