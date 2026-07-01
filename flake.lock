@@ -1269,15 +1269,16 @@
     "t3code": {
       "flake": false,
       "locked": {
-        "lastModified": 1782865536,
-        "narHash": "sha256-haEFClSbXXCKUDLVHbRZCc/qRRYrm51MGvD5ET3DZ+4=",
-        "owner": "pingdotgg",
+        "lastModified": 1783030691,
+        "narHash": "sha256-N/WGsDNA5E42bwwl3u390gj1fuRDNisHuETzOtvg394=",
+        "owner": "khaneliman",
         "repo": "t3code",
-        "rev": "7b9eef7ac29f9d4819c6411dfb1c5f04fef50264",
+        "rev": "45a6317e4e0e38eac54d33c4cc5f38228aa66410",
         "type": "github"
       },
       "original": {
-        "owner": "pingdotgg",
+        "owner": "khaneliman",
+        "ref": "integration/local",
         "repo": "t3code",
         "type": "github"
       }
