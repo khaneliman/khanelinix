@@ -18,10 +18,14 @@ in
     ccusage
     ck
     claude-code
+    code-review-graph
     codex
     git-surgeon
     hunk
     opencode
+    rtk
+    semble
+    toon
     tuicr
     vibe-kanban
     workmux

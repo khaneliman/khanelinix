@@ -139,10 +139,13 @@ in
           agentsview
           ccusage
           ck
+          code-review-graph
           hunk
-          tuicr
           lmstudio
-          vibe-kanban
+          rtk
+          semble
+          toon
+          tuicr
           workmux
           zat
         ];
