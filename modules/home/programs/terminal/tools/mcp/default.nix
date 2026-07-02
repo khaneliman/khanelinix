@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  # pkgs,
+  pkgs,
   inputs,
   system,
   ...
@@ -47,6 +47,19 @@ in
 
         git = {
           command = getExe mcpPkgs.mcp-server-git;
+        };
+
+        bevy-brp = {
+          command = getExe pkgs.khanelinix.bevy-brp-mcp;
+        };
+
+        code-review-graph = {
+          command = getExe pkgs.code-review-graph;
+          args = [ "mcp" ];
+        };
+
+        semble = {
+          command = lib.getExe' pkgs.semble "semble-mcp";
         };
 
         tavily = {
