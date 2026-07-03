@@ -4,6 +4,60 @@ let
   modelValue = provider: model: if builtins.isAttrs model then model.${provider} or null else model;
 
   agents = {
+    "fact-finder" = {
+      name = "fact-finder";
+      description = "Read-only fact-finding specialist for scoped repo questions. Use for bounded evidence gathering when main context should stay small.";
+      tools = [
+        "Read"
+        "Bash"
+        "Grep"
+        "Glob"
+      ];
+      model = {
+        claude = "haiku";
+        copilot = "claude-haiku-4.5";
+        antigravity = "gemini-3.1-flash-lite-preview";
+        opencode = "openai/gpt-5.4-mini";
+        codex = "gpt-5.3-codex-spark";
+      };
+      model_reasoning_effort = {
+        codex = "medium";
+      };
+      sandbox_mode = {
+        codex = "read-only";
+      };
+      permission = {
+        bash = "ask";
+      };
+      content = builtins.readFile (agentsBasePath + "/general/fact-finder.md");
+    };
+    "probe-runner" = {
+      name = "probe-runner";
+      description = "Bounded probe and reproduction specialist. Use for non-destructive command checks, reproduction attempts, and noisy output summaries.";
+      tools = [
+        "Read"
+        "Bash"
+        "Grep"
+        "Glob"
+      ];
+      model = {
+        claude = "haiku";
+        copilot = "claude-haiku-4.5";
+        antigravity = "gemini-3.1-flash-lite-preview";
+        opencode = "openai/gpt-5.4-mini";
+        codex = "gpt-5.3-codex-spark";
+      };
+      model_reasoning_effort = {
+        codex = "medium";
+      };
+      sandbox_mode = {
+        codex = "workspace-write";
+      };
+      permission = {
+        bash = "ask";
+      };
+      content = builtins.readFile (agentsBasePath + "/general/probe-runner.md");
+    };
     debugger = {
       name = "debugger";
       description = "Debugging specialist for errors, exceptions, test failures, and unexpected behavior. Use when encountering any issues that need root cause analysis.";
@@ -159,6 +213,8 @@ let
     agent:
     let
       model = modelValue "codex" agent.model;
+      modelReasoningEffort = modelValue "codex" (agent.model_reasoning_effort or null);
+      sandboxMode = modelValue "codex" (agent.sandbox_mode or null);
     in
     {
       inherit (agent) name;
@@ -167,6 +223,15 @@ let
     }
     // lib.optionalAttrs (model != null) {
       inherit model;
+    }
+    // lib.optionalAttrs (modelReasoningEffort != null) {
+      model_reasoning_effort = modelReasoningEffort;
+    }
+    // lib.optionalAttrs (sandboxMode != null) {
+      sandbox_mode = sandboxMode;
+    }
+    // lib.optionalAttrs (agent ? nickname_candidates) {
+      inherit (agent) nickname_candidates;
     };
 
   toClaudeMarkdown = lib.mapAttrs (_name: renderClaudeAgent) agents;
