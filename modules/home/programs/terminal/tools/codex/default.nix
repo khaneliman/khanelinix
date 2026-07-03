@@ -114,23 +114,70 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.shellAliases = {
-      codex-deep = "codex --profile deep";
-      codex-long = "codex --profile long -c model_context_window=1000000 -c model_auto_compact_token_limit=850000";
-      codex-nano = "codex --profile nano";
-      codex-offline = "codex --profile offline";
-      codex-quick = "codex --profile quick";
-      codex-spark = "codex --profile spark";
-      codex-unsafe = "codex --profile unsafe";
-    }
-    // lib.optionalAttrs exoEnabled {
-      codex-exo = ''f(){ model="$1"; shift; codex -c model_provider='"exo"' -m "$model" "$@"; }; f'';
-      codex-exo-coder = ''codex -c model_provider='"exo"' -m mlx-community/Qwen3-Coder-Next-4bit'';
-      codex-exo-gpt-oss = ''codex -c model_provider='"exo"' -m mlx-community/gpt-oss-20b-MXFP4-Q8'';
-      codex-exo-qwen = ''codex -c model_provider='"exo"' -m mlx-community/Qwen3.6-35B-A3B-5bit'';
+    home = {
+      # Codex plugin caches are mutable content downloaded at runtime, so
+      # patching them cannot be declared; re-patch on every switch instead.
+      # Non-fatal so a fresh machine (no plugin cache yet) or an unsupported
+      # codex bump does not block activation. The native-messaging manifest and
+      # node_repl MCP server are managed declaratively below, so the installer's
+      # manifest writes are redirected to a scratch root it may own.
+      activation = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+        codexBrowserUseInstall = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          run ${lib.getExe pkgs.khanelinix.codex-browser-use-linux-chromium} install \
+            --codex-home ${codexConfigPath} \
+            --browser-config-root ${config.xdg.stateHome}/codex-browser-use-linux-chromium \
+            --skip-feature-config \
+            --patch-chromium-extension \
+            || verboseEcho "codex-browser-use-linux-chromium install failed (non-fatal); run codex-browser-doctor"
+        '';
+      };
+      file = codexAgentFiles // codexCommandFiles;
+      packages = lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+        pkgs.khanelinix.codex-browser-use-linux-chromium
+      ];
+      shellAliases = {
+        codex-deep = "codex --profile deep";
+        codex-long = "codex --profile long -c model_context_window=1000000 -c model_auto_compact_token_limit=850000";
+        codex-nano = "codex --profile nano";
+        codex-offline = "codex --profile offline";
+        codex-quick = "codex --profile quick";
+        codex-spark = "codex --profile spark";
+        codex-unsafe = "codex --profile unsafe";
+      }
+      // lib.optionalAttrs exoEnabled {
+        codex-exo = ''f(){ model="$1"; shift; codex -c model_provider='"exo"' -m "$model" "$@"; }; f'';
+        codex-exo-coder = ''codex -c model_provider='"exo"' -m mlx-community/Qwen3-Coder-Next-4bit'';
+        codex-exo-gpt-oss = ''codex -c model_provider='"exo"' -m mlx-community/gpt-oss-20b-MXFP4-Q8'';
+        codex-exo-qwen = ''codex -c model_provider='"exo"' -m mlx-community/Qwen3.6-35B-A3B-5bit'';
+      }
+      // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+        codex-browser-doctor = "codex-browser-use-linux-chromium doctor --codex-home ${codexConfigPath}";
+      };
     };
 
-    home.file = codexAgentFiles // codexCommandFiles;
+    # Official Codex Chrome extension, required by the browser-use bridge.
+    programs.chromium.extensions =
+      lib.mkIf
+        (pkgs.stdenv.hostPlatform.isLinux && config.khanelinix.programs.graphical.browsers.chromium.enable)
+        [
+          { id = "hehggadaopoacecdllhhajmbjkdcmajg"; }
+        ];
+
+    # Native-messaging manifest wiring the Codex extension to the bridge.
+    # force: replaces the manifest earlier installer runs wrote imperatively.
+    xdg.configFile."chromium/NativeMessagingHosts/com.openai.codexextension.json" =
+      lib.mkIf
+        (pkgs.stdenv.hostPlatform.isLinux && config.khanelinix.programs.graphical.browsers.chromium.enable)
+        {
+          force = true;
+          text = builtins.toJSON {
+            name = "com.openai.codexextension";
+            description = "Codex Browser Use Linux Chromium native host bridge";
+            path = lib.getExe' pkgs.khanelinix.codex-browser-use-linux-chromium "codex-native-host-bridge";
+            type = "stdio";
+            allowed_origins = [ "chrome-extension://hehggadaopoacecdllhhajmbjkdcmajg/" ];
+          };
+        };
 
     programs.codex = {
       enable = true;
@@ -164,6 +211,11 @@ in
           tool_suggest = true;
           unified_exec = true;
           workspace_dependencies = true;
+        }
+        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+          # Required by codex-browser-use-linux-chromium (codex >= 0.133) so
+          # plugin MCP servers are discovered instead of deferred.
+          tool_search_always_defer_mcp_tools = false;
         };
 
         agents = {
@@ -185,6 +237,18 @@ in
         model_reasoning_effort = "high";
         plan_mode_reasoning_effort = "high";
         # service_tier = "fast"; # Not preferred by default for now; use /fast on when needed.
+
+        # Browser-side counterpart lives in the chromium native-messaging
+        # manifest; together they let codex drive Chromium without the
+        # imperative --write-codex-config step.
+        mcp_servers = lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+          node_repl = {
+            command = lib.getExe' pkgs.khanelinix.codex-browser-use-linux-chromium "codex-node-repl-mcp";
+            # js/js_reset/browser_cleanup drive the local Chromium bridge;
+            # prompting per call makes browser use unusable.
+            default_tools_approval_mode = "approve";
+          };
+        };
 
         model_providers = lib.optionalAttrs exoEnabled {
           exo = {
