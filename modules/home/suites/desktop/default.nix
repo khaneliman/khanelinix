@@ -31,6 +31,7 @@ in
             aerospace.enable = mkDefault false;
           };
           browsers = {
+            chromium.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
             firefox = {
               enable = mkDefault true;
               extensions.settings = {
