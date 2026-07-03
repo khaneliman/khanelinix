@@ -5,6 +5,11 @@ let
   aiAgents = import ./agents.nix { inherit lib; };
 
   base = ./base.md;
+  codexContext = ./codex.md;
+  codexContextOverride = lib.concatStringsSep "\n\n" [
+    (builtins.readFile base)
+    (builtins.readFile codexContext)
+  ];
   skillsDir = ./skills;
 
   isSkillDirectory =
@@ -137,6 +142,8 @@ in
     agents
     base
     commands
+    codexContext
+    codexContextOverride
     checkedHarnessSkillPolicy
     skills
     skillsDir
@@ -160,6 +167,7 @@ in
     disabledSystemSkills = disabledSystemSkillsForHarness "codex";
     agents = aiAgents.toCodexAgents;
     commands = aiCommands.toCodexSkills;
+    contextOverride = codexContextOverride;
     skills = skillsForHarness "codex";
   };
 

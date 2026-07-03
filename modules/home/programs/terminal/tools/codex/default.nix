@@ -219,7 +219,7 @@ in
         };
 
         agents = {
-          max_threads = 6;
+          max_threads = 8;
           max_depth = 1;
           job_max_runtime_seconds = 3600;
         };
@@ -373,6 +373,7 @@ in
       };
 
       context = builtins.readFile aiTools.base;
+      contextOverride = aiTools.codex.contextOverride;
       inherit (aiTools.codex) skills;
       rules = import ./rules.nix;
     };

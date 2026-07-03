@@ -49,14 +49,12 @@ For GitHub issues, PR bodies, reviews, and comments:
 
 - Be token conscious. Batch independent reads, prefer `rg`, project CLIs, and
   structured queries.
-- Delegate bounded discovery, review, debugging, and test loops to cheap
-  subagents when tool support exists or context would pollute main thread.
-- Give subagents only task, paths, constraints, and exit criteria. Do not copy
-  full conversation.
-- Prefer `gpt-5.4-mini` for robust unsupervised Codex/OpenCode exploration and
-  test workers. Use `gpt-5.3-codex-spark` only for narrow deterministic tool
-  runs, active latency-sensitive pairing, or quota backup. Use stronger models
-  when ambiguity, risk, or reasoning depth justifies cost.
+- Delegate bounded discovery, review, debugging, and test-output analysis when
+  the harness exposes subagents and isolated context would keep main thread
+  cleaner.
+- Give delegated agents only task, paths, constraints, and exit criteria. Do not
+  copy full conversation.
+- Prefer evidence summaries over raw logs or broad transcripts.
 - Use skills for durable workflows, MCP/live tools for external state, and
   one-shot commands for atomic prompts.
 
