@@ -8,6 +8,7 @@
 }:
 let
   cfg = config.khanelinix.programs.terminal.tools.t3code;
+  t3codePatches = import ./patches.nix { inherit pkgs; };
 in
 {
   options.khanelinix.programs.terminal.tools.t3code.enable =
@@ -37,14 +38,14 @@ in
           (old: {
             src = inputs.t3code;
             version = inputs.t3code.shortRev or "dirty";
+            patches = (old.patches or [ ]) ++ t3codePatches;
             pnpmDeps = pkgs.fetchPnpmDeps {
-              inherit (old) pname;
+              inherit (old) pname pnpmWorkspaces;
               version = inputs.t3code.shortRev or "dirty";
               src = inputs.t3code;
-              inherit (old) pnpmWorkspaces;
               pnpm = pkgs.pnpm_10;
               fetcherVersion = 4;
-              hash = "sha256-+JqW/iI0wdRPxyL7y6ggD/+AvwwZXs9+fSUtG/SgW9s=";
+              hash = "sha256-zbS8M8nqsotKDqdTlhYDcOUA+46rZbUwPLcRy5fGYJA=";
             };
           });
 
