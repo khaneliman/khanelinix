@@ -81,11 +81,6 @@ in
               url = "https://github.com/Alexays/Waybar/pull/4843.patch?full_index=1";
               hash = "sha256-F98AF+23y7zJFJTR63c/3dvMgLcP1AwOI5W5vZgWayQ=";
             })
-            (pkgs.fetchpatch2 {
-              name = "hyprland-workspace-grouping";
-              url = "https://github.com/Alexays/Waybar/pull/4861.patch?full_index=1";
-              hash = "sha256-9HbVkjeTXtBi3O9IAr3YCt/qSU2XymWW4u2HXM3DiHs=";
-            })
           ];
         });
 
