@@ -230,7 +230,7 @@ in
           gtk.enable = false;
           hyprland.enable = !(isThemedBy "hyprland");
           # FIXME:: upstream needs module fix
-          hyprlock.useWallpaper = false;
+          hyprlock.image.enable = false;
           hyprlock.enable = false;
           qt.enable = !(isThemedBy "qt");
           sway.enable = !(isThemedBy "sway");
