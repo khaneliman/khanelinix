@@ -39,6 +39,8 @@ in
         "--border=rounded"
       ];
 
+      historyWidget.command = lib.mkIf config.programs.atuin.enable "";
+
       enableBashIntegration = true;
       enableZshIntegration = false;
       enableFishIntegration = true;
