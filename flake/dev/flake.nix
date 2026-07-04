@@ -8,10 +8,13 @@
       url = "path:./../..";
       # Unneeded in dev flake
       inputs = {
+        adv360-zmk.follows = "";
         anyrun-nixos-options.follows = "";
         catppuccin.follows = "";
         disko.follows = "";
+        fast-nix-gc.follows = "";
         firefox-addons.follows = "";
+        hermes-agent.follows = "";
         khanelivim.follows = "";
         lanzaboote.follows = "";
         llm-agents.follows = "";
@@ -24,9 +27,11 @@
         nix-rosetta-builder.follows = "";
         nixos-wsl.follows = "";
         stylix.follows = "";
+        t3code.follows = "";
         tokyonight.follows = "";
         waybar.follows = "";
         yazi-flavors.follows = "";
+        zmk-nix.follows = "";
       };
     };
 
@@ -34,8 +39,6 @@
     nixpkgs-master.follows = "root/nixpkgs-master";
     nixpkgs-unstable.follows = "root/nixpkgs-unstable";
     flake-compat.follows = "root/flake-compat";
-    fast-nix-gc.follows = "root/fast-nix-gc";
-    hermes-agent.follows = "root/hermes-agent";
     home-manager.follows = "root/home-manager";
     sops-nix.follows = "root/sops-nix";
 
