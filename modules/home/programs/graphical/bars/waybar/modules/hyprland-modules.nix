@@ -54,6 +54,7 @@ in
       "default" = "";
       "empty" = "󱓼";
     };
+    tooltip = false;
     # "format-window-separator" = "->";
     window-rewrite-group-threshold = 3;
     window-rewrite-default = "";
