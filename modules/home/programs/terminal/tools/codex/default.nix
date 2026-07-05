@@ -35,12 +35,15 @@ let
       source = tomlFormat.generate "codex-agent-${name}" agentSettings;
     }
   ) aiTools.codex.agents;
-  codexCommandFiles = lib.mapAttrs' (
-    name: commandMarkdown:
-    lib.nameValuePair "${codexConfigDir}/skills/${name}/SKILL.md" {
-      text = commandMarkdown;
-    }
-  ) aiTools.codex.commands;
+  codexCommandFiles = lib.concatMapAttrs (
+    name: commandFiles:
+    lib.mapAttrs' (
+      relativePath: fileText:
+      lib.nameValuePair "${codexConfigDir}/skills/${name}/${relativePath}" {
+        text = fileText;
+      }
+    ) commandFiles
+  ) aiTools.codex.commandSkillFiles;
   codexProfiles = {
     # Deep analysis and live-research mode. Intentionally expensive:
     # benchmark preference is GPT-5.5 xhigh for best pass rate.

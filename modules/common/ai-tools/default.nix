@@ -166,7 +166,7 @@ in
   codex = {
     disabledSystemSkills = disabledSystemSkillsForHarness "codex";
     agents = aiAgents.toCodexAgents;
-    commands = aiCommands.toCodexSkills;
+    commandSkillFiles = aiCommands.toCodexSkillFiles;
     contextOverride = codexContextOverride;
     skills = skillsForHarness "codex";
   };

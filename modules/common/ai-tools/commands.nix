@@ -121,11 +121,23 @@ let
     ${lib.trim command.prompt}
   '';
 
+  renderCodexSkillMetadata = _command: ''
+    policy:
+      allow_implicit_invocation: false
+  '';
+
+  renderCodexSkillFiles = command: {
+    "SKILL.md" = renderCodexSkill command;
+    "agents/openai.yaml" = renderCodexSkillMetadata command;
+  };
+
   toClaudeMarkdown = lib.mapAttrs (_name: renderClaudeMarkdown) commands;
 
   toCopilotSkills = lib.mapAttrs (_name: renderCopilotSkill) commands;
 
   toCodexSkills = lib.mapAttrs (_name: renderCodexSkill) commands;
+
+  toCodexSkillFiles = lib.mapAttrs (_name: renderCodexSkillFiles) commands;
 
   toOpenCodeMarkdown = lib.mapAttrs (_name: renderOpenCodeMarkdown) commands;
 
@@ -140,11 +152,14 @@ in
     renderClaudeMarkdown
     renderCopilotSkill
     renderCodexSkill
+    renderCodexSkillFiles
+    renderCodexSkillMetadata
     renderOpenCodeMarkdown
     toAntigravityCommands
     toClaudeMarkdown
     toCopilotSkills
     toCodexSkills
+    toCodexSkillFiles
     toOpenCodeMarkdown
     ;
 
