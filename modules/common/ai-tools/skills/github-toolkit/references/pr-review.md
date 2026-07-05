@@ -91,6 +91,78 @@ suggestion comments, use `gh api`.
 - A suggestion block replaces exactly `start_line..line`; its body must be a
   drop-in replacement for those lines, including indentation.
 
+## Editing Draft Reviews (API Mechanics)
+
+Only edit pending draft comments/reviews you authored unless the user explicitly
+asks for something else. Prefer editing drafts over deleting and recreating them
+when anchors are correct.
+
+REST and GraphQL use different IDs:
+
+- REST endpoints use numeric database IDs from URLs and `databaseId`.
+- GraphQL mutations use opaque node IDs like `PRRC_...` and `PRR_...`.
+- Do not guess node IDs from REST IDs or from adjacent comments. Fetch exact
+  node IDs before patching.
+
+REST can edit submitted review comments:
+
+```bash
+gh api -X PATCH \
+  repos/{owner}/{repo}/pulls/comments/{comment_database_id} \
+  -f body="$body"
+```
+
+Pending draft review comments may reject REST patches. Use GraphQL when editing
+draft comments:
+
+```bash
+gh api graphql \
+  -f query='mutation($id:ID!, $body:String!) {
+    updatePullRequestReviewComment(input:{pullRequestReviewCommentId:$id, body:$body}) {
+      pullRequestReviewComment { id body updatedAt }
+    }
+  }' \
+  -F id="$comment_node_id" \
+  -f body="$body"
+```
+
+Use GraphQL for draft review summary body edits too:
+
+```bash
+gh api graphql \
+  -f query='mutation($id:ID!, $body:String!) {
+    updatePullRequestReview(input:{pullRequestReviewId:$id, body:$body}) {
+      pullRequestReview { id body state updatedAt }
+    }
+  }' \
+  -F id="$review_node_id" \
+  -f body="$body"
+```
+
+Fetch exact review/comment node IDs before editing:
+
+```bash
+gh api graphql \
+  -f owner='{owner}' -f repo='{repo}' -F number='{pr_number}' \
+  -f query='query($owner:String!, $repo:String!, $number:Int!) {
+    repository(owner:$owner, name:$repo) {
+      pullRequest(number:$number) {
+        reviews(last:20) {
+          nodes {
+            id databaseId state author { login } body
+            comments(first:100) {
+              nodes { id databaseId path body author { login } }
+            }
+          }
+        }
+      }
+    }
+  }'
+```
+
+After mutation, read back the edited node body through GraphQL. For pending
+reviews, REST read-back can omit fields or show stale/partial shape.
+
 ## Conventional Comments
 
 Format:

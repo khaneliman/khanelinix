@@ -63,7 +63,7 @@ efficient issue discovery.
 ## 4) PR Review Mode
 
 Read [pr-review.md](references/pr-review.md) for review collection, high-signal
-policy, inline comment rules, and no-issues response.
+policy, inline comment rules, draft review editing, and no-issues response.
 
 ## 5) CI Fix Mode
 
