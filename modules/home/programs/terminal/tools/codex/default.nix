@@ -171,7 +171,7 @@ in
         codex-offline = "codex --profile offline";
         codex-quick = "codex --profile quick";
         codex-spark = "codex --profile spark";
-        codex-unsafe = "codex --profile unsafe";
+        codex-unsafe = "codex --profile unsafe --dangerously-bypass-hook-trust";
       }
       // lib.optionalAttrs exoEnabled {
         codex-exo = ''f(){ model="$1"; shift; codex -c model_provider='"exo"' -m "$model" "$@"; }; f'';
