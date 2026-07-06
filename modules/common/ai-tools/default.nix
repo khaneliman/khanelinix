@@ -169,6 +169,7 @@ in
     commandSkillFiles = aiCommands.toCodexSkillFiles;
     contextOverride = codexContextOverride;
     skills = skillsForHarness "codex";
+    skillSources = skillsAttrsForHarness "codex";
   };
 
   githubCopilotCli = {

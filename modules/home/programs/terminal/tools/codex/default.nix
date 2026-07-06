@@ -29,21 +29,44 @@ let
     path = "${codexConfigPath}/skills/.system/${name}/SKILL.md";
     enabled = false;
   }) aiTools.codex.disabledSystemSkills;
+  codexCommandSkillNames = builtins.attrNames aiTools.codex.commandSkillFiles;
   codexAgentFiles = lib.mapAttrs' (
     name: agentSettings:
     lib.nameValuePair "${codexConfigDir}/agents/${name}.toml" {
       source = tomlFormat.generate "codex-agent-${name}" agentSettings;
     }
   ) aiTools.codex.agents;
-  codexCommandFiles = lib.concatMapAttrs (
+  codexCommandSkillDirs = lib.mapAttrs (
     name: commandFiles:
-    lib.mapAttrs' (
-      relativePath: fileText:
-      lib.nameValuePair "${codexConfigDir}/skills/${name}/${relativePath}" {
-        text = fileText;
-      }
-    ) commandFiles
+    pkgs.runCommandLocal "codex-command-skill-${name}" { } (
+      lib.concatStringsSep "\n" (
+        lib.mapAttrsToList (
+          relativePath: fileText:
+          let
+            file = builtins.toFile "codex-command-${name}-${lib.replaceStrings [ "/" ] [ "-" ] relativePath}" fileText;
+          in
+          ''
+            install -Dm0644 ${file} "$out/${relativePath}"
+          ''
+        ) commandFiles
+      )
+    )
   ) aiTools.codex.commandSkillFiles;
+  codexSkills = aiTools.codex.skillSources // codexCommandSkillDirs;
+  codexCommandSkillCleanup = lib.concatMapStringsSep "\n" (
+    name:
+    let
+      target = "${codexConfigPath}/skills/${name}";
+    in
+    ''
+      if [ -d ${lib.escapeShellArg target} ] && [ ! -L ${lib.escapeShellArg target} ]; then
+        [ ! -L ${lib.escapeShellArg "${target}/SKILL.md"} ] || rm -f ${lib.escapeShellArg "${target}/SKILL.md"}
+        [ ! -L ${lib.escapeShellArg "${target}/agents/openai.yaml"} ] || rm -f ${lib.escapeShellArg "${target}/agents/openai.yaml"}
+        rmdir ${lib.escapeShellArg "${target}/agents"} 2>/dev/null || true
+        rmdir ${lib.escapeShellArg target} 2>/dev/null || true
+      fi
+    ''
+  ) codexCommandSkillNames;
   codexProfiles = {
     # Deep analysis and live-research mode. Intentionally expensive:
     # benchmark preference is GPT-5.5 xhigh for best pass rate.
@@ -124,7 +147,10 @@ in
       # codex bump does not block activation. The native-messaging manifest and
       # node_repl MCP server are managed declaratively below, so the installer's
       # manifest writes are redirected to a scratch root it may own.
-      activation = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      activation = {
+        codexCommandSkillShape = lib.hm.dag.entryBefore [ "checkLinkTargets" ] codexCommandSkillCleanup;
+      }
+      // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
         codexBrowserUseInstall = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           run ${lib.getExe pkgs.khanelinix.codex-browser-use-linux-chromium} install \
             --codex-home ${codexConfigPath} \
@@ -134,7 +160,7 @@ in
             || verboseEcho "codex-browser-use-linux-chromium install failed (non-fatal); run codex-browser-doctor"
         '';
       };
-      file = codexAgentFiles // codexCommandFiles;
+      file = codexAgentFiles;
       packages = lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         pkgs.khanelinix.codex-browser-use-linux-chromium
       ];
@@ -377,7 +403,7 @@ in
 
       context = builtins.readFile aiTools.base;
       contextOverride = aiTools.codex.contextOverride;
-      inherit (aiTools.codex) skills;
+      skills = codexSkills;
       rules = import ./rules.nix;
     };
   };
