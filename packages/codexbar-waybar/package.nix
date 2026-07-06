@@ -24,6 +24,8 @@
 }:
 
 let
+  iconSearch = "ICONS_DIR = Path(\n    os.environ.get(\"XDG_DATA_HOME\", str(Path.home() / \".local/share\"))\n) / \"codexbar-waybar\" / \"icons\"";
+  iconReplacement = "ICONS_DIR = Path(os.environ.get(\n    \"CODEXBAR_ICONS_DIR\",\n    str(Path(os.environ.get(\"XDG_DATA_HOME\", str(Path.home() / \".local/share\"))) / \"codexbar-waybar\" / \"icons\"),\n))";
   pythonEnv = python3.withPackages (
     pythonPackages: with pythonPackages; [
       pycairo
@@ -46,13 +48,31 @@ stdenvNoCC.mkDerivation {
   nativeBuildInputs = [ makeWrapper ];
 
   postPatch = ''
-        substituteInPlace codexbar-popup.py \
-          --replace-fail 'ICONS_DIR = Path(
-        os.environ.get("XDG_DATA_HOME", str(Path.home() / ".local/share"))
-    ) / "codexbar-waybar" / "icons"' 'ICONS_DIR = Path(os.environ.get(
-        "CODEXBAR_ICONS_DIR",
-        str(Path(os.environ.get("XDG_DATA_HOME", str(Path.home() / ".local/share"))) / "codexbar-waybar" / "icons"),
-    ))'
+    substituteInPlace codexbar-popup.py \
+      --replace-fail ${lib.escapeShellArg iconSearch} ${lib.escapeShellArg iconReplacement}
+
+    substituteInPlace codexbar.sh \
+          --replace-fail '    [claude]=oauth' '    [claude]=oauth
+        [antigravity]=cli' \
+          --replace-fail '    echo "$body"
+    }' '    # A freshly started agy server can answer before RetrieveUserQuotaSummary is
+        # ready. CodexBar then falls back to placeholder model quotas (0/0, no
+        # extraRateWindows), which makes Waybar look healthy while hiding weekly
+        # Antigravity usage. Give the CLI source two readiness retries.
+        if [[ "$p" == "antigravity" ]]; then
+            for _ in 1 2; do
+                if echo "$body" | jq -e "type == \"array\" and (.[0].error // null) == null and (.[0].usage.extraRateWindows // null) == null and ((.[0].usage.primary.usedPercent // 0) == 0) and ((.[0].usage.secondary.usedPercent // 0) == 0)" >/dev/null 2>&1; then
+                    sleep "''${CODEXBAR_ANTIGRAVITY_RETRY_DELAY:-5}"
+                    body="$(fetch_one "$p" "$primary")"
+                else
+                    break
+                fi
+            done
+        fi
+
+        echo "$body"
+    }'
+
   '';
 
   installPhase = ''

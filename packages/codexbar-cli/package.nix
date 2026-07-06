@@ -15,22 +15,24 @@
 }:
 
 let
+  version = "0.40.0";
+
   sources = {
     x86_64-linux = {
-      url = "https://github.com/steipete/CodexBar/releases/download/v0.32.5/CodexBarCLI-v0.32.5-linux-x86_64.tar.gz";
-      hash = "sha256-oFO+QfaqqWeBe8swpplw7VYphcCnj9t6CA+9422Wv2I=";
+      url = "https://github.com/steipete/CodexBar/releases/download/v${version}/CodexBarCLI-v${version}-linux-x86_64.tar.gz";
+      hash = "sha256-QI6eSz3LhkQHR6ootmrPfTincIrg8u/0vOpwgw8CjCk=";
     };
     aarch64-linux = {
-      url = "https://github.com/steipete/CodexBar/releases/download/v0.32.5/CodexBarCLI-v0.32.5-linux-aarch64.tar.gz";
-      hash = "sha256-6wtwbr+pR9YZM00N2zId+UjA6qMn0c+ls9cw6vkS7Ak=";
+      url = "https://github.com/steipete/CodexBar/releases/download/v${version}/CodexBarCLI-v${version}-linux-aarch64.tar.gz";
+      hash = "sha256-gZi/3fYbgzv5I0EZWPulxXmMTFppsCiiavvdZmRTRjg=";
     };
     aarch64-darwin = {
-      url = "https://github.com/steipete/CodexBar/releases/download/v0.32.5/CodexBarCLI-v0.32.5-macos-arm64.tar.gz";
-      hash = "sha256-4zN1x1tgwXc9w0ayFtiDLsudlDG50dtGbQRjwJg89kQ=";
+      url = "https://github.com/steipete/CodexBar/releases/download/v${version}/CodexBarCLI-v${version}-macos-arm64.tar.gz";
+      hash = "sha256-GEU1Nh+890//oocNHKw5Ew7GPi/SrKc/041SE7vUwl8=";
     };
     x86_64-darwin = {
-      url = "https://github.com/steipete/CodexBar/releases/download/v0.32.5/CodexBarCLI-v0.32.5-macos-x86_64.tar.gz";
-      hash = "sha256-JEZ9GmRpPUvucXLXQDec6cIa4UFFoT0+1d7q5HRJbpw=";
+      url = "https://github.com/steipete/CodexBar/releases/download/v${version}/CodexBarCLI-v${version}-macos-x86_64.tar.gz";
+      hash = "sha256-a/mab/Dge//4Wgo51SHOdNMZ/JqTdJy2HfXuqHrhwyU=";
     };
   };
 
@@ -40,7 +42,7 @@ let
 in
 stdenv.mkDerivation {
   pname = "codexbar-cli";
-  version = "0.32.5";
+  inherit version;
 
   src = fetchzip (source // { stripRoot = false; });
 
