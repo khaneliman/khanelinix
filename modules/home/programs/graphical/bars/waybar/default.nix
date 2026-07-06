@@ -73,16 +73,7 @@ in
         # Waybar configuration
         # See: https://github.com/Alexays/Waybar/wiki/Configuration
         enable = true;
-        package = waybar.packages.${system}.waybar.overrideAttrs (_: {
-          # TODO: remove after PR merges and flake lock update
-          patches = [
-            (pkgs.fetchpatch2 {
-              name = "interval-min";
-              url = "https://github.com/Alexays/Waybar/pull/4843.patch?full_index=1";
-              hash = "sha256-F98AF+23y7zJFJTR63c/3dvMgLcP1AwOI5W5vZgWayQ=";
-            })
-          ];
-        });
+        package = waybar.packages.${system}.waybar;
 
         systemd = {
           enable = true;
