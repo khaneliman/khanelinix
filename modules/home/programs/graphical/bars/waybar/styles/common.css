@@ -189,10 +189,16 @@ box {
   min-height: 30px;
 }
 
+#custom-power {
+  margin: 5px 0px 5px 8px;
+  padding: 0 8px;
+  min-width: 28px;
+}
+
 #custom-wlogout label,
 #custom-power label {
   font-family: "Monaspace Neon NF", "MonaspaceNeon NF";
-  font-size: 28px;
+  font-size: 40px;
 }
 
 #cpu,
