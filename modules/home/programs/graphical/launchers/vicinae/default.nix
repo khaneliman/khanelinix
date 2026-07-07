@@ -10,7 +10,7 @@ let
   inherit (lib.khanelinix) suiteProfileIncludes;
 
   cfg = config.khanelinix.programs.graphical.launchers.vicinae;
-  raycastRev = "e3b6229c1a4b12e31f17689a1be7b03988270556";
+  raycastRev = "2a7b7ffb381ee92eca7a28b422965246c78c09a0";
   businessIncludes = suiteProfileIncludes config config.khanelinix.suites.business;
   socialIncludes = suiteProfileIncludes config config.khanelinix.suites.social;
 
@@ -42,70 +42,70 @@ in
         [
           {
             name = "base64";
-            sha256 = "sha256-rY876rx/TEFPOeIoA8J5c2fjr1/k/xegCH/4szdwUE0=";
-            npmDepsHash = "sha256-PoYZFH5HJEmbRBPrZD2ArCchytgzwoq3MCuyHVri60E=";
+            sha256 = "sha256-WR93MSReHXxWkqhpgvE8iaHcPr+dDs2sghK9g6gJot0=";
+            npmDepsHash = "sha256-g/RT+ZAAmtJtUCeexoOp07/wW7HiLKzMOXwRp9pqiLQ=";
           }
           {
             name = "browser-bookmarks";
-            sha256 = "sha256-0EmO/3W6kKpvNzizOWSapf69xull9GOAb2nJq30I4cM=";
-            npmDepsHash = "sha256-I//QQtQWKnNos1etKmAbJs2Jg9tbfpI0SMt3k6S1fkw=";
+            sha256 = "sha256-ATowV1EqMQ4kqEARGSkopX9r4xUBfM9RB3cfW2IXXO0=";
+            npmDepsHash = "sha256-6RXhV8nQ2cmmrmoWz4VjcqdebnoBxegXJc7hZCbJ1F4=";
           }
           {
             name = "browser-history";
-            sha256 = "sha256-Hg63K00z4KRvNrm9KeQpFjFdF08NXkAJ76zoAQ6VFWI=";
-            npmDepsHash = "sha256-UgSl45qpkeDf92XWrbJBCcLgeGJLyDUrJzsQFtHHgKY=";
+            sha256 = "sha256-lpAuVXIgcIqd4aa2kK3S4eDhYA/Sxx9+mrjqr1xg1N8=";
+            npmDepsHash = "sha256-g1P+5RcyYRd+LbtxakSwVGD4s29N9Z0a6fj6GJ5CbPk=";
           }
           {
             name = "browser-tabs";
-            sha256 = "sha256-oNa/6NGdenTKHWm75bsig4JKY3DHBI7cX9gCaHKlOYk=";
-            npmDepsHash = "sha256-tiAhDUAZ2CcVJGTiUM4TAoOtM20djSz0bzR8J8T6e6w=";
+            sha256 = "sha256-TArCdPprg4eXtx+8puY/Ipy4ivBsgHaPXFMEw4AY7MA=";
+            npmDepsHash = "sha256-anxLOeTqZB9Vd5/doJebLCzuKd2H9iQt886qQwTUlC8=";
           }
           {
             name = "calendar";
-            sha256 = "sha256-GkhODmoFS7GZDSi2QhyWGMwT91wfeAv5vDdbSdyyhno=";
-            npmDepsHash = "sha256-Ib5wOEoJT2j4iuuR2hCTzkXBbu41hFNhKlUAh57PbNE=";
+            sha256 = "sha256-xr2v2GwXEE1QJpe4OljcHYveBSiw69splSsCyT9gJIY=";
+            npmDepsHash = "sha256-/yohICk4V0yEBH8wTdmmjSCJBsJPB0GjDfvxhptmpiI=";
           }
           {
             name = "cheatsheets";
-            sha256 = "sha256-xno6xb3foSItmOuxU2I67M8TBjHUv/KtnB0WnHrj40U=";
-            npmDepsHash = "sha256-+OMA+g1Eve0Hg+a3uVqZdgmT2aw0yeo8GyDDmFnNXDQ=";
+            sha256 = "sha256-3ZRSFjRMHD6GP+mGkfJgdGPZ4Vp7j4d6ja5crXutaTI=";
+            npmDepsHash = "sha256-ZhPJQvhm4i5utXfW6r2q/b7+Rs6UPyTFnGohHuMpkP0=";
           }
           # FIXME: hangs forever
           # "color-picker"
           {
             name = "conventional-commits";
-            sha256 = "sha256-G19OJfYdiwzxZRbV7gcoVDQCi55+ubpu3e7l4NOmoJ8=";
+            sha256 = "sha256-Kfm/d+OeTjA4nQdKcbgyk3+eNGDrDowxO6eAGxTzjgU=";
             npmDepsHash = "sha256-YFVVjAWQnWXWan0vj95t6u09rP8lgKUu1Pr97r6XrkY=";
           }
           {
             name = "dad-jokes";
-            sha256 = "sha256-VjKEepMWaZrDYpvSpQ1TH0eZAUbgTruM7KQSEMlOhoY=";
-            npmDepsHash = "sha256-wLxS0udCSpzHmj1HA7bgGAxBebAN/0brn1ppzQDg2MM=";
+            sha256 = "sha256-hh06bx3eGqbSQ0BacOhZ5yPFTY5AjQ6ui16dAtyG7KA=";
+            npmDepsHash = "sha256-vwEfu5O4aDgT9hmYI3jpeM/oUwtr8pwz517Dv9szasI=";
           }
           {
             name = "gif-search";
-            sha256 = "sha256-es1GDe906h/vNmzd6ZY2kWSZGIvTuwByrGde2m1Zlyc=";
-            npmDepsHash = "sha256-kqiR9jgv/mwtI9LUPNAJ4OVECTQo91ZxS8spBethGVw=";
+            sha256 = "sha256-neenXhjjQ5Xayt/SPqq+Y3kPytWgOMZmKPfSn6BJN84=";
+            npmDepsHash = "sha256-kqEPCxqdmoM1OUmyZ6lPHE8trXiDQkRUpLWD8FcMRX4=";
           }
           {
             name = "tldr";
-            sha256 = "sha256-JHHvyNPGw0mRqo7SQXiPSN8qVa8Tlri0g0i7h6R2bao=";
-            npmDepsHash = "sha256-/I8wqJ1zLGCk715YkLnE52qs13maov5H6Yc3uAtqR/A=";
+            sha256 = "sha256-TieqiIZAdOVcScLK583zOwoCBuWx7Ms4mA5zTdfw65I=";
+            npmDepsHash = "sha256-OkBtsNOO2M/n4aCurRi230JmjreKsQgfVsKHHyzz7rU=";
           }
           {
             name = "weather";
-            sha256 = "sha256-NB7jsFhoO0n6I5oDloTCK6z5ksoEzS0l48yHUnGh7BY=";
-            npmDepsHash = "sha256-lce/RN4wycOeLL++sZVYZWq0AZTzYLm8Wrqp/VKvRl8=";
+            sha256 = "sha256-wfPOhyTbjJzQSkRgKjFcARACJEjJp+cDqhytUw3P5e8=";
+            npmDepsHash = "sha256-aT4yOJ+pmGjKhOYmDdjmOHfgvp6tr+tuRmi9OcspmrU=";
           }
           {
             name = "window-walker";
-            sha256 = "sha256-L3XTv91z87bakLS4C10L0adcJJbAVLX15T/2c7TVjpY=";
-            npmDepsHash = "sha256-Ri354YJ61Y23u36VfG1n2rPFqh7dkTtSOKwnE2ThhSg=";
+            sha256 = "sha256-fh8QwQ1fyfPi9gy/GV0b7Sp6Gs5GvaBVPpzSXOhDTA4=";
+            npmDepsHash = "sha256-wtvECI9R7wN+mOnBpuRRa7CG5zPdckmOmKN2waJtE0I=";
           }
           {
             name = "world-clock";
-            sha256 = "sha256-7HGaEwwLxUKz9h+WrWep6hA5dJpqFbAHPKAfFVjF+7I=";
-            npmDepsHash = "sha256-itWBlCAXAISrSCFIJhzvppU3Ovvkxi+fRiP+G3I+azQ=";
+            sha256 = "sha256-LJVeEYnu4n9igUPokiBFLYfNUchvZM7WxnFd2XdQXt4=";
+            npmDepsHash = "sha256-CAoevgaWukNJIgx4uSYUNFtSTFiQggQk7g6TVa/TaQs=";
           }
           # FIXME: broken extension candidates (build/runtime issues in CI)
           # npm error path /build/bitwarden/node_modules/electron
@@ -132,60 +132,60 @@ in
         # }
         ++ lib.optional config.khanelinix.programs.terminal.emulators.warp.enable {
           name = "warp";
-          sha256 = "sha256-wBu5LzTvTWsT7SDePYY4rBPEToa23PMRvKfiIqABuZ8=";
-          npmDepsHash = "sha256-Pirsjf99/2ZPwdRFKF2cZ0QFlQi/YE2DasbTsEJiahM=";
+          sha256 = "sha256-gsENleXt2ii0FTZBZO+7jBoRXvjnQfazEEcZ5FX/dNc=";
+          npmDepsHash = "sha256-OUab384shAv6ijWQiC0xsf3eV+3ahVTaO3sJ9uS0nvs=";
         }
         ++ lib.optional config.khanelinix.suites.business.enable {
           name = "1password";
-          sha256 = "sha256-wZUe66wjY855zygpOv1lYAyRqXZXJAVgkHnQlygaDzM=";
-          npmDepsHash = "sha256-VIoAMS0/Sl3A8MMsMgqRlZs6dpk2fhMJrREjwj9CDjA=";
+          sha256 = "sha256-NpAJi443OsEQwGKb/Tpkobn6pmjzwwYvTJjgvfMv/D8=";
+          npmDepsHash = "sha256-WsFo+xxZXYzMkN3+1GBTfQMxHhiE8vVXqiCD+eC6AP0=";
         }
         ++ lib.optional (config.khanelinix.suites.business.enable && businessIncludes "maximal") {
           name = "slack";
-          sha256 = "sha256-i0P0z9PNy4CPX79MV7EEhAjmwtUaYN2GDhYfhCFfExY=";
-          npmDepsHash = "sha256-DeUjKPjd/haeBmSw7jrudpNcvc7twCcDpOe50s40ZvI=";
+          sha256 = "sha256-+AKQm1V4AiNPAj3z2zGT00XHU/3PDOaROSEyE8YZJ1s=";
+          npmDepsHash = "sha256-/GPBrSgLqB2M1W2F7EwBBmt+CcbRSVLioht0SScPhvw=";
         }
         ++ lib.optionals config.khanelinix.suites.development.enable [
           {
             name = "github";
-            sha256 = "sha256-bZKhSOz5u6rFRX97J6bxDvNQJGKXh/EtkNxDjUJBKIQ=";
-            npmDepsHash = "sha256-Tqz6yif7bgdw2yVaWjibNBpgzmMpn7J4wcVLRhuKDXI=";
+            sha256 = "sha256-mbzg0AHQMvJtLQQ3Tf9gqum1q0heCkG7fZi8xPur5Mw=";
+            npmDepsHash = "sha256-UUzJPT9MNGdUMBAQIy5caNekdfQkJe41eulOjGrS6JU=";
           }
           {
             name = "gitlab";
-            sha256 = "sha256-cNg0+40ZIGnx+NOpDsaMdYRSJfu5WdJlA6Z9A6qKSh8=";
-            npmDepsHash = "sha256-CL9wWQZm2VTCriB7gQZBksdPj/eYKicCLbNT4E2jo5c=";
+            sha256 = "sha256-gAU7eQIOHsuPcgAoXNxSQv12h7uIl2wbGz7Hm8RQtPE=";
+            npmDepsHash = "sha256-hDF6f8GmZSiln+BxI0WA9uvaZtx2pxUdYCqHWUurtxc=";
           }
         ]
         ++ lib.optional config.khanelinix.suites.development.dockerEnable {
           name = "docker";
-          sha256 = "sha256-K7qiT53LJRDjw6dEHKgZvJjtpBOMalJJADM6hQZf518=";
-          npmDepsHash = "sha256-Hnj4w7daE3KJDSrjPNGehQkYV2EjGkhYVlifmHy4pAg=";
+          sha256 = "sha256-nrNXZ7DRLKoMgRaJAhshOBoZqDMcqKR5HJ03T3UxZEY=";
+          npmDepsHash = "sha256-rBJGbVaeA0SRMrz17K/dqSG1NaAnfD0sgETjf1vOw64=";
         }
         ++ lib.optionals (config.khanelinix.suites.social.enable && socialIncludes "maximal") [
           {
             name = "telegram";
-            sha256 = "sha256-UTilgwb/OubiJt0Zbb9t/IsaRN1PwVyhn6DCYM9GAFE=";
-            npmDepsHash = "sha256-wmHeFPsRrRCI4jk52gJHXVJn4FlfVCKL4nRoLi2zoUg=";
+            sha256 = "sha256-ifXYmDNsXY181jpOjkWGS4PmgEmHVNnAOZIMeiAVbKI=";
+            npmDepsHash = "sha256-nSszWpFktf+WoaYn9lUfKGqKOFospo9uWUX97Hm/EnU=";
           }
           {
             name = "twitch";
-            sha256 = "sha256-7uKcD/cQhoS8B1xilkKCna16E9SE0o0zSsmING3CpAE=";
-            npmDepsHash = "sha256-GHJ/n2MJSY/yDsG/HIavVqSAtkNYOLNTssNrdV8iKUs=";
+            sha256 = "sha256-iPPNuUGjzOr8goCQzXvzkfw09/LzB7gkCNycMX++DiA=";
+            npmDepsHash = "sha256-aFDkvrqPB6/zhX6wjao0UJWNIUv/1BJXPdI9rTBfEJ0=";
           }
         ]
         ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin (
           [
             {
               name = "brew";
-              sha256 = "sha256-mL3Hm1w3AdpOjSLIXusPegXKe5j6njVBm0nWZYrQIWo=";
-              npmDepsHash = "sha256-uuF2NxFFTzOOsgQ0dSETL3JU8l9tE4q5NXa/to8YLTc=";
+              sha256 = "sha256-P+Jeh6yYThK93660BB+BlBPA37xENopaw8dOFfxsEYU=";
+              npmDepsHash = "sha256-tb9VwHhWDRHc2Z03JBiuHJApu8KQ6qhgErN9FLlV8eA=";
             }
           ]
           ++ lib.optional config.khanelinix.programs.graphical.wms.aerospace.enable {
             name = "aerospace";
-            sha256 = "sha256-QcDTZ269K6AhLSuqiiKdzsoIMFh9k4Lapp3k2g+ekaE=";
-            npmDepsHash = "sha256-bLDtsxZP2f51Uho/Dh4mj+6Ygyhxmvh3FIGCh4z5AlE=";
+            sha256 = "sha256-I7JkXbVx8i3QBCkm/gFwIYgUAmmlsxQ1V4Ws61W1eOk=";
+            npmDepsHash = "sha256-uYL3lVIogQ94/79BdaL5uKUQWaIY8Lt5JectIGTQ2eA=";
           }
         )
       );
