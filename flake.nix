@@ -117,7 +117,7 @@
       };
     };
     waybar = {
-      url = "github:Alexays/Waybar";
+      url = "git+https://github.com/Alexays/Waybar.git?submodules=1";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-compat.follows = "flake-compat";
