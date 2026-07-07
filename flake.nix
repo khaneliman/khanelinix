@@ -93,6 +93,13 @@
         systems.follows = "systems";
       };
     };
+    codex-desktop-linux = {
+      url = "github:distsystem/codex-desktop-linux";
+      inputs = {
+        nixpkgs.follows = "nixpkgs-unstable";
+        flake-utils.inputs.systems.follows = "systems";
+      };
+    };
     nh = {
       url = "github:nix-community/nh";
       inputs.nixpkgs.follows = "nixpkgs";

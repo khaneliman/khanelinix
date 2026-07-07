@@ -11,6 +11,7 @@
         adv360-zmk.follows = "";
         anyrun-nixos-options.follows = "";
         catppuccin.follows = "";
+        codex-desktop-linux.follows = "";
         disko.follows = "";
         fast-nix-gc.follows = "";
         firefox-addons.follows = "";
