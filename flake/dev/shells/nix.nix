@@ -8,6 +8,7 @@ let
   packages = with pkgs; [
     deadnix
     hydra-check
+    namaka
     nh
     nix-bisect
     nix-diff
