@@ -12,6 +12,37 @@ let
     (builtins.readFile codexContext)
   ];
   skillsDir = ./skills;
+  planningWithFilesDir = ./planning-with-files;
+  planningWithFilesCommandsDir = planningWithFilesDir + "/commands";
+  planningWithFilesCommandNames = [
+    "plan"
+    "plan-attest"
+    "plan-goal"
+    "plan-loop"
+    "pwf"
+    "status"
+  ];
+  planningWithFilesCommands = builtins.listToAttrs (
+    map (name: {
+      inherit name;
+      value = planningWithFilesCommandsDir + "/${name}.md";
+    }) planningWithFilesCommandNames
+  );
+  planningWithFiles = {
+    commands = planningWithFilesCommands;
+    canonicalSkill = skillsDir + "/planning-with-files";
+
+    antigravityCli.skill = planningWithFilesDir + "/gemini/skills/planning-with-files";
+
+    codex = {
+      hooks = planningWithFilesDir + "/codex";
+      skill = planningWithFilesDir + "/codex/skills/planning-with-files";
+    };
+
+    opencode.skill = planningWithFilesDir + "/opencode/skills/planning-with-files";
+
+    piCodingAgent.package = planningWithFilesDir + "/pi/skills/planning-with-files";
+  };
 
   isSkillDirectory =
     name: type: type == "directory" && builtins.pathExists (skillsDir + "/${name}/SKILL.md");
@@ -147,13 +178,14 @@ in
     codexContextOverride
     checkedHarnessSkillPolicy
     permissions
+    planningWithFiles
     skills
     skillsDir
     systemSkillNames
     ;
 
   claudeCode = {
-    commands = aiCommands.toClaudeMarkdown;
+    commands = aiCommands.toClaudeMarkdown // planningWithFilesCommands;
     agents = aiAgents.toClaudeMarkdown;
     skills = skillsForHarness "claudeCode";
     inherit skillsDir;
@@ -171,7 +203,9 @@ in
     commandSkillFiles = aiCommands.toCodexSkillFiles;
     contextOverride = codexContextOverride;
     skills = skillsForHarness "codex";
-    skillSources = skillsAttrsForHarness "codex";
+    skillSources = skillsAttrsForHarness "codex" // {
+      planning-with-files = planningWithFiles.codex.skill;
+    };
   };
 
   githubCopilotCli = {
@@ -187,6 +221,9 @@ in
     commands = aiCommands.toOpenCodeMarkdown;
     disabledPluginSkills = disabledPluginSkillsForHarness "opencode";
     skills = skillsForHarness "opencode";
+    skillSources = skillsAttrsForHarness "opencode" // {
+      planning-with-files = planningWithFiles.opencode.skill;
+    };
     inherit agents;
     renderAgents = aiAgents.toOpenCodeMarkdown;
   };
