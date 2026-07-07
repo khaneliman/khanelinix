@@ -1,0 +1,4 @@
+source = "https://github.com/OthmanAdi/planning-with-files"
+rev = "fbc562f5f4da68a36aca06c667a69229e2740665"
+version = "3.4.0"
+license = "MIT"

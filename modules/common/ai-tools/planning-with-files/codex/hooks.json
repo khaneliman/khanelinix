@@ -1,0 +1,83 @@
+{
+	"hooks": {
+		"SessionStart": [
+			{
+				"matcher": "startup|resume",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "sh .codex/hooks/session-start.sh 2>/dev/null || sh \"$HOME/.codex/hooks/session-start.sh\" 2>/dev/null || true",
+						"statusMessage": "Loading planning context"
+					}
+				]
+			}
+		],
+		"UserPromptSubmit": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": "sh .codex/hooks/user-prompt-submit.sh 2>/dev/null || sh \"$HOME/.codex/hooks/user-prompt-submit.sh\" 2>/dev/null || true"
+					}
+				]
+			}
+		],
+		"PreToolUse": [
+			{
+				"matcher": "Bash",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "python3 .codex/hooks/pre_tool_use.py 2>/dev/null || python3 \"$HOME/.codex/hooks/pre_tool_use.py\" 2>/dev/null || true",
+						"statusMessage": "Checking plan before Bash"
+					}
+				]
+			}
+		],
+		"PermissionRequest": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": "python3 .codex/hooks/permission_request.py 2>/dev/null || python3 \"$HOME/.codex/hooks/permission_request.py\" 2>/dev/null || true"
+					}
+				]
+			}
+		],
+		"PostToolUse": [
+			{
+				"matcher": "Bash",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "python3 .codex/hooks/post_tool_use.py 2>/dev/null || python3 \"$HOME/.codex/hooks/post_tool_use.py\" 2>/dev/null || true",
+						"statusMessage": "Reviewing Bash against plan"
+					}
+				]
+			}
+		],
+		"PreCompact": [
+			{
+				"matcher": "*",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "sh .codex/hooks/pre-compact.sh 2>/dev/null || sh \"$HOME/.codex/hooks/pre-compact.sh\" 2>/dev/null || true",
+						"statusMessage": "Preparing planning context before compact"
+					}
+				]
+			}
+		],
+		"Stop": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": "python3 .codex/hooks/stop.py 2>/dev/null || python3 \"$HOME/.codex/hooks/stop.py\" 2>/dev/null || true",
+						"timeout": 30
+					}
+				]
+			}
+		]
+	}
+}
