@@ -53,6 +53,7 @@ let
       commonAttributes = {
         layer = "top";
         position = "top";
+        reload_style_on_change = true;
 
         margin-top = 10;
         margin-left = 20;
