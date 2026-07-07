@@ -432,6 +432,7 @@ in
       contextOverride = aiTools.codex.contextOverride;
       skills = codexSkills;
       rules = import ./rules.nix { inherit lib; };
+      hooks = aiTools.planningWithFiles.codex.hooks;
     };
   };
 }
