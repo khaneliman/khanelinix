@@ -212,8 +212,15 @@ in
           "Bash(gh search:*)"
 
           # MCP tools - read only
+          "mcp__bevy-brp__brp_type_guide"
+          "mcp__code-review-graph__find_large_functions_tool"
+          "mcp__code-review-graph__get_review_context_tool"
+          "mcp__code-review-graph__list_repos_tool"
+          "mcp__code-review-graph__semantic_search_nodes_tool"
           "mcp__github__search_repositories"
           "mcp__github__get_file_contents"
+          "mcp__semble__find_related"
+          "mcp__semble__search"
           "mcp__sequential-thinking__sequentialthinking"
 
           # Filesystem MCP - read operations
@@ -254,16 +261,6 @@ in
 
         # Standard profile additions - balanced permissions
         standardAllow = baseAllow ++ [
-          # Git staging
-          "Bash(git add:*)"
-
-          # Nix evaluation/check (can trigger builds)
-          "Bash(nix flake check:*)"
-
-          # Directory creation
-          "Bash(mkdir:*)"
-          "Bash(chmod:*)"
-
           # System info
           "Bash(systemctl list-units:*)"
           "Bash(systemctl list-timers:*)"
@@ -312,6 +309,7 @@ in
         # Operations requiring confirmation in non-autonomous mode
         standardAsk = [
           # Potentially destructive git commands
+          "Bash(git add:*)"
           "Bash(git checkout:*)"
           "Bash(git commit:*)"
           "Bash(git merge:*)"
@@ -324,7 +322,9 @@ in
           "Bash(git switch:*)"
 
           # File deletion and modification
+          "Bash(chmod:*)"
           "Bash(cp:*)"
+          "Bash(mkdir:*)"
           "Bash(mv:*)"
           "Bash(rm:*)"
           # Phase 1 destructive-command baseline is ask for explicit primitives.
@@ -356,6 +356,7 @@ in
 
           # Package management
           "Bash(nix build:*)"
+          "Bash(nix flake check:*)"
           "Bash(nix run:*)"
           "Bash(nix shell:*)"
           "Bash(nixos-rebuild:*)"
