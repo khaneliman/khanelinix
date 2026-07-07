@@ -57,18 +57,3 @@ decorative abstractions.
 
 After edits, run the most relevant repo checks available for the task
 (`nix fmt`, focused eval/build/test, or module-specific validation).
-
-## Output Contract
-
-Report:
-
-```text
-CHANGES MADE:
-- <file>: <what changed and why>
-
-THINGS I DIDN'T TOUCH:
-- <file>: <why intentionally unchanged>
-
-POTENTIAL CONCERNS:
-- <risk or follow-up checks>
-```
