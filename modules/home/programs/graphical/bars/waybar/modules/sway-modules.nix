@@ -58,6 +58,8 @@ in
       "class<Ardour-.*>" = "";
       "class<Bitwarden>" = "󰞀";
       "class<Caprine>" = "󰈎";
+      "class<claude-desktop>" = "󰚩";
+      "class<codex-desktop>" = "󱚣";
       "class<DBeaver>" = "";
       "class<Element>" = "󰭹";
       "class<Darktable>" = "󰄄";
