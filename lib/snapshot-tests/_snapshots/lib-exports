@@ -1,0 +1,73 @@
+#json
+{
+  "base64": [
+    "ascii",
+    "base64Table",
+    "decode"
+  ],
+  "file": [
+    "filterDarwinSystems",
+    "filterNixOSSystems",
+    "getFile",
+    "getNixFiles",
+    "importDir",
+    "importDirPlain",
+    "importFiles",
+    "importModulesRecursive",
+    "importSubdirs",
+    "listDir",
+    "listDirectories",
+    "listNames",
+    "listNamesMatching",
+    "mergeAttrs",
+    "parseHomeConfigurations",
+    "parseSystemConfigurations",
+    "pathExists",
+    "readFile",
+    "safeImport",
+    "scanDir"
+  ],
+  "module": [
+    "ascii",
+    "base64Table",
+    "boolToNum",
+    "capitalize",
+    "decode",
+    "default-attrs",
+    "disabled",
+    "enable",
+    "enableForSystem",
+    "enabled",
+    "force-attrs",
+    "mkBoolOpt",
+    "mkBoolOpt'",
+    "mkOpt",
+    "mkOpt'",
+    "mkPackageProfileOption",
+    "nested-default-attrs",
+    "nested-force-attrs",
+    "packageProfileRank",
+    "packageProfileType",
+    "packageProfiles",
+    "profileIncludes",
+    "resolvePackageProfile",
+    "suitePackageProfile",
+    "suiteProfileIncludes"
+  ],
+  "system": [
+    "common",
+    "mkDarwin",
+    "mkHome",
+    "mkSystem"
+  ],
+  "theme": [
+    "compileSCSS",
+    "getColors",
+    "mkColorScheme",
+    "variants",
+    "wallpaperDir",
+    "wallpaperPath",
+    "wallpaperPaths",
+    "wallpaperTheme"
+  ]
+}

@@ -58,6 +58,11 @@
       inputs.flake-compat.follows = "flake-compat";
     };
 
+    namaka = {
+      url = "github:nix-community/namaka";
+      inputs.nixpkgs.follows = "root/nixpkgs";
+    };
+
     nix-unit = {
       url = "github:nix-community/nix-unit";
       inputs.nixpkgs.follows = "root/nixpkgs";

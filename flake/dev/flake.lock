@@ -1755,6 +1755,28 @@
         "type": "github"
       }
     },
+    "haumea_3": {
+      "inputs": {
+        "nixpkgs": [
+          "namaka",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1685133229,
+        "narHash": "sha256-FePm/Gi9PBSNwiDFq3N+DWdfxFq0UKsVVTJS3cQPn94=",
+        "owner": "nix-community",
+        "repo": "haumea",
+        "rev": "34dd58385092a23018748b50f9b23de6266dffc2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "ref": "v0.2.2",
+        "repo": "haumea",
+        "type": "github"
+      }
+    },
     "heist-extra": {
       "flake": false,
       "locked": {
@@ -2097,6 +2119,28 @@
         "owner": "nix-community",
         "repo": "namaka",
         "rev": "5329d4125ee173c7371a1d74d5d87039522d41aa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "namaka",
+        "type": "github"
+      }
+    },
+    "namaka_2": {
+      "inputs": {
+        "haumea": "haumea_3",
+        "nixpkgs": [
+          "root",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1783288541,
+        "narHash": "sha256-aDsyjA7Lwi2c5/Yl3oXdJmlFqOleVJAa3sRHx6LAkIg=",
+        "owner": "nix-community",
+        "repo": "namaka",
+        "rev": "f6c17cdc38abdd5dbe38e4f1159182a0afdb8059",
         "type": "github"
       },
       "original": {
@@ -3462,6 +3506,7 @@
           "root",
           "home-manager"
         ],
+        "namaka": "namaka_2",
         "nix-unit": "nix-unit_3",
         "nixpkgs": [
           "root",
