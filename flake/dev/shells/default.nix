@@ -10,6 +10,7 @@ let
   packages = with pkgs; [
     act
     deadnix
+    namaka
     nh
     nix-unit
     statix
@@ -40,6 +41,7 @@ mkShell {
     echo "  nix fmt -- --no-cache - Format without cache"
     echo "  statix check          - Check for anti-patterns"
     echo "  deadnix               - Find unused code"
+    echo "  namaka check          - Run snapshot tests"
     echo "  nh search <query>     - Search nixpkgs"
     echo "  sops                  - Manage secrets"
     echo "  nix-unit --flake .#tests - Run lib unit tests"
