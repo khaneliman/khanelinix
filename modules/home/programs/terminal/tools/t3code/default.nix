@@ -28,6 +28,8 @@ in
           inherit (pkgs) gh;
           inherit (pkgs) git;
 
+          pnpm_10 = pkgs.pnpm_11;
+
           enableClaude = false;
           enableCodex = false;
           enableGit = true;
@@ -35,19 +37,26 @@ in
           enableJujutsu = false;
           enableOpencode = false;
         }).overrideAttrs
-          (old: {
-            src = inputs.t3code;
-            version = inputs.t3code.shortRev or "dirty";
-            patches = (old.patches or [ ]) ++ t3codePatches;
-            pnpmDeps = pkgs.fetchPnpmDeps {
-              inherit (old) pname pnpmWorkspaces;
-              version = inputs.t3code.shortRev or "dirty";
+          (
+            old:
+            let
+              t3codeVersion =
+                (builtins.fromJSON (builtins.readFile (inputs.t3code + "/apps/desktop/package.json"))).version;
+            in
+            {
               src = inputs.t3code;
-              pnpm = pkgs.pnpm_10;
-              fetcherVersion = 4;
-              hash = "sha256-zbS8M8nqsotKDqdTlhYDcOUA+46rZbUwPLcRy5fGYJA=";
-            };
-          });
+              version = t3codeVersion;
+              patches = (old.patches or [ ]) ++ t3codePatches;
+              pnpmDeps = pkgs.fetchPnpmDeps {
+                inherit (old) pname pnpmWorkspaces;
+                version = t3codeVersion;
+                src = inputs.t3code;
+                pnpm = pkgs.pnpm_11;
+                fetcherVersion = 4;
+                hash = "sha256-qgyhcSm+0E5x8l6nQk3O2NBVFkWcetCVDTNZVoQGTe8=";
+              };
+            }
+          );
 
       remoteCommand =
         let
