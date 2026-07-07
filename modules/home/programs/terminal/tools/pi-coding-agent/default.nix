@@ -35,8 +35,6 @@ in
 
   config = mkIf cfg.enable {
     home = {
-      packages = [ cfg.package ];
-
       sessionVariables = {
         PI_SKIP_VERSION_CHECK = "1";
         PI_TELEMETRY = "0";
@@ -50,30 +48,29 @@ in
         pi-read = "pi --tools read,grep,find,ls";
         pi-spark = "pi --model openai-codex/gpt-5.3-codex-spark --thinking high";
       };
+    };
 
-      file = {
-        ".pi/agent/AGENTS.md".source = aiTools.base;
-        ".pi/agent/settings.json".text = builtins.toJSON (
-          lib.recursiveUpdate {
-            defaultProvider = "openai-codex";
-            defaultModel = "gpt-5.4-mini";
-            defaultThinkingLevel = "high";
-            enableInstallTelemetry = false;
-            collapseChangelog = true;
-            transport = "auto";
+    programs.pi-coding-agent = {
+      enable = true;
+      inherit (cfg) package;
+      context = aiTools.base;
+      settings = lib.recursiveUpdate {
+        defaultProvider = "openai-codex";
+        defaultModel = "gpt-5.4-mini";
+        defaultThinkingLevel = "high";
+        enableInstallTelemetry = false;
+        collapseChangelog = true;
+        transport = "auto";
 
-            compaction = {
-              reserveTokens = 20000;
-              keepRecentTokens = 50000;
-            };
+        compaction = {
+          reserveTokens = 20000;
+          keepRecentTokens = 50000;
+        };
 
-            retry = {
-              provider.maxRetryDelayMs = 60000;
-            };
-          } cfg.settings
-        );
-        ".pi/agent/skills".source = aiTools.piCodingAgent.skills;
-      };
+        retry = {
+          provider.maxRetryDelayMs = 60000;
+        };
+      } cfg.settings;
     };
   };
 }
