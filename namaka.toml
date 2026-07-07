@@ -1,0 +1,5 @@
+[check]
+cmd = ["nix", "flake", "check", "--print-build-logs"]
+
+[eval]
+cmd = ["nix", "eval", ".#checks.x86_64-linux.namaka-snapshots.name"]
