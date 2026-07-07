@@ -41,9 +41,10 @@ scope rules.
   history strategy, fixup/autosquash, and message CLI safety.
 
 When asked to commit, inspect the full diff and state an atomic commit plan
-before creating the first commit. Do not treat one user request as one commit
-when the diff contains independently buildable setup, adoption, cleanup,
-formatting, tests, documentation, or generated-file changes.
+before creating the first commit. Default to the smallest committable scope, not
+one commit per user request or feature name. Split independently buildable
+setup, adoption, configuration, generated output, cleanup, formatting, tests,
+and documentation even when they all support the same feature.
 
 ## 2a) Hunk-Level Git Strategy
 

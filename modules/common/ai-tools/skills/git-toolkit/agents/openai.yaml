@@ -1,4 +1,4 @@
 interface:
   display_name: "Git Toolkit"
-  short_description: "Git workflows and commit message quality"
-  default_prompt: "Help with git workflows, branching strategy, and conventional commit messages."
+  short_description: "Git workflows and atomic commit discipline"
+  default_prompt: "Use $git-toolkit to plan atomic commits, draft messages, or handle git workflow safely."
