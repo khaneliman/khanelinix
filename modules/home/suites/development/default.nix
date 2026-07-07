@@ -139,6 +139,7 @@ in
           agentsview
           ccusage
           ck
+          khanelinix.codeburn
           code-review-graph
           hunk
           lmstudio
@@ -148,6 +149,10 @@ in
           tuicr
           workmux
           zat
+        ]
+        ++ lib.optionals (cfg.aiEnable && pkgs.stdenv.hostPlatform.isLinux && !isWSL) [
+          claude-desktop
+          codex-desktop
         ];
 
       shellAliases = {
