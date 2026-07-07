@@ -6,7 +6,7 @@ let
   agents = {
     "fact-finder" = {
       name = "fact-finder";
-      description = "Read-only fact-finding specialist for scoped repo questions. Use for bounded evidence gathering when main context should stay small.";
+      description = "Read-only fact-finding specialist for scoped repo questions. Use for multi-file discovery, caller tracing, config lookup, pattern comparison, and bounded evidence gathering when main context should stay small.";
       tools = [
         "Read"
         "Bash"
@@ -26,14 +26,11 @@ let
       sandbox_mode = {
         codex = "read-only";
       };
-      permission = {
-        bash = "ask";
-      };
       content = builtins.readFile (agentsBasePath + "/general/fact-finder.md");
     };
     "probe-runner" = {
       name = "probe-runner";
-      description = "Bounded probe and reproduction specialist. Use for non-destructive command checks, reproduction attempts, and noisy output summaries.";
+      description = "Bounded probe and reproduction specialist. Use for one-shot commands, non-destructive checks, reproduction attempts, browser probes, eval/build probes, and noisy output summaries.";
       tools = [
         "Read"
         "Bash"
@@ -52,9 +49,6 @@ let
       };
       sandbox_mode = {
         codex = "workspace-write";
-      };
-      permission = {
-        bash = "ask";
       };
       content = builtins.readFile (agentsBasePath + "/general/probe-runner.md");
     };
@@ -77,7 +71,6 @@ let
       };
       permission = {
         edit = "ask";
-        bash = "ask";
       };
       content = builtins.readFile (agentsBasePath + "/general/debugger.md");
     };
@@ -101,13 +94,12 @@ let
       };
       permission = {
         edit = "ask";
-        bash = "ask";
       };
       content = builtins.readFile (agentsBasePath + "/general/refactorer.md");
     };
     test-runner = {
       name = "test-runner";
-      description = "Test execution specialist. Use after code changes to run tests, analyze failures, and suggest fixes. Keeps verbose test output out of main conversation.";
+      description = "Test execution specialist. Use for broad or noisy tests, checks, lint, build validation, failure analysis, and post-change verification. Keeps verbose output out of main conversation.";
       tools = [
         "Read"
         "Bash"
@@ -120,11 +112,10 @@ let
         copilot = "claude-haiku-4.5";
         antigravity = "gemini-3.1-flash-lite-preview";
         opencode = "openai/gpt-5.4-mini";
-        codex = "gpt-5.4-mini";
+        codex = "gpt-5.3-codex-spark";
       };
       permission = {
         edit = "ask";
-        bash = "ask";
       };
       content = builtins.readFile (agentsBasePath + "/general/test-runner.md");
     };
@@ -165,7 +156,7 @@ let
       ""
     else
       let
-        render = key: value: ''"${key}": ${toString value}'';
+        render = key: value: "  ${key}: ${toString value}";
       in
       ''
         permission:
@@ -173,15 +164,15 @@ let
       '';
 
   renderOpenCodeFrontmatter = agent: ''
-        ---
-        description: ${agent.description}
-        mode: ${agent.mode or "all"}
-        model: ${agent.model.opencode or agent.model}
+    ---
+    description: ${agent.description}
+    mode: ${agent.mode or "all"}
+    model: ${agent.model.opencode or agent.model}
 
-        tools:
-        ${renderOpenCodeTools agent}
-    ${renderOpenCodePermission agent.permission}
-        ---
+    tools:
+    ${renderOpenCodeTools agent}
+    ${renderOpenCodePermission (agent.permission or null)}
+    ---
   '';
 
   renderOpenCodeAgent = agent: ''

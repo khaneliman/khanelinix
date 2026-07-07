@@ -2,7 +2,21 @@
 
 Use main thread for planning, integration, and final decisions.
 
-Delegate only when a worker result feeds the next main-thread decision.
+Use persisted goals only for explicit long-running objectives. Keep routine
+fact-finding disposable: delegate, receive evidence packet, discard worker
+context.
+
+Spend Spark helper quota aggressively when the work can be bounded. Delegate
+early for repo discovery, noisy command output, checks, reviews, and independent
+fact slices that would otherwise bloat main context.
+
+Delegate when:
+
+- discovery spans multiple files, callers, modules, commits, or config paths
+- command output may be long or noisy
+- tests, builds, evals, or browser probes can run while main thread reads code
+- review can split by file, module, commit, or concern
+- the worker can return evidence without owning final judgment
 
 Before spawning:
 
@@ -18,6 +32,9 @@ Before spawning:
 5. Treat worker output as an evidence packet. Main thread owns synthesis, edits,
    risk decisions, and final answer.
 
-Use `gpt-5.3-codex-spark` agents for narrow deterministic tasks with clear
-inputs and evidence-only outputs. Use stronger agents for ambiguous debugging,
-architecture, risky edits, and final synthesis.
+Do not delegate tiny one-command answers, work that needs full conversation
+context, or final product/design/architecture decisions.
+
+Use `gpt-5.3-codex-spark` agents by default for bounded evidence, probes, and
+test analysis. Use stronger agents for ambiguous debugging, architecture, risky
+edits, and final synthesis.
