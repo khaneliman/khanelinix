@@ -11,6 +11,7 @@ _: {
             "nixpkgs-master"
             "flake-compat"
             "flake-parts"
+            "systems"
           ];
         };
 
@@ -18,6 +19,7 @@ _: {
           description = "System management";
           inputs = [
             "disko"
+            "fast-nix-gc"
             "home-manager"
             "lanzaboote"
             "nix-darwin"
@@ -30,16 +32,24 @@ _: {
         apps = {
           description = "Applications & packages";
           inputs = [
+            "adv360-zmk"
             "anyrun-nixos-options"
             "catppuccin"
             "firefox-addons"
+            "hermes-agent"
             "khanelivim"
+            "llm-agents"
+            "mcp-servers-nix"
             "nh"
+            "niri"
             "nix-flatpak"
             "nix-index-database"
             "stylix"
+            "t3code"
+            "tokyonight"
             "waybar"
             "yazi-flavors"
+            "zmk-nix"
           ];
         };
       };
