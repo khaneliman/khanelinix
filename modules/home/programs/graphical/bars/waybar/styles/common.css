@@ -161,8 +161,12 @@ box {
   min-width: 128px;
 }
 
-#custom-separator-left,
-#custom-separator-right {
+#custom-calendar label {
+  font-weight: 800;
+}
+
+#custom-separator-left label,
+#custom-separator-right label {
   font-family: "Monaspace Neon NF", "MonaspaceNeon NF";
   font-size: 20px;
 }
@@ -179,12 +183,16 @@ box {
 
 #custom-wlogout,
 #custom-power {
-  font-family: "Monaspace Neon NF", "MonaspaceNeon NF";
-  font-size: 28px;
   margin: 5px 8px 5px 12px;
   padding: 0 8px;
   min-width: 30px;
   min-height: 30px;
+}
+
+#custom-wlogout label,
+#custom-power label {
+  font-family: "Monaspace Neon NF", "MonaspaceNeon NF";
+  font-size: 28px;
 }
 
 #cpu,
