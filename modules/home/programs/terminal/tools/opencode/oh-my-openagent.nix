@@ -34,7 +34,7 @@ in
         testRunnerModel = aiTools.agents.test-runner.model.opencode;
         sparkModel = "openai/gpt-5.3-codex-spark";
         miniModel = "openai/gpt-5.4-mini";
-        opencodeSkillsPath = toString config.programs.opencode.skills;
+        opencodeSkillsPath = "${config.xdg.configHome}/opencode/skills";
         disabledPluginSkills = aiTools.opencode.disabledPluginSkills;
 
         deliberateFallbackModels = [

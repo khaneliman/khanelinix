@@ -121,7 +121,7 @@ in
           _: command: aiToolCommands.renderOpenCodeMarkdown command
         ) aiTools.commands;
         agents = lib.mapAttrs (_: agent: aiToolAgents.renderOpenCodeAgent agent) aiTools.agents;
-        inherit (aiTools.opencode) skills;
+        skills = aiTools.opencode.skillSources;
 
         context = builtins.readFile aiTools.base;
       };
