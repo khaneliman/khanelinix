@@ -62,6 +62,10 @@ in
         collapseChangelog = true;
         transport = "auto";
 
+        packages = [
+          aiTools.planningWithFiles.piCodingAgent.package
+        ];
+
         compaction = {
           reserveTokens = 20000;
           keepRecentTokens = 50000;
