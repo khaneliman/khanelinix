@@ -186,6 +186,27 @@
         "type": "github"
       }
     },
+    "codex-desktop-linux": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1779892031,
+        "narHash": "sha256-IP8IF6nAXR0+cCaF3+izioVNr3+w3zaT89tO3tC1cKg=",
+        "owner": "distsystem",
+        "repo": "codex-desktop-linux",
+        "rev": "93e52c1452b1b4524f9089fd54f8922914218f14",
+        "type": "github"
+      },
+      "original": {
+        "owner": "distsystem",
+        "repo": "codex-desktop-linux",
+        "type": "github"
+      }
+    },
     "crane": {
       "locked": {
         "lastModified": 1781825982,
@@ -329,6 +350,26 @@
       "original": {
         "owner": "hercules-ci",
         "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "flake-utils": {
+      "inputs": {
+        "systems": [
+          "systems"
+        ]
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
         "type": "github"
       }
     },
@@ -1021,6 +1062,7 @@
         "adv360-zmk": "adv360-zmk",
         "anyrun-nixos-options": "anyrun-nixos-options",
         "catppuccin": "catppuccin",
+        "codex-desktop-linux": "codex-desktop-linux",
         "disko": "disko",
         "fast-nix-gc": "fast-nix-gc",
         "firefox-addons": "firefox-addons",
