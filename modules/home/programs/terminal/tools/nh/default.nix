@@ -61,7 +61,7 @@ in
       };
       shellAliases = {
         nixre = "nh ${switchTarget} switch";
-        nixre-fast = "NIX_CONFIG=$'max-jobs = auto\\ncores = 0' nh ${switchTarget} switch";
+        nixre-fast = "nh ${switchTarget} switch --option max-jobs auto --option cores 0";
       };
     };
   };
