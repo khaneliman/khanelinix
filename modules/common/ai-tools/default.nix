@@ -3,6 +3,7 @@
 let
   aiCommands = import ./commands.nix { inherit lib; };
   aiAgents = import ./agents.nix { inherit lib; };
+  permissions = import ./permissions.nix;
 
   base = ./base.md;
   codexContext = ./codex.md;
@@ -145,6 +146,7 @@ in
     codexContext
     codexContextOverride
     checkedHarnessSkillPolicy
+    permissions
     skills
     skillsDir
     systemSkillNames
