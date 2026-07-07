@@ -18,6 +18,7 @@ in
     ccusage
     ck
     claude-code
+    claude-desktop
     code-review-graph
     codex
     git-surgeon
