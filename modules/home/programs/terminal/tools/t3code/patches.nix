@@ -79,16 +79,6 @@ map fetchPatch [
     hash = "sha256-5fEarfhLrLS4eWMUU6dZKB8i0LL9C8jQEuWEGIPmE4k=";
   }
   {
-    name = "first-message-thread-snapshot-transaction";
-    rev = "0cfb2270b4a761ee49751dc35dbe972dff5d77ff";
-    hash = "sha256-UFO194iJLWjBqsI1CwlS4R1m9puoX7GBk50odqZNeus=";
-  }
-  {
-    name = "first-message-stream-events";
-    rev = "c4fbb1f5c71f572ffed40cfda007dfa5be65f183";
-    hash = "sha256-VHdwtWFUY+gNYKMAemA/b3RveN8xcn9DqftTfUwlWX8=";
-  }
-  {
     name = "fix-first-message-disappearing";
     rev = "6f0709718c348481263b3e585707b0bddfcb2ba9";
     hash = "sha256-Fi4HoWSRPQldXqaY3fXSe3+Qvd35s5L2sorcC6wU0aM=";
