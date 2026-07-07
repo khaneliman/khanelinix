@@ -1,91 +1,18 @@
+{ lib, ... }:
+let
+  permissions = import ../../../../../common/ai-tools/permissions.nix;
+  renderPrefix =
+    command:
+    let
+      pattern = lib.splitString " " command;
+    in
+    "prefix_rule(pattern = ${builtins.toJSON pattern}, decision = \"allow\")";
+in
 {
   "read-only" = ''
     # Read-only shell commands that should not require repeated approvals.
-    # Destructive primitives intentionally stay off this allowlist so Codex falls
-    # back to approval_policy = "on-request" in default.nix. Phase 1 keeps the
-    # repo baseline at ask for `rm -rf`, `dd`, `mkfs`, `shutdown`, and `reboot`
-    # instead of inventing unsupported hard-deny shell rules here.
-    prefix_rule(pattern = ["basename"], decision = "allow")
-    prefix_rule(pattern = ["cat"], decision = "allow")
-    prefix_rule(pattern = ["command", "-v"], decision = "allow")
-    prefix_rule(pattern = ["coredumpctl", "list"], decision = "allow")
-    prefix_rule(pattern = ["cut"], decision = "allow")
-    prefix_rule(pattern = ["df"], decision = "allow")
-    prefix_rule(pattern = ["dirname"], decision = "allow")
-    prefix_rule(pattern = ["dmesg"], decision = "allow")
-    prefix_rule(pattern = ["du"], decision = "allow")
-    prefix_rule(pattern = ["fd"], decision = "allow")
-    prefix_rule(pattern = ["file"], decision = "allow")
-    prefix_rule(pattern = ["find"], decision = "allow")
-
-    prefix_rule(pattern = ["gh", "auth", "status"], decision = "allow")
-    prefix_rule(pattern = ["gh", "issue", "list"], decision = "allow")
-    prefix_rule(pattern = ["gh", "issue", "status"], decision = "allow")
-    prefix_rule(pattern = ["gh", "issue", "view"], decision = "allow")
-    prefix_rule(pattern = ["gh", "label", "list"], decision = "allow")
-    prefix_rule(pattern = ["gh", "pr", "checks"], decision = "allow")
-    prefix_rule(pattern = ["gh", "pr", "diff"], decision = "allow")
-    prefix_rule(pattern = ["gh", "pr", "list"], decision = "allow")
-    prefix_rule(pattern = ["gh", "pr", "status"], decision = "allow")
-    prefix_rule(pattern = ["gh", "pr", "view"], decision = "allow")
-    prefix_rule(pattern = ["gh", "release", "list"], decision = "allow")
-    prefix_rule(pattern = ["gh", "release", "view"], decision = "allow")
-    prefix_rule(pattern = ["gh", "repo", "view"], decision = "allow")
-    prefix_rule(pattern = ["gh", "run", "list"], decision = "allow")
-    prefix_rule(pattern = ["gh", "run", "view"], decision = "allow")
-    prefix_rule(pattern = ["gh", "search"], decision = "allow")
-    prefix_rule(pattern = ["git", "blame"], decision = "allow")
-    prefix_rule(pattern = ["git", "branch"], decision = "allow")
-    prefix_rule(pattern = ["git", "diff"], decision = "allow")
-    prefix_rule(pattern = ["git", "grep"], decision = "allow")
-    prefix_rule(pattern = ["git", "log"], decision = "allow")
-    prefix_rule(pattern = ["git", "ls-files"], decision = "allow")
-    prefix_rule(pattern = ["git", "ls-tree"], decision = "allow")
-    prefix_rule(pattern = ["git", "reflog"], decision = "allow")
-    prefix_rule(pattern = ["git", "remote"], decision = "allow")
-    prefix_rule(pattern = ["git", "rev-parse"], decision = "allow")
-    prefix_rule(pattern = ["git", "show"], decision = "allow")
-    prefix_rule(pattern = ["git", "status"], decision = "allow")
-    prefix_rule(pattern = ["git", "submodule", "status"], decision = "allow")
-
-    prefix_rule(pattern = ["jj", "bookmark", "list"], decision = "allow")
-    prefix_rule(pattern = ["jj", "diff"], decision = "allow")
-    prefix_rule(pattern = ["jj", "evolog"], decision = "allow")
-    prefix_rule(pattern = ["jj", "file", "list"], decision = "allow")
-    prefix_rule(pattern = ["jj", "log"], decision = "allow")
-    prefix_rule(pattern = ["jj", "op", "log"], decision = "allow")
-    prefix_rule(pattern = ["jj", "show"], decision = "allow")
-    prefix_rule(pattern = ["jj", "status"], decision = "allow")
-
-    prefix_rule(pattern = ["grep"], decision = "allow")
-    prefix_rule(pattern = ["head"], decision = "allow")
-    prefix_rule(pattern = ["journalctl"], decision = "allow")
-    prefix_rule(pattern = ["ls"], decision = "allow")
-
-    prefix_rule(pattern = ["nh", "search"], decision = "allow")
-    prefix_rule(pattern = ["nix", "eval"], decision = "allow")
-    prefix_rule(pattern = ["nix", "flake", "metadata"], decision = "allow")
-    prefix_rule(pattern = ["nix", "flake", "show"], decision = "allow")
-    prefix_rule(pattern = ["nix", "path-info"], decision = "allow")
-
-    prefix_rule(pattern = ["pactl", "list"], decision = "allow")
-    prefix_rule(pattern = ["ps"], decision = "allow")
-    prefix_rule(pattern = ["pw-top"], decision = "allow")
-    prefix_rule(pattern = ["pwd"], decision = "allow")
-    prefix_rule(pattern = ["readlink"], decision = "allow")
-    prefix_rule(pattern = ["realpath"], decision = "allow")
-    prefix_rule(pattern = ["rg"], decision = "allow")
-    prefix_rule(pattern = ["sed", "-n"], decision = "allow")
-    prefix_rule(pattern = ["sort"], decision = "allow")
-    prefix_rule(pattern = ["stat"], decision = "allow")
-
-    prefix_rule(pattern = ["systemctl", "list-timers"], decision = "allow")
-    prefix_rule(pattern = ["systemctl", "list-units"], decision = "allow")
-    prefix_rule(pattern = ["systemctl", "status"], decision = "allow")
-
-    prefix_rule(pattern = ["tail"], decision = "allow")
-    prefix_rule(pattern = ["uname"], decision = "allow")
-    prefix_rule(pattern = ["uniq"], decision = "allow")
-    prefix_rule(pattern = ["wc"], decision = "allow")
+    # Mutating commands intentionally stay off this allowlist so Codex falls
+    # back to approval_policy = "on-request" in default.nix.
+    ${lib.concatStringsSep "\n" (map renderPrefix permissions.readOnlyShellCommands)}
   '';
 }

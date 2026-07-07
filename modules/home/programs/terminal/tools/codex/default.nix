@@ -13,6 +13,27 @@ let
   cfg = config.khanelinix.programs.terminal.tools.codex;
   mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
   exoEnabled = config.services.exo.enable or false;
+  # `programs.codex.settings.mcp_servers` is merged with the auto-generated
+  # entries from `programs.mcp.servers` per top-level server name (whole-entry
+  # override, not a deep per-field merge), so any entry listed here would
+  # otherwise drop its `command`/`args`/`env` transport. Replicate the same
+  # transform home-manager's codex module applies so policy overrides keep
+  # their transport intact.
+  codexMcpTransport = lib.mapAttrs (
+    name: server:
+    lib.hm.mcp.transformMcpServer {
+      inherit server;
+      exclude = [
+        "headers"
+        "type"
+      ];
+      extraTransforms = [
+        (s: s // lib.optionalAttrs (s.headers or { } != { }) { http_headers = s.headers; })
+        lib.hm.mcp.addType
+        (lib.hm.mcp.wrapEnvFilesCommand { inherit pkgs name; })
+      ];
+    }
+  ) config.programs.mcp.servers;
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
   tomlFormat = pkgs.formats.toml { };
   codexConfigDir =
@@ -248,7 +269,7 @@ in
         };
 
         agents = {
-          max_threads = 8;
+          max_threads = 12;
           max_depth = 1;
           job_max_runtime_seconds = 3600;
         };
@@ -270,14 +291,20 @@ in
         # Browser-side counterpart lives in the chromium native-messaging
         # manifest; together they let codex drive Chromium without the
         # imperative --write-codex-config step.
-        mcp_servers = lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-          node_repl = {
-            command = lib.getExe' pkgs.khanelinix.codex-browser-use-linux-chromium "codex-node-repl-mcp";
-            # js/js_reset/browser_cleanup drive the local Chromium bridge;
-            # prompting per call makes browser use unusable.
-            default_tools_approval_mode = "approve";
+        mcp_servers =
+          lib.optionalAttrs mcpModuleEnabled (
+            lib.mapAttrs (
+              name: policy: (codexMcpTransport.${name} or { }) // policy
+            ) aiTools.permissions.codexMcpServerPolicies
+          )
+          // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+            node_repl = {
+              command = lib.getExe' pkgs.khanelinix.codex-browser-use-linux-chromium "codex-node-repl-mcp";
+              # js/js_reset/browser_cleanup drive the local Chromium bridge;
+              # prompting per call makes browser use unusable.
+              default_tools_approval_mode = "approve";
+            };
           };
-        };
 
         model_providers = lib.optionalAttrs exoEnabled {
           exo = {
@@ -404,7 +431,7 @@ in
       context = builtins.readFile aiTools.base;
       contextOverride = aiTools.codex.contextOverride;
       skills = codexSkills;
-      rules = import ./rules.nix;
+      rules = import ./rules.nix { inherit lib; };
     };
   };
 }
