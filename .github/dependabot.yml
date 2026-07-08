@@ -10,49 +10,79 @@ updates:
     directory: "/templates/angular"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 1
     commit-message:
       prefix: "chore(templates/angular)"
     groups:
       angular-dependencies:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      angular-security:
+        applies-to: security-updates
         patterns:
           - "*"
   - package-ecosystem: "npm"
     directory: "/templates/node"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 1
     commit-message:
       prefix: "chore(templates/node)"
     groups:
       node-dependencies:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      node-security:
+        applies-to: security-updates
         patterns:
           - "*"
   - package-ecosystem: "pip"
     directory: "/templates/python"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 1
     commit-message:
       prefix: "chore(templates/python)"
     groups:
       python-dependencies:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      python-security:
+        applies-to: security-updates
         patterns:
           - "*"
   - package-ecosystem: "cargo"
     directory: "/templates/rust"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 1
     commit-message:
       prefix: "chore(templates/rust)"
     groups:
       rust-dependencies:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      rust-security:
+        applies-to: security-updates
         patterns:
           - "*"
   - package-ecosystem: "cargo"
     directory: "/templates/rust-web-server"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 1
     commit-message:
       prefix: "chore(templates/rust-web-server)"
     groups:
       rust-web-server-dependencies:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      rust-web-server-security:
+        applies-to: security-updates
         patterns:
           - "*"
