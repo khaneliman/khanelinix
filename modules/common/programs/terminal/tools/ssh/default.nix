@@ -32,7 +32,7 @@ let
       remote-user-id = if remote.system == "darwin" then "501" else "1000";
 
       forward-gpg =
-        lib.optionalString (config.programs.gnupg.agent.enable && remote.gpgAgent)
+        lib.optionalString (config.programs.gnupg.agent.enable && (remote.gpgAgent or false))
           "  RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra\n  RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh";
       port-expr = lib.optionalString (remote.system == "nixos") "  Port ${toString cfg.port}";
 
