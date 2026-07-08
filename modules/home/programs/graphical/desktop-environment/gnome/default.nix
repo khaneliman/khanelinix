@@ -7,7 +7,12 @@
 }:
 let
   inherit (lib) types mkIf;
-  inherit (lib.khanelinix) default-attrs mkBoolOpt mkOpt;
+  inherit (lib.khanelinix)
+    default-attrs
+    enabled
+    mkBoolOpt
+    mkOpt
+    ;
 
   cfg = config.khanelinix.programs.graphical.desktop-environment.gnome;
 
@@ -273,6 +278,11 @@ in
   };
 
   config = mkIf cfg.enable {
+    khanelinix.theme = {
+      gtk = enabled;
+      qt = enabled;
+    };
+
     dconf.settings = lib.recursiveUpdate (
       lib.optionalAttrs (cfg.shell != { }) {
         "org/gnome/shell" = default-attrs cfg.shell;
