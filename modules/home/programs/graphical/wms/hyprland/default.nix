@@ -118,6 +118,8 @@ in
             XDG_SESSION_TYPE = "wayland";
             _JAVA_AWT_WM_NONREPARENTING = "1";
             __GL_GSYNC_ALLOWED = "0";
+          }
+          // lib.optionalAttrs (osConfig.khanelinix.hardware.gpu.nvidia.enable or false) {
             __GL_VRR_ALLOWED = "0";
           }
           // mkIf cfg.enableDebug {

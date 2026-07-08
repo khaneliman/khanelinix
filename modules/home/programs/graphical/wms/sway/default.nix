@@ -84,18 +84,22 @@ in
           wayvnc
         ];
 
-        sessionVariables = lib.mkIf (!(osConfig.khanelinix.programs.graphical.wms.sway.withUWSM or false)) {
-          CLUTTER_BACKEND = "wayland";
-          MOZ_ENABLE_WAYLAND = "1";
-          MOZ_USE_XINPUT2 = "1";
-          # NOTE: causes gldriverquery crash on wayland
-          # SDL_VIDEODRIVER = "wayland";
-          WLR_DRM_NO_ATOMIC = "1";
-          XDG_SESSION_TYPE = "wayland";
-          _JAVA_AWT_WM_NONREPARENTING = "1";
-          __GL_GSYNC_ALLOWED = "0";
-          __GL_VRR_ALLOWED = "0";
-        };
+        sessionVariables = lib.mkIf (!(osConfig.khanelinix.programs.graphical.wms.sway.withUWSM or false)) (
+          {
+            CLUTTER_BACKEND = "wayland";
+            MOZ_ENABLE_WAYLAND = "1";
+            MOZ_USE_XINPUT2 = "1";
+            # NOTE: causes gldriverquery crash on wayland
+            # SDL_VIDEODRIVER = "wayland";
+            WLR_DRM_NO_ATOMIC = "1";
+            XDG_SESSION_TYPE = "wayland";
+            _JAVA_AWT_WM_NONREPARENTING = "1";
+            __GL_GSYNC_ALLOWED = "0";
+          }
+          // lib.optionalAttrs (osConfig.khanelinix.hardware.gpu.nvidia.enable or false) {
+            __GL_VRR_ALLOWED = "0";
+          }
+        );
       };
 
       khanelinix = {

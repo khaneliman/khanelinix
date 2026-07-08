@@ -28,7 +28,7 @@ in
           export XDG_SESSION_TYPE=wayland
           export _JAVA_AWT_WM_NONREPARENTING=1
           export __GL_GSYNC_ALLOWED=0
-          export __GL_VRR_ALLOWED=0
+          ${lib.optionalString config.khanelinix.hardware.gpu.nvidia.enable "export __GL_VRR_ALLOWED=0"}
         '';
         # Debug variables (commented out by default)
         #export AQ_TRACE="1"
