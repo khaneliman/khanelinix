@@ -111,7 +111,7 @@ in
       systemPackages = [
         cfg.cursor.package
         cfg.icon.package
-        cfg.selectedTheme.package
+        cfg.package
       ];
     };
   };
