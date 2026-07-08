@@ -84,6 +84,7 @@ in
 
     (mkIf cfg.enable {
       khanelinix.theme.enable = true;
+      khanelinix.theme.package = cfg.package;
 
       assertions = [
         {

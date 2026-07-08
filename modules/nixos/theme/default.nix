@@ -92,11 +92,8 @@ in
 
     package = mkOption {
       type = types.package;
-      default = pkgs.catppuccin.override { inherit (cfg.selectedTheme) accent variant; };
-      description = ''
-        The `spotifyd` package to use.
-        Can be used to specify extensions.
-      '';
+      default = pkgs.emptyDirectory;
+      description = "The primary theme package to install system-wide.";
     };
   };
 
