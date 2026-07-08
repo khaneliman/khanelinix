@@ -432,7 +432,9 @@ in
       contextOverride = aiTools.codex.contextOverride;
       skills = codexSkills;
       rules = import ./rules.nix { inherit lib; };
-      hooks = aiTools.planningWithFiles.codex.hooks;
+      # TODO: enable user config when trust becomes declarative or separate state file
+      # https://github.com/openai/codex/issues/14601
+      # hooks = aiTools.planningWithFiles.codex.hooks;
     };
   };
 }

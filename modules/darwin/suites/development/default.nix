@@ -1,12 +1,15 @@
 {
   config,
   lib,
+  pkgs,
 
   ...
 }:
 let
   inherit (lib) mkIf;
   cfg = config.khanelinix.suites.development;
+  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
+  tomlFormat = pkgs.formats.toml { };
 in
 {
   options.khanelinix.suites.development = {
@@ -35,6 +38,13 @@ in
     nix.settings = {
       keep-derivations = true;
       keep-outputs = true;
+    };
+
+    environment.etc = mkIf cfg.aiEnable {
+      "codex/requirements.toml".source =
+        tomlFormat.generate "codex-requirements" aiTools.codex.managedRequirements;
+      "codex/hooks".source = aiTools.planningWithFiles.codex.hooks + "/hooks";
+      "codex/skills/planning-with-files".source = aiTools.planningWithFiles.codex.skill;
     };
   };
 }
