@@ -12,7 +12,7 @@ let
   user = config.users.users.${config.khanelinix.user.name};
   user-id = toString user.uid;
 
-  hosts = import ./hosts.nix;
+  hosts = import (lib.getFile "modules/common/programs/terminal/tools/ssh/hosts.nix");
 
   # MagicDNS tailnet suffix. The "-ts" aliases below are only emitted when the
   # Tailscale daemon/app is enabled, since plain ".local" aliases use mDNS and
@@ -132,18 +132,6 @@ in
           hostNames = [ host.hostname ];
           inherit (host) publicKey;
         }) (lib.filterAttrs (_: host: host ? publicKey) hosts)
-        //
-          lib.mapAttrs
-            (_name: host: {
-              hostNames = [ host.hostname ];
-              publicKey = host.userPublicKey;
-            })
-            (
-              lib.mapAttrs' (name: host: {
-                name = "${host.username}@${name}";
-                value = host;
-              }) (lib.filterAttrs (_: host: host ? userPublicKey) hosts)
-            )
       );
     };
 

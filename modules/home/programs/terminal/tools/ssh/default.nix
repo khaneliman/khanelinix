@@ -38,7 +38,7 @@ let
   # Per-host SSH overrides are maintained in a dedicated hosts map
   # (modules/common/programs/terminal/tools/ssh/hosts.nix) to keep aliases
   # cheap to evaluate and avoid per-host module edits.
-  hostOverrides = import (inputs.self + "/modules/common/programs/terminal/tools/ssh/hosts.nix");
+  hostOverrides = import (lib.getFile "modules/common/programs/terminal/tools/ssh/hosts.nix");
 
   otherHosts = lib.mapAttrs (
     name: _host:
@@ -53,16 +53,11 @@ let
   magicDnsSuffix = "taild8431e.ts.net";
   tailscaleEnabled = osConfig.khanelinix.services.tailscale.enable or false;
 
-  authorizedKeys = [
-    # `khanelinix`
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFuMXeT21L3wnxnuzl0rKuE5+8inPSi8ca/Y3ll4s9pC"
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKEilFPAgSUwW3N7PTvdTqjaV2MD3cY2oZGKdaS7ndKB"
-    # `khanelimac`
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJAZIwy7nkz8CZYR/ZTSNr+7lRBW2AYy1jw06b44zaID"
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINBG8l3jQ2EPLU+BlgtaQZpr4xr97n2buTLAZTxKHSsD"
-    # `bruddynix`
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFeLt5cnRnKeil39Ds+CimMJQq/5dln32YqQ+EfYSCvc"
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEqCiZgjOmhsBTAFD0LbuwpfeuCnwXwMl2wByxC1UiRt"
+  hostUserPublicKeys = lib.mapAttrsToList (_: host: host.userPublicKey) (
+    lib.filterAttrs (_: host: host ? userPublicKey) hostOverrides
+  );
+
+  authorizedKeys = hostUserPublicKeys ++ [
     # `austinserver hermes`
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG1MjYs1zQ6dxFyNwUTR/1K0QI65nuJ6h1xINWnQEUdy hermes-agent@austinserver"
   ];
