@@ -19,6 +19,7 @@ in
         # Gamescope documentation
         # See: https://github.com/ValveSoftware/gamescope
         enable = true;
+        enableWsi = true;
         package = pkgs.gamescope;
 
         # NOTE: breaks running WITHIN steam
