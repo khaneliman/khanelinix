@@ -34,6 +34,14 @@
             language = "system";
             pass_filenames = false;
           };
+          okf-memory-conformance = {
+            enable = true;
+            description = "OKF bundle conformance + memory char budget";
+            entry = "sh ${toString ../../modules/common/ai-tools/skills/okf-memory/scripts/check-bundle.sh}";
+            files = "^\\.okf/.*\\.md$";
+            language = "system";
+            pass_filenames = false;
+          };
           pre-commit-hook-ensure-sops.enable = true;
           treefmt.enable = true;
           typos = {
