@@ -52,6 +52,10 @@ in
         gtk.enable = !config.khanelinix.theme.gtk.enable;
         qt.enable = !config.khanelinix.theme.qt.enable;
       };
+
+      cursor = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+        inherit (cfg.cursor) name package size;
+      };
     };
   };
 }
