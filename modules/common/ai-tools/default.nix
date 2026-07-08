@@ -55,7 +55,45 @@ let
 
     claudeCode.skill = okfMemoryDir + "/claude/SKILL.md";
 
+    codex = {
+      hooksDir = okfMemoryDir + "/codex/hooks";
+      requirements = import (okfMemoryDir + "/codex/requirements.nix");
+    };
   };
+
+  # Merge okf-memory's SessionStart/UserPromptSubmit hook entries into
+  # planning-with-files' managed-requirements hooks (each event is a list,
+  # so this appends rather than replaces). `managed_dir` isn't an event key
+  # and is passed through untouched.
+  mergeHookEvents =
+    a: b:
+    let
+      isEventKey = name: name != "managed_dir";
+      eventNames = lib.unique (
+        (builtins.filter isEventKey (builtins.attrNames a)) ++ (builtins.attrNames b)
+      );
+    in
+    (lib.filterAttrs (name: _: !(isEventKey name)) a)
+    // lib.genAttrs eventNames (name: (a.${name} or [ ]) ++ (b.${name} or [ ]));
+
+  codexManagedRequirementsMerged = codexManagedRequirements // {
+    hooks = mergeHookEvents codexManagedRequirements.hooks okfMemory.codex.requirements;
+  };
+
+  # Combine planning-with-files' and okf-memory's Codex hook scripts into one
+  # directory, since both are deployed to the same /etc/codex/hooks path.
+  # Falls back to planning-with-files' own directory when pkgs isn't passed
+  # (some callers of this module don't need Codex support and omit it).
+  codexHooksDirMerged =
+    if pkgs == null then
+      planningWithFiles.codex.hooks + "/hooks"
+    else
+      pkgs.runCommand "codex-hooks-merged" { } ''
+        mkdir -p $out
+        cp -R ${planningWithFiles.codex.hooks}/hooks/. $out/
+        cp -R ${okfMemory.codex.hooksDir}/. $out/
+      '';
+
   # Claude Code reads hooks from each skill's own SKILL.md frontmatter, which
   # is provider-specific — the canonical okf-memory/SKILL.md stays neutral so
   # every other provider gets a correct, honest file. For Claude Code only,
@@ -77,6 +115,7 @@ let
           cp ${okfMemory.claudeCode.skill} $out/okf-memory/SKILL.md
         ''
       );
+
   isSkillDirectory =
     name: type: type == "directory" && builtins.pathExists (skillsDir + "/${name}/SKILL.md");
   allSkills = lib.filterAttrs isSkillDirectory (builtins.readDir skillsDir);
@@ -235,7 +274,8 @@ in
     agents = aiAgents.toCodexAgents;
     commandSkillFiles = aiCommands.toCodexSkillFiles;
     contextOverride = codexContextOverride;
-    managedRequirements = codexManagedRequirements;
+    managedRequirements = codexManagedRequirementsMerged;
+    hooksDir = codexHooksDirMerged;
     skills = skillsForHarness "codex";
     skillSources = skillsAttrsForHarness "codex" // {
       planning-with-files = planningWithFiles.codex.skill;

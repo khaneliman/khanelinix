@@ -8,7 +8,7 @@
 let
   inherit (lib) mkIf;
   cfg = config.khanelinix.suites.development;
-  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
+  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
   tomlFormat = pkgs.formats.toml { };
 in
 {
@@ -43,7 +43,7 @@ in
     environment.etc = mkIf cfg.aiEnable {
       "codex/requirements.toml".source =
         tomlFormat.generate "codex-requirements" aiTools.codex.managedRequirements;
-      "codex/hooks".source = aiTools.planningWithFiles.codex.hooks + "/hooks";
+      "codex/hooks".source = aiTools.codex.hooksDir;
       "codex/skills/planning-with-files".source = aiTools.planningWithFiles.codex.skill;
     };
   };

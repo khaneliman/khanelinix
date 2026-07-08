@@ -8,7 +8,7 @@
 let
 
   cfg = config.khanelinix.suites.development;
-  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
+  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
   homeCfg = config.home-manager.users.${config.khanelinix.user.name} or { };
   exoEnabled = homeCfg.services.exo.enable or false;
   exoLibp2pPort = 52416;
@@ -71,7 +71,7 @@ in
     environment.etc = lib.mkIf cfg.aiEnable {
       "codex/requirements.toml".source =
         tomlFormat.generate "codex-requirements" aiTools.codex.managedRequirements;
-      "codex/hooks".source = aiTools.planningWithFiles.codex.hooks + "/hooks";
+      "codex/hooks".source = aiTools.codex.hooksDir;
       "codex/skills/planning-with-files".source = aiTools.planningWithFiles.codex.skill;
     };
   };
