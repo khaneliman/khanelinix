@@ -1,4 +1,8 @@
-{ lib, ... }:
+{
+  lib,
+  pkgs ? null,
+  ...
+}:
 
 let
   aiCommands = import ./commands.nix { inherit lib; };
@@ -45,6 +49,34 @@ let
     piCodingAgent.package = planningWithFilesDir + "/pi/skills/planning-with-files";
   };
 
+  okfMemoryDir = ./okf-memory;
+  okfMemory = {
+    canonicalSkill = skillsDir + "/okf-memory";
+
+    claudeCode.skill = okfMemoryDir + "/claude/SKILL.md";
+
+  };
+  # Claude Code reads hooks from each skill's own SKILL.md frontmatter, which
+  # is provider-specific — the canonical okf-memory/SKILL.md stays neutral so
+  # every other provider gets a correct, honest file. For Claude Code only,
+  # swap in the variant that adds the hooks: block, keeping everything else
+  # (including scripts/) from the generic skill directory.
+  # home-manager's claude-code module dispatches on `builtins.isAttrs
+  # cfg.skills` to decide between whole-directory and per-skill-override
+  # modes — and a derivation IS an attrset, so passing one directly here
+  # would make it match BOTH branches. `toString` collapses it to a plain
+  # store-path string, keeping it unambiguously in whole-directory mode.
+  claudeCodeSkillsDir =
+    if pkgs == null then
+      skillsForHarness "claudeCode"
+    else
+      toString (
+        pkgs.runCommand "claude-code-skills" { } ''
+          cp -R ${skillsForHarness "claudeCode"} $out
+          chmod -R u+w $out
+          cp ${okfMemory.claudeCode.skill} $out/okf-memory/SKILL.md
+        ''
+      );
   isSkillDirectory =
     name: type: type == "directory" && builtins.pathExists (skillsDir + "/${name}/SKILL.md");
   allSkills = lib.filterAttrs isSkillDirectory (builtins.readDir skillsDir);
@@ -188,7 +220,7 @@ in
   claudeCode = {
     commands = aiCommands.toClaudeMarkdown // planningWithFilesCommands;
     agents = aiAgents.toClaudeMarkdown;
-    skills = skillsForHarness "claudeCode";
+    skills = claudeCodeSkillsDir;
     inherit skillsDir;
   };
 
