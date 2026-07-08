@@ -3,6 +3,7 @@
 let
   aiCommands = import ./commands.nix { inherit lib; };
   aiAgents = import ./agents.nix { inherit lib; };
+  codexManagedRequirements = import ./codex-managed-requirements.nix;
   permissions = import ./permissions.nix;
 
   base = ./base.md;
@@ -202,6 +203,7 @@ in
     agents = aiAgents.toCodexAgents;
     commandSkillFiles = aiCommands.toCodexSkillFiles;
     contextOverride = codexContextOverride;
+    managedRequirements = codexManagedRequirements;
     skills = skillsForHarness "codex";
     skillSources = skillsAttrsForHarness "codex" // {
       planning-with-files = planningWithFiles.codex.skill;
