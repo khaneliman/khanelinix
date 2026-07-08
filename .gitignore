@@ -44,3 +44,6 @@ result
 .venv
 
 **/.claude/settings.local.json
+
+# okf-memory: local, uncommitted curated memory
+.okf/MEMORY.local.md
