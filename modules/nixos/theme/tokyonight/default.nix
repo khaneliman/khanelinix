@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -37,7 +38,11 @@ in
   config = mkIf cfg.enable (
     lib.mkMerge [
       {
-        khanelinix.theme.enable = true;
+        khanelinix.theme = {
+          enable = true;
+          name = "tokyonight";
+          package = pkgs.tokyonight-gtk-theme;
+        };
 
         assertions = [
           {

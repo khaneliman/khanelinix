@@ -10,7 +10,7 @@ let
   inherit (lib.khanelinix) default-attrs;
 
   cfg = config.khanelinix.system.boot;
-  themeCfg = config.khanelinix.theme;
+
   useLimine = cfg.loader == "limine";
   useSystemdBoot = cfg.loader == "systemd-boot";
 in
@@ -138,8 +138,6 @@ in
 
       plymouth = {
         enable = cfg.plymouth;
-        theme = lib.mkDefault "${themeCfg.selectedTheme.name}-${themeCfg.selectedTheme.variant}";
-        themePackages = lib.mkDefault [ pkgs.catppuccin-plymouth ];
       };
 
       tmp = default-attrs {

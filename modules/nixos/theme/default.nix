@@ -15,79 +15,26 @@ let
   inherit (lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.theme;
-
-  catppuccinAccents = [
-    "rosewater"
-    "flamingo"
-    "pink"
-    "mauve"
-    "red"
-    "maroon"
-    "peach"
-    "yellow"
-    "green"
-    "teal"
-    "sky"
-    "sapphire"
-    "blue"
-    "lavender"
-  ];
-  catppuccinVariants = [
-    "latte"
-    "frappe"
-    "macchiato"
-    "mocha"
-  ];
 in
 {
-  # TODO: consolidate home-manager and nixos module
   options.khanelinix.theme = {
     enable = mkEnableOption "custom theme use for applications";
 
+    name = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "The primary name of the active theme (e.g., 'catppuccin', 'tokyonight').";
+    };
+
     cursor = {
-      name = mkOpt types.str "catppuccin-macchiato-blue-cursors" "The name of the cursor theme to apply.";
-      package = mkOpt types.package (
-        if pkgs.stdenv.hostPlatform.isLinux then
-          pkgs.catppuccin-cursors.macchiatoBlue
-        else
-          pkgs.emptyDirectory
-      ) "The package to use for the cursor theme.";
+      name = mkOpt (types.nullOr types.str) null "The name of the cursor theme to apply.";
+      package = mkOpt types.package pkgs.emptyDirectory "The package to use for the cursor theme.";
       size = mkOpt types.int 32 "The size of the cursor.";
     };
 
     icon = {
-      name = mkOpt types.str "breeze-dark" "The name of the icon theme to apply.";
-      package =
-        mkOpt types.package pkgs.kdePackages.breeze-icons
-          "The package to use for the icon theme.";
-    };
-
-    selectedTheme = mkOption {
-      type = types.submodule {
-        options = {
-          name = mkOpt types.str "catppuccin" "The theme to use.";
-          accent = mkOption {
-            type = types.enum catppuccinAccents;
-            default = "blue";
-            description = ''
-              An optional theme accent.
-            '';
-          };
-          variant = mkOption {
-            type = types.enum catppuccinVariants;
-            default = "macchiato";
-            description = ''
-              An optional theme variant.
-            '';
-          };
-        };
-      };
-      default = {
-        name = "catppuccin";
-        accent = "blue";
-        variant = "macchiato";
-      };
-      description = "Theme to use for applications.";
+      name = mkOpt (types.nullOr types.str) null "The name of the icon theme to apply.";
+      package = mkOpt types.package pkgs.emptyDirectory "The package to use for the icon theme.";
     };
 
     package = mkOption {
@@ -98,12 +45,18 @@ in
   };
 
   config = mkIf cfg.enable {
+    warnings = lib.mkIf (cfg.name == null) [
+      "khanelinix.theme is enabled, but no theme name (e.g. catppuccin, tokyonight, nord) is configured. You may have forgotten to enable a concrete theme module."
+    ];
+
     environment = {
-      sessionVariables = {
-        CURSOR_THEME = cfg.cursor.name;
-        XCURSOR_SIZE = "${toString cfg.cursor.size}";
-        XCURSOR_THEME = cfg.cursor.name;
-      };
+      sessionVariables = lib.mkMerge [
+        (lib.mkIf (cfg.cursor.name != null) {
+          CURSOR_THEME = cfg.cursor.name;
+          XCURSOR_THEME = cfg.cursor.name;
+          XCURSOR_SIZE = "${toString cfg.cursor.size}";
+        })
+      ];
 
       systemPackages = [
         cfg.cursor.package

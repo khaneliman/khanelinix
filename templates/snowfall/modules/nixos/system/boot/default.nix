@@ -10,7 +10,7 @@ let
   inherit (lib.${namespace}) default-attrs;
 
   cfg = config.${namespace}.system.boot;
-  themeCfg = config.${namespace}.theme;
+
 in
 {
   options.${namespace}.system.boot = {
@@ -78,8 +78,6 @@ in
 
       plymouth = {
         enable = cfg.plymouth;
-        theme = lib.mkDefault "${themeCfg.selectedTheme.name}-${themeCfg.selectedTheme.variant}";
-        themePackages = lib.mkDefault [ pkgs.catppuccin-plymouth ];
       };
 
       tmp = default-attrs {

@@ -83,8 +83,27 @@ in
     })
 
     (mkIf cfg.enable {
-      khanelinix.theme.enable = true;
-      khanelinix.theme.package = cfg.package;
+      khanelinix.theme = {
+        enable = true;
+        name = "catppuccin";
+        inherit (cfg) package;
+
+        cursor = {
+          name = "catppuccin-${cfg.flavor}-${cfg.accent}-cursors";
+          package =
+            if pkgs.stdenv.hostPlatform.isLinux then
+              pkgs.catppuccin-cursors."${cfg.flavor}${lib.toUpper (lib.substring 0 1 cfg.accent)}${
+                lib.substring 1 (-1) cfg.accent
+              }"
+            else
+              pkgs.emptyDirectory;
+        };
+
+        icon = {
+          name = "breeze-dark";
+          package = pkgs.kdePackages.breeze-icons;
+        };
+      };
 
       assertions = [
         {
