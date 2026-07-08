@@ -56,7 +56,10 @@ in
 
       wms = mkMerge [
         {
-          hyprland.enable = true;
+          hyprland = {
+            enable = true;
+            gamemode.vrr.enable = true; # Odyssey G9 (DP-1) supports VRR
+          };
           niri = {
             enable = true;
             package = pkgs.niri-unstable;

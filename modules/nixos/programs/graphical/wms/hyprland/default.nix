@@ -40,6 +40,7 @@ in
         "Custom configuration files that can be used to override the default files.";
     customFiles = mkOpt attrs { } "Custom files that can be used to override the default files.";
     wallpaper = mkOpt (nullOr package) null "The wallpaper to display.";
+    gamemode.vrr.enable = lib.mkEnableOption "toggling Hyprland VRR mode during gamemode (only for VRR-capable displays)";
   };
 
   config = mkIf cfg.enable {
@@ -106,16 +107,18 @@ in
                 echo "=== Gamemode Start: $(date) ===" > "$LOG_FILE"
 
                 hyprctl --batch '${
-                  lib.concatStringsSep " " [
-                    "keyword animations:enabled 0;"
-                    "keyword decoration:shadow:enabled 0;"
-                    "keyword decoration:blur:enabled 0;"
-                    "keyword decoration:active_opacity 1.0;"
-                    "keyword decoration:inactive_opacity 1.0;"
-                    "keyword decoration:fullscreen_opacity 1.0;"
-                    "keyword debug:vfr 0;"
-                    "keyword misc:vrr 0"
-                  ]
+                  lib.concatStringsSep " " (
+                    [
+                      "keyword animations:enabled 0;"
+                      "keyword decoration:shadow:enabled 0;"
+                      "keyword decoration:blur:enabled 0;"
+                      "keyword decoration:active_opacity 1.0;"
+                      "keyword decoration:inactive_opacity 1.0;"
+                      "keyword decoration:fullscreen_opacity 1.0;"
+                      "keyword debug:vfr 0;"
+                    ]
+                    ++ lib.optional cfg.gamemode.vrr.enable "keyword misc:vrr 2"
+                  )
                 }'
 
                 echo "Setting kitty opacity to 1.0..." >> "$LOG_FILE"
@@ -157,16 +160,18 @@ in
                 echo "=== Gamemode End: $(date) ===" > "$LOG_FILE"
 
                 hyprctl --batch '${
-                  lib.concatStringsSep " " [
-                    "keyword animations:enabled 1;"
-                    "keyword decoration:shadow:enabled 1;"
-                    "keyword decoration:blur:enabled 1;"
-                    "keyword decoration:active_opacity 0.95;"
-                    "keyword decoration:inactive_opacity 0.9;"
-                    "keyword decoration:fullscreen_opacity 1.0;"
-                    "keyword debug:vfr 1;"
-                    "keyword misc:vrr 2"
-                  ]
+                  lib.concatStringsSep " " (
+                    [
+                      "keyword animations:enabled 1;"
+                      "keyword decoration:shadow:enabled 1;"
+                      "keyword decoration:blur:enabled 1;"
+                      "keyword decoration:active_opacity 0.95;"
+                      "keyword decoration:inactive_opacity 0.9;"
+                      "keyword decoration:fullscreen_opacity 1.0;"
+                      "keyword debug:vfr 1;"
+                    ]
+                    ++ lib.optional cfg.gamemode.vrr.enable "keyword misc:vrr 2"
+                  )
                 }'
 
                 echo "Restoring kitty opacity to 0.90..." >> "$LOG_FILE"
