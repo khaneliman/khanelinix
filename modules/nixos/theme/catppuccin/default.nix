@@ -83,6 +83,8 @@ in
     })
 
     (mkIf cfg.enable {
+      khanelinix.theme.enable = true;
+
       assertions = [
         {
           assertion = !config.khanelinix.theme.nord.enable;

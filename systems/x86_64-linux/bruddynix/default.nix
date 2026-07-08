@@ -99,6 +99,7 @@ in
     theme = {
       # gtk = enabled;
       # qt = enabled;
+      catppuccin = enabled;
       stylix = enabled;
     };
 

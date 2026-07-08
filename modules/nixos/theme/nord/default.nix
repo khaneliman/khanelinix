@@ -37,6 +37,8 @@ in
   config = mkIf cfg.enable (
     lib.mkMerge [
       {
+        khanelinix.theme.enable = true;
+
         assertions = [
           {
             assertion = !config.khanelinix.theme.catppuccin.enable;
