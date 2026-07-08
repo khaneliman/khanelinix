@@ -23,6 +23,12 @@ in
 
   config = lib.mkIf cfg.enable {
     khanelinix = {
+      hardware.controllers = lib.mkIf (includes "standard") (mkDefault {
+        xpadneo.enable = true;
+        playstation.enable = true;
+        joycon.enable = true;
+      });
+
       programs = {
         graphical = {
           addons = {
