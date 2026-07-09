@@ -78,7 +78,7 @@ in
 
         inherit hooks;
 
-        model = "claude-opus-4-8[1m]";
+        model = "claude-sonnet-5[1m]";
         effortLevel = "high";
         alwaysThinkingEnabled = true;
         # Usage credits
@@ -100,7 +100,10 @@ in
 
         env = {
           USE_BUILTIN_RIPGREP = "0";
+          ANTHROPIC_DEFAULT_FABLE_MODEL = "claude-fable-5";
           ANTHROPIC_DEFAULT_HAIKU_MODEL = "claude-haiku-4-5";
+          ANTHROPIC_DEFAULT_OPUS_MODEL = "claude-opus-4-8";
+          ANTHROPIC_DEFAULT_SONNET_MODEL = "claude-sonnet-5";
         }
         // lib.optionalAttrs mcpModuleEnabled {
           ENABLE_TOOL_SEARCH = "auto:5";
