@@ -64,8 +64,13 @@ in
     xdg.dataFile."icons/claude.ico".source = claudeIcon;
 
     home.shellAliases = {
-      "claude-bypass" = "claude --permission-mode bypassPermissions";
-      "claude-danger" = "claude --dangerously-skip-permissions";
+      # --dangerously-skip-permissions / --permission-mode bypassPermissions alone still
+      # honor permissions.nix's explicit `ask` list (git push, sudo, curl, etc.) - only an
+      # explicit `--settings` override with an empty `ask` array clears it. `deny` still
+      # merges across every settings layer regardless, so the rm -rf / circuit breaker
+      # in permissions.nix keeps applying even under this alias.
+      "claude-unsafe" =
+        ''claude --permission-mode bypassPermissions --settings '{"permissions":{"ask":[],"defaultMode":"bypassPermissions"}}' '';
     };
 
     programs.claude-code = {
