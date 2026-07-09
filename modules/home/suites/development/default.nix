@@ -203,6 +203,9 @@ in
         hmt-repl = "nix repl --reference-lock-file flake.lock ./tests";
         hmtf = ''f(){ nix build -L --option allow-import-from-derivation false --reference-lock-file flake.lock "./tests#test-$1"; }; f'';
         hmts = ''f(){ nix build -L --option allow-import-from-derivation false --reference-lock-file flake.lock "./tests#test-$1" && nix path-info -rSh ./result; }; f'';
+      }
+      // lib.optionalAttrs cfg.aiEnable {
+        agentsview = "CODEX_SESSIONS_DIR=${config.xdg.configHome}/codex/sessions agentsview";
       };
     };
 
