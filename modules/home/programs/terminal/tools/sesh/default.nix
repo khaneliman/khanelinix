@@ -21,7 +21,7 @@ in
       shellAliases = {
         sl = "sesh list";
         tl = "sesh last";
-        tr = ''sesh connect --root "$(pwd)"'';
+        troot = ''sesh connect --root "$(pwd)"'';
         ts = ''sesh connect "$(sesh list | fzf)"'';
       };
     };
