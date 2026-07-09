@@ -6,9 +6,9 @@ Use persisted goals only for explicit long-running objectives. Keep routine
 fact-finding disposable: delegate, receive evidence packet, discard worker
 context.
 
-Spend Spark helper quota aggressively when the work can be bounded. Delegate
-early for repo discovery, noisy command output, checks, reviews, and independent
-fact slices that would otherwise bloat main context.
+Delegate aggressively when work can be bounded. Prefer configured GPT-5.6
+workers for repo discovery, noisy command output, checks, reviews, and
+independent fact slices that would otherwise bloat main context.
 
 Delegate when:
 
@@ -35,9 +35,8 @@ Before spawning:
 Do not delegate tiny one-command answers, work that needs full conversation
 context, or final product/design/architecture decisions.
 
-Use `gpt-5.3-codex-spark` agents by default for bounded evidence, probes, and
-test analysis. Use stronger agents for ambiguous debugging, architecture, risky
-edits, and final synthesis.
+Use GPT-5.6 agents by default. Reserve `gpt-5.3-codex-spark` for trivial,
+latency-first tasks where expected output is obvious and failure is cheap.
 
 ## Retry Circuit Breaker
 

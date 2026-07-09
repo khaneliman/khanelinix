@@ -89,10 +89,9 @@ let
     ''
   ) codexCommandSkillNames;
   codexProfiles = {
-    # Deep analysis and live-research mode. Intentionally expensive:
-    # benchmark preference is GPT-5.5 xhigh for best pass rate.
+    # Deep analysis and live-research mode. Intentionally expensive.
     deep = {
-      model = "gpt-5.5";
+      model = "gpt-5.6-sol";
       model_reasoning_effort = "xhigh";
       model_verbosity = "high";
       plan_mode_reasoning_effort = "xhigh";
@@ -120,10 +119,10 @@ let
       web_search = "disabled";
     };
 
-    # Faster implementation loop for coding tasks.
+    # Faster implementation loop for routine coding tasks.
     quick = {
       model_reasoning_effort = "medium";
-      model = "gpt-5.3-codex-spark";
+      model = "gpt-5.6-luna";
       model_reasoning_summary = "none";
       model_verbosity = "low";
       plan_mode_reasoning_effort = "medium";
@@ -131,7 +130,7 @@ let
       web_search = "disabled";
     };
 
-    # High-effort coding profile for coding-first work.
+    # Trivial latency-first profile for obvious, low-risk work.
     spark = {
       model = "gpt-5.3-codex-spark";
       model_reasoning_effort = "medium";
@@ -284,9 +283,9 @@ in
 
         notice.hide_rate_limit_model_nudge = true;
 
-        # DeepSWE favors GPT-5.5 high/xhigh enough to justify high as the
-        # routine default; xhigh stays reserved for explicit deep runs.
-        model = "gpt-5.5";
+        # Sol handles routine work at high effort; xhigh stays reserved for
+        # explicit deep runs.
+        model = "gpt-5.6-sol";
         model_reasoning_effort = "high";
         plan_mode_reasoning_effort = "high";
         # service_tier = "fast"; # Not preferred by default for now; use /fast on when needed.

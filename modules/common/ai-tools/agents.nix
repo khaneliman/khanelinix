@@ -18,7 +18,7 @@ let
         copilot = "claude-haiku-4.5";
         antigravity = "gemini-3.1-flash-lite-preview";
         opencode = "openai/gpt-5.4-mini";
-        codex = "gpt-5.3-codex-spark";
+        codex = "gpt-5.6-luna";
       };
       model_reasoning_effort = {
         codex = "medium";
@@ -42,7 +42,7 @@ let
         copilot = "claude-haiku-4.5";
         antigravity = "gemini-3.1-flash-lite-preview";
         opencode = "openai/gpt-5.4-mini";
-        codex = "gpt-5.3-codex-spark";
+        codex = "gpt-5.6-luna";
       };
       model_reasoning_effort = {
         codex = "medium";
@@ -67,7 +67,10 @@ let
         copilot = "claude-sonnet-4.6";
         antigravity = "gemini-3.1-pro-preview";
         opencode = "openai/gpt-5.5";
-        codex = "gpt-5.5";
+        codex = "gpt-5.6-sol";
+      };
+      model_reasoning_effort = {
+        codex = "medium";
       };
       permission = {
         edit = "ask";
@@ -90,7 +93,10 @@ let
         copilot = "claude-sonnet-4.6";
         antigravity = "gemini-3.1-pro-preview";
         opencode = "openai/gpt-5.5";
-        codex = "gpt-5.5";
+        codex = "gpt-5.6-terra";
+      };
+      model_reasoning_effort = {
+        codex = "medium";
       };
       permission = {
         edit = "ask";
@@ -112,7 +118,7 @@ let
         copilot = "claude-haiku-4.5";
         antigravity = "gemini-3.1-flash-lite-preview";
         opencode = "openai/gpt-5.4-mini";
-        codex = "gpt-5.3-codex-spark";
+        codex = "gpt-5.6-terra";
       };
       permission = {
         edit = "ask";
