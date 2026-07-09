@@ -14,7 +14,9 @@ When invoked, route to one mode:
 1. **workflow** — branching strategy, conflict resolution, commit history, and
    basic Git operations.
 2. **commit-message** — conventional commit style, scope, and quality checks.
-3. **github-toolkit** — any GH PR review comments, check triage, or issue
+3. **change-stack** — split, review, and validate multi-commit branches or PR
+   stacks.
+4. **github-toolkit** — any GH PR review comments, check triage, or issue
    creation.
 
 If intent is unclear, ask for the mode before applying changes.
@@ -58,7 +60,18 @@ Use `git-surgeon` for non-interactive, hunk-level git operations:
 Before using it, read [references/git-surgeon.md](references/git-surgeon.md) and
 follow its safety rules.
 
-## 3) GitHub Extensions
+## 3) Change-Stack Mode
+
+Use for work that spans commits, branches, review threads, or contribution
+boundaries: migration branches, upstream contribution prep, branch review, PR
+stack shaping, or keeping large work independently reviewable.
+
+- Check [change-stack.md](references/change-stack.md) for stack mapping,
+  review-unit boundaries, stop points, and output shape.
+- Keep domain-specific implementation rules in the relevant domain skill; this
+  mode owns history and review shape only.
+
+## 4) GitHub Extensions
 
 Use [`github-toolkit`](../github-toolkit/) for:
 

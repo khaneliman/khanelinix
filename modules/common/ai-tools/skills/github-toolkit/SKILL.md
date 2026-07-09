@@ -49,6 +49,8 @@ mandatory:
 Read [pull-request-creation.md](references/pull-request-creation.md). Template
 usage is mandatory:
 
+- If the request involves PR stacks, commit grouping, branch splitting, or
+  review-unit boundaries, use `git-toolkit` change-stack mode first.
 - Discover repo templates before drafting PR body.
 - Read contribution guidance before drafting.
 - If a `PULL_REQUEST_TEMPLATE` is present, fill it strictly.
@@ -63,7 +65,9 @@ efficient issue discovery.
 ## 4) PR Review Mode
 
 Read [pr-review.md](references/pr-review.md) for review collection, high-signal
-policy, inline comment rules, draft review editing, and no-issues response.
+policy, inline comment rules, draft review editing, and no-issues response. Use
+`git-toolkit` change-stack mode first when the review asks about branch shape,
+split strategy, or commit grouping rather than changed-code findings.
 
 ## 5) CI Fix Mode
 
