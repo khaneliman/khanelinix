@@ -241,6 +241,9 @@ in
           browser_use = true;
           browser_use_external = true;
           computer_use = true;
+          # TODO:remove after upstream fix
+          # https://github.com/numtide/llm-agents.nix/issues/6630
+          code_mode_host = false;
           enable_request_compression = true;
           fast_mode = true;
           goals = true;

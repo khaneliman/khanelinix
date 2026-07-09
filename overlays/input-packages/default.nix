@@ -50,7 +50,6 @@ in
   python3 = prev.python3.override {
     packageOverrides = _pyFinal: _pyPrev: {
       # TODO: remove after hitting channel
-      inherit (master.python3Packages) afdko;
     };
   };
   python3Packages = final.python3.pkgs;

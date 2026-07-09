@@ -53,7 +53,7 @@ in
                 src = inputs.t3code;
                 pnpm = pkgs.pnpm_11;
                 fetcherVersion = 4;
-                hash = "sha256-qgyhcSm+0E5x8l6nQk3O2NBVFkWcetCVDTNZVoQGTe8=";
+                hash = "sha256-JmOs6j0Tx8EgZFgvYhhnIPLmEcXirk0AlLvY+onNZhQ=";
               };
             }
           );
