@@ -109,7 +109,8 @@ in
         "net.ipv4.ip_local_port_range" = "16384 65535";
         "net.ipv4.tcp_max_syn_backlog" = 8192;
         "net.ipv4.tcp_max_tw_buckets" = 2000000;
-        "net.ipv4.tcp_mtu_probing" = 1;
+        # mkDefault so jovian's steam module (equivalent `true`) can merge cleanly
+        "net.ipv4.tcp_mtu_probing" = lib.mkDefault 1;
         "net.ipv4.tcp_rmem" = "4096 1048576 16777216";
         "net.ipv4.tcp_slow_start_after_idle" = 0;
         "net.ipv4.tcp_tw_reuse" = 1;
