@@ -1,0 +1,34 @@
+diff --git a/module.nix b/module.nix
+--- a/module.nix
++++ b/module.nix
+@@ -59,12 +59,18 @@ in
+       type = types.int;
+       default = 8;
+       description = ''
+         The number of CPU cores allocated to the VM.
+-        This also sets the maximum number of jobs allowed for the
+-        builder in the `nix.buildMachines` specification.
+       '';
+     };
+-
++    maxJobs = mkOption {
++      type = types.nullOr types.ints.positive;
++      default = null;
++      description = ''
++        Maximum number of concurrent jobs allowed for the builder in the
++        `nix.buildMachines` specification. Defaults to the VM core count.
++      '';
++    };
++
+     diskSize = mkOption {
+       type = types.str;
+       default = "100GiB";
+@@ -395,7 +403,7 @@ in
+             {
+               inherit (cfg) speedFactor;
+               hostName = sshHost;
+-              maxJobs = cfg.cores;
++              maxJobs = if cfg.maxJobs == null then cfg.cores else cfg.maxJobs;
+               protocol = cfg.sshProtocol;
+               supportedFeatures = [
+                 "benchmark"

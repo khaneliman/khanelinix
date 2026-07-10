@@ -20,6 +20,11 @@ in
       default = "8GiB";
       description = "Memory to use for the builder.";
     };
+    maxJobs = lib.mkOption {
+      type = lib.types.nullOr lib.types.ints.positive;
+      default = null;
+      description = "Maximum concurrent build jobs; defaults to the VM core count.";
+    };
     sshProtocol = lib.mkOption {
       type = lib.types.str;
       default = "ssh-ng";
@@ -45,6 +50,7 @@ in
       onDemand = true;
       onDemandLingerMinutes = 30;
       permitNonRootSshAccess = true;
-    };
+    }
+    // lib.optionalAttrs (cfg.maxJobs != null) { inherit (cfg) maxJobs; };
   };
 }
