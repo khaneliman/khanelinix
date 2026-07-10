@@ -46,10 +46,15 @@ in
   #          ╭──────────────────────────────────────────────────────────╮
   #          │                 Python package overrides                 │
   #          ╰──────────────────────────────────────────────────────────╯
-  # Keep this disabled unless we need explicit python package overrides.
+  # Keep packageOverrides empty unless we need explicit Python package overrides.
   python3 = prev.python3.override {
-    packageOverrides = _pyFinal: _pyPrev: {
-      # TODO: remove after hitting channel
+    packageOverrides = _pyFinal: pyPrev: {
+      # TODO: remove after NixOS/nixpkgs#539806 hits the channel
+      click-threading = pyPrev.click-threading.overridePythonAttrs (_old: {
+        preCheck = ''
+          rm -rf docs
+        '';
+      });
     };
   };
   python3Packages = final.python3.pkgs;

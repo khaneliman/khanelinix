@@ -938,11 +938,11 @@
         "treefmt-nix": "treefmt-nix_10"
       },
       "locked": {
-        "lastModified": 1783630152,
-        "narHash": "sha256-AMe5/bhylJF6P0BLz1/avGSZye8f+0mzhnDpqUR9jg8=",
+        "lastModified": 1783673351,
+        "narHash": "sha256-RK/7nTuHKklUxqmpb9vA5ds/7Kl2TjfQ6rW89wWLeEw=",
         "owner": "hercules-ci",
         "repo": "flake.parts-website",
-        "rev": "e6923f4eb2e1f537674daa45421bd4612810ef18",
+        "rev": "4938551907cc7709d021af93f73ca070e7492462",
         "type": "github"
       },
       "original": {
@@ -1847,11 +1847,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1783618078,
-        "narHash": "sha256-F43DGcBoIO8xOZFAfodg3jy0VghB9NGdb6xbTYAIx1A=",
+        "lastModified": 1783689750,
+        "narHash": "sha256-iMO/Ypany7DPXD6D7sQgH7METtEUihnOvdb+A9ehn8k=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "144f4e36d0186195037da9fce80a727108978070",
+        "rev": "79e6082586b3680ff32c8e75127545058f074fa4",
         "type": "github"
       },
       "original": {
@@ -1940,6 +1940,28 @@
       "original": {
         "owner": "divnix",
         "repo": "incl",
+        "type": "github"
+      }
+    },
+    "jovian": {
+      "inputs": {
+        "nix-github-actions": "nix-github-actions_7",
+        "nixpkgs": [
+          "root",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1783616501,
+        "narHash": "sha256-kzxvD/qP4CZHFRuszPw0fr5N2Q7/1OxT5DBs2ERx/2Q=",
+        "owner": "Jovian-Experiments",
+        "repo": "Jovian-NixOS",
+        "rev": "eb1d4e013417487d515db93fafcd3e75c9e0f843",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Jovian-Experiments",
+        "repo": "Jovian-NixOS",
         "type": "github"
       }
     },
@@ -2136,11 +2158,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1783288541,
-        "narHash": "sha256-aDsyjA7Lwi2c5/Yl3oXdJmlFqOleVJAa3sRHx6LAkIg=",
+        "lastModified": 1783647379,
+        "narHash": "sha256-GnIDa7O5P+bmOxvnxcrSY1+AgizQcMy3QQAPsbcwNwY=",
         "owner": "nix-community",
         "repo": "namaka",
-        "rev": "f6c17cdc38abdd5dbe38e4f1159182a0afdb8059",
+        "rev": "f0c011d104aa583b62b00909f02511f2cd08b06f",
         "type": "github"
       },
       "original": {
@@ -2424,6 +2446,29 @@
         "type": "github"
       }
     },
+    "nix-github-actions_7": {
+      "inputs": {
+        "nixpkgs": [
+          "root",
+          "jovian",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1729697500,
+        "narHash": "sha256-VFTWrbzDlZyFHHb1AlKRiD/qqCJIripXKiCSFS8fAOY=",
+        "owner": "zhaofengli",
+        "repo": "nix-github-actions",
+        "rev": "e418aeb728b6aa5ca8c5c71974e7159c2df1d8cf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "zhaofengli",
+        "ref": "matrix-name",
+        "repo": "nix-github-actions",
+        "type": "github"
+      }
+    },
     "nix-lib": {
       "inputs": {
         "devour-flake": "devour-flake",
@@ -2570,11 +2615,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1783610564,
-        "narHash": "sha256-XUgPlbtvuqxJHqaiVtwwxPxGa4seC/7XqZP2k0m3RXo=",
+        "lastModified": 1783657646,
+        "narHash": "sha256-q2vSdTzjD1T7TcT/9X3886FqWssnXRDiWdmuZy3qN94=",
         "owner": "nix-community",
         "repo": "nix-unit",
-        "rev": "e7a6b9428e99886edb16fbcd75b9e7c50cfb7445",
+        "rev": "dd2e1b8cfdb941c7690a23d766a7d26c706e5506",
         "type": "github"
       },
       "original": {
@@ -2595,11 +2640,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1783610564,
-        "narHash": "sha256-XUgPlbtvuqxJHqaiVtwwxPxGa4seC/7XqZP2k0m3RXo=",
+        "lastModified": 1783657646,
+        "narHash": "sha256-q2vSdTzjD1T7TcT/9X3886FqWssnXRDiWdmuZy3qN94=",
         "owner": "nix-community",
         "repo": "nix-unit",
-        "rev": "e7a6b9428e99886edb16fbcd75b9e7c50cfb7445",
+        "rev": "dd2e1b8cfdb941c7690a23d766a7d26c706e5506",
         "type": "github"
       },
       "original": {
@@ -2912,11 +2957,11 @@
     },
     "nixpkgs-master": {
       "locked": {
-        "lastModified": 1783632829,
-        "narHash": "sha256-Zs5A5hXvXdxtfiVNKQ9r86gBp/co8sXR0SVH5ze8QQk=",
+        "lastModified": 1783688962,
+        "narHash": "sha256-aZ/njtl7FgL6b5ZqotFbAbxIStlErD+ZhWZVjJZuDFM=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "73ae6bd3b26e7ccbf70efb0ebb96cdd6478c8808",
+        "rev": "bb1cdb558d430b5a13d06909530fb12c1c405f53",
         "type": "github"
       },
       "original": {
@@ -3053,11 +3098,11 @@
     },
     "nixpkgs_6": {
       "locked": {
-        "lastModified": 1783224372,
-        "narHash": "sha256-8i/87eeoqiGE4yOTjwSA3Eh/ziJRQEmd/unYU+K27sk=",
+        "lastModified": 1783522502,
+        "narHash": "sha256-iffAls3iaNTyJC2faYcUXSI+Gp02cDjYl+MygxKl2GI=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "d407951447dcd00442e97087bf374aad70c04cea",
+        "rev": "0bb7ec54c8483066ec9d7720e780a5caa71f8612",
         "type": "github"
       },
       "original": {
@@ -3295,6 +3340,31 @@
       "original": {
         "owner": "drupol",
         "repo": "pkgs-by-name-for-flake-parts",
+        "type": "github"
+      }
+    },
+    "plasma-manager": {
+      "inputs": {
+        "home-manager": [
+          "root",
+          "home-manager"
+        ],
+        "nixpkgs": [
+          "root",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1783574839,
+        "narHash": "sha256-ICof1tV4/9XheBLBGf7dhMhfMq4dOs1zwTHrr7zGFlA=",
+        "owner": "nix-community",
+        "repo": "plasma-manager",
+        "rev": "c551f0687658e4bb699cfff6015436ad7ee57a0d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "plasma-manager",
         "type": "github"
       }
     },
@@ -3541,6 +3611,7 @@
         "flake-parts": "flake-parts_16",
         "hermes-agent": [],
         "home-manager": "home-manager_2",
+        "jovian": "jovian",
         "khanelivim": [],
         "lanzaboote": [],
         "llm-agents": [],
@@ -3555,6 +3626,7 @@
         "nixpkgs": "nixpkgs_6",
         "nixpkgs-master": "nixpkgs-master",
         "nixpkgs-unstable": "nixpkgs-unstable",
+        "plasma-manager": "plasma-manager",
         "sops-nix": "sops-nix",
         "stylix": [],
         "systems": "systems_7",
