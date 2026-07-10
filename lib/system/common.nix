@@ -274,19 +274,23 @@ let
       inherit getPkgsMaster getPkgsUnstable;
     };
 
+  fileLib = import ../file {
+    inherit inputs;
+    self = ../..;
+  };
+
   /**
     Shared Home Manager modules used by both standalone (mkHome) and integrated
     (mkHomeManagerConfig) paths. Single source of truth to prevent drift.
   */
-  hmSharedModules =
-    extendedLib:
-    [
-      inputs.catppuccin.homeModules.catppuccin
-      inputs.codex-desktop-linux.homeManagerModules.default
-      inputs.nix-index-database.homeModules.nix-index
-      inputs.sops-nix.homeManagerModules.sops
-    ]
-    ++ (extendedLib.importModulesRecursive ../../modules/home);
+  hmSharedModules = [
+    inputs.catppuccin.homeModules.catppuccin
+    inputs.codex-desktop-linux.homeManagerModules.default
+    inputs.nix-index-database.homeModules.nix-index
+    inputs.plasma-manager.homeModules.plasma-manager
+    inputs.sops-nix.homeManagerModules.sops
+  ]
+  ++ fileLib.importModulesRecursive ../../modules/home;
 in
 {
   inherit hmSharedModules;
@@ -401,8 +405,7 @@ in
           else
             null;
         enableStylixHomeModule = stylixHomeModule != null && !(config.stylix.enable or false);
-        baseHomeModules = hmSharedModules extendedLib;
-        hmSharedModulesResolved = if sharedHomeModules == null then baseHomeModules else sharedHomeModules;
+        hmSharedModulesResolved = if sharedHomeModules == null then hmSharedModules else sharedHomeModules;
       in
       {
         home-manager = {

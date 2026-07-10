@@ -67,5 +67,5 @@ patchedInputs.home-manager.lib.homeManagerConfiguration {
   }
   // inputPackageSets;
 
-  modules = (common.hmSharedModules extendedLib) ++ modules;
+  modules = common.hmSharedModules ++ modules;
 }
