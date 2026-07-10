@@ -12,6 +12,13 @@ let
   cfg = config.khanelinix.theme.tokyonight;
   variant = if cfg.variant == "storm" then "night" else cfg.variant;
   colors = (import ./colors.nix).getVariant cfg.variant;
+  # Codex discovers custom syntax themes as {CODEX_HOME}/themes/{name}.tmTheme,
+  # matching where home-manager's codex module writes config.toml.
+  codexConfigDir =
+    if config.home.preferXdgDirectories then
+      "${lib.removePrefix config.home.homeDirectory config.xdg.configHome}/codex"
+    else
+      ".codex";
 in
 {
   config = mkIf cfg.enable {
@@ -37,6 +44,8 @@ in
       bat.config.theme = "tokyonight_${variant}";
 
       btop.settings.color_theme = mkForce "tokyonight_${variant}";
+
+      codex.settings.tui.theme = "tokyonight_${variant}";
 
       delta.options = mkIf config.programs.delta.enable (
         let
@@ -362,9 +371,16 @@ in
       })
     ];
 
-    home.file = mkIf pkgs.stdenv.hostPlatform.isLinux {
-      ".Xresources.d/tokyonight".source =
-        "${tokyonight}/extras/xresources/tokyonight_${variant}.Xresources";
-    };
+    home.file = lib.mkMerge [
+      (mkIf pkgs.stdenv.hostPlatform.isLinux {
+        ".Xresources.d/tokyonight".source =
+          "${tokyonight}/extras/xresources/tokyonight_${variant}.Xresources";
+      })
+
+      (mkIf config.programs.codex.enable {
+        "${codexConfigDir}/themes/tokyonight_${variant}.tmTheme".source =
+          "${tokyonight}/extras/sublime/tokyonight_${variant}.tmTheme";
+      })
+    ];
   };
 }
