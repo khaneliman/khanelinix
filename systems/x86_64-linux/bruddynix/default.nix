@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   ...
 }:
@@ -8,6 +9,7 @@ let
 in
 {
   imports = [
+    inputs.jovian.nixosModules.default
     ./disks.nix
     ./hardware.nix
     ./network.nix
@@ -93,7 +95,11 @@ in
 
       fonts = enabled;
       locale = enabled;
-      networking.enable = true;
+      networking = {
+        enable = true;
+        # Steam Deck UI first-time setup requires NetworkManager
+        manager = "networkmanager";
+      };
       time = enabled;
     };
 
@@ -115,6 +121,14 @@ in
         # Fix mouse pointer in gnome
         NO_POINTER_VIEWPORT = "1";
       };
+
+  # Steam Deck-style Gaming Mode as an optional SDDM session (no auto-launch)
+  jovian.steam = {
+    enable = true;
+    user = "bruddy";
+    # Only takes effect with autoStart; re-enable together if switching to console mode
+    # desktopSession = "plasma";
+  };
 
   nix.settings = {
     cores = 8;
