@@ -10,6 +10,8 @@ let
   inherit (lib) mkDefault mkIf;
 
   cfg = config.khanelinix.nix;
+  homeCfg = config.home-manager.users.${config.khanelinix.user.name} or { };
+  anyrunEnabled = homeCfg.khanelinix.programs.graphical.launchers.anyrun.enable or false;
 in
 {
   imports = [ (lib.getFile "modules/common/nix/default.nix") ];
@@ -64,10 +66,10 @@ in
         ];
         use-cgroups = true;
 
-        substituters = [
+        substituters = lib.optionals anyrunEnabled [
           "https://anyrun.cachix.org"
         ];
-        trusted-public-keys = [
+        trusted-public-keys = lib.optionals anyrunEnabled [
           "anyrun.cachix.org-1:pqBobmOjI7nKlsUMV25u9QHa9btJK65/C8vnO3p346s="
         ];
       };
