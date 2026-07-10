@@ -270,7 +270,6 @@ in
           allowed-users = users;
           auto-optimise-store = pkgs.stdenv.hostPlatform.isLinux;
           builders-use-substitutes = false;
-          max-silent-time = 300;
           connect-timeout = 10;
           experimental-features = experimentalFeatures;
           # Prevent builds failing just because we can't contact a substituter
