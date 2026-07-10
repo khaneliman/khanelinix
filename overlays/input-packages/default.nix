@@ -49,7 +49,6 @@ in
 
   github-copilot-cli = inputs.llm-agents.packages.${system}.copilot-cli;
   pi-coding-agent = inputs.llm-agents.packages.${system}.pi;
-  codex-desktop = inputs.codex-desktop-linux.packages.${system}.codex-desktop;
 
   #          ╭──────────────────────────────────────────────────────────╮
   #          │ From nixpkgs-master (fast updating / want latest always) │

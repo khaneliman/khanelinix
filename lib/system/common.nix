@@ -282,6 +282,7 @@ let
     extendedLib:
     [
       inputs.catppuccin.homeModules.catppuccin
+      inputs.codex-desktop-linux.homeManagerModules.default
       inputs.nix-index-database.homeModules.nix-index
       inputs.sops-nix.homeManagerModules.sops
     ]

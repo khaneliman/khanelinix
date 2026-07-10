@@ -20,6 +20,7 @@ let
   allDarwinModules = self.lib.file.importModulesRecursive ../modules/darwin;
   allHomeModules = [
     inputs.catppuccin.homeModules.catppuccin
+    inputs.codex-desktop-linux.homeManagerModules.default
     inputs.nix-index-database.homeModules.nix-index
     inputs.plasma-manager.homeModules.plasma-manager
     inputs.sops-nix.homeManagerModules.sops
