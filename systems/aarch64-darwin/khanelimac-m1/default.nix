@@ -56,8 +56,8 @@ in
   };
 
   nix.settings = {
-    cores = 10;
-    max-jobs = 3;
+    cores = 5;
+    max-jobs = 2;
   };
 
   khanelinix.system.networking.pruneStaleLocalNetworkPermissions = false;
