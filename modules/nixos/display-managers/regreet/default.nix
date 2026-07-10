@@ -17,6 +17,16 @@ let
   themeCfg = config.khanelinix.theme;
   gtkCfg = config.khanelinix.desktop.addons.gtk;
 
+  # regreet remembers the last user in /var/lib/regreet/state.toml; seed it so
+  # the very first login is already populated. The empty user_to_last_sess
+  # table is required — the Cache struct has no serde defaults, and a partial
+  # file would fail to parse (regreet would then just fall back to defaults).
+  seedStateFile = pkgs.writeText "regreet-state.toml" ''
+    last_user = "${config.khanelinix.user.name}"
+
+    [user_to_last_sess]
+  '';
+
   greetdHyprlandConfig = pkgs.writeText "greetd-hyprland.lua" ''
     ${cfg.hyprlandOutput}
 
@@ -92,5 +102,12 @@ in
       enableGnomeKeyring = true;
       gnupg.enable = true;
     };
+
+    # C = copy only when the destination is missing, so regreet's own
+    # last-user tracking still wins after the first login (C+ would force it
+    # every boot)
+    systemd.tmpfiles.rules = [
+      "C /var/lib/regreet/state.toml 0644 greeter greeter - ${seedStateFile}"
+    ];
   };
 }
