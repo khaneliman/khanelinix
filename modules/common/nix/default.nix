@@ -276,19 +276,6 @@ in
           min-free = 1073741824; # 1GB
           max-free = 10737418240; # 10GB
 
-          allowed-impure-host-deps = [
-            # Only wanted to add this for darwin from nixos
-            # But, apparently using option wipes out all the other in the default list
-            "/bin/sh"
-            "/dev/random"
-            "/dev/urandom"
-            "/dev/zero"
-            "/usr/bin/ditto"
-            "/usr/lib/libSystem.B.dylib"
-            "/usr/lib/libc.dylib"
-            "/usr/lib/system/libunc.dylib"
-          ];
-
           substituters = [
             "https://khanelinix.cachix.org"
             "https://nix-community.cachix.org"

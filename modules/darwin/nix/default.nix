@@ -179,6 +179,16 @@ in
           daemonProcessType = "Standard";
 
           settings = {
+            allowed-impure-host-deps = [
+              "/bin/sh"
+              "/dev/random"
+              "/dev/urandom"
+              "/dev/zero"
+              "/usr/bin/ditto"
+              "/usr/lib/libSystem.B.dylib"
+              "/usr/lib/libc.dylib"
+              "/usr/lib/system/libunc.dylib"
+            ];
             build-users-group = "nixbld";
 
             extra-sandbox-paths = [
