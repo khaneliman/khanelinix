@@ -28,6 +28,7 @@ in
       nix-rosetta-builder = {
         enable = true;
         cores = 4;
+        memory = "16GiB";
       };
       # useLix = true;
     };
