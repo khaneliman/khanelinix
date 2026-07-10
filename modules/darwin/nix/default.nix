@@ -139,16 +139,7 @@ in
           };
         };
 
-        # Nix-Darwin config options
-        # Check corresponding shared imported module
         nix = {
-          # Options that aren't supported through nix-darwin
-          extraOptions = ''
-            # bail early on missing cache hits
-            connect-timeout = 10
-            stalled-download-timeout = 300
-          '';
-
           gc = {
             # Weekly (Sunday) rather than daily. optimise.interval below derives
             # from this, so both heavy maintenance jobs run once a week.

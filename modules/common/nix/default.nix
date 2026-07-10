@@ -263,14 +263,10 @@ in
           allowed-users = [ config.khanelinix.user.name ];
           auto-optimise-store = pkgs.stdenv.hostPlatform.isLinux;
           builders-use-substitutes = true;
-          connect-timeout = 10;
           experimental-features = experimentalFeatures;
           # Prevent builds failing just because we can't contact a substituter
           fallback = true;
           flake-registry = "/etc/nix/registry.json";
-          # Unlimited HTTP fetch concurrency is brittle for large flake graphs
-          # that fan out across many GitHub-backed inputs.
-          http-connections = 25;
           log-lines = 50;
           sandbox = true;
           trusted-users = [ config.khanelinix.user.name ];
