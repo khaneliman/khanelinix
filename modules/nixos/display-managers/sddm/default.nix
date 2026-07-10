@@ -37,7 +37,8 @@ in
           inherit (cfg) enable;
           # package = pkgs.libsForQt5.sddm;
           # TODO: update theme support
-          package = pkgs.kdePackages.sddm;
+          # mkDefault so desktop environments (plasma6) can provide their own wrapped sddm
+          package = lib.mkDefault pkgs.kdePackages.sddm;
           theme = "${themePackage}/share/sddm/themes/catppuccin-sddm-corners";
           wayland = enabled;
 
