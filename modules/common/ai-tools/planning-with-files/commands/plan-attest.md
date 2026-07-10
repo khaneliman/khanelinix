@@ -1,5 +1,5 @@
 ---
-description: "Lock the current task_plan.md content with a SHA-256 attestation. Hooks then refuse to inject plan content if the file diverges from the attested hash, blocking silent tampering. Use --show to print the stored hash, --clear to remove the attestation. Available since v2.37.0."
+description: "Lock the current task_plan.md content with a SHA-256 attestation. Prompt hooks warn when the file diverges without injecting its changed content. Use --show to print the stored hash, --clear to remove the attestation."
 disable-model-invocation: true
 allowed-tools: "Bash"
 ---
@@ -28,8 +28,7 @@ Flags:
 - `--show` — print the currently stored hash and where it lives.
 - `--clear` — remove the attestation (re-open the plan to free editing).
 
-After running this command, every UserPromptSubmit and PreToolUse hook fire
-compares `task_plan.md` against the stored hash. If they diverge, the hook emits
-`[PLAN TAMPERED — injection blocked]` instead of feeding plan content into the
-model. Re-run `/plan-attest` whenever you intentionally edit and re-approve the
-plan.
+After running this command, the prompt hook compares `task_plan.md` against the
+stored hash. If they diverge, it emits a short warning and never injects the
+changed body. Re-run `/plan-attest` whenever you intentionally edit and
+re-approve the plan.

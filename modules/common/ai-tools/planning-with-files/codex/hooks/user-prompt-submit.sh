@@ -8,7 +8,6 @@
 HOOK_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd)"
 PLAN_DIR="$(sh "${HOOK_DIR}/resolve-plan-dir.sh" 2>/dev/null)"
 PLAN_FILE="${PLAN_DIR:+${PLAN_DIR}/}task_plan.md"
-PROGRESS_FILE="${PLAN_DIR:+${PLAN_DIR}/}progress.md"
 
 # Session isolation: if .planning/sessions/ exists, only attached sessions see
 # plan context. Absence of the sessions dir means legacy single-session mode —
@@ -21,12 +20,20 @@ if [ -d ".planning/sessions" ]; then
 fi
 
 if [ -f "$PLAN_FILE" ]; then
-    echo "[planning-with-files] ACTIVE PLAN — current state:"
-    head -50 "$PLAN_FILE"
-    echo ""
-    echo "=== recent progress ==="
-    tail -20 "$PROGRESS_FILE" 2>/dev/null
-    echo ""
-    echo "[planning-with-files] Read findings.md for research context. Continue from the current phase."
+    if [ -n "$PLAN_DIR" ]; then
+        ATTESTATION_FILE="${PLAN_DIR}/.attestation"
+    else
+        ATTESTATION_FILE=".plan-attestation"
+    fi
+    if [ -f "$ATTESTATION_FILE" ]; then
+        EXPECTED="$(tr -d '\r\n[:space:]' <"$ATTESTATION_FILE" 2>/dev/null)"
+        ACTUAL="$(sha256sum "$PLAN_FILE" 2>/dev/null || shasum -a 256 "$PLAN_FILE" 2>/dev/null)"
+        ACTUAL="${ACTUAL%% *}"
+        if [ -n "$EXPECTED" ] && [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo '[planning-with-files] Plan changed after attestation. Re-attest approved content before continuing.'
+            exit 0
+        fi
+    fi
+    echo "[planning-with-files] Active plan: ${PLAN_FILE}. Read before major decisions; update phase status and progress after meaningful work; store research in findings.md."
 fi
 exit 0

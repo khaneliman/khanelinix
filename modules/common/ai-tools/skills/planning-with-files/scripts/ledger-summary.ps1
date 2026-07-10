@@ -4,7 +4,7 @@
     Emit a fixed-shape, cache-stable run-ledger summary (PowerShell mirror, v3).
 
 .DESCRIPTION
-    Replaces raw progress.md tail injection in autonomous mode. Output is
+    Summarizes structured progress in autonomous mode. Output is
     synthesized from the machine ledger and task_plan.md status counts only:
     NO free text from disk reaches model context, and NO timestamps, so the
     injected block is KV-cache stable by construction (architecture C3).

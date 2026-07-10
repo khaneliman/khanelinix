@@ -1,9 +1,8 @@
 #!/usr/bin/env sh
 # planning-with-files: lock the current task_plan.md content with a SHA-256 attestation.
 #
-# Use after you finalise (or intentionally edit) a plan. The hooks then refuse
-# to inject plan content into the model context if the file diverges from the
-# attested hash, surfacing a "[PLAN TAMPERED]" warning instead.
+# Use after you finalise or intentionally edit a plan. Prompt hooks surface a
+# short warning when the file diverges from the approved hash.
 #
 # Resolution:
 #   1. $PLAN_ID env var → ./.planning/$PLAN_ID/
@@ -199,7 +198,7 @@ attest)
     short_hash="$(printf "%s" "${hash_val}" | cut -c1-12)"
     printf "[plan-attest] Locked %s\n" "${plan_file}"
     printf "[plan-attest] SHA-256: %s... (stored in %s)\n" "${short_hash}" "${attestation_file}"
-    printf "[plan-attest] Hooks will block injection if the file is modified without re-running this command.\n"
+    printf "[plan-attest] Prompt hooks will warn if the file changes without re-running this command.\n"
     ;;
 esac
 

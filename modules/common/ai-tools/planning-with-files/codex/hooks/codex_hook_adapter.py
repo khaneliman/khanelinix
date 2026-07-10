@@ -72,7 +72,10 @@ def parse_json(text: str) -> dict[str, Any]:
 
 
 def run_shell_script(
-    script_name: str, cwd: Path, session_id: str | None = None
+    script_name: str,
+    cwd: Path,
+    session_id: str | None = None,
+    stdin: str | None = None,
 ) -> tuple[str, str]:
     env = os.environ.copy()
     if session_id:
@@ -82,6 +85,7 @@ def run_shell_script(
         ["sh", str(HOOK_DIR / script_name)],
         cwd=str(cwd),
         env=env,
+        input=stdin,
         text=True,
         capture_output=True,
         check=False,

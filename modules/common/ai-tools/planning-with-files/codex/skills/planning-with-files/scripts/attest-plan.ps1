@@ -4,9 +4,8 @@
     Lock the current task_plan.md content with a SHA-256 attestation.
 
 .DESCRIPTION
-    Use after you finalise (or intentionally edit) a plan. The hooks then refuse
-    to inject plan content into the model context if the file diverges from the
-    attested hash, surfacing a "[PLAN TAMPERED]" warning instead.
+    Use after you finalise or intentionally edit a plan. Prompt hooks surface a
+    short warning when the file diverges from the approved hash.
 
     Plan resolution:
       1. $env:PLAN_ID  -> ./.planning/$PLAN_ID/
@@ -133,5 +132,5 @@ if ($storedHash -ne $hashVal) {
 $short = $hashVal.Substring(0, 12)
 Write-Output "[plan-attest] Locked $planFile"
 Write-Output "[plan-attest] SHA-256: $short... (stored in $attestationFile)"
-Write-Output "[plan-attest] Hooks will block injection if the file is modified without re-running this command."
+Write-Output "[plan-attest] Prompt hooks will warn if the file changes without re-running this command."
 exit 0

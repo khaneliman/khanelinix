@@ -40,7 +40,7 @@
        phase that is not making progress. -->
 - **Attestation policy:** default-on
   <!-- In autonomous and gated modes attestation is on by default: task_plan.md is hashed at
-       init and the hooks refuse to inject plan content that diverges from the attested hash.
+       init and prompt hooks warn when content diverges from the attested hash.
        Re-attest with scripts/attest-plan.sh after any intentional edit. This is what makes an
        AcceptanceCheck command safe to run: only allowlisted commands from an attested plan
        reach the gate. -->

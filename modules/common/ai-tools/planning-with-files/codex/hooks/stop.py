@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import json
+
 import codex_hook_adapter as adapter
 
 
@@ -11,14 +13,17 @@ def main() -> None:
     if not adapter.is_session_attached(root, adapter.session_id_from_payload(payload)):
         return
 
-    stdout, _ = adapter.run_shell_script("stop.sh", root)
+    stdout, _ = adapter.run_shell_script("stop.sh", root, stdin=json.dumps(payload))
     result = adapter.parse_json(stdout)
 
-    message = result.get("followup_message")
-    if not isinstance(message, str) or not message:
+    if result.get("decision") != "block":
         return
 
-    adapter.emit_json({"systemMessage": message})
+    reason = result.get("reason")
+    if not isinstance(reason, str) or not reason:
+        return
+
+    adapter.emit_json({"decision": "block", "reason": reason})
 
 
 if __name__ == "__main__":
