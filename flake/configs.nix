@@ -21,6 +21,7 @@ let
   allHomeModules = [
     inputs.catppuccin.homeModules.catppuccin
     inputs.nix-index-database.homeModules.nix-index
+    inputs.plasma-manager.homeModules.plasma-manager
     inputs.sops-nix.homeManagerModules.sops
   ]
   ++ self.lib.file.importModulesRecursive ../modules/home;
