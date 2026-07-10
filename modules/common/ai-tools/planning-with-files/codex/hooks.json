@@ -6,7 +6,7 @@
 				"hooks": [
 					{
 						"type": "command",
-						"command": "sh .codex/hooks/session-start.sh 2>/dev/null || sh \"$HOME/.codex/hooks/session-start.sh\" 2>/dev/null || true",
+						"command": "python3 .codex/hooks/session_start.py 2>/dev/null || python3 \"$HOME/.codex/hooks/session_start.py\" 2>/dev/null || true",
 						"statusMessage": "Loading planning context"
 					}
 				]
@@ -17,7 +17,7 @@
 				"hooks": [
 					{
 						"type": "command",
-						"command": "sh .codex/hooks/user-prompt-submit.sh 2>/dev/null || sh \"$HOME/.codex/hooks/user-prompt-submit.sh\" 2>/dev/null || true"
+						"command": "python3 .codex/hooks/user_prompt_submit.py 2>/dev/null || python3 \"$HOME/.codex/hooks/user_prompt_submit.py\" 2>/dev/null || true"
 					}
 				]
 			}

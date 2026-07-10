@@ -5,7 +5,7 @@
       hooks = [
         {
           type = "command";
-          command = "sh /etc/codex/hooks/okf-memory-session-start.sh";
+          command = "python3 /etc/codex/hooks/okf_memory_context.py";
         }
       ];
     }
@@ -16,7 +16,7 @@
       hooks = [
         {
           type = "command";
-          command = "sh /etc/codex/hooks/okf-memory-user-prompt-submit.sh";
+          command = "python3 /etc/codex/hooks/okf_memory_context.py";
         }
       ];
     }

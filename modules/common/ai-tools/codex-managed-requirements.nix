@@ -12,7 +12,7 @@
         hooks = [
           {
             type = "command";
-            command = "sh /etc/codex/hooks/session-start.sh";
+            command = "python3 /etc/codex/hooks/session_start.py";
             statusMessage = "Loading planning context";
           }
         ];
@@ -24,7 +24,7 @@
         hooks = [
           {
             type = "command";
-            command = "sh /etc/codex/hooks/user-prompt-submit.sh";
+            command = "python3 /etc/codex/hooks/user_prompt_submit.py";
           }
         ];
       }

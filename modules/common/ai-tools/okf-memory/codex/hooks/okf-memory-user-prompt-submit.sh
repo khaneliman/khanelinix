@@ -1,6 +1,5 @@
 #!/usr/bin/env sh
-# okf-memory: UserPromptSubmit hook for Codex. Same contract as
-# planning-with-files' own Codex hooks: plain echo to stdout, exit 0.
+# okf-memory: render context for the Codex JSON adapter.
 #
 # Deployed flat into /etc/codex/hooks/ alongside planning-with-files' own
 # scripts (see modules/common/ai-tools/default.nix's hooksDir merge), so

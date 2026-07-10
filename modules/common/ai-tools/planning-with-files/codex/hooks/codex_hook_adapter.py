@@ -71,10 +71,17 @@ def parse_json(text: str) -> dict[str, Any]:
     return payload if isinstance(payload, dict) else {}
 
 
-def run_shell_script(script_name: str, cwd: Path) -> tuple[str, str]:
+def run_shell_script(
+    script_name: str, cwd: Path, session_id: str | None = None
+) -> tuple[str, str]:
+    env = os.environ.copy()
+    if session_id:
+        env["PWF_SESSION_ID"] = session_id
+
     result = subprocess.run(
         ["sh", str(HOOK_DIR / script_name)],
         cwd=str(cwd),
+        env=env,
         text=True,
         capture_output=True,
         check=False,
