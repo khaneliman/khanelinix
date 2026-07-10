@@ -8,6 +8,7 @@
   - [Darwin](platforms/darwin.md)
   - [Darwin WindowServer Investigation](platforms/darwin-windowserver-instability.md)
   - [Home Manager](platforms/home-manager.md)
+    - [DavMail Work Account Authentication](platforms/home-manager-davmail-authentication.md)
 - [Module Enablement](module-enablement/index.md)
   - [Archetypes](module-enablement/archetypes.md)
   - [Suites](module-enablement/suites.md)
