@@ -269,7 +269,7 @@ in
         settings = {
           allowed-users = users;
           auto-optimise-store = pkgs.stdenv.hostPlatform.isLinux;
-          builders-use-substitutes = false;
+          builders-use-substitutes = true;
           connect-timeout = 10;
           experimental-features = experimentalFeatures;
           # Prevent builds failing just because we can't contact a substituter
