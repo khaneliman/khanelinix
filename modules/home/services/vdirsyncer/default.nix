@@ -8,9 +8,12 @@ let
   cfg = config.khanelinix.services.vdirsyncer;
   googleCalendarLocalPath = "${config.xdg.dataHome}/calendars/google_calendars";
   googleCalendarTokenFile = "${config.xdg.stateHome}/vdirsyncer/google-calendar-token";
+  vdirsyncerStateDir = "${config.xdg.stateHome}/vdirsyncer";
   davmailTokenFile =
     config.services.davmail.settings."davmail.oauth.tokenFilePath"
       or "${config.xdg.stateHome}/davmail/oauth-tokens.properties";
+  davmailFailureStamp = "${vdirsyncerStateDir}/davmail-failed";
+  davmailLastSuccess = "${vdirsyncerStateDir}/davmail-last-success";
   davmailAccounts = lib.filterAttrs (
     _name: account: account.enable && account.flavor == "davmail"
   ) config.khanelinix.programs.graphical.apps.thunderbird.extraEmailAccounts;
@@ -26,6 +29,94 @@ let
     name: account: lib.nameValuePair "davmail_${vdirsyncerSafeName name}" account
   ) davmailAccounts;
   davmailPairNames = map (name: "calendar_${name}") (lib.attrNames davmailCalendarAccounts);
+
+  vdirsyncer = lib.getExe config.programs.vdirsyncer.package;
+  googleSync = pkgs.writeShellScript "vdirsyncer-google-sync" ''
+    set -euo pipefail
+
+    if [ ! -s ${lib.escapeShellArg googleCalendarTokenFile} ]; then
+      echo "Google Calendar token missing; skipping synchronization" >&2
+      exit 0
+    fi
+
+    ${vdirsyncer} metasync calendar_google_calendars
+    ${vdirsyncer} sync calendar_google_calendars
+  '';
+  davmailReady = pkgs.writeShellScript "wait-for-davmail-caldav" ''
+    set -euo pipefail
+
+    for _attempt in {1..30}; do
+      if ${lib.getExe pkgs.netcat-openbsd} -z 127.0.0.1 1080; then
+        exit 0
+      fi
+      ${lib.getExe' pkgs.coreutils "sleep"} 1
+    done
+
+    echo "DavMail CalDAV endpoint did not become ready" >&2
+    exit 1
+  '';
+  davmailSync = pkgs.writeShellScript "vdirsyncer-davmail-sync" ''
+    set -euo pipefail
+
+    if [ ! -s ${lib.escapeShellArg davmailTokenFile} ]; then
+      echo "Work calendar authentication missing; run work-calendar-auth" >&2
+      exit 1
+    fi
+
+    ${vdirsyncer} metasync ${lib.escapeShellArgs davmailPairNames}
+    ${vdirsyncer} sync ${lib.escapeShellArgs davmailPairNames}
+  '';
+  davmailFailureNotify = pkgs.writeShellScript "vdirsyncer-davmail-failure-notify" ''
+    set -euo pipefail
+
+    ${lib.getExe' pkgs.systemd "systemctl"} --user stop vdirsyncer-davmail.timer
+    ${lib.getExe' pkgs.coreutils "install"} -m 0600 /dev/null ${lib.escapeShellArg davmailFailureStamp}
+    ${lib.getExe pkgs.libnotify} -a "Work Calendar" -u critical \
+      "Work calendar sync paused" \
+      "Run work-calendar-auth to repair authentication and resume sync." \
+      >/dev/null 2>&1 || true
+  '';
+  workCalendarAuth = pkgs.writeShellApplication {
+    name = "work-calendar-auth";
+    runtimeInputs = [
+      config.programs.vdirsyncer.package
+      pkgs.systemd
+    ];
+    text = ''
+      journal_pid=""
+      restart_timer=false
+
+      cleanup() {
+        if [[ -n "$journal_pid" ]]; then
+          kill "$journal_pid" >/dev/null 2>&1 || true
+        fi
+        if [[ "$restart_timer" == true ]]; then
+          systemctl --user start vdirsyncer-davmail.timer
+        fi
+      }
+      trap cleanup EXIT
+
+      printf '%s\n' \
+        "Close Thunderbird before enrollment to avoid competing device-code flows." \
+        "Ensure every saved localhost DavMail password matches the SOPS work-password." \
+        "Press Enter to continue."
+      read -r _
+
+      systemctl --user stop vdirsyncer-davmail.timer vdirsyncer-davmail.service
+      systemctl --user start davmail.service
+
+      journalctl --user --unit=davmail.service --since=now --follow --output=cat &
+      journal_pid=$!
+
+      pairs=(${lib.escapeShellArgs davmailPairNames})
+      for pair in "''${pairs[@]}"; do
+        vdirsyncer discover "$pair"
+      done
+
+      systemctl --user start vdirsyncer-davmail.service
+      restart_timer=true
+    '';
+  };
 in
 {
   options.khanelinix.services.vdirsyncer = {
@@ -70,44 +161,11 @@ in
 
         programs.vdirsyncer.enable = true;
 
-        services.vdirsyncer = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-          enable = true;
-          frequency = "*:0/15";
-        };
+        home.activation.vdirsyncerState = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          $DRY_RUN_CMD ${lib.getExe' pkgs.coreutils "install"} -d -m 0700 ${lib.escapeShellArg vdirsyncerStateDir}
+        '';
 
-        systemd.user.services.vdirsyncer.Service.ExecStart = lib.mkIf pkgs.stdenv.hostPlatform.isLinux (
-          lib.mkForce [
-            (pkgs.writeShellScript "vdirsyncer-sync-ready-calendars" ''
-              set -euo pipefail
-
-              vdirsyncer=${lib.escapeShellArg (lib.getExe config.programs.vdirsyncer.package)}
-              pairs=()
-
-              ${lib.optionalString cfg.google.enable ''
-                if [ -s ${lib.escapeShellArg googleCalendarTokenFile} ]; then
-                  "$vdirsyncer" discover calendar_google_calendars
-                  pairs+=(calendar_google_calendars)
-                fi
-              ''}
-
-              ${lib.optionalString cfg.davmail.enable ''
-                if [ -s ${lib.escapeShellArg davmailTokenFile} ]; then
-                  for pair in ${lib.escapeShellArgs davmailPairNames}; do
-                    "$vdirsyncer" discover "$pair"
-                    pairs+=("$pair")
-                  done
-                fi
-              ''}
-
-              if [ "''${#pairs[@]}" -eq 0 ]; then
-                exit 0
-              fi
-
-              "$vdirsyncer" metasync "''${pairs[@]}"
-              "$vdirsyncer" sync "''${pairs[@]}"
-            '')
-          ]
-        );
+        systemd.user.servicesStartTimeoutMs = lib.mkDefault 240000;
       }
 
       (lib.mkIf cfg.google.enable {
@@ -165,12 +223,38 @@ in
         };
 
         home.activation.vdirsyncerGoogleCalendarCollections = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          $DRY_RUN_CMD ${lib.getExe' pkgs.coreutils "mkdir"} -p ${
+          $DRY_RUN_CMD ${lib.getExe' pkgs.coreutils "install"} -d -m 0700 ${
             lib.escapeShellArgs (
               map (collection: "${googleCalendarLocalPath}/${collection.local}") cfg.google.collections
             )
           }
         '';
+
+        systemd.user = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+          services.vdirsyncer-google = {
+            Unit = {
+              Description = "Google Calendar synchronization";
+              "X-SwitchMethod" = "keep-old";
+            };
+
+            Service = {
+              Type = "oneshot";
+              ExecStart = [ googleSync ];
+              TimeoutStartSec = "3m";
+              UMask = "0077";
+            };
+          };
+
+          timers.vdirsyncer-google = {
+            Unit.Description = "Google Calendar synchronization";
+            Timer = {
+              OnCalendar = "*:0/15";
+              Persistent = true;
+              Unit = "vdirsyncer-google.service";
+            };
+            Install.WantedBy = [ "timers.target" ];
+          };
+        };
 
         sops.secrets = {
           "calendar/google-client-id" = {
@@ -231,7 +315,7 @@ in
         }) davmailCalendarAccounts;
 
         home.activation.vdirsyncerDavmailCalendarCollections = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          $DRY_RUN_CMD ${lib.getExe' pkgs.coreutils "mkdir"} -p ${
+          $DRY_RUN_CMD ${lib.getExe' pkgs.coreutils "install"} -d -m 0700 ${
             lib.escapeShellArgs (
               lib.mapAttrsToList (
                 name: _account: "${config.xdg.dataHome}/calendars/${name}"
@@ -240,13 +324,54 @@ in
           }
         '';
 
-        systemd.user.services.vdirsyncer = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-          Unit = {
-            After = [ "davmail.service" ];
-            Wants = [ "davmail.service" ];
+        systemd.user = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+          services = {
+            vdirsyncer-davmail = {
+              Unit = {
+                After = [ "davmail.service" ];
+                Description = "Work calendar synchronization";
+                OnFailure = [ "vdirsyncer-davmail-notify.service" ];
+                Requires = [ "davmail.service" ];
+                "X-SwitchMethod" = "keep-old";
+              };
+
+              Service = {
+                Type = "oneshot";
+                ExecStartPre = [ davmailReady ];
+                ExecStart = [ davmailSync ];
+                ExecStartPost = [
+                  "${lib.getExe' pkgs.coreutils "touch"} ${lib.escapeShellArg davmailLastSuccess}"
+                  "${lib.getExe' pkgs.coreutils "rm"} -f ${lib.escapeShellArg davmailFailureStamp}"
+                ];
+                TimeoutStartSec = "3m";
+                UMask = "0077";
+              };
+            };
+
+            vdirsyncer-davmail-notify = {
+              Unit = {
+                ConditionPathExists = "!${davmailFailureStamp}";
+                Description = "Notify about paused work calendar synchronization";
+              };
+              Service = {
+                Type = "oneshot";
+                ExecStart = [ davmailFailureNotify ];
+              };
+            };
           };
 
+          timers.vdirsyncer-davmail = {
+            Unit.Description = "Work calendar synchronization";
+            Timer = {
+              OnCalendar = "*:5/15";
+              Persistent = true;
+              Unit = "vdirsyncer-davmail.service";
+            };
+            Install.WantedBy = [ "timers.target" ];
+          };
         };
+
+        home.packages = [ workCalendarAuth ];
       })
     ]
   );
