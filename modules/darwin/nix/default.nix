@@ -185,17 +185,10 @@ in
               "/System/Library/Frameworks"
               "/System/Library/PrivateFrameworks"
               "/usr/lib"
-
-              "/private/tmp"
-              "/private/var/tmp"
               "/usr/bin/env"
             ];
             min-free = lib.mkForce (20 * 1024 * 1024 * 1024);
             max-free = lib.mkForce (50 * 1024 * 1024 * 1024);
-            # FIXME: upstream bug needs to be resolved before fully enabling
-            # https://github.com/NixOS/nix/issues/12698
-            # TODO: sandbox causes "Bus error: 10" on Darwin 25.2.0, disabling for now.
-            sandbox = lib.mkForce false;
           };
         };
 
