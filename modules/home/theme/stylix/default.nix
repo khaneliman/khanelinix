@@ -250,6 +250,7 @@ in
       # Each theme sets their own pointerCursor.
       home = lib.mkIf (isLinux && !anyCuratedTheme) {
         pointerCursor = {
+          enable = true;
           inherit (cfg.cursor) name package size;
         };
       };

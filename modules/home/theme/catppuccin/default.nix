@@ -300,6 +300,7 @@ in
             ];
 
             pointerCursor = mkIf pkgs.stdenv.hostPlatform.isLinux {
+              enable = true;
               inherit (config.khanelinix.theme.gtk.cursor) name package size;
             };
 
