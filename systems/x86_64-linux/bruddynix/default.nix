@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   ...
 }:
@@ -53,7 +54,7 @@ in
     programs = {
       graphical = {
         desktop-environment = {
-          gnome = {
+          plasma = {
             enable = true;
           };
         };
@@ -106,12 +107,14 @@ in
     user.name = "bruddy";
   };
 
-  environment.variables = {
-    # Fix black bars in gnome
-    GSK_RENDERER = "ngl";
-    # Fix mouse pointer in gnome
-    NO_POINTER_VIEWPORT = "1";
-  };
+  environment.variables =
+    lib.mkIf config.khanelinix.programs.graphical.desktop-environment.gnome.enable
+      {
+        # Fix black bars in gnome
+        GSK_RENDERER = "ngl";
+        # Fix mouse pointer in gnome
+        NO_POINTER_VIEWPORT = "1";
+      };
 
   nix.settings = {
     cores = 8;
