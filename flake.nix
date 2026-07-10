@@ -98,7 +98,7 @@
       };
     };
     codex-desktop-linux = {
-      url = "github:distsystem/codex-desktop-linux";
+      url = "github:ilysenko/codex-desktop-linux";
       inputs = {
         nixpkgs.follows = "nixpkgs-unstable";
         flake-utils.inputs.systems.follows = "systems";
