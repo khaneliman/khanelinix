@@ -82,13 +82,6 @@ in
     # Check corresponding nixos/nix-darwin imported module
     nix =
       let
-        users = [
-          "root"
-          "@wheel"
-          "nix-builder"
-          config.khanelinix.user.name
-        ];
-
         isLix = cfg.useLix || (lib.getName cfg.package) == "lix";
         hasRemoteBuilders =
           config.khanelinix.security.sops.enable
@@ -267,7 +260,7 @@ in
         ];
 
         settings = {
-          allowed-users = users;
+          allowed-users = [ config.khanelinix.user.name ];
           auto-optimise-store = pkgs.stdenv.hostPlatform.isLinux;
           builders-use-substitutes = true;
           connect-timeout = 10;
@@ -281,7 +274,7 @@ in
           keep-going = true;
           log-lines = 50;
           sandbox = true;
-          trusted-users = users;
+          trusted-users = [ config.khanelinix.user.name ];
           min-free = 1073741824; # 1GB
           max-free = 10737418240; # 10GB
 
