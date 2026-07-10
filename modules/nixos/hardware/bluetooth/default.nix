@@ -31,7 +31,8 @@ in
         General = {
           Experimental = true;
           JustWorksRepairing = "always";
-          KernelExperimental = true;
+          # mkDefault so jovian's steamos bluetooth tuning (specific UUID list) can win
+          KernelExperimental = lib.mkDefault true;
           MultiProfile = "multiple";
         };
         Policy = {
