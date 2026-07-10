@@ -148,7 +148,7 @@ in
                 systems = [
                   "x86_64-linux"
                 ];
-                maxJobs = 6;
+                maxJobs = 4;
                 speedFactor = 2;
                 supportedFeatures = supportedFeatures ++ [ "kvm" ];
               }
