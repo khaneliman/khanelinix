@@ -110,6 +110,8 @@ in
               ${work} = {
                 address = work;
                 flavor = "davmail";
+                # DavMail encrypts the shared OAuth token with this local bridge
+                # password. Thunderbird's saved localhost credentials must match it.
                 passwordCommand = [
                   (lib.getExe' pkgs.coreutils "cat")
                   config.sops.secrets."davmail/work-password".path
