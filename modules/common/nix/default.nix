@@ -23,6 +23,8 @@ let
     "nh"
     "enable"
   ] false config;
+  homeCfg = config.home-manager.users.${config.khanelinix.user.name} or { };
+  khanelivimEnabled = homeCfg.khanelinix.programs.terminal.editors.neovim.enable or false;
 in
 {
   options.khanelinix.nix = {
@@ -288,18 +290,20 @@ in
 
           substituters = [
             "https://khanelinix.cachix.org"
-            "https://khanelivim.cachix.org"
             "https://nix-community.cachix.org"
             "https://nixpkgs-unfree.cachix.org"
             "https://cache.numtide.com"
-          ];
+          ]
+          ++ lib.optionals khanelivimEnabled [ "https://khanelivim.cachix.org" ];
 
           trusted-public-keys = [
             "khanelinix.cachix.org-1:FTmbv7OqlMsmJEOFvAlz7PVkoGtstbwLC2OldAiJZ10="
-            "khanelivim.cachix.org-1:Tb0jsMlhXSJDtI2ISiGPBrvL1XIzQrWap80AiJuBGI0="
             "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
             "nixpkgs-unfree.cachix.org-1:hqvoInulhbV4nJ9yJOEr+4wxhDV4xq2d1DK7S6Nj6rs="
             "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
+          ]
+          ++ lib.optionals khanelivimEnabled [
+            "khanelivim.cachix.org-1:Tb0jsMlhXSJDtI2ISiGPBrvL1XIzQrWap80AiJuBGI0="
           ];
 
           use-xdg-base-directories = true;
