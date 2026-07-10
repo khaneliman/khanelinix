@@ -129,12 +129,17 @@ in
           };
         };
 
-        programs.thunderbird.profiles.${config.khanelinix.user.name} =
-          mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable
-            {
-              extensions = [ thunderbirdAddon ];
-              settings."extensions.autoDisableScopes" = 0;
-            };
+        programs = {
+          # Codex bundles the nord syntax theme upstream.
+          codex.settings.tui.theme = "nord";
+
+          thunderbird.profiles.${config.khanelinix.user.name} =
+            mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable
+              {
+                extensions = [ thunderbirdAddon ];
+                settings."extensions.autoDisableScopes" = 0;
+              };
+        };
 
         home = {
           pointerCursor = mkIf pkgs.stdenv.hostPlatform.isLinux {
