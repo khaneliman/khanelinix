@@ -210,18 +210,6 @@ in
 
     programs = {
       bash.initExtra = posixTokenExports;
-      # ChatGPT Desktop via upstream module: bakes CODEX_CLI_PATH into the
-      # launcher and selects the feature set upstream CI builds and caches.
-      codexDesktopLinux = {
-        enable = cfg.aiEnable && pkgs.stdenv.hostPlatform.isLinux && !isWSL;
-        cliPackage = pkgs.codex;
-        linuxFeatures = [
-          "appshots"
-          "node-repl-reaper"
-          "open-target-discovery"
-          "persistent-status-panel"
-        ];
-      };
       fish.shellInit = fishTokenExports;
       nix-your-shell = mkDefault enabled;
       vinegar.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
@@ -231,6 +219,10 @@ in
     khanelinix = {
       programs = {
         graphical = {
+          apps = {
+            codex-desktop.enable = cfg.aiEnable && pkgs.stdenv.hostPlatform.isLinux && !isWSL;
+          };
+
           editors = {
             # FIXME: broken darwin
             vscode.enable = mkDefault (!isWSL && !pkgs.stdenv.hostPlatform.isDarwin && includes "maximal");
