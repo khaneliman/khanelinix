@@ -66,6 +66,10 @@ in
     nix.settings = {
       keep-derivations = true;
       keep-outputs = true;
+      substituters = lib.optionals cfg.aiEnable [ "https://numtide.cachix.org" ];
+      trusted-public-keys = lib.optionals cfg.aiEnable [
+        "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE="
+      ];
     };
 
     environment.etc = lib.mkIf cfg.aiEnable {

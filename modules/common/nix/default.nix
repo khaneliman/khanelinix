@@ -291,7 +291,6 @@ in
             "https://khanelivim.cachix.org"
             "https://nix-community.cachix.org"
             "https://nixpkgs-unfree.cachix.org"
-            "https://numtide.cachix.org"
             "https://cache.numtide.com"
           ];
 
@@ -300,7 +299,6 @@ in
             "khanelivim.cachix.org-1:Tb0jsMlhXSJDtI2ISiGPBrvL1XIzQrWap80AiJuBGI0="
             "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
             "nixpkgs-unfree.cachix.org-1:hqvoInulhbV4nJ9yJOEr+4wxhDV4xq2d1DK7S6Nj6rs="
-            "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE="
             "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
           ];
 
