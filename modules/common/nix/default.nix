@@ -280,7 +280,6 @@ in
           http-connections = 25;
           keep-going = true;
           log-lines = 50;
-          preallocate-contents = true;
           sandbox = true;
           trusted-users = users;
           min-free = 1073741824; # 1GB
