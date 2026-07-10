@@ -46,6 +46,18 @@ in
             "org.vinegarhq.Sober.desktop"
           ];
         };
+
+        desktop-environment.plasma = {
+          # Follow the host's DE selection
+          enable = osConfig.khanelinix.programs.graphical.desktop-environment.plasma.enable or false;
+          panel.launchers = [
+            "applications:org.kde.dolphin.desktop"
+            "applications:org.kde.konsole.desktop"
+            "applications:firefox-devedition.desktop"
+            "applications:steam.desktop"
+            "applications:org.vinegarhq.Sober.desktop"
+          ];
+        };
       };
 
       terminal = {
