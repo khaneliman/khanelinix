@@ -250,6 +250,7 @@ in
           hooks = true;
           image_generation = true;
           in_app_browser = true;
+          memories = true;
           multi_agent = true;
           personality = true;
           plugin_sharing = true;
