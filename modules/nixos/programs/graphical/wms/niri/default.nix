@@ -25,57 +25,61 @@ in
     package = mkOpt package pkgs.niri-stable "Niri package (stable or unstable).";
   };
 
-  config = mkIf cfg.enable (
-    lib.mkMerge [
-      (lib.optionalAttrs hasNiri {
-        niri-flake.cache.enable = mkDefault true;
+  config = lib.mkMerge [
+    (lib.optionalAttrs hasNiri {
+      niri-flake.cache.enable = mkDefault cfg.enable;
+    })
 
-        nixpkgs.overlays = mkBefore [ inputs.niri.overlays.niri ];
+    (mkIf cfg.enable (
+      lib.mkMerge [
+        (lib.optionalAttrs hasNiri {
+          nixpkgs.overlays = mkBefore [ inputs.niri.overlays.niri ];
 
-        programs.niri = {
-          enable = true;
-          inherit (cfg) package;
-        };
-      })
-
-      {
-        khanelinix = {
-          display-managers.sddm.enable = true;
-
-          home = {
-            configFile = lib.optionalAttrs config.programs.uwsm.enable {
-              "uwsm/env-niri".text = /* Bash */ ''
-                export XDG_CURRENT_DESKTOP=niri
-                export XDG_SESSION_TYPE=wayland
-                export XDG_SESSION_DESKTOP=niri
-              '';
-            };
+          programs.niri = {
+            enable = true;
+            inherit (cfg) package;
           };
+        })
 
-          programs.graphical = {
-            apps = {
-              gnome-disks = enabled;
-              partitionmanager = enabled;
+        {
+          khanelinix = {
+            display-managers.sddm.enable = true;
+
+            home = {
+              configFile = lib.optionalAttrs config.programs.uwsm.enable {
+                "uwsm/env-niri".text = /* Bash */ ''
+                  export XDG_CURRENT_DESKTOP=niri
+                  export XDG_SESSION_TYPE=wayland
+                  export XDG_SESSION_DESKTOP=niri
+                '';
+              };
             };
 
-            file-managers = {
-              nautilus = enabled;
+            programs.graphical = {
+              apps = {
+                gnome-disks = enabled;
+                partitionmanager = enabled;
+              };
+
+              file-managers = {
+                nautilus = enabled;
+              };
+            };
+
+            security = {
+              keyring = enabled;
+              polkit = enabled;
+            };
+
+            suites.wlroots = enabled;
+
+            theme = {
+              gtk = enabled;
+              qt = enabled;
             };
           };
-
-          security = {
-            keyring = enabled;
-            polkit = enabled;
-          };
-
-          suites.wlroots = enabled;
-
-          theme = {
-            gtk = enabled;
-            qt = enabled;
-          };
-        };
-      }
-    ]
-  );
+        }
+      ]
+    ))
+  ];
 }
