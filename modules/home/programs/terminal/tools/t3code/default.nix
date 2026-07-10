@@ -324,7 +324,7 @@ in
               }
               {
                 provider = "codex";
-                model = "gpt-5.5";
+                model = "gpt-5.6-sol";
               }
               {
                 provider = "codex";

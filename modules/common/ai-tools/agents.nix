@@ -66,7 +66,7 @@ let
         claude = "sonnet";
         copilot = "claude-sonnet-4.6";
         antigravity = "gemini-3.1-pro-preview";
-        opencode = "openai/gpt-5.5";
+        opencode = "openai/gpt-5.6-sol";
         codex = "gpt-5.6-sol";
       };
       model_reasoning_effort = {
@@ -92,7 +92,7 @@ let
         claude = "sonnet";
         copilot = "claude-sonnet-4.6";
         antigravity = "gemini-3.1-pro-preview";
-        opencode = "openai/gpt-5.5";
+        opencode = "openai/gpt-5.6-terra";
         codex = "gpt-5.6-terra";
       };
       model_reasoning_effort = {

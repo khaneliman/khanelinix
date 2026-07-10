@@ -41,7 +41,7 @@ in
       };
 
       shellAliases = {
-        pi-deep = "pi --model openai-codex/gpt-5.5 --thinking high";
+        pi-deep = "pi --model openai-codex/gpt-5.6-sol --thinking high";
         pi-json = "pi --mode json";
         pi-print = "pi --print";
         pi-quick = "pi --model openai-codex/gpt-5.3-codex-spark --thinking low";
