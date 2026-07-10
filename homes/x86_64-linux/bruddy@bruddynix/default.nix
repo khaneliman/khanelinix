@@ -1,5 +1,6 @@
 {
   lib,
+  osConfig ? { },
 
   ...
 }:
@@ -35,7 +36,8 @@ in
         };
 
         desktop-environment.gnome = {
-          enable = true;
+          # Follow the host's DE selection so this config is inert under plasma
+          enable = osConfig.khanelinix.programs.graphical.desktop-environment.gnome.enable or false;
           shell.favorite-apps = [
             "org.gnome.Nautilus.desktop"
             "org.gnome.Console.desktop"
