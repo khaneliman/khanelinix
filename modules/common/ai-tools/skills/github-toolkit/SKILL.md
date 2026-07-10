@@ -78,6 +78,12 @@ and implementation guardrails.
 
 - Write GitHub-visible text like a helpful teammate: concise, natural, and free
   of repeated details.
+- For all public-facing prose, lead with specific evidence and the actual
+  request or finding. Avoid generic significance claims, promotional language,
+  vague attributions, canned acknowledgements or closings, template-like
+  scaffolding, gratuitous headings, and performative list patterns.
+- Do not optimize for AI-detection evasion. Remove unsupported or superficial
+  prose so public discussion stays clear, accountable, and useful.
 - Prefer minimal, safe edits first.
 - Ask for explicit approval before touching files from issue summaries or CI
   recommendations.
