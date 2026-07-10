@@ -311,6 +311,9 @@ in
 
           programs = {
             # Additional program settings that don't follow the common pattern
+            # Codex bundles the catppuccin syntax themes upstream.
+            codex.settings.tui.theme = "catppuccin-${cfg.flavor}";
+
             fzf.colors = mkIf config.khanelinix.programs.terminal.tools.fzf.enable fzfColors;
 
             gh-dash.settings = mkIf config.khanelinix.programs.terminal.tools.gh.enable ghDashTheme;
