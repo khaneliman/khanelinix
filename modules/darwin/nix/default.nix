@@ -147,7 +147,6 @@ in
             # bail early on missing cache hits
             connect-timeout = 10
             stalled-download-timeout = 300
-            keep-going = true
           '';
 
           gc = {

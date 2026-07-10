@@ -62,7 +62,6 @@ in
         connect-timeout = 10;
         stalled-download-timeout = 300;
         experimental-features = [ "cgroups" ];
-        keep-going = true;
         system-features = [
           "ca-derivations"
           "uid-range"
