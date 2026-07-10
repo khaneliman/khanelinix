@@ -283,7 +283,6 @@ in
           preallocate-contents = true;
           sandbox = true;
           trusted-users = users;
-          warn-dirty = false;
           min-free = 1073741824; # 1GB
           max-free = 10737418240; # 10GB
 
