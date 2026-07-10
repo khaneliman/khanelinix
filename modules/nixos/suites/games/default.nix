@@ -22,6 +22,13 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    nix.settings = {
+      substituters = [ "https://nix-gaming.cachix.org" ];
+      trusted-public-keys = [
+        "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
+      ];
+    };
+
     khanelinix = {
       hardware.controllers = lib.mkIf (includes "standard") (mkDefault {
         xpadneo.enable = true;
