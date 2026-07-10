@@ -44,6 +44,13 @@ in
   };
 
   config = mkIf cfg.enable {
+    nix.settings = {
+      substituters = [ "https://hyprland.cachix.org" ];
+      trusted-public-keys = [
+        "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+      ];
+    };
+
     environment = {
       sessionVariables = lib.mkIf (!config.programs.hyprland.withUWSM) {
         HYPRCURSOR_THEME = config.khanelinix.theme.cursor.name;
