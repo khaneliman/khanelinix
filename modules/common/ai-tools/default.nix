@@ -61,10 +61,9 @@ let
     };
   };
 
-  # Merge okf-memory's SessionStart/UserPromptSubmit hook entries into
-  # planning-with-files' managed-requirements hooks (each event is a list,
-  # so this appends rather than replaces). `managed_dir` isn't an event key
-  # and is passed through untouched.
+  # Merge okf-memory's SessionStart hook into planning-with-files' managed
+  # requirements. Event values are lists, so entries append rather than
+  # replace. `managed_dir` isn't an event key and passes through untouched.
   mergeHookEvents =
     a: b:
     let

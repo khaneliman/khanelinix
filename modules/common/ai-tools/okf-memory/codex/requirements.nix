@@ -1,18 +1,7 @@
 {
   SessionStart = [
     {
-      matcher = "startup|resume";
-      hooks = [
-        {
-          type = "command";
-          command = "python3 /etc/codex/hooks/okf_memory_context.py";
-        }
-      ];
-    }
-  ];
-
-  UserPromptSubmit = [
-    {
+      matcher = "startup|resume|clear|compact";
       hooks = [
         {
           type = "command";

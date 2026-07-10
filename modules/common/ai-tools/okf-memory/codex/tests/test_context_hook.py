@@ -10,6 +10,7 @@ from pathlib import Path
 
 CODEX_DIR = Path(__file__).resolve().parent.parent
 HOOK = CODEX_DIR / "hooks" / "okf_memory_context.py"
+REQUIREMENTS = CODEX_DIR / "requirements.nix"
 
 
 class ContextHookTests(unittest.TestCase):
@@ -56,21 +57,27 @@ class ContextHookTests(unittest.TestCase):
 
             self.assert_context_hook(result, "SessionStart")
 
-    def test_user_prompt_submit_emits_json_context(self) -> None:
+    def test_missing_bundle_emits_no_output(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            result = self.run_hook(Path(temp_dir), "SessionStart")
+
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(result.stdout, "")
+
+    def test_user_prompt_submit_is_not_supported(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             self.create_bundle(root)
 
             result = self.run_hook(root, "UserPromptSubmit")
 
-            self.assert_context_hook(result, "UserPromptSubmit")
-
-    def test_missing_bundle_emits_no_output(self) -> None:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            result = self.run_hook(Path(temp_dir), "UserPromptSubmit")
-
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(result.stdout, "")
+
+    def test_session_start_matches_recovery_sources(self) -> None:
+        requirements = REQUIREMENTS.read_text(encoding="utf-8")
+
+        self.assertIn('matcher = "startup|resume|clear|compact";', requirements)
 
 
 if __name__ == "__main__":

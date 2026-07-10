@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
-# okf-memory: SessionStart/UserPromptSubmit hook for Claude Code.
+# okf-memory: SessionStart hook for Claude Code.
 # No-op if this project has no .okf/ bundle yet. Always exits 0.
 set -u
 
-SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+SCRIPT_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 BUNDLE_DIR="$(sh "${SCRIPT_DIR}/resolve-bundle-dir.sh")"
 
 [ -d "$BUNDLE_DIR" ] || exit 0

@@ -10,7 +10,6 @@ from typing import Any
 HOOK_DIR = Path(__file__).resolve().parent
 SCRIPT_BY_EVENT = {
     "SessionStart": "okf-memory-session-start.sh",
-    "UserPromptSubmit": "okf-memory-user-prompt-submit.sh",
 }
 
 
