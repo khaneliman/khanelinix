@@ -82,8 +82,10 @@ in
         enable = true;
         package = inputs.fast-nix-gc.packages.${pkgs.stdenv.hostPlatform.system}.default;
         automatic = true;
-        dates = "daily";
-        deleteOlderThan = "7d";
+        dates = "weekly";
+        deleteOlderThan = "30d";
+        ensureFree = "100G";
+        keepRecent = "7d";
         randomizedDelaySec = "45min";
       };
 
