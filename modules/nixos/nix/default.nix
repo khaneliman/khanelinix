@@ -63,6 +63,10 @@ in
         stalled-download-timeout = 300;
         experimental-features = [ "cgroups" ];
         keep-going = true;
+        system-features = [
+          "ca-derivations"
+          "uid-range"
+        ];
         use-cgroups = true;
 
         substituters = [
