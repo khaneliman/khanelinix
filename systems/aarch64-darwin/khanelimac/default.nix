@@ -136,7 +136,7 @@ in
   };
 
   nix.settings = {
-    cores = 0;
+    cores = 4;
     max-jobs = 5;
   };
 
