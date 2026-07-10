@@ -91,7 +91,7 @@ in
 
       fast-nix-optimise = {
         enable = true;
-        automatic = true;
+        automatic = false;
         dates = [ "04:00" ];
       };
     };
