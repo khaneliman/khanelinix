@@ -60,6 +60,8 @@ in
       settings = {
         auto-allocate-uids = true;
         experimental-features = [ "cgroups" ];
+        max-free = lib.mkForce (100 * 1024 * 1024 * 1024);
+        min-free = lib.mkForce (20 * 1024 * 1024 * 1024);
         system-features = [
           "ca-derivations"
           "uid-range"
