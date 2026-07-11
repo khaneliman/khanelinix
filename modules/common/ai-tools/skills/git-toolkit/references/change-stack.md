@@ -7,16 +7,20 @@ framework, or host-specific implementation details.
 ## Workflow
 
 1. Read contribution docs and local agent instructions.
-2. State target project, base ref, desired review units, known issue/PR links,
+2. Collect deterministic stack evidence when useful:
+   `python3 "<path-to-skill>/scripts/stack_report.py" --repo . --base <ref>`. Do
+   not reconstruct status, ahead/behind counts, commit bodies, and touched paths
+   by hand.
+3. State target project, base ref, desired review units, known issue/PR links,
    review constraints, and validation budget.
-3. Split by independently reviewable behavior: setup, refactor, migration,
+4. Split by independently reviewable behavior: setup, refactor, migration,
    enablement, generated output, tests, and docs only stay together when an
    intermediate commit would be broken or misleading.
-4. Assign each slice its owner paths, dependency order, risk, and focused
+5. Assign each slice its owner paths, dependency order, risk, and focused
    validation.
-5. For implementation, keep main thread on stack boundaries and final
+6. For implementation, keep main thread on stack boundaries and final
    integration; use workers for bounded facts/probes when the harness permits.
-6. Before committing or posting, inspect diff against base and verify each
+7. Before committing or posting, inspect diff against base and verify each
    commit can be explained as one useful history fact.
 
 ## Stop Points

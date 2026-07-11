@@ -29,5 +29,8 @@ When invoked, route to one mode:
 
 If intent is unclear, ask for the mode before applying changes.
 
+Read [scripts.md](references/scripts.md) when deterministic stack collection or
+an isolated automated bisect can replace manual Git command assembly.
+
 Repository contributor docs and existing history remain authoritative. This
 skill supplies workflow defaults where repository canon is silent.
