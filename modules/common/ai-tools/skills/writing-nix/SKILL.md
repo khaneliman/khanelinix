@@ -11,8 +11,8 @@ decorative abstractions.
 
 ## Quick Start
 
-1. Read repository docs only for hard constraints or project-specific layout. Do
-   not weaken the style rules in this skill unless the user explicitly asks.
+1. Read repository docs for local constraints and layout. Treat them as
+   authoritative; use this skill's defaults where repository canon is silent.
 2. Identify the task shape and load only the relevant reference files:
    - [references/module-style.md](references/module-style.md): module templates,
      option design, merge priority, `mkDefault`, `mkForce`, and `mkMerge`.
@@ -41,11 +41,9 @@ decorative abstractions.
 
 ## Style Authority
 
-- Treat this skill as the default style guide for Nix code.
-- Use repository docs for hard constraints, integration details, or required
-  module layout, not to dilute the style guidance here.
-- If a repository's local conventions conflict with this skill, call out the
-  conflict explicitly instead of silently blending the styles.
+- Treat repository contributor docs as authority for local Nix conventions.
+- Use this skill as default guidance where repository canon is silent.
+- If two repository-local sources conflict, call out conflict before editing.
 - Avoid top-level, block-level, and wide-scope `with`. Expression-local `with`
   is acceptable for a single value when it reduces noisy repetition and keeps
   scope obvious, such as `type = with lib.types; nullOr (either str path);`.
