@@ -199,12 +199,32 @@ in
             };
           };
 
-          programs.thunderbird.profiles.${config.khanelinix.user.name} =
-            mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable
-              {
-                extensions = [ thunderbirdAddon ];
-                settings."extensions.autoDisableScopes" = 0;
+          programs = {
+            codex.settings.desktop = mkIf config.khanelinix.programs.graphical.apps.codex-desktop.enable {
+              appearanceTheme = "dark";
+              appearanceDarkCodeThemeId = "catppuccin";
+              appearanceDarkChromeTheme = {
+                surface = palette.colors.base.hex;
+                ink = palette.colors.text.hex;
+                accent = palette.colors.${cfg.accent}.hex;
+                contrast = 45;
+                fonts = { };
+                opaqueWindows = false;
+                semanticColors = {
+                  diffAdded = palette.colors.green.hex;
+                  diffRemoved = palette.colors.red.hex;
+                  skill = palette.colors.${cfg.accent}.hex;
+                };
               };
+            };
+
+            thunderbird.profiles.${config.khanelinix.user.name} =
+              mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable
+                {
+                  extensions = [ thunderbirdAddon ];
+                  settings."extensions.autoDisableScopes" = 0;
+                };
+          };
         }
         (lib.optionalAttrs (inputs ? catppuccin && inputs.catppuccin ? homeModules) {
           catppuccin = {
