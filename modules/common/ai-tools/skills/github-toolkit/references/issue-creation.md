@@ -4,14 +4,24 @@ Use when turning raw notes, logs, dictation, or screenshots into a GitHub issue.
 
 ## Workflow
 
-1. Extract summary, environment, reproduction, expected behavior, actual
-   behavior, errors, visual evidence, impact, and context.
-2. Discover and enforce repo template (see below).
-3. Read contribution guidance before drafting: `CONTRIBUTING.md`, root/local
-   instruction files, and directly relevant docs.
-4. Keep every section concise and action-oriented.
-5. Save to `issues/YYYY-MM-DD-short-description.md` unless user requests another
-   destination.
+1. Resolve target repository and source notes, logs, or screenshots. Redact
+   secrets.
+2. Extract summary, environment, reproduction, expected and actual behavior,
+   errors, visual evidence, impact, and context.
+3. Discover and enforce repository template. Read `CONTRIBUTING.md`, root/local
+   instructions, and directly relevant docs before drafting.
+4. Check likely duplicates and linked pull requests.
+5. Fill selected template exactly with concise, evidence-backed prose.
+
+## Authority and Output
+
+Creating issue requires explicit user request. Without it, save draft to
+`issues/YYYY-MM-DD-short-description.md` unless user names another destination.
+When creation is explicit, create issue from filled template. Do not label,
+assign, close, or modify unrelated files unless separately requested.
+
+If template choice or required contribution context is ambiguous, stop with
+concise blocker and do not create issue.
 
 ## Template Discovery (mandatory)
 
