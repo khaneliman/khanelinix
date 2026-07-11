@@ -30,6 +30,8 @@ If intent is unclear, ask for mode before GitHub writes or source edits.
   template before drafting or publishing.
 - Treat GitHub writes as separate authority: inspect and draft by default;
   create, edit, comment, label, close, submit, or resolve only when requested.
+- PR URL inputs accept `https://github.com/...` only. Do not use these helpers
+  for GitHub Enterprise until hostname binding is implemented.
 - Write public prose like teammate: specific evidence and direct request, no
   generic significance claims, canned acknowledgement, or repeated detail.
 - Use `git-toolkit` change-stack mode for commit/branch/PR-stack shape.

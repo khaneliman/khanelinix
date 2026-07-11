@@ -5,8 +5,9 @@ planned work summaries.
 
 ## Workflow
 
-1. Resolve repository, current/base branches, remote, commits, diff, checks,
-   related issues, and worktree state.
+1. Resolve repository, current/base branches, remote, diff, related issues, and
+   worktree state. For an existing PR, collect commits, files, and checks with
+   `scripts/pr_snapshot.py` instead of rebuilding API queries.
 2. Detect mandatory PR template. Read `CONTRIBUTING.md`, root and changed-path
    instructions, and directly relevant docs.
 3. Apply one template verbatim and fill required fields with concise,

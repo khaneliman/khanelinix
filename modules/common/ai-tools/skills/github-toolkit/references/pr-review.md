@@ -1,22 +1,22 @@
 # Pull Request Review Authoring
 
-Use for a high-signal review of a target pull request and a draft or explicitly
-requested pending GitHub review. Use [pr-feedback.md](pr-feedback.md) for
-existing review comments.
-
-## Contents
-
-- [Workflow](#workflow)
-- [Review policy](#high-signal-review-policy)
-- [Review writing and inline comments](#review-writing)
-- [Pending review API](#posting-pending-reviews-api-mechanics)
-- [Draft review editing](#editing-draft-reviews-api-mechanics)
-- [Conventional Comments](#conventional-comments)
+Use for a high-signal review and a draft or explicitly requested pending GitHub
+review. Use [pr-feedback.md](pr-feedback.md) for existing review comments.
 
 ## Workflow
 
-1. Resolve target from number, URL, branch, or current branch. Capture status,
-   base/head SHA, commits, changed files, and checks.
+1. Resolve one target and capture bounded metadata:
+
+   ```bash
+   python "<path-to-skill>/scripts/pr_snapshot.py" \
+     --repo "OWNER/REPO" --pr "NUMBER_OR_URL"
+   ```
+
+   Snapshot defaults to at most 200 files and 100 commits. Check
+   `completeness.files` and `completeness.commits` before treating scope as
+   exhaustive. Increase `--max-files`/`--max-commits`, or use `0` to fetch
+   through GitHub's API hard cap.
+
 2. Stop for closed or draft pull requests, or generated/dependency-only changes
    with no reviewable code.
 3. Read contributor guidance, PR template, root and changed-path instructions,
@@ -24,16 +24,60 @@ existing review comments.
 4. Review only diff plus necessary local context. Load matching language/domain
    skill before judging implementation details.
 5. Validate each finding against changed code and repository policy.
-6. Return draft findings by default. Only when user explicitly requests pending
-   review creation, create one review with inline comments using API mechanics
-   below, then verify review and anchors. If creation fails, return exact draft.
-
-When creating, add `<!-- ai-tools:review-pr -->` to pending review body and stop
-if existing review contains marker. If no validated findings exist, do not
-create review.
+6. Return draft findings by default. Create or update a pending review only when
+   user explicitly requests it.
 
 Never submit pending review, approve, request changes, push, or edit source.
 Leave final publication to user in GitHub UI.
+
+## Pending Review Helper
+
+Inspect pending and marked reviews before any write:
+
+```bash
+python "<path-to-skill>/scripts/review_draft.py" inspect \
+  --repo "OWNER/REPO" --pr "NUMBER_OR_URL" --include-bodies
+```
+
+Create input:
+
+```json
+{
+  "expected_head_sha": "FULL_HEAD_SHA",
+  "body": "<!-- ai-tools:review-pr -->\nReview context.",
+  "comments": [
+    {
+      "path": "path/to/file",
+      "start_line": 10,
+      "line": 12,
+      "side": "RIGHT",
+      "body": "issue (blocking): describe validated defect"
+    }
+  ]
+}
+```
+
+Plan first; add `--apply` only for explicitly requested pending-review creation:
+
+```bash
+python "<path-to-skill>/scripts/review_draft.py" create \
+  --repo "OWNER/REPO" --pr "NUMBER_OR_URL" --input review.json
+```
+
+Update input identifies owned draft comments by GraphQL `id`, REST
+`database_id`, or exact `path`/`start_line`/`line`, and supplies replacement
+`body`. Review `body` and `review_id` are optional. Plan then apply with the
+same command shape using `update`.
+
+Helper enforces exact head SHA, current-actor ownership, pending state, one
+marker, and current diff anchors. It rejects unknown fields and has no review
+submission event surface.
+
+After `--apply`, inspect `applied`, `mutation`, and `verification.status`.
+`applied: true` with `unverified` means GitHub accepted the write but readback
+could not prove every requested anchor; inspect current draft and do not retry
+blindly. `partial` lists operations already applied before a later update
+failed. Only `verified` proves post-write state and exact anchors.
 
 ## High-Signal Review Policy
 
@@ -44,196 +88,37 @@ Flag only highly likely defects:
 - clear security or data-loss defects in changed code
 - clear instruction-file violations scoped to changed file
 - clear contribution-policy violations: commit message, atomicity, required
-  tests/checks, licensing, secrets
+  tests/checks, licensing, or secrets
 
 Do not flag style, subjective quality, pre-existing problems, speculative edge
 cases, duplicates, or normal linter findings unless repo instructions require.
-Validate each issue against diff and relevant local instructions before posting.
+Validate each issue against diff and relevant local instructions.
 
-## Don't Re-Run CI Work
-
-CI already runs the mechanical checks, and the PR already shows their results.
-Re-running them during review proves nothing new, adds noise, and lengthens the
-review.
-
-- Do not re-run tests, builds, linters, or formatters just to confirm what a
-  green check already reports. Read the check results instead.
-- Do not restate passing checks or paste their output as findings.
-- Do judge whether a check actually exercises the change: does the suite cover
-  the new code path, or pass without touching it? Is there changed behavior with
-  no check behind it? A check that stays green regardless of the diff proves
-  nothing — that gap is the finding worth flagging.
-- Spend review effort on what CI cannot: logic correctness, design, policy
-  compliance, and missing coverage.
+Do not re-run green CI checks merely to restate them. Judge whether checks cover
+changed behavior; missing coverage can be a finding when repository policy or
+risk requires it.
 
 ## Review Writing
 
-- Make the review body short: outcome, confidence, and any global context only.
-- Do not restate inline findings in the review body.
-- Write inline comments like teammate guidance: problem, reason, next step.
-- Keep each inline discussion to 1-3 short sentences unless evidence needs more.
-- Let suggestion blocks stand on their own; do not narrate the patch twice.
-- Avoid canned review phrases like "overall", "it appears", and "great work".
+- Keep review body to outcome, confidence, and global context. Do not duplicate
+  inline findings.
+- Write one inline comment per unique issue: problem, reason, next step.
+- Keep each discussion to 1-3 short sentences unless evidence requires more.
+- Use suggestion blocks only when they fully fix the selected line range.
+- Cite local instructions for compliance findings and concrete commit SHAs for
+  code links.
 
-## Inline Comments
-
-- Prefer one review containing all inline comments over sequential standalone
-  comments.
-- Post one comment per unique issue.
-- Use Conventional Comments labels for scanability, but keep prose natural.
-- Include suggestion blocks only when they fully fix issue.
-- Cite local instruction/contribution files for compliance findings.
-- Use full GitHub URLs with concrete commit SHA for code links.
-
-## Posting Pending Reviews (API Mechanics)
-
-`gh pr review` cannot post inline comments — only
-approve/comment/request-changes with a body. For inline, multi-line, or
-suggestion comments, use `gh api`.
-
-- REST works end to end (verified gh 2.95.0 / GitHub API, 2026-06):
-  `POST
-  /repos/{owner}/{repo}/pulls/{n}/reviews` with a `comments[]` array
-  preserves `start_line`/`start_side`. The range survives submission, so
-  suggestion blocks anchor to the full `start_line..line` span and "Commit
-  suggestion" replaces every line in it. One call posts the whole review
-  atomically. Both `--input` JSON and the `-f 'comments[][field]=...'` flag form
-  build the nested objects.
-- Omit `event` to leave the review pending; add `event` (`COMMENT`, `APPROVE`,
-  `REQUEST_CHANGES`) to submit.
-- Read-back trap: `GET .../reviews/{id}/comments` on a pending review returns
-  `line`/`start_line`/`side` as null with only `position` set. That is a read
-  limitation, not a lost write — confirm ranges via GraphQL, not REST:
-  `... on PullRequestReview { comments { path startLine line } }`.
-- GraphQL is an equivalent path (`addPullRequestReview` with no `event`, then
-  `addPullRequestReviewThread` per comment); not required for multi-line
-  correctness.
-- A suggestion block replaces exactly `start_line..line`; its body must be a
-  drop-in replacement for those lines, including indentation.
-
-## Editing Draft Reviews (API Mechanics)
-
-Only edit pending draft comments/reviews you authored unless the user explicitly
-asks for something else. Prefer editing drafts over deleting and recreating them
-when anchors are correct.
-
-REST and GraphQL use different IDs:
-
-- REST endpoints use numeric database IDs from URLs and `databaseId`.
-- GraphQL mutations use opaque node IDs like `PRRC_...` and `PRR_...`.
-- Do not guess node IDs from REST IDs or from adjacent comments. Fetch exact
-  node IDs before patching.
-
-REST can edit submitted review comments:
-
-```bash
-gh api -X PATCH \
-  repos/{owner}/{repo}/pulls/comments/{comment_database_id} \
-  -f body="$body"
-```
-
-Pending draft review comments may reject REST patches. Use GraphQL when editing
-draft comments:
-
-```bash
-gh api graphql \
-  -f query='mutation($id:ID!, $body:String!) {
-    updatePullRequestReviewComment(input:{pullRequestReviewCommentId:$id, body:$body}) {
-      pullRequestReviewComment { id body updatedAt }
-    }
-  }' \
-  -F id="$comment_node_id" \
-  -f body="$body"
-```
-
-Use GraphQL for draft review summary body edits too:
-
-```bash
-gh api graphql \
-  -f query='mutation($id:ID!, $body:String!) {
-    updatePullRequestReview(input:{pullRequestReviewId:$id, body:$body}) {
-      pullRequestReview { id body state updatedAt }
-    }
-  }' \
-  -F id="$review_node_id" \
-  -f body="$body"
-```
-
-Fetch exact review/comment node IDs before editing:
-
-```bash
-gh api graphql \
-  -f owner='{owner}' -f repo='{repo}' -F number='{pr_number}' \
-  -f query='query($owner:String!, $repo:String!, $number:Int!) {
-    repository(owner:$owner, name:$repo) {
-      pullRequest(number:$number) {
-        reviews(last:20) {
-          nodes {
-            id databaseId state author { login } body
-            comments(first:100) {
-              nodes { id databaseId path body author { login } }
-            }
-          }
-        }
-      }
-    }
-  }'
-```
-
-After mutation, read back the edited node body through GraphQL. For pending
-reviews, REST read-back can omit fields or show stale/partial shape.
-
-## Conventional Comments
-
-Format:
+Format inline comments as:
 
 ```markdown
 <label> [decorations]: <subject>
 
-[discussion]
+[necessary evidence, reasoning, and next step]
 ```
 
-Use labels to make intent clear:
-
-- `issue`: defect or policy violation that must be fixed.
-- `suggestion`: improvement worth considering, usually non-blocking.
-- `question`: clarification request needed to judge correctness.
-- `nitpick`: tiny preference or cleanup; always non-blocking.
-- `note`: useful context; non-blocking.
-- `praise`: positive feedback; do not mix with required changes.
-- `todo`: small required follow-up.
-
-Use decorations when status or scope matters:
-
-- `(blocking)`: must be resolved before approval or merge.
-- `(non-blocking)`: optional or deferrable.
-- `(if-minor)`: worth doing only if change is small.
-- Add scoped tags sparingly, for example `(security, blocking)` or
-  `(tests, non-blocking)`.
-
-Rules:
-
-- Start every inline finding with `<label> [decorations]: <subject>`.
-- Use `(blocking)` only for high-signal review findings from policy above.
-- Keep subject one line and imperative or descriptive.
-- Put only necessary evidence, reasoning, and next step in discussion body.
-- Avoid labels that weaken priority; choose one primary label per comment.
-
-Examples:
-
-```markdown
-issue (blocking): validate `owner` before using it in shell command
-
-`owner` comes from PR metadata and reaches command construction. Pass it as an
-argument array element or validate it before use.
-```
-
-```markdown
-suggestion (non-blocking): move duplicate retry logic into helper
-
-Both paths now retry with identical backoff. Shared helper would reduce drift,
-but current behavior is correct.
-```
+Use `issue`, `suggestion`, `question`, `nitpick`, `note`, `praise`, or `todo`.
+Use `(blocking)` only for high-signal defects; otherwise use `(non-blocking)` or
+omit decoration. Keep one primary label.
 
 No-issues comment when requested:
 
