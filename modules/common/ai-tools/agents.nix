@@ -16,7 +16,6 @@ let
       model = {
         claude = "haiku";
         copilot = "claude-haiku-4.5";
-        antigravity = "gemini-3.1-flash-lite-preview";
         opencode = "openai/gpt-5.4-mini";
         codex = "gpt-5.6-luna";
       };
@@ -40,7 +39,6 @@ let
       model = {
         claude = "haiku";
         copilot = "claude-haiku-4.5";
-        antigravity = "gemini-3.1-flash-lite-preview";
         opencode = "openai/gpt-5.4-mini";
         codex = "gpt-5.6-luna";
       };
@@ -54,10 +52,9 @@ let
     };
     debugger = {
       name = "debugger";
-      description = "Debugging specialist for errors, exceptions, test failures, and unexpected behavior. Use when encountering any issues that need root cause analysis.";
+      description = "Read-only root-cause specialist for a reproduced error, exception, test failure, or unexpected behavior with supplied symptom or evidence.";
       tools = [
         "Read"
-        "Edit"
         "Bash"
         "Grep"
         "Glob"
@@ -65,15 +62,14 @@ let
       model = {
         claude = "sonnet";
         copilot = "claude-sonnet-4.6";
-        antigravity = "gemini-3.1-pro-preview";
         opencode = "openai/gpt-5.6-sol";
         codex = "gpt-5.6-sol";
       };
       model_reasoning_effort = {
         codex = "medium";
       };
-      permission = {
-        edit = "ask";
+      sandbox_mode = {
+        codex = "read-only";
       };
       content = builtins.readFile (agentsBasePath + "/general/debugger.md");
     };
@@ -91,7 +87,6 @@ let
       model = {
         claude = "sonnet";
         copilot = "claude-sonnet-4.6";
-        antigravity = "gemini-3.1-pro-preview";
         opencode = "openai/gpt-5.6-terra";
         codex = "gpt-5.6-terra";
       };
@@ -111,17 +106,15 @@ let
         "Bash"
         "Grep"
         "Glob"
-        "Edit"
       ];
       model = {
         claude = "haiku";
         copilot = "claude-haiku-4.5";
-        antigravity = "gemini-3.1-flash-lite-preview";
         opencode = "openai/gpt-5.4-mini";
         codex = "gpt-5.6-terra";
       };
-      permission = {
-        edit = "ask";
+      sandbox_mode = {
+        codex = "workspace-write";
       };
       content = builtins.readFile (agentsBasePath + "/general/test-runner.md");
     };
@@ -233,31 +226,15 @@ let
 
   toClaudeMarkdown = lib.mapAttrs (_name: renderClaudeAgent) agents;
   toCopilotMarkdown = lib.mapAttrs (_name: renderCopilotAgent) agents;
-  toAntigravityAgents = lib.mapAttrs (_name: agent: {
-    prompt = agent.content;
-    description = agent.description or "AI agent";
-  }) agents;
-  renderAntigravitySkill = agent: ''
-    ---
-    name: ${builtins.toJSON agent.name}
-    description: ${builtins.toJSON agent.description}
-    ---
-
-    ${lib.trim agent.content}
-  '';
-  toAntigravitySkills = lib.mapAttrs (_name: renderAntigravitySkill) agents;
   toCodexAgents = lib.mapAttrs (_name: renderCodexAgent) agents;
   toOpenCodeMarkdown = lib.mapAttrs (_name: renderOpenCodeAgent) agents;
 in
 {
   inherit
     agents
-    renderAntigravitySkill
     renderClaudeAgent
     renderCopilotAgent
     renderOpenCodeAgent
-    toAntigravityAgents
-    toAntigravitySkills
     toClaudeMarkdown
     toCopilotMarkdown
     toCodexAgents

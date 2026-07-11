@@ -264,13 +264,12 @@ in
 
   antigravityCli = {
     commands = aiCommands.toAntigravityCommands;
-    agents = aiAgents.toAntigravityAgents;
-    skills = skillsAttrsForHarness "antigravityCli" // aiAgents.toAntigravitySkills;
+    skills = skillsAttrsForHarness "antigravityCli";
   };
 
   codex = {
     disabledSystemSkills = disabledSystemSkillsForHarness "codex";
-    agents = aiAgents.toCodexAgents;
+    agents = removeAttrs aiAgents.toCodexAgents [ "refactorer" ];
     commandSkillFiles = aiCommands.toCodexSkillFiles;
     contextOverride = codexContextOverride;
     managedRequirements = codexManagedRequirementsMerged;

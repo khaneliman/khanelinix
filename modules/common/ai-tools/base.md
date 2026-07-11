@@ -14,8 +14,7 @@ Respond like smart caveman.
 
 ## Operating Loop
 
-- Read project canon before changes. In this repo, `CONTRIBUTING.md` is source
-  of truth for style, taxonomy, validation, security, and commit policy.
+- Read project-local contributor canon before changes.
 - For vague, short, or broad requests, do intake before implementation: identify
   goal, scope, success criteria, likely validation, and any assumption that
   would materially change the work. If the risk is low, proceed with stated

@@ -18,25 +18,19 @@ Delegate when:
 - review can split by file, module, commit, or concern
 - the worker can return evidence without owning final judgment
 
-Before spawning:
+Pick smallest worker:
 
-1. Name the missing fact, probe result, or review slice.
-2. Pick the smallest worker:
-   - `fact-finder` for read-only evidence gathering.
-   - `probe-runner` for bounded non-destructive command or browser checks.
-   - `test-runner` for broader test suites or noisy failure loops.
-   - `debugger` for ambiguous root-cause analysis.
-3. Pass only task, paths/cwd, constraints, allowed tool or skill lane, and exit
-   criteria. Do not pass full conversation unless required.
-4. Continue local integration work while the worker runs when possible.
-5. Treat worker output as an evidence packet. Main thread owns synthesis, edits,
-   risk decisions, and final answer.
+1. `fact-finder` for read-only evidence gathering.
+2. `probe-runner` for bounded non-destructive command or browser checks.
+3. `test-runner` for broader test suites or noisy failure loops.
+4. `debugger` for ambiguous root-cause analysis.
+
+Pass only task, paths, constraints, allowed skill/tool lane, and exit criteria.
+Continue local integration while worker runs; treat result as evidence packet.
+Use `git-toolkit` change-stack mode for multi-commit or PR-stack boundaries.
 
 Do not delegate tiny one-command answers, work that needs full conversation
 context, or final product/design/architecture decisions.
-
-Use GPT-5.6 agents by default. Reserve `gpt-5.3-codex-spark` for trivial,
-latency-first tasks where expected output is obvious and failure is cheap.
 
 ## Retry Circuit Breaker
 
@@ -50,17 +44,3 @@ same patch shape:
    `debugger`/`probe-runner` when available, or ask for the missing decision.
 4. Resume only with a materially different command, narrower scope, or new
    evidence.
-
-## Large Change-Stack Routing
-
-For upstream contribution, multi-commit, PR-stack, migration, branch-review, or
-large history-shaping work, split early:
-
-- Main thread owns goal, commit boundaries, final judgment, and integration.
-- `fact-finder`: upstream issue/PR context, changed-path ownership, caller
-  tracing, and relevant provenance.
-- `probe-runner`: focused eval/build/test checks, noisy logs, GitHub/CI probes.
-- `test-runner`: broad suites or repeated failure analysis.
-
-Pass workers only paths, refs, commands allowed, and exit criteria. Do not pass
-full conversation unless the worker needs it.
