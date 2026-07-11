@@ -13,7 +13,7 @@
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^26.1.0",
-		"typescript": "^6.0.2",
+		"typescript": "^7.0.2",
 		"typescript-language-server": "^5.1.3"
 	}
 }
