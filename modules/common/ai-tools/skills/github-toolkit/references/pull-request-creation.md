@@ -5,13 +5,23 @@ planned work summaries.
 
 ## Workflow
 
-1. Detect mandatory PR template before drafting.
-2. Read contribution guidance before drafting: `CONTRIBUTING.md`, root/local
-   instruction files, and directly relevant docs.
-3. Apply one template verbatim; fill required fields with concise, repo-relevant
-   detail.
-4. Return PR title/body ready for `gh pr create`.
-5. If template or contribution context is missing, request clarification.
+1. Resolve repository, current/base branches, remote, commits, diff, checks,
+   related issues, and worktree state.
+2. Detect mandatory PR template. Read `CONTRIBUTING.md`, root and changed-path
+   instructions, and directly relevant docs.
+3. Apply one template verbatim and fill required fields with concise,
+   repository-relevant detail.
+4. Note contribution gaps: missing tests/docs/issue links, atomic-history
+   concerns, licensing/secrets risk, dirty tree, or unpushed commits.
+5. Return title/body ready for `gh pr create`.
+
+## Authority and Output
+
+Creating pull request requires explicit user request. Draft title/body by
+default. If creation is explicit but branch is dirty, unpushed, or missing
+required context, return title/body plus exact blocker. Do not push, force-push,
+rebase, amend, or edit files unless separately requested. Create draft PR only
+when user asks for draft state.
 
 ## Template Discovery (mandatory)
 
