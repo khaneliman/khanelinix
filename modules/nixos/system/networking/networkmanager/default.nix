@@ -43,7 +43,12 @@ in
         ++ lib.optionals config.khanelinix.virtualisation.kvm.enable [ "interface-name:virbr*" ];
       };
     };
-    # Slows down rebuilds timing out for network.
-    systemd.services.NetworkManager-wait-online.enable = lib.mkForce false;
+    systemd.services = {
+      # Keep NFS mounts reachable while systemd reexecutes during activation.
+      NetworkManager.reloadIfChanged = true;
+
+      # Slows down rebuilds timing out for network.
+      NetworkManager-wait-online.enable = lib.mkForce false;
+    };
   };
 }
