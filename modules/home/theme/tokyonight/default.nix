@@ -16,6 +16,7 @@ let
 
   cfg = config.khanelinix.theme.tokyonight;
   palette = import ./colors.nix;
+  colors = palette.getVariant cfg.variant;
   thunderbirdAddon = pkgs.stdenvNoCC.mkDerivation {
     pname = "thunderbird-addon-tokyo-night";
     version = "1.0.1";
@@ -124,36 +125,54 @@ in
                   mkIf config.khanelinix.programs.graphical.browsers.firefox.enable
                     [ pkgs.firefox-addons.tokyo-night-v2 ];
               };
-              apps.thunderbird.theme =
-                let
-                  colors = palette.getVariant cfg.variant;
-                in
-                {
-                  enable = true;
-                  isDark = cfg.variant != "day";
-                  colors = {
-                    inherit (colors)
-                      bg
-                      fg
-                      ;
-                    surface = colors.bg_dark;
-                    surfaceAlt = colors.bg_highlight;
-                    accent = colors.blue;
-                    accentSoft = colors.cyan;
-                    accentFg = if cfg.variant == "day" then "#ffffff" else colors.fg;
-                    border = colors.blue7;
-                  };
+              apps.thunderbird.theme = {
+                enable = true;
+                isDark = cfg.variant != "day";
+                colors = {
+                  inherit (colors)
+                    bg
+                    fg
+                    ;
+                  surface = colors.bg_dark;
+                  surfaceAlt = colors.bg_highlight;
+                  accent = colors.blue;
+                  accentSoft = colors.cyan;
+                  accentFg = if cfg.variant == "day" then "#ffffff" else colors.fg;
+                  border = colors.blue7;
                 };
+              };
             };
           };
         };
 
-        programs.thunderbird.profiles.${config.khanelinix.user.name} =
-          mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable
-            {
-              extensions = [ thunderbirdAddon ];
-              settings."extensions.autoDisableScopes" = 0;
-            };
+        programs = {
+          codex.settings.desktop =
+            mkIf (config.khanelinix.programs.graphical.apps.codex-desktop.enable && cfg.variant != "day")
+              {
+                appearanceTheme = "dark";
+                appearanceDarkCodeThemeId = "tokyo-night";
+                appearanceDarkChromeTheme = {
+                  surface = colors.bg;
+                  ink = colors.fg_dark;
+                  accent = colors.blue0;
+                  contrast = 60;
+                  fonts = { };
+                  opaqueWindows = false;
+                  semanticColors = {
+                    diffAdded = colors.git.add;
+                    diffRemoved = colors.git.delete;
+                    skill = colors.purple;
+                  };
+                };
+              };
+
+          thunderbird.profiles.${config.khanelinix.user.name} =
+            mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable
+              {
+                extensions = [ thunderbirdAddon ];
+                settings."extensions.autoDisableScopes" = 0;
+              };
+        };
 
         home = {
           pointerCursor = mkIf pkgs.stdenv.hostPlatform.isLinux {
