@@ -131,7 +131,26 @@ in
 
         programs = {
           # Codex bundles the nord syntax theme upstream.
-          codex.settings.tui.theme = "nord";
+          codex.settings = {
+            tui.theme = "nord";
+            desktop = mkIf config.khanelinix.programs.graphical.apps.codex-desktop.enable {
+              appearanceTheme = "dark";
+              appearanceDarkCodeThemeId = "nord";
+              appearanceDarkChromeTheme = {
+                surface = palette.palette.nord0.hex;
+                ink = palette.palette.nord6.hex;
+                accent = palette.palette.nord10.hex;
+                contrast = 45;
+                fonts = { };
+                opaqueWindows = false;
+                semanticColors = {
+                  diffAdded = palette.palette.nord14.hex;
+                  diffRemoved = palette.palette.nord11.hex;
+                  skill = palette.palette.nord15.hex;
+                };
+              };
+            };
+          };
 
           thunderbird.profiles.${config.khanelinix.user.name} =
             mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable
