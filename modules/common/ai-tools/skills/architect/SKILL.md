@@ -9,6 +9,16 @@ Enforce "Progressive Disclosure" for this project's AI setup: help the user
 refactor their prompts, rules, and agents so tokens are only consumed when
 strictly necessary.
 
+For an existing AI configuration tree, run the structural audit before manual
+review:
+
+```bash
+python3 <skill-dir>/scripts/audit_ai_tools.py <ai-tools-root> --format markdown
+```
+
+The audit is read-only. Treat errors as objective structural failures and
+warnings as review candidates; architecture decisions remain with the agent.
+
 Treat root `AGENTS.md` as registry and keep detailed workflow or domain guidance
 in gated leaf nodes.
 
