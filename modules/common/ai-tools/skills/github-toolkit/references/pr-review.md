@@ -1,19 +1,39 @@
-# PR Review Play
+# Pull Request Review Authoring
 
-Use for review-comment triage or high-signal review of current branch PR.
+Use for a high-signal review of a target pull request and a draft or explicitly
+requested pending GitHub review. Use [pr-feedback.md](pr-feedback.md) for
+existing review comments.
+
+## Contents
+
+- [Workflow](#workflow)
+- [Review policy](#high-signal-review-policy)
+- [Review writing and inline comments](#review-writing)
+- [Pending review API](#posting-pending-reviews-api-mechanics)
+- [Draft review editing](#editing-draft-reviews-api-mechanics)
+- [Conventional Comments](#conventional-comments)
 
 ## Workflow
 
-1. Verify auth: `gh auth status`.
-2. Fetch comments: `python "<path-to-skill>/scripts/fetch_comments.py"`.
-3. Read root and changed-path guidance: `AGENTS.md`, `CONTRIBUTING.md`,
-   `CLAUDE.md`, local instruction files.
-4. Compare diff, commits, and PR metadata against guidance.
-5. Summarize actionable review threads or validated findings.
-6. Ask user which items to address before editing.
-7. Implement only selected items and report changes.
+1. Resolve target from number, URL, branch, or current branch. Capture status,
+   base/head SHA, commits, changed files, and checks.
+2. Stop for closed or draft pull requests, or generated/dependency-only changes
+   with no reviewable code.
+3. Read contributor guidance, PR template, root and changed-path instructions,
+   and directly relevant documentation.
+4. Review only diff plus necessary local context. Load matching language/domain
+   skill before judging implementation details.
+5. Validate each finding against changed code and repository policy.
+6. Return draft findings by default. Only when user explicitly requests pending
+   review creation, create one review with inline comments using API mechanics
+   below, then verify review and anchors. If creation fails, return exact draft.
 
-If auth/rate limiting fails, ask user to run `gh auth login`.
+When creating, add `<!-- ai-tools:review-pr -->` to pending review body and stop
+if existing review contains marker. If no validated findings exist, do not
+create review.
+
+Never submit pending review, approve, request changes, push, or edit source.
+Leave final publication to user in GitHub UI.
 
 ## High-Signal Review Policy
 

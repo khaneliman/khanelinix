@@ -1,91 +1,37 @@
 ---
 name: github-toolkit
-description: GitHub issue triage, issue creation, PR review, and CI check-fix workflows using gh CLI.
+description: GitHub issue discovery, targeted triage, issue creation, pull-request creation, review authoring, review-feedback handling, and CI check-fix workflows using gh CLI. Use for read or write work against GitHub issues, pull requests, reviews, or checks.
 ---
 
 # GitHub Toolkit
 
-Use this skill for GitHub-specific workflows.
+Route to one mode and load only named reference:
 
-## How I choose what to do
+1. **issue-creation** — draft or explicitly create issue. Read
+   [issue-creation.md](references/issue-creation.md).
+2. **pull-request-creation** — draft or explicitly create pull request. Read
+   [pull-request-creation.md](references/pull-request-creation.md).
+3. **issue-discovery** — search, filter, rank, or summarize many issues. Read
+   [issue-discovery.md](references/issue-discovery.md).
+4. **issue-triage** — classify target issue and draft next-step guidance. Read
+   [issue-triage.md](references/issue-triage.md).
+5. **pr-review** — review target, then draft or explicitly create pending
+   review. Read [pr-review.md](references/pr-review.md).
+6. **pr-feedback** — inspect or address existing review comments. Read
+   [pr-feedback.md](references/pr-feedback.md).
+7. **ci-fix** — inspect failing checks and prepare focused fix context. Read
+   [ci-fix.md](references/ci-fix.md).
 
-When invoked, choose one mode:
+If intent is unclear, ask for mode before GitHub writes or source edits.
 
-1. **issue-creation** — convert raw notes/logs/dictation into a structured
-   GitHub issue file.
-2. **pull-request-creation** — prepare a PR title/body matching the repository's
-   PR template.
-3. **issue-triage** — find, filter, and summarize GitHub issues for selection or
-   contribution.
-4. **pr-review** — collect, prioritize, and address review comments on the PR
-   for the current branch.
-5. **ci-fix** — inspect failing PR checks and summarize actionable fix context.
+## Shared Rules
 
-If intent is unclear, ask for the mode before acting.
-
-## Template Compliance (global)
-
-- Treat repository issue and PR templates as hard requirements.
-- If a repo exposes template files/directories, use exactly one template branch
-  in the output.
-- If multiple templates exist and intent is unclear, ask user to pick one before
-  drafting.
-- For PR or issue creation, read contribution guidance before drafting:
-  `CONTRIBUTING.md`, root/local instruction files, and directly relevant docs.
-  Treat required tests, docs, security, and licensing rules as hard constraints.
-
-## 1) Issue Creation Mode
-
-Read [issue-creation.md](references/issue-creation.md). Template usage is
-mandatory:
-
-- Discover repo templates before drafting (paths in the reference).
-- Read contribution guidance before drafting.
-- If an `ISSUE_TEMPLATE` is present, fill strictly from that template.
-- Do not skip template structure, sections, or required fields.
-
-## 2) Pull Request Creation Mode
-
-Read [pull-request-creation.md](references/pull-request-creation.md). Template
-usage is mandatory:
-
-- If the request involves PR stacks, commit grouping, branch splitting, or
-  review-unit boundaries, use `git-toolkit` change-stack mode first.
-- Discover repo templates before drafting PR body.
-- Read contribution guidance before drafting.
-- If a `PULL_REQUEST_TEMPLATE` is present, fill it strictly.
-- Do not skip required template sections.
-
-## 3) Issue Triage Mode
-
-Read [issue-triage.md](references/issue-triage.md) before running searches.
-Contains `gh` command patterns, field-name quirks, and reporting checklist for
-efficient issue discovery.
-
-## 4) PR Review Mode
-
-Read [pr-review.md](references/pr-review.md) for review collection, high-signal
-policy, inline comment rules, draft review editing, and no-issues response. Use
-`git-toolkit` change-stack mode first when the review asks about branch shape,
-split strategy, or commit grouping rather than changed-code findings.
-
-## 5) CI Fix Mode
-
-Read [ci-fix.md](references/ci-fix.md) for PR check discovery, failure summary,
-and implementation guardrails.
-
-## Cross-Mode Notes
-
-- Write GitHub-visible text like a helpful teammate: concise, natural, and free
-  of repeated details.
-- For all public-facing prose, lead with specific evidence and the actual
-  request or finding. Avoid generic significance claims, promotional language,
-  vague attributions, canned acknowledgements or closings, template-like
-  scaffolding, gratuitous headings, and performative list patterns.
-- Do not optimize for AI-detection evasion. Remove unsupported or superficial
-  prose so public discussion stays clear, accountable, and useful.
-- Prefer minimal, safe edits first.
-- Ask for explicit approval before touching files from issue summaries or CI
-  recommendations.
-- For destructive git operations (hard reset, force push, branch deletion), call
-  out risk before running.
+- Read repository contributor docs, local instructions, and matching issue/PR
+  template before drafting or publishing.
+- Treat GitHub writes as separate authority: inspect and draft by default;
+  create, edit, comment, label, close, submit, or resolve only when requested.
+- Write public prose like teammate: specific evidence and direct request, no
+  generic significance claims, canned acknowledgement, or repeated detail.
+- Use `git-toolkit` change-stack mode for commit/branch/PR-stack shape.
+- Call out destructive Git risk before reset, rewrite, force-push, or branch
+  deletion.
