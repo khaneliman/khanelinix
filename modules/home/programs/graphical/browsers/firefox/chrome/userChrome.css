@@ -146,14 +146,11 @@
 /* nav-bar-customization-target */
 
 /* Context Menu Cleanup - Hide unnecessary items to reduce size */
-#context-navigation,
-#context-sep-navigation,
 #context-stop,
 #context-bookmarkpage,
 #context-pocket,
 #context-sendpagetodevice,
 #context-sep-sendpagetodevice,
-#context-sep-copyimage,
 #context-sendimage,
 #context-setDesktopBackground,
 #context-inspect-a11y,
@@ -169,13 +166,6 @@
 /* Hide specific text selection context menu items */
 #context-sendlinktodevice,
 #context-sep-sendlinktodevice {
-  display: none !important;
-}
-
-/* Hide specific image context menu items */
-#context-copyimage-contents,
-#context-copyimage,
-#context-sep-copyimage {
   display: none !important;
 }
 
