@@ -12,7 +12,8 @@ in
     argumentHint = "[path] [--since=date] [--author=name] [--search=string]";
     prompt = ''
       Analyze git history for code evolution, bug origin, ownership, or change
-      patterns.
+      patterns. Filters come from `$ARGUMENTS`; with no arguments, use the current
+      repository and no path, author, or date filter.
 
       Workflow:
       1. Identify target paths, symbols, search terms, author, and time range.
@@ -22,8 +23,9 @@ in
          `git diff` comparisons.
       4. Separate confirmed history from inference.
 
-      Output: summary, key commits with hashes, evidence-backed findings, and
-      recommended next checks or fixes.
+      Return a read-only report with target/range, summary, key commits with
+      hashes, evidence-backed findings, confirmed facts versus inference, and
+      only the next checks needed to close remaining uncertainty.
     '';
   };
 }

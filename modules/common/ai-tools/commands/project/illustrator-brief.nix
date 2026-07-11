@@ -12,7 +12,7 @@ in
     argumentHint = "[path]";
     prompt = ''
       Produce repo-grounded architecture brief for human illustrator or diagramming
-      tool. Target `[path]` or current directory.
+      tool. Target comes from `$ARGUMENTS`; with no argument, use current directory.
 
       Rules:
       - Facts only. Do not prescribe layout, color, icons, arrows, or style.
@@ -24,9 +24,9 @@ in
         capabilities, data stores, source control/CI/planning, tech-stack legend,
         and numbered real data flows.
       - Omit unverified or non-applicable categories instead of speculating.
-      - Output markdown topic sections for illustrator unfamiliar with repo.
+      - Return markdown topic sections for illustrator unfamiliar with repo.
       - Expand helpful acronyms on first use.
-      - Do not modify files unless explicitly asked.
+      - Do not modify files.
     '';
   };
 }

@@ -7,7 +7,6 @@ let
     explore = {
       claude = "haiku";
       copilot = "claude-haiku-4.5";
-      antigravity = "gemini-3.1-flash-lite-preview";
       opencode = "openai/gpt-5.4-mini";
     };
   };
@@ -15,26 +14,10 @@ let
   agentModels = agentModelDefaults // lib.mapAttrs (_name: agent: agent.model) aiAgents.agents;
 
   commandAgents = {
-    analyze-git-history = "explore";
     changelog = "refactorer";
-    check-todos = "refactorer";
-    code-review = "debugger";
-    commit-changes = "refactorer";
-    create-issue = "refactorer";
-    create-pr = "refactorer";
-    deep-check = "test-runner";
+    check-todos = "test-runner";
     dependency-audit = "test-runner";
-    fixup-autosquash = "refactorer";
-    git-bisect = "explore";
-    git-cleanup = "explore";
-    illustrator-brief = "explore";
-    initialization = "refactorer";
-    module-lint = "test-runner";
     parse-sarif = "test-runner";
-    review-pr = "debugger";
-    resolve-conflicts = "refactorer";
-    style-audit = "test-runner";
-    triage-issue = "explore";
   };
 
   normalizeCommand =
