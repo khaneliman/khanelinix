@@ -7,6 +7,15 @@ let
     inherit system;
     inherit (prev) config;
   };
+
+  # TODO: remove after NixOS/nixpkgs#540742 hits the channel
+  patoolFile = prev.file.overrideAttrs (old: {
+    postPatch = (old.postPatch or "") + ''
+      substituteInPlace src/landlock.c --replace-fail \
+        "LANDLOCK_ACCESS_FS_READ_FILE | LANDLOCK_ACCESS_FS_READ_DIR" \
+        "LANDLOCK_ACCESS_FS_READ_FILE | LANDLOCK_ACCESS_FS_READ_DIR | LANDLOCK_ACCESS_FS_EXECUTE"
+    '';
+  });
 in
 {
   #          ╭──────────────────────────────────────────────────────────╮
@@ -79,6 +88,8 @@ in
           rm -rf docs
         '';
       });
+
+      patool = pyPrev.patool.override { file = patoolFile; };
     };
   };
   python3Packages = final.python3.pkgs;
