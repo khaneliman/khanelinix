@@ -34,8 +34,9 @@ let
     exec ${lib.getExe' pkgs.systemd "systemd-run"} \
       --slice=app-manual.slice \
       --property=ExitType=cgroup \
+      --service-type=exec \
+      --collect \
       --user \
-      --wait \
       ${lib.getExe pkgs.bash} -lc 'exec "$@"' run-as-service ${apply-hm-env} "$@"
   '';
 in
