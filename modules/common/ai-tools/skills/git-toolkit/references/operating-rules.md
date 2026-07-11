@@ -14,10 +14,3 @@ Use for safety boundaries across Git modes.
 - Use `github-toolkit` for PR review comments, CI check triage, and issue
   creation.
 - Keep Git logic here; keep GitHub workflow logic in GitHub toolkit.
-
-## Multi-Step Work
-
-- Prefer minimal safe steps.
-- Keep worktree status visible before staging/committing.
-- Preserve unrelated user changes.
-- Use non-interactive commands where possible.
