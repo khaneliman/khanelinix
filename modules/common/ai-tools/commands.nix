@@ -17,7 +17,6 @@ let
     changelog = "refactorer";
     check-todos = "test-runner";
     dependency-audit = "test-runner";
-    parse-sarif = "test-runner";
   };
 
   normalizeCommand =
