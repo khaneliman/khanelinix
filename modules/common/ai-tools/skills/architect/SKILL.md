@@ -1,6 +1,6 @@
 ---
 name: architect
-description: Progressive context-architecture expert for AI prompts, rules, agents, and skills. Use when designing, refactoring, or optimizing local/global AI configuration to be token-efficient.
+description: Progressive context-architecture expert for repository instructions, AI prompts, rules, agents, commands, and skills. Use when initializing, designing, refactoring, or auditing AI configuration for clear boundaries and token-efficient disclosure.
 ---
 
 # Progressive Architecture Playbook
@@ -9,8 +9,8 @@ Enforce "Progressive Disclosure" for this project's AI setup: help the user
 refactor their prompts, rules, and agents so tokens are only consumed when
 strictly necessary.
 
-The user already relies on an `AGENTS.md` root registry. Advise on the leaf
-nodes.
+Treat root `AGENTS.md` as registry and keep detailed workflow or domain guidance
+in gated leaf nodes.
 
 ## Core Doctrine: Nudges, Not Documentation
 
@@ -48,6 +48,9 @@ to read the corresponding reference document in `refs/` before responding:
   [refs/SKILLS.md](refs/SKILLS.md)
 - **For Commands (Single-file, atomic prompts):** Read
   [refs/COMMANDS.md](refs/COMMANDS.md)
+- **For repository instruction initialization or full-surface audits:** Read
+  [refs/INITIALIZATION.md](refs/INITIALIZATION.md), then only the component
+  references it selects.
 
 If the user's request is broad (e.g., "How should I structure this new
 feature?"), ask them clarifying questions to determine which of the four
