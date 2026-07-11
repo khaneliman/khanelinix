@@ -39,6 +39,16 @@ in
       ];
     };
 
+    programs.codex.settings.desktop = {
+      appearanceDiffMarkerStyle = "color";
+      followUpQueueMode = "steer";
+      "git-always-force-push" = false;
+      "git-branch-prefix" = "";
+      "notifications-turn-mode" = "always";
+      reviewDelivery = "inline";
+      usePointerCursors = false;
+    };
+
     # The launcher reads its own flags file instead of the generic
     # electron-flags.conf and only seeds a commented template when the file is
     # missing, so owning it declaratively is safe.
