@@ -29,14 +29,13 @@ equivalent of leaving a dirty working copy in Git.
 
 **No branches, only bookmarks.** Bookmarks are named pointers to commits. They
 do NOT advance automatically on new commits (unlike Git branches). They DO
-follow when a commit is rewritten. See
-[references/git-interop.md](references/git-interop.md).
+follow when a commit is rewritten. See [git-interop.md](git-interop.md).
 
 **Editing history is safe — but watch for conflicts.** jj rewrites commits
 freely and automatically rebases descendants. If a rebase causes overlapping
 changes, jj records a conflict in the descendant commit and warns you. Conflicts
 are data (not blocking states) but must be resolved before the code compiles.
-See [references/conflict-resolution.md](references/conflict-resolution.md).
+See [conflict-resolution.md](conflict-resolution.md).
 
 **Operation log.** Every command creates an operation entry. `jj undo` reverts
 the last operation. `jj op restore <id>` jumps to any past state.
@@ -136,7 +135,7 @@ diff editor. Use `jj split path/to/file` for file-level splits or
 
 Splitting rewrites the target revision, so all descendants are rebased. jj will
 warn if this creates conflicts — resolve them before continuing. See
-[references/conflict-resolution.md](references/conflict-resolution.md).
+[conflict-resolution.md](conflict-resolution.md).
 
 ## Squashing and absorbing
 
@@ -152,8 +151,7 @@ jj-hunk-tool squash <id> --from <rev> --into <rev> -m "msg"
 
 **Warning:** `jj squash` rewrites the destination commit, causing all its
 descendants to be rebased. jj will warn if this creates conflicts — resolve them
-before continuing. See
-[references/conflict-resolution.md](references/conflict-resolution.md).
+before continuing. See [conflict-resolution.md](conflict-resolution.md).
 
 ### Absorbing
 
@@ -209,7 +207,7 @@ jj rebase -s @ -d main                  # rebase current stack onto main
 
 Rebasing can create conflicts if the new base has diverged. jj will warn if this
 happens — resolve them before continuing. See
-[references/conflict-resolution.md](references/conflict-resolution.md).
+[conflict-resolution.md](conflict-resolution.md).
 
 ## Undoing operations
 
@@ -233,8 +231,8 @@ Conflicts are first-class data — a commit can contain conflicts and still be
 rebased, squashed, or pushed. **For agents, the most reliable resolution method
 is reading the conflicted file and editing out the conflict markers directly.**
 jj's conflict markers differ from Git's — see
-[references/conflict-resolution.md](references/conflict-resolution.md) for the
-format and resolution strategies.
+[conflict-resolution.md](conflict-resolution.md) for the format and resolution
+strategies.
 
 ## Revsets
 
@@ -280,7 +278,7 @@ conflicts()            # all commits with conflicts
 ```
 
 For the complete function reference, string/date patterns, and workspace
-symbols, see [references/revset-reference.md](references/revset-reference.md).
+symbols, see [revset-reference.md](revset-reference.md).
 
 ## Workflows
 
@@ -365,19 +363,15 @@ jj op restore <op-id>                   # restore to any point
   can squash between any two mutable commits.
 - After any history rewrite, jj will warn if conflicts were created. Resolve
   them immediately — cascading conflicts are much harder to fix. See
-  [references/conflict-resolution.md](references/conflict-resolution.md). Use
+  [conflict-resolution.md](conflict-resolution.md). Use
   `jj log -r 'conflicts()'` if you need to find all conflicted commits.
 
 ## Reference docs
 
-- [Revsets](references/revset-reference.md) — full function list, string/date
-  patterns
-- [Conflict resolution](references/conflict-resolution.md) — marker format,
-  reading guide, strategies
-- [Git interop](references/git-interop.md) — bookmarks, pushing, remotes,
-  colocated repos
-- [Workspaces](references/workspaces.md) — multiple working copies, sparse
-  checkouts
-- [Templates](references/template-reference.md) — custom log/show output
-- [Bisect](references/bisect.md) — binary search for regressions with
-  `jj bisect run`
+- [Revsets](revset-reference.md) — full function list, string/date patterns
+- [Conflict resolution](conflict-resolution.md) — marker format, reading guide,
+  strategies
+- [Git interop](git-interop.md) — bookmarks, pushing, remotes, colocated repos
+- [Workspaces](workspaces.md) — multiple working copies, sparse checkouts
+- [Templates](template-reference.md) — custom log/show output
+- [Bisect](bisect.md) — binary search for regressions with `jj bisect run`
