@@ -1,118 +1,44 @@
 # Package Diffing
 
-## Protocol
+## Deterministic First Pass
 
-1. Build local output and comparison output to separate result symlinks.
-2. File-list diff first (cheap), then closure drift, then `diffoscope`.
-3. Normalize store paths before reviewing textual diffs.
-4. Report changed paths, metadata, closure drift, and impact.
-
-## Local Change vs Base Revision
+Compare any two Nix installables with the Python helper:
 
 ```bash
-package="package-name"
-base="HEAD^"
-
-nix-build -A "$package" -o result-after
-git worktree add --detach ../nixpkgs-base "$base"
-nix-build ../nixpkgs-base -A "$package" -o result-before
-nix store diff-closures result-before result-after
-nix-shell -p diffoscope --run "diffoscope result-before result-after"
+python3 "<path-to-skill>/scripts/package_diff_report.py" \
+  --repo . \
+  --before 'nixpkgs#hello' \
+  --after '.#hello'
 ```
 
-Remove the temporary worktree after investigation.
+Helper builds with `--no-link`, `--no-update-lock-file`, and
+`--no-write-lock-file`; it never creates checkout result links or modifies the
+lock file. It hashes regular files, compares path metadata and recursive
+closures, bounds large lists, and emits stable JSON. Use `--format text` for a
+compact summary or `--no-file-hashes` for a cheaper metadata-only pass.
 
-## Local vs Remote Branch
+Add `--diffoscope` only after file and closure evidence warrants deeper work.
+Diffoscope writes its temporary report outside checkout; helper returns a
+bounded excerpt with store hashes normalized. Missing diffoscope is a hard error
+instead of a silent skip.
 
-```bash
-remote="owner:branch"
-package="package-name"
+For revision comparisons, pass immutable or explicitly selected installables.
+Prefer fixed revisions over moving branches when result must be reproducible.
 
-nix-build -A "$package" -o result-local \
-  && nix-build -E '
-    { remote, package }:
-    let
-      parts = builtins.split ":" remote;
-      owner = builtins.elemAt parts 0;
-      branch = builtins.elemAt parts 2;
+## Interpretation
 
-      pkgs = import (fetchTarball {
-        url = "https://github.com/${owner}/nixpkgs/archive/${branch}.tar.gz";
-      }) {};
-    in pkgs.${package}
-  ' --argstr remote "$remote" --argstr package "$package" -o result-remote \
-  && nix-shell -p diffoscope --run "diffoscope result-local result-remote"
-```
-
-Use branch form for triage only; use fixed revision when result must be
-reproducible.
-
-## Fixed Revision Template
-
-```bash
-package="package-name"
-owner="NixOS"
-rev="nixos-unstable"
-
-nix-build -A "$package" -o result-local
-nix-build -E '
-  { owner, rev, package }:
-  let
-    pkgs = import (fetchTarball {
-      url = "https://github.com/${owner}/nixpkgs/archive/${rev}.tar.gz";
-    }) {};
-  in pkgs.${package}
-' --argstr owner "$owner" --argstr rev "$rev" --argstr package "$package" -o result-remote
-```
-
-Add `sha256` to `fetchTarball` for durable docs/CI (one failed run prints the
-expected hash).
-
-## File List First Pass
-
-```bash
-find -L result-local -type f | sed 's#^result-local/##' | sort > local.files
-find -L result-remote -type f | sed 's#^result-remote/##' | sort > remote.files
-diff -u local.files remote.files
-```
-
-## Closure Comparison
-
-```bash
-nix path-info -Sh result-local
-nix path-info -Sh result-remote
-nix path-info -rSh result-local | sort > local.closure
-nix path-info -rSh result-remote | sort > remote.closure
-diff -u local.closure remote.closure
-```
-
-Scripted first pass:
-`scripts/closure-diff-report.sh nixpkgs#hello nixpkgs#hello`
-
-## Text Diff Normalization
-
-```bash
-diff -ru result-local result-remote \
-  | sed -E 's#/nix/store/[a-z0-9]{32}-#/nix/store/<hash>-#g' \
-  > normalized.diff
-```
-
-Hash-only changes usually indicate rebuild drift, not behavioral change.
-
-## Diffoscope Tips
-
-- Start with file lists; `diffoscope` can be slow on large outputs.
-- Timestamps only → check `SOURCE_DATE_EPOCH` or strip nondeterministic archive
-  metadata.
-- ELF differences → compare `nix-store -q --references result-*` before assuming
-  source changes.
-- Fonts, icons, Python wheels, jars → inspect generated indexes and archive
-  member ordering.
+- Same file list with changed hashes: inspect content or generated metadata.
+- Hash-only store-path drift: distinguish rebuild drift from behavior change.
+- Timestamp-only archive drift: inspect `SOURCE_DATE_EPOCH` and archive member
+  ordering.
+- ELF differences: compare closure/reference changes before assuming source
+  changes.
+- Fonts, icons, wheels, and jars: inspect generated indexes and archive order.
 
 ## Reporting Checklist
 
-- Package, source revisions, system.
-- Exact build commands or attributes.
-- Outputs: byte-identical | file-list different | structurally different.
-- Largest/riskiest changed paths.
-- Closure size or dependency changes.
+- Compared installables, source revisions, and system.
+- Comparison method and whether file hashing or diffoscope ran.
+- Byte-identical, file-list different, or structurally different outputs.
+- Largest or riskiest changed paths.
+- Closure size and dependency changes.

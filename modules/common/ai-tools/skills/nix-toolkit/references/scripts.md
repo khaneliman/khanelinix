@@ -5,6 +5,11 @@ playbooks when diagnosis or custom command shaping is needed.
 
 ## Available Scripts
 
+- `<path-to-skill>/scripts/package_diff_report.py --before <installable>
+  --after <installable>`:
+  build without result links or lock-file updates, compare deterministic file
+  manifests and closures, and emit bounded stable JSON. Add `--diffoscope` for
+  bounded normalized structural excerpts.
 - `scripts/closure-diff-report.sh <before> <after>`: build two installables
   without linking and report closure drift.
 - `scripts/dependency-trace.sh <target> [dependency]`: inspect direct
