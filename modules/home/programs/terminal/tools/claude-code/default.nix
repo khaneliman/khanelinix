@@ -14,7 +14,14 @@ let
   mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
   hooks = lib.zipAttrsWith (_: values: lib.concatLists values) (
-    lib.importFiles ./hooks { inherit pkgs config lib; }
+    lib.importFiles ./hooks {
+      inherit
+        aiTools
+        config
+        lib
+        pkgs
+        ;
+    }
   );
 
   claudeIcon = ./assets/claude.ico;
