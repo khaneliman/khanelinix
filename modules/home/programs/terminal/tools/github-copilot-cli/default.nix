@@ -43,6 +43,10 @@ in
       ) copilotCommands
     );
 
+    home.shellAliases = {
+      copilot-unsafe = "copilot --mode autopilot --yolo";
+    };
+
     programs = {
       github-copilot-cli = {
         enable = true;
