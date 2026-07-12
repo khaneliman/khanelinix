@@ -128,8 +128,8 @@ in
             publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIElIQ54qAy7Dh63rBudYKdbzJHrrbrrMXLYl7Pkmk88H";
           };
         }
-        // lib.mapAttrs (_: host: {
-          hostNames = [ host.hostname ];
+        // lib.mapAttrs (name: host: {
+          hostNames = [ host.hostname ] ++ lib.optional tailscaleEnabled "${name}.${magicDnsSuffix}";
           inherit (host) publicKey;
         }) (lib.filterAttrs (_: host: host ? publicKey) hosts)
       );
