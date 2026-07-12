@@ -54,6 +54,11 @@ in
         };
       };
 
+      apps.citrix-workspace = {
+        enable = true;
+        usbRedirection.enable = true;
+      };
+
       wms = mkMerge [
         {
           hyprland = {

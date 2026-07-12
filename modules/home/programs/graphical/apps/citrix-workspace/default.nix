@@ -9,6 +9,10 @@ let
   inherit (lib) mkIf mkOption;
 
   cfg = config.khanelinix.programs.graphical.apps.citrix-workspace;
+  pkgsMaster = getPkgsMaster pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
+  citrixPackage = pkgsMaster.citrix-workspace.override {
+    extraPkcs11Modules = [ "${pkgsMaster.opensc}/lib/opensc-pkcs11.so" ];
+  };
 
   toINI = lib.generators.toINI { };
   iniFormat = pkgs.formats.ini { };
@@ -16,6 +20,12 @@ in
 {
   options.khanelinix.programs.graphical.apps.citrix-workspace = {
     enable = lib.mkEnableOption "Citrix Workspace";
+    package = mkOption {
+      type = lib.types.package;
+      default = citrixPackage;
+      defaultText = lib.literalExpression "patched pkgsMaster.citrix-workspace with OpenSC";
+      description = "Citrix Workspace package to install.";
+    };
 
     settings = mkOption {
       inherit (iniFormat) type;
@@ -95,12 +105,7 @@ in
     };
 
     home = {
-      packages =
-        let
-          # TODO: remove after hits channel
-          pkgsMaster = getPkgsMaster pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
-        in
-        [ pkgsMaster.citrix-workspace ];
+      packages = [ cfg.package ];
 
       # Generate wfclient.ini configuration file
       file.".ICAClient/wfclient.ini" = {
@@ -128,5 +133,18 @@ in
     systemd.user.tmpfiles.rules = [
       "e %h/.ICAClient/logs - - - 30d"
     ];
+
+    systemd.user.services.ctxcwalogd = {
+      Unit.Description = "Citrix Log Daemon Service";
+
+      Service = {
+        Type = "forking";
+        ExecStart = "${cfg.package.icaroot}/util/ctxcwalogd";
+      };
+
+      Install.WantedBy = [ "default.target" ];
+    };
+
+    programs.chromium.nativeMessagingHosts = [ cfg.package ];
   };
 }

@@ -1,0 +1,418 @@
+diff --git a/pkgs/by-name/ci/citrix-workspace/package.nix b/pkgs/by-name/ci/citrix-workspace/package.nix
+index b9fb58c0cc6d..9c902c5a7fe8 100644
+--- a/pkgs/by-name/ci/citrix-workspace/package.nix
++++ b/pkgs/by-name/ci/citrix-workspace/package.nix
+@@ -2,6 +2,7 @@
+   lib,
+   stdenv,
+   requireFile,
++  runtimeShell,
+   makeWrapper,
+   autoPatchelfHook,
+   wrapGAppsHook3,
+@@ -18,12 +19,8 @@
+   gdk-pixbuf,
+   glib,
+   glib-networking,
+-  gnome2,
+   gst_all_1,
+-  gtk2,
+-  gtk2-x11,
+   gtk3,
+-  gtk_engines,
+   harfbuzzFull,
+   heimdal,
+   hyphen,
+@@ -41,7 +38,6 @@
+   libjson,
+   libmanette,
+   libnotify,
+-  libpng12,
+   libpulseaudio,
+   libredirect,
+   libseccomp,
+@@ -54,7 +50,6 @@
+   more,
+   nspr,
+   nss,
+-  opencv4,
+   pango,
+   pcsclite,
+   sane-backends,
+@@ -77,10 +72,13 @@
+   xprop,
+   xdpyinfo,
+   libxcb,
+-  x264,
+   zlib,
+
+   extraCerts ? [ ],
++  # Paths to PKCS#11 modules (e.g. "${opensc}/lib/opensc-pkcs11.so") linked
++  # into the directory AuthManConfig.xml's PKCS11module key resolves against.
++  # The first module becomes the configured default.
++  extraPkcs11Modules ? [ ],
+ }:
+
+ let
+@@ -103,24 +101,28 @@ let
+     '';
+   };
+
+-  opencv4' = symlinkJoin {
+-    name = "opencv4-compat";
+-    paths = [ opencv4 ];
+-    postBuild = ''
+-      for so in ${opencv4}/lib/*.so; do
+-        ln -s "$so" $out/lib/$(basename "$so").410 || true
+-      done
+-    '';
++  # hinst writes this manifest into each user's ~/.config when run as root;
++  # the extension IDs are the Citrix Workspace web extensions for Chrome and
++  # Edge (service continuity in browser).
++  nmhManifest = builtins.toJSON {
++    name = "com.citrix.workspace.native";
++    description = "Launch NMH";
++    path = "${placeholder "out"}/opt/citrix-icaclient/NativeMessagingHost";
++    type = "stdio";
++    allowed_origins = [
++      "chrome-extension://dbdlmgpfijccjgnnpacnamgdfmljoeee/"
++      "chrome-extension://pmdpflpcmcomdkocbehamllbfkdgnalf/"
++    ];
+   };
+
+ in
+
+-stdenv.mkDerivation rec {
++stdenv.mkDerivation (finalAttrs: {
+   pname = "citrix-workspace";
+   version = "26.04.0.105";
+
+   src = requireFile rec {
+-    name = "linuxx64-${version}.tar.gz";
++    name = "linuxx64-${finalAttrs.version}.tar.gz";
+     sha256 = "1kl6b1ldjd9gb6cmvhxf6ggvc3amq1kz0qwjlb1fp6dxx0pivwm8";
+
+     message = ''
+@@ -129,7 +131,7 @@ stdenv.mkDerivation rec {
+
+       https://www.citrix.com/downloads/workspace-app/betas-and-tech-previews/workspace-app-tp-gcc11-for-linux.html
+
+-      (if you do not find version ${version} there, try at
++      (if you do not find version ${finalAttrs.version} there, try at
+       https://www.citrix.com/downloads/workspace-app/)
+
+       Once you have downloaded the file, please use the following command and re-run the
+@@ -145,7 +147,7 @@ stdenv.mkDerivation rec {
+   __structuredAttrs = true;
+   sourceRoot = ".";
+   preferLocalBuild = true;
+-  passthru.icaroot = "${placeholder "out"}/opt/citrix-icaclient";
++  passthru.icaroot = "${finalAttrs.finalPackage}/opt/citrix-icaclient";
+
+   nativeBuildInputs = [
+     autoPatchelfHook
+@@ -168,11 +170,7 @@ stdenv.mkDerivation rec {
+     fuse3'
+     gdk-pixbuf
+     glib-networking
+-    gnome2.gtkglext
+-    gtk2
+-    gtk2-x11
+     gtk3
+-    gtk_engines
+     harfbuzzFull
+     heimdal
+     hyphen
+@@ -188,7 +186,6 @@ stdenv.mkDerivation rec {
+     libjson
+     libmanette
+     libnotify
+-    libpng12
+     libpulseaudio
+     libseccomp
+     libsecret
+@@ -199,7 +196,6 @@ stdenv.mkDerivation rec {
+     llvmPackages.libunwind
+     nspr
+     nss
+-    opencv4'
+     pango
+     pcsclite
+     sane-backends
+@@ -212,7 +208,6 @@ stdenv.mkDerivation rec {
+     libxaw
+     libxmu
+     libxtst
+-    x264
+     zlib
+   ]
+   ++ gstPackages;
+@@ -242,11 +237,26 @@ stdenv.mkDerivation rec {
+       isSelfservice = program: (builtins.match "selfservice(.*)" program) != null;
+       isWfica = program: (builtins.match "wfica(.*)" program) != null;
+
++      # Helpers that read ICAROOT from the environment; passing an -icaroot
++      # flag would collide with their own argument parsing (new_store invokes
++      # storebrowse with an explicit --icaroot, for example).
++      isEnvOnly =
++        program:
++        builtins.elem program [
++          "NativeMessagingHost"
++          "UrlRedirector"
++          "util/logmgr"
++          "util/nfcui"
++          "util/sendfeedback"
++          "util/setlog"
++          "util/storebrowse"
++        ];
++
+       icaFlag =
+         program:
+         if isSelfservice program then
+           "--icaroot"
+-        else if isWfica program then
++        else if isWfica program || isEnvOnly program then
+           null
+         else
+           "-icaroot";
+@@ -275,15 +285,24 @@ stdenv.mkDerivation rec {
+           ++ [
+             ''--set ICAROOT "$ICAInstDir"''
+             ''--prefix GIO_EXTRA_MODULES : "${glib-networking}/lib/gio/modules"''
+-            ''--prefix GST_PLUGIN_SYSTEM_PATH_1_0 : "${gstPluginPath}"''
++            ''--prefix GST_PLUGIN_SYSTEM_PATH_1_0 : "$ICAInstDir/gst-plugins:${gstPluginPath}"''
+             ''--prefix LD_LIBRARY_PATH : "${ldLibraryPath program}"''
+             ''--set LD_PRELOAD "${libredirect}/lib/libredirect.so ${lib.getLib pcsclite}/lib/libpcsclite.so"''
+-            ''--set NIX_REDIRECTS "/usr/share/zoneinfo=${tzdata}/share/zoneinfo:/etc/zoneinfo=${tzdata}/share/zoneinfo:/etc/timezone=$ICAInstDir/timezone"''
++            # The session syncs the VDA clock from /etc/timezone (a Debian-ism
++            # holding an Olson name), which NixOS doesn't have; derive it from
++            # the /etc/localtime symlink at launch instead of pinning UTC
++            # (issue #321470). ctxfuse and wfica exec a hardcoded
++            # /usr/bin/fusermount3 for HDX file transfer.
++            # Wrapper scripts run under `bash -e`; every command needs a
++            # fallback.
++            ''--run "tz=\$(readlink /etc/localtime 2>/dev/null || true); tz=\''${tz##*/zoneinfo/}; tzfile=\''${XDG_RUNTIME_DIR:-/tmp}/citrix-timezone-\$(id -u); { printf '%s\n' \"\''${tz:-UTC}\" >\"\$tzfile\"; } 2>/dev/null || tzfile=$ICAInstDir/timezone; export NIX_REDIRECTS=/usr/share/zoneinfo=${tzdata}/share/zoneinfo:/etc/zoneinfo=${tzdata}/share/zoneinfo:/etc/timezone=\$tzfile:/usr/bin/fusermount3=/run/wrappers/bin/fusermount3"''
+           ]
+         );
+
++      # Shell wrappers: wrapGAppsHook3 pulls in makeBinaryWrapper, whose
++      # wrapProgram cannot compile the --run timezone detection.
+       wrap = program: ''
+-        wrapProgram $out/opt/citrix-icaclient/${program} \
++        wrapProgramShell $out/opt/citrix-icaclient/${program} \
+           ${wrapperArgs program}
+       '';
+
+@@ -293,7 +312,7 @@ stdenv.mkDerivation rec {
+       '';
+
+       makeBinWrapper = program: wrapperName: ''
+-        makeWrapper $out/opt/citrix-icaclient/${program} $out/bin/${wrapperName} \
++        makeShellWrapper $out/opt/citrix-icaclient/${program} $out/bin/${wrapperName} \
+           ${wrapperArgs program}
+       '';
+
+@@ -301,15 +320,22 @@ stdenv.mkDerivation rec {
+         cp -v ${path} $out/opt/citrix-icaclient/keystore/cacerts/${baseNameOf path}
+       '';
+
++      linkPkcs11Module = path: ''
++        ln -s ${path} "$ICAInstDir/PKCS#11/"
++      '';
++
+       mkWrappers = lib.concatMapStringsSep "\n";
+
+       toWrap = [
++        "NativeMessagingHost"
++        "UrlRedirector"
+         "adapter"
+         "selfservice"
+         "util/configmgr"
+         "util/conncenter"
+         "util/ctx_rehash"
+         "util/ctxwebhelper"
++        "util/storebrowse"
+       ];
+     in
+     ''
+@@ -335,20 +361,89 @@ stdenv.mkDerivation rec {
+       # the tarball still contains the legacy WebKitGTK 4.0 bundle.
+       rm -rf "$ICAInstDir/Webkit2gtk4.0"
+
+-      if [ -f "$ICAInstDir/util/setlog" ]; then
+-        chmod +x "$ICAInstDir/util/setlog"
+-        ln -sf "$ICAInstDir/util/setlog" "$out/bin/citrix-setlog"
+-      fi
++      # FHS launcher hinst generates even for non-root installs; it hardcodes
++      # store paths without any of the wrapper environment.
++      rm -f "$ICAInstDir/wfica.sh"
++
++      # hinst installs USB redirection only when run as root (installCtxusb).
++      # ctxusbd (root daemon) and ctxusb (setuid) need system configuration to
++      # be functional, but VDGUSB.DLL degrades gracefully without them.
++      install -m555 -t "$ICAInstDir" \
++        linuxx64/linuxx64.cor/usb/{VDGUSB.DLL,ctxusbd,ctx_usb_isactive}
++      install -m555 linuxx64/linuxx64.cor/usb/ctxusb "$ICAInstDir/ctxusb.real"
++      # VDGUSB.DLL derives a sibling `ctxusb` path from /proc/self/exe and
++      # invokes it with execl, so it cannot discover NixOS' setuid wrapper via
++      # PATH. Leave the raw binary available as the wrapper source and bridge
++      # the sibling path to /run/wrappers explicitly.
++      printf '%s\n' \
++        '#!${runtimeShell}' \
++        'exec /run/wrappers/bin/ctxusb "$@"' \
++        > "$ICAInstDir/ctxusb"
++      chmod 555 "$ICAInstDir/ctxusb"
++      install -m644 -t "$ICAInstDir" linuxx64/linuxx64.cor/usb/usb.conf
++      sed -i \
++        -e 's/^[ \t]*VirtualDriver[ \t]*=.*$/&, GenericUSB/' \
++        -e '/\[ICA 3.0\]/a GenericUSB=on' \
++        "$ICAInstDir/config/module.ini"
++      chmod u+w "$ICAInstDir/config/module.ini"
++      printf '[GenericUSB]\nDriverName = VDGUSB.DLL\n' >> "$ICAInstDir/config/module.ini"
++
++      # Scope the upstream multitouch rule to touchscreens; its original grants
++      # access to every input event. Run after 60-input-id populates the match
++      # property. systemd's 70-uaccess already covers FIDO security tokens.
++      # Replace the obsolete HAL-era `last_rule`/logger USB rule with current
++      # udisks and ModemManager suppression properties.
++      mkdir -p $out/lib/udev/rules.d
++      printf '%s\n' \
++        'KERNEL=="event[0-9]*", SUBSYSTEM=="input", ENV{ID_INPUT_TOUCHSCREEN}=="1", TAG+="uaccess"' \
++        > $out/lib/udev/rules.d/61-ica-mtch.rules
++      printf '%s\n' \
++        "SUBSYSTEM==\"usb\", ACTION==\"add\", PROGRAM==\"$ICAInstDir/ctx_usb_isactive\", ENV{UDISKS_IGNORE}=\"1\", ENV{ID_MM_DEVICE_IGNORE}=\"1\"" \
++        > $out/lib/udev/rules.d/85-ica-usb.rules
++
++      # Upstream's non-root install registers ctxcwalogd as a systemd user
++      # unit; setlog/logmgr collect nothing without the daemon.
++      mkdir -p $out/lib/systemd/user
++      sed \
++        -e '/^#/d' \
++        -e "s,###ICAROOT###,$ICAInstDir,g" \
++        -e '/###CitrixUser###/d' \
++        -e 's,###USER###,default,' \
++        linuxx64/linuxx64.cor/ctxcwalogd.service > $out/lib/systemd/user/ctxcwalogd.service
++
++      # The Citrix Workspace web extension (service continuity) and
++      # host-to-client URL redirection are dead without browser manifests;
++      # hinst only writes them into user homes.
++      for browser in opt/chrome chromium opt/edge; do
++        mkdir -p "$out/etc/$browser/native-messaging-hosts"
++        printf '%s' ${lib.escapeShellArg nmhManifest} \
++          > "$out/etc/$browser/native-messaging-hosts/com.citrix.workspace.native.json"
++        sed "s,/opt/Citrix/ICAClient,$ICAInstDir,g" \
++          "$ICAInstDir/config/com.citrix.urlinterceptor.json" \
++          > "$out/etc/$browser/native-messaging-hosts/com.citrix.urlinterceptor.json"
++      done
++
++      # Mirror hinst's `ldconfig -n lib/third_party`: the bundled OpenCV
++      # carries SONAME .so.410, which libbgblur links against.
++      for so in "$ICAInstDir"/lib/third_party/*.so.*; do
++        soname=$(objdump -p "$so" | awk '$1 == "SONAME" { print $2 }')
++        ln -sf "$(basename "$so")" "$ICAInstDir/lib/third_party/$soname"
++      done
++
++      chmod +x "$ICAInstDir/util/setlog"
+       ${mkWrappers wrapLink toWrap}
+       ${makeBinWrapper "wfica" "wfica"}
++      ${makeBinWrapper "util/setlog" "citrix-setlog"}
+       ${mkWrappers wrap [
+         "PrimaryAuthManager"
+         "ServiceRecord"
+         "AuthManagerDaemon"
++        "util/logmgr"
++        "util/new_store"
++        "util/nfcui"
++        "util/sendfeedback"
+       ]}
+
+-      ln -sf $ICAInstDir/util/storebrowse $out/bin/storebrowse
+-
+       # As explained in https://wiki.archlinux.org/index.php/Citrix#Security_Certificates
+       echo "Expanding certificates..."
+       pushd "$ICAInstDir/keystore/cacerts"
+@@ -357,16 +452,33 @@ stdenv.mkDerivation rec {
+       popd
+
+       ${mkWrappers copyCert extraCerts}
++      ${mkWrappers linkPkcs11Module extraPkcs11Modules}
++      ${lib.optionalString (extraPkcs11Modules != [ ]) ''
++        sed -i \
++          '/<key>PKCS11module<\/key>/{n;s#<value></value>#<value>${baseNameOf (lib.head extraPkcs11Modules)}</value>#;}' \
++          "$ICAInstDir/config/AuthManConfig.xml"
++        grep -Fq '<value>${baseNameOf (lib.head extraPkcs11Modules)}</value>' \
++          "$ICAInstDir/config/AuthManConfig.xml"
++      ''}
+
+       # We support only Gstreamer 1.0
+       rm $ICAInstDir/util/{gst_aud_{play,read},gst_*0.10,libgstflatstm0.10.so} || true
+       ln -sf $ICAInstDir/util/gst_play1.0 $ICAInstDir/util/gst_play
+       ln -sf $ICAInstDir/util/gst_read1.0 $ICAInstDir/util/gst_read
++
++      # hinst symlinks these into the system GStreamer plugin dir; the
++      # wrappers put this directory on GST_PLUGIN_SYSTEM_PATH_1_0 instead
++      # (HDX MediaStream flatstm elements, background blur).
++      mkdir -p "$ICAInstDir/gst-plugins"
++      ln -s "$ICAInstDir/util/libgstflatstm1.0.so" \
++        "$ICAInstDir/gst-plugins/libgstflatstm.so"
++      ln -s "$ICAInstDir/lib/libctxbeffect.so" "$ICAInstDir/gst-plugins/"
++
+       # `hinst` disables multimedia when it cannot link into FHS plugin
+       # directories. In Nix we provide the plugin path via wrappers instead.
+       sed -i 's/^MultiMedia=Off$/MultiMedia=On/' "$ICAInstDir/config/module.ini"
+
+-      echo "We arbitrarily set the timezone to UTC. No known consequences at this point."
++      # Fallback for the wrappers' runtime timezone detection.
+       echo UTC > "$ICAInstDir/timezone"
+
+       echo "Patch .desktop files."
+@@ -404,7 +516,12 @@ stdenv.mkDerivation rec {
+       done
+
+       echo "Copy .desktop files."
+-      cp $out/opt/citrix-icaclient/desktop/* $out/share/applications/
++      cp $out/opt/citrix-icaclient/desktop/*.desktop $out/share/applications/
++
++      install -Dm444 "$ICAInstDir/desktop/Citrix-mime_types.xml" \
++        $out/share/mime/packages/Citrix-mime_types.xml
++      install -Dm444 "$ICAInstDir/icons/000_Receiver_64.png" \
++        $out/share/icons/hicolor/64x64/apps/Citrix-Receiver.png
+
+       runHook postInstall
+     '';
+@@ -414,6 +531,7 @@ stdenv.mkDerivation rec {
+   dontAutoPatchelf = true;
+   postFixup = ''
+     addAutoPatchelfSearchPath "$out/opt/citrix-icaclient/lib"
++    addAutoPatchelfSearchPath "$out/opt/citrix-icaclient/lib/third_party"
+     autoPatchelf -- "$out"
+
+     $out/opt/citrix-icaclient/util/ctx_rehash
+@@ -422,6 +540,21 @@ stdenv.mkDerivation rec {
+   meta = {
+     license = lib.licenses.unfree;
+     description = "Citrix Workspace";
++    longDescription = ''
++      Some features need system-level wiring beyond this package:
++      udev rules for multitouch and USB redirection ship in
++      lib/udev/rules.d (services.udev.packages). Generic
++      USB redirection additionally needs the bundled ctxusbd running as a
++      root daemon and a setuid wrapper whose source is
++      opt/citrix-icaclient/ctxusb.real. Smart cards need pcscd and a package
++      override selecting an extraPkcs11Modules entry. The ctxcwalogd logging
++      daemon ships as a systemd user unit. Native-messaging manifests for the
++      Citrix Workspace web extension and URL redirection ship under
++      etc/{opt/chrome,chromium,opt/edge}/native-messaging-hosts and need system
++      registration.
++      App Protection, Endpoint Analysis (EPA) and deviceTRUST are not
++      supported: their installers write to /etc and /usr/local.
++    '';
+     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
+     platforms = [ "x86_64-linux" ];
+     maintainers = with lib.maintainers; [
+@@ -430,4 +563,4 @@ stdenv.mkDerivation rec {
+     ];
+     homepage = "https://www.citrix.com/downloads/workspace-app/betas-and-tech-previews/workspace-app-tp-gcc11-for-linux.html";
+   };
+-}
++})
