@@ -62,7 +62,7 @@ in
         lib.recursiveUpdate {
           model = {
             provider = "openai-codex";
-            default = "gpt-5.4";
+            default = "gpt-5.6-sol";
           };
 
           fallback_providers = [
