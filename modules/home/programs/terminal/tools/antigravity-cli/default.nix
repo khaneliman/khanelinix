@@ -12,7 +12,7 @@ let
 
   cfg = config.khanelinix.programs.terminal.tools.antigravity-cli;
   mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
-  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
+  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
   planningWithFilesSkill = pkgs.runCommandLocal "antigravity-cli-planning-with-files-skill" { } ''
     cp -R ${aiTools.planningWithFiles.antigravityCli.skill} "$out"
     chmod -R u+w "$out"
@@ -38,6 +38,8 @@ in
       # TODO: Upstream to home manager?
       # NOTE: antigravity will mutate config and replace file.
       file.".gemini/antigravity-cli/settings.json".force = true;
+      file.".gemini/config/plugins/okf-memory".source =
+        lib.mkDefault aiTools.antigravityCli.okfMemoryPlugin;
       shellAliases = {
         # Control overrides
         "agy-continue" = "agy --continue";

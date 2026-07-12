@@ -78,18 +78,6 @@ let
                   timeout = 5;
                 }
               ];
-              PostToolUse = [
-                {
-                  matcher = "*";
-                  hooks = [
-                    {
-                      type = "command";
-                      command = command "post-tool";
-                      timeout = 5;
-                    }
-                  ];
-                }
-              ];
               Stop = [
                 {
                   type = "command";
