@@ -8,7 +8,7 @@ evaluations and builds.
 
 ## Current Phase
 
-Phase 8
+Phase 9
 
 ## Phases
 
@@ -69,8 +69,15 @@ Phase 8
 - [x] Diagnose `home-manager-khaneliman.service` collision (`codex/config.toml`)
 - [x] Fix ctxusbd: add `LD_LIBRARY_PATH` for `libcap` dlopen
 - [x] Fix HM: remove stale codex config symlink
-- [ ] Re-test activation
-- **Status:** in_progress
+- [x] Re-test activation and live Citrix integration surfaces
+- **Status:** complete
+
+### Phase 9: Nixpkgs commit-message audit
+
+- [x] Compare all 14 final commit subjects and bodies with their diffs
+- [x] Check nixpkgs package commit conventions
+- [x] Identify messages made stale or incomplete by fixup commits
+- **Status:** complete
 
 ## Key Questions
 

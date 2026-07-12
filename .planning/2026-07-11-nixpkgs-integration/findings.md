@@ -102,6 +102,24 @@
 - Enabled host evaluation has the setuid wrapper sourced from `ctxusb.real`, the
   vendor-compatible forking daemon contract, the Chromium native hosts, and
   `ctxcwalogd` user service.
+- Live `ctxusbd` is active with zero restarts and uses the same Citrix package
+  selected by the current flake; its post-fix journal contains no libcap or
+  crash errors.
+- Live `ctxcwalogd` is active and has handled actual `gst_read` client sessions.
+- The generated setuid wrapper is root-owned mode 4555 and embeds the expected
+  `ctxusb.real` source; the package sibling launcher reaches it through
+  `/run/wrappers/bin/ctxusb`.
+- Both deployed Citrix udev rules pass `udevadm verify`. The attached YubiKey
+  already receives `uaccess` and a user ACL from standard rules, so the removed
+  broad Citrix HID rule is unnecessary on this host.
+- Citrix's configured OpenSC module enumerates the attached YubiKey PIV token
+  through the active PC/SC service.
+- Both Chromium native-host manifests are live, valid, executable, and target
+  wrappers exporting the same package ICAROOT.
+- Fresh-registry `gst-inspect-1.0` loads both `flatstm` and `ctxbeffect` when run
+  with the exact Citrix wrapper environment.
+- The active Home Manager generation matches current evaluation and the
+  previously colliding Codex config is now a managed store symlink.
 
 ## Technical Decisions
 
@@ -112,6 +130,7 @@
 | Do not force ordinary overlay for current `getPkgsMaster` path | `mkInputPackageSets` imports master with `overlays = [ ]`; overlay would need explicit plumbing and still cannot conveniently add a new package-function argument without copying/replacing the expression. |
 | Enable repaired system wiring on `khanelinix`                  | Package repairs removed the udev, browser-host, PKCS#11, and sibling-wrapper blockers found during initial review.                                                                                          |
 | Skip explicit `pcscd.plugins = [ pkgs.ccid ]`                  | `services.pcscd.enable` already supplies ccid in current NixOS.                                                                                                                                             |
+| Keep hardware/session tests manual                             | Device attachment and ICA-session behavior can change remote state or require interactive Citrix/browser UI; build and live host infrastructure are proven independently.                                  |
 
 ## Issues Encountered
 

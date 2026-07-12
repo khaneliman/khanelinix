@@ -98,6 +98,53 @@
 | Disabled USB eval/build      | No service/wrapper/USB hook                     | only `61-ica-mtch.rules` remains        | pass   |
 | Formatting and patch hygiene | Nix format and clean patch                      | `nix fmt` and `git diff --check` pass   | pass   |
 
+### Phase 8: Activation debugging and live verification
+
+- **Status:** complete
+- Actions taken:
+  - Confirmed `ctxusbd` is active with zero restarts after adding its libcap
+    lookup path.
+  - Confirmed Home Manager activation succeeded and its live generation equals
+    current evaluation.
+  - Confirmed `ctxcwalogd` is active and servicing real Citrix GStreamer helper
+    sessions.
+  - Verified deployed udev rules, setuid wrapper, PC/SC/OpenSC token discovery,
+    Chromium native hosts, GStreamer plugins, FUSE redirect, and timezone
+    redirect.
+
+## Phase 8 Test Results
+
+| Test | Expected | Actual | Status |
+| ---- | -------- | ------ | ------ |
+| `ctxusbd` live service | Stable daemon after libcap fix | active, zero restarts, no post-start libcap error | pass |
+| Home Manager activation | No `codex/config.toml` collision | service success; live and evaluated HM generations match | pass |
+| `ctxcwalogd` live service | Log daemon handles clients | active; real `gst_read` sessions observed | pass |
+| USB bridge | Vendor sibling reaches setuid source | launcher, 4555 wrapper, embedded `ctxusb.real` target | pass |
+| Live udev rules | Valid deployed rules | both Citrix rules pass `udevadm verify` | pass |
+| Smartcard stack | Citrix OpenSC module reaches token | YubiKey PIV slot enumerated through PC/SC | pass |
+| Chromium hosts | Activated wrapped targets | both manifests valid and executable with ICAROOT | pass |
+| GStreamer | Both new plugins load | `flatstm` and `ctxbeffect` return 0 | pass |
+| ICA device/session behavior | Redirect real remote resources | requires interactive ICA session | pending manual |
+
+### Phase 9: Nixpkgs commit-message audit
+
+- **Status:** complete
+- Reviewed all 14 final commits in `10c27492e27a..b1f1b497aa21` against their
+  final diffs and nixpkgs package commit conventions.
+- All subjects use the required `citrix-workspace:` prefix and accurately name
+  their logical unit.
+- Eight bodies remain accurate as written; six need wording updates because
+  fixups changed or expanded the final behavior.
+- Per user direction, omitted automation-assistance trailer recommendations.
+- Rewrote the six stale or incomplete bodies with interactive rebase; subjects
+  and package patches remained unchanged.
+- Verified `git range-diff` reports metadata-only changes, the final tree equals
+  `origin/citrix-workspace`, all 14 bodies are present and wrapped to 72 columns,
+  and no assistance trailers were added.
+- New local HEAD is `00d952d51ca0`; recovery ref
+  `refs/codex/backup/citrix-workspace-pre-message-amend` retains old HEAD
+  `b1f1b497aa21`.
+
 ## Error Log
 
 | Timestamp  | Error                                                                    | Attempt | Resolution                                                                |
