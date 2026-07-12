@@ -39,7 +39,7 @@ in
 
         deliberateFallbackModels = [
           {
-            model = "openai/gpt-5.4";
+            model = "openai/gpt-5.6-sol";
             reasoningEffort = "high";
           }
           testRunnerModel
@@ -124,7 +124,7 @@ in
               github-copilot = 8;
             };
             modelConcurrency = {
-              "openai/gpt-5.4" = 2;
+              "openai/gpt-5.6-sol" = 2;
               "github-copilot/gpt-5-mini" = 12;
             };
           };
