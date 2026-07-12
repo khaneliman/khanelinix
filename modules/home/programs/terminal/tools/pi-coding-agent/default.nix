@@ -56,7 +56,7 @@ in
       context = aiTools.base;
       settings = lib.recursiveUpdate {
         defaultProvider = "openai-codex";
-        defaultModel = "gpt-5.4-mini";
+        defaultModel = "gpt-5.6-luna";
         defaultThinkingLevel = "high";
         enableInstallTelemetry = false;
         collapseChangelog = true;

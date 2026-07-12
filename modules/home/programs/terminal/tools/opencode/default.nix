@@ -37,9 +37,9 @@ in
         refactorerModel = aiTools.agents.refactorer.model.opencode;
       in
       {
-        opencode-coding = "opencode --model openai/gpt-5.4-mini";
+        opencode-coding = "opencode --model openai/gpt-5.6-luna";
         opencode-deep = "opencode --model ${refactorerModel}";
-        opencode-nano = "opencode --model openai/gpt-5.4-mini";
+        opencode-nano = "opencode --model openai/gpt-5.6-luna";
         opencode-research = "opencode --agent refactorer";
         opencode-spark = "opencode --model openai/gpt-5.3-codex-spark";
       }
@@ -76,7 +76,7 @@ in
           model = refactorerModel;
           share = "manual";
           autoupdate = false;
-          small_model = "openai/gpt-5.4-mini";
+          small_model = "openai/gpt-5.6-luna";
           default_agent = "refactorer";
           compaction = {
             auto = true;
@@ -97,7 +97,7 @@ in
             };
             nano = {
               template = "Keep each action minimal and targeted for small-surface modifications.";
-              model = "openai/gpt-5.4-mini";
+              model = "openai/gpt-5.6-luna";
               agent = "refactorer";
               subtask = true;
             };

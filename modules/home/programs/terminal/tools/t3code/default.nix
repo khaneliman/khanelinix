@@ -134,7 +134,7 @@ in
           addProjectBaseDirectory = githubRoot;
           textGenerationModelSelection = {
             instanceId = "codex";
-            model = "gpt-5.4-mini";
+            model = "gpt-5.6-luna";
             options = [
               {
                 id = "reasoningEffort";
@@ -332,7 +332,7 @@ in
               }
               {
                 provider = "codex";
-                model = "gpt-5.4-mini";
+                model = "gpt-5.6-luna";
               }
               {
                 provider = "codex";

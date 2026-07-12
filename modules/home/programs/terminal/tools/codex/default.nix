@@ -111,7 +111,7 @@ let
 
     # Cheapest local utility profile for triage and simple transforms.
     nano = {
-      model = "gpt-5.4-mini";
+      model = "gpt-5.6-luna";
       model_reasoning_effort = "none";
       model_verbosity = "low";
       plan_mode_reasoning_effort = "low";

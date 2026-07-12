@@ -16,7 +16,7 @@ let
       model = {
         claude = "haiku";
         copilot = "claude-haiku-4.5";
-        opencode = "openai/gpt-5.4-mini";
+        opencode = "openai/gpt-5.6-luna";
         codex = "gpt-5.6-luna";
       };
       model_reasoning_effort = {
@@ -39,7 +39,7 @@ let
       model = {
         claude = "haiku";
         copilot = "claude-haiku-4.5";
-        opencode = "openai/gpt-5.4-mini";
+        opencode = "openai/gpt-5.6-luna";
         codex = "gpt-5.6-luna";
       };
       model_reasoning_effort = {
@@ -110,7 +110,7 @@ let
       model = {
         claude = "haiku";
         copilot = "claude-haiku-4.5";
-        opencode = "openai/gpt-5.4-mini";
+        opencode = "openai/gpt-5.6-luna";
         codex = "gpt-5.6-terra";
       };
       sandbox_mode = {
