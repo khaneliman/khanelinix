@@ -102,7 +102,7 @@ let
     # via CLI -c because those fields are top-level settings in the published
     # schema.
     long = {
-      model = "gpt-5.4";
+      model = "gpt-5.6-sol";
       model_reasoning_effort = "xhigh";
       model_verbosity = "high";
       plan_mode_reasoning_effort = "xhigh";
