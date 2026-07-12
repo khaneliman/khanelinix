@@ -51,6 +51,17 @@ Respond like smart caveman.
 - Use skills for durable workflows, MCP/live tools for external state, and
   one-shot commands for atomic prompts.
 
+## Durable Memory
+
+- Use planning-with-files only for transient task/session state.
+- After substantial investigation, decide whether a verified result would save
+  future research. Persist repository-specific knowledge in project `.okf/` and
+  cross-project preferences or lessons in user OKF memory.
+- Provider-native memory may mirror durable knowledge, but never substitutes for
+  OKF. Prefer OKF first; write both when native recall remains useful.
+- Do not persist routine progress, raw transcripts, speculation, secrets, or
+  content already owned by contributor documentation.
+
 ## Output
 
 - Match existing code style.

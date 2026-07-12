@@ -5,7 +5,31 @@
       hooks = [
         {
           type = "command";
-          command = "python3 /etc/codex/hooks/okf_memory_context.py";
+          command = "python3 /etc/codex/hooks/okf_memory_hook.py codex session-start";
+          statusMessage = "Loading durable memory";
+        }
+      ];
+    }
+  ];
+
+  UserPromptSubmit = [
+    {
+      hooks = [
+        {
+          type = "command";
+          command = "python3 /etc/codex/hooks/okf_memory_hook.py codex user-prompt";
+        }
+      ];
+    }
+  ];
+
+  Stop = [
+    {
+      hooks = [
+        {
+          type = "command";
+          command = "python3 /etc/codex/hooks/okf_memory_hook.py codex stop";
+          timeout = 5;
         }
       ];
     }

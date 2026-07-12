@@ -13,9 +13,10 @@ replacement for it.
   touching `*.nix` files; other `.claude/rules/` files load per directory.
 - **Secrets**: `sops-nix` only; never commit plaintext secrets. (Also in
   CONTRIBUTING.md — repeated here so it survives context compaction.)
-- **Durable project knowledge**: use the `okf-memory` skill to read/write a
-  per-project `.okf/` knowledge bundle that survives across sessions and
-  providers.
+- **Durable memory**: use `planning-with-files` for transient session state. Use
+  `okf-memory` for durable project or user knowledge that should survive across
+  sessions and providers. Provider-native memory may mirror OKF, but never
+  substitutes for it.
 
 ## Host Context
 

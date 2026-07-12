@@ -2,13 +2,19 @@
 
 ## Provider Behavior
 
-Claude Code and Codex inject `.okf/MEMORY.local.md` and `.okf/index.md` once at
-session start. Other providers should follow the root skill's read order when
-project history matters. Concept files remain on-demand for every provider.
+Claude Code, Codex, and Antigravity inject bounded user and project
+`MEMORY.local.md`/`index.md` context at session start. A short nudge establishes
+the routing contract at each user turn. A one-shot Stop audit checks the latest
+turn after explicit memory intent or substantial tool work. Concept files remain
+on-demand for every provider.
 
 Memory written during a running session is already visible to that agent.
 External edits become automatic context at the next session start; read the
 bundle explicitly when an immediate refresh matters.
+
+Planning-with-files owns transient task/session state. OKF owns durable user or
+project knowledge. Provider-native memory is a secondary mirror, never the sole
+durable write when OKF is available.
 
 ## Conformance
 

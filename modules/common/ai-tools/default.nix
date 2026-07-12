@@ -52,14 +52,60 @@ let
   okfMemoryDir = ./okf-memory;
   okfMemory = {
     canonicalSkill = skillsDir + "/okf-memory";
-
-    claudeCode.skill = okfMemoryDir + "/claude/SKILL.md";
+    hook = okfMemoryDir + "/hooks/okf_memory_hook.py";
 
     codex = {
-      hooksDir = okfMemoryDir + "/codex/hooks";
       requirements = import (okfMemoryDir + "/codex/requirements.nix");
     };
   };
+
+  antigravityOkfMemoryPlugin =
+    if pkgs == null then
+      null
+    else
+      let
+        command = event: "${lib.getExe pkgs.python3} ${okfMemory.hook} antigravity ${event}";
+        pluginJson = pkgs.writeText "antigravity-okf-memory-plugin.json" (
+          builtins.toJSON { name = "okf-memory"; }
+        );
+        hooksJson = pkgs.writeText "antigravity-okf-memory-hooks.json" (
+          builtins.toJSON {
+            okf-memory = {
+              PreInvocation = [
+                {
+                  type = "command";
+                  command = command "pre-invocation";
+                  timeout = 5;
+                }
+              ];
+              PostToolUse = [
+                {
+                  matcher = "*";
+                  hooks = [
+                    {
+                      type = "command";
+                      command = command "post-tool";
+                      timeout = 5;
+                    }
+                  ];
+                }
+              ];
+              Stop = [
+                {
+                  type = "command";
+                  command = command "stop";
+                  timeout = 5;
+                }
+              ];
+            };
+          }
+        );
+      in
+      pkgs.runCommand "antigravity-okf-memory-plugin" { } ''
+        mkdir -p $out
+        cp ${pluginJson} $out/plugin.json
+        cp ${hooksJson} $out/hooks.json
+      '';
 
   # Merge okf-memory's SessionStart hook into planning-with-files' managed
   # requirements. Event values are lists, so entries append rather than
@@ -90,30 +136,8 @@ let
       pkgs.runCommand "codex-hooks-merged" { } ''
         mkdir -p $out
         cp -R ${planningWithFiles.codex.hooks}/hooks/. $out/
-        cp -R ${okfMemory.codex.hooksDir}/. $out/
+        cp ${okfMemory.hook} $out/okf_memory_hook.py
       '';
-
-  # Claude Code reads hooks from each skill's own SKILL.md frontmatter, which
-  # is provider-specific — the canonical okf-memory/SKILL.md stays neutral so
-  # every other provider gets a correct, honest file. For Claude Code only,
-  # swap in the variant that adds the hooks: block, keeping everything else
-  # (including scripts/) from the generic skill directory.
-  # home-manager's claude-code module dispatches on `builtins.isAttrs
-  # cfg.skills` to decide between whole-directory and per-skill-override
-  # modes — and a derivation IS an attrset, so passing one directly here
-  # would make it match BOTH branches. `toString` collapses it to a plain
-  # store-path string, keeping it unambiguously in whole-directory mode.
-  claudeCodeSkillsDir =
-    if pkgs == null then
-      skillsForHarness "claudeCode"
-    else
-      toString (
-        pkgs.runCommand "claude-code-skills" { } ''
-          cp -R ${skillsForHarness "claudeCode"} $out
-          chmod -R u+w $out
-          cp ${okfMemory.claudeCode.skill} $out/okf-memory/SKILL.md
-        ''
-      );
 
   isSkillDirectory =
     name: type: type == "directory" && builtins.pathExists (skillsDir + "/${name}/SKILL.md");
@@ -248,6 +272,7 @@ in
     codexContext
     codexContextOverride
     checkedHarnessSkillPolicy
+    okfMemory
     permissions
     planningWithFiles
     skills
@@ -258,12 +283,13 @@ in
   claudeCode = {
     commands = aiCommands.toClaudeMarkdown // planningWithFilesCommands;
     agents = aiAgents.toClaudeMarkdown;
-    skills = claudeCodeSkillsDir;
+    skills = skillsForHarness "claudeCode";
     inherit skillsDir;
   };
 
   antigravityCli = {
     commands = aiCommands.toAntigravityCommands;
+    okfMemoryPlugin = antigravityOkfMemoryPlugin;
     skills = skillsAttrsForHarness "antigravityCli";
   };
 
