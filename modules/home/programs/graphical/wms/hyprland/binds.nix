@@ -756,6 +756,7 @@ in
                 mods = "$mainMod";
                 key = "BackSpace";
                 args = "pkill -SIGUSR1 hyprlock || WAYLAND_DISPLAY=wayland-1 $screen-locker";
+                wrap = false;
                 description = "Lock session";
               })
               (mkExecBindWith {
