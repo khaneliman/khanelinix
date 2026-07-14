@@ -8,6 +8,18 @@ let
     inherit (prev) config;
   };
 
+  useLldOnDarwin =
+    package:
+    if final.stdenv.hostPlatform.isDarwin then
+      package.overrideAttrs (old: {
+        nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ final.llvmPackages.lld ];
+        env = (old.env or { }) // {
+          NIX_CFLAGS_LINK = "-fuse-ld=lld";
+        };
+      })
+    else
+      package;
+
   # TODO: remove after NixOS/nixpkgs#540742 hits the channel
   patoolFile = prev.file.overrideAttrs (old: {
     postPatch = (old.postPatch or "") + ''
@@ -62,9 +74,62 @@ in
   #          ╭──────────────────────────────────────────────────────────╮
   #          │ From nixpkgs-master (fast updating / want latest always) │
   #          ╰──────────────────────────────────────────────────────────╯
-  # inherit (master)
-  #   # TODO: remove after hitting channel
-  #   ;
+  # TODO: remove after the ld64 hardening workarounds reach the unstable channel.
+  blueutil = if final.stdenv.hostPlatform.isDarwin then master.blueutil else prev.blueutil;
+  darktable =
+    if final.stdenv.hostPlatform.isDarwin then
+      master.darktable.overrideAttrs {
+        # `darktable --version` hangs indefinitely inside the Darwin build sandbox.
+        # Compilation and linking finish before this smoke check runs.
+        doInstallCheck = false;
+      }
+    else
+      prev.darktable;
+  godot = if final.stdenv.hostPlatform.isDarwin then master.godot else prev.godot;
+  mpv-unwrapped =
+    if final.stdenv.hostPlatform.isDarwin then master.mpv-unwrapped else prev.mpv-unwrapped;
+  sketchybar = if final.stdenv.hostPlatform.isDarwin then master.sketchybar else prev.sketchybar;
+  stats = if final.stdenv.hostPlatform.isDarwin then master.stats else prev.stats;
+  terminal-notifier =
+    if final.stdenv.hostPlatform.isDarwin then master.terminal-notifier else prev.terminal-notifier;
+
+  #          ╭──────────────────────────────────────────────────────────╮
+  #          │                 Darwin package overrides                 │
+  #          ╰──────────────────────────────────────────────────────────╯
+  # MLX distributes a CPython 3.13 Darwin wheel. Loading it through the
+  # default Python 3.14 leaves mlx.core without its compiled attributes.
+  exo =
+    if final.stdenv.hostPlatform.isDarwin then
+      prev.callPackage "${inputs.nixpkgs}/pkgs/by-name/ex/exo/package.nix" {
+        python3Packages = final.python313Packages;
+      }
+    else
+      prev.exo;
+
+  # LM Studio's APFS disk image requires hdiutil, which cannot mount inside
+  # Nix's Darwin sandbox. `sandbox = "relaxed"` honors this package opt-out.
+  lmstudio = prev.lmstudio.overrideAttrs {
+    __noChroot = final.stdenv.hostPlatform.isDarwin;
+  };
+
+  # TODO: remove after the ld64 hardening workaround reaches input-leap.
+  input-leap = useLldOnDarwin prev.input-leap;
+
+  # TODO: remove after the ld64 hardening workaround reaches musikcube.
+  musikcube = useLldOnDarwin prev.musikcube;
+
+  # TODO: remove after the ld64 hardening workaround reaches ncspot.
+  ncspot = useLldOnDarwin prev.ncspot;
+
+  # TODO: remove after the ld64 hardening workaround reaches moonlight-qt.
+  moonlight-qt = useLldOnDarwin prev.moonlight-qt;
+
+  # TODO: remove after the ld64 hardening workaround reaches mkvtoolnix.
+  mkvtoolnix = useLldOnDarwin prev.mkvtoolnix;
+
+  # TODO: remove after the ld64 hardening workaround reaches unar.
+  unar = useLldOnDarwin prev.unar;
+
   #          ╭──────────────────────────────────────────────────────────╮
   #          │                 Python package overrides                 │
   #          ╰──────────────────────────────────────────────────────────╯

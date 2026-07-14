@@ -8,6 +8,7 @@
   fetchzip,
   lib,
   libopus,
+  llvmPackages,
   miniupnpc,
   nlohmann_json,
   openssl,
@@ -61,6 +62,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   nativeBuildInputs = [
     cmake
+    llvmPackages.lld
     pkg-config
   ];
 
@@ -94,6 +96,7 @@ stdenv.mkDerivation (finalAttrs: {
     BRANCH = "main";
     COMMIT = "5c3bd0f";
     NIX_CFLAGS_COMPILE = "-isystem ${finalAttrs.ffmpegPreparedBinaries}/include";
+    NIX_CFLAGS_LINK = "-fuse-ld=lld";
   };
 
   buildFlags = [

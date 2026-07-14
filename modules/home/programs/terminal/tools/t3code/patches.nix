@@ -89,11 +89,6 @@ map fetchPatch [
     hash = "sha256-nSNm4UBxJw9XMk6SpRs7jOc4tBdHxTo5j1ZD0+twgfY=";
   }
   {
-    name = "fix-thread-error-banner-cramped";
-    rev = "b784b6333018cb7b0e58196113a4a8516e0d4954";
-    hash = "sha256-fVcp9ydPUMO7MGcj/cdshOtHRZTkoGswKh+WXetQ3TU=";
-  }
-  {
     name = "fix-codex-session-start-timeout";
     rev = "883b413cd9cfbb428abafc9f2a877ca14a9e6795";
     hash = "sha256-5b5mRry2OF120R0pAAVKXT9TG2nAes+ZQb848nyTrNQ=";

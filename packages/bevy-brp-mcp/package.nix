@@ -23,7 +23,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   cargoHash = "sha256-JGm/WyygJqpzCaFr9JRnVtJxRMFXl192kt2b7QCru88=";
 
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [
+    makeWrapper
+    rustPlatform.bindgenHook
+  ];
 
   postFixup = ''
     wrapProgram $out/bin/bevy_brp_mcp \

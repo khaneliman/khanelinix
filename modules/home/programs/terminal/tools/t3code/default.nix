@@ -23,19 +23,10 @@ in
 
       githubRoot = "${config.home.homeDirectory}/${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents/"}github";
 
-      t3codePackage =
-        (pkgs.t3code.override {
-          inherit (pkgs) gh;
-          inherit (pkgs) git;
-
+      overrideT3codeSource =
+        package:
+        (package.override {
           pnpm_10 = pkgs.pnpm_11;
-
-          enableClaude = false;
-          enableCodex = false;
-          enableGit = true;
-          enableGitHub = true;
-          enableJujutsu = false;
-          enableOpencode = false;
         }).overrideAttrs
           (
             old:
@@ -57,6 +48,30 @@ in
               };
             }
           );
+
+      t3codePackage =
+        let
+          overrides = {
+            inherit (pkgs) gh;
+            inherit (pkgs) git;
+
+            enableClaude = false;
+            enableCodex = false;
+            enableGit = true;
+            enableGitHub = true;
+            enableJujutsu = false;
+            enableOpencode = false;
+          };
+        in
+        if pkgs.t3code ? unwrapped then
+          pkgs.t3code.override (
+            overrides
+            // {
+              t3code-unwrapped = overrideT3codeSource pkgs.t3code.unwrapped;
+            }
+          )
+        else
+          overrideT3codeSource (pkgs.t3code.override overrides);
 
       remoteCommand =
         let
@@ -82,7 +97,7 @@ in
               done
             fi
 
-            exec ${lib.getExe' t3codePackage "t3code"} ${
+            exec ${lib.getExe' t3codePackage "t3"} ${
               lib.escapeShellArgs [
                 "serve"
                 "--tailscale-serve"
