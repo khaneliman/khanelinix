@@ -42,6 +42,7 @@ in
         };
 
         sequential-thinking = {
+          enabled = false;
           command = getExe mcpPkgs.mcp-server-sequential-thinking;
         };
 
@@ -54,15 +55,18 @@ in
         };
 
         code-review-graph = {
+          enabled = false;
           command = getExe pkgs.code-review-graph;
           args = [ "mcp" ];
         };
 
         semble = {
+          enabled = false;
           command = lib.getExe' pkgs.semble "semble-mcp";
         };
 
         tavily = {
+          enabled = false;
           command = getExe mcpPkgs.tavily-mcp;
         }
         // lib.optionalAttrs hasTavilyApiKey {
