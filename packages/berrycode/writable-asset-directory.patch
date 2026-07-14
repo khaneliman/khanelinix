@@ -1,0 +1,92 @@
+diff --git a/berrycode/src/main.rs b/berrycode/src/main.rs
+--- a/berrycode/src/main.rs
++++ b/berrycode/src/main.rs
+@@ -44,3 +44,6 @@ fn main() {
+     tracing::info!("Starting BerryCode - Bevy IDE");
+-
++
++    let asset_dir =
++        std::env::var("BERRYCODE_ASSET_DIR").unwrap_or_else(|_| "assets".to_string());
++
+     App::new()
+@@ -58,3 +61,7 @@ fn main() {
+                     ..default()
+-                }),
++                })
++                .set(bevy::asset::AssetPlugin {
++                    file_path: asset_dir,
++                    ..default()
++                }),
+         )
+diff --git a/berrycode/src/app/preview_3d.rs b/berrycode/src/app/preview_3d.rs
+--- a/berrycode/src/app/preview_3d.rs
++++ b/berrycode/src/app/preview_3d.rs
+@@ -192,13 +192,7 @@ pub fn update_preview_3d(
+             .to_string();
+-
+-        // Bevy uses CARGO_MANIFEST_DIR/assets/ during `cargo run`
+-        let bevy_assets_dir = option_env!("CARGO_MANIFEST_DIR")
+-            .map(|d| std::path::PathBuf::from(d).join("assets"))
+-            .unwrap_or_else(|| {
+-                std::env::current_exe()
+-                    .ok()
+-                    .and_then(|p| p.parent().map(|p| p.join("assets")))
+-                    .unwrap_or_else(|| std::path::PathBuf::from("assets"))
+-            });
+-
++
++        let bevy_assets_dir = std::env::var_os("BERRYCODE_ASSET_DIR")
++            .map(std::path::PathBuf::from)
++            .unwrap_or_else(|| std::path::PathBuf::from("assets"));
++
+         let preview_dir = bevy_assets_dir.join("_preview");
+@@ -206,10 +200,8 @@ pub fn update_preview_3d(
+         let dest = preview_dir.join(&file_name);
+-
+-        // Copy file if needed
+-        let src_size = std::fs::metadata(&path).map(|m| m.len()).unwrap_or(0);
+-        let dst_size = std::fs::metadata(&dest).map(|m| m.len()).unwrap_or(0);
+-        if src_size != dst_size {
+-            let _ = std::fs::copy(&path, &dest);
+-        }
+-
++
++        if let Err(error) = std::fs::copy(&path, &dest) {
++            tracing::warn!("3D Preview: failed to stage '{}': {}", path, error);
++            return;
++        }
++
+         let asset_path = format!("_preview/{}", file_name);
+diff --git a/berrycode/src/app/scene_editor/bevy_sync.rs b/berrycode/src/app/scene_editor/bevy_sync.rs
+--- a/berrycode/src/app/scene_editor/bevy_sync.rs
++++ b/berrycode/src/app/scene_editor/bevy_sync.rs
+@@ -687,12 +687,7 @@ fn stage_asset_for_loading(abs_path: &str) -> Option<String> {
+     let file_name = file_path.file_name()?.to_string_lossy().to_string();
+-
+-    let bevy_assets_dir = option_env!("CARGO_MANIFEST_DIR")
+-        .map(|d| std::path::PathBuf::from(d).join("assets"))
+-        .unwrap_or_else(|| {
+-            std::env::current_exe()
+-                .ok()
+-                .and_then(|p| p.parent().map(|p| p.join("assets")))
+-                .unwrap_or_else(|| std::path::PathBuf::from("assets"))
+-        });
+-
++
++    let bevy_assets_dir = std::env::var_os("BERRYCODE_ASSET_DIR")
++        .map(std::path::PathBuf::from)
++        .unwrap_or_else(|| std::path::PathBuf::from("assets"));
++
+     let preview_dir = bevy_assets_dir.join("_preview");
+@@ -703,9 +698,6 @@ fn stage_asset_for_loading(abs_path: &str) -> Option<String> {
+     if src_size == 0 {
+         return None;
+     }
+-    let dst_size = std::fs::metadata(&dest).map(|m| m.len()).unwrap_or(0);
+-    if src_size != dst_size {
+-        std::fs::copy(abs_path, &dest).ok()?;
+-    }
+-
++    std::fs::copy(abs_path, &dest).ok()?;
++
+     Some(format!("_preview/{}", file_name))
