@@ -197,6 +197,5 @@ type(scope): description
 - Never commit secrets or keys to the repository
 - Use sops-nix for secrets management
 - Follow security best practices in configurations
-- Use the Security Auditor agent for security-related changes
 
 Thank you for contributing to khanelinix!

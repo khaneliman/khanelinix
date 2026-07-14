@@ -1,36 +1,41 @@
-Read `CONTRIBUTING.md` before making any changes. It is the source of truth for
-code style, module organization and taxonomy, commit conventions, validation,
-and security practices — for humans and agents alike.
+# Repository Instructions
 
-Everything below and in `.claude/rules/` exists only to add model-specific
-nudges that `CONTRIBUTING.md` does not cover. Never treat these files as a
-replacement for it.
+## Instruction Ownership
 
-## Progressive Context
+- `CONTRIBUTING.md` is contributor canon. Read it before changes; do not restate
+  its style, taxonomy, validation, commit, or security rules here.
+- `AGENTS.md` files are provider-neutral repository guidance. Before editing a
+  subtree, read every `AGENTS.md` from repository root through target path;
+  closest guidance wins.
+- `CLAUDE.md` files only import sibling `AGENTS.md` files. Keep repository rules
+  out of Claude-only files.
+- `modules/common/ai-tools/base.md` owns installed cross-repository behavior.
+  Skills own reusable workflows. Do not copy either into repository guidance.
 
-- **Nix code or module work**: use the `writing-nix` skill before edits.
-  Repo-specific nudges load automatically from `.claude/rules/nix-style.md` when
-  touching `*.nix` files; other `.claude/rules/` files load per directory.
-- **Secrets**: `sops-nix` only; never commit plaintext secrets. (Also in
-  CONTRIBUTING.md — repeated here so it survives context compaction.)
-- **Durable memory**: use `planning-with-files` for transient session state. Use
-  `okf-memory` for durable project or user knowledge that should survive across
-  sessions and providers. Provider-native memory may mirror OKF, but never
-  substitutes for it.
+## Scoped Guidance
 
-## Host Context
+- `modules/AGENTS.md`: reusable module conventions
+- `modules/common/AGENTS.md`: shared system module ownership
+- `modules/common/ai-tools/AGENTS.md`: generated AI-tool architecture
+- `modules/home/AGENTS.md`: Home Manager ownership and integration
+- `modules/nixos/AGENTS.md`: NixOS system ownership
+- `modules/darwin/AGENTS.md`: nix-darwin ownership
+- `systems/AGENTS.md`: host configuration
+- `homes/AGENTS.md`: user configuration
+- `lib/AGENTS.md`: custom library exports and tests
+- `packages/AGENTS.md`: local package discovery
+- `templates/AGENTS.md`: flake template discovery and validation
 
-- Primary `khanelinix` workstation uses a Kinesis Advantage360 Pro split
-  keyboard.
-- For keybind, shortcut, launcher, window-manager, shell, editor, multiplexer,
-  or workflow changes, optimize for split-keyboard ergonomics: prefer home-row
-  or thumb-cluster reachable binds, modal flows, and consistent cross-app
-  patterns. Treat keyboard firmware layers/macros as available tools when they
-  reduce app-specific chord complexity.
-- Avoid designs that assume laptop/ANSI key placement, function-row reach, or
-  dense same-hand multi-modifier chords.
+## Workstation Context
+
+- Primary workstation uses Kinesis Advantage360 Pro split keyboard. For keybind,
+  launcher, window-manager, shell, editor, multiplexer, or workflow changes,
+  prefer home-row or thumb-cluster reach, modal flows, and consistent cross-app
+  patterns. Firmware layers and macros are available.
+- Avoid laptop/ANSI placement assumptions, function-row reach, and dense
+  same-hand modifier chords.
 
 ## Agent Environment
 
-- In sandboxed agent environments, set `PRE_COMMIT_HOME=/tmp/pre-commit` before
-  `git commit` if pre-commit cannot write to `~/.local/cache/pre-commit`.
+- In sandboxed environments, use `PRE_COMMIT_HOME=/tmp/pre-commit` for commits
+  when default pre-commit cache is not writable.
