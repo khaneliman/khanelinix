@@ -122,6 +122,7 @@ in
             godot
           ]
           ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+            khanelinix.berrycode
             # NOTE: removed from nixpkgs
             # ue4
             unityhub
