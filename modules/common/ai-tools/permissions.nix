@@ -211,7 +211,22 @@
   ];
 
   readOnlyMcpTools = [
+    "mcp__bevy_brp__brp_all_type_guides"
+    "mcp__bevy_brp__brp_extras_get_diagnostics"
+    "mcp__bevy_brp__brp_get_trace_log_path"
+    "mcp__bevy_brp__brp_list_active_watches"
+    "mcp__bevy_brp__brp_list_bevy"
+    "mcp__bevy_brp__brp_list_logs"
+    "mcp__bevy_brp__brp_read_log"
+    "mcp__bevy_brp__brp_status"
     "mcp__bevy_brp__brp_type_guide"
+    "mcp__bevy_brp__registry_schema"
+    "mcp__bevy_brp__rpc_discover"
+    "mcp__bevy_brp__world_get_components"
+    "mcp__bevy_brp__world_get_resources"
+    "mcp__bevy_brp__world_list_components"
+    "mcp__bevy_brp__world_list_resources"
+    "mcp__bevy_brp__world_query"
     "mcp__code_review_graph__find_large_functions_tool"
     "mcp__code_review_graph__get_review_context_tool"
     "mcp__code_review_graph__list_repos_tool"
@@ -243,10 +258,7 @@
   ];
 
   codexMcpServerPolicies = {
-    bevy-brp = {
-      default_tools_approval_mode = "approve";
-      enabled_tools = [ "brp_type_guide" ];
-    };
+    bevy-brp.default_tools_approval_mode = "approve";
 
     code-review-graph = {
       default_tools_approval_mode = "approve";
