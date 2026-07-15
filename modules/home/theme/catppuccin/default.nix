@@ -200,7 +200,7 @@ in
           };
 
           programs = {
-            codex.settings.desktop = mkIf config.khanelinix.programs.graphical.apps.codex-desktop.enable {
+            codex.settings.desktop = {
               appearanceTheme = "dark";
               appearanceDarkCodeThemeId = "catppuccin";
               appearanceDarkChromeTheme = {
