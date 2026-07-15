@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bevy Toolkit"
+  short_description: "Bevy ECS, BRP/MCP, runtime control, and validation"
+  default_prompt: "Use $bevy-toolkit to design, inspect, control, debug, profile, or validate this Bevy application."

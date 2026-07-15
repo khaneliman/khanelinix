@@ -1,6 +1,6 @@
 ---
 name: rust-toolkit
-description: Rust architecture and engineering playbooks for Cargo crates and workspaces. Use when creating, restructuring, reviewing, debugging, optimizing, or testing Rust libraries, services, CLIs, Cargo.toml/workspaces, unsafe or concurrent code, ownership-driven state machines, module and crate boundaries, API and error design, typestate, validation, build/runtime profiling, or allocator decisions.
+description: Rust architecture and engineering playbooks for Cargo crates and workspaces. Use when creating, restructuring, reviewing, debugging, optimizing, or testing Rust libraries, services, CLIs, Cargo.toml/workspaces, unsafe or concurrent code, ownership-driven state machines, module and crate boundaries, API and error design, typestate, validation, build/runtime profiling, or allocator decisions. Use bevy-toolkit for engine-specific Bevy work.
 ---
 
 # Rust Toolkit
@@ -50,6 +50,8 @@ reference needed for the current decision.
 ## Cross-Skill Boundaries
 
 - Use `memory-profiler` for leak, OOM, fragmentation, or heap-profile work.
+- Use `bevy-toolkit` for Bevy ECS, plugins, lifecycle, MCP/BRP, runtime control,
+  rendering, and visual validation.
 - Use `security-toolkit` for explicit security audits or threat models.
 - Use `nix-toolkit` or `writing-nix` for Nix environment changes.
 - Use `git-toolkit` for commit structure and history operations.
