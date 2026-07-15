@@ -146,25 +146,23 @@ in
         };
 
         programs = {
-          codex.settings.desktop =
-            mkIf (config.khanelinix.programs.graphical.apps.codex-desktop.enable && cfg.variant != "day")
-              {
-                appearanceTheme = "dark";
-                appearanceDarkCodeThemeId = "tokyo-night";
-                appearanceDarkChromeTheme = {
-                  surface = colors.bg;
-                  ink = colors.fg_dark;
-                  accent = colors.blue0;
-                  contrast = 60;
-                  fonts = { };
-                  opaqueWindows = false;
-                  semanticColors = {
-                    diffAdded = colors.git.add;
-                    diffRemoved = colors.git.delete;
-                    skill = colors.purple;
-                  };
-                };
+          codex.settings.desktop = mkIf (cfg.variant != "day") {
+            appearanceTheme = "dark";
+            appearanceDarkCodeThemeId = "tokyo-night";
+            appearanceDarkChromeTheme = {
+              surface = colors.bg;
+              ink = colors.fg_dark;
+              accent = colors.blue0;
+              contrast = 60;
+              fonts = { };
+              opaqueWindows = false;
+              semanticColors = {
+                diffAdded = colors.git.add;
+                diffRemoved = colors.git.delete;
+                skill = colors.purple;
               };
+            };
+          };
 
           thunderbird.profiles.${config.khanelinix.user.name} =
             mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable
