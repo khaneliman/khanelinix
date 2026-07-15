@@ -130,6 +130,21 @@ in
   # TODO: remove after the ld64 hardening workaround reaches unar.
   unar = useLldOnDarwin prev.unar;
 
+  # Vesktop 1.6.5 pins EOL Electron 40, while upstream already supports Electron 41.
+  # TODO: remove after nixpkgs updates Vesktop's Electron dependency.
+  vesktop =
+    let
+      electron = final.electron_41;
+    in
+    (prev.vesktop.override { electron_40 = electron; }).overrideAttrs {
+      # Skip the stale source-manifest major-version check and build against the
+      # explicitly supplied Electron distribution.
+      preBuild = ''
+        cp -r ${electron.dist} electron-dist
+        chmod -R u+w electron-dist
+      '';
+    };
+
   #          ╭──────────────────────────────────────────────────────────╮
   #          │                 Python package overrides                 │
   #          ╰──────────────────────────────────────────────────────────╯
@@ -169,13 +184,4 @@ in
       })
     ];
   });
-
-  #          ╭──────────────────────────────────────────────────────────╮
-  #          │   Override linuxKernel.packages.linux_zen specifically   │
-  #          ╰──────────────────────────────────────────────────────────╯
-  # linux-zen 7.0.12 in the channel installs $out/vmlinuz instead of
-  # $out/bzImage, so the bootloader sanity check fails. master's 7.1.2 build
-  # restores $out/bzImage; pull it until the fix reaches the unstable channel.
-  # TODO: remove after hitting channel
-  inherit (master) linuxPackages_zen;
 }
