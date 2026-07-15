@@ -133,7 +133,7 @@ in
           # Codex bundles the nord syntax theme upstream.
           codex.settings = {
             tui.theme = "nord";
-            desktop = mkIf config.khanelinix.programs.graphical.apps.codex-desktop.enable {
+            desktop = {
               appearanceTheme = "dark";
               appearanceDarkCodeThemeId = "nord";
               appearanceDarkChromeTheme = {
