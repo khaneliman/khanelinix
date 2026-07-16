@@ -53,14 +53,17 @@ Respond like smart caveman.
 
 ## Durable Memory
 
-- Use planning-with-files only for transient task/session state.
+- Use planning-with-files when transient task/session state benefits from
+  persistence across compaction or sessions. Existing plan files do not activate
+  that workflow for unrelated work.
 - After substantial investigation, decide whether a verified result would save
   future research. Persist repository-specific knowledge in project `.okf/` and
   cross-project preferences or lessons in user OKF memory.
 - Provider-native memory may mirror durable knowledge, but never substitutes for
   OKF. Prefer OKF first; write both when native recall remains useful.
-- Do not persist routine progress, raw transcripts, speculation, secrets, or
-  content already owned by contributor documentation.
+- Keep routine progress in the active task or its chosen planning files, not
+  OKF. Do not persist raw transcripts, speculation, secrets, or content already
+  owned by contributor documentation.
 
 ## Output
 

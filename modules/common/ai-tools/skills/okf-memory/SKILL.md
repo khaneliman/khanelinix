@@ -5,8 +5,9 @@ description: Durable cross-provider user and project memory. Must use when asked
 
 # OKF Memory
 
-Keep durable knowledge provider-neutral. Use planning-with-files for transient
-session/task state; use OKF only when knowledge should survive future sessions.
+Keep durable knowledge provider-neutral. Use planning-with-files when transient
+session/task state benefits from persistence; use OKF only when knowledge should
+survive future sessions.
 
 ## Scope
 

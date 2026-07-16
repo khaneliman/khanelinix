@@ -17,15 +17,12 @@ class OkfMemoryHookTests(unittest.TestCase):
         provider: str,
         event: str,
         payload: dict[str, object],
-        *,
-        threshold: int = 2,
     ) -> dict[str, object] | str:
         environment = os.environ.copy()
         environment.update(
             HOME=str(root / "home"),
             XDG_DATA_HOME=str(root / "data"),
             XDG_RUNTIME_DIR=str(root / "run"),
-            OKF_MEMORY_TOOL_THRESHOLD=str(threshold),
         )
         (root / "run").mkdir(exist_ok=True)
         result = subprocess.run(
@@ -98,6 +95,9 @@ class OkfMemoryHookTests(unittest.TestCase):
             root = Path(temporary)
             bundle = root / ".okf"
             bundle.mkdir()
+            (bundle / "MEMORY.local.md").write_text(
+                "---\ntype: memory\n---\n\nProject summary.\n", encoding="utf-8"
+            )
             (bundle / "index.md").write_text("# Project index\n", encoding="utf-8")
             output = self.run_hook(
                 root,
@@ -112,10 +112,12 @@ class OkfMemoryHookTests(unittest.TestCase):
             context = output["hookSpecificOutput"]["additionalContext"]
             self.assertIn("Durable-memory routing contract", context)
             self.assertIn("BEGIN-USER-OKF-MEMORY", context)
-            self.assertIn("# Project index", context)
+            self.assertIn("Project summary", context)
+            self.assertNotIn("# Project index", context)
+            self.assertIn(f"Index (read on demand): {bundle / 'index.md'}", context)
             self.assertTrue((root / "data" / "okf" / "index.md").exists())
 
-    def test_every_user_turn_gets_short_nudge(self) -> None:
+    def test_routine_user_turn_emits_no_context(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             payload = {"session_id": "turn", "cwd": str(root)}
@@ -125,9 +127,7 @@ class OkfMemoryHookTests(unittest.TestCase):
                 "user-prompt",
                 payload | {"prompt": "Investigate this"},
             )
-            context = output["hookSpecificOutput"]["additionalContext"]
-            self.assertIn("New task boundary", context)
-            self.assertNotIn("Explicit durable-memory intent", context)
+            self.assertEqual(output, {})
 
     def test_explicit_memory_intent_blocks_stop_once(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -148,7 +148,7 @@ class OkfMemoryHookTests(unittest.TestCase):
             )
             self.assertEqual(self.run_hook(root, "codex", "stop", payload), {})
 
-    def test_substantial_claude_work_is_counted_from_transcript(self) -> None:
+    def test_substantial_claude_work_does_not_force_checkpoint(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             transcript = root / "claude.jsonl"
@@ -168,7 +168,7 @@ class OkfMemoryHookTests(unittest.TestCase):
                 self.claude_result("call-2"),
             )
             stop = self.run_hook(root, "claude", "stop", payload)
-            self.assertEqual(stop["decision"], "block")
+            self.assertEqual(stop, {})
 
     def test_small_turn_does_not_checkpoint(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -374,10 +374,7 @@ class OkfMemoryHookTests(unittest.TestCase):
                     "transcript_path": str(claude),
                 },
             )
-            self.assertIn(
-                "New task boundary",
-                claude_output["hookSpecificOutput"]["additionalContext"],
-            )
+            self.assertEqual(claude_output, {})
 
             codex = root / "codex.jsonl"
             self.append(
@@ -406,10 +403,7 @@ class OkfMemoryHookTests(unittest.TestCase):
                     "transcript_path": str(codex),
                 },
             )
-            self.assertIn(
-                "New task boundary",
-                codex_output["hookSpecificOutput"]["additionalContext"],
-            )
+            self.assertEqual(codex_output, {})
 
     def test_large_turn_and_rotated_transcript_are_scanned(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -425,7 +419,7 @@ class OkfMemoryHookTests(unittest.TestCase):
                 root,
                 "claude",
                 "user-prompt",
-                payload | {"prompt": "Investigate"},
+                payload | {"prompt": "Remember this decision"},
             )
             replacement = root / "replacement.jsonl"
             replacement.write_text(
@@ -455,7 +449,7 @@ class OkfMemoryHookTests(unittest.TestCase):
                 root,
                 "claude",
                 "user-prompt",
-                payload | {"prompt": "Investigate"},
+                payload | {"prompt": "Remember this decision"},
             )
             self.append(
                 transcript,
@@ -475,7 +469,7 @@ class OkfMemoryHookTests(unittest.TestCase):
             stop = self.run_hook(root, "claude", "stop", payload)
             self.assertEqual(stop["decision"], "block")
 
-    def test_antigravity_nudges_once_per_distinct_turn(self) -> None:
+    def test_antigravity_injects_startup_then_explicit_intent_only(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             transcript = root / "antigravity.jsonl"
@@ -609,7 +603,10 @@ class OkfMemoryHookTests(unittest.TestCase):
             root = Path(temporary)
             bundle = root / ".okf"
             bundle.mkdir()
-            (bundle / "index.md").write_text("x" * 20_000, encoding="utf-8")
+            (bundle / "MEMORY.local.md").write_text(
+                "---\ntype: memory\n---\n\n" + "x" * 20_000,
+                encoding="utf-8",
+            )
             output = self.run_hook(
                 root,
                 "claude",
@@ -617,7 +614,7 @@ class OkfMemoryHookTests(unittest.TestCase):
                 {"session_id": "budget", "cwd": str(root)},
             )
             context = output["hookSpecificOutput"]["additionalContext"]
-            self.assertLessEqual(len(context), 8_000)
+            self.assertLessEqual(len(context), 6_000)
             self.assertIn("Context truncated", context)
 
 

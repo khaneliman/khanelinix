@@ -40,20 +40,17 @@ DIRECT_MUTATIONS = {
     "write_file",
 }
 SHELL_TOOLS = {"bash", "exec", "exec_command", "run_command", "shell"}
-TOOL_THRESHOLD = int(os.environ.get("OKF_MEMORY_TOOL_THRESHOLD", "8"))
-MAX_CONTEXT_CHARS = 8_000
+MAX_CONTEXT_CHARS = 6_000
 
 ROUTING = """[okf-memory] Durable-memory routing contract:
-- Use planning-with-files only for transient task/session state.
+- Use planning-with-files when transient task/session state benefits from persistence across compaction or sessions; its presence does not activate it for unrelated work.
 - Save repository-specific facts, decisions, research, preferences, and recurring pitfalls in the project .okf bundle.
 - Save cross-project user preferences and reusable lessons in the user OKF bundle.
 - Provider-native memory may mirror durable knowledge, but never substitutes for OKF. Prefer OKF first; when native memory is useful, write both.
 - After sustained investigation, explicitly decide whether the result will save future research. If yes, invoke the okf-memory skill before the final response.
-- Do not save routine progress, raw transcripts, speculative notes, or facts already covered by contributor documentation."""
+- Keep routine progress in the active task or its chosen planning files, not OKF. Do not save raw transcripts, speculative notes, secrets, or facts already covered by contributor documentation."""
 
-CHECKPOINT = """[okf-memory] Durable-memory checkpoint: this task accumulated substantial tool work or explicit memory intent. Before finishing, decide whether any verified result would prevent future research. If yes, invoke okf-memory and write the project or user OKF bundle before any provider-native memory. If no durable knowledge exists, say so briefly; this checkpoint will not block again."""
-
-TURN_NUDGE = """[okf-memory] New task boundary: use planning-with-files for transient work. After sustained research, save reusable project/user knowledge through okf-memory before or alongside provider-native memory."""
+CHECKPOINT = """[okf-memory] Explicit durable-memory request remains unsatisfied. Invoke okf-memory and write the project or user OKF bundle before any provider-native memory. This checkpoint will not block again."""
 
 EXPLICIT_NUDGE = """[okf-memory] Explicit durable-memory intent detected. Use okf-memory for the project or user bundle before final response. Provider-native memory may mirror the result, but cannot be the only write."""
 
@@ -182,10 +179,10 @@ def render_context(paths: tuple[Path, Path]) -> str:
             sections.append(f"{label} OKF bundle: {bundle} (not initialized)")
             continue
         sections.append(f"===BEGIN-{label}-OKF-MEMORY===\nBundle: {bundle}")
-        for name in ("MEMORY.local.md", "index.md"):
-            content = read_memory(bundle / name)
-            if content:
-                sections.append(f"--- {name} ---\n{content}")
+        content = read_memory(bundle / "MEMORY.local.md")
+        if content:
+            sections.append(f"--- MEMORY.local.md ---\n{content}")
+        sections.append(f"Index (read on demand): {bundle / 'index.md'}")
         sections.append(f"===END-{label}-OKF-MEMORY===")
     rendered = "\n\n".join(sections)
     if len(rendered) <= MAX_CONTEXT_CHARS:
@@ -548,6 +545,10 @@ def emit_allow(provider: str) -> None:
     print('{"decision":"stop"}' if provider == "antigravity" else "{}")
 
 
+def emit_no_context(provider: str) -> None:
+    print('{"injectSteps":[]}' if provider == "antigravity" else "{}")
+
+
 def handle_start(provider: str, payload: dict[str, Any]) -> None:
     path = state_path(payload)
     memory_paths = bundles(payload)
@@ -577,7 +578,7 @@ def handle_start(provider: str, payload: dict[str, Any]) -> None:
             context = render_context(memory_paths)
         elif marker and marker != state.get("turn_marker"):
             reset_turn(state, prompt, marker, payload, memory_paths)
-            context = EXPLICIT_NUDGE if has_memory_intent(prompt) else TURN_NUDGE
+            context = EXPLICIT_NUDGE if has_memory_intent(prompt) else ""
     if context:
         emit_context(provider, "PreInvocation", context)
     else:
@@ -590,11 +591,14 @@ def handle_user_prompt(provider: str, payload: dict[str, Any]) -> None:
     memory_paths = bundles(payload)
     with locked_state(path) as state:
         reset_turn(state, prompt, marker, payload, memory_paths)
-    emit_context(
-        provider,
-        first_string(payload, "hook_event_name") or "UserPromptSubmit",
-        EXPLICIT_NUDGE if has_memory_intent(prompt) else TURN_NUDGE,
-    )
+    if has_memory_intent(prompt):
+        emit_context(
+            provider,
+            first_string(payload, "hook_event_name") or "UserPromptSubmit",
+            EXPLICIT_NUDGE,
+        )
+    else:
+        emit_no_context(provider)
 
 
 def handle_stop(provider: str, payload: dict[str, Any]) -> None:
@@ -608,21 +612,17 @@ def handle_stop(provider: str, payload: dict[str, Any]) -> None:
         if not state:
             prompt, marker = latest_user_turn(provider, payload)
             reset_turn(state, prompt, marker, payload, memory_paths)
-        records, current_transcript = records_since_start(payload, state)
-        tool_count, write_receipt = analyze_records(provider, records, memory_paths)
-        current_digest = bundle_digest(memory_paths)
-        persisted = write_receipt and current_digest != state.get("baseline")
-        needs_checkpoint = bool(
-            state.get("explicit_intent") or tool_count >= TOOL_THRESHOLD
-        )
-        should_block = bool(
-            needs_checkpoint and not persisted and not state.get("stop_reminded")
-        )
-        if should_block:
-            state["stop_reminded"] = True
-        state["baseline"] = current_digest
-        if current_transcript:
-            state["transcript"] = current_transcript
+        if state.get("explicit_intent"):
+            records, current_transcript = records_since_start(payload, state)
+            _, write_receipt = analyze_records(provider, records, memory_paths)
+            current_digest = bundle_digest(memory_paths)
+            persisted = write_receipt and current_digest != state.get("baseline")
+            should_block = bool(not persisted and not state.get("stop_reminded"))
+            if should_block:
+                state["stop_reminded"] = True
+            state["baseline"] = current_digest
+            if current_transcript:
+                state["transcript"] = current_transcript
     if not should_block:
         emit_allow(provider)
     elif provider == "antigravity":
