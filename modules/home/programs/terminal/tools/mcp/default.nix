@@ -28,10 +28,14 @@ in
       enable = true;
       servers = {
         fetch = {
+          # Native browser and web tools cover routine retrieval.
+          enabled = false;
           command = getExe mcpPkgs.mcp-server-fetch;
         };
 
         filesystem = {
+          # Native file and shell tools cover repository-local reads.
+          enabled = false;
           command = getExe mcpPkgs.mcp-server-filesystem;
           args = lib.mkDefault [
             config.home.homeDirectory
@@ -47,6 +51,8 @@ in
         };
 
         git = {
+          # Native shell tools cover Git inspection and mutation.
+          enabled = false;
           command = getExe mcpPkgs.mcp-server-git;
         };
 
