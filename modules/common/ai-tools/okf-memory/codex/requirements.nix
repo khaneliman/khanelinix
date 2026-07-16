@@ -6,7 +6,6 @@
         {
           type = "command";
           command = "python3 /etc/codex/hooks/okf_memory_hook.py codex session-start";
-          statusMessage = "Loading durable memory";
         }
       ];
     }

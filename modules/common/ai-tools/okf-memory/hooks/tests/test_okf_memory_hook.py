@@ -8,6 +8,7 @@ import unittest
 from pathlib import Path
 
 HOOK = Path(__file__).parents[1] / "okf_memory_hook.py"
+EXPECTED_START_NUDGE = """[okf-memory] Prior durable memory may apply. Read only relevant project or user OKF scope when this task depends on prior work, saved decisions, recurring issues, or preferences."""
 
 
 class OkfMemoryHookTests(unittest.TestCase):
@@ -17,13 +18,19 @@ class OkfMemoryHookTests(unittest.TestCase):
         provider: str,
         event: str,
         payload: dict[str, object],
+        *,
+        threshold: int = 2,
+        include_subagents: bool = False,
     ) -> dict[str, object] | str:
         environment = os.environ.copy()
         environment.update(
             HOME=str(root / "home"),
             XDG_DATA_HOME=str(root / "data"),
             XDG_RUNTIME_DIR=str(root / "run"),
+            OKF_MEMORY_TOOL_THRESHOLD=str(threshold),
         )
+        if include_subagents:
+            environment["OKF_MEMORY_INCLUDE_SUBAGENTS"] = "1"
         (root / "run").mkdir(exist_ok=True)
         result = subprocess.run(
             ["python3", str(HOOK), provider, event],
@@ -90,7 +97,7 @@ class OkfMemoryHookTests(unittest.TestCase):
             },
         }
 
-    def test_session_start_injects_user_and_project_memory(self) -> None:
+    def test_claude_session_start_emits_no_memory_context(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             bundle = root / ".okf"
@@ -109,13 +116,94 @@ class OkfMemoryHookTests(unittest.TestCase):
                     "hook_event_name": "SessionStart",
                 },
             )
-            context = output["hookSpecificOutput"]["additionalContext"]
-            self.assertIn("Durable-memory routing contract", context)
-            self.assertIn("BEGIN-USER-OKF-MEMORY", context)
-            self.assertIn("Project summary", context)
-            self.assertNotIn("# Project index", context)
-            self.assertIn(f"Index (read on demand): {bundle / 'index.md'}", context)
+            self.assertEqual(output, {})
             self.assertTrue((root / "data" / "okf" / "index.md").exists())
+
+    def test_codex_session_start_emits_small_memory_nudge(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            output = self.run_hook(
+                root,
+                "codex",
+                "session-start",
+                {
+                    "session_id": "main",
+                    "cwd": str(root),
+                    "hook_event_name": "SessionStart",
+                },
+            )
+            hook_output = output["hookSpecificOutput"]
+            self.assertEqual(hook_output["hookEventName"], "SessionStart")
+            self.assertEqual(hook_output["additionalContext"], EXPECTED_START_NUDGE)
+
+    def test_codex_subagent_payload_skips_all_hooks(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            payload = {
+                "session_id": "worker",
+                "cwd": str(root),
+                "source": {
+                    "subagent": {
+                        "thread_spawn": {
+                            "parent_thread_id": "parent",
+                            "agent_role": "fact-finder",
+                        }
+                    }
+                },
+                "prompt": "Remember this decision",
+            }
+            for event in ("session-start", "user-prompt", "stop"):
+                self.assertEqual(self.run_hook(root, "codex", event, payload), {})
+            self.assertFalse((root / "data" / "okf").exists())
+
+    def test_codex_subagent_transcript_skips_hooks(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            transcript = root / "codex.jsonl"
+            self.append(
+                transcript,
+                {
+                    "type": "session_meta",
+                    "payload": {
+                        "source": {
+                            "subagent": {
+                                "thread_spawn": {
+                                    "parent_thread_id": "parent",
+                                    "agent_role": "test-runner",
+                                }
+                            }
+                        }
+                    },
+                },
+            )
+            payload = {
+                "session_id": "worker-transcript",
+                "cwd": str(root),
+                "transcript_path": str(transcript),
+                "prompt": "Remember this decision",
+            }
+            self.assertEqual(self.run_hook(root, "codex", "user-prompt", payload), {})
+            self.assertEqual(self.run_hook(root, "codex", "stop", payload), {})
+            self.assertFalse((root / "data" / "okf").exists())
+
+    def test_codex_subagent_override_restores_hook(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            output = self.run_hook(
+                root,
+                "codex",
+                "session-start",
+                {
+                    "session_id": "worker-override",
+                    "cwd": str(root),
+                    "source": {"subagent": {"thread_spawn": {}}},
+                },
+                include_subagents=True,
+            )
+            self.assertEqual(
+                output["hookSpecificOutput"]["additionalContext"],
+                EXPECTED_START_NUDGE,
+            )
 
     def test_routine_user_turn_emits_no_context(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -139,16 +227,13 @@ class OkfMemoryHookTests(unittest.TestCase):
                 "user-prompt",
                 payload | {"prompt": "Please remember this for the future"},
             )
-            self.assertIn(
-                "Explicit durable-memory intent",
-                output["hookSpecificOutput"]["additionalContext"],
-            )
+            self.assertEqual(output, {})
             self.assertEqual(
                 self.run_hook(root, "codex", "stop", payload)["decision"], "block"
             )
             self.assertEqual(self.run_hook(root, "codex", "stop", payload), {})
 
-    def test_substantial_claude_work_does_not_force_checkpoint(self) -> None:
+    def test_substantial_claude_work_gets_end_checkpoint(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             transcript = root / "claude.jsonl"
@@ -168,7 +253,7 @@ class OkfMemoryHookTests(unittest.TestCase):
                 self.claude_result("call-2"),
             )
             stop = self.run_hook(root, "claude", "stop", payload)
-            self.assertEqual(stop, {})
+            self.assertEqual(stop["decision"], "block")
 
     def test_small_turn_does_not_checkpoint(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -462,14 +547,11 @@ class OkfMemoryHookTests(unittest.TestCase):
                 "session-start",
                 payload | {"source": "compact"},
             )
-            self.assertIn(
-                "Durable-memory routing contract",
-                context["hookSpecificOutput"]["additionalContext"],
-            )
+            self.assertEqual(context, {})
             stop = self.run_hook(root, "claude", "stop", payload)
             self.assertEqual(stop["decision"], "block")
 
-    def test_antigravity_injects_startup_then_explicit_intent_only(self) -> None:
+    def test_antigravity_pre_invocation_stays_silent(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             transcript = root / "antigravity.jsonl"
@@ -489,10 +571,7 @@ class OkfMemoryHookTests(unittest.TestCase):
                 "transcriptPath": str(transcript),
             }
             first = self.run_hook(root, "antigravity", "pre-invocation", payload)
-            self.assertIn(
-                "Durable-memory routing contract",
-                first["injectSteps"][0]["ephemeralMessage"],
-            )
+            self.assertEqual(first, {"injectSteps": []})
             self.assertEqual(
                 self.run_hook(root, "antigravity", "pre-invocation", payload),
                 {"injectSteps": []},
@@ -508,9 +587,10 @@ class OkfMemoryHookTests(unittest.TestCase):
                 },
             )
             second = self.run_hook(root, "antigravity", "pre-invocation", payload)
-            self.assertIn(
-                "Explicit durable-memory intent",
-                second["injectSteps"][0]["ephemeralMessage"],
+            self.assertEqual(second, {"injectSteps": []})
+            self.assertEqual(
+                self.run_hook(root, "antigravity", "stop", payload)["decision"],
+                "continue",
             )
 
     def test_antigravity_write_receipt_satisfies_checkpoint(self) -> None:
@@ -598,7 +678,7 @@ class OkfMemoryHookTests(unittest.TestCase):
             stop = self.run_hook(root, "claude", "stop", payload)
             self.assertEqual(stop["decision"], "block")
 
-    def test_context_budget_is_total(self) -> None:
+    def test_large_memory_file_is_not_injected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             bundle = root / ".okf"
@@ -613,9 +693,7 @@ class OkfMemoryHookTests(unittest.TestCase):
                 "session-start",
                 {"session_id": "budget", "cwd": str(root)},
             )
-            context = output["hookSpecificOutput"]["additionalContext"]
-            self.assertLessEqual(len(context), 6_000)
-            self.assertIn("Context truncated", context)
+            self.assertEqual(output, {})
 
 
 if __name__ == "__main__":

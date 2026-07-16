@@ -2,14 +2,18 @@
 
 ## Provider Behavior
 
-Claude Code, Codex, and Antigravity inject bounded user and project
-`MEMORY.local.md` context at session start. Bundle indexes and concept files
-remain on-demand. Routine user turns inject no memory context; explicit durable
-memory requests receive a targeted nudge and one-shot Stop audit.
+Main Codex sessions receive one small startup nudge to read only relevant user
+or project OKF scope. The hook never injects memory bodies. Codex subagents skip
+all OKF lifecycle processing before bundle reads or state writes; set
+`OKF_MEMORY_INCLUDE_SUBAGENTS=1` only for diagnostics.
 
-Memory written during a running session is already visible to that agent.
-External edits become automatic context at the next session start; read the
-bundle explicitly when an immediate refresh matters.
+Claude Code and Antigravity inject no startup context. Routine user turns stay
+silent for every provider. Prior memory remains on-demand through scoped bundle
+reads. A one-shot Stop audit runs after explicit durable-memory intent or
+substantial tool work.
+
+Memory written during a running session is already visible to that agent. Read
+the relevant bundle explicitly when an immediate refresh matters.
 
 Planning-with-files optionally owns transient task/session state when persistent
 continuity is useful. OKF owns durable user or project knowledge.

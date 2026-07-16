@@ -13,13 +13,6 @@ let
   };
 in
 {
-  SessionStart = [
-    {
-      matcher = "*";
-      hooks = [ (hook "session-start") ];
-    }
-  ];
-
   UserPromptSubmit = [
     {
       matcher = "*";

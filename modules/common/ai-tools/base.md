@@ -56,6 +56,8 @@ Respond like smart caveman.
 - Use planning-with-files when transient task/session state benefits from
   persistence across compaction or sessions. Existing plan files do not activate
   that workflow for unrelated work.
+- Read only the relevant project or user OKF scope when a request depends on
+  prior work, saved decisions, recurring issues, or user preferences.
 - After substantial investigation, decide whether a verified result would save
   future research. Persist repository-specific knowledge in project `.okf/` and
   cross-project preferences or lessons in user OKF memory.
