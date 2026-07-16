@@ -122,6 +122,12 @@ let
 
   harnessSkillPolicy = {
     codex = {
+      excludeLocal = [
+        "docx"
+        "mcp-builder"
+        "pdf"
+        "security-toolkit"
+      ];
       preferSystem = [
         "imagegen"
         "openai-docs"
@@ -134,6 +140,12 @@ let
     };
 
     claudeCode = {
+      excludeLocal = [
+        "docx"
+        "mcp-builder"
+        "pdf"
+        "security-toolkit"
+      ];
       preferSystem = [
         "skill-creator"
       ];
