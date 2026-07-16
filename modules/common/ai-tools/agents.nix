@@ -73,31 +73,6 @@ let
       };
       content = builtins.readFile (agentsBasePath + "/general/debugger.md");
     };
-    refactorer = {
-      name = "refactorer";
-      description = "Code refactoring specialist for improving code structure, readability, and maintainability without changing behavior. Use for focused refactoring tasks in isolated context.";
-      tools = [
-        "Read"
-        "Edit"
-        "Write"
-        "Grep"
-        "Glob"
-        "Bash"
-      ];
-      model = {
-        claude = "sonnet";
-        copilot = "claude-sonnet-4.6";
-        opencode = "openai/gpt-5.6-terra";
-        codex = "gpt-5.6-terra";
-      };
-      model_reasoning_effort = {
-        codex = "medium";
-      };
-      permission = {
-        edit = "ask";
-      };
-      content = builtins.readFile (agentsBasePath + "/general/refactorer.md");
-    };
     test-runner = {
       name = "test-runner";
       description = "Test execution specialist. Use for broad or noisy tests, checks, lint, build validation, failure analysis, and post-change verification. Keeps verbose output out of main conversation.";

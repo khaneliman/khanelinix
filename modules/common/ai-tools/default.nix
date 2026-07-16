@@ -254,7 +254,7 @@ in
 
   codex = {
     disabledSystemSkills = disabledSystemSkillsForHarness "codex";
-    agents = removeAttrs aiAgents.toCodexAgents [ "refactorer" ];
+    agents = aiAgents.toCodexAgents;
     commandSkillFiles = aiCommands.toCodexSkillFiles;
     contextOverride = codexContextOverride;
     managedRequirements = codexManagedRequirementsWithOkf;

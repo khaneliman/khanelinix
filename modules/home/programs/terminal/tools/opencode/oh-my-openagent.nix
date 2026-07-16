@@ -9,6 +9,7 @@ let
   opencodeSkills = config.programs.opencode.skills or null;
 
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
+  deliberateModel = "openai/gpt-5.6-terra";
 
   json = pkgs.formats.json { };
 in
@@ -30,7 +31,6 @@ in
     xdg.configFile."opencode/oh-my-openagent.json".source =
       let
         debuggerModel = aiTools.agents.debugger.model.opencode;
-        refactorerModel = aiTools.agents.refactorer.model.opencode;
         testRunnerModel = aiTools.agents.test-runner.model.opencode;
         sparkModel = "openai/gpt-5.3-codex-spark";
         miniModel = "openai/gpt-5.6-luna";
@@ -64,7 +64,7 @@ in
 
           agents = {
             sisyphus = {
-              model = refactorerModel;
+              model = deliberateModel;
               fallback_models = deliberateFallbackModels;
               prompt_append = "Follow the repository engineering rules already provided through the shared OpenCode context. Prefer the shared commands and skills before inventing new workflows.";
             };
@@ -96,7 +96,7 @@ in
               description = "Debugging, diagnosis, and deliberate investigation.";
             };
             unspecified-high = {
-              model = refactorerModel;
+              model = deliberateModel;
               fallback_models = deliberateFallbackModels;
               description = "General engineering work that benefits from stronger reasoning.";
             };

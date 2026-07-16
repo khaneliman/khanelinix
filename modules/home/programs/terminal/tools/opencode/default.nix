@@ -17,6 +17,7 @@ let
     (config.services.ollama.enable or false) || (osConfig.services.ollama.enable or false);
 
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
+  deliberateModel = "openai/gpt-5.6-terra";
 in
 {
   imports = [
@@ -32,36 +33,31 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.shellAliases =
-      let
-        refactorerModel = aiTools.agents.refactorer.model.opencode;
-      in
-      {
-        opencode-coding = "opencode --model openai/gpt-5.6-luna";
-        opencode-deep = "opencode --model ${refactorerModel}";
-        opencode-nano = "opencode --model openai/gpt-5.6-luna";
-        opencode-research = "opencode --agent refactorer";
-        opencode-spark = "opencode --model openai/gpt-5.3-codex-spark";
-      }
-      // lib.optionalAttrs config.services.exo.enable {
-        opencode-exo = ''f(){ model="$1"; shift; opencode --model "exo/$model" "$@"; }; f'';
-        opencode-exo-coder = "opencode --model exo/mlx-community/Qwen3-Coder-Next-4bit";
-        opencode-exo-gpt-oss = "opencode --model exo/mlx-community/gpt-oss-20b-MXFP4-Q8";
-        opencode-exo-qwen = "opencode --model exo/mlx-community/Qwen3.6-35B-A3B-5bit";
-      }
-      // lib.optionalAttrs ollamaEnabled {
-        opencode-ollama = ''f(){ model="$1"; shift; opencode --model "ollama/$model" "$@"; }; f'';
-        opencode-ollama-agent = "opencode --model ollama/glm-4.7-flash";
-        opencode-ollama-coder = "opencode --model ollama/qwen3-coder:30b";
-        opencode-ollama-gpt-oss = "opencode --model ollama/gpt-oss:20b";
-        opencode-ollama-qwen = "opencode --model ollama/qwen3.6:27b";
-      };
+    home.shellAliases = {
+      opencode-coding = "opencode --model openai/gpt-5.6-luna";
+      opencode-deep = "opencode --model ${deliberateModel}";
+      opencode-nano = "opencode --model openai/gpt-5.6-luna";
+      opencode-research = "opencode --agent build --model ${deliberateModel}";
+      opencode-spark = "opencode --model openai/gpt-5.3-codex-spark";
+    }
+    // lib.optionalAttrs config.services.exo.enable {
+      opencode-exo = ''f(){ model="$1"; shift; opencode --model "exo/$model" "$@"; }; f'';
+      opencode-exo-coder = "opencode --model exo/mlx-community/Qwen3-Coder-Next-4bit";
+      opencode-exo-gpt-oss = "opencode --model exo/mlx-community/gpt-oss-20b-MXFP4-Q8";
+      opencode-exo-qwen = "opencode --model exo/mlx-community/Qwen3.6-35B-A3B-5bit";
+    }
+    // lib.optionalAttrs ollamaEnabled {
+      opencode-ollama = ''f(){ model="$1"; shift; opencode --model "ollama/$model" "$@"; }; f'';
+      opencode-ollama-agent = "opencode --model ollama/glm-4.7-flash";
+      opencode-ollama-coder = "opencode --model ollama/qwen3-coder:30b";
+      opencode-ollama-gpt-oss = "opencode --model ollama/gpt-oss:20b";
+      opencode-ollama-qwen = "opencode --model ollama/qwen3.6:27b";
+    };
 
     programs.opencode =
       let
         aiToolAgents = import (lib.getFile "modules/common/ai-tools/agents.nix") { inherit lib; };
         aiToolCommands = import (lib.getFile "modules/common/ai-tools/commands.nix") { inherit lib; };
-        refactorerModel = aiTools.agents.refactorer.model.opencode;
       in
       {
         enable = true;
@@ -73,11 +69,11 @@ in
           mkIf mcpModuleEnabled true;
 
         settings = {
-          model = refactorerModel;
+          model = deliberateModel;
           share = "manual";
           autoupdate = false;
           small_model = "openai/gpt-5.6-luna";
-          default_agent = "refactorer";
+          default_agent = "build";
           compaction = {
             auto = true;
             prune = true;
@@ -87,18 +83,18 @@ in
             quick = {
               template = "Make fast, minimal edits and keep responses concise.";
               model = "openai/gpt-5.3-codex-spark";
-              agent = "refactorer";
+              agent = "build";
               subtask = true;
             };
             research = {
               template = "Do deliberate analysis before edits, include caveats and verification steps.";
-              model = refactorerModel;
-              agent = "refactorer";
+              model = deliberateModel;
+              agent = "build";
             };
             nano = {
               template = "Keep each action minimal and targeted for small-surface modifications.";
               model = "openai/gpt-5.6-luna";
-              agent = "refactorer";
+              agent = "build";
               subtask = true;
             };
           };

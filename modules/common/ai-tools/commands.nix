@@ -4,6 +4,10 @@ let
   aiAgents = import ./agents.nix { inherit lib; };
 
   agentModelDefaults = {
+    build = {
+      claude = "sonnet";
+      opencode = "openai/gpt-5.6-terra";
+    };
     explore = {
       claude = "haiku";
       copilot = "claude-haiku-4.5";
@@ -14,7 +18,7 @@ let
   agentModels = agentModelDefaults // lib.mapAttrs (_name: agent: agent.model) aiAgents.agents;
 
   commandAgents = {
-    changelog = "refactorer";
+    changelog = "build";
     check-todos = "test-runner";
     dependency-audit = "test-runner";
   };
