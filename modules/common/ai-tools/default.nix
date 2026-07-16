@@ -36,16 +36,6 @@ let
   planningWithFiles = {
     commands = planningWithFilesCommands;
     canonicalSkill = skillsDir + "/planning-with-files";
-
-    antigravityCli.skill = planningWithFilesDir + "/gemini/skills/planning-with-files";
-
-    codex = {
-      hooks = planningWithFilesDir + "/codex";
-      skill = planningWithFilesDir + "/codex/skills/planning-with-files";
-    };
-
-    opencode.skill = planningWithFilesDir + "/opencode/skills/planning-with-files";
-
     piCodingAgent.package = planningWithFilesDir + "/pi/skills/planning-with-files";
   };
 
@@ -95,35 +85,16 @@ let
         cp ${hooksJson} $out/hooks.json
       '';
 
-  # Merge okf-memory's SessionStart hook into planning-with-files' managed
-  # requirements. Event values are lists, so entries append rather than
-  # replace. `managed_dir` isn't an event key and passes through untouched.
-  mergeHookEvents =
-    a: b:
-    let
-      isEventKey = name: name != "managed_dir";
-      eventNames = lib.unique (
-        (builtins.filter isEventKey (builtins.attrNames a)) ++ (builtins.attrNames b)
-      );
-    in
-    (lib.filterAttrs (name: _: !(isEventKey name)) a)
-    // lib.genAttrs eventNames (name: (a.${name} or [ ]) ++ (b.${name} or [ ]));
-
-  codexManagedRequirementsMerged = codexManagedRequirements // {
-    hooks = mergeHookEvents codexManagedRequirements.hooks okfMemory.codex.requirements;
+  codexManagedRequirementsWithOkf = codexManagedRequirements // {
+    hooks = codexManagedRequirements.hooks // okfMemory.codex.requirements;
   };
 
-  # Combine planning-with-files' and okf-memory's Codex hook scripts into one
-  # directory, since both are deployed to the same /etc/codex/hooks path.
-  # Falls back to planning-with-files' own directory when pkgs isn't passed
-  # (some callers of this module don't need Codex support and omit it).
-  codexHooksDirMerged =
+  codexHooksDir =
     if pkgs == null then
-      planningWithFiles.codex.hooks + "/hooks"
+      okfMemoryDir + "/hooks"
     else
-      pkgs.runCommand "codex-hooks-merged" { } ''
+      pkgs.runCommand "codex-hooks" { } ''
         mkdir -p $out
-        cp -R ${planningWithFiles.codex.hooks}/hooks/. $out/
         cp ${okfMemory.hook} $out/okf_memory_hook.py
       '';
 
@@ -286,12 +257,10 @@ in
     agents = removeAttrs aiAgents.toCodexAgents [ "refactorer" ];
     commandSkillFiles = aiCommands.toCodexSkillFiles;
     contextOverride = codexContextOverride;
-    managedRequirements = codexManagedRequirementsMerged;
-    hooksDir = codexHooksDirMerged;
+    managedRequirements = codexManagedRequirementsWithOkf;
+    hooksDir = codexHooksDir;
     skills = skillsForHarness "codex";
-    skillSources = skillsAttrsForHarness "codex" // {
-      planning-with-files = planningWithFiles.codex.skill;
-    };
+    skillSources = skillsAttrsForHarness "codex";
   };
 
   githubCopilotCli = {
@@ -307,9 +276,7 @@ in
     commands = aiCommands.toOpenCodeMarkdown;
     disabledPluginSkills = disabledPluginSkillsForHarness "opencode";
     skills = skillsForHarness "opencode";
-    skillSources = skillsAttrsForHarness "opencode" // {
-      planning-with-files = planningWithFiles.opencode.skill;
-    };
+    skillSources = skillsAttrsForHarness "opencode";
     inherit agents;
     renderAgents = aiAgents.toOpenCodeMarkdown;
   };

@@ -220,17 +220,15 @@ describe("Pi extension runtime handlers", () => {
 		expect(Array.from(pi.commands.keys()).sort()).toContain("plan-execute");
 	});
 
-	it("session_start initializes visible plan state for an attached plan directory", async () => {
+	it("session_start stays silent before explicit plan activation", async () => {
 		const cwd = makeWorkspace();
 		const pi = loadExtension();
 		const ctx = createContext(cwd);
 
 		await emit(pi, "session_start", { reason: "resume" }, ctx);
 
-		expect(ctx.ui.setStatus).toHaveBeenCalledWith(
-			"planning-with-files",
-			"1/2 phases complete — run /plan-execute to activate hooks",
-		);
+		expect(ctx.ui.setStatus).not.toHaveBeenCalled();
+		expect(ctx.ui.notify).not.toHaveBeenCalled();
 	});
 
 	it("before_agent_start stays passive before plan-execute approval", async () => {
@@ -241,10 +239,7 @@ describe("Pi extension runtime handlers", () => {
 		const result = await emit(pi, "before_agent_start", {}, ctx);
 
 		expect(result).toBeUndefined();
-		expect(ctx.ui.setStatus).toHaveBeenCalledWith(
-			"planning-with-files",
-			"1/2 phases complete — run /plan-execute to activate hooks",
-		);
+		expect(ctx.ui.setStatus).not.toHaveBeenCalled();
 	});
 
 	it("before_agent_start injects canonical skill content when attestation matches", async () => {
@@ -340,23 +335,17 @@ describe("Pi extension runtime handlers", () => {
 		await emit(pi, "agent_end", {}, ctx);
 
 		expect(pi.sendUserMessage).not.toHaveBeenCalled();
-		expect(ctx.ui.notify).toHaveBeenCalledWith(
-			"[planning-with-files] Task incomplete (1/2). Run /plan-execute to activate hooks.",
-			"warning",
-		);
+		expect(ctx.ui.notify).not.toHaveBeenCalled();
 	});
 
-	it("agent_end flushes final complete-plan state without scheduling a follow-up", async () => {
+	it("agent_end ignores complete plans before plan-execute approval", async () => {
 		const cwd = makeWorkspace(completePlan());
 		const pi = loadExtension();
 		const ctx = createContext(cwd);
 
 		await emit(pi, "agent_end", {}, ctx);
 
-		expect(ctx.ui.notify).toHaveBeenCalledWith(
-			"[planning-with-files] ALL PHASES COMPLETE (2/2).",
-			"info",
-		);
+		expect(ctx.ui.notify).not.toHaveBeenCalled();
 		expect(pi.sendUserMessage).not.toHaveBeenCalled();
 	});
 

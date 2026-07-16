@@ -1,6 +1,6 @@
 ---
 name: planning-with-files
-description: "Persistent file-based planning for complex or long-running work. Use when asked to plan, organize, research, or execute work requiring multiple phases or roughly 5+ tool calls. Keeps task_plan.md, findings.md, and progress.md recoverable across sessions and compaction."
+description: "Optional persistent file-based planning for multi-phase or long-running work that benefits from recovery across sessions or compaction. Use when requested or when persistence materially improves continuity; do not activate merely due to tool count or existing plan files."
 user-invocable: true
 allowed-tools: "Read Write Edit Bash Glob Grep"
 hooks:
@@ -23,12 +23,13 @@ metadata:
 
 # Planning with Files
 
-Use persistent markdown files as working memory for complex or long-running
-tasks. Hook behavior is provider-specific; this skill body is the routing layer.
+Use persistent markdown files as working memory when a task intentionally opts
+into cross-session or compaction recovery. Hook behavior is provider-specific;
+this skill body is the routing layer.
 
 ## Restore First
 
-Before complex work, read existing planning state when present:
+When the current task has intentionally adopted planning state, read:
 
 - `task_plan.md`
 - `findings.md`
@@ -39,12 +40,13 @@ tool activity may not be reflected in the files.
 
 ## Start or Continue
 
-- New complex task: create `task_plan.md`, `findings.md`, and `progress.md`
-  from templates.
+- New persistent plan: create `task_plan.md`, `findings.md`, and `progress.md`
+  from templates after choosing this workflow.
 - Existing plan: re-read the files before major decisions.
 - After each phase: update phase status and append progress.
 - After research or external content: record facts in `findings.md`, not
   `task_plan.md`.
+- Existing plan files do not activate this workflow for unrelated tasks.
 
 ## References
 

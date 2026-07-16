@@ -55,8 +55,8 @@ Or:
 
 The bundled extension maps Claude-style behavior onto Pi events:
 
-- `session_start` - session catchup
-- passive plan status before approval
+- `session_start` - reset session-local activation state without emitting context
+- lifecycle callbacks remain silent before approval
 - `before_agent_start` - plan reminder/injection after `/plan-execute`
 - `tool_call` - pre-tool recitation equivalent after `/plan-execute`
 - `tool_result` - post-write reminder after `/plan-execute`
@@ -108,16 +108,16 @@ Or settings:
 - `/plan-goal <text|default|clear>`
 - `/plan-loop [interval] [prompt]` (`stop` to cancel)
 
-Draft and review `task_plan.md` first. The extension stays passive until you
-approve the active plan with `/plan-execute`; after that, plan injection,
-pre-tool reminders, post-write reminders, and auto-continue are enabled for the
-current session and plan.
+Draft and review `task_plan.md` first. The extension emits no planning context,
+status, warning, or continuation until you approve the active plan with
+`/plan-execute`; after that, plan injection, pre-tool reminders, post-write
+reminders, and auto-continue are enabled for the current session and plan.
 
 ---
 
 ## Session Recovery
 
-If needed, run catchup manually:
+Run catchup manually when resuming a persistent plan after a gap:
 
 ```bash
 python3 .pi/skills/planning-with-files/scripts/session-catchup.py .

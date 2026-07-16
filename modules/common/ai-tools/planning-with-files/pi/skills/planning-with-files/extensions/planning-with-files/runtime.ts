@@ -51,7 +51,6 @@ interface ExecResult {
 
 const EXT_DIR = dirname(fileURLToPath(import.meta.url));
 const SKILL_ROOT = resolve(EXT_DIR, "../..");
-const CATCHUP_SCRIPT = resolve(SKILL_ROOT, "scripts", "session-catchup.py");
 const ATTEST_SH = resolve(SKILL_ROOT, "scripts", "attest-plan.sh");
 const ATTEST_PS1 = resolve(SKILL_ROOT, "scripts", "attest-plan.ps1");
 
@@ -182,26 +181,6 @@ function runFirstSuccessful(
 		if (result.ok) return result;
 	}
 	return { ok: false, stdout: "", stderr: "no runnable command candidate" };
-}
-
-function runSessionCatchup(cwd: string): ExecResult {
-	if (!existsSync(CATCHUP_SCRIPT)) {
-		return {
-			ok: false,
-			stdout: "",
-			stderr: `missing catchup script: ${CATCHUP_SCRIPT}`,
-		};
-	}
-
-	return runFirstSuccessful(
-		[
-			["uv", ["run", CATCHUP_SCRIPT, cwd]],
-			["python3", [CATCHUP_SCRIPT, cwd]],
-			["python", [CATCHUP_SCRIPT, cwd]],
-			["py", ["-3", CATCHUP_SCRIPT, cwd]],
-		],
-		cwd,
-	);
 }
 
 function runAttestScript(cwd: string, args: string[]): ExecResult {
@@ -517,24 +496,10 @@ export default function planningWithFilesExtension(pi: ExtensionAPI): void {
 
 	registerCommands(pi, state);
 
-	pi.on("session_start", async (event, ctx) => {
+	pi.on("session_start", async (_event, ctx) => {
 		const sessionId = getSessionId(ctx);
 		clearSessionPrefixMap(state, sessionId);
 		clearSessionExecutionApprovals(state, sessionId);
-
-		if (!isAttachedSession(ctx)) {
-			ctx.ui.setStatus(PKG_NAME, "session not attached to planning context");
-			return;
-		}
-
-		if (["startup", "new", "resume", "fork"].includes(event.reason)) {
-			runSessionCatchup(ctx.cwd);
-		}
-
-		const status = readPlanStatus(ctx.cwd);
-		if (status.exists) {
-			setPassivePlanStatus(ctx, status);
-		}
 	});
 
 	pi.on("session_shutdown", async (_event, ctx) => {
@@ -556,11 +521,7 @@ export default function planningWithFilesExtension(pi: ExtensionAPI): void {
 
 		const status = readPlanStatus(ctx.cwd);
 		if (!status.exists) return;
-
-		if (!isExecutionApproved(state, ctx, status)) {
-			setPassivePlanStatus(ctx, status);
-			return;
-		}
+		if (!isExecutionApproved(state, ctx, status)) return;
 
 		const mode = deriveEffectiveMode(resolveConfiguredMode(ctx.cwd), ctx);
 		const attestation = checkPlanAttestation(status);
@@ -596,8 +557,10 @@ export default function planningWithFilesExtension(pi: ExtensionAPI): void {
 	pi.on("tool_call", async (event, ctx) => {
 		if (!isAttachedSession(ctx)) return;
 
-		const mode = deriveEffectiveMode(resolveConfiguredMode(ctx.cwd), ctx);
 		const status = readPlanStatus(ctx.cwd);
+		if (!status.exists || !isExecutionApproved(state, ctx, status)) return;
+
+		const mode = deriveEffectiveMode(resolveConfiguredMode(ctx.cwd), ctx);
 		const sessionId = getSessionId(ctx);
 		const leafId = ctx.sessionManager.getLeafId() ?? "leaf";
 		const leafKey = `${sessionId}:${leafId}`;
@@ -612,10 +575,8 @@ export default function planningWithFilesExtension(pi: ExtensionAPI): void {
 			"ls",
 		]);
 		if (
-			status.exists &&
-			isExecutionApproved(state, ctx, status) &&
-			trackableTools.has(event.toolName) &&
-			!state.preToolQueuedByLeaf.has(leafKey)
+				trackableTools.has(event.toolName) &&
+				!state.preToolQueuedByLeaf.has(leafKey)
 		) {
 			state.preToolQueuedByLeaf.add(leafKey);
 			const attestation = checkPlanAttestation(status);
@@ -650,16 +611,6 @@ export default function planningWithFilesExtension(pi: ExtensionAPI): void {
 		}
 
 		if (
-			!status.exists &&
-			(event.toolName === "write" || event.toolName === "edit")
-		) {
-			ctx.ui.notify(
-				"[planning-with-files] No task_plan.md found. Create planning files first.",
-				"warning",
-			);
-		}
-
-		if (
 			isToolCallEventType("bash", event) &&
 			isDangerousBashCommand(event.input.command)
 		) {
@@ -676,10 +627,7 @@ export default function planningWithFilesExtension(pi: ExtensionAPI): void {
 
 		const status = readPlanStatus(ctx.cwd);
 		if (!status.exists) return;
-		if (!isExecutionApproved(state, ctx, status)) {
-			setPassivePlanStatus(ctx, status);
-			return;
-		}
+		if (!isExecutionApproved(state, ctx, status)) return;
 
 		const mode = deriveEffectiveMode(resolveConfiguredMode(ctx.cwd), ctx);
 		if (mode === "parity") {
@@ -702,6 +650,8 @@ export default function planningWithFilesExtension(pi: ExtensionAPI): void {
 
 		const sessionId = getSessionId(ctx);
 		const planKey = getPlanSessionKey(ctx, status);
+		if (!isExecutionApproved(state, ctx, status)) return;
+
 		const mode = deriveEffectiveMode(resolveConfiguredMode(ctx.cwd), ctx);
 
 		if (isAllPhasesComplete(status)) {
@@ -714,15 +664,6 @@ export default function planningWithFilesExtension(pi: ExtensionAPI): void {
 		}
 
 		if (!isPlanIncomplete(status)) return;
-
-		if (!isExecutionApproved(state, ctx, status)) {
-			ctx.ui.notify(
-				`[planning-with-files] Task incomplete (${status.completePhases}/${status.totalPhases}). Run /plan-execute to activate hooks.`,
-				"warning",
-			);
-			setPassivePlanStatus(ctx, status);
-			return;
-		}
 
 		if (mode === "notify") {
 			ctx.ui.notify(
@@ -756,15 +697,7 @@ export default function planningWithFilesExtension(pi: ExtensionAPI): void {
 
 		const status = readPlanStatus(ctx.cwd);
 		if (!status.exists) return;
-
-		if (!isExecutionApproved(state, ctx, status)) {
-			ctx.ui.notify(
-				"[planning-with-files] PreCompact: flush progress.md and task_plan.md updates.",
-				"info",
-			);
-			setPassivePlanStatus(ctx, status);
-			return;
-		}
+		if (!isExecutionApproved(state, ctx, status)) return;
 
 		const attestation = checkPlanAttestation(status);
 		const reminder = [

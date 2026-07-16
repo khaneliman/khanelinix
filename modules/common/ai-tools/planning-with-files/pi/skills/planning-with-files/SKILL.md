@@ -1,20 +1,19 @@
 ---
 name: pi-planning-with-files
-description: Implements Manus-style file-based planning to organize and track progress on complex tasks. Creates task_plan.md, findings.md, and progress.md. Use when asked to plan out, break down, or organize a multi-step project, research task, or any work requiring 5+ tool calls. Supports automatic session recovery after /clear.
+description: Optional persistent file-based planning for multi-phase or long-running work that benefits from recovery across sessions or compaction. Use when requested or when persistence materially improves continuity; do not activate merely due to tool count or existing plan files.
 ---
 
 # Planning with Files
 
 Work like Manus: Use persistent markdown files as your "working memory on disk."
 
-## FIRST: Restore Context
+## Adopt Intentionally
 
-**Before doing anything else**, check if planning files exist and read them:
+Existing planning files do not activate this workflow for unrelated tasks.
+After the current task intentionally adopts persistent planning:
 
-1. If `task_plan.md` exists, read `task_plan.md`, `progress.md`, and
-   `findings.md` immediately.
-2. The extension automatically checks for unsynced context from a previous
-   session.
+1. Read `task_plan.md`, `progress.md`, and `findings.md`.
+2. Run session catchup manually when resuming after a gap.
 
 If catchup report shows unsynced context:
 
@@ -35,7 +34,7 @@ If catchup report shows unsynced context:
 
 ## Quick Start
 
-Before ANY complex task:
+After choosing persistent planning for the current task:
 
 1. **Create `task_plan.md`** — Use
    [templates/task_plan.md](templates/task_plan.md) as reference
@@ -70,9 +69,10 @@ Filesystem = Disk (persistent, unlimited)
 
 ## Critical Rules
 
-### 1. Create Plan First
+### 1. Choose Persistence First
 
-Never start a complex task without `task_plan.md`. Non-negotiable.
+Use this workflow when disk-backed task state materially improves continuity.
+Complexity or tool count alone does not require it.
 
 ### 2. The 2-Action Rule
 
@@ -174,19 +174,16 @@ If you can answer these, your context management is solid:
 
 ## When to Use This Pattern
 
-**Use for:**
+**Good fits:**
 
-- Multi-step tasks (3+ steps)
-- Research tasks
-- Building/creating projects
-- Tasks spanning many tool calls
-- Anything requiring organization
+- Work expected to cross sessions or compaction
+- Long-running research that needs a recoverable evidence trail
+- Multi-phase implementation where the user wants persistent progress state
 
-**Skip for:**
+**Do not auto-activate for:**
 
-- Simple questions
-- Single-file edits
-- Quick lookups
+- Tool-count thresholds
+- Unrelated work in a repository that happens to contain old plan files
 
 ## Templates
 

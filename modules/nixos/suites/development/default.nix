@@ -76,7 +76,6 @@ in
       "codex/requirements.toml".source =
         tomlFormat.generate "codex-requirements" aiTools.codex.managedRequirements;
       "codex/hooks".source = aiTools.codex.hooksDir;
-      "codex/skills/planning-with-files".source = aiTools.planningWithFiles.codex.skill;
     };
   };
 }
