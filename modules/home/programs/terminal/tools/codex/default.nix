@@ -255,7 +255,7 @@ in
           hooks = true;
           image_generation = true;
           in_app_browser = true;
-          memories = true;
+          memories = !aiTools.codex.okfMemoryEnabled;
           multi_agent = true;
           personality = true;
           plugin_sharing = true;
@@ -285,6 +285,11 @@ in
         history = {
           persistence = "save-all";
           max_bytes = 104857600;
+        };
+
+        memories = lib.optionalAttrs aiTools.codex.okfMemoryEnabled {
+          generate_memories = false;
+          use_memories = false;
         };
 
         notice.hide_rate_limit_model_nudge = true;

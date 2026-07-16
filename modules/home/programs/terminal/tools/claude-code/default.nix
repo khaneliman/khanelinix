@@ -93,6 +93,7 @@ in
         model = "claude-sonnet-5[1m]";
         effortLevel = "high";
         alwaysThinkingEnabled = true;
+        autoMemoryEnabled = !aiTools.claudeCode.okfMemoryEnabled;
         # Usage credits
         # fastMode = true;
         cleanupPeriodDays = 90;

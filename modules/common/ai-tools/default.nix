@@ -218,6 +218,9 @@ let
       lib.filterAttrs (name: _: shouldKeep name) allSkills
     );
 
+  skillEnabledForHarness =
+    harnessName: skillName: builtins.hasAttr skillName (skillsAttrsForHarness harnessName);
+
   disabledSystemSkillsForHarness = harnessName: (skillPolicyFor harnessName).disableSystem or [ ];
 
   disabledPluginSkillsForHarness =
@@ -242,6 +245,7 @@ in
   claudeCode = {
     commands = aiCommands.toClaudeMarkdown // planningWithFilesCommands;
     agents = aiAgents.toClaudeMarkdown;
+    okfMemoryEnabled = skillEnabledForHarness "claudeCode" "okf-memory";
     skills = skillsForHarness "claudeCode";
     inherit skillsDir;
   };
@@ -259,6 +263,7 @@ in
     contextOverride = codexContextOverride;
     managedRequirements = codexManagedRequirementsWithOkf;
     hooksDir = codexHooksDir;
+    okfMemoryEnabled = skillEnabledForHarness "codex" "okf-memory";
     skills = skillsForHarness "codex";
     skillSources = skillsAttrsForHarness "codex";
   };
