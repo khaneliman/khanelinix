@@ -1,18 +1,23 @@
 { pkgs }:
 let
-  fetchPatch =
+  fetchPatches =
     {
       name,
       rev,
       hash,
+      excludes ? [ ],
+      extraPatches ? [ ],
     }:
-    pkgs.fetchpatch2 {
-      name = "t3code-${name}.patch";
-      url = "https://github.com/khaneliman/t3code/commit/${rev}.patch";
-      inherit hash;
-    };
+    [
+      (pkgs.fetchpatch2 {
+        name = "t3code-${name}.patch";
+        url = "https://github.com/khaneliman/t3code/commit/${rev}.patch";
+        inherit excludes hash;
+      })
+    ]
+    ++ extraPatches;
 in
-map fetchPatch [
+pkgs.lib.concatMap fetchPatches [
   {
     name = "fix-agent-interrupt-steer";
     rev = "0961fd7225515fbc9ce3345ac1e855e1f1d744da";
@@ -86,7 +91,9 @@ map fetchPatch [
   {
     name = "feat-web-text-scale";
     rev = "f3ba720c046e7953c76d0bba690475de6eb7c86f";
-    hash = "sha256-nSNm4UBxJw9XMk6SpRs7jOc4tBdHxTo5j1ZD0+twgfY=";
+    hash = "sha256-CSdLAXaNnlR0gW6/4l37rFE+Z7QMR8Xn2pLWCKq3e+k=";
+    excludes = [ "apps/web/src/index.css" ];
+    extraPatches = [ ./feat-web-text-scale-css.patch ];
   }
   {
     name = "fix-codex-session-start-timeout";

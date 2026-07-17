@@ -25,8 +25,15 @@ in
 
       overrideT3codeSource =
         package:
+        let
+          pnpm =
+            if pkgs.stdenv.hostPlatform.isDarwin then
+              pkgs.pnpm_11.override { nodejs-slim = pkgs.nodejs-slim_24; }
+            else
+              pkgs.pnpm_11;
+        in
         (package.override {
-          pnpm_10 = pkgs.pnpm_11;
+          pnpm_10 = pnpm;
         }).overrideAttrs
           (
             old:
@@ -42,9 +49,9 @@ in
                 inherit (old) pname pnpmWorkspaces;
                 version = t3codeVersion;
                 src = inputs.t3code;
-                pnpm = pkgs.pnpm_11;
+                inherit pnpm;
                 fetcherVersion = 4;
-                hash = "sha256-JmOs6j0Tx8EgZFgvYhhnIPLmEcXirk0AlLvY+onNZhQ=";
+                hash = "sha256-bfZDQjVdT0neQYxmNB8t+XU8mbjVsAtaTi2Vms5pzxw=";
               };
             }
           );
