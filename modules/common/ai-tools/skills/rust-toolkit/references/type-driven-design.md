@@ -3,6 +3,16 @@
 Use types to remove invalid states when the value exceeds the complexity cost.
 Do not turn every runtime workflow into a generic type graph.
 
+## Contents
+
+- [Pattern Selection](#pattern-selection)
+- [Typestate](#typestate)
+- [Builders and Validation](#builders-and-validation)
+- [Static or Dynamic Dispatch](#static-or-dynamic-dispatch)
+- [Opaque and Async Return Types](#opaque-and-async-return-types)
+- [Ownership and Concurrency](#ownership-and-concurrency)
+- [Design Proof](#design-proof)
+
 ## Pattern Selection
 
 | Need                             | Default                       | Escalate when                                                            |
@@ -55,11 +65,35 @@ Measure before attributing performance to dispatch. Monomorphization can improve
 runtime while increasing compile time and binary size. Keep object safety,
 lifetimes, auto traits, and downcasting needs visible in the API decision.
 
+Use native async trait methods when static dispatch fits. Do not assume they are
+`dyn` compatible on the selected toolchain. Add boxing or an object-safe adapter
+only at the boundary that needs runtime heterogeneity, then measure allocation
+and latency rather than importing ecosystem-wide performance claims.
+
+Use trait upcasting instead of conversion shims when the repository's MSRV
+supports the required coercion. Keep explicit adapters when they enforce policy
+or compatibility beyond the coercion itself.
+
+## Opaque and Async Return Types
+
+- In Rust 2024, return-position `impl Trait` captures all in-scope generic
+  parameters by default. Review public APIs for unintended lifetime capture
+  during edition migration.
+- Use a precise `use<..>` capture bound when the hidden type needs a narrower
+  contract and the declared MSRV supports it. Do not add capture tricks by rote.
+- Put `Send` requirements where work crosses a multithreaded executor boundary.
+  Do not force `Send` onto single-threaded consumers for convenience.
+- Verify return-type notation or other async bound syntax against the selected
+  stable toolchain. Route nightly-only syntax through
+  [toolchain-evolution.md](toolchain-evolution.md).
+
 ## Ownership and Concurrency
 
 - Prefer one clear owner and borrowed access before `Rc`, `Arc`, interior
   mutability, or global state.
 - Use channels/message passing when ownership transfer models the workflow.
+- Before raw-pointer splitting, use a stable disjoint-borrow API when the
+  collection and repository MSRV provide one.
 - Use `Arc<Mutex<T>>` only when shared synchronized mutation is genuinely the
   simplest contract; keep lock scope short and document ordering.
 - Never hold blocking locks across `.await`. Distinguish sync mutexes from async

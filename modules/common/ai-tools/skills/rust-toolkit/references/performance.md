@@ -3,6 +3,17 @@
 Optimize from evidence. Keep compile-time, runtime latency, throughput, memory,
 binary size, and developer iteration as separate budgets.
 
+## Contents
+
+- [Measurement Contract](#measurement-contract)
+- [Runtime Ladder](#runtime-ladder)
+- [Data Layout and SIMD](#data-layout-and-simd)
+- [Allocation Decisions](#allocation-decisions)
+- [Compile-Time Ladder](#compile-time-ladder)
+- [Profiles and Toolchain Choices](#profiles-and-toolchain-choices)
+- [Profile-Guided and Post-Link Optimization](#profile-guided-and-post-link-optimization)
+- [Output](#output)
+
 ## Measurement Contract
 
 Before changing code or configuration, record:
@@ -30,6 +41,20 @@ Prefer data layouts that match traversal. Avoid cloning to satisfy ownership
 without showing where ownership should move or borrowing should narrow. Treat
 `unsafe` optimization as a proof obligation with benchmarks and correctness
 tests.
+
+## Data Layout and SIMD
+
+- Measure `size_of`, alignment, cache behavior, allocation traffic, and actual
+  value distributions. Do not generalize `String`, `Arc<str>`, or small-vector
+  footprints across targets, allocators, or inline capacities.
+- Borrow when ownership permits. Add shared ownership, reference counting, or
+  inline storage only after including clone cost, atomic contention, retained
+  capacity, and code-size effects in the comparison.
+- Keep a scalar baseline. Use stable `std::arch` intrinsics only behind matching
+  compile-time or runtime feature detection with a tested fallback.
+- Treat portable SIMD and new target-feature surfaces as toolchain experiments
+  until the selected stable documentation says otherwise. Follow
+  [toolchain-evolution.md](toolchain-evolution.md).
 
 ## Allocation Decisions
 
@@ -76,8 +101,23 @@ latency. Measure both clean and representative incremental paths.
 - Configure shared caches with reproducibility, credentials, cache poisoning,
   and CI eviction behavior visible.
 
+## Profile-Guided and Post-Link Optimization
+
+- Attempt PGO only after a representative release workload and ordinary
+  profiling exist. Instrument, train, merge, and rebuild with matching target,
+  features, profile, and compiler flags; check for missing or stale profile
+  data.
+- Compare the optimized binary against the same workload plus correctness,
+  startup, size, and tail-latency checks. Training-set wins can regress other
+  traffic.
+- Treat BOLT as a target- and binary-format-specific post-link experiment after
+  PGO. Preserve symbols, debug/unwind data, signing, packaging, and deployment
+  checks, and keep an unoptimized fallback artifact.
+- Report observed results. Do not import generic percentage claims.
+
 Official starting point:
 [Cargo build-performance guidance](https://doc.rust-lang.org/cargo/guide/build-performance.html).
+[rustc PGO guidance](https://doc.rust-lang.org/rustc/profile-guided-optimization.html).
 
 ## Output
 

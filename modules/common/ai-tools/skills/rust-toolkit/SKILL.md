@@ -1,6 +1,6 @@
 ---
 name: rust-toolkit
-description: Rust architecture and engineering playbooks for Cargo crates and workspaces. Use when creating, restructuring, reviewing, debugging, optimizing, or testing Rust libraries, services, CLIs, Cargo.toml/workspaces, unsafe or concurrent code, ownership-driven state machines, module and crate boundaries, API and error design, typestate, validation, build/runtime profiling, or allocator decisions. Use bevy-toolkit for engine-specific Bevy work.
+description: Rust architecture and engineering playbooks for Cargo crates and workspaces. Use when creating, restructuring, reviewing, debugging, optimizing, migrating, or testing Rust libraries, services, CLIs, Cargo.toml/workspaces, editions and toolchains, stable or nightly experiments, unsafe or concurrent code, ownership-driven state machines, module and crate boundaries, API and error design, typestate, validation, build/runtime profiling, SIMD, PGO, or allocator decisions. Use bevy-toolkit for engine-specific Bevy work.
 ---
 
 # Rust Toolkit
@@ -31,9 +31,12 @@ reference needed for the current decision.
    review, Miri, Loom, fuzzing, sanitizers, and validation ladders. Read
    [correctness-and-testing.md](references/correctness-and-testing.md).
 4. **performance** — compile-time and runtime measurement, data layout,
-   allocations, custom allocators, profiles, linkers, and caching. Read
-   [performance.md](references/performance.md).
-5. **repeatable checks** — use the inventory and quality-gate helpers. Read
+   allocations, SIMD, custom allocators, PGO, profiles, linkers, and caching.
+   Read [performance.md](references/performance.md).
+5. **toolchain evolution** — edition or MSRV migrations, release and target
+   changes, unstable language/Cargo features, and nightly experiments. Read
+   [toolchain-evolution.md](references/toolchain-evolution.md).
+6. **repeatable checks** — use the inventory and quality-gate helpers. Read
    [scripts.md](references/scripts.md).
 
 ## Core Rules
@@ -44,6 +47,8 @@ reference needed for the current decision.
   allocators. Report baseline, changed variable, and comparable result.
 - Derive version-sensitive APIs from manifests and matching official docs. Never
   silently rewrite code to the newest Rust release.
+- Treat RFCs, project goals, tracking issues, and accepted nightly syntax as
+  research leads, not proof that a feature is stable.
 - Prefer repository-native checks. Use `scripts/rust-verify.sh` only when its
   command shape matches project policy.
 

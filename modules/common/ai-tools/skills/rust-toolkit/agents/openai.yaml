@@ -1,4 +1,4 @@
 interface:
   display_name: "Rust Toolkit"
-  short_description: "Rust architecture, correctness, testing, and performance"
+  short_description: "Rust architecture, toolchains, correctness, and performance"
   default_prompt: "Use $rust-toolkit to design, implement, review, optimize, or test this Rust project."

@@ -64,6 +64,16 @@ For every `unsafe` block, function, impl, or trait:
 6. Review `unsafe impl Send/Sync` independently. Interior fields and future
    mutation can invalidate the proof.
 
+Treat unsafe attributes and `extern` declarations as safety boundaries too.
+During edition migration, use compatibility lints to find syntax changes, then
+manually verify exported symbol uniqueness, section constraints, ABI signatures,
+ownership, and unwind behavior; an automated fix cannot prove those contracts.
+
+For `#[target_feature]` and architecture intrinsics, keep static or runtime CPU
+feature detection beside the dispatch boundary, retain a portable fallback, and
+test both paths on declared deployment targets. Never infer hardware support
+from the build host alone.
+
 Do not claim Miri or sanitizers prove absence of undefined behavior. Record the
 covered commands, target, toolchain, and paths.
 
