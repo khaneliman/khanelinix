@@ -1,6 +1,6 @@
 ---
 name: bevy-toolkit
-description: Bevy application and game-engine playbooks for ECS architecture, plugins, states, schedules, lifecycle cleanup, assets/scenes, runtime diagnostics, visual verification, and live control through Bevy Remote Protocol (BRP) and bevy_brp_mcp. Use when creating, restructuring, debugging, profiling, testing, launching, inspecting, mutating, capturing, or automating Bevy apps and plugins, including MCP-driven entity/resource queries, screenshots, keyboard or mouse input, and deterministic game-control scripts.
+description: Bevy workflows for ECS, plugin selection, scenes, scheduling, world authoring, diagnostics, validation, and BRP/MCP control. Use when building, debugging, profiling, testing, editing, or automating native Bevy apps.
 ---
 
 # Bevy Toolkit
@@ -40,6 +40,12 @@ Cargo, unsafe, and allocator decisions in `rust-toolkit`.
    GPU/frame diagnostics, minimal-app tests, visual proof, and build iteration.
    Read
    [performance-and-validation.md](references/performance-and-validation.md).
+6. **ecosystem selection** — third-party crate compatibility, architecture fit,
+   target/backend support, maintenance risk, and bounded integration spikes.
+   Read [ecosystem-selection.md](references/ecosystem-selection.md).
+7. **world authoring and iteration** — feedback-loop selection, source-of-truth
+   ownership, transactional reload, editor/DCC bridges, and persisted edits.
+   Read [authoring-pipelines.md](references/authoring-pipelines.md).
 
 ## Core Rules
 
@@ -47,6 +53,8 @@ Cargo, unsafe, and allocator decisions in `rust-toolkit`.
   explicitly need remote control. Bind local probes to loopback by default.
 - Query and record pre-state before mutation. Mutate the narrowest reflected
   path, read back, capture evidence, and restore temporary changes.
+- Treat live editor and BRP mutations as ephemeral unless an explicit authoring
+  command persists them to source-owned data.
 - Treat tool success and fresh image hashes as transport proof, not visual or
   gameplay correctness. Inspect resulting state and pixels.
 - Never silently upgrade Bevy or third-party plugins to match newer examples.

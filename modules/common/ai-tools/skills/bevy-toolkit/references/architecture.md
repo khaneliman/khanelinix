@@ -26,12 +26,17 @@ patterns.
   state. Do not turn resources into service locators.
 - Keep hot query data focused. Split components when systems access disjoint
   fields or fields change at different rates; require query/profile evidence.
+- Use release-appropriate named query-data structs for large or reused query
+  shapes. Keep one-off queries local instead of hiding simple access behind a
+  type.
 - Treat component insertion/removal as archetype movement and lifecycle change,
   not a free flag toggle.
 - Keep world-dependent behavior in systems/commands. Component methods remain
   useful for local invariants and pure transformations.
 - Prefer explicit marker components over string/name matching for runtime logic;
   add `Name` for diagnostics and BRP discovery.
+- Give save, replication, and cross-session references domain IDs. Raw `Entity`
+  values are runtime handles, not persistent identity.
 
 ## Relationships and Scenes
 
@@ -42,6 +47,14 @@ patterns.
 - Use required components, bundles, scenes, or spawn helpers according to the
   locked Bevy version and whether the contract is structural, reusable, or
   data-authored. Do not replace every spawn with the newest mechanism.
+- On Bevy 0.19+, use required components for component-level invariants and
+  scene components/scenes for multi-entity shape. A scene can guarantee initial
+  structure; later mutation can still remove related entities.
+- Treat BSN scenes as composable patches, not serialized object snapshots. Use
+  dependency-aware queued spawning when assets may be unavailable, and test the
+  loading/error path.
+- Verify asset-loader support before promising editable `.bsn` files. Bevy 0.19
+  ships code-driven BSN but no first-party `.bsn` asset loader.
 - Keep data-authored scene/layout hot reload scoped to one owner. Rebuild the
   changed subtree instead of respawning unrelated world state.
 
@@ -65,3 +78,5 @@ patterns.
 3. Can headless/minimal tests omit rendering and platform plugins?
 4. Does a scene hierarchy encode presentation, gameplay ownership, or both?
 5. Which types must be remotely mutable, and which should remain unregistered?
+
+Version source: [Bevy 0.19 release notes](https://bevy.org/news/bevy-0-19/).

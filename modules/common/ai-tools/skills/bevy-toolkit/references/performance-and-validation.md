@@ -24,6 +24,11 @@
 - Profile shadows, lights, transparent materials, particles, overdraw, camera
   stacks, render layers, post-processing, and asset uploads with representative
   views.
+- Verify renderer features against the locked release, enabled Cargo features,
+  target backend, and hardware limits. Treat experimental or feature-gated paths
+  as opt-in and preserve a supported fallback.
+- Reproduce upstream headline benchmarks before using them as project evidence;
+  scene composition, motion, backend, and hardware can reverse the result.
 - Keep visual quality changes reversible and compare source-owned captures.
 - Verify imported scene scale against known-size world props before rescaling
   collision or world coordinates.
@@ -34,6 +39,9 @@
 
 - Compare existing profiles before adding Bevy dependency optimization, dynamic
   linking, alternative linkers, or feature reduction.
+- Use hotpatching only when the locked release and repository launcher already
+  support it. After changing system parameters, ECS type shape, plugin setup, or
+  schedules, restart and rerun cold-start validation.
 - Measure clean and incremental paths separately.
 - Keep stable CI/release fallback when development uses dynamic linking or an
   alternative codegen backend.
@@ -58,6 +66,9 @@
   path, file size, modification time, and hash.
 - Reject stale files and wrong live sessions.
 - Inspect image contents. Hashes prove freshness/distinctness, not correctness.
+- For time-dependent visual behavior, capture a bounded source-owned recording
+  when the locked release and target support it. Pair video with state or frame
+  assertions; video alone is not deterministic proof.
 - Avoid compositor screenshots through lock screens or overlays.
 - For native windows, match compositor surface to expected game resolution
   before injecting coordinate-based input or capturing the window.

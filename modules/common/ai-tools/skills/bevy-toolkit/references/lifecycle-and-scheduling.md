@@ -30,6 +30,9 @@
   or request handling before readback.
 - Name coarse system sets instead of chaining many individual systems.
 - Put cross-domain ordering in one integration plugin.
+- Gate a coarse set when its whole domain is inactive, such as paused gameplay.
+  Keep transition and teardown paths runnable; do not scatter redundant
+  per-system conditions without measured idle cost.
 - Use schedule graphs to prove ordering/conflicts; use runtime profiling to
   prove cost. Graph shape alone is not performance evidence.
 
