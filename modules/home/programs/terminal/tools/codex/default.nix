@@ -420,6 +420,7 @@ in
             trustedGithubProjects = [
               "home-manager"
               "khanelivim"
+              "midnight-scavenger"
               "nixpkgs"
               "nixvim"
               "Austin-Horstman"
