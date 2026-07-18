@@ -54,6 +54,7 @@ let
 
   karabinerConfig = {
     global = {
+      check_for_updates_on_startup = false;
       show_in_menu_bar = false;
     };
 
