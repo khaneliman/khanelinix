@@ -72,8 +72,6 @@ in
       rm -rf '${driverSupportDir}'
       mkdir -p '/Library/Application Support/org.pqrs'
       cp -R '${packageDriverSupportPath}' '${driverSupportDir}'
-
-      chmod 4755 '${supportDir}/bin/karabiner_session_monitor'
     '';
 
     system.activationScripts.postActivation.text = ''
