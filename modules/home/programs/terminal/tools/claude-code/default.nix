@@ -26,7 +26,7 @@ let
 
   claudeIcon = ./assets/claude.ico;
 
-  # Codex-style status line: model+reasoning, dir, context usage, 5h limit.
+  # Codex-style status line: model+reasoning, session/worktree, context, limits.
   # Rate-limit fields only appear for Claude.ai subscribers, so guard for null.
   statusLineScript = pkgs.writeShellApplication {
     name = "claude-statusline";
@@ -36,6 +36,8 @@ let
       jq -r '
         def pc(v): (v // 0) | floor | tostring;
         (.model.display_name // "?") as $name |
+        (.session_name // "") as $session |
+        (.worktree.branch // .workspace.git_worktree // "") as $branch |
         ( "[" + $name
           + (if ((.model.id // "") | test("\\[1m\\]")) and (($name | ascii_downcase) | test("1m") | not)
              then " ·1M" else "" end)
@@ -43,6 +45,12 @@ let
           + (if .thinking.enabled == true then " +think" else "" end)
           + "]" )
         + " 📁 " + (((.workspace.current_dir // .cwd // "") | split("/") | last))
+        + (if $session != "" then " · " + $session else "" end)
+        + (if $branch != "" then " | 🌿 " + $branch else "" end)
+        + (if .pr.number != null
+           then " | PR#" + (.pr.number | tostring)
+             + (if (.pr.review_state // "") != "" then " " + .pr.review_state else "" end)
+           else "" end)
         + (if .context_window.used_percentage != null
            then " | ctx " + pc(.context_window.used_percentage) + "%"
            else "" end)
@@ -53,6 +61,34 @@ let
            then " | 7d " + pc(.rate_limits.seven_day.used_percentage) + "%"
            else "" end)
       ' <<<"$input"
+    '';
+  };
+
+  subagentStatusLineScript = pkgs.writeShellApplication {
+    name = "claude-subagent-statusline";
+    runtimeInputs = [ pkgs.jq ];
+    text = ''
+      jq -cr '
+        .tasks[] |
+        (.name // .type // "agent") as $name |
+        ((.model // "") | sub("^claude-"; "")) as $model |
+        (.status // "unknown") as $status |
+        (.cwd // "" | split("/") | last) as $dir |
+        (.contextWindowSize // 0) as $capacity |
+        (.tokenCount // 0) as $tokens |
+        {
+          id,
+          content: (
+            $name
+            + (if $model != "" then " [" + $model + "]" else "" end)
+            + " · " + $status
+            + (if $capacity > 0
+               then " · ctx " + (($tokens * 100 / $capacity) | floor | tostring) + "%"
+               else "" end)
+            + (if $dir != "" then " · " + $dir else "" end)
+          )
+        }
+      '
     '';
   };
 in
@@ -95,6 +131,8 @@ in
         # fastMode = true;
         cleanupPeriodDays = 90;
         verbose = true;
+        workflowSizeGuideline = "small";
+        worktree.baseRef = "head";
         attribution = {
           commit = "";
           pr = "";
@@ -105,6 +143,12 @@ in
           type = "command";
           command = lib.getExe statusLineScript;
           padding = 0;
+          refreshInterval = 5;
+        };
+
+        subagentStatusLine = {
+          type = "command";
+          command = lib.getExe subagentStatusLineScript;
         };
 
         env = {
