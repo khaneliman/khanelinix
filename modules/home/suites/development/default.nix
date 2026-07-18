@@ -221,7 +221,7 @@ in
       programs = {
         graphical = {
           apps = {
-            codex-desktop.enable = cfg.aiEnable && pkgs.stdenv.hostPlatform.isLinux && !isWSL;
+            codex-desktop.enable = cfg.aiEnable && !isWSL;
           };
 
           editors = {

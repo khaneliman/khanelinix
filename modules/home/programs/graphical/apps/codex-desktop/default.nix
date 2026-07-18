@@ -17,18 +17,12 @@ in
   };
 
   config = mkIf cfg.enable {
-    assertions = [
-      {
-        assertion = isLinux;
-        message = "ChatGPT Desktop is only available on Linux";
-      }
-    ];
 
     # Upstream module wraps the launcher with CODEX_CLI_PATH and selects the
     # feature set upstream CI builds and pushes to cachix. Behavior settings
     # (features, MCP servers, ...) flow through `programs.codex.settings`,
     # which the desktop app shares with the CLI.
-    programs.codexDesktopLinux = {
+    programs.codexDesktopLinux = lib.optionalAttrs isLinux {
       enable = true;
       cliPackage = pkgs.codex;
       linuxFeatures = [
