@@ -131,10 +131,20 @@ in
   unar = useLldOnDarwin prev.unar;
 
   # Vesktop 1.6.5 pins EOL Electron 40, while upstream already supports Electron 41.
-  # TODO: remove after nixpkgs updates Vesktop's Electron dependency.
+  # Electron 41.9.1 crashes renderers using WebAssembly streaming; fixed in 41.10.2.
+  # TODO: remove after nixpkgs updates Vesktop and Electron's dependencies.
   vesktop =
     let
-      electron = final.electron_41;
+      electron =
+        final.callPackage "${inputs.nixpkgs}/pkgs/development/tools/electron/binary/generic.nix" { }
+          "41.10.2"
+          {
+            aarch64-darwin = "913bd9a200042ebba65db9dfe4ade747eeea3fb4ea79a2554e641f456cc6026e";
+            aarch64-linux = "d896fd92da4ac86c9da37e563fde07891fafeedf2be0da69ee29eb211906be3d";
+            armv7l-linux = "847aa8d7f674b076bb54a70f1b68141e027147913df88fb2d88611a7cd509f71";
+            headers = "sha256-4RhN9zgT5mKcwLBNcBrSqaxfpVOzF1EvbGYyEUX0dG0=";
+            x86_64-linux = "f6308c1a0a33329d1baa8dcf510595057a2a5c34af94c9d16c6f35fd5b099be5";
+          };
     in
     (prev.vesktop.override { electron_40 = electron; }).overrideAttrs {
       # Skip the stale source-manifest major-version check and build against the
