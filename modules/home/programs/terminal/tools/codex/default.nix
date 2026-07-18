@@ -96,6 +96,15 @@ let
     ''
   ) codexCommandSkillNames;
   codexProfiles = {
+    # Balanced default for everyday work that does not need Sol's full depth.
+    balanced = {
+      model = "gpt-5.6-terra";
+      model_reasoning_effort = "medium";
+      model_verbosity = "medium";
+      plan_mode_reasoning_effort = "medium";
+      web_search = "cached";
+    };
+
     # Deep analysis and live-research mode. Intentionally expensive.
     deep = {
       model = "gpt-5.6-sol";
@@ -193,19 +202,21 @@ in
         pkgs.khanelinix.codex-browser-use-linux-chromium
       ];
       shellAliases = {
-        codex-deep = "codex --profile deep";
-        codex-long = "codex --profile long -c model_context_window=1000000 -c model_auto_compact_token_limit=850000";
-        codex-nano = "codex --profile nano";
-        codex-offline = "codex --profile offline";
-        codex-quick = "codex --profile quick";
-        codex-spark = "codex --profile spark";
-        codex-unsafe = "codex --profile unsafe --dangerously-bypass-hook-trust";
+        codex-balanced = "codex --strict-config --profile balanced";
+        codex-deep = "codex --strict-config --profile deep";
+        codex-doctor = "codex doctor --summary";
+        codex-long = "codex --strict-config --profile long -c model_context_window=1000000 -c model_auto_compact_token_limit=850000";
+        codex-nano = "codex --strict-config --profile nano";
+        codex-offline = "codex --strict-config --profile offline";
+        codex-quick = "codex --strict-config --profile quick";
+        codex-spark = "codex --strict-config --profile spark";
+        codex-unsafe = "codex --strict-config --profile unsafe --dangerously-bypass-hook-trust";
       }
       // lib.optionalAttrs exoEnabled {
-        codex-exo = ''f(){ model="$1"; shift; codex -c model_provider='"exo"' -m "$model" "$@"; }; f'';
-        codex-exo-coder = ''codex -c model_provider='"exo"' -m mlx-community/Qwen3-Coder-Next-4bit'';
-        codex-exo-gpt-oss = ''codex -c model_provider='"exo"' -m mlx-community/gpt-oss-20b-MXFP4-Q8'';
-        codex-exo-qwen = ''codex -c model_provider='"exo"' -m mlx-community/Qwen3.6-35B-A3B-5bit'';
+        codex-exo = ''f(){ model="$1"; shift; codex --strict-config -c model_provider='"exo"' -m "$model" "$@"; }; f'';
+        codex-exo-coder = ''codex --strict-config -c model_provider='"exo"' -m mlx-community/Qwen3-Coder-Next-4bit'';
+        codex-exo-gpt-oss = ''codex --strict-config -c model_provider='"exo"' -m mlx-community/gpt-oss-20b-MXFP4-Q8'';
+        codex-exo-qwen = ''codex --strict-config -c model_provider='"exo"' -m mlx-community/Qwen3.6-35B-A3B-5bit'';
       }
       // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
         codex-browser-doctor = "codex-browser-use-linux-chromium doctor --codex-home ${codexConfigPath}";
@@ -243,6 +254,10 @@ in
 
       # https://developers.openai.com/codex/config-schema.json
       settings = {
+        apps._default.default_tools_approval_mode = "writes";
+
+        cli_auth_credentials_store = "auto";
+
         features = {
           memories = !aiTools.codex.okfMemoryEnabled;
           prevent_idle_sleep = true;
@@ -368,9 +383,15 @@ in
           status_line = [
             "model-with-reasoning"
             "current-dir"
+            "git-branch"
             "context-remaining"
             "context-used"
             "five-hour-limit"
+          ];
+          terminal_title = [
+            "spinner"
+            "project"
+            "git-branch"
           ];
         };
 
