@@ -149,6 +149,7 @@ let
 
     # Force local-only behavior when you do not want network access.
     offline = {
+      sandbox_mode = "workspace-write";
       sandbox_workspace_write.network_access = false;
       web_search = "disabled";
     };
@@ -243,47 +244,16 @@ in
       # https://developers.openai.com/codex/config-schema.json
       settings = {
         features = {
-          apps = true;
-          browser_use = true;
-          browser_use_external = true;
-          code_mode_host = true;
-          computer_use = true;
-          enable_request_compression = true;
-          fast_mode = true;
-          goals = true;
-          guardian_approval = true;
-          hooks = true;
-          image_generation = true;
-          in_app_browser = true;
           memories = !aiTools.codex.okfMemoryEnabled;
-          multi_agent = true;
-          personality = true;
-          plugin_sharing = true;
-          plugins = true;
           prevent_idle_sleep = true;
-          shell_snapshot = true;
-          shell_tool = true;
-          skill_mcp_dependency_install = true;
-          terminal_resize_reflow = true;
-          tool_call_mcp_elicitation = true;
-          tool_suggest = true;
-          unified_exec = true;
-          workspace_dependencies = true;
-        }
-        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-          # Required by codex-browser-use-linux-chromium (codex >= 0.133) so
-          # plugin MCP servers are discovered instead of deferred.
-          tool_search_always_defer_mcp_tools = false;
         };
 
         agents = {
           max_threads = 12;
-          max_depth = 1;
           job_max_runtime_seconds = 3600;
         };
 
         history = {
-          persistence = "save-all";
           max_bytes = 104857600;
         };
 
