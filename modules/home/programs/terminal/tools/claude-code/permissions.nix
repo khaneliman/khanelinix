@@ -30,7 +30,6 @@ in
         # Base safe operations - always allowed regardless of profile
         baseAllow = [
           # Core Claude Code tools
-          "Glob(*)"
           "Grep(*)"
           "LS(*)"
           "Read(*)"
@@ -283,9 +282,6 @@ in
 
           # Debugging
           "Bash(coredumpctl list:*)"
-
-          # Work MCP
-          "mcp__mulesoft-analyzer"
 
           # Additional home directory reads
           "Read(${config.home.homeDirectory}/Documents/github/home-manager/**)"
