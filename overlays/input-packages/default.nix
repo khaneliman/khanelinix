@@ -41,7 +41,7 @@ in
     claude-code
     claude-desktop
     code-review-graph
-    # codex
+    codex
     git-surgeon
     hunk
     opencode
@@ -53,20 +53,6 @@ in
     workmux
     zat
     ;
-
-  # Codex spawns a separate `codex-code-mode-host` binary to run shell and
-  # file-edit commands, and looks for it next to its own executable.
-  # llm-agents.nix only builds the `codex-cli` package, so the host binary is
-  # missing from the store path and no shell or file-edit command can start.
-  # Build it as well so it is installed alongside `codex` in `bin/`. Drop this
-  # once https://github.com/numtide/llm-agents.nix/pull/6631 lands and the
-  # input is bumped past it.
-  codex = inputs.llm-agents.packages.${system}.codex.overrideAttrs (old: {
-    cargoBuildFlags = (old.cargoBuildFlags or [ ]) ++ [
-      "--package"
-      "codex-code-mode-host"
-    ];
-  });
 
   github-copilot-cli = inputs.llm-agents.packages.${system}.copilot-cli;
   pi-coding-agent = inputs.llm-agents.packages.${system}.pi;
@@ -129,31 +115,6 @@ in
 
   # TODO: remove after the ld64 hardening workaround reaches unar.
   unar = useLldOnDarwin prev.unar;
-
-  # Vesktop 1.6.5 pins EOL Electron 40, while upstream already supports Electron 41.
-  # Electron 41.9.1 crashes renderers using WebAssembly streaming; fixed in 41.10.2.
-  # TODO: remove after nixpkgs updates Vesktop and Electron's dependencies.
-  vesktop =
-    let
-      electron =
-        final.callPackage "${inputs.nixpkgs}/pkgs/development/tools/electron/binary/generic.nix" { }
-          "41.10.2"
-          {
-            aarch64-darwin = "913bd9a200042ebba65db9dfe4ade747eeea3fb4ea79a2554e641f456cc6026e";
-            aarch64-linux = "d896fd92da4ac86c9da37e563fde07891fafeedf2be0da69ee29eb211906be3d";
-            armv7l-linux = "847aa8d7f674b076bb54a70f1b68141e027147913df88fb2d88611a7cd509f71";
-            headers = "sha256-4RhN9zgT5mKcwLBNcBrSqaxfpVOzF1EvbGYyEUX0dG0=";
-            x86_64-linux = "f6308c1a0a33329d1baa8dcf510595057a2a5c34af94c9d16c6f35fd5b099be5";
-          };
-    in
-    (prev.vesktop.override { electron_40 = electron; }).overrideAttrs {
-      # Skip the stale source-manifest major-version check and build against the
-      # explicitly supplied Electron distribution.
-      preBuild = ''
-        cp -r ${electron.dist} electron-dist
-        chmod -R u+w electron-dist
-      '';
-    };
 
   #          ╭──────────────────────────────────────────────────────────╮
   #          │                 Python package overrides                 │

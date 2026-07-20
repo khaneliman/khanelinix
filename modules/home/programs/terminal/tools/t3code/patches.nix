@@ -19,11 +19,6 @@ let
 in
 pkgs.lib.concatMap fetchPatches [
   {
-    name = "fix-agent-interrupt-steer";
-    rev = "0961fd7225515fbc9ce3345ac1e855e1f1d744da";
-    hash = "sha256-7CPhqbsqKsAmHiRpq7zI3C/RZ5g0lrTS2jO7M75m0pg=";
-  }
-  {
     name = "perf-lazy-load-terminal-css";
     rev = "904f535940872e21f59f10f12e545ac9e894e713";
     hash = "sha256-D++ggKNE0ZvOAw6IHmeQ67FHD31ELs3FOb1+F0lU1GQ=";
@@ -79,11 +74,6 @@ pkgs.lib.concatMap fetchPatches [
     hash = "sha256-2U3h2yubETQxP52DPSHxCew5rqmZRZRNrMklfUJkFJs=";
   }
   {
-    name = "first-message-domain-event-subscription";
-    rev = "86d50beaa177ebfcd2866b94db52c13519290606";
-    hash = "sha256-5fEarfhLrLS4eWMUU6dZKB8i0LL9C8jQEuWEGIPmE4k=";
-  }
-  {
     name = "fix-first-message-disappearing";
     rev = "6f0709718c348481263b3e585707b0bddfcb2ba9";
     hash = "sha256-Fi4HoWSRPQldXqaY3fXSe3+Qvd35s5L2sorcC6wU0aM=";
@@ -91,8 +81,13 @@ pkgs.lib.concatMap fetchPatches [
   {
     name = "feat-web-text-scale";
     rev = "f3ba720c046e7953c76d0bba690475de6eb7c86f";
-    hash = "sha256-CSdLAXaNnlR0gW6/4l37rFE+Z7QMR8Xn2pLWCKq3e+k=";
-    excludes = [ "apps/web/src/index.css" ];
+    hash = "sha256-Z5jPtgLv/aHBs0TqJ0n5bI/szpjgOwvXAAZ+2OgSZiA=";
+    excludes = [
+      "apps/web/src/components/Sidebar.tsx"
+      "apps/web/src/components/chat/MessagesTimeline.tsx"
+      "apps/web/src/components/settings/DiagnosticsSettings.tsx"
+      "apps/web/src/index.css"
+    ];
     extraPatches = [ ./feat-web-text-scale-css.patch ];
   }
   {
