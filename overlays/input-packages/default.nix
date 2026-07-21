@@ -153,17 +153,6 @@ in
   # Keep packageOverrides empty unless we need explicit Python package overrides.
   python3 = prev.python3.override {
     packageOverrides = _pyFinal: pyPrev: {
-      # TODO: remove after NixOS/nixpkgs#540569 hits the channel
-      catppuccin = pyPrev.catppuccin.overridePythonAttrs (old: {
-        patches = (old.patches or [ ]) ++ [
-          (prev.fetchpatch2 {
-            name = "catppuccin-matplotlib-3.11.patch";
-            url = "https://github.com/catppuccin/python/commit/11ab7be947064f11453f1063f63455b343b7253d.patch";
-            hash = "sha256-cYQBnGs1BRY/EOew/t5GAVZy2xEXLg8WMeSHiuGbd0U=";
-          })
-        ];
-      });
-
       # TODO: remove after NixOS/nixpkgs#539806 hits the channel
       click-threading = pyPrev.click-threading.overridePythonAttrs (_old: {
         preCheck = ''
@@ -175,15 +164,4 @@ in
     };
   };
   python3Packages = final.python3.pkgs;
-
-  # TODO: remove after NixOS/nixpkgs#540569 hits the channel
-  catppuccin-gtk = (prev.catppuccin-gtk.override { inherit (final) python3; }).overrideAttrs (old: {
-    patches = (old.patches or [ ]) ++ [
-      (prev.fetchpatch2 {
-        name = "catppuccin-gtk-python-3.14.patch";
-        url = "https://raw.githubusercontent.com/NixOS/nixpkgs/894acc94f63aae4b9483cf5d9f64c183398e2454/pkgs/by-name/ca/catppuccin-gtk/python-3.14.patch";
-        hash = "sha256-onepzruX2DNH6WTrfDBj8O0Qd1VZ+IfQ5tsSqxa5aK0=";
-      })
-    ];
-  });
 }
