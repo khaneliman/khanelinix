@@ -28,12 +28,6 @@ in
       home-network = enabled;
     };
 
-    display-managers = {
-      gdm = {
-        defaultSession = "gnome";
-      };
-    };
-
     hardware = {
       audio = {
         enable = true;
@@ -116,6 +110,7 @@ in
   # Home Manager installs the same style without changing the package closure.
   stylix.targets.gtksourceview.enable = false;
 
+  services.displayManager.defaultSession = "gamescope-wayland";
   services.flatpak.update.onActivation = true;
 
   environment.variables =
