@@ -11,6 +11,11 @@ let
   permissions = import ./permissions.nix;
 
   base = ./base.md;
+  claudeContext = ./claude.md;
+  claudeContextOverride = lib.concatStringsSep "\n\n" [
+    (builtins.readFile base)
+    (builtins.readFile claudeContext)
+  ];
   codexContext = ./codex.md;
   codexContextOverride = lib.concatStringsSep "\n\n" [
     (builtins.readFile base)
@@ -123,6 +128,7 @@ let
   harnessSkillPolicy = {
     codex = {
       excludeLocal = [
+        "delivery-workflow"
         "docx"
         "mcp-builder"
         "pdf"
@@ -151,11 +157,12 @@ let
       ];
     };
 
-    antigravityCli = { };
+    antigravityCli.excludeLocal = [ "delivery-workflow" ];
 
-    githubCopilotCli = { };
+    githubCopilotCli.excludeLocal = [ "delivery-workflow" ];
 
     opencode = {
+      excludeLocal = [ "delivery-workflow" ];
       disablePluginSkills = [
         "frontend-ui-ux"
         "git-master"
@@ -164,7 +171,7 @@ let
       ];
     };
 
-    piCodingAgent = { };
+    piCodingAgent.excludeLocal = [ "delivery-workflow" ];
   };
 
   validateSkillPolicy =
@@ -243,6 +250,8 @@ in
     agents
     base
     commands
+    claudeContext
+    claudeContextOverride
     codexContext
     codexContextOverride
     checkedHarnessSkillPolicy
@@ -257,6 +266,7 @@ in
   claudeCode = {
     commands = aiCommands.toClaudeMarkdown // planningWithFilesCommands;
     agents = aiAgents.toClaudeMarkdown;
+    contextOverride = claudeContextOverride;
     okfMemoryEnabled = skillEnabledForHarness "claudeCode" "okf-memory";
     skills = skillsForHarness "claudeCode";
     inherit skillsDir;

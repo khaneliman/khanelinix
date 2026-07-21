@@ -7,6 +7,7 @@ let
     "fact-finder" = {
       name = "fact-finder";
       description = "Read-only fact-finding specialist for scoped repo questions. Use for multi-file discovery, caller tracing, config lookup, pattern comparison, and bounded evidence gathering when main context should stay small.";
+      claudeDescription = "Claude-native fallback for read-only fact-finding when Codex workers are unavailable, throttled, or explicitly not wanted.";
       tools = [
         "Read"
         "Bash"
@@ -30,6 +31,7 @@ let
     "probe-runner" = {
       name = "probe-runner";
       description = "Bounded probe and reproduction specialist. Use for one-shot commands, non-destructive checks, reproduction attempts, browser probes, eval/build probes, and noisy output summaries.";
+      claudeDescription = "Claude-native fallback for bounded probes when Codex workers are unavailable, throttled, or explicitly not wanted.";
       tools = [
         "Read"
         "Bash"
@@ -53,6 +55,7 @@ let
     debugger = {
       name = "debugger";
       description = "Read-only root-cause specialist for a reproduced error, exception, test failure, or unexpected behavior with supplied symptom or evidence.";
+      claudeDescription = "Claude-native fallback for root-cause analysis when Codex Sol is unavailable, throttled, or explicitly not wanted.";
       tools = [
         "Read"
         "Bash"
@@ -76,6 +79,7 @@ let
     test-runner = {
       name = "test-runner";
       description = "Test execution specialist. Use for broad or noisy tests, checks, lint, build validation, failure analysis, and post-change verification. Keeps verbose output out of main conversation.";
+      claudeDescription = "Claude-native fallback for broad or noisy validation when Codex workers are unavailable, throttled, or explicitly not wanted.";
       tools = [
         "Read"
         "Bash"
@@ -86,19 +90,38 @@ let
         claude = "haiku";
         copilot = "claude-haiku-4.5";
         opencode = "openai/gpt-5.6-luna";
-        codex = "gpt-5.6-terra";
+        codex = "gpt-5.6-luna";
       };
       sandbox_mode = {
         codex = "workspace-write";
       };
       content = builtins.readFile (agentsBasePath + "/general/test-runner.md");
     };
+    implementer = {
+      name = "implementer";
+      description = "Claude Sonnet 5 implementation specialist for material correction batches, Codex overflow, or explicitly Claude-native work.";
+      providers = [ "claudeCode" ];
+      tools = [
+        "Read"
+        "Edit"
+        "Write"
+        "Bash"
+        "Grep"
+        "Glob"
+      ];
+      model.claude = "claude-sonnet-5";
+      content = builtins.readFile (agentsBasePath + "/general/implementer.md");
+    };
   };
+
+  agentsForProvider =
+    provider:
+    lib.filterAttrs (_name: agent: lib.elem provider (agent.providers or [ provider ])) agents;
 
   renderClaudeFrontmatter = agent: ''
     ---
     name: ${agent.name}
-    description: ${agent.description}
+    description: ${agent.claudeDescription or agent.description}
     tools: ${lib.concatStringsSep ", " agent.tools}
     model: ${agent.model.claude or agent.model}
     ---
@@ -199,14 +222,15 @@ let
       inherit (agent) nickname_candidates;
     };
 
-  toClaudeMarkdown = lib.mapAttrs (_name: renderClaudeAgent) agents;
-  toCopilotMarkdown = lib.mapAttrs (_name: renderCopilotAgent) agents;
-  toCodexAgents = lib.mapAttrs (_name: renderCodexAgent) agents;
-  toOpenCodeMarkdown = lib.mapAttrs (_name: renderOpenCodeAgent) agents;
+  toClaudeMarkdown = lib.mapAttrs (_name: renderClaudeAgent) (agentsForProvider "claudeCode");
+  toCopilotMarkdown = lib.mapAttrs (_name: renderCopilotAgent) (agentsForProvider "githubCopilotCli");
+  toCodexAgents = lib.mapAttrs (_name: renderCodexAgent) (agentsForProvider "codex");
+  toOpenCodeMarkdown = lib.mapAttrs (_name: renderOpenCodeAgent) (agentsForProvider "opencode");
 in
 {
   inherit
     agents
+    agentsForProvider
     renderClaudeAgent
     renderCopilotAgent
     renderOpenCodeAgent

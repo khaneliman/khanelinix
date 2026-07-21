@@ -124,7 +124,7 @@ in
       settings = {
         inherit hooks;
 
-        model = "claude-sonnet-5";
+        model = "claude-fable-5";
         alwaysThinkingEnabled = true;
         autoMemoryEnabled = !aiTools.claudeCode.okfMemoryEnabled;
         # Usage credits
@@ -158,7 +158,7 @@ in
 
       inherit (aiTools.claudeCode) agents commands;
       inherit (aiTools.claudeCode) skills;
-      context = aiTools.base;
+      context = aiTools.claudeCode.contextOverride;
     };
   };
 }
