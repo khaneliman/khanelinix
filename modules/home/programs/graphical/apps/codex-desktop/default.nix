@@ -30,6 +30,7 @@ in
         "node-repl-reaper"
         "open-target-discovery"
         "persistent-status-panel"
+        "shallow-repository-watches"
       ];
     };
 
