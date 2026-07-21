@@ -70,6 +70,7 @@ in
               WFClient = {
                 AllowAudioInput = "True";
                 HDXH264InputEnabled = "True";
+                ToolbarVersion = 0;
               };
             };
           };
