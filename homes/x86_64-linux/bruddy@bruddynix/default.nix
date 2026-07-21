@@ -115,7 +115,6 @@ in
 
       development = {
         enable = true;
-        gameEnable = true;
         nixEnable = true;
       };
 
