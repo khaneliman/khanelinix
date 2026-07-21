@@ -70,54 +70,14 @@ let
     path = "${codexConfigPath}/skills/.system/${name}/SKILL.md";
     enabled = false;
   }) aiTools.codex.disabledSystemSkills;
-  codexCommandSkillNames = builtins.attrNames aiTools.codex.commandSkillFiles;
   codexAgentFiles = lib.mapAttrs' (
     name: agentSettings:
     lib.nameValuePair "${codexConfigDir}/agents/${name}.toml" {
       source = tomlFormat.generate "codex-agent-${name}" agentSettings;
     }
   ) aiTools.codex.agents;
-  codexCommandSkillDirs = lib.mapAttrs (
-    name: commandFiles:
-    pkgs.runCommandLocal "codex-command-skill-${name}" { } (
-      lib.concatStringsSep "\n" (
-        lib.mapAttrsToList (
-          relativePath: fileText:
-          let
-            file = builtins.toFile "codex-command-${name}-${lib.replaceStrings [ "/" ] [ "-" ] relativePath}" fileText;
-          in
-          ''
-            install -Dm0644 ${file} "$out/${relativePath}"
-          ''
-        ) commandFiles
-      )
-    )
-  ) aiTools.codex.commandSkillFiles;
-  codexSkills = aiTools.codex.skillSources // codexCommandSkillDirs;
-  codexCommandSkillCleanup = lib.concatMapStringsSep "\n" (
-    name:
-    let
-      target = "${codexConfigPath}/skills/${name}";
-    in
-    ''
-      if [ -d ${lib.escapeShellArg target} ] && [ ! -L ${lib.escapeShellArg target} ]; then
-        [ ! -L ${lib.escapeShellArg "${target}/SKILL.md"} ] || rm -f ${lib.escapeShellArg "${target}/SKILL.md"}
-        [ ! -L ${lib.escapeShellArg "${target}/agents/openai.yaml"} ] || rm -f ${lib.escapeShellArg "${target}/agents/openai.yaml"}
-        rmdir ${lib.escapeShellArg "${target}/agents"} 2>/dev/null || true
-        rmdir ${lib.escapeShellArg target} 2>/dev/null || true
-      fi
-    ''
-  ) codexCommandSkillNames;
+  codexSkills = aiTools.codex.skillSources;
   codexProfiles = {
-    # Balanced default for everyday work that does not need Sol's full depth.
-    balanced = {
-      model = "gpt-5.6-terra";
-      model_reasoning_effort = "medium";
-      model_verbosity = "medium";
-      plan_mode_reasoning_effort = "medium";
-      web_search = "cached";
-    };
-
     # Deep analysis and live-research mode. Intentionally expensive.
     deep = {
       model = "gpt-5.6-sol";
@@ -136,16 +96,6 @@ let
       model_verbosity = "high";
       plan_mode_reasoning_effort = "xhigh";
       web_search = "live";
-    };
-
-    # Cheapest local utility profile for triage and simple transforms.
-    nano = {
-      model = "gpt-5.6-luna";
-      model_reasoning_effort = "none";
-      model_verbosity = "low";
-      plan_mode_reasoning_effort = "low";
-      service_tier = "flex";
-      web_search = "disabled";
     };
 
     # Faster implementation loop for routine coding tasks.
@@ -197,10 +147,7 @@ in
       # codex bump does not block activation. The native-messaging manifest and
       # node_repl MCP server are managed declaratively below, so the installer's
       # manifest writes are redirected to a scratch root it may own.
-      activation = {
-        codexCommandSkillShape = lib.hm.dag.entryBefore [ "checkLinkTargets" ] codexCommandSkillCleanup;
-      }
-      // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+      activation = lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
         codexBrowserUseInstall = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           run ${lib.getExe pkgs.khanelinix.codex-browser-use-linux-chromium} install \
             --codex-home ${codexConfigPath} \
@@ -218,11 +165,9 @@ in
         pkgs.khanelinix.codex-browser-use-linux-chromium
       ];
       shellAliases = {
-        codex-balanced = "codex --strict-config --profile balanced";
         codex-deep = "codex --strict-config --profile deep";
         codex-doctor = "codex doctor --summary";
         codex-long = "codex --strict-config --profile long -c model_context_window=1000000 -c model_auto_compact_token_limit=850000";
-        codex-nano = "codex --strict-config --profile nano";
         codex-offline = "codex --strict-config --profile offline";
         codex-quick = "codex --strict-config --profile quick";
         codex-spark = "codex --strict-config --profile spark";

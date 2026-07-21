@@ -54,72 +54,64 @@ in
       opencode-ollama-qwen = "opencode --model ollama/qwen3.6:27b";
     };
 
-    programs.opencode =
-      let
-        aiToolAgents = import (lib.getFile "modules/common/ai-tools/agents.nix") { inherit lib; };
-        aiToolCommands = import (lib.getFile "modules/common/ai-tools/commands.nix") { inherit lib; };
-      in
-      {
-        enable = true;
+    programs.opencode = {
+      enable = true;
 
-        enableMcpIntegration =
-          let
-            mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
-          in
-          mkIf mcpModuleEnabled true;
+      enableMcpIntegration =
+        let
+          mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
+        in
+        mkIf mcpModuleEnabled true;
 
-        settings = {
-          model = deliberateModel;
-          share = "manual";
-          autoupdate = false;
-          small_model = "openai/gpt-5.6-luna";
-          default_agent = "build";
-          compaction = {
-            auto = true;
-            prune = true;
-            reserved = 20000;
+      settings = {
+        model = deliberateModel;
+        share = "manual";
+        autoupdate = false;
+        small_model = "openai/gpt-5.6-luna";
+        default_agent = "build";
+        compaction = {
+          auto = true;
+          prune = true;
+          reserved = 20000;
+        };
+        command = {
+          quick = {
+            template = "Make fast, minimal edits and keep responses concise.";
+            model = "openai/gpt-5.3-codex-spark";
+            agent = "build";
+            subtask = true;
           };
-          command = {
-            quick = {
-              template = "Make fast, minimal edits and keep responses concise.";
-              model = "openai/gpt-5.3-codex-spark";
-              agent = "build";
-              subtask = true;
-            };
-            research = {
-              template = "Do deliberate analysis before edits, include caveats and verification steps.";
-              model = deliberateModel;
-              agent = "build";
-            };
-            nano = {
-              template = "Keep each action minimal and targeted for small-surface modifications.";
-              model = "openai/gpt-5.6-luna";
-              agent = "build";
-              subtask = true;
-            };
+          research = {
+            template = "Do deliberate analysis before edits, include caveats and verification steps.";
+            model = deliberateModel;
+            agent = "build";
           };
-
-          plugin = [
-            # Support google account auth
-            "opencode-gemini-auth@latest"
-            # Support background shell commands
-            "opencode-pty@latest"
-            # Enhanced agent orchestration and plugin workflow
-            "oh-my-openagent@latest"
-          ];
+          nano = {
+            template = "Keep each action minimal and targeted for small-surface modifications.";
+            model = "openai/gpt-5.6-luna";
+            agent = "build";
+            subtask = true;
+          };
         };
 
-        tui = {
-          theme = mkDefault "opencode";
-        };
-
-        commands = lib.mapAttrs (
-          _: command: aiToolCommands.renderOpenCodeMarkdown command
-        ) aiTools.commands;
-        agents = lib.mapAttrs (_: agent: aiToolAgents.renderOpenCodeAgent agent) aiTools.agents;
-        skills = aiTools.opencode.skillSources;
-
-        context = builtins.readFile aiTools.base;
+        plugin = [
+          # Support google account auth
+          "opencode-gemini-auth@latest"
+          # Support background shell commands
+          "opencode-pty@latest"
+          # Enhanced agent orchestration and plugin workflow
+          "oh-my-openagent@latest"
+        ];
       };
+
+      tui = {
+        theme = mkDefault "opencode";
+      };
+
+      agents = aiTools.opencode.renderAgents;
+      skills = aiTools.opencode.skillSources;
+
+      context = builtins.readFile aiTools.base;
+    };
   };
 }

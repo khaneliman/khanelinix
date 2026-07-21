@@ -12,8 +12,7 @@
 
 ## Main Areas
 
-- `ai-tools/`: generated multi-provider agents, commands, skills, hooks, and
-  policy
+- `ai-tools/`: generated multi-provider agents, skills, hooks, and policy
 - `fonts/`: shared font packages and naming
 - `nix/`, `nixd/`: cross-platform Nix and nixd behavior
 - `package-profile/`: shared package-tier selection

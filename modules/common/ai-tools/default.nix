@@ -5,7 +5,6 @@
 }:
 
 let
-  aiCommands = import ./commands.nix { inherit lib; };
   aiAgents = import ./agents.nix { inherit lib; };
   codexManagedRequirements = import ./codex-managed-requirements.nix;
   permissions = import ./permissions.nix;
@@ -108,7 +107,6 @@ let
   allSkills = lib.filterAttrs isSkillDirectory (builtins.readDir skillsDir);
   skills = lib.mapAttrs (name: _: skillsDir + "/${name}") allSkills;
 
-  inherit (aiCommands) commands;
   inherit (aiAgents) agents;
 
   systemSkillNames = {
@@ -249,7 +247,6 @@ in
   inherit
     agents
     base
-    commands
     claudeContext
     claudeContextOverride
     codexContext
@@ -264,7 +261,7 @@ in
     ;
 
   claudeCode = {
-    commands = aiCommands.toClaudeMarkdown // planningWithFilesCommands;
+    commands = planningWithFilesCommands;
     agents = aiAgents.toClaudeMarkdown;
     contextOverride = claudeContextOverride;
     okfMemoryEnabled = skillEnabledForHarness "claudeCode" "okf-memory";
@@ -273,7 +270,6 @@ in
   };
 
   antigravityCli = {
-    commands = aiCommands.toAntigravityCommands;
     okfMemoryPlugin = antigravityOkfMemoryPlugin;
     skills = skillsAttrsForHarness "antigravityCli";
   };
@@ -281,7 +277,6 @@ in
   codex = {
     disabledSystemSkills = disabledSystemSkillsForHarness "codex";
     agents = aiAgents.toCodexAgents;
-    commandSkillFiles = aiCommands.toCodexSkillFiles;
     contextOverride = codexContextOverride;
     managedRequirements = codexManagedRequirementsWithOkf;
     hooksDir = codexHooksDir;
@@ -292,25 +287,19 @@ in
 
   githubCopilotCli = {
     agents = aiAgents.toCopilotMarkdown;
-    commandSkills = aiCommands.toCopilotSkills;
-    commands = aiCommands.toClaudeMarkdown;
     context = base;
-    skills = skillsAttrsForHarness "githubCopilotCli" // aiCommands.toCopilotSkills;
+    skills = skillsAttrsForHarness "githubCopilotCli";
     inherit base;
   };
 
   opencode = {
-    commands = aiCommands.toOpenCodeMarkdown;
     disabledPluginSkills = disabledPluginSkillsForHarness "opencode";
     skills = skillsForHarness "opencode";
     skillSources = skillsAttrsForHarness "opencode";
-    inherit agents;
     renderAgents = aiAgents.toOpenCodeMarkdown;
   };
 
   piCodingAgent = {
     skills = skillsForHarness "piCodingAgent";
   };
-
-  mergeCommands = existingCommands: newCommands: existingCommands // newCommands;
 }

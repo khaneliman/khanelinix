@@ -167,7 +167,6 @@ in
             ++ map (project: "${githubRoot}/${project}") trustedGithubProjects;
         };
 
-      inherit (aiTools.antigravityCli) commands;
       inherit (aiTools.antigravityCli) skills;
       context = {
         AGENTS = aiTools.base;

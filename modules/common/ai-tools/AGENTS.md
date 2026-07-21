@@ -20,8 +20,6 @@
 - `codex.md`: Codex-only delegation and retry addendum
 - `permissions.nix`: shared command and MCP permission catalog
 - `agents.nix`: canonical bounded-worker definitions plus provider renderers
-- `commands.nix` and `commands/`: canonical one-shot prompts plus provider
-  renderers
 - `skills/`: canonical on-demand workflows; keep root playbooks lean and route
   detail into references/scripts
 - `planning-with-files/`: vendored provider adapters and explicit planning
