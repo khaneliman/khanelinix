@@ -53,6 +53,19 @@ let
       "${config.xdg.configHome}/codex"
     else
       "${config.home.homeDirectory}/.codex";
+  codexRepairMessageIds = pkgs.writeShellApplication {
+    name = "codex-repair-message-ids";
+    runtimeInputs = with pkgs; [
+      coreutils
+      findutils
+      jq
+      lsof
+    ];
+    text = ''
+      codex_home_default=${lib.escapeShellArg codexConfigPath}
+      ${builtins.readFile ./repair-message-ids.sh}
+    '';
+  };
   disabledSystemSkillConfig = map (name: {
     path = "${codexConfigPath}/skills/.system/${name}/SKILL.md";
     enabled = false;
@@ -198,7 +211,10 @@ in
         '';
       };
       file = codexAgentFiles;
-      packages = lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+      packages = [
+        codexRepairMessageIds
+      ]
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         pkgs.khanelinix.codex-browser-use-linux-chromium
       ];
       shellAliases = {

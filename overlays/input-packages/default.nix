@@ -28,6 +28,36 @@ let
         "LANDLOCK_ACCESS_FS_READ_FILE | LANDLOCK_ACCESS_FS_READ_DIR | LANDLOCK_ACCESS_FS_EXECUTE"
     '';
   });
+
+  # TODO: remove after openai/codex#32312 reaches a stable llm-agents release.
+  # Codex Desktop can persist UUID-only response item IDs. The Responses API
+  # rejects those IDs during replay because they lack a resource prefix.
+  codex = inputs.llm-agents.packages.${system}.codex.overrideAttrs (old: {
+    patches = (old.patches or [ ]) ++ [
+      (builtins.toFile "codex-require-response-item-id-prefix.patch" ''
+        diff --git a/core/src/client.rs b/core/src/client.rs
+        --- a/core/src/client.rs
+        +++ b/core/src/client.rs
+        @@ -915,6 +915,16 @@ impl ModelClient {
+             }
+
+             fn prepare_response_items_for_request(&self, input: &mut [ResponseItem], store: bool) {
+        +        for item in input.iter_mut() {
+        +            if item.id().is_some_and(|id| {
+        +                !id.split_once('_').is_some_and(|(prefix, suffix)| {
+        +                    !prefix.is_empty() && !suffix.is_empty()
+        +                })
+        +            }) {
+        +                item.set_id(/*new_id*/ None);
+        +            }
+        +        }
+        +
+                 if self.state.item_ids_enabled || store {
+                     return;
+                 }
+      '')
+    ];
+  });
 in
 {
   #          ╭──────────────────────────────────────────────────────────╮
@@ -41,7 +71,6 @@ in
     claude-code
     claude-desktop
     code-review-graph
-    codex
     git-surgeon
     hunk
     opencode
@@ -53,6 +82,8 @@ in
     workmux
     zat
     ;
+
+  inherit codex;
 
   github-copilot-cli = inputs.llm-agents.packages.${system}.copilot-cli;
   pi-coding-agent = inputs.llm-agents.packages.${system}.pi;
