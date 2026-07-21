@@ -8,7 +8,8 @@ let
     packages = with pkgs; [
       dotnetbuildhelpers
       dotnetPackages.Nuget
-      mono
+      # FIXME: broken darwin
+      # mono
       msbuild
       netcoredbg
       roslyn
