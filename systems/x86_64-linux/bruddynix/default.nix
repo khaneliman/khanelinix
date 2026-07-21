@@ -113,6 +113,9 @@ in
     user.name = "bruddy";
   };
 
+  # Home Manager installs the same style without changing the package closure.
+  stylix.targets.gtksourceview.enable = false;
+
   environment.variables =
     lib.mkIf config.khanelinix.programs.graphical.desktop-environment.gnome.enable
       {
