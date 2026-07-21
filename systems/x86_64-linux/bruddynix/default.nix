@@ -116,6 +116,8 @@ in
   # Home Manager installs the same style without changing the package closure.
   stylix.targets.gtksourceview.enable = false;
 
+  services.flatpak.update.onActivation = true;
+
   environment.variables =
     lib.mkIf config.khanelinix.programs.graphical.desktop-environment.gnome.enable
       {
