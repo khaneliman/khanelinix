@@ -8,7 +8,7 @@
 - `base.md` contains only cross-repository, cross-provider behavior that should
   always load. Keep khanelinix-specific guidance in repository `AGENTS.md`
   files.
-- Keep provider-only behavior in provider adapters such as `claude.md` and
+- Keep provider-only behavior in provider adapters such as `CLAUDE.md` and
   `codex.md`.
 - Treat vendored provider copies under `planning-with-files/` as upstream
   artifacts unless task explicitly targets them.
@@ -16,7 +16,7 @@
 ## Source Map
 
 - `base.md`: always-loaded behavior shared by configured coding agents
-- `claude.md`: Claude-only model routing and delivery delegation addendum
+- `CLAUDE.md`: sibling `AGENTS.md` import plus Claude-only delivery addendum
 - `codex.md`: Codex-only delegation and retry addendum
 - `permissions.nix`: shared command and MCP permission catalog
 - `agents.nix`: canonical bounded-worker definitions plus provider renderers

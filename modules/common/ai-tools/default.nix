@@ -10,7 +10,7 @@ let
   permissions = import ./permissions.nix;
 
   base = ./base.md;
-  claudeContext = ./claude.md;
+  claudeContext = ./CLAUDE.md;
   claudeContextOverride = lib.concatStringsSep "\n\n" [
     (builtins.readFile base)
     (builtins.readFile claudeContext)
