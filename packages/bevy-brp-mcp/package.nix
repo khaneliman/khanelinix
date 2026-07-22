@@ -2,6 +2,7 @@
   lib,
   cargo,
   fetchFromGitHub,
+  fetchpatch2,
   makeWrapper,
   rustPlatform,
   rustc,
@@ -18,6 +19,13 @@ rustPlatform.buildRustPackage (finalAttrs: {
     rev = "v${finalAttrs.version}";
     hash = "sha256-IMfv5Mp+rN3bLJcbwtE46nNXHaLtLYBUD8hTLJ1FsHo=";
   };
+
+  patches = [
+    (fetchpatch2 {
+      url = "https://github.com/khaneliman/bevy_brp/commit/e60148efc209cd5ee16887b2f02eefbef8b0eda6.patch";
+      hash = "sha256-8c/QVdWgjT8muUGrSvN0sZd4OiCDn+OYGght08nIhN8=";
+    })
+  ];
 
   buildAndTestSubdir = "mcp";
 
