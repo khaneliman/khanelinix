@@ -3,10 +3,10 @@ final: prev:
 let
   inherit (final.stdenv.hostPlatform) system;
 
-  master = import inputs.nixpkgs-master {
-    inherit system;
-    inherit (prev) config;
-  };
+  # master = import inputs.nixpkgs-master {
+  #   inherit system;
+  #   inherit (prev) config;
+  # };
 
   useLldOnDarwin =
     package:
@@ -91,25 +91,6 @@ in
   #          ╭──────────────────────────────────────────────────────────╮
   #          │ From nixpkgs-master (fast updating / want latest always) │
   #          ╰──────────────────────────────────────────────────────────╯
-  # TODO: remove after the ld64 hardening workarounds reach the unstable channel.
-  blueutil = if final.stdenv.hostPlatform.isDarwin then master.blueutil else prev.blueutil;
-  darktable =
-    if final.stdenv.hostPlatform.isDarwin then
-      master.darktable.overrideAttrs {
-        # `darktable --version` hangs indefinitely inside the Darwin build sandbox.
-        # Compilation and linking finish before this smoke check runs.
-        doInstallCheck = false;
-      }
-    else
-      prev.darktable;
-  godot = if final.stdenv.hostPlatform.isDarwin then master.godot else prev.godot;
-  mpv-unwrapped =
-    if final.stdenv.hostPlatform.isDarwin then master.mpv-unwrapped else prev.mpv-unwrapped;
-  sketchybar = if final.stdenv.hostPlatform.isDarwin then master.sketchybar else prev.sketchybar;
-  stats = if final.stdenv.hostPlatform.isDarwin then master.stats else prev.stats;
-  terminal-notifier =
-    if final.stdenv.hostPlatform.isDarwin then master.terminal-notifier else prev.terminal-notifier;
-
   #          ╭──────────────────────────────────────────────────────────╮
   #          │                 Darwin package overrides                 │
   #          ╰──────────────────────────────────────────────────────────╯
