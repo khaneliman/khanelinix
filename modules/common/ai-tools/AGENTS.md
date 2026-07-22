@@ -16,7 +16,12 @@
 ## Source Map
 
 - `base.md`: always-loaded behavior shared by configured coding agents
-- `CLAUDE.md`: sibling `AGENTS.md` import plus Claude-only delivery addendum
+- `CLAUDE.md`: sibling `AGENTS.md` import only; auto-loads as in-repo project
+  memory for this subtree
+- `claude-delivery.md`: Claude-only delivery-routing addendum concatenated onto
+  `base.md` for generated global Claude context; kept separate from `CLAUDE.md`
+  so routing does not double-load in-repo and global carries no dangling
+  `@AGENTS.md` import. Named to avoid a Darwin case collision with `CLAUDE.md`
 - `codex.md`: Codex-only delegation and retry addendum
 - `permissions.nix`: shared command and MCP permission catalog
 - `agents.nix`: canonical bounded-worker definitions plus provider renderers

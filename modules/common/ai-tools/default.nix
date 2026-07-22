@@ -10,7 +10,13 @@ let
   permissions = import ./permissions.nix;
 
   base = ./base.md;
-  claudeContext = ./CLAUDE.md;
+  # Pure Claude-only addendum, mirroring codex.md. Kept separate from the
+  # sibling CLAUDE.md (which is only `@AGENTS.md`) so the generated global
+  # context carries no dangling `@AGENTS.md` import and the delivery routing
+  # does not double-load when working inside this subtree. Named
+  # `claude-delivery.md` rather than `claude.md` to avoid a case-insensitive
+  # filesystem collision with CLAUDE.md on Darwin.
+  claudeContext = ./claude-delivery.md;
   claudeContextOverride = lib.concatStringsSep "\n\n" [
     (builtins.readFile base)
     (builtins.readFile claudeContext)
