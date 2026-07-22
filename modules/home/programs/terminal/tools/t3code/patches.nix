@@ -81,14 +81,18 @@ pkgs.lib.concatMap fetchPatches [
   {
     name = "feat-web-text-scale";
     rev = "f3ba720c046e7953c76d0bba690475de6eb7c86f";
-    hash = "sha256-Z5jPtgLv/aHBs0TqJ0n5bI/szpjgOwvXAAZ+2OgSZiA=";
+    hash = "sha256-M2AXK58OsFxXMC7VjiRuR4JBFlLxe1P6gQWEMU0DraE=";
     excludes = [
       "apps/web/src/components/Sidebar.tsx"
       "apps/web/src/components/chat/MessagesTimeline.tsx"
       "apps/web/src/components/settings/DiagnosticsSettings.tsx"
       "apps/web/src/index.css"
+      "packages/contracts/src/settings.test.ts"
     ];
-    extraPatches = [ ./feat-web-text-scale-css.patch ];
+    extraPatches = [
+      ./feat-web-text-scale-css.patch
+      ./feat-web-text-scale-settings-test.patch
+    ];
   }
   {
     name = "fix-codex-session-start-timeout";
