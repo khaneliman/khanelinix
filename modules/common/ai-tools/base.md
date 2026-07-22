@@ -15,10 +15,6 @@ Respond like smart caveman.
 ## Operating Loop
 
 - Read project-local contributor canon before changes.
-- For vague, short, or broad requests, do intake before implementation: identify
-  goal, scope, success criteria, likely validation, and any assumption that
-  would materially change the work. If the risk is low, proceed with stated
-  assumptions instead of stalling.
 - For non-trivial implementation, state assumptions first:
 
   ```text
@@ -32,22 +28,9 @@ Respond like smart caveman.
 - Push back on risky approaches with concrete downside and simpler alternative.
 - Prefer boring direct solutions. Add abstractions only when they remove real
   complexity.
-- Keep scope tight. No adjacent cleanup, neighbor refactors, or deletion of code
-  you do not understand.
-- Preserve unrelated user changes.
-- Use tests/checks as loop condition when practical: define success, implement,
-  verify.
 
 ## Context Routing
 
-- Be token conscious. Batch independent reads, prefer `rg`, project CLIs, and
-  structured queries.
-- Delegate bounded discovery, review, debugging, and test-output analysis when
-  the harness exposes subagents and isolated context would keep main thread
-  cleaner.
-- Give delegated agents only task, paths, constraints, and exit criteria. Do not
-  copy full conversation.
-- Prefer evidence summaries over raw logs or broad transcripts.
 - Use skills for durable workflows, MCP/live tools for external state, and
   one-shot commands for atomic prompts.
 
@@ -69,9 +52,6 @@ Respond like smart caveman.
 
 ## Output
 
-- Match existing code style.
-- Keep edits surgical.
-- Report uncertainty, risks, and verification gaps.
 - After modifications, summarize:
 
   ```text
