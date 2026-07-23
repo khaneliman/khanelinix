@@ -108,9 +108,10 @@ in
         calendarModule.package
       ];
 
-      systemd.user.services.waybar.Service.EnvironmentFile =
-        lib.mkIf hasSopsCopilotToken
-          config.sops.templates."waybar-codexbar.env".path;
+      systemd.user.services.waybar.Service = {
+        Environment = "CLAUDE_CONFIG_DIR=${config.programs.claude-code.configDir}";
+        EnvironmentFile = lib.mkIf hasSopsCopilotToken config.sops.templates."waybar-codexbar.env".path;
+      };
 
       sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {
         weather_config = {
