@@ -118,6 +118,7 @@ in
 
     programs.claude-code = {
       enable = true;
+      configDir = "${config.xdg.configHome}/claude";
 
       enableMcpIntegration = mkIf mcpModuleEnabled true;
 
@@ -125,6 +126,7 @@ in
         inherit hooks;
 
         model = "claude-fable-5";
+        theme = "dark";
         alwaysThinkingEnabled = true;
         autoMemoryEnabled = !aiTools.claudeCode.okfMemoryEnabled;
         # Usage credits
