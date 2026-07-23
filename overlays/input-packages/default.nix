@@ -40,7 +40,6 @@ in
     ccusage
     ck
     claude-code
-    claude-desktop
     code-review-graph
     codex
     git-surgeon
@@ -54,6 +53,17 @@ in
     workmux
     zat
     ;
+
+  claude-desktop =
+    let
+      package = inputs.llm-agents.packages.${system}.claude-desktop;
+    in
+    # Chromium cannot infer Secret Service from wlroots desktop names and falls
+    # back to plaintext basic_text storage despite an unlocked GNOME Keyring.
+    if final.stdenv.hostPlatform.isLinux then
+      package.override { commandLineArgs = "--password-store=gnome-libsecret"; }
+    else
+      package;
 
   github-copilot-cli = inputs.llm-agents.packages.${system}.copilot-cli;
   pi-coding-agent = inputs.llm-agents.packages.${system}.pi;
