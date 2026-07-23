@@ -275,6 +275,7 @@ in
           trusted-users = [ config.khanelinix.user.name ];
           min-free = 1073741824; # 1GB
           max-free = 10737418240; # 10GB
+          keep-going = true;
 
           substituters = [
             "https://khanelinix.cachix.org"
