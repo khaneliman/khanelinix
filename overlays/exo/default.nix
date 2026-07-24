@@ -1,6 +1,34 @@
-_: _final: prev:
+_: final: prev:
 let
-  mlxMetal = prev.python3Packages.buildPythonPackage {
+  # MLX only ships a CPython 3.13 Darwin wheel, so exo and its whole MLX stack
+  # must be built against python313Packages. Loading the wheel through the
+  # default 3.14 interpreter leaves mlx.core without its compiled attributes.
+  pythonPackages =
+    if prev.stdenv.hostPlatform.isDarwin then final.python313Packages else final.python3Packages;
+
+  useMetalWheel = prev.stdenv.hostPlatform.isDarwin && prev.stdenv.hostPlatform.isAarch64;
+
+  # The MLX wheels are Metal-enabled builds, so importing them needs a real GPU.
+  # The sandbox has none — nixpkgs builds its own MLX with MLX_BUILD_METAL=false
+  # for that reason, which also costs it GPU acceleration at runtime. Skip the
+  # execution-based checks instead of relaxing the sandbox; the wheels only run
+  # at runtime, where Metal is available.
+  #
+  # Skip those phases individually rather than setting doCheck = false: some of
+  # these packages declare runtime dependencies that nixpkgs supplies only as
+  # nativeCheckInputs (mlx-lm needs sentencepiece), so dropping the check inputs
+  # makes pythonRuntimeDepsCheck fail instead.
+  withoutGpuChecks =
+    package:
+    if useMetalWheel then
+      package.overridePythonAttrs {
+        dontUsePythonImportsCheck = true;
+        dontUsePytestCheck = true;
+      }
+    else
+      package;
+
+  mlxMetal = pythonPackages.buildPythonPackage {
     pname = "mlx-metal";
     version = "0.31.2";
     format = "wheel";
@@ -12,8 +40,8 @@ let
   };
 
   mlx =
-    if prev.stdenv.hostPlatform.isDarwin && prev.stdenv.hostPlatform.isAarch64 then
-      prev.python3Packages.buildPythonPackage {
+    if useMetalWheel then
+      pythonPackages.buildPythonPackage {
         pname = "mlx";
         version = "0.31.2";
         format = "wheel";
@@ -25,69 +53,102 @@ let
 
         dependencies = [
           mlxMetal
-          prev.python3Packages.numpy
+          pythonPackages.numpy
         ];
 
         postInstall = ''
           ln -s \
-            ${mlxMetal}/${prev.python3Packages.python.sitePackages}/mlx/lib \
-            $out/${prev.python3Packages.python.sitePackages}/mlx/lib
+            ${mlxMetal}/${pythonPackages.python.sitePackages}/mlx/lib \
+            $out/${pythonPackages.python.sitePackages}/mlx/lib
         '';
 
         pythonImportsCheck = [ "mlx" ];
       }
     else
-      prev.python3Packages.mlx;
+      pythonPackages.mlx;
 
-  mlx-lm = prev.python3Packages.mlx-lm.overridePythonAttrs (old: {
-    dependencies =
-      builtins.filter (dependency: (dependency.pname or "") != "mlx") (old.dependencies or [ ])
-      ++ [
-        mlx
-      ];
-  });
+  mlx-lm = withoutGpuChecks (
+    pythonPackages.mlx-lm.overridePythonAttrs (old: {
+      dependencies =
+        builtins.filter (dependency: (dependency.pname or "") != "mlx") (old.dependencies or [ ])
+        ++ [
+          mlx
+        ];
+    })
+  );
 
-  mlx-vlm = prev.python3Packages.mlx-vlm.overridePythonAttrs (old: {
-    dependencies =
-      builtins.filter (
-        dependency:
-        !(builtins.elem (dependency.pname or "") [
-          "mlx"
-          "mlx-lm"
-        ])
-      ) (old.dependencies or [ ])
-      ++ [
-        mlx
-        mlx-lm
-      ];
-  });
+  mlx-vlm = withoutGpuChecks (
+    pythonPackages.mlx-vlm.overridePythonAttrs (old: {
+      dependencies =
+        builtins.filter (
+          dependency:
+          !(builtins.elem (dependency.pname or "") [
+            "mlx"
+            "mlx-lm"
+          ])
+        ) (old.dependencies or [ ])
+        ++ [
+          mlx
+          mlx-lm
+        ];
+    })
+  );
 
-  mflux = prev.python3Packages.mflux.overridePythonAttrs (old: {
-    dependencies =
-      builtins.filter (dependency: (dependency.pname or "") != "mlx") (old.dependencies or [ ])
-      ++ [
-        mlx
-      ];
-  });
+  mflux = withoutGpuChecks (
+    pythonPackages.mflux.overridePythonAttrs (old: {
+      dependencies =
+        builtins.filter (dependency: (dependency.pname or "") != "mlx") (old.dependencies or [ ])
+        ++ [
+          mlx
+        ];
+    })
+  );
+
+  basePackage =
+    if prev.stdenv.hostPlatform.isDarwin then
+      prev.exo.override { python3Packages = pythonPackages; }
+    else
+      prev.exo;
+
+  # nixpkgs versions the bindings by exo's git tag while the crate's pyproject
+  # keeps its own unrelated version, so the metadata check can never match.
+  pyo3-bindings = basePackage.exo-pyo3-bindings.overridePythonAttrs {
+    dontCheckPythonMetadata = true;
+  };
 in
 {
-  exo = prev.exo.overridePythonAttrs (old: {
-    dependencies =
-      builtins.filter (
-        dependency:
-        !(builtins.elem (dependency.pname or "") [
-          "mflux"
-          "mlx"
-          "mlx-lm"
-          "mlx-vlm"
-        ])
-      ) (old.dependencies or [ ])
-      ++ [
-        mflux
-        mlx
-        mlx-lm
-        mlx-vlm
-        prev.python3Packages.torchvision
+  # exo imports the MLX stack, so it inherits the same sandbox GPU limitation.
+  exo = withoutGpuChecks (
+    basePackage.overridePythonAttrs (old: {
+      # exo tags releases without bumping pyproject's version, so patch it to the
+      # derivation version for pythonMetadataCheckPhase.
+      nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [
+        pythonPackages.pyprojectVersionPatchHook
       ];
-  });
+
+      passthru = (old.passthru or { }) // {
+        exo-pyo3-bindings = pyo3-bindings;
+      };
+
+      dependencies =
+        builtins.filter (
+          dependency:
+          !(builtins.elem (dependency.pname or "") [
+            "exo-pyo3-bindings"
+            "mflux"
+            "mlx"
+            "mlx-lm"
+            "mlx-vlm"
+          ])
+        ) (old.dependencies or [ ])
+        ++ [
+          mflux
+          mlx
+          mlx-lm
+          mlx-vlm
+          pyo3-bindings
+          pythonPackages.torchvision
+        ];
+    })
+  );
 }

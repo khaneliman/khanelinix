@@ -74,16 +74,6 @@ in
   #          ╭──────────────────────────────────────────────────────────╮
   #          │                 Darwin package overrides                 │
   #          ╰──────────────────────────────────────────────────────────╯
-  # MLX distributes a CPython 3.13 Darwin wheel. Loading it through the
-  # default Python 3.14 leaves mlx.core without its compiled attributes.
-  exo =
-    if final.stdenv.hostPlatform.isDarwin then
-      prev.callPackage "${inputs.nixpkgs}/pkgs/by-name/ex/exo/package.nix" {
-        python3Packages = final.python313Packages;
-      }
-    else
-      prev.exo;
-
   # LM Studio's APFS disk image requires hdiutil, which cannot mount inside
   # Nix's Darwin sandbox. `sandbox = "relaxed"` honors this package opt-out.
   lmstudio = prev.lmstudio.overrideAttrs {
