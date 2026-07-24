@@ -356,6 +356,8 @@ in
           ];
         };
 
+        emulators.limux = enabled;
+
         tools = {
           git = {
             enable = true;
@@ -369,6 +371,7 @@ in
             ];
           };
 
+          herdr = enabled;
           run-as-service = enabled;
           sesh = enabled;
           ssh = enabled;
