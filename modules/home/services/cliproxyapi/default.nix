@@ -336,11 +336,18 @@ in
         baseURL = "${baseUrl}/v1";
         inherit apiKey;
       };
-      models = {
-        "${proxyModel "claude" cfg.models.claude}".name = "Claude via CLIProxyAPI";
-        "${proxyModel "codex" cfg.models.codex}".name = "Codex via CLIProxyAPI";
-        "${proxyModel "antigravity" cfg.models.gemini}".name = "Gemini via CLIProxyAPI";
-      };
+      models =
+        builtins.listToAttrs (
+          map (model: {
+            name = model.alias;
+            value.name = model.displayName;
+          }) cfg.claudeCodeModels
+        )
+        // {
+          "${proxyModel "claude" cfg.models.claude}".name = "Anthropic · Fable 5";
+          "claude-opus-4-8".name = "Anthropic · Opus 4.8";
+          "claude-sonnet-5".name = "Anthropic · Sonnet 5";
+        };
     };
 
     systemd.user.services.cliproxyapi = mkIf pkgs.stdenv.hostPlatform.isLinux {
