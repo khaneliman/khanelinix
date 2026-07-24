@@ -348,6 +348,7 @@ in
         Description = "CLIProxyAPI local AI provider proxy";
         After = [ "network-online.target" ];
         Wants = [ "network-online.target" ];
+        X-Restart-Triggers = [ "${proxyConfig}" ];
       };
 
       Service = {
