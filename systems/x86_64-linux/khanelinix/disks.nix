@@ -16,6 +16,7 @@ let
     "noatime"
     "nodiratime"
   ];
+  xdgBtrfsOpts = defaultBtrfsOpts ++ [ "x-gvfs-hide" ];
 in
 {
   disko.devices = {
@@ -134,23 +135,23 @@ in
                   };
                   "@userdata/@documents" = {
                     mountpoint = "/home/${config.khanelinix.user.name}/Documents";
-                    mountOptions = defaultBtrfsOpts;
+                    mountOptions = xdgBtrfsOpts;
                   };
                   "@userdata/@downloads" = {
                     mountpoint = "/home/${config.khanelinix.user.name}/Downloads";
-                    mountOptions = defaultBtrfsOpts;
+                    mountOptions = xdgBtrfsOpts;
                   };
                   "@userdata/@music" = {
                     mountpoint = "/home/${config.khanelinix.user.name}/Music";
-                    mountOptions = defaultBtrfsOpts;
+                    mountOptions = xdgBtrfsOpts;
                   };
                   "@userdata/@pictures" = {
                     mountpoint = "/home/${config.khanelinix.user.name}/Pictures";
-                    mountOptions = defaultBtrfsOpts;
+                    mountOptions = xdgBtrfsOpts;
                   };
                   "@userdata/@videos" = {
                     mountpoint = "/home/${config.khanelinix.user.name}/Videos";
-                    mountOptions = defaultBtrfsOpts;
+                    mountOptions = xdgBtrfsOpts;
                   };
                 };
               };
