@@ -84,7 +84,7 @@ in
 
         in
         {
-          model = "Gemini 3.5 Flash (High)";
+          model = "Gemini 3.6 Flash (High)";
           historySize = 5000;
           allowNonWorkspaceAccess = true;
           altScreenMode = "always";
