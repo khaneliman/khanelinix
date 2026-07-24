@@ -35,27 +35,43 @@ let
     logging-to-file = false;
     usage-statistics-enabled = false;
     ws-auth = true;
+    oauth-excluded-models = cfg.oauthExcludedModels;
+    oauth-model-alias = lib.mapAttrs (
+      _: models:
+      map (model: {
+        name = model.model;
+        inherit (model) alias;
+        display-name = model.displayName;
+      }) models
+    ) (lib.groupBy (model: model.provider) cfg.claudeCodeModels);
   };
 
+  proxyModel =
+    provider: model:
+    let
+      mapping = lib.findFirst (
+        candidate: candidate.provider == provider && candidate.model == model
+      ) null cfg.claudeCodeModels;
+    in
+    if mapping == null then model else mapping.alias;
+
   claudeCommand =
-    model:
+    provider: model:
     lib.concatStringsSep " " [
       "ANTHROPIC_BASE_URL=${lib.escapeShellArg baseUrl}"
       "ANTHROPIC_AUTH_TOKEN=${lib.escapeShellArg apiKey}"
-      "ANTHROPIC_DEFAULT_OPUS_MODEL=${lib.escapeShellArg model}"
-      "ANTHROPIC_DEFAULT_SONNET_MODEL=${lib.escapeShellArg model}"
-      "ANTHROPIC_DEFAULT_HAIKU_MODEL=${lib.escapeShellArg model}"
-      "CLAUDE_CODE_SUBAGENT_MODEL=${lib.escapeShellArg model}"
+      "CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1"
       "CLAUDE_CODE_ALWAYS_ENABLE_EFFORT=1"
       "CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY=3"
       "ENABLE_TOOL_SEARCH=false"
       "claude"
       "--model"
-      (lib.escapeShellArg model)
+      (lib.escapeShellArg (proxyModel provider model))
     ];
 
   codexCommand =
-    model: "codex --strict-config -c model_provider='\"cliproxyapi\"' -m ${lib.escapeShellArg model}";
+    provider: model:
+    "codex --strict-config -c model_provider='\"cliproxyapi\"' -m ${lib.escapeShellArg (proxyModel provider model)}";
 
   loginCommand =
     provider: flag:
@@ -108,9 +124,138 @@ in
 
       gemini = mkOption {
         type = types.str;
-        default = "gemini-3.5-flash";
+        default = "gemini-3.6-flash-high";
         description = "Gemini provider model used by harness aliases.";
       };
+    };
+
+    oauthExcludedModels = mkOption {
+      type = types.attrsOf (types.listOf types.str);
+      default = {
+        antigravity = [
+          "gemini-3-flash"
+          "gemini-3-flash-agent"
+          "gemini-3.1-flash-image"
+          "gemini-3.1-flash-lite"
+          "gemini-3.1-pro-low"
+          "gemini-3.5-flash-extra-low"
+          "gemini-3.5-flash-low"
+        ];
+        codex = [
+          "codex-auto-review"
+          "gpt-5.4"
+          "gpt-5.4-mini"
+          "gpt-5.5"
+          "gpt-image-1.5"
+          "gpt-image-2"
+        ];
+        claude = [
+          "claude-3-5-haiku-20241022"
+          "claude-3-7-sonnet-20250219"
+          "claude-opus-4-20250514"
+          "claude-opus-4-1-20250805"
+          "claude-opus-4-5-20251101"
+          "claude-opus-4-6"
+          "claude-opus-4-7"
+          "claude-sonnet-4-20250514"
+          "claude-sonnet-4-5-20250929"
+          "claude-sonnet-4-6"
+        ];
+      };
+      description = ''
+        OAuth provider models hidden from CLIProxyAPI clients. Lists use
+        CLIProxyAPI's case-insensitive wildcard syntax and apply before model
+        aliases.
+      '';
+    };
+
+    claudeCodeModels = mkOption {
+      type = types.listOf (
+        types.submodule {
+          options = {
+            provider = mkOption {
+              type = types.str;
+              description = "CLIProxyAPI OAuth provider that owns the model.";
+            };
+
+            model = mkOption {
+              type = types.str;
+              description = "Upstream model ID routed by CLIProxyAPI.";
+            };
+
+            alias = mkOption {
+              type = types.str;
+              description = "Claude-prefixed model ID exposed to Claude Code.";
+            };
+
+            displayName = mkOption {
+              type = types.str;
+              description = "Human-readable model name exposed to gateway clients.";
+            };
+          };
+        }
+      );
+      default = [
+        {
+          provider = "codex";
+          model = "gpt-5.3-codex-spark";
+          alias = "claude-gpt-5.3-codex-spark";
+          displayName = "OpenAI · GPT 5.3 Codex Spark";
+        }
+        {
+          provider = "codex";
+          model = "gpt-5.6-sol";
+          alias = "claude-gpt-5.6-sol";
+          displayName = "OpenAI · GPT 5.6 Sol";
+        }
+        {
+          provider = "codex";
+          model = "gpt-5.6-terra";
+          alias = "claude-gpt-5.6-terra";
+          displayName = "OpenAI · GPT 5.6 Terra";
+        }
+        {
+          provider = "codex";
+          model = "gpt-5.6-luna";
+          alias = "claude-gpt-5.6-luna";
+          displayName = "OpenAI · GPT 5.6 Luna";
+        }
+        {
+          provider = "antigravity";
+          model = "gemini-3.6-flash-high";
+          alias = "claude-gemini-3.6-flash";
+          displayName = "Google · Gemini 3.6 Flash";
+        }
+        {
+          provider = "antigravity";
+          model = "gemini-pro-agent";
+          alias = "claude-gemini-3.1-pro";
+          displayName = "Google · Gemini 3.1 Pro";
+        }
+        {
+          provider = "antigravity";
+          model = "claude-sonnet-4-6";
+          alias = "claude-antigravity-sonnet-4-6";
+          displayName = "Google · Claude Sonnet 4.6";
+        }
+        {
+          provider = "antigravity";
+          model = "claude-opus-4-6-thinking";
+          alias = "claude-antigravity-opus-4-6";
+          displayName = "Google · Claude Opus 4.6";
+        }
+        {
+          provider = "antigravity";
+          model = "gpt-oss-120b-medium";
+          alias = "claude-gpt-oss-120b";
+          displayName = "Google · GPT-OSS 120B";
+        }
+      ];
+      description = ''
+        Models exposed additively to Claude Code through CLIProxyAPI gateway
+        discovery. Aliases must start with `claude` or `anthropic` because
+        Claude Code filters other gateway model IDs from its picker.
+      '';
     };
   };
 
@@ -123,6 +268,20 @@ in
           "localhost"
         ];
         message = "khanelinix.services.cliproxyapi.host must remain loopback-only";
+      }
+      {
+        assertion = lib.all (
+          model: lib.hasPrefix "claude" model.alias || lib.hasPrefix "anthropic" model.alias
+        ) cfg.claudeCodeModels;
+        message = "khanelinix.services.cliproxyapi.claudeCodeModels aliases must start with claude or anthropic";
+      }
+      {
+        assertion =
+          let
+            aliases = map (model: model.alias) cfg.claudeCodeModels;
+          in
+          lib.length aliases == lib.length (lib.unique aliases);
+        message = "khanelinix.services.cliproxyapi.claudeCodeModels aliases must be unique";
       }
     ];
 
@@ -140,20 +299,22 @@ in
 
       shellAliases =
         lib.optionalAttrs claudeCodeEnabled {
-          claude-claude = claudeCommand cfg.models.claude;
-          claude-codex = claudeCommand cfg.models.codex;
-          claude-gemini = claudeCommand cfg.models.gemini;
-          claudex = claudeCommand cfg.models.codex;
+          claude = claudeCommand "claude" cfg.models.claude;
+          claude-claude = claudeCommand "claude" cfg.models.claude;
+          claude-codex = claudeCommand "codex" cfg.models.codex;
+          claude-direct = "command claude";
+          claude-gemini = claudeCommand "antigravity" cfg.models.gemini;
+          claudex = claudeCommand "codex" cfg.models.codex;
         }
         // lib.optionalAttrs codexEnabled {
-          codex-claude = codexCommand cfg.models.claude;
-          codex-codex = codexCommand cfg.models.codex;
-          codex-gemini = codexCommand cfg.models.gemini;
+          codex-claude = codexCommand "claude" cfg.models.claude;
+          codex-codex = codexCommand "codex" cfg.models.codex;
+          codex-gemini = codexCommand "antigravity" cfg.models.gemini;
         }
         // lib.optionalAttrs opencodeEnabled {
-          opencode-claude = "opencode --model cliproxyapi/${cfg.models.claude}";
-          opencode-codex = "opencode --model cliproxyapi/${cfg.models.codex}";
-          opencode-gemini = "opencode --model cliproxyapi/${cfg.models.gemini}";
+          opencode-claude = "opencode --model cliproxyapi/${proxyModel "claude" cfg.models.claude}";
+          opencode-codex = "opencode --model cliproxyapi/${proxyModel "codex" cfg.models.codex}";
+          opencode-gemini = "opencode --model cliproxyapi/${proxyModel "antigravity" cfg.models.gemini}";
         };
     };
 
@@ -176,9 +337,9 @@ in
         inherit apiKey;
       };
       models = {
-        "${cfg.models.claude}".name = "Claude via CLIProxyAPI";
-        "${cfg.models.codex}".name = "Codex via CLIProxyAPI";
-        "${cfg.models.gemini}".name = "Gemini via CLIProxyAPI";
+        "${proxyModel "claude" cfg.models.claude}".name = "Claude via CLIProxyAPI";
+        "${proxyModel "codex" cfg.models.codex}".name = "Codex via CLIProxyAPI";
+        "${proxyModel "antigravity" cfg.models.gemini}".name = "Gemini via CLIProxyAPI";
       };
     };
 
