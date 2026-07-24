@@ -34,7 +34,10 @@ let
       ];
     }
   ) config.programs.mcp.servers;
-  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
+  aiTools = import (lib.getFile "modules/common/ai-tools") {
+    gatewayEnabled = config.khanelinix.services.cliproxyapi.enable or false;
+    inherit lib pkgs;
+  };
   tomlFormat = pkgs.formats.toml { };
   # Model metadata overrides the multi-agent feature flags. Force V1 until the
   # current MultiAgentV2 tool-schema bug is fixed upstream.

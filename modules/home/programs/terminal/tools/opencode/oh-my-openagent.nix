@@ -8,7 +8,10 @@ let
   cfg = config.khanelinix.programs.terminal.tools.opencode;
   opencodeSkills = config.programs.opencode.skills or null;
 
-  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
+  aiTools = import (lib.getFile "modules/common/ai-tools") {
+    gatewayEnabled = config.khanelinix.services.cliproxyapi.enable or false;
+    inherit lib;
+  };
   deliberateModel = "openai/gpt-5.6-terra";
 
   json = pkgs.formats.json { };

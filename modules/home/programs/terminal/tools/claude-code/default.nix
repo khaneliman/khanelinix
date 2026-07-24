@@ -12,7 +12,10 @@ let
 
   cfg = config.khanelinix.programs.terminal.tools.claude-code;
   mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
-  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
+  aiTools = import (lib.getFile "modules/common/ai-tools") {
+    gatewayEnabled = config.khanelinix.services.cliproxyapi.enable or false;
+    inherit lib pkgs;
+  };
   hooks = lib.zipAttrsWith (_: values: lib.concatLists values) (
     lib.importFiles ./hooks {
       inherit

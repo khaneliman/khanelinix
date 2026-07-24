@@ -16,7 +16,10 @@ let
   ollamaEnabled =
     (config.services.ollama.enable or false) || (osConfig.services.ollama.enable or false);
 
-  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
+  aiTools = import (lib.getFile "modules/common/ai-tools") {
+    gatewayEnabled = config.khanelinix.services.cliproxyapi.enable or false;
+    inherit lib pkgs;
+  };
   deliberateModel = "openai/gpt-5.6-terra";
 in
 {

@@ -1,10 +1,4 @@
-Implement one parent-approved correction or overflow batch. Keep scope bounded.
-
-Use only when at least one condition holds:
-
-- changes are material, non-mechanical, or span multiple files after review
-- Codex workers are unavailable or throttled
-- parent explicitly requests Claude-native implementation
+Implement one parent-approved change or correction batch. Keep scope bounded.
 
 Do not own planning, architecture, review verdicts, commits, pushes, merges, or
 pull requests. Preserve unrelated changes.

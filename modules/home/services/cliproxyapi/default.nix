@@ -55,19 +55,25 @@ let
     in
     if mapping == null then model else mapping.alias;
 
+  claudeGatewayEnv = {
+    ANTHROPIC_BASE_URL = baseUrl;
+    ANTHROPIC_AUTH_TOKEN = apiKey;
+    CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY = "1";
+    ENABLE_TOOL_SEARCH = "false";
+  };
+
   claudeCommand =
     provider: model:
-    lib.concatStringsSep " " [
-      "ANTHROPIC_BASE_URL=${lib.escapeShellArg baseUrl}"
-      "ANTHROPIC_AUTH_TOKEN=${lib.escapeShellArg apiKey}"
-      "CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1"
-      "CLAUDE_CODE_ALWAYS_ENABLE_EFFORT=1"
-      "CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY=3"
-      "ENABLE_TOOL_SEARCH=false"
-      "claude"
-      "--model"
-      (lib.escapeShellArg (proxyModel provider model))
-    ];
+    lib.concatStringsSep " " (
+      lib.mapAttrsToList (name: value: "${name}=${lib.escapeShellArg value}") claudeGatewayEnv
+      ++ [
+        "CLAUDE_CODE_ALWAYS_ENABLE_EFFORT=1"
+        "CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY=3"
+        "claude"
+        "--model"
+        (lib.escapeShellArg (proxyModel provider model))
+      ]
+    );
 
   codexCommand =
     provider: model:
@@ -302,7 +308,13 @@ in
           claude = claudeCommand "claude" cfg.models.claude;
           claude-claude = claudeCommand "claude" cfg.models.claude;
           claude-codex = claudeCommand "codex" cfg.models.codex;
-          claude-direct = "command claude";
+          claude-direct = lib.concatStringsSep " " [
+            "ANTHROPIC_BASE_URL=https://api.anthropic.com"
+            "ANTHROPIC_AUTH_TOKEN=''"
+            "CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=0"
+            "ENABLE_TOOL_SEARCH=true"
+            "command claude"
+          ];
           claude-gemini = claudeCommand "antigravity" cfg.models.gemini;
           claudex = claudeCommand "codex" cfg.models.codex;
         }
@@ -349,6 +361,8 @@ in
           "claude-sonnet-5".name = "Anthropic · Sonnet 5";
         };
     };
+
+    programs.claude-code.settings.env = mkIf claudeCodeEnabled claudeGatewayEnv;
 
     systemd.user.services.cliproxyapi = mkIf pkgs.stdenv.hostPlatform.isLinux {
       Unit = {

@@ -1,26 +1,17 @@
 {
+  gatewayEnabled ? false,
   lib,
   pkgs ? null,
   ...
 }:
 
 let
-  aiAgents = import ./agents.nix { inherit lib; };
+  aiAgents = import ./agents.nix { inherit gatewayEnabled lib; };
   codexManagedRequirements = import ./codex-managed-requirements.nix;
   permissions = import ./permissions.nix;
 
   base = ./base.md;
-  # Pure Claude-only addendum, mirroring codex.md. Kept separate from the
-  # sibling CLAUDE.md (which is only `@AGENTS.md`) so the generated global
-  # context carries no dangling `@AGENTS.md` import and the delivery routing
-  # does not double-load when working inside this subtree. Named
-  # `claude-delivery.md` rather than `claude.md` to avoid a case-insensitive
-  # filesystem collision with CLAUDE.md on Darwin.
-  claudeContext = ./claude-delivery.md;
-  claudeContextOverride = lib.concatStringsSep "\n\n" [
-    (builtins.readFile base)
-    (builtins.readFile claudeContext)
-  ];
+  claudeContextOverride = builtins.readFile base;
   codexContext = ./codex.md;
   codexContextOverride = lib.concatStringsSep "\n\n" [
     (builtins.readFile base)
@@ -132,7 +123,6 @@ let
   harnessSkillPolicy = {
     codex = {
       excludeLocal = [
-        "delivery-workflow"
         "docx"
         "mcp-builder"
         "pdf"
@@ -161,12 +151,7 @@ let
       ];
     };
 
-    antigravityCli.excludeLocal = [ "delivery-workflow" ];
-
-    githubCopilotCli.excludeLocal = [ "delivery-workflow" ];
-
     opencode = {
-      excludeLocal = [ "delivery-workflow" ];
       disablePluginSkills = [
         "frontend-ui-ux"
         "git-master"
@@ -175,7 +160,6 @@ let
       ];
     };
 
-    piCodingAgent.excludeLocal = [ "delivery-workflow" ];
   };
 
   validateSkillPolicy =
@@ -253,7 +237,6 @@ in
   inherit
     agents
     base
-    claudeContext
     claudeContextOverride
     codexContext
     codexContextOverride
