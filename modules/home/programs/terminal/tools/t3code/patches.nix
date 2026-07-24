@@ -1,23 +1,19 @@
 { pkgs }:
 let
-  fetchPatches =
+  fetchPatch =
     {
       name,
       rev,
       hash,
       excludes ? [ ],
-      extraPatches ? [ ],
     }:
-    [
-      (pkgs.fetchpatch2 {
-        name = "t3code-${name}.patch";
-        url = "https://github.com/khaneliman/t3code/commit/${rev}.patch";
-        inherit excludes hash;
-      })
-    ]
-    ++ extraPatches;
+    pkgs.fetchpatch2 {
+      name = "t3code-${name}.patch";
+      url = "https://github.com/khaneliman/t3code/commit/${rev}.patch";
+      inherit excludes hash;
+    };
 in
-pkgs.lib.concatMap fetchPatches [
+map fetchPatch [
   {
     name = "perf-lazy-load-terminal-css";
     rev = "904f535940872e21f59f10f12e545ac9e894e713";
@@ -38,61 +34,40 @@ pkgs.lib.concatMap fetchPatches [
     rev = "8063dd0634ca781725db593f619dda849bbe733b";
     hash = "sha256-mBf/gdIFKoGztmUwlXfAGw7BJ4XqvJk5yhSVY4bfi94=";
   }
+  # Antigravity stack: rebased onto upstream 9cbe50d10 on branch
+  # nix-patches/antigravity-rebase (docs commit dropped).
   {
     name = "antigravity-provider-settings";
-    rev = "7b60a511938e96f3ccc08f51383a467fa174d866";
-    hash = "sha256-V1gazdr0zsHCgknA3YS2IbIjItJFbBcc/xjl+9tNZ28=";
+    rev = "3f4511a636bf6b152a6419661cc5d3f45588390b";
+    hash = "sha256-EUnhYfOFuE/q64vvK4Kar9dxLlb5Y56zdiN5YeYgwlI=";
   }
   {
     name = "antigravity-provider-driver";
-    rev = "f4fa768220ea27af977a3b503c69e36657c753b9";
-    hash = "sha256-adOQ7+1hSKDneRV1pGDNeTIw0WNmfuT+37akpyFo0VQ=";
+    rev = "0a8cd769ef3c0a536fc556449b38ad7d9a3b4d7a";
+    hash = "sha256-RZBAu4ErgWgMjC7dyFKtMtKp/pwsYmZY/pBb+KXj1o0=";
   }
   {
     name = "antigravity-provider-controls";
-    rev = "76cc1c6d979d6c0c10533e990edcca84010fcb44";
-    hash = "sha256-mXDmNq0VToJMszf5II8OQBj1gXAxfwxfz7j5HGFURxg=";
-  }
-  {
-    name = "antigravity-docs";
-    rev = "bc81318c30d5e86236f0854b45a17f9c8e0f4456";
-    hash = "sha256-QYV3DEFo1JeMzFlYf5/wxAfAsqP38g0XOoItKiKRr9w=";
+    rev = "4a49d4c9cf9de81d53dd39e5275d6c06fd3d80a9";
+    hash = "sha256-2FcLKLKCWQzVRvVWmTNBQqc7y668vdlkWUsEnjN+2VU=";
   }
   {
     name = "antigravity-cli-only-mode";
-    rev = "5826a41110039ef5a1fb77d5cdd832a3b841f490";
-    hash = "sha256-PwY+IfZE4JNAXDK5G1yR5H0dHUAE2xVgnY1B1fsVKW0=";
+    rev = "70dd5053022a25533f2835929d5ee3576ca3b766";
+    hash = "sha256-XVsfaXjm0uEE0yXLcNuZQwqwqVHuBuCvMgSXGgIymV4=";
   }
   {
     name = "antigravity-plan-mode";
-    rev = "1282c23e9ac83d3169fe33a8c9ac28e76d7f6150";
+    rev = "72c2203f85956ccd368238f6822338d59954b78a";
     hash = "sha256-TVcUZpRUb6/vauKHs4lBHNOVPaarlQJoPIp1v9vbm4I=";
   }
   {
+    # Nixpkgs build runs no tests; keep only the runtime synchronous
+    # initial-poll hunk.
     name = "antigravity-test-stability";
-    rev = "05732771522567aa1f961bcab62bfef6ac06e019";
-    hash = "sha256-2U3h2yubETQxP52DPSHxCew5rqmZRZRNrMklfUJkFJs=";
-  }
-  {
-    name = "fix-first-message-disappearing";
-    rev = "6f0709718c348481263b3e585707b0bddfcb2ba9";
-    hash = "sha256-Fi4HoWSRPQldXqaY3fXSe3+Qvd35s5L2sorcC6wU0aM=";
-  }
-  {
-    name = "feat-web-text-scale";
-    rev = "f3ba720c046e7953c76d0bba690475de6eb7c86f";
-    hash = "sha256-M2AXK58OsFxXMC7VjiRuR4JBFlLxe1P6gQWEMU0DraE=";
-    excludes = [
-      "apps/web/src/components/Sidebar.tsx"
-      "apps/web/src/components/chat/MessagesTimeline.tsx"
-      "apps/web/src/components/settings/DiagnosticsSettings.tsx"
-      "apps/web/src/index.css"
-      "packages/contracts/src/settings.test.ts"
-    ];
-    extraPatches = [
-      ./feat-web-text-scale-css.patch
-      ./feat-web-text-scale-settings-test.patch
-    ];
+    rev = "88b66258e071117e08fff0def6abdd09100a0ddb";
+    hash = "sha256-bkLFB7JEJWc+8KA2FcGYInEgjYqIdtH+tQavrSIlqSc=";
+    excludes = [ "apps/server/src/provider/Layers/AntigravityAdapter.test.ts" ];
   }
   {
     name = "fix-codex-session-start-timeout";
@@ -100,8 +75,10 @@ pkgs.lib.concatMap fetchPatches [
     hash = "sha256-5b5mRry2OF120R0pAAVKXT9TG2nAes+ZQb848nyTrNQ=";
   }
   {
+    # Test hunk drifts with upstream; runtime fix still absent upstream.
     name = "fix-agent-queue-blocked-on-session-start";
     rev = "2a504ad066bd5ec1413905f0f71e906180e8ee98";
-    hash = "sha256-47/DZa5bFipcdro3nxH8+bGgosc2l0006uqLj2v42Dc=";
+    hash = "sha256-3p2Drn04OlrcfB8hQ7sCefjD5SPx3IALcqNkESwFt9I=";
+    excludes = [ "apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts" ];
   }
 ]

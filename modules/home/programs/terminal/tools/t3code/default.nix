@@ -45,18 +45,6 @@ in
               src = inputs.t3code;
               version = t3codeVersion;
               patches = (old.patches or [ ]) ++ t3codePatches;
-              postPatch = (old.postPatch or "") + ''
-                # These files drift frequently. Keep the text-scale patch's unit
-                # conversions explicit after excluding its stale hunks.
-                substituteInPlace apps/web/src/components/Sidebar.tsx \
-                  --replace-fail "text-[10px]" "text-[0.625rem]"
-                substituteInPlace apps/web/src/components/chat/MessagesTimeline.tsx \
-                  --replace-fail "text-[10px]" "text-[0.625rem]" \
-                  --replace-fail "text-[11px]" "text-[0.6875rem]" \
-                  --replace-fail "text-[12px]" "text-xs"
-                substituteInPlace apps/web/src/components/settings/DiagnosticsSettings.tsx \
-                  --replace-fail "text-[11px]" "text-[0.6875rem]"
-              '';
               pnpmDeps = pkgs.fetchPnpmDeps {
                 inherit (old) pname pnpmWorkspaces;
                 version = t3codeVersion;
