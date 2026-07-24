@@ -1,6 +1,6 @@
 ---
 name: git-toolkit
-description: Git commit planning, fixup/autosquash, branch cleanup, conflict resolution, regression bisect, and multi-commit change-stack workflows. Use for safe local history operations or deciding how changes should be split, repaired, or validated.
+description: Git commit planning, fixup/autosquash, branch cleanup, conflict resolution, regression bisect, independent adversarial change review, and multi-commit change-stack workflows. Use for safe local history operations or deciding how changes should be split, repaired, reviewed, or validated.
 ---
 
 # Git Toolkit
@@ -20,11 +20,14 @@ When invoked, route to one mode:
    [bisect.md](references/bisect.md).
 4. **change-stack** — shape or review multi-commit branches and PR stacks. Read
    [change-stack.md](references/change-stack.md).
-5. **routine-workflow** — branch cleanup, merge/rebase choice, conflict
+5. **adversarial-review** — independently review a commit, PR, or diff against
+   falsifiable design premises and repository-wide constraints. Read
+   [adversarial-review.md](references/adversarial-review.md).
+6. **routine-workflow** — branch cleanup, merge/rebase choice, conflict
    resolution, or standard Git operations. Git mechanics are model-known; read
    [operating-rules.md](references/operating-rules.md) only when shared-history
    risk or GitHub boundaries matter.
-6. **github-toolkit** — issues, pull requests, review feedback, and CI state.
+7. **github-toolkit** — issues, pull requests, review feedback, and CI state.
    Use [`github-toolkit`](../github-toolkit/).
 
 If intent is unclear, ask for the mode before applying changes.

@@ -1,4 +1,4 @@
 interface:
   display_name: "Git Toolkit"
-  short_description: "Git workflows and atomic history discipline"
-  default_prompt: "Use $git-toolkit for commit planning, history repair, bisect, conflicts, or change-stack work."
+  short_description: "Git workflows, adversarial review, and history discipline"
+  default_prompt: "Use $git-toolkit for commit planning, history repair, bisect, conflicts, adversarial review, or change-stack work."
