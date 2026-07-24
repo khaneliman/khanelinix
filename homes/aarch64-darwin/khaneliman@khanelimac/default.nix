@@ -65,7 +65,10 @@ in
       };
 
       terminal = {
+        emulators.cmux = enabled;
+
         tools = {
+          herdr = enabled;
           sesh = enabled;
           ssh = enabled;
           tmux = enabled;
