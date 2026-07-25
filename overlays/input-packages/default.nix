@@ -74,12 +74,6 @@ in
   #          ╭──────────────────────────────────────────────────────────╮
   #          │                 Darwin package overrides                 │
   #          ╰──────────────────────────────────────────────────────────╯
-  # LM Studio's APFS disk image requires hdiutil, which cannot mount inside
-  # Nix's Darwin sandbox. `sandbox = "relaxed"` honors this package opt-out.
-  lmstudio = prev.lmstudio.overrideAttrs {
-    __noChroot = final.stdenv.hostPlatform.isDarwin;
-  };
-
   # TODO: remove after the ld64 hardening workaround reaches input-leap.
   input-leap = useLldOnDarwin prev.input-leap;
 
