@@ -14,5 +14,17 @@ Before acting, read the full upstream guide —
 `jj-hunk-tool` command mapping and hunk IDs, full `jj` workflows, conflict and
 bisect guidance, and revset/workspace reference tables.
 
+## Non-negotiable: move the bookmark
+
+In a git-colocated repo, moving the bookmark is part of finishing a change, not
+a follow-up. Committing without it leaves the Git branch behind and the work
+invisible to `git log`, `gh`, CI, and reviewers — the most common agent failure
+mode with jj. A commit with no bookmark on it is not on a branch.
+
+Before reporting any jj work done, confirm the bookmark sits on your stack tip
+and `@` is empty. Follow
+[references/git-interop.md](references/git-interop.md#bookmark-discipline-mandatory)
+— read it before your first commit, not after.
+
 MIT attribution:
 [references/LICENSE-jj-hunk-tool](references/LICENSE-jj-hunk-tool).

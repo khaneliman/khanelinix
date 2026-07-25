@@ -12,6 +12,10 @@ Bookmarks are named pointers to commits. They do NOT advance automatically on
 new commits (unlike Git branches). They DO follow when a commit is rewritten.
 Bookmarks map to Git branches for push/fetch.
 
+Consequence in a colocated repo: `jj commit` alone produces a commit that no Git
+branch contains. See
+[Bookmark discipline (mandatory)](#bookmark-discipline-mandatory).
+
 ```bash
 jj bookmark create <name> -r <rev>      # create bookmark (default rev: @)
 jj bookmark set <name> -r <rev>         # move bookmark to revision
@@ -64,14 +68,44 @@ Because this commit has no bookmark/branch pointing to it, Git's HEAD will
 automatically be detached at the working copy commit hash. **This is normal and
 expected behavior.**
 
-### Danger of Pointing Bookmarks to `@`
+### Bookmark discipline (mandatory)
 
-Never point branch bookmarks to the working copy `@` (e.g.
-`jj bookmark set main -r @`) if `@` contains active, uncommitted changes. Doing
-so will move the branch bookmark to include those uncommitted changes,
-effectively committing them to the branch in Git's history with no description.
+Moving the bookmark is part of finishing a change. Do it every time, in this
+order:
 
-Bookmarks should always point to clean, finalized parent commits (e.g. `@-`).
+1. **Identify the bookmark before touching history** — the nearest bookmarked
+   ancestor of `@` is the branch you are working off:
+
+   ```bash
+   jj log --no-pager -r 'heads(::@ & bookmarks())' -T 'bookmarks ++ "\n"'
+   ```
+
+   Nothing returned means the stack is unnamed: create a bookmark or ask which
+   one to use. Do not leave it unnamed.
+
+2. **Finalize, then move the bookmark to the stack tip** (`@-` after a single
+   `jj commit`) — never to a dirty `@`, which would commit work-in-progress to
+   the branch with no description:
+
+   ```bash
+   jj bookmark set <bookmark> -r @-
+   ```
+
+   New branch: `jj bookmark create <name> -r @-`.
+
+3. **Verify before reporting done** — bookmark on the tip, `@` empty:
+
+   ```bash
+   jj log --no-pager -r '@ | @-'
+   ```
+
+   Rewrites (`jj squash`, `jj absorb`, `jj rebase`) carry bookmarks along but
+   can change which commit is the tip, so re-verify after each.
+
+Symptoms of a missed move: `git log` / `git status` show an older branch tip
+while `jj log` shows your commits; HEAD detached at a commit holding your work;
+bookmark-less commits between the bookmark and `@`. Fix by moving it forward;
+`--allow-backwards` is only for a deliberate move to an ancestor.
 
 ### Recovery from Accidental Working Copy Committing
 
@@ -95,13 +129,3 @@ commit:
    ```bash
    jj abandon OldDirtyCommitID
    ```
-
-### Advancing Bookmarks Forward
-
-Because bookmarks do not automatically follow new working copy commits, when you
-split a commit or create a new clean commit and want to get it onto your branch
-(e.g., `main`), you must explicitly move the bookmark forward to that commit:
-
-```bash
-jj bookmark set main -r CleanCommitID
-```

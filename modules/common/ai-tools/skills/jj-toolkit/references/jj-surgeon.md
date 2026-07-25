@@ -29,7 +29,9 @@ equivalent of leaving a dirty working copy in Git.
 
 **No branches, only bookmarks.** Bookmarks are named pointers to commits. They
 do NOT advance automatically on new commits (unlike Git branches). They DO
-follow when a commit is rewritten. See [git-interop.md](git-interop.md).
+follow when a commit is rewritten. In a colocated repo you must therefore move
+the bookmark yourself as part of finishing a change — see
+[git-interop.md](git-interop.md#bookmark-discipline-mandatory).
 
 **Editing history is safe — but watch for conflicts.** jj rewrites commits
 freely and automatically rebases descendants. If a rebase causes overlapping
@@ -289,6 +291,7 @@ jj commit -m "feature part 1"           # finalize @, create new empty @
 # ... work ...
 jj commit -m "feature part 2"
 jj log --no-pager -r 'trunk()..@'       # see the stack
+jj bookmark set <bookmark> -r @-        # mandatory: advance branch to stack tip
 ```
 
 ### Blame-guided fixup
@@ -347,6 +350,11 @@ jj op restore <op-id>                   # restore to any point
 - Do NOT `jj abandon @` to "clean up" an empty working copy. It's normal.
 - **Always leave `@` empty when you're done working.** Use `jj commit -m "msg"`
   to finalize a change — NOT `jj describe`, which leaves your changes in `@`.
+- **Never leave a colocated repo with the bookmark behind your commits.** A
+  commit with no bookmark on it is not on a branch, so git tooling cannot see
+  it. Move and verify the bookmark before reporting done, and never set it to a
+  dirty `@`. Procedure:
+  [git-interop.md](git-interop.md#bookmark-discipline-mandatory).
 - Do NOT use `git` commands in a jj repo. Always use `jj`.
 - Always pass `--git --no-pager` when viewing diffs.
 - Always pass `--no-pager` to `jj log`, `jj op log`, `jj bookmark list`.
