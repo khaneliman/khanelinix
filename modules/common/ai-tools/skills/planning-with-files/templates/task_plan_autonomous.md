@@ -186,10 +186,10 @@ Phase 1
   WHEN: Adjust the tiers to the models your host actually offers. The names below are examples.
 -->
 
-| Phase kind                            | Tier       | Example model   |
-| ------------------------------------- | ---------- | --------------- |
-| Research / triage / discovery         | small-fast | Sonnet          |
-| Build / implementation / verification | frontier   | Opus or Fable 5 |
+| Phase kind                            | Tier       | Example model |
+| ------------------------------------- | ---------- | ------------- |
+| Research / triage / discovery         | small-fast | Sonnet        |
+| Build / implementation / verification | frontier   | Opus 5        |
 
 ## Key Questions
 

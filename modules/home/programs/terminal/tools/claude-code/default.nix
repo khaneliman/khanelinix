@@ -128,7 +128,7 @@ in
       settings = {
         inherit hooks;
 
-        model = "claude-fable-5";
+        model = "claude-opus-5";
         theme = "dark";
         alwaysThinkingEnabled = true;
         autoMemoryEnabled = !aiTools.claudeCode.okfMemoryEnabled;

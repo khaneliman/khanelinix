@@ -118,7 +118,7 @@ in
     models = {
       claude = mkOption {
         type = types.str;
-        default = "claude-fable-5";
+        default = "claude-opus-5";
         description = "Claude provider model used by harness aliases.";
       };
 
@@ -163,6 +163,7 @@ in
           "claude-opus-4-5-20251101"
           "claude-opus-4-6"
           "claude-opus-4-7"
+          "claude-opus-4-8"
           "claude-sonnet-4-20250514"
           "claude-sonnet-4-5-20250929"
           "claude-sonnet-4-6"
@@ -356,8 +357,7 @@ in
           }) cfg.claudeCodeModels
         )
         // {
-          "${proxyModel "claude" cfg.models.claude}".name = "Anthropic · Fable 5";
-          "claude-opus-4-8".name = "Anthropic · Opus 4.8";
+          "${proxyModel "claude" cfg.models.claude}".name = "Anthropic · Opus 5";
           "claude-sonnet-5".name = "Anthropic · Sonnet 5";
         };
     };

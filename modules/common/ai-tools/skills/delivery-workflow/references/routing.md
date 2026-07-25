@@ -2,15 +2,15 @@
 
 ## Agent routing
 
-| Need                                       | Primary model agent   | Quality-first model-agent fallback          | Native semantic role | Write policy                      |
-| ------------------------------------------ | --------------------- | ------------------------------------------- | -------------------- | --------------------------------- |
-| obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark` | `gemini-3-6-flash`, `gpt-5-6-luna`          | `mechanic`           | read-only unless edit is explicit |
-| repository discovery                       | `gemini-3-6-flash`    | `gpt-5-6-luna`, `gpt-5-3-codex-spark`       | `fact-finder`        | read-only                         |
-| bounded reproduction                       | `gpt-5-6-luna`        | `gemini-3-6-flash`, `sonnet-5`              | `probe-runner`       | build artifacts only              |
-| noisy validation                           | `gpt-oss-120b`        | `gemini-3-6-flash`, `gpt-5-6-luna`          | `test-runner`        | build artifacts only              |
-| normal implementation                      | `sonnet-5`            | `gpt-5-6-luna`, `google-sonnet-4-6`         | `implementer`        | workspace write                   |
-| ambiguous diagnosis                        | `gemini-3-1-pro`      | `gpt-5-6-terra`, `opus-4-8`                 | `debugger`           | read-only                         |
-| plan or code review                        | `opus-4-8`            | `gpt-5-6-sol`, `google-opus-4-6`, `fable-5` | `reviewer`           | read-only                         |
+| Need                                       | Primary model agent   | Quality-first model-agent fallback    | Native semantic role | Write policy                      |
+| ------------------------------------------ | --------------------- | ------------------------------------- | -------------------- | --------------------------------- |
+| obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark` | `gemini-3-6-flash`, `gpt-5-6-luna`    | `mechanic`           | read-only unless edit is explicit |
+| repository discovery                       | `gemini-3-6-flash`    | `gpt-5-6-luna`, `gpt-5-3-codex-spark` | `fact-finder`        | read-only                         |
+| bounded reproduction                       | `gpt-5-6-luna`        | `gemini-3-6-flash`, `sonnet-5`        | `probe-runner`       | build artifacts only              |
+| noisy validation                           | `gpt-oss-120b`        | `gemini-3-6-flash`, `gpt-5-6-luna`    | `test-runner`        | build artifacts only              |
+| normal implementation                      | `sonnet-5`            | `gpt-5-6-luna`, `google-sonnet-4-6`   | `implementer`        | workspace write                   |
+| ambiguous diagnosis                        | `gemini-3-1-pro`      | `gpt-5-6-terra`, `opus-5`             | `debugger`           | read-only                         |
+| plan or code review                        | `opus-5`              | `gpt-5-6-sol`, `google-opus-4-6`      | `reviewer`           | read-only                         |
 
 Gateway-capable harnesses install model-agent names and pin provider/model in
 each definition. Pass the name as native agent type and omit per-invocation

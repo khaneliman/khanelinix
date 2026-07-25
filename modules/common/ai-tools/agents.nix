@@ -181,7 +181,7 @@ let
         "Grep"
         "Glob"
       ];
-      model = routedModel "claude-opus-4-8" {
+      model = routedModel "claude-opus-5" {
         claude = "opus";
         copilot = "claude-opus-4.6";
         opencode = "openai/gpt-5.6-sol";
@@ -272,15 +272,10 @@ let
       description = "Google GPT-OSS 120B gateway worker for noisy test execution, validation summaries, and inexpensive independent checks.";
       workspaceWrite = true;
     };
-    "fable-5" = mkGatewayAgent {
-      name = "fable-5";
-      alias = "claude-fable-5";
-      description = "Anthropic Fable 5 gateway worker for the hardest independent read-only diagnosis and review tasks.";
-    };
-    "opus-4-8" = mkGatewayAgent {
-      name = "opus-4-8";
-      alias = "claude-opus-4-8";
-      description = "Anthropic Opus 4.8 gateway worker for plan review, code review, and complex read-only reasoning.";
+    "opus-5" = mkGatewayAgent {
+      name = "opus-5";
+      alias = "claude-opus-5";
+      description = "Anthropic Opus 5 gateway worker for plan review, code review, and the hardest independent read-only diagnosis.";
     };
     "sonnet-5" = mkGatewayAgent {
       name = "sonnet-5";

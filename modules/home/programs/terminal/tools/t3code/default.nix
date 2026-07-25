@@ -334,11 +334,7 @@ in
             favorites = [
               {
                 provider = "claudeAgent";
-                model = "claude-fable-5";
-              }
-              {
-                provider = "claudeAgent";
-                model = "claude-opus-4-8";
+                model = "claude-opus-5";
               }
               {
                 provider = "claudeAgent";
