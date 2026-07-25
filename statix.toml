@@ -8,4 +8,10 @@ disabled = [
   "faster_zipattrswith",
 ]
 
-ignore = ["*record_screen*"]
+ignore = [
+  "*record_screen*",
+  # Local build symlinks point into /nix/store; only the global gitignore knows
+  # about `result-*`, which statix does not read.
+  "result",
+  "result-*",
+]
