@@ -71,8 +71,18 @@ in
           # compdumps are marked with the current date in yyyy-mm-dd format
           # which means this is likely to recompile daily
           # also see: <https://htr3n.github.io/2018/07/faster-zsh/>
+          #
+          # zcompile unlinks then re-creates its target with mode 0444, so two
+          # shells starting at once (terminals restoring multiple panes) race and
+          # one fails with "can't write zwc file". Compile a private copy and
+          # rename it into place, matching compinit's own atomic dump handling.
           if [[ -s "$zcompdump" && (! -s "$zcompdump".zwc || "$zcompdump" -nt "$zcompdump".zwc) ]]; then
-            zcompile "$zcompdump"
+            zcompdump_tmp="$zcompdump.$$"
+            if cp -f "$zcompdump" "$zcompdump_tmp" 2>/dev/null && zcompile "$zcompdump_tmp" 2>/dev/null; then
+              mv -f "$zcompdump_tmp".zwc "$zcompdump".zwc 2>/dev/null
+            fi
+            rm -f "$zcompdump_tmp" "$zcompdump_tmp".zwc 2>/dev/null
+            unset zcompdump_tmp
           fi
 
           # Load bash completion functions.
