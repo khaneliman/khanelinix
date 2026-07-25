@@ -43,6 +43,13 @@
             pass_filenames = false;
           };
           pre-commit-hook-ensure-sops.enable = true;
+          # treefmt runs `statix fix`, which silently skips lints that have no
+          # auto-fix (for example `repeated_keys`). Only `statix check` reports
+          # them, matching the CI lint job.
+          statix = {
+            enable = true;
+            package = pkgs.statix;
+          };
           treefmt.enable = true;
           typos = {
             enable = true;
