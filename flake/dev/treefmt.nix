@@ -8,6 +8,12 @@
 
   perSystem =
     { pkgs, ... }:
+    let
+      # Single source of truth: `statix check` auto-discovers ./statix.toml, but
+      # treefmt-nix always passes its own generated --config, so mirror the
+      # checked-in ruleset here instead of maintaining two lists.
+      statixConfig = lib.importTOML ../../statix.toml;
+    in
     {
       treefmt = lib.mkIf (inputs.treefmt-nix ? flakeModule) {
         flakeCheck = true;
@@ -74,6 +80,9 @@
           statix = {
             enable = true;
             priority = -2;
+            package = pkgs.statix;
+            disabled-lints = statixConfig.disabled;
+            excludes = statixConfig.ignore;
           };
           stylua.enable = true;
           taplo.enable = true;
