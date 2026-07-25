@@ -333,36 +333,38 @@ in
 
     xdg.configFile."cliproxyapi/config.yaml".source = proxyConfig;
 
-    programs.codex.settings.model_providers.cliproxyapi = mkIf codexEnabled {
-      name = "CLIProxyAPI";
-      base_url = "${baseUrl}/v1";
-      experimental_bearer_token = apiKey;
-      wire_api = "responses";
-      requires_openai_auth = true;
-      supports_websockets = true;
-    };
+    programs = {
+      claude-code.settings.env = mkIf claudeCodeEnabled claudeGatewayEnv;
 
-    programs.opencode.settings.provider.cliproxyapi = mkIf opencodeEnabled {
-      npm = "@ai-sdk/openai-compatible";
-      name = "CLIProxyAPI";
-      options = {
-        baseURL = "${baseUrl}/v1";
-        inherit apiKey;
+      codex.settings.model_providers.cliproxyapi = mkIf codexEnabled {
+        name = "CLIProxyAPI";
+        base_url = "${baseUrl}/v1";
+        experimental_bearer_token = apiKey;
+        wire_api = "responses";
+        requires_openai_auth = true;
+        supports_websockets = true;
       };
-      models =
-        builtins.listToAttrs (
-          map (model: {
-            name = model.alias;
-            value.name = model.displayName;
-          }) cfg.claudeCodeModels
-        )
-        // {
-          "${proxyModel "claude" cfg.models.claude}".name = "Anthropic · Opus 5";
-          "claude-sonnet-5".name = "Anthropic · Sonnet 5";
-        };
-    };
 
-    programs.claude-code.settings.env = mkIf claudeCodeEnabled claudeGatewayEnv;
+      opencode.settings.provider.cliproxyapi = mkIf opencodeEnabled {
+        npm = "@ai-sdk/openai-compatible";
+        name = "CLIProxyAPI";
+        options = {
+          baseURL = "${baseUrl}/v1";
+          inherit apiKey;
+        };
+        models =
+          builtins.listToAttrs (
+            map (model: {
+              name = model.alias;
+              value.name = model.displayName;
+            }) cfg.claudeCodeModels
+          )
+          // {
+            "${proxyModel "claude" cfg.models.claude}".name = "Anthropic · Opus 5";
+            "claude-sonnet-5".name = "Anthropic · Sonnet 5";
+          };
+      };
+    };
 
     systemd.user.services.cliproxyapi = mkIf pkgs.stdenv.hostPlatform.isLinux {
       Unit = {
