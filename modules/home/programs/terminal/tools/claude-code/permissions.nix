@@ -14,6 +14,7 @@ in
       "conservative"
       "standard"
       "autonomous"
+      "bypass"
     ];
     default = "standard";
     description = ''
@@ -21,6 +22,13 @@ in
       - conservative: Minimal permissions, most operations require confirmation
       - standard: Balanced permissions for normal development workflows
       - autonomous: Maximum autonomy for trusted environments
+      - bypass: Start every session in bypassPermissions mode with no ask
+        rules. Only the deny list and Claude Code's built-in root/home deletion
+        circuit breaker still prompt. Intended for isolated hosts, containers,
+        and VMs.
+
+      Any profile can still enter bypassPermissions per session with the
+      `claude-unsafe` alias; the profile only changes the default mode.
     '';
   };
 
@@ -302,132 +310,62 @@ in
           "Bash(rm:*)"
         ];
 
-        # Operations requiring confirmation in non-autonomous mode
-        standardAsk = [
-          # Potentially destructive git commands
-          "Bash(git add:*)"
-          "Bash(git checkout:*)"
-          "Bash(git commit:*)"
-          "Bash(git merge:*)"
-          "Bash(git pull:*)"
-          "Bash(git push:*)"
-          "Bash(git rebase:*)"
-          "Bash(git reset:*)"
-          "Bash(git restore:*)"
-          "Bash(git stash:*)"
-          "Bash(git switch:*)"
+        # Ask rules are the strongest routine control Claude Code has: they beat
+        # allow rules and force a prompt in *every* permission mode, including
+        # acceptEdits, auto, and bypassPermissions. Permission rules also union
+        # across settings scopes rather than override, so a session cannot drop
+        # a user-settings ask rule with a flag or `--settings`.
+        #
+        # Consequence: only list a rule here when it tightens the profile's own
+        # baseline mode. Anything the profile does not allow already prompts in
+        # that baseline, so restating it buys no safety and permanently defeats
+        # bypassPermissions. That is why `standard` (baseline `default`, which
+        # prompts for every non-allowed Bash command) carries no ask rules.
+        standardAsk = [ ];
 
-          # File deletion and modification
-          "Bash(chmod:*)"
-          "Bash(cp:*)"
-          "Bash(mkdir:*)"
-          "Bash(mv:*)"
-          "Bash(rm:*)"
-          # Phase 1 destructive-command baseline is ask for explicit primitives.
-          "Bash(rm -rf:*)"
-          "Bash(dd:*)"
-          "Bash(mkfs:*)"
-          "Bash(shutdown)"
-          "Bash(shutdown:*)"
-          "Bash(reboot)"
-          "Bash(reboot:*)"
-
-          # System control operations
-          "Bash(systemctl disable:*)"
-          "Bash(systemctl enable:*)"
-          "Bash(systemctl mask:*)"
-          "Bash(systemctl reload:*)"
-          "Bash(systemctl restart:*)"
-          "Bash(systemctl start:*)"
-          "Bash(systemctl stop:*)"
-          "Bash(systemctl unmask:*)"
-
-          # Network operations
-          "Bash(curl:*)"
-          "Bash(ping:*)"
-          "Bash(rsync:*)"
-          "Bash(scp:*)"
-          "Bash(ssh:*)"
-          "Bash(wget:*)"
-
-          # Package management
-          "Bash(nix build:*)"
-          "Bash(nix flake check:*)"
-          "Bash(nix run:*)"
-          "Bash(nix shell:*)"
-          "Bash(nixos-rebuild:*)"
-          "Bash(sudo:*)"
-
-          # Process management
-          "Bash(kill:*)"
-          "Bash(killall:*)"
-          "Bash(pkill:*)"
-
-        ];
-
-        # Autonomous mode still requires confirmation for these
+        # `autonomous` runs with an acceptEdits baseline, which auto-approves
+        # mkdir/touch/rm/rmdir/mv/cp/sed inside the working directory, and its
+        # allow list adds `rm:*`. Recursive force deletion is the one primitive
+        # that needs a human in that combination.
         autonomousAsk = [
-          # Always confirm pushing
-          "Bash(git push:*)"
-          "Bash(git merge:*)"
-          "Bash(git rebase:*)"
-
-          # System operations
-          "Bash(systemctl:*)"
-          "Bash(nix build:*)"
-          "Bash(nix run:*)"
-          "Bash(nix shell:*)"
-          "Bash(nixos-rebuild:*)"
-          "Bash(sudo:*)"
-
-          # Network operations
-          "Bash(curl:*)"
-          "Bash(rsync:*)"
-          "Bash(scp:*)"
-          "Bash(ssh:*)"
-          "Bash(wget:*)"
-
-          # Process management
-          "Bash(kill:*)"
-          "Bash(killall:*)"
-          "Bash(pkill:*)"
-
-          # Keep destructive primitives on ask even for trusted profiles.
           "Bash(rm -rf:*)"
-          "Bash(dd:*)"
-          "Bash(mkfs:*)"
-          "Bash(shutdown)"
-          "Bash(shutdown:*)"
-          "Bash(reboot)"
-          "Bash(reboot:*)"
         ];
       in
       {
         allow =
-          if cfg.permissionProfile == "autonomous" then
-            autonomousAllow
+          if cfg.permissionProfile == "conservative" then
+            baseAllow
           else if cfg.permissionProfile == "standard" then
             standardAllow
           else
-            baseAllow;
+            autonomousAllow; # autonomous and bypass
 
         ask =
-          if cfg.permissionProfile == "autonomous" then
-            autonomousAsk
+          if cfg.permissionProfile == "conservative" then
+            standardAllow # Conservative: ask for everything standard allows
           else if cfg.permissionProfile == "standard" then
             standardAsk
+          else if cfg.permissionProfile == "autonomous" then
+            autonomousAsk
           else
-            standardAsk ++ standardAllow; # Conservative: ask for everything standard allows
+            [ ]; # bypass: no prompts beyond deny and the built-in circuit breaker
 
-        # Keep only catastrophic root deletion on deny; Phase 1 baseline for
-        # the explicit destructive primitives is ask so Claude matches the repo
-        # safety target without inventing broader deny parity.
+        # Deny is the only rule class that survives bypassPermissions without
+        # prompting, so it carries the catastrophic-deletion circuit breaker.
+        # Claude Code additionally prompts for `rm -rf /` and `rm -rf ~` in every
+        # mode on its own.
         deny = [
           "Bash(rm -rf /*)"
           "Bash(rm -rf /)"
         ];
 
-        defaultMode = if cfg.permissionProfile == "autonomous" then "acceptEdits" else "default";
+        defaultMode =
+          if cfg.permissionProfile == "bypass" then
+            "bypassPermissions"
+          else if cfg.permissionProfile == "autonomous" then
+            "acceptEdits"
+          else
+            "default";
       };
   };
 }
