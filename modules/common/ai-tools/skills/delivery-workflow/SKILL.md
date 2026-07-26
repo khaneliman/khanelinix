@@ -1,6 +1,6 @@
 ---
 name: delivery-workflow
-description: Provider-neutral delivery workflow for quality-first native subagent routing, subscription-aware model selection, bounded implementation, validation, and review. Use when user requests delivery workflow, multi-model delegation, cross-provider workers, or balanced subscription usage.
+description: Provider-neutral delivery workflow for bounded implementation, validation, and fresh review using subscription-aware native subagent routing. Use when the user requests execution of an approved plan, implementation delegation, validation or review cycles, or balanced subscription usage for delivery work. Explicit all-provider deliberation belongs to multi-provider-council.
 ---
 
 # Delivery Workflow
@@ -9,6 +9,16 @@ Use current harness's native subagent mechanism. Never invoke another AI harness
 through shell, CLI, MCP, or wrapper script.
 
 Read [routing and gates](references/routing.md) before dispatch.
+
+When the user explicitly requests all-provider deliberation, a multi-model
+council, parallel perspectives, or comparison of independent plans, invoke
+`multi-provider-council` before this loop. Resume delivery only from its
+approved plan; do not repeat council deliberation during implementation.
+
+Before mutation from a council handoff, re-read the active `task_plan.md` and
+`progress.md`. Verify explicit approval is recorded, plan attestation is
+current, and relevant baseline and allowed scope have not drifted. Stop for
+renewed approval when any check fails.
 
 ## Loop
 

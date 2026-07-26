@@ -20,6 +20,27 @@ different subscription.
 Every subscription needs its own current gateway authentication. One expired
 login removes that whole row from routing without affecting the others.
 
+## Multi-provider council
+
+Use these read-only seats when `multi-provider-council` is explicitly invoked:
+
+| Provider subscription | Native agent type | Perspective                                                   |
+| --------------------- | ----------------- | ------------------------------------------------------------- |
+| Anthropic             | `opus-5`          | architecture coherence, intent, and long-term tradeoffs       |
+| Google                | `gemini-3-1-pro`  | adversarial alternatives, edge cases, and hidden dependencies |
+| OpenAI                | `gpt-5-6-sol`     | implementation feasibility, integration, and validation       |
+
+Dispatch all available seats concurrently with the same bounded fact packet and
+without peer answers. Council mode is best-effort: disclose every unavailable
+seat, continue with two provider responses as degraded consensus, and refuse the
+council label when fewer than two providers respond. Never silently replace a
+failed provider with the parent subscription.
+
+Run at most one challenge round against seats involved in material unresolved
+issues. Council agents remain read-only and never execute the resulting plan;
+after explicit approval, the normal delivery risk gates own implementation,
+validation, and review.
+
 ## Agent routing
 
 | Need                                       | Primary model agent   | Quality-first model-agent fallback    | Native semantic role | Write policy                      |
