@@ -21,6 +21,34 @@ let
   editors = config.khanelinix.programs.terminal.editors;
   tools = config.khanelinix.programs.terminal.tools;
 
+  layoutTools =
+    lib.optional editors.neovim.enable "nvim"
+    ++ lib.optional tools.btop.enable "btop"
+    ++ lib.optional tools.jjui.enable "jjui"
+    ++ lib.optional tools.lazygit.enable "lazygit"
+    ++ lib.optional tools.yazi.enable "yazi"
+    ++ lib.optional config.khanelinix.suites.music.enable "musikcube";
+
+  cmuxResumeTool = pkgs.writeShellApplication {
+    name = "cmux-resume-tool";
+    runtimeInputs = [ pkgs.jq ];
+    text = ''
+      cmux_cli="''${CMUX_CLI:-${cmuxCli}}"
+      allowed_tools=(${lib.escapeShellArgs layoutTools})
+      ${builtins.readFile ./resume-tool.sh}
+    '';
+  };
+
+  cmuxLayoutTool = pkgs.writeShellApplication {
+    name = "cmux-layout-tool";
+    runtimeInputs = [ cmuxResumeTool ];
+    text = ''
+      cmux_cli="''${CMUX_CLI:-${cmuxCli}}"
+      allowed_tools=(${lib.escapeShellArgs layoutTools})
+      ${builtins.readFile ./layout-tool.sh}
+    '';
+  };
+
   musicDirectory =
     if config.xdg.userDirs.enable then
       config.xdg.userDirs.music
@@ -36,6 +64,18 @@ let
       type = "terminal";
     }
     // attrs;
+
+  resumableTerminal =
+    name: command: attrs:
+    terminal name (
+      {
+        command = lib.escapeShellArgs [
+          "cmux-layout-tool"
+          command
+        ];
+      }
+      // attrs
+    );
 
   # cmux 0.64.x builds the first surface as the pane's initial tab, then inserts
   # every later surface directly after it, so a declared tail arrives reversed:
@@ -55,17 +95,16 @@ let
       at = surfaceCwd: lib.optionalAttrs (surfaceCwd != null) { cwd = surfaceCwd; };
     in
     lib.optional editors.neovim.enable (
-      terminal editorName (
+      resumableTerminal editorName "nvim" (
         {
-          command = "nvim";
           focus = true;
         }
         // at cwd
       )
     )
-    ++ lib.optional tools.lazygit.enable (terminal "Git" ({ command = "lazygit"; } // at cwd))
-    ++ lib.optional tools.jjui.enable (terminal "Jujutsu" ({ command = "jjui"; } // at cwd))
-    ++ lib.optional tools.yazi.enable (terminal "Files" ({ command = "yazi"; } // at cwd))
+    ++ lib.optional tools.lazygit.enable (resumableTerminal "Git" "lazygit" (at cwd))
+    ++ lib.optional tools.jjui.enable (resumableTerminal "Jujutsu" "jjui" (at cwd))
+    ++ lib.optional tools.yazi.enable (resumableTerminal "Files" "yazi" (at cwd))
     ++ [ (terminal "Shell" (at cwd)) ];
 
   layouts = {
@@ -100,14 +139,12 @@ let
         layout.pane.surfaces = orderSurfaces (
           toolSurfaces { editorName = "khanelinix"; }
           ++ lib.optional tools.btop.enable (
-            terminal "Processes" {
-              command = "btop";
+            resumableTerminal "Processes" "btop" {
               cwd = config.home.homeDirectory;
             }
           )
           ++ lib.optional config.khanelinix.suites.music.enable (
-            terminal "Media" {
-              command = "musikcube";
+            resumableTerminal "Media" "musikcube" {
               cwd = musicDirectory;
             }
           )
@@ -160,6 +197,8 @@ in
   config = lib.mkIf (cfg.enable && cfg.layouts.enable && isSupported) {
     home = {
       packages = [
+        cmuxLayoutTool
+        cmuxResumeTool
         cmuxWorkspace
       ]
       ++ lib.optional pickerAvailable cmuxPick;

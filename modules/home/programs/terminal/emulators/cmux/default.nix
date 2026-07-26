@@ -9,6 +9,21 @@ let
   cfg = config.khanelinix.programs.terminal.emulators.cmux;
   isSupported = lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.cmux;
   jsonFormat = pkgs.formats.json { };
+
+  cmuxConfigPath = "${config.xdg.configHome}/cmux/cmux.json";
+  cmuxSettings = jsonFormat.generate "cmux.json" cfg.settings;
+  cmuxConfigActivate = pkgs.writeShellApplication {
+    name = "cmux-config-activate";
+    runtimeInputs = with pkgs; [
+      coreutils
+      jq
+    ];
+    text = ''
+      baseline="''${CMUX_CONFIG_BASELINE:-${cmuxSettings}}"
+      target="''${CMUX_CONFIG_TARGET:-${cmuxConfigPath}}"
+      ${builtins.readFile ./config-activate.sh}
+    '';
+  };
 in
 {
   imports = [ ./layouts.nix ];
@@ -72,8 +87,13 @@ in
       };
     };
 
-    xdg.configFile = lib.mkIf isSupported {
-      "cmux/cmux.json".source = jsonFormat.generate "cmux.json" cfg.settings;
-    };
+    # cmux stores signed surface-resume approvals in cmux.json. Keep the file
+    # writable while replacing every declarative key on activation and carrying
+    # forward only those signed records.
+    home.activation.cmuxSettings = lib.mkIf isSupported (
+      lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+        run ${lib.getExe cmuxConfigActivate}
+      ''
+    );
   };
 }
