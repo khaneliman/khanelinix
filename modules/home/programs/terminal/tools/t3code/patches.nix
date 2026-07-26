@@ -13,7 +13,7 @@ let
       inherit excludes hash;
     };
 in
-(map fetchPatch [
+map fetchPatch [
   {
     name = "perf-lazy-load-terminal-css";
     rev = "904f535940872e21f59f10f12e545ac9e894e713";
@@ -21,8 +21,8 @@ in
   }
   {
     name = "perf-lazy-load-terminal-drawer";
-    rev = "fe4d23ee916229041308d1b8ce6de9abefcb919e";
-    hash = "sha256-PfIeQA6Ma08UJegG9Vhx9G0gVxLysVMUK30P6yHwH9o=";
+    rev = "ac0e4d194ea67000c9f0a2a1d992046cd5b4ac5d";
+    hash = "sha256-vHeO001OxTaxAkOJ4mCXVJz6Omd8TanMKGqt2jgvOBM=";
   }
   {
     name = "perf-concurrent-command-resolution";
@@ -81,5 +81,4 @@ in
     hash = "sha256-3p2Drn04OlrcfB8hQ7sCefjD5SPx3IALcqNkESwFt9I=";
     excludes = [ "apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts" ];
   }
-])
-++ [ ./fix-settlement-migration-id.patch ]
+]
