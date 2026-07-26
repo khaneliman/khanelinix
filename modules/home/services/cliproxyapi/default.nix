@@ -383,16 +383,20 @@ in
       Install.WantedBy = [ "default.target" ];
     };
 
-    launchd.agents.cliproxyapi.config = mkIf pkgs.stdenv.hostPlatform.isDarwin {
-      ProgramArguments = [
-        (lib.getExe cfg.package)
-        "--config"
-        configPath
-      ];
-      RunAtLoad = true;
-      KeepAlive = true;
-      StandardOutPath = "${config.xdg.stateHome}/cliproxyapi/stdout.log";
-      StandardErrorPath = "${config.xdg.stateHome}/cliproxyapi/stderr.log";
+    launchd.agents.cliproxyapi = mkIf pkgs.stdenv.hostPlatform.isDarwin {
+      enable = true;
+
+      config = {
+        ProgramArguments = [
+          (lib.getExe cfg.package)
+          "--config"
+          configPath
+        ];
+        RunAtLoad = true;
+        KeepAlive = true;
+        StandardOutPath = "${config.xdg.stateHome}/cliproxyapi/stdout.log";
+        StandardErrorPath = "${config.xdg.stateHome}/cliproxyapi/stderr.log";
+      };
     };
   };
 }
