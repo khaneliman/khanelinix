@@ -74,6 +74,35 @@ let
       ]
     );
 
+  claudeDirect = pkgs.writeShellApplication {
+    name = "claude-direct";
+    text = ''
+      for arg in "$@"; do
+        case "$arg" in
+          --settings|--settings=*)
+            echo "claude-direct: --settings is reserved for the direct Anthropic route" >&2
+            exit 2
+            ;;
+        esac
+      done
+
+      exec ${lib.getExe config.programs.claude-code.package} \
+        --settings ${
+          lib.escapeShellArg (
+            builtins.toJSON {
+              env = {
+                ANTHROPIC_BASE_URL = "https://api.anthropic.com";
+                ANTHROPIC_AUTH_TOKEN = "";
+                CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY = "0";
+                ENABLE_TOOL_SEARCH = "true";
+              };
+            }
+          )
+        } \
+        "$@"
+    '';
+  };
+
   codexCommand =
     provider: model:
     "codex --strict-config -c model_provider='\"cliproxyapi\"' -m ${lib.escapeShellArg (proxyModel provider model)}";
@@ -301,20 +330,14 @@ in
         (loginCommand "claude" "--claude-login")
         (loginCommand "codex" "--codex-login")
         (loginCommand "gemini" "--antigravity-login")
-      ];
+      ]
+      ++ lib.optional claudeCodeEnabled claudeDirect;
 
       shellAliases =
         lib.optionalAttrs claudeCodeEnabled {
           claude = claudeCommand "claude" cfg.models.claude;
           claude-claude = claudeCommand "claude" cfg.models.claude;
           claude-codex = claudeCommand "codex" cfg.models.codex;
-          claude-direct = lib.concatStringsSep " " [
-            "ANTHROPIC_BASE_URL=https://api.anthropic.com"
-            "ANTHROPIC_AUTH_TOKEN=''"
-            "CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=0"
-            "ENABLE_TOOL_SEARCH=true"
-            "command claude"
-          ];
           claude-gemini = claudeCommand "antigravity" cfg.models.gemini;
           claudex = claudeCommand "codex" cfg.models.codex;
         }
