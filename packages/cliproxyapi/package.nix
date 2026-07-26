@@ -18,6 +18,10 @@ buildGoModule (finalAttrs: {
 
   vendorHash = "sha256-xirNOpnPVwe/TqEYkHHLMWREajosaisBazvy8rFEIak=";
 
+  # Remove after https://github.com/router-for-me/CLIProxyAPI/issues/4428 lands
+  # in the pinned release.
+  patches = [ ./fix-claude-root-tool-schema-unions.patch ];
+
   subPackages = [ "cmd/server" ];
 
   ldflags = [
