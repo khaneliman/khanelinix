@@ -59,7 +59,6 @@ let
     ANTHROPIC_BASE_URL = baseUrl;
     ANTHROPIC_AUTH_TOKEN = apiKey;
     CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY = "1";
-    ENABLE_TOOL_SEARCH = "false";
   };
 
   claudeCommand =
