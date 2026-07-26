@@ -13,7 +13,7 @@ let
       inherit excludes hash;
     };
 in
-map fetchPatch [
+(map fetchPatch [
   {
     name = "perf-lazy-load-terminal-css";
     rev = "904f535940872e21f59f10f12e545ac9e894e713";
@@ -81,4 +81,5 @@ map fetchPatch [
     hash = "sha256-3p2Drn04OlrcfB8hQ7sCefjD5SPx3IALcqNkESwFt9I=";
     excludes = [ "apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts" ];
   }
-]
+])
+++ [ ./fix-settlement-migration-id.patch ]
