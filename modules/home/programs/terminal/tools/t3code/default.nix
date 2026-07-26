@@ -53,6 +53,13 @@ in
                 fetcherVersion = 4;
                 hash = "sha256-bfZDQjVdT0neQYxmNB8t+XU8mbjVsAtaTi2Vms5pzxw=";
               };
+              postBuild = (old.postBuild or "") + ''
+                ${lib.getExe pkgs.nodejs} ${./prune-node-modules.mjs} "$PWD"
+              '';
+
+              # Runtime dependencies contain prebuilt native artifacts. Scanning
+              # the JavaScript-heavy closure with Darwin strip costs minutes.
+              dontStrip = true;
             }
           );
 
