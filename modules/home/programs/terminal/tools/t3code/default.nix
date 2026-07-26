@@ -142,18 +142,19 @@ in
             Install.WantedBy = [ "default.target" ];
           };
 
-      launchd.agents.t3code-remote.config =
-        lib.mkIf (tailscaleEnabled && pkgs.stdenv.hostPlatform.isDarwin)
-          {
-            ProgramArguments = [ (lib.getExe remoteCommand) ];
-            RunAtLoad = true;
-            KeepAlive = true;
-            StandardOutPath = "${config.home.homeDirectory}/Library/Logs/t3code-remote.out.log";
-            StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/t3code-remote.err.log";
-            EnvironmentVariables = {
-              PATH = "/Applications/Tailscale.app/Contents/MacOS:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin";
-            };
+      launchd.agents.t3code-remote = lib.mkIf (tailscaleEnabled && pkgs.stdenv.hostPlatform.isDarwin) {
+        enable = true;
+        config = {
+          ProgramArguments = [ (lib.getExe remoteCommand) ];
+          RunAtLoad = true;
+          KeepAlive = true;
+          StandardOutPath = "${config.home.homeDirectory}/Library/Logs/t3code-remote.out.log";
+          StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/t3code-remote.err.log";
+          EnvironmentVariables = {
+            PATH = "/Applications/Tailscale.app/Contents/MacOS:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin";
           };
+        };
+      };
 
       programs.t3code = {
         enable = true;
