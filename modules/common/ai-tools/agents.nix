@@ -292,7 +292,15 @@ let
     lib.filterAttrs (
       _name: agent:
       let
-        expectedProjection = if gatewayEnabled then "gateway" else "native";
+        # Copilot has no gateway model-agent projection, so gateway-enabled
+        # hosts must retain its native semantic roster.
+        expectedProjection =
+          if provider == "githubCopilotCli" then
+            "native"
+          else if gatewayEnabled then
+            "gateway"
+          else
+            "native";
       in
       agent.projection == expectedProjection && lib.elem provider (agent.providers or [ provider ])
     ) agents;
