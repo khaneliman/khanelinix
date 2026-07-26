@@ -33,6 +33,8 @@ in
   config = lib.mkIf cfg.enable {
     xdg.configFile."opencode/oh-my-openagent.json".source =
       let
+        # OmO consumes the raw semantic model mappings rather than the rendered
+        # OpenCode roster, so routedModel keeps these gateway-aware.
         debuggerModel = aiTools.agents.debugger.model.opencode;
         testRunnerModel = aiTools.agents.test-runner.model.opencode;
         sparkModel = "openai/gpt-5.3-codex-spark";

@@ -51,14 +51,28 @@ harness-native timeout and concurrency controls.
 
 ## Availability
 
-Model agents and native semantic roles are mutually exclusive installs. A
-gateway-enabled harness installs model-agent names only; a harness without
-gateway installs semantic roles only. Never assume both are dispatchable.
+Projection is harness-specific. Gateway-enabled Claude Code, Codex, and OpenCode
+install model-agent names; without the gateway they install native semantic
+roles. GitHub Copilot CLI always installs native semantic roles because it has
+no gateway model-agent projection. Never infer one harness's roster from another
+harness on the same host.
 
 Check the harness's available agent-type list before dispatch and route to the
 set that is actually present. Installed name is still not a proven live route:
 the gateway daemon must be listening on its loopback port and the row's
-subscription must hold current authentication.
+subscription must hold current authentication, and the current process must use
+the gateway endpoint.
+
+Claude execution surfaces can expose an installed gateway roster without a live
+gateway route:
+
+- Gateway-routed CLI sessions can dispatch every installed model agent whose
+  subscription row is healthy.
+- `claude-direct` sessions use Anthropic's first-party endpoint. Gateway-only
+  model agents are unavailable; only `opus-5` and `sonnet-5` resolve there.
+- Claude Desktop also pins the first-party endpoint and ignores the CLI gateway
+  environment. It has the same `opus-5` and `sonnet-5` limit even when the
+  generated user roster contains every gateway model agent.
 
 Distinguish the two failure modes:
 
@@ -71,9 +85,10 @@ Distinguish the two failure modes:
   the parent subscription when the user expected another one.
 
 A runtime gateway bypass such as `claude-direct` counts as unavailable even when
-installed model agents contain gateway aliases. Use parent model only after
-suitable alternate subscription is unavailable. If a pinned route is throttled,
-dispatch first capable fallback agent instead of retrying same route.
+installed model agents contain gateway aliases. Treat `opus-5` and `sonnet-5` as
+the only first-party exceptions. Use parent model only after suitable alternate
+subscription is unavailable. If a pinned route is throttled, dispatch first
+capable fallback agent instead of retrying same route.
 
 ## Risk gates
 
