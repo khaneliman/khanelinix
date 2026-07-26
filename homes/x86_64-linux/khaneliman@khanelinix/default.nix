@@ -381,8 +381,6 @@ in
     };
 
     services = {
-      cliproxyapi.enable = true;
-
       hyprpaper = {
         monitors = [
           {
