@@ -1,5 +1,25 @@
 # Routing and Quality Gates
 
+## Subscription map
+
+Each model agent bills exactly one subscription. Agent name does not imply
+owner: `google-*` agents run Claude models on Google quota, and `gpt-oss-120b`
+runs on Google quota despite its prefix.
+
+| Subscription         | Model agents                                                                                 |
+| -------------------- | -------------------------------------------------------------------------------------------- |
+| OpenAI (Codex)       | `gpt-5-3-codex-spark`, `gpt-5-6-luna`, `gpt-5-6-terra`, `gpt-5-6-sol`                        |
+| Google (Antigravity) | `gemini-3-6-flash`, `gemini-3-1-pro`, `google-sonnet-4-6`, `google-opus-4-6`, `gpt-oss-120b` |
+| Anthropic            | `opus-5`, `sonnet-5`                                                                         |
+
+Resolve provider preference against this table, not against model family. Under
+a Claude parent, `opus-5` and `sonnet-5` reuse parent subscription, while
+`google-opus-4-6` and `google-sonnet-4-6` keep Claude-family capability on a
+different subscription.
+
+Every subscription needs its own current gateway authentication. One expired
+login removes that whole row from routing without affecting the others.
+
 ## Agent routing
 
 | Need                                       | Primary model agent   | Quality-first model-agent fallback    | Native semantic role | Write policy                      |
@@ -12,17 +32,11 @@
 | ambiguous diagnosis                        | `gemini-3-1-pro`      | `gpt-5-6-terra`, `opus-5`             | `debugger`           | read-only                         |
 | plan or code review                        | `opus-5`              | `gpt-5-6-sol`, `google-opus-4-6`      | `reviewer`           | read-only                         |
 
-Gateway-capable harnesses install model-agent names and pin provider/model in
-each definition. Pass the name as native agent type and omit per-invocation
-model override. Some harness schemas accept only their built-in model aliases at
-dispatch even though custom agent definitions accept gateway IDs.
-
-Without gateway or model-agent support, use native semantic role in table or one
-native generic worker. A runtime gateway bypass such as `claude-direct` counts
-as unavailable even when installed model agents contain gateway aliases. Use
-parent model only after suitable alternate subscription is unavailable. If a
-pinned route is throttled, dispatch first capable fallback agent instead of
-retrying same route.
+Gateway-capable harnesses install model-agent names and pin provider, model,
+reasoning effort, and sandbox mode in each definition. Pass the name as native
+agent type and omit per-invocation model override. Some harness schemas accept
+only their built-in model aliases at dispatch even though custom agent
+definitions accept gateway IDs.
 
 Priority means capability fit, not rigid order. Among equally suitable choices:
 
@@ -34,6 +48,32 @@ Priority means capability fit, not rigid order. Among equally suitable choices:
 
 Use fresh workers. Keep scopes bounded and pass summaries between runs. Honor
 harness-native timeout and concurrency controls.
+
+## Availability
+
+Model agents and native semantic roles are mutually exclusive installs. A
+gateway-enabled harness installs model-agent names only; a harness without
+gateway installs semantic roles only. Never assume both are dispatchable.
+
+Check the harness's available agent-type list before dispatch and route to the
+set that is actually present. Installed name is still not a proven live route:
+the gateway daemon must be listening on its loopback port and the row's
+subscription must hold current authentication.
+
+Distinguish the two failure modes:
+
+- Unknown agent type: gateway projection is not installed. Use native semantic
+  role in the table, or one native generic worker with same scope, permissions,
+  and exit criteria.
+- Dispatch resolves but gateway refuses connection, errors, or returns auth
+  failure: daemon or subscription problem, not a routing problem. Report it
+  instead of retrying the same route, and do not quietly absorb the work into
+  the parent subscription when the user expected another one.
+
+A runtime gateway bypass such as `claude-direct` counts as unavailable even when
+installed model agents contain gateway aliases. Use parent model only after
+suitable alternate subscription is unavailable. If a pinned route is throttled,
+dispatch first capable fallback agent instead of retrying same route.
 
 ## Risk gates
 
