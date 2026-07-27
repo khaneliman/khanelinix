@@ -11,6 +11,8 @@ let
   jsonFormat = pkgs.formats.json { };
 in
 {
+  imports = [ ./layouts.nix ];
+
   options.khanelinix.programs.terminal.emulators.limux = {
     enable = lib.mkEnableOption "Limux terminal workspace manager";
 
