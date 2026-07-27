@@ -19,6 +19,7 @@ in
   config = mkIf cfg.enable {
     xdg = {
       enable = true;
+      localBinInPath = true;
       cacheHome = config.home.homeDirectory + "/.local/cache";
 
       configFile =
