@@ -24,7 +24,9 @@ Read [the council protocol](references/protocol.md) and the delivery workflow's
 
 Canonical seats are Anthropic `opus-5`, Google `gemini-3-1-pro`, and OpenAI
 `gpt-5-6-sol`. Council mode uses these fixed perspectives; do not replace them
-with cheaper or task-fit workers.
+with cheaper or task-fit workers. Never downgrade the Anthropic seat to
+`sonnet-5` as an efficiency shortcut: prefer `opus-5` for fewer retries, shorter
+deliberation, and lower total token use.
 
 ## Workflow
 

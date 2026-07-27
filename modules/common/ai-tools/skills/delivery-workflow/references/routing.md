@@ -17,6 +17,13 @@ a Claude parent, `opus-5` and `sonnet-5` reuse parent subscription, while
 `google-opus-4-6` and `google-sonnet-4-6` keep Claude-family capability on a
 different subscription.
 
+For Anthropic routing, use `opus-5`; never select `sonnet-5` automatically.
+Optimize for total token use and completed-work efficiency: stronger first-pass
+reasoning usually costs fewer retries, corrections, and repeated context. When
+`opus-5` is unavailable or throttled, use a capable alternate subscription or
+native semantic fallback and report the degraded route. Use `sonnet-5` only when
+the user explicitly requests it.
+
 Every subscription needs its own current gateway authentication. One expired
 login removes that whole row from routing without affecting the others.
 
@@ -47,9 +54,9 @@ validation, and review.
 | ------------------------------------------ | --------------------- | ------------------------------------- | -------------------- | --------------------------------- |
 | obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark` | `gemini-3-6-flash`, `gpt-5-6-luna`    | `mechanic`           | read-only unless edit is explicit |
 | repository discovery                       | `gemini-3-6-flash`    | `gpt-5-6-luna`, `gpt-5-3-codex-spark` | `fact-finder`        | read-only                         |
-| bounded reproduction                       | `gpt-5-6-luna`        | `gemini-3-6-flash`, `sonnet-5`        | `probe-runner`       | build artifacts only              |
+| bounded reproduction                       | `gpt-5-6-luna`        | `gemini-3-6-flash`, `opus-5`          | `probe-runner`       | build artifacts only              |
 | noisy validation                           | `gpt-oss-120b`        | `gemini-3-6-flash`, `gpt-5-6-luna`    | `test-runner`        | build artifacts only              |
-| normal implementation                      | `sonnet-5`            | `gpt-5-6-luna`, `google-sonnet-4-6`   | `implementer`        | workspace write                   |
+| normal implementation                      | `opus-5`              | `gpt-5-6-luna`, `google-opus-4-6`     | `implementer`        | workspace write                   |
 | ambiguous diagnosis                        | `gemini-3-1-pro`      | `gpt-5-6-terra`, `opus-5`             | `debugger`           | read-only                         |
 | plan or code review                        | `opus-5`              | `gpt-5-6-sol`, `google-opus-4-6`      | `reviewer`           | read-only                         |
 
@@ -61,10 +68,11 @@ definitions accept gateway IDs.
 
 Priority means capability fit, not rigid order. Among equally suitable choices:
 
-1. Prefer provider different from parent.
-2. Prefer provider with more quota headroom or less recent use.
-3. Rotate repeated independent tasks instead of concentrating one subscription.
-4. Never select clearly weaker model, duplicate work, or expand scope only for
+1. Use `opus-5` for Anthropic routing; exclude `sonnet-5` unless user-requested.
+2. Prefer provider different from parent.
+3. Prefer provider with more quota headroom or less recent use.
+4. Rotate repeated independent tasks instead of concentrating one subscription.
+5. Never select clearly weaker model, duplicate work, or expand scope only for
    quota balancing.
 
 Use fresh workers. Keep scopes bounded and pass summaries between runs. Honor
@@ -106,10 +114,11 @@ Distinguish the two failure modes:
   the parent subscription when the user expected another one.
 
 A runtime gateway bypass such as `claude-direct` counts as unavailable even when
-installed model agents contain gateway aliases. Treat `opus-5` and `sonnet-5` as
-the only first-party exceptions. Use parent model only after suitable alternate
-subscription is unavailable. If a pinned route is throttled, dispatch first
-capable fallback agent instead of retrying same route.
+installed model agents contain gateway aliases. `opus-5` and `sonnet-5` are the
+only first-party routes, but `sonnet-5` remains user-request-only. Use parent
+model only after suitable alternate subscription is unavailable. If a pinned
+route is throttled, dispatch first capable fallback agent instead of retrying
+same route.
 
 ## Risk gates
 

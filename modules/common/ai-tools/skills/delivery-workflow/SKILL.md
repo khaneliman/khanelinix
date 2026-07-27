@@ -25,9 +25,11 @@ renewed approval when any check fails.
 1. Read contributor canon and inspect dirty state. Preserve unrelated work.
 2. Classify task `trivial`, `normal`, or `high-risk` using routing reference.
 3. State assumptions and planned route. User owns architecture and scope.
-4. Choose smallest capable model agent. Resolve provider preference through the
-   subscription map, not the agent name, and prefer a subscription other than
-   parent's when suitability is equal.
+4. Choose the model agent expected to minimize total tokens and retries, not the
+   lowest nominal tier. Resolve provider preference through the subscription
+   map, not the agent name. Use `opus-5` for Anthropic work; do not route to
+   `sonnet-5` unless the user explicitly requests it. Prefer a subscription
+   other than parent's when suitability is equal.
 5. Confirm the route exists in the harness's available agent-type list, then
    dispatch that name as native agent type. Do not pass a model override:
    installed definition pins gateway model. When model agents or gateway are
