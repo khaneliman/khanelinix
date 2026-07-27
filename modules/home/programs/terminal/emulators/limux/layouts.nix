@@ -128,6 +128,24 @@ let
       ${builtins.readFile ./workspace.sh}
     '';
   };
+
+  pickerAvailable = tools.fzf.enable && tools.zoxide.enable;
+
+  limuxPick = pkgs.writeShellApplication {
+    name = "limux-pick";
+    runtimeInputs = with pkgs; [
+      coreutils
+      findutils
+      fzf
+      gawk
+      limuxWorkspace
+      zoxide
+    ];
+    text = ''
+      layout_project_roots=(${lib.escapeShellArgs cfg.layouts.projectRoots})
+      ${builtins.readFile ./pick.sh}
+    '';
+  };
 in
 {
   options.khanelinix.programs.terminal.emulators.limux.layouts = {
@@ -135,11 +153,18 @@ in
     default = mkOpt (lib.types.enum (lib.attrNames layouts)) "dev" ''
       Layout built by `limux-workspace` when `--layout` is omitted.
     '';
+    projectRoots = mkOpt (lib.types.listOf lib.types.str) [
+      "${config.home.homeDirectory}/khanelinix"
+      "${config.home.homeDirectory}/github"
+    ] "Directories whose immediate children `limux-pick` offers alongside zoxide";
   };
 
   config = lib.mkIf (cfg.enable && cfg.layouts.enable && isSupported) {
     home = {
-      packages = [ limuxWorkspace ];
+      packages = [
+        limuxWorkspace
+      ]
+      ++ lib.optional pickerAvailable limuxPick;
 
       # Limux binds only its built-in shortcut ids and exposes no action or
       # command surface in its config, so an alias is the only way to reach a
@@ -147,6 +172,9 @@ in
       shellAliases = {
         lx = "limux-workspace";
         lxs = "limux-workspace --layout system";
+      }
+      // lib.optionalAttrs pickerAvailable {
+        lxp = "limux-pick";
       };
     };
   };
