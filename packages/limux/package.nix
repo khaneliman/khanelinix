@@ -5,6 +5,7 @@
   autoPatchelfHook,
   wrapGAppsHook4,
   fontconfig,
+  glib-networking,
   gtk4,
   libadwaita,
   webkitgtk_6_0,
@@ -27,6 +28,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   buildInputs = [
     fontconfig
+    glib-networking
     gtk4
     libadwaita
     webkitgtk_6_0
