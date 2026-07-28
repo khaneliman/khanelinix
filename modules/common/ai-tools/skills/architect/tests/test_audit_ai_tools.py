@@ -53,7 +53,13 @@ class AuditAiToolsTests(unittest.TestCase):
             report = audit_ai_tools.audit_root(root)
 
             self.assertEqual(
-                report["summary"], {"skills": 1, "errors": 0, "warnings": 0}
+                report["summary"],
+                {
+                    "skills": 1,
+                    "errors": 0,
+                    "warnings": 0,
+                    "description_characters": len("Test clean-skill."),
+                },
             )
 
     def test_ai_tools_root_prefers_canonical_skills_directory(self) -> None:
@@ -90,7 +96,13 @@ class AuditAiToolsTests(unittest.TestCase):
             self.assertIn("playbook_line_budget", codes)
             self.assertIn("broken_local_link", codes)
             self.assertEqual(
-                report["summary"], {"skills": 1, "errors": 2, "warnings": 1}
+                report["summary"],
+                {
+                    "skills": 1,
+                    "errors": 2,
+                    "warnings": 1,
+                    "description_characters": len("Test."),
+                },
             )
 
     def test_malformed_or_non_string_required_frontmatter_is_rejected(self) -> None:
@@ -104,6 +116,30 @@ class AuditAiToolsTests(unittest.TestCase):
                     "---\n"
                     "name: invalid-skill\n"
                     f"description: {value}\n"
+                    "---\n\n# Invalid\n",
+                    encoding="utf-8",
+                )
+
+                report = audit_ai_tools.audit_root(root)
+
+                self.assertEqual(report["summary"]["errors"], 1)
+                self.assertEqual(report["findings"][0]["code"], "invalid_frontmatter")
+
+    def test_unsupported_or_malformed_nested_frontmatter_is_rejected(self) -> None:
+        cases = (
+            "hooks:\n  Stop: value\n",
+            'metadata:\n    version: "1"\n',
+        )
+        for extra in cases:
+            with self.subTest(extra=extra), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                skill = root / "invalid-skill"
+                skill.mkdir()
+                (skill / "SKILL.md").write_text(
+                    "---\n"
+                    "name: invalid-skill\n"
+                    "description: Invalid nested metadata.\n"
+                    f"{extra}"
                     "---\n\n# Invalid\n",
                     encoding="utf-8",
                 )
@@ -162,7 +198,13 @@ class AuditAiToolsTests(unittest.TestCase):
             report = audit_ai_tools.audit_root(root)
 
             self.assertEqual(
-                report["summary"], {"skills": 1, "errors": 0, "warnings": 0}
+                report["summary"],
+                {
+                    "skills": 1,
+                    "errors": 0,
+                    "warnings": 0,
+                    "description_characters": 1024,
+                },
             )
 
     def test_multiline_description_limit_uses_parsed_block_value(self) -> None:
@@ -246,7 +288,7 @@ class AuditAiToolsTests(unittest.TestCase):
                 "# Orphan\n", encoding="utf-8"
             )
             (skill / "scripts").mkdir()
-            (skill / "scripts" / "unused.py").write_text(
+            (skill / "scripts" / "unused").write_text(
                 "#!/usr/bin/env python3\n", encoding="utf-8"
             )
 
@@ -257,6 +299,84 @@ class AuditAiToolsTests(unittest.TestCase):
             self.assertIn("orphan_resource", codes)
             self.assertIn("script_uninvoked", codes)
             self.assertIn("script_not_executable", codes)
+
+    def test_interpreter_script_and_static_dependencies_do_not_need_exec_bits(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            skill = write_skill(
+                root,
+                "dependency-skill",
+                "Run `python3 scripts/run.py`.\n",
+            )
+            scripts = skill / "scripts"
+            scripts.mkdir()
+            (scripts / "run.py").write_text(
+                "#!/usr/bin/env python3\nfrom . import helper\n",
+                encoding="utf-8",
+            )
+            (scripts / "helper.py").write_text("VALUE = 1\n", encoding="utf-8")
+            (scripts / "__init__.py").write_text("", encoding="utf-8")
+            (scripts / "requirements.txt").write_text("example==1\n", encoding="utf-8")
+
+            report = audit_ai_tools.audit_root(root)
+
+            self.assertEqual(
+                report["summary"],
+                {
+                    "skills": 1,
+                    "errors": 0,
+                    "warnings": 0,
+                    "description_characters": len("Test dependency-skill."),
+                },
+            )
+
+    def test_dependency_basename_substrings_do_not_hide_uninvoked_scripts(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            skill = write_skill(
+                root,
+                "collision-skill",
+                "Run `python3 scripts/run.py`.",
+            )
+            scripts = skill / "scripts"
+            scripts.mkdir()
+            (scripts / "run.py").write_text(
+                "# helper.py.bak is not a dependency\n", encoding="utf-8"
+            )
+            (scripts / "helper.py").write_text("VALUE = 1\n", encoding="utf-8")
+
+            report = audit_ai_tools.audit_root(root)
+            uninvoked = [
+                finding
+                for finding in report["findings"]
+                if finding["code"] == "script_uninvoked"
+            ]
+
+            self.assertEqual(len(uninvoked), 1)
+            self.assertTrue(uninvoked[0]["path"].endswith("scripts/helper.py"))
+
+    def test_openai_metadata_schema_and_assets_are_validated(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            skill = write_skill(root, "metadata-skill", "Small body.")
+            agents = skill / "agents"
+            agents.mkdir()
+            (agents / "openai.yaml").write_text(
+                "interface:\n"
+                '  display_name: "Metadata Skill"\n'
+                '  short_description: "Useful metadata validation fixture"\n'
+                '  icon_small: "./assets/missing.svg"\n'
+                '  default_prompt: "Use this fixture."\n',
+                encoding="utf-8",
+            )
+
+            report = audit_ai_tools.audit_root(root)
+            codes = {finding["code"] for finding in report["findings"]}
+
+            self.assertIn("invalid_openai_metadata", codes)
+            self.assertIn("missing_openai_asset", codes)
 
     def test_exact_normalized_duplicate_blocks_warn(self) -> None:
         duplicate = (
@@ -278,6 +398,60 @@ class AuditAiToolsTests(unittest.TestCase):
             self.assertEqual(len(duplicates), 1)
             self.assertEqual(duplicates[0]["severity"], "warning")
             self.assertEqual(report["summary"]["errors"], 0)
+
+    def test_variant_references_within_one_skill_do_not_warn_as_duplicates(
+        self,
+    ) -> None:
+        duplicate = (
+            "This deliberately long paragraph describes shared variant behavior while the "
+            "root playbook routes only one provider-specific reference for each request."
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            skill = write_skill(
+                root,
+                "variant-skill",
+                "Choose [Python](references/python.md) or "
+                "[Node](references/node.md), then read only that variant.",
+            )
+            references = skill / "references"
+            references.mkdir()
+            (references / "python.md").write_text(duplicate, encoding="utf-8")
+            (references / "node.md").write_text(duplicate, encoding="utf-8")
+
+            report = audit_ai_tools.audit_root(root, minimum_duplicate_characters=80)
+
+            self.assertNotIn(
+                "duplicate_block",
+                {finding["code"] for finding in report["findings"]},
+            )
+
+    def test_directly_coloaded_references_still_warn_as_duplicates(self) -> None:
+        duplicate = (
+            "This deliberately long paragraph repeats guidance in two references that "
+            "directly load one another during the same skill workflow and waste context."
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            skill = write_skill(
+                root,
+                "coloaded-skill",
+                "Read [first](references/first.md).",
+            )
+            references = skill / "references"
+            references.mkdir()
+            (references / "first.md").write_text(
+                duplicate + "\n\nRead [second](second.md).\n",
+                encoding="utf-8",
+            )
+            (references / "second.md").write_text(duplicate, encoding="utf-8")
+
+            report = audit_ai_tools.audit_root(root, minimum_duplicate_characters=80)
+
+            self.assertIn(
+                "duplicate_block",
+                {finding["code"] for finding in report["findings"]},
+            )
 
     def test_json_and_markdown_outputs_are_stable(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

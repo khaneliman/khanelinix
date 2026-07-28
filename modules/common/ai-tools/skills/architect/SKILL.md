@@ -18,6 +18,11 @@ python3 <skill-dir>/scripts/audit_ai_tools.py <ai-tools-root> --format markdown
 
 The audit is read-only. Treat errors as objective structural failures and
 warnings as review candidates; architecture decisions remain with the agent.
+After changing canonical skills, run every bundled unit suite with:
+
+```bash
+python3 <skill-dir>/scripts/run_skill_tests.py <canonical-skills-root>
+```
 
 Treat root `AGENTS.md` as registry and keep detailed workflow or domain guidance
 in gated leaf nodes.
@@ -69,7 +74,3 @@ to read the corresponding reference document in `refs/` before responding:
 If the user's request is broad (e.g., "How should I structure this new
 feature?"), ask them clarifying questions to determine which of the four
 components best fits their need before reading the reference files.
-
-> [!NOTE]
-> Discover more about Claude Code LLM integration by viewing the documentation
-> index at: https://code.claude.com/docs/llms.txt

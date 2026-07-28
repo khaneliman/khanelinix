@@ -16,6 +16,19 @@ from urllib.parse import unquote, urlsplit
 
 RESOURCE_DIRS = ("references", "refs", "scripts", "assets")
 IGNORED_PARTS = {".git", "__pycache__", "node_modules"}
+INTERPRETER_SCRIPT_SUFFIXES = {
+    ".bash",
+    ".cjs",
+    ".js",
+    ".mjs",
+    ".pl",
+    ".ps1",
+    ".py",
+    ".rb",
+    ".sh",
+    ".ts",
+}
+SCRIPT_SUPPORT_NAMES = {"__init__.py", "requirements.txt"}
 LINK_RE = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 RESOURCE_MENTION_RE = re.compile(
     r"(?<![A-Za-z0-9_-])((?:references|refs|scripts|assets)/[A-Za-z0-9@_./+:-]+)"
@@ -32,6 +45,12 @@ BLOCK_SCALAR_RE = re.compile(
 SKILL_NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 MAX_SKILL_NAME_CHARACTERS = 64
 MAX_SKILL_DESCRIPTION_CHARACTERS = 1024
+SUPPORTED_FRONTMATTER_FIELDS = {"description", "license", "metadata", "name"}
+OPENAI_REQUIRED_INTERFACE_FIELDS = {
+    "default_prompt",
+    "display_name",
+    "short_description",
+}
 
 
 @dataclass(frozen=True)
@@ -57,6 +76,7 @@ class SkillRecord:
     path: str
     name: str | None
     line_count: int
+    description_characters: int
     resources: int
 
 
@@ -247,14 +267,18 @@ def parse_frontmatter(path: Path) -> tuple[dict[str, str], str | None]:
     index = 0
     while index < len(frontmatter_lines):
         line = frontmatter_lines[index]
-        if not line or line[0].isspace() or line.lstrip().startswith("#"):
+        if not line or line.lstrip().startswith("#"):
             index += 1
             continue
+        if line[0].isspace():
+            return {}, f"unexpected nested YAML at frontmatter line {index + 2}"
         match = TOP_LEVEL_YAML_RE.match(line)
         if not match:
             return {}, f"malformed top-level YAML at frontmatter line {index + 2}"
         key = match.group(1)
         value = (match.group(2) or "").strip()
+        if key not in SUPPORTED_FRONTMATTER_FIELDS:
+            return {}, f"unsupported frontmatter field: {key}"
         if key in {"name", "description"}:
             if key in values:
                 return {}, f"duplicate frontmatter field: {key}"
@@ -269,10 +293,200 @@ def parse_frontmatter(path: Path) -> tuple[dict[str, str], str | None]:
                 return {}, error
             assert parsed is not None
             values[key] = parsed
-        else:
-            values[key] = value
+        elif key == "license":
+            parsed, error = parse_string_scalar(key, value)
             index += 1
+            if error is not None:
+                return {}, error
+            assert parsed is not None
+            values[key] = parsed
+        else:
+            if value:
+                return {}, "frontmatter metadata must be an indented string mapping"
+            index += 1
+            metadata: dict[str, str] = {}
+            while index < len(frontmatter_lines):
+                nested = frontmatter_lines[index]
+                if not nested or nested.lstrip().startswith("#"):
+                    index += 1
+                    continue
+                if not nested[0].isspace():
+                    break
+                if not nested.startswith("  ") or nested.startswith("   "):
+                    return {}, (
+                        "frontmatter metadata must use exactly two-space indentation "
+                        f"at line {index + 2}"
+                    )
+                nested_match = TOP_LEVEL_YAML_RE.match(nested[2:])
+                if nested_match is None:
+                    return (
+                        {},
+                        f"malformed metadata YAML at frontmatter line {index + 2}",
+                    )
+                metadata_key = nested_match.group(1)
+                if metadata_key in metadata:
+                    return {}, f"duplicate frontmatter metadata field: {metadata_key}"
+                parsed, error = parse_string_scalar(
+                    f"metadata.{metadata_key}", nested_match.group(2) or ""
+                )
+                if error is not None:
+                    return {}, error
+                assert parsed is not None
+                metadata[metadata_key] = parsed
+                index += 1
+            values[key] = json.dumps(metadata, sort_keys=True)
     return values, None
+
+
+def validate_openai_metadata(
+    path: Path, skill_name: str | None, root: Path
+) -> list[Finding]:
+    findings: list[Finding] = []
+    values: dict[str, str] = {}
+    lines = read_text(path).splitlines()
+    interface_index = next(
+        (index for index, line in enumerate(lines) if line == "interface:"), None
+    )
+    metadata_path = display_path(path, root)
+    if interface_index is None:
+        return [
+            Finding(
+                "error",
+                "invalid_openai_metadata",
+                metadata_path,
+                "agents/openai.yaml requires an interface mapping",
+                1,
+            )
+        ]
+
+    index = interface_index + 1
+    while index < len(lines):
+        line = lines[index]
+        if not line or line.lstrip().startswith("#"):
+            index += 1
+            continue
+        if not line[0].isspace():
+            break
+        if not line.startswith("  ") or line.startswith("   "):
+            findings.append(
+                Finding(
+                    "error",
+                    "invalid_openai_metadata",
+                    metadata_path,
+                    "interface fields must use exactly two-space indentation",
+                    index + 1,
+                )
+            )
+            return findings
+        match = TOP_LEVEL_YAML_RE.match(line[2:])
+        if match is None:
+            findings.append(
+                Finding(
+                    "error",
+                    "invalid_openai_metadata",
+                    metadata_path,
+                    "malformed interface field",
+                    index + 1,
+                )
+            )
+            return findings
+        key = match.group(1)
+        raw = (match.group(2) or "").strip()
+        if key in values:
+            findings.append(
+                Finding(
+                    "error",
+                    "invalid_openai_metadata",
+                    metadata_path,
+                    f"duplicate interface field: {key}",
+                    index + 1,
+                )
+            )
+            return findings
+        if not raw.startswith(('"', "'")):
+            findings.append(
+                Finding(
+                    "error",
+                    "invalid_openai_metadata",
+                    metadata_path,
+                    f"interface field {key} must use a quoted string",
+                    index + 1,
+                )
+            )
+            return findings
+        parsed, error = parse_string_scalar(f"interface.{key}", raw)
+        if error is not None:
+            findings.append(
+                Finding(
+                    "error",
+                    "invalid_openai_metadata",
+                    metadata_path,
+                    error,
+                    index + 1,
+                )
+            )
+            return findings
+        assert parsed is not None
+        values[key] = parsed
+        index += 1
+
+    missing = sorted(OPENAI_REQUIRED_INTERFACE_FIELDS - values.keys())
+    if missing:
+        findings.append(
+            Finding(
+                "error",
+                "invalid_openai_metadata",
+                metadata_path,
+                "missing interface fields: " + ", ".join(missing),
+                interface_index + 1,
+            )
+        )
+        return findings
+
+    short_description = values["short_description"]
+    if not 25 <= len(short_description) <= 64:
+        findings.append(
+            Finding(
+                "error",
+                "invalid_openai_metadata",
+                metadata_path,
+                "short_description must contain 25-64 characters",
+                interface_index + 1,
+            )
+        )
+    if skill_name and f"${skill_name}" not in values["default_prompt"]:
+        findings.append(
+            Finding(
+                "error",
+                "invalid_openai_metadata",
+                metadata_path,
+                f"default_prompt must mention ${skill_name}",
+                interface_index + 1,
+            )
+        )
+
+    for key in ("icon_small", "icon_large"):
+        target = values.get(key)
+        if not target:
+            continue
+        resolved = (path.parent.parent / target).resolve()
+        try:
+            resolved.relative_to(path.parent.parent.resolve())
+        except ValueError:
+            exists = False
+        else:
+            exists = resolved.is_file()
+        if not exists:
+            findings.append(
+                Finding(
+                    "error",
+                    "missing_openai_asset",
+                    metadata_path,
+                    f"{key} target does not exist: {target}",
+                    interface_index + 1,
+                )
+            )
+    return findings
 
 
 def iter_markdown_links(content: str) -> Iterable[MarkdownLink]:
@@ -309,6 +523,14 @@ def resolve_local_link(source: Path, target: str) -> Path | None:
     return (source.parent / decoded).resolve()
 
 
+def markdown_links_to(source: Path, targets: set[Path]) -> bool:
+    for link in iter_markdown_links(read_text(source)):
+        resolved = resolve_local_link(source, link.target)
+        if resolved is not None and resolved.resolve() in targets:
+            return True
+    return False
+
+
 def markdown_files(skill_dir: Path) -> list[Path]:
     return sorted(
         (
@@ -334,6 +556,13 @@ def resource_files(skill_dir: Path) -> list[Path]:
             and path.suffix != ".pyc"
         )
     return sorted(resources, key=lambda path: path.as_posix())
+
+
+def mentions_static_dependency(content: str, relative: str, name: str) -> bool:
+    if relative in content:
+        return True
+    pattern = re.compile(rf"(?<![A-Za-z0-9_.-]){re.escape(name)}(?![A-Za-z0-9_.-])")
+    return pattern.search(content) is not None
 
 
 def referenced_resources(skill_dir: Path) -> set[Path]:
@@ -383,29 +612,57 @@ def referenced_resources(skill_dir: Path) -> set[Path]:
             if candidate.is_file():
                 referenced.add(candidate)
 
-    python_queue = deque(
-        resource for resource in referenced if resource.suffix.lower() == ".py"
+    dependency_queue = deque(
+        resource
+        for resource in referenced
+        if resource.parent.name == "scripts" or "scripts" in resource.parts
     )
-    inspected_python: set[Path] = set()
-    while python_queue:
-        source = python_queue.popleft()
-        if source in inspected_python:
+    inspected_dependencies: set[Path] = set()
+    all_resources = resource_files(skill_dir)
+    while dependency_queue:
+        source = dependency_queue.popleft()
+        if source in inspected_dependencies or not source.is_file():
             continue
-        inspected_python.add(source)
+        inspected_dependencies.add(source)
+        content = read_text(source)
+
+        for candidate in all_resources:
+            if candidate == source or candidate in referenced:
+                continue
+            relative = candidate.relative_to(skill_dir).as_posix()
+            top_level = Path(relative).parts[0]
+            if top_level not in {"assets", "scripts"}:
+                continue
+            if mentions_static_dependency(content, relative, candidate.name):
+                referenced.add(candidate)
+                if "scripts" in candidate.parts:
+                    dependency_queue.append(candidate)
+
+        if source.suffix.lower() != ".py":
+            continue
+
         try:
-            tree = ast.parse(read_text(source), filename=str(source))
+            tree = ast.parse(content, filename=str(source))
         except SyntaxError:
             continue
 
-        module_names: list[str] = []
+        module_candidates: list[Path] = []
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
-                module_names.extend(alias.name for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
-                module_names.append(node.module)
+                module_candidates.extend(
+                    source.parent.joinpath(*alias.name.split("."))
+                    for alias in node.names
+                )
+            elif isinstance(node, ast.ImportFrom):
+                base = source.parent
+                for _ in range(max(node.level - 1, 0)):
+                    base = base.parent
+                if node.module:
+                    module_candidates.append(base.joinpath(*node.module.split(".")))
+                else:
+                    module_candidates.extend(base / alias.name for alias in node.names)
 
-        for module_name in module_names:
-            module_path = source.parent.joinpath(*module_name.split("."))
+        for module_path in module_candidates:
             candidates = (module_path.with_suffix(".py"), module_path / "__init__.py")
             for candidate in candidates:
                 candidate = candidate.resolve()
@@ -415,8 +672,25 @@ def referenced_resources(skill_dir: Path) -> set[Path]:
                     continue
                 if candidate.is_file() and candidate not in referenced:
                     referenced.add(candidate)
-                    python_queue.append(candidate)
+                    dependency_queue.append(candidate)
     return referenced
+
+
+def is_script_support_file(relative: str, resource: Path) -> bool:
+    parts = Path(relative).parts
+    return (
+        resource.name in SCRIPT_SUPPORT_NAMES
+        or resource.name.endswith("_test.py")
+        or (
+            "templates" in parts
+            and bool(resource.suffix)
+            and resource.suffix.lower() not in INTERPRETER_SCRIPT_SUFFIXES
+        )
+    )
+
+
+def is_invocable_script(resource: Path) -> bool:
+    return not resource.suffix or resource.suffix.lower() in INTERPRETER_SCRIPT_SUFFIXES
 
 
 def iter_prose_blocks(path: Path, minimum_characters: int) -> Iterable[ProseBlock]:
@@ -484,6 +758,7 @@ def audit_skill(
     line_count = len(content.splitlines())
     frontmatter, frontmatter_error = parse_frontmatter(skill_file)
     name = frontmatter.get("name")
+    description = frontmatter.get("description")
 
     if frontmatter_error:
         findings.append(
@@ -532,7 +807,6 @@ def audit_skill(
                     1,
                 )
             )
-        description = frontmatter.get("description")
         if not description:
             findings.append(
                 Finding(
@@ -565,6 +839,10 @@ def audit_skill(
             )
         )
 
+    openai_metadata = skill_dir / "agents" / "openai.yaml"
+    if openai_metadata.is_file():
+        findings.extend(validate_openai_metadata(openai_metadata, name, root))
+
     for markdown in markdown_files(skill_dir):
         for link in iter_markdown_links(read_text(markdown)):
             resolved = resolve_local_link(markdown, link.target)
@@ -584,10 +862,13 @@ def audit_skill(
     for resource in resources:
         resource_path = display_path(resource, root)
         relative = resource.relative_to(skill_dir).as_posix()
-        if resource not in referenced:
+        support_file = relative.startswith("scripts/") and is_script_support_file(
+            relative, resource
+        )
+        if resource not in referenced and not support_file:
             code = (
                 "script_uninvoked"
-                if relative.startswith("scripts/")
+                if relative.startswith("scripts/") and is_invocable_script(resource)
                 else "orphan_resource"
             )
             message = (
@@ -605,6 +886,7 @@ def audit_skill(
             relative.startswith("scripts/")
             and shebang
             and not (resource.stat().st_mode & 0o111)
+            and resource.suffix.lower() not in INTERPRETER_SCRIPT_SUFFIXES
         ):
             findings.append(
                 Finding(
@@ -620,6 +902,7 @@ def audit_skill(
             path=display_path(skill_dir, root),
             name=name,
             line_count=line_count,
+            description_characters=len(description or ""),
             resources=len(resources),
         ),
         findings,
@@ -650,11 +933,13 @@ def audit_root(
         )
 
     duplicate_blocks: dict[str, list[ProseBlock]] = defaultdict(list)
+    block_skills: dict[Path, Path] = {}
     for skill_dir in skills:
         record, skill_findings = audit_skill(skill_dir, root, line_budget)
         records.append(record)
         findings.extend(skill_findings)
         for markdown in markdown_files(skill_dir):
+            block_skills[markdown.resolve()] = skill_dir.resolve()
             for block in iter_prose_blocks(markdown, minimum_duplicate_characters):
                 duplicate_blocks[block.normalized].append(block)
 
@@ -662,6 +947,16 @@ def audit_root(
         unique_paths = {block.path.resolve() for block in blocks}
         if len(unique_paths) < 2:
             continue
+        owning_skills = {block_skills[block.path.resolve()] for block in blocks}
+        if len(owning_skills) == 1:
+            skill_dir = next(iter(owning_skills))
+            skill_file = (skill_dir / "SKILL.md").resolve()
+            directly_coloaded = any(
+                markdown_links_to(source, unique_paths - {source})
+                for source in unique_paths
+            )
+            if skill_file not in unique_paths and not directly_coloaded:
+                continue
         ordered = sorted(blocks, key=lambda block: (block.path.as_posix(), block.line))
         first = ordered[0]
         related = tuple(display_path(block.path, root) for block in ordered[1:])
@@ -686,12 +981,14 @@ def audit_root(
     )
     errors = sum(finding.severity == "error" for finding in findings)
     warnings = len(findings) - errors
+    description_characters = sum(record.description_characters for record in records)
     return {
         "root": str(root),
         "summary": {
             "skills": len(records),
             "errors": errors,
             "warnings": warnings,
+            "description_characters": description_characters,
         },
         "skills": [asdict(record) for record in records],
         "findings": [finding.to_dict() for finding in findings],
@@ -708,6 +1005,7 @@ def render_markdown(report: dict[str, object]) -> str:
         f"- Skills: {summary['skills']}",
         f"- Errors: {summary['errors']}",
         f"- Warnings: {summary['warnings']}",
+        f"- Description characters: {summary['description_characters']}",
         "",
     ]
     findings = report["findings"]

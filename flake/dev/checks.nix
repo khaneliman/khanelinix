@@ -43,6 +43,14 @@
             language = "system";
             pass_filenames = false;
           };
+          skill-tests = {
+            enable = true;
+            description = "Canonical skill and harness-adapter unit tests";
+            entry = "${lib.getExe pkgs.python3} -B modules/common/ai-tools/skills/architect/scripts/run_skill_tests.py modules/common/ai-tools/skills";
+            files = "^modules/(common/ai-tools/(skills/|planning-with-files/)|home/programs/terminal/tools/claude-code/hooks/planning-with-files\\.nix$)";
+            language = "system";
+            pass_filenames = false;
+          };
           pre-commit-hook-ensure-sops.enable = true;
           # treefmt runs `statix fix`, which silently skips lints that have no
           # auto-fix (for example `repeated_keys`). Only `statix check` reports

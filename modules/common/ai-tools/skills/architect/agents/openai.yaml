@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Tools Architect"
+  short_description: "Audit and structure agent rules, skills, commands, and workers"
+  default_prompt: "Use $architect to audit or redesign this AI configuration with progressive disclosure and deterministic execution boundaries."
