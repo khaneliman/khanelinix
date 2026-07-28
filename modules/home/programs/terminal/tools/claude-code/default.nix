@@ -130,13 +130,10 @@ in
 
         model = "claude-opus-5";
         theme = "dark";
-        alwaysThinkingEnabled = true;
-        autoMemoryEnabled = !aiTools.claudeCode.okfMemoryEnabled;
         # Usage credits
         # fastMode = true;
         cleanupPeriodDays = 90;
         verbose = true;
-        workflowSizeGuideline = "small";
         worktree.baseRef = "head";
         attribution = {
           commit = "";
@@ -157,6 +154,9 @@ in
         };
 
         env = {
+          # Custom Anthropic endpoints disable deferred MCP tool loading unless
+          # explicitly enabled.
+          ENABLE_TOOL_SEARCH = "true";
           USE_BUILTIN_RIPGREP = "0";
         };
       };
