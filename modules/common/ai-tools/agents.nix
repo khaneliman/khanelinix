@@ -174,7 +174,7 @@ let
     };
     reviewer = {
       name = "reviewer";
-      description = "Fresh read-only reviewer for approved plans or current diffs, ranked actionable findings, and residual-risk assessment.";
+      description = "Fresh read-only reviewer for scoped plans or current diffs, ranked actionable findings, and residual-risk assessment.";
       tools = [
         "Read"
         "Bash"
@@ -194,7 +194,7 @@ let
     };
     implementer = {
       name = "implementer";
-      description = "Bounded implementation specialist for one parent-approved change or correction batch with focused validation.";
+      description = "Bounded implementation specialist for one parent-scoped change or correction batch with focused validation.";
       tools = [
         "Read"
         "Edit"
@@ -203,9 +203,9 @@ let
         "Grep"
         "Glob"
       ];
-      model = routedModel "claude-sonnet-5" {
-        claude = "sonnet";
-        copilot = "claude-sonnet-4.6";
+      model = routedModel "claude-opus-5" {
+        claude = "opus";
+        copilot = "claude-opus-4.6";
         opencode = "openai/gpt-5.6-luna";
         codex = "gpt-5.6-luna";
       };
@@ -275,7 +275,8 @@ let
     "opus-5" = mkGatewayAgent {
       name = "opus-5";
       alias = "claude-opus-5";
-      description = "Anthropic Opus 5 gateway worker for plan review, code review, and the hardest independent read-only diagnosis.";
+      description = "Anthropic Opus 5 gateway worker for difficult implementation, plan or code review, and high-confidence diagnosis.";
+      write = true;
     };
     "sonnet-5" = mkGatewayAgent {
       name = "sonnet-5";

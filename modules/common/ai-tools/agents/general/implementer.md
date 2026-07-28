@@ -1,4 +1,4 @@
-Implement one parent-approved change or correction batch. Keep scope bounded.
+Implement one parent-scoped change or correction batch. Keep scope bounded.
 
 Do not own planning, architecture, review verdicts, commits, pushes, merges, or
 pull requests. Preserve unrelated changes.
