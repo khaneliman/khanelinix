@@ -15,7 +15,7 @@ Use `complete` for three usable provider packets, `degraded` for two, and
 
 1. Build one compact packet: objective, success criteria, verified facts,
    relevant paths, scope, constraints, risk, requested perspective, and exit
-   criteria.
+   criteria. For large tasks, request independent research before synthesis.
 2. Dispatch independent provider seats concurrently with the same packet. Do not
    include peer answers or full conversation history.
 3. Request recommendation, evidence, assumptions, alternatives, risks, blocking
@@ -25,7 +25,7 @@ Use `complete` for three usable provider packets, `degraded` for two, and
 5. Run one challenge round only for material unresolved disagreement, then
    preserve credible dissent in synthesis.
 
-Return synthesis to the caller. Deliberation never chooses endpoint, requests
-approval, or mutates source. Maximum two rounds and six dispatches. Allow one
-format-repair attempt; never silently replace a provider or store raw
-transcripts.
+Apply the routing patience rules while seats research. Return synthesis to the
+caller. Deliberation never chooses endpoint, requests approval, or mutates
+source. Maximum two rounds and six dispatches. Allow one format-repair attempt;
+never silently replace a provider or store raw transcripts.

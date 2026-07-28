@@ -27,6 +27,23 @@ and current authentication.
 For explicit three-provider deliberation, use Anthropic `opus-5`, Google
 `google-opus-4-6` with `gemini-3-1-pro` fallback, and OpenAI `gpt-5-6-sol`.
 
+## Worker patience
+
+- Give frontier reasoning seats such as Opus, Fable, Sol, or comparable models
+  time to research, reason, and synthesize on large tasks. Fast models such as
+  Luna, Spark, Flash, or Haiku should receive narrower packets and may be
+  redirected sooner.
+- Treat a wait or poll timeout as observer cadence, not worker failure or a
+  runtime deadline. Repeat polls without changing healthy seat state; use longer
+  waits when the harness can still provide required user updates.
+- Do not interrupt, demand immediate finalization from, or close a healthy
+  reasoning seat for elapsed time alone. Nudge only for scope drift, confirmed
+  looping, an explicit user deadline, or proximity to the actual harness runtime
+  limit; interrupt only to stop runaway work.
+- Count only new seat creation against dispatch limits. Mark a seat unavailable
+  only after an explicit error, shutdown, route failure, or actual runtime
+  limit. Never invent a shorter deadline from repeated poll expiry.
+
 Choose for capability and total retry cost. Among equal routes, prefer a
 provider different from parent, then quota headroom. Do not duplicate work only
 to balance subscriptions.
