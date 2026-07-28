@@ -45,13 +45,18 @@ in
               src = inputs.t3code;
               version = t3codeVersion;
               patches = (old.patches or [ ]) ++ t3codePatches;
+              postPatch = ''
+                substituteInPlace apps/web/vite.config.ts \
+                  --replace-fail 'const host = explicitHost || "localhost";' \
+                                 'const host = explicitHost || "127.0.0.1";'
+              '';
               pnpmDeps = pkgs.fetchPnpmDeps {
                 inherit (old) pname pnpmWorkspaces;
                 version = t3codeVersion;
                 src = inputs.t3code;
                 inherit pnpm;
                 fetcherVersion = 4;
-                hash = "sha256-QNVBRvXVUOKZEdIqKY2dfjvmivMTaJJSh2cexvtdJ6k=";
+                hash = "sha256-Qiwbg1EPjcVvt8YGc0YYP+1NbgBIxMkwIyTq5f3gtl4=";
               };
               postBuild = (old.postBuild or "") + ''
                 ${lib.getExe pkgs.nodejs} ${./prune-node-modules.mjs} "$PWD"
