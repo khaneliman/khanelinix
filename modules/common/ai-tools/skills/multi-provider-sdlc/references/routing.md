@@ -14,28 +14,35 @@ and current authentication.
 
 ## Preferred routes
 
-| Need                                       | Primary               | Fallback                                  | Semantic role  | Write policy                      |
-| ------------------------------------------ | --------------------- | ----------------------------------------- | -------------- | --------------------------------- |
-| obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark` | `gpt-5-6-luna`, `gemini-3-6-flash`        | `mechanic`     | read-only unless edit is explicit |
-| repository discovery                       | `gpt-5-6-luna`        | `gpt-5-3-codex-spark`, `gemini-3-6-flash` | `fact-finder`  | read-only                         |
-| bounded reproduction                       | `gpt-5-6-luna`        | `opus-5`, `gemini-3-6-flash`              | `probe-runner` | build artifacts only              |
-| noisy validation                           | `gpt-oss-120b`        | `gpt-5-6-luna`, `gemini-3-6-flash`        | `test-runner`  | build artifacts only              |
-| implementation                             | `opus-5`              | `gpt-5-6-luna`                            | `implementer`  | workspace write                   |
-| ambiguous diagnosis                        | `opus-5`              | `gpt-5-6-sol`, `gemini-3-1-pro`           | `debugger`     | read-only                         |
-| plan or code review                        | `opus-5`              | `gpt-5-6-sol`, `google-opus-4-6`          | `reviewer`     | read-only                         |
+| Need                                       | Primary               | Fallback                           | Semantic role  | Write policy                      |
+| ------------------------------------------ | --------------------- | ---------------------------------- | -------------- | --------------------------------- |
+| obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark` | `gpt-5-6-luna`, `gemini-3-6-flash` | `mechanic`     | read-only unless edit is explicit |
+| repository discovery                       | `gpt-5-3-codex-spark` | `gpt-5-6-luna`, `gemini-3-6-flash` | `fact-finder`  | read-only                         |
+| bounded reproduction                       | `gpt-5-6-luna`        | `opus-5`, `gemini-3-6-flash`       | `probe-runner` | build artifacts only              |
+| focused validation                         | `gpt-5-3-codex-spark` | `gpt-5-6-luna`                     | `test-runner`  | build artifacts only              |
+| noisy validation                           | `gpt-oss-120b`        | `gpt-5-6-luna`, `gemini-3-6-flash` | `test-runner`  | build artifacts only              |
+| implementation                             | `opus-5`              | `gpt-5-6-luna`                     | `implementer`  | workspace write                   |
+| ambiguous diagnosis                        | `opus-5`              | `gpt-5-6-sol`, `gemini-3-1-pro`    | `debugger`     | read-only                         |
+| plan or code review                        | `opus-5`              | `gpt-5-6-sol`, `google-opus-4-6`   | `reviewer`     | read-only                         |
 
 For explicit three-provider deliberation, use Anthropic `opus-5`, Google
 `google-opus-4-6` with `gemini-3-1-pro` fallback, and OpenAI `gpt-5-6-sol`.
 
 ## Quota circuits
 
-Google has separate `claude-gpt` and `gemini` quota pools. Google Opus, Sonnet,
-and GPT-OSS share `claude-gpt`; Gemini Pro and Flash share `gemini`. Before a
-Google dispatch, run [check-google-quota](../scripts/check-google-quota.sh) once
-when `codexbar` is available.
+Use scripted preflight only when telemetry identifies every relevant pool.
 
-- `exhausted`: skip that pool without dispatch. Check the other Google pool only
-  when its model is a capable fallback.
+- Google: Opus, Sonnet, and GPT-OSS share `claude-gpt`; Gemini Pro and Flash
+  share `gemini`. Run [check-google-quota](../scripts/check-google-quota.sh)
+  once before Google dispatch when `codexbar` is available.
+- OpenAI: Spark has a separate `spark` pool; Luna, Terra, and Sol share
+  `general`. Current CodexBar data does not distinguish both pools, so do not
+  preflight. A `429` opens only the matching pool.
+- Anthropic: no reliable quota query is available in the current environment.
+  Let the first required dispatch act as probe; a quota failure opens the
+  Anthropic circuit.
+- `exhausted`: skip that pool without dispatch. Check another pool only when its
+  model is a capable fallback.
 - `available`: dispatch normally.
 - `unknown`: allow one required attempt; a `429` or retry-limit failure opens
   that pool circuit for the current task.
@@ -44,8 +51,8 @@ when `codexbar` is available.
   budget.
 - Treat unknown agent types, unsupported models, and model-specific errors as
   route failures; one corrected route in the same pool is allowed. Treat auth or
-  connection failure as provider-wide. Google is unavailable only when both
-  pools are unavailable or the provider-wide circuit is open.
+  connection failure as provider-wide. A provider is unavailable only when all
+  usable pools are unavailable or its provider-wide circuit is open.
 
 ## Worker patience
 

@@ -88,11 +88,11 @@ let
         "Grep"
         "Glob"
       ];
-      model = routedModel "claude-gemini-3.6-flash" {
+      model = routedModel "claude-gpt-5.3-codex-spark" {
         claude = "haiku";
         copilot = "claude-haiku-4.5";
-        opencode = "openai/gpt-5.6-luna";
-        codex = "gpt-5.6-luna";
+        opencode = "openai/gpt-5.3-codex-spark";
+        codex = "gpt-5.3-codex-spark";
       };
       model_provider = routedProvider;
       model_reasoning_effort = {
