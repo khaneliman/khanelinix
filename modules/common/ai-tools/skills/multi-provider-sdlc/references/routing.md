@@ -27,6 +27,26 @@ and current authentication.
 For explicit three-provider deliberation, use Anthropic `opus-5`, Google
 `google-opus-4-6` with `gemini-3-1-pro` fallback, and OpenAI `gpt-5-6-sol`.
 
+## Quota circuits
+
+Google has separate `claude-gpt` and `gemini` quota pools. Google Opus, Sonnet,
+and GPT-OSS share `claude-gpt`; Gemini Pro and Flash share `gemini`. Before a
+Google dispatch, run [check-google-quota](../scripts/check-google-quota.sh) once
+when `codexbar` is available.
+
+- `exhausted`: skip that pool without dispatch. Check the other Google pool only
+  when its model is a capable fallback.
+- `available`: dispatch normally.
+- `unknown`: allow one required attempt; a `429` or retry-limit failure opens
+  that pool circuit for the current task.
+- Reuse open circuits across later phases and challenge rounds. Do not probe or
+  retry another model in the same pool. Skipped calls do not consume dispatch
+  budget.
+- Treat unknown agent types, unsupported models, and model-specific errors as
+  route failures; one corrected route in the same pool is allowed. Treat auth or
+  connection failure as provider-wide. Google is unavailable only when both
+  pools are unavailable or the provider-wide circuit is open.
+
 ## Worker patience
 
 - Give frontier reasoning seats such as Opus, Fable, Sol, or comparable models
@@ -49,10 +69,9 @@ provider different from parent, then quota headroom. Do not duplicate work only
 to balance subscriptions.
 
 Confirm agent type before dispatch and omit model overrides. Unknown type means
-use its semantic role or one bounded native worker. Connection, auth, or
-throttle failure means try one capable alternate provider and report
-degradation. Never launch another harness. Use only write-capable routes for
-mutation; task prompts must still make deliberation and review read-only.
+use its semantic role or one bounded native worker. Never launch another
+harness. Use only write-capable routes for mutation; task prompts must still
+make deliberation and review read-only.
 
 ## Risk
 

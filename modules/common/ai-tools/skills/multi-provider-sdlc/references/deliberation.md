@@ -11,7 +11,8 @@ Seats: Anthropic opus-5=<status>; Google google-opus-4-6=<status>; OpenAI gpt-5-
 ```
 
 Use `complete` for three usable provider packets, `degraded` for two, and
-`unavailable` for fewer than two. Disclose fallback routes and failures.
+`unavailable` for fewer than two. Disclose fallback routes and failures. Mark
+quota-suppressed seats `skipped_quota:<pool>`; they consume no dispatch.
 
 1. Build one compact packet: objective, success criteria, verified facts,
    relevant paths, scope, constraints, risk, requested perspective, and exit
