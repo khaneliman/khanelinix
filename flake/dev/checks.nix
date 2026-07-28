@@ -24,6 +24,7 @@
           clang-tidy.enable = true;
           eslint = {
             enable = true;
+            entry = "${lib.getExe pkgs.eslint_d} --fix";
             package = pkgs.eslint_d;
           };
           luals = {
