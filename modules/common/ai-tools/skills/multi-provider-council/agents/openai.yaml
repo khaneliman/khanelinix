@@ -1,4 +1,0 @@
-interface:
-  display_name: "Multi-Provider Council"
-  short_description: "Parallel Anthropic, Google, and OpenAI deliberation"
-  default_prompt: "Use $multi-provider-council to gather independent provider perspectives, resolve disagreement, and synthesize an approval-gated plan."
