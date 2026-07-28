@@ -29,4 +29,5 @@ risks.
    - `hidden_owners`
    - `bus_factor_hotspots`
 
-Use `neo4j-import.md` only when graph persistence or visualization is requested.
+Read [neo4j-import.md](neo4j-import.md) only when graph persistence or
+visualization is requested.

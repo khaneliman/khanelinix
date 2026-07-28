@@ -46,5 +46,7 @@ Use scripts directly before reading them:
 
 - `scripts/connections.py`: connection helpers.
 - `scripts/evaluation.py`: run evaluation XML against server.
+- `scripts/example_evaluation.xml`: starter evaluation fixture.
+- `scripts/requirements.txt`: Python dependencies for evaluation tooling.
 
 Run script `--help` first when available.

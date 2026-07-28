@@ -5,14 +5,25 @@ description: Use for working with Jujutsu (jj) history workflows, including hunk
 
 # Jujutsu Toolkit
 
-Use for `jj` / `jj-hunk-tool` workflows: stack inspection, revsets,
-splits/squashes, rebases, absorb/undo, conflict handling, bisect, and
-line-precise hunk operations.
+Route to one mode and read only its reference:
 
-Before acting, read the full upstream guide —
-[references/jj-surgeon.md](references/jj-surgeon.md) — which covers
-`jj-hunk-tool` command mapping and hunk IDs, full `jj` workflows, conflict and
-bisect guidance, and revset/workspace reference tables.
+1. **hunk-edit** — split, squash, restore, or move exact hunks with
+   `jj-hunk-tool`. Read [jj-surgeon.md](references/jj-surgeon.md).
+2. **conflicts** — resolve conflicted changes or rebases. Read
+   [conflict-resolution.md](references/conflict-resolution.md).
+3. **bisect** — identify a first bad change. Read
+   [bisect.md](references/bisect.md).
+4. **git-interop** — bookmarks, colocated repositories, push visibility, and
+   GitHub boundaries. Read [git-interop.md](references/git-interop.md).
+5. **revsets/templates** — write or debug selection and output expressions. Read
+   [revset-reference.md](references/revset-reference.md) or
+   [template-reference.md](references/template-reference.md).
+6. **workspaces** — create, inspect, or clean up parallel workspaces. Read
+   [workspaces.md](references/workspaces.md).
+
+Use model-known `jj` mechanics for routine operations. Load the upstream
+`jj-surgeon` guide only for hunk-level work or when another focused reference
+routes there.
 
 ## Non-negotiable: move the bookmark
 

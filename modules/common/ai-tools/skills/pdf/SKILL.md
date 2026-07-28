@@ -1,6 +1,6 @@
 ---
 name: pdf
-description: Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents, and handling forms. When Claude needs to fill in a PDF form or programmatically process, generate, or analyze PDF documents at scale.
+description: Extract, generate, merge, split, annotate, validate, or fill PDF documents and forms. Use for PDF-specific processing, visual verification, or batch document operations; use docx for Word documents.
 license: Proprietary. LICENSE.txt has complete terms
 ---
 
@@ -31,13 +31,13 @@ Open only when needed:
 
 Prefer scripts as black boxes; run `--help` first:
 
-- `check_fillable_fields.py`
-- `extract_form_field_info.py`
-- `fill_fillable_fields.py`
-- `fill_pdf_form_with_annotations.py`
-- `check_bounding_boxes.py`
-- `create_validation_image.py`
-- `convert_pdf_to_images.py`
+- `python3 scripts/check_fillable_fields.py --help`
+- `python3 scripts/extract_form_field_info.py --help`
+- `python3 scripts/fill_fillable_fields.py --help`
+- `python3 scripts/fill_pdf_form_with_annotations.py --help`
+- `python3 scripts/check_bounding_boxes.py --help`
+- `python3 scripts/create_validation_image.py --help`
+- `python3 scripts/convert_pdf_to_images.py --help`
 
 ## Core Patterns
 

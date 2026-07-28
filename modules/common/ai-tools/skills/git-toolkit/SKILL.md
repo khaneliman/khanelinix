@@ -28,12 +28,15 @@ When invoked, route to one mode:
    [operating-rules.md](references/operating-rules.md) only when shared-history
    risk or GitHub boundaries matter.
 7. **github-toolkit** — issues, pull requests, review feedback, and CI state.
-   Use [`github-toolkit`](../github-toolkit/).
+   Invoke `$github-toolkit`; do not depend on a sibling filesystem path.
 
 If intent is unclear, ask for the mode before applying changes.
 
 Read [scripts.md](references/scripts.md) when deterministic stack collection or
 an isolated automated bisect can replace manual Git command assembly.
+
+MIT attribution for `git-surgeon`:
+[LICENSE-git-surgeon](references/LICENSE-git-surgeon).
 
 Repository contributor docs and existing history remain authoritative. This
 skill supplies workflow defaults where repository canon is silent.
