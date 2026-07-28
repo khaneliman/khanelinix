@@ -327,7 +327,7 @@ in
           in
           [ (lib.getExe codexNotify) ];
 
-        personality = "pragmatic";
+        personality = "none";
 
         project_root_markers = [
           ".git"
