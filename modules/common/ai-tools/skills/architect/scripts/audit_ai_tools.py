@@ -26,6 +26,12 @@ NON_STRING_YAML_SCALARS = {"false", "null", "true", "~"}
 NUMBER_YAML_RE = re.compile(
     r"^[+-]?(?:0|[1-9][0-9_]*)(?:\.[0-9_]+)?(?:[eE][+-]?[0-9]+)?$"
 )
+BLOCK_SCALAR_RE = re.compile(
+    r"^(?P<style>[|>])(?P<indicators>(?:[+-]?[1-9]?|[1-9][+-])?)$"
+)
+SKILL_NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+MAX_SKILL_NAME_CHARACTERS = 64
+MAX_SKILL_DESCRIPTION_CHARACTERS = 1024
 
 
 @dataclass(frozen=True)
@@ -119,17 +125,118 @@ def parse_string_scalar(key: str, raw: str) -> tuple[str | None, str | None]:
     return value, None
 
 
+def fold_block_lines(lines: Sequence[str]) -> str:
+    parts: list[str] = []
+    index = 0
+    while index < len(lines):
+        line = lines[index]
+        if not line:
+            end = index
+            while end < len(lines) and not lines[end]:
+                end += 1
+            previous_more_indented = bool(
+                index > 0 and lines[index - 1] and lines[index - 1][0].isspace()
+            )
+            next_more_indented = bool(
+                end < len(lines) and lines[end] and lines[end][0].isspace()
+            )
+            extra_break = int(previous_more_indented or next_more_indented)
+            parts.append("\n" * (end - index + extra_break))
+            index = end
+            continue
+
+        more_indented = line[0].isspace()
+        parts.append(line)
+        index += 1
+        if index >= len(lines):
+            continue
+
+        next_line = lines[index]
+        if not next_line:
+            continue
+        if more_indented or next_line[0].isspace():
+            parts.append("\n")
+        else:
+            parts.append(" ")
+
+    return "".join(parts)
+
+
+def parse_block_scalar(
+    key: str, header: str, lines: Sequence[str], start: int
+) -> tuple[str | None, int, str | None]:
+    header_without_comment = header.split(" #", maxsplit=1)[0].rstrip()
+    match = BLOCK_SCALAR_RE.fullmatch(header_without_comment)
+    if match is None:
+        return None, start, f"frontmatter {key} has malformed block scalar header"
+
+    content: list[str] = []
+    index = start
+    while index < len(lines):
+        line = lines[index]
+        if line and not line[0].isspace():
+            break
+        content.append(line)
+        index += 1
+
+    indicators = match.group("indicators")
+    explicit_indent = next(
+        (int(character) for character in indicators if character.isdigit()), None
+    )
+    indents: list[int] = []
+    for line in content:
+        if not line.strip():
+            continue
+        prefix = line[: len(line) - len(line.lstrip())]
+        if "\t" in prefix:
+            return None, index, f"frontmatter {key} block indentation uses a tab"
+        indents.append(len(prefix))
+
+    content_indent = explicit_indent
+    if content_indent is None:
+        content_indent = min(indents, default=0)
+
+    normalized: list[str] = []
+    for line in content:
+        if not line.strip():
+            normalized.append("")
+            continue
+        prefix = line[: len(line) - len(line.lstrip())]
+        if len(prefix) < content_indent:
+            return None, index, f"frontmatter {key} block has inconsistent indentation"
+        normalized.append(line[content_indent:])
+
+    trailing_empty = 0
+    while normalized and not normalized[-1]:
+        trailing_empty += 1
+        normalized.pop()
+
+    if match.group("style") == ">":
+        value = fold_block_lines(normalized)
+    else:
+        value = "\n".join(normalized)
+
+    if normalized:
+        value += "\n" * (trailing_empty + 1)
+    elif trailing_empty:
+        value = "\n" * trailing_empty
+
+    if "-" in indicators:
+        value = value.rstrip("\n")
+    elif "+" not in indicators:
+        value = value.rstrip("\n")
+        if value:
+            value += "\n"
+    return value, index, None
+
+
 def parse_frontmatter(path: Path) -> tuple[dict[str, str], str | None]:
     lines = read_text(path).splitlines()
     if not lines or lines[0].strip() != "---":
         return {}, "missing opening YAML frontmatter boundary"
 
     closing = next(
-        (
-            index
-            for index, line in enumerate(lines[1:], start=1)
-            if line.strip() == "---"
-        ),
+        (index for index, line in enumerate(lines[1:], start=1) if line == "---"),
         None,
     )
     if closing is None:
@@ -137,8 +244,11 @@ def parse_frontmatter(path: Path) -> tuple[dict[str, str], str | None]:
 
     values: dict[str, str] = {}
     frontmatter_lines = lines[1:closing]
-    for index, line in enumerate(frontmatter_lines):
+    index = 0
+    while index < len(frontmatter_lines):
+        line = frontmatter_lines[index]
         if not line or line[0].isspace() or line.lstrip().startswith("#"):
+            index += 1
             continue
         match = TOP_LEVEL_YAML_RE.match(line)
         if not match:
@@ -148,13 +258,20 @@ def parse_frontmatter(path: Path) -> tuple[dict[str, str], str | None]:
         if key in {"name", "description"}:
             if key in values:
                 return {}, f"duplicate frontmatter field: {key}"
-            parsed, error = parse_string_scalar(key, value)
+            if value.startswith(("|", ">")):
+                parsed, index, error = parse_block_scalar(
+                    key, value, frontmatter_lines, index + 1
+                )
+            else:
+                parsed, error = parse_string_scalar(key, value)
+                index += 1
             if error is not None:
                 return {}, error
             assert parsed is not None
             values[key] = parsed
         else:
             values[key] = value
+            index += 1
     return values, None
 
 
@@ -383,6 +500,28 @@ def audit_skill(
                     1,
                 )
             )
+        elif len(name) > MAX_SKILL_NAME_CHARACTERS:
+            findings.append(
+                Finding(
+                    "error",
+                    "invalid_name",
+                    skill_path,
+                    f"frontmatter name {name!r} exceeds "
+                    f"{MAX_SKILL_NAME_CHARACTERS} characters",
+                    1,
+                )
+            )
+        elif SKILL_NAME_RE.fullmatch(name) is None:
+            findings.append(
+                Finding(
+                    "error",
+                    "invalid_name",
+                    skill_path,
+                    f"frontmatter name {name!r} must use lowercase letters, digits, "
+                    "and single internal hyphens",
+                    1,
+                )
+            )
         elif name != skill_dir.name:
             findings.append(
                 Finding(
@@ -393,7 +532,8 @@ def audit_skill(
                     1,
                 )
             )
-        if not frontmatter.get("description"):
+        description = frontmatter.get("description")
+        if not description:
             findings.append(
                 Finding(
                     "error",
@@ -403,14 +543,25 @@ def audit_skill(
                     1,
                 )
             )
+        elif len(description) > MAX_SKILL_DESCRIPTION_CHARACTERS:
+            findings.append(
+                Finding(
+                    "error",
+                    "description_too_long",
+                    skill_path,
+                    "frontmatter description exceeds "
+                    f"{MAX_SKILL_DESCRIPTION_CHARACTERS} characters",
+                    1,
+                )
+            )
 
     if line_count > line_budget:
         findings.append(
             Finding(
-                "error",
+                "warning",
                 "playbook_line_budget",
                 skill_path,
-                f"root playbook has {line_count} lines; budget is {line_budget}",
+                f"root playbook has {line_count} lines; target is {line_budget}",
             )
         )
 
@@ -597,7 +748,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("root", nargs="?", default=".", help="skill or AI-tools root")
     parser.add_argument("--format", choices=("json", "markdown"), default="markdown")
-    parser.add_argument("--line-budget", type=int, default=100)
+    parser.add_argument(
+        "--line-budget",
+        type=int,
+        default=100,
+        help="root playbook line-count warning threshold",
+    )
     parser.add_argument("--minimum-duplicate-characters", type=int, default=120)
     parser.add_argument(
         "--strict",

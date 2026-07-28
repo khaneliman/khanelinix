@@ -72,7 +72,7 @@ class AuditAiToolsTests(unittest.TestCase):
             self.assertEqual(report["root"], str((root / "skills").resolve()))
             self.assertEqual(report["skills"][0]["name"], "canonical-skill")
 
-    def test_objective_structure_errors(self) -> None:
+    def test_objective_structure_findings(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             skill = root / "wrong-directory"
@@ -89,7 +89,9 @@ class AuditAiToolsTests(unittest.TestCase):
             self.assertIn("name_path_mismatch", codes)
             self.assertIn("playbook_line_budget", codes)
             self.assertIn("broken_local_link", codes)
-            self.assertEqual(report["summary"]["errors"], 3)
+            self.assertEqual(
+                report["summary"], {"skills": 1, "errors": 2, "warnings": 1}
+            )
 
     def test_malformed_or_non_string_required_frontmatter_is_rejected(self) -> None:
         invalid_values = ("[unterminated", "{value: mapping}", "null", '"unterminated')
@@ -110,6 +112,130 @@ class AuditAiToolsTests(unittest.TestCase):
 
                 self.assertEqual(report["summary"]["errors"], 1)
                 self.assertEqual(report["findings"][0]["code"], "invalid_frontmatter")
+
+    def test_open_standard_name_and_description_limits_are_enforced(self) -> None:
+        cases = (
+            ("test-skill", "Invalid_Name", "Valid description.", "invalid_name"),
+            ("test-skill", "double--hyphen", "Valid description.", "invalid_name"),
+            ("test-skill", "-leading", "Valid description.", "invalid_name"),
+            ("test-skill", "trailing-", "Valid description.", "invalid_name"),
+            ("test-skill", "a" * 65, "Valid description.", "invalid_name"),
+            ("valid-name", "valid-name", "x" * 1025, "description_too_long"),
+        )
+        for directory, name, description, expected_code in cases:
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                skill = root / directory
+                skill.mkdir()
+                (skill / "SKILL.md").write_text(
+                    "---\n"
+                    f"name: {name}\n"
+                    f"description: {json.dumps(description)}\n"
+                    "---\n\n# Invalid\n",
+                    encoding="utf-8",
+                )
+
+                report = audit_ai_tools.audit_root(root)
+                error_codes = [
+                    finding["code"]
+                    for finding in report["findings"]
+                    if finding["severity"] == "error"
+                ]
+
+                self.assertEqual(report["summary"]["errors"], 1)
+                self.assertEqual(error_codes, [expected_code])
+
+    def test_open_standard_name_and_description_boundaries_pass(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            name = "a" * 64
+            skill = root / name
+            skill.mkdir()
+            (skill / "SKILL.md").write_text(
+                "---\n"
+                f"name: {name}\n"
+                f"description: {json.dumps('x' * 1024)}\n"
+                "---\n\n# Valid\n",
+                encoding="utf-8",
+            )
+
+            report = audit_ai_tools.audit_root(root)
+
+            self.assertEqual(
+                report["summary"], {"skills": 1, "errors": 0, "warnings": 0}
+            )
+
+    def test_multiline_description_limit_uses_parsed_block_value(self) -> None:
+        descriptions = (
+            ("a" * 512, "b" * 511, 0),
+            ("a" * 512, "b" * 512, 1),
+        )
+        for first, second, expected_errors in descriptions:
+            with (
+                self.subTest(expected_errors=expected_errors),
+                tempfile.TemporaryDirectory() as temporary,
+            ):
+                root = Path(temporary)
+                skill = root / "block-description"
+                skill.mkdir()
+                (skill / "SKILL.md").write_text(
+                    "---\n"
+                    "name: block-description\n"
+                    "description: >-\n"
+                    f"  {first}\n"
+                    f"  {second}\n"
+                    "---\n\n# Block Description\n",
+                    encoding="utf-8",
+                )
+
+                report = audit_ai_tools.audit_root(root)
+
+                self.assertEqual(report["summary"]["errors"], expected_errors)
+                error_codes = {
+                    finding["code"]
+                    for finding in report["findings"]
+                    if finding["severity"] == "error"
+                }
+                self.assertEqual(
+                    error_codes,
+                    {"description_too_long"} if expected_errors else set(),
+                )
+
+    def test_folded_description_preserves_more_indented_breaks(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            skill_file = Path(temporary) / "SKILL.md"
+            skill_file.write_text(
+                "---\n"
+                "name: folded-description\n"
+                "description: >-\n"
+                "  alpha\n"
+                "\n"
+                "    code\n"
+                "---\n\n# Folded Description\n",
+                encoding="utf-8",
+            )
+
+            frontmatter, error = audit_ai_tools.parse_frontmatter(skill_file)
+
+            self.assertIsNone(error)
+            self.assertEqual(frontmatter["description"], "alpha\n\n  code")
+
+    def test_indented_frontmatter_boundary_is_block_content(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            skill_file = Path(temporary) / "SKILL.md"
+            skill_file.write_text(
+                "---\n"
+                "name: boundary-description\n"
+                "description: |-\n"
+                "  ---\n"
+                "---\n\n# Boundary Description\n",
+                encoding="utf-8",
+            )
+
+            frontmatter, error = audit_ai_tools.parse_frontmatter(skill_file)
+
+            self.assertIsNone(error)
+            self.assertEqual(frontmatter["description"], "---")
 
     def test_orphan_and_non_executable_script_are_warnings(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

@@ -1,13 +1,13 @@
 ---
 name: architect
-description: Progressive context-architecture expert for repository instructions, AI prompts, rules, agents, commands, and skills. Use when initializing, designing, refactoring, or auditing AI configuration for clear boundaries and token-efficient disclosure.
+description: Progressive context and execution architecture for repository instructions, AI prompts, rules, agents, commands, and skills. Use when initializing, designing, refactoring, or auditing AI configuration for clear boundaries, deterministic automation, reproducible workflows, and token-efficient disclosure.
 ---
 
 # Progressive Architecture Playbook
 
-Enforce "Progressive Disclosure" for this project's AI setup: help the user
-refactor their prompts, rules, and agents so tokens are only consumed when
-strictly necessary.
+Enforce progressive disclosure and deterministic execution boundaries for this
+project's AI setup. Keep model context focused on judgment while routing exact,
+repeatable mechanics through tools or bundled scripts.
 
 For an existing AI configuration tree, run the structural audit before manual
 review:
@@ -43,6 +43,10 @@ review, in any repository:
 4. **Dedupe across co-loading files.** Duplication only costs tokens when both
    copies load together (sibling path-gated rules, registry + rule). State
    shared guidance once in the file with the widest matching gate.
+5. **Encode mechanics; explain judgment.** Prefer parameterized scripts or CLIs
+   for fragile or repeated queries, transformations, validation, and mutations.
+   Keep selection, ambiguity resolution, and result interpretation in the
+   playbook unless those decisions also have an exact contract.
 
 ## Execution Routing
 
