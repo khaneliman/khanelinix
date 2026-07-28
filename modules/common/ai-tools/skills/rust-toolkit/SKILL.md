@@ -1,6 +1,6 @@
 ---
 name: rust-toolkit
-description: Rust architecture and engineering playbooks for Cargo crates and workspaces. Use when creating, restructuring, reviewing, debugging, optimizing, migrating, or testing Rust libraries, services, CLIs, Cargo.toml/workspaces, editions and toolchains, stable or nightly experiments, unsafe or concurrent code, ownership-driven state machines, module and crate boundaries, API and error design, typestate, validation, build/runtime profiling, SIMD, PGO, or allocator decisions. Use bevy-toolkit for engine-specific Bevy work.
+description: Rust and Cargo architecture, correctness, toolchain, concurrency, unsafe-code, testing, migration, and performance workflows for crates and workspaces. Use for Rust libraries, services, or CLIs; use bevy-toolkit for engine-specific Bevy work.
 ---
 
 # Rust Toolkit

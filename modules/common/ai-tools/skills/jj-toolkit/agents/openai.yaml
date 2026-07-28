@@ -1,0 +1,4 @@
+interface:
+  display_name: "Jujutsu Toolkit"
+  short_description: "Jujutsu history, hunk, conflict, bisect, and interop workflows"
+  default_prompt: "Use $jj-toolkit for this Jujutsu history or jj-hunk-tool workflow, preserving bookmark and Git interop invariants."

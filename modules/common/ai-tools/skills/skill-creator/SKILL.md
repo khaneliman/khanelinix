@@ -1,6 +1,6 @@
 ---
 name: skill-creator
-description: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.
+description: Create or update portable agent skills with precise triggers, progressive disclosure, deterministic scripts, references, assets, and optional harness metadata. Use for skill package design or scaffolding; use architect for full AI-configuration audits.
 license: Complete terms in LICENSE.txt
 ---
 

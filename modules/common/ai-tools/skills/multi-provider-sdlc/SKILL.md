@@ -1,6 +1,6 @@
 ---
 name: multi-provider-sdlc
-description: Route software work across native Anthropic, Google, and OpenAI provider or model subagents for planning, architecture, diagnosis, implementation, validation, and review. Use for explicit multi-provider, all-provider, council, cross-model, subscription-aware, delegated delivery, or end-to-end SDLC requests. Mutation requests execute through completion; plan-only and review-only are endpoints the user must name.
+description: Route explicit multi-provider, cross-model, council, or delegated SDLC work across native Anthropic, Google, and OpenAI agents for planning, implementation, validation, and review. Mutation requests execute through completion; plan-only or review-only must be requested.
 ---
 
 # Multi-Provider SDLC

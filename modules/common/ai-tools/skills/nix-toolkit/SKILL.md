@@ -1,6 +1,6 @@
 ---
 name: nix-toolkit
-description: Nix operational playbooks for package diffs, build debugging, closure analysis, dependency forensics, flake maintenance, and evaluation performance tuning. Use when comparing Nix build outputs, diagnosing derivation failures, finding unexpected runtime/build dependencies, inspecting closure size, maintaining flakes, or profiling slow NixOS/Home Manager/Nixvim evaluation.
+description: Nix operational workflows for package diffs, build failures, closure analysis, dependency forensics, flake maintenance, and evaluation performance. Use for diagnosing Nix builds or outputs; use writing-nix for expression and module authoring.
 ---
 
 # Nix Toolkit

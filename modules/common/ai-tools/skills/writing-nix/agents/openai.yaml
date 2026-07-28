@@ -1,0 +1,4 @@
+interface:
+  display_name: "Writing Nix"
+  short_description: "Idiomatic Nix expressions and module authoring"
+  default_prompt: "Use $writing-nix to create or refactor this Nix expression or module with correct merge semantics and maintainable structure."

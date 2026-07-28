@@ -1,6 +1,6 @@
 ---
 name: lua-toolkit
-description: Neovim Lua plugin development playbooks — project architecture, self lazy-loading, vim.g configuration, scoped commands and <Plug> keymaps, health checks, type-safe tooling, busted testing, and LuaRocks distribution. Use when writing or refactoring a Neovim Lua plugin, designing vim.g/setup config, deciding command/keymap APIs, adding checkhealth, configuring lua-ls/luacheck/stylua/LuaCATS, or setting up busted/nlua tests and SemVer LuaRocks releases.
+description: Neovim Lua plugin architecture, lazy loading, configuration APIs, commands, keymaps, health checks, type-aware tooling, tests, and LuaRocks distribution. Use when creating, refactoring, validating, or releasing a Neovim Lua plugin.
 ---
 
 # Lua Toolkit
