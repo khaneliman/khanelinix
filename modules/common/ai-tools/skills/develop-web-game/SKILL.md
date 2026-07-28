@@ -1,6 +1,6 @@
 ---
 name: "develop-web-game"
-description: "Use when Codex is building or iterating on a web game (HTML/JS) and needs a reliable development + testing loop: implement small changes, run a Playwright-based test script with short input bursts and intentional pauses, inspect screenshots/text, and review console errors with render_game_to_text."
+description: "Build or iterate on HTML/JavaScript games with a short Playwright verification loop, screenshot and console inspection, and render_game_to_text state checks. Use for playable browser-game implementation or debugging; use frontend-design for non-game interfaces."
 ---
 
 # Develop Web Game
@@ -19,11 +19,11 @@ text state plus screenshots, fix, repeat.
 
 ## Setup
 
-```bash
-export CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
-export WEB_GAME_CLIENT="$CODEX_HOME/skills/develop-web-game/scripts/web_game_playwright_client.js"
-export WEB_GAME_ACTIONS="$CODEX_HOME/skills/develop-web-game/references/action_payloads.json"
-```
+Resolve the absolute directory containing this `SKILL.md`, then set
+`WEB_GAME_CLIENT` to `scripts/web_game_playwright_client.js` and
+`WEB_GAME_ACTIONS` to `references/action_payloads.json` beneath that directory.
+Read [references/setup.md](references/setup.md) when either path or Playwright
+availability is unclear.
 
 ## Required Game Hooks
 

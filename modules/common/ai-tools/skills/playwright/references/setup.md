@@ -4,15 +4,16 @@ Use before first CLI action.
 
 ## Skill Path
 
-`PWCLI` points at this skill's wrapper script. The skill is installed under your
-harness's skills directory, e.g.:
+`PWCLI` points at this skill's wrapper script. Resolve the directory containing
+the loaded `playwright/SKILL.md`; installation roots differ by harness and
+scope:
 
 ```bash
-# Claude Code
-export PWCLI="$HOME/.claude/skills/playwright/scripts/playwright_cli.sh"
-# Codex
-export PWCLI="${CODEX_HOME:-$HOME/.codex}/skills/playwright/scripts/playwright_cli.sh"
+export PLAYWRIGHT_SKILL_DIR="<absolute-path-to-playwright>"
+export PWCLI="$PLAYWRIGHT_SKILL_DIR/scripts/playwright_cli.sh"
 ```
+
+Do not assume a Codex, Claude, user, plugin, or system installation root.
 
 ## Prerequisite Check
 

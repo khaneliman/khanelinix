@@ -1,12 +1,13 @@
 ---
 name: "playwright-interactive"
-description: "Persistent browser and Electron interaction through `js_repl` for fast iterative UI debugging, using Nix-provided `playwright-cli`/browsers when available. Do not install Playwright or browsers with npm/npx as setup."
+description: "Persistent browser and Electron debugging through a harness-native interactive runtime, with Nix-provided Playwright and browsers when available. Use for stateful iterative QA; use playwright for one-shot terminal automation."
 ---
 
 # Playwright Interactive
 
-Use persistent `js_repl` Playwright handles for web or Electron debugging when
-stateful browser sessions make iteration faster than one-shot scripts.
+Use persistent Playwright handles through the current harness's interactive
+runtime when stateful browser sessions make iteration faster than one-shot
+scripts.
 
 Default to the `playwright` CLI skill when persistent in-process handles are
 not needed. In khanelinix/Nix environments, `playwright-cli` already provides
@@ -16,27 +17,32 @@ as setup.
 
 ## Plays
 
-- `references/setup.md`: js_repl enablement, Nix-backed checks, bootstrap cell.
+- `references/setup.md`: `js_repl`-specific enablement, Nix-backed checks, and
+  bootstrap cell. Read only when that tool exists.
 - `references/web.md`: desktop/mobile/native web sessions and reloads.
 - `references/electron.md`: Electron launch, reload, relaunch.
 - `references/qa.md`: functional QA, visual QA, signoff inventory.
 - `references/screenshots.md`: CSS-normalized screenshots and viewport checks.
 - `references/troubleshooting.md`: stale handles, server lifecycle, cleanup.
 
-## Preconditions
+## Runtime Routing
 
-- `js_repl` enabled in Codex config or session flags.
-- `playwright-cli --help` works from `PATH`, or
-  `nix run ~/khanelinix#playwright-cli -- --help` works.
+- Harness exposes `js_repl`: read `references/setup.md`, then reuse the
+  in-process handles described by this skill.
+- Another harness with a persistent JavaScript/browser tool: translate the same
+  handle lifecycle to that native tool; do not emulate unavailable tool names.
+- No persistent runtime: use the `playwright` skill and its CLI session instead.
+- In every harness, `playwright-cli --help` or the repository's Nix wrapper must
+  work before browser automation begins.
 - Run from project directory being debugged.
-- Treat `js_repl_reset` as recovery; it destroys handles.
+- Reset the interactive runtime only for recovery; it destroys handles.
 
 ## Core Loop
 
 1. Define QA inventory from user request, implemented behavior, and final claims.
 2. Start dev server in persistent terminal if needed.
-3. Bootstrap `js_repl` once; reuse `browser`, `context`, `page`,
-   `electronApp`, and `appWindow`.
+3. Bootstrap the harness-native runtime once; reuse `browser`, `context`,
+   `page`, `electronApp`, and `appWindow`.
 4. Launch web page or Electron app.
 5. After edits, reload renderer changes; relaunch Electron for main/preload or
    startup changes.

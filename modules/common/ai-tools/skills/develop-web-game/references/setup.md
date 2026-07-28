@@ -4,18 +4,22 @@ Use when preparing web-game test loop.
 
 ## Skill Paths
 
+Resolve the directory containing the loaded `develop-web-game/SKILL.md`; skill
+locations differ by harness and installation scope. Use that exact directory:
+
 ```bash
-export CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
-export WEB_GAME_CLIENT="$CODEX_HOME/skills/develop-web-game/scripts/web_game_playwright_client.js"
-export WEB_GAME_ACTIONS="$CODEX_HOME/skills/develop-web-game/references/action_payloads.json"
+export WEB_GAME_SKILL_DIR="<absolute-path-to-develop-web-game>"
+export WEB_GAME_CLIENT="$WEB_GAME_SKILL_DIR/scripts/web_game_playwright_client.js"
+export WEB_GAME_ACTIONS="$WEB_GAME_SKILL_DIR/references/action_payloads.json"
 ```
 
-User-scoped skills install under `$CODEX_HOME/skills` by default.
+Do not assume a Codex, Claude, user, plugin, or system installation root.
 
 ## Playwright
 
-Ensure Playwright is available through project dependency, global install, or
-repo tooling. If unsure, check `npx` first. Use bundled client:
+Ensure Playwright is available through project dependencies or repository
+tooling. In Nix environments, prefer the bundled `playwright-cli` closure. Use
+the bundled client:
 
 ```bash
 node "$WEB_GAME_CLIENT" --help

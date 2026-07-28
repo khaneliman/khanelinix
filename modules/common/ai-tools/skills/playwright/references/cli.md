@@ -4,13 +4,13 @@ Use the wrapper script unless the repository already standardizes on direct
 Playwright calls through its own Nix environment:
 
 ```bash
-export CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
-export PWCLI="$CODEX_HOME/skills/playwright/scripts/playwright_cli.sh"
+export PLAYWRIGHT_SKILL_DIR="<absolute-directory-containing-SKILL.md>"
+export PWCLI="$PLAYWRIGHT_SKILL_DIR/scripts/playwright_cli.sh"
 "$PWCLI" --help
 ```
 
-User-scoped skills install under `$CODEX_HOME/skills` (default:
-`~/.codex/skills`).
+Resolve the skill directory from the loaded skill path. Do not assume a
+harness-specific user directory.
 
 The wrapper execs the flake's `playwright-cli` package, which provides
 Playwright plus NixOS-runnable browsers; do not use `npx` or a global npm

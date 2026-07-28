@@ -1,6 +1,7 @@
-# Setup Play
+# Codex js_repl Setup
 
-Use when starting persistent Playwright from `js_repl`.
+Use only when Codex exposes `js_repl`. Other harnesses should use their native
+persistent JavaScript/browser runtime or route to the `playwright` CLI skill.
 
 ## Hard Rule
 
