@@ -71,14 +71,15 @@ class HookTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertIn('"decision":"block"', result.stdout)
 
-    def test_skill_has_no_per_tool_recitation_hooks(self) -> None:
+    def test_skill_frontmatter_is_provider_neutral(self) -> None:
         text = SKILL.read_text(encoding="utf-8")
         frontmatter = text.split("---", 2)[1]
 
-        self.assertNotIn("PreToolUse:", frontmatter)
-        self.assertNotIn("PostToolUse:", frontmatter)
-        self.assertIn("gate-stop.sh", frontmatter)
-        self.assertNotIn("powershell.exe", frontmatter)
+        self.assertNotIn("hooks:", frontmatter)
+        self.assertNotIn("allowed-tools:", frontmatter)
+        self.assertNotIn("user-invocable:", frontmatter)
+        self.assertNotIn("CLAUDE_SKILL_DIR", frontmatter)
+        self.assertNotIn("CODEX_HOME", frontmatter)
 
 
 if __name__ == "__main__":

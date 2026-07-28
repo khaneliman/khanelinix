@@ -7,9 +7,8 @@
 # that share a cwd with a plan but never opted into it.
 [ "${PLANNING_DISABLED:-}" = "1" ] && exit 0
 
-SCRIPT_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
-CODEX_ROOT="$(CDPATH='' cd -- "$SCRIPT_DIR/.." && pwd)"
-SKILL_DIR="$CODEX_ROOT/skills/planning-with-files"
+CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME:-}/.config}"
+SKILL_DIR="${PWF_SKILL_DIR:-${CONFIG_HOME}/codex/skills/planning-with-files}"
 PYTHON_BIN="${PYTHON_BIN:-$(command -v python3 || command -v python)}"
 
 if [ -n "$PYTHON_BIN" ] && [ -f "$SKILL_DIR/scripts/session-catchup.py" ]; then

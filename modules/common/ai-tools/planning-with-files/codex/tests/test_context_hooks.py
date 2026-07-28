@@ -11,8 +11,13 @@ from pathlib import Path
 CODEX_DIR = Path(__file__).resolve().parent.parent
 HOOK_DIR = CODEX_DIR / "hooks"
 SKILL_DIR = CODEX_DIR / "skills" / "planning-with-files"
-MANAGED_REQUIREMENTS = CODEX_DIR.parent.parent / "codex-managed-requirements.nix"
+REQUIREMENTS = CODEX_DIR / "requirements.nix"
 HOOKS_JSON = CODEX_DIR / "hooks.json"
+REPO_ROOT = Path(__file__).resolve().parents[6]
+CLAUDE_HOOK = (
+    REPO_ROOT
+    / "modules/home/programs/terminal/tools/claude-code/hooks/planning-with-files.nix"
+)
 
 
 class ContextHookTests(unittest.TestCase):
@@ -84,6 +89,31 @@ class ContextHookTests(unittest.TestCase):
 
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(result.stdout, "")
+
+    def test_session_start_shell_uses_installed_codex_skill_path(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            skill_scripts = (
+                root / "config" / "codex" / "skills" / "planning-with-files" / "scripts"
+            )
+            skill_scripts.mkdir(parents=True)
+            catchup = skill_scripts / "session-catchup.py"
+            catchup.write_text("print('catchup-ran')\n", encoding="utf-8")
+            env = os.environ.copy()
+            env.pop("PWF_SKILL_DIR", None)
+            env["XDG_CONFIG_HOME"] = str(root / "config")
+
+            result = subprocess.run(
+                ["sh", str(HOOK_DIR / "session-start.sh")],
+                cwd=root,
+                env=env,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("catchup-ran", result.stdout)
 
     def test_compact_session_start_restores_concise_nudge(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -174,12 +204,43 @@ class ContextHookTests(unittest.TestCase):
             self.assertEqual(result.stdout, "")
 
     def test_managed_hooks_use_recovery_sources_without_precompact(self) -> None:
-        requirements = MANAGED_REQUIREMENTS.read_text(encoding="utf-8")
+        requirements = REQUIREMENTS.read_text(encoding="utf-8")
         hooks = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))["hooks"]
 
         self.assertIn('matcher = "startup|resume|clear|compact";', requirements)
         self.assertNotIn("PreCompact =", requirements)
         self.assertNotIn("PreCompact", hooks)
+
+    def test_claude_adapter_schema_evaluates(self) -> None:
+        expression = f'''
+          let
+            flake = builtins.getFlake {json.dumps(str(REPO_ROOT))};
+            pkgs = flake.inputs.nixpkgs.legacyPackages.${{builtins.currentSystem}};
+            lib = flake.inputs.nixpkgs.lib;
+            aiTools = import {REPO_ROOT}/modules/common/ai-tools {{
+              inherit lib pkgs;
+              gatewayEnabled = false;
+            }};
+            hooks = import {CLAUDE_HOOK} {{ inherit aiTools lib pkgs; }};
+          in builtins.mapAttrs (_: entries:
+            map (entry: map (hook: hook.timeout) entry.hooks) entries
+          ) hooks
+        '''
+        result = subprocess.run(
+            ["nix", "eval", "--impure", "--json", "--expr", expression],
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        hooks = json.loads(result.stdout)
+        self.assertEqual(
+            set(hooks), {"PreCompact", "SessionStart", "Stop", "UserPromptSubmit"}
+        )
+        self.assertEqual(hooks["SessionStart"], [[30]])
+        self.assertEqual(hooks["Stop"], [[30]])
 
 
 if __name__ == "__main__":

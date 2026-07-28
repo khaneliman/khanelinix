@@ -1,0 +1,4 @@
+interface:
+  display_name: "Planning with Files"
+  short_description: "Optional persistent task planning and recovery"
+  default_prompt: "Use $planning-with-files only when this task intentionally needs persistent phase, findings, and progress state."

@@ -37,6 +37,10 @@ let
   planningWithFiles = {
     commands = planningWithFilesCommands;
     canonicalSkill = skillsDir + "/planning-with-files";
+    codex = {
+      hooks = planningWithFilesDir + "/codex/hooks";
+      requirements = import (planningWithFilesDir + "/codex/requirements.nix");
+    };
     piCodingAgent.package = planningWithFilesDir + "/pi/skills/planning-with-files";
   };
 
@@ -86,17 +90,28 @@ let
         cp ${hooksJson} $out/hooks.json
       '';
 
+  codexHooks =
+    lib.zipAttrsWith
+      (name: values: if name == "managed_dir" then lib.last values else lib.concatLists values)
+      [
+        codexManagedRequirements.hooks
+        okfMemory.codex.requirements
+        planningWithFiles.codex.requirements
+      ];
   codexManagedRequirementsWithOkf = codexManagedRequirements // {
-    hooks = codexManagedRequirements.hooks // okfMemory.codex.requirements;
+    hooks = codexHooks;
   };
 
   codexHooksDir =
     if pkgs == null then
-      okfMemoryDir + "/hooks"
+      null
     else
       pkgs.runCommand "codex-hooks" { } ''
         mkdir -p $out
         cp ${okfMemory.hook} $out/okf_memory_hook.py
+        mkdir -p $out/planning-with-files
+        cp ${planningWithFiles.codex.hooks}/*.py $out/planning-with-files/
+        cp ${planningWithFiles.codex.hooks}/*.sh $out/planning-with-files/
       '';
 
   isSkillDirectory =

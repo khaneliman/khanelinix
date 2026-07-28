@@ -1,22 +1,6 @@
 ---
 name: planning-with-files
 description: "Optional persistent file-based planning for multi-phase or long-running work that benefits from recovery across sessions or compaction. Use when requested or when persistence materially improves continuity; do not activate merely due to tool count or existing plan files."
-user-invocable: true
-allowed-tools: "Read Write Edit Bash Glob Grep"
-hooks:
-  UserPromptSubmit:
-    - hooks:
-        - type: command
-          command: "SH=\"${CLAUDE_SKILL_DIR}/scripts/inject-plan.sh\"; [ -f \"$SH\" ] || SH=$(ls \"$HOME/.claude/skills/planning-with-files/scripts/inject-plan.sh\" \"$HOME/.claude/plugins/marketplaces/planning-with-files/scripts/inject-plan.sh\" 2>/dev/null | head -1); [ -n \"$SH\" ] && [ -f \"$SH\" ] && sh \"$SH\" --context=userprompt; exit 0"
-  Stop:
-    - hooks:
-        - type: command
-          command: "SH=\"${CLAUDE_SKILL_DIR}/scripts/gate-stop.sh\"; [ -f \"$SH\" ] || SH=$(ls \"$HOME/.claude/skills/planning-with-files/scripts/gate-stop.sh\" \"$HOME/.claude/plugins/marketplaces/planning-with-files/scripts/gate-stop.sh\" 2>/dev/null | head -1); [ -n \"$SH\" ] && [ -f \"$SH\" ] && sh \"$SH\" 2>/dev/null; exit 0"
-  PreCompact:
-    - matcher: "*"
-      hooks:
-        - type: command
-          command: "SH=\"${CLAUDE_SKILL_DIR}/scripts/inject-plan.sh\"; [ -f \"$SH\" ] || SH=$(ls \"$HOME/.claude/skills/planning-with-files/scripts/inject-plan.sh\" \"$HOME/.claude/plugins/marketplaces/planning-with-files/scripts/inject-plan.sh\" 2>/dev/null | head -1); [ -n \"$SH\" ] && [ -f \"$SH\" ] && sh \"$SH\" --context=precompact; exit 0"
 metadata:
   version: "3.4.0"
 ---
@@ -25,7 +9,8 @@ metadata:
 
 Use persistent markdown files as working memory when a task intentionally opts
 into cross-session or compaction recovery. Hook behavior is provider-specific;
-this skill body is the routing layer.
+this canonical package is the provider-neutral routing layer. Harness adapters
+may add hooks without changing the workflow contract.
 
 ## Restore First
 

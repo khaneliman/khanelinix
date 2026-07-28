@@ -54,16 +54,24 @@ body. Re-attest after an intentional edit.
 
 ## Scripts
 
-- `init-session.sh`: create root or isolated planning files.
-- `set-active-plan.sh`: inspect or switch active plan.
-- `resolve-plan-dir.sh`: resolve provider-independent plan location.
-- `session-catchup.py`: recover potentially unsynced session activity.
-- `check-complete.sh`: report phase completion; gate Stop when requested.
-- `attest-plan.sh`: record or inspect the approved plan hash.
-- `phase-status.sh`: update phase status.
-- `ledger-append.sh`: append structured autonomous progress.
+- `scripts/init-session.sh`: create root or isolated planning files.
+- `scripts/set-active-plan.sh`: inspect or switch active plan.
+- `scripts/resolve-plan-dir.sh`: resolve provider-independent plan location.
+- `scripts/session-catchup.py`: recover potentially unsynced session activity.
+- `scripts/inject-plan.sh`: emit bounded active-plan context for prompt and
+  compaction hooks.
+- `scripts/gate-stop.sh`: enforce explicitly enabled completion gates.
+- `scripts/check-complete.sh`: report phase completion; gate Stop when requested.
+- `scripts/attest-plan.sh`: record or inspect the approved plan hash.
+- `scripts/phase-status.sh`: update phase status.
+- `scripts/ledger-append.sh`: append structured autonomous progress.
+- `scripts/ledger-summary.sh`: summarize autonomous progress.
 
-PowerShell equivalents exist where supported.
+PowerShell adapters use `scripts/init-session.ps1`,
+`scripts/set-active-plan.ps1`, `scripts/resolve-plan-dir.ps1`,
+`scripts/check-complete.ps1`, `scripts/attest-plan.ps1`,
+`scripts/phase-status.ps1`, `scripts/ledger-append.ps1`, and
+`scripts/ledger-summary.ps1`.
 
 ## Safety
 
