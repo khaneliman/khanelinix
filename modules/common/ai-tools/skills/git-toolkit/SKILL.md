@@ -1,6 +1,6 @@
 ---
 name: git-toolkit
-description: Git commit planning, fixup/autosquash, branch cleanup, conflict resolution, regression bisect, independent adversarial change review, and multi-commit change-stack workflows. Use for safe local history operations or deciding how changes should be split, repaired, reviewed, or validated.
+description: Git commit planning, branch naming and cleanup, fixup/autosquash, conflict resolution, regression bisect, independent adversarial change review, and multi-commit change-stack workflows. Use for safe local history operations or deciding how changes should be split, repaired, reviewed, or validated.
 ---
 
 # Git Toolkit
@@ -23,10 +23,10 @@ When invoked, route to one mode:
 5. **adversarial-review** — independently review a commit, PR, or diff against
    falsifiable design premises and repository-wide constraints. Read
    [adversarial-review.md](references/adversarial-review.md).
-6. **routine-workflow** — branch cleanup, merge/rebase choice, conflict
-   resolution, or standard Git operations. Git mechanics are model-known; read
-   [operating-rules.md](references/operating-rules.md) only when shared-history
-   risk or GitHub boundaries matter.
+6. **routine-workflow** — branch creation, naming, cleanup, merge/rebase choice,
+   conflict resolution, or standard Git operations. Git mechanics are
+   model-known; read [operating-rules.md](references/operating-rules.md) when
+   naming a branch or when shared-history risk or GitHub boundaries matter.
 7. **github-toolkit** — issues, pull requests, review feedback, and CI state.
    Invoke `$github-toolkit`; do not depend on a sibling filesystem path.
 

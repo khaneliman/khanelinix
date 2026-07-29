@@ -2,6 +2,16 @@
 
 Use for safety boundaries across Git modes.
 
+## Branch Names
+
+- Follow repository documentation and existing branch history when they define a
+  naming convention.
+- When repository canon is silent, choose a concise semantic name. Do not add a
+  provider-identity prefix such as `agent/`, `codex/`, or `claude/` merely
+  because an AI agent created the branch.
+- Use a provider or automation prefix only when the user, repository, or
+  execution environment explicitly requires one.
+
 ## Shared History
 
 - Call out destructive risk before commands touching shared history or remotes:
