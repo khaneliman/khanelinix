@@ -7,10 +7,6 @@ let
 in
 
 {
-  imports = [
-    ./newsyslog.nix
-  ];
-
   options.khanelinix.system.logging = {
     enable = mkEnableOption "system logging configuration";
   };

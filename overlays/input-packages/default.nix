@@ -29,10 +29,6 @@ let
     '';
   });
 
-  libdisplayInfo03 = final.callPackage (
-    inputs.nixpkgs-master + "/pkgs/by-name/li/libdisplay-info/0.3.nix"
-  ) { };
-
 in
 {
   #          ╭──────────────────────────────────────────────────────────╮
@@ -75,9 +71,6 @@ in
   #          ╭──────────────────────────────────────────────────────────╮
   #          │ From nixpkgs-master (fast updating / want latest always) │
   #          ╰──────────────────────────────────────────────────────────╯
-  # TODO: remove after the libdisplay-info 0.3 LACT fix reaches the channel.
-  lact = prev.lact.override { libdisplay-info = libdisplayInfo03; };
-
   #          ╭──────────────────────────────────────────────────────────╮
   #          │                 Darwin package overrides                 │
   #          ╰──────────────────────────────────────────────────────────╯

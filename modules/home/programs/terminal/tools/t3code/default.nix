@@ -56,7 +56,7 @@ in
                 src = inputs.t3code;
                 inherit pnpm;
                 fetcherVersion = 4;
-                hash = "sha256-Qiwbg1EPjcVvt8YGc0YYP+1NbgBIxMkwIyTq5f3gtl4=";
+                hash = "sha256-6tuT9MS+PIMV0PFiw1q6vtZyk3yFB5Y4yHgWohMJczs=";
               };
               postBuild = (old.postBuild or "") + ''
                 ${lib.getExe pkgs.nodejs} ${./prune-node-modules.mjs} "$PWD"
