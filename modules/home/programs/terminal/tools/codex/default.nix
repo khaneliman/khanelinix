@@ -249,7 +249,7 @@ in
         model_catalog_json = codexModelCatalogV1;
         model_reasoning_effort = "high";
         plan_mode_reasoning_effort = "high";
-        # service_tier = "fast"; # Not preferred by default for now; use /fast on when needed.
+        service_tier = "fast";
 
         # Browser-side counterpart lives in the chromium native-messaging
         # manifest; together they let codex drive Chromium without the
