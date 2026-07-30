@@ -7,12 +7,16 @@ let
   agentsBasePath = ./agents;
   modelValue = provider: model: if builtins.isAttrs model then model.${provider} or null else model;
   routedModel =
-    alias: native:
+    gatewayModels: native:
+    let
+      gatewayModel =
+        provider: if builtins.isAttrs gatewayModels then gatewayModels.${provider} else gatewayModels;
+    in
     native
     // lib.optionalAttrs gatewayEnabled {
-      claude = alias;
-      codex = alias;
-      opencode = "cliproxyapi/${alias}";
+      claude = gatewayModel "claude";
+      codex = gatewayModel "codex";
+      opencode = "cliproxyapi/${gatewayModel "opencode"}";
     };
   routedProvider.codex = if gatewayEnabled then "cliproxyapi" else null;
 
@@ -26,6 +30,41 @@ let
     "Edit"
     "Write"
   ];
+
+  sparkDiscoveryAgent = {
+    tools = readOnlyTools;
+    model = routedModel "claude-gpt-5.3-codex-spark" {
+      claude = "haiku";
+      copilot = "claude-haiku-4.5";
+      opencode = "openai/gpt-5.3-codex-spark";
+      codex = "gpt-5.3-codex-spark";
+    };
+    model_provider = routedProvider;
+    model_reasoning_effort.codex = "medium";
+    sandbox_mode.codex = "read-only";
+    content = builtins.readFile (agentsBasePath + "/general/fact-finder.md");
+  };
+
+  implementationAgent = {
+    tools = writeTools;
+    model =
+      routedModel
+        {
+          claude = "claude-opus-5";
+          codex = "claude-gpt-5.6-luna";
+          opencode = "claude-gpt-5.6-luna";
+        }
+        {
+          claude = "opus";
+          copilot = "claude-opus-4.6";
+          opencode = "openai/gpt-5.6-luna";
+          codex = "gpt-5.6-luna";
+        };
+    model_provider = routedProvider;
+    model_reasoning_effort.codex = "medium";
+    sandbox_mode.codex = "workspace-write";
+    content = builtins.readFile (agentsBasePath + "/general/implementer.md");
+  };
 
   mkGatewayAgent =
     {
@@ -59,7 +98,7 @@ let
   semanticAgents = lib.mapAttrs (_name: agent: agent // { projection = "native"; }) {
     mechanic = {
       name = "mechanic";
-      description = "Latency-first worker for one obvious low-risk lookup or mechanical one-file edit with focused validation.";
+      description = "Latency-first worker for one obvious low-risk lookup, mechanical one-file edit, or focused check.";
       tools = [
         "Read"
         "Edit"
@@ -79,15 +118,18 @@ let
       sandbox_mode.codex = "workspace-write";
       content = builtins.readFile (agentsBasePath + "/general/mechanic.md");
     };
-    "fact-finder" = {
+    "fact-finder" = sparkDiscoveryAgent // {
       name = "fact-finder";
       description = "Read-only fact-finding specialist for scoped repo questions. Use for multi-file discovery, caller tracing, config lookup, pattern comparison, and bounded evidence gathering when main context should stay small.";
-      tools = [
-        "Read"
-        "Bash"
-        "Grep"
-        "Glob"
-      ];
+    };
+    explorer = sparkDiscoveryAgent // {
+      name = "explorer";
+      description = "Spark-backed override for Codex's built-in read-heavy explorer. Use for repository search, caller tracing, config lookup, and bounded evidence gathering.";
+    };
+    checker = {
+      name = "checker";
+      description = "Focused validation specialist for one bounded test, lint, evaluation, or build command with a known success condition.";
+      tools = readOnlyTools;
       model = routedModel "claude-gpt-5.3-codex-spark" {
         claude = "haiku";
         copilot = "claude-haiku-4.5";
@@ -95,13 +137,9 @@ let
         codex = "gpt-5.3-codex-spark";
       };
       model_provider = routedProvider;
-      model_reasoning_effort = {
-        codex = "medium";
-      };
-      sandbox_mode = {
-        codex = "read-only";
-      };
-      content = builtins.readFile (agentsBasePath + "/general/fact-finder.md");
+      model_reasoning_effort.codex = "medium";
+      sandbox_mode.codex = "workspace-write";
+      content = builtins.readFile (agentsBasePath + "/general/checker.md");
     };
     "probe-runner" = {
       name = "probe-runner";
@@ -136,12 +174,19 @@ let
         "Grep"
         "Glob"
       ];
-      model = routedModel "claude-gemini-3.1-pro" {
-        claude = "sonnet";
-        copilot = "claude-sonnet-4.6";
-        opencode = "openai/gpt-5.6-sol";
-        codex = "gpt-5.6-sol";
-      };
+      model =
+        routedModel
+          {
+            claude = "claude-gemini-3.1-pro";
+            codex = "claude-gpt-5.6-sol";
+            opencode = "claude-gpt-5.6-sol";
+          }
+          {
+            claude = "sonnet";
+            copilot = "claude-sonnet-4.6";
+            opencode = "openai/gpt-5.6-sol";
+            codex = "gpt-5.6-sol";
+          };
       model_provider = routedProvider;
       model_reasoning_effort = {
         codex = "medium";
@@ -153,19 +198,26 @@ let
     };
     test-runner = {
       name = "test-runner";
-      description = "Test execution specialist. Use for broad or noisy tests, checks, lint, build validation, failure analysis, and post-change verification. Keeps verbose output out of main conversation.";
+      description = "Test execution specialist for broad or noisy suites, lint, build validation, failure analysis, and post-change verification.";
       tools = [
         "Read"
         "Bash"
         "Grep"
         "Glob"
       ];
-      model = routedModel "claude-gpt-oss-120b" {
-        claude = "haiku";
-        copilot = "claude-haiku-4.5";
-        opencode = "openai/gpt-5.6-luna";
-        codex = "gpt-5.6-luna";
-      };
+      model =
+        routedModel
+          {
+            claude = "claude-gpt-oss-120b";
+            codex = "claude-gpt-5.6-luna";
+            opencode = "claude-gpt-5.6-luna";
+          }
+          {
+            claude = "haiku";
+            copilot = "claude-haiku-4.5";
+            opencode = "openai/gpt-5.6-luna";
+            codex = "gpt-5.6-luna";
+          };
       model_provider = routedProvider;
       sandbox_mode = {
         codex = "workspace-write";
@@ -181,38 +233,31 @@ let
         "Grep"
         "Glob"
       ];
-      model = routedModel "claude-opus-5" {
-        claude = "opus";
-        copilot = "claude-opus-4.6";
-        opencode = "openai/gpt-5.6-sol";
-        codex = "gpt-5.6-sol";
-      };
+      model =
+        routedModel
+          {
+            claude = "claude-opus-5";
+            codex = "claude-gpt-5.6-sol";
+            opencode = "claude-gpt-5.6-sol";
+          }
+          {
+            claude = "opus";
+            copilot = "claude-opus-4.6";
+            opencode = "openai/gpt-5.6-sol";
+            codex = "gpt-5.6-sol";
+          };
       model_provider = routedProvider;
       model_reasoning_effort.codex = "high";
       sandbox_mode.codex = "read-only";
       content = builtins.readFile (agentsBasePath + "/general/reviewer.md");
     };
-    implementer = {
+    implementer = implementationAgent // {
       name = "implementer";
       description = "Bounded implementation specialist for one parent-scoped change or correction batch with focused validation.";
-      tools = [
-        "Read"
-        "Edit"
-        "Write"
-        "Bash"
-        "Grep"
-        "Glob"
-      ];
-      model = routedModel "claude-opus-5" {
-        claude = "opus";
-        copilot = "claude-opus-4.6";
-        opencode = "openai/gpt-5.6-luna";
-        codex = "gpt-5.6-luna";
-      };
-      model_provider = routedProvider;
-      model_reasoning_effort.codex = "medium";
-      sandbox_mode.codex = "workspace-write";
-      content = builtins.readFile (agentsBasePath + "/general/implementer.md");
+    };
+    worker = implementationAgent // {
+      name = "worker";
+      description = "Luna-backed override for Codex's built-in execution worker. Use for one bounded implementation or fix batch with focused validation.";
     };
   };
 
@@ -220,14 +265,14 @@ let
     "gpt-5-3-codex-spark" = mkGatewayAgent {
       name = "gpt-5-3-codex-spark";
       alias = "claude-gpt-5.3-codex-spark";
-      description = "OpenAI GPT 5.3 Codex Spark gateway worker for obvious lookups, mechanical edits, and focused low-risk checks.";
+      description = "OpenAI GPT 5.3 Codex Spark gateway worker for repository discovery, caller tracing, obvious lookups, mechanical edits, and focused low-risk checks.";
       reasoningEffort = "medium";
       write = true;
     };
     "gpt-5-6-luna" = mkGatewayAgent {
       name = "gpt-5-6-luna";
       alias = "claude-gpt-5.6-luna";
-      description = "OpenAI GPT 5.6 Luna gateway worker for fast discovery, bounded probes, routine implementation, and validation.";
+      description = "OpenAI GPT 5.6 Luna gateway worker for bounded reproduction, routine multi-step implementation, and broader validation.";
       reasoningEffort = "medium";
       write = true;
     };
@@ -293,17 +338,19 @@ let
     lib.filterAttrs (
       _name: agent:
       let
-        # Copilot has no gateway model-agent projection, so gateway-enabled
-        # hosts must retain its native semantic roster.
-        expectedProjection =
-          if provider == "githubCopilotCli" then
-            "native"
-          else if gatewayEnabled then
-            "gateway"
+        # Gateway-capable harnesses need semantic roles for automatic routing
+        # and model-named agents for explicit provider selection. Copilot has
+        # no gateway model-agent projection.
+        expectedProjections =
+          if provider == "githubCopilotCli" || !gatewayEnabled then
+            [ "native" ]
           else
-            "native";
+            [
+              "native"
+              "gateway"
+            ];
       in
-      agent.projection == expectedProjection && lib.elem provider (agent.providers or [ provider ])
+      lib.elem agent.projection expectedProjections && lib.elem provider (agent.providers or [ provider ])
     ) agents;
 
   renderClaudeFrontmatter = agent: ''
