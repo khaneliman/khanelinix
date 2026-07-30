@@ -64,38 +64,39 @@ in
       gtkCfg.theme.package
     ];
 
-    programs.regreet = {
-      # ReGreet documentation
-      # See: https://github.com/rharish101/ReGreet
-      enable = true;
+    services = {
+      displayManager.regreet = {
+        # ReGreet documentation
+        # See: https://github.com/rharish101/ReGreet
+        enable = true;
 
-      settings = {
-        background = {
-          path = lib.khanelinix.theme.wallpaperPath {
-            inherit config pkgs;
-            name = config.khanelinix.theme.wallpaper.primary;
+        settings = {
+          background = {
+            path = lib.khanelinix.theme.wallpaperPath {
+              inherit config pkgs;
+              name = config.khanelinix.theme.wallpaper.primary;
+            };
+            fit = "Cover";
           };
-          fit = "Cover";
-        };
 
-        GTK = {
-          application_prefer_dark_theme = true;
-          cursor_theme_name = "${themeCfg.cursor.name}";
-          font_name = "${config.khanelinix.system.fonts.default} * 12";
-          icon_theme_name = "${themeCfg.icon.name}";
-          theme_name = "${gtkCfg.theme.name}";
-        };
-      };
-    };
-
-    services.greetd = {
-      settings = {
-        default_session = {
-          command = "${getExe pkgs.hyprland-unwrapped} --config ${greetdHyprlandConfig} > /tmp/hyprland-log-out.txt 2>&1";
+          GTK = {
+            application_prefer_dark_theme = true;
+            cursor_theme_name = "${themeCfg.cursor.name}";
+            font_name = "${config.khanelinix.system.fonts.default} * 12";
+            icon_theme_name = "${themeCfg.icon.name}";
+            theme_name = "${gtkCfg.theme.name}";
+          };
         };
       };
+      greetd = {
+        settings = {
+          default_session = {
+            command = "${getExe pkgs.hyprland-unwrapped} --config ${greetdHyprlandConfig} > /tmp/hyprland-log-out.txt 2>&1";
+          };
+        };
 
-      restart = false;
+        restart = false;
+      };
     };
 
     security.pam.services.greetd = {
