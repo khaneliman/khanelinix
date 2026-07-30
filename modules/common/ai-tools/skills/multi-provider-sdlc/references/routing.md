@@ -14,16 +14,16 @@ and current authentication.
 
 ## Preferred routes
 
-| Need                                       | Primary               | Fallback                           | Semantic role  | Write policy                      |
-| ------------------------------------------ | --------------------- | ---------------------------------- | -------------- | --------------------------------- |
-| obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark` | `gpt-5-6-luna`, `gemini-3-6-flash` | `mechanic`     | read-only unless edit is explicit |
-| repository discovery                       | `gpt-5-3-codex-spark` | `gpt-5-6-luna`, `gemini-3-6-flash` | `fact-finder`  | read-only                         |
-| bounded reproduction                       | `gpt-5-6-luna`        | `opus-5`, `gemini-3-6-flash`       | `probe-runner` | build artifacts only              |
-| focused validation                         | `gpt-5-3-codex-spark` | `gpt-5-6-luna`                     | `checker`      | build artifacts only              |
-| noisy validation                           | `gpt-oss-120b`        | `gpt-5-6-luna`, `gemini-3-6-flash` | `test-runner`  | build artifacts only              |
-| implementation                             | `opus-5`              | `gpt-5-6-luna`                     | `implementer`  | workspace write                   |
-| ambiguous diagnosis                        | `opus-5`              | `gpt-5-6-sol`, `gemini-3-1-pro`    | `debugger`     | read-only                         |
-| plan or code review                        | `opus-5`              | `gpt-5-6-sol`, `google-opus-4-6`   | `reviewer`     | read-only                         |
+| Need                                       | Primary               | Fallback                                  | Semantic role  | Write policy                      |
+| ------------------------------------------ | --------------------- | ----------------------------------------- | -------------- | --------------------------------- |
+| obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark` | `gpt-5-6-luna`, `gemini-3-6-flash`        | `mechanic`     | read-only unless edit is explicit |
+| repository discovery                       | `gpt-5-6-luna`        | `gpt-5-3-codex-spark`, `gemini-3-6-flash` | `fact-finder`  | read-only                         |
+| bounded reproduction                       | `gpt-5-6-luna`        | `opus-5`, `gemini-3-6-flash`              | `probe-runner` | build artifacts only              |
+| focused validation                         | `gpt-5-3-codex-spark` | `gpt-5-6-luna`                            | `checker`      | build artifacts only              |
+| noisy validation                           | `gpt-oss-120b`        | `gpt-5-6-luna`, `gemini-3-6-flash`        | `test-runner`  | build artifacts only              |
+| implementation                             | `opus-5`              | `gpt-5-6-luna`                            | `implementer`  | workspace write                   |
+| ambiguous diagnosis                        | `opus-5`              | `gpt-5-6-sol`, `gemini-3-1-pro`           | `debugger`     | read-only                         |
+| plan or code review                        | `opus-5`              | `gpt-5-6-sol`, `google-opus-4-6`          | `reviewer`     | read-only                         |
 
 For explicit three-provider deliberation, use Anthropic `opus-5`, Google
 `google-opus-4-6` with `gemini-3-1-pro` fallback, and OpenAI `gpt-5-6-sol`.
@@ -72,10 +72,12 @@ Use scripted preflight only when telemetry identifies every relevant pool.
   limit. Never invent a shorter deadline from repeated poll expiry.
 
 Choose for capability and total retry cost. Among equal routes, prefer the
-independent quota pool with more headroom. Keep Spark first for bounded
-discovery and focused checks even when the parent uses the OpenAI general pool;
-prefer provider diversity only after capability and quota-pool fit. Do not
-duplicate work only to balance subscriptions.
+independent quota pool with more headroom. Keep Spark first for obvious low-risk
+lookups, mechanical edits, and focused checks even when the parent uses the
+OpenAI general pool. Use Luna for average discovery, implementation, probes, and
+broad tests. Keep Terra explicit-only. Prefer provider diversity only after
+capability and quota-pool fit. Do not duplicate work only to balance
+subscriptions.
 
 Confirm agent type before dispatch and omit model overrides. Unknown type means
 use its semantic role or one bounded native worker. Never launch another

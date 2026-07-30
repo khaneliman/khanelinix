@@ -12,7 +12,7 @@ let
     gatewayEnabled = config.khanelinix.services.cliproxyapi.enable or false;
     inherit lib;
   };
-  deliberateModel = "openai/gpt-5.6-terra";
+  deliberateModel = "openai/gpt-5.6-luna";
 
   json = pkgs.formats.json { };
 in

@@ -31,13 +31,13 @@ let
     "Write"
   ];
 
-  sparkDiscoveryAgent = {
+  lunaDiscoveryAgent = {
     tools = readOnlyTools;
-    model = routedModel "claude-gpt-5.3-codex-spark" {
+    model = routedModel "claude-gpt-5.6-luna" {
       claude = "haiku";
       copilot = "claude-haiku-4.5";
-      opencode = "openai/gpt-5.3-codex-spark";
-      codex = "gpt-5.3-codex-spark";
+      opencode = "openai/gpt-5.6-luna";
+      codex = "gpt-5.6-luna";
     };
     model_provider = routedProvider;
     model_reasoning_effort.codex = "medium";
@@ -118,13 +118,13 @@ let
       sandbox_mode.codex = "workspace-write";
       content = builtins.readFile (agentsBasePath + "/general/mechanic.md");
     };
-    "fact-finder" = sparkDiscoveryAgent // {
+    "fact-finder" = lunaDiscoveryAgent // {
       name = "fact-finder";
       description = "Read-only fact-finding specialist for scoped repo questions. Use for multi-file discovery, caller tracing, config lookup, pattern comparison, and bounded evidence gathering when main context should stay small.";
     };
-    explorer = sparkDiscoveryAgent // {
+    explorer = lunaDiscoveryAgent // {
       name = "explorer";
-      description = "Spark-backed override for Codex's built-in read-heavy explorer. Use for repository search, caller tracing, config lookup, and bounded evidence gathering.";
+      description = "Read-heavy explorer for repository search, caller tracing, config lookup, and bounded evidence gathering.";
     };
     checker = {
       name = "checker";
@@ -257,7 +257,7 @@ let
     };
     worker = implementationAgent // {
       name = "worker";
-      description = "Luna-backed override for Codex's built-in execution worker. Use for one bounded implementation or fix batch with focused validation.";
+      description = "Execution worker for one bounded implementation or fix batch with focused validation.";
     };
   };
 
@@ -265,22 +265,22 @@ let
     "gpt-5-3-codex-spark" = mkGatewayAgent {
       name = "gpt-5-3-codex-spark";
       alias = "claude-gpt-5.3-codex-spark";
-      description = "OpenAI GPT 5.3 Codex Spark gateway worker for repository discovery, caller tracing, obvious lookups, mechanical edits, and focused low-risk checks.";
+      description = "OpenAI GPT 5.3 Codex Spark gateway worker for obvious lookups, mechanical edits, and focused low-risk checks.";
       reasoningEffort = "medium";
       write = true;
     };
     "gpt-5-6-luna" = mkGatewayAgent {
       name = "gpt-5-6-luna";
       alias = "claude-gpt-5.6-luna";
-      description = "OpenAI GPT 5.6 Luna gateway worker for bounded reproduction, routine multi-step implementation, and broader validation.";
+      description = "OpenAI GPT 5.6 Luna gateway worker for bounded reproduction, deterministic high-volume work, and broader validation.";
       reasoningEffort = "medium";
       write = true;
     };
     "gpt-5-6-terra" = mkGatewayAgent {
       name = "gpt-5-6-terra";
       alias = "claude-gpt-5.6-terra";
-      description = "OpenAI GPT 5.6 Terra gateway worker for balanced debugging, ambiguous implementation, and deliberate analysis.";
-      reasoningEffort = "high";
+      description = "OpenAI GPT 5.6 Terra gateway worker for explicit model-selected tasks.";
+      reasoningEffort = "medium";
       write = true;
     };
     "gpt-5-6-sol" = mkGatewayAgent {

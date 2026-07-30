@@ -221,8 +221,6 @@ in
         };
 
         agents = {
-          default_subagent_model = "gpt-5.3-codex-spark";
-          default_subagent_reasoning_effort = "medium";
           max_threads = 12;
           job_max_runtime_seconds = 3600;
         };

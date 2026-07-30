@@ -20,7 +20,7 @@ let
     gatewayEnabled = config.khanelinix.services.cliproxyapi.enable or false;
     inherit lib pkgs;
   };
-  deliberateModel = "openai/gpt-5.6-terra";
+  deliberateModel = "openai/gpt-5.6-luna";
 in
 {
   imports = [
