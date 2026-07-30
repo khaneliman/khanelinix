@@ -44,6 +44,12 @@ in
       usePointerCursors = false;
     };
 
+    # Keep GPU compositing enabled on native Wayland. The Linux launcher
+    # otherwise adds --disable-gpu-compositing as a compatibility fallback.
+    home.sessionVariables = mkIf waylandSupport {
+      CODEX_LINUX_RENDERING_MODE = "wayland-gpu";
+    };
+
     # The launcher reads its own flags file instead of the generic
     # electron-flags.conf and only seeds a commented template when the file is
     # missing, so owning it declaratively is safe.
