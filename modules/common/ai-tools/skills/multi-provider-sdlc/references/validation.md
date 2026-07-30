@@ -4,6 +4,8 @@ Run checks proportional to changed behavior and risk.
 
 - Use focused checks for trivial work; add broad or boundary suites for normal
   and high-risk changes.
+- Route one known test, lint, evaluation, or build command to `checker`; route
+  broad or noisy suites to `test-runner`.
 - Route noisy logs to the validation lane. Workers may create build artifacts
   but must not edit source.
 - Use a separate provider or model from implementation when useful. Keep Gemini

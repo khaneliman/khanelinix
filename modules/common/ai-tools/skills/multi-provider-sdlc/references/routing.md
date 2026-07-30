@@ -19,7 +19,7 @@ and current authentication.
 | obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark` | `gpt-5-6-luna`, `gemini-3-6-flash` | `mechanic`     | read-only unless edit is explicit |
 | repository discovery                       | `gpt-5-3-codex-spark` | `gpt-5-6-luna`, `gemini-3-6-flash` | `fact-finder`  | read-only                         |
 | bounded reproduction                       | `gpt-5-6-luna`        | `opus-5`, `gemini-3-6-flash`       | `probe-runner` | build artifacts only              |
-| focused validation                         | `gpt-5-3-codex-spark` | `gpt-5-6-luna`                     | `test-runner`  | build artifacts only              |
+| focused validation                         | `gpt-5-3-codex-spark` | `gpt-5-6-luna`                     | `checker`      | build artifacts only              |
 | noisy validation                           | `gpt-oss-120b`        | `gpt-5-6-luna`, `gemini-3-6-flash` | `test-runner`  | build artifacts only              |
 | implementation                             | `opus-5`              | `gpt-5-6-luna`                     | `implementer`  | workspace write                   |
 | ambiguous diagnosis                        | `opus-5`              | `gpt-5-6-sol`, `gemini-3-1-pro`    | `debugger`     | read-only                         |
@@ -71,9 +71,11 @@ Use scripted preflight only when telemetry identifies every relevant pool.
   only after an explicit error, shutdown, route failure, or actual runtime
   limit. Never invent a shorter deadline from repeated poll expiry.
 
-Choose for capability and total retry cost. Among equal routes, prefer a
-provider different from parent, then quota headroom. Do not duplicate work only
-to balance subscriptions.
+Choose for capability and total retry cost. Among equal routes, prefer the
+independent quota pool with more headroom. Keep Spark first for bounded
+discovery and focused checks even when the parent uses the OpenAI general pool;
+prefer provider diversity only after capability and quota-pool fit. Do not
+duplicate work only to balance subscriptions.
 
 Confirm agent type before dispatch and omit model overrides. Unknown type means
 use its semantic role or one bounded native worker. Never launch another
