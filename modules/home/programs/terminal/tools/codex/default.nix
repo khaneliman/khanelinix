@@ -39,13 +39,6 @@ let
     inherit lib pkgs;
   };
   tomlFormat = pkgs.formats.toml { };
-  # Model metadata overrides the multi-agent feature flags. Force V1 until the
-  # current MultiAgentV2 tool-schema bug is fixed upstream.
-  codexModelCatalogV1 = pkgs.runCommandLocal "codex-model-catalog-v1.json" { } ''
-    ${lib.getExe pkgs.jq} '
-      (.models[] | select(.multi_agent_version == "v2") | .multi_agent_version) = "v1"
-    ' ${config.programs.codex.package.src}/codex-rs/models-manager/models.json > "$out"
-  '';
   codexConfigDir =
     if config.home.preferXdgDirectories then
       "${lib.removePrefix config.home.homeDirectory config.xdg.configHome}/codex"
@@ -248,7 +241,6 @@ in
         # Sol handles routine work at high effort; xhigh stays reserved for
         # explicit deep runs.
         model = "gpt-5.6-sol";
-        model_catalog_json = codexModelCatalogV1;
         model_reasoning_effort = "high";
         plan_mode_reasoning_effort = "high";
         service_tier = "fast";
