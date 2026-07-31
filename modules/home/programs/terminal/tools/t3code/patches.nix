@@ -15,11 +15,6 @@ let
 in
 map fetchPatch [
   {
-    name = "perf-lazy-load-terminal-css";
-    rev = "904f535940872e21f59f10f12e545ac9e894e713";
-    hash = "sha256-D++ggKNE0ZvOAw6IHmeQ67FHD31ELs3FOb1+F0lU1GQ=";
-  }
-  {
     name = "perf-lazy-load-terminal-drawer";
     rev = "ac0e4d194ea67000c9f0a2a1d992046cd5b4ac5d";
     hash = "sha256-vHeO001OxTaxAkOJ4mCXVJz6Omd8TanMKGqt2jgvOBM=";

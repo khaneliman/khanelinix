@@ -31,42 +31,47 @@ in
               pkgs.pnpm_11.override { nodejs-slim = pkgs.nodejs-slim_24; }
             else
               pkgs.pnpm_11;
+          t3codeArgs = builtins.functionArgs (import "${pkgs.path}/pkgs/by-name/t3/t3code/unwrapped.nix");
+          pnpmOverride =
+            if t3codeArgs ? pnpm_11 then
+              { pnpm_11 = pnpm; }
+            else if t3codeArgs ? pnpm_10 then
+              { pnpm_10 = pnpm; }
+            else
+              throw "t3code package exposes neither pnpm_10 nor pnpm_11";
         in
-        (package.override {
-          pnpm_10 = pnpm;
-        }).overrideAttrs
-          (
-            old:
-            let
-              t3codeVersion =
-                (builtins.fromJSON (builtins.readFile (inputs.t3code + "/apps/desktop/package.json"))).version;
-            in
-            {
-              src = inputs.t3code;
+        (package.override pnpmOverride).overrideAttrs (
+          old:
+          let
+            t3codeVersion =
+              (builtins.fromJSON (builtins.readFile (inputs.t3code + "/apps/desktop/package.json"))).version;
+          in
+          {
+            src = inputs.t3code;
+            version = t3codeVersion;
+            patches = (old.patches or [ ]) ++ t3codePatches;
+            postPatch = ''
+              substituteInPlace apps/web/vite.config.ts \
+                --replace-fail 'const host = explicitHost || "localhost";' \
+                               'const host = explicitHost || "127.0.0.1";'
+            '';
+            pnpmDeps = pkgs.fetchPnpmDeps {
+              inherit (old) pname pnpmWorkspaces;
               version = t3codeVersion;
-              patches = (old.patches or [ ]) ++ t3codePatches;
-              postPatch = ''
-                substituteInPlace apps/web/vite.config.ts \
-                  --replace-fail 'const host = explicitHost || "localhost";' \
-                                 'const host = explicitHost || "127.0.0.1";'
-              '';
-              pnpmDeps = pkgs.fetchPnpmDeps {
-                inherit (old) pname pnpmWorkspaces;
-                version = t3codeVersion;
-                src = inputs.t3code;
-                inherit pnpm;
-                fetcherVersion = 4;
-                hash = "sha256-6tuT9MS+PIMV0PFiw1q6vtZyk3yFB5Y4yHgWohMJczs=";
-              };
-              postBuild = (old.postBuild or "") + ''
-                ${lib.getExe pkgs.nodejs} ${./prune-node-modules.mjs} "$PWD"
-              '';
+              src = inputs.t3code;
+              inherit pnpm;
+              fetcherVersion = 4;
+              hash = "sha256-T4Av+63TauvUxokF9hogiWGoC1laITqAvku7Jxm2plg=";
+            };
+            postBuild = (old.postBuild or "") + ''
+              ${lib.getExe pkgs.nodejs} ${./prune-node-modules.mjs} "$PWD"
+            '';
 
-              # Runtime dependencies contain prebuilt native artifacts. Scanning
-              # the JavaScript-heavy closure with Darwin strip costs minutes.
-              dontStrip = true;
-            }
-          );
+            # Runtime dependencies contain prebuilt native artifacts. Scanning
+            # the JavaScript-heavy closure with Darwin strip costs minutes.
+            dontStrip = true;
+          }
+        );
 
       t3codePackage =
         let

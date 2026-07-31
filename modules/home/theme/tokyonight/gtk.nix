@@ -23,7 +23,7 @@ in
 
       theme = {
         name = "Tokyonight-Dark";
-        package = pkgs.tokyonight-gtk-theme;
+        package = pkgs.khanelinix.tokyonight-gtk-theme;
       };
     };
   };
