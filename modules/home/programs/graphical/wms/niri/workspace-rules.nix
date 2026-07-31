@@ -33,6 +33,7 @@ in
         (mkWorkspaceRule "4" { app-id = "^(steam|Steam)$"; })
         (mkWorkspaceRule "4" { app-id = "^steamwebhelper$"; })
         (mkWorkspaceRule "4" { app-id = "^(gamescope|steam_app).*$"; })
+        (mkWorkspaceRule "4" { title = "^(?i)Midnight Scavenger: Fort Protocol.*$"; })
         (mkWorkspaceRule "4" { app-id = "^heroic$"; })
         (mkWorkspaceRule "4" { app-id = "^lutris$"; })
         (mkWorkspaceRule "4" { app-id = "^org.vinegarhq.Sober$"; })

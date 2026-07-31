@@ -65,6 +65,12 @@ in
             workspace = "4 silent";
           }
           {
+            match.title = "^(?i)Midnight Scavenger: Fort Protocol.*$";
+            workspace = "4 silent";
+            no_initial_focus = true;
+            focus_on_activate = false;
+          }
+          {
             match.class = "^(heroic|lutris|org.vinegarhq.Sober)$";
             workspace = "4";
           }

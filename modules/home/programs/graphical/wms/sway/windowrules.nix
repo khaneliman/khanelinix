@@ -44,6 +44,7 @@ in
             { class = "[Ss]team$"; }
             { title = "[Ss]team$"; }
             { class = "^gamescope|steam_app.*$"; }
+            { title = "^(?i)Midnight Scavenger: Fort Protocol.*$"; }
             { app_id = "^heroic$"; }
             { app_id = "^lutris$"; }
             { app_id = ".*(cemu|yuzu|Ryujinx|emulationstation|retroarch).*"; }
