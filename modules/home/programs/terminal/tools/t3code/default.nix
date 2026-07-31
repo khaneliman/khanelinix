@@ -92,6 +92,20 @@ in
         else
           overrideT3codeSource (pkgs.t3code.override overrides);
 
+      # Upstream renumbers inline sqlite migrations between revisions while the
+      # server only tracks applied migrations by id, so an existing database
+      # skips renumbered migrations and crashes on missing columns. Reconcile
+      # recorded history by name against the installed bundle before launch.
+      reconcileCommand = pkgs.writeShellApplication {
+        name = "t3code-reconcile-migrations";
+        runtimeInputs = [ pkgs.nodejs ];
+        text = ''
+          exec node ${./reconcile-migrations.mjs} \
+            ${t3codePackage}/libexec/t3code/apps/server/dist/bin.mjs \
+            "$HOME/.t3/userdata/state.sqlite"
+        '';
+      };
+
       remoteCommand =
         let
           claudeCodePackage = config.programs.claude-code.package or null;
@@ -116,6 +130,8 @@ in
               done
             fi
 
+            ${lib.getExe reconcileCommand}
+
             exec ${lib.getExe' t3codePackage "t3"} ${
               lib.escapeShellArgs [
                 "serve"
@@ -127,7 +143,17 @@ in
         };
     in
     lib.mkIf cfg.enable {
-      home.shellAliases.t3-remote = lib.mkIf tailscaleEnabled (lib.getExe remoteCommand);
+      home = {
+        packages = [ reconcileCommand ];
+
+        # Cover desktop-only launches: reconcile whenever a switch installs a
+        # server build whose migration numbering may have moved.
+        activation.t3codeReconcileMigrations = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          run ${lib.getExe reconcileCommand}
+        '';
+
+        shellAliases.t3-remote = lib.mkIf tailscaleEnabled (lib.getExe remoteCommand);
+      };
 
       systemd.user.services.t3code-remote =
         lib.mkIf (tailscaleEnabled && pkgs.stdenv.hostPlatform.isLinux)
