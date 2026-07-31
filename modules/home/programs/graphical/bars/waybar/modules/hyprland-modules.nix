@@ -84,6 +84,7 @@ in
       "class<Youtube Music>" = "";
       "class<bleachbit>" = "";
       "class<code>" = "󰨞";
+      "class<dev.limux.linux>" = "";
       "class<t3code>" = "󰅩";
       "class<com.obsproject.Studio>" = "󱜠";
       "class<com.usebottles.bottles>" = "󰡔";
