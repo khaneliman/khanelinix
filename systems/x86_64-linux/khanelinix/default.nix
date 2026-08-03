@@ -203,8 +203,8 @@ in
         av1_mode = 3;
         global_prep_cmd = builtins.toJSON [
           {
-            do = ''if command -v swaymsg >/dev/null 2>&1; then swaymsg "output * dpms on"; fi; if command -v hyprctl >/dev/null 2>&1; then hyprctl dispatch 'hl.dsp.dpms("on")'; fi'';
-            undo = ''if command -v swaymsg >/dev/null 2>&1; then swaymsg "output * dpms off"; fi; if command -v hyprctl >/dev/null 2>&1; then hyprctl dispatch 'hl.dsp.dpms("off")'; fi'';
+            do = ''if command -v swaymsg >/dev/null 2>&1; then swaymsg "output * dpms on"; fi; if command -v hyprctl >/dev/null 2>&1; then hyprctl dispatch 'hl.dsp.dpms({ action = "on" })'; fi'';
+            undo = ''if command -v swaymsg >/dev/null 2>&1; then swaymsg "output * dpms off"; fi; if command -v hyprctl >/dev/null 2>&1; then hyprctl dispatch 'hl.dsp.dpms({ action = "off" })'; fi'';
           }
         ];
       };
