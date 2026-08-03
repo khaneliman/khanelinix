@@ -20,7 +20,7 @@ in
 
       settings = {
         general = {
-          after_sleep_cmd = "hyprctl dispatch 'hl.dsp.dpms(\"on\")'";
+          after_sleep_cmd = "hyprctl dispatch 'hl.dsp.dpms({ action = \"on\" })'";
           before_sleep_cmd = "loginctl lock-session";
           ignore_dbus_inhibit = false;
           lock_cmd = "pidof hyprlock || hyprlock --grace 600";
@@ -33,8 +33,8 @@ in
           }
           {
             timeout = 3600;
-            on-timeout = "hyprctl dispatch 'hl.dsp.dpms(\"off\")'";
-            on-resume = "hyprctl dispatch 'hl.dsp.dpms(\"on\")'";
+            on-timeout = "hyprctl dispatch 'hl.dsp.dpms({ action = \"off\" })'";
+            on-resume = "hyprctl dispatch 'hl.dsp.dpms({ action = \"on\" })'";
           }
         ];
       };
