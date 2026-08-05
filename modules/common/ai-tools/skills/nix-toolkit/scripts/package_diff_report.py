@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 import hashlib
 import json
 import os
@@ -13,8 +14,9 @@ import stat
 import subprocess
 import sys
 import tempfile
+from collections.abc import Callable, Sequence
 from pathlib import Path
-from typing import Any, Callable, ContextManager, Sequence
+from typing import Any
 
 SCHEMA_VERSION = 1
 DEFAULT_MAX_ITEMS = 50
@@ -29,7 +31,7 @@ class PackageDiffError(RuntimeError):
 CommandRunner = Callable[
     [Sequence[str], Path, bool], subprocess.CompletedProcess[bytes]
 ]
-TemporaryDirectoryFactory = Callable[..., ContextManager[str]]
+TemporaryDirectoryFactory = Callable[..., contextlib.AbstractContextManager[str]]
 
 
 def decode(value: bytes) -> str:
@@ -48,8 +50,7 @@ def run_command(
             list(arguments),
             cwd=cwd,
             check=False,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
             env=environment,
         )
     except OSError as error:
