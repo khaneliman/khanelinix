@@ -9,9 +9,9 @@ import json
 import re
 import sys
 from collections import defaultdict, deque
+from collections.abc import Iterable, Sequence
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Iterable, Sequence
 from urllib.parse import unquote, urlsplit
 
 RESOURCE_DIRS = ("references", "refs", "scripts", "assets")

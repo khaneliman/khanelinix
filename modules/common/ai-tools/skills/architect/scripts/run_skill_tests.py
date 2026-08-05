@@ -8,8 +8,8 @@ import os
 import re
 import subprocess
 import sys
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Sequence
 
 TEST_COUNT_RE = re.compile(r"Ran (\d+) tests?")
 MAX_FAILURE_LINES = 120
