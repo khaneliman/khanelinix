@@ -16,10 +16,14 @@ def run_safe(cmd, capture_output=True, text=True):
     """Run command and return (success, stdout, stderr)."""
     try:
         result = subprocess.run(
-            cmd, capture_output=capture_output, text=text, check=False
+            cmd, capture_output=capture_output, text=text, check=True
         )
-        return result.returncode == 0, result.stdout.strip(), result.stderr.strip()
-    except Exception as e:
+        return True, result.stdout.strip(), result.stderr.strip()
+    except subprocess.CalledProcessError as e:
+        stdout = e.stdout.strip() if e.stdout else ""
+        stderr = e.stderr.strip() if e.stderr else ""
+        return False, stdout, stderr
+    except (OSError, ValueError) as e:
         return False, "", str(e)
 
 
@@ -138,7 +142,7 @@ def find_package_in_derivation(flake_output, search_term):
 
             input_drvs = drv_info.get("inputDrvs", {})
             if isinstance(input_drvs, dict):
-                for input_drv in input_drvs.keys():
+                for input_drv in input_drvs:
                     if search_term in input_drv and input_drv not in matches:
                         matches.append(input_drv)
 
@@ -189,7 +193,10 @@ def run_why_depends(toplevel_path, dep_path, with_derivation=False):
     if with_derivation:
         command.append("--derivation")
     command.extend([toplevel_path, dep_path])
-    return subprocess.run(command)
+    result = subprocess.run(command, check=False)
+    if result.returncode != 0:
+        print("⚠️  nix why-depends returned a non-zero exit code.")
+    return result
 
 
 def run_why_depends_derivation(flake_output, search_term):
