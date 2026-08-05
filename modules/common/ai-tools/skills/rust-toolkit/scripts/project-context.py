@@ -8,9 +8,10 @@ import glob
 import json
 import subprocess
 import sys
-import tomllib
 from pathlib import Path
 from typing import Any
+
+import tomllib
 
 CONFIG_PATHS = (
     "Cargo.lock",
