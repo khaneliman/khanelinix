@@ -26,6 +26,7 @@ def run(
         cwd=cwd,
         text=True,
         capture_output=True,
+        check=False,
     )
     if check and result.returncode != 0:
         sys.stderr.write(result.stdout)
