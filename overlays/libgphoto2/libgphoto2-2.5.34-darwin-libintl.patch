@@ -1,0 +1,11 @@
+diff --git a/camlibs/Makefile.am b/camlibs/Makefile.am
+index 35ce0c05..39fc72cc 100644
+--- a/camlibs/Makefile.am
++++ b/camlibs/Makefile.am
+@@ -75,5 +75,6 @@
+ camlib_libadd =
+ camlib_libadd += $(top_builddir)/libgphoto2/libgphoto2.la
+ camlib_libadd += $(top_builddir)/libgphoto2_port/libgphoto2_port/libgphoto2_port.la
++camlib_libadd += $(LIBINTL)
+ 
+ camlib_cflags  =

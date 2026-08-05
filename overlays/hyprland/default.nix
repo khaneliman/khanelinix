@@ -5,10 +5,19 @@ _final: prev: {
   # carries v0.56.0 or newer.
   hyprland =
     if prev.stdenv.hostPlatform.isLinux then
-      (import inputs.nixpkgs-master {
-        inherit (prev.stdenv.hostPlatform) system;
-        inherit (prev) config;
-      }).hyprland
+      let
+        hyprlandPkgs = import inputs.nixpkgs-master {
+          inherit (prev.stdenv.hostPlatform) system;
+          inherit (prev) config;
+        };
+      in
+      hyprlandPkgs.hyprland.overrideAttrs (old: {
+        postPatch = (old.postPatch or "") + ''
+          # Backport https://github.com/NixOS/nixpkgs/pull/549253.
+          substituteInPlace CMakeLists.txt start/CMakeLists.txt hyprpm/CMakeLists.txt \
+            --replace-fail "glaze 7...<8" "glaze"
+        '';
+      })
     else
       prev.hyprland;
 }
