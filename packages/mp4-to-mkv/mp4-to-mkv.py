@@ -114,7 +114,7 @@ def convert_to_mkv(filepath, delete_source=False, interactive=False):
         print("   \033[91m[FAIL]\033[0m Conversion failed")
         if os.path.exists(output_path):
             os.remove(output_path)
-    except Exception as e:
+    except (EOFError, OSError) as e:
         print(f"   \033[91m[ERR]\033[0m {e}")
 
 
