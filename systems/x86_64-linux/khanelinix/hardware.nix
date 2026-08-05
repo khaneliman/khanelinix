@@ -115,6 +115,13 @@ in
       };
 
       tpm = enabled;
+
+      ups = {
+        enable = true;
+        name = "cyberpower";
+        description = "CyberPower CP1500AVR";
+      };
+
       yubikey = enabled;
     };
   };
