@@ -11,7 +11,6 @@ import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
 
 
 def format_bytes(bytes_size: int) -> str:
@@ -37,9 +36,9 @@ class Package:
 class AnalysisResult:
     total_size: int
     total_size_gb: float
-    packages: List[Package]
-    large_packages: List[Package]
-    categories: Dict[str, List[Package]]
+    packages: list[Package]
+    large_packages: list[Package]
+    categories: dict[str, list[Package]]
 
 
 class ClosureAnalyzer:
@@ -47,7 +46,7 @@ class ClosureAnalyzer:
         self,
         target: str,
         size_threshold_gb: float = 1.0,
-        cache_dir: Optional[Path] = None,
+        cache_dir: Path | None = None,
     ):
         self.target = target
         self.size_threshold_gb = size_threshold_gb
@@ -292,7 +291,7 @@ class ClosureAnalyzer:
 
     def get_closure_info(
         self, quiet: bool = False
-    ) -> Tuple[List[Tuple[str, int, int]], int]:
+    ) -> tuple[list[tuple[str, int, int]], int]:
         """Get closure paths with both dependency-inclusive and actual disk usage sizes"""
         if not quiet:
             print("📊 Analyzing closure...")
@@ -358,6 +357,7 @@ class ClosureAnalyzer:
                     ["du", "-s"] + batch_paths,
                     capture_output=True,
                     text=True,
+                    check=False,
                     timeout=300,  # 5 minute timeout for du
                 )
 
@@ -489,7 +489,7 @@ class ClosureAnalyzer:
             categories=categories,
         )
 
-    def find_dependencies(self, package_path: str, max_depth: int = 3) -> List[str]:
+    def find_dependencies(self, package_path: str, max_depth: int = 3) -> list[str]:
         """Find what depends on a specific package"""
         try:
             # Use the stored result path if available, otherwise fall back to ./result
@@ -648,7 +648,7 @@ class ClosureAnalyzer:
 
         return "\n".join(report)
 
-    def generate_suggestions(self, analysis: AnalysisResult) -> List[str]:
+    def generate_suggestions(self, analysis: AnalysisResult) -> list[str]:
         """Generate dynamic optimization suggestions based on actual analysis"""
         suggestions = []
 
@@ -807,11 +807,11 @@ class ClosureAnalyzer:
             with open(cache_file, "w") as f:
                 json.dump(cache_data, f, indent=2)
 
-        except Exception as e:
+        except (OSError, TypeError, ValueError) as e:
             # Don't fail the whole analysis if caching fails
             print(f"⚠️  Warning: Could not save cache: {e}")
 
-    def load_analysis_cache(self) -> Optional[dict]:
+    def load_analysis_cache(self) -> dict | None:
         """Load previous analysis from cache"""
         try:
             import hashlib
@@ -822,11 +822,11 @@ class ClosureAnalyzer:
             if cache_file.exists():
                 with open(cache_file) as f:
                     return json.load(f)
-        except Exception:
-            pass
+        except (OSError, json.JSONDecodeError):
+            return None
         return None
 
-    def compare_with_previous(self, current_analysis: AnalysisResult) -> Optional[str]:
+    def compare_with_previous(self, current_analysis: AnalysisResult) -> str | None:
         """Compare current analysis with cached previous run"""
         previous = self.load_analysis_cache()
         if not previous:
@@ -856,7 +856,7 @@ class ClosureAnalyzer:
 
         return "\n".join(comparison)
 
-    def generate_wsl_suggestions(self, analysis: AnalysisResult) -> List[str]:
+    def generate_wsl_suggestions(self, analysis: AnalysisResult) -> list[str]:
         """Generate WSL-specific optimization suggestions"""
         suggestions = []
 
@@ -942,13 +942,12 @@ def main():
     args = parser.parse_args()
 
     # Set up cache directory if not disabled
-    cache_dir = None if args.no_cache else None  # Use default
+    cache_dir = None  # Use default
     analyzer = ClosureAnalyzer(args.target, args.threshold, cache_dir)
 
     # Build target unless --no-build
-    if not args.no_build:
-        if not analyzer.build_target():
-            sys.exit(1)
+    if not args.no_build and not analyzer.build_target():
+        sys.exit(1)
 
     # Handle compare-only mode
     if args.compare_only:
