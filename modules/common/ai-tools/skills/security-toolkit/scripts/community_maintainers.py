@@ -12,8 +12,8 @@ import re
 import subprocess
 import sys
 from collections import Counter, defaultdict
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 
 def parse_args() -> argparse.Namespace:
@@ -388,7 +388,7 @@ def main() -> int:
     until = parse_date(args.until) if args.until else None
 
     try:
-        community_id, community_files = load_community_files(
+        _community_id, community_files = load_community_files(
             data_dir, args.file, args.community_id
         )
     except (ValueError, FileNotFoundError) as exc:
@@ -484,17 +484,27 @@ def main() -> int:
         if args.window_days > 0:
             window_start = bucket_end - dt.timedelta(days=args.window_days)
 
-            def in_bucket(commit_date: dt.datetime) -> bool:
+            def in_bucket(
+                commit_date: dt.datetime,
+                window_start: dt.datetime = window_start,
+                bucket_end: dt.datetime = bucket_end,
+            ) -> bool:
                 return window_start <= commit_date <= bucket_end
         else:
             if args.bucket == "quarter":
                 bucket_start = quarter_start(period_cursor)
 
-                def in_bucket(commit_date: dt.datetime) -> bool:
+                def in_bucket(
+                    commit_date: dt.datetime,
+                    bucket_start: dt.datetime = bucket_start,
+                    bucket_end: dt.datetime = bucket_end,
+                ) -> bool:
                     return bucket_start <= commit_date <= bucket_end
             else:
 
-                def in_bucket(commit_date: dt.datetime) -> bool:
+                def in_bucket(
+                    commit_date: dt.datetime, bucket_end: dt.datetime = bucket_end
+                ) -> bool:
                     return (
                         commit_date.year == bucket_end.year
                         and commit_date.month == bucket_end.month

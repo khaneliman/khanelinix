@@ -14,8 +14,8 @@ import re
 import subprocess
 import sys
 from collections import defaultdict
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 DEFAULT_SENSITIVE_RULES: list[tuple[str, str, float]] = [
     ("**/auth/**", "auth", 1.0),
