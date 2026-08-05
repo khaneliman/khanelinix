@@ -103,7 +103,9 @@ def get_undef_audio_files(target_path):
                     "a",
                     filepath,
                 ]
-                result = subprocess.run(cmd, capture_output=True, text=True)
+                result = subprocess.run(
+                    cmd, capture_output=True, text=True, check=False
+                )
                 if not result.stdout:
                     continue
 
@@ -112,9 +114,7 @@ def get_undef_audio_files(target_path):
                     continue
 
                 # Check audio tracks
-                mkv_counter = 0
-                for s in data["streams"]:
-                    mkv_counter += 1
+                for mkv_counter, s in enumerate(data["streams"], start=1):
                     lang = s.get("tags", {}).get("language", "und").lower()
 
                     # If language is undefined, it's a candidate
@@ -129,7 +129,14 @@ def get_undef_audio_files(target_path):
                         # We process one UNDEF track per file to avoid complexity for now,
                         # or break here if you only want to fix the *first* undef track.
                         # Let's collect them all.
-            except Exception:
+            except (
+                OSError,
+                subprocess.SubprocessError,
+                json.JSONDecodeError,
+                KeyError,
+                TypeError,
+                ValueError,
+            ):
                 continue
     except KeyboardInterrupt:
         print(
@@ -163,7 +170,12 @@ def extract_sample_audio(filepath, stream_index, output_wav):
         dur = float(subprocess.check_output(cmd_dur).decode().strip())
         if dur < 1200:  # If movie is < 20 mins
             start_time = str(int(dur * 0.2))  # Start at 20%
-    except Exception:
+    except (
+        OSError,
+        subprocess.SubprocessError,
+        UnicodeDecodeError,
+        ValueError,
+    ):
         pass
 
     # Extract mono 16khz wav (ideal for whisper)
@@ -186,7 +198,7 @@ def extract_sample_audio(filepath, stream_index, output_wav):
         "16000",  # Mono 16k
         output_wav,
     ]
-    subprocess.run(cmd, stdout=subprocess.DEVNULL)
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, check=False)
 
 
 def detect_language(model, audio_path):
@@ -260,7 +272,7 @@ def main():
     print(f"Loading Whisper model '{args.model}'...")
     try:
         model = whisper.load_model(args.model)
-    except Exception as e:
+    except (OSError, RuntimeError, ValueError) as e:
         print(f"Failed to load model: {e}")
         sys.exit(1)
 
