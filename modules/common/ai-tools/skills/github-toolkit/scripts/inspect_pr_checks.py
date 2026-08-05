@@ -6,9 +6,10 @@ import json
 import re
 import subprocess
 import sys
+from collections.abc import Iterable, Sequence
 from pathlib import Path
 from shutil import which
-from typing import Any, Iterable, Sequence
+from typing import Any
 
 FAILURE_CONCLUSIONS = {
     "failure",
@@ -61,6 +62,7 @@ def run_gh_command(args: Sequence[str], cwd: Path) -> GhResult:
         cwd=cwd,
         text=True,
         capture_output=True,
+        check=False,
     )
     return GhResult(process.returncode, process.stdout, process.stderr)
 
@@ -70,6 +72,7 @@ def run_gh_command_raw(args: Sequence[str], cwd: Path) -> tuple[int, bytes, str]
         ["gh", *args],
         cwd=cwd,
         capture_output=True,
+        check=False,
     )
     stderr = process.stderr.decode(errors="replace")
     return process.returncode, process.stdout, stderr
@@ -145,6 +148,7 @@ def find_git_root(start: Path) -> Path | None:
         cwd=start,
         text=True,
         capture_output=True,
+        check=False,
     )
     if result.returncode != 0:
         return None

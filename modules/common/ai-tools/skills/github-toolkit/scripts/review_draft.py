@@ -268,8 +268,10 @@ def fetch_diff_files(client: GhClient, target: Target) -> dict[str, dict[str, An
                 "api",
                 "--method",
                 "GET",
-                f"repos/{target.repository}/pulls/{target.pull_request}/files"
-                f"?per_page=100&page={page}",
+                (
+                    f"repos/{target.repository}/pulls/{target.pull_request}/files"
+                    f"?per_page=100&page={page}"
+                ),
                 "-H",
                 "Accept: application/vnd.github+json",
                 "-H",
@@ -317,8 +319,10 @@ def fetch_review_comments_with_sides(
                 "api",
                 "--method",
                 "GET",
-                f"repos/{target.repository}/pulls/{target.pull_request}/reviews/"
-                f"{review_id}/comments?per_page=100&page={page}",
+                (
+                    f"repos/{target.repository}/pulls/{target.pull_request}/reviews/"
+                    f"{review_id}/comments?per_page=100&page={page}"
+                ),
                 "-H",
                 "Accept: application/vnd.github+json",
                 "-H",
@@ -826,7 +830,7 @@ def create(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
             client, target, created_review
         )
         verify_created_review(created_review, actor, body, comments)
-    except Exception as error:
+    except Exception as error:  # noqa: BLE001 - report readback as unverified
         plan["verification"] = verification("unverified", error)
         return plan
     plan["verification"] = verification("verified")
@@ -1083,7 +1087,7 @@ def update(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
                 raise ToolkitError("draft comment body readback does not match update")
         if updated.get("state") != "PENDING" or review_author(updated) != actor:
             raise ToolkitError("updated review lost pending state or actor ownership")
-    except Exception as error:
+    except Exception as error:  # noqa: BLE001 - report readback as unverified
         plan["verification"] = verification("unverified", error)
         return plan
     plan["verification"] = verification("verified")

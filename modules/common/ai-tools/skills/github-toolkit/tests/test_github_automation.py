@@ -11,11 +11,11 @@ from unittest import mock
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
-import _github  # noqa: E402
-import issue_scan  # noqa: E402
-import pr_snapshot  # noqa: E402
-import review_draft  # noqa: E402
-import review_threads  # noqa: E402
+import _github
+import issue_scan
+import pr_snapshot
+import review_draft
+import review_threads
 
 HEAD_SHA = "a" * 40
 PATCH = """@@ -20,3 +8,4 @@
@@ -539,9 +539,9 @@ class ReviewDraftTests(unittest.TestCase):
                 "pull_request_oids",
                 return_value={"base_sha": "b" * 40, "head_sha": "c" * 40},
             ),
+            self.assertRaises(_github.InputError),
         ):
-            with self.assertRaises(_github.InputError):
-                review_draft.create(args, client)
+            review_draft.create(args, client)
 
         self.assertEqual(client.json_calls, [])
 
@@ -582,9 +582,9 @@ class ReviewDraftTests(unittest.TestCase):
                 "fetch_diff_files",
                 return_value={"src/example.py": {"patch": PATCH}},
             ),
+            self.assertRaises(_github.InputError),
         ):
-            with self.assertRaises(_github.InputError):
-                review_draft.create(args, client)
+            review_draft.create(args, client)
 
         self.assertEqual(client.json_calls, [])
 
@@ -837,9 +837,9 @@ class ReviewDraftTests(unittest.TestCase):
                 ],
             ),
             mock.patch.object(review_draft, "current_actor", return_value="viewer"),
+            self.assertRaises(_github.InputError),
         ):
-            with self.assertRaises(_github.InputError):
-                review_draft.update(args, client)
+            review_draft.update(args, client)
 
         self.assertEqual(client.graphql_calls, [])
 
@@ -871,9 +871,9 @@ class ReviewThreadTests(unittest.TestCase):
                 "fetch_threads",
                 return_value=(pull_request(), []),
             ),
+            self.assertRaises(_github.InputError),
         ):
-            with self.assertRaises(_github.InputError):
-                review_threads.reply(args, client)
+            review_threads.reply(args, client)
 
         self.assertEqual(client.graphql_calls, [])
         self.assertEqual(client.json_calls, [])
@@ -916,9 +916,9 @@ class ReviewThreadTests(unittest.TestCase):
                 "pull_request_oids",
                 return_value={"base_sha": "b" * 40, "head_sha": "c" * 40},
             ),
+            self.assertRaises(_github.InputError),
         ):
-            with self.assertRaises(_github.InputError):
-                review_threads.reply(args, client)
+            review_threads.reply(args, client)
 
         self.assertEqual(client.graphql_calls, [])
 

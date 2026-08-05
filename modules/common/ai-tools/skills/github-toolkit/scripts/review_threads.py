@@ -461,7 +461,7 @@ def reply(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
             if isinstance(comment, dict)
         ):
             raise ToolkitError("reply readback did not contain created comment")
-    except Exception as error:
+    except Exception as error:  # noqa: BLE001 - report readback as unverified
         plan["verification"] = verification("unverified", error)
         return plan
     plan["verification"] = verification("verified")
@@ -505,7 +505,7 @@ def resolve(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
         refreshed_thread = find_thread(refreshed, args.thread)
         if not refreshed_thread.get("isResolved"):
             raise ToolkitError("resolve readback still reports unresolved state")
-    except Exception as error:
+    except Exception as error:  # noqa: BLE001 - report readback as unverified
         plan["verification"] = verification("unverified", error)
         return plan
     plan["verification"] = verification("verified")

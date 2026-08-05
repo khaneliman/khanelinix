@@ -17,27 +17,10 @@ from _github import (
     resolve_target,
 )
 
-FIELDS = ",".join(
-    (
-        "author",
-        "baseRefName",
-        "baseRefOid",
-        "headRefName",
-        "headRefOid",
-        "headRepository",
-        "headRepositoryOwner",
-        "isCrossRepository",
-        "isDraft",
-        "mergeable",
-        "mergeStateStatus",
-        "number",
-        "reviewDecision",
-        "state",
-        "statusCheckRollup",
-        "title",
-        "updatedAt",
-        "url",
-    )
+FIELDS = (
+    "author,baseRefName,baseRefOid,headRefName,headRefOid,headRepository,"
+    "headRepositoryOwner,isCrossRepository,isDraft,mergeable,mergeStateStatus,"
+    "number,reviewDecision,state,statusCheckRollup,title,updatedAt,url"
 )
 
 FILES_HARD_CAP = 3000
@@ -275,8 +258,10 @@ def fetch_collection(
                 "api",
                 "--method",
                 "GET",
-                f"repos/{target.repository}/pulls/{target.pull_request}/{endpoint}"
-                f"?per_page={PAGE_SIZE}&page={page}",
+                (
+                    f"repos/{target.repository}/pulls/{target.pull_request}/{endpoint}"
+                    f"?per_page={PAGE_SIZE}&page={page}"
+                ),
                 "-H",
                 "Accept: application/vnd.github+json",
                 "-H",
