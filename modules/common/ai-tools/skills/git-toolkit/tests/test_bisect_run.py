@@ -121,8 +121,7 @@ class BisectRunTests(unittest.TestCase):
                 result = subprocess.run(
                     ["git", "-C", str(repository), *arguments],
                     check=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
+                    capture_output=True,
                     text=True,
                 )
                 return result.stdout.strip()

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import os
 import shlex
@@ -13,9 +14,10 @@ import subprocess
 import sys
 import tempfile
 import threading
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, ContextManager, Sequence
+from typing import Any
 
 SCHEMA_VERSION = 1
 DEFAULT_MAX_TESTED_REVISIONS = 100
@@ -29,7 +31,7 @@ class BisectError(RuntimeError):
 
 
 GitRunner = Callable[[Path, Sequence[str], bool], subprocess.CompletedProcess[bytes]]
-TemporaryDirectoryFactory = Callable[..., ContextManager[str]]
+TemporaryDirectoryFactory = Callable[..., contextlib.AbstractContextManager[str]]
 ExecutableResolver = Callable[[str], str | None]
 
 
@@ -89,8 +91,7 @@ def run_git(
         result = subprocess.run(
             ["git", "-C", str(repository), *arguments],
             check=False,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
             env=environment,
         )
     except OSError as error:

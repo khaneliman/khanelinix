@@ -8,8 +8,9 @@ import json
 import os
 import subprocess
 import sys
+from collections.abc import Callable, Sequence
 from pathlib import Path
-from typing import Any, Callable, Sequence
+from typing import Any
 
 SCHEMA_VERSION = 1
 DEFAULT_MAX_COMMITS = 100
@@ -38,8 +39,7 @@ def run_git(
         result = subprocess.run(
             ["git", "-C", str(repository), *arguments],
             check=False,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
             env=environment,
         )
     except OSError as error:
