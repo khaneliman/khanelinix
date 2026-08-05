@@ -74,7 +74,7 @@ def analyze_file(filepath, ignore_langs):
             "-show_streams",
             filepath,
         ]
-        result = subprocess.run(cmd, capture_output=True, text=True)
+        result = subprocess.run(cmd, capture_output=True, text=True, check=False)
 
         if not result.stdout:
             return {"status": "error", "msg": "no output"}
@@ -139,7 +139,14 @@ def analyze_file(filepath, ignore_langs):
                 "current_lang": def_lang,
             }
 
-    except Exception as e:
+    except (
+        OSError,
+        subprocess.SubprocessError,
+        json.JSONDecodeError,
+        KeyError,
+        TypeError,
+        ValueError,
+    ) as e:
         return {"status": "error", "msg": str(e)}
 
 
@@ -197,7 +204,7 @@ def apply_fix(item):
         os.replace(temp_file, filepath)
         print("      \033[92m[FIXED]\033[0m FFmpeg copy complete.")
         return True
-    except Exception as e:
+    except (OSError, subprocess.SubprocessError) as e:
         print(f"      \033[91m[FAIL]\033[0m FFmpeg error: {e}")
         if os.path.exists(temp_file):
             os.remove(temp_file)
@@ -339,7 +346,7 @@ def main():
             with open(args.output_file, "w") as f:
                 json.dump(fixable_items, f, indent=2)
             print(f"\n[INFO] Fixable list written to: {args.output_file}")
-        except Exception as e:
+        except (OSError, TypeError, ValueError) as e:
             print(f"\n[ERROR] Could not write file: {e}")
 
 
