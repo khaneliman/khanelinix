@@ -6,10 +6,10 @@ from __future__ import annotations
 import argparse
 import json
 import os
+from collections.abc import Sequence
 from dataclasses import dataclass
-from datetime import date
+from datetime import datetime
 from pathlib import Path
-from typing import Sequence
 
 
 @dataclass(frozen=True)
@@ -26,7 +26,9 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         help="explicit project .gitignore to update for MEMORY.local.md",
     )
-    parser.add_argument("--date", default=date.today().isoformat())
+    parser.add_argument(
+        "--date", default=datetime.now().astimezone().date().isoformat()
+    )
     parser.add_argument("--apply", action="store_true")
     return parser
 

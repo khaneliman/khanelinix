@@ -12,9 +12,10 @@ import re
 import subprocess
 import sys
 import tempfile
+from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any
 
 MEMORY_INTENT = (
     re.compile(r"\bremember\s+(?:this|that|my|our|the fact\b)", re.IGNORECASE),
@@ -428,9 +429,10 @@ def result_succeeded(result: dict[str, Any]) -> bool:
     if result.get("is_error") is True or result.get("success") is False:
         return False
     output = result.get("output")
-    if isinstance(output, str) and re.search(r"\b(?:error|failed)\b", output, re.I):
-        return False
-    return True
+    return not (
+        isinstance(output, str)
+        and re.search(r"\b(?:error|failed)\b", output, re.IGNORECASE)
+    )
 
 
 def analyze_records(
@@ -508,9 +510,12 @@ def analyze_records(
                         first_string(item, "name"), arguments, memory_paths
                     ):
                         antigravity_targeted = True
-            if record.get("type") == "CODE_ACTION" and result_succeeded(record):
-                if targets_okf(record, memory_paths):
-                    antigravity_receipt = True
+            if (
+                record.get("type") == "CODE_ACTION"
+                and result_succeeded(record)
+                and targets_okf(record, memory_paths)
+            ):
+                antigravity_receipt = True
 
     receipt = bool(targeted_calls & successful_calls) or patch_receipt
     if provider == "antigravity":
@@ -567,9 +572,7 @@ def handle_start(provider: str, payload: dict[str, Any]) -> None:
         return
 
     with locked_state(path) as state:
-        if not state:
-            reset_turn(state, prompt, marker, payload, memory_paths)
-        elif marker and marker != state.get("turn_marker"):
+        if not state or marker and marker != state.get("turn_marker"):
             reset_turn(state, prompt, marker, payload, memory_paths)
     emit_no_context(provider)
 
@@ -643,6 +646,6 @@ def main() -> None:
 if __name__ == "__main__":
     try:
         main()
-    except Exception as exc:  # Hooks must fail open.
+    except Exception as exc:  # Hooks must fail open.  # noqa: BLE001
         print(f"[okf-memory hook] {exc}", file=sys.stderr)
         print("{}")
