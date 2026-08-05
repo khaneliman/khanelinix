@@ -37,16 +37,16 @@ def main():
 
     with sqlite3.connect(DB_PATH) as connection:
         rows = connection.execute(
-            """
+            f"""
             select client, hex(csreq)
             from access
             where service = ?
               and client_type = 1
               and (
                 client like '/nix/store/%'
-                or client in ({})
+                or client in ({stable_client_placeholders})
               )
-            """.format(stable_client_placeholders),
+            """,
             (SERVICE, *stable_client_paths),
         ).fetchall()
 
