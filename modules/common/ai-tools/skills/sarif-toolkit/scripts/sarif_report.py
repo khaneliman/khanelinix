@@ -11,9 +11,10 @@ import re
 import sys
 import tempfile
 from collections import Counter, defaultdict
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable, Sequence
+from typing import Any
 
 GENERATED_BY = "sarif-toolkit"
 MISSING_RULE = "<no-rule>"
