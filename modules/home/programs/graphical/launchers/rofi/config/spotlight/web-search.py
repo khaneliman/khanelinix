@@ -111,7 +111,9 @@ def fetch_suggestions(search_string):
             "q": search_string,
             "callback": "autocompleteCallback",
             "kl": "wt-wt",
-            "_": str(int((datetime.datetime.now().timestamp()) * 1000)),
+            "_": str(
+                int(datetime.datetime.now(datetime.timezone.utc).timestamp() * 1000)
+            ),
         }
         url = CONFIG["SUGGESTION_URL"][SEARCH_ENGINE] + urllib.parse.urlencode(r)
         if bang_search:
@@ -169,6 +171,5 @@ def main():
 if __name__ == "__main__":
     try:
         main()
-    except Exception as e:
-        if e:
-            sys.exit(1)
+    except Exception:  # noqa: BLE001 - preserve CLI's failure exit status
+        sys.exit(1)
