@@ -1,0 +1,14 @@
+diff --git a/core/src/config/mod.rs b/core/src/config/mod.rs
+--- a/core/src/config/mod.rs
++++ b/core/src/config/mod.rs
+@@ -1448,8 +1448,10 @@ impl Config {
+             Some(MultiAgentVersion::V2)
+         } else if !self.agents_enabled {
+             Some(MultiAgentVersion::Disabled)
++        } else if self.features.enabled(Feature::Collab) {
++            Some(MultiAgentVersion::V1)
+         } else {
+-            None
++            Some(MultiAgentVersion::Disabled)
+         }
+     }

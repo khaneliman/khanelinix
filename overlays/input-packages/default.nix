@@ -41,7 +41,6 @@ in
     ck
     claude-code
     code-review-graph
-    codex
     git-surgeon
     hunk
     opencode
@@ -53,6 +52,13 @@ in
     workmux
     zat
     ;
+
+  # Treat an enabled V1 feature with V2 disabled as an explicit protocol
+  # choice. Otherwise Sol's model-catalog metadata silently promotes sessions
+  # back to V2 and sends encrypted child prompts through the OAuth gateway.
+  codex = inputs.llm-agents.packages.${system}.codex.overrideAttrs (old: {
+    patches = (old.patches or [ ]) ++ [ ./codex-force-multi-agent-v1.patch ];
+  });
 
   claude-desktop =
     let
