@@ -35,6 +35,7 @@ let
     logging-to-file = false;
     usage-statistics-enabled = false;
     ws-auth = true;
+    codex.optimize-multi-agent-v2 = true;
     oauth-excluded-models = cfg.oauthExcludedModels;
     oauth-model-alias = lib.mapAttrs (
       _: models:
