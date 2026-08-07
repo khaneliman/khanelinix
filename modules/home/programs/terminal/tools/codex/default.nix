@@ -13,9 +13,6 @@ let
   cfg = config.khanelinix.programs.terminal.tools.codex;
   mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
   exoEnabled = config.services.exo.enable or false;
-  # Sol and Terra force MultiAgentV2 through model-catalog metadata. Keep the
-  # root on Luna's explicit V1 route until encrypted gateway delegation works.
-  codexV1Model = "gpt-5.6-luna";
   # `programs.codex.settings.mcp_servers` is merged with the auto-generated
   # entries from `programs.mcp.servers` per top-level server name (whole-entry
   # override, not a deep per-field merge), so any entry listed here would
@@ -79,7 +76,7 @@ let
   codexProfiles = {
     # Deep analysis and live-research mode. Intentionally expensive.
     deep = {
-      model = codexV1Model;
+      model = "gpt-5.6-sol";
       model_reasoning_effort = "xhigh";
       model_verbosity = "high";
       plan_mode_reasoning_effort = "xhigh";
@@ -90,7 +87,7 @@ let
     # via CLI -c because those fields are top-level settings in the published
     # schema.
     long = {
-      model = codexV1Model;
+      model = "gpt-5.6-sol";
       model_reasoning_effort = "xhigh";
       model_verbosity = "high";
       plan_mode_reasoning_effort = "xhigh";
@@ -100,7 +97,7 @@ let
     # Faster implementation loop for routine coding tasks.
     quick = {
       model_reasoning_effort = "medium";
-      model = codexV1Model;
+      model = "gpt-5.6-luna";
       model_reasoning_summary = "none";
       model_verbosity = "low";
       plan_mode_reasoning_effort = "medium";
@@ -241,9 +238,9 @@ in
 
         notice.hide_rate_limit_model_nudge = true;
 
-        # Luna keeps delegation on MultiAgentV1; xhigh stays reserved for
+        # Sol handles routine work at high effort; xhigh stays reserved for
         # explicit deep runs.
-        model = codexV1Model;
+        model = "gpt-5.6-sol";
         model_reasoning_effort = "high";
         plan_mode_reasoning_effort = "high";
         service_tier = "fast";
