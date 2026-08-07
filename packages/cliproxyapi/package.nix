@@ -7,20 +7,16 @@
 
 buildGoModule (finalAttrs: {
   pname = "cliproxyapi";
-  version = "7.2.94";
+  version = "7.2.121";
 
   src = fetchFromGitHub {
     owner = "router-for-me";
     repo = "CLIProxyAPI";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-f0aBi/Pz+Dyd3X1V0qVg71GSxTKli1WbWI45e2dWRK4=";
+    hash = "sha256-clksOlN5FyKhf7hymE7EtgUN2v5BWSg6tm1Sdfczrc4=";
   };
 
-  vendorHash = "sha256-xirNOpnPVwe/TqEYkHHLMWREajosaisBazvy8rFEIak=";
-
-  # Remove after https://github.com/router-for-me/CLIProxyAPI/issues/4428 lands
-  # in the pinned release.
-  patches = [ ./fix-claude-root-tool-schema-unions.patch ];
+  vendorHash = "sha256-CrDp7MOr+AwJUhTovklXx3F1yaktQlvD7VYhYSY6VvY=";
 
   subPackages = [ "cmd/server" ];
 
@@ -28,8 +24,8 @@ buildGoModule (finalAttrs: {
     "-s"
     "-w"
     "-X main.Version=${finalAttrs.version}"
-    "-X main.Commit=36b45d5"
-    "-X main.BuildDate=2026-07-21T19:30:32Z"
+    "-X main.Commit=8392b180"
+    "-X main.BuildDate=2026-08-06T14:52:45Z"
   ];
 
   postInstall = ''
