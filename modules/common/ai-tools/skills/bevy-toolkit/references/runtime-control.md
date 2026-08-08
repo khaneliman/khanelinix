@@ -6,35 +6,60 @@ behavior without relying on the MCP tool catalog.
 
 ## Direct BRP Helper
 
-Default endpoint is `http://127.0.0.1:15702`; the helper also tries `/jsonrpc`
-when the base path rejects a request.
+Requires Python 3.10 or newer. Default endpoint is `http://127.0.0.1:15702`. The
+helper resolves the base path or `/jsonrpc` with a read-only readiness probe,
+pins that endpoint, and never retries a mutation on another path after ambiguous
+delivery.
 
 ```bash
 <skill-dir>/scripts/brp-control.py status
 <skill-dir>/scripts/brp-control.py wait --seconds 120
 <skill-dir>/scripts/brp-control.py call world.query \
-  '{"data":{},"filter":{"with":["bevy_ecs::name::Name"]}}'
+  '{"data":{},"filter":{"with":["bevy_ecs::name::Name"]}}' --read-only
 ```
 
-Convenience controls:
+Arbitrary `call` defaults to mutation. `--read-only` is accepted only for the
+helper's allowlisted core BRP reads; unknown and custom methods remain mutations
+even when their implementation is observational. Mutations require exact
+identity readback before execution:
 
 ```bash
-<skill-dir>/scripts/brp-control.py keys Space --duration-ms 500
-<skill-dir>/scripts/brp-control.py type-text 'player name'
-<skill-dir>/scripts/brp-control.py diagnostics
-<skill-dir>/scripts/brp-control.py screenshot /absolute/path/proof.png
-<skill-dir>/scripts/brp-control.py shutdown
+<skill-dir>/scripts/brp-control.py \
+  --identity-method world.get_resources \
+  --identity-params '{"resource":"game::SessionIdentity"}' \
+  --identity-expected '{"app":"my-game","session":42}' \
+  keys Space --duration-ms 500
 ```
+
+Identity method must be an allowlisted BRP read such as `world.get_resources` or
+`world.query`, and return stable app/session/build data. Expose project-owned
+identity as a reflected resource or component rather than a custom method.
+`--allow-unguarded-mutation` is an explicit escape hatch for deliberate
+interactive control when project identity does not exist; do not use it in CI or
+unattended automation.
 
 Use `call METHOD @params.json` for larger payloads and `call METHOD -` for
 stdin. Use `--port`, `--url`, `--timeout`, and `--pretty` as needed. The helper
-never launches or kills a process; lifecycle ownership remains with repo scripts
-or MCP `brp_launch` / `brp_shutdown`.
+never launches or sends OS process signals; `shutdown` requests clean remote
+shutdown. Lifecycle ownership remains with repository scripts or MCP.
+
+Successful output is a stable JSON receipt with `schema_version`, `skill`,
+`operation`, `mode`, `status`, resolved `endpoint`, identity guard result, and
+BRP `result`. Exit codes:
+
+| Code | Meaning                                                 |
+| ---- | ------------------------------------------------------- |
+| 0    | operation completed and receipt emitted                 |
+| 2    | CLI or JSON input invalid                               |
+| 3    | readiness timeout or mutation safety prerequisite unmet |
+| 4    | transport, JSON-RPC, local I/O, or execution failure    |
+| 5    | identity or artifact verification failed                |
 
 ## Deterministic Probe Shape
 
 1. **Preflight** — verify target/build/features and reject occupied/wrong BRP
-   session.
+   session. Establish project-owned reflected identity data before scripting
+   mutations.
 2. **Launch/attach** — start through MCP or repository launcher; capture PID,
    port, app/session identity, log, and whether desktop/headless.
 3. **Wait** — poll BRP while also checking owned process liveness and timeout.
