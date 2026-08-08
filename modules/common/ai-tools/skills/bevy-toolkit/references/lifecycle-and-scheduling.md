@@ -7,6 +7,8 @@
 - Use components/resources for orthogonal, nested, or per-entity state.
 - Keep transition requests separate from transition application. Test duplicate,
   same-state, early, and conflicting requests.
+- On Bevy 0.19, `NextState::set()` runs same-state transition schedules; use
+  `set_if_neq()` only when intentionally suppressing same-state enter/exit work.
 - Derive APIs from the locked Bevy release; state transition hooks and messages
   change across versions.
 
@@ -47,14 +49,18 @@
 
 ## Events, Messages, and Observers
 
-- Use buffered messages/events for decoupled fan-out and temporal buffering.
-- Configure writer/reader order when one-frame latency is incorrect.
-- Use observers/triggers for targeted or immediate reactions when supported by
-  the locked release and re-entrancy is acceptable.
+- Use release-appropriate buffered `Message` queues for pull-based fan-out and
+  temporal buffering. Configure writer/reader order when one-frame latency is
+  incorrect.
+- Use triggered `Event`s and observers for immediate global, entity-targeted,
+  propagating, or component-lifecycle reactions when re-entrancy is acceptable.
+- Do not migrate between messages and events as a naming cleanup; delivery,
+  retention, targeting, ordering, and failure behavior differ.
 - Keep observer side effects narrow; immediate cascades can obscure lifecycle
   ownership and mutate entities during teardown.
-- Gate event-only systems when idle cost is measured and meaningful, not by
-  habit.
+- Gate message-reader systems when idle cost is measured and meaningful, not by
+  habit. Use observer run conditions for observer-specific gating when the
+  locked release supports them.
 
 ## Deterministic Tests
 

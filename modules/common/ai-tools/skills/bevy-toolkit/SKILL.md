@@ -1,6 +1,6 @@
 ---
 name: bevy-toolkit
-description: Bevy workflows for ECS, plugin selection, scenes, scheduling, world authoring, diagnostics, validation, and BRP/MCP control. Use when building, debugging, profiling, testing, editing, or automating native Bevy apps.
+description: Bevy workflows for ECS, migrations, first-party UI/input/rendering/assets/shaders, plugin selection, scenes, scheduling, world authoring, diagnostics, validation, and BRP/MCP control. Use when building, debugging, profiling, testing, editing, migrating, or automating native Bevy apps.
 ---
 
 # Bevy Toolkit
@@ -46,6 +46,14 @@ Cargo, unsafe, and allocator decisions in `rust-toolkit`.
 7. **world authoring and iteration** — feedback-loop selection, source-of-truth
    ownership, transactional reload, editor/DCC bridges, and persisted edits.
    Read [authoring-pipelines.md](references/authoring-pipelines.md).
+8. **Bevy migrations** — locked-version intake, chained release guides,
+   dependency/plugin compatibility, scene/assets/reflection/BRP checkpoints,
+   rollback boundaries, and target matrices. Read
+   [migration.md](references/migration.md).
+9. **first-party feature construction** — UI layout/focus/accessibility/text,
+   input mapping/controllers, cameras/windows, main/render-world boundaries,
+   assets/shaders, and headless versus visual proof. Read
+   [feature-construction.md](references/feature-construction.md).
 
 ## Core Rules
 

@@ -27,6 +27,19 @@ popularity and ecosystem labels as discovery signals, not architecture proof.
 - Native ECS integration can improve ergonomics but does not prove determinism,
   throughput, or lower synchronization cost. Measure the required scenario.
 
+## Maintenance and Supply Chain
+
+- Verify license compatibility, security-advisory history, MSRV/toolchain fit,
+  release cadence, open critical regressions, and whether maintenance depends on
+  one unavailable owner.
+- Define rejection thresholds before comparison: unsupported locked Bevy
+  version, incompatible target, unacceptable transitive feature expansion,
+  unresolved critical advisory, abandoned release line, or missing migration
+  ownership.
+- Record who owns upgrades, data/schema migration, fork or replacement fallback,
+  and removal cost. A bounded internal adapter can contain churn but does not
+  make an abandoned dependency healthy.
+
 ## Category Questions
 
 | Category             | Resolve before selection                                                                                                    |

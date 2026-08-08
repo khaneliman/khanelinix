@@ -8,6 +8,22 @@
 4. Change one variable and repeat the same probe.
 5. Keep recommendation conditional when no comparable baseline exists.
 
+## Evidence Acquisition
+
+1. Start with release-appropriate diagnostic plugins and `DiagnosticsStore` for
+   frame time, entity counts, and project counters. Treat BRP diagnostics as
+   aggregate symptom evidence, not system attribution.
+2. Use repository-supported Bevy tracing features and launcher/profile settings
+   to capture system/schedule spans with Chrome tracing, Tracy, or Perf. Record
+   exact feature set, profile, scenario, warm-up, sample window, and artifact.
+3. Use schedule graphs or schedule-data extraction to explain dependencies and
+   conflicts; pair them with runtime spans before claiming cost.
+4. Use render diagnostics and GPU-specific capture/profiling for render passes,
+   pipeline statistics, synchronization, upload, or shader bottlenecks. CPU
+   tracing alone cannot prove a GPU cause.
+5. Compare fixed scenarios over multiple samples. Report distribution or stable
+   summary statistics, not one favorable frame.
+
 ## ECS and Schedule Cost
 
 - Inspect entity counts, query cardinality, archetype count/churn, change
@@ -57,7 +73,7 @@
 | BRP/reflection        | Type guide/query, mutation/readback, cleanup             |
 | Input behavior        | Frame-aware injected input and resulting state assertion |
 | Camera/layout/scale   | Fixed-view framebuffer capture and pixel inspection      |
-| Rendering/performance | Same-scene diagnostics/profile before and after          |
+| Rendering/performance | Same-scene trace/GPU evidence before and after           |
 | Asset hot reload      | Changed asset rebuilds only owned subtree                |
 
 ## Visual Proof

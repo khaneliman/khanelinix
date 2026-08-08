@@ -18,6 +18,13 @@ Do not standardize on RON, BSN, glTF, or another format only because Bevy can
 load it. Choose by source ownership, round-trip needs, target support, and
 migration cost.
 
+For disk-backed asset reload, verify the locked release's watcher feature and
+repository launcher enable it. Remember that reloading a shared asset handle
+updates every consumer; use project-owned data or distinct handles when only one
+instance should change. Keep reflected world serialization, code-driven BSN,
+glTF, and DCC source as separate ownership choices rather than interchangeable
+scene formats.
+
 ## Declare the Source of Truth
 
 - Name the authority for each field: Rust defaults, authored asset, DCC project,

@@ -24,6 +24,10 @@ patterns.
 
 - Use components for per-entity state and resources for truly world-global
   state. Do not turn resources into service locators.
+- On Bevy 0.19, resources use component storage on dedicated singleton entities.
+  Keep resource semantics explicit: do not derive/use one type as both ordinary
+  component and resource, and review reflection/BRP queries that can now observe
+  resource component storage.
 - Keep hot query data focused. Split components when systems access disjoint
   fields or fields change at different rates; require query/profile evidence.
 - Use release-appropriate named query-data structs for large or reused query

@@ -18,9 +18,8 @@ diagnosing discovery, tool availability, or game reachability.
 ## Compatibility and App Setup
 
 Inspect installed MCP/extras and locked Bevy versions before editing. The
-khanelinix package currently uses `bevy_brp_mcp` 0.20.1, whose upstream
-compatibility table targets Bevy 0.19. Treat this as current configuration, not
-a permanent compatibility rule.
+package version, upstream compatibility table, and live `brp_tool_help` output
+are authoritative; do not copy a previously observed version from this skill.
 
 Core BRP requires Bevy's remote feature and remote plugins. `bevy_brp_extras`
 can register core BRP plus screenshots, diagnostics, keyboard/mouse input,
@@ -30,11 +29,14 @@ control must not ship in normal/release binaries.
 Defaults and caveats:
 
 - Default port: `15702`; extras supports `BRP_EXTRAS_PORT`.
-- Bind to loopback unless remote access is explicit and secured.
+- Bind to loopback unless remote access is explicit and protected by an
+  application-owned authentication, authorization, and method-allowlist layer.
 - Extras screenshots require Bevy's `png` feature.
 - Extras diagnostics require its `diagnostics` feature (default-on upstream).
 - Custom `RemoteHttpPlugin` owns transport/port; extras port settings are then
   ignored.
+- Release-appropriate core BRP may expose the render subapp on a second port.
+  Discover support before assuming main-world and render-world visibility.
 
 ## Lifecycle Workflow
 
@@ -43,12 +45,16 @@ Prefer this sequence:
 1. `brp_list_bevy` — discover declared apps/examples, package identity, BRP
    support level, profiles, build status, and paths.
 2. `brp_status` — detect existing process/port before launch.
-3. `brp_launch` — launch chosen app/example, supplying package/path/features,
-   profile, args, and port deliberately.
-4. Poll `brp_status` until `running_with_brp`; read returned log path when
+3. `brp_tool_help` — read the live parameter contract before a nontrivial or
+   unfamiliar tool call.
+4. `brp_launch` — launch a target already configured with required Cargo
+   features, supplying supported package/path, profile, args, environment,
+   instance, and port fields deliberately. Use a repository launcher when
+   features must be selected at launch time.
+5. Poll `brp_status` until `running_with_brp`; read returned log path when
    launch or startup fails.
-5. Perform inspect/control/verification work.
-6. `brp_shutdown` — prefer extras clean shutdown; MCP may fall back to its owned
+6. Perform inspect/control/verification work.
+7. `brp_shutdown` — prefer extras clean shutdown; MCP may fall back to its owned
    process termination.
 
 Do not launch a second app onto an occupied BRP port. For multiple instances,
@@ -64,6 +70,8 @@ every tool call.
 - Use `registry_schema` or `brp_all_type_guides` only when broad schema
   discovery is needed; their responses can be large.
 - Use `rpc_discover` when diagnosing available BRP methods or extras mismatch.
+- Use `brp_tool_help` for exact MCP parameter names and shapes instead of
+  treating examples in this reference as a second tool schema.
 - Prefer project-owned `Name`, marker components, request/session resources, and
   stable IDs over entity numbers copied from an older run.
 
@@ -102,8 +110,15 @@ observer semantics are intended. Prefer project-owned request resources for
 long-running actions because they can carry request ID, status, progress, and
 error state across frames.
 
+Register project-owned custom BRP methods for deterministic reset, save/load,
+fixture setup, or assertions when raw ECS mutation cannot express the operation
+safely. Give each method narrow inputs, explicit authorization, request/session
+identity, bounded work, and readback status.
+
 ## Input, Capture, and Diagnostics
 
+These are adapter capabilities, not core BRP guarantees. Use
+[runtime-control.md](runtime-control.md) for end-to-end sequencing and proof.
 With `bevy_brp_extras`:
 
 - `brp_extras_send_keys` sends a simultaneous chord and complete
