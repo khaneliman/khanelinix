@@ -3,6 +3,11 @@
 Use for an independent, read-only review of a commit, PR, or diff. Form a fresh
 judgment from repository evidence instead of extending prior review conclusions.
 
+This workflow owns clean-room and output contracts for every Git artifact,
+including architecture-heavy or systemic changes. Invoke `$software-engineering`
+when architecture, state, failure, or evolution premises need its lenses; keep
+this workflow's finding format and final verdict authoritative.
+
 ## Review Input
 
 Collect or require:
