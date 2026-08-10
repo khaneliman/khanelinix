@@ -3,6 +3,9 @@
 Design world, level, UI, asset, or runtime feedback loops here. Confirm locked
 versions before choosing format, watcher, reflection, or remote APIs.
 
+For open-world chunk streaming or code hotpatching, also read
+[hot-reload-and-streaming.md](hot-reload-and-streaming.md).
+
 ## Select the Feedback Loop
 
 | Change                                               | Primary loop                                                   | Minimum proof                                        |
@@ -52,8 +55,10 @@ scene formats.
    diagnostics.
 
 Reject stale completions from older revisions. Cancel pending work when its host
-or state exits. Prefer whole-subtree replacement for editor-owned presentation;
-use explicit reconciliation when runtime state must survive.
+or state exits when supported; otherwise retain tracked ownership until it
+finishes and reject its stale result. Prefer whole-subtree replacement for
+editor-owned presentation; use explicit reconciliation when runtime state must
+survive.
 
 ## Define the External Tool Contract
 

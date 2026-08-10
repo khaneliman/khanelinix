@@ -49,6 +49,7 @@ popularity and ecosystem labels as discovery signals, not architecture proof.
 | VFX/vector/rendering | render-world integration, backend limits, shader/assets pipeline, batching, capture behavior, web/mobile fallback           |
 | UI/inspection        | maturity, accessibility and text input, reflection exposure, runtime overhead, release gating                               |
 | Authoring/DCC        | source of truth, stable IDs, round-trip format, schema sync, coordinate conversion, undo/redo, last-known-good behavior     |
+| Hotpatch/streaming   | first-party alternative, restart boundary, schema migration, target support, cancellation, load budget, cold-start parity   |
 | Networking           | authority model, tick/rollback design, serialization, transport, entity mapping, disconnect/reconnect lifecycle             |
 
 ## Bounded Integration Spike

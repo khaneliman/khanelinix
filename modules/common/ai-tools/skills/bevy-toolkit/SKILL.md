@@ -1,6 +1,6 @@
 ---
 name: bevy-toolkit
-description: Bevy workflows for ECS, migrations, first-party UI/input/rendering/assets/shaders, plugin selection, scenes, scheduling, world authoring, diagnostics, validation, and BRP/MCP control. Use when building, debugging, profiling, testing, editing, migrating, or automating native Bevy apps.
+description: Bevy workflows for ECS, migrations, first-party UI/input/rendering/assets/shaders, plugin selection, scenes, scheduling, hot reloading, streamed-world expansion, world authoring, diagnostics, validation, and BRP/MCP control. Use when building, debugging, profiling, testing, editing, migrating, or automating native Bevy apps.
 ---
 
 # Bevy Toolkit
@@ -54,6 +54,10 @@ Cargo, unsafe, and allocator decisions in `rust-toolkit`.
    input mapping/controllers, cameras/windows, main/render-world boundaries,
    assets/shaders, and headless versus visual proof. Read
    [feature-construction.md](references/feature-construction.md).
+10. **hot reload and streamed worlds** — asset watching, scene/world reload
+    semantics, chunk lifecycle, model/view persistence, stale async work, code
+    hotpatching, and reload stress tests. Read
+    [hot-reload-and-streaming.md](references/hot-reload-and-streaming.md).
 
 ## Core Rules
 
