@@ -384,6 +384,7 @@ in
           )
           // {
             "${proxyModel "claude" cfg.models.claude}".name = "Anthropic · Opus 5";
+            "claude-fable-5".name = "Anthropic · Fable 5";
             "claude-sonnet-5".name = "Anthropic · Sonnet 5";
           };
       };

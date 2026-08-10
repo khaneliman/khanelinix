@@ -323,6 +323,12 @@ let
       description = "Anthropic Opus 5 gateway worker for difficult implementation, plan or code review, and high-confidence diagnosis.";
       write = true;
     };
+    "fable-5" = mkGatewayAgent {
+      name = "fable-5";
+      alias = "claude-fable-5";
+      description = "Anthropic Fable 5 gateway worker for difficult implementation, planning, architecture critique, and independent review.";
+      write = true;
+    };
     "sonnet-5" = mkGatewayAgent {
       name = "sonnet-5";
       alias = "claude-sonnet-5";
