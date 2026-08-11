@@ -144,7 +144,7 @@ type(scope): description
 ### Guidelines:
 
 - Use lowercase for the description
-- Keep the subject line under 50 characters when possible
+- Keep the subject line at 50 characters or fewer
 - Use imperative mood ("add", "fix", "update", not "added", "fixed", "updated")
 - No trailing period in the subject line
 - Keep `type` to standard values (`feat`, `fix`, `refactor`, `docs`, `chore`)
@@ -154,6 +154,11 @@ type(scope): description
   change exists so history stays useful as documentation
 - Subject is the what; body is the why, plus any important implementation
   context or constraints
+- Keep each body line at 72 characters or fewer and use no more than six
+  non-empty body lines
+- Git trailers are metadata. Recognized trailing fields do not count toward body
+  prose limits
+- The commit-message hook also rejects configured output-style markers
 - Avoid one-line commits
 - Write the body as short prose, not a changelog dump
 

@@ -51,6 +51,23 @@
             language = "system";
             pass_filenames = false;
           };
+          technical-writing-commit-message = {
+            enable = true;
+            name = "technical writing commit message";
+            description = "Commit message structure and output style policy";
+            always_run = true;
+            entry = "${lib.getExe pkgs.python3} -B modules/common/ai-tools/skills/technical-writing/scripts/style_guard.py commit-message";
+            language = "system";
+            stages = [ "commit-msg" ];
+          };
+          technical-writing-policy = {
+            enable = true;
+            name = "technical writing policy";
+            description = "Blocked output markers in shared writing policy";
+            entry = "${lib.getExe pkgs.python3} -B modules/common/ai-tools/skills/technical-writing/scripts/style_guard.py scan";
+            files = "^modules/common/ai-tools/(base\\.md|skills/technical-writing/(SKILL\\.md|references/rules\\.md))$";
+            language = "system";
+          };
           pre-commit-hook-ensure-sops.enable = true;
           # treefmt runs `statix fix`, which silently skips lints that have no
           # auto-fix (for example `repeated_keys`). Only `statix check` reports
