@@ -54,6 +54,23 @@ let
     };
   };
 
+  technicalWriting = {
+    canonicalSkill = skillsDir + "/technical-writing";
+    guard = skillsDir + "/technical-writing/scripts/style_guard.py";
+
+    codex.requirements.Stop = [
+      {
+        hooks = [
+          {
+            type = "command";
+            command = "python3 /etc/codex/hooks/technical-writing/style_guard.py hook codex";
+            timeout = 5;
+          }
+        ];
+      }
+    ];
+  };
+
   antigravityOkfMemoryPlugin =
     if pkgs == null then
       null
@@ -90,6 +107,33 @@ let
         cp ${hooksJson} $out/hooks.json
       '';
 
+  antigravityTechnicalWritingPlugin =
+    if pkgs == null then
+      null
+    else
+      let
+        command = "${lib.getExe pkgs.python3} ${technicalWriting.guard} hook antigravity";
+        pluginJson = pkgs.writeText "antigravity-technical-writing-plugin.json" (
+          builtins.toJSON { name = "technical-writing"; }
+        );
+        hooksJson = pkgs.writeText "antigravity-technical-writing-hooks.json" (
+          builtins.toJSON {
+            technical-writing.Stop = [
+              {
+                type = "command";
+                inherit command;
+                timeout = 5;
+              }
+            ];
+          }
+        );
+      in
+      pkgs.runCommand "antigravity-technical-writing-plugin" { } ''
+        mkdir -p $out
+        cp ${pluginJson} $out/plugin.json
+        cp ${hooksJson} $out/hooks.json
+      '';
+
   codexHooks =
     lib.zipAttrsWith
       (name: values: if name == "managed_dir" then lib.last values else lib.concatLists values)
@@ -97,8 +141,9 @@ let
         codexManagedRequirements.hooks
         okfMemory.codex.requirements
         planningWithFiles.codex.requirements
+        technicalWriting.codex.requirements
       ];
-  codexManagedRequirementsWithOkf = codexManagedRequirements // {
+  codexManagedRequirementsWithHooks = codexManagedRequirements // {
     hooks = codexHooks;
   };
 
@@ -112,6 +157,8 @@ let
         mkdir -p $out/planning-with-files
         cp ${planningWithFiles.codex.hooks}/*.py $out/planning-with-files/
         cp ${planningWithFiles.codex.hooks}/*.sh $out/planning-with-files/
+        mkdir -p $out/technical-writing
+        cp ${technicalWriting.guard} $out/technical-writing/style_guard.py
       '';
 
   isSkillDirectory =
@@ -262,6 +309,7 @@ in
     skills
     skillsDir
     systemSkillNames
+    technicalWriting
     ;
 
   claudeCode = {
@@ -275,6 +323,7 @@ in
 
   antigravityCli = {
     okfMemoryPlugin = antigravityOkfMemoryPlugin;
+    technicalWritingPlugin = antigravityTechnicalWritingPlugin;
     skills = skillsAttrsForHarness "antigravityCli";
   };
 
@@ -282,7 +331,7 @@ in
     disabledSystemSkills = disabledSystemSkillsForHarness "codex";
     agents = aiAgents.toCodexAgents;
     contextOverride = codexContextOverride;
-    managedRequirements = codexManagedRequirementsWithOkf;
+    managedRequirements = codexManagedRequirementsWithHooks;
     hooksDir = codexHooksDir;
     okfMemoryEnabled = skillEnabledForHarness "codex" "okf-memory";
     skills = skillsForHarness "codex";

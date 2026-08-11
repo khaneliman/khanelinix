@@ -22,6 +22,8 @@ in
   config = mkIf cfg.enable {
     home.file.".gemini/config/plugins/okf-memory".source =
       lib.mkDefault aiTools.antigravityCli.okfMemoryPlugin;
+    home.file.".gemini/config/plugins/technical-writing".source =
+      lib.mkDefault aiTools.antigravityCli.technicalWritingPlugin;
 
     programs.antigravity = {
       enable = true;

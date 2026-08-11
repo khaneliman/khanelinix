@@ -27,9 +27,12 @@ in
     home = {
       # TODO: Upstream to home manager?
       # NOTE: antigravity will mutate config and replace file.
-      file.".gemini/antigravity-cli/settings.json".force = true;
-      file.".gemini/config/plugins/okf-memory".source =
-        lib.mkDefault aiTools.antigravityCli.okfMemoryPlugin;
+      file = {
+        ".gemini/antigravity-cli/settings.json".force = true;
+        ".gemini/config/plugins/okf-memory".source = lib.mkDefault aiTools.antigravityCli.okfMemoryPlugin;
+        ".gemini/config/plugins/technical-writing".source =
+          lib.mkDefault aiTools.antigravityCli.technicalWritingPlugin;
+      };
       shellAliases = {
         # Control overrides
         "agy-continue" = "agy --continue";
