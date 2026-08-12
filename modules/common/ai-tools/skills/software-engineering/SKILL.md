@@ -1,6 +1,6 @@
 ---
 name: software-engineering
-description: Evidence-backed software engineering for current-state repository or subsystem architecture and maintainability evaluation; planning changes that are large or cross-cutting, including features, refactors, migrations, and technical-debt reduction; and reviewing proposed standalone software architecture or cross-component designs. Use when work needs repository-wide understanding, explicit contracts and invariants, boundary or tradeoff analysis, failure and evolution design, or an implementation-ready validation strategy. Do not use for routine localized edits, visual design, AI-configuration review, security audits, or pure implementation owned by a domain skill. Do not use as primary workflow for commit/PR/diff review; use only as secondary architecture lenses when Git review invokes it.
+description: Software-system engineering for current-state repository or subsystem architecture and maintainability evaluation, large or cross-cutting change planning, and standalone design review. Use ai-tools-architect for AI configuration. Use when work needs repository-wide understanding, explicit contracts and invariants, boundary tradeoff analysis, failure and evolution design, or an implementation-ready validation strategy. Do not use for routine localized edits, visual design, security audits, pure implementation owned by a domain skill, or primary commit/PR/diff review.
 ---
 
 # Software Engineering
@@ -25,14 +25,14 @@ and language, framework, security, Git, and delivery skills own specialist work.
 
 ## Route One Primary Mode
 
-- **current-state repository or subsystem evaluation** — audit existing
+- **current-state repository or subsystem evaluation:** audit existing
   architecture, maintainability, correctness, operability, and change readiness.
   Read [repository-evaluation.md](references/repository-evaluation.md).
-- **large-change planning** — convert a feature, refactor, migration, or
+- **large-change planning:** convert a feature, refactor, migration, or
   technical-debt outcome into contracts, state changes, boundaries, increments,
   rollout, and verification. Read
   [large-change-planning.md](references/large-change-planning.md).
-- **proposed standalone software architecture review** — challenge a design
+- **proposed standalone software architecture review:** challenge a design
   proposal or ADR before implementation and outside commit/PR/diff review. Read
   [architecture-review.md](references/architecture-review.md).
 
@@ -43,8 +43,8 @@ For secondary Git-review support, do not select a primary mode or produce a
 separate verdict. Apply root lenses to supplied architecture premises and return
 them to `$git-toolkit`; its clean-room, finding, and verdict contracts remain
 authoritative. Use `$planning-with-files` only when task state should persist
-across sessions or compaction, `$architect` for AI configuration, and security
-skills for explicit security audits or threat models.
+across sessions or compaction. Use `$ai-tools-architect` for AI configuration.
+Use security skills for explicit security audits or threat models.
 
 ## Apply Engineering Lenses Proportionally
 
@@ -61,10 +61,10 @@ skills for explicit security audits or threat models.
 6. **Responsibility:** affected stakeholders, harm, fairness, privacy,
    accessibility, accountability, and human control in proportion to impact.
 
-Increase depth when work changes public APIs or schemas, stored data,
-authentication or trust boundaries, concurrent or remote effects, destructive
-operations, or safety-, legal-, or livelihood-relevant workflows. Otherwise
-sample representative paths and state evidence limits.
+Increase depth for public APIs or schemas, stored data, authentication or trust
+boundaries, concurrent or remote effects, or destructive operations. Increase
+depth for safety-, legal-, or livelihood-relevant workflows. Otherwise sample
+representative paths and state evidence limits.
 
 Do not mechanically require ADTs, immutability, SOLID patterns, hierarchical
 names, adapters, distributed machinery, or approval gates. Introduce a boundary

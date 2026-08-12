@@ -53,11 +53,11 @@ comments, and commit messages.
 - Keep always-loaded context lean. Put repository gotchas in scoped guidance,
   repeatable procedures in skills, and external state behind live tools.
 - Load references only when relevant to current task.
-- Route repository-wide architecture or maintainability evaluation/audit,
-  planning changes that are large or cross-cutting, including features,
-  refactors, migrations, and technical-debt reduction, and proposed standalone
-  software architecture review through `software-engineering`. Keep routine
-  edits and commit, PR, or diff review with matching domain or Git skills.
+- Route AI-configuration design, refactoring, and audits through
+  `ai-tools-architect`. Route repository-wide software architecture evaluation,
+  large or cross-cutting change planning, and standalone design review through
+  `software-engineering`. Keep routine edits and Git artifact review with
+  matching domain or Git skills.
 
 ## Durable Memory
 

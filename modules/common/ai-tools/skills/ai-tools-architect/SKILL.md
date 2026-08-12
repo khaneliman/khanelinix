@@ -1,9 +1,9 @@
 ---
-name: architect
-description: Progressive context and execution architecture for repository instructions, AI prompts, rules, agents, commands, and skills. Use when initializing, designing, refactoring, or auditing AI configuration for clear boundaries, deterministic automation, reproducible workflows, and token-efficient disclosure.
+name: ai-tools-architect
+description: AI-configuration architecture for repository instructions, prompts, rules, agents, commands, skills, and provider context. Use software-engineering for application or system architecture. Use when initializing, designing, refactoring, or auditing agent configuration for clear boundaries, deterministic automation, reproducible workflows, or token-efficient disclosure.
 ---
 
-# Progressive Architecture Playbook
+# AI Tools Architecture Playbook
 
 Enforce progressive disclosure and deterministic execution boundaries for this
 project's AI setup. Keep model context focused on judgment while routing exact,
@@ -34,7 +34,7 @@ review, in any repository:
 
 1. **Human docs are canon.** If the project documents a convention for all
    contributors (`CONTRIBUTING.md`, `docs/`, style guides), agent files must
-   point there — never paraphrase or fork it. The root registry should instruct
+   point there; never paraphrase or fork it. The root registry should instruct
    reading the canon doc before making changes. Duplicating canon into agent
    files costs little context (they rarely co-load) but guarantees drift.
 2. **Models know the technology.** Never spend agent-file lines teaching the
@@ -55,9 +55,8 @@ review, in any repository:
 
 ## Execution Routing
 
-Do not guess or hallucinate the architectural standards. When the user asks for
-advice on structuring a specific component, you MUST use your file-reading tools
-to read the corresponding reference document in `refs/` before responding:
+Do not guess or hallucinate architectural standards. For advice about a specific
+AI-configuration component, read its reference in `refs/` before responding:
 
 - **For Subagents (Specialized tool/context boundaries):** Read
   [refs/AGENTS.md](refs/AGENTS.md)
@@ -71,6 +70,5 @@ to read the corresponding reference document in `refs/` before responding:
   [refs/INITIALIZATION.md](refs/INITIALIZATION.md), then only the component
   references it selects.
 
-If the user's request is broad (e.g., "How should I structure this new
-feature?"), ask them clarifying questions to determine which of the four
-components best fits their need before reading the reference files.
+If AI-configuration scope remains broad, ask which component fits the need.
+Example: "How should I structure this new agent workflow?"
