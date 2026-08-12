@@ -1,7 +1,8 @@
 # Pull Request Review Authoring
 
-Use for a high-signal review and a draft or explicitly requested pending GitHub
-review. Use [pr-feedback.md](pr-feedback.md) for existing review comments.
+Use for high-signal review and explicit inspection or mutation of GitHub reviews
+owned by current actor. Use [pr-feedback.md](pr-feedback.md) for existing review
+comments.
 
 ## Workflow
 
@@ -24,23 +25,35 @@ review. Use [pr-feedback.md](pr-feedback.md) for existing review comments.
 4. Review only diff plus necessary local context. Load matching language/domain
    skill before judging implementation details.
 5. Validate each finding against changed code and repository policy.
-6. Return draft findings by default. Create or update a pending review only when
-   user explicitly requests it.
+6. Return draft findings by default. Inspect, create, update, or delete a review
+   only when user explicitly requests it.
 
 Never submit pending review, approve, request changes, push, or edit source.
 Leave final publication to user in GitHub UI.
 
-## Pending Review Reconciler
+## Review Operations
 
-Declare desired pending-review state. Give every inline finding a stable key:
+Inspect reviews before each write. Default output contains all reviews owned by
+current actor. Use `--all-reviews` only when other actors provide needed
+context:
+
+```bash
+python "<path-to-skill>/scripts/review_draft.py" inspect \
+  --repo "OWNER/REPO" --pr "NUMBER_OR_URL" --include-bodies
+```
+
+Inspection returns GraphQL `id` and REST `database_id` values for reviews and
+inline comments. Use these GitHub identities for updates and deletions. Do not
+add hidden ownership markers or other tool-specific text to public prose.
+
+Create one pending review from ordinary prose and optional inline comments. Omit
+`body` for an inline-only review:
 
 ```json
 {
   "expected_head_sha": "FULL_HEAD_SHA",
-  "body": "<!-- ai-tools:review-pr -->\nReview context.",
   "comments": [
     {
-      "key": "validated-defect-name",
       "path": "path/to/file",
       "start_line": 10,
       "line": 12,
@@ -51,37 +64,48 @@ Declare desired pending-review state. Give every inline finding a stable key:
 }
 ```
 
-Use an empty `comments` array for a body-only or no-findings review. Plan first.
-Add `--apply` only when user explicitly requested pending-review creation or
-update:
+Update any current-actor review summary or comment that GitHub permits. Identify
+the review and each comment explicitly:
 
-```bash
-python "<path-to-skill>/scripts/review_draft.py" reconcile \
-  --repo "OWNER/REPO" --pr "NUMBER_OR_URL" --input review.json
+```json
+{
+  "review_id": "PRR_GRAPHQL_OR_DATABASE_ID",
+  "body": "Updated review summary.",
+  "comments": [
+    {
+      "id": "PRRC_GRAPHQL_ID",
+      "body": "Updated inline comment."
+    }
+  ]
+}
 ```
 
-Reconciler discovers current actor and pending review. It selects create,
-update, or no-op. It adds, updates, relocates, and removes keyed comments while
-preserving unkeyed comments. Submitted marked reviews do not block a later
-review cycle. It adopts one legacy unkeyed comment only when its anchor and
-visible body match a desired keyed comment. Re-running same desired input
-converges after partial writes.
+Delete a current-actor pending review by review ID:
 
-Reconciler enforces open non-draft state, exact head and base SHAs,
-current-actor ownership, one review marker, unique comment keys, and current
-diff anchors. It rejects unknown fields and has no review-submission event
-surface. Use helper for supported review mechanics. Do not discover or assemble
-ad hoc GitHub review mutations.
+```json
+{ "review_id": "PRR_GRAPHQL_OR_DATABASE_ID" }
+```
 
-After `--apply`, inspect `applied`, `mutation`, and `verification.status`.
-`unverified` means a write may have completed without exact readback. `partial`
-lists attempted and confirmed operations before a later update fails. Run same
-reconcile input again. Reconciler reads current state and plans only remaining
-work. Only `verified` proves exact desired review body, keyed comments, anchors,
-pending state, actor, and PR revisions.
+Delete current-actor review comments without deleting their review:
 
-Legacy `inspect`, `create`, and `update` commands remain for compatibility.
-Prefer `reconcile` for new workflows.
+```json
+{
+  "review_id": "PRR_GRAPHQL_OR_DATABASE_ID",
+  "comments": [{ "database_id": "COMMENT_DATABASE_ID" }]
+}
+```
+
+Run `create`, `update`, or `delete` without `--apply` first. Review exact
+planned IDs and operations. Add `--apply` only when user explicitly requested
+that write. Helpers refresh actor ownership and selected IDs before mutation,
+then read back exact bodies or absence. GitHub permits review-summary updates
+after submission but permits whole-review deletion only while review is pending.
+Submitted inline comments can still be updated or deleted.
+
+Never infer ownership from prose. Never select update or delete targets by body
+text or diff anchor. Use `id` for a GraphQL node ID or `database_id` for a
+numeric comment ID. The helper rejects submission events and cannot approve,
+request changes, comment-submit, or dismiss reviews.
 
 ## High-Signal Review Policy
 

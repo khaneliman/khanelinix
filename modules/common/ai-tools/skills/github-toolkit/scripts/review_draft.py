@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Inspect, create, or edit an owned pending pull request review."""
+"""Inspect, create, update, or delete current-actor pull request reviews."""
 
 from __future__ import annotations
 
@@ -20,7 +20,6 @@ from _github import (
     resolve_target,
 )
 
-MARKER = "<!-- ai-tools:review-pr -->"
 HUNK_HEADER = re.compile(r"^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@")
 
 
@@ -129,6 +128,15 @@ mutation($id: ID!, $body: String!) {
 """
 
 
+DELETE_COMMENT_MUTATION = """
+mutation($id: ID!) {
+  deletePullRequestReviewComment(input: {id: $id}) {
+    pullRequestReviewComment { id }
+  }
+}
+"""
+
+
 def add_target_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--repo",
@@ -142,16 +150,14 @@ def add_target_arguments(parser: argparse.ArgumentParser) -> None:
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Inspect, plan, or apply an owned pending pull request review."
+        description="Inspect, plan, or apply current-actor pull request review writes."
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    inspect = subparsers.add_parser(
-        "inspect", help="Inspect pending or marked reviews."
-    )
+    inspect = subparsers.add_parser("inspect", help="Inspect pull request reviews.")
     add_target_arguments(inspect)
     inspect.add_argument(
-        "--all-reviews", action="store_true", help="Include unmarked submitted reviews."
+        "--all-reviews", action="store_true", help="Include reviews by other actors."
     )
     inspect.add_argument(
         "--include-bodies",
@@ -160,14 +166,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     inspect.add_argument("--max-body-chars", type=int, default=240)
 
-    for command in ("create", "update", "reconcile"):
-        child = subparsers.add_parser(
-            command, help=f"Plan or apply pending review {command}."
-        )
+    for command in ("create", "update", "delete"):
+        child = subparsers.add_parser(command, help=f"Plan or apply review {command}.")
         add_target_arguments(child)
         child.add_argument("--input", required=True, help="JSON file, or - for stdin.")
         child.add_argument(
-            "--apply", action="store_true", help="Apply validated pending review write."
+            "--apply", action="store_true", help="Apply validated review write."
         )
     return parser.parse_args(argv)
 
@@ -473,6 +477,12 @@ def _string(value: Any, field: str) -> str:
     return value
 
 
+def _text(value: Any, field: str) -> str:
+    if not isinstance(value, str):
+        raise InputError(f"{field} must be a string")
+    return value
+
+
 def _only_keys(value: dict[str, Any], allowed: set[str], context: str) -> None:
     unknown = sorted(set(value) - allowed)
     if "event" in unknown:
@@ -481,11 +491,6 @@ def _only_keys(value: dict[str, Any], allowed: set[str], context: str) -> None:
         )
     if unknown:
         raise InputError(f"unsupported {context} fields: {', '.join(unknown)}")
-
-
-def validate_marker(body: str) -> None:
-    if body.count(MARKER) != 1:
-        raise InputError(f"review body must contain marker exactly once: {MARKER}")
 
 
 def validate_expected_sha(value: Any, pull_request: dict[str, Any]) -> str:
@@ -572,19 +577,6 @@ def review_author(review: dict[str, Any]) -> str | None:
     return author.get("login") if isinstance(author, dict) else None
 
 
-def marker_reviews(reviews: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    return [review for review in reviews if MARKER in str(review.get("body") or "")]
-
-
-def other_marker_reviews(
-    reviews: list[dict[str, Any]], selected: dict[str, Any]
-) -> list[dict[str, Any]]:
-    selected_id = selected.get("id")
-    return [
-        review for review in marker_reviews(reviews) if review.get("id") != selected_id
-    ]
-
-
 def body_fields(body: Any, include: bool, max_chars: int) -> dict[str, Any]:
     text = body if isinstance(body, str) else ""
     if include:
@@ -625,7 +617,6 @@ def normalize_review(
         "comments": comments,
         "database_id": review.get("databaseId"),
         "id": review.get("id"),
-        "marker_count": str(review.get("body") or "").count(MARKER),
         "state": review.get("state"),
         "submitted_at": review.get("submittedAt"),
         "updated_at": review.get("updatedAt"),
@@ -639,20 +630,12 @@ def inspect(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     target = resolve_target(client, args.repo, args.pr)
     pull_request, reviews = fetch_review_context(client, target)
     actor = current_actor(client)
-    selected = (
-        reviews
-        if args.all_reviews
-        else [
-            review
-            for review in reviews
-            if review.get("state") == "PENDING"
-            or MARKER in str(review.get("body") or "")
-        ]
-    )
+    owned = [review for review in reviews if review_author(review) == actor]
+    selected = reviews if args.all_reviews else owned
     return {
         "actor": actor,
         "counts": {
-            "marked": len(marker_reviews(reviews)),
+            "owned": len(owned),
             "selected": len(selected),
             "total": len(reviews),
         },
@@ -766,11 +749,6 @@ def verify_created_review(
 
 
 def ensure_create_available(reviews: list[dict[str, Any]], actor: str) -> None:
-    pending_marked = [
-        review for review in marker_reviews(reviews) if review.get("state") == "PENDING"
-    ]
-    if pending_marked:
-        raise InputError("target pull request already contains a marked pending review")
     actor_pending = [
         review
         for review in reviews
@@ -787,8 +765,7 @@ def create(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     pull_request, reviews = fetch_review_context(client, target)
     actor = current_actor(client)
     expected_sha = validate_expected_sha(data.get("expected_head_sha"), pull_request)
-    body = _string(data.get("body"), "body")
-    validate_marker(body)
+    body = _text(data["body"], "body") if "body" in data else ""
     raw_comments = data.get("comments", [])
     if not isinstance(raw_comments, list):
         raise InputError("comments must be an array")
@@ -796,11 +773,15 @@ def create(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
         normalize_create_comment(comment, index)
         for index, comment in enumerate(raw_comments)
     ]
+    if not body.strip() and not comments:
+        raise InputError("create input must include a non-empty body or comments")
     ensure_create_available(reviews, actor)
     files = fetch_diff_files(client, target) if comments else {}
     for index, comment in enumerate(comments):
         verify_anchor(comment, files, f"comments[{index}]")
-    payload = {"body": body, "commit_id": expected_sha}
+    payload = {"commit_id": expected_sha}
+    if "body" in data:
+        payload["body"] = body
     if comments:
         payload["comments"] = comments
     plan: dict[str, Any] = {
@@ -859,7 +840,7 @@ def create(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
                 not node_id
                 and review.get("state") == "PENDING"
                 and review_author(review) == actor
-                and review.get("body") == body
+                and str(review.get("body") or "") == body
             )
         ]
         if len(candidates) != 1:
@@ -879,29 +860,22 @@ def create(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     return plan
 
 
-def select_pending_review(
+def select_owned_review(
     reviews: list[dict[str, Any]], actor: str, requested_id: Any
 ) -> dict[str, Any]:
-    if requested_id is not None:
-        value = str(requested_id)
-        matches = [
-            review
-            for review in reviews
-            if str(review.get("id")) == value or str(review.get("databaseId")) == value
-        ]
-    else:
-        matches = [
-            review
-            for review in reviews
-            if review.get("state") == "PENDING" and review_author(review) == actor
-        ]
+    value = _string(
+        str(requested_id) if requested_id is not None else None, "review_id"
+    )
+    matches = [
+        review
+        for review in reviews
+        if str(review.get("id")) == value or str(review.get("databaseId")) == value
+    ]
     if len(matches) != 1:
-        raise InputError("review_id does not identify one current-actor pending review")
+        raise InputError("review_id does not identify one pull request review")
     review = matches[0]
-    if review.get("state") != "PENDING":
-        raise InputError("target review is not pending")
     if review_author(review) != actor:
-        raise InputError("target pending review is not owned by current actor")
+        raise InputError("target review is not owned by current actor")
     return review
 
 
@@ -910,33 +884,19 @@ def select_comment(
 ) -> dict[str, Any]:
     identifier = request.get("id")
     database_id = request.get("database_id")
-    if identifier is not None or database_id is not None:
-        matches = [
-            comment
-            for comment in comments
-            if (identifier is not None and str(comment.get("id")) == str(identifier))
-            or (
-                database_id is not None
-                and str(comment.get("databaseId")) == str(database_id)
-            )
-        ]
-    else:
-        path = request.get("path")
-        line = request.get("line")
-        start_line = request.get("start_line")
-        if not isinstance(path, str) or not isinstance(line, int):
-            raise InputError(
-                f"comments[{index}] needs id, database_id, or path plus line"
-            )
-        matches = [
-            comment
-            for comment in comments
-            if comment.get("path") == path
-            and comment.get("line") == line
-            and comment.get("startLine") == start_line
-        ]
+    if identifier is None and database_id is None:
+        raise InputError(f"comments[{index}] needs id or database_id")
+    matches = [
+        comment
+        for comment in comments
+        if (identifier is not None and str(comment.get("id")) == str(identifier))
+        or (
+            database_id is not None
+            and str(comment.get("databaseId")) == str(database_id)
+        )
+    ]
     if len(matches) != 1:
-        raise InputError(f"comments[{index}] does not identify one draft comment")
+        raise InputError(f"comments[{index}] does not identify one review comment")
     selected = matches[0]
     comparisons = {
         "path": selected.get("path"),
@@ -945,12 +905,12 @@ def select_comment(
     }
     for field, actual in comparisons.items():
         if field in request and request[field] != actual:
-            raise InputError(f"comments[{index}].{field} does not match draft anchor")
+            raise InputError(f"comments[{index}].{field} does not match review anchor")
     return selected
 
 
 def normalize_update_operations(
-    data: dict[str, Any], review: dict[str, Any], files: dict[str, dict[str, Any]]
+    data: dict[str, Any], review: dict[str, Any]
 ) -> list[dict[str, Any]]:
     raw_comments = data.get("comments", [])
     if not isinstance(raw_comments, list):
@@ -961,39 +921,11 @@ def normalize_update_operations(
             raise InputError(f"comments[{index}] must be an object")
         _only_keys(
             request,
-            {
-                "body",
-                "database_id",
-                "id",
-                "line",
-                "path",
-                "side",
-                "start_line",
-            },
+            {"body", "database_id", "id", "line", "path", "start_line"},
             f"comments[{index}]",
         )
         body = _string(request.get("body"), f"comments[{index}].body")
         selected = select_comment(request, review.get("comments", []), index)
-        selected_side = selected.get("diffSide")
-        if selected_side not in {"LEFT", "RIGHT"}:
-            raise InputError(f"comments[{index}] current diff side is unavailable")
-        selected_start_line = selected.get("startLine")
-        selected_start_side = selected.get("startDiffSide")
-        if selected_start_line is not None and selected_start_side != selected_side:
-            raise InputError(f"comments[{index}] current range side is unavailable")
-        anchor = {
-            "line": selected.get("line"),
-            "path": selected.get("path"),
-            "side": selected_side,
-            "start_line": selected_start_line,
-            "start_side": selected_start_side,
-        }
-        if "side" in request:
-            side = _string(request["side"], f"comments[{index}].side").upper()
-            if side not in {"LEFT", "RIGHT"}:
-                raise InputError(f"comments[{index}].side must be LEFT or RIGHT")
-            anchor["side"] = side
-        verify_anchor(anchor, files, f"comments[{index}]")
         if selected.get("body") != body:
             operations.append(
                 {
@@ -1015,7 +947,7 @@ def update(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     data = read_json_input(args.input)
     _only_keys(
         data,
-        {"body", "comments", "expected_head_sha", "review_id"},
+        {"body", "comments", "review_id"},
         "input",
     )
     if "body" not in data and "comments" not in data:
@@ -1023,30 +955,17 @@ def update(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     target = resolve_target(client, args.repo, args.pr)
     pull_request, reviews = fetch_review_context(client, target)
     actor = current_actor(client)
-    validate_expected_sha(data.get("expected_head_sha"), pull_request)
-    review = select_pending_review(reviews, actor, data.get("review_id"))
-    if data.get("comments"):
-        review = dict(review)
-        review["comments"] = fetch_review_comments_with_sides(client, target, review)
+    review = select_owned_review(reviews, actor, data.get("review_id"))
     body = (
-        _string(data["body"], "body")
-        if "body" in data
-        else str(review.get("body") or "")
+        _text(data["body"], "body") if "body" in data else str(review.get("body") or "")
     )
-    validate_marker(body)
-    duplicates = other_marker_reviews(reviews, review)
-    if duplicates:
-        raise InputError("another review already contains the AI review marker")
-    files = fetch_diff_files(client, target) if data.get("comments") else {}
-    operations = normalize_update_operations(data, review, files)
+    operations = normalize_update_operations(data, review)
     if body != review.get("body"):
         operations.insert(
             0, {"body": body, "id": review.get("id"), "type": "review_body"}
         )
-    if not operations:
-        raise InputError("update contains no changes")
     plan: dict[str, Any] = {
-        "action": "update",
+        "action": "update" if operations else "noop",
         "actor": actor,
         "applied": False,
         "operations": operations,
@@ -1055,58 +974,43 @@ def update(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     }
     if not args.apply:
         return plan
-    latest_pull_request, latest_reviews = fetch_review_context(client, target)
+    _, latest_reviews = fetch_review_context(client, target)
     latest_actor = current_actor(client)
     if latest_actor != actor:
         raise InputError("current GitHub actor changed before review update")
-    validate_expected_sha(data.get("expected_head_sha"), latest_pull_request)
-    latest_review = select_pending_review(
-        latest_reviews, latest_actor, review.get("id")
-    )
-    if data.get("comments"):
-        latest_review = dict(latest_review)
-        latest_review["comments"] = fetch_review_comments_with_sides(
-            client, target, latest_review
-        )
+    latest_review = select_owned_review(latest_reviews, latest_actor, review.get("id"))
     latest_body = (
-        _string(data["body"], "body")
+        _text(data["body"], "body")
         if "body" in data
         else str(latest_review.get("body") or "")
     )
-    validate_marker(latest_body)
-    latest_duplicates = other_marker_reviews(latest_reviews, latest_review)
-    if latest_duplicates:
-        raise InputError("another review already contains the AI review marker")
-    latest_files = fetch_diff_files(client, target) if data.get("comments") else {}
-    operations = normalize_update_operations(data, latest_review, latest_files)
+    operations = normalize_update_operations(data, latest_review)
     if latest_body != latest_review.get("body"):
         operations.insert(
             0,
             {"body": latest_body, "id": latest_review.get("id"), "type": "review_body"},
         )
     if not operations:
-        raise InputError("update contains no changes after pre-write refresh")
+        plan["action"] = "noop"
+        plan["operations"] = []
+        plan["review"] = normalize_review(latest_review, True, 0)
+        plan["verification"] = verification("verified")
+        return plan
     body = latest_body
     review = latest_review
     plan["operations"] = operations
     plan["review"] = normalize_review(latest_review, True, 0)
-    latest_base_sha = latest_pull_request.get("base_sha")
-    if data.get("comments") and not isinstance(latest_base_sha, str):
-        raise ToolkitError("GitHub response omitted current PR base SHA")
     applied_operations: list[dict[str, Any]] = []
     plan["mutation"] = {
         "applied_operations": applied_operations,
+        "attempted_operations": [],
         "complete": False,
         "requested_operations": len(operations),
     }
     for operation in operations:
+        attempted = {"id": operation["id"], "type": operation["type"]}
+        plan["mutation"]["attempted_operations"].append(attempted)
         try:
-            verify_current_oids(
-                client,
-                target,
-                str(data["expected_head_sha"]),
-                latest_base_sha if data.get("comments") else None,
-            )
             if operation["type"] == "review_body":
                 payload = client.graphql(
                     UPDATE_REVIEW_MUTATION,
@@ -1129,11 +1033,10 @@ def update(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
                     "pullRequestReviewComment",
                     operation["id"],
                 )
-        except Exception as error:
-            if not applied_operations:
-                raise
-            plan["applied"] = True
-            plan["verification"] = verification("partial", error)
+        except Exception as error:  # noqa: BLE001 - preserve ambiguous write truth
+            plan["applied"] = bool(applied_operations)
+            status = "partial" if applied_operations else "unverified"
+            plan["verification"] = verification(status, error)
             return plan
         applied_operations.append({"id": operation["id"], "type": operation["type"]})
     plan["applied"] = True
@@ -1141,12 +1044,7 @@ def update(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     plan["verification"] = verification("unverified")
     try:
         _, refreshed = fetch_review_context(client, target)
-        updated = select_pending_review(refreshed, actor, review.get("id"))
-        if any(operation["type"] == "comment_body" for operation in operations):
-            updated = dict(updated)
-            updated["comments"] = fetch_review_comments_with_sides(
-                client, target, updated
-            )
+        updated = select_owned_review(refreshed, actor, review.get("id"))
         if updated.get("body") != body:
             raise ToolkitError("review body readback does not match update")
         refreshed_comments = {
@@ -1159,16 +1057,175 @@ def update(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
                 continue
             comment = refreshed_comments.get(operation["id"])
             if not comment or not _readback_matches_request(comment, operation):
-                raise ToolkitError(
-                    "draft comment anchor/body readback does not match update"
-                )
-        if updated.get("state") != "PENDING" or review_author(updated) != actor:
-            raise ToolkitError("updated review lost pending state or actor ownership")
+                raise ToolkitError("review comment body readback does not match update")
+        if review_author(updated) != actor:
+            raise ToolkitError("updated review lost actor ownership")
     except Exception as error:  # noqa: BLE001 - report readback as unverified
         plan["verification"] = verification("unverified", error)
         return plan
     plan["verification"] = verification("verified")
     plan["review"] = normalize_review(updated, True, 0)
+    return plan
+
+
+def normalize_delete_comments(
+    data: dict[str, Any], review: dict[str, Any]
+) -> list[dict[str, Any]]:
+    raw_comments = data.get("comments")
+    if raw_comments is None:
+        return []
+    if not isinstance(raw_comments, list) or not raw_comments:
+        raise InputError("comments must be a non-empty array when provided")
+    operations = []
+    seen: set[str] = set()
+    for index, request in enumerate(raw_comments):
+        if not isinstance(request, dict):
+            raise InputError(f"comments[{index}] must be an object")
+        _only_keys(request, {"database_id", "id"}, f"comments[{index}]")
+        selected = select_comment(request, review.get("comments", []), index)
+        identifier = selected.get("id")
+        if not isinstance(identifier, str):
+            raise ToolkitError(f"comments[{index}] omitted GraphQL ID")
+        if identifier in seen:
+            raise InputError(f"comments[{index}] duplicates a selected review comment")
+        seen.add(identifier)
+        operations.append(
+            {
+                "database_id": selected.get("databaseId"),
+                "id": identifier,
+                "type": "delete_comment",
+            }
+        )
+    return operations
+
+
+def delete(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
+    data = read_json_input(args.input)
+    _only_keys(data, {"comments", "review_id"}, "input")
+    target = resolve_target(client, args.repo, args.pr)
+    pull_request, reviews = fetch_review_context(client, target)
+    actor = current_actor(client)
+    review = select_owned_review(reviews, actor, data.get("review_id"))
+    if "comments" in data:
+        operations = normalize_delete_comments(data, review)
+    else:
+        if review.get("state") != "PENDING":
+            raise InputError("GitHub can delete only pending pull request reviews")
+        database_id = review.get("databaseId")
+        if database_id is None:
+            raise ToolkitError("pending review omitted database ID")
+        operations = [
+            {
+                "database_id": str(database_id),
+                "id": review.get("id"),
+                "type": "delete_review",
+            }
+        ]
+    plan: dict[str, Any] = {
+        "action": "delete",
+        "actor": actor,
+        "applied": False,
+        "operations": operations,
+        "pull_request": pull_request,
+        "review": normalize_review(review, True, 0),
+    }
+    if not args.apply:
+        return plan
+
+    _, latest_reviews = fetch_review_context(client, target)
+    latest_actor = current_actor(client)
+    if latest_actor != actor:
+        raise InputError("current GitHub actor changed before review deletion")
+    latest_review = select_owned_review(latest_reviews, latest_actor, review.get("id"))
+    if "comments" in data:
+        operations = normalize_delete_comments(data, latest_review)
+    else:
+        if latest_review.get("state") != "PENDING":
+            raise InputError("GitHub can delete only pending pull request reviews")
+        database_id = latest_review.get("databaseId")
+        if database_id is None:
+            raise ToolkitError("pending review omitted database ID")
+        operations = [
+            {
+                "database_id": str(database_id),
+                "id": latest_review.get("id"),
+                "type": "delete_review",
+            }
+        ]
+    plan["operations"] = operations
+    plan["review"] = normalize_review(latest_review, True, 0)
+    applied_operations: list[dict[str, Any]] = []
+    plan["mutation"] = {
+        "applied_operations": applied_operations,
+        "attempted_operations": [],
+        "complete": False,
+        "requested_operations": len(operations),
+    }
+    for operation in operations:
+        attempted = {"id": operation["id"], "type": operation["type"]}
+        plan["mutation"]["attempted_operations"].append(attempted)
+        try:
+            if operation["type"] == "delete_review":
+                response = client.run_json(
+                    [
+                        "api",
+                        "--method",
+                        "DELETE",
+                        f"repos/{target.repository}/pulls/{target.pull_request}/reviews/{operation['database_id']}",
+                        "-H",
+                        "Accept: application/vnd.github+json",
+                        "-H",
+                        "X-GitHub-Api-Version: 2022-11-28",
+                    ]
+                )
+                if not isinstance(response, dict) or (
+                    str(response.get("id")) != operation["database_id"]
+                    and str(response.get("node_id")) != str(operation["id"])
+                ):
+                    raise ToolkitError("GitHub returned wrong deleted review identity")
+            else:
+                payload = client.graphql(
+                    DELETE_COMMENT_MUTATION, {"id": operation["id"]}
+                )
+                validate_mutation_id(
+                    payload,
+                    "deletePullRequestReviewComment",
+                    "pullRequestReviewComment",
+                    operation["id"],
+                )
+        except Exception as error:  # noqa: BLE001 - preserve ambiguous write truth
+            plan["applied"] = bool(applied_operations)
+            status = "partial" if applied_operations else "unverified"
+            plan["verification"] = verification(status, error)
+            return plan
+        applied_operations.append({"id": operation["id"], "type": operation["type"]})
+    plan["applied"] = True
+    plan["mutation"]["complete"] = True
+    plan["verification"] = verification("unverified")
+    try:
+        _, refreshed = fetch_review_context(client, target)
+        matches = [
+            item
+            for item in refreshed
+            if str(item.get("id")) == str(review.get("id"))
+            or str(item.get("databaseId")) == str(review.get("databaseId"))
+        ]
+        if "comments" not in data:
+            if matches:
+                raise ToolkitError("deleted pending review remains present in readback")
+        else:
+            if len(matches) != 1 or review_author(matches[0]) != actor:
+                raise ToolkitError("review comment deletion lost review ownership")
+            refreshed_review = dict(matches[0])
+            remaining = {comment.get("id") for comment in refreshed_review["comments"]}
+            deleted = {operation["id"] for operation in operations}
+            if remaining & deleted:
+                raise ToolkitError("deleted review comment remains present in readback")
+            plan["review"] = normalize_review(refreshed_review, True, 0)
+    except Exception as error:  # noqa: BLE001 - report readback as unverified
+        plan["verification"] = verification("unverified", error)
+        return plan
+    plan["verification"] = verification("verified")
     return plan
 
 
@@ -1179,10 +1236,8 @@ def run(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
         return create(args, client)
     if args.command == "update":
         return update(args, client)
-    if args.command == "reconcile":
-        from review_reconcile import reconcile
-
-        return reconcile(args, client)
+    if args.command == "delete":
+        return delete(args, client)
     raise InputError(f"unsupported command: {args.command}")
 
 

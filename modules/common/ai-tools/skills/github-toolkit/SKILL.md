@@ -15,8 +15,9 @@ Route to one mode and load only named reference:
    [issue-discovery.md](references/issue-discovery.md).
 4. **issue-triage** — classify target issue and draft next-step guidance. Read
    [issue-triage.md](references/issue-triage.md).
-5. **pr-review** — review target, then draft or explicitly create pending
-   review. Read [pr-review.md](references/pr-review.md).
+5. **pr-review** — review target, then inspect, create, update, or delete
+   current-actor reviews when explicitly requested. Read
+   [pr-review.md](references/pr-review.md).
 6. **pr-feedback** — inspect or address existing review comments. Read
    [pr-feedback.md](references/pr-feedback.md).
 7. **ci-fix** — inspect failing checks and prepare focused fix context. Read

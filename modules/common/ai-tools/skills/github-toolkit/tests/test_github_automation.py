@@ -15,7 +15,6 @@ import _github
 import issue_scan
 import pr_snapshot
 import review_draft
-import review_reconcile
 import review_threads
 
 HEAD_SHA = "a" * 40
@@ -54,7 +53,7 @@ def review_comment(
 
 def pending_review(
     *,
-    body: str = review_draft.MARKER,
+    body: str = "review body",
     comments: list[dict[str, object]] | None = None,
 ) -> dict[str, object]:
     return {
@@ -289,6 +288,60 @@ class SnapshotAndIssueScanTests(unittest.TestCase):
 
 
 class ReviewDraftTests(unittest.TestCase):
+    def test_cli_exposes_crud_without_submission_event(self) -> None:
+        for command in ("create", "update", "delete"):
+            args = review_draft.parse_args(
+                [
+                    command,
+                    "--repo",
+                    "base/repo",
+                    "--pr",
+                    "7",
+                    "--input",
+                    "review.json",
+                ]
+            )
+            self.assertEqual(args.command, command)
+            self.assertFalse(hasattr(args, "event"))
+
+    def test_inspect_defaults_to_all_current_actor_reviews(self) -> None:
+        owned_pending = pending_review(body="pending")
+        owned_submitted = pending_review(body="submitted")
+        owned_submitted["id"] = "PRR_2"
+        owned_submitted["state"] = "COMMENTED"
+        foreign = pending_review(body="foreign")
+        foreign["id"] = "PRR_3"
+        foreign["author"] = {"login": "other"}
+        args = argparse.Namespace(
+            repo="base/repo",
+            pr="7",
+            all_reviews=False,
+            include_bodies=True,
+            max_body_chars=240,
+        )
+        with (
+            mock.patch.object(
+                review_draft,
+                "resolve_target",
+                return_value=_github.Target("base/repo", 7),
+            ),
+            mock.patch.object(
+                review_draft,
+                "fetch_review_context",
+                return_value=(
+                    pull_request(),
+                    [owned_pending, foreign, owned_submitted],
+                ),
+            ),
+            mock.patch.object(review_draft, "current_actor", return_value="viewer"),
+        ):
+            result = review_draft.inspect(args, mock.Mock())
+
+        self.assertEqual(result["counts"], {"owned": 2, "selected": 2, "total": 3})
+        self.assertEqual(
+            [review["id"] for review in result["reviews"]], ["PRR_1", "PRR_2"]
+        )
+
     def test_patch_parser_distinguishes_left_and_right_lines(self) -> None:
         lines = review_draft.parse_patch_lines(PATCH)
         self.assertIn(21, lines["LEFT"])
@@ -298,7 +351,7 @@ class ReviewDraftTests(unittest.TestCase):
 
     def test_created_review_readback_rejects_wrong_diff_side(self) -> None:
         review = pending_review(
-            body=f"{review_draft.MARKER}\ncontext",
+            body="context",
             comments=[review_comment(body="defect", side="LEFT")],
         )
         requested = [
@@ -314,7 +367,7 @@ class ReviewDraftTests(unittest.TestCase):
             review_draft.verify_created_review(
                 review,
                 "viewer",
-                f"{review_draft.MARKER}\ncontext",
+                "context",
                 requested,
             )
 
@@ -349,7 +402,7 @@ class ReviewDraftTests(unittest.TestCase):
         self.assertEqual(comments[0]["startDiffSide"], "RIGHT")
 
     def test_pending_rest_null_anchor_is_not_certified_from_position(self) -> None:
-        body = f"{review_draft.MARKER}\ncontext"
+        body = "context"
         graphql_comment = review_comment(body="defect")
         review = pending_review(body=body, comments=[graphql_comment])
         client = RecordingClient(
@@ -397,7 +450,7 @@ class ReviewDraftTests(unittest.TestCase):
     def test_create_dry_run_has_no_event_or_mutation(self) -> None:
         data = {
             "expected_head_sha": HEAD_SHA,
-            "body": f"{review_draft.MARKER}\ncontext",
+            "body": "context",
             "comments": [
                 {
                     "path": "src/example.py",
@@ -437,8 +490,49 @@ class ReviewDraftTests(unittest.TestCase):
         self.assertEqual(client.json_calls, [])
         self.assertEqual(client.graphql_calls, [])
 
+    def test_create_inline_only_review_omits_summary_body(self) -> None:
+        data = {
+            "expected_head_sha": HEAD_SHA,
+            "comments": [
+                {
+                    "path": "src/example.py",
+                    "line": 10,
+                    "side": "RIGHT",
+                    "body": "issue (blocking): defect",
+                }
+            ],
+        }
+        args = argparse.Namespace(
+            input="review.json", repo="base/repo", pr="7", apply=False
+        )
+        with (
+            mock.patch.object(review_draft, "read_json_input", return_value=data),
+            mock.patch.object(
+                review_draft,
+                "resolve_target",
+                return_value=_github.Target("base/repo", 7),
+            ),
+            mock.patch.object(
+                review_draft,
+                "fetch_review_context",
+                return_value=(pull_request(), []),
+            ),
+            mock.patch.object(review_draft, "current_actor", return_value="viewer"),
+            mock.patch.object(
+                review_draft,
+                "fetch_diff_files",
+                return_value={"src/example.py": {"patch": PATCH}},
+            ),
+        ):
+            result = review_draft.create(args, mock.Mock())
+
+        self.assertNotIn("body", result["payload"])
+        self.assertEqual(
+            result["payload"]["comments"][0]["body"], data["comments"][0]["body"]
+        )
+
     def test_create_apply_posts_without_event_and_reads_back_pending(self) -> None:
-        body = f"{review_draft.MARKER}\ncontext"
+        body = "context"
         data = {
             "expected_head_sha": HEAD_SHA,
             "body": body,
@@ -503,7 +597,7 @@ class ReviewDraftTests(unittest.TestCase):
         self.assertNotIn("event", posted)
 
     def test_create_apply_rechecks_head_immediately_before_post(self) -> None:
-        body = f"{review_draft.MARKER}\ncontext"
+        body = "context"
         data = {
             "expected_head_sha": HEAD_SHA,
             "body": body,
@@ -552,7 +646,7 @@ class ReviewDraftTests(unittest.TestCase):
     def test_create_apply_rechecks_head_before_post(self) -> None:
         data = {
             "expected_head_sha": HEAD_SHA,
-            "body": f"{review_draft.MARKER}\ncontext",
+            "body": "context",
             "comments": [
                 {
                     "path": "src/example.py",
@@ -592,15 +686,59 @@ class ReviewDraftTests(unittest.TestCase):
 
         self.assertEqual(client.json_calls, [])
 
-    def test_update_rejects_pending_review_owned_by_another_actor(self) -> None:
+    def test_update_rejects_review_owned_by_another_actor(self) -> None:
         review = pending_review()
         review["author"] = {"login": "someone-else"}
         with self.assertRaises(_github.InputError):
-            review_draft.select_pending_review([review], "viewer", "PRR_1")
+            review_draft.select_owned_review([review], "viewer", "PRR_1")
 
-    def test_update_apply_refetches_diff_before_comment_mutation(self) -> None:
+    def test_update_selects_owned_submitted_review(self) -> None:
+        review = pending_review(body="submitted summary")
+        review["state"] = "COMMENTED"
+        selected = review_draft.select_owned_review([review], "viewer", "55")
+        self.assertEqual(selected["id"], "PRR_1")
+
+    def test_update_submitted_review_without_marker(self) -> None:
         data = {
-            "expected_head_sha": HEAD_SHA,
+            "body": "updated teammate summary",
+            "review_id": "PRR_1",
+        }
+        review = pending_review(body="old summary")
+        review["state"] = "COMMENTED"
+        args = argparse.Namespace(
+            input="review.json", repo="base/repo", pr="7", apply=False
+        )
+        with (
+            mock.patch.object(review_draft, "read_json_input", return_value=data),
+            mock.patch.object(
+                review_draft,
+                "resolve_target",
+                return_value=_github.Target("base/repo", 7),
+            ),
+            mock.patch.object(
+                review_draft,
+                "fetch_review_context",
+                return_value=(pull_request(), [review]),
+            ),
+            mock.patch.object(review_draft, "current_actor", return_value="viewer"),
+        ):
+            result = review_draft.update(args, mock.Mock())
+
+        self.assertEqual(result["action"], "update")
+        self.assertEqual(
+            result["operations"],
+            [
+                {
+                    "body": "updated teammate summary",
+                    "id": "PRR_1",
+                    "type": "review_body",
+                }
+            ],
+        )
+        self.assertNotIn("ai-tools", result["operations"][0]["body"])
+
+    def test_update_comment_uses_explicit_id_without_diff_refresh(self) -> None:
+        data = {
             "comments": [{"id": "PRRC_1", "body": "new body"}],
             "review_id": "PRR_1",
         }
@@ -636,11 +774,6 @@ class ReviewDraftTests(unittest.TestCase):
             mock.patch.object(review_draft, "current_actor", return_value="viewer"),
             mock.patch.object(
                 review_draft,
-                "fetch_diff_files",
-                return_value={"src/example.py": {"patch": PATCH}},
-            ) as fetch_diff_files,
-            mock.patch.object(
-                review_draft,
                 "fetch_review_comments_with_sides",
                 side_effect=[
                     original["comments"],
@@ -648,99 +781,22 @@ class ReviewDraftTests(unittest.TestCase):
                     updated["comments"],
                 ],
             ),
-            mock.patch.object(
-                review_draft,
-                "pull_request_oids",
-                return_value={"base_sha": "b" * 40, "head_sha": HEAD_SHA},
-            ),
         ):
             result = review_draft.update(args, client)
 
         self.assertTrue(result["applied"])
-        self.assertEqual(fetch_diff_files.call_count, 2)
         client.graphql.assert_called_once()
         self.assertTrue(result["mutation"]["complete"])
         self.assertEqual(result["verification"]["status"], "verified")
 
-    def test_create_reports_applied_but_unverified_for_missing_side(self) -> None:
-        body = f"{review_draft.MARKER}\ncontext"
-        data = {
-            "expected_head_sha": HEAD_SHA,
-            "body": body,
-            "comments": [
-                {
-                    "path": "src/example.py",
-                    "line": 10,
-                    "side": "RIGHT",
-                    "body": "defect",
-                }
-            ],
-        }
-        created = pending_review(
-            body=body,
-            comments=[review_comment(body="defect", side="RIGHT")],
-        )
-        unprovable = review_comment(body="defect", side="RIGHT")
-        unprovable["diffSide"] = None
-        unprovable["position"] = 4
-        args = argparse.Namespace(
-            input="review.json", repo="base/repo", pr="7", apply=True
-        )
-        client = RecordingClient({"node_id": "PRR_1"})
-        with (
-            mock.patch.object(review_draft, "read_json_input", return_value=data),
-            mock.patch.object(
-                review_draft,
-                "resolve_target",
-                return_value=_github.Target("base/repo", 7),
-            ),
-            mock.patch.object(
-                review_draft,
-                "fetch_review_context",
-                side_effect=[
-                    (pull_request(), []),
-                    (pull_request(), []),
-                    (pull_request(), [created]),
-                ],
-            ),
-            mock.patch.object(review_draft, "current_actor", return_value="viewer"),
-            mock.patch.object(
-                review_draft,
-                "fetch_diff_files",
-                return_value={"src/example.py": {"patch": PATCH}},
-            ),
-            mock.patch.object(
-                review_draft,
-                "pull_request_oids",
-                return_value={"base_sha": "b" * 40, "head_sha": HEAD_SHA},
-            ),
-            mock.patch.object(
-                review_draft,
-                "fetch_review_comments_with_sides",
-                return_value=[unprovable],
-            ),
-        ):
-            result = review_draft.create(args, client)
-
-        self.assertTrue(result["applied"])
-        self.assertEqual(result["review_node_id"], "PRR_1")
-        self.assertEqual(result["verification"]["status"], "unverified")
-        self.assertIn("anchor/body", result["verification"]["detail"])
-
-    def test_update_reports_completed_write_when_readback_fails(self) -> None:
-        data = {
-            "expected_head_sha": HEAD_SHA,
-            "body": f"{review_draft.MARKER}\nnew context",
-            "review_id": "PRR_1",
-        }
-        original = pending_review(body=f"{review_draft.MARKER}\nold context")
+    def test_update_ambiguous_first_write_records_attempt(self) -> None:
+        data = {"body": "new body", "review_id": "PRR_1"}
+        original = pending_review(body="old body")
         args = argparse.Namespace(
             input="review.json", repo="base/repo", pr="7", apply=True
         )
         client = mock.Mock()
-        client.graphql.return_value = {
-            "data": {"updatePullRequestReview": {"pullRequestReview": {"id": "PRR_1"}}}
-        }
+        client.graphql.side_effect = _github.ToolkitError("connection reset")
         with (
             mock.patch.object(review_draft, "read_json_input", return_value=data),
             mock.patch.object(
@@ -754,45 +810,25 @@ class ReviewDraftTests(unittest.TestCase):
                 side_effect=[
                     (pull_request(), [original]),
                     (pull_request(), [original]),
-                    _github.ToolkitError("readback unavailable"),
                 ],
             ),
             mock.patch.object(review_draft, "current_actor", return_value="viewer"),
-            mock.patch.object(
-                review_draft,
-                "pull_request_oids",
-                return_value={"base_sha": "b" * 40, "head_sha": HEAD_SHA},
-            ),
         ):
             result = review_draft.update(args, client)
 
-        self.assertTrue(result["applied"])
-        self.assertTrue(result["mutation"]["complete"])
+        self.assertFalse(result["applied"])
+        self.assertEqual(
+            result["mutation"]["attempted_operations"],
+            [{"id": "PRR_1", "type": "review_body"}],
+        )
         self.assertEqual(result["verification"]["status"], "unverified")
 
-    def test_update_reports_partial_operations_without_retrying_first(self) -> None:
-        data = {
-            "expected_head_sha": HEAD_SHA,
-            "body": f"{review_draft.MARKER}\nnew context",
-            "comments": [{"id": "PRRC_1", "body": "new body"}],
-            "review_id": "PRR_1",
-        }
-        original = pending_review(
-            body=f"{review_draft.MARKER}\nold context",
-            comments=[review_comment(body="old body")],
-        )
+    def test_update_identical_state_is_noop(self) -> None:
+        data = {"body": "same body", "review_id": "PRR_1"}
+        review = pending_review(body="same body")
         args = argparse.Namespace(
-            input="review.json", repo="base/repo", pr="7", apply=True
+            input="review.json", repo="base/repo", pr="7", apply=False
         )
-        client = mock.Mock()
-        client.graphql.side_effect = [
-            {
-                "data": {
-                    "updatePullRequestReview": {"pullRequestReview": {"id": "PRR_1"}}
-                }
-            },
-            _github.ToolkitError("second mutation unavailable"),
-        ]
         with (
             mock.patch.object(review_draft, "read_json_input", return_value=data),
             mock.patch.object(
@@ -803,48 +839,50 @@ class ReviewDraftTests(unittest.TestCase):
             mock.patch.object(
                 review_draft,
                 "fetch_review_context",
-                side_effect=[
-                    (pull_request(), [original]),
-                    (pull_request(), [original]),
-                ],
+                return_value=(pull_request(), [review]),
             ),
             mock.patch.object(review_draft, "current_actor", return_value="viewer"),
-            mock.patch.object(
-                review_draft,
-                "fetch_diff_files",
-                return_value={"src/example.py": {"patch": PATCH}},
-            ),
-            mock.patch.object(
-                review_draft,
-                "fetch_review_comments_with_sides",
-                side_effect=[original["comments"], original["comments"]],
-            ),
-            mock.patch.object(
-                review_draft,
-                "pull_request_oids",
-                return_value={"base_sha": "b" * 40, "head_sha": HEAD_SHA},
-            ),
         ):
-            result = review_draft.update(args, client)
+            result = review_draft.update(args, mock.Mock())
 
-        self.assertTrue(result["applied"])
-        self.assertFalse(result["mutation"]["complete"])
-        self.assertEqual(len(result["mutation"]["applied_operations"]), 1)
-        self.assertEqual(result["verification"]["status"], "partial")
+        self.assertEqual(result["action"], "noop")
+        self.assertEqual(result["operations"], [])
 
-    def test_update_apply_rechecks_head_before_mutation(self) -> None:
-        data = {
-            "expected_head_sha": HEAD_SHA,
-            "body": f"{review_draft.MARKER}\nnew context",
-            "review_id": "PRR_1",
-        }
-        review = pending_review(body=f"{review_draft.MARKER}\nold context")
-        stale_pull_request = pull_request()
-        stale_pull_request["head_sha"] = "b" * 40
+    def test_delete_pending_review_plans_explicit_rest_id(self) -> None:
+        data = {"review_id": "PRR_1"}
+        review = pending_review()
+        args = argparse.Namespace(
+            input="review.json", repo="base/repo", pr="7", apply=False
+        )
+        with (
+            mock.patch.object(review_draft, "read_json_input", return_value=data),
+            mock.patch.object(
+                review_draft,
+                "resolve_target",
+                return_value=_github.Target("base/repo", 7),
+            ),
+            mock.patch.object(
+                review_draft,
+                "fetch_review_context",
+                return_value=(pull_request(), [review]),
+            ),
+            mock.patch.object(review_draft, "current_actor", return_value="viewer"),
+        ):
+            result = review_draft.delete(args, mock.Mock())
+
+        self.assertEqual(
+            result["operations"],
+            [{"database_id": "55", "id": "PRR_1", "type": "delete_review"}],
+        )
+        self.assertFalse(result["applied"])
+
+    def test_delete_pending_review_applies_and_verifies_absence(self) -> None:
+        data = {"review_id": "PRR_1"}
+        review = pending_review()
         args = argparse.Namespace(
             input="review.json", repo="base/repo", pr="7", apply=True
         )
-        client = RecordingClient()
+        client = RecordingClient({"id": 55})
         with (
             mock.patch.object(review_draft, "read_json_input", return_value=data),
             mock.patch.object(
@@ -857,371 +895,97 @@ class ReviewDraftTests(unittest.TestCase):
                 "fetch_review_context",
                 side_effect=[
                     (pull_request(), [review]),
-                    (stale_pull_request, [review]),
+                    (pull_request(), [review]),
+                    (pull_request(), []),
                 ],
             ),
             mock.patch.object(review_draft, "current_actor", return_value="viewer"),
-            self.assertRaises(_github.InputError),
         ):
-            review_draft.update(args, client)
+            result = review_draft.delete(args, client)
 
-        self.assertEqual(client.graphql_calls, [])
-
-    def test_unknown_event_field_is_always_rejected(self) -> None:
-        with self.assertRaisesRegex(_github.InputError, "cannot submit"):
-            review_draft._only_keys({"event": "APPROVE"}, set(), "input")
-
-
-class ReviewReconcileTests(unittest.TestCase):
-    def desired_comment(
-        self,
-        key: str,
-        body: str = "issue (blocking): defect",
-        *,
-        line: int = 10,
-        side: str = "RIGHT",
-    ) -> dict[str, object]:
-        return review_reconcile.normalize_desired_comments(
-            [
-                {
-                    "body": body,
-                    "key": key,
-                    "line": line,
-                    "path": "src/example.py",
-                    "side": side,
-                }
-            ]
-        )[0]
-
-    def managed_comment(
-        self,
-        key: str,
-        body: str = "issue (blocking): defect",
-        *,
-        identifier: str = "PRRC_1",
-        line: int = 10,
-        side: str = "RIGHT",
-    ) -> dict[str, object]:
-        return review_comment(
-            identifier=identifier,
-            body=review_reconcile.render_comment_body(body, key),
-            line=line,
-            side=side,
-        )
-
-    def test_cli_exposes_reconcile_without_submission_event(self) -> None:
-        args = review_draft.parse_args(
-            [
-                "reconcile",
-                "--repo",
-                "base/repo",
-                "--pr",
-                "7",
-                "--input",
-                "review.json",
-            ]
-        )
-
-        self.assertEqual(args.command, "reconcile")
-        self.assertFalse(args.apply)
-        self.assertFalse(hasattr(args, "event"))
-
-    def test_normalize_allows_body_only_and_rejects_duplicate_keys(self) -> None:
-        normalized = review_reconcile.normalize_input(
-            {
-                "body": f"{review_draft.MARKER}\nNo issues found.",
-                "expected_head_sha": HEAD_SHA,
-            },
-            pull_request(),
-        )
-        self.assertEqual(normalized["comments"], [])
-
-        comment = {
-            "body": "defect",
-            "key": "same-key",
-            "line": 10,
-            "path": "src/example.py",
-            "side": "RIGHT",
-        }
-        with self.assertRaisesRegex(_github.InputError, "duplicate"):
-            review_reconcile.normalize_desired_comments([comment, comment])
-
-    def test_historical_marked_review_does_not_block_new_cycle(self) -> None:
-        submitted = pending_review(body=review_draft.MARKER)
-        submitted["state"] = "COMMENTED"
-
-        selected = review_reconcile.select_managed_pending_review([submitted], "viewer")
-
-        self.assertIsNone(selected)
-
-    def test_foreign_marked_pending_review_is_rejected(self) -> None:
-        review = pending_review(body=review_draft.MARKER)
-        review["author"] = {"login": "other"}
-
-        with self.assertRaisesRegex(_github.InputError, "another actor"):
-            review_reconcile.select_managed_pending_review([review], "viewer")
-
-    def test_plan_create_supports_body_only_review(self) -> None:
-        desired = {
-            "body": f"{review_draft.MARKER}\nNo issues found.",
-            "comments": [],
-            "expected_head_sha": HEAD_SHA,
-        }
-
-        plan = review_reconcile.plan_create_review(pull_request(), "viewer", desired)
-
-        self.assertEqual(plan["action"], "create")
-        self.assertNotIn("comments", plan["payload"])
-
-    def test_plan_reconciles_full_managed_comment_lifecycle(self) -> None:
-        exact = self.managed_comment("keep", identifier="PRRC_KEEP")
-        update = self.managed_comment("update", "old body", identifier="PRRC_UPDATE")
-        move = self.managed_comment(
-            "move", identifier="PRRC_MOVE", line=21, side="LEFT"
-        )
-        remove = self.managed_comment("remove", identifier="PRRC_REMOVE")
-        unmanaged = review_comment(identifier="PRRC_USER", body="user-authored", line=9)
-        review = pending_review(
-            body=f"{review_draft.MARKER}\nold context",
-            comments=[exact, update, move, remove, unmanaged],
-        )
-        desired = {
-            "body": f"{review_draft.MARKER}\nnew context",
-            "comments": [
-                self.desired_comment("keep"),
-                self.desired_comment("update", "new body"),
-                self.desired_comment("move"),
-                self.desired_comment("add"),
-            ],
-            "expected_head_sha": HEAD_SHA,
-        }
-
-        plan = review_reconcile.plan_existing_review(
-            pull_request(), review, "viewer", desired
-        )
-
-        types = [operation["type"] for operation in plan["operations"]]
-        self.assertEqual(
-            types,
-            [
-                "update_review",
-                "add_comment",
-                "add_comment",
-                "update_comment",
-                "delete_comment",
-                "delete_comment",
-            ],
-        )
-        self.assertEqual(plan["preserved_unmanaged_comments"], 1)
-        self.assertLess(types.index("add_comment"), types.index("delete_comment"))
-
-    def test_partial_replacement_converges_to_delete_old_anchor(self) -> None:
-        old = self.managed_comment("move", identifier="PRRC_OLD", line=21, side="LEFT")
-        replacement = self.managed_comment("move", identifier="PRRC_NEW")
-        review = pending_review(comments=[old, replacement])
-        desired = {
-            "body": review_draft.MARKER,
-            "comments": [self.desired_comment("move")],
-            "expected_head_sha": HEAD_SHA,
-        }
-
-        plan = review_reconcile.plan_existing_review(
-            pull_request(), review, "viewer", desired
-        )
-
-        self.assertEqual(
-            plan["operations"],
-            [{"id": "PRRC_OLD", "key": "move", "type": "delete_comment"}],
-        )
-
-    def test_plan_adopts_one_legacy_comment_at_desired_anchor(self) -> None:
-        legacy = review_comment(identifier="PRRC_LEGACY", body="same finding")
-        review = pending_review(comments=[legacy])
-        desired = {
-            "body": review_draft.MARKER,
-            "comments": [self.desired_comment("adopt", "same finding")],
-            "expected_head_sha": HEAD_SHA,
-        }
-
-        plan = review_reconcile.plan_existing_review(
-            pull_request(), review, "viewer", desired
-        )
-
-        self.assertEqual(plan["operations"][0]["type"], "update_comment")
-        self.assertEqual(plan["operations"][0]["id"], "PRRC_LEGACY")
-        self.assertEqual(plan["preserved_unmanaged_comments"], 0)
-
-    def test_plan_preserves_different_unkeyed_comment_at_desired_anchor(self) -> None:
-        manual = review_comment(identifier="PRRC_MANUAL", body="manual comment")
-        review = pending_review(comments=[manual])
-        desired = {
-            "body": review_draft.MARKER,
-            "comments": [self.desired_comment("safe", "different finding")],
-            "expected_head_sha": HEAD_SHA,
-        }
-
-        plan = review_reconcile.plan_existing_review(
-            pull_request(), review, "viewer", desired
-        )
-
-        self.assertEqual(plan["operations"][0]["type"], "add_comment")
-        self.assertEqual(plan["preserved_unmanaged_comments"], 1)
-
-    def test_apply_orders_add_before_delete_and_records_receipts(self) -> None:
-        desired = {
-            "body": review_draft.MARKER,
-            "comments": [self.desired_comment("move")],
-            "expected_head_sha": HEAD_SHA,
-        }
-        plan = {
-            "action": "update",
-            "actor": "viewer",
-            "applied": False,
-            "desired": desired,
-            "operations": [
-                {
-                    **review_reconcile.operation_comment(desired["comments"][0]),
-                    "type": "add_comment",
-                },
-                {"id": "PRRC_OLD", "key": "move", "type": "delete_comment"},
-            ],
-            "pull_request": pull_request(),
-            "review": {"id": "PRR_1"},
-        }
-        client = mock.Mock()
-        with (
-            mock.patch.object(review_draft, "verify_current_oids"),
-            mock.patch.object(
-                review_reconcile,
-                "apply_operation",
-                side_effect=[
-                    {"id": "PRRC_NEW", "key": "move", "type": "add_comment"},
-                    {"id": "PRRC_OLD", "key": "move", "type": "delete_comment"},
-                ],
-            ) as apply_operation,
-            mock.patch.object(
-                review_reconcile,
-                "verify_desired_state",
-                return_value={"id": "PRR_1"},
-            ),
-        ):
-            result = review_reconcile.apply_plan(
-                client, _github.Target("base/repo", 7), plan
-            )
-
-        self.assertEqual(
-            [call.args[2]["type"] for call in apply_operation.call_args_list],
-            ["add_comment", "delete_comment"],
-        )
-        self.assertTrue(result["mutation"]["complete"])
+        self.assertTrue(result["applied"])
         self.assertEqual(result["verification"]["status"], "verified")
+        command, payload = client.json_calls[0]
+        self.assertIn("DELETE", command)
+        self.assertIn("reviews/55", " ".join(command))
+        self.assertIsNone(payload)
 
-    def test_ambiguous_add_failure_records_attempt_for_safe_reconcile(self) -> None:
-        desired = {
-            "body": review_draft.MARKER,
-            "comments": [self.desired_comment("add")],
-            "expected_head_sha": HEAD_SHA,
-        }
-        operation = {
-            **review_reconcile.operation_comment(desired["comments"][0]),
-            "type": "add_comment",
-        }
-        plan = {
-            "action": "update",
-            "actor": "viewer",
-            "applied": False,
-            "desired": desired,
-            "operations": [operation],
-            "pull_request": pull_request(),
-            "review": {"id": "PRR_1"},
-        }
-        with (
-            mock.patch.object(review_draft, "verify_current_oids"),
-            mock.patch.object(
-                review_reconcile,
-                "apply_operation",
-                side_effect=_github.ToolkitError("connection reset"),
-            ),
-        ):
-            result = review_reconcile.apply_plan(
-                mock.Mock(), _github.Target("base/repo", 7), plan
-            )
-
-        self.assertFalse(result["applied"])
-        self.assertEqual(
-            result["mutation"]["attempted_operations"],
-            [{"key": "add", "type": "add_comment"}],
+    def test_delete_submitted_review_is_rejected_by_github_boundary(self) -> None:
+        data = {"review_id": "PRR_1"}
+        review = pending_review()
+        review["state"] = "COMMENTED"
+        args = argparse.Namespace(
+            input="review.json", repo="base/repo", pr="7", apply=False
         )
-        self.assertEqual(result["verification"]["status"], "unverified")
-
-    def test_update_response_validator_rejects_wrong_identity(self) -> None:
-        with self.assertRaisesRegex(_github.ToolkitError, "wrong"):
-            review_draft.validate_mutation_id(
-                {
-                    "data": {
-                        "updatePullRequestReviewComment": {
-                            "pullRequestReviewComment": {"id": "PRRC_OTHER"}
-                        }
-                    }
-                },
-                "updatePullRequestReviewComment",
-                "pullRequestReviewComment",
-                "PRRC_EXPECTED",
-            )
-
-    def test_verify_desired_state_rejects_wrong_diff_side(self) -> None:
-        desired_comment = self.desired_comment("side")
-        actual = self.managed_comment("side", side="LEFT")
-        review = pending_review(comments=[actual])
-        desired = {
-            "body": review_draft.MARKER,
-            "comments": [desired_comment],
-            "expected_head_sha": HEAD_SHA,
-        }
-        client = mock.Mock()
         with (
+            mock.patch.object(review_draft, "read_json_input", return_value=data),
             mock.patch.object(
                 review_draft,
-                "pull_request_oids",
-                return_value={"base_sha": "b" * 40, "head_sha": HEAD_SHA},
+                "resolve_target",
+                return_value=_github.Target("base/repo", 7),
             ),
             mock.patch.object(
                 review_draft,
                 "fetch_review_context",
                 return_value=(pull_request(), [review]),
             ),
+            mock.patch.object(review_draft, "current_actor", return_value="viewer"),
+            self.assertRaisesRegex(_github.InputError, "only pending"),
+        ):
+            review_draft.delete(args, mock.Mock())
+
+    def test_delete_submitted_review_comment_by_explicit_id(self) -> None:
+        data = {
+            "review_id": "PRR_1",
+            "comments": [{"id": "PRRC_1"}],
+        }
+        original = pending_review(comments=[review_comment()])
+        original["state"] = "COMMENTED"
+        updated = pending_review(comments=[])
+        updated["state"] = "COMMENTED"
+        args = argparse.Namespace(
+            input="review.json", repo="base/repo", pr="7", apply=True
+        )
+        client = mock.Mock()
+        client.graphql.return_value = {
+            "data": {
+                "deletePullRequestReviewComment": {
+                    "pullRequestReviewComment": {"id": "PRRC_1"}
+                }
+            }
+        }
+        with (
+            mock.patch.object(review_draft, "read_json_input", return_value=data),
+            mock.patch.object(
+                review_draft,
+                "resolve_target",
+                return_value=_github.Target("base/repo", 7),
+            ),
+            mock.patch.object(
+                review_draft,
+                "fetch_review_context",
+                side_effect=[
+                    (pull_request(), [original]),
+                    (pull_request(), [original]),
+                    (pull_request(), [updated]),
+                ],
+            ),
+            mock.patch.object(review_draft, "current_actor", return_value="viewer"),
             mock.patch.object(
                 review_draft,
                 "fetch_review_comments_with_sides",
-                return_value=[actual],
+                side_effect=[original["comments"], original["comments"], []],
             ),
-            self.assertRaisesRegex(_github.ToolkitError, "side"),
         ):
-            review_reconcile.verify_desired_state(
-                client,
-                _github.Target("base/repo", 7),
-                "viewer",
-                desired,
-                "b" * 40,
-            )
+            result = review_draft.delete(args, client)
 
-    def test_build_plan_rejects_draft_pull_request(self) -> None:
-        draft = pull_request()
-        draft["is_draft"] = True
-        with (
-            mock.patch.object(
-                review_draft, "fetch_review_context", return_value=(draft, [])
-            ),
-            self.assertRaisesRegex(_github.InputError, "draft"),
-        ):
-            review_reconcile.build_plan(
-                mock.Mock(),
-                _github.Target("base/repo", 7),
-                {
-                    "body": review_draft.MARKER,
-                    "expected_head_sha": HEAD_SHA,
-                },
-            )
+        self.assertTrue(result["applied"])
+        self.assertTrue(result["mutation"]["complete"])
+        self.assertEqual(result["verification"]["status"], "verified")
+
+    def test_unknown_event_field_is_always_rejected(self) -> None:
+        with self.assertRaisesRegex(_github.InputError, "cannot submit"):
+            review_draft._only_keys({"event": "APPROVE"}, set(), "input")
 
 
 class ReviewThreadTests(unittest.TestCase):
