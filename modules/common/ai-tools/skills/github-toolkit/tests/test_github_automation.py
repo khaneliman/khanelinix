@@ -15,6 +15,7 @@ import _github
 import issue_scan
 import pr_snapshot
 import review_draft
+import review_reconcile
 import review_threads
 
 HEAD_SHA = "a" * 40
@@ -72,8 +73,11 @@ def pull_request() -> dict[str, object]:
     return {
         "base_sha": "b" * 40,
         "head_sha": HEAD_SHA,
+        "id": "PR_1",
+        "is_draft": False,
         "number": 7,
         "repository": "base/repo",
+        "state": "OPEN",
         "url": "https://github.com/base/repo/pull/7",
     }
 
@@ -637,6 +641,15 @@ class ReviewDraftTests(unittest.TestCase):
             ) as fetch_diff_files,
             mock.patch.object(
                 review_draft,
+                "fetch_review_comments_with_sides",
+                side_effect=[
+                    original["comments"],
+                    original["comments"],
+                    updated["comments"],
+                ],
+            ),
+            mock.patch.object(
+                review_draft,
                 "pull_request_oids",
                 return_value={"base_sha": "b" * 40, "head_sha": HEAD_SHA},
             ),
@@ -725,7 +738,9 @@ class ReviewDraftTests(unittest.TestCase):
             input="review.json", repo="base/repo", pr="7", apply=True
         )
         client = mock.Mock()
-        client.graphql.return_value = {"data": {"ok": True}}
+        client.graphql.return_value = {
+            "data": {"updatePullRequestReview": {"pullRequestReview": {"id": "PRR_1"}}}
+        }
         with (
             mock.patch.object(review_draft, "read_json_input", return_value=data),
             mock.patch.object(
@@ -771,7 +786,11 @@ class ReviewDraftTests(unittest.TestCase):
         )
         client = mock.Mock()
         client.graphql.side_effect = [
-            {"data": {"ok": True}},
+            {
+                "data": {
+                    "updatePullRequestReview": {"pullRequestReview": {"id": "PRR_1"}}
+                }
+            },
             _github.ToolkitError("second mutation unavailable"),
         ]
         with (
@@ -794,6 +813,11 @@ class ReviewDraftTests(unittest.TestCase):
                 review_draft,
                 "fetch_diff_files",
                 return_value={"src/example.py": {"patch": PATCH}},
+            ),
+            mock.patch.object(
+                review_draft,
+                "fetch_review_comments_with_sides",
+                side_effect=[original["comments"], original["comments"]],
             ),
             mock.patch.object(
                 review_draft,
@@ -846,6 +870,358 @@ class ReviewDraftTests(unittest.TestCase):
     def test_unknown_event_field_is_always_rejected(self) -> None:
         with self.assertRaisesRegex(_github.InputError, "cannot submit"):
             review_draft._only_keys({"event": "APPROVE"}, set(), "input")
+
+
+class ReviewReconcileTests(unittest.TestCase):
+    def desired_comment(
+        self,
+        key: str,
+        body: str = "issue (blocking): defect",
+        *,
+        line: int = 10,
+        side: str = "RIGHT",
+    ) -> dict[str, object]:
+        return review_reconcile.normalize_desired_comments(
+            [
+                {
+                    "body": body,
+                    "key": key,
+                    "line": line,
+                    "path": "src/example.py",
+                    "side": side,
+                }
+            ]
+        )[0]
+
+    def managed_comment(
+        self,
+        key: str,
+        body: str = "issue (blocking): defect",
+        *,
+        identifier: str = "PRRC_1",
+        line: int = 10,
+        side: str = "RIGHT",
+    ) -> dict[str, object]:
+        return review_comment(
+            identifier=identifier,
+            body=review_reconcile.render_comment_body(body, key),
+            line=line,
+            side=side,
+        )
+
+    def test_cli_exposes_reconcile_without_submission_event(self) -> None:
+        args = review_draft.parse_args(
+            [
+                "reconcile",
+                "--repo",
+                "base/repo",
+                "--pr",
+                "7",
+                "--input",
+                "review.json",
+            ]
+        )
+
+        self.assertEqual(args.command, "reconcile")
+        self.assertFalse(args.apply)
+        self.assertFalse(hasattr(args, "event"))
+
+    def test_normalize_allows_body_only_and_rejects_duplicate_keys(self) -> None:
+        normalized = review_reconcile.normalize_input(
+            {
+                "body": f"{review_draft.MARKER}\nNo issues found.",
+                "expected_head_sha": HEAD_SHA,
+            },
+            pull_request(),
+        )
+        self.assertEqual(normalized["comments"], [])
+
+        comment = {
+            "body": "defect",
+            "key": "same-key",
+            "line": 10,
+            "path": "src/example.py",
+            "side": "RIGHT",
+        }
+        with self.assertRaisesRegex(_github.InputError, "duplicate"):
+            review_reconcile.normalize_desired_comments([comment, comment])
+
+    def test_historical_marked_review_does_not_block_new_cycle(self) -> None:
+        submitted = pending_review(body=review_draft.MARKER)
+        submitted["state"] = "COMMENTED"
+
+        selected = review_reconcile.select_managed_pending_review([submitted], "viewer")
+
+        self.assertIsNone(selected)
+
+    def test_foreign_marked_pending_review_is_rejected(self) -> None:
+        review = pending_review(body=review_draft.MARKER)
+        review["author"] = {"login": "other"}
+
+        with self.assertRaisesRegex(_github.InputError, "another actor"):
+            review_reconcile.select_managed_pending_review([review], "viewer")
+
+    def test_plan_create_supports_body_only_review(self) -> None:
+        desired = {
+            "body": f"{review_draft.MARKER}\nNo issues found.",
+            "comments": [],
+            "expected_head_sha": HEAD_SHA,
+        }
+
+        plan = review_reconcile.plan_create_review(pull_request(), "viewer", desired)
+
+        self.assertEqual(plan["action"], "create")
+        self.assertNotIn("comments", plan["payload"])
+
+    def test_plan_reconciles_full_managed_comment_lifecycle(self) -> None:
+        exact = self.managed_comment("keep", identifier="PRRC_KEEP")
+        update = self.managed_comment("update", "old body", identifier="PRRC_UPDATE")
+        move = self.managed_comment(
+            "move", identifier="PRRC_MOVE", line=21, side="LEFT"
+        )
+        remove = self.managed_comment("remove", identifier="PRRC_REMOVE")
+        unmanaged = review_comment(identifier="PRRC_USER", body="user-authored", line=9)
+        review = pending_review(
+            body=f"{review_draft.MARKER}\nold context",
+            comments=[exact, update, move, remove, unmanaged],
+        )
+        desired = {
+            "body": f"{review_draft.MARKER}\nnew context",
+            "comments": [
+                self.desired_comment("keep"),
+                self.desired_comment("update", "new body"),
+                self.desired_comment("move"),
+                self.desired_comment("add"),
+            ],
+            "expected_head_sha": HEAD_SHA,
+        }
+
+        plan = review_reconcile.plan_existing_review(
+            pull_request(), review, "viewer", desired
+        )
+
+        types = [operation["type"] for operation in plan["operations"]]
+        self.assertEqual(
+            types,
+            [
+                "update_review",
+                "add_comment",
+                "add_comment",
+                "update_comment",
+                "delete_comment",
+                "delete_comment",
+            ],
+        )
+        self.assertEqual(plan["preserved_unmanaged_comments"], 1)
+        self.assertLess(types.index("add_comment"), types.index("delete_comment"))
+
+    def test_partial_replacement_converges_to_delete_old_anchor(self) -> None:
+        old = self.managed_comment("move", identifier="PRRC_OLD", line=21, side="LEFT")
+        replacement = self.managed_comment("move", identifier="PRRC_NEW")
+        review = pending_review(comments=[old, replacement])
+        desired = {
+            "body": review_draft.MARKER,
+            "comments": [self.desired_comment("move")],
+            "expected_head_sha": HEAD_SHA,
+        }
+
+        plan = review_reconcile.plan_existing_review(
+            pull_request(), review, "viewer", desired
+        )
+
+        self.assertEqual(
+            plan["operations"],
+            [{"id": "PRRC_OLD", "key": "move", "type": "delete_comment"}],
+        )
+
+    def test_plan_adopts_one_legacy_comment_at_desired_anchor(self) -> None:
+        legacy = review_comment(identifier="PRRC_LEGACY", body="same finding")
+        review = pending_review(comments=[legacy])
+        desired = {
+            "body": review_draft.MARKER,
+            "comments": [self.desired_comment("adopt", "same finding")],
+            "expected_head_sha": HEAD_SHA,
+        }
+
+        plan = review_reconcile.plan_existing_review(
+            pull_request(), review, "viewer", desired
+        )
+
+        self.assertEqual(plan["operations"][0]["type"], "update_comment")
+        self.assertEqual(plan["operations"][0]["id"], "PRRC_LEGACY")
+        self.assertEqual(plan["preserved_unmanaged_comments"], 0)
+
+    def test_plan_preserves_different_unkeyed_comment_at_desired_anchor(self) -> None:
+        manual = review_comment(identifier="PRRC_MANUAL", body="manual comment")
+        review = pending_review(comments=[manual])
+        desired = {
+            "body": review_draft.MARKER,
+            "comments": [self.desired_comment("safe", "different finding")],
+            "expected_head_sha": HEAD_SHA,
+        }
+
+        plan = review_reconcile.plan_existing_review(
+            pull_request(), review, "viewer", desired
+        )
+
+        self.assertEqual(plan["operations"][0]["type"], "add_comment")
+        self.assertEqual(plan["preserved_unmanaged_comments"], 1)
+
+    def test_apply_orders_add_before_delete_and_records_receipts(self) -> None:
+        desired = {
+            "body": review_draft.MARKER,
+            "comments": [self.desired_comment("move")],
+            "expected_head_sha": HEAD_SHA,
+        }
+        plan = {
+            "action": "update",
+            "actor": "viewer",
+            "applied": False,
+            "desired": desired,
+            "operations": [
+                {
+                    **review_reconcile.operation_comment(desired["comments"][0]),
+                    "type": "add_comment",
+                },
+                {"id": "PRRC_OLD", "key": "move", "type": "delete_comment"},
+            ],
+            "pull_request": pull_request(),
+            "review": {"id": "PRR_1"},
+        }
+        client = mock.Mock()
+        with (
+            mock.patch.object(review_draft, "verify_current_oids"),
+            mock.patch.object(
+                review_reconcile,
+                "apply_operation",
+                side_effect=[
+                    {"id": "PRRC_NEW", "key": "move", "type": "add_comment"},
+                    {"id": "PRRC_OLD", "key": "move", "type": "delete_comment"},
+                ],
+            ) as apply_operation,
+            mock.patch.object(
+                review_reconcile,
+                "verify_desired_state",
+                return_value={"id": "PRR_1"},
+            ),
+        ):
+            result = review_reconcile.apply_plan(
+                client, _github.Target("base/repo", 7), plan
+            )
+
+        self.assertEqual(
+            [call.args[2]["type"] for call in apply_operation.call_args_list],
+            ["add_comment", "delete_comment"],
+        )
+        self.assertTrue(result["mutation"]["complete"])
+        self.assertEqual(result["verification"]["status"], "verified")
+
+    def test_ambiguous_add_failure_records_attempt_for_safe_reconcile(self) -> None:
+        desired = {
+            "body": review_draft.MARKER,
+            "comments": [self.desired_comment("add")],
+            "expected_head_sha": HEAD_SHA,
+        }
+        operation = {
+            **review_reconcile.operation_comment(desired["comments"][0]),
+            "type": "add_comment",
+        }
+        plan = {
+            "action": "update",
+            "actor": "viewer",
+            "applied": False,
+            "desired": desired,
+            "operations": [operation],
+            "pull_request": pull_request(),
+            "review": {"id": "PRR_1"},
+        }
+        with (
+            mock.patch.object(review_draft, "verify_current_oids"),
+            mock.patch.object(
+                review_reconcile,
+                "apply_operation",
+                side_effect=_github.ToolkitError("connection reset"),
+            ),
+        ):
+            result = review_reconcile.apply_plan(
+                mock.Mock(), _github.Target("base/repo", 7), plan
+            )
+
+        self.assertFalse(result["applied"])
+        self.assertEqual(
+            result["mutation"]["attempted_operations"],
+            [{"key": "add", "type": "add_comment"}],
+        )
+        self.assertEqual(result["verification"]["status"], "unverified")
+
+    def test_update_response_validator_rejects_wrong_identity(self) -> None:
+        with self.assertRaisesRegex(_github.ToolkitError, "wrong"):
+            review_draft.validate_mutation_id(
+                {
+                    "data": {
+                        "updatePullRequestReviewComment": {
+                            "pullRequestReviewComment": {"id": "PRRC_OTHER"}
+                        }
+                    }
+                },
+                "updatePullRequestReviewComment",
+                "pullRequestReviewComment",
+                "PRRC_EXPECTED",
+            )
+
+    def test_verify_desired_state_rejects_wrong_diff_side(self) -> None:
+        desired_comment = self.desired_comment("side")
+        actual = self.managed_comment("side", side="LEFT")
+        review = pending_review(comments=[actual])
+        desired = {
+            "body": review_draft.MARKER,
+            "comments": [desired_comment],
+            "expected_head_sha": HEAD_SHA,
+        }
+        client = mock.Mock()
+        with (
+            mock.patch.object(
+                review_draft,
+                "pull_request_oids",
+                return_value={"base_sha": "b" * 40, "head_sha": HEAD_SHA},
+            ),
+            mock.patch.object(
+                review_draft,
+                "fetch_review_context",
+                return_value=(pull_request(), [review]),
+            ),
+            mock.patch.object(
+                review_draft,
+                "fetch_review_comments_with_sides",
+                return_value=[actual],
+            ),
+            self.assertRaisesRegex(_github.ToolkitError, "side"),
+        ):
+            review_reconcile.verify_desired_state(
+                client,
+                _github.Target("base/repo", 7),
+                "viewer",
+                desired,
+                "b" * 40,
+            )
+
+    def test_build_plan_rejects_draft_pull_request(self) -> None:
+        draft = pull_request()
+        draft["is_draft"] = True
+        with (
+            mock.patch.object(
+                review_draft, "fetch_review_context", return_value=(draft, [])
+            ),
+            self.assertRaisesRegex(_github.InputError, "draft"),
+        ):
+            review_reconcile.build_plan(
+                mock.Mock(),
+                _github.Target("base/repo", 7),
+                {
+                    "body": review_draft.MARKER,
+                    "expected_head_sha": HEAD_SHA,
+                },
+            )
 
 
 class ReviewThreadTests(unittest.TestCase):

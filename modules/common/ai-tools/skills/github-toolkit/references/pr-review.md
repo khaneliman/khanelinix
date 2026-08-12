@@ -30,16 +30,9 @@ review. Use [pr-feedback.md](pr-feedback.md) for existing review comments.
 Never submit pending review, approve, request changes, push, or edit source.
 Leave final publication to user in GitHub UI.
 
-## Pending Review Helper
+## Pending Review Reconciler
 
-Inspect pending and marked reviews before any write:
-
-```bash
-python "<path-to-skill>/scripts/review_draft.py" inspect \
-  --repo "OWNER/REPO" --pr "NUMBER_OR_URL" --include-bodies
-```
-
-Create input:
+Declare desired pending-review state. Give every inline finding a stable key:
 
 ```json
 {
@@ -47,6 +40,7 @@ Create input:
   "body": "<!-- ai-tools:review-pr -->\nReview context.",
   "comments": [
     {
+      "key": "validated-defect-name",
       "path": "path/to/file",
       "start_line": 10,
       "line": 12,
@@ -57,27 +51,37 @@ Create input:
 }
 ```
 
-Plan first; add `--apply` only for explicitly requested pending-review creation:
+Use an empty `comments` array for a body-only or no-findings review. Plan first.
+Add `--apply` only when user explicitly requested pending-review creation or
+update:
 
 ```bash
-python "<path-to-skill>/scripts/review_draft.py" create \
+python "<path-to-skill>/scripts/review_draft.py" reconcile \
   --repo "OWNER/REPO" --pr "NUMBER_OR_URL" --input review.json
 ```
 
-Update input identifies owned draft comments by GraphQL `id`, REST
-`database_id`, or exact `path`/`start_line`/`line`, and supplies replacement
-`body`. Review `body` and `review_id` are optional. Plan then apply with the
-same command shape using `update`.
+Reconciler discovers current actor and pending review. It selects create,
+update, or no-op. It adds, updates, relocates, and removes keyed comments while
+preserving unkeyed comments. Submitted marked reviews do not block a later
+review cycle. It adopts one legacy unkeyed comment only when its anchor and
+visible body match a desired keyed comment. Re-running same desired input
+converges after partial writes.
 
-Helper enforces exact head SHA, current-actor ownership, pending state, one
-marker, and current diff anchors. It rejects unknown fields and has no review
-submission event surface.
+Reconciler enforces open non-draft state, exact head and base SHAs,
+current-actor ownership, one review marker, unique comment keys, and current
+diff anchors. It rejects unknown fields and has no review-submission event
+surface. Use helper for supported review mechanics. Do not discover or assemble
+ad hoc GitHub review mutations.
 
 After `--apply`, inspect `applied`, `mutation`, and `verification.status`.
-`applied: true` with `unverified` means GitHub accepted the write but readback
-could not prove every requested anchor; inspect current draft and do not retry
-blindly. `partial` lists operations already applied before a later update
-failed. Only `verified` proves post-write state and exact anchors.
+`unverified` means a write may have completed without exact readback. `partial`
+lists attempted and confirmed operations before a later update fails. Run same
+reconcile input again. Reconciler reads current state and plans only remaining
+work. Only `verified` proves exact desired review body, keyed comments, anchors,
+pending state, actor, and PR revisions.
+
+Legacy `inspect`, `create`, and `update` commands remain for compatibility.
+Prefer `reconcile` for new workflows.
 
 ## High-Signal Review Policy
 
