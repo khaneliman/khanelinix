@@ -65,9 +65,9 @@ in
 
   # SP5100 TCO hardware watchdog: recover automatically from the recurring
   # hard freeze during reboot/shutdown instead of hanging until power-cycled.
-  systemd.watchdog = {
-    runtimeTime = "2min";
-    rebootTime = "2min";
+  systemd.settings.Manager = {
+    RuntimeWatchdogSec = "2min";
+    RebootWatchdogSec = "2min";
   };
 
   khanelinix = {

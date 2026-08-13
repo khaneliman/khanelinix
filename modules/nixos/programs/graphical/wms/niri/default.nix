@@ -1,5 +1,6 @@
 {
   config,
+  options,
   lib,
   pkgs,
   inputs,
@@ -7,33 +8,43 @@
 }:
 let
   inherit (lib)
-    mkBefore
-    mkDefault
+    literalExpression
     mkIf
+    mkOption
     types
     ;
-  inherit (lib.khanelinix) enabled mkOpt;
+  inherit (lib.khanelinix) enabled;
 
   cfg = config.khanelinix.programs.graphical.wms.niri;
   hasNiri = inputs ? niri;
 in
 {
-  imports = lib.optionals hasNiri [ inputs.niri.nixosModules.niri ];
-
   options.khanelinix.programs.graphical.wms.niri = with types; {
     enable = lib.mkEnableOption "Niri";
-    package = mkOpt package pkgs.niri-stable "Niri package (stable or unstable).";
+    package = mkOption {
+      type = package;
+      default = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-stable;
+      defaultText = literalExpression "inputs.niri.packages.\${pkgs.stdenv.hostPlatform.system}.niri-stable";
+      description = "Niri package (stable or unstable).";
+    };
   };
 
   config = lib.mkMerge [
     (lib.optionalAttrs hasNiri {
-      niri-flake.cache.enable = mkDefault cfg.enable;
+      home-manager.sharedModules = [
+        inputs.niri.homeModules.config
+        { programs.niri.package = lib.mkForce cfg.package; }
+      ]
+      ++ lib.optionals (options ? stylix) [ inputs.niri.homeModules.stylix ];
     })
 
     (mkIf cfg.enable (
       lib.mkMerge [
         (lib.optionalAttrs hasNiri {
-          nixpkgs.overlays = mkBefore [ inputs.niri.overlays.niri ];
+          nix.settings = {
+            substituters = [ "https://niri.cachix.org" ];
+            trusted-public-keys = [ "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964=" ];
+          };
 
           programs.niri = {
             enable = true;

@@ -9,6 +9,9 @@ _: _final: prev: {
           # DeadlineExceeded('Test took 25951.43ms, which exceeds the deadline
           # of 20000.00ms.')
           "test_approx_jit_timeout"
+          # AssertionError: 15.95… not less than 9.0 : should exit in time
+          # (test/amd/test_mockgpu_invalid.py, same wall-clock class)
+          "test_unsupported_instruction_raises"
         ];
       });
     })

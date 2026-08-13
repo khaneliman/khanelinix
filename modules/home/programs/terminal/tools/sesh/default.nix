@@ -29,7 +29,7 @@ in
     xdg.configFile."sesh/sesh.toml".source =
       let
         seshFormat = pkgs.formats.toml { };
-        githubRoot = if pkgs.stdenv.isLinux then "~/Documents/github" else "~/github";
+        githubRoot = if pkgs.stdenv.hostPlatform.isLinux then "~/Documents/github" else "~/github";
         seshWindowNames = [
           "git"
           "files"

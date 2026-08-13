@@ -191,6 +191,11 @@ in
             ];
             build-users-group = "nixbld";
 
+            # buildDotnetModule emits __sandboxProfile on Darwin (mds, ICU,
+            # SecurityServer); strict `sandbox = true` refuses such drvs
+            # outright. Relaxed still sandboxes everything else.
+            sandbox = lib.mkForce "relaxed";
+
             extra-sandbox-paths = [
               "/System/Library/Frameworks"
               "/System/Library/PrivateFrameworks"

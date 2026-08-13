@@ -23,7 +23,7 @@
         nixpkgsConfig
         // {
           inherit (pkgs.stdenv.hostPlatform) system;
-          overlays = nixpkgsConfig.overlays ++ lib.optional (inputs ? niri) inputs.niri.overlays.niri;
+          inherit (nixpkgsConfig) overlays;
         }
       );
 
@@ -163,7 +163,7 @@
 
       apps.docs =
         let
-          opener = if pkgs.stdenv.isDarwin then "open" else "xdg-open";
+          opener = if pkgs.stdenv.hostPlatform.isDarwin then "open" else "xdg-open";
           openDocs = pkgs.writeShellScript "open-docs" ''
             path="${config.packages.docs-html}/index.html"
             if ! ${opener} "$path"; then

@@ -43,7 +43,6 @@ in
     code-review-graph
     git-surgeon
     hunk
-    opencode
     rtk
     semble
     toon
@@ -52,6 +51,12 @@ in
     workmux
     zat
     ;
+
+  # TODO: re-enable after the 1.18.18 binary stops crashing `--version` inside
+  # the Darwin sandbox (passes outside it, so the artifact itself is fine).
+  opencode = inputs.llm-agents.packages.${system}.opencode.overrideAttrs (_old: {
+    doInstallCheck = false;
+  });
 
   # Treat an enabled V1 feature with V2 disabled as an explicit protocol
   # choice. Otherwise Sol's model-catalog metadata silently promotes sessions
@@ -90,7 +95,9 @@ in
   ncspot = useLldOnDarwin prev.ncspot;
 
   # TODO: remove after the ld64 hardening workaround reaches moonlight-qt.
-  moonlight-qt = useLldOnDarwin prev.moonlight-qt;
+  # TODO: drop the ffmpeg_8 pin after NixOS/nixpkgs#552212 hits the channel;
+  # 6.1.0 still uses AVCodec.pix_fmts, removed in ffmpeg 9.
+  moonlight-qt = useLldOnDarwin (prev.moonlight-qt.override { ffmpeg = final.ffmpeg_8; });
 
   # TODO: remove after the ld64 hardening workaround reaches mkvtoolnix.
   mkvtoolnix = useLldOnDarwin prev.mkvtoolnix;

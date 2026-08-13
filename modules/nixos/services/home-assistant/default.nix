@@ -15,16 +15,23 @@ in
       default = "/mnt/pool/appdata/home-assistant";
       description = "Home Assistant configuration directory.";
     };
+
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8123;
+      description = "Home Assistant HTTP port.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
+    networking.firewall.allowedTCPPorts = [ cfg.port ];
+
     # Restore a Home Assistant backup into this configDir during cutover before
     # depending on integrations. HAOS add-ons/supervisor features may still need
     # native NixOS services or OCI containers.
     services.home-assistant = {
       enable = true;
       inherit (cfg) configDir;
-      openFirewall = true;
 
       extraComponents = [
         "default_config"
@@ -49,7 +56,7 @@ in
 
         http = {
           server_host = "0.0.0.0";
-          server_port = 8123;
+          server_port = cfg.port;
         };
       };
     };

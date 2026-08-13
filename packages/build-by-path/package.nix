@@ -1,4 +1,5 @@
 {
+  lib,
   nix-fast-build,
   writeShellApplication,
   ...
@@ -8,7 +9,7 @@ writeShellApplication {
 
   meta = {
     mainProgram = "build-by-path";
-    license = [ ./LICENSE ];
+    license = lib.licenses.mit;
   };
 
   checkPhase = "";

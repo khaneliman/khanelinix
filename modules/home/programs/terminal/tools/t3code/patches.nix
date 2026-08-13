@@ -14,15 +14,18 @@ let
     };
 in
 map fetchPatch [
+  # Perf pair rebased onto upstream 9e201941a on branch
+  # nix-patches/perf-rebase-9e201941 (command-resolution reworked around
+  # upstream's new PATH-resolution cache).
   {
     name = "perf-lazy-load-terminal-drawer";
-    rev = "ac0e4d194ea67000c9f0a2a1d992046cd5b4ac5d";
-    hash = "sha256-vHeO001OxTaxAkOJ4mCXVJz6Omd8TanMKGqt2jgvOBM=";
+    rev = "bf5a88adcad1e0e06cf563b348b366f3c868bf95";
+    hash = "sha256-I5HT/NBkGuyj2uhlmTbnIkR78XAD48tEBb+vDDZ55q8=";
   }
   {
     name = "perf-concurrent-command-resolution";
-    rev = "ef44192d8c7d1a58b3197b647f823903a316c176";
-    hash = "sha256-Mj8xqESbCEFevkqytSr/BQBwKs1qLEtTET44aVicSd8=";
+    rev = "37aa21367381eeefe09938325a7437b24b5d348d";
+    hash = "sha256-iFQ1EzltopuggTSPtzicNTMPC3yEDjamuReBc9DDyTQ=";
   }
   {
     name = "perf-desktop-readiness-probe-timeout";

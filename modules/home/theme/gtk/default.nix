@@ -106,7 +106,7 @@ in
               ++ (with pkgs; [
                 glib # gsettings
                 gtk3.out # for gtk-launch
-                libappindicator-gtk3
+                libayatana-appindicator
               ]);
 
             pointerCursor = mkIf (cfg.cursor.name != null) (mkDefault {

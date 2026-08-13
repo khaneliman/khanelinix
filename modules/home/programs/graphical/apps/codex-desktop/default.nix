@@ -18,17 +18,14 @@ in
 
   config = mkIf cfg.enable {
 
-    # Upstream module wraps the launcher with CODEX_CLI_PATH and selects the
-    # feature set upstream CI builds and pushes to cachix. Behavior settings
-    # (features, MCP servers, ...) flow through `programs.codex.settings`,
+    # Upstream module selects the feature set that its CI builds and pushes
+    # to Cachix. Behavior settings flow through `programs.codex.settings`,
     # which the desktop app shares with the CLI.
     programs.codexDesktopLinux = lib.optionalAttrs isLinux {
       enable = true;
-      cliPackage = pkgs.codex;
       linuxFeatures = [
         "appshots"
         "node-repl-reaper"
-        "open-target-discovery"
         "persistent-status-panel"
         "shallow-repository-watches"
       ];
@@ -46,9 +43,16 @@ in
 
     # Keep GPU compositing enabled on native Wayland. The Linux launcher
     # otherwise adds --disable-gpu-compositing as a compatibility fallback.
-    home.sessionVariables = mkIf waylandSupport {
-      CODEX_LINUX_RENDERING_MODE = "wayland-gpu";
-    };
+    home.sessionVariables = lib.mkMerge [
+      # The upstream module no longer owns CODEX_CLI_PATH. Keep the desktop
+      # app on the same patched CLI as the terminal integration.
+      (mkIf isLinux {
+        CODEX_CLI_PATH = lib.getExe pkgs.codex;
+      })
+      (mkIf waylandSupport {
+        CODEX_LINUX_RENDERING_MODE = "wayland-gpu";
+      })
+    ];
 
     # The launcher reads its own flags file instead of the generic
     # electron-flags.conf and only seeds a commented template when the file is

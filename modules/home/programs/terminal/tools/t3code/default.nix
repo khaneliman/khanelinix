@@ -63,7 +63,15 @@ in
               src = inputs.t3code;
               inherit pnpm;
               fetcherVersion = 4;
-              hash = "sha256-0rN8r7JpcFyjtQXDEo8Hh7X7Jo5NzV9Ys8bQXs2v180=";
+              # Large platform binaries (rolldown, esbuild) trip pnpm's 60s
+              # default fetch timeout on slow links; the fetch env doesn't
+              # affect the fixed-output hash.
+              prePnpmInstall = ''
+                pnpm config set fetch-timeout 600000
+                pnpm config set fetch-retries 5
+                pnpm config set network-concurrency 8
+              '';
+              hash = "sha256-KxsxNNo/WU0pBy7lqwxU1OGQtZA7agTppPSGF3CCogw=";
             };
             postBuild = (old.postBuild or "") + ''
               ${lib.getExe pkgs.nodejs} ${./prune-node-modules.mjs} "$PWD"
