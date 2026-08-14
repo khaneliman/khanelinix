@@ -19,6 +19,8 @@ in
       workstation = enabled;
     };
 
+    desktop.wms.yabai.enableScriptingAddition = true;
+
     environments = {
       home-network = enabled;
     };

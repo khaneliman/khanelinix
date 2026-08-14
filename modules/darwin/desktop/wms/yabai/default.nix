@@ -49,6 +49,7 @@ in
   options.khanelinix.desktop.wms.yabai = {
     enable = lib.mkEnableOption "yabai";
     debug = lib.mkEnableOption "debug output";
+    enableScriptingAddition = lib.mkEnableOption "the SIP-dependent Yabai scripting addition";
     logPaths = {
       stdout = lib.mkOption {
         type = lib.types.str;
@@ -104,10 +105,9 @@ in
       # See: https://github.com/koekeishiya/yabai
       enable = true;
       package = pkgs.yabai;
-      # NOTE: You need to disable SIP and set nvram boot args for this.
-      # csrutil disable
-      # sudo nvram boot-args=-arm64e_preview_abi
-      enableScriptingAddition = true;
+      # Enabling this option requires reduced SIP protections and a matching
+      # NVRAM boot argument. Keep the secure nix-darwin default otherwise.
+      inherit (cfg) enableScriptingAddition;
 
       config = {
         debug_output = if cfg.debug then "on" else "off";
@@ -165,7 +165,9 @@ in
           ${builtins.readFile ./extraConfig}
 
           # Signal hooks
-          yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+          ${lib.optionalString cfg.enableScriptingAddition ''
+            yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+          ''}
           yabai -m signal --add event=window_focused action="${getExe sketchybar} --trigger window_focus"
           yabai -m signal --add event=display_added action="sleep 1 && source ${getExe yabai-helper} && create_spaces 7"
           yabai -m signal --add event=display_removed action="sleep 1 && source ${getExe yabai-helper} && create_spaces 7"
