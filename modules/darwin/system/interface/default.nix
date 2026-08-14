@@ -20,28 +20,16 @@ in
     };
 
     system.defaults = {
-      CustomSystemPreferences = {
-        finder = {
+      CustomUserPreferences = {
+        "com.apple.finder" = {
           DisableAllAnimations = true;
-          FXEnableExtensionChangeWarning = false;
-          QuitMenuItem = true;
-          ShowExternalHardDrivesOnDesktop = false;
-          ShowHardDrivesOnDesktop = false;
-          ShowMountedServersOnDesktop = false;
-          ShowPathbar = true;
-          ShowRemovableMediaOnDesktop = false;
-          _FXSortFoldersFirst = true;
         };
 
         NSGlobalDomain = {
           AppleAccentColor = 1;
           AppleHighlightColor = "0.65098 0.85490 0.58431";
-          AppleSpacesSwitchOnActivate = false;
           WebKitDeveloperExtras = true;
         };
-      };
-
-      CustomUserPreferences = {
         "com.apple.Terminal" = {
           # skhd requires Secure Keyboard Entry to be disabled.
           SecureKeyboardEntry = !hmCfg.services.skhd.enable;
@@ -174,8 +162,14 @@ in
         # NOTE: Four-letter codes for the other view modes: `icnv`, `clmv`, `glyv`
         FXPreferredViewStyle = "Nlsv";
         QuitMenuItem = true;
+        ShowExternalHardDrivesOnDesktop = false;
+        ShowHardDrivesOnDesktop = false;
+        ShowMountedServersOnDesktop = false;
+        ShowPathbar = true;
+        ShowRemovableMediaOnDesktop = false;
         ShowStatusBar = false;
         _FXShowPosixPathInTitle = true;
+        _FXSortFoldersFirst = true;
       };
 
       # login window settings
@@ -196,6 +190,7 @@ in
         "com.apple.sound.beep.volume" = 0.0;
         AppleShowAllExtensions = true;
         AppleShowScrollBars = "Automatic";
+        AppleSpacesSwitchOnActivate = false;
         NSAutomaticCapitalizationEnabled = false;
         NSAutomaticDashSubstitutionEnabled = false;
         NSAutomaticPeriodSubstitutionEnabled = false;
