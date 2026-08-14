@@ -46,12 +46,6 @@ in
           # skhd requires Secure Keyboard Entry to be disabled.
           SecureKeyboardEntry = !hmCfg.services.skhd.enable;
         };
-        "com.apple.SoftwareUpdate" = {
-          AutomaticCheckEnabled = true;
-          AutomaticDownload = 1;
-          CriticalUpdateInstall = 1;
-          ScheduleFrequency = 1;
-        };
       };
 
       # dock settings
@@ -188,8 +182,6 @@ in
       loginwindow = {
         # disable guest account
         GuestEnabled = false;
-        # show name instead of username
-        SHOWFULLNAME = false;
       };
 
       menuExtraClock = {

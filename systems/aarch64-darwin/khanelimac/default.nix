@@ -37,6 +37,11 @@ in
     };
 
     security = {
+      hardening.audit.expected = {
+        # Yabai scripting additions require this host-level platform exception.
+        systemIntegrityProtection = "disabled";
+        arm64ePreviewAbi = "present";
+      };
       sudo = enabled;
       sops = {
         enable = true;

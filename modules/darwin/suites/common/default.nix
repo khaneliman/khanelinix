@@ -55,6 +55,8 @@ in
 
       nix = mkDefault enabled;
 
+      security.hardening = mkDefault enabled;
+
       programs.terminal.tools = {
         atuin = mkDefault enabled;
         nh = mkDefault enabled;
