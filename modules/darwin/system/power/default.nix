@@ -20,8 +20,8 @@ in
     ];
 
     security.sudo.extraConfig = lib.mkAfter ''
-      # Allow the closed-lid helper to toggle pmset without an interactive prompt.
-      ${config.khanelinix.user.name} ALL=(root) NOPASSWD: /usr/bin/pmset
+      # Allow only the pmset operations used by the closed-lid helper.
+      ${config.khanelinix.user.name} ALL=(root) NOPASSWD: /usr/bin/pmset -g, /usr/bin/pmset disablesleep 0, /usr/bin/pmset disablesleep 1
     '';
 
     khanelinix.home.extraOptions = {
