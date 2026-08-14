@@ -159,7 +159,7 @@ in
 
       gemini = mkOption {
         type = types.str;
-        default = "gemini-3.6-flash-high";
+        default = "gemini-3.7-flash-high";
         description = "Gemini provider model used by harness aliases.";
       };
     };
@@ -258,9 +258,9 @@ in
         }
         {
           provider = "antigravity";
-          model = "gemini-3.6-flash-high";
-          alias = "claude-gemini-3.6-flash";
-          displayName = "Google · Gemini 3.6 Flash";
+          model = "gemini-3.7-flash-high";
+          alias = "claude-gemini-3.7-flash";
+          displayName = "Google · Gemini 3.7 Flash";
         }
         {
           provider = "antigravity";

@@ -67,7 +67,7 @@ printf '%s\n' "$usage_json" | jq -c \
           ),
           gemini: summarize(
             [$windows[] | select(.id | startswith("antigravity-quota-summary-gemini-"))];
-            ["gemini-3-1-pro", "gemini-3-6-flash"]
+            ["gemini-3-1-pro", "gemini-3-7-flash"]
           )
         }
       }

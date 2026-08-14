@@ -289,10 +289,10 @@ let
       description = "OpenAI GPT 5.6 Sol gateway worker for hard diagnosis, architecture or code review, and high-confidence reasoning.";
       reasoningEffort = "high";
     };
-    "gemini-3-6-flash" = mkGatewayAgent {
-      name = "gemini-3-6-flash";
-      alias = "claude-gemini-3.6-flash";
-      description = "Google Gemini 3.6 Flash gateway worker for repository discovery, broad searches, noisy probes, and fast validation.";
+    "gemini-3-7-flash" = mkGatewayAgent {
+      name = "gemini-3-7-flash";
+      alias = "claude-gemini-3.7-flash";
+      description = "Google Gemini 3.7 Flash gateway worker for repository discovery, broad searches, noisy probes, and fast validation.";
       workspaceWrite = true;
     };
     "gemini-3-1-pro" = mkGatewayAgent {

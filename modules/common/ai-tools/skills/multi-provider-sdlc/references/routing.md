@@ -5,7 +5,7 @@
 | Subscription         | Model agents                                                                                 |
 | -------------------- | -------------------------------------------------------------------------------------------- |
 | OpenAI (Codex)       | `gpt-5-3-codex-spark`, `gpt-5-6-luna`, `gpt-5-6-terra`, `gpt-5-6-sol`                        |
-| Google (Antigravity) | `gpt-oss-120b`, `google-opus-4-6`, `google-sonnet-4-6`, `gemini-3-6-flash`, `gemini-3-1-pro` |
+| Google (Antigravity) | `gpt-oss-120b`, `google-opus-4-6`, `google-sonnet-4-6`, `gemini-3-7-flash`, `gemini-3-1-pro` |
 | Anthropic            | `opus-5`, `fable-5`, `sonnet-5`                                                              |
 
 Prefer `opus-5` for Anthropic implementation and diagnosis. Use `fable-5` for
@@ -17,11 +17,11 @@ authentication.
 
 | Need                                       | Primary               | Fallback                                    | Semantic role  | Write policy                      |
 | ------------------------------------------ | --------------------- | ------------------------------------------- | -------------- | --------------------------------- |
-| obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark` | `gpt-5-6-luna`, `gemini-3-6-flash`          | `mechanic`     | read-only unless edit is explicit |
-| repository discovery                       | `gpt-5-6-luna`        | `gpt-5-3-codex-spark`, `gemini-3-6-flash`   | `fact-finder`  | read-only                         |
-| bounded reproduction                       | `gpt-5-6-luna`        | `opus-5`, `gemini-3-6-flash`                | `probe-runner` | build artifacts only              |
+| obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark` | `gpt-5-6-luna`, `gemini-3-7-flash`          | `mechanic`     | read-only unless edit is explicit |
+| repository discovery                       | `gpt-5-6-luna`        | `gpt-5-3-codex-spark`, `gemini-3-7-flash`   | `fact-finder`  | read-only                         |
+| bounded reproduction                       | `gpt-5-6-luna`        | `opus-5`, `gemini-3-7-flash`                | `probe-runner` | build artifacts only              |
 | focused validation                         | `gpt-5-3-codex-spark` | `gpt-5-6-luna`                              | `checker`      | build artifacts only              |
-| noisy validation                           | `gpt-oss-120b`        | `gpt-5-6-luna`, `gemini-3-6-flash`          | `test-runner`  | build artifacts only              |
+| noisy validation                           | `gpt-oss-120b`        | `gpt-5-6-luna`, `gemini-3-7-flash`          | `test-runner`  | build artifacts only              |
 | implementation                             | `opus-5`              | `gpt-5-6-luna`                              | `implementer`  | workspace write                   |
 | ambiguous diagnosis                        | `opus-5`              | `gpt-5-6-sol`, `gemini-3-1-pro`             | `debugger`     | read-only                         |
 | plan or code review                        | `opus-5`              | `fable-5`, `gpt-5-6-sol`, `google-opus-4-6` | `reviewer`     | read-only                         |
