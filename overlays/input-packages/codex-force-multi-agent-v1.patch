@@ -1,7 +1,7 @@
 diff --git a/core/src/config/mod.rs b/core/src/config/mod.rs
 --- a/core/src/config/mod.rs
 +++ b/core/src/config/mod.rs
-@@ -1448,8 +1448,10 @@ impl Config {
+@@ -1556,7 +1556,9 @@ impl Config {
              Some(MultiAgentVersion::V2)
          } else if !self.agents_enabled {
              Some(MultiAgentVersion::Disabled)
@@ -12,3 +12,40 @@ diff --git a/core/src/config/mod.rs b/core/src/config/mod.rs
 +            Some(MultiAgentVersion::Disabled)
          }
      }
+diff --git a/core/src/config/config_tests.rs b/core/src/config/config_tests.rs
+--- a/core/src/config/config_tests.rs
++++ b/core/src/config/config_tests.rs
+@@ -10907,3 +10907,32 @@ async fn smart_approvals_alias_is_ignored() -> std::io::Result<()> {
+ }
+-
++
++#[tokio::test]
++async fn multi_agent_v1_config_overrides_v2_model_metadata() -> std::io::Result<()> {
++    let codex_home = TempDir::new()?;
++    std::fs::write(
++        codex_home.path().join(CONFIG_TOML_FILE),
++        r#"[features]
++multi_agent = true
++multi_agent_v2 = false
++"#,
++    )?;
++
++    let config = ConfigBuilder::without_managed_config_for_tests()
++        .codex_home(codex_home.path().to_path_buf())
++        .fallback_cwd(Some(codex_home.path().to_path_buf()))
++        .build()
++        .await?;
++
++    assert_eq!(
++        config.multi_agent_version_from_features(),
++        MultiAgentVersion::V1
++    );
++    assert_eq!(
++        config.multi_agent_version_for_model(Some(MultiAgentVersion::V2)),
++        MultiAgentVersion::V1
++    );
++
++    Ok(())
++}
++
+ #[tokio::test]
