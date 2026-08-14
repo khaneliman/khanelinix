@@ -23,6 +23,11 @@ Route to one mode; load only that reference:
 
 If intent is unclear, ask before proceeding.
 
+## NixOS Privilege Wrappers
+
+If `sudo` resolves outside `/run/wrappers/bin`, use `/run/wrappers/bin/sudo`.
+Nix store binaries lack setuid privileges.
+
 Read [scripts.md](references/scripts.md) when a first-pass report or repeatable
 measurement can replace manual command assembly.
 
