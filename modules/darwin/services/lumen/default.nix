@@ -31,7 +31,7 @@ let
     audio_sink = "system";
     max_bitrate = 80000;
     virtual_display = instance.virtualDisplay;
-    upnp = true;
+    upnp = false;
     file_state = "${instance.configDir}/sunshine_state.json";
     file_apps = "${instance.configDir}/apps.json";
     log_path = "${instance.configDir}/sunshine.log";
@@ -64,24 +64,43 @@ let
     );
 
   activationFor = name: instance: ''
-    install -d -m 0755 -o ${userName} -g staff \
+    install -d -m 0700 -o ${userName} -g staff \
       "${instance.configDir}" \
+      "${instance.configDir}/credentials" \
       "${instance.configDir}/scripts"
 
-    # install -d only chowns directories it creates; repair configDir if an
-    # earlier activation left it root-owned (sunshine needs to write here).
-    chown ${userName}:staff "${instance.configDir}"
+    # Repair existing directories because install -d does not change all
+    # attributes consistently across macOS releases.
+    chown ${userName}:staff \
+      "${instance.configDir}" \
+      "${instance.configDir}/credentials" \
+      "${instance.configDir}/scripts"
+    chmod 0700 \
+      "${instance.configDir}" \
+      "${instance.configDir}/credentials" \
+      "${instance.configDir}/scripts"
 
     for script in "${cfg.package}/share/lumen/scripts/"*.sh; do
       install -m 0755 -o ${userName} -g staff "$script" "${instance.configDir}/scripts/$(basename "$script")"
     done
 
     if [ ! -f "${instance.configDir}/sunshine.conf" ]; then
-      install -m 0644 -o ${userName} -g staff "${confFileFor name instance}" "${instance.configDir}/sunshine.conf"
+      install -m 0600 -o ${userName} -g staff "${confFileFor name instance}" "${instance.configDir}/sunshine.conf"
     fi
 
     ${managedSettingsCommandsFor instance}
-    install -m 0644 -o ${userName} -g staff "${appsFileFor name instance}" "${instance.configDir}/apps.json"
+    install -m 0600 -o ${userName} -g staff "${appsFileFor name instance}" "${instance.configDir}/apps.json"
+
+    for privateFile in \
+      "${instance.configDir}/sunshine.conf" \
+      "${instance.configDir}/sunshine.log" \
+      "${instance.configDir}/sunshine_state.json" \
+      "${instance.configDir}/credentials/cakey.pem"; do
+      if [ -f "$privateFile" ] && [ ! -L "$privateFile" ]; then
+        chown ${userName}:staff "$privateFile"
+        chmod 0600 "$privateFile"
+      fi
+    done
   '';
 
   appsFileFor =
@@ -194,6 +213,7 @@ in
           ];
           RunAtLoad = instance.autoStart;
           KeepAlive = instance.autoStart;
+          Umask = 63;
           StandardOutPath = "${userHome}/Library/Logs/lumen/${name}.out.log";
           StandardErrorPath = "${userHome}/Library/Logs/lumen/${name}.err.log";
           WorkingDirectory = instance.configDir;
@@ -250,7 +270,7 @@ in
           }
         ' "$file" > "$tmp"
 
-        install -m 0644 -o ${userName} -g staff "$tmp" "$file"
+        install -m 0600 -o ${userName} -g staff "$tmp" "$file"
         rm -f "$tmp"
       }
 
