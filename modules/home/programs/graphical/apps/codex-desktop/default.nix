@@ -56,6 +56,15 @@ in
         })
       ];
 
+      # Codex's durable SSH app-server daemon resolves its executable through
+      # this fixed installer path. Keep that path on the Nix-managed CLI so a
+      # dropped Remote Control websocket can restart without an orphan server.
+      # TODO: Upstream a daemon executable override for package-managed installs,
+      # then remove this standalone-layout compatibility link.
+      xdg.configFile."codex/packages/standalone/current/codex" = lib.mkIf isLinux {
+        source = lib.getExe pkgs.codex;
+      };
+
       # The launcher reads its own flags file instead of the generic
       # electron-flags.conf and only seeds a commented template when the file is
       # missing, so owning it declaratively is safe.
