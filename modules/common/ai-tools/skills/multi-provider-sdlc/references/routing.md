@@ -23,11 +23,11 @@ authentication.
 | focused validation                         | `gpt-5-3-codex-spark` | `gpt-5-6-luna`                              | `checker`      | build artifacts only              |
 | noisy validation                           | `gpt-oss-120b`        | `gpt-5-6-luna`, `gemini-3-7-flash`          | `test-runner`  | build artifacts only              |
 | implementation                             | `opus-5`              | `gpt-5-6-luna`                              | `implementer`  | workspace write                   |
-| ambiguous diagnosis                        | `opus-5`              | `gpt-5-6-sol`, `gemini-3-1-pro`             | `debugger`     | read-only                         |
+| ambiguous diagnosis                        | `opus-5`              | `gpt-5-6-sol`, `gemini-3-7-flash`           | `debugger`     | read-only                         |
 | plan or code review                        | `opus-5`              | `fable-5`, `gpt-5-6-sol`, `google-opus-4-6` | `reviewer`     | read-only                         |
 
 For explicit three-provider deliberation, use Anthropic `opus-5`, Google
-`google-opus-4-6` with `gemini-3-1-pro` fallback, and OpenAI `gpt-5-6-sol`.
+`google-opus-4-6` with `gemini-3-7-flash` fallback, and OpenAI `gpt-5-6-sol`.
 
 ## Quota circuits
 

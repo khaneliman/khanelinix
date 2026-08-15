@@ -177,7 +177,7 @@ let
       model =
         routedModel
           {
-            claude = "claude-gemini-3.1-pro";
+            claude = "claude-gemini-3.7-flash";
             codex = "claude-gpt-5.6-sol";
             opencode = "claude-gpt-5.6-sol";
           }
@@ -289,16 +289,17 @@ let
       description = "OpenAI GPT 5.6 Sol gateway worker for hard diagnosis, architecture or code review, and high-confidence reasoning.";
       reasoningEffort = "high";
     };
+    # TODO: Reassess reasoning routes when Google releases a new Gemini Pro model.
     "gemini-3-7-flash" = mkGatewayAgent {
       name = "gemini-3-7-flash";
       alias = "claude-gemini-3.7-flash";
-      description = "Google Gemini 3.7 Flash gateway worker for repository discovery, broad searches, noisy probes, and fast validation.";
+      description = "Google Gemini 3.7 Flash gateway worker for repository discovery, ambiguous diagnosis, dependency reasoning, noisy probes, and independent review.";
       workspaceWrite = true;
     };
     "gemini-3-1-pro" = mkGatewayAgent {
       name = "gemini-3-1-pro";
       alias = "claude-gemini-3.1-pro";
-      description = "Google Gemini 3.1 Pro gateway worker for ambiguous diagnosis, dependency reasoning, and independent review.";
+      description = "Google Gemini 3.1 Pro gateway worker for explicit legacy proxy requests.";
     };
     "google-sonnet-4-6" = mkGatewayAgent {
       name = "google-sonnet-4-6";

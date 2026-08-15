@@ -76,7 +76,7 @@ in
             }
             {
               provider = "gemini";
-              model = "gemini-3.1-pro-preview";
+              model = "gemini-3.7-flash";
             }
           ];
 

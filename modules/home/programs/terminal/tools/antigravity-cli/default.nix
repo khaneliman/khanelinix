@@ -41,7 +41,7 @@ in
         "agy-danger" = "agy --dangerously-skip-permissions";
 
         # Task shortcuts
-        "agy-deep" = "agy --model \"Gemini 3.1 Pro (High)\"";
+        "agy-deep" = "agy --model \"Gemini 3.7 Flash (High)\"";
         "agy-quick" = "agy --model \"Gemini 3.5 Flash (High)\"";
         "agy-nano" = "agy --model \"Gemini 3.5 Flash (Low)\"";
       };
