@@ -74,11 +74,12 @@ in
         (import ./keymap/manager.nix {
           inherit
             config
+            isWSL
             lib
             pkgs
             ;
         })
-        (import ./keymap/select.nix)
+        (import ./keymap/pick.nix)
         (import ./keymap/tasks.nix)
       ];
 
@@ -132,10 +133,6 @@ in
         })
         (import ./settings/plugin.nix { inherit config lib; })
         {
-          log = {
-            enabled = false;
-          };
-
           mgr = {
             ratio = [
               1

@@ -1,5 +1,5 @@
 {
-  select = {
+  pick = {
     prepend_keymap = [
       {
         on = [ "<C-q>" ];

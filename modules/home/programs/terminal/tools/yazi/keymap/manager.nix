@@ -1,7 +1,7 @@
 {
   config,
+  isWSL,
   lib,
-
   pkgs,
   ...
 }:
@@ -52,13 +52,28 @@ in
         run = "spot";
         desc = "Spot hovered file";
       }
+      {
+        on = [ "<A-h>" ];
+        run = "arrow 0vp";
+        desc = "Move cursor to viewport top";
+      }
+      {
+        on = [ "<A-m>" ];
+        run = "arrow 50vp";
+        desc = "Move cursor to viewport middle";
+      }
+      {
+        on = [ "<A-l>" ];
+        run = "arrow 100vp";
+        desc = "Move cursor to viewport bottom";
+      }
     ]
     ++ lib.lists.map (i: {
       on = [ "${toString i}" ];
       run = "plugin smart-switch ${toString (i - 1)}";
       desc = "Switch to tab ${toString i}";
     }) (lib.lists.range 1 9)
-    ++ lib.optional pkgs.stdenv.hostPlatform.isLinux {
+    ++ lib.optional (pkgs.stdenv.hostPlatform.isLinux && !isWSL) {
       on = [ "<C-v>" ];
       run = "shell 'dragon -x -i -T %h'";
       desc = "Drag and drop files";

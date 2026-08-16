@@ -44,7 +44,7 @@
       desc = "Move cursor to the bottom";
     }
     {
-      on = [ "<BackTab>" ];
+      on = [ "<S-Tab>" ];
       run = "tab_switch -1 --relative";
       desc = "Switch to the previous tab";
     }

@@ -47,6 +47,12 @@ let
       desc = "Go to a directory interactively";
     }
     {
+      key = "b";
+      dirPath = "plugin trash";
+      isCommand = true;
+      desc = "Go to the trash bin";
+    }
+    {
       key = "c";
       dirPath = config.xdg.configHome;
       desc = "~/.config";
@@ -173,11 +179,6 @@ let
       dirPath = "/Applications";
     }
     {
-      key = "b";
-      dirPath = "${config.home.homeDirectory}/.Trash";
-      desc = "~/.Trash";
-    }
-    {
       key = "C";
       dirPath = "${config.home.homeDirectory}/Library/Mobile Documents/com~apple~CloudDocs";
       desc = "~/Library/.../CloudDocs";
@@ -210,7 +211,7 @@ let
   # Available keys:
   # B, f, F, j, J, q, Q, x, X, y, Y, z, Z, K, N, O, S, U, W, I
   # Used keys:
-  # /, <Space>, h, c, t, d, D, e, g, G, k, l, p, r, u, V, w, i, M, m, n, o, R, s, v, H, A, a, C, L, P, b
+  # /, <Space>, b, h, c, t, d, D, e, g, G, k, l, p, r, u, V, w, i, M, m, n, o, R, s, v, H, A, a, C, L, P
   gotoLocations =
     commonLocations
     ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux linuxLocations

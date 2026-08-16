@@ -29,7 +29,7 @@
       ];
 
       generateArchiveRule = ext: {
-        url = "*.${ext}";
+        url = "local://*.${ext}";
         use = [
           "extract"
           "reveal"
