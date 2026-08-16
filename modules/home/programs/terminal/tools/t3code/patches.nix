@@ -68,6 +68,14 @@ map fetchPatch [
     excludes = [ "apps/server/src/provider/Layers/AntigravityAdapter.test.ts" ];
   }
   {
+    # The preceding stability patch omits this test file, so omit the
+    # follow-up test hunk that depends on its excluded context.
+    name = "antigravity-model-discovery";
+    rev = "4b99a47b7a0e176d98f9e2cdd2d20bba2a94fa35";
+    hash = "sha256-iWsXHUWzMVbkwai/1E9sUk546uE6LmuDjPbm7DnJMOI=";
+    excludes = [ "apps/server/src/provider/Layers/AntigravityAdapter.test.ts" ];
+  }
+  {
     name = "fix-codex-session-start-timeout";
     rev = "883b413cd9cfbb428abafc9f2a877ca14a9e6795";
     hash = "sha256-5b5mRry2OF120R0pAAVKXT9TG2nAes+ZQb848nyTrNQ=";

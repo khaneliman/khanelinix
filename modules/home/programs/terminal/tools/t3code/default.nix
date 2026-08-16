@@ -21,6 +21,9 @@ in
         || (osConfig.services.tailscale.enable or false)
         || (config.khanelinix.services.tailscale.enable or false);
 
+      antigravityCliEnabled = config.programs.antigravity-cli.enable or false;
+      antigravityCliPackage = config.programs.antigravity-cli.package or null;
+
       githubRoot = "${config.home.homeDirectory}/${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents/"}github";
 
       overrideT3codeSource =
@@ -132,7 +135,8 @@ in
             pkgs.coreutils
           ]
           ++ lib.optionals (tailscaleEnabled && pkgs.stdenv.hostPlatform.isLinux) [ pkgs.tailscale ]
-          ++ lib.optional (claudeCodePackage != null) claudeCodePackage;
+          ++ lib.optional (claudeCodePackage != null) claudeCodePackage
+          ++ lib.optional (antigravityCliEnabled && antigravityCliPackage != null) antigravityCliPackage;
           text = ''
             export PATH="/Applications/Tailscale.app/Contents/MacOS:/opt/homebrew/bin:/usr/local/bin:$PATH"
 
@@ -230,6 +234,9 @@ in
             }
             // lib.optionalAttrs (config.programs.opencode.enable or false) {
               opencode.binaryPath = lib.getExe config.programs.opencode.package;
+            }
+            // lib.optionalAttrs (antigravityCliEnabled && antigravityCliPackage != null) {
+              antigravity.binaryPath = lib.getExe antigravityCliPackage;
             };
         };
 
