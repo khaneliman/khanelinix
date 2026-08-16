@@ -259,7 +259,29 @@ in
       (mkIf config.programs.yazi.enable {
         "yazi/theme.toml".source = mkForce (
           pkgs.runCommand "tokyonight-yazi-theme.toml" { } ''
-            sed 's/name =/url =/g' ${tokyonight}/extras/yazi/tokyonight_${variant}.toml > $out
+            sed \
+              -e 's/name =/url =/g' \
+              -e '/^\[mgr\]/,/^\[/ { /^hovered[[:space:]]*=/d; /^preview_hovered[[:space:]]*=/d; }' \
+              -e '/^\[which\]$/a border = { fg = "${colors.blue}" }' \
+              -e '/^\[confirm\]/,/^\[/ s/^content[[:space:]]*=/body =/' \
+              -e '/^\[help\]$/a border = { fg = "${colors.blue}" }' \
+              -e '/^\[help\]/,/^\[/ s/^on[[:space:]]*=/chord =/' \
+              -e '/^\[help\]/,/^\[/ s/^run[[:space:]]*=/action =/' \
+              -e '/^\[help\]/,/^\[/ { /^desc[[:space:]]*=/d; /^footer[[:space:]]*=/d; }' \
+              -e '/^\[filetype\]/,$ s|mime = "|mime = "**/|' \
+              ${tokyonight}/extras/yazi/tokyonight_${variant}.toml > theme.tmp
+
+            sed '/^[[:space:]]*# Fallback$/i\
+            \t{ mime = "vfs/{absent,stale}", fg = "${colors.comment}" },' theme.tmp > "$out"
+
+            printf '\n[indicator]\nparent = { bg = "${colors.bg_highlight}" }\ncurrent = { bg = "${colors.bg_highlight}" }\npreview = { bg = "${colors.bg_highlight}" }\n' >> "$out"
+
+            grep -Eq '^chord[[:space:]]*=' "$out"
+            grep -Eq '^action[[:space:]]*=' "$out"
+            grep -Eq '^body[[:space:]]*=' "$out"
+            grep -Fq 'mime = "**/image/*"' "$out"
+            grep -Fq 'mime = "vfs/{absent,stale}"' "$out"
+            grep -Fxq '[indicator]' "$out"
           ''
         );
       })

@@ -63,7 +63,25 @@ in
     };
   };
 
+  confirm = {
+    border = {
+      fg = catppuccin.colors.blue.hex;
+    };
+    title = {
+      fg = catppuccin.colors.blue.hex;
+    };
+    body = { };
+    list = { };
+    btn_yes = {
+      reversed = true;
+    };
+    btn_no = { };
+  };
+
   which = {
+    border = {
+      fg = catppuccin.colors.blue.hex;
+    };
     mask = {
       bg = "#363a4f";
     };
@@ -83,22 +101,18 @@ in
   };
 
   help = {
-    on = {
+    border = {
+      fg = catppuccin.colors.blue.hex;
+    };
+    chord = {
       fg = catppuccin.colors.pink.hex;
     };
-    exec = {
+    action = {
       fg = catppuccin.colors.teal.hex;
     };
-    desc = {
-      fg = catppuccin.colors.overlay2.hex;
-    };
     hovered = {
-      bg = catppuccin.colors.surface2.hex;
+      reversed = true;
       bold = true;
-    };
-    footer = {
-      fg = catppuccin.colors.surface1.hex;
-      bg = catppuccin.colors.text.hex;
     };
   };
 }

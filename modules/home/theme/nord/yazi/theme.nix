@@ -64,7 +64,25 @@ in
     };
   };
 
+  confirm = {
+    border = {
+      fg = nord.palette.nord9.hex;
+    };
+    title = {
+      fg = nord.palette.nord9.hex;
+    };
+    body = { };
+    list = { };
+    btn_yes = {
+      reversed = true;
+    };
+    btn_no = { };
+  };
+
   which = {
+    border = {
+      fg = nord.palette.nord9.hex;
+    };
     mask = {
       bg = nord.palette.nord1.hex;
     };
@@ -84,22 +102,18 @@ in
   };
 
   help = {
-    on = {
+    border = {
+      fg = nord.palette.nord9.hex;
+    };
+    chord = {
       fg = nord.palette.nord15.hex;
     };
-    exec = {
+    action = {
       fg = nord.palette.nord7.hex;
     };
-    desc = {
-      fg = nord.palette.nord3.hex;
-    };
     hovered = {
-      bg = nord.palette.nord2.hex;
+      reversed = true;
       bold = true;
-    };
-    footer = {
-      fg = nord.palette.nord4.hex;
-      bg = nord.palette.nord1.hex;
     };
   };
 }

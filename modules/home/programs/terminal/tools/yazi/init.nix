@@ -72,7 +72,10 @@ in
             if config.khanelinix.theme.nord.enable then
               ''theme = require("nord"):setup(),''
             else if config.khanelinix.theme.catppuccin.enable then
-              lib.optionalString (lib.hasAttr "yatline-catppuccin" enabledPlugins) ''theme = require("yatline-catppuccin"):setup("macchiato"),''
+              lib.optionalString (lib.hasAttr "yatline-catppuccin" enabledPlugins) ''
+                theme_dark = require("yatline-catppuccin"):setup("macchiato"),
+                theme_light = require("yatline-catppuccin"):setup("latte"),
+              ''
             else
               ""
           }

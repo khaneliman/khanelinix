@@ -437,14 +437,18 @@ in
             yazi = {
               flavors = {
                 dark = "${yazi-flavors}/catppuccin-macchiato.yazi";
-                light = "${yazi-flavors}/catppuccin-frappe.yazi";
+                light = "${yazi-flavors}/catppuccin-latte.yazi";
               };
               theme = lib.mkForce (
-                lib.mkMerge [
-                  (import ./yazi/filetype.nix)
-                  (import ./yazi/manager.nix)
-                  (import ./yazi/theme.nix)
-                ]
+                {
+                  flavor = {
+                    dark = "dark";
+                    light = "light";
+                  };
+                }
+                // (import ./yazi/filetype.nix)
+                // (import ./yazi/manager.nix)
+                // (import ./yazi/theme.nix)
               );
             };
           };

@@ -5,20 +5,24 @@ in
   filetype = {
     rules = [
       {
-        mime = "image/*";
+        mime = "**/image/*";
         fg = catppuccin.colors.teal.hex;
       }
       {
-        mime = "video/*";
+        mime = "**/video/*";
         fg = catppuccin.colors.yellow.hex;
       }
       {
-        mime = "audio/*";
+        mime = "**/audio/*";
         fg = catppuccin.colors.yellow.hex;
       }
       {
-        mime = "application/{tar,bzip*,7z-compressed,xz,rar,gzip}";
+        mime = "**/application/{tar,bzip*,7z-compressed,xz,rar,gzip}";
         fg = catppuccin.colors.pink.hex;
+      }
+      {
+        mime = "vfs/{absent,stale}";
+        fg = catppuccin.colors.overlay0.hex;
       }
       # Orphan symbolic links
       {
