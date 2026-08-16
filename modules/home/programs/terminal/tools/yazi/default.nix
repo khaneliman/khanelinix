@@ -11,7 +11,6 @@ let
   cfg = config.khanelinix.programs.terminal.tools.yazi;
   isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
 
-  mkYaziPlugin = pkgs.callPackage ./mkYaziPlugin.nix { };
 in
 {
   options.khanelinix.programs.terminal.tools.yazi = {
@@ -43,6 +42,7 @@ in
             ++ optionalPluginPackage "piper" pkgs.eza
             ++ optionalPluginPackage "piper" pkgs.glow
             ++ optionalPluginPackage "piper" pkgs.xlsx2csv
+            ++ optionalPluginPackage "restore" pkgs.trash-cli
             ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && !isWSL) [
               pkgs.dragon-drop
             ];
@@ -86,23 +86,13 @@ in
         "arrow-parent" = ./plugins/arrow-parent.yazi;
         "smart-switch" = ./plugins/smart-switch.yazi;
         "smart-tab" = ./plugins/smart-tab.yazi;
-        githead = mkYaziPlugin {
-          pname = "githead.yazi";
-          version = "26.1.22-unstable-2026-01-26";
-
-          src = pkgs.fetchFromGitHub {
-            owner = "llanosrocas";
-            repo = "githead.yazi";
-            rev = "317d09f728928943f0af72ff6ce31ea335351202";
-            hash = "sha256-o2EnQYOxp5bWn0eLn0sCUXcbtu6tbO9pdUdoquFCTVw=";
-          };
-        };
         inherit (pkgs.yaziPlugins)
           chmod
           diff
           duckdb
           full-border
           git
+          githead
           # glow
           jump-to-char
           # Faster, less accurate
@@ -110,13 +100,15 @@ in
           mount
           ouch
           piper
-          restore
           smart-enter
           smart-filter
           sudo
           toggle-pane
           yatline
           ;
+      }
+      // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+        inherit (pkgs.yaziPlugins) restore;
       }
       // lib.optionalAttrs config.khanelinix.theme.nord.enable {
         inherit (pkgs.yaziPlugins) nord;
