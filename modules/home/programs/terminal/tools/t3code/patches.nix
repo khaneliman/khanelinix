@@ -76,6 +76,11 @@ map fetchPatch [
     excludes = [ "apps/server/src/provider/Layers/AntigravityAdapter.test.ts" ];
   }
   {
+    name = "antigravity-deduplicate-cached-models";
+    rev = "f81342477b5b207800df956bdd1132a48ef29582";
+    hash = "sha256-XVdKgCVslqmJPNyM9HDJHV5GwotPPefEwJem0X7+QtY=";
+  }
+  {
     name = "fix-codex-session-start-timeout";
     rev = "883b413cd9cfbb428abafc9f2a877ca14a9e6795";
     hash = "sha256-5b5mRry2OF120R0pAAVKXT9TG2nAes+ZQb848nyTrNQ=";
