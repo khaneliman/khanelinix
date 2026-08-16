@@ -51,7 +51,7 @@ stdenvNoCC.mkDerivation {
     homepage = "https://github.com/Fausto-Korpsvart/Tokyonight-GTK-Theme";
     license = lib.licenses.gpl3Plus;
     maintainers = [ lib.maintainers.khaneliman ];
-    platforms = lib.platforms.unix;
+    platforms = lib.platforms.linux;
     sourceProvenance = [ lib.sourceTypes.fromSource ];
   };
 }
