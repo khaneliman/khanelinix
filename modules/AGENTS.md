@@ -29,6 +29,19 @@ in
   or needs explicit toggle/customization.
 - Configure upstream NixOS, nix-darwin, or Home Manager options directly when no
   repository-level choice exists. Do not wrap only for visual consistency.
+- Keep fixed repository policy as local module bindings, not options.
+- Emit only intentional deltas from the pinned upstream default. Inspect that
+  default before adding a setting, including values inherited from another owned
+  config.
+
+## Dormant Configuration
+
+- Treat configuration for a disabled feature as desired dormant state. Move it
+  into the owning module and guard it with that module's enablement.
+- Gate on module or package-selection state, not on flake-input existence or
+  final-closure contents. Closure inspection creates evaluation cycles.
+- Delete dormant configuration only when it is invalid, superseded, duplicated
+  by an authoritative default, or explicitly rejected.
 
 ## Executable References
 
