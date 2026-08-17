@@ -185,6 +185,14 @@ in
         ShowSeconds = true;
       };
 
+      WindowManager = lib.mkIf config.services.yabai.enable {
+        GloballyEnabled = false;
+        EnableStandardClickToShowDesktop = false;
+        EnableTilingByEdgeDrag = false;
+        EnableTopTilingByEdgeDrag = false;
+        EnableTilingOptionAccelerator = false;
+      };
+
       NSGlobalDomain = {
         "com.apple.sound.beep.feedback" = 0;
         "com.apple.sound.beep.volume" = 0.0;
