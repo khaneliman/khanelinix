@@ -35,6 +35,16 @@ in
 
       programs.codex.settings.desktop = {
         appearanceDiffMarkerStyle = "color";
+        ambient-suggestions-enabled = true;
+        conversationDetailMode = "STEPS_COMMANDS";
+        enabled-reasoning-efforts = [
+          "low"
+          "medium"
+          "high"
+          "xhigh"
+          "ultra"
+          "max"
+        ];
         followUpQueueMode = "steer";
         "git-always-force-push" = false;
         "git-branch-prefix" = "";
