@@ -16,6 +16,26 @@ let
 
   cfg = config.khanelinix.theme.nord;
   palette = import ./colors.nix;
+  t3codeTheme = import ../t3code.nix {
+    appearance = "dark";
+    id = "khanelinix-nord";
+    name = "Nord";
+    accent = palette.palette.nord10.hex;
+    accentForeground = palette.palette.nord6.hex;
+    border = palette.palette.nord3.hex;
+    canvas = palette.palette.nord0.hex;
+    chrome = palette.palette.nord0.hex;
+    error = palette.palette.nord11.hex;
+    secondary = palette.palette.nord8.hex;
+    statusForeground = palette.palette.nord0.hex;
+    success = palette.palette.nord14.hex;
+    surface = palette.palette.nord1.hex;
+    surfaceOverlay = palette.palette.nord3.hex;
+    surfaceRaised = palette.palette.nord2.hex;
+    text = palette.palette.nord6.hex;
+    textMuted = palette.palette.nord4.hex;
+    warning = palette.palette.nord13.hex;
+  };
   thunderbirdAddon = pkgs.stdenvNoCC.mkDerivation {
     pname = "thunderbird-addon-nord-theme";
     version = "1.0";
@@ -151,6 +171,8 @@ in
               };
             };
           };
+
+          t3code.clientSettings.declarativeTheme = t3codeTheme;
 
           thunderbird.profiles.${config.khanelinix.user.name} =
             mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable

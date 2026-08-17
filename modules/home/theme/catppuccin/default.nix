@@ -22,6 +22,28 @@ let
 
   palette = import ./colors.nix;
   inherit (palette) colors;
+  catppuccinColors =
+    (lib.importJSON "${config.catppuccin.sources.palette}/palette.json").${cfg.flavor}.colors;
+  t3codeTheme = import ../t3code.nix {
+    appearance = if cfg.flavor == "latte" then "light" else "dark";
+    id = "khanelinix-catppuccin-${cfg.flavor}";
+    name = "Catppuccin ${lib.khanelinix.capitalize cfg.flavor}";
+    accent = catppuccinColors.${cfg.accent}.hex;
+    accentForeground = catppuccinColors.base.hex;
+    border = catppuccinColors.surface2.hex;
+    canvas = catppuccinColors.base.hex;
+    chrome = catppuccinColors.mantle.hex;
+    error = catppuccinColors.red.hex;
+    secondary = catppuccinColors.teal.hex;
+    statusForeground = catppuccinColors.crust.hex;
+    success = catppuccinColors.green.hex;
+    surface = catppuccinColors.surface0.hex;
+    surfaceOverlay = catppuccinColors.surface2.hex;
+    surfaceRaised = catppuccinColors.surface1.hex;
+    text = catppuccinColors.text.hex;
+    textMuted = catppuccinColors.subtext0.hex;
+    warning = catppuccinColors.yellow.hex;
+  };
   fzfColors = {
     "bg+" = colors.surface0.hex;
     bg = colors.base.hex;
@@ -217,6 +239,8 @@ in
                 };
               };
             };
+
+            t3code.clientSettings.declarativeTheme = t3codeTheme;
 
             thunderbird.profiles.${config.khanelinix.user.name} =
               mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable
