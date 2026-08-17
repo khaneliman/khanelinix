@@ -50,6 +50,7 @@ in
     programs.antigravity-cli = {
       enable = true;
       enableMcpIntegration = mkIf mcpModuleEnabled true;
+      mcpServers.bevy-brp.disabled = true;
 
       settings =
         let
