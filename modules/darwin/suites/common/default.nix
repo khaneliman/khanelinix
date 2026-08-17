@@ -69,6 +69,7 @@ in
 
       services = {
         openssh = mkDefault enabled;
+        time-machine = mkDefault enabled;
       };
 
       system = {
@@ -91,9 +92,6 @@ in
       /* Bash */ ''
         echo >&2 "Disabling Spotlight indexing for the Nix store..."
         sudo touch /nix/store/.metadata_never_index
-
-        echo >&2 "Excluding the Nix store from Time Machine backups..."
-        sudo tmutil addexclusion -p /nix/store >/dev/null || true
 
         echo >&2 "Cleaning up dead LaunchServices Nix store entries..."
         /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -dump | \
