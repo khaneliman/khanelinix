@@ -296,7 +296,10 @@ in
                 fi
                 dirName="''${cwd##*/}"
 
-                message="$(printf '%s' "$payload" | jq -r '.["last-assistant-message"] // "Turn complete"')"
+                message="$(printf '%s' "$payload" | jq -r '.["last-assistant-message"] // empty')"
+                if [ -z "$message" ]; then
+                  message="Turn complete"
+                fi
                 summary="''${message:0:180}"
 
                 if [ -n "$dirName" ] && [ "$dirName" != "$cwd" ]; then
