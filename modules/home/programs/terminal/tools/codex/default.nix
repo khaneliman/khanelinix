@@ -312,6 +312,7 @@ in
                 fi
 
                 ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
+                  ${lib.getExe pkgs.terminal-notifier} -title "Codex" -message "$summary" -group "codex-turn" -sender "com.openai.codex" >/dev/null 2>&1 || \
                   ${lib.getExe pkgs.terminal-notifier} -title "Codex" -message "$summary" -group "codex-turn" >/dev/null 2>&1
                 ''}
                 ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
