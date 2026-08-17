@@ -59,6 +59,7 @@ in
 
       programs.terminal.tools = {
         atuin = mkDefault enabled;
+        darwin-doctor = mkDefault enabled;
         nh = mkDefault enabled;
         ssh = mkDefault enabled;
       };
