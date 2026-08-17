@@ -91,7 +91,6 @@ in
     };
 
     suites.development = {
-      dockerEnable = true;
       gameEnable = true;
     };
 

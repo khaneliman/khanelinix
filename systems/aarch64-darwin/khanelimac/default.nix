@@ -116,6 +116,7 @@ in
         enable = true;
 
         aiEnable = true;
+        containerBackend = "colima";
       };
       games = enabled;
       music = enabled;

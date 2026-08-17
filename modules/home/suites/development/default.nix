@@ -49,6 +49,7 @@ let
   exoLibp2pPort = 52416;
   exoLogDir = "${config.home.homeDirectory}/Library/Logs/exo";
   hostName = osConfig.networking.hostName or "";
+  containerBackend = osConfig.khanelinix.suites.development.containerBackend or "none";
   exoEnabled = config.services.exo.enable or false;
   # TODO: Re-enable Linux exo workers when upstream supports AMD GPU acceleration.
   exoDisableWorker = pkgs.stdenv.hostPlatform.isLinux;
@@ -100,6 +101,9 @@ in
           podman
           podman-desktop
           podman-tui
+        ]
+        ++ lib.optionals (pkgs.stdenv.hostPlatform.isDarwin && cfg.dockerEnable) [
+          docker-client
         ]
         ++ lib.optionals cfg.nixEnable [
           hydra-check
@@ -217,6 +221,8 @@ in
       zsh.initContent = posixTokenExports;
     };
 
+    programs.docker-cli.enable = lib.mkDefault (pkgs.stdenv.hostPlatform.isDarwin && cfg.dockerEnable);
+
     khanelinix = {
       programs = {
         graphical = {
@@ -294,6 +300,27 @@ in
       ++ lib.optionals exoDisableWorker [
         "--no-worker"
       ];
+    };
+
+    services.colima = lib.mkIf (pkgs.stdenv.hostPlatform.isDarwin && containerBackend == "colima") {
+      enable = true;
+      profiles.default = {
+        isActive = true;
+        isService = true;
+        setDockerHost = true;
+        settings = {
+          arch = "host";
+          cpu = osConfig.khanelinix.suites.development.colima.cpu;
+          disk = osConfig.khanelinix.suites.development.colima.disk;
+          memory = osConfig.khanelinix.suites.development.colima.memory;
+          runtime = "docker";
+          vmType = "vz";
+          mountType = "virtiofs";
+          rosetta = true;
+          binfmt = true;
+          kubernetes.enabled = false;
+        };
+      };
     };
 
     launchd.agents.exo.config = lib.mkIf exoEnabled {
