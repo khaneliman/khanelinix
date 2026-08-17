@@ -63,6 +63,12 @@ nix log "$drv"
 - For upstream patch URLs, prefer `fetchpatch2`.
 - Start fixed-output patch hashes with `lib.fakeHash`; copy the `got:` SRI hash
   from the failure.
+- `fetchpatch2` runs `filterdiff -p1 -x <exclude>`, so an `excludes` pattern
+  matches the path with the `a/` prefix already stripped. Reproduce an exclude
+  locally with the same `-p1`; without it the pattern misses and the excluded
+  hunk stays in the patch.
+- Reproduce the build's `patch -p1` behavior, not `git apply`, which is stricter
+  and reports failures the build never sees.
 
 ## Reporting Checklist
 
