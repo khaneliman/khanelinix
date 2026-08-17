@@ -229,6 +229,7 @@ in
           };
 
           editors = {
+            antigravity.enable = mkDefault (cfg.aiEnable && !isWSL);
             # FIXME: broken darwin
             vscode.enable = mkDefault (!isWSL && !pkgs.stdenv.hostPlatform.isDarwin && includes "maximal");
           };
