@@ -395,19 +395,15 @@ in
             favorites = [
               {
                 provider = "claudeAgent";
-                model = "claude-opus-5";
+                model = "claude-fable-5";
               }
               {
                 provider = "claudeAgent";
-                model = "claude-sonnet-5";
+                model = "claude-opus-5";
               }
               {
                 provider = "codex";
                 model = "gpt-5.6-sol";
-              }
-              {
-                provider = "codex";
-                model = "gpt-5.4";
               }
               {
                 provider = "codex";
@@ -416,6 +412,10 @@ in
               {
                 provider = "codex";
                 model = "gpt-5.3-codex-spark";
+              }
+              {
+                provider = "antigravity";
+                model = "gemini-3.7-flash-medium";
               }
             ];
             sidebarProjectGroupingMode = "repository";
