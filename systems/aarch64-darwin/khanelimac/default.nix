@@ -128,7 +128,10 @@ in
 
     system.logging = enabled;
 
-    tools.homebrew.masEnable = true;
+    tools.homebrew = {
+      idempotentActivation = false;
+      masEnable = true;
+    };
   };
 
   services.karabiner-elements.enable = true;
