@@ -13,7 +13,7 @@ let
       inherit excludes hash;
     };
 in
-map fetchPatch [
+(map fetchPatch [
   # Perf pair rebased onto upstream 9e201941a on branch
   # nix-patches/perf-rebase-9e201941 (command-resolution reworked around
   # upstream's new PATH-resolution cache).
@@ -92,4 +92,5 @@ map fetchPatch [
     hash = "sha256-3p2Drn04OlrcfB8hQ7sCefjD5SPx3IALcqNkESwFt9I=";
     excludes = [ "apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts" ];
   }
-]
+])
+++ [ ./declarative-theme-settings.patch ]
