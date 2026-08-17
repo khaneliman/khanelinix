@@ -38,7 +38,7 @@ in
         "agy-continue" = "agy --continue";
         "agy-sandbox" = "agy --sandbox";
         "agy-safe" = "agy --sandbox";
-        "agy-danger" = "agy --dangerously-skip-permissions";
+        "agy-unsafe" = "agy --dangerously-skip-permissions";
 
         # Task shortcuts
         "agy-deep" = "agy --model \"Gemini 3.7 Flash (High)\"";
