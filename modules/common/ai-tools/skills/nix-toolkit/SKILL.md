@@ -19,14 +19,18 @@ Route to one mode; load only that reference:
    [flake-maintenance.md](references/flake-maintenance.md)
 6. **eval-performance** — [eval-performance.md](references/eval-performance.md)
 7. **ifd-remediation** — [ifd-remediation.md](references/ifd-remediation.md)
-8. **nix-authoring** — delegate to `writing-nix`
+8. **activation-verification** —
+   [activation-verification.md](references/activation-verification.md)
+9. **nix-authoring** — delegate to `writing-nix`
 
 If intent is unclear, ask before proceeding.
 
 ## NixOS Privilege Wrappers
 
 If `sudo` resolves outside `/run/wrappers/bin`, use `/run/wrappers/bin/sudo`.
-Nix store binaries lack setuid privileges.
+Nix store binaries lack setuid privileges. Diagnose with `type -a sudo`, then
+prepend the wrapper directory for that command. Never `chmod` a store path or
+replace the wrapper.
 
 Read [scripts.md](references/scripts.md) when a first-pass report or repeatable
 measurement can replace manual command assembly.
