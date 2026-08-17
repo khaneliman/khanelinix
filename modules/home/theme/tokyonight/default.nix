@@ -17,6 +17,30 @@ let
   cfg = config.khanelinix.theme.tokyonight;
   palette = import ./colors.nix;
   colors = palette.getVariant cfg.variant;
+  t3codeTheme = import ../t3code.nix {
+    appearance = if cfg.variant == "day" then "light" else "dark";
+    id = "khanelinix-tokyonight-${cfg.variant}";
+    name =
+      if cfg.variant == "night" then
+        "Tokyo Night"
+      else
+        "Tokyo Night ${lib.khanelinix.capitalize cfg.variant}";
+    accent = colors.blue;
+    accentForeground = if cfg.variant == "day" then "#ffffff" else colors.bg_dark1;
+    border = colors.blue7;
+    canvas = colors.bg;
+    chrome = colors.bg_dark;
+    error = colors.red;
+    secondary = colors.cyan;
+    statusForeground = if cfg.variant == "day" then "#1a1b26" else colors.bg_dark1;
+    success = colors.green;
+    surface = colors.bg_dark;
+    surfaceOverlay = colors.dark3;
+    surfaceRaised = colors.bg_highlight;
+    text = colors.fg;
+    textMuted = colors.comment;
+    warning = colors.yellow;
+  };
   thunderbirdAddon = pkgs.stdenvNoCC.mkDerivation {
     pname = "thunderbird-addon-tokyo-night";
     version = "1.0.1";
@@ -163,6 +187,8 @@ in
               };
             };
           };
+
+          t3code.clientSettings.declarativeTheme = t3codeTheme;
 
           thunderbird.profiles.${config.khanelinix.user.name} =
             mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable
