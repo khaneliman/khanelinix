@@ -14,7 +14,7 @@ let
       /* Bash */ ''
         # Use terminal-notifier if available for better icon support, fallback to osascript
         if command -v terminal-notifier &>/dev/null; then
-          terminal-notifier -title "Claude Code" -message "$message" -sender "com.anthropic.claudecode" -sound default 2>/dev/null || \
+          terminal-notifier -title "Claude Code" -message "$message" -sender "com.anthropic.claude-code" -sound default 2>/dev/null || \
           terminal-notifier -title "Claude Code" -message "$message" -sound default
         else
           osascript -e "display notification \"$message\" with title \"Claude Code\" sound name \"Blow\""

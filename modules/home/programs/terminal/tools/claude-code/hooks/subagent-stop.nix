@@ -32,7 +32,8 @@ let
         if pkgs.stdenv.hostPlatform.isDarwin then
           ''
             if command -v terminal-notifier >/dev/null 2>&1; then
-              terminal-notifier -title "Claude Code" -message "$notify_msg" -sender "com.anthropic.claudecode" -sound default >/dev/null 2>&1 || true
+              terminal-notifier -title "Claude Code" -message "$notify_msg" -sender "com.anthropic.claude-code" -sound default >/dev/null 2>&1 || \
+              terminal-notifier -title "Claude Code" -message "$notify_msg" -sound default >/dev/null 2>&1 || true
             else
               osascript \
                 -e 'on run argv' \
