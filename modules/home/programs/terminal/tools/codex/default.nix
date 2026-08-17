@@ -244,6 +244,7 @@ in
         model_reasoning_effort = "high";
         plan_mode_reasoning_effort = "high";
         service_tier = "fast";
+        web_search = "live";
 
         # Browser-side counterpart lives in the chromium native-messaging
         # manifest; together they let codex drive Chromium without the
