@@ -204,12 +204,24 @@ def check_time_machine(specification: dict[str, Any]) -> list[dict[str, str]]:
     else:
         destination = command(["/usr/bin/tmutil", "destinationinfo"])
         output = detail(destination)
-        matches = destination.returncode == 0 and expected_destination in output
+        destination_count = sum(
+            line.strip().startswith("ID") for line in output.splitlines()
+        )
+        matches = all(
+            (
+                destination.returncode == 0,
+                destination_count == 1,
+                expected_destination in output,
+            )
+        )
         checks.append(
             result(
                 "time-machine-destination",
                 "pass" if matches else "mismatch",
-                output or "no destination",
+                (
+                    f"expected one {expected_destination}; "
+                    f"found {destination_count}\n{output}"
+                ),
             )
         )
     for path in specification["exclusions"]:
