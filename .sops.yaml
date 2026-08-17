@@ -3,6 +3,7 @@ keys:
   - &user_khanelinix_khaneliman age13xfa77f49ne56z3yyqh9qc9upjmrjfva8kcvg3jfem2m99dhr9fs34gdrp
   - &user_CORE_nixos age1qh2epukpmcg69386v5shr3w9l2tvryan4xr8npdk8tkth62jtpwqg4u0n3
   - &user_khanelimac_khaneliman age1q2qaahrx4chvsa5g7xqwrwk28mld6kn4md8crcrqg046m8yt2efsugl8vr
+  - &user_khanelimac_m1_khaneliman age1aqgjd4qsf8j08wg6l9f38hhckm7hl7mtkc9jnrxqxytt6j68qg9szs4e25
   - &admin_khanelimac_khaneliman age1xxpd2a56xjj9kzx7xt2ax6w36a68vtzcd8enrnvup6m6wfr6upwq8fr5h5
   - &user_VT0_khaneliman age1r6tnk84tdmrf58rmppqprv8lyl7turnqsgtg8z6uq48pegwrqqwq0ke8e0
   - &user_VT0_nixos age1j6dyfn0dwusaaxmwf49smvc5akp3nv6jla5jv65uph9hgg0kc9sskvrc26
@@ -37,6 +38,7 @@ creation_rules:
           - *admin_khaneliman
           - *admin_khanelimac_khaneliman
           - *user_khanelimac_khaneliman
+          - *user_khanelimac_m1_khaneliman
   - path_regex: secrets/khanelimac/khaneliman/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
