@@ -11,7 +11,6 @@ let
     ;
 
   cfg = config.khanelinix.programs.terminal.tools.antigravity-cli;
-  mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
 in
 {
@@ -29,9 +28,6 @@ in
       # NOTE: antigravity will mutate config and replace file.
       file = {
         ".gemini/antigravity-cli/settings.json".force = true;
-        ".gemini/config/plugins/okf-memory".source = lib.mkDefault aiTools.antigravityCli.okfMemoryPlugin;
-        ".gemini/config/plugins/technical-writing".source =
-          lib.mkDefault aiTools.antigravityCli.technicalWritingPlugin;
       };
       shellAliases = {
         # Control overrides
@@ -49,8 +45,6 @@ in
 
     programs.antigravity-cli = {
       enable = true;
-      enableMcpIntegration = mkIf mcpModuleEnabled true;
-      mcpServers.bevy-brp.disabled = true;
 
       settings =
         let
@@ -172,9 +166,6 @@ in
         };
 
       inherit (aiTools.antigravityCli) skills;
-      context = {
-        AGENTS = aiTools.base;
-      };
     };
   };
 }

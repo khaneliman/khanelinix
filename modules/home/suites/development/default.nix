@@ -224,12 +224,12 @@ in
       programs = {
         graphical = {
           apps = {
+            antigravity.enable = mkDefault (cfg.aiEnable && !isWSL);
             claude-desktop.enable = mkDefault (cfg.aiEnable && !isWSL);
             codex-desktop.enable = cfg.aiEnable && !isWSL;
           };
 
           editors = {
-            antigravity.enable = mkDefault (cfg.aiEnable && !isWSL);
             # FIXME: broken darwin
             vscode.enable = mkDefault (!isWSL && !pkgs.stdenv.hostPlatform.isDarwin && includes "maximal");
           };
