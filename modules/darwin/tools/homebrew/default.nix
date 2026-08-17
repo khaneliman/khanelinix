@@ -13,6 +13,11 @@ in
   options.khanelinix.tools.homebrew = {
     enable = lib.mkEnableOption "homebrew";
     masEnable = lib.mkEnableOption "Mac App Store downloads";
+    idempotentActivation = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Whether system activation installs declared Homebrew entries without updating or upgrading existing entries.";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -38,10 +43,10 @@ in
       greedyCasks = true;
 
       onActivation = {
-        autoUpdate = true;
+        autoUpdate = !cfg.idempotentActivation;
         cleanup = "uninstall";
-        upgrade = true;
-        extraFlags = [ "--force" ];
+        upgrade = !cfg.idempotentActivation;
+        extraFlags = lib.optionals (!cfg.idempotentActivation) [ "--force" ];
       };
     };
   };
