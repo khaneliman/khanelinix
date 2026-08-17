@@ -106,6 +106,13 @@ in
         };
       };
       tailscale = enabled;
+      time-machine.destination = {
+        enable = true;
+        host = "timemachine.local";
+        passwordFile = config.sops.secrets."time-machine-password".path;
+        share = "TimeMachine";
+        user = "khaneliman";
+      };
     };
 
     suites = {
@@ -135,6 +142,8 @@ in
   };
 
   services.karabiner-elements.enable = true;
+
+  sops.secrets."time-machine-password" = { };
 
   networking = {
     computerName = "Austins MacBook Pro";

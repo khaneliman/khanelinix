@@ -25,10 +25,18 @@ in
     security = {
       sudo = enabled;
       sops = {
-        enable = false;
+        enable = true;
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
         defaultSopsFile = lib.getFile "secrets/khanelimac/default.yaml";
       };
+    };
+
+    services.time-machine.destination = {
+      enable = true;
+      host = "timemachine.local";
+      passwordFile = config.sops.secrets."time-machine-password".path;
+      share = "TimeMachine";
+      user = "khaneliman";
     };
 
     suites = {
@@ -78,4 +86,6 @@ in
   };
 
   system.defaults.universalaccess.reduceMotion = lib.mkForce null;
+
+  sops.secrets."time-machine-password" = { };
 }
