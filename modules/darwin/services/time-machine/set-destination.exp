@@ -1,0 +1,46 @@
+proc exit_with_child_status {} {
+    set wait_result [wait]
+    exit [lindex $wait_result 3]
+}
+
+if {$argc != 2} {
+    puts stderr "usage: set-destination.exp URL PASSWORD_FILE"
+    exit 64
+}
+
+set timeout 60
+set destination_url [lindex $argv 0]
+set password_file [lindex $argv 1]
+set stream [open $password_file r]
+set password [string trimright [read $stream] "\r\n"]
+close $stream
+
+if {$password eq ""} {
+    puts stderr "Time Machine password file is empty"
+    exit 65
+}
+
+spawn -noecho /usr/bin/tmutil setdestination -p $destination_url
+expect {
+    -re {(?i)password:} {
+        send -- "$password\r"
+        set password ""
+    }
+    eof {
+        exit_with_child_status
+    }
+    timeout {
+        puts stderr "timed out waiting for the Time Machine password prompt"
+        exit 124
+    }
+}
+
+expect {
+    eof {
+        exit_with_child_status
+    }
+    timeout {
+        puts stderr "timed out configuring the Time Machine destination"
+        exit 124
+    }
+}
