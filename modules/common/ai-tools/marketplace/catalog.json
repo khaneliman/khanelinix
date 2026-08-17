@@ -1,0 +1,121 @@
+{
+	"schemaVersion": 1,
+	"marketplace": {
+		"name": "khanelinix-ai-tools",
+		"displayName": "Khanelinix AI Tools",
+		"description": "Portable agent skills maintained in khanelinix.",
+		"owner": {
+			"name": "khaneliman"
+		},
+		"repository": "https://github.com/khaneliman/khanelinix"
+	},
+	"plugins": [
+		{
+			"name": "ai-tools-architect",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
+			"name": "bevy-toolkit",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
+			"name": "develop-web-game",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
+			"name": "frontend-design",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
+			"name": "github-toolkit",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
+			"name": "git-toolkit",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
+			"name": "jj-toolkit",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
+			"name": "lua-toolkit",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
+			"name": "mcp-builder",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
+			"name": "memory-profiler",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
+			"name": "nix-toolkit",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
+			"name": "okf-memory",
+			"version": "0.1.0",
+			"category": "Productivity"
+		},
+		{
+			"name": "planning-with-files",
+			"version": "0.1.0",
+			"category": "Productivity"
+		},
+		{
+			"name": "rust-toolkit",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
+			"name": "sarif-toolkit",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
+			"name": "security-toolkit",
+			"version": "0.1.0",
+			"category": "Security"
+		},
+		{
+			"name": "skill-creator",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
+			"name": "software-engineering",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
+			"name": "technical-writing",
+			"version": "0.1.0",
+			"category": "Productivity"
+		},
+		{
+			"name": "writing-nix",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		}
+	],
+	"excluded": {
+		"docx": "Bundled license prohibits redistribution.",
+		"multi-provider-sdlc": "Requires the private khanelinix agent registry and provider routes.",
+		"pdf": "Bundled license prohibits redistribution.",
+		"playwright": "Requires the khanelinix Nix-backed Playwright wrapper.",
+		"playwright-interactive": "Requires a harness-native interactive runtime and local browser package."
+	}
+}

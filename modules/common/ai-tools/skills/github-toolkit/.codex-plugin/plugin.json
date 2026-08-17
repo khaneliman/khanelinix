@@ -1,0 +1,7 @@
+{
+	"name": "github-toolkit",
+	"version": "0.1.0",
+	"description": "Work with GitHub issues, pull requests, reviews, and checks.",
+	"author": { "name": "khaneliman" },
+	"skills": "./"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "skill-creator",
+  "version": "0.1.0",
+  "description": "Create and update portable agent skills.",
+  "author": { "name": "khaneliman" },
+  "skills": "./"
+}

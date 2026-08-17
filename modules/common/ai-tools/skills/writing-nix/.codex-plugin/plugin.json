@@ -1,0 +1,7 @@
+{
+	"name": "writing-nix",
+	"version": "0.1.0",
+	"description": "Write maintainable Nix expressions and modules.",
+	"author": { "name": "khaneliman" },
+	"skills": "./"
+}

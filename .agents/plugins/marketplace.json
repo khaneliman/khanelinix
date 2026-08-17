@@ -1,0 +1,188 @@
+{
+	"name": "khanelinix-ai-tools",
+	"interface": {
+		"displayName": "Khanelinix AI Tools"
+	},
+	"plugins": [
+		{
+			"name": "ai-tools-architect",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/ai-tools-architect"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Developer Tools"
+		},
+		{
+			"name": "bevy-toolkit",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/bevy-toolkit"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Developer Tools"
+		},
+		{
+			"name": "develop-web-game",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/develop-web-game"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Developer Tools"
+		},
+		{
+			"name": "frontend-design",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/frontend-design"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Developer Tools"
+		},
+		{
+			"name": "github-toolkit",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/github-toolkit"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Developer Tools"
+		},
+		{
+			"name": "git-toolkit",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/git-toolkit"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Developer Tools"
+		},
+		{
+			"name": "jj-toolkit",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/jj-toolkit"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Developer Tools"
+		},
+		{
+			"name": "lua-toolkit",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/lua-toolkit"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Developer Tools"
+		},
+		{
+			"name": "mcp-builder",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/mcp-builder"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Developer Tools"
+		},
+		{
+			"name": "memory-profiler",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/memory-profiler"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Developer Tools"
+		},
+		{
+			"name": "nix-toolkit",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/nix-toolkit"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Developer Tools"
+		},
+		{
+			"name": "okf-memory",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/okf-memory"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Productivity"
+		},
+		{
+			"name": "planning-with-files",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/planning-with-files"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Productivity"
+		},
+		{
+			"name": "rust-toolkit",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/rust-toolkit"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Developer Tools"
+		},
+		{
+			"name": "sarif-toolkit",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/sarif-toolkit"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Developer Tools"
+		},
+		{
+			"name": "security-toolkit",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/security-toolkit"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Security"
+		},
+		{
+			"name": "skill-creator",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/skill-creator"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Developer Tools"
+		},
+		{
+			"name": "software-engineering",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/software-engineering"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Developer Tools"
+		},
+		{
+			"name": "technical-writing",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/technical-writing"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Productivity"
+		},
+		{
+			"name": "writing-nix",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/writing-nix"
+			},
+			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"category": "Developer Tools"
+		}
+	]
+}

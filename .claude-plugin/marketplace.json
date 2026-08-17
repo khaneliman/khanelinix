@@ -1,0 +1,170 @@
+{
+	"$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+	"name": "khanelinix-ai-tools",
+	"description": "Portable agent skills maintained in khanelinix.",
+	"owner": {
+		"name": "khaneliman"
+	},
+	"plugins": [
+		{
+			"name": "ai-tools-architect",
+			"description": "Design and audit portable AI-tool configuration.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/ai-tools-architect"
+		},
+		{
+			"name": "bevy-toolkit",
+			"description": "Build, debug, and validate native Bevy applications.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/bevy-toolkit"
+		},
+		{
+			"name": "develop-web-game",
+			"description": "Build and debug playable HTML and JavaScript games.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/develop-web-game"
+		},
+		{
+			"name": "frontend-design",
+			"description": "Create distinctive production-grade frontend interfaces.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/frontend-design"
+		},
+		{
+			"name": "github-toolkit",
+			"description": "Work with GitHub issues, pull requests, reviews, and checks.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/github-toolkit"
+		},
+		{
+			"name": "git-toolkit",
+			"description": "Git history and change-stack workflows.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/git-toolkit"
+		},
+		{
+			"name": "jj-toolkit",
+			"description": "Work with Jujutsu history and hunk-level changes.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/jj-toolkit"
+		},
+		{
+			"name": "lua-toolkit",
+			"description": "Build and maintain Neovim Lua plugins.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/lua-toolkit"
+		},
+		{
+			"name": "mcp-builder",
+			"description": "Build MCP servers for external APIs and services.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/mcp-builder"
+		},
+		{
+			"name": "memory-profiler",
+			"description": "Diagnose and refactor cross-language memory problems.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/memory-profiler"
+		},
+		{
+			"name": "nix-toolkit",
+			"description": "Diagnose Nix builds, closures, flakes, and evaluation.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/nix-toolkit"
+		},
+		{
+			"name": "okf-memory",
+			"description": "Persist durable cross-provider project and user knowledge.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "productivity",
+			"source": "./modules/common/ai-tools/skills/okf-memory"
+		},
+		{
+			"name": "planning-with-files",
+			"description": "Persist task plans for long-running work.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "productivity",
+			"source": "./modules/common/ai-tools/skills/planning-with-files"
+		},
+		{
+			"name": "rust-toolkit",
+			"description": "Build and maintain Rust crates, services, and CLIs.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/rust-toolkit"
+		},
+		{
+			"name": "sarif-toolkit",
+			"description": "Inspect, summarize, and partition SARIF reports.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/sarif-toolkit"
+		},
+		{
+			"name": "security-toolkit",
+			"description": "Review repositories for explicit security requests.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "security",
+			"source": "./modules/common/ai-tools/skills/security-toolkit"
+		},
+		{
+			"name": "skill-creator",
+			"description": "Create and update portable agent skills.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/skill-creator"
+		},
+		{
+			"name": "software-engineering",
+			"description": "Evaluate software architecture and plan large changes.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/software-engineering"
+		},
+		{
+			"name": "technical-writing",
+			"description": "Write and review concise technical prose.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "productivity",
+			"source": "./modules/common/ai-tools/skills/technical-writing"
+		},
+		{
+			"name": "writing-nix",
+			"description": "Write maintainable Nix expressions and modules.",
+			"version": "0.1.0",
+			"author": { "name": "khaneliman" },
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/writing-nix"
+		}
+	]
+}
