@@ -119,7 +119,10 @@ in
         tray.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
       };
 
-      system.input.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isDarwin;
+      system = {
+        darwin-defaults.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isDarwin;
+        input.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isDarwin;
+      };
     };
 
     programs = {
