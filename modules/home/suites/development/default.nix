@@ -154,9 +154,6 @@ in
           tuicr
           workmux
           zat
-        ]
-        ++ lib.optionals (cfg.aiEnable && pkgs.stdenv.hostPlatform.isLinux && !isWSL) [
-          claude-desktop
         ];
 
       shellAliases = {
@@ -227,6 +224,7 @@ in
       programs = {
         graphical = {
           apps = {
+            claude-desktop.enable = mkDefault (cfg.aiEnable && !isWSL);
             codex-desktop.enable = cfg.aiEnable && !isWSL;
           };
 
