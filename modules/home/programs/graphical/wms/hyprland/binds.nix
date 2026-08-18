@@ -117,9 +117,7 @@ let
           "satty --filename -"
         else
           "swappy -f -";
-      annotateScreenshot =
-        screenshotCommand:
-        "${lib.getExe pkgs.bash} -lc ${lib.escapeShellArg "${screenshotCommand} | ${annotationTool}"}";
+      serviceShellCommand = command: "${lib.getExe pkgs.bash} -lc ${lib.escapeShellArg command}";
     in
     [
       {
@@ -236,15 +234,15 @@ let
       }
       {
         from = "$screenshot_active_annotate";
-        to = annotateScreenshot screenshotTool.active;
+        to = serviceShellCommand "${screenshotTool.active} | ${annotationTool}";
       }
       {
         from = "$screenshot_area_annotate";
-        to = annotateScreenshot screenshotTool.area;
+        to = serviceShellCommand "${screenshotTool.area} | ${annotationTool}";
       }
       {
         from = "$screenshot_screen_annotate";
-        to = annotateScreenshot screenshotTool.screen;
+        to = serviceShellCommand "${screenshotTool.screen} | ${annotationTool}";
       }
       {
         from = "$screen-recorder";
