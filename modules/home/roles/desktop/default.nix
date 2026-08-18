@@ -25,6 +25,7 @@ in
       };
       business = {
         enable = true;
+        annotationEnable = true;
         officeEnable = true;
         pimEnable = true;
       };

@@ -17,7 +17,10 @@ in
 
   config = mkIf cfg.enable {
     khanelinix.suites = {
-      business = enabled;
+      business = {
+        enable = true;
+        annotationEnable = true;
+      };
       common = enabled;
       development = {
         enable = true;
