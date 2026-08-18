@@ -17,11 +17,13 @@ let
   cfg = config.khanelinix.suites.business;
   includes = suiteProfileIncludes config cfg;
   isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
+  annotationEnabled = cfg.annotationEnable && !isWSL;
 in
 {
   options.khanelinix.suites.business = {
     enable = lib.mkEnableOption "business configuration";
     packageProfile = mkPackageProfileOption "Package profile override for business applications.";
+    annotationEnable = lib.mkEnableOption "screenshot annotation applications";
     officeEnable = lib.mkEnableOption "office applications";
     pimEnable = lib.mkEnableOption "personal information management applications";
   };
@@ -42,11 +44,16 @@ in
         calcurse
         dooit
       ]
-      ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
-        meetingbar
-      ]
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin (
+        [ meetingbar ]
+        ++ lib.optionals annotationEnabled [
+          macshot
+          shottr
+        ]
+      )
       ++ lib.optionals (stdenv.hostPlatform.isLinux && !isWSL) (
-        lib.optionals cfg.officeEnable [
+        lib.optionals annotationEnabled [ ksnip ]
+        ++ lib.optionals cfg.officeEnable [
           libreoffice
           p3x-onenote
         ]
@@ -55,6 +62,8 @@ in
     khanelinix = {
       programs = {
         graphical = {
+          addons.flameshot.enable = lib.mkDefault annotationEnabled;
+
           apps = {
             teams-for-linux.enable = lib.mkDefault (!isWSL && includes "standard");
             thunderbird.enable = lib.mkDefault (!isWSL && includes "standard"); # No GUI email client in WSL
