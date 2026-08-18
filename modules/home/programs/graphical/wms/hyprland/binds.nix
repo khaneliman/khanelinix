@@ -190,7 +190,7 @@ let
       }
       {
         from = "$cliphist";
-        to = "cliphist list  | tr -d '\\000' | ${dmenuLauncher} | cliphist decode | wl-copy";
+        to = serviceShellCommand "cliphist list | tr -d '\\000' | ${dmenuLauncher} | cliphist decode | wl-copy";
       }
       {
         from = "$looking-glass";
