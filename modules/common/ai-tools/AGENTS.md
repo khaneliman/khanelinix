@@ -22,6 +22,8 @@
 - `permissions.nix`: shared command and MCP permission catalog
 - `agents.nix`: canonical semantic workers, gateway model projections, and
   provider renderers
+- `marketplace/`: portable publication catalog, validator, tests, and install
+  documentation
 - `skills/`: canonical on-demand workflows; keep root playbooks lean and route
   detail into references/scripts
 - `planning-with-files/`: vendored provider adapters and explicit planning
