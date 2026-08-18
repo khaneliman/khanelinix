@@ -83,9 +83,14 @@ in
           sway_active_file = ''file="${screenshot-path}/$(${getDateTime}).png" && grim -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')" "$file" && notify-send "Screenshot" "Window saved to $file"'';
           sway_screen_file = ''file="${screenshot-path}/$(${getDateTime}).png" && grim "$file" && notify-send "Screenshot" "Screen saved to $file"'';
 
-          sway_area_swappy = ''grim -g "$(slurp)" - | swappy -f -'';
-          sway_active_swappy = ''grim -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')" - | swappy -f -'';
-          sway_screen_swappy = "grim - | swappy -f -";
+          annotationTool =
+            if config.khanelinix.programs.graphical.addons.satty.enable then
+              "satty --filename -"
+            else
+              "swappy -f -";
+          sway_area_annotate = ''grim -g "$(slurp)" -t ppm - | ${annotationTool}'';
+          sway_active_annotate = ''grim -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')" -t ppm - | ${annotationTool}'';
+          sway_screen_annotate = "grim -t ppm - | ${annotationTool}";
 
           sway_area_clipboard = ''grim -g "$(slurp)" - | wl-copy && notify-send "Screenshot" "Area copied to clipboard"'';
           sway_active_clipboard = ''grim -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')" - | wl-copy && notify-send "Screenshot" "Window copied to clipboard"'';
@@ -172,9 +177,9 @@ in
               "Super_L+Print" = "exec ${sway_screen_file}";
 
               # Area / Window screenshots
-              "Alt+Print" = "exec ${sway_active_swappy}";
-              "Alt+Control+Print" = "exec ${sway_area_swappy}";
-              "Alt+Super_L+Print" = "exec ${sway_screen_swappy}";
+              "Alt+Print" = "exec ${sway_active_annotate}";
+              "Alt+Control+Print" = "exec ${sway_area_annotate}";
+              "Alt+Super_L+Print" = "exec ${sway_screen_annotate}";
 
               # Clipboard screenshots
               "Control+Print" = "exec ${sway_active_clipboard}";
@@ -330,9 +335,9 @@ in
               "Shift+w" = "exec ${sway_active_file}, mode default";
               "Shift+a" = "exec ${sway_area_file}, mode default";
               "Shift+s" = "exec ${sway_screen_file}, mode default";
-              "Alt+w" = "exec ${sway_active_swappy}, mode default";
-              "Alt+a" = "exec ${sway_area_swappy}, mode default";
-              "Alt+s" = "exec ${sway_screen_swappy}, mode default";
+              "Alt+w" = "exec ${sway_active_annotate}, mode default";
+              "Alt+a" = "exec ${sway_area_annotate}, mode default";
+              "Alt+s" = "exec ${sway_screen_annotate}, mode default";
               "r" = "exec record_screen screen, mode default";
               "Shift+r" = "exec record_screen area, mode default";
               "Escape" = "mode default";
