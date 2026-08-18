@@ -11,6 +11,10 @@ let
   inherit (lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.services.skhd;
+  annotationShortcutEnabled =
+    config.khanelinix.suites.business.enable
+    && config.khanelinix.suites.business.annotationEnable
+    && !config.khanelinix.programs.graphical.wms.aerospace.enable;
 
   userHome = config.home.homeDirectory;
 
@@ -84,6 +88,9 @@ in
         default < cmd + alt + ctrl - o : open /Applications/Microsoft\ Outlook.app
         default < cmd + alt + ctrl - p : open /Applications/Microsoft\ PowerPoint.app
         default < cmd + alt + ctrl - f : open /Applications/Firefox\ Developer\ Edition.app
+        ${lib.optionalString annotationShortcutEnabled ''
+          default < cmd + shift - x : open 'shottr://grab/area?then=edit'
+        ''}
 
         # ░█▀▀░█░█░█▀▀░▀█▀░█▀▀░█▄█
         # ░▀▀█░░█░░▀▀█░░█░░█▀▀░█░█

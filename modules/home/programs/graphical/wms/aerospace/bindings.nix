@@ -7,6 +7,8 @@
 let
   cfg = config.khanelinix.programs.graphical.wms.aerospace;
   sketchybar = lib.getExe (config.programs.sketchybar.finalPackage or pkgs.sketchybar);
+  annotationEnabled =
+    config.khanelinix.suites.business.enable && config.khanelinix.suites.business.annotationEnable;
 in
 {
   config = lib.mkIf cfg.enable {
@@ -157,6 +159,9 @@ in
           "cmd-alt-ctrl-w" = "exec-and-forget open -a WezTerm";
           "cmd-alt-ctrl-o" = "exec-and-forget open -a 'Microsoft Outlook'";
           "cmd-alt-ctrl-p" = "exec-and-forget open -a 'Microsoft PowerPoint'";
+        }
+        // lib.optionalAttrs annotationEnabled {
+          "cmd-shift-x" = "exec-and-forget open 'shottr://grab/area?then=edit'";
         };
 
         # Resize mode bindings
