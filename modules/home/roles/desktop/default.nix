@@ -27,6 +27,7 @@ in
         enable = true;
         annotationEnable = true;
         architectureEnable = true;
+        azureDevOpsEnable = true;
         knowledgeEnable = true;
         officeEnable = true;
         pimEnable = true;

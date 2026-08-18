@@ -25,6 +25,7 @@ in
     packageProfile = mkPackageProfileOption "Package profile override for business applications.";
     annotationEnable = lib.mkEnableOption "screenshot annotation applications";
     architectureEnable = lib.mkEnableOption "architecture documentation applications";
+    azureDevOpsEnable = lib.mkEnableOption "Azure DevOps backlog integration";
     knowledgeEnable = lib.mkEnableOption "knowledge and requirements applications";
     officeEnable = lib.mkEnableOption "office applications";
     pimEnable = lib.mkEnableOption "personal information management applications";
@@ -79,6 +80,7 @@ in
           };
           tools = {
             _1password-cli = lib.mkDefault enabled;
+            azure.devOpsEnable = lib.mkDefault cfg.azureDevOpsEnable;
             d2.enable = lib.mkDefault cfg.architectureEnable;
             khal.enable = lib.mkDefault cfg.pimEnable;
             pandoc.enable = lib.mkDefault cfg.publishingEnable;

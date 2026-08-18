@@ -246,7 +246,7 @@ in
 
           tools = {
             act = mkDefault enabled;
-            azure.enable = cfg.azureEnable;
+            azure.developmentEnable = cfg.azureEnable;
             claude-code.enable = cfg.aiEnable;
             codex.enable = cfg.aiEnable;
             codexbar.enable = cfg.aiEnable;
