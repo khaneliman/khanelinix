@@ -20,6 +20,7 @@ in
       business = {
         enable = true;
         annotationEnable = true;
+        architectureEnable = true;
         knowledgeEnable = true;
         planningEnable = true;
       };
