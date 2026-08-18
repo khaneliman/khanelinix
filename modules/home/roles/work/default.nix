@@ -21,6 +21,7 @@ in
         enable = true;
         annotationEnable = true;
         knowledgeEnable = true;
+        planningEnable = true;
       };
       common = enabled;
       development = {

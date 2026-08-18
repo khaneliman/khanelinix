@@ -27,6 +27,7 @@ in
     knowledgeEnable = lib.mkEnableOption "knowledge and requirements applications";
     officeEnable = lib.mkEnableOption "office applications";
     pimEnable = lib.mkEnableOption "personal information management applications";
+    planningEnable = lib.mkEnableOption "personal planning applications";
   };
 
   config = mkIf cfg.enable {
@@ -43,7 +44,6 @@ in
       ]
       ++ lib.optionals cfg.pimEnable [
         calcurse
-        dooit
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin (
         [ meetingbar ]
@@ -78,6 +78,7 @@ in
           tools = {
             _1password-cli = lib.mkDefault enabled;
             khal.enable = lib.mkDefault cfg.pimEnable;
+            taskwarrior.enable = lib.mkDefault cfg.planningEnable;
             zk.enable = lib.mkDefault cfg.knowledgeEnable;
           };
         };

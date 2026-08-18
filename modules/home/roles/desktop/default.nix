@@ -29,6 +29,7 @@ in
         knowledgeEnable = true;
         officeEnable = true;
         pimEnable = true;
+        planningEnable = true;
       };
       social = {
         enable = true;
