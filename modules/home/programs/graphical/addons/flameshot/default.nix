@@ -1,11 +1,13 @@
 {
   config,
   lib,
+  pkgs,
 
   ...
 }:
 let
   inherit (lib) mkIf;
+  inherit (pkgs.stdenv.hostPlatform) isDarwin;
 
   cfg = config.khanelinix.programs.graphical.addons.flameshot;
 
@@ -23,6 +25,9 @@ in
   config = mkIf cfg.enable {
     home.file."${lib.removePrefix "${config.home.homeDirectory}/" picturesDir}/screenshots/.keep".text =
       "";
+
+    # Shottr owns the managed macOS capture shortcut.
+    launchd.agents.flameshot.enable = lib.mkIf isDarwin (lib.mkForce false);
 
     services.flameshot = {
       # Flameshot documentation
