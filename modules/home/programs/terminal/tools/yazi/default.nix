@@ -122,6 +122,14 @@ in
       # See: https://yazi-rs.github.io/docs/configuration/overview/
       settings = lib.mkMerge [
         (import ./settings/input.nix)
+        (import ./settings/image-annotation.nix {
+          inherit
+            config
+            isWSL
+            lib
+            pkgs
+            ;
+        })
         (import ./settings/open.nix)
         (import ./settings/opener.nix {
           inherit
