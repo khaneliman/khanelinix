@@ -26,6 +26,7 @@ in
       business = {
         enable = true;
         annotationEnable = true;
+        knowledgeEnable = true;
         officeEnable = true;
         pimEnable = true;
       };

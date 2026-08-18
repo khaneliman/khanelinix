@@ -20,6 +20,7 @@ in
       business = {
         enable = true;
         annotationEnable = true;
+        knowledgeEnable = true;
       };
       common = enabled;
       development = {

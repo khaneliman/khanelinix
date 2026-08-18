@@ -24,6 +24,7 @@ in
     enable = lib.mkEnableOption "business configuration";
     packageProfile = mkPackageProfileOption "Package profile override for business applications.";
     annotationEnable = lib.mkEnableOption "screenshot annotation applications";
+    knowledgeEnable = lib.mkEnableOption "knowledge and requirements applications";
     officeEnable = lib.mkEnableOption "office applications";
     pimEnable = lib.mkEnableOption "personal information management applications";
   };
@@ -76,6 +77,7 @@ in
           tools = {
             _1password-cli = lib.mkDefault enabled;
             khal.enable = lib.mkDefault cfg.pimEnable;
+            zk.enable = lib.mkDefault cfg.knowledgeEnable;
           };
         };
       };
