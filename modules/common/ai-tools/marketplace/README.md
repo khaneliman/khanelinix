@@ -17,8 +17,8 @@ npx skills add khaneliman/khanelinix \
 ```
 
 Replace `git-toolkit` with a published skill name from `catalog.json`. Select
-skills explicitly. The repository also contains internal or license-restricted
-skills that the marketplace excludes.
+skills explicitly. The repository also contains internal or host-bound skills
+that the marketplace excludes.
 
 ## Use the Codex marketplace
 

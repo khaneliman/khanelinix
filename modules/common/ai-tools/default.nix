@@ -185,9 +185,7 @@ let
   harnessSkillPolicy = {
     codex = {
       excludeLocal = [
-        "docx"
         "mcp-builder"
-        "pdf"
         "security-toolkit"
       ];
       preferSystem = [
@@ -203,9 +201,7 @@ let
 
     claudeCode = {
       excludeLocal = [
-        "docx"
         "mcp-builder"
-        "pdf"
         "security-toolkit"
       ];
       preferSystem = [
