@@ -198,7 +198,7 @@ let
       }
       {
         from = "$color_picker";
-        to = "hyprpicker -a && (${magick} convert -size 32x32 xc:$(wl-paste) /tmp/color.png && notify-send \"Color Code:\" \"$(wl-paste)\" -h \"string:bgcolor:$(wl-paste)\" --icon /tmp/color.png -u critical -t 4000)";
+        to = serviceShellCommand "hyprpicker -a && (${magick} convert -size 32x32 xc:$(wl-paste) /tmp/color.png && notify-send \"Color Code:\" \"$(wl-paste)\" -h \"string:bgcolor:$(wl-paste)\" --icon /tmp/color.png -u critical -t 4000)";
       }
       {
         from = "$bar";
