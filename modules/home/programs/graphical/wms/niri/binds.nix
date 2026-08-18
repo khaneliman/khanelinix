@@ -108,6 +108,12 @@ in
             notify-send "Color Code:" "$color" -h "string:bgcolor:$color" --icon /tmp/color.png -u critical -t 4000
           '';
 
+          annotationCommand =
+            if config.khanelinix.programs.graphical.addons.satty.enable then
+              ''grim -g "$(slurp)" -t ppm - | satty --filename -''
+            else
+              ''grim -g "$(slurp)" - | swappy -f -'';
+
           workspaceDigitBinds = builtins.listToAttrs (
             map (
               ws:
@@ -294,6 +300,7 @@ in
               show-pointer = false;
             };
           };
+          "Ctrl+Alt+Print".action.spawn = annotationCommand;
 
           "Mod+I".action.spawn = "notify-send \"niri\" \"No window inspector configured\"";
           "Mod+Shift+Period".action.spawn = "smile";
