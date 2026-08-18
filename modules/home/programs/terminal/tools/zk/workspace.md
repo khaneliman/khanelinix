@@ -19,3 +19,10 @@ This workspace uses portable Markdown for `zk`, Obsidian, and Pandoc.
 - `Meetings/`: meeting context, notes, decisions, and actions
 - `Projects/`: project outcomes, scope, risks, and milestones
 - `Requirements/`: requirements and acceptance criteria
+- `Templates/`: writable starter templates for Obsidian
+
+## Configuration ownership
+
+- Home Manager copies this README and starter templates only when absent.
+- Home Manager owns configured `.obsidian/*.json` settings as store symlinks.
+- Change declarative Obsidian settings in the Home Manager module.

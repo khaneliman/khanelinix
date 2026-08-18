@@ -66,6 +66,7 @@ in
           addons.flameshot.enable = lib.mkDefault annotationEnabled;
 
           apps = {
+            obsidian.enable = lib.mkDefault (cfg.knowledgeEnable && !isWSL);
             teams-for-linux.enable = lib.mkDefault (!isWSL && includes "standard");
             thunderbird.enable = lib.mkDefault (!isWSL && includes "standard"); # No GUI email client in WSL
           };
