@@ -12,6 +12,7 @@ let
   cfg = config.khanelinix.programs.graphical.desktop-environment.plasma;
   catppuccinCfg = config.khanelinix.theme.catppuccin;
   cursorCfg = config.khanelinix.theme.gtk.cursor;
+  flameshotEnabled = config.khanelinix.programs.graphical.addons.flameshot.enable;
 
   capitalize = s: lib.toUpper (builtins.substring 0 1 s) + builtins.substring 1 (-1) s;
 
@@ -41,6 +42,13 @@ in
 
     programs.plasma = {
       enable = true;
+
+      hotkeys.commands.annotate-screenshot = lib.mkIf flameshotEnabled {
+        name = "Annotate Screenshot";
+        key = "Ctrl+Alt+Print";
+        command = "${lib.getExe config.services.flameshot.package} gui";
+        logs.enabled = false;
+      };
 
       workspace = {
         wallpaper = wallpaperPath config.khanelinix.theme.wallpaper.primary;
