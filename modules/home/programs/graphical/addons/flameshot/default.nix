@@ -28,6 +28,13 @@ in
       # Flameshot documentation
       # See: https://flameshot.org/docs/
       enable = true;
+
+      settings.General = {
+        filenamePattern = "flameshot-%Y-%m-%d_%H-%M-%S";
+        savePath = "${picturesDir}/screenshots";
+        savePathFixed = true;
+        showStartupLaunchMessage = false;
+      };
     };
   };
 }
