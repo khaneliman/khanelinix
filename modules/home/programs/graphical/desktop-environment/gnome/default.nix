@@ -15,6 +15,7 @@ let
     ;
 
   cfg = config.khanelinix.programs.graphical.desktop-environment.gnome;
+  flameshotEnabled = config.khanelinix.programs.graphical.addons.flameshot.enable;
 
   get-wallpaper = wallpaper: if lib.isDerivation wallpaper then toString wallpaper else wallpaper;
   wallpaperPath = name: lib.khanelinix.theme.wallpaperPath { inherit config pkgs name; };
@@ -286,6 +287,18 @@ in
     dconf.settings = lib.recursiveUpdate (
       lib.optionalAttrs (cfg.shell != { }) {
         "org/gnome/shell" = default-attrs cfg.shell;
+      }
+      // lib.optionalAttrs flameshotEnabled {
+        "org/gnome/settings-daemon/plugins/media-keys" = {
+          custom-keybindings = [
+            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/khanelinix-flameshot/"
+          ];
+        };
+        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/khanelinix-flameshot" = {
+          binding = "<Control><Alt>Print";
+          command = "${lib.getExe config.services.flameshot.package} gui";
+          name = "Annotate Screenshot";
+        };
       }
       // lib.optionalAttrs (cfg.desktop.interface != { }) {
         "org/gnome/desktop/interface" = default-attrs cfg.desktop.interface;
