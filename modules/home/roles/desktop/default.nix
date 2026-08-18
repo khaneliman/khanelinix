@@ -31,6 +31,7 @@ in
         officeEnable = true;
         pimEnable = true;
         planningEnable = true;
+        publishingEnable = true;
       };
       social = {
         enable = true;

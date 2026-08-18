@@ -29,6 +29,7 @@ in
     officeEnable = lib.mkEnableOption "office applications";
     pimEnable = lib.mkEnableOption "personal information management applications";
     planningEnable = lib.mkEnableOption "personal planning applications";
+    publishingEnable = lib.mkEnableOption "document publishing applications";
   };
 
   config = mkIf cfg.enable {
@@ -80,6 +81,7 @@ in
             _1password-cli = lib.mkDefault enabled;
             d2.enable = lib.mkDefault cfg.architectureEnable;
             khal.enable = lib.mkDefault cfg.pimEnable;
+            pandoc.enable = lib.mkDefault cfg.publishingEnable;
             taskwarrior.enable = lib.mkDefault cfg.planningEnable;
             zk.enable = lib.mkDefault cfg.knowledgeEnable;
           };

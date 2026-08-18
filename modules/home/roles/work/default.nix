@@ -23,6 +23,7 @@ in
         architectureEnable = true;
         knowledgeEnable = true;
         planningEnable = true;
+        publishingEnable = true;
       };
       common = enabled;
       development = {
