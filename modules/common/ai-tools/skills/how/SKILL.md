@@ -1,6 +1,6 @@
 ---
 name: how
-description: "Explain how a subsystem works from direct codebase exploration, and optionally critique its architecture. Use for \"how does X work\", code walkthroughs before changing something, and placement / ownership / layering questions (\"where should this live\", \"which package owns this\", \"is this the right layer\"). Covers subsystem architecture, runtime flow, and onboarding mental models. Use why for motivation. Use software-engineering for repository-wide architecture evaluation."
+description: "Explain how a subsystem works from direct codebase exploration, with an optional architecture critique. Use for \"how does X work\", code walkthroughs before changing something, or placement and layering questions (\"where should this live\", \"is this the right layer\"). Use why for motivation; use software-engineering for repository-wide evaluation."
 ---
 
 # How
