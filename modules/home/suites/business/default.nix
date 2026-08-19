@@ -45,6 +45,9 @@ in
       ++ lib.optionals (includes "maximal") [
         slack
       ]
+      ++ lib.optionals cfg.architectureEnable [
+        mermaid-cli
+      ]
       ++ lib.optionals cfg.pimEnable [
         calcurse
       ]
@@ -57,6 +60,7 @@ in
       )
       ++ lib.optionals (stdenv.hostPlatform.isLinux && !isWSL) (
         lib.optionals annotationEnabled [ ksnip ]
+        ++ lib.optionals cfg.architectureEnable [ drawio ]
         ++ lib.optionals cfg.officeEnable [
           libreoffice
           p3x-onenote

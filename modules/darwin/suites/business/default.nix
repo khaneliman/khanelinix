@@ -19,6 +19,7 @@ in
     homebrew = {
       casks = [
         "calibre"
+        "drawio"
         "fantastical"
         "libreoffice"
         "microsoft-teams"
