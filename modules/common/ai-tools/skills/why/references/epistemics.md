@@ -175,8 +175,7 @@ make the call.
 
 ## When Evidence Is Missing
 
-An honest "we don't know" is one of the most valuable outputs this skill can
-produce. The user now knows:
+An honest "we don't know" is a useful result. The user now knows:
 
 - The answer isn't in the obvious places
 - They'll need to ask a human (the original author, the product owner, the team

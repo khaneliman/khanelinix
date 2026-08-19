@@ -12,7 +12,7 @@
 | `test/`               | Unit/integration tests (native busted).                                    |
 
 Adapters/libraries loaded by another plugin (Neotest adapter, null-ls source)
-have **no** `plugin/` or `ftplugin/` — expose no user commands, only the `lua/`
+have **no** `plugin/` or `ftplugin/`. Expose no user commands, only the `lua/`
 tree. Don't add `plugin/` just to follow the template.
 
 ## `plugin/` vs `lua/` Separation
@@ -31,8 +31,8 @@ vim.api.nvim_create_user_command("ModernPluginAction", function(opts)
 end, { nargs = "?", desc = "Executes the primary action of the modern plugin" })
 ```
 
-Anti-pattern: top-level `require('my_plugin')` in `plugin/` — forces synchronous
-parse+compile+eval of the whole plugin at startup.
+Anti-pattern: top-level `require('my_plugin')` in `plugin/`. It forces
+synchronous parse+compile+eval of the whole plugin at startup.
 
 ## Modular Design
 
@@ -53,7 +53,7 @@ lua/<plugin>/
 
 ## Runtime Guardrails
 
-Probe `jit` and degrade gracefully — don't assume LuaJIT-only features (`ffi`,
+Probe `jit` and degrade gracefully. Do not assume LuaJIT-only features (`ffi`,
 `jit.p`):
 
 ```lua
@@ -64,7 +64,7 @@ else
 end
 ```
 
-Exception: `require("bit")` is always available — Neovim ships a C-backed
+Exception: `require("bit")` is always available. Neovim ships a C-backed
 fallback even on non-JIT builds.
 
 ## Global Pollution

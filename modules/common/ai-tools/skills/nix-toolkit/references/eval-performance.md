@@ -79,38 +79,39 @@ Apply in order based on profiling output.
 
 ### System-Level
 
-- `documentation.enable = false;` — often top cause of slow NixOS eval (manual
+- `documentation.enable = false;`: often top cause of slow NixOS eval (manual
   generation).
-- `home-manager.useGlobalPkgs = true;` — prevents redundant second Nixpkgs
+- `home-manager.useGlobalPkgs = true;`: prevents redundant second Nixpkgs
   evaluation.
-- `inputs.<name>.follows = "nixpkgs";` — reduces dependency graph; validate
+- `inputs.<name>.follows = "nixpkgs";`: reduces dependency graph; validate
   cache-hit tradeoffs.
 
 ### Nix Language Patterns
 
 - Move repeated `let` bindings outside loops/maps to reduce thunk creation.
-- Prefer `let` + standard attrsets over `rec { ... }` — `rec` uses fixpoint
+- Prefer `let` + standard attrsets over `rec { ... }`: `rec` uses fixpoint
   iteration; shared values in `let` avoid that.
-- Use strict `builtins.foldl'` / `lib.foldl'` for list reductions (not `foldl`
-  or hand-written recursion) — avoids GC-pressuring thunk chain.
-- For transitive-closure traversals, use `builtins.genericClosure` — runs in
-  C++, deduplicates in place, bypasses Nix recursion limit.
+- Use strict `builtins.foldl'` / `lib.foldl'` for list reductions. Avoid `foldl`
+  and hand-written recursion because they create GC pressure through thunk
+  chains.
+- For transitive-closure traversals, use `builtins.genericClosure`: runs in C++,
+  deduplicates in place, bypasses Nix recursion limit.
 - Avoid heavy string manipulation; repeated split/concat degrades toward O(N^2).
   Use `builtins.fromJSON`/`fromTOML`; tokenize with `builtins.match` and reduce
   with strict `foldl'`.
-- Do NOT interpolate local paths into strings (`"${./.}"`) — coercing a path
+- Do NOT interpolate local paths into strings (`"${./.}"`): coercing a path
   copies the target into the store before resolving; keeps path values as paths,
   or use `lib.fileset`.
 - Gate optional/expensive modules behind enable options; eval time scales
   linearly with import count.
 - Avoid `builtins.readDir` over large trees during module import; materialize
   file lists or narrow the directory.
-- Avoid generating many options with dynamic names — option declaration/merge
+- Avoid generating many options with dynamic names: option declaration/merge
   cost scales with surface area.
 - Force strict evaluation of large static datasets instead of wrapping in deeply
   nested lazy `map`/`filter` chains.
-- Prefer `hasAttrByPath`, `attrByPath`, `getAttrFromPath` over dynamically
-  concatenated strings — static interned names compare by pointer; dynamic
+- Prefer `hasAttrByPath`, `attrByPath`, and `getAttrFromPath` over dynamically
+  concatenated strings. Static interned names compare by pointer. Dynamic
   strings fall back to character comparison.
 
 ### Attribute-Set Merge Complexity
@@ -121,8 +122,9 @@ Apply in order based on profiling output.
 | Linear fold      | `foldl' (a: b: a // b) {} list`    | O(N^2·m)     | avoid for dynamic lists           |
 | Binary merge     | `lib.attrsets.mergeAttrsList list` | O(N·m·log N) | dynamic/large lists, overlays     |
 
-- `foldl`/`foldr` of `//` over a list re-copies all prior keys on every step —
-  quadratic. Use `lib.attrsets.mergeAttrsList` for dynamic/large lists.
+- `foldl`/`foldr` of `//` over a list re-copies all prior keys on every step.
+  This is quadratic. Use `lib.attrsets.mergeAttrsList` for dynamic or large
+  lists.
 - `lib.attrsets.zipAttrsWith` for surface-level grouping by key.
 - Same quadratic trap applies to `foldl' lib.recursiveUpdate {} list`.
 
@@ -132,7 +134,7 @@ Apply in order based on profiling output.
 - Nixvim and plugin-heavy modules create large option graphs.
 - HM without `useGlobalPkgs` evaluates Nixpkgs twice.
 - Overlays that import Nixpkgs internally multiply evaluation cost. A single
-  overlay does NOT re-evaluate all of Nixpkgs — only overridden attributes
+  overlay does NOT re-evaluate all of Nixpkgs. Only overridden attributes
   re-evaluate.
 - `specialisations` and NixOS `containers` are highest-cost: each
   duplicates/re-evaluates the config graph (N×M multiplier). Prefer lighter

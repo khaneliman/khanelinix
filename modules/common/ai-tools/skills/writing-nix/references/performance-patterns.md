@@ -65,7 +65,7 @@ Decision rule:
    `fromTOML`, or do the parsing in a build step.
 2. If a small amount of parsing is unavoidable, tokenize with `builtins.match`
    (C++ regex) and reduce the result with a strict `foldl'`.
-3. Avoid building strings just to compare them — see the attribute-path note
+3. Avoid building strings just to compare them. See the attribute-path note
    below.
 
 ## Attribute Names Over Built Strings

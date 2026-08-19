@@ -57,23 +57,22 @@ BRP `result`. Exit codes:
 
 ## Deterministic Probe Shape
 
-1. **Preflight** — verify target/build/features and reject occupied/wrong BRP
+1. **Preflight**: verify target/build/features and reject occupied/wrong BRP
    session. Establish project-owned reflected identity data before scripting
    mutations.
-2. **Launch/attach** — start through MCP or repository launcher; capture PID,
+2. **Launch/attach**: start through MCP or repository launcher; capture PID,
    port, app/session identity, log, and whether desktop/headless.
-3. **Wait** — poll BRP while also checking owned process liveness and timeout.
-4. **Arrange** — query current entities/resources; establish narrow mutation or
+3. **Wait**: poll BRP while also checking owned process liveness and timeout.
+4. **Arrange**: query current entities/resources; establish narrow mutation or
    project-owned request.
-5. **Act** — use reflected mutation, event/request, or frame-aware input.
-6. **Settle** — poll explicit status/request identity, not a blind long sleep.
-7. **Assert** — read back state and reject wrong scene, stalled progress, or
+5. **Act**: use reflected mutation, event/request, or frame-aware input.
+6. **Settle**: poll explicit status/request identity, not a blind long sleep.
+7. **Assert**: read back state and reject wrong scene, stalled progress, or
    stale response.
-8. **Capture** — request framebuffer screenshot and verify fresh nonzero file.
-9. **Inspect** — view pixels/logs/diagnostics; transport success is
-   insufficient.
-10. **Restore/cleanup** — revert temporary state, stop watches, cleanly shut
-    down only process owned by this probe.
+8. **Capture**: request framebuffer screenshot and verify fresh nonzero file.
+9. **Inspect**: view pixels/logs/diagnostics; transport success is insufficient.
+10. **Restore/cleanup**: revert temporary state, stop watches, cleanly shut down
+    only process owned by this probe.
 
 ## Launching
 

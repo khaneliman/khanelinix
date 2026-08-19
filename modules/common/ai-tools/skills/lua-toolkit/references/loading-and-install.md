@@ -1,6 +1,6 @@
 # Loading and Installation
 
-## Self-Lazy-Load — Don't Rely on the Plugin Manager
+## Self-Lazy-Load: Don't Rely on the Plugin Manager
 
 Don't rely on `event`/`cmd`/`ft` triggers in the manager. Make the plugin load
 itself:
@@ -49,8 +49,8 @@ depend on `plenary.nvim`.
 
 ## Dependencies
 
-Pure-Lua libraries load on `require()` — mark `lazy = true` to keep them off the
-startup path:
+Pure-Lua libraries load on `require()`. Mark them `lazy = true` to keep them off
+the startup path:
 
 ```lua
 { "author/some-lua-lib.nvim", lazy = true }
@@ -59,5 +59,6 @@ startup path:
 ## Build Steps
 
 lazy.nvim runs build functions in a coroutine. Use `coroutine.yield()` for
-progress. Never call `vim.api.nvim_set_current_dir()` in a build — runs
-concurrently, mutating cwd corrupts other in-flight builds. Use absolute paths.
+progress. Never call `vim.api.nvim_set_current_dir()` in a build. Builds run
+concurrently, so mutating cwd corrupts other in-flight builds. Use absolute
+paths.

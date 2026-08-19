@@ -21,22 +21,22 @@ reference needed for the current decision.
 
 ## Routing
 
-1. **project architecture** — crate/module/workspace boundaries, dependency
+1. **project architecture**: crate/module/workspace boundaries, dependency
    direction, visibility, errors, features, and project initialization. Read
    [architecture.md](references/architecture.md).
-2. **type-driven design** — typestate, runtime state machines, builders,
+2. **type-driven design**: typestate, runtime state machines, builders,
    newtypes, trait dispatch, ownership, and concurrency boundaries. Read
    [type-driven-design.md](references/type-driven-design.md).
-3. **correctness and testing** — test placement, property/model testing, unsafe
+3. **correctness and testing**: test placement, property/model testing, unsafe
    review, Miri, Loom, fuzzing, sanitizers, and validation ladders. Read
    [correctness-and-testing.md](references/correctness-and-testing.md).
-4. **performance** — compile-time and runtime measurement, data layout,
+4. **performance**: compile-time and runtime measurement, data layout,
    allocations, SIMD, custom allocators, PGO, profiles, linkers, and caching.
    Read [performance.md](references/performance.md).
-5. **toolchain evolution** — edition or MSRV migrations, release and target
+5. **toolchain evolution**: edition or MSRV migrations, release and target
    changes, unstable language/Cargo features, and nightly experiments. Read
    [toolchain-evolution.md](references/toolchain-evolution.md).
-6. **repeatable checks** — use the inventory and quality-gate helpers. Read
+6. **repeatable checks**: use the inventory and quality-gate helpers. Read
    [scripts.md](references/scripts.md).
 
 ## Core Rules

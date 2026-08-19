@@ -5,8 +5,9 @@ description: Software-system engineering for current-state repository or subsyst
 
 # Software Engineering
 
-Use this skill as judgment entry point. Let repository canon define local policy
-and language, framework, security, Git, and delivery skills own specialist work.
+Use this skill for architecture decisions. Let repository canon define local
+policy, and let language, framework, security, Git, and delivery skills own
+specialist work.
 
 ## Start from Evidence
 

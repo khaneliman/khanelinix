@@ -2,9 +2,9 @@
 
 ## Busted Testing
 
-Use `busted` — not `plenary.busted` or `vusted`. Run via `nlua`. `.busted` at
-repo root; specs in `spec/`. Declare test deps in rockspec `test_dependencies`.
-Non-Nix CI runner: `nvim-busted-action`.
+Use `busted`, not `plenary.busted` or `vusted`. Run via `nlua`. Keep `.busted`
+at repo root; specs in `spec/`. Declare test deps in rockspec
+`test_dependencies`. Non-Nix CI runner: `nvim-busted-action`.
 
 ```lua
 -- File: .busted  (template only)
@@ -45,11 +45,10 @@ sufficient if lua-ls fails.
 
 ## Automated Documentation
 
-Generate `doc/*.txt` from LuaCATS — `lemmy-help` or `vimcats` compile
-annotations into tagged vimdoc; `panvimdoc` converts `README.md`. Wire into a
-`docgen` flake app or GitHub Action that commits `doc/`. Author structure
-(Diátaxis: tutorials, how-tos, reference, explanation) — don't dump a raw API
-listing.
+Generate `doc/*.txt` from LuaCATS. `lemmy-help` or `vimcats` compile annotations
+into tagged vimdoc; `panvimdoc` converts `README.md`. Wire this into a `docgen`
+flake app or GitHub Action that commits `doc/`. Author structure (Diátaxis:
+tutorials, how-tos, reference, explanation). Do not dump a raw API listing.
 
 ## Versioning and LuaRocks Distribution
 
@@ -58,7 +57,7 @@ listing.
 - Include rockspec (`<plugin>-scm-1.rockspec`, `rockspec_format = "3.0"`) for
   version resolution and `test_dependencies`.
 - Publish on tag via `nvim-neorocks/luarocks-tag-release` +
-  `release-please-action` — no manual `luarocks upload`.
+  `release-please-action`. Do not run `luarocks upload` manually.
 
 For Nix packaging (Nixvim, `vimUtils.buildVimPlugin`, overlay) use the
 `writing-nix` skill.

@@ -55,7 +55,7 @@ For each finding, provide:
 ## What Makes a Good Finding
 
 - It references specific code, not vague concerns ("this could be better")
-- It explains WHY something is a problem, not just THAT it is
+- It explains why something is a problem, not only that it is
 - It distinguishes between "this is broken" and "I would have done this
   differently"
 - It considers the stated intent. A finding that ignores the context of what's

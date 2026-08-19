@@ -5,9 +5,8 @@ description: Diagnose memory inefficiencies, capture high-resolution memory prof
 
 # Memory Profiler
 
-This skill establishes an exhaustive framework for diagnosing memory
-inefficiencies, capturing memory profiles, and executing architectural
-refactoring across various programming languages.
+This skill provides a framework for diagnosing memory inefficiencies, capturing
+memory profiles, and refactoring systems across several programming languages.
 
 ## Core Concepts
 

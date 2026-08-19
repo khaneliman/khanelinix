@@ -4,7 +4,7 @@
 
 - Target Lua 5.1 / LuaJIT 2.1. No 5.2+ dialect: no new `goto` scoping, no
   integer division `//`, no native bitwise operators.
-- `require("bit")` for bit ops — always available, even non-JIT builds.
+- `require("bit")` for bit ops: always available, even non-JIT builds.
 
 ## State And Loading
 

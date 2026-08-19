@@ -66,8 +66,8 @@ rg -l '<symbol>' --glob '*test*'
 
 ## What good evidence looks like here
 
-- A PR description that explains the problem being solved, not just the change
-  ("This fixes the pagination bug that caused X")
+- A PR description that explains the problem and its impact, then describes the
+  change ("This fixes the pagination bug that caused X")
 - A long review thread where alternatives were debated
 - An inline comment near the target line that explains a non-obvious constraint
 - A test named `test_handles_edge_case_when_X` that reveals an edge case

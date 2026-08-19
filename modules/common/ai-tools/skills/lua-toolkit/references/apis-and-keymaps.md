@@ -2,11 +2,10 @@
 
 ## One Scoped Command with Subcommands
 
-One command dispatches subcommands (`:MyPlugin install`, `:MyPlugin update`) —
-not a command per action. Use `nargs = "+"`, parse `opts.fargs`, supply
-`complete` filtering on the first token. Set `range = true` if subcommands act
-on visual selection. For complex arg parsing, `mega.cmdparse` reduces
-boilerplate.
+One command dispatches subcommands (`:MyPlugin install`, `:MyPlugin update`).
+Use `nargs = "+"`, parse `opts.fargs`, and supply `complete` filtering on the
+first token. Set `range = true` if subcommands act on visual selection. For
+complex arg parsing, `mega.cmdparse` reduces boilerplate.
 
 ```lua
 -- File: plugin/my_plugin.lua  (template only)
@@ -37,8 +36,8 @@ end, {
 ## Keymaps: `<Plug>` Only, No Defaults
 
 Don't create default keymaps. Expose `<Plug>` mappings; let users bind their own
-keys. `<Plug>` routes by mode via Neovim's C-level handling — no hand-rolled
-mode checks in the payload.
+keys. `<Plug>` routes by mode through Neovim's C-level handling. Do not add
+hand-rolled mode checks in the payload.
 
 ```lua
 vim.keymap.set("n", "<Plug>(MyPluginAction)", function()

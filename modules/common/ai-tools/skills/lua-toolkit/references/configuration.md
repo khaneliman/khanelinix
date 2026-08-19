@@ -1,6 +1,6 @@
 # Configuration UX
 
-## `vim.g.<plugin>` — Not `setup()`
+## `vim.g.<plugin>`: Not `setup()`
 
 Don't force `setup()`. Use `vim.g.<plugin>` (or `vim.b.<plugin>` for
 buffer-local): Vimscript-compatible, no init call, read lazily (users may set
@@ -44,7 +44,8 @@ Keep `setup()` only as an optional convenience; never the sole entry point.
 - **List keys** (sequential int): **overwritten** wholesale, not concatenated.
 
 `capabilities = {"formatting","diagnostics"}` default + user
-`capabilities = {"formatting"}` yields exactly `{"formatting"}` — no merge.
+`capabilities = {"formatting"}` yields exactly `{"formatting"}`. There is no
+merge.
 
 ## Validation: `vim.validate`
 

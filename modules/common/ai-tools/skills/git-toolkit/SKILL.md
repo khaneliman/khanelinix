@@ -11,23 +11,23 @@ Route Git work to one mode and load only its reference.
 
 When invoked, route to one mode:
 
-1. **commit-discipline** — plan atomic commits, draft messages, or choose
+1. **commit-discipline**: plan atomic commits, draft messages, or choose
    amend/fixup/autosquash. Read
    [commit-discipline.md](references/commit-discipline.md).
-2. **hunk-history** — split, move, restore, amend, or squash selected hunks with
+2. **hunk-history**: split, move, restore, amend, or squash selected hunks with
    `git-surgeon`. Read [git-surgeon.md](references/git-surgeon.md).
-3. **regression-bisect** — locate a first bad commit. Read
+3. **regression-bisect**: locate a first bad commit. Read
    [bisect.md](references/bisect.md).
-4. **change-stack** — shape or review multi-commit branches and PR stacks. Read
+4. **change-stack**: shape or review multi-commit branches and PR stacks. Read
    [change-stack.md](references/change-stack.md).
-5. **adversarial-review** — independently review a commit, PR, or diff against
+5. **adversarial-review**: independently review a commit, PR, or diff against
    falsifiable design premises and repository-wide constraints. Read
    [adversarial-review.md](references/adversarial-review.md).
-6. **routine-workflow** — branch creation, naming, cleanup, merge/rebase choice,
+6. **routine-workflow**: branch creation, naming, cleanup, merge/rebase choice,
    conflict resolution, or standard Git operations. Git mechanics are
    model-known; read [operating-rules.md](references/operating-rules.md) when
    naming a branch or when shared-history risk or GitHub boundaries matter.
-7. **github-toolkit** — issues, pull requests, review feedback, and CI state.
+7. **github-toolkit**: issues, pull requests, review feedback, and CI state.
    Invoke `$github-toolkit`; do not depend on a sibling filesystem path.
 
 If intent is unclear, ask for the mode before applying changes.

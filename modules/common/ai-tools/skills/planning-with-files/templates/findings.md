@@ -58,7 +58,8 @@
 
 <!--
   WHAT: Problems you ran into and how you solved them.
-  WHY: Similar to errors in task_plan.md, but focused on broader issues (not just code errors).
+  WHY: Similar to errors in task_plan.md, but focused on broader problems than
+       code errors.
   WHEN: Document when you encounter blockers or unexpected challenges.
   EXAMPLE:
     | Empty file causes JSONDecodeError | Added explicit empty file check before json.load() |

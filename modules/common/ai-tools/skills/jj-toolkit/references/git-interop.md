@@ -73,7 +73,7 @@ expected behavior.**
 Moving the bookmark is part of finishing a change. Do it every time, in this
 order:
 
-1. **Identify the bookmark before touching history** — the nearest bookmarked
+1. **Identify the bookmark before touching history**: the nearest bookmarked
    ancestor of `@` is the branch you are working off:
 
    ```bash
@@ -84,8 +84,8 @@ order:
    one to use. Do not leave it unnamed.
 
 2. **Finalize, then move the bookmark to the stack tip** (`@-` after a single
-   `jj commit`) — never to a dirty `@`, which would commit work-in-progress to
-   the branch with no description:
+   `jj commit`). Never move it to a dirty `@`, which would commit
+   work-in-progress to the branch with no description:
 
    ```bash
    jj bookmark set <bookmark> -r @-
@@ -93,7 +93,7 @@ order:
 
    New branch: `jj bookmark create <name> -r @-`.
 
-3. **Verify before reporting done** — bookmark on the tip, `@` empty:
+3. **Verify before reporting done**: bookmark on the tip, `@` empty:
 
    ```bash
    jj log --no-pager -r '@ | @-'

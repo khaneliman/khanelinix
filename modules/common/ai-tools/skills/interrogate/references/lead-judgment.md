@@ -75,9 +75,9 @@ These deserve more scrutiny even when they come from a single model.
 
 ## Verdict Calibration
 
-A good verdict is useful, not comprehensive. The user should be able to read the
-"Act On" section, fix those issues, and ship with confidence. If your "Act On"
-list has more than 5 items, you're probably not filtering hard enough.
+A good verdict is useful. The user should be able to read the "Act On" section,
+fix those issues, and ship with confidence. If your "Act On" list has more than
+5 items, you're probably not filtering hard enough.
 
 The "Dismissed" section is not busywork. It's a trust mechanism. Showing the
 user what you rejected and why lets them override your judgment where they

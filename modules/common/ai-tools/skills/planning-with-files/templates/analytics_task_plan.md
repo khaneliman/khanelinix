@@ -2,8 +2,9 @@
 
 <!--
   WHAT: Roadmap for a data analytics or exploration session.
-  WHY: Analytics workflows have different phases than software development — hypothesis testing,
-       data quality checks, and statistical validation don't map to a generic build cycle.
+  WHY: Analytics workflows have different phases than software development.
+       Hypothesis testing, data quality checks, and statistical validation do
+       not map to a generic build cycle.
   WHEN: Create this FIRST before starting any data exploration. Update after each phase.
 -->
 

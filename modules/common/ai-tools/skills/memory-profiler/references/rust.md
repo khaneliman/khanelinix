@@ -32,8 +32,8 @@ suboptimal allocator behavior can still occur.
 
 - **`std::collections::HashMap`**: Avoid unbounded caches. Employ bounded caches
   (e.g., `lru` crate) to cap memory.
-- **Deep cloning (`.clone()`)**: Leverage `std::borrow::Cow<T>` for
-  Clone-on-Write semantics.
+- **Deep cloning (`.clone()`)**: Use `std::borrow::Cow<T>` for Clone-on-Write
+  semantics.
 - **Frequent small `Vec<T>`**: Utilize `SmallVec` or `ArrayVec` to
   stack-allocate collections with known small maximum capacities.
 - **Massive file reading into RAM**: Transition to memory mapping to avoid

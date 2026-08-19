@@ -42,19 +42,19 @@ Defaults and caveats:
 
 Prefer this sequence:
 
-1. `brp_list_bevy` — discover declared apps/examples, package identity, BRP
+1. `brp_list_bevy`: discover declared apps/examples, package identity, BRP
    support level, profiles, build status, and paths.
-2. `brp_status` — detect existing process/port before launch.
-3. `brp_tool_help` — read the live parameter contract before a nontrivial or
+2. `brp_status`: detect existing process/port before launch.
+3. `brp_tool_help`: read the live parameter contract before a nontrivial or
    unfamiliar tool call.
-4. `brp_launch` — launch a target already configured with required Cargo
+4. `brp_launch`: launch a target already configured with required Cargo
    features, supplying supported package/path, profile, args, environment,
    instance, and port fields deliberately. Use a repository launcher when
    features must be selected at launch time.
 5. Poll `brp_status` until `running_with_brp`; read returned log path when
    launch or startup fails.
 6. Perform inspect/control/verification work.
-7. `brp_shutdown` — prefer extras clean shutdown; MCP may fall back to its owned
+7. `brp_shutdown`: prefer extras clean shutdown; MCP may fall back to its owned
    process termination.
 
 Do not launch a second app onto an occupied BRP port. For multiple instances,

@@ -2,7 +2,7 @@
 
 Python employs reference counting combined with a secondary cyclic garbage
 collector. Its abstraction layer, PyMalloc, optimizes small objects but
-obfuscates consumption—especially in C-extensions like NumPy/Pandas.
+obfuscates consumption, especially in C extensions such as NumPy and Pandas.
 
 ## Profiling Tools & Diagnostic Workflows
 

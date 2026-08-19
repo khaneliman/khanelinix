@@ -4,8 +4,8 @@
 
 jj automatically rebases descendants when you rewrite a commit. If a descendant
 modified the same lines you changed, jj records a **conflict** in that
-descendant. Conflicts are first-class data — the commit still exists, you can
-log it, diff it, and even rebase it further. But the working copy will contain
+descendant. Conflicts are first-class data. The commit still exists, so you can
+log it, diff it, and even rebase it further. The working copy will contain
 conflict markers and the code won't compile until resolved.
 
 Common triggers:
@@ -63,7 +63,7 @@ result.
    destination changed relative to the original parent. Lines prefixed with
    space are context, `-` are removed, `+` are added.
 2. **Between `+++++++` and `>>>>>>>`**: The literal content from the rebased
-   (incoming) revision — what the code looks like in the commit being rebased.
+   (incoming) revision. This is the code from the commit being rebased.
 3. **Before `<<<<<<<` and after `>>>>>>>`**: Surrounding code that both sides
    agree on.
 
@@ -130,7 +130,7 @@ conflicts in descendants that touched the same code. The workflow is:
 ```bash
 jj edit <ancestor>              # edit the target commit
 # ... make changes ...
-# jj shows "Rebased N descendant commits" — some may conflict
+# jj shows "Rebased N descendant commits": some may conflict
 
 # Check for conflicts:
 jj log --no-pager -r 'descendants(@) & conflicts()'
@@ -166,5 +166,5 @@ untangle.
   all are resolved, the commit drops its "(conflict)" marker automatically.
 
 - **If resolution goes wrong**, `jj undo` reverts your last operation.
-  Alternatively, the conflict markers are still valid data — you can re-read and
+  Alternatively, the conflict markers are still valid data. You can re-read and
   try again.

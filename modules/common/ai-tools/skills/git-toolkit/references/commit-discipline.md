@@ -110,7 +110,7 @@ Before committing follow-up fixes, inspect whether history edit is better:
 - immediate HEAD correction: prefer `git commit --amend`
 - nearby local-only regression: prefer `git commit --fixup=<target>` then
   `GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash <parent>^`
-  (`GIT_SEQUENCE_EDITOR=:` skips the editor — non-interactive)
+  (`GIT_SEQUENCE_EDITOR=:` skips the editor in non-interactive mode)
 - pushed/shared commits: avoid rewrite; use follow-up commit unless user
   coordinates rewrite; confirmed rewrite requires `git push --force-with-lease`
 

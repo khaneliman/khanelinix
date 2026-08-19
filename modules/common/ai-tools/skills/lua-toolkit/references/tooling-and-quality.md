@@ -1,7 +1,7 @@
 # Tooling and Quality
 
 All tooling targets Lua 5.1 / LuaJIT. LuaCATS + lua-ls is the primary
-correctness tool, not just a linter.
+correctness tool. It catches problems that a linter may miss.
 
 ## Priority: LuaCATS + lua-ls
 
@@ -20,9 +20,9 @@ Annotate data crossing module boundaries:
 function M.execute_action(opts) end
 ```
 
-## `.luarc.json` — CI Gate
+## `.luarc.json`: CI Gate
 
-Set `runtime.version` to `"Lua 5.1"` (not `"LuaJIT"`) — lua-ls then flags
+Set `runtime.version` to `"Lua 5.1"` (not `"LuaJIT"`). lua-ls then flags
 LuaJIT-only usage that breaks non-JIT builds:
 
 ```jsonc
@@ -48,7 +48,7 @@ read_globals = { "vim", "describe", "it", "assert" }
 
 ## StyLua (`.stylua.toml`)
 
-Match an existing repo's stylua config if present — consistency wins. Baseline:
+Match an existing repo's stylua config if present. Consistency wins. Baseline:
 
 ```toml
 line_endings = "Unix"
@@ -61,7 +61,7 @@ collapse_simple_statement = "Never"
 
 ## One-off Tooling
 
-Run via `nix shell` or `,` — don't add persistent lint deps:
+Run via `nix shell` or `,`. Do not add persistent lint deps:
 
 ```bash
 nix run nixpkgs#stylua -- --check .

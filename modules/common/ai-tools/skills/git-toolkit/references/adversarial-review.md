@@ -42,7 +42,7 @@ conclusions:
 ```text
 Independent adversarial review of <COMMIT/PR/DIFF> in <REPO_PATH>.
 Run `<READ-ONLY COMMAND TO VIEW FULL CHANGE>` to see the full change.
-Read-only — do NOT edit files.
+Read-only. Do NOT edit files.
 
 You are reviewing fresh, with no knowledge of any prior reviews. Form your own
 judgment.
@@ -51,7 +51,7 @@ Background: <2-4 SENTENCES: PROBLEM AND MOTIVATION>.
 
 The change claims:
 <FALSIFIABLE DESIGN PREMISES>
-Verify these premises against the actual codebase, not just the diff.
+Verify these premises against the actual codebase, not the diff alone.
 
 Hard constraints the code must satisfy:
 <PORTABILITY, API, DOWNSTREAM, PERFORMANCE, OR OTHER HIDDEN CONSTRAINTS>

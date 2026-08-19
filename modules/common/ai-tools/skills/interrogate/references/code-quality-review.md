@@ -44,10 +44,9 @@ Each dimension is stated once. Apply the ones that are relevant.
    design problem, not a style nit. Prefer pushing the logic into a dedicated
    helper, state machine, or module instead of tangling an existing path.
 
-3. **Bias toward cleaning the design, not just accepting working code.** If
-   behavior can stay the same while the structure becomes meaningfully cleaner,
-   push for the cleaner version. Prefer simplifications that remove moving
-   pieces over refactors that spread the same complexity around.
+3. **Clean the design when behavior can stay the same.** Prefer simplifications
+   that remove moving pieces over refactors that spread the same complexity
+   around.
 
 4. **Prefer direct, boring, maintainable code over hacky or magical code.**
    Treat brittle, ad-hoc, or "magic" behavior as a problem. Be skeptical of

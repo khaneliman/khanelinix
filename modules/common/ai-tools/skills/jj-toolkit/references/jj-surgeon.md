@@ -1,6 +1,6 @@
 ---
 name: jj-surgeon
-description: Comprehensive guide for working with Jujutsu (jj) version control. Use whenever inspecting or modifying jj changes or commits, including managing, viewing, creating, editing, splitting, squashing, rebasing, reordering, and changing history — including hunk-level operations, bookmarks, conflict resolution, revsets, bisecting, and all standard jj workflows.
+description: Guide for inspecting and modifying Jujutsu (jj) changes and commits. Use for viewing, creating, editing, splitting, squashing, rebasing, reordering, and changing history, including hunk operations, bookmarks, conflict resolution, revsets, bisects, and standard jj workflows.
 ---
 
 # Jujutsu (jj) Agent Guide
@@ -12,32 +12,32 @@ snapshotted into commit `@` at the start of every jj command. There is no
 staging area. All file changes are immediately part of `@`.
 
 **"Clean" means an empty `@`.** When `@` has no diff vs its parent, the working
-copy is clean. You do NOT need to `jj abandon` an empty `@` — it is harmless and
-jj creates a new empty `@` automatically after operations that consume it.
-**Always finish your work with a clean `@`.** Use `jj commit -m "message"` (not
-`jj describe`) when you're done with a change — `jj commit` finalizes `@` and
-creates a new empty working copy on top. If you use `jj describe` instead, `@`
-still contains your changes and you're still "editing" it. This is the jj
-equivalent of leaving a dirty working copy in Git.
+copy is clean. You do NOT need to `jj abandon` an empty `@`. It is harmless, and
+jj creates a new empty `@` after operations that consume it. **Always finish
+your work with a clean `@`.** Use `jj commit -m "message"` (not `jj describe`)
+when you're done with a change. `jj commit` finalizes `@` and creates a new
+empty working copy on top. If you use `jj describe` instead, `@` still contains
+your changes and you're still "editing" it. This is the jj equivalent of leaving
+a dirty working copy in Git.
 
 **Change IDs vs commit IDs.** Every commit has two identifiers:
 
-- _Change ID_ — stable across rewrites (rebase, amend, squash). Shown as
+- _Change ID_: stable across rewrites (rebase, amend, squash). Shown as
   reversed-hex letters (k-z). Use this to refer to changes you plan to rewrite.
-- _Commit ID_ — content hash (standard hex). Changes on every rewrite. Matches
+- _Commit ID_: content hash (standard hex). Changes on every rewrite. Matches
   the Git SHA in colocated repos. Becomes permanent once immutable.
 
 **No branches, only bookmarks.** Bookmarks are named pointers to commits. They
 do NOT advance automatically on new commits (unlike Git branches). They DO
 follow when a commit is rewritten. In a colocated repo you must therefore move
-the bookmark yourself as part of finishing a change — see
+the bookmark yourself as part of finishing a change. See
 [git-interop.md](git-interop.md#bookmark-discipline-mandatory).
 
-**Editing history is safe — but watch for conflicts.** jj rewrites commits
-freely and automatically rebases descendants. If a rebase causes overlapping
-changes, jj records a conflict in the descendant commit and warns you. Conflicts
-are data (not blocking states) but must be resolved before the code compiles.
-See [conflict-resolution.md](conflict-resolution.md).
+**Editing history is safe, but watch for conflicts.** jj rewrites commits freely
+and automatically rebases descendants. If a rebase causes overlapping changes,
+jj records a conflict in the descendant commit and warns you. Conflicts are data
+(not blocking states) but must be resolved before the code compiles. See
+[conflict-resolution.md](conflict-resolution.md).
 
 **Operation log.** Every command creates an operation entry. `jj undo` reverts
 the last operation. `jj op restore <id>` jumps to any past state.
@@ -57,8 +57,8 @@ jj log --no-pager -p --git -r <revset>
 ## Hunk-level operations
 
 Several jj commands (`split`, `squash`, `diffedit`, `restore`) can operate at
-the hunk level, but only through an interactive diff editor — **which agents
-must never use**. `jj-hunk-tool` provides non-interactive equivalents using
+the hunk level, but only through an interactive diff editor. Agents must never
+use that editor. `jj-hunk-tool` provides non-interactive equivalents using
 stable hunk IDs. These are shown alongside their native jj counterparts
 throughout this guide.
 
@@ -136,7 +136,7 @@ diff editor. Use `jj split path/to/file` for file-level splits or
 `jj-hunk-tool split` for hunk-level splits.
 
 Splitting rewrites the target revision, so all descendants are rebased. jj will
-warn if this creates conflicts — resolve them before continuing. See
+warn if this creates conflicts. Resolve them before continuing. See
 [conflict-resolution.md](conflict-resolution.md).
 
 ## Squashing and absorbing
@@ -152,13 +152,13 @@ jj-hunk-tool squash <id> --from <rev> --into <rev> -m "msg"
 **Always pass `-m` to `jj squash`.** Without `-m`, jj opens `$EDITOR`.
 
 **Warning:** `jj squash` rewrites the destination commit, causing all its
-descendants to be rebased. jj will warn if this creates conflicts — resolve them
+descendants to be rebased. jj will warn if this creates conflicts. Resolve them
 before continuing. See [conflict-resolution.md](conflict-resolution.md).
 
 ### Absorbing
 
 `jj absorb` auto-distributes changes from `@` into the correct mutable ancestors
-by blame — extremely powerful for fixup workflows.
+by blame. This is useful for fixup workflows.
 
 ```bash
 jj absorb                               # auto-distribute @ into ancestors
@@ -208,7 +208,7 @@ jj rebase -s @ -d main                  # rebase current stack onto main
 ```
 
 Rebasing can create conflicts if the new base has diverged. jj will warn if this
-happens — resolve them before continuing. See
+happens. Resolve them before continuing. See
 [conflict-resolution.md](conflict-resolution.md).
 
 ## Undoing operations
@@ -229,10 +229,10 @@ jj resolve --list                       # list conflicted files in @
 jj resolve --list -r <rev>             # list conflicted files in specific revision
 ```
 
-Conflicts are first-class data — a commit can contain conflicts and still be
+Conflicts are first-class data. A commit can contain conflicts and still be
 rebased, squashed, or pushed. **For agents, the most reliable resolution method
 is reading the conflicted file and editing out the conflict markers directly.**
-jj's conflict markers differ from Git's — see
+jj's conflict markers differ from Git's. See
 [conflict-resolution.md](conflict-resolution.md) for the format and resolution
 strategies.
 
@@ -349,7 +349,8 @@ jj op restore <op-id>                   # restore to any point
   `jj-hunk-tool diffedit` with explicit hunk IDs.
 - Do NOT `jj abandon @` to "clean up" an empty working copy. It's normal.
 - **Always leave `@` empty when you're done working.** Use `jj commit -m "msg"`
-  to finalize a change — NOT `jj describe`, which leaves your changes in `@`.
+  to finalize a change. Do NOT use `jj describe`, which leaves your changes in
+  `@`.
 - **Never leave a colocated repo with the bookmark behind your commits.** A
   commit with no bookmark on it is not on a branch, so git tooling cannot see
   it. Move and verify the bookmark before reporting done, and never set it to a
@@ -359,8 +360,8 @@ jj op restore <op-id>                   # restore to any point
 - Always pass `--git --no-pager` when viewing diffs.
 - Always pass `--no-pager` to `jj log`, `jj op log`, `jj bookmark list`.
 - **Always pass `-m "message"` to `jj commit`, `jj describe`, `jj squash`,
-  `jj split`, and any other command that sets a commit message** — unless the
-  user explicitly asks to write the message in their editor.
+  `jj split`, and any other command that sets a commit message**. Use an editor
+  only when the user explicitly asks to write the message in their editor.
 - `jj diff` with no `-r` shows `@` vs parent. Use `-r <rev>` for other
   revisions.
 - After `jj commit -m "msg"`, the described change is `@-` (the parent). `@` is
@@ -370,16 +371,16 @@ jj op restore <op-id>                   # restore to any point
 - `jj squash` without args squashes `@` into `@-`. With `--from`/`--into` you
   can squash between any two mutable commits.
 - After any history rewrite, jj will warn if conflicts were created. Resolve
-  them immediately — cascading conflicts are much harder to fix. See
+  them immediately. Cascading conflicts are much harder to fix. See
   [conflict-resolution.md](conflict-resolution.md). Use
   `jj log -r 'conflicts()'` if you need to find all conflicted commits.
 
 ## Reference docs
 
-- [Revsets](revset-reference.md) — full function list, string/date patterns
-- [Conflict resolution](conflict-resolution.md) — marker format, reading guide,
+- [Revsets](revset-reference.md): full function list, string/date patterns
+- [Conflict resolution](conflict-resolution.md): marker format, reading guide,
   strategies
-- [Git interop](git-interop.md) — bookmarks, pushing, remotes, colocated repos
-- [Workspaces](workspaces.md) — multiple working copies, sparse checkouts
-- [Templates](template-reference.md) — custom log/show output
-- [Bisect](bisect.md) — binary search for regressions with `jj bisect run`
+- [Git interop](git-interop.md): bookmarks, pushing, remotes, colocated repos
+- [Workspaces](workspaces.md): multiple working copies, sparse checkouts
+- [Templates](template-reference.md): custom log/show output
+- [Bisect](bisect.md): binary search for regressions with `jj bisect run`

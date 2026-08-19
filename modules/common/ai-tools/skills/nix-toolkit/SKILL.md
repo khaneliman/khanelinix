@@ -10,18 +10,18 @@ modules, expressions, overlays, packages, or flake outputs, use `writing-nix`.
 
 Route to one mode; load only that reference:
 
-1. **package-diffing** — [package-diffing.md](references/package-diffing.md)
-2. **build-debugging** — [build-debugging.md](references/build-debugging.md)
-3. **closure-analysis** — [closure-analysis.md](references/closure-analysis.md)
-4. **dependency-forensics** —
+1. **package-diffing**: [package-diffing.md](references/package-diffing.md)
+2. **build-debugging**: [build-debugging.md](references/build-debugging.md)
+3. **closure-analysis**: [closure-analysis.md](references/closure-analysis.md)
+4. **dependency-forensics**:
    [dependency-forensics.md](references/dependency-forensics.md)
-5. **flake-maintenance** —
+5. **flake-maintenance**:
    [flake-maintenance.md](references/flake-maintenance.md)
-6. **eval-performance** — [eval-performance.md](references/eval-performance.md)
-7. **ifd-remediation** — [ifd-remediation.md](references/ifd-remediation.md)
-8. **activation-verification** —
+6. **eval-performance**: [eval-performance.md](references/eval-performance.md)
+7. **ifd-remediation**: [ifd-remediation.md](references/ifd-remediation.md)
+8. **activation-verification**:
    [activation-verification.md](references/activation-verification.md)
-9. **nix-authoring** — delegate to `writing-nix`
+9. **nix-authoring**: delegate to `writing-nix`
 
 If intent is unclear, ask before proceeding.
 

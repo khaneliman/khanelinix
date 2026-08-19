@@ -1,13 +1,13 @@
 # Repository Evaluation
 
 Evaluate current repository or subsystem against stated purpose and likely
-change—not generic style or a proposed design.
+change. It is not a generic style review or a proposed design.
 
 ## Procedure
 
 1. Define evaluation question, scope, excluded areas, time horizon, and evidence
-   limits. “Evaluate repository” defaults to architecture and change readiness,
-   not exhaustive security or line-by-line review.
+   limits. “Evaluate repository” defaults to architecture and change readiness.
+   It does not cover security or every line unless the request says so.
 2. Map contributor canon, package or workspace boundaries, executable entry
    points, public interfaces, data stores, external systems, build and
    deployment paths, ownership clues, and validation commands.

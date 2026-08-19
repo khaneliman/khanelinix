@@ -46,8 +46,8 @@ package names when multi-output paths differ.
   edge only.
 - System closure unbuildable → use `package-option-scan.sh` or
   `drv-graph-grep.sh` first.
-- `nixpkgs#pkg` often points to `bin` while closure contains `out` or `lib` —
-  resolve exact output first.
+- `nixpkgs#pkg` often points to `bin` while the closure contains `out` or `lib`.
+  Resolve the exact output first.
 
 ## Embedded Store Paths
 

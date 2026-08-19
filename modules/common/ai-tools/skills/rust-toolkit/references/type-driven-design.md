@@ -47,7 +47,7 @@ inside a narrow critical protocol.
 
 - Prefer a constructor when required data is small and clear.
 - Use a builder for many optional fields, discoverable configuration, or staged
-  validation—not to mimic named arguments mechanically.
+  validation, not to mimic named arguments mechanically.
 - Return `Result` from `build` when runtime validation can fail.
 - Use a typed builder only when compile-time required-field enforcement pays for
   error-message and type-complexity cost.

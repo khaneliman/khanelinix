@@ -59,10 +59,10 @@ hub.
 - Check feature unification and duplicate dependency versions before blaming
   source layout for build cost.
 - Reject cycles by moving the shared contract inward, merging unstable
-  boundaries, or introducing messages/data—not by adding a miscellaneous crate.
+  boundaries, or introducing messages/data. Do not add a miscellaneous crate.
 
 Layered, hexagonal, or clean architecture is optional vocabulary. Preserve the
-useful invariant—dependencies point toward stable policy—without reproducing a
+useful invariant. Dependencies point toward stable policy without reproducing a
 framework-shaped directory tree.
 
 ## Public Surface

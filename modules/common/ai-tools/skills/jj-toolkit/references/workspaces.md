@@ -3,8 +3,8 @@
 ## Mental model: workspaces vs git worktrees
 
 Git worktrees are separate checkouts tied to branches. Each worktree locks its
-branch — no other worktree can check it out. Changes made in a worktree must be
-merged or rebased back into the main worktree's branch through the normal
+branch, so no other worktree can check it out. Changes made in a worktree must
+be merged or rebased back into the main worktree's branch through the normal
 branch-integration workflow.
 
 jj workspaces are fundamentally different:
@@ -16,7 +16,7 @@ jj workspaces are fundamentally different:
   operations performed in workspace B.
 - **No merge-back.** Commits created in one workspace are immediately visible in
   every other workspace. The main workspace can rebase, squash, bookmark, or
-  push those commits — no pull, fetch, or merge needed.
+  push those commits. No pull, fetch, or merge is needed.
 - **No branch-locking.** Multiple workspaces can check out the same commit.
   There's no concept of a branch being "in use" by another worktree.
 - **Lock-free concurrency.** You can run `jj` commands simultaneously in
@@ -70,8 +70,8 @@ jj sparse set --add backend/ --add shared/
 
 In colocated jj/git repos, `jj workspace add` creates a workspace that may not
 have full git interop. The new workspace gets its own `.jj/` but may not have a
-`.git/` — meaning git-based tooling (editors, CI scripts) may not work there.
-Plan accordingly if you need git compatibility in all workspaces.
+`.git/`. Git-based tooling, including editors and CI scripts, may not work
+there. Plan accordingly if you need git compatibility in all workspaces.
 
 ## Use cases
 

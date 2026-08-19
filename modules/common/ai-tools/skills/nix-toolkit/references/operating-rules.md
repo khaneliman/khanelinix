@@ -19,6 +19,6 @@
 
 ## Skill Maintenance
 
-After editing references, run `scripts/validate-snippets.sh` — checks shell
-fence syntax and Nix subcommands/flags; does not build packages, fetch remotes,
-or update lock files.
+After editing references, run `scripts/validate-snippets.sh`. It checks shell
+fence syntax and Nix subcommands and flags. It does not build packages, fetch
+remotes, or update lock files.

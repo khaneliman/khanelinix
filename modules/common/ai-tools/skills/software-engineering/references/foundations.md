@@ -9,11 +9,11 @@ Basis:
 
 Evaluate whether design is:
 
-- **safe from bugs** — invalid states and misuse are prevented, detected, or
+- **safe from bugs**: invalid states and misuse are prevented, detected, or
   contained near their source;
-- **easy to understand** — behavior, ownership, and terminology can be recovered
+- **easy to understand**: behavior, ownership, and terminology can be recovered
   without reconstructing whole system;
-- **ready for change** — credible changes remain localized and observable
+- **ready for change**: credible changes remain localized and observable
   contracts remain stable unless migration is intentional.
 
 Tradeoffs remain explicit. Improving one property may increase complexity,
@@ -84,7 +84,7 @@ Basis:
 [MIT SERC](https://ocw.mit.edu/courses/res-tll-008-social-and-ethical-responsibilities-of-computing-serc/)
 and [ACM Code of Ethics](https://www.acm.org/code-of-ethics).
 
-For consequential systems, identify affected people—including non-users—and
+For consequential systems, identify affected people, including non-users, and
 evaluate benefit and harm distribution, fairness, privacy, accessibility,
 security, recourse, accountability, and operational control. Match safeguards to
 impact: least privilege, previews, approvals, audit trails, explainability,

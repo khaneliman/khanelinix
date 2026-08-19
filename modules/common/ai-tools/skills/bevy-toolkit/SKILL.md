@@ -24,37 +24,37 @@ Cargo, unsafe, and allocator decisions in `rust-toolkit`.
 
 ## Routing
 
-1. **ECS and plugin architecture** — components/resources, query data shape,
+1. **ECS and plugin architecture**: components/resources, query data shape,
    plugin ownership, relationships, scenes, and headless composition. Read
    [architecture.md](references/architecture.md).
-2. **states and scheduling** — lifecycle setup/teardown, state-scoped entities,
+2. **states and scheduling**: lifecycle setup/teardown, state-scoped entities,
    system sets, deferred commands, events/messages, and observers. Read
    [lifecycle-and-scheduling.md](references/lifecycle-and-scheduling.md).
-3. **MCP and BRP** — app setup, target discovery, launch/status/logs, type
+3. **MCP and BRP**: app setup, target discovery, launch/status/logs, type
    introspection, queries, mutations, watches, input, screenshots, and cleanup.
    Read [mcp-and-brp.md](references/mcp-and-brp.md).
-4. **runtime automation** — direct JSON-RPC script, deterministic control loops,
+4. **runtime automation**: direct JSON-RPC script, deterministic control loops,
    window/headless handling, capture freshness, and process ownership. Read
    [runtime-control.md](references/runtime-control.md).
-5. **performance and validation** — schedule/system profiling, archetype churn,
+5. **performance and validation**: schedule/system profiling, archetype churn,
    GPU/frame diagnostics, minimal-app tests, visual proof, and build iteration.
    Read
    [performance-and-validation.md](references/performance-and-validation.md).
-6. **ecosystem selection** — third-party crate compatibility, architecture fit,
+6. **ecosystem selection**: third-party crate compatibility, architecture fit,
    target/backend support, maintenance risk, and bounded integration spikes.
    Read [ecosystem-selection.md](references/ecosystem-selection.md).
-7. **world authoring and iteration** — feedback-loop selection, source-of-truth
+7. **world authoring and iteration**: feedback-loop selection, source-of-truth
    ownership, transactional reload, editor/DCC bridges, and persisted edits.
    Read [authoring-pipelines.md](references/authoring-pipelines.md).
-8. **Bevy migrations** — locked-version intake, chained release guides,
+8. **Bevy migrations**: locked-version intake, chained release guides,
    dependency/plugin compatibility, scene/assets/reflection/BRP checkpoints,
    rollback boundaries, and target matrices. Read
    [migration.md](references/migration.md).
-9. **first-party feature construction** — UI layout/focus/accessibility/text,
+9. **first-party feature construction**: UI layout/focus/accessibility/text,
    input mapping/controllers, cameras/windows, main/render-world boundaries,
    assets/shaders, and headless versus visual proof. Read
    [feature-construction.md](references/feature-construction.md).
-10. **hot reload and streamed worlds** — asset watching, scene/world reload
+10. **hot reload and streamed worlds**: asset watching, scene/world reload
     semantics, chunk lifecycle, model/view persistence, stale async work, code
     hotpatching, and reload stress tests. Read
     [hot-reload-and-streaming.md](references/hot-reload-and-streaming.md).

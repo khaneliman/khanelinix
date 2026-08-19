@@ -186,7 +186,7 @@ Before finalizing, review your output against this checklist:
 6. Did you cite any code as evidence for its own intent? Remove those. Code is
    mechanics, not motivation.
 7. Is the overall tone calibrated? A confident-sounding answer with weak
-   evidence is the exact failure mode this skill exists to prevent.
+   evidence is the failure mode this workflow is meant to prevent.
 
 If any item fails, revise before returning.
 

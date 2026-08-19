@@ -29,8 +29,8 @@ plausible-sounding summary.
   let the reader jump to the source and confirm the claim in seconds.
 - **Go wide before going deep.** Cast a broad first net so you don't miss
   related context. Only then narrow in.
-- **Track what you searched, not just what you found.** An absence is only
-  useful if the reader knows what was looked for. Record queries verbatim.
+- **Track what you searched and what you found.** An absence is useful only if
+  the reader knows what was looked for. Record queries verbatim.
 - **Resist the story.** If three pieces of evidence line up neatly and a fourth
   contradicts them, the contradiction is the most interesting finding. Don't
   file it away.
@@ -70,9 +70,9 @@ the evidence and forms conclusions. Follow this loop:
 
 1. **Cast a wide net first.** Start broad so you don't miss related context,
    then narrow in on specific items.
-2. **Read the whole thing.** Read any PR, ticket, doc, or thread fully, not just
-   the title or summary. The key evidence is often buried in a comment, a
-   subtask, or a follow-up.
+2. **Read the whole thing.** Read any PR, ticket, doc, or thread fully. Do not
+   stop at the title or summary. The key evidence is often buried in a comment,
+   a subtask, or a follow-up.
 3. **Follow links within your assigned source.** If a PR references another PR
    or commit, pull it. If a ticket links a parent or sibling, pull it. If a doc
    links another doc, pull it. Stay inside your assigned source. When you spot a

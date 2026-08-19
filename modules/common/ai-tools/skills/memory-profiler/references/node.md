@@ -1,8 +1,8 @@
 # TypeScript / Node.js Memory Profiling & Optimization
 
-Node.js leverages Google's V8 engine with a generational garbage collector.
-Memory leaks usually stem from references retained unintentionally in global
-scopes, closures, or lingering event listeners.
+Node.js uses Google's V8 engine with a generational garbage collector. Memory
+leaks usually stem from references retained unintentionally in global scopes,
+closures, or lingering event listeners.
 
 ## Profiling Tools & Diagnostic Workflows
 

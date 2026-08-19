@@ -37,9 +37,10 @@ uncontained risk, or material maintenance/operation cost. Each finding includes:
 - why proposed or existing guard does not contain it;
 - smallest viable correction or decision needed.
 
-Rank severity from impact, reach, likelihood, detectability, and recovery—not
-pattern labels. Code smell, SOLID violation, mutable state, missing abstraction,
-or absent approval gate is not finding without demonstrated consequence.
+Rank severity from impact, reach, likelihood, detectability, and recovery. Do
+not rank findings based only on pattern labels. A code smell, SOLID violation,
+mutable state, missing abstraction, or absent approval gate is not a finding
+without demonstrated consequence.
 
 ## Output
 

@@ -86,7 +86,7 @@ jj log --no-pager -r '<good>..<bad>' --no-graph \
 ## Tips
 
 - The command runs in the workspace root (`$JJ_WORKSPACE_ROOT` is set).
-- Bisect does not modify history — it only checks out revisions temporarily.
+- Bisect does not modify history: it only checks out revisions temporarily.
 - After bisect completes, your working copy is restored.
 - Use `--` before the command to prevent jj from interpreting its flags.
 - For long test suites, narrow the range first with a quick check (e.g., grep

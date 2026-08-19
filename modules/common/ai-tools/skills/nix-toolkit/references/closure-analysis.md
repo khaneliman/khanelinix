@@ -46,7 +46,8 @@ change.
 2. Recursive grew but direct did not → inspect added closure paths.
 3. Dependency only in derivation graph → treat as build-time until runtime
    reference proves otherwise.
-4. Multi-output package → compare the exact output path, not just package name.
+4. Multi-output package: compare the exact output path, not the package name
+   alone.
 
 ## Reverse Dependency
 
@@ -72,8 +73,8 @@ nix-store -q --tree result
 
 ## Interpretation Notes
 
-- `nix store diff-closures` groups by package name/version — better for human
-  review than raw path diffs.
+- `nix store diff-closures` groups by package name and version. This makes human
+  review easier than raw path diffs.
 - Raw path diffs catch generated outputs that changed name but not version.
 - Direct output size vs recursive closure size are different bugs.
 - Multiple versions of same library → input graph drift, overlays, or mixed

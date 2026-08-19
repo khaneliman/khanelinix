@@ -29,17 +29,17 @@ Goal: native APIs first. Plenary upstream is no longer actively maintained.
 
 ## `vim.system` Key Patterns
 
-Sync: `vim.system({...}, { text = true, timeout = 5000 }):wait()` — check
-`result.code`, use `vim.trim(result.stdout)`.
+Sync: `vim.system({...}, { text = true, timeout = 5000 }):wait()`. Check
+`result.code` and use `vim.trim(result.stdout)`.
 
 Streaming: bind `stdout`/`stderr` callbacks; wrap body in `vim.schedule`. Use
 `vim.uv.spawn()` only when `vim.system()` can't express required
 handle/stdio/lifecycle.
 
-Path ops — keep string-based:
+Path operations should stay string-based:
 `vim.fs.joinpath(vim.fn.stdpath("cache"), "my_plugin", "state.json")`. For large
-tree scans, process `vim.fs.dir()` incrementally — don't build one huge table
-first.
+For large tree scans, process `vim.fs.dir()` incrementally. Do not build one
+huge table first.
 
 `plenary.curl` JSON replacement:
 `vim.system({"curl","--silent","--fail-with-body","-X","POST","-H","content-type: application/json","--data-binary","@-",endpoint}, { text = true, timeout = 30000, stdin = vim.json.encode(body) }):wait()`.
