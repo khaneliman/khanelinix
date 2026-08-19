@@ -8,6 +8,11 @@ let
   inherit (lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.programs.graphical.browsers.firefox;
+
+  # No khanelinix.programs.terminal.tools.azure organization option exists
+  # yet (checked modules/home/programs/terminal/tools/azure/default.nix at
+  # HEAD). Switch this to that option if one is added later.
+  adoOrg = "core-bts-02";
 in
 {
   options.khanelinix.programs.graphical.browsers.firefox = {
@@ -139,6 +144,49 @@ in
           ];
           icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
           definedAliases = [ "@sx" ];
+        };
+
+        "Azure DevOps Work Item" = {
+          metaData.hideOneOffButton = true;
+          urls = [ { template = "https://dev.azure.com/${adoOrg}/_workitems/edit/{searchTerms}"; } ];
+          definedAliases = [ "@wi" ];
+        };
+
+        "Azure DevOps Search" = {
+          metaData.hideOneOffButton = true;
+          urls = [
+            {
+              template = "https://dev.azure.com/${adoOrg}/_search";
+              params = [
+                {
+                  name = "type";
+                  value = "workitem";
+                }
+                {
+                  name = "text";
+                  value = "{searchTerms}";
+                }
+              ];
+            }
+          ];
+          definedAliases = [ "@ado" ];
+        };
+
+        "Microsoft Learn" = {
+          metaData.hideOneOffButton = true;
+          urls = [
+            {
+              template = "https://learn.microsoft.com/en-us/search/";
+              params = [
+                {
+                  name = "terms";
+                  value = "{searchTerms}";
+                }
+              ];
+            }
+          ];
+          icon = "https://learn.microsoft.com/favicon.ico";
+          definedAliases = [ "@ms" ];
         };
 
       };
