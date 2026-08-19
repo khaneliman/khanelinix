@@ -24,33 +24,18 @@ covers and the parent followed correctly. One-offs are not learnings.
 
 ### 1. Locate the Active Transcript
 
-Find the transcript for the current session before you fan out. Transcript
-stores vary per provider. Claude Code writes one JSONL file per session under
-its config directory in `projects/<workspace-slug>/`.
-
-List candidates from the current workspace transcript directory only:
-
-```bash
-ls -t <transcript-dir>/*.jsonl <transcript-dir>/*/*.jsonl \
-  <transcript-dir>/*/subagents/*.jsonl 2>/dev/null | head -10
-```
-
-Do not glob across other workspace slugs. Cross-slug globs read private sessions
-from unrelated projects.
-
-Providers use up to three layouts: flat (`<id>.jsonl`), nested
-(`<id>/<id>.jsonl`), and subagent (`<parent>/subagents/<child>.jsonl`).
-
-Read the first JSONL line of each candidate. Confirm the first message text
-holds this conversation's opening user prompt. Take the matching path. If no
-path resolves, write a tight digest of the session and pass the digest instead.
+Find the transcript for the current session before you fan out. Follow
+[transcript-location.md](references/transcript-location.md), and list candidates
+only from the current workspace so private sessions from other projects stay
+unread. If no path resolves, write a tight digest of the session and pass the
+digest instead.
 
 ### 2. Spawn Three Reviewers in Parallel
 
 Launch three reviewer subagents in one message. Use distinct model families when
 the harness offers them. Reviewers need MCP access to look up context the
-transcript cites, so do not run them read-only. Each prompt forbids file writes.
-The parent applies every edit.
+transcript cites, so do not run them read-only. Each prompt forbids file writes;
+the parent applies every edit.
 
 | Lens      | Prompt template                                           |
 | --------- | --------------------------------------------------------- |
@@ -72,9 +57,8 @@ structured Accepted, Rejected, and Backlog list.
 
 Sanity-check the synthesizer's Accepted list. Move an item to Backlog when a
 lint rule, script, metadata flag, or runtime check enforces it more reliably
-than prose. The synthesizer already applies this criterion. This pass runs last,
-before edits land. See the encode-lessons-in-structure principle in
-`engineering-principles`.
+than prose, per the encode-lessons-in-structure principle in
+`engineering-principles`. This pass runs last, before edits land.
 
 ### 5. Apply
 
@@ -84,13 +68,11 @@ picks the subset to apply and may redirect routings. Skill changes affect every
 future session, so never auto-apply.
 
 Backlog items and durable learnings that are not skill edits route to the
-`okf-memory` skill. Those notes are not skill edits. Only the Accepted list
-waits for approval.
+`okf-memory` skill. Only the Accepted list waits for approval.
 
-Land every skill edit in the canonical source tree
-`modules/common/ai-tools/skills/` in the khanelinix repository. Never edit
-deployed provider copies under user config. When the canonical checkout is not
-available in the current workspace, file the learning as an `okf-memory` note
+Land every skill edit in the canonical tree `modules/common/ai-tools/skills/` in
+the khanelinix repository, never in deployed provider copies under user config.
+Without the canonical checkout, file the learning as an `okf-memory` note
 instead.
 
 For each approved Accepted item, follow the Routing field exactly:
@@ -106,10 +88,7 @@ For each approved Accepted item, follow the Routing field exactly:
   Do not invent the package shape ad hoc.
 
 After skill edits, run the skill test runner on the canonical tree:
-
-```bash
-python3 modules/common/ai-tools/skills/ai-tools-architect/scripts/run_skill_tests.py
-```
+`python3 modules/common/ai-tools/skills/ai-tools-architect/scripts/run_skill_tests.py`.
 
 ### 6. Summarize for the User
 
