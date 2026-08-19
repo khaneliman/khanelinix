@@ -14,6 +14,8 @@ let
   inherit (lib) mkOption types;
 
   cfg = config.khanelinix.programs.terminal.editors.neovim;
+  zkCfg = config.khanelinix.programs.terminal.tools.zk;
+  zkNotebookPath = "${config.home.homeDirectory}/${zkCfg.notebookDirectory}";
 
   profileNames = [
     "minimal"
@@ -99,6 +101,27 @@ let
               }
           end
         '';
+      })
+      (lib.mkIf zkCfg.enable {
+        lsp.servers.zk = {
+          enable = true;
+          config = {
+            cmd = [
+              (lib.getExe pkgs.zk)
+              "lsp"
+            ];
+            filetypes = [ "markdown" ];
+            root_dir.__raw = ''
+              function(bufnr, on_dir)
+                local notebook = ${builtins.toJSON zkNotebookPath}
+                local filename = vim.api.nvim_buf_get_name(bufnr)
+                if filename == notebook or filename:sub(1, #notebook + 1) == notebook .. "/" then
+                  on_dir(notebook)
+                end
+              end
+            '';
+          };
+        };
       })
     ]
     ++ cfg.extraModules;
