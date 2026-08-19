@@ -16,6 +16,16 @@ let
     ;
 
   cfg = config.khanelinix.programs.graphical.apps.raycast;
+  azureCfg = config.khanelinix.programs.terminal.tools.azure;
+  taskwarriorCfg = config.khanelinix.programs.terminal.tools.taskwarrior;
+  zkCfg = config.khanelinix.programs.terminal.tools.zk;
+
+  # Azure DevOps puts the project segment before the work item route when a
+  # project is set; organization scope works without it.
+  workItemUrl =
+    "https://dev.azure.com/${azureCfg.devOpsOrganization}/"
+    + lib.optionalString (azureCfg.devOpsProject != null) "${azureCfg.devOpsProject}/"
+    + "_workitems/edit";
 
   mkScript =
     {
@@ -165,6 +175,48 @@ in
               launchdTarget = "org.nixos.yabai";
             };
           }
+      ++ lib.optionals azureCfg.devOpsEnable [
+        (mkScriptEntry {
+          file = "ado-work-item.sh";
+          title = "Open Work Item";
+          description = "Open an Azure DevOps work item in the browser.";
+          icon = "link";
+          argument1 = {
+            type = "text";
+            placeholder = "work item id";
+          };
+          body = ''exec open "${workItemUrl}/$1"'';
+        })
+        (mkScriptEntry {
+          file = "ado-backlog.sh";
+          title = "ADO Assigned Work";
+          description = "Show active Azure DevOps work items assigned to you.";
+          icon = "list";
+          body = ''exec kitty --single-instance -d "$HOME" -- zsh -lc "ado-backlog assigned | less -FIRX"'';
+        })
+      ]
+      ++ lib.optionals zkCfg.enable [
+        (mkScriptEntry {
+          file = "zk-daily.sh";
+          title = "Open Daily Note";
+          description = "Open today's zk daily note in Kitty.";
+          icon = "book";
+          body = ''exec kitty --single-instance -d "${config.home.homeDirectory}/${zkCfg.notebookDirectory}" -- zsh -lc "zk daily"'';
+        })
+      ]
+      ++ lib.optionals taskwarriorCfg.enable [
+        (mkScriptEntry {
+          file = "task-add.sh";
+          title = "Task Add";
+          description = "Capture a Taskwarrior task without leaving Raycast.";
+          icon = "plus";
+          argument1 = {
+            type = "text";
+            placeholder = "task description";
+          };
+          body = ''exec task add "$1"'';
+        })
+      ]
       ++ lib.optionals (osConfig.networking.hostName or "" == "khanelimac") [
         (mkScriptEntry {
           file = "khanelimac-sessions.sh";
