@@ -44,6 +44,8 @@ in
           };
         };
 
+        urgency.uda.estimate.coefficient = 0.1;
+
         report = {
           backlog = {
             description = "Pending tasks grouped by project";
