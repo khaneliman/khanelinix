@@ -237,6 +237,10 @@ let
         # NOTE: vesktop/stylelint
         "pnpm-9.15.9"
         "pnpm-10.29.2"
+        # NOTE: exo carries CVE-2026-14738, a weak hash in the vision image
+        # cache key. Upstream ships no fixed release. The cluster listens on a
+        # trusted LAN only.
+        "exo-1.0.71"
       ];
     };
   };
