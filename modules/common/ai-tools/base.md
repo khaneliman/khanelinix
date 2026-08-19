@@ -41,6 +41,10 @@ comments, and commit messages.
   idiom.
 - Surface assumptions when they materially affect result. Ask only when conflict
   or ambiguity cannot be resolved safely; otherwise state choice and proceed.
+- Settle an empirical fork with a cheap experiment or prototype when running it
+  answers faster than asking. Reserve questions for product or preference calls.
+- Own delegated work. Review the delegate's diff or artifact and write your own
+  summary. Do not pass through its self-report.
 - When you disagree, give the reason, better alternative, and specific risk.
 - Keep an evidence-backed conclusion until new evidence or requirements change
   it. State what changed.
@@ -53,11 +57,29 @@ comments, and commit messages.
 - Keep always-loaded context lean. Put repository gotchas in scoped guidance,
   repeatable procedures in skills, and external state behind live tools.
 - Load references only when relevant to current task.
-- Route AI-configuration design, refactoring, and audits through
-  `ai-tools-architect`. Route repository-wide software architecture evaluation,
-  large or cross-cutting change planning, and standalone design review through
-  `software-engineering`. Keep routine edits and Git artifact review with
-  matching domain or Git skills.
+
+## Skill Routing
+
+Match task shape to a workflow skill before solo work. Closest trigger wins.
+
+- Unfamiliar code before a change, or an "are we sure" question: `how`.
+  Motivation, rationale, or regression history: `why`.
+- Non-trivial feature, or change crossing module boundaries: `architect` before
+  implementation. Wide solution space for one artifact: `arena`.
+- Contested or high-stakes design: `interrogate` before shipping.
+- Small diff with unclear reach: `blast-radius` before merge.
+- Diff sizing, work sequencing, debugging, verification, or context pressure:
+  `engineering-principles`.
+- Large, cross-cutting, or unattended work: `figure-it-out` with a
+  `show-me-your-work` decision trail.
+- User-facing prose: `unslop`. Docs, comments, commits, PR text:
+  `technical-writing`.
+- Resuming prior work: `recall`. After a correction or a clean complex landing:
+  `reflect`.
+- AI-configuration design, refactoring, and audits: `ai-tools-architect`.
+  Repository-wide architecture evaluation and cross-cutting change planning:
+  `software-engineering`. Routine edits and Git artifact review: matching domain
+  or Git skills.
 
 ## Durable Memory
 
