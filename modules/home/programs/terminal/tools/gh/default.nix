@@ -12,7 +12,6 @@ let
     mkOption
     types
     ;
-  inherit (lib.khanelinix) enabled;
 
   cfg = config.khanelinix.programs.terminal.tools.gh;
 in
@@ -59,7 +58,29 @@ in
         };
       };
       # dashboard with pull requests and issues
-      gh-dash = enabled;
+      gh-dash = {
+        enable = true;
+        settings = {
+          prSections = [
+            {
+              title = "Needs my review";
+              filters = "is:open review-requested:@me";
+            }
+            {
+              title = "My PRs";
+              filters = "is:open author:@me";
+            }
+            {
+              title = "Involved";
+              filters = "is:open involves:@me -author:@me";
+            }
+            {
+              title = "Stale";
+              filters = "is:open involves:@me updated:<{{ nowModify \"-14d\" }}";
+            }
+          ];
+        };
+      };
     };
   };
 }
