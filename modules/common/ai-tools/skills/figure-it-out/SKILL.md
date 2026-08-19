@@ -18,8 +18,6 @@ one, such as a migration across many call sites, an ambitious multi-part change,
 or work the user reviews after stepping away. The rigor and the audit trail are
 the point.
 
-## Start
-
 Open a todolist with the phases below as items.
 
 ## Phase A: Frame
