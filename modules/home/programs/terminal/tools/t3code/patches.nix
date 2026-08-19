@@ -95,5 +95,6 @@ in
 ])
 ++ [
   ./antigravity-planner-response.patch
+  ./antigravity-conversation-discovery.patch
   ./declarative-theme-settings.patch
 ]

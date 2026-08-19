@@ -1,0 +1,380 @@
+diff --git a/apps/server/src/provider/Layers/AntigravityAdapter.test.ts b/apps/server/src/provider/Layers/AntigravityAdapter.test.ts
+index 1f7308f2d..ca89470b7 100644
+--- a/apps/server/src/provider/Layers/AntigravityAdapter.test.ts
++++ b/apps/server/src/provider/Layers/AntigravityAdapter.test.ts
+@@ -313,6 +313,171 @@ describe("AntigravityAdapter sessions", () => {
+     }),
+   );
+ 
++  it.effect("ignores a stale cache cursor until the current agy turn replaces it", () =>
++    Effect.gen(function* () {
++      const baseDir = yield* Effect.promise(() =>
++        NodeFSP.mkdtemp(NodePath.join(NodeOS.tmpdir(), "antig-adapter-stale-cache-")),
++      );
++      try {
++        const staleConversationId = "conv-stale";
++        const currentConversationId = "conv-current";
++        const cacheDir = NodePath.join(baseDir, "cache");
++        const cachePath = NodePath.join(cacheDir, "last_conversations.json");
++        const staleTranscriptPath = NodePath.join(
++          baseDir,
++          "brain",
++          staleConversationId,
++          ".system_generated",
++          "logs",
++          "transcript.jsonl",
++        );
++        yield* Effect.promise(() => NodeFSP.mkdir(cacheDir, { recursive: true }));
++        yield* Effect.promise(() =>
++          NodeFSP.mkdir(NodePath.dirname(staleTranscriptPath), { recursive: true }),
++        );
++        yield* Effect.promise(() =>
++          NodeFSP.writeFile(
++            cachePath,
++            `${JSON.stringify({ [baseDir]: staleConversationId })}\n`,
++            "utf8",
++          ),
++        );
++        yield* Effect.promise(() =>
++          NodeFSP.writeFile(
++            staleTranscriptPath,
++            `${JSON.stringify({
++              step_index: 1,
++              source: "MODEL",
++              type: "FINAL_RESPONSE",
++              status: "DONE",
++              content: "stale response",
++            })}\n`,
++            "utf8",
++          ),
++        );
++
++        const adapter = yield* makeAdapter(baseDir, {}, async () => {
++          await new Promise((resolve) => setTimeout(resolve, 700));
++          await NodeFSP.writeFile(
++            cachePath,
++            `${JSON.stringify({ [baseDir]: currentConversationId })}\n`,
++            "utf8",
++          );
++          return "current response";
++        });
++        const { events, fiber } = yield* collectEvents(adapter);
++        const threadId = ThreadId.make("thread-stale-cache");
++        try {
++          yield* adapter.startSession({ threadId, runtimeMode: "full-access", cwd: baseDir });
++          const result = yield* adapter.sendTurn({
++            threadId,
++            input: "hello",
++            attachments: [],
++          });
++          yield* Effect.promise(() =>
++            waitFor(() => events.some((event) => event.type === "turn.completed"), events),
++          );
++
++          expect(result.resumeCursor).toEqual({ conversationId: currentConversationId });
++          expect(
++            events.some(
++              (event) => event.type === "content.delta" && event.payload.delta === "stale response",
++            ),
++          ).toBe(false);
++          expect(events.filter((event) => event.type === "thread.started")).toHaveLength(1);
++          expect(events.filter((event) => event.type === "turn.completed")).toHaveLength(1);
++        } finally {
++          yield* adapter.stopSession(threadId).pipe(Effect.catch(() => Effect.void));
++          yield* Fiber.interrupt(fiber).pipe(Effect.catch(() => Effect.void));
++        }
++      } finally {
++        yield* Effect.promise(() => NodeFSP.rm(baseDir, { recursive: true, force: true }));
++      }
++    }),
++  );
++
++  it.effect("starts resumed transcript polling at the pre-send file size", () =>
++    Effect.gen(function* () {
++      const baseDir = yield* Effect.promise(() =>
++        NodeFSP.mkdtemp(NodePath.join(NodeOS.tmpdir(), "antig-adapter-resume-floor-")),
++      );
++      try {
++        const conversationId = "conv-resume-floor";
++        const transcriptPath = NodePath.join(
++          baseDir,
++          "brain",
++          conversationId,
++          ".system_generated",
++          "logs",
++          "transcript.jsonl",
++        );
++        yield* Effect.promise(() =>
++          NodeFSP.mkdir(NodePath.dirname(transcriptPath), { recursive: true }),
++        );
++        yield* Effect.promise(() =>
++          NodeFSP.writeFile(
++            transcriptPath,
++            `${JSON.stringify({
++              step_index: 1,
++              source: "MODEL",
++              type: "FINAL_RESPONSE",
++              status: "DONE",
++              content: "historical response",
++            })}\n`,
++            "utf8",
++          ),
++        );
++
++        const adapter = yield* makeAdapter(baseDir, {}, async () => {
++          await NodeFSP.appendFile(
++            transcriptPath,
++            `${JSON.stringify({
++              step_index: 2,
++              source: "MODEL",
++              type: "FINAL_RESPONSE",
++              status: "DONE",
++              content: "current response",
++            })}\n`,
++            "utf8",
++          );
++          return "";
++        });
++        const { events, fiber } = yield* collectEvents(adapter);
++        const threadId = ThreadId.make("thread-resume-floor");
++        try {
++          yield* adapter.startSession({
++            threadId,
++            runtimeMode: "full-access",
++            cwd: baseDir,
++            resumeCursor: { conversationId },
++          });
++          yield* Effect.promise(() => new Promise((resolve) => setTimeout(resolve, 100)));
++          const result = yield* adapter.sendTurn({
++            threadId,
++            input: "continue",
++            attachments: [],
++          });
++          yield* Effect.promise(() =>
++            waitFor(() => events.some((event) => event.type === "turn.completed"), events),
++          );
++
++          expect(result.resumeCursor).toEqual({ conversationId });
++          expect(
++            events
++              .filter((event) => event.type === "content.delta")
++              .map((event) => event.payload.delta),
++          ).toEqual(["current response"]);
++          expect(events.filter((event) => event.type === "turn.completed")).toHaveLength(1);
++        } finally {
++          yield* adapter.stopSession(threadId).pipe(Effect.catch(() => Effect.void));
++          yield* Fiber.interrupt(fiber).pipe(Effect.catch(() => Effect.void));
++        }
++      } finally {
++        yield* Effect.promise(() => NodeFSP.rm(baseDir, { recursive: true, force: true }));
++      }
++    }),
++  );
++
+   it.effect(
+     "uses agentapi new-conversation and send-message when daemon endpoint is configured",
+     () =>
+@@ -353,7 +518,7 @@ describe("AntigravityAdapter sessions", () => {
+       }),
+   );
+ 
+-  it.effect("starts transcript poller from resume cursor and buffers partial lines", () =>
++  it.effect("buffers partial transcript lines after a resumed turn starts", () =>
+     Effect.gen(function* () {
+       const baseDir = yield* Effect.promise(() =>
+         NodeFSP.mkdtemp(NodePath.join(NodeOS.tmpdir(), "antig-adapter-poll-")),
+@@ -372,7 +537,15 @@ describe("AntigravityAdapter sessions", () => {
+           NodeFSP.mkdir(NodePath.dirname(transcriptPath), { recursive: true }),
+         );
+         yield* Effect.promise(() => NodeFSP.writeFile(transcriptPath, ""));
+-        const adapter = yield* makeAdapter(baseDir, {});
++        let finishProcess = () => {};
++        const adapter = yield* makeAdapter(
++          baseDir,
++          {},
++          () =>
++            new Promise<string>((resolve) => {
++              finishProcess = () => resolve("");
++            }),
++        );
+         const { events, fiber } = yield* collectEvents(adapter);
+         const threadId = ThreadId.make("thread-poll");
+         try {
+@@ -382,6 +555,7 @@ describe("AntigravityAdapter sessions", () => {
+             cwd: baseDir,
+             resumeCursor: { conversationId },
+           });
++          yield* adapter.sendTurn({ threadId, input: "continue", attachments: [] });
+           yield* Effect.promise(() =>
+             NodeFSP.appendFile(
+               transcriptPath,
+@@ -397,6 +571,7 @@ describe("AntigravityAdapter sessions", () => {
+           expect(events.find((event) => event.type === "content.delta")?.payload).toMatchObject({
+             delta: "Hello",
+           });
++          finishProcess();
+         } finally {
+           yield* adapter.stopSession(threadId).pipe(Effect.catch(() => Effect.void));
+           yield* Fiber.interrupt(fiber).pipe(Effect.catch(() => Effect.void));
+diff --git a/apps/server/src/provider/Layers/AntigravityAdapter.ts b/apps/server/src/provider/Layers/AntigravityAdapter.ts
+index 53c8f8e12..e0cef40dc 100644
+--- a/apps/server/src/provider/Layers/AntigravityAdapter.ts
++++ b/apps/server/src/provider/Layers/AntigravityAdapter.ts
+@@ -1115,10 +1115,6 @@ export const makeAntigravityAdapter = Effect.fn("makeAntigravityAdapter")(functi
+     };
+     yield* Ref.update(sessionsRef, (sessions) => new Map(sessions).set(input.threadId, context));
+     const rawSource = endpointFor(context) ? "antigravity.agentapi" : "antigravity.cli";
+-    if (context.conversationId) {
+-      startTranscriptPoller(context);
+-      startGatePoller(context);
+-    }
+     emit({
+       ...runtimeEventBase({
+         threadId: input.threadId,
+@@ -1238,7 +1234,7 @@ export const makeAntigravityAdapter = Effect.fn("makeAntigravityAdapter")(functi
+         payload: modelId ? { model: modelId } : {},
+       });
+ 
+-      if (context.conversationId) {
++      if (context.conversationId && !context.poller) {
+         const cliTranscriptStartOffset = yield* Effect.promise(() =>
+           transcriptSizeForConversation({ settings, conversationId: context.conversationId! }),
+         );
+@@ -1257,7 +1253,40 @@ export const makeAntigravityAdapter = Effect.fn("makeAntigravityAdapter")(functi
+             fullAccess: context.session.runtimeMode === "full-access",
+           });
+       const commandMethod = endpoint ? (args[1] ?? "agentapi") : "agy.print";
+-      const previousConversationId = context.conversationId;
++      const cachedConversationIdBeforeTurn = context.conversationId
++        ? undefined
++        : yield* Effect.promise(() => readLastConversationIdForCwd({ settings, cwd }));
++
++      const bindConversation = (ctx: SessionContext, conversationId: string): boolean => {
++        if (ctx.conversationId) return false;
++        ctx.conversationId = conversationId;
++        ctx.pollOffset = 0;
++        ctx.pollCarry = "";
++        const cursor = { conversationId };
++        const resumedAt = new Date().toISOString();
++        ctx.session = {
++          ...ctx.session,
++          resumeCursor: cursor,
++          updatedAt: resumedAt,
++        };
++        emit({
++          ...runtimeEventBase({
++            threadId: input.threadId,
++            ...(options.instanceId ? { instanceId: options.instanceId } : {}),
++            createdAt: resumedAt,
++            method: "thread.start",
++            rawSource,
++            payload: cursor,
++          }),
++          type: "thread.started",
++          payload: { providerThreadId: conversationId },
++        });
++        startTranscriptPoller(ctx);
++        if (endpoint) {
++          startGatePoller(ctx);
++        }
++        return true;
++      };
+ 
+       const runAgyPromise = () =>
+         options.runAgentApi
+@@ -1305,44 +1334,21 @@ export const makeAntigravityAdapter = Effect.fn("makeAntigravityAdapter")(functi
+               if (endpoint) {
+                 try {
+                   const decoded = decodeNewConversationResponseJson(stdout);
+-                  context.conversationId = decoded.response.newConversation.conversationId;
+-                  const cursor = { conversationId: context.conversationId };
+-                  const resumedAt = yield* currentTimestamp;
+-                  context.session = {
+-                    ...context.session,
+-                    resumeCursor: cursor,
+-                    updatedAt: resumedAt,
+-                  };
+-                  emit({
+-                    ...runtimeEventBase({
+-                      threadId: input.threadId,
+-                      ...(options.instanceId ? { instanceId: options.instanceId } : {}),
+-                      createdAt: resumedAt,
+-                      method: "thread.start",
+-                      rawSource,
+-                      payload: cursor,
+-                    }),
+-                    type: "thread.started",
+-                    payload: { providerThreadId: context.conversationId },
+-                  });
+-                  startTranscriptPoller(context);
+-                  startGatePoller(context);
++                  bindConversation(context, decoded.response.newConversation.conversationId);
+                 } catch {
+                   const discovered = yield* Effect.promise(() =>
+                     readLastConversationIdForCwd({ settings, cwd }),
+                   );
+-                  if (discovered) {
+-                    context.conversationId = discovered;
+-                    startTranscriptPoller(context);
++                  if (discovered && discovered !== cachedConversationIdBeforeTurn) {
++                    bindConversation(context, discovered);
+                   }
+                 }
+               } else {
+                 const discovered = yield* Effect.promise(() =>
+                   readLastConversationIdForCwd({ settings, cwd }),
+                 );
+-                if (discovered) {
+-                  context.conversationId = discovered;
+-                  startTranscriptPoller(context);
++                if (discovered && discovered !== cachedConversationIdBeforeTurn) {
++                  bindConversation(context, discovered);
+                 }
+               }
+             }
+@@ -1475,40 +1481,17 @@ export const makeAntigravityAdapter = Effect.fn("makeAntigravityAdapter")(functi
+             return;
+           }
+           const discovered = await readLastConversationIdForCwd({ settings, cwd });
+-          if (discovered && discovered !== previousConversationId) {
++          if (discovered && discovered !== cachedConversationIdBeforeTurn) {
+             NodeTimers.clearInterval(interval);
+-            ctx.conversationId = discovered;
+-            ctx.pollOffset = 0;
+-            ctx.pollCarry = "";
+-            const cursor = { conversationId: discovered };
+-            const resumedAt = new Date().toISOString();
+-            ctx.session = {
+-              ...ctx.session,
+-              resumeCursor: cursor,
+-              updatedAt: resumedAt,
+-            };
+-            emit({
+-              ...runtimeEventBase({
+-                threadId: input.threadId,
+-                ...(options.instanceId ? { instanceId: options.instanceId } : {}),
+-                createdAt: resumedAt,
+-                method: "thread.start",
+-                rawSource,
+-                payload: cursor,
+-              }),
+-              type: "thread.started",
+-              payload: { providerThreadId: discovered },
+-            });
+-            startTranscriptPoller(ctx);
+-            if (endpoint) {
+-              startGatePoller(ctx);
+-            }
++            bindConversation(ctx, discovered);
+           }
+         }, 500);
+       };
+ 
+       if (!context.conversationId) {
+-        startConversationIdPoller(context);
++        if (!endpoint) {
++          startConversationIdPoller(context);
++        }
+         let waited = 0;
+         while (!context.conversationId && waited < 5000 && !context.stopped) {
+           yield* Effect.promise(() => new Promise((resolve) => setTimeout(resolve, 50)));
