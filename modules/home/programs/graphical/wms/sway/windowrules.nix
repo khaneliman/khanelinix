@@ -63,6 +63,7 @@ in
           "6" = [
             { app_id = "^thunderbird$"; }
             # { class = "^Mailspring$"; }
+            { app_id = "^obsidian$"; }
           ];
           "7" = [
             { app_id = "^mpv|vlc|VLC|mpdevil$"; }

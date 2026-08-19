@@ -96,6 +96,11 @@ in
             match.class = "^(thunderbird|Mailspring)$";
             workspace = "6 silent";
           }
+          # Notes
+          {
+            match.class = "^(obsidian)$";
+            workspace = "6";
+          }
           # Media
           {
             match.class = "^(mpv|vlc|mpdevil)$";

@@ -50,6 +50,7 @@ in
 
         (mkWorkspaceRule "6" { app-id = "^thunderbird$"; })
         (mkWorkspaceRule "6" { app-id = "^Mailspring$"; })
+        (mkWorkspaceRule "6" { app-id = "^obsidian$"; })
 
         (mkWorkspaceRule "7" { app-id = "^(mpv|vlc|mpdevil)$"; })
         (mkWorkspaceRule "7" { app-id = "^Spotify$"; })
