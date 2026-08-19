@@ -34,6 +34,9 @@ def run_git(
     """Run one read-only Git command with locale-stable output."""
 
     environment = os.environ.copy()
+    for key in list(environment.keys()):
+        if key.startswith("GIT_") and key != "GIT_OPTIONAL_LOCKS":
+            environment.pop(key, None)
     environment.update({"GIT_OPTIONAL_LOCKS": "0", "LC_ALL": "C"})
     try:
         result = subprocess.run(

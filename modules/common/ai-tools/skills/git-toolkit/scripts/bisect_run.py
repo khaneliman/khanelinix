@@ -86,6 +86,9 @@ def run_git(
     check: bool = True,
 ) -> subprocess.CompletedProcess[bytes]:
     environment = os.environ.copy()
+    for key in list(environment.keys()):
+        if key.startswith("GIT_"):
+            environment.pop(key, None)
     environment.update({"LC_ALL": "C"})
     try:
         result = subprocess.run(

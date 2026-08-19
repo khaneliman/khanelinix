@@ -74,6 +74,8 @@ def run_suite(root: Path, tests: Path) -> tuple[int, int, str]:
 
 
 def suite_name(root: Path, tests: Path) -> str:
+    root = root.resolve()
+    tests = tests.resolve()
     try:
         relative = tests.relative_to(root)
     except ValueError:

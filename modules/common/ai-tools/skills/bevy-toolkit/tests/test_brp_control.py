@@ -186,7 +186,7 @@ class BrpControlTest(unittest.TestCase):
 
     def test_screenshot_reports_fresh_artifact(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "capture.png"
+            path = Path(directory).resolve() / "capture.png"
             result = self.run_script(
                 "--allow-unguarded-mutation", "screenshot", str(path)
             )
