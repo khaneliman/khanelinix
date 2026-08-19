@@ -70,7 +70,10 @@ in
 
           apps = {
             obsidian.enable = lib.mkDefault (cfg.knowledgeEnable && !isWSL);
-            teams-for-linux.enable = lib.mkDefault (!isWSL && includes "standard");
+            # Native Teams cask owns macOS through the Darwin business suite
+            teams-for-linux.enable = lib.mkDefault (
+              pkgs.stdenv.hostPlatform.isLinux && !isWSL && includes "standard"
+            );
             thunderbird.enable = lib.mkDefault (!isWSL && includes "standard"); # No GUI email client in WSL
           };
         };
