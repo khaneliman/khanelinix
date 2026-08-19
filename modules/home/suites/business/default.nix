@@ -85,7 +85,8 @@ in
             _1password-cli = lib.mkDefault enabled;
             azure.devOpsEnable = lib.mkDefault cfg.azureDevOpsEnable;
             d2.enable = lib.mkDefault cfg.architectureEnable;
-            khal.enable = lib.mkDefault cfg.pimEnable;
+            # khal reads calendars collected by vdirsyncer, which is Linux only
+            khal.enable = lib.mkDefault (cfg.pimEnable && pkgs.stdenv.hostPlatform.isLinux);
             pandoc.enable = lib.mkDefault cfg.publishingEnable;
             taskwarrior.enable = lib.mkDefault cfg.planningEnable;
             zk.enable = lib.mkDefault cfg.knowledgeEnable;
