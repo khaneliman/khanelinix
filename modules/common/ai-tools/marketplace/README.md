@@ -20,6 +20,51 @@ Replace `git-toolkit` with a published skill name from `catalog.json`. Select
 skills explicitly. The repository also contains internal or host-bound skills
 that the marketplace excludes.
 
+## Install a bundle
+
+Bundles are named skill sets in `catalog.json`. Every member stays an
+independent plugin; a bundle is an install preference, not a package. The
+validator keeps each command below in sync with the catalog.
+
+With the Agent Skills installer, pass the whole member list to `--skill`. On the
+Codex and Claude marketplaces, install each member with the per-plugin commands
+from the sections below.
+
+`workflow-core` is the engineering workflow system. The skills call each other
+by name, so install the full set:
+
+```sh
+npx skills add khaneliman/khanelinix \
+  --agent antigravity claude-code codex \
+  --skill architect arena blast-radius engineering-principles figure-it-out how interrogate okf-memory planning-with-files recall show-me-your-work unslop why \
+  --global --copy --yes
+```
+
+The domain bundles group standalone skills by work area:
+
+```sh
+# ai-tools: AI-tool authoring for skills, MCP servers, and configuration
+npx skills add khaneliman/khanelinix \
+  --skill ai-tools-architect mcp-builder skill-creator --global --copy --yes
+
+# vcs: Git history, GitHub, and Jujutsu workflows
+npx skills add khaneliman/khanelinix \
+  --skill git-toolkit github-toolkit jj-toolkit --global --copy --yes
+
+# nix: Nix operations and expression authoring
+npx skills add khaneliman/khanelinix \
+  --skill nix-toolkit writing-nix --global --copy --yes
+
+# web: frontend, browser-game, and TypeScript work
+npx skills add khaneliman/khanelinix \
+  --skill develop-web-game frontend-design typescript-best-practices \
+  --global --copy --yes
+
+# writing: technical prose quality and AI-pattern removal
+npx skills add khaneliman/khanelinix \
+  --skill technical-writing unslop --global --copy --yes
+```
+
 ## Use the Codex marketplace
 
 Current Codex releases require separate marketplace and plugin commands:

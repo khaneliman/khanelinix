@@ -70,10 +70,23 @@ class MarketplaceTest(unittest.TestCase):
         payload.write_text(self.skill_body(name), encoding="utf-8")
         return plugin_dir
 
+    def write_readme(self, bundles: dict[str, Any]) -> None:
+        blocks = [
+            f"### {name}\n\n```sh\nnpx skills add tester/repository \\\n"
+            f"  --skill {' '.join(bundle['plugins'])} --global --copy --yes\n```\n"
+            for name, bundle in bundles.items()
+        ]
+        readme_path = self.catalog_path.parent / "README.md"
+        readme_path.parent.mkdir(parents=True, exist_ok=True)
+        readme_path.write_text(
+            "# Marketplace\n\n" + "\n".join(blocks), encoding="utf-8"
+        )
+
     def write_repository(
         self,
         published: list[str],
         excluded: dict[str, str] | None = None,
+        bundles: dict[str, Any] | None = None,
     ) -> None:
         for name in published:
             self.write_plugin(name)
@@ -100,6 +113,9 @@ class MarketplaceTest(unittest.TestCase):
             "plugins": plugins,
             "excluded": excluded or {},
         }
+        if bundles is not None:
+            catalog["bundles"] = bundles
+            self.write_readme(bundles)
         self.write_json(self.catalog_path, catalog)
         self.write_json(
             self.root / marketplace.CODEX_MARKETPLACE_PATH,
@@ -291,6 +307,70 @@ class MarketplaceTest(unittest.TestCase):
         self.write_json(path, payload)
 
         with self.assertRaisesRegex(marketplace.MarketplaceError, "version mismatch"):
+            marketplace.validate_repository(self.root)
+
+    def test_documented_bundle_passes(self) -> None:
+        self.write_skill("alpha-skill")
+        self.write_skill("beta-skill")
+        bundles = {
+            "core": {
+                "description": "Core set.",
+                "plugins": ["alpha-skill", "beta-skill"],
+            }
+        }
+        self.write_repository(["alpha-skill", "beta-skill"], bundles=bundles)
+
+        result = marketplace.validate_repository(self.root)
+
+        self.assertEqual(result["bundles"], {"core": ["alpha-skill", "beta-skill"]})
+
+    def test_bundle_member_must_be_published(self) -> None:
+        self.write_skill("alpha-skill")
+        self.write_skill("private-skill")
+        bundles = {
+            "core": {
+                "description": "Core set.",
+                "plugins": ["alpha-skill", "private-skill"],
+            }
+        }
+        self.write_repository(
+            ["alpha-skill"],
+            {"private-skill": "Not redistributable."},
+            bundles=bundles,
+        )
+
+        with self.assertRaisesRegex(
+            marketplace.MarketplaceError, "unpublished skill: private-skill"
+        ):
+            marketplace.validate_repository(self.root)
+
+    def test_bundle_name_must_not_collide_with_skill(self) -> None:
+        self.write_skill("alpha-skill")
+        bundles = {
+            "alpha-skill": {"description": "Collides.", "plugins": ["alpha-skill"]}
+        }
+        self.write_repository(["alpha-skill"], bundles=bundles)
+
+        with self.assertRaisesRegex(marketplace.MarketplaceError, "collides"):
+            marketplace.validate_repository(self.root)
+
+    def test_bundle_readme_command_must_stay_in_sync(self) -> None:
+        self.write_skill("alpha-skill")
+        self.write_skill("beta-skill")
+        bundles = {
+            "core": {
+                "description": "Core set.",
+                "plugins": ["alpha-skill", "beta-skill"],
+            }
+        }
+        self.write_repository(["alpha-skill", "beta-skill"], bundles=bundles)
+        self.write_readme(
+            {"core": {"description": "Core set.", "plugins": ["alpha-skill"]}}
+        )
+
+        with self.assertRaisesRegex(
+            marketplace.MarketplaceError, "command out of sync: core"
+        ):
             marketplace.validate_repository(self.root)
 
 

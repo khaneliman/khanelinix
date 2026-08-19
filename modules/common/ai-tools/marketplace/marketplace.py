@@ -101,6 +101,34 @@ def load_catalog(path: Path) -> dict[str, Any]:
         if not isinstance(reason, str) or not reason.strip():
             raise MarketplaceError(f"excluded skill requires a reason: {name}")
 
+    bundles = catalog.get("bundles", {})
+    if not isinstance(bundles, dict):
+        raise MarketplaceError("catalog.bundles must be an object")
+    for bundle_name, bundle in bundles.items():
+        if not isinstance(bundle_name, str) or NAME_RE.fullmatch(bundle_name) is None:
+            raise MarketplaceError(f"invalid bundle name: {bundle_name}")
+        if bundle_name in seen or bundle_name in excluded:
+            raise MarketplaceError(
+                f"bundle name collides with a skill name: {bundle_name}"
+            )
+        if not isinstance(bundle, dict):
+            raise MarketplaceError(f"catalog.bundles.{bundle_name} must be an object")
+        require_string(bundle, "description", f"catalog.bundles.{bundle_name}")
+        members = bundle.get("plugins")
+        if not isinstance(members, list) or not members:
+            raise MarketplaceError(
+                f"catalog.bundles.{bundle_name}.plugins must be a non-empty array"
+            )
+        if members != sorted(set(members)):
+            raise MarketplaceError(
+                f"bundle members must be unique and sorted: {bundle_name}"
+            )
+        for member in members:
+            if member not in seen:
+                raise MarketplaceError(
+                    f"bundle {bundle_name} references unpublished skill: {member}"
+                )
+
     return catalog
 
 
@@ -301,6 +329,25 @@ def validate_codex_plugin(
         )
 
 
+def validate_bundle_documentation(readme_path: Path, bundles: dict[str, Any]) -> None:
+    """Require one documented install command per bundle in the README.
+
+    Line-continuation backslashes collapse before matching, so wrapped
+    commands stay valid.
+    """
+    try:
+        readme = readme_path.read_text(encoding="utf-8")
+    except OSError as error:
+        raise MarketplaceError(f"unable to read README: {readme_path}") from error
+    normalized = re.sub(r"\s+", " ", re.sub(r"\\\s*\n", " ", readme))
+    for bundle_name, bundle in bundles.items():
+        if bundle_name not in readme:
+            raise MarketplaceError(f"README does not document bundle: {bundle_name}")
+        command = "--skill " + " ".join(bundle["plugins"])
+        if command not in normalized:
+            raise MarketplaceError(f"README bundle command out of sync: {bundle_name}")
+
+
 def validate_repository(root: Path, catalog_path: Path | None = None) -> dict[str, Any]:
     root = root.resolve()
     if not root.is_dir():
@@ -379,11 +426,16 @@ def validate_repository(root: Path, catalog_path: Path | None = None) -> dict[st
     if exposed != sorted(expected_names):
         raise MarketplaceError("plugin tree does not match published catalog entries")
 
+    bundles = catalog.get("bundles", {})
+    if bundles:
+        validate_bundle_documentation(catalog_path.parent / "README.md", bundles)
+
     return {
         "marketplace": marketplace["name"],
         "root": str(root),
         "plugins": len(expected_names),
         "excluded": catalog["excluded"],
+        "bundles": {name: bundle["plugins"] for name, bundle in bundles.items()},
     }
 
 

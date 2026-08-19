@@ -240,5 +240,49 @@
 		"playwright": "Requires the khanelinix Nix-backed Playwright wrapper.",
 		"playwright-interactive": "Requires a harness-native interactive runtime and local browser package.",
 		"reflect": "Routes accepted skill edits into the khanelinix canonical tree."
+	},
+	"bundles": {
+		"ai-tools": {
+			"description": "AI-tool authoring: skills, MCP servers, and configuration.",
+			"plugins": ["ai-tools-architect", "mcp-builder", "skill-creator"]
+		},
+		"nix": {
+			"description": "Nix operations and expression authoring.",
+			"plugins": ["nix-toolkit", "writing-nix"]
+		},
+		"vcs": {
+			"description": "Git history, GitHub, and Jujutsu workflows.",
+			"plugins": ["git-toolkit", "github-toolkit", "jj-toolkit"]
+		},
+		"web": {
+			"description": "Frontend, browser-game, and TypeScript work.",
+			"plugins": [
+				"develop-web-game",
+				"frontend-design",
+				"typescript-best-practices"
+			]
+		},
+		"workflow-core": {
+			"description": "Engineering workflow system; the skills call each other by name.",
+			"plugins": [
+				"architect",
+				"arena",
+				"blast-radius",
+				"engineering-principles",
+				"figure-it-out",
+				"how",
+				"interrogate",
+				"okf-memory",
+				"planning-with-files",
+				"recall",
+				"show-me-your-work",
+				"unslop",
+				"why"
+			]
+		},
+		"writing": {
+			"description": "Technical prose quality and AI-pattern removal.",
+			"plugins": ["technical-writing", "unslop"]
+		}
 	}
 }
