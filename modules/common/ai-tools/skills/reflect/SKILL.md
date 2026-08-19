@@ -1,0 +1,120 @@
+---
+name: reflect
+description: "Mine the active session transcript with three parallel review lenses and route durable learnings into concrete skill edits. Use when the user says reflect, after a complex task lands cleanly, after dead ends resolve into a working path, after the user corrects the approach mid-task, or when a non-trivial workflow emerges that no skill captures."
+---
+
+# Reflect
+
+Mine the current conversation for durable learnings. Route each learning into a
+skill edit or a durable memory note.
+
+## When To Invoke
+
+- The user said "reflect".
+- A complex task of 5 or more tool calls landed cleanly and the recipe is worth
+  keeping.
+- The agent hit dead ends, found the working path, and the path generalizes.
+- The user corrected the agent's approach mid-task.
+- A non-trivial workflow emerged that no skill captures.
+
+Skip trivial or off-topic conversations. Skip work an existing skill already
+covers and the parent followed correctly. One-offs are not learnings.
+
+## Workflow
+
+### 1. Locate the Active Transcript
+
+Find the transcript for the current session before you fan out. Transcript
+stores vary per provider. Claude Code writes one JSONL file per session under
+its config directory in `projects/<workspace-slug>/`.
+
+List candidates from the current workspace transcript directory only:
+
+```bash
+ls -t <transcript-dir>/*.jsonl <transcript-dir>/*/*.jsonl \
+  <transcript-dir>/*/subagents/*.jsonl 2>/dev/null | head -10
+```
+
+Do not glob across other workspace slugs. Cross-slug globs read private sessions
+from unrelated projects.
+
+Providers use up to three layouts: flat (`<id>.jsonl`), nested
+(`<id>/<id>.jsonl`), and subagent (`<parent>/subagents/<child>.jsonl`).
+
+Read the first JSONL line of each candidate. Confirm the first message text
+holds this conversation's opening user prompt. Take the matching path. If no
+path resolves, write a tight digest of the session and pass the digest instead.
+
+### 2. Spawn Three Reviewers in Parallel
+
+Launch three reviewer subagents in one message. Use distinct model families when
+the harness offers them. Reviewers need MCP access to look up context the
+transcript cites, so do not run them read-only. Each prompt forbids file writes.
+The parent applies every edit.
+
+| Lens      | Prompt template                                           |
+| --------- | --------------------------------------------------------- |
+| Judgment  | [judgment-reviewer.md](references/judgment-reviewer.md)   |
+| Tooling   | [tooling-reviewer.md](references/tooling-reviewer.md)     |
+| Divergent | [divergent-reviewer.md](references/divergent-reviewer.md) |
+
+Pass each template verbatim. Substitute the transcript path or the digest where
+the template marks it. Reviewers return findings in the subagent response.
+
+### 3. Synthesize
+
+Spawn one synthesizer subagent with [synthesizer.md](references/synthesizer.md)
+verbatim. Inline each reviewer's full output where the template marks it. The
+synthesizer spot-verifies citations, so it also needs MCP access. It returns a
+structured Accepted, Rejected, and Backlog list.
+
+### 4. Structural Enforcement Check
+
+Sanity-check the synthesizer's Accepted list. Move an item to Backlog when a
+lint rule, script, metadata flag, or runtime check enforces it more reliably
+than prose. The synthesizer already applies this criterion. This pass runs last,
+before edits land. See the `principle-encode-lessons-in-structure` skill.
+
+### 5. Apply
+
+Present the synthesizer's full Accepted, Rejected, and Backlog output to the
+user. Wait for explicit approval before you apply any Accepted edit. The user
+picks the subset to apply and may redirect routings. Skill changes affect every
+future session, so never auto-apply.
+
+Backlog items and durable learnings that are not skill edits route to the
+`okf-memory` skill. Those notes are not skill edits. Only the Accepted list
+waits for approval.
+
+Land every skill edit in the canonical source tree
+`modules/common/ai-tools/skills/` in the khanelinix repository. Never edit
+deployed provider copies under user config. When the canonical checkout is not
+available in the current workspace, file the learning as an `okf-memory` note
+instead.
+
+For each approved Accepted item, follow the Routing field exactly:
+
+- Trivial existing-skill edit, such as one bullet, a tightened sentence, or a
+  stale fact: the parent edits the canonical skill directly.
+- Substantive existing-skill edit, such as a new section, a new pattern table,
+  or more than about 10 lines: hand to the `skill-creator` skill and run its
+  draft, test, and iterate loop.
+- `tune description: <skill path>` when the skill exists but did not trigger:
+  hand to `skill-creator` and run its description-tuning loop.
+- `new skill via skill-creator: <kebab-name>`: hand creation to `skill-creator`.
+  Do not invent the package shape ad hoc.
+
+After skill edits, run the skill test runner on the canonical tree:
+
+```bash
+python3 modules/common/ai-tools/skills/ai-tools-architect/scripts/run_skill_tests.py
+```
+
+### 6. Summarize for the User
+
+Short list, no preamble:
+
+- Edits applied: `<skill path>`. What changed, one line each.
+- New skills created: `<skill path>`. One line each. Rare.
+- Notes filed to `okf-memory`: `<note title>`. One line each.
+- Dropped: one line per rejected finding plus the synthesizer's reason.
