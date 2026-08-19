@@ -23,7 +23,7 @@
 - `agents.nix`: canonical semantic workers, gateway model projections, and
   provider renderers
 - `marketplace/`: portable publication catalog, generator (`sync.py`),
-  validator, generated Codex plugin tree (`codex/`), tests, and install
+  validator, generated shared plugin tree (`plugins/`), tests, and install
   documentation
 - `skills/`: canonical on-demand workflows; keep root playbooks lean and route
   detail into references/scripts
@@ -35,6 +35,10 @@
 
 - Change shared behavior once at canonical source, then verify every renderer or
   consumer affected by that source.
+- When a marketplace-published skill's content changes, bump its version in
+  `marketplace/catalog.json` and run `marketplace/sync.py` in the same change,
+  then rerun the marketplace validator per `marketplace/README.md`. Downstream
+  plugin consumers only receive updates on a bump.
 - Keep prompt changes separate from workflow, permission, hook, and generated
   provider changes when each can stand alone.
 - Do not hand-edit deployed files under user config; change repository source

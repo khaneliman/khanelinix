@@ -109,6 +109,23 @@ python3 modules/common/ai-tools/marketplace/sync.py
 `catalog.json` must publish or exclude every canonical skill. Add an exclusion
 reason when license or runtime constraints prevent portable distribution.
 
+## Version published skills
+
+Marketplace consumers receive an update only on a version increase.
+`npx skills update` fetches head content directly, but `claude plugin update`
+and `codex plugin` compare the installed version against the published one, so
+an unbumped content change never reaches those consumers.
+
+When a published skill's content changes, raise its semver in `catalog.json` and
+run `sync.py` in the same commit. The sync writes the version into both plugin
+manifests and the Claude index. The Codex root index carries no version field.
+
+The validator proves every generated file agrees with `catalog.json` and that
+each plugin payload is byte-identical to its canonical skill. It cannot detect a
+content change with no bump, so the bump is the author's responsibility. Bundle
+membership and other catalog metadata carry no version; consumers pick those up
+on the next marketplace re-fetch.
+
 Run the read-only validator after a metadata or skill change:
 
 ```sh
