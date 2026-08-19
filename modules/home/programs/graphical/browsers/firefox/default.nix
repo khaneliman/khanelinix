@@ -20,6 +20,7 @@ let
 in
 {
   imports = [
+    ./bookmarks.nix
     ./containers.nix
     ./extensions.nix
     ./search.nix
