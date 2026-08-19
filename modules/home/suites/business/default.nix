@@ -93,6 +93,7 @@ in
             khal.enable = lib.mkDefault (cfg.pimEnable && pkgs.stdenv.hostPlatform.isLinux);
             pandoc.enable = lib.mkDefault cfg.publishingEnable;
             taskwarrior.enable = lib.mkDefault cfg.planningEnable;
+            timewarrior.enable = lib.mkDefault cfg.planningEnable;
             zk.enable = lib.mkDefault cfg.knowledgeEnable;
           };
         };
