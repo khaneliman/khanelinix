@@ -36,6 +36,7 @@ in
         gitako-github-file-tree
         github-file-icons
         github-issue-link-status
+        multi-account-containers
         onepassword-password-manager
         react-devtools
         reduxdevtools
