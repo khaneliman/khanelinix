@@ -91,6 +91,8 @@ in
     };
 
     suites.development = {
+      azureEnable = true;
+      dotnetEnable = true;
       gameEnable = true;
     };
 

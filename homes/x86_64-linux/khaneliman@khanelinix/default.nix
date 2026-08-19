@@ -431,6 +431,8 @@ in
 
     suites = {
       development = {
+        azureEnable = true;
+        dotnetEnable = true;
         dockerEnable = true;
         gameEnable = true;
         kubernetesEnable = true;
