@@ -112,6 +112,8 @@ in
               lib.optional (config.khanelinix.tools.homebrew.enable && config.khanelinix.suites.business.enable) {
                 app = "/Applications/Fantastical.app";
               }
+              ++ lib.optional (hmCfg.khanelinix.programs.graphical.apps.obsidian.enable or false
+              ) "${hmApps}/Obsidian.app"
               ++ [
                 "/System/Applications/Reminders.app"
                 "/System/Applications/Notes.app"
