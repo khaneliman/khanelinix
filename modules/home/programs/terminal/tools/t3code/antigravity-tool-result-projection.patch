@@ -1,0 +1,865 @@
+diff --git a/apps/server/src/provider/Layers/AntigravityAdapter.ts b/apps/server/src/provider/Layers/AntigravityAdapter.ts
+index e3c028f24..6eb84ec04 100644
+--- a/apps/server/src/provider/Layers/AntigravityAdapter.ts
++++ b/apps/server/src/provider/Layers/AntigravityAdapter.ts
+@@ -87,6 +87,7 @@ export interface AntigravityTranscriptRecord {
+   readonly source?: string;
+   readonly type?: string;
+   readonly status?: string;
++  readonly created_at?: string;
+   readonly content?: string;
+   readonly error?: string;
+   readonly tool_calls?: ReadonlyArray<{
+@@ -97,6 +98,16 @@ export interface AntigravityTranscriptRecord {
+ 
+ type AntigravityToolCall = NonNullable<AntigravityTranscriptRecord["tool_calls"]>[number];
+ 
++type AntigravityToolItemType = "command_execution" | "file_change" | "dynamic_tool_call";
++
++interface PendingAntigravityTool {
++  readonly itemId: RuntimeItemId;
++  readonly itemType: AntigravityToolItemType;
++  readonly title: string;
++  readonly detail: string | undefined;
++  readonly tool: AntigravityToolCall;
++}
++
+ interface SessionContext {
+   session: ProviderSession;
+   conversationId: string | undefined;
+@@ -113,6 +124,8 @@ interface SessionContext {
+   pollCarry: string;
+   readonly seenLines: Set<string>;
+   readonly toolCallStepIndexes: Set<number>;
++  readonly pendingToolGroups: Array<ReadonlyArray<PendingAntigravityTool>>;
++  discardTranscriptUntilUserInput: boolean;
+   stopped: boolean;
+ }
+ 
+@@ -200,23 +213,68 @@ function normalizeTranscriptType(value: string | undefined): string {
+   return (value ?? "").trim().toUpperCase();
+ }
+ 
+-function toolDetail(tool: AntigravityToolCall): string | undefined {
++function transcriptCreatedAt(
++  record: AntigravityTranscriptRecord,
++  fallback: string | undefined,
++): string | undefined {
++  const value = trimText(record.created_at);
++  if (!value) return fallback;
++  const timestamp = Date.parse(value);
++  return Number.isNaN(timestamp) ? fallback : new Date(timestamp).toISOString();
++}
++
++function toolArgText(value: unknown): string | undefined {
++  const direct = trimText(value);
++  if (!direct) return undefined;
++  try {
++    return trimText(JSON.parse(direct)) ?? direct;
++  } catch {
++    return direct;
++  }
++}
++
++function normalizedToolArgs(tool: AntigravityToolCall): Record<string, unknown> {
++  return Object.fromEntries(
++    Object.entries(tool.args ?? {}).map(([key, value]) => [
++      key,
++      typeof value === "string" ? (toolArgText(value) ?? value) : value,
++    ]),
++  );
++}
++
++function toolCommand(tool: AntigravityToolCall): string | undefined {
+   const args = tool.args ?? {};
+-  const command =
+-    trimText(args.command) ??
+-    trimText(args.Command) ??
+-    trimText(args.command_line) ??
+-    trimText(args.CommandLine);
+-  const target =
+-    trimText(args.TargetFile) ??
+-    trimText(args.target_file) ??
+-    trimText(args.file_path) ??
+-    trimText(args.path);
+-  return command ?? target ?? tool.name;
++  return (
++    toolArgText(args.command) ??
++    toolArgText(args.Command) ??
++    toolArgText(args.command_line) ??
++    toolArgText(args.CommandLine)
++  );
++}
++
++function toolTarget(tool: AntigravityToolCall): string | undefined {
++  const args = tool.args ?? {};
++  return (
++    toolArgText(args.TargetFile) ??
++    toolArgText(args.target_file) ??
++    toolArgText(args.AbsolutePath) ??
++    toolArgText(args.absolute_path) ??
++    toolArgText(args.DirectoryPath) ??
++    toolArgText(args.SearchDirectory) ??
++    toolArgText(args.file_path) ??
++    toolArgText(args.path)
++  );
++}
++
++function toolDetail(tool: AntigravityToolCall): string | undefined {
++  return toolCommand(tool) ?? toolTarget(tool) ?? toolArgText(tool.name);
+ }
+ 
+ function toolTitle(tool: AntigravityToolCall): string {
+-  const name = trimText(tool.name);
++  const args = tool.args ?? {};
++  const summary = toolArgText(args.toolSummary) ?? toolArgText(args.toolAction);
++  if (summary) return summary;
++  const name = toolArgText(tool.name);
+   if (!name) return "Tool call";
+   const normalized = name.toLowerCase().replace(/[\s-]+/g, "_");
+   if (normalized === "list_dir" || normalized === "list_directory") return "Listed directory";
+@@ -225,6 +283,51 @@ function toolTitle(tool: AntigravityToolCall): string {
+   return name;
+ }
+ 
++function toolItemType(tool: AntigravityToolCall): AntigravityToolItemType {
++  const normalized = (toolArgText(tool.name) ?? "").toLowerCase().replace(/[\s-]+/g, "_");
++  if (normalized === "run_command" || normalized === "command") return "command_execution";
++  if (
++    normalized === "write_to_file" ||
++    normalized === "write_file" ||
++    normalized === "replace_file_content" ||
++    normalized === "multi_replace_file_content" ||
++    normalized === "apply_patch"
++  ) {
++    return "file_change";
++  }
++  return "dynamic_tool_call";
++}
++
++function pendingToolsForRecord(
++  record: AntigravityTranscriptRecord,
++): ReadonlyArray<PendingAntigravityTool> {
++  return (record.tool_calls ?? []).map((tool, index) => ({
++    itemId: RuntimeItemId.make(
++      `antigravity-tool-${record.step_index ?? "x"}-${index}-${tool.name ?? "tool"}`,
++    ),
++    itemType: toolItemType(tool),
++    title: toolTitle(tool),
++    detail: toolDetail(tool),
++    tool,
++  }));
++}
++
++function toolEventData(
++  pending: PendingAntigravityTool,
++  result: string | undefined,
++): Record<string, unknown> {
++  const command = toolCommand(pending.tool);
++  const target = toolTarget(pending.tool);
++  return {
++    toolCallId: pending.itemId,
++    toolName: pending.tool.name ?? "tool",
++    input: normalizedToolArgs(pending.tool),
++    ...(command ? { command, kind: "execute" } : {}),
++    ...(target ? { files: [{ path: target }] } : {}),
++    ...(result ? { rawOutput: { content: result } } : {}),
++  };
++}
++
+ function itemTypeForTranscript(record: AntigravityTranscriptRecord) {
+   const type = normalizeTranscriptType(record.type);
+   if (type.includes("RUN_COMMAND")) return "command_execution" as const;
+@@ -363,27 +466,24 @@ export function mapAntigravityTranscriptRecordToRuntimeEvents(input: {
+   if (record.source && normalizeTranscriptType(record.source) !== "MODEL") return events;
+ 
+   if (record.tool_calls && record.tool_calls.length > 0) {
+-    for (const [index, tool] of record.tool_calls.entries()) {
+-      const itemId = RuntimeItemId.make(
+-        `antigravity-tool-${record.step_index ?? "x"}-${index}-${tool.name ?? "tool"}`,
+-      );
++    for (const pending of pendingToolsForRecord(record)) {
+       events.push({
+         ...runtimeEventBase({
+           threadId,
+           instanceId,
+           turnId,
+-          itemId,
++          itemId: pending.itemId,
+           createdAt,
+           method,
+           payload: record,
+         }),
+-        type: "item.completed",
++        type: "item.started",
+         payload: {
+-          itemType: "dynamic_tool_call",
+-          status: "completed",
+-          title: toolTitle(tool),
+-          ...(toolDetail(tool) ? { detail: toolDetail(tool) } : {}),
+-          data: tool,
++          itemType: pending.itemType,
++          status: "inProgress",
++          title: pending.title,
++          ...(pending.detail ? { detail: pending.detail } : {}),
++          data: toolEventData(pending, undefined),
+         },
+       });
+     }
+@@ -480,6 +580,68 @@ export function mapAntigravityTranscriptRecordToRuntimeEvents(input: {
+   return events;
+ }
+ 
++function mapAntigravityToolResultToRuntimeEvents(input: {
++  readonly record: AntigravityTranscriptRecord;
++  readonly pendingTools: ReadonlyArray<PendingAntigravityTool>;
++  readonly threadId: ThreadId;
++  readonly instanceId?: ProviderInstanceId;
++  readonly turnId?: TurnId;
++  readonly createdAt?: string;
++}): ReadonlyArray<ProviderRuntimeEvent> {
++  const { record, pendingTools, threadId, instanceId, turnId, createdAt } = input;
++  const method = normalizeTranscriptType(record.type) || "GENERIC";
++  const content = trimText(record.content);
++  const error = trimText(record.error);
++  const failed = normalizeTranscriptType(record.status) === "ERROR" || error !== undefined;
++  const result = error ?? content;
++  const events: ProviderRuntimeEvent[] = [];
++
++  for (const pending of pendingTools) {
++    const streamKind =
++      pending.itemType === "command_execution"
++        ? "command_output"
++        : pending.itemType === "file_change"
++          ? "file_change_output"
++          : undefined;
++    if (streamKind && result) {
++      events.push({
++        ...runtimeEventBase({
++          threadId,
++          instanceId,
++          turnId,
++          itemId: pending.itemId,
++          createdAt,
++          method,
++          payload: record,
++        }),
++        type: "content.delta",
++        payload: { streamKind, delta: result },
++      });
++    }
++    events.push({
++      ...runtimeEventBase({
++        threadId,
++        instanceId,
++        turnId,
++        itemId: pending.itemId,
++        createdAt,
++        method,
++        payload: record,
++      }),
++      type: "item.completed",
++      payload: {
++        itemType: pending.itemType,
++        status: failed ? "failed" : "completed",
++        title: pending.title,
++        ...(pending.detail ? { detail: pending.detail } : {}),
++        data: toolEventData(pending, result),
++      },
++    });
++  }
++
++  return events;
++}
++
+ function runAgentApiDefault(
+   binaryPath: string,
+   args: ReadonlyArray<string>,
+@@ -938,6 +1100,38 @@ export const makeAntigravityAdapter = Effect.fn("makeAntigravityAdapter")(functi
+       }),
+     );
+ 
++  const failPendingTools = (
++    context: SessionContext,
++    createdAt: string,
++    method: string,
++    rawSource?: "antigravity.transcript" | "antigravity.agentapi",
++  ): void => {
++    for (const group of context.pendingToolGroups) {
++      for (const pending of group) {
++        emit({
++          ...runtimeEventBase({
++            threadId: context.session.threadId,
++            ...(options.instanceId ? { instanceId: options.instanceId } : {}),
++            ...(context.activeTurnId ? { turnId: context.activeTurnId } : {}),
++            itemId: pending.itemId,
++            createdAt,
++            method,
++            ...(rawSource ? { rawSource } : {}),
++          }),
++          type: "item.completed",
++          payload: {
++            itemType: pending.itemType,
++            status: "failed",
++            title: pending.title,
++            ...(pending.detail ? { detail: pending.detail } : {}),
++            data: toolEventData(pending, undefined),
++          },
++        });
++      }
++    }
++    context.pendingToolGroups.length = 0;
++  };
++
+   const reopenTurn = (context: SessionContext): void => {
+     const turnId = TurnId.make(`antigravity-turn-${NodeCrypto.randomUUID()}`);
+     const updatedAt = new Date().toISOString();
+@@ -982,6 +1176,7 @@ export const makeAntigravityAdapter = Effect.fn("makeAntigravityAdapter")(functi
+         context.pollCarry = "";
+         context.seenLines.clear();
+         context.toolCallStepIndexes.clear();
++        context.pendingToolGroups.length = 0;
+       }
+       if (stat.size === context.pollOffset) return { emittedContent, completedTurn };
+ 
+@@ -1001,19 +1196,44 @@ export const makeAntigravityAdapter = Effect.fn("makeAntigravityAdapter")(functi
+           context.seenLines.add(key);
+           const record = parseAntigravityTranscriptLine(line);
+           if (!record) continue;
++          const method = normalizeTranscriptType(record.type);
++          if (context.discardTranscriptUntilUserInput) {
++            if (method === "USER_INPUT") {
++              context.discardTranscriptUntilUserInput = false;
++            }
++            continue;
++          }
+           if (isDuplicateConcreteToolRecord(record, context.toolCallStepIndexes)) continue;
+           if (typeof record.step_index === "number" && record.tool_calls?.length) {
+             context.toolCallStepIndexes.add(record.step_index);
+           }
+ 
++          const pendingToolResult =
++            method === "GENERIC" ? context.pendingToolGroups.shift() : undefined;
++          const pendingTools =
++            normalizeTranscriptType(record.source) === "MODEL" ? pendingToolsForRecord(record) : [];
++          if (pendingTools.length > 0) {
++            context.pendingToolGroups.push(pendingTools);
++          }
++          const createdAt = transcriptCreatedAt(record, context.session.updatedAt);
++
+           const mapRecord = () =>
+-            mapAntigravityTranscriptRecordToRuntimeEvents({
+-              record,
+-              threadId: context.session.threadId,
+-              ...(options.instanceId ? { instanceId: options.instanceId } : {}),
+-              ...(context.activeTurnId ? { turnId: context.activeTurnId } : {}),
+-              createdAt: context.session.updatedAt,
+-            });
++            pendingToolResult
++              ? mapAntigravityToolResultToRuntimeEvents({
++                  record,
++                  pendingTools: pendingToolResult,
++                  threadId: context.session.threadId,
++                  ...(options.instanceId ? { instanceId: options.instanceId } : {}),
++                  ...(context.activeTurnId ? { turnId: context.activeTurnId } : {}),
++                  ...(createdAt ? { createdAt } : {}),
++                })
++              : mapAntigravityTranscriptRecordToRuntimeEvents({
++                  record,
++                  threadId: context.session.threadId,
++                  ...(options.instanceId ? { instanceId: options.instanceId } : {}),
++                  ...(context.activeTurnId ? { turnId: context.activeTurnId } : {}),
++                  ...(createdAt ? { createdAt } : {}),
++                });
+           let mapped = mapRecord();
+           if (mapped.length === 0) continue;
+           if (context.activeTurnId === undefined && !context.stopped) {
+@@ -1023,6 +1243,9 @@ export const makeAntigravityAdapter = Effect.fn("makeAntigravityAdapter")(functi
+           appendTurnItem(context, context.activeTurnId, record);
+ 
+           for (const event of mapped) {
++            if (event.type === "turn.completed") {
++              failPendingTools(context, event.createdAt, "transcript.turn-complete");
++            }
+             emit(event);
+             if (event.type === "content.delta") emittedContent = true;
+             if (event.type === "turn.completed") {
+@@ -1097,6 +1320,8 @@ export const makeAntigravityAdapter = Effect.fn("makeAntigravityAdapter")(functi
+       pollCarry: "",
+       seenLines: new Set(),
+       toolCallStepIndexes: new Set(),
++      pendingToolGroups: [],
++      discardTranscriptUntilUserInput: false,
+       stopped: false,
+     };
+     yield* Ref.update(sessionsRef, (sessions) => new Map(sessions).set(input.threadId, context));
+@@ -1198,6 +1423,7 @@ export const makeAntigravityAdapter = Effect.fn("makeAntigravityAdapter")(functi
+       const turnId = TurnId.make(`antigravity-turn-${yield* randomUUIDv4}`);
+       const updatedAt = yield* currentTimestamp;
+ 
++      context.pendingToolGroups.length = 0;
+       context.activeTurnId = turnId;
+       context.session = {
+         ...context.session,
+@@ -1535,6 +1761,8 @@ export const makeAntigravityAdapter = Effect.fn("makeAntigravityAdapter")(functi
+       }).pipe(Effect.catch(() => Effect.void));
+     }
+     const updatedAt = yield* currentTimestamp;
++    failPendingTools(context, updatedAt, "interrupt", "antigravity.agentapi");
++    context.discardTranscriptUntilUserInput = true;
+     context.activeTurnId = undefined;
+     context.pendingGates.clear();
+     context.autoApprovedGates.clear();
+@@ -1642,6 +1870,7 @@ export const makeAntigravityAdapter = Effect.fn("makeAntigravityAdapter")(functi
+     context.stopped = true;
+     if (context.poller) NodeTimers.clearInterval(context.poller);
+     if (context.gatePoller) NodeTimers.clearInterval(context.gatePoller);
++    context.pendingToolGroups.length = 0;
+     context.pendingGates.clear();
+     context.autoApprovedGates.clear();
+     context.session = { ...context.session, status: "closed", updatedAt };
+diff --git a/apps/server/src/provider/Layers/AntigravityAdapter.test.ts b/apps/server/src/provider/Layers/AntigravityAdapter.test.ts
+index 3323f4cc2..4085039c1 100644
+--- a/apps/server/src/provider/Layers/AntigravityAdapter.test.ts
++++ b/apps/server/src/provider/Layers/AntigravityAdapter.test.ts
+@@ -29,6 +29,7 @@ import {
+ } from "./AntigravityAdapter.ts";
+ 
+ const decodeAntigravitySettings = Schema.decodeSync(AntigravitySettings);
++const encodeUnknownJson = Schema.encodeUnknownSync(Schema.fromJsonString(Schema.Unknown));
+ 
+ const makeTestServerConfig = (baseDir: string) =>
+   Effect.gen(function* () {
+@@ -206,18 +207,22 @@ describe("AntigravityAdapter transcript helpers", () => {
+       }).map((event) => event.type),
+     ).toEqual(["item.completed", "content.delta"]);
+ 
+-    expect(
+-      mapAntigravityTranscriptRecordToRuntimeEvents({
+-        ...base,
+-        record: {
+-          step_index: 7,
+-          source: "MODEL",
+-          type: "PLANNER_RESPONSE",
+-          status: "DONE",
+-          tool_calls: [{ name: "write_to_file", args: { TargetFile: "/tmp/a.ts" } }],
+-        },
+-      })[0]?.payload,
+-    ).toMatchObject({ itemType: "dynamic_tool_call", title: "Write file" });
++    const toolEvents = mapAntigravityTranscriptRecordToRuntimeEvents({
++      ...base,
++      record: {
++        step_index: 7,
++        source: "MODEL",
++        type: "PLANNER_RESPONSE",
++        status: "DONE",
++        tool_calls: [{ name: "write_to_file", args: { TargetFile: "/tmp/a.ts" } }],
++      },
++    });
++    expect(toolEvents.map((event) => event.type)).toEqual(["item.started"]);
++    expect(toolEvents[0]?.payload).toMatchObject({
++      itemType: "file_change",
++      status: "inProgress",
++      title: "Write file",
++    });
+ 
+     expect(
+       mapAntigravityTranscriptRecordToRuntimeEvents({
+@@ -479,6 +484,244 @@ describe("AntigravityAdapter sessions", () => {
+     }),
+   );
+ 
++  it.effect("pairs generic transcript results with their tool calls", () =>
++    Effect.gen(function* () {
++      const baseDir = yield* Effect.promise(() =>
++        NodeFSP.mkdtemp(NodePath.join(NodeOS.tmpdir(), "antig-adapter-tool-results-")),
++      );
++      try {
++        const conversationId = "conv-tool-results";
++        const transcriptPath = NodePath.join(
++          baseDir,
++          "brain",
++          conversationId,
++          ".system_generated",
++          "logs",
++          "transcript.jsonl",
++        );
++        yield* Effect.promise(() =>
++          NodeFSP.mkdir(NodePath.dirname(transcriptPath), { recursive: true }),
++        );
++        yield* Effect.promise(() => NodeFSP.writeFile(transcriptPath, ""));
++
++        const records = [
++          {
++            step_index: 1,
++            source: "MODEL",
++            type: "PLANNER_RESPONSE",
++            status: "DONE",
++            created_at: "2026-08-19T01:41:28Z",
++            tool_calls: [
++              {
++                name: "view_file",
++                args: {
++                  AbsolutePath: '"/workspace/flake.nix"',
++                  toolSummary: '"View flake"',
++                },
++              },
++            ],
++          },
++          {
++            step_index: 2,
++            source: "MODEL",
++            type: "GENERIC",
++            status: "DONE",
++            created_at: "2026-08-19T01:41:30Z",
++            content: "Total Lines: 42",
++          },
++          {
++            step_index: 3,
++            source: "MODEL",
++            type: "PLANNER_RESPONSE",
++            status: "DONE",
++            created_at: "2026-08-19T01:41:31Z",
++            tool_calls: [
++              {
++                name: "run_command",
++                args: {
++                  CommandLine: '"nix flake check"',
++                  toolSummary: '"Check flake"',
++                },
++              },
++            ],
++          },
++          {
++            step_index: 4,
++            source: "MODEL",
++            type: "GENERIC",
++            status: "DONE",
++            created_at: "2026-08-19T01:41:33Z",
++            content: "ok",
++          },
++          {
++            step_index: 5,
++            source: "MODEL",
++            type: "PLANNER_RESPONSE",
++            status: "DONE",
++            created_at: "2026-08-19T01:41:34Z",
++            content: "Review complete.",
++          },
++        ];
++        const adapter = yield* makeAdapter(baseDir, {}, async () => {
++          await NodeFSP.appendFile(
++            transcriptPath,
++            `${records.map(encodeUnknownJson).join("\n")}\n`,
++          );
++          return "";
++        });
++        const { events, fiber } = yield* collectEvents(adapter);
++        const threadId = ThreadId.make("thread-tool-results");
++        try {
++          yield* adapter.startSession({
++            threadId,
++            runtimeMode: "full-access",
++            cwd: baseDir,
++            resumeCursor: { conversationId },
++          });
++          yield* adapter.sendTurn({ threadId, input: "review", attachments: [] });
++          yield* Effect.promise(() =>
++            waitFor(() => events.some((event) => event.type === "turn.completed"), events),
++          );
++
++          const started = events.filter((event) => event.type === "item.started");
++          const completed = events.filter((event) => event.type === "item.completed");
++          expect(started).toHaveLength(2);
++          expect(completed).toHaveLength(2);
++          expect(completed.map((event) => event.itemId)).toEqual(
++            started.map((event) => event.itemId),
++          );
++          expect(started.map((event) => event.createdAt)).toEqual([
++            "2026-08-19T01:41:28.000Z",
++            "2026-08-19T01:41:31.000Z",
++          ]);
++          expect(completed.map((event) => event.createdAt)).toEqual([
++            "2026-08-19T01:41:30.000Z",
++            "2026-08-19T01:41:33.000Z",
++          ]);
++          expect(completed[0]?.payload).toMatchObject({
++            itemType: "dynamic_tool_call",
++            title: "View flake",
++            detail: "/workspace/flake.nix",
++            data: { rawOutput: { content: "Total Lines: 42" } },
++          });
++          expect(completed[1]?.payload).toMatchObject({
++            itemType: "command_execution",
++            title: "Check flake",
++            data: { command: "nix flake check", rawOutput: { content: "ok" } },
++          });
++          expect(
++            events.flatMap((event) =>
++              event.type === "content.delta" && event.payload.streamKind === "assistant_text"
++                ? [event.payload.delta]
++                : [],
++            ),
++          ).toEqual(["Review complete."]);
++          expect(
++            events.flatMap((event) =>
++              event.type === "content.delta" && event.payload.streamKind === "command_output"
++                ? [event.payload.delta]
++                : [],
++            ),
++          ).toEqual(["ok"]);
++        } finally {
++          yield* adapter.stopSession(threadId).pipe(Effect.catch(() => Effect.void));
++          yield* Fiber.interrupt(fiber).pipe(Effect.catch(() => Effect.void));
++        }
++      } finally {
++        yield* Effect.promise(() => NodeFSP.rm(baseDir, { recursive: true, force: true }));
++      }
++    }),
++  );
++
++  it.effect("does not reopen a turn for transcript residue after interrupt", () =>
++    Effect.gen(function* () {
++      const baseDir = yield* Effect.promise(() =>
++        NodeFSP.mkdtemp(NodePath.join(NodeOS.tmpdir(), "antig-adapter-interrupt-residue-")),
++      );
++      try {
++        const conversationId = "conv-interrupt-residue";
++        const transcriptPath = NodePath.join(
++          baseDir,
++          "brain",
++          conversationId,
++          ".system_generated",
++          "logs",
++          "transcript.jsonl",
++        );
++        yield* Effect.promise(() =>
++          NodeFSP.mkdir(NodePath.dirname(transcriptPath), { recursive: true }),
++        );
++        yield* Effect.promise(() => NodeFSP.writeFile(transcriptPath, ""));
++        let finishProcess = () => {};
++        const adapter = yield* makeAdapter(
++          baseDir,
++          {},
++          () =>
++            new Promise<string>((resolve) => {
++              finishProcess = () => resolve("");
++            }),
++        );
++        const { events, fiber } = yield* collectEvents(adapter);
++        const threadId = ThreadId.make("thread-interrupt-residue");
++        try {
++          yield* adapter.startSession({
++            threadId,
++            runtimeMode: "full-access",
++            cwd: baseDir,
++            resumeCursor: { conversationId },
++          });
++          yield* adapter.sendTurn({ threadId, input: "review", attachments: [] });
++          yield* Effect.promise(() =>
++            NodeFSP.appendFile(
++              transcriptPath,
++              `${encodeUnknownJson({
++                step_index: 1,
++                source: "MODEL",
++                type: "PLANNER_RESPONSE",
++                status: "DONE",
++                created_at: "2026-08-19T01:43:42Z",
++                tool_calls: [{ name: "view_file", args: { AbsolutePath: '"/workspace/a"' } }],
++              })}\n`,
++            ),
++          );
++          yield* Effect.promise(() =>
++            waitFor(() => events.some((event) => event.type === "item.started"), events),
++          );
++
++          yield* adapter.interruptTurn(threadId);
++          yield* Effect.promise(() =>
++            NodeFSP.appendFile(
++              transcriptPath,
++              `${encodeUnknownJson({
++                step_index: 2,
++                source: "MODEL",
++                type: "PLANNER_RESPONSE",
++                status: "DONE",
++                created_at: "2026-08-19T01:43:43Z",
++              })}\n`,
++            ),
++          );
++          yield* Effect.promise(() => new Promise((resolve) => setTimeout(resolve, 700)));
++
++          expect(events.filter((event) => event.type === "turn.started")).toHaveLength(1);
++          expect(events.filter((event) => event.type === "turn.completed")).toHaveLength(1);
++          expect(events.find((event) => event.type === "turn.completed")?.payload).toMatchObject({
++            state: "cancelled",
++          });
++          expect(events.find((event) => event.type === "item.completed")?.payload).toMatchObject({
++            status: "failed",
++          });
++          finishProcess();
++        } finally {
++          yield* adapter.stopSession(threadId).pipe(Effect.catch(() => Effect.void));
++          yield* Fiber.interrupt(fiber).pipe(Effect.catch(() => Effect.void));
++        }
++      } finally {
++        yield* Effect.promise(() => NodeFSP.rm(baseDir, { recursive: true, force: true }));
++      }
++    }),
++  );
++
+   it.effect(
+     "uses agentapi new-conversation and send-message when daemon endpoint is configured",
+     () =>
+diff --git a/apps/server/src/provider/Layers/AntigravityAdapter.ts b/apps/server/src/provider/Layers/AntigravityAdapter.ts
+--- a/apps/server/src/provider/Layers/AntigravityAdapter.ts
++++ b/apps/server/src/provider/Layers/AntigravityAdapter.ts
+@@ -1468,11 +1468,23 @@ export const makeAntigravityAdapter = Effect.fn("makeAntigravityAdapter")(functi
+       const cachedConversationIdBeforeTurn = context.conversationId
+         ? undefined
+         : yield* Effect.promise(() => readLastConversationIdForCwd({ settings, cwd }));
++      const cachedTranscriptSizeBeforeTurn = cachedConversationIdBeforeTurn
++        ? yield* Effect.promise(() =>
++            transcriptSizeForConversation({
++              settings,
++              conversationId: cachedConversationIdBeforeTurn,
++            }),
++          )
++        : undefined;
+ 
+-      const bindConversation = (ctx: SessionContext, conversationId: string): boolean => {
++      const bindConversation = (
++        ctx: SessionContext,
++        conversationId: string,
++        pollOffset = 0,
++      ): boolean => {
+         if (ctx.conversationId) return false;
+         ctx.conversationId = conversationId;
+-        ctx.pollOffset = 0;
++        ctx.pollOffset = pollOffset;
+         ctx.pollCarry = "";
+         const cursor = { conversationId };
+         const resumedAt = new Date().toISOString();
+@@ -1696,9 +1708,21 @@ export const makeAntigravityAdapter = Effect.fn("makeAntigravityAdapter")(functi
+             return;
+           }
+           const discovered = await readLastConversationIdForCwd({ settings, cwd });
+-          if (discovered && discovered !== cachedConversationIdBeforeTurn) {
++          if (!discovered) return;
++          if (discovered !== cachedConversationIdBeforeTurn) {
+             NodeTimers.clearInterval(interval);
+             bindConversation(ctx, discovered);
++            return;
++          }
++          if (cachedTranscriptSizeBeforeTurn !== undefined) {
++            const currentSize = await transcriptSizeForConversation({
++              settings,
++              conversationId: discovered,
++            });
++            if (currentSize > cachedTranscriptSizeBeforeTurn) {
++              NodeTimers.clearInterval(interval);
++              bindConversation(ctx, discovered, cachedTranscriptSizeBeforeTurn);
++            }
+           }
+         }, 500);
+       };
+diff --git a/apps/server/src/provider/Layers/AntigravityAdapter.test.ts b/apps/server/src/provider/Layers/AntigravityAdapter.test.ts
+--- a/apps/server/src/provider/Layers/AntigravityAdapter.test.ts
++++ b/apps/server/src/provider/Layers/AntigravityAdapter.test.ts
+@@ -419,7 +419,97 @@ describe("AntigravityAdapter sessions", () => {
+       }
+     }),
+   );
++
++  it.effect("binds an auto-resumed cached conversation after its transcript grows", () =>
++    Effect.gen(function* () {
++      const baseDir = yield* Effect.promise(() =>
++        NodeFSP.mkdtemp(NodePath.join(NodeOS.tmpdir(), "antig-adapter-auto-resume-")),
++      );
++      try {
++        const conversationId = "conv-auto-resume";
++        const cacheDir = NodePath.join(baseDir, "cache");
++        const cachePath = NodePath.join(cacheDir, "last_conversations.json");
++        const transcriptPath = NodePath.join(
++          baseDir,
++          "brain",
++          conversationId,
++          ".system_generated",
++          "logs",
++          "transcript.jsonl",
++        );
++        yield* Effect.promise(() => NodeFSP.mkdir(cacheDir, { recursive: true }));
++        yield* Effect.promise(() =>
++          NodeFSP.mkdir(NodePath.dirname(transcriptPath), { recursive: true }),
++        );
++        yield* Effect.promise(() =>
++          NodeFSP.writeFile(
++            cachePath,
++            `${JSON.stringify({ [baseDir]: conversationId })}\n`,
++            "utf8",
++          ),
++        );
++        yield* Effect.promise(() =>
++          NodeFSP.writeFile(
++            transcriptPath,
++            `${encodeUnknownJson({
++              step_index: 1,
++              source: "MODEL",
++              type: "FINAL_RESPONSE",
++              status: "DONE",
++              content: "historical response",
++            })}\n`,
++          ),
++        );
++
++        let finishProcess = () => {};
++        const adapter = yield* makeAdapter(
++          baseDir,
++          {},
++          async () => {
++            await new Promise((resolve) => setTimeout(resolve, 700));
++            await NodeFSP.appendFile(
++              transcriptPath,
++              `${encodeUnknownJson({
++                step_index: 2,
++                source: "MODEL",
++                type: "PLANNER_RESPONSE",
++                status: "DONE",
++                tool_calls: [{ name: "view_file", args: { AbsolutePath: '\"/workspace/a\"' } }],
++              })}\n`,
++            );
++            return new Promise<string>((resolve) => {
++              finishProcess = () => resolve("");
++            });
++          },
++        );
++        const { events, fiber } = yield* collectEvents(adapter);
++        const threadId = ThreadId.make("thread-auto-resume");
++        try {
++          yield* adapter.startSession({ threadId, runtimeMode: "full-access", cwd: baseDir });
++          yield* adapter.sendTurn({ threadId, input: "continue", attachments: [] });
++          yield* Effect.promise(() =>
++            waitFor(() => events.some((event) => event.type === "item.started"), events),
++          );
++
++          expect(events.filter((event) => event.type === "thread.started")).toHaveLength(1);
++          expect(
++            events.some(
++              (event) =>
++                event.type === "content.delta" && event.payload.delta === "historical response",
++            ),
++          ).toBe(false);
++          finishProcess();
++        } finally {
++          yield* adapter.stopSession(threadId).pipe(Effect.catch(() => Effect.void));
++          yield* Fiber.interrupt(fiber).pipe(Effect.catch(() => Effect.void));
++        }
++      } finally {
++        yield* Effect.promise(() => NodeFSP.rm(baseDir, { recursive: true, force: true }));
++      }
++    }),
++  );
++
+ 
+   it.effect("starts resumed transcript polling at the pre-send file size", () =>
+     Effect.gen(function* () {
+       const baseDir = yield* Effect.promise(() =>

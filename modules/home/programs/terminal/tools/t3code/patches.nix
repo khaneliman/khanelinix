@@ -96,5 +96,6 @@ in
 ++ [
   ./antigravity-planner-response.patch
   ./antigravity-conversation-discovery.patch
+  ./antigravity-tool-result-projection.patch
   ./declarative-theme-settings.patch
 ]
