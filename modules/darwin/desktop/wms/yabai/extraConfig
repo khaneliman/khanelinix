@@ -122,6 +122,7 @@ PRODUCTIVITY=(
   Reminders
   Calendar
   Fantastical
+  Obsidian
 )
 
 for ((i = 1; i <= "${#PRODUCTIVITY[@]}"; i++)); do
