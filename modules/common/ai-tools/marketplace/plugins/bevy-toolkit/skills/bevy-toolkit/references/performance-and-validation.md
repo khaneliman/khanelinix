@@ -1,0 +1,96 @@
+# Bevy Performance and Validation
+
+## Measurement Ladder
+
+1. Reproduce with fixed scene, camera, inputs, feature set, profile, and window.
+2. Capture frame time/FPS diagnostics and system/schedule evidence.
+3. Separate CPU simulation, render extraction, GPU, asset, and build-time cost.
+4. Change one variable and repeat the same probe.
+5. Keep recommendation conditional when no comparable baseline exists.
+
+## Evidence Acquisition
+
+1. Start with release-appropriate diagnostic plugins and `DiagnosticsStore` for
+   frame time, entity counts, and project counters. Treat BRP diagnostics as
+   aggregate symptom evidence, not system attribution.
+2. Use repository-supported Bevy tracing features and launcher/profile settings
+   to capture system/schedule spans with Chrome tracing, Tracy, or Perf. Record
+   exact feature set, profile, scenario, warm-up, sample window, and artifact.
+3. Use schedule graphs or schedule-data extraction to explain dependencies and
+   conflicts; pair them with runtime spans before claiming cost.
+4. Use render diagnostics and GPU-specific capture/profiling for render passes,
+   pipeline statistics, synchronization, upload, or shader bottlenecks. CPU
+   tracing alone cannot prove a GPU cause.
+5. Compare fixed scenarios over multiple samples. Report distribution or stable
+   summary statistics, not one favorable frame.
+
+## ECS and Schedule Cost
+
+- Inspect entity counts, query cardinality, archetype count/churn, change
+  detection, command queues, and system conflicts.
+- Reduce repeated projections or broad world scans only after locating callers
+  and proving data ownership/invalidation.
+- Treat `Changed<T>` as Bevy change detection, not semantic value inequality.
+- Keep fixed-step simulation and variable presentation responsibilities clear.
+- Avoid adding caches whose invalidation is broader or less reliable than the
+  work they replace.
+
+## Rendering and Assets
+
+- Profile shadows, lights, transparent materials, particles, overdraw, camera
+  stacks, render layers, post-processing, and asset uploads with representative
+  views.
+- Verify renderer features against the locked release, enabled Cargo features,
+  target backend, and hardware limits. Treat experimental or feature-gated paths
+  as opt-in and preserve a supported fallback.
+- Reproduce upstream headline benchmarks before using them as project evidence;
+  scene composition, motion, backend, and hardware can reverse the result.
+- Keep visual quality changes reversible and compare source-owned captures.
+- Verify imported scene scale against known-size world props before rescaling
+  collision or world coordinates.
+- Use headless GPU/framebuffer capture when supported. A no-window ECS test does
+  not validate rendering.
+
+## Build Iteration
+
+- Compare existing profiles before adding Bevy dependency optimization, dynamic
+  linking, alternative linkers, or feature reduction.
+- Use hotpatching only when the locked release and repository launcher already
+  support it. After changing system parameters, ECS type shape, plugin setup, or
+  schedules, restart and rerun cold-start validation.
+- Measure clean and incremental paths separately.
+- Keep stable CI/release fallback when development uses dynamic linking or an
+  alternative codegen backend.
+- Use `rust-toolkit` for Cargo timing, dependency, allocator, or generic Rust
+  optimization decisions.
+
+## Validation Matrix
+
+| Change                | Minimum proof                                            |
+| --------------------- | -------------------------------------------------------- |
+| ECS/state logic       | Minimal-App test plus focused project test               |
+| Scheduling/order      | Focused transition test and schedule graph when needed   |
+| BRP/reflection        | Type guide/query, mutation/readback, cleanup             |
+| Input behavior        | Frame-aware injected input and resulting state assertion |
+| Camera/layout/scale   | Fixed-view framebuffer capture and pixel inspection      |
+| Rendering/performance | Same-scene trace/GPU evidence before and after           |
+| Asset hot reload      | Changed asset rebuilds only owned subtree                |
+
+## Visual Proof
+
+- Record session/request identity, camera transform, window/surface size, output
+  path, file size, modification time, and hash.
+- Reject stale files and wrong live sessions.
+- Inspect image contents. Hashes prove freshness/distinctness, not correctness.
+- For time-dependent visual behavior, capture a bounded source-owned recording
+  when the locked release and target support it. Pair video with state or frame
+  assertions; video alone is not deterministic proof.
+- Avoid compositor screenshots through lock screens or overlays.
+- For native windows, match compositor surface to expected game resolution
+  before injecting coordinate-based input or capturing the window.
+
+## Reporting
+
+Separate executed checks, observed metrics, visual observations, hypotheses, and
+checks not run. Include exact app target, Bevy version, features, profile, BRP
+port/session, and whether a real desktop window was opened.

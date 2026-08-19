@@ -1,0 +1,13 @@
+{
+	"name": "interrogate",
+	"version": "0.1.2",
+	"description": "Multi-model adversarial review from independent angles.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Interrogate",
+		"shortDescription": "Multi-model adversarial review from independent angles."
+	}
+}

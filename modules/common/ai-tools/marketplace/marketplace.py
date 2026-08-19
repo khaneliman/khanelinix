@@ -18,6 +18,7 @@ SEMVER_RE = re.compile(
     r"(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$"
 )
 SKILLS_PATH = Path("modules/common/ai-tools/skills")
+PLUGINS_TREE_PATH = Path("modules/common/ai-tools/marketplace/plugins")
 CODEX_MARKETPLACE_PATH = Path(".agents/plugins/marketplace.json")
 CLAUDE_MARKETPLACE_PATH = Path(".claude-plugin/marketplace.json")
 
@@ -85,6 +86,8 @@ def load_catalog(path: Path) -> dict[str, Any]:
         version = require_string(plugin, "version", owner_label)
         if SEMVER_RE.fullmatch(version) is None:
             raise MarketplaceError(f"invalid plugin version for {name}: {version}")
+        require_string(plugin, "displayName", owner_label)
+        require_string(plugin, "description", owner_label)
         require_string(plugin, "category", owner_label)
 
     excluded = catalog.get("excluded")
@@ -215,6 +218,8 @@ def validate_codex_entry(
     entry: dict[str, Any], plugin: dict[str, Any], expected_path: str
 ) -> None:
     name = plugin["name"]
+    if set(entry) != {"name", "source", "policy", "category"}:
+        raise MarketplaceError(f"Codex marketplace entry has nonstandard keys: {name}")
     if entry.get("source") != {"source": "local", "path": expected_path}:
         raise MarketplaceError(f"Codex marketplace source mismatch: {name}")
     if entry.get("policy") != {
@@ -238,24 +243,62 @@ def validate_claude_entry(
         raise MarketplaceError(f"Claude marketplace category mismatch: {name}")
     if entry.get("author") != owner:
         raise MarketplaceError(f"Claude marketplace author mismatch: {name}")
-    require_string(entry, "description", f"Claude marketplace plugin {name}")
+    if entry.get("description") != plugin["description"]:
+        raise MarketplaceError(f"Claude marketplace description mismatch: {name}")
+
+
+def directory_files(root: Path) -> dict[str, bytes]:
+    return {
+        path.relative_to(root).as_posix(): path.read_bytes()
+        for path in sorted(root.rglob("*"))
+        if path.is_file()
+    }
+
+
+def validate_claude_plugin(
+    plugin_dir: Path, plugin: dict[str, Any], owner: Any
+) -> None:
+    name = plugin["name"]
+    manifest = load_json_object(plugin_dir / ".claude-plugin" / "plugin.json")
+    expected = {
+        "name": name,
+        "displayName": plugin["displayName"],
+        "description": plugin["description"],
+        "version": plugin["version"],
+        "author": owner,
+    }
+    if manifest != expected:
+        raise MarketplaceError(f"Claude plugin manifest mismatch: {name}")
 
 
 def validate_codex_plugin(
-    skill_dir: Path, plugin: dict[str, Any], owner: Any, description: str
+    plugin_dir: Path, skill_dir: Path, plugin: dict[str, Any], owner: Any
 ) -> None:
     name = plugin["name"]
-    manifest = load_json_object(skill_dir / ".codex-plugin" / "plugin.json")
+    manifest = load_json_object(plugin_dir / ".codex-plugin" / "plugin.json")
     if manifest.get("name") != name:
         raise MarketplaceError(f"Codex plugin name mismatch: {name}")
     if manifest.get("version") != plugin["version"]:
         raise MarketplaceError(f"Codex plugin version mismatch: {name}")
     if manifest.get("author") != owner:
         raise MarketplaceError(f"Codex plugin author mismatch: {name}")
-    if manifest.get("description") != description:
+    if manifest.get("description") != plugin["description"]:
         raise MarketplaceError(f"Codex plugin description mismatch: {name}")
-    if manifest.get("skills") != "./":
-        raise MarketplaceError(f"Codex plugin skills path must equal ./: {name}")
+    if manifest.get("skills") != "./skills/":
+        raise MarketplaceError(f"Codex plugin skills path must equal ./skills/: {name}")
+    if manifest.get("interface") != {
+        "displayName": plugin["displayName"],
+        "shortDescription": plugin["description"],
+    }:
+        raise MarketplaceError(f"Codex plugin interface mismatch: {name}")
+    payload_dir = plugin_dir / "skills" / name
+    if not payload_dir.is_dir() or directory_files(payload_dir) != directory_files(
+        skill_dir
+    ):
+        raise MarketplaceError(
+            f"Codex plugin payload out of sync with canonical skill: {name}; "
+            "run marketplace/sync.py"
+        )
 
 
 def validate_repository(root: Path, catalog_path: Path | None = None) -> dict[str, Any]:
@@ -305,30 +348,36 @@ def validate_repository(root: Path, catalog_path: Path | None = None) -> dict[st
                 f"{provider} marketplace plugin order does not match catalog"
             )
 
+    stray = sorted(
+        skill_dir.name
+        for skill_dir in skills_dir.iterdir()
+        if (skill_dir / ".codex-plugin").exists()
+        or (skill_dir / ".claude-plugin").exists()
+    )
+    if stray:
+        raise MarketplaceError(
+            "canonical skills must not contain plugin manifests: " + ", ".join(stray)
+        )
+
+    plugins_tree = root / PLUGINS_TREE_PATH
     for index, plugin in enumerate(catalog["plugins"]):
         name = plugin["name"]
-        relative_path = (SKILLS_PATH / name).as_posix()
-        expected_path = f"./{relative_path}"
+        plugin_path = f"./{(PLUGINS_TREE_PATH / name).as_posix()}"
         skill = read_skill_frontmatter(discovered[name])
         codex_entry = require_entry(codex_entries[index], "Codex", index)
         claude_entry = require_entry(claude_entries[index], "Claude", index)
-        validate_codex_entry(codex_entry, plugin, expected_path)
-        validate_claude_entry(claude_entry, plugin, expected_path, owner)
-        validate_codex_plugin(
-            discovered[name], plugin, owner, claude_entry["description"]
-        )
+        validate_codex_entry(codex_entry, plugin, plugin_path)
+        validate_claude_entry(claude_entry, plugin, plugin_path, owner)
+        validate_codex_plugin(plugins_tree / name, discovered[name], plugin, owner)
+        validate_claude_plugin(plugins_tree / name, plugin, owner)
         if not skill["description"]:
             raise MarketplaceError(f"skill description is empty: {name}")
 
     exposed = sorted(
-        skill_dir.name
-        for skill_dir in skills_dir.iterdir()
-        if (skill_dir / ".codex-plugin" / "plugin.json").is_file()
+        plugin_dir.name for plugin_dir in plugins_tree.iterdir() if plugin_dir.is_dir()
     )
     if exposed != sorted(expected_names):
-        raise MarketplaceError(
-            "Codex plugin manifests do not match published catalog entries"
-        )
+        raise MarketplaceError("plugin tree does not match published catalog entries")
 
     return {
         "marketplace": marketplace["name"],

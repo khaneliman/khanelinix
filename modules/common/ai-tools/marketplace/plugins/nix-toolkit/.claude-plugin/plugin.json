@@ -1,0 +1,9 @@
+{
+	"name": "nix-toolkit",
+	"displayName": "Nix Toolkit",
+	"description": "Diagnose Nix builds, closures, flakes, and evaluation.",
+	"version": "0.1.2",
+	"author": {
+		"name": "khaneliman"
+	}
+}

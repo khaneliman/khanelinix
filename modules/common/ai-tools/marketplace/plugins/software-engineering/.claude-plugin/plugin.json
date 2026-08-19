@@ -1,0 +1,9 @@
+{
+	"name": "software-engineering",
+	"displayName": "Software Engineering",
+	"description": "Evaluate software architecture and plan large changes.",
+	"version": "0.1.2",
+	"author": {
+		"name": "khaneliman"
+	}
+}

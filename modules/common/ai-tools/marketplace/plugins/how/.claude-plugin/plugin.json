@@ -1,0 +1,9 @@
+{
+	"name": "how",
+	"displayName": "How",
+	"description": "Explain how a subsystem works from codebase exploration.",
+	"version": "0.1.2",
+	"author": {
+		"name": "khaneliman"
+	}
+}

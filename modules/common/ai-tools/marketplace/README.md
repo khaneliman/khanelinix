@@ -41,17 +41,28 @@ claude plugin install git-toolkit@khanelinix-ai-tools
 
 ## Maintain the marketplace
 
-The repository root contains both provider indexes:
+`catalog.json` is the single source for names, display names, descriptions,
+versions, categories, bundles, and exclusions. `sync.py` generates the consumer
+files from it:
 
-- `.agents/plugins/marketplace.json` for Codex
-- `.claude-plugin/marketplace.json` for Claude Code
+- `.agents/plugins/marketplace.json`, the Codex index
+- `.claude-plugin/marketplace.json`, the Claude Code index
+- `marketplace/plugins/<name>/`, one plugin per published skill with a Codex and
+  a Claude manifest over one copy of the canonical skill under `skills/<name>/`
 
-Each published skill directory contains its Codex plugin manifest. Claude Code
-uses the skill directory's root `SKILL.md` directly.
+Both providers load plugin skills only from `skills/<name>/SKILL.md` under the
+plugin root. A root `SKILL.md` installs, and Claude Code CLI sessions even
+expose it, but Codex sessions expose nothing and Claude Desktop counts zero
+skills, so the nested layout is the contract.
+
+After any change to `catalog.json` or a published skill, run:
+
+```sh
+python3 modules/common/ai-tools/marketplace/sync.py
+```
 
 `catalog.json` must publish or exclude every canonical skill. Add an exclusion
 reason when license or runtime constraints prevent portable distribution.
-Increase a plugin version when its canonical skill content changes.
 
 Run the read-only validator after a metadata or skill change:
 

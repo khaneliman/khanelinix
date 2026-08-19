@@ -1,0 +1,13 @@
+{
+	"name": "figure-it-out",
+	"version": "0.1.2",
+	"description": "Design an auditable playbook when no narrower one fits.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Figure It Out",
+		"shortDescription": "Design an auditable playbook when no narrower one fits."
+	}
+}

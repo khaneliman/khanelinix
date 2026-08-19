@@ -1,0 +1,4 @@
+interface:
+  display_name: "Security Toolkit"
+  short_description: "Security review, threat modeling, and ownership analysis"
+  default_prompt: "Use $security-toolkit for this explicit secure-code review, threat model, or security ownership analysis."

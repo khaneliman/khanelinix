@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lua Toolkit"
+  short_description: "Neovim Lua plugin architecture, tooling, tests, and releases"
+  default_prompt: "Use $lua-toolkit to architect, configure, validate, or release this Neovim Lua plugin."

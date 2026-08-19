@@ -1,0 +1,4 @@
+interface:
+  display_name: "SARIF Toolkit"
+  short_description: "Deterministic SARIF reports and result splitting"
+  default_prompt: "Use $sarif-toolkit to summarize or split this SARIF file without loading its full JSON into chat."

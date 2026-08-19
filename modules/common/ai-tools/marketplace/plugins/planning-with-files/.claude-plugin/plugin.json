@@ -1,0 +1,9 @@
+{
+	"name": "planning-with-files",
+	"displayName": "Planning With Files",
+	"description": "Persist task plans for long-running work.",
+	"version": "0.1.2",
+	"author": {
+		"name": "khaneliman"
+	}
+}

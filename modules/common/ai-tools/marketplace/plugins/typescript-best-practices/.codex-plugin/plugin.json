@@ -1,0 +1,13 @@
+{
+	"name": "typescript-best-practices",
+	"version": "0.1.2",
+	"description": "TypeScript best practices for edits.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "TypeScript Best Practices",
+		"shortDescription": "TypeScript best practices for edits."
+	}
+}

@@ -8,180 +8,384 @@
 			"name": "ai-tools-architect",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/ai-tools-architect"
+				"path": "./modules/common/ai-tools/marketplace/plugins/ai-tools-architect"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
+			"name": "architect",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/architect"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
+			"name": "arena",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/arena"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
 			"category": "Developer Tools"
 		},
 		{
 			"name": "bevy-toolkit",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/bevy-toolkit"
+				"path": "./modules/common/ai-tools/marketplace/plugins/bevy-toolkit"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
+			"name": "blast-radius",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/blast-radius"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
 			"category": "Developer Tools"
 		},
 		{
 			"name": "develop-web-game",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/develop-web-game"
+				"path": "./modules/common/ai-tools/marketplace/plugins/develop-web-game"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
+			"name": "engineering-principles",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/engineering-principles"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
+			"name": "figure-it-out",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/figure-it-out"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
 			"category": "Developer Tools"
 		},
 		{
 			"name": "frontend-design",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/frontend-design"
+				"path": "./modules/common/ai-tools/marketplace/plugins/frontend-design"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
-			"category": "Developer Tools"
-		},
-		{
-			"name": "github-toolkit",
-			"source": {
-				"source": "local",
-				"path": "./modules/common/ai-tools/skills/github-toolkit"
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
 			"category": "Developer Tools"
 		},
 		{
 			"name": "git-toolkit",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/git-toolkit"
+				"path": "./modules/common/ai-tools/marketplace/plugins/git-toolkit"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
+			"name": "github-toolkit",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/github-toolkit"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
+			"name": "how",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/how"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
+			"name": "interrogate",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/interrogate"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
 			"category": "Developer Tools"
 		},
 		{
 			"name": "jj-toolkit",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/jj-toolkit"
+				"path": "./modules/common/ai-tools/marketplace/plugins/jj-toolkit"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
 			"category": "Developer Tools"
 		},
 		{
 			"name": "lua-toolkit",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/lua-toolkit"
+				"path": "./modules/common/ai-tools/marketplace/plugins/lua-toolkit"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
 			"category": "Developer Tools"
 		},
 		{
 			"name": "mcp-builder",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/mcp-builder"
+				"path": "./modules/common/ai-tools/marketplace/plugins/mcp-builder"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
 			"category": "Developer Tools"
 		},
 		{
 			"name": "memory-profiler",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/memory-profiler"
+				"path": "./modules/common/ai-tools/marketplace/plugins/memory-profiler"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
 			"category": "Developer Tools"
 		},
 		{
 			"name": "nix-toolkit",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/nix-toolkit"
+				"path": "./modules/common/ai-tools/marketplace/plugins/nix-toolkit"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
 			"category": "Developer Tools"
 		},
 		{
 			"name": "okf-memory",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/okf-memory"
+				"path": "./modules/common/ai-tools/marketplace/plugins/okf-memory"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
-			"category": "Productivity"
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
 		},
 		{
 			"name": "planning-with-files",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/planning-with-files"
+				"path": "./modules/common/ai-tools/marketplace/plugins/planning-with-files"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
-			"category": "Productivity"
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
+			"name": "recall",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/recall"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
 		},
 		{
 			"name": "rust-toolkit",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/rust-toolkit"
+				"path": "./modules/common/ai-tools/marketplace/plugins/rust-toolkit"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
 			"category": "Developer Tools"
 		},
 		{
 			"name": "sarif-toolkit",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/sarif-toolkit"
+				"path": "./modules/common/ai-tools/marketplace/plugins/sarif-toolkit"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
 			"category": "Developer Tools"
 		},
 		{
 			"name": "security-toolkit",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/security-toolkit"
+				"path": "./modules/common/ai-tools/marketplace/plugins/security-toolkit"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
-			"category": "Security"
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
+			"name": "show-me-your-work",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/show-me-your-work"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
 		},
 		{
 			"name": "skill-creator",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/skill-creator"
+				"path": "./modules/common/ai-tools/marketplace/plugins/skill-creator"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
 			"category": "Developer Tools"
 		},
 		{
 			"name": "software-engineering",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/software-engineering"
+				"path": "./modules/common/ai-tools/marketplace/plugins/software-engineering"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
 			"category": "Developer Tools"
 		},
 		{
 			"name": "technical-writing",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/technical-writing"
+				"path": "./modules/common/ai-tools/marketplace/plugins/technical-writing"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
-			"category": "Productivity"
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
+			"name": "typescript-best-practices",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/typescript-best-practices"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
+			"name": "unslop",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/unslop"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
+			"name": "why",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/why"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
 		},
 		{
 			"name": "writing-nix",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/skills/writing-nix"
+				"path": "./modules/common/ai-tools/marketplace/plugins/writing-nix"
 			},
-			"policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
 			"category": "Developer Tools"
 		}
 	]

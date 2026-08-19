@@ -1,7 +1,0 @@
-{
-  "name": "mcp-builder",
-  "version": "0.1.0",
-  "description": "Build MCP servers for external APIs and services.",
-  "author": { "name": "khaneliman" },
-  "skills": "./"
-}

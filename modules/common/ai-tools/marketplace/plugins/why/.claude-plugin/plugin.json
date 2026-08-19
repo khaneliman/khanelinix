@@ -1,0 +1,9 @@
+{
+	"name": "why",
+	"displayName": "Why",
+	"description": "Investigate motivation and design rationale behind code.",
+	"version": "0.1.2",
+	"author": {
+		"name": "khaneliman"
+	}
+}

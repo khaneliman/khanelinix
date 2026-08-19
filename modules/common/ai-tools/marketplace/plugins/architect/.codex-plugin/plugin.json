@@ -1,0 +1,13 @@
+{
+	"name": "architect",
+	"version": "0.1.2",
+	"description": "Sketch types and module structure before implementation.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Architect",
+		"shortDescription": "Sketch types and module structure before implementation."
+	}
+}

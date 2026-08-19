@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bevy Toolkit"
+  short_description: "Bevy ECS, hot reload, streaming, and runtime tooling"
+  default_prompt: "Use $bevy-toolkit to build, hot-reload, stream, inspect, debug, profile, or validate this native Bevy application."

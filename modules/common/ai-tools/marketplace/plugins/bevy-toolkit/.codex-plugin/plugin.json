@@ -1,0 +1,13 @@
+{
+	"name": "bevy-toolkit",
+	"version": "0.1.2",
+	"description": "Build, debug, and validate native Bevy applications.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Bevy Toolkit",
+		"shortDescription": "Build, debug, and validate native Bevy applications."
+	}
+}

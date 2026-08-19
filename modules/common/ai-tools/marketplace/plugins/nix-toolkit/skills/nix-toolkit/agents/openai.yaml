@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nix Toolkit"
+  short_description: "Nix build, diff, closure, dependency, flake, and eval playbooks"
+  default_prompt: "Use $nix-toolkit to diagnose or compare this Nix build, closure, dependency, flake, or evaluation problem."

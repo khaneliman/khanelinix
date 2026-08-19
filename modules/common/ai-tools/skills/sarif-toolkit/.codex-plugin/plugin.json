@@ -1,7 +1,0 @@
-{
-	"name": "sarif-toolkit",
-	"version": "0.1.0",
-	"description": "Inspect, summarize, and partition SARIF reports.",
-	"author": { "name": "khaneliman" },
-	"skills": "./"
-}

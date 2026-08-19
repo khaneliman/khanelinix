@@ -1,0 +1,9 @@
+{
+	"name": "interrogate",
+	"displayName": "Interrogate",
+	"description": "Multi-model adversarial review from independent angles.",
+	"version": "0.1.2",
+	"author": {
+		"name": "khaneliman"
+	}
+}

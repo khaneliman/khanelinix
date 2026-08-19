@@ -1,0 +1,13 @@
+{
+	"name": "engineering-principles",
+	"version": "0.1.2",
+	"description": "Principles for lean, verified agentic work.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Engineering Principles",
+		"shortDescription": "Principles for lean, verified agentic work."
+	}
+}

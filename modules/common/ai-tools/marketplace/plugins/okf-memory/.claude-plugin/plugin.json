@@ -1,0 +1,9 @@
+{
+	"name": "okf-memory",
+	"displayName": "OKF Memory",
+	"description": "Persist durable cross-provider project and user knowledge.",
+	"version": "0.1.2",
+	"author": {
+		"name": "khaneliman"
+	}
+}

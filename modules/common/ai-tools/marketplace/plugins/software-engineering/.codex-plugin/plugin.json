@@ -1,0 +1,13 @@
+{
+	"name": "software-engineering",
+	"version": "0.1.2",
+	"description": "Evaluate software architecture and plan large changes.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Software Engineering",
+		"shortDescription": "Evaluate software architecture and plan large changes."
+	}
+}

@@ -1,0 +1,13 @@
+{
+	"name": "recall",
+	"version": "0.1.2",
+	"description": "Rebuild recent working context into a current-state brief.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Recall",
+		"shortDescription": "Rebuild recent working context into a current-state brief."
+	}
+}

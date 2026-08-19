@@ -1,0 +1,9 @@
+{
+	"name": "blast-radius",
+	"displayName": "Blast Radius",
+	"description": "Find what a change could break beyond the diff.",
+	"version": "0.1.2",
+	"author": {
+		"name": "khaneliman"
+	}
+}

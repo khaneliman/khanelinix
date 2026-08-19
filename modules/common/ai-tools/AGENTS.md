@@ -22,7 +22,8 @@
 - `permissions.nix`: shared command and MCP permission catalog
 - `agents.nix`: canonical semantic workers, gateway model projections, and
   provider renderers
-- `marketplace/`: portable publication catalog, validator, tests, and install
+- `marketplace/`: portable publication catalog, generator (`sync.py`),
+  validator, generated Codex plugin tree (`codex/`), tests, and install
   documentation
 - `skills/`: canonical on-demand workflows; keep root playbooks lean and route
   detail into references/scripts

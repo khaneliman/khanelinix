@@ -1,7 +1,0 @@
-{
-	"name": "security-toolkit",
-	"version": "0.1.0",
-	"description": "Review repositories for explicit security requests.",
-	"author": { "name": "khaneliman" },
-	"skills": "./"
-}

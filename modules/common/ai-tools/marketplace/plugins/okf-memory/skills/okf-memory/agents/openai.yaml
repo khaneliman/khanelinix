@@ -1,0 +1,4 @@
+interface:
+  display_name: "OKF Memory"
+  short_description: "Durable provider-neutral project and user memory"
+  default_prompt: "Use $okf-memory to read or update only the relevant durable project or user knowledge scope."

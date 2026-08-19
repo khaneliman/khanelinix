@@ -13,6 +13,10 @@
       pre-commit = lib.mkIf (inputs.git-hooks-nix ? flakeModule) {
         check.enable = false;
 
+        # Generated copies of canonical skills; hooks already check the
+        # canonical tree and the marketplace validator enforces byte equality.
+        settings.excludes = [ "^modules/common/ai-tools/marketplace/plugins/" ];
+
         settings.hooks = {
           check-merge-conflicts = {
             enable = true;

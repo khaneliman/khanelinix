@@ -1,0 +1,9 @@
+{
+	"name": "lua-toolkit",
+	"displayName": "Lua Toolkit",
+	"description": "Build and maintain Neovim Lua plugins.",
+	"version": "0.1.2",
+	"author": {
+		"name": "khaneliman"
+	}
+}

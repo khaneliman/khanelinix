@@ -1,0 +1,86 @@
+# Bevy ECS and Plugin Architecture
+
+## Intake
+
+Record app targets, Bevy version/features, plugin compatibility, supported
+platforms, states/schedules, headless needs, asset pipeline, and current query
+hotspots. Inspect project-local architecture docs before applying generic ECS
+patterns.
+
+## Domain Plugins
+
+- Organize plugins around cohesive gameplay/application capabilities, not one
+  plugin per component or system.
+- Keep plugin `build` focused on registration: reflected types, resources,
+  events/messages, observers, schedules, systems, and child plugins.
+- Expose subplugins when headless servers, tests, editors, or feature flags need
+  different composition.
+- Keep deterministic simulation independent from rendering, audio, input, and
+  remote-debug adapters when alternate composition benefits.
+- Put cross-plugin ordering at the integration boundary. Avoid hidden `.before`
+  or `.after` contracts spread across leaf modules.
+
+## ECS Data Shape
+
+- Use components for per-entity state and resources for truly world-global
+  state. Do not turn resources into service locators.
+- On Bevy 0.19, resources use component storage on dedicated singleton entities.
+  Keep resource semantics explicit: do not derive/use one type as both ordinary
+  component and resource, and review reflection/BRP queries that can now observe
+  resource component storage.
+- Keep hot query data focused. Split components when systems access disjoint
+  fields or fields change at different rates; require query/profile evidence.
+- Use release-appropriate named query-data structs for large or reused query
+  shapes. Keep one-off queries local instead of hiding simple access behind a
+  type.
+- Treat component insertion/removal as archetype movement and lifecycle change,
+  not a free flag toggle.
+- Keep world-dependent behavior in systems/commands. Component methods remain
+  useful for local invariants and pure transformations.
+- Prefer explicit marker components over string/name matching for runtime logic;
+  add `Name` for diagnostics and BRP discovery.
+- Give save, replication, and cross-session references domain IDs. Raw `Entity`
+  values are runtime handles, not persistent identity.
+
+## Relationships and Scenes
+
+- Use relationships/hierarchies only when ownership, propagation, and recursive
+  teardown semantics are explicit.
+- Keep imported scene roots as presentation children when gameplay collision,
+  interaction, save identity, or lifecycle belongs to a stable wrapper entity.
+- Use required components, bundles, scenes, or spawn helpers according to the
+  locked Bevy version and whether the contract is structural, reusable, or
+  data-authored. Do not replace every spawn with the newest mechanism.
+- On Bevy 0.19+, use required components for component-level invariants and
+  scene components/scenes for multi-entity shape. A scene can guarantee initial
+  structure; later mutation can still remove related entities.
+- Treat BSN scenes as composable patches, not serialized object snapshots. Use
+  dependency-aware queued spawning when assets may be unavailable, and test the
+  loading/error path.
+- Verify asset-loader support before promising editable `.bsn` files. Bevy 0.19
+  ships code-driven BSN but no first-party `.bsn` asset loader.
+- Keep data-authored scene/layout hot reload scoped to one owner. Rebuild the
+  changed subtree instead of respawning unrelated world state.
+
+## Boundaries and Reflection
+
+- Register only types that need scenes, serialization, inspector/BRP access, or
+  dynamic construction. Reflection expands debug and mutation surface.
+- Give remote-control resources explicit request/status/identity fields so
+  automation can reject stale responses and wrong sessions.
+- Keep debug-only reflection and BRP plugins behind a feature when release
+  binaries should not expose them.
+- Split crates only for independent targets, dependencies, release units,
+  proc-macros, or measured recompilation isolation. Plugin boundaries normally
+  belong inside one crate first.
+
+## Review Questions
+
+1. Which plugin owns each resource, event/message, state transition, and
+   cleanup?
+2. Which systems need same-frame order versus ordinary data conflict ordering?
+3. Can headless/minimal tests omit rendering and platform plugins?
+4. Does a scene hierarchy encode presentation, gameplay ownership, or both?
+5. Which types must be remotely mutable, and which should remain unregistered?
+
+Version source: [Bevy 0.19 release notes](https://bevy.org/news/bevy-0-19/).

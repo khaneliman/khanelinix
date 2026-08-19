@@ -1,0 +1,9 @@
+{
+	"name": "jj-toolkit",
+	"displayName": "JJ Toolkit",
+	"description": "Work with Jujutsu history and hunk-level changes.",
+	"version": "0.1.2",
+	"author": {
+		"name": "khaneliman"
+	}
+}

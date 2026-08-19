@@ -1,0 +1,13 @@
+{
+	"name": "security-toolkit",
+	"version": "0.1.2",
+	"description": "Review repositories for explicit security requests.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Security Toolkit",
+		"shortDescription": "Review repositories for explicit security requests."
+	}
+}

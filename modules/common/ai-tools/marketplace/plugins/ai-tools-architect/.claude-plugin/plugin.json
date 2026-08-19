@@ -1,0 +1,9 @@
+{
+	"name": "ai-tools-architect",
+	"displayName": "AI Tools Architect",
+	"description": "Design and audit portable AI-tool configuration.",
+	"version": "0.1.2",
+	"author": {
+		"name": "khaneliman"
+	}
+}

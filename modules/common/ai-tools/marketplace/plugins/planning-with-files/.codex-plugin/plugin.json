@@ -1,0 +1,13 @@
+{
+	"name": "planning-with-files",
+	"version": "0.1.2",
+	"description": "Persist task plans for long-running work.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Planning With Files",
+		"shortDescription": "Persist task plans for long-running work."
+	}
+}

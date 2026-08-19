@@ -1,0 +1,4 @@
+interface:
+  display_name: "Software Engineering"
+  short_description: "Evaluate architecture and plan large software changes"
+  default_prompt: "Use $software-engineering to evaluate current architecture, plan a large or cross-cutting change, or review a proposed standalone design."

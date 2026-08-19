@@ -1,0 +1,9 @@
+{
+	"name": "technical-writing",
+	"displayName": "Technical Writing",
+	"description": "Write and review concise technical prose.",
+	"version": "0.1.3",
+	"author": {
+		"name": "khaneliman"
+	}
+}

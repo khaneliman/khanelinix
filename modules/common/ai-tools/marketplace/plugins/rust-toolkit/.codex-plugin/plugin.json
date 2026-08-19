@@ -1,0 +1,13 @@
+{
+	"name": "rust-toolkit",
+	"version": "0.1.2",
+	"description": "Build and maintain Rust crates, services, and CLIs.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Rust Toolkit",
+		"shortDescription": "Build and maintain Rust crates, services, and CLIs."
+	}
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Technical Writing"
+  short_description: "Write and score concise technical text"
+  default_prompt: "Use $technical-writing to rewrite this technical text without losing facts."

@@ -1,0 +1,57 @@
+---
+name: writing-nix
+description: Write idiomatic and maintainable Nix code. Use when creating or refactoring Nix expressions, Home Manager or NixOS modules, overlays, packages, and flake outputs, especially when deciding module merge semantics, binding locality, option defaults, and conditional structure.
+---
+
+# Writing Nix
+
+Write boring, explicit Nix that follows this skill's opinionated style. Prefer
+module merge semantics, narrow scopes, and simple attrset composition over
+decorative abstractions.
+
+## Quick Start
+
+1. Read repository docs for local constraints and layout. Treat them as
+   authoritative; use this skill's defaults where repository canon is silent.
+2. Identify the task shape and load only the relevant reference files:
+   - [references/module-style.md](references/module-style.md): module templates,
+     option design, merge priority, `mkDefault`, `mkForce`, and `mkMerge`.
+   - [references/bindings.md](references/bindings.md): `let` locality,
+     single-use bindings, `inherit (...)`, and bulky inline expressions.
+   - [references/assertions-and-warnings.md](references/assertions-and-warnings.md):
+     when to fail evaluation, when to warn, and when simpler typing is better.
+   - [references/anti-patterns.md](references/anti-patterns.md): `with`, `rec`,
+     chained conditionals, and other style hazards that should usually block a
+     proposed refactor.
+   - [references/performance-patterns.md](references/performance-patterns.md):
+     strict folds and `genericClosure`, path coercion vs `lib.fileset`, string
+     handling, attribute-path lookups, and import-cost awareness.
+3. Apply the narrowest ruleset needed. Do not bulk-load every reference file
+   unless the task truly spans them.
+
+## Always Prefer
+
+- Explicit `lib.` usage, a justified local `inherit (...)`, or expression-local
+  `with` when it is narrower and clearer than repeated prefixes.
+- Local bindings over hoisted helper names.
+- Module-system merging over hand-written `if/else`.
+- Small, intentional option surfaces.
+- Normal assignments, `mkDefault`, and `mkForce` used intentionally by merge
+  priority.
+
+## Style Authority
+
+- Treat repository contributor docs as authority for local Nix conventions.
+- Use this skill as default guidance where repository canon is silent.
+- If two repository-local sources conflict, call out conflict before editing.
+- Avoid top-level, block-level, and wide-scope `with`. Expression-local `with`
+  is acceptable for a single value when it reduces noisy repetition and keeps
+  scope obvious, such as `type = with lib.types; nullOr (either str path);`.
+- Do not request a style fix solely because new code uses expression-local
+  `with lib.types;` in one `type = ...;` assignment.
+- Keep edits surgical; do not clean up unrelated Nix while touching a module.
+
+## Validation
+
+After edits, run the most relevant repo checks available for the task
+(`nix fmt`, focused eval/build/test, or module-specific validation).

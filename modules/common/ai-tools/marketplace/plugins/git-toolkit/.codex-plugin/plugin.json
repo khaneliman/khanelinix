@@ -1,0 +1,13 @@
+{
+	"name": "git-toolkit",
+	"version": "0.1.2",
+	"description": "Git history and change-stack workflows.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Git Toolkit",
+		"shortDescription": "Git history and change-stack workflows."
+	}
+}

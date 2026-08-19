@@ -1,0 +1,13 @@
+{
+	"name": "how",
+	"version": "0.1.2",
+	"description": "Explain how a subsystem works from codebase exploration.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "How",
+		"shortDescription": "Explain how a subsystem works from codebase exploration."
+	}
+}

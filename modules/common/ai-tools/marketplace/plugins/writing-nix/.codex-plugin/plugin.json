@@ -1,0 +1,13 @@
+{
+	"name": "writing-nix",
+	"version": "0.1.2",
+	"description": "Write maintainable Nix expressions and modules.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Writing Nix",
+		"shortDescription": "Write maintainable Nix expressions and modules."
+	}
+}

@@ -1,0 +1,13 @@
+{
+	"name": "arena",
+	"version": "0.1.2",
+	"description": "Parallel candidates, base selection, and grafting.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Arena",
+		"shortDescription": "Parallel candidates, base selection, and grafting."
+	}
+}
