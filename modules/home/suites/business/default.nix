@@ -52,8 +52,7 @@ in
         calcurse
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin (
-        [ meetingbar ]
-        ++ lib.optionals annotationEnabled [
+        lib.optionals annotationEnabled [
           macshot
           shottr
         ]
@@ -73,6 +72,7 @@ in
           addons.flameshot.enable = lib.mkDefault annotationEnabled;
 
           apps = {
+            meetingbar.enable = lib.mkDefault (cfg.pimEnable && pkgs.stdenv.hostPlatform.isDarwin);
             obsidian.enable = lib.mkDefault (cfg.knowledgeEnable && !isWSL);
             # Native Teams cask owns macOS through the Darwin business suite
             teams-for-linux.enable = lib.mkDefault (
