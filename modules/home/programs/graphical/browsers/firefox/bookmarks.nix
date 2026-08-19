@@ -5,11 +5,7 @@
 }:
 let
   cfg = config.khanelinix.programs.graphical.browsers.firefox;
-
-  # No khanelinix.programs.terminal.tools.azure organization option exists
-  # yet (checked modules/home/programs/terminal/tools/azure/default.nix at
-  # HEAD). Switch this to that option if one is added later.
-  adoOrg = "core-bts-02";
+  adoOrg = config.khanelinix.programs.terminal.tools.azure.devOpsOrganization;
 in
 {
   config = lib.mkIf cfg.enable {
