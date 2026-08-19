@@ -39,7 +39,6 @@ in
       [
         # FIXME: broken nixpkgs
         # bitwarden-desktop
-        jrnl
         np
       ]
       ++ lib.optionals (includes "maximal") [
@@ -89,6 +88,7 @@ in
             _1password-cli = lib.mkDefault enabled;
             azure.devOpsEnable = lib.mkDefault cfg.azureDevOpsEnable;
             d2.enable = lib.mkDefault cfg.architectureEnable;
+            jrnl.enable = lib.mkDefault cfg.knowledgeEnable;
             # khal reads calendars collected by vdirsyncer, which is Linux only
             khal.enable = lib.mkDefault (cfg.pimEnable && pkgs.stdenv.hostPlatform.isLinux);
             pandoc.enable = lib.mkDefault cfg.publishingEnable;
