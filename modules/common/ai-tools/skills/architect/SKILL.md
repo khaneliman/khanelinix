@@ -1,6 +1,6 @@
 ---
 name: architect
-description: "Sketch types, signatures, and module structure before code, then stay in the loop while implementation fills in the bodies. Use for /architect, 'architect this', 'design this', or non-trivial work where jumping to code locks in the wrong shape. Use software-engineering for repository-wide architecture evaluation and cross-cutting change planning; architect owns feature-level design before code."
+description: "Sketch types, signatures, and module structure before code, then implement against the agreed sketch. Use for /architect, 'architect this', 'design this', or non-trivial features where jumping to code locks in the wrong shape. Use software-engineering for repository-wide planning."
 ---
 
 # Architect
@@ -93,7 +93,8 @@ overreaches. Surface the deviation. Do not bolt it on.
 ## Phase E: Scrap When the Architecture Is Wrong
 
 If implementation keeps producing friction the sketch cannot absorb, discard the
-sketch. Do not bolt fixes onto a wrong design, per `principle-fix-root-causes`.
+sketch. Do not bolt fixes onto a wrong design, per the fix-root-causes principle
+in `engineering-principles`.
 
 The signal is a pattern, not a single instance. Tells:
 
@@ -117,8 +118,9 @@ When you scrap:
 1. Re-run the `how` skill over what exists. Implementation lessons enter the new
    design as inputs, not impressions.
 2. Redesign as if the new constraints had been day-one assumptions.
-3. Subtract before adding, per `principle-subtract-before-you-add`. The new
-   sketch should be smaller than the old one before it grows.
+3. Subtract before adding, per the subtract-before-you-add principle in
+   `engineering-principles`. The new sketch should be smaller than the old one
+   before it grows.
 4. Return to Phase B and re-run arena.
 
 ## Outputs

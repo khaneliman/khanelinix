@@ -1,6 +1,6 @@
 ---
 name: figure-it-out
-description: "Design an auditable playbook when no narrower one fits: scale rigor to the task, run a hypothesis loop, and log each decision so a reviewer can audit the run afterward. Use for /figure-it-out, 'figure it out', a large migration, work a human reviews after stepping away, or when no narrower playbook applies."
+description: "Design and run an auditable playbook when no narrower one fits: scaled rigor, a hypothesis loop, and a logged decision trail. Use for /figure-it-out, 'figure it out', a large migration, or unattended work a human reviews later. Use software-engineering for the architecture plan itself."
 ---
 
 # Figure It Out
@@ -26,8 +26,8 @@ Open a todolist with the phases below as items.
 
 Ground first, then commit. Do not start the run until you can state:
 
-- The definition of done as a falsifiable predicate
-  (`principle-prove-it-works`). "Done well" has to be checkable.
+- The definition of done as a falsifiable predicate (the prove-it-works
+  principle in `engineering-principles`). "Done well" has to be checkable.
 - Scope, quantified: rough units and effort, plus the blockers grounding
   surfaced. Raise blockers before spending hours, not after fifty doomed
   commits.
@@ -49,8 +49,8 @@ verification before features.
 - For one-way-door design decisions, run `architect`, which runs `arena`, with
   diverse, isolated, opinionated candidates and a read-only judge on a different
   model family. Skip it for mechanical work whose shape is already concrete. A
-  second arena over a settled design is over-engineering
-  (`principle-laziness-protocol`).
+  second arena over a settled design is over-engineering (the laziness-protocol
+  principle in `engineering-principles`).
 - Decide what fans out. Parallelize only across genuine seams. Give each
   parallel worker its own worktree or branch so no two workers share mutable
   state. Do not over-fan.
@@ -68,8 +68,8 @@ lands, instead of saving the whole trail for the end.
 Treat each unit as an experiment. State the hypothesis, make the smallest
 change, and measure it against the predicate on the real artifact. Keep the
 change when it advanced the predicate. Revert it when it did not. Verify each
-unit before starting the next instead of batching checks at the end
-(`principle-sequence-verifiable-units`).
+unit before starting the next instead of batching checks at the end (the
+sequence-verifiable-units principle in `engineering-principles`).
 
 - Verify by inspecting the artifact, never a self-report. When something passes
   too easily, suspect the observation method before the system. A blank
@@ -94,8 +94,8 @@ diff is what lets the human come back and trust the work.
 
 Check the whole against the Phase A predicate on the real product, not only the
 harness. Encode any recurring correction as a gate, a lint rule, a check, or a
-script so the win cannot silently regress
-(`principle-encode-lessons-in-structure`).
+script so the win cannot silently regress (the encode-lessons-in-structure
+principle in `engineering-principles`).
 
 **Reply:** the playbook you designed, the rigor level and why, the
 decision-trail path, what is verified against the predicate, and what is still

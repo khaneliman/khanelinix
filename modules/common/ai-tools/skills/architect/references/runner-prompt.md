@@ -44,7 +44,8 @@ axes to pick a base.
 - Make state transitions idempotent where applicable. Ask what happens if the
   operation runs twice or crashes halfway.
 - Keep call chains short. If tracing the flow needs more than three files,
-  flatten the hierarchy, per `principle-laziness-protocol`.
+  flatten the hierarchy, per the laziness-protocol principle in
+  `engineering-principles`.
 
 You are one of several runners, each on a different model. Produce the best
 design your model can make. Do not hedge against the other runners. Differences

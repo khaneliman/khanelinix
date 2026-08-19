@@ -1,6 +1,6 @@
 ---
 name: reflect
-description: "Mine the active session transcript with three parallel review lenses and route durable learnings into concrete skill edits. Use when the user says reflect, after a complex task lands cleanly, after dead ends resolve into a working path, after the user corrects the approach mid-task, or when a non-trivial workflow emerges that no skill captures."
+description: "Mine the session transcript with three review lenses and route durable learnings into skill edits or memory notes. Use when the user says reflect, after a complex task lands cleanly, or after a correction or new workflow worth keeping."
 ---
 
 # Reflect
@@ -73,7 +73,8 @@ structured Accepted, Rejected, and Backlog list.
 Sanity-check the synthesizer's Accepted list. Move an item to Backlog when a
 lint rule, script, metadata flag, or runtime check enforces it more reliably
 than prose. The synthesizer already applies this criterion. This pass runs last,
-before edits land. See the `principle-encode-lessons-in-structure` skill.
+before edits land. See the encode-lessons-in-structure principle in
+`engineering-principles`.
 
 ### 5. Apply
 
