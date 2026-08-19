@@ -24,8 +24,8 @@ reconstruct it from transcripts alone.
 ## Transcript stores
 
 Transcript stores vary per provider. Claude Code writes one JSONL file per
-session under its config directory at `projects/<slug>/`, where `<slug>` is the
-workspace path with each `/` replaced by `-`. Every line is one chat message.
+session, one chat message per line, under its config directory at
+`projects/<slug>/`, `<slug>` being the workspace path with `/` replaced by `-`.
 Discover the active provider's store before mining. Never read another project's
 transcripts unless asked.
 
@@ -33,10 +33,9 @@ transcripts unless asked.
 
 1. Classify, then route. One specific prior chat to resume needs no fan-out;
    open that chat and read it directly. Turning habits into a durable skill is
-   `skill-creator` work. A human-readable summary of your work is a different
-   task. Recall loads working context across recent sessions before you act.
-   When the user already gave a full state capsule (paths, branch, the change),
-   use it and skip the mining.
+   `skill-creator` work. Recall loads working context across recent sessions
+   before you act. When the user already gave a full state capsule (paths,
+   branch, the change), use it and skip the mining.
 2. Check durable local state before mining transcripts. Read active
    planning-with-files artifacts (`task_plan.md`, `findings.md`, `progress.md`)
    and `okf-memory` durable notes. These often answer "where did I leave off"
@@ -46,16 +45,15 @@ transcripts unless asked.
    default the last 7 days), the topic if named, and the workspace (default the
    active one). State the scope back. Never quietly turn "all" into "recent N".
 4. Fan out across chat history. Spawn parallel read-only subagents on a fast,
-   cheap model, each taking a slice of the corpus, because searching transcripts
-   is grunt work. Tell every subagent to order candidates by real modification
-   time (`ls -t`) and never by file name, grep the topic first, then read only
-   the matching sessions and only their relevant regions, and skip the current
-   session plus obvious noise (subagent, eval, and test sessions). Each returns
-   the same schema, one block per session: topic, the user's goal, decisions,
-   open threads, struggles and corrections, and artifacts (PRs, tickets,
-   branches), each citing the session ID. For one or two sessions, skip the
-   fan-out and search directly. Raw transcripts stay in the subagents. The main
-   thread gets their findings only.
+   cheap model, each taking a slice of the corpus. Tell every subagent to order
+   candidates by real modification time (`ls -t`) and never by file name, grep
+   the topic first, then read only the matching sessions and only their relevant
+   regions, and skip the current session plus obvious noise (subagent, eval, and
+   test sessions). Each returns the same schema, one block per session: topic,
+   the user's goal, decisions, open threads, struggles and corrections, and
+   artifacts (PRs, tickets, branches), each citing the session ID. For one or
+   two sessions, skip the fan-out and search directly. Raw transcripts stay in
+   the subagents. The main thread gets their findings only.
 5. Sweep the shared record whenever the topic names a feature, file, subsystem,
    area, or bug. This is the default, not a judgment call, and "my work on X"
    does not exempt it. A named target carries history you never see in your own
