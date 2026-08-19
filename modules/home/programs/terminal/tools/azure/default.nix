@@ -32,6 +32,8 @@ in
     ++ lib.optionals cfg.developmentEnable [
       pkgs.azure-functions-core-tools
       pkgs.azure-storage-azcopy
+      pkgs.bicep
+      # azure-dev is not available in the pinned nixpkgs.
     ]
     ++ lib.optionals (cfg.developmentEnable && pkgs.stdenv.hostPlatform.isLinux) [
       pkgs.azuredatastudio
