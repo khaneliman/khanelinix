@@ -97,9 +97,8 @@ in
         # FIXME: requires approval
         davmail.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isLinux;
         vdirsyncer.enable = lib.mkDefault (cfg.pimEnable && pkgs.stdenv.hostPlatform.isLinux && !isWSL);
-        # FIXME: not even being used on darwin and causing network/fs issues
-        # TODO: Don't use yet, at all should take advantage of
-        # syncthing.enable = lib.mkDefault (!isWSL && !pkgs.stdenv.hostPlatform.isDarwin);
+        # Syncthing carries the knowledge workspace between workstations
+        syncthing.enable = lib.mkDefault (cfg.knowledgeEnable && !isWSL);
       };
     };
   };
