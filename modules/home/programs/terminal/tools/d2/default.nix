@@ -15,7 +15,9 @@ in
 
   config = lib.mkIf cfg.enable {
     home = {
-      packages = [ (pkgs.d2.override { withImageSupport = false; }) ];
+      # Image support follows the upstream default, which needs libdrm and is
+      # therefore Linux only
+      packages = [ pkgs.d2 ];
 
       sessionVariables.D2_LAYOUT = "elk";
 
