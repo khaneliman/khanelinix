@@ -10,6 +10,10 @@ let
   wallpaperCfg = config.khanelinix.theme.wallpaper;
   wallpaperPath = name: lib.khanelinix.theme.wallpaperPath { inherit config pkgs name; };
   wallpaperPaths = names: lib.khanelinix.theme.wallpaperPaths { inherit config pkgs names; };
+  workGitIdentity = pkgs.writeText "git-work-identity" ''
+    [user]
+      email = ${work}
+  '';
 
   # Not super secret, just doesn't need to be scraped so easily.
   primaryGoogle = decode "a2hhbmVsaW1hbjEyQGdtYWlsLmNvbQ==";
@@ -363,6 +367,11 @@ in
             enable = true;
 
             includes = [
+              {
+                # NOTE: include is inert until work repos live in ~/work.
+                condition = "gitdir:~/work/";
+                path = workGitIdentity;
+              }
             ];
           };
           gh = {

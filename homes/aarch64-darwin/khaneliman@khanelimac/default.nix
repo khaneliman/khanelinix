@@ -1,11 +1,17 @@
 {
   config,
   lib,
+  pkgs,
 
   ...
 }:
 let
-  inherit (lib.khanelinix) enabled;
+  inherit (lib.khanelinix) decode enabled;
+  work = decode "YXVzdGluLmhvcnN0bWFuQG5yaS1uYS5jb20=";
+  workGitIdentity = pkgs.writeText "git-work-identity" ''
+    [user]
+      email = ${work}
+  '';
 in
 {
   khanelinix = {
@@ -68,6 +74,16 @@ in
         emulators.cmux = enabled;
 
         tools = {
+          git = {
+            enable = true;
+            includes = [
+              {
+                # NOTE: include is inert until work repos live in ~/work.
+                condition = "gitdir:~/work/";
+                path = workGitIdentity;
+              }
+            ];
+          };
           herdr = enabled;
           sesh = enabled;
           ssh = enabled;
