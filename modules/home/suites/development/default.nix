@@ -62,6 +62,7 @@ in
     aiEnable = lib.mkEnableOption "ai development configuration";
     azureEnable = lib.mkEnableOption "azure development configuration";
     dockerEnable = lib.mkEnableOption "docker development configuration";
+    dotnetEnable = lib.mkEnableOption "dotnet development configuration";
     gameEnable = lib.mkEnableOption "game development configuration";
     goEnable = lib.mkEnableOption "go development configuration";
     kubernetesEnable = lib.mkEnableOption "kubernetes development configuration";
@@ -236,6 +237,8 @@ in
         };
 
         terminal = {
+          shell.powershell.enable = mkDefault cfg.azureEnable;
+
           editors = {
             # helix = enabled;
             neovim = {
@@ -247,6 +250,7 @@ in
           tools = {
             act = mkDefault enabled;
             azure.developmentEnable = cfg.azureEnable;
+            dotnet.enable = mkDefault cfg.dotnetEnable;
             claude-code.enable = cfg.aiEnable;
             codex.enable = cfg.aiEnable;
             codexbar.enable = cfg.aiEnable;
