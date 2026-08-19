@@ -58,6 +58,19 @@ class StyleGuardTests(unittest.TestCase):
             {"phrase-18", "phrase-19", "phrase-20", "phrase-21"},
         )
 
+    def test_code_regions_are_exempt(self) -> None:
+        text = "Route risky diffs through `blast-radius`.\n\n```md\nhonestly\n```\n"
+        self.assertEqual(STYLE_GUARD.style_violations(text), [])
+
+    def test_blocked_phrase_outside_code_region_still_blocks(self) -> None:
+        violations = STYLE_GUARD.style_violations(
+            "The `plan` must name the blast radius."
+        )
+        self.assertEqual(
+            [(item["policy_id"], item["line"], item["column"]) for item in violations],
+            [("phrase-04", 1, 26)],
+        )
+
     def test_plain_technical_text_passes(self) -> None:
         self.assertEqual(
             STYLE_GUARD.style_violations(

@@ -151,18 +151,33 @@ def line_column(text: str, offset: int) -> tuple[int, int]:
     return line, offset - last_newline
 
 
+def mask_code_regions(text: str) -> str:
+    """Blank fenced blocks and inline code so scans see prose only.
+
+    Replacement keeps length and newlines, so violation offsets still
+    map to the original text.
+    """
+
+    def blank(match: re.Match[str]) -> str:
+        return re.sub(r"[^\n]", " ", match.group(0))
+
+    return INLINE_CODE_RE.sub(blank, FENCED_CODE_RE.sub(blank, text))
+
+
 def style_violations(text: str) -> list[dict[str, int | str]]:
+    prose = mask_code_regions(text)
     matches: list[tuple[int, str, str]] = []
     for policy_id, pattern in FORBIDDEN_PATTERNS:
         matches.extend(
             (match.start(), "blocked-phrase", policy_id)
-            for match in pattern.finditer(text)
+            for match in pattern.finditer(prose)
         )
     matches.extend(
-        (match.start(), "emoji", "emoji") for match in EMOJI_RE.finditer(text)
+        (match.start(), "emoji", "emoji") for match in EMOJI_RE.finditer(prose)
     )
     matches.extend(
-        (match.start(), "unicode-dash", "dash") for match in re.finditer("\u2014", text)
+        (match.start(), "unicode-dash", "dash")
+        for match in re.finditer("\u2014", prose)
     )
 
     violations = []
