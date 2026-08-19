@@ -1,0 +1,129 @@
+diff --git a/apps/server/src/provider/Layers/AntigravityAdapter.test.ts b/apps/server/src/provider/Layers/AntigravityAdapter.test.ts
+index 1f7308f2d..eb04f73c3 100644
+--- a/apps/server/src/provider/Layers/AntigravityAdapter.test.ts
++++ b/apps/server/src/provider/Layers/AntigravityAdapter.test.ts
+@@ -247,6 +247,25 @@ describe("AntigravityAdapter transcript helpers", () => {
+       }).map((event) => event.type),
+     ).toEqual(["content.delta", "turn.completed"]);
+ 
++    const plannerResponseEvents = mapAntigravityTranscriptRecordToRuntimeEvents({
++      ...base,
++      record: {
++        step_index: 13,
++        source: "MODEL",
++        type: "PLANNER_RESPONSE",
++        status: "DONE",
++        content: "Changes made.",
++      },
++    });
++    expect(plannerResponseEvents.map((event) => event.type)).toEqual([
++      "content.delta",
++      "turn.completed",
++    ]);
++    expect(plannerResponseEvents[0]?.payload).toMatchObject({
++      streamKind: "assistant_text",
++      delta: "Changes made.",
++    });
++
+     expect(
+       mapAntigravityTranscriptRecordToRuntimeEvents({
+         ...base,
+@@ -489,6 +508,46 @@ describe("AntigravityAdapter sessions", () => {
+     }),
+   );
+ 
++  it.effect("does not emit discovered plan files outside plan mode", () =>
++    Effect.gen(function* () {
++      const baseDir = yield* Effect.promise(() =>
++        NodeFSP.mkdtemp(NodePath.join(NodeOS.tmpdir(), "antig-adapter-normal-plan-file-")),
++      );
++      try {
++        const adapter = yield* makeAdapter(baseDir, {}, async (_binaryPath, _args, options) => {
++          await NodeFSP.mkdir(NodePath.join(baseDir, "cache"), { recursive: true });
++          await NodeFSP.mkdir(NodePath.join(baseDir, ".plans"), { recursive: true });
++          await NodeFSP.writeFile(
++            NodePath.join(baseDir, "cache", "last_conversations.json"),
++            `${JSON.stringify({ [options.cwd]: "conv-normal-plan-file" })}\n`,
++            "utf8",
++          );
++          await NodeFSP.writeFile(
++            NodePath.join(baseDir, ".plans", "unexpected.md"),
++            "# Internal notes\n",
++            "utf8",
++          );
++          return "Changes made.";
++        });
++        const { events, fiber } = yield* collectEvents(adapter);
++        const threadId = ThreadId.make("thread-normal-plan-file");
++        try {
++          yield* adapter.startSession({ threadId, runtimeMode: "full-access", cwd: baseDir });
++          yield* adapter.sendTurn({ threadId, input: "make changes", attachments: [] });
++          yield* Effect.promise(() =>
++            waitFor(() => events.some((event) => event.type === "turn.completed"), events),
++          );
++          expect(events.some((event) => event.type === "turn.proposed.completed")).toBe(false);
++        } finally {
++          yield* adapter.stopSession(threadId).pipe(Effect.catch(() => Effect.void));
++          yield* Fiber.interrupt(fiber).pipe(Effect.catch(() => Effect.void));
++        }
++      } finally {
++        yield* Effect.promise(() => NodeFSP.rm(baseDir, { recursive: true, force: true }));
++      }
++    }),
++  );
++
+   it.effect("returns unsupported error for provider-side rollback", () =>
+     Effect.gen(function* () {
+       const baseDir = yield* Effect.promise(() =>
+diff --git a/apps/server/src/provider/Layers/AntigravityAdapter.ts b/apps/server/src/provider/Layers/AntigravityAdapter.ts
+index 53c8f8e12..9c400d8c9 100644
+--- a/apps/server/src/provider/Layers/AntigravityAdapter.ts
++++ b/apps/server/src/provider/Layers/AntigravityAdapter.ts
+@@ -233,7 +233,6 @@ function itemTypeForTranscript(record: AntigravityTranscriptRecord) {
+     return "dynamic_tool_call" as const;
+   }
+   if (record.tool_calls && record.tool_calls.length > 0) return "dynamic_tool_call" as const;
+-  if (type.includes("PLANNER") || type.includes("PLAN")) return "plan" as const;
+   return "assistant_message" as const;
+ }
+ 
+@@ -458,26 +457,13 @@ export function mapAntigravityTranscriptRecordToRuntimeEvents(input: {
+     return events;
+   }
+ 
+-  if (itemType === "plan" && (status === "DONE" || completesTurn)) {
+-    const planText = sanitizeAntigravityAssistantText(content);
+-    if (planText) {
+-      events.push({
+-        ...runtimeEventBase({ threadId, instanceId, turnId, createdAt, method, payload: record }),
+-        type: "turn.proposed.completed",
+-        payload: {
+-          planMarkdown: planText,
+-        },
+-      });
+-    }
+-  }
+-
+   const assistantText = sanitizeAntigravityAssistantText(content);
+   if (assistantText) {
+     events.push({
+       ...runtimeEventBase({ threadId, instanceId, turnId, createdAt, method, payload: record }),
+       type: "content.delta",
+       payload: {
+-        streamKind: itemType === "plan" && !completesTurn ? "plan_text" : "assistant_text",
++        streamKind: "assistant_text",
+         delta: assistantText,
+       },
+     });
+@@ -1351,7 +1337,10 @@ export const makeAntigravityAdapter = Effect.fn("makeAntigravityAdapter")(functi
+               ? yield* Effect.promise(() => pollTranscriptOnce(context))
+               : { emittedContent: false, completedTurn: false };
+ 
+-            const planContent = yield* Effect.promise(() => scanForNewPlanFile(cwd, turnStartTime));
++            const planContent =
++              input.interactionMode === "plan"
++                ? yield* Effect.promise(() => scanForNewPlanFile(cwd, turnStartTime))
++                : undefined;
+             if (planContent) {
+               emit({
+                 ...runtimeEventBase({

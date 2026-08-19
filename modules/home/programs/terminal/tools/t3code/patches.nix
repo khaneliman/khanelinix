@@ -93,4 +93,7 @@ in
     excludes = [ "apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts" ];
   }
 ])
-++ [ ./declarative-theme-settings.patch ]
+++ [
+  ./antigravity-planner-response.patch
+  ./declarative-theme-settings.patch
+]
