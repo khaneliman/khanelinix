@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import re
 import unittest
 from pathlib import Path
@@ -8,7 +9,9 @@ SKILL_ROOT = Path(__file__).resolve().parents[1]
 SKILL_MD = SKILL_ROOT / "SKILL.md"
 LICENSE = SKILL_ROOT / "LICENSE"
 METADATA = SKILL_ROOT / "agents" / "openai.yaml"
-CANONICAL_LICENSE = SKILL_ROOT.parent / "engineering-workflow" / "LICENSE"
+PSTACK_LICENSE_SHA256 = (
+    "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e"
+)
 
 
 def read(path: Path) -> str:
@@ -70,8 +73,11 @@ class SwarmContract(unittest.TestCase):
             body, r"`multi-provider-sdlc`.*provider or model seat selection"
         )
 
-    def test_license_matches_existing_pstack_license(self) -> None:
-        self.assertEqual(read(LICENSE), read(CANONICAL_LICENSE))
+    def test_license_matches_pstack_digest(self) -> None:
+        self.assertEqual(
+            hashlib.sha256(LICENSE.read_bytes()).hexdigest(),
+            PSTACK_LICENSE_SHA256,
+        )
 
     def test_openai_metadata_disables_implicit_invocation(self) -> None:
         content = read(METADATA)

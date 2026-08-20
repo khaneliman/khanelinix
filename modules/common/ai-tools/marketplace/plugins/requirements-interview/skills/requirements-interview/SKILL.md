@@ -1,6 +1,7 @@
 ---
 name: requirements-interview
-description: "Run a bounded requirements interview for an explicit interview request or an unresolved material product choice. Discover facts and run probes first, then ask one frontier round at a time with recommendations. Do not write an ADR or requirements artifact unless explicitly requested. Do not own implementation, review verdicts, commits, or pull requests."
+description: "Bounded requirements interview for an explicit interview request or unresolved material product choice. Discover facts first, then ask frontier questions with recommendations. Do not use for routine clarification."
+license: Complete terms in LICENSE
 ---
 
 # Requirements Interview

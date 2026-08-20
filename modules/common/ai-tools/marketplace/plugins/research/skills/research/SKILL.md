@@ -1,6 +1,7 @@
 ---
 name: research
-description: "Investigate a question with high-trust primary sources and return a cited answer. Use for external research, official documentation, specifications, APIs, or first-party source code. Default to read-only answers; write a repository artifact only when explicitly requested. Do not use for repository structure or rationale/history questions; use how or why."
+description: "External research from primary sources with a cited answer. Use for official docs, specifications, APIs, or first-party source. Read-only by default. For repository structure or rationale, use how or why."
+license: Complete terms in LICENSE
 ---
 
 # Research

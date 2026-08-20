@@ -36,7 +36,7 @@ skills call each other by name, so install the full set:
 ```sh
 npx skills add khaneliman/khanelinix \
   --agent antigravity claude-code codex \
-  --skill architect arena blast-radius engineering-principles engineering-workflow figure-it-out git-toolkit github-toolkit how interrogate okf-memory planning-with-files recall show-me-your-work software-engineering unslop why \
+  --skill architect arena blast-radius engineering-principles engineering-workflow figure-it-out git-toolkit github-toolkit how interrogate okf-memory planning-with-files recall requirements-interview research show-me-your-work software-engineering tdd unslop verification-harness why \
   --global --copy --yes
 ```
 
@@ -81,8 +81,10 @@ downstream skill.
 
 ```text
 Ground -> Shape -> Implement -> Verify -> Review -> Correct -> Hand off
-  how      architect   domain skill   blast-radius   interrogate
-  why      engineering-principles
+  how      architect   domain skill   blast-radius          interrogate
+  why      engineering-principles     verification-harness
+  research             tdd            performance-forensics
+  requirements-interview
 ```
 
 Every risk level requires focused verification. Normal-risk and high-risk work
@@ -99,8 +101,11 @@ lifecycle:
 | Task                                           | Entry skill                         |
 | ---------------------------------------------- | ----------------------------------- |
 | Explain code without changing it               | `how`                               |
+| Research external primary-source facts         | `research`                          |
 | Investigate rationale or regression history    | `why`                               |
+| Resolve an unresolved material product choice  | `requirements-interview`            |
 | Diagnose without implementing a fix            | Matching diagnostic or domain skill |
+| Diagnose or improve measured performance       | `performance-forensics`             |
 | Review Git history or a local change stack     | `git-toolkit`                       |
 | Review GitHub issues, pull requests, or checks | `github-toolkit`                    |
 | Evaluate architecture without implementation   | `software-engineering`              |
@@ -154,11 +159,16 @@ lifecycle methods, direct routes, and support utilities.
 | `show-me-your-work`      | Reviewable decision trails                        |
 | `recall`                 | Prior work reconstruction                         |
 | `okf-memory`             | Durable project and user knowledge                |
+| `requirements-interview` | Bounded material product-choice clarification     |
+| `research`               | External primary-source evidence gathering        |
+| `tdd`                    | Narrow red-green-refactor implementation method   |
+| `verification-harness`   | Reusable verification surface creation and audit  |
 | `unslop`                 | User-facing prose cleanup                         |
 
 Domain skills can own methods across several lifecycle phases. In the `nix`
 bundle, `nix-toolkit` owns operational diagnosis and `writing-nix` owns
-expression authoring.
+expression authoring. `performance-forensics` remains a standalone domain plugin
+because most routine changes do not need profiling or traces.
 
 ## Examples
 
@@ -182,6 +192,14 @@ Use software-engineering to evaluate this subsystem boundary without edits.
 Use figure-it-out for this cross-cutting migration and keep a decision trail.
 
 Use interrogate to challenge this change before it ships.
+
+Use research to verify the external API contract from primary sources.
+
+Use requirements-interview to resolve the remaining product choices.
+
+Use tdd to implement this behavior through a red-green-refactor loop.
+
+Use verification-harness to replace this unreliable manual check.
 ```
 
 ## Host-only workflow extensions
@@ -190,6 +208,10 @@ The portable marketplace excludes `multi-provider-sdlc`. It requires private
 provider routes. A host that installs this overlay can route one lifecycle phase
 across Anthropic, Google, and OpenAI workers. The caller still owns the
 lifecycle and final judgment.
+
+The marketplace excludes `swarm`. It requires the private worker registry and
+host delegation controls. An explicit `swarm this` request partitions
+independent coverage slices. The caller keeps integration and final judgment.
 
 The marketplace also excludes `reflect`. With approval, it routes accepted skill
 edits into the khanelinix canonical tree. Portable workflows treat it as an

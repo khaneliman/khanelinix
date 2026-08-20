@@ -26,9 +26,11 @@ user wants an explanation and no mutation, leave this skill and use `how` or
 - Shape: name the data model and choose types, signatures, and placement before
   code. Apply `model-the-domain`, `boundary-discipline`, and
   `type-system-discipline` from `engineering-principles`. Use `architect` for a
-  non-trivial feature or a boundary crossing.
+  non-trivial feature or a boundary crossing. Use `tdd` only when the user
+  requests TDD or test-first work.
 - Verify: exercise the new path and one existing path that shares its
-  dependencies.
+  dependencies. Use `verification-harness` to audit or propose when no reliable
+  check covers the observable behavior. Create it only with explicit authority.
 - Done: the new behavior works on the real surface, and existing callers still
   work.
 
@@ -39,7 +41,9 @@ user wants an explanation and no mutation, leave this skill and use `how` or
 - Shape: pin current behavior, subtract dead weight, then sequence mechanical
   steps so each step keeps the tree working. Apply `subtract-before-you-add` and
   `minimize-reader-load` from `engineering-principles`.
-- Verify: prove behavior parity. Use `blast-radius` when call reach is unclear.
+- Verify: prove behavior parity. Use `verification-harness` to audit or propose
+  when the existing parity surface is missing or unreliable. Create it only with
+  explicit authority. Use `blast-radius` when call reach is unclear.
 - Done: structure improved, and no observable behavior moved.
 
 ## Prototype
@@ -55,7 +59,8 @@ user wants an explanation and no mutation, leave this skill and use `how` or
 ## Evaluation
 
 - Goal: compare candidate options and choose one.
-- Ground: define the criteria and the fixed comparison surface first.
+- Ground: define the criteria and the fixed comparison surface first. Use
+  `research` when the comparison requires external primary-source facts.
 - Shape: run each candidate against identical criteria. Use `arena` for
   competing artifacts. Use `interrogate` when the choice is contested or high
   stakes.

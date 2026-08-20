@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import re
 import unittest
 from pathlib import Path
@@ -165,9 +166,10 @@ class PerformanceForensicsReferencesContract(unittest.TestCase):
 
 class PerformanceForensicsLicenseContract(unittest.TestCase):
     def test_pstack_license_matches(self) -> None:
-        pstack = read(LICENSE)
-        self.assertIn("Copyright (c) 2026 Lauren Tan", pstack)
-        self.assertIn("MIT License", pstack)
+        self.assertEqual(
+            hashlib.sha256(LICENSE.read_bytes()).hexdigest(),
+            "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+        )
 
 
 class PerformanceForensicsOpenAIMetadataContract(unittest.TestCase):

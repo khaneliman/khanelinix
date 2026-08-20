@@ -2,7 +2,7 @@
 	"name": "research",
 	"displayName": "Research",
 	"description": "Research external questions with cited primary sources.",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"author": {
 		"name": "khaneliman"
 	}

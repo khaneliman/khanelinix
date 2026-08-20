@@ -1,6 +1,7 @@
 ---
 name: tdd
-description: Test-driven development method for explicit test-first requests or cheap stable executable behavior seams. Executes the red-green-refactor loop with red failure evidence, minimal green implementation, and rerun validation. Avoids testing implementation details and excessive mocking.
+description: Red-green-refactor implementation method for explicit TDD or test-first requests. Requires red evidence, minimal green implementation, and rerun validation.
+license: Complete terms in LICENSES/
 ---
 
 # Test-Driven Development

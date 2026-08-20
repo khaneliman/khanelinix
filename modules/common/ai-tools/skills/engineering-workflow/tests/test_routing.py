@@ -15,6 +15,7 @@ LICENSE = SKILL_ROOT / "LICENSE"
 OPENAI_METADATA = SKILL_ROOT / "agents" / "openai.yaml"
 BASE_MD = AI_TOOLS_ROOT / "base.md"
 MULTI_PROVIDER_ROOT = SKILL_ROOT.parent / "multi-provider-sdlc"
+SWARM_ROOT = SKILL_ROOT.parent / "swarm"
 CATALOG = AI_TOOLS_ROOT / "marketplace" / "catalog.json"
 GENERAL_AGENTS = AI_TOOLS_ROOT / "agents" / "general"
 
@@ -110,8 +111,29 @@ class PlaybookContract(unittest.TestCase):
             "blast-radius",
             "interrogate",
             "reflect",
+            "research",
+            "requirements-interview",
+            "tdd",
+            "verification-harness",
+            "performance-forensics",
         ):
             self.assertIn(f"`{skill}`", package_text)
+
+    def test_routes_leaf_methods_to_matching_phases(self) -> None:
+        phase_routes = {
+            "ground": ("`research`", "`requirements-interview`"),
+            "implement": ("`tdd`",),
+            "verify": ("`verification-harness`", "`performance-forensics`"),
+        }
+        for phase, skills in phase_routes.items():
+            match = re.search(
+                rf"^\d+\. \*\*{phase.title()}\.\*\*(.*?)(?=^\d+\.|\Z)",
+                self.body,
+                re.MULTILINE | re.DOTALL,
+            )
+            self.assertIsNotNone(match, phase)
+            for skill in skills:
+                self.assertIn(skill, match.group(1), phase)
 
     def test_routes_implementation_to_installed_domain_skill(self) -> None:
         self.assertIn("matching installed domain skill owns the method", self.body)
@@ -194,8 +216,14 @@ class GatesContract(unittest.TestCase):
     def test_risk_levels_are_disjoint_for_one_file(self) -> None:
         self.assertIn("normal**: multiple files within one module", self.text)
 
-    def test_forbids_unearned_claims(self) -> None:
-        self.assertIn("never claim", self.text)
+    def test_evidence_gate_rejects_unearned_claims(self) -> None:
+        section = self.text.split("## evidence gate", maxsplit=1)[1]
+        for phrase in ("actually ran", "actually happened", "verification gaps"):
+            self.assertIn(phrase, section)
+
+    def test_routes_missing_and_performance_surfaces(self) -> None:
+        self.assertIn("`verification-harness`", self.text)
+        self.assertIn("`performance-forensics`", self.text)
 
 
 class RepositoryRoutingContract(unittest.TestCase):
@@ -219,6 +247,18 @@ class RepositoryRoutingContract(unittest.TestCase):
         self.assertIn("Inside `engineering-workflow`, use `architect`", text)
         self.assertIn("An explicit `/architect` request", text)
 
+    def test_base_routes_new_leaf_methods(self) -> None:
+        text = read(BASE_MD)
+        for skill in (
+            "research",
+            "requirements-interview",
+            "tdd",
+            "verification-harness",
+            "performance-forensics",
+            "swarm",
+        ):
+            self.assertIn(f"`{skill}`", text)
+
     def test_multi_provider_root_rejects_lifecycle_ownership(self) -> None:
         text = normalized(MULTI_PROVIDER_ROOT / "SKILL.md")
         self.assertIn("does not own lifecycle sequencing", text)
@@ -238,6 +278,15 @@ class RepositoryRoutingContract(unittest.TestCase):
         self.assertIn("Do not start validation or review phases", implementation)
         self.assertIn("Do not correct source or advance to review", validation)
         self.assertIn("Do not fix findings, advance phases", review)
+
+    def test_swarm_is_explicit_and_not_a_lifecycle_owner(self) -> None:
+        if not SWARM_ROOT.is_dir():
+            self.skipTest("host-only swarm skill is not installed")
+        fields, body = split_frontmatter(read(SWARM_ROOT / "SKILL.md"))
+        description = fields["description"].lower()
+        self.assertIn("explicit", description)
+        self.assertIn("caller", body.lower())
+        self.assertIn("final judgment", body.lower())
 
 
 class RepositoryWorkerLaneContract(unittest.TestCase):
@@ -280,8 +329,17 @@ class MarketplaceCompositionContract(unittest.TestCase):
             "git-toolkit",
             "github-toolkit",
             "software-engineering",
+            "research",
+            "requirements-interview",
+            "tdd",
+            "verification-harness",
         }
         self.assertTrue(required.issubset(self.members))
+
+    def test_host_only_swarm_is_excluded(self) -> None:
+        catalog = json.loads(read(CATALOG))
+        self.assertIn("swarm", catalog["excluded"])
+        self.assertNotIn("swarm", self.members)
 
 
 class DelegationContract(unittest.TestCase):
@@ -311,6 +369,9 @@ class DelegationContract(unittest.TestCase):
             r"multi-provider-sdlc.*only when the user explicitly requests",
         )
 
+    def test_swarm_routing_requires_explicit_request(self) -> None:
+        self.assertRegex(self.text, r"swarm.*only when the user explicitly requests")
+
     def test_workers_never_own_final_judgment(self) -> None:
         self.assertRegex(
             self.text,
@@ -338,6 +399,10 @@ class TaskShapesContract(unittest.TestCase):
         self.assertIn("investigation is a phase", lowered)
         self.assertIn("`how`", lowered)
         self.assertIn("`why`", lowered)
+
+    def test_shapes_route_optional_leaf_methods(self) -> None:
+        for skill in ("research", "tdd", "verification-harness"):
+            self.assertIn(f"`{skill}`", self.content)
 
     def test_attributes_upstream_license(self) -> None:
         self.assertIn("pstack", self.content.lower())

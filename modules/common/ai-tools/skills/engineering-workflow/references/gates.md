@@ -23,7 +23,11 @@ that would fail if the change were wrong.
 - High: the focused check, the regression surface, and a reach check. Use
   `blast-radius` when reach past the diff is unclear.
 
-Run the real command, build, or test. Do not infer a pass from reading code.
+Run the real command, build, or test. Do not infer a pass from reading code. Use
+`verification-harness` to audit or propose when the required real surface is
+missing, slow, or unreliable. Create or repair it only with explicit authority.
+When installed, use `performance-forensics` when completion depends on a
+measured performance claim.
 
 ## Review Gate
 
@@ -43,9 +47,9 @@ Fresh independent review means a reviewer that did not write the change.
   them to the user. Report rejected and nonblocking findings with reasons. Do
   not loop.
 
-## Honesty Gate
+## Evidence Gate
 
 - Report the checks that actually ran, with their real result.
 - If a worker was unavailable, say so and report what you ran directly.
-- Never claim a check, review, or delegated result that did not happen.
+- Claim only checks, reviews, and delegated results that actually happened.
 - List verification gaps explicitly in the handoff.

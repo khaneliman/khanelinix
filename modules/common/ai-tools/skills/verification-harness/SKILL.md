@@ -1,6 +1,6 @@
 ---
 name: verification-harness
-description: "Create or audit a portable project-local deterministic verification harness with Create and Audit modes, feature/check maps, observable outcomes, rerunnable commands, maintenance rules, and explicit gaps. Use when a verification surface is missing or unreliable. Do not use only to run an existing check."
+description: "Create or audit a deterministic project-local verification harness when checks are missing or unreliable. Do not use only to run an existing check."
 license: Complete terms in LICENSE
 ---
 
@@ -11,10 +11,11 @@ deterministic, portable, observable, minimal, and rerunnable.
 
 ## Modes
 
-- **Create.** Build a missing harness from the feature/check map. Repair an
-  unreliable harness when the caller requests repair.
+- **Create.** Build or repair a harness only when the caller explicitly requests
+  or authorizes the required writes.
 - **Audit.** Inspect an existing harness, exercise its real outcomes, and list
-  maintenance and coverage gaps without changing it unless repair is requested.
+  maintenance and coverage gaps without changing it. If the harness is missing,
+  return a proposed feature/check map and exact write scope.
 
 ## Workflow
 

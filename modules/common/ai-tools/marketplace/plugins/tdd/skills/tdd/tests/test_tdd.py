@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import re
 import unittest
 from pathlib import Path
@@ -67,7 +68,7 @@ class TddFrontmatterContract(unittest.TestCase):
         description = self.fields["description"].lower()
         self.assertIn("test-first", description)
         self.assertIn("red-green-refactor", description)
-        self.assertIn("seam", description)
+        self.assertIn("explicit tdd", description)
 
     def test_playbook_stays_under_line_budget(self) -> None:
         self.assertLess(len(read(SKILL_MD).splitlines()), MAX_PLAYBOOK_LINES)
@@ -131,14 +132,18 @@ class TddReferencesContract(unittest.TestCase):
 
 class TddLicensesContract(unittest.TestCase):
     def test_pstack_license_matches(self) -> None:
-        pstack = read(LICENSES / "LICENSE-pstack.txt")
-        self.assertIn("Copyright (c) 2026 Lauren Tan", pstack)
-        self.assertIn("MIT License", pstack)
+        digest = hashlib.sha256((LICENSES / "LICENSE-pstack.txt").read_bytes())
+        self.assertEqual(
+            digest.hexdigest(),
+            "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+        )
 
     def test_matt_pocock_license_matches(self) -> None:
-        matt = read(LICENSES / "LICENSE-matt-pocock.txt")
-        self.assertIn("Copyright (c) 2026 Matt Pocock", matt)
-        self.assertIn("MIT License", matt)
+        digest = hashlib.sha256((LICENSES / "LICENSE-matt-pocock.txt").read_bytes())
+        self.assertEqual(
+            digest.hexdigest(),
+            "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+        )
 
 
 class TddOpenAIMetadataContract(unittest.TestCase):

@@ -63,7 +63,7 @@
 			"name": "engineering-workflow",
 			"displayName": "Engineering Workflow",
 			"description": "Run routine software changes through a complete lifecycle.",
-			"version": "0.1.0",
+			"version": "0.1.1",
 			"category": "Developer Tools"
 		},
 		{
@@ -154,7 +154,7 @@
 			"name": "performance-forensics",
 			"displayName": "Performance Forensics",
 			"description": "Measure and diagnose performance with reproducible evidence.",
-			"version": "0.1.0",
+			"version": "0.1.1",
 			"category": "Developer Tools"
 		},
 		{
@@ -175,14 +175,14 @@
 			"name": "requirements-interview",
 			"displayName": "Requirements Interview",
 			"description": "Resolve material product choices through bounded questions.",
-			"version": "0.1.0",
+			"version": "0.1.1",
 			"category": "Developer Tools"
 		},
 		{
 			"name": "research",
 			"displayName": "Research",
 			"description": "Research external questions with cited primary sources.",
-			"version": "0.1.0",
+			"version": "0.1.1",
 			"category": "Developer Tools"
 		},
 		{
@@ -231,7 +231,7 @@
 			"name": "tdd",
 			"displayName": "TDD",
 			"description": "Implement behavior through a red-green-refactor loop.",
-			"version": "0.1.0",
+			"version": "0.1.1",
 			"category": "Developer Tools"
 		},
 		{
@@ -259,7 +259,7 @@
 			"name": "verification-harness",
 			"displayName": "Verification Harness",
 			"description": "Create or audit deterministic verification surfaces.",
-			"version": "0.1.0",
+			"version": "0.1.1",
 			"category": "Developer Tools"
 		},
 		{
@@ -321,9 +321,13 @@
 				"okf-memory",
 				"planning-with-files",
 				"recall",
+				"requirements-interview",
+				"research",
 				"show-me-your-work",
 				"software-engineering",
+				"tdd",
 				"unslop",
+				"verification-harness",
 				"why"
 			]
 		},

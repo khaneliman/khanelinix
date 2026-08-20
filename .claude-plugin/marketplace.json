@@ -79,7 +79,7 @@
 		{
 			"name": "engineering-workflow",
 			"description": "Run routine software changes through a complete lifecycle.",
-			"version": "0.1.0",
+			"version": "0.1.1",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -209,7 +209,7 @@
 		{
 			"name": "performance-forensics",
 			"description": "Measure and diagnose performance with reproducible evidence.",
-			"version": "0.1.0",
+			"version": "0.1.1",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -239,7 +239,7 @@
 		{
 			"name": "requirements-interview",
 			"description": "Resolve material product choices through bounded questions.",
-			"version": "0.1.0",
+			"version": "0.1.1",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -249,7 +249,7 @@
 		{
 			"name": "research",
 			"description": "Research external questions with cited primary sources.",
-			"version": "0.1.0",
+			"version": "0.1.1",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -319,7 +319,7 @@
 		{
 			"name": "tdd",
 			"description": "Implement behavior through a red-green-refactor loop.",
-			"version": "0.1.0",
+			"version": "0.1.1",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -359,7 +359,7 @@
 		{
 			"name": "verification-harness",
 			"description": "Create or audit deterministic verification surfaces.",
-			"version": "0.1.0",
+			"version": "0.1.1",
 			"author": {
 				"name": "khaneliman"
 			},

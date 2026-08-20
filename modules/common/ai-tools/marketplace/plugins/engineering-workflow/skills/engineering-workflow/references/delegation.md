@@ -50,6 +50,9 @@ with the same write policy and lane.
 - Use `multi-provider-sdlc` only when the user explicitly requests provider or
   model diversity. It returns one phase packet; this skill keeps phase order and
   completion.
+- Use `swarm` only when the user explicitly requests independent parallel
+  fan-out. It returns evidence packets; this skill keeps integration and final
+  judgment.
 
 ## When Workers Are Unavailable
 

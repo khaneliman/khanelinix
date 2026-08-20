@@ -1,6 +1,6 @@
 ---
 name: swarm
-description: "Host-only explicit fan-out overlay for independent worker coverage slices with bounded concurrency, one write owner per path, evidence packets, and parent-owned integration. Use only for /swarm or 'swarm this'."
+description: "Host-only explicit fan-out for /swarm or 'swarm this'. Partitions independent worker slices; caller owns integration and final judgment."
 license: Complete terms in LICENSE
 ---
 

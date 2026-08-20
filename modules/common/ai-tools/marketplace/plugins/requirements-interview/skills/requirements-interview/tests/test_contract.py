@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import re
 import unittest
 from pathlib import Path
@@ -9,7 +10,7 @@ SKILL_MD = SKILL_ROOT / "SKILL.md"
 REFERENCE = SKILL_ROOT / "references" / "interview-method.md"
 LICENSE = SKILL_ROOT / "LICENSE"
 OPENAI_METADATA = SKILL_ROOT / "agents" / "openai.yaml"
-MATT_LICENSE = Path("/tmp/ai-tools-upstream.5SCXeS/matt-skills/LICENSE")
+MATT_LICENSE_SHA256 = "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5"
 
 
 def read(path: Path) -> str:
@@ -64,16 +65,20 @@ class RequirementsInterviewContractTests(unittest.TestCase):
     def test_metadata_and_license_match_contract(self) -> None:
         fields = frontmatter(self.skill)
         self.assertEqual(fields["name"], "requirements-interview")
-        self.assertEqual(set(fields), {"name", "description"})
+        self.assertEqual(set(fields), {"name", "description", "license"})
         metadata = read(OPENAI_METADATA)
         self.assertIn("display_name:", metadata)
         self.assertIn("short_description:", metadata)
         self.assertIn("default_prompt:", metadata)
-        self.assertEqual(read(LICENSE), read(MATT_LICENSE))
+        self.assertEqual(
+            hashlib.sha256(LICENSE.read_bytes()).hexdigest(), MATT_LICENSE_SHA256
+        )
 
     def test_artifact_write_requires_explicit_request(self) -> None:
         self.assertIn("Do not write an ADR", self.skill)
-        self.assertIn("unless explicitly requested", self.skill)
+        self.assertIn(
+            "unless the user explicitly requests", " ".join(self.skill.split())
+        )
         self.assertIn(
             "Write an ADR or requirements artifact only after an explicit request",
             self.reference,
