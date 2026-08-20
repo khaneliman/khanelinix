@@ -105,5 +105,6 @@ in
   ./antigravity-planner-response.patch
   ./antigravity-conversation-discovery.patch
   ./antigravity-tool-result-projection.patch
+  ./antigravity-subagent-projection.patch
   ./declarative-theme-settings.patch
 ]
