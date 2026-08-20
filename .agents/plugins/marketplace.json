@@ -365,6 +365,18 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "tdd",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/tdd"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
 			"name": "technical-writing",
 			"source": {
 				"source": "local",

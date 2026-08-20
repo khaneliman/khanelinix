@@ -307,6 +307,16 @@
 			"source": "./modules/common/ai-tools/marketplace/plugins/software-engineering"
 		},
 		{
+			"name": "tdd",
+			"description": "Implement behavior through a red-green-refactor loop.",
+			"version": "0.1.0",
+			"author": {
+				"name": "khaneliman"
+			},
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/marketplace/plugins/tdd"
+		},
+		{
 			"name": "technical-writing",
 			"description": "Write and review concise technical prose.",
 			"version": "0.1.3",

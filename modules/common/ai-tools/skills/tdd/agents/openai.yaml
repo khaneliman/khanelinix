@@ -1,0 +1,4 @@
+interface:
+  display_name: "TDD"
+  short_description: "Test-driven red-green-refactor implementation method"
+  default_prompt: "Use $tdd to implement this change test-first against a verified behavior seam."

@@ -1,0 +1,13 @@
+{
+	"name": "tdd",
+	"version": "0.1.0",
+	"description": "Implement behavior through a red-green-refactor loop.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "TDD",
+		"shortDescription": "Implement behavior through a red-green-refactor loop."
+	}
+}

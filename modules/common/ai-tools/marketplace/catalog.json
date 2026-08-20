@@ -221,6 +221,13 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "tdd",
+			"displayName": "TDD",
+			"description": "Implement behavior through a red-green-refactor loop.",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
 			"name": "technical-writing",
 			"displayName": "Technical Writing",
 			"description": "Write and review concise technical prose.",
