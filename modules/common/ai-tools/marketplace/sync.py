@@ -62,7 +62,11 @@ def main() -> None:
                 "author": owner,
             },
         )
-        shutil.copytree(SKILLS_DIR / name, plugin_dir / "skills" / name)
+        shutil.copytree(
+            SKILLS_DIR / name,
+            plugin_dir / "skills" / name,
+            ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+        )
 
     dump(
         CODEX_INDEX,

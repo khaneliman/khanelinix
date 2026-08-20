@@ -279,7 +279,7 @@ def directory_files(root: Path) -> dict[str, bytes]:
     return {
         path.relative_to(root).as_posix(): path.read_bytes()
         for path in sorted(root.rglob("*"))
-        if path.is_file()
+        if path.is_file() and "__pycache__" not in path.parts and path.suffix != ".pyc"
     }
 
 

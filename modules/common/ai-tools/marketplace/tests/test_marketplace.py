@@ -229,6 +229,22 @@ class MarketplaceTest(unittest.TestCase):
         with self.assertRaisesRegex(marketplace.MarketplaceError, "out of sync"):
             marketplace.validate_repository(self.root)
 
+    def test_ignores_transient_python_bytecode(self) -> None:
+        skill_dir = self.write_skill("alpha-skill")
+        self.write_repository(["alpha-skill"])
+        payload_dir = self.plugins_tree / "alpha-skill/skills/alpha-skill"
+        relative_cache = Path("tests/__pycache__/test_contract.cpython-314.pyc")
+        canonical_cache = skill_dir / relative_cache
+        plugin_cache = payload_dir / relative_cache
+        canonical_cache.parent.mkdir(parents=True)
+        plugin_cache.parent.mkdir(parents=True)
+        canonical_cache.write_bytes(b"canonical transient bytecode")
+        plugin_cache.write_bytes(b"plugin transient bytecode")
+
+        result = marketplace.validate_repository(self.root)
+
+        self.assertEqual(result["plugins"], 1)
+
     def test_rejects_root_skills_path(self) -> None:
         self.write_skill("alpha-skill")
         self.write_repository(["alpha-skill"])
