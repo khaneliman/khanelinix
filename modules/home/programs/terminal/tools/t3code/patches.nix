@@ -3,14 +3,15 @@ let
   fetchPatch =
     {
       name,
-      rev,
+      rev ? null,
+      url ? "https://github.com/khaneliman/t3code/commit/${rev}.patch",
       hash,
       excludes ? [ ],
     }:
     pkgs.fetchpatch2 {
       name = "t3code-${name}.patch";
-      url = "https://github.com/khaneliman/t3code/commit/${rev}.patch";
       inherit excludes hash;
+      inherit url;
     };
 in
 (map fetchPatch [
@@ -91,6 +92,13 @@ in
     rev = "2a504ad066bd5ec1413905f0f71e906180e8ee98";
     hash = "sha256-3p2Drn04OlrcfB8hQ7sCefjD5SPx3IALcqNkESwFt9I=";
     excludes = [ "apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts" ];
+  }
+  {
+    # PR #7507 has seven commits. Pin the immutable base-to-head range so the
+    # complete fix remains available before upstream merges it.
+    name = "fix-codex-spawned-subagent-sidebar";
+    url = "https://github.com/pingdotgg/t3code/compare/24c4ba68f536d56e8482a1e4d7070a6771da551d...89b365ee5f52e9b028d71072983fe19f3d7f448c.patch";
+    hash = "sha256-trI/GNcDnWHpRGJJWN+NJVXE66762CUe5xVkFK43Ec8=";
   }
 ])
 ++ [
