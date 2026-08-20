@@ -207,6 +207,16 @@
 			"source": "./modules/common/ai-tools/marketplace/plugins/okf-memory"
 		},
 		{
+			"name": "performance-forensics",
+			"description": "Measure and diagnose performance with reproducible evidence.",
+			"version": "0.1.0",
+			"author": {
+				"name": "khaneliman"
+			},
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/marketplace/plugins/performance-forensics"
+		},
+		{
 			"name": "planning-with-files",
 			"description": "Persist task plans for long-running work.",
 			"version": "0.1.2",

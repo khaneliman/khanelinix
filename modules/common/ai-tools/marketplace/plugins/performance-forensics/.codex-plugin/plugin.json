@@ -1,0 +1,13 @@
+{
+	"name": "performance-forensics",
+	"version": "0.1.0",
+	"description": "Measure and diagnose performance with reproducible evidence.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Performance Forensics",
+		"shortDescription": "Measure and diagnose performance with reproducible evidence."
+	}
+}

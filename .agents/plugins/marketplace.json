@@ -245,6 +245,18 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "performance-forensics",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/performance-forensics"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
 			"name": "planning-with-files",
 			"source": {
 				"source": "local",

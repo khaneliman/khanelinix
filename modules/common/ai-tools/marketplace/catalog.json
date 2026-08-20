@@ -151,6 +151,13 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "performance-forensics",
+			"displayName": "Performance Forensics",
+			"description": "Measure and diagnose performance with reproducible evidence.",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
 			"name": "planning-with-files",
 			"displayName": "Planning With Files",
 			"description": "Persist task plans for long-running work.",

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Performance Forensics"
+  short_description: "Profile, diagnose, and optimize runtime performance"
+  default_prompt: "Use $performance-forensics to measure baselines, diagnose bottlenecks, and validate performance optimizations."
