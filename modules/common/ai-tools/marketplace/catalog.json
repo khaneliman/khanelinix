@@ -256,6 +256,13 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "verification-harness",
+			"displayName": "Verification Harness",
+			"description": "Create or audit deterministic verification surfaces.",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
 			"name": "why",
 			"displayName": "Why",
 			"description": "Investigate motivation and design rationale behind code.",

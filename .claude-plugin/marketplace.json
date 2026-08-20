@@ -357,6 +357,16 @@
 			"source": "./modules/common/ai-tools/marketplace/plugins/unslop"
 		},
 		{
+			"name": "verification-harness",
+			"description": "Create or audit deterministic verification surfaces.",
+			"version": "0.1.0",
+			"author": {
+				"name": "khaneliman"
+			},
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/marketplace/plugins/verification-harness"
+		},
+		{
 			"name": "why",
 			"description": "Investigate motivation and design rationale behind code.",
 			"version": "0.1.3",

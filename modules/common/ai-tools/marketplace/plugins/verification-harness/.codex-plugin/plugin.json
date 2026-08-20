@@ -1,0 +1,13 @@
+{
+	"name": "verification-harness",
+	"version": "0.1.0",
+	"description": "Create or audit deterministic verification surfaces.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Verification Harness",
+		"shortDescription": "Create or audit deterministic verification surfaces."
+	}
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Verification Harness"
+  short_description: "Create or audit deterministic verification surfaces"
+  default_prompt: "Use $verification-harness to create or audit a project-local deterministic verification surface."
