@@ -34,9 +34,8 @@ decision, for example "per boundary discipline". Do not restate the principle._
 
 ## Synthesis Decision
 
-_Filled in by [arena](../../arena/SKILL.md). Record which candidate became the
-base and why, what you adapted from each of the others, and what you rejected
-and why._
+_Filled in by the `arena` skill. Record which candidate became the base and why,
+what you adapted from each of the others, and what you rejected and why._
 
 ## Tradeoffs Accepted
 
