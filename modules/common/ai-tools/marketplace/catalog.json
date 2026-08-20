@@ -281,7 +281,8 @@
 		"multi-provider-sdlc": "Requires the private khanelinix agent registry and provider routes.",
 		"playwright": "Requires the khanelinix Nix-backed Playwright wrapper.",
 		"playwright-interactive": "Requires a harness-native interactive runtime and local browser package.",
-		"reflect": "Routes accepted skill edits into the khanelinix canonical tree."
+		"reflect": "Routes accepted skill edits into the khanelinix canonical tree.",
+		"swarm": "Requires the private khanelinix agent registry and host delegation controls."
 	},
 	"bundles": {
 		"ai-tools": {
