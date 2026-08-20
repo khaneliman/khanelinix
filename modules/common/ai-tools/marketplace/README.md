@@ -68,6 +68,133 @@ npx skills add khaneliman/khanelinix \
   --skill technical-writing unslop --global --copy --yes
 ```
 
+## Start with the workflow
+
+Install `workflow-core`, then describe the task normally. Agents can select
+`engineering-workflow` from Agent Skills metadata for routine code,
+configuration, script, dependency, migration, feature, refactor, and bug-fix
+work. This automatic activation is best-effort. If an agent misses the route,
+say `Use engineering-workflow` explicitly. You do not need to invoke every
+downstream skill.
+
+`engineering-workflow` owns this lifecycle:
+
+```text
+Ground -> Shape -> Implement -> Verify -> Review -> Correct -> Hand off
+  how      architect   domain skill   blast-radius   interrogate
+  why      engineering-principles
+```
+
+Every risk level requires focused verification. Normal-risk and high-risk work
+also requires a fresh independent review. The workflow allows one correction and
+one re-review before handoff.
+
+The workflow never commits, pushes, merges, publishes, deploys, or performs
+another external write automatically. The agent stops when required authority is
+missing.
+
+Use a direct specialist entry when the task does not need the routine mutation
+lifecycle:
+
+| Task                                           | Entry skill                         |
+| ---------------------------------------------- | ----------------------------------- |
+| Explain code without changing it               | `how`                               |
+| Investigate rationale or regression history    | `why`                               |
+| Diagnose without implementing a fix            | Matching diagnostic or domain skill |
+| Review Git history or a local change stack     | `git-toolkit`                       |
+| Review GitHub issues, pull requests, or checks | `github-toolkit`                    |
+| Evaluate architecture without implementation   | `software-engineering`              |
+| Run large, cross-cutting, or unattended work   | `figure-it-out`                     |
+| Compare competing artifacts                    | `arena`                             |
+| Run adversarial multi-model review             | `interrogate`                       |
+
+An explicit `/architect` request uses the design-led `architect` workflow.
+Inside routine mutation work, `engineering-workflow` can call `architect` only
+for its Shape phase.
+
+## Choose the task shape
+
+`engineering-workflow` selects one task shape. Each shape changes the evidence,
+verification target, and completion signal.
+
+| Shape      | Required emphasis                                                            |
+| ---------- | ---------------------------------------------------------------------------- |
+| Bug fix    | Reproduce first, fix the cause, and rerun the failing signal.                |
+| Feature    | Read contracts, shape types and placement, then test new and shared paths.   |
+| Refactor   | Find callers, pin behavior, subtract first, and prove behavior parity.       |
+| Prototype  | State one question, build the smallest probe, and mark throwaway work.       |
+| Evaluation | Fix criteria, compare identical surfaces, and record the reversal condition. |
+
+Investigation is a phase inside each shape. For explanation-only work, use `how`
+or `why` directly.
+
+This task-shape taxonomy is adapted from pstack. See the canonical
+[attribution and license](../skills/engineering-workflow/references/task-shapes.md#attribution).
+
+## Understand the workflow-core skills
+
+Every `workflow-core` member remains an independent plugin. The bundle combines
+lifecycle methods, direct routes, and support utilities.
+
+| Skill                    | Role in the bundle                                |
+| ------------------------ | ------------------------------------------------- |
+| `engineering-workflow`   | Routine mutation lifecycle and gates              |
+| `how`                    | Structure discovery and explanation               |
+| `why`                    | Rationale and regression history                  |
+| `architect`              | Types, signatures, placement, and implementation  |
+| `engineering-principles` | Scope, sequence, simplicity, and verification     |
+| `blast-radius`           | Reach analysis beyond the diff                    |
+| `interrogate`            | Independent multi-model challenge                 |
+| `arena`                  | Parallel candidate comparison                     |
+| `figure-it-out`          | Large, unmatched, or unattended work              |
+| `git-toolkit`            | Git history and change stacks                     |
+| `github-toolkit`         | GitHub issues, pull requests, reviews, and checks |
+| `software-engineering`   | Architecture evaluation and large-change plans    |
+| `planning-with-files`    | Persistent transient task state                   |
+| `show-me-your-work`      | Reviewable decision trails                        |
+| `recall`                 | Prior work reconstruction                         |
+| `okf-memory`             | Durable project and user knowledge                |
+| `unslop`                 | User-facing prose cleanup                         |
+
+Domain skills can own methods across several lifecycle phases. In the `nix`
+bundle, `nix-toolkit` owns operational diagnosis and `writing-nix` owns
+expression authoring.
+
+## Examples
+
+Natural task descriptions can enter the default lifecycle:
+
+```text
+Fix the idle scroll drift. Reproduce it first and keep the patch narrow.
+
+Add export support. Shape the data boundary before implementation.
+
+Refactor this parser without changing behavior. Prove caller parity.
+```
+
+Use direct wording to select a specialist workflow:
+
+```text
+Use how to explain where request validation lives.
+
+Use software-engineering to evaluate this subsystem boundary without edits.
+
+Use figure-it-out for this cross-cutting migration and keep a decision trail.
+
+Use interrogate to challenge this change before it ships.
+```
+
+## Host-only workflow extensions
+
+The portable marketplace excludes `multi-provider-sdlc`. It requires private
+provider routes. A host that installs this overlay can route one lifecycle phase
+across Anthropic, Google, and OpenAI workers. The caller still owns the
+lifecycle and final judgment.
+
+The marketplace also excludes `reflect`. With approval, it routes accepted skill
+edits into the khanelinix canonical tree. Portable workflows treat it as an
+optional final phase.
+
 ## Use the Codex marketplace
 
 Current Codex releases require separate marketplace and plugin commands:
