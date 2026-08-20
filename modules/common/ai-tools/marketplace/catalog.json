@@ -165,6 +165,13 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "research",
+			"displayName": "Research",
+			"description": "Research external questions with cited primary sources.",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
 			"name": "rust-toolkit",
 			"displayName": "Rust Toolkit",
 			"description": "Build and maintain Rust crates, services, and CLIs.",

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Primary-Source Research"
+  short_description: "Research external questions with cited primary sources"
+  default_prompt: "Use $research for primary-source external research and return a cited, read-only answer unless I explicitly request a repository artifact."

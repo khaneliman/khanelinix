@@ -269,6 +269,18 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "research",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/research"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
 			"name": "rust-toolkit",
 			"source": {
 				"source": "local",

@@ -1,0 +1,13 @@
+{
+	"name": "research",
+	"version": "0.1.0",
+	"description": "Research external questions with cited primary sources.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Research",
+		"shortDescription": "Research external questions with cited primary sources."
+	}
+}

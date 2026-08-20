@@ -227,6 +227,16 @@
 			"source": "./modules/common/ai-tools/marketplace/plugins/recall"
 		},
 		{
+			"name": "research",
+			"description": "Research external questions with cited primary sources.",
+			"version": "0.1.0",
+			"author": {
+				"name": "khaneliman"
+			},
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/marketplace/plugins/research"
+		},
+		{
 			"name": "rust-toolkit",
 			"description": "Build and maintain Rust crates, services, and CLIs.",
 			"version": "0.1.2",
