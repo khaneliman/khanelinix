@@ -2,11 +2,21 @@
   config,
   lib,
   pkgs,
+
+  osConfig ? { },
   ...
 }:
 let
   cfg = config.khanelinix.services.voxtype;
+  hyprlandPackage =
+    if osConfig ? programs.hyprland.enable && osConfig.programs.hyprland.enable then
+      osConfig.programs.hyprland.package
+    else
+      config.wayland.windowManager.hyprland.package;
   isLinux = pkgs.stdenv.hostPlatform.isLinux;
+  voxtypePackage = pkgs.voxtype-onnx.overrideAttrs (oldAttrs: {
+    patches = (oldAttrs.patches or [ ]) ++ [ ./streaming-session-hooks.patch ];
+  });
 in
 {
   options.khanelinix.services.voxtype = {
@@ -27,14 +37,43 @@ in
       services.voxtype = {
         enable = true;
 
-        package = pkgs.voxtype-vulkan;
-        loadModels = [ config.services.voxtype.settings.whisper.model ];
+        package = voxtypePackage;
+        loadModels = [ config.services.voxtype.settings.parakeet.model ];
+        environment = {
+          DOTOOL_PIPE = "%t/voxtype-dotool-pipe";
+          PATH = lib.makeBinPath (
+            [
+              pkgs.coreutils
+              pkgs.dotool
+              pkgs.runtimeShellPackage
+              pkgs.which
+              pkgs.wl-clipboard
+              pkgs.wtype
+            ]
+            ++ lib.optional config.khanelinix.programs.graphical.wms.hyprland.enable hyprlandPackage
+            ++ lib.optional (
+              !config.khanelinix.programs.graphical.wms.hyprland.enable
+              && config.khanelinix.programs.graphical.wms.sway.enable
+            ) config.wayland.windowManager.sway.package
+          );
+        };
         wayland.display = "wayland-1";
         settings = lib.mkMerge [
           {
             state_file = "auto";
-            hotkey.enabled = false;
+            engine = "parakeet";
+            hotkey = {
+              enabled = false;
+              mode = "toggle";
+            };
             audio.max_duration_secs = 300;
+            parakeet = {
+              model = "parakeet-unified-en-0.6b";
+              streaming = true;
+              streaming_chunk_secs = 0.32;
+              streaming_left_context_secs = 5.6;
+              streaming_right_context_secs = 0.32;
+            };
             whisper = {
               model = "base.en";
               language = "en";
@@ -59,9 +98,8 @@ in
 
           (lib.mkIf config.khanelinix.programs.graphical.wms.hyprland.enable {
             output = {
-              pre_recording_command = "hyprctl dispatch 'hl.dsp.submap(\"voxtype_recording\")'";
-              pre_output_command = "hyprctl dispatch 'hl.dsp.submap(\"voxtype_suppress\")'";
-              post_output_command = "hyprctl dispatch 'hl.dsp.submap(\"reset\")'";
+              pre_recording_command = "hyprctl --instance 0 dispatch 'hl.dsp.submap(\"voxtype_suppress\")'";
+              post_output_command = "hyprctl --instance 0 dispatch 'hl.dsp.submap(\"reset\")'";
             };
           })
 
@@ -72,13 +110,38 @@ in
             )
             {
               output = {
-                pre_recording_command = "swaymsg mode voxtype_recording";
-                pre_output_command = "swaymsg mode voxtype_suppress";
+                pre_recording_command = "swaymsg mode voxtype_suppress";
                 post_output_command = "swaymsg mode default";
               };
             }
           )
         ];
+      };
+
+      systemd.user.services = {
+        dotoold = {
+          Unit.Description = "dotool daemon for low-latency keyboard injection";
+          Service = {
+            ExecStart = lib.getExe' pkgs.dotool "dotoold";
+            Environment = [
+              "DOTOOL_PIPE=%t/voxtype-dotool-pipe"
+              "PATH=${
+                lib.makeBinPath [
+                  pkgs.coreutils
+                  pkgs.procps
+                ]
+              }"
+            ];
+            Restart = "on-failure";
+            RestartSec = "5s";
+          };
+          Install.WantedBy = [ "default.target" ];
+        };
+
+        voxtype.Unit = {
+          Wants = [ "dotoold.service" ];
+          After = [ "dotoold.service" ];
+        };
       };
     })
   ];

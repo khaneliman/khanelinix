@@ -325,7 +325,11 @@ in
               "Alt_R" = "nop";
               "Shift_L" = "nop";
               "Shift_R" = "nop";
-              "F12" = "mode default";
+              "F13" = "exec ${mkStartCommand voxtype-toggle}, mode default";
+              "${swayCfg.modifier}+d" = "exec ${mkStartCommand voxtype-toggle}, mode default";
+              "F14" = "exec ${mkStartCommand voxtype-cancel}, mode default";
+              "${swayCfg.modifier}+Shift+d" = "exec ${mkStartCommand voxtype-cancel}, mode default";
+              "F12" = "exec ${mkStartCommand voxtype-cancel}, mode default";
             };
 
             screenshot = {

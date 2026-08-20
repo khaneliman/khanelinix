@@ -1,0 +1,36 @@
+diff --git a/src/daemon.rs b/src/daemon.rs
+--- a/src/daemon.rs
++++ b/src/daemon.rs
+@@ -3527,8 +3527,8 @@ impl Daemon {
+                                 if let Err(e) = s.type_partial_delta(
+                                     chain,
+                                     text,
+-                                    self.config.output.pre_output_command.as_deref(),
+-                                    self.config.output.post_output_command.as_deref(),
++                                    None,
++                                    None,
+                                 ).await {
+                                     tracing::warn!("Streaming partial delta type failed: {}", e);
+                                 }
+@@ -3546,8 +3546,8 @@ impl Daemon {
+                                     chain,
+                                     &text,
+                                     pp,
+-                                    self.config.output.pre_output_command.as_deref(),
+-                                    self.config.output.post_output_command.as_deref(),
++                                    None,
++                                    None,
+                                 ).await {
+                                     tracing::error!("Streaming commit_segment failed: {}", e);
+                                 }
+@@ -3567,8 +3567,8 @@ impl Daemon {
+                                     chain,
+                                     backspace,
+                                     &text,
+-                                    self.config.output.pre_output_command.as_deref(),
+-                                    self.config.output.post_output_command.as_deref(),
++                                    None,
++                                    None,
+                                 ).await {
+                                     tracing::error!("Streaming replace_and_commit failed: {}", e);
+                                 }
