@@ -1,0 +1,55 @@
+diff --git a/codexbar.sh b/codexbar.sh
+index 4dddb05..2600b38 100755
+--- a/codexbar.sh
++++ b/codexbar.sh
+@@ -196,6 +196,11 @@ fetch_provider() {
+ # Sequential fetch with a small stagger between providers (avoids 429s).
+ STAGGER_SECS="${CODEXBAR_STAGGER:-0.5}"
+ PROVIDER_TIMEOUT_SECS="${CODEXBAR_PROVIDER_TIMEOUT:-20}"
++CACHE_MAX_AGE_SECS="${CODEXBAR_CACHE_MAX_AGE:-3600}"
++case "$CACHE_MAX_AGE_SECS" in
++    ''|*[!0-9]*) CACHE_MAX_AGE_SECS=3600 ;;
++esac
++CACHE_CAPTURED_AT="$(date -u +%FT%TZ)"
+ LAST_GOOD="$CACHE_DIR/last.json"
+ 
+ tmpdir="$(mktemp -d)"
+@@ -243,24 +248,34 @@ merged+="]"
+ 
+ last_good_json=""
+ if [[ -f "$LAST_GOOD" ]]; then
+-    last_good_json="$(jq -c 'select(type == "array")' "$LAST_GOOD" 2>/dev/null || true)"
++    last_good_json="$(jq -c --argjson max_age "$CACHE_MAX_AGE_SECS" '
++        def capture_time:
++            (.cachedAt // .usage.updatedAt // .updatedAt // empty)
++            | fromdateiso8601;
++        select(type == "array")
++        | if $max_age == 0 then .
++          else map(select((try capture_time catch 0) >= (now - $max_age)))
++          end
++    ' "$LAST_GOOD" 2>/dev/null || true)"
++    [[ -n "$last_good_json" ]] && printf '%s\n' "$last_good_json" > "$LAST_GOOD"
+ fi
+ 
+ # Persist fresh successful provider snapshots without dropping older successful
+ # entries for providers that failed this refresh.
+ if [[ "$merged" != "[]" ]] && echo "$merged" | jq -e 'any(.error | not)' >/dev/null 2>&1; then
+     if [[ -n "$last_good_json" ]]; then
+-        merged_for_cache="$(jq -c --argjson prev "$last_good_json" '
++        merged_for_cache="$(jq -c --argjson prev "$last_good_json" --arg captured_at "$CACHE_CAPTURED_AT" '
+             def cache_key: (.provider // "") + "\u0000" + (.account // "");
+             ([$prev[]? | select((.error | not) and (.stale != true))
+               | {key: cache_key, value: .}] | from_entries) as $ok_prev
+             | ([.[]? | select(.error | not)
+-            | {key: cache_key, value: (del(.stale))}] | from_entries) as $ok_fresh
++            | {key: cache_key, value: (del(.stale) + {cachedAt: $captured_at})}] | from_entries) as $ok_fresh
+             | ($ok_prev + $ok_fresh) | [.[]]
+         ' <<< "$merged")"
+         [[ -n "$merged_for_cache" ]] && echo "$merged_for_cache" > "$LAST_GOOD"
+     else
+-        echo "$merged" | jq -c 'map(select(.error | not) | del(.stale))' > "$LAST_GOOD"
++        echo "$merged" | jq -c --arg captured_at "$CACHE_CAPTURED_AT" \
++            'map(select(.error | not) | del(.stale) + {cachedAt: $captured_at})' > "$LAST_GOOD"
+     fi
+     last_good_json="$(jq -c 'select(type == "array")' "$LAST_GOOD" 2>/dev/null || true)"
+ fi

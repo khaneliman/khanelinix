@@ -35,17 +35,23 @@ let
 in
 stdenvNoCC.mkDerivation {
   pname = "codexbar-waybar";
-  version = "0.3.1-unstable-2026-06-25";
+  version = "0.4.0-unstable-2026-08-01";
 
   src = fetchFromGitHub {
-    owner = "khaneliman";
+    owner = "Marouan-chak";
     repo = "codexbar-waybar";
-    rev = "87be28ddb59ecfdb873e6d743f29491fc73c0594";
-    hash = "sha256-62c1kGCAlScgQiq5O9w9reECFw66GFuj8vRPBKzlbjw=";
+    rev = "474b4a292c14ba72d5ee2941d73cecd2258035c1";
+    hash = "sha256-KgjvxfJO0v3K2z2h6FMGMpJIs4WNJmMhVSVgPTSLeKA=";
     fetchSubmodules = false;
   };
 
   nativeBuildInputs = [ makeWrapper ];
+  nativeCheckInputs = [ jq ];
+
+  patches = [
+    ./cache-max-age.patch
+    ./round-percentages.patch
+  ];
 
   postPatch = ''
     substituteInPlace codexbar-popup.py \
@@ -73,6 +79,20 @@ stdenvNoCC.mkDerivation {
         echo "$body"
     }'
 
+  '';
+
+  doCheck = true;
+
+  checkPhase = ''
+    runHook preCheck
+
+    ${lib.getExe bash} ${./tests/cache-max-age.sh} \
+      ./codexbar.sh \
+      ${./tests/stale-cache.json} \
+      ${lib.getExe bash} \
+      ${lib.getExe' coreutils "false"}
+
+    runHook postCheck
   '';
 
   installPhase = ''
@@ -155,7 +175,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Waybar custom module and GTK4 popover for CodexBar Linux CLI";
-    homepage = "https://github.com/khaneliman/codexbar-waybar";
+    homepage = "https://github.com/Marouan-chak/codexbar-waybar";
     license = lib.licenses.mit;
     mainProgram = "codexbar-waybar";
     platforms = lib.platforms.linux;
