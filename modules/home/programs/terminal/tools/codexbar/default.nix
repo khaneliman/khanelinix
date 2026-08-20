@@ -13,36 +13,41 @@ let
     ;
 
   cfg = config.khanelinix.programs.terminal.tools.codexbar;
-  # json = pkgs.formats.json { };
-  #
-  # moduleProviders = [
-  #   {
-  #     id = "codex";
-  #     enabled = config.khanelinix.programs.terminal.tools.codex.enable or false;
-  #   }
-  #   {
-  #     id = "claude";
-  #     enabled = config.khanelinix.programs.terminal.tools.claude-code.enable or false;
-  #   }
-  #   {
-  #     id = "antigravity";
-  #     enabled = config.khanelinix.programs.terminal.tools.antigravity-cli.enable or false;
-  #   }
-  #   {
-  #     id = "copilot";
-  #     enabled = config.khanelinix.programs.terminal.tools.github-copilot-cli.enable or false;
-  #   }
-  #   {
-  #     id = "ollama";
-  #     enabled =
-  #       (config.khanelinix.services.ollama.enable or false) || (config.services.ollama.enable or false);
-  #   }
-  # ];
+  moduleProviders = [
+    {
+      id = "codex";
+      enabled = config.khanelinix.programs.terminal.tools.codex.enable or false;
+    }
+    {
+      id = "claude";
+      enabled = config.khanelinix.programs.terminal.tools.claude-code.enable or false;
+    }
+    {
+      id = "antigravity";
+      enabled = config.khanelinix.programs.terminal.tools.antigravity-cli.enable or false;
+    }
+    {
+      id = "copilot";
+      enabled = config.khanelinix.programs.terminal.tools.github-copilot-cli.enable or false;
+    }
+    {
+      id = "ollama";
+      enabled =
+        (config.khanelinix.services.ollama.enable or false) || (config.services.ollama.enable or false);
+    }
+  ];
 
-  # enabledProviders = map (provider: {
-  #   inherit (provider) id;
-  #   enabled = true;
-  # }) (lib.filter (provider: provider.enabled) moduleProviders);
+  enabledProviderIds =
+    map (provider: provider.id) (lib.filter (provider: provider.enabled) moduleProviders)
+    ++ cfg.extraProviders;
+  initialConfig = (pkgs.formats.json { }).generate "codexbar-config.json" {
+    version = 1;
+    providers = map (id: {
+      inherit id;
+      enabled = true;
+    }) (lib.unique enabledProviderIds);
+  };
+  configPath = "${config.home.homeDirectory}/.codexbar/config.json";
 in
 {
   options.khanelinix.programs.terminal.tools.codexbar = {
@@ -60,19 +65,14 @@ in
   };
 
   config = mkIf cfg.enable {
-    home = {
-      packages = [ pkgs.khanelinix.codexbar-cli ];
+    home.packages = [ pkgs.khanelinix.codexbar-cli ];
 
-      # NOTE: Requires inline secrets for copilot and mutates when fixing connections.
-      # file.".codexbar/config.json".source = json.generate "codexbar-config.json" {
-      #   version = 1;
-      #   providers =
-      #     enabledProviders
-      #     ++ map (id: {
-      #       inherit id;
-      #       enabled = true;
-      #     }) cfg.extraProviders;
-      # };
-    };
+    # CodexBar and its popup mutate this file for provider credentials and
+    # settings. Seed only a missing file so later runtime changes stay writable.
+    home.activation.initializeCodexbarConfig = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+      if [[ ! -e ${lib.escapeShellArg configPath} && ! -L ${lib.escapeShellArg configPath} ]]; then
+        run ${lib.getExe' pkgs.coreutils "install"} -Dm0600 ${initialConfig} ${lib.escapeShellArg configPath}
+      fi
+    '';
   };
 }
