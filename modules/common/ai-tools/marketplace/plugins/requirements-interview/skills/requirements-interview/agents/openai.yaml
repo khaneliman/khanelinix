@@ -1,0 +1,4 @@
+interface:
+  display_name: "Requirements Interview"
+  short_description: "Resolve material product choices through bounded questions"
+  default_prompt: "Use $requirements-interview to discover facts, run probes, and interview me through bounded frontier questions with recommendations."

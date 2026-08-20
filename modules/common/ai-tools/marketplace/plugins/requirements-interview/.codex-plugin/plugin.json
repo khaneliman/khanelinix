@@ -1,0 +1,13 @@
+{
+	"name": "requirements-interview",
+	"version": "0.1.0",
+	"description": "Resolve material product choices through bounded questions.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Requirements Interview",
+		"shortDescription": "Resolve material product choices through bounded questions."
+	}
+}
