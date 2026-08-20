@@ -1,6 +1,6 @@
 ---
 name: verification-harness
-description: "Create or audit a deterministic project-local verification harness when checks are missing or unreliable. Do not use only to run an existing check."
+description: "Create or audit a deterministic project-local verification harness inside a caller-owned Verify phase. Direct use is audit-only. Do not use only to run an existing check."
 license: Complete terms in LICENSE
 ---
 

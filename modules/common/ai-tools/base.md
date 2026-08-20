@@ -79,14 +79,17 @@ Match task shape to a workflow skill before solo work. Closest trigger wins.
   `show-me-your-work` decision trail.
 - Explicit provider or model diversity, or council routing:
   `multi-provider-sdlc` selects seats inside the caller-owned endpoint.
-- External primary-source research: `research`. Unresolved material product
-  choice after autonomous discovery: `requirements-interview`.
-- Explicit TDD or test-first implementation: `tdd`. Missing or unreliable
-  reusable verification surface: `verification-harness`, with writes explicitly
-  authorized. Measured performance diagnosis or improvement:
-  `performance-forensics`.
-- Explicit independent worker fan-out: `swarm`. The caller keeps lifecycle,
-  integration, and final judgment.
+- External primary-source research with no mutation: `research`. Standalone
+  material product-choice clarification: `requirements-interview`.
+- For mutation work, `engineering-workflow` keeps lifecycle ownership. Inside
+  it, use `research` and `requirements-interview` in Ground, explicit `tdd` in
+  Implement, and `verification-harness` or `performance-forensics` in Verify.
+  Harness creation or repair still requires explicit write authority.
+- Read-only performance diagnosis: `performance-forensics`. Read-only
+  verification-surface audit: `verification-harness`.
+- Explicit independent worker fan-out adds `swarm` as a host-only overlay to the
+  selected workflow. Never use it as the entry workflow. The caller keeps
+  lifecycle, integration, and final judgment.
 - User-facing prose: `unslop`. Docs, comments, commits, PR text:
   `technical-writing`.
 - Resuming prior work: `recall`. After a correction or a clean complex landing:

@@ -2,7 +2,7 @@
 	"name": "verification-harness",
 	"displayName": "Verification Harness",
 	"description": "Create or audit deterministic verification surfaces.",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"author": {
 		"name": "khaneliman"
 	}

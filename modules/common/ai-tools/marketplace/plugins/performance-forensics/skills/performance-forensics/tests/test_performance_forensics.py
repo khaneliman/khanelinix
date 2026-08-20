@@ -75,6 +75,8 @@ class PerformanceForensicsFrontmatterContract(unittest.TestCase):
             "memory-profiler",
         ):
             self.assertIn(trigger, description)
+        self.assertIn("caller-owned mutation lifecycle", description)
+        self.assertIn("ground or verify method", description)
 
     def test_playbook_stays_under_line_budget(self) -> None:
         self.assertLess(len(read(SKILL_MD).splitlines()), MAX_PLAYBOOK_LINES)

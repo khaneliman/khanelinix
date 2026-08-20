@@ -2,7 +2,7 @@
 	"name": "engineering-workflow",
 	"displayName": "Engineering Workflow",
 	"description": "Run routine software changes through a complete lifecycle.",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"author": {
 		"name": "khaneliman"
 	}

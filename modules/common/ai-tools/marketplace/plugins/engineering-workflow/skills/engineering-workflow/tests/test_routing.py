@@ -259,6 +259,17 @@ class RepositoryRoutingContract(unittest.TestCase):
         ):
             self.assertIn(f"`{skill}`", text)
 
+    def test_base_keeps_mutating_leaf_methods_inside_lifecycle(self) -> None:
+        text = normalized(BASE_MD)
+        self.assertIn(
+            "For mutation work, `engineering-workflow` keeps lifecycle ownership",
+            text,
+        )
+        self.assertIn("explicit `tdd` in Implement", text)
+        self.assertIn("Harness creation or repair", text)
+        self.assertIn("`swarm` as a host-only overlay", text)
+        self.assertIn("Never use it as the entry workflow", text)
+
     def test_multi_provider_root_rejects_lifecycle_ownership(self) -> None:
         text = normalized(MULTI_PROVIDER_ROOT / "SKILL.md")
         self.assertIn("does not own lifecycle sequencing", text)

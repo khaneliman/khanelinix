@@ -42,6 +42,8 @@ class VerificationHarnessContract(unittest.TestCase):
         description = fields["description"].lower()
         for term in ("create", "audit", "deterministic", "do not use only to run"):
             self.assertIn(term, description)
+        self.assertIn("caller-owned verify phase", description)
+        self.assertIn("direct use is audit-only", description)
 
     def test_modes_distinguish_creation_and_audit_from_run(self) -> None:
         _, body = split_frontmatter(read(SKILL_MD))

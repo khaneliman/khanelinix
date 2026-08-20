@@ -2,7 +2,7 @@
 	"name": "performance-forensics",
 	"displayName": "Performance Forensics",
 	"description": "Measure and diagnose performance with reproducible evidence.",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"author": {
 		"name": "khaneliman"
 	}

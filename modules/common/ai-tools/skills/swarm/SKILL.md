@@ -1,6 +1,6 @@
 ---
 name: swarm
-description: "Host-only explicit fan-out for /swarm or 'swarm this'. Partitions independent worker slices; caller owns integration and final judgment."
+description: "Host-only explicit fan-out overlay for /swarm or 'swarm this'. Never an entry workflow; caller owns lifecycle, integration, and final judgment."
 license: Complete terms in LICENSE
 ---
 

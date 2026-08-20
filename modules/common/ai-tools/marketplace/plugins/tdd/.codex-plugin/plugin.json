@@ -1,6 +1,6 @@
 {
 	"name": "tdd",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "Implement behavior through a red-green-refactor loop.",
 	"author": {
 		"name": "khaneliman"

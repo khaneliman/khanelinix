@@ -40,8 +40,9 @@ class SwarmContract(unittest.TestCase):
         fields, body = split_frontmatter(read(SKILL_MD))
         self.assertEqual(fields["name"], "swarm")
         description = fields["description"].lower()
-        for term in ("host-only", "explicit", "/swarm", "swarm this"):
+        for term in ("host-only", "explicit", "overlay", "/swarm", "swarm this"):
             self.assertIn(term, description)
+        self.assertIn("never an entry workflow", description)
         self.assertIn("Do not implicitly invoke", " ".join(body.split()))
 
     def test_fanout_contract_is_bounded_and_packetized(self) -> None:

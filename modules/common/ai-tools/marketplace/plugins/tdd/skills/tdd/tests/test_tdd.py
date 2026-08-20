@@ -69,6 +69,7 @@ class TddFrontmatterContract(unittest.TestCase):
         self.assertIn("test-first", description)
         self.assertIn("red-green-refactor", description)
         self.assertIn("explicit tdd", description)
+        self.assertIn("implement method inside a caller-owned lifecycle", description)
 
     def test_playbook_stays_under_line_budget(self) -> None:
         self.assertLess(len(read(SKILL_MD).splitlines()), MAX_PLAYBOOK_LINES)

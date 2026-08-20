@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: Red-green-refactor implementation method for explicit TDD or test-first requests. Requires red evidence, minimal green implementation, and rerun validation.
+description: "Red-green-refactor Implement method inside a caller-owned lifecycle for explicit TDD or test-first requests. Requires red evidence, minimal green implementation, and rerun validation."
 license: Complete terms in LICENSES/
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: performance-forensics
-description: Measured performance diagnosis or improvement for latency, CPU, throughput, I/O, contention, traces, or hillclimbing. Read-only diagnosis by default. Use memory-profiler for leaks, OOM, or heap fragmentation.
+description: "Read-only measured performance diagnosis for latency, CPU, throughput, I/O, contention, traces, or hillclimbing. Improvement is a Ground or Verify method inside a caller-owned mutation lifecycle. Use memory-profiler for leaks, OOM, or heap fragmentation."
 license: Complete terms in LICENSE
 ---
 
