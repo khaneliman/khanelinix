@@ -34,6 +34,7 @@ in
           {
             state_file = "auto";
             hotkey.enabled = false;
+            audio.max_duration_secs = 300;
             whisper = {
               model = "base.en";
               language = "en";
