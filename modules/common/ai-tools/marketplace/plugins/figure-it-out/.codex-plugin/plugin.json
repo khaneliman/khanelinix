@@ -1,6 +1,6 @@
 {
 	"name": "figure-it-out",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "Design an auditable playbook when no narrower one fits.",
 	"author": {
 		"name": "khaneliman"

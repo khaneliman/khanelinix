@@ -2,7 +2,7 @@
 	"name": "arena",
 	"displayName": "Arena",
 	"description": "Parallel candidates, base selection, and grafting.",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"author": {
 		"name": "khaneliman"
 	}

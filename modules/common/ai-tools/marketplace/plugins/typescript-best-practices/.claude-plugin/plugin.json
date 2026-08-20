@@ -2,7 +2,7 @@
 	"name": "typescript-best-practices",
 	"displayName": "TypeScript Best Practices",
 	"description": "TypeScript best practices for edits.",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"author": {
 		"name": "khaneliman"
 	}

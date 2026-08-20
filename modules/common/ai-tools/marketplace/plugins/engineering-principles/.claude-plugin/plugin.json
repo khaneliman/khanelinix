@@ -2,7 +2,7 @@
 	"name": "engineering-principles",
 	"displayName": "Engineering Principles",
 	"description": "Principles for lean, verified agentic work.",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"author": {
 		"name": "khaneliman"
 	}

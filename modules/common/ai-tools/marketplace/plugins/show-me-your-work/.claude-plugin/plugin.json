@@ -2,7 +2,7 @@
 	"name": "show-me-your-work",
 	"displayName": "Show Me Your Work",
 	"description": "Reviewable decision trail for long-running work.",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"author": {
 		"name": "khaneliman"
 	}

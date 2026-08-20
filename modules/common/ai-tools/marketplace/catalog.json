@@ -21,14 +21,14 @@
 			"name": "architect",
 			"displayName": "Architect",
 			"description": "Sketch types and module structure before implementation.",
-			"version": "0.1.2",
+			"version": "0.1.3",
 			"category": "Developer Tools"
 		},
 		{
 			"name": "arena",
 			"displayName": "Arena",
 			"description": "Parallel candidates, base selection, and grafting.",
-			"version": "0.1.2",
+			"version": "0.1.3",
 			"category": "Developer Tools"
 		},
 		{
@@ -42,7 +42,7 @@
 			"name": "blast-radius",
 			"displayName": "Blast Radius",
 			"description": "Find what a change could break beyond the diff.",
-			"version": "0.1.2",
+			"version": "0.1.3",
 			"category": "Developer Tools"
 		},
 		{
@@ -56,14 +56,14 @@
 			"name": "engineering-principles",
 			"displayName": "Engineering Principles",
 			"description": "Principles for lean, verified agentic work.",
-			"version": "0.1.2",
+			"version": "0.1.3",
 			"category": "Developer Tools"
 		},
 		{
 			"name": "figure-it-out",
 			"displayName": "Figure It Out",
 			"description": "Design an auditable playbook when no narrower one fits.",
-			"version": "0.1.2",
+			"version": "0.1.3",
 			"category": "Developer Tools"
 		},
 		{
@@ -91,14 +91,14 @@
 			"name": "how",
 			"displayName": "How",
 			"description": "Explain how a subsystem works from codebase exploration.",
-			"version": "0.1.2",
+			"version": "0.1.3",
 			"category": "Developer Tools"
 		},
 		{
 			"name": "interrogate",
 			"displayName": "Interrogate",
 			"description": "Multi-model adversarial review from independent angles.",
-			"version": "0.1.2",
+			"version": "0.1.3",
 			"category": "Developer Tools"
 		},
 		{
@@ -154,7 +154,7 @@
 			"name": "recall",
 			"displayName": "Recall",
 			"description": "Rebuild recent working context into a current-state brief.",
-			"version": "0.1.2",
+			"version": "0.1.3",
 			"category": "Developer Tools"
 		},
 		{
@@ -182,7 +182,7 @@
 			"name": "show-me-your-work",
 			"displayName": "Show Me Your Work",
 			"description": "Reviewable decision trail for long-running work.",
-			"version": "0.1.2",
+			"version": "0.1.3",
 			"category": "Developer Tools"
 		},
 		{
@@ -210,21 +210,21 @@
 			"name": "typescript-best-practices",
 			"displayName": "TypeScript Best Practices",
 			"description": "TypeScript best practices for edits.",
-			"version": "0.1.2",
+			"version": "0.1.3",
 			"category": "Developer Tools"
 		},
 		{
 			"name": "unslop",
 			"displayName": "Unslop",
 			"description": "Remove AI writing patterns from prose.",
-			"version": "0.1.2",
+			"version": "0.1.3",
 			"category": "Developer Tools"
 		},
 		{
 			"name": "why",
 			"displayName": "Why",
 			"description": "Investigate motivation and design rationale behind code.",
-			"version": "0.1.2",
+			"version": "0.1.3",
 			"category": "Developer Tools"
 		},
 		{

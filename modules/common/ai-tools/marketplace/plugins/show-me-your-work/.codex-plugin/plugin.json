@@ -1,6 +1,6 @@
 {
 	"name": "show-me-your-work",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "Reviewable decision trail for long-running work.",
 	"author": {
 		"name": "khaneliman"
