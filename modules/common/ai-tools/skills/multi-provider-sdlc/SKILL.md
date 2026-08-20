@@ -1,26 +1,31 @@
 ---
 name: multi-provider-sdlc
-description: Route explicit multi-provider, cross-model, council, or delegated SDLC work across native Anthropic, Google, and OpenAI agents for planning, implementation, validation, and review. Mutation requests execute through completion; plan-only or review-only must be requested.
+description: Provider-routing overlay for explicit provider or model diversity, or council work across Anthropic, Google, and OpenAI agents. Selects seats, quota circuits, and bounded phase workers; the caller owns lifecycle and final judgment.
 ---
 
 # Multi-Provider SDLC
 
-Execute the user's endpoint, not an intermediate plan. Use only current-harness
-native subagents.
+Route one caller-owned phase through current-harness native subagents. This
+skill owns provider choice, quota circuits, and bounded worker packets. It does
+not own lifecycle sequencing, correction, or final judgment.
 
-## Endpoint
+## Ownership
 
-- Mutation request: plan, implement, validate, review, correct, and finish.
-- Plan, answer, or review only: stop there only when explicitly requested.
-- A plan or deliberation does not create an approval checkpoint. Pause only for
-  missing authority, material scope expansion, or an unresolved blocking choice.
-- Use planning-with-files only when persistence helps. Default to autonomous
-  mode; use gated mode only when explicitly requested.
+- The caller supplies endpoint, phase, risk, paths, authority, success criteria,
+  and exit criteria.
+- For provider-diverse mutation, `engineering-workflow` owns phase order and
+  completion. This skill returns one phase packet to it.
+- For review, `interrogate` or the caller owns method and synthesis. This skill
+  selects provider seats only when diversity is explicit.
+- For an explicit plan-only, council, or review-only request, the user request
+  supplies the endpoint.
+- A plan does not create an approval checkpoint. Pause only for missing
+  authority, material scope expansion, or an unresolved blocking choice.
 
 ## Playbook Index
 
-Read [routing](references/routing.md) before delegation, then only playbooks
-needed for the requested endpoint:
+Read [routing](references/routing.md) before delegation, then only the playbook
+for the caller-supplied phase:
 
 - Plan, architecture, diagnosis, brainstorming, or council:
   [deliberation](references/deliberation.md)
@@ -30,9 +35,6 @@ needed for the requested endpoint:
   [validation](references/validation.md)
 - Plan, diff, code, or final quality review: [review](references/review.md)
 
-For end-to-end mutation, read implementation, validation, and review. Add
-deliberation when explicitly requested or valuable for high-risk decisions.
-
 Give workers only task, paths, constraints, allowed lane, and exit criteria.
 Preserve unrelated work. Never auto-commit, tag, merge, push, publish, or open a
-pull request.
+pull request. Return phase evidence to the caller. Do not advance another phase.

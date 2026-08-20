@@ -60,6 +60,13 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "engineering-workflow",
+			"displayName": "Engineering Workflow",
+			"description": "Run routine software changes through a complete lifecycle.",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
 			"name": "figure-it-out",
 			"displayName": "Figure It Out",
 			"description": "Design an auditable playbook when no narrower one fits.",
@@ -269,13 +276,17 @@
 				"arena",
 				"blast-radius",
 				"engineering-principles",
+				"engineering-workflow",
 				"figure-it-out",
+				"git-toolkit",
+				"github-toolkit",
 				"how",
 				"interrogate",
 				"okf-memory",
 				"planning-with-files",
 				"recall",
 				"show-me-your-work",
+				"software-engineering",
 				"unslop",
 				"why"
 			]

@@ -89,6 +89,18 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "engineering-workflow",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/engineering-workflow"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
 			"name": "figure-it-out",
 			"source": {
 				"source": "local",

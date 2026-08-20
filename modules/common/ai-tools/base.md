@@ -62,24 +62,31 @@ comments, and commit messages.
 
 Match task shape to a workflow skill before solo work. Closest trigger wins.
 
+- Routine bounded software mutation: `engineering-workflow`. It owns lifecycle
+  gates while matching domain and workflow skills own phase methods.
 - Unfamiliar code before a change, or an "are we sure" question: `how`.
   Motivation, rationale, or regression history: `why`.
-- Non-trivial feature, or change crossing module boundaries: `architect` before
-  implementation. Wide solution space for one artifact: `arena`.
-- Contested or high-stakes design: `interrogate` before shipping.
+- Inside `engineering-workflow`, use `architect` as the Shape method for a
+  non-trivial feature or boundary change. An explicit `/architect` request uses
+  its design-led implementation flow. Wide solution space for one artifact:
+  `arena`.
+- Contested or high-stakes design: `interrogate` owns review method and
+  synthesis before shipping.
 - Small diff with unclear reach: `blast-radius` before merge.
 - Diff sizing, work sequencing, debugging, verification, or context pressure:
   `engineering-principles`.
 - Large, cross-cutting, or unattended work: `figure-it-out` with a
   `show-me-your-work` decision trail.
+- Explicit provider or model diversity, or council routing:
+  `multi-provider-sdlc` selects seats inside the caller-owned endpoint.
 - User-facing prose: `unslop`. Docs, comments, commits, PR text:
   `technical-writing`.
 - Resuming prior work: `recall`. After a correction or a clean complex landing:
   `reflect`.
 - AI-configuration design, refactoring, and audits: `ai-tools-architect`.
   Repository-wide architecture evaluation and cross-cutting change planning:
-  `software-engineering`. Routine edits and Git artifact review: matching domain
-  or Git skills.
+  `software-engineering`. Domain skills execute inside the selected workflow;
+  Git artifact review uses the matching Git skill.
 
 ## Durable Memory
 

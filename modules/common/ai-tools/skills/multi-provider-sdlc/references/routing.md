@@ -84,12 +84,3 @@ Confirm agent type before dispatch and omit model overrides. Unknown type means
 use its semantic role or one bounded native worker. Never launch another
 harness. Use only write-capable routes for mutation; task prompts must still
 make deliberation and review read-only.
-
-## Risk
-
-- Trivial: focused validation; fresh review optional.
-- Normal: bounded plan, implementation, validation, fresh diff review, then one
-  correction and re-review maximum.
-- High: architecture, security, destructive migration, public API or schema,
-  concurrency, authentication, or broad behavior. Add plan review, boundary
-  validation, and final review. Persist autonomously only when recovery helps.

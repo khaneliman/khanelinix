@@ -9,12 +9,9 @@ Request verdict `approved`, `changes_requested`, or `blocked`, then ranked
 `critical`, `major`, `minor`, and `suggestion` findings with exact paths,
 rationale, and minimal fix.
 
-- Fix critical and major findings when within scope; stop only when resolution
-  needs user choice or material expansion.
-- Fix low-risk minor findings; report the rest.
+- Return the verdict, ranked findings, and residual risk to the lifecycle owner.
+- Do not fix findings, advance phases, or own the correction verdict.
 - Suggestions never expand scope.
-- Apply one bounded correction batch, rerun affected validation, then use one
-  fresh re-review maximum.
 
 For explicit cross-provider review, also read deliberation playbook and
 synthesize independent review packets without vote counting.

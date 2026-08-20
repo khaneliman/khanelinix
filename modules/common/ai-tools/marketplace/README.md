@@ -30,15 +30,18 @@ With the Agent Skills installer, pass the whole member list to `--skill`. On the
 Codex and Claude marketplaces, install each member with the per-plugin commands
 from the sections below.
 
-`workflow-core` is the engineering workflow system. The skills call each other
-by name, so install the full set:
+`workflow-core` contains the lifecycle and its direct workflow routes. The
+skills call each other by name, so install the full set:
 
 ```sh
 npx skills add khaneliman/khanelinix \
   --agent antigravity claude-code codex \
-  --skill architect arena blast-radius engineering-principles figure-it-out how interrogate okf-memory planning-with-files recall show-me-your-work unslop why \
+  --skill architect arena blast-radius engineering-principles engineering-workflow figure-it-out git-toolkit github-toolkit how interrogate okf-memory planning-with-files recall show-me-your-work software-engineering unslop why \
   --global --copy --yes
 ```
+
+Install a matching domain bundle or standalone domain skill for implementation.
+`reflect` is an optional local extension and is not marketplace-published.
 
 The domain bundles group standalone skills by work area:
 

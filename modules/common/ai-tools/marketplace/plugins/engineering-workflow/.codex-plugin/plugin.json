@@ -1,0 +1,13 @@
+{
+	"name": "engineering-workflow",
+	"version": "0.1.0",
+	"description": "Run routine software changes through a complete lifecycle.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Engineering Workflow",
+		"shortDescription": "Run routine software changes through a complete lifecycle."
+	}
+}

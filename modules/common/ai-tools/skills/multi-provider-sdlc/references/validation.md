@@ -15,6 +15,6 @@ Run checks proportional to changed behavior and risk.
 - On failure, reproduce once, then route ambiguous cause to diagnosis. Do not
   retry the same failing route without new evidence.
 
-Validation failure blocks completion, not implementation progress already made.
-Fix scoped causes, rerun affected checks, and report environmental failures
-separately from product failures.
+Return pass, fail, or blocked evidence to the lifecycle owner. Separate
+environmental failures from product failures. Do not correct source or advance
+to review.

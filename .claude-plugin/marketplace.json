@@ -77,6 +77,16 @@
 			"source": "./modules/common/ai-tools/marketplace/plugins/engineering-principles"
 		},
 		{
+			"name": "engineering-workflow",
+			"description": "Run routine software changes through a complete lifecycle.",
+			"version": "0.1.0",
+			"author": {
+				"name": "khaneliman"
+			},
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/marketplace/plugins/engineering-workflow"
+		},
+		{
 			"name": "figure-it-out",
 			"description": "Design an auditable playbook when no narrower one fits.",
 			"version": "0.1.3",

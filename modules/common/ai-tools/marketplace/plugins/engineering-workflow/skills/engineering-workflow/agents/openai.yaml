@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engineering Workflow"
+  short_description: "Lifecycle gates for routine code mutation"
+  default_prompt: "Use $engineering-workflow to own the lifecycle gates for this routine software mutation."

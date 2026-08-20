@@ -1,4 +1,4 @@
 interface:
   display_name: "Multi-Provider SDLC"
-  short_description: "Cross-provider planning, delivery, test, and review"
-  default_prompt: "Use $multi-provider-sdlc to route this task across provider and model lanes through the requested SDLC endpoint."
+  short_description: "Route one phase across provider and model lanes"
+  default_prompt: "Use $multi-provider-sdlc as the provider-routing overlay for this caller-owned phase."
