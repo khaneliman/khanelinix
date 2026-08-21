@@ -966,41 +966,12 @@ in
                 (mkExecBindRaw "SHIFT" "Shift_R" "true")
               ])
               ++ map mkLuaBind [
+                # VoxType resets this submap after streaming session teardown.
                 (mkExecBind "" "F13" "$voxtype-toggle")
-                (mkBind {
-                  mods = "";
-                  key = "F13";
-                  dispatcher = "submap";
-                  args = "reset";
-                })
                 (mkExecBind "$mainMod" "D" "$voxtype-toggle")
-                (mkBind {
-                  mods = "$mainMod";
-                  key = "D";
-                  dispatcher = "submap";
-                  args = "reset";
-                })
                 (mkExecBind "" "F14" "$voxtype-cancel")
-                (mkBind {
-                  mods = "";
-                  key = "F14";
-                  dispatcher = "submap";
-                  args = "reset";
-                })
                 (mkExecBind "$SUPER_SHIFT" "D" "$voxtype-cancel")
-                (mkBind {
-                  mods = "$SUPER_SHIFT";
-                  key = "D";
-                  dispatcher = "submap";
-                  args = "reset";
-                })
                 (mkExecBind "" "F12" "$voxtype-cancel")
-                (mkBind {
-                  mods = "";
-                  key = "F12";
-                  dispatcher = "submap";
-                  args = "reset";
-                })
               ];
           };
         };
