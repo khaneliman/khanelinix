@@ -1,6 +1,7 @@
 {
   inputs,
   lib,
+  python3Packages,
   runCommand,
   stdenvNoCC,
   ...
@@ -28,7 +29,9 @@ buildSplitKeyboard {
   ];
   enableZmkStudio = true;
 
-  zephyrDepsHash = "sha256-0tNjgMiepoGr/eGPvxSyRaKTekoZ8KqAAoLG3HAPKq8=";
+  nativeBuildInputs = [ python3Packages.standard-pkg-resources ];
+
+  zephyrDepsHash = "sha256-c4wNOAIFKwBc+QxSQx7iuomp0pdVy7PFXSMsa6XMEiA=";
 
   meta = {
     description = "Kinesis Advantage360 Pro firmware with Khanelinix keymap";
