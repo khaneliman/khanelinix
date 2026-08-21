@@ -352,12 +352,15 @@ in
 
       terminal = {
         editors = {
-          neovim.extraProfiles = [
-            "minimal"
-            "basic"
-            "full"
-            "debug"
-          ];
+          neovim = {
+            opencodeModel = "ollama/qwen3-coder:30b";
+            extraProfiles = [
+              "minimal"
+              "basic"
+              "full"
+              "debug"
+            ];
+          };
         };
 
         emulators.limux = enabled;

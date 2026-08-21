@@ -16,6 +16,7 @@ let
   cfg = config.khanelinix.programs.terminal.editors.neovim;
   zkCfg = config.khanelinix.programs.terminal.tools.zk;
   zkNotebookPath = "${config.home.homeDirectory}/${zkCfg.notebookDirectory}";
+  opencodeCommand = "opencode --model ${lib.escapeShellArg cfg.opencodeModel} --port";
 
   profileNames = [
     "minimal"
@@ -123,6 +124,52 @@ let
           };
         };
       })
+      (lib.mkIf (cfg.opencodeModel != null) {
+        plugins = {
+          opencode.settings.server.__raw = lib.mkForce ''
+            (function()
+              local opencode_cmd = ${builtins.toJSON opencodeCommand}
+              local snacks_terminal_opts = {
+                win = {
+                  position = "right",
+                  enter = true,
+                  on_win = function(win)
+                    require("opencode.terminal").setup(win.win)
+                  end,
+                },
+              }
+
+              return {
+                start = function()
+                  require("snacks.terminal").open(opencode_cmd, snacks_terminal_opts)
+                end,
+                stop = function()
+                  local terminal = require("snacks.terminal").get(opencode_cmd, snacks_terminal_opts)
+                  if terminal then
+                    terminal:close()
+                  end
+                end,
+                toggle = function()
+                  require("snacks.terminal").toggle(opencode_cmd, snacks_terminal_opts)
+                end,
+              }
+            end)()
+          '';
+          sidekick.settings.cli.tools.opencode.cmd = lib.mkForce [
+            "opencode"
+            "--model"
+            cfg.opencodeModel
+          ];
+          sidekick.settings.cli.tools.opencode_yolo.cmd = lib.mkForce [
+            "opencode"
+            "run"
+            "--model"
+            cfg.opencodeModel
+            "--interactive"
+            "--dangerously-skip-permissions"
+          ];
+        };
+      })
     ]
     ++ cfg.extraModules;
 
@@ -166,6 +213,16 @@ in
       type = types.listOf types.attrs;
       default = [ ];
       description = "Additional nixvim modules to extend the khanelivim configuration";
+    };
+    opencodeModel = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = ''
+        Model passed to OpenCode processes started from Neovim.
+        Use provider/model to select an OpenCode endpoint.
+        Null inherits the OpenCode default model.
+      '';
+      example = "ollama/qwen3-coder:30b";
     };
   };
 
