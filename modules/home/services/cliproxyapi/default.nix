@@ -108,6 +108,10 @@ let
     provider: model:
     "codex --strict-config -c model_provider='\"cliproxyapi\"' -m ${lib.escapeShellArg (proxyModel provider model)}";
 
+  # If the gateway returns `503 auth_unavailable` and logs `Refresh token expired`,
+  # run `cliproxyapi-claude-login`. Claude Code's `/login` updates only its direct
+  # credential. Gateway mode disables claude.ai connectors by design; use
+  # `claude-direct` when those connectors are required.
   loginCommand =
     provider: flag:
     pkgs.writeShellApplication {
