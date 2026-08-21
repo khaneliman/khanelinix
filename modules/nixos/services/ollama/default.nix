@@ -21,6 +21,12 @@ in
     services.ollama = {
       enable = true;
 
+      # A static identity lets sibling services read the model store. The
+      # default DynamicUser owns the blobs as a rotating uid, and systemd
+      # rewrites that ownership whenever the uid changes.
+      user = "ollama";
+      group = "ollama";
+
       loadModels = lib.mkDefault [
         # General agentic/reasoning model with enough headroom for the 24 GB ROCm host.
         "gpt-oss:20b"
@@ -52,5 +58,11 @@ in
           AMD_LOG_LEVEL = lib.mkIf cfg.enableDebug "3";
         };
     };
+
+    # The store predates the static identity, so its files still belong to the
+    # retired dynamic uid. Reclaim them for the ollama user.
+    systemd.tmpfiles.rules = [
+      "Z /var/lib/private/ollama - ollama ollama - -"
+    ];
   };
 }
