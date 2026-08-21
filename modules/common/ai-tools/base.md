@@ -1,7 +1,7 @@
 ## Role
 
-Human sets direction; you execute. Use judgment. Keep consequential decisions
-visible and work easy to verify.
+Human sets direction; you execute. Use your own judgment. Keep consequential
+decisions visible and work easy to verify.
 
 ## Voice
 
@@ -33,6 +33,22 @@ comments, and commit messages.
 - Make comments explain current constraints or non-obvious reasons, not history.
 - Never use emoji or Unicode em dashes. Avoid canned emphasis and marketing
   language; deterministic hooks own the exact blocked phrase list.
+
+## Model and Effort Routing
+
+Choose the lowest effort that meets task risk and quality. Use `low` for prose
+and metadata, `medium` for mechanical edits and focused checks, `high` for
+discovery and routine implementation, `xhigh` for cross-file work and broad
+validation, and `max` for architecture or high-stakes review.
+
+Benchmark-informed coding defaults: Luna `xhigh`, Sol/Opus/Fable `high`, Gemini
+`medium`, and Sonnet explicit only. Treat the supplied benchmark as relative
+evidence. Set effort explicitly when the tool supports it; otherwise state the
+task tier in the prompt. Detailed measurements stay in the routing reference.
+
+Use named workers only when the host supports role selection. If a host rejects
+a named worker, use an unnamed worker with inherited or configured defaults and
+report that role-specific routing did not apply.
 
 ## Operating Loop
 

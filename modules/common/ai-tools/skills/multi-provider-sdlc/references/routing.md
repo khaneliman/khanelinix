@@ -29,6 +29,38 @@ authentication.
 For explicit three-provider deliberation, use Anthropic `opus-5`, Google
 `google-opus-4-6` with `gemini-3-7-flash` fallback, and OpenAI `gpt-5-6-sol`.
 
+## Effort policy
+
+Choose effort for the task, not only for the model. Use the shared policy in the
+always-loaded AI context:
+
+- `low`: prose, metadata, summaries, and simple lookups.
+- `medium`: mechanical edits and focused checks.
+- `high`: discovery, reproduction, routine implementation, and test analysis.
+- `xhigh`: cross-file implementation, broad validation, and difficult debugging.
+- `max`: architecture, council work, hard failures, and high-stakes review.
+
+The following user-supplied DeepSWE snapshot reports `pass@1` and average cost
+for mini-swe-agent coding tasks. Each cell uses `pass@1 / USD`.
+
+| Model            | Low         | Medium      | High        | Xhigh        | Max          |
+| ---------------- | ----------- | ----------- | ----------- | ------------ | ------------ |
+| GPT-5.6 Luna     | 2% / $0.01  | 11% / $0.04 | 44% / $0.16 | 57% / $0.31  | 67% / $0.61  |
+| GPT-5.6 Sol      | 45% / $1.07 | 61% / $1.86 | 69% / $3.47 | 71% / $4.70  | 73% / $8.39  |
+| Claude Opus 5    | 58% / $1.66 | 69% / $3.29 | 73% / $6.08 | 73% / $9.07  | 74% / $11.84 |
+| Claude Fable 5   | 60% / $3.76 | 65% / $6.09 | 69% / $9.18 | 70% / $13.41 | 70% / $21.63 |
+| Gemini 3.7 Flash | 54% / $1.83 | 65% / $2.03 | 65% / $2.18 | not shown    | not shown    |
+| Claude Sonnet 5  | 31% / $2.19 | 40% / $4.08 | 48% / $7.43 | 50% / $11.89 | 54% / $26.40 |
+
+Use the matrix as relative evidence. Luna gains sharply from high through max,
+so use xhigh for meaningful default work and max for high-stakes work. Sol and
+Opus reach strong results at high, so reserve xhigh or max for harder tasks.
+Fable gains little beyond xhigh. Gemini Flash shows no measured gain from medium
+to high. Sonnet is not a cost-efficient default in this snapshot.
+
+Spark, Terra, and GPT-OSS do not appear in the snapshot. Keep their existing
+latency-first or explicit-only roles until comparable measurements exist.
+
 ## Quota circuits
 
 Use scripted preflight only when telemetry identifies every relevant pool.
@@ -81,6 +113,10 @@ capability and quota-pool fit. Do not duplicate work only to balance
 subscriptions.
 
 Confirm agent type before dispatch and omit model overrides. Unknown type means
-use its semantic role or one bounded native worker. Never launch another
+use its semantic role or one bounded native worker. If the host returns
+`agent
+type is currently not available`, stop retrying named roles. Use built-in
+`default` with configured defaults when available, or mark that route
+unavailable. Do not treat this error as quota evidence or launch another
 harness. Use only write-capable routes for mutation; task prompts must still
 make deliberation and review read-only.
