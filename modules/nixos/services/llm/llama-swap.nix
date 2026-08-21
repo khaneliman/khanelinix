@@ -69,9 +69,16 @@ let
         "--host 127.0.0.1"
         # llama-swap assigns the upstream port through this macro.
         "--port \${PORT}"
+        "--parallel ${toString model.parallelSlots}"
       ]
       ++ lib.optional (model.contextSize != null) "--ctx-size ${toString model.contextSize}"
       ++ lib.optional (model.cpuMoeLayers != null) "--n-cpu-moe ${toString model.cpuMoeLayers}"
+      ++ lib.optionals (model.kvCacheType != "f16") [
+        # Quantized cache entries need flash attention.
+        "--flash-attn on"
+        "--cache-type-k ${model.kvCacheType}"
+        "--cache-type-v ${model.kvCacheType}"
+      ]
       ++ model.extraArgs
     );
 
@@ -155,6 +162,36 @@ in
 
                 A dense model gains nothing here, since every parameter runs on
                 every token.
+              '';
+            };
+
+            parallelSlots = lib.mkOption {
+              type = lib.types.ints.positive;
+              default = 1;
+              description = ''
+                Number of request slots the server allocates.
+
+                Each slot reserves its own share of the context, so more slots
+                shrink the memory left for weights. One slot measured 154
+                tokens per second against 137 for the upstream default of four,
+                and llama-swap serves one model at a time anyway.
+              '';
+            };
+
+            kvCacheType = lib.mkOption {
+              type = lib.types.enum [
+                "f16"
+                "q4_0"
+                "q8_0"
+              ];
+              default = "q8_0";
+              description = ''
+                Precision of the key and value cache.
+
+                A quantized cache leaves more memory for weights, so more layers
+                reach the GPU. On a 24 GiB card with a 30B mixture-of-experts
+                model at 32768 context, q8_0 measured 177 tokens per second
+                against 154 for f16, and freed 1.3 GiB.
               '';
             };
 
