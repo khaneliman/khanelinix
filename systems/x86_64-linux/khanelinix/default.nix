@@ -82,14 +82,13 @@ in
         llamaSwap = {
           enable = true;
 
+          # ollama converts some models with its own architecture names, such as
+          # gptoss and glm4moelite, which llama.cpp does not recognize. Only
+          # tags whose architecture matches upstream belong here, and ollama
+          # keeps serving the rest.
           models = {
-            "glm-4.7-flash" = {
-              tag = "glm-4.7-flash";
-              contextSize = 32768;
-            };
-
-            "gpt-oss-20b" = {
-              tag = "gpt-oss:20b";
+            "qwen3-6-27b" = {
+              tag = "qwen3.6:27b";
               contextSize = 32768;
             };
 
