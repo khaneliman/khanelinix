@@ -12,6 +12,12 @@ let
 
   ollamaCfg = config.services.ollama;
 
+  # ollama keeps its store under /var/lib/private, which only root may traverse,
+  # and /var/lib/ollama is a symlink into that directory. Binding onto the
+  # symlink resolves back to the unreachable path, so the service reads the
+  # store through a mount point of its own.
+  modelsRoot = "/var/lib/llm/ollama-models";
+
   # ollama stores a tag as a manifest that points at content-addressed blobs, so
   # the GGUF path is only known at runtime. Resolve it when the model starts.
   serve = pkgs.writeShellApplication {
@@ -37,7 +43,7 @@ let
         ref="latest"
       fi
 
-      manifest="${ollamaCfg.modelsDir}/manifests/registry.ollama.ai/library/$name/$ref"
+      manifest="${modelsRoot}/manifests/registry.ollama.ai/library/$name/$ref"
       if [ ! -f "$manifest" ]; then
         echo "no ollama manifest for $tag at $manifest" >&2
         exit 1
@@ -49,7 +55,7 @@ let
         exit 1
       fi
 
-      exec llama-server --model "${ollamaCfg.modelsDir}/blobs/''${digest/:/-}" "$@"
+      exec llama-server --model "${modelsRoot}/blobs/''${digest/:/-}" "$@"
     '';
   };
 
@@ -187,6 +193,11 @@ in
 
     networking.firewall.allowedTCPPorts = lib.mkIf swapCfg.openFirewall [ swapCfg.port ];
 
+    systemd.tmpfiles.rules = [
+      "d /var/lib/llm 0750 ${ollamaCfg.user} ${ollamaCfg.group} -"
+      "d ${modelsRoot} 0750 ${ollamaCfg.user} ${ollamaCfg.group} -"
+    ];
+
     systemd.services.llama-swap = {
       description = "Model swapping proxy for llama.cpp";
       wantedBy = [ "multi-user.target" ];
@@ -205,11 +216,10 @@ in
         User = ollamaCfg.user;
         Group = ollamaCfg.group;
 
-        # ollama keeps its state under /var/lib/private, which only root may
-        # traverse. systemd mounts this before dropping privileges, so the
-        # service reads the store at the path the resolver expects.
+        # systemd mounts this before dropping privileges, so the service reads
+        # the store without traversing /var/lib/private.
         BindReadOnlyPaths = [
-          "/var/lib/private/ollama/models:${ollamaCfg.modelsDir}"
+          "/var/lib/private/ollama/models:${modelsRoot}"
         ];
 
         # llama-server needs the render node for every backend except cpu.
