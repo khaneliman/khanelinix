@@ -76,6 +76,10 @@ let
 
     logLevel = "info";
 
+    # Without upstream output, a model that fails to load reports only that its
+    # command exited.
+    logToStdout = "both";
+
     models = lib.mapAttrs (_: model: {
       cmd = mkCmd model;
       inherit (model) ttl;
