@@ -75,6 +75,34 @@ in
     services = {
       avahi = enabled;
       geoclue = enabled;
+
+      llm = {
+        enable = true;
+
+        llamaSwap = {
+          enable = true;
+
+          models = {
+            "glm-4.7-flash" = {
+              tag = "glm-4.7-flash";
+              contextSize = 32768;
+            };
+
+            "gpt-oss-20b" = {
+              tag = "gpt-oss:20b";
+              contextSize = 32768;
+            };
+
+            "qwen3-coder-30b" = {
+              tag = "qwen3-coder:30b";
+              contextSize = 32768;
+              # The 30B coder fills the card on its own, so hold it longer than
+              # the smaller models to avoid reloading 18 GB repeatedly.
+              ttl = 900;
+            };
+          };
+        };
+      };
       power = enabled;
       printing = enabled;
 
