@@ -30,11 +30,12 @@ in
         "qwen3.6:27b"
         # Strong 30B-class agentic/tool-use option for coding, research, and analytical tasks.
         "glm-4.7-flash"
-        # Base model with fill-in-the-middle tokens for editor inline completion.
-        # Ollama ships no Qwen3-Coder base tag, so this stays on the 2.5 series.
-        # The 1.5B tag stays resident beside a 30B coder on 24 GB VRAM.
+        # Editor completion at the cursor. Only a base tag carries the template
+        # that splits the text before the cursor from the text after it, and
+        # ollama ships no Qwen3-Coder base tag. The 1.5B tag stays resident
+        # beside a 30B coder on 24 GB VRAM.
         "qwen2.5-coder:1.5b-base"
-        # Retrieval embeddings for local RAG and semantic search.
+        # Retrieval embeddings for local document search and RAG.
         "qwen3-embedding:0.6b"
       ];
 
