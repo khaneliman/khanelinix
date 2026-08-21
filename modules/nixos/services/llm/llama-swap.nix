@@ -206,6 +206,8 @@ in
         "ollama.service"
       ];
 
+      environment.XDG_CACHE_HOME = "/var/cache/llm";
+
       serviceConfig = {
         Type = "exec";
         ExecStart = "${lib.getExe pkgs.llama-swap} --config ${configFile} --listen 127.0.0.1:${toString swapCfg.port}";
@@ -223,11 +225,19 @@ in
         ];
 
         # llama-server needs the render node for every backend except cpu.
+        # "char-drm" names the device subsystem: a directory path is not a valid
+        # device rule, and any DeviceAllow entry closes the default policy, so
+        # naming /dev/dri here would block every node and drop the GPU.
         SupplementaryGroups = [
           "render"
           "video"
         ];
-        DeviceAllow = [ "/dev/dri rw" ];
+        DeviceAllow = [ "char-drm rw" ];
+
+        # Mesa writes its shader cache under XDG_CACHE_HOME and disables the
+        # cache when that path is read-only, which recompiles pipelines on each
+        # start.
+        CacheDirectory = "llm";
 
         CapabilityBoundingSet = [ "" ];
         LockPersonality = true;
