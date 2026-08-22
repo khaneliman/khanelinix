@@ -130,10 +130,35 @@ in
   options.khanelinix.services.llm.llamaSwap = {
     enable = lib.mkEnableOption "llama-swap model swapping proxy";
 
+    host = lib.mkOption {
+      type = lib.types.str;
+      default = "127.0.0.1";
+      example = "0.0.0.0";
+      description = ''
+        Address the proxy listens on.
+
+        The loopback default keeps the API off the network. Bind wider only
+        alongside openFirewall and something that authenticates.
+      '';
+    };
+
     port = lib.mkOption {
       type = lib.types.port;
       default = 8090;
       description = "Port serving the OpenAI-compatible API.";
+    };
+
+    endpoint = lib.mkOption {
+      type = lib.types.str;
+      readOnly = true;
+      default = "http://${swapCfg.host}:${toString swapCfg.port}/v1";
+      defaultText = lib.literalExpression ''"http://\''${host}:\''${port}/v1"'';
+      description = ''
+        OpenAI-compatible base URL clients should use.
+
+        Derived so a host or port change reaches every client, and so a client
+        on another machine can point at one value instead of rebuilding the URL.
+      '';
     };
 
     openFirewall = lib.mkEnableOption "opening the llama-swap port";
@@ -366,7 +391,7 @@ in
 
       serviceConfig = {
         Type = "exec";
-        ExecStart = "${lib.getExe pkgs.llama-swap} --config ${configFile} --listen 127.0.0.1:${toString swapCfg.port}";
+        ExecStart = "${lib.getExe pkgs.llama-swap} --config ${configFile} --listen ${swapCfg.host}:${toString swapCfg.port}";
         Restart = "on-failure";
 
         # Sharing ollama's identity grants read access to blobs the ollama user
