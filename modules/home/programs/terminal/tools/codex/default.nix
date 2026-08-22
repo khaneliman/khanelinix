@@ -2,6 +2,8 @@
   config,
   lib,
   pkgs,
+
+  osConfig ? { },
   ...
 }:
 let
@@ -13,6 +15,19 @@ let
   cfg = config.khanelinix.programs.terminal.tools.codex;
   mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
   exoEnabled = config.services.exo.enable or false;
+
+  swapCfg = osConfig.khanelinix.services.llm.llamaSwap or { };
+  swapEnabled = swapCfg.enable or false;
+
+  # The proxy publishes its base URL, so a host or port change needs no edit
+  # here, and a proxy on another machine needs only that option set.
+  swapEndpoint = swapCfg.endpoint or "http://127.0.0.1:8090/v1";
+
+  # codex speaks only the responses API. llama.cpp serves it through the proxy;
+  # colibri does not, exposing chat completions, completions, and messages.
+  swapModels = lib.attrNames (
+    lib.filterAttrs (_: model: model.backend == "llama-cpp") (swapCfg.models or { })
+  );
   # `programs.codex.settings.mcp_servers` is merged with the auto-generated
   # entries from `programs.mcp.servers` per top-level server name (whole-entry
   # override, not a deep per-field merge), so any entry listed here would
@@ -169,6 +184,19 @@ in
         codex-spark = "codex --strict-config --profile spark";
         codex-unsafe = "codex --strict-config --profile unsafe --dangerously-bypass-hook-trust";
       }
+      // lib.optionalAttrs swapEnabled (
+        {
+          codex-local = ''f(){ model="$1"; shift; codex --strict-config -c model_provider='"llama-swap"' -m "$model" "$@"; }; f'';
+        }
+        # One alias per served model, so the set follows the service rather than
+        # a list repeated here.
+        // lib.listToAttrs (
+          map (model: {
+            name = "codex-local-${model}";
+            value = ''codex --strict-config -c model_provider='"llama-swap"' -m ${model}'';
+          }) swapModels
+        )
+      )
       // lib.optionalAttrs exoEnabled {
         codex-exo = ''f(){ model="$1"; shift; codex --strict-config -c model_provider='"exo"' -m "$model" "$@"; }; f'';
         codex-exo-coder = ''codex --strict-config -c model_provider='"exo"' -m mlx-community/Qwen3-Coder-Next-4bit'';
@@ -264,17 +292,33 @@ in
             };
           };
 
-        model_providers = lib.optionalAttrs exoEnabled {
-          exo = {
-            name = "exo (local cluster)";
-            base_url = "http://localhost:52415/v1";
-            wire_api = "responses";
-            requires_openai_auth = false;
-            request_max_retries = 1;
-            stream_max_retries = 1;
-            stream_idle_timeout_ms = 300000;
+        model_providers =
+          lib.optionalAttrs swapEnabled {
+            llama-swap = {
+              name = "Local (llama-swap)";
+              base_url = swapEndpoint;
+              # codex dropped the chat wire API, and llama.cpp answers
+              # /v1/responses through the proxy.
+              wire_api = "responses";
+              requires_openai_auth = false;
+              request_max_retries = 1;
+              stream_max_retries = 1;
+              # A streamed expert container answers slowly, and colibri warms its
+              # experts before the first token.
+              stream_idle_timeout_ms = 600000;
+            };
+          }
+          // lib.optionalAttrs exoEnabled {
+            exo = {
+              name = "exo (local cluster)";
+              base_url = "http://localhost:52415/v1";
+              wire_api = "responses";
+              requires_openai_auth = false;
+              request_max_retries = 1;
+              stream_max_retries = 1;
+              stream_idle_timeout_ms = 300000;
+            };
           };
-        };
 
         notify =
           let
