@@ -10,9 +10,9 @@ let
 
   swapCfg = osConfig.khanelinix.services.llm.llamaSwap or { };
 
-  # The proxy publishes its own base URL, so a host or port change needs no edit
-  # here. Fall back to the upstream default when this user has no such host,
-  # which keeps the provider usable against a proxy elsewhere.
+  # The proxy publishes its base URL, so a host or port change needs no edit
+  # here. The literal only guards an evaluation without this system's config,
+  # and the provider is gated on that config anyway.
   swapEndpoint = swapCfg.endpoint or "http://127.0.0.1:8090/v1";
 
   swapEnabled = swapCfg.enable or false;
@@ -55,8 +55,8 @@ in
         options = {
           baseURL = "http://localhost:11434/v1";
         };
-        # ollama converts these with its own architecture names, so no other
-        # engine here can load them.
+        # The tags ollama pulled use its own conversion, with architecture
+        # names no other engine here reads.
         models = {
           "glm-4.7-flash".name = "GLM 4.7 Flash";
           "gpt-oss:20b".name = "GPT OSS 20B";

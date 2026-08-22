@@ -156,8 +156,8 @@ in
       description = ''
         OpenAI-compatible base URL clients should use.
 
-        Derived so a host or port change reaches every client, and so a client
-        on another machine can point at one value instead of rebuilding the URL.
+        Derived from host and port, so a change to either reaches every client
+        that reads this option during the same evaluation.
       '';
     };
 
@@ -236,18 +236,21 @@ in
             vramBudgetGb = lib.mkOption {
               type = lib.types.nullOr lib.types.ints.positive;
               default = null;
-              example = 16;
+              example = 12;
               description = ''
-                Video memory colibri may fill with experts, in gigabytes.
+                Video memory colibri may fill with experts, in gigabytes. The
+                flag counts gigabytes while rocm-smi reports gibibytes.
 
-                A 16 GB budget on a 24 GiB card placed 9686 of 10240 experts and
+                A 16 GB budget on a 24 GiB card placed 9686 of 10240 experts. It
                 measured 7.0 tokens per second against 0.67 on the CPU path,
-                with output identical to the byte.
+                with output identical to the byte. That budget also left the card
+                at 23.9 of 24.0 GiB, which glitched a running compositor. Leave
+                headroom on a card that also drives a display.
 
-                colibri reads free memory when it starts and cannot grow later,
-                so a model loaded while another still holds the card gets less
-                than this budget: following a 21 GiB model it saw 10.7 GB free
-                and fell to 3.3 tokens per second.
+                colibri reads free memory at start and cannot grow later. A model
+                loaded while another still holds the card gets less than this
+                budget. Following a 21 GiB model it saw 10.7 GB free and fell to
+                3.3 tokens per second.
               '';
             };
 
@@ -259,7 +262,7 @@ in
                 Expert cache slots per layer, passed as --cap.
 
                 The qwen36 tier needs one slot for every expert the model
-                declares and disables itself otherwise: a 256-expert model
+                declares and disables itself otherwise. A 256-expert model
                 planned 8 slots on its own and logged "cap=8 != n_experts=256
                 -> tier disabled".
               '';

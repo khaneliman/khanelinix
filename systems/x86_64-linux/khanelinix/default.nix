@@ -101,8 +101,9 @@ in
             "qwen3-coder-30b" = {
               tag = "qwen3-coder:30b";
               contextSize = 32768;
-              # Reloading 18 GB costs about 20 seconds, but holding the card
-              # longer than this starves the compositor.
+              # An editing session sends bursts, so a 300 second hold avoids
+              # the 20 second reload of 18 GB between prompts. ollama holds 60
+              # seconds instead, because its callers are one-shot.
               ttl = 300;
             };
 
@@ -115,8 +116,8 @@ in
               ttl = 300;
 
               # The tier needs one cache slot per declared expert or it disables
-              # itself. A 12 GB budget leaves the compositor room: 16 GB filled
-              # the card to 23.9 of 24.0 GiB and the desktop glitched.
+              # itself. A 12 GB budget leaves the compositor room. A 16 GB budget
+              # filled the card to 23.9 of 24.0 GiB and the compositor glitched.
               gpu = "0";
               vramBudgetGb = 12;
               cacheSlots = 256;
