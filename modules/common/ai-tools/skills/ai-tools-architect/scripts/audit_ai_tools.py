@@ -51,6 +51,7 @@ OPENAI_REQUIRED_INTERFACE_FIELDS = {
     "display_name",
     "short_description",
 }
+DEFAULT_IMPLICIT_DESCRIPTION_BUDGET = 8_000
 
 
 @dataclass(frozen=True)
@@ -77,6 +78,7 @@ class SkillRecord:
     name: str | None
     line_count: int
     description_characters: int
+    implicit_invocation: bool
     resources: int
 
 
@@ -489,6 +491,42 @@ def validate_openai_metadata(
     return findings
 
 
+def parse_openai_invocation_policy(path: Path) -> tuple[bool, str | None]:
+    lines = read_text(path).splitlines()
+    policy_index = next(
+        (index for index, line in enumerate(lines) if line == "policy:"), None
+    )
+    if policy_index is None:
+        return True, None
+
+    values: dict[str, str] = {}
+    index = policy_index + 1
+    while index < len(lines):
+        line = lines[index]
+        if not line or line.lstrip().startswith("#"):
+            index += 1
+            continue
+        if not line[0].isspace():
+            break
+        if not line.startswith("  ") or line.startswith("   "):
+            return True, "policy fields must use exactly two-space indentation"
+        match = TOP_LEVEL_YAML_RE.match(line[2:])
+        if match is None:
+            return True, "malformed policy field"
+        key = match.group(1)
+        if key != "allow_implicit_invocation":
+            return True, f"unsupported policy field: {key}"
+        if key in values:
+            return True, f"duplicate policy field: {key}"
+        values[key] = (match.group(2) or "").strip()
+        index += 1
+
+    raw = values.get("allow_implicit_invocation")
+    if raw not in {"true", "false"}:
+        return True, "allow_implicit_invocation must be true or false"
+    return raw == "true", None
+
+
 def iter_markdown_links(content: str) -> Iterable[MarkdownLink]:
     fence: str | None = None
     for line_number, line in enumerate(content.splitlines(), start=1):
@@ -840,8 +878,22 @@ def audit_skill(
         )
 
     openai_metadata = skill_dir / "agents" / "openai.yaml"
+    implicit_invocation = True
     if openai_metadata.is_file():
         findings.extend(validate_openai_metadata(openai_metadata, name, root))
+        implicit_invocation, policy_error = parse_openai_invocation_policy(
+            openai_metadata
+        )
+        if policy_error is not None:
+            findings.append(
+                Finding(
+                    "error",
+                    "invalid_openai_metadata",
+                    display_path(openai_metadata, root),
+                    policy_error,
+                    1,
+                )
+            )
 
     for markdown in markdown_files(skill_dir):
         for link in iter_markdown_links(read_text(markdown)):
@@ -903,6 +955,7 @@ def audit_skill(
             name=name,
             line_count=line_count,
             description_characters=len(description or ""),
+            implicit_invocation=implicit_invocation,
             resources=len(resources),
         ),
         findings,
@@ -914,6 +967,7 @@ def audit_root(
     *,
     line_budget: int = 100,
     minimum_duplicate_characters: int = 120,
+    implicit_description_budget: int = DEFAULT_IMPLICIT_DESCRIPTION_BUDGET,
 ) -> dict[str, object]:
     root = root.resolve()
     if not (root / "SKILL.md").is_file() and (root / "skills").is_dir():
@@ -982,6 +1036,10 @@ def audit_root(
     errors = sum(finding.severity == "error" for finding in findings)
     warnings = len(findings) - errors
     description_characters = sum(record.description_characters for record in records)
+    implicit_records = [record for record in records if record.implicit_invocation]
+    implicit_description_characters = sum(
+        record.description_characters for record in implicit_records
+    )
     return {
         "root": str(root),
         "summary": {
@@ -989,6 +1047,13 @@ def audit_root(
             "errors": errors,
             "warnings": warnings,
             "description_characters": description_characters,
+            "implicit_skills": len(implicit_records),
+            "explicit_only_skills": len(records) - len(implicit_records),
+            "implicit_description_characters": implicit_description_characters,
+            "implicit_description_budget": implicit_description_budget,
+            "implicit_description_budget_exceeded": (
+                implicit_description_characters > implicit_description_budget
+            ),
         },
         "skills": [asdict(record) for record in records],
         "findings": [finding.to_dict() for finding in findings],
@@ -998,6 +1063,9 @@ def audit_root(
 def render_markdown(report: dict[str, object]) -> str:
     summary = report["summary"]
     assert isinstance(summary, dict)
+    budget_status = (
+        "exceeded" if summary["implicit_description_budget_exceeded"] else "within"
+    )
     lines = [
         "# AI Tools Audit",
         "",
@@ -1006,6 +1074,13 @@ def render_markdown(report: dict[str, object]) -> str:
         f"- Errors: {summary['errors']}",
         f"- Warnings: {summary['warnings']}",
         f"- Description characters: {summary['description_characters']}",
+        f"- Implicit skills: {summary['implicit_skills']}",
+        f"- Explicit-only skills: {summary['explicit_only_skills']}",
+        (
+            f"- Implicit description budget: "
+            f"{summary['implicit_description_characters']} / "
+            f"{summary['implicit_description_budget']} ({budget_status})"
+        ),
         "",
     ]
     findings = report["findings"]
@@ -1054,6 +1129,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--minimum-duplicate-characters", type=int, default=120)
     parser.add_argument(
+        "--implicit-description-budget",
+        type=int,
+        default=DEFAULT_IMPLICIT_DESCRIPTION_BUDGET,
+        help="advisory character budget for implicitly invocable descriptions",
+    )
+    parser.add_argument(
         "--strict",
         action="store_true",
         help="return nonzero when warnings exist as well as errors",
@@ -1063,12 +1144,17 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    if args.line_budget < 1 or args.minimum_duplicate_characters < 1:
+    if (
+        args.line_budget < 1
+        or args.minimum_duplicate_characters < 1
+        or args.implicit_description_budget < 1
+    ):
         build_parser().error("budgets must be positive integers")
     report = audit_root(
         Path(args.root),
         line_budget=args.line_budget,
         minimum_duplicate_characters=args.minimum_duplicate_characters,
+        implicit_description_budget=args.implicit_description_budget,
     )
     if args.format == "json":
         json.dump(report, sys.stdout, indent=2, sort_keys=True)

@@ -26,6 +26,22 @@ def write_skill(root: Path, name: str, body: str) -> Path:
     return skill
 
 
+def expected_summary(
+    *, skills: int, errors: int, warnings: int, description_characters: int
+) -> dict[str, int | bool]:
+    return {
+        "skills": skills,
+        "errors": errors,
+        "warnings": warnings,
+        "description_characters": description_characters,
+        "implicit_skills": skills,
+        "explicit_only_skills": 0,
+        "implicit_description_characters": description_characters,
+        "implicit_description_budget": 8_000,
+        "implicit_description_budget_exceeded": False,
+    }
+
+
 class AuditAiToolsTests(unittest.TestCase):
     def test_clean_linked_skill(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -54,12 +70,12 @@ class AuditAiToolsTests(unittest.TestCase):
 
             self.assertEqual(
                 report["summary"],
-                {
-                    "skills": 1,
-                    "errors": 0,
-                    "warnings": 0,
-                    "description_characters": len("Test clean-skill."),
-                },
+                expected_summary(
+                    skills=1,
+                    errors=0,
+                    warnings=0,
+                    description_characters=len("Test clean-skill."),
+                ),
             )
 
     def test_ai_tools_root_prefers_canonical_skills_directory(self) -> None:
@@ -97,12 +113,12 @@ class AuditAiToolsTests(unittest.TestCase):
             self.assertIn("broken_local_link", codes)
             self.assertEqual(
                 report["summary"],
-                {
-                    "skills": 1,
-                    "errors": 2,
-                    "warnings": 1,
-                    "description_characters": len("Test."),
-                },
+                expected_summary(
+                    skills=1,
+                    errors=2,
+                    warnings=1,
+                    description_characters=len("Test."),
+                ),
             )
 
     def test_malformed_or_non_string_required_frontmatter_is_rejected(self) -> None:
@@ -199,12 +215,12 @@ class AuditAiToolsTests(unittest.TestCase):
 
             self.assertEqual(
                 report["summary"],
-                {
-                    "skills": 1,
-                    "errors": 0,
-                    "warnings": 0,
-                    "description_characters": 1024,
-                },
+                expected_summary(
+                    skills=1,
+                    errors=0,
+                    warnings=0,
+                    description_characters=1024,
+                ),
             )
 
     def test_multiline_description_limit_uses_parsed_block_value(self) -> None:
@@ -324,13 +340,70 @@ class AuditAiToolsTests(unittest.TestCase):
 
             self.assertEqual(
                 report["summary"],
-                {
-                    "skills": 1,
-                    "errors": 0,
-                    "warnings": 0,
-                    "description_characters": len("Test dependency-skill."),
-                },
+                expected_summary(
+                    skills=1,
+                    errors=0,
+                    warnings=0,
+                    description_characters=len("Test dependency-skill."),
+                ),
             )
+
+    def test_invocation_policy_controls_implicit_budget(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            implicit = write_skill(root, "implicit-skill", "Small body.")
+            explicit = write_skill(root, "explicit-skill", "Small body.")
+            for skill in (implicit, explicit):
+                agents = skill / "agents"
+                agents.mkdir()
+                policy = (
+                    "policy:\n  allow_implicit_invocation: false\n"
+                    if skill == explicit
+                    else ""
+                )
+                (agents / "openai.yaml").write_text(
+                    "interface:\n"
+                    f'  display_name: "{skill.name}"\n'
+                    '  short_description: "Useful policy validation fixture"\n'
+                    f'  default_prompt: "Use ${skill.name} for this fixture."\n'
+                    f"{policy}",
+                    encoding="utf-8",
+                )
+
+            report = audit_ai_tools.audit_root(root, implicit_description_budget=1)
+            summary = report["summary"]
+
+            self.assertEqual(summary["implicit_skills"], 1)
+            self.assertEqual(summary["explicit_only_skills"], 1)
+            self.assertEqual(
+                summary["implicit_description_characters"],
+                len("Test implicit-skill."),
+            )
+            self.assertTrue(summary["implicit_description_budget_exceeded"])
+            records = {record["name"]: record for record in report["skills"]}
+            self.assertTrue(records["implicit-skill"]["implicit_invocation"])
+            self.assertFalse(records["explicit-skill"]["implicit_invocation"])
+
+    def test_invalid_invocation_policy_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            skill = write_skill(root, "policy-skill", "Small body.")
+            agents = skill / "agents"
+            agents.mkdir()
+            (agents / "openai.yaml").write_text(
+                "interface:\n"
+                '  display_name: "Policy Skill"\n'
+                '  short_description: "Useful policy validation fixture"\n'
+                '  default_prompt: "Use $policy-skill for this fixture."\n'
+                "policy:\n"
+                "  allow_implicit_invocation: sometimes\n",
+                encoding="utf-8",
+            )
+
+            report = audit_ai_tools.audit_root(root)
+
+            self.assertEqual(report["summary"]["errors"], 1)
+            self.assertEqual(report["findings"][0]["code"], "invalid_openai_metadata")
 
     def test_dependency_basename_substrings_do_not_hide_uninvoked_scripts(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -464,6 +537,7 @@ class AuditAiToolsTests(unittest.TestCase):
 
             self.assertEqual(json.loads(encoded)["summary"]["skills"], 1)
             self.assertIn("# AI Tools Audit", markdown)
+            self.assertIn("Implicit description budget:", markdown)
             self.assertIn("No findings.", markdown)
 
 

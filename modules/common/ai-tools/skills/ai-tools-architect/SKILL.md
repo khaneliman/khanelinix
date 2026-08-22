@@ -18,6 +18,8 @@ python3 <skill-dir>/scripts/audit_ai_tools.py <ai-tools-root> --format markdown
 
 The audit is read-only. Treat errors as objective structural failures and
 warnings as review candidates; architecture decisions remain with the agent.
+Review implicit and explicit-only skill counts before adding another automatic
+trigger. Treat the description budget as advisory because host limits vary.
 After changing canonical skills, run every bundled unit suite with:
 
 ```bash
