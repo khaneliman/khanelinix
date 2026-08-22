@@ -79,6 +79,9 @@ let
         "--model-id ${name}"
       ]
       ++ lib.optional (model.contextSize != null) "--ctx ${toString model.contextSize}"
+      ++ lib.optional (model.gpu != null) "--gpu ${model.gpu}"
+      ++ lib.optional (model.vramBudgetGb != null) "--vram ${toString model.vramBudgetGb}"
+      ++ lib.optional (model.cacheSlots != null) "--cap ${toString model.cacheSlots}"
       ++ model.extraArgs
     );
 
@@ -190,7 +193,51 @@ in
             contextSize = lib.mkOption {
               type = lib.types.nullOr lib.types.ints.positive;
               default = null;
-              description = "Context window in tokens. Null keeps the llama.cpp default.";
+              description = "Context window in tokens. Null keeps the engine default.";
+            };
+
+            gpu = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              default = null;
+              example = "0";
+              description = ''
+                Devices colibri may use, as auto, none, or a device list.
+
+                Null leaves the engine on its own default, which places no
+                experts in video memory.
+              '';
+            };
+
+            vramBudgetGb = lib.mkOption {
+              type = lib.types.nullOr lib.types.ints.positive;
+              default = null;
+              example = 16;
+              description = ''
+                Video memory colibri may fill with experts, in gigabytes.
+
+                A 16 GB budget on a 24 GiB card placed 9686 of 10240 experts and
+                measured 7.0 tokens per second against 0.67 on the CPU path,
+                with output identical to the byte.
+
+                colibri reads free memory when it starts and cannot grow later,
+                so a model loaded while another still holds the card gets less
+                than this budget: following a 21 GiB model it saw 10.7 GB free
+                and fell to 3.3 tokens per second.
+              '';
+            };
+
+            cacheSlots = lib.mkOption {
+              type = lib.types.nullOr lib.types.ints.positive;
+              default = null;
+              example = 256;
+              description = ''
+                Expert cache slots per layer, passed as --cap.
+
+                The qwen36 tier needs one slot for every expert the model
+                declares and disables itself otherwise: a 256-expert model
+                planned 8 slots on its own and logged "cap=8 != n_experts=256
+                -> tier disabled".
+              '';
             };
 
             cpuMoeLayers = lib.mkOption {
@@ -290,6 +337,13 @@ in
       # The unit sets ProtectHome, so a container under /home is invisible to it.
       assertion = model.backend != "colibri" || !(lib.hasPrefix "/home/" (toString model.modelDir));
       message = "khanelinix.services.llm.llamaSwap.models.${name} keeps its container under /home, which the service cannot read. Use ${colibriRoot} instead.";
+    }) swapCfg.models
+    ++ lib.mapAttrsToList (name: model: {
+      # These render colibri flags, so a llama-cpp entry would drop them.
+      assertion =
+        model.backend == "colibri"
+        || (model.gpu == null && model.vramBudgetGb == null && model.cacheSlots == null);
+      message = "khanelinix.services.llm.llamaSwap.models.${name} sets colibri placement options that the llama-cpp backend ignores.";
     }) swapCfg.models;
 
     networking.firewall.allowedTCPPorts = lib.mkIf swapCfg.openFirewall [ swapCfg.port ];
@@ -326,15 +380,23 @@ in
           "/var/lib/private/ollama/models:${modelsRoot}"
         ];
 
-        # llama-server needs the render node for every backend except cpu.
+        # An engine needs the render node for every backend except cpu.
         # "char-drm" names the device subsystem: a directory path is not a valid
         # device rule, and any DeviceAllow entry closes the default policy, so
         # naming /dev/dri here would block every node and drop the GPU.
+        #
+        # ROCm compute also needs /dev/kfd, which sits outside the drm
+        # subsystem. Denying it lets a HIP engine start and serve while its
+        # expert tier reports coli_cuda_init failed and silently falls back to
+        # the CPU.
         SupplementaryGroups = [
           "render"
           "video"
         ];
-        DeviceAllow = [ "char-drm rw" ];
+        DeviceAllow = [
+          "/dev/kfd rw"
+          "char-drm rw"
+        ];
 
         # Mesa writes its shader cache under XDG_CACHE_HOME and disables the
         # cache when that path is read-only, which recompiles pipelines on each

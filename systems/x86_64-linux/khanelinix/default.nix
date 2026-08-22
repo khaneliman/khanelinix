@@ -113,6 +113,12 @@ in
               modelDir = "/var/lib/llm/colibri/qwen36";
               contextSize = 32768;
               ttl = 900;
+
+              # 16 GB of the card holds 9686 of the 10240 experts, and the tier
+              # needs one cache slot per declared expert or it disables itself.
+              gpu = "0";
+              vramBudgetGb = 16;
+              cacheSlots = 256;
             };
           };
         };
