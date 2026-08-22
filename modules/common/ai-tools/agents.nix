@@ -15,10 +15,8 @@ let
     native
     // lib.optionalAttrs gatewayEnabled {
       claude = gatewayModel "claude";
-      codex = gatewayModel "codex";
       opencode = "cliproxyapi/${gatewayModel "opencode"}";
     };
-  routedProvider.codex = if gatewayEnabled then "cliproxyapi" else null;
 
   readOnlyTools = [
     "Read"
@@ -39,7 +37,6 @@ let
       opencode = "openai/gpt-5.6-luna";
       codex = "gpt-5.6-luna";
     };
-    model_provider = routedProvider;
     model_reasoning_effort.codex = "medium";
     sandbox_mode.codex = "read-only";
     content = builtins.readFile (agentsBasePath + "/general/fact-finder.md");
@@ -60,7 +57,6 @@ let
           opencode = "openai/gpt-5.6-luna";
           codex = "gpt-5.6-luna";
         };
-    model_provider = routedProvider;
     model_reasoning_effort.codex = "medium";
     sandbox_mode.codex = "workspace-write";
     content = builtins.readFile (agentsBasePath + "/general/implementer.md");
@@ -113,7 +109,6 @@ let
         opencode = "openai/gpt-5.3-codex-spark";
         codex = "gpt-5.3-codex-spark";
       };
-      model_provider = routedProvider;
       model_reasoning_effort.codex = "medium";
       sandbox_mode.codex = "workspace-write";
       content = builtins.readFile (agentsBasePath + "/general/mechanic.md");
@@ -136,7 +131,6 @@ let
         opencode = "openai/gpt-5.3-codex-spark";
         codex = "gpt-5.3-codex-spark";
       };
-      model_provider = routedProvider;
       model_reasoning_effort.codex = "medium";
       sandbox_mode.codex = "workspace-write";
       content = builtins.readFile (agentsBasePath + "/general/checker.md");
@@ -156,7 +150,6 @@ let
         opencode = "openai/gpt-5.6-luna";
         codex = "gpt-5.6-luna";
       };
-      model_provider = routedProvider;
       model_reasoning_effort = {
         codex = "medium";
       };
@@ -187,7 +180,6 @@ let
             opencode = "openai/gpt-5.6-sol";
             codex = "gpt-5.6-sol";
           };
-      model_provider = routedProvider;
       model_reasoning_effort = {
         codex = "medium";
       };
@@ -218,7 +210,6 @@ let
             opencode = "openai/gpt-5.6-luna";
             codex = "gpt-5.6-luna";
           };
-      model_provider = routedProvider;
       sandbox_mode = {
         codex = "workspace-write";
       };
@@ -246,7 +237,6 @@ let
             opencode = "openai/gpt-5.6-sol";
             codex = "gpt-5.6-sol";
           };
-      model_provider = routedProvider;
       model_reasoning_effort.codex = "high";
       sandbox_mode.codex = "read-only";
       content = builtins.readFile (agentsBasePath + "/general/reviewer.md");
