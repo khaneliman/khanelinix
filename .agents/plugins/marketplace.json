@@ -77,6 +77,18 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "diagnosing-bugs",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/diagnosing-bugs"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
 			"name": "engineering-principles",
 			"source": {
 				"source": "local",

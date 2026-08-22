@@ -53,6 +53,13 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "diagnosing-bugs",
+			"displayName": "Diagnosing Bugs",
+			"description": "Reproduce, minimize, and establish software bug causes.",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
 			"name": "engineering-principles",
 			"displayName": "Engineering Principles",
 			"description": "Principles for lean, verified agentic work.",
@@ -63,7 +70,7 @@
 			"name": "engineering-workflow",
 			"displayName": "Engineering Workflow",
 			"description": "Run routine software changes through a complete lifecycle.",
-			"version": "0.1.2",
+			"version": "0.1.3",
 			"category": "Developer Tools"
 		},
 		{
@@ -311,6 +318,7 @@
 				"architect",
 				"arena",
 				"blast-radius",
+				"diagnosing-bugs",
 				"engineering-principles",
 				"engineering-workflow",
 				"figure-it-out",

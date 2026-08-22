@@ -12,7 +12,9 @@ user wants an explanation and no mutation, leave this skill and use `how` or
 
 - Goal: restore intended behavior at the true cause.
 - Ground: reproduce the failure first. Capture the failing signal before any
-  edit. Use `why` when the code looks deliberate or the regression has history.
+  edit. Use `diagnosing-bugs` when the cause needs a minimal reproduction and
+  falsifiable probes. Use `why` when the code looks deliberate or the
+  regression has history.
 - Shape: fix the cause, not the symptom. Keep the diff at the smallest scope
   that removes the cause. Apply `fix-root-causes` from `engineering-principles`.
 - Verify: rerun the original failing signal, then the nearest regression

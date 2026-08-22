@@ -116,6 +116,7 @@ class PlaybookContract(unittest.TestCase):
             "tdd",
             "verification-harness",
             "performance-forensics",
+            "diagnosing-bugs",
         ):
             self.assertIn(f"`{skill}`", package_text)
 
@@ -255,6 +256,7 @@ class RepositoryRoutingContract(unittest.TestCase):
             "tdd",
             "verification-harness",
             "performance-forensics",
+            "diagnosing-bugs",
             "swarm",
         ):
             self.assertIn(f"`{skill}`", text)
@@ -344,6 +346,7 @@ class MarketplaceCompositionContract(unittest.TestCase):
             "requirements-interview",
             "tdd",
             "verification-harness",
+            "diagnosing-bugs",
         }
         self.assertTrue(required.issubset(self.members))
 
@@ -412,7 +415,7 @@ class TaskShapesContract(unittest.TestCase):
         self.assertIn("`why`", lowered)
 
     def test_shapes_route_optional_leaf_methods(self) -> None:
-        for skill in ("research", "tdd", "verification-harness"):
+        for skill in ("research", "tdd", "verification-harness", "diagnosing-bugs"):
             self.assertIn(f"`{skill}`", self.content)
 
     def test_attributes_upstream_license(self) -> None:

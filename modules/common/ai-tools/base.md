@@ -99,10 +99,12 @@ Match task shape to a workflow skill before solo work. Closest trigger wins.
   material product-choice clarification: `requirements-interview`.
 - For mutation work, `engineering-workflow` keeps lifecycle ownership. Inside
   it, use `research` and `requirements-interview` in Ground, explicit `tdd` in
-  Implement, and `verification-harness` or `performance-forensics` in Verify.
-  Harness creation or repair still requires explicit write authority.
-- Read-only performance diagnosis: `performance-forensics`. Read-only
-  verification-surface audit: `verification-harness`.
+  Implement, `diagnosing-bugs` for hard general bugs in Ground, and
+  `verification-harness` or `performance-forensics` in Verify. Harness creation
+  or repair still requires explicit write authority.
+- Read-only general bug diagnosis: `diagnosing-bugs`. Read-only performance
+  diagnosis: `performance-forensics`. Read-only verification-surface audit:
+  `verification-harness`.
 - Explicit independent worker fan-out adds `swarm` as a host-only overlay to the
   selected workflow. Never use it as the entry workflow. The caller keeps
   lifecycle, integration, and final judgment.

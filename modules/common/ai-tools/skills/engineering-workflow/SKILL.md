@@ -18,9 +18,9 @@ Leave non-mutation work to the direct specialist entry.
 - Answer-only question or code walkthrough: `how`.
 - External primary-source research with no mutation: `research`.
 - Motivation, rationale, or regression history: `why`.
-- Diagnosis-only work with no fix requested: matching domain or diagnostic
-  skill. When installed, use `performance-forensics` for measured performance
-  diagnosis. Use `how` or `why` for structure or history.
+- Diagnosis-only work with no fix requested: `diagnosing-bugs` for general
+  failures. Use `performance-forensics` for measured performance diagnosis.
+  Use `how` or `why` for structure or history.
 - Review-only work: matching review skill. Use `git-toolkit` for Git artifacts
   and `github-toolkit` for GitHub state.
 - Architecture-only work: `software-engineering`.
@@ -47,7 +47,8 @@ Run these phases in order. Skip a phase only when a gate rule allows it.
    product choice or missing authority. Use `research` for external
    primary-source facts. Use `requirements-interview` only when a material
    product choice remains unresolved. Use `how` for unfamiliar structure and
-   `why` for motivation or regression history.
+   `why` for motivation or regression history. For a hard general bug, use
+   `diagnosing-bugs` to establish the exact symptom and supported cause.
 2. **Shape.** Choose change shape and sequence. Use `architect` for a
    non-trivial feature or a change crossing module boundaries. Use
    `engineering-principles` for diff sizing and work order. Read

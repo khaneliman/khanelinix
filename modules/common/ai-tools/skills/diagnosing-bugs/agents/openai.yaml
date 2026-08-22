@@ -1,0 +1,4 @@
+interface:
+  display_name: "Diagnosing Bugs"
+  short_description: "Build exact repros and test ranked bug hypotheses"
+  default_prompt: "Use $diagnosing-bugs to reproduce, minimize, and establish the cause of this software failure."

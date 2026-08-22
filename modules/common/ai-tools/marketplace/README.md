@@ -36,7 +36,7 @@ skills call each other by name, so install the full set:
 ```sh
 npx skills add khaneliman/khanelinix \
   --agent antigravity claude-code codex \
-  --skill architect arena blast-radius engineering-principles engineering-workflow figure-it-out git-toolkit github-toolkit how interrogate okf-memory planning-with-files recall requirements-interview research show-me-your-work software-engineering tdd unslop verification-harness why \
+  --skill architect arena blast-radius diagnosing-bugs engineering-principles engineering-workflow figure-it-out git-toolkit github-toolkit how interrogate okf-memory planning-with-files recall requirements-interview research show-me-your-work software-engineering tdd unslop verification-harness why \
   --global --copy --yes
 ```
 
@@ -84,6 +84,7 @@ Ground -> Shape -> Implement -> Verify -> Review -> Correct -> Hand off
   how      architect   domain skill   blast-radius          interrogate
   why      engineering-principles     verification-harness
   research             tdd            performance-forensics
+  diagnosing-bugs
   requirements-interview
 ```
 
@@ -98,20 +99,20 @@ missing.
 Use a direct specialist entry when the task does not need the routine mutation
 lifecycle:
 
-| Task                                           | Entry skill                         |
-| ---------------------------------------------- | ----------------------------------- |
-| Explain code without changing it               | `how`                               |
-| Research external primary-source facts         | `research`                          |
-| Investigate rationale or regression history    | `why`                               |
-| Resolve an unresolved material product choice  | `requirements-interview`            |
-| Diagnose without implementing a fix            | Matching diagnostic or domain skill |
-| Diagnose or improve measured performance       | `performance-forensics`             |
-| Review Git history or a local change stack     | `git-toolkit`                       |
-| Review GitHub issues, pull requests, or checks | `github-toolkit`                    |
-| Evaluate architecture without implementation   | `software-engineering`              |
-| Run large, cross-cutting, or unattended work   | `figure-it-out`                     |
-| Compare competing artifacts                    | `arena`                             |
-| Run adversarial multi-model review             | `interrogate`                       |
+| Task                                           | Entry skill              |
+| ---------------------------------------------- | ------------------------ |
+| Explain code without changing it               | `how`                    |
+| Research external primary-source facts         | `research`               |
+| Investigate rationale or regression history    | `why`                    |
+| Resolve an unresolved material product choice  | `requirements-interview` |
+| Diagnose a general bug without fixing it       | `diagnosing-bugs`        |
+| Diagnose or improve measured performance       | `performance-forensics`  |
+| Review Git history or a local change stack     | `git-toolkit`            |
+| Review GitHub issues, pull requests, or checks | `github-toolkit`         |
+| Evaluate architecture without implementation   | `software-engineering`   |
+| Run large, cross-cutting, or unattended work   | `figure-it-out`          |
+| Compare competing artifacts                    | `arena`                  |
+| Run adversarial multi-model review             | `interrogate`            |
 
 An explicit `/architect` request uses the design-led `architect` workflow.
 Inside routine mutation work, `engineering-workflow` can call `architect` only
@@ -146,6 +147,7 @@ lifecycle methods, direct routes, and support utilities.
 | `engineering-workflow`   | Routine mutation lifecycle and gates              |
 | `how`                    | Structure discovery and explanation               |
 | `why`                    | Rationale and regression history                  |
+| `diagnosing-bugs`        | Exact-symptom reproduction and cause diagnosis    |
 | `architect`              | Types, signatures, placement, and implementation  |
 | `engineering-principles` | Scope, sequence, simplicity, and verification     |
 | `blast-radius`           | Reach analysis beyond the diff                    |
@@ -167,8 +169,9 @@ lifecycle methods, direct routes, and support utilities.
 
 Domain skills can own methods across several lifecycle phases. In the `nix`
 bundle, `nix-toolkit` owns operational diagnosis and `writing-nix` owns
-expression authoring. `performance-forensics` remains a standalone domain plugin
-because most routine changes do not need profiling or traces.
+expression authoring. `diagnosing-bugs` handles general failures inside Ground
+or as a direct read-only route. `performance-forensics` remains a standalone
+domain plugin because most routine changes do not need profiling or traces.
 
 ## Examples
 

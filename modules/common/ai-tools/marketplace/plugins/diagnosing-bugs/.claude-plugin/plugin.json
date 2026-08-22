@@ -1,0 +1,9 @@
+{
+	"name": "diagnosing-bugs",
+	"displayName": "Diagnosing Bugs",
+	"description": "Reproduce, minimize, and establish software bug causes.",
+	"version": "0.1.0",
+	"author": {
+		"name": "khaneliman"
+	}
+}
