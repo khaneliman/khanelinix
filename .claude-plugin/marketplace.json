@@ -129,7 +129,7 @@
 		{
 			"name": "github-toolkit",
 			"description": "Work with GitHub issues, pull requests, reviews, and checks.",
-			"version": "0.1.2",
+			"version": "0.1.3",
 			"author": {
 				"name": "khaneliman"
 			},

@@ -12,6 +12,8 @@ Use when turning raw notes, logs, dictation, or screenshots into a GitHub issue.
    instructions, and directly relevant docs before drafting.
 4. Check likely duplicates and linked pull requests.
 5. Fill selected template exactly with concise, evidence-backed prose.
+6. If the issue is intended for future agent handoff, read
+   [agent-brief.md](agent-brief.md) and add a durable behavioral contract.
 
 ## Authority and Output
 
@@ -22,6 +24,9 @@ assign, close, or modify unrelated files unless separately requested.
 
 If template choice or required contribution context is ambiguous, stop with
 concise blocker and do not create issue.
+
+Agent-handoff intent does not authorize publication, labels, assignment, or
+source edits. Preserve the same explicit GitHub-write boundary.
 
 ## Template Discovery (mandatory)
 

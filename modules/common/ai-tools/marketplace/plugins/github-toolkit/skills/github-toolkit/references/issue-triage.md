@@ -21,6 +21,8 @@ ranking.
 4. Recommend smallest useful next action: request information, link docs, close
    as duplicate/not planned, label/route, or outline implementation.
 5. Load matching domain skill before proposing code direction.
+6. If the recommended state is ready for agent handoff, read
+   [agent-brief.md](agent-brief.md) and draft a durable behavioral contract.
 
 ## Authority and Output
 
@@ -28,5 +30,5 @@ Triage is read-only unless user explicitly asks for a GitHub write. Do not
 comment, label, close, assign, push, or edit files while only asked to triage.
 
 Return target and classification, evidence and missing information, relevant
-guidelines, recommended next action, concise draft reply, and—only when useful—a
-minimal implementation and validation outline.
+guidelines, recommended next action, and concise draft reply. For agent handoff,
+return the durable brief instead of a path-bound implementation recipe.
