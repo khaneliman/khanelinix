@@ -114,10 +114,11 @@ in
               contextSize = 32768;
               ttl = 300;
 
-              # 16 GB of the card holds 9686 of the 10240 experts, and the tier
-              # needs one cache slot per declared expert or it disables itself.
+              # The tier needs one cache slot per declared expert or it disables
+              # itself. A 12 GB budget leaves the compositor room: 16 GB filled
+              # the card to 23.9 of 24.0 GiB and the desktop glitched.
               gpu = "0";
-              vramBudgetGb = 16;
+              vramBudgetGb = 12;
               cacheSlots = 256;
             };
           };
