@@ -101,9 +101,9 @@ in
             "qwen3-coder-30b" = {
               tag = "qwen3-coder:30b";
               contextSize = 32768;
-              # The 30B coder fills the card on its own, so hold it longer than
-              # the smaller models to avoid reloading 18 GB repeatedly.
-              ttl = 900;
+              # Reloading 18 GB costs about 20 seconds, but holding the card
+              # longer than this starves the compositor.
+              ttl = 300;
             };
 
             # 35B total with 3B active. The int4 container is 23 GB, which
@@ -112,7 +112,7 @@ in
               backend = "colibri";
               modelDir = "/var/lib/llm/colibri/qwen36";
               contextSize = 32768;
-              ttl = 900;
+              ttl = 300;
 
               # 16 GB of the card holds 9686 of the 10240 experts, and the tier
               # needs one cache slot per declared expert or it disables itself.
