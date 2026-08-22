@@ -1,6 +1,8 @@
 ---
 name: bevy-toolkit
 description: Bevy workflows for ECS, migrations, first-party UI/input/rendering/assets/shaders, plugin selection, scenes, scheduling, hot reloading, streamed-world expansion, world authoring, diagnostics, validation, and BRP/MCP control. Use when building, debugging, profiling, testing, editing, migrating, or automating native Bevy apps.
+metadata:
+  disable-model-selection: "true"
 ---
 
 # Bevy Toolkit

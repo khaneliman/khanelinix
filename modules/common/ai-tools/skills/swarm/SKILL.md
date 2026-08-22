@@ -2,6 +2,8 @@
 name: swarm
 description: "Host-only explicit fan-out overlay for /swarm or 'swarm this'. Never an entry workflow; caller owns lifecycle, integration, and final judgment."
 license: Complete terms in LICENSE
+metadata:
+  disable-model-selection: "true"
 ---
 
 # Swarm

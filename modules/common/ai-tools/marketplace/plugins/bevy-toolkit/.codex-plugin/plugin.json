@@ -1,6 +1,6 @@
 {
 	"name": "bevy-toolkit",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "Build, debug, and validate native Bevy applications.",
 	"author": {
 		"name": "khaneliman"

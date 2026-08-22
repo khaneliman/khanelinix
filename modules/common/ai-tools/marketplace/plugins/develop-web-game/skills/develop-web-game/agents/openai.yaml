@@ -4,3 +4,5 @@ interface:
   icon_small: "./assets/game-small.svg"
   icon_large: "./assets/game.png"
   default_prompt: "Use $develop-web-game to build or iterate this playable browser game and validate each change with the bundled Playwright loop."
+policy:
+  allow_implicit_invocation: false

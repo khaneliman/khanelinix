@@ -2,3 +2,5 @@ interface:
   display_name: "Memory Profiler"
   short_description: "Memory leak, OOM, heap, and allocation diagnosis"
   default_prompt: "Use $memory-profiler to capture evidence, diagnose this memory problem, and recommend or implement the smallest justified correction."
+policy:
+  allow_implicit_invocation: false

@@ -2,6 +2,8 @@
 name: skill-creator
 description: Create or update portable agent skills with precise triggers, progressive disclosure, deterministic scripts, references, assets, and optional harness metadata. Use for skill package design or scaffolding; use ai-tools-architect for full AI-configuration audits.
 license: Complete terms in LICENSE.txt
+metadata:
+  disable-model-selection: "true"
 ---
 
 # Skill Creator

@@ -1197,7 +1197,7 @@ Sanitizer reference:
 "
 
             draft-ietf-oauth-browser-based-apps-26
-        
+
     "
 
 [17]: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/rel "HTML attribute: rel - HTML | MDN"

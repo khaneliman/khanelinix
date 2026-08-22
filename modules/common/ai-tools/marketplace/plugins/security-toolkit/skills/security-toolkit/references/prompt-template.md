@@ -134,7 +134,7 @@ You MUST follow this process and reflect outputs in the final document:
       - sandboxing/isolation, privilege boundaries, subprocess execution
       - logging/auditing and error handling paths
       - CI/build/release: pipelines, dependency management, artifact publishing
-   
+
 2) System model
    a. Summarize the primary components (runtime plus critical build/CI components when relevant).
    b. Enumerate data flows and trust boundaries.

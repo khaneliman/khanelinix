@@ -1,6 +1,8 @@
 ---
 name: sarif-toolkit
 description: Deterministic SARIF reporting and partitioning. Use when inspecting .sarif or .sarif.json static-analysis output, summarizing findings without loading full JSON into chat, or splitting results by rule, path, severity, or balanced chunks.
+metadata:
+  disable-model-selection: "true"
 ---
 
 # SARIF Toolkit

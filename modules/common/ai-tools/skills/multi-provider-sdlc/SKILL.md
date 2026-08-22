@@ -1,6 +1,8 @@
 ---
 name: multi-provider-sdlc
 description: Provider-routing overlay for explicit provider or model diversity, or council work across Anthropic, Google, and OpenAI agents. Selects seats, quota circuits, and bounded phase workers; the caller owns lifecycle and final judgment.
+metadata:
+  disable-model-selection: "true"
 ---
 
 # Multi-Provider SDLC

@@ -1,6 +1,8 @@
 ---
 name: memory-profiler
 description: Diagnose memory inefficiencies, capture high-resolution memory profiles, and execute architectural refactoring across C++, Rust, TypeScript/Node.js, .NET, and Python. Use when troubleshooting memory leaks, out-of-memory (OOM) errors, or heap fragmentation.
+metadata:
+  disable-model-selection: "true"
 ---
 
 # Memory Profiler
