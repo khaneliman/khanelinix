@@ -18,6 +18,9 @@ let
   # store through a mount point of its own.
   modelsRoot = "/var/lib/llm/ollama-models";
 
+  # colibri containers belong outside /home, which the unit hides.
+  colibriRoot = "/var/lib/llm/colibri";
+
   # ollama stores a tag as a manifest that points at content-addressed blobs, so
   # the GGUF path is only known at runtime. Resolve it when the model starts.
   serve = pkgs.writeShellApplication {
@@ -59,9 +62,29 @@ let
     '';
   };
 
+  colibriCfg = cfg.colibri;
+
+  # colibri owns its own model container and reads experts from disk, so it
+  # takes a directory rather than a resolved blob.
+  mkColibriCmd =
+    name: model:
+    lib.concatStringsSep " " (
+      [
+        "${lib.getExe colibriCfg.package} serve"
+        "--model ${model.modelDir}"
+        "--host 127.0.0.1"
+        "--port \${PORT}"
+        # llama-swap forwards the requested name upstream, and colibri rejects a
+        # name it does not advertise, so the engine answers to its entry key.
+        "--model-id ${name}"
+      ]
+      ++ lib.optional (model.contextSize != null) "--ctx ${toString model.contextSize}"
+      ++ model.extraArgs
+    );
+
   # llama-swap splits this string into arguments itself, so keep it on one line
   # rather than using shell continuations.
-  mkCmd =
+  mkLlamaCmd =
     model:
     lib.concatStringsSep " " (
       [
@@ -93,8 +116,8 @@ let
     # command exited.
     logToStdout = "both";
 
-    models = lib.mapAttrs (_: model: {
-      cmd = mkCmd model;
+    models = lib.mapAttrs (name: model: {
+      cmd = if model.backend == "colibri" then mkColibriCmd name model else mkLlamaCmd model;
       inherit (model) ttl;
     }) swapCfg.models;
   };
@@ -134,10 +157,34 @@ in
       type = lib.types.attrsOf (
         lib.types.submodule {
           options = {
+            backend = lib.mkOption {
+              type = lib.types.enum [
+                "colibri"
+                "llama-cpp"
+              ];
+              default = "llama-cpp";
+              description = ''
+                Engine serving this entry.
+
+                llama-cpp loads a GGUF from the ollama store and needs the
+                weights to fit memory. colibri reads its own container and
+                streams experts from disk, which runs a model that fits
+                neither video memory nor system memory.
+              '';
+            };
+
             tag = lib.mkOption {
-              type = lib.types.str;
+              type = lib.types.nullOr lib.types.str;
+              default = null;
               example = "qwen3-coder:30b";
-              description = "ollama tag holding the GGUF to serve.";
+              description = "ollama tag holding the GGUF, for the llama-cpp backend.";
+            };
+
+            modelDir = lib.mkOption {
+              type = lib.types.nullOr lib.types.path;
+              default = null;
+              example = "/var/lib/llm/colibri/qwen36";
+              description = "colibri container directory, for the colibri backend.";
             };
 
             contextSize = lib.mkOption {
@@ -226,13 +273,31 @@ in
         assertion = ollamaCfg.user != null;
         message = "khanelinix.services.llm.llamaSwap shares ollama's identity, so services.ollama.user must be set.";
       }
-    ];
+    ]
+    ++ lib.mapAttrsToList (name: model: {
+      assertion = if model.backend == "colibri" then model.modelDir != null else model.tag != null;
+      message = "khanelinix.services.llm.llamaSwap.models.${name} needs ${
+        if model.backend == "colibri" then "modelDir" else "tag"
+      } for the ${model.backend} backend.";
+    }) swapCfg.models
+    ++ lib.mapAttrsToList (name: model: {
+      # These render llama-server flags, so a colibri entry would drop them.
+      assertion =
+        model.backend == "llama-cpp" || (model.cpuMoeLayers == null && model.kvCacheType == "q8_0");
+      message = "khanelinix.services.llm.llamaSwap.models.${name} sets llama.cpp cache options that the colibri backend ignores.";
+    }) swapCfg.models
+    ++ lib.mapAttrsToList (name: model: {
+      # The unit sets ProtectHome, so a container under /home is invisible to it.
+      assertion = model.backend != "colibri" || !(lib.hasPrefix "/home/" (toString model.modelDir));
+      message = "khanelinix.services.llm.llamaSwap.models.${name} keeps its container under /home, which the service cannot read. Use ${colibriRoot} instead.";
+    }) swapCfg.models;
 
     networking.firewall.allowedTCPPorts = lib.mkIf swapCfg.openFirewall [ swapCfg.port ];
 
     systemd.tmpfiles.rules = [
       "d /var/lib/llm 0750 ${ollamaCfg.user} ${ollamaCfg.group} -"
       "d ${modelsRoot} 0750 ${ollamaCfg.user} ${ollamaCfg.group} -"
+      "d ${colibriRoot} 0750 ${ollamaCfg.user} ${ollamaCfg.group} -"
     ];
 
     systemd.services.llama-swap = {

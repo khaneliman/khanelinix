@@ -25,6 +25,7 @@ let
 in
 {
   imports = [
+    ./colibri.nix
     ./llama-swap.nix
   ];
 
