@@ -205,6 +205,28 @@ Use tdd to implement this behavior through a red-green-refactor loop.
 Use verification-harness to replace this unreliable manual check.
 ```
 
+## Invocation modes
+
+Skills activate in two ways:
+
+1. **Automatic (implicit)**: The agent selects the skill automatically from task
+   descriptions. Core lifecycle and exploration skills run in this mode.
+2. **Manual (explicit-only)**: The agent activates the skill only when you state
+   its name directly. This mode saves context token budget on routine prompts.
+
+### Explicit-only skills
+
+| Skill                 | Purpose                                         | Invocation syntax                |
+| :-------------------- | :---------------------------------------------- | :------------------------------- |
+| `bevy-toolkit`        | Bevy ECS, hot reloading, and runtime tooling    | `Use $bevy-toolkit ...`          |
+| `develop-web-game`    | Web game dev and Playwright test loop           | `Use $develop-web-game ...`      |
+| `memory-profiler`     | Heap profiling, leaks, and allocation diagnosis | `Use $memory-profiler ...`       |
+| `sarif-toolkit`       | Static-analysis SARIF reports and partitioning  | `Use $sarif-toolkit ...`         |
+| `skill-creator`       | Create or update portable agent skills          | `Use $skill-creator ...`         |
+| `show-me-your-work`   | Reviewable TSV decision logs                    | `Use $show-me-your-work ...`     |
+| `multi-provider-sdlc` | Host-only multi-provider routing overlay        | `Use $multi-provider-sdlc ...`   |
+| `swarm`               | Host-only worker fan-out overlay                | `Use $swarm ...` or `swarm this` |
+
 ## Host-only workflow extensions
 
 The portable marketplace excludes `multi-provider-sdlc`. It requires private
