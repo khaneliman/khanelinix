@@ -7,6 +7,7 @@
   rocmPackages,
   stdenv,
   symlinkJoin,
+  util-linux,
   writeShellScriptBin,
 
   # The GPU expert tier is opt-in. Without it the engine is pure CPU, which is
@@ -30,9 +31,9 @@ let
   archBaseline = if stdenv.hostPlatform.isx86_64 then "x86-64-v3" else "armv8-a";
 
   # The Makefile expects one ROCm prefix holding bin/hipcc and lib/libamdhip64,
-  # which nixpkgs splits across packages. rocwmma belongs here too: an
+  # which nixpkgs splits across packages. rocwmma belongs here too. An
   # architecture with matrix cores, which includes every gfx11xx card, compiles
-  # the WMMA paths and backend_gpu_compat.h fails without those headers.
+  # the WMMA paths, and backend_gpu_compat.h fails without those headers.
   rocmHome = symlinkJoin {
     name = "colibri-rocm-home";
     paths = with rocmPackages; [
@@ -65,6 +66,27 @@ let
   ];
 
   cpuFlags = [ "ARCH=${archBaseline}" ];
+
+  # colibri probes the machine by shelling out, and a systemd unit carries a
+  # minimal PATH, so each probe needs a store path.
+  #
+  # lscpu counts physical cores. Without it the planner counts logical CPUs and
+  # sets OMP_NUM_THREADS to twice the core count. That over-subscribes SMT
+  # siblings. This host measured 4.2 tokens per second at 32 threads against 7.0
+  # at 16 threads.
+  #
+  # ldd reports whether the engine linked a GPU runtime, and rocm-smi enumerates
+  # devices. Without both, --vram refuses to run even though the binary links
+  # libamdhip64, so the tier stays compiled in and unused.
+  probePath = [
+    "${lib.getBin util-linux}/bin"
+  ]
+  ++ lib.optionals hipSupport [
+    "${lib.getBin stdenv.cc.libc}/bin"
+    "${rocmPackages.rocm-smi}/bin"
+  ];
+
+  wrapperArgs = ''--prefix PATH : "${lib.concatStringsSep ":" probePath}"'';
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "colibri";
@@ -156,7 +178,7 @@ stdenv.mkDerivation (finalAttrs: {
         # the GLM engine whenever it is present, which defeats per-model dispatch.
         makeWrapper ${lib.getExe pythonEnv} $out/bin/coli \
           --add-flags "$out/lib/colibri/coli" \
-          --set PYTHONPATH "$out/lib/colibri:${pythonEnv}/${python3.sitePackages}"
+          --set PYTHONPATH "$out/lib/colibri:${pythonEnv}/${python3.sitePackages}" ${wrapperArgs}
 
         runHook postInstall
   '';
