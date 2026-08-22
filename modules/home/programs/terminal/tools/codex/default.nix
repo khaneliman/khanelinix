@@ -81,12 +81,54 @@ let
     path = "${codexConfigPath}/skills/.system/${name}/SKILL.md";
     enabled = false;
   }) aiTools.codex.disabledSystemSkills;
-  codexAgentFiles = lib.mapAttrs' (
-    name: agentSettings:
-    lib.nameValuePair "${codexConfigDir}/agents/${name}.toml" {
-      source = tomlFormat.generate "codex-agent-${name}" agentSettings;
-    }
+  codexAgentSources = lib.mapAttrs (
+    name: agentSettings: tomlFormat.generate "codex-agent-${name}" agentSettings
   ) aiTools.codex.agents;
+  # Codex opens agent role files with O_NOFOLLOW before each spawn. Home Manager
+  # still declares the sources, then activation replaces its links with files.
+  codexAgentFiles = lib.mapAttrs' (
+    name: source:
+    lib.nameValuePair "${codexConfigDir}/agents/${name}.toml" {
+      inherit source;
+      force = true;
+    }
+  ) codexAgentSources;
+  codexAgentsActivate = pkgs.writeShellApplication {
+    name = "codex-agents-activate";
+    runtimeInputs = [ pkgs.coreutils ];
+    text = ''
+      target_directory=${lib.escapeShellArg "${codexConfigPath}/agents"}
+      install -d -m 0700 "$target_directory"
+
+      agent_names=(${lib.escapeShellArgs (lib.attrNames codexAgentSources)})
+      agent_sources=(${lib.escapeShellArgs (lib.attrValues codexAgentSources)})
+      temporary_file=
+      cleanup() {
+        if [[ -n ''${temporary_file:-} ]]; then
+          rm -f -- "$temporary_file"
+        fi
+      }
+      trap cleanup EXIT
+
+      for index in "''${!agent_names[@]}"; do
+        name=''${agent_names[$index]}
+        source=''${agent_sources[$index]}
+        target="$target_directory/$name.toml"
+        temporary_file=$(mktemp "$target_directory/.$name.toml.XXXXXX")
+
+        install -m 0600 -- "$source" "$temporary_file"
+
+        # Replace Home Manager symlinks even when their contents match.
+        if [[ -L $target ]] || ! cmp -s "$temporary_file" "$target"; then
+          mv -f -- "$temporary_file" "$target"
+        else
+          rm -f -- "$temporary_file"
+        fi
+        temporary_file=
+      done
+      trap - EXIT
+    '';
+  };
   codexSkills = aiTools.codex.skillSources;
   codexProfiles = {
     # Deep analysis and live-research mode. Intentionally expensive.
@@ -158,7 +200,12 @@ in
       # codex bump does not block activation. The native-messaging manifest and
       # node_repl MCP server are managed declaratively below, so the installer's
       # manifest writes are redirected to a scratch root it may own.
-      activation = lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+      activation = {
+        codexAgentFiles = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+          run ${lib.getExe codexAgentsActivate}
+        '';
+      }
+      // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
         codexBrowserUseInstall = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           run ${lib.getExe pkgs.khanelinix.codex-browser-use-linux-chromium} install \
             --codex-home ${codexConfigPath} \
@@ -257,6 +304,11 @@ in
 
         history = {
           max_bytes = 104857600;
+
+          # codex 0.149 ignores this field, but codex-acp embeds an older core
+          # that refuses to load a config without it. Editor plugins reach codex
+          # through that bridge.
+          persistence = "save-all";
         };
 
         memories = lib.optionalAttrs aiTools.codex.okfMemoryEnabled {
