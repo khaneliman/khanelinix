@@ -25,6 +25,23 @@ If material input is missing, state the gap and review what can still be proven.
 Do not invent requirements. Reject or replace any supplied inspection command
 that can mutate the worktree, history, remotes, or external state.
 
+## Evidence Axes
+
+Check two evidence axes before synthesizing one verdict:
+
+- **Standards:** Compare the change with contributor canon, scoped repository
+  instructions, documented coding standards, and enforced tool contracts. Cite
+  the owning rule for each violation. Do not add a generic smell baseline that
+  the repository did not adopt.
+- **Spec:** Locate the originating issue, specification, accepted plan, or user
+  requirements. Check for missing or partial requirements, scope creep, and
+  behavior that appears implemented but violates the requested contract. If no
+  durable spec exists, state that evidence gap.
+
+Keep findings separated by evidence axis during validation. Integrate their
+severity ordering and final verdict here. Separate workers are optional evidence
+collectors, not required owners of Standards or Spec judgment.
+
 ## Clean-Room Boundary
 
 When the harness permits, route the review to a fresh worker with only the input
@@ -75,7 +92,7 @@ ready / not-ready verdict.
 ## Workflow
 
 1. Read contributor guidance and every scoped repository instruction governing
-   inspected paths.
+   inspected paths. Identify the Standards sources and originating Spec source.
 2. Run the supplied inspection command and inspect the full change, not only a
    summary.
 3. Translate each claimed premise into a check that could disprove it. Verify
@@ -91,11 +108,13 @@ ready / not-ready verdict.
    - whether tests validate behavioral claims instead of matching text or
      implementation shape
    - any rejection or major-rework risk not covered by supplied lenses
-6. Sanity-check the named hazard directly.
-7. Prefer empirical evidence. Run focused code/tests and grep callers where
+6. Compare the validated change against both evidence axes. Record the owning
+   Standards rule or Spec requirement for each supported finding.
+7. Sanity-check the named hazard directly.
+8. Prefer empirical evidence. Run focused code/tests and grep callers where
    possible. Distinguish verified failures from residual risks that could not be
    reproduced.
-8. Check each candidate finding against actual lines and a concrete failure
+9. Check each candidate finding against actual lines and a concrete failure
    path. Omit vague style preferences and unsupported hypotheticals.
 
 ## Output
@@ -104,9 +123,16 @@ Report findings first, ordered by severity. For each finding include:
 
 - `file:line`
 - severity: `blocker`, `major`, `minor`, or `nit`
+- evidence axis: `Standards`, `Spec`, or both
 - violated premise or constraint
 - concrete failure scenario as `inputs/state → wrong outcome`
 - verification evidence, including command or caller path when useful
 
 Then state residual test or evidence gaps. Explicitly say whether blockers were
 found. End with exactly one verdict: `ready` or `not-ready`.
+
+## Attribution
+
+The Standards and Spec evidence axes are adapted from Matt Pocock's
+`code-review` skill. Prose is original. Upstream terms are in
+[LICENSE-matt-pocock.txt](../LICENSES/LICENSE-matt-pocock.txt).
