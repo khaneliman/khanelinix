@@ -20,7 +20,7 @@ let
   swapEnabled = swapCfg.enable or false;
 
   # The proxy publishes its base URL, so a host or port change needs no edit
-  # here, and a proxy on another machine needs only that option set.
+  # here. The literal only guards an evaluation without this system's config.
   swapEndpoint = swapCfg.endpoint or "http://127.0.0.1:8090/v1";
 
   # codex speaks only the responses API. llama.cpp serves it through the proxy;
