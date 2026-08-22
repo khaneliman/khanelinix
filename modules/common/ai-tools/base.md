@@ -55,6 +55,13 @@ report that role-specific routing did not apply.
 - Read project-local contributor canon before changes.
 - Follow user outcome and surrounding code. Match comment density, naming, and
   idiom.
+- Assume multiple agent streams operate concurrently in the repository. Never
+  assume sole control of the workspace.
+- Keep edits strictly bounded to your assigned work stream. Do not revert,
+  overwrite, or clean unfamiliar files or changes made by other streams.
+- Before you stage or commit, inspect diffs to ensure changes belong only to
+  your task. Never run blanket discard or reset operations that destroy
+  concurrent work.
 - Surface assumptions when they materially affect result. Ask only when conflict
   or ambiguity cannot be resolved safely; otherwise state choice and proceed.
 - Settle an empirical fork with a cheap experiment or prototype when running it
