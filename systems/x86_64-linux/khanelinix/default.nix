@@ -79,6 +79,12 @@ in
       llm = {
         enable = true;
 
+        colibri = {
+          # qwen36 is one of the two engines the HIP tier reaches, so this host
+          # exercises it.
+          hipSupport = true;
+        };
+
         llamaSwap = {
           enable = true;
 
@@ -97,6 +103,15 @@ in
               contextSize = 32768;
               # The 30B coder fills the card on its own, so hold it longer than
               # the smaller models to avoid reloading 18 GB repeatedly.
+              ttl = 900;
+            };
+
+            # 35B total with 3B active. The int4 container is 23 GB, which
+            # exceeds this card, so colibri streams the experts instead.
+            "qwen36-colibri" = {
+              backend = "colibri";
+              modelDir = "/var/lib/llm/colibri/qwen36";
+              contextSize = 32768;
               ttl = 900;
             };
           };
