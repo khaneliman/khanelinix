@@ -97,11 +97,35 @@ let
     name = "codex-agents-activate";
     runtimeInputs = [ pkgs.coreutils ];
     text = ''
+      old_generation=''${1:-}
       target_directory=${lib.escapeShellArg "${codexConfigPath}/agents"}
       install -d -m 0700 "$target_directory"
 
       agent_names=(${lib.escapeShellArgs (lib.attrNames codexAgentSources)})
       agent_sources=(${lib.escapeShellArgs (lib.attrValues codexAgentSources)})
+
+      # Home Manager skips removed targets after activation makes them regular
+      # files. Remove only names owned by the previous generation.
+      old_agent_directory="$old_generation/home-files/${codexConfigDir}/agents"
+      if [[ -n $old_generation && -d $old_agent_directory ]]; then
+        shopt -s nullglob
+        for old_agent in "$old_agent_directory"/*.toml; do
+          old_name=''${old_agent##*/}
+          old_name=''${old_name%.toml}
+          is_current=false
+          for name in "''${agent_names[@]}"; do
+            if [[ $old_name == "$name" ]]; then
+              is_current=true
+              break
+            fi
+          done
+          if [[ $is_current == false ]]; then
+            rm -f -- "$target_directory/$old_name.toml"
+          fi
+        done
+        shopt -u nullglob
+      fi
+
       temporary_file=
       cleanup() {
         if [[ -n ''${temporary_file:-} ]]; then
@@ -202,7 +226,7 @@ in
       # manifest writes are redirected to a scratch root it may own.
       activation = {
         codexAgentFiles = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-          run ${lib.getExe codexAgentsActivate}
+          run ${lib.getExe codexAgentsActivate} "''${oldGenPath:-}"
         '';
       }
       // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
