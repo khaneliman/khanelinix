@@ -49,14 +49,25 @@ in
 
       rocmOverrideGfx = lib.mkIf (amdCfg.enable && amdCfg.enableRocmSupport) "11.0.0";
 
-      environmentVariables =
-        lib.optionalAttrs cfg.enableDebug {
-          OLLAMA_DEBUG = "1";
-        }
-        // lib.optionalAttrs (amdCfg.enable && amdCfg.enableRocmSupport) {
-          HCC_AMDGPU_TARGET = "gfx1100";
-          AMD_LOG_LEVEL = lib.mkIf cfg.enableDebug "3";
-        };
+      environmentVariables = {
+        # A desktop compositor needs video memory too, and a 24 GiB card holds
+        # about one of these models. Holding weights for the upstream default
+        # of five minutes after a one-shot completion starves the desktop and
+        # collides with llama-swap, which manages the same card without
+        # knowing about this service.
+        OLLAMA_KEEP_ALIVE = "60s";
+
+        # A second resident model cannot fit, so loading one only pushes the
+        # first onto the CPU.
+        OLLAMA_MAX_LOADED_MODELS = "1";
+      }
+      // lib.optionalAttrs cfg.enableDebug {
+        OLLAMA_DEBUG = "1";
+      }
+      // lib.optionalAttrs (amdCfg.enable && amdCfg.enableRocmSupport) {
+        HCC_AMDGPU_TARGET = "gfx1100";
+        AMD_LOG_LEVEL = lib.mkIf cfg.enableDebug "3";
+      };
     };
 
     # The store predates the static identity, so its files still belong to the
