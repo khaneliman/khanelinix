@@ -1,0 +1,6 @@
+interface:
+  display_name: "Recall"
+  short_description: "Rebuild recent work into a current-state brief"
+  default_prompt: "Use $recall to reconstruct my recent work and return a concise current-state brief."
+policy:
+  allow_implicit_invocation: false
