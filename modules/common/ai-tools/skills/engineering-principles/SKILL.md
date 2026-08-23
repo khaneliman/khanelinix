@@ -1,6 +1,6 @@
 ---
 name: engineering-principles
-description: "Engineering principles for lean, verified agentic work. Apply when refactoring or sizing a diff, sequencing an addition or rewrite, debugging, stacking multi-step work or commits, verifying before declaring done, managing a filling context window, encoding a recurring correction, or choosing between hand edits and a tool."
+description: "Methods inside a caller-owned lifecycle: diff sizing, work sequencing, refactoring, debugging, commit stacks, verification, context pressure, recurring corrections, and tool choice."
 ---
 
 # Engineering Principles
