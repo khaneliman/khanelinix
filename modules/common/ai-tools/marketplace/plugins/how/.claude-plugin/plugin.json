@@ -2,7 +2,7 @@
 	"name": "how",
 	"displayName": "How",
 	"description": "Explain how a subsystem works from codebase exploration.",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"author": {
 		"name": "khaneliman"
 	}
