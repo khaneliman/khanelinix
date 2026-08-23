@@ -9,7 +9,8 @@ Drive a real browser from the terminal using the bundled wrapper script. The
 wrapper provides Playwright from Nix, so it does not depend on `npx` or a
 project-local Node install.
 Treat this skill as CLI-first automation. Do not pivot to `@playwright/test`
-unless the user explicitly asks for test files.
+unless the user explicitly asks for test files. When the task needs a persistent
+stateful browser session, invoke `playwright-interactive` by name instead.
 
 ## Plays
 

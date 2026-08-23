@@ -4,3 +4,5 @@ interface:
   icon_small: "./assets/playwright-small.svg"
   icon_large: "./assets/playwright.png"
   default_prompt: "Use $playwright-interactive to debug a local web or Electron app in a persistent Nix-backed Playwright session and capture the QA evidence."
+policy:
+  allow_implicit_invocation: false
