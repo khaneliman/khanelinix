@@ -1,6 +1,6 @@
 ---
 name: engineering-workflow
-description: "Default lifecycle for routine software mutations: bug fixes, features, refactors, migrations, and dependency, config, script, or code changes. Orchestrates investigation, design, implementation, verification, fresh review, correction, and handoff through matching skills. Do not use for answer-only, diagnosis-only, review-only, architecture-only, large, cross-cutting, or unattended work."
+description: "Default lifecycle for routine bug fixes, features, refactors, migrations, dependency updates, configuration, scripts, and code. Routes investigation through handoff. Excludes answer-only, diagnosis-only, review-only, architecture-only, large, cross-cutting, and unattended work."
 ---
 
 # Engineering Workflow
