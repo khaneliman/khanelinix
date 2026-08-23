@@ -1,0 +1,6 @@
+interface:
+  display_name: "Arena"
+  short_description: "Compare parallel candidates before selecting a base"
+  default_prompt: "Use $arena to compare independent candidates and synthesize the strongest result."
+policy:
+  allow_implicit_invocation: false
