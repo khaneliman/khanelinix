@@ -1,0 +1,581 @@
+{
+	"schema_version": 1,
+	"suite_id": "workflow-routing-baseline",
+	"frozen_at": "2026-08-23",
+	"source_revision": "7caf2d1321af4384d568d60c8325631a718ad60f",
+	"cases": [
+		{
+			"id": "routine-bug-fix",
+			"prompt": "Fix the parser regression that makes one existing unit test fail. Keep the patch bounded.",
+			"tags": [
+				"provider-parity",
+				"method-positive",
+				"owner-positive",
+				"bug-fix"
+			],
+			"expected": {
+				"selection": {
+					"owner": "engineering-workflow",
+					"methods": ["diagnosing-bugs"],
+					"overlays": []
+				},
+				"must_not_select": ["figure-it-out", "program-orchestration"]
+			}
+		},
+		{
+			"id": "feature-boundary-change",
+			"prompt": "Add a bounded feature that introduces a new public module boundary, then verify the implementation.",
+			"tags": [
+				"provider-parity",
+				"owner-positive",
+				"method-positive",
+				"feature"
+			],
+			"expected": {
+				"selection": {
+					"owner": "engineering-workflow",
+					"methods": ["architect"],
+					"overlays": []
+				},
+				"must_not_select": ["software-engineering", "figure-it-out"]
+			}
+		},
+		{
+			"id": "large-modernization-goal",
+			"prompt": "Figure out and execute a repository-wide migration from the legacy runtime to the supported stack. Keep an auditable decision trail.",
+			"tags": [
+				"provider-parity",
+				"owner-positive",
+				"method-positive",
+				"modernization"
+			],
+			"expected": {
+				"selection": {
+					"owner": "figure-it-out",
+					"methods": ["software-engineering"],
+					"overlays": []
+				},
+				"must_not_select": ["engineering-workflow", "program-orchestration"]
+			}
+		},
+		{
+			"id": "architecture-plan-only",
+			"prompt": "Evaluate this repository architecture and produce an implementation-ready plan. Do not change files.",
+			"tags": [
+				"provider-parity",
+				"owner-positive",
+				"architecture",
+				"answer-only"
+			],
+			"expected": {
+				"selection": {
+					"owner": "software-engineering",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["engineering-workflow", "architect"]
+			}
+		},
+		{
+			"id": "diagnosis-only",
+			"prompt": "Diagnose why the command fails intermittently. Report the supported cause, but do not implement a fix.",
+			"tags": ["provider-parity", "owner-positive", "diagnosis", "answer-only"],
+			"expected": {
+				"selection": {
+					"owner": "diagnosing-bugs",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["engineering-workflow"]
+			}
+		},
+		{
+			"id": "performance-diagnosis-only",
+			"prompt": "Measure and explain the new latency regression. Do not optimize or edit the implementation.",
+			"tags": [
+				"provider-parity",
+				"owner-positive",
+				"performance",
+				"answer-only"
+			],
+			"expected": {
+				"selection": {
+					"owner": "performance-forensics",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["engineering-workflow", "diagnosing-bugs"]
+			}
+		},
+		{
+			"id": "commit-stack-plan",
+			"prompt": "Inspect this local change and plan the smallest independently reviewable Conventional Commit stack.",
+			"tags": ["provider-parity", "owner-positive", "git"],
+			"expected": {
+				"selection": {
+					"owner": "git-toolkit",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["engineering-workflow", "github-toolkit"]
+			}
+		},
+		{
+			"id": "maintainer-triage-queue",
+			"prompt": "Triage the open GitHub issue queue. Group duplicates, identify existing pull requests, and propose next actions without writing to GitHub.",
+			"tags": ["provider-parity", "owner-positive", "maintainer", "github"],
+			"expected": {
+				"selection": {
+					"owner": "github-toolkit",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["engineering-workflow", "program-orchestration"]
+			}
+		},
+		{
+			"id": "maintainer-accepted-fix",
+			"prompt": "Use the accepted GitHub issue to reproduce and fix the reported bug. Keep GitHub writes out of scope.",
+			"tags": [
+				"provider-parity",
+				"owner-positive",
+				"method-positive",
+				"maintainer",
+				"bug-fix"
+			],
+			"expected": {
+				"selection": {
+					"owner": "engineering-workflow",
+					"methods": ["github-toolkit", "diagnosing-bugs"],
+					"overlays": []
+				},
+				"must_not_select": ["program-orchestration"]
+			}
+		},
+		{
+			"id": "subsystem-explanation",
+			"prompt": "How does the provider agent renderer work, and where should another renderer live?",
+			"tags": ["provider-parity", "owner-positive", "explanation"],
+			"expected": {
+				"selection": {
+					"owner": "how",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["software-engineering", "why"]
+			}
+		},
+		{
+			"id": "historical-rationale",
+			"prompt": "Why did this repository keep native Codex semantic roles instead of proxy aliases? Trace the decision evidence.",
+			"tags": ["provider-parity", "owner-positive", "rationale"],
+			"expected": {
+				"selection": {
+					"owner": "why",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["how", "research"]
+			}
+		},
+		{
+			"id": "external-primary-research",
+			"prompt": "Research the current official model guidance from primary provider documentation and cite every material claim.",
+			"tags": ["provider-parity", "owner-positive", "research"],
+			"expected": {
+				"selection": {
+					"owner": "research",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["why", "software-engineering"]
+			}
+		},
+		{
+			"id": "test-first-fix",
+			"prompt": "Fix this bounded defect with explicit red-green-refactor TDD inside the normal mutation lifecycle.",
+			"tags": ["provider-parity", "owner-positive", "method-positive", "tdd"],
+			"expected": {
+				"selection": {
+					"owner": "engineering-workflow",
+					"methods": ["tdd"],
+					"overlays": []
+				},
+				"must_not_select": ["figure-it-out"]
+			}
+		},
+		{
+			"id": "small-diff-blast-radius",
+			"prompt": "Review this small diff before merge and prove what it could break beyond the changed files.",
+			"tags": [
+				"provider-parity",
+				"owner-positive",
+				"method-positive",
+				"review"
+			],
+			"expected": {
+				"selection": {
+					"owner": "git-toolkit",
+					"methods": ["blast-radius"],
+					"overlays": []
+				},
+				"must_not_select": ["software-engineering"]
+			}
+		},
+		{
+			"id": "verification-surface-audit",
+			"prompt": "Audit whether this repository has a deterministic verification surface. Do not create or repair one.",
+			"tags": [
+				"provider-parity",
+				"owner-positive",
+				"verification",
+				"answer-only"
+			],
+			"expected": {
+				"selection": {
+					"owner": "verification-harness",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["engineering-workflow"]
+			}
+		},
+		{
+			"id": "explicit-ai-tools-architect",
+			"prompt": "Use $ai-tools-architect to audit this repository's agent instructions, skills, and provider projections.",
+			"tags": [
+				"provider-parity",
+				"owner-positive",
+				"explicit-positive",
+				"ai-configuration"
+			],
+			"expected": {
+				"selection": {
+					"owner": "ai-tools-architect",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["software-engineering"]
+			}
+		},
+		{
+			"id": "application-ai-architecture",
+			"prompt": "Design the application module that calls an AI inference API. Focus on runtime boundaries and failure behavior.",
+			"tags": [
+				"provider-parity",
+				"owner-negative",
+				"explicit-negative",
+				"architecture"
+			],
+			"expected": {
+				"selection": {
+					"owner": "software-engineering",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["ai-tools-architect"]
+			}
+		},
+		{
+			"id": "explicit-arena",
+			"prompt": "Use $arena to produce three competing API designs, select the strongest base, and synthesize the result.",
+			"tags": [
+				"provider-parity",
+				"owner-positive",
+				"explicit-positive",
+				"design"
+			],
+			"expected": {
+				"selection": {
+					"owner": "arena",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["interrogate"]
+			}
+		},
+		{
+			"id": "single-design-path",
+			"prompt": "Architect this bounded internal helper. The existing interface fixes the solution shape.",
+			"tags": [
+				"provider-parity",
+				"method-negative",
+				"explicit-negative",
+				"design"
+			],
+			"expected": {
+				"selection": {
+					"owner": "architect",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["arena"]
+			}
+		},
+		{
+			"id": "explicit-interrogate",
+			"prompt": "Use $interrogate to adversarially review this migration diff from independent angles. Do not apply changes.",
+			"tags": [
+				"provider-parity",
+				"overlay-positive",
+				"explicit-positive",
+				"review"
+			],
+			"expected": {
+				"selection": {
+					"owner": "git-toolkit",
+					"methods": [],
+					"overlays": ["interrogate"]
+				},
+				"must_not_select": ["engineering-workflow"]
+			}
+		},
+		{
+			"id": "routine-single-review",
+			"prompt": "Review this ordinary local diff for correctness with one independent reviewer.",
+			"tags": [
+				"provider-parity",
+				"overlay-negative",
+				"explicit-negative",
+				"review"
+			],
+			"expected": {
+				"selection": {
+					"owner": "git-toolkit",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["interrogate", "multi-provider-sdlc"]
+			}
+		},
+		{
+			"id": "explicit-playwright-interactive",
+			"prompt": "A persistent browser runtime is available. Use $playwright-interactive to keep one session alive while debugging this stateful local UI flow.",
+			"tags": [
+				"provider-parity",
+				"owner-positive",
+				"explicit-positive",
+				"browser"
+			],
+			"expected": {
+				"selection": {
+					"owner": "playwright-interactive",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": []
+			}
+		},
+		{
+			"id": "one-shot-browser-check",
+			"prompt": "Open the local page once, submit the form, capture a screenshot, and exit.",
+			"tags": [
+				"provider-parity",
+				"owner-negative",
+				"explicit-negative",
+				"browser"
+			],
+			"expected": {
+				"selection": {
+					"owner": "playwright",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["playwright-interactive"]
+			}
+		},
+		{
+			"id": "explicit-recall",
+			"prompt": "Use $recall to reconstruct where I left off on the provider-routing work and give me a current-state brief.",
+			"tags": [
+				"provider-parity",
+				"owner-positive",
+				"explicit-positive",
+				"continuity"
+			],
+			"expected": {
+				"selection": {
+					"owner": "recall",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["why"]
+			}
+		},
+		{
+			"id": "active-plan-continue",
+			"prompt": "Continue the next unchecked step from the active plan already injected into this session.",
+			"tags": [
+				"provider-parity",
+				"owner-negative",
+				"explicit-negative",
+				"continuity"
+			],
+			"expected": {
+				"selection": {
+					"owner": null,
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["recall"]
+			}
+		},
+		{
+			"id": "explicit-reflect",
+			"prompt": "Use $reflect to mine this completed session for reusable workflow lessons and route accepted learnings.",
+			"tags": [
+				"provider-parity",
+				"owner-positive",
+				"explicit-positive",
+				"learning"
+			],
+			"expected": {
+				"selection": {
+					"owner": "reflect",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["recall"]
+			}
+		},
+		{
+			"id": "routine-completion-report",
+			"prompt": "Report the result of this one-line typo correction and its focused check.",
+			"tags": [
+				"provider-parity",
+				"owner-negative",
+				"explicit-negative",
+				"learning"
+			],
+			"expected": {
+				"selection": {
+					"owner": null,
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["reflect"]
+			}
+		},
+		{
+			"id": "explicit-requirements-interview",
+			"prompt": "Use $requirements-interview to resolve the remaining product choices before we design this feature.",
+			"tags": [
+				"provider-parity",
+				"owner-positive",
+				"explicit-positive",
+				"requirements"
+			],
+			"expected": {
+				"selection": {
+					"owner": "requirements-interview",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["architect"]
+			}
+		},
+		{
+			"id": "fully-specified-feature",
+			"prompt": "Implement the specified endpoint exactly as described. Product choices and acceptance criteria are complete.",
+			"tags": [
+				"provider-parity",
+				"owner-negative",
+				"explicit-negative",
+				"requirements"
+			],
+			"expected": {
+				"selection": {
+					"owner": "engineering-workflow",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["requirements-interview"]
+			}
+		},
+		{
+			"id": "explicit-unslop",
+			"prompt": "Use $unslop to remove canned AI phrasing from this pull request description while preserving every fact.",
+			"tags": [
+				"provider-parity",
+				"method-positive",
+				"explicit-positive",
+				"writing"
+			],
+			"expected": {
+				"selection": {
+					"owner": "technical-writing",
+					"methods": ["unslop"],
+					"overlays": []
+				},
+				"must_not_select": []
+			}
+		},
+		{
+			"id": "ordinary-technical-edit",
+			"prompt": "Rewrite this procedure for concise technical clarity while preserving all commands, caveats, and links.",
+			"tags": [
+				"provider-parity",
+				"method-negative",
+				"explicit-negative",
+				"writing"
+			],
+			"expected": {
+				"selection": {
+					"owner": "technical-writing",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["unslop"]
+			}
+		},
+		{
+			"id": "explicit-provider-review",
+			"prompt": "Use multiple LLM providers to challenge this high-stakes architecture plan, then synthesize one lead verdict.",
+			"tags": [
+				"provider-parity",
+				"overlay-positive",
+				"provider-diversity",
+				"review"
+			],
+			"expected": {
+				"selection": {
+					"owner": "software-engineering",
+					"methods": [],
+					"overlays": ["interrogate", "multi-provider-sdlc"]
+				},
+				"must_not_select": ["swarm"]
+			}
+		},
+		{
+			"id": "explicit-swarm",
+			"prompt": "Use $swarm to inspect independent frontend, backend, and documentation slices before the owning workflow integrates them.",
+			"tags": [
+				"provider-parity",
+				"overlay-positive",
+				"explicit-positive",
+				"delegation"
+			],
+			"expected": {
+				"selection": {
+					"owner": "engineering-workflow",
+					"methods": [],
+					"overlays": ["swarm"]
+				},
+				"must_not_select": ["program-orchestration"]
+			}
+		},
+		{
+			"id": "bounded-repository-question",
+			"prompt": "Find the callers of this one function and explain the result. Keep the exploration in one bounded worker.",
+			"tags": ["provider-parity", "overlay-negative", "delegation"],
+			"expected": {
+				"selection": {
+					"owner": "how",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["swarm", "program-orchestration"]
+			}
+		}
+	]
+}

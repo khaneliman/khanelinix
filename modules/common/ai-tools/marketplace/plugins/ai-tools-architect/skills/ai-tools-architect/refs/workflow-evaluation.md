@@ -33,6 +33,12 @@ invocation cases when a skill is explicit-only. Remove secrets, live mutable
 identifiers, expected answers, and hints that exist only to help the evaluator.
 Freeze the corpus and source revision before running candidates.
 
+The canonical routing corpus lives at
+`modules/common/ai-tools/eval/workflow-routing-baseline.json`. Keep every corpus
+outside the skill directory. A corpus carries expected answers, so it must never
+ship inside the installed skill package. Record `source_revision` as provenance
+only; do not treat it as a pin that consumers must resolve.
+
 ## Blind the Run
 
 Prepare task and answer-key artifacts outside the installed skill directory:
