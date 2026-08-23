@@ -1,6 +1,6 @@
 ---
 name: ai-tools-architect
-description: AI-configuration architecture for repository instructions, prompts, rules, agents, commands, skills, and provider context. Use software-engineering for application or system architecture. Use when initializing, designing, refactoring, or auditing agent configuration for clear boundaries, deterministic automation, reproducible workflows, or token-efficient disclosure.
+description: AI-tool architecture for instructions, prompts, rules, agents, commands, skills, hooks, and provider context. Use for setup, refactoring, or audits needing clear boundaries, deterministic automation, reproducibility, or lean context. Use software-engineering for application architecture.
 ---
 
 # AI Tools Architecture Playbook

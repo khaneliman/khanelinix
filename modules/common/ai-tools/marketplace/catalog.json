@@ -14,7 +14,7 @@
 			"name": "ai-tools-architect",
 			"displayName": "AI Tools Architect",
 			"description": "Design and audit portable AI-tool configuration.",
-			"version": "0.1.6",
+			"version": "0.1.7",
 			"category": "Developer Tools"
 		},
 		{
