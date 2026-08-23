@@ -1,6 +1,6 @@
 ---
 name: software-engineering
-description: Software-system engineering for current-state repository or subsystem architecture and maintainability evaluation, large or cross-cutting change planning, and standalone design review. Use ai-tools-architect for AI configuration. Use when work needs repository-wide understanding, explicit contracts and invariants, boundary tradeoff analysis, failure and evolution design, or an implementation-ready validation strategy. Do not use for routine localized edits, visual design, security audits, pure implementation owned by a domain skill, or primary commit/PR/diff review.
+description: Repository or subsystem architecture, maintainability, and large-change planning. Use for architecture-only contracts, invariants, boundaries, failure behavior, evolution, design review, or implementation-ready validation. Use ai-tools-architect for agent configuration. Excludes routine implementation and commit, PR, diff, visual, or security review.
 ---
 
 # Software Engineering
