@@ -1,0 +1,6 @@
+interface:
+  display_name: "Unslop"
+  short_description: "Remove canned AI patterns from user-facing prose"
+  default_prompt: "Use $unslop to remove canned AI patterns while preserving the text's meaning and voice."
+policy:
+  allow_implicit_invocation: false
