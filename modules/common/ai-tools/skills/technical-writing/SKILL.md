@@ -1,6 +1,6 @@
 ---
 name: technical-writing
-description: Write, rewrite, or review technical prose with STE-inspired clarity and measurable retention checks. Use for documentation, procedures, code comments, commit messages, release notes, incident reports, postmortems, or any edit where concise language must preserve facts, caveats, figures, code, links, and tables. Do not claim full ASD-STE100 conformance unless the task uses the official current standard and controlled dictionary.
+description: Write or review concise technical prose for docs, procedures, comments, commits, releases, incidents, and postmortems. Preserve facts, caveats, figures, code, commands, links, and tables. Claim full ASD-STE100 conformance only with the official current standard and controlled dictionary.
 ---
 
 # Technical Writing

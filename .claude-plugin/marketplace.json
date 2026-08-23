@@ -339,7 +339,7 @@
 		{
 			"name": "technical-writing",
 			"description": "Write and review concise technical prose.",
-			"version": "0.1.3",
+			"version": "0.1.4",
 			"author": {
 				"name": "khaneliman"
 			},
