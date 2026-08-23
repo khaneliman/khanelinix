@@ -70,6 +70,8 @@ AI-configuration component, read its reference in `refs/` before responding:
   [refs/COMMANDS.md](refs/COMMANDS.md)
 - **For agent-facing instructions and skill prose:** Read
   [refs/writing-for-agents/REFERENCE.md](refs/writing-for-agents/REFERENCE.md)
+- **For skill, workflow, or model-route evaluation:** Read
+  [refs/workflow-evaluation.md](refs/workflow-evaluation.md)
 - **For repository instruction initialization or full-surface audits:** Read
   [refs/INITIALIZATION.md](refs/INITIALIZATION.md), then only the component
   references it selects.
