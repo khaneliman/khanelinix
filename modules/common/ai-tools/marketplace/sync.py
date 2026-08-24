@@ -14,6 +14,8 @@ import shutil
 from pathlib import Path
 from typing import Any
 
+from skill_projection import render_path
+
 MARKETPLACE_DIR = Path(__file__).resolve().parent
 ROOT = MARKETPLACE_DIR.parents[3]
 SKILLS_DIR = MARKETPLACE_DIR.parent / "skills"
@@ -62,10 +64,10 @@ def main() -> None:
                 "author": owner,
             },
         )
-        shutil.copytree(
+        render_path(
             SKILLS_DIR / name,
             plugin_dir / "skills" / name,
-            ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+            "claude-code",
         )
 
     dump(

@@ -14,6 +14,7 @@ let
 
   cfg = config.khanelinix.programs.terminal.tools.pi-coding-agent;
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
+  projectedSkills = aiTools.piCodingAgent.skills;
 in
 {
   options.khanelinix.programs.terminal.tools.pi-coding-agent = {
@@ -65,6 +66,8 @@ in
         packages = [
           aiTools.planningWithFiles.piCodingAgent.package
         ];
+
+        skills = [ projectedSkills ];
 
         compaction = {
           reserveTokens = 20000;

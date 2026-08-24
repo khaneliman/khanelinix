@@ -2,7 +2,7 @@
 	"name": "develop-web-game",
 	"displayName": "Develop Web Game",
 	"description": "Build and debug playable HTML and JavaScript games.",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"author": {
 		"name": "khaneliman"
 	}

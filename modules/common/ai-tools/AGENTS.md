@@ -24,9 +24,9 @@
   model policy, gateway catalog, task routes, and quota pools
 - `model-routing.nix`: validated Nix adapter for canonical routing policy
 - `agents.nix`: semantic worker capabilities and provider renderers
-- `marketplace/`: portable publication catalog, generator (`sync.py`),
-  validator, generated shared plugin tree (`plugins/`), tests, and install
-  documentation
+- `marketplace/`: portable publication catalog, provider skill projection,
+  generator (`sync.py`), validator, generated shared plugin tree (`plugins/`),
+  tests, and install documentation
 - `skills/`: canonical on-demand workflows; keep root playbooks lean and route
   detail into references/scripts
 - `planning-with-files/`: vendored provider adapters and explicit planning

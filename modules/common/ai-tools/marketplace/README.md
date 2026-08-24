@@ -216,19 +216,29 @@ Skills activate in two ways:
 2. **Manual (explicit-only)**: The agent activates the skill only when you state
    its name directly. This mode saves context token budget on routine prompts.
 
+Canonical skills record cross-provider manual intent in
+`metadata.khanelinix-invocation-mode`. Repository-managed Claude Code and Pi
+projections emit their native `disable-model-invocation` field. Codex uses
+`agents/openai.yaml`.
+
+The generic `npx skills` installer copies portable canonical manifests. It does
+not apply repository provider projections. These installs retain the skill
+description when a host cannot interpret the canonical metadata. Use the native
+marketplace or Nix-managed projection when model hiding must be enforced.
+
+Codex hides fifteen additional caller-invoked or owner-routed skills to save
+standing context. Other hosts keep them model-visible so lifecycle skills can
+invoke them.
+
 ### Explicit-only skills
 
-| Skill                   | Purpose                                         | Invocation syntax                |
-| :---------------------- | :---------------------------------------------- | :------------------------------- |
-| `bevy-toolkit`          | Bevy ECS, hot reloading, and runtime tooling    | `Use $bevy-toolkit ...`          |
-| `develop-web-game`      | Web game dev and Playwright test loop           | `Use $develop-web-game ...`      |
-| `memory-profiler`       | Heap profiling, leaks, and allocation diagnosis | `Use $memory-profiler ...`       |
-| `sarif-toolkit`         | Static-analysis SARIF reports and partitioning  | `Use $sarif-toolkit ...`         |
-| `skill-creator`         | Create or update portable agent skills          | `Use $skill-creator ...`         |
-| `show-me-your-work`     | Reviewable TSV decision logs                    | `Use $show-me-your-work ...`     |
-| `program-orchestration` | Durable multi-unit program control              | `Use $program-orchestration ...` |
-| `multi-provider-sdlc`   | Host-only multi-provider routing overlay        | `Use $multi-provider-sdlc ...`   |
-| `swarm`                 | Host-only worker fan-out overlay                | `Use $swarm ...` or `swarm this` |
+| Skill                   | Purpose                            | Invocation syntax                |
+| :---------------------- | :--------------------------------- | :------------------------------- |
+| `program-orchestration` | Durable multi-unit program control | `Use $program-orchestration ...` |
+
+Domain toolkits and explicit overlays such as `bevy-toolkit`, `swarm`, and
+`multi-provider-sdlc` stay model-visible on Claude Code and Pi. A selected owner
+can route them. Codex hides them from implicit matching.
 
 ## Host-only workflow extensions
 
@@ -301,8 +311,8 @@ run `sync.py` in the same commit. The sync writes the version into both plugin
 manifests and the Claude index. The Codex root index carries no version field.
 
 The validator proves every generated file agrees with `catalog.json` and that
-each plugin payload is byte-identical to its canonical skill. It cannot detect a
-content change with no bump, so the bump is the author's responsibility. Bundle
+each plugin payload matches its provider projection. It cannot detect a content
+change with no bump, so the bump is the author's responsibility. Bundle
 membership and other catalog metadata carry no version; consumers pick those up
 on the next marketplace re-fetch.
 

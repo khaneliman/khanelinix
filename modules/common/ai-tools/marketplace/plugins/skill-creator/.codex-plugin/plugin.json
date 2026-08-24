@@ -1,6 +1,6 @@
 {
 	"name": "skill-creator",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"description": "Create and update portable agent skills.",
 	"author": {
 		"name": "khaneliman"

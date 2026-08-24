@@ -141,6 +141,23 @@ Codex supports the open agent skills standard (agentskills.io).
   enabled = false
   ```
 
+### Invocation Policy
+
+- Record cross-provider user-only intent as
+  `metadata.khanelinix-invocation-mode: "user-only"` in canonical skills.
+- Emit host-only frontmatter through provider projections. Keep canonical
+  packages valid against the Agent Skills specification.
+- Set `policy.allow_implicit_invocation: false` in `agents/openai.yaml` for each
+  user-only skill.
+- Codex can also hide caller-invoked methods. Do not emit a user-only host flag
+  when another skill must invoke that method.
+- Codex-explicit skills set only the `agents/openai.yaml` policy and keep no
+  cross-provider flag. Caller-only owners such as `arena` and `recall` use this
+  tier. Claude and Pi still match their trigger phrases; Codex reaches them by
+  name. This asymmetry is deliberate and protects the Codex discovery budget.
+- Validate canonical intent, provider projection, and publication parity as one
+  contract.
+
 **Actionable Advice Output:** Propose the directory structure, draft the
 `SKILL.md` frontmatter, draft any `agents/openai.yaml` dependencies, and suggest
 trigger words to keep under the 7,000-character repository ceiling. Identify

@@ -52,6 +52,8 @@ OPENAI_REQUIRED_INTERFACE_FIELDS = {
     "short_description",
 }
 DEFAULT_IMPLICIT_DESCRIPTION_BUDGET = 7_000
+INVOCATION_METADATA_KEY = "khanelinix-invocation-mode"
+USER_ONLY_INVOCATION_MODE = "user-only"
 
 
 @dataclass(frozen=True)
@@ -79,6 +81,7 @@ class SkillRecord:
     line_count: int
     description_characters: int
     implicit_invocation: bool
+    invocation_mode: str
     resources: int
 
 
@@ -797,6 +800,7 @@ def audit_skill(
     frontmatter, frontmatter_error = parse_frontmatter(skill_file)
     name = frontmatter.get("name")
     description = frontmatter.get("description")
+    invocation_mode = "automatic"
 
     if frontmatter_error:
         findings.append(
@@ -866,6 +870,22 @@ def audit_skill(
                     1,
                 )
             )
+        metadata = json.loads(frontmatter.get("metadata", "{}"))
+        declared_invocation_mode = metadata.get(INVOCATION_METADATA_KEY)
+        if declared_invocation_mode is not None:
+            if declared_invocation_mode != USER_ONLY_INVOCATION_MODE:
+                findings.append(
+                    Finding(
+                        "error",
+                        "invalid_invocation_mode",
+                        skill_path,
+                        f"metadata.{INVOCATION_METADATA_KEY} must equal "
+                        f"{USER_ONLY_INVOCATION_MODE!r}",
+                        1,
+                    )
+                )
+            else:
+                invocation_mode = USER_ONLY_INVOCATION_MODE
 
     if line_count > line_budget:
         findings.append(
@@ -894,6 +914,19 @@ def audit_skill(
                     1,
                 )
             )
+
+    if invocation_mode == USER_ONLY_INVOCATION_MODE and implicit_invocation:
+        findings.append(
+            Finding(
+                "error",
+                "invocation_policy_mismatch",
+                skill_path,
+                "user-only skills must disable Codex implicit invocation",
+                1,
+            )
+        )
+    elif not implicit_invocation and invocation_mode == "automatic":
+        invocation_mode = "codex-explicit"
 
     for markdown in markdown_files(skill_dir):
         for link in iter_markdown_links(read_text(markdown)):
@@ -956,6 +989,7 @@ def audit_skill(
             line_count=line_count,
             description_characters=len(description or ""),
             implicit_invocation=implicit_invocation,
+            invocation_mode=invocation_mode,
             resources=len(resources),
         ),
         findings,
@@ -1037,6 +1071,11 @@ def audit_root(
     warnings = len(findings) - errors
     description_characters = sum(record.description_characters for record in records)
     implicit_records = [record for record in records if record.implicit_invocation]
+    user_only_records = [
+        record
+        for record in records
+        if record.invocation_mode == USER_ONLY_INVOCATION_MODE
+    ]
     implicit_description_characters = sum(
         record.description_characters for record in implicit_records
     )
@@ -1049,6 +1088,7 @@ def audit_root(
             "description_characters": description_characters,
             "implicit_skills": len(implicit_records),
             "explicit_only_skills": len(records) - len(implicit_records),
+            "user_only_skills": len(user_only_records),
             "implicit_description_characters": implicit_description_characters,
             "implicit_description_budget": implicit_description_budget,
             "implicit_description_budget_exceeded": (
@@ -1076,6 +1116,7 @@ def render_markdown(report: dict[str, object]) -> str:
         f"- Description characters: {summary['description_characters']}",
         f"- Implicit skills: {summary['implicit_skills']}",
         f"- Explicit-only skills: {summary['explicit_only_skills']}",
+        f"- Cross-provider user-only skills: {summary['user_only_skills']}",
         (
             f"- Implicit description budget: "
             f"{summary['implicit_description_characters']} / "

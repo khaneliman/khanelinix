@@ -9,6 +9,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+import skill_projection
+
 NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 SEMVER_RE = re.compile(
     r"^(0|[1-9]\d*)\."
@@ -152,7 +154,8 @@ def decode_frontmatter_value(raw_value: str) -> str:
 def read_skill_frontmatter(skill_dir: Path) -> dict[str, str]:
     manifest_path = skill_dir / "SKILL.md"
     try:
-        lines = manifest_path.read_text(encoding="utf-8").splitlines()
+        manifest = manifest_path.read_text(encoding="utf-8")
+        lines = manifest.splitlines()
     except OSError as error:
         raise MarketplaceError(
             f"unable to read skill manifest: {manifest_path}"
@@ -184,6 +187,14 @@ def read_skill_frontmatter(skill_dir: Path) -> dict[str, str]:
         raise MarketplaceError(
             f"skill name must match directory: {skill_dir.name} != {name}"
         )
+    try:
+        mode = skill_projection.invocation_mode(manifest)
+    except skill_projection.ProjectionError as error:
+        raise MarketplaceError(
+            f"invalid skill invocation metadata: {manifest_path}: {error}"
+        ) from error
+    if mode is not None:
+        frontmatter[skill_projection.INVOCATION_METADATA_KEY] = mode
     return frontmatter
 
 
@@ -320,11 +331,11 @@ def validate_codex_plugin(
     }:
         raise MarketplaceError(f"Codex plugin interface mismatch: {name}")
     payload_dir = plugin_dir / "skills" / name
-    if not payload_dir.is_dir() or directory_files(payload_dir) != directory_files(
-        skill_dir
-    ):
+    if not payload_dir.is_dir() or directory_files(
+        payload_dir
+    ) != skill_projection.projected_directory_files(skill_dir, "claude-code"):
         raise MarketplaceError(
-            f"Codex plugin payload out of sync with canonical skill: {name}; "
+            f"plugin payload out of sync with provider projection: {name}; "
             "run marketplace/sync.py"
         )
 
@@ -346,6 +357,45 @@ def validate_bundle_documentation(readme_path: Path, bundles: dict[str, Any]) ->
         command = "--skill " + " ".join(bundle["plugins"])
         if command not in normalized:
             raise MarketplaceError(f"README bundle command out of sync: {bundle_name}")
+
+
+def validate_invocation_documentation(
+    readme_path: Path, discovered: dict[str, Path]
+) -> None:
+    expected = {
+        name
+        for name, skill_dir in discovered.items()
+        if read_skill_frontmatter(skill_dir).get(
+            skill_projection.INVOCATION_METADATA_KEY
+        )
+        == skill_projection.USER_ONLY_MODE
+    }
+    if not readme_path.is_file():
+        if expected:
+            raise MarketplaceError(f"unable to read README: {readme_path}")
+        return
+    try:
+        readme = readme_path.read_text(encoding="utf-8")
+    except OSError as error:
+        raise MarketplaceError(f"unable to read README: {readme_path}") from error
+    marker = "### Explicit-only skills"
+    if marker not in readme:
+        if expected:
+            raise MarketplaceError("README lacks the explicit-only skill table")
+        return
+    section = readme.split(marker, 1)[1].split("\n## ", 1)[0]
+    documented = set(re.findall(r"^\|\s*`([^`]+)`\s*\|", section, re.MULTILINE))
+    if documented != expected:
+        missing = sorted(expected - documented)
+        extra = sorted(documented - expected)
+        details = []
+        if missing:
+            details.append("missing: " + ", ".join(missing))
+        if extra:
+            details.append("extra: " + ", ".join(extra))
+        raise MarketplaceError(
+            "README explicit-only skill table is out of sync; " + "; ".join(details)
+        )
 
 
 def validate_repository(root: Path, catalog_path: Path | None = None) -> dict[str, Any]:
@@ -429,6 +479,7 @@ def validate_repository(root: Path, catalog_path: Path | None = None) -> dict[st
     bundles = catalog.get("bundles", {})
     if bundles:
         validate_bundle_documentation(catalog_path.parent / "README.md", bundles)
+    validate_invocation_documentation(catalog_path.parent / "README.md", discovered)
 
     return {
         "marketplace": marketplace["name"],

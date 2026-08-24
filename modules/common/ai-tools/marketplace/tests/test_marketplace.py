@@ -11,6 +11,7 @@ MARKETPLACE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(MARKETPLACE_DIR))
 
 import marketplace
+import skill_projection
 
 
 class MarketplaceTest(unittest.TestCase):
@@ -30,13 +31,23 @@ class MarketplaceTest(unittest.TestCase):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(payload), encoding="utf-8")
 
-    def skill_body(self, name: str) -> str:
-        return f"---\nname: {name}\ndescription: Use {name} for tests.\n---\n\n# Test\n"
+    def skill_body(self, name: str, *, user_only: bool = False) -> str:
+        metadata = (
+            'metadata:\n  khanelinix-invocation-mode: "user-only"\n'
+            if user_only
+            else ""
+        )
+        return (
+            f"---\nname: {name}\ndescription: Use {name} for tests.\n"
+            f"{metadata}---\n\n# Test\n"
+        )
 
-    def write_skill(self, name: str) -> Path:
+    def write_skill(self, name: str, *, user_only: bool = False) -> Path:
         skill_dir = self.skills_dir / name
         skill_dir.mkdir(parents=True)
-        (skill_dir / "SKILL.md").write_text(self.skill_body(name), encoding="utf-8")
+        (skill_dir / "SKILL.md").write_text(
+            self.skill_body(name, user_only=user_only), encoding="utf-8"
+        )
         return skill_dir
 
     def write_plugin(self, name: str) -> Path:
@@ -67,7 +78,16 @@ class MarketplaceTest(unittest.TestCase):
         )
         payload = plugin_dir / "skills" / name / "SKILL.md"
         payload.parent.mkdir(parents=True, exist_ok=True)
-        payload.write_text(self.skill_body(name), encoding="utf-8")
+        canonical = self.skills_dir / name / "SKILL.md"
+        source = (
+            canonical.read_text(encoding="utf-8")
+            if canonical.is_file()
+            else self.skill_body(name)
+        )
+        payload.write_text(
+            skill_projection.project_manifest(source, "claude-code"),
+            encoding="utf-8",
+        )
         return plugin_dir
 
     def write_readme(self, bundles: dict[str, Any]) -> None:
@@ -80,6 +100,19 @@ class MarketplaceTest(unittest.TestCase):
         readme_path.parent.mkdir(parents=True, exist_ok=True)
         readme_path.write_text(
             "# Marketplace\n\n" + "\n".join(blocks), encoding="utf-8"
+        )
+
+    def write_invocation_readme(self, names: list[str]) -> None:
+        readme_path = self.catalog_path.parent / "README.md"
+        readme_path.parent.mkdir(parents=True, exist_ok=True)
+        rows = "\n".join(f"| `{name}` | Test | `Use ${name}` |" for name in names)
+        readme_path.write_text(
+            "# Marketplace\n\n"
+            "### Explicit-only skills\n\n"
+            "| Skill | Purpose | Invocation syntax |\n"
+            "| --- | --- | --- |\n"
+            f"{rows}\n",
+            encoding="utf-8",
         )
 
     def write_repository(
@@ -227,6 +260,37 @@ class MarketplaceTest(unittest.TestCase):
         payload.write_text(payload.read_text() + "\nDrift.\n", encoding="utf-8")
 
         with self.assertRaisesRegex(marketplace.MarketplaceError, "out of sync"):
+            marketplace.validate_repository(self.root)
+
+    def test_user_only_payload_uses_provider_projection(self) -> None:
+        self.write_skill("manual-skill", user_only=True)
+        self.write_repository(["manual-skill"])
+        self.write_invocation_readme(["manual-skill"])
+
+        result = marketplace.validate_repository(self.root)
+
+        self.assertEqual(result["plugins"], 1)
+        payload = self.plugins_tree / "manual-skill/skills/manual-skill/SKILL.md"
+        rendered = payload.read_text(encoding="utf-8")
+        self.assertIn("disable-model-invocation: true", rendered)
+
+        payload.write_text(
+            rendered.replace("disable-model-invocation: true\n", ""),
+            encoding="utf-8",
+        )
+        with self.assertRaisesRegex(
+            marketplace.MarketplaceError, "provider projection"
+        ):
+            marketplace.validate_repository(self.root)
+
+    def test_user_only_documentation_must_match_metadata(self) -> None:
+        self.write_skill("manual-skill", user_only=True)
+        self.write_repository(["manual-skill"])
+        self.write_invocation_readme(["stale-skill"])
+
+        with self.assertRaisesRegex(
+            marketplace.MarketplaceError, "explicit-only skill table is out of sync"
+        ):
             marketplace.validate_repository(self.root)
 
     def test_ignores_transient_python_bytecode(self) -> None:

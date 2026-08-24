@@ -52,6 +52,7 @@ def expected_summary(
         "description_characters": description_characters,
         "implicit_skills": skills,
         "explicit_only_skills": 0,
+        "user_only_skills": 0,
         "implicit_description_characters": description_characters,
         "implicit_description_budget": 7_000,
         "implicit_description_budget_exceeded": False,
@@ -399,6 +400,71 @@ class AuditAiToolsTests(unittest.TestCase):
             records = {record["name"]: record for record in report["skills"]}
             self.assertTrue(records["implicit-skill"]["implicit_invocation"])
             self.assertFalse(records["explicit-skill"]["implicit_invocation"])
+            self.assertEqual(records["implicit-skill"]["invocation_mode"], "automatic")
+            self.assertEqual(
+                records["explicit-skill"]["invocation_mode"], "codex-explicit"
+            )
+
+    def test_user_only_mode_requires_codex_invocation_policy(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            skill = write_skill(root, "manual-skill", "Small body.")
+            manifest = skill / "SKILL.md"
+            manifest.write_text(
+                manifest.read_text(encoding="utf-8").replace(
+                    "---\n\n# Test",
+                    "metadata:\n"
+                    '  khanelinix-invocation-mode: "user-only"\n'
+                    "---\n\n# Test",
+                ),
+                encoding="utf-8",
+            )
+
+            report = audit_ai_tools.audit_root(root)
+
+            self.assertEqual(report["summary"]["errors"], 1)
+            self.assertEqual(report["summary"]["user_only_skills"], 1)
+            self.assertEqual(
+                report["findings"][0]["code"], "invocation_policy_mismatch"
+            )
+
+            agents = skill / "agents"
+            agents.mkdir()
+            (agents / "openai.yaml").write_text(
+                "interface:\n"
+                '  display_name: "Manual Skill"\n'
+                '  short_description: "Useful manual policy fixture"\n'
+                '  default_prompt: "Use $manual-skill for this fixture."\n'
+                "policy:\n"
+                "  allow_implicit_invocation: false\n",
+                encoding="utf-8",
+            )
+
+            report = audit_ai_tools.audit_root(root)
+
+            self.assertEqual(report["summary"]["errors"], 0)
+            self.assertEqual(report["summary"]["user_only_skills"], 1)
+            self.assertEqual(report["skills"][0]["invocation_mode"], "user-only")
+
+    def test_invocation_mode_is_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            skill = write_skill(root, "manual-skill", "Small body.")
+            manifest = skill / "SKILL.md"
+            manifest.write_text(
+                manifest.read_text(encoding="utf-8").replace(
+                    "---\n\n# Test",
+                    "metadata:\n"
+                    '  khanelinix-invocation-mode: "sometimes"\n'
+                    "---\n\n# Test",
+                ),
+                encoding="utf-8",
+            )
+
+            report = audit_ai_tools.audit_root(root)
+
+            self.assertEqual(report["summary"]["errors"], 1)
+            self.assertEqual(report["findings"][0]["code"], "invalid_invocation_mode")
 
     def test_cli_rejects_default_implicit_budget_excess(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
