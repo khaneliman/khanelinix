@@ -6,6 +6,7 @@ import argparse
 import copy
 import errno
 import hashlib
+import io
 import json
 import os
 import re
@@ -14,6 +15,7 @@ import socket
 import stat
 import subprocess
 import sys
+import time
 from contextlib import AbstractContextManager
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -24,6 +26,18 @@ from typing import Any, NoReturn, Self
 SCHEMA_VERSION = 1
 ZERO_HASH = "0" * 64
 MAX_ARRAY_ITEMS = 256
+MAX_ACTIVE_BYTES = 4 * 1024
+MAX_LOCK_OWNER_BYTES = 4 * 1024
+MAX_EVENT_BYTES = 256 * 1024
+MAX_JOURNAL_BYTES = 16 * 1024 * 1024
+MAX_JOURNAL_EVENTS = 16 * 1024
+MAX_SNAPSHOT_BYTES = 8 * 1024 * 1024
+LOCK_ATTEMPTS = 5
+LOCK_BACKOFF_SECONDS = 0.125
+LOCK_CONTENTION_MESSAGE = (
+    "program state lock is held by another writer; retry the command, "
+    "then inspect the lock with recover-plan when it persists"
+)
 PROGRAM_ID_RE = re.compile(r"^[a-z0-9][a-z0-9._-]{0,63}$")
 IDENTIFIER_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$")
 COMMIT_RE = re.compile(r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
@@ -370,16 +384,29 @@ def require_scope(value: Any, label: str) -> str:
     return scope
 
 
+def require_v1_string(value: Any, label: str, *, maximum: int = 2048) -> str:
+    if not isinstance(value, str) or not value or len(value) > maximum:
+        fail(f"{label} must be a non-empty string of at most {maximum} characters")
+    if CONTROL_RE.search(value):
+        fail(f"{label} must not contain control characters")
+    return value
+
+
+def require_v1_scope(value: Any, label: str) -> str:
+    return require_v1_string(value, label, maximum=512)
+
+
 def require_sorted_strings(
     value: Any,
     label: str,
     item_validator: Any,
     *,
     allow_empty: bool = True,
+    maximum_items: int | None = MAX_ARRAY_ITEMS,
 ) -> list[str]:
     if (
         not isinstance(value, list)
-        or len(value) > MAX_ARRAY_ITEMS
+        or (maximum_items is not None and len(value) > maximum_items)
         or (not allow_empty and not value)
     ):
         fail(f"{label} must be a{' non-empty' if not allow_empty else ''} array")
@@ -391,9 +418,20 @@ def require_sorted_strings(
     return items
 
 
-def require_capabilities(value: Any, label: str) -> list[dict[str, str]]:
-    if not isinstance(value, list) or len(value) > MAX_ARRAY_ITEMS:
-        fail(f"{label} must be an array with at most {MAX_ARRAY_ITEMS} items")
+def require_capabilities(
+    value: Any,
+    label: str,
+    *,
+    scope_validator: Any = require_scope,
+    maximum_items: int | None = MAX_ARRAY_ITEMS,
+) -> list[dict[str, str]]:
+    if not isinstance(value, list) or (
+        maximum_items is not None and len(value) > maximum_items
+    ):
+        maximum = (
+            f" with at most {maximum_items} items" if maximum_items is not None else ""
+        )
+        fail(f"{label} must be an array{maximum}")
     result: list[dict[str, str]] = []
     for index, item in enumerate(value):
         item_label = f"{label}[{index}]"
@@ -405,7 +443,7 @@ def require_capabilities(value: Any, label: str) -> list[dict[str, str]]:
         result.append(
             {
                 "capability": capability,
-                "scope": require_scope(item["scope"], f"{item_label}.scope"),
+                "scope": scope_validator(item["scope"], f"{item_label}.scope"),
             }
         )
     keys = [(item["capability"], item["scope"]) for item in result]
@@ -414,9 +452,18 @@ def require_capabilities(value: Any, label: str) -> list[dict[str, str]]:
     return result
 
 
-def validate_field(kind: str, value: Any, label: str) -> None:
+def validate_field(
+    kind: str,
+    value: Any,
+    label: str,
+    *,
+    producer_profile: bool = True,
+) -> None:
+    string_validator = require_string if producer_profile else require_v1_string
+    scope_validator = require_scope if producer_profile else require_v1_scope
+    maximum_items = MAX_ARRAY_ITEMS if producer_profile else None
     if kind == "text" or kind == "reference":
-        require_string(value, label)
+        string_validator(value, label)
     elif kind == "identifier":
         require_identifier(value, label)
     elif kind == "commit":
@@ -426,7 +473,7 @@ def validate_field(kind: str, value: Any, label: str) -> None:
     elif kind == "utc":
         require_utc(value, label)
     elif kind == "scope":
-        require_scope(value, label)
+        scope_validator(value, label)
     elif kind == "capability":
         if not isinstance(value, str) or value not in CAPABILITIES:
             fail(f"{label} is an unknown capability")
@@ -440,16 +487,37 @@ def validate_field(kind: str, value: Any, label: str) -> None:
         if type(value) is not bool:
             fail(f"{label} must be a boolean")
     elif kind == "identifier_array":
-        require_sorted_strings(value, label, require_identifier)
+        require_sorted_strings(
+            value,
+            label,
+            require_identifier,
+            maximum_items=maximum_items,
+        )
     elif kind == "scope_array":
-        require_sorted_strings(value, label, require_scope, allow_empty=False)
+        require_sorted_strings(
+            value,
+            label,
+            scope_validator,
+            allow_empty=False,
+            maximum_items=maximum_items,
+        )
     elif kind == "required_capability_array":
-        require_capabilities(value, label)
+        require_capabilities(
+            value,
+            label,
+            scope_validator=scope_validator,
+            maximum_items=maximum_items,
+        )
     else:
         fail(f"internal validator kind is unknown: {kind}")
 
 
-def validate_payload(event_type: str, payload: Any) -> dict[str, Any]:
+def validate_payload(
+    event_type: str,
+    payload: Any,
+    *,
+    producer_profile: bool = True,
+) -> dict[str, Any]:
     if not isinstance(payload, dict):
         fail(f"{event_type}.payload must be an object")
     required, optional = PAYLOAD_SPECS[event_type]
@@ -461,14 +529,28 @@ def validate_payload(event_type: str, payload: Any) -> dict[str, Any]:
     if unknown:
         fail(f"{event_type}.payload has unknown fields: {', '.join(unknown)}")
     for field, kind in required.items():
-        validate_field(kind, payload[field], f"{event_type}.payload.{field}")
+        validate_field(
+            kind,
+            payload[field],
+            f"{event_type}.payload.{field}",
+            producer_profile=producer_profile,
+        )
     for field, kind in optional.items():
         if field in payload:
-            validate_field(kind, payload[field], f"{event_type}.payload.{field}")
+            validate_field(
+                kind,
+                payload[field],
+                f"{event_type}.payload.{field}",
+                producer_profile=producer_profile,
+            )
     return payload
 
 
-def validate_event_shape(event: Any) -> dict[str, Any]:
+def validate_event_shape(
+    event: Any,
+    *,
+    producer_profile: bool = True,
+) -> dict[str, Any]:
     if not isinstance(event, dict) or set(event) != ENVELOPE_FIELDS:
         fail("event envelope has missing or unknown fields")
     if (
@@ -486,7 +568,11 @@ def validate_event_shape(event: Any) -> dict[str, Any]:
         fail(f"unknown event type: {event_type!r}")
     require_utc(event["recorded_at"], "recorded_at")
     require_identifier(event["actor"], "actor")
-    validate_payload(event_type, event["payload"])
+    validate_payload(
+        event_type,
+        event["payload"],
+        producer_profile=producer_profile,
+    )
     require_digest(event["previous_hash"], "previous_hash")
     require_digest(event["event_hash"], "event_hash")
     expected = event_digest(event)
@@ -1051,13 +1137,14 @@ def apply_event(state: dict[str, Any], event: dict[str, Any]) -> None:
 def replay(events: list[dict[str, Any]]) -> dict[str, Any]:
     if not events:
         fail("journal is empty")
-    first = validate_event_shape(events[0])
+    first = validate_event_shape(events[0], producer_profile=False)
     program_id = first["program_id"]
     state = initial_state(program_id)
     expected_previous = ZERO_HASH
     seen_event_ids: set[str] = set()
     for expected_sequence, event in enumerate(events, start=1):
-        validate_event_shape(event)
+        if expected_sequence > 1:
+            validate_event_shape(event, producer_profile=False)
         if event["program_id"] != program_id:
             fail(f"program ID changed at sequence {expected_sequence}")
         if event["sequence"] != expected_sequence:
@@ -1075,14 +1162,38 @@ def replay(events: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def journal_bytes(events: list[dict[str, Any]]) -> bytes:
-    return b"".join(canonical_json(event) + b"\n" for event in events)
-
-
-def parse_journal(data: bytes) -> list[dict[str, Any]]:
-    if not data or not data.endswith(b"\n"):
+    chunks: list[bytes] = []
+    total_bytes = 0
+    for line_number, event in enumerate(events, start=1):
+        if line_number > MAX_JOURNAL_EVENTS:
+            fail(f"journal exceeds {MAX_JOURNAL_EVENTS} events")
+        row = canonical_json(event) + b"\n"
+        if len(row) > MAX_EVENT_BYTES:
+            fail(f"journal line {line_number} exceeds {MAX_EVENT_BYTES} bytes")
+        total_bytes += len(row)
+        if total_bytes > MAX_JOURNAL_BYTES:
+            fail(f"journal exceeds {MAX_JOURNAL_BYTES} bytes")
+        chunks.append(row)
+    if not chunks:
         fail("journal must be non-empty and end with one newline")
+    return b"".join(chunks)
+
+
+def parse_journal_rows(rows: Any) -> list[dict[str, Any]]:
     events: list[dict[str, Any]] = []
-    for line_number, raw_line in enumerate(data.splitlines(keepends=True), start=1):
+    total_bytes = 0
+    while True:
+        raw_line = rows.readline(MAX_EVENT_BYTES + 1)
+        if not raw_line:
+            break
+        line_number = len(events) + 1
+        total_bytes += len(raw_line)
+        if total_bytes > MAX_JOURNAL_BYTES:
+            fail(f"journal exceeds {MAX_JOURNAL_BYTES} bytes")
+        if len(raw_line) > MAX_EVENT_BYTES:
+            fail(f"journal line {line_number} exceeds {MAX_EVENT_BYTES} bytes")
+        if line_number > MAX_JOURNAL_EVENTS:
+            fail(f"journal exceeds {MAX_JOURNAL_EVENTS} events")
         if not raw_line.endswith(b"\n") or raw_line in {b"\n", b"\r\n"}:
             fail(f"journal line {line_number} is empty or unterminated")
         encoded = raw_line[:-1]
@@ -1091,9 +1202,17 @@ def parse_journal(data: bytes) -> list[dict[str, Any]]:
         event = strict_json_loads(encoded, f"journal line {line_number}")
         if canonical_json(event) != encoded:
             fail(f"journal line {line_number} is not canonical JSON")
-        events.append(validate_event_shape(event))
+        events.append(validate_event_shape(event, producer_profile=False))
+    if not events:
+        fail("journal must be non-empty and end with one newline")
     replay(events)
     return events
+
+
+def parse_journal(data: bytes) -> list[dict[str, Any]]:
+    if len(data) > MAX_JOURNAL_BYTES:
+        fail(f"journal exceeds {MAX_JOURNAL_BYTES} bytes")
+    return parse_journal_rows(io.BytesIO(data))
 
 
 def resolve_root(root: str | Path) -> Path:
@@ -1141,6 +1260,47 @@ def programs_root(root: Path, *, create: bool) -> Path:
     return ensure_directory(agent_dir / "programs", create=create)
 
 
+def require_program_state_excluded(root: Path, program_id: str) -> None:
+    require_program_id(program_id)
+    tracked = subprocess.run(
+        ["git", "-C", str(root), "ls-files", "--", ".agent/programs"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if tracked.returncode != 0:
+        fail("repository root must support Git ignore checks")
+    if tracked.stdout.strip():
+        fail(".agent/programs must not contain tracked files")
+    managed_paths = (
+        ".agent/programs/",
+        ".agent/programs/active.json",
+        ".agent/programs/.state-lock/owner.json",
+        f".agent/programs/{program_id}/journal.jsonl",
+        f".agent/programs/{program_id}/snapshot.json",
+    )
+    for managed_path in managed_paths:
+        ignored = subprocess.run(
+            [
+                "git",
+                "-C",
+                str(root),
+                "check-ignore",
+                "--no-index",
+                "--quiet",
+                "--",
+                managed_path,
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if ignored.returncode == 1:
+            fail(".agent/programs/ must be excluded from Git before program writes")
+        if ignored.returncode != 0:
+            fail("repository root must support Git ignore checks")
+
+
 def program_directory(root: Path, program_id: str, *, create: bool = False) -> Path:
     require_program_id(program_id)
     directory = programs_root(root, create=create) / program_id
@@ -1162,7 +1322,9 @@ def program_directory(root: Path, program_id: str, *, create: bool = False) -> P
     return directory
 
 
-def read_regular_bytes(path: Path, label: str) -> bytes:
+def open_regular_descriptor(
+    path: Path, label: str, *, maximum_bytes: int | None = None
+) -> int:
     metadata = lstat_path(path)
     if metadata is None:
         fail(f"{label} does not exist: {path}")
@@ -1171,16 +1333,254 @@ def read_regular_bytes(path: Path, label: str) -> bytes:
     flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
     try:
         descriptor = os.open(path, flags)
+    except OSError as error:
+        raise ProgramError(f"cannot open {label} {path}: {error}") from error
+    try:
         opened = os.fstat(descriptor)
-        if not stat.S_ISREG(opened.st_mode):
-            os.close(descriptor)
-            fail(f"{label} changed type while opening: {path}")
+    except OSError as error:
+        os.close(descriptor)
+        raise ProgramError(f"cannot inspect open {label} {path}: {error}") from error
+    if not stat.S_ISREG(opened.st_mode) or (opened.st_dev, opened.st_ino) != (
+        metadata.st_dev,
+        metadata.st_ino,
+    ):
+        os.close(descriptor)
+        fail(f"{label} changed while opening: {path}")
+    if maximum_bytes is not None and opened.st_size > maximum_bytes:
+        os.close(descriptor)
+        fail(f"{label} exceeds {maximum_bytes} bytes")
+    return descriptor
+
+
+def validate_regular_file(
+    path: Path, label: str, *, maximum_bytes: int | None = None
+) -> None:
+    descriptor = open_regular_descriptor(path, label, maximum_bytes=maximum_bytes)
+    try:
+        os.close(descriptor)
+    except OSError as error:
+        raise ProgramError(f"cannot close {label} {path}: {error}") from error
+
+
+def read_regular_bytes(path: Path, label: str, *, maximum_bytes: int) -> bytes:
+    descriptor = open_regular_descriptor(path, label, maximum_bytes=maximum_bytes)
+    try:
         with os.fdopen(descriptor, "rb") as handle:
-            return handle.read()
+            data = handle.read(maximum_bytes + 1)
+    except OSError as error:
+        raise ProgramError(f"cannot read {label} {path}: {error}") from error
+    if len(data) > maximum_bytes:
+        fail(f"{label} exceeds {maximum_bytes} bytes")
+    return data
+
+
+def read_journal(path: Path) -> list[dict[str, Any]]:
+    descriptor = open_regular_descriptor(
+        path,
+        "journal",
+        maximum_bytes=MAX_JOURNAL_BYTES,
+    )
+    try:
+        with os.fdopen(descriptor, "rb") as handle:
+            return parse_journal_rows(handle)
+    except OSError as error:
+        raise ProgramError(f"cannot read journal {path}: {error}") from error
+
+
+def open_directory_descriptor(path: Path, label: str) -> int:
+    metadata = lstat_path(path)
+    if metadata is None:
+        fail(f"{label} does not exist: {path}")
+    if stat.S_ISLNK(metadata.st_mode) or not stat.S_ISDIR(metadata.st_mode):
+        fail(f"{label} must be a non-symlink directory: {path}")
+    flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
+    descriptor: int | None = None
+    try:
+        descriptor = os.open(path, flags)
+        opened = os.fstat(descriptor)
+    except OSError as error:
+        if descriptor is not None:
+            os.close(descriptor)
+        raise ProgramError(f"cannot open {label} {path}: {error}") from error
+    assert descriptor is not None
+    if not stat.S_ISDIR(opened.st_mode) or (opened.st_dev, opened.st_ino) != (
+        metadata.st_dev,
+        metadata.st_ino,
+    ):
+        os.close(descriptor)
+        fail(f"{label} changed while opening: {path}")
+    return descriptor
+
+
+def read_regular_at(
+    directory_descriptor: int,
+    name: str,
+    label: str,
+    *,
+    maximum_bytes: int,
+) -> bytes:
+    try:
+        metadata = os.stat(name, dir_fd=directory_descriptor, follow_symlinks=False)
+    except FileNotFoundError:
+        fail(f"{label} does not exist")
+    except OSError as error:
+        raise ProgramError(f"cannot inspect {label}: {error}") from error
+    if stat.S_ISLNK(metadata.st_mode) or not stat.S_ISREG(metadata.st_mode):
+        fail(f"{label} must be a non-symlink regular file")
+    if metadata.st_size > maximum_bytes:
+        fail(f"{label} exceeds {maximum_bytes} bytes")
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+    descriptor: int | None = None
+    try:
+        descriptor = os.open(name, flags, dir_fd=directory_descriptor)
+        opened = os.fstat(descriptor)
+    except OSError as error:
+        if descriptor is not None:
+            os.close(descriptor)
+        raise ProgramError(f"cannot open {label}: {error}") from error
+    assert descriptor is not None
+    if not stat.S_ISREG(opened.st_mode) or (opened.st_dev, opened.st_ino) != (
+        metadata.st_dev,
+        metadata.st_ino,
+    ):
+        os.close(descriptor)
+        fail(f"{label} changed while opening")
+    try:
+        with os.fdopen(descriptor, "rb") as handle:
+            data = handle.read(maximum_bytes + 1)
+    except OSError as error:
+        raise ProgramError(f"cannot read {label}: {error}") from error
+    if len(data) > maximum_bytes:
+        fail(f"{label} exceeds {maximum_bytes} bytes")
+    return data
+
+
+def open_state_lock(programs: Path) -> tuple[int, int, os.stat_result]:
+    programs_descriptor = open_directory_descriptor(programs, "program state root")
+    flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
+    lock_descriptor: int | None = None
+    try:
+        expected_lock = os.stat(
+            ".state-lock",
+            dir_fd=programs_descriptor,
+            follow_symlinks=False,
+        )
+        if stat.S_ISLNK(expected_lock.st_mode) or not stat.S_ISDIR(
+            expected_lock.st_mode
+        ):
+            fail("state lock must be a non-symlink directory")
+        lock_descriptor = os.open(
+            ".state-lock",
+            flags,
+            dir_fd=programs_descriptor,
+        )
+        lock_metadata = os.fstat(lock_descriptor)
+    except ProgramError:
+        os.close(programs_descriptor)
+        raise
+    except OSError as error:
+        if lock_descriptor is not None:
+            os.close(lock_descriptor)
+        os.close(programs_descriptor)
+        raise ProgramError(f"cannot open state lock: {error}") from error
+    assert lock_descriptor is not None
+    if not stat.S_ISDIR(lock_metadata.st_mode) or (
+        lock_metadata.st_dev,
+        lock_metadata.st_ino,
+    ) != (expected_lock.st_dev, expected_lock.st_ino):
+        os.close(lock_descriptor)
+        os.close(programs_descriptor)
+        fail("state lock must be a non-symlink directory")
+    return programs_descriptor, lock_descriptor, lock_metadata
+
+
+def read_lock_owner(lock_descriptor: int) -> dict[str, Any]:
+    owner = strict_json_loads(
+        read_regular_at(
+            lock_descriptor,
+            "owner.json",
+            "state lock owner",
+            maximum_bytes=MAX_LOCK_OWNER_BYTES,
+        ),
+        "state lock owner",
+    )
+    if not isinstance(owner, dict):
+        fail("state lock owner must contain one JSON object")
+    return owner
+
+
+def remove_lock_directory(programs: Path, expected_token: str) -> None:
+    programs_descriptor, lock_descriptor, opened_lock = open_state_lock(programs)
+    quarantine = f".state-lock.quarantine.{secrets.token_hex(12)}"
+    quarantined = False
+    destructive_started = False
+    try:
+        owner = read_lock_owner(lock_descriptor)
+        if owner.get("token") != expected_token:
+            fail("observed lock token changed")
+        os.rename(
+            ".state-lock",
+            quarantine,
+            src_dir_fd=programs_descriptor,
+            dst_dir_fd=programs_descriptor,
+        )
+        quarantined = True
+        quarantined_lock = os.stat(
+            quarantine,
+            dir_fd=programs_descriptor,
+            follow_symlinks=False,
+        )
+        if not stat.S_ISDIR(quarantined_lock.st_mode) or (
+            quarantined_lock.st_dev,
+            quarantined_lock.st_ino,
+        ) != (opened_lock.st_dev, opened_lock.st_ino):
+            fail("state lock changed before quarantine")
+        owner = read_lock_owner(lock_descriptor)
+        if owner.get("token") != expected_token:
+            fail("observed lock token changed after quarantine")
+        entries = sorted(os.listdir(lock_descriptor))
+        if entries != ["owner.json"]:
+            fail("state lock contains unexpected files")
+        destructive_started = True
+        os.unlink("owner.json", dir_fd=lock_descriptor)
+        try:
+            os.fsync(lock_descriptor)
+        except OSError as error:
+            if error.errno not in {errno.EINVAL, errno.ENOTSUP, errno.EBADF}:
+                raise
+        os.rmdir(quarantine, dir_fd=programs_descriptor)
+        quarantined = False
+        try:
+            os.fsync(programs_descriptor)
+        except OSError as error:
+            if error.errno not in {errno.EINVAL, errno.ENOTSUP, errno.EBADF}:
+                raise
     except ProgramError:
         raise
     except OSError as error:
-        raise ProgramError(f"cannot read {label} {path}: {error}") from error
+        raise ProgramError(f"cannot remove selected state lock: {error}") from error
+    finally:
+        if quarantined and not destructive_started:
+            try:
+                os.stat(
+                    ".state-lock",
+                    dir_fd=programs_descriptor,
+                    follow_symlinks=False,
+                )
+            except FileNotFoundError:
+                try:
+                    os.rename(
+                        quarantine,
+                        ".state-lock",
+                        src_dir_fd=programs_descriptor,
+                        dst_dir_fd=programs_descriptor,
+                    )
+                except OSError:
+                    pass
+            except OSError:
+                pass
+        os.close(lock_descriptor)
+        os.close(programs_descriptor)
 
 
 def fsync_directory(path: Path) -> None:
@@ -1228,8 +1628,13 @@ def atomic_write(path: Path, data: bytes) -> None:
             pass
 
 
-def read_json_file(path: Path, label: str) -> dict[str, Any]:
-    payload = strict_json_loads(read_regular_bytes(path, label), label)
+def read_json_file(
+    path: Path, label: str, *, maximum_bytes: int = MAX_SNAPSHOT_BYTES
+) -> dict[str, Any]:
+    payload = strict_json_loads(
+        read_regular_bytes(path, label, maximum_bytes=maximum_bytes),
+        label,
+    )
     if not isinstance(payload, dict):
         fail(f"{label} must contain one JSON object")
     return payload
@@ -1241,7 +1646,11 @@ def read_active(root: Path, *, required: bool) -> dict[str, Any] | None:
         if required:
             fail("active program pointer does not exist")
         return None
-    active = read_json_file(path, "active pointer")
+    active = read_json_file(
+        path,
+        "active pointer",
+        maximum_bytes=MAX_ACTIVE_BYTES,
+    )
     if set(active) != {"schema_version", "program_id"}:
         fail("active pointer has missing or unknown fields")
     if (
@@ -1260,11 +1669,22 @@ def active_bytes(program_id: str) -> bytes:
     )
 
 
+def snapshot_bytes(state: dict[str, Any]) -> bytes:
+    snapshot = canonical_json(state) + b"\n"
+    if len(snapshot) > MAX_SNAPSHOT_BYTES:
+        fail(f"snapshot exceeds {MAX_SNAPSHOT_BYTES} bytes")
+    return snapshot
+
+
 def read_snapshot_status(path: Path, state: dict[str, Any]) -> str:
     if lstat_path(path) is None:
         return "missing"
     try:
-        data = read_regular_bytes(path, "snapshot")
+        data = read_regular_bytes(
+            path,
+            "snapshot",
+            maximum_bytes=MAX_SNAPSHOT_BYTES,
+        )
         snapshot = strict_json_loads(data, "snapshot")
         if not isinstance(snapshot, dict):
             return "invalid"
@@ -1283,7 +1703,7 @@ def load_program(root: str | Path, program_id: str | None = None) -> LoadedProgr
         program_id = active["program_id"]
     require_program_id(program_id)
     directory = program_directory(resolved, program_id)
-    events = parse_journal(read_regular_bytes(directory / "journal.jsonl", "journal"))
+    events = read_journal(directory / "journal.jsonl")
     state = replay(events)
     if state["program_id"] != program_id:
         fail("journal program ID does not match selected directory")
@@ -1327,35 +1747,79 @@ def find_event(loaded: LoadedProgram, event_id: str) -> dict[str, Any] | None:
     )
 
 
+def commit_resolves(root: Path, commit: str) -> bool:
+    result = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(root),
+            "rev-parse",
+            "--verify",
+            "--quiet",
+            f"{commit}^{{commit}}",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    return result.returncode == 0
+
+
+def commit_is_ancestor(root: Path, commit: str, descendant: str) -> bool:
+    result = subprocess.run(
+        ["git", "-C", str(root), "merge-base", "--is-ancestor", commit, descendant],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode not in {0, 1}:
+        fail("repository root must support Git ancestry checks")
+    return result.returncode == 0
+
+
 def verify_landing_head(
     root: Path, state: dict[str, Any], payload: dict[str, Any]
 ) -> None:
     receipt = state["receipts"].get(payload["receipt_id"])
     if receipt is None or receipt["unit_id"] != payload["unit_id"]:
         return
-    if (
-        receipt["delivery_kind"] == "occurrence"
-        and current_git_head(root) != receipt["commit_sha"]
-    ):
-        fail("occurrence commit must remain repository HEAD when unit lands")
+    if receipt["delivery_kind"] != "occurrence":
+        return
+    commit = receipt["commit_sha"]
+    if not commit_resolves(root, commit):
+        fail(f"occurrence commit no longer resolves: {commit}")
+    # A later unit can commit before this unit lands. Reachability, not HEAD
+    # equality, proves the recorded commit still belongs to current history.
+    if not commit_is_ancestor(root, commit, "HEAD"):
+        fail(
+            "occurrence commit must remain reachable from repository HEAD "
+            "when unit lands"
+        )
 
 
 class StateLock(AbstractContextManager["StateLock"]):
-    def __init__(self, root: Path):
+    def __init__(self, root: Path, program_id: str):
+        require_program_state_excluded(root, program_id)
         self.programs = programs_root(root, create=True)
         self.path = self.programs / ".state-lock"
         self.owner = self.path / "owner.json"
         self.token = secrets.token_hex(16)
 
     def __enter__(self) -> Self:
-        try:
-            self.path.mkdir(mode=0o700)
-        except FileExistsError as error:
-            raise ProgramError(
-                "program state lock exists; inspect it with recover-plan"
-            ) from error
-        except OSError as error:
-            raise ProgramError(f"cannot create program state lock: {error}") from error
+        # Another writer usually holds the lock for a short time. Retry with a
+        # deterministic backoff before reporting contention.
+        for attempt in range(LOCK_ATTEMPTS):
+            try:
+                self.path.mkdir(mode=0o700)
+                break
+            except FileExistsError as error:
+                if attempt + 1 == LOCK_ATTEMPTS:
+                    raise ProgramError(LOCK_CONTENTION_MESSAGE) from error
+                time.sleep(LOCK_BACKOFF_SECONDS * 2**attempt)
+            except OSError as error:
+                raise ProgramError(
+                    f"cannot create program state lock: {error}"
+                ) from error
         payload = {
             "token": self.token,
             "pid": os.getpid(),
@@ -1380,19 +1844,9 @@ class StateLock(AbstractContextManager["StateLock"]):
     ) -> bool:
         cleanup_error: ProgramError | None = None
         try:
-            owner = read_json_file(self.owner, "state lock owner")
-            if owner.get("token") != self.token:
-                fail("state lock token changed; lock remains")
-            entries = sorted(path.name for path in self.path.iterdir())
-            if entries != ["owner.json"]:
-                fail("state lock contains unexpected files; lock remains")
-            self.owner.unlink()
-            self.path.rmdir()
-            fsync_directory(self.programs)
+            remove_lock_directory(self.programs, self.token)
         except ProgramError as error:
             cleanup_error = error
-        except OSError as error:
-            cleanup_error = ProgramError(f"cannot release state lock: {error}")
         if cleanup_error is not None and exc_type is None:
             raise cleanup_error
         return False
@@ -1409,8 +1863,10 @@ def write_program(
     events: list[dict[str, Any]], loaded: LoadedProgram
 ) -> dict[str, Any]:
     state = replay(events)
-    atomic_write(loaded.journal_path, journal_bytes(events))
-    atomic_write(loaded.snapshot_path, canonical_json(state) + b"\n")
+    journal = journal_bytes(events)
+    snapshot = snapshot_bytes(state)
+    atomic_write(loaded.journal_path, journal)
+    atomic_write(loaded.snapshot_path, snapshot)
     return state
 
 
@@ -1434,7 +1890,7 @@ def init_program(
         fail("initial base commit does not match repository HEAD")
     at = recorded_at or utc_now()
     require_utc(at, "recorded_at")
-    with StateLock(resolved):
+    with StateLock(resolved, program_id):
         active = read_active(resolved, required=False)
         if active is not None:
             previous = load_program(resolved, active["program_id"])
@@ -1489,7 +1945,7 @@ def record_event(
         fail(f"record cannot append event type: {event_type}")
     at = recorded_at or utc_now()
     require_utc(at, "recorded_at")
-    with StateLock(resolved):
+    with StateLock(resolved, program_id):
         require_active(resolved, program_id)
         loaded = load_program(resolved, program_id)
         existing = find_event(loaded, event_id)
@@ -1557,7 +2013,11 @@ def scan_lock(root: Path, at: str) -> dict[str, Any] | None:
     owner_path = path / "owner.json"
     if lstat_path(owner_path) is None:
         return {"status": "owner-missing", "path": ".state-lock"}
-    owner = read_json_file(owner_path, "state lock owner")
+    owner = read_json_file(
+        owner_path,
+        "state lock owner",
+        maximum_bytes=MAX_LOCK_OWNER_BYTES,
+    )
     expected = {"token", "pid", "host", "created_at"}
     if set(owner) != expected:
         fail("state lock owner has missing or unknown fields")
@@ -1571,7 +2031,13 @@ def scan_lock(root: Path, at: str) -> dict[str, Any] | None:
 
 
 def file_digest(path: Path) -> str:
-    return hashlib.sha256(read_regular_bytes(path, "recovery file")).hexdigest()
+    return hashlib.sha256(
+        read_regular_bytes(
+            path,
+            "recovery file",
+            maximum_bytes=MAX_JOURNAL_BYTES,
+        )
+    ).hexdigest()
 
 
 def orphan_temporaries(root: Path, program_id: str | None) -> list[dict[str, str]]:
@@ -1714,20 +2180,8 @@ def remove_stale_lock(
     loaded = validate_recovery_head(root, program_id, expected_head)
     require_identifier(lock_token, "lock_token")
     require_string(evidence_ref, "evidence_ref")
-    lock_path = programs_root(root, create=False) / ".state-lock"
-    owner_path = lock_path / "owner.json"
-    owner = read_json_file(owner_path, "state lock owner")
-    if owner.get("token") != lock_token:
-        fail("observed lock token changed")
-    entries = sorted(path.name for path in lock_path.iterdir())
-    if entries != ["owner.json"]:
-        fail("state lock contains unexpected files")
-    try:
-        owner_path.unlink()
-        lock_path.rmdir()
-        fsync_directory(lock_path.parent)
-    except OSError as error:
-        raise ProgramError(f"cannot remove selected state lock: {error}") from error
+    require_program_state_excluded(root, program_id)
+    remove_lock_directory(programs_root(root, create=False), lock_token)
     return {
         "action": "remove-lock",
         "program_id": program_id,
@@ -1759,10 +2213,10 @@ def recovery_apply(
             lock_token=lock_token,
             evidence_ref=evidence_ref,
         )
-    with StateLock(resolved):
+    with StateLock(resolved, program_id):
         loaded = validate_recovery_head(resolved, program_id, expected_head)
         if action == "rebuild-snapshot":
-            atomic_write(loaded.snapshot_path, canonical_json(loaded.state) + b"\n")
+            atomic_write(loaded.snapshot_path, snapshot_bytes(loaded.state))
         elif action == "restore-active":
             try:
                 active = read_active(resolved, required=False)
@@ -1801,11 +2255,17 @@ def recovery_apply(
 
 def load_payload(path: str) -> dict[str, Any]:
     if path == "-":
-        data = sys.stdin.buffer.read()
+        data = sys.stdin.buffer.read(MAX_EVENT_BYTES + 1)
+        if len(data) > MAX_EVENT_BYTES:
+            fail(f"payload stdin exceeds {MAX_EVENT_BYTES} bytes")
         label = "payload stdin"
     else:
         payload_path = Path(path).expanduser()
-        data = read_regular_bytes(payload_path, "payload file")
+        data = read_regular_bytes(
+            payload_path,
+            "payload file",
+            maximum_bytes=MAX_EVENT_BYTES,
+        )
         label = f"payload file {payload_path}"
     payload = strict_json_loads(data, label)
     if not isinstance(payload, dict):

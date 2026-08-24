@@ -141,7 +141,8 @@ A lease coordinates one ready unit. Its expiry never frees scope ownership. Only
 a recorded reconciliation can renew, release, or block it.
 
 A receipt references one verified-slice artifact. It does not reproduce unit
-lifecycle history. An occurrence receipt binds commit and content digests. A
+lifecycle history. An occurrence receipt binds commit and content digests. Its
+commit must remain reachable from repository `HEAD` until the unit lands. A
 handoff receipt binds an exact patch artifact and digest.
 
 ## Controller Decisions

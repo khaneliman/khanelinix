@@ -41,13 +41,14 @@ Capabilities are `workspace-read`, `workspace-write`, `local-commit`,
 Evidence verdict is `VERIFIED`, `NOT_VERIFIED`, or `INCONCLUSIVE`.
 `lease_reconciled.outcome` is `released` or `blocked`.
 
-Text, reference, and scope values are one line without outer whitespace or
-control characters. A scope is relative and slash-delimited. It cannot contain a
-backslash, empty segment, `.` segment, or `..` segment.
+Version 1 text, reference, and scope values exclude control characters. Arrays
+have no schema item limit. Replay preserves those published acceptance rules.
 
-Arrays contain at most 256 items. The state engine also requires duplicate-free
-lexical ordering for dependency, scope, grant ID, and capability arrays. JSON
-Schema cannot express lexical ordering, so replay validation enforces it.
+The current producer profile also requires outer-whitespace-free text, canonical
+relative hierarchical scopes, and at most 256 array items. The state engine
+requires duplicate-free lexical ordering for dependency, scope, grant ID, and
+capability arrays. JSON Schema cannot express lexical ordering, so replay
+validation enforces it.
 
 ## Transition Notes
 
@@ -58,5 +59,7 @@ Schema cannot express lexical ordering, so replay validation enforces it.
 - `lease_reconciled` closes an active lease as released or blocked.
 - Receipt events can record any evidence verdict. Only `VERIFIED` evidence can
   support `unit_landed`.
+- `unit_landed` requires an occurrence commit that still resolves and remains
+  reachable from repository `HEAD`. Another unit can commit first.
 - `receipt_invalidated` precedes `unit_reopened`.
 - Program terminal events reject every later event.

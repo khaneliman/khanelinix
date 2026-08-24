@@ -43,7 +43,11 @@ class ProgramStateTests(unittest.TestCase):
         self.root = Path(self.temporary.name)
         run_git(self.root, "init", "-q")
         (self.root / "README.md").write_text("baseline\n", encoding="utf-8")
-        run_git(self.root, "add", "README.md")
+        (self.root / ".gitignore").write_text(
+            ".agent/programs/\n",
+            encoding="utf-8",
+        )
+        run_git(self.root, "add", "README.md", ".gitignore")
         run_git(
             self.root,
             "-c",
@@ -75,6 +79,42 @@ class ProgramStateTests(unittest.TestCase):
             minutes = self.time_counter
             self.time_counter += 1
         return (START + timedelta(minutes=minutes)).isoformat().replace("+00:00", "Z")
+
+    def test_program_state_stays_out_of_git_status(self) -> None:
+        self.assertEqual(run_git(self.root, "status", "--short"), "")
+
+    def test_program_writes_require_git_exclusion(self) -> None:
+        (self.root / ".gitignore").write_text("", encoding="utf-8")
+
+        with self.assertRaisesRegex(program_state.ProgramError, "must be excluded"):
+            self.record("grant_recorded", self.grant())
+
+    def test_program_writes_reject_specific_unignore(self) -> None:
+        (self.root / ".gitignore").write_text(
+            ".agent/programs/*\n!.agent/programs/active.json\n",
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(program_state.ProgramError, "must be excluded"):
+            self.record("grant_recorded", self.grant())
+
+    def test_program_writes_require_ignored_temporary_namespace(self) -> None:
+        (self.root / ".gitignore").write_text(
+            ".agent/programs/active.json\n"
+            ".agent/programs/.state-lock/owner.json\n"
+            ".agent/programs/test-program/journal.jsonl\n"
+            ".agent/programs/test-program/snapshot.json\n",
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(program_state.ProgramError, "must be excluded"):
+            self.record("grant_recorded", self.grant())
+
+    def test_program_writes_reject_tracked_state(self) -> None:
+        run_git(self.root, "add", "-f", ".agent/programs/active.json")
+
+        with self.assertRaisesRegex(program_state.ProgramError, "tracked files"):
+            self.record("grant_recorded", self.grant())
 
     def record(
         self,
@@ -175,6 +215,44 @@ class ProgramStateTests(unittest.TestCase):
             "content_digest": DIGEST,
             "evidence_verdict": verdict,
             "artifact_ref": f"patch://{unit_id}",
+        }
+
+    def commit_file(self, name: str, text: str, message: str) -> str:
+        (self.root / name).write_text(text, encoding="utf-8")
+        run_git(self.root, "add", name)
+        run_git(
+            self.root,
+            "-c",
+            "user.name=Program Test",
+            "-c",
+            "user.email=program@example.invalid",
+            "commit",
+            "-qm",
+            message,
+        )
+        return run_git(self.root, "rev-parse", "HEAD")
+
+    def occurrence_receipt(
+        self,
+        unit_id: str,
+        lease_id: str,
+        receipt_id: str,
+        *,
+        commit: str,
+        parent: str,
+    ) -> dict[str, object]:
+        return {
+            "receipt_id": receipt_id,
+            "unit_id": unit_id,
+            "lease_id": lease_id,
+            "base_commit": parent,
+            "content_digest": DIGEST,
+            "evidence_verdict": "VERIFIED",
+            "artifact_ref": f"receipt://{unit_id}",
+            "commit_sha": commit,
+            "parent_sha": parent,
+            "committed_digest": DIGEST,
+            "digest_match": True,
         }
 
     def land_handoff(self, unit_id: str, lease_id: str, receipt_id: str) -> None:
@@ -543,7 +621,7 @@ class ProgramStateTests(unittest.TestCase):
                 },
             )
 
-    def test_occurrence_commit_must_remain_head_until_landing(self) -> None:
+    def test_occurrence_commit_must_stay_reachable_until_landing(self) -> None:
         self.record("grant_recorded", self.grant())
         self.record(
             "grant_recorded",
@@ -555,53 +633,92 @@ class ProgramStateTests(unittest.TestCase):
             local_commit=True,
             grant_ids=["grant-commit", "grant-write"],
         )
-        (self.root / "README.md").write_text("candidate\n", encoding="utf-8")
-        run_git(self.root, "add", "README.md")
-        run_git(
-            self.root,
-            "-c",
-            "user.name=Program Test",
-            "-c",
-            "user.email=program@example.invalid",
-            "commit",
-            "-qm",
-            "candidate",
-        )
-        commit = run_git(self.root, "rev-parse", "HEAD")
+        commit = self.commit_file("README.md", "candidate\n", "candidate")
         self.record(
             "occurrence_receipt_recorded",
-            {
-                "receipt_id": "receipt-a",
-                "unit_id": "unit-a",
-                "lease_id": "lease-a",
-                "base_commit": self.base,
-                "content_digest": DIGEST,
-                "evidence_verdict": "VERIFIED",
-                "artifact_ref": "receipt://unit-a",
-                "commit_sha": commit,
-                "parent_sha": self.base,
-                "committed_digest": DIGEST,
-                "digest_match": True,
-            },
+            self.occurrence_receipt(
+                "unit-a",
+                "lease-a",
+                "receipt-a",
+                commit=commit,
+                parent=self.base,
+            ),
         )
-        (self.root / "later.txt").write_text("later\n", encoding="utf-8")
-        run_git(self.root, "add", "later.txt")
-        run_git(
-            self.root,
-            "-c",
-            "user.name=Program Test",
-            "-c",
-            "user.email=program@example.invalid",
-            "commit",
-            "-qm",
-            "later",
-        )
+        run_git(self.root, "checkout", "-q", "--detach", self.base)
 
-        with self.assertRaisesRegex(program_state.ProgramError, "remain.*HEAD"):
+        with self.assertRaisesRegex(program_state.ProgramError, "reachable"):
             self.record(
                 "unit_landed",
                 {"unit_id": "unit-a", "receipt_id": "receipt-a"},
             )
+
+    def test_interleaved_units_both_land_after_later_commit(self) -> None:
+        self.record("grant_recorded", self.grant())
+        self.record(
+            "grant_recorded",
+            self.grant("grant-commit", capability="local-commit"),
+        )
+        self.prepare_unit(
+            "unit-a",
+            "lease-a",
+            local_commit=True,
+            grant_ids=["grant-commit", "grant-write"],
+        )
+        first = self.commit_file("unit-a.txt", "unit a\n", "unit a")
+        self.record(
+            "occurrence_receipt_recorded",
+            self.occurrence_receipt(
+                "unit-a",
+                "lease-a",
+                "receipt-a",
+                commit=first,
+                parent=self.base,
+            ),
+        )
+        self.prepare_unit(
+            "unit-b",
+            "lease-b",
+            local_commit=True,
+            grant_ids=["grant-commit", "grant-write"],
+        )
+        second = self.commit_file("unit-b.txt", "unit b\n", "unit b")
+        self.record(
+            "occurrence_receipt_recorded",
+            self.occurrence_receipt(
+                "unit-b",
+                "lease-b",
+                "receipt-b",
+                commit=second,
+                parent=first,
+            ),
+        )
+
+        self.record("unit_landed", {"unit_id": "unit-a", "receipt_id": "receipt-a"})
+        state = self.record(
+            "unit_landed", {"unit_id": "unit-b", "receipt_id": "receipt-b"}
+        )
+
+        self.assertEqual(state["units"]["unit-a"]["status"], "landed")
+        self.assertEqual(state["units"]["unit-b"]["status"], "landed")
+
+    def test_lock_contention_retries_before_reporting(self) -> None:
+        lock = self.root / ".agent" / "programs" / ".state-lock"
+        lock.mkdir()
+        delays: list[float] = []
+
+        with (
+            mock.patch.object(program_state.time, "sleep", delays.append),
+            self.assertRaisesRegex(program_state.ProgramError, "retry the command"),
+        ):
+            self.record("grant_recorded", self.grant())
+        self.assertEqual(len(delays), program_state.LOCK_ATTEMPTS - 1)
+        self.assertEqual(delays, sorted(delays))
+        self.assertGreaterEqual(sum(delays), 1.0)
+
+        lock.rmdir()
+        state = self.record("grant_recorded", self.grant())
+
+        self.assertIn("grant-write", state["grants"])
 
     def test_invalidated_dependency_blocks_receipt_delivery(self) -> None:
         self.record("grant_recorded", self.grant())
@@ -719,6 +836,15 @@ class ProgramStateTests(unittest.TestCase):
             "current",
         )
 
+    def test_regular_file_probe_reads_no_content(self) -> None:
+        loaded = program_state.load_program(self.root)
+        with mock.patch.object(
+            program_state.os,
+            "fdopen",
+            side_effect=AssertionError("probe opened a reader"),
+        ):
+            program_state.validate_regular_file(loaded.snapshot_path, "snapshot")
+
     def test_stale_lock_requires_exact_token_and_evidence(self) -> None:
         programs = self.root / ".agent" / "programs"
         lock = programs / ".state-lock"
@@ -731,7 +857,10 @@ class ProgramStateTests(unittest.TestCase):
         }
         (lock / "owner.json").write_bytes(program_state.canonical_json(owner) + b"\n")
 
-        with self.assertRaisesRegex(program_state.ProgramError, "lock exists"):
+        with (
+            mock.patch.object(program_state.time, "sleep", lambda _: None),
+            self.assertRaisesRegex(program_state.ProgramError, "lock is held"),
+        ):
             self.record("grant_recorded", self.grant())
         plan = program_state.recovery_plan(
             self.root,
@@ -758,6 +887,187 @@ class ProgramStateTests(unittest.TestCase):
         )
         self.assertEqual(result["action"], "remove-lock")
         self.assertFalse(lock.exists())
+
+    @unittest.skipUnless(hasattr(os, "symlink"), "symlinks unavailable")
+    def test_stale_lock_symlink_preserves_external_owner(self) -> None:
+        programs = self.root / ".agent" / "programs"
+        lock = programs / ".state-lock"
+        external = self.root / "external-lock"
+        external.mkdir()
+        owner = external / "owner.json"
+        owner.write_bytes(
+            program_state.canonical_json(
+                {
+                    "token": "abc123",
+                    "pid": 999999,
+                    "host": "test-host",
+                    "created_at": self.time(minutes=1),
+                }
+            )
+            + b"\n"
+        )
+        lock.symlink_to(external, target_is_directory=True)
+
+        with self.assertRaises(program_state.ProgramError):
+            program_state.recovery_apply(
+                self.root,
+                program_id="test-program",
+                expected_head=self.state["head"],
+                action="remove-lock",
+                lock_token="abc123",
+                evidence_ref="process://checked",
+            )
+
+        self.assertTrue(owner.is_file())
+        self.assertIn("abc123", owner.read_text(encoding="utf-8"))
+
+    def test_stale_lock_replacement_race_preserves_both_locks(self) -> None:
+        programs = self.root / ".agent" / "programs"
+        lock = programs / ".state-lock"
+        moved = programs / ".state-lock-original"
+        lock.mkdir()
+        original_owner = lock / "owner.json"
+        original_owner.write_bytes(
+            program_state.canonical_json(
+                {
+                    "token": "abc123",
+                    "pid": 999999,
+                    "host": "test-host",
+                    "created_at": self.time(minutes=1),
+                }
+            )
+            + b"\n"
+        )
+        real_rename = os.rename
+        swapped = False
+
+        def replace_before_quarantine(
+            source: object,
+            target: object,
+            *args: object,
+            **kwargs: object,
+        ) -> None:
+            nonlocal swapped
+            if source == ".state-lock" and not swapped:
+                swapped = True
+                real_rename(lock, moved)
+                lock.mkdir()
+                (lock / "owner.json").write_bytes(
+                    program_state.canonical_json(
+                        {
+                            "token": "replacement",
+                            "pid": 999998,
+                            "host": "test-host",
+                            "created_at": self.time(minutes=2),
+                        }
+                    )
+                    + b"\n"
+                )
+            real_rename(source, target, *args, **kwargs)
+
+        with (
+            mock.patch.object(
+                program_state.os,
+                "rename",
+                side_effect=replace_before_quarantine,
+            ),
+            self.assertRaisesRegex(program_state.ProgramError, "before quarantine"),
+        ):
+            program_state.recovery_apply(
+                self.root,
+                program_id="test-program",
+                expected_head=self.state["head"],
+                action="remove-lock",
+                lock_token="abc123",
+                evidence_ref="process://checked",
+            )
+
+        self.assertTrue((moved / "owner.json").is_file())
+        self.assertTrue((lock / "owner.json").is_file())
+        self.assertEqual(
+            json.loads((lock / "owner.json").read_text(encoding="utf-8"))["token"],
+            "replacement",
+        )
+        self.assertEqual(list(programs.glob(".state-lock.quarantine.*")), [])
+
+    def test_writer_preflights_limits_before_replacing_state(self) -> None:
+        loaded = program_state.load_program(self.root)
+        journal = loaded.journal_path
+        snapshot = loaded.snapshot_path
+        before = (journal.read_bytes(), snapshot.read_bytes())
+
+        with (
+            mock.patch.object(program_state, "MAX_JOURNAL_EVENTS", 1),
+            self.assertRaisesRegex(program_state.ProgramError, "exceeds 1 events"),
+        ):
+            self.record("grant_recorded", self.grant())
+        self.assertEqual((journal.read_bytes(), snapshot.read_bytes()), before)
+
+        with (
+            mock.patch.object(
+                program_state,
+                "MAX_SNAPSHOT_BYTES",
+                len(before[1]),
+            ),
+            self.assertRaisesRegex(program_state.ProgramError, "snapshot exceeds"),
+        ):
+            self.record("grant_recorded", self.grant())
+        self.assertEqual((journal.read_bytes(), snapshot.read_bytes()), before)
+
+        snapshot.write_bytes(b"stale\n")
+        with (
+            mock.patch.object(program_state, "MAX_SNAPSHOT_BYTES", 1),
+            self.assertRaisesRegex(program_state.ProgramError, "snapshot exceeds"),
+        ):
+            program_state.recovery_apply(
+                self.root,
+                program_id="test-program",
+                expected_head=self.state["head"],
+                action="rebuild-snapshot",
+            )
+        self.assertEqual(snapshot.read_bytes(), b"stale\n")
+
+    def test_state_file_and_journal_limits_fail_closed(self) -> None:
+        programs = self.root / ".agent" / "programs"
+        active = programs / "active.json"
+        journal = programs / "test-program" / "journal.jsonl"
+        active_bytes = active.read_bytes()
+        journal_bytes = journal.read_bytes()
+
+        active.write_bytes(b" " * (program_state.MAX_ACTIVE_BYTES + 1))
+        with self.assertRaisesRegex(
+            program_state.ProgramError, "active pointer exceeds"
+        ):
+            program_state.load_program(self.root)
+        active.write_bytes(active_bytes)
+
+        journal.write_bytes(b"x" * (program_state.MAX_EVENT_BYTES + 1) + b"\n")
+        with self.assertRaisesRegex(
+            program_state.ProgramError, "journal line 1 exceeds"
+        ):
+            program_state.load_program(self.root)
+        journal.write_bytes(journal_bytes)
+
+        with (
+            mock.patch.object(
+                program_state,
+                "MAX_JOURNAL_BYTES",
+                len(journal_bytes) - 1,
+            ),
+            self.assertRaisesRegex(
+                program_state.ProgramError,
+                "journal exceeds",
+            ),
+        ):
+            program_state.load_program(self.root)
+
+        with (
+            mock.patch.object(program_state, "MAX_JOURNAL_EVENTS", 0),
+            self.assertRaisesRegex(
+                program_state.ProgramError, "journal exceeds 0 events"
+            ),
+        ):
+            program_state.load_program(self.root)
 
     def test_recovery_removes_only_exact_temporary(self) -> None:
         program_dir = self.root / ".agent" / "programs" / "test-program"
@@ -848,31 +1158,106 @@ class ProgramStateTests(unittest.TestCase):
         cases = {
             "text": (
                 ("Valid text.",),
-                (" leading", "trailing ", "two\nlines"),
+                (" leading", "trailing "),
+                ("two\nlines",),
                 "text",
             ),
             "reference": (
                 ("artifact://receipt",),
                 (" artifact://receipt", "artifact://receipt "),
+                ("artifact://receipt\nnext",),
                 "reference",
             ),
             "scope": (
                 ("repo/path", "git:local"),
                 ("/repo", "repo/", "repo//path", "repo/../path", r"repo\path"),
+                ("repo\npath",),
                 "scope",
             ),
         }
-        for definition, (accepted, rejected, kind) in cases.items():
+        for definition, (accepted, legacy_only, rejected, kind) in cases.items():
             pattern = re.compile(schema["$defs"][definition]["pattern"])
-            for value in accepted:
+            for value in (*accepted, *legacy_only):
                 with self.subTest(definition=definition, value=value):
                     self.assertIsNotNone(pattern.fullmatch(value))
+                    program_state.validate_field(
+                        kind,
+                        value,
+                        definition,
+                        producer_profile=False,
+                    )
+            for value in accepted:
+                program_state.validate_field(kind, value, definition)
+            for value in legacy_only:
+                with self.assertRaises(program_state.ProgramError):
                     program_state.validate_field(kind, value, definition)
             for value in rejected:
                 with self.subTest(definition=definition, value=value):
                     self.assertIsNone(pattern.fullmatch(value))
                     with self.assertRaises(program_state.ProgramError):
                         program_state.validate_field(kind, value, definition)
+
+    def test_replay_accepts_published_v1_scope_and_array_contract(self) -> None:
+        loaded = program_state.load_program(self.root)
+
+        def legacy_event(
+            sequence: int,
+            event_type: str,
+            payload: dict[str, object],
+            previous_hash: str,
+        ) -> dict[str, object]:
+            event: dict[str, object] = {
+                "schema_version": 1,
+                "program_id": "test-program",
+                "sequence": sequence,
+                "event_id": f"legacy-{sequence}",
+                "event_type": event_type,
+                "recorded_at": self.time(),
+                "actor": "controller",
+                "payload": payload,
+                "previous_hash": previous_hash,
+                "event_hash": program_state.ZERO_HASH,
+            }
+            event["event_hash"] = program_state.event_digest(event)
+            return event
+
+        grant = legacy_event(
+            2,
+            "grant_recorded",
+            {
+                "grant_id": "legacy-grant",
+                "capability": "workspace-read",
+                "scope": "/legacy//../scope",
+                "issuer": "user",
+                "evidence_ref": " legacy evidence ",
+            },
+            loaded.state["head"],
+        )
+        scopes = [f"/legacy//scope-{index:03d}" for index in range(257)]
+        unit = legacy_event(
+            3,
+            "unit_added",
+            {
+                "unit_id": "legacy-unit",
+                "outcome": " legacy outcome ",
+                "owner": "engineering-workflow",
+                "dependencies": [],
+                "resource_scopes": scopes,
+                "required_capabilities": [],
+                "predicate": " legacy predicate ",
+                "rollback": " legacy rollback ",
+            },
+            grant["event_hash"],
+        )
+
+        events = program_state.parse_journal(
+            program_state.journal_bytes([*loaded.events, grant, unit])
+        )
+
+        self.assertEqual(len(events), 3)
+        self.assertEqual(program_state.replay(events)["sequence"], 3)
+        with self.assertRaises(program_state.ProgramError):
+            program_state.validate_payload("unit_added", unit["payload"])
 
     def test_sorted_arrays_have_closed_size_and_order(self) -> None:
         payload = self.unit("unit-a")
@@ -924,6 +1309,34 @@ class ProgramStateTests(unittest.TestCase):
         )
         self.assertEqual(invalid.returncode, 2)
         self.assertFalse(json.loads(invalid.stderr)["ok"])
+
+        oversized = subprocess.run(
+            [
+                sys.executable,
+                "-B",
+                str(SCRIPT),
+                "record",
+                str(self.root),
+                "--program-id",
+                "test-program",
+                "--expected-head",
+                self.state["head"],
+                "--event-type",
+                "unit_readied",
+                "--actor",
+                "controller",
+                "--event-id",
+                "oversized-payload",
+                "--payload-file",
+                "-",
+            ],
+            input="x" * (program_state.MAX_EVENT_BYTES + 1),
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(oversized.returncode, 2)
+        self.assertIn("payload stdin exceeds", oversized.stderr)
 
         argument_error = subprocess.run(
             [

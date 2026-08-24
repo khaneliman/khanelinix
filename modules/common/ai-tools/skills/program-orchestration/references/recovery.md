@@ -17,6 +17,11 @@ directory contains a random token, PID, host, and UTC creation time.
 Create the lock directory atomically. Normal exit removes it only when the token
 still matches. A writer must not follow symlinks in the managed state path.
 
+A contended lock is normal. The writer retries acquisition with a bounded
+backoff and then reports contention. Retry the command first. Treat the lock as
+stale only when it persists across retries, and then inspect it with a recovery
+plan.
+
 While holding the lock:
 
 1. validate the complete journal and derived state;
@@ -27,6 +32,10 @@ While holding the lock:
 6. atomically replace the journal;
 7. fsync the directory when the platform supports it;
 8. write and replace the derived snapshot by the same method.
+
+Readers reject active pointers above 4 KiB, event rows above 256 KiB, journals
+above 16 MiB or 16,384 events, lock owners above 4 KiB, and snapshots above 8
+MiB. Journal replay reads one bounded row at a time.
 
 Journal replacement succeeds before snapshot replacement. If snapshot writing
 fails, report failure and leave the valid journal as the recovery source.
@@ -64,8 +73,9 @@ Allowed actions:
   external evidence that no writer remains;
 - reconcile an expired lease through a normal journal event.
 
-Recovery apply never modifies journal history. A stale-lock removal changes only
-the lock directory. After removing it, reacquire a new lock for any state write.
+Recovery apply never modifies journal history. A stale-lock removal uses
+directory-relative operations and changes only the selected lock directory.
+After removing it, reacquire a new lock for any state write.
 
 If the expected head, lock token, file identity, or active program changes, stop
 and generate a new recovery plan.
@@ -78,6 +88,7 @@ and generate a new recovery plan.
 | New valid journal, old snapshot         | Rebuild snapshot                                 |
 | New program journal, old active pointer | Restore pointer after validation                 |
 | Invalid journal                         | Stop for manual forensic recovery                |
+| Lock held by a concurrent writer        | Retry the command                                |
 | Existing lock with uncertain writer     | Stop and obtain external evidence                |
 | Expired active lease                    | Inspect workspace, then renew, release, or block |
 

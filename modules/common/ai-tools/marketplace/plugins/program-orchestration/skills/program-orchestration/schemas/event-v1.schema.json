@@ -424,19 +424,19 @@
 			"type": "string",
 			"minLength": 1,
 			"maxLength": 2048,
-			"pattern": "^(?!\\s)(?!.*\\s$)[^\\u0000-\\u001F\\u007F]+$"
+			"pattern": "^[^\\u0000-\\u001F\\u007F]+$"
 		},
 		"reference": {
 			"type": "string",
 			"minLength": 1,
 			"maxLength": 2048,
-			"pattern": "^(?!\\s)(?!.*\\s$)[^\\u0000-\\u001F\\u007F]+$"
+			"pattern": "^[^\\u0000-\\u001F\\u007F]+$"
 		},
 		"scope": {
 			"type": "string",
 			"minLength": 1,
 			"maxLength": 512,
-			"pattern": "^(?!\\s)(?!/)(?!.*//)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*\\\\)(?!.*\\s$)[^\\u0000-\\u001F\\u007F/](?:[^\\u0000-\\u001F\\u007F]*[^\\u0000-\\u001F\\u007F/])?$"
+			"pattern": "^[^\\u0000-\\u001F\\u007F]+$"
 		},
 		"commit": {
 			"type": "string",
@@ -471,7 +471,6 @@
 		},
 		"identifierArray": {
 			"type": "array",
-			"maxItems": 256,
 			"items": {
 				"$ref": "#/$defs/identifier"
 			},
@@ -480,7 +479,6 @@
 		"scopeArray": {
 			"type": "array",
 			"minItems": 1,
-			"maxItems": 256,
 			"items": {
 				"$ref": "#/$defs/scope"
 			},
@@ -501,7 +499,6 @@
 		},
 		"requiredCapabilityArray": {
 			"type": "array",
-			"maxItems": 256,
 			"items": {
 				"$ref": "#/$defs/requiredCapability"
 			},

@@ -1,7 +1,9 @@
 # Program State Tool
 
 The state tool uses Python 3.11 or newer, standard-library modules, and Git. It
-writes under the supplied repository root.
+writes under `.agent/programs/` in the supplied repository root. Exclude that
+directory through `.gitignore` or `.git/info/exclude` before any write. The
+engine refuses writes when the path is tracked or not ignored.
 
 ```sh
 python3 <skill-dir>/scripts/program_state.py --help
@@ -44,7 +46,8 @@ stable event exists and identifies its sequence and hash.
 ## Record One Event
 
 Write one payload JSON object to a file. Use an explicit event ID so uncertain
-command recovery can find the event before retry.
+command recovery can find the event before retry. Payload files and standard
+input are limited to 256 KiB.
 
 ```sh
 python3 <skill-dir>/scripts/program_state.py record REPO \
@@ -60,7 +63,13 @@ The writer acquires the repository program lock, validates the full journal,
 compares the expected head, applies one event, replaces the journal, then
 replaces the snapshot. It rejects a lease base that differs from repository
 `HEAD`. It verifies an occurrence commit's parent against local Git history. The
-occurrence commit must remain `HEAD` until the unit lands.
+occurrence commit must be `HEAD` when the receipt is recorded. When the unit
+lands, that commit must still resolve and remain reachable from `HEAD`. A later
+commit from another unit therefore does not block landing.
+
+The writer retries a contended lock with a bounded backoff. If the lock still
+exists after the retries, retry the command once. Inspect the lock with
+`recover-plan` only when it persists across retries.
 
 Use [events-v1.md](events-v1.md) for payload fields. Arrays must be
 duplicate-free and lexically sorted. Required capability objects sort by

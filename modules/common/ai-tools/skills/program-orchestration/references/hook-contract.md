@@ -11,6 +11,17 @@ No active pointer produces neutral output. A valid active program produces one
 bounded context record. Corrupt active state produces a visible warning but does
 not block unrelated work.
 
+## Provider Adapters
+
+Invoke `program_context.py PROVIDER EVENT` with provider JSON on standard input.
+Supported provider values are `codex` and `claude`. Supported event values are
+`session-start` and `user-prompt`.
+
+Each adapter emits `hookSpecificOutput` with the native `hookEventName` and one
+`additionalContext` string. Emit no standard output when no active pointer
+exists. Send fixed diagnostic text to standard error and return success after a
+state or adapter error.
+
 ## Input and Discovery
 
 Read provider JSON from standard input. Use only documented fields to locate the
@@ -21,12 +32,15 @@ Reject symlinked `.agent`, `programs`, active pointer, program directory,
 journal, or snapshot components. Never use a path stored in untrusted state to
 escape the fixed program root.
 
+Apply the state engine's file, event-row, journal, and event-count limits before
+replay. Emit the fixed invalid-state warning when any input exceeds its limit.
+
 ## Allowed Context
 
 Allow only these fields:
 
-- program ID, goal, status, and journal head;
-- up to eight leased or ready unit IDs, outcomes, and recorded lifecycle owners;
+- program ID, status, and journal head;
+- up to eight leased or ready unit IDs and recorded lifecycle owners;
 - dependency IDs and their control states;
 - active grant capability names without evidence or issuer details;
 - active lease holder, scopes, and expiry;
@@ -38,8 +52,9 @@ control characters. Limit emitted context to 4 KiB after provider wrapping. If
 truncation is required, keep identity, status, head, warning, and next action
 first.
 
-Never emit free-form journal payloads, grant evidence, user prompts, secrets, or
-arbitrary file content.
+Never emit program goals, unit outcomes, predicates, rollback text, evidence,
+user prompts, arbitrary file content, or another free-form journal field.
+Identifiers and scopes must not carry secrets.
 
 ## Forbidden Decisions
 

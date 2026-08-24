@@ -13,6 +13,14 @@ OPENAI = SKILL_ROOT / "agents" / "openai.yaml"
 EVENT_SCHEMA = SKILL_ROOT / "schemas" / "event-v1.schema.json"
 AI_TOOLS = SKILL_ROOT.parents[1]
 CATALOG = AI_TOOLS / "marketplace" / "catalog.json"
+AI_TOOLS_DEFAULT = AI_TOOLS / "default.nix"
+CODEX_REQUIREMENTS = AI_TOOLS / "program-orchestration/codex/requirements.nix"
+REPOSITORY_ROOT = AI_TOOLS.parents[2]
+CLAUDE_HOOK = (
+    REPOSITORY_ROOT
+    / "modules/home/programs/terminal/tools/claude-code/hooks"
+    / "program-orchestration.nix"
+)
 MAX_PLAYBOOK_LINES = 100
 EVENT_TYPES = {
     "program_initialized",
@@ -129,6 +137,29 @@ class ProgramOrchestrationContract(unittest.TestCase):
             "repair state",
         ):
             self.assertIn(forbidden, text)
+
+    def test_codex_and_claude_project_one_read_only_renderer(self) -> None:
+        if not AI_TOOLS_DEFAULT.is_file():
+            self.skipTest("provider adapters are not installed")
+        codex = read(CODEX_REQUIREMENTS)
+        default = read(AI_TOOLS_DEFAULT)
+        claude = read(CLAUDE_HOOK)
+
+        for event in ("SessionStart", "UserPromptSubmit"):
+            self.assertIn(event, codex)
+            self.assertIn(event, claude)
+        self.assertIn("program_context.py codex session-start", codex)
+        self.assertIn("program_context.py codex user-prompt", codex)
+        self.assertIn("program_context.py claude ${event}", claude)
+        self.assertIn('hook "session-start"', claude)
+        self.assertIn('hook "user-prompt"', claude)
+        self.assertIn("programOrchestration.codex.requirements", default)
+        self.assertIn("program_context.py $out/program-orchestration/", default)
+        self.assertIn("program_state.py $out/program-orchestration/", default)
+        self.assertNotIn("Stop", codex)
+        self.assertNotIn("PreToolUse", codex)
+        self.assertNotIn("Stop", claude)
+        self.assertNotIn("PreToolUse", claude)
 
     def test_marketplace_bundle_contains_program_overlay(self) -> None:
         if not CATALOG.is_file():

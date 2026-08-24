@@ -48,3 +48,4 @@ result
 # okf-memory: local, uncommitted curated memory
 .okf/
 .planning/
+.agent/programs/

@@ -18,6 +18,12 @@ let
     (builtins.readFile codexContext)
   ];
   skillsDir = ./skills;
+  programOrchestrationDir = ./program-orchestration;
+  programOrchestration = {
+    canonicalSkill = skillsDir + "/program-orchestration";
+
+    codex.requirements = import (programOrchestrationDir + "/codex/requirements.nix");
+  };
   planningWithFilesDir = ./planning-with-files;
   planningWithFilesCommandsDir = planningWithFilesDir + "/commands";
   planningWithFilesCommandNames = [
@@ -141,6 +147,7 @@ let
         codexManagedRequirements.hooks
         okfMemory.codex.requirements
         planningWithFiles.codex.requirements
+        programOrchestration.codex.requirements
         technicalWriting.codex.requirements
       ];
   codexManagedRequirementsWithHooks = codexManagedRequirements // {
@@ -157,6 +164,9 @@ let
         mkdir -p $out/planning-with-files
         cp ${planningWithFiles.codex.hooks}/*.py $out/planning-with-files/
         cp ${planningWithFiles.codex.hooks}/*.sh $out/planning-with-files/
+        mkdir -p $out/program-orchestration
+        cp ${programOrchestration.canonicalSkill}/scripts/program_context.py $out/program-orchestration/
+        cp ${programOrchestration.canonicalSkill}/scripts/program_state.py $out/program-orchestration/
         mkdir -p $out/technical-writing
         cp ${technicalWriting.guard} $out/technical-writing/style_guard.py
       '';
@@ -302,6 +312,7 @@ in
     okfMemory
     permissions
     planningWithFiles
+    programOrchestration
     skills
     skillsDir
     systemSkillNames
