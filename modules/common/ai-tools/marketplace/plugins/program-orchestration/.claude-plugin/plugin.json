@@ -2,7 +2,7 @@
 	"name": "program-orchestration",
 	"displayName": "Program Orchestration",
 	"description": "Coordinate durable multi-unit program control.",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"author": {
 		"name": "khaneliman"
 	}

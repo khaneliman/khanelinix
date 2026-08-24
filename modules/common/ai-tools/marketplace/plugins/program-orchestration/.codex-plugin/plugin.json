@@ -1,6 +1,6 @@
 {
 	"name": "program-orchestration",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Coordinate durable multi-unit program control.",
 	"author": {
 		"name": "khaneliman"

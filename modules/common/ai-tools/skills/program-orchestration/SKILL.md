@@ -32,6 +32,8 @@ unit.
   expired lease, or an uncertain writer outcome.
 - Read [hook-contract.md](references/hook-contract.md) before adding provider
   context hooks.
+- Read [state-tool.md](references/state-tool.md) before invoking the journal CLI
+  or recovery actions.
 
 ## Start
 
@@ -43,6 +45,15 @@ unit.
    program grants nothing.
 5. Freeze the initial unit graph before dispatch. Add later units through a
    recorded controller decision.
+
+## State Tool
+
+Run `python3 <skill-dir>/scripts/program_state.py --help`. Initialize once, then
+use `record` with the exact expected head, stable event ID, closed event type,
+and a JSON payload file. Use `status` and `validate` for reads.
+
+Run `recover-plan` before `recover-apply`. Never retry an uncertain write until
+`validate` proves whether its event ID exists.
 
 ## Control Loop
 

@@ -41,9 +41,13 @@ Capabilities are `workspace-read`, `workspace-write`, `local-commit`,
 Evidence verdict is `VERIFIED`, `NOT_VERIFIED`, or `INCONCLUSIVE`.
 `lease_reconciled.outcome` is `released` or `blocked`.
 
-The state engine also requires duplicate-free lexical ordering for dependency,
-scope, grant ID, and capability arrays. JSON Schema cannot express lexical
-ordering, so replay validation enforces it.
+Text, reference, and scope values are one line without outer whitespace or
+control characters. A scope is relative and slash-delimited. It cannot contain a
+backslash, empty segment, `.` segment, or `..` segment.
+
+Arrays contain at most 256 items. The state engine also requires duplicate-free
+lexical ordering for dependency, scope, grant ID, and capability arrays. JSON
+Schema cannot express lexical ordering, so replay validation enforces it.
 
 ## Transition Notes
 
