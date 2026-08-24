@@ -1,6 +1,6 @@
 ---
 name: okf-memory
-description: Durable cross-provider user and project memory. Use when asked to remember or persist something, when a request depends on prior work, saved decisions, recurring issues, or user preferences, or after substantial research produces a reusable lesson. Provider-native memory is not a substitute.
+description: Durable cross-provider user and project memory. Use when asked to remember or persist, when a request depends on prior work, decisions, recurring issues, or preferences, or when substantial research yields a reusable lesson. Provider-native memory is not a substitute.
 ---
 
 # OKF Memory
