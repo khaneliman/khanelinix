@@ -22,8 +22,9 @@ let
     ++ lib.optionals exoEnabled [
       "${pkgs.exo}/bin/exo"
       # exo's bin/exo is a shell wrapper that execs the bare interpreter, so
-      # ALF tracks python itself. exo builds from pkgs.python3Packages.
-      "${pkgs.python3.interpreter}"
+      # ALF tracks python itself. The exo overlay pins its own interpreter
+      # (MLX wheel constraint), so read it from the package, not pkgs.python3.
+      "${pkgs.exo.python.interpreter}"
     ]
     ++ lib.optionals (moonlightPackage != null) [
       # ALF tracks the real listening executable, not the qt wrapper script.

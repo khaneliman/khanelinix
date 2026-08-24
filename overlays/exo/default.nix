@@ -128,6 +128,9 @@ in
 
       passthru = (old.passthru or { }) // {
         exo-pyo3-bindings = pyo3-bindings;
+        # Consumers such as the Application Firewall allowlist need the exact
+        # interpreter exo runs under, which this overlay pins per platform.
+        inherit (pythonPackages) python;
       };
 
       dependencies =
