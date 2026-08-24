@@ -51,7 +51,7 @@ OPENAI_REQUIRED_INTERFACE_FIELDS = {
     "display_name",
     "short_description",
 }
-DEFAULT_IMPLICIT_DESCRIPTION_BUDGET = 8_000
+DEFAULT_IMPLICIT_DESCRIPTION_BUDGET = 7_000
 
 
 @dataclass(frozen=True)
@@ -1132,7 +1132,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--implicit-description-budget",
         type=int,
         default=DEFAULT_IMPLICIT_DESCRIPTION_BUDGET,
-        help="advisory character budget for implicitly invocable descriptions",
+        help="maximum characters for implicitly invocable descriptions",
     )
     parser.add_argument(
         "--strict",
@@ -1166,7 +1166,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     assert isinstance(summary, dict)
     has_errors = int(summary["errors"]) > 0
     has_warnings = int(summary["warnings"]) > 0
-    return 1 if has_errors or (args.strict and has_warnings) else 0
+    exceeds_implicit_budget = bool(summary["implicit_description_budget_exceeded"])
+    return (
+        1
+        if has_errors or exceeds_implicit_budget or (args.strict and has_warnings)
+        else 0
+    )
 
 
 if __name__ == "__main__":

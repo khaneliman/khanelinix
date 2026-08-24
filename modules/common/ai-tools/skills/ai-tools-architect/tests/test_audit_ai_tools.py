@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import importlib.util
+import io
 import json
 import os
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stdout
 from pathlib import Path
 
 SCRIPT = Path(__file__).parents[1] / "scripts" / "audit_ai_tools.py"
@@ -14,6 +16,20 @@ assert SPEC is not None and SPEC.loader is not None
 audit_ai_tools = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = audit_ai_tools
 SPEC.loader.exec_module(audit_ai_tools)
+
+
+def find_repository_skills() -> Path | None:
+    """Return the repository skills tree that ships to every provider."""
+    for candidate in Path(__file__).resolve().parents:
+        if candidate.name != "ai-tools" or candidate.parent.name != "common":
+            continue
+        skills = candidate / "skills"
+        if (skills / "ai-tools-architect" / "SKILL.md").is_file():
+            return skills
+    return None
+
+
+REPOSITORY_SKILLS = find_repository_skills()
 
 
 def write_skill(root: Path, name: str, body: str) -> Path:
@@ -37,7 +53,7 @@ def expected_summary(
         "implicit_skills": skills,
         "explicit_only_skills": 0,
         "implicit_description_characters": description_characters,
-        "implicit_description_budget": 8_000,
+        "implicit_description_budget": 7_000,
         "implicit_description_budget_exceeded": False,
     }
 
@@ -383,6 +399,42 @@ class AuditAiToolsTests(unittest.TestCase):
             records = {record["name"]: record for record in report["skills"]}
             self.assertTrue(records["implicit-skill"]["implicit_invocation"])
             self.assertFalse(records["explicit-skill"]["implicit_invocation"])
+
+    def test_cli_rejects_default_implicit_budget_excess(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            lengths = [1_000] * 7 + [1]
+            for index, length in enumerate(lengths):
+                name = f"budget-skill-{index}"
+                skill = root / name
+                skill.mkdir()
+                (skill / "SKILL.md").write_text(
+                    f"---\nname: {name}\ndescription: {'x' * length}\n---\n\n# Test\n",
+                    encoding="utf-8",
+                )
+
+            with redirect_stdout(io.StringIO()):
+                result = audit_ai_tools.main([str(root), "--format", "json"])
+
+            self.assertEqual(audit_ai_tools.DEFAULT_IMPLICIT_DESCRIPTION_BUDGET, 7_000)
+            self.assertEqual(result, 1)
+
+    def test_repository_skills_stay_within_implicit_budget(self) -> None:
+        if REPOSITORY_SKILLS is None:
+            self.skipTest(
+                "repository skills tree is unavailable outside the khanelinix checkout"
+            )
+
+        summary = audit_ai_tools.audit_root(REPOSITORY_SKILLS)["summary"]
+        total = summary["implicit_description_characters"]
+        budget = summary["implicit_description_budget"]
+
+        self.assertFalse(
+            summary["implicit_description_budget_exceeded"],
+            f"implicit descriptions total {total} characters against a "
+            f"{budget} character budget, an overflow of {total - budget}; "
+            "shorten implicit descriptions or make a skill explicit-only",
+        )
 
     def test_invalid_invocation_policy_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

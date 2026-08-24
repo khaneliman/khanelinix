@@ -129,6 +129,8 @@ Codex supports the open agent skills standard (agentskills.io).
 
 - The initial list of all available skills in context is capped at **2% of the
   context window** (approx. 8,000 characters when unknown).
+- This repository enforces a **7,000-character ceiling** to retain margin below
+  that approximate host cap.
 - If budget is exceeded, Codex shortens descriptions first, then omits skills.
 - **Design Rule:** Front-load key use cases and trigger words in the description
   frontmatter so matching works even when truncated.
@@ -141,6 +143,6 @@ Codex supports the open agent skills standard (agentskills.io).
 
 **Actionable Advice Output:** Propose the directory structure, draft the
 `SKILL.md` frontmatter, draft any `agents/openai.yaml` dependencies, and suggest
-trigger words to keep under the 8,000-character match budget. Identify each
-workflow step as model judgment, direct tool use, or bundled deterministic
+trigger words to keep under the 7,000-character repository ceiling. Identify
+each workflow step as model judgment, direct tool use, or bundled deterministic
 script, and define script input/output and mutation-safety contracts.
