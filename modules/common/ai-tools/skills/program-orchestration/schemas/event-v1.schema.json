@@ -1,0 +1,904 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "Program orchestration event version 1",
+	"type": "object",
+	"additionalProperties": false,
+	"required": [
+		"schema_version",
+		"program_id",
+		"sequence",
+		"event_id",
+		"event_type",
+		"recorded_at",
+		"actor",
+		"payload",
+		"previous_hash",
+		"event_hash"
+	],
+	"properties": {
+		"schema_version": {
+			"const": 1
+		},
+		"program_id": {
+			"$ref": "#/$defs/programId"
+		},
+		"sequence": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"event_id": {
+			"$ref": "#/$defs/identifier"
+		},
+		"event_type": {
+			"enum": [
+				"program_initialized",
+				"unit_added",
+				"unit_readied",
+				"unit_blocked",
+				"unit_unblocked",
+				"unit_cancelled",
+				"grant_recorded",
+				"grant_revoked",
+				"lease_acquired",
+				"lease_renewed",
+				"lease_reconciled",
+				"occurrence_receipt_recorded",
+				"handoff_receipt_recorded",
+				"receipt_invalidated",
+				"unit_landed",
+				"unit_reopened",
+				"program_paused",
+				"program_resumed",
+				"program_completed",
+				"program_aborted"
+			]
+		},
+		"recorded_at": {
+			"$ref": "#/$defs/utcTimestamp"
+		},
+		"actor": {
+			"$ref": "#/$defs/identifier"
+		},
+		"payload": {
+			"type": "object"
+		},
+		"previous_hash": {
+			"$ref": "#/$defs/digest"
+		},
+		"event_hash": {
+			"$ref": "#/$defs/digest"
+		}
+	},
+	"allOf": [
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "program_initialized"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/programInitialized"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "unit_added"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/unitAdded"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "unit_readied"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/unitReadied"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "unit_blocked"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/unitBlocked"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "unit_unblocked"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/unitUnblocked"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "unit_cancelled"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/unitCancelled"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "grant_recorded"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/grantRecorded"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "grant_revoked"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/grantRevoked"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "lease_acquired"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/leaseAcquired"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "lease_renewed"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/leaseRenewed"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "lease_reconciled"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/leaseReconciled"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "occurrence_receipt_recorded"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/occurrenceReceiptRecorded"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "handoff_receipt_recorded"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/handoffReceiptRecorded"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "receipt_invalidated"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/receiptInvalidated"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "unit_landed"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/unitLanded"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "unit_reopened"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/unitReopened"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "program_paused"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/programPaused"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "program_resumed"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/programResumed"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "program_completed"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/programCompleted"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"event_type": {
+						"const": "program_aborted"
+					}
+				},
+				"required": ["event_type"]
+			},
+			"then": {
+				"properties": {
+					"payload": {
+						"$ref": "#/$defs/programAborted"
+					}
+				}
+			}
+		}
+	],
+	"$defs": {
+		"programId": {
+			"type": "string",
+			"pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+		},
+		"identifier": {
+			"type": "string",
+			"pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+		},
+		"text": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 2048,
+			"pattern": "^[^\\u0000-\\u001F\\u007F]+$"
+		},
+		"reference": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 2048,
+			"pattern": "^[^\\u0000-\\u001F\\u007F]+$"
+		},
+		"scope": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 512,
+			"pattern": "^[^\\u0000-\\u001F\\u007F]+$"
+		},
+		"commit": {
+			"type": "string",
+			"pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"
+		},
+		"digest": {
+			"type": "string",
+			"pattern": "^[0-9a-f]{64}$"
+		},
+		"utcTimestamp": {
+			"type": "string",
+			"format": "date-time",
+			"pattern": "Z$"
+		},
+		"capability": {
+			"enum": [
+				"workspace-read",
+				"workspace-write",
+				"local-commit",
+				"git-push",
+				"github-write",
+				"pull-request",
+				"merge",
+				"publish",
+				"release",
+				"deploy",
+				"cutover"
+			]
+		},
+		"verdict": {
+			"enum": ["VERIFIED", "NOT_VERIFIED", "INCONCLUSIVE"]
+		},
+		"identifierArray": {
+			"type": "array",
+			"items": {
+				"$ref": "#/$defs/identifier"
+			},
+			"uniqueItems": true
+		},
+		"scopeArray": {
+			"type": "array",
+			"minItems": 1,
+			"items": {
+				"$ref": "#/$defs/scope"
+			},
+			"uniqueItems": true
+		},
+		"requiredCapability": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["capability", "scope"],
+			"properties": {
+				"capability": {
+					"$ref": "#/$defs/capability"
+				},
+				"scope": {
+					"$ref": "#/$defs/scope"
+				}
+			}
+		},
+		"requiredCapabilityArray": {
+			"type": "array",
+			"items": {
+				"$ref": "#/$defs/requiredCapability"
+			},
+			"uniqueItems": true
+		},
+		"programInitialized": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["goal", "base_commit"],
+			"properties": {
+				"goal": {
+					"$ref": "#/$defs/text"
+				},
+				"base_commit": {
+					"$ref": "#/$defs/commit"
+				}
+			}
+		},
+		"unitAdded": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"unit_id",
+				"outcome",
+				"owner",
+				"dependencies",
+				"resource_scopes",
+				"required_capabilities",
+				"predicate",
+				"rollback"
+			],
+			"properties": {
+				"unit_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"outcome": {
+					"$ref": "#/$defs/text"
+				},
+				"owner": {
+					"$ref": "#/$defs/identifier"
+				},
+				"dependencies": {
+					"$ref": "#/$defs/identifierArray"
+				},
+				"resource_scopes": {
+					"$ref": "#/$defs/scopeArray"
+				},
+				"required_capabilities": {
+					"$ref": "#/$defs/requiredCapabilityArray"
+				},
+				"predicate": {
+					"$ref": "#/$defs/text"
+				},
+				"rollback": {
+					"$ref": "#/$defs/text"
+				}
+			}
+		},
+		"unitReadied": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["unit_id"],
+			"properties": {
+				"unit_id": {
+					"$ref": "#/$defs/identifier"
+				}
+			}
+		},
+		"unitBlocked": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["unit_id", "reason", "evidence_ref"],
+			"properties": {
+				"unit_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"reason": {
+					"$ref": "#/$defs/text"
+				},
+				"evidence_ref": {
+					"$ref": "#/$defs/reference"
+				}
+			}
+		},
+		"unitUnblocked": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["unit_id", "reason"],
+			"properties": {
+				"unit_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"reason": {
+					"$ref": "#/$defs/text"
+				}
+			}
+		},
+		"unitCancelled": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["unit_id", "reason", "evidence_ref"],
+			"properties": {
+				"unit_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"reason": {
+					"$ref": "#/$defs/text"
+				},
+				"evidence_ref": {
+					"$ref": "#/$defs/reference"
+				}
+			}
+		},
+		"grantRecorded": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["grant_id", "capability", "scope", "issuer", "evidence_ref"],
+			"properties": {
+				"grant_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"capability": {
+					"$ref": "#/$defs/capability"
+				},
+				"scope": {
+					"$ref": "#/$defs/scope"
+				},
+				"issuer": {
+					"$ref": "#/$defs/identifier"
+				},
+				"evidence_ref": {
+					"$ref": "#/$defs/reference"
+				},
+				"expires_at": {
+					"$ref": "#/$defs/utcTimestamp"
+				}
+			}
+		},
+		"grantRevoked": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["grant_id", "reason"],
+			"properties": {
+				"grant_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"reason": {
+					"$ref": "#/$defs/text"
+				}
+			}
+		},
+		"leaseAcquired": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"lease_id",
+				"unit_id",
+				"holder",
+				"resource_scopes",
+				"grant_ids",
+				"base_commit",
+				"expires_at"
+			],
+			"properties": {
+				"lease_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"unit_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"holder": {
+					"$ref": "#/$defs/identifier"
+				},
+				"resource_scopes": {
+					"$ref": "#/$defs/scopeArray"
+				},
+				"grant_ids": {
+					"$ref": "#/$defs/identifierArray"
+				},
+				"base_commit": {
+					"$ref": "#/$defs/commit"
+				},
+				"expires_at": {
+					"$ref": "#/$defs/utcTimestamp"
+				}
+			}
+		},
+		"leaseRenewed": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["lease_id", "expires_at", "evidence_ref"],
+			"properties": {
+				"lease_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"expires_at": {
+					"$ref": "#/$defs/utcTimestamp"
+				},
+				"evidence_ref": {
+					"$ref": "#/$defs/reference"
+				}
+			}
+		},
+		"leaseReconciled": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["lease_id", "outcome", "reason", "evidence_ref"],
+			"properties": {
+				"lease_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"outcome": {
+					"enum": ["released", "blocked"]
+				},
+				"reason": {
+					"$ref": "#/$defs/text"
+				},
+				"evidence_ref": {
+					"$ref": "#/$defs/reference"
+				}
+			}
+		},
+		"occurrenceReceiptRecorded": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"receipt_id",
+				"unit_id",
+				"lease_id",
+				"base_commit",
+				"content_digest",
+				"evidence_verdict",
+				"artifact_ref",
+				"commit_sha",
+				"parent_sha",
+				"committed_digest",
+				"digest_match"
+			],
+			"properties": {
+				"receipt_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"unit_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"lease_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"base_commit": {
+					"$ref": "#/$defs/commit"
+				},
+				"content_digest": {
+					"$ref": "#/$defs/digest"
+				},
+				"evidence_verdict": {
+					"$ref": "#/$defs/verdict"
+				},
+				"artifact_ref": {
+					"$ref": "#/$defs/reference"
+				},
+				"commit_sha": {
+					"$ref": "#/$defs/commit"
+				},
+				"parent_sha": {
+					"$ref": "#/$defs/commit"
+				},
+				"committed_digest": {
+					"$ref": "#/$defs/digest"
+				},
+				"digest_match": {
+					"type": "boolean"
+				}
+			}
+		},
+		"handoffReceiptRecorded": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"receipt_id",
+				"unit_id",
+				"lease_id",
+				"base_commit",
+				"content_digest",
+				"evidence_verdict",
+				"artifact_ref"
+			],
+			"properties": {
+				"receipt_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"unit_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"lease_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"base_commit": {
+					"$ref": "#/$defs/commit"
+				},
+				"content_digest": {
+					"$ref": "#/$defs/digest"
+				},
+				"evidence_verdict": {
+					"$ref": "#/$defs/verdict"
+				},
+				"artifact_ref": {
+					"$ref": "#/$defs/reference"
+				}
+			}
+		},
+		"receiptInvalidated": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["receipt_id", "reason", "evidence_ref"],
+			"properties": {
+				"receipt_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"reason": {
+					"$ref": "#/$defs/text"
+				},
+				"evidence_ref": {
+					"$ref": "#/$defs/reference"
+				}
+			}
+		},
+		"unitLanded": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["unit_id", "receipt_id"],
+			"properties": {
+				"unit_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"receipt_id": {
+					"$ref": "#/$defs/identifier"
+				}
+			}
+		},
+		"unitReopened": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["unit_id", "receipt_id", "reason", "evidence_ref"],
+			"properties": {
+				"unit_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"receipt_id": {
+					"$ref": "#/$defs/identifier"
+				},
+				"reason": {
+					"$ref": "#/$defs/text"
+				},
+				"evidence_ref": {
+					"$ref": "#/$defs/reference"
+				}
+			}
+		},
+		"programPaused": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["reason"],
+			"properties": {
+				"reason": {
+					"$ref": "#/$defs/text"
+				}
+			}
+		},
+		"programResumed": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["reason"],
+			"properties": {
+				"reason": {
+					"$ref": "#/$defs/text"
+				}
+			}
+		},
+		"programCompleted": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["evidence_ref"],
+			"properties": {
+				"evidence_ref": {
+					"$ref": "#/$defs/reference"
+				}
+			}
+		},
+		"programAborted": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["reason", "evidence_ref"],
+			"properties": {
+				"reason": {
+					"$ref": "#/$defs/text"
+				},
+				"evidence_ref": {
+					"$ref": "#/$defs/reference"
+				}
+			}
+		}
+	}
+}

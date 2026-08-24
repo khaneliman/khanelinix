@@ -91,8 +91,10 @@ Select one owner before phase methods. Closest discriminator wins.
 The selected owner routes phase methods and domain skills. A method never takes
 over lifecycle ownership. Caller-only methods include `arena`, `interrogate`,
 `playwright-interactive`, `recall`, `reflect`, `requirements-interview`, and
-`unslop`. Explicit overlays include `multi-provider-sdlc`, `show-me-your-work`,
-and `swarm`. Load one only after the user or selected owner names it.
+`unslop`. Explicit overlays include `multi-provider-sdlc`,
+`program-orchestration`, `show-me-your-work`, and `swarm`.
+`program-orchestration` requires explicit user invocation. Load another overlay
+only after the user or selected owner names it.
 
 ## Durable Memory
 

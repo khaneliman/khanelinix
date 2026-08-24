@@ -172,6 +172,13 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "program-orchestration",
+			"displayName": "Program Orchestration",
+			"description": "Coordinate durable multi-unit program control.",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
 			"name": "recall",
 			"displayName": "Recall",
 			"description": "Rebuild recent working context into a current-state brief.",
@@ -328,6 +335,7 @@
 				"interrogate",
 				"okf-memory",
 				"planning-with-files",
+				"program-orchestration",
 				"recall",
 				"requirements-interview",
 				"research",

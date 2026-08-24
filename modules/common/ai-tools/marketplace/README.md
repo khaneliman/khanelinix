@@ -36,7 +36,7 @@ skills call each other by name, so install the full set:
 ```sh
 npx skills add khaneliman/khanelinix \
   --agent antigravity claude-code codex \
-  --skill architect arena blast-radius diagnosing-bugs engineering-principles engineering-workflow figure-it-out git-toolkit github-toolkit how interrogate okf-memory planning-with-files recall requirements-interview research show-me-your-work software-engineering tdd unslop verification-harness why \
+  --skill architect arena blast-radius diagnosing-bugs engineering-principles engineering-workflow figure-it-out git-toolkit github-toolkit how interrogate okf-memory planning-with-files program-orchestration recall requirements-interview research show-me-your-work software-engineering tdd unslop verification-harness why \
   --global --copy --yes
 ```
 
@@ -159,6 +159,7 @@ lifecycle methods, direct routes, and support utilities.
 | `github-toolkit`         | GitHub queues, issues, PRs, reviews, and checks  |
 | `software-engineering`   | Architecture evaluation and large-change plans   |
 | `planning-with-files`    | Persistent transient task state                  |
+| `program-orchestration`  | Explicit durable multi-unit control              |
 | `show-me-your-work`      | Reviewable decision trails                       |
 | `recall`                 | Prior work reconstruction                        |
 | `okf-memory`             | Durable project and user knowledge               |
@@ -217,16 +218,17 @@ Skills activate in two ways:
 
 ### Explicit-only skills
 
-| Skill                 | Purpose                                         | Invocation syntax                |
-| :-------------------- | :---------------------------------------------- | :------------------------------- |
-| `bevy-toolkit`        | Bevy ECS, hot reloading, and runtime tooling    | `Use $bevy-toolkit ...`          |
-| `develop-web-game`    | Web game dev and Playwright test loop           | `Use $develop-web-game ...`      |
-| `memory-profiler`     | Heap profiling, leaks, and allocation diagnosis | `Use $memory-profiler ...`       |
-| `sarif-toolkit`       | Static-analysis SARIF reports and partitioning  | `Use $sarif-toolkit ...`         |
-| `skill-creator`       | Create or update portable agent skills          | `Use $skill-creator ...`         |
-| `show-me-your-work`   | Reviewable TSV decision logs                    | `Use $show-me-your-work ...`     |
-| `multi-provider-sdlc` | Host-only multi-provider routing overlay        | `Use $multi-provider-sdlc ...`   |
-| `swarm`               | Host-only worker fan-out overlay                | `Use $swarm ...` or `swarm this` |
+| Skill                   | Purpose                                         | Invocation syntax                |
+| :---------------------- | :---------------------------------------------- | :------------------------------- |
+| `bevy-toolkit`          | Bevy ECS, hot reloading, and runtime tooling    | `Use $bevy-toolkit ...`          |
+| `develop-web-game`      | Web game dev and Playwright test loop           | `Use $develop-web-game ...`      |
+| `memory-profiler`       | Heap profiling, leaks, and allocation diagnosis | `Use $memory-profiler ...`       |
+| `sarif-toolkit`         | Static-analysis SARIF reports and partitioning  | `Use $sarif-toolkit ...`         |
+| `skill-creator`         | Create or update portable agent skills          | `Use $skill-creator ...`         |
+| `show-me-your-work`     | Reviewable TSV decision logs                    | `Use $show-me-your-work ...`     |
+| `program-orchestration` | Durable multi-unit program control              | `Use $program-orchestration ...` |
+| `multi-provider-sdlc`   | Host-only multi-provider routing overlay        | `Use $multi-provider-sdlc ...`   |
+| `swarm`                 | Host-only worker fan-out overlay                | `Use $swarm ...` or `swarm this` |
 
 ## Host-only workflow extensions
 

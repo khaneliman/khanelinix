@@ -281,6 +281,18 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "program-orchestration",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/program-orchestration"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
 			"name": "recall",
 			"source": {
 				"source": "local",

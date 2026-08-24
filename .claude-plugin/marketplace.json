@@ -237,6 +237,16 @@
 			"source": "./modules/common/ai-tools/marketplace/plugins/planning-with-files"
 		},
 		{
+			"name": "program-orchestration",
+			"description": "Coordinate durable multi-unit program control.",
+			"version": "0.1.0",
+			"author": {
+				"name": "khaneliman"
+			},
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/marketplace/plugins/program-orchestration"
+		},
+		{
 			"name": "recall",
 			"description": "Rebuild recent working context into a current-state brief.",
 			"version": "0.1.4",
