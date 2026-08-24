@@ -19,13 +19,13 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       alt-tab-macos
-      appcleaner
       bartender
       blueutil
+      mole-cleaner
       monitorcontrol
       raycast
-      switchaudio-osx
       stats
+      switchaudio-osx
     ];
 
     khanelinix = {
