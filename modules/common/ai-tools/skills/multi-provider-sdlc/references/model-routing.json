@@ -1,0 +1,404 @@
+{
+	"schema_version": 1,
+	"subscription_order": ["openai", "google", "anthropic"],
+	"subscriptions": {
+		"openai": {
+			"label": "OpenAI (Codex)",
+			"model_agents": [
+				"gpt-5-3-codex-spark",
+				"gpt-5-6-luna",
+				"gpt-5-6-terra",
+				"gpt-5-6-sol"
+			]
+		},
+		"google": {
+			"label": "Google (Antigravity)",
+			"model_agents": [
+				"gpt-oss-120b",
+				"google-opus-4-6",
+				"google-sonnet-4-6",
+				"gemini-3-7-flash",
+				"gemini-3-1-pro"
+			]
+		},
+		"anthropic": {
+			"label": "Anthropic",
+			"model_agents": ["opus-5", "fable-5", "sonnet-5"]
+		}
+	},
+	"models": {
+		"gpt-5-3-codex-spark": {
+			"subscription": "openai",
+			"quota_pool": "spark",
+			"upstream_provider": "codex",
+			"upstream_model": "gpt-5.3-codex-spark",
+			"gateway_alias": "claude-gpt-5.3-codex-spark",
+			"display_name": "OpenAI · GPT 5.3 Codex Spark",
+			"description": "OpenAI GPT 5.3 Codex Spark gateway worker for obvious lookups, mechanical edits, and focused low-risk checks.",
+			"reasoning_effort": "medium",
+			"write": true,
+			"workspace_write": true,
+			"publish_alias": true
+		},
+		"gpt-5-6-luna": {
+			"subscription": "openai",
+			"quota_pool": "general",
+			"upstream_provider": "codex",
+			"upstream_model": "gpt-5.6-luna",
+			"gateway_alias": "claude-gpt-5.6-luna",
+			"display_name": "OpenAI · GPT 5.6 Luna",
+			"description": "OpenAI GPT 5.6 Luna gateway worker for bounded reproduction, deterministic high-volume work, and broader validation.",
+			"reasoning_effort": "medium",
+			"write": true,
+			"workspace_write": true,
+			"publish_alias": true
+		},
+		"gpt-5-6-terra": {
+			"subscription": "openai",
+			"quota_pool": "general",
+			"upstream_provider": "codex",
+			"upstream_model": "gpt-5.6-terra",
+			"gateway_alias": "claude-gpt-5.6-terra",
+			"display_name": "OpenAI · GPT 5.6 Terra",
+			"description": "OpenAI GPT 5.6 Terra gateway worker for explicit model-selected tasks.",
+			"reasoning_effort": "medium",
+			"write": true,
+			"workspace_write": true,
+			"publish_alias": true
+		},
+		"gpt-5-6-sol": {
+			"subscription": "openai",
+			"quota_pool": "general",
+			"upstream_provider": "codex",
+			"upstream_model": "gpt-5.6-sol",
+			"gateway_alias": "claude-gpt-5.6-sol",
+			"display_name": "OpenAI · GPT 5.6 Sol",
+			"description": "OpenAI GPT 5.6 Sol gateway worker for hard diagnosis, architecture or code review, and high-confidence reasoning.",
+			"reasoning_effort": "high",
+			"write": false,
+			"workspace_write": false,
+			"publish_alias": true
+		},
+		"gemini-3-7-flash": {
+			"subscription": "google",
+			"quota_pool": "gemini",
+			"upstream_provider": "antigravity",
+			"upstream_model": "gemini-3.7-flash-high",
+			"gateway_alias": "claude-gemini-3.7-flash",
+			"display_name": "Google · Gemini 3.7 Flash",
+			"description": "Google Gemini 3.7 Flash gateway worker for repository discovery, ambiguous diagnosis, dependency reasoning, noisy probes, and independent review.",
+			"reasoning_effort": null,
+			"write": false,
+			"workspace_write": true,
+			"publish_alias": true
+		},
+		"gemini-3-1-pro": {
+			"subscription": "google",
+			"quota_pool": "gemini",
+			"upstream_provider": "antigravity",
+			"upstream_model": "gemini-pro-agent",
+			"gateway_alias": "claude-gemini-3.1-pro",
+			"display_name": "Google · Gemini 3.1 Pro",
+			"description": "Google Gemini 3.1 Pro gateway worker for explicit legacy proxy requests.",
+			"reasoning_effort": null,
+			"write": false,
+			"workspace_write": false,
+			"publish_alias": true
+		},
+		"google-sonnet-4-6": {
+			"subscription": "google",
+			"quota_pool": "claude-gpt",
+			"upstream_provider": "antigravity",
+			"upstream_model": "claude-sonnet-4-6",
+			"gateway_alias": "claude-antigravity-sonnet-4-6",
+			"display_name": "Google · Claude Sonnet 4.6",
+			"description": "Google subscription Claude Sonnet 4.6 gateway worker for bounded implementation and routine debugging.",
+			"reasoning_effort": null,
+			"write": true,
+			"workspace_write": true,
+			"publish_alias": true
+		},
+		"google-opus-4-6": {
+			"subscription": "google",
+			"quota_pool": "claude-gpt",
+			"upstream_provider": "antigravity",
+			"upstream_model": "claude-opus-4-6-thinking",
+			"gateway_alias": "claude-antigravity-opus-4-6",
+			"display_name": "Google · Claude Opus 4.6",
+			"description": "Google subscription Claude Opus 4.6 gateway worker for difficult read-only review, diagnosis, and planning critique.",
+			"reasoning_effort": null,
+			"write": false,
+			"workspace_write": false,
+			"publish_alias": true
+		},
+		"gpt-oss-120b": {
+			"subscription": "google",
+			"quota_pool": "claude-gpt",
+			"upstream_provider": "antigravity",
+			"upstream_model": "gpt-oss-120b-medium",
+			"gateway_alias": "claude-gpt-oss-120b",
+			"display_name": "Google · GPT-OSS 120B",
+			"description": "Google GPT-OSS 120B gateway worker for noisy test execution, validation summaries, and inexpensive independent checks.",
+			"reasoning_effort": null,
+			"write": false,
+			"workspace_write": true,
+			"publish_alias": true
+		},
+		"opus-5": {
+			"subscription": "anthropic",
+			"quota_pool": "general",
+			"upstream_provider": "claude",
+			"upstream_model": "claude-opus-5",
+			"gateway_alias": "claude-opus-5",
+			"display_name": "Anthropic · Opus 5",
+			"description": "Anthropic Opus 5 gateway worker for difficult implementation, plan or code review, and high-confidence diagnosis.",
+			"reasoning_effort": null,
+			"write": true,
+			"workspace_write": true,
+			"publish_alias": false
+		},
+		"fable-5": {
+			"subscription": "anthropic",
+			"quota_pool": "general",
+			"upstream_provider": "claude",
+			"upstream_model": "claude-fable-5",
+			"gateway_alias": "claude-fable-5",
+			"display_name": "Anthropic · Fable 5",
+			"description": "Anthropic Fable 5 gateway worker for difficult implementation, planning, architecture critique, and independent review.",
+			"reasoning_effort": null,
+			"write": true,
+			"workspace_write": true,
+			"publish_alias": false
+		},
+		"sonnet-5": {
+			"subscription": "anthropic",
+			"quota_pool": "general",
+			"upstream_provider": "claude",
+			"upstream_model": "claude-sonnet-5",
+			"gateway_alias": "claude-sonnet-5",
+			"display_name": "Anthropic · Sonnet 5",
+			"description": "Anthropic Sonnet 5 gateway worker for bounded implementation, correction batches, and focused validation.",
+			"reasoning_effort": null,
+			"write": true,
+			"workspace_write": true,
+			"publish_alias": false
+		}
+	},
+	"cliproxy_alias_order": [
+		"gpt-5-3-codex-spark",
+		"gpt-5-6-sol",
+		"gpt-5-6-terra",
+		"gpt-5-6-luna",
+		"gemini-3-7-flash",
+		"gemini-3-1-pro",
+		"google-sonnet-4-6",
+		"google-opus-4-6",
+		"gpt-oss-120b"
+	],
+	"gateway_defaults": {
+		"claude": "opus-5",
+		"codex": "gpt-5-6-sol",
+		"gemini": "gemini-3-7-flash"
+	},
+	"semantic_roles": {
+		"mechanic": {
+			"native": {
+				"claude": "haiku",
+				"copilot": "claude-haiku-4.5",
+				"opencode": "openai/gpt-5.3-codex-spark",
+				"codex": "gpt-5.3-codex-spark"
+			},
+			"gateway": {
+				"claude": "gpt-5-3-codex-spark",
+				"opencode": "gpt-5-3-codex-spark"
+			},
+			"reasoning_effort": { "codex": "medium" }
+		},
+		"fact-finder": {
+			"native": {
+				"claude": "haiku",
+				"copilot": "claude-haiku-4.5",
+				"opencode": "openai/gpt-5.6-luna",
+				"codex": "gpt-5.6-luna"
+			},
+			"gateway": {
+				"claude": "gpt-5-6-luna",
+				"opencode": "gpt-5-6-luna"
+			},
+			"reasoning_effort": { "codex": "medium" }
+		},
+		"explorer": {
+			"native": {
+				"claude": "haiku",
+				"copilot": "claude-haiku-4.5",
+				"opencode": "openai/gpt-5.6-luna",
+				"codex": "gpt-5.6-luna"
+			},
+			"gateway": {
+				"claude": "gpt-5-6-luna",
+				"opencode": "gpt-5-6-luna"
+			},
+			"reasoning_effort": { "codex": "medium" }
+		},
+		"checker": {
+			"native": {
+				"claude": "haiku",
+				"copilot": "claude-haiku-4.5",
+				"opencode": "openai/gpt-5.3-codex-spark",
+				"codex": "gpt-5.3-codex-spark"
+			},
+			"gateway": {
+				"claude": "gpt-5-3-codex-spark",
+				"opencode": "gpt-5-3-codex-spark"
+			},
+			"reasoning_effort": { "codex": "medium" }
+		},
+		"probe-runner": {
+			"native": {
+				"claude": "haiku",
+				"copilot": "claude-haiku-4.5",
+				"opencode": "openai/gpt-5.6-luna",
+				"codex": "gpt-5.6-luna"
+			},
+			"gateway": {
+				"claude": "gpt-5-6-luna",
+				"opencode": "gpt-5-6-luna"
+			},
+			"reasoning_effort": { "codex": "medium" }
+		},
+		"debugger": {
+			"native": {
+				"claude": "sonnet",
+				"copilot": "claude-sonnet-4.6",
+				"opencode": "openai/gpt-5.6-sol",
+				"codex": "gpt-5.6-sol"
+			},
+			"gateway": {
+				"claude": "gemini-3-7-flash",
+				"opencode": "gpt-5-6-sol"
+			},
+			"reasoning_effort": { "codex": "medium" }
+		},
+		"test-runner": {
+			"native": {
+				"claude": "haiku",
+				"copilot": "claude-haiku-4.5",
+				"opencode": "openai/gpt-5.6-luna",
+				"codex": "gpt-5.6-luna"
+			},
+			"gateway": {
+				"claude": "gpt-oss-120b",
+				"opencode": "gpt-5-6-luna"
+			},
+			"reasoning_effort": {}
+		},
+		"reviewer": {
+			"native": {
+				"claude": "opus",
+				"copilot": "claude-opus-4.6",
+				"opencode": "openai/gpt-5.6-sol",
+				"codex": "gpt-5.6-sol"
+			},
+			"gateway": {
+				"claude": "opus-5",
+				"opencode": "gpt-5-6-sol"
+			},
+			"reasoning_effort": { "codex": "high" }
+		},
+		"implementer": {
+			"native": {
+				"claude": "opus",
+				"copilot": "claude-opus-4.6",
+				"opencode": "openai/gpt-5.6-luna",
+				"codex": "gpt-5.6-luna"
+			},
+			"gateway": {
+				"claude": "opus-5",
+				"opencode": "gpt-5-6-luna"
+			},
+			"reasoning_effort": { "codex": "medium" }
+		},
+		"worker": {
+			"native": {
+				"claude": "opus",
+				"copilot": "claude-opus-4.6",
+				"opencode": "openai/gpt-5.6-luna",
+				"codex": "gpt-5.6-luna"
+			},
+			"gateway": {
+				"claude": "opus-5",
+				"opencode": "gpt-5-6-luna"
+			},
+			"reasoning_effort": { "codex": "medium" }
+		}
+	},
+	"task_routes": [
+		{
+			"need": "obvious lookup or mechanical one-file edit",
+			"primary": "gpt-5-3-codex-spark",
+			"fallbacks": ["gpt-5-6-luna", "gemini-3-7-flash"],
+			"semantic_role": "mechanic",
+			"write_policy": "read-only unless edit is explicit"
+		},
+		{
+			"need": "repository discovery",
+			"primary": "gpt-5-6-luna",
+			"fallbacks": ["gpt-5-3-codex-spark", "gemini-3-7-flash"],
+			"semantic_role": "fact-finder",
+			"write_policy": "read-only"
+		},
+		{
+			"need": "bounded reproduction",
+			"primary": "gpt-5-6-luna",
+			"fallbacks": ["opus-5", "gemini-3-7-flash"],
+			"semantic_role": "probe-runner",
+			"write_policy": "build artifacts only"
+		},
+		{
+			"need": "focused validation",
+			"primary": "gpt-5-3-codex-spark",
+			"fallbacks": ["gpt-5-6-luna"],
+			"semantic_role": "checker",
+			"write_policy": "build artifacts only"
+		},
+		{
+			"need": "noisy validation",
+			"primary": "gpt-oss-120b",
+			"fallbacks": ["gpt-5-6-luna", "gemini-3-7-flash"],
+			"semantic_role": "test-runner",
+			"write_policy": "build artifacts only"
+		},
+		{
+			"need": "implementation",
+			"primary": "opus-5",
+			"fallbacks": ["gpt-5-6-luna"],
+			"semantic_role": "implementer",
+			"write_policy": "workspace write"
+		},
+		{
+			"need": "ambiguous diagnosis",
+			"primary": "opus-5",
+			"fallbacks": ["gpt-5-6-sol", "gemini-3-7-flash"],
+			"semantic_role": "debugger",
+			"write_policy": "read-only"
+		},
+		{
+			"need": "plan or code review",
+			"primary": "opus-5",
+			"fallbacks": ["fable-5", "gpt-5-6-sol", "google-opus-4-6"],
+			"semantic_role": "reviewer",
+			"write_policy": "read-only"
+		}
+	],
+	"deliberation": {
+		"anthropic": "opus-5",
+		"google": "google-opus-4-6",
+		"google_fallback": "gemini-3-7-flash",
+		"openai": "gpt-5-6-sol"
+	},
+	"quota_pools": {
+		"openai": ["spark", "general"],
+		"google": ["claude-gpt", "gemini"],
+		"anthropic": ["general"]
+	}
+}

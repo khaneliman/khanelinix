@@ -1,6 +1,13 @@
 # Provider and Agent Routing
 
+The [model-routing registry](model-routing.json) owns model, role, task, and
+quota-pool data. After a policy edit, run
+[`render-model-routes.py`](../scripts/render-model-routes.py) with `render`,
+apply the generated section update, then run it with `check`.
+
 ## Subscription map
+
+<!-- BEGIN GENERATED SUBSCRIPTIONS -->
 
 | Subscription         | Model agents                                                                                 |
 | -------------------- | -------------------------------------------------------------------------------------------- |
@@ -8,12 +15,16 @@
 | Google (Antigravity) | `gpt-oss-120b`, `google-opus-4-6`, `google-sonnet-4-6`, `gemini-3-7-flash`, `gemini-3-1-pro` |
 | Anthropic            | `opus-5`, `fable-5`, `sonnet-5`                                                              |
 
+<!-- END GENERATED SUBSCRIPTIONS -->
+
 Prefer `opus-5` for Anthropic implementation and diagnosis. Use `fable-5` for
 independent planning or review; use `sonnet-5` only when explicitly requested.
 Keep Gemini fallback-only. Every subscription requires a live route and current
 authentication.
 
 ## Preferred routes
+
+<!-- BEGIN GENERATED ROUTES -->
 
 | Need                                       | Primary               | Fallback                                    | Semantic role  | Write policy                      |
 | ------------------------------------------ | --------------------- | ------------------------------------------- | -------------- | --------------------------------- |
@@ -28,6 +39,8 @@ authentication.
 
 For explicit three-provider deliberation, use Anthropic `opus-5`, Google
 `google-opus-4-6` with `gemini-3-7-flash` fallback, and OpenAI `gpt-5-6-sol`.
+
+<!-- END GENERATED ROUTES -->
 
 ## Effort policy
 
