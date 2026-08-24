@@ -1,27 +1,30 @@
 ---
 name: github-toolkit
-description: GitHub issue discovery, targeted triage, issue creation, pull-request creation, review authoring, review-feedback handling, and CI check-fix workflows using gh CLI. Use for read or write work against GitHub issues, pull requests, reviews, or checks.
+description: GitHub maintainer queues, issue discovery and triage, issue creation, pull-request creation, review authoring and feedback, and CI check-fix workflows using gh CLI. Use for read or write work against GitHub issues, pull requests, reviews, or checks.
 ---
 
 # GitHub Toolkit
 
 Route to one mode and load only named reference:
 
-1. **issue-creation** — draft or explicitly create issue. Read
+1. **issue-creation**: draft or explicitly create issue. Read
    [issue-creation.md](references/issue-creation.md).
-2. **pull-request-creation** — draft or explicitly create pull request. Read
+2. **pull-request-creation**: draft or explicitly create pull request. Read
    [pull-request-creation.md](references/pull-request-creation.md).
-3. **issue-discovery** — search, filter, rank, or summarize many issues. Read
+3. **issue-discovery**: search, filter, rank, or summarize many issues. Read
    [issue-discovery.md](references/issue-discovery.md).
-4. **issue-triage** — classify target issue and draft next-step guidance. Read
+4. **issue-triage**: classify target issue and draft next-step guidance. Read
    [issue-triage.md](references/issue-triage.md).
-5. **pr-review** — review target, then inspect, create, update, or delete
+5. **pr-review**: review target, then inspect, create, update, or delete
    current-actor reviews when explicitly requested. Read
    [pr-review.md](references/pr-review.md).
-6. **pr-feedback** — inspect or address existing review comments. Read
+6. **pr-feedback**: inspect or address existing review comments. Read
    [pr-feedback.md](references/pr-feedback.md).
-7. **ci-fix** — inspect failing checks and prepare focused fix context. Read
+7. **ci-fix**: inspect failing checks and prepare focused fix context. Read
    [ci-fix.md](references/ci-fix.md).
+8. **maintainer-queue**: collect a bounded repository queue, rank evidenced next
+   actions, and route selected items. Read
+   [maintainer-queue.md](references/maintainer-queue.md).
 
 If intent is unclear, ask for mode before GitHub writes or source edits.
 

@@ -1,6 +1,6 @@
 interface:
   display_name: "GitHub Toolkit"
-  short_description: "GitHub issues, pull requests, reviews, and CI"
+  short_description: "GitHub queues, issues, pull requests, reviews, and CI"
   icon_small: "./assets/github-small.svg"
   icon_large: "./assets/github.png"
-  default_prompt: "Use $github-toolkit to work with GitHub issues, pull requests, reviews, or failing checks."
+  default_prompt: "Use $github-toolkit to manage a GitHub queue, issue, pull request, review, or failing check."

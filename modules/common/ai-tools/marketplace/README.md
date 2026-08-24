@@ -99,20 +99,20 @@ missing.
 Use a direct specialist entry when the task does not need the routine mutation
 lifecycle:
 
-| Task                                           | Entry skill              |
-| ---------------------------------------------- | ------------------------ |
-| Explain code without changing it               | `how`                    |
-| Research external primary-source facts         | `research`               |
-| Investigate rationale or regression history    | `why`                    |
-| Resolve an unresolved material product choice  | `requirements-interview` |
-| Diagnose a general bug without fixing it       | `diagnosing-bugs`        |
-| Diagnose or improve measured performance       | `performance-forensics`  |
-| Review Git history or a local change stack     | `git-toolkit`            |
-| Review GitHub issues, pull requests, or checks | `github-toolkit`         |
-| Evaluate architecture without implementation   | `software-engineering`   |
-| Run large, cross-cutting, or unattended work   | `figure-it-out`          |
-| Compare competing artifacts                    | `arena`                  |
-| Run adversarial multi-model review             | `interrogate`            |
+| Task                                          | Entry skill              |
+| --------------------------------------------- | ------------------------ |
+| Explain code without changing it              | `how`                    |
+| Research external primary-source facts        | `research`               |
+| Investigate rationale or regression history   | `why`                    |
+| Resolve an unresolved material product choice | `requirements-interview` |
+| Diagnose a general bug without fixing it      | `diagnosing-bugs`        |
+| Diagnose or improve measured performance      | `performance-forensics`  |
+| Review Git history or a local change stack    | `git-toolkit`            |
+| Review GitHub queues, issues, PRs, or checks  | `github-toolkit`         |
+| Evaluate architecture without implementation  | `software-engineering`   |
+| Run large, cross-cutting, or unattended work  | `figure-it-out`          |
+| Compare competing artifacts                   | `arena`                  |
+| Run adversarial multi-model review            | `interrogate`            |
 
 An explicit `/architect` request uses the design-led `architect` workflow.
 Inside routine mutation work, `engineering-workflow` can call `architect` only
@@ -143,30 +143,30 @@ This task-shape taxonomy is adapted from pstack. See the canonical
 Every `workflow-core` member remains an independent plugin. The bundle combines
 lifecycle methods, direct routes, and support utilities.
 
-| Skill                    | Role in the bundle                                |
-| ------------------------ | ------------------------------------------------- |
-| `engineering-workflow`   | Routine mutation lifecycle and gates              |
-| `how`                    | Structure discovery and explanation               |
-| `why`                    | Rationale and regression history                  |
-| `diagnosing-bugs`        | Exact-symptom reproduction and cause diagnosis    |
-| `architect`              | Types, signatures, placement, and implementation  |
-| `engineering-principles` | Scope, sequence, simplicity, and verification     |
-| `blast-radius`           | Reach analysis beyond the diff                    |
-| `interrogate`            | Independent multi-model challenge                 |
-| `arena`                  | Parallel candidate comparison                     |
-| `figure-it-out`          | Large, unmatched, or unattended work              |
-| `git-toolkit`            | Git history and change stacks                     |
-| `github-toolkit`         | GitHub issues, pull requests, reviews, and checks |
-| `software-engineering`   | Architecture evaluation and large-change plans    |
-| `planning-with-files`    | Persistent transient task state                   |
-| `show-me-your-work`      | Reviewable decision trails                        |
-| `recall`                 | Prior work reconstruction                         |
-| `okf-memory`             | Durable project and user knowledge                |
-| `requirements-interview` | Bounded material product-choice clarification     |
-| `research`               | External primary-source evidence gathering        |
-| `tdd`                    | Narrow red-green-refactor implementation method   |
-| `verification-harness`   | Reusable verification surface creation and audit  |
-| `unslop`                 | User-facing prose cleanup                         |
+| Skill                    | Role in the bundle                               |
+| ------------------------ | ------------------------------------------------ |
+| `engineering-workflow`   | Routine mutation lifecycle and gates             |
+| `how`                    | Structure discovery and explanation              |
+| `why`                    | Rationale and regression history                 |
+| `diagnosing-bugs`        | Exact-symptom reproduction and cause diagnosis   |
+| `architect`              | Types, signatures, placement, and implementation |
+| `engineering-principles` | Scope, sequence, simplicity, and verification    |
+| `blast-radius`           | Reach analysis beyond the diff                   |
+| `interrogate`            | Independent multi-model challenge                |
+| `arena`                  | Parallel candidate comparison                    |
+| `figure-it-out`          | Large, unmatched, or unattended work             |
+| `git-toolkit`            | Git history and change stacks                    |
+| `github-toolkit`         | GitHub queues, issues, PRs, reviews, and checks  |
+| `software-engineering`   | Architecture evaluation and large-change plans   |
+| `planning-with-files`    | Persistent transient task state                  |
+| `show-me-your-work`      | Reviewable decision trails                       |
+| `recall`                 | Prior work reconstruction                        |
+| `okf-memory`             | Durable project and user knowledge               |
+| `requirements-interview` | Bounded material product-choice clarification    |
+| `research`               | External primary-source evidence gathering       |
+| `tdd`                    | Narrow red-green-refactor implementation method  |
+| `verification-harness`   | Reusable verification surface creation and audit |
+| `unslop`                 | User-facing prose cleanup                        |
 
 Domain skills can own methods across several lifecycle phases. In the `nix`
 bundle, `nix-toolkit` owns operational diagnosis and `writing-nix` owns

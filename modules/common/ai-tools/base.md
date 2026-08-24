@@ -83,7 +83,7 @@ Select one owner before phase methods. Closest discriminator wins.
   diagnosis: `performance-forensics`.
 - Explicit design-led implementation: `architect`. Browser automation:
   `playwright`. Verification-surface audit: `verification-harness`.
-- Local Git history or diffs: `git-toolkit`. GitHub issues, pull requests,
+- Local Git history or diffs: `git-toolkit`. GitHub queues, issues, PRs,
   reviews, or checks: `github-toolkit`.
 - Technical prose: `technical-writing`. Durable knowledge: `okf-memory`.
   Persistent transient task state: `planning-with-files`.
