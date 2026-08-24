@@ -17,6 +17,7 @@ let
 
   cfg = config.khanelinix.programs.graphical.apps.raycast;
   azureCfg = config.khanelinix.programs.terminal.tools.azure;
+  moleCleanerSelected = lib.elem pkgs.mole-cleaner (osConfig.environment.systemPackages or [ ]);
   taskwarriorCfg = config.khanelinix.programs.terminal.tools.taskwarrior;
   zkCfg = config.khanelinix.programs.terminal.tools.zk;
 
@@ -88,6 +89,10 @@ let
           ;
       };
     };
+
+  moleScriptCommands = import ./mole-script-commands.nix {
+    inherit lib mkScriptEntry;
+  };
 in
 {
   options.khanelinix.programs.graphical.apps.raycast.enable =
@@ -141,6 +146,7 @@ in
           '';
         })
       ]
+      ++ lib.optionals moleCleanerSelected moleScriptCommands
       ++
         mapAttrsToList
           (
