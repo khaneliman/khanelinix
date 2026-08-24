@@ -74,6 +74,7 @@ in
 
     services = {
       avahi = enabled;
+      comfyui = enabled;
       geoclue = enabled;
 
       llm = {
