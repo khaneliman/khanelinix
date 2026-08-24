@@ -1,7 +1,8 @@
 # Provider and Agent Routing
 
-The [model-routing registry](model-routing.json) owns model, role, task, and
-quota-pool data. After a policy edit, run
+The [model-routing registry](model-routing.json) is the canonical source for
+model, role, task, and quota-pool policy. A consumer owns runtime behavior until
+its projection adopts that policy. After a policy edit, run
 [`render-model-routes.py`](../scripts/render-model-routes.py) with `render`,
 apply the generated section update, then run it with `check`.
 
@@ -78,6 +79,94 @@ latency-first or explicit-only roles until comparable measurements exist.
 
 Use scripted preflight only when telemetry identifies every relevant pool.
 
+### Task-local capability state
+
+Use [`route-capability.py`](../scripts/route-capability.py) when one task can
+retry, cross providers, or reuse capability evidence in later phases. Skip the
+state file for one known dispatch. The caller remains the only dispatcher and
+state writer.
+
+Choose an explicit path in the task's ignored planning or temporary area. Do not
+use durable memory, commit the state, or store provider output in it. Initialize
+once. Resolve `<skill-root>` to the directory containing this skill's
+`SKILL.md`:
+
+```console
+python3 <skill-root>/scripts/route-capability.py --state <state-path> --task-id <task-id> init
+```
+
+Ask for an ordered route before dispatch. Use a `need` value from the generated
+route table:
+
+```console
+python3 <skill-root>/scripts/route-capability.py --state <state-path> --task-id <task-id> plan --need "plan or code review"
+```
+
+The result returns the current revision, eligible named candidates, blocked
+circuits, and one semantic fallback. `probe: true` means the selected route has
+unknown capability. Add `--gateway off` when the provider runs semantic roles on
+native models. The default `on` resolves each role through its gateway model.
+
+When no candidate remains, the plan also resolves the semantic role. If
+`claimConflicts` is true, wait for the active claim; `semanticFallback` is null
+with reason `claim-conflict`. If every gateway model for the role is blocked,
+`semanticFallback` is null and `semanticFallbackReason` names the blocking
+circuit. Force a native worker or wait for that quota; do not dispatch the role
+through the blocked circuit. Otherwise, use the semantic fallback when no named
+candidate remains. Claim a selected model with the returned need and revision:
+
+```console
+python3 <skill-root>/scripts/route-capability.py --state <state-path> --task-id <task-id> claim --expected-revision <revision> --need "<need>" --model <selected-model>
+```
+
+Only a successful claim authorizes named-model dispatch. Never dispatch from a
+plan alone. The claim records its task need, plan revision, selected model, and
+current planned candidate set. A claim reserves each unknown named-agent,
+provider, and pool scope, plus the selected route. Use a fresh revision for each
+parallel claim; distinct known scopes can remain active together.
+
+Use a non-candidate only when caller intent requires one. Add exactly one
+categorical `--override-reason`: `explicit-model-request`,
+`provider-diversity-seat`, or `caller-capability-judgment`. State records the
+`non-candidate` marker and reason. An override does not bypass an open circuit
+or active claim scope.
+
+After every claimed named-model attempt, record one categorical outcome with its
+`claimId`. Use `success`, `quota-exhausted`, `route-unavailable`,
+`auth-failure`, `connection-failure`, `agent-type-unavailable`, or
+`agent-type-available`. Record `agent-type-available` when the host accepted the
+named agent type but the attempt returned no route, pool, or provider evidence.
+
+```console
+python3 <skill-root>/scripts/route-capability.py --state <state-path> --task-id <task-id> record --claim-id <claim-id> --outcome route-unavailable
+```
+
+If dispatch did not start, cancel its claim. If dispatch started but then
+stopped without a provider result, record `dispatch-interrupted`; this opens the
+claimed route. Do not cancel a claim for a seat that can still return. Keep
+native semantic-fallback evidence in the caller-owned lifecycle; this state
+tracks named model routes only.
+
+```console
+python3 <skill-root>/scripts/route-capability.py --state <state-path> --task-id <task-id> cancel --claim-id <claim-id>
+```
+
+Before a Google claim, ingest only categorical telemetry and use the returned
+revision for the next plan or claim:
+
+```console
+<skill-root>/scripts/check-google-quota.sh | python3 <skill-root>/scripts/route-capability.py --state <state-path> --task-id <task-id> ingest-google --expected-revision <revision>
+```
+
+The state keeps active claim metadata and categorical route, pool, provider, and
+named-agent circuits. Route, pool, and provider circuits stay open for the
+current task. The named-agent surface is the one recoverable circuit. A later
+outcome that carries named-agent availability evidence closes that surface and
+resumes named routing. A compare-and-swap claim rejects concurrent or stale
+probes. If the canonical registry or state schema changes, initialize a new
+task-state path. Do not rewrite stale state because older claims lack current
+binding evidence.
+
 - Google: Opus, Sonnet, and GPT-OSS share `claude-gpt`; Gemini Pro and Flash
   share `gemini`. Run [check-google-quota](../scripts/check-google-quota.sh)
   once before Google dispatch when `codexbar` is available.
@@ -95,10 +184,11 @@ Use scripted preflight only when telemetry identifies every relevant pool.
 - Reuse open circuits across later phases and challenge rounds. Do not probe or
   retry another model in the same pool. Skipped calls do not consume dispatch
   budget.
-- Treat unknown agent types, unsupported models, and model-specific errors as
-  route failures; one corrected route in the same pool is allowed. Treat auth or
-  connection failure as provider-wide. A provider is unavailable only when all
-  usable pools are unavailable or its provider-wide circuit is open.
+- Treat unsupported models and model-specific errors as route failures; one
+  corrected route in the same pool is allowed. Treat host rejection of named
+  agent types as a named-agent surface failure. Treat auth or connection failure
+  as provider-wide. A provider is unavailable only when all usable pools are
+  unavailable or its provider-wide circuit is open.
 
 ## Worker patience
 
@@ -130,6 +220,9 @@ use its semantic role or one bounded native worker. If the host returns
 `agent
 type is currently not available`, stop retrying named roles. Use built-in
 `default` with configured defaults when available, or mark that route
-unavailable. Do not treat this error as quota evidence or launch another
+unavailable. When capability state exists, record `agent-type-unavailable` and
+use its semantic fallback. Record `agent-type-available`, or any other
+named-model outcome, once a later attempt shows that the host accepts named
+agent types again. Do not treat this error as quota evidence or launch another
 harness. Use only write-capable routes for mutation; task prompts must still
 make deliberation and review read-only.

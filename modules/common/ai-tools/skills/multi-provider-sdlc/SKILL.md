@@ -11,6 +11,10 @@ Route one caller-owned phase through current-harness native subagents. This
 skill owns provider choice, quota circuits, and bounded worker packets. It does
 not own lifecycle sequencing, correction, or final judgment.
 
+For one known dispatch, keep capability evidence in the caller packet. When a
+task can retry, cross providers, or reuse circuits in later phases, use the
+task-local capability state defined in [routing](references/routing.md).
+
 ## Ownership
 
 - The caller supplies endpoint, phase, risk, paths, authority, success criteria,

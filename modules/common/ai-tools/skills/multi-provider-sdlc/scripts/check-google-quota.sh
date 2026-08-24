@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+registry="$script_dir/../references/model-routing.json"
+
 if ! command -v codexbar >/dev/null 2>&1 || ! command -v jq >/dev/null 2>&1; then
     printf '%s\n' '{"provider":"google","status":"unknown","reason":"quota-tool-unavailable"}'
+    exit 0
+fi
+
+if [[ ! -r $registry ]] || ! jq -e '.schema_version == 1 and (.models | type == "object")' "$registry" >/dev/null 2>&1; then
+    printf '%s\n' '{"provider":"google","status":"unknown","reason":"routing-registry-unavailable"}'
     exit 0
 fi
 
@@ -26,10 +34,19 @@ if ! printf '%s\n' "$usage_json" | jq -e '
     exit 0
 fi
 
-printf '%s\n' "$usage_json" | jq -c \
+printf '%s\n' "$usage_json" | jq -c --slurpfile registry "$registry" \
     '
-    def summarize($windows; $models):
-      [$windows[] | select(.window.usedPercent | type == "number")] as $known
+    def models_for($pool):
+      [
+        $registry[0].models
+        | to_entries[]
+        | select(.value.subscription == "google" and .value.quota_pool == $pool)
+        | .key
+      ] | sort;
+
+    def summarize($windows; $pool):
+      models_for($pool) as $models
+      | [$windows[] | select(.window.usedPercent | type == "number")] as $known
       | [
           $known[]
           | select(
@@ -40,21 +57,9 @@ printf '%s\n' "$usage_json" | jq -c \
       | if ($known | length) == 0 then
           { status: "unknown", reason: "quota-data-missing", models: $models }
         elif ($blocked | length) > 0 then
-          ($blocked | max_by(.window.usedPercent)) as $window
-          | {
-              status: "exhausted",
-              usedPercent: $window.window.usedPercent,
-              resetsAt: ($window.window.resetsAt // null),
-              models: $models
-            }
+          { status: "exhausted", models: $models }
         else
-          ($known | max_by(.window.usedPercent)) as $window
-          | {
-              status: "available",
-              usedPercent: $window.window.usedPercent,
-              resetsAt: ($window.window.resetsAt // null),
-              models: $models
-            }
+          { status: "available", models: $models }
         end;
 
     .[0].usage.extraRateWindows as $windows
@@ -63,11 +68,11 @@ printf '%s\n' "$usage_json" | jq -c \
         pools: {
           "claude-gpt": summarize(
             [$windows[] | select(.id | startswith("antigravity-quota-summary-3p-"))];
-            ["google-opus-4-6", "google-sonnet-4-6", "gpt-oss-120b"]
+            "claude-gpt"
           ),
           gemini: summarize(
             [$windows[] | select(.id | startswith("antigravity-quota-summary-gemini-"))];
-            ["gemini-3-1-pro", "gemini-3-7-flash"]
+            "gemini"
           )
         }
       }
