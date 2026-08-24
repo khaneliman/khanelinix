@@ -74,7 +74,61 @@ in
 
     services = {
       avahi = enabled;
-      comfyui = enabled;
+
+      comfyui = {
+        enable = true;
+
+        # Weight curation is a host choice. This set is the Qwen-Image stack,
+        # about 52 GB realized before activation.
+        models =
+          lib.mapAttrs
+            (
+              target: source:
+              pkgs.fetchurl (
+                source
+                // {
+                  name = baseNameOf target;
+                  meta.license = lib.licenses.asl20;
+                }
+              )
+            )
+            {
+              "text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors" = {
+                url = "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/7beb7b647f04469fbe64ba8adc2bb0d7e5e9f73f/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors";
+                hash = "sha256-y1Y22FKg6mqQdasb70lsDbeu8TwCNQVx44iuqVnFwLQ=";
+              };
+
+              "vae/qwen_image_vae.safetensors" = {
+                url = "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/7beb7b647f04469fbe64ba8adc2bb0d7e5e9f73f/split_files/vae/qwen_image_vae.safetensors";
+                hash = "sha256-pwWA8CE+Z5Z+6clfBbtADo+wgwfgF6kkvzRBIj4CPR8=";
+              };
+
+              "diffusion_models/qwen_image_2512_fp8_e4m3fn.safetensors" = {
+                url = "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/7beb7b647f04469fbe64ba8adc2bb0d7e5e9f73f/split_files/diffusion_models/qwen_image_2512_fp8_e4m3fn.safetensors";
+                hash = "sha256-XcgFVNXYM5AEai9KlOzgavt3AL97Cq+L3pdpeTh1h2s=";
+              };
+
+              "diffusion_models/qwen_image_edit_2511_int8_convrot.safetensors" = {
+                url = "https://huggingface.co/Comfy-Org/Qwen-Image-Edit_ComfyUI/resolve/984166f60a9b1fcede5e9b9287b7a7aebc050010/split_files/diffusion_models/qwen_image_edit_2511_int8_convrot.safetensors";
+                hash = "sha256-EbWvWsYBgh1zkwyEhGyaFY5nF3NW2vknzhyNEPOWOCk=";
+              };
+
+              "loras/Qwen-Image-2512-Lightning-4steps-V1.0-bf16.safetensors" = {
+                url = "https://huggingface.co/lightx2v/Qwen-Image-2512-Lightning/resolve/c35c0e2ab8891698dace27aac7b64bc6c4f1a8ea/Qwen-Image-2512-Lightning-4steps-V1.0-bf16.safetensors";
+                hash = "sha256-3g0jblTs8sQ7MkR9E0eMbq4NNhsf7UjGlnWwhPokDYc=";
+              };
+
+              "loras/Qwen-Image-Edit-2511-Lightning-4steps-V1.0-bf16.safetensors" = {
+                url = "https://huggingface.co/lightx2v/Qwen-Image-Edit-2511-Lightning/resolve/d74eba145674fd7e31b949324e148e21e7118abd/Qwen-Image-Edit-2511-Lightning-4steps-V1.0-bf16.safetensors";
+                hash = "sha256-IiJujQXTVLs1ZifUKICfWv14GTmbB3I4orcKgog6kE8=";
+              };
+            };
+
+        # This GPU also drives two high-resolution displays. Preserve compositor
+        # headroom.
+        reserveVramGb = 2;
+      };
+
       geoclue = enabled;
 
       llm = {
