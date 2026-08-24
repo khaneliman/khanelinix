@@ -160,6 +160,10 @@ in
             exec ${lib.getExe' t3codePackage "t3"} ${
               lib.escapeShellArgs [
                 "serve"
+                "--host"
+                "127.0.0.1"
+                "--port"
+                "3774"
                 "--tailscale-serve"
                 githubRoot
               ]
