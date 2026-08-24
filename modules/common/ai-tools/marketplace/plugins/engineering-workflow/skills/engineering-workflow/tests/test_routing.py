@@ -139,6 +139,37 @@ class PlaybookContract(unittest.TestCase):
     def test_routes_implementation_to_installed_domain_skill(self) -> None:
         self.assertIn("matching installed domain skill owns the method", self.body)
 
+    def test_shape_plans_independently_valid_commit_units(self) -> None:
+        shape = re.search(
+            r"^2\. \*\*Shape\.\*\*(.*?)(?=^3\.)",
+            self.body,
+            re.MULTILINE | re.DOTALL,
+        )
+        self.assertIsNotNone(shape)
+        self.assertIn("`git-toolkit`", shape.group(1))
+        self.assertIn("independently valid commit units", shape.group(1))
+        self.assertIn("Before writes", shape.group(1))
+
+    def test_runs_each_unit_through_verified_slice(self) -> None:
+        slice_section = self.body.split("## Slice Execution", maxsplit=1)[1].split(
+            "## Gates", maxsplit=1
+        )[0]
+        lowered = " ".join(slice_section.lower().split())
+        self.assertIn("`verified-slice` method in `engineering-principles`", lowered)
+        self.assertIn("one planned unit at a time", lowered)
+        self.assertIn(
+            "when the work needs review evidence, commit boundaries, or "
+            "authority checks",
+            lowered,
+        )
+        self.assertRegex(
+            lowered,
+            r"with `local-commit`, prepare and commit the candidate, "
+            r"then confirm occurrence\. otherwise, hand off the exact patch and stop\.",
+        )
+        self.assertIn("do not batch edits before verification", lowered)
+        self.assertIn("confirmed occurrence and durable rollback boundary", lowered)
+
     def test_architecture_only_has_one_non_mutating_route(self) -> None:
         self.assertIn("Architecture-only work: `software-engineering`.", self.body)
         self.assertNotIn(
@@ -166,6 +197,15 @@ class PlaybookContract(unittest.TestCase):
         lowered = self.body.lower()
         for fence in ("commit", "push", "merge", "publish", "deploy", "pull request"):
             self.assertIn(fence, lowered)
+
+    def test_local_commit_authority_does_not_grant_remote_writes(self) -> None:
+        authority = self.body.split("## Authority", maxsplit=1)[1].split(
+            "## Phases", maxsplit=1
+        )[0]
+        self.assertIn("explicit `local-commit` authority", authority)
+        self.assertIn("implies no authority", authority)
+        for capability in ("push", "merge", "publish", "deploy", "pull request"):
+            self.assertIn(capability, authority)
 
     def test_parent_retains_final_authority(self) -> None:
         lowered = self.body.lower()

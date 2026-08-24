@@ -12,7 +12,6 @@ and gates. Matching domain and workflow skills own phase methods.
 
 Take mutation work by default. Bug fixes, features, refactors, migrations,
 dependency bumps, config changes, script changes, and code changes route here.
-
 Leave non-mutation work to the direct specialist entry.
 
 - Answer-only question or code walkthrough: `how`.
@@ -35,8 +34,9 @@ Investigation inside a mutation is a phase here, not a separate entry.
 Parent owns architecture acceptance, integration, final judgment, and authority.
 Workers never own them.
 
-Never auto-commit, push, merge, publish, deploy, open a pull request, or make
-any other external write. Stop and ask when authority is missing.
+Create a local commit only with explicit `local-commit` authority. This grant
+implies no authority to push, merge, publish, deploy, open a pull request, or
+make another external write. Stop and ask when a required capability is missing.
 
 ## Phases
 
@@ -51,8 +51,9 @@ Run these phases in order. Skip a phase only when a gate rule allows it.
    `diagnosing-bugs` to establish the exact symptom and supported cause.
 2. **Shape.** Choose change shape and sequence. Use `architect` for a
    non-trivial feature or a change crossing module boundaries. Use
-   `engineering-principles` for diff sizing and work order. Read
-   [task-shapes.md](references/task-shapes.md).
+   `engineering-principles` for diff sizing and work order. Before writes, use
+   `git-toolkit` to plan independently valid commit units when work needs
+   multiple slices or local commits. Read [task-shapes.md](references/task-shapes.md).
 3. **Implement.** The matching installed domain skill owns the method. Keep one
    write owner per batch. Use `tdd` only when the user requests TDD or
    test-first work. Read [delegation.md](references/delegation.md) before you
@@ -74,6 +75,16 @@ Run these phases in order. Skip a phase only when a gate rule allows it.
 
 A specialist can complete more than one phase. Inspect its artifact and resume
 at the first unfinished gate. Do not repeat completed work to satisfy the list.
+
+## Slice Execution
+
+Ground and Shape can cover the full stack. When the work needs review evidence,
+commit boundaries, or authority checks, run one planned unit at a time through
+the `verified-slice` method in `engineering-principles`. Each unit runs
+Implement through Correct. With `local-commit`, prepare and commit the candidate,
+then confirm occurrence. Otherwise, hand off the exact patch and stop. Do not
+batch edits before verification. Start the next unit only after a confirmed
+occurrence and durable rollback boundary.
 
 ## Gates
 
