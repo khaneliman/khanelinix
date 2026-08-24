@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 import textwrap
 from collections.abc import Sequence
@@ -32,10 +33,26 @@ COPILOT_NATIVE_MODELS = {
     "claude-sonnet-4.6",
     "claude-opus-4.6",
 }
+CONTROL_CHARACTER_RE = re.compile(r"[\x00-\x1f\x7f]")
 
 
 class RoutingError(ValueError):
     """Report invalid policy or generated reference state."""
+
+
+def require_safe_policy_text(value: Any, context: str = "routing registry") -> None:
+    if isinstance(value, str):
+        if CONTROL_CHARACTER_RE.search(value):
+            raise RoutingError(f"{context} contains control characters")
+        return
+    if isinstance(value, list):
+        for index, item in enumerate(value):
+            require_safe_policy_text(item, f"{context}[{index}]")
+        return
+    if isinstance(value, dict):
+        for key, item in value.items():
+            require_safe_policy_text(key, f"{context} field name")
+            require_safe_policy_text(item, f"{context}.{key}")
 
 
 def require_table_cell(value: str, context: str) -> None:
@@ -71,6 +88,7 @@ def load_registry(path: Path = REGISTRY_PATH) -> dict[str, Any]:
 
 
 def validate_registry(registry: dict[str, Any]) -> None:
+    require_safe_policy_text(registry)
     require_exact_keys(
         registry,
         {

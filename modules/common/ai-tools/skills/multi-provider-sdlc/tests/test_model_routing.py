@@ -1,12 +1,19 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib.util
+import json
+import shutil
+import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
 SKILL_ROOT = Path(__file__).resolve().parents[1]
+AI_TOOLS_ROOT = SKILL_ROOT.parents[1]
+REPO_ROOT = AI_TOOLS_ROOT.parents[2]
 SCRIPT = SKILL_ROOT / "scripts" / "render-model-routes.py"
 SPEC = importlib.util.spec_from_file_location("render_model_routes", SCRIPT)
 assert SPEC is not None and SPEC.loader is not None
@@ -121,6 +128,32 @@ class ModelRoutingTests(unittest.TestCase):
         with self.assertRaisesRegex(routes.RoutingError, "Markdown table syntax"):
             routes.validate_registry(invalid)
 
+    def test_policy_control_characters_are_rejected(self) -> None:
+        cases = {
+            "alias": lambda value: value["models"]["opus-5"].__setitem__(
+                "gateway_alias", "claude-opus-5\nmodel: injected"
+            ),
+            "description": lambda value: value["models"]["opus-5"].__setitem__(
+                "description", "worker\tdescription"
+            ),
+            "model ID": lambda value: value["models"].__setitem__(
+                "model\rID", value["models"].pop("opus-5")
+            ),
+            "provider ID": lambda value: value["subscriptions"].__setitem__(
+                "openai\nprovider", value["subscriptions"].pop("openai")
+            ),
+            "rendered model ID": lambda value: value["semantic_roles"]["reviewer"][
+                "native"
+            ].__setitem__("codex", "gpt-5.6-sol\nname = injected"),
+        }
+
+        for label, mutate in cases.items():
+            with self.subTest(label=label):
+                invalid = copy.deepcopy(self.registry)
+                mutate(invalid)
+                with self.assertRaisesRegex(routes.RoutingError, "control characters"):
+                    routes.validate_registry(invalid)
+
     def test_unknown_write_policy_is_rejected(self) -> None:
         invalid = copy.deepcopy(self.registry)
         invalid["task_routes"][0]["write_policy"] = "anything goes"
@@ -171,6 +204,333 @@ class ModelRoutingTests(unittest.TestCase):
                 routes.SUBSCRIPTIONS_END,
                 "body",
             )
+
+    def test_nix_consumers_use_canonical_adapter(self) -> None:
+        agents = (AI_TOOLS_ROOT / "agents.nix").read_text(encoding="utf-8")
+        service = (
+            AI_TOOLS_ROOT.parents[1]
+            / "home"
+            / "services"
+            / "cliproxyapi"
+            / "default.nix"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("modelRouting.modelsForRole", agents)
+        self.assertIn("modelRouting.gatewayAgentSpecs", agents)
+        self.assertIn("modelRouting.cliproxyAliases", service)
+        self.assertNotIn("claude-gpt-5.6-luna", agents)
+        self.assertNotIn("claude-gpt-5.6-luna", service)
+
+    @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
+    def test_provider_projections_match_frozen_baseline(self) -> None:
+        expected_digests = {
+            False: "3469a9a3c0123e90d24cfece7e441a8be21337da2fe7e7f0acde511b7714d3e4",
+            True: "70be7dbf89eed5ce5ab5e73922cba4094a5924e0a09f468dcbcdd2f5e17bd8d7",
+        }
+
+        for gateway_enabled, expected_digest in expected_digests.items():
+            with self.subTest(gateway_enabled=gateway_enabled):
+                expression = self._provider_projection_expression(gateway_enabled)
+                result = self._nix_eval(expression)
+
+                self.assertEqual(hashlib.sha256(result).hexdigest(), expected_digest)
+
+    @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
+    def test_frontmatter_string_scalars_use_safe_deterministic_quotes(self) -> None:
+        projection = json.loads(self._nix_eval(self._frontmatter_expression()))
+
+        self.assertIn('name: "worker: # tag"', projection["claude"])
+        self.assertIn('description: "description: # tag"', projection["claude"])
+        self.assertIn('tools: "Read: # tag"', projection["claude"])
+        self.assertIn('model: "claude: # model"', projection["claude"])
+        self.assertIn('description: "description: # tag"', projection["opencode"])
+        self.assertIn('mode: "mode: # tag"', projection["opencode"])
+        self.assertIn('model: "opencode: # model"', projection["opencode"])
+        self.assertIn('"bash": false', projection["opencode"])
+        self.assertIn('"permission: # key": "allow: # value"', projection["opencode"])
+        self.assertIn('name: "worker: # tag"', projection["copilot"])
+        self.assertIn('model: "copilot: # model"', projection["copilot"])
+
+    @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
+    def test_control_character_injection_is_rejected_across_projections(self) -> None:
+        projections = {
+            "claude": ("claude", "toClaudeMarkdown.mechanic"),
+            "codex": ("codex", "toCodexAgents.mechanic.model"),
+            "copilot": ("copilot", "toCopilotMarkdown.mechanic"),
+            "opencode": ("opencode", "toOpenCodeMarkdown.mechanic"),
+        }
+
+        for label, (model_field, projection) in projections.items():
+            with self.subTest(label=label):
+                result = self._nix_eval_result(
+                    self._injected_projection_expression(model_field, projection)
+                )
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("control characters", result.stderr.decode())
+
+    @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
+    def test_nix_adapter_rejects_missing_published_alias(self) -> None:
+        invalid = copy.deepcopy(self.registry)
+        invalid["cliproxy_alias_order"].pop()
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            registry_path = (
+                root
+                / "skills"
+                / "multi-provider-sdlc"
+                / "references"
+                / "model-routing.json"
+            )
+            registry_path.parent.mkdir(parents=True)
+            registry_path.write_text(json.dumps(invalid), encoding="utf-8")
+            shutil.copy2(
+                AI_TOOLS_ROOT / "model-routing.nix", root / "model-routing.nix"
+            )
+            result = self._nix_eval_result(self._temporary_adapter_expression(root))
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("omits published models", result.stderr.decode())
+
+    @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
+    def test_nix_adapter_rejects_policy_control_characters(self) -> None:
+        invalid = copy.deepcopy(self.registry)
+        invalid["models"]["opus-5"]["description"] = "worker\ndescription"
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            registry_path = (
+                root
+                / "skills"
+                / "multi-provider-sdlc"
+                / "references"
+                / "model-routing.json"
+            )
+            registry_path.parent.mkdir(parents=True)
+            registry_path.write_text(json.dumps(invalid), encoding="utf-8")
+            shutil.copy2(
+                AI_TOOLS_ROOT / "model-routing.nix", root / "model-routing.nix"
+            )
+            result = self._nix_eval_result(self._temporary_adapter_expression(root))
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("control characters", result.stderr.decode())
+
+    @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
+    def test_nix_adapter_matches_registry_and_preserves_overrides(self) -> None:
+        projection = json.loads(self._nix_eval(self._adapter_expression()))
+        models = self.registry["models"]
+        expected_aliases = [
+            {
+                "provider": models[name]["upstream_provider"],
+                "alias": models[name]["gateway_alias"],
+                "model": models[name]["upstream_model"],
+                "displayName": models[name]["display_name"],
+            }
+            for name in self.registry["cliproxy_alias_order"]
+        ]
+        expected_defaults = {
+            provider: models[name]["upstream_model"]
+            for provider, name in self.registry["gateway_defaults"].items()
+        }
+        expected_direct = {
+            model["gateway_alias"]: {"name": model["display_name"]}
+            for model in models.values()
+            if not model["publish_alias"]
+        }
+
+        self.assertEqual(projection["aliases"], expected_aliases)
+        self.assertEqual(projection["defaults"], expected_defaults)
+        self.assertEqual(projection["directDefault"], expected_direct)
+        self.assertEqual(projection["directFable"], expected_direct)
+        self.assertEqual(projection["directSonnet"], expected_direct)
+        self.assertEqual(
+            projection["directCustom"],
+            expected_direct
+            | {
+                "claude-custom": {
+                    "name": models[self.registry["gateway_defaults"]["claude"]][
+                        "display_name"
+                    ]
+                }
+            },
+        )
+
+    @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
+    def test_custom_claude_mapping_keeps_its_display_name(self) -> None:
+        projection = json.loads(self._nix_eval(self._custom_mapping_expression()))
+
+        self.assertEqual(projection["claude-custom"], {"name": "Custom Claude"})
+
+    @staticmethod
+    def _nix_eval(expression: str) -> bytes:
+        result = ModelRoutingTests._nix_eval_result(expression)
+        result.check_returncode()
+        return result.stdout
+
+    @staticmethod
+    def _nix_eval_result(expression: str) -> subprocess.CompletedProcess[bytes]:
+        nix = shutil.which("nix")
+        assert nix is not None
+        return subprocess.run(
+            [
+                nix,
+                "eval",
+                "--json",
+                "--impure",
+                "--expr",
+                expression,
+            ],
+            cwd=REPO_ROOT,
+            check=False,
+            capture_output=True,
+        )
+
+    @staticmethod
+    def _provider_projection_expression(gateway_enabled: bool) -> str:
+        enabled = "true" if gateway_enabled else "false"
+        repo = json.dumps(str(REPO_ROOT))
+        return f"""
+          let
+            repo = builtins.toPath {repo};
+            flake = builtins.getFlake (toString repo);
+            aiTools = import (repo + "/modules/common/ai-tools") {{
+              inherit (flake.inputs.nixpkgs) lib;
+              gatewayEnabled = {enabled};
+            }};
+          in
+          {{
+            codex = aiTools.codex.agents;
+            claude = aiTools.claudeCode.agents;
+            copilot = aiTools.githubCopilotCli.agents;
+            opencode = aiTools.opencode.renderAgents;
+          }}
+        """
+
+    @staticmethod
+    def _adapter_expression() -> str:
+        repo = json.dumps(str(REPO_ROOT))
+        return f"""
+          let
+            repo = builtins.toPath {repo};
+            flake = builtins.getFlake (toString repo);
+            modelRouting = (import (repo + "/modules/common/ai-tools") {{
+              inherit (flake.inputs.nixpkgs) lib;
+            }}).modelRouting;
+          in
+          {{
+            defaults = modelRouting.defaultUpstreamModels;
+            aliases = modelRouting.cliproxyAliases;
+            directDefault = modelRouting.directGatewayModelsFor {{}} "claude-opus-5";
+            directFable = modelRouting.directGatewayModelsFor {{}} "claude-fable-5";
+            directSonnet = modelRouting.directGatewayModelsFor {{}} "claude-sonnet-5";
+            directCustom = modelRouting.directGatewayModelsFor {{}} "claude-custom";
+          }}
+        """
+
+    @staticmethod
+    def _frontmatter_expression() -> str:
+        repo = json.dumps(str(REPO_ROOT))
+        return f"""
+          let
+            repo = builtins.toPath {repo};
+            flake = builtins.getFlake (toString repo);
+            renderers = import (repo + "/modules/common/ai-tools/agents.nix") {{
+              inherit (flake.inputs.nixpkgs) lib;
+            }};
+            agent = {{
+              name = "worker: # tag";
+              description = "description: # tag";
+              tools = [ "Read: # tag" ];
+              mode = "mode: # tag";
+              permission."permission: # key" = "allow: # value";
+              model = {{
+                claude = "claude: # model";
+                copilot = "copilot: # model";
+                opencode = "opencode: # model";
+              }};
+              content = "Worker body.";
+            }};
+          in
+          {{
+            claude = renderers.renderClaudeAgent agent;
+            copilot = renderers.renderCopilotAgent agent;
+            opencode = renderers.renderOpenCodeAgent agent;
+          }}
+        """
+
+    @staticmethod
+    def _injected_projection_expression(model_field: str, projection: str) -> str:
+        repo = json.dumps(str(REPO_ROOT))
+        invalid = json.dumps("safe-model\nmodel: injected")
+        model_values = {
+            provider: invalid if provider == model_field else json.dumps("safe-model")
+            for provider in ("claude", "codex", "copilot", "opencode")
+        }
+        return f"""
+          let
+            repo = builtins.toPath {repo};
+            flake = builtins.getFlake (toString repo);
+            modelRouting = {{
+              modelsForRole = _role: {{
+                claude = {model_values["claude"]};
+                codex = {model_values["codex"]};
+                copilot = {model_values["copilot"]};
+                opencode = {model_values["opencode"]};
+              }};
+              reasoningEffortForRole = _role: {{ codex = "medium"; }};
+              gatewayAgentSpecs = {{}};
+            }};
+            renderers = import (repo + "/modules/common/ai-tools/agents.nix") {{
+              inherit (flake.inputs.nixpkgs) lib;
+              inherit modelRouting;
+            }};
+          in
+          renderers.{projection}
+        """
+
+    @staticmethod
+    def _temporary_adapter_expression(root: Path) -> str:
+        repo = json.dumps(str(REPO_ROOT))
+        adapter = json.dumps(str(root / "model-routing.nix"))
+        return f"""
+          let
+            repo = builtins.toPath {repo};
+            flake = builtins.getFlake (toString repo);
+            modelRouting = import (builtins.toPath {adapter}) {{
+              inherit (flake.inputs.nixpkgs) lib;
+            }};
+          in
+          modelRouting.cliproxyAliases
+        """
+
+    @staticmethod
+    def _custom_mapping_expression() -> str:
+        repo = json.dumps(str(REPO_ROOT))
+        return f"""
+          let
+            repo = builtins.toPath {repo};
+            flake = builtins.getFlake (toString repo);
+            lib = flake.inputs.nixpkgs.lib;
+            home = flake.homeConfigurations."khaneliman@khanelinix".extendModules {{
+              modules = [
+                {{
+                  khanelinix.services.cliproxyapi.models.claude =
+                    lib.mkForce "custom-upstream";
+                  khanelinix.services.cliproxyapi.claudeCodeModels = lib.mkForce [
+                    {{
+                      provider = "claude";
+                      model = "custom-upstream";
+                      alias = "claude-custom";
+                      displayName = "Custom Claude";
+                    }}
+                  ];
+                }}
+              ];
+            }};
+          in
+          home.config.programs.opencode.settings.provider.cliproxyapi.models
+        """
 
 
 if __name__ == "__main__":

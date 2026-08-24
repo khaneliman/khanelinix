@@ -1,22 +1,27 @@
 {
   gatewayEnabled ? false,
   lib,
+  modelRouting ? import ./model-routing.nix { inherit gatewayEnabled lib; },
   ...
 }:
 let
   agentsBasePath = ./agents;
   modelValue = provider: model: if builtins.isAttrs model then model.${provider} or null else model;
-  routedModel =
-    gatewayModels: native:
-    let
-      gatewayModel =
-        provider: if builtins.isAttrs gatewayModels then gatewayModels.${provider} else gatewayModels;
-    in
-    native
-    // lib.optionalAttrs gatewayEnabled {
-      claude = gatewayModel "claude";
-      opencode = "cliproxyapi/${gatewayModel "opencode"}";
-    };
+  controlCharacters = lib.stringToCharacters (
+    builtins.fromJSON ''"\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u0008\u0009\u000a\u000b\u000c\u000d\u000e\u000f\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f\u007f"''
+  );
+  requireSafeText =
+    context: value:
+    if
+      builtins.isString value && !(lib.any (character: lib.hasInfix character value) controlCharacters)
+    then
+      value
+    else
+      throw "${context} must be text without control characters";
+  renderYamlString = context: value: builtins.toJSON (requireSafeText context value);
+  renderYamlScalar =
+    context: value:
+    if builtins.isString value then renderYamlString context value else builtins.toJSON value;
 
   readOnlyTools = [
     "Read"
@@ -29,35 +34,18 @@ let
     "Write"
   ];
 
-  lunaDiscoveryAgent = {
+  lunaDiscoveryAgent = role: {
     tools = readOnlyTools;
-    model = routedModel "claude-gpt-5.6-luna" {
-      claude = "haiku";
-      copilot = "claude-haiku-4.5";
-      opencode = "openai/gpt-5.6-luna";
-      codex = "gpt-5.6-luna";
-    };
-    model_reasoning_effort.codex = "medium";
+    model = modelRouting.modelsForRole role;
+    model_reasoning_effort = modelRouting.reasoningEffortForRole role;
     sandbox_mode.codex = "read-only";
     content = builtins.readFile (agentsBasePath + "/general/fact-finder.md");
   };
 
-  implementationAgent = {
+  implementationAgent = role: {
     tools = writeTools;
-    model =
-      routedModel
-        {
-          claude = "claude-opus-5";
-          codex = "claude-gpt-5.6-luna";
-          opencode = "claude-gpt-5.6-luna";
-        }
-        {
-          claude = "opus";
-          copilot = "claude-opus-4.6";
-          opencode = "openai/gpt-5.6-luna";
-          codex = "gpt-5.6-luna";
-        };
-    model_reasoning_effort.codex = "medium";
+    model = modelRouting.modelsForRole role;
+    model_reasoning_effort = modelRouting.reasoningEffortForRole role;
     sandbox_mode.codex = "workspace-write";
     content = builtins.readFile (agentsBasePath + "/general/implementer.md");
   };
@@ -103,21 +91,16 @@ let
         "Grep"
         "Glob"
       ];
-      model = routedModel "claude-gpt-5.3-codex-spark" {
-        claude = "haiku";
-        copilot = "claude-haiku-4.5";
-        opencode = "openai/gpt-5.3-codex-spark";
-        codex = "gpt-5.3-codex-spark";
-      };
-      model_reasoning_effort.codex = "medium";
+      model = modelRouting.modelsForRole "mechanic";
+      model_reasoning_effort = modelRouting.reasoningEffortForRole "mechanic";
       sandbox_mode.codex = "workspace-write";
       content = builtins.readFile (agentsBasePath + "/general/mechanic.md");
     };
-    "fact-finder" = lunaDiscoveryAgent // {
+    "fact-finder" = lunaDiscoveryAgent "fact-finder" // {
       name = "fact-finder";
       description = "Read-only fact-finding specialist for scoped repo questions. Use for multi-file discovery, caller tracing, config lookup, pattern comparison, and bounded evidence gathering when main context should stay small.";
     };
-    explorer = lunaDiscoveryAgent // {
+    explorer = lunaDiscoveryAgent "explorer" // {
       name = "explorer";
       description = "Read-heavy explorer for repository search, caller tracing, config lookup, and bounded evidence gathering.";
     };
@@ -125,13 +108,8 @@ let
       name = "checker";
       description = "Focused validation specialist for one bounded test, lint, evaluation, or build command with a known success condition.";
       tools = readOnlyTools;
-      model = routedModel "claude-gpt-5.3-codex-spark" {
-        claude = "haiku";
-        copilot = "claude-haiku-4.5";
-        opencode = "openai/gpt-5.3-codex-spark";
-        codex = "gpt-5.3-codex-spark";
-      };
-      model_reasoning_effort.codex = "medium";
+      model = modelRouting.modelsForRole "checker";
+      model_reasoning_effort = modelRouting.reasoningEffortForRole "checker";
       sandbox_mode.codex = "workspace-write";
       content = builtins.readFile (agentsBasePath + "/general/checker.md");
     };
@@ -144,15 +122,8 @@ let
         "Grep"
         "Glob"
       ];
-      model = routedModel "claude-gpt-5.6-luna" {
-        claude = "haiku";
-        copilot = "claude-haiku-4.5";
-        opencode = "openai/gpt-5.6-luna";
-        codex = "gpt-5.6-luna";
-      };
-      model_reasoning_effort = {
-        codex = "medium";
-      };
+      model = modelRouting.modelsForRole "probe-runner";
+      model_reasoning_effort = modelRouting.reasoningEffortForRole "probe-runner";
       sandbox_mode = {
         codex = "workspace-write";
       };
@@ -167,22 +138,8 @@ let
         "Grep"
         "Glob"
       ];
-      model =
-        routedModel
-          {
-            claude = "claude-gemini-3.7-flash";
-            codex = "claude-gpt-5.6-sol";
-            opencode = "claude-gpt-5.6-sol";
-          }
-          {
-            claude = "sonnet";
-            copilot = "claude-sonnet-4.6";
-            opencode = "openai/gpt-5.6-sol";
-            codex = "gpt-5.6-sol";
-          };
-      model_reasoning_effort = {
-        codex = "medium";
-      };
+      model = modelRouting.modelsForRole "debugger";
+      model_reasoning_effort = modelRouting.reasoningEffortForRole "debugger";
       sandbox_mode = {
         codex = "read-only";
       };
@@ -197,19 +154,8 @@ let
         "Grep"
         "Glob"
       ];
-      model =
-        routedModel
-          {
-            claude = "claude-gpt-oss-120b";
-            codex = "claude-gpt-5.6-luna";
-            opencode = "claude-gpt-5.6-luna";
-          }
-          {
-            claude = "haiku";
-            copilot = "claude-haiku-4.5";
-            opencode = "openai/gpt-5.6-luna";
-            codex = "gpt-5.6-luna";
-          };
+      model = modelRouting.modelsForRole "test-runner";
+      model_reasoning_effort = modelRouting.reasoningEffortForRole "test-runner";
       sandbox_mode = {
         codex = "workspace-write";
       };
@@ -224,109 +170,22 @@ let
         "Grep"
         "Glob"
       ];
-      model =
-        routedModel
-          {
-            claude = "claude-opus-5";
-            codex = "claude-gpt-5.6-sol";
-            opencode = "claude-gpt-5.6-sol";
-          }
-          {
-            claude = "opus";
-            copilot = "claude-opus-4.6";
-            opencode = "openai/gpt-5.6-sol";
-            codex = "gpt-5.6-sol";
-          };
-      model_reasoning_effort.codex = "high";
+      model = modelRouting.modelsForRole "reviewer";
+      model_reasoning_effort = modelRouting.reasoningEffortForRole "reviewer";
       sandbox_mode.codex = "read-only";
       content = builtins.readFile (agentsBasePath + "/general/reviewer.md");
     };
-    implementer = implementationAgent // {
+    implementer = implementationAgent "implementer" // {
       name = "implementer";
       description = "Bounded implementation specialist for one parent-scoped change or correction batch with focused validation.";
     };
-    worker = implementationAgent // {
+    worker = implementationAgent "worker" // {
       name = "worker";
       description = "Execution worker for one bounded implementation or fix batch with focused validation.";
     };
   };
 
-  gatewayAgents = {
-    "gpt-5-3-codex-spark" = mkGatewayAgent {
-      name = "gpt-5-3-codex-spark";
-      alias = "claude-gpt-5.3-codex-spark";
-      description = "OpenAI GPT 5.3 Codex Spark gateway worker for obvious lookups, mechanical edits, and focused low-risk checks.";
-      reasoningEffort = "medium";
-      write = true;
-    };
-    "gpt-5-6-luna" = mkGatewayAgent {
-      name = "gpt-5-6-luna";
-      alias = "claude-gpt-5.6-luna";
-      description = "OpenAI GPT 5.6 Luna gateway worker for bounded reproduction, deterministic high-volume work, and broader validation.";
-      reasoningEffort = "medium";
-      write = true;
-    };
-    "gpt-5-6-terra" = mkGatewayAgent {
-      name = "gpt-5-6-terra";
-      alias = "claude-gpt-5.6-terra";
-      description = "OpenAI GPT 5.6 Terra gateway worker for explicit model-selected tasks.";
-      reasoningEffort = "medium";
-      write = true;
-    };
-    "gpt-5-6-sol" = mkGatewayAgent {
-      name = "gpt-5-6-sol";
-      alias = "claude-gpt-5.6-sol";
-      description = "OpenAI GPT 5.6 Sol gateway worker for hard diagnosis, architecture or code review, and high-confidence reasoning.";
-      reasoningEffort = "high";
-    };
-    # TODO: Reassess reasoning routes when Google releases a new Gemini Pro model.
-    "gemini-3-7-flash" = mkGatewayAgent {
-      name = "gemini-3-7-flash";
-      alias = "claude-gemini-3.7-flash";
-      description = "Google Gemini 3.7 Flash gateway worker for repository discovery, ambiguous diagnosis, dependency reasoning, noisy probes, and independent review.";
-      workspaceWrite = true;
-    };
-    "gemini-3-1-pro" = mkGatewayAgent {
-      name = "gemini-3-1-pro";
-      alias = "claude-gemini-3.1-pro";
-      description = "Google Gemini 3.1 Pro gateway worker for explicit legacy proxy requests.";
-    };
-    "google-sonnet-4-6" = mkGatewayAgent {
-      name = "google-sonnet-4-6";
-      alias = "claude-antigravity-sonnet-4-6";
-      description = "Google subscription Claude Sonnet 4.6 gateway worker for bounded implementation and routine debugging.";
-      write = true;
-    };
-    "google-opus-4-6" = mkGatewayAgent {
-      name = "google-opus-4-6";
-      alias = "claude-antigravity-opus-4-6";
-      description = "Google subscription Claude Opus 4.6 gateway worker for difficult read-only review, diagnosis, and planning critique.";
-    };
-    "gpt-oss-120b" = mkGatewayAgent {
-      name = "gpt-oss-120b";
-      alias = "claude-gpt-oss-120b";
-      description = "Google GPT-OSS 120B gateway worker for noisy test execution, validation summaries, and inexpensive independent checks.";
-      workspaceWrite = true;
-    };
-    "opus-5" = mkGatewayAgent {
-      name = "opus-5";
-      alias = "claude-opus-5";
-      description = "Anthropic Opus 5 gateway worker for difficult implementation, plan or code review, and high-confidence diagnosis.";
-      write = true;
-    };
-    "fable-5" = mkGatewayAgent {
-      name = "fable-5";
-      alias = "claude-fable-5";
-      description = "Anthropic Fable 5 gateway worker for difficult implementation, planning, architecture critique, and independent review.";
-      write = true;
-    };
-    "sonnet-5" = mkGatewayAgent {
-      name = "sonnet-5";
-      alias = "claude-sonnet-5";
-      description = "Anthropic Sonnet 5 gateway worker for bounded implementation, correction batches, and focused validation.";
-      write = true;
-    };
-  };
+  gatewayAgents = lib.mapAttrs (_name: mkGatewayAgent) modelRouting.gatewayAgentSpecs;
 
   agents = semanticAgents // gatewayAgents;
 
@@ -350,14 +209,21 @@ let
       lib.elem agent.projection expectedProjections && lib.elem provider (agent.providers or [ provider ])
     ) agents;
 
-  renderClaudeFrontmatter = agent: ''
-    ---
-    name: ${agent.name}
-    description: ${agent.claudeDescription or agent.description}
-    tools: ${lib.concatStringsSep ", " agent.tools}
-    model: ${agent.model.claude or agent.model}
-    ---
-  '';
+  renderClaudeFrontmatter =
+    agent:
+    let
+      description = agent.claudeDescription or agent.description;
+      model = agent.model.claude or agent.model;
+      tools = renderYamlString "Claude tool IDs" (lib.concatStringsSep ", " agent.tools);
+    in
+    ''
+      ---
+      name: ${renderYamlString "Claude agent name" agent.name}
+      description: ${renderYamlString "Claude agent description" description}
+      tools: ${tools}
+      model: ${renderYamlString "Claude model ID" model}
+      ---
+    '';
 
   renderClaudeAgent = agent: ''
     ${lib.trim (renderClaudeFrontmatter agent)}
@@ -375,7 +241,9 @@ let
         "edit"
         "write"
       ];
-      coreToolLines = map (tool: "  ${tool}: ${if isAllowed tool then "true" else "false"}") coreTools;
+      coreToolLines = map (
+        tool: "  ${renderYamlString "OpenCode tool ID" tool}: ${builtins.toJSON (isAllowed tool)}"
+      ) coreTools;
     in
     lib.concatStringsSep "\n" coreToolLines;
 
@@ -385,24 +253,32 @@ let
       ""
     else
       let
-        render = key: value: "  ${key}: ${toString value}";
+        render =
+          key: value:
+          "  ${renderYamlString "OpenCode permission ID" key}: ${renderYamlScalar "OpenCode permission value" value}";
       in
       ''
         permission:
         ${lib.concatStringsSep "\n" (lib.mapAttrsToList render permission)}
       '';
 
-  renderOpenCodeFrontmatter = agent: ''
-    ---
-    description: ${agent.description}
-    mode: ${agent.mode or "all"}
-    model: ${agent.model.opencode or agent.model}
+  renderOpenCodeFrontmatter =
+    agent:
+    let
+      mode = agent.mode or "all";
+      model = agent.model.opencode or agent.model;
+    in
+    ''
+      ---
+      description: ${renderYamlString "OpenCode agent description" agent.description}
+      mode: ${renderYamlString "OpenCode agent mode" mode}
+      model: ${renderYamlString "OpenCode model ID" model}
 
-    tools:
-    ${renderOpenCodeTools agent}
-    ${renderOpenCodePermission (agent.permission or null)}
-    ---
-  '';
+      tools:
+      ${renderOpenCodeTools agent}
+      ${renderOpenCodePermission (agent.permission or null)}
+      ---
+    '';
 
   renderOpenCodeAgent = agent: ''
     ${lib.trim (renderOpenCodeFrontmatter agent)}
@@ -417,9 +293,9 @@ let
     in
     ''
       ---
-      name: ${builtins.toJSON agent.name}
-      description: ${builtins.toJSON agent.description}
-      ${lib.optionalString (model != null) "model: ${builtins.toJSON model}"}
+      name: ${renderYamlString "Copilot agent name" agent.name}
+      description: ${renderYamlString "Copilot agent description" agent.description}
+      ${lib.optionalString (model != null) "model: ${renderYamlString "Copilot model ID" model}"}
       ---
     '';
 
@@ -438,24 +314,24 @@ let
       sandboxMode = modelValue "codex" (agent.sandbox_mode or null);
     in
     {
-      inherit (agent) name;
-      inherit (agent) description;
+      name = requireSafeText "Codex agent name" agent.name;
+      description = requireSafeText "Codex agent description" agent.description;
       developer_instructions = lib.trim agent.content;
     }
     // lib.optionalAttrs (model != null) {
-      inherit model;
+      model = requireSafeText "Codex model ID" model;
     }
     // lib.optionalAttrs (modelReasoningEffort != null) {
-      model_reasoning_effort = modelReasoningEffort;
+      model_reasoning_effort = requireSafeText "Codex reasoning effort" modelReasoningEffort;
     }
     // lib.optionalAttrs (modelProvider != null) {
-      model_provider = modelProvider;
+      model_provider = requireSafeText "Codex provider ID" modelProvider;
     }
     // lib.optionalAttrs (sandboxMode != null) {
-      sandbox_mode = sandboxMode;
+      sandbox_mode = requireSafeText "Codex sandbox mode" sandboxMode;
     }
     // lib.optionalAttrs (agent ? nickname_candidates) {
-      inherit (agent) nickname_candidates;
+      nickname_candidates = map (requireSafeText "Codex nickname candidate") agent.nickname_candidates;
     };
 
   toClaudeMarkdown = lib.mapAttrs (_name: renderClaudeAgent) (agentsForProvider "claudeCode");

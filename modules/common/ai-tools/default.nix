@@ -6,7 +6,10 @@
 }:
 
 let
-  aiAgents = import ./agents.nix { inherit gatewayEnabled lib; };
+  modelRouting = import ./model-routing.nix { inherit gatewayEnabled lib; };
+  aiAgents = import ./agents.nix {
+    inherit gatewayEnabled lib modelRouting;
+  };
   codexManagedRequirements = import ./codex-managed-requirements.nix;
   permissions = import ./permissions.nix;
 
@@ -310,6 +313,7 @@ in
     codexContextOverride
     checkedHarnessSkillPolicy
     okfMemory
+    modelRouting
     permissions
     planningWithFiles
     programOrchestration

@@ -13,6 +13,8 @@ let
     ;
 
   cfg = config.khanelinix.services.cliproxyapi;
+  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
+  inherit (aiTools) modelRouting;
   claudeCodeEnabled = config.khanelinix.programs.terminal.tools.claude-code.enable or false;
   codexEnabled = config.khanelinix.programs.terminal.tools.codex.enable or false;
   opencodeEnabled = config.khanelinix.programs.terminal.tools.opencode.enable or false;
@@ -151,19 +153,19 @@ in
     models = {
       claude = mkOption {
         type = types.str;
-        default = "claude-opus-5";
+        default = modelRouting.defaultUpstreamModels.claude;
         description = "Claude provider model used by harness aliases.";
       };
 
       codex = mkOption {
         type = types.str;
-        default = "gpt-5.6-sol";
+        default = modelRouting.defaultUpstreamModels.codex;
         description = "Codex provider model used by harness aliases.";
       };
 
       gemini = mkOption {
         type = types.str;
-        default = "gemini-3.7-flash-high";
+        default = modelRouting.defaultUpstreamModels.gemini;
         description = "Gemini provider model used by harness aliases.";
       };
     };
@@ -235,62 +237,7 @@ in
           };
         }
       );
-      default = [
-        {
-          provider = "codex";
-          model = "gpt-5.3-codex-spark";
-          alias = "claude-gpt-5.3-codex-spark";
-          displayName = "OpenAI · GPT 5.3 Codex Spark";
-        }
-        {
-          provider = "codex";
-          model = "gpt-5.6-sol";
-          alias = "claude-gpt-5.6-sol";
-          displayName = "OpenAI · GPT 5.6 Sol";
-        }
-        {
-          provider = "codex";
-          model = "gpt-5.6-terra";
-          alias = "claude-gpt-5.6-terra";
-          displayName = "OpenAI · GPT 5.6 Terra";
-        }
-        {
-          provider = "codex";
-          model = "gpt-5.6-luna";
-          alias = "claude-gpt-5.6-luna";
-          displayName = "OpenAI · GPT 5.6 Luna";
-        }
-        {
-          provider = "antigravity";
-          model = "gemini-3.7-flash-high";
-          alias = "claude-gemini-3.7-flash";
-          displayName = "Google · Gemini 3.7 Flash";
-        }
-        {
-          provider = "antigravity";
-          model = "gemini-pro-agent";
-          alias = "claude-gemini-3.1-pro";
-          displayName = "Google · Gemini 3.1 Pro";
-        }
-        {
-          provider = "antigravity";
-          model = "claude-sonnet-4-6";
-          alias = "claude-antigravity-sonnet-4-6";
-          displayName = "Google · Claude Sonnet 4.6";
-        }
-        {
-          provider = "antigravity";
-          model = "claude-opus-4-6-thinking";
-          alias = "claude-antigravity-opus-4-6";
-          displayName = "Google · Claude Opus 4.6";
-        }
-        {
-          provider = "antigravity";
-          model = "gpt-oss-120b-medium";
-          alias = "claude-gpt-oss-120b";
-          displayName = "Google · GPT-OSS 120B";
-        }
-      ];
+      default = modelRouting.cliproxyAliases;
       description = ''
         Models exposed additively to Claude Code through CLIProxyAPI gateway
         discovery. Aliases must start with `claude` or `anthropic` because
@@ -380,17 +327,16 @@ in
           inherit apiKey;
         };
         models =
-          builtins.listToAttrs (
-            map (model: {
-              name = model.alias;
-              value.name = model.displayName;
-            }) cfg.claudeCodeModels
-          )
-          // {
-            "${proxyModel "claude" cfg.models.claude}".name = "Anthropic · Opus 5";
-            "claude-fable-5".name = "Anthropic · Fable 5";
-            "claude-sonnet-5".name = "Anthropic · Sonnet 5";
-          };
+          let
+            configuredModels = builtins.listToAttrs (
+              map (model: {
+                name = model.alias;
+                value.name = model.displayName;
+              }) cfg.claudeCodeModels
+            );
+          in
+          configuredModels
+          // modelRouting.directGatewayModelsFor configuredModels (proxyModel "claude" cfg.models.claude);
       };
     };
 

@@ -20,8 +20,10 @@
   memory for this subtree
 - `codex.md`: Codex-only delegation and retry addendum
 - `permissions.nix`: shared command and MCP permission catalog
-- `agents.nix`: canonical semantic workers, gateway model projections, and
-  provider renderers
+- `skills/multi-provider-sdlc/references/model-routing.json`: canonical semantic
+  model policy, gateway catalog, task routes, and quota pools
+- `model-routing.nix`: validated Nix adapter for canonical routing policy
+- `agents.nix`: semantic worker capabilities and provider renderers
 - `marketplace/`: portable publication catalog, generator (`sync.py`),
   validator, generated shared plugin tree (`plugins/`), tests, and install
   documentation
