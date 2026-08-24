@@ -8,6 +8,15 @@
 let
   cfg = config.khanelinix.services.comfyui;
 
+  localFirstSettings = (pkgs.formats.json { }).generate "comfyui-local-first-settings.json" {
+    "Comfy.RightSidePanel.IsOpen" = false;
+    "Comfy.Templates.SelectedRunsOn" = [ "ComfyUI" ];
+    "Comfy.Workflow.AutoSave" = "off";
+    "Comfy.Workflow.Persist" = true;
+  };
+
+  workflowPresets = pkgs.callPackage ./workflows.nix { };
+
   models = [
     {
       url = "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/7beb7b647f04469fbe64ba8adc2bb0d7e5e9f73f/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors";
@@ -72,10 +81,50 @@ in
       extraArgs = [
         # ComfyUI 0.33.1 leaves its ROCm INT8 Triton backend opt-in.
         "--enable-triton-backend"
+        # Keep local installs free of paid API nodes and frontend network requests.
+        "--disable-api-nodes"
         "--extra-model-paths-config=${extraModelPaths}"
         # This GPU also drives two high-resolution displays. Preserve compositor headroom.
         "--reserve-vram=2"
       ];
     };
+
+    systemd.services.comfyui.preStart = lib.mkAfter ''
+      install -d -m 0755 \
+        /var/lib/comfyui/user/default \
+        /var/lib/comfyui/user/default/workflows/khanelinix
+
+      ln -sfnT ${./local_first} /var/lib/comfyui/custom_nodes/khanelinix_local_first
+
+      seedPreset() {
+        source=$1
+        destination=$2
+
+        if [[ ! -e "$destination" ]]; then
+          cp "$source" "$destination"
+          chmod 0644 "$destination"
+        fi
+      }
+
+      seedPreset \
+        ${workflowPresets}/01-qwen-image-2512.json \
+        /var/lib/comfyui/user/default/workflows/khanelinix/01-qwen-image-2512.json
+      seedPreset \
+        ${workflowPresets}/02-qwen-image-edit-2511.json \
+        /var/lib/comfyui/user/default/workflows/khanelinix/02-qwen-image-edit-2511.json
+
+      settingsFile=/var/lib/comfyui/user/default/comfy.settings.json
+      settingsTmp="$settingsFile.tmp"
+
+      if [[ -f "$settingsFile" ]]; then
+        ${lib.getExe pkgs.jq} --slurp '.[0] * .[1]' \
+          "$settingsFile" ${localFirstSettings} > "$settingsTmp"
+      else
+        cp ${localFirstSettings} "$settingsTmp"
+      fi
+
+      chmod 0644 "$settingsTmp"
+      mv "$settingsTmp" "$settingsFile"
+    '';
   };
 }
