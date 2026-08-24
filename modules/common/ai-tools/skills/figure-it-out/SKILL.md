@@ -5,11 +5,9 @@ description: "Design and run an auditable playbook when no narrower one fits: sc
 
 # Figure It Out
 
-When the task matches no playbook, design one. The first deliverable is the
-workflow itself: a phase sequence that scales rigor to the task, runs the
-scientific method, and leaves a decision trail a human can audit after stepping
-away. Bias toward more rigor. Building the wrong thing costs more than being
-careful.
+When no playbook matches, design one. First deliverable is a phase sequence that
+scales rigor, runs the scientific method, and leaves a decision trail a human can
+audit after stepping away. Bias toward rigor because wrong work costs more.
 
 Do not reinvent a playbook you already have. Route a focused single-unit task to
 its matching playbook: bug fix, performance, feature, visual parity, evaluation,
@@ -22,7 +20,7 @@ Open a todolist with the phases below as items.
 
 ## Phase A: Frame
 
-Ground first, then commit. Do not start the run until you can state:
+Do not start the run until you can state:
 
 - The definition of done as a falsifiable predicate (the prove-it-works
   principle in `engineering-principles`). "Done well" has to be checkable.
@@ -38,9 +36,9 @@ work proceeds without asking, but a multi-hour run earns one checkpoint.
 
 ## Phase B: Design the workflow
 
-Decompose the task into atomic, independently landable units. Sequence the
-riskiest unknown first so option value stays high. Build scaffold and
-verification before features.
+Decompose the task into atomic, independently landable units. Before writes,
+use `git-toolkit` to plan the stack and its rollback boundaries. Sequence the
+riskiest unknown first. Build scaffold and verification before features.
 
 - Build the verification harness before the work. Capture the baseline from the
   pre-change state so each check reads as old value against new value.
@@ -63,21 +61,20 @@ lands, instead of saving the whole trail for the end.
 
 ## Phase C: Run the loop
 
-Treat each unit as an experiment. State the hypothesis, make the smallest
-change, and measure it against the predicate on the real artifact. Keep the
-change when it advanced the predicate. Revert it when it did not. Verify each
-unit before starting the next instead of batching checks at the end (the
-sequence-verifiable-units principle in `engineering-principles`).
+This skill owns the program lifecycle, hypotheses, and audit trail.
+`verified-slice` stays a unit method and does not own program lifecycle,
+architecture, or audit trail.
 
-- Verify by inspecting the artifact, never a self-report. When something passes
-  too easily, suspect the observation method before the system. A blank
-  screenshot passes a lazy gate.
-- Pair delegated work with a judge. Audit the delegates' artifacts yourself
-  before trusting them. If a worker games the gate, reset and harden the
-  contract. If the gate itself is wrong, fix the gate in its own change instead
-  of routing around it.
-- A verdict is VERIFIED, NOT VERIFIED, or INCONCLUSIVE. Inconclusive is not a
-  pass. Do not hide a negative.
+State the hypothesis and predicate. Then run each planned unit through the
+`verified-slice` method in `engineering-principles`. It handles baseline,
+implementation, proportional verification, review, correction, and exact
+candidate preparation. With `local-commit`, commit the candidate, then confirm
+occurrence. Otherwise, hand off the exact patch and stop. Start the next unit
+only after a confirmed occurrence and durable rollback boundary.
+
+Inspect the real artifact, never a self-report. Pair delegated work with a judge
+and audit its artifact. Use VERIFIED, NOT_VERIFIED, or INCONCLUSIVE. An
+inconclusive result does not pass.
 
 ## Phase D: Keep the audit trail
 
