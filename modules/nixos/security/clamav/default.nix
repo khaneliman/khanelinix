@@ -9,6 +9,7 @@ let
   cfg = config.khanelinix.security.clamav;
   excludedDirectories = [
     "(^|/)\\.cache($|/)"
+    "(^|/)\\.local/cache($|/)"
     "(^|/)\\.git($|/)"
     "(^|/)\\.hg($|/)"
     "(^|/)\\.svn($|/)"
@@ -48,7 +49,9 @@ in
         Nice = 19;
         CPUSchedulingPolicy = "idle";
         IOSchedulingClass = "idle";
-        RuntimeMaxSec = "6h";
+        # A oneshot remains in its start phase until clamscan exits.
+        # RuntimeMaxSec does not apply to oneshot services.
+        TimeoutStartSec = "6h";
         SuccessExitStatus = [ 1 ];
 
         # The scanner parses untrusted file contents as root; contain it.
