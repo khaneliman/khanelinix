@@ -1,0 +1,176 @@
+--- a/core/src/agent/role.rs
++++ b/core/src/agent/role.rs
+@@ -1,7 +1,8 @@
+ //! Applies bounded agent-role overrides to an existing session config.
+ //!
+ //! Roles may customize the child or reduce its capabilities, but never replace the parent
+-//! session's authority. A projected layer keeps existing layer-based consumers in sync.
++//! session's authority. User-layer roles may select a provider already configured by the parent.
++//! A projected layer keeps existing layer-based consumers in sync.
+ 
+ use crate::config::AgentRoleConfig;
+ use crate::config::Config;
+@@ -37,6 +38,7 @@
+ struct AgentRoleOverrides {
+     developer_instructions: Option<String>,
+     model: Option<String>,
++    model_provider: Option<String>,
+     model_reasoning_effort: Option<ReasoningEffort>,
+     model_reasoning_summary: Option<ReasoningSummary>,
+     model_verbosity: Option<Verbosity>,
+@@ -80,6 +82,11 @@
+     let mut overrides = AgentRoleOverrides {
+         developer_instructions: role_config.developer_instructions,
+         model: role_config.model,
++        model_provider: config
++            .agent_roles_with_provider_selection
++            .contains(role_name)
++            .then_some(role_config.model_provider)
++            .flatten(),
+         model_reasoning_effort: role_config.model_reasoning_effort,
+         model_reasoning_summary: role_config.model_reasoning_summary,
+         model_verbosity: role_config.model_verbosity,
+@@ -182,6 +189,14 @@
+     ) -> anyhow::Result<Config> {
+         let mut next_config = config.clone();
+         next_config.config_layer_stack = build_config_layer_stack(config, &role_layer_toml)?;
++        if let Some(provider_id) = &overrides.model_provider {
++            next_config.model_provider = next_config
++                .model_providers
++                .get(provider_id)
++                .cloned()
++                .ok_or_else(|| anyhow!("Model provider `{provider_id}` not found"))?;
++            next_config.model_provider_id = provider_id.clone();
++        }
+         if let Some(model) = &overrides.model {
+             next_config.model = Some(model.clone());
+         }
+--- a/core/src/config/agent_roles.rs
++++ b/core/src/config/agent_roles.rs
+@@ -1,4 +1,5 @@
+ use super::AgentRoleConfig;
++use codex_config::ConfigLayerSource;
+ use codex_config::ConfigLayerStack;
+ use codex_config::config_toml::AgentRoleToml;
+ use codex_config::config_toml::AgentsToml;
+@@ -22,14 +23,16 @@
+     cfg: &ConfigToml,
+     config_layer_stack: &ConfigLayerStack,
+     startup_warnings: &mut Vec<String>,
+-) -> std::io::Result<BTreeMap<String, AgentRoleConfig>> {
++) -> std::io::Result<(BTreeMap<String, AgentRoleConfig>, BTreeSet<String>)> {
+     let mut layers = config_layer_stack.layers_low_to_high().peekable();
+     if layers.peek().is_none() {
+         return load_agent_roles_without_layers(fs, cfg).await;
+     }
+ 
+     let mut roles: BTreeMap<String, AgentRoleConfig> = BTreeMap::new();
++    let mut provider_selecting_roles = BTreeSet::new();
+     for layer in layers {
++        let layer_can_select_provider = matches!(layer.name, ConfigLayerSource::User { .. });
+         let mut layer_roles: BTreeMap<String, AgentRoleConfig> = BTreeMap::new();
+         let mut declared_role_files = BTreeSet::new();
+         let config_folder = layer.config_folder();
+@@ -95,6 +98,8 @@
+         }
+ 
+         for (role_name, role) in layer_roles {
++            let config_file_from_layer = role.config_file.is_some();
++            let inherited_provider_selection = provider_selecting_roles.contains(&role_name);
+             let mut merged_role = role;
+             if let Some(existing_role) = roles.get(&role_name) {
+                 merge_missing_role_fields(&mut merged_role, existing_role);
+@@ -106,11 +111,20 @@
+                 push_agent_role_warning(startup_warnings, err);
+                 continue;
+             }
++            if if config_file_from_layer {
++                layer_can_select_provider
++            } else {
++                inherited_provider_selection
++            } {
++                provider_selecting_roles.insert(role_name.clone());
++            } else {
++                provider_selecting_roles.remove(&role_name);
++            }
+             roles.insert(role_name, merged_role);
+         }
+     }
+ 
+-    Ok(roles)
++    Ok((roles, provider_selecting_roles))
+ }
+ 
+ fn push_agent_role_warning(startup_warnings: &mut Vec<String>, err: std::io::Error) {
+@@ -122,7 +136,7 @@
+ async fn load_agent_roles_without_layers(
+     fs: &dyn ExecutorFileSystem,
+     cfg: &ConfigToml,
+-) -> std::io::Result<BTreeMap<String, AgentRoleConfig>> {
++) -> std::io::Result<(BTreeMap<String, AgentRoleConfig>, BTreeSet<String>)> {
+     let mut roles = BTreeMap::new();
+     if let Some(agents_toml) = cfg.agents.as_ref() {
+         for (declared_role_name, role_toml) in &agents_toml.roles {
+@@ -138,7 +152,7 @@
+         }
+     }
+ 
+-    Ok(roles)
++    Ok((roles, BTreeSet::new()))
+ }
+ 
+ async fn read_declared_role(
+--- a/core/src/config/mod.rs
++++ b/core/src/config/mod.rs
+@@ -129,6 +129,7 @@
+ use serde::Deserialize;
+ use serde::Serialize;
+ use std::collections::BTreeMap;
++use std::collections::BTreeSet;
+ use std::collections::HashMap;
+ use std::collections::HashSet;
+ use std::io::ErrorKind;
+@@ -844,6 +845,10 @@
+     /// User-defined role declarations keyed by role name.
+     pub agent_roles: BTreeMap<String, AgentRoleConfig>,
+ 
++    /// Roles whose config file originates from a machine-local user layer.
++    #[doc(hidden)]
++    pub agent_roles_with_provider_selection: BTreeSet<String>,
++
+     /// Maximum token budget allowed for a goal and default budget for new goals.
+     pub max_goal_token_budget: Option<i64>,
+ 
+@@ -3630,7 +3635,7 @@
+         let current_time_reminder = resolve_current_time_reminder_config(&cfg, &features)?;
+         let terminal_resize_reflow = resolve_terminal_resize_reflow_config(&cfg);
+ 
+-        let agent_roles =
++        let (agent_roles, agent_roles_with_provider_selection) =
+             agent_roles::load_agent_roles(fs, &cfg, &config_layer_stack, &mut startup_warnings)
+                 .await?;
+ 
+@@ -4085,6 +4090,7 @@
+             agent_default_subagent_reasoning_effort,
+             agent_max_depth,
+             agent_roles,
++            agent_roles_with_provider_selection,
+             max_goal_token_budget: cfg
+                 .goals
+                 .as_ref()
+--- a/thread-manager-sample/src/main.rs
++++ b/thread-manager-sample/src/main.rs
+@@ -1,4 +1,5 @@
+ use std::collections::BTreeMap;
++use std::collections::BTreeSet;
+ use std::collections::HashMap;
+ use std::io::IsTerminal;
+ use std::io::Read;
+@@ -258,6 +259,7 @@
+         agent_interrupt_message_enabled: false,
+         agent_max_depth: 1,
+         agent_roles: BTreeMap::new(),
++        agent_roles_with_provider_selection: BTreeSet::new(),
+         memories: MemoriesConfig::default(),
+         sqlite: SqliteConfig::from_sqlite_home(codex_home.clone()),
+         log_dir: codex_home.join("log").to_path_buf(),

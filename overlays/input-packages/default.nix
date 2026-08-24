@@ -61,8 +61,14 @@ in
   # Treat an enabled V1 feature with V2 disabled as an explicit protocol
   # choice. Otherwise Sol's model-catalog metadata silently promotes sessions
   # back to V2 and sends encrypted child prompts through the OAuth gateway.
+  #
+  # User-owned agent files may select configured providers. Project agents
+  # retain the parent provider and authority boundary.
   codex = inputs.llm-agents.packages.${system}.codex.overrideAttrs (old: {
-    patches = (old.patches or [ ]) ++ [ ./codex-force-multi-agent-v1.patch ];
+    patches = (old.patches or [ ]) ++ [
+      ./codex-force-multi-agent-v1.patch
+      ./codex-user-agent-provider.patch
+    ];
   });
 
   claude-desktop =
