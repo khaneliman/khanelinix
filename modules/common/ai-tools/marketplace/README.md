@@ -123,13 +123,14 @@ for its Shape phase.
 `engineering-workflow` selects one task shape. Each shape changes the evidence,
 verification target, and completion signal.
 
-| Shape      | Required emphasis                                                            |
-| ---------- | ---------------------------------------------------------------------------- |
-| Bug fix    | Reproduce first, fix the cause, and rerun the failing signal.                |
-| Feature    | Read contracts, shape types and placement, then test new and shared paths.   |
-| Refactor   | Find callers, pin behavior, subtract first, and prove behavior parity.       |
-| Prototype  | State one question, build the smallest probe, and mark throwaway work.       |
-| Evaluation | Fix criteria, compare identical surfaces, and record the reversal condition. |
+| Shape         | Required emphasis                                                            |
+| ------------- | ---------------------------------------------------------------------------- |
+| Bug fix       | Reproduce first, fix the cause, and rerun the failing signal.                |
+| Feature       | Read contracts, shape types and placement, then test new and shared paths.   |
+| Refactor      | Find callers, pin behavior, subtract first, and prove behavior parity.       |
+| Modernization | Freeze compatibility, migrate in green slices, then remove the legacy path.  |
+| Prototype     | State one question, build the smallest probe, and mark throwaway work.       |
+| Evaluation    | Fix criteria, compare identical surfaces, and record the reversal condition. |
 
 Investigation is a phase inside each shape. For explanation-only work, use `how`
 or `why` directly.

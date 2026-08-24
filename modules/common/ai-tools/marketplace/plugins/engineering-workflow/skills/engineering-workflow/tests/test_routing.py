@@ -23,6 +23,10 @@ LINK_RE = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 SUPPORTED_FRONTMATTER_FIELDS = {"description", "license", "metadata", "name"}
 MAX_DESCRIPTION_CHARACTERS = 512
 MAX_PLAYBOOK_LINES = 100
+PROGRAM_SCALE_PREDICATE = (
+    "Program-scale means any large, cross-cutting, or unattended run, including "
+    "multiple independent cutovers, repositories, systems, or teams."
+)
 
 
 def read(path: Path) -> str:
@@ -31,6 +35,10 @@ def read(path: Path) -> str:
 
 def normalized(path: Path) -> str:
     return " ".join(read(path).split())
+
+
+def compact(content: str) -> str:
+    return " ".join(content.split())
 
 
 def split_frontmatter(content: str) -> tuple[dict[str, str], str]:
@@ -218,7 +226,12 @@ class PlaybookContract(unittest.TestCase):
 
 class ReferenceReachability(unittest.TestCase):
     def test_required_references_exist(self) -> None:
-        for name in ("task-shapes.md", "delegation.md", "gates.md"):
+        for name in (
+            "task-shapes.md",
+            "delegation.md",
+            "gates.md",
+            "modernization.md",
+        ):
             self.assertTrue((REFERENCES / name).is_file(), name)
 
     def test_every_local_link_resolves(self) -> None:
@@ -434,12 +447,19 @@ class TaskShapesContract(unittest.TestCase):
     def setUp(self) -> None:
         self.content = read(REFERENCES / "task-shapes.md")
 
-    def test_declares_five_shapes(self) -> None:
+    def test_declares_six_shapes(self) -> None:
         headings = re.findall(r"^##\s+(.+)$", self.content, re.MULTILINE)
         shapes = [heading.strip() for heading in headings if heading != "Attribution"]
         self.assertEqual(
             shapes,
-            ["Bug Fix", "Feature", "Refactor", "Prototype", "Evaluation"],
+            [
+                "Bug Fix",
+                "Feature",
+                "Refactor",
+                "Modernization",
+                "Prototype",
+                "Evaluation",
+            ],
         )
 
     def test_investigation_is_a_phase_not_a_shape(self) -> None:
@@ -452,9 +472,106 @@ class TaskShapesContract(unittest.TestCase):
         for skill in ("research", "tdd", "verification-harness", "diagnosing-bugs"):
             self.assertIn(f"`{skill}`", self.content)
 
+    def test_modernization_routes_by_lifecycle_size(self) -> None:
+        modernization = self.content.split("## Modernization", maxsplit=1)[1].split(
+            "## Prototype", maxsplit=1
+        )[0]
+        text = compact(modernization)
+        self.assertIn("[modernization.md](modernization.md)", modernization)
+        self.assertIn(PROGRAM_SCALE_PREDICATE, text)
+        self.assertRegex(
+            text,
+            r"Route program-scale modernization to `figure-it-out` before writes[.]",
+        )
+
     def test_attributes_upstream_license(self) -> None:
         self.assertIn("pstack", self.content.lower())
         self.assertIn("../LICENSE", self.content)
+
+
+class ModernizationContract(unittest.TestCase):
+    def setUp(self) -> None:
+        self.content = read(REFERENCES / "modernization.md")
+        self.text = self.content.lower()
+
+    def test_freezes_compatibility_before_translation(self) -> None:
+        freeze = self.content.split("## Freeze the Compatibility Contract", maxsplit=1)[
+            1
+        ].split("## Shape the Migration", maxsplit=1)[0]
+        text = " ".join(freeze.lower().split())
+        self.assertIn("observable contract as a compatibility matrix", text)
+        self.assertIn("capture the baseline on the legacy implementation", text)
+
+    def test_owner_predicate_matches_task_shape(self) -> None:
+        owner = self.content.split("## Owner Boundary", maxsplit=1)[1].split(
+            "## Freeze the Compatibility Contract", maxsplit=1
+        )[0]
+        owner_text = compact(owner)
+        self.assertIn(PROGRAM_SCALE_PREDICATE, owner_text)
+        self.assertIn(
+            "Route program-scale modernization to `figure-it-out` before writes.",
+            owner_text,
+        )
+        self.assertIn(
+            "cutover, and rollback execution as separate authority",
+            owner_text,
+        )
+        self.assertIn(
+            "A code or commit grant does not authorize an external cutover.",
+            owner_text,
+        )
+
+    def test_separates_mechanical_and_behavior_changes(self) -> None:
+        shape = self.content.split("## Shape the Migration", maxsplit=1)[1].split(
+            "## Prove and Cut Over", maxsplit=1
+        )[0]
+        text = compact(shape).lower()
+        self.assertIn("expand-migrate-contract", text)
+        self.assertLess(
+            text.index("mechanical translation"),
+            text.index("deliberate behavior change"),
+        )
+        self.assertIn(
+            "keep mechanical translation and behavior change in separate slices", text
+        )
+        self.assertIn(
+            "separate compatibility-matrix entries, checks, and reviewer verdicts",
+            text,
+        )
+        self.assertIn("removal condition", text)
+
+    def test_requires_parity_cutover_and_rollback_evidence(self) -> None:
+        proof = self.content.split("## Prove and Cut Over", maxsplit=1)[1].split(
+            "## Completion", maxsplit=1
+        )[0]
+        text = compact(proof).lower()
+        self.assertIn("old and new paths against identical fixtures", text)
+        self.assertIn("do not prove semantic parity", text)
+        self.assertIn("make data and activation operations idempotent and resumable", text)
+        self.assertIn("run each applicable operation twice", text)
+        self.assertIn("prove the second run converges without another effect", text)
+        self.assertRegex(text, r"before an authorized cutover, prove rollback")
+
+    def test_finishes_without_dual_maintenance(self) -> None:
+        completion = self.content.split("## Completion", maxsplit=1)[1]
+        text = completion.lower()
+        self.assertIn("sole supported path", text)
+        self.assertIn("deleted", text)
+        self.assertIn("remaining legacy references", text)
+
+    def test_orders_cutover_stabilization_and_legacy_deletion(self) -> None:
+        shape = self.content.split("## Shape the Migration", maxsplit=1)[1]
+        text = compact(shape).lower()
+        for term in (
+            "cutover, post-cutover stabilization, and legacy deletion",
+            "separate green ordered slices",
+            "stabilization evidence passes",
+            "legacy path",
+        ):
+            self.assertIn(term, text)
+        ordered = text.split("1. verification scaffold", maxsplit=1)[1]
+        self.assertLess(ordered.index("authorized cutover"), ordered.index("post-cutover stabilization"))
+        self.assertLess(ordered.index("post-cutover stabilization"), ordered.index("legacy deletion"))
 
 
 class LicenseContract(unittest.TestCase):

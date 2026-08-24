@@ -48,6 +48,24 @@ user wants an explanation and no mutation, leave this skill and use `how` or
   explicit authority. Use `blast-radius` when call reach is unclear.
 - Done: structure improved, and no observable behavior moved.
 
+## Modernization
+
+- Goal: replace a legacy language, runtime, framework, build, or packaging path
+  while preserving chosen contracts.
+- Scope: use this shape only when one routine, bounded lifecycle can reach
+  cutover. Program-scale means any large, cross-cutting, or unattended run,
+  including multiple independent cutovers, repositories, systems, or teams.
+  Route program-scale modernization to `figure-it-out` before writes. Read
+  [modernization.md](modernization.md).
+- Ground: inventory observable contracts, consumers, data, delivery paths, and
+  verification gaps. Capture the compatibility baseline before translation.
+- Shape: define target boundaries, then sequence green migration slices. Keep
+  mechanical translation separate from behavior change.
+- Verify: prove old-to-new parity at each boundary. Test migration, rollback,
+  build, package, install, and integration paths that exist in scope.
+- Done: the target is the sole supported path, legacy code is removed, and
+  cutover evidence names any separately authorized external action.
+
 ## Prototype
 
 - Goal: learn whether an approach works.
