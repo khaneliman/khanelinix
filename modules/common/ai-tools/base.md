@@ -41,36 +41,24 @@ and metadata, `medium` for mechanical edits and focused checks, `high` for
 discovery and routine implementation, `xhigh` for cross-file work and broad
 validation, and `max` for architecture or high-stakes review.
 
-Benchmark-informed coding defaults: Luna `xhigh`, Sol/Opus/Fable `high`, Gemini
-`medium`, and Sonnet explicit only. Treat the supplied benchmark as relative
-evidence. Set effort explicitly when the tool supports it; otherwise state the
-task tier in the prompt. Detailed measurements stay in the routing reference.
-
-Use named workers only when the host supports role selection. If a host rejects
-a named worker, use an unnamed worker with inherited or configured defaults and
-report that role-specific routing did not apply.
+Delegate bounded fact finding and checks to the smallest capable worker. Keep
+planning, integration, and final judgment in the parent. Let provider adapters
+or `multi-provider-sdlc` select concrete models, fallbacks, and quota circuits.
+If a named role fails, use a configured default and report the degradation.
 
 ## Operating Loop
 
 - Read project-local contributor canon before changes.
 - Follow user outcome and surrounding code. Match comment density, naming, and
   idiom.
-- Assume multiple agent streams operate concurrently in the repository. Never
-  assume sole control of the workspace.
-- Keep edits strictly bounded to your assigned work stream. Do not revert,
-  overwrite, or clean unfamiliar files or changes made by other streams.
-- Before you stage or commit, inspect diffs to ensure changes belong only to
-  your task. Never run blanket discard or reset operations that destroy
-  concurrent work.
+- Assume concurrent agent streams. Keep edits bounded. Never alter unfamiliar
+  work. Inspect exact diffs before staging or committing.
 - Surface assumptions when they materially affect result. Ask only when conflict
   or ambiguity cannot be resolved safely; otherwise state choice and proceed.
 - Settle an empirical fork with a cheap experiment or prototype when running it
   answers faster than asking. Reserve questions for product or preference calls.
-- Own delegated work. Review the delegate's diff or artifact and write your own
-  summary. Do not pass through its self-report.
-- When you disagree, give the reason, better alternative, and specific risk.
-- Keep an evidence-backed conclusion until new evidence or requirements change
-  it. State what changed.
+- Own delegated work. Inspect its artifact and write your own conclusion.
+- When evidence supports disagreement, state reason, alternative, and risk.
 - Prefer boring direct solutions. Add abstractions only when they remove real
   complexity.
 - Verify in proportion to risk before reporting completion.
@@ -83,46 +71,28 @@ report that role-specific routing did not apply.
 
 ## Skill Routing
 
-Match task shape to a workflow skill before solo work. Closest trigger wins.
+Select one owner before phase methods. Closest discriminator wins.
 
-- Routine bounded software mutation: `engineering-workflow`. It owns lifecycle
-  gates while matching domain and workflow skills own phase methods.
-- Unfamiliar code before a change, or an "are we sure" question: `how`.
-  Motivation, rationale, or regression history: `why`.
-- Inside `engineering-workflow`, use `architect` as the Shape method for a
-  non-trivial feature or boundary change. An explicit `/architect` request uses
-  its design-led implementation flow. Wide solution space for one artifact:
-  `arena`.
-- Contested or high-stakes design: `interrogate` owns review method and
-  synthesis before shipping.
-- Small diff with unclear reach: `blast-radius` before merge.
-- Diff sizing, work sequencing, debugging, verification, or context pressure:
-  `engineering-principles`.
-- Large, cross-cutting, or unattended work: `figure-it-out` with a
-  `show-me-your-work` decision trail.
-- Explicit provider or model diversity, or council routing:
-  `multi-provider-sdlc` selects seats inside the caller-owned endpoint.
-- External primary-source research with no mutation: `research`. Standalone
-  material product-choice clarification: `requirements-interview`.
-- For mutation work, `engineering-workflow` keeps lifecycle ownership. Inside
-  it, use `research` and `requirements-interview` in Ground, explicit `tdd` in
-  Implement, `diagnosing-bugs` for hard general bugs in Ground, and
-  `verification-harness` or `performance-forensics` in Verify. Harness creation
-  or repair still requires explicit write authority.
-- Read-only general bug diagnosis: `diagnosing-bugs`. Read-only performance
-  diagnosis: `performance-forensics`. Read-only verification-surface audit:
-  `verification-harness`.
-- Explicit independent worker fan-out adds `swarm` as a host-only overlay to the
-  selected workflow. Never use it as the entry workflow. The caller keeps
-  lifecycle, integration, and final judgment.
-- User-facing prose: `unslop`. Docs, comments, commits, PR text:
-  `technical-writing`.
-- Resuming prior work: `recall`. After a correction or a clean complex landing:
-  `reflect`.
-- AI-configuration design, refactoring, and audits: `ai-tools-architect`.
-  Repository-wide architecture evaluation and cross-cutting change planning:
-  `software-engineering`. Domain skills execute inside the selected workflow;
-  Git artifact review uses the matching Git skill.
+- Routine mutation: `engineering-workflow`. Large, cross-cutting, or unattended
+  single-goal work: `figure-it-out`.
+- Architecture-only work: `software-engineering`. AI-tool configuration:
+  `ai-tools-architect`.
+- Structure explanation: `how`. Rationale or regression history: `why`. External
+  primary-source facts: `research`.
+- General bug diagnosis without a fix: `diagnosing-bugs`. Measured performance
+  diagnosis: `performance-forensics`.
+- Explicit design-led implementation: `architect`. Browser automation:
+  `playwright`. Verification-surface audit: `verification-harness`.
+- Local Git history or diffs: `git-toolkit`. GitHub issues, pull requests,
+  reviews, or checks: `github-toolkit`.
+- Technical prose: `technical-writing`. Durable knowledge: `okf-memory`.
+  Persistent transient task state: `planning-with-files`.
+
+The selected owner routes phase methods and domain skills. A method never takes
+over lifecycle ownership. Caller-only methods include `arena`, `interrogate`,
+`playwright-interactive`, `recall`, `reflect`, `requirements-interview`, and
+`unslop`. Explicit overlays include `multi-provider-sdlc`, `show-me-your-work`,
+and `swarm`. Load one only after the user or selected owner names it.
 
 ## Durable Memory
 

@@ -234,43 +234,37 @@ class RepositoryRoutingContract(unittest.TestCase):
 
     def test_base_routes_routine_mutation_to_workflow(self) -> None:
         text = read(BASE_MD)
-        self.assertIn("Routine bounded software mutation: `engineering-workflow`", text)
+        self.assertIn("Routine mutation: `engineering-workflow`", text)
 
     def test_base_routes_explicit_provider_work_to_overlay(self) -> None:
         text = read(BASE_MD)
-        self.assertIn(
-            "`multi-provider-sdlc` selects seats inside the caller-owned endpoint",
-            text,
-        )
+        self.assertIn("`multi-provider-sdlc` select concrete models", text)
+        self.assertIn("Explicit overlays include `multi-provider-sdlc`", text)
 
-    def test_base_qualifies_architect_ownership(self) -> None:
+    def test_base_keeps_architect_below_selected_owner(self) -> None:
         text = normalized(BASE_MD)
-        self.assertIn("Inside `engineering-workflow`, use `architect`", text)
-        self.assertIn("An explicit `/architect` request", text)
+        self.assertIn("Explicit design-led implementation: `architect`", text)
+        self.assertIn("The selected owner routes phase methods", text)
 
-    def test_base_routes_new_leaf_methods(self) -> None:
+    def test_base_names_direct_and_caller_only_methods(self) -> None:
         text = read(BASE_MD)
         for skill in (
             "research",
             "requirements-interview",
-            "tdd",
             "verification-harness",
             "performance-forensics",
             "diagnosing-bugs",
+            "arena",
+            "interrogate",
             "swarm",
         ):
             self.assertIn(f"`{skill}`", text)
 
-    def test_base_keeps_mutating_leaf_methods_inside_lifecycle(self) -> None:
+    def test_base_keeps_methods_below_lifecycle_owners(self) -> None:
         text = normalized(BASE_MD)
-        self.assertIn(
-            "For mutation work, `engineering-workflow` keeps lifecycle ownership",
-            text,
-        )
-        self.assertIn("explicit `tdd` in Implement", text)
-        self.assertIn("Harness creation or repair", text)
-        self.assertIn("`swarm` as a host-only overlay", text)
-        self.assertIn("Never use it as the entry workflow", text)
+        self.assertIn("A method never takes over lifecycle ownership", text)
+        self.assertIn("Explicit overlays include", text)
+        self.assertIn("after the user or selected owner names it", text)
 
     def test_multi_provider_root_rejects_lifecycle_ownership(self) -> None:
         text = normalized(MULTI_PROVIDER_ROOT / "SKILL.md")
