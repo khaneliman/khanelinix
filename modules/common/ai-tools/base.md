@@ -89,12 +89,12 @@ Select one owner before phase methods. Closest discriminator wins.
   Persistent transient task state: `planning-with-files`.
 
 The selected owner routes phase methods and domain skills. A method never takes
-over lifecycle ownership. Caller-only methods include `arena`, `interrogate`,
-`playwright-interactive`, `recall`, `reflect`, `requirements-interview`, and
-`unslop`. Explicit overlays include `multi-provider-sdlc`,
-`program-orchestration`, `show-me-your-work`, and `swarm`.
-`program-orchestration` requires explicit user invocation. Load another overlay
-only after the user or selected owner names it.
+over lifecycle ownership. Caller-only owners include `arena`,
+`playwright-interactive`, `recall`, `reflect`, and direct
+`requirements-interview` invocation. Caller-only method: `unslop`. Explicit
+overlays include `interrogate`, `multi-provider-sdlc`, `program-orchestration`,
+`show-me-your-work`, and `swarm`. `program-orchestration` requires explicit user
+invocation. Load another overlay only after the user or selected owner names it.
 
 ## Durable Memory
 

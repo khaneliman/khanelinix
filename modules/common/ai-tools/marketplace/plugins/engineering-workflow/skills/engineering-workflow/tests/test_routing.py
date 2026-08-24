@@ -290,9 +290,11 @@ class RepositoryRoutingContract(unittest.TestCase):
         self.assertIn("Routine mutation: `engineering-workflow`", text)
 
     def test_base_routes_explicit_provider_work_to_overlay(self) -> None:
-        text = read(BASE_MD)
+        text = normalized(BASE_MD)
         self.assertIn("`multi-provider-sdlc` select concrete models", text)
-        self.assertIn("Explicit overlays include `multi-provider-sdlc`", text)
+        self.assertIn(
+            "Explicit overlays include `interrogate`, `multi-provider-sdlc`", text
+        )
 
     def test_base_keeps_architect_below_selected_owner(self) -> None:
         text = normalized(BASE_MD)
