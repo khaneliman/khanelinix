@@ -10,6 +10,10 @@ let
   homeCfg = config.home-manager.users.${config.khanelinix.user.name} or { };
   exoEnabled = homeCfg.services.exo.enable or false;
   exoLibp2pPort = 52416;
+  syncthingEnabled = homeCfg.services.syncthing.enable or false;
+  # Use the package instance from the user's Home Manager service so the
+  # allowlisted path matches the binary the LaunchAgent launches.
+  syncthingPackage = homeCfg.services.syncthing.package or pkgs.syncthing;
   python3 = lib.getExe pkgs.python3;
   localNetworkPrivilegesCleanup = ./local-network-privileges-cleanup.py;
   # Use the package instance from the user's home packages so the allowlisted
@@ -25,6 +29,9 @@ let
       # ALF tracks python itself. The exo overlay pins its own interpreter
       # (MLX wheel constraint), so read it from the package, not pkgs.python3.
       "${pkgs.exo.python.interpreter}"
+    ]
+    ++ lib.optionals syncthingEnabled [
+      (lib.getExe syncthingPackage)
     ]
     ++ lib.optionals (moonlightPackage != null) [
       # ALF tracks the real listening executable, not the qt wrapper script.
