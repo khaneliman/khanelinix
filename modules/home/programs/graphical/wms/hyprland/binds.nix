@@ -504,10 +504,12 @@ in
               # printed Kinesis Fn row. Advantage360 Pro/ZMK can emit F13/F14
               # from any thumb/layer position, giving VoxType a cross-OS bind
               # that does not involve Super/Windows.
+              # Fallback chords use Ctrl+Alt, not Super: a Super tap leaks to
+              # Citrix/RDP sessions and opens the Windows Start menu.
               (mkExecBind "" "F13" "$voxtype-toggle")
-              (mkExecBind "$mainMod" "D" "$voxtype-toggle")
+              (mkExecBind "CTRL_ALT" "D" "$voxtype-toggle")
               (mkExecBind "" "F14" "$voxtype-cancel")
-              (mkExecBind "$SUPER_SHIFT" "D" "$voxtype-cancel")
+              (mkExecBind "CTRL_ALT_SHIFT" "D" "$voxtype-cancel")
             ];
 
             # Background tools binds (background-graphical.slice)
@@ -920,9 +922,9 @@ in
                 dispatcher = "submap";
                 args = "reset";
               })
-              (mkExecBind "$mainMod" "D" "$voxtype-toggle")
+              (mkExecBind "CTRL_ALT" "D" "$voxtype-toggle")
               (mkBind {
-                mods = "$mainMod";
+                mods = "CTRL_ALT";
                 key = "D";
                 dispatcher = "submap";
                 args = "reset";
@@ -934,9 +936,9 @@ in
                 dispatcher = "submap";
                 args = "reset";
               })
-              (mkExecBind "$SUPER_SHIFT" "D" "$voxtype-cancel")
+              (mkExecBind "CTRL_ALT_SHIFT" "D" "$voxtype-cancel")
               (mkBind {
-                mods = "$SUPER_SHIFT";
+                mods = "CTRL_ALT_SHIFT";
                 key = "D";
                 dispatcher = "submap";
                 args = "reset";
@@ -968,9 +970,9 @@ in
               ++ map mkLuaBind [
                 # VoxType resets this submap after streaming session teardown.
                 (mkExecBind "" "F13" "$voxtype-toggle")
-                (mkExecBind "$mainMod" "D" "$voxtype-toggle")
+                (mkExecBind "CTRL_ALT" "D" "$voxtype-toggle")
                 (mkExecBind "" "F14" "$voxtype-cancel")
-                (mkExecBind "$SUPER_SHIFT" "D" "$voxtype-cancel")
+                (mkExecBind "CTRL_ALT_SHIFT" "D" "$voxtype-cancel")
                 (mkExecBind "" "F12" "$voxtype-cancel")
               ];
           };

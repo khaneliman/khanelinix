@@ -177,7 +177,7 @@ in
               "record"
               "toggle"
             ];
-            "Mod+D".action.spawn = [
+            "Ctrl+Alt+D".action.spawn = [
               "voxtype"
               "record"
               "toggle"
@@ -187,7 +187,7 @@ in
               "record"
               "cancel"
             ];
-            "Mod+Shift+D".action.spawn = [
+            "Ctrl+Alt+Shift+D".action.spawn = [
               "voxtype"
               "record"
               "cancel"

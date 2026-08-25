@@ -262,9 +262,9 @@ in
             (lib.mkOptionDefault (
               lib.optionalAttrs config.khanelinix.services.voxtype.enable {
                 "F13" = "exec ${mkStartCommand voxtype-toggle}";
-                "${swayCfg.modifier}+d" = "exec ${mkStartCommand voxtype-toggle}";
+                "Ctrl+Alt+d" = "exec ${mkStartCommand voxtype-toggle}";
                 "F14" = "exec ${mkStartCommand voxtype-cancel}";
-                "${swayCfg.modifier}+Shift+d" = "exec ${mkStartCommand voxtype-cancel}";
+                "Ctrl+Alt+Shift+d" = "exec ${mkStartCommand voxtype-cancel}";
               }
             ))
             (lib.mkOptionDefault (
@@ -310,9 +310,9 @@ in
           modes = {
             voxtype_recording = lib.optionalAttrs config.khanelinix.services.voxtype.enable {
               "F13" = "exec ${mkStartCommand voxtype-toggle}, mode default";
-              "${swayCfg.modifier}+d" = "exec ${mkStartCommand voxtype-toggle}, mode default";
+              "Ctrl+Alt+d" = "exec ${mkStartCommand voxtype-toggle}, mode default";
               "F14" = "exec ${mkStartCommand voxtype-cancel}, mode default";
-              "${swayCfg.modifier}+Shift+d" = "exec ${mkStartCommand voxtype-cancel}, mode default";
+              "Ctrl+Alt+Shift+d" = "exec ${mkStartCommand voxtype-cancel}, mode default";
               "F12" = "exec ${mkStartCommand voxtype-cancel}, mode default";
             };
 
@@ -327,9 +327,9 @@ in
               "Shift_R" = "nop";
               # VoxType resets this mode after streaming session teardown.
               "F13" = "exec ${mkStartCommand voxtype-toggle}";
-              "${swayCfg.modifier}+d" = "exec ${mkStartCommand voxtype-toggle}";
+              "Ctrl+Alt+d" = "exec ${mkStartCommand voxtype-toggle}";
               "F14" = "exec ${mkStartCommand voxtype-cancel}";
-              "${swayCfg.modifier}+Shift+d" = "exec ${mkStartCommand voxtype-cancel}";
+              "Ctrl+Alt+Shift+d" = "exec ${mkStartCommand voxtype-cancel}";
               "F12" = "exec ${mkStartCommand voxtype-cancel}";
             };
 
