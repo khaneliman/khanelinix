@@ -974,6 +974,15 @@ in
                 (mkExecBind "" "F14" "$voxtype-cancel")
                 (mkExecBind "CTRL_ALT_SHIFT" "D" "$voxtype-cancel")
                 (mkExecBind "" "F12" "$voxtype-cancel")
+                (mkExecBind "" "escape" "$voxtype-cancel")
+                # Reset directly so Esc exits the submap even when the
+                # daemon dies before its teardown reset runs.
+                (mkBind {
+                  mods = "";
+                  key = "escape";
+                  dispatcher = "submap";
+                  args = "reset";
+                })
               ];
           };
         };

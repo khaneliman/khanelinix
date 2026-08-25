@@ -331,6 +331,9 @@ in
               "F14" = "exec ${mkStartCommand voxtype-cancel}";
               "Ctrl+Alt+Shift+d" = "exec ${mkStartCommand voxtype-cancel}";
               "F12" = "exec ${mkStartCommand voxtype-cancel}";
+              # Reset directly so Esc exits the mode even when the daemon
+              # dies before its teardown reset runs.
+              "Escape" = "exec ${mkStartCommand voxtype-cancel}, mode default";
             };
 
             screenshot = {
