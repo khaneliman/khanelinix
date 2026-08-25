@@ -78,8 +78,8 @@ in
       comfyui = {
         enable = true;
 
-        # Weight curation is a host choice. This set is the Qwen-Image and Wan
-        # 2.2 stack, about 71 GB realized before activation.
+        # Weight curation is a host choice. This set supports the curated Qwen
+        # image, Qwen edit, and Wan video workflows.
         models =
           lib.mapAttrs
             (
@@ -103,9 +103,11 @@ in
                 hash = "sha256-pwWA8CE+Z5Z+6clfBbtADo+wgwfgF6kkvzRBIj4CPR8=";
               };
 
-              "diffusion_models/qwen_image_2512_fp8_e4m3fn.safetensors" = {
-                url = "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/7beb7b647f04469fbe64ba8adc2bb0d7e5e9f73f/split_files/diffusion_models/qwen_image_2512_fp8_e4m3fn.safetensors";
-                hash = "sha256-XcgFVNXYM5AEai9KlOzgavt3AL97Cq+L3pdpeTh1h2s=";
+              # TODO(ComfyUI): Restore Qwen BF16 when model loading stays below
+              # the desktop-safe memory boundary. It reached about 31.3 GiB RSS.
+              "diffusion_models/Qwen-Image-2512-Q5_K_S-5.10bpw.gguf" = {
+                url = "https://huggingface.co/byteshape/Qwen-Image-2512-GGUF/resolve/6329dd4a8e5bb973d6898f39b90c678b6782a018/Qwen-Image-2512-Q5_K_S-5.10bpw.gguf";
+                hash = "sha256-cUpdCHryZV8wBdHjGFCU5ESLAAtZKpwzgytyOI4RwZ4=";
               };
 
               "diffusion_models/qwen_image_edit_2511_int8_convrot.safetensors" = {
@@ -123,9 +125,12 @@ in
                 hash = "sha256-IiJujQXTVLs1ZifUKICfWv14GTmbB3I4orcKgog6kE8=";
               };
 
-              "diffusion_models/wan2.2_ti2v_5B_fp16.safetensors" = {
-                url = "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/c4f60d30c55a624e35427060fdd217579a6c1d77/split_files/diffusion_models/wan2.2_ti2v_5B_fp16.safetensors";
-                hash = "sha256-RW+QEzi9nq297TgouBkQmpto6KUlylz40ASaafz+yh4=";
+              # TODO(ROCm): Replace this fallback with Wan 2.2 TI2V 5B after AMD
+              # resolves its documented Radeon Linux color-corruption issue.
+              # https://rocm.docs.amd.com/projects/radeon-ryzen/en/docs-7.2/docs/limitations/limitationsrad.html
+              "diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors" = {
+                url = "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/617a7633e636506f850e043bc4605f290a466a8e/split_files/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors";
+                hash = "sha256-vlMQJM2QGMtbSMQM+7amGRZFsceS64v0+MHG4Q+STcU=";
               };
 
               "text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors" = {
@@ -133,9 +138,9 @@ in
                 hash = "sha256-wzVdMBkfHwZrJtk/ugF66YCdzmxifdpfambqplEgT2g=";
               };
 
-              "vae/wan2.2_vae.safetensors" = {
-                url = "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/c4f60d30c55a624e35427060fdd217579a6c1d77/split_files/vae/wan2.2_vae.safetensors";
-                hash = "sha256-5AMhvTa5cJmR2uJTDrSsMD3RaCdpgNPpvEtuK3X+0VY=";
+              "vae/wan_2.1_vae.safetensors" = {
+                url = "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/617a7633e636506f850e043bc4605f290a466a8e/split_files/vae/wan_2.1_vae.safetensors";
+                hash = "sha256-L8OdMTWaSwpk9Vh22P9/qNeAlWriyxNGOwIj4VFIl2s=";
               };
             };
 
