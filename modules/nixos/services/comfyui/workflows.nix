@@ -20,6 +20,12 @@ let
     meta.license = lib.licenses.mit;
   };
 
+  videoGeneration = fetchurl {
+    url = "${baseUrl}/templates/video_wan2_2_5B_ti2v.json";
+    hash = "sha256-UDkHmKEzdXB111CreLJidOO/PkoJ9GqqLwjZVZ5idQs=";
+    meta.license = lib.licenses.mit;
+  };
+
   license = fetchurl {
     url = "${baseUrl}/LICENSE";
     hash = "sha256-XczWHIDIR81rIvqYEkAQFjq4ZG5XNVehalyuMRIvIFY=";
@@ -81,6 +87,60 @@ runCommand "comfyui-khanelinix-workflows"
         | select(. == "Qwen-Image-Edit-2511-Lightning-4steps-V1.0-bf16.safetensors")]
         | length > 0)
     ' "$out/02-qwen-image-edit-2511.json" > /dev/null
+
+    jq '
+      .nodes |= map(select(.type != "MarkdownNote"))
+      | .nodes |= map(
+          if .id == 55 and .type == "Wan22ImageToVideoLatent" then
+            .widgets_values = [640, 384, 49, 1]
+          elif .id == 58 and .type == "SaveVideo" then
+            .widgets_values[0] = "video/Wan2.2-5B"
+          else . end
+        )
+    ' ${videoGeneration} > "$out/03-wan2.2-video.json"
+
+    jq -e '
+      ([.nodes[]
+        | select(
+            .id == 37
+            and .type == "UNETLoader"
+            and .widgets_values[0] == "wan2.2_ti2v_5B_fp16.safetensors"
+          )] | length == 1)
+      and ([.nodes[]
+        | select(
+            .id == 38
+            and .type == "CLIPLoader"
+            and .widgets_values[0] == "umt5_xxl_fp8_e4m3fn_scaled.safetensors"
+          )] | length == 1)
+      and ([.nodes[]
+        | select(
+            .id == 39
+            and .type == "VAELoader"
+            and .widgets_values[0] == "wan2.2_vae.safetensors"
+          )] | length == 1)
+      and ([.nodes[]
+        | select(
+            .id == 55
+            and .type == "Wan22ImageToVideoLatent"
+            and .widgets_values == [640, 384, 49, 1]
+          )] | length == 1)
+      and ([.nodes[]
+        | select(.id == 56 and .type == "LoadImage" and .mode == 4)]
+        | length == 1)
+      and ([.nodes[]
+        | select(.id == 3 and .type == "KSampler" and .widgets_values[2] == 20)]
+        | length == 1)
+      and ([.nodes[]
+        | select(.id == 57 and .type == "CreateVideo" and .widgets_values[0] == 24)]
+        | length == 1)
+      and ([.nodes[]
+        | select(
+            .id == 58
+            and .type == "SaveVideo"
+            and .widgets_values[0] == "video/Wan2.2-5B"
+          )] | length == 1)
+      and ([.nodes[] | select(.type == "MarkdownNote")] | length == 0)
+    ' "$out/03-wan2.2-video.json" > /dev/null
 
     cp ${license} "$out/LICENSE"
   ''

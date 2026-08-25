@@ -78,8 +78,8 @@ in
       comfyui = {
         enable = true;
 
-        # Weight curation is a host choice. This set is the Qwen-Image stack,
-        # about 52 GB realized before activation.
+        # Weight curation is a host choice. This set is the Qwen-Image and Wan
+        # 2.2 stack, about 71 GB realized before activation.
         models =
           lib.mapAttrs
             (
@@ -121,6 +121,21 @@ in
               "loras/Qwen-Image-Edit-2511-Lightning-4steps-V1.0-bf16.safetensors" = {
                 url = "https://huggingface.co/lightx2v/Qwen-Image-Edit-2511-Lightning/resolve/d74eba145674fd7e31b949324e148e21e7118abd/Qwen-Image-Edit-2511-Lightning-4steps-V1.0-bf16.safetensors";
                 hash = "sha256-IiJujQXTVLs1ZifUKICfWv14GTmbB3I4orcKgog6kE8=";
+              };
+
+              "diffusion_models/wan2.2_ti2v_5B_fp16.safetensors" = {
+                url = "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/c4f60d30c55a624e35427060fdd217579a6c1d77/split_files/diffusion_models/wan2.2_ti2v_5B_fp16.safetensors";
+                hash = "sha256-RW+QEzi9nq297TgouBkQmpto6KUlylz40ASaafz+yh4=";
+              };
+
+              "text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors" = {
+                url = "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/617a7633e636506f850e043bc4605f290a466a8e/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors";
+                hash = "sha256-wzVdMBkfHwZrJtk/ugF66YCdzmxifdpfambqplEgT2g=";
+              };
+
+              "vae/wan2.2_vae.safetensors" = {
+                url = "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/c4f60d30c55a624e35427060fdd217579a6c1d77/split_files/vae/wan2.2_vae.safetensors";
+                hash = "sha256-5AMhvTa5cJmR2uJTDrSsMD3RaCdpgNPpvEtuK3X+0VY=";
               };
             };
 
