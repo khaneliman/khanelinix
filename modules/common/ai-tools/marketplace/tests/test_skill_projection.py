@@ -22,7 +22,6 @@ CODEX_EXPLICIT_ROUTED_SKILLS = {
     "bevy-toolkit",
     "develop-web-game",
     "memory-profiler",
-    "multi-provider-sdlc",
     "sarif-toolkit",
     "show-me-your-work",
     "skill-creator",
@@ -30,12 +29,10 @@ CODEX_EXPLICIT_ROUTED_SKILLS = {
 }
 CODEX_CALLER_ONLY_SKILLS = {
     "arena",
-    "interrogate",
     "playwright-interactive",
     "recall",
     "reflect",
     "requirements-interview",
-    "unslop",
 }
 
 

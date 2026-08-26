@@ -2,5 +2,3 @@ interface:
   display_name: "Multi-Provider SDLC"
   short_description: "Route one phase across provider and model lanes"
   default_prompt: "Use $multi-provider-sdlc as the provider-routing overlay for this caller-owned phase."
-policy:
-  allow_implicit_invocation: false

@@ -9,7 +9,7 @@ if ! command -v codexbar >/dev/null 2>&1 || ! command -v jq >/dev/null 2>&1; the
     exit 0
 fi
 
-if [[ ! -r $registry ]] || ! jq -e '.schema_version == 1 and (.models | type == "object")' "$registry" >/dev/null 2>&1; then
+if [[ ! -r $registry ]] || ! jq -e '.schema_version == 2 and (.models | type == "object")' "$registry" >/dev/null 2>&1; then
     printf '%s\n' '{"provider":"google","status":"unknown","reason":"routing-registry-unavailable"}'
     exit 0
 fi

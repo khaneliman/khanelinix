@@ -14,7 +14,7 @@
 			"name": "ai-tools-architect",
 			"displayName": "AI Tools Architect",
 			"description": "Design and audit portable AI-tool configuration.",
-			"version": "0.1.10",
+			"version": "0.1.11",
 			"category": "Developer Tools"
 		},
 		{
@@ -70,7 +70,7 @@
 			"name": "engineering-workflow",
 			"displayName": "Engineering Workflow",
 			"description": "Run routine software changes through a complete lifecycle.",
-			"version": "0.1.8",
+			"version": "0.1.9",
 			"category": "Developer Tools"
 		},
 		{
@@ -112,7 +112,7 @@
 			"name": "interrogate",
 			"displayName": "Interrogate",
 			"description": "Multi-model adversarial review from independent angles.",
-			"version": "0.1.4",
+			"version": "0.1.5",
 			"category": "Developer Tools"
 		},
 		{
@@ -266,7 +266,7 @@
 			"name": "unslop",
 			"displayName": "Unslop",
 			"description": "Remove AI writing patterns from prose.",
-			"version": "0.1.4",
+			"version": "0.1.5",
 			"category": "Developer Tools"
 		},
 		{

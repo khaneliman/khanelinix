@@ -60,7 +60,8 @@ let
       write ? false,
     }:
     {
-      inherit description name;
+      inherit name;
+      description = "Explicit model route. Use only after user model/provider intent or a multi-provider-sdlc route. ${description}";
       projection = "gateway";
       providers = [
         "claudeCode"

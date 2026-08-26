@@ -2,8 +2,9 @@
 
 Use a fresh read-only worker for normal and high-risk plan or diff review.
 Prefer a provider different from implementation when capability is comparable.
-Opus remains read-only when assigned this phase even though its agent supports
-workspace writes.
+Every review route remains read-only even when its model agent supports writes.
+Fable and Sol have equal preference. The caller chooses between them from task
+context and current quota evidence.
 
 Request verdict `approved`, `changes_requested`, or `blocked`, then ranked
 `critical`, `major`, `minor`, and `suggestion` findings with exact paths,

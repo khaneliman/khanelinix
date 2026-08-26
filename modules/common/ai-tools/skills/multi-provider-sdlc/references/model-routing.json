@@ -1,5 +1,5 @@
 {
-	"schema_version": 1,
+	"schema_version": 2,
 	"subscription_order": ["openai", "google", "anthropic"],
 	"subscriptions": {
 		"openai": {
@@ -86,9 +86,9 @@
 			"upstream_model": "gemini-3.7-flash-high",
 			"gateway_alias": "claude-gemini-3.7-flash",
 			"display_name": "Google · Gemini 3.7 Flash",
-			"description": "Google Gemini 3.7 Flash gateway worker for repository discovery, ambiguous diagnosis, dependency reasoning, noisy probes, and independent review.",
+			"description": "Google Gemini 3.7 Flash gateway worker for bounded implementation, repository discovery, ambiguous diagnosis, dependency reasoning, and noisy probes.",
 			"reasoning_effort": null,
-			"write": false,
+			"write": true,
 			"workspace_write": true,
 			"publish_alias": true
 		},
@@ -300,7 +300,7 @@
 				"codex": "gpt-5.6-sol"
 			},
 			"gateway": {
-				"claude": "opus-5",
+				"claude": "fable-5",
 				"opencode": "gpt-5-6-sol"
 			},
 			"reasoning_effort": { "codex": "high" }
@@ -335,57 +335,57 @@
 	"task_routes": [
 		{
 			"need": "obvious lookup or mechanical one-file edit",
-			"primary": "gpt-5-3-codex-spark",
+			"preferred": ["gpt-5-3-codex-spark"],
 			"fallbacks": ["gpt-5-6-luna", "gemini-3-7-flash"],
 			"semantic_role": "mechanic",
 			"write_policy": "read-only unless edit is explicit"
 		},
 		{
 			"need": "repository discovery",
-			"primary": "gpt-5-6-luna",
+			"preferred": ["gpt-5-6-luna"],
 			"fallbacks": ["gpt-5-3-codex-spark", "gemini-3-7-flash"],
 			"semantic_role": "fact-finder",
 			"write_policy": "read-only"
 		},
 		{
 			"need": "bounded reproduction",
-			"primary": "gpt-5-6-luna",
+			"preferred": ["gpt-5-6-luna"],
 			"fallbacks": ["opus-5", "gemini-3-7-flash"],
 			"semantic_role": "probe-runner",
 			"write_policy": "build artifacts only"
 		},
 		{
 			"need": "focused validation",
-			"primary": "gpt-5-3-codex-spark",
+			"preferred": ["gpt-5-3-codex-spark"],
 			"fallbacks": ["gpt-5-6-luna"],
 			"semantic_role": "checker",
 			"write_policy": "build artifacts only"
 		},
 		{
 			"need": "noisy validation",
-			"primary": "gpt-oss-120b",
+			"preferred": ["gpt-oss-120b"],
 			"fallbacks": ["gpt-5-6-luna", "gemini-3-7-flash"],
 			"semantic_role": "test-runner",
 			"write_policy": "build artifacts only"
 		},
 		{
 			"need": "implementation",
-			"primary": "opus-5",
-			"fallbacks": ["gpt-5-6-luna"],
+			"preferred": ["opus-5"],
+			"fallbacks": ["gpt-5-6-luna", "gemini-3-7-flash"],
 			"semantic_role": "implementer",
 			"write_policy": "workspace write"
 		},
 		{
 			"need": "ambiguous diagnosis",
-			"primary": "opus-5",
+			"preferred": ["opus-5"],
 			"fallbacks": ["gpt-5-6-sol", "gemini-3-7-flash"],
 			"semantic_role": "debugger",
 			"write_policy": "read-only"
 		},
 		{
 			"need": "plan or code review",
-			"primary": "opus-5",
-			"fallbacks": ["fable-5", "gpt-5-6-sol", "google-opus-4-6"],
+			"preferred": ["fable-5", "gpt-5-6-sol"],
+			"fallbacks": ["opus-5", "google-opus-4-6"],
 			"semantic_role": "reviewer",
 			"write_policy": "read-only"
 		}

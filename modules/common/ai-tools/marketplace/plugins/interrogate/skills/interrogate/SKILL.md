@@ -1,6 +1,6 @@
 ---
 name: interrogate
-description: Multiple LLM reviewers challenge changes from independent angles. Use for "interrogate", "adversarial review", "multi-model review", "challenge this", "stress test this code", "find blind spots", or "tear this apart".
+description: Adversarial multi-reviewer synthesis for contested or high-risk plans and changes. Use for multi-model review, independent angles, challenge, stress-test, or blind-spot requests. Do not use for routine single-reviewer checks.
 ---
 
 # Interrogate

@@ -349,6 +349,24 @@
 			}
 		},
 		{
+			"id": "implicit-adversarial-review",
+			"prompt": "Challenge this migration diff from independent angles and synthesize one adversarial review. Do not apply changes.",
+			"tags": [
+				"provider-parity",
+				"overlay-positive",
+				"implicit-positive",
+				"review"
+			],
+			"expected": {
+				"selection": {
+					"owner": "git-toolkit",
+					"methods": [],
+					"overlays": ["interrogate"]
+				},
+				"must_not_select": ["multi-provider-sdlc"]
+			}
+		},
+		{
 			"id": "explicit-playwright-interactive",
 			"prompt": "A persistent browser runtime is available. Use $playwright-interactive to keep one session alive while debugging this stateful local UI flow.",
 			"tags": [
@@ -499,6 +517,24 @@
 				"provider-parity",
 				"method-positive",
 				"explicit-positive",
+				"writing"
+			],
+			"expected": {
+				"selection": {
+					"owner": "technical-writing",
+					"methods": ["unslop"],
+					"overlays": []
+				},
+				"must_not_select": []
+			}
+		},
+		{
+			"id": "implicit-unslop",
+			"prompt": "Rewrite this pull request description to remove canned AI phrasing and promotional language while preserving every fact.",
+			"tags": [
+				"provider-parity",
+				"method-positive",
+				"implicit-positive",
 				"writing"
 			],
 			"expected": {

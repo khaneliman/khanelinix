@@ -19,17 +19,16 @@ Give every worker exactly these fields. Omit conversational context.
 
 ## Worker Selection
 
-When the current harness exposes these classes and semantic roles:
+Select semantic roles before concrete models:
 
-- Obvious mechanical edit or one focused known check: Spark-class `mechanic` or
-  `checker`.
-- Average repository work, implementation, reproduction, or broad and noisy
-  validation: Luna-class `explorer`, `fact-finder`, `worker`, `implementer`,
-  `probe-runner`, or `test-runner`.
-- Simple factual lookup: use the Luna-class semantic `fact-finder` when it is
-  available.
-- Ambiguity, architecture, or review: escalate to Sol.
-- Terra stays explicit-only.
+- Obvious mechanical edit or one focused known check: `mechanic` or `checker`.
+- Repository discovery or factual lookup: `explorer` or `fact-finder`.
+- Implementation: `implementer` or `worker`.
+- Reproduction or broad validation: `probe-runner` or `test-runner`.
+- Ambiguous diagnosis: `debugger`.
+- Plan or code review: read-only `reviewer`.
+
+Do not select a named-model agent from diff size, latency, or write access.
 
 If a named class is unavailable, use the smallest capable current-harness worker
 with the same write policy and lane.
@@ -47,9 +46,9 @@ with the same write policy and lane.
 - Workers never commit, push, merge, publish, deploy, or open a pull request.
 - Review the worker diff or artifact yourself. Write your own summary. Do not
   pass through a worker self-report.
-- Use `multi-provider-sdlc` only when the user explicitly requests provider or
-  model diversity. It returns one phase packet; this skill keeps phase order and
-  completion.
+- Use `multi-provider-sdlc` when provider diversity, named-model intent, quota
+  fallback, or route retry matters. It returns one phase packet; this skill
+  keeps phase order and completion.
 - Use `swarm` only when the user explicitly requests independent parallel
   fan-out. It returns evidence packets; this skill keeps integration and final
   judgment.

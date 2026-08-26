@@ -19,24 +19,25 @@ apply the generated section update, then run it with `check`.
 <!-- END GENERATED SUBSCRIPTIONS -->
 
 Prefer `opus-5` for Anthropic implementation and diagnosis. Use `fable-5` for
-independent planning or review; use `sonnet-5` only when explicitly requested.
-Keep Gemini fallback-only. Every subscription requires a live route and current
+independent planning. Treat `fable-5` and `gpt-5-6-sol` as equal preferred
+review routes. Use `sonnet-5` only when explicitly requested. Keep Gemini
+fallback-only. Every subscription requires a live route and current
 authentication.
 
 ## Preferred routes
 
 <!-- BEGIN GENERATED ROUTES -->
 
-| Need                                       | Primary               | Fallback                                    | Semantic role  | Write policy                      |
-| ------------------------------------------ | --------------------- | ------------------------------------------- | -------------- | --------------------------------- |
-| obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark` | `gpt-5-6-luna`, `gemini-3-7-flash`          | `mechanic`     | read-only unless edit is explicit |
-| repository discovery                       | `gpt-5-6-luna`        | `gpt-5-3-codex-spark`, `gemini-3-7-flash`   | `fact-finder`  | read-only                         |
-| bounded reproduction                       | `gpt-5-6-luna`        | `opus-5`, `gemini-3-7-flash`                | `probe-runner` | build artifacts only              |
-| focused validation                         | `gpt-5-3-codex-spark` | `gpt-5-6-luna`                              | `checker`      | build artifacts only              |
-| noisy validation                           | `gpt-oss-120b`        | `gpt-5-6-luna`, `gemini-3-7-flash`          | `test-runner`  | build artifacts only              |
-| implementation                             | `opus-5`              | `gpt-5-6-luna`                              | `implementer`  | workspace write                   |
-| ambiguous diagnosis                        | `opus-5`              | `gpt-5-6-sol`, `gemini-3-7-flash`           | `debugger`     | read-only                         |
-| plan or code review                        | `opus-5`              | `fable-5`, `gpt-5-6-sol`, `google-opus-4-6` | `reviewer`     | read-only                         |
+| Need                                       | Preferred                | Fallback                                  | Semantic role  | Write policy                      |
+| ------------------------------------------ | ------------------------ | ----------------------------------------- | -------------- | --------------------------------- |
+| obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark`    | `gpt-5-6-luna`, `gemini-3-7-flash`        | `mechanic`     | read-only unless edit is explicit |
+| repository discovery                       | `gpt-5-6-luna`           | `gpt-5-3-codex-spark`, `gemini-3-7-flash` | `fact-finder`  | read-only                         |
+| bounded reproduction                       | `gpt-5-6-luna`           | `opus-5`, `gemini-3-7-flash`              | `probe-runner` | build artifacts only              |
+| focused validation                         | `gpt-5-3-codex-spark`    | `gpt-5-6-luna`                            | `checker`      | build artifacts only              |
+| noisy validation                           | `gpt-oss-120b`           | `gpt-5-6-luna`, `gemini-3-7-flash`        | `test-runner`  | build artifacts only              |
+| implementation                             | `opus-5`                 | `gpt-5-6-luna`, `gemini-3-7-flash`        | `implementer`  | workspace write                   |
+| ambiguous diagnosis                        | `opus-5`                 | `gpt-5-6-sol`, `gemini-3-7-flash`         | `debugger`     | read-only                         |
+| plan or code review                        | `fable-5`, `gpt-5-6-sol` | `opus-5`, `google-opus-4-6`               | `reviewer`     | read-only                         |
 
 For explicit three-provider deliberation, use Anthropic `opus-5`, Google
 `google-opus-4-6` with `gemini-3-7-flash` fallback, and OpenAI `gpt-5-6-sol`.
@@ -95,17 +96,21 @@ once. Resolve `<skill-root>` to the directory containing this skill's
 python3 <skill-root>/scripts/route-capability.py --state <state-path> --task-id <task-id> init
 ```
 
-Ask for an ordered route before dispatch. Use a `need` value from the generated
-route table:
+Ask for a route before dispatch. Use a `need` value from the generated route
+table:
 
 ```console
 python3 <skill-root>/scripts/route-capability.py --state <state-path> --task-id <task-id> plan --need "plan or code review"
 ```
 
 The result returns the current revision, eligible named candidates, blocked
-circuits, and one semantic fallback. `probe: true` means the selected route has
-unknown capability. Add `--gateway off` when the provider runs semantic roles on
-native models. The default `on` resolves each role through its gateway model.
+circuits, and one semantic fallback. When `selectionRequired` is true, choose
+one `preferredCandidates` entry with caller judgment. The planner leaves
+`selected` null because each preferred model has equal policy rank. When
+`selectionRequired` is false, claim `selected`. `probe: true` means that route
+has unknown capability. Add `--gateway off` when the provider runs semantic
+roles on native models. The default `on` resolves each role through its gateway
+model.
 
 When no candidate remains, the plan also resolves the semantic role. If
 `claimConflicts` is true, wait for the active claim; `semanticFallback` is null
@@ -113,10 +118,11 @@ with reason `claim-conflict`. If every gateway model for the role is blocked,
 `semanticFallback` is null and `semanticFallbackReason` names the blocking
 circuit. Force a native worker or wait for that quota; do not dispatch the role
 through the blocked circuit. Otherwise, use the semantic fallback when no named
-candidate remains. Claim a selected model with the returned need and revision:
+candidate remains. Claim the selected or caller-chosen preferred model with the
+returned need and revision:
 
 ```console
-python3 <skill-root>/scripts/route-capability.py --state <state-path> --task-id <task-id> claim --expected-revision <revision> --need "<need>" --model <selected-model>
+python3 <skill-root>/scripts/route-capability.py --state <state-path> --task-id <task-id> claim --expected-revision <revision> --need "<need>" --model <model>
 ```
 
 Only a successful claim authorizes named-model dispatch. Never dispatch from a
@@ -210,9 +216,9 @@ binding evidence.
 Choose for capability and total retry cost. Among equal routes, prefer the
 independent quota pool with more headroom. Keep Spark first for obvious low-risk
 lookups, mechanical edits, and focused checks even when the parent uses the
-OpenAI general pool. Use Luna for average discovery, implementation, probes, and
-broad tests. Keep Terra explicit-only. Prefer provider diversity only after
-capability and quota-pool fit. Do not duplicate work only to balance
+OpenAI general pool. Use Luna for average discovery, implementation fallback,
+probes, and broad tests. Keep Terra explicit-only. Prefer provider diversity
+only after capability and quota-pool fit. Do not duplicate work only to balance
 subscriptions.
 
 Confirm agent type before dispatch and omit model overrides. Unknown type means

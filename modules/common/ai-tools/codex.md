@@ -12,7 +12,8 @@ worker or built-in `default`, let `[agents]` defaults route it, and report that
 the named role did not run.
 
 Prefer Spark-backed `mechanic` and `checker` for obvious mechanical edits and
-one focused known check. Use Luna-backed `explorer`, `fact-finder`, `worker`,
-`implementer`, `probe-runner`, and `test-runner` for average repository work,
-implementation, reproduction, and broad or noisy validation. Escalate to Sol
-only for ambiguity, architecture, or review. Keep Terra explicit-only.
+one focused known check. Use Luna-backed `explorer`, `fact-finder`,
+`probe-runner`, and `test-runner` for average repository work and noisy
+validation. Use Luna-backed `implementer` when the preferred Opus route is not
+available. Use Sol-backed `reviewer` for review and hard diagnosis. Keep Terra
+explicit-only.

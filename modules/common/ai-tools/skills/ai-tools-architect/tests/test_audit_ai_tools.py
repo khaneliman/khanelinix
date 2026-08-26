@@ -54,7 +54,7 @@ def expected_summary(
         "explicit_only_skills": 0,
         "user_only_skills": 0,
         "implicit_description_characters": description_characters,
-        "implicit_description_budget": 7_000,
+        "implicit_description_budget": 7_800,
         "implicit_description_budget_exceeded": False,
     }
 
@@ -469,7 +469,7 @@ class AuditAiToolsTests(unittest.TestCase):
     def test_cli_rejects_default_implicit_budget_excess(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            lengths = [1_000] * 7 + [1]
+            lengths = [1_000] * 7 + [801]
             for index, length in enumerate(lengths):
                 name = f"budget-skill-{index}"
                 skill = root / name
@@ -482,7 +482,7 @@ class AuditAiToolsTests(unittest.TestCase):
             with redirect_stdout(io.StringIO()):
                 result = audit_ai_tools.main([str(root), "--format", "json"])
 
-            self.assertEqual(audit_ai_tools.DEFAULT_IMPLICIT_DESCRIPTION_BUDGET, 7_000)
+            self.assertEqual(audit_ai_tools.DEFAULT_IMPLICIT_DESCRIPTION_BUDGET, 7_800)
             self.assertEqual(result, 1)
 
     def test_repository_skills_stay_within_implicit_budget(self) -> None:

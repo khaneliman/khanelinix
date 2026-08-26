@@ -1,6 +1,6 @@
 {
 	"name": "unslop",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "Remove AI writing patterns from prose.",
 	"author": {
 		"name": "khaneliman"

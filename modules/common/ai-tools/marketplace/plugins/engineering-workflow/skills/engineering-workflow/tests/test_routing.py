@@ -289,12 +289,10 @@ class RepositoryRoutingContract(unittest.TestCase):
         text = read(BASE_MD)
         self.assertIn("Routine mutation: `engineering-workflow`", text)
 
-    def test_base_routes_explicit_provider_work_to_overlay(self) -> None:
+    def test_base_routes_concrete_provider_work_to_overlay(self) -> None:
         text = normalized(BASE_MD)
         self.assertIn("`multi-provider-sdlc` select concrete models", text)
-        self.assertIn(
-            "Explicit overlays include `interrogate`, `multi-provider-sdlc`", text
-        )
+        self.assertIn("Use `multi-provider-sdlc` when provider diversity", text)
 
     def test_base_keeps_architect_below_selected_owner(self) -> None:
         text = normalized(BASE_MD)
@@ -318,19 +316,21 @@ class RepositoryRoutingContract(unittest.TestCase):
     def test_base_keeps_methods_below_lifecycle_owners(self) -> None:
         text = normalized(BASE_MD)
         self.assertIn("A method never takes over lifecycle ownership", text)
+        self.assertIn("Owner-routed methods and overlays include", text)
         self.assertIn("Explicit overlays include", text)
-        self.assertIn("after the user or selected owner names it", text)
+        self.assertIn("load them automatically when their trigger matches", text)
 
     def test_multi_provider_root_rejects_lifecycle_ownership(self) -> None:
         text = normalized(MULTI_PROVIDER_ROOT / "SKILL.md")
         self.assertIn("does not own lifecycle sequencing", text)
         self.assertIn("`engineering-workflow` owns phase order", text)
 
-    def test_multi_provider_owns_only_explicit_diverse_seats(self) -> None:
+    def test_multi_provider_owns_only_concrete_route_selection(self) -> None:
         fields, body = split_frontmatter(read(MULTI_PROVIDER_ROOT / "SKILL.md"))
+        body = " ".join(body.split())
         self.assertNotIn("delegated", fields["description"].lower())
         self.assertIn("`interrogate` or the caller owns method and synthesis", body)
-        self.assertIn("only when diversity is explicit", body)
+        self.assertIn("quota fallback, or route retry", body)
 
     def test_multi_provider_phases_return_without_advancing(self) -> None:
         references = MULTI_PROVIDER_ROOT / "references"
@@ -426,11 +426,9 @@ class DelegationContract(unittest.TestCase):
     def test_semantic_fact_finder_is_named(self) -> None:
         self.assertIn("fact-finder", self.text)
 
-    def test_provider_routing_requires_explicit_request(self) -> None:
-        self.assertRegex(
-            self.text,
-            r"multi-provider-sdlc.*only when the user explicitly requests",
-        )
+    def test_provider_routing_requires_concrete_route_need(self) -> None:
+        self.assertRegex(self.text, r"multi-provider-sdlc.*provider diversity")
+        self.assertIn("named-model intent", self.text)
 
     def test_swarm_routing_requires_explicit_request(self) -> None:
         self.assertRegex(self.text, r"swarm.*only when the user explicitly requests")

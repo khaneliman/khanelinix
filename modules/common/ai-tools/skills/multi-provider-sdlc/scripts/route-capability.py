@@ -285,7 +285,7 @@ def validate_claims(value: Any, registry: dict[str, Any]) -> None:
             raise CapabilityError("claim references an unknown task need")
         if type(plan_revision) is not int or plan_revision < 0:
             raise CapabilityError("claim plan revision must be a non-negative integer")
-        route_models = [routes[need]["primary"], *routes[need]["fallbacks"]]
+        route_models = [*routes[need]["preferred"], *routes[need]["fallbacks"]]
         if (
             not isinstance(planned_candidates, list)
             or any(not isinstance(candidate, str) for candidate in planned_candidates)
@@ -640,7 +640,7 @@ def candidate_model_ids(
 ) -> list[str]:
     return [
         model_id
-        for model_id in [route["primary"], *route["fallbacks"]]
+        for model_id in [*route["preferred"], *route["fallbacks"]]
         if route_block_reason(state, model_id, registry["models"][model_id]) is None
     ]
 
@@ -762,21 +762,23 @@ def plan_route(
     state = load_state(path, task_id, registry, digest)
     route = task_route(registry, need)
     candidates = []
+    preferred_candidates = []
     blocked = []
-    for model_id in [route["primary"], *route["fallbacks"]]:
+    for model_id in [*route["preferred"], *route["fallbacks"]]:
         model = registry["models"][model_id]
         reason = route_block_reason(state, model_id, model)
         if reason is not None:
             blocked.append({"model": model_id, "reason": reason})
             continue
-        candidates.append(
-            {
-                "model": model_id,
-                "subscription": model["subscription"],
-                "pool": model["quota_pool"],
-                "probe": route_needs_probe(state, model_id, model),
-            }
-        )
+        candidate = {
+            "model": model_id,
+            "subscription": model["subscription"],
+            "pool": model["quota_pool"],
+            "probe": route_needs_probe(state, model_id, model),
+        }
+        candidates.append(candidate)
+        if model_id in route["preferred"]:
+            preferred_candidates.append(candidate)
     claim_conflicts = any(
         blocked_route["reason"].startswith("claim:") for blocked_route in blocked
     )
@@ -791,6 +793,11 @@ def plan_route(
             )
         if semantic_fallback_reason is not None:
             semantic_fallback = None
+    selection_required = len(preferred_candidates) > 1
+    selected = None
+    if not selection_required:
+        selected_candidates = preferred_candidates or candidates
+        selected = selected_candidates[0]["model"] if selected_candidates else None
     return {
         "taskId": task_id,
         "revision": state["revision"],
@@ -798,7 +805,9 @@ def plan_route(
         "semanticRole": route["semantic_role"],
         "writePolicy": route["write_policy"],
         "gatewayEnabled": gateway_enabled,
-        "selected": candidates[0]["model"] if candidates else None,
+        "selected": selected,
+        "selectionRequired": selection_required,
+        "preferredCandidates": preferred_candidates,
         "candidates": candidates,
         "blocked": blocked,
         "claimConflicts": claim_conflicts,

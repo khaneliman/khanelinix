@@ -226,7 +226,7 @@ not apply repository provider projections. These installs retain the skill
 description when a host cannot interpret the canonical metadata. Use the native
 marketplace or Nix-managed projection when model hiding must be enforced.
 
-Codex hides fifteen additional caller-invoked or owner-routed skills to save
+Codex hides twelve additional caller-invoked or owner-routed skills to save
 standing context. Other hosts keep them model-visible so lifecycle skills can
 invoke them.
 
@@ -236,16 +236,16 @@ invoke them.
 | :---------------------- | :--------------------------------- | :------------------------------- |
 | `program-orchestration` | Durable multi-unit program control | `Use $program-orchestration ...` |
 
-Domain toolkits and explicit overlays such as `bevy-toolkit`, `swarm`, and
-`multi-provider-sdlc` stay model-visible on Claude Code and Pi. A selected owner
-can route them. Codex hides them from implicit matching.
+Large domain toolkits and explicit overlays such as `bevy-toolkit` and `swarm`
+stay model-visible on Claude Code and Pi. A selected owner can route them. Codex
+hides them from implicit matching.
 
 ## Host-only workflow extensions
 
 The portable marketplace excludes `multi-provider-sdlc`. It requires private
-provider routes. A host that installs this overlay can route one lifecycle phase
-across Anthropic, Google, and OpenAI workers. The caller still owns the
-lifecycle and final judgment.
+provider routes. A host that installs this overlay can activate it when provider
+diversity, named-model intent, quota fallback, or route retry matters. The
+caller still owns the lifecycle and final judgment.
 
 The marketplace excludes `swarm`. It requires the private worker registry and
 host delegation controls. An explicit `swarm this` request partitions

@@ -38,7 +38,7 @@ let
     builtins.attrValues semanticRoles
   );
   taskModelReferences = lib.concatMap (
-    route: [ route.primary ] ++ route.fallbacks
+    route: route.preferred ++ route.fallbacks
   ) registry.task_routes;
   deliberationReferences = builtins.attrValues registry.deliberation;
   defaultReferences = builtins.attrValues registry.gateway_defaults;
@@ -126,7 +126,7 @@ let
     _provider: model: (modelFor model).upstream_model
   ) registry.gateway_defaults;
 in
-if registry.schema_version != 1 then
+if registry.schema_version != 2 then
   throw "Unsupported model-routing schema: ${toString registry.schema_version}"
 else if policyContainsControlCharacter registry then
   throw "Model-routing policy text must not contain control characters"

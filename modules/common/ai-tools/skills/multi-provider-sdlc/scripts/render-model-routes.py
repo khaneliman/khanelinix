@@ -107,9 +107,9 @@ def validate_registry(registry: dict[str, Any]) -> None:
     )
     if (
         type(registry.get("schema_version")) is not int
-        or registry["schema_version"] != 1
+        or registry["schema_version"] != 2
     ):
-        raise RoutingError("routing registry schema_version must equal 1")
+        raise RoutingError("routing registry schema_version must equal 2")
 
     models = registry.get("models")
     roles = registry.get("semantic_roles")
@@ -210,23 +210,32 @@ def validate_registry(registry: dict[str, Any]) -> None:
             raise RoutingError("task route entries must be objects")
         require_exact_keys(
             route,
-            {"need", "primary", "fallbacks", "semantic_role", "write_policy"},
+            {"need", "preferred", "fallbacks", "semantic_role", "write_policy"},
             "task route",
         )
-        for field in ("need", "primary", "semantic_role", "write_policy"):
+        for field in ("need", "semantic_role", "write_policy"):
             if not isinstance(route.get(field), str) or not route[field]:
                 raise RoutingError(f"task route needs non-empty {field}")
             require_table_cell(route[field], f"task route {field}")
-        model_references.append(route.get("primary"))
         route_names.append(route["need"])
+        preferred = route.get("preferred")
         fallbacks = route.get("fallbacks")
+        if (
+            not isinstance(preferred, list)
+            or not preferred
+            or not all(isinstance(model, str) and model for model in preferred)
+        ):
+            raise RoutingError("task route preferred models must be non-empty arrays")
         if not isinstance(fallbacks, list) or not all(
             isinstance(model, str) and model for model in fallbacks
         ):
             raise RoutingError("task route fallbacks must be arrays")
+        route_models = preferred + fallbacks
+        if len(route_models) != len(set(route_models)):
+            raise RoutingError("task route models must be unique")
         if route["write_policy"] not in WRITE_POLICIES:
             raise RoutingError("task route has invalid write policy")
-        model_references.extend(fallbacks)
+        model_references.extend(route_models)
         if route.get("semantic_role") not in roles:
             raise RoutingError("task route references an unknown semantic role")
     if len(route_names) != len(set(route_names)):
@@ -370,18 +379,19 @@ def render_subscriptions(registry: dict[str, Any]) -> str:
 def render_routes(registry: dict[str, Any]) -> str:
     rows = []
     for route in registry["task_routes"]:
+        preferred = ", ".join(f"`{model}`" for model in route["preferred"])
         fallbacks = ", ".join(f"`{model}`" for model in route["fallbacks"])
         rows.append(
             [
                 route["need"],
-                f"`{route['primary']}`",
+                preferred,
                 fallbacks,
                 f"`{route['semantic_role']}`",
                 route["write_policy"],
             ]
         )
     table = markdown_table(
-        ["Need", "Primary", "Fallback", "Semantic role", "Write policy"], rows
+        ["Need", "Preferred", "Fallback", "Semantic role", "Write policy"], rows
     )
     deliberation = registry["deliberation"]
     sentence = (

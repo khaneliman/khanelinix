@@ -9,7 +9,7 @@
 		{
 			"name": "ai-tools-architect",
 			"description": "Design and audit portable AI-tool configuration.",
-			"version": "0.1.10",
+			"version": "0.1.11",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -89,7 +89,7 @@
 		{
 			"name": "engineering-workflow",
 			"description": "Run routine software changes through a complete lifecycle.",
-			"version": "0.1.8",
+			"version": "0.1.9",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -149,7 +149,7 @@
 		{
 			"name": "interrogate",
 			"description": "Multi-model adversarial review from independent angles.",
-			"version": "0.1.4",
+			"version": "0.1.5",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -369,7 +369,7 @@
 		{
 			"name": "unslop",
 			"description": "Remove AI writing patterns from prose.",
-			"version": "0.1.4",
+			"version": "0.1.5",
 			"author": {
 				"name": "khaneliman"
 			},

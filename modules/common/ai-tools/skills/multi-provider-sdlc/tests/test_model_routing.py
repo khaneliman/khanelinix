@@ -53,9 +53,29 @@ class ModelRoutingTests(unittest.TestCase):
                 self.assertIn(model, models)
         for route in self.registry["task_routes"]:
             self.assertIn(route["semantic_role"], roles)
-            self.assertIn(route["primary"], models)
-            for model in route["fallbacks"]:
+            for model in [*route["preferred"], *route["fallbacks"]]:
                 self.assertIn(model, models)
+
+    def test_review_and_implementation_preferences_are_canonical(self) -> None:
+        routes = {route["need"]: route for route in self.registry["task_routes"]}
+
+        self.assertEqual(
+            routes["plan or code review"]["preferred"],
+            ["fable-5", "gpt-5-6-sol"],
+        )
+        self.assertEqual(
+            routes["plan or code review"]["fallbacks"],
+            ["opus-5", "google-opus-4-6"],
+        )
+        self.assertEqual(
+            self.registry["semantic_roles"]["reviewer"]["gateway"]["claude"],
+            "fable-5",
+        )
+        self.assertEqual(
+            routes["implementation"]["fallbacks"],
+            ["gpt-5-6-luna", "gemini-3-7-flash"],
+        )
+        self.assertTrue(self.registry["models"]["gemini-3-7-flash"]["write"])
 
     def test_aliases_are_unique_and_claude_visible(self) -> None:
         aliases = [model["gateway_alias"] for model in self.registry["models"].values()]
@@ -67,9 +87,25 @@ class ModelRoutingTests(unittest.TestCase):
 
     def test_invalid_model_reference_is_rejected(self) -> None:
         invalid = copy.deepcopy(self.registry)
-        invalid["task_routes"][0]["primary"] = "missing-model"
+        invalid["task_routes"][0]["preferred"][0] = "missing-model"
 
         with self.assertRaisesRegex(routes.RoutingError, "unknown model references"):
+            routes.validate_registry(invalid)
+
+    def test_empty_preferred_route_is_rejected(self) -> None:
+        invalid = copy.deepcopy(self.registry)
+        invalid["task_routes"][0]["preferred"] = []
+
+        with self.assertRaisesRegex(routes.RoutingError, "preferred models"):
+            routes.validate_registry(invalid)
+
+    def test_duplicate_route_model_is_rejected(self) -> None:
+        invalid = copy.deepcopy(self.registry)
+        invalid["task_routes"][0]["fallbacks"].append(
+            invalid["task_routes"][0]["preferred"][0]
+        )
+
+        with self.assertRaisesRegex(routes.RoutingError, "models must be unique"):
             routes.validate_registry(invalid)
 
     def test_boolean_schema_version_is_rejected(self) -> None:
@@ -217,6 +253,7 @@ class ModelRoutingTests(unittest.TestCase):
 
         self.assertIn("modelRouting.modelsForRole", agents)
         self.assertIn("modelRouting.gatewayAgentSpecs", agents)
+        self.assertIn("Explicit model route", agents)
         self.assertIn("modelRouting.cliproxyAliases", service)
         self.assertNotIn("claude-gpt-5.6-luna", agents)
         self.assertNotIn("claude-gpt-5.6-luna", service)
@@ -225,7 +262,7 @@ class ModelRoutingTests(unittest.TestCase):
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
             False: "3469a9a3c0123e90d24cfece7e441a8be21337da2fe7e7f0acde511b7714d3e4",
-            True: "70be7dbf89eed5ce5ab5e73922cba4094a5924e0a09f468dcbcdd2f5e17bd8d7",
+            True: "5b189889d38ca8b5b467b532a1c511904e91fcc79291a8b96170cd278b1f6ed4",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():
