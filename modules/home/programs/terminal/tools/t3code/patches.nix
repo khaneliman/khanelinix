@@ -17,7 +17,9 @@ in
 (map fetchPatch [
   # Perf pair rebased onto upstream 9e201941a on branch
   # nix-patches/perf-rebase-9e201941 (command-resolution reworked around
-  # upstream's new PATH-resolution cache).
+  # upstream's new PATH-resolution cache). Command resolution was rebased
+  # again onto upstream 504177797 on branch nix-patches/perf-rebase-50417779,
+  # where the file-manager probe became resolveUsableFileManagerCommand.
   {
     name = "perf-lazy-load-terminal-drawer";
     rev = "bf5a88adcad1e0e06cf563b348b366f3c868bf95";
@@ -25,8 +27,8 @@ in
   }
   {
     name = "perf-concurrent-command-resolution";
-    rev = "37aa21367381eeefe09938325a7437b24b5d348d";
-    hash = "sha256-iFQ1EzltopuggTSPtzicNTMPC3yEDjamuReBc9DDyTQ=";
+    rev = "9d8723a7ca8e89e001f70d844331a19c9c520893";
+    hash = "sha256-Y2d4QA8G9B1sxRpmvQkOrVDgsco2O6owkI+H76rghUI=";
   }
   {
     name = "perf-desktop-readiness-probe-timeout";
@@ -98,7 +100,9 @@ in
     # complete fix remains available before upstream merges it.
     name = "fix-codex-spawned-subagent-sidebar";
     url = "https://github.com/pingdotgg/t3code/compare/24c4ba68f536d56e8482a1e4d7070a6771da551d...89b365ee5f52e9b028d71072983fe19f3d7f448c.patch";
-    hash = "sha256-trI/GNcDnWHpRGJJWN+NJVXE66762CUe5xVkFK43Ec8=";
+    hash = "sha256-Z8HwOXq5AgCihHZQAGcMfBN+EkCrxHl4dg46IUnD8q8=";
+    # Nixpkgs builds run no tests, and the test hunks drift with upstream.
+    excludes = [ "apps/server/src/provider/Layers/CodexCollabRuntime.integration.test.ts" ];
   }
 ])
 ++ [

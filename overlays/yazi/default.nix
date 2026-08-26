@@ -11,14 +11,6 @@ in
   yazi = if prev.lib.versionAtLeast prev.yazi.version "26.8.15" then prev.yazi else pkgsMaster.yazi;
 
   yaziPlugins = prev.yaziPlugins // {
-    ouch = prev.yaziPlugins.ouch.overrideAttrs (old: {
-      postPatch = (old.postPatch or "") + ''
-        substituteInPlace main.lua \
-          --replace-fail 'local icon = File({' 'local icon = th.icon:match(File({' \
-          --replace-fail '  }):icon()' '  }))'
-      '';
-    });
-
     sudo = prev.yaziPlugins.sudo.overrideAttrs (old: {
       postPatch = (old.postPatch or "") + ''
         substituteInPlace main.lua \
