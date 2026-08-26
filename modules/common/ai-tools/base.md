@@ -42,6 +42,11 @@ planning, integration, and final judgment in the parent. Let provider adapters
 or `multi-provider-sdlc` select concrete models, fallbacks, and quota circuits.
 If a named role fails, use a configured default and report the degradation.
 
+Give every worker one bounded packet: task, paths, verified context,
+constraints, write policy, skill or tool lane, required evidence, and exit
+criteria. Omit conversation history. Treat missing write permission as
+read-only.
+
 Delegate automatically by semantic role. Never choose a named-model agent from
 diff size, latency, or write access alone.
 

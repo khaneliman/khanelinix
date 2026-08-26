@@ -2,8 +2,8 @@
 
 Delegate bounded multi-file discovery, noisy probes and tests, and parallel fact
 slices to the smallest configured worker. Keep planning, integration, and final
-judgment in main thread. Pass only task, paths, constraints, allowed tool or
-skill lane, and exit criteria; consume an evidence packet.
+judgment in main thread. Use the shared worker-packet contract and consume its
+evidence packet.
 
 Apply the shared model and effort policy. Pass an explicit `reasoning_effort`
 when a task needs a level different from inherited `xhigh`. If the host rejects

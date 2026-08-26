@@ -18,6 +18,7 @@ MULTI_PROVIDER_ROOT = SKILL_ROOT.parent / "multi-provider-sdlc"
 SWARM_ROOT = SKILL_ROOT.parent / "swarm"
 CATALOG = AI_TOOLS_ROOT / "marketplace" / "catalog.json"
 GENERAL_AGENTS = AI_TOOLS_ROOT / "agents" / "general"
+SHARED_WORKER_CORE = AI_TOOLS_ROOT / "agents" / "shared" / "worker-core.md"
 
 LINK_RE = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 SUPPORTED_FRONTMATTER_FIELDS = {"description", "license", "metadata", "name"}
@@ -356,26 +357,40 @@ class RepositoryWorkerLaneContract(unittest.TestCase):
         if not GENERAL_AGENTS.is_dir():
             self.skipTest("repository agent prompts are not installed")
 
-    def test_bounded_workers_reject_lifecycle_ownership(self) -> None:
-        for name in (
-            "checker.md",
-            "debugger.md",
-            "fact-finder.md",
-            "implementer.md",
-            "mechanic.md",
-            "model-worker.md",
-            "probe-runner.md",
-            "reviewer.md",
-            "test-runner.md",
+    def test_shared_worker_core_owns_child_boundaries(self) -> None:
+        text = normalized(SHARED_WORKER_CORE)
+
+        for expected in (
+            "one child worker",
+            "parent-owned workflow",
+            "verified context",
+            "Missing write permission means read-only",
+            "sibling agents",
+            "assigned write set",
+            "skill or tool lane",
+            "invoke a lifecycle skill",
+            "spawn workers",
+            "Never overwrite another actor's changes",
+            "evidence packet",
         ):
+            self.assertIn(expected, text)
+
+    def test_role_prompts_keep_bounded_role_contracts(self) -> None:
+        role_markers = {
+            "checker.md": "focused validation",
+            "debugger.md": "Diagnose supplied failure",
+            "fact-finder.md": "parent-stated question",
+            "implementer.md": "parent-scoped change",
+            "mechanic.md": "mechanical one-file edit",
+            "model-worker.md": "model and provider pinned",
+            "probe-runner.md": "non-destructive reproduction",
+            "reviewer.md": "Review one supplied plan",
+            "test-runner.md": "validation suites",
+        }
+        for name, marker in role_markers.items():
             text = normalized(GENERAL_AGENTS / name)
-            self.assertIn("lane", text, name)
-            self.assertRegex(
-                text,
-                r"(?:Never|Do not) invoke (?:a )?lifecycle skills?",
-                name,
-            )
-            self.assertIn("expand", text, name)
+            self.assertIn(marker, text, name)
+            self.assertNotIn("Never invoke lifecycle skills", text, name)
 
 
 class MarketplaceCompositionContract(unittest.TestCase):

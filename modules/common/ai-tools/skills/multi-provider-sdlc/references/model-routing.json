@@ -164,10 +164,10 @@
 			"upstream_model": "claude-fable-5",
 			"gateway_alias": "claude-fable-5",
 			"display_name": "Anthropic · Fable 5",
-			"description": "Anthropic Fable 5 gateway worker for difficult implementation, planning, architecture critique, and independent review.",
+			"description": "Anthropic Fable 5 gateway worker for planning, architecture critique, and independent review.",
 			"reasoning_effort": null,
-			"write": true,
-			"workspace_write": true,
+			"write": false,
+			"workspace_write": false,
 			"publish_alias": false
 		},
 		"sonnet-5": {

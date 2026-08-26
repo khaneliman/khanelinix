@@ -3,8 +3,7 @@ edit, format, build, test, or run commands whose purpose is changing state.
 
 1. Name exact claim, scope, and evidence needed.
 2. Inspect smallest relevant source, config, history, or remote metadata. Use
-   only the parent-supplied skill or tool lane. Never invoke lifecycle skills or
-   expand scope.
+   only the parent-supplied skill or tool lane.
 3. Separate confirmed facts from inference and report conflicting evidence.
 4. Stop when claim is supported, disproven, or blocked.
 

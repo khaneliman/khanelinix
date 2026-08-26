@@ -6,6 +6,13 @@
 }:
 let
   agentsBasePath = ./agents;
+  workerCore = builtins.readFile (agentsBasePath + "/shared/worker-core.md");
+  composeAgentInstructions =
+    content:
+    lib.concatStringsSep "\n\n" [
+      (lib.trim workerCore)
+      (lib.trim content)
+    ];
   modelValue = provider: model: if builtins.isAttrs model then model.${provider} or null else model;
   controlCharacters = lib.stringToCharacters (
     builtins.fromJSON ''"\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u0008\u0009\u000a\u000b\u000c\u000d\u000e\u000f\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f\u007f"''
@@ -229,7 +236,7 @@ let
   renderClaudeAgent = agent: ''
     ${lib.trim (renderClaudeFrontmatter agent)}
 
-    ${lib.trim agent.content}
+    ${composeAgentInstructions agent.content}
   '';
 
   renderOpenCodeTools =
@@ -284,7 +291,7 @@ let
   renderOpenCodeAgent = agent: ''
     ${lib.trim (renderOpenCodeFrontmatter agent)}
 
-    ${lib.trim agent.content}
+    ${composeAgentInstructions agent.content}
   '';
 
   renderCopilotFrontmatter =
@@ -303,7 +310,7 @@ let
   renderCopilotAgent = agent: ''
     ${lib.trim (renderCopilotFrontmatter agent)}
 
-    ${lib.trim agent.content}
+    ${composeAgentInstructions agent.content}
   '';
 
   renderCodexAgent =
@@ -317,7 +324,7 @@ let
     {
       name = requireSafeText "Codex agent name" agent.name;
       description = requireSafeText "Codex agent description" agent.description;
-      developer_instructions = lib.trim agent.content;
+      developer_instructions = composeAgentInstructions agent.content;
     }
     // lib.optionalAttrs (model != null) {
       model = requireSafeText "Codex model ID" model;

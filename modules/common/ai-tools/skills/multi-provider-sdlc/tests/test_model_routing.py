@@ -71,6 +71,8 @@ class ModelRoutingTests(unittest.TestCase):
             self.registry["semantic_roles"]["reviewer"]["gateway"]["claude"],
             "fable-5",
         )
+        self.assertFalse(self.registry["models"]["fable-5"]["write"])
+        self.assertFalse(self.registry["models"]["fable-5"]["workspace_write"])
         self.assertEqual(
             routes["implementation"]["fallbacks"],
             ["gpt-5-6-luna", "gemini-3-7-flash"],
@@ -259,10 +261,57 @@ class ModelRoutingTests(unittest.TestCase):
         self.assertNotIn("claude-gpt-5.6-luna", service)
 
     @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
+    def test_shared_worker_core_reaches_every_provider_projection(self) -> None:
+        for gateway_enabled in (False, True):
+            projection = json.loads(
+                self._nix_eval(self._provider_projection_expression(gateway_enabled))
+            )
+            instructions = {
+                "claude": projection["claude"],
+                "codex": {
+                    name: agent["developer_instructions"]
+                    for name, agent in projection["codex"].items()
+                },
+                "copilot": projection["copilot"],
+                "opencode": projection["opencode"],
+            }
+
+            for provider, agents in instructions.items():
+                for name, content in agents.items():
+                    with self.subTest(
+                        gateway_enabled=gateway_enabled,
+                        provider=provider,
+                        agent=name,
+                    ):
+                        normalized = " ".join(content.split())
+                        self.assertIn(
+                            "one child worker in a parent-owned workflow", normalized
+                        )
+                        self.assertIn(
+                            "Never overwrite another actor's changes", normalized
+                        )
+                        self.assertIn("skill or tool lane", normalized)
+                        self.assertIn("Write like a technical peer", normalized)
+                        self.assertIn("Remove canned framing", normalized)
+
+    @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
+    def test_fable_gateway_projection_is_read_only(self) -> None:
+        projection = json.loads(
+            self._nix_eval(self._provider_projection_expression(True))
+        )
+
+        self.assertIn(
+            'tools: "Read, Bash, Grep, Glob"', projection["claude"]["fable-5"]
+        )
+        self.assertEqual(projection["codex"]["fable-5"]["sandbox_mode"], "read-only")
+        self.assertIn('"edit": false', projection["opencode"]["fable-5"])
+        self.assertIn('"write": false', projection["opencode"]["fable-5"])
+
+    @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
-            False: "3469a9a3c0123e90d24cfece7e441a8be21337da2fe7e7f0acde511b7714d3e4",
-            True: "5b189889d38ca8b5b467b532a1c511904e91fcc79291a8b96170cd278b1f6ed4",
+            False: "b9001bbe9bfd45a6e31329e8ef1fd93f137a266036d051ff8ec4b310800f70d6",
+            True: "186d47e70d3a48b628c47ced482ca1d75ad262b8801001a9592ae84d5b764a6a",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():

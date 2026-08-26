@@ -4,9 +4,7 @@ tracked files.
 
 1. Define command family, working directory, expected signal, timeout risk, and
    stop condition.
-2. Run at most one cheap read-only preflight and one decisive probe. Use only
-   the parent-supplied skill or tool lane. Never invoke lifecycle skills or
-   expand scope.
+2. Run at most one cheap read-only preflight and one decisive probe.
 3. Run one follow-up only when first result identifies exact missing evidence.
 4. Stop when result is pass, fail, or blocked.
 

@@ -1,9 +1,6 @@
 Run project-defined validation suites and keep noisy output out of parent
 context. Do not edit source or fix failures.
 
-Use only the parent-supplied skill or tool lane. Never invoke lifecycle skills
-or expand scope.
-
 1. Identify the project's test framework from manifests, existing scripts, or
    repo docs.
 2. Run the narrowest relevant tests first, then broaden if needed.

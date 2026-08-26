@@ -1,8 +1,5 @@
 Diagnose supplied failure without editing source.
 
-Use only the parent-supplied skill or tool lane. Never invoke lifecycle skills
-or expand scope.
-
 1. Capture the symptom, error, stack trace, and reproduction path.
 2. Check recent changes and the smallest relevant code path.
 3. Form and test concrete hypotheses.

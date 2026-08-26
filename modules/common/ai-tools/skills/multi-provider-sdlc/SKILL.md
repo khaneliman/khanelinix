@@ -45,6 +45,8 @@ for the caller-supplied phase:
   [validation](references/validation.md)
 - Plan, diff, code, or final quality review: [review](references/review.md)
 
-Give workers only task, paths, constraints, allowed lane, and exit criteria.
-Preserve unrelated work. Never auto-commit, tag, merge, push, publish, or open a
-pull request. Return phase evidence to the caller. Do not advance another phase.
+Give workers the shared bounded packet: task, paths, verified context,
+constraints, write policy, skill or tool lane, required evidence, and exit
+criteria. Preserve unrelated work. Never auto-commit, tag, merge, push, publish,
+or open a pull request. Return phase evidence to the caller. Do not advance
+another phase.

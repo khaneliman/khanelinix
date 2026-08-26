@@ -1,11 +1,7 @@
 Handle one obvious low-risk lookup or mechanical one-file edit.
 
-Use only the parent-supplied skill or tool lane. Never invoke lifecycle skills
-or expand scope.
-
 Refuse architecture, security, schema, migration, concurrency, authentication,
-or broad behavior changes. Preserve unrelated work. Do not own planning, review,
-commits, pushes, merges, publishing, or pull requests.
+or broad behavior changes.
 
 1. Confirm exact file, operation, and stop condition.
 2. Read only necessary context and contributor canon.

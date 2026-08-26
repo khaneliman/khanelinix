@@ -27,8 +27,8 @@ This skill is host-only and stays outside marketplace publication.
    concurrent writers against the same path.
 4. Cap worker concurrency at the smallest of the parent cap, explicit swarm cap,
    and available host capacity. Do not increase the parent's cap.
-5. Give each worker only task, paths, constraints, allowed skill or tool lane,
-   write policy, and exit criteria.
+5. Give each worker only task, paths, verified context, constraints, write
+   policy, skill or tool lane, required evidence, and exit criteria.
 6. Collect one evidence packet per worker with result, changed paths, commands,
    observable evidence, gaps, and remaining risk. Never fabricate a packet.
 7. Return packets to the parent for integration and judgment. Do not integrate

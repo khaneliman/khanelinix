@@ -9,12 +9,15 @@ Give every worker exactly these fields. Omit conversational context.
 
 - **Task**: one bounded outcome.
 - **Paths**: files or directories in scope.
+- **Verified context**: only decisions and facts required for this task.
 - **Constraints**: what must not change, plus repository rules that apply.
 - **Write policy**: read-only, or the exact paths the worker may write. Missing
   write permission means read-only.
 - **Skill or tool lane**: the allowed skills and commands. A matching specialist
   skill may run inside the lane, such as `writing-nix` for Nix edits or
   `rust-toolkit` for Rust edits.
+- **Required evidence**: exact findings, checks, artifacts, or changed paths the
+  parent must inspect.
 - **Exit criteria**: the evidence that ends the task.
 
 ## Worker Selection

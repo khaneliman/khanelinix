@@ -24,6 +24,8 @@
   model policy, gateway catalog, task routes, and quota pools
 - `model-routing.nix`: validated Nix adapter for canonical routing policy
 - `agents.nix`: semantic worker capabilities and provider renderers
+- `agents/shared/worker-core.md`: universal child-worker boundaries and quality
+  contract composed into every provider agent
 - `marketplace/`: portable publication catalog, provider skill projection,
   generator (`sync.py`), validator, generated shared plugin tree (`plugins/`),
   tests, and install documentation
