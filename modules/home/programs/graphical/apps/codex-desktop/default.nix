@@ -9,7 +9,16 @@ let
   inherit (pkgs.stdenv.hostPlatform) isDarwin isLinux;
 
   cfg = config.khanelinix.programs.graphical.apps.codex-desktop;
+  codexPackage =
+    if config.programs.codex.package == null then pkgs.codex else config.programs.codex.package;
   codexHome = config.home.sessionVariables.CODEX_HOME or "${config.home.homeDirectory}/.codex";
+  codexDesktopEnvironment = pkgs.writeShellApplication {
+    name = "codex-desktop-environment";
+    text = ''
+      /bin/launchctl setenv CODEX_HOME ${lib.escapeShellArg codexHome}
+      /bin/launchctl setenv CODEX_CLI_PATH ${lib.escapeShellArg (lib.getExe codexPackage)}
+    '';
+  };
   waylandSupport = config.khanelinix.programs.graphical.addons.electron-support.enable or false;
 in
 {
@@ -59,7 +68,7 @@ in
         # The upstream module no longer owns CODEX_CLI_PATH. Keep the desktop
         # app on the same patched CLI as the terminal integration.
         (mkIf isLinux {
-          CODEX_CLI_PATH = lib.getExe pkgs.codex;
+          CODEX_CLI_PATH = lib.getExe codexPackage;
         })
         (mkIf waylandSupport {
           CODEX_LINUX_RENDERING_MODE = "wayland-gpu";
@@ -72,7 +81,7 @@ in
       # TODO: Upstream a daemon executable override for package-managed installs,
       # then remove this standalone-layout compatibility link.
       xdg.configFile."codex/packages/standalone/current/codex" = lib.mkIf isLinux {
-        source = lib.getExe pkgs.codex;
+        source = lib.getExe codexPackage;
       };
 
       # The launcher reads its own flags file instead of the generic
@@ -86,6 +95,14 @@ in
           --wayland-text-input-version=1
         '';
       };
+
+      launchd.agents.codex-desktop-environment = lib.mkIf isDarwin {
+        enable = true;
+        config = {
+          ProgramArguments = [ (lib.getExe codexDesktopEnvironment) ];
+          RunAtLoad = true;
+        };
+      };
     })
 
     # Dock apps inherit launchd's environment instead of Home Manager's shell
@@ -96,8 +113,7 @@ in
       home.activation.codexDesktopEnvironment = lib.hm.dag.entryAfter [ "writeBoundary" ] (
         if cfg.enable then
           ''
-            run /bin/launchctl setenv CODEX_HOME ${lib.escapeShellArg codexHome}
-            run /bin/launchctl setenv CODEX_CLI_PATH ${lib.escapeShellArg (lib.getExe pkgs.codex)}
+            run ${lib.getExe codexDesktopEnvironment}
           ''
         else
           ''
