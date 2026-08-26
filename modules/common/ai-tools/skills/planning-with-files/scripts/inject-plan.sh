@@ -17,6 +17,11 @@ PLAN_FILE="${PLAN_DIR:+${PLAN_DIR}/}task_plan.md"
 
 [ -f "$PLAN_FILE" ] || exit 0
 
+if sh "${SCRIPT_DIR}/check-complete.sh" "$PLAN_FILE" 2>/dev/null |
+    grep -q "ALL PHASES COMPLETE"; then
+    exit 0
+fi
+
 if [ -n "$PLAN_DIR" ]; then
     ATTESTATION_FILE="${PLAN_DIR}/.attestation"
 else
