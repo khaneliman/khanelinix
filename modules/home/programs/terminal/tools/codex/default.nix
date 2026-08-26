@@ -64,6 +64,20 @@ let
       "${config.xdg.configHome}/codex"
     else
       "${config.home.homeDirectory}/.codex";
+  codexPackage =
+    if pkgs.stdenv.hostPlatform.isDarwin && config.home.preferXdgDirectories then
+      pkgs.symlinkJoin {
+        name = pkgs.codex.name;
+        paths = [ pkgs.codex ];
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+        postBuild = ''
+          wrapProgram "$out/bin/codex" \
+            --set-default CODEX_HOME ${lib.escapeShellArg codexConfigPath}
+        '';
+        meta = pkgs.codex.meta;
+      }
+    else
+      pkgs.codex;
   codexRepairMessageIds = pkgs.writeShellApplication {
     name = "codex-repair-message-ids";
     runtimeInputs = with pkgs; [
@@ -306,13 +320,18 @@ in
     programs.codex = {
       enable = true;
       enableMcpIntegration = mkIf mcpModuleEnabled true;
+      package = codexPackage;
       profiles = codexProfiles;
 
       # https://developers.openai.com/codex/config-schema.json
       settings = {
         apps._default.default_tools_approval_mode = "writes";
 
-        cli_auth_credentials_store = "auto";
+        # Nix rebuilds change the ad-hoc Mach-O CDHash. Keychain then treats
+        # Codex as a new executable and asks for the login password again.
+        # Codex does not migrate Keychain credentials into file storage.
+        cli_auth_credentials_store = if pkgs.stdenv.hostPlatform.isDarwin then "file" else "auto";
+        mcp_oauth_credentials_store = if pkgs.stdenv.hostPlatform.isDarwin then "file" else "auto";
 
         features = {
           memories = !aiTools.codex.okfMemoryEnabled;
