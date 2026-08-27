@@ -54,11 +54,6 @@ let
     inherit lib pkgs;
   };
   tomlFormat = pkgs.formats.toml { };
-  codexConfigDir =
-    if config.home.preferXdgDirectories then
-      "${lib.removePrefix config.home.homeDirectory config.xdg.configHome}/codex"
-    else
-      ".codex";
   codexConfigPath =
     if config.home.preferXdgDirectories then
       "${config.xdg.configHome}/codex"
@@ -98,75 +93,27 @@ let
   codexAgentSources = lib.mapAttrs (
     name: agentSettings: tomlFormat.generate "codex-agent-${name}" agentSettings
   ) aiTools.codex.agents;
-  # Codex opens agent role files with O_NOFOLLOW before each spawn. Home Manager
-  # still declares the sources, then activation replaces its links with files.
-  codexAgentFiles = lib.mapAttrs' (
-    name: source:
-    lib.nameValuePair "${codexConfigDir}/agents/${name}.toml" {
-      inherit source;
-      force = true;
-    }
-  ) codexAgentSources;
-  codexAgentsActivate = pkgs.writeShellApplication {
-    name = "codex-agents-activate";
-    runtimeInputs = [ pkgs.coreutils ];
-    text = ''
-      old_generation=''${1:-}
-      target_directory=${lib.escapeShellArg "${codexConfigPath}/agents"}
-      install -d -m 0700 "$target_directory"
-
-      agent_names=(${lib.escapeShellArgs (lib.attrNames codexAgentSources)})
-      agent_sources=(${lib.escapeShellArgs (lib.attrValues codexAgentSources)})
-
-      # Home Manager skips removed targets after activation makes them regular
-      # files. Remove only names owned by the previous generation.
-      old_agent_directory="$old_generation/home-files/${codexConfigDir}/agents"
-      if [[ -n $old_generation && -d $old_agent_directory ]]; then
-        shopt -s nullglob
-        for old_agent in "$old_agent_directory"/*.toml; do
-          old_name=''${old_agent##*/}
-          old_name=''${old_name%.toml}
-          is_current=false
-          for name in "''${agent_names[@]}"; do
-            if [[ $old_name == "$name" ]]; then
-              is_current=true
-              break
-            fi
-          done
-          if [[ $is_current == false ]]; then
-            rm -f -- "$target_directory/$old_name.toml"
-          fi
-        done
-        shopt -u nullglob
-      fi
-
-      temporary_file=
-      cleanup() {
-        if [[ -n ''${temporary_file:-} ]]; then
-          rm -f -- "$temporary_file"
-        fi
-      }
-      trap cleanup EXIT
-
-      for index in "''${!agent_names[@]}"; do
-        name=''${agent_names[$index]}
-        source=''${agent_sources[$index]}
-        target="$target_directory/$name.toml"
-        temporary_file=$(mktemp "$target_directory/.$name.toml.XXXXXX")
-
-        install -m 0600 -- "$source" "$temporary_file"
-
-        # Replace Home Manager symlinks even when their contents match.
-        if [[ -L $target ]] || ! cmp -s "$temporary_file" "$target"; then
-          mv -f -- "$temporary_file" "$target"
-        else
-          rm -f -- "$temporary_file"
-        fi
-        temporary_file=
-      done
-      trap - EXIT
-    '';
-  };
+  codexAgentSettingNames = [
+    "default_subagent_model"
+    "default_subagent_reasoning_effort"
+    "enabled"
+    "interrupt_message"
+    "job_max_runtime_seconds"
+    "max_concurrent_threads_per_session"
+    "max_depth"
+    "max_threads"
+  ];
+  codexAgentRoleNameCollisions = lib.intersectLists codexAgentSettingNames (
+    lib.attrNames aiTools.codex.agents
+  );
+  # Codex rejects symlinked role files. Point role declarations at regular Nix
+  # store files instead of copying them into the mutable Codex home.
+  codexAgentRoles =
+    assert lib.assertMsg (codexAgentRoleNameCollisions == [ ])
+      "Codex agent role names collide with agent settings: ${lib.concatStringsSep ", " codexAgentRoleNameCollisions}";
+    lib.mapAttrs (name: _: {
+      config_file = codexAgentSources.${name};
+    }) aiTools.codex.agents;
   codexSkills = aiTools.codex.skillSources;
   codexProfiles = {
     # Deep analysis and live-research mode. Intentionally expensive.
@@ -238,22 +185,16 @@ in
       # codex bump does not block activation. The native-messaging manifest and
       # node_repl MCP server are managed declaratively below, so the installer's
       # manifest writes are redirected to a scratch root it may own.
-      activation = {
-        codexAgentFiles = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-          run ${lib.getExe codexAgentsActivate} "''${oldGenPath:-}"
-        '';
-      }
-      // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+      activation = lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
         codexBrowserUseInstall = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           run ${lib.getExe pkgs.khanelinix.codex-browser-use-linux-chromium} install \
             --codex-home ${codexConfigPath} \
             --browser-config-root ${config.xdg.stateHome}/codex-browser-use-linux-chromium \
             --skip-feature-config \
             --patch-chromium-extension \
-            || verboseEcho "codex-browser-use-linux-chromium install failed (non-fatal); run codex-browser-doctor"
+          || verboseEcho "codex-browser-use-linux-chromium install failed (non-fatal); run codex-browser-doctor"
         '';
       };
-      file = codexAgentFiles;
       packages = [
         codexRepairMessageIds
       ]
@@ -343,7 +284,8 @@ in
         agents = {
           max_threads = 12;
           job_max_runtime_seconds = 3600;
-        };
+        }
+        // codexAgentRoles;
 
         history = {
           max_bytes = 104857600;
