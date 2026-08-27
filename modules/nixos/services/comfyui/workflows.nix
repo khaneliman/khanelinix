@@ -102,6 +102,11 @@ runCommand "comfyui-khanelinix-workflows"
 
     jq '
       .nodes |= map(select(.type != "MarkdownNote"))
+      | .nodes |= map(
+          if .id == 60 and .type == "SaveImage" then
+            .widgets_values[0] = "image/Qwen-Image-2512/Base"
+          else . end
+        )
       | .definitions.subgraphs[0].nodes |= map(
           if .id == 226 and .type == "UNETLoader" then
             .type = "UnetLoaderGGUF"
@@ -148,10 +153,21 @@ runCommand "comfyui-khanelinix-workflows"
             and .type == "LoraLoaderModelOnly"
             and .widgets_values[0] == "Qwen-Image-2512-Lightning-4steps-V1.0-bf16.safetensors"
           )] | length == 1)
+      and ([.nodes[]
+        | select(
+            .id == 60
+            and .type == "SaveImage"
+            and .widgets_values[0] == "image/Qwen-Image-2512/Base"
+          )] | length == 1)
     ' "$out/01-qwen-image-2512.json" > /dev/null
 
     jq '
       .nodes |= map(select(.type != "MarkdownNote"))
+      | .nodes |= map(
+          if .id == 195 and .type == "SaveImageAdvanced" then
+            .widgets_values[0] = "image/Qwen-Image-Edit-2511/Edit"
+          else . end
+        )
       | .definitions.subgraphs[0].nodes |= map(
           if .id == 168 then .widgets_values[0] = true else . end
         )
@@ -176,6 +192,12 @@ runCommand "comfyui-khanelinix-workflows"
             and .type == "LoraLoaderModelOnly"
             and .widgets_values[0] == "Qwen-Image-Edit-2511-Lightning-4steps-V1.0-bf16.safetensors"
           )] | length == 1)
+      and ([.nodes[]
+        | select(
+            .id == 195
+            and .type == "SaveImageAdvanced"
+            and .widgets_values[0] == "image/Qwen-Image-Edit-2511/Edit"
+          )] | length == 1)
     ' "$out/02-qwen-image-edit-2511.json" > /dev/null
 
     jq '
@@ -196,7 +218,7 @@ runCommand "comfyui-khanelinix-workflows"
           elif .id == 57 and .type == "CreateVideo" then
             .widgets_values[0] = 16
           elif .id == 58 and .type == "SaveVideo" then
-            .widgets_values[0] = "video/Wan2.1-1.3B"
+            .widgets_values[0] = "video/Wan2.1-1.3B/T2V"
           elif .id == 6 and .type == "CLIPTextEncode" then
             .widgets_values[0] = "A red fox runs through a snowy forest, cinematic tracking shot, detailed fur, natural motion"
           else . end
@@ -241,7 +263,7 @@ runCommand "comfyui-khanelinix-workflows"
         | select(
             .id == 58
             and .type == "SaveVideo"
-            and .widgets_values[0] == "video/Wan2.1-1.3B"
+            and .widgets_values[0] == "video/Wan2.1-1.3B/T2V"
           )] | length == 1)
       and ([.nodes[]
         | select(
@@ -295,7 +317,7 @@ runCommand "comfyui-khanelinix-workflows"
       # The model card's own prompt template. Deviating from it costs realism.
       positive = "RAW photo, a woman on a rain-soaked city street at night, neon reflections, 8k uhd, dslr, soft lighting, high quality, film grain, Fujifilm XT3";
       negative = "(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime), text, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck";
-      prefix = "image/RealisticVision-V6";
+      prefix = "image/RealisticVision-V6/Photo";
       latent = [
         512
         768
