@@ -1,8 +1,8 @@
 {
 	"schema_version": 1,
 	"suite_id": "workflow-routing-baseline",
-	"frozen_at": "2026-08-23",
-	"source_revision": "7caf2d1321af4384d568d60c8325631a718ad60f",
+	"frozen_at": "2026-08-26",
+	"source_revision": "23563624e835316938751c164a073b321d5df934",
 	"cases": [
 		{
 			"id": "routine-bug-fix",
@@ -131,6 +131,23 @@
 					"overlays": []
 				},
 				"must_not_select": ["engineering-workflow", "program-orchestration"]
+			}
+		},
+		{
+			"id": "github-pull-request-review",
+			"prompt": "Review https://github.com/example/project/pull/123 and report actionable findings. Do not post a review or change code.",
+			"tags": ["provider-parity", "owner-positive", "github", "review"],
+			"expected": {
+				"selection": {
+					"owner": "github-toolkit",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": [
+					"engineering-workflow",
+					"git-toolkit",
+					"interrogate"
+				]
 			}
 		},
 		{
@@ -611,6 +628,24 @@
 					"overlays": []
 				},
 				"must_not_select": ["swarm", "program-orchestration"]
+			}
+		},
+		{
+			"id": "child-worker-assigned-skill-lane",
+			"prompt": "You are a child worker. The parent packet assigns read-only GitHub pull-request metadata collection through the github-toolkit skill lane. Return evidence only and do not choose a lifecycle owner.",
+			"tags": [
+				"provider-parity",
+				"owner-negative",
+				"method-positive",
+				"delegation"
+			],
+			"expected": {
+				"selection": {
+					"owner": null,
+					"methods": ["github-toolkit"],
+					"overlays": []
+				},
+				"must_not_select": ["engineering-workflow", "figure-it-out"]
 			}
 		}
 	]

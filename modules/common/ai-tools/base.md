@@ -87,7 +87,22 @@ model, quota fallback, or route retry matters.
 
 ## Skill Routing
 
-Select one owner before phase methods. Closest discriminator wins.
+Every new or materially changed parent task requires a skill decision.
+
+- Before task-specific tools or a substantive answer, invoke the closest
+  matching owner skill. Do not skip invocation because the task looks simple or
+  the workflow is familiar.
+- Expect one owner skill for most tasks. Add one method, domain skill, or
+  overlay when its trigger matches. Do not load unrelated skills to reach a
+  quota.
+- If no visible skill fits, continue without inventing one. Surface the gap only
+  when it blocks or materially changes the result.
+- Do not re-invoke skills for a status reply, a clarifying question, or
+  continuation of an already-invoked workflow.
+- Child workers follow the skill or tool lane in their packet. They do not
+  select another lifecycle owner.
+
+Closest discriminator wins when selecting the owner.
 
 - Routine mutation: `engineering-workflow`. Large, cross-cutting, or unattended
   single-goal work: `figure-it-out`.
