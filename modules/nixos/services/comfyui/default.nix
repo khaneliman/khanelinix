@@ -49,9 +49,11 @@ let
   extraModelPaths = (pkgs.formats.yaml { }).generate "comfyui-extra-model-paths.yaml" {
     khanelinix = {
       base_path = modelRoot;
+      checkpoints = "checkpoints";
       diffusion_models = "diffusion_models";
       loras = "loras";
       text_encoders = "text_encoders";
+      upscale_models = "upscale_models";
       unet = "diffusion_models";
       vae = "vae";
     };
@@ -83,6 +85,22 @@ in
       '';
     };
 
+    cacheNodeOutputs = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      example = true;
+      description = ''
+        Whether ComfyUI keeps node outputs and loaded models between prompts.
+
+        false passes --cache-none, which recomputes every node and re-reads the
+        checkpoint from disk on each queued prompt. That keeps peak memory flat
+        for long video runs, where the reload is a rounding error against
+        sampling time. Image workflows sample in seconds, so the reload
+        dominates instead. Enable this when image generation is the common
+        workload, at the cost of retaining large intermediate tensors.
+      '';
+    };
+
     reserveVramGb = lib.mkOption {
       type = lib.types.nullOr lib.types.numbers.nonnegative;
       default = null;
@@ -107,11 +125,10 @@ in
         # TODO(ROCm): Retest Triton when Wan output matches eager kernels on gfx1100.
         # Triton produced corrupt Wan output on gfx1100.
         "--disable-triton-backend"
-        # Recompute nodes instead of retaining large image and video tensors.
-        "--cache-none"
         # Keep local installs free of paid API nodes and frontend network requests.
         "--disable-api-nodes"
       ]
+      ++ lib.optional (!cfg.cacheNodeOutputs) "--cache-none"
       ++ lib.optional (cfg.models != { }) "--extra-model-paths-config=${extraModelPaths}"
       ++ lib.optional (cfg.reserveVramGb != null) "--reserve-vram=${toString cfg.reserveVramGb}";
     };
@@ -195,6 +212,12 @@ in
         archivePreset 03-wan2.1-text-to-video.json
         archivePreset 03-wan2.2-14b-text-to-video-q5.json
         archivePreset 03-wan2.2-5b-video.json
+        archivePreset 04-sdxl-cyberrealistic-v10.json
+        archivePreset 04-sdxl-cyberrealistic-v10-hires.json
+        archivePreset 04-sdxl-cyberrealistic.json
+        archivePreset 05-sd15-realistic-vision-hires.json
+        archivePreset 05-sd15-realistic-vision-r2.json
+        archivePreset 04-sdxl-cyberrealistic-r2.json
 
         seedPreset \
           ${workflowPresets}/01-qwen-image-2512.json \
@@ -205,6 +228,18 @@ in
         seedPreset \
           ${workflowPresets}/03-wan2.1-video.json \
           03-wan2.1-1.3b-video.json
+        seedPreset \
+          ${workflowPresets}/04-sdxl-cyberrealistic-landscape.json \
+          04-sdxl-cyberrealistic-landscape.json
+        seedPreset \
+          ${workflowPresets}/04-sdxl-cyberrealistic-portrait.json \
+          04-sdxl-cyberrealistic-portrait.json
+        seedPreset \
+          ${workflowPresets}/04-sdxl-cyberrealistic-product.json \
+          04-sdxl-cyberrealistic-product.json
+        seedPreset \
+          ${workflowPresets}/05-sd15-realistic-vision.json \
+          05-sd15-realistic-vision.json
 
         settingsFile=/var/lib/comfyui/user/default/comfy.settings.json
         settingsTmp="$settingsFile.tmp"

@@ -26,10 +26,63 @@ let
     meta.license = lib.licenses.mit;
   };
 
+  sdxlCheckpoint = fetchurl {
+    url = "${baseUrl}/templates/sdxl_simple_example.json";
+    hash = "sha256-fzgl3up6P8SU276IONkjNue7RNn68XkUm3MZMwW2jyQ=";
+    meta.license = lib.licenses.mit;
+  };
+
   license = fetchurl {
     url = "${baseUrl}/LICENSE";
     hash = "sha256-XczWHIDIR81rIvqYEkAQFjq4ZG5XNVehalyuMRIvIFY=";
   };
+  mkCheckpointWorkflow = name: params: ''
+    jq --argjson p ${lib.escapeShellArg (builtins.toJSON params)} \
+      --from-file ${./checkpoint-txt2img.jq} \
+      ${sdxlCheckpoint} > "$out/${name}"
+
+    jq -e --argjson p ${lib.escapeShellArg (builtins.toJSON params)} \
+      --from-file ${./checkpoint-txt2img-check.jq} \
+      "$out/${name}" > /dev/null
+  '';
+
+  cyberRealisticDefaults = {
+    checkpoint = "CyberRealisticXLPlay_V10.0_FP16.safetensors";
+    checkpointTitle = "Load Checkpoint - CyberRealistic XL";
+    vae = "";
+    # Both passes start at the same seed and increment together. Each queue
+    # explores a new composition without desynchronizing the hires pass.
+    sampler = [
+      721897303308196
+      "increment"
+      30
+      4
+      "dpmpp_2m_sde"
+      "karras"
+      1
+    ];
+    # CyberRealistic v10 examples use a 2x learned pass with 20 hires steps.
+    # Scaling the 2x result by 0.75 lands at the selected 1.5x final size while
+    # keeping the learned intermediate small enough for the display GPU.
+    hires = {
+      upscaleModel = "RealESRGAN_x2plus.pth";
+      upscaleModelScale = 2;
+      finalScale = 1.5;
+      sampler = [
+        721897303308196
+        "increment"
+        20
+        4
+        "dpmpp_2m_sde"
+        "karras"
+        0.35
+      ];
+    };
+  };
+
+  mkCyberRealisticWorkflow =
+    name: profile: mkCheckpointWorkflow name (lib.recursiveUpdate cyberRealisticDefaults profile);
+
 in
 runCommand "comfyui-khanelinix-workflows"
   {
@@ -199,6 +252,85 @@ runCommand "comfyui-khanelinix-workflows"
       and ([.nodes[] | select(.type == "MarkdownNote")] | length == 0)
       and ([.nodes[] | select(.properties.models?)] | length == 0)
     ' "$out/03-wan2.1-video.json" > /dev/null
+
+    ${mkCyberRealisticWorkflow "04-sdxl-cyberrealistic-landscape.json" {
+      positive = "RAW photo, cinematic landscape photography, a rain-soaked city street at night, wide establishing composition, natural perspective, neon reflections, physically accurate lighting, realistic textures, atmospheric depth, subtle film grain, sharp environmental detail";
+      negative = "lowres, blurry, distorted perspective, oversaturated, cartoon, illustration, anime, painting, CGI, 3D render, watermark, text, logo";
+      prefix = "image/CyberRealisticXL/Landscape";
+      latent = [
+        1280
+        720
+        1
+      ];
+    }}
+
+    ${mkCyberRealisticWorkflow "04-sdxl-cyberrealistic-portrait.json" {
+      positive = "RAW photo, close-up head-and-shoulders portrait of an adult woman, natural skin texture, visible pores and fine facial hair, lifelike eyes, 85mm lens, shallow depth of field, soft window key light, subtle fill light, neutral color grading, sharp focus";
+      negative = "lowres, bad anatomy, bad hands, deformed iris, deformed pupils, extra fingers, malformed hands, waxy skin, plastic skin, cartoon, illustration, anime, painting, CGI, 3D render, watermark, text, logo";
+      prefix = "image/CyberRealisticXL/Portrait";
+      latent = [
+        720
+        1280
+        1
+      ];
+    }}
+
+    ${mkCyberRealisticWorkflow "04-sdxl-cyberrealistic-product.json" {
+      positive = "commercial studio product photography, a premium wristwatch centered on a seamless neutral backdrop, three-quarter view, softbox key light, controlled rim light, realistic metal and glass reflections, accurate geometry, crisp material texture, natural contact shadow, sharp focus";
+      negative = "lowres, blurry, distorted geometry, warped edges, asymmetry, duplicate object, floating object, cluttered background, blown highlights, crushed shadows, cartoon, illustration, anime, painting, CGI, 3D render, watermark, text, logo";
+      prefix = "image/CyberRealisticXL/Product";
+      latent = [
+        1024
+        1024
+        1
+      ];
+    }}
+
+    ${mkCheckpointWorkflow "05-sd15-realistic-vision.json" {
+      checkpoint = "Realistic_Vision_V6.0_NV_B1_fp16.safetensors";
+      checkpointTitle = "Load Checkpoint - Realistic Vision V6.0 B1";
+      # The checkpoint has a usable baked VAE, but the model card recommends
+      # sd-vae-ft-mse instead to clear artifacts.
+      vae = "vae-ft-mse-840000-ema-pruned.safetensors";
+      # The model card's own prompt template. Deviating from it costs realism.
+      positive = "RAW photo, a woman on a rain-soaked city street at night, neon reflections, 8k uhd, dslr, soft lighting, high quality, film grain, Fujifilm XT3";
+      negative = "(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime), text, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck";
+      prefix = "image/RealisticVision-V6";
+      latent = [
+        512
+        768
+        1
+      ];
+      sampler = [
+        721897303308196
+        "increment"
+        30
+        5
+        "dpmpp_sde"
+        "karras"
+        1
+      ];
+      # The card lists 768x1024 and up, but qualifies it with "use lower
+      # resolution if you get a lot of mutations". Duplicated limbs showed up at
+      # 768x1024, so the base pass composes at 512x768 and the 1.5x pass takes
+      # it to 768x1152. The card calls Hires.Fix mandatory for half and full
+      # body framing. The 2x model keeps the learned intermediate close to the
+      # final canvas before the 1.5x resize.
+      hires = {
+        upscaleModel = "RealESRGAN_x2plus.pth";
+        upscaleModelScale = 2;
+        finalScale = 1.5;
+        sampler = [
+          721897303308196
+          "increment"
+          15
+          5
+          "dpmpp_sde"
+          "karras"
+          0.3
+        ];
+      };
+    }}
 
     cp ${license} "$out/LICENSE"
   ''
