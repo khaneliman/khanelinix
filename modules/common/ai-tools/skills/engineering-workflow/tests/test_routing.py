@@ -392,6 +392,34 @@ class RepositoryWorkerLaneContract(unittest.TestCase):
             self.assertIn(marker, text, name)
             self.assertNotIn("Never invoke lifecycle skills", text, name)
 
+    def test_reviewer_prompt_requires_implementation_ready_findings(self) -> None:
+        text = normalized(GENERAL_AGENTS / "reviewer.md").lower()
+        for requirement in (
+            "load every corresponding specialist skill",
+            "each changed language or domain",
+            "return `blocked`",
+            "revalidate every finding against the current target state",
+            "current pr head when reviewing a pull request",
+            "trigger or input",
+            "current behavior",
+            "expected behavior",
+            "applicable code shape",
+            "exact condition, type, or module assignment",
+            "precedence",
+            "compatibility",
+            "focused regression test that fails before",
+            "one defect per finding",
+            "what breaks",
+            "replacement code shape",
+            "proof test",
+            "do not restate the diff",
+            "abstract repair verbs without an exact operation",
+            "owns the protocol or behavior being consumed",
+            "pinned commit and exact lines",
+            "unresolved choice and viable alternatives",
+        ):
+            self.assertIn(requirement, text)
+
 
 class MarketplaceCompositionContract(unittest.TestCase):
     def setUp(self) -> None:
