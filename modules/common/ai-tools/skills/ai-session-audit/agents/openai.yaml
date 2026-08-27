@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Session Audit"
+  short_description: "Audit coding-agent sessions and routing behavior"
+  default_prompt: "Use $ai-session-audit to summarize recent agent turns, skill use, tools, workers, models, and tokens."
