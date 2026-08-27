@@ -204,15 +204,14 @@ in
               };
             };
 
-        # The SDXL and SD 1.5 presets are the common workload here, and they
-        # sample in seconds. With --cache-none the checkpoint reload dominates
-        # wall-clock, so keep models resident. Watch the Wan runs: caching also
-        # retains their large video tensors against MemoryMax.
-        cacheNodeOutputs = true;
+        # A sustained CyberRealistic queue coincided with an AMDGPU context loss.
+        # The trigger is unconfirmed; reduce retained RAM and VRAM as conservative
+        # containment on the card that also drives the desktop.
+        cacheNodeOutputs = false;
 
-        # This GPU also drives two high-resolution displays. Preserve compositor
-        # headroom.
-        reserveVramGb = 2;
+        # Increase the prior 2 GiB reserve to give two high-resolution displays
+        # more headroom while SDXL, its VAE, and the upscaler exchange residency.
+        reserveVramGb = 4;
       };
 
       geoclue = enabled;
