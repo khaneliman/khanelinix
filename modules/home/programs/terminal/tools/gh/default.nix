@@ -44,6 +44,7 @@ in
           gh-eco # explore the ecosystem
           gh-cal # contributions calender terminal viewer
           gh-poi # clean up local branches safely
+          gh-stack # stacked pull requests
         ];
 
         gitCredentialHelper = {
