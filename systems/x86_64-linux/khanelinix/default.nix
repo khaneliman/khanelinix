@@ -9,6 +9,22 @@
 let
   inherit (lib.khanelinix) enabled;
   inherit (lib) mkForce mkMerge;
+
+  # nixpkgs has no OpenRAIL license attribute. Use restrictions make the
+  # license non-free, but it still allows redistribution.
+  openRailM = {
+    fullName = "CreativeML Open RAIL-M License";
+    url = "https://huggingface.co/spaces/CompVis/stable-diffusion-license";
+    free = false;
+    redistributable = true;
+  };
+
+  openRailPlusPlusM = {
+    fullName = "CreativeML Open RAIL++-M License";
+    url = "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/blob/main/LICENSE.md";
+    free = false;
+    redistributable = true;
+  };
 in
 {
   imports = [
@@ -85,11 +101,10 @@ in
             (
               target: source:
               pkgs.fetchurl (
-                source
-                // {
+                lib.recursiveUpdate {
                   name = baseNameOf target;
                   meta.license = lib.licenses.asl20;
-                }
+                } source
               )
             )
             {
@@ -142,7 +157,58 @@ in
                 url = "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/617a7633e636506f850e043bc4605f290a466a8e/split_files/vae/wan_2.1_vae.safetensors";
                 hash = "sha256-L8OdMTWaSwpk9Vh22P9/qNeAlWriyxNGOwIj4VFIl2s=";
               };
+
+              # An SDXL checkpoint bundles UNet, CLIP, and VAE, so no separate
+              # text encoder or VAE entry is needed. FP16 halves the download
+              # and the VRAM footprint against FP32.
+              #
+              # The HuggingFace metadata tags this RAIL-M, but SDXL 1.0 base is
+              # RAIL++-M and derivatives keep at least its use restrictions.
+              "checkpoints/CyberRealisticXLPlay_V10.0_FP16.safetensors" = {
+                url = "https://huggingface.co/cyberdelia/CyberRealisticXL/resolve/c04ae13b465d19763561a834d625a3d504a4f315/CyberRealisticXLPlay_V10.0_FP16.safetensors";
+                hash = "sha256-/V6HC1u85L3etk9LuOScV/hKt5PAJipQPwEjvkNeZn0=";
+                meta.license = openRailPlusPlusM;
+              };
+
+              # The checkpoint bakes in a merge-drifted SD 1.5 VAE, so it does
+              # decode standalone. The author recommends sd-vae-ft-mse over it
+              # to clear artifacts, which is why the workflow loads that VAE.
+              "checkpoints/Realistic_Vision_V6.0_NV_B1_fp16.safetensors" = {
+                url = "https://huggingface.co/SG161222/Realistic_Vision_V6.0_B1_noVAE/resolve/9a857a696b9aabbf509073e0aa55ec8200b6ef7d/Realistic_Vision_V6.0_NV_B1_fp16.safetensors";
+                hash = "sha256-xIv9FZzXplB7EoaF6WPDmPpyOZzvr69gN4HfUM6DbMc=";
+                meta.license = openRailM;
+              };
+
+              # The official Real-ESRGAN X2 general-image model keeps the
+              # learned intermediate close to the requested final size. Its
+              # repository publishes the release asset under BSD-3-Clause.
+              "upscale_models/RealESRGAN_x2plus.pth" = {
+                url = "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.1/RealESRGAN_x2plus.pth";
+                hash = "sha256-Sfr9Rfj9eqjTGrKiLRTZG1NsNElKXP4x612Jwvomars=";
+                meta.license = lib.licenses.bsd3;
+              };
+
+              # Retain UltraSharp for existing user-authored workflows. The
+              # curated presets avoid it because a 4x intermediate exhausted
+              # display VRAM headroom on this dual-display GPU.
+              "upscale_models/4x-UltraSharp.safetensors" = {
+                url = "https://huggingface.co/Kim2091/UltraSharp/resolve/920fe218c211f831b43cb30327f203e2b59f5dab/4x-UltraSharp.safetensors";
+                hash = "sha256-NqNAtVCbaZ0sBstEXdwdPTkZmsc02IntbXkV9g4FvLw=";
+                meta.license = lib.licenses.cc-by-nc-sa-40;
+              };
+
+              "vae/vae-ft-mse-840000-ema-pruned.safetensors" = {
+                url = "https://huggingface.co/stabilityai/sd-vae-ft-mse-original/resolve/629b3ad3030ce36e15e70c5db7d91df0d60c627f/vae-ft-mse-840000-ema-pruned.safetensors";
+                hash = "sha256-c15MOkR6MlV2DX+GhF8J+TeAm6pSnBc3DYPkw3WPPHU=";
+                meta.license = lib.licenses.mit;
+              };
             };
+
+        # The SDXL and SD 1.5 presets are the common workload here, and they
+        # sample in seconds. With --cache-none the checkpoint reload dominates
+        # wall-clock, so keep models resident. Watch the Wan runs: caching also
+        # retains their large video tensors against MemoryMax.
+        cacheNodeOutputs = true;
 
         # This GPU also drives two high-resolution displays. Preserve compositor
         # headroom.
