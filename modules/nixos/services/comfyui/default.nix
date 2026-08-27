@@ -8,6 +8,18 @@
 let
   cfg = config.khanelinix.services.comfyui;
 
+  userName = config.khanelinix.user.name;
+  homeCfg = config.home-manager.users.${userName} or { };
+
+  # Generations belong where the desktop already looks for images. XDG user
+  # dirs are Home Manager state, so fall back to the conventional path when
+  # that module is absent.
+  picturesDir =
+    if homeCfg.xdg.userDirs.enable or false then
+      homeCfg.xdg.userDirs.pictures
+    else
+      "${config.users.users.${userName}.home}/Pictures";
+
   localFirstSettings = (pkgs.formats.json { }).generate "comfyui-local-first-settings.json" {
     "Comfy.RightSidePanel.IsOpen" = false;
     "Comfy.Templates.SelectedRunsOn" = [ "ComfyUI" ];
@@ -111,6 +123,40 @@ in
         null omits --reserve-vram, which lets ComfyUI claim the whole card.
       '';
     };
+
+    outputDir = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = "${picturesDir}/comfyui";
+      defaultText = lib.literalExpression ''"''${xdg.userDirs.pictures}/comfyui"'';
+      example = "/srv/comfyui-output";
+      description = ''
+        Directory that receives generated images and video.
+
+        Defaults under the desktop user's XDG pictures directory, because
+        ComfyUI's own gallery cannot show anything generated before the current
+        process, which leaves a file manager as the only way to browse past
+        work. The path is bind-mounted into the unit, so it still resolves
+        under /home, where ProtectHome would otherwise substitute a tmpfs.
+
+        The directory is created setgid so ComfyUI writes group-readable files
+        and members of outputGroup can prune them.
+
+        null keeps the output tree inside the state directory, which systemd
+        creates 0700 and no desktop session can traverse.
+      '';
+    };
+
+    outputGroup = lib.mkOption {
+      type = lib.types.str;
+      default = config.users.users.${userName}.group;
+      defaultText = lib.literalExpression "config.users.users.\${khanelinix.user.name}.group";
+      example = "media";
+      description = ''
+        Group that owns outputDir and therefore reads generated media.
+
+        Only consulted when outputDir is set.
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -130,10 +176,23 @@ in
       ]
       ++ lib.optional (!cfg.cacheNodeOutputs) "--cache-none"
       ++ lib.optional (cfg.models != { }) "--extra-model-paths-config=${extraModelPaths}"
-      ++ lib.optional (cfg.reserveVramGb != null) "--reserve-vram=${toString cfg.reserveVramGb}";
+      ++ lib.optional (cfg.reserveVramGb != null) "--reserve-vram=${toString cfg.reserveVramGb}"
+      ++ lib.optional (cfg.outputDir != null) "--output-directory=${cfg.outputDir}";
     };
 
     systemd = {
+      # ProtectSystem=strict makes everything outside the state directory
+      # read-only, and ProtectHome=tmpfs hides /home entirely. A bind mount is
+      # applied after both, so it reaches through either one. ReadWritePaths
+      # would not: under ProtectHome the tmpfs still shadows the target.
+      tmpfiles.settings = lib.mkIf (cfg.outputDir != null) {
+        "10-khanelinix-comfyui-output".${cfg.outputDir}.d = {
+          user = "comfyui";
+          group = cfg.outputGroup;
+          mode = "2775";
+        };
+      };
+
       services.comfyui.preStart = lib.mkAfter ''
         install -d -m 0755 \
           /var/lib/comfyui/user/default \
@@ -265,6 +324,7 @@ in
       };
 
       services.comfyui.serviceConfig = {
+        BindPaths = lib.mkIf (cfg.outputDir != null) [ cfg.outputDir ];
         CPUWeight = 20;
         IOWeight = 20;
         MemoryHigh = "24G";
