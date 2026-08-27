@@ -81,6 +81,11 @@ let
     ];
   };
 
+  skillRoutingDir = ./skill-routing;
+  skillRouting = {
+    hook = skillRoutingDir + "/hooks/skill_routing_hook.py";
+  };
+
   antigravityOkfMemoryPlugin =
     if pkgs == null then
       null
@@ -343,6 +348,7 @@ in
     permissions
     planningWithFiles
     programOrchestration
+    skillRouting
     skills
     skillsDir
     systemSkillNames
