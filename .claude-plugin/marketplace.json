@@ -119,7 +119,7 @@
 		{
 			"name": "git-toolkit",
 			"description": "Git history and change-stack workflows.",
-			"version": "0.1.4",
+			"version": "0.1.5",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -129,7 +129,7 @@
 		{
 			"name": "github-toolkit",
 			"description": "Manage GitHub queues, issues, pull requests, reviews, and CI.",
-			"version": "0.1.5",
+			"version": "0.1.6",
 			"author": {
 				"name": "khaneliman"
 			},

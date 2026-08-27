@@ -4,6 +4,10 @@ Use for work that spans commits, branches, review threads, or contribution
 boundaries. This reference owns history and review shape, not language,
 framework, or host-specific implementation details.
 
+Stop at the slice map. To publish slices as a GitHub stack of dependent pull
+requests, or to inspect, restructure, or merge one, invoke `$github-toolkit`
+pr-stacking mode. Do not chain PR base branches by hand.
+
 ## Workflow
 
 1. Read contribution docs and local agent instructions.

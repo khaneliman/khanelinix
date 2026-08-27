@@ -91,14 +91,14 @@
 			"name": "git-toolkit",
 			"displayName": "Git Toolkit",
 			"description": "Git history and change-stack workflows.",
-			"version": "0.1.4",
+			"version": "0.1.5",
 			"category": "Developer Tools"
 		},
 		{
 			"name": "github-toolkit",
 			"displayName": "GitHub Toolkit",
 			"description": "Manage GitHub queues, issues, pull requests, reviews, and CI.",
-			"version": "0.1.5",
+			"version": "0.1.6",
 			"category": "Developer Tools"
 		},
 		{
