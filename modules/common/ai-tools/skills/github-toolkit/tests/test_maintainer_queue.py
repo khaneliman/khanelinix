@@ -10,6 +10,7 @@ from pathlib import Path
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 SKILL_MD = SKILL_ROOT / "SKILL.md"
 REFERENCE = SKILL_ROOT / "references" / "maintainer-queue.md"
+PR_REVIEW_REFERENCE = SKILL_ROOT / "references" / "pr-review.md"
 BASE_MD = SKILL_ROOT.parents[1] / "base.md"
 CATALOG = SKILL_ROOT.parents[1] / "marketplace" / "catalog.json"
 
@@ -136,6 +137,51 @@ class MaintainerQueueMethodContract(unittest.TestCase):
             self.assertIn(term, output)
         self.assertIn("live external state", output)
         self.assertIn("durable memory", output)
+
+
+class PullRequestReviewContract(unittest.TestCase):
+    def setUp(self) -> None:
+        self.text = compact(read(PR_REVIEW_REFERENCE)).lower()
+
+    def test_findings_are_current_head_and_implementation_ready(self) -> None:
+        for requirement in (
+            "load every corresponding specialist skill",
+            "each changed language or domain",
+            "return a blocked review",
+            "revalidate each finding against the current pr head",
+            "trigger or input",
+            "current behavior",
+            "expected behavior",
+            "concrete correction",
+            "condition",
+            "type",
+            "module assignment",
+            "precedence",
+            "compatibility",
+            "focused regression test that fails before",
+            "one defect per comment",
+            "what breaks",
+            "replacement code shape",
+            "proof test",
+            "do not restate the diff",
+            "abstract repair verbs without an exact operation",
+            "owns the protocol or behavior being consumed",
+            "pinned commit and exact lines",
+            "unresolved choice and viable alternatives",
+        ):
+            self.assertIn(requirement, self.text)
+
+    def test_pending_mutations_are_previewed_owned_and_never_submitted(self) -> None:
+        for requirement in (
+            "inspect the exact review and comment ids again",
+            "confirm the review is pending and owned by the current actor",
+            "preview every planned mutation",
+            '`expected_head_sha` and `expected_review_state: "pending"`',
+            "validates both during preview and again immediately before mutation",
+            "select only the exact review owned by the current actor",
+            "never submit it",
+        ):
+            self.assertIn(requirement, self.text)
 
 
 if __name__ == "__main__":

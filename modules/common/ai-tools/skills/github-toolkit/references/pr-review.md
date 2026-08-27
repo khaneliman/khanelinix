@@ -22,10 +22,16 @@ comments.
    with no reviewable code.
 3. Read contributor guidance, PR template, root and changed-path instructions,
    and directly relevant documentation.
-4. Review only diff plus necessary local context. Load matching language/domain
-   skill before judging implementation details.
-5. Validate each finding against changed code and repository policy.
-6. Return draft findings by default. Inspect, create, update, or delete a review
+4. Before reviewing code, load every corresponding specialist skill for each
+   changed language or domain, such as `rust-toolkit`,
+   `typescript-best-practices`, or `writing-nix`. This is a hard precondition.
+   If any changed code lacks a matching skill in the supplied lane, state the
+   coverage limitation. Return a blocked review.
+5. Review only diff plus necessary local context after the specialist skill is
+   loaded.
+6. Revalidate each finding against the current PR head, changed code, and
+   repository policy before drafting or revising it.
+7. Return draft findings by default. Inspect, create, update, or delete a review
    only when user explicitly requests it.
 
 Never submit pending review, approve, request changes, push, or edit source.
@@ -64,12 +70,16 @@ Create one pending review from ordinary prose and optional inline comments. Omit
 }
 ```
 
-Update any current-actor review summary or comment that GitHub permits. Identify
-the review and each comment explicitly:
+Update a current-actor review summary or comment only when GitHub permits it.
+For a pending review mutation, inspect the exact review and comment IDs again.
+Confirm the review is pending and owned by the current actor. Identify the
+review and each comment explicitly:
 
 ```json
 {
   "review_id": "PRR_GRAPHQL_OR_DATABASE_ID",
+  "expected_head_sha": "FULL_HEAD_SHA",
+  "expected_review_state": "PENDING",
   "body": "Updated review summary.",
   "comments": [
     {
@@ -95,12 +105,18 @@ Delete current-actor review comments without deleting their review:
 }
 ```
 
-Run `create`, `update`, or `delete` without `--apply` first. Review exact
-planned IDs and operations. Add `--apply` only when user explicitly requested
-that write. Helpers refresh actor ownership and selected IDs before mutation,
-then read back exact bodies or absence. GitHub permits review-summary updates
-after submission but permits whole-review deletion only while review is pending.
-Submitted inline comments can still be updated or deleted.
+Run `create`, `update`, or `delete` without `--apply` first and preview every
+planned mutation, including its exact IDs and replacement body. Add `--apply`
+only when the user explicitly requested that write. Helpers refresh actor
+ownership and selected IDs before mutation, then read back exact bodies or
+absence. For a pending-review update, include `expected_head_sha` and
+`expected_review_state: "PENDING"`. The helper validates both during preview and
+again immediately before mutation. This guard is optional for separately
+authorized submitted-review updates. When revising a pending review, select only
+the exact review owned by the current actor. Never submit it. GitHub permits
+review-summary updates after submission but permits whole-review deletion only
+while a review is pending. Submitted inline comments can still be updated or
+deleted when explicitly requested.
 
 Never infer ownership from prose. Never select update or delete targets by body
 text or diff anchor. Use `id` for a GraphQL node ID or `database_id` for a
@@ -112,7 +128,7 @@ request changes, comment-submit, or dismiss reviews.
 Flag only highly likely defects:
 
 - syntax, type, compile, or unresolved-reference failures
-- logic that definitely produces wrong behavior
+- logic that produces incorrect behavior for a validated input or state
 - clear security or data-loss defects in changed code
 - clear instruction-file violations scoped to changed file
 - clear contribution-policy violations: commit message, atomicity, required
@@ -130,8 +146,21 @@ risk requires it.
 
 - Keep review body to outcome, confidence, and global context. Do not duplicate
   inline findings.
-- Write one inline comment per unique issue: problem, reason, next step.
-- Keep each discussion to 1-3 short sentences unless evidence requires more.
+- Write one inline comment per unique issue. State the trigger or input, current
+  behavior, expected behavior, and one concrete correction with enough code
+  shape to implement. Give an exact condition, type, or module assignment. State
+  precedence and compatibility behavior when relevant. Request a focused
+  regression test that fails before the correction.
+- Make each comment self-contained and as long as the evidence requires. It must
+  answer what breaks, why, the replacement code shape, and the proof test. Keep
+  one defect per comment.
+- Cite prior art only when it clarifies intent. Prefer repository examples;
+  otherwise use an external repository only when it owns the protocol or
+  behavior being consumed. Link to a pinned commit and exact lines, then explain
+  applicability. If repository behavior does not establish one fix, state the
+  unresolved choice and viable alternatives.
+- Do not restate the diff or leave abstract repair verbs without an exact
+  operation.
 - Use suggestion blocks only when they fully fix the selected line range.
 - Cite local instructions for compliance findings and concrete commit SHAs for
   code links.

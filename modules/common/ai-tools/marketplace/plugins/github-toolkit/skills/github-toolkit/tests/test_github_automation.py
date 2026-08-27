@@ -737,6 +737,117 @@ class ReviewDraftTests(unittest.TestCase):
         )
         self.assertNotIn("ai-tools", result["operations"][0]["body"])
 
+    def test_update_pending_rechecks_head_before_mutation(self) -> None:
+        data = {
+            "body": "updated summary",
+            "expected_head_sha": HEAD_SHA,
+            "expected_review_state": "PENDING",
+            "review_id": "PRR_1",
+        }
+        review = pending_review(body="old summary")
+        stale_pull_request = pull_request()
+        stale_pull_request["head_sha"] = "b" * 40
+        args = argparse.Namespace(
+            input="review.json", repo="base/repo", pr="7", apply=True
+        )
+        client = mock.Mock()
+        with (
+            mock.patch.object(review_draft, "read_json_input", return_value=data),
+            mock.patch.object(
+                review_draft,
+                "resolve_target",
+                return_value=_github.Target("base/repo", 7),
+            ),
+            mock.patch.object(
+                review_draft,
+                "fetch_review_context",
+                side_effect=[
+                    (pull_request(), [review]),
+                    (stale_pull_request, [review]),
+                ],
+            ),
+            mock.patch.object(review_draft, "current_actor", return_value="viewer"),
+            self.assertRaises(_github.InputError),
+        ):
+            review_draft.update(args, client)
+
+        client.graphql.assert_not_called()
+
+    def test_update_pending_rechecks_state_before_mutation(self) -> None:
+        data = {
+            "body": "updated summary",
+            "expected_head_sha": HEAD_SHA,
+            "expected_review_state": "PENDING",
+            "review_id": "PRR_1",
+        }
+        review = pending_review(body="old summary")
+        submitted = pending_review(body="old summary")
+        submitted["state"] = "COMMENTED"
+        args = argparse.Namespace(
+            input="review.json", repo="base/repo", pr="7", apply=True
+        )
+        client = mock.Mock()
+        with (
+            mock.patch.object(review_draft, "read_json_input", return_value=data),
+            mock.patch.object(
+                review_draft,
+                "resolve_target",
+                return_value=_github.Target("base/repo", 7),
+            ),
+            mock.patch.object(
+                review_draft,
+                "fetch_review_context",
+                side_effect=[
+                    (pull_request(), [review]),
+                    (pull_request(), [submitted]),
+                ],
+            ),
+            mock.patch.object(review_draft, "current_actor", return_value="viewer"),
+            self.assertRaises(_github.InputError),
+        ):
+            review_draft.update(args, client)
+
+        client.graphql.assert_not_called()
+
+    def test_update_pending_rechecks_head_immediately_before_mutation(self) -> None:
+        data = {
+            "body": "updated summary",
+            "expected_head_sha": HEAD_SHA,
+            "expected_review_state": "PENDING",
+            "review_id": "PRR_1",
+        }
+        review = pending_review(body="old summary")
+        args = argparse.Namespace(
+            input="review.json", repo="base/repo", pr="7", apply=True
+        )
+        client = mock.Mock()
+        with (
+            mock.patch.object(review_draft, "read_json_input", return_value=data),
+            mock.patch.object(
+                review_draft,
+                "resolve_target",
+                return_value=_github.Target("base/repo", 7),
+            ),
+            mock.patch.object(
+                review_draft,
+                "fetch_review_context",
+                side_effect=[
+                    (pull_request(), [review]),
+                    (pull_request(), [review]),
+                ],
+            ),
+            mock.patch.object(review_draft, "current_actor", return_value="viewer"),
+            mock.patch.object(
+                review_draft,
+                "pull_request_oids",
+                return_value={"base_sha": "b" * 40, "head_sha": "c" * 40},
+            ),
+            self.assertRaises(_github.InputError),
+        ):
+            review_draft.update(args, client)
+
+        client.graphql.assert_not_called()
+
     def test_update_comment_uses_explicit_id_without_diff_refresh(self) -> None:
         data = {
             "comments": [{"id": "PRRC_1", "body": "new body"}],

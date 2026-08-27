@@ -503,6 +503,17 @@ def validate_expected_sha(value: Any, pull_request: dict[str, Any]) -> str:
     return expected
 
 
+def validate_expected_review_state(value: Any, review: dict[str, Any]) -> str:
+    expected = _string(value, "expected_review_state")
+    current = review.get("state")
+    if not isinstance(current, str) or expected != current:
+        raise InputError(
+            "expected_review_state does not match current review state: "
+            f"{expected} != {current}"
+        )
+    return expected
+
+
 def normalize_create_comment(value: Any, index: int) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise InputError(f"comments[{index}] must be an object")
@@ -947,7 +958,13 @@ def update(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     data = read_json_input(args.input)
     _only_keys(
         data,
-        {"body", "comments", "review_id"},
+        {
+            "body",
+            "comments",
+            "expected_head_sha",
+            "expected_review_state",
+            "review_id",
+        },
         "input",
     )
     if "body" not in data and "comments" not in data:
@@ -956,6 +973,16 @@ def update(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     pull_request, reviews = fetch_review_context(client, target)
     actor = current_actor(client)
     review = select_owned_review(reviews, actor, data.get("review_id"))
+    expected_head_sha = (
+        validate_expected_sha(data.get("expected_head_sha"), pull_request)
+        if "expected_head_sha" in data
+        else None
+    )
+    expected_review_state = (
+        validate_expected_review_state(data.get("expected_review_state"), review)
+        if "expected_review_state" in data
+        else None
+    )
     body = (
         _text(data["body"], "body") if "body" in data else str(review.get("body") or "")
     )
@@ -974,11 +1001,15 @@ def update(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     }
     if not args.apply:
         return plan
-    _, latest_reviews = fetch_review_context(client, target)
+    latest_pull_request, latest_reviews = fetch_review_context(client, target)
     latest_actor = current_actor(client)
     if latest_actor != actor:
         raise InputError("current GitHub actor changed before review update")
     latest_review = select_owned_review(latest_reviews, latest_actor, review.get("id"))
+    if expected_head_sha is not None:
+        validate_expected_sha(expected_head_sha, latest_pull_request)
+    if expected_review_state is not None:
+        validate_expected_review_state(expected_review_state, latest_review)
     latest_body = (
         _text(data["body"], "body")
         if "body" in data
@@ -1000,6 +1031,8 @@ def update(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     review = latest_review
     plan["operations"] = operations
     plan["review"] = normalize_review(latest_review, True, 0)
+    if expected_head_sha is not None:
+        verify_current_oids(client, target, expected_head_sha)
     applied_operations: list[dict[str, Any]] = []
     plan["mutation"] = {
         "applied_operations": applied_operations,
@@ -1045,6 +1078,8 @@ def update(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     try:
         _, refreshed = fetch_review_context(client, target)
         updated = select_owned_review(refreshed, actor, review.get("id"))
+        if expected_review_state is not None:
+            validate_expected_review_state(expected_review_state, updated)
         if updated.get("body") != body:
             raise ToolkitError("review body readback does not match update")
         refreshed_comments = {
