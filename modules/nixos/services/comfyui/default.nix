@@ -125,58 +125,86 @@ in
         ln -sfnT ${./local_first} /var/lib/comfyui/custom_nodes/khanelinix_local_first
         ln -sfnT ${comfyUiGguf} /var/lib/comfyui/custom_nodes/ComfyUI-GGUF
 
+        presetDir=/var/lib/comfyui/user/default/workflows/khanelinix
+        presetState=/var/lib/comfyui/khanelinix-presets
+        backupDir=/var/lib/comfyui/user/default/workflow-backups/khanelinix
+
+        install -d -m 0755 "$presetState"
+
+        # Seeding tracks the hash of what it last wrote. An untouched preset is
+        # refreshed in place, so a corrected workflow reaches the host without
+        # renaming the file. An edited one is left alone, because the hash no
+        # longer matches. Neither case needs a new filename per revision.
         seedPreset() {
           source=$1
-          destination=$2
+          name=$2
+          destination=$presetDir/$name
+          marker=$presetState/$name.sha256
 
-          if [[ ! -e "$destination" ]]; then
-            cp "$source" "$destination"
-            chmod 0644 "$destination"
+          if [[ -e "$destination" ]]; then
+            current=$(sha256sum < "$destination" | cut -d ' ' -f 1)
+
+            if [[ -e "$marker" ]]; then
+              seeded=$(cat "$marker" 2>/dev/null || true)
+            else
+              # Adopt presets from before hash tracking only when they still
+              # match the declarative source. A different file is a user edit.
+              seeded=$(sha256sum < "$source" | cut -d ' ' -f 1)
+            fi
+
+            if [[ "$current" != "$seeded" ]]; then
+              return
+            fi
           fi
+
+          cp "$source" "$destination"
+          chmod 0644 "$destination"
+          sha256sum < "$destination" | cut -d ' ' -f 1 > "$marker"
         }
 
+        # Retiring a preset name runs once. Leaving it unconditional would move
+        # the file again every activation, including one the user later saved
+        # back under that name.
         archivePreset() {
-          source=$1
+          name=$1
+          source=$presetDir/$name
+          marker=$presetState/$name.retired
+
+          if [[ -e "$marker" ]]; then
+            return
+          fi
 
           if [[ -e "$source" ]]; then
-            backupDir=/var/lib/comfyui/user/default/workflow-backups/khanelinix
-            timestamp=$(${lib.getExe' pkgs.coreutils "date"} -u +%Y%m%dT%H%M%SZ)
+            timestamp=$(date -u +%Y%m%dT%H%M%SZ)
 
             install -d -m 0755 "$backupDir"
-            mv "$source" "$backupDir/$(${lib.getExe' pkgs.coreutils "basename"} "$source").$timestamp"
+            mv "$source" "$backupDir/$name.$timestamp"
           fi
+
+          rm -f "$presetState/$name.sha256"
+          touch "$marker"
         }
 
-        archivePreset \
-          /var/lib/comfyui/user/default/workflows/khanelinix/01-qwen-image-2512.json
-        archivePreset \
-          /var/lib/comfyui/user/default/workflows/khanelinix/01-qwen-image-2512-scaled.json
-        archivePreset \
-          /var/lib/comfyui/user/default/workflows/khanelinix/01-qwen-image-2512-bf16.json
-        archivePreset \
-          /var/lib/comfyui/user/default/workflows/khanelinix/01-qwen-image-2512-gguf.json
-        archivePreset \
-          /var/lib/comfyui/user/default/workflows/khanelinix/03-wan2.2-video.json
-        archivePreset \
-          /var/lib/comfyui/user/default/workflows/khanelinix/03-wan2.2-image-to-video.json
-        archivePreset \
-          /var/lib/comfyui/user/default/workflows/khanelinix/03-wan2.2-text-to-video.json
-        archivePreset \
-          /var/lib/comfyui/user/default/workflows/khanelinix/03-wan2.1-text-to-video.json
-        archivePreset \
-          /var/lib/comfyui/user/default/workflows/khanelinix/03-wan2.2-14b-text-to-video-q5.json
-        archivePreset \
-          /var/lib/comfyui/user/default/workflows/khanelinix/03-wan2.2-5b-video.json
+        archivePreset 01-qwen-image-2512.json
+        archivePreset 01-qwen-image-2512-scaled.json
+        archivePreset 01-qwen-image-2512-bf16.json
+        archivePreset 01-qwen-image-2512-gguf.json
+        archivePreset 03-wan2.2-video.json
+        archivePreset 03-wan2.2-image-to-video.json
+        archivePreset 03-wan2.2-text-to-video.json
+        archivePreset 03-wan2.1-text-to-video.json
+        archivePreset 03-wan2.2-14b-text-to-video-q5.json
+        archivePreset 03-wan2.2-5b-video.json
 
         seedPreset \
           ${workflowPresets}/01-qwen-image-2512.json \
-          /var/lib/comfyui/user/default/workflows/khanelinix/01-qwen-image-2512-q5.json
+          01-qwen-image-2512-q5.json
         seedPreset \
           ${workflowPresets}/02-qwen-image-edit-2511.json \
-          /var/lib/comfyui/user/default/workflows/khanelinix/02-qwen-image-edit-2511.json
+          02-qwen-image-edit-2511.json
         seedPreset \
           ${workflowPresets}/03-wan2.1-video.json \
-          /var/lib/comfyui/user/default/workflows/khanelinix/03-wan2.1-1.3b-video.json
+          03-wan2.1-1.3b-video.json
 
         settingsFile=/var/lib/comfyui/user/default/comfy.settings.json
         settingsTmp="$settingsFile.tmp"
