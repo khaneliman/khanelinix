@@ -20,7 +20,7 @@ run_wrapper() {
     HOME="$test_root/home" \
         XDG_CACHE_HOME="$test_root/cache" \
         CODEXBAR_BIN="$failed_codexbar" \
-        CODEXBAR_PROVIDERS=claude \
+        CODEXBAR_PROVIDERS="claude codex gemini" \
         CODEXBAR_STAGGER=0 \
         CODEXBAR_CACHE_MAX_AGE="$max_age" \
         "$wrapper_shell" "$wrapper"
@@ -38,6 +38,5 @@ unbounded_output="$(run_wrapper 0)"
 jq -e '
     .class == "stale"
     and .percentage == 15.68
-    and (.tooltip | contains("Claude primary: 11.12%"))
-    and (.tooltip | contains("Claude secondary: 15.68%"))
+    and .tooltip == "╭─ Claude\n│  primary: 11.12%\n╰─ secondary: 15.68%\n\n╭─ Codex\n│  primary: 6%\n╰─ secondary: 3.33%"
 ' <<<"$unbounded_output" >/dev/null

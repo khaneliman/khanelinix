@@ -51,6 +51,7 @@ stdenvNoCC.mkDerivation {
   patches = [
     ./cache-max-age.patch
     ./round-percentages.patch
+    ./provider-sections.patch
   ];
 
   postPatch = ''

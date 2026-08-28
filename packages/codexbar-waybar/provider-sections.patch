@@ -1,0 +1,39 @@
+diff --git a/codexbar.sh b/codexbar.sh
+index 7c233e4..05c83be 100755
+--- a/codexbar.sh
++++ b/codexbar.sh
+@@ -469,10 +469,10 @@ echo "$merged" | jq -c \
+         ];
+ 
+     def provider_lines(entry):
+         entry as $entry
+         | if $entry.error then
+-            "\(provider_name($entry.provider)): error — \($entry.error.message)"
++            "╭─ \(provider_name($entry.provider))\n╰─ error — \($entry.error.message)"
+         else
+             (entry_name($entry)) as $name
+             | [
+                 status_line($entry),
+@@ -486,4 +486,12 @@ echo "$merged" | jq -c \
+             + credits_lines($entry)
+             + cost_lines($entry)
+-            | map(select(. != null and . != "")) | join("\n")
++            | map(select(. != null and . != "") | ltrimstr("\($name) ")) as $details
++            | if ($details | length) == 0 then
++                ""
++              else
++                (["╭─ \($name)"]
++                 + ($details[0:-1] | map("│  \(.)"))
++                 + ["╰─ \($details[-1])"])
++                | join("\n")
++              end
+         end;
+@@ -525,7 +533,7 @@ echo "$merged" | jq -c \
+         text: (if $pinned != null then bar_text($pinned)
+                elif $all_errored then "🤖 ⚠"
+                else "🤖 \($pct | tostring)%" end),
+-        tooltip: ($lines | join("\n")),
++        tooltip: ($lines | join("\n\n")),
+         class: (if $all_errored then "stale"
+                 elif $pct >= 90 then "critical"
+                 elif $pct >= 70 then "warning"

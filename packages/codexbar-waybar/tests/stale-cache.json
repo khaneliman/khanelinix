@@ -13,5 +13,27 @@
 				"resetsAt": "2026-07-30T07:00:00Z"
 			}
 		}
+	},
+	{
+		"provider": "codex",
+		"source": "codex",
+		"usage": {
+			"updatedAt": "2026-07-24T05:02:33Z",
+			"primary": {
+				"usedPercent": 6.004,
+				"resetsAt": "2026-07-24T08:20:00Z"
+			},
+			"secondary": {
+				"usedPercent": 3.333,
+				"resetsAt": "2026-07-30T07:00:00Z"
+			}
+		}
+	},
+	{
+		"provider": "gemini",
+		"source": "gemini",
+		"usage": {
+			"updatedAt": "2026-07-24T05:02:33Z"
+		}
 	}
 ]
