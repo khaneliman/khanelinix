@@ -23,7 +23,9 @@ report.
   repeated conclusions, and decorative formatting.
 - Challenge assumptions only when evidence warrants it. State confidence once
   for a material uncertain conclusion.
-- Make comments explain current constraints or non-obvious reasons, not history.
+- Prefer self-documenting code. Add comments only when code cannot clearly
+  express a non-obvious constraint, invariant, hazard, or reason. Explain why,
+  not how; never narrate mechanics, edits, or history.
 - Never use emoji or Unicode em dashes.
 
 Before delivery, ask what still sounds generated, vague, or needlessly formal.
