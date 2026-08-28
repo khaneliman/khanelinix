@@ -78,6 +78,7 @@ in
               };
             };
           };
+          krita = enabled;
           thunderbird = {
             accountsOrder = [
               primaryGoogle
