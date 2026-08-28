@@ -20,18 +20,18 @@ let
     listToValue = values: concatStringsSep ", " values;
   };
 
-  # Root-launched Qt apps do not see the Home Manager-managed qtct/Kvantum files
-  # under ~/.config, so provide a system-wide fallback in /etc/xdg.
+  # Elevated Qt apps cannot read the user's Home Manager theme files.
   qtctSettings = {
     Appearance = {
-      custom_palette = true;
+      custom_palette = false;
+      icon_theme = cfg.icon.name;
       standard_dialogs = "gtk3";
       style = "kvantum";
     };
 
     Fonts = {
-      fixed = "${fontCfg.monaspace.families.krypton} 10";
-      general = "${fontCfg.monaspace.families.neon} 10";
+      fixed = ''"${fontCfg.monaspace.families.krypton},12"'';
+      general = ''"Lexend,12"'';
     };
 
     Interface = {
@@ -43,35 +43,46 @@ let
       keyboard_scheme = 2;
       menus_have_icons = true;
       show_shortcuts_in_context_menus = true;
-      toolbutton_style = "kvantum";
+      toolbutton_style = 4;
       underline_shortcut = 1;
     };
 
-    Troubleshooting = {
-      force_raster_widgets = 1;
-    };
+    Troubleshooting.force_raster_widgets = 1;
   };
 
-  kvantumSettings = {
-    General.theme = cfg.theme.name;
-  };
+  kvantumSettings.General.theme = cfg.theme.name;
+  systemKvantumQt5 = pkgs.libsForQt5.qtstyleplugin-kvantum.overrideAttrs (oldAttrs: {
+    postInstall = (oldAttrs.postInstall or "") + ''
+      standardThemes=$(readlink "$out/share/Kvantum")
+      rm "$out/share/Kvantum"
+      mkdir "$out/share/Kvantum"
+      cp -r "$standardThemes/." "$out/share/Kvantum/"
+      cp -r ${cfg.theme.package}/share/Kvantum/${cfg.theme.name} "$out/share/Kvantum/"
+    '';
+  });
 in
 {
   options.khanelinix.theme.qt = with types; {
     enable = lib.mkEnableOption "customizing qt and apply themes";
 
     theme = {
-      name = mkOpt str "Catppuccin-Macchiato-Blue" "The name of the kvantum theme to apply.";
+      name = mkOpt str "catppuccin-macchiato-blue" "The name of the kvantum theme to apply.";
       package = mkOpt package (pkgs.catppuccin-kvantum.override {
         accent = "blue";
         variant = "macchiato";
       }) "The package to use for the theme.";
+    };
+
+    icon = {
+      name = mkOpt str "Papirus-Dark" "The icon theme to use for system Qt applications.";
+      package = mkOpt package pkgs.papirus-icon-theme "The package providing the system Qt icon theme.";
     };
   };
 
   config = mkIf cfg.enable {
     environment = {
       etc = {
+        "xdg/Kvantum/${cfg.theme.name}".source = "${cfg.theme.package}/share/Kvantum/${cfg.theme.name}";
         "xdg/Kvantum/kvantum.kvconfig".source = qtctFormat.generate "kvantum.kvconfig" kvantumSettings;
         "xdg/qt5ct/qt5ct.conf".source = qtctFormat.generate "qt5ct.conf" qtctSettings;
         "xdg/qt6ct/qt6ct.conf".source = qtctFormat.generate "qt6ct.conf" qtctSettings;
@@ -79,14 +90,18 @@ in
 
       systemPackages =
         with pkgs;
-        [ cfg.theme.package ] ++ lib.optional config.khanelinix.suites.wlroots.enable kdePackages.qtwayland;
+        [
+          cfg.icon.package
+          cfg.theme.package
+          qt6Packages.qtstyleplugin-kvantum
+          systemKvantumQt5
+        ]
+        ++ lib.optional config.khanelinix.suites.wlroots.enable kdePackages.qtwayland;
     };
 
     qt = {
       enable = true;
-
       platformTheme = lib.mkDefault "qt5ct";
-      style = lib.mkDefault "kvantum";
     };
   };
 }
