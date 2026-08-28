@@ -140,5 +140,11 @@ invocation.
 
 ## Output
 
-- Match detail to task. After modifications, report outcome, changed files,
-  intentional omissions, verification gaps, and concerns.
+- Lead with the outcome or current state in one or two sentences. Put decisions,
+  blockers, risks, and unresolved questions before supporting detail.
+- Default to concise. Expand only when requested or when evidence is necessary
+  for the next decision.
+- Use short headings or bullets when they improve scanning. Omit empty sections.
+  Do not narrate the work or repeat a fact in multiple forms.
+- After modifications, report changed files and checks. Mention omissions,
+  verification gaps, concerns, or next steps only when they matter.
