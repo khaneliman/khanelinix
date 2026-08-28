@@ -10,6 +10,11 @@ in
 {
   config = lib.mkIf cfg.enable {
     khanelinix.theme.qt = {
+      icon = {
+        name = "Nordzy-dark";
+        package = pkgs.nordzy-icon-theme;
+      };
+
       theme =
         let
           qtThemeName =
