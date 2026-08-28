@@ -1,0 +1,18 @@
+diff --git a/src/BuiltinExtensions/ComfyUIBackend/ComfyUIAPIAbstractBackend.cs b/src/BuiltinExtensions/ComfyUIBackend/ComfyUIAPIAbstractBackend.cs
+index 64be6e6..f2585cd 100644
+--- a/src/BuiltinExtensions/ComfyUIBackend/ComfyUIAPIAbstractBackend.cs
++++ b/src/BuiltinExtensions/ComfyUIBackend/ComfyUIAPIAbstractBackend.cs
+@@ -173,8 +173,11 @@ public abstract class ComfyUIAPIAbstractBackend : AbstractT2IBackend
+         if (CanIdle)
+         {
+             Idler.Backend = this;
+-            using CancellationTokenSource cancel = Utilities.TimedCancel(TimeSpan.FromMinutes(1));
+-            Idler.ValidateCall = () => SendGet<JObject>("object_info", cancel.Token).Wait();
++            Idler.ValidateCall = () =>
++            {
++                using CancellationTokenSource cancel = Utilities.TimedCancel(TimeSpan.FromMinutes(1));
++                SendGet<JObject>("object_info", cancel.Token).Wait();
++            };
+             Idler.Start();
+         }
+     }

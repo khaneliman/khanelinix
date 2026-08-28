@@ -1,0 +1,7 @@
+using SwarmUI.Core;
+
+namespace SwarmFixture;
+
+public class FixtureExtension : Extension
+{
+}

@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <AssemblyName>FixtureExtension</AssemblyName>
+  </PropertyGroup>
+  <Import Project="../../SwarmUI.extension.props" />
+</Project>
