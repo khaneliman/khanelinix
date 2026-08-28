@@ -54,6 +54,18 @@ in
                     mountpoint = "/mnt/kvm";
                     mountOptions = defaultBtrfsOpts;
                   };
+                  "@kvm/workloads/ollama" = {
+                    mountpoint = "/var/lib/private/ollama";
+                    mountOptions = defaultBtrfsOpts;
+                  };
+                  "@kvm/workloads/llm" = {
+                    mountpoint = "/var/lib/llm";
+                    mountOptions = defaultBtrfsOpts;
+                  };
+                  "@kvm/workloads/unity" = {
+                    mountpoint = "/home/${config.khanelinix.user.name}/Unity/Hub/Editor";
+                    mountOptions = defaultBtrfsOpts;
+                  };
                 };
               };
             };
