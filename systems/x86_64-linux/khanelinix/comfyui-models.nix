@@ -24,6 +24,11 @@ let
     # Distribution is allowed only outside the license's excluded territories.
     redistributable = false;
   };
+
+  wan21Vae = {
+    url = "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/617a7633e636506f850e043bc4605f290a466a8e/split_files/vae/wan_2.1_vae.safetensors";
+    hash = "sha256-L8OdMTWaSwpk9Vh22P9/qNeAlWriyxNGOwIj4VFIl2s=";
+  };
 in
 lib.mapAttrs
   (
@@ -120,10 +125,10 @@ lib.mapAttrs
       hash = "sha256-wzVdMBkfHwZrJtk/ugF66YCdzmxifdpfambqplEgT2g=";
     };
 
-    "vae/wan_2.1_vae.safetensors" = {
-      url = "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/617a7633e636506f850e043bc4605f290a466a8e/split_files/vae/wan_2.1_vae.safetensors";
-      hash = "sha256-L8OdMTWaSwpk9Vh22P9/qNeAlWriyxNGOwIj4VFIl2s=";
-    };
+    # SwarmUI hard-codes the Wan subdirectory, while existing ComfyUI
+    # workflows use the flat name. Both entries resolve to one store path.
+    "vae/Wan/wan_2.1_vae.safetensors" = wan21Vae;
+    "vae/wan_2.1_vae.safetensors" = wan21Vae;
 
     # An SDXL checkpoint bundles UNet, CLIP, and VAE, so no separate
     # text encoder or VAE entry is needed. FP16 halves the download

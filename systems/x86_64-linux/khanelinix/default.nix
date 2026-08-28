@@ -91,6 +91,8 @@ in
         reserveVramGb = 4;
       };
 
+      swarmui = enabled;
+
       geoclue = enabled;
 
       llm = {
