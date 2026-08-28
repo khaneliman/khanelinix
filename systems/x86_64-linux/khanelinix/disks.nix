@@ -141,6 +141,38 @@ in
                     mountpoint = "/mnt/games";
                     mountOptions = defaultBtrfsOpts;
                   };
+                  "@games/app-state/games" = {
+                    mountpoint = "/home/${config.khanelinix.user.name}/Games";
+                    mountOptions = defaultBtrfsOpts;
+                  };
+                  "@games/app-state/steam" = {
+                    mountpoint = "/home/${config.khanelinix.user.name}/.local/share/Steam";
+                    mountOptions = defaultBtrfsOpts;
+                  };
+                  "@games/app-state/bottles" = {
+                    mountpoint = "/home/${config.khanelinix.user.name}/.local/share/bottles";
+                    mountOptions = defaultBtrfsOpts;
+                  };
+                  "@games/app-state/lutris" = {
+                    mountpoint = "/home/${config.khanelinix.user.name}/.local/share/lutris";
+                    mountOptions = defaultBtrfsOpts;
+                  };
+                  "@games/app-state/umu" = {
+                    mountpoint = "/home/${config.khanelinix.user.name}/.local/share/umu";
+                    mountOptions = defaultBtrfsOpts;
+                  };
+                  "@games/app-state/vinegar" = {
+                    mountpoint = "/home/${config.khanelinix.user.name}/.local/share/vinegar";
+                    mountOptions = defaultBtrfsOpts;
+                  };
+                  "@games/app-state/prism-launcher" = {
+                    mountpoint = "/home/${config.khanelinix.user.name}/.local/share/PrismLauncher";
+                    mountOptions = defaultBtrfsOpts;
+                  };
+                  "@games/app-state/yuzu" = {
+                    mountpoint = "/home/${config.khanelinix.user.name}/.local/share/yuzu";
+                    mountOptions = defaultBtrfsOpts;
+                  };
                   "@steam" = {
                     mountpoint = "/mnt/steam";
                     mountOptions = defaultBtrfsOpts;
