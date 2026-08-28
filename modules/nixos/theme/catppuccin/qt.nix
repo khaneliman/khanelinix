@@ -13,8 +13,16 @@ in
     khanelinix = {
       theme = {
         qt = {
+          icon = {
+            name = "Papirus-Dark";
+            package = pkgs.catppuccin-papirus-folders.override {
+              accent = "blue";
+              flavor = "macchiato";
+            };
+          };
+
           theme = {
-            name = "Catppuccin-Macchiato-Blue";
+            name = "catppuccin-macchiato-blue";
             package = pkgs.catppuccin-kvantum.override {
               accent = "blue";
               variant = "macchiato";

@@ -6,7 +6,6 @@
   ...
 }:
 let
-  inherit (lib.khanelinix) capitalize;
   cfg = config.khanelinix.theme.catppuccin;
 in
 {
@@ -15,32 +14,36 @@ in
       theme = {
         qt = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
           theme = {
-            name = "Catppuccin-Macchiato-Blue";
+            name = "catppuccin-macchiato-blue";
             package = pkgs.catppuccin-kvantum.override {
               accent = "blue";
               variant = "macchiato";
             };
           };
 
-          settings = {
-            Appearance = {
-              color_scheme_path = "${pkgs.catppuccin}/qt5ct/Catppuccin-${capitalize cfg.flavor}.conf";
-            };
+          qml.palette = {
+            AlternateBase = "#24273a";
+            Base = "#1e2030";
+            BrightText = "#cad3f5";
+            Button = "#363a4f";
+            ButtonText = "#cad3f5";
+            Dark = "#181926";
+            Highlight = "#8aadf4";
+            HighlightedText = "#1e2030";
+            Light = "#5b6078";
+            Link = "#8aadf4";
+            LinkVisited = "#b7bdf8";
+            Mid = "#1e2030";
+            Midlight = "#494d64";
+            PlaceholderText = "#6e738d";
+            Shadow = "#181926";
+            Text = "#cad3f5";
+            ToolTipBase = "#24273a";
+            ToolTipText = "#cad3f5";
+            Window = "#24273a";
+            WindowText = "#cad3f5";
           };
         };
-      };
-    };
-
-    qt = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-      enable = true;
-
-      platformTheme = {
-        name = "kvantum";
-      };
-
-      style = {
-        name = "kvantum";
-        inherit (config.khanelinix.theme.qt.theme) package;
       };
     };
   };
