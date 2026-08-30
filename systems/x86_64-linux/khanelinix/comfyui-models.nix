@@ -29,6 +29,8 @@ let
     url = "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/617a7633e636506f850e043bc4605f290a466a8e/split_files/vae/wan_2.1_vae.safetensors";
     hash = "sha256-L8OdMTWaSwpk9Vh22P9/qNeAlWriyxNGOwIj4VFIl2s=";
   };
+
+  clipSegBaseUrl = "https://huggingface.co/mcmonkey/clipseg-rd64-refined-fp16/resolve/5de7a14cdcc31b84fa9ebea216e54fa880322812";
 in
 lib.mapAttrs
   (
@@ -41,6 +43,43 @@ lib.mapAttrs
     )
   )
   {
+    # SwarmClipSeg otherwise downloads these files into mutable ComfyUI state
+    # during the first automatic segment refinement.
+    "clipseg/clipseg-rd64-refined-fp16-safetensors/config.json" = {
+      url = "${clipSegBaseUrl}/config.json";
+      hash = "sha256-wCM3WWbTGzsTknZPe9kd9HCYzhn2LxGwJj2O7c9wi80=";
+    };
+
+    "clipseg/clipseg-rd64-refined-fp16-safetensors/merges.txt" = {
+      url = "${clipSegBaseUrl}/merges.txt";
+      hash = "sha256-n9aR98gDkhDg/O0VhlRmxlgg0JtjmIsBdL/iXeKZBRo=";
+    };
+
+    "clipseg/clipseg-rd64-refined-fp16-safetensors/model.safetensors" = {
+      url = "${clipSegBaseUrl}/model.safetensors";
+      hash = "sha256-O/zXsFtSb4Sc8YwxAv7ULEjvOWN3uOEbd3ppECnKEpU=";
+    };
+
+    "clipseg/clipseg-rd64-refined-fp16-safetensors/preprocessor_config.json" = {
+      url = "${clipSegBaseUrl}/preprocessor_config.json";
+      hash = "sha256-T7CevP12USBcqCmbmTwwCI5VNe81CnLUbFxFgO6sBEA=";
+    };
+
+    "clipseg/clipseg-rd64-refined-fp16-safetensors/special_tokens_map.json" = {
+      url = "${clipSegBaseUrl}/special_tokens_map.json";
+      hash = "sha256-xIZKk3aoQBkYQlvtcfwU/A6B+bWexFwc+WzMst9Qjqw=";
+    };
+
+    "clipseg/clipseg-rd64-refined-fp16-safetensors/tokenizer_config.json" = {
+      url = "${clipSegBaseUrl}/tokenizer_config.json";
+      hash = "sha256-THXVf9m9C+hHitLW+LnOvdSkUzjrEIVHMpwrYzNHbKY=";
+    };
+
+    "clipseg/clipseg-rd64-refined-fp16-safetensors/vocab.json" = {
+      url = "${clipSegBaseUrl}/vocab.json";
+      hash = "sha256-4Imtkro2g3oNMUM+VVyPRf5gGrXCIdT2B97TLZ96Q0k=";
+    };
+
     "text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors" = {
       url = "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/7beb7b647f04469fbe64ba8adc2bb0d7e5e9f73f/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors";
       hash = "sha256-y1Y22FKg6mqQdasb70lsDbeu8TwCNQVx44iuqVnFwLQ=";

@@ -8,6 +8,18 @@
 let
   cfg = config.khanelinix.services.comfyui;
 
+  clipSegDirectory = "clipseg/clipseg-rd64-refined-fp16-safetensors";
+  clipSegFiles = map (file: "${clipSegDirectory}/${file}") [
+    "config.json"
+    "merges.txt"
+    "model.safetensors"
+    "preprocessor_config.json"
+    "special_tokens_map.json"
+    "tokenizer_config.json"
+    "vocab.json"
+  ];
+  hasClipSegBundle = lib.all (name: builtins.hasAttr name cfg.models) clipSegFiles;
+
   userName = config.khanelinix.user.name;
   homeCfg = config.home-manager.users.${userName} or { };
 
@@ -68,7 +80,8 @@ let
       upscale_models = "upscale_models";
       unet = "diffusion_models";
       vae = "vae";
-    };
+    }
+    // lib.optionalAttrs hasClipSegBundle { clipseg = "clipseg"; };
   };
 in
 {
