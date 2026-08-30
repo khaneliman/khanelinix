@@ -45,7 +45,8 @@ in
   {
     name = "antigravity-provider-driver";
     rev = "0a8cd769ef3c0a536fc556449b38ad7d9a3b4d7a";
-    hash = "sha256-RZBAu4ErgWgMjC7dyFKtMtKp/pwsYmZY/pBb+KXj1o0=";
+    hash = "sha256-BD6S3vMsj77K1XKK+YwqRcYEXBkfhxskNddNVIQZs4w=";
+    excludes = [ "apps/server/src/provider/Layers/ProviderInstanceRegistryLive.test.ts" ];
   }
   {
     name = "antigravity-provider-controls";
@@ -95,17 +96,11 @@ in
     hash = "sha256-3p2Drn04OlrcfB8hQ7sCefjD5SPx3IALcqNkESwFt9I=";
     excludes = [ "apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts" ];
   }
-  {
-    # PR #7507 has seven commits. Pin the immutable base-to-head range so the
-    # complete fix remains available before upstream merges it.
-    name = "fix-codex-spawned-subagent-sidebar";
-    url = "https://github.com/pingdotgg/t3code/compare/24c4ba68f536d56e8482a1e4d7070a6771da551d...89b365ee5f52e9b028d71072983fe19f3d7f448c.patch";
-    hash = "sha256-Z8HwOXq5AgCihHZQAGcMfBN+EkCrxHl4dg46IUnD8q8=";
-    # Nixpkgs builds run no tests, and the test hunks drift with upstream.
-    excludes = [ "apps/server/src/provider/Layers/CodexCollabRuntime.integration.test.ts" ];
-  }
 ])
 ++ [
+  # PR #7507 has seven commits. This aggregate excludes its integration-test
+  # hunks and refreshes the duplicate-event guard for upstream child metadata.
+  ./fix-codex-spawned-subagent-sidebar.patch
   ./antigravity-planner-response.patch
   ./antigravity-conversation-discovery.patch
   ./antigravity-tool-result-projection.patch

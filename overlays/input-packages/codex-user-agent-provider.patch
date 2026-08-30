@@ -45,10 +45,10 @@
          if let Some(model) = &overrides.model {
              next_config.model = Some(model.clone());
          }
---- a/core/src/config/agent_roles.rs
-+++ b/core/src/config/agent_roles.rs
-@@ -1,4 +1,5 @@
- use super::AgentRoleConfig;
+--- a/agent-roles/src/loader.rs
++++ b/agent-roles/src/loader.rs
+@@ -6,4 +6,5 @@
+ use crate::parse_agent_role_file_contents;
 +use codex_config::ConfigLayerSource;
  use codex_config::ConfigLayerStack;
  use codex_config::config_toml::AgentRoleToml;
@@ -141,14 +141,13 @@
      /// Maximum token budget allowed for a goal and default budget for new goals.
      pub max_goal_token_budget: Option<i64>,
  
-@@ -3630,7 +3635,7 @@
+@@ -3665,6 +3670,6 @@
          let current_time_reminder = resolve_current_time_reminder_config(&cfg, &features)?;
          let terminal_resize_reflow = resolve_terminal_resize_reflow_config(&cfg);
  
 -        let agent_roles =
 +        let (agent_roles, agent_roles_with_provider_selection) =
-             agent_roles::load_agent_roles(fs, &cfg, &config_layer_stack, &mut startup_warnings)
-                 .await?;
+             load_agent_roles(fs, &cfg, &config_layer_stack, &mut startup_warnings).await?;
  
 @@ -4085,6 +4090,7 @@
              agent_default_subagent_reasoning_effort,
