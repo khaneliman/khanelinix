@@ -100,6 +100,8 @@ let
   '';
 in
 {
+  imports = [ ./starter-presets.nix ];
+
   options.khanelinix.services.swarmui = {
     enable = lib.mkEnableOption "SwarmUI image and video generation web interface";
 
