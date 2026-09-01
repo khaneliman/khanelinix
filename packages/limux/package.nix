@@ -14,11 +14,11 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "limux";
-  version = "0.1.21";
+  version = "0.1.25";
 
   src = fetchurl {
     url = "https://github.com/am-will/limux/releases/download/v${finalAttrs.version}/limux-${finalAttrs.version}-linux-x86_64.tar.gz";
-    hash = "sha256-vt+hsiQWP5IxDQ/htlEKMOt/seppFBkoyz2AwieFBlE=";
+    hash = "sha256-bB6KCW5mw3DOECnXmFIY7O2jPvW7sGYZFLUDui6TzO0=";
   };
 
   nativeBuildInputs = [
@@ -39,7 +39,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     install -Dm755 limux $out/bin/limux
     install -Dm755 libexec/limux/limux-host $out/libexec/limux/limux-host
-    install -Dm644 lib/libghostty.so $out/lib/limux/libghostty.so
+    install -Dm644 lib/libghostty-internal.so $out/lib/limux/libghostty-internal.so
     cp -r share/. $out/share/
 
     runHook postInstall
