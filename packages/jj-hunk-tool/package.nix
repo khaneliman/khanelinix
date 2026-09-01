@@ -6,16 +6,16 @@
 }:
 rustPlatform.buildRustPackage {
   pname = "jj-hunk-tool";
-  version = "0.1.0";
+  version = "0-unstable-2026-07-19";
 
   src = fetchFromGitHub {
     owner = "mvzink";
     repo = "jj-hunk-tool";
-    rev = "0fceafeb8d0907790e9fec327df768355b8748d4";
-    hash = "sha256-XK6tAXlLUP0kI1UdyQB6ZLY3toRILmmKtQyJ0l4tyeQ=";
+    rev = "066ff0a6b959472c9bf6ae3a652ef6d367f27e1a";
+    hash = "sha256-h/0vMBGrY9zBb6K+l4b+4Eos5Z16TA/3l8jkUzAIfyw=";
   };
 
-  cargoHash = "sha256-8CwA837ybNJ65DlcIwKibKBknUFmZ7+1/UD/HrfYP5k=";
+  cargoHash = "sha256-qH/R0+urKZX3qtD6wt42hjgBOtu170HaR3SegRNlkh4=";
 
   # FIXME: upstream integration tests depend on a richer local jj/git environment and
   # fail in nix sandboxed builds; disable checks to keep install working.
