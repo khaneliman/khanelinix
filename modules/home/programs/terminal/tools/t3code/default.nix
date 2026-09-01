@@ -80,7 +80,7 @@ in
                 pnpm config set fetch-retries 5
                 pnpm config set network-concurrency 8
               '';
-              hash = "sha256-RH3YzOn4R3mSwEUGFgKVNR2RdeYSyjp1MZm5m5lb5cY=";
+              hash = "sha256-t/hmpXdYPnBFx18A6NrSL4zSvVnUDIjIPtLjGOzoaDk=";
             };
             postBuild = (old.postBuild or "") + ''
               ${lib.getExe pkgs.nodejs} ${./prune-node-modules.mjs} "$PWD"
