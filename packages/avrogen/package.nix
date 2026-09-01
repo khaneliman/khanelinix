@@ -3,6 +3,6 @@
 pkgs.buildDotnetGlobalTool {
   pname = "avrogen";
   nugetName = "Apache.Avro.Tools";
-  version = "1.12.2";
-  nugetSha256 = "sha256-DuituWLGO4Q3fESaLg3vEM+92XRxG5muoov4g7D02gQ=";
+  version = "1.12.0";
+  nugetSha256 = "sha256-bR2ObY5hFCAWD326Y6NkN5FRyNWCKu4JaXlZ1dKY+XY=";
 }
