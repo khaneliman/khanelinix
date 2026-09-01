@@ -1,0 +1,372 @@
+diff --git a/mcp/help_text/brp_tool_help.txt b/mcp/help_text/brp_tool_help.txt
+new file mode 100644
+index 0000000..3f879aa
+--- /dev/null
++++ b/mcp/help_text/brp_tool_help.txt
+@@ -0,0 +1,4 @@
++Returns detailed usage guidance and examples for one MCP tool.
++
++Use the exact tool name from the MCP tool listing. This keeps full documentation
++available without advertising every tool's long-form help on every request.
+diff --git a/mcp/src/tool/def.rs b/mcp/src/tool/def.rs
+index daff363..4ae47a7 100644
+--- a/mcp/src/tool/def.rs
++++ b/mcp/src/tool/def.rs
+@@ -5,14 +5,11 @@ use std::sync::Arc;
+ use rmcp::ErrorData;
+ use rmcp::model::CallToolRequestParams;
+ use rmcp::model::CallToolResult;
+-use rmcp::model::JsonObject;
+ use rmcp::model::Tool;
+-use schemars::generate::SchemaSettings;
+ 
+ use super::HandlerContext;
+ use super::annotations::Annotation;
+ use super::handler::ErasedToolFn;
+-use super::json_response::ToolCallJsonResponse;
+ use super::name::ToolName;
+ use super::parameters::ParameterBuilder;
+ 
+@@ -43,25 +40,6 @@ impl ToolDef {
+         Ok(self.handler.call_erased(handler_context).await)
+     }
+ 
+-    /// Generate unified output schema from the actual [`ToolCallJsonResponse`] struct
+-    fn generate_output_schema() -> Arc<JsonObject> {
+-        let mut schema_settings = SchemaSettings::default();
+-        schema_settings.inline_subschemas = true;
+-        let generator = schema_settings.into_generator();
+-        let schema = generator.into_root_schema_for::<ToolCallJsonResponse>();
+-
+-        let Ok(schema_value) = serde_json::to_value(schema) else {
+-            // Fallback to empty schema if serialization fails
+-            return Arc::new(rmcp::model::JsonObject::new());
+-        };
+-
+-        let schema_object = schema_value
+-            .as_object()
+-            .map_or_else(rmcp::model::JsonObject::new, Clone::clone);
+-
+-        Arc::new(schema_object)
+-    }
+-
+     /// Convert to MCP Tool for registration
+     pub fn to_tool(&self) -> Tool {
+         // Build parameters using the provided builder function, or create empty builder
+@@ -90,7 +68,6 @@ impl ToolDef {
+             builder.build(),
+         )
+         .with_title(self.tool_name.short_title())
+-        .with_raw_output_schema(Self::generate_output_schema())
+         .with_annotations(enhanced_annotations.into())
+     }
+ }
+diff --git a/mcp/src/tool/help.rs b/mcp/src/tool/help.rs
+new file mode 100644
+index 0000000..622f6b7
+--- /dev/null
++++ b/mcp/src/tool/help.rs
+@@ -0,0 +1,60 @@
++//! On-demand detailed tool guidance.
++
++use std::str::FromStr;
++
++use bevy_brp_mcp_macros::ParamStruct;
++use bevy_brp_mcp_macros::ResultStruct;
++use bevy_brp_mcp_macros::ToolFn;
++use schemars::JsonSchema;
++use serde::Deserialize;
++use serde::Serialize;
++
++use super::ToolName;
++use crate::error::Error;
++use crate::error::Result;
++use crate::tool::HandlerContext;
++use crate::tool::HandlerResult;
++use crate::tool::ToolFn;
++use crate::tool::ToolResult;
++
++/// Parameters for detailed MCP tool guidance.
++#[derive(Clone, Deserialize, Serialize, JsonSchema, ParamStruct)]
++pub struct ToolHelpParams {
++    /// Exact MCP tool name, such as `world_query`.
++    pub tool_name: String,
++}
++
++/// Detailed guidance for one MCP tool.
++#[derive(Debug, Clone, Serialize, Deserialize, ResultStruct)]
++pub struct ToolHelpResult {
++    /// Exact MCP tool name.
++    #[to_metadata]
++    tool_name: String,
++
++    /// Detailed usage guidance and examples.
++    #[to_result]
++    help: String,
++
++    /// Message template for formatting responses.
++    #[to_message(message_template = "Detailed help for {tool_name}")]
++    message_template: String,
++}
++
++/// Returns detailed guidance for one advertised MCP tool.
++#[derive(ToolFn)]
++#[tool_fn(params = "ToolHelpParams", output = "ToolHelpResult")]
++pub struct BrpToolHelp;
++
++#[allow(
++    clippy::unused_async,
++    reason = "ToolFn trait requires async handler signature"
++)]
++async fn handle_impl(params: ToolHelpParams) -> Result<ToolHelpResult> {
++    let tool = ToolName::from_str(&params.tool_name)
++        .map_err(|_| Error::invalid("tool_name", &params.tool_name))?;
++
++    Ok(ToolHelpResult::new(
++        params.tool_name,
++        tool.help().to_string(),
++    ))
++}
+diff --git a/mcp/src/tool/mod.rs b/mcp/src/tool/mod.rs
+index 59c4092..c78e0c6 100644
+--- a/mcp/src/tool/mod.rs
++++ b/mcp/src/tool/mod.rs
+@@ -5,6 +5,7 @@ mod facade;
+ mod field_placement;
+ mod handler;
+ mod handler_context;
++mod help;
+ mod json_response;
+ mod large_response;
+ mod name;
+@@ -25,6 +26,8 @@ pub use handler::ResultStruct;
+ pub use handler::ToolFn;
+ pub use handler::ToolResult;
+ pub use handler_context::HandlerContext;
++pub use help::BrpToolHelp;
++pub use help::ToolHelpParams;
+ pub use name::BrpMethod;
+ pub use name::ToolName;
+ pub use parameters::NoParams;
+diff --git a/mcp/src/tool/name.rs b/mcp/src/tool/name.rs
+index 4982d40..a66b909 100644
+--- a/mcp/src/tool/name.rs
++++ b/mcp/src/tool/name.rs
+@@ -16,7 +16,9 @@ use strum::EnumIter;
+ use strum::EnumString;
+ use strum::IntoStaticStr;
+ 
++use super::BrpToolHelp;
+ use super::ToolDef;
++use super::ToolHelpParams;
+ use super::annotations::Annotation;
+ use super::annotations::EnvironmentImpact;
+ use super::annotations::ToolCategory;
+@@ -297,6 +299,8 @@ pub enum ToolName {
+     BrpExecute,
+     /// `brp_list_agent_tools` - List developer-published application method guidance
+     BrpListAgentTools,
++    /// `brp_tool_help` - Get detailed guidance for one MCP tool
++    BrpToolHelp,
+ 
+     // BRP Extras Tools
+     /// `brp_extras_screenshot` - Capture screenshots
+@@ -561,6 +565,11 @@ impl ToolName {
+                 ToolCategory::Discovery,
+                 EnvironmentImpact::ReadOnly,
+             ),
++            Self::BrpToolHelp => Annotation::new(
++                "get detailed tool guidance",
++                ToolCategory::Discovery,
++                EnvironmentImpact::ReadOnly,
++            ),
+             Self::BrpExtrasScreenshot => Annotation::new(
+                 "take screenshot",
+                 ToolCategory::Extras,
+@@ -772,6 +781,7 @@ impl ToolName {
+             Self::BrpListAgentTools => {
+                 Some(parameters::build_parameters_from::<ListAgentToolsParams>)
+             },
++            Self::BrpToolHelp => Some(parameters::build_parameters_from::<ToolHelpParams>),
+             Self::BrpExtrasScreenshot => {
+                 Some(parameters::build_parameters_from::<ScreenshotParams>)
+             },
+@@ -878,6 +888,7 @@ impl ToolName {
+             // Special tools with their own implementations
+             Self::BrpExecute => Arc::new(BrpExecute),
+             Self::BrpListAgentTools => Arc::new(BrpListAgentTools),
++            Self::BrpToolHelp => Arc::new(BrpToolHelp),
+             Self::WorldGetComponentsWatch => Arc::new(WorldGetComponentsWatch),
+             Self::WorldListComponentsWatch => Arc::new(BevyListWatch),
+             Self::BrpListActiveWatches => Arc::new(BrpListActiveWatches),
+@@ -975,12 +986,12 @@ mod tests {
+     #[test]
+     fn agent_catalog_help_cross_links_discovery_and_execution_without_native_tools() {
+         let catalog_help = ToolName::BrpListAgentTools
+-            .description()
++            .help()
+             .split_whitespace()
+             .collect::<Vec<_>>()
+             .join(" ");
+-        let execute_help = ToolName::BrpExecute.description();
+-        let discover_help = ToolName::RpcDiscover.description();
++        let execute_help = ToolName::BrpExecute.help();
++        let discover_help = ToolName::RpcDiscover.help();
+
+         assert!(catalog_help.contains("rpc_discover"));
+         assert!(catalog_help.contains("brp_execute"));
+@@ -1014 +1025 @@ mod tests {
+-        assert!(tool_name.description().contains("standard BRP"));
++        assert!(tool_name.help().contains("standard BRP"));
+@@ -1037,4 +1048,16 @@ mod tests {
+             assert_eq!(schema.get("required"), Some(&serde_json::json!(["name"])));
+         }
+     }
++
++    #[test]
++    fn advertised_description_is_concise_and_detailed_help_is_retained() {
++        let tool = ToolName::WorldQuery;
++
++        assert_eq!(
++            tool.description(),
++            "`world_query` - Query entities by components"
++        );
++        assert!(tool.help().contains("## How to Call"));
++        assert!(tool.help().len() > tool.description().len());
++    }
+ }
+diff --git a/mcp_macros/src/lib.rs b/mcp_macros/src/lib.rs
+index ac6fe4c..9887395 100644
+--- a/mcp_macros/src/lib.rs
++++ b/mcp_macros/src/lib.rs
+@@ -21,7 +21,7 @@ mod tool_fn;
+ 
+ use proc_macro::TokenStream;
+ 
+-/// Derives a `description()` method for tool enums that loads help text from files.
++/// Derives concise `description()` and detailed `help()` methods for tool enums.
+ ///
+ /// # Example
+ ///
+@@ -34,14 +34,22 @@ use proc_macro::TokenStream;
+ /// }
+ /// ```
+ ///
+-/// This will generate:
++/// Concise descriptions come from variant documentation. Detailed help is loaded
++/// from the matching text file. This will generate:
+ ///
+ /// ```ignore
+ /// impl ToolName {
+ ///     pub const fn description(&self) -> &'static str {
+ ///         match self {
+-///             ToolName::BevyList => include_str!("../../help_text/world.list_components.txt"),
+-///             ToolName::BevyGet => include_str!("../../help_text/world.get_components.txt"),
++///             ToolName::BevyList => "List Bevy components",
++///             ToolName::BevyGet => "Get Bevy component data",
++///         }
++///     }
++///
++///     pub const fn help(&self) -> &'static str {
++///         match self {
++///             ToolName::BevyList => include_str!("../../help_text/bevy_list.txt"),
++///             ToolName::BevyGet => include_str!("../../help_text/bevy_get.txt"),
+ ///         }
+ ///     }
+ /// }
+diff --git a/mcp_macros/src/tool_description.rs b/mcp_macros/src/tool_description.rs
+index 921805d..b75e3ed 100644
+--- a/mcp_macros/src/tool_description.rs
++++ b/mcp_macros/src/tool_description.rs
+@@ -6,8 +6,11 @@ use quote::quote;
+ use syn::Attribute;
+ use syn::Data;
+ use syn::DeriveInput;
++use syn::Expr;
+ use syn::Fields;
++use syn::Lit;
+ use syn::LitStr;
++use syn::Meta;
+ use syn::parse_macro_input;
+ 
+ /// Implementation of the `ToolDescription` derive macro
+@@ -22,14 +25,24 @@ pub(crate) fn derive_tool_description_impl(input: TokenStream) -> TokenStream {
+         panic!("ToolDescription can only be derived for enums");
+     };
+ 
+-    // Generate match arms for each variant
+-    let match_arms = data_enum.variants.iter().map(|variant| {
++    // Generate brief descriptions from enum documentation. Keep the existing
++    // help files available separately for progressive disclosure.
++    let description_arms = data_enum.variants.iter().map(|variant| {
+         // Ensure the variant has no fields
+         assert!(
+             matches!(variant.fields, Fields::Unit),
+             "ToolDescription can only be derived for enums with unit variants"
+         );
+ 
++        let variant_name = &variant.ident;
++        let description = extract_doc(&variant.attrs);
++
++        quote! {
++            Self::#variant_name => #description
++        }
++    });
++
++    let help_arms = data_enum.variants.iter().map(|variant| {
+         let variant_name = &variant.ident;
+         let snake_case_name = variant_name.to_string().to_snake_case();
+         let file_path = format!("{path}/{snake_case_name}.txt");
+@@ -44,10 +57,17 @@ pub(crate) fn derive_tool_description_impl(input: TokenStream) -> TokenStream {
+     // Generate the implementation
+     let expanded = quote! {
+         impl #enum_name {
+-            /// Returns the description text for this tool.
++            /// Returns the concise description advertised in MCP tool listings.
+             pub const fn description(&self) -> &'static str {
+                 match self {
+-                    #(#match_arms,)*
++                    #(#description_arms,)*
++                }
++            }
++
++            /// Returns detailed usage guidance for this tool on demand.
++            pub const fn help(&self) -> &'static str {
++                match self {
++                    #(#help_arms,)*
+                 }
+             }
+         }
+@@ -56,6 +76,32 @@ pub(crate) fn derive_tool_description_impl(input: TokenStream) -> TokenStream {
+     TokenStream::from(expanded)
+ }
+ 
++/// Extract and join Rust documentation attributes for a concise tool description.
++fn extract_doc(attributes: &[Attribute]) -> String {
++    let description = attributes
++        .iter()
++        .filter(|attribute| attribute.path().is_ident("doc"))
++        .filter_map(|attribute| match &attribute.meta {
++            Meta::NameValue(meta) => match &meta.value {
++                Expr::Lit(expr) => match &expr.lit {
++                    Lit::Str(value) => Some(value.value().trim().to_string()),
++                    _ => None,
++                },
++                _ => None,
++            },
++            _ => None,
++        })
++        .collect::<Vec<_>>()
++        .join(" ");
++
++    assert!(
++        !description.is_empty(),
++        "ToolDescription variants require a documentation comment"
++    );
++
++    description
++}
++
+ /// Extract the path from `tool_description` attributes
+ fn extract_path(attributes: &[Attribute]) -> String {
+     for attribute in attributes {

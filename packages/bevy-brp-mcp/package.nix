@@ -2,7 +2,6 @@
   lib,
   cargo,
   fetchFromGitHub,
-  fetchpatch2,
   makeWrapper,
   rustPlatform,
   rustc,
@@ -11,25 +10,22 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "bevy_brp_mcp";
-  version = "0.20.1";
+  version = "0.22.5";
 
   src = fetchFromGitHub {
     owner = "natepiano";
     repo = "bevy_brp";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-IMfv5Mp+rN3bLJcbwtE46nNXHaLtLYBUD8hTLJ1FsHo=";
+    hash = "sha256-j+1GLFkvGOd5Za6ZdhLTwD6t2u1+uXd18LKr3VfUqVI=";
   };
 
   patches = [
-    (fetchpatch2 {
-      url = "https://github.com/khaneliman/bevy_brp/commit/e60148efc209cd5ee16887b2f02eefbef8b0eda6.patch";
-      hash = "sha256-8c/QVdWgjT8muUGrSvN0sZd4OiCDn+OYGght08nIhN8=";
-    })
+    ./progressive-tool-help.patch
   ];
 
   buildAndTestSubdir = "mcp";
 
-  cargoHash = "sha256-JGm/WyygJqpzCaFr9JRnVtJxRMFXl192kt2b7QCru88=";
+  cargoHash = "sha256-K+aaS4B5xYGh/wmiMAtyvg9wLQN9Nw48Rue03fxckEM=";
 
   nativeBuildInputs = [
     makeWrapper
