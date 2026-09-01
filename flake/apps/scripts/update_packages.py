@@ -215,18 +215,12 @@ def commit_message(package: str, original_subject: str) -> tuple[str, str]:
         )
         if len(subject) > 50:
             subject = "chore(packages): update local package"
-        body = (
-            f"Update {package} from {old_version} to {new_version}.\n\n"
-            "nix-update built the package before creating this commit."
-        )
+        body = f"Update {package} from {old_version} to {new_version}."
     else:
         subject = f"chore({package}): update package"
         if len(subject) > 50:
             subject = "chore(packages): update local package"
-        body = (
-            f"Refresh {package} from its configured upstream.\n\n"
-            "nix-update built the package before creating this commit."
-        )
+        body = f"Refresh {package} from its configured upstream."
     return subject, body
 
 

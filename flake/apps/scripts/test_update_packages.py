@@ -58,6 +58,7 @@ class UpdatePackagesTests(unittest.TestCase):
         self.assertLessEqual(len(subject), 50)
         self.assertIn("0.1.13", body)
         self.assertIn("0.1.19", body)
+        self.assertNotIn("nix-update", body)
 
     def test_long_package_name_keeps_subject_bounded(self) -> None:
         subject, _ = update_packages.commit_message(
