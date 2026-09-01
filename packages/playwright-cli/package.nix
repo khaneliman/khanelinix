@@ -15,16 +15,16 @@ let
 in
 buildNpmPackage rec {
   pname = "playwright-cli";
-  version = "0.1.13";
+  version = "0.1.19";
 
   src = fetchFromGitHub {
     owner = "microsoft";
     repo = "playwright-cli";
     rev = "v${version}";
-    hash = "sha256-hHK/GR5Drlt+e0L9kyNmn+ht1PCrVH6WrVbxGB1Wsxg=";
+    hash = "sha256-pbv51ybubbjoIpKg0k7lfXfZ9Z+qdZI2lRhQeI+/mFA=";
   };
 
-  npmDepsHash = "sha256-Ulp6IttsZcOOA7LaYDpVKkBYbe2j4RFG8lJARWifOSk=";
+  npmDepsHash = "sha256-aY3i+sc2p8iQAEpfs+j/ifeBVmMpDDmwctEqOIDmCqI=";
 
   # Ships playwright-cli.js directly; there is no compile step.
   dontNpmBuild = true;
