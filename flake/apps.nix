@@ -158,6 +158,25 @@ _: {
             );
           };
 
+        update-packages = {
+          type = "app";
+          meta.description = "Update local flake packages in separate commits";
+          program = lib.getExe (
+            pkgs.writeShellApplication {
+              name = "update-packages";
+              runtimeInputs = [
+                pkgs.git
+                pkgs.nix
+                pkgs.nix-update
+                pkgs.python3
+              ];
+              text = ''
+                ${pkgs.python3}/bin/python3 ${./apps/scripts/update_packages.py} "$@"
+              '';
+            }
+          );
+        };
+
         update-vicinae-extensions = {
           type = "app";
           meta.description = "Update pinned Vicinae Raycast extensions";
