@@ -35,13 +35,13 @@ let
 in
 stdenvNoCC.mkDerivation {
   pname = "codexbar-waybar";
-  version = "0.4.0-unstable-2026-08-01";
+  version = "0.4.0-unstable-2026-08-29";
 
   src = fetchFromGitHub {
     owner = "Marouan-chak";
     repo = "codexbar-waybar";
-    rev = "474b4a292c14ba72d5ee2941d73cecd2258035c1";
-    hash = "sha256-KgjvxfJO0v3K2z2h6FMGMpJIs4WNJmMhVSVgPTSLeKA=";
+    rev = "bf9dd73ca87152a073ae542e19f523ecf6eae2dd";
+    hash = "sha256-fQHiMDhcxAGry9GW4Vg2edsmso2ZlwGjqVbq1j/Zsag=";
     fetchSubmodules = false;
   };
 
@@ -50,7 +50,6 @@ stdenvNoCC.mkDerivation {
 
   patches = [
     ./cache-max-age.patch
-    ./round-percentages.patch
     ./provider-sections.patch
   ];
 
