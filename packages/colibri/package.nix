@@ -90,13 +90,13 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "colibri";
-  version = "1.7.0";
+  version = "1.10.1-unstable-2026-08-31";
 
   src = fetchFromGitHub {
     owner = "JustVugg";
     repo = "colibri";
-    rev = "33e67a9c004b6e608d1f19dfbdcc20793377f94f";
-    hash = "sha256-f1IHa87lUBYgKXfX0EivxCvSb7bjb2JRt9IhFjoSe5Y=";
+    rev = "12a5c464b5c1f8292d578c62458706bc32d6ac95";
+    hash = "sha256-nWIp71zq0jb15+W8w5tyfmegFREgy1zgEiAcvO1d1hU=";
   };
 
   nativeBuildInputs = [ makeWrapper ];
