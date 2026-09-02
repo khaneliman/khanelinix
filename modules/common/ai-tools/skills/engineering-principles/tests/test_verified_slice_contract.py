@@ -26,7 +26,7 @@ class VerifiedSliceContractTests(unittest.TestCase):
     def test_index_routes_to_shared_slice_contract(self) -> None:
         skill = SKILL.read_text(encoding="utf-8")
 
-        self.assertIn("Sixteen principles", skill)
+        self.assertIn("Seventeen principles", skill)
         self.assertIn("[verified-slice](references/verified-slice.md)", skill)
 
     def test_contract_enforces_ownership_and_authority(self) -> None:

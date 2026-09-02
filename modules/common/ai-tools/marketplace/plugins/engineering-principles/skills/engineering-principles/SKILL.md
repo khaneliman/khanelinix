@@ -5,7 +5,7 @@ description: "Methods inside a caller-owned lifecycle: diff sizing, work sequenc
 
 # Engineering Principles
 
-Sixteen principles, one index. Match the situation to a row, then read that
+Seventeen principles, one index. Match the situation to a row, then read that
 reference in full before applying it. Each reference is short.
 
 | Principle                                                                                          | Apply when                                                                               |
@@ -23,6 +23,7 @@ reference in full before applying it. Each reference is short.
 | [sequence-verifiable-units](references/sequence-verifiable-units.md)                               | Multi-step work and commit or PR stacking. Verify each unit before the next.             |
 | [verified-slice](references/verified-slice.md)                                                     | Implementing one reviewable, reversible unit with evidence and commit authority.        |
 | [prove-it-works](references/prove-it-works.md)                                                     | After completing a task, before declaring done. Check the real artifact.                 |
+| [premise-review](references/premise-review.md)                                                     | Reviewing a plan, diff, or PR. Decide whether the change should exist before checking whether it works. |
 | [guard-the-context-window](references/guard-the-context-window.md)                                 | Context fills up: large outputs, long files, repeated reads, fan-out planning.           |
 | [encode-lessons-in-structure](references/encode-lessons-in-structure.md)                           | The same instruction gets written a second time, or a correction recurs.                 |
 | [build-the-lever](references/build-the-lever.md)                                                   | Non-trivial edits, migrations, analyses, or checks. Build the rerunnable tool.           |
