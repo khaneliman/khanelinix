@@ -497,14 +497,14 @@ class SessionAuditTests(unittest.TestCase):
             thread="thread",
             payload={
                 "status": "inProgress",
-                "config": {"model": "claude-fable-5[1m]"},
+                "config": {"model": "claude-fable-5-1[1m]"},
             },
         )
 
         normalized = audit.normalize(configured)
 
         self.assertEqual(normalized["status"], "in_progress")
-        self.assertEqual(normalized["model"], "claude-fable-5")
+        self.assertEqual(normalized["model"], "claude-fable-5-1")
         self.assertEqual(normalized["scrubbed_fields"], [])
 
         malformed = event(

@@ -227,11 +227,11 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertTrue(plan["selectionRequired"])
         self.assertEqual(
             [candidate["model"] for candidate in plan["preferredCandidates"]],
-            ["fable-5", "gpt-5-6-sol"],
+            ["fable-5-1", "gpt-5-6-sol"],
         )
         self.assertEqual(
             [candidate["model"] for candidate in plan["candidates"]],
-            ["fable-5", "gpt-5-6-sol", "opus-5", "google-opus-4-6"],
+            ["fable-5-1", "gpt-5-6-sol", "opus-5", "google-opus-4-6"],
         )
         self.assertTrue(all(candidate["probe"] for candidate in plan["candidates"]))
         self.assertEqual(plan["semanticFallback"], "reviewer")
@@ -402,7 +402,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(plan["selected"], "gpt-5-6-sol")
         self.assertEqual(
             {blocked["model"] for blocked in plan["blocked"]},
-            {"opus-5", "fable-5"},
+            {"opus-5", "fable-5-1"},
         )
         self.assertTrue(
             all(

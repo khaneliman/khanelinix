@@ -52,8 +52,8 @@ read-only.
 Delegate automatically by semantic role. Never choose a named-model agent from
 diff size, latency, or write access alone.
 
-- Review: use read-only `reviewer`. Prefer Fable 5 or GPT-5.6 Sol. Fall back to
-  available Opus variants. Keep review separate from correction.
+- Review: use read-only `reviewer`. Prefer Fable 5.1 or GPT-5.6 Sol. Fall back
+  to available Opus variants. Keep review separate from correction.
 - Implementation: use `implementer`. Prefer Opus 5, then GPT-5.6 Luna, then
   Gemini Flash when that route has write capability.
 - Named model: require explicit user model/provider intent or a route selected

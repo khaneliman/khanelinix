@@ -61,7 +61,7 @@ class ModelRoutingTests(unittest.TestCase):
 
         self.assertEqual(
             routes["plan or code review"]["preferred"],
-            ["fable-5", "gpt-5-6-sol"],
+            ["fable-5-1", "gpt-5-6-sol"],
         )
         self.assertEqual(
             routes["plan or code review"]["fallbacks"],
@@ -69,10 +69,10 @@ class ModelRoutingTests(unittest.TestCase):
         )
         self.assertEqual(
             self.registry["semantic_roles"]["reviewer"]["gateway"]["claude"],
-            "fable-5",
+            "fable-5-1",
         )
-        self.assertFalse(self.registry["models"]["fable-5"]["write"])
-        self.assertFalse(self.registry["models"]["fable-5"]["workspace_write"])
+        self.assertFalse(self.registry["models"]["fable-5-1"]["write"])
+        self.assertFalse(self.registry["models"]["fable-5-1"]["workspace_write"])
         self.assertEqual(
             routes["implementation"]["fallbacks"],
             ["gpt-5-6-luna", "gemini-3-7-flash"],
@@ -86,6 +86,12 @@ class ModelRoutingTests(unittest.TestCase):
         self.assertTrue(
             all(alias.startswith(("claude", "anthropic")) for alias in aliases)
         )
+
+    def test_fable_5_1_uses_hyphenated_gateway_id(self) -> None:
+        fable = self.registry["models"]["fable-5-1"]
+
+        self.assertEqual(fable["upstream_model"], "claude-fable-5-1")
+        self.assertEqual(fable["gateway_alias"], "claude-fable-5-1")
 
     def test_invalid_model_reference_is_rejected(self) -> None:
         invalid = copy.deepcopy(self.registry)
@@ -301,17 +307,17 @@ class ModelRoutingTests(unittest.TestCase):
         )
 
         self.assertIn(
-            'tools: "Read, Bash, Grep, Glob"', projection["claude"]["fable-5"]
+            'tools: "Read, Bash, Grep, Glob"', projection["claude"]["fable-5-1"]
         )
-        self.assertEqual(projection["codex"]["fable-5"]["sandbox_mode"], "read-only")
-        self.assertIn('"edit": false', projection["opencode"]["fable-5"])
-        self.assertIn('"write": false', projection["opencode"]["fable-5"])
+        self.assertEqual(projection["codex"]["fable-5-1"]["sandbox_mode"], "read-only")
+        self.assertIn('"edit": false', projection["opencode"]["fable-5-1"])
+        self.assertIn('"write": false', projection["opencode"]["fable-5-1"])
 
     @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
             False: "5b1232835fcc1573e2e044ec6ae0891f05ef5ec585f206d085e88d8738bd212d",
-            True: "55afbca1fd96cc812f03f1b89a01f1d8092525fcbd31dda88198dee6940ebe4c",
+            True: "0104fcae85931efe6f4ddc6174db34806908cb0d088d1e44d914f1081bd7dfc3",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():
@@ -508,7 +514,7 @@ class ModelRoutingTests(unittest.TestCase):
             defaults = modelRouting.defaultUpstreamModels;
             aliases = modelRouting.cliproxyAliases;
             directDefault = modelRouting.directGatewayModelsFor {{}} "claude-opus-5";
-            directFable = modelRouting.directGatewayModelsFor {{}} "claude-fable-5";
+            directFable = modelRouting.directGatewayModelsFor {{}} "claude-fable-5-1";
             directSonnet = modelRouting.directGatewayModelsFor {{}} "claude-sonnet-5";
             directCustom = modelRouting.directGatewayModelsFor {{}} "claude-custom";
           }}

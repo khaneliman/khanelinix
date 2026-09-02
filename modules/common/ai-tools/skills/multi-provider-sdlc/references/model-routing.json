@@ -23,7 +23,7 @@
 		},
 		"anthropic": {
 			"label": "Anthropic",
-			"model_agents": ["opus-5", "fable-5", "sonnet-5"]
+			"model_agents": ["opus-5", "fable-5-1", "sonnet-5"]
 		}
 	},
 	"models": {
@@ -157,14 +157,14 @@
 			"workspace_write": true,
 			"publish_alias": false
 		},
-		"fable-5": {
+		"fable-5-1": {
 			"subscription": "anthropic",
 			"quota_pool": "general",
 			"upstream_provider": "claude",
-			"upstream_model": "claude-fable-5",
-			"gateway_alias": "claude-fable-5",
-			"display_name": "Anthropic · Fable 5",
-			"description": "Anthropic Fable 5 gateway worker for planning, architecture critique, and independent review.",
+			"upstream_model": "claude-fable-5-1",
+			"gateway_alias": "claude-fable-5-1",
+			"display_name": "Anthropic · Fable 5.1",
+			"description": "Anthropic Fable 5.1 gateway worker for planning, architecture critique, and independent review.",
 			"reasoning_effort": null,
 			"write": false,
 			"workspace_write": false,
@@ -300,7 +300,7 @@
 				"codex": "gpt-5.6-sol"
 			},
 			"gateway": {
-				"claude": "fable-5",
+				"claude": "fable-5-1",
 				"opencode": "gpt-5-6-sol"
 			},
 			"reasoning_effort": { "codex": "high" }
@@ -384,7 +384,7 @@
 		},
 		{
 			"need": "plan or code review",
-			"preferred": ["fable-5", "gpt-5-6-sol"],
+			"preferred": ["fable-5-1", "gpt-5-6-sol"],
 			"fallbacks": ["opus-5", "google-opus-4-6"],
 			"semantic_role": "reviewer",
 			"write_policy": "read-only"
