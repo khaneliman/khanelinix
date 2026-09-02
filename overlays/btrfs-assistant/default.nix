@@ -5,8 +5,8 @@ _: _final: prev: {
     src = prev.fetchFromGitLab {
       owner = "khaneliman";
       repo = "btrfs-assistant";
-      rev = "de03f8303db8a337b07a097bdef711fe4aac6cae";
-      hash = "sha256-bXjcK+83E5Psap6H02HfWPlm9L+OV7xusv8tunjLOzE=";
+      rev = "4979691523d5cb2b2ee2c85490c6c0414f401074";
+      hash = "sha256-jS18A9CHBhyxP8Evz5UgKKT7VPPIdb/2gKElKg8GNeA=";
     };
 
     patches = [ ];
