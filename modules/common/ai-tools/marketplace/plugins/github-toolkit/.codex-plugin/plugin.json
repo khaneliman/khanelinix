@@ -1,6 +1,6 @@
 {
 	"name": "github-toolkit",
-	"version": "0.1.7",
+	"version": "0.1.8",
 	"description": "Manage GitHub queues, issues, pull requests, reviews, and CI.",
 	"author": {
 		"name": "khaneliman"

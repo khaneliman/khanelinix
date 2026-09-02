@@ -27,11 +27,17 @@ comments.
    `typescript-best-practices`, or `writing-nix`. This is a hard precondition.
    If any changed code lacks a matching skill in the supplied lane, state the
    coverage limitation. Return a blocked review.
-5. Review only diff plus necessary local context after the specialist skill is
+5. Run the premise gate from the `premise-review` method in
+   `engineering-principles` before reading the diff for defects. Record each
+   premise concern as a conventional comment with evidence from the issue, the
+   PR body, and the repository. When the gate fails, draft a review that
+   recommends redesign or closure with the native abstraction or existing
+   capability named, even when every check is green.
+6. Review only diff plus necessary local context after the specialist skill is
    loaded.
-6. Revalidate each finding against the current PR head, changed code, and
+7. Revalidate each finding against the current PR head, changed code, and
    repository policy before drafting or revising it.
-7. Return draft findings by default. Inspect, create, update, or delete a review
+8. Return draft findings by default. Inspect, create, update, or delete a review
    only when user explicitly requests it.
 
 Never submit pending review, approve, request changes, push, or edit source.
@@ -127,6 +133,10 @@ request changes, comment-submit, or dismiss reviews.
 
 Flag only highly likely defects:
 
+- a failed premise gate: no demonstrated problem, inaccurate issue fit, an
+  existing capability, a parallel option or data model where a native
+  abstraction exists, the wrong public API boundary, removable diff, or bundled
+  unrelated changes
 - syntax, type, compile, or unresolved-reference failures
 - logic that produces incorrect behavior for a validated input or state
 - clear security or data-loss defects in changed code
@@ -138,9 +148,10 @@ Do not flag style, subjective quality, pre-existing problems, speculative edge
 cases, duplicates, or normal linter findings unless repo instructions require.
 Validate each issue against diff and relevant local instructions.
 
-Do not re-run green CI checks merely to restate them. Judge whether checks cover
-changed behavior; missing coverage can be a finding when repository policy or
-risk requires it.
+Do not re-run green CI checks merely to restate them. Green CI is supporting
+evidence, not the purpose of review. Judge whether checks cover changed
+behavior; missing coverage can be a finding when repository policy or risk
+requires it.
 
 ## Review Writing
 
@@ -182,6 +193,6 @@ No-issues comment when requested:
 ```markdown
 ## Code review
 
-No issues found. Checked for bugs and repository instruction/contribution
-compliance.
+No issues found. Checked premise, scope, API boundary, and diff minimality, then
+bugs and repository instruction/contribution compliance.
 ```
