@@ -1,0 +1,991 @@
+diff --git a/apps/desktop/src/app/DesktopApp.ts b/apps/desktop/src/app/DesktopApp.ts
+index 5283658..832c34e 100644
+--- a/apps/desktop/src/app/DesktopApp.ts
++++ b/apps/desktop/src/app/DesktopApp.ts
+@@ -29,6 +29,7 @@ import * as DesktopShellEnvironment from "../shell/DesktopShellEnvironment.ts";
+ import * as DesktopState from "./DesktopState.ts";
+ import * as DesktopUpdates from "../updates/DesktopUpdates.ts";
+ import * as DesktopWslBackend from "../wsl/DesktopWslBackend.ts";
++import * as DesktopExistingBackendAttachment from "../backend/DesktopExistingBackendAttachment.ts";
+ 
+ const DEFAULT_DESKTOP_BACKEND_PORT = 3773;
+ const MAX_TCP_PORT = 65_535;
+@@ -141,21 +142,58 @@ const fatalStartupCause = <E>(stage: string, cause: Cause.Cause<E>) =>
+   handleFatalStartupError(stage, Cause.pretty(cause)).pipe(Effect.andThen(Effect.failCause(cause)));
+ 
+ const bootstrap = Effect.gen(function* () {
+-  const pool = yield* DesktopBackendPool.DesktopBackendPool;
+-  const primaryBackend = yield* pool.primary;
++  const attachment = yield* DesktopExistingBackendAttachment.DesktopExistingBackendAttachment;
+   const state = yield* DesktopState.DesktopState;
+   const environment = yield* DesktopEnvironment.DesktopEnvironment;
+-  const desktopSettings = yield* DesktopAppSettings.DesktopAppSettings;
+-  const serverExposure = yield* DesktopServerExposure.DesktopServerExposure;
+-  const wslBackend = yield* DesktopWslBackend.DesktopWslBackend;
+   const desktopWindow = yield* DesktopWindow.DesktopWindow;
+   const appActivation = yield* DesktopAppActivation.DesktopAppActivation;
+   yield* logBootstrapInfo("bootstrap start");
+ 
+-  if (environment.isDevelopment && Option.isNone(environment.configuredBackendPort)) {
++  yield* attachment.bootstrap;
++  const attached = yield* attachment.ready;
++
++  if (
++    Option.isNone(attached) &&
++    environment.isDevelopment &&
++    Option.isNone(environment.configuredBackendPort)
++  ) {
+     return yield* new DesktopDevelopmentBackendPortRequiredError();
+   }
+ 
++  if (Option.isSome(attached)) {
++    if (yield* Ref.get(state.quitting)) return;
++    const electronProtocol = yield* ElectronProtocol.ElectronProtocol;
++    const rendererTarget = environment.isDevelopment
++      ? Option.getOrThrow(environment.devServerUrl)
++      : attached.value.httpBaseUrl;
++    yield* electronProtocol.registerDesktopProtocol({
++      scheme: ElectronProtocol.getDesktopScheme(environment.isDevelopment),
++      targetOrigin: rendererTarget,
++      backendOrigin: attached.value.httpBaseUrl,
++      clerkFrontendApiHostname: DesktopClerk.desktopClerkFrontendApiHostname,
++    });
++    yield* logBootstrapInfo("bootstrap attached to existing backend", {
++      baseUrl: attached.value.httpBaseUrl.href,
++    });
++    yield* installDesktopIpcHandlers();
++    yield* logBootstrapInfo("bootstrap ipc handlers registered");
++    if (!(yield* Ref.get(state.quitting))) {
++      yield* desktopWindow.handleBackendReady(attached.value.httpBaseUrl);
++      yield* appActivation.start.pipe(
++        Effect.tap(() => logBootstrapInfo("desktop app control socket ready")),
++        Effect.catch((error) =>
++          logStartupError("desktop app control socket unavailable", { error }),
++        ),
++      );
++    }
++    return;
++  }
++
++  const pool = yield* DesktopBackendPool.DesktopBackendPool;
++  const primaryBackend = yield* pool.primary;
++  const desktopSettings = yield* DesktopAppSettings.DesktopAppSettings;
++  const serverExposure = yield* DesktopServerExposure.DesktopServerExposure;
++  const wslBackend = yield* DesktopWslBackend.DesktopWslBackend;
+   const backendPortSelection = yield* resolveDesktopBackendPort(environment.configuredBackendPort);
+   const backendPort = backendPortSelection.port;
+   yield* logBootstrapInfo(
+@@ -296,6 +334,14 @@ const startup = Effect.gen(function* () {
+   yield* bootstrap.pipe(Effect.catchCause((cause) => fatalStartupCause("bootstrap", cause)));
+ }).pipe(Effect.withSpan("desktop.startup"));
+ 
++export const stopDesktopOwnedBackends = <E, R>(
++  instances: ReadonlyArray<{ readonly stop: () => Effect.Effect<void, E, R> }>,
++): Effect.Effect<void, E, R> =>
++  Effect.forEach(instances, (instance) => instance.stop(), {
++    concurrency: "unbounded",
++    discard: true,
++  });
++
+ const scopedProgram = Effect.scoped(
+   Effect.gen(function* () {
+     const runId = yield* makeDesktopRunId;
+@@ -313,9 +359,7 @@ const scopedProgram = Effect.scoped(
+         // finalizer means it gets hard-killed by the OS instead of
+         // receiving SIGTERM + grace. Stops run concurrently.
+         const instances = yield* pool.list;
+-        yield* Effect.forEach(instances, (instance) => instance.stop(), {
+-          concurrency: "unbounded",
+-        });
++        yield* stopDesktopOwnedBackends(instances);
+       }).pipe(Effect.ensuring(shutdown.markComplete)),
+     );
+ 
+diff --git a/apps/desktop/src/app/DesktopAppErrors.test.ts b/apps/desktop/src/app/DesktopAppErrors.test.ts
+index 666c36d..6599b34 100644
+--- a/apps/desktop/src/app/DesktopAppErrors.test.ts
++++ b/apps/desktop/src/app/DesktopAppErrors.test.ts
+@@ -1,9 +1,13 @@
+ import { assert, describe, it } from "@effect/vitest";
++import { spawn } from "node:child_process";
++import * as Effect from "effect/Effect";
+ 
+ import {
+   DesktopBackendPortUnavailableError,
+   DesktopDevelopmentBackendPortRequiredError,
++  stopDesktopOwnedBackends,
+ } from "./DesktopApp.ts";
++import { processIsAlive } from "../backend/DesktopExistingBackendAttachment.ts";
+ 
+ describe("DesktopApp errors", () => {
+   it("preserves unavailable backend port context", () => {
+@@ -27,4 +31,27 @@ describe("DesktopApp errors", () => {
+ 
+     assert.equal(error.message, "T3CODE_PORT is required in desktop development.");
+   });
++
++  it.effect("stops Desktop-owned backends without terminating the attached process", () =>
++    Effect.gen(function* () {
++      const external = yield* Effect.acquireRelease(
++        Effect.sync(() =>
++          spawn(process.execPath, ["-e", "setInterval(() => {}, 1000)"], { stdio: "ignore" }),
++        ),
++        (child) => Effect.sync(() => child.kill()),
++      );
++      if (external.pid === undefined) return yield* Effect.die("external process has no pid");
++      let stopCount = 0;
++      yield* stopDesktopOwnedBackends([
++        {
++          stop: () =>
++            Effect.sync(() => {
++              stopCount += 1;
++            }),
++        },
++      ]);
++      assert.strictEqual(stopCount, 1);
++      assert.isTrue(processIsAlive(external.pid));
++    }).pipe(Effect.scoped),
++  );
+ });
+diff --git a/apps/desktop/src/app/DesktopConfig.ts b/apps/desktop/src/app/DesktopConfig.ts
+index d157a4c..f7413b7 100644
+--- a/apps/desktop/src/app/DesktopConfig.ts
++++ b/apps/desktop/src/app/DesktopConfig.ts
+@@ -37,6 +37,7 @@ export const DesktopConfig = Config.all({
+   xdgConfigHome: trimmedString("XDG_CONFIG_HOME"),
+   xdgDataHome: trimmedString("XDG_DATA_HOME"),
+   t3Home: trimmedString("T3CODE_HOME"),
++  attachExistingBackend: optionalBoolean("T3CODE_DESKTOP_ATTACH_EXISTING"),
+   devServerUrl: Config.url("VITE_DEV_SERVER_URL").pipe(Config.option),
+   appUserModelIdOverride: trimmedString("T3CODE_DESKTOP_APP_USER_MODEL_ID"),
+   devRemoteT3ServerEntryPath: trimmedString("T3CODE_DEV_REMOTE_T3_SERVER_ENTRY_PATH"),
+diff --git a/apps/desktop/src/app/DesktopEnvironment.ts b/apps/desktop/src/app/DesktopEnvironment.ts
+index 4583e51..9e9c745 100644
+--- a/apps/desktop/src/app/DesktopEnvironment.ts
++++ b/apps/desktop/src/app/DesktopEnvironment.ts
+@@ -66,6 +66,7 @@ export class DesktopEnvironment extends Context.Service<
+     readonly devServerUrl: Option.Option<URL>;
+     readonly devRemoteT3ServerEntryPath: Option.Option<string>;
+     readonly configuredBackendPort: Option.Option<number>;
++    readonly attachExistingBackend: boolean;
+     readonly commitHashOverride: Option.Option<string>;
+     readonly otlpTracesUrl: Option.Option<string>;
+     readonly otlpExportIntervalMs: number;
+@@ -218,6 +219,7 @@ const make = Effect.fn("desktop.environment.make")(function* (
+     devServerUrl,
+     devRemoteT3ServerEntryPath: config.devRemoteT3ServerEntryPath,
+     configuredBackendPort: config.configuredBackendPort,
++    attachExistingBackend: config.attachExistingBackend,
+     commitHashOverride: config.commitHashOverride,
+     otlpTracesUrl: config.otlpTracesUrl,
+     otlpExportIntervalMs: config.otlpExportIntervalMs,
+diff --git a/apps/desktop/src/backend/DesktopExistingBackendAttachment.test.ts b/apps/desktop/src/backend/DesktopExistingBackendAttachment.test.ts
+new file mode 100644
+index 0000000..96ab3fc
+--- /dev/null
++++ b/apps/desktop/src/backend/DesktopExistingBackendAttachment.test.ts
+@@ -0,0 +1,243 @@
++import { assert, describe, it } from "@effect/vitest";
++import { AuthAdministrativeScopes } from "@t3tools/contracts";
++import { spawn } from "node:child_process";
++import * as Effect from "effect/Effect";
++import * as Option from "effect/Option";
++import * as Ref from "effect/Ref";
++
++import * as DesktopExistingBackendAttachment from "./DesktopExistingBackendAttachment.ts";
++
++describe("DesktopExistingBackendAttachment", () => {
++  const runtime = JSON.stringify({
++    version: 1,
++    pid: 42,
++    origin: "http://127.0.0.1:3773",
++    port: 3773,
++  });
++  const makeAttachment = (
++    input: {
++      readonly enabled?: boolean;
++      readonly runtimeJson?: string;
++      readonly expectedPort?: number;
++      readonly environmentId?: string;
++      readonly isProcessAlive?: (pid: number) => boolean;
++      readonly descriptorId?: string;
++      readonly sessionJson?: string;
++      readonly issueSession?: () => Effect.Effect<string, unknown>;
++    } = {},
++  ) =>
++    DesktopExistingBackendAttachment.makeWithOperations({
++      enabled: input.enabled ?? true,
++      stateDir: "/state",
++      expectedPort: input.expectedPort ?? 3773,
++      joinPath: (first, second) => `${first}/${second}`,
++      operations: {
++        readFileString: (path) =>
++          Effect.succeed(
++            path.endsWith("server-runtime.json")
++              ? (input.runtimeJson ?? runtime)
++              : (input.environmentId ?? "environment-1"),
++          ),
++        isProcessAlive: input.isProcessAlive ?? (() => true),
++        fetchDescriptor: () =>
++          Effect.succeed({
++            environmentId: input.descriptorId ?? "environment-1",
++            label: "Canonical server",
++          }),
++        issueSession:
++          input.issueSession ??
++          (() =>
++            Effect.succeed(
++              input.sessionJson ??
++                JSON.stringify({ token: "bearer", scopes: AuthAdministrativeScopes }),
++            )),
++      },
++    });
++
++  it.effect("does not resolve or issue a session when attachment is disabled", () =>
++    Effect.gen(function* () {
++      const issueCount = yield* Ref.make(0);
++      const attachment = yield* makeAttachment({
++        enabled: false,
++        issueSession: () => Ref.update(issueCount, (count) => count + 1).pipe(Effect.as("")),
++      });
++      yield* attachment.bootstrap;
++      assert.deepEqual(yield* attachment.state, { kind: "disabled" });
++      assert.strictEqual(yield* Ref.get(issueCount), 0);
++    }),
++  );
++
++  it.effect("accepts a live loopback runtime with a matching port", () =>
++    Effect.gen(function* () {
++      const origin = yield* DesktopExistingBackendAttachment.validateRuntimeOrigin(
++        {
++          origin: "http://127.0.0.1:3773",
++          port: 3773,
++        },
++        3773,
++      );
++      assert.strictEqual(origin.href, "http://127.0.0.1:3773/");
++      assert.isTrue(DesktopExistingBackendAttachment.processIsAlive(process.pid));
++    }),
++  );
++
++  it.effect("runs bootstrap and retains the validated descriptor label and bearer", () =>
++    Effect.gen(function* () {
++      const attachment = yield* makeAttachment();
++      yield* attachment.bootstrap;
++      const ready = yield* attachment.ready;
++      assert.isTrue(Option.isSome(ready));
++      if (Option.isSome(ready)) {
++        assert.strictEqual(ready.value.bearer, "bearer");
++        assert.strictEqual(ready.value.label, "Canonical server");
++      }
++    }),
++  );
++
++  it.effect("rejects a stale process", () =>
++    Effect.gen(function* () {
++      const attachment = yield* makeAttachment({ isProcessAlive: () => false });
++      const error = yield* attachment.bootstrap.pipe(Effect.flip);
++      assert.include(error.reason, "no longer running");
++      assert.isFalse(DesktopExistingBackendAttachment.processIsAlive(2_147_483_647));
++    }),
++  );
++
++  it.effect("rejects non-loopback and mismatched runtime origins", () =>
++    Effect.gen(function* () {
++      const nonLoopback = yield* DesktopExistingBackendAttachment.validateRuntimeOrigin(
++        {
++          origin: "http://192.0.2.1:3773",
++          port: 3773,
++        },
++        3773,
++      ).pipe(Effect.flip);
++      const mismatchedPort = yield* DesktopExistingBackendAttachment.validateRuntimeOrigin(
++        {
++          origin: "http://127.0.0.1:3774",
++          port: 3773,
++        },
++        3773,
++      ).pipe(Effect.flip);
++      const nonCanonicalPort = yield* DesktopExistingBackendAttachment.validateRuntimeOrigin(
++        {
++          origin: "http://127.0.0.1:3774",
++          port: 3774,
++        },
++        3773,
++      ).pipe(Effect.flip);
++      assert.include(nonLoopback.reason, "not loopback");
++      assert.include(mismatchedPort.reason, "port");
++      assert.include(nonCanonicalPort.reason, "configured attachment port 3773");
++    }),
++  );
++
++  it.effect("rejects zero and negative runtime PIDs before probing liveness", () =>
++    Effect.gen(function* () {
++      const probedPids: number[] = [];
++      const isProcessAlive = (pid: number) => {
++        probedPids.push(pid);
++        return true;
++      };
++      for (const pid of [0, -1]) {
++        const attachment = yield* makeAttachment({
++          runtimeJson: JSON.stringify({
++            version: 1,
++            pid,
++            origin: "http://127.0.0.1:3773",
++            port: 3773,
++          }),
++          isProcessAlive,
++        });
++        const error = yield* attachment.bootstrap.pipe(Effect.flip);
++        assert.include(error.reason, "pid is not positive");
++      }
++      assert.deepEqual(probedPids, []);
++    }),
++  );
++
++  it.effect("does not take ownership of an attached external process", () =>
++    Effect.gen(function* () {
++      const child = yield* Effect.acquireRelease(
++        Effect.sync(() =>
++          spawn(process.execPath, ["-e", "setInterval(() => {}, 1000)"], {
++            stdio: "ignore",
++          }),
++        ),
++        (process) => Effect.sync(() => process.kill()),
++      );
++      if (child.pid === undefined) return yield* Effect.die("external process has no pid");
++      const pid = child.pid;
++      yield* Effect.scoped(
++        Effect.gen(function* () {
++          const attachment = yield* makeAttachment({
++            runtimeJson: JSON.stringify({
++              version: 1,
++              pid,
++              origin: "http://127.0.0.1:3773",
++              port: 3773,
++            }),
++            isProcessAlive: DesktopExistingBackendAttachment.processIsAlive,
++          });
++          yield* attachment.bootstrap;
++        }),
++      );
++      assert.isTrue(DesktopExistingBackendAttachment.processIsAlive(pid));
++    }).pipe(Effect.scoped),
++  );
++
++  it.effect("rejects empty and mismatched environment IDs", () =>
++    Effect.gen(function* () {
++      const emptyAttachment = yield* makeAttachment({ environmentId: "" });
++      const mismatchAttachment = yield* makeAttachment({ descriptorId: "other" });
++      const empty = yield* emptyAttachment.bootstrap.pipe(Effect.flip);
++      const mismatch = yield* mismatchAttachment.bootstrap.pipe(Effect.flip);
++      assert.include(empty.reason, "empty");
++      assert.include(mismatch.reason, "does not match");
++    }),
++  );
++
++  it.effect("rejects a non-loopback origin during bootstrap", () =>
++    Effect.gen(function* () {
++      const attachment = yield* makeAttachment({
++        runtimeJson: JSON.stringify({
++          version: 1,
++          pid: 42,
++          origin: "http://192.0.2.1:3773",
++          port: 3773,
++        }),
++      });
++      const error = yield* attachment.bootstrap.pipe(Effect.flip);
++      assert.include(error.reason, "not loopback");
++    }),
++  );
++
++  it.effect("rejects invalid session JSON and missing administrative scopes", () =>
++    Effect.gen(function* () {
++      const invalidAttachment = yield* makeAttachment({ sessionJson: "not-json" });
++      const missingScopeAttachment = yield* makeAttachment({
++        sessionJson: JSON.stringify({ token: "bearer", scopes: [] }),
++      });
++      const invalid = yield* invalidAttachment.bootstrap.pipe(Effect.flip);
++      const missingScope = yield* missingScopeAttachment.bootstrap.pipe(Effect.flip);
++      assert.include(invalid.reason, "JSON");
++      assert.include(missingScope.reason, "scope");
++    }),
++  );
++
++  it.effect("serializes concurrent bootstrap calls and issues one session", () =>
++    Effect.gen(function* () {
++      const issueCount = yield* Ref.make(0);
++      const attachment = yield* makeAttachment({
++        issueSession: () =>
++          Ref.update(issueCount, (count) => count + 1).pipe(
++            Effect.as(JSON.stringify({ token: "bearer", scopes: AuthAdministrativeScopes })),
++          ),
++      });
++      yield* Effect.all([attachment.bootstrap, attachment.bootstrap], {
++        concurrency: "unbounded",
++      });
++      assert.strictEqual(yield* Ref.get(issueCount), 1);
++    }),
++  );
++});
+diff --git a/apps/desktop/src/backend/DesktopExistingBackendAttachment.ts b/apps/desktop/src/backend/DesktopExistingBackendAttachment.ts
+new file mode 100644
+index 0000000..bd1fb35
+--- /dev/null
++++ b/apps/desktop/src/backend/DesktopExistingBackendAttachment.ts
+@@ -0,0 +1,316 @@
++import { fetchRemoteEnvironmentDescriptor } from "@t3tools/client-runtime/environment";
++import { AuthAdministrativeScopes, TrimmedNonEmptyString } from "@t3tools/contracts";
++import * as Context from "effect/Context";
++import * as Effect from "effect/Effect";
++import * as FileSystem from "effect/FileSystem";
++import * as Layer from "effect/Layer";
++import * as Option from "effect/Option";
++import * as Ref from "effect/Ref";
++import * as Schema from "effect/Schema";
++import * as Semaphore from "effect/Semaphore";
++import { ChildProcess, ChildProcessSpawner } from "effect/unstable/process";
++import * as HttpClient from "effect/unstable/http/HttpClient";
++
++import * as DesktopEnvironment from "../app/DesktopEnvironment.ts";
++
++const ATTACHMENT_TIMEOUT = "10 seconds";
++
++const ServerRuntimeState = Schema.fromJsonString(
++  Schema.Struct({
++    version: Schema.Literal(1),
++    pid: Schema.Int,
++    origin: Schema.String,
++    port: Schema.Int,
++  }),
++);
++const IssuedSession = Schema.fromJsonString(
++  Schema.Struct({
++    token: TrimmedNonEmptyString,
++    scopes: Schema.Array(Schema.String),
++  }),
++);
++
++export class DesktopExistingBackendAttachmentError extends Schema.TaggedErrorClass<DesktopExistingBackendAttachmentError>()(
++  "DesktopExistingBackendAttachmentError",
++  { reason: Schema.String, cause: Schema.optionalKey(Schema.Defect()) },
++) {
++  override get message(): string {
++    return `Unable to attach to the existing T3 server: ${this.reason}`;
++  }
++}
++
++export type DesktopExistingBackendAttachmentState =
++  | { readonly kind: "disabled" }
++  | { readonly kind: "resolving" }
++  | {
++      readonly kind: "ready";
++      readonly httpBaseUrl: URL;
++      readonly bearer: string;
++      readonly label: string;
++    }
++  | { readonly kind: "failed"; readonly error: DesktopExistingBackendAttachmentError };
++
++export class DesktopExistingBackendAttachment extends Context.Service<
++  DesktopExistingBackendAttachment,
++  {
++    readonly bootstrap: Effect.Effect<void, DesktopExistingBackendAttachmentError>;
++    readonly state: Effect.Effect<DesktopExistingBackendAttachmentState>;
++    readonly ready: Effect.Effect<
++      Option.Option<Extract<DesktopExistingBackendAttachmentState, { readonly kind: "ready" }>>
++    >;
++  }
++>()("@t3tools/desktop/backend/DesktopExistingBackendAttachment") {}
++
++export const isLoopback = (url: URL): boolean =>
++  url.protocol === "http:" &&
++  (url.hostname === "127.0.0.1" ||
++    url.hostname === "localhost" ||
++    url.hostname === "[::1]" ||
++    url.hostname === "::1");
++
++export const processIsAlive = (pid: number): boolean => {
++  try {
++    process.kill(pid, 0);
++    return true;
++  } catch (error) {
++    return error instanceof Error && "code" in error && error.code === "EPERM";
++  }
++};
++
++const fail = (reason: string, cause?: unknown) =>
++  Effect.fail(
++    new DesktopExistingBackendAttachmentError({
++      reason,
++      ...(cause === undefined ? {} : { cause }),
++    }),
++  );
++
++export const validateRuntimeOrigin = (
++  runtime: {
++    readonly origin: string;
++    readonly port: number;
++  },
++  expectedPort?: number,
++): Effect.Effect<URL, DesktopExistingBackendAttachmentError> =>
++  Effect.try({
++    try: () => new URL(runtime.origin),
++    catch: (cause) => cause,
++  }).pipe(
++    Effect.mapError(
++      (cause) =>
++        new DesktopExistingBackendAttachmentError({
++          reason: "server origin is invalid",
++          cause,
++        }),
++    ),
++    Effect.filterOrFail(
++      isLoopback,
++      () =>
++        new DesktopExistingBackendAttachmentError({ reason: "the server origin is not loopback" }),
++    ),
++    Effect.filterOrFail(
++      (origin) => (origin.port === "" ? 80 : Number(origin.port)) === runtime.port,
++      () =>
++        new DesktopExistingBackendAttachmentError({
++          reason: "server runtime origin port does not match runtime port",
++        }),
++    ),
++    Effect.filterOrFail(
++      () => expectedPort === undefined || runtime.port === expectedPort,
++      () =>
++        new DesktopExistingBackendAttachmentError({
++          reason: `server runtime port does not match configured attachment port ${expectedPort}`,
++        }),
++    ),
++  );
++
++export interface DesktopExistingBackendAttachmentOperations {
++  readonly readFileString: (path: string) => Effect.Effect<string, unknown>;
++  readonly isProcessAlive: (pid: number) => boolean;
++  readonly fetchDescriptor: (
++    origin: URL,
++  ) => Effect.Effect<{ readonly environmentId: string; readonly label: string }, unknown>;
++  readonly issueSession: () => Effect.Effect<string, unknown>;
++}
++
++export interface DesktopExistingBackendAttachmentInput {
++  readonly enabled: boolean;
++  readonly stateDir: string;
++  readonly expectedPort?: number;
++  readonly joinPath: (first: string, second: string) => string;
++  readonly operations: DesktopExistingBackendAttachmentOperations;
++}
++
++export const makeWithOperations = (input: DesktopExistingBackendAttachmentInput) =>
++  Effect.gen(function* () {
++    const stateRef = yield* Ref.make<DesktopExistingBackendAttachmentState>({ kind: "disabled" });
++    const bootstrapMutex = yield* Semaphore.make(1);
++
++    const resolve = Effect.fn("desktop.existingBackendAttachment.resolve")(function* () {
++      const runtimeJson = yield* input.operations
++        .readFileString(input.joinPath(input.stateDir, "server-runtime.json"))
++        .pipe(
++          Effect.mapError(
++            (cause) =>
++              new DesktopExistingBackendAttachmentError({
++                reason: "server-runtime.json is missing or unreadable",
++                cause,
++              }),
++          ),
++        );
++      const runtime = yield* Schema.decodeUnknownEffect(ServerRuntimeState)(runtimeJson).pipe(
++        Effect.mapError(
++          (cause) =>
++            new DesktopExistingBackendAttachmentError({
++              reason: "server-runtime.json is corrupt",
++              cause,
++            }),
++        ),
++      );
++      if (runtime.pid <= 0) return yield* fail("server runtime pid is not positive");
++      if (!input.operations.isProcessAlive(runtime.pid))
++        return yield* fail("the server process is no longer running");
++      const origin = yield* validateRuntimeOrigin(runtime, input.expectedPort);
++      const localEnvironmentId = yield* input.operations
++        .readFileString(input.joinPath(input.stateDir, "environment-id"))
++        .pipe(
++          Effect.mapError(
++            (cause) =>
++              new DesktopExistingBackendAttachmentError({
++                reason: "environment-id is missing or unreadable",
++                cause,
++              }),
++          ),
++          Effect.map((value) => value.trim()),
++        );
++      if (localEnvironmentId.length === 0) return yield* fail("environment-id is empty");
++      const descriptor = yield* input.operations.fetchDescriptor(origin).pipe(
++        Effect.mapError(
++          (cause) =>
++            new DesktopExistingBackendAttachmentError({
++              reason: "existing server descriptor probe failed",
++              cause,
++            }),
++        ),
++      );
++      if (descriptor.environmentId !== localEnvironmentId)
++        return yield* fail("existing server environment does not match local environment-id");
++      const output = yield* input.operations.issueSession().pipe(
++        Effect.timeout(ATTACHMENT_TIMEOUT),
++        Effect.mapError(
++          (cause) =>
++            new DesktopExistingBackendAttachmentError({
++              reason: "administrative session command failed or timed out",
++              cause,
++            }),
++        ),
++      );
++      const issued = yield* Schema.decodeUnknownEffect(IssuedSession)(output).pipe(
++        Effect.mapError(
++          (cause) =>
++            new DesktopExistingBackendAttachmentError({
++              reason: "administrative session JSON was invalid",
++              cause,
++            }),
++        ),
++      );
++      const missingScope = AuthAdministrativeScopes.find((scope) => !issued.scopes.includes(scope));
++      if (missingScope !== undefined)
++        return yield* fail(`administrative session is missing scope ${missingScope}`);
++      return {
++        kind: "ready",
++        httpBaseUrl: origin,
++        bearer: issued.token,
++        label: descriptor.label,
++      } as const;
++    });
++
++    const bootstrap = Effect.suspend(() => {
++      if (!input.enabled) return Effect.void;
++      return bootstrapMutex
++        .withPermits(1)(
++          Effect.gen(function* () {
++            const current = yield* Ref.get(stateRef);
++            if (current.kind === "ready") return;
++            if (current.kind === "failed") return yield* current.error;
++            yield* Ref.set(stateRef, { kind: "resolving" });
++            const next = yield* resolve();
++            yield* Ref.set(stateRef, next);
++          }),
++        )
++        .pipe(
++          Effect.catchTag("DesktopExistingBackendAttachmentError", (error) =>
++            Ref.set(stateRef, { kind: "failed", error }).pipe(Effect.andThen(Effect.fail(error))),
++          ),
++        );
++    });
++    const state = Ref.get(stateRef);
++    return DesktopExistingBackendAttachment.of({
++      bootstrap,
++      state,
++      ready: state.pipe(
++        Effect.map((value) => (value.kind === "ready" ? Option.some(value) : Option.none())),
++      ),
++    });
++  });
++
++export const make = Effect.gen(function* () {
++  const environment = yield* DesktopEnvironment.DesktopEnvironment;
++  const fileSystem = yield* FileSystem.FileSystem;
++  const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
++  const httpClient = yield* HttpClient.HttpClient;
++  return yield* makeWithOperations({
++    enabled: environment.attachExistingBackend,
++    stateDir: environment.stateDir,
++    ...(Option.isSome(environment.configuredBackendPort)
++      ? { expectedPort: environment.configuredBackendPort.value }
++      : {}),
++    joinPath: environment.path.join,
++    operations: {
++      readFileString: fileSystem.readFileString,
++      isProcessAlive: processIsAlive,
++      fetchDescriptor: (origin) =>
++        fetchRemoteEnvironmentDescriptor({ httpBaseUrl: origin.href }).pipe(
++          Effect.provideService(HttpClient.HttpClient, httpClient),
++        ),
++      issueSession: () => {
++        const command = ChildProcess.make(
++          process.execPath,
++          [
++            environment.backendEntryPath,
++            "auth",
++            "session",
++            "issue",
++            "--base-dir",
++            environment.baseDir,
++            "--json",
++            "--label",
++            "T3 Code Desktop",
++            "--subject",
++            "desktop-attachment",
++          ],
++          {
++            cwd: environment.backendCwd,
++            env: { ELECTRON_RUN_AS_NODE: "1" },
++            extendEnv: true,
++            stdin: "ignore",
++            stdout: "pipe",
++            stderr: "inherit",
++          },
++        );
++        return spawner.string(command);
++      },
++    },
++  });
++});
++
++export const layer = Layer.effect(DesktopExistingBackendAttachment, make);
++
++export const layerTest = (
++  state: DesktopExistingBackendAttachmentState,
++): Layer.Layer<DesktopExistingBackendAttachment> =>
++  Layer.succeed(DesktopExistingBackendAttachment, {
++    bootstrap: Effect.void,
++    state: Effect.succeed(state),
++    ready: Effect.succeed(state.kind === "ready" ? Option.some(state) : Option.none()),
++  });
+diff --git a/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.test.ts b/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.test.ts
+--- a/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.test.ts
++++ b/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.test.ts
+@@ -9,6 +9,7 @@ import { PRIMARY_LOCAL_ENVIRONMENT_ID } from "@t3tools/contracts";
+ 
+ import * as DesktopBackendPool from "./DesktopBackendPool.ts";
+ import * as DesktopLocalEnvironmentAuth from "./DesktopLocalEnvironmentAuth.ts";
++import * as DesktopExistingBackendAttachment from "./DesktopExistingBackendAttachment.ts";
+ 
+ const config = {
+   executablePath: "/electron",
+@@ -65,7 +66,13 @@ describe("DesktopLocalEnvironmentAuth", () => {
+         ]),
+       } as unknown as DesktopBackendPool.DesktopBackendPool["Service"]);
+       const testLayer = DesktopLocalEnvironmentAuth.layer.pipe(
+-        Layer.provide(Layer.mergeAll(poolLayer, httpClientLayer)),
++        Layer.provide(
++          Layer.mergeAll(
++            poolLayer,
++            httpClientLayer,
++            DesktopExistingBackendAttachment.layerTest({ kind: "disabled" }),
++          ),
++        ),
+       );
+ 
+       const [first, second] = yield* Effect.gen(function* () {
+@@ -78,4 +85,33 @@ describe("DesktopLocalEnvironmentAuth", () => {
+       assert.strictEqual(yield* Ref.get(requestCount), 1);
+     }),
+   );
++
++  it.effect("prefers the attached administrative bearer", () =>
++    Effect.gen(function* () {
++      const auth = yield* DesktopLocalEnvironmentAuth.DesktopLocalEnvironmentAuth;
++      assert.strictEqual(yield* auth.getBearerToken, "attached-bearer");
++    }).pipe(
++      Effect.provide(
++        DesktopLocalEnvironmentAuth.layer.pipe(
++          Layer.provide(
++            Layer.mergeAll(
++              Layer.succeed(DesktopBackendPool.DesktopBackendPool, {
++                list: Effect.succeed([]),
++              } as unknown as DesktopBackendPool.DesktopBackendPool["Service"]),
++              Layer.succeed(
++                HttpClient.HttpClient,
++                HttpClient.make(() => Effect.die("unexpected request")),
++              ),
++              DesktopExistingBackendAttachment.layerTest({
++                kind: "ready",
++                httpBaseUrl: new URL("http://127.0.0.1:3773"),
++                bearer: "attached-bearer",
++                label: "Canonical server",
++              }),
++            ),
++          ),
++        ),
++      ),
++    ),
++  );
+ });
+diff --git a/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.ts b/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.ts
+index 201492f..73450dc 100644
+--- a/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.ts
++++ b/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.ts
+@@ -10,6 +10,7 @@ import * as Semaphore from "effect/Semaphore";
+ import * as HttpClient from "effect/unstable/http/HttpClient";
+ 
+ import * as DesktopBackendPool from "./DesktopBackendPool.ts";
++import * as DesktopExistingBackendAttachment from "./DesktopExistingBackendAttachment.ts";
+ 
+ export class DesktopLocalEnvironmentAuthBackendNotConfiguredError extends Schema.TaggedErrorClass<DesktopLocalEnvironmentAuthBackendNotConfiguredError>()(
+   "DesktopLocalEnvironmentAuthBackendNotConfiguredError",
+@@ -44,6 +45,7 @@ export class DesktopLocalEnvironmentAuth extends Context.Service<
+ 
+ export const make = Effect.gen(function* () {
+   const pool = yield* DesktopBackendPool.DesktopBackendPool;
++  const attachment = yield* DesktopExistingBackendAttachment.DesktopExistingBackendAttachment;
+   const httpClient = yield* HttpClient.HttpClient;
+   const tokenRef = yield* Ref.make(Option.none<string>());
+   const mutex = yield* Semaphore.make(1);
+@@ -51,6 +53,10 @@ export const make = Effect.gen(function* () {
+   const getBearerToken = mutex
+     .withPermits(1)(
+       Effect.gen(function* () {
++        const attached = yield* attachment.ready;
++        if (Option.isSome(attached)) {
++          return attached.value.bearer;
++        }
+         const cached = yield* Ref.get(tokenRef);
+         if (Option.isSome(cached)) {
+           return cached.value;
+diff --git a/apps/desktop/src/ipc/methods/window.test.ts b/apps/desktop/src/ipc/methods/window.test.ts
+index 203151c..783924d 100644
+--- a/apps/desktop/src/ipc/methods/window.test.ts
++++ b/apps/desktop/src/ipc/methods/window.test.ts
+@@ -8,6 +8,7 @@ import type * as Electron from "electron";
+ 
+ import * as DesktopBackendManager from "../../backend/DesktopBackendManager.ts";
+ import * as DesktopBackendPool from "../../backend/DesktopBackendPool.ts";
++import * as DesktopExistingBackendAttachment from "../../backend/DesktopExistingBackendAttachment.ts";
+ import * as ElectronDialog from "../../electron/ElectronDialog.ts";
+ import * as ElectronWindow from "../../electron/ElectronWindow.ts";
+ import {
+@@ -70,7 +71,14 @@ describe("getLocalEnvironmentBootstraps", () => {
+           bootstrapToken: "bootstrap-token",
+         },
+       ]);
+-    }).pipe(Effect.provide(DesktopBackendPool.layerTest([defaultWslInstance]))),
++    }).pipe(
++      Effect.provide(
++        Layer.mergeAll(
++          DesktopBackendPool.layerTest([defaultWslInstance]),
++          DesktopExistingBackendAttachment.layerTest({ kind: "disabled" }),
++        ),
++      ),
++    ),
+   );
+ 
+   it.effect("publishes a pending bootstrap only while a transient retry is scheduled", () => {
+@@ -105,7 +113,14 @@ describe("getLocalEnvironmentBootstraps", () => {
+           wsBaseUrl: null,
+         },
+       ]);
+-    }).pipe(Effect.provide(DesktopBackendPool.layerTest([retryingInstance])));
++    }).pipe(
++      Effect.provide(
++        Layer.mergeAll(
++          DesktopBackendPool.layerTest([retryingInstance]),
++          DesktopExistingBackendAttachment.layerTest({ kind: "disabled" }),
++        ),
++      ),
++    );
+   });
+ 
+   it.effect("omits a bounded transient bootstrap after retries stop", () => {
+@@ -133,8 +148,49 @@ describe("getLocalEnvironmentBootstraps", () => {
+     return Effect.gen(function* () {
+       const result = yield* getLocalEnvironmentBootstraps.handler();
+       assert.deepEqual(result, []);
+-    }).pipe(Effect.provide(DesktopBackendPool.layerTest([stoppedInstance])));
++    }).pipe(
++      Effect.provide(
++        Layer.mergeAll(
++          DesktopBackendPool.layerTest([stoppedInstance]),
++          DesktopExistingBackendAttachment.layerTest({ kind: "disabled" }),
++        ),
++      ),
++    );
+   });
++
++  it.effect("publishes the attached primary without a bootstrap token", () =>
++    Effect.gen(function* () {
++      const result = yield* getLocalEnvironmentBootstraps.handler();
++      assert.deepEqual(result, [
++        {
++          id: "primary",
++          label: "Canonical server",
++          httpBaseUrl: "http://127.0.0.1:3773/",
++          wsBaseUrl: "ws://127.0.0.1:3773/",
++        },
++        {
++          id: "wsl:default",
++          label: "WSL (Ubuntu)",
++          runningDistro: "Ubuntu",
++          httpBaseUrl: "http://127.0.0.1:3774/",
++          wsBaseUrl: "ws://127.0.0.1:3774/",
++          bootstrapToken: "bootstrap-token",
++        },
++      ]);
++    }).pipe(
++      Effect.provide(
++        Layer.mergeAll(
++          DesktopBackendPool.layerTest([defaultWslInstance]),
++          DesktopExistingBackendAttachment.layerTest({
++            kind: "ready",
++            httpBaseUrl: new URL("http://127.0.0.1:3773"),
++            bearer: "attached-bearer",
++            label: "Canonical server",
++          }),
++        ),
++      ),
++    ),
++  );
+ });
+ 
+ describe("getWindowFullscreenState", () => {
+diff --git a/apps/desktop/src/ipc/methods/window.ts b/apps/desktop/src/ipc/methods/window.ts
+--- a/apps/desktop/src/ipc/methods/window.ts
++++ b/apps/desktop/src/ipc/methods/window.ts
+@@ -27,6 +27,7 @@ import * as DesktopEnvironment from "../../app/DesktopEnvironment.ts";
+ import * as DesktopAppSettings from "../../settings/DesktopAppSettings.ts";
+ import * as DesktopWslBackend from "../../wsl/DesktopWslBackend.ts";
+ import * as DesktopWslEnvironment from "../../wsl/DesktopWslEnvironment.ts";
++import * as DesktopExistingBackendAttachment from "../../backend/DesktopExistingBackendAttachment.ts";
+ import * as ElectronApp from "../../electron/ElectronApp.ts";
+ import * as ElectronDialog from "../../electron/ElectronDialog.ts";
+ import * as ElectronMenu from "../../electron/ElectronMenu.ts";
+@@ -90,10 +91,21 @@ export const getLocalEnvironmentBootstraps = DesktopIpc.makeSyncIpcMethod({
+   result: Schema.Array(DesktopEnvironmentBootstrapSchema),
+   handler: Effect.fn("desktop.ipc.window.getLocalEnvironmentBootstraps")(function* () {
+     const pool = yield* DesktopBackendPool.DesktopBackendPool;
++    const attachment = yield* DesktopExistingBackendAttachment.DesktopExistingBackendAttachment;
++    const attached = yield* attachment.ready;
+     const instances = yield* pool.list;
+     const bootstraps: DesktopEnvironmentBootstrap[] = [];
++    if (Option.isSome(attached)) {
++      bootstraps.push({
++        id: PRIMARY_LOCAL_ENVIRONMENT_ID,
++        label: attached.value.label,
++        httpBaseUrl: attached.value.httpBaseUrl.href,
++        wsBaseUrl: toWebSocketBaseUrl(attached.value.httpBaseUrl),
++      });
++    }
+     for (const instance of instances) {
+       const isPrimary = instance.id === PRIMARY_LOCAL_ENVIRONMENT_ID;
++      if (Option.isSome(attached) && isPrimary) continue;
+       const config = yield* instance.currentConfig;
+       const snapshot = yield* instance.snapshot;
+       // A secondary backend (e.g. a parallel WSL backend) that hasn't produced
+diff --git a/apps/desktop/src/main.ts b/apps/desktop/src/main.ts
+index c826c56..4b1bf9e 100644
+--- a/apps/desktop/src/main.ts
++++ b/apps/desktop/src/main.ts
+@@ -41,6 +41,7 @@ import * as DesktopAssets from "./app/DesktopAssets.ts";
+ import * as DesktopBackendConfiguration from "./backend/DesktopBackendConfiguration.ts";
+ import * as DesktopBackendPool from "./backend/DesktopBackendPool.ts";
+ import * as DesktopLocalEnvironmentAuth from "./backend/DesktopLocalEnvironmentAuth.ts";
++import * as DesktopExistingBackendAttachment from "./backend/DesktopExistingBackendAttachment.ts";
+ import * as DesktopNetworkInterfaces from "./backend/DesktopNetworkInterfaces.ts";
+ import * as DesktopEnvironment from "./app/DesktopEnvironment.ts";
+ import * as DesktopLifecycle from "./app/DesktopLifecycle.ts";
+@@ -185,6 +186,7 @@ const desktopWslBackendLayer = DesktopWslBackend.layer.pipe(
+ 
+ const desktopLocalEnvironmentAuthLayer = DesktopLocalEnvironmentAuth.layer.pipe(
+   Layer.provideMerge(desktopBackendLayer),
++  Layer.provideMerge(DesktopExistingBackendAttachment.layer),
+ );
+ 
+ const desktopApplicationLayer = Layer.mergeAll(

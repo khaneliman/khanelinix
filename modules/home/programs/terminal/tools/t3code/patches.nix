@@ -106,6 +106,7 @@ in
   # PR #7507 has seven commits. This aggregate excludes its integration-test
   # hunks and refreshes the duplicate-event guard for upstream child metadata.
   ./fix-codex-spawned-subagent-sidebar.patch
+  ./desktop-attach-existing-backend.patch
   ./antigravity-planner-response.patch
   ./antigravity-conversation-discovery.patch
   ./antigravity-tool-result-projection.patch

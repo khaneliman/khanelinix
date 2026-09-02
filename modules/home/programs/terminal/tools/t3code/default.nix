@@ -85,6 +85,11 @@ in
             postBuild = (old.postBuild or "") + ''
               ${lib.getExe pkgs.nodejs} ${./prune-node-modules.mjs} "$PWD"
             '';
+            postInstall = (old.postInstall or "") + ''
+              wrapProgram "$out/bin/t3code-desktop" \
+                --set T3CODE_DESKTOP_ATTACH_EXISTING 1 \
+                --set T3CODE_PORT 3773
+            '';
 
             # Runtime dependencies contain prebuilt native artifacts. Scanning
             # the JavaScript-heavy closure with Darwin strip costs minutes.
@@ -144,29 +149,33 @@ in
           ++ lib.optional (claudeCodePackage != null) claudeCodePackage
           ++ lib.optional (antigravityCliEnabled && antigravityCliPackage != null) antigravityCliPackage;
           text = ''
-            export PATH="/Applications/Tailscale.app/Contents/MacOS:/opt/homebrew/bin:/usr/local/bin:$PATH"
+            ${lib.optionalString tailscaleEnabled ''
+              export PATH="/Applications/Tailscale.app/Contents/MacOS:/opt/homebrew/bin:/usr/local/bin:$PATH"
 
-            if command -v tailscale >/dev/null 2>&1; then
-              for _ in $(seq 1 30); do
-                if tailscale status --json >/dev/null 2>&1; then
-                  break
-                fi
-                sleep 2
-              done
-            fi
+              if command -v tailscale >/dev/null 2>&1; then
+                for _ in $(seq 1 30); do
+                  if tailscale status --json >/dev/null 2>&1; then
+                    break
+                  fi
+                  sleep 2
+                done
+              fi
+            ''}
 
             ${lib.getExe reconcileCommand}
 
             exec ${lib.getExe' t3codePackage "t3"} ${
-              lib.escapeShellArgs [
-                "serve"
-                "--host"
-                "127.0.0.1"
-                "--port"
-                "3774"
-                "--tailscale-serve"
-                githubRoot
-              ]
+              lib.escapeShellArgs (
+                [
+                  "serve"
+                  "--host"
+                  "127.0.0.1"
+                  "--port"
+                  "3773"
+                ]
+                ++ lib.optional tailscaleEnabled "--tailscale-serve"
+                ++ [ githubRoot ]
+              )
             }
           '';
         };
@@ -184,25 +193,23 @@ in
         shellAliases.t3-remote = lib.mkIf tailscaleEnabled (lib.getExe remoteCommand);
       };
 
-      systemd.user.services.t3code-remote =
-        lib.mkIf (tailscaleEnabled && pkgs.stdenv.hostPlatform.isLinux)
-          {
-            Unit = {
-              Description = "T3 Code remote backend";
-              After = [ "network-online.target" ];
-              Wants = [ "network-online.target" ];
-            };
+      systemd.user.services.t3code-remote = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+        Unit = {
+          Description = "T3 Code canonical backend";
+          After = [ "network-online.target" ];
+          Wants = [ "network-online.target" ];
+        };
 
-            Service = {
-              ExecStart = lib.getExe remoteCommand;
-              Restart = "on-failure";
-              RestartSec = "10s";
-            };
+        Service = {
+          ExecStart = lib.getExe remoteCommand;
+          Restart = "on-failure";
+          RestartSec = "10s";
+        };
 
-            Install.WantedBy = [ "default.target" ];
-          };
+        Install.WantedBy = [ "default.target" ];
+      };
 
-      launchd.agents.t3code-remote = lib.mkIf (tailscaleEnabled && pkgs.stdenv.hostPlatform.isDarwin) {
+      launchd.agents.t3code-remote = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
         enable = true;
         config = {
           ProgramArguments = [ (lib.getExe remoteCommand) ];
