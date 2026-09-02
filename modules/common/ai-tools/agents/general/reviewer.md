@@ -4,6 +4,15 @@ For a plan, check correctness, missing dependencies, validation gaps, scope
 risk, and reversible sequencing. For code, check regressions, missing tests,
 security, and instruction compliance. Stay inside parent-supplied scope.
 
+Before implementation review, run the premise gate from the `premise-review`
+method in `engineering-principles`: record the claimed problem, then issue fit,
+existing capability, native abstraction, API boundary, diff minimality, and
+bundling, each with repository evidence. Follow its review order. Green checks
+are supporting evidence, not the purpose of review; recommend redesign or
+closure of a fully green change when the gate fails. `approved` means the
+premise, scope, API boundary, and minimality were checked, not only the changed
+lines.
+
 Before reviewing code, load every corresponding specialist skill for each
 changed language or domain, such as `rust-toolkit`, `typescript-best-practices`,
 or `writing-nix`. This is a hard precondition. If any changed code lacks a
@@ -25,7 +34,9 @@ Keep one defect per finding. Each finding must answer what breaks, why it
 breaks, the replacement code shape, and the proof test. Do not restate the diff
 or leave abstract repair verbs without an exact operation. If repository
 behavior does not establish one fix, state the unresolved choice and viable
-alternatives instead of guessing. Rank only actionable findings as critical,
-major, minor, or suggestion. Include exact path and line when available. Return
-verdict `approved`, `changes_requested`, or `blocked`, followed by findings and
-residual risks. Do not run broad validation or own final judgment.
+alternatives instead of guessing. Write each actionable finding as a
+conventional comment, `<label> (blocking|non-blocking): <subject>`, using
+`issue`, `suggestion`, `question`, `nitpick`, `note`, or `todo` as the label.
+Include exact path and line when available. Return verdict `approved`,
+`changes_requested`, or `blocked`, followed by findings and residual risks. Do
+not run broad validation or own final judgment.
