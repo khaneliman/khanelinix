@@ -1,0 +1,50 @@
+diff --git a/codexbar.sh b/codexbar.sh
+index 4dddb05..26779e8 100755
+--- a/codexbar.sh
++++ b/codexbar.sh
+@@ -121,11 +121,12 @@ if [[ " ${PROVIDERS[*]} " == *" antigravity "* ]]; then
+     setup_antigravity_ssl
+ fi
+ 
+-# Per-provider --source override. Codex/Claude need explicit oauth on Linux
+-# (their `auto` falls back to web first, which is macOS-only).
++# Per-provider --source override. Codex uses its local CLI on Linux. Claude
++# uses OAuth because its `auto` source falls back to macOS-only web access.
+ declare -A SOURCE_OVERRIDES=(
+-    [codex]=oauth
++    [codex]=cli
+     [claude]=oauth
++    [antigravity]=cli
+ )
+ 
+ # If the primary source returns a provider-level error (e.g. Claude OAuth
+@@ -188,6 +189,30 @@ fetch_provider() {
+         fi
+     fi
+ 
++    if [[ "$p" == "antigravity" ]]; then
++        antigravity_unavailable() {
++            jq -e '
++                type == "array"
++                and length > 0
++                and (.[0].error // null) == null
++                and (
++                    (.[0].source // "") == "offline"
++                    or (.[0].usage.loginMethod // "") == "offline"
++                    or ([.[0].usage.extraRateWindows[]?
++                          | select(.id == "antigravity-offline-conversations")]
++                        | length) > 0
++                )
++            ' >/dev/null 2>&1
++        }
++
++        # The CLI package owns cold-start readiness. Never cache its offline
++        # conversation fallback as successful quota usage.
++        if antigravity_unavailable <<<"$body"; then
++            body="$(jq -cn --arg provider "$p" \
++                '[{provider: $provider, error: {message: "quota unavailable"}}]')"
++        fi
++    fi
++
+     echo "$body"
+ }

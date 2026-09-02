@@ -49,6 +49,7 @@ stdenvNoCC.mkDerivation {
   nativeCheckInputs = [ jq ];
 
   patches = [
+    ./provider-sources.patch
     ./cache-max-age.patch
     ./provider-sections.patch
   ];
@@ -56,29 +57,6 @@ stdenvNoCC.mkDerivation {
   postPatch = ''
     substituteInPlace codexbar-popup.py \
       --replace-fail ${lib.escapeShellArg iconSearch} ${lib.escapeShellArg iconReplacement}
-
-    substituteInPlace codexbar.sh \
-          --replace-fail '    [claude]=oauth' '    [claude]=oauth
-        [antigravity]=cli' \
-          --replace-fail '    echo "$body"
-    }' '    # A freshly started agy server can answer before RetrieveUserQuotaSummary is
-        # ready. CodexBar then falls back to placeholder model quotas (0/0, no
-        # extraRateWindows), which makes Waybar look healthy while hiding weekly
-        # Antigravity usage. Give the CLI source two readiness retries.
-        if [[ "$p" == "antigravity" ]]; then
-            for _ in 1 2; do
-                if echo "$body" | jq -e "type == \"array\" and (.[0].error // null) == null and (.[0].usage.extraRateWindows // null) == null and ((.[0].usage.primary.usedPercent // 0) == 0) and ((.[0].usage.secondary.usedPercent // 0) == 0)" >/dev/null 2>&1; then
-                    sleep "''${CODEXBAR_ANTIGRAVITY_RETRY_DELAY:-5}"
-                    body="$(fetch_one "$p" "$primary")"
-                else
-                    break
-                fi
-            done
-        fi
-
-        echo "$body"
-    }'
-
   '';
 
   doCheck = true;
@@ -91,6 +69,11 @@ stdenvNoCC.mkDerivation {
       ${./tests/stale-cache.json} \
       ${lib.getExe bash} \
       ${lib.getExe' coreutils "false"}
+
+    ${lib.getExe bash} ${./tests/provider-sources.sh} \
+      ./codexbar.sh \
+      ${./tests/fake-codexbar.sh} \
+      ${lib.getExe bash}
 
     runHook postCheck
   '';
