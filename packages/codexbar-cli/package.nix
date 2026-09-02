@@ -61,15 +61,47 @@ stdenv.mkDerivation {
   installPhase = ''
     runHook preInstall
 
-    mkdir -p $out/bin $out/share/codexbar-cli $out/lib
+    mkdir -p $out/bin $out/share/codexbar-cli $out/lib $out/libexec
 
     install -Dm0755 CodexBarCLI $out/bin/.codexbar-wrapped
     install -Dm0644 VERSION $out/share/codexbar-cli/VERSION
 
     ${lib.optionalString stdenv.hostPlatform.isLinux ''
+      # agy renders login and keyring status while it restores a valid token.
+      # CodexBar 0.56.3 treats those transient lines as terminal auth failures
+      # and kills agy before its local quota server is ready. Disable the early
+      # PTY auth classification; CodexBar's existing 15-second readiness
+      # timeout still bounds a genuinely unauthenticated session.
+      grep -aFq 'Select login method:' $out/bin/.codexbar-wrapped
+      grep -aFq 'select\s+login\s+method\s*:?' \
+        $out/bin/.codexbar-wrapped
+      grep -aFq 'you\s+are\s+not\s+logged\s+into\s+antigravity' \
+        $out/bin/.codexbar-wrapped
+      grep -aFq 'keyring\s*auth\s*:\s*timed\s+out\b' \
+        $out/bin/.codexbar-wrapped
+      LC_ALL=C sed -i \
+        -e 's/Select login method:/Xxxxxx login method:/' \
+        -e 's/select\\s+login\\s+method\\s\*:?/xxxxxx\\s+login\\s+method\\s*:?/' \
+        -e 's/you\\s+are\\s+not\\s+logged\\s+into\\s+antigravity/zzz\\s+are\\s+not\\s+logged\\s+into\\s+antigravity/' \
+        -e 's/keyring\\s\*auth\\s\*:\\s\*timed\\s+out\\b/xxxxxxx\\s*auth\\s*:\\s*timed\\s+out\\b/' \
+        $out/bin/.codexbar-wrapped
+      grep -aFq 'Xxxxxx login method:' $out/bin/.codexbar-wrapped
+      grep -aFq 'xxxxxx\s+login\s+method\s*:?' \
+        $out/bin/.codexbar-wrapped
+      grep -aFq 'zzz\s+are\s+not\s+logged\s+into\s+antigravity' \
+        $out/bin/.codexbar-wrapped
+      grep -aFq 'xxxxxxx\s*auth\s*:\s*timed\s+out\b' \
+        $out/bin/.codexbar-wrapped
+
+      # CodexBar retries an empty lsof result only when stderr is also empty.
+      # Ignore host mount warnings so a cold agy process gets the full
+      # readiness window while preserving lsof's status and stdout.
+      makeWrapper ${lib.getExe lsof} $out/libexec/codexbar-lsof \
+        --run 'exec 2>/dev/null'
+
       substitute ${./path-redirect.c.in} path-redirect.c \
         --replace-fail @ps@ ${lib.getExe' procps "ps"} \
-        --replace-fail @lsof@ ${lib.getExe lsof} \
+        --replace-fail @lsof@ $out/libexec/codexbar-lsof \
         --replace-fail @which@ ${lib.getExe which} \
         --replace-fail @tzdata@ ${tzdata}/share/zoneinfo
 
