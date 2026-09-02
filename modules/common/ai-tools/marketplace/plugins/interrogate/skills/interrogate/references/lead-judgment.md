@@ -56,8 +56,8 @@ Watch for findings that reveal the reviewer didn't understand the context:
   reviewer just doesn't know that)
 - Recommending approaches that conflict with constraints you know about
 
-These are honest mistakes from reviewers working with limited information.
-Dismiss them gracefully.
+These are mistakes from reviewers working with limited information. Dismiss
+them gracefully.
 
 ## When Reviewers Are Right
 
