@@ -9,21 +9,24 @@ these lenses while retaining its clean-room, finding, and verdict contracts.
 
 1. Resolve review target, requirements, intended behavior, affected
    stakeholders, and excluded concerns.
-2. Recover contract from requirements, contributor canon, public interfaces,
+2. Run the premise gate from the `premise-review` method in
+   `engineering-principles`: confirm the demonstrated problem, existing
+   capability, and native abstraction before challenging proposed structure.
+3. Recover contract from requirements, contributor canon, public interfaces,
    schemas, tests, and current behavior. Call out contradictions.
-3. Trace proposed flows end to end. Check normal path, boundary inputs, errors,
+4. Trace proposed flows end to end. Check normal path, boundary inputs, errors,
    cancellation, cleanup, retries, and recovery.
-4. Challenge state model: invalid states, invariant ownership, transition
+5. Challenge state model: invalid states, invariant ownership, transition
    atomicity, aliases, concurrent writers, persistence, migration, and rollback.
-5. Challenge boundaries: dependency direction, authority, information exposure,
+6. Challenge boundaries: dependency direction, authority, information exposure,
    change propagation, failure containment, and operational ownership.
-6. Check compatibility and rollout across callers, stored data, protocols,
+7. Check compatibility and rollout across callers, stored data, protocols,
    configuration, deployment ordering, and mixed-version operation when
    relevant.
-7. Evaluate proposed validation by contract and failure mode, not changed-line
+8. Evaluate proposed validation by contract and failure mode, not changed-line
    coverage. Run read-only or repository-native checks when they avoid external
    mutation; otherwise state evidence gap.
-8. Apply root responsibility lens at its concrete depth escalators.
+9. Apply root responsibility lens at its concrete depth escalators.
 
 ## Finding Standard
 
