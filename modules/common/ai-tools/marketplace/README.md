@@ -255,6 +255,9 @@ The marketplace also excludes `reflect`. With approval, it routes accepted skill
 edits into the khanelinix canonical tree. Portable workflows treat it as an
 optional final phase.
 
+The marketplace excludes `ai-session-audit`. It reads T3 Code provider event
+logs and labels routes from the private khanelinix model-routing policy.
+
 ## Use the Codex marketplace
 
 Current Codex releases require separate marketplace and plugin commands:

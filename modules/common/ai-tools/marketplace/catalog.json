@@ -292,6 +292,7 @@
 		}
 	],
 	"excluded": {
+		"ai-session-audit": "Reads T3 Code provider event logs and the private khanelinix model-routing policy.",
 		"multi-provider-sdlc": "Requires the private khanelinix agent registry and provider routes.",
 		"playwright": "Requires the khanelinix Nix-backed Playwright wrapper.",
 		"playwright-interactive": "Requires a harness-native interactive runtime and local browser package.",
