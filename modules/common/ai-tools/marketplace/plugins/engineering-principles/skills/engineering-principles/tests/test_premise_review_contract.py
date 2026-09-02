@@ -14,6 +14,31 @@ REFERENCE = SKILL_ROOT / "references" / "premise-review.md"
 SCRIPT = SKILL_ROOT / "scripts" / "premise_gate_check.py"
 FIXTURES = SKILL_ROOT / "tests" / "fixtures" / "premise-review"
 SKILLS = SKILL_ROOT.parent
+CONSUMERS = {
+    "reviewer agent": AI_TOOLS_ROOT / "agents" / "general" / "reviewer.md",
+    "engineering-workflow gates": SKILLS / "engineering-workflow" / "references" / "gates.md",
+    "engineering-workflow delegation": SKILLS
+    / "engineering-workflow"
+    / "references"
+    / "delegation.md",
+    "git-toolkit adversarial review": SKILLS
+    / "git-toolkit"
+    / "references"
+    / "adversarial-review.md",
+    "github-toolkit pr review": SKILLS / "github-toolkit" / "references" / "pr-review.md",
+    "interrogate playbook": SKILLS / "interrogate" / "SKILL.md",
+    "interrogate reviewer prompt": SKILLS
+    / "interrogate"
+    / "references"
+    / "reviewer-prompt.md",
+    "interrogate rubric": SKILLS / "interrogate" / "references" / "rubric.md",
+    "interrogate lead judgment": SKILLS / "interrogate" / "references" / "lead-judgment.md",
+    "software-engineering architecture review": SKILLS
+    / "software-engineering"
+    / "references"
+    / "architecture-review.md",
+    "multi-provider review": SKILLS / "multi-provider-sdlc" / "references" / "review.md",
+}
 GENERATED_REFERENCE = (
     AI_TOOLS_ROOT
     / "marketplace"
@@ -241,6 +266,48 @@ class PremiseGateCheckerTests(unittest.TestCase):
         )
 
         self.assertEqual(result.returncode, 2)
+
+
+class ReviewEntryPointsReferenceTheContract(unittest.TestCase):
+    def test_every_review_entry_point_routes_through_premise_review(self) -> None:
+        for name, path in CONSUMERS.items():
+            with self.subTest(name):
+                self.assertIn("premise-review", normalized(path))
+
+    def test_reviewer_agent_orders_premise_before_implementation(self) -> None:
+        text = normalized(CONSUMERS["reviewer agent"])
+
+        self.assertIn("before implementation review", text)
+        self.assertIn("green checks are supporting evidence", text)
+        self.assertIn("redesign or closure of a fully green change", text)
+        self.assertIn("`approved` means the premise, scope, api boundary, and minimality were checked", text)
+        self.assertIn("conventional comment", text)
+
+    def test_interrogate_no_longer_protects_the_intent(self) -> None:
+        prompt = normalized(CONSUMERS["interrogate reviewer prompt"])
+        playbook = normalized(CONSUMERS["interrogate playbook"])
+        judgment = normalized(CONSUMERS["interrogate lead judgment"])
+
+        self.assertNotIn("do not question the intent", prompt)
+        self.assertNotIn("assume the goal is correct", prompt)
+        self.assertIn("should exist in this form", prompt)
+        self.assertIn("blind", playbook)
+        self.assertIn("one unchallenged premise", judgment)
+
+    def test_git_and_github_reviews_gate_before_findings(self) -> None:
+        git = normalized(CONSUMERS["git-toolkit adversarial review"])
+        github = normalized(CONSUMERS["github-toolkit pr review"])
+
+        self.assertIn("blind brief", git)
+        self.assertLess(git.index("premise gate"), git.index("## evidence axes"))
+        self.assertIn("premise, scope, api boundary, and diff minimality", github)
+        self.assertLess(github.index("premise gate"), github.index("high-signal review policy"))
+
+    def test_delegation_requires_one_blind_reviewer(self) -> None:
+        text = normalized(CONSUMERS["engineering-workflow delegation"])
+
+        self.assertIn("blind", text)
+        self.assertIn("one unchallenged premise", text)
 
 
 if __name__ == "__main__":
