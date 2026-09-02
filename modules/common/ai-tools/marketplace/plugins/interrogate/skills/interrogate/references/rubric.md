@@ -3,9 +3,16 @@
 Review through whichever lenses are relevant. Not every lens applies to every
 change. Use judgment.
 
+## Premise and Scope
+
+Apply this lens first, every time. Should this change exist in this form? Use
+the `premise-review` method in `engineering-principles`: claimed problem, issue
+fit, existing capability, native abstraction, API boundary, removable diff, and
+bundling. A green build answers none of these.
+
 ## Correctness
 
-Does the code actually do what the intent says it should?
+Does the code actually do what the problem statement requires?
 
 - Edge cases: empty inputs, nil/undefined, boundary values, concurrent access
 - Error handling: are errors caught, propagated, or silently swallowed?

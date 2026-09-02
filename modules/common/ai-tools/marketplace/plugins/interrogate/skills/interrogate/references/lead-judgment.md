@@ -65,7 +65,13 @@ Don't dismiss findings just because they're uncomfortable. The whole point of
 adversarial review is to catch things you'd miss. Signs a finding deserves
 attention:
 
-- Multiple models flag the same issue independently (consensus signal)
+- Multiple models flag the same issue independently (consensus signal).
+  Independence requires different packets: reviewers that accepted one
+  unchallenged premise from the same packet are one reviewer, not consensus.
+- One blind reviewer reports a failed premise gate from the `premise-review`
+  method: an existing capability, a native abstraction, or removable diff.
+  That outranks implementation consensus, and it is not "I would have done it
+  differently" when it names the alternative.
 - The finding identifies a concrete execution path, not a hypothetical
 - The finding reveals a gap in your mental model of the code
 - You read the finding and think "...yeah, actually"
