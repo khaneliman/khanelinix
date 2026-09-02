@@ -13,8 +13,11 @@ let
       inherit excludes hash;
       inherit url;
     };
+  # Ordering matters: later patches depend on earlier context, so a locally
+  # rebased patch stays at its original position instead of moving to the tail.
+  mkPatch = spec: spec.path or (fetchPatch spec);
 in
-(map fetchPatch [
+(map mkPatch [
   # Perf pair rebased onto upstream 9e201941a on branch
   # nix-patches/perf-rebase-9e201941 (command-resolution reworked around
   # upstream's new PATH-resolution cache). Command resolution was rebased
@@ -49,9 +52,10 @@ in
     excludes = [ "apps/server/src/provider/Layers/ProviderInstanceRegistryLive.test.ts" ];
   }
   {
-    name = "antigravity-provider-controls";
-    rev = "4a49d4c9cf9de81d53dd39e5275d6c06fd3d80a9";
-    hash = "sha256-2FcLKLKCWQzVRvVWmTNBQqc7y668vdlkWUsEnjN+2VU=";
+    # Upstream dropped AVAILABLE_PROVIDER_OPTIONS from providerIconUtils.ts,
+    # which broke the fork commit's import hunk. Carried locally until the
+    # fork branch is rebased.
+    path = ./antigravity-provider-controls.patch;
   }
   {
     name = "antigravity-cli-only-mode";
@@ -80,9 +84,10 @@ in
     excludes = [ "apps/server/src/provider/Layers/AntigravityAdapter.test.ts" ];
   }
   {
-    name = "antigravity-deduplicate-cached-models";
-    rev = "f81342477b5b207800df956bdd1132a48ef29582";
-    hash = "sha256-XVdKgCVslqmJPNyM9HDJHV5GwotPPefEwJem0X7+QtY=";
+    # Upstream added its own isCustom filter to mergeProviderModels. This
+    # carries the merged form: cached custom rows and Antigravity name
+    # duplicates are both dropped.
+    path = ./antigravity-deduplicate-cached-models.patch;
   }
   {
     name = "fix-codex-session-start-timeout";
