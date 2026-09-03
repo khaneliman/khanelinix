@@ -41,7 +41,7 @@ in
         "agy-unsafe" = "agy --dangerously-skip-permissions";
 
         # Task shortcuts
-        "agy-deep" = "agy --model \"Gemini 3.7 Flash (High)\"";
+        "agy-deep" = "agy --model \"Gemini 3.8 Flash (High)\"";
         "agy-quick" = "agy --model \"Gemini 3.5 Flash (High)\"";
         "agy-nano" = "agy --model \"Gemini 3.5 Flash (Low)\"";
       };
@@ -88,7 +88,7 @@ in
 
         in
         {
-          model = "Gemini 3.7 Flash (High)";
+          model = "Gemini 3.8 Flash (High)";
           historySize = 5000;
           allowNonWorkspaceAccess = true;
           altScreenMode = "always";

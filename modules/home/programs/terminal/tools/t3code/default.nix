@@ -443,7 +443,7 @@ in
             }
             {
               provider = "antigravity";
-              model = "gemini-3.7-flash-medium";
+              model = "gemini-3.8-flash-medium";
             }
           ];
           fontFamilyCode = "";

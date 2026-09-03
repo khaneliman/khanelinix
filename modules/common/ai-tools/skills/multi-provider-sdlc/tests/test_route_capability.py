@@ -251,7 +251,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(claim["planRevision"], 0)
         self.assertEqual(
             claim["plannedCandidates"],
-            ["opus-5", "gpt-5-6-luna", "gemini-3-7-flash"],
+            ["opus-5", "gpt-5-6-luna", "gemini-3-8-flash"],
         )
         self.assertIsNone(claim["candidateOverride"])
         self.assertEqual(
@@ -279,7 +279,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(stored_claim["plan_revision"], 0)
         self.assertEqual(
             stored_claim["planned_candidates"],
-            ["opus-5", "gpt-5-6-luna", "gemini-3-7-flash"],
+            ["opus-5", "gpt-5-6-luna", "gemini-3-8-flash"],
         )
         self.assertIsNone(stored_claim["candidate_override"])
 
@@ -308,7 +308,7 @@ class RouteCapabilityTests(unittest.TestCase):
         )
         self.assertEqual(
             claim["plannedCandidates"],
-            ["opus-5", "gpt-5-6-luna", "gemini-3-7-flash"],
+            ["opus-5", "gpt-5-6-luna", "gemini-3-8-flash"],
         )
         self.assertEqual(stored_claim["candidate_override"], claim["candidateOverride"])
 
@@ -362,7 +362,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.initialize()
         self.complete("gpt-5-6-luna", "success")
         spark = self.claim("gpt-5-3-codex-spark", 2)
-        gemini = self.claim("gemini-3-7-flash", 3)
+        gemini = self.claim("gemini-3-8-flash", 3)
 
         first = capability.record_outcome(
             self.state, self.task_id, spark["claimId"], "success"
@@ -376,7 +376,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(second["revision"], 6)
         self.assertEqual(state["claims"], {})
         self.assertEqual(state["routes"]["gpt-5-3-codex-spark"], "available")
-        self.assertEqual(state["routes"]["gemini-3-7-flash"], "available")
+        self.assertEqual(state["routes"]["gemini-3-8-flash"], "available")
 
     def test_route_failure_blocks_only_one_model(self) -> None:
         self.initialize()
@@ -446,7 +446,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.initialize()
         self.complete("gpt-5-6-luna", "success")
         blocked_claim = self.claim("opus-5", 2)
-        healthy_claim = self.claim("gemini-3-7-flash", 3)
+        healthy_claim = self.claim("gemini-3-8-flash", 3)
 
         capability.record_outcome(
             self.state,
@@ -474,7 +474,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.initialize()
         self.complete("gpt-5-6-luna", "success")
         blocked_claim = self.claim("opus-5", 2)
-        healthy_claim = self.claim("gemini-3-7-flash", 3)
+        healthy_claim = self.claim("gemini-3-8-flash", 3)
 
         capability.record_outcome(
             self.state,
@@ -492,7 +492,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
         self.assertEqual(recorded["outcome"], "agent-type-available")
         self.assertEqual(state["named_agents"], "available")
-        self.assertEqual(state["routes"]["gemini-3-7-flash"], "unknown")
+        self.assertEqual(state["routes"]["gemini-3-8-flash"], "unknown")
         self.assertEqual(state["pools"]["google"]["gemini"], "unknown")
         self.assertEqual(state["claims"], {})
 
@@ -758,7 +758,7 @@ class RouteCapabilityTests(unittest.TestCase):
         claim["planned_candidates"] = [
             "opus-5",
             "gpt-5-6-luna",
-            "gemini-3-7-flash",
+            "gemini-3-8-flash",
         ]
         claim["candidate_override"] = {
             "marker": "non-candidate",

@@ -75,9 +75,9 @@ class ModelRoutingTests(unittest.TestCase):
         self.assertFalse(self.registry["models"]["fable-5-1"]["workspace_write"])
         self.assertEqual(
             routes["implementation"]["fallbacks"],
-            ["gpt-5-6-luna", "gemini-3-7-flash"],
+            ["gpt-5-6-luna", "gemini-3-8-flash"],
         )
-        self.assertTrue(self.registry["models"]["gemini-3-7-flash"]["write"])
+        self.assertTrue(self.registry["models"]["gemini-3-8-flash"]["write"])
 
     def test_aliases_are_unique_and_claude_visible(self) -> None:
         aliases = [model["gateway_alias"] for model in self.registry["models"].values()]
@@ -317,7 +317,7 @@ class ModelRoutingTests(unittest.TestCase):
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
             False: "6606394454230703bbcbe9da6606d3b71547ce8faed5a10a960fbc2b81934b6e",
-            True: "3693b85ddcd37f47a1f285b2fed7363b547c7630be0d0365c7e263f899488c81",
+            True: "fb13aee156be6c0df60659eab0e8b41a72d8da67a330d03c142a72962fe57f4d",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():

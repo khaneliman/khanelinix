@@ -13,7 +13,7 @@ apply the generated section update, then run it with `check`.
 | Subscription         | Model agents                                                                                 |
 | -------------------- | -------------------------------------------------------------------------------------------- |
 | OpenAI (Codex)       | `gpt-5-3-codex-spark`, `gpt-5-6-luna`, `gpt-5-6-terra`, `gpt-5-6-sol`                        |
-| Google (Antigravity) | `gpt-oss-120b`, `google-opus-4-6`, `google-sonnet-4-6`, `gemini-3-7-flash`, `gemini-3-1-pro` |
+| Google (Antigravity) | `gpt-oss-120b`, `google-opus-4-6`, `google-sonnet-4-6`, `gemini-3-8-flash`, `gemini-3-1-pro` |
 | Anthropic            | `opus-5`, `fable-5-1`, `sonnet-5`                                                            |
 
 <!-- END GENERATED SUBSCRIPTIONS -->
@@ -30,17 +30,17 @@ authentication.
 
 | Need                                       | Preferred                  | Fallback                                  | Semantic role  | Write policy                      |
 | ------------------------------------------ | -------------------------- | ----------------------------------------- | -------------- | --------------------------------- |
-| obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark`      | `gpt-5-6-luna`, `gemini-3-7-flash`        | `mechanic`     | read-only unless edit is explicit |
-| repository discovery                       | `gpt-5-6-luna`             | `gpt-5-3-codex-spark`, `gemini-3-7-flash` | `fact-finder`  | read-only                         |
-| bounded reproduction                       | `gpt-5-6-luna`             | `opus-5`, `gemini-3-7-flash`              | `probe-runner` | build artifacts only              |
+| obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark`      | `gpt-5-6-luna`, `gemini-3-8-flash`        | `mechanic`     | read-only unless edit is explicit |
+| repository discovery                       | `gpt-5-6-luna`             | `gpt-5-3-codex-spark`, `gemini-3-8-flash` | `fact-finder`  | read-only                         |
+| bounded reproduction                       | `gpt-5-6-luna`             | `opus-5`, `gemini-3-8-flash`              | `probe-runner` | build artifacts only              |
 | focused validation                         | `gpt-5-3-codex-spark`      | `gpt-5-6-luna`                            | `checker`      | build artifacts only              |
-| noisy validation                           | `gpt-oss-120b`             | `gpt-5-6-luna`, `gemini-3-7-flash`        | `test-runner`  | build artifacts only              |
-| implementation                             | `opus-5`                   | `gpt-5-6-luna`, `gemini-3-7-flash`        | `implementer`  | workspace write                   |
-| ambiguous diagnosis                        | `opus-5`                   | `gpt-5-6-sol`, `gemini-3-7-flash`         | `debugger`     | read-only                         |
+| noisy validation                           | `gpt-oss-120b`             | `gpt-5-6-luna`, `gemini-3-8-flash`        | `test-runner`  | build artifacts only              |
+| implementation                             | `opus-5`                   | `gpt-5-6-luna`, `gemini-3-8-flash`        | `implementer`  | workspace write                   |
+| ambiguous diagnosis                        | `opus-5`                   | `gpt-5-6-sol`, `gemini-3-8-flash`         | `debugger`     | read-only                         |
 | plan or code review                        | `fable-5-1`, `gpt-5-6-sol` | `opus-5`, `google-opus-4-6`               | `reviewer`     | read-only                         |
 
 For explicit three-provider deliberation, use Anthropic `opus-5`, Google
-`google-opus-4-6` with `gemini-3-7-flash` fallback, and OpenAI `gpt-5-6-sol`.
+`google-opus-4-6` with `gemini-3-8-flash` fallback, and OpenAI `gpt-5-6-sol`.
 
 <!-- END GENERATED ROUTES -->
 
@@ -64,7 +64,7 @@ for mini-swe-agent coding tasks. Each cell uses `pass@1 / USD`.
 | GPT-5.6 Sol      | 45% / $1.07 | 61% / $1.86 | 69% / $3.47 | 71% / $4.70  | 73% / $8.39  |
 | Claude Opus 5    | 58% / $1.66 | 69% / $3.29 | 73% / $6.08 | 73% / $9.07  | 74% / $11.84 |
 | Claude Fable 5.1 | 60% / $3.76 | 65% / $6.09 | 69% / $9.18 | 70% / $13.41 | 70% / $21.63 |
-| Gemini 3.7 Flash | 54% / $1.83 | 65% / $2.03 | 65% / $2.18 | not shown    | not shown    |
+| Gemini 3.8 Flash | 54% / $1.83 | 65% / $2.03 | 65% / $2.18 | not shown    | not shown    |
 | Claude Sonnet 5  | 31% / $2.19 | 40% / $4.08 | 48% / $7.43 | 50% / $11.89 | 54% / $26.40 |
 
 Use the matrix as relative evidence. Luna gains sharply from high through max,

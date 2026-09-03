@@ -17,7 +17,7 @@
 				"gpt-oss-120b",
 				"google-opus-4-6",
 				"google-sonnet-4-6",
-				"gemini-3-7-flash",
+				"gemini-3-8-flash",
 				"gemini-3-1-pro"
 			]
 		},
@@ -79,14 +79,14 @@
 			"workspace_write": false,
 			"publish_alias": true
 		},
-		"gemini-3-7-flash": {
+		"gemini-3-8-flash": {
 			"subscription": "google",
 			"quota_pool": "gemini",
 			"upstream_provider": "antigravity",
-			"upstream_model": "gemini-3.7-flash-high",
-			"gateway_alias": "claude-gemini-3.7-flash",
-			"display_name": "Google · Gemini 3.7 Flash",
-			"description": "Google Gemini 3.7 Flash gateway worker for bounded implementation, repository discovery, ambiguous diagnosis, dependency reasoning, and noisy probes.",
+			"upstream_model": "gemini-3.8-flash-high",
+			"gateway_alias": "claude-gemini-3.8-flash",
+			"display_name": "Google · Gemini 3.8 Flash",
+			"description": "Google Gemini 3.8 Flash gateway worker for bounded implementation, repository discovery, ambiguous diagnosis, dependency reasoning, and noisy probes.",
 			"reasoning_effort": null,
 			"write": true,
 			"workspace_write": true,
@@ -189,7 +189,7 @@
 		"gpt-5-6-sol",
 		"gpt-5-6-terra",
 		"gpt-5-6-luna",
-		"gemini-3-7-flash",
+		"gemini-3-8-flash",
 		"gemini-3-1-pro",
 		"google-sonnet-4-6",
 		"google-opus-4-6",
@@ -198,7 +198,7 @@
 	"gateway_defaults": {
 		"claude": "opus-5",
 		"codex": "gpt-5-6-sol",
-		"gemini": "gemini-3-7-flash"
+		"gemini": "gemini-3-8-flash"
 	},
 	"semantic_roles": {
 		"mechanic": {
@@ -274,7 +274,7 @@
 				"codex": "gpt-5.6-sol"
 			},
 			"gateway": {
-				"claude": "gemini-3-7-flash",
+				"claude": "gemini-3-8-flash",
 				"opencode": "gpt-5-6-sol"
 			},
 			"reasoning_effort": { "codex": "medium" }
@@ -336,21 +336,21 @@
 		{
 			"need": "obvious lookup or mechanical one-file edit",
 			"preferred": ["gpt-5-3-codex-spark"],
-			"fallbacks": ["gpt-5-6-luna", "gemini-3-7-flash"],
+			"fallbacks": ["gpt-5-6-luna", "gemini-3-8-flash"],
 			"semantic_role": "mechanic",
 			"write_policy": "read-only unless edit is explicit"
 		},
 		{
 			"need": "repository discovery",
 			"preferred": ["gpt-5-6-luna"],
-			"fallbacks": ["gpt-5-3-codex-spark", "gemini-3-7-flash"],
+			"fallbacks": ["gpt-5-3-codex-spark", "gemini-3-8-flash"],
 			"semantic_role": "fact-finder",
 			"write_policy": "read-only"
 		},
 		{
 			"need": "bounded reproduction",
 			"preferred": ["gpt-5-6-luna"],
-			"fallbacks": ["opus-5", "gemini-3-7-flash"],
+			"fallbacks": ["opus-5", "gemini-3-8-flash"],
 			"semantic_role": "probe-runner",
 			"write_policy": "build artifacts only"
 		},
@@ -364,21 +364,21 @@
 		{
 			"need": "noisy validation",
 			"preferred": ["gpt-oss-120b"],
-			"fallbacks": ["gpt-5-6-luna", "gemini-3-7-flash"],
+			"fallbacks": ["gpt-5-6-luna", "gemini-3-8-flash"],
 			"semantic_role": "test-runner",
 			"write_policy": "build artifacts only"
 		},
 		{
 			"need": "implementation",
 			"preferred": ["opus-5"],
-			"fallbacks": ["gpt-5-6-luna", "gemini-3-7-flash"],
+			"fallbacks": ["gpt-5-6-luna", "gemini-3-8-flash"],
 			"semantic_role": "implementer",
 			"write_policy": "workspace write"
 		},
 		{
 			"need": "ambiguous diagnosis",
 			"preferred": ["opus-5"],
-			"fallbacks": ["gpt-5-6-sol", "gemini-3-7-flash"],
+			"fallbacks": ["gpt-5-6-sol", "gemini-3-8-flash"],
 			"semantic_role": "debugger",
 			"write_policy": "read-only"
 		},
@@ -393,7 +393,7 @@
 	"deliberation": {
 		"anthropic": "opus-5",
 		"google": "google-opus-4-6",
-		"google_fallback": "gemini-3-7-flash",
+		"google_fallback": "gemini-3-8-flash",
 		"openai": "gpt-5-6-sol"
 	},
 	"quota_pools": {
