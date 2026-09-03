@@ -9,6 +9,8 @@ writeShellApplication {
     mainProgram = "test-fonts";
   };
 
+  passthru.updateScript = null;
+
   checkPhase = "";
 
   text = ''

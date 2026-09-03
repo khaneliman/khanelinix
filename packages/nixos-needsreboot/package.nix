@@ -6,6 +6,8 @@ writeShellApplication {
     mainProgram = "nixos-needsreboot";
   };
 
+  passthru.updateScript = null;
+
   checkPhase = "";
 
   runtimeInputs = [ coreutils ];

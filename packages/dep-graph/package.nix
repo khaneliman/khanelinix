@@ -43,4 +43,6 @@ python3Packages.buildPythonApplication rec {
     license = lib.licenses.mit;
     mainProgram = "nix-dep-graph";
   };
+
+  passthru.updateScript = null;
 }

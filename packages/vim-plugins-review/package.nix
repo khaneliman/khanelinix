@@ -42,4 +42,6 @@ python3Packages.buildPythonApplication rec {
     license = lib.licenses.mit;
     mainProgram = "vim-plugins-review";
   };
+
+  passthru.updateScript = null;
 }

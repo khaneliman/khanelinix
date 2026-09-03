@@ -15,6 +15,8 @@ writeShellApplication {
     mainProgram = "fix-git";
   };
 
+  passthru.updateScript = null;
+
   checkPhase = "";
 
   runtimeInputs = [

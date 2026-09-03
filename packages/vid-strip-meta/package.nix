@@ -6,6 +6,8 @@
 writeShellApplication {
   name = "vid-strip-meta";
 
+  passthru.updateScript = null;
+
   meta.mainProgram = "vid-strip-meta";
   checkPhase = "";
 

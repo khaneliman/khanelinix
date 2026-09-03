@@ -2,6 +2,8 @@
 writeShellApplication {
   name = "clamshell";
 
+  passthru.updateScript = null;
+
   checkPhase = "";
 
   text = ''

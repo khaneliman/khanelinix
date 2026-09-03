@@ -130,6 +130,8 @@ writeShellApplication {
     mainProgram = "git-cliff";
   };
 
+  passthru.updateScript = null;
+
   runtimeInputs = with pkgs; [ git-cliff ];
 
   text = ''

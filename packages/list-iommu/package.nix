@@ -12,6 +12,8 @@ writeShellApplication {
     platforms = lib.platforms.linux;
   };
 
+  passthru.updateScript = null;
+
   checkPhase = "";
 
   runtimeInputs = [ pciutils ];

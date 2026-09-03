@@ -20,4 +20,6 @@ stdenv.mkDerivation (_finalAttrs: {
     mainProgram = "dynamic-island-helper";
     platforms = lib.platforms.darwin;
   };
+
+  passthru.updateScript = null;
 })

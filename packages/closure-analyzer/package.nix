@@ -79,4 +79,6 @@ python3Packages.buildPythonApplication rec {
     platforms = lib.platforms.unix;
     mainProgram = "closure-analyzer";
   };
+
+  passthru.updateScript = null;
 }

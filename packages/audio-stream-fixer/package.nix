@@ -39,4 +39,6 @@ python3Packages.buildPythonApplication rec {
     mainProgram = "audio-stream-fixer";
     platforms = lib.platforms.unix;
   };
+
+  passthru.updateScript = null;
 }

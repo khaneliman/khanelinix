@@ -7,6 +7,8 @@
 writeShellApplication {
   name = "vid2audio";
 
+  passthru.updateScript = null;
+
   meta.mainProgram = "vid2audio";
   checkPhase = "";
 

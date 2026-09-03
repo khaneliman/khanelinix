@@ -59,4 +59,6 @@ python3Packages.buildPythonApplication rec {
     mainProgram = "auto-language-tagger";
     platforms = lib.platforms.linux;
   };
+
+  passthru.updateScript = null;
 }

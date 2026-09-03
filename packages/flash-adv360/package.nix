@@ -73,4 +73,6 @@ writeShellApplication {
     platforms = lib.platforms.linux;
     mainProgram = "flash-adv360";
   };
+
+  passthru.updateScript = null;
 }

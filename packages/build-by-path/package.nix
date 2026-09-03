@@ -12,6 +12,8 @@ writeShellApplication {
     license = lib.licenses.mit;
   };
 
+  passthru.updateScript = null;
+
   checkPhase = "";
 
   runtimeInputs = [ nix-fast-build ];

@@ -6,6 +6,8 @@ writeShellApplication {
     mainProgram = "trace-symlink";
   };
 
+  passthru.updateScript = null;
+
   checkPhase = "";
 
   runtimeInputs = [ coreutils ];

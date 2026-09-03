@@ -46,4 +46,6 @@ python3.pkgs.buildPythonApplication rec {
     mainProgram = "mp4-to-mkv";
     platforms = lib.platforms.all;
   };
+
+  passthru.updateScript = null;
 }

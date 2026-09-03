@@ -11,6 +11,8 @@ writeShellApplication {
     mainProgram = "trace-which";
   };
 
+  passthru.updateScript = null;
+
   checkPhase = "";
 
   text = ''

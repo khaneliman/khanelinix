@@ -12,4 +12,6 @@ stdenv.mkDerivation (_finalAttrs: {
     mainProgram = "sketchyhelper";
     platforms = lib.platforms.darwin;
   };
+
+  passthru.updateScript = null;
 })

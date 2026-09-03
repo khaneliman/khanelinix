@@ -42,4 +42,6 @@ python3Packages.buildPythonApplication rec {
     description = "Trace why a package exists in a Nix system closure";
     license = lib.licenses.mit;
   };
+
+  passthru.updateScript = null;
 }

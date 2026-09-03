@@ -63,6 +63,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   passthru = {
+    updateScript = null;
     inherit names;
   }
   // wallpapers;

@@ -20,6 +20,8 @@ writeShellApplication {
     platforms = lib.platforms.darwin;
   };
 
+  passthru.updateScript = null;
+
   name = "yabai-helper";
 
   checkPhase = "";

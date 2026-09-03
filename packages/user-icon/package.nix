@@ -10,6 +10,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   passthru = {
+    updateScript = null;
     fileName = "profile.png";
   };
 }

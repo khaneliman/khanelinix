@@ -11,6 +11,8 @@ writeShellApplication {
     mainProgram = "ff-title";
   };
 
+  passthru.updateScript = null;
+
   checkPhase = "";
 
   runtimeInputs = [
