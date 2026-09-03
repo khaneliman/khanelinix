@@ -91,7 +91,15 @@ def current_system(repo: Path) -> str:
     return result.stdout.strip()
 
 
+UPDATABLE_PACKAGES_FILTER = (
+    "packages: builtins.filter"
+    " (name: (packages.${name}.updateScript or true) != null)"
+    " (builtins.attrNames packages)"
+)
+
+
 def flake_packages(repo: Path, system: str) -> list[str]:
+    """List flake packages that do not opt out with a null updateScript."""
     result = run(
         (
             "nix",
@@ -99,7 +107,7 @@ def flake_packages(repo: Path, system: str) -> list[str]:
             "--json",
             f".#packages.{system}",
             "--apply",
-            "builtins.attrNames",
+            UPDATABLE_PACKAGES_FILTER,
         ),
         cwd=repo,
         check=True,

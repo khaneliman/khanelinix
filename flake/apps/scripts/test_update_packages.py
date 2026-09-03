@@ -76,6 +76,12 @@ class UpdatePackagesTests(unittest.TestCase):
         ):
             self.assertIn(package, update_packages.SKIP_PACKAGES)
 
+    def test_null_update_script_packages_are_excluded(self) -> None:
+        self.assertIn(
+            "updateScript or true) != null",
+            update_packages.UPDATABLE_PACKAGES_FILTER,
+        )
+
     def test_dry_run_does_not_unstage_repository(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             repo = Path(temp_dir)
