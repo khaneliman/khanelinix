@@ -14,11 +14,11 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "limux";
-  version = "0.1.25";
+  version = "0.1.26";
 
   src = fetchurl {
     url = "https://github.com/am-will/limux/releases/download/v${finalAttrs.version}/limux-${finalAttrs.version}-linux-x86_64.tar.gz";
-    hash = "sha256-bB6KCW5mw3DOECnXmFIY7O2jPvW7sGYZFLUDui6TzO0=";
+    hash = "sha256-fa0Gf/fsxZ3BFo2ut0QyUcZ7VqBhppMYWN8GeN/WlJU=";
   };
 
   nativeBuildInputs = [
