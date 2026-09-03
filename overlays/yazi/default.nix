@@ -11,13 +11,6 @@ in
   yazi = if prev.lib.versionAtLeast prev.yazi.version "26.8.15" then prev.yazi else pkgsMaster.yazi;
 
   yaziPlugins = prev.yaziPlugins // {
-    sudo = prev.yaziPlugins.sudo.overrideAttrs (old: {
-      postPatch = (old.postPatch or "") + ''
-        substituteInPlace main.lua \
-          --replace-fail 'tostring(url)' 'tostring(url.url or url)'
-      '';
-    });
-
     yatline = prev.yaziPlugins.yatline.overrideAttrs (old: {
       postPatch = (old.postPatch or "") + ''
         substituteInPlace main.lua \

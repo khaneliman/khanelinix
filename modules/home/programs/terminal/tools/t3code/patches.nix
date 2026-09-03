@@ -26,7 +26,13 @@ in
   {
     name = "perf-lazy-load-terminal-drawer";
     rev = "bf5a88adcad1e0e06cf563b348b366f3c868bf95";
-    hash = "sha256-I5HT/NBkGuyj2uhlmTbnIkR78XAD48tEBb+vDDZ55q8=";
+    hash = "sha256-irCex6Wauqb4BKMR9MtM2FDExc+Opx9v4wVV87oUV4A=";
+    excludes = [ "apps/web/src/components/ChatView.tsx" ];
+  }
+  # Upstream added animated terminal drawer presence around the component.
+  # Keep that structure while applying the lazy import from the excluded hunk.
+  {
+    path = ./perf-lazy-load-terminal-drawer.patch;
   }
   {
     name = "perf-concurrent-command-resolution";
@@ -37,57 +43,6 @@ in
     name = "perf-desktop-readiness-probe-timeout";
     rev = "8063dd0634ca781725db593f619dda849bbe733b";
     hash = "sha256-mBf/gdIFKoGztmUwlXfAGw7BJ4XqvJk5yhSVY4bfi94=";
-  }
-  # Antigravity stack: rebased onto upstream 9cbe50d10 on branch
-  # nix-patches/antigravity-rebase (docs commit dropped).
-  {
-    name = "antigravity-provider-settings";
-    rev = "3f4511a636bf6b152a6419661cc5d3f45588390b";
-    hash = "sha256-EUnhYfOFuE/q64vvK4Kar9dxLlb5Y56zdiN5YeYgwlI=";
-  }
-  {
-    name = "antigravity-provider-driver";
-    rev = "0a8cd769ef3c0a536fc556449b38ad7d9a3b4d7a";
-    hash = "sha256-BD6S3vMsj77K1XKK+YwqRcYEXBkfhxskNddNVIQZs4w=";
-    excludes = [ "apps/server/src/provider/Layers/ProviderInstanceRegistryLive.test.ts" ];
-  }
-  {
-    # Upstream dropped AVAILABLE_PROVIDER_OPTIONS from providerIconUtils.ts,
-    # which broke the fork commit's import hunk. Carried locally until the
-    # fork branch is rebased.
-    path = ./antigravity-provider-controls.patch;
-  }
-  {
-    name = "antigravity-cli-only-mode";
-    rev = "70dd5053022a25533f2835929d5ee3576ca3b766";
-    hash = "sha256-XVsfaXjm0uEE0yXLcNuZQwqwqVHuBuCvMgSXGgIymV4=";
-  }
-  {
-    name = "antigravity-plan-mode";
-    rev = "72c2203f85956ccd368238f6822338d59954b78a";
-    hash = "sha256-TVcUZpRUb6/vauKHs4lBHNOVPaarlQJoPIp1v9vbm4I=";
-  }
-  {
-    # Nixpkgs build runs no tests; keep only the runtime synchronous
-    # initial-poll hunk.
-    name = "antigravity-test-stability";
-    rev = "88b66258e071117e08fff0def6abdd09100a0ddb";
-    hash = "sha256-bkLFB7JEJWc+8KA2FcGYInEgjYqIdtH+tQavrSIlqSc=";
-    excludes = [ "apps/server/src/provider/Layers/AntigravityAdapter.test.ts" ];
-  }
-  {
-    # The preceding stability patch omits this test file, so omit the
-    # follow-up test hunk that depends on its excluded context.
-    name = "antigravity-model-discovery";
-    rev = "4b99a47b7a0e176d98f9e2cdd2d20bba2a94fa35";
-    hash = "sha256-iWsXHUWzMVbkwai/1E9sUk546uE6LmuDjPbm7DnJMOI=";
-    excludes = [ "apps/server/src/provider/Layers/AntigravityAdapter.test.ts" ];
-  }
-  {
-    # Upstream added its own isCustom filter to mergeProviderModels. This
-    # carries the merged form: cached custom rows and Antigravity name
-    # duplicates are both dropped.
-    path = ./antigravity-deduplicate-cached-models.patch;
   }
   {
     name = "fix-codex-session-start-timeout";
@@ -107,10 +62,5 @@ in
   # hunks and refreshes the duplicate-event guard for upstream child metadata.
   ./fix-codex-spawned-subagent-sidebar.patch
   ./desktop-attach-existing-backend.patch
-  ./antigravity-planner-response.patch
-  ./antigravity-conversation-discovery.patch
-  ./antigravity-tool-result-projection.patch
-  ./antigravity-subagent-projection.patch
-  ./antigravity-skill-discovery.patch
   ./declarative-theme-settings.patch
 ]
