@@ -118,7 +118,7 @@ let
   codexProfiles = {
     # Deep analysis and live-research mode. Intentionally expensive.
     deep = {
-      model = "gpt-5.6-sol";
+      model = "gpt-6-astra";
       model_reasoning_effort = "xhigh";
       model_verbosity = "high";
       plan_mode_reasoning_effort = "xhigh";
@@ -129,7 +129,7 @@ let
     # via CLI -c because those fields are top-level settings in the published
     # schema.
     long = {
-      model = "gpt-5.6-sol";
+      model = "gpt-6-astra";
       model_reasoning_effort = "xhigh";
       model_verbosity = "high";
       plan_mode_reasoning_effort = "xhigh";
@@ -303,9 +303,8 @@ in
 
         notice.hide_rate_limit_model_nudge = true;
 
-        # Sol handles routine work at high effort; xhigh stays reserved for
-        # explicit deep runs.
-        model = "gpt-5.6-sol";
+        # Keep expensive parent reasoning separate from Luna/Spark worker routes.
+        model = "gpt-6-astra";
         model_reasoning_effort = "high";
         plan_mode_reasoning_effort = "high";
         service_tier = "fast";
