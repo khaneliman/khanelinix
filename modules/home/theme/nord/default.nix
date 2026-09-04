@@ -17,6 +17,7 @@ let
   cfg = config.khanelinix.theme.nord;
   palette = import ./colors.nix;
   t3codeTheme = import ../t3code.nix {
+    inherit config lib pkgs;
     appearance = "dark";
     id = "khanelinix-nord";
     name = "Nord";
@@ -172,8 +173,6 @@ in
             };
           };
 
-          t3code.clientSettings.declarativeTheme = t3codeTheme;
-
           thunderbird.profiles.${config.khanelinix.user.name} =
             mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable
               {
@@ -183,6 +182,8 @@ in
         };
 
         home = {
+          activation.t3codeTheme = t3codeTheme;
+
           pointerCursor = mkIf pkgs.stdenv.hostPlatform.isLinux {
             enable = true;
             inherit (config.khanelinix.theme.gtk.cursor) name package size;
