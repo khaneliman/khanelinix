@@ -175,8 +175,8 @@ in
 
           preview = {
             tab_size = 2;
-            max_width = 600;
-            max_height = 900;
+            max_width = 2560;
+            max_height = 1440;
             image_filter = "triangle";
             image_quality = 75;
             ueberzug_scale = 1;
