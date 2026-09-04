@@ -266,6 +266,7 @@ in
 
         userSettings = {
           addProjectBaseDirectory = githubRoot;
+          sidebarAutoSettleAfterDays = 3;
           textGenerationModelSelection = {
             instanceId = "codex";
             model = "gpt-5.6-luna";
@@ -495,7 +496,6 @@ in
           legacySidebarEnabled = false;
           planModeEnabled = false;
           providerModelPreferences = { };
-          sidebarAutoSettleAfterDays = 3;
           sidebarProjectGroupingMode = "repository";
           sidebarProjectSortOrder = "updated_at";
           sidebarThreadPreviewCount = 6;
