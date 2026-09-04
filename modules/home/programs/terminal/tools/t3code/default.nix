@@ -126,6 +126,31 @@ in
         else
           overrideT3codeSource (pkgs.t3code.override overrides);
 
+      syncProviderSettings = pkgs.writeShellApplication {
+        name = "t3code-sync-provider-settings";
+        runtimeInputs = [
+          pkgs.coreutils
+          pkgs.jq
+        ];
+        text = ''
+          settingsPath="$1"
+          if [ ! -f "$settingsPath" ]; then
+            exit 0
+          fi
+
+          temporaryPath=$(mktemp "$settingsPath.XXXXXX")
+          trap 'rm -f "$temporaryPath"' EXIT
+          jq --slurpfile managed ${
+            (pkgs.formats.json { }).generate "t3code-managed-providers.json"
+              config.programs.t3code.userSettings.providers
+          } \
+            -f ${./sync-provider-settings.jq} "$settingsPath" > "$temporaryPath"
+          if ! cmp -s "$settingsPath" "$temporaryPath"; then
+            mv "$temporaryPath" "$settingsPath"
+          fi
+        '';
+      };
+
       # Upstream renumbers inline sqlite migrations between revisions while the
       # server only tracks applied migrations by id, so an existing database
       # skips renumbered migrations and crashes on missing columns. Reconcile
@@ -188,6 +213,12 @@ in
     lib.mkIf cfg.enable {
       home = {
         packages = [ reconcileCommand ];
+
+        # Explicit instances shadow legacy providers. Update only Nix-owned
+        # fields without creating instances or overriding GUI enablement.
+        activation.t3codeProviderSettings = lib.hm.dag.entryAfter [ "t3codeSettingsActivation" ] ''
+          run ${lib.getExe syncProviderSettings} ${lib.escapeShellArg "${config.home.homeDirectory}/.t3/userdata/settings.json"}
+        '';
 
         # Cover desktop-only launches: reconcile whenever a switch installs a
         # server build whose migration numbering may have moved.
