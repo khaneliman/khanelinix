@@ -21,9 +21,6 @@ in
         || (osConfig.services.tailscale.enable or false)
         || (config.khanelinix.services.tailscale.enable or false);
 
-      antigravityCliEnabled = config.programs.antigravity-cli.enable or false;
-      antigravityCliPackage = config.programs.antigravity-cli.package or null;
-
       claudeCodeEnabled = config.programs.claude-code.enable or false;
       claudeProviderSettings = {
         binaryPath = lib.getExe config.programs.claude-code.package;
@@ -176,8 +173,7 @@ in
             pkgs.coreutils
           ]
           ++ lib.optionals (tailscaleEnabled && pkgs.stdenv.hostPlatform.isLinux) [ pkgs.tailscale ]
-          ++ lib.optional (claudeCodePackage != null) claudeCodePackage
-          ++ lib.optional (antigravityCliEnabled && antigravityCliPackage != null) antigravityCliPackage;
+          ++ lib.optional (claudeCodePackage != null) claudeCodePackage;
           text = ''
             ${lib.optionalString tailscaleEnabled ''
               export PATH="/Applications/Tailscale.app/Contents/MacOS:/opt/homebrew/bin:/usr/local/bin:$PATH"
@@ -215,7 +211,7 @@ in
         packages = [ reconcileCommand ];
 
         # Explicit instances shadow legacy providers. Update only Nix-owned
-        # fields without creating instances or overriding GUI enablement.
+        # fields without creating instances or overriding undeclared GUI enablement.
         activation.t3codeProviderSettings = lib.hm.dag.entryAfter [ "t3codeSettingsActivation" ] ''
           run ${lib.getExe syncProviderSettings} ${lib.escapeShellArg "${config.home.homeDirectory}/.t3/userdata/settings.json"}
         '';
@@ -282,8 +278,11 @@ in
             // lib.optionalAttrs (config.programs.opencode.enable or false) {
               opencode.binaryPath = lib.getExe config.programs.opencode.package;
             }
-            // lib.optionalAttrs (antigravityCliEnabled && antigravityCliPackage != null) {
-              antigravity.binaryPath = lib.getExe antigravityCliPackage;
+            // {
+              antigravity = {
+                enabled = true;
+                binaryPath = lib.getExe pkgs.khanelinix.antigravity-acp;
+              };
             };
 
           providerInstances = lib.optionalAttrs claudeCodeEnabled {
