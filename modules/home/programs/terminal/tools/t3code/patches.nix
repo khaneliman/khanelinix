@@ -40,11 +40,6 @@ in
     hash = "sha256-Y2d4QA8G9B1sxRpmvQkOrVDgsco2O6owkI+H76rghUI=";
   }
   {
-    name = "perf-desktop-readiness-probe-timeout";
-    rev = "8063dd0634ca781725db593f619dda849bbe733b";
-    hash = "sha256-mBf/gdIFKoGztmUwlXfAGw7BJ4XqvJk5yhSVY4bfi94=";
-  }
-  {
     name = "fix-codex-session-start-timeout";
     rev = "883b413cd9cfbb428abafc9f2a877ca14a9e6795";
     hash = "sha256-5b5mRry2OF120R0pAAVKXT9TG2nAes+ZQb848nyTrNQ=";
