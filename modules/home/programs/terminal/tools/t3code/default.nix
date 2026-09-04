@@ -316,6 +316,10 @@ in
             }
             {
               provider = "codex";
+              model = "gpt-6-astra";
+            }
+            {
+              provider = "codex";
               model = "gpt-5.6-sol";
             }
             {
