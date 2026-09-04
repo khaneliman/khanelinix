@@ -25,6 +25,7 @@ let
   catppuccinColors =
     (lib.importJSON "${config.catppuccin.sources.palette}/palette.json").${cfg.flavor}.colors;
   t3codeTheme = import ../t3code.nix {
+    inherit config lib pkgs;
     appearance = if cfg.flavor == "latte" then "light" else "dark";
     id = "khanelinix-catppuccin-${cfg.flavor}";
     name = "Catppuccin ${lib.khanelinix.capitalize cfg.flavor}";
@@ -175,6 +176,8 @@ in
     (mkIf cfg.enable (
       lib.mkMerge [
         {
+          home.activation.t3codeTheme = t3codeTheme;
+
           assertions = [
             {
               assertion = !config.khanelinix.theme.nord.enable;
@@ -239,8 +242,6 @@ in
                 };
               };
             };
-
-            t3code.clientSettings.declarativeTheme = t3codeTheme;
 
             thunderbird.profiles.${config.khanelinix.user.name} =
               mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable

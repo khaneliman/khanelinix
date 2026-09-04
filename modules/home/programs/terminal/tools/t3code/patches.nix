@@ -62,5 +62,4 @@ in
   # hunks and refreshes the duplicate-event guard for upstream child metadata.
   ./fix-codex-spawned-subagent-sidebar.patch
   ./desktop-attach-existing-backend.patch
-  ./declarative-theme-settings.patch
 ]

@@ -5,9 +5,12 @@
   border,
   canvas,
   chrome,
+  config,
   error,
   id,
+  lib,
   name,
+  pkgs,
   secondary,
   statusForeground,
   success,
@@ -18,19 +21,10 @@
   textMuted,
   warning,
 }:
-{
-  appearanceMode = appearance;
-  file = {
+let
+  themeFile = (pkgs.formats.json { }).generate "t3code-${id}.json" {
     version = 1;
-    inherit
-      appearance
-      id
-      name
-      ;
-    collection = {
-      id = "khanelinix";
-      label = "Khanelinix";
-    };
+    inherit appearance name;
     colors = {
       inherit
         accent
@@ -93,4 +87,11 @@
       warningSurface = surfaceRaised;
     };
   };
-}
+in
+lib.mkIf config.programs.t3code.enable (
+  lib.hm.dag.entryAfter [ "t3codeSettingsActivation" "t3codeProviderSettings" ] ''
+    run ${lib.getExe' config.programs.t3code.package "t3"} theme set ${themeFile} \
+      --id ${lib.escapeShellArg id} \
+      --base-dir ${lib.escapeShellArg "${config.home.homeDirectory}/.t3"}
+  ''
+)
