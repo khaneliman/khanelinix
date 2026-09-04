@@ -8,7 +8,8 @@
 				"gpt-5-3-codex-spark",
 				"gpt-5-6-luna",
 				"gpt-5-6-terra",
-				"gpt-5-6-sol"
+				"gpt-5-6-sol",
+				"gpt-6-astra"
 			]
 		},
 		"google": {
@@ -73,7 +74,20 @@
 			"upstream_model": "gpt-5.6-sol",
 			"gateway_alias": "claude-gpt-5.6-sol",
 			"display_name": "OpenAI · GPT 5.6 Sol",
-			"description": "OpenAI GPT 5.6 Sol gateway worker for hard diagnosis, architecture or code review, and high-confidence reasoning.",
+			"description": "OpenAI GPT 5.6 Sol gateway worker for difficult implementation, hard diagnosis, and high-confidence reasoning.",
+			"reasoning_effort": "high",
+			"write": true,
+			"workspace_write": true,
+			"publish_alias": true
+		},
+		"gpt-6-astra": {
+			"subscription": "openai",
+			"quota_pool": "general",
+			"upstream_provider": "codex",
+			"upstream_model": "gpt-6-astra",
+			"gateway_alias": "claude-gpt-6-astra",
+			"display_name": "OpenAI · GPT 6 Astra",
+			"description": "OpenAI GPT 6 Astra gateway worker for difficult read-only review, orchestration, and high-confidence reasoning.",
 			"reasoning_effort": "high",
 			"write": false,
 			"workspace_write": false,
@@ -187,6 +201,7 @@
 	"cliproxy_alias_order": [
 		"gpt-5-3-codex-spark",
 		"gpt-5-6-sol",
+		"gpt-6-astra",
 		"gpt-5-6-terra",
 		"gpt-5-6-luna",
 		"gemini-3-8-flash",
@@ -197,7 +212,7 @@
 	],
 	"gateway_defaults": {
 		"claude": "opus-5",
-		"codex": "gpt-5-6-sol",
+		"codex": "gpt-6-astra",
 		"gemini": "gemini-3-8-flash"
 	},
 	"semantic_roles": {
@@ -296,12 +311,12 @@
 			"native": {
 				"claude": "opus",
 				"copilot": "claude-opus-4.6",
-				"opencode": "openai/gpt-5.6-sol",
-				"codex": "gpt-5.6-sol"
+				"opencode": "openai/gpt-6-astra",
+				"codex": "gpt-6-astra"
 			},
 			"gateway": {
 				"claude": "fable-5-1",
-				"opencode": "gpt-5-6-sol"
+				"opencode": "gpt-6-astra"
 			},
 			"reasoning_effort": { "codex": "high" }
 		},
@@ -313,7 +328,7 @@
 				"codex": "gpt-5.6-luna"
 			},
 			"gateway": {
-				"claude": "opus-5",
+				"claude": "gemini-3-8-flash",
 				"opencode": "gpt-5-6-luna"
 			},
 			"reasoning_effort": { "codex": "medium" }
@@ -326,7 +341,7 @@
 				"codex": "gpt-5.6-luna"
 			},
 			"gateway": {
-				"claude": "opus-5",
+				"claude": "gemini-3-8-flash",
 				"opencode": "gpt-5-6-luna"
 			},
 			"reasoning_effort": { "codex": "medium" }
@@ -342,15 +357,15 @@
 		},
 		{
 			"need": "repository discovery",
-			"preferred": ["gpt-5-6-luna"],
-			"fallbacks": ["gpt-5-3-codex-spark", "gemini-3-8-flash"],
+			"preferred": ["gpt-5-6-luna", "gemini-3-8-flash"],
+			"fallbacks": ["gpt-5-3-codex-spark"],
 			"semantic_role": "fact-finder",
 			"write_policy": "read-only"
 		},
 		{
 			"need": "bounded reproduction",
 			"preferred": ["gpt-5-6-luna"],
-			"fallbacks": ["opus-5", "gemini-3-8-flash"],
+			"fallbacks": ["opus-5", "gpt-5-6-sol", "gemini-3-8-flash"],
 			"semantic_role": "probe-runner",
 			"write_policy": "build artifacts only"
 		},
@@ -370,7 +385,14 @@
 		},
 		{
 			"need": "implementation",
-			"preferred": ["opus-5"],
+			"preferred": ["gpt-5-6-luna", "gemini-3-8-flash"],
+			"fallbacks": ["gpt-5-6-sol", "opus-5"],
+			"semantic_role": "implementer",
+			"write_policy": "workspace write"
+		},
+		{
+			"need": "difficult implementation",
+			"preferred": ["gpt-5-6-sol", "opus-5"],
 			"fallbacks": ["gpt-5-6-luna", "gemini-3-8-flash"],
 			"semantic_role": "implementer",
 			"write_policy": "workspace write"
@@ -384,8 +406,8 @@
 		},
 		{
 			"need": "plan or code review",
-			"preferred": ["fable-5-1", "gpt-5-6-sol"],
-			"fallbacks": ["opus-5", "google-opus-4-6"],
+			"preferred": ["fable-5-1", "gpt-6-astra"],
+			"fallbacks": ["gpt-5-6-sol", "opus-5", "google-opus-4-6"],
 			"semantic_role": "reviewer",
 			"write_policy": "read-only"
 		}
@@ -394,7 +416,7 @@
 		"anthropic": "opus-5",
 		"google": "google-opus-4-6",
 		"google_fallback": "gemini-3-8-flash",
-		"openai": "gpt-5-6-sol"
+		"openai": "gpt-6-astra"
 	},
 	"quota_pools": {
 		"openai": ["spark", "general"],

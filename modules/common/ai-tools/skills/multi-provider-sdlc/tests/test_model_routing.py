@@ -61,11 +61,11 @@ class ModelRoutingTests(unittest.TestCase):
 
         self.assertEqual(
             routes["plan or code review"]["preferred"],
-            ["fable-5-1", "gpt-5-6-sol"],
+            ["fable-5-1", "gpt-6-astra"],
         )
         self.assertEqual(
             routes["plan or code review"]["fallbacks"],
-            ["opus-5", "google-opus-4-6"],
+            ["gpt-5-6-sol", "opus-5", "google-opus-4-6"],
         )
         self.assertEqual(
             self.registry["semantic_roles"]["reviewer"]["gateway"]["claude"],
@@ -74,10 +74,20 @@ class ModelRoutingTests(unittest.TestCase):
         self.assertFalse(self.registry["models"]["fable-5-1"]["write"])
         self.assertFalse(self.registry["models"]["fable-5-1"]["workspace_write"])
         self.assertEqual(
-            routes["implementation"]["fallbacks"],
+            routes["implementation"]["preferred"],
+            ["gpt-5-6-luna", "gemini-3-8-flash"],
+        )
+        self.assertEqual(
+            routes["difficult implementation"]["preferred"],
+            ["gpt-5-6-sol", "opus-5"],
+        )
+        self.assertEqual(
+            routes["difficult implementation"]["fallbacks"],
             ["gpt-5-6-luna", "gemini-3-8-flash"],
         )
         self.assertTrue(self.registry["models"]["gemini-3-8-flash"]["write"])
+        self.assertTrue(self.registry["models"]["gpt-5-6-sol"]["workspace_write"])
+        self.assertFalse(self.registry["models"]["gpt-6-astra"]["write"])
 
     def test_aliases_are_unique_and_claude_visible(self) -> None:
         aliases = [model["gateway_alias"] for model in self.registry["models"].values()]
@@ -316,8 +326,8 @@ class ModelRoutingTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
-            False: "6606394454230703bbcbe9da6606d3b71547ce8faed5a10a960fbc2b81934b6e",
-            True: "fb13aee156be6c0df60659eab0e8b41a72d8da67a330d03c142a72962fe57f4d",
+            False: "3538796860e40b0d5ba1d860c70673e0e21f47ffcb8f2bd6b24c2371d5f85dfd",
+            True: "4f93c525989988f969a83aef2a6fce6dbf177d549f9b13ecf75a6c11e45c75f0",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():

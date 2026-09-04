@@ -14,6 +14,6 @@ the named role did not run.
 Prefer Spark-backed `mechanic` and `checker` for obvious mechanical edits and
 one focused known check. Use Luna-backed `explorer`, `fact-finder`,
 `probe-runner`, and `test-runner` for average repository work and noisy
-validation. Use Luna-backed `implementer` when the preferred Opus route is not
-available. Use Sol-backed `reviewer` for review and hard diagnosis. Keep Terra
-explicit-only.
+validation. Use Luna-backed `implementer` for routine changes. Escalate
+difficult implementation to Sol or Opus. Use Astra-backed `reviewer` for review
+and Sol-backed `debugger` for hard diagnosis. Keep Terra explicit-only.

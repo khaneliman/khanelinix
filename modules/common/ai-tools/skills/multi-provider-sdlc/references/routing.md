@@ -12,35 +12,36 @@ apply the generated section update, then run it with `check`.
 
 | Subscription         | Model agents                                                                                 |
 | -------------------- | -------------------------------------------------------------------------------------------- |
-| OpenAI (Codex)       | `gpt-5-3-codex-spark`, `gpt-5-6-luna`, `gpt-5-6-terra`, `gpt-5-6-sol`                        |
+| OpenAI (Codex)       | `gpt-5-3-codex-spark`, `gpt-5-6-luna`, `gpt-5-6-terra`, `gpt-5-6-sol`, `gpt-6-astra`         |
 | Google (Antigravity) | `gpt-oss-120b`, `google-opus-4-6`, `google-sonnet-4-6`, `gemini-3-8-flash`, `gemini-3-1-pro` |
 | Anthropic            | `opus-5`, `fable-5-1`, `sonnet-5`                                                            |
 
 <!-- END GENERATED SUBSCRIPTIONS -->
 
-Prefer `opus-5` for Anthropic implementation and diagnosis. Use `fable-5-1` for
-independent planning. Treat `fable-5-1` and `gpt-5-6-sol` as equal preferred
-review routes. Use `sonnet-5` only when explicitly requested. Keep Gemini
-fallback-only. Every subscription requires a live route and current
-authentication.
+Use Luna and Gemini Flash for routine implementation and repository research.
+Use Sol and Opus for difficult implementation. Use `fable-5-1` and `gpt-6-astra`
+as equal preferred review routes. Keep Sol as the debugger route. Use `sonnet-5`
+only when explicitly requested. Every subscription requires a live route and
+current authentication.
 
 ## Preferred routes
 
 <!-- BEGIN GENERATED ROUTES -->
 
-| Need                                       | Preferred                  | Fallback                                  | Semantic role  | Write policy                      |
-| ------------------------------------------ | -------------------------- | ----------------------------------------- | -------------- | --------------------------------- |
-| obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark`      | `gpt-5-6-luna`, `gemini-3-8-flash`        | `mechanic`     | read-only unless edit is explicit |
-| repository discovery                       | `gpt-5-6-luna`             | `gpt-5-3-codex-spark`, `gemini-3-8-flash` | `fact-finder`  | read-only                         |
-| bounded reproduction                       | `gpt-5-6-luna`             | `opus-5`, `gemini-3-8-flash`              | `probe-runner` | build artifacts only              |
-| focused validation                         | `gpt-5-3-codex-spark`      | `gpt-5-6-luna`                            | `checker`      | build artifacts only              |
-| noisy validation                           | `gpt-oss-120b`             | `gpt-5-6-luna`, `gemini-3-8-flash`        | `test-runner`  | build artifacts only              |
-| implementation                             | `opus-5`                   | `gpt-5-6-luna`, `gemini-3-8-flash`        | `implementer`  | workspace write                   |
-| ambiguous diagnosis                        | `opus-5`                   | `gpt-5-6-sol`, `gemini-3-8-flash`         | `debugger`     | read-only                         |
-| plan or code review                        | `fable-5-1`, `gpt-5-6-sol` | `opus-5`, `google-opus-4-6`               | `reviewer`     | read-only                         |
+| Need                                       | Preferred                          | Fallback                                    | Semantic role  | Write policy                      |
+| ------------------------------------------ | ---------------------------------- | ------------------------------------------- | -------------- | --------------------------------- |
+| obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark`              | `gpt-5-6-luna`, `gemini-3-8-flash`          | `mechanic`     | read-only unless edit is explicit |
+| repository discovery                       | `gpt-5-6-luna`, `gemini-3-8-flash` | `gpt-5-3-codex-spark`                       | `fact-finder`  | read-only                         |
+| bounded reproduction                       | `gpt-5-6-luna`                     | `opus-5`, `gpt-5-6-sol`, `gemini-3-8-flash` | `probe-runner` | build artifacts only              |
+| focused validation                         | `gpt-5-3-codex-spark`              | `gpt-5-6-luna`                              | `checker`      | build artifacts only              |
+| noisy validation                           | `gpt-oss-120b`                     | `gpt-5-6-luna`, `gemini-3-8-flash`          | `test-runner`  | build artifacts only              |
+| implementation                             | `gpt-5-6-luna`, `gemini-3-8-flash` | `gpt-5-6-sol`, `opus-5`                     | `implementer`  | workspace write                   |
+| difficult implementation                   | `gpt-5-6-sol`, `opus-5`            | `gpt-5-6-luna`, `gemini-3-8-flash`          | `implementer`  | workspace write                   |
+| ambiguous diagnosis                        | `opus-5`                           | `gpt-5-6-sol`, `gemini-3-8-flash`           | `debugger`     | read-only                         |
+| plan or code review                        | `fable-5-1`, `gpt-6-astra`         | `gpt-5-6-sol`, `opus-5`, `google-opus-4-6`  | `reviewer`     | read-only                         |
 
 For explicit three-provider deliberation, use Anthropic `opus-5`, Google
-`google-opus-4-6` with `gemini-3-8-flash` fallback, and OpenAI `gpt-5-6-sol`.
+`google-opus-4-6` with `gemini-3-8-flash` fallback, and OpenAI `gpt-6-astra`.
 
 <!-- END GENERATED ROUTES -->
 
@@ -62,6 +63,7 @@ for mini-swe-agent coding tasks. Each cell uses `pass@1 / USD`.
 | ---------------- | ----------- | ----------- | ----------- | ------------ | ------------ |
 | GPT-5.6 Luna     | 2% / $0.01  | 11% / $0.04 | 44% / $0.16 | 57% / $0.31  | 67% / $0.61  |
 | GPT-5.6 Sol      | 45% / $1.07 | 61% / $1.86 | 69% / $3.47 | 71% / $4.70  | 73% / $8.39  |
+| GPT-6 Astra      | unmeasured  | unmeasured  | unmeasured  | unmeasured   | unmeasured   |
 | Claude Opus 5    | 58% / $1.66 | 69% / $3.29 | 73% / $6.08 | 73% / $9.07  | 74% / $11.84 |
 | Claude Fable 5.1 | 60% / $3.76 | 65% / $6.09 | 69% / $9.18 | 70% / $13.41 | 70% / $21.63 |
 | Gemini 3.8 Flash | 54% / $1.83 | 65% / $2.03 | 65% / $2.18 | not shown    | not shown    |
@@ -73,6 +75,10 @@ Opus reach strong results at high, so reserve xhigh or max for harder tasks.
 Fable gains little beyond xhigh. Gemini Flash shows no measured gain from medium
 to high. Sonnet is not a cost-efficient default in this snapshot.
 
+Astra has no benchmark measurement in the snapshot. The routing policy reserves
+it for higher-cost, higher-latency review and orchestration work until direct
+measurements are available. Keep Astra in the existing OpenAI `general` quota
+pool conservatively until live pool telemetry verifies a separate allocation.
 Spark, Terra, and GPT-OSS do not appear in the snapshot. Keep their existing
 latency-first or explicit-only roles until comparable measurements exist.
 
@@ -176,9 +182,9 @@ binding evidence.
 - Google: Opus, Sonnet, and GPT-OSS share `claude-gpt`; Gemini Pro and Flash
   share `gemini`. Run [check-google-quota](../scripts/check-google-quota.sh)
   once before Google dispatch when `codexbar` is available.
-- OpenAI: Spark has a separate `spark` pool; Luna, Terra, and Sol share
-  `general`. Current CodexBar data does not distinguish both pools, so do not
-  preflight. A `429` opens only the matching pool.
+- OpenAI: Spark has a separate `spark` pool; Luna, Terra, Sol, and Astra share
+  `general` conservatively. Current CodexBar data does not distinguish both
+  pools, so do not preflight. A `429` opens only the matching pool.
 - Anthropic: no reliable quota query is available in the current environment.
   Let the first required dispatch act as probe; a quota failure opens the
   Anthropic circuit.
@@ -198,10 +204,10 @@ binding evidence.
 
 ## Worker patience
 
-- Give frontier reasoning seats such as Opus, Fable, Sol, or comparable models
-  time to research, reason, and synthesize on large tasks. Fast models such as
-  Luna, Spark, Flash, or Haiku should receive narrower packets and may be
-  redirected sooner.
+- Give frontier reasoning seats such as Astra, Opus, Fable, Sol, or comparable
+  models time to research, reason, and synthesize on large tasks. Fast models
+  such as Luna, Spark, Flash, or Haiku should receive narrower packets and may
+  be redirected sooner.
 - Treat a wait or poll timeout as observer cadence, not worker failure or a
   runtime deadline. Repeat polls without changing healthy seat state; use longer
   waits when the harness can still provide required user updates.

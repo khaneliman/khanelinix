@@ -3,7 +3,7 @@
 Use a fresh read-only worker for normal and high-risk plan or diff review.
 Prefer a provider different from implementation when capability is comparable.
 Every review route remains read-only even when its model agent supports writes.
-Fable and Sol have equal preference. The caller chooses between them from task
+Fable and Astra have equal preference. The caller chooses between them from task
 context and current quota evidence.
 
 Build every seat packet per the `premise-review` method in
