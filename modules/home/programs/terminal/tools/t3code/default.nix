@@ -220,12 +220,6 @@ in
           run ${lib.getExe syncProviderSettings} ${lib.escapeShellArg "${config.home.homeDirectory}/.t3/userdata/settings.json"}
         '';
 
-        # Cover desktop-only launches: reconcile whenever a switch installs a
-        # server build whose migration numbering may have moved.
-        activation.t3codeReconcileMigrations = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          run ${lib.getExe reconcileCommand}
-        '';
-
         shellAliases.t3-remote = lib.mkIf tailscaleEnabled (lib.getExe remoteCommand);
       };
 
