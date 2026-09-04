@@ -69,7 +69,7 @@ in
 
           agents = {
             sisyphus = {
-              model = deliberateModel;
+              model = aiTools.agents.reviewer.model.opencode;
               fallback_models = deliberateFallbackModels;
               prompt_append = "Follow the repository engineering rules already provided through the shared OpenCode context. Prefer the shared commands and skills before inventing new workflows.";
             };
@@ -129,6 +129,8 @@ in
               github-copilot = 8;
             };
             modelConcurrency = {
+              "openai/gpt-6-astra" = 1;
+              "cliproxyapi/claude-gpt-6-astra" = 1;
               "openai/gpt-5.6-sol" = 2;
               "github-copilot/gpt-5-mini" = 12;
             };
