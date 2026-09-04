@@ -188,7 +188,7 @@ class RouteCapabilityTests(unittest.TestCase):
             "--need",
             str(plan["need"]),
             "--model",
-            str(plan["selected"]),
+            "gpt-5-6-luna",
         )
         recorded = self.run_cli(
             "record",
@@ -227,11 +227,11 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertTrue(plan["selectionRequired"])
         self.assertEqual(
             [candidate["model"] for candidate in plan["preferredCandidates"]],
-            ["fable-5-1", "gpt-5-6-sol"],
+            ["fable-5-1", "gpt-6-astra"],
         )
         self.assertEqual(
             [candidate["model"] for candidate in plan["candidates"]],
-            ["fable-5-1", "gpt-5-6-sol", "opus-5", "google-opus-4-6"],
+            ["fable-5-1", "gpt-6-astra", "gpt-5-6-sol", "opus-5", "google-opus-4-6"],
         )
         self.assertTrue(all(candidate["probe"] for candidate in plan["candidates"]))
         self.assertEqual(plan["semanticFallback"], "reviewer")
@@ -247,11 +247,11 @@ class RouteCapabilityTests(unittest.TestCase):
         state = self.load_state()
 
         self.assertEqual(claim["revision"], 1)
-        self.assertEqual(claim["need"], "implementation")
+        self.assertEqual(claim["need"], "difficult implementation")
         self.assertEqual(claim["planRevision"], 0)
         self.assertEqual(
             claim["plannedCandidates"],
-            ["opus-5", "gpt-5-6-luna", "gemini-3-8-flash"],
+            ["gpt-5-6-sol", "opus-5", "gpt-5-6-luna", "gemini-3-8-flash"],
         )
         self.assertIsNone(claim["candidateOverride"])
         self.assertEqual(
@@ -275,11 +275,11 @@ class RouteCapabilityTests(unittest.TestCase):
         )
         self.assertEqual(len(state["claims"]), 1)
         stored_claim = next(iter(state["claims"].values()))
-        self.assertEqual(stored_claim["need"], "implementation")
+        self.assertEqual(stored_claim["need"], "difficult implementation")
         self.assertEqual(stored_claim["plan_revision"], 0)
         self.assertEqual(
             stored_claim["planned_candidates"],
-            ["opus-5", "gpt-5-6-luna", "gemini-3-8-flash"],
+            ["gpt-5-6-sol", "opus-5", "gpt-5-6-luna", "gemini-3-8-flash"],
         )
         self.assertIsNone(stored_claim["candidate_override"])
 
@@ -291,13 +291,13 @@ class RouteCapabilityTests(unittest.TestCase):
         ):
             self.claim(
                 "gpt-5-6-terra",
-                need="implementation",
+                need="difficult implementation",
                 override_reason=None,
             )
 
         claim = self.claim(
             "gpt-5-6-terra",
-            need="implementation",
+            need="difficult implementation",
             override_reason="explicit-model-request",
         )
         stored_claim = next(iter(self.load_state()["claims"].values()))
@@ -308,7 +308,7 @@ class RouteCapabilityTests(unittest.TestCase):
         )
         self.assertEqual(
             claim["plannedCandidates"],
-            ["opus-5", "gpt-5-6-luna", "gemini-3-8-flash"],
+            ["gpt-5-6-sol", "opus-5", "gpt-5-6-luna", "gemini-3-8-flash"],
         )
         self.assertEqual(stored_claim["candidate_override"], claim["candidateOverride"])
 
@@ -320,7 +320,7 @@ class RouteCapabilityTests(unittest.TestCase):
         ):
             self.claim(
                 "opus-5",
-                need="implementation",
+                need="difficult implementation",
                 override_reason="caller-capability-judgment",
             )
 
@@ -399,7 +399,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
         plan = capability.plan_route(self.state, self.task_id, "plan or code review")
 
-        self.assertEqual(plan["selected"], "gpt-5-6-sol")
+        self.assertEqual(plan["selected"], "gpt-6-astra")
         self.assertEqual(
             {blocked["model"] for blocked in plan["blocked"]},
             {"opus-5", "fable-5-1"},
@@ -417,7 +417,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
         plan = capability.plan_route(self.state, self.task_id, "plan or code review")
 
-        self.assertEqual(plan["selected"], "gpt-5-6-sol")
+        self.assertEqual(plan["selected"], "gpt-6-astra")
         self.assertEqual(
             {blocked["reason"] for blocked in plan["blocked"]},
             {"provider:anthropic"},
@@ -467,7 +467,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertIsNone(opened["selected"])
         self.assertEqual(opened["semanticFallback"], "implementer")
         self.assertEqual(state["named_agents"], "available")
-        self.assertEqual(recovered["selected"], "opus-5")
+        self.assertIsNone(recovered["selected"])
         self.assertEqual(recovered["blocked"], [])
 
     def test_explicit_agent_type_available_closes_surface_only(self) -> None:

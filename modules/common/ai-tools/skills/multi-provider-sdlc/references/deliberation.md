@@ -7,7 +7,7 @@ For explicit three-provider council output, begin with:
 
 ```text
 Council status: <complete|degraded|unavailable>
-Seats: Anthropic opus-5=<status>; Google google-opus-4-6=<status>; OpenAI gpt-5-6-sol=<status>
+Seats: Anthropic opus-5=<status>; Google google-opus-4-6=<status>; OpenAI gpt-6-astra=<status>
 ```
 
 Use `complete` for three usable provider packets, `degraded` for two, and
