@@ -96,7 +96,8 @@ in
           smile
         ]
         ++ lib.optionals (cfg.fileManagementEnable && includes "standard") [
-          dupeguru
+          # FIXME: broken nixpkgs
+          # dupeguru
           kdePackages.filelight
           kdePackages.ark
           kdePackages.gwenview

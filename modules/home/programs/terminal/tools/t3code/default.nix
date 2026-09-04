@@ -61,6 +61,11 @@ in
             };
             version = t3codeVersion;
             patches = (old.patches or [ ]) ++ t3codePatches;
+            nativeBuildInputs =
+              (old.nativeBuildInputs or [ ])
+              ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.pkg-config ];
+            buildInputs =
+              (old.buildInputs or [ ]) ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.libsecret ];
             postPatch = ''
               substituteInPlace apps/web/vite.config.ts \
                 --replace-fail 'const host = explicitHost || "localhost";' \
@@ -80,7 +85,7 @@ in
                 pnpm config set fetch-retries 5
                 pnpm config set network-concurrency 8
               '';
-              hash = "sha256-H1wn6RohCREpPISkBhGVci+bR5BreqNPOkICLhtAk+o=";
+              hash = "sha256-mgRMeBpJmiTat38APyE4guNJ+6RiQhenphP7tRcmc+k=";
             };
             postBuild = (old.postBuild or "") + ''
               ${lib.getExe pkgs.nodejs} ${./prune-node-modules.mjs} "$PWD"

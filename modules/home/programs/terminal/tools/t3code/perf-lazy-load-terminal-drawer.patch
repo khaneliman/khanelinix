@@ -85,12 +85,13 @@ index 0d33aec7b..b28801472 100644
        </div>
      </div>
    );
-@@ -1251,39 +1253,43 @@ const PersistentThreadTerminalPanel = memo(function PersistentThreadTerminalPane
+@@ -1251,40 +1253,44 @@ const PersistentThreadTerminalPanel = memo(function PersistentThreadTerminalPane
    if (!project || !cwd) return null;
  
    return (
 -    <ThreadTerminalDrawer
 -      mode="panel"
+-      visible={visible}
 -      threadRef={threadRef}
 -      threadId={threadRef.threadId}
 -      cwd={cwd}
@@ -126,6 +127,7 @@ index 0d33aec7b..b28801472 100644
 +    <Suspense fallback={null}>
 +      <ThreadTerminalDrawer
 +        mode="panel"
++        visible={visible}
 +        threadRef={threadRef}
 +        threadId={threadRef.threadId}
 +        cwd={cwd}
