@@ -14,6 +14,7 @@ in
 {
   config = {
     programs.opencode.settings.permission = {
+      # edit covers edit, write, and patch.
       edit = "ask";
       bash =
         globPermissionAttrs "allow" permissions.readOnlyShellCommands
@@ -23,10 +24,8 @@ in
       glob = "allow";
       grep = "allow";
       webfetch = "ask";
-      write = "ask";
       task = "allow";
       todowrite = "allow";
-      todoread = "allow";
     };
   };
 }
