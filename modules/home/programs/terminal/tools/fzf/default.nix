@@ -34,7 +34,6 @@ in
         "--ansi"
         "--with-nth=1.."
         "--pointer=' '"
-        "--pointer=' '"
         "--header-first"
         "--border=rounded"
       ];
