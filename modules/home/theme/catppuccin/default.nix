@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  options,
   pkgs,
   inputs,
   ...
@@ -175,6 +176,14 @@ in
 
     (mkIf cfg.enable (
       lib.mkMerge [
+        # Hand the selected wallpaper to stylix as nord and tokyonight do.
+        (lib.optionalAttrs (options ? stylix) {
+          stylix.image = lib.khanelinix.theme.wallpaperPath {
+            inherit config pkgs;
+            name = config.khanelinix.theme.wallpaper.primary;
+          };
+        })
+
         {
           home.activation.t3codeTheme = t3codeTheme;
 
