@@ -88,20 +88,19 @@ in
 
         in
         {
+          # The CLI drops artifactReviewPolicy, enableTerminalSandbox,
+          # runningLightSpeed, toolPermission, and verbosity on every save, so
+          # declaring them here only holds until the first write. The sandbox
+          # flag already lives in the editor's config.json.
           model = "Gemini 3.8 Flash (High)";
           historySize = 5000;
           allowNonWorkspaceAccess = true;
           altScreenMode = "always";
           colorScheme = "tokyo night";
-          toolPermission = "request-review";
-          artifactReviewPolicy = "asks-for-review";
           notifications = true;
           showTips = false;
           showFeedbackSurvey = false;
-          enableTerminalSandbox = false;
           enableTelemetry = false;
-          verbosity = "high";
-          runningLightSpeed = "medium";
 
           statusLine = {
             type = "command";
