@@ -22,13 +22,13 @@
     }
     {
       on = [ "<C-k>" ];
-      run = "peek -5";
-      desc = "Peek up 5 units in the preview";
+      run = "seek -5";
+      desc = "Seek up 5 units in the preview";
     }
     {
       on = [ "<C-j>" ];
-      run = "peek 5";
-      desc = "Peek down 5 units in the preview";
+      run = "seek 5";
+      desc = "Seek down 5 units in the preview";
     }
     {
       on = [
