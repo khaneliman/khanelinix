@@ -87,10 +87,11 @@ in
         # Add the entry once the server is packaged, and read the PAT from
         # sops the same way tavily reads TAVILY_API_KEY.
 
-        # FIXME: broken nixpkgs
-        # nixos = {
-        #   command = getExe pkgs.mcp-nixos;
-        # };
+        nixos = {
+          # Native nix eval and the pinned source trees cover routine lookups.
+          enabled = false;
+          command = getExe pkgs.mcp-nixos;
+        };
       };
     };
   };
