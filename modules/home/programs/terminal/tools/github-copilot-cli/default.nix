@@ -54,34 +54,6 @@ in
           enabledFeatureFlags = {
             QUEUED_COMMANDS = true;
           };
-
-          trusted_folders =
-            let
-              documentsPath =
-                if config.xdg.userDirs.enable then
-                  config.xdg.userDirs.documents
-                else
-                  config.home.homeDirectory + lib.optionalString pkgs.stdenv.hostPlatform.isLinux "/Documents";
-              githubRoot =
-                if pkgs.stdenv.hostPlatform.isLinux then
-                  "${documentsPath}/github"
-                else
-                  "${config.home.homeDirectory}/github";
-
-              trustedGithubProjects = [
-                "home-manager"
-                "khanelivim"
-                "nixpkgs"
-                "nixvim"
-                "Austin-Horstman"
-                "neotest-nix"
-                "waybar"
-              ];
-            in
-            [
-              "${config.home.homeDirectory}/khanelinix"
-            ]
-            ++ map (project: "${githubRoot}/${project}") trustedGithubProjects;
         };
 
         inherit (aiTools.githubCopilotCli)
