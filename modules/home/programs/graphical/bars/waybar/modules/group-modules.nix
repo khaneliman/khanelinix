@@ -16,22 +16,6 @@
     ];
   };
 
-  "group/power" = {
-    orientation = "horizontal";
-    drawer = {
-      transition-duration = 500;
-      children-class = "not-power";
-      transition-left-to-right = false;
-    };
-    modules = [
-      "custom/wlogout"
-      # "custom/power"
-      # "custom/quit"
-      # "custom/lock"
-      # "custom/reboot"
-    ];
-  };
-
   "group/control-center" = {
     orientation = "horizontal";
     modules =

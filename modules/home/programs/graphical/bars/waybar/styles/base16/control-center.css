@@ -16,15 +16,10 @@
   color: @base0D;
 }
 
-#custom-updates {
-  color: @base08;
-}
-
 #systemd-failed-units {
   color: @base0E;
 }
 
-#custom-pipewire.muted,
 #pulseaudio.muted {
   background-color: @base0C;
   color: @base0B;
