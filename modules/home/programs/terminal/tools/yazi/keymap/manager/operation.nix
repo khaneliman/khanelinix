@@ -73,6 +73,18 @@ in
         desc = "sudo delete (permanent)";
       }
     ]
+    ++ lib.optionals (lib.hasAttr "duckdb" enabledPlugins) [
+      {
+        on = "<C-h>";
+        run = "plugin duckdb -1";
+        desc = "Scroll data columns left";
+      }
+      {
+        on = "<C-l>";
+        run = "plugin duckdb +1";
+        desc = "Scroll data columns right";
+      }
+    ]
     ++ lib.optional (lib.hasAttr "restore" enabledPlugins) {
       on = "u";
       run = "plugin restore";
