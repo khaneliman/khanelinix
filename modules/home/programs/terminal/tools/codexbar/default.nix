@@ -47,7 +47,9 @@ let
       enabled = true;
     }) (lib.unique enabledProviderIds);
   };
-  configPath = "${config.home.homeDirectory}/.codexbar/config.json";
+  # CodexBar reads $XDG_CONFIG_HOME/codexbar first and only falls back to
+  # ~/.codexbar for legacy installs, so seed the XDG location.
+  configPath = "${config.xdg.configHome}/codexbar/config.json";
 in
 {
   options.khanelinix.programs.terminal.tools.codexbar = {
