@@ -1,43 +1,24 @@
 {
   config,
   lib,
+  options,
 
   ...
 }:
 let
   cfg = config.khanelinix.services.snapper;
 
-  safeStr = types.strMatching "[^\n\"]*" // {
-    description = "string without line breaks or quotes";
-    descriptionClass = "conjunction";
-  };
-
-  inherit (lib) types mkEnableOption mkIf;
+  inherit (lib) mkEnableOption mkIf;
 in
 {
   options.khanelinix.services.snapper = {
     enable = mkEnableOption "snapper";
 
     configs = lib.mkOption {
+      # Reuse the upstream type instead of restating it here.
+      inherit (options.services.snapper.configs) type;
       default = { };
-      description = ''
-        Subvolume configuration. Any option mentioned in man:snapper-configs(5)
-        is valid here, even if NixOS doesn't document it.
-
-        See <https://en.opensuse.org/openSUSE:Snapper_Tutorial>
-      '';
-      type = types.attrsOf (
-        types.submodule {
-          freeformType = types.attrsOf (
-            types.oneOf [
-              (types.listOf safeStr)
-              types.bool
-              safeStr
-              types.number
-            ]
-          );
-        }
-      );
+      description = "Subvolume configuration passed through to services.snapper.configs.";
     };
   };
 
