@@ -164,19 +164,19 @@ in
         };
 
         nix = {
+          # fast-nix-gc replaces the upstream daemons while it is automatic.
+          # Keep the upstream schedule as the fallback so a host that turns
+          # fast-nix-gc off gets the same maintenance from nix-darwin.
           gc = {
-            automatic = lib.mkForce false;
+            automatic = lib.mkForce (!config.services.fast-nix-gc.automatic);
             interval = gcInterval;
             options = "--delete-older-than 7d";
           };
 
           optimise = {
-            automatic = lib.mkForce false;
+            automatic = lib.mkForce (!config.services.fast-nix-optimise.automatic);
             interval = lib.map (entry: entry // { Hour = entry.Hour + 1; }) gcInterval;
           };
-
-          # Run builds with low priority to keep the system responsive.
-          daemonProcessType = "Standard";
 
           settings = {
             allowed-impure-host-deps = [
