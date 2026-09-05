@@ -239,36 +239,32 @@ let
     ${composeAgentInstructions agent.content}
   '';
 
-  renderOpenCodeTools =
+  # opencode deprecated the agent-level tools block in favor of permission
+  # rules, so tool access renders as allow/deny permissions. edit covers
+  # write as well.
+  renderOpenCodeToolPermissions =
     agent:
     let
       allowed = map lib.toLower agent.tools;
       isAllowed = tool: lib.elem tool allowed;
-      coreTools = [
-        "bash"
-        "edit"
-        "write"
-      ];
-      coreToolLines = map (
-        tool: "  ${renderYamlString "OpenCode tool ID" tool}: ${builtins.toJSON (isAllowed tool)}"
-      ) coreTools;
     in
-    lib.concatStringsSep "\n" coreToolLines;
+    {
+      bash = if isAllowed "bash" then "allow" else "deny";
+      edit = if isAllowed "edit" || isAllowed "write" then "allow" else "deny";
+    };
 
   renderOpenCodePermission =
-    permission:
-    if permission == null then
-      ""
-    else
-      let
-        render =
-          key: value:
-          "  ${renderYamlString "OpenCode permission ID" key}: ${renderYamlScalar "OpenCode permission value" value}";
-      in
-      ''
-        permission:
-        ${lib.concatStringsSep "\n" (lib.mapAttrsToList render permission)}
-      '';
+    agent:
+    let
+      permission = renderOpenCodeToolPermissions agent // (agent.permission or { });
+      render =
+        key: value:
+        "  ${renderYamlString "OpenCode permission ID" key}: ${renderYamlScalar "OpenCode permission value" value}";
+    in
+    ''
+      permission:
+      ${lib.concatStringsSep "\n" (lib.mapAttrsToList render permission)}
+    '';
 
   renderOpenCodeFrontmatter =
     agent:
@@ -281,10 +277,7 @@ let
       description: ${renderYamlString "OpenCode agent description" agent.description}
       mode: ${renderYamlString "OpenCode agent mode" mode}
       model: ${renderYamlString "OpenCode model ID" model}
-
-      tools:
-      ${renderOpenCodeTools agent}
-      ${renderOpenCodePermission (agent.permission or null)}
+      ${renderOpenCodePermission agent}
       ---
     '';
 
