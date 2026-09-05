@@ -47,11 +47,15 @@ in
       flake = "${config.home.homeDirectory}/khanelinix";
     };
 
-    launchd.agents.nh-clean.config = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-      StandardErrorPath = nhLogPaths.stderr;
-      StandardOutPath = nhLogPaths.stdout;
-      EnvironmentVariables = {
-        PATH = "/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin:/usr/bin:/bin:/usr/sbin:/sbin";
+    launchd.agents.nh-clean = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+      # Store cleanup does not need the Aqua session.
+      domain = "user";
+      config = {
+        StandardErrorPath = nhLogPaths.stderr;
+        StandardOutPath = nhLogPaths.stdout;
+        EnvironmentVariables = {
+          PATH = "/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin:/usr/bin:/bin:/usr/sbin:/sbin";
+        };
       };
     };
 
