@@ -100,6 +100,8 @@ in
           lfs = enabled;
           signing = {
             backend = "ssh";
+            # jj defaults to "keep", which only preserves existing signatures.
+            behavior = if cfg.signByDefault then "own" else "keep";
             key = cfg.signingKey;
           };
           push = {
