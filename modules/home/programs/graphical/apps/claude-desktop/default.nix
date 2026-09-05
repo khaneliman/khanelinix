@@ -34,6 +34,7 @@ let
         coworkHipaaRestricted = cfg.hipaaRestricted;
         inherit (cfg) coworkScheduledTasksEnabled;
         coworkWebSearchEnabled = cfg.webSearchEnabled;
+        dispatchCodeTasksPermissionMode = cfg.codeTasksPermissionMode;
         inherit (cfg) sidebarMode;
       };
     }
@@ -114,6 +115,19 @@ in
       type = types.bool;
       default = false;
       description = "Whether Claude Desktop uses Cowork HIPAA restrictions.";
+    };
+    codeTasksPermissionMode = mkOption {
+      type = types.enum [
+        "default"
+        "acceptEdits"
+        "bypassPermissions"
+      ];
+      default = "default";
+      description = ''
+        Permission mode for Claude Code tasks dispatched from the desktop app.
+        Left unmanaged, the app persisted bypassPermissions, which sidesteps
+        the permission catalog every other tool follows.
+      '';
     };
   };
 
