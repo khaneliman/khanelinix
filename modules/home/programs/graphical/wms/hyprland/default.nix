@@ -122,7 +122,9 @@ in
           // lib.optionalAttrs (osConfig.khanelinix.hardware.gpu.nvidia.enable or false) {
             __GL_VRR_ALLOWED = "0";
           }
-          // mkIf cfg.enableDebug {
+          # optionalAttrs, not mkIf: a mkIf merged with `//` would make the
+          # whole attrset conditional and drop every variable when debug is off.
+          // lib.optionalAttrs cfg.enableDebug {
             AQ_TRACE = "1";
             HYPRLAND_TRACE = "1";
           }
