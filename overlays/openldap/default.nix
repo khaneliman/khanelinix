@@ -1,5 +1,5 @@
 _: _final: prev: {
-  # https://github.com/NixOS/nixpkgs/issues/513245
+  # https://github.com/NixOS/nixpkgs/issues/426717 (closed, not planned)
   openldap = prev.openldap.overrideAttrs {
     doCheck = !prev.stdenv.hostPlatform.isi686;
   };
