@@ -51,31 +51,35 @@ in
       atuin-sync = "atuin sync";
     };
 
-    launchd.agents.atuin-daemon.config = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-      ProgramArguments = [
-        "/bin/sh"
-        "-c"
-        ''
-          /bin/wait4path /nix/store || exit 1
-          ${lib.optionalString syncWithSops ''
-            # launchd has no agent ordering; wait for the sops key so atuin
-            # won't generate a fresh one and break sync (Linux uses systemd).
-            for _ in $(seq 1 60); do
-              [ -f '${atuinKeyPath}' ] && break
-              sleep 1
-            done
-          ''}
-          # macOS can leave the socket behind across reboots if the daemon is
-          # terminated before its shutdown handler runs.
-          if [ -S '${atuinSocketPath}' ] && ! /usr/sbin/lsof '${atuinSocketPath}' >/dev/null 2>&1; then
-            rm -f '${atuinSocketPath}'
-          fi
+    launchd.agents.atuin-daemon = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+      # A background daemon does not need the Aqua session.
+      domain = "user";
+      config = {
+        ProgramArguments = [
+          "/bin/sh"
+          "-c"
+          ''
+            /bin/wait4path /nix/store || exit 1
+            ${lib.optionalString syncWithSops ''
+              # launchd has no agent ordering; wait for the sops key so atuin
+              # won't generate a fresh one and break sync (Linux uses systemd).
+              for _ in $(seq 1 60); do
+                [ -f '${atuinKeyPath}' ] && break
+                sleep 1
+              done
+            ''}
+            # macOS can leave the socket behind across reboots if the daemon is
+            # terminated before its shutdown handler runs.
+            if [ -S '${atuinSocketPath}' ] && ! /usr/sbin/lsof '${atuinSocketPath}' >/dev/null 2>&1; then
+              rm -f '${atuinSocketPath}'
+            fi
 
-          exec ${lib.getExe pkgs.atuin} daemon start
-        ''
-      ];
-      StandardErrorPath = atuinLogPaths.stderr;
-      StandardOutPath = atuinLogPaths.stdout;
+            exec ${lib.getExe pkgs.atuin} daemon start
+          ''
+        ];
+        StandardErrorPath = atuinLogPaths.stderr;
+        StandardOutPath = atuinLogPaths.stdout;
+      };
     };
 
     # Order after the sops-nix oneshot so the key exists before atuin starts.
