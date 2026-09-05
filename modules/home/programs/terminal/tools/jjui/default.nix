@@ -23,7 +23,7 @@ in
       settings = {
         limit = 0;
 
-        custom_commands = import ./custom-commands.nix;
+        inherit (import ./custom-commands.nix) actions bindings;
 
         preview = {
           show_at_start = true;
