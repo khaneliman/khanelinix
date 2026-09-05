@@ -1,0 +1,89 @@
+diff --git a/apps/server/src/provider/Layers/CodexSessionRuntime.test.ts b/apps/server/src/provider/Layers/CodexSessionRuntime.test.ts
+index 6a9a0c9f..f7b32a11 100644
+--- a/apps/server/src/provider/Layers/CodexSessionRuntime.test.ts
++++ b/apps/server/src/provider/Layers/CodexSessionRuntime.test.ts
+@@ -21,6 +21,7 @@ import {
+   hasConfiguredMcpServer,
+   isRecoverableThreadResumeError,
+   makeMemoryConsolidationNotificationFilter,
+   openCodexThread,
++  readThreadSpawnSource,
+   toMcpElicitationResponse,
+ } from "./CodexSessionRuntime.ts";
+ const isCodexAppServerRequestError = Schema.is(CodexErrors.CodexAppServerRequestError);
+ 
++describe("readThreadSpawnSource", () => {
++  it("preserves top-level child role metadata when the source shape is not nested", () => {
++    NodeAssert.deepStrictEqual(
++      readThreadSpawnSource({
++        source: "appServer",
++        agentNickname: "reviewer",
++        agentRole: "reviewer",
++        parentThreadId: "parent-thread",
++      }),
++      {
++        nickname: "reviewer",
++        role: "reviewer",
++        agentPath: undefined,
++        depth: undefined,
++        parentThreadId: "parent-thread",
++      },
++    );
++  });
++});
++
+ describe("CodexSessionRuntimeIdentifierGenerationError", () => {
+   it("retains identifier purpose and the random source failure", () => {
+     const cause = new Error("random source unavailable");
+diff --git a/apps/server/src/provider/Layers/CodexSessionRuntime.ts b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
+index 1d6f9c33..8a6d2f1e 100644
+--- a/apps/server/src/provider/Layers/CodexSessionRuntime.ts
++++ b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
+@@ -945,7 +966,12 @@ function nonEmptyMetadataValue(value: unknown): string | undefined {
+   return trimmed.length > 0 ? trimmed : undefined;
+ }
+ 
+-function readThreadSpawnSource(thread: { readonly source: unknown }):
++export function readThreadSpawnSource(thread: {
++  readonly source: unknown;
++  readonly agentNickname?: unknown;
++  readonly agentRole?: unknown;
++  readonly parentThreadId?: unknown;
++}):
+   | {
+       nickname: string | undefined;
+       role: string | undefined;
+@@ -954,15 +980,29 @@ function readThreadSpawnSource(thread: { readonly source: unknown }):
+       parentThreadId: string | undefined;
+     }
+   | undefined {
++  const topLevelIdentity = {
++    nickname: typeof thread.agentNickname === "string" ? thread.agentNickname : undefined,
++    role: typeof thread.agentRole === "string" ? thread.agentRole : undefined,
++    agentPath: undefined,
++    depth: undefined,
++    parentThreadId:
++      typeof thread.parentThreadId === "string" ? thread.parentThreadId : undefined,
++  };
++  const hasTopLevelIdentity =
++    topLevelIdentity.nickname !== undefined || topLevelIdentity.role !== undefined;
+   const source = thread.source;
++  // Some app-server thread responses expose child identity on the Thread
++  // itself even when the source variant is not the nested thread_spawn shape.
++  // Keep that identity available to the Agents surface instead of rejecting
++  // the child and letting the adapter synthesize "general-purpose".
+   if (typeof source !== "object" || source === null || !("subAgent" in source)) {
+-    return undefined;
++    return hasTopLevelIdentity ? topLevelIdentity : undefined;
+   }
+   const subAgent = (source as { subAgent: unknown }).subAgent;
+   if (typeof subAgent !== "object" || subAgent === null || !("thread_spawn" in subAgent)) {
+-    return undefined;
++    return hasTopLevelIdentity ? topLevelIdentity : undefined;
+   }
+   const spawn = (subAgent as { thread_spawn: unknown }).thread_spawn;
+   if (typeof spawn !== "object" || spawn === null) {
+-    return undefined;
++    return hasTopLevelIdentity ? topLevelIdentity : undefined;
+   }
+   const record = spawn as Record<string, unknown>;
