@@ -10,7 +10,7 @@
       hooks = [
         {
           type = "command";
-          command = "${lib.getExe pkgs.python3} ${aiTools.skillRouting.hook} claude user-prompt";
+          command = "${lib.getExe pkgs.python3} -P ${aiTools.skillRouting.hook} claude user-prompt";
           timeout = 5;
         }
       ];
@@ -23,7 +23,7 @@
       hooks = [
         {
           type = "command";
-          command = "${lib.getExe pkgs.python3} ${aiTools.skillRouting.hook} claude prompt-expansion";
+          command = "${lib.getExe pkgs.python3} -P ${aiTools.skillRouting.hook} claude prompt-expansion";
           timeout = 5;
         }
       ];
@@ -36,7 +36,7 @@
       hooks = [
         {
           type = "command";
-          command = "${lib.getExe pkgs.python3} ${aiTools.skillRouting.hook} claude pre-tool";
+          command = "${lib.getExe pkgs.python3} -P ${aiTools.skillRouting.hook} claude pre-tool";
           timeout = 5;
         }
       ];
@@ -49,7 +49,7 @@
       hooks = [
         {
           type = "command";
-          command = "${lib.getExe pkgs.python3} ${aiTools.skillRouting.hook} claude post-tool";
+          command = "${lib.getExe pkgs.python3} -P ${aiTools.skillRouting.hook} claude post-tool";
           timeout = 5;
         }
       ];
@@ -61,7 +61,7 @@
       hooks = [
         {
           type = "command";
-          command = "${lib.getExe pkgs.python3} ${aiTools.skillRouting.hook} claude post-compact";
+          command = "${lib.getExe pkgs.python3} -P ${aiTools.skillRouting.hook} claude post-compact";
           timeout = 5;
         }
       ];
@@ -73,7 +73,7 @@
       hooks = [
         {
           type = "command";
-          command = "${lib.getExe pkgs.python3} ${aiTools.skillRouting.hook} claude session-end";
+          command = "${lib.getExe pkgs.python3} -P ${aiTools.skillRouting.hook} claude session-end";
           timeout = 5;
         }
       ];
