@@ -63,6 +63,11 @@ npx skills add khaneliman/khanelinix \
   --skill develop-web-game frontend-design typescript-best-practices \
   --global --copy --yes
 
+# game-development: game runtimes and Blender asset authoring
+npx skills add khaneliman/khanelinix \
+  --skill bevy-toolkit blender-toolkit develop-web-game \
+  --global --copy --yes
+
 # writing: technical prose quality and AI-pattern removal
 npx skills add khaneliman/khanelinix \
   --skill technical-writing unslop --global --copy --yes

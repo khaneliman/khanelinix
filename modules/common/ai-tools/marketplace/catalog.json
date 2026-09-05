@@ -311,6 +311,10 @@
 			"description": "AI-tool authoring: skills, MCP servers, and configuration.",
 			"plugins": ["ai-tools-architect", "mcp-builder", "skill-creator"]
 		},
+		"game-development": {
+			"description": "Native and browser game development plus Blender asset authoring.",
+			"plugins": ["bevy-toolkit", "blender-toolkit", "develop-web-game"]
+		},
 		"nix": {
 			"description": "Nix operations and expression authoring.",
 			"plugins": ["nix-toolkit", "writing-nix"]
