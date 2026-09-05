@@ -8,7 +8,6 @@
 let
   inherit (lib) types mkIf;
   inherit (lib.strings) concatStringsSep;
-  inherit (lib.modules) mkBefore;
   inherit (lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.services.tailscale;
@@ -18,7 +17,9 @@ in
     enable = lib.mkEnableOption "Tailscale";
     autoconnect = {
       enable = lib.mkEnableOption "automatic connection to Tailscale";
-      key = mkOpt str "" "The authentication key to use";
+      keyFile =
+        mkOpt (nullOr path) null
+          "File holding the auth key, read at runtime so it stays out of the store.";
     };
     acceptRoutes = lib.mkEnableOption "routes advertised by other Tailscale nodes";
     advertiseExitNode = lib.mkEnableOption "this host as a Tailscale exit node";
@@ -29,18 +30,10 @@ in
   config = mkIf cfg.enable {
     assertions = [
       {
-        assertion = cfg.autoconnect.enable -> cfg.autoconnect.key != "";
-        message = "khanelinix.services.tailscale.autoconnect.key must be set";
+        assertion = cfg.autoconnect.enable -> cfg.autoconnect.keyFile != null;
+        message = "khanelinix.services.tailscale.autoconnect.keyFile must be set";
       }
     ];
-
-    boot.kernel.sysctl = {
-      # Enable IP forwarding
-      # required for Wireguard & Tailscale/Headscale subnet feature
-      # See <https://tailscale.com/kb/1019/subnets/?tab=linux#step-1-install-the-tailscale-client>
-      "net.ipv4.ip_forward" = true;
-      "net.ipv6.conf.all.forwarding" = true;
-    };
 
     environment.systemPackages = with pkgs; [
       tailscale
@@ -48,7 +41,6 @@ in
 
     networking = {
       firewall = {
-        allowedUDPPorts = [ config.services.tailscale.port ];
         allowedTCPPorts = [ 5900 ];
         trustedInterfaces = [ config.services.tailscale.interfaceName ];
         # Strict reverse path filtering breaks Tailscale exit node use and some subnet routing setups.
@@ -62,8 +54,16 @@ in
       # Tailscale documentation
       # See: https://tailscale.com/kb/
       enable = true;
+      # Upstream does not send usage or logs to Tailscale with this set.
+      disableUpstreamLogging = true;
+      openFirewall = true;
       permitCertUid = "root";
+      # "both" also enables the IPv4 and IPv6 forwarding sysctls that subnet
+      # routing and exit nodes need.
       useRoutingFeatures = "both";
+      # Read at runtime by upstream's tailscaled-autoconnect unit, which polls
+      # BackendState instead of sleeping.
+      authKeyFile = lib.mkIf cfg.autoconnect.enable cfg.autoconnect.keyFile;
       extraSetFlags = [
         "--operator=${config.khanelinix.user.name}"
         "--accept-routes=${lib.boolToString cfg.acceptRoutes}"
@@ -75,43 +75,6 @@ in
       ];
     };
 
-    systemd = {
-      network.wait-online.ignoredInterfaces = [ "${config.services.tailscale.interfaceName}" ];
-
-      services = {
-        tailscaled.serviceConfig.Environment = mkBefore [ "TS_NO_LOGS_NO_SUPPORT=true" ];
-
-        tailscale-autoconnect = mkIf cfg.autoconnect.enable {
-          description = "Automatic connection to Tailscale";
-
-          # Make sure tailscale is running before trying to connect to tailscale
-          after = [
-            "network-pre.target"
-            "tailscale.service"
-          ];
-          wants = [
-            "network-pre.target"
-            "tailscale.service"
-          ];
-          wantedBy = [ "multi-user.target" ];
-
-          serviceConfig.Type = "oneshot";
-
-          script = with pkgs; /* bash */ ''
-            # Wait for tailscaled to settle
-            sleep 2
-
-            # Check if we are already authenticated to tailscale
-            status="$(${getExe tailscale} status -json | ${getExe jq} -r .BackendState)"
-            if [ $status = "Running" ]; then # if so, then do nothing
-              exit 0
-            fi
-
-            # Otherwise authenticate with tailscale
-            ${getExe tailscale} up -authkey "${cfg.autoconnect.key}"
-          '';
-        };
-      };
-    };
+    systemd.network.wait-online.ignoredInterfaces = [ config.services.tailscale.interfaceName ];
   };
 }
