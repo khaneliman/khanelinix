@@ -1,179 +1,76 @@
+# jjui 0.10 replaced [custom_commands] with [[actions]] and [[bindings]].
+# Builtin actions cover most former commands; the rest run through Lua.
+let
+  leader = "\\";
+  seq = keys: [ leader ] ++ keys;
+  luaAction = name: lua: { inherit name lua; };
+  jjAsync = name: args: luaAction name "jjui.jj_async(${args})";
+  revsetAction = name: revset: luaAction name "jjui.revset.set(${builtins.toJSON revset})";
+  bind = action: keys: desc: {
+    inherit action desc;
+    scope = "revisions";
+    seq = seq keys;
+  };
+in
 {
-  "show all commits" = {
-    key_sequence = [
-      "\\"
-      "a"
-    ];
-    revset = "all()";
-  };
-  "show default view" = {
-    key_sequence = [
-      "\\"
-      "v"
-    ];
-    revset = "";
-  };
-  "edit immutable" = {
-    key_sequence = [
-      "\\"
-      "e"
-    ];
-    args = [
-      "edit"
-      "--ignore-immutable"
-      "-r"
-      "$change_id"
-    ];
-  };
-  "squash immutable" = {
-    key_sequence = [
-      "\\"
-      "S"
-    ];
-    args = [
-      "squash"
-      "--ignore-immutable"
-      "-r"
-      "$change_id"
-    ];
-  };
-  "split immutable" = {
-    key_sequence = [
-      "\\"
-      "s"
-    ];
-    args = [
-      "split"
-      "--ignore-immutable"
-      "-r"
-      "$change_id"
-    ];
-  };
-  "show diff" = {
-    key_sequence = [
-      "\\"
-      "d"
-    ];
-    args = [
-      "diff"
-      "-r"
-      "$change_id"
-      "--color"
-      "always"
-    ];
-    show = "diff";
-  };
-  "show oplog diff" = {
-    key_sequence = [
-      "\\"
-      "o"
-    ];
-    args = [
-      "op"
-      "show"
-      "$operation_id"
-      "--color"
-      "always"
-    ];
-    show = "diff";
-  };
-  "resolve vscode" = {
-    key_sequence = [
-      "\\"
-      "r"
-    ];
-    args = [
-      "resolve"
-      "--tool"
-      "vscode"
-    ];
-    show = "interactive";
-  };
-  "new main" = {
-    key_sequence = [
-      "\\"
-      "n"
-      "m"
-    ];
-    args = [
-      "new"
-      "main"
-    ];
-  };
-  "tug" = {
-    key_sequence = [
-      "\\"
-      "t"
-    ];
-    args = [
-      "bookmark"
-      "move"
-      "--from"
-      "closest_bookmark($change_id)"
-      "--to"
-      "closest_pushable($change_id)"
-    ];
-  };
-  "show after revisions" = {
-    key_sequence = [
-      "\\"
-      "a"
-      "f"
-    ];
-    revset = "::$change_id";
-  };
-  "move commit down" = {
-    key_sequence = [
-      "\\"
-      "m"
-      "d"
-    ];
-    args = [
-      "rebase"
-      "-r"
-      "$change_id"
-      "--insert-before"
-      "$change_id-"
-    ];
-  };
-  "move commit up" = {
-    key_sequence = [
-      "\\"
-      "m"
-      "u"
-    ];
-    args = [
-      "rebase"
-      "-r"
-      "$change_id"
-      "--insert-after"
-      "$change_id+"
-    ];
-  };
-  "toggle parent" = {
-    key_sequence = [
-      "\\"
-      "p"
-    ];
-    args = [
-      "rebase"
-      "-r"
-      "@"
-      "-d"
-      "all:(parents(@) | $change_id) ~ (parents(@) & $change_id)"
-    ];
-  };
-  "new note commit" = {
-    key_sequence = [
-      "\\"
-      "n"
-      "n"
-    ];
-    args = [
-      "new"
-      "--no-edit"
-      "-A"
-      "$change_id"
-    ];
-  };
+  actions = [
+    (revsetAction "custom.show_all" "all()")
+    (luaAction "custom.show_ancestors" ''
+      jjui.revset.set("::" .. jjui.context.change_id())
+    '')
+    (jjAsync "custom.squash_immutable" ''
+      "squash", "--ignore-immutable", "-r", jjui.context.change_id()
+    '')
+    (jjAsync "custom.split_immutable" ''
+      "split", "--ignore-immutable", "-r", jjui.context.change_id()
+    '')
+    (luaAction "custom.resolve_vscode" ''
+      jjui.jj_interactive("resolve", "--tool", "vscode")
+    '')
+    (jjAsync "custom.new_main" ''"new", "main"'')
+    (jjAsync "custom.tug" ''
+      "bookmark", "move",
+      "--from", "closest_bookmark(" .. jjui.context.change_id() .. ")",
+      "--to", "closest_pushable(" .. jjui.context.change_id() .. ")"
+    '')
+    (jjAsync "custom.move_down" ''
+      "rebase", "-r", jjui.context.change_id(),
+      "--insert-before", jjui.context.change_id() .. "-"
+    '')
+    (jjAsync "custom.move_up" ''
+      "rebase", "-r", jjui.context.change_id(),
+      "--insert-after", jjui.context.change_id() .. "+"
+    '')
+    (jjAsync "custom.toggle_parent" ''
+      "rebase", "-r", "@", "-d",
+      "all:(parents(@) | " .. jjui.context.change_id() .. ") ~ (parents(@) & " .. jjui.context.change_id() .. ")"
+    '')
+    (jjAsync "custom.new_note_commit" ''
+      "new", "--no-edit", "-A", jjui.context.change_id()
+    '')
+  ];
+
+  bindings = [
+    (bind "custom.show_all" [ "a" ] "show all commits")
+    (bind "revset.reset" [ "v" ] "show default view")
+    # Formerly \ a f, which shadowed \ a as a sequence prefix.
+    (bind "custom.show_ancestors" [ "A" ] "show ancestors")
+    (bind "revisions.force_edit" [ "e" ] "edit immutable")
+    (bind "custom.squash_immutable" [ "S" ] "squash immutable")
+    (bind "custom.split_immutable" [ "s" ] "split immutable")
+    (bind "revisions.diff" [ "d" ] "show diff")
+    (bind "custom.resolve_vscode" [ "r" ] "resolve in vscode")
+    (bind "custom.new_main" [ "n" "m" ] "new on main")
+    (bind "custom.tug" [ "t" ] "tug bookmark")
+    (bind "custom.move_down" [ "m" "d" ] "move commit down")
+    (bind "custom.move_up" [ "m" "u" ] "move commit up")
+    (bind "custom.toggle_parent" [ "p" ] "toggle parent")
+    (bind "custom.new_note_commit" [ "n" "n" ] "new note commit")
+    {
+      action = "oplog.diff";
+      desc = "show oplog diff";
+      scope = "oplog";
+      seq = seq [ "o" ];
+    }
+  ];
 }
