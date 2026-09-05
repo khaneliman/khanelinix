@@ -40,7 +40,7 @@
     }
     {
       on = [ "G" ];
-      run = "arrow bottom";
+      run = "arrow bot";
       desc = "Move cursor to the bottom";
     }
     {
