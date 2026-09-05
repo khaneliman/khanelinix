@@ -237,6 +237,8 @@ in
 
       launchd.agents.t3code-remote = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
         enable = true;
+        # Headless bridge; the user domain starts without a graphical login.
+        domain = "user";
         config = {
           ProgramArguments = [ (lib.getExe remoteCommand) ];
           RunAtLoad = true;
