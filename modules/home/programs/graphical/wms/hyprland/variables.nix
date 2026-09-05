@@ -173,6 +173,7 @@ in
           };
 
           general = {
+            allow_tearing = true;
             border_size = 2;
             "col.active_border" = lib.mkDefault "rgba(7793D1FF)";
             "col.inactive_border" = lib.mkDefault "rgb(5e6798)";
