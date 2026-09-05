@@ -77,7 +77,7 @@ in
       "class<code>" = "󰨞";
       "class<dev.limux.linux>" = "";
       "class<t3code>" = "󰅩";
-      "class<com.obsproject.Studio" = "󱜠";
+      "class<com.obsproject.Studio>" = "󱜠";
       "class<com.usebottles.bottles>" = "󰡔";
       "class<discord>" = "󰙯";
       "class<vesktop>" = "󰙯";
@@ -87,7 +87,7 @@ in
       "class<firefox.*> title<.*twitch|youtube|plex|tntdrama|bally sports.*>" = "";
       "class<firefox.*>" = "";
       "class<foot>" = "";
-      "class<fr.handbrake.ghb" = "󱁆";
+      "class<fr.handbrake.ghb>" = "󱁆";
       "class<heroic>" = "󱢾";
       "class<info.cemu.Cemu>" = "󰜭";
       "class<io.github.celluloid_player.Celluloid>" = "";
