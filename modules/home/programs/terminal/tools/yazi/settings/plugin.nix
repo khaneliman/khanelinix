@@ -11,37 +11,37 @@ in
       lib.optionals (lib.hasAttr "git" enabledPlugins) [
         {
           group = "git";
-          url = "*";
+          url = "local://*";
           run = "git";
         }
         {
           group = "git";
-          url = "*/";
+          url = "local://*/";
           run = "git";
         }
       ]
       ++ lib.optional (lib.hasAttr "mime-ext" enabledPlugins) {
         group = "mime";
-        url = "*";
+        url = "local://*";
         run = "mime-ext";
         prio = "high";
       };
 
     prepend_preloaders = [
       {
-        url = "/mnt/austinserver/**";
+        url = "local:///mnt/austinserver/**";
         run = "noop";
       }
       {
-        url = "/Volumes/austinserver/**";
+        url = "local:///Volumes/austinserver/**";
         run = "noop";
       }
       {
-        url = "/mnt/disk/**";
+        url = "local:///mnt/disk/**";
         run = "noop";
       }
       {
-        url = "/mnt/dropbox/**";
+        url = "local:///mnt/dropbox/**";
         run = "noop";
       }
     ];
@@ -49,23 +49,23 @@ in
     prepend_previewers =
       lib.optionals (lib.hasAttr "piper" enabledPlugins) [
         {
-          url = "*.parquet";
+          url = "local://*.parquet";
           run = ''piper -- duckdb -c "SELECT * FROM read_parquet('$1') LIMIT 50"'';
         }
         {
-          url = "*.xlsx";
+          url = "local://*.xlsx";
           run = ''piper -- xlsx2csv "$1" | bat -p --color=always --file-name "$1.csv"'';
         }
         {
-          url = "*.json";
+          url = "local://*.json";
           run = ''piper -- bat -p --color=always "$1"'';
         }
         {
-          url = "*.sqlite";
+          url = "local://*.sqlite";
           run = ''piper -- duckdb -c "SELECT * FROM sqlite_scan('$1') LIMIT 50"'';
         }
         {
-          url = "*.db";
+          url = "local://*.db";
           run = ''piper -- duckdb -c "SELECT * FROM sqlite_scan('$1') LIMIT 50"'';
         }
       ]
@@ -87,24 +87,25 @@ in
         in
         map (mime: {
           inherit mime;
+          url = "local://*";
           run = "ouch";
         }) mimeTypes
       )
       ++ lib.optionals (lib.hasAttr "piper" enabledPlugins) [
         {
-          url = "*.tar*";
+          url = "local://*.tar*";
           run = ''piper --format=url -- tar tf "$1"'';
         }
         {
-          url = "*.csv";
+          url = "local://*.csv";
           run = ''piper -- bat -p --color=always "$1"'';
         }
         {
-          url = "*.md";
+          url = "local://*.md";
           run = ''piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"'';
         }
         {
-          url = "*/";
+          url = "local://*/";
           run = ''piper -- eza -TL=3 --color=always --icons=always --group-directories-first --no-quotes "$1"'';
         }
       ];

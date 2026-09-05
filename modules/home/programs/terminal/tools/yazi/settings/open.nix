@@ -39,16 +39,7 @@
       archiveRules = map generateArchiveRule archiveExtensions;
     in
     {
-      prepend_rules = archiveRules ++ [
-        {
-          url = "*/";
-          use = [
-            "edit"
-            "open"
-            "reveal"
-          ];
-        }
-      ];
+      prepend_rules = archiveRules;
 
       append_rules = [
         {
