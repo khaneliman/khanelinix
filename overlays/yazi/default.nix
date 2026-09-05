@@ -1,15 +1,4 @@
-{ inputs }:
-_final: prev:
-let
-  pkgsMaster = import inputs.nixpkgs-master {
-    inherit (prev.stdenv.hostPlatform) system;
-    inherit (prev) config;
-  };
-in
-{
-  # Use master only until the primary package set carries this release.
-  yazi = if prev.lib.versionAtLeast prev.yazi.version "26.8.15" then prev.yazi else pkgsMaster.yazi;
-
+_: _final: prev: {
   yaziPlugins = prev.yaziPlugins // {
     duckdb = prev.yaziPlugins.duckdb.overrideAttrs (old: {
       patches = (old.patches or [ ]) ++ [ ./duckdb-compat.patch ];
