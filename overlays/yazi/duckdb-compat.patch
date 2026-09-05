@@ -1,0 +1,46 @@
+--- a/main.lua
++++ b/main.lua
+@@ -57 +57 @@
+-	local url_string = "'" .. tostring(target) .. "'"
++	local url_string = "'" .. tostring(target):gsub("'", "''") .. "'"
+@@ -140 +140 @@
+-	ya.emit("seek", { "lateral scroll" })
++	ya.emit("seek", { 0 })
+@@ -426 +426 @@
+-		"select %scolumns(c -> list_contains(getvariable('included_columns'), c)) from %s limit %d offset %d;",
++		"select %scolumns(lambda c: list_contains(getvariable('included_columns'), c)) from %s limit %d offset %d;",
+@@ -675,2 +675,2 @@
+-	ya.dbg("stdout: " .. tostring(output.stdout))
+-	ya.dbg("stderr: " .. tostring(output.stderr))
++	ya.dbg("stdout: " .. tostring(output and output.stdout))
++	ya.dbg("stderr: " .. tostring(output and output.stderr))
+@@ -698,0 +699,3 @@
++	if mode == "summarized" and get_opts("mode") == "summarized" then
++		ya.emit("peek", { only_if = job.file.url, force = true })
++	end
+@@ -761,2 +764,2 @@
+-	ya.dbg("stdout: " .. tostring(output.stdout))
+-	ya.dbg("stderr: " .. tostring(output.stderr))
++	ya.dbg("stdout: " .. tostring(output and output.stdout))
++	ya.dbg("stderr: " .. tostring(output and output.stderr))
+@@ -768 +771 @@
+-		elseif is_on_list("bad_cache", args.cache_str) then
++		else
+@@ -771,10 +773,0 @@
+-	end
+-
+-	if args.target == args.file_url and args.mode == "summarized" and not args.use_cache then
+-		render_output(output, job)
+-		while not is_on_list("completed", args.cache_str) do
+-			ya.sleep(0.2)
+-		end
+-		clear_list("completed")
+-		set_opts("re_peek", true)
+-		return require("duckdb"):peek(job)
+@@ -800,3 +793,3 @@
+-		ya.emit("peek", { OFFSET_BASE, only_if = job.file.url })
+-	else
+-		ya.emit("peek", { new_skip + OFFSET_BASE, only_if = job.file.url })
++		ya.emit("peek", { OFFSET_BASE, only_if = job.file.url, force = true })
++	else
++		ya.emit("peek", { new_skip + OFFSET_BASE, only_if = job.file.url, force = true })

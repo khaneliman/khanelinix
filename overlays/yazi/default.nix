@@ -11,6 +11,10 @@ in
   yazi = if prev.lib.versionAtLeast prev.yazi.version "26.8.15" then prev.yazi else pkgsMaster.yazi;
 
   yaziPlugins = prev.yaziPlugins // {
+    duckdb = prev.yaziPlugins.duckdb.overrideAttrs (old: {
+      patches = (old.patches or [ ]) ++ [ ./duckdb-compat.patch ];
+    });
+
     yatline = prev.yaziPlugins.yatline.overrideAttrs (old: {
       postPatch = (old.postPatch or "") + ''
         substituteInPlace main.lua \
