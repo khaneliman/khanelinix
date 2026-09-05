@@ -34,6 +34,9 @@ in
       # which the desktop app shares with the CLI.
       programs.codexDesktopLinux = lib.optionalAttrs isLinux {
         enable = true;
+        # Bake the patched CLI into the launcher and its desktop entry so
+        # graphical starts use it without relying on a session variable.
+        cliPackage = codexPackage;
         linuxFeatures = [
           "appshots"
           "node-repl-reaper"
@@ -62,14 +65,14 @@ in
         usePointerCursors = false;
       };
 
-      # Keep GPU compositing enabled on native Wayland. The Linux launcher
-      # otherwise adds --disable-gpu-compositing as a compatibility fallback.
       home.sessionVariables = lib.mkMerge [
-        # The upstream module no longer owns CODEX_CLI_PATH. Keep the desktop
-        # app on the same patched CLI as the terminal integration.
+        # The launcher posts a daily anonymous launch count; keep telemetry
+        # off here as for every other tool.
         (mkIf isLinux {
-          CODEX_CLI_PATH = lib.getExe codexPackage;
+          CODEX_LINUX_DISABLE_USAGE_REPORTING = "1";
         })
+        # Keep GPU compositing enabled on native Wayland. The Linux launcher
+        # otherwise adds --disable-gpu-compositing as a compatibility fallback.
         (mkIf waylandSupport {
           CODEX_LINUX_RENDERING_MODE = "wayland-gpu";
         })
