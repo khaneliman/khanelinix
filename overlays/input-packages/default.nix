@@ -20,15 +20,6 @@ let
     else
       package;
 
-  # TODO: remove after NixOS/nixpkgs#540742 hits the channel
-  patoolFile = prev.file.overrideAttrs (old: {
-    postPatch = (old.postPatch or "") + ''
-      substituteInPlace src/landlock.c --replace-fail \
-        "LANDLOCK_ACCESS_FS_READ_FILE | LANDLOCK_ACCESS_FS_READ_DIR" \
-        "LANDLOCK_ACCESS_FS_READ_FILE | LANDLOCK_ACCESS_FS_READ_DIR | LANDLOCK_ACCESS_FS_EXECUTE"
-    '';
-  });
-
 in
 {
   #          ╭──────────────────────────────────────────────────────────╮
@@ -109,21 +100,4 @@ in
   # TODO: remove after the ld64 hardening workaround reaches unar.
   unar = useLldOnDarwin prev.unar;
 
-  #          ╭──────────────────────────────────────────────────────────╮
-  #          │                 Python package overrides                 │
-  #          ╰──────────────────────────────────────────────────────────╯
-  # Keep packageOverrides empty unless we need explicit Python package overrides.
-  python3 = prev.python3.override {
-    packageOverrides = _pyFinal: pyPrev: {
-      # TODO: remove after NixOS/nixpkgs#539806 hits the channel
-      click-threading = pyPrev.click-threading.overridePythonAttrs (_old: {
-        preCheck = ''
-          rm -rf docs
-        '';
-      });
-
-      patool = pyPrev.patool.override { file = patoolFile; };
-    };
-  };
-  python3Packages = final.python3.pkgs;
 }
