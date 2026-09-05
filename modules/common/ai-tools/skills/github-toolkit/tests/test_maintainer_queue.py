@@ -183,6 +183,18 @@ class PullRequestReviewContract(unittest.TestCase):
         ):
             self.assertIn(requirement, self.text)
 
+    def test_suggestion_blocks_are_minimal_and_preflighted(self) -> None:
+        for requirement in (
+            "smallest contiguous diff range",
+            "does not authorize replacing a surrounding",
+            "do not duplicate unchanged context",
+            "compare the selected lines with the proposed replacement",
+            "every selected line is intentionally replaced",
+            "coordinated edits that cannot be expressed in the same minimal range",
+            "in prose. do not expand a suggestion block",
+        ):
+            self.assertIn(requirement, self.text)
+
 
 if __name__ == "__main__":
     unittest.main()

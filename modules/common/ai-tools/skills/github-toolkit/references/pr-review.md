@@ -172,7 +172,21 @@ requires it.
   unresolved choice and viable alternatives.
 - Do not restate the diff or leave abstract repair verbs without an exact
   operation.
-- Use suggestion blocks only when they fully fix the selected line range.
+
+### Suggestion blocks
+
+- Select the smallest contiguous diff range that the replacement can fully fix.
+  "Fully fix the selected range" does not authorize replacing a surrounding
+  option, function, or expression block for a one-line or one-word change.
+- Do not duplicate unchanged context in a suggestion block. The replacement must
+  contain only the selected lines' new content, not surrounding lines that
+  remain unchanged.
+- Before writing the comment, compare the selected lines with the proposed
+  replacement. Confirm that every selected line is intentionally replaced and
+  that no unchanged context was added; if this comparison fails, narrow the
+  range or rewrite the replacement.
+- Keep coordinated edits that cannot be expressed in the same minimal range in
+  prose. Do not expand a suggestion block to carry those edits.
 - Cite local instructions for compliance findings and concrete commit SHAs for
   code links.
 
