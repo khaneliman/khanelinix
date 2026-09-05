@@ -7,8 +7,6 @@
 }:
 let
   inherit (lib) mkIf getExe;
-  inherit (config.khanelinix) user;
-  inherit (config.users.users.${user.name}) home;
   inherit (pkgs.stdenv.hostPlatform) isLinux;
 
   cfg = config.khanelinix.programs.graphical.addons.kanshi;
@@ -38,7 +36,7 @@ in
       systemd.user.services.kanshi = {
         description = "Kanshi output autoconfig ";
         environment = {
-          XDG_CONFIG_HOME = "${home}/.config";
+          XDG_CONFIG_HOME = config.xdg.configHome;
         };
         partOf = [ "graphical-session.target" ];
         wantedBy = [ "graphical-session.target" ];
