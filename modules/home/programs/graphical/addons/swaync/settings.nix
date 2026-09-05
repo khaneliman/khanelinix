@@ -43,6 +43,7 @@ in
     "menubar"
     "buttons-grid"
     "volume"
+    "backlight#KB"
     "mpris"
     "title"
     "dnd"
