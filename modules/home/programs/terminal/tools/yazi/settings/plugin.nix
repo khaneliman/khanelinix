@@ -44,31 +44,26 @@ in
         url = "local:///mnt/dropbox/**";
         run = "noop";
       }
-    ];
+    ]
+    ++ lib.optional (lib.hasAttr "duckdb" enabledPlugins) {
+      url = "local://*.{csv,tsv,parquet}";
+      run = "duckdb";
+    };
 
     prepend_previewers =
       lib.optionals (lib.hasAttr "piper" enabledPlugins) [
         {
-          url = "local://*.parquet";
-          run = ''piper -- duckdb -c "SELECT * FROM read_parquet('$1') LIMIT 50"'';
+          url = "local://*";
+          mime = "application/sqlite3";
+          run = ''piper -- sqlite3 -readonly -init /dev/null "$1" '.schema --indent' | bat -p --color=always -l sql'';
+        }
+        {
+          url = "local://*.{sqlite,sqlite3}";
+          run = ''piper -- sqlite3 -readonly -init /dev/null "$1" '.schema --indent' | bat -p --color=always -l sql'';
         }
         {
           url = "local://*.xlsx";
           run = ''piper -- xlsx2csv "$1" | bat -p --color=always --file-name "$1.csv"'';
-        }
-        {
-          url = "local://*.sqlite";
-          run = ''piper -- duckdb -c "SELECT * FROM sqlite_scan('$1') LIMIT 50"'';
-        }
-        {
-          url = "local://*.db";
-          run = ''piper -- duckdb -c "SELECT * FROM sqlite_scan('$1') LIMIT 50"'';
-        }
-      ]
-      ++ lib.optionals (lib.hasAttr "piper" enabledPlugins) [
-        {
-          url = "local://*.csv";
-          run = ''piper -- bat -p --color=always "$1"'';
         }
         {
           url = "local://*.md";
@@ -78,6 +73,10 @@ in
           url = "local://*/";
           run = ''piper -- eza -TL=3 --color=always --icons=always --group-directories-first --no-quotes "$1"'';
         }
-      ];
+      ]
+      ++ lib.optional (lib.hasAttr "duckdb" enabledPlugins) {
+        url = "local://*.{csv,tsv,parquet,duckdb,db}";
+        run = "duckdb";
+      };
   };
 }

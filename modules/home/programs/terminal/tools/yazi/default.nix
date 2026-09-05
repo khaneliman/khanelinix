@@ -42,6 +42,7 @@ in
             ++ optionalPluginPackage "piper" pkgs.eza
             ++ optionalPluginPackage "piper" pkgs.glow
             ++ optionalPluginPackage "piper" pkgs.xlsx2csv
+            ++ optionalPluginPackage "piper" pkgs.sqlite
             ++ optionalPluginPackage "restore" pkgs.trash-cli
             ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && !isWSL) [
               pkgs.dragon-drop

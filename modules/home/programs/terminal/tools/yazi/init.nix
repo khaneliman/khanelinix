@@ -15,7 +15,7 @@ in
         require("git"):setup()
       '')
       (lib.optionalString (lib.hasAttr "duckdb" enabledPlugins) ''
-        require("duckdb"):setup()
+        require("duckdb"):setup({ mode = "standard", cache_size = 500 })
       '')
     ])
     + lib.concatStringsSep "\n" [
