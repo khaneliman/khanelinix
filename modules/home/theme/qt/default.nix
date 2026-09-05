@@ -143,6 +143,8 @@ in
         name = mkDefault "qtct";
       };
 
+      style.name = "kvantum";
+
       qt5ctSettings = qtctSettings;
       qt6ctSettings = qtctSettings;
     };
