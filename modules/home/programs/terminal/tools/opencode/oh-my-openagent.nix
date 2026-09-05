@@ -136,10 +136,16 @@ in
             };
           };
 
+          # The schema requires all three git_master keys.
           git_master = {
             commit_footer = false;
             include_co_authored_by = false;
+            git_env_prefix = "GIT_MASTER=1";
           };
+
+          # Both default on; opencode itself has telemetry and autoupdate off.
+          telemetry = false;
+          auto_update = false;
 
           runtime_fallback = true;
 
@@ -154,6 +160,16 @@ in
             dynamic_context_pruning = {
               enabled = true;
               notification = "minimal";
+              # Required by the schema; mirrors the documented default list.
+              protected_tools = [
+                "task"
+                "todowrite"
+                "todoread"
+                "lsp_rename"
+                "session_read"
+                "session_write"
+                "session_search"
+              ];
               turn_protection = {
                 enabled = true;
                 turns = 3;
