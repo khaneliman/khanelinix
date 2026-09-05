@@ -76,10 +76,12 @@ in
         in
         [
           "-g" # Kill all processes within a process group
+          # The module escapes each argument, so shell quoting here would reach
+          # earlyoom as literal characters inside the regex.
           "--avoid"
-          "'^(${appsToAvoid})$'"
+          "^(${appsToAvoid})$"
           "--prefer"
-          "'^(${appsToPrefer})$'"
+          "^(${appsToPrefer})$"
         ];
 
       killHook = pkgs.writeShellScript "earlyoom-kill-hook" ''
