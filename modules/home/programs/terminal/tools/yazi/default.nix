@@ -24,28 +24,6 @@ in
       package = pkgs.yazi.override (
         {
           _7zz = pkgs._7zz-rar; # Support for RAR extraction
-          extraPackages =
-            let
-              optionalPluginPackage =
-                plugin: package: lib.optional (builtins.hasAttr plugin config.programs.yazi.plugins) package;
-            in
-            (with pkgs; [
-              atool
-              exiftool
-              mediainfo
-              unar
-              undmg
-            ])
-            ++ optionalPluginPackage "ouch" pkgs.ouch
-            ++ optionalPluginPackage "duckdb" pkgs.duckdb
-            ++ optionalPluginPackage "piper" pkgs.bat
-            ++ optionalPluginPackage "piper" pkgs.glow
-            ++ optionalPluginPackage "piper" pkgs.xlsx2csv
-            ++ optionalPluginPackage "piper" pkgs.sqlite
-            ++ optionalPluginPackage "restore" pkgs.trash-cli
-            ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && !isWSL) [
-              pkgs.dragon-drop
-            ];
         }
         // lib.optionalAttrs isWSL {
           optionalDeps = with pkgs; [
@@ -61,10 +39,34 @@ in
         }
       );
 
-      enableBashIntegration = true;
-      enableFishIntegration = true;
-      enableNushellIntegration = true;
-      enableZshIntegration = true;
+      extraPackages =
+        let
+          optionalPluginPackage =
+            plugin: package: lib.optional (builtins.hasAttr plugin config.programs.yazi.plugins) package;
+        in
+        (with pkgs; [
+          atool
+          exiftool
+          mediainfo
+          unar
+          undmg
+        ])
+        ++ optionalPluginPackage "ouch" pkgs.ouch
+        ++ optionalPluginPackage "duckdb" pkgs.duckdb
+        ++ optionalPluginPackage "piper" pkgs.bat
+        ++ optionalPluginPackage "piper" pkgs.glow
+        ++ optionalPluginPackage "piper" pkgs.xlsx2csv
+        ++ optionalPluginPackage "piper" pkgs.sqlite
+        ++ optionalPluginPackage "restore" pkgs.trash-cli
+        ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && !isWSL) [
+          pkgs.dragon-drop
+        ];
+
+      enableBashIntegration = config.programs.bash.enable && config.home.shell.enableBashIntegration;
+      enableFishIntegration = config.programs.fish.enable && config.home.shell.enableFishIntegration;
+      enableNushellIntegration =
+        config.programs.nushell.enable && config.home.shell.enableNushellIntegration;
+      enableZshIntegration = config.programs.zsh.enable && config.home.shell.enableZshIntegration;
       shellWrapperName = "y";
 
       inherit (import ./init.nix { inherit config lib; }) initLua;
@@ -85,15 +87,28 @@ in
       ];
 
       plugins = {
+        duckdb = {
+          package = pkgs.yaziPlugins.duckdb;
+          setup = true;
+          settings = {
+            mode = "standard";
+            cache_size = 500;
+          };
+        };
+        full-border = {
+          package = pkgs.yaziPlugins.full-border;
+          setup = true;
+        };
+        git = {
+          package = pkgs.yaziPlugins.git;
+          setup = true;
+        };
         "arrow-parent" = ./plugins/arrow-parent.yazi;
         "smart-switch" = ./plugins/smart-switch.yazi;
         "smart-tab" = ./plugins/smart-tab.yazi;
         inherit (pkgs.yaziPlugins)
           chmod
           diff
-          duckdb
-          full-border
-          git
           githead
           # glow
           jump-to-char
