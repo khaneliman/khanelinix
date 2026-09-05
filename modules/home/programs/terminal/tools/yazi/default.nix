@@ -21,8 +21,8 @@ in
     programs.yazi = {
       enable = true;
 
-      package =
-        pkgs.yazi.override {
+      package = pkgs.yazi.override (
+        {
           _7zz = pkgs._7zz-rar; # Support for RAR extraction
           extraPackages =
             let
@@ -58,7 +58,8 @@ in
             zoxide
             # Remove: ffmpeg, poppler-utils, imagemagick, chafa, resvg
           ];
-        };
+        }
+      );
 
       enableBashIntegration = true;
       enableFishIntegration = true;
