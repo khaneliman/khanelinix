@@ -20,6 +20,7 @@ let
   aliases = import ./aliases.nix;
   ignores = import ./ignores.nix;
   shell-aliases = import ./shell-aliases.nix { inherit config lib pkgs; };
+  sshHosts = import (lib.getFile "modules/common/programs/terminal/tools/ssh/hosts.nix");
 
   hasGithubAccessToken = lib.hasAttrByPath [ "sops" "secrets" "github/access-token" ] config;
   posixTokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) ''
@@ -190,6 +191,15 @@ in
           key = cfg.signingKey;
           format = "ssh";
           inherit (cfg) signByDefault;
+          # Without an allowed-signers file git cannot verify SSH signatures,
+          # so trust the user key of every host in the shared SSH inventory.
+          allowedSigners = lib.concatMapStringsSep "\n" (key: "${cfg.userEmail} namespaces=\"git\" ${key}") (
+            lib.unique (
+              lib.mapAttrsToList (_: host: host.userPublicKey) (
+                lib.filterAttrs (_: host: host ? userPublicKey) sshHosts
+              )
+            )
+          );
         };
       };
 
