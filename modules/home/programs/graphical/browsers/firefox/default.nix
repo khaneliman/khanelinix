@@ -189,7 +189,6 @@ in
                 "browser.newtab.url" = "about:blank";
                 "browser.ctrlTab.sortByRecentlyUsed" = false;
                 "browser.tabs.closeWindowWithLastTab" = true;
-                "browser.tabs.tabmanager.enabled" = true;
 
                 "browser.download.start_downloads_in_tmp_dir" = true;
                 # "browser.download.folderList" = 2; # use the last dir
@@ -257,10 +256,9 @@ in
                 "dom.webgpu.enabled" = true;
                 "gfx.webrender.all" = true;
                 "layers.gpu-process.enabled" = true;
-                "layers.mlgpu.enabled" = true;
               })
               (optionalAttrs cfg.hardwareDecoding {
-                "media.ffmpeg.vaapi.enabled" = true;
+                "media.ffmpeg.vaapi.force-surface-zero-copy" = true;
                 "media.gpu-process-decoder" = true;
                 "media.gpu-process-encoder" = true;
                 "media.hardware-video-decoding.enabled" = true;
