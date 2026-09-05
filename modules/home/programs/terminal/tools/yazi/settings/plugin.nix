@@ -72,7 +72,7 @@ in
         }
         {
           url = "local://*.md";
-          run = ''piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"'';
+          run = ''piper -- CLICOLOR_FORCE=1 glow -w="$w" -s="$t" "$1"'';
         }
         {
           url = "local://*/";
