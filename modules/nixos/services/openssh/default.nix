@@ -61,7 +61,7 @@ in
 
       settings = {
         AuthenticationMethods = "publickey";
-        ChallengeResponseAuthentication = "no";
+        KbdInteractiveAuthentication = false;
         PasswordAuthentication = false;
         PermitRootLogin = if format == "install-iso" then "yes" else "no";
         PubkeyAuthentication = "yes";
