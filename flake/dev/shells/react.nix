@@ -5,20 +5,15 @@
   ...
 }:
 let
-  reactPackages =
-    with pkgs;
-    [
-      # Modern React tooling (replacing deprecated create-react-app)
-      nodejs_22
-      pnpm
-      yarn
-      bun
-      typescript-language-server
-      typescript
-    ]
-    ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-      react-native-debugger
-    ];
+  reactPackages = with pkgs; [
+    # Modern React tooling (replacing deprecated create-react-app)
+    nodejs_22
+    pnpm
+    yarn
+    bun
+    typescript-language-server
+    typescript
+  ];
 in
 mkShell {
   packages = reactPackages;
