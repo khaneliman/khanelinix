@@ -36,6 +36,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    xdg.configFile."opencode/tui.json".force = true;
+
     home.shellAliases = {
       opencode-coding = "opencode --model openai/gpt-5.6-luna";
       opencode-deep = "opencode --model ${deliberateModel}";
