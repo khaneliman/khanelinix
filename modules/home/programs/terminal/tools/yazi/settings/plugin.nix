@@ -69,10 +69,6 @@ in
           url = "local://*.md";
           run = ''piper -- CLICOLOR_FORCE=1 glow -w="$w" -s="$t" "$1"'';
         }
-        {
-          url = "local://*/";
-          run = ''piper -- eza -TL=3 --color=always --icons=always --group-directories-first --no-quotes "$1"'';
-        }
       ]
       ++ lib.optional (lib.hasAttr "duckdb" enabledPlugins) {
         url = "local://*.{csv,tsv,parquet,duckdb,db}";
