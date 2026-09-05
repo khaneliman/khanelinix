@@ -366,6 +366,10 @@ in
         };
 
         media.camera.autoAdjustAspectRatio.enabled = true;
+
+        # Trims the Electron cache before it grows past the size that forces a
+        # fresh login every day.
+        cacheManagement.enabled = true;
       }
       // (optionalAttrs hasCustomCss {
         customCSSLocation = "${configDir}/custom.css";
