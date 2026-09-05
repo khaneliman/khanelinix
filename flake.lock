@@ -666,26 +666,6 @@
         "type": "github"
       }
     },
-    "nh": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1788350973,
-        "narHash": "sha256-EIAXZh7U5AOZEzFA9IjRgErwEIlNsnAs+3HNAJLjJJo=",
-        "owner": "nix-community",
-        "repo": "nh",
-        "rev": "d49f2365f1ca3dafdca978541f02abb523f2c417",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "nh",
-        "type": "github"
-      }
-    },
     "niri": {
       "inputs": {
         "niri-stable": "niri-stable",
@@ -1141,7 +1121,6 @@
         "lanzaboote": "lanzaboote",
         "llm-agents": "llm-agents",
         "mcp-servers-nix": "mcp-servers-nix",
-        "nh": "nh",
         "niri": "niri",
         "nix-darwin": "nix-darwin_2",
         "nix-flatpak": "nix-flatpak",
