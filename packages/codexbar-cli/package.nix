@@ -15,24 +15,24 @@
 }:
 
 let
-  version = "0.56.3";
+  version = "0.56.5";
 
   sources = {
     x86_64-linux = {
       url = "https://github.com/steipete/CodexBar/releases/download/v${version}/CodexBarCLI-v${version}-linux-x86_64.tar.gz";
-      hash = "sha256-mxEknj4KpfhaU0kPYHKYin4fz0zVoocWu09waLGALGc=";
+      hash = "sha256-8HtyhYTn6d76aaMhhHMrcTJCxEBCHUrENSmkWUvZImI=";
     };
     aarch64-linux = {
       url = "https://github.com/steipete/CodexBar/releases/download/v${version}/CodexBarCLI-v${version}-linux-aarch64.tar.gz";
-      hash = "sha256-ZAxb/lLjXOlkuYNWNEuZoAmBUKlYpKAiR+XcP7Lg9Tc=";
+      hash = "sha256-QTVIrRt48YXB4bHAifBQlllI2pG4oRhC89yptlETxNs=";
     };
     aarch64-darwin = {
       url = "https://github.com/steipete/CodexBar/releases/download/v${version}/CodexBarCLI-v${version}-macos-arm64.tar.gz";
-      hash = "sha256-SLU41P82Yab4xBmCGz1o58na2UJpPWf2iFHvfPDRpfk=";
+      hash = "sha256-inwik+qkvpIn911jk6DW3sQvX94eAeLYN3LOjesAVU8=";
     };
     x86_64-darwin = {
       url = "https://github.com/steipete/CodexBar/releases/download/v${version}/CodexBarCLI-v${version}-macos-x86_64.tar.gz";
-      hash = "sha256-E3qEIrDYO2AY/9hSudrCDgmC3qCVSElJMT4Zziio9Mw=";
+      hash = "sha256-/BMl3XGhBMsEF5SZxfV1nCYwvBNwAoiuaBozLmFYkOs=";
     };
   };
 
@@ -68,7 +68,7 @@ stdenv.mkDerivation {
 
     ${lib.optionalString stdenv.hostPlatform.isLinux ''
       # agy renders login and keyring status while it restores a valid token.
-      # CodexBar 0.56.3 treats those transient lines as terminal auth failures
+      # CodexBar 0.56.5 treats those transient lines as terminal auth failures
       # and kills agy before its local quota server is ready. Disable the early
       # PTY auth classification; CodexBar's existing 15-second readiness
       # timeout still bounds a genuinely unauthenticated session.
@@ -93,15 +93,11 @@ stdenv.mkDerivation {
       grep -aFq 'xxxxxxx\s*auth\s*:\s*timed\s+out\b' \
         $out/bin/.codexbar-wrapped
 
-      # CodexBar retries an empty lsof result only when stderr is also empty.
-      # Ignore host mount warnings so a cold agy process gets the full
-      # readiness window while preserving lsof's status and stdout.
-      makeWrapper ${lib.getExe lsof} $out/libexec/codexbar-lsof \
-        --run 'exec 2>/dev/null'
-
+      # 0.56.4 falls back to a /proc lookup when lsof fails on inaccessible
+      # mount namespaces, so lsof only needs to resolve to a real binary.
       substitute ${./path-redirect.c.in} path-redirect.c \
         --replace-fail @ps@ ${lib.getExe' procps "ps"} \
-        --replace-fail @lsof@ $out/libexec/codexbar-lsof \
+        --replace-fail @lsof@ ${lib.getExe lsof} \
         --replace-fail @which@ ${lib.getExe which} \
         --replace-fail @tzdata@ ${tzdata}/share/zoneinfo
 
