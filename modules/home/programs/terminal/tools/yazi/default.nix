@@ -137,7 +137,6 @@ in
       # Yazi configuration
       # See: https://yazi-rs.github.io/docs/configuration/overview/
       settings = lib.mkMerge [
-        (import ./settings/input.nix)
         (import ./settings/image-annotation.nix {
           inherit
             config
@@ -165,56 +164,10 @@ in
             ];
             linemode = "custom";
             show_hidden = true;
-            show_symlink = true;
-            sort_by = "alphabetical";
-            sort_dir_first = true;
             sort_fallback = "natural";
-            sort_reverse = false;
-            sort_sensitive = false;
-            mouse_events = [
-              "click"
-              "scroll"
-              "drag"
-            ];
           };
 
-          pick = {
-            open_title = "Open with:";
-            open_origin = "hovered";
-            open_offset = [
-              0
-              1
-              50
-              7
-            ];
-          };
-
-          preview = {
-            tab_size = 2;
-            image_filter = "triangle";
-            image_quality = 75;
-            ueberzug_scale = 1;
-            ueberzug_offset = [
-              0
-              0
-              0
-              0
-            ];
-            wrap = "yes";
-          };
-
-          tasks = {
-            file_workers = 3;
-            preload_workers = 2;
-            image_alloc = 536870912; # 512MB
-            suppress_preload = false;
-          };
-
-          which = {
-            sort_by = "none";
-            sort_sensitive = false;
-            sort_reverse = false;
-          };
+          preview.wrap = "yes";
         }
       ];
     };
