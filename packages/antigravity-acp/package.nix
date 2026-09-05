@@ -4,6 +4,8 @@
   fetchurl,
   unzip,
   autoPatchelfHook,
+  makeWrapper,
+  cacert,
   python3,
   ...
 }:
@@ -37,7 +39,11 @@ stdenv.mkDerivation {
     inherit (source) hash;
   };
 
-  nativeBuildInputs = [ unzip ] ++ lib.optionals stdenv.hostPlatform.isLinux [ autoPatchelfHook ];
+  nativeBuildInputs = [
+    unzip
+    makeWrapper
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [ autoPatchelfHook ];
   sourceRoot = ".";
   dontConfigure = true;
   dontBuild = true;
@@ -49,6 +55,11 @@ stdenv.mkDerivation {
     install -Dm755 agy_acp_server.par "$out/bin/agy_acp_server.par"
     install -Dm755 localharness_external "$out/bin/localharness_external"
     runHook postInstall
+  '';
+
+  postFixup = ''
+    wrapProgram "$out/bin/agy_acp_server.par" \
+      --set-default SSL_CERT_FILE "${cacert}/etc/ssl/certs/ca-bundle.crt"
   '';
 
   # TCMalloc needs CPU sysfs, which the Linux build sandbox hides.
