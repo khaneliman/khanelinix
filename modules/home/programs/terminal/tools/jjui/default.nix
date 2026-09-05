@@ -34,12 +34,8 @@ in
           limit = 500;
         };
 
-        graph = {
-          batch_size = 100;
-        };
-
-        ui = {
-          tracer.enabled = true;
+        revisions = {
+          log_batch_size = 100;
         };
       };
     };
