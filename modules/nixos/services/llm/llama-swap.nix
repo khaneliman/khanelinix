@@ -108,23 +108,6 @@ let
       ++ model.extraArgs
     );
 
-  settingsFormat = pkgs.formats.yaml { };
-
-  configFile = settingsFormat.generate "llama-swap.yaml" {
-    inherit (swapCfg) healthCheckTimeout;
-
-    logLevel = "info";
-
-    # Without upstream output, a model that fails to load reports only that its
-    # command exited.
-    logToStdout = "both";
-
-    models = lib.mapAttrs (name: model: {
-      cmd = if model.backend == "colibri" then mkColibriCmd name model else mkLlamaCmd model;
-      inherit (model) ttl;
-    }) swapCfg.models;
-  };
-
 in
 {
   options.khanelinix.services.llm.llamaSwap = {
@@ -374,33 +357,48 @@ in
       message = "khanelinix.services.llm.llamaSwap.models.${name} sets colibri placement options that the llama-cpp backend ignores.";
     }) swapCfg.models;
 
-    networking.firewall.allowedTCPPorts = lib.mkIf swapCfg.openFirewall [ swapCfg.port ];
-
     systemd.tmpfiles.rules = [
       "d /var/lib/llm 0750 ${ollamaCfg.user} ${ollamaCfg.group} -"
       "d ${modelsRoot} 0750 ${ollamaCfg.user} ${ollamaCfg.group} -"
       "d ${colibriRoot} 0750 ${ollamaCfg.user} ${ollamaCfg.group} -"
     ];
 
-    systemd.services.llama-swap = {
-      description = "Model swapping proxy for llama.cpp";
-      wantedBy = [ "multi-user.target" ];
-      after = [
-        "network.target"
-        "ollama.service"
-      ];
+    # Upstream owns the unit, config rendering, and most hardening. The
+    # overrides below are what this host needs on top of it.
+    services.llama-swap = {
+      enable = true;
+      listenAddress = swapCfg.host;
+      inherit (swapCfg) port openFirewall;
+      settings = {
+        inherit (swapCfg) healthCheckTimeout;
 
-      environment.XDG_CACHE_HOME = "/var/cache/llm";
+        logLevel = "info";
+
+        # Without upstream output, a model that fails to load reports only that
+        # its command exited.
+        logToStdout = "both";
+
+        models = lib.mapAttrs (name: model: {
+          cmd = if model.backend == "colibri" then mkColibriCmd name model else mkLlamaCmd model;
+          inherit (model) ttl;
+        }) swapCfg.models;
+      };
+    };
+
+    systemd.services.llama-swap = {
+      after = [ "ollama.service" ];
 
       serviceConfig = {
-        Type = "exec";
-        ExecStart = "${lib.getExe pkgs.llama-swap} --config ${configFile} --listen ${swapCfg.host}:${toString swapCfg.port}";
-        Restart = "on-failure";
-
         # Sharing ollama's identity grants read access to blobs the ollama user
-        # owns, without loosening their permissions.
+        # owns, without loosening their permissions. Upstream's DynamicUser and
+        # PrivateUsers would hide that identity from the engines.
+        DynamicUser = lib.mkForce false;
+        PrivateUsers = lib.mkForce false;
         User = ollamaCfg.user;
         Group = ollamaCfg.group;
+
+        # HIP JIT-compiles kernels into writable executable memory.
+        MemoryDenyWriteExecute = lib.mkForce false;
 
         # systemd mounts this before dropping privileges, so the service reads
         # the store without traversing /var/lib/private.
@@ -428,35 +426,8 @@ in
 
         # Mesa writes its shader cache under XDG_CACHE_HOME and disables the
         # cache when that path is read-only, which recompiles pipelines on each
-        # start.
-        CacheDirectory = "llm";
-
-        CapabilityBoundingSet = [ "" ];
-        LockPersonality = true;
-        NoNewPrivileges = true;
-        PrivateTmp = true;
-        ProtectClock = true;
-        ProtectControlGroups = true;
-        ProtectHome = true;
-        ProtectHostname = true;
-        ProtectKernelLogs = true;
-        ProtectKernelModules = true;
-        ProtectKernelTunables = true;
-        ProtectProc = "invisible";
-        ProtectSystem = "strict";
-        RestrictAddressFamilies = [
-          "AF_INET"
-          "AF_INET6"
-          "AF_UNIX"
-        ];
-        RestrictNamespaces = true;
-        RestrictRealtime = true;
-        RestrictSUIDSGID = true;
-        SystemCallArchitectures = "native";
-        SystemCallFilter = [
-          "@system-service"
-          "~@privileged"
-        ];
+        # start. Keep the existing cache directory name.
+        CacheDirectory = lib.mkForce "llm";
       };
     };
   };
