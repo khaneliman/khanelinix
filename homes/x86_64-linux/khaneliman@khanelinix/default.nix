@@ -501,6 +501,8 @@ in
     "/nix/store"
   ];
 
+  khanelinix.programs.terminal.tools.mcp.blender.enable = true;
+
   # Neo G9
   xresources.properties."Xft.dpi" = "108";
 
