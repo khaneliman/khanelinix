@@ -264,7 +264,9 @@ in
   };
 
   temperature = {
-    hwmon-path-abs = "/sys/devices/pci0000:00/0000:00:18.3/hwmon";
+    # Match the zenpower device by name so a BIOS or board change that moves
+    # the PCI address does not break the sensor. temp3 is Tccd1.
+    hwmon-by-name = "zenpower";
     input-filename = "temp3_input";
     critical-threshold = 80;
     format-critical = "{temperatureC}°C {icon}";
