@@ -78,8 +78,11 @@ in
     };
 
     system = {
+      # nix-darwin runs `defaults write` from `/`, and a slash in the domain
+      # makes `defaults` treat it as a filesystem path, so the domain must be
+      # absolute to land in /Library/Preferences.
       defaults.CustomSystemPreferences = {
-        "SystemConfiguration/com.apple.captive.control" = {
+        "/Library/Preferences/SystemConfiguration/com.apple.captive.control" = {
           Active = false;
         };
       };
