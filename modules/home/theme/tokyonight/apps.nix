@@ -19,6 +19,33 @@ let
       "${lib.removePrefix config.home.homeDirectory config.xdg.configHome}/codex"
     else
       ".codex";
+
+  # programs.ghostty.themes wants an attrset, so parse the upstream
+  # `key = value` file; repeated palette keys become a list.
+  ghosttyTheme =
+    let
+      lines = lib.filter (l: lib.hasInfix " = " l) (
+        lib.splitString "\n" (builtins.readFile "${tokyonight}/extras/ghostty/tokyonight_${variant}")
+      );
+      pairs = map (
+        l:
+        let
+          idx = lib.strings.stringLength (lib.head (lib.splitString " = " l));
+        in
+        {
+          name = lib.substring 0 idx l;
+          value = lib.substring (idx + 3) (lib.stringLength l) l;
+        }
+      ) lines;
+    in
+    lib.foldl' (
+      acc: pair:
+      acc
+      // {
+        ${pair.name} =
+          if acc ? ${pair.name} then (lib.toList acc.${pair.name}) ++ [ pair.value ] else pair.value;
+      }
+    ) { } pairs;
 in
 {
   config = mkIf cfg.enable {
@@ -41,7 +68,13 @@ in
         "${tokyonight}/extras/alacritty/tokyonight_${variant}.toml"
       ];
 
-      bat.config.theme = "tokyonight_${variant}";
+      bat = {
+        config.theme = "tokyonight_${variant}";
+        themes."tokyonight_${variant}" = {
+          src = "${tokyonight}/extras/sublime";
+          file = "tokyonight_${variant}.tmTheme";
+        };
+      };
 
       btop.settings.color_theme = mkForce "tokyonight_${variant}";
 
@@ -98,16 +131,19 @@ in
 
       gh-dash.settings.theme.selected_line = mkForce "bg:default fg:white bold";
 
-      ghostty.settings = lib.mkMerge [
-        {
-          theme = "tokyonight_${variant}";
-        }
-        (mkIf pkgs.stdenv.hostPlatform.isDarwin {
-          macos-icon = "custom-style";
-          macos-icon-ghost-color = colors.blue;
-          macos-icon-screen-color = "${colors.bg_highlight},${colors.bg}";
-        })
-      ];
+      ghostty = {
+        settings = lib.mkMerge [
+          {
+            theme = "tokyonight_${variant}";
+          }
+          (mkIf pkgs.stdenv.hostPlatform.isDarwin {
+            macos-icon = "custom-style";
+            macos-icon-ghost-color = colors.blue;
+            macos-icon-screen-color = "${colors.bg_highlight},${colors.bg}";
+          })
+        ];
+        themes."tokyonight_${variant}" = ghosttyTheme;
+      };
 
       helix.settings.theme = "tokyonight_${variant}";
 
@@ -225,35 +261,33 @@ in
     };
 
     xdg.configFile = lib.mkMerge [
-      (mkIf config.programs.bat.enable {
-        "bat/themes/tokyonight_${variant}.tmTheme".source =
-          "${tokyonight}/extras/sublime/tokyonight_${variant}.tmTheme";
-      })
-
+      # These stay raw links. The typed theme options for btop, gitui, and
+      # zellij only link true path values and would write a store-path string
+      # out as file content, and programs.eza.theme wants an attrset that Nix
+      # cannot read from the upstream YAML.
       (mkIf config.programs.btop.enable {
         "btop/themes/tokyonight_${variant}.theme".source =
           "${tokyonight}/extras/btop/tokyonight_${variant}.theme";
-      })
-
-      (mkIf config.services.dunst.enable {
-        "dunst/tokyonight_${variant}.conf".source = "${tokyonight}/extras/dunst/tokyonight_${variant}.conf";
       })
 
       (mkIf config.programs.eza.enable {
         "eza/theme.yml".source = mkForce "${tokyonight}/extras/eza/tokyonight_${variant}.yml";
       })
 
-      (mkIf config.programs.fuzzel.enable {
-        "fuzzel/tokyonight.ini".source = "${tokyonight}/extras/fuzzel/tokyonight_${variant}.ini";
-      })
-
-      (mkIf config.programs.ghostty.enable {
-        "ghostty/themes/tokyonight_${variant}".source =
-          "${tokyonight}/extras/ghostty/tokyonight_${variant}";
-      })
-
       (mkIf config.programs.gitui.enable {
         "gitui/theme.ron".source = mkForce "${tokyonight}/extras/gitui/tokyonight_${variant}.ron";
+      })
+
+      (mkIf config.programs.zellij.enable {
+        "zellij/themes/tokyonight.kdl".source = "${tokyonight}/extras/zellij/tokyonight_${variant}.kdl";
+      })
+
+      (mkIf config.services.dunst.enable {
+        "dunst/tokyonight_${variant}.conf".source = "${tokyonight}/extras/dunst/tokyonight_${variant}.conf";
+      })
+
+      (mkIf config.programs.fuzzel.enable {
+        "fuzzel/tokyonight.ini".source = "${tokyonight}/extras/fuzzel/tokyonight_${variant}.ini";
       })
 
       (mkIf config.programs.yazi.enable {
@@ -288,10 +322,6 @@ in
 
       (mkIf config.programs.zathura.enable {
         "zathura/tokyonight".source = "${tokyonight}/extras/zathura/tokyonight_${variant}.zathurarc";
-      })
-
-      (mkIf config.programs.zellij.enable {
-        "zellij/themes/tokyonight.kdl".source = "${tokyonight}/extras/zellij/tokyonight_${variant}.kdl";
       })
 
       (mkIf config.programs.wezterm.enable {
