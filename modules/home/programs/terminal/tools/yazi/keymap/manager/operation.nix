@@ -11,7 +11,7 @@ in
           "p"
           "p"
         ];
-        run = "plugin sudo --args='paste'";
+        run = "plugin sudo -- paste";
         desc = "sudo paste";
       }
       {
@@ -19,7 +19,7 @@ in
           "R"
           "P"
         ];
-        run = "plugin sudo --args='paste -f'";
+        run = "plugin sudo -- paste --force";
         desc = "sudo paste (force)";
       }
       {
@@ -27,7 +27,7 @@ in
           "R"
           "r"
         ];
-        run = "plugin sudo --args='rename'";
+        run = "plugin sudo -- rename";
         desc = "sudo rename";
       }
       {
@@ -36,7 +36,7 @@ in
           "p"
           "l"
         ];
-        run = "plugin sudo --args='link'";
+        run = "plugin sudo -- link";
         desc = "sudo link (absolute path)";
       }
       {
@@ -45,7 +45,7 @@ in
           "p"
           "L"
         ];
-        run = "plugin sudo --args='link -r'";
+        run = "plugin sudo -- link --relative";
         desc = "sudo link (relative path)";
       }
       {
@@ -53,7 +53,7 @@ in
           "R"
           "a"
         ];
-        run = "plugin sudo --args='create'";
+        run = "plugin sudo -- create";
         desc = "sudo create (file or directory)";
       }
       {
@@ -61,7 +61,7 @@ in
           "R"
           "d"
         ];
-        run = "plugin sudo --args='remove'";
+        run = "plugin sudo -- remove";
         desc = "sudo trash";
       }
       {
@@ -69,7 +69,7 @@ in
           "R"
           "D"
         ];
-        run = "plugin sudo --args='remove -P'";
+        run = "plugin sudo -- remove --permanently";
         desc = "sudo delete (permanent)";
       }
     ]
