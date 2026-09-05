@@ -241,18 +241,6 @@ in
     on-click = "${getExe config.programs.swaylock.package}";
   };
 
-  "custom/media" = {
-    format = "{icon} {}";
-    return-type = "json";
-    max-length = 40;
-    format-icons = {
-      spotify = "";
-      default = "🎜";
-    };
-    escape = true;
-    exec = "${config.xdg.configHome}/waybar/mediaplayer.py 2> /dev/null";
-  };
-
   "custom/notification" = {
     tooltip = true;
     format = "{icon} {text}";

@@ -88,7 +88,6 @@ box {
 }
 
 #custom-notification,
-#custom-updates,
 #custom-github,
 #custom-codexbar,
 #idle_inhibitor,
@@ -114,11 +113,6 @@ box {
 
 #custom-notification {
   padding-right: 8px;
-}
-
-#custom-updates.updated {
-  padding-left: 0;
-  padding-right: 13px;
 }
 
 #idle_inhibitor,
