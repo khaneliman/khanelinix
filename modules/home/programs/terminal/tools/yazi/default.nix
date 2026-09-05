@@ -39,7 +39,6 @@ in
             ++ optionalPluginPackage "ouch" pkgs.ouch
             ++ optionalPluginPackage "duckdb" pkgs.duckdb
             ++ optionalPluginPackage "piper" pkgs.bat
-            ++ optionalPluginPackage "piper" pkgs.eza
             ++ optionalPluginPackage "piper" pkgs.glow
             ++ optionalPluginPackage "piper" pkgs.xlsx2csv
             ++ optionalPluginPackage "piper" pkgs.sqlite
@@ -177,8 +176,6 @@ in
 
           preview = {
             tab_size = 2;
-            max_width = 2560;
-            max_height = 1440;
             image_filter = "triangle";
             image_quality = 75;
             ueberzug_scale = 1;
@@ -193,16 +190,8 @@ in
 
           tasks = {
             file_workers = 3;
-            plugin_workers = 10;
-            fetch_workers = 10;
             preload_workers = 2;
-            process_workers = 25;
-            bizarre_retry = 5;
             image_alloc = 536870912; # 512MB
-            image_bound = [
-              0
-              0
-            ];
             suppress_preload = false;
           };
 
