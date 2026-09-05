@@ -125,6 +125,10 @@ in
           KEYTIMEOUT = 0;
         };
 
+        # Home Manager sources this at order 700, after the plugin list and
+        # before the syntax highlighter, matching the previous manual order.
+        autosuggestion.enable = true;
+
         syntaxHighlighting = {
           enable = true;
           highlighters = [
@@ -233,11 +237,6 @@ in
             name = "zsh-vi-mode";
             src = pkgs.zsh-vi-mode;
             file = "share/zsh-vi-mode/zsh-vi-mode.plugin.zsh";
-          }
-          {
-            name = "zsh-autosuggestions";
-            file = "share/zsh-autosuggestions/zsh-autosuggestions.zsh";
-            src = pkgs.zsh-autosuggestions;
           }
           {
             name = "zsh-better-npm-completion";
