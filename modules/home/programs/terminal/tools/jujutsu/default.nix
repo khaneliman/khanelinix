@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) types mkEnableOption mkIf;
-  inherit (lib.khanelinix) mkOpt enabled;
+  inherit (lib.khanelinix) mkOpt;
   inherit (config.khanelinix) user;
 
   cfg = config.khanelinix.programs.terminal.tools.jujutsu;
@@ -91,25 +91,11 @@ in
             name = cfg.userName;
             email = cfg.userEmail;
           };
-          fetch = {
-            prune = true;
-          };
-          init = {
-            default_branch = "main";
-          };
-          lfs = enabled;
           signing = {
             backend = "ssh";
             # jj defaults to "keep", which only preserves existing signatures.
             behavior = if cfg.signByDefault then "own" else "keep";
             key = cfg.signingKey;
-          };
-          push = {
-            autoSetupRemote = true;
-            default = "current";
-          };
-          rebase = {
-            auto_stash = true;
           };
           "revset-aliases" = {
             "mine_mutable()" = "mine() & mutable()";
