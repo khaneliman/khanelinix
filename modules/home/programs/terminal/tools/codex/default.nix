@@ -98,10 +98,8 @@ let
     "default_subagent_reasoning_effort"
     "enabled"
     "interrupt_message"
-    "job_max_runtime_seconds"
     "max_concurrent_threads_per_session"
     "max_depth"
-    "max_threads"
   ];
   codexAgentRoleNameCollisions = lib.intersectLists codexAgentSettingNames (
     lib.attrNames aiTools.codex.agents
@@ -143,7 +141,7 @@ let
       model_reasoning_summary = "none";
       model_verbosity = "low";
       plan_mode_reasoning_effort = "medium";
-      service_tier = "fast";
+      service_tier = "priority";
       web_search = "disabled";
     };
 
@@ -153,7 +151,7 @@ let
       model_reasoning_effort = "medium";
       model_verbosity = "medium";
       plan_mode_reasoning_effort = "high";
-      service_tier = "fast";
+      service_tier = "priority";
       web_search = "disabled";
     };
 
@@ -282,17 +280,16 @@ in
         };
 
         agents = {
-          max_threads = 12;
-          job_max_runtime_seconds = 3600;
+          max_concurrent_threads_per_session = 12;
         }
         // codexAgentRoles;
 
         history = {
           max_bytes = 104857600;
 
-          # codex 0.149 ignores this field, but codex-acp embeds an older core
-          # that refuses to load a config without it. Editor plugins reach codex
-          # through that bridge.
+          # Matches the upstream default; codex-acp embeds an older core that
+          # refuses to load a config without the key. Editor plugins reach
+          # codex through that bridge.
           persistence = "save-all";
         };
 
@@ -304,10 +301,10 @@ in
         notice.hide_rate_limit_model_nudge = true;
 
         # Keep expensive parent reasoning separate from Luna/Spark worker routes.
+        # No service_tier: Astra is costly enough on the default tier.
         model = "gpt-6-astra";
         model_reasoning_effort = "high";
         plan_mode_reasoning_effort = "high";
-        service_tier = "fast";
         web_search = "live";
 
         # Browser-side counterpart lives in the chromium native-messaging
@@ -432,8 +429,8 @@ in
             "five-hour-limit"
           ];
           terminal_title = [
-            "spinner"
-            "project"
+            "activity"
+            "project-name"
             "git-branch"
           ];
         };
