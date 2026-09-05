@@ -359,6 +359,8 @@ in
 
     launchd.agents.cliproxyapi = mkIf pkgs.stdenv.hostPlatform.isDarwin {
       enable = true;
+      # Headless proxy; the user domain starts without a graphical login.
+      domain = "user";
 
       config = {
         ProgramArguments = [
