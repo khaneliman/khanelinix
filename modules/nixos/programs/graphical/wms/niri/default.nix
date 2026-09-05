@@ -23,8 +23,10 @@ in
     enable = lib.mkEnableOption "Niri";
     package = mkOption {
       type = package;
-      default = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-stable;
-      defaultText = literalExpression "inputs.niri.packages.\${pkgs.stdenv.hostPlatform.system}.niri-stable";
+      # niri-flake's stable pin lags nixpkgs by two releases; nixpkgs' niri
+      # exposes the same cargo feature passthru the flake module reads.
+      default = pkgs.niri;
+      defaultText = literalExpression "pkgs.niri";
       description = "Niri package (stable or unstable).";
     };
   };
