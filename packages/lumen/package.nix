@@ -21,8 +21,11 @@ stdenv.mkDerivation (finalAttrs: {
   pname = "lumen";
   version = "unstable-2026-02-18";
 
+  # trollzem/Lumen, the fork this package tracked, no longer exists on
+  # GitHub. lumaaaaaa/Lumen is the root repository and carries the same
+  # commit, so the hash is unchanged.
   src = fetchFromGitHub {
-    owner = "trollzem";
+    owner = "lumaaaaaa";
     repo = "Lumen";
     rev = "5c3bd0f4109eb4069d10ee1a8201b9bf3a328018";
     hash = "sha256-+vzWBYrXMompedxNKtAaf+KIEdWR+bo1x/ZAtlYmUDw=";
