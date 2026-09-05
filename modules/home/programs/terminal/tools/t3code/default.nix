@@ -276,7 +276,12 @@ in
               claudeAgent = claudeProviderSettings;
             }
             // lib.optionalAttrs (config.programs.opencode.enable or false) {
-              opencode.binaryPath = lib.getExe config.programs.opencode.package;
+              # The provider defaults to disabled upstream, so a binary path
+              # alone leaves it off.
+              opencode = {
+                enabled = true;
+                binaryPath = lib.getExe config.programs.opencode.package;
+              };
             }
             // {
               antigravity = {
