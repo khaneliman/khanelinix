@@ -53,6 +53,18 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "blender-toolkit",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/marketplace/plugins/blender-toolkit"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
 			"name": "blast-radius",
 			"source": {
 				"source": "local",
