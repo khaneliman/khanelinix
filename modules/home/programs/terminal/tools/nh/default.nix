@@ -64,8 +64,8 @@ in
         NH_SEARCH_PLATFORM = 1;
       };
       shellAliases = {
-        nixre = "nh ${switchTarget} switch";
-        nixre-fast = "nh ${switchTarget} switch --option max-jobs auto --option cores 0";
+        nixre = "nh ${switchTarget} switch --show-activation-logs";
+        nixre-fast = "nh ${switchTarget} switch --show-activation-logs --option max-jobs auto --option cores 0";
       };
     };
   };
