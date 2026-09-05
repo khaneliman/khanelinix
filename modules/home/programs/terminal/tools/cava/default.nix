@@ -81,13 +81,15 @@ in
           "5" = 1; # treble
         };
       }
-      // lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      # `//` with mkIf marks the whole attrset conditional and empties settings
+      # on the other platform.
+      // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
         input = {
           method = "pulse";
           source = "auto";
         };
       }
-      // lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+      // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
         input = {
           method = "portaudio";
           source = "Background Music";
