@@ -31,7 +31,8 @@ an already authorized modeling task does not cancel that task's remaining work.
 3. If operating Blender, discover the installed executable and API version, then
    choose the available interactive, control, or headless workflow. A
    version-matched headless script is valid without MCP/control. Never assume an
-   executable path, socket protocol, or `bpy` version.
+   executable path, socket protocol, or `bpy` version. Before scripted or live
+   control, read [automation](references/automation.md).
 
 ## Choose a modeling route deliberately
 
@@ -43,6 +44,10 @@ an already authorized modeling task does not cancel that task's remaining work.
   correspondence for cavity or boundary loops before union or subdivision.
   Recalculating normals after a bad pre-union construction cannot restore lost
   surface intent.
+
+For loops around eyes, mouths, cavities, or joints, preserve ordered boundary
+correspondence before subdivision. Unordered or mismatched loops can create
+subdivision artifacts that hide or distort existing features.
 
 ## Inspect effective scene state
 
@@ -69,15 +74,8 @@ anatomy that the references do not establish.
 
 ## Rig, pose, and weights
 
-Keep skinning ownership explicit. Automatic weights are a starting hypothesis,
-not acceptance evidence. For a bad pose, inspect the rest pose, deform modifier,
-vertex-group ownership, normalization, bone envelopes, and affected mesh region.
-Nearest-bone or chain-distance heuristics can assign vertices to the wrong bone;
-inspect and correct ownership before tuning pose controls.
-
-For loops around eyes, mouths, cavities, or joints, preserve ordered boundary
-correspondence before subdivision. Unordered or mismatched loops can create
-subdivision artifacts that hide or distort existing features.
+For skinning, pose correction, or retargeting, read
+[rigging](references/rigging.md) before changing the rig.
 
 ## Preserve checkpoints and export candidates
 
@@ -86,30 +84,6 @@ cleanup, rigging, and approved presentation. When exporting, write a separate
 candidate; keep authoring, candidate, and runtime-imported artifacts
 distinguishable by path or manifest rather than flattening the only source.
 
-When the task targets glTF/GLB or another runtime format:
-
-1. Export from the intended scene or collection with explicit object,
-   visibility, modifier, material, skinning, and animation settings.
-2. Re-import into a clean inspection scene or the target runtime. Check
-   transforms, scale, winding, normals, UVs, materials, hierarchy, skeleton,
-   weights, animation, and missing dependencies.
-3. Compare a fixed-view render or runtime capture with the source and inspect
-   the imported asset. Record Blender and runtime versions when behavior is
-   version-sensitive.
-
-Do not accept a successful export command as proof. The bar is the source
-checkpoint, exported candidate, successful re-import, and direct inspection of
-resulting visual/runtime behavior.
-
-## Primary references
-
-- [Blender glTF 2.0 manual](https://docs.blender.org/manual/en/latest/addons/import_export/scene_gltf2.html)
-  for exporter scope, evaluated modifiers, collection/visibility filtering, and
-  supported animation data.
-- [Blender normals manual](https://docs.blender.org/manual/en/latest/modeling/meshes/editing/mesh/normals.html)
-  for recalculation, face orientation, and custom normal behavior.
-- [Blender Python API](https://docs.blender.org/api/current/) for the discovered
-  local version's operators and data API.
-- [Bevy assets documentation](https://docs.rs/bevy/latest/bevy/asset/) when the
-  candidate is consumed by Bevy; keep source ownership and cold-start import
-  checks aligned with the consuming toolkit.
+For glTF/GLB, FBX, or other runtime candidates, read
+[export acceptance](references/export.md). A successful command is not proof of
+a usable asset; retain re-import and direct visual/runtime inspection.
