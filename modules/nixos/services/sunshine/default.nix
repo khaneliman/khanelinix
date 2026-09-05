@@ -114,8 +114,7 @@ in
         };
       };
 
-      hardware.uinput.enable = true;
-
+      # services.sunshine already enables hardware.uinput.
       users.users.${userName}.extraGroups = [ "uinput" ];
     }
   );
