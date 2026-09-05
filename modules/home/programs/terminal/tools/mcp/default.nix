@@ -15,13 +15,43 @@ let
   cfg = config.khanelinix.programs.terminal.tools.mcp;
   mcpPkgs = inputs.mcp-servers-nix.packages.${system};
   hasTavilyApiKey = hasAttrByPath [ "sops" "secrets" "TAVILY_API_KEY" ] config;
+  blenderMcpPackage = pkgs.khanelinix.blender-mcp;
 in
 {
   options.khanelinix.programs.terminal.tools.mcp = {
     enable = lib.mkEnableOption "MCP (Model Context Protocol) servers";
+
+    blender = {
+      enable = lib.mkEnableOption "Blender MCP server and add-on";
+      host = lib.mkOption {
+        type = lib.types.str;
+        default = "localhost";
+        description = "Host where the Blender MCP add-on listens.";
+      };
+      port = lib.mkOption {
+        type = lib.types.port;
+        default = 9876;
+        description = "Port where the Blender MCP add-on listens.";
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable {
+    home.packages = lib.optionals cfg.blender.enable [ pkgs.blender ];
+
+    home.activation.blenderMcpExtension = lib.mkIf cfg.blender.enable (
+      lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        run ${getExe pkgs.blender} \
+          --online-mode \
+          --background \
+          --factory-startup \
+          --command extension install-file \
+          "${blenderMcpPackage}/share/blender-mcp/addon/blender_mcp_addon-1.0.0.zip" \
+          --repo user_default \
+          --enable
+      ''
+    );
+
     programs.mcp = {
       # MCP documentation
       # See: https://modelcontextprotocol.io/
@@ -58,6 +88,15 @@ in
 
         bevy-brp = {
           command = getExe pkgs.khanelinix.bevy-brp-mcp;
+        };
+
+        blender = {
+          enabled = cfg.blender.enable;
+          command = getExe blenderMcpPackage;
+          env = {
+            BLENDER_MCP_HOST = cfg.blender.host;
+            BLENDER_MCP_PORT = toString cfg.blender.port;
+          };
         };
 
         code-review-graph = {

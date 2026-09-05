@@ -259,6 +259,7 @@
 
   codexMcpServerPolicies = {
     bevy-brp.default_tools_approval_mode = "approve";
+    blender.default_tools_approval_mode = "approve";
 
     code-review-graph = {
       default_tools_approval_mode = "approve";
