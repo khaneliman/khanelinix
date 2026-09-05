@@ -71,6 +71,8 @@ in
 
       inherit (import ./init.nix { inherit config lib; }) initLua;
 
+      vfs = import ./vfs.nix { inherit config lib; };
+
       keymap = lib.mkMerge [
         (import ./keymap/completion.nix)
         (import ./keymap/help.nix)
