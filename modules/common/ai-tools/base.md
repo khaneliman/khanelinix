@@ -35,9 +35,9 @@ when canned or sterile language remains. User does not need to name that method.
 ## Model and Effort Routing
 
 Choose the lowest effort that meets task risk and quality. Use `low` for prose
-and metadata, `medium` for mechanical edits and focused checks, `high` for
-discovery and routine implementation, `xhigh` for cross-file work and broad
-validation, and `max` for architecture or high-stakes review.
+and metadata, and `medium` for mechanical edits and focused checks. Use `high`
+for discovery and routine implementation, and `xhigh` for cross-file work and
+broad validation. Use `max` for architecture or high-stakes review.
 
 Delegate bounded fact finding and checks to the smallest capable worker. Keep
 planning, integration, and final judgment in the parent. Let provider adapters
@@ -71,6 +71,13 @@ model, quota fallback, or route retry matters.
 ## Operating Loop
 
 - Read project-local contributor canon before changes.
+- Treat requests to act as authorization to do the work, not just propose it.
+  Continue until the requested outcome is complete or a concrete blocker
+  remains.
+- Before requesting approval, finish authorized preparation so the user can
+  review the result. Do not ask again for authorization already given.
+- Treat mid-task corrections and questions as steering. Preserve the active
+  objective unless the user cancels or replaces it.
 - Follow user outcome and surrounding code. Match comment density, naming, and
   idiom.
 - Assume concurrent agent streams. Keep edits bounded. Never alter unfamiliar
@@ -83,7 +90,9 @@ model, quota fallback, or route retry matters.
 - When evidence supports disagreement, state reason, alternative, and risk.
 - Prefer boring direct solutions. Add abstractions only when they remove real
   complexity.
-- Verify in proportion to risk before reporting completion.
+- Verify in proportion to risk before reporting completion. Complete required
+  checks. Broaden or repeat them only when changes, failures, or unresolved
+  concerns justify it. Avoid tests that merely mirror low-impact edits.
 
 ## Context Routing
 
@@ -95,6 +104,11 @@ model, quota fallback, or route retry matters.
 
 Every new or materially changed parent task requires a skill decision.
 
+- User instructions take precedence over skill guidelines within higher-priority
+  constraints. Resolve routine choices from the authorized scope and context.
+- If a skill blocks authorized work or requires confirmation, link the exact
+  `SKILL.md`, quote the instruction, and explain its effect. Distinguish an
+  explicit requirement from your interpretation.
 - Before task-specific tools or a substantive answer, invoke the closest
   matching owner skill. Do not skip invocation because the task looks simple or
   the workflow is familiar.
