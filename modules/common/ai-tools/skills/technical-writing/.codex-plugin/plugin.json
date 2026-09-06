@@ -1,0 +1,13 @@
+{
+	"name": "technical-writing",
+	"version": "0.1.5",
+	"description": "Write and review concise technical prose.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./.",
+	"interface": {
+		"displayName": "Technical Writing",
+		"shortDescription": "Write and review concise technical prose."
+	}
+}

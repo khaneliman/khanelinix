@@ -1,0 +1,13 @@
+{
+	"name": "github-toolkit",
+	"version": "0.1.10",
+	"description": "Manage GitHub queues, issues, pull requests, reviews, and CI.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./.",
+	"interface": {
+		"displayName": "GitHub Toolkit",
+		"shortDescription": "Manage GitHub queues, issues, pull requests, reviews, and CI."
+	}
+}

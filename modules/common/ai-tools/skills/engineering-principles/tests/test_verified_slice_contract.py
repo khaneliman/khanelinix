@@ -5,17 +5,6 @@ from pathlib import Path
 
 SKILL = Path(__file__).resolve().parents[1] / "SKILL.md"
 REFERENCE = SKILL.parent / "references" / "verified-slice.md"
-AI_TOOLS_ROOT = SKILL.parents[2]
-GENERATED_REFERENCE = (
-    AI_TOOLS_ROOT
-    / "marketplace"
-    / "plugins"
-    / "engineering-principles"
-    / "skills"
-    / "engineering-principles"
-    / "references"
-    / "verified-slice.md"
-)
 
 
 def normalized(path: Path) -> str:
@@ -135,12 +124,6 @@ class VerifiedSliceContractTests(unittest.TestCase):
 
         self.assertIn("unless repository policy explicitly permits", text)
         self.assertIn("unless repository policy explicitly permits", sequencing)
-
-    def test_generated_reference_matches_canonical_source(self) -> None:
-        if AI_TOOLS_ROOT.name != "ai-tools":
-            self.skipTest("canonical AI-tools tree is not installed")
-
-        self.assertEqual(REFERENCE.read_bytes(), GENERATED_REFERENCE.read_bytes())
 
 
 if __name__ == "__main__":

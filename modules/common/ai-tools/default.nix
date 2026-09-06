@@ -21,7 +21,6 @@ let
     (builtins.readFile codexContext)
   ];
   skillsDir = ./skills;
-  skillProjectionScript = ./marketplace/skill_projection.py;
   programOrchestrationDir = ./program-orchestration;
   programOrchestration = {
     canonicalSkill = skillsDir + "/program-orchestration";
@@ -272,7 +271,6 @@ let
       exclude = lib.unique ((policy.excludeLocal or [ ]) ++ (policy.preferSystem or [ ]));
     in
     {
-      hasFilter = exclude != [ ];
       keepNames = builtins.filter (name: !(lib.elem name exclude)) (builtins.attrNames allSkills);
     };
 
@@ -286,35 +284,19 @@ let
         path:
         let
           relPath = lib.removePrefix (toString skillsDir + "/") (toString path);
-          topLevel = if relPath == "" then "" else lib.head (lib.splitString "/" relPath);
+          parts = lib.splitString "/" relPath;
+          topLevel = if relPath == "" then "" else lib.head parts;
+          isPluginMetadata = lib.any (
+            part:
+            lib.elem part [
+              ".codex-plugin"
+              ".claude-plugin"
+            ]
+          ) parts;
         in
-        topLevel == "" || shouldKeep topLevel;
+        !isPluginMetadata && (topLevel == "" || shouldKeep topLevel);
     in
-    if !filter.hasFilter then
-      skillsDir
-    else
-      builtins.filterSource (path: _: shouldKeepPath path) skillsDir;
-
-  modelHidingProviderForHarness = {
-    claudeCode = "claude-code";
-    piCodingAgent = "pi";
-  };
-
-  projectedSkillsForHarness =
-    harnessName:
-    let
-      source = skillsForHarness harnessName;
-      provider = modelHidingProviderForHarness.${harnessName} or null;
-    in
-    if provider == null then
-      source
-    else if pkgs == null then
-      throw "${harnessName} skill projection requires pkgs"
-    else
-      pkgs.runCommand "${harnessName}-skill-projection" { } ''
-        ${lib.getExe pkgs.python3} ${skillProjectionScript} \
-          --provider ${provider} ${source} "$out"
-      '';
+    builtins.filterSource (path: _: shouldKeepPath path) skillsDir;
 
   skillsAttrsForHarness =
     harnessName:
@@ -360,7 +342,7 @@ in
     agents = aiAgents.toClaudeMarkdown;
     contextOverride = claudeContextOverride;
     okfMemoryEnabled = skillEnabledForHarness "claudeCode" "okf-memory";
-    skills = projectedSkillsForHarness "claudeCode";
+    skills = skillsForHarness "claudeCode";
     inherit skillsDir;
   };
 
@@ -396,6 +378,6 @@ in
   };
 
   piCodingAgent = {
-    skills = projectedSkillsForHarness "piCodingAgent";
+    skills = skillsForHarness "piCodingAgent";
   };
 }

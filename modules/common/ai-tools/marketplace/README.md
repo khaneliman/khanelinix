@@ -222,14 +222,14 @@ Skills activate in two ways:
    its name directly. This mode saves context token budget on routine prompts.
 
 Canonical skills record cross-provider manual intent in
-`metadata.khanelinix-invocation-mode`. Repository-managed Claude Code and Pi
-projections emit their native `disable-model-invocation` field. Codex uses
-`agents/openai.yaml`.
+`metadata.khanelinix-invocation-mode`. User-only skills also carry the native
+`disable-model-invocation: true` field for Claude Code and Pi. Codex uses
+`agents/openai.yaml`. Validation keeps these controls aligned.
 
-The generic `npx skills` installer copies portable canonical manifests. It does
-not apply repository provider projections. These installs retain the skill
-description when a host cannot interpret the canonical metadata. Use the native
-marketplace or Nix-managed projection when model hiding must be enforced.
+The generic `npx skills` installer, native marketplaces, and Nix-managed
+installs use the same canonical skill content. No provider-specific content
+generation is required. A host must support its native invocation control to
+enforce model hiding; a skill description alone is not that control.
 
 Codex hides twelve additional caller-invoked or owner-routed skills to save
 standing context. Other hosts keep them model-visible so lifecycle skills can
@@ -284,45 +284,38 @@ claude plugin install git-toolkit@khanelinix-ai-tools
 
 ## Maintain the marketplace
 
-`catalog.json` is the single source for names, display names, descriptions,
-versions, categories, bundles, and exclusions. `sync.py` generates the consumer
-files from it:
+Each published directory under `../skills/<name>/` is both the canonical skill
+and its plugin root. Edit skill content there once. The provider manifests sit
+beside `SKILL.md` in `.codex-plugin/` and `.claude-plugin/`.
 
-- `.agents/plugins/marketplace.json`, the Codex index
-- `.claude-plugin/marketplace.json`, the Claude Code index
-- `marketplace/plugins/<name>/`, one plugin per published skill with a Codex and
-  a Claude manifest over one copy of the canonical skill under `skills/<name>/`
+Both marketplace indexes point directly at that canonical directory:
 
-Both providers load plugin skills only from `skills/<name>/SKILL.md` under the
-plugin root. A root `SKILL.md` installs, and Claude Code CLI sessions even
-expose it, but Codex sessions expose nothing and Claude Desktop counts zero
-skills, so the nested layout is the contract.
+- `.agents/plugins/marketplace.json` is the Codex index.
+- `.claude-plugin/marketplace.json` is the Claude Code index.
 
-After any change to `catalog.json` or a published skill, run:
+Codex uses `"skills": "./."`; Claude uses `"skills": "./"`. These paths select
+the plugin root without a second content tree. Codex 0.153.2 rejects the bare
+`./` path, so do not shorten its configured value. Isolated install/discovery
+checks verified the root layout on Codex 0.153.2 and Claude Code 2.1.261.
 
-```sh
-python3 modules/common/ai-tools/marketplace/sync.py
-```
+The clients create their own installation caches. The repository does not copy
+skill payloads or require a sync step. Local Home Manager installations exclude
+plugin manifests so standalone skills keep their existing identity.
 
-`catalog.json` must publish or exclude every canonical skill. Add an exclusion
-reason when license or runtime constraints prevent portable distribution.
+`catalog.json` records publication membership, versions, categories, bundles,
+and exclusions. Publish or exclude every canonical skill. Keep catalog and
+provider metadata consistent when adding or updating a plugin; the validator
+checks them without generating files.
 
 ## Version published skills
 
-Marketplace consumers receive an update only on a version increase.
-`npx skills update` fetches head content directly, but `claude plugin update`
-and `codex plugin` compare the installed version against the published one, so
-an unbumped content change never reaches those consumers.
+Raise the plugin's semver in `catalog.json`, both plugin manifests, and the
+Claude marketplace entry when published content or packaging changes. The Codex
+marketplace entry carries no version field.
 
-When a published skill's content changes, raise its semver in `catalog.json` and
-run `sync.py` in the same commit. The sync writes the version into both plugin
-manifests and the Claude index. The Codex root index carries no version field.
-
-The validator proves every generated file agrees with `catalog.json` and that
-each plugin payload matches its provider projection. It cannot detect a content
-change with no bump, so the bump is the author's responsibility. Bundle
-membership and other catalog metadata carry no version; consumers pick those up
-on the next marketplace re-fetch.
+`npx skills update` fetches head content directly. Marketplace consumers use
+plugin versions to detect updates. Bundle membership and other catalog metadata
+carry no version; consumers pick those up on the next marketplace re-fetch.
 
 Run the read-only validator after a metadata or skill change:
 
@@ -330,4 +323,10 @@ Run the read-only validator after a metadata or skill change:
 python3 modules/common/ai-tools/marketplace/marketplace.py --root .
 ```
 
-The Python command is a maintainer check. It does not generate consumer files.
+The validator checks native source paths, metadata, publication coverage, and
+explicit-only controls. It rejects a leftover copied plugin-content tree.
+
+Native plugin configuration is documented in the
+[OpenAI plugin reference](https://developers.openai.com/plugins/build/plugins)
+and
+[Claude plugin reference](https://code.claude.com/docs/en/plugins-reference).

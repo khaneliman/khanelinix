@@ -182,6 +182,59 @@ class AuditAiToolsTests(unittest.TestCase):
                 self.assertEqual(report["summary"]["errors"], 1)
                 self.assertEqual(report["findings"][0]["code"], "invalid_frontmatter")
 
+    def test_native_invocation_flag_requires_boolean_true(self) -> None:
+        cases = (
+            "false",
+            '"true"',
+            "",
+            "true\ndisable-model-invocation: true",
+        )
+        for value in cases:
+            with self.subTest(value=value), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                skill = root / "invalid-skill"
+                skill.mkdir()
+                (skill / "SKILL.md").write_text(
+                    "---\n"
+                    "name: invalid-skill\n"
+                    "description: Invalid native invocation flag.\n"
+                    f"disable-model-invocation: {value}\n"
+                    "---\n\n# Invalid\n",
+                    encoding="utf-8",
+                )
+
+                report = audit_ai_tools.audit_root(root)
+
+                self.assertEqual(report["summary"]["errors"], 1)
+                self.assertEqual(report["findings"][0]["code"], "invalid_frontmatter")
+
+    def test_native_invocation_flag_matches_user_only_metadata(self) -> None:
+        cases = (
+            "disable-model-invocation: true\n",
+            'metadata:\n  khanelinix-invocation-mode: "user-only"\n',
+        )
+        for extra in cases:
+            with self.subTest(extra=extra), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                skill = root / "mismatched-skill"
+                skill.mkdir()
+                (skill / "SKILL.md").write_text(
+                    "---\n"
+                    "name: mismatched-skill\n"
+                    "description: Mismatched invocation policy.\n"
+                    f"{extra}"
+                    "---\n\n# Mismatch\n",
+                    encoding="utf-8",
+                )
+
+                report = audit_ai_tools.audit_root(root)
+
+                self.assertGreaterEqual(report["summary"]["errors"], 1)
+                self.assertIn(
+                    "invocation_policy_mismatch",
+                    {finding["code"] for finding in report["findings"]},
+                )
+
     def test_open_standard_name_and_description_limits_are_enforced(self) -> None:
         cases = (
             ("test-skill", "Invalid_Name", "Valid description.", "invalid_name"),
@@ -413,6 +466,7 @@ class AuditAiToolsTests(unittest.TestCase):
             manifest.write_text(
                 manifest.read_text(encoding="utf-8").replace(
                     "---\n\n# Test",
+                    "disable-model-invocation: true\n"
                     "metadata:\n"
                     '  khanelinix-invocation-mode: "user-only"\n'
                     "---\n\n# Test",

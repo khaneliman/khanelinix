@@ -1,0 +1,13 @@
+{
+	"name": "why",
+	"version": "0.1.4",
+	"description": "Investigate motivation and design rationale behind code.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./.",
+	"interface": {
+		"displayName": "Why",
+		"shortDescription": "Investigate motivation and design rationale behind code."
+	}
+}

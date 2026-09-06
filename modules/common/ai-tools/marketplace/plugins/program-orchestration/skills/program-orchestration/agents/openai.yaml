@@ -1,6 +1,0 @@
-interface:
-  display_name: "Program Orchestration"
-  short_description: "Coordinate durable multi-unit program control"
-  default_prompt: "Use $program-orchestration to coordinate this explicitly requested multi-unit program without taking over unit lifecycles."
-policy:
-  allow_implicit_invocation: false

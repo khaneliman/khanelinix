@@ -8,7 +8,7 @@
 			"name": "ai-tools-architect",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/ai-tools-architect"
+				"path": "./modules/common/ai-tools/skills/ai-tools-architect"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -20,7 +20,7 @@
 			"name": "architect",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/architect"
+				"path": "./modules/common/ai-tools/skills/architect"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -32,7 +32,7 @@
 			"name": "arena",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/arena"
+				"path": "./modules/common/ai-tools/skills/arena"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -44,7 +44,7 @@
 			"name": "bevy-toolkit",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/bevy-toolkit"
+				"path": "./modules/common/ai-tools/skills/bevy-toolkit"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -56,7 +56,7 @@
 			"name": "blender-toolkit",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/blender-toolkit"
+				"path": "./modules/common/ai-tools/skills/blender-toolkit"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -68,7 +68,7 @@
 			"name": "blast-radius",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/blast-radius"
+				"path": "./modules/common/ai-tools/skills/blast-radius"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -80,7 +80,7 @@
 			"name": "develop-web-game",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/develop-web-game"
+				"path": "./modules/common/ai-tools/skills/develop-web-game"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -92,7 +92,7 @@
 			"name": "diagnosing-bugs",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/diagnosing-bugs"
+				"path": "./modules/common/ai-tools/skills/diagnosing-bugs"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -104,7 +104,7 @@
 			"name": "engineering-principles",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/engineering-principles"
+				"path": "./modules/common/ai-tools/skills/engineering-principles"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -116,7 +116,7 @@
 			"name": "engineering-workflow",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/engineering-workflow"
+				"path": "./modules/common/ai-tools/skills/engineering-workflow"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -128,7 +128,7 @@
 			"name": "figure-it-out",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/figure-it-out"
+				"path": "./modules/common/ai-tools/skills/figure-it-out"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -140,7 +140,7 @@
 			"name": "frontend-design",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/frontend-design"
+				"path": "./modules/common/ai-tools/skills/frontend-design"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -152,7 +152,7 @@
 			"name": "git-toolkit",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/git-toolkit"
+				"path": "./modules/common/ai-tools/skills/git-toolkit"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -164,7 +164,7 @@
 			"name": "github-toolkit",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/github-toolkit"
+				"path": "./modules/common/ai-tools/skills/github-toolkit"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -176,7 +176,7 @@
 			"name": "how",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/how"
+				"path": "./modules/common/ai-tools/skills/how"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -188,7 +188,7 @@
 			"name": "interrogate",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/interrogate"
+				"path": "./modules/common/ai-tools/skills/interrogate"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -200,7 +200,7 @@
 			"name": "jj-toolkit",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/jj-toolkit"
+				"path": "./modules/common/ai-tools/skills/jj-toolkit"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -212,7 +212,7 @@
 			"name": "lua-toolkit",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/lua-toolkit"
+				"path": "./modules/common/ai-tools/skills/lua-toolkit"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -224,7 +224,7 @@
 			"name": "mcp-builder",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/mcp-builder"
+				"path": "./modules/common/ai-tools/skills/mcp-builder"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -236,7 +236,7 @@
 			"name": "memory-profiler",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/memory-profiler"
+				"path": "./modules/common/ai-tools/skills/memory-profiler"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -248,7 +248,7 @@
 			"name": "nix-toolkit",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/nix-toolkit"
+				"path": "./modules/common/ai-tools/skills/nix-toolkit"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -260,7 +260,7 @@
 			"name": "okf-memory",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/okf-memory"
+				"path": "./modules/common/ai-tools/skills/okf-memory"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -272,7 +272,7 @@
 			"name": "performance-forensics",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/performance-forensics"
+				"path": "./modules/common/ai-tools/skills/performance-forensics"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -284,7 +284,7 @@
 			"name": "planning-with-files",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/planning-with-files"
+				"path": "./modules/common/ai-tools/skills/planning-with-files"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -296,7 +296,7 @@
 			"name": "program-orchestration",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/program-orchestration"
+				"path": "./modules/common/ai-tools/skills/program-orchestration"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -308,7 +308,7 @@
 			"name": "recall",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/recall"
+				"path": "./modules/common/ai-tools/skills/recall"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -320,7 +320,7 @@
 			"name": "requirements-interview",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/requirements-interview"
+				"path": "./modules/common/ai-tools/skills/requirements-interview"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -332,7 +332,7 @@
 			"name": "research",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/research"
+				"path": "./modules/common/ai-tools/skills/research"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -344,7 +344,7 @@
 			"name": "rust-toolkit",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/rust-toolkit"
+				"path": "./modules/common/ai-tools/skills/rust-toolkit"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -356,7 +356,7 @@
 			"name": "sarif-toolkit",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/sarif-toolkit"
+				"path": "./modules/common/ai-tools/skills/sarif-toolkit"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -368,7 +368,7 @@
 			"name": "security-toolkit",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/security-toolkit"
+				"path": "./modules/common/ai-tools/skills/security-toolkit"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -380,7 +380,7 @@
 			"name": "show-me-your-work",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/show-me-your-work"
+				"path": "./modules/common/ai-tools/skills/show-me-your-work"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -392,7 +392,7 @@
 			"name": "skill-creator",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/skill-creator"
+				"path": "./modules/common/ai-tools/skills/skill-creator"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -404,7 +404,7 @@
 			"name": "software-engineering",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/software-engineering"
+				"path": "./modules/common/ai-tools/skills/software-engineering"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -416,7 +416,7 @@
 			"name": "tdd",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/tdd"
+				"path": "./modules/common/ai-tools/skills/tdd"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -428,7 +428,7 @@
 			"name": "technical-writing",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/technical-writing"
+				"path": "./modules/common/ai-tools/skills/technical-writing"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -440,7 +440,7 @@
 			"name": "typescript-best-practices",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/typescript-best-practices"
+				"path": "./modules/common/ai-tools/skills/typescript-best-practices"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -452,7 +452,7 @@
 			"name": "unslop",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/unslop"
+				"path": "./modules/common/ai-tools/skills/unslop"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -464,7 +464,7 @@
 			"name": "verification-harness",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/verification-harness"
+				"path": "./modules/common/ai-tools/skills/verification-harness"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -476,7 +476,7 @@
 			"name": "why",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/why"
+				"path": "./modules/common/ai-tools/skills/why"
 			},
 			"policy": {
 				"installation": "AVAILABLE",
@@ -488,7 +488,7 @@
 			"name": "writing-nix",
 			"source": {
 				"source": "local",
-				"path": "./modules/common/ai-tools/marketplace/plugins/writing-nix"
+				"path": "./modules/common/ai-tools/skills/writing-nix"
 			},
 			"policy": {
 				"installation": "AVAILABLE",

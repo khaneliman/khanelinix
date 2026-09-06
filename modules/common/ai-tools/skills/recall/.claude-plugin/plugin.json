@@ -1,0 +1,10 @@
+{
+	"name": "recall",
+	"displayName": "Recall",
+	"description": "Rebuild recent working context into a current-state brief.",
+	"version": "0.1.5",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./"
+}

@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-import skill_projection
+import skill_metadata
 
 NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 SEMVER_RE = re.compile(
@@ -188,13 +188,13 @@ def read_skill_frontmatter(skill_dir: Path) -> dict[str, str]:
             f"skill name must match directory: {skill_dir.name} != {name}"
         )
     try:
-        mode = skill_projection.invocation_mode(manifest)
-    except skill_projection.ProjectionError as error:
+        mode = skill_metadata.invocation_mode(manifest)
+    except skill_metadata.MetadataError as error:
         raise MarketplaceError(
             f"invalid skill invocation metadata: {manifest_path}: {error}"
         ) from error
     if mode is not None:
-        frontmatter[skill_projection.INVOCATION_METADATA_KEY] = mode
+        frontmatter[skill_metadata.INVOCATION_METADATA_KEY] = mode
     return frontmatter
 
 
@@ -286,57 +286,54 @@ def validate_claude_entry(
         raise MarketplaceError(f"Claude marketplace description mismatch: {name}")
 
 
-def directory_files(root: Path) -> dict[str, bytes]:
-    return {
-        path.relative_to(root).as_posix(): path.read_bytes()
-        for path in sorted(root.rglob("*"))
-        if path.is_file() and "__pycache__" not in path.parts and path.suffix != ".pyc"
-    }
-
-
-def validate_claude_plugin(
-    plugin_dir: Path, plugin: dict[str, Any], owner: Any
-) -> None:
+def validate_claude_plugin(skill_dir: Path, plugin: dict[str, Any], owner: Any) -> None:
     name = plugin["name"]
-    manifest = load_json_object(plugin_dir / ".claude-plugin" / "plugin.json")
+    manifest = load_json_object(skill_dir / ".claude-plugin" / "plugin.json")
     expected = {
         "name": name,
         "displayName": plugin["displayName"],
         "description": plugin["description"],
         "version": plugin["version"],
         "author": owner,
+        "skills": "./",
     }
     if manifest != expected:
         raise MarketplaceError(f"Claude plugin manifest mismatch: {name}")
 
 
-def validate_codex_plugin(
-    plugin_dir: Path, skill_dir: Path, plugin: dict[str, Any], owner: Any
-) -> None:
+def validate_codex_plugin(skill_dir: Path, plugin: dict[str, Any], owner: Any) -> None:
     name = plugin["name"]
-    manifest = load_json_object(plugin_dir / ".codex-plugin" / "plugin.json")
-    if manifest.get("name") != name:
-        raise MarketplaceError(f"Codex plugin name mismatch: {name}")
-    if manifest.get("version") != plugin["version"]:
-        raise MarketplaceError(f"Codex plugin version mismatch: {name}")
-    if manifest.get("author") != owner:
-        raise MarketplaceError(f"Codex plugin author mismatch: {name}")
-    if manifest.get("description") != plugin["description"]:
-        raise MarketplaceError(f"Codex plugin description mismatch: {name}")
-    if manifest.get("skills") != "./skills/":
-        raise MarketplaceError(f"Codex plugin skills path must equal ./skills/: {name}")
-    if manifest.get("interface") != {
-        "displayName": plugin["displayName"],
-        "shortDescription": plugin["description"],
-    }:
-        raise MarketplaceError(f"Codex plugin interface mismatch: {name}")
-    payload_dir = plugin_dir / "skills" / name
-    if not payload_dir.is_dir() or directory_files(
-        payload_dir
-    ) != skill_projection.projected_directory_files(skill_dir, "claude-code"):
+    manifest = load_json_object(skill_dir / ".codex-plugin" / "plugin.json")
+    expected = {
+        "name": name,
+        "version": plugin["version"],
+        "description": plugin["description"],
+        "author": owner,
+        "skills": "./.",
+        "interface": {
+            "displayName": plugin["displayName"],
+            "shortDescription": plugin["description"],
+        },
+    }
+    if manifest != expected:
+        raise MarketplaceError(f"Codex plugin manifest mismatch: {name}")
+
+
+def validate_user_only_control(skill_dir: Path, skill: dict[str, str]) -> None:
+    if (
+        skill.get(skill_metadata.INVOCATION_METADATA_KEY)
+        != skill_metadata.USER_ONLY_MODE
+    ):
+        return
+    manifest = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    lines, closing = skill_metadata.frontmatter_bounds(manifest)
+    if not any(
+        re.fullmatch(r"disable-model-invocation:\s*true", line)
+        for line in lines[1:closing]
+    ):
         raise MarketplaceError(
-            f"plugin payload out of sync with provider projection: {name}; "
-            "run marketplace/sync.py"
+            "user-only skill must declare disable-model-invocation: true: "
+            + skill_dir.name
         )
 
 
@@ -365,10 +362,8 @@ def validate_invocation_documentation(
     expected = {
         name
         for name, skill_dir in discovered.items()
-        if read_skill_frontmatter(skill_dir).get(
-            skill_projection.INVOCATION_METADATA_KEY
-        )
-        == skill_projection.USER_ONLY_MODE
+        if read_skill_frontmatter(skill_dir).get(skill_metadata.INVOCATION_METADATA_KEY)
+        == skill_metadata.USER_ONLY_MODE
     }
     if not readme_path.is_file():
         if expected:
@@ -445,36 +440,34 @@ def validate_repository(root: Path, catalog_path: Path | None = None) -> dict[st
                 f"{provider} marketplace plugin order does not match catalog"
             )
 
-    stray = sorted(
-        skill_dir.name
-        for skill_dir in skills_dir.iterdir()
-        if (skill_dir / ".codex-plugin").exists()
-        or (skill_dir / ".claude-plugin").exists()
-    )
-    if stray:
+    legacy_plugins = root / PLUGINS_TREE_PATH
+    if legacy_plugins.exists():
         raise MarketplaceError(
-            "canonical skills must not contain plugin manifests: " + ", ".join(stray)
+            "legacy marketplace plugin tree must be removed: " + str(legacy_plugins)
         )
 
-    plugins_tree = root / PLUGINS_TREE_PATH
     for index, plugin in enumerate(catalog["plugins"]):
         name = plugin["name"]
-        plugin_path = f"./{(PLUGINS_TREE_PATH / name).as_posix()}"
+        plugin_path = f"./{(SKILLS_PATH / name).as_posix()}"
         skill = read_skill_frontmatter(discovered[name])
         codex_entry = require_entry(codex_entries[index], "Codex", index)
         claude_entry = require_entry(claude_entries[index], "Claude", index)
         validate_codex_entry(codex_entry, plugin, plugin_path)
         validate_claude_entry(claude_entry, plugin, plugin_path, owner)
-        validate_codex_plugin(plugins_tree / name, discovered[name], plugin, owner)
-        validate_claude_plugin(plugins_tree / name, plugin, owner)
+        validate_codex_plugin(discovered[name], plugin, owner)
+        validate_claude_plugin(discovered[name], plugin, owner)
+        validate_user_only_control(discovered[name], skill)
         if not skill["description"]:
             raise MarketplaceError(f"skill description is empty: {name}")
 
-    exposed = sorted(
-        plugin_dir.name for plugin_dir in plugins_tree.iterdir() if plugin_dir.is_dir()
-    )
-    if exposed != sorted(expected_names):
-        raise MarketplaceError("plugin tree does not match published catalog entries")
+    for name in catalog["excluded"]:
+        skill_dir = discovered[name]
+        if (skill_dir / ".codex-plugin").exists() or (
+            skill_dir / ".claude-plugin"
+        ).exists():
+            raise MarketplaceError(
+                "excluded skill must not contain provider manifests: " + name
+            )
 
     bundles = catalog.get("bundles", {})
     if bundles:

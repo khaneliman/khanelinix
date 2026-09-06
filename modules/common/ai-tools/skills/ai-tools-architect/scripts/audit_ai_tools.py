@@ -45,7 +45,13 @@ BLOCK_SCALAR_RE = re.compile(
 SKILL_NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 MAX_SKILL_NAME_CHARACTERS = 64
 MAX_SKILL_DESCRIPTION_CHARACTERS = 1024
-SUPPORTED_FRONTMATTER_FIELDS = {"description", "license", "metadata", "name"}
+SUPPORTED_FRONTMATTER_FIELDS = {
+    "description",
+    "disable-model-invocation",
+    "license",
+    "metadata",
+    "name",
+}
 OPENAI_REQUIRED_INTERFACE_FIELDS = {
     "default_prompt",
     "display_name",
@@ -255,7 +261,7 @@ def parse_block_scalar(
     return value, index, None
 
 
-def parse_frontmatter(path: Path) -> tuple[dict[str, str], str | None]:
+def parse_frontmatter(path: Path) -> tuple[dict[str, str | bool], str | None]:
     lines = read_text(path).splitlines()
     if not lines or lines[0].strip() != "---":
         return {}, "missing opening YAML frontmatter boundary"
@@ -284,9 +290,9 @@ def parse_frontmatter(path: Path) -> tuple[dict[str, str], str | None]:
         value = (match.group(2) or "").strip()
         if key not in SUPPORTED_FRONTMATTER_FIELDS:
             return {}, f"unsupported frontmatter field: {key}"
+        if key in values:
+            return {}, f"duplicate frontmatter field: {key}"
         if key in {"name", "description"}:
-            if key in values:
-                return {}, f"duplicate frontmatter field: {key}"
             if value.startswith(("|", ">")):
                 parsed, index, error = parse_block_scalar(
                     key, value, frontmatter_lines, index + 1
@@ -298,6 +304,11 @@ def parse_frontmatter(path: Path) -> tuple[dict[str, str], str | None]:
                 return {}, error
             assert parsed is not None
             values[key] = parsed
+        elif key == "disable-model-invocation":
+            if value != "true":
+                return {}, "frontmatter disable-model-invocation must be true"
+            values[key] = True
+            index += 1
         elif key == "license":
             parsed, error = parse_string_scalar(key, value)
             index += 1
@@ -872,6 +883,7 @@ def audit_skill(
             )
         metadata = json.loads(frontmatter.get("metadata", "{}"))
         declared_invocation_mode = metadata.get(INVOCATION_METADATA_KEY)
+        native_user_only = frontmatter.get("disable-model-invocation") is True
         if declared_invocation_mode is not None:
             if declared_invocation_mode != USER_ONLY_INVOCATION_MODE:
                 findings.append(
@@ -886,6 +898,17 @@ def audit_skill(
                 )
             else:
                 invocation_mode = USER_ONLY_INVOCATION_MODE
+        if native_user_only != (declared_invocation_mode == USER_ONLY_INVOCATION_MODE):
+            findings.append(
+                Finding(
+                    "error",
+                    "invocation_policy_mismatch",
+                    skill_path,
+                    "disable-model-invocation: true must match "
+                    f"metadata.{INVOCATION_METADATA_KEY}: {USER_ONLY_INVOCATION_MODE!r}",
+                    1,
+                )
+            )
 
     if line_count > line_budget:
         findings.append(

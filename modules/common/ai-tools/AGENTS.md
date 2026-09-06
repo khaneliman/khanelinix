@@ -26,8 +26,7 @@
 - `agents.nix`: semantic worker capabilities and provider renderers
 - `agents/shared/worker-core.md`: universal child-worker boundaries and quality
   contract composed into every provider agent
-- `marketplace/`: portable publication catalog, provider skill projection,
-  generator (`sync.py`), validator, generated shared plugin tree (`plugins/`),
+- `marketplace/`: portable publication catalog, native marketplace validation,
   tests, and install documentation
 - `skills/`: canonical on-demand workflows; keep root playbooks lean and route
   detail into references/scripts
@@ -40,10 +39,9 @@
 
 - Change shared behavior once at canonical source, then verify every renderer or
   consumer affected by that source.
-- When a marketplace-published skill's content changes, bump its version in
-  `marketplace/catalog.json` and run `marketplace/sync.py` in the same change,
-  then rerun the marketplace validator per `marketplace/README.md`. Downstream
-  plugin consumers only receive updates on a bump.
+- Published skill directories are native plugin roots. Maintain content only
+  under `skills/`; do not create copied marketplace payloads. Follow
+  `marketplace/README.md` for version updates and validation.
 - Keep prompt changes separate from workflow, permission, hook, and generated
   provider changes when each can stand alone.
 - Do not hand-edit deployed files under user config; change repository source

@@ -1,6 +1,7 @@
 ---
 name: program-orchestration
 description: "Explicit durable control overlay for multiple independently landable work units. Use only when the user names $program-orchestration or directly asks to orchestrate a program with dependencies, leases, grants, receipts, and recovery. Existing workflow skills still own each unit."
+disable-model-invocation: true
 metadata:
   khanelinix-invocation-mode: "user-only"
 ---

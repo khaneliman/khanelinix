@@ -1,9 +1,0 @@
-{
-	"name": "memory-profiler",
-	"displayName": "Memory Profiler",
-	"description": "Diagnose and refactor cross-language memory problems.",
-	"version": "0.1.4",
-	"author": {
-		"name": "khaneliman"
-	}
-}

@@ -1,9 +1,0 @@
-{
-	"name": "git-toolkit",
-	"displayName": "Git Toolkit",
-	"description": "Git history and change-stack workflows.",
-	"version": "0.1.6",
-	"author": {
-		"name": "khaneliman"
-	}
-}

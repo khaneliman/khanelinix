@@ -1,4 +1,0 @@
-interface:
-  display_name: "Blender Toolkit"
-  short_description: "Game asset authoring, inspection, rigging, and glTF validation"
-  default_prompt: "Use $blender-toolkit to author, inspect, rig, render, export, or validate this Blender game asset pipeline."

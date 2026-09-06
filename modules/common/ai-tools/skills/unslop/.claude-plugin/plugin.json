@@ -1,0 +1,10 @@
+{
+	"name": "unslop",
+	"displayName": "Unslop",
+	"description": "Remove AI writing patterns from prose.",
+	"version": "0.1.6",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./"
+}

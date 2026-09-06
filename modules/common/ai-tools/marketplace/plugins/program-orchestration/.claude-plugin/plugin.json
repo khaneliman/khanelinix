@@ -1,9 +1,0 @@
-{
-	"name": "program-orchestration",
-	"displayName": "Program Orchestration",
-	"description": "Coordinate durable multi-unit program control.",
-	"version": "0.1.4",
-	"author": {
-		"name": "khaneliman"
-	}
-}

@@ -1,0 +1,13 @@
+{
+	"name": "mcp-builder",
+	"version": "0.1.3",
+	"description": "Build MCP servers for external APIs and services.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./.",
+	"interface": {
+		"displayName": "MCP Builder",
+		"shortDescription": "Build MCP servers for external APIs and services."
+	}
+}

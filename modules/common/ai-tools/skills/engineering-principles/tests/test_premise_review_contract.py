@@ -39,16 +39,6 @@ CONSUMERS = {
     / "architecture-review.md",
     "multi-provider review": SKILLS / "multi-provider-sdlc" / "references" / "review.md",
 }
-GENERATED_REFERENCE = (
-    AI_TOOLS_ROOT
-    / "marketplace"
-    / "plugins"
-    / "engineering-principles"
-    / "skills"
-    / "engineering-principles"
-    / "references"
-    / "premise-review.md"
-)
 
 
 def normalized(path: Path) -> str:
@@ -137,12 +127,6 @@ class PremiseReviewReferenceTests(unittest.TestCase):
         self.assertTrue((FIXTURES / "review-clean-approve.md").is_file())
         self.assertNotIn("nix", normalized(FIXTURES / "review-clean-approve.md"))
         self.assertNotIn("nix", normalized(FIXTURES / "review-gate-rubber-stamp.md"))
-
-    def test_generated_reference_matches_canonical_source(self) -> None:
-        if AI_TOOLS_ROOT.name != "ai-tools":
-            self.skipTest("canonical AI-tools tree is not installed")
-
-        self.assertEqual(REFERENCE.read_bytes(), GENERATED_REFERENCE.read_bytes())
 
 
 class PremiseGateCheckerTests(unittest.TestCase):

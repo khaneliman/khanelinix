@@ -1,4 +1,0 @@
-interface:
-  display_name: "Interrogate"
-  short_description: "Run independent adversarial reviewers before shipping"
-  default_prompt: "Use $interrogate to challenge this change with independent reviewers and synthesize their findings."

@@ -1,0 +1,10 @@
+{
+	"name": "research",
+	"displayName": "Research",
+	"description": "Research external questions with cited primary sources.",
+	"version": "0.1.2",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./"
+}

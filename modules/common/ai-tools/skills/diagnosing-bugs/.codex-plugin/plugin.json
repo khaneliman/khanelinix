@@ -1,0 +1,13 @@
+{
+	"name": "diagnosing-bugs",
+	"version": "0.1.1",
+	"description": "Reproduce, minimize, and establish software bug causes.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./.",
+	"interface": {
+		"displayName": "Diagnosing Bugs",
+		"shortDescription": "Reproduce, minimize, and establish software bug causes."
+	}
+}

@@ -1,0 +1,10 @@
+{
+	"name": "program-orchestration",
+	"displayName": "Program Orchestration",
+	"description": "Coordinate durable multi-unit program control.",
+	"version": "0.1.5",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./"
+}

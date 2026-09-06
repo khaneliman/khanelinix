@@ -11,7 +11,6 @@ MARKETPLACE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(MARKETPLACE_DIR))
 
 import marketplace
-import skill_projection
 
 
 class MarketplaceTest(unittest.TestCase):
@@ -19,7 +18,6 @@ class MarketplaceTest(unittest.TestCase):
         self.temporary_directory = tempfile.TemporaryDirectory()
         self.root = Path(self.temporary_directory.name)
         self.skills_dir = self.root / marketplace.SKILLS_PATH
-        self.plugins_tree = self.root / marketplace.PLUGINS_TREE_PATH
         self.catalog_path = (
             self.root / "modules/common/ai-tools/marketplace/catalog.json"
         )
@@ -33,6 +31,7 @@ class MarketplaceTest(unittest.TestCase):
 
     def skill_body(self, name: str, *, user_only: bool = False) -> str:
         metadata = (
+            "disable-model-invocation: true\n"
             'metadata:\n  khanelinix-invocation-mode: "user-only"\n'
             if user_only
             else ""
@@ -50,45 +49,33 @@ class MarketplaceTest(unittest.TestCase):
         )
         return skill_dir
 
-    def write_plugin(self, name: str) -> Path:
-        plugin_dir = self.plugins_tree / name
+    def write_native_manifests(self, name: str) -> None:
+        skill_dir = self.skills_dir / name
         self.write_json(
-            plugin_dir / ".claude-plugin/plugin.json",
+            skill_dir / ".claude-plugin/plugin.json",
             {
                 "name": name,
                 "displayName": f"{name} Display",
                 "description": f"Use {name} for tests.",
                 "version": "0.1.0",
                 "author": {"name": "Tester"},
+                "skills": "./",
             },
         )
         self.write_json(
-            plugin_dir / ".codex-plugin/plugin.json",
+            skill_dir / ".codex-plugin/plugin.json",
             {
                 "name": name,
                 "version": "0.1.0",
                 "description": f"Use {name} for tests.",
                 "author": {"name": "Tester"},
-                "skills": "./skills/",
+                "skills": "./.",
                 "interface": {
                     "displayName": f"{name} Display",
                     "shortDescription": f"Use {name} for tests.",
                 },
             },
         )
-        payload = plugin_dir / "skills" / name / "SKILL.md"
-        payload.parent.mkdir(parents=True, exist_ok=True)
-        canonical = self.skills_dir / name / "SKILL.md"
-        source = (
-            canonical.read_text(encoding="utf-8")
-            if canonical.is_file()
-            else self.skill_body(name)
-        )
-        payload.write_text(
-            skill_projection.project_manifest(source, "claude-code"),
-            encoding="utf-8",
-        )
-        return plugin_dir
 
     def write_readme(self, bundles: dict[str, Any]) -> None:
         blocks = [
@@ -122,7 +109,7 @@ class MarketplaceTest(unittest.TestCase):
         bundles: dict[str, Any] | None = None,
     ) -> None:
         for name in published:
-            self.write_plugin(name)
+            self.write_native_manifests(name)
         marketplace_metadata = {
             "name": "test-marketplace",
             "displayName": "Test Marketplace",
@@ -160,9 +147,7 @@ class MarketplaceTest(unittest.TestCase):
                         "name": name,
                         "source": {
                             "source": "local",
-                            "path": (
-                                "./modules/common/ai-tools/marketplace/plugins/" + name
-                            ),
+                            "path": ("./modules/common/ai-tools/skills/" + name),
                         },
                         "policy": {
                             "installation": "AVAILABLE",
@@ -188,9 +173,7 @@ class MarketplaceTest(unittest.TestCase):
                         "version": "0.1.0",
                         "author": {"name": "Tester"},
                         "category": "developer-tools",
-                        "source": (
-                            "./modules/common/ai-tools/marketplace/plugins/" + name
-                        ),
+                        "source": ("./modules/common/ai-tools/skills/" + name),
                     }
                     for name in published
                 ],
@@ -219,50 +202,47 @@ class MarketplaceTest(unittest.TestCase):
         ):
             marketplace.validate_repository(self.root)
 
-    def test_excluded_skill_must_not_have_codex_plugin(self) -> None:
+    def test_excluded_skill_must_not_have_provider_manifests(self) -> None:
         self.write_skill("alpha-skill")
         self.write_skill("private-skill")
         self.write_repository(
             ["alpha-skill"], {"private-skill": "Not redistributable."}
         )
-        self.write_plugin("private-skill")
+        self.write_native_manifests("private-skill")
 
         with self.assertRaisesRegex(
-            marketplace.MarketplaceError, "tree does not match"
+            marketplace.MarketplaceError, "excluded skill must not contain"
         ):
             marketplace.validate_repository(self.root)
 
     def test_requires_codex_plugin_manifest(self) -> None:
         self.write_skill("alpha-skill")
         self.write_repository(["alpha-skill"])
-        manifest = self.plugins_tree / "alpha-skill/.codex-plugin/plugin.json"
+        manifest = self.skills_dir / "alpha-skill/.codex-plugin/plugin.json"
         manifest.unlink()
 
         with self.assertRaisesRegex(marketplace.MarketplaceError, "unable to read"):
             marketplace.validate_repository(self.root)
 
-    def test_canonical_skill_must_not_hold_codex_manifest(self) -> None:
-        skill_dir = self.write_skill("alpha-skill")
-        self.write_repository(["alpha-skill"])
-        stray = skill_dir / ".codex-plugin"
-        stray.mkdir()
-        (stray / "plugin.json").write_text("{}", encoding="utf-8")
-
-        with self.assertRaisesRegex(
-            marketplace.MarketplaceError, "must not contain plugin manifests"
-        ):
-            marketplace.validate_repository(self.root)
-
-    def test_rejects_stale_codex_payload(self) -> None:
+    def test_requires_claude_plugin_manifest(self) -> None:
         self.write_skill("alpha-skill")
         self.write_repository(["alpha-skill"])
-        payload = self.plugins_tree / "alpha-skill/skills/alpha-skill/SKILL.md"
-        payload.write_text(payload.read_text() + "\nDrift.\n", encoding="utf-8")
+        manifest = self.skills_dir / "alpha-skill/.claude-plugin/plugin.json"
+        manifest.unlink()
 
-        with self.assertRaisesRegex(marketplace.MarketplaceError, "out of sync"):
+        with self.assertRaisesRegex(marketplace.MarketplaceError, "unable to read"):
             marketplace.validate_repository(self.root)
 
-    def test_user_only_payload_uses_provider_projection(self) -> None:
+    def test_rejects_legacy_plugin_tree(self) -> None:
+        self.write_skill("alpha-skill")
+        self.write_repository(["alpha-skill"])
+        legacy = self.root / marketplace.PLUGINS_TREE_PATH / "alpha-skill"
+        legacy.mkdir(parents=True)
+
+        with self.assertRaisesRegex(marketplace.MarketplaceError, "legacy marketplace"):
+            marketplace.validate_repository(self.root)
+
+    def test_user_only_skill_requires_native_control(self) -> None:
         self.write_skill("manual-skill", user_only=True)
         self.write_repository(["manual-skill"])
         self.write_invocation_readme(["manual-skill"])
@@ -270,16 +250,17 @@ class MarketplaceTest(unittest.TestCase):
         result = marketplace.validate_repository(self.root)
 
         self.assertEqual(result["plugins"], 1)
-        payload = self.plugins_tree / "manual-skill/skills/manual-skill/SKILL.md"
-        rendered = payload.read_text(encoding="utf-8")
+        manifest = self.skills_dir / "manual-skill/SKILL.md"
+        rendered = manifest.read_text(encoding="utf-8")
         self.assertIn("disable-model-invocation: true", rendered)
 
-        payload.write_text(
-            rendered.replace("disable-model-invocation: true\n", ""),
+        manifest.write_text(
+            rendered.replace("disable-model-invocation: true\n", "")
+            + "\nExample: disable-model-invocation: true\n",
             encoding="utf-8",
         )
         with self.assertRaisesRegex(
-            marketplace.MarketplaceError, "provider projection"
+            marketplace.MarketplaceError, "must declare disable-model-invocation"
         ):
             marketplace.validate_repository(self.root)
 
@@ -293,44 +274,28 @@ class MarketplaceTest(unittest.TestCase):
         ):
             marketplace.validate_repository(self.root)
 
-    def test_ignores_transient_python_bytecode(self) -> None:
-        skill_dir = self.write_skill("alpha-skill")
-        self.write_repository(["alpha-skill"])
-        payload_dir = self.plugins_tree / "alpha-skill/skills/alpha-skill"
-        relative_cache = Path("tests/__pycache__/test_contract.cpython-314.pyc")
-        canonical_cache = skill_dir / relative_cache
-        plugin_cache = payload_dir / relative_cache
-        canonical_cache.parent.mkdir(parents=True)
-        plugin_cache.parent.mkdir(parents=True)
-        canonical_cache.write_bytes(b"canonical transient bytecode")
-        plugin_cache.write_bytes(b"plugin transient bytecode")
-
-        result = marketplace.validate_repository(self.root)
-
-        self.assertEqual(result["plugins"], 1)
-
-    def test_rejects_root_skills_path(self) -> None:
+    def test_rejects_non_native_codex_skills_path(self) -> None:
         self.write_skill("alpha-skill")
         self.write_repository(["alpha-skill"])
-        path = self.plugins_tree / "alpha-skill/.codex-plugin/plugin.json"
+        path = self.skills_dir / "alpha-skill/.codex-plugin/plugin.json"
         payload = self.load_json(path)
         payload["skills"] = "./"
         self.write_json(path, payload)
 
         with self.assertRaisesRegex(
-            marketplace.MarketplaceError, "must equal ./skills/"
+            marketplace.MarketplaceError, "Codex plugin manifest mismatch"
         ):
             marketplace.validate_repository(self.root)
 
     def test_rejects_missing_interface(self) -> None:
         self.write_skill("alpha-skill")
         self.write_repository(["alpha-skill"])
-        path = self.plugins_tree / "alpha-skill/.codex-plugin/plugin.json"
+        path = self.skills_dir / "alpha-skill/.codex-plugin/plugin.json"
         payload = self.load_json(path)
         del payload["interface"]
         self.write_json(path, payload)
 
-        with self.assertRaisesRegex(marketplace.MarketplaceError, "interface mismatch"):
+        with self.assertRaisesRegex(marketplace.MarketplaceError, "manifest mismatch"):
             marketplace.validate_repository(self.root)
 
     def test_rejects_codex_source_mismatch(self) -> None:
@@ -381,12 +346,12 @@ class MarketplaceTest(unittest.TestCase):
     def test_rejects_plugin_version_mismatch(self) -> None:
         self.write_skill("alpha-skill")
         self.write_repository(["alpha-skill"])
-        path = self.plugins_tree / "alpha-skill/.codex-plugin/plugin.json"
+        path = self.skills_dir / "alpha-skill/.codex-plugin/plugin.json"
         payload = self.load_json(path)
         payload["version"] = "0.2.0"
         self.write_json(path, payload)
 
-        with self.assertRaisesRegex(marketplace.MarketplaceError, "version mismatch"):
+        with self.assertRaisesRegex(marketplace.MarketplaceError, "manifest mismatch"):
             marketplace.validate_repository(self.root)
 
     def test_documented_bundle_passes(self) -> None:
