@@ -20,12 +20,11 @@ in
   perSystem =
     { system, ... }:
     {
-      _module.args.pkgs = lib.mkDefault (
-        import inputs.nixpkgs {
-          inherit system;
-          overlays = allOverlays;
-          config = { };
-        }
-      );
+      # Dev tooling needs nixpkgs aliases that the host policy disables.
+      _module.args.pkgs = import inputs.nixpkgs {
+        inherit system;
+        overlays = allOverlays;
+        config = { };
+      };
     };
 }
