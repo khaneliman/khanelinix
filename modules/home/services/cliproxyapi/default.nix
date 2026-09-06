@@ -75,6 +75,10 @@ let
         "--model"
         (lib.escapeShellArg (proxyModel provider model))
       ]
+      ++ lib.optionals (provider == "codex" && model == "gpt-6-astra") [
+        "--effort"
+        modelRouting.models."gpt-6-astra".reasoning_effort
+      ]
     );
 
   claudeDirect = pkgs.writeShellApplication {
