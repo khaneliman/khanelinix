@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import errno
 import json
 import os
 import subprocess
@@ -132,7 +133,12 @@ class ContentDigestTests(unittest.TestCase):
     @unittest.skipUnless(os.name == "posix", "byte paths require POSIX")
     def test_non_utf8_path_matches_after_commit(self) -> None:
         path = os.fsencode(self.repo) + b"/byte-path-\xff"
-        descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        try:
+            descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        except OSError as error:
+            if error.errno == errno.EILSEQ:
+                self.skipTest("filesystem does not support non-UTF-8 filenames")
+            raise
         with os.fdopen(descriptor, "wb") as handle:
             handle.write(b"opaque path\n")
         subprocess.check_call(

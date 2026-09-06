@@ -320,14 +320,13 @@ class ModelRoutingTests(unittest.TestCase):
             'tools: "Read, Bash, Grep, Glob"', projection["claude"]["fable-5-1"]
         )
         self.assertEqual(projection["codex"]["fable-5-1"]["sandbox_mode"], "read-only")
-        self.assertIn('"edit": false', projection["opencode"]["fable-5-1"])
-        self.assertIn('"write": false', projection["opencode"]["fable-5-1"])
+        self.assertIn('"edit": "deny"', projection["opencode"]["fable-5-1"])
 
     @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
-            False: "3538796860e40b0d5ba1d860c70673e0e21f47ffcb8f2bd6b24c2371d5f85dfd",
-            True: "4f93c525989988f969a83aef2a6fce6dbf177d549f9b13ecf75a6c11e45c75f0",
+            False: "a1a575de6000d7035cbf06f5de97942fb397d2d250bce269a548d8a644855f5b",
+            True: "fdd5801444cc23504fa8baf299eb2d5e7b722da813c5b59a73a5e976740177b4",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():
@@ -348,7 +347,7 @@ class ModelRoutingTests(unittest.TestCase):
         self.assertIn('description: "description: # tag"', projection["opencode"])
         self.assertIn('mode: "mode: # tag"', projection["opencode"])
         self.assertIn('model: "opencode: # model"', projection["opencode"])
-        self.assertIn('"bash": false', projection["opencode"])
+        self.assertIn('"bash": "deny"', projection["opencode"])
         self.assertIn('"permission: # key": "allow: # value"', projection["opencode"])
         self.assertIn('name: "worker: # tag"', projection["copilot"])
         self.assertIn('model: "copilot: # model"', projection["copilot"])
