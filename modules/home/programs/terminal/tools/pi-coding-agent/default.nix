@@ -139,6 +139,10 @@ in
         defaultProvider = "openai-codex";
         defaultModel = "gpt-5.6-luna";
         defaultThinkingLevel = "high";
+        modelThinkingLevels = {
+          "openai-codex/gpt-6-astra" = "medium";
+          "openai/gpt-6-astra" = "medium";
+        };
         enableInstallTelemetry = false;
         collapseChangelog = true;
         transport = "auto";
