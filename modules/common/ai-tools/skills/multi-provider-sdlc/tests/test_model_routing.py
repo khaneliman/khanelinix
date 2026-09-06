@@ -326,7 +326,7 @@ class ModelRoutingTests(unittest.TestCase):
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
             False: "a1a575de6000d7035cbf06f5de97942fb397d2d250bce269a548d8a644855f5b",
-            True: "fdd5801444cc23504fa8baf299eb2d5e7b722da813c5b59a73a5e976740177b4",
+            True: "a1c5f3ccee4bcb4f10e807938b95f04a27ce445bb9669f2717418fc79b910ba8",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():

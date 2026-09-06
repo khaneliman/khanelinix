@@ -82,7 +82,12 @@ let
         opencode = "cliproxyapi/${alias}";
       };
       model_provider.codex = "cliproxyapi";
-      model_reasoning_effort.codex = reasoningEffort;
+      model_reasoning_effort = {
+        codex = reasoningEffort;
+      }
+      // lib.optionalAttrs (name == "gpt-6-astra") {
+        claude = reasoningEffort;
+      };
       sandbox_mode.codex = if workspaceWrite then "workspace-write" else "read-only";
       content = builtins.readFile (agentsBasePath + "/general/model-worker.md");
     };
@@ -222,6 +227,7 @@ let
     let
       description = agent.claudeDescription or agent.description;
       model = agent.model.claude or agent.model;
+      effort = modelValue "claude" (agent.model_reasoning_effort or null);
       tools = renderYamlString "Claude tool IDs" (lib.concatStringsSep ", " agent.tools);
     in
     ''
@@ -230,7 +236,9 @@ let
       description: ${renderYamlString "Claude agent description" description}
       tools: ${tools}
       model: ${renderYamlString "Claude model ID" model}
-      ---
+      ${
+        lib.optionalString (effort != null) "effort: ${renderYamlString "Claude reasoning effort" effort}\n"
+      }---
     '';
 
   renderClaudeAgent = agent: ''
