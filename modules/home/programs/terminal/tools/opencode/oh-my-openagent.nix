@@ -70,6 +70,7 @@ in
           agents = {
             sisyphus = {
               model = aiTools.agents.reviewer.model.opencode;
+              reasoningEffort = "medium";
               fallback_models = deliberateFallbackModels;
               prompt_append = "Follow the repository engineering rules already provided through the shared OpenCode context. Prefer the shared commands and skills before inventing new workflows.";
             };
