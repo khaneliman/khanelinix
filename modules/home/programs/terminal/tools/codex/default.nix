@@ -300,11 +300,10 @@ in
 
         notice.hide_rate_limit_model_nudge = true;
 
-        # Keep expensive parent reasoning separate from Luna/Spark worker routes.
         # No service_tier: Astra is costly enough on the default tier.
         model = "gpt-6-astra";
-        model_reasoning_effort = "high";
-        plan_mode_reasoning_effort = "high";
+        model_reasoning_effort = "medium";
+        plan_mode_reasoning_effort = "medium";
         web_search = "live";
 
         # Browser-side counterpart lives in the chromium native-messaging
