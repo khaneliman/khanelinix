@@ -6,6 +6,7 @@
 }:
 let
   cfg = config.khanelinix.programs.terminal.tools.t3code;
+  inherit (cfg) resourceControl;
 
   mkRunner =
     name: scopeArgs: ownerArgs:
@@ -19,13 +20,13 @@ let
 
   agentArgs = [
     "--slice=app-agent-workloads.slice"
-    "--property=MemoryHigh=6G"
-    "--property=MemoryMax=8G"
-    "--property=MemorySwapMax=2G"
+    "--property=MemoryHigh=${resourceControl.agent.memoryHigh}"
+    "--property=MemoryMax=${resourceControl.agent.memoryMax}"
+    "--property=MemorySwapMax=${resourceControl.agent.memorySwapMax}"
   ];
   buildArgs = [
     "--slice=app-build.slice"
-    "--property=MemoryHigh=16G"
+    "--property=MemoryHigh=${resourceControl.build.memoryHigh}"
   ];
   backendArgs = [
     "--property=BindsTo=t3code-remote.service"
@@ -59,11 +60,55 @@ let
   ) providerBinaries;
 in
 {
-  options.khanelinix.programs.terminal.tools.t3code.resourceControl.enable =
-    lib.mkEnableOption "resource-limited T3 provider scopes"
-    // {
+  options.khanelinix.programs.terminal.tools.t3code.resourceControl = {
+    enable = lib.mkEnableOption "resource-limited T3 provider scopes" // {
       default = true;
     };
+
+    agent = {
+      memoryHigh = lib.mkOption {
+        type = lib.types.str;
+        default = "6G";
+        description = "Soft memory threshold for each agent scope.";
+      };
+      memoryMax = lib.mkOption {
+        type = lib.types.str;
+        default = "8G";
+        description = "Hard memory limit for each agent scope.";
+      };
+      memorySwapMax = lib.mkOption {
+        type = lib.types.str;
+        default = "2G";
+        description = "Swap limit for each agent scope.";
+      };
+    };
+
+    agentAggregate = {
+      memoryHigh = lib.mkOption {
+        type = lib.types.str;
+        default = "12G";
+        description = "Soft memory threshold for the agent workload slice.";
+      };
+      memoryMax = lib.mkOption {
+        type = lib.types.str;
+        default = "16G";
+        description = "Hard memory limit for the agent workload slice.";
+      };
+      memorySwapMax = lib.mkOption {
+        type = lib.types.str;
+        default = "4G";
+        description = "Swap limit for the agent workload slice.";
+      };
+    };
+
+    build = {
+      memoryHigh = lib.mkOption {
+        type = lib.types.str;
+        default = "16G";
+        description = "Soft memory threshold for each build scope and slice.";
+      };
+    };
+  };
 
   config = lib.mkIf (cfg.enable && cfg.resourceControl.enable && pkgs.stdenv.hostPlatform.isLinux) {
     home.packages = [
@@ -75,9 +120,9 @@ in
     systemd.user.slices.app-agent-workloads = {
       Unit.Description = "Resource-limited agent workloads";
       Slice = {
-        MemoryHigh = "12G";
-        MemoryMax = "16G";
-        MemorySwapMax = "4G";
+        MemoryHigh = resourceControl.agentAggregate.memoryHigh;
+        MemoryMax = resourceControl.agentAggregate.memoryMax;
+        MemorySwapMax = resourceControl.agentAggregate.memorySwapMax;
         ManagedOOMMemoryPressure = "kill";
         ManagedOOMMemoryPressureLimit = "80%";
         ManagedOOMMemoryPressureDurationSec = "20s";
@@ -88,9 +133,9 @@ in
     systemd.user.slices.app-build = {
       Unit.Description = "Soft-limited build workloads";
       Slice = {
-        CPUWeight = 20;
-        IOWeight = 20;
-        MemoryHigh = "16G";
+        CPUWeight = lib.mkDefault 20;
+        IOWeight = lib.mkDefault 20;
+        MemoryHigh = resourceControl.build.memoryHigh;
       };
     };
 
