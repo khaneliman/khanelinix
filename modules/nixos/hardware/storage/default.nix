@@ -44,12 +44,12 @@ in
     # I/O Scheduler optimization for interactive latency
     hardware.block = {
       # NVMe: 'kyber' for latency-oriented scheduling under mixed workloads
-      defaultScheduler = "kyber";
+      defaultScheduler = lib.mkDefault "kyber";
       # HDDs and SATA: BFQ provides better interactive latency
-      defaultSchedulerRotational = "bfq";
+      defaultSchedulerRotational = lib.mkDefault "bfq";
       # Per-device overrides: SATA SSDs also benefit from BFQ
       scheduler = {
-        "sd[a-z]" = "bfq";
+        "sd[a-z]" = lib.mkDefault "bfq";
       };
     };
 
