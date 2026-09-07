@@ -302,8 +302,8 @@ in
 
         # No service_tier: Astra is costly enough on the default tier.
         model = "gpt-6-astra";
-        model_reasoning_effort = "medium";
-        plan_mode_reasoning_effort = "medium";
+        model_reasoning_effort = "low";
+        plan_mode_reasoning_effort = "low";
         web_search = "live";
 
         # Browser-side counterpart lives in the chromium native-messaging
