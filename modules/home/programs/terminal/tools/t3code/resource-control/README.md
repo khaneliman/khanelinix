@@ -4,6 +4,24 @@ On Linux, T3's managed provider processes run separately from its backend.
 Ordinary commands inherit their provider's limits. Large builds need an explicit
 build runner; commands are not classified automatically.
 
+The budgets are configurable under
+`khanelinix.programs.terminal.tools.t3code.resourceControl`. The options are
+strings because systemd accepts values such as `6G` directly. Set
+`agent.memoryHigh`, `agent.memoryMax`, and `agent.memorySwapMax` for each scope;
+`agentAggregate.memoryHigh`, `agentAggregate.memoryMax`, and
+`agentAggregate.memorySwapMax` for the shared agent slice; and
+`build.memoryHigh` for build scopes and their shared slice.
+
+```nix
+khanelinix.programs.terminal.tools.t3code.resourceControl = {
+  agent.memoryMax = "10G";
+  agentAggregate.memoryMax = "20G";
+  build.memoryHigh = "24G";
+};
+```
+
+The existing limits below are the defaults.
+
 | Workload                                    | Soft memory threshold | Hard memory limit | Swap limit      |
 | ------------------------------------------- | --------------------- | ----------------- | --------------- |
 | Each managed provider or `agent-run` scope  | 6 GiB                 | 8 GiB             | 2 GiB           |
