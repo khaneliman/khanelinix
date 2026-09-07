@@ -78,24 +78,6 @@ in
       # Add user to gamemode group for renice and parking permissions
       users.users.${config.khanelinix.user.name}.extraGroups = [ "gamemode" ];
 
-      security.wrappers.gamemode = {
-        owner = "root";
-        group = "root";
-        source = "${lib.getExe' pkgs.gamemode "gamemoderun"}";
-        capabilities = "cap_sys_ptrace,cap_sys_nice+pie";
-      };
-
-      security.polkit.extraConfig = ''
-        polkit.addRule(function(action, subject) {
-          if ((action.id == "com.feralinteractive.GameMode.governor-helper" ||
-               action.id == "com.feralinteractive.GameMode.procsys-helper" ||
-               action.id == "com.feralinteractive.GameMode.gpu-helper") &&
-              subject.isInGroup("users")) {
-            return polkit.Result.YES;
-          }
-        });
-      '';
-
       # Allow reading CPU power consumption for gamemode monitoring
       systemd.tmpfiles.settings."10-gamemode-powercap" = {
         "/sys/devices/virtual/powercap/intel-rapl/intel-rapl:0/intel-rapl:0:0/energy_uj".z = {
