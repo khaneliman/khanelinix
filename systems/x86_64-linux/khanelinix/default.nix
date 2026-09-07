@@ -274,6 +274,11 @@ in
   services = {
     displayManager.defaultSession = "hyprland";
     irqbalance.enable = false;
+    sysstat = {
+      enable = true;
+      collect-frequency = "*:0/1";
+      collect-args = "-S DISK 1 1";
+    };
     sunshine = {
       settings = {
         sunshine_name = "khanelinix";
