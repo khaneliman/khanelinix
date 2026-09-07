@@ -89,6 +89,12 @@ class ModelRoutingTests(unittest.TestCase):
         self.assertTrue(self.registry["models"]["gpt-5-6-sol"]["workspace_write"])
         self.assertFalse(self.registry["models"]["gpt-6-astra"]["write"])
 
+    def test_astra_gateway_default_effort_is_low(self) -> None:
+        self.assertEqual(
+            self.registry["models"]["gpt-6-astra"]["reasoning_effort"],
+            "low",
+        )
+
     def test_aliases_are_unique_and_claude_visible(self) -> None:
         aliases = [model["gateway_alias"] for model in self.registry["models"].values()]
 
@@ -326,7 +332,7 @@ class ModelRoutingTests(unittest.TestCase):
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
             False: "a1a575de6000d7035cbf06f5de97942fb397d2d250bce269a548d8a644855f5b",
-            True: "a1c5f3ccee4bcb4f10e807938b95f04a27ce445bb9669f2717418fc79b910ba8",
+            True: "3e7e3e969c8c6129536c016ffddd907af030c4559dd590138a13c2bfb1aa14d8",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():

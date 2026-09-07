@@ -88,7 +88,7 @@
 			"gateway_alias": "claude-gpt-6-astra",
 			"display_name": "OpenAI · GPT 6 Astra",
 			"description": "OpenAI GPT 6 Astra gateway worker for difficult read-only review, orchestration, and high-confidence reasoning.",
-			"reasoning_effort": "medium",
+			"reasoning_effort": "low",
 			"write": false,
 			"workspace_write": false,
 			"publish_alias": true
