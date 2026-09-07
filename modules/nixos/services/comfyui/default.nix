@@ -330,6 +330,8 @@ in
       slices.system-comfyui = {
         description = "ComfyUI resource-control slice";
         sliceConfig = {
+          CPUWeight = lib.mkDefault 20;
+          IOWeight = lib.mkDefault 20;
           ManagedOOMMemoryPressure = "kill";
           ManagedOOMMemoryPressureLimit = "40%";
           ManagedOOMMemoryPressureDurationSec = "10s";
@@ -338,8 +340,6 @@ in
 
       services.comfyui.serviceConfig = {
         BindPaths = lib.mkIf (cfg.outputDir != null) [ cfg.outputDir ];
-        CPUWeight = 20;
-        IOWeight = 20;
         MemoryHigh = "24G";
         MemoryMax = "26G";
         MemorySwapMax = 0;
