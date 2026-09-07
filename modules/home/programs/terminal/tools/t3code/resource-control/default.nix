@@ -8,23 +8,34 @@ let
   cfg = config.khanelinix.programs.terminal.tools.t3code;
 
   mkRunner =
-    name: ownerArgs:
+    name: scopeArgs: ownerArgs:
     pkgs.writeShellScriptBin name ''
       exec ${lib.getExe' pkgs.systemd "systemd-run"} \
         --user --scope --quiet --collect --expand-environment=no \
-        --slice=app-agent-workloads.slice \
-        --property=MemoryHigh=6G \
-        --property=MemoryMax=8G \
-        --property=MemorySwapMax=2G \
+        --unit="${name}-$$-$RANDOM.scope" \
         --property=OOMPolicy=kill \
-        ${lib.escapeShellArgs ownerArgs} -- "$@"
+        ${lib.escapeShellArgs (scopeArgs ++ ownerArgs)} -- "$@"
     '';
 
-  agentRun = mkRunner "agent-run" [ ];
-  providerRun = mkRunner "t3code-provider-run" [
+  agentArgs = [
+    "--slice=app-agent-workloads.slice"
+    "--property=MemoryHigh=6G"
+    "--property=MemoryMax=8G"
+    "--property=MemorySwapMax=2G"
+  ];
+  buildArgs = [
+    "--slice=app-build.slice"
+    "--property=MemoryHigh=16G"
+  ];
+  backendArgs = [
     "--property=BindsTo=t3code-remote.service"
     "--property=After=t3code-remote.service"
   ];
+
+  agentRun = mkRunner "agent-run" agentArgs [ ];
+  providerRun = mkRunner "t3code-provider-run" agentArgs backendArgs;
+  buildRun = mkRunner "build-run" buildArgs [ ];
+  t3codeBuild = mkRunner "t3code-build" buildArgs backendArgs;
 
   providerBinaries =
     lib.optionalAttrs (config.programs.codex.enable or false) {
@@ -55,7 +66,11 @@ in
     };
 
   config = lib.mkIf (cfg.enable && cfg.resourceControl.enable && pkgs.stdenv.hostPlatform.isLinux) {
-    home.packages = [ agentRun ];
+    home.packages = [
+      agentRun
+      buildRun
+      t3codeBuild
+    ];
 
     systemd.user.slices.app-agent-workloads = {
       Unit.Description = "Resource-limited agent workloads";
@@ -63,6 +78,16 @@ in
         MemoryHigh = "12G";
         MemoryMax = "16G";
         MemorySwapMax = "4G";
+      };
+    };
+
+    # A sibling slice lets explicit builds exceed the provider hard caps.
+    systemd.user.slices.app-build = {
+      Unit.Description = "Soft-limited build workloads";
+      Slice = {
+        CPUWeight = 20;
+        IOWeight = 20;
+        MemoryHigh = "16G";
       };
     };
 
