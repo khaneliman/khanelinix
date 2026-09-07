@@ -36,9 +36,6 @@ in
       kernelParams = [
         "amd_pstate=active"
 
-        # Potential stability fixes
-        "amdgpu.sg_display=0"
-        "amdgpu.dcdebugmask=0x10"
       ];
     };
 
