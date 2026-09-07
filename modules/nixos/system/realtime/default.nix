@@ -17,8 +17,6 @@ in
   config = mkIf cfg.enable {
     # port of https://gitlab.archlinux.org/archlinux/packaging/packages/realtime-privileges
     # see https://wiki.archlinux.org/title/Realtime_process_management
-    # tldr: realtime processes have higher priority than normal processes
-    # and that's a good thing
     users = {
       users."${config.khanelinix.user.name}".extraGroups = [ "realtime" ];
       groups.realtime = { };

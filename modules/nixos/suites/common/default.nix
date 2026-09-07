@@ -87,7 +87,6 @@ in
         fonts = mkDefault enabled;
         hostname = mkDefault enabled;
         locale = mkDefault enabled;
-        realtime = mkDefault enabled;
         time = mkDefault enabled;
       };
     };
