@@ -32,6 +32,11 @@ in
   };
 
   config = mkIf cfg.enable {
+    hardware.ksm = {
+      enable = lib.mkDefault true;
+      sleep = lib.mkDefault 100;
+    };
+
     boot = {
       initrd.kernelModules = [
         "kvm-${cfg.platform}"
