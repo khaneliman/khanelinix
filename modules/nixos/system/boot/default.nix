@@ -51,7 +51,7 @@ in
 
       kernel.sysctl = {
         # Memory management - Desktop optimized
-        "vm.swappiness" = 10;
+        "vm.swappiness" = lib.mkDefault (if config.zramSwap.enable then 100 else 10);
         "vm.vfs_cache_pressure" = 50;
         "vm.dirty_ratio" = 15;
         "vm.dirty_background_ratio" = 5;
@@ -61,8 +61,8 @@ in
         "vm.overcommit_memory" = 0;
         "vm.overcommit_ratio" = 50;
 
-        # Swap I/O optimization - read 8 pages at a time
-        "vm.page-cluster" = 3;
+        # Zram does not benefit from disk-oriented swap readahead.
+        "vm.page-cluster" = lib.mkDefault (if config.zramSwap.enable then 0 else 3);
 
         # Disable zone reclaim (bad for desktop, causes latency spikes)
         "vm.zone_reclaim_mode" = 0;
