@@ -114,7 +114,7 @@ in
       fi
     '';
 
-    zramSwap.enable = true;
+    zramSwap.enable = mkDefault true;
 
     # IRQBalance: Distributes hardware interrupts across CPUs for better multi-core utilization
     services.irqbalance.enable = true;
