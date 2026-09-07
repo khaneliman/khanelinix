@@ -97,7 +97,7 @@ in
             gateway_timeout = 3600;
             gateway_timeout_warning = 900;
             gateway_notify_interval = 180;
-            reasoning_effort = "medium";
+            reasoning_effort = "low";
             tool_use_enforcement = [
               "gpt"
               "codex"
