@@ -56,10 +56,8 @@ in
         "vm.dirty_ratio" = 15;
         "vm.dirty_background_ratio" = 5;
 
-        # Memory overcommit - heuristic overcommit prevents unpredictable OOMs
-        # 0 = heuristic overcommit, default behavior
+        # Heuristic overcommit does not guarantee protection from OOM.
         "vm.overcommit_memory" = 0;
-        "vm.overcommit_ratio" = 50;
 
         # Zram does not benefit from disk-oriented swap readahead.
         "vm.page-cluster" = lib.mkDefault (if config.zramSwap.enable then 0 else 3);
