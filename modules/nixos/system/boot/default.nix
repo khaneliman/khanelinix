@@ -37,6 +37,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    khanelinix.system.memory.enable = lib.mkDefault true;
+
     environment.systemPackages =
       with pkgs;
       [
@@ -50,21 +52,6 @@ in
       initrd.systemd.network.wait-online.enable = false;
 
       kernel.sysctl = {
-        # Memory management - Desktop optimized
-        "vm.swappiness" = lib.mkDefault (if config.zramSwap.enable then 100 else 10);
-        "vm.vfs_cache_pressure" = 50;
-        "vm.dirty_ratio" = 15;
-        "vm.dirty_background_ratio" = 5;
-
-        # Heuristic overcommit does not guarantee protection from OOM.
-        "vm.overcommit_memory" = 0;
-
-        # Zram does not benefit from disk-oriented swap readahead.
-        "vm.page-cluster" = lib.mkDefault (if config.zramSwap.enable then 0 else 3);
-
-        # Disable zone reclaim (bad for desktop, causes latency spikes)
-        "vm.zone_reclaim_mode" = 0;
-
         # Security: prevent NULL pointer dereference attacks
         "vm.mmap_min_addr" = 65536;
       };
