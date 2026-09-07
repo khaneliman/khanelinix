@@ -12,19 +12,36 @@ in
 {
   options.khanelinix.services.resources-limiter = {
     enable = mkEnableOption "resources limiter slice";
+    memoryHigh = lib.mkOption {
+      type = lib.types.str;
+      default = "25%";
+      description = "Memory usage at which build workloads are throttled.";
+    };
+    memoryMax = lib.mkOption {
+      type = lib.types.str;
+      default = "infinity";
+      description = "Hard memory limit shared by build workloads.";
+    };
+    memorySwapMax = lib.mkOption {
+      type = lib.types.str;
+      default = "infinity";
+      description = "Maximum swap usage shared by build workloads.";
+    };
   };
 
   config = mkIf cfg.enable {
     systemd = {
       # DOCS https://www.freedesktop.org/software/systemd/man/latest/systemd.resource-control.html
+      # Weights compete at the root alongside system.slice and user.slice.
+      slices.resources.sliceConfig = {
+        CPUWeight = 20;
+        IOWeight = 20;
+      };
       slices.resources-limiter.sliceConfig = {
-        CPUAccounting = true;
-        CPUQuota = "200%";
         MemoryAccounting = true;
-        MemoryHigh = "50%";
-        MemoryMax = "75%";
-        MemorySwapMax = "50%";
-        MemoryZSwapMax = "50%";
+        MemoryHigh = cfg.memoryHigh;
+        MemoryMax = cfg.memoryMax;
+        MemorySwapMax = cfg.memorySwapMax;
       };
 
       services = {
