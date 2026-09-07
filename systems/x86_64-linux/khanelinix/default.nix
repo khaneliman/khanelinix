@@ -263,6 +263,8 @@ in
 
   programs.hyprland.withUWSM = false;
 
+  hardware.amdgpu.overdrive.enable = true;
+
   # Retain display workarounds while boot and GPU stability remain under investigation.
   boot.kernelParams = [
     "amdgpu.sg_display=0"

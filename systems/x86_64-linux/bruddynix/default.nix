@@ -16,6 +16,8 @@ in
     # ./specializations.nix
   ];
 
+  hardware.amdgpu.overdrive.enable = true;
+
   boot.kernelParams = [
     "amdgpu.sg_display=0"
     "amdgpu.dcdebugmask=0x10"

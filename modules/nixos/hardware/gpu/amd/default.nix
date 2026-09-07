@@ -27,17 +27,10 @@ in
         nvtopPackages.amd
       ];
 
-    # enables AMDVLK & OpenCL support
     hardware = {
       amdgpu = {
         initrd.enable = true;
         opencl.enable = true;
-        overdrive = {
-          enable = true;
-          # Full feature mask for all power management features
-          # Default 0xfffd7fff is conservative; 0xffffffff enables all (may cause flicker on some cards)
-          ppfeaturemask = "0xffffffff";
-        };
       };
 
       graphics = {
@@ -54,5 +47,6 @@ in
     services.udev.extraRules = ''
       KERNEL=="card[0-9]", SUBSYSTEM=="drm", ACTION=="add", RUN+="${pkgs.coreutils}/bin/chmod 666 /sys/class/drm/%k/device/power_dpm_force_performance_level"
     '';
+
   };
 }
