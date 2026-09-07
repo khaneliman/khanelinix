@@ -34,7 +34,6 @@ in
           appsToAvoid = lib.concatStringsSep "|" [
             "(h|H)yprland"
             "(x|X)wayland"
-            "bash"
             "cryptsetup"
             "dbus-.*"
             "foot"
@@ -54,7 +53,6 @@ in
             "tmux: client"
             "tmux: server"
             "wezterm"
-            "zsh"
           ];
 
           # Burn it with fire!
@@ -71,11 +69,13 @@ in
             "nix"
             "npm"
             "node"
-            "pipewire(.*)"
           ];
         in
         [
-          "-g" # Kill all processes within a process group
+          # Group kills can include ignored processes; target individual PIDs.
+          # Unlike --avoid, --ignore excludes audio services from selection.
+          "--ignore"
+          "^(pipewire(-pulse)?|wireplumber)$"
           # The module escapes each argument, so shell quoting here would reach
           # earlyoom as literal characters inside the regex.
           "--avoid"
