@@ -140,8 +140,8 @@ in
         defaultModel = "gpt-5.6-luna";
         defaultThinkingLevel = "high";
         modelThinkingLevels = {
-          "openai-codex/gpt-6-astra" = "medium";
-          "openai/gpt-6-astra" = "medium";
+          "openai-codex/gpt-6-astra" = "low";
+          "openai/gpt-6-astra" = "low";
         };
         enableInstallTelemetry = false;
         collapseChangelog = true;
