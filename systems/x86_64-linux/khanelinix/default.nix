@@ -273,7 +273,7 @@ in
 
   services = {
     displayManager.defaultSession = "hyprland";
-    irqbalance.enable = mkForce false;
+    irqbalance.enable = false;
     sunshine = {
       settings = {
         sunshine_name = "khanelinix";
