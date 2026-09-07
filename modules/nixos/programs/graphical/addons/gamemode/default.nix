@@ -10,16 +10,12 @@ let
 
   cfg = config.khanelinix.programs.graphical.addons.gamemode;
 
-  powerprofilesctl = lib.getExe' pkgs.power-profiles-daemon "powerprofilesctl";
-
   defaultStartScript = ''
-    ${powerprofilesctl} set performance
-    ${lib.getExe' pkgs.libnotify "notify-send"} -u low 'GameMode' 'Performance mode enabled'
+    ${lib.getExe' pkgs.libnotify "notify-send"} -u low 'GameMode' 'GameMode started'
   '';
 
   defaultEndScript = ''
-    ${powerprofilesctl} set balanced
-    ${lib.getExe' pkgs.libnotify "notify-send"} -u low 'GameMode' 'Balanced mode restored'
+    ${lib.getExe' pkgs.libnotify "notify-send"} -u low 'GameMode' 'GameMode ended'
   '';
 in
 {

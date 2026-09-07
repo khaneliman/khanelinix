@@ -19,15 +19,9 @@ let
     [
       config.programs.hyprland.package
       coreutils
-      config.services.power-profiles-daemon.package
-      systemd
       libnotify
       kitty
-      gawk
-      procps
-      util-linux
       swaynotificationcenter
-      findutils
     ]
   );
 in
@@ -139,22 +133,6 @@ in
                 # echo "Hiding waybar..." >> "$LOG_FILE"
                 # pkill -SIGUSR1 waybar 2>&1 | tee -a "$LOG_FILE" || echo "✗ waybar toggle failed" >> "$LOG_FILE"
 
-                echo "Setting AMD GPU to high performance..." >> "$LOG_FILE"
-                echo high | tee /sys/class/drm/card*/device/power_dpm_force_performance_level 2>&1 | tee -a "$LOG_FILE" || echo "✗ GPU performance mode failed" >> "$LOG_FILE"
-
-                {
-                  GAME_PIDS=$(pgrep -af 'steam_.*game|proton|wine-preloader|wine64-preloader|lutris|heroic|gamemoderun' | awk '{print $1}')
-                  if [ -n "$GAME_PIDS" ]; then
-                    echo "$GAME_PIDS" | xargs -r renice -n -10 -p
-                    echo "Boosted priority for PIDs: $GAME_PIDS" >> "$LOG_FILE"
-                  else
-                    echo "No game processes found to boost" >> "$LOG_FILE"
-                  fi
-                } 2>&1 | tee -a "$LOG_FILE" || true
-
-                # Set power profile to performance (may fail if not supported)
-                echo "Setting power profile to performance..." >> "$LOG_FILE"
-                powerprofilesctl set performance 2>&1 | tee -a "$LOG_FILE" || echo "✗ Performance mode not supported" >> "$LOG_FILE"
                 echo "=== Gamemode Start Complete ===" >> "$LOG_FILE"
                 notify-send -a 'Gamemode' 'Optimizations activated' -u 'low'
               '';
@@ -192,21 +170,6 @@ in
                 # echo "Showing waybar..." >> "$LOG_FILE"
                 # pkill -SIGUSR1 waybar 2>&1 | tee -a "$LOG_FILE" || echo "✗ waybar restore failed" >> "$LOG_FILE"
 
-                echo "Restoring AMD GPU to auto mode..." >> "$LOG_FILE"
-                echo auto | tee /sys/class/drm/card*/device/power_dpm_force_performance_level 2>&1 | tee -a "$LOG_FILE" || echo "✗ GPU auto mode restore failed" >> "$LOG_FILE"
-
-                {
-                  GAME_PIDS=$(pgrep -af 'steam_.*game|proton|wine-preloader|wine64-preloader|lutris|heroic|gamemoderun' | awk '{print $1}')
-                  if [ -n "$GAME_PIDS" ]; then
-                    echo "$GAME_PIDS" | xargs -r renice -n 0 -p
-                    echo "Restored priority for PIDs: $GAME_PIDS" >> "$LOG_FILE"
-                  else
-                    echo "No game processes found to restore" >> "$LOG_FILE"
-                  fi
-                } 2>&1 | tee -a "$LOG_FILE" || true
-
-                echo "Restoring power profile to balanced..." >> "$LOG_FILE"
-                powerprofilesctl set balanced 2>&1 | tee -a "$LOG_FILE" || echo "✗ Power profile restore failed" >> "$LOG_FILE"
                 echo "=== Gamemode End Complete ===" >> "$LOG_FILE"
                 notify-send -a 'Gamemode' 'Optimizations deactivated' -u 'low'
               '';
