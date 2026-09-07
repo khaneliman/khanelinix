@@ -76,6 +76,11 @@ in
     services = {
       avahi = enabled;
 
+      resources-limiter = {
+        enable = true;
+        memoryHigh = "16G";
+      };
+
       comfyui = {
         enable = true;
 
