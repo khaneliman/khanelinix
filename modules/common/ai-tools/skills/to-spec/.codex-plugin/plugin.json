@@ -1,0 +1,13 @@
+{
+	"name": "to-spec",
+	"version": "0.1.0",
+	"description": "Save agreed requirements as a durable implementation spec.",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./.",
+	"interface": {
+		"displayName": "To Spec",
+		"shortDescription": "Save agreed requirements as a durable implementation spec."
+	}
+}

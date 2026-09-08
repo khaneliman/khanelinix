@@ -240,6 +240,7 @@ invoke them.
 | Skill                   | Purpose                            | Invocation syntax                |
 | :---------------------- | :--------------------------------- | :------------------------------- |
 | `program-orchestration` | Durable multi-unit program control | `Use $program-orchestration ...` |
+| `to-spec`               | Save a durable implementation spec | `Use $to-spec ...`               |
 
 Large domain toolkits and explicit overlays such as `bevy-toolkit` and `swarm`
 stay model-visible on Claude Code and Pi. A selected owner can route them. Codex

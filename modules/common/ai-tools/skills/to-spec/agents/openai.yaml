@@ -1,0 +1,6 @@
+interface:
+  display_name: "To Spec"
+  short_description: "Save agreed requirements as a durable spec"
+  default_prompt: "Use $to-spec to save our agreed requirements and decisions as a local spec."
+policy:
+  allow_implicit_invocation: false

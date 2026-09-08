@@ -12,6 +12,7 @@ sys.path.insert(0, str(MARKETPLACE_DIR))
 import skill_metadata
 
 USER_ONLY_SKILLS = {
+    "to-spec",
     "program-orchestration",
 }
 # Owner-routed domain skills and overlays stay model-visible on Claude Code and

@@ -263,6 +263,13 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "to-spec",
+			"displayName": "To Spec",
+			"description": "Save agreed requirements as a durable implementation spec.",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
 			"name": "typescript-best-practices",
 			"displayName": "TypeScript Best Practices",
 			"description": "TypeScript best practices for edits.",
