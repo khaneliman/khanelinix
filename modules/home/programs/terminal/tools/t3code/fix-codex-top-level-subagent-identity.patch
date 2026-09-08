@@ -1,9 +1,8 @@
 diff --git a/apps/server/src/provider/Layers/CodexSessionRuntime.test.ts b/apps/server/src/provider/Layers/CodexSessionRuntime.test.ts
-index 6a9a0c9f..f7b32a11 100644
+index 3385137a2dae0564b2e7b76bd80d4770b809be6e..05411b09995c14a395674823588b8ed22fde094c 100644
 --- a/apps/server/src/provider/Layers/CodexSessionRuntime.test.ts
 +++ b/apps/server/src/provider/Layers/CodexSessionRuntime.test.ts
-@@ -21,6 +21,7 @@ import {
-   hasConfiguredMcpServer,
+@@ -18,6 +18,7 @@ import {
    isRecoverableThreadResumeError,
    makeMemoryConsolidationNotificationFilter,
    openCodexThread,
@@ -11,35 +10,75 @@ index 6a9a0c9f..f7b32a11 100644
    toMcpElicitationResponse,
  } from "./CodexSessionRuntime.ts";
  const isCodexAppServerRequestError = Schema.is(CodexErrors.CodexAppServerRequestError);
+@@ -694,6 +695,63 @@ describe("makeMemoryConsolidationNotificationFilter", () => {
+   });
+ });
  
 +describe("readThreadSpawnSource", () => {
-+  it("preserves top-level child role metadata when the source shape is not nested", () => {
++  it("uses a top-level role as identity when the source is ordinary", () => {
 +    NodeAssert.deepStrictEqual(
 +      readThreadSpawnSource({
-+        source: "appServer",
-+        agentNickname: "reviewer",
-+        agentRole: "reviewer",
-+        parentThreadId: "parent-thread",
++        source: { session: "cli" },
++        agentRole: "verifier",
++        parentThreadId: "root-thread",
 +      }),
 +      {
-+        nickname: "reviewer",
-+        role: "reviewer",
++        nickname: undefined,
++        role: "verifier",
 +        agentPath: undefined,
 +        depth: undefined,
-+        parentThreadId: "parent-thread",
++        parentThreadId: "root-thread",
++      },
++    );
++  });
++
++  it("does not treat an ordinary root thread as a spawned child", () => {
++    NodeAssert.equal(
++      readThreadSpawnSource({
++        source: { session: "cli" },
++        parentThreadId: "root-thread",
++      }),
++      undefined,
++    );
++  });
++
++  it("prefers nested spawn identity over conflicting top-level fields", () => {
++    NodeAssert.deepStrictEqual(
++      readThreadSpawnSource({
++        source: {
++          subAgent: {
++            thread_spawn: {
++              agent_nickname: "nested-name",
++              agent_path: "/root/nested-name",
++              agent_role: "nested-role",
++              depth: 1,
++              parent_thread_id: "nested-parent",
++            },
++          },
++        },
++        agentNickname: "top-level-name",
++        agentRole: "top-level-role",
++        parentThreadId: "top-level-parent",
++      }),
++      {
++        nickname: "nested-name",
++        role: "nested-role",
++        agentPath: "/root/nested-name",
++        depth: 1,
++        parentThreadId: "nested-parent",
 +      },
 +    );
 +  });
 +});
 +
- describe("CodexSessionRuntimeIdentifierGenerationError", () => {
-   it("retains identifier purpose and the random source failure", () => {
-     const cause = new Error("random source unavailable");
+ describe("codexSessionAppServerArgs", () => {
+   it("keeps the app-server subcommand when explicit args are provided", () => {
+     NodeAssert.deepStrictEqual(codexSessionAppServerArgs(["-c", "model=gpt-5"], undefined), [
 diff --git a/apps/server/src/provider/Layers/CodexSessionRuntime.ts b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-index 1d6f9c33..8a6d2f1e 100644
+index 4ebbf9a2d60211301d326b8c92cd97c7e44de2b0..c588d8269f3b167ff4d5a6e64b3075eb42cde102 100644
 --- a/apps/server/src/provider/Layers/CodexSessionRuntime.ts
 +++ b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-@@ -945,7 +966,12 @@ function nonEmptyMetadataValue(value: unknown): string | undefined {
+@@ -984,7 +984,12 @@ function nonEmptyMetadataValue(value: unknown): string | undefined {
    return trimmed.length > 0 ? trimmed : undefined;
  }
  
@@ -53,7 +92,7 @@ index 1d6f9c33..8a6d2f1e 100644
    | {
        nickname: string | undefined;
        role: string | undefined;
-@@ -954,15 +980,29 @@ function readThreadSpawnSource(thread: { readonly source: unknown }):
+@@ -993,17 +998,31 @@ function readThreadSpawnSource(thread: { readonly source: unknown }):
        parentThreadId: string | undefined;
      }
    | undefined {
@@ -87,3 +126,4 @@ index 1d6f9c33..8a6d2f1e 100644
 +    return hasTopLevelIdentity ? topLevelIdentity : undefined;
    }
    const record = spawn as Record<string, unknown>;
+   return {

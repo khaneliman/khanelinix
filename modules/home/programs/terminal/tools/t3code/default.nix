@@ -8,7 +8,7 @@
 }:
 let
   cfg = config.khanelinix.programs.terminal.tools.t3code;
-  t3codePatches = import ./patches.nix { inherit pkgs; };
+  t3codePatches = import ./patches.nix;
 in
 {
   options.khanelinix.programs.terminal.tools.t3code.enable =
@@ -82,7 +82,7 @@ in
                 pnpm config set fetch-retries 5
                 pnpm config set network-concurrency 8
               '';
-              hash = "sha256-mgRMeBpJmiTat38APyE4guNJ+6RiQhenphP7tRcmc+k=";
+              hash = "sha256-EO844JyOlqtUG+mGWOeXlVtQjRpFFgwiXRvTgfEh7ao=";
             };
             postBuild = (old.postBuild or "") + ''
               ${lib.getExe pkgs.nodejs} ${./prune-node-modules.mjs} "$PWD"

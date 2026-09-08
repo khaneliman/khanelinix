@@ -1,16 +1,16 @@
 diff --git a/apps/desktop/src/app/DesktopApp.ts b/apps/desktop/src/app/DesktopApp.ts
-index 5283658..832c34e 100644
+index e84e6d5c730ddbe06e0d7d2575283ecff1bb81b5..69a6979165bd661a790283ecc857d1cfaa740cf9 100644
 --- a/apps/desktop/src/app/DesktopApp.ts
 +++ b/apps/desktop/src/app/DesktopApp.ts
-@@ -29,6 +29,7 @@ import * as DesktopShellEnvironment from "../shell/DesktopShellEnvironment.ts";
- import * as DesktopState from "./DesktopState.ts";
+@@ -31,6 +31,7 @@ import * as DesktopRemoteUpdates from "../updates/DesktopRemoteUpdates.ts";
  import * as DesktopUpdates from "../updates/DesktopUpdates.ts";
+ import * as DesktopSnapShot from "../snapShot/DesktopSnapShot.ts";
  import * as DesktopWslBackend from "../wsl/DesktopWslBackend.ts";
 +import * as DesktopExistingBackendAttachment from "../backend/DesktopExistingBackendAttachment.ts";
  
  const DEFAULT_DESKTOP_BACKEND_PORT = 3773;
  const MAX_TCP_PORT = 65_535;
-@@ -141,21 +142,58 @@ const fatalStartupCause = <E>(stage: string, cause: Cause.Cause<E>) =>
+@@ -143,22 +144,60 @@ const fatalStartupCause = <E>(stage: string, cause: Cause.Cause<E>) =>
    handleFatalStartupError(stage, Cause.pretty(cause)).pipe(Effect.andThen(Effect.failCause(cause)));
  
  const bootstrap = Effect.gen(function* () {
@@ -23,6 +23,7 @@ index 5283658..832c34e 100644
 -  const serverExposure = yield* DesktopServerExposure.DesktopServerExposure;
 -  const wslBackend = yield* DesktopWslBackend.DesktopWslBackend;
    const desktopWindow = yield* DesktopWindow.DesktopWindow;
+   const snapShot = yield* DesktopSnapShot.DesktopSnapShot;
    const appActivation = yield* DesktopAppActivation.DesktopAppActivation;
    yield* logBootstrapInfo("bootstrap start");
  
@@ -53,6 +54,7 @@ index 5283658..832c34e 100644
 +    yield* logBootstrapInfo("bootstrap attached to existing backend", {
 +      baseUrl: attached.value.httpBaseUrl.href,
 +    });
++    yield* snapShot.initialize;
 +    yield* installDesktopIpcHandlers();
 +    yield* logBootstrapInfo("bootstrap ipc handlers registered");
 +    if (!(yield* Ref.get(state.quitting))) {
@@ -75,7 +77,7 @@ index 5283658..832c34e 100644
    const backendPortSelection = yield* resolveDesktopBackendPort(environment.configuredBackendPort);
    const backendPort = backendPortSelection.port;
    yield* logBootstrapInfo(
-@@ -296,6 +334,14 @@ const startup = Effect.gen(function* () {
+@@ -304,6 +343,14 @@ const startup = Effect.gen(function* () {
    yield* bootstrap.pipe(Effect.catchCause((cause) => fatalStartupCause("bootstrap", cause)));
  }).pipe(Effect.withSpan("desktop.startup"));
  
@@ -90,7 +92,7 @@ index 5283658..832c34e 100644
  const scopedProgram = Effect.scoped(
    Effect.gen(function* () {
      const runId = yield* makeDesktopRunId;
-@@ -313,9 +359,7 @@ const scopedProgram = Effect.scoped(
+@@ -321,9 +368,7 @@ const scopedProgram = Effect.scoped(
          // finalizer means it gets hard-killed by the OS instead of
          // receiving SIGTERM + grace. Stops run concurrently.
          const instances = yield* pool.list;
@@ -102,7 +104,7 @@ index 5283658..832c34e 100644
      );
  
 diff --git a/apps/desktop/src/app/DesktopAppErrors.test.ts b/apps/desktop/src/app/DesktopAppErrors.test.ts
-index 666c36d..6599b34 100644
+index 666c36d391de2efc3fad2c487307886a59eb4219..6599b34db42cd1da660dd081f8e308f9e528c61c 100644
 --- a/apps/desktop/src/app/DesktopAppErrors.test.ts
 +++ b/apps/desktop/src/app/DesktopAppErrors.test.ts
 @@ -1,9 +1,13 @@
@@ -148,7 +150,7 @@ index 666c36d..6599b34 100644
 +  );
  });
 diff --git a/apps/desktop/src/app/DesktopConfig.ts b/apps/desktop/src/app/DesktopConfig.ts
-index d157a4c..f7413b7 100644
+index d157a4c6ba44122c413ac1be525ec30fb5d98bdf..f7413b7232868d06cfc837fca65e648a4db26eaa 100644
 --- a/apps/desktop/src/app/DesktopConfig.ts
 +++ b/apps/desktop/src/app/DesktopConfig.ts
 @@ -37,6 +37,7 @@ export const DesktopConfig = Config.all({
@@ -160,10 +162,10 @@ index d157a4c..f7413b7 100644
    appUserModelIdOverride: trimmedString("T3CODE_DESKTOP_APP_USER_MODEL_ID"),
    devRemoteT3ServerEntryPath: trimmedString("T3CODE_DEV_REMOTE_T3_SERVER_ENTRY_PATH"),
 diff --git a/apps/desktop/src/app/DesktopEnvironment.ts b/apps/desktop/src/app/DesktopEnvironment.ts
-index 4583e51..9e9c745 100644
+index 9d7f00c3ee69f0f04f8e3f7cd0b19ebef38af410..8c2a1c6048f5b610f81f4203eaebb5d103e80285 100644
 --- a/apps/desktop/src/app/DesktopEnvironment.ts
 +++ b/apps/desktop/src/app/DesktopEnvironment.ts
-@@ -66,6 +66,7 @@ export class DesktopEnvironment extends Context.Service<
+@@ -67,6 +67,7 @@ export class DesktopEnvironment extends Context.Service<
      readonly devServerUrl: Option.Option<URL>;
      readonly devRemoteT3ServerEntryPath: Option.Option<string>;
      readonly configuredBackendPort: Option.Option<number>;
@@ -171,7 +173,7 @@ index 4583e51..9e9c745 100644
      readonly commitHashOverride: Option.Option<string>;
      readonly otlpTracesUrl: Option.Option<string>;
      readonly otlpExportIntervalMs: number;
-@@ -218,6 +219,7 @@ const make = Effect.fn("desktop.environment.make")(function* (
+@@ -219,6 +220,7 @@ const make = Effect.fn("desktop.environment.make")(function* (
      devServerUrl,
      devRemoteT3ServerEntryPath: config.devRemoteT3ServerEntryPath,
      configuredBackendPort: config.configuredBackendPort,
@@ -181,7 +183,7 @@ index 4583e51..9e9c745 100644
      otlpExportIntervalMs: config.otlpExportIntervalMs,
 diff --git a/apps/desktop/src/backend/DesktopExistingBackendAttachment.test.ts b/apps/desktop/src/backend/DesktopExistingBackendAttachment.test.ts
 new file mode 100644
-index 0000000..96ab3fc
+index 0000000000000000000000000000000000000000..96ab3fcf82ae64f846637d1ddc30e4a97e29275c
 --- /dev/null
 +++ b/apps/desktop/src/backend/DesktopExistingBackendAttachment.test.ts
 @@ -0,0 +1,243 @@
@@ -430,7 +432,7 @@ index 0000000..96ab3fc
 +});
 diff --git a/apps/desktop/src/backend/DesktopExistingBackendAttachment.ts b/apps/desktop/src/backend/DesktopExistingBackendAttachment.ts
 new file mode 100644
-index 0000000..bd1fb35
+index 0000000000000000000000000000000000000000..0cc2bcde1de1e2113fb8f1641c9eea5cce6a0317
 --- /dev/null
 +++ b/apps/desktop/src/backend/DesktopExistingBackendAttachment.ts
 @@ -0,0 +1,316 @@
@@ -466,7 +468,7 @@ index 0000000..bd1fb35
 +  }),
 +);
 +
-+export class DesktopExistingBackendAttachmentError extends Schema.TaggedErrorClass<DesktopExistingBackendAttachmentError>()(
++export class DesktopExistingBackendAttachmentError extends Schema.TaggedError<DesktopExistingBackendAttachmentError>()(
 +  "DesktopExistingBackendAttachmentError",
 +  { reason: Schema.String, cause: Schema.optionalKey(Schema.Defect()) },
 +) {
@@ -751,6 +753,7 @@ index 0000000..bd1fb35
 +    ready: Effect.succeed(state.kind === "ready" ? Option.some(state) : Option.none()),
 +  });
 diff --git a/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.test.ts b/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.test.ts
+index e7a58baef140c7984b342533cdbfacf3a1f5ee67..94e660fc6cfc999c39b06397c3043aaa2213023b 100644
 --- a/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.test.ts
 +++ b/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.test.ts
 @@ -9,6 +9,7 @@ import { PRIMARY_LOCAL_ENVIRONMENT_ID } from "@t3tools/contracts";
@@ -811,7 +814,7 @@ diff --git a/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.test.ts b/apps
 +  );
  });
 diff --git a/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.ts b/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.ts
-index 201492f..73450dc 100644
+index dae20e2da9555b3bb0dae83da014143a1ceafb01..c25e0162267644b4f4854e9922cdfa7059863b12 100644
 --- a/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.ts
 +++ b/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.ts
 @@ -10,6 +10,7 @@ import * as Semaphore from "effect/Semaphore";
@@ -820,17 +823,17 @@ index 201492f..73450dc 100644
  import * as DesktopBackendPool from "./DesktopBackendPool.ts";
 +import * as DesktopExistingBackendAttachment from "./DesktopExistingBackendAttachment.ts";
  
- export class DesktopLocalEnvironmentAuthBackendNotConfiguredError extends Schema.TaggedErrorClass<DesktopLocalEnvironmentAuthBackendNotConfiguredError>()(
+ export class DesktopLocalEnvironmentAuthBackendNotConfiguredError extends Schema.TaggedError<DesktopLocalEnvironmentAuthBackendNotConfiguredError>()(
    "DesktopLocalEnvironmentAuthBackendNotConfiguredError",
-@@ -44,6 +45,7 @@ export class DesktopLocalEnvironmentAuth extends Context.Service<
- 
+@@ -45,6 +46,7 @@ export class DesktopLocalEnvironmentAuth extends Context.Service<
+ /** @public Service construction is part of the canonical Effect module API. */
  export const make = Effect.gen(function* () {
    const pool = yield* DesktopBackendPool.DesktopBackendPool;
 +  const attachment = yield* DesktopExistingBackendAttachment.DesktopExistingBackendAttachment;
    const httpClient = yield* HttpClient.HttpClient;
    const tokenRef = yield* Ref.make(Option.none<string>());
    const mutex = yield* Semaphore.make(1);
-@@ -51,6 +53,10 @@ export const make = Effect.gen(function* () {
+@@ -52,6 +54,10 @@ export const make = Effect.gen(function* () {
    const getBearerToken = mutex
      .withPermits(1)(
        Effect.gen(function* () {
@@ -842,7 +845,7 @@ index 201492f..73450dc 100644
          if (Option.isSome(cached)) {
            return cached.value;
 diff --git a/apps/desktop/src/ipc/methods/window.test.ts b/apps/desktop/src/ipc/methods/window.test.ts
-index 203151c..783924d 100644
+index 203151c2660ea5ff2f6fd13b491c07becf4fb1a6..783924d23c06da2d955dd6282fa9407e220123cc 100644
 --- a/apps/desktop/src/ipc/methods/window.test.ts
 +++ b/apps/desktop/src/ipc/methods/window.test.ts
 @@ -8,6 +8,7 @@ import type * as Electron from "electron";
@@ -937,9 +940,10 @@ index 203151c..783924d 100644
  
  describe("getWindowFullscreenState", () => {
 diff --git a/apps/desktop/src/ipc/methods/window.ts b/apps/desktop/src/ipc/methods/window.ts
+index 61de1361a3112c962e49573cb25d38b44a8788f4..2a2957080db77d6392450f6e644e274007a53c69 100644
 --- a/apps/desktop/src/ipc/methods/window.ts
 +++ b/apps/desktop/src/ipc/methods/window.ts
-@@ -27,6 +27,7 @@ import * as DesktopEnvironment from "../../app/DesktopEnvironment.ts";
+@@ -28,6 +28,7 @@ import * as DesktopEnvironment from "../../app/DesktopEnvironment.ts";
  import * as DesktopAppSettings from "../../settings/DesktopAppSettings.ts";
  import * as DesktopWslBackend from "../../wsl/DesktopWslBackend.ts";
  import * as DesktopWslEnvironment from "../../wsl/DesktopWslEnvironment.ts";
@@ -947,7 +951,7 @@ diff --git a/apps/desktop/src/ipc/methods/window.ts b/apps/desktop/src/ipc/metho
  import * as ElectronApp from "../../electron/ElectronApp.ts";
  import * as ElectronDialog from "../../electron/ElectronDialog.ts";
  import * as ElectronMenu from "../../electron/ElectronMenu.ts";
-@@ -90,10 +91,21 @@ export const getLocalEnvironmentBootstraps = DesktopIpc.makeSyncIpcMethod({
+@@ -91,10 +92,21 @@ export const getLocalEnvironmentBootstraps = DesktopIpc.makeSyncIpcMethod({
    result: Schema.Array(DesktopEnvironmentBootstrapSchema),
    handler: Effect.fn("desktop.ipc.window.getLocalEnvironmentBootstraps")(function* () {
      const pool = yield* DesktopBackendPool.DesktopBackendPool;
@@ -970,7 +974,7 @@ diff --git a/apps/desktop/src/ipc/methods/window.ts b/apps/desktop/src/ipc/metho
        const snapshot = yield* instance.snapshot;
        // A secondary backend (e.g. a parallel WSL backend) that hasn't produced
 diff --git a/apps/desktop/src/main.ts b/apps/desktop/src/main.ts
-index c826c56..4b1bf9e 100644
+index ed920abcdc8f77d7b490d570558807c24dcc692e..70fd4874b9f20e6381cb3097d32c621850d8be83 100644
 --- a/apps/desktop/src/main.ts
 +++ b/apps/desktop/src/main.ts
 @@ -41,6 +41,7 @@ import * as DesktopAssets from "./app/DesktopAssets.ts";
@@ -981,7 +985,7 @@ index c826c56..4b1bf9e 100644
  import * as DesktopNetworkInterfaces from "./backend/DesktopNetworkInterfaces.ts";
  import * as DesktopEnvironment from "./app/DesktopEnvironment.ts";
  import * as DesktopLifecycle from "./app/DesktopLifecycle.ts";
-@@ -185,6 +186,7 @@ const desktopWslBackendLayer = DesktopWslBackend.layer.pipe(
+@@ -195,6 +196,7 @@ const desktopWslBackendLayer = DesktopWslBackend.layer.pipe(
  
  const desktopLocalEnvironmentAuthLayer = DesktopLocalEnvironmentAuth.layer.pipe(
    Layer.provideMerge(desktopBackendLayer),

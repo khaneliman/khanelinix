@@ -1,8 +1,227 @@
+diff --git a/apps/server/src/provider/Layers/CodexCollabRuntime.integration.test.ts b/apps/server/src/provider/Layers/CodexCollabRuntime.integration.test.ts
+index 02b7a45f33adedd616f116570edfa6a98c93198e..301693b9696ef70d6cd1ae561d8ba4fc32384d72 100644
+--- a/apps/server/src/provider/Layers/CodexCollabRuntime.integration.test.ts
++++ b/apps/server/src/provider/Layers/CodexCollabRuntime.integration.test.ts
+@@ -15,6 +15,10 @@ import * as NodePath from "node:path";
+ import * as NodeServices from "@effect/platform-node/NodeServices";
+ import { it } from "@effect/vitest";
+ import { type ProviderApprovalDecision, type ProviderEvent, ThreadId } from "@t3tools/contracts";
++import type {
++  ServerNotification as CodexServerNotification,
++  ServerNotification__ThreadItem as CodexThreadItem,
++} from "effect-codex-app-server/schema";
+ import * as Deferred from "effect/Deferred";
+ import * as Effect from "effect/Effect";
+ import * as Fiber from "effect/Fiber";
+@@ -150,6 +154,31 @@ function childSettings(threadId: string, model: string, effort: string) {
+   };
+ }
+ 
++function spawnAgentItem({
++  id,
++  childThreadId,
++  status,
++  childStatus,
++}: {
++  id: string;
++  childThreadId: string;
++  status: "inProgress" | "completed" | "failed";
++  childStatus: "running" | "completed" | "errored";
++}): Extract<CodexThreadItem, { type: "collabAgentToolCall" }> {
++  return {
++    type: "collabAgentToolCall",
++    id,
++    tool: "spawnAgent",
++    status,
++    senderThreadId: ROOT,
++    receiverThreadIds: [childThreadId],
++    prompt: "Verify the implementation",
++    model: null,
++    reasoningEffort: null,
++    agentsStates: { [childThreadId]: { status: childStatus } },
++  };
++}
++
+ function readRecordedRequests() {
+   return NodeFS.readFileSync(`${scriptPath}.requests`, "utf8")
+     .trim()
+@@ -166,6 +195,171 @@ const peerPath = NodePath.join(
+ );
+ 
+ describe("CodexSessionRuntime collab integration", () => {
++  it.effect("registers spawnAgent children once across item lifecycle delivery", () =>
++    Effect.gen(function* () {
++      const script = {
++        rootThreadId: ROOT,
++        notifications: [
++          {
++            method: "item/started",
++            params: {
++              threadId: ROOT,
++              startedAtMs: 1,
++              turnId: "spawn-turn",
++              item: spawnAgentItem({
++                id: "spawn-once",
++                childThreadId: CHILD_A,
++                status: "inProgress",
++                childStatus: "running",
++              }),
++            },
++          },
++          {
++            method: "item/completed",
++            params: {
++              threadId: ROOT,
++              completedAtMs: 2,
++              turnId: "spawn-turn",
++              item: spawnAgentItem({
++                id: "spawn-once",
++                childThreadId: CHILD_A,
++                status: "completed",
++                childStatus: "completed",
++              }),
++            },
++          },
++        ] satisfies ReadonlyArray<CodexServerNotification>,
++      };
++      // @effect-diagnostics-next-line preferSchemaOverJson:off
++      NodeFS.writeFileSync(scriptPath, JSON.stringify(script), "utf8");
++      yield* Effect.addFinalizer(() =>
++        Effect.sync(() => NodeFS.rmSync(scriptPath, { force: true })),
++      );
++
++      const runtime = yield* makeCodexSessionRuntime({
++        threadId: ThreadId.make("thread-collab-spawn-registration"),
++        binaryPath: peerPath,
++        cwd: NodeOS.tmpdir(),
++        runtimeMode: "full-access",
++        environment: { ...process.env, T3_CODEX_COLLAB_SCRIPT: scriptPath },
++      });
++      const eventsFiber = yield* runtime.events.pipe(
++        Stream.takeUntil((event) => event.method === "turn/completed"),
++        Stream.runCollect,
++        Effect.forkScoped,
++      );
++
++      yield* runtime.start();
++      yield* runtime.sendTurn({ input: "spawn one child" });
++      const events = Array.from(yield* Fiber.join(eventsFiber));
++      const started = events.filter(
++        (event) =>
++          event.method === "collabAgent/started" &&
++          Schema.is(Schema.Struct({ agentThreadId: Schema.Literal(CHILD_A) }))(event.payload),
++      );
++      assert.lengthOf(started, 1);
++      assert.deepInclude(started[0]?.payload, {
++        agentThreadId: CHILD_A,
++        nickname: "Verify the implementation",
++      });
++
++      yield* runtime.close;
++    }).pipe(Effect.scoped, Effect.provide(NodeServices.layer)),
++  );
++
++  it.effect("cleans failed spawn children so retries do not leave phantom rows", () =>
++    Effect.gen(function* () {
++      const script = {
++        rootThreadId: ROOT,
++        notifications: [
++          {
++            method: "item/started",
++            params: {
++              threadId: ROOT,
++              startedAtMs: 1,
++              turnId: "spawn-turn",
++              item: spawnAgentItem({
++                id: "spawn-failed",
++                childThreadId: CHILD_A,
++                status: "inProgress",
++                childStatus: "running",
++              }),
++            },
++          },
++          {
++            method: "item/completed",
++            params: {
++              threadId: ROOT,
++              completedAtMs: 2,
++              turnId: "spawn-turn",
++              item: spawnAgentItem({
++                id: "spawn-failed",
++                childThreadId: CHILD_A,
++                status: "failed",
++                childStatus: "errored",
++              }),
++            },
++          },
++          {
++            method: "item/started",
++            params: {
++              threadId: ROOT,
++              startedAtMs: 1,
++              turnId: "spawn-retry-turn",
++              item: spawnAgentItem({
++                id: "spawn-retry",
++                childThreadId: CHILD_A,
++                status: "inProgress",
++                childStatus: "running",
++              }),
++            },
++          },
++        ] satisfies ReadonlyArray<CodexServerNotification>,
++      };
++      // @effect-diagnostics-next-line preferSchemaOverJson:off
++      NodeFS.writeFileSync(scriptPath, JSON.stringify(script), "utf8");
++      yield* Effect.addFinalizer(() =>
++        Effect.sync(() => NodeFS.rmSync(scriptPath, { force: true })),
++      );
++
++      const runtime = yield* makeCodexSessionRuntime({
++        threadId: ThreadId.make("thread-collab-spawn-failure"),
++        binaryPath: peerPath,
++        cwd: NodeOS.tmpdir(),
++        runtimeMode: "full-access",
++        environment: { ...process.env, T3_CODEX_COLLAB_SCRIPT: scriptPath },
++      });
++      const eventsFiber = yield* runtime.events.pipe(
++        Stream.takeUntil((event) => event.method === "turn/completed"),
++        Stream.runCollect,
++        Effect.forkScoped,
++      );
++
++      yield* runtime.start();
++      yield* runtime.sendTurn({ input: "retry the failed child" });
++      const events = Array.from(yield* Fiber.join(eventsFiber));
++      const childEvents = events.filter((event) =>
++        Schema.is(Schema.Struct({ agentThreadId: Schema.Literal(CHILD_A) }))(event.payload),
++      );
++      assert.lengthOf(
++        childEvents.filter((event) => event.method === "collabAgent/started"),
++        2,
++      );
++      assert.lengthOf(
++        childEvents.filter(
++          (event) =>
++            event.method === "collabAgent/statusChanged" &&
++            Schema.is(
++              Schema.Struct({ status: Schema.Struct({ type: Schema.Literal("systemError") }) }),
++            )(event.payload),
++        ),
++        1,
++      );
++
++      yield* runtime.close;
++    }).pipe(Effect.scoped, Effect.provide(NodeServices.layer)),
++  );
++
+   it.effect("looks up child model metadata once after activity registration", () =>
+     Effect.gen(function* () {
+       const script = {
 diff --git a/apps/server/src/provider/Layers/CodexSessionRuntime.ts b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-index 29bb992611c1..0b002bc8e1ff 100644
+index 4620e68b47e0a99d2e0cb6f4483923e2b8756ce7..4ebbf9a2d60211301d326b8c92cd97c7e44de2b0 100644
 --- a/apps/server/src/provider/Layers/CodexSessionRuntime.ts
 +++ b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-@@ -652,19 +652,17 @@
+@@ -925,19 +925,17 @@ function readRouteFields(notification: CodexServerNotification): {
  /**
   * Native collab child-agent tracking (multi-agent v2). Under v2 subagents are
   * full app-server threads: identity arrives on `thread/started` with
@@ -32,7 +251,16 @@ index 29bb992611c1..0b002bc8e1ff 100644
   */
  interface CollabChildAgentState {
    readonly agentThreadId: string;
-@@ -736,6 +734,40 @@
+@@ -953,6 +951,8 @@ interface CollabChildAgentState {
+    * "direct:no-turn" CTA (review finding).
+    */
+   readonly spawnTurnId: TurnId | undefined;
++  /** Spawn item that first registered this child, for failed-spawn cleanup. */
++  readonly spawnItemId: string | undefined;
+ }
+ 
+ interface CollabChildMetadataState {
+@@ -1038,6 +1038,66 @@ function rememberCollabReceiverTurns(
    }
  }
  
@@ -46,12 +274,38 @@ index 29bb992611c1..0b002bc8e1ff 100644
 +      { readonly type: "collabAgentToolCall" }
 +    >;
 +
-+function readCollabSpawnChildThreadIds(item: CodexCollabAgentToolCall): ReadonlyArray<string> {
++function readCollabSpawnChildThreadIds(item: CodexCollabAgentToolCall) {
++  if (item.tool !== "spawnAgent" || item.status === "failed") {
++    return [];
++  }
++
++  // These terminal failure states have no child lifecycle that can settle a
++  // task.started row.
++  return Array.from(new Set([...item.receiverThreadIds, ...Object.keys(item.agentsStates)])).filter(
++    (threadId) => {
++      const status = item.agentsStates[threadId]?.status;
++      return status !== "errored" && status !== "notFound";
++    },
++  );
++}
++
++function readCollabSpawnFailedChildThreadIds(item: CodexCollabAgentToolCall) {
 +  if (item.tool !== "spawnAgent") {
 +    return [];
 +  }
 +
-+  return Array.from(new Set([...item.receiverThreadIds, ...Object.keys(item.agentsStates)]));
++  const failedThreadIds = new Set<string>();
++  if (item.status === "failed") {
++    for (const threadId of [...item.receiverThreadIds, ...Object.keys(item.agentsStates)]) {
++      failedThreadIds.add(threadId);
++    }
++  }
++  for (const [threadId, state] of Object.entries(item.agentsStates)) {
++    if (state.status === "errored" || state.status === "notFound") {
++      failedThreadIds.add(threadId);
++    }
++  }
++  return Array.from(failedThreadIds);
 +}
 +
 +function readCollabSpawnTitle(prompt: string | null | undefined): string | undefined {
@@ -73,7 +327,17 @@ index 29bb992611c1..0b002bc8e1ff 100644
  function shouldSuppressChildConversationNotification(
    method: CodexRpc.ServerNotificationMethod,
  ): boolean {
-@@ -1031,6 +1063,72 @@
+@@ -1208,6 +1268,9 @@ export const makeCodexSessionRuntime = (
+     const approvalCorrelationsRef = yield* Ref.make(new Map<string, ApprovalCorrelation>());
+     const pendingUserInputsRef = yield* Ref.make(new Map<ApprovalRequestId, PendingUserInput>());
+     const collabReceiverTurnsRef = yield* Ref.make(new Map<string, TurnId>());
++    // Raw notification order stays reliable even when the client handlers
++    // update session state concurrently with the notification queue.
++    const currentRootTurnIdRef = yield* Ref.make<TurnId | undefined>(undefined);
+     const collabChildAgentsRef = yield* Ref.make(new Map<string, CollabChildAgentState>());
+     const collabChildMetadataRef = yield* Ref.make(new Map<string, CollabChildMetadataState>());
+     /** Child provider-thread id → its currently running provider turn id. */
+@@ -1464,6 +1527,117 @@ export const makeCodexSessionRuntime = (
       */
      const interceptCollabChildNotification = (notification: CodexServerNotification) =>
        Effect.gen(function* () {
@@ -88,222 +352,6 @@ index 29bb992611c1..0b002bc8e1ff 100644
 +          notification.params.item.type === "collabAgentToolCall"
 +        ) {
 +          const item = notification.params.item;
-+          const childThreadIds = readCollabSpawnChildThreadIds(item);
-+          if (childThreadIds.length > 0) {
-+            const session = yield* Ref.get(sessionRef);
-+            const rootProviderThreadId = currentProviderThreadId(session);
-+            const parentTurnId =
-+              (yield* Ref.get(collabReceiverTurnsRef)).get(item.senderThreadId) ??
-+              session.activeTurnId;
-+            const nickname = readCollabSpawnTitle(item.prompt);
-+            const parentThreadId =
-+              item.senderThreadId !== rootProviderThreadId ? item.senderThreadId : undefined;
-+
-+            for (const agentThreadId of childThreadIds) {
-+              if (agentThreadId.length === 0 || agentThreadId === rootProviderThreadId) {
-+                continue;
-+              }
-+
-+              const existingChild = (yield* Ref.get(collabChildAgentsRef)).get(agentThreadId);
-+              const state: CollabChildAgentState = {
-+                agentThreadId,
-+                nickname: existingChild?.nickname ?? nickname,
-+                role: existingChild?.role,
-+                agentPath: existingChild?.agentPath,
-+                depth: existingChild?.depth,
-+                parentThreadId: existingChild?.parentThreadId ?? parentThreadId,
-+                spawnTurnId: existingChild?.spawnTurnId ?? parentTurnId,
-+              };
-+              yield* Ref.update(collabChildAgentsRef, (current) => {
-+                const next = new Map(current);
-+                next.set(agentThreadId, state);
-+                return next;
-+              });
-+
-+              // The same child appears on item/started and item/completed.
-+              // Emit one task.started row and let the child's own lifecycle
-+              // notifications carry subsequent status changes.
-+              if (!existingChild) {
-+                yield* emitEvent({
-+                  kind: "notification",
-+                  threadId: options.threadId,
-+                  ...(state.spawnTurnId ? { turnId: state.spawnTurnId } : {}),
-+                  method: "collabAgent/started",
-+                  payload: {
-+                    agentThreadId: state.agentThreadId,
-+                    ...(state.nickname ? { nickname: state.nickname } : {}),
-+                    ...(state.role ? { role: state.role } : {}),
-+                    ...(state.agentPath ? { agentPath: state.agentPath } : {}),
-+                    ...(state.depth !== undefined ? { depth: state.depth } : {}),
-+                    ...(state.parentThreadId ? { parentThreadId: state.parentThreadId } : {}),
-+                  },
-+                });
-+              }
-+            }
-+          }
-+        }
-+
-         // Registration path 1: child thread announces itself with a
-         // subAgent thread_spawn source.
-         if (notification.method === "thread/started") {
-diff --git a/apps/server/src/provider/Layers/CodexSessionRuntime.ts b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-index 0b002bc8e1ff..f65d80e603df 100644
---- a/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-+++ b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-@@ -745,11 +745,18 @@
-     >;
- 
- function readCollabSpawnChildThreadIds(item: CodexCollabAgentToolCall): ReadonlyArray<string> {
--  if (item.tool !== "spawnAgent") {
-+  if (item.tool !== "spawnAgent" || item.status === "failed") {
-     return [];
-   }
- 
--  return Array.from(new Set([...item.receiverThreadIds, ...Object.keys(item.agentsStates)]));
-+  // These terminal failure states have no child lifecycle that can settle a
-+  // task.started row.
-+  return Array.from(new Set([...item.receiverThreadIds, ...Object.keys(item.agentsStates)])).filter(
-+    (threadId) => {
-+      const status = item.agentsStates[threadId]?.status;
-+      return status !== "errored" && status !== "notFound";
-+    },
-+  );
- }
- 
- function readCollabSpawnTitle(prompt: string | null | undefined): string | undefined {
-@@ -1462,14 +1462,16 @@
-           const metadata = (yield* Ref.get(collabChildMetadataRef)).get(thread.id);
--          yield* emitEvent({
--            kind: "notification",
--            threadId: options.threadId,
--            method: "collabAgent/started",
--            ...(state.spawnTurnId ? { turnId: state.spawnTurnId } : {}),
--            payload: {
--              ...collabChildIdentity(state, metadata),
--              ...(state.depth !== undefined ? { depth: state.depth } : {}),
--              ...(state.parentThreadId ? { parentThreadId: state.parentThreadId } : {}),
--            },
--          });
-+          if (!existingChild) {
-+            yield* emitEvent({
-+              kind: "notification",
-+              threadId: options.threadId,
-+              method: "collabAgent/started",
-+              ...(state.spawnTurnId ? { turnId: state.spawnTurnId } : {}),
-+              payload: {
-+                ...collabChildIdentity(state, metadata),
-+                ...(state.depth !== undefined ? { depth: state.depth } : {}),
-+                ...(state.parentThreadId ? { parentThreadId: state.parentThreadId } : {}),
-+              },
-+            });
-+          }
-           yield* startCollabChildMetadataLookup(thread.id);
-           return true;
-         }
- 
-diff --git a/apps/server/src/provider/Layers/CodexSessionRuntime.ts b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-index f65d80e603df..89b4f65ecf78 100644
---- a/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-+++ b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-@@ -942,6 +942,9 @@
-     const approvalCorrelationsRef = yield* Ref.make(new Map<string, ApprovalCorrelation>());
-     const pendingUserInputsRef = yield* Ref.make(new Map<ApprovalRequestId, PendingUserInput>());
-     const collabReceiverTurnsRef = yield* Ref.make(new Map<string, TurnId>());
-+    // Raw notification order stays reliable even when the client handlers
-+    // update session state concurrently with the notification queue.
-+    const currentRootTurnIdRef = yield* Ref.make<TurnId | undefined>(undefined);
-     const collabChildAgentsRef = yield* Ref.make(new Map<string, CollabChildAgentState>());
-     /** Child provider-thread id → its currently running provider turn id. */
-     const collabChildLiveTurnsRef = yield* Ref.make(new Map<string, string>());
-@@ -1086,8 +1089,9 @@
-             const session = yield* Ref.get(sessionRef);
-             const rootProviderThreadId = currentProviderThreadId(session);
-             const parentTurnId =
--              (yield* Ref.get(collabReceiverTurnsRef)).get(item.senderThreadId) ??
--              session.activeTurnId;
-+              (yield* Ref.get(currentRootTurnIdRef)) ??
-+              session.activeTurnId ??
-+              (yield* Ref.get(collabReceiverTurnsRef)).get(item.senderThreadId);
-             const nickname = readCollabSpawnTitle(item.prompt);
-             const parentThreadId =
-               item.senderThreadId !== rootProviderThreadId ? item.senderThreadId : undefined;
-@@ -1411,12 +1415,18 @@
- 
-         const payload = notification.params;
-         const route = readRouteFields(notification);
-+        const rootProviderThreadId = currentProviderThreadId(yield* Ref.get(sessionRef));
-+        const notificationThreadId = readNotificationThreadId(notification);
-+        if (notificationThreadId === rootProviderThreadId) {
-+          if (notification.method === "turn/started") {
-+            yield* Ref.set(currentRootTurnIdRef, route.turnId);
-+          } else if (notification.method === "turn/completed") {
-+            yield* Ref.set(currentRootTurnIdRef, undefined);
-+          }
-+        }
-         const collabReceiverTurns = yield* Ref.get(collabReceiverTurnsRef);
-         const childParentTurnId = (() => {
--          const providerConversationId = readNotificationThreadId(notification);
--          return providerConversationId
--            ? collabReceiverTurns.get(providerConversationId)
--            : undefined;
-+          return notificationThreadId ? collabReceiverTurns.get(notificationThreadId) : undefined;
-         })();
- 
-         rememberCollabReceiverTurns(collabReceiverTurns, notification, route.turnId);
-@@ -1437,7 +1447,7 @@
-         // lifecycle must not reach the parent path, where the adapter maps
-         // thread/* onto parent session state. Root-id-known guard keeps the
-         // root's own early notifications flowing during session open.
--        const suppressRootId = currentProviderThreadId(yield* Ref.get(sessionRef));
-+        const suppressRootId = rootProviderThreadId;
-         const foreignConversation = (() => {
-           const providerConversationId = readNotificationThreadId(notification);
-           return (
-diff --git a/apps/server/src/provider/Layers/CodexSessionRuntime.ts b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-index 89b4f65ecf78..a54f760b851f 100644
---- a/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-+++ b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-@@ -678,6 +678,8 @@
-    * "direct:no-turn" CTA (review finding).
-    */
-   readonly spawnTurnId: TurnId | undefined;
-+  /** Spawn item that first registered this child, for failed-spawn cleanup. */
-+  readonly spawnItemId: string | undefined;
- }
- 
- function readThreadSpawnSource(thread: { readonly source: unknown }):
-@@ -759,6 +761,27 @@
-   );
- }
- 
-+function readCollabSpawnFailedChildThreadIds(
-+  item: CodexCollabAgentToolCall,
-+): ReadonlyArray<string> {
-+  if (item.tool !== "spawnAgent") {
-+    return [];
-+  }
-+
-+  const failedThreadIds = new Set<string>();
-+  if (item.status === "failed") {
-+    for (const threadId of [...item.receiverThreadIds, ...Object.keys(item.agentsStates)]) {
-+      failedThreadIds.add(threadId);
-+    }
-+  }
-+  for (const [threadId, state] of Object.entries(item.agentsStates)) {
-+    if (state.status === "errored" || state.status === "notFound") {
-+      failedThreadIds.add(threadId);
-+    }
-+  }
-+  return Array.from(failedThreadIds);
-+}
-+
- function readCollabSpawnTitle(prompt: string | null | undefined): string | undefined {
-   if (typeof prompt !== "string") {
-     return undefined;
-@@ -1084,6 +1107,49 @@
-           notification.params.item.type === "collabAgentToolCall"
-         ) {
-           const item = notification.params.item;
 +          if (notification.method === "item/completed") {
 +            const children = yield* Ref.get(collabChildAgentsRef);
 +            const failedChildAgents = readCollabSpawnFailedChildThreadIds(item).flatMap(
@@ -347,18 +395,67 @@ index 89b4f65ecf78..a54f760b851f 100644
 +              }
 +            }
 +          }
-           const childThreadIds = readCollabSpawnChildThreadIds(item);
-           if (childThreadIds.length > 0) {
-             const session = yield* Ref.get(sessionRef);
-@@ -1110,6 +1176,7 @@
-                 depth: existingChild?.depth,
-                 parentThreadId: existingChild?.parentThreadId ?? parentThreadId,
-                 spawnTurnId: existingChild?.spawnTurnId ?? parentTurnId,
-+                spawnItemId: existingChild ? existingChild.spawnItemId : item.id,
-               };
-               yield* Ref.update(collabChildAgentsRef, (current) => {
-                 const next = new Map(current);
-@@ -1168,6 +1235,7 @@
++          const childThreadIds = readCollabSpawnChildThreadIds(item);
++          if (childThreadIds.length > 0) {
++            const session = yield* Ref.get(sessionRef);
++            const rootProviderThreadId = currentProviderThreadId(session);
++            const parentTurnId =
++              (yield* Ref.get(currentRootTurnIdRef)) ??
++              session.activeTurnId ??
++              (yield* Ref.get(collabReceiverTurnsRef)).get(item.senderThreadId);
++            const nickname = readCollabSpawnTitle(item.prompt);
++            const parentThreadId =
++              item.senderThreadId !== rootProviderThreadId ? item.senderThreadId : undefined;
++
++            for (const agentThreadId of childThreadIds) {
++              if (agentThreadId.length === 0 || agentThreadId === rootProviderThreadId) {
++                continue;
++              }
++
++              const existingChild = (yield* Ref.get(collabChildAgentsRef)).get(agentThreadId);
++              const state: CollabChildAgentState = {
++                agentThreadId,
++                nickname: existingChild?.nickname ?? nickname,
++                role: existingChild?.role,
++                agentPath: existingChild?.agentPath,
++                depth: existingChild?.depth,
++                parentThreadId: existingChild?.parentThreadId ?? parentThreadId,
++                spawnTurnId: existingChild?.spawnTurnId ?? parentTurnId,
++                spawnItemId: existingChild?.spawnItemId ?? item.id,
++              };
++              yield* Ref.update(collabChildAgentsRef, (current) => {
++                const next = new Map(current);
++                next.set(agentThreadId, state);
++                return next;
++              });
++
++              // The same child appears on item/started and item/completed.
++              // Emit one task.started row and let the child's own lifecycle
++              // notifications carry subsequent status changes.
++              if (!existingChild) {
++                yield* emitEvent({
++                  kind: "notification",
++                  threadId: options.threadId,
++                  ...(state.spawnTurnId ? { turnId: state.spawnTurnId } : {}),
++                  method: "collabAgent/started",
++                  payload: {
++                    agentThreadId: state.agentThreadId,
++                    ...(state.nickname ? { nickname: state.nickname } : {}),
++                    ...(state.role ? { role: state.role } : {}),
++                    ...(state.agentPath ? { agentPath: state.agentPath } : {}),
++                    ...(state.depth !== undefined ? { depth: state.depth } : {}),
++                    ...(state.parentThreadId ? { parentThreadId: state.parentThreadId } : {}),
++                  },
++                });
++              }
++            }
++          }
++        }
++
+         // Registration path 1: child thread announces itself with a
+         // subAgent thread_spawn source.
+         if (notification.method === "thread/started") {
+@@ -1496,6 +1670,7 @@ export const makeCodexSessionRuntime = (
              parentThreadId:
                spawn.parentThreadId ?? thread.parentThreadId ?? existingChild?.parentThreadId,
              spawnTurnId,
@@ -366,7 +463,38 @@ index 89b4f65ecf78..a54f760b851f 100644
            };
            yield* Ref.update(collabChildAgentsRef, (current) => {
              const next = new Map(current);
-@@ -1235,6 +1303,7 @@
+@@ -1503,17 +1678,19 @@ export const makeCodexSessionRuntime = (
+             return next;
+           });
+           const metadata = (yield* Ref.get(collabChildMetadataRef)).get(thread.id);
+-          yield* emitEvent({
+-            kind: "notification",
+-            threadId: options.threadId,
+-            method: "collabAgent/started",
+-            ...(state.spawnTurnId ? { turnId: state.spawnTurnId } : {}),
+-            payload: {
+-              ...collabChildIdentity(state, metadata),
+-              ...(state.depth !== undefined ? { depth: state.depth } : {}),
+-              ...(state.parentThreadId ? { parentThreadId: state.parentThreadId } : {}),
+-            },
+-          });
++          if (!existingChild) {
++            yield* emitEvent({
++              kind: "notification",
++              threadId: options.threadId,
++              method: "collabAgent/started",
++              ...(state.spawnTurnId ? { turnId: state.spawnTurnId } : {}),
++              payload: {
++                ...collabChildIdentity(state, metadata),
++                ...(state.depth !== undefined ? { depth: state.depth } : {}),
++                ...(state.parentThreadId ? { parentThreadId: state.parentThreadId } : {}),
++              },
++            });
++          }
+           yield* startCollabChildMetadataLookup(thread.id);
+           return true;
+         }
+@@ -1560,6 +1737,7 @@ export const makeCodexSessionRuntime = (
                depth: existing?.depth,
                parentThreadId: existing?.parentThreadId,
                spawnTurnId: existing ? existing.spawnTurnId : activitySpawnTurnId,
@@ -374,11 +502,30 @@ index 89b4f65ecf78..a54f760b851f 100644
              });
              return next;
            });
-diff --git a/apps/server/src/provider/Layers/CodexSessionRuntime.ts b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-index a54f760b851f..02264b3ddcc8 100644
---- a/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-+++ b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-@@ -1504,7 +1504,10 @@
+@@ -1772,12 +1950,18 @@ export const makeCodexSessionRuntime = (
+ 
+         const payload = notification.params;
+         const route = readRouteFields(notification);
++        const rootProviderThreadId = currentProviderThreadId(yield* Ref.get(sessionRef));
++        const notificationThreadId = readNotificationThreadId(notification);
++        if (notificationThreadId === rootProviderThreadId) {
++          if (notification.method === "turn/started") {
++            yield* Ref.set(currentRootTurnIdRef, route.turnId);
++          } else if (notification.method === "turn/completed") {
++            yield* Ref.set(currentRootTurnIdRef, undefined);
++          }
++        }
+         const collabReceiverTurns = yield* Ref.get(collabReceiverTurnsRef);
+         const childParentTurnId = (() => {
+-          const providerConversationId = readNotificationThreadId(notification);
+-          return providerConversationId
+-            ? collabReceiverTurns.get(providerConversationId)
+-            : undefined;
++          return notificationThreadId ? collabReceiverTurns.get(notificationThreadId) : undefined;
+         })();
+ 
+         rememberCollabReceiverTurns(collabReceiverTurns, notification, route.turnId);
+@@ -1786,7 +1970,10 @@ export const makeCodexSessionRuntime = (
          // legacy suppressor below would drop its lifecycle before it could
          // become synthetic collabAgent events (review finding). The
          // suppressor still covers UNREGISTERED children.
@@ -390,70 +537,29 @@ index a54f760b851f..02264b3ddcc8 100644
            yield* Ref.set(collabReceiverTurnsRef, collabReceiverTurns);
            return;
          }
-diff --git a/apps/server/src/provider/Layers/CodexSessionRuntime.ts b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-index 02264b3ddcc8..73b08d6875f9 100644
---- a/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-+++ b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-@@ -1176,7 +1176,7 @@
-                 depth: existingChild?.depth,
-                 parentThreadId: existingChild?.parentThreadId ?? parentThreadId,
-                 spawnTurnId: existingChild?.spawnTurnId ?? parentTurnId,
--                spawnItemId: existingChild ? existingChild.spawnItemId : item.id,
-+                spawnItemId: existingChild?.spawnItemId ?? item.id,
-               };
-               yield* Ref.update(collabChildAgentsRef, (current) => {
-                 const next = new Map(current);
-diff --git a/apps/server/src/provider/Layers/CodexSessionRuntime.ts b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-index 73b08d6875f9..37fdd8f705d1 100644
---- a/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-+++ b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
-@@ -746,7 +746,7 @@
-       { readonly type: "collabAgentToolCall" }
-     >;
- 
--function readCollabSpawnChildThreadIds(item: CodexCollabAgentToolCall): ReadonlyArray<string> {
-+function readCollabSpawnChildThreadIds(item: CodexCollabAgentToolCall) {
-   if (item.tool !== "spawnAgent" || item.status === "failed") {
-     return [];
-   }
-@@ -761,9 +761,7 @@
-   );
- }
- 
--function readCollabSpawnFailedChildThreadIds(
--  item: CodexCollabAgentToolCall,
--): ReadonlyArray<string> {
-+function readCollabSpawnFailedChildThreadIds(item: CodexCollabAgentToolCall) {
-   if (item.tool !== "spawnAgent") {
-     return [];
-   }
+@@ -1798,7 +1985,7 @@ export const makeCodexSessionRuntime = (
+         // lifecycle must not reach the parent path, where the adapter maps
+         // thread/* onto parent session state. Root-id-known guard keeps the
+         // root's own early notifications flowing during session open.
+-        const suppressRootId = currentProviderThreadId(yield* Ref.get(sessionRef));
++        const suppressRootId = rootProviderThreadId;
+         const foreignConversation = (() => {
+           const providerConversationId = readNotificationThreadId(notification);
+           return (
 diff --git a/apps/server/src/provider/testFixtures/codexCollabMockPeer.mjs b/apps/server/src/provider/testFixtures/codexCollabMockPeer.mjs
-index f06e984c9aa5..f26ec8b0249f 100644
+index fa567d75cf8a8fa6291f7d821816599b410df617..666dd5138e0be7b096d0bad282001b46e37f4d4e 100644
 --- a/apps/server/src/provider/testFixtures/codexCollabMockPeer.mjs
 +++ b/apps/server/src/provider/testFixtures/codexCollabMockPeer.mjs
-@@ -58,7 +58,9 @@
+@@ -133,7 +133,11 @@ rl.on("line", (line) => {
          params: { threadId: rootThreadId, turn },
        });
      }
 -    for (const notification of script.notifications) {
 +    const notifications =
-+      script.notificationsByTurn?.[turnStartCount - 1] ?? script.notifications ?? [];
-+    for (const notification of notifications) {
-       write({ jsonrpc: "2.0", method: notification.method, params: notification.params });
-     }
-     if (script.holdTurnOpen !== true) {
-diff --git a/apps/server/src/provider/testFixtures/codexCollabMockPeer.mjs b/apps/server/src/provider/testFixtures/codexCollabMockPeer.mjs
-index f26ec8b0249f..28b8815ab167 100644
---- a/apps/server/src/provider/testFixtures/codexCollabMockPeer.mjs
-+++ b/apps/server/src/provider/testFixtures/codexCollabMockPeer.mjs
-@@ -59,7 +59,9 @@
-       });
-     }
-     const notifications =
--      script.notificationsByTurn?.[turnStartCount - 1] ?? script.notifications ?? [];
 +      script.notificationsByTurn !== undefined
 +        ? (script.notificationsByTurn[turnStartCount - 1] ?? [])
 +        : (script.notifications ?? []);
-     for (const notification of notifications) {
++    for (const notification of notifications) {
        write({ jsonrpc: "2.0", method: notification.method, params: notification.params });
      }
+     for (const request of script.serverRequests ?? []) {

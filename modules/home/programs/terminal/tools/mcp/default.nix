@@ -66,7 +66,7 @@ in
         filesystem = {
           # Native file and shell tools cover repository-local reads.
           enabled = false;
-          command = getExe mcpPkgs.mcp-server-filesystem;
+          command = getExe pkgs.mcp-server-filesystem;
           args = lib.mkDefault [
             config.home.homeDirectory
             "${config.home.homeDirectory}/Documents"
@@ -77,7 +77,7 @@ in
 
         sequential-thinking = {
           enabled = false;
-          command = getExe mcpPkgs.mcp-server-sequential-thinking;
+          command = getExe pkgs.mcp-server-sequential-thinking;
         };
 
         git = {

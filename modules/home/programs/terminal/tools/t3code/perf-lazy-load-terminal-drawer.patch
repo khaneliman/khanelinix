@@ -1,16 +1,16 @@
 diff --git a/apps/web/src/components/ChatView.tsx b/apps/web/src/components/ChatView.tsx
-index 0d33aec7b..b28801472 100644
+index 5f339b0147dce1cea1a591d8c3e89d58a8e2efa6..f95baabc456d72c1779730bd7cbedfd71d83d293 100644
 --- a/apps/web/src/components/ChatView.tsx
 +++ b/apps/web/src/components/ChatView.tsx
-@@ -182,7 +182,6 @@ import {
- import { DiffWorkerPoolProvider } from "./DiffWorkerPoolProvider";
+@@ -209,7 +209,6 @@ import {
+ } from "@t3tools/client-runtime/state/subagentRuntime";
  import { BranchToolbar } from "./BranchToolbar";
  import { resolveShortcutCommand, shortcutLabelForCommand } from "../keybindings";
 -import ThreadTerminalDrawer from "./ThreadTerminalDrawer";
  import {
    AlarmClockIcon,
    CheckCircle2Icon,
-@@ -522,6 +521,7 @@ const PreviewPanel = lazy(() =>
+@@ -553,6 +552,7 @@ const PreviewPanel = lazy(() =>
  );
  const DiffPanel = lazy(() => import("./DiffPanel"));
  const FilePreviewPanel = lazy(() => import("./files/FilePreviewPanel"));
@@ -18,7 +18,7 @@ index 0d33aec7b..b28801472 100644
  const EMPTY_PENDING_FILE_SURFACE_IDS: ReadonlySet<string> = new Set();
  const TYPE_TO_FOCUS_EDITABLE_SELECTOR = [
    "input",
-@@ -1085,35 +1085,37 @@ const PersistentThreadTerminalDrawer = memo(function PersistentThreadTerminalDra
+@@ -1148,35 +1148,37 @@ const PersistentThreadTerminalDrawer = memo(function PersistentThreadTerminalDra
        )}
      >
        <div className="min-h-0 overflow-clip">
@@ -85,7 +85,7 @@ index 0d33aec7b..b28801472 100644
        </div>
      </div>
    );
-@@ -1251,40 +1253,44 @@ const PersistentThreadTerminalPanel = memo(function PersistentThreadTerminalPane
+@@ -1316,41 +1318,45 @@ const PersistentThreadTerminalPanel = memo(function PersistentThreadTerminalPane
    if (!project || !cwd) return null;
  
    return (
@@ -165,3 +165,30 @@ index 0d33aec7b..b28801472 100644
 +    </Suspense>
    );
  });
+ 
+diff --git a/apps/web/vite.config.ts b/apps/web/vite.config.ts
+index 702c1884098311aeb1eb07bbc0886219ec1f00c9..ffeb8e6a33e8661b6adb5152ab151d93f8914b05 100644
+--- a/apps/web/vite.config.ts
++++ b/apps/web/vite.config.ts
+@@ -271,6 +271,21 @@ export default defineConfig(() => {
+       emptyOutDir: true,
+       manifest: true,
+       sourcemap: buildSourcemap,
++      rollupOptions: {
++        output: {
++          manualChunks(id) {
++            if (!id.includes("node_modules")) {
++              return;
++            }
++            if (id.includes("/lexical/") || id.includes("/@lexical/")) {
++              return "vendor-lexical";
++            }
++            if (id.includes("/@dnd-kit/")) {
++              return "vendor-dnd-kit";
++            }
++          },
++        },
++      },
+     },
+     test: {
+       projects: [defineProject(unitTestProject)],

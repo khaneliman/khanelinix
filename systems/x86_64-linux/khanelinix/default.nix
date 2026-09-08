@@ -82,7 +82,8 @@ in
       };
 
       comfyui = {
-        enable = true;
+        # Restore after https://github.com/NixOS/nixpkgs/issues/560210 is resolved.
+        enable = false;
 
         models = import ./comfyui-models.nix { inherit lib pkgs; };
 

@@ -1,0 +1,165 @@
+diff --git a/apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts b/apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts
+index d93fec5a3cf68655a5e2fea4be3974243b79da5a..219caa309e330c2f1d7e48972b550fa15db07bf7 100644
+--- a/apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts
++++ b/apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts
+@@ -31,6 +31,7 @@ import * as Layer from "effect/Layer";
+ import * as ManagedRuntime from "effect/ManagedRuntime";
+ import * as Option from "effect/Option";
+ import * as PubSub from "effect/PubSub";
++import * as Schema from "effect/Schema";
+ import * as Scope from "effect/Scope";
+ import * as Stream from "effect/Stream";
+ import * as SqlClient from "effect/unstable/sql/SqlClient";
+@@ -870,6 +871,91 @@ describe("ProviderCommandReactor", () => {
+     expect(thread?.session?.runtimeMode).toBe("approval-required");
+   });
+ 
++  effectIt.effect("isolates a stuck turn start to its thread and drains it after release", () =>
++    Effect.gen(function* () {
++      const threadAStarted = yield* Deferred.make<void>();
++      const releaseThreadA = yield* Deferred.make<void>();
++      const threadBStarted = yield* Deferred.make<void>();
++      const threadA = ThreadId.make("thread-1");
++      const threadB = ThreadId.make("thread-2");
++      const harness = yield* Effect.promise(() =>
++        createHarness({
++          startSessionEffect: (session) =>
++            session.threadId === threadA
++              ? Deferred.succeed(threadAStarted, undefined).pipe(
++                  Effect.andThen(Deferred.await(releaseThreadA)),
++                  Effect.as(session),
++                )
++              : Deferred.succeed(threadBStarted, undefined).pipe(Effect.as(session)),
++        }),
++      );
++      const createdAt = "2026-01-01T00:00:00.000Z";
++
++      yield* harness.engine.dispatch({
++        type: "thread.create",
++        commandId: CommandId.make("cmd-thread-create-2-isolation"),
++        threadId: threadB,
++        projectId: asProjectId("project-1"),
++        title: "Thread 2",
++        modelSelection: {
++          instanceId: ProviderInstanceId.make("codex"),
++          model: "gpt-5-codex",
++        },
++        interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
++        runtimeMode: "approval-required",
++        branch: null,
++        worktreePath: null,
++        createdAt,
++      });
++
++      const dispatchTurnStart = (threadId: ThreadId, messageId: string) =>
++        harness.engine.dispatch({
++          type: "thread.turn.start",
++          commandId: CommandId.make(`cmd-turn-start-isolation-${messageId}`),
++          threadId,
++          message: {
++            messageId: asMessageId(messageId),
++            role: "user",
++            text: `hello ${threadId}`,
++            attachments: [],
++          },
++          interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
++          runtimeMode: "approval-required",
++          createdAt,
++        });
++
++      yield* dispatchTurnStart(threadA, "user-message-isolation-a");
++      yield* Deferred.await(threadAStarted);
++      yield* dispatchTurnStart(threadA, "user-message-isolation-a-second");
++      yield* dispatchTurnStart(threadB, "user-message-isolation-b");
++      yield* Deferred.await(threadBStarted);
++      expect(harness.startSession.mock.calls.some((call) => call[0] === threadA)).toBe(true);
++      expect(harness.startSession.mock.calls.some((call) => call[0] === threadB)).toBe(true);
++      expect(harness.startSession.mock.calls.filter((call) => call[0] === threadA)).toHaveLength(1);
++
++      yield* Deferred.succeed(releaseThreadA, undefined);
++      yield* Effect.promise(() => harness.drain());
++
++      expect(harness.startSession.mock.calls.filter((call) => call[0] === threadA)).toHaveLength(1);
++      expect(
++        harness.sendTurn.mock.calls.filter((call) =>
++          Schema.is(Schema.Struct({ threadId: Schema.Literal(threadA) }))(call[0]),
++        ),
++      ).toHaveLength(2);
++      expect(
++        harness.sendTurn.mock.calls.filter((call) =>
++          Schema.is(Schema.Struct({ threadId: Schema.Literal(threadB) }))(call[0]),
++        ),
++      ).toHaveLength(1);
++      expect(harness.sendTurn.mock.calls).toEqual(
++        expect.arrayContaining([
++          [expect.objectContaining({ threadId: threadA })],
++          [expect.objectContaining({ threadId: threadB })],
++        ]),
++      );
++    }),
++  );
++
+   effectIt.effect("retains a turn dispatched immediately after start until activation", () =>
+     Effect.gen(function* () {
+       const activation = yield* Deferred.make<void>();
+diff --git a/apps/server/src/orchestration/Layers/ProviderCommandReactor.ts b/apps/server/src/orchestration/Layers/ProviderCommandReactor.ts
+index 6df08bfadb9c77d3fef31bbd371b51ac54de76a7..5ac53795cd89a610c3e94609c89a42ebbef736d8 100644
+--- a/apps/server/src/orchestration/Layers/ProviderCommandReactor.ts
++++ b/apps/server/src/orchestration/Layers/ProviderCommandReactor.ts
+@@ -18,10 +18,13 @@ import * as Cache from "effect/Cache";
+ import * as Cause from "effect/Cause";
+ import * as Crypto from "effect/Crypto";
+ import * as DateTime from "effect/DateTime";
++import * as Deferred from "effect/Deferred";
+ import * as Duration from "effect/Duration";
+ import * as Effect from "effect/Effect";
+ import * as Equal from "effect/Equal";
+ import * as FileSystem from "effect/FileSystem";
++import * as Fiber from "effect/Fiber";
++import * as FiberSet from "effect/FiberSet";
+ import * as Layer from "effect/Layer";
+ import * as Option from "effect/Option";
+ import * as Schedule from "effect/Schedule";
+@@ -1772,7 +1775,33 @@ const make = Effect.gen(function* () {
+       }),
+     );
+ 
+-  const worker = yield* makeDrainableWorker(processDomainEventSafely);
++  const eventFibers = yield* FiberSet.make();
++  const threadTails = new Map<ThreadId, Fiber.Fiber<void, never>>();
++  const processEventInThread = (event: ProviderIntentEvent) =>
++    Effect.gen(function* () {
++      const previousTail = threadTails.get(event.payload.threadId);
++      const registered = yield* Deferred.make<void>();
++      let currentTail: Fiber.Fiber<void, never> | undefined;
++      const task = Effect.gen(function* () {
++        yield* Deferred.await(registered);
++        if (previousTail !== undefined) {
++          yield* Fiber.join(previousTail);
++        }
++        yield* processDomainEventSafely(event);
++      }).pipe(
++        Effect.ensuring(
++          Effect.sync(() => {
++            if (currentTail !== undefined && threadTails.get(event.payload.threadId) === currentTail) {
++              threadTails.delete(event.payload.threadId);
++            }
++          }),
++        ),
++      );
++      currentTail = yield* FiberSet.run(eventFibers, task);
++      threadTails.set(event.payload.threadId, currentTail);
++      yield* Deferred.succeed(registered, undefined);
++    });
++  const worker = yield* makeDrainableWorker(processEventInThread);
+ 
+   const start: ProviderCommandReactorShape["start"] = Effect.fn("start")(function* () {
+     const interruptedTitleRegenerations = yield* findInterruptedThreadTitleRegenerations().pipe(
+@@ -1835,6 +1864,7 @@ const make = Effect.gen(function* () {
+     start,
+     drain: Effect.gen(function* () {
+       yield* worker.drain;
++      yield* FiberSet.awaitEmpty(eventFibers);
+       yield* threadTitleRegenerationWorker.drain;
+     }),
+   } satisfies ProviderCommandReactorShape;
