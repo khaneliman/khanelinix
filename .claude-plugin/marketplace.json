@@ -377,6 +377,16 @@
 			"source": "./modules/common/ai-tools/skills/to-spec"
 		},
 		{
+			"name": "to-tickets",
+			"description": "Split a spec into self-contained tickets with dependencies.",
+			"version": "0.1.0",
+			"author": {
+				"name": "khaneliman"
+			},
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/to-tickets"
+		},
+		{
 			"name": "typescript-best-practices",
 			"description": "TypeScript best practices for edits.",
 			"version": "0.1.4",

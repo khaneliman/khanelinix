@@ -1,0 +1,10 @@
+{
+	"name": "to-tickets",
+	"displayName": "To Tickets",
+	"description": "Split a spec into self-contained tickets with dependencies.",
+	"version": "0.1.0",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./"
+}

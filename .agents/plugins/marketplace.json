@@ -449,6 +449,18 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "to-tickets",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/to-tickets"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
 			"name": "typescript-best-practices",
 			"source": {
 				"source": "local",

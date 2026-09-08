@@ -13,6 +13,7 @@ import skill_metadata
 
 USER_ONLY_SKILLS = {
     "to-spec",
+    "to-tickets",
     "program-orchestration",
 }
 # Owner-routed domain skills and overlays stay model-visible on Claude Code and

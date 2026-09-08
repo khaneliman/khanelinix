@@ -241,6 +241,19 @@ invoke them.
 | :---------------------- | :--------------------------------- | :------------------------------- |
 | `program-orchestration` | Durable multi-unit program control | `Use $program-orchestration ...` |
 | `to-spec`               | Save a durable implementation spec | `Use $to-spec ...`               |
+| `to-tickets`            | Create independent ticket handoffs | `Use $to-tickets ...`            |
+
+For fresh-session implementation, use `requirements-interview` when product
+choices need discussion, then explicitly request `to-spec` and `to-tickets`.
+Install these two standalone plugins alongside `workflow-core`. Neither runs
+automatically or replaces the implementation lifecycle.
+
+By default, artifacts live under `.planning/<feature>/`: `spec.md` and one
+`tickets/NN-slug.md` file per ticket. Requested paths and project conventions
+win. Start a fresh session with the ticket path and ask `engineering-workflow`
+to implement it. Tickets carry source revisions, acceptance checks, blockers,
+and write-scope hints. Parallel execution also requires compatible write scopes
+or isolated worktrees with an integration owner and order.
 
 Large domain toolkits and explicit overlays such as `bevy-toolkit` and `swarm`
 stay model-visible on Claude Code and Pi. A selected owner can route them. Codex

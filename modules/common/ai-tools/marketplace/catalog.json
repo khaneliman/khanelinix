@@ -270,6 +270,13 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "to-tickets",
+			"displayName": "To Tickets",
+			"description": "Split a spec into self-contained tickets with dependencies.",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
 			"name": "typescript-best-practices",
 			"displayName": "TypeScript Best Practices",
 			"description": "TypeScript best practices for edits.",
