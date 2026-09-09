@@ -96,6 +96,8 @@
                   Shotcut = "Shotcut";
                   # Plug and Play (citrix PnP settings keys)
                   Pn = "Pn";
+                  # 15-byte /proc/PID/comm truncation of .Hyprland-wrapped
+                  wrapp = "wrapp";
                 };
                 extend-ignore-re = [
                   # SSH public keys (ssh-rsa, ssh-ed25519, etc.)

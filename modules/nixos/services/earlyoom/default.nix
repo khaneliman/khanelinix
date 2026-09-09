@@ -30,9 +30,11 @@ in
 
       extraArgs =
         let
-          # Don't kill please...
+          # earlyoom matches /proc/PID/comm, which truncates to 15 bytes and
+          # carries the makeWrapper name for wrapped binaries.
           appsToAvoid = lib.concatStringsSep "|" [
-            "(h|H)yprland"
+            "\\.?(h|H)yprland(-wrapp)?"
+            "start-hyprland"
             "(x|X)wayland"
             "cryptsetup"
             "dbus-.*"
@@ -44,6 +46,7 @@ in
             ".*qemu-system.*"
             "regreet"
             "sddm"
+            "sddm-helper"
             "ssh-agent"
             "sshd"
             "sway"
