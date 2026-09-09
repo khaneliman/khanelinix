@@ -120,12 +120,10 @@ in
     systemd.user.slices.app-agent-workloads = {
       Unit.Description = "Resource-limited agent workloads";
       Slice = {
+        # Reclaim pressure alone must not terminate interactive agent sessions.
         MemoryHigh = resourceControl.agentAggregate.memoryHigh;
         MemoryMax = resourceControl.agentAggregate.memoryMax;
         MemorySwapMax = resourceControl.agentAggregate.memorySwapMax;
-        ManagedOOMMemoryPressure = "kill";
-        ManagedOOMMemoryPressureLimit = "80%";
-        ManagedOOMMemoryPressureDurationSec = "20s";
       };
     };
 

@@ -63,9 +63,12 @@ has a 16 GiB soft threshold and no hard memory or swap cap. Client evaluation
 still inherits ordinary provider limits unless launched through the build
 runner. The `nixre-fast` alias retains its explicit concurrency overrides.
 
-Oomd monitors ordinary agent scopes, not the build slice or backend. System-wide
-memory exhaustion can still interrupt builds through earlyoom or the kernel.
-Ancestor cgroup limits, if configured elsewhere, also apply.
+The agent slice keeps systemd's default `ManagedOOMMemoryPressure=auto`;
+reclaim pressure alone does not trigger a kill from this slice. Hard memory
+caps still apply. An ancestor configured for oomd killing can still select
+agent scopes. System-wide memory exhaustion can interrupt workloads through
+earlyoom or the kernel. Ancestor cgroup limits, if configured elsewhere, also
+apply.
 
 The provider limit covers the whole process tree, not each tool command
 individually. Wrapping applies to Nix-managed canonical provider paths; custom
