@@ -19,6 +19,11 @@ in
     ./specializations.nix
   ];
 
+  users = {
+    manageLingering = true;
+    users.${config.khanelinix.user.name}.linger = true;
+  };
+
   khanelinix = {
     packageProfile = "standard";
 
