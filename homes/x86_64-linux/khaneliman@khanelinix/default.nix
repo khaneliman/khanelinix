@@ -367,6 +367,7 @@ in
         emulators.limux = enabled;
 
         tools = {
+          claude-code.quotaWarmup.enable = true;
           git = {
             enable = true;
 
