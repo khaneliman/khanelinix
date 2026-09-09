@@ -22,6 +22,12 @@ in
       package = pkgs.ananicy-cpp;
       # CachyOS rules are more aggressive and optimized for desktop performance
       rulesProvider = pkgs.ananicy-rules-cachyos;
+
+      # The workaround moves every SCHED_RR process, including the compositor,
+      # into the root cgroup to dodge RT_GROUP_SCHED. nixpkgs kernels build
+      # without it, so the move only hides those processes from their session
+      # scope and from cgroup memory policy.
+      settings.cgroup_realtime_workaround = lib.mkForce false;
     };
   };
 }
