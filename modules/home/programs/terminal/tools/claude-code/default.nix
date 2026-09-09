@@ -103,9 +103,48 @@ in
 
   options.khanelinix.programs.terminal.tools.claude-code = {
     enable = mkEnableOption "Claude Code configuration";
+    quotaWarmup.enable = mkEnableOption "periodic Claude subscription quota warmup";
   };
 
   config = mkIf cfg.enable {
+    systemd.user = mkIf (cfg.quotaWarmup.enable && pkgs.stdenv.hostPlatform.isLinux) {
+      services.ai-quota-warmup-claude = {
+        Unit.Description = "Warm Claude CLI quota window";
+        Service = {
+          Type = "oneshot";
+          ExecStart = lib.escapeShellArgs [
+            (lib.getExe config.programs.claude-code.package)
+            "--settings"
+            (builtins.toJSON {
+              env = {
+                ANTHROPIC_BASE_URL = "https://api.anthropic.com";
+                ANTHROPIC_AUTH_TOKEN = "";
+                CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY = "0";
+              };
+            })
+            "--model"
+            "haiku"
+            "--safe-mode"
+            "--no-session-persistence"
+            "-p"
+            "hi"
+          ];
+          TimeoutStartSec = "2min";
+        };
+      };
+      timers.ai-quota-warmup-claude = {
+        Unit.Description = "Warm Claude quota every 5h1m";
+        Timer = {
+          # Re-arm after every user-manager restart, not a past calendar date.
+          OnStartupSec = "2min";
+          OnUnitActiveSec = "5h1m";
+          AccuracySec = "30s";
+          Unit = "ai-quota-warmup-claude.service";
+        };
+        Install.WantedBy = [ "timers.target" ];
+      };
+    };
+
     # Install Claude icon for notifications
     xdg.dataFile."icons/claude.ico".source = claudeIcon;
 
