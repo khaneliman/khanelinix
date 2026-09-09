@@ -22,8 +22,8 @@ Route to one mode and load only named reference:
    [pr-review.md](references/pr-review.md).
 7. **pr-feedback**: inspect or address existing review comments. Read
    [pr-feedback.md](references/pr-feedback.md).
-8. **ci-fix**: inspect failing checks and prepare focused fix context. Read
-   [ci-fix.md](references/ci-fix.md).
+8. **ci-fix**: diagnose failing CI and implement and verify requested fixes.
+   Read [ci-fix.md](references/ci-fix.md).
 9. **maintainer-queue**: collect a bounded repository queue, rank evidenced next
    actions, and route selected items. Read
    [maintainer-queue.md](references/maintainer-queue.md).
