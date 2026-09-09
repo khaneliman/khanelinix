@@ -90,6 +90,11 @@ model, quota fallback, or route retry matters.
 - When evidence supports disagreement, state reason, alternative, and risk.
 - Prefer boring direct solutions. Add abstractions only when they remove real
   complexity.
+- Run compilers, package builds, and heavy test suites through `t3code-build` or
+  `build-run` when one is on PATH; interactive agent scopes are memory capped
+  and throttle into a stall instead of failing. Keep disposable build scratch in
+  the repository's ignored build directory or under `$XDG_CACHE_HOME`, not
+  `/tmp`.
 - Verify in proportion to risk before reporting completion. Complete required
   checks. Broaden or repeat them only when changes, failures, or unresolved
   concerns justify it. Avoid tests that merely mirror low-impact edits.
