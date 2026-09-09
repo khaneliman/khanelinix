@@ -16,7 +16,9 @@ in
 
   config = mkIf cfg.enable {
     systemd = {
-      # Monitor explicitly opted-in workloads, not entire sessions.
+      # No slice is monitored by default. A unit opts in by setting
+      # ManagedOOMMemoryPressure=kill on itself, as the comfyui service does;
+      # everything else only sees the hard MemoryMax caps set on the unit.
       oomd = {
         enable = true;
         enableRootSlice = false;
