@@ -133,9 +133,13 @@ in
             hide_on_key_press = true;
           };
 
-          debug = mkIf cfg.enableDebug {
-            colored_stdout_logs = true;
+          debug = {
+            # Upstream disables the log file by default, which leaves an
+            # unexpected compositor exit with no record of who requested it.
             disable_logs = false;
+          }
+          // lib.optionalAttrs cfg.enableDebug {
+            colored_stdout_logs = true;
             enable_stdout_logs = true;
             error_position = -1;
           };
