@@ -47,7 +47,7 @@ jq -e '
     .class == "ok"
     and .percentage == 40
     and (.tooltip | contains("Antigravity"))
-    and (.tooltip | contains("primary: 0%"))
+    and (.tooltip | contains("0% used"))
 ' <<<"$zero_output" >/dev/null
 
 jq -e '

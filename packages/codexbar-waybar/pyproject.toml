@@ -1,0 +1,6 @@
+[tool.ruff]
+target-version = "py311"
+
+[tool.isort]
+profile = "black"
+py_version = 311

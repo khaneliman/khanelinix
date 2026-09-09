@@ -38,5 +38,9 @@ unbounded_output="$(run_wrapper 0)"
 jq -e '
     .class == "stale"
     and .percentage == 15.68
-    and .tooltip == "╭─ Claude\n│  primary: 11.12%\n╰─ secondary: 15.68%\n\n╭─ Codex\n│  primary: 6%\n╰─ secondary: 3.33%"
+    and (.tooltip | contains("Claude · cached"))
+    and (.tooltip | contains("11.1% used"))
+    and (.tooltip | contains("15.7% used"))
+    and (.tooltip | contains("94% left"))
+    and (.tooltip | contains("96.7% left"))
 ' <<<"$unbounded_output" >/dev/null

@@ -15,6 +15,7 @@
   gtk4-layer-shell,
   jq,
   libnotify,
+  libsecret,
   pango,
   procps,
   python3,
@@ -46,15 +47,20 @@ stdenvNoCC.mkDerivation {
   };
 
   nativeBuildInputs = [ makeWrapper ];
-  nativeCheckInputs = [ jq ];
+  nativeCheckInputs = [
+    jq
+    python3
+  ];
 
   patches = [
     ./provider-sources.patch
     ./cache-max-age.patch
-    ./provider-sections.patch
+    ./quota-presentation.patch
   ];
 
   postPatch = ''
+    cp ${./presentation.py} codexbar_presentation.py
+    cp ${./reset-inventory.py} reset-inventory.py
     substituteInPlace codexbar-popup.py \
       --replace-fail ${lib.escapeShellArg iconSearch} ${lib.escapeShellArg iconReplacement}
   '';
@@ -75,6 +81,15 @@ stdenvNoCC.mkDerivation {
       ${./tests/fake-codexbar.sh} \
       ${lib.getExe bash}
 
+    ${lib.getExe bash} ${./tests/presentation-integration.sh} \
+      ./codexbar.sh ${lib.getExe bash}
+
+    PYTHONPATH="$PWD" ${lib.getExe python3} ${./tests/test_presentation.py}
+    PYTHONPATH="$PWD" ${lib.getExe python3} -m unittest discover \
+      -s tests -p 'test_popup_provider_selection.py'
+    RESET_INVENTORY_HELPER=${./reset-inventory.py} \
+      ${lib.getExe python3} ${./tests/test_reset_inventory.py}
+
     runHook postCheck
   '';
 
@@ -82,6 +97,8 @@ stdenvNoCC.mkDerivation {
     runHook preInstall
 
     install -Dm0755 codexbar.sh $out/bin/.codexbar-waybar-wrapped
+    install -Dm0644 codexbar_presentation.py $out/bin/codexbar_presentation.py
+    install -Dm0755 reset-inventory.py $out/bin/reset-inventory.py
     install -Dm0755 codexbar-popup.py $out/bin/.codexbar-waybar-popup-wrapped
     install -Dm0644 codexbar.css $out/share/codexbar-waybar/codexbar.css
     install -Dm0644 LICENSE $out/share/licenses/codexbar-waybar/LICENSE
@@ -96,8 +113,11 @@ stdenvNoCC.mkDerivation {
           bash
           coreutils
           jq
+          python3
         ]
-      }
+      } \
+      --set CODEXBAR_RESET_INVENTORY 1 \
+      --set CODEXBAR_SECRET_TOOL ${lib.getExe' libsecret "secret-tool"}
 
     ln -s $out/bin/codexbar.sh $out/bin/codexbar-waybar
 

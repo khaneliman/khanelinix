@@ -1,0 +1,464 @@
+diff --git a/codexbar.sh b/codexbar.sh
+--- a/codexbar.sh
++++ b/codexbar.sh
+@@ -168,7 +168,11 @@
+         fi
+         return
+     fi
+-    "${runner[@]}" "$CODEXBAR" "${args[@]}" 2>/dev/null
++    if [[ "$p" == "codex" && "${CODEXBAR_RESET_INVENTORY:-0}" == "1" ]]; then
++        python3 "$SCRIPT_DIR/reset-inventory.py" "${runner[@]}" "$CODEXBAR" "${args[@]}" 2>/dev/null
++    else
++        "${runner[@]}" "$CODEXBAR" "${args[@]}" 2>/dev/null
++    fi
+ }
+ 
+ fetch_provider() {
+@@ -339,200 +343,13 @@
+     exit 0
+ fi
+ 
++tooltip="$(CODEXBAR_RESET_TIME_FORMAT="$RESET_TIME_FORMAT" python3 "$SCRIPT_DIR/codexbar_presentation.py" <<< "$merged")"
++
+ echo "$merged" | jq -c \
+-    --arg now "$(date -u +%FT%TZ)" \
+     --arg bar_provider "$BAR_PROVIDER" \
+-    --arg reset_format "$RESET_TIME_FORMAT" '
+-    # Collect all usage windows across providers
+-    def provider_name(p):
+-        if p == null then "Unknown"
+-        else {
+-          abacus:"Abacus AI", alibaba:"Alibaba", alibabatokenplan:"Alibaba Token Plan",
+-          amp:"Amp", antigravity:"Antigravity", augment:"Augment",
+-          azureopenai:"Azure OpenAI", bedrock:"AWS Bedrock", chutes:"Chutes",
+-          claude:"Claude", clawrouter:"ClawRouter", codebuff:"Codebuff",
+-          codex:"Codex", commandcode:"Command Code", copilot:"Copilot",
+-          crof:"Crof", crossmodel:"CrossModel", cursor:"Cursor",
+-          deepgram:"Deepgram", deepseek:"DeepSeek", devin:"Devin",
+-          doubao:"Doubao", elevenlabs:"ElevenLabs", factory:"Droid",
+-          gemini:"Gemini", grok:"Grok", groq:"Groq",
+-          jetbrains:"JetBrains AI", kilo:"Kilo", kimi:"Kimi",
+-          kimik2:"Kimi K2", kiro:"Kiro", litellm:"LiteLLM",
+-          llmproxy:"LLM Proxy", manus:"Manus", mimo:"Xiaomi MiMo",
+-          minimax:"MiniMax", mistral:"Mistral", moonshot:"Moonshot / Kimi API",
+-          ollama:"Ollama", openai:"OpenAI", opencode:"OpenCode",
+-          opencodego:"OpenCode Go", openrouter:"OpenRouter", perplexity:"Perplexity",
+-          poe:"Poe", qoder:"Qoder", sakana:"Sakana AI",
+-          stepfun:"StepFun", synthetic:"Synthetic", t3chat:"T3 Chat",
+-          venice:"Venice", vertexai:"Vertex AI", warp:"Warp",
+-          windsurf:"Windsurf", zai:"z.ai", zed:"Zed"
+-        }[p] // (p | gsub("-"; " ") | ascii_upcase)
+-        end;
+-
+-    def entry_name(entry):
+-        entry as $entry
+-        | provider_name($entry.provider)
+-          + (if (($entry.account // "") != "") then " (\($entry.account))" else "" end);
+-
+-    # Insert spaces the providers omit. Claude OAuth gives "May 17 at 6:20AM"
+-    # (no space before AM/PM); Claude CLI gives "Resets6:20am(Europe/Paris)"
+-    # (no space anywhere). Normalise both to a single, consistent style.
+-    def normalize_reset:
+-        sub("^Resets(?=\\S)"; "Resets ")
+-        | sub("^resets(?=\\S)"; "resets ")
+-        | gsub("(?<=\\S)\\("; " (")
+-        | gsub(",(?=\\S)"; ", ")
+-        | gsub("(?<=\\d)(?=[AaPp][Mm]\\b)"; " ");
+-
+-    # Format a UNIX timestamp in the system local timezone, tiered by how far
+-    # away the reset is. Today drops the date; this year drops the year.
+-    def fmt_local_ts:
+-        . as $ts
+-        | ($ts | strflocaltime("%Y-%m-%d")) as $rd
+-        | (now | strflocaltime("%Y-%m-%d")) as $td
+-        | ($ts | strflocaltime("%Y")) as $ry
+-        | (now | strflocaltime("%Y")) as $cy
+-        | if $rd == $td then ($ts | strflocaltime("%-I:%M %p %Z"))
+-          elif $ry == $cy then ($ts | strflocaltime("%b %-d at %-I:%M %p %Z"))
+-          else ($ts | strflocaltime("%b %-d %Y at %-I:%M %p %Z")) end;
+-
+-    # Same tiering, formatted in UTC. We hardcode the "UTC" suffix because
+-    # `strftime("%Z")` after `gmtime` is empty on some libc builds.
+-    def fmt_utc_ts:
+-        . as $ts
+-        | ($ts | gmtime | strftime("%Y-%m-%d")) as $rd
+-        | (now | gmtime | strftime("%Y-%m-%d")) as $td
+-        | ($ts | gmtime | strftime("%Y")) as $ry
+-        | (now | gmtime | strftime("%Y")) as $cy
+-        | if $rd == $td then ($ts | gmtime | strftime("%-I:%M %p UTC"))
+-          elif $ry == $cy then ($ts | gmtime | strftime("%b %-d at %-I:%M %p UTC"))
+-          else ($ts | gmtime | strftime("%b %-d %Y at %-I:%M %p UTC")) end;
+-
+-    # Build the trailing " — resets …" fragment for a usage window. Mode is
+-    # one of "provider" (preserve the provider string), "local", or "utc".
+-    # Relative phrases like "Resets in 2 hours" are kept verbatim even in
+-    # absolute modes — "in 2 hours" is more useful than a wall-clock time.
+-    def reset_phrase(w):
+-        if w == null then ""
+-        else (w.resetDescription // "" | normalize_reset) as $clean
+-             | (if $clean == "" then ""
+-                elif ($clean | test("^[Rr]esets")) then " — \($clean)"
+-                else " — resets \($clean)" end) as $from_desc
+-             | if $reset_format == "provider" then $from_desc
+-               elif ($clean | test("^[Rr]esets in ")) then $from_desc
+-               elif w.resetsAt != null then
+-                   (try (w.resetsAt | fromdateiso8601) catch null) as $ts
+-                   | if $ts == null then $from_desc
+-                     elif $reset_format == "utc" then " — resets \($ts | fmt_utc_ts)"
+-                     else " — resets \($ts | fmt_local_ts)" end
+-               else $from_desc
+-               end
+-        end;
+-
++    --arg tooltip "$tooltip" '
+     def round_pct:
+         ((((. * 100) + 0.5) | floor) / 100);
+-
+-    def fmt_pct:
+-        (round_pct | tostring);
+-
+-    def fmt_window(w; name):
+-        if w == null or w.usedPercent == null then empty
+-        else "\(name): \(w.usedPercent | fmt_pct)%" + reset_phrase(w)
+-        end;
+-
+-    def fmt_named_window(item; provider):
+-        if item == null or item.window == null then empty
+-        else (item.title // item.id // "Extra quota") as $title
+-             | if (item | has("usageKnown")) and item.usageKnown == false then
+-                   "\(provider) \($title): reset tracked" + reset_phrase(item.window)
+-               else fmt_window(item.window; "\(provider) \($title)") end
+-        end;
+-
+-    def money(v; currency):
+-        if currency == null or currency == "USD" then "$\((v * 100 | round / 100))"
+-        else "\(currency) \((v * 100 | round / 100))" end;
+-
+-    def status_line(entry):
+-        entry as $entry
+-        | if $entry.status == null then empty
+-        else ($entry.status.indicator // "unknown" | gsub("_"; " ") | ascii_upcase) as $indicator
+-             | if ($entry.status.description // "") == "" then
+-                   "\(entry_name($entry)) status: \($indicator)"
+-               else
+-                   "\(entry_name($entry)) status: \($indicator) — \($entry.status.description)"
+-               end
+-        end;
+-
+-    def pace_lines(entry):
+-        entry as $entry
+-        |
+-        [
+-          ($entry.pace.primary.summary? | select(. != null) | "\(entry_name($entry)) session pace: \(.)"),
+-          ($entry.pace.secondary.summary? | select(. != null) | "\(entry_name($entry)) weekly pace: \(.)")
+-        ];
+-
+-    def credits_lines(entry):
+-        entry as $entry
+-        |
+-        [
+-          ($entry.credits.remaining? | select(type == "number")
+-           | "\(entry_name($entry)) credits: \(money(.; "USD")) remaining"),
+-          ($entry.credits.codexCreditLimit? | select(.limit? > 0)
+-           | "\(entry_name($entry)) \(.title // "Monthly credit limit"): \(money(.used; "USD")) / \(money(.limit; "USD"))"),
+-          ($entry.openaiDashboard.creditsRemaining? | select(type == "number")
+-           | "\(entry_name($entry)) dashboard credits: \(money(.; "USD")) remaining"),
+-          ($entry.openaiDashboard.codexCreditLimit? | select(.limit? > 0)
+-           | "\(entry_name($entry)) \(.title // "Monthly credit limit"): \(money(.used; "USD")) / \(money(.limit; "USD"))")
+-        ];
+-
+-    def reset_credit_line(entry):
+-        entry as $entry
+-        | $entry.usage.codexResetCredits as $rc
+-        | if $rc == null then empty
+-          else ($rc.availableCount // ([$rc.credits[]? | select(.status == "available")] | length)) as $count
+-          | ([$rc.credits[]? | select(.status == "available" and .expires_at != null)] | sort_by(.expires_at) | .[0].expires_at) as $next
+-          | if $next != null then
+-                (try ($next | fromdateiso8601) catch null) as $ts
+-                | if $ts == null then "\(entry_name($entry)) reset credits: \($count) available"
+-                  else "\(entry_name($entry)) reset credits: \($count) available; next expires \($ts | fmt_local_ts)" end
+-            elif $count > 0 then "\(entry_name($entry)) reset credits: \($count) available; no expiry"
+-            else "\(entry_name($entry)) reset credits: none available" end
+-          end;
+-
+-    def cost_lines(entry):
+-        entry as $entry
+-        |
+-        [
+-          ($entry.usage.providerCost? | select(.used? != null)
+-           | "\(entry_name($entry)) \(.period // "budget"): \(money(.used; .currencyCode // "USD"))"
+-             + (if .limit? > 0 then " / \(money(.limit; .currencyCode // "USD"))" else "" end)),
+-          ($entry.usage.openRouterUsage.balance? | select(type == "number")
+-           | "\(entry_name($entry)) balance: \(money(.; "USD"))"),
+-          ($entry.usage.sakanaPayAsYouGo.creditBalance? | select(type == "number")
+-           | "\(entry_name($entry)) pay-as-you-go balance: \(money(.; "USD"))"),
+-          ($entry.antigravityPlanInfo? | (.planDisplayName // .displayName // .planShortName // .planName) as $plan
+-           | select($plan != null) | "\(entry_name($entry)) plan: \($plan)")
+-        ];
+-
+-    def provider_lines(entry):
+-        entry as $entry
+-        | if $entry.error then
+-            "\(provider_name($entry.provider)): error — \($entry.error.message)"
+-        else
+-            (entry_name($entry)) as $name
+-            | [
+-                status_line($entry),
+-                fmt_window($entry.usage.primary;   "\($name) primary"),
+-                fmt_window($entry.usage.secondary; "\($name) secondary"),
+-                fmt_window($entry.usage.tertiary;  "\($name) tertiary"),
+-                ($entry.usage.extraRateWindows[]? | fmt_named_window(.; $name)),
+-                reset_credit_line($entry)
+-            ]
+-            + pace_lines($entry)
+-            + credits_lines($entry)
+-            + cost_lines($entry)
+-            | map(select(. != null and . != "")) | join("\n")
+-        end;
+ 
+     def max_pct(entry):
+         if entry.error then 0
+@@ -562,7 +379,6 @@
+ 
+     . as $all
+     | ($all | map(max_pct(.)) | max // 0 | round_pct) as $pct
+-    | ($all | map(provider_lines(.)) | map(select(. != ""))) as $lines
+     | ($all | all(.error)) as $all_errored
+     | ($all | any(.stale == true)) as $any_stale
+     | (if $bar_provider == "" then null
+@@ -571,7 +387,7 @@
+         text: (if $pinned != null then bar_text($pinned)
+                elif $all_errored then "🤖 ⚠"
+                else "🤖 \($pct | tostring)%" end),
+-        tooltip: ($lines | join("\n")),
++        tooltip: $tooltip,
+         class: (if $all_errored then "stale"
+                 elif $pct >= 90 then "critical"
+                 elif $pct >= 70 then "warning"
+diff --git a/codexbar-popup.py b/codexbar-popup.py
+--- a/codexbar-popup.py
++++ b/codexbar-popup.py
+@@ -20,6 +20,8 @@
+ import sys
+ from pathlib import Path
+ from threading import Thread
++
++from codexbar_presentation import quota_rows, reset_inventory, pace_lines, billing_lines
+ 
+ # gtk4-layer-shell must load before libwayland-client; re-exec with LD_PRELOAD.
+ # Override the lib location with CODEXBAR_LAYER_SHELL_LIB if needed.
+@@ -229,13 +231,13 @@
+ .codexbar-divider {
+     background-color: #e5e5e5;
+     min-height: 1px;
+-    margin: 12px 0;
++    margin: 8px 0;
+ }
+ .codexbar-section-title {
+     font-size: 13px;
+     font-weight: 700;
+     color: #111111;
+-    margin-bottom: 6px;
++    margin-bottom: 0;
+ }
+ .codexbar-section-detail-left {
+     font-size: 11px;
+@@ -1046,13 +1048,12 @@
+         self.body.append(self._divider())
+ 
+         # --- Section: reset time format ---
+-        reset_title = Gtk.Label(label="Reset times", xalign=0.0)
++        reset_title = Gtk.Label(label="Exact reset times", xalign=0.0)
+         reset_title.add_css_class("codexbar-section-title")
+         self.body.append(reset_title)
+         reset_hint = Gtk.Label(
+-            label="How to render the “Resets …” label. Provider keeps the raw "
+-                  "string each backend emits; Local/UTC reformat the reset "
+-                  "timestamp with an explicit timezone.",
++            label="Timezone for exact hover dates and reset expiration. "
++                  "Provider defaults to local time. Quota countdowns stay relative.",
+             xalign=0.0, wrap=True, max_width_chars=44)
+         reset_hint.add_css_class("codexbar-subtitle")
+         self.body.append(reset_hint)
+@@ -1264,77 +1265,45 @@
+             self.body.append(err)
+             return
+ 
+-        # Usage windows.
+         rendered_any = False
+-        for key in ("primary", "secondary", "tertiary"):
+-            window = usage.get(key)
+-            if not window:
+-                continue
++        for quota in quota_rows(entry, exact_mode=current_reset_format()):
+             self.body.append(self._divider())
+-            self.body.append(self._section(WINDOW_LABELS.get(key, key.title()), window))
++            self.body.append(self._section(quota))
+             rendered_any = True
+ 
+-        for item in usage.get("extraRateWindows") or []:
+-            if not isinstance(item, dict):
+-                continue
+-            window = item.get("window")
+-            if not isinstance(window, dict):
+-                continue
++        inventory = reset_inventory(usage, exact_mode=current_reset_format())
++        if inventory:
+             self.body.append(self._divider())
+-            title = item.get("title") or item.get("id") or "Extra quota"
+-            self.body.append(self._section(str(title), window, usage_known=item.get("usageKnown", True)))
++            title = Gtk.Label(label="Usage limit resets", xalign=0.0)
++            title.add_css_class("codexbar-section-title")
++            self.body.append(title)
++            for text in inventory:
++                if text:
++                    label = Gtk.Label(label=text, xalign=0.0)
++                    label.add_css_class("codexbar-section-detail-left")
++                    self.body.append(label)
+             rendered_any = True
+ 
+-        # Credits (when provider exposes it).
+-        credits = entry.get("credits") or {}
+-        remaining = credits.get("remaining")
+-        credit_lines = []
+-        if isinstance(remaining, (int, float)):
+-            credit_lines.append((money(float(remaining)), "remaining"))
+-        limit_line = summarize_credit_limit(credits.get("codexCreditLimit"))
+-        if limit_line:
+-            credit_lines.append((limit_line, ""))
+-        if credit_lines:
++        details = pace_lines(entry) + billing_lines(entry)
++        details.extend(line for line in summarize_openai_dashboard(entry)
++                       if line.startswith(("Plan:", "Recent dashboard spend:")))
++        details.extend(line for line in summarize_usage_details(usage)
++                       if line.startswith(("API history:", "Subscription", "Monthly grant")))
++        plan_info = entry.get("antigravityPlanInfo") or {}
++        plan = (plan_info.get("planDisplayName") or plan_info.get("displayName")
++                or plan_info.get("planShortName") or plan_info.get("planName"))
++        if plan:
++            details.append(f"Plan: {plan}")
++        if details:
+             self.body.append(self._divider())
+-            credit_title = Gtk.Label(label="Credits", xalign=0.0)
+-            credit_title.add_css_class("codexbar-section-title")
+-            self.body.append(credit_title)
+-            for value, label in credit_lines:
+-                row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+-                val = Gtk.Label(label=value, xalign=0.0, hexpand=True)
+-                val.add_css_class("codexbar-credits")
+-                row.append(val)
+-                if label:
+-                    lbl = Gtk.Label(label=label, xalign=1.0)
+-                    lbl.add_css_class("codexbar-credits-label")
+-                    row.append(lbl)
+-                self.body.append(row)
+-            rendered_any = True
+-
+-        detail_lines = [
+-            *summarize_pace(entry),
+-            *summarize_openai_dashboard(entry),
+-            *summarize_usage_details(usage),
+-        ]
+-        plan_info = entry.get("antigravityPlanInfo")
+-        if isinstance(plan_info, dict):
+-            plan = (
+-                plan_info.get("planDisplayName")
+-                or plan_info.get("displayName")
+-                or plan_info.get("planShortName")
+-                or plan_info.get("planName")
+-            )
+-            if plan:
+-                detail_lines.append(f"Plan: {plan}")
+-        if detail_lines:
+-            self.body.append(self._divider())
+-            details_title = Gtk.Label(label="Details", xalign=0.0)
+-            details_title.add_css_class("codexbar-section-title")
+-            self.body.append(details_title)
+-            for line in detail_lines:
+-                detail = Gtk.Label(label=line, xalign=0.0, wrap=True, max_width_chars=48)
+-                detail.add_css_class("codexbar-subtitle")
+-                self.body.append(detail)
++            expander = Gtk.Expander(label="Pace & billing")
++            content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
++            for line in details:
++                label = Gtk.Label(label=line, xalign=0.0, wrap=True, max_width_chars=48)
++                label.add_css_class("codexbar-subtitle")
++                content.append(label)
++            expander.set_child(content)
++            self.body.append(expander)
+             rendered_any = True
+ 
+         if not rendered_any:
+@@ -1348,45 +1317,38 @@
+         d.add_css_class("codexbar-divider")
+         return d
+ 
+-    def _section(self, title: str, window: dict, *, usage_known: bool = True) -> Gtk.Widget:
++    def _section(self, quota) -> Gtk.Widget:
+         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+-        t = Gtk.Label(label=title, xalign=0.0)
+-        t.add_css_class("codexbar-section-title")
+-        box.append(t)
+-
+-        pct = window.get("usedPercent")
+-        bar = Gtk.LevelBar()
+-        bar.add_css_class("codex-usage")
+-        bar.set_min_value(0)
+-        bar.set_max_value(100)
+-        bar.set_value(float(pct) if isinstance(pct, (int, float)) else 0)
+-        if isinstance(pct, (int, float)):
++        heading = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
++        title = Gtk.Label(label=quota.title, xalign=0.0, hexpand=True)
++        title.add_css_class("codexbar-section-title")
++        value = Gtk.Label(label=quota.value, xalign=1.0)
++        value.add_css_class("codexbar-section-detail-left")
++        heading.append(title)
++        heading.append(value)
++        box.append(heading)
++
++        pct = quota.used_percent
++        if pct is not None:
++            bar = Gtk.LevelBar()
++            bar.add_css_class("codex-usage")
++            bar.set_min_value(0)
++            bar.set_max_value(100)
++            bar.set_value(max(0, min(100, 100 - pct if quota.value.endswith("left") else pct)))
+             if pct >= 90:
+                 bar.add_css_class("critical")
+             elif pct >= 70:
+                 bar.add_css_class("warning")
+-        box.append(bar)
+-
+-        details = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+-        if not usage_known:
+-            left_text = "Reset tracked"
+-        elif isinstance(pct, (int, float)):
+-            regen = window.get("nextRegenPercent")
+-            left_text = f"{int(pct)}% used"
+-            if isinstance(regen, (int, float)) and regen > 0:
+-                left_text += f" · +{compact_number(regen)}% next regen"
+-        else:
+-            left_text = "—"
+-        left = Gtk.Label(label=left_text, xalign=0.0, hexpand=True)
+-        left.add_css_class("codexbar-section-detail-left")
+-        details.append(left)
+-
+-        reset_text = format_reset_label(window, current_reset_format())
+-        if reset_text:
+-            r = Gtk.Label(label=reset_text, xalign=1.0)
+-            r.add_css_class("codexbar-section-detail-right")
+-            details.append(r)
+-        box.append(details)
++            box.append(bar)
++
++        reset_label = quota.reset
++        regen = quota.window.get("nextRegenPercent")
++        if pct is not None and isinstance(regen, (int, float)) and regen > 0:
++            reset_label += f" · +{compact_number(regen)}% next regen"
++        reset = Gtk.Label(label=reset_label, xalign=0.0)
++        reset.add_css_class("codexbar-section-detail-right")
++        reset.set_tooltip_text(quota.exact_reset)
++        box.append(reset)
+         return box
+ 
+     def _clear(self, container: Gtk.Box):
