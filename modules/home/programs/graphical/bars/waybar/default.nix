@@ -17,6 +17,12 @@ let
   inherit (inputs) waybar;
   inherit (pkgs.stdenv.hostPlatform) isLinux;
 
+  # Tray context menus render empty on the first right click on the locked
+  # rev (Alexays/Waybar#5285). Drop once #5315 is merged and the input bumped.
+  waybarPackage = waybar.packages.${system}.waybar.overrideAttrs (old: {
+    patches = (old.patches or [ ]) ++ [ ./tray-menu-first-click.patch ];
+  });
+
   cfg = config.khanelinix.programs.graphical.bars.waybar;
   hasCopilotToken = lib.hasAttrByPath [ "sops" "secrets" "github/copilot-token" ] config;
   hasSops = config.khanelinix.services.sops.enable or false;
@@ -73,7 +79,7 @@ in
         # Waybar configuration
         # See: https://github.com/Alexays/Waybar/wiki/Configuration
         enable = true;
-        package = waybar.packages.${system}.waybar;
+        package = waybarPackage;
 
         systemd = {
           enable = true;
