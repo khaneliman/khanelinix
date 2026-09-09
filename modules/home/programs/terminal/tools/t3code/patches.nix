@@ -12,5 +12,7 @@
   # PR #7507, squashed to its final runtime and fixture changes.
   ./fix-codex-spawned-subagent-sidebar.patch
   ./fix-codex-top-level-subagent-identity.patch
+  # Emit session exit on signals so the next turn can resume its saved thread.
+  ./fix-codex-signal-exit-recovery.patch
   ./desktop-attach-existing-backend.patch
 ]

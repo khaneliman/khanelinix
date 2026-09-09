@@ -1,0 +1,358 @@
+diff --git a/apps/server/src/provider/Layers/CodexSessionRuntime.ts b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
+--- a/apps/server/src/provider/Layers/CodexSessionRuntime.ts
++++ b/apps/server/src/provider/Layers/CodexSessionRuntime.ts
+@@ -1003,8 +1003,7 @@
+     role: typeof thread.agentRole === "string" ? thread.agentRole : undefined,
+     agentPath: undefined,
+     depth: undefined,
+-    parentThreadId:
+-      typeof thread.parentThreadId === "string" ? thread.parentThreadId : undefined,
++    parentThreadId: typeof thread.parentThreadId === "string" ? thread.parentThreadId : undefined,
+   };
+   const hasTopLevelIdentity =
+     topLevelIdentity.nickname !== undefined || topLevelIdentity.role !== undefined;
+@@ -2451,26 +2450,32 @@
+     );
+ 
+     yield* child.exitCode.pipe(
+-      Effect.flatMap((exitCode) =>
++      Effect.match({
++        onFailure: (cause) => {
++          const diagnostic = cause instanceof Error ? cause.message : String(cause);
++          return {
++            status: "error" as const,
++            message: `Codex App Server exited unexpectedly: ${diagnostic}.`,
++          };
++        },
++        onSuccess: (exitCode) => ({
++          status: exitCode === 0 ? ("closed" as const) : ("error" as const),
++          message:
++            exitCode === 0
++              ? "Codex App Server exited."
++              : `Codex App Server exited with code ${exitCode}.`,
++        }),
++      }),
++      Effect.flatMap(({ status, message }) =>
+         Ref.get(closedRef).pipe(
+           Effect.flatMap((closed) => {
+             if (closed) {
+               return Effect.void;
+             }
+-            const nextStatus = exitCode === 0 ? "closed" : "error";
+             return updateSession(sessionRef, {
+-              status: nextStatus,
++              status,
+               activeTurnId: undefined,
+-            }).pipe(
+-              Effect.andThen(
+-                emitSessionEvent(
+-                  "session/exited",
+-                  exitCode === 0
+-                    ? "Codex App Server exited."
+-                    : `Codex App Server exited with code ${exitCode}.`,
+-                ),
+-              ),
+-            );
++            }).pipe(Effect.andThen(emitSessionEvent("session/exited", message)));
+           }),
+         ),
+       ),
+@@ -2500,9 +2505,7 @@
+         Effect.flatMap((result) =>
+           Option.match(result, {
+             onNone: () =>
+-              Effect.fail(
+-                new CodexSessionRuntimeStartTimeoutError({ threadId: options.threadId }),
+-              ),
++              Effect.fail(new CodexSessionRuntimeStartTimeoutError({ threadId: options.threadId })),
+             onSome: Effect.succeed,
+           }),
+         ),
+diff --git a/apps/server/src/provider/Layers/CodexCollabRuntime.integration.test.ts b/apps/server/src/provider/Layers/CodexCollabRuntime.integration.test.ts
+--- a/apps/server/src/provider/Layers/CodexCollabRuntime.integration.test.ts
++++ b/apps/server/src/provider/Layers/CodexCollabRuntime.integration.test.ts
+@@ -21,18 +21,28 @@
+ } from "effect-codex-app-server/schema";
+ import * as Deferred from "effect/Deferred";
+ import * as Effect from "effect/Effect";
++import * as Exit from "effect/Exit";
+ import * as Fiber from "effect/Fiber";
+ import * as Schema from "effect/Schema";
++import * as Scope from "effect/Scope";
+ import * as Stream from "effect/Stream";
+ import { assert, describe } from "vite-plus/test";
+ 
+ import wireFixture from "../testFixtures/codexMultiAgentWire.json" with { type: "json" };
+-import { makeCodexSessionRuntime } from "./CodexSessionRuntime.ts";
++import { CodexResumeCursorSchema, makeCodexSessionRuntime } from "./CodexSessionRuntime.ts";
+ import { HostProcessPlatform } from "@t3tools/shared/hostProcess";
+ 
+ const ROOT = wireFixture.rootThreadId;
+ const [CHILD_A, CHILD_B] = wireFixture.childThreadIds as [string, string];
+ const MEMORY = "memory-consolidation-thread";
++const decodeResumeCursor = Schema.decodeUnknownEffect(CodexResumeCursorSchema);
++const decodeResumeRequest = Schema.decodeUnknownEffect(
++  Schema.fromJsonString(
++    Schema.Struct({
++      params: Schema.Struct({ threadId: Schema.String, excludeTurns: Schema.Boolean }),
++    }),
++  ),
++);
+ const decodeMcpElicitationResponse = Schema.decodeUnknownEffect(
+   Schema.fromJsonString(
+     Schema.Struct({
+@@ -194,7 +204,122 @@
+   `../testFixtures/codexCollabMockPeer.${HostProcessPlatform.defaultValue() === "win32" ? "cmd" : "sh"}`,
+ );
+ 
++const recoveryPeerSource = (threadStart: unknown, turnStart: unknown) => `#!/usr/bin/env node
++import * as fs from "node:fs";
++const fixture = ${JSON.stringify({ threadStart, turnStart })};
++const pidPath = process.env.T3_CODEX_RECOVERY_PID;
++const requestsPath = process.env.T3_CODEX_RECOVERY_REQUESTS;
++if (pidPath) fs.writeFileSync(pidPath, String(process.pid));
++const write = (message) => process.stdout.write(JSON.stringify(message) + "\\n");
++const rl = (await import("node:readline")).createInterface({ input: process.stdin });
++rl.on("line", (line) => {
++  let message;
++  try { message = JSON.parse(line); } catch { return; }
++  const { id, method, params } = message;
++  if (method === "initialize") return write({ id, result: { userAgent: "recovery-peer", codexHome: "/tmp", platformFamily: "unix", platformOs: "linux" } });
++  if (method === "thread/start") return write({ id, result: fixture.threadStart });
++  if (method === "thread/resume") {
++    if (requestsPath) fs.appendFileSync(requestsPath, JSON.stringify({ method, params }) + "\\n");
++    return write({ id, result: { ...fixture.threadStart, thread: { ...fixture.threadStart.thread, id: params.threadId, sessionId: params.threadId } } });
++  }
++  if (method === "turn/start") {
++    write({ id, result: fixture.turnStart });
++    write({ jsonrpc: "2.0", method: "turn/started", params: { threadId: fixture.threadStart.thread.id, turn: fixture.turnStart.turn } });
++    if (process.env.T3_CODEX_RECOVERY_COMPLETE === "1") write({ jsonrpc: "2.0", method: "turn/completed", params: { threadId: fixture.threadStart.thread.id, turn: { ...fixture.turnStart.turn, status: "completed" } } });
++    return;
++  }
++  if (id !== undefined) write({ id, result: {} });
++});
++`;
++
+ describe("CodexSessionRuntime collab integration", () => {
++  it.live.skipIf(HostProcessPlatform.defaultValue() === "win32")(
++    "recovers a session after its app-server is killed by signal",
++    () =>
++      Effect.gen(function* () {
++        const recoveryPeerPath = NodePath.join(
++          NodeOS.tmpdir(),
++          `t3-codex-recovery-peer-${process.pid}.mjs`,
++        );
++        const recoveryPidPath = `${recoveryPeerPath}.pid`;
++        const recoveryRequestsPath = `${recoveryPeerPath}.requests`;
++        NodeFS.writeFileSync(
++          recoveryPeerPath,
++          recoveryPeerSource(wireFixture.responses.threadStart, wireFixture.responses.turnStart),
++          "utf8",
++        );
++        NodeFS.chmodSync(recoveryPeerPath, 0o755);
++        NodeFS.rmSync(recoveryPidPath, { force: true });
++        NodeFS.rmSync(recoveryRequestsPath, { force: true });
++        yield* Effect.addFinalizer(() =>
++          Effect.sync(() => {
++            NodeFS.rmSync(recoveryPeerPath, { force: true });
++            NodeFS.rmSync(recoveryPidPath, { force: true });
++            NodeFS.rmSync(recoveryRequestsPath, { force: true });
++          }),
++        );
++
++        const environment = {
++          ...process.env,
++          T3_CODEX_RECOVERY_PID: recoveryPidPath,
++          T3_CODEX_RECOVERY_REQUESTS: recoveryRequestsPath,
++        };
++        const threadId = ThreadId.make("thread-codex-signal-recovery");
++        const firstScope = yield* Scope.make();
++        yield* Effect.addFinalizer(() => Scope.close(firstScope, Exit.void));
++        const firstRuntime = yield* makeCodexSessionRuntime({
++          threadId,
++          binaryPath: recoveryPeerPath,
++          cwd: NodeOS.tmpdir(),
++          runtimeMode: "full-access",
++          environment,
++        }).pipe(Effect.provideService(Scope.Scope, firstScope));
++        const exitedFiber = yield* firstRuntime.events.pipe(
++          Stream.filter((event) => event.method === "session/exited"),
++          Stream.take(1),
++          Stream.runCollect,
++          Effect.forkScoped,
++        );
++        const firstSession = yield* firstRuntime.start();
++        const cursor = yield* decodeResumeCursor(firstSession.resumeCursor);
++        assert.deepEqual(cursor, { threadId: wireFixture.responses.threadStart.thread.id });
++        yield* firstRuntime.sendTurn({ input: "leave this turn open" });
++
++        const childPid = Number(NodeFS.readFileSync(recoveryPidPath, "utf8"));
++        assert.isTrue(Number.isInteger(childPid));
++        process.kill(childPid, "SIGKILL");
++        const exited = Array.from(yield* Fiber.join(exitedFiber).pipe(Effect.timeout("5 seconds")));
++        assert.include(exited[0]?.message ?? "", "Codex App Server exited unexpectedly:");
++        assert.include(exited[0]?.message ?? "", "ChildProcess.exitCode");
++        assert.equal((yield* firstRuntime.getSession).status, "error");
++        assert.isUndefined((yield* firstRuntime.getSession).activeTurnId);
++        assert.deepEqual((yield* firstRuntime.getSession).resumeCursor, cursor);
++        yield* firstRuntime.close;
++
++        const secondScope = yield* Scope.make();
++        yield* Effect.addFinalizer(() => Scope.close(secondScope, Exit.void));
++        const secondRuntime = yield* makeCodexSessionRuntime({
++          threadId,
++          binaryPath: recoveryPeerPath,
++          cwd: NodeOS.tmpdir(),
++          runtimeMode: "full-access",
++          resumeCursor: cursor,
++          environment: { ...environment, T3_CODEX_RECOVERY_COMPLETE: "1" },
++        }).pipe(Effect.provideService(Scope.Scope, secondScope));
++        const secondSession = yield* secondRuntime.start();
++        assert.equal(secondSession.status, "ready");
++        assert.deepEqual(secondSession.resumeCursor, cursor);
++        const turn = yield* secondRuntime.sendTurn({ input: "continue without replay" });
++        assert.isDefined(turn.turnId);
++        const { params: resumeRequest } = yield* decodeResumeRequest(
++          NodeFS.readFileSync(recoveryRequestsPath, "utf8").trim(),
++        );
++        assert.equal(resumeRequest.threadId, wireFixture.responses.threadStart.thread.id);
++        assert.equal(resumeRequest.excludeTurns, true);
++        yield* secondRuntime.close;
++      }).pipe(Effect.scoped, Effect.provide(NodeServices.layer)),
++  );
++
+   it.effect("registers spawnAgent children once across item lifecycle delivery", () =>
+     Effect.gen(function* () {
+       const script = {
+diff --git a/apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts b/apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts
+--- a/apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts
++++ b/apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts
+@@ -3606,60 +3606,77 @@
+     }),
+   );
+ 
+-  it("starts a fresh session when only projected session state exists", async () => {
+-    const harness = await createHarness();
+-    const now = "2026-01-01T00:00:00.000Z";
+-
+-    await Effect.runPromise(
+-      harness.engine.dispatch({
+-        type: "thread.session.set",
+-        commandId: CommandId.make("cmd-session-set-stale"),
+-        threadId: ThreadId.make("thread-1"),
+-        session: {
++  it.each(["missing", "exited"] as const)(
++    "starts a new session when the previous runtime is %s",
++    async (runtimeState) => {
++      const harness = await createHarness();
++      const now = "2026-01-01T00:00:00.000Z";
++
++      if (runtimeState === "exited") {
++        harness.runtimeSessions.push({
+           threadId: ThreadId.make("thread-1"),
+-          status: "ready",
+-          providerName: "codex",
++          provider: ProviderDriverKind.make("codex"),
++          providerInstanceId: ProviderInstanceId.make("codex"),
++          status: "error",
+           runtimeMode: "approval-required",
+-          activeTurnId: null,
+-          lastError: null,
++          resumeCursor: { threadId: "native-thread-before-kill" },
++          createdAt: now,
+           updatedAt: now,
+-        },
+-        createdAt: now,
+-      }),
+-    );
+-
+-    await Effect.runPromise(
+-      harness.engine.dispatch({
+-        type: "thread.turn.start",
+-        commandId: CommandId.make("cmd-turn-start-stale"),
+-        threadId: ThreadId.make("thread-1"),
+-        message: {
+-          messageId: asMessageId("user-message-stale"),
+-          role: "user",
+-          text: "resume codex",
+-          attachments: [],
+-        },
+-        interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
+-        runtimeMode: "approval-required",
+-        createdAt: now,
+-      }),
+-    );
+-
+-    await waitFor(() => harness.startSession.mock.calls.length === 1);
+-    await waitFor(() => harness.sendTurn.mock.calls.length === 1);
+-
+-    expect(harness.startSession.mock.calls[0]?.[1]).toMatchObject({
+-      threadId: ThreadId.make("thread-1"),
+-      modelSelection: {
+-        instanceId: ProviderInstanceId.make("codex"),
+-        model: "gpt-5-codex",
+-      },
+-      runtimeMode: "approval-required",
+-    });
+-    expect(harness.sendTurn.mock.calls[0]?.[0]).toMatchObject({
+-      threadId: ThreadId.make("thread-1"),
+-    });
+-  });
++        });
++      }
++
++      await Effect.runPromise(
++        harness.engine.dispatch({
++          type: "thread.session.set",
++          commandId: CommandId.make("cmd-session-set-stale"),
++          threadId: ThreadId.make("thread-1"),
++          session: {
++            threadId: ThreadId.make("thread-1"),
++            status: runtimeState === "exited" ? "stopped" : "ready",
++            providerName: "codex",
++            runtimeMode: "approval-required",
++            activeTurnId: null,
++            lastError: null,
++            updatedAt: now,
++          },
++          createdAt: now,
++        }),
++      );
++
++      await Effect.runPromise(
++        harness.engine.dispatch({
++          type: "thread.turn.start",
++          commandId: CommandId.make("cmd-turn-start-stale"),
++          threadId: ThreadId.make("thread-1"),
++          message: {
++            messageId: asMessageId("user-message-stale"),
++            role: "user",
++            text: "resume codex",
++            attachments: [],
++          },
++          interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
++          runtimeMode: "approval-required",
++          createdAt: now,
++        }),
++      );
++
++      await harness.drain();
++      expect(harness.startSession).toHaveBeenCalledTimes(1);
++      expect(harness.sendTurn).toHaveBeenCalledTimes(1);
++
++      expect(harness.startSession.mock.calls[0]?.[1]).toMatchObject({
++        threadId: ThreadId.make("thread-1"),
++        modelSelection: {
++          instanceId: ProviderInstanceId.make("codex"),
++          model: "gpt-5-codex",
++        },
++        runtimeMode: "approval-required",
++      });
++      expect(harness.sendTurn.mock.calls[0]?.[0]).toMatchObject({
++        threadId: ThreadId.make("thread-1"),
++      });
++    },
++  );
+ 
+   it("rejects active runtime sessions that are missing provider instance ids", async () => {
+     const harness = await createHarness();
