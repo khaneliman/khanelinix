@@ -70,6 +70,11 @@ agent scopes. System-wide memory exhaustion can interrupt workloads through
 earlyoom or the kernel. Ancestor cgroup limits, if configured elsewhere, also
 apply.
 
+Agent scopes run with `TMPDIR=/var/tmp` unless the caller already exported
+`TMPDIR`. The default `/tmp` is a tmpfs, so
+build scratch left there stays resident until reboot; `/var/tmp` is disk backed
+and cleaned by tmpfiles after 30 days.
+
 The provider limit covers the whole process tree, not each tool command
 individually. Wrapping applies to Nix-managed canonical provider paths; custom
 provider instances configured through the GUI are not covered automatically.

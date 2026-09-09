@@ -9,12 +9,13 @@ let
   inherit (cfg) resourceControl;
 
   mkRunner =
-    name: scopeArgs: ownerArgs:
+    name: scratchOnDisk: scopeArgs: ownerArgs:
     pkgs.writeShellScriptBin name ''
       exec ${lib.getExe' pkgs.systemd "systemd-run"} \
         --user --scope --quiet --collect --expand-environment=no \
         --unit="${name}-$$-$RANDOM.scope" \
         --property=OOMPolicy=kill \
+        ${lib.optionalString scratchOnDisk ''--setenv=TMPDIR="''${TMPDIR:-/var/tmp}" \''}
         ${lib.escapeShellArgs (scopeArgs ++ ownerArgs)} -- "$@"
     '';
 
@@ -33,10 +34,13 @@ let
     "--property=After=t3code-remote.service"
   ];
 
-  agentRun = mkRunner "agent-run" agentArgs [ ];
-  providerRun = mkRunner "t3code-provider-run" agentArgs backendArgs;
-  buildRun = mkRunner "build-run" buildArgs [ ];
-  t3codeBuild = mkRunner "t3code-build" buildArgs backendArgs;
+  # /tmp is a tmpfs, so build scratch left there pins RAM for the whole boot.
+  # /var/tmp is disk backed and cleaned by tmpfiles after 30 days. A TMPDIR
+  # the caller already exported wins.
+  agentRun = mkRunner "agent-run" true agentArgs [ ];
+  providerRun = mkRunner "t3code-provider-run" true agentArgs backendArgs;
+  buildRun = mkRunner "build-run" false buildArgs [ ];
+  t3codeBuild = mkRunner "t3code-build" false buildArgs backendArgs;
 
   providerBinaries =
     lib.optionalAttrs (config.programs.codex.enable or false) {
