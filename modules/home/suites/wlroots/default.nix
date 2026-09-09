@@ -15,6 +15,12 @@ let
   waylandSessionStop = pkgs.writeShellScriptBin "wayland-session-stop" ''
     set -u
 
+    # A compositor exit leaves no trace of its requester. Record the caller
+    # so the journal can distinguish a deliberate logout from anything else.
+    parent="$(${lib.getExe' pkgs.procps "ps"} -o comm= -p "$PPID" 2>/dev/null || true)"
+    ${lib.getExe' pkgs.util-linux "logger"} -t wayland-session-stop \
+      "requested by ''${parent:-unknown} (ppid $PPID) in session ''${XDG_SESSION_ID:-unset}"
+
     stop_hyprland() {
       command -v hyprctl >/dev/null 2>&1 && hyprctl dispatch exit && exit 0
     }
