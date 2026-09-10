@@ -11,9 +11,5 @@ a named agent with `agent type is currently not available`, use an unnamed
 worker or built-in `default`, let `[agents]` defaults route it, and report that
 the named role did not run.
 
-Prefer Spark-backed `mechanic` and `checker` for obvious mechanical edits and
-one focused known check. Use Luna-backed `explorer`, `fact-finder`,
-`probe-runner`, and `test-runner` for average repository work and noisy
-validation. Use Luna-backed `implementer` for routine changes. Escalate
-difficult implementation to Sol or Opus. Use Astra-backed `reviewer` for review
-and Sol-backed `debugger` for hard diagnosis. Keep Terra explicit-only.
+Concrete seats per role come from `multi-provider-sdlc` routing policy through
+the `[agents]` defaults. Do not restate them here.
