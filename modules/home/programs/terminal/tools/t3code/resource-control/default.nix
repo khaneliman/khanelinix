@@ -15,8 +15,9 @@ let
         --user --scope --quiet --collect --expand-environment=no \
         --unit="${name}-$$-$RANDOM.scope" \
         --property=OOMPolicy=kill \
-        ${lib.optionalString scratchOnDisk ''--setenv=TMPDIR="''${TMPDIR:-/var/tmp}" \''}
-        ${lib.escapeShellArgs (scopeArgs ++ ownerArgs)} -- "$@"
+        ${lib.optionalString scratchOnDisk ''--setenv=TMPDIR="''${TMPDIR:-/var/tmp}" ''}${
+          lib.escapeShellArgs (scopeArgs ++ ownerArgs)
+        } -- "$@"
     '';
 
   agentArgs = [
