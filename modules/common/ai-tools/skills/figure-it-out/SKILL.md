@@ -1,6 +1,6 @@
 ---
 name: figure-it-out
-description: "Design and run an auditable playbook when no narrower one fits: scaled rigor, a hypothesis loop, and a logged decision trail. Use for /figure-it-out, 'figure it out', a large migration, or unattended work a human reviews later. Use software-engineering for the architecture plan itself."
+description: "Design and run an auditable playbook when no narrower one fits: scaled rigor, a hypothesis loop, and a logged decision trail. Use for /figure-it-out, 'figure it out', a large migration, or unattended work a human reviews later."
 ---
 
 # Figure It Out
@@ -9,12 +9,10 @@ When no playbook matches, design one. First deliverable is a phase sequence that
 scales rigor, runs the scientific method, and leaves a decision trail a human can
 audit after stepping away. Bias toward rigor because wrong work costs more.
 
-Do not reinvent a playbook you already have. Route a focused single-unit task to
-its matching playbook: bug fix, performance, feature, visual parity, evaluation,
-or multi-phase plan. Use this skill for the large or cross-cutting version of
-one, such as a migration across many call sites, an ambitious multi-part change,
-or work the user reviews after stepping away. The rigor and the audit trail are
-the point.
+Route a focused single-unit task to its matching playbook instead. Use this
+skill for the large or cross-cutting version: a migration across many call
+sites, an ambitious multi-part change, or work the user reviews after stepping
+away.
 
 Open a todolist with the phases below as items.
 
@@ -23,7 +21,7 @@ Open a todolist with the phases below as items.
 Do not start the run until you can state:
 
 - The definition of done as a falsifiable predicate (the prove-it-works
-  principle in `engineering-principles`). "Done well" has to be checkable.
+  principle in `engineering-principles`).
 - Scope, quantified: rough units and effort, plus the blockers grounding
   surfaced. Raise blockers before spending hours, not after fifty doomed
   commits.
@@ -32,7 +30,7 @@ Do not start the run until you can state:
   artifacts, not "try harder".
 
 Present the framing and tradeoffs before committing to a long run. Reversible
-work proceeds without asking, but a multi-hour run earns one checkpoint.
+work proceeds without asking; a multi-hour run earns one checkpoint.
 
 ## Phase B: Design the workflow
 
@@ -44,20 +42,17 @@ riskiest unknown first. Build scaffold and verification before features.
   pre-change state so each check reads as old value against new value.
 - For one-way-door design decisions, run `architect`, which runs `arena`, with
   diverse, isolated, opinionated candidates and a read-only judge on a different
-  model family. Skip it for mechanical work whose shape is already concrete. A
-  second arena over a settled design is over-engineering (the laziness-protocol
-  principle in `engineering-principles`).
-- Decide what fans out. Parallelize only across genuine seams. Give each
-  parallel worker its own worktree or branch so no two workers share mutable
-  state. Do not over-fan.
-- Write the designed phase list down. The human reviews that list.
-- When the run spans sessions or risks compaction, persist the designed phase
-  list and the findings through `planning-with-files`.
+  model family. Skip it for mechanical work whose shape is already concrete (the
+  laziness-protocol principle in `engineering-principles`).
+- Parallelize only across genuine seams. Give each parallel worker its own
+  worktree or branch so no two workers share mutable state.
+- Write the designed phase list down. The human reviews that list. When the run
+  spans sessions or risks compaction, persist it and the findings through
+  `planning-with-files`.
 
-Then put the design into motion. Add its steps to the todolist as concrete
-items, after the Phase C entry and before Phase D. Run each step under the Phase
-C loop discipline. Weave the Phase D log through the steps, one row as each step
-lands, instead of saving the whole trail for the end.
+Then add the design's steps to the todolist as concrete items, after the Phase C
+entry and before Phase D. Run each step under the Phase C loop and log one Phase
+D row as each step lands.
 
 ## Phase C: Run the loop
 
@@ -79,11 +74,9 @@ inconclusive result does not pass.
 ## Phase D: Keep the audit trail
 
 Log the run through `show-me-your-work`: one canonical TSV with a row per
-decision and per unit, evidence as links. Work run under this skill is usually
-ambitious enough to commit the trail so the reviewer reads it in the pull
-request. Commit the trail when confidence has to be shown. Prefer evidence
-produced by committed scripts so a reviewer can re-run it. The trail plus the
-diff is what lets the human come back and trust the work.
+decision and per unit, evidence as links. Commit the trail when the reviewer
+needs it to trust the result, which is usual for work this size. Prefer
+evidence produced by committed scripts so a reviewer can re-run it.
 
 ## Phase E: Verify and hand back
 

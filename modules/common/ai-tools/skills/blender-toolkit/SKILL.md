@@ -1,6 +1,6 @@
 ---
 name: blender-toolkit
-description: Model/review Blender assets.
+description: Author, inspect, rig, render, export, or review Blender game assets with editable source files and re-import checks. Use for .blend modeling, topology or normals repair, glTF export validation, or image-based asset review.
 metadata:
   disable-model-selection: "true"
 ---

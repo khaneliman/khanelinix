@@ -1,6 +1,6 @@
 ---
 name: software-engineering
-description: Repository or subsystem architecture, maintainability, and large-change planning. Use for architecture-only contracts, invariants, boundaries, failure behavior, evolution, design review, or implementation-ready validation. Use ai-tools-architect for agent configuration. Excludes routine implementation and commit, PR, diff, visual, or security review.
+description: Repository or subsystem architecture, maintainability, and large-change planning. Use for architecture-only contracts, invariants, boundaries, failure behavior, evolution, design review, or implementation-ready validation. Use ai-tools-architect for agent configuration.
 ---
 
 # Software Engineering

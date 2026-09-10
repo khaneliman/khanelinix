@@ -1,6 +1,6 @@
 ---
 name: "playwright-interactive"
-description: "Persistent browser and Electron debugging through a harness-native interactive runtime, with Nix-provided Playwright and browsers when available. Use for stateful iterative QA; use playwright for one-shot terminal automation."
+description: "Persistent browser and Electron debugging through a harness-native interactive runtime, with Nix-provided Playwright and browsers when available. Use for stateful iterative QA."
 ---
 
 # Playwright Interactive

@@ -1,6 +1,6 @@
 ---
 name: how
-description: "Explain a subsystem through direct codebase exploration. Use for how-it-works questions, walkthroughs, caller discovery, placement, or layering decisions. Use why for rationale and software-engineering for repository-wide evaluation."
+description: "Explain a subsystem through direct codebase exploration. Use for how-it-works questions, walkthroughs, caller discovery, placement, or layering decisions."
 ---
 
 # How

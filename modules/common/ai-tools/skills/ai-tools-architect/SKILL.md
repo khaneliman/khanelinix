@@ -1,6 +1,6 @@
 ---
 name: ai-tools-architect
-description: AI-tool architecture for instructions, prompts, rules, agents, commands, skills, hooks, and provider context. Use for setup, refactoring, or audits needing clear boundaries, deterministic automation, reproducibility, or lean context. Use software-engineering for application architecture.
+description: AI-tool architecture for instructions, prompts, rules, agents, commands, skills, hooks, and provider context. Use for setup, refactoring, or audits needing clear boundaries, deterministic automation, reproducibility, or lean context.
 ---
 
 # AI Tools Architecture Playbook

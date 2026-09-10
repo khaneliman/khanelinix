@@ -1,6 +1,6 @@
 ---
 name: interrogate
-description: Adversarial multi-reviewer synthesis for contested or high-risk plans and changes. Use for multi-model review, independent angles, challenge, stress-test, or blind-spot requests. Do not use for routine single-reviewer checks.
+description: Adversarial multi-reviewer synthesis for contested or high-risk plans and changes. Use for multi-model review, independent angles, challenge, stress-test, or blind-spot requests.
 ---
 
 # Interrogate

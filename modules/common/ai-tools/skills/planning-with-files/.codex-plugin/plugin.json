@@ -1,6 +1,6 @@
 {
 	"name": "planning-with-files",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "Persist task plans for long-running work.",
 	"author": {
 		"name": "khaneliman"

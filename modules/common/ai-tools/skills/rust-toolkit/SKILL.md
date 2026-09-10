@@ -1,6 +1,6 @@
 ---
 name: rust-toolkit
-description: Rust and Cargo architecture, correctness, toolchain, concurrency, unsafe-code, testing, migration, and performance workflows for crates and workspaces. Use for Rust libraries, services, or CLIs; use bevy-toolkit for engine-specific Bevy work.
+description: Rust and Cargo architecture, correctness, toolchain, concurrency, unsafe-code, testing, migration, and performance workflows for crates and workspaces. Use for Rust libraries, services, or CLIs.
 ---
 
 # Rust Toolkit

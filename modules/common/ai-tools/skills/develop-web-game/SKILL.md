@@ -1,6 +1,6 @@
 ---
 name: "develop-web-game"
-description: "Build or iterate on HTML/JavaScript games with a short Playwright verification loop, screenshot and console inspection, and render_game_to_text state checks. Use for playable browser-game implementation or debugging; use frontend-design for non-game interfaces."
+description: "Build or iterate on HTML/JavaScript games with a short Playwright verification loop, screenshot and console inspection, and render_game_to_text state checks. Use for playable browser-game implementation or debugging."
 metadata:
   disable-model-selection: "true"
 ---

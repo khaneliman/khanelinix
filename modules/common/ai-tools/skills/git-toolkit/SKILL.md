@@ -1,6 +1,6 @@
 ---
 name: git-toolkit
-description: Git workflows for commit planning, branch cleanup, fixup/autosquash, conflicts, bisect, single-reviewer diff review, and multi-commit stacks. Use for local history or change splitting, repair, review, and validation. Use interrogate for multi-model review.
+description: Git workflows for commit planning, branch cleanup, fixup/autosquash, conflicts, bisect, single-reviewer diff review, and multi-commit stacks. Use for local history or change splitting, repair, review, and validation.
 ---
 
 # Git Toolkit

@@ -14,14 +14,14 @@
 			"name": "ai-tools-architect",
 			"displayName": "AI Tools Architect",
 			"description": "Design and audit portable AI-tool configuration.",
-			"version": "0.1.12",
+			"version": "0.1.13",
 			"category": "Developer Tools"
 		},
 		{
 			"name": "architect",
 			"displayName": "Architect",
 			"description": "Sketch types and module structure before implementation.",
-			"version": "0.1.5",
+			"version": "0.1.6",
 			"category": "Developer Tools"
 		},
 		{
@@ -42,7 +42,7 @@
 			"name": "blender-toolkit",
 			"displayName": "Blender Toolkit",
 			"description": "Author and validate Blender assets for game runtimes.",
-			"version": "0.2.1",
+			"version": "0.2.2",
 			"category": "Developer Tools"
 		},
 		{
@@ -56,7 +56,7 @@
 			"name": "develop-web-game",
 			"displayName": "Develop Web Game",
 			"description": "Build and debug playable HTML and JavaScript games.",
-			"version": "0.1.5",
+			"version": "0.1.6",
 			"category": "Developer Tools"
 		},
 		{
@@ -84,7 +84,7 @@
 			"name": "figure-it-out",
 			"displayName": "Figure It Out",
 			"description": "Design an auditable playbook when no narrower one fits.",
-			"version": "0.1.5",
+			"version": "0.1.6",
 			"category": "Developer Tools"
 		},
 		{
@@ -98,7 +98,7 @@
 			"name": "git-toolkit",
 			"displayName": "Git Toolkit",
 			"description": "Git history and change-stack workflows.",
-			"version": "0.1.8",
+			"version": "0.1.9",
 			"category": "Developer Tools"
 		},
 		{
@@ -112,14 +112,14 @@
 			"name": "how",
 			"displayName": "How",
 			"description": "Explain how a subsystem works from codebase exploration.",
-			"version": "0.1.5",
+			"version": "0.1.6",
 			"category": "Developer Tools"
 		},
 		{
 			"name": "interrogate",
 			"displayName": "Interrogate",
 			"description": "Multi-model adversarial review from independent angles.",
-			"version": "0.1.8",
+			"version": "0.1.9",
 			"category": "Developer Tools"
 		},
 		{
@@ -161,7 +161,7 @@
 			"name": "okf-memory",
 			"displayName": "OKF Memory",
 			"description": "Persist durable cross-provider project and user knowledge.",
-			"version": "0.1.4",
+			"version": "0.1.5",
 			"category": "Developer Tools"
 		},
 		{
@@ -175,7 +175,7 @@
 			"name": "planning-with-files",
 			"displayName": "Planning With Files",
 			"description": "Persist task plans for long-running work.",
-			"version": "0.1.4",
+			"version": "0.1.5",
 			"category": "Developer Tools"
 		},
 		{
@@ -210,7 +210,7 @@
 			"name": "rust-toolkit",
 			"displayName": "Rust Toolkit",
 			"description": "Build and maintain Rust crates, services, and CLIs.",
-			"version": "0.1.4",
+			"version": "0.1.5",
 			"category": "Developer Tools"
 		},
 		{
@@ -224,7 +224,7 @@
 			"name": "security-toolkit",
 			"displayName": "Security Toolkit",
 			"description": "Review repositories for explicit security requests.",
-			"version": "0.1.3",
+			"version": "0.1.4",
 			"category": "Developer Tools"
 		},
 		{
@@ -238,14 +238,14 @@
 			"name": "skill-creator",
 			"displayName": "Skill Creator",
 			"description": "Create and update portable agent skills.",
-			"version": "0.1.5",
+			"version": "0.1.6",
 			"category": "Developer Tools"
 		},
 		{
 			"name": "software-engineering",
 			"displayName": "Software Engineering",
 			"description": "Evaluate software architecture and plan large changes.",
-			"version": "0.1.5",
+			"version": "0.1.6",
 			"category": "Developer Tools"
 		},
 		{

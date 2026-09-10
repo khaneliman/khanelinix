@@ -2,7 +2,7 @@
 	"name": "security-toolkit",
 	"displayName": "Security Toolkit",
 	"description": "Review repositories for explicit security requests.",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"author": {
 		"name": "khaneliman"
 	},

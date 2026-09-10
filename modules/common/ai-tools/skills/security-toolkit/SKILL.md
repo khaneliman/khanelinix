@@ -1,6 +1,6 @@
 ---
 name: security-toolkit
-description: "Use only for explicit repository security requests: secure-code review, threat modeling, or security ownership and bus-factor analysis. Do not trigger for generic code review; prefer dedicated security scan skills when installed and requested."
+description: "Use only for explicit repository security requests: secure-code review, threat modeling, or security ownership and bus-factor analysis. Prefer dedicated security scan skills when installed and requested."
 ---
 
 # Security Toolkit

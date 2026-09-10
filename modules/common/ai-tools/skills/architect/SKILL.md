@@ -1,6 +1,6 @@
 ---
 name: architect
-description: "Sketch types, signatures, and module structure before code, then implement against the agreed sketch. Use for /architect, 'architect this', 'design this', or non-trivial features where jumping to code locks in the wrong shape. Use software-engineering for repository-wide planning."
+description: "Sketch types, signatures, and module structure before code, then implement against the agreed sketch. Use for /architect, 'architect this', 'design this', or non-trivial features where jumping to code locks in the wrong shape."
 ---
 
 # Architect

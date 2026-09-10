@@ -1,6 +1,6 @@
 {
 	"name": "rust-toolkit",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "Build and maintain Rust crates, services, and CLIs.",
 	"author": {
 		"name": "khaneliman"
