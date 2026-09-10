@@ -73,8 +73,3 @@ status. For authorized optimization, also return:
 - Post-fix measurement number and artifact path.
 - Net delta percentage or throughput difference.
 - Status classification: improvement, regression, or inconclusive.
-
-## Attribution
-
-Adapted from upstream pstack performance and forensics playbooks. See
-[LICENSE](LICENSE).

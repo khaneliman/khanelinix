@@ -79,7 +79,7 @@
 		{
 			"name": "diagnosing-bugs",
 			"description": "Reproduce, minimize, and establish software bug causes.",
-			"version": "0.1.1",
+			"version": "0.1.2",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -89,7 +89,7 @@
 		{
 			"name": "engineering-principles",
 			"description": "Principles for lean, verified agentic work.",
-			"version": "0.1.13",
+			"version": "0.1.14",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -99,7 +99,7 @@
 		{
 			"name": "engineering-workflow",
 			"description": "Run routine software changes through a complete lifecycle.",
-			"version": "0.1.15",
+			"version": "0.1.16",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -229,7 +229,7 @@
 		{
 			"name": "performance-forensics",
 			"description": "Measure and diagnose performance with reproducible evidence.",
-			"version": "0.1.3",
+			"version": "0.1.4",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -269,7 +269,7 @@
 		{
 			"name": "requirements-interview",
 			"description": "Resolve material product choices through bounded questions.",
-			"version": "0.1.3",
+			"version": "0.1.4",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -279,7 +279,7 @@
 		{
 			"name": "research",
 			"description": "Research external questions with cited primary sources.",
-			"version": "0.1.2",
+			"version": "0.1.3",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -349,7 +349,7 @@
 		{
 			"name": "tdd",
 			"description": "Implement behavior through a red-green-refactor loop.",
-			"version": "0.1.3",
+			"version": "0.1.4",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -369,7 +369,7 @@
 		{
 			"name": "to-spec",
 			"description": "Save agreed requirements as a durable implementation spec.",
-			"version": "0.1.0",
+			"version": "0.1.1",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -379,7 +379,7 @@
 		{
 			"name": "to-tickets",
 			"description": "Split a spec into self-contained tickets with dependencies.",
-			"version": "0.1.0",
+			"version": "0.1.1",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -409,7 +409,7 @@
 		{
 			"name": "verification-harness",
 			"description": "Create or audit deterministic verification surfaces.",
-			"version": "0.1.3",
+			"version": "0.1.4",
 			"author": {
 				"name": "khaneliman"
 			},

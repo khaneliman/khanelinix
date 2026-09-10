@@ -1,6 +1,7 @@
 ---
 name: engineering-workflow
 description: "Default lifecycle for routine bug fixes, features, refactors, migrations, dependency updates, configuration, scripts, and code. Routes investigation through handoff. Excludes answer-only, diagnosis-only, review-only, architecture-only, large, cross-cutting, and unattended work."
+license: Complete terms in LICENSE
 ---
 
 # Engineering Workflow
@@ -10,18 +11,9 @@ and gates. Matching domain and workflow skills own phase methods.
 
 ## Scope
 
-Take mutation work by default. Bug fixes, features, refactors, migrations,
-dependency bumps, config changes, script changes, and code changes route here.
-Leave non-mutation work to the direct specialist entry.
+Take mutation work by default. Leave non-mutation work to the direct
+specialist entry its description names.
 
-- Answer-only question or code walkthrough: `how`.
-- External primary-source research with no mutation: `research`.
-- Motivation, rationale, or regression history: `why`.
-- Diagnosis-only work with no fix requested: `diagnosing-bugs` for general
-  failures. Use `performance-forensics` for measured performance diagnosis.
-  Use `how` or `why` for structure or history.
-- Review-only work: matching review skill. Use `git-toolkit` for Git artifacts
-  and `github-toolkit` for GitHub state.
 - Architecture-only work: `software-engineering`.
 - Large, cross-cutting, or unattended work: `figure-it-out`.
 - Explicit provider or model diversity also loads `multi-provider-sdlc` as an
@@ -92,8 +84,3 @@ Scale rigor to trivial, normal, or high risk. Focused verification is the
 minimum at every level. Fresh independent review is optional for trivial risk
 and required for normal and high risk. Read [gates.md](references/gates.md)
 before you claim completion.
-
-## Attribution
-
-Task-shape architecture is derived from pstack. Upstream terms are in
-[LICENSE](LICENSE).

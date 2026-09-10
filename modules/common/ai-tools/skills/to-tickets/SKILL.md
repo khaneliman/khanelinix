@@ -65,9 +65,3 @@ with expected evidence, and a fresh-session instruction routing the work to
   available tracker tool for another requested tracker. Preserve the local
   tickets and record publication identifiers after readback. Do not close or
   modify a parent issue as a side effect of ticket publication.
-
-## Attribution
-
-Adapted from Matt Pocock's
-[to-tickets](https://github.com/mattpocock/skills/blob/main/skills/engineering/to-tickets/SKILL.md).
-Upstream MIT terms are preserved in [LICENSE](LICENSE).

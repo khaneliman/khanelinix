@@ -56,9 +56,3 @@ Report the following evidence to the caller:
 - Green phase success output and execution duration.
 - Adjacent test verification results.
 - Bounded refactoring changes applied.
-
-## Attribution
-
-Adapted from upstream pstack and Matt Pocock TDD skills. See
-[LICENSES/LICENSE-pstack.txt](LICENSES/LICENSE-pstack.txt) and
-[LICENSES/LICENSE-matt-pocock.txt](LICENSES/LICENSE-matt-pocock.txt).

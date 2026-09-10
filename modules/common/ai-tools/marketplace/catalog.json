@@ -63,21 +63,21 @@
 			"name": "diagnosing-bugs",
 			"displayName": "Diagnosing Bugs",
 			"description": "Reproduce, minimize, and establish software bug causes.",
-			"version": "0.1.1",
+			"version": "0.1.2",
 			"category": "Developer Tools"
 		},
 		{
 			"name": "engineering-principles",
 			"displayName": "Engineering Principles",
 			"description": "Principles for lean, verified agentic work.",
-			"version": "0.1.13",
+			"version": "0.1.14",
 			"category": "Developer Tools"
 		},
 		{
 			"name": "engineering-workflow",
 			"displayName": "Engineering Workflow",
 			"description": "Run routine software changes through a complete lifecycle.",
-			"version": "0.1.15",
+			"version": "0.1.16",
 			"category": "Developer Tools"
 		},
 		{
@@ -168,7 +168,7 @@
 			"name": "performance-forensics",
 			"displayName": "Performance Forensics",
 			"description": "Measure and diagnose performance with reproducible evidence.",
-			"version": "0.1.3",
+			"version": "0.1.4",
 			"category": "Developer Tools"
 		},
 		{
@@ -196,14 +196,14 @@
 			"name": "requirements-interview",
 			"displayName": "Requirements Interview",
 			"description": "Resolve material product choices through bounded questions.",
-			"version": "0.1.3",
+			"version": "0.1.4",
 			"category": "Developer Tools"
 		},
 		{
 			"name": "research",
 			"displayName": "Research",
 			"description": "Research external questions with cited primary sources.",
-			"version": "0.1.2",
+			"version": "0.1.3",
 			"category": "Developer Tools"
 		},
 		{
@@ -252,7 +252,7 @@
 			"name": "tdd",
 			"displayName": "TDD",
 			"description": "Implement behavior through a red-green-refactor loop.",
-			"version": "0.1.3",
+			"version": "0.1.4",
 			"category": "Developer Tools"
 		},
 		{
@@ -266,14 +266,14 @@
 			"name": "to-spec",
 			"displayName": "To Spec",
 			"description": "Save agreed requirements as a durable implementation spec.",
-			"version": "0.1.0",
+			"version": "0.1.1",
 			"category": "Developer Tools"
 		},
 		{
 			"name": "to-tickets",
 			"displayName": "To Tickets",
 			"description": "Split a spec into self-contained tickets with dependencies.",
-			"version": "0.1.0",
+			"version": "0.1.1",
 			"category": "Developer Tools"
 		},
 		{
@@ -294,7 +294,7 @@
 			"name": "verification-harness",
 			"displayName": "Verification Harness",
 			"description": "Create or audit deterministic verification surfaces.",
-			"version": "0.1.3",
+			"version": "0.1.4",
 			"category": "Developer Tools"
 		},
 		{

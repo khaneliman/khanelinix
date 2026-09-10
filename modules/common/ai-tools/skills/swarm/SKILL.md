@@ -45,6 +45,3 @@ This skill is host-only and stays outside marketplace publication.
 
 The parent owns lifecycle, architecture, integration, final judgment, commits,
 pushes, merges, pull requests, and other external writes.
-
-This skill adapts pstack's `swarm`. The included `LICENSE` preserves the exact
-upstream MIT license text.

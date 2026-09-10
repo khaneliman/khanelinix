@@ -46,7 +46,3 @@ execution.
 
 The caller owns lifecycle, architecture, final judgment, and external writes.
 Keep this skill focused on the verification surface and its evidence.
-
-This skill adapts pstack's `create-verification-skill` and
-`maintain-verification-skill`. The included `LICENSE` preserves the exact
-upstream MIT license text.

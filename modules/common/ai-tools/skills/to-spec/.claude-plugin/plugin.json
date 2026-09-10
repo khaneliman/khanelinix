@@ -2,7 +2,7 @@
 	"name": "to-spec",
 	"displayName": "To Spec",
 	"description": "Save agreed requirements as a durable implementation spec.",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"author": {
 		"name": "khaneliman"
 	},

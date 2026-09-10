@@ -64,9 +64,3 @@ report that publication needs a suitable tool. Reuse existing publication
 authority, read back the published result, and retain its identifier in the
 local spec. Do not infer permission to commit, push, publish, or deploy from
 spec creation.
-
-## Attribution
-
-Adapted from Matt Pocock's
-[to-spec](https://github.com/mattpocock/skills/blob/main/skills/engineering/to-spec/SKILL.md).
-Upstream MIT terms are preserved in [LICENSE](LICENSE).

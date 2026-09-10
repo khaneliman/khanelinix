@@ -1,6 +1,7 @@
 ---
 name: engineering-principles
 description: "Methods inside a caller-owned lifecycle: diff sizing, work sequencing, refactoring, debugging, commit stacks, verification, context pressure, recurring corrections, and tool choice."
+license: Complete terms in LICENSE
 ---
 
 # Engineering Principles
@@ -33,6 +34,3 @@ decision behind it means the reference was skipped.
 
 Workflow skills reference principles by short name, for example "the
 prove-it-works principle". Resolve those names against this index.
-
-Seven principles adapt pstack guidance. Upstream terms are in
-[LICENSE](LICENSE).

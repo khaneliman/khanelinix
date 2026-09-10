@@ -1,6 +1,6 @@
 {
 	"name": "to-tickets",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Split a spec into self-contained tickets with dependencies.",
 	"author": {
 		"name": "khaneliman"

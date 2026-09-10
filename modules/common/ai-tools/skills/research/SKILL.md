@@ -14,8 +14,6 @@ Use this skill for external fact-finding that needs primary-source evidence.
   request for a repository artifact.
 - Prefer official documentation, specifications, source code, and first-party
   APIs. Trace each material claim to the source that owns it.
-- Use `how` for repository structure or runtime behavior. Use `why` for
-  motivation, historical decisions, regressions, or rationale.
 - Keep source access and interpretation separate. Mark uncertainty and
   conflicting primary sources.
 - Do not require a provider-specific browser, agent, or citation format.

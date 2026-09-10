@@ -10,9 +10,6 @@ Use this skill to establish why general software behavior fails. Diagnosis-only
 work is read-only by default. If the user requests a fix, use this method inside
 the `engineering-workflow` Ground phase and return control to that lifecycle.
 
-Use `performance-forensics` for measured performance problems. Use
-`memory-profiler` for leaks, out-of-memory errors, or heap fragmentation.
-
 ## Safety Boundary
 
 - Redact secrets from commands, output, logs, traces, and fixtures.
@@ -49,8 +46,3 @@ For diagnosis-only work, stop after the evidence report. For a requested fix,
 return the minimized reproduction and supported cause to `engineering-workflow`.
 That lifecycle owns implementation, regression verification, review, and
 handoff.
-
-## Attribution
-
-Adapted from Matt Pocock's diagnosing-bugs skill. Prose is original. Upstream
-terms are in [LICENSE](LICENSE).

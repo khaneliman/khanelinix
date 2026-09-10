@@ -7,13 +7,8 @@ license: Complete terms in LICENSE
 # Requirements Interview
 
 Use this skill to resolve material product choices through a bounded interview.
-
-## Trigger
-
-Activate only when the user asks for a requirements interview, grilling, or
-stress test, or when a material product decision remains unresolved. Do not
-activate for routine implementation, generic clarification, or architecture
-owned by another skill.
+Do not activate for routine implementation, generic clarification, or
+architecture another skill owns.
 
 ## Method
 
