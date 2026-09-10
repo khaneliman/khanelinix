@@ -194,6 +194,7 @@ in
           "gpt-image-1.5"
           "gpt-image-2"
         ];
+        # Claude Code's cyber-refusal fallback requires Opus 4.8 to remain routable.
         claude = [
           "claude-3-5-haiku-20241022"
           "claude-3-7-sonnet-20250219"
@@ -202,7 +203,6 @@ in
           "claude-opus-4-5-20251101"
           "claude-opus-4-6"
           "claude-opus-4-7"
-          "claude-opus-4-8"
           "claude-sonnet-4-20250514"
           "claude-sonnet-4-5-20250929"
           "claude-sonnet-4-6"
