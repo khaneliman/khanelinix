@@ -5,32 +5,14 @@ decisions visible and work easy to verify.
 
 ## Prose Quality
 
-Assume model drafts need revision. Write like a technical peer, not a generated
-report.
+Write like a technical peer, not a generated report. Start with the useful fact,
+correction, risk, or gap. Use first person when it makes ownership or judgment
+clearer. Preserve every fact, caveat, figure, code sample, link, and table when
+editing. Add code comments only for a non-obvious constraint, invariant, hazard,
+or reason; never narrate edits or history. Never use emoji or Unicode em dashes.
 
-- Use direct, conversational, specific prose. Keep technical terms exact.
-- Start with the useful fact, correction, risk, or gap. Skip praise and warm-up
-  paragraphs.
-- Use first person when it makes ownership or judgment clearer.
-- Vary sentence rhythm. Use fragments only when they improve scanning.
-- Apply STE-inspired structure. Keep one action or fact in each sentence when
-  dense prose would hide meaning.
-- Use active voice when the actor is known. Put a condition before its action.
-- Use one term for one meaning. Do not cycle synonyms for style.
-- Preserve every fact, caveat, figure, code sample, link, and table when
-  editing.
-- Cut puffery, canned transitions, promotional language, fake quotations,
-  repeated conclusions, and decorative formatting.
-- Challenge assumptions only when evidence warrants it. State confidence once
-  for a material uncertain conclusion.
-- Prefer self-documenting code. Add comments only when code cannot clearly
-  express a non-obvious constraint, invariant, hazard, or reason. Explain why,
-  not how; never narrate mechanics, edits, or history.
-- Never use emoji or Unicode em dashes.
-
-Before delivery, ask what still sounds generated, vague, or needlessly formal.
-Fix it. Use `technical-writing` for technical prose work. It may invoke `unslop`
-when canned or sterile language remains. User does not need to name that method.
+Use `technical-writing` for technical prose work. It may invoke `unslop` when
+canned or sterile language remains. User does not need to name that method.
 
 ## Model and Effort Routing
 
@@ -40,28 +22,16 @@ for discovery and routine implementation, and `xhigh` for cross-file work and
 broad validation. Use `max` for architecture or high-stakes review.
 
 Delegate bounded fact finding and checks to the smallest capable worker. Keep
-planning, integration, and final judgment in the parent. Let provider adapters
-or `multi-provider-sdlc` select concrete models, fallbacks, and quota circuits.
-If a named role fails, use a configured default and report the degradation.
+planning, integration, and final judgment in the parent. Give every worker one
+bounded packet: task, paths, verified context, constraints, write policy, skill
+or tool lane, required evidence, and exit criteria. Omit conversation history.
 
-Give every worker one bounded packet: task, paths, verified context,
-constraints, write policy, skill or tool lane, required evidence, and exit
-criteria. Omit conversation history. Treat missing write permission as
-read-only.
-
-Delegate automatically by semantic role. Never choose a named-model agent from
-diff size, latency, or write access alone.
-
-- Review: use read-only `reviewer`. Prefer GPT-6 Astra or Fable 5.1. Fall back
-  to GPT-5.6 Sol or available Opus variants. Keep review separate from
-  correction.
-- Orchestration: use GPT-6 Astra for planning, integration, and final judgment.
-  Keep its higher cost and latency off routine worker paths.
-- Implementation and research: prefer GPT-5.6 Luna or Gemini Flash. Use
-  `implementer` for changes and read-only discovery roles for research. Escalate
-  difficult implementation to GPT-5.6 Sol or Opus 5.
-- Named model: require explicit user model/provider intent or a route selected
-  by `multi-provider-sdlc`.
+Delegate by semantic role (`reviewer`, `implementer`, `explorer`, and so on).
+Let provider adapters or `multi-provider-sdlc` select concrete models,
+fallbacks, and quota circuits. A named model requires explicit user intent or a
+route selected by `multi-provider-sdlc`. If a named role fails, use a configured
+default and report the degradation. Keep review read-only and separate from
+correction.
 
 Use one reviewer for routine review. Use `interrogate` automatically when the
 request asks for adversarial, contested, high-risk, multi-model, or independent
@@ -127,22 +97,16 @@ Every new or materially changed parent task requires a skill decision.
 - Child workers follow the skill or tool lane in their packet. They do not
   select another lifecycle owner.
 
-Closest discriminator wins when selecting the owner.
+Skill descriptions carry their own triggers. These lines resolve only the
+collisions descriptions cannot:
 
 - Routine mutation: `engineering-workflow`. Large, cross-cutting, or unattended
   single-goal work: `figure-it-out`.
 - Architecture-only work: `software-engineering`. AI-tool configuration:
-  `ai-tools-architect`.
-- Structure explanation: `how`. Rationale or regression history: `why`. External
-  primary-source facts: `research`.
-- General bug diagnosis without a fix: `diagnosing-bugs`. Measured performance
-  diagnosis: `performance-forensics`.
-- Explicit design-led implementation: `architect`. Browser automation:
-  `playwright`. Verification-surface audit: `verification-harness`.
-- Local Git history or diffs: `git-toolkit`. GitHub queues, issues, PRs,
-  reviews, or checks: `github-toolkit`.
-- Technical prose: `technical-writing`. Durable knowledge: `okf-memory`.
-  Persistent transient task state: `planning-with-files`.
+  `ai-tools-architect`. Explicit design-led implementation: `architect`.
+- Direct non-mutation entries: `how`, `why`, `research`, `diagnosing-bugs`,
+  `performance-forensics`, `verification-harness`, `git-toolkit`,
+  `github-toolkit`, `technical-writing`, `okf-memory`.
 
 The selected owner routes phase methods and domain skills. A method never takes
 over lifecycle ownership. Caller-only owners include `arena`,
