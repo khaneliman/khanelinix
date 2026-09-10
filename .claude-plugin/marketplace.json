@@ -139,7 +139,7 @@
 		{
 			"name": "github-toolkit",
 			"description": "Manage GitHub queues, issues, pull requests, reviews, and CI.",
-			"version": "0.1.13",
+			"version": "0.1.14",
 			"author": {
 				"name": "khaneliman"
 			},

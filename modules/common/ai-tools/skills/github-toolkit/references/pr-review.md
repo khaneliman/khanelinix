@@ -43,6 +43,25 @@ comments.
 Never submit pending review, approve, request changes, push, or edit source.
 Leave final publication to user in GitHub UI.
 
+## Full-history and duplicate gate
+
+Before reviewing, read the full paginated PR description, issue discussion,
+reviews and inline threads across all head SHAs. Include all participants,
+author replies, and resolved/outdated state. Verify pagination completeness;
+block the review when history is incomplete.
+
+A changed head permits reconsideration, not repetition. Compare every proposed
+finding against prior feedback by root cause, consequence and requested fix, not
+just text, comment IDs or review commit SHA. Do not repost unresolved findings
+in fresh threads. Incorporate author rebuttals and verify disputed upstream
+behavior against the relevant packaged source. Previous generated configuration
+is not proof of supported or working runtime behavior.
+
+Recheck history before writing. Only materially new evidence belongs in an
+existing thread, and public replies still require user authorization. Keep
+fixed, outstanding, rebutted and genuinely new issues separate in private review
+notes.
+
 ## Review Operations
 
 Inspect reviews before each write. Default output contains all reviews owned by
