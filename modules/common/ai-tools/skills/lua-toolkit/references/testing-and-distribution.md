@@ -58,6 +58,3 @@ tutorials, how-tos, reference, explanation). Do not dump a raw API listing.
   version resolution and `test_dependencies`.
 - Publish on tag via `nvim-neorocks/luarocks-tag-release` +
   `release-please-action`. Do not run `luarocks upload` manually.
-
-For Nix packaging (Nixvim, `vimUtils.buildVimPlugin`, overlay) use the
-`writing-nix` skill.

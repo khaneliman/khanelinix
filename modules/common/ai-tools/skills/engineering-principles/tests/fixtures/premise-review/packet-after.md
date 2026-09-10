@@ -7,6 +7,6 @@ Review packet
 - Target: `gh pr diff 9893`
 - Constraints: existing user configurations keep working; options follow module conventions.
 - Write policy: read-only
-- Lane: writing-nix, nix build
+- Lane: nix-toolkit, nix build
 - Required evidence: premise gate as conventional comments, findings, verdict
 - Exit criteria: verdict with the premise gate recorded first

@@ -17,8 +17,8 @@ built paths in the store, so the retry only activates.
 
 ```bash
 ls -t /nix/var/nix/profiles/ | head
-readlink -f /nix/var/nix/profiles/system-<previous>-link
-readlink -f /nix/var/nix/profiles/system-<new>-link
+readlink -f /nix/var/nix/profiles/system-'<previous>'-link
+readlink -f /nix/var/nix/profiles/system-'<new>'-link
 ```
 
 Different targets prove the system changed. Identical targets prove the switch
@@ -29,10 +29,10 @@ profile.
 ## Prove The Intended Artifact Landed
 
 ```bash
-gen=/nix/var/nix/profiles/system-<new>-link
-nix path-info -r "$gen" | grep <package>
-nix derivation show "$(nix path-info --derivation <store-path>)" \
-  | grep <expected-input>
+gen=/nix/var/nix/profiles/system-'<new>'-link
+nix path-info -r "$gen" | grep '<package>'
+nix derivation show "$(nix path-info --derivation '<store-path>')" \
+  | grep '<expected-input>'
 ```
 
 Check the derivation when the change is an input rather than a version, such as

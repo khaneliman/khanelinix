@@ -24,7 +24,7 @@ comments.
    and directly relevant documentation.
 4. Before reviewing code, load every corresponding specialist skill for each
    changed language or domain, such as `rust-toolkit`,
-   `typescript-best-practices`, or `writing-nix`. This is a hard precondition.
+   `typescript-best-practices`, or `nix-toolkit`. This is a hard precondition.
    If any changed code lacks a matching skill in the supplied lane, state the
    coverage limitation. Return a blocked review.
 5. Run the premise gate from the `premise-review` method in

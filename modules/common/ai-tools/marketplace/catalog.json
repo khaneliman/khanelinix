@@ -35,7 +35,7 @@
 			"name": "bevy-toolkit",
 			"displayName": "Bevy Toolkit",
 			"description": "Build, debug, and validate native Bevy applications.",
-			"version": "0.1.5",
+			"version": "0.1.6",
 			"category": "Developer Tools"
 		},
 		{
@@ -70,14 +70,14 @@
 			"name": "engineering-principles",
 			"displayName": "Engineering Principles",
 			"description": "Principles for lean, verified agentic work.",
-			"version": "0.1.12",
+			"version": "0.1.13",
 			"category": "Developer Tools"
 		},
 		{
 			"name": "engineering-workflow",
 			"displayName": "Engineering Workflow",
 			"description": "Run routine software changes through a complete lifecycle.",
-			"version": "0.1.14",
+			"version": "0.1.15",
 			"category": "Developer Tools"
 		},
 		{
@@ -105,7 +105,7 @@
 			"name": "github-toolkit",
 			"displayName": "GitHub Toolkit",
 			"description": "Manage GitHub queues, issues, pull requests, reviews, and CI.",
-			"version": "0.1.12",
+			"version": "0.1.13",
 			"category": "Developer Tools"
 		},
 		{
@@ -133,7 +133,7 @@
 			"name": "lua-toolkit",
 			"displayName": "Lua Toolkit",
 			"description": "Build and maintain Neovim Lua plugins.",
-			"version": "0.1.3",
+			"version": "0.1.4",
 			"category": "Developer Tools"
 		},
 		{
@@ -153,8 +153,8 @@
 		{
 			"name": "nix-toolkit",
 			"displayName": "Nix Toolkit",
-			"description": "Diagnose Nix builds, closures, flakes, and evaluation.",
-			"version": "0.1.3",
+			"description": "Author Nix code and diagnose builds, flakes, and evaluation.",
+			"version": "0.1.4",
 			"category": "Developer Tools"
 		},
 		{
@@ -210,7 +210,7 @@
 			"name": "rust-toolkit",
 			"displayName": "Rust Toolkit",
 			"description": "Build and maintain Rust crates, services, and CLIs.",
-			"version": "0.1.3",
+			"version": "0.1.4",
 			"category": "Developer Tools"
 		},
 		{
@@ -303,13 +303,6 @@
 			"description": "Investigate motivation and design rationale behind code.",
 			"version": "0.1.4",
 			"category": "Developer Tools"
-		},
-		{
-			"name": "writing-nix",
-			"displayName": "Writing Nix",
-			"description": "Write maintainable Nix expressions and modules.",
-			"version": "0.1.3",
-			"category": "Developer Tools"
 		}
 	],
 	"excluded": {
@@ -331,7 +324,7 @@
 		},
 		"nix": {
 			"description": "Nix operations and expression authoring.",
-			"plugins": ["nix-toolkit", "writing-nix"]
+			"plugins": ["nix-toolkit"]
 		},
 		"vcs": {
 			"description": "Git history, GitHub, and Jujutsu workflows.",

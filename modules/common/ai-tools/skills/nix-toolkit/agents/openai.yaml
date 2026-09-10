@@ -1,4 +1,4 @@
 interface:
   display_name: "Nix Toolkit"
-  short_description: "Nix build, diff, closure, dependency, flake, and eval playbooks"
-  default_prompt: "Use $nix-toolkit to diagnose or compare this Nix build, closure, dependency, flake, or evaluation problem."
+  short_description: "Nix authoring, builds, flakes, closures, and evaluation"
+  default_prompt: "Use $nix-toolkit to author or refactor this Nix code, or diagnose its build, closure, dependency, flake, or evaluation behavior."

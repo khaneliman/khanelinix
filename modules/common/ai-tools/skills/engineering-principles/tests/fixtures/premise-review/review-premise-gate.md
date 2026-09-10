@@ -1,7 +1,7 @@
 # Review: Home Manager PR #9893 programs.msmtp.accountOrder
 
 Target: `gh pr diff 9893`
-Specialist skills loaded: writing-nix.
+Specialist skills loaded: nix-toolkit.
 
 ## Premise gate
 

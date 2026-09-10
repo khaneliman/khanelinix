@@ -19,7 +19,7 @@ routine validation remains with the implementation or CI-check lane.
 
 Before reviewing code, load every corresponding specialist skill for each
 changed language or domain, such as `rust-toolkit`, `typescript-best-practices`,
-or `writing-nix`. This is a hard precondition. If any changed code lacks a
+or `nix-toolkit`. This is a hard precondition. If any changed code lacks a
 matching skill in the supplied lane, state the coverage limitation. Return
 `blocked` instead of presenting a complete review.
 

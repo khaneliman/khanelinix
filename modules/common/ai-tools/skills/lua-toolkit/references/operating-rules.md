@@ -4,8 +4,6 @@ Use for cross-skill routing and reporting.
 
 ## Cross-Skill Boundaries
 
-- Use `writing-nix` before editing Nix that packages/wires plugin: Nixvim,
-  `vimUtils` derivations, overlays, or flake outputs.
 - Use `git-toolkit` for commit strategy and local history surgery.
 - Use `github-toolkit` for PR review comments and CI check triage.
 - Prefer one-off tooling through `nix shell` or `,` for stylua, luacheck, or

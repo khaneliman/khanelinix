@@ -2,7 +2,7 @@
 
 Authoring choices that keep evaluation cheap. These are about which construct to
 reach for while writing; for profiling and before/after measurement use the
-`nix-toolkit` `eval-performance` playbook.
+[Evaluation performance](eval-performance.md) playbook.
 
 ## Folds And Recursion
 
@@ -25,8 +25,8 @@ Decision rule:
    re-copies the whole accumulator on every step (`O(N^2)`), since attrsets are
    immutable. Use `lib.attrsets.mergeAttrsList` (balanced binary merge) for
    dynamic or large lists; a fixed `a // b // c` chain is fine for a handful.
-   See `module-style.md` and the `nix-toolkit` `eval-performance`
-   merge-complexity table for detail.
+   See [Module style](module-style.md) and the
+   [evaluation merge-complexity table](eval-performance.md) for detail.
 3. Resolving a transitive closure (dependency graphs, reachability)? Use
    `builtins.genericClosure` instead of manual recursion. It is a C++ primop
    that bypasses the Nix recursion limit and dedups in place.

@@ -58,5 +58,4 @@ reference needed for the current decision.
 - Use `bevy-toolkit` for Bevy ECS, plugins, lifecycle, MCP/BRP, runtime control,
   rendering, and visual validation.
 - Use `security-toolkit` for explicit security audits or threat models.
-- Use `nix-toolkit` or `writing-nix` for Nix environment changes.
 - Use `git-toolkit` for commit structure and history operations.

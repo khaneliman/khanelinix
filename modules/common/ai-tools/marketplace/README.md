@@ -56,7 +56,7 @@ npx skills add khaneliman/khanelinix \
 
 # nix: Nix operations and expression authoring
 npx skills add khaneliman/khanelinix \
-  --skill nix-toolkit writing-nix --global --copy --yes
+  --skill nix-toolkit --global --copy --yes
 
 # web: frontend, browser-game, and TypeScript work
 npx skills add khaneliman/khanelinix \
@@ -175,10 +175,10 @@ lifecycle methods, direct routes, and support utilities.
 | `unslop`                 | User-facing prose cleanup                        |
 
 Domain skills can own methods across several lifecycle phases. In the `nix`
-bundle, `nix-toolkit` owns operational diagnosis and `writing-nix` owns
-expression authoring. `diagnosing-bugs` handles general failures inside Ground
-or as a direct read-only route. `performance-forensics` remains a standalone
-domain plugin because most routine changes do not need profiling or traces.
+bundle, `nix-toolkit` owns operational diagnosis and expression authoring.
+`diagnosing-bugs` handles general failures inside Ground or as a direct
+read-only route. `performance-forensics` remains a standalone domain plugin
+because most routine changes do not need profiling or traces.
 
 ## Examples
 

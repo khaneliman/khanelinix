@@ -76,4 +76,4 @@ files, text-like binary payloads.
 - Runtime + intentional → document or accept.
 - Runtime + accidental → find embedded path, narrow wrapper/config/linkage.
 - Build-time only → not a closure regression.
-- Nix code changes needed → switch to `writing-nix`.
+- Nix code changes needed → read [Authoring](authoring.md).

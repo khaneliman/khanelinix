@@ -80,6 +80,5 @@ Cargo, unsafe, and allocator decisions in `rust-toolkit`.
 - Use `rust-toolkit` for Cargo/workspace, API, typestate, concurrency, unsafe,
   and non-Bevy performance work.
 - Use `memory-profiler` for heap leaks, OOM, or allocator forensics.
-- Use `nix-toolkit` or `writing-nix` for Nix development environments.
 - Use `develop-web-game` only for browser-hosted games; native Bevy uses this
   skill.
