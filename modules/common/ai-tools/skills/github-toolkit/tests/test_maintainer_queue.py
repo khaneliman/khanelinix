@@ -40,7 +40,7 @@ class MaintainerQueueRoutingContract(unittest.TestCase):
     def test_base_names_queue_owner(self) -> None:
         if not BASE_MD.is_file():
             self.skipTest("repository base routing is not installed")
-        self.assertIn("GitHub queues, issues, PRs", compact(read(BASE_MD)))
+        self.assertIn("`github-toolkit`", compact(read(BASE_MD)))
 
     def test_marketplace_description_names_queue(self) -> None:
         if not CATALOG.is_file():
